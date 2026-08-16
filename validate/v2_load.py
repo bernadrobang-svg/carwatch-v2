@@ -121,6 +121,10 @@ C = {
     "V2-08": Check("V2", "V2-08", "값 종류 1인 컬럼", WARN, "run",
                      "차종 특성인지 결함인지 8차종 통합 분포로 판정한다",
                     KIND_EXTERNAL),
+    "V2-30": Check("V2", "V2-30", "전 파서가 row_status 를 냄", FATAL, "run",
+                   "같은 자리를 넷이 쓰는데 하나만 빠지면 눈으로 못 잡는다. "
+                   "parse_diagnosis 가 빠져 S6 이 통째로 죽었다 (개정 270)",
+                   KIND_CODE)
 }
 
 # 단위 검사 기준 — 중앙값이 이 미만이면 만원 단위가 남아 있다 (STEP 56)
@@ -507,6 +511,7 @@ def _exception_shape_checks(conn, rid) -> list:
 
     # V2-22 — DDL 과 현재 스키마가 같은가
     out.append(_schema_sync_check(conn, rid))
+    out.append(_parser_common_fields_check(rid))
 
     # V2-23 — 파싱이 죽어 매물이 사라지지 않았는가
     if _table_exists(conn, "core_parse_issue"):
@@ -741,3 +746,64 @@ def _secret_key_check(rid):
                    for line in rules.splitlines()):
             bad.append(f"{rel} 가 .gitignore 에 없다")
     return result(C["V2-12"], rid, 0, bad or 0, not bad, bad)
+
+
+# 파서가 결과를 넣는 표.  ★ 넷을 한 줄에 놓고 본다 (개정 270)
+PARSER_TABLES: tuple[tuple[str, str], ...] = (
+    ("parse_list_item", "core_listing"),
+    ("parse_detail", "core_listing"),
+    ("parse_inspection", "core_inspection"),
+    ("parse_record", "core_record"),
+    ("parse_diagnosis", "core_diagnosis"),
+)
+
+
+def _parser_common_fields_check(rid):
+    """V2-30 — 전 파서가 NOT NULL 공통 필드를 내는가 (개정 270).
+
+    ★ 하나씩 보면 안 보인다.  셋은 맞고 하나만 틀리기 때문이다.
+      실측 08-16 — parse_diagnosis 가 row_status 를 안 내 S6 이 통째로 죽었다
+    ★ 표의 NOT NULL 이면서 코드가 채우지 않는 칸을 기계로 찾는다.
+      「row_status 만」 보면 다음에 다른 칸이 빠졌을 때 또 못 잡는다
+    """
+    import ast
+    import os as _o
+    import sqlite3 as _sq
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    src_path = _o.path.join(root, "parse", "encar", "mapping.py")
+    src = open(src_path, encoding="utf-8").read()
+    tree = ast.parse(src)
+    returns: dict = {}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        keys = set()
+        for sub in ast.walk(node):
+            if isinstance(sub, ast.Dict):
+                keys |= {k.value for k in sub.keys
+                         if isinstance(k, ast.Constant)
+                         and isinstance(k.value, str)}
+        returns[node.name] = keys
+
+    # 표의 NOT NULL 칸 — 파서가 채워야 하는 것 (기본값·파이프라인이 채우는 것 제외)
+    filled_by_pipeline = {"parsed_at", "parse_version", "listing_id",
+                          "first_seen", "last_seen", "site", "source_id",
+                          "status", "classify_conflict"}
+    mem = _sq.connect(":memory:")
+    ddl = _o.path.join(root, "sql", "ddl")
+    for name in sorted(_o.listdir(ddl)):
+        if name.endswith(".sql"):
+            mem.executescript(open(_o.path.join(ddl, name),
+                                   encoding="utf-8").read())
+    bad = []
+    for fn, table in PARSER_TABLES:
+        if fn not in returns:
+            bad.append(f"{fn} 이 없다")
+            continue
+        need = {r[1] for r in mem.execute(f"PRAGMA table_info({table})")
+                if r[3] and r[4] is None} - filled_by_pipeline
+        miss = sorted(need - returns[fn])
+        if miss:
+            bad.append(f"{fn} → {table}: {', '.join(miss)} 를 안 낸다")
+    return result(C["V2-30"], rid, 0, len(bad), not bad, bad)

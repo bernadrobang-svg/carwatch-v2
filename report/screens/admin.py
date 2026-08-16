@@ -613,7 +613,10 @@ def dict_state(conn) -> dict:
     from store.adminops import pending_axis_summary, pending_enums
 
     rows = pending_enums(conn)
-    axes = pending_axis_summary(conn)
+    # ★ 예시를 몇 개 보일지는 표시 정책이다 (config.web.recent_rows)
+    n = _cfg_rows("recent_rows")
+    axes = [dict(a, sample=" · ".join(a["sample"][:n]))
+            for a in pending_axis_summary(conn)]
     confirmed = conn.execute(
         "SELECT axis, COUNT(*) FROM dict_enum WHERE status='confirmed' "
         "GROUP BY 1 ORDER BY 1").fetchall()

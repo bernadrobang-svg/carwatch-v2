@@ -393,9 +393,9 @@ def pending_axis_summary(conn: sqlite3.Connection, site: str = "encar") -> list:
         a["values"] += 1
         a["listings"] += r["listings"]
         a["from_list"] = a["from_list"] or r["from_list"]
-        if len(a["sample"]) < 5:
-            a["sample"].append(r["value"])
-    return [dict(v, sample=" · ".join(v["sample"])) for v in rows.values()]
+        # ★ 몇 개만 보일지는 표시 정책이다.  표현 계층이 자른다 (STEP 152)
+        a["sample"].append(r["value"])
+    return list(rows.values())
 
 
 DICT_ACTIONS = ("confirm", "hold", "retire")

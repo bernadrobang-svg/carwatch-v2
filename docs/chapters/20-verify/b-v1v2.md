@@ -113,6 +113,7 @@ V1-08 전량 실패        코드 문제로 가정.  차단으로 단정하지 �
 | V2-27 | `parse/` 에 원문 연쇄 첨자가 없음 (AST · `parse/` 만) | 0 | fatal |
 | V2-28 | 파싱 실패 매물의 필드 수가 2 인 행 없음 | 0 | fatal |
 | V2-29 | `parsed` 키 중 저장 안 된 것이 접두 예외 외에 없음 | 0 | fatal |
+| V2-30 | 전 파서가 `row_status` 를 냄 | code | fatal |
 | V2-09 | **`core_pii` 를 직접 조회하는 코드 없음** (`get_pii` 경유) | 0 | fatal |
 | V2-10 | `core_listing` 에 `plate_no` · `dealer_name` · `phone` · `address` 없음 | 0 | fatal |
 | V2-10b | 마스킹 컬럼이 `core_*` 에 없음 (`*_masked`) | 0 | fatal |

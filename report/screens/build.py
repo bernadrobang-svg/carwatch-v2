@@ -510,11 +510,15 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         prices.setdefault(tk, []).append(p)
 
     stats = []
-    for tk in sorted(by_target):
+    # ★ 차종이 없는 매물이 있다.  목록 쿼리가 ModelGroup 단위라
+    #   우리가 안 보는 트림·연료가 함께 온다 (실측 08-16 · 4,188건).
+    #   None 을 그냥 정렬하면 화면이 통째로 500 이 된다 — 이름을 주어 함께 낸다
+    for tk in sorted(by_target, key=lambda k: (k is None, k or "")):
         grades = by_target[tk]
         got = prices.get(tk, [])
         stats.append(TargetStat(
-            target_key=tk, total=sum(grades.values()), grades=grades,
+            target_key=tk or "차종 미정", total=sum(grades.values()),
+            grades=grades,
             rank1=_rank1_of(grades),
             median_price_a_won=got[len(got) // 2] if got else None))
 

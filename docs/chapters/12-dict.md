@@ -148,8 +148,26 @@ unknown      →  이 상태는 없다.  v1 은 미분류를 unknown 으로 삼�
        목록에만 있는 값은 ★ 확인이 필요하다 — facet 에 없는 값이 왜 매물에 있나
 금지   목록 관측만으로 confirmed 를 만드는 것
        「전체 집합을 봤다」가 아니기 때문이다
-검산   V3-37  목록 관측분의 source 가 'list' 인가
+검산   V3-37  목록 관측이 confirmed 를 자동으로 만들지 않는가
        V3-38  facet 수신 후 목록 관측분과 대조하는가
+```
+
+```
+★ 출처와 확정은 다른 것이다 — 08-16 정정
+  source_endpoint   어디서 왔나 (facet · list)
+  status            지금 무엇인가 (pending · confirmed · retired)
+  ★ 둘은 서로 독립이다
+
+  source='list' · status='pending'     목록에서 관측만 함
+  source='list' · status='confirmed'   ★ 사람이 확정한 것.  정상이다
+  source='facet' · status='pending'    facet 에서 왔지만 아직 미검토
+
+필수   V3-37 은 「자동 확정을 했는가」를 본다
+       source 만 보고 판정하지 않는다
+필수   사람이 확정했는지는 config_change 이력으로 가른다
+       확정에는 사유와 계정이 남는다 (STEP 136e)
+금지   source 로 「사람이 했는지」를 추정하는 것
+       ★ 가이드가 이 둘을 한 필드로 보게 검사를 썼다.  오탐이 났다 (실측 08-16)
 ```
 
 ```
