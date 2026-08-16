@@ -819,6 +819,40 @@ def _target_rows(conn) -> list:
 IMPORT_PREVIEW, IMPORT_SAVE, IMPORT_COLLECT = "preview", "import", "collect"
 
 
+def admin_dict(conn, account, req, root: str = ROOT, csrf: str = "",
+               flash_key: str = "-", **_kw):
+    """사전 확정 (13장 STEP 136e).
+
+    ★ 확정을 자동으로 하지 않는다.  사람이 원문을 보고 누른다 (개정 267)
+    ★ 'list' 출처는 「전체 집합이 아니다」를 화면이 말한다 (V10-25)
+    """
+    from report.screens.admin import dict_state
+    from store.adminops import apply_dict_decision
+    from web.app import redirect
+
+    if req.get("method") == "POST":
+        form = _gate(conn, account, req, csrf)
+        axis = (form.get("axis") or "").strip()
+        action = (form.get("action") or "").strip()
+        picked = [v for k, v in form.items()
+                  if k.startswith("v_") and v]
+        if not picked:
+            # 축 단위 묶음 확정 — 그 축의 대기 전부다 (STEP 136e ③)
+            from store.adminops import pending_enums
+
+            picked = [r["value"] for r in pending_enums(conn)
+                      if r["axis"] == axis]
+        got = apply_dict_decision(conn, account, axis=axis, values=picked,
+                                  action=action, reason=form.get("reason", ""),
+                                  at=_now())
+        return redirect("/admin/dict",
+                        f"{got['axis']} — {got['action']} {got['done']}/"
+                        f"{got['asked']}종 처리했습니다", flash_key)
+
+    return page(conn, account, "사전 확정", "admin_dict.html",
+                dict_state(conn), csrf=csrf, root=root, flash_key=flash_key)
+
+
 def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
                   flash_key: str = "-", collect_urls=None, **_kw):
     """브라우저 수집 (13장 STEP 136c).
@@ -1520,6 +1554,7 @@ HANDLERS = {
     "view_admin_run": admin_run,
     "view_admin_import": admin_import,
     "view_admin_collect": admin_collect,
+    "view_admin_dict": admin_dict,
     "view_admin_scoring": admin_scoring,
     "view_admin_registry": admin_registry,
     "view_admin_query": admin_query,

@@ -483,9 +483,13 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                "WHERE endpoint='list' AND status='ok' AND origin <> 'import'")
         args: tuple = ()
         if scope_kind != ENVELOPE_ALL:
-            # raw_response 에 run_id 컬럼이 없다.  실행 시작 시각으로 가른다.
-            # ★ run_id 컬럼 추가는 STEP 33 표 변경이라 마스터 승인 사항이다
-            sql += " AND fetched_at >= ?"
+            # 실행 시작 시각으로 이번 실행분을 가른다.
+            # ★ 밖에서 받아 온 봉투(browser)는 시각으로 못 가른다 —
+            #   파이프라인 밖에서 먼저 저장되기 때문이다.  그것을 빼면
+            #   목록을 392쪽 받아 두고도 S4 가 0건을 펼친다 (실측 08-16).
+            #   다시 펼쳐도 upsert 라 결과가 같다 (STEP 50a 의 뜻은
+            #   「옛 수집분을 매번 훑지 않는다」이지 「밖에서 온 것을 버린다」가 아니다)
+            sql += " AND (fetched_at >= ? OR origin = 'browser')"
             args = (ctx.started_at.isoformat(),)
         for (body,) in conn.execute(sql, args).fetchall():
             _count, items = unpack_envelope(json.loads(body))

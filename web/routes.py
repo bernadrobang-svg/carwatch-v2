@@ -81,6 +81,9 @@ ROUTES: tuple[Route, ...] = (
           GROUP_TUNE),
     Route("/admin/registry", (GET, POST), "view_admin_registry", ROLE_ADMIN,
           GROUP_TUNE),
+    # 사전 확정 — 사람이 검토할 자리다 (STEP 136e).  자동으로 하지 않는다
+    Route("/admin/dict", (GET, POST), "view_admin_dict", ROLE_ADMIN,
+          GROUP_TUNE),
     Route("/admin/config", (GET, POST), "view_admin_config", ROLE_ADMIN,
           GROUP_TUNE),
     Route("/admin/query", (GET, POST), "view_admin_query", ROLE_ADMIN,

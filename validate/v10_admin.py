@@ -12,7 +12,8 @@ import ast
 import os
 
 from validate.base import (
-    Check, FATAL, KIND_CODE, KIND_CONTRACT, KIND_EXTERNAL, WARN, result,
+    Check, FATAL, KIND_CODE, KIND_CONTRACT, KIND_EXTERNAL, WARN,
+    not_applicable, result,
 )
 
 C = {
@@ -82,6 +83,14 @@ C = {
                     "session_account 가 disabled_at 을 본다 · "
                     "change_secret 이 다른 세션을 폐기한다 (C-3 · C-4)",
                     KIND_CONTRACT),
+    "V10-24": Check("V10", "V10-24", "사전 확정에 사유가 남음", FATAL, "run",
+                    "무엇을 왜 확정했는지가 없으면 되짚을 수 없다 "
+                    "(STEP 136e · 149k)",
+                    KIND_CONTRACT),
+    "V10-25": Check("V10", "V10-25", "'list' 출처가 화면에 표시됨", FATAL, "run",
+                    "facet 없이 목록에서 관측한 것은 전체 집합이 아니다. "
+                    "화면이 그렇게 말해야 한다 (STEP 136e)",
+                    KIND_CODE),
     "V10-20": Check("V10", "V10-20", "연속 로그인 실패 상한을 넘으면 거부됨",
                     FATAL, "run",
                     "config.admin.login_fail_limit 를 건다. "
@@ -344,6 +353,8 @@ def _session_checks(rid) -> list:
         except PolicyError:
             locked = True
             break
+    out.append(_dict_reason_check(conn, rid))
+    out.append(_dict_source_shown_check(rid))
     out.append(result(C["V10-20"], rid, "거부",
                       "거부" if locked else "무제한", locked,
                       [] if locked else [f"{limit}회를 넘겨도 계속 받는다"]))
@@ -423,3 +434,37 @@ def _scratch() -> str:
     path = tempfile.mkdtemp(prefix="cw-check-")
     atexit.register(shutil.rmtree, path, ignore_errors=True)
     return path
+
+
+def _dict_reason_check(conn, rid):
+    """V10-24 — 사전 확정에 사유가 남는가 (STEP 136e).
+
+    ★ 「사유를 받는다」를 폼에만 두지 않는다.  남은 이력을 본다
+    """
+    rows = conn.execute(
+        "SELECT COUNT(*), SUM(CASE WHEN reason IS NULL OR reason='' "
+        "THEN 1 ELSE 0 END) FROM config_change WHERE file='dict_enum'"
+    ).fetchone()
+    n, blank = rows[0] or 0, rows[1] or 0
+    if not n:
+        return not_applicable(C["V10-24"], rid, "사전 확정 이력이 없다")
+    bad = [f"사유 없는 확정 {blank}건"] if blank else []
+    return result(C["V10-24"], rid, 0, blank, not bad, bad)
+
+
+def _dict_source_shown_check(rid):
+    """V10-25 — 'list' 출처를 화면이 말하는가 (STEP 136e)."""
+    import os as _o
+
+    tpl = _o.path.join(ROOT, "web", "templates", "admin_dict.html")
+    if not _o.path.isfile(tpl):
+        return result(C["V10-25"], rid, "표시", "화면이 없다", False,
+                      ["admin_dict.html 이 없다"])
+    html = open(tpl, encoding="utf-8").read()
+    bad = []
+    if "list" not in html:
+        bad.append("출처를 표시하지 않는다")
+    if "전체 집합" not in html:
+        bad.append("「전체 집합이 아니다」를 말하지 않는다")
+    return result(C["V10-25"], rid, "표시",
+                  "표시" if not bad else "없음", not bad, bad)

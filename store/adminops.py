@@ -347,6 +347,104 @@ def mark_step_imported(conn: sqlite3.Connection, code: str, at: str,
     )
 
 
+# 사전 축 → core_listing 컬럼 (STEP 136e ④).
+# ★ 「확정하면 몇 건이 판정 가능해지나」를 세려면 그 값이 어느 칸에 있는지 알아야 한다
+DICT_AXIS_COLUMN: dict[str, str] = {
+    "fuel": "fuel_raw",
+    "color_ext": "color_ext_raw",
+    "color_int": "color_int_raw",
+    "trim": "trim_badge",
+    "sell_type": "sell_type",
+}
+
+
+def pending_enums(conn: sqlite3.Connection, site: str = "encar") -> list:
+    """확정 대기 목록 (13장 STEP 136e ①).
+
+    ★ 출처를 함께 낸다.  'list' 는 「전체 집합을 본 게 아니다」라는 뜻이다
+    """
+    out = []
+    for axis, value, cnt, src, first in conn.execute(
+        "SELECT axis, value, count_seen, source_endpoint, first_seen "
+        "FROM dict_enum WHERE site=? AND status='pending' "
+        "ORDER BY axis, count_seen DESC, value", (site,)
+    ):
+        col = DICT_AXIS_COLUMN.get(axis)
+        listings = 0
+        if col:
+            listings = conn.execute(
+                f"SELECT COUNT(*) FROM core_listing WHERE {col}=?",
+                (value,)).fetchone()[0]
+        out.append({"axis": axis, "value": value, "count_seen": cnt or 0,
+                    "source": src, "first_seen": first,
+                    "listings": listings,
+                    # ★ facet 을 못 봐서 목록으로 대신한 것이면 그렇게 말한다
+                    "from_list": src == "list"})
+    return out
+
+
+def pending_axis_summary(conn: sqlite3.Connection, site: str = "encar") -> list:
+    """축 단위 묶음 (STEP 136e ③).  ★ 41종을 하나씩 누르지 않게 한다."""
+    rows: dict = {}
+    for r in pending_enums(conn, site):
+        a = rows.setdefault(r["axis"], {"axis": r["axis"], "values": 0,
+                                        "listings": 0, "from_list": False,
+                                        "sample": []})
+        a["values"] += 1
+        a["listings"] += r["listings"]
+        a["from_list"] = a["from_list"] or r["from_list"]
+        if len(a["sample"]) < 5:
+            a["sample"].append(r["value"])
+    return [dict(v, sample=" · ".join(v["sample"])) for v in rows.values()]
+
+
+DICT_ACTIONS = ("confirm", "hold", "retire")
+
+
+def apply_dict_decision(conn: sqlite3.Connection, account: Account, *,
+                        axis: str, values: list, action: str, reason: str,
+                        at: str, site: str = "encar") -> dict:
+    """사전 값을 확정·보류·폐기한다 (STEP 136e ②③).
+
+    ★ 자동으로 확정하지 않는다.  사람이 눌러야 여기 온다 —
+      「흰색」과 「화이트」를 같은 것으로 볼지는 기계가 못 정한다 (개정 267)
+    ★ 사유를 남긴다.  무엇을 왜 확정했는지가 없으면 되짚을 수 없다 (V10-24)
+    """
+    from store.dictionary import confirm_enum
+
+    require_role(account, ROLE_ADMIN)
+    if action not in DICT_ACTIONS:
+        raise ValidationError(f"없는 행동: {action}", step="STEP 136e")
+    if not (reason or "").strip():
+        raise ValidationError("사유가 있어야 확정합니다", step="STEP 149k")
+    if not values:
+        raise ValidationError("고른 값이 없습니다", step="STEP 136e")
+    done = 0
+    for value in values:
+        if action == "confirm":
+            if confirm_enum(conn, site, axis, value, at) == "confirmed":
+                done += 1
+        elif action == "retire":
+            conn.execute(
+                "UPDATE dict_enum SET status='retired', last_seen=? "
+                "WHERE site=? AND axis=? AND value=? AND status='pending'",
+                (at, site, axis, value))
+            done += conn.total_changes and 1
+        else:
+            done += 1          # 보류 — 그대로 둔다.  기록만 남긴다
+    # ★ 이력을 남긴다.  /admin/audit 의 「설정 변경」 탭에서 보인다
+    conn.execute(
+        "INSERT INTO config_change"
+        "(change_id,account_id,file,key_path,before_value,after_value,"
+        " reason,applied_at) VALUES (?,?,?,?,?,?,?,?)",
+        (secrets.token_hex(ID_BYTES), account.account_id, "dict_enum",
+         f"{axis}[{len(values)}]", "pending", action,
+         reason, at))
+    conn.commit()
+    return {"axis": axis, "action": action, "asked": len(values),
+            "done": done}
+
+
 def _strip_sql(sql: str) -> str:
     """주석을 걷어낸 뒤 첫 낱말을 본다.  판정은 아래 컴파일이 한다."""
     s = re.sub(r"/\*.*?\*/", " ", sql, flags=re.S)

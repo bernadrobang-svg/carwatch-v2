@@ -44,6 +44,7 @@ MENU: tuple[tuple[str, str, str, str], ...] = (
     (GROUP_TUNE, "/admin/scoring", "배점 조정", "STEP 128 · 129"),
     (GROUP_TUNE, "/admin/targets", "차종 추가 · 수정", "STEP 130"),
     (GROUP_TUNE, "/admin/registry", "등록부 분류", "STEP 131"),
+    (GROUP_TUNE, "/admin/dict", "사전 확정", "STEP 136e"),
     (GROUP_TUNE, "/admin/config", "config 편집 · 이력", "STEP 127"),
     (GROUP_EXPLORE, "/admin/query", "조회 쿼리", "STEP 133"),
     (GROUP_EXPLORE, "/admin/api", "API 조회 · 저장", "STEP 134"),
@@ -580,6 +581,25 @@ def collect_state(conn, collect_urls=None, root: str = ".",
             "rows_per_call": int(web["browser_collect_rows"]),
             "interval_sec": float(web["browser_interval_sec"]),
             "max_form_bytes": int(web["max_form_bytes"])}
+
+
+def dict_state(conn) -> dict:
+    """사전 확정 화면 (13장 STEP 136e).
+
+    ★ 「몇 종」이 아니라 「무엇을 확정하면 무엇이 열리나」를 낸다
+    """
+    from store.adminops import pending_axis_summary, pending_enums
+
+    rows = pending_enums(conn)
+    axes = pending_axis_summary(conn)
+    confirmed = conn.execute(
+        "SELECT axis, COUNT(*) FROM dict_enum WHERE status='confirmed' "
+        "GROUP BY 1 ORDER BY 1").fetchall()
+    return {"pending_rows": rows, "pending_axes": axes,
+            "pending_total": len(rows),
+            "confirmed_rows": [{"axis": a, "n": n} for a, n in confirmed],
+            # ★ facet 없이 목록에서 온 것이 있으면 화면이 그렇게 말한다 (V10-25)
+            "has_list_source": any(r["from_list"] for r in rows)}
 
 
 def import_state(conn, limit: int | None = None) -> dict:

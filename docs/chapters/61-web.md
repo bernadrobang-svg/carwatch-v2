@@ -206,6 +206,7 @@ python3 run.py web --port N
 | `/admin/tools` | GET·POST | `view_admin_tools` | **admin** | 탐색 | 시안 |
 | `/admin/import` | GET·POST | `view_admin_import` | **admin** | 운영 | 08-16 신설 |
 | `/admin/collect` | GET·POST | `view_admin_collect` | **admin** | 운영 | 08-16 신설 |
+| `/admin/dict` | GET·POST | `view_admin_dict` | **admin** | 조정 | 08-16 신설 |
 | `/admin/requests` | GET·POST | `view_admin_requests` | **admin** | 탐색 | 시안 |
 
 ```
