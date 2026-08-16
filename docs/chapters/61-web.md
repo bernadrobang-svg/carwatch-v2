@@ -1370,6 +1370,7 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-49 | 한 차종 실패가 나머지를 멈추지 않음 | code | fatal |
 | V11-51 | 모니터 화면에 실행 단추가 없음 | code | fatal |
 | V11-52 | 마지막 갱신 시각이 표시됨 | code | fatal |
+| V11-53 | 「도는 것 없음」과 「최근 처리 있음」이 함께 나오지 않음 | code | fatal |
 
 ---
 
