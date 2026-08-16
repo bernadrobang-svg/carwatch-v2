@@ -631,9 +631,20 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                     target_key=cls.target_key, classify_stage=cls.stage,
                     classify_source=cls.source,
                     classify_conflict=1 if cls.conflict else 0,
+                    # ★ 2단에서 대상 외로 판명되면 status 도 따라가야 한다.
+                    #   target_key 만 지우면 「차종 미정인데 active」가 남아
+                    #   S5 가 계속 가져간다 (V2-31 · 실측 08-16)
+                    status="active" if cls.target_key else "out_of_scope",
                     vehicle_id=vid, parsed_at=at,
                     parse_version=ctx.parse_version)
                 upsert_core(conn, parsed, at)
+                if not cls.target_key:
+                    # ★ 판정은 대상에만 존재한다.  옛 판정을 남기면
+                    #   등급 분포가 거짓이 된다 (개정 271 · V2-31)
+                    conn.execute("DELETE FROM result_axis WHERE listing_id=?",
+                                 (lid,))
+                    conn.execute("DELETE FROM result_score WHERE listing_id=?",
+                                 (lid,))
                 upsert_vehicle(conn, vid, at)
                 if parsed.get("dealer_id"):
                     upsert_dealer(conn, adapter.site_code, parsed["dealer_id"],
@@ -867,6 +878,19 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         t0 = time.time()
         at = clock.now().isoformat()
         dicts = _dicts(conn, root)
+        # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
+        #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
+        #   그대로 두면 등급 분포에 대상 아닌 것이 섞인다
+        conn.execute(
+            "DELETE FROM result_axis WHERE listing_id IN "
+            "(SELECT listing_id FROM core_listing WHERE target_key IS NULL)")
+        conn.execute(
+            "DELETE FROM result_score WHERE listing_id IN "
+            "(SELECT listing_id FROM core_listing WHERE target_key IS NULL)")
+        conn.execute(
+            "UPDATE core_listing SET status='out_of_scope' "
+            "WHERE target_key IS NULL AND status='active'")
+        conn.commit()
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
                     "WHERE status='active'"))]
@@ -912,6 +936,19 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         t0 = time.time()
         at = clock.now().isoformat()
         dicts = _dicts(conn, root)
+        # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
+        #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
+        #   그대로 두면 등급 분포에 대상 아닌 것이 섞인다
+        conn.execute(
+            "DELETE FROM result_axis WHERE listing_id IN "
+            "(SELECT listing_id FROM core_listing WHERE target_key IS NULL)")
+        conn.execute(
+            "DELETE FROM result_score WHERE listing_id IN "
+            "(SELECT listing_id FROM core_listing WHERE target_key IS NULL)")
+        conn.execute(
+            "UPDATE core_listing SET status='out_of_scope' "
+            "WHERE target_key IS NULL AND status='active'")
+        conn.commit()
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
                     "WHERE status='active'"))]

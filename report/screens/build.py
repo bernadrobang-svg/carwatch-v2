@@ -745,8 +745,36 @@ def view_notready(account: Account, conn, calc_version: str,
         reasons.append(f"등록부 미분류 {n}건 — V4-11 이 판정을 막는다")
         actions.append("config/field_usage.suggested.json 을 확인·수정해 "
                        "config/field_usage.json 으로 옮긴 뒤 재실행한다")
+    rows = _unmatched_rows(conn)
+    n_null = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE target_key IS NULL"
+    ).fetchone()[0]
+    n_ok = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE target_key IS NOT NULL"
+    ).fetchone()[0]
+    if n_null:
+        reasons.append(f"차종이 안 붙은 매물 {n_null:,}건 — 판정 대상이 아니다")
+        actions.append("아래 모델명·배지를 보고 targets.json 의 "
+                       "fuel_match · trim_include 를 고치거나 그대로 둔다")
     return NotReadyView(
         ReportMeta(run_id, "L3", "encar", None, calc_version, None),
         reasons, actions,
         pending_values=_pending_values(conn),
-        done=_done_items(conn, calc_version))
+        done=_done_items(conn, calc_version),
+        unmatched=rows, unmatched_total=n_null, matched_total=n_ok)
+
+
+def _unmatched_rows(conn, limit: int | None = None) -> list:
+    """차종이 안 붙은 매물을 모델·연료·배지로 묶어 낸다 (개정 271 · V2-32).
+
+    ★ 「4,188건」만 내면 사람이 아무것도 못 한다.
+      「그랜저 가솔린 706건」이라야 targets.json 을 고칠지 정한다
+    """
+    limit = _view_cfg("rows_per_page") if limit is None else limit
+    return [{"manufacturer": mf, "model_group": mg, "fuel": fuel,
+             "trim": trim, "count": n}
+            for mf, mg, fuel, trim, n in conn.execute(
+                "SELECT site_manufacturer, site_model_group, fuel_raw, "
+                "       trim_badge, COUNT(*) "
+                "FROM core_listing WHERE target_key IS NULL "
+                "GROUP BY 1, 2, 3 ORDER BY 5 DESC LIMIT ?", (limit,))]

@@ -14,6 +14,34 @@
 {% endif %}
 
 {% if n.done %}
+<h2>차종이 안 붙은 매물</h2>
+<p class="notice">
+  범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
+  <strong>차종 미정 {{ nr.unmatched_total | num }}건</strong>.
+  섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
+  차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
+  넣지도 않습니다.
+</p>
+{% if nr.unmatched %}
+<p class="muted">왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
+  이것으로 <code>targets.json</code> 의 <code>fuel_match</code> ·
+  <code>trim_include</code> 를 고칠지, 그대로 둘지 정합니다.</p>
+<table id="unmatched">
+<thead><tr><th>제조사</th><th>모델군</th><th>연료</th><th>배지</th>
+  <th class="num">건수</th></tr></thead>
+<tbody>
+{% for u in nr.unmatched %}
+<tr><td>{{ u.manufacturer }}</td><td>{{ u.model_group }}</td>
+  <td>{{ u.fuel }}</td><td class="muted">{{ u.trim }}</td>
+  <td class="num">{{ u.count | num }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !nr.unmatched %}
+<p class="muted">차종이 안 붙은 매물이 없습니다.</p>
+{% endif %}
+
 <h2>지금도 볼 수 있는 것</h2>
 <ul>{% for d in n.done %}<li>{{ d }}</li>{% endfor %}</ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
@@ -37,6 +65,34 @@
   반대로 무시하고 넘기면 감점해야 할 것을 놓칩니다.
   그래서 사람이 볼 때까지 <strong>그 축만</strong> 멈춥니다.
   나머지 축은 정상으로 판정됩니다.</p>
+
+<h2>차종이 안 붙은 매물</h2>
+<p class="notice">
+  범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
+  <strong>차종 미정 {{ nr.unmatched_total | num }}건</strong>.
+  섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
+  차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
+  넣지도 않습니다.
+</p>
+{% if nr.unmatched %}
+<p class="muted">왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
+  이것으로 <code>targets.json</code> 의 <code>fuel_match</code> ·
+  <code>trim_include</code> 를 고칠지, 그대로 둘지 정합니다.</p>
+<table id="unmatched">
+<thead><tr><th>제조사</th><th>모델군</th><th>연료</th><th>배지</th>
+  <th class="num">건수</th></tr></thead>
+<tbody>
+{% for u in nr.unmatched %}
+<tr><td>{{ u.manufacturer }}</td><td>{{ u.model_group }}</td>
+  <td>{{ u.fuel }}</td><td class="muted">{{ u.trim }}</td>
+  <td class="num">{{ u.count | num }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !nr.unmatched %}
+<p class="muted">차종이 안 붙은 매물이 없습니다.</p>
+{% endif %}
 
 <h2>지금도 볼 수 있는 것</h2>
 <p class="muted">판정이 멈춰 있어도 아래는 지금 볼 수 있습니다 —

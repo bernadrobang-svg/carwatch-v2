@@ -254,6 +254,11 @@ class NotReadyView:
     pending_values: list = field(default_factory=list)
     # 이미 된 것 — 「아무것도 안 됐다」와 「등급만 없다」는 다르다
     done: list = field(default_factory=list)
+    # ★ 차종이 안 붙은 매물 — 모델명·배지를 낸다 (개정 271 · V2-32).
+    #   건수만 내면 targets.json 을 고칠지 규칙을 고칠지 못 정한다
+    unmatched: list = field(default_factory=list)
+    unmatched_total: int = 0
+    matched_total: int = 0
 
 
 @dataclass(frozen=True)

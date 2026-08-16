@@ -121,6 +121,16 @@ C = {
     "V2-08": Check("V2", "V2-08", "값 종류 1인 컬럼", WARN, "run",
                      "차종 특성인지 결함인지 8차종 통합 분포로 판정한다",
                     KIND_EXTERNAL),
+    "V2-31": Check("V2", "V2-31", "target_key NULL 이 판정에 들어가지 않음",
+                   FATAL, "run",
+                   "차종이 없으면 판정 대상이 아니다.  임의의 차종에 넣지 "
+                   "않는다 (개정 271)",
+                   KIND_CODE),
+    "V2-32": Check("V2", "V2-32", "NULL 매물의 모델명이 화면에서 보임",
+                   WARN, "run",
+                   "왜 안 붙었는지 알 수 있어야 사람이 targets.json 을 "
+                   "고친다 (개정 271)",
+                   KIND_CODE),
     "V2-30": Check("V2", "V2-30", "전 파서가 row_status 를 냄", FATAL, "run",
                    "같은 자리를 넷이 쓰는데 하나만 빠지면 눈으로 못 잡는다. "
                    "parse_diagnosis 가 빠져 S6 이 통째로 죽었다 (개정 270)",
@@ -512,6 +522,8 @@ def _exception_shape_checks(conn, rid) -> list:
     # V2-22 — DDL 과 현재 스키마가 같은가
     out.append(_schema_sync_check(conn, rid))
     out.append(_parser_common_fields_check(rid))
+    out.append(_null_target_not_judged_check(conn, rid))
+    out.append(_null_target_visible_check(conn, rid))
 
     # V2-23 — 파싱이 죽어 매물이 사라지지 않았는가
     if _table_exists(conn, "core_parse_issue"):
@@ -807,3 +819,54 @@ def _parser_common_fields_check(rid):
         if miss:
             bad.append(f"{fn} → {table}: {', '.join(miss)} 를 안 낸다")
     return result(C["V2-30"], rid, 0, len(bad), not bad, bad)
+
+
+def _null_target_not_judged_check(conn, rid):
+    """V2-31 — 차종 없는 매물이 판정에 들어갔는가 (개정 271).
+
+    ★ 「미정으로 두면 된다」가 아니다.  판정에 섞이면 등급 분포가 거짓이 된다
+    """
+    n_null = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE target_key IS NULL"
+    ).fetchone()[0]
+    if not n_null:
+        return not_applicable(C["V2-31"], rid, "차종 미정 매물이 없다")
+    judged = conn.execute(
+        "SELECT COUNT(*) FROM result_score s JOIN core_listing l "
+        "ON l.listing_id = s.listing_id WHERE l.target_key IS NULL"
+    ).fetchone()[0]
+    active = conn.execute(
+        "SELECT COUNT(*) FROM core_listing "
+        "WHERE target_key IS NULL AND status='active'").fetchone()[0]
+    bad = []
+    if judged:
+        bad.append(f"차종 미정인데 판정된 매물 {judged}건")
+    if active:
+        bad.append(f"차종 미정인데 status='active' {active}건 — S5 가 가져간다")
+    return result(C["V2-31"], rid, 0, judged, not bad, bad)
+
+
+def _null_target_visible_check(conn, rid):
+    """V2-32 — 왜 안 붙었는지 화면에서 볼 수 있는가 (개정 271).
+
+    ★ 건수만 내면 사람이 아무것도 못 한다.  모델명·배지가 있어야
+      targets.json 을 고칠지 규칙을 고칠지 정한다
+    """
+    import os as _o
+
+    n_null = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE target_key IS NULL"
+    ).fetchone()[0]
+    if not n_null:
+        return not_applicable(C["V2-32"], rid, "차종 미정 매물이 없다")
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    tpl = _o.path.join(root, "web", "templates", "notready.html")
+    bad = []
+    if not _o.path.isfile(tpl):
+        bad.append("notready.html 이 없다")
+    else:
+        html = open(tpl, encoding="utf-8").read()
+        if "unmatched" not in html:
+            bad.append("차종 미정 절이 화면에 없다")
+    return result(C["V2-32"], rid, "보임",
+                  "보임" if not bad else "없음", not bad, bad)
