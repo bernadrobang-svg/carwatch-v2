@@ -164,6 +164,10 @@
           "ratio": null,
           "points": 0
         }
+      ],
+      "_commercial_note": "보험이력 용도 코드 3=영업용 (개정 302).  규격에 코드표가 없어 실측으로 짚었다 — 점검부가 「렌트」라 한 646건 중 627건",
+      "commercial_use_codes": [
+        "3"
       ]
     },
     "safety": {

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import random
 
+from analyze.axis.history import RENT_AD_TYPES
 from analyze.verdict import BANNED_SOURCES
 from validate.base import (
     Check,
@@ -152,6 +153,11 @@ C = {
                    "이론가가 실제 시장보다 높으면 전부 「싸다」로 나온다. "
                    "그러면 「싸다」가 아무 뜻이 없다 (개정 282)",
                    KIND_EXTERNAL),
+    "V3-54": Check("V3", "V3-54", "렌트 이력을 세 곳에서 대조", FATAL, "run",
+                   "advertisementType 만 보면 「지금 리스 상품인가」다. "
+                   "과거 렌트는 점검부 용도변경과 보험이력에 있다 "
+                   "— 실측 08-17: 「렌트 아님」이라 한 144건이 렌트였다 (개정 302)",
+                   KIND_CONTRACT),
     "V3-45": Check("V3", "V3-45", "배점 합이 만점과 같음", FATAL, "run",
                    "합이 안 맞으면 비율이 뜻을 잃는다 (개정 292)",
                    KIND_CONTRACT),
@@ -500,6 +506,43 @@ def _core_axis_check(conn, rid):
     return result(C["V3-40"], rid, 0, len(bad), not bad, bad)
 
 
+def _rental_cross_check(conn, rid):
+    """V3-54 — 렌트를 세 곳에서 대조했는가 (개정 302).
+
+    ★ 셋 중 하나라도 렌트라 하는데 「렌트 아님」으로 점수를 준 것을 센다
+    """
+    bad = []
+    # ★ 지금 채점본만 본다.  옛 calc_version 의 잔재는 V3-41 이 따로 잡는다
+    cv = conn.execute("SELECT calc_version FROM result_score"
+                      " ORDER BY calculated_at DESC LIMIT 1").fetchone()
+    cv = cv[0] if cv else ""
+    n = conn.execute(
+        "SELECT COUNT(*) FROM result_axis a JOIN core_listing l"
+        " ON l.listing_id = a.listing_id"
+        " WHERE a.axis = 'history.rental' AND a.value > 0"
+        " AND a.calc_version = ? AND l.advertisement_type IN"
+        f" ({','.join('?' * len(RENT_AD_TYPES))})",
+        (cv, *sorted(RENT_AD_TYPES))).fetchone()[0]
+    if n:
+        bad.append(f"광고형태가 렌트·리스인데 「렌트 아님」 {n}건")
+    n = conn.execute(
+        "SELECT COUNT(*) FROM result_axis a JOIN core_inspection i"
+        " ON i.listing_id = a.listing_id"
+        " WHERE a.axis = 'history.rental' AND a.value > 0"
+        " AND a.calc_version = ?"
+        " AND i.usage_change_types_json LIKE '%\"렌트\"%'", (cv,)).fetchone()[0]
+    if n:
+        bad.append(f"점검부 용도변경이 렌트인데 「렌트 아님」 {n}건")
+    # 근거 이름에 세 곳이 다 등장하는가 — 한 곳만 보고 있으면 여기서 걸린다
+    seen = {r[0] for r in conn.execute(
+        "SELECT DISTINCT source FROM result_axis"
+        " WHERE axis='history.rental' AND calc_version=?", (cv,))}
+    for want in ("advertisement_type", "usage_change_types", "record_use"):
+        if not any(want in got for got in seen):
+            bad.append(f"근거에 {want} 가 한 번도 안 나온다")
+    return result(C["V3-54"], rid, 0, len(bad), not bad, bad)
+
+
 def _fill_gap_check(conn, rid):
     """V3-47 — 축별 차종 간 결측률 편차 (개정 293).
 
@@ -614,6 +657,7 @@ def run(conn, ctx) -> list:
     out.append(_market_gap_check(conn, rid))
     out.append(_core_axis_check(conn, rid))
     out.append(_fill_gap_check(conn, rid))
+    out.append(_rental_cross_check(conn, rid))
 
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL").fetchone()[0]

@@ -183,6 +183,8 @@ class ListingSnapshot:
     usage_change_types_json: str | None = None
     warranty_extend: int | None = None
     warranty_deemed: int | None = None
+    # ★ 보험이력 용도 변경이력 (개정 302).  렌트를 세 곳에서 대조한다
+    record_use_json: str | None = None
 
 
 @dataclass(frozen=True)

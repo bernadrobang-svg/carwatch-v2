@@ -7,6 +7,7 @@
          사고 20점이 한 번도 작동하지 않았다
 금지     부위명 문자열 매칭.  type 3 을 감점에 넣는 것.  insuranceBenefit 사용
          SellType 을 렌트 1순위로 쓰는 것 — 현재 판매 형태지 과거 이력이 아니다
+         ★ advertisementType 은 1순위가 아니라 셋 중 하나다 (개정 302)
 """
 from __future__ import annotations
 
@@ -20,6 +21,11 @@ INSURANCE = "history.insurance"
 RENTAL = "history.rental"
 
 RENT_TITLE = "렌트"
+# 광고형태가 이미 렌트·리스라고 말하는 것 (개정 302 ①)
+RENT_AD_TYPES = {"RENT_SUCCESSION": "렌트 승계 매물",
+                 "RENT_CAR": "렌터카",
+                 "OPERATING_LEASE": "운용리스 매물",
+                 "FINANCING_LEASE": "금융리스 매물"}
 
 
 SWAP = "swap"
@@ -103,21 +109,48 @@ def analyze_history(ctx: AxisContext, v: Verdict) -> None:
     # ── 보험 15점 (STEP 77) ──────────────────────────────────────────
     _insurance(ctx, v, r)
 
-    # ── 렌트 20점 (STEP 78) ──────────────────────────────────────────
-    rr = r["rental"]
-    usage = ctx.snapshot.usage_change_types_json
-    if usage is not None:
-        types = json.loads(usage)
-        is_rent = any(t.get("title") == RENT_TITLE for t in types)
-        put(v, RENTAL, rr["rental"] if is_rent else rr["non_rental"],
-            PRIO_OBSERVED, "usage_change_types")
-        return
-    # ★ 허·하·호 = 렌터카.  원본이 아니라 파생 한 글자로 판정한다 (STEP 35)
+    # ── 렌트 20점 (STEP 78 · 개정 302) ───────────────────────────────
+    _rental(ctx, v, r["rental"])
+
+
+def rental_findings(s, commercial_codes) -> list:
+    """렌트 이력을 세 곳에서 찾는다 (개정 302).
+
+    ★ 우리는 advertisementType 만 봤다.  그것은 「지금 리스 상품인가」다.
+      「과거에 렌트로 쓰였나」는 점검부 용도변경과 보험이력에 있다.
+      실측 08-17: 「렌트 아님」이라 한 144건이 광고형태로는 렌트·리스였다
+    필수   하나라도 렌트면 「렌트 이력」이다 (개정 302)
+    """
+    out = []
+    if s.advertisement_type in RENT_AD_TYPES:
+        out.append(("advertisement_type", RENT_AD_TYPES[s.advertisement_type]))
+    if s.usage_change_types_json is not None:
+        titles = [t.get("title") for t in json.loads(s.usage_change_types_json)]
+        if RENT_TITLE in titles:
+            out.append(("usage_change_types", "점검부 용도변경 렌트"))
+    # ★ 보험이력 용도 변경이력.  코드의 뜻은 규격에 없다 — 실측으로 짚었다
+    #   점검부가 「렌트」라 한 646건 중 627건에 용도 3(영업용)이 있었다
+    if s.record_use_json is not None:
+        codes = json.loads(s.record_use_json)
+        if any(str(c) in commercial_codes for c in codes):
+            out.append(("record_use", "보험이력 영업용 이력"))
     if s.plate_use_char is not None:
-        put(v, RENTAL, rr["rental"], PRIO_CLASSIFIER, "plate_use_char")
+        out.append(("plate_use_char", "번호판이 렌터카"))
+    return out
+
+
+def _rental(ctx: AxisContext, v: Verdict, rr: dict) -> None:
+    s = ctx.snapshot
+    found = rental_findings(s, ctx.policy.rule("history")["commercial_use_codes"])
+    if found:
+        # 근거를 하나만 남기지 않는다 — 어디서 찾았는지가 화면에 나가야 한다
+        put(v, RENTAL, rr["rental"], PRIO_OBSERVED,
+            "+".join(k for k, _why in found))
         return
-    if s.plate_history_hash_json is not None:
-        put(v, RENTAL, rr["non_rental"], PRIO_CLASSIFIER, "record_plate")
+    # 「렌트가 아니다」는 셋 중 하나라도 실제로 봤을 때만 말할 수 있다
+    if (s.usage_change_types_json is not None or s.record_use_json is not None
+            or s.plate_history_hash_json is not None):
+        put(v, RENTAL, rr["non_rental"], PRIO_OBSERVED, "checked_three")
         return
     # 불명 — 수집 실패를 렌트로 단정하지 않는다.  0 으로 두면 실패가 감점이 된다
     put(v, RENTAL, rr["unknown"], PRIO_CLASSIFIER, "unknown")

@@ -901,19 +901,22 @@ def _listing_config(conn, lid: str, targets: dict, dep: dict,
 
 
 def _listing_values(conn, lid: str) -> dict:
-    """매물별 판정 값 6종 → ListingSnapshot 필드 (F-1)."""
+    """매물별 판정 값 7종 → ListingSnapshot 필드 (F-1 · 개정 302)."""
     row = conn.execute(
         "SELECT l.diagnosis_car, l.warranty_extend, l.warranty_deemed,"
         " l.advertisement_type, l.lease_rent_info_json,"
-        " i.usage_change_types_json"
+        " i.usage_change_types_json, r.use1_json"
         " FROM core_listing l LEFT JOIN core_inspection i"
-        " ON i.listing_id = l.listing_id WHERE l.listing_id = ?", (lid,)
+        " ON i.listing_id = l.listing_id"
+        " LEFT JOIN core_record r ON r.listing_id = l.listing_id"
+        " WHERE l.listing_id = ?", (lid,)
     ).fetchone()
     if row is None:
         return {}
     return {"diagnosis_car": row[0], "warranty_extend": row[1],
             "warranty_deemed": row[2], "advertisement_type": row[3],
-            "lease_rent_info": row[4], "usage_change_types_json": row[5]}
+            "lease_rent_info": row[4], "usage_change_types_json": row[5],
+            "record_use_json": row[6]}
 
 
 def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,

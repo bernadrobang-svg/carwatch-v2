@@ -119,12 +119,13 @@ def _bulk_axes(conn, lids: list, calc_version: str) -> dict:
         return {}
     marks = ",".join("?" * len(lids))
     out: dict = {}
-    for lid, axis, value, excluded in conn.execute(
-        f"SELECT listing_id, axis, value, excluded FROM result_axis "
+    # ★ source 도 싣는다 — 렌트를 어디서 찾았는지가 화면에 나가야 한다 (개정 302)
+    for lid, axis, value, excluded, source in conn.execute(
+        f"SELECT listing_id, axis, value, excluded, source FROM result_axis "
         f"WHERE calc_version = ? AND listing_id IN ({marks})",
         (calc_version, *lids)
     ):
-        out.setdefault(lid, {})[axis] = (value, bool(excluded))
+        out.setdefault(lid, {})[axis] = (value, bool(excluded), source)
     return out
 
 
@@ -350,7 +351,13 @@ STATE_AXES = ("warranty.general", "warranty.power",
               "history.damage", "history.insurance", "history.rental")
 
 
-def _axis_state(axis: str, chip, state: dict, as_of: str) -> str:
+# 렌트를 어디서 찾았는가 → 화면 문구 (개정 302).  ★ 「렌트 이력」만 내지 않는다
+RENT_SOURCE_WORDS = {"advertisement_type": "광고", "usage_change_types": "점검부",
+                     "record_use": "보험", "plate_use_char": "번호판"}
+
+
+def _axis_state(axis: str, chip, state: dict, as_of: str,
+                source: str = "") -> str:
     """축 칸에 낼 상태 문구 (STEP 149n · 개정 280).
 
     ★ 「0」 하나로 일곱 축을 다 말할 수 없다.  축마다 말이 다르다
@@ -374,7 +381,12 @@ def _axis_state(axis: str, chip, state: dict, as_of: str) -> str:
         return "0원" if not cost else f"{int(cost) // WON_PER_MANWON:,}만"
     if axis == "history.rental":
         # ★ 점수를 받았으면 렌트가 아니다 (excluded 가 아니라 값이 있을 때만)
-        return "렌트 아님" if chip.tone == TONE_GOOD else "렌트 이력"
+        if chip.tone == TONE_GOOD:
+            return "렌트 아님"
+        # ★ 어디서 찾았는지를 함께 낸다.  「렌트 이력」만으로는 확인할 수 없다
+        got = [RENT_SOURCE_WORDS[k] for k in source.split("+")
+               if k in RENT_SOURCE_WORDS]
+        return f"렌트 이력 ({'·'.join(got)})" if got else "렌트 이력"
     if axis.startswith("spec."):
         # 사양 축은 있고 없고가 전부다 (STEP 149n 표)
         return "있음" if chip.tone == TONE_GOOD else "없음"
@@ -403,7 +415,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         else:
             one = chip(axis, None, True, labels)
         # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)
-        chips.append(replace(one, state=_axis_state(axis, one, st, calc_at)))
+        chips.append(replace(one, state=_axis_state(
+            axis, one, st, calc_at, (got.get(axis) or (0, 0, ""))[2])))
     fin = build_finance(price, fin_cfg, tk)
     changes, first_won = (changes_by or {}).get(lid, (0, None))
     # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
