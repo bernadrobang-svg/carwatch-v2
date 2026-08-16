@@ -95,24 +95,31 @@ def test_denominator() -> None:
     check("A 전 축 정상 → 만점", r.score_total == total and r.denominator == total,
           f"{r.score_total}/{r.denominator}")
 
+    # ★ B · C 는 폐기됐다 (개정 298).  한 축을 못 봐도 분모는 555 다
     r = score(full_verdict(excluded_comps=("spec.hud",)), POLICY)
-    check("B/C 한 축 제외 → 분모 축소 · 점수 산출",
-          r.denominator == total - POLICY.comp("spec.hud")
-          and r.score_total == total, f"{r.denominator}")
+    check("G 한 축 제외 → 분모는 그대로 · 그 축이 0점",
+          r.denominator == total
+          and r.score_total == total - POLICY.comp("spec.hud"),
+          f"{r.denominator} · {r.score_total}")
+    check("I 확인율을 낼 수 있다 (applicable = 확인한 배점 합)",
+          r.applicable == total - POLICY.comp("spec.hud"), f"{r.applicable}")
 
     r = score(full_verdict(excluded_comps=COMPONENTS), POLICY)
     check("D 전 축 실패 → 점수 생성 금지 (NOT_RATED)",
           r.grade == "NOT_RATED" and r.not_rated_reason == "전 축 수집 실패")
 
-    # F — 분모가 최소 기준(60%) 미만
+    # ★ F 도 폐기됐다 (개정 298).  분모로 등급을 막지 않는다.
+    #   많이 못 봤으면 분모를 줄이는 것이 아니라 비율이 낮게 나와야 한다
     heavy = ("price", "warranty.general", "warranty.power",
              "spec.hud", "spec.hda")
     r = score(full_verdict(excluded_comps=heavy), POLICY)
-    check("F 분모 미달 → 등급 생성 금지",
-          r.grade == "NOT_RATED" and r.not_rated_reason == "분모 최소 기준 미만",
-          f"{r.denominator}/{total}")
-    check("NOT_RATED 는 D 나 E 가 아니다",
-          grade_of(r, POLICY) == "NOT_RATED")
+    heavy_pts = sum(POLICY.comp(c) for c in heavy)
+    check("H 많이 못 봐도 분모는 555 · 못 본 만큼 점수가 빠진다",
+          r.denominator == total and r.score_total == total - heavy_pts,
+          f"{r.score_total}/{r.denominator}")
+    check("★ 못 볼수록 비율이 내려간다 (v1 사고의 반대)",
+          r.score_total / r.denominator < 1.0,
+          f"{r.score_total / r.denominator:.1%}")
 
     check("E 금지 근거는 put() 이 차단한다 (불변식 ②)", True)
 
@@ -342,9 +349,12 @@ def test_safety_real() -> None:
           and "safety.warranty_product" not in v.excluded)
 
     r2 = score(v, POLICY)
-    check("전기차는 안전 분모가 20 줄어든다",
-          score(analyze_listing(ctx(snap(target_key="MODEL_Y"), diagnosis_car=1)),
-                POLICY).denominator < r2.denominator)
+    ev = score(analyze_listing(ctx(snap(target_key="MODEL_Y"), diagnosis_car=1)),
+               POLICY)
+    # ★ 분모가 아니라 확인율이 줄어든다 (개정 298).  전기차라고 만점이 되면 안 된다
+    check("전기차는 안전 축을 못 봐 확인율이 20 줄어든다",
+          ev.denominator == r2.denominator and ev.applicable < r2.applicable,
+          f"분모 {ev.denominator} · 확인 {ev.applicable} < {r2.applicable}")
 
 
 def test_spec_gate() -> None:
@@ -427,9 +437,10 @@ def test_price_real() -> None:
                                   price_origin_won=32840000,
                                   first_registration_date="2023-05-02"),
                              depreciation=dep))
-    check("스포티지는 가격 200 만큼만 분모가 줄어든다",
-          score(ok, POLICY).denominator - score(v, POLICY).denominator == 200,
-          f"{score(ok, POLICY).denominator} → {score(v, POLICY).denominator}")
+    check("스포티지는 가격 200 만큼 확인율이 줄어든다 (분모가 아니라)",
+          score(ok, POLICY).applicable - score(v, POLICY).applicable == 200
+          and score(ok, POLICY).denominator == score(v, POLICY).denominator,
+          f"확인 {score(ok, POLICY).applicable} → {score(v, POLICY).applicable}")
 
 
 # ── 색상 40점 (STEP 80) ──────────────────────────────────────────────

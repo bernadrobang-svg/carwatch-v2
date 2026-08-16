@@ -34,7 +34,7 @@ class ScoreResult:
 
 REASON_ALL_MISSING = "전 축 수집 실패"
 REASON_BANNED_ONLY = "금지 근거만 존재"
-REASON_MIN_DENOM = "분모 최소 기준 미만"
+# ★ REASON_MIN_DENOM 은 폐기됐다 (개정 298).  분모로 등급을 막지 않는다
 
 
 def score(v: Verdict, policy: ScoringPolicy,

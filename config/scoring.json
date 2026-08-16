@@ -37,7 +37,6 @@
     "B": 0.7,
     "C": 0.6
   },
-  "min_denominator_ratio": 0.6,
   "price_curve": [
     {
       "deviation": -0.25,

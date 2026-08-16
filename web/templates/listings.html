@@ -63,9 +63,10 @@
   <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="{{ r.grade }} 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
   <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim" title="E · 미판정은 순위를 매기지 않습니다">—</span>{% endif %}</td>
   <td class="r num" data-label="비율">
-    {% if r.ratio_pct %}<strong title="받은 점수 ÷ 판정한 축의 배점 합">{{ r.ratio_pct }}%</strong>
-    <span class="raw{% if r.denom_short %} denom-short{% endif %}" title="원점수 {{ r.earned }} / 분모 {{ r.denominator }} — 판정할 수 없는 축은 0점이 아니라 분모에서 뺍니다">{{ r.earned }}/{{ r.denominator }}</span>
-    <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>{% endif %}
+    {% if r.ratio_pct %}<strong title="받은 점수 ÷ 만점">{{ r.ratio_pct }}%</strong>
+    <span class="raw{% if r.denom_short %} denom-short{% endif %}" title="원점수 {{ r.earned }} / 만점 {{ r.denominator }} — 분모는 늘 만점입니다. 못 본 축은 분모에서 빼지 않고 0점으로 둡니다">{{ r.earned }}/{{ r.denominator }}</span>
+    <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>
+    <span class="raw" title="이 매물에서 실제로 확인한 축의 배점 합입니다. 나머지는 못 본 것이라 0점입니다">{{ r.denominator }} 중 {{ r.confirmed_points }}점 확인 ({{ r.confirm_pct }}%)</span>{% endif %}
     {% if !r.ratio_pct %}<span class="dim" title="아직 판정하지 못했습니다">—</span>{% endif %}
   </td>
   <td data-label="차종">

@@ -79,6 +79,10 @@ class ListingRow:
     denominator: float | None = None
     ratio_pct: float | None = None
     denom_short: bool = False
+    # 확인율 — 「555 중 350점을 확인했습니다 (63%)」 (개정 298 I).
+    # ★ 분모로 등급을 막지 않는 대신 얼마나 봤는지를 낸다
+    confirmed_points: float | None = None
+    confirm_pct: float | None = None
     # 대표 사진 주소 (개정 274).  ★ 우리가 내려받지 않는다 — ci.encar.com 을
     #   그대로 부른다.  없으면 None 이고 화면은 thumb-none 으로 자리를 채운다.
     #   ★ 판정에 쓰지 않는다.  보는 사람을 위한 것이다

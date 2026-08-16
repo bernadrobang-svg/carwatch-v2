@@ -119,14 +119,27 @@ def _bulk_axes(conn, lids: list, calc_version: str) -> dict:
         return {}
     marks = ",".join("?" * len(lids))
     out: dict = {}
-    # ★ source 도 싣는다 — 렌트를 어디서 찾았는지가 화면에 나가야 한다 (개정 302)
-    for lid, axis, value, excluded, source in conn.execute(
-        f"SELECT listing_id, axis, value, excluded, source FROM result_axis "
-        f"WHERE calc_version = ? AND listing_id IN ({marks})",
+    # ★ source · max_points 도 같은 쿼리로 싣는다.  쿼리를 늘리지 않는다 (V11-34)
+    #   source  렌트를 어디서 찾았는가 (개정 302)
+    #   max_points  확인율 「555 중 350점 확인」 (개정 298 I)
+    for lid, axis, value, excluded, source, mx in conn.execute(
+        f"SELECT listing_id, axis, value, excluded, source, max_points "
+        f"FROM result_axis WHERE calc_version = ? AND listing_id IN ({marks})",
         (calc_version, *lids)
     ):
-        out.setdefault(lid, {})[axis] = (value, bool(excluded), source)
+        out.setdefault(lid, {})[axis] = (value, bool(excluded), source, mx)
     return out
+
+
+def confirm_ratio(got: dict, total: float) -> tuple:
+    """확인율 — 「555 중 350점을 확인했습니다 (63%)」 (개정 298 I).
+
+    ★ 분모로 등급을 막지 않는다.  대신 얼마나 확인했는지를 화면에 낸다
+    """
+    seen = sum(float(v[3] or 0) for v in got.values() if not v[1])
+    # ★ 배점은 정수다.  「550.0점」이 아니라 「550점」으로 낸다
+    return (int(seen) if seen == int(seen) else seen,
+            seen / total if total else 0.0)
 
 
 def _bulk_changes(conn, lids: list) -> dict:
@@ -417,6 +430,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)
         chips.append(replace(one, state=_axis_state(
             axis, one, st, calc_at, (got.get(axis) or (0, 0, ""))[2])))
+    _confirm = confirm_ratio(got, float(denom or _total_points()))
     fin = build_finance(price, fin_cfg, tk)
     changes, first_won = (changes_by or {}).get(lid, (0, None))
     # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
@@ -439,8 +453,10 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         earned=earned, denominator=denom,
         ratio_pct=(round(earned / denom * 100, 1)
                    if earned is not None and denom else None),
-        # 분모가 만점보다 짧으면 색으로 가른다 (A-2)
+        # 분모가 만점보다 짧으면 색으로 가른다 (A-2).
+        # ★ 개정 298 로 분모는 늘 만점이다 — 짧으면 그것 자체가 사고다
         denom_short=bool(denom and denom < _total_points()),
+        confirmed_points=_confirm[0], confirm_pct=round(_confirm[1] * 100, 1),
         target_label=tk or "", trim=trim, year_month=ym, mileage_km=km,
         color_ext=ce, color_int=ci, axis_chips=chips, price_won=price,
         total_cost_won=(price + fin.acquisition_cost_won) if fin else None,

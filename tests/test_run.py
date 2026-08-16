@@ -420,8 +420,10 @@ def test_parse_pipeline() -> None:
     s5 = [r for r in reps if r.step == "S5"][0]
     # ★ 08-14 확정 — 진단은 encarDiagnosis == 0 인 매물만 부른다 (STEP 21b).
     #   안 부른 것은 expected 에서 뺀다.  「미완성」이 아니다
+    # ★ 요청 종류가 4 → 9종으로 늘었다 (개정 296·297 · docs/ENCAR_API.md).
+    #   진단만 조건부라 매물 3건 × (9 − 1) + 진단 대상 = 실측값을 그대로 쓴다
     check("★ 진단을 뺀 만큼 expected 가 줄어든다",
-          s5.expected == 9, str(s5.expected))
+          s5.expected == 24, str(s5.expected))
     check("★ 안 부른 것은 empty 가 아니다 — 요청 자체를 안 했다",
           s5.empty == 0, str(s5.empty))
     st = conn.execute(
@@ -459,7 +461,8 @@ def test_score_pipeline() -> None:
         "FROM result_score").fetchall()
     check("매물마다 점수 1행", len(rows) == 3, f"{len(rows)}행")
     g, total, denom, fail = rows[0]
-    check("미확정 축이 분모에서 빠진다 (555 미만)", denom < 555, str(denom))
+    # ★ 개정 298 — 분모는 늘 555 다.  못 본 축은 분모가 아니라 점수에서 빠진다
+    check("분모는 늘 555 다 (개정 298 G)", denom == 555, str(denom))
     check("등급이 매겨진다", g in ("S", "A", "B", "C", "D", "E", "NOT_RATED"),
           f"{g} {total}/{denom}")
 

@@ -19,8 +19,8 @@ C = {
     "V5-02": Check("V5", "V5-02", "표시용 등급 점수가 비율과 일치", FATAL, "run",
                      "config/scoring.json 의 grade_cuts 비율을 확인한다",
                     KIND_CODE),
-    "V5-03": Check("V5", "V5-03", "분모 시험 6종 통과", FATAL, "run",
-                     "분모 시험 A~F 중 실패 항목의 축 판정을 확인한다",
+    "V5-03": Check("V5", "V5-03", "분모 시험 A·D·E·G·H·I 통과", FATAL, "run",
+                     "실패한 항목(A·D·E·G·H·I)의 축 판정을 확인한다 (개정 298)",
                     KIND_CODE),
     "V5-04": Check("V5", "V5-04", "점수 범위 위반 없음", FATAL, "run",
                      "점수 범위를 벗어난 축의 배점 곡선을 확인한다",
@@ -189,7 +189,13 @@ def _grade_ratio_checks(conn, run_id, policy_raw: dict) -> list:
 
 
 def _denominator_suite(run_id: str, policy: dict):
-    """분모 시험 6종 A~F (0장 STEP 7.1).  D·E·F 가 핵심이다."""
+    """분모 시험 A·D·E·G·H·I (0장 STEP 7.1 · 개정 298).
+
+    ★ B · C · F 는 폐기됐다.  「분모를 줄이되 최소치를 두자」가 절반만 맞았다
+      분모를 줄이면 못 찾을수록 비율이 오른다
+    남는다  A 전 축 정상 · D 전 축 수집 실패 · E 금지 근거만 존재
+    새로   G 분모는 늘 만점 · H 못 본 축은 0점 · I 확인율을 함께 낸다
+    """
     from analyze.axes import COMPONENTS, ScoringPolicy
     from analyze.verdict import PRIO_OBSERVED, Verdict, put
     from score.scorer import score
@@ -205,16 +211,28 @@ def _denominator_suite(run_id: str, policy: dict):
                 put(v, c, p.comp(c), PRIO_OBSERVED, "test")
         return v
 
+    total = float(policy["total_points"])
     fails = []
     if score(build(), p).grade == "NOT_RATED":
-        fails.append("A")
-    one = ("spec.hud",)
-    r = score(build(one), p)
-    if r.denominator != policy["total_points"] - p.comp("spec.hud"):
-        fails.append("B/C")
+        fails.append("A 전 축 정상인데 등급이 안 났다")
     if score(build(COMPONENTS), p).grade != "NOT_RATED":
-        fails.append("D")
-    heavy = ("price", "warranty.general", "warranty.power", "spec.hud", "spec.hda")
-    if score(build(heavy), p).grade != "NOT_RATED":
-        fails.append("F")
-    return result(C["V5-03"], run_id, "A~F 전건", fails or "통과", not fails, fails)
+        fails.append("D 전 축 수집 실패인데 등급이 났다")
+    if score(build(), p, absolute=["침수"]).absolute_fail is None:
+        fails.append("E 금지 근거를 실었는데 안 남았다")
+
+    # G — 분모는 늘 만점이다.  어떤 축을 빼도 555 다 (개정 298)
+    heavy = ("price", "warranty.general", "warranty.power", "spec.hud")
+    for excl in ((), ("spec.hud",), heavy):
+        if score(build(excl), p).denominator != total:
+            fails.append(f"G 분모가 만점이 아니다 ({len(excl)}축 제외)")
+
+    # H — 못 본 축은 0점이다.  분모가 아니라 획득이 줄어야 한다
+    r_one = score(build(("spec.hud",)), p)
+    if r_one.earned != score(build(), p).earned - p.comp("spec.hud"):
+        fails.append("H 못 본 축이 0점으로 안 남았다")
+
+    # I — 확인율을 낼 수 있다.  applicable 이 「확인한 배점 합」이다
+    if r_one.applicable != total - p.comp("spec.hud"):
+        fails.append("I 확인율을 낼 수 없다")
+    return result(C["V5-03"], run_id, "A·D·E·G·H·I 전건",
+                  fails or "통과", not fails, fails)

@@ -7,7 +7,7 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 13,093B |
-| `/listings` | [listings.html](listings.html) | 200 | 68,836B |
+| `/listings` | [listings.html](listings.html) | 200 | 70,666B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 25,793B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 14,452B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,002B |
@@ -29,7 +29,7 @@
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 13,211B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 17,299B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 22,372B |
-| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 81,385B |
+| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 80,659B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 16,645B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,290B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 8,603B |
