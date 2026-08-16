@@ -526,16 +526,24 @@ def parse_import_text(text: str, site: str) -> tuple:
     return fmt, parse_import(text, fmt, site), facet
 
 
-def collect_state(conn, collect_urls=None, limit: int | None = None) -> dict:
-    """브라우저 수집 화면 (13장 STEP 136c).
+def collect_state(conn, collect_urls=None, root: str = ".",
+                  limit: int | None = None) -> dict:
+    """브라우저 수집 화면 (13장 STEP 136c · 개정 263 · 264 · 265).
 
     ★ 부를 주소는 어댑터가 만든 것을 그대로 낸다.  화면이 손으로 만들지 않는다
-    ★ JS 를 못 쓰는 환경도 있다 — 주소를 눈에 보이게 내서 붙여넣기로 돌아갈 수 있게 한다
+    ★ 이미 받은 쪽을 함께 낸다 — 중간에 실패해도 처음부터 다시 하지 않는다
     """
+    import json as _j
+
     limit = _cfg_rows("recent_rows") if limit is None else limit
     from contracts import ORIGIN_BROWSER
 
     urls = list(collect_urls() if callable(collect_urls) else (collect_urls or []))
+    web = {}
+    path = os.path.join(root, "config", "web.json")
+    if os.path.isfile(path):
+        with open(path, encoding="utf-8") as f:
+            web = _j.load(f)
     rows = [{"raw_id": rid, "at": at, "endpoint": ep, "bytes": len(body or ""),
              "url": url or "", "code": code}
             for rid, at, ep, body, url, code in conn.execute(
@@ -546,10 +554,32 @@ def collect_state(conn, collect_urls=None, limit: int | None = None) -> dict:
         "SELECT code, actual, checked_at FROM audit_validation "
         "WHERE code LIKE 'STEP53-%' AND actual IN (?, 'import') "
         "ORDER BY checked_at DESC", (ORIGIN_BROWSER,))]
-    return {"collect_urls": urls, "browser_batches": rows,
+    # ★ 차종별로 이미 받은 것 — 재개점이다 (개정 263)
+    done: dict = {}
+    for r in conn.execute(
+        "SELECT endpoint, COUNT(*) FROM raw_response WHERE origin=? "
+        "GROUP BY endpoint", (ORIGIN_BROWSER,)
+    ):
+        done[r[0]] = r[1]
+    scopes = []
+    for u in urls:
+        if u["kind"] == "list":
+            scopes.append({"target_key": u["target_key"],
+                           "targets": u.get("targets") or u["target_key"]})
+    # ★ JS 에 넘길 계획.  화면이 문자열을 손으로 짓지 않게 여기서 만든다.
+    #   사용자 입력이 아니라 어댑터가 만든 값이다 (V11-05 RAW_ALLOW)
+    plan = _j.dumps([{"kind": u["kind"], "target_key": u["target_key"],
+                      "url": u["url"], "url_template": u["url_template"]}
+                     for u in urls], ensure_ascii=False)
+    return {"collect_urls": urls, "collect_plan_json": plan,
+            "browser_batches": rows,
             "browser_count": len(rows), "opened_steps": opened,
-            # ★ 주소가 없으면 부를 것도 없다.  간격도 0 이다
-            "interval_sec": (urls[0]["interval_sec"] if urls else 0)}
+            "scopes": scopes, "scope_count": len(scopes),
+            "saved_list": done.get("list", 0), "saved_facet": done.get("facet", 0),
+            # ★ 기본값을 코드에 두지 않는다.  없으면 그 자리에서 드러난다
+            "rows_per_call": int(web["browser_collect_rows"]),
+            "interval_sec": float(web["browser_interval_sec"]),
+            "max_form_bytes": int(web["max_form_bytes"])}
 
 
 def import_state(conn, limit: int | None = None) -> dict:

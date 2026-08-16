@@ -182,6 +182,20 @@ C = {
                     "②를 건너뛰고 자동 저장하면 무엇이 들어갔는지 모른다 "
                     "(STEP 136c · 149k)",
                     KIND_CODE),
+    "V11-47": Check("V11", "V11-47",
+                    "브라우저 수집이 한 번에 max_form_bytes 를 넘기지 않음",
+                    FATAL, "run",
+                    "JS 가 나눠 보낸다.  사람에게 「나눠서 보내십시오」라고 "
+                    "하지 않는다 (개정 263)",
+                    KIND_CODE),
+    "V11-48": Check("V11", "V11-48", "전 차종 수집에 확인 절차가 있음",
+                    FATAL, "run",
+                    "전 차종은 「높음」이다.  all 을 입력받는다 (STEP 149l)",
+                    KIND_CODE),
+    "V11-49": Check("V11", "V11-49", "한 차종 실패가 나머지를 멈추지 않음",
+                    FATAL, "run",
+                    "실패한 차종만 남기고 나머지를 이어서 한다 (개정 264)",
+                    KIND_CODE),
     "V11-46": Check("V11", "V11-46", "반입으로 연 단계의 actual 이 'import' 임",
                     FATAL, "run",
                     "S1·S2·S4 를 반입이 대신했으면 그렇게 남긴다. "
@@ -658,6 +672,8 @@ def _screen_checks(conn, rid) -> list:
     # 브라우저 수집 2종 (13장 STEP 136c)
     out.append(_browser_origin_check(conn, rid))
     out.append(_browser_confirm_check(conn, rid))
+    out.append(_browser_chunk_check(conn, rid))
+    out += _browser_scope_checks(rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -849,6 +865,58 @@ def _browser_confirm_check(conn, rid):
     _ = conn
     return result(C["V11-44"], rid, "미리보기 필수",
                   "관문 통과" if not bad else "관문 없음", not bad, bad)
+
+
+def _browser_chunk_check(conn, rid):
+    """V11-47 — 한 번에 상한을 넘기지 않는가 (개정 263).
+
+    ★ 「나눠 보낸다」를 글로 두지 않는다.  config 와 실제 저장분을 함께 본다
+    """
+    import json as _j
+
+    from contracts import ORIGIN_BROWSER
+
+    with open(os.path.join(ROOT, "config", "web.json"),
+              encoding="utf-8") as f:
+        web = _j.load(f)
+    cap = int(web["max_form_bytes"])
+    bad = []
+    if "browser_collect_rows" not in web:
+        bad.append("config.web.browser_collect_rows 가 없다")
+    tpl = os.path.join(ROOT, "web", "templates", "admin_collect.html")
+    html = open(tpl, encoding="utf-8").read() if os.path.isfile(tpl) else ""
+    if "url_template" not in html or "{offset}" not in html:
+        bad.append("JS 가 쪽을 이어서 부르지 않는다")
+    if "나눠서 보내" in html and "사람" not in html:
+        bad.append("사람에게 나누라고 안내한다")
+    row = conn.execute(
+        "SELECT MAX(LENGTH(body)) FROM raw_response WHERE origin=?",
+        (ORIGIN_BROWSER,)).fetchone()
+    worst = row[0] or 0
+    if worst > cap:
+        bad.append(f"저장된 한 건이 {worst}바이트 — 상한 {cap} 초과")
+    return result(C["V11-47"], rid, f"<= {cap}", worst, not bad, bad)
+
+
+def _browser_scope_checks(rid):
+    """V11-48 · V11-49 — 범위 확인과 실패 격리 (개정 264)."""
+    tpl = os.path.join(ROOT, "web", "templates", "admin_collect.html")
+    html = open(tpl, encoding="utf-8").read() if os.path.isfile(tpl) else ""
+    bad48 = []
+    if 'value="all"' not in html:
+        bad48.append("전 차종 선택지가 없다")
+    if "f_confirm" not in html or "!== 'all'" not in html:
+        bad48.append("all 확인 문구를 받지 않는다")
+    bad49 = []
+    # ★ 묶음마다 catch 하고 이어서 도는가 — 한 번 터지면 전체가 멈추면 안 된다
+    if ".catch(" not in html or "failed.push" not in html:
+        bad49.append("한 묶음 실패를 잡아 두지 않는다")
+    if "runJob(i + 1)" not in html:
+        bad49.append("실패 뒤 다음 묶음으로 가지 않는다")
+    return [result(C["V11-48"], rid, "확인 있음",
+                   "확인 있음" if not bad48 else "없음", not bad48, bad48),
+            result(C["V11-49"], rid, "이어서 함",
+                   "이어서 함" if not bad49 else "멈춘다", not bad49, bad49)]
 
 
 def _import_opened_steps_check(conn, rid):

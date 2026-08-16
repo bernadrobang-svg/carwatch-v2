@@ -102,6 +102,9 @@ FILTERS = {"won": f_won, "km": f_km, "pct": f_pct, "date": f_date,
 RAW_ALLOW: frozenset[str] = frozenset({
     "page.body_html",      # 조립된 부분 템플릿
     "doc.body_html",       # 문서 뷰어 — 지시서 마크다운 (관리자 전용)
+    # 브라우저 수집 계획 (STEP 136c).  ★ 어댑터가 만든 URL 목록이다 —
+    # 사용자 입력이 아니다.  JSON 이라 이스케이프하면 JS 가 못 읽는다
+    "collect_plan_json",
 })
 
 

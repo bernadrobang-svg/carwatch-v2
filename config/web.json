@@ -16,5 +16,7 @@
   "market_min_sample": 5,
   "display_timezone": "Asia/Seoul",
   "trim_rows": 20,
-  "doc_body_chars": 20000
+  "doc_body_chars": 20000,
+  "browser_collect_rows": 20,
+  "browser_interval_sec": 0
 }

@@ -847,15 +847,27 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
             at=_now(), http_code=_int_or_none(form.get("http_code")),
             count=_int_or_none(form.get("count")),
             items=_int_or_none(form.get("items")) or 0,
-            axis_count=_int_or_none(form.get("axis_count")))
+            axis_count=_int_or_none(form.get("axis_count")),
+            run_id=_run_stamp("browser"))
         return redirect(
             "/admin/collect",
             f"{kind} 원문을 저장했습니다 — raw_id {got.raw_id} · "
             f"{got.opened} 를 열었습니다 (origin=browser)", flash_key)
 
-    ctx = collect_state(conn, collect_urls)
+    ctx = collect_state(conn, collect_urls, root=root)
     return page(conn, account, "브라우저 수집", "admin_collect.html", ctx,
                 csrf=csrf, root=root, flash_key=flash_key)
+
+
+def _run_stamp(prefix: str) -> str:
+    """화면이 넣은 원문의 run_id (A-10 · V1-19).
+
+    ★ 파이프라인 실행이 아니어도 「어느 실행이 넣었나」가 있어야 되짚는다.
+      접두어로 수집분과 구분한다 — 섞어 보이면 안 된다 (STEP 136a · 136c)
+    """
+    from datetime import datetime, timezone
+
+    return prefix + "-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
 
 
 def _int_or_none(value):
@@ -907,7 +919,8 @@ def admin_import(conn, account, req, root: str = ROOT, csrf: str = "",
                 target_key=target_key, text=text,
                 reason=form.get("reason", ""), at=_now(),
                 parse_version=_versions(conn).get("parse_version") or "",
-                source_name=form.get("source_name") or None, facet=facet)
+                source_name=form.get("source_name") or None, facet=facet,
+                run_id=_run_stamp("import"))
             note = ("원문 있음" if res.site_raw else "원문 없음")
             msg = (f"반입 {res.total}건 — 새 {res.created} · 갱신 "
                    f"{res.updated} · {note} · S4 = 반입(import)")

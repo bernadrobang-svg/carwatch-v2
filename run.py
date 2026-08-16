@@ -198,17 +198,19 @@ def cmd_admin_create(name: str) -> int:
 
 
 def _collect_urls(target_key: str | None = None) -> list[dict]:
-    """브라우저가 부를 주소를 만든다 (13장 STEP 136c).
+    """브라우저가 부를 주소를 만든다 (13장 STEP 136c · 264).
 
     ★ 어댑터가 q 를 조립한다.  web 은 adapters 를 못 부른다 (STEP 15a).
       화면이 URL 을 손으로 만들면 수집분과 다른 조건이 된다
-    반환   [{'kind','target_key','label','url','interval_sec'}]
+    ★ 목록은 쪽수를 미리 모른다 — Count 를 받아야 안다.
+      그래서 {offset} 자리를 남긴 틀을 준다.  JS 가 이어서 부른다
+    반환   [{'kind','target_key','targets','label','url','url_template','rows'}]
     """
     cfg = load("endpoints.json")["encar"]
+    web = load("web.json")
+    rows = int(web["browser_collect_rows"])
     adapter = EncarAdapter(cfg)
     targets = load_targets(os.path.join(ROOT, "config", "targets.json"))
-    # ★ 기본값을 코드에 두지 않는다.  없으면 그 자리에서 드러나야 한다
-    gap = float(cfg["interval_sec"][0])
     out = []
     # ★ 수집 단위는 collect_group 이다.  facet 은 그 단위로만 존재한다
     #   (2장 STEP 23 · 「G80_EV 의 facet」은 없다)
@@ -218,14 +220,32 @@ def _collect_urls(target_key: str | None = None) -> list[dict]:
         spec = group.as_target_spec()
         keys = " · ".join(group.target_keys)
         out.append({"kind": "list", "target_key": group.target_keys[0],
-                    "label": f"{keys} 목록 1쪽",
-                    "url": adapter.list_url(spec, 0).url,
-                    "interval_sec": gap})
+                    "targets": keys, "label": f"{keys} 목록",
+                    "url": _page_url(adapter, spec, 0, rows),
+                    "url_template": _page_url(adapter, spec, None, rows),
+                    "rows": rows})
         for req in adapter.facet_urls(spec):
             out.append({"kind": "facet", "target_key": group.target_keys[0],
-                        "label": f"{keys} facet",
-                        "url": req.url, "interval_sec": gap})
+                        "targets": keys, "label": f"{keys} facet",
+                        "url": req.url, "url_template": req.url,
+                        "rows": rows})
     return out
+
+
+def _page_url(adapter, spec, offset: int | None, rows: int) -> str:
+    """목록 한 쪽의 주소.  offset 이 None 이면 {offset} 자리를 남긴다.
+
+    ★ 문자열을 손으로 조립하지 않는다.  어댑터가 만든 것에서 sr 의
+      |offset|limit 자리만 바꿔 끼운다 (STEP 136c · 개정 263)
+    """
+    url = adapter.list_url(spec, 0).url
+    head, sep, tail = url.partition("%7C0%7C")     # sr=|MobileModifiedDate|0|limit
+    if not sep:
+        return url
+    parts = tail.split("&", 1)
+    rest = "&" + parts[1] if len(parts) > 1 else ""
+    at = "{offset}" if offset is None else str(offset)
+    return head + "%7C" + at + "%7C" + str(rows) + rest
 
 
 def cmd_web(host: str | None, port: str | None) -> int:
