@@ -21,8 +21,8 @@ from datetime import datetime, timezone
 
 from errors import PolicyError, ValidationError
 from contracts import (
-    FORMAT_JSON, IMPORT_SOURCE, IMPORT_STAGE, ROLE_ADMIN, S4_CODE, S4_EXPECTED,
-    Account, require_role,
+    FORMAT_FACET, FORMAT_JSON, IMPORT_SOURCE, IMPORT_STAGE, ROLE_ADMIN,
+    S1_CODE, S2_CODE, S4_CODE, S4_EXPECTED, Account, require_role,
 )
 from store.admin import TEMP_SECRET_BYTES, _admin_cfg
 
@@ -147,8 +147,18 @@ class ImportResult:
 
 def preview_import(conn: sqlite3.Connection, rows: list, *, fmt: str,
                    site: str, target_key: str | None,
-                   bytes_in: int) -> ImportPreview:
+                   bytes_in: int,
+                   _facet_text: str | None = None) -> ImportPreview:
     """저장하지 않고 무엇이 들어갈지만 센다 (STEP 136a ④ · STEP 138)."""
+    if fmt == FORMAT_FACET:
+        # facet 은 매물이 아니라 축이다 — 「몇 축이 오는가」를 낸다 (개정 260)
+        from parse.importer import parse_facet
+
+        got = parse_facet(_facet_text or "")
+        return ImportPreview(
+            fmt=fmt, site=site, target_key=target_key,
+            total=got["axis_count"], existing=0, fresh=got["axis_count"],
+            site_raw=True, bytes_in=bytes_in)
     ids = [r["source_id"] for r in rows]
     existing = 0
     if ids:
@@ -181,6 +191,10 @@ def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
     if not (reason or "").strip():
         raise ValidationError("사유가 있어야 반입할 수 있습니다",
                               step="STEP 149k")
+    if fmt == FORMAT_FACET:
+        return _import_facet(conn, account, text=text, site=site,
+                             target_key=target_key, reason=reason, at=at,
+                             run_id=run_id, source_name=source_name)
     raw_id = save_import_raw(conn, site, text, fmt, at, run_id=run_id,
                              source_name=source_name)
     created = updated = 0
@@ -209,31 +223,62 @@ def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
             updated += 1
         else:
             created += 1
-    _mark_s4_imported(conn, account, reason, at, fmt=fmt, rows=len(rows),
-                      raw_id=raw_id, run_id=run_id)
+    # ★ 목록을 확보한 것은 S1 이 하던 일이기도 하다 (5장 · 개정 259).
+    #   S4 만 열면 S3 가 S1 을 요구해 반입 경로에서 영원히 막힌다
+    detail = {"account_id": account.account_id, "reason": reason,
+              "format": fmt, "rows": len(rows), "raw_id": raw_id}
+    for code in (S1_CODE, S4_CODE):
+        mark_step_imported(conn, code, at, detail, run_id=run_id)
     conn.commit()
     return ImportResult(raw_id=raw_id, total=len(rows), created=created,
                         updated=updated, fmt=fmt, site_raw=fmt == FORMAT_JSON)
 
 
-def _mark_s4_imported(conn: sqlite3.Connection, account: Account, reason: str,
-                      at: str, *, fmt: str, rows: int, raw_id: int,
-                      run_id: str | None) -> None:
-    """S4 를 완료로 치되 「반입」임을 남긴다 (STEP 136b ④).
+def _import_facet(conn: sqlite3.Connection, account: Account, *, text: str,
+                  site: str, target_key: str | None, reason: str, at: str,
+                  run_id: str | None, source_name: str | None) -> ImportResult:
+    """facet 원문을 받아 S2 를 연다 (STEP 136a ④ · 개정 260).
+
+    ★ 매물을 넣지 않는다.  facet 은 「축이 무엇인가」이지 매물이 아니다
+    ★ 사전은 여기서 만들지 않는다 — S3(build_dict)의 일이다 (2장 STEP 23)
+    """
+    from parse.importer import parse_facet
+    from store.raw import save_import_facet
+
+    if not target_key:
+        raise ValidationError(
+            "facet 은 차종별로 받습니다 — 차종을 고르십시오", step="STEP 136a")
+    got = parse_facet(text)
+    raw_id = save_import_facet(conn, site, target_key, text, at,
+                               axis_count=got["axis_count"], run_id=run_id,
+                               source_name=source_name)
+    mark_step_imported(
+        conn, S2_CODE, at,
+        {"account_id": account.account_id, "reason": reason,
+         "format": FORMAT_FACET, "target_key": target_key,
+         "axis_count": got["axis_count"], "axes": got["axes"],
+         "raw_id": raw_id},
+        run_id=run_id)
+    conn.commit()
+    return ImportResult(raw_id=raw_id, total=got["axis_count"], created=0,
+                        updated=0, fmt=FORMAT_FACET, site_raw=True)
+
+
+def mark_step_imported(conn: sqlite3.Connection, code: str, at: str,
+                       detail: dict, run_id: str | None = None) -> None:
+    """단계를 「반입이 대신했다」로 연다 (STEP 136b ④ · 개정 259).
 
     ★ actual 을 'collector' 로 남기면 「우리가 받았다」가 된다 — 금지다
-    ★ 이 행이 없으면 precheck('S5') 가 「선행 단계 미완료」로 막는다
-    ★ 누가 · 언제 · 왜 넣었는지를 samples 에 남긴다 (STEP 136a 필수)
+    ★ 이 행이 없으면 precheck 가 「선행 단계 미완료」로 막는다
+    ★ 무엇을 반입했는지 samples 에 남긴다 — 근거 없이 열지 않는다
     """
     conn.execute(
         "INSERT OR REPLACE INTO audit_validation"
         "(run_id,phase,code,target_key,expected,actual,passed,severity,"
         " samples,applicable,checked_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-        (run_id or "", "V1", S4_CODE, "", S4_EXPECTED, IMPORT_SOURCE,
+        (run_id or "", "V1", code, "", S4_EXPECTED, IMPORT_SOURCE,
          1, "warn",
-         json.dumps({"account_id": account.account_id, "reason": reason,
-                     "format": fmt, "rows": rows, "raw_id": raw_id},
-                    ensure_ascii=False),
+         json.dumps(detail, ensure_ascii=False),
          1, at),
     )
 

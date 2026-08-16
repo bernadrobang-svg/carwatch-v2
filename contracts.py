@@ -101,8 +101,10 @@ ROW_STATUS: frozenset[str] = frozenset({"ok", "partial", "error"})
 # 반입 형식 (13장 STEP 136a).  ★ ①이 원칙이다 — 원문 JSON 이 아니면
 # 사이트 원문이 없는 것이고, 화면이 「원문 없음」이라고 말해야 한다
 FORMAT_JSON, FORMAT_IDS, FORMAT_CSV = "json", "ids", "csv"
+# ④ facet 원문 (개정 260).  ★ color_ext · color_int · fuel 사전은 여기서만 나온다
+FORMAT_FACET = "facet"
 IMPORT_FORMATS: frozenset[str] = frozenset(
-    {FORMAT_JSON, FORMAT_IDS, FORMAT_CSV}
+    {FORMAT_JSON, FORMAT_IDS, FORMAT_CSV, FORMAT_FACET}
 )
 # CSV 열 이름.  ★ 순서가 아니라 머리글로 읽는다 — 열이 바뀌면 값이 밀린다
 CSV_COLUMNS: tuple[str, ...] = (
@@ -114,6 +116,10 @@ IMPORT_STAGE = "confirmed"       # 사람이 정한 것이다.  잠정(provision
 # S4 완료 행의 expected.  actual 이 collector 인지 import 인지로 갈린다
 S4_EXPECTED = "collector 또는 import"
 S4_CODE = "STEP53-S4"
+# 반입이 대신할 수 있는 단계 (5장 · 개정 259).  ★ /search/ 가 407 인 자리다
+S1_CODE = "STEP53-S1"        # 목록 확보
+S2_CODE = "STEP53-S2"        # facet (분류 축)
+IMPORT_STEP_CODES = (S1_CODE, S2_CODE, S4_CODE)
 
 
 # ── Store → Analyzer 계약 (3장 정의서) ───────────────────────────────

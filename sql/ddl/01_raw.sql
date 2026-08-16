@@ -33,7 +33,9 @@ CREATE TABLE IF NOT EXISTS raw_facet (
   site          TEXT NOT NULL,
   target_key    TEXT NOT NULL,
   request_kind  TEXT NOT NULL,
-  request_url   TEXT NOT NULL,
+  -- ★ 반입한 facet 은 URL 이 없다 (13장 STEP 136b ② · 개정 260).
+  --   NULL 인 것이 「우리가 부른 것이 아니다」라는 표시다
+  request_url   TEXT,
   axis_count    INTEGER,
   body          TEXT NOT NULL,
   fetched_at    TEXT NOT NULL,

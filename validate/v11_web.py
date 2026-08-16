@@ -172,6 +172,11 @@ C = {
                     "반입이 S4 완료를 안 남기면 precheck('S5') 가 "
                     "「선행 단계 미완료」로 막는다 (STEP 136b ④)",
                     KIND_CODE),
+    "V11-46": Check("V11", "V11-46", "반입으로 연 단계의 actual 이 'import' 임",
+                    FATAL, "run",
+                    "S1·S2·S4 를 반입이 대신했으면 그렇게 남긴다. "
+                    "근거 없이 열면 「우리가 받았다」가 된다 (개정 259)",
+                    KIND_CODE),
     "V11-42": Check("V11", "V11-42", "S4 완료 행의 actual 이 'import' 임",
                     FATAL, "run",
                     "반입인데 collector 로 남기면 감사 기록이 거짓이 된다 "
@@ -635,6 +640,7 @@ def _screen_checks(conn, rid) -> list:
     out.append(_import_origin_check(conn, rid))
     out.append(_import_resume_check(conn, rid))
     out.append(_import_step4_check(conn, rid))
+    out.append(_import_opened_steps_check(conn, rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -783,6 +789,34 @@ def _import_step4_check(conn, rid):
     if not passed:
         bad.append("passed=0 — S4 가 완료로 남지 않았다")
     return result(C["V11-42"], rid, IMPORT_SOURCE, str(actual), not bad, bad)
+
+
+def _import_opened_steps_check(conn, rid):
+    """V11-46 — 반입으로 연 단계가 그렇게 적혀 있는가 (개정 259).
+
+    ★ 「반입이 대신했다」는 근거가 있어야 연다.  근거는 두 가지다 —
+      원문이 raw_response·raw_facet 에 있고, actual 이 'import' 다
+    """
+    from contracts import IMPORT_SOURCE, IMPORT_STEP_CODES
+
+    marks = ",".join("?" * len(IMPORT_STEP_CODES))
+    rows = conn.execute(
+        f"SELECT code, actual, passed FROM audit_validation "
+        f"WHERE code IN ({marks})", IMPORT_STEP_CODES).fetchall()
+    opened = [r for r in rows if r[1] == IMPORT_SOURCE]
+    if not opened:
+        return not_applicable(C["V11-46"], rid, "반입으로 연 단계가 없다")
+    batches = conn.execute(
+        "SELECT COUNT(*) FROM raw_response WHERE origin=?",
+        (IMPORT_SOURCE,)).fetchone()[0]
+    bad = []
+    for code, actual, passed in opened:
+        if not passed:
+            bad.append(f"{code}: passed=0 인데 actual={actual}")
+    if not batches:
+        bad.append("반입 원문이 0건인데 단계를 열었다")
+    return result(C["V11-46"], rid, IMPORT_SOURCE,
+                  " · ".join(f"{c}={a}" for c, a, _p in opened), not bad, bad)
 
 
 def _import_resume_check(conn, rid):

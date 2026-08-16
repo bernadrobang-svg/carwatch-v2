@@ -14,7 +14,7 @@ import io
 import json
 
 from contracts import (
-    CSV_COLUMNS, FORMAT_CSV, FORMAT_IDS, FORMAT_JSON, YM_PLAIN,
+    CSV_COLUMNS, FORMAT_CSV, FORMAT_FACET, FORMAT_IDS, FORMAT_JSON, YM_PLAIN,
 )
 from errors import ValidationError
 
@@ -34,11 +34,51 @@ def detect_format(text: str) -> str:
     if not body:
         raise ValidationError("넣은 내용이 없습니다", step=STEP)
     if body[0] in "{[":
+        # ★ 목록 봉투와 facet 은 둘 다 JSON 이다.  안을 보고 가른다 (개정 260)
+        #   facet 은 iNav.Nodes 를 준다 — 목록은 SearchResults 를 준다
+        try:
+            doc = json.loads(body)
+        except ValueError as exc:
+            raise ValidationError(f"JSON 으로 읽지 못했습니다: {exc}",
+                                  step=STEP) from exc
+        if isinstance(doc, dict) and isinstance(doc.get("iNav"), dict):
+            return FORMAT_FACET
         return FORMAT_JSON
     head = body.splitlines()[0]
     if "," in head and "source_id" in head:
         return FORMAT_CSV
     return FORMAT_IDS
+
+
+def parse_facet(text: str) -> dict:
+    """facet 원문에서 축 이름과 값 수를 센다 (개정 260).
+
+    ★ 값을 고르지 않는다.  무엇이 몇 개 왔는지만 센다 —
+      사전을 만드는 것은 S3(build_dict)의 일이다 (2장 STEP 23)
+    반환   {'axes': {축이름: 값수}, 'axis_count': n}
+    """
+    try:
+        doc = json.loads(text)
+    except ValueError as exc:
+        raise ValidationError(f"JSON 으로 읽지 못했습니다: {exc}",
+                              step=STEP) from exc
+    nodes = ((doc.get("iNav") or {}).get("Nodes")
+             if isinstance(doc, dict) else None)
+    if not isinstance(nodes, list):
+        raise ValidationError(
+            "facet 을 찾지 못했습니다 — iNav.Nodes 배열이 있어야 합니다",
+            step=STEP)
+    axes = {}
+    for node in nodes:
+        if not isinstance(node, dict) or node.get("Type") != "Aspect":
+            continue
+        facets = node.get("Facets")
+        axes[str(node.get("Name"))] = len(facets) if isinstance(facets, list) \
+            else 0
+    if not axes:
+        raise ValidationError(
+            "축(Type='Aspect')이 한 개도 없습니다", step=STEP)
+    return {"axes": axes, "axis_count": len(axes)}
 
 
 def parse_import(text: str, fmt: str, site: str) -> list[dict]:
@@ -48,6 +88,9 @@ def parse_import(text: str, fmt: str, site: str) -> list[dict]:
       되고, 나중에 S6 이 채운 값을 덮어쓸 수 있다 (STEP 136b ①)
     반환   [{'site','source_id', ...}]
     """
+    if fmt == FORMAT_FACET:
+        # facet 은 매물 행이 아니다.  S2 를 대신한다 (개정 260)
+        return []
     if fmt == FORMAT_JSON:
         return _from_json(text, site)
     if fmt == FORMAT_CSV:

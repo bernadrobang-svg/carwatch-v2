@@ -13,7 +13,7 @@ import json
 import os
 import sqlite3
 
-from contracts import FORMAT_JSON, EndpointSpec, FetchResult
+from contracts import FORMAT_FACET, FORMAT_JSON, EndpointSpec, FetchResult
 # ★ 형식 검증은 수집 계약이다.  store 는 「저장」만 한다 (STEP 15a).
 #   호출자가 검증한 결과를 넘긴다 — 아래 save_raw 의 verify 인자
 
@@ -144,6 +144,7 @@ def save_import_raw(
     at: str,
     run_id: str | None = None,
     source_name: str | None = None,
+    endpoint: str = "list",
 ) -> int:
     """반입 원문을 그대로 남긴다 (13장 STEP 136a · P3).
 
@@ -161,11 +162,41 @@ def save_import_raw(
         "(run_id,site,listing_id,source_id,endpoint,request_url,request_meta,"
         " http_code,response_meta,status,body,origin,fetched_at)"
         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        (run_id, site, None, None, "list", None, None,
+        (run_id, site, None, None, endpoint, None, None,
          None, meta, "ok", text, ORIGIN_IMPORT, at),
     )
     conn.commit()
     return cur.lastrowid
+
+
+def save_import_facet(
+    conn: sqlite3.Connection,
+    site: str,
+    target_key: str,
+    text: str,
+    at: str,
+    axis_count: int | None = None,
+    run_id: str | None = None,
+    source_name: str | None = None,
+) -> int:
+    """반입한 facet 원문 (13장 STEP 136a ④ · 개정 260).
+
+    ★ 두 자리에 넣는다 — 뜻이 다르다.
+      raw_facet     S3(build_dict)가 사전을 만들 때 읽는 자리
+      raw_response  「누가 어디서 받아 왔나」를 남기는 자리 (origin='import')
+    ★ raw_facet.request_url 을 NULL 로 둔다.  URL 이 있으면 우리가 부른 것이다
+    반환   raw_response.id
+    """
+    conn.execute(
+        "INSERT INTO raw_facet"
+        "(site,target_key,request_kind,request_url,axis_count,body,fetched_at)"
+        " VALUES (?,?,?,?,?,?,?)",
+        (site, target_key, "unspecified", None, axis_count, text, at),
+    )
+    rid = save_import_raw(conn, site, text, FORMAT_FACET, at, run_id=run_id,
+                          source_name=source_name, endpoint="facet")
+    conn.commit()
+    return rid
 
 
 def save_facet(
