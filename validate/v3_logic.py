@@ -137,6 +137,16 @@ C = {
                    "못 볼수록 비율이 올라가면 못 찾을수록 좋은 등급이 된다 — "
                    "실측 08-16: 같은 차가 330/350 S · 330/555 D 였다",
                    KIND_CONTRACT),
+    "V3-40": Check("V3", "V3-40", "핵심 축이 excluded 인데 등급을 매기지 않음",
+                   FATAL, "run",
+                   "가격 축을 못 보고도 등급이 나오면 그 등급은 뜻이 없다 "
+                   "(개정 287)",
+                   KIND_CONTRACT),
+    "V3-47": Check("V3", "V3-47", "축별 차종 간 결측률 편차가 상한 안",
+                   FATAL, "run",
+                   "한 차종만 그 축을 못 받으면 그 차종이 통째로 불리해진다 "
+                   "— 실측 08-17: 전기차의 safety.warranty_product 가 0% (개정 293)",
+                   KIND_EXTERNAL),
     "V3-31": Check("V3", "V3-31", "딜러 NULL 매물에 dealer_untrusted 없음",
                    FATAL, "run",
                    "딜러 없음을 나쁨으로 판정하는 경로를 찾는다. "
@@ -461,10 +471,66 @@ def _denominator_check(conn, rid):
                   f"{kinds}종" if bad else f"{total:g} 하나", not bad, bad[:8])
 
 
+CORE_AXES = ("price", "history.damage", "mileage")
+
+
+def _core_axis_check(conn, rid):
+    """V3-40 — 핵심 축이 excluded 인데 등급을 매겼는가 (개정 287).
+
+    ★ 가격을 못 보고 매긴 등급은 뜻이 없다.  숫자로 낸다
+    """
+    bad = []
+    for axis in CORE_AXES:
+        n = conn.execute(
+            "SELECT COUNT(*) FROM result_axis a JOIN result_score s"
+            " ON s.listing_id=a.listing_id AND s.calc_version=a.calc_version"
+            " WHERE a.axis=? AND a.excluded=1"
+            " AND s.grade IS NOT NULL AND s.grade NOT IN ('NOT_RATED','E')",
+            (axis,)).fetchone()[0]
+        if n:
+            bad.append(f"{axis} 를 못 봤는데 등급을 매긴 것 {n}건")
+    return result(C["V3-40"], rid, 0, len(bad), not bad, bad)
+
+
+def _fill_gap_check(conn, rid):
+    """V3-47 — 축별 차종 간 결측률 편차 (개정 293).
+
+    ★ 한 차종만 그 축을 못 받으면 그 차종이 통째로 불리해진다.
+      배점을 차종별로 둘지 정하려면 편차를 먼저 봐야 한다
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "checks.json"),
+              encoding="utf-8") as f:
+        cap = float(_j.load(f).get("fill_rate_gap_max", 0.9))
+    rows = conn.execute(
+        "SELECT a.axis, l.target_key,"
+        " SUM(CASE WHEN a.excluded=0 THEN 1 ELSE 0 END) * 1.0 / COUNT(*)"
+        " FROM result_axis a JOIN core_listing l"
+        " ON l.listing_id = a.listing_id"
+        " WHERE l.target_key IS NOT NULL GROUP BY 1, 2").fetchall()
+    by: dict = {}
+    for axis, tk, rate in rows:
+        by.setdefault(axis, []).append((rate, tk))
+    bad = []
+    for axis, got in sorted(by.items()):
+        hi = max(r for r, _t in got)
+        lo = min(got)
+        if hi - lo[0] > cap:
+            bad.append(f"{axis} — {lo[1]} 가 {lo[0] * 100:.0f}% 인데 "
+                       f"최고는 {hi * 100:.0f}%")
+    return result(C["V3-47"], rid, f"편차 <= {cap * 100:.0f}%p",
+                  f"{len(bad)}축", not bad, bad[:8])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
     out.append(_denominator_check(conn, rid))
+    out.append(_core_axis_check(conn, rid))
+    out.append(_fill_gap_check(conn, rid))
 
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL").fetchone()[0]

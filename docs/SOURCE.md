@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 112개 · 총 34,867줄
+파일 112개 · 총 34,933줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -18,8 +18,8 @@
 | `tools/check_src.py` | 737 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `collect/pipeline.py` | 689 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `tests/test_score.py` | 681 | 7장 판정·채점 시험. |
+| `validate/v3_logic.py` | 681 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tests/test_run.py` | 675 | S0~S3 종단 시험 (모의 응답). |
-| `validate/v3_logic.py` | 615 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/watch.py` | 612 | 후보 추적 (11장). |
 | `store/admin.py` | 609 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
 | `store/core.py` | 584 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
@@ -193,16 +193,16 @@ envelope_scope:41  Reprocess:91  reprocess_plan:110  should_refetch:127  expecte
 check:35  fx:41  snap:45  ctx:59  full_verdict:80  test_denominator:91  test_components_form:121  test_grade:164  test_order_independent:210  panels_of:233  test_history_real:238  test_rental_real:262  test_insurance:285  test_safety_real:324  test_spec_gate:350  test_price_real:380  test_color:436  test_price_pending:452  test_absolute_real:467  test_null_safe:507  test_empty_array_meaning:524  test_peer_group:547  test_damage_by_status:589  test_repair_cost_ratio:616  test_hda_gate:625
 ```
 
+### `validate/v3_logic.py` — 681줄
+
+```
+_file_output_checks:181  _conflict_checks:234  _diagnosis_count_check:258  _hda_source_check:274  _sort_determinism:285  _warning_contract_checks:302  _list_observed_source_check:397  _facet_reconcile_check:427  _denominator_check:450  _core_axis_check:477  _fill_gap_check:495  run:528  _shuffle_check:630  _halt_dict_check:655
+```
+
 ### `tests/test_run.py` — 675줄
 
 ```
 check:36  StubEncar:89  Clock:180  setup:185  test_envelope:223  test_last_page_exact:251  test_facet:258  test_facet_missing_axis:272  test_dict_step:281  test_all_groups:303  test_parse_pipeline:314  test_score_pipeline:416  test_validate:455  test_registry_gate:498  test_target_scope:555  test_catalog_key:587  test_wrapper_args:605  test_unclassified_listing:642
-```
-
-### `validate/v3_logic.py` — 615줄
-
-```
-_file_output_checks:171  _conflict_checks:224  _diagnosis_count_check:248  _hda_source_check:264  _sort_determinism:275  _warning_contract_checks:292  _list_observed_source_check:387  _facet_reconcile_check:417  _denominator_check:440  run:464  _shuffle_check:564  _halt_dict_check:589
 ```
 
 ### `store/watch.py` — 612줄
