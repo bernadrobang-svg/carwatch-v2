@@ -96,6 +96,8 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 | V3-44 | NULL 축에 원인 코드가 붙어 있음 | data | fatal |
 | V3-45 | 배점 합이 555 임 | code | fatal |
 | V3-46 | 등급이 505 기준으로 매겨짐 | code | fatal |
+| V3-47 | 축별 차종 간 결측률 편차가 상한 이내 | data | fatal |
+| V3-48 | 축이 차종 안에서 변별력이 있음 | data | warn |
 | V3-38 | facet 수신 후 목록 관측분과 대조함 | code | warn |
 | V3-31 | 딜러 NULL 매물에 `dealer_untrusted` 경고가 없음 | fatal |
 | V3-32 | `seizing` null 매물이 「저당 없음」으로 판정되지 않음 | fatal |
