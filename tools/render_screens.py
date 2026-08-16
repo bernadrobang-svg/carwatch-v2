@@ -30,11 +30,13 @@ SAMPLE = {"listing_id": None, "watch_id": "1", "account_id": "1"}
 SHOT_DIR = os.path.join(ROOT, "outputs", "shot")
 SHOT_WIDTHS = (360, 1400)
 # 넓은 폭까지 찍을 화면.  ★ 마스터가 주로 보는 곳이다
-WIDE_PATHS = ("/listings", "/why/{listing_id}", "/market", "/dealers",
-              "/recommend", "/", "/notready")
+# ★ 저장소가 커밋마다 불어난다.  넓은 폭은 마스터가 PC 로 주로 보는 셋만
+WIDE_PATHS = ("/listings", "/why/{listing_id}", "/market")
 # ★ 나머지는 360 만 찍는다 — 관리 화면도 전부 찍는다 (가이드 요청 검토 14 §7).
 #   「관리 UI 가 엉망」이라는 지적을 가이드가 직접 보고 판단할 수 있어야 한다
 SHOT_TIMEOUT_SEC = 180
+# ★ 「찍었다」가 아니라 「내용이 있는가」다 (개정 279).  이 글이 있으면 빈 장이다
+DENY_MARK = "관리자만 볼 수 있습니다"
 SHOT_HEIGHT = 1400
 
 
@@ -157,8 +159,15 @@ def shot_paths() -> list:
     return out
 
 
-def shoot(base: str = "http://127.0.0.1:8765", paths=None) -> int:
-    """돌고 있는 서비스를 실제 브라우저로 찍는다 (가이드 요청 B안).
+def shoot(base: str = "", paths=None) -> int:
+    """★ outputs/render/ 의 HTML 을 그대로 찍는다 (가이드 요청 B안).
+
+    실측 08-16 — 돌고 있는 서비스를 찍었더니 **관리 화면 17장이 전부
+    「관리자만 볼 수 있습니다」였다.** 세션 쿠키가 없어서다.
+    「36장 찍었다」를 내용 확인 없이 보고했다 — 개정 279 가 말한 그 실패다.
+
+    렌더 결과는 이미 관리자로 만든 것이라 그것을 file:// 로 찍으면
+    세션을 흉내 낼 필요가 없다.  ★ 화면과 스크린샷이 같은 HTML 에서 나온다.
 
     ★ 「반응형으로 했습니다」가 아니라 보이는 것을 낸다.
       실측 08-16 — 스크린샷이 잡은 것:
@@ -172,42 +181,64 @@ def shoot(base: str = "http://127.0.0.1:8765", paths=None) -> int:
     import subprocess
     import tempfile
 
-    paths = paths or shot_paths()
     ff = _sh.which("firefox")
     if ff is None:
         print("firefox 가 없다 — 스크린샷을 건너뛴다 (A안 HTML 은 그대로 나온다)")
         return 0
     _sh.rmtree(SHOT_DIR, ignore_errors=True)
     os.makedirs(SHOT_DIR)
-    made = []
-    for path in paths:
-        url_path = path.replace("{listing_id}", SAMPLE["listing_id"] or "1")
-        name = (url_path.strip("/").replace("/", "_") or "home")
-        for w in (SHOT_WIDTHS if path in WIDE_PATHS else SHOT_WIDTHS[:1]):
-            out = os.path.join(SHOT_DIR, f"{name}_{w}.png")
-            # ★ 프로필을 새로 만든다.  안 그러면 옛 CSS 가 캐시로 남아
-            #   고친 것이 안 보인다 (실측 08-16)
-            with tempfile.TemporaryDirectory() as prof:
-                env = dict(os.environ, MOZ_HEADLESS="1")
-                subprocess.run(
-                    [ff, "--headless", "--profile", prof, "--screenshot", out,
-                     f"--window-size={w},{SHOT_HEIGHT}", f"{base}{url_path}"],
-                    env=env, timeout=SHOT_TIMEOUT_SEC,
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                    check=False)
-            if os.path.isfile(out):
-                made.append((url_path, w, os.path.getsize(out)))
+    made, empty = [], []
+    with tempfile.TemporaryDirectory() as site:
+        _sh.copy(os.path.join(ROOT, "web", "static", "app.css"),
+                 os.path.join(site, "app.css"))
+        for f in sorted(os.listdir(OUT_DIR)):
+            if not f.endswith(".html"):
+                continue
+            html = open(os.path.join(OUT_DIR, f), encoding="utf-8").read()
+            # ★ file:// 에서는 /static 이 안 잡힌다.  같은 CSS 를 옆에 둔다
+            html = html.replace('href="/static/app.css"', 'href="app.css"')
+            open(os.path.join(site, f), "w", encoding="utf-8").write(html)
+            name = f[:-5]
+            wide = any(name == (p.replace("{listing_id}", SAMPLE["listing_id"]
+                                          or "1").strip("/")
+                                .replace("/", "_") or "home")
+                       for p in WIDE_PATHS)
+            for w in (SHOT_WIDTHS if wide else SHOT_WIDTHS[:1]):
+                out = os.path.join(SHOT_DIR, f"{name}_{w}.png")
+                # ★ 프로필을 새로 만든다.  안 그러면 옛 CSS 가 캐시로 남아
+                #   고친 것이 안 보인다 (실측 08-16)
+                with tempfile.TemporaryDirectory() as prof:
+                    env = dict(os.environ, MOZ_HEADLESS="1")
+                    subprocess.run(
+                        [ff, "--headless", "--profile", prof,
+                         "--screenshot", out, f"--window-size={w},{SHOT_HEIGHT}",
+                         f"file://{os.path.join(site, f)}"],
+                        env=env, timeout=SHOT_TIMEOUT_SEC,
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                        check=False)
+                # ★ 「찍었다」가 아니라 「내용이 있는가」를 본다 (개정 279)
+                if DENY_MARK in html:
+                    empty.append(f"{name} — 권한 없음 화면이다")
+                elif os.path.isfile(out):
+                    made.append((name, w, os.path.getsize(out)))
     lines = ["# 스크린샷 — 실제로 보이는 모습", "",
              "`python3.11 tools/render_screens.py --shot` 로 만든다.",
-             "", "★ 돌고 있는 서비스를 headless firefox 로 찍은 것이다.",
+             "",
+             "★ `outputs/render/` 의 HTML 을 그대로 찍은 것이다 —",
+             "  그것은 **관리자로** 만든 것이라 관리 화면도 내용이 있다.",
+             "  (돌고 있는 서비스를 찍으면 세션이 없어 「권한 없음」만 나온다)",
              "", "| 화면 | 폭 | 파일 | 크기 |", "|---|--:|---|--:|"]
-    for path, w, size in made:
-        name = (path.strip("/").replace("/", "_") or "home")
-        lines.append(f"| `{path}` | {w} | [{name}_{w}.png]({name}_{w}.png) "
+    for name, w, size in made:
+        lines.append(f"| `{name}` | {w} | [{name}_{w}.png]({name}_{w}.png) "
                      f"| {size:,}B |")
+    if empty:
+        lines += ["", "## 내용이 없는 화면", ""] + [f"- {e}" for e in empty]
     with open(os.path.join(SHOT_DIR, "README.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
-    print(f"스크린샷 {len(made)}장 → outputs/shot/")
+    print(f"스크린샷 {len(made)}장 → outputs/shot/"
+          + (f" · 내용 없음 {len(empty)}" if empty else ""))
+    for e in empty:
+        print(f"  · {e}")
     return 0
 
 

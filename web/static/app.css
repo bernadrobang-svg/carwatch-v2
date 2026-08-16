@@ -1469,7 +1469,20 @@ body.s-listings main { max-width:1560px; }
    ★ 시안은 <div> 에 JS 로 걸었다.  우리는 JS 없이 링크로 한다 (개정 248) */
 .hist .b { display:block; text-decoration:none; }
 .hist .b .n { text-decoration:none; }
-/* 좁은 폭에서 표가 화면을 넘지 않게 — 스크롤은 그 표 안에서만 (V11-71) */
+/* 좁은 폭에서 표가 화면을 넘지 않게 — 스크롤은 그 표 안에서만 (V11-71).
+   ★ 스크롤바가 흰 줄로만 보이면 무엇인지 모른다 — 스크롤바로 보이게 한다
+     (실측 08-16 검토 16 — 「표 아래 흰 띠가 하나 있습니다」) */
 @media (max-width:1099px) {
-  main table { display:block; overflow-x:auto; }
+  main table {
+    display:block; overflow-x:auto;
+    scrollbar-color:var(--line2) var(--surface2);
+    scrollbar-width:thin;
+  }
+  main table::-webkit-scrollbar { height:8px; }
+  main table::-webkit-scrollbar-track {
+    background:var(--surface2); border-radius:4px;
+  }
+  main table::-webkit-scrollbar-thumb {
+    background:var(--line2); border-radius:4px;
+  }
 }

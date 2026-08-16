@@ -11,7 +11,7 @@
 | `/recommend` | [recommend.html](recommend.html) | 200 | 16,406B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 11,311B |
 | `/compare` | [compare.html](compare.html) | 200 | 3,420B |
-| `/market` | [market.html](market.html) | 200 | 9,905B |
+| `/market` | [market.html](market.html) | 200 | 9,888B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 161,566B |
 | `/notready` | [notready.html](notready.html) | 200 | 14,837B |
 | `/watch` | [watch.html](watch.html) | 200 | 4,746B |
