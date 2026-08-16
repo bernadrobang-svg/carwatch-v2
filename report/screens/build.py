@@ -194,10 +194,6 @@ def photo_url(photos_json: str | None, base: str) -> str | None:
     return f"{base}{best}" if best else None
 
 
-YEAR_CHARS = 4
-DAY_CHARS = 10          # 'YYYY-MM-DD'
-
-
 def market_price(origin_won, year_month, as_of, target_key, dep: dict):
     """기대가 = 신차가 × 감가계수(경과년) × 차종 보정계수 (7장 STEP 70).
 
@@ -222,8 +218,9 @@ def _days_between(a: str | None, b: str | None) -> int | None:
     if not a or not b:
         return None
     try:
-        x = date.fromisoformat(str(a)[:DAY_CHARS])
-        y = date.fromisoformat(str(b)[:DAY_CHARS])
+        # ★ 판정값이 아니라 ISO 문자열의 자릿수다 — 'YYYY-MM-DD' 는 10자
+        x = date.fromisoformat(str(a)[:10])
+        y = date.fromisoformat(str(b)[:10])
     except ValueError:
         return None
     return (y - x).days
@@ -302,7 +299,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
         encar_url=(encar_tpl.format(source_id=sid)
                    if sid and encar_tpl else None),
-        year=(ym or "")[:YEAR_CHARS] or None,
+        # ★ 'YYYY-MM' 의 앞 4자가 연식이다 — 판정값이 아니다
+        year=(ym or "")[:4] or None,
         km_bucket=_ceil_to(km, km_unit),
         monthly_bucket_won=_ceil_to(
             fin.monthly_payment_won if fin else None, monthly_unit),

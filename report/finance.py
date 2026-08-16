@@ -71,13 +71,6 @@ def build_finance(price_listed_won: int | None, fin: dict,
                        pay, pay * months - principal, False, shortfall, est)
 
 
-# 월납입 상한 → 가격 상한을 되짚는 데 쓰는 값 (STEP 149p).
-# ★ 월납입은 가격의 단조 증가 함수다.  이분법으로 되짚는다 —
-#   근사식을 새로 쓰면 화면의 숫자와 필터가 어긋난다
-PRICE_CEILING_WON = 10_000_000_000
-BISECT_STEPS = 48
-
-
 def price_for_monthly(monthly_cap_won: int, fin: dict,
                       target_key: str | None) -> int:
     """월납입이 상한 이하가 되는 가장 비싼 표시가.
@@ -87,8 +80,12 @@ def price_for_monthly(monthly_cap_won: int, fin: dict,
     """
     if monthly_cap_won <= 0:
         return 0
-    lo, hi = 0, PRICE_CEILING_WON
-    for _ in range(BISECT_STEPS):
+    # ★ 상한을 상수로 박지 않는다.  월 납입 × 개월수는 원금보다 크고,
+    #   원금은 표시가보다 크지 않다 — 그러니 이것이 확실한 상한이다.
+    #   선납금만큼 더 얹어 경계를 넘긴다 (V4-13)
+    lo = 0
+    hi = monthly_cap_won * int(fin["loan_months"]) + int(fin["down_payment_won"])
+    while hi - lo > 1:                      # 1원까지 좁힌다.  횟수도 안 박는다
         mid = (lo + hi) // 2
         got = build_finance(mid, fin, target_key)
         if got and got.monthly_payment_won <= monthly_cap_won:

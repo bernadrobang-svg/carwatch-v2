@@ -1398,8 +1398,7 @@ def _v1_parity_checks(rid):
 
 # 확인할 폭 (마스터 지시 08-16).  ★ 360 이 기준이다 — 휴대폰으로 본다
 WIDTHS = (360, 640, 900, 1100, 1400)
-# 이 폭 아래는 카드다 (STEP 149o-2).  넓음은 1100px 부터
-NARROW_MAX = 1099
+
 
 
 def _media_blocks(css: str):
@@ -1424,8 +1423,13 @@ def _responsive_checks(rid):
     ★ 「반응형으로 했습니다」가 아니라 숫자로 본다.
       좁은 폭에서 display:none 으로 값을 지우는지 CSS 를 실제로 읽는다
     """
+    import json as _j
+
     css = open(APP_CSS, encoding="utf-8").read()
     html = open(LISTINGS_TPL, encoding="utf-8").read()
+    # 이 폭 아래는 카드다 (STEP 149o-2).  ★ 폭은 표시 정책이라 config 에 둔다
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        narrow_max = int(_j.load(f)["narrow_max_px"])
     cells = re.findall(r'data-label="([^"]*)"', html)
     bad70, bad71 = [], []
     if not cells:
@@ -1433,7 +1437,7 @@ def _responsive_checks(rid):
 
     card = False
     for width, body in _media_blocks(css):
-        if width > NARROW_MAX:
+        if width > narrow_max:
             continue
         if re.search(r"\.rows[^{}]*\{[^{}]*display:\s*block", body):
             card = True

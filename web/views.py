@@ -357,10 +357,6 @@ def _query_string(flt) -> str:
     return _u.urlencode(got)
 
 
-# 쪽 넘김에 한 번에 내보일 쪽 번호 수.  ★ 18쪽을 다 늘어놓으면 줄이 넘친다
-PAGE_LINKS = 9
-
-
 def _paging(conn, flt, shown: int, root: str) -> dict:
     """「3,471건 중 200건 · 1/18쪽」 + 쪽 넘김 (V11-55 · V11-58).
 
@@ -371,6 +367,9 @@ def _paging(conn, flt, shown: int, root: str) -> dict:
 
     total = count_listings(conn, flt)
     size = _view_cfg("rows_per_page", root)
+    # 한 번에 내보일 쪽 번호 수.  ★ 70쪽을 다 늘어놓으면 줄이 넘친다.
+    #   표시 정책이라 코드에 박지 않는다 (config/web.json · S14)
+    links = _view_cfg("page_links", root)
     pages = 1 if flt.show_all else max(1, -(-total // size))
     now = min(max(1, flt.page), pages)
     qs = _query_string(flt)
@@ -379,9 +378,9 @@ def _paging(conn, flt, shown: int, root: str) -> dict:
     def url(n: int) -> str:
         return f"/listings?{qs}{sep}page={n}"
 
-    lo = max(1, now - PAGE_LINKS // 2)
-    hi = min(pages, lo + PAGE_LINKS - 1)
-    lo = max(1, hi - PAGE_LINKS + 1)
+    lo = max(1, now - links // 2)
+    hi = min(pages, lo + links - 1)
+    lo = max(1, hi - links + 1)
     return {
         "total": total, "shown": shown, "size": size,
         "page": now, "pages": pages,

@@ -646,6 +646,65 @@ if not _recs:
     _bad26.append("outputs/ 에 작업 기록이 없다 (YYYYMMDD_HHMM_v버전_제목.md)")
 say("S26", "작업 기록 (6절 · 이름 규칙)", len(_recs) - len(_bad26), [], _bad26)
 
+# ── S27 화면이 본체다 (개정 279) ────────────────────────────────────
+# ★ 마스터 진단 — 「CLI 있다고 개무시하니 웹이 개판이 됐다」.
+#   CLI 로 되는 것은 완성이 아니다.  기능마다 화면이 있어야 한다.
+#   V11-45 는 「CLI 로만 되는 기능이 없는가」, S27 은 「기능마다 화면이 있는가」다
+_SCREEN_FOR = {
+    # run.py 가 받는 명령
+    "collect": "/admin/run",
+    "web": "/",
+    "admin create": "/admin/users",
+    "setup": "/admin/users",
+    "dry": "/admin/run",
+    "migrate": "/admin/tools",
+    "export": "/admin/tools",
+    "report": "/admin/tools",
+    # tools/ 의 스크립트
+    "tools/build_dict.py": "/admin/dict",
+    "tools/check_all.py": "/admin/audit",
+    "tools/check_screens.py": "/admin/audit",
+    "tools/check_spec.py": "/admin/audit",
+    "tools/check_src.py": "/admin/audit",
+    "tools/classify_fields.py": "/admin/registry",
+    "tools/export_cli.py": "/admin/tools",
+    "tools/inspect_dict.py": "/admin/dict",
+    "tools/inspect_facet.py": "/admin/api",
+    "tools/inspect_requests.py": "/admin/requests",
+    "tools/menu.py": "/admin",
+    "tools/migrate.py": "/admin/tools",
+    "tools/report_cli.py": "/admin/tools",
+    "tools/run_tests.py": "/admin/audit",
+    "tools/setup_check.py": "/admin/tools",
+    "tools/sync_registry.py": "/admin/registry",
+}
+_TOOLS_DIR = os.path.join(ROOT, "tools")
+_have = {"collect", "web", "admin create", "setup", "dry"}
+_have |= {f"tools/{f}" for f in sorted(os.listdir(_TOOLS_DIR))
+          if f.endswith(".py") and not f.startswith("_")}
+with io.open(os.path.join(ROOT, "run.py"), encoding="utf-8") as _fh:
+    _runsrc = _fh.read()
+_m = re.search(r"DELEGATED\s*=\s*\{(.*?)\}", _runsrc, re.S)
+if _m:
+    _have |= set(re.findall(r'"([\w-]+)"\s*:', _m.group(1)))
+# 라우팅 표에 그 경로가 실제로 있는가 — 표에 적어만 두면 뜻이 없다
+try:
+    sys.path.insert(0, ROOT)
+    from web.routes import ROUTES as _ROUTES
+
+    _paths = {r.path for r in _ROUTES}
+except Exception:                                        # noqa: BLE001
+    _paths = set()
+_bad27, _todo27 = [], []
+for _cap in sorted(_have):
+    _scr = _SCREEN_FOR.get(_cap)
+    if not _scr:
+        _todo27.append(_cap)                 # 화면을 아직 안 정한 기능
+    elif _paths and _scr not in _paths:
+        _bad27.append(f"{_cap} → {_scr} 가 라우팅 표에 없다")
+say("S27", "기능마다 화면 (CLI 는 완성이 아니다)",
+    len(_have) - len(_todo27) - len(_bad27), _todo27, _bad27)
+
 print()
 print(f"미착수 합계 {todo_total}")
 print("결과:", "통과" if not fail else "실패 — " + " / ".join(fail))
