@@ -170,6 +170,27 @@ skipped         조건에 안 맞아 안 불렀다      ← 정상
 |---|---|
 | S1 | 백업 완료 · `endpoints.json` · `targets.json` 로드 · `q` 조립 성공 |
 | S3 | S1·S2 의 `rejected = 0` · **facet 필수 축 집합 통과** (2장 STEP 23) |
+
+```
+★ 08-16 개정 — 반입 경로에서는 S1·S2 를 반입이 대신할 수 있다
+근거   실측.  AWS 서울 IP 에서 /search/ 가 407 이라 S1·S2 를 서버가 못 돈다
+      S4 만 「반입이 대신했다」로 열면 S3 가 영원히 막힌다
+필수   S1 · S2 도 audit_validation 에 반입 완료를 남길 수 있다
+       code='STEP53-S1' · passed=1 · actual='import'
+       (S4 와 같은 방식 — STEP 136b ④)
+필수   그때는 무엇을 반입했는지 samples 에 남긴다
+       목록이면 rows · facet 이면 축 이름과 값 수
+금지   반입 없이 S1·S2 를 통과로 치는 것.  근거 없이 열지 않는다
+검산   V11-46  반입으로 연 단계의 actual 이 'import' 인가
+```
+
+```
+★ facet 도 반입 대상이다 — 08-16
+근거   실측.  V4-25 가 지목한 color_ext · color_int · fuel 이 전부 facet 축이다
+      상세를 아무리 받아도 이 사전은 안 채워진다
+필수   /admin/import 가 facet 응답 JSON 도 받는다 (형식 ④)
+필수   받은 facet 으로 S2 완료를 남기고 S3 가 그것으로 사전을 만든다
+```
 | S4 | 사전 `pending` 축이 분류에 쓰이지 않음 |
 | S5 | `core_listing` 에 `status='active'` 매물 존재 |
 | S6 | S5 의 `rejected = 0` |

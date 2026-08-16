@@ -206,10 +206,15 @@ CREATE TABLE admin_api_snapshot (
 ```
 
 ```
-★ 받는 형식 두 가지
+★ 받는 형식 네 가지
   ① 원문 JSON      엔카 목록 응답을 그대로.  파서가 처리한다
   ② 매물 ID 목록    한 줄에 하나.  최소 입력이다
-  ①이 원칙이다.  ②는 원문이 없으므로 「원문 없음」으로 표시한다
+  ③ CSV           source_id 등 열이 있는 것.  ②로 취급한다
+  ④ facet 원문 JSON  ★ 08-16 추가.  S2 를 대신한다
+  ①이 원칙이다.  ②③은 원문이 없으므로 「원문 없음」으로 표시한다
+★ ④가 필요한 이유
+  color_ext · color_int · fuel · trim 사전은 facet 에서만 나온다
+  상세를 아무리 받아도 안 채워진다 (실측 08-16 · V4-25)
 
 ★ 붙여넣기 상한
   max_form_bytes 를 넘으면 파일 업로드로 안내한다
@@ -491,6 +496,8 @@ reopened     applied 였으나 다시 문제.  재개
 | **조정** | `/admin/config` | `config` 전체 편집 + 이력 | 127 |
 | **탐색** | `/admin/query` | 조회 쿼리 | 133 |
 | **탐색** | `/admin/api` | API 조회 · 저장 | 134 |
+| **운영** | `/admin/import` | 목록 반입 — JSON · ID 목록 · CSV | 136a · 136b |
+| **운영** | `/admin/collect` | 브라우저 수집 — 사용자 회선으로 부른다 | 136c |
 | **탐색** | `/admin/tools` | 관리 도구 | 135 |
 | **탐색** | `/admin/docs` | 문서 뷰어 | 136 |
 | **탐색** | `/admin/requests` | 개발 요청 | 137 |
@@ -555,6 +562,8 @@ reopened     applied 였으나 다시 문제.  재개
 | V10-18 | `core_pii` · `core_dealer_pii` 조회가 거부됨 | 0 | fatal |
 | V10-19 | 중지·역할하향·비밀번호 변경 후 옛 세션이 anonymous | 0 | fatal |
 | V10-20 | 연속 로그인 실패 상한을 넘으면 거부됨 | 통과 | fatal |
+| V10-22 | `queued` 를 소비하는 코드가 있음 | 통과 | fatal |
+| V10-23 | 오래된 `queued` 가 화면에 표시됨 | 통과 | warn |
 
 ---
 

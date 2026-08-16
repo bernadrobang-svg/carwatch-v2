@@ -1362,6 +1362,7 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-43 | 브라우저 수집분의 `origin` 이 `'browser'` 임 | code | fatal |
 | V11-44 | 사람 확인 없이 저장되지 않음 | code | fatal |
 | V11-45 | CLI 로만 되는 기능이 없음 (부트스트랩 제외) | contract | fatal |
+| V11-46 | 반입으로 연 단계의 `actual` 이 `'import'` 임 | code | fatal |
 
 ---
 

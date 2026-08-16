@@ -26,6 +26,18 @@ from store.admin import (  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _spec_menu_paths() -> set:
+    """13장 메뉴 표(STEP 138)의 경로 집합.  ★ 규격이 정본이다."""
+    import re as _re
+
+    path = os.path.join(ROOT, "docs", "chapters", "60-admin", "c-tools.md")
+    with open(path, encoding="utf-8") as f:
+        body = f.read()
+    # | 분류 | `/admin/...` | 내용 | STEP |
+    return set(_re.findall(r"^\|[^|\n]*\|\s*`(/admin[^`]*)`\s*\|", body,
+                           _re.M))
 NOW = datetime(2026, 8, 10, tzinfo=timezone.utc)
 T1 = NOW.isoformat()
 FAIL: list[str] = []
@@ -419,7 +431,14 @@ def test_admin_screens() -> None:
     user = Account(9, ROLE_USER, "사용자")
 
     home = view_admin_home(admin, conn)
-    check("메뉴 12개", len(home.menu) == 12, str(len(home.menu)))
+    # ★ 숫자를 손으로 적지 않는다.  13장 메뉴 표가 정본이다 (규칙 1).
+    #   적어 두면 규격이 화면을 늘릴 때마다 시험이 먼저 막는다 (실측 08-16)
+    want = _spec_menu_paths()
+    got = {m.path for m in home.menu}
+    check(f"메뉴가 13장 표와 같다 ({len(want)}개)", got == want,
+          f"코드 {len(got)} · 표 {len(want)}"
+          + (f" · 표에만 {sorted(want - got)}" if want - got else "")
+          + (f" · 코드에만 {sorted(got - want)}" if got - want else ""))
     check("★ 전 화면에 근거 STEP 링크", all(m.step_ref for m in home.menu))
     check("메뉴 3분류", {m.group for m in home.menu}
           == {"", "운영", "조정", "탐색"})
