@@ -91,6 +91,9 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 | V3-37 | 목록 관측분의 `source` 가 `'list'` 임 | code | fatal |
 | V3-40 | 핵심 축이 excluded 인데 등급이 매겨진 건이 없음 | data | fatal |
 | V3-41 | 전 매물의 분모가 만점과 같음 | data | fatal |
+| V3-42 | 취향 축만으로 S·A 가 나온 건이 없음 | data | fatal |
+| V3-43 | 트림·옵션이 높은데 점수가 낮은 역전이 없음 | data | fatal |
+| V3-44 | NULL 축에 원인 코드가 붙어 있음 | data | fatal |
 | V3-38 | facet 수신 후 목록 관측분과 대조함 | code | warn |
 | V3-31 | 딜러 NULL 매물에 `dealer_untrusted` 경고가 없음 | fatal |
 | V3-32 | `seizing` null 매물이 「저당 없음」으로 판정되지 않음 | fatal |
