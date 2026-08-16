@@ -117,19 +117,24 @@
 <script>
 // 13장 STEP 136c · 개정 263 · 264 · 265 · 14장 STEP 145b
 // ★ 바닐라 JS · 한 파일 · CDN 도 npm 도 쓰지 않는다
-// ★ JS 가 하는 일은 「브라우저만 할 수 있는 일」뿐이다 — 엔카를 부르고 나눠 보내는 것.
-//   화면은 서버가 만든다.  여기서 HTML 을 짓지 않는다
+// ★ JS 가 하는 일은 「브라우저만 할 수 있는 일」뿐이다 — 엔카를 부르고 나눠 보내는 것
 (function () {
   var PLAN = {{! collect_plan_json }};
   var ROWS = {{ rows_per_call }};
   var GAP_MS = Math.round(({{ interval_sec }}) * 1000);
   var CAP = {{ max_form_bytes }};
+  // ★ 폼에는 원문 말고도 사유·URL·경계가 함께 간다.  그만큼 뺀 자리에서 잰다
+  var ROOM = Math.floor(CAP * 0.8);
   var CSRF = document.querySelector('input[name=csrf]').value;
   var stopped = false;
   var probed = null;
 
   function el(id) { return document.getElementById(id); }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function bytes(s) {
+    // ★ 글자 수가 아니라 바이트다.  한글은 글자당 3바이트다 (실측 08-16)
+    return new Blob([s]).size;
+  }
   function show(id, lines, body) {
     var h = '';
     for (var i = 0; i < lines.length; i++) { h += '<p>' + lines[i] + '</p>'; }
@@ -164,9 +169,25 @@
     return fetch(url, {method: 'GET', mode: 'cors', credentials: 'omit'})
       .then(function (res) {
         return res.text().then(function (body) {
-          return {status: res.status, body: body};
+          return {status: res.status, body: body, size: bytes(body)};
         });
       });
+  }
+  function pageUrl(job, offset, rows) {
+    return job.url_template.replace('{offset}', String(offset))
+                           .replace('{rows}', String(rows));
+  }
+  // ★ 바이트가 들어갈 때까지 건수를 줄여 같은 자리를 다시 부른다.
+  //   건수로만 나누면 사진 많은 차종에서 한 쪽이 상한을 넘는다 (실측 413)
+  function fit(job, offset, rows) {
+    return grab(pageUrl(job, offset, rows)).then(function (got) {
+      if (got.status === 200 && got.size > ROOM && rows > 1) {
+        var half = Math.max(1, Math.floor(rows / 2));
+        return fit(job, offset, half);
+      }
+      got.rows = rows;
+      return got;
+    });
   }
   function post(job, got, url) {
     var doc = null;
@@ -194,7 +215,7 @@
                                     credentials: 'same-origin'})
       .then(function (res) {
         if (!res.ok && res.status !== 303) {
-          throw new Error('저장 실패 ' + res.status);
+          throw new Error('저장 ' + res.status + ' (' + got.size + '바이트)');
         }
         return res;
       });
@@ -209,20 +230,21 @@
     }
     if (!first) { first = jobs[0]; }
     show('result', ['부르는 중…']);
-    grab(first.url).then(function (got) {
+    fit(first, 0, ROWS).then(function (got) {
       var doc = null;
       try { doc = JSON.parse(got.body); } catch (e) { doc = null; }
       var count = doc && typeof doc.Count === 'number' ? doc.Count : null;
-      var pages = count === null ? '?' : Math.ceil(count / ROWS);
+      var pages = count === null ? '?' : Math.ceil(count / got.rows);
       var lines = [
-        '<strong>' + got.status + '</strong> · ' + got.body.length + '글자',
+        '<strong>' + got.status + '</strong> · ' + got.size + '바이트 (' +
+        got.rows + '건) · 한 번에 보낼 수 있는 자리 ' + ROOM + '바이트',
         'Count <strong>' + (count === null ? '?' : count) + '</strong>' +
-        ' · 예상 <strong>' + pages + '쪽</strong> (' + ROWS + '건씩)' +
-        ' · 묶음 <strong>' + jobs.length + '</strong>개'
+        ' · 예상 <strong>' + pages + '쪽</strong> · 묶음 <strong>' +
+        jobs.length + '</strong>개'
       ];
-      if (got.body.length > CAP) {
-        lines.push('한 쪽이 상한(' + CAP + ')보다 큽니다 — ' +
-                   'browser_collect_rows 를 낮추십시오');
+      if (got.rows < ROWS) {
+        lines.push('한 쪽이 커서 <strong>' + ROWS + '건 → ' + got.rows +
+                   '건</strong>으로 줄였습니다. 차종마다 다시 잽니다.');
       }
       if (got.status !== 200) {
         // ★ 407·403·429 를 삼키지 않는다 (STEP 136c)
@@ -246,8 +268,10 @@
     if (!el('f_reason').value.trim()) {
       show('progress', ['사유를 적어야 저장합니다.']); return;
     }
-    // ★ 전 차종은 확인 문구를 받는다 (STEP 149l · V11-48)
-    if (mode() === 'all' && el('f_confirm').value.trim() !== 'all') {
+    // ★ 전 차종은 확인 문구를 받는다 (STEP 149l · V11-48).
+    //   대소문자를 가리지 않는다 — 확인의 목적은 실수 방지이지 타자 시험이 아니다
+    if (mode() === 'all' &&
+        el('f_confirm').value.trim().toLowerCase() !== 'all') {
       show('progress', ['<strong>전 차종은 확인 칸에 <code>all</code> 을 ' +
                         '입력해야 시작합니다.</strong> 되돌릴 수 없이 오래 돕니다.']);
       return;
@@ -256,22 +280,33 @@
     stopped = false;
     el('btn_stop').disabled = false;
     el('btn_save').disabled = true;
-    var failed = [], okPages = 0, ji = 0;
+    var failed = [], okPages = 0, okItems = 0, ji = 0;
 
     function report(extra) {
-      var lines = ['전체 <strong>' + Math.min(ji + 1, jobs.length) + '/' +
-                   jobs.length + '</strong>묶음 · 저장 ' + okPages + '쪽'];
+      var lines = [];
+      // ★ 실패가 있으면 그것이 머리말이다.  저장이 0 이면 더더욱 (V11-33 정신)
+      if (failed.length && okPages === 0) {
+        lines.push('<strong>하나도 저장되지 않았습니다 — 실패 ' +
+                   failed.length + '건</strong>');
+      } else if (failed.length) {
+        lines.push('<strong>실패 ' + failed.length + '건</strong> · 저장 ' +
+                   okPages + '쪽 (' + okItems + '건)');
+      } else {
+        lines.push('저장 <strong>' + okPages + '쪽</strong> (' + okItems + '건)');
+      }
+      lines.push('묶음 ' + Math.min(ji + 1, jobs.length) + '/' + jobs.length);
       if (extra) { lines.push(extra); }
       if (failed.length) {
-        lines.push('<strong>실패</strong> — ' + esc(failed.join(', ')) +
-                   ' (그 묶음만 다시 하면 됩니다)');
+        lines.push('실패한 것 — ' + esc(failed.join(' · ')) +
+                   '<br>그 묶음만 다시 고르면 됩니다. 저장된 쪽은 남아 있습니다.');
       }
       show('progress', lines);
     }
 
     function runJob(i) {
       if (i >= jobs.length || stopped) {
-        report(stopped ? '중단했습니다. 여기까지는 남아 있습니다.' : '끝났습니다.');
+        report(stopped ? '중단했습니다.'
+                       : (failed.length ? '' : '끝났습니다.'));
         el('btn_stop').disabled = true;
         el('btn_save').disabled = false;
         return Promise.resolve();
@@ -280,38 +315,46 @@
       var job = jobs[i];
       // ★ 한 묶음이 실패해도 나머지를 이어서 한다 (V11-49)
       return runPages(job).catch(function (err) {
-        failed.push(job.target_key + ':' + (err && err.message ? err.message : err));
+        failed.push(job.target_key + '/' + job.kind + ' ' +
+                    (err && err.message ? err.message : err));
+        report('');
       }).then(function () { return runJob(i + 1); });
     }
 
     function runPages(job) {
       if (job.kind === 'facet') {
-        return grab(job.url).then(function (got) {
+        return fit(job, 0, ROWS).then(function (got) {
           if (got.status !== 200) { throw new Error('HTTP ' + got.status); }
+          if (got.size > ROOM) {
+            throw new Error('facet 이 ' + got.size + '바이트 — 나눌 수 없습니다');
+          }
           return post(job, got, job.url).then(function () {
             okPages += 1; report(job.target_key + ' facet 저장');
           });
         });
       }
-      var page = 0, total = null;
+      var offset = 0, rows = ROWS, total = null, seen = 0;
       function step() {
         if (stopped) { return Promise.resolve(); }
-        var url = job.url_template.replace('{offset}', String(page * ROWS));
-        return grab(url).then(function (got) {
+        return fit(job, offset, rows).then(function (got) {
           if (got.status !== 200) { throw new Error('HTTP ' + got.status); }
+          rows = got.rows;                       // 줄인 건수를 이어서 쓴다
           var doc = null;
           try { doc = JSON.parse(got.body); } catch (e) { doc = null; }
           if (total === null && doc && typeof doc.Count === 'number') {
-            total = Math.ceil(doc.Count / ROWS);
+            total = doc.Count;
           }
           var items = doc && doc.SearchResults ? doc.SearchResults.length : 0;
-          return post(job, got, url).then(function () {
+          return post(job, got, pageUrl(job, offset, rows)).then(function () {
             okPages += 1;
-            page += 1;
-            report(job.target_key + ' ' + page + '/' +
-                   (total === null ? '?' : total) + '쪽 저장했습니다');
-            if (items < ROWS || (total !== null && page >= total)) {
-              return null;               // 마지막 쪽이다
+            okItems += items;
+            seen += items;
+            offset += rows;
+            report(job.target_key + ' ' + seen + '/' +
+                   (total === null ? '?' : total) + '건 저장했습니다');
+            if (items === 0 || items < rows ||
+                (total !== null && seen >= total)) {
+              return null;                       // 마지막 쪽이다
             }
             return wait(GAP_MS).then(step);
           });

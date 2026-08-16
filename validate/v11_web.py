@@ -887,6 +887,11 @@ def _browser_chunk_check(conn, rid):
     html = open(tpl, encoding="utf-8").read() if os.path.isfile(tpl) else ""
     if "url_template" not in html or "{offset}" not in html:
         bad.append("JS 가 쪽을 이어서 부르지 않는다")
+    # ★ 건수로만 나누면 바이트가 안 묶인다.  한글은 글자당 3바이트다 (실측 413)
+    if "new Blob(" not in html:
+        bad.append("JS 가 바이트를 재지 않는다 — 건수로만 나눈다")
+    if "{rows}" not in html:
+        bad.append("건수를 줄여 다시 부를 수 없다")
     if "나눠서 보내" in html and "사람" not in html:
         bad.append("사람에게 나누라고 안내한다")
     row = conn.execute(

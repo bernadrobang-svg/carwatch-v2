@@ -245,7 +245,10 @@ def _page_url(adapter, spec, offset: int | None, rows: int) -> str:
     parts = tail.split("&", 1)
     rest = "&" + parts[1] if len(parts) > 1 else ""
     at = "{offset}" if offset is None else str(offset)
-    return head + "%7C" + at + "%7C" + str(rows) + rest
+    # ★ 건수도 자리로 남긴다.  바이트가 상한을 넘으면 JS 가 건수를 줄여
+    #   같은 자리를 다시 부른다 — 건수로 나누면 바이트가 안 묶인다 (실측 08-16)
+    lim = "{rows}" if offset is None else str(rows)
+    return head + "%7C" + at + "%7C" + lim + rest
 
 
 def cmd_web(host: str | None, port: str | None) -> int:
