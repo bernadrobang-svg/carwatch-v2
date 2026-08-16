@@ -283,7 +283,8 @@ adapters/  →  collect/  →  store/                →  contracts · errors
 ### 진입점
 
 ```
-run.py           유일한 진입점.  CLI 인자를 해석한다
+run.py           유일한 진입점.  인자를 해석한다
+                 ★ 08-16 — 사람이 쓰는 것은 화면이다.  진입점은 화면이 부른다
 tools/*.py       독립 실행.  run.py 를 부르지 않는다
 web/server.py    run.py web 이 부른다.  직접 실행하지 않는다
 ```

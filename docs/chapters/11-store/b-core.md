@@ -14,7 +14,7 @@ CREATE TABLE raw_response (
   response_meta  TEXT,               -- content_type · encoding · 필요한 응답 헤더
   status         TEXT NOT NULL,      -- ok·empty·not_found·error
   body           TEXT,               -- 원문 그대로
-  origin         TEXT NOT NULL,      -- collector · master_manual
+  origin         TEXT NOT NULL,      -- collector · master_manual · import · browser
   fetched_at     TEXT NOT NULL
 );
 CREATE INDEX ix_raw_lookup ON raw_response(listing_id, endpoint, fetched_at DESC);
@@ -22,6 +22,14 @@ CREATE INDEX ix_raw_lookup ON raw_response(listing_id, endpoint, fetched_at DESC
 
 ```
 origin='master_manual'   마스터가 PDF 로 회신한 실측 응답 (2장 STEP 25a)
+origin='import'          파일·붙여넣기로 반입한 것 (13장 STEP 136a) — 08-16
+origin='browser'         브라우저가 사용자 회선으로 받은 것 (13장 STEP 136c) — 08-16
+
+★ 넷을 가르는 이유
+  누가 받았는지가 다르면 신뢰 근거가 다르다
+  collector 는 서버가 · browser 는 사용자 회선이 · import 는 사람이 옮긴 것이다
+  섞으면 「우리가 받았다」가 사실이 아니게 된다
+필수   CHECK 에 넷을 다 넣는다.  V11-40 · V11-43 이 이 값을 요구한다
                         원문이므로 RAW 에 넣고 경로 전수 대상에 포함한다
 ```
 

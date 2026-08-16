@@ -74,6 +74,8 @@ python3 tools/check_spec.py <문서.md>      종료코드 0 통과 · 1 실패
 | **S22** | **정적 검사** — `ruff --select F821,F811,B905` 가 0 인가 | **0장** |
 | **S23** | **실행 환경** — 인터프리터가 Python 3.11 이상인가 | **0장** |
 | **S24** | **시험 격리** — 시험이 운영 DB 를 읽지 않는가 | **0장** |
+| **S25** | **형상 관리** — 커밋되지 않은 변경이 없는가 | **0장** |
+| **S26** | **작업 기록** — 작업마다 `outputs/` 기록이 있는가 | **0장** |
 
 ### ★ 검사 도구가 없으면 실패다 — 08-16
 
@@ -392,8 +394,7 @@ _core 접미사   변환 후 값.  시험이 변환 로직을 다시 구현하�
   "options_choice_len": 5,
   "dealer_firm": "남덕모터스"
  },
- "catalog.json": {,
- "diagnosis.json": "encarDiagnosis == 0 인 매물의 진단 결과. items 에 판정(resultCode 있음)과 소견(null)이 섞여 있다 — 소견을 부위로 세면 수가 틀린다 (STEP 21b)"
+ "catalog.json": {
   "len": 9,
   "first": {
    "optionCd": "1009",
