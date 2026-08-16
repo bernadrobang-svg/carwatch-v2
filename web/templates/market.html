@@ -25,17 +25,33 @@
 {% endif %}
 
 {% if m.price_bins %}
-<h2>가격 분포 <span class="muted">막대를 누르면 그 구간 매물로</span></h2>
-<table>
-<thead><tr><th>구간</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
-<tbody>
-{% for b in m.price_bins %}
-<tr><td>{% if b.filter_url %}<a href="{{ b.filter_url }}">{{ b.min_won | won }} ~ {{ b.max_won | won }}</a>{% endif %}</td>
-  <td class="num">{{ b.count | num }}</td>
-  <td class="num">{{ b.median_won | won }}</td></tr>
-{% endfor %}
-</tbody>
-</table>
+<h2>가격 분포 <span class="more">막대를 누르면 그 구간 매물로</span></h2>
+<div class="card">
+  <div class="hist">
+    {% for b in m.price_bins %}<a class="b" href="{{ b.filter_url }}"
+      style="height:{{ b.height_pct }}%"
+      title="{{ b.min_won | won }} ~ {{ b.max_won | won }} · {{ b.count | num }}건 · 중앙 {{ b.median_won | won }}"><span class="n">{{ b.count | num }}</span></a>{% endfor %}
+  </div>
+  <div class="histx">
+    {% for b in m.price_bins %}<span title="{{ b.min_won | won }} ~ {{ b.max_won | won }}">{{ b.min_won | won }}</span>{% endfor %}
+  </div>
+  <div class="hnote dim">막대에 손을 대면 구간이 보이고, 누르면 그 가격대 매물로 갑니다.
+    막대 위 숫자가 그 구간의 건수입니다.</div>
+</div>
+
+<details class="tight">
+  <summary class="dim">가격 분포를 숫자로 보기</summary>
+  <table>
+  <thead><tr><th>구간</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+  <tbody>
+  {% for b in m.price_bins %}
+  <tr><td>{% if b.filter_url %}<a href="{{ b.filter_url }}" title="이 가격대 매물로 갑니다">{{ b.min_won | won }} ~ {{ b.max_won | won }}</a>{% endif %}</td>
+    <td class="num">{{ b.count | num }}</td>
+    <td class="num">{{ b.median_won | won }}</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+</details>
 {% endif %}
 
 {% if m.by_year %}

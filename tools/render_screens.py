@@ -29,10 +29,11 @@ SAMPLE = {"listing_id": None, "watch_id": "1", "account_id": "1"}
 # 스크린샷 (가이드 요청 B안).  ★ 마스터는 360px 로 본다
 SHOT_DIR = os.path.join(ROOT, "outputs", "shot")
 SHOT_WIDTHS = (360, 1400)
-# 찍을 화면.  ★ 전 화면을 찍으면 t4g.small 에서 몇 분씩 걸린다 —
-#   모양이 다른 것만 고른다.  나머지는 outputs/render/ 의 HTML 로 본다
-SHOT_PATHS = ("/listings", "/why/{listing_id}", "/market", "/dealers",
+# 넓은 폭까지 찍을 화면.  ★ 마스터가 주로 보는 곳이다
+WIDE_PATHS = ("/listings", "/why/{listing_id}", "/market", "/dealers",
               "/recommend", "/", "/notready")
+# ★ 나머지는 360 만 찍는다 — 관리 화면도 전부 찍는다 (가이드 요청 검토 14 §7).
+#   「관리 UI 가 엉망」이라는 지적을 가이드가 직접 보고 판단할 수 있어야 한다
 SHOT_TIMEOUT_SEC = 180
 SHOT_HEIGHT = 1400
 
@@ -136,7 +137,27 @@ def main(db: str = "carwatch.db") -> int:
     return 0
 
 
-def shoot(base: str = "http://127.0.0.1:8765") -> int:
+def shot_paths() -> list:
+    """찍을 화면 — 관리자가 GET 으로 볼 수 있는 전부 (검토 14 §7)."""
+    from contracts import ROLE_ADMIN, Account
+    from web.routes import GET, ROUTES
+    from web.server import guard
+    from web.views import HANDLERS
+
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    out = []
+    for r in ROUTES:
+        if GET not in r.methods or guard(acc, r) is not None:
+            continue
+        if HANDLERS.get(r.view) is None:
+            continue
+        if "{" in r.path and r.path.split("{")[1].split("}")[0] not in SAMPLE:
+            continue
+        out.append(r.path)
+    return out
+
+
+def shoot(base: str = "http://127.0.0.1:8765", paths=None) -> int:
     """돌고 있는 서비스를 실제 브라우저로 찍는다 (가이드 요청 B안).
 
     ★ 「반응형으로 했습니다」가 아니라 보이는 것을 낸다.
@@ -151,6 +172,7 @@ def shoot(base: str = "http://127.0.0.1:8765") -> int:
     import subprocess
     import tempfile
 
+    paths = paths or shot_paths()
     ff = _sh.which("firefox")
     if ff is None:
         print("firefox 가 없다 — 스크린샷을 건너뛴다 (A안 HTML 은 그대로 나온다)")
@@ -158,10 +180,10 @@ def shoot(base: str = "http://127.0.0.1:8765") -> int:
     _sh.rmtree(SHOT_DIR, ignore_errors=True)
     os.makedirs(SHOT_DIR)
     made = []
-    for path in SHOT_PATHS:
+    for path in paths:
         url_path = path.replace("{listing_id}", SAMPLE["listing_id"] or "1")
         name = (url_path.strip("/").replace("/", "_") or "home")
-        for w in SHOT_WIDTHS:
+        for w in (SHOT_WIDTHS if path in WIDE_PATHS else SHOT_WIDTHS[:1]):
             out = os.path.join(SHOT_DIR, f"{name}_{w}.png")
             # ★ 프로필을 새로 만든다.  안 그러면 옛 CSS 가 캐시로 남아
             #   고친 것이 안 보인다 (실측 08-16)

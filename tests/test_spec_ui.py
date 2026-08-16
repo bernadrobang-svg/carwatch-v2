@@ -64,8 +64,16 @@ def spec_a(ad: Client, lid: int) -> None:
         bool(re.search(r'width:\s*\d+(?:\.\d+)?%', lb)))
 
     # A-4 축 3상태
+    # ★ 기호를 시험에 박지 않는다.  config/labels.json 이 정본이다 —
+    #   실측 08-16: 「없음」을 · 에서 - 로 바꾸자 시험만 옛 기호를 찾았다
+    import json as _j
+    with open(os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "config", "labels.json"),
+            encoding="utf-8") as _f:
+        _marks = _j.load(_f)["VALUE_MARKS"]
+    want = {_marks["1"], _marks["0"], _marks["unknown"]}
     got3 = (all(m in lb for m in ("axis-good", "axis-bad", "axis-unknown"))
-            and set(re.findall(r"<b>([O·?])</b>", lb)) >= {"O", "·", "?"})
+            and set(re.findall(r"<b>(.)</b>", lb)) >= want)
     rec("A-4", "축 3상태 O · · · ?", "축 표시를 본다",
         "3상태 구분" if got3 else "구분 없음", got3,
         "「없음」과 「모름」이 같으면 v1 사고")

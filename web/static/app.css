@@ -1464,3 +1464,12 @@ body.s-listings main { max-width:1560px; }
 .cons li { color:var(--up); }
 .cmp-head { color:var(--dim); font-weight:600; }
 .unknown { color:var(--faint); font-style:italic; }
+
+/* 히스토그램 막대는 <a> 다 — 누르면 그 구간 매물로 간다 (시안 v2_market).
+   ★ 시안은 <div> 에 JS 로 걸었다.  우리는 JS 없이 링크로 한다 (개정 248) */
+.hist .b { display:block; text-decoration:none; }
+.hist .b .n { text-decoration:none; }
+/* 좁은 폭에서 표가 화면을 넘지 않게 — 스크롤은 그 표 안에서만 (V11-71) */
+@media (max-width:1099px) {
+  main table { display:block; overflow-x:auto; }
+}

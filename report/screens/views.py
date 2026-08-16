@@ -365,6 +365,10 @@ class Bucket:
     median_won: int | None = None
     filter_url: str | None = None
     enough: bool = True
+    # 막대 높이 (%).  ★ 화면이 최대값을 못 찾는다 — 여기서 계산해 내려준다.
+    #   ★ 자리를 앞에 끼우지 않는다 — 위치 인자로 만드는 곳이 어긋난다 (실측)
+    #   「막대를 누르면」이라 적어 놓고 막대가 없으면 거짓말이다 (검토 14)
+    height_pct: int = 0
 
 
 @dataclass(frozen=True)

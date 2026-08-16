@@ -18,6 +18,8 @@ import os
 import sqlite3
 from urllib.parse import urlencode
 
+from dataclasses import replace
+
 from report.finance import build_finance
 from report.render import render_listing, render_run
 from report.screens.views import (
@@ -607,8 +609,23 @@ def _median(xs: list):
     return xs[len(xs) // 2] if xs else None
 
 
+def _with_height(buckets: list, root: str = ".") -> list:
+    """막대 높이를 채운다.  ★ 가장 많은 구간이 100% 다 (시안 v2_market .hist).
+
+    ★ 최소 높이는 표시 정책이라 config 에 둔다 —
+      0건이 아닌데 안 보이면 「없다」로 읽힌다
+    """
+    top = max((b.count for b in buckets), default=0)
+    if not top:
+        return buckets
+    floor = _view_cfg("hist_min_bar_pct", root)
+    return [replace(b, height_pct=max(floor, round(b.count / top * 100))
+                    if b.count else 0)
+            for b in buckets]
+
+
 def _price_bins(prices: list, target_key: str,
-                bins: int = PRICE_BINS) -> list:
+                bins: int = PRICE_BINS, root: str = ".") -> list:
     """가격 분포.  ★ 막대를 누르면 그 구간 매물로 간다 (시안 v2_market)."""
     if not prices:
         return []
@@ -625,7 +642,7 @@ def _price_bins(prices: list, target_key: str,
         out.append(Bucket("", a, b, len(got), _median(got),
                           f"/listings?target={target_key}"
                           f"&price_min={a}&price_max={b}"))
-    return out
+    return _with_height(out, root)
 
 
 def _by_year(conn, target_key: str) -> list:

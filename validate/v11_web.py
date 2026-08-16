@@ -271,6 +271,12 @@ C = {
                     "「빈 링크」가 아니라 「링크 아님」이다.  실측 08-16: "
                     "마스터가 링크를 눌렀더니 주소가 null 이었다",
                     KIND_CODE),
+    "V11-77": Check("V11", "V11-77", "시안의 시각 요소가 렌더 결과에 나옴",
+                    FATAL, "run",
+                    "CSS 에 있는 것과 화면에 쓰이는 것은 다르다. "
+                    ".hist 를 CSS 에 넣어도 market.html 이 <table> 이면 "
+                    "소용없다 — 실측 08-16 (검토 14)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -796,6 +802,7 @@ def _screen_checks(conn, rid) -> list:
     out += _v1_parity_checks(rid)
     out += _responsive_checks(rid)
     out.append(_null_link_check(conn, rid))
+    out.append(_sian_visual_check(conn, rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1540,6 +1547,75 @@ def _null_link_check(conn, rid):
     probe.close()
     return result(C["V11-72"], rid, f"{seen}화면",
                   "없음" if not bad else f"{len(bad)}곳", not bad, bad[:10])
+
+
+# 화면마다 반드시 나와야 하는 시안의 시각 요소 (검토 14 · 개정 275).
+# ★ 「그 화면이 무엇으로 보여 주는가」다.  표로 대신하면 시안이 아니다
+SIAN_VISUAL = {
+    "/market": ("hist", "histx"),
+    "/dealers": ("quad",),
+    "/watch": ("spark",),
+    "/recommend": ("pbar",),
+    "/why/{listing_id}": ("curve",),
+    "/listings": ("thumb", "peek"),
+}
+
+
+def _sian_visual_check(conn, rid):
+    """V11-77 — 시안의 시각 요소가 렌더 결과에 실제로 나오는가.
+
+    ★ CSS 도 템플릿도 보지 않는다.  나온 HTML 에서 class 를 센다
+    """
+    import sqlite3 as _sq
+
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from web.routes import GET, ROUTES
+    from web.server import guard
+    from web.views import HANDLERS
+
+    row = conn.execute(
+        "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+    if row is None:
+        return not_applicable(C["V11-77"], rid, "판정 결과가 없다")
+    tmp = os.path.join(_scratch(), "visual.db")
+    probe = _sq.connect(tmp)
+    conn.backup(probe)
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    routes = {r.path: r for r in ROUTES}
+    bad, ok = [], 0
+    for path, want in SIAN_VISUAL.items():
+        route = routes.get(path)
+        if route is None or GET not in route.methods:
+            bad.append(f"{path} — 그런 화면이 없다")
+            continue
+        if guard(acc, route) is not None:
+            continue
+        pv = {}
+        if "{" in path:
+            key = path.split("{")[1].split("}")[0]
+            pv = {key: str(row[0])}
+        try:
+            _st, _h, body = HANDLERS[route.view](
+                probe, acc, {"query": {}, "form": {}, "method": GET},
+                path_vars=pv, csrf="t")
+        except (CarWatchError, KeyError, ValueError) as e:
+            bad.append(f"{path} — 못 그렸다: {type(e).__name__} {e}")
+            continue
+        html = body.decode("utf-8", "replace")
+        used = set()
+        for attr in re.findall(r'class="([^"{}]*)"', html):
+            used |= set(attr.split())
+        used |= set(re.findall(r'id="([\w-]+)"', html))
+        for cls in want:
+            if cls in used:
+                ok += 1
+            else:
+                bad.append(f"{path} — .{cls} 가 화면에 없다 (표로 내고 있다)")
+    probe.close()
+    total = sum(len(v) for v in SIAN_VISUAL.values())
+    return result(C["V11-77"], rid, f"{total}종", f"{ok}/{total}", not bad,
+                  bad[:8])
 
 
 def _browser_scope_checks(rid):

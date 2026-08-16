@@ -28,5 +28,6 @@
   "km_bucket": 10000,
   "monthly_bucket_won": 100000,
   "page_links": 9,
-  "narrow_max_px": 1099
+  "narrow_max_px": 1099,
+  "hist_min_bar_pct": 3
 }
