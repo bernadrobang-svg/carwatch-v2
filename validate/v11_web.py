@@ -188,6 +188,37 @@ C = {
                     "스스로 모순된다 — 「도는 것이 없다」와 「0분 전 처리」가 "
                     "같은 화면에 있었다 (개정 273)",
                     KIND_CODE),
+    "V11-54": Check("V11", "V11-54", "메뉴에 경로가 그대로 나오지 않음",
+                    FATAL, "run",
+                    "이름이 없으면 「/admin/status」가 메뉴에 그대로 뜬다. "
+                    "13장 STEP 138 메뉴표가 정본이다 (개정 274)",
+                    KIND_CODE),
+    "V11-55": Check("V11", "V11-55", "목록에 전체 건수와 쪽이 표시됨",
+                    FATAL, "run",
+                    "200건만 보이면서 전체를 안 적으면 3,470건을 못 본다. "
+                    "「3,470건 중 200건 · 1/18쪽」 (개정 274)",
+                    KIND_CODE),
+    "V11-56": Check("V11", "V11-56", "대표 사진 경로가 저장됨", FATAL, "run",
+                    "차를 고르는 도구인데 차가 안 보인다. 원문에 이미 있다 "
+                    "— 다시 받을 필요가 없다 (개정 274)",
+                    KIND_EXTERNAL),
+    "V11-57": Check("V11", "V11-57", "사진 없는 매물이 화면을 무너뜨리지 않음",
+                    FATAL, "run",
+                    "사진이 없다고 행을 숨기지 않는다. thumb-none 으로 "
+                    "자리를 채운다 (개정 274)",
+                    KIND_CODE),
+    "V11-58": Check("V11", "V11-58", "쪽을 넘겨도 조건이 남음", FATAL, "run",
+                    "2쪽에서 필터가 풀리면 무엇을 보고 있는지 알 수 없다 "
+                    "(개정 274)",
+                    KIND_CODE),
+    "V11-59": Check("V11", "V11-59", "시안의 클래스가 CSS 에 있음", FATAL, "run",
+                    "화면이 시안의 이름을 쓰는데 CSS 에 그 이름이 없으면 "
+                    "표가 아니라 글자 뭉치가 된다 — .chips 가 그랬다 (개정 275)",
+                    KIND_CODE),
+    "V11-60": Check("V11", "V11-60", "시안 CSS 를 다시 만들지 않음", FATAL, "run",
+                    "시안이 정본이다. 손으로 옮겨 적으면 값이 갈린다 "
+                    "(개정 275)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -547,7 +578,16 @@ def _screen_checks(conn, rid) -> list:
     tpls = _all_templates()
 
     # V11-13 — 토큰 밖 색값
-    bad = sorted(set(RE_COLOR.findall(RE_ROOT.sub("", css))))
+    # ★ 시안이 쓴 색은 「늘린 색」이 아니다 — 시안이 정본이다 (개정 275).
+    #   토큰 밖이면서 시안에도 없는 것만 결함이다.  손으로 고른 색을 막는다
+    sian: set = set()
+    if os.path.isdir(SIAN):
+        for f in os.listdir(SIAN):
+            if f.endswith(".html"):
+                sian |= {c.lower() for c in RE_COLOR.findall(
+                    open(os.path.join(SIAN, f), encoding="utf-8").read())}
+    bad = sorted({c for c in RE_COLOR.findall(RE_ROOT.sub("", css))
+                  if c.lower() not in sian})
     out.append(result(C["V11-13"], rid, 0, bad or 0, not bad, bad))
 
     # V11-14 — 숫자 셀에 mono
@@ -690,6 +730,11 @@ def _screen_checks(conn, rid) -> list:
     out += _status_screen_checks(rid)
     out.append(_status_liveness_check(conn, rid))
     out += _browser_scope_checks(rid)
+    # 목록 화면 6종 (개정 274 · 275)
+    out.append(_menu_label_check(rid))
+    out += _listing_paging_checks(conn, rid)
+    out += _photo_checks(conn, rid)
+    out += _sian_css_checks(rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -723,8 +768,10 @@ def _query_budget_check(conn, rid):
     with open(os.path.join(ROOT, "config", "web.json"),
               encoding="utf-8") as f:
         cap = int(_j.load(f)["max_queries_per_request"])
-    ver = conn.execute(
-        "SELECT MAX(calc_version) FROM result_score").fetchone()[0]
+    # ★ MAX 는 글자 크기다.  화면이 읽는 것과 같은 것을 읽어야 실측이 된다
+    from store.core import current_versions
+
+    ver = current_versions(conn)["calc_version"]
     if not ver:
         return not_applicable(C["V11-34"], rid, "판정 결과가 없다")
 
@@ -980,6 +1027,144 @@ def _status_liveness_check(conn, rid):
     return result(C["V11-53"], rid, "실측 기준",
                   "도는 중" if view.get("live_running") else "조용함",
                   not bad, bad)
+
+
+MENU_TABLE = os.path.join(ROOT, "docs", "chapters", "60-admin", "c-tools.md")
+LISTINGS_TPL = os.path.join(TEMPLATES, "listings.html")
+APP_CSS = os.path.join(ROOT, "web", "static", "app.css")
+SIAN = os.path.join(ROOT, "ref", "screens")
+
+
+def _menu_label_check(rid):
+    """V11-54 — 메뉴에 경로가 그대로 나오는가 (개정 274).
+
+    ★ 13장 STEP 138 메뉴표와 대조한다.  표에 있는데 이름이 없으면 결함이다
+    """
+    from web.app import LABELS
+
+    bad = [p for p in LABELS.values() if p.startswith("/")]
+    if os.path.isfile(MENU_TABLE):
+        doc = open(MENU_TABLE, encoding="utf-8").read()
+        for path in re.findall(r"\|\s*`(/admin[a-z/]*)`\s*\|", doc):
+            if path not in LABELS:
+                bad.append(f"{path} — 메뉴표에 있는데 이름이 없다")
+    return result(C["V11-54"], rid, "이름", "이름" if not bad else "경로",
+                  not bad, bad)
+
+
+def _listing_paging_checks(conn, rid):
+    """V11-55 · V11-58 — 전체 건수 · 쪽 · 쪽을 넘겨도 남는 조건.
+
+    ★ 실제로 화면을 만들어 본다.  「구현했다」가 아니라 나온 글자를 본다
+    """
+    from report.screens.views import ListingFilter
+    from store.core import current_versions
+    from web.views import _paging
+
+    ver = current_versions(conn)
+    html = open(LISTINGS_TPL, encoding="utf-8").read()
+    bad55 = []
+    for want in ("paging.total", "paging.page", "paging.pages"):
+        if want not in html:
+            bad55.append(f"{want} 를 안 낸다")
+    flt = ListingFilter(site="encar", calc_version=ver["calc_version"])
+    pg = _paging(conn, flt, 0, ROOT)
+    if pg["total"] and pg["pages"] < 1:
+        bad55.append("쪽 수가 0 이다")
+
+    # V11-58 — 조건을 걸고 쪽 링크에 그 조건이 남는가
+    bad58 = []
+    got = _paging(conn, ListingFilter(site="encar", grade="B",
+                                      calc_version=ver["calc_version"]),
+                  0, ROOT)
+    for link in [got["next"], got["last"]] + [x["url"] for x in got["links"]]:
+        if link and "grade=B" not in link:
+            bad58.append(f"쪽 링크에 조건이 없다 — {link}")
+            break
+    return [result(C["V11-55"], rid, "건수 · 쪽",
+                   f"{pg['total']}건 {pg['pages']}쪽" if not bad55 else "없음",
+                   not bad55, bad55),
+            result(C["V11-58"], rid, "조건 유지",
+                   "유지" if not bad58 else "풀림", not bad58, bad58)]
+
+
+def _photo_checks(conn, rid):
+    """V11-56 · V11-57 — 대표 사진 (개정 274)."""
+    from report.screens.build import photo_url
+
+    bad56 = []
+    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE status='active'"
+                     ).fetchone()[0]
+    got = conn.execute("SELECT COUNT(*) FROM core_listing"
+                       " WHERE status='active' AND photo_list_json IS NOT NULL"
+                       ).fetchone()[0]
+    if n and not got:
+        bad56.append("펼쳐 앉은 매물에 사진 원문이 하나도 없다")
+    row = conn.execute("SELECT photo_list_json FROM core_listing"
+                       " WHERE photo_list_json IS NOT NULL LIMIT 1").fetchone()
+    if row and not photo_url(row[0], "https://ci.encar.com"):
+        bad56.append("원문이 있는데 대표 사진을 못 고른다")
+
+    # ★ 사진이 없어도 행이 살아 있는가 — 깨진 원문 4종을 실제로 넣어 본다
+    bad57 = []
+    for broken in (None, "", "[]", '[{"ordering":1.0}]', "{not json"):
+        try:
+            if photo_url(broken, "https://ci.encar.com") is not None:
+                bad57.append(f"없는 사진에 주소를 만든다 — {broken!r}")
+        except Exception as e:                       # noqa: BLE001
+            bad57.append(f"사진이 없으면 터진다 — {broken!r} {e}")
+    html = open(LISTINGS_TPL, encoding="utf-8").read()
+    if "thumb-none" not in html:
+        bad57.append("사진이 없을 때 자리를 안 채운다")
+    if 'loading="lazy"' not in html:
+        bad57.append("loading=\"lazy\" 가 없다 — 200행에 200장을 한 번에 받는다")
+    return [result(C["V11-56"], rid, "사진 원문", f"{got}/{n}건",
+                   not bad56, bad56),
+            result(C["V11-57"], rid, "없어도 뜸",
+                   "뜸" if not bad57 else "무너짐", not bad57, bad57)]
+
+
+def _sian_css_checks(rid):
+    """V11-59 · V11-60 — 시안 CSS 를 그대로 옮겼는가 (개정 275).
+
+    ★ 화면이 쓰는 이름이 CSS 에 있는가 · 시안의 값과 같은가
+    """
+    css = open(APP_CSS, encoding="utf-8").read() if os.path.isfile(APP_CSS) else ""
+    have = set(re.findall(r"\.([a-zA-Z][\w-]*)", css))
+    used: set = set()
+    for name in os.listdir(TEMPLATES):
+        if not name.endswith(".html"):
+            continue
+        html = open(os.path.join(TEMPLATES, name), encoding="utf-8").read()
+        for attr in re.findall(r'class="([^"{}]*)"', html):
+            # ★ js- 는 JS 가 잡는 손잡이다.  꾸미지 않는다
+            used |= {c for c in attr.split() if c and not c.startswith("js-")}
+    bad59 = sorted(used - have)
+
+    # V11-60 — 시안의 값과 우리 CSS 의 값이 같은가 (겹치는 이름 표본)
+    bad60 = []
+    if not os.path.isdir(SIAN):
+        bad60.append("시안이 없다 — ref/screens/")
+    else:
+        for f in sorted(os.listdir(SIAN)):
+            if not f.endswith(".html"):
+                continue
+            src = open(os.path.join(SIAN, f), encoding="utf-8").read()
+            for sel, body in re.findall(r"\n(\.[\w-]+)\{([^{}]*)\}", src):
+                want = re.sub(r"\s+", "", body)
+                for got in re.findall(re.escape(sel) + r" \{ ([^{}]*)\}", css):
+                    if re.sub(r"\s+", "", got) == want:
+                        break
+                else:
+                    if sel[1:] in have:      # 이름은 있는데 값이 다르다
+                        bad60.append(f"{f} {sel} 값이 시안과 다르다")
+    # ★ 이름을 우리가 따로 쓰는 것(.mini 등)은 화면별로 가둬 뒀다 — 표본만 본다
+    bad60 = bad60[:5]
+    return [result(C["V11-59"], rid, "쓰는 이름",
+                   f"{len(used)}종" if not bad59 else f"{len(bad59)}종 없음",
+                   not bad59, bad59),
+            result(C["V11-60"], rid, "시안과 같음",
+                   "같음" if not bad60 else "다름", not bad60, bad60)]
 
 
 def _browser_scope_checks(rid):

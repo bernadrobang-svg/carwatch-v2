@@ -48,10 +48,16 @@ LABELS = {
     "/admin/registry": "등록부", "/admin/config": "설정",
     "/admin/users": "사용자", "/admin/query": "쿼리", "/admin/api": "API", "/admin/tools": "도구",
     "/admin/docs": "문서", "/admin/requests": "개발 요청",
+    # ★ 13장 STEP 138 메뉴표가 정본이다.  표에 있는 이름을 그대로 쓴다 —
+    #   빠지면 메뉴에 경로가 그대로 나온다 (실측 08-16 · V11-54)
+    "/admin/import": "목록 반입", "/admin/collect": "브라우저 수집",
+    "/admin/dict": "사전 확정", "/admin/status": "진행 모니터",
 }
 
 
 def _label(path: str) -> str:
+    """★ 이름이 없으면 경로를 그대로 낸다 — 그것이 눈에 띄어야 고친다.
+    검사는 V11-54 가 한다 (13장 STEP 138 메뉴표와 대조)."""
     return LABELS.get(path, path)
 
 
@@ -91,7 +97,8 @@ def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
 def build_page(conn, account, title: str, body_html: str, *,
                csrf: str = "", flashes=None, run_id: str = "",
                calc_version: str = "", dict_version: str = "",
-               parse_version: str = "", refresh_sec: int = 0) -> PageContext:
+               parse_version: str = "", refresh_sec: int = 0,
+               screen: str = "") -> PageContext:
     """전 화면이 같은 것을 낸다 (STEP 144)."""
     from report.screens.build import viewer_state
 
@@ -103,7 +110,7 @@ def build_page(conn, account, title: str, body_html: str, *,
         dict_version=dict_version, parse_version=parse_version,
         run_id=run_id,
         generated_at=_display_now(),
-        csrf_token=csrf, refresh_sec=refresh_sec)
+        csrf_token=csrf, refresh_sec=refresh_sec, screen=screen)
 
 
 # ── STEP 147 폼 ─────────────────────────────────────────────────────

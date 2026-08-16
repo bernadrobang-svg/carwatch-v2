@@ -518,10 +518,22 @@ def current_versions(conn: sqlite3.Connection) -> dict:
         except sqlite3.Error:
             return ""
 
+    # ★ MAX(version) 은 글자 크기다 — 판이 아니다.  실측 08-16:
+    #   08-15 시험 행 하나가 남긴 'c3' 가 'c1' 보다 커서 전 화면이 c3 을 현재로
+    #   읽었다.  c3 에는 채점이 1건뿐이라 /recommend 후보가 1건이 되고
+    #   /listings 3,470행의 등급이 전부 비었다.  'c10' < 'c9' 도 같은 함정이다.
+    #   현재 판은 「가장 최근에 쓰인 것」이다 — 시각으로 고른다
     return {
-        "calc_version": one("SELECT MAX(calc_version) FROM result_score"),
-        "dict_version": one("SELECT MAX(dict_version) FROM dict_enum"),
-        "parse_version": one("SELECT MAX(parse_version) FROM core_listing"),
+        "calc_version": one("SELECT calc_version FROM result_score"
+                            " ORDER BY calculated_at DESC, rowid DESC LIMIT 1"),
+        # ★ 화면의 사전판은 「지금 보이는 판정이 쓴 사전」이다.
+        #   사전만 고치고 재채점을 안 했으면 옛 사전이 맞다 (선언과 실제의 일치)
+        "dict_version": one("SELECT dict_version FROM result_score"
+                            " ORDER BY calculated_at DESC, rowid DESC LIMIT 1")
+        or one("SELECT MAX(dict_version) FROM dict_enum"),
+        "parse_version": one("SELECT parse_version FROM core_listing"
+                             " WHERE parse_version <> ''"
+                             " ORDER BY parsed_at DESC, rowid DESC LIMIT 1"),
         "run_id": one("SELECT run_id FROM audit_request "
                       "ORDER BY rowid DESC LIMIT 1"),
     }

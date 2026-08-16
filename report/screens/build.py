@@ -42,8 +42,17 @@ MARKET_QUANTILES = (0.25, 0.50, 0.75)
 GONE = "gone"
 
 # 목록에 띄우는 축 요약 (STEP 97).  Component 이름을 쓴다
-CHIP_AXES = ("spec.hud", "warranty.general", "history.damage",
-             "history.insurance", "history.rental")
+# 목록에 좁은 칸으로 세우는 축.  ★ 순서와 종류는 시안이 정본이다
+# (ref/screens/v2_listings_시안.html — HUD · HDA · 선루프 · 사고 · 렌트 · 보증).
+# 한 칸에 몰아넣으면 200행에서 읽을 수 없다 — 축마다 한 칸이다
+CHIP_AXES = ("spec.hud", "spec.hda", "spec.sunroof", "history.damage",
+             "history.rental", "warranty.general")
+
+
+def axis_heads(root: str = ".") -> list[dict]:
+    """목록 축 열의 머리말.  ★ 문구를 화면에 박지 않는다 (STEP 91 · V6-02)."""
+    al = _labels(root)["AXIS_LABELS"]
+    return [{"axis": a, "label": al.get(a, a)} for a in CHIP_AXES]
 
 RANK_ORDER = ("S", "A", "B", "C", "D", "E")
 
@@ -130,15 +139,46 @@ def _total_points() -> float:
         return float(_j.load(f)["total_points"])
 
 
+def photo_url(photos_json: str | None, base: str) -> str | None:
+    """대표 사진 주소 (개정 274).
+
+    원문 Photos 중 ordering 이 가장 앞인 것 하나다.
+    ★ 우리가 내려받지 않는다 — 저작권은 엔카에 있고, 링크는 참조다.
+    ★ 원문이 깨져 있어도 화면을 무너뜨리지 않는다.  못 고르면 None 이다 (V11-57)
+    """
+    if not photos_json:
+        return None
+    try:
+        photos = json.loads(photos_json)
+    except (ValueError, TypeError):
+        return None
+    if not isinstance(photos, list):
+        return None
+    best, best_ord = None, None
+    for p in photos:
+        if not isinstance(p, dict):
+            continue
+        loc = p.get("location")
+        if not loc:
+            continue
+        try:
+            o = float(p.get("ordering"))
+        except (TypeError, ValueError):
+            o = float("inf")       # 순서를 모르면 맨 뒤로 — 있는 것을 버리진 않는다
+        if best_ord is None or o < best_ord:
+            best, best_ord = loc, o
+    return f"{base}{best}" if best else None
+
+
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
-         axes: dict | None = None, changes_by: dict | None = None
-         ) -> ListingRow:
+         axes: dict | None = None, changes_by: dict | None = None,
+         photo_base: str = "") -> ListingRow:
     """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
 
     워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
     """
     (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
-     dealer, dstatus, first_seen, last_seen, dv) = rec
+     dealer, dstatus, first_seen, last_seen, dv, photos) = rec
     got = (axes or {}).get(lid, {})
     chips = []
     for axis in CHIP_AXES:
@@ -167,6 +207,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         price_gap_pct=None, price_change_cnt=changes, days_on_market=None,
         dealer_shop=dealer, dealer_honesty=None, note=None,
         versions=_stamp(calc_version, dv),
+        photo_url=photo_url(photos, photo_base),
         # ★ gone 은 목록에서 사라진 것이다.  팔렸다고 단정하지 않는다
         status_label=labels["STATUS_LABELS"].get(dstatus) if dstatus else None)
 
@@ -212,10 +253,15 @@ def order_clause(order: str) -> str:
     return f"{ORDER_HEAD}, {first}, {ORDER_TAIL}"
 
 
-def view_listings(account: Account, conn: sqlite3.Connection,
-                  flt: ListingFilter, fin_cfg: dict, root: str = ".",
-                  page_size: int | None = None) -> list[ListingRow]:
-    """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1."""
+def _view_str(key: str, root: str = ".") -> str:
+    """화면 표시 정책 중 문자열.  ★ 코드에 박지 않는다 (config/web.json)."""
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return str(json.load(f)[key])
+
+
+def _listings_where(flt: ListingFilter) -> tuple[list, list]:
+    """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
+    갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
     where = ["l.site = ?"]
     args: list = [flt.site]
     if flt.target_key:
@@ -245,6 +291,26 @@ def view_listings(account: Account, conn: sqlite3.Connection,
             "EXISTS (SELECT 1 FROM result_axis a WHERE a.listing_id=l.listing_id"
             f" AND a.axis=? AND a.calc_version=? AND {cond})")
         args += [flt.axis, flt.calc_version]
+    return where, args
+
+
+def count_listings(conn: sqlite3.Connection, flt: ListingFilter) -> int:
+    """조건에 맞는 전체 건수 (V11-55).  ★ 쪽을 나누려면 전체를 알아야 한다.
+
+    쿼리 1개를 더 쓴다 — 「몇 건 중 몇 건」을 못 내는 것보다 낫다 (V11-34 여유 안)
+    """
+    where, args = _listings_where(flt)
+    return conn.execute(
+        "SELECT COUNT(*) FROM core_listing l LEFT JOIN result_score s"
+        " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+        f" WHERE {' AND '.join(where)}", [flt.calc_version, *args]).fetchone()[0]
+
+
+def view_listings(account: Account, conn: sqlite3.Connection,
+                  flt: ListingFilter, fin_cfg: dict, root: str = ".",
+                  page_size: int | None = None) -> list[ListingRow]:
+    """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1."""
+    where, args = _listings_where(flt)
 
     sql = (
         "SELECT l.listing_id, l.target_key, l.trim_badge, l.year_month,"
@@ -252,7 +318,8 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★ earned 를 가져온다.  비율은 earned/denominator 다 —
         #   score_total(555 환산)로 나누면 분모가 짧을수록 부풀려진다 (E-1)
         " s.grade, s.earned, s.denominator, l.dealer_shop, l.status,"
-        " l.first_seen, l.last_seen, s.dict_version"
+        # ★ 사진은 이미 원문에서 뽑아 앉아 있다 — 다시 받지 않는다 (개정 274)
+        " l.first_seen, l.last_seen, s.dict_version, l.photo_list_json"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         f" WHERE {' AND '.join(where)}"
@@ -271,8 +338,28 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     lids = [r[0] for r in recs]
     axes = _bulk_axes(conn, lids, flt.calc_version)
     changes = _bulk_changes(conn, lids)
-    return [_row(conn, r, labels, fin_cfg, i + 1, flt.calc_version,
-                 axes, changes) for i, r in enumerate(recs)]
+    base = _view_str("photo_base_url", root)
+    # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
+    first = 0 if flt.show_all else (flt.page - 1) * page_size
+    return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
+                 axes, changes, base) for i, r in enumerate(recs)]
+
+
+def recommend_funnel(conn, calc_version: str, shown: int) -> dict:
+    """후보가 몇 건인지만 내면 「왜 이것뿐인가」를 못 본다 (마스터 지시 08-16 · 7번).
+
+    ★ 단계마다 숫자를 낸다 — 어디서 줄었는지 눈으로 본다.
+      실측 08-16: 후보가 1건이었던 원인은 현재 판(calc_version)이 잘못
+      뽑힌 것이었다.  이 줄이 있었으면 바로 보였다
+    """
+    judged = conn.execute(
+        "SELECT COUNT(*) FROM result_score WHERE calc_version=?",
+        (calc_version,)).fetchone()[0]
+    dropped = conn.execute(
+        "SELECT COUNT(*) FROM result_score WHERE calc_version=?"
+        " AND grade IN ('E','NOT_RATED')", (calc_version,)).fetchone()[0]
+    return {"judged": judged, "dropped": dropped,
+            "eligible": judged - dropped, "shown": shown}
 
 
 def view_recommend(account: Account, conn, flt: ListingFilter,

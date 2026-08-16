@@ -67,6 +67,10 @@ class PageContext:
     #   JS 가 아니라 meta refresh 다 — JS 가 꺼져도 돌고, 실패해도
     #   지금까지의 진행은 서버가 만든 화면에 그대로 남는다 (V11-19 · STEP 132a)
     refresh_sec: int = 0
+    # ★ body 의 화면 클래스.  시안 23개가 같은 이름을 다르게 쓴 것이 57개라
+    #   (.bar · .cand · .prog · .log …) 그것만 이 클래스 안에 가둬 뒀다.
+    #   비어 있으면 공통 규칙만 걸린다 — 화면이 깨지지 않는다 (개정 275)
+    screen: str = ""
 
     @property
     def is_admin(self) -> bool:

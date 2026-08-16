@@ -73,6 +73,10 @@ class ListingRow:
     denominator: float | None = None
     ratio_pct: float | None = None
     denom_short: bool = False
+    # 대표 사진 주소 (개정 274).  ★ 우리가 내려받지 않는다 — ci.encar.com 을
+    #   그대로 부른다.  없으면 None 이고 화면은 thumb-none 으로 자리를 채운다.
+    #   ★ 판정에 쓰지 않는다.  보는 사람을 위한 것이다
+    photo_url: str | None = None
 
     # ★ tone 으로 나눈다.  화면이 판정하지 않는다 (STEP 152)
     @property

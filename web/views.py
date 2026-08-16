@@ -62,11 +62,14 @@ def page(conn, account, title: str, template: str, ctx: dict, *,
     from web.app import take_flashes
 
     flashes = list(flashes or []) + take_flashes(flash_key)
+    # ★ 화면 이름은 부분 템플릿 이름에서 온다 — 손으로 적지 않는다.
+    #   listings.html → s-listings.  시안의 화면별 규칙이 여기에 걸린다
+    screen = "s-" + template.removesuffix(".html").replace("_", "-")
     p = build_page(conn, account, title, "", csrf=csrf, flashes=flashes,
-                   refresh_sec=refresh_sec, **ver)
+                   refresh_sec=refresh_sec, screen=screen, **ver)
     body = render(template, {"page": p, **ctx})
     p = build_page(conn, account, title, body, csrf=csrf, flashes=flashes,
-                   refresh_sec=refresh_sec, **ver)
+                   refresh_sec=refresh_sec, screen=screen, **ver)
     html = render("_page.html", {"page": p, **ctx})
     return HTTP_OK, {}, html.encode("utf-8")
 
@@ -74,7 +77,7 @@ def page(conn, account, title: str, template: str, ctx: dict, *,
 # ── 화면별 어댑터 ────────────────────────────────────────────────────
 def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
-    from report.screens.build import view_listings
+    from report.screens.build import axis_heads, view_listings
 
     q = req.get("query", {})
     ver = _versions(conn)
@@ -97,6 +100,10 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
     rows = view_listings(account, conn, flt, _cfg("finance.json", root), root)
     return page(conn, account, "매물", "listings.html",
                 {"rows": rows, "count": len(rows), "filter": flt,
+                 # ★ 「3,471건 중 200건 · 1/18쪽」 (V11-55).
+                 #   200건만 보이면서 전체를 안 적으면 3,471건을 못 본다
+                 "paging": _paging(conn, flt, len(rows), root),
+                 "axis_heads": axis_heads(root),
                  # ★ 지금 조건을 칩으로 낸다.  누른 값이 보이지 않으면
                  #   무엇으로 걸렀는지 알 수 없다 (STEP 149d · 149g)
                  "chips": _filter_chips(flt),
@@ -319,6 +326,44 @@ def _query_string(flt) -> str:
     return _u.urlencode(got)
 
 
+# 쪽 넘김에 한 번에 내보일 쪽 번호 수.  ★ 18쪽을 다 늘어놓으면 줄이 넘친다
+PAGE_LINKS = 9
+
+
+def _paging(conn, flt, shown: int, root: str) -> dict:
+    """「3,471건 중 200건 · 1/18쪽」 + 쪽 넘김 (V11-55 · V11-58).
+
+    ★ 쪽을 넘어도 지금 조건이 그대로 붙는다 — 2쪽에서 필터가 풀리면
+      무엇을 보고 있는지 알 수 없다 (V11-58)
+    """
+    from report.screens.build import _view_cfg, count_listings
+
+    total = count_listings(conn, flt)
+    size = _view_cfg("rows_per_page", root)
+    pages = 1 if flt.show_all else max(1, -(-total // size))
+    now = min(max(1, flt.page), pages)
+    qs = _query_string(flt)
+    sep = "&" if qs else ""
+
+    def url(n: int) -> str:
+        return f"/listings?{qs}{sep}page={n}"
+
+    lo = max(1, now - PAGE_LINKS // 2)
+    hi = min(pages, lo + PAGE_LINKS - 1)
+    lo = max(1, hi - PAGE_LINKS + 1)
+    return {
+        "total": total, "shown": shown, "size": size,
+        "page": now, "pages": pages,
+        "many": pages > 1,
+        "prev": url(now - 1) if now > 1 else "",
+        "next": url(now + 1) if now < pages else "",
+        "first": url(1) if lo > 1 else "",
+        "last": url(pages) if hi < pages else "",
+        "links": [{"n": n, "url": url(n), "on": n == now}
+                  for n in range(lo, hi + 1)],
+    }
+
+
 def _filter(conn, q: dict, ver: dict) -> ListingFilter:
     """URL 파라미터 → 필터.  값 해석은 view_* 가 한다 (STEP 106a)."""
     return ListingFilter(
@@ -339,7 +384,9 @@ def _filter(conn, q: dict, ver: dict) -> ListingFilter:
 
 def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
-    from report.screens.build import excluded_groups, view_recommend
+    from report.screens.build import (
+        excluded_groups, recommend_funnel, view_recommend,
+    )
 
     ver = _versions(conn)
     rows = view_recommend(account, conn, _filter(conn, req.get("query", {}),
@@ -347,8 +394,11 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                           _cfg("finance.json", root), root)
     # ★ 뺀 것을 숨기지 않는다.  왜 뺐는지가 판단 재료다 (G-1)
     groups = excluded_groups(conn, ver["calc_version"])
+    # ★ 단계마다 숫자를 낸다 — 어디서 줄었는지 눈으로 본다 (7번).
+    #   ★ SQL 은 web/ 에 두지 않는다 (V11-01)
+    funnel = recommend_funnel(conn, ver["calc_version"], len(rows))
     return page(conn, account, "추천", "recommend.html",
-                {"rows": rows, "count": len(rows),
+                {"rows": rows, "count": len(rows), "funnel": funnel,
                  "r": {"excluded_groups": groups,
                        "excluded_total": sum(g.count for g in groups)}},
                 root=root, csrf=csrf, flash_key=flash_key)

@@ -84,9 +84,10 @@ def spec_a(ad: Client, lid: int) -> None:
         f"등급 순서 {grades[:6]}…", e_last)
 
     # A-7 숫자 셀 mono
+    # ★ 시안이 class="r num" 처럼 붙여 쓴다 — 낱말로 본다 (개정 275)
+    has_num = re.search(r'class="[^"]*\bnum\b[^"]*"', lb) is not None
     rec("A-7", "숫자 셀에 mono", "class 를 본다",
-        'class="num"' if 'class="num"' in lb else "없음",
-        'class="num"' in lb)
+        "num 있음" if has_num else "없음", has_num)
 
 
 # ── B  필터가 다음 행동의 조건 (STEP 149g · 149d) ───────────────────
@@ -670,8 +671,20 @@ def spec_l(ad: Client) -> None:
 
     st, cb, _h = ad.get("/static/app.css")
     literals = re.findall(r"#[0-9a-fA-F]{3,6}\b", cb)
+    tokens = re.findall(r"--[\w-]+:\s*(#[0-9a-fA-F]{3,6})", cb)
+    # ★ 시안이 쓴 색은 「늘린 색」이 아니다 — 시안이 정본이다 (개정 275).
+    #   토큰 밖이면서 시안에도 없는 것만 결함이다
+    sian = set()
+    _sd = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                       "ref", "screens")
+    if os.path.isdir(_sd):
+        for _f in os.listdir(_sd):
+            if _f.endswith(".html"):
+                sian |= {c.lower() for c in re.findall(
+                    r"#[0-9a-fA-F]{3,6}\b",
+                    open(os.path.join(_sd, _f), encoding="utf-8").read())}
     outside = [x for x in literals
-               if x not in re.findall(r"--[\w-]+:\s*(#[0-9a-fA-F]{3,6})", cb)]
+               if x not in tokens and x.lower() not in sian]
     rec("L-3", "토큰 밖 색값 없음", "CSS 를 훑는다",
         f"리터럴 {len(literals)} · 토큰 밖 {len(outside)}",
         not outside)

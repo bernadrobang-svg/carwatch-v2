@@ -8,7 +8,7 @@
   "flash_max": 5,
   "max_form_bytes": 65536,
   "session_max_age_sec": 43200,
-  "rows_per_page": 200,
+  "rows_per_page": 50,
   "signup_policy": "closed",
   "max_queries_per_request": 20,
   "price_bins": 8,
@@ -22,5 +22,6 @@
   "worker_poll_sec": 2,
   "progress_refresh_sec": 5,
   "status_poll_sec": 5,
-  "live_window_sec": 60
+  "live_window_sec": 60,
+  "photo_base_url": "https://ci.encar.com"
 }

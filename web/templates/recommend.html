@@ -1,4 +1,10 @@
-<h1>후보 <small>{{ count }}건 중 상위</small></h1>
+<h1>후보 <small>{{ funnel.shown | num }}건</small></h1>
+
+<p class="dim">판정 <strong>{{ funnel.judged | num }}건</strong>
+  → E · 미판정 <strong>{{ funnel.dropped | num }}건</strong> 뺌
+  → 후보 <strong>{{ funnel.eligible | num }}건</strong>
+  → 이 쪽 <strong>{{ funnel.shown | num }}건</strong>
+  <span class="dim">★ 후보가 적으면 어느 단계에서 줄었는지 여기서 봅니다</span></p>
 
 <p class="notice">
   ⓘ <strong>점수순이 아닙니다.</strong> 예산 · 월납입 · 확인 못 한 축을 함께 봅니다.
