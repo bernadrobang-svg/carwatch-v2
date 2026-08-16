@@ -219,16 +219,18 @@ def _collect_urls(target_key: str | None = None) -> list[dict]:
             continue
         spec = group.as_target_spec()
         keys = " · ".join(group.target_keys)
-        out.append({"kind": "list", "target_key": group.target_keys[0],
-                    "targets": keys, "label": f"{keys} 목록",
-                    "url": _page_url(adapter, spec, 0, rows),
-                    "url_template": _page_url(adapter, spec, None, rows),
-                    "rows": rows})
+        # ★ facet 을 먼저 둔다.  facet 이 없으면 S2 가 안 열려 그 뒤가 전부
+        #   막힌다 — 목록을 아무리 받아도 소용없다 (실측 08-16 · V4-25)
         for req in adapter.facet_urls(spec):
             out.append({"kind": "facet", "target_key": group.target_keys[0],
                         "targets": keys, "label": f"{keys} facet",
                         "url": req.url, "url_template": req.url,
                         "rows": rows})
+        out.append({"kind": "list", "target_key": group.target_keys[0],
+                    "targets": keys, "label": f"{keys} 목록",
+                    "url": _page_url(adapter, spec, 0, rows),
+                    "url_template": _page_url(adapter, spec, None, rows),
+                    "rows": rows})
     return out
 
 

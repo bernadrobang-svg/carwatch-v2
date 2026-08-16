@@ -35,6 +35,9 @@
     <strong>차종 하나</strong></label>
   <label class="opt"><input type="radio" name="scope_mode" value="some">
     <strong>여러 차종</strong> <span class="muted">고른 것만</span></label>
+  <label class="opt"><input type="radio" name="scope_mode" value="facet">
+    <strong>facet 만</strong>
+    <span class="muted">사전을 채우는 것.  이것이 없으면 S3 부터 전부 막힙니다</span></label>
   <label class="opt"><input type="radio" name="scope_mode" value="all">
     <strong>전 차종</strong>
     <span class="warn-block">{{ scope_count }}개 묶음 · 되돌릴 수 없이 오래 돕니다</span></label>
@@ -153,6 +156,14 @@
   function planFor() {
     var m = mode();
     if (m === 'all') { return PLAN.slice(); }
+    // ★ facet 만 — S2 를 여는 것이 급할 때 쓴다 (V4-25 가 여기 걸려 있다)
+    if (m === 'facet') {
+      var only = [];
+      for (var k = 0; k < PLAN.length; k++) {
+        if (PLAN[k].kind === 'facet') { only.push(PLAN[k]); }
+      }
+      return only;
+    }
     var want = chosen();
     if (m === 'one' && want.length > 1) { want = want.slice(0, 1); }
     var out = [];
@@ -224,11 +235,7 @@
   function probe() {
     var jobs = planFor();
     if (!jobs.length) { show('result', ['범위를 고르십시오.']); return; }
-    var first = null;
-    for (var i = 0; i < jobs.length; i++) {
-      if (jobs[i].kind === 'list') { first = jobs[i]; break; }
-    }
-    if (!first) { first = jobs[0]; }
+    var first = jobs[0];
     show('result', ['부르는 중…']);
     fit(first, 0, ROWS).then(function (got) {
       var doc = null;
