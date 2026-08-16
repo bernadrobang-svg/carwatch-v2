@@ -558,7 +558,7 @@ def status_view(conn, root: str = ".") -> dict:
             return None
         return int((now - t).total_seconds() // SEC_PER_MIN)
 
-    live = _live_progress(conn, now)
+    live = _live_progress(conn, now, root)
     # 마지막으로 처리한 매물 — 「진척이 있나」를 이것으로 가른다
     last = conn.execute(
         "SELECT source_id, endpoint, fetched_at FROM raw_response "
@@ -600,13 +600,20 @@ def status_view(conn, root: str = ".") -> dict:
     }
 
 
-# 「도는 중」으로 볼 최근 구간(초).  ★ 이보다 오래 조용하면 멈춘 것으로 본다
-LIVE_WINDOW_SEC = 60
 # 매물당 요청 4종 (2장 STEP 25).  ★ 여기서 세지 않는다 — 수집 계약이 정본이다
 from report.render import LISTING_ENDPOINTS  # noqa: E402
 
 
-def _live_progress(conn, now) -> dict:
+def _live_window(root: str = ".") -> int:
+    """「도는 중」으로 볼 최근 구간(초).  ★ 코드에 박지 않는다 (config.web)."""
+    import json as _j
+
+    with open(os.path.join(root, "config", "web.json"),
+              encoding="utf-8") as f:
+        return int(_j.load(f)["live_window_sec"])
+
+
+def _live_progress(conn, now, root: str = ".") -> dict:
     """실제로 도는가 · 얼마나 남았나 (개정 273 · STEP 136f).
 
     ★ recalc_job 만 보면 큐를 안 거친 실행을 「할 일 없음」으로 단정한다.
@@ -615,7 +622,8 @@ def _live_progress(conn, now) -> dict:
     """
     from datetime import timedelta
 
-    since = (now - timedelta(seconds=LIVE_WINDOW_SEC)).isoformat()
+    window = _live_window(root)
+    since = (now - timedelta(seconds=window)).isoformat()
     recent = conn.execute(
         "SELECT COUNT(*) FROM audit_request WHERE requested_at >= ?",
         (since,)).fetchone()[0]
@@ -631,7 +639,7 @@ def _live_progress(conn, now) -> dict:
     ).fetchone()[0]
     # ★ 상한이다.  진단은 encarDiagnosis==0 인 매물만 부르므로 실제는 더 적다
     total = active * len(LISTING_ENDPOINTS)
-    rate = recent / float(LIVE_WINDOW_SEC)
+    rate = recent / float(window)
     left = max(0, total - done)
     eta_min = int(left / rate / SEC_PER_MIN) if rate else None
     step = {"list": "S1", "facet": "S2", "catalog": "S7"}.get(
@@ -639,7 +647,7 @@ def _live_progress(conn, now) -> dict:
     return {
         "live_running": recent > 0,
         "live_recent": recent,
-        "live_window": LIVE_WINDOW_SEC,
+        "live_window": window,
         "live_rate": round(rate, 1),
         "live_step": step,
         "live_run_id": run_id,

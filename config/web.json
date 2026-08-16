@@ -21,5 +21,6 @@
   "browser_interval_sec": 0,
   "worker_poll_sec": 2,
   "progress_refresh_sec": 5,
-  "status_poll_sec": 5
+  "status_poll_sec": 5,
+  "live_window_sec": 60
 }
