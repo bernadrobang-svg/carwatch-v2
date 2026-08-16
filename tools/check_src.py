@@ -572,6 +572,32 @@ for code in sorted(spec_codes - impl):
         missing.append(code)
 say("S16", "검증 코드 대조", len(impl & spec_codes) + excused, [], missing)
 
+# ── S23 실행 환경 (0장 · 부록 E · 개정 242) ─────────────────────────
+# ★ 3.9 로 돌리면 zip(strict=True) 이 죽어 시험 9종이 무관하게 실패한다.
+#   그때 「코드가 깨졌다」로 읽으면 없는 결함을 쫓는다 (실측 08-16)
+MIN_PY = (3, 11)
+_ver = sys.version_info[:2]
+say("S23", "실행 환경 (Python 3.11+)", 1 if _ver >= MIN_PY else 0, [],
+    [] if _ver >= MIN_PY else
+    [f"{_ver[0]}.{_ver[1]} 로 돌고 있다 — python3.11 로 돌린다"])
+
+# ── S24 시험 격리 (0장 · 부록 E · 개정 246) ─────────────────────────
+# ★ 운영 DB 를 복사해 돌면 거기 남은 상태가 결과를 바꾼다.
+#   실측 08-16 — queued 인 recalc_job 1건에 관리 화면이 409 로 잠겨
+#   test_spec_ui 가 9건 무더기로 실패했다.  코드는 하나도 안 바뀌었다
+_PROD_DB = re.compile(r"""ROOT\s*,\s*["']carwatch\.db["']""")
+_leaks = []
+_tests_dir = os.path.join(ROOT, "tests")
+for _f in sorted(os.listdir(_tests_dir)) if os.path.isdir(_tests_dir) else []:
+    if not _f.endswith(".py"):
+        continue
+    with io.open(os.path.join(_tests_dir, _f), encoding="utf-8") as _fh:
+        _body = _fh.read()
+    for _n, _line in enumerate(_body.splitlines(), start=1):
+        if _PROD_DB.search(_line):
+            _leaks.append(f"tests/{_f}:{_n} — 운영 DB 를 가리킨다")
+say("S24", "시험 격리 (운영 DB 미사용)", 1 if not _leaks else 0, [], _leaks)
+
 print()
 print(f"미착수 합계 {todo_total}")
 print("결과:", "통과" if not fail else "실패 — " + " / ".join(fail))

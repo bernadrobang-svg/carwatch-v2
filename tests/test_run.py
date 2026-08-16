@@ -89,9 +89,13 @@ RECORD = {
 class StubEncar:
     """페이지네이션 · facet 2요청 · 매물 4종을 흉내낸다."""
 
-    def __init__(self, total: int = 45, drop_badge: bool = False):
+    def __init__(self, total: int = 45, drop_badge: bool = False,
+                 id_base: int = 0):
         self.total = total
         self.drop_badge = drop_badge
+        # ★ 씨앗 DB 는 ID 대역을 옮긴다 — 0·1·2 는 다른 시험이 쓰는
+        #   탐색 URL(/readside/vehicle/1)과 겹친다 (실측 08-16)
+        self.id_base = id_base
         self.list_calls = 0
         self.facet_calls = 0
         self.detail_calls = 0
@@ -150,11 +154,20 @@ class StubEncar:
         self.list_calls += 1
         offset = int(u.split("|MobileModifiedDate|")[1].split("|")[0])
         limit = int(u.split("|MobileModifiedDate|")[1].split("|")[1].split("&")[0])
+        # ★ 전건이 같은 값이면 분포가 없다 — 히스토그램·등급 분포가
+        #   한 칸에 몰려 「화면이 도는지」를 못 본다 (S24 씨앗 · 개정 246)
         items = [{
-            "Id": str(offset + i), "ModelGroup": "G80", "Model": "G80 (RG3)",
+            "Id": str(self.id_base + offset + i),
+            "ModelGroup": "G80", "Model": "G80 (RG3)",
             "Manufacturer": "제네시스", "Badge": "2.5 터보", "FuelType": "가솔린",
-            "Year": 202305.0, "FormYear": 2023, "Mileage": 30000,
-            "Price": 5000.0, "Color": "블랙", "ColorExpression": "#000;#000",
+            # ★ 0번은 원래 값을 지킨다 — 환산·형식 시험이 그 행을 본다
+            "Year": 202305.0 if offset + i == 0 else 202301.0 + (offset + i) % 3,
+            "FormYear": 2023,
+            "Mileage": 30000 if offset + i == 0
+                       else 20000 + ((offset + i) % 6) * 9000,
+            "Price": 5000.0 if offset + i == 0
+                     else 4200.0 + ((offset + i) % 6) * 260,
+            "Color": "블랙", "ColorExpression": "#000;#000",
             "SeatColor": "블랙", "Transmission": "오토", "SellType": "일반",
             "SalesStatus": "ADVERTISE", "ServiceCopyCar": "ORIGINAL",
             "OfficeCityState": "서울특별시", "Photos": [], "Trust": [],

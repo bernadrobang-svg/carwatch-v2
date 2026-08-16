@@ -40,10 +40,11 @@ def _env():
     root = tempfile.mkdtemp()
     shutil.copytree(os.path.join(ROOT, "config"), os.path.join(root, "config"))
     db = os.path.join(root, "carwatch.db")
-    src = os.path.join(ROOT, "carwatch.db")
-    if not os.path.isfile(src):
-        return None, None, None
-    shutil.copy(src, db)
+    # ★ 운영 DB 를 복사하지 않는다 (0장 · S24 · 개정 246).
+    #   거기 남은 상태가 시험 결과를 바꾼다 — 실측 08-16
+    from seed import build_seed_db
+
+    build_seed_db(db, root)
     conn = sqlite3.connect(db)
     from store.admin import create_account
 

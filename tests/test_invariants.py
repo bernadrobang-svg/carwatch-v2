@@ -171,11 +171,11 @@ def inv3_source_not_null() -> None:
 
     ★ 근거 없이 나온 점수는 되짚을 수 없다.  판정이 아니라 숫자다
     """
-    db = os.path.join(ROOT, "carwatch.db")
-    if not os.path.isfile(db):
-        check("불변식③ source 존재", True, "DB 없음 — 규칙만 검사")
-        return
-    conn = sqlite3.connect(db)
+    # ★ 운영 DB 를 읽지 않는다 (0장 · S24).  씨앗으로 본다.
+    #   실물 데이터에 대한 같은 불변식은 check_all 의 V3-01·02 가 본다 (개정 247)
+    from seed import seed_db_path
+
+    conn = sqlite3.connect(seed_db_path())
     rows = conn.execute(
         "SELECT calc_version, COUNT(*), SUM(source IS NULL) "
         "FROM result_axis GROUP BY calc_version").fetchall()
@@ -206,11 +206,10 @@ def inv6_no_unclassified() -> None:
 
     ★ 미분류가 남아 있으면 그 축은 판정이 멈춘 것이다 — 0점이 아니다
     """
-    db = os.path.join(ROOT, "carwatch.db")
-    if not os.path.isfile(db):
-        check("불변식⑥ 사전 미분류 0", True, "DB 없음")
-        return
-    conn = sqlite3.connect(db)
+    # ★ 운영 DB 를 읽지 않는다 (0장 · S24).  실물 쪽은 check_all V4-25 가 본다
+    from seed import seed_db_path
+
+    conn = sqlite3.connect(seed_db_path())
     n = conn.execute("SELECT COUNT(*) FROM dict_enum "
                      "WHERE status='pending'").fetchone()[0]
     check("불변식⑥ 사전 미분류 0", n == 0, f"{n}건")

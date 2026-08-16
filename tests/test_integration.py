@@ -126,7 +126,12 @@ def start_server():
         if os.path.isdir(src):
             shutil.copytree(src, os.path.join(root, d))
     db = os.path.join(root, "carwatch.db")
-    shutil.copy(os.path.join(ROOT, "carwatch.db"), db)
+    # ★ 운영 DB 를 복사하지 않는다 (0장 · S24 · 개정 246).
+    #   거기 남은 recalc_job·계정이 시험 결과를 바꿔 「코드는 그대로인데
+    #   어제는 되고 오늘은 안 되는」 상태가 된다 — 실측 08-16
+    from seed import build_seed_db
+
+    build_seed_db(db, root)
 
     from collect.pipeline import resume_point
 
