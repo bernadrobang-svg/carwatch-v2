@@ -1,0 +1,360 @@
+{
+ "manage": {
+  "dummy": false,
+  "dummyVehicleId": null,
+  "reRegistered": true,
+  "webReserved": true,
+  "registDateTime": "2026-06-01T09:44:17",
+  "firstAdvertisedDateTime": "2026-08-02T21:34:44",
+  "modifyDateTime": "2026-08-02T21:34:44",
+  "subscribeCount": 13,
+  "viewCount": 1338
+ },
+ "category": {
+  "type": "CAR",
+  "manufacturerCd": "087",
+  "manufacturerName": "테슬라",
+  "modelCd": "004",
+  "modelName": "모델 Y",
+  "gradeCd": "004",
+  "gradeName": "RWD",
+  "gradeEnglishName": "RWD",
+  "yearMonth": "202508",
+  "formYear": "2025",
+  "domestic": false,
+  "importType": "REGULAR_IMPORT",
+  "originPrice": 5299,
+  "manufacturerEnglishName": "Tesla",
+  "modelGroupCd": "004",
+  "modelGroupName": "모델 Y",
+  "modelGroupEnglishName": "Model Y",
+  "gradeDetailCd": null,
+  "gradeDetailName": null,
+  "gradeDetailEnglishName": null,
+  "jatoVehicleId": 824569420250328,
+  "warranty": {
+   "userDefined": true,
+   "companyName": "테슬라코리아",
+   "bodyMonth": 48,
+   "bodyMileage": 80000,
+   "transmissionMonth": 96,
+   "transmissionMileage": 192000
+  }
+ },
+ "advertisement": {
+  "type": "CAR",
+  "price": 3899,
+  "status": "ADVERTISE",
+  "warrantyStyleColor": null,
+  "trust": [],
+  "hotMark": [
+   11,
+   12,
+   18
+  ],
+  "oneLineText": "3일간타보고결정OK/SOH99%/전액할부가능/자체as가능",
+  "salesStatus": null,
+  "directInspected": false,
+  "preVerified": false,
+  "extendWarranty": false,
+  "deemedExtendWarranty": false,
+  "homeService": false,
+  "meetGo": false,
+  "encarCheck": false,
+  "preDelivery": false,
+  "leaseRentInfo": null,
+  "encarPassType": null,
+  "encarPassCategoryType": null,
+  "underBodyPhotos": [],
+  "hasUnderBodyPhoto": false,
+  "advertisementType": "NORMAL",
+  "diagnosisCar": false
+ },
+ "contact": {
+  "userId": "zzzzz5072",
+  "userType": "DEALER",
+  "no": "05062207381",
+  "address": "경기 수원시 권선구",
+  "contactType": "MOBILE",
+  "isVerifyOwner": false,
+  "isOwnerPartner": true
+ },
+ "spec": {
+  "type": "CAR",
+  "mileage": 17102,
+  "displacement": 180,
+  "transmissionName": "오토",
+  "fuelCd": "009",
+  "fuelName": "전기",
+  "colorName": "검정색",
+  "customColor": null,
+  "seatCount": 5,
+  "tradeType": "D",
+  "tradeOwnerType": null,
+  "tradeCompanyName": null,
+  "bodyName": "SUV"
+ },
+ "photos": [
+  {
+   "code": "002",
+   "path": "/carpicture10/pic4210/42106289_002.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "021",
+   "path": "/carpicture10/pic4210/42106289_021.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "008",
+   "path": "/carpicture10/pic4210/42106289_008.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "005",
+   "path": "/carpicture10/pic4210/42106289_005.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "020",
+   "path": "/carpicture10/pic4210/42106289_020.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "016",
+   "path": "/carpicture10/pic4210/42106289_016.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "006",
+   "path": "/carpicture10/pic4210/42106289_006.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "004",
+   "path": "/carpicture10/pic4210/42106289_004.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "022",
+   "path": "/carpicture10/pic4210/42106289_022.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "003",
+   "path": "/carpicture10/pic4210/42106289_003.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "007",
+   "path": "/carpicture10/pic4210/42106289_007.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "023",
+   "path": "/carpicture10/pic4210/42106289_023.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "017",
+   "path": "/carpicture10/pic4210/42106289_017.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "009",
+   "path": "/carpicture10/pic4210/42106289_009.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "024",
+   "path": "/carpicture10/pic4210/42106289_024.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "010",
+   "path": "/carpicture10/pic4210/42106289_010.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "018",
+   "path": "/carpicture10/pic4210/42106289_018.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "019",
+   "path": "/carpicture10/pic4210/42106289_019.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "001",
+   "path": "/carpicture10/pic4210/42106289_001.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  },
+  {
+   "code": "015",
+   "path": "/carpicture10/pic4210/42106289_015.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-06-02T14:38:07",
+   "desc": null
+  }
+ ],
+ "options": {
+  "type": "CAR",
+  "standard": [
+   "001",
+   "004",
+   "005",
+   "006",
+   "007",
+   "008",
+   "010",
+   "014",
+   "017",
+   "019",
+   "020",
+   "021",
+   "022",
+   "023",
+   "024",
+   "026",
+   "027",
+   "030",
+   "031",
+   "032",
+   "033",
+   "034",
+   "035",
+   "051",
+   "055",
+   "056",
+   "057",
+   "058",
+   "059",
+   "063",
+   "072",
+   "075",
+   "077",
+   "079",
+   "081",
+   "082",
+   "083",
+   "085",
+   "086",
+   "088",
+   "094",
+   "096",
+   "097"
+  ],
+  "etc": [],
+  "choice": [],
+  "tuning": []
+ },
+ "condition": {
+  "accident": {
+   "recordView": true,
+   "resumeView": true
+  },
+  "inspection": {
+   "formats": [
+    "TABLE"
+   ]
+  },
+  "seizing": {
+   "seizingCount": 0,
+   "pledgeCount": 0
+  }
+ },
+ "partnership": {
+  "brand": null,
+  "testdrive": {
+   "active": false
+  },
+  "dealer": {
+   "userId": "zzzzz5072",
+   "name": "이종진",
+   "firm": {
+    "code": "4834",
+    "name": "솔카",
+    "diag2Partnered": false,
+    "diagnosisCenters": [
+     {
+      "code": "173",
+      "name": "엔카진단센터 수원 SAC",
+      "major": true,
+      "telephoneNumber": "031-291-6420",
+      "address": "경기 수원시 권선구 권선로 341 수원오토컬렉션(SAC) 지하1층 101호"
+     },
+     {
+      "code": "164",
+      "name": "엔카진단센터 수원 서둔점",
+      "major": false,
+      "telephoneNumber": "010-4522-7026",
+      "address": "경기 수원시 권선구 권선로 309 수원오토콜렉션2(SAC) 1층"
+     }
+    ],
+    "meetgoCenters": []
+   },
+   "visitReservation": true
+  },
+  "isPartneredVehicle": true,
+  "certifiedBrand": null,
+  "lease": null,
+  "rent": null
+ },
+ "contents": {
+  "text": "※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n안녕하세요 중고차 전문딜러 오토컬렉션 솔카 이종진 팀장입니다.\n\n차량에 관심을 가져주셔서 감사합니다.\n\n현재 고객님께서 보시고 계신 차량은 100% 실매물이며\n저희 솔카에서는 허위매물은 절대 하지않습니다. 안심하고 문의주세요^^!\n\n\n\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n★차량 상세설명★\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n\n\n■ 차명 : 테슬라 모델 Y RWD\n\n■ 연식 : 2025-08-18\n\n■주행거리 : 17,094Km\n\n■특이사항 : 전국최저가 전기차특성상 과견적 자차 처리로 전손처리 배터리 이상 무  점검완료\n                     완벽수리 전액할부 가능합니다. 3일간 타보고결정OK/(단 조건부)\n\n\n\n\n\n\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n- 오토컬렉션 솔카의 안심 구매 보증 서비스-\n\n1. 나라에서 등록된 전문 평가사가 직접 진단한 차량입니다.\n\n2. 법적 효력이 있는 계약서를 100% 작성해드립니다.\n\n3.실매물이 걱정되시는분께 차량 영상 촬영 및 실사진을 보내드립니다.\n\n4. 출발전 원하시는 차량의 성능기록부, 차량등록증, 사업자사본, 종사원등 확인을\n원하시는 부분에 대해 모든 절차를 도와드립니다.\n\n\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n-단지 전시전 차량의 전반적인 테스트를 실시하여 차량상태를 완벽하게 파악하여\n문제가 있는 부분은 정비해놨습니다.\n\n- 현재 타고다니시는 차량과 대차가 가능하며 대차받는 차량들은 매우 높은금액으로 정리해 드립니다.\n\n- 언제든 편하게 연락주시면 친절하게 상담 도와드리겠습니다\n\n- 실내크리닉 및 광택 작업을 마치고 전시하였습니다\n\n\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n■판매자 정보\n\n-판매자 : 이종진\n-종사원번호 : CG21-05469\n-고객님께 맞는 11개의 금융사와 제휴\nKB국민카드, 하나은행, 신한은행, 신한카드\n신한캐피탈, 현대캐피탈, KB캐피탈, 하나캐피탈\nJB우리캐피탈, 메리츠캐피탈, DGB캐피탈\n\n- 1:1 상황에 맞게 할부 및 리스/렌트가능 : \n대학생, 군미필자, 주부, 무직자, 프리랜서, 신불해지자, 외국인\n\n- 기종 사업자리즈차량 승계 및 위탁판매가능\n\n- 전문 할부/렌트 담당자 배정 : \n무분별한 신용조회 필요없습니다.\n\n\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n■ 차량 구매시\n\n-현금구매시 : 신분증(주민등록증 또는 면허증)\n-할부구매시 : 면허증(추가서류 상황에 따라)\n- 대차시      : 차량용매도용 인감1통, 자동차세 완납 증명서 1통\n\n\n※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※※\n\n■오시는길\n\n★ 개인차량이용시 \n경기도 수원시 권선구 권선로 341, 오토컬렉션 418호, 419호 솔카\n\n★ 대중교통이용시\n수원역에서 도보 20분, 택시5분거리입니다\n수원역도착 10분전에 말씀주시면 픽업도 가능합니다.",
+  "meetGoText": null
+ },
+ "view": {
+  "encarDiagnosis": -1,
+  "encarMeetGo": -1,
+  "hasEvBatteryInfo": false,
+  "isBatteryPass": false,
+  "isBatteryCompensable": false,
+  "photoPlus": 0,
+  "meetgoExpertAvailable": false,
+  "isSingleAd": false
+ },
+ "vehicleId": 42106289,
+ "vehicleType": "CAR",
+ "vin": "LRWYGCFJ5SC205893",
+ "vehicleNo": "31마4660"
+}

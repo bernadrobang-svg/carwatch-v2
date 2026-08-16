@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.title }} · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    {{ page.viewer.display_name }} · {{ page.viewer.role }}
+    {% if page.viewer.can_watch %}
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <button type="submit">로그아웃</button>
+    </form>
+    {% endif %}
+    {% if !page.viewer.can_watch %}<a href="/login">로그인</a>{% endif %}
+  </span>
+</header>
+
+<nav class="nav">
+  {% for m in page.menu %}
+  <a class="nav-item" href="{{ m.path }}">{{ m.label }}{% if m.group %} <em>{{ m.group }}</em>{% endif %}{% if m.locked %} <span class="locked">잠김</span>{% endif %}</a>
+  {% endfor %}
+</nav>
+
+{% for f in page.flashes %}<p class="flash">{{ f }}</p>{% endfor %}
+
+{% for b in page.banners %}
+<div class="banner banner-{{ b.kind }}">
+  <strong>{{ b.text }}</strong>
+  {% if b.action %}<span class="banner-action">{{ b.action }}</span>{% endif %}
+</div>
+{% endfor %}
+
+<main>
+{% block body %}{% endblock %}
+</main>
+
+<footer class="ver">
+  <span>calc {{ page.calc_version }}</span>
+  <span>dict {{ page.dict_version }}</span>
+  <span>parse {{ page.parse_version }}</span>
+  <span>run {{ page.run_id }}</span>
+  <span>{{ page.generated_at }}</span>
+</footer>
+
+</body>
+</html>

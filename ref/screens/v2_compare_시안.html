@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비교 · CarWatch v2</title>
+<style>
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header{border-bottom:1px solid var(--line);
+       background:linear-gradient(180deg,#171c21,#12161a);position:sticky;top:0;z-index:30}
+.hwrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:28px;height:52px}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase;margin-left:8px}
+nav{display:flex;gap:2px;margin-left:6px}
+nav a{padding:6px 13px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a:hover{color:var(--text);background:var(--surface2)}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:16px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle;background:var(--down)}
+
+main{max-width:1280px;margin:0 auto;padding:20px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:24px 0 11px}
+h2:first-of-type{margin-top:0}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:0;margin-bottom:14px;overflow:hidden}
+
+.tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;
+     border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+a.tag:hover{border-color:var(--amber)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+.up-v{color:var(--up)} .down-v{color:var(--down)}
+select,button,.btn{background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;padding:5px 11px;
+  font-size:12.5px;font-family:inherit;cursor:pointer}
+.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+
+/* ── 비교 표 ── */
+table.cmp{width:100%;border-collapse:collapse;font-size:13px}
+table.cmp th,table.cmp td{padding:8px 12px;border-bottom:1px solid var(--line);
+  vertical-align:middle}
+table.cmp th{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--faint);
+  text-transform:uppercase;text-align:left;background:var(--surface2);
+  border-bottom:1px solid var(--line2)}
+table.cmp td:first-child,table.cmp th:first-child{width:150px;color:var(--dim);
+  background:#12161a;position:sticky;left:0;z-index:5}
+table.cmp td{text-align:center;font-family:var(--mono)}
+table.cmp td:first-child{text-align:left;font-family:var(--sans)}
+table.cmp tr:last-child td{border-bottom:0}
+
+/* 열 머리 */
+.chd{padding:14px 12px;text-align:left!important;font-family:var(--sans)!important;
+     border-bottom:1px solid var(--line2);background:var(--surface2)}
+.chd .t{font-size:14px;font-weight:600;margin-top:5px}
+.chd .s{font-size:11.5px;color:var(--dim);margin-top:2px}
+.chd .p{font-family:var(--mono);font-size:19px;font-weight:600;margin-top:6px}
+.chd .x{float:right;color:var(--faint);cursor:pointer;font-size:14px;
+        padding:0 4px;border-radius:3px}
+.chd .x:hover{color:var(--up);background:rgba(224,101,95,.12)}
+
+/* 승자 표시 — 색이 아니라 굵기와 점 */
+.win{font-weight:700;position:relative}
+.win::after{content:"●";color:var(--amber);font-size:7px;
+            vertical-align:super;margin-left:3px}
+.lose{color:var(--faint)}
+
+/* 축 그룹 머리 */
+tr.grp td{background:#12161a;font-size:10.5px;letter-spacing:.07em;
+          color:var(--faint);text-transform:uppercase;font-family:var(--sans);
+          padding:6px 12px}
+
+/* 결론 */
+.verdict{border:1px solid #5c4520;border-radius:8px;background:#161a1e;
+         padding:16px 18px;margin-bottom:14px}
+.verdict h3{margin:0 0 10px;font-size:12px;letter-spacing:.09em;
+            color:var(--amber);text-transform:uppercase;font-weight:600}
+.vrow{display:flex;gap:12px;padding:7px 0;font-size:13px;
+      border-bottom:1px solid var(--line)}
+.vrow:last-child{border-bottom:0}
+.vrow .k{width:120px;color:var(--dim);flex:none}
+.vrow .v{flex:1}
+.vrow .v b{color:var(--amber)}
+
+/* 담기 */
+.slot{border:1px dashed var(--line2);border-radius:7px;padding:22px 14px;
+      text-align:center;color:var(--faint);font-size:12.5px}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>CarWatch</b><span>v2</span></div>
+    <nav>
+      <a href="v2_dashboard_시안.html">현황</a>
+      <a href="v2_recommend_시안.html">후보</a>
+      <a href="v2_listings_시안.html">매물</a>
+      <a href="v2_watch_시안.html">관심</a>
+      <a href="v2_compare_시안.html" class="on">비교</a>
+      <a href="v2_market_시안.html">시세</a>
+      <a href="v2_dealers_시안.html">딜러</a>
+      <a href="v2_admin_시안.html" style="color:var(--amber)">관리</a>
+    </nav>
+    <div class="hmeta">
+      <a href="v2_login_시안.html" style="border:1px solid var(--line2);border-radius:12px;padding:2px 10px;color:var(--dim)">마스터</a>
+      <span><span class="dot"></span>08-14 06:00 수집</span>
+      <span class="num">c3 · d7 · p2</span>
+    </div>
+  </div>
+</header>
+<main>
+
+<div class="bar">
+  <span class="btn on">차이만 보기</span>
+  <span class="btn">전 항목</span>
+  <span style="width:10px"></span>
+  <span class="btn">＋ 매물 담기</span>
+  <span class="btn">전부 비우기</span>
+  <span class="faint" style="margin-left:auto;font-size:12px">
+    최대 <span class="num">3</span>대 · 지금 <span class="num">3</span>대</span>
+</div>
+
+<!-- ★ 결론 먼저 -->
+<div class="verdict">
+  <h3>이 셋 중에서</h3>
+  <div class="vrow"><div class="k">점수만 보면</div>
+    <div class="v"><b>A</b> — 83.4% · 다만 분모가 530 입니다
+      <span class="faint">(HDA·틴팅 미확인)</span></div></div>
+  <div class="vrow"><div class="k">확실한 것</div>
+    <div class="v"><b>B</b> — 전 축 판정 완료 · 81.9%/555
+      <span class="faint">더 오르지도 내리지도 않습니다</span></div></div>
+  <div class="vrow"><div class="k">월 부담</div>
+    <div class="v"><b>C</b> — 42.4만 · A 보다 3.7만 낮습니다
+      <span class="faint">48개월이면 178만 차이</span></div></div>
+  <div class="vrow"><div class="k">갈리는 지점</div>
+    <div class="v">HUD 를 포기할 수 있는가 ·
+      HDA 확인을 기다릴 수 있는가</div></div>
+</div>
+
+<div class="card" style="overflow-x:auto">
+<table class="cmp">
+<thead>
+<tr>
+  <th></th>
+  <th class="chd">
+    <span class="x" title="빼기">×</span>
+    <span class="tag amber">A</span>
+    <div class="t">그랑 콜레오스</div>
+    <div class="s">1.5 E-TECH 아이코닉 2WD · 25/07</div>
+    <div class="p">3,254만</div>
+  </th>
+  <th class="chd">
+    <span class="x" title="빼기">×</span>
+    <span class="tag amber">A</span>
+    <div class="t">그랑 콜레오스</div>
+    <div class="s">1.5 E-TECH 에스프리 · 25/05</div>
+    <div class="p">3,340만</div>
+  </th>
+  <th class="chd">
+    <span class="x" title="빼기">×</span>
+    <span class="tag">B</span>
+    <div class="t">그랑 콜레오스</div>
+    <div class="s">1.5 E-TECH 에스프리 · 25/03</div>
+    <div class="p">3,010만</div>
+  </th>
+</tr>
+</thead>
+<tbody>
+
+<tr class="grp"><td colspan="4">판정</td></tr>
+<tr><td>비율</td>
+  <td class="win">83.4%</td><td>81.9%</td><td class="lose">74.8%</td></tr>
+<tr><td>점수 / 분모</td>
+  <td>441.9 / <span class="amber" style="color:var(--amber)">530</span></td>
+  <td class="win">454.5 / 555</td>
+  <td>396.4 / <span style="color:var(--amber)">530</span></td></tr>
+<tr><td>확인 못 한 축</td>
+  <td class="lose">2개 · 25점</td>
+  <td class="win">없음</td>
+  <td class="lose">2개 · 25점</td></tr>
+<tr><td>채우면 최대</td>
+  <td>84.1% <span class="faint">(HDA2 시 87.6%)</span></td>
+  <td class="dim">확정</td>
+  <td>75.9%</td></tr>
+
+<tr class="grp"><td colspan="4">비용</td></tr>
+<tr><td>표시가</td>
+  <td>3,254만</td><td class="lose">3,340만</td><td class="win">3,010만</td></tr>
+<tr><td>현금 (선납)</td>
+  <td class="dim">1,500만</td><td class="dim">1,500만</td><td class="dim">1,500만</td></tr>
+<tr><td>월 납입</td>
+  <td>46.1만</td><td class="lose">47.3만</td><td class="win">42.4만</td></tr>
+<tr><td>48개월 총액</td>
+  <td>2,213만</td><td class="lose">2,270만</td><td class="win">2,035만</td></tr>
+<tr><td>시세 대비</td>
+  <td class="win down-v">−159만</td><td class="dim">−42만</td>
+  <td class="down-v">−94만</td></tr>
+
+<tr class="grp"><td colspan="4">사양</td></tr>
+<tr><td>HUD</td>
+  <td class="win">O</td><td class="win">O</td><td class="lose">·</td></tr>
+<tr><td>HDA</td>
+  <td style="color:var(--amber)">?</td><td class="win">1단계</td>
+  <td style="color:var(--amber)">?</td></tr>
+<tr><td>선루프</td>
+  <td class="win">O</td><td class="lose">·</td><td class="win">O</td></tr>
+<tr><td>SVM</td>
+  <td class="lose">·</td><td class="win">O</td><td class="lose">·</td></tr>
+<tr><td>SCC · BSD</td>
+  <td>O · O</td><td>O · O</td><td>O · O</td></tr>
+<tr><td>틴팅</td>
+  <td style="color:var(--amber)">?</td><td class="win">O</td>
+  <td style="color:var(--amber)">?</td></tr>
+
+<tr class="grp"><td colspan="4">상태</td></tr>
+<tr><td>연식</td>
+  <td class="win">25/07</td><td>25/05</td><td class="lose">25/03</td></tr>
+<tr><td>주행</td>
+  <td class="win">6,318</td><td>9,400</td><td class="lose">12,840</td></tr>
+<tr><td>사고</td>
+  <td class="win">무사고</td><td class="win">무사고</td><td class="win">무사고</td></tr>
+<tr><td>보험 내차피해</td>
+  <td class="win">0만</td><td class="win">0만</td><td class="win">0만</td></tr>
+<tr><td>렌트 이력</td>
+  <td class="win">비렌트</td><td class="win">비렌트</td><td class="win">비렌트</td></tr>
+<tr><td>일반보증</td>
+  <td class="lose">23개월</td><td class="win">21개월</td><td>19개월</td></tr>
+<tr><td>색상</td>
+  <td class="win">검정 / 검정</td><td>흰색 / 검정</td><td class="win">검정 / 검정</td></tr>
+
+<tr class="grp"><td colspan="4">거래</td></tr>
+<tr><td>딜러</td>
+  <td>(주)굿카</td><td>오토플러스</td><td>스마트상사</td></tr>
+<tr><td>게시</td>
+  <td>12일</td><td class="win">2일</td><td class="lose">28일</td></tr>
+<tr><td>가격 변동</td>
+  <td class="down-v">−30만</td><td class="dim">—</td>
+  <td class="down-v win">−50만</td></tr>
+
+<tr class="grp"><td colspan="4"></td></tr>
+<tr><td></td>
+  <td><a href="v2_why_시안.html" class="tag amber">판정 근거</a>
+      <span class="tag">＋ 관심</span></td>
+  <td><a href="v2_why_시안.html" class="tag amber">판정 근거</a>
+      <span class="tag">＋ 관심</span></td>
+  <td><a href="v2_why_시안.html" class="tag amber">판정 근거</a>
+      <span class="tag">＋ 관심</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="faint" style="font-size:11.5px;line-height:1.9;margin-bottom:18px">
+  <b style="color:var(--text)">●</b> 그 항목에서 앞선 것 ·
+  <span style="color:var(--amber)">?</span> 확인 못 함 (분모에서 제외) ·
+  <span style="color:var(--amber)">530</span> 분모가 짧음
+  <br>
+  분모가 다르면 점수를 그대로 비교할 수 없습니다.
+  「확인 못 한 축」이 몇 개인지를 함께 보십시오.
+</div>
+
+<!-- 최종 후보 지정 -->
+<h2>최종 후보로</h2>
+<div class="card" style="padding:14px 17px">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <span class="btn">A 를 최종 후보로</span>
+    <span class="btn">B 를 최종 후보로</span>
+    <span class="btn">C 를 최종 후보로</span>
+    <span class="faint" style="font-size:11.5px;margin-left:8px">
+      지정하면 관심 목록에 고정되고, 가격·상태 변동을 추적합니다</span>
+  </div>
+</div>
+
+<div class="faint" style="font-size:11px;text-align:right;margin-top:14px">
+  calc c3 · dict d7 · parse p2 · 2026-08-14 06:12
+</div>
+</main>
+</body>
+</html>

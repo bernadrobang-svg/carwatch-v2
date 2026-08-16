@@ -1,0 +1,36 @@
+{% if error %}<p class="warn-block">{{ error }}</p>{% endif %}
+<h1>로그인</h1>
+<p class="muted">이 도구는 로컬에서만 열립니다.</p>
+
+{% if no_account %}
+<div class="notice">
+  <p><strong>계정이 없습니다.</strong> 첫 관리자는 CLI 에서만 만듭니다.
+     웹에서 가입을 열면 누구나 관리자가 될 수 있기 때문입니다.</p>
+  <pre>python run.py admin create --name 마스터</pre>
+  <p class="muted">만든 뒤 임시 비밀번호로 로그인하면 바로 변경 화면이 나옵니다.</p>
+</div>
+{% endif %}
+
+{% if must_change %}
+<div class="notice">
+  <p><strong>비밀번호를 바꾸십시오.</strong> 임시 비밀번호로는 다른 화면이 열리지 않습니다.</p>
+</div>
+<form method="post" action="/login">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <input type="hidden" name="mode" value="change">
+  <label>새 비밀번호 <input type="password" name="secret" required></label>
+  <button type="submit">바꾸기</button>
+</form>
+{% endif %}
+
+{% if !must_change %}
+<form method="post" action="/login">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <label>이름 <input name="name" required></label>
+  <label>비밀번호 <input type="password" name="secret" required></label>
+  <button type="submit">로그인</button>
+</form>
+<p class="muted">비밀번호를 잊었으면 CLI 에서 재설정합니다 —
+  <code>python run.py admin reset --name 마스터</code></p>
+{% endif %}
+<p class="muted">계정이 없으면 <a href="/join">계정 만들기</a></p>

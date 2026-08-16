@@ -1,0 +1,66 @@
+<h1>개발 요청 <small>{{ count | num }}건</small></h1>
+<p class="notice">
+  없는 기능 · 막힌 것을 기록해 세션에 전달합니다.
+  <strong>요청은 삭제하지 않습니다</strong> — 상태 전이로만 관리합니다.<br>
+  ★ <code>applied</code> 는 어느 STEP 에 반영됐는지를,
+  <code>not_applied</code> · <code>misapplied</code> 는 사유를 받습니다.
+  <span class="muted">근거 STEP 137</span>
+</p>
+
+<h2>새 요청</h2>
+<form method="post" action="/admin/requests">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <input type="hidden" name="action" value="create">
+  <label>제목 <input name="title" size="50" required></label>
+  <label>내용 <textarea name="body" rows="4" cols="70" required></textarea></label>
+  <label>출처
+    <select name="origin">
+      {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit">남기기</button>
+</form>
+
+<h2>요청 목록</h2>
+{% if rows %}
+<table>
+<thead><tr><th>제목</th><th>출처</th><th>상태</th><th>반영 STEP</th>
+<th>사유</th><th>상태 바꾸기</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+  <td>{{ r.title }}</td>
+  <td class="muted">{{ r.origin }}</td>
+  <td>{{ r.status }}</td>
+  <td class="runid">{{ r.step_ref }}</td>
+  <td class="muted">{{ r.direction }}</td>
+  <td>
+    <form method="post" action="/admin/requests" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="action" value="status">
+      <input type="hidden" name="request_id" value="{{ r.request_id }}">
+      <select name="status">
+        {% for s in statuses %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+      </select>
+      <input name="step_ref" size="8" placeholder="STEP">
+      <input name="direction" size="16" placeholder="사유">
+      <button type="submit" class="mini">바꾸기</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !rows %}
+<p class="muted">아직 요청이 없습니다.</p>
+{% endif %}
+
+<h2>내보내기</h2>
+<p class="muted"><code>requested</code> · <code>reopened</code> 를 md 로 냅니다.
+  세션에 붙여 개발 지시로 씁니다. 덮어쓰지 않고 새 파일로 냅니다.</p>
+<form method="post" action="/admin/requests">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <input type="hidden" name="action" value="export">
+  <button type="submit">내보내기</button>
+</form>

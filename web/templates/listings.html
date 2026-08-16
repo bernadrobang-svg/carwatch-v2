@@ -1,0 +1,80 @@
+<h1>매물 <small>{{ count }}건</small></h1>
+{% if !count %}
+<p class="notice">조건에 맞는 매물이 없습니다.
+  <strong>필터를 하나 지워 보십시오</strong> — 위의 칩에서 <code>×</code> 를 누르면
+  그 조건만 빠집니다.</p>
+{% endif %}
+<table>
+<thead><tr>
+<th>등급</th><th class="num">비율</th><th>차종</th><th>트림</th><th>연식</th>
+<th class="num">주행</th><th class="num">가격</th><th class="num">월납</th>
+<th>딜러</th><th>상태</th><th>축</th><th></th>
+</tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+  <td><a href="/listings?grade={{ r.grade }}" title="이 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
+  <td class="num">
+    {% if r.ratio_pct %}<strong class="ratio">{{ r.ratio_pct }}%</strong>
+    <span class="raw{% if r.denom_short %} denom-short{% endif %}">{{ r.earned }}/{{ r.denominator }}</span>
+    <span class="bar"><i style="width:{{ r.ratio_pct }}%"></i></span>{% endif %}
+    {% if !r.ratio_pct %}<span class="muted">—</span>{% endif %}
+  </td>
+  <td><a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a></td>
+  <td>{{ r.trim }}</td>
+  <td>{{ r.year_month }}</td>
+  <td class="num">{{ r.mileage_km | km }}</td>
+  <td class="num">{{ r.price_won | won }}</td>
+  <td class="num">{{ r.monthly_won | won }}</td>
+  <td>{{ r.dealer_shop }}</td>
+  <td>{{ r.status_label }}</td>
+  <td class="chips">{% for c in r.axis_chips %}<a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}"><b>{{ c.mark }}</b> {{ c.label }}</a>{% endfor %}</td>
+  <td><a href="/why/{{ r.listing_id }}">근거</a>
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
+      <button type="submit" class="mini">＋ 관심</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<p class="legend muted">
+  값을 누르면 그 조건으로 걸러집니다 · <strong>지금 조건</strong>이 그대로 다음 행동의 조건이 됩니다.<br>
+  분모 555 전 축 판정 · 530 일부 제외 — <strong>비율로 정렬합니다</strong>.
+  판정할 수 없는 축은 0 점이 아니라 분모에서 뺍니다.
+</p>
+
+{% if !rows %}
+<h2>조건에 맞는 매물이 없습니다</h2>
+<p class="muted">위 조건을 하나 지워 보십시오.</p>
+{% endif %}
+
+{% if !chips %}
+<p class="muted">필터 없음 — 표의 값을 누르면 그 조건으로 걸러집니다.</p>
+{% endif %}
+{% if chips %}
+<p class="chips">지금 조건
+  {% for c in chips %}<span class="chip">{{ c.label }} {{ c.value }}
+    <a href="{{ c.remove_url }}" title="이 조건만 뺍니다">×</a></span>{% endfor %}
+  <a class="chip" href="/listings">전부 지우기</a>
+</p>
+{% endif %}
+
+<h2>지금 조건으로</h2>
+<p><strong>{{ condition_sentence }}</strong></p>
+<p class="muted">지금 걸린 조건이 그대로 다음 행동의 조건이 됩니다 —
+  관심 등록 · 비교 · 알림에 같은 조건이 넘어갑니다.</p>
+<form method="post" action="/watch/add" class="inline">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <input type="hidden" name="kind" value="query">
+  <input type="hidden" name="target_key" value="{{ filter.target_key }}">
+  <input type="hidden" name="min_grade" value="{{ filter.grade }}">
+  <input type="hidden" name="axis" value="{{ filter.axis }}">
+  <input type="hidden" name="bucket" value="{{ filter.bucket }}">
+  <input name="name" size="24" placeholder="조건 이름" required>
+  <button type="submit">이 조건으로 알림 등록</button>
+</form>
+<p class="muted">현재 조건 <code>{{ query_string }}</code></p>

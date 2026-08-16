@@ -1,0 +1,14 @@
+{
+  "_ref": "지시서 부록 E · 08-14 신설",
+  "_note": "★ 검사 대상 경로를 코드에 박지 않는다. 장이 나뉘면 여기만 고친다",
+  "spec_glob": "docs/chapters/**/*.md",
+  "ref_glob": "docs/ref/*.md",
+  "chapters": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+  "self_exclude": [
+    "tools/check_spec.py",
+    "tools/check_src.py",
+    "tools/check_screens.py",
+    "validate/v*_*.py"
+  ],
+  "screens_dir": "ref/screens"
+}

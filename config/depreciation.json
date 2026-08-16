@@ -1,0 +1,33 @@
+{
+  "_source": "v1 car_monitor.db 4,750건 · 2026-08-09 관측",
+  "_note": "첫 실수집 후 STEP 64 절차로 재산출한다. 이 값은 초기값이다",
+  "curve": {
+    "0": 0.829,
+    "1": 0.824,
+    "2": 0.788,
+    "3": 0.71,
+    "4": 0.62,
+    "5": 0.589
+  },
+  "curve_beyond": 0.589,
+  "coefficient": {
+    "G80_25T": 1.053,
+    "G80_EV": 0.854,
+    "G70_25T": 0.977,
+    "G70_20T": 1.119,
+    "GV70_EV": 1.05,
+    "GV60": 1.049,
+    "KOLEOS_HEV": 0.97,
+    "SPORTAGE_LPI": 1.517,
+    "GRANDEUR_LPG": 0.946,
+    "MODEL_Y": 0.977
+  },
+  "curve_min_sample": 100,
+  "coefficient_change_limit": 0.1,
+  "coefficient_min_sample": 30,
+  "coefficient_max_iter": 3,
+  "coefficient_sane_range": [
+    0.8,
+    1.2
+  ]
+}

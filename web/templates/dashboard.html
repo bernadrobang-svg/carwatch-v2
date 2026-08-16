@@ -1,0 +1,89 @@
+<h1>현황</h1>
+
+{% if d.attention %}
+<h2>해야 할 일</h2>
+<ul>{% for a in d.attention %}
+<li class="warn-warn">{{ a.kind }} <strong>{{ a.count | num }}건</strong>
+  <span class="muted">— {{ a.action }}</span></li>
+{% endfor %}</ul>
+{% endif %}
+
+<h2>등급 분포 {{ d.grade_total | num }}건 · 전 차종</h2>
+<table>
+<thead><tr>{% for r in d.grade_rows %}<th class="num">{{ r.grade }}</th>{% endfor %}</tr></thead>
+<tbody><tr>{% for r in d.grade_rows %}<td class="num"><a href="/listings?grade={{ r.grade }}">{{ r.count | num }}</a></td>{% endfor %}</tr></tbody>
+</table>
+{% if d.e_reasons %}
+<p class="muted">E 사유 — {% for r in d.e_reasons %}<span class="chip">{{ r }} {{ d.e_reasons[r] | num }}</span>{% endfor %}</p>
+{% endif %}
+
+<h2>차종별 <span class="muted">막대는 A / B / C 이하</span></h2>
+<table>
+<thead><tr><th>차종</th><th class="num">매물</th><th>1위</th>
+<th class="num">A등급 중앙가</th><th>등급 분포</th></tr></thead>
+<tbody>
+{% for t in d.target_stats %}
+<tr><td><a href="/listings?target={{ t.target_key }}">{{ t.target_key }}</a></td><td class="num">{{ t.total | num }}</td>
+<td class="num">{{ t.rank1 }}</td>
+<td class="num">{{ t.median_price_a_won | won }}</td>
+<td class="muted">{{ t.grades }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if d.attention %}
+<h2>주의</h2>
+<ul>{% for a in d.attention %}<li class="warn-warn">{{ a.kind }} {{ a.count | num }}건 — {{ a.detail }}</li>{% endfor %}</ul>
+{% endif %}
+
+{% if d.today_changes %}
+<h2>오늘 변동</h2>
+<table>
+<thead><tr><th>구분</th><th>차종</th><th>항목</th><th class="num">변화</th>
+<th class="num">현재가</th></tr></thead>
+<tbody>
+{% for c in d.today_changes %}
+<tr><td>{{ c.kind }}</td><td>{{ c.target_key }}</td>
+  <td class="muted">{{ c.trim }}</td>
+  <td class="num">{{ c.delta_won | won }}</td>
+  <td class="num">{{ c.price_won | won }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% if d.steps %}
+<h2>수집</h2>
+<p class="muted">★ 「없음」은 그 매물에 그 응답이 없는 것입니다. 실패가 아닙니다.</p>
+<table>
+<thead><tr><th>단계</th><th class="num">요청</th><th class="num">성공</th>
+<th class="num">없음</th><th class="num">실패</th><th class="num">시간</th>
+<th>판정</th></tr></thead>
+<tbody>
+{% for s in d.steps %}
+<tr><td>{{ s.label }}</td><td class="num">{{ s.requested | num }}</td>
+  <td class="num">{{ s.ok | num }}</td><td class="num">{{ s.missing | num }}</td>
+  <td class="num">{{ s.failed | num }}</td>
+  <td class="num">{{ s.seconds | num }}초</td><td>{{ s.verdict }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% if d.finalists %}
+<h2>상위 후보 <span class="muted">추천순</span></h2>
+<table>
+<thead><tr><th class="num">순위</th><th>등급</th><th>차종</th>
+<th class="num">가격</th><th></th></tr></thead>
+<tbody>
+{% for r in d.finalists %}
+<tr><td class="num">{{ r.rank | num }}</td>
+  <td><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></td>
+  <td>{{ r.target_label }} {{ r.trim }}</td>
+  <td class="num">{{ r.price_won | won }}</td>
+  <td><a href="/why/{{ r.listing_id }}">근거</a></td></tr>
+{% endfor %}
+</tbody>
+</table>
+<p class="muted">★ 점수순이 아닙니다. 예산 · 월납입 · 제외 축을 함께 봅니다.</p>
+{% endif %}

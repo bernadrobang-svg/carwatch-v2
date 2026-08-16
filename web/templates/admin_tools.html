@@ -1,0 +1,62 @@
+<h1>도구</h1>
+<p class="notice">
+  도구는 <strong>읽기 또는 설정 변경만</strong> 합니다. 데이터를 고치지 않습니다 —
+  데이터 수정은 재파싱·재판정으로 합니다.<br>
+  ★ 도구 결과는 <strong>제안</strong>입니다. 적용은 설정 화면에서 사유와 함께 합니다 —
+  「산출했다」와 「바꿨다」는 다릅니다.
+  <span class="muted">근거 STEP 135</span>
+</p>
+
+<h2>점검 — 읽기만 합니다</h2>
+<table>
+<thead><tr><th>도구</th><th>하는 일</th><th>근거</th><th></th></tr></thead>
+<tbody>
+{% for t in tools %}
+<tr><td>{{ t.label }}</td><td class="muted">{{ t.what }}</td>
+  <td class="muted">{{ t.step }}</td>
+  <td>
+    <form method="post" action="/admin/tools" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="reason" value="점검">
+      <input type="hidden" name="tool" value="{{ t.key }}">
+      <button type="submit" class="mini">실행</button>
+    </form>
+  </td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if result %}
+<h2>{{ result.title }}</h2>
+<p class="muted">{{ result.note }}</p>
+{% if result.rows %}
+<table>
+<thead><tr>{% for k in result.rows.0 %}<th>{{ k }}</th>{% endfor %}</tr></thead>
+<tbody>
+{% for r in result.rows %}
+<tr>{% for k in r %}<td>{{ r[k] }}</td>{% endfor %}</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% endif %}
+
+<h2>정비 — 되돌릴 수 있습니다</h2>
+<p class="muted">DDL 을 고쳤을 때 기존 DB 를 따라가게 합니다. 데이터를 지우지 않습니다.</p>
+<pre>python run.py migrate</pre>
+
+<h2>내보내기</h2>
+<p class="muted">매물 · 판정 · 축별 근거를 CSV 로 냅니다. 개인정보는 빠집니다.
+  덮어쓰지 않고 새 파일로 냅니다.</p>
+<pre>python run.py export --format csv
+python run.py report</pre>
+
+<h2>여기에 없는 것</h2>
+<p class="muted">아래는 CLI 에서만 합니다.
+  버튼이 있으면 「일단 눌러보자」가 됩니다 — 원문을 확인한 뒤 손으로 치는 편이 안전합니다.</p>
+<ul class="muted">
+  <li><code>collect --full</code> 전면 재수집 — 되돌릴 수 없습니다</li>
+  <li><code>db reset</code> DB 초기화 — 원문이 사라집니다</li>
+  <li><code>admin reset</code> 비밀번호 재설정 — 잠겼을 때 씁니다</li>
+</ul>

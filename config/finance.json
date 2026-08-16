@@ -1,0 +1,17 @@
+{
+  "_ref": "지시서 7장 STEP 83 · 마스터 회신 20260809 확정",
+  "_estimated": ["fee_stamp", "fee_transfer", "fee_delivery", "fee_tinting", "bond_table"],
+  "_note": "_estimated 항목은 실측 전이다. 0 이므로 실구매가에 더해지지 않으며 화면에 「미확정」으로 표시한다 (STEP 83)",
+  "down_payment_won": 15000000,
+  "loan_months": 48,
+  "loan_rate_annual": 0.055,
+  "repay_method": "equal_installment",
+  "tax_acquisition_rate": 0.07,
+  "bond_table": {},
+  "fee_stamp": 0,
+  "fee_transfer": 0,
+  "fee_delivery": 0,
+  "fee_tinting": 0,
+  "ev_tax_exempt": ["MODEL_Y", "GV60", "G80_EV", "GV70_EV"],
+  "hold_months": 48
+}

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- ★ 로컬에서 파일로 연 것입니다. 링크는 동작하지 않습니다.
+     배치·색·간격을 보기 위한 것입니다. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>판정 근거 · CarWatch<script>
+var ca = document.getElementById('cmp-add');
+if (ca) ca.onclick = function () {
+  fetch('/api/compare/add', {method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({listing_id: ca.dataset.id})})
+    .then(function (r) { return r.json(); })
+    .then(function (d) { ca.textContent = d.ok ? '담김 ✓' : d.error;
+                         ca.disabled = d.ok; });
+};
+</script>
+</title>
+<meta http-equiv="refresh" content="30">
+<style>
+/* ─────────────────────────────────────────────────────────
+   야간 계기판. 값을 읽는 도구이지 보여주는 화면이 아니다.
+   숫자는 등폭, 라벨은 작게, 강조는 한 곳에만.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a;          /* 계기판 조명 — 강조는 여기만 */
+  --down:#4fc3a1;           /* 인하 = 좋음 */
+  --up:#e0655f;             /* 인상 = 나쁨 */
+  --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','Cascadia Mono','D2Coding',
+         'Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Segoe UI',
+         'Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:var(--sans); font-size:14px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── 헤더 ── */
+header{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#171c21,#12161a);
+  position:sticky; top:0; z-index:20;
+}
+.hwrap{max-width:1560px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:28px;height:52px}
+.brand{display:flex;align-items:baseline;gap:9px;letter-spacing:-.01em}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase}
+nav{display:flex;gap:2px;margin-left:6px}
+nav a{padding:6px 13px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a:hover{color:var(--text);background:var(--surface2)}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:16px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle}
+.dot.ok{background:var(--down)} .dot.warn{background:var(--amber)}
+.dot.bad{background:var(--up)}  .dot.none{background:var(--faint)}
+
+/* ── 본문 ── */
+main{max-width:1560px;margin:0 auto;padding:22px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:0 0 11px}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:16px 18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1080px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── 지표 스트립 ── */
+.strip{display:flex;gap:0;border:1px solid var(--line);border-radius:7px;
+       overflow:hidden;background:var(--surface);margin-bottom:18px}
+.stat{flex:1;padding:13px 16px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat .k{font-size:10.5px;letter-spacing:.07em;color:var(--faint);
+         text-transform:uppercase}
+.stat .v{font-family:var(--mono);font-size:22px;font-weight:600;
+         line-height:1.25;margin-top:2px}
+.stat .v small{font-size:11px;color:var(--dim);font-weight:400;
+               margin-left:3px}
+
+/* ── 표 ── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:7px 9px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:var(--surface2)}
+.r{text-align:right} .c{text-align:center}
+tr.rejected{opacity:.4}
+
+/* ── 배지 ── */
+.tag{display:inline-block;font-size:10.5px;padding:1.5px 6px;
+     border-radius:3px;border:1px solid var(--line2);color:var(--dim);
+     white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.tag.q1{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.q2{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.tag.q3{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.q4{border-color:var(--line2);color:var(--faint)}
+
+/* 클릭해서 목록으로 들어갈 수 있는 값 */
+.cellnum{border-bottom:1px dotted var(--line2);cursor:pointer}
+.cellnum:hover{border-bottom-color:var(--amber);color:var(--amber)!important}
+a.tag{cursor:pointer}
+a.tag:hover{border-color:var(--amber)}
+
+/* 썸네일 */
+.thumb{width:112px;height:78px;border-radius:5px;object-fit:cover;
+       background:var(--surface2);border:1px solid var(--line);flex:none}
+.thumb.sm{width:64px;height:44px;border-radius:4px}
+.thumb-none{display:flex;align-items:center;justify-content:center;
+            font-size:10px;color:var(--faint);text-align:center;
+            line-height:1.3}
+
+/* 마우스 오버 미리보기 */
+#peek{position:fixed;z-index:200;display:none;pointer-events:none;
+      width:290px;background:var(--surface);border:1px solid var(--line2);
+      border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.55);
+      overflow:hidden}
+#peek img{width:100%;height:184px;object-fit:cover;display:block;
+          background:var(--surface2)}
+#peek .pk{padding:10px 12px}
+#peek .pk-t{font-weight:600;font-size:13.5px;margin-bottom:3px}
+#peek .pk-p{font-family:var(--mono);font-size:19px;font-weight:600;
+            line-height:1.2}
+#peek .pk-r{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+#peek .pk-d{font-size:11px;color:var(--dim);margin-top:7px;
+            padding-top:7px;border-top:1px solid var(--line)}
+
+/* 필터 요약 */
+.chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{font-size:11.5px;padding:2px 9px;border-radius:12px;
+      background:var(--surface2);border:1px solid var(--line2);
+      color:var(--text)}
+.chip b{color:var(--amber)}
+
+.up-v{color:var(--up)} .down-v{color:var(--down)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+
+/* ── 폼 ── */
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+     margin-bottom:14px}
+select,button,.btn{
+  background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;
+  padding:5px 11px;font-size:12.5px;font-family:inherit;cursor:pointer}
+select:hover,button:hover,.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);
+        font-weight:600}
+form.inline{display:inline}
+
+/* ── 빈 상태 ── */
+.empty{padding:56px 24px;text-align:center;color:var(--dim)}
+.empty h3{color:var(--text);font-size:16px;margin:0 0 8px;font-weight:600}
+.empty code{background:var(--surface2);padding:3px 8px;border-radius:4px;
+            font-family:var(--mono);font-size:12.5px;color:var(--amber)}
+.empty p{margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>car_monitor</b><span>중고차 시장 관측</span></div>
+    <nav>
+      <a href="/"          class="">현황</a>
+      <a href="/recommend" class="">후보</a>
+      <a href="/listings"  class="">매물</a>
+      <a href="/watch"     class="">관심</a>
+  <a href="/compare" class="">비교</a>
+      <a href="/dealers"   class="">딜러</a>
+      <a href="/market"    class="">시세</a>
+      <a href="/run"       class="">수집</a>
+      <a href="/reports"   class="">리포트</a>
+    </nav>
+    <div class="hmeta">
+      
+        <span><span class="dot none"></span>수집 이력 없음</span>
+      
+      <span id="runbadge" style="display:none">
+        <span class="dot warn"></span><span id="runphase">실행 중</span>
+      </span>
+      <span class="num">2026-08-14 01:50</span>
+    </div>
+  </div>
+</header>
+<main>
+
+
+<div class="card" style="margin-bottom:16px">
+  <div style="display:flex;gap:14px">
+    
+    <div style="flex:1">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <span class="tag amber"
+          >A</span>
+        <b style="font-size:15px">그랑 콜레오스</b>
+        <span class="num dim">25/07식</span>
+        <span class="num dim">6,318km</span>
+      </div>
+      <div class="num" style="font-size:22px;font-weight:600;margin-top:5px">
+        3,254<small
+          style="font-size:11px;color:var(--dim)">만</small>
+        
+        <span class="down-v" style="font-size:12px">
+          </span>
+        
+      </div>
+      <div class="dim" style="font-size:12.5px;margin-top:4px">
+        순위 2 ·
+        검증 완료
+        
+      </div>
+      <div style="margin-top:7px;display:flex;gap:8px;align-items:center">
+        
+        <a href="http://x" target="_blank" rel="noopener"
+           style="color:var(--amber);font-size:12.5px">엔카에서 보기 ↗</a>
+        
+        <button id="cmp-add" data-id="encar_42142135"
+          style="padding:2px 9px;font-size:11.5px">⇄ 비교에 추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>무엇을 조회했는가</h2>
+<div class="card" style="padding:6px 10px;margin-bottom:16px">
+<table>
+
+<tr>
+  <td style="width:150px">성능점검기록부</td>
+  <td class="c" style="width:70px">
+    <span class="tag down">받음</span>
+  </td>
+  <td class="faint num" style="width:100px">X</td>
+  <td class="dim" style="font-size:12px">사고 부위·상태</td>
+</tr>
+
+<tr>
+  <td style="width:150px">자동차이력정보</td>
+  <td class="c" style="width:70px">
+    <span class="tag down">받음</span>
+  </td>
+  <td class="faint num" style="width:100px">X</td>
+  <td class="dim" style="font-size:12px">보험처리액·번호판 이력</td>
+</tr>
+
+<tr>
+  <td style="width:150px">엔카 자체진단</td>
+  <td class="c" style="width:70px">
+    <span class="tag ">미조회</span>
+  </td>
+  <td class="faint num" style="width:100px"></td>
+  <td class="dim" style="font-size:12px">외판 부위별 판정</td>
+</tr>
+
+<tr>
+  <td style="width:150px">선택 옵션</td>
+  <td class="c" style="width:70px">
+    <span class="tag ">미조회</span>
+  </td>
+  <td class="faint num" style="width:100px"></td>
+  <td class="dim" style="font-size:12px">HUD 등 장착 옵션</td>
+</tr>
+
+</table>
+</div>
+
+
+<h2>축별 판정</h2>
+<div class="card" style="padding:6px 10px;margin-bottom:16px">
+<table>
+
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag down"
+      >OK</span></td>
+  <td style="width:110px">2 보증</td>
+  <td class="dim">W1 · 일반 23개월 · 엔진 47개월</td>
+</tr>
+
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag down"
+      >OK</span></td>
+  <td style="width:110px">3 주행거리</td>
+  <td class="dim">6,318km (0_50)</td>
+</tr>
+
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag down"
+      >OK</span></td>
+  <td style="width:110px">4 색상</td>
+  <td class="dim">외 black 검정색  /  내 black 검정</td>
+</tr>
+
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag down"
+      >OK</span></td>
+  <td style="width:110px">5 렌트</td>
+  <td class="dim">none / none</td>
+</tr>
+
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag down"
+      >OK</span></td>
+  <td style="width:110px">6 사고</td>
+  <td class="dim">AC1 무사고</td>
+</tr>
+
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag down"
+      >OK</span></td>
+  <td style="width:110px">7 보험</td>
+  <td class="dim">I0 내차 피해 없음</td>
+</tr>
+
+</table>
+</div>
+
+
+<h2>왜 2순위인가</h2>
+<div class="card" style="padding:12px 14px;margin-bottom:16px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px">
+  
+    <span class="tag down"
+      >✅ 비렌트</span>
+  
+    <span class="tag down"
+      >✅ 무사고</span>
+  
+    <span class="tag down"
+      >✅ HUD</span>
+  
+    <span class="tag down"
+      >✅ 보증 23개월</span>
+  
+    <span class="tag down"
+      >✅ 주요옵션 91%</span>
+  
+  </div>
+</div>
+
+
+
+<h2>주요 옵션 <span class="faint" style="font-size:10px;letter-spacing:0;
+  text-transform:none">등급이 아니라 동순위 정렬에 사용</span></h2>
+<div class="card" style="padding:6px 10px;margin-bottom:16px">
+<table>
+
+<tr>
+  <td style="width:180px">헤드업 디스플레이</td>
+  <td class="c" style="width:80px">
+    <span class="tag down">탑재</span>
+    </td>
+  <td class="dim num"></td>
+</tr>
+
+<tr>
+  <td style="width:180px">고속도로 주행 보조</td>
+  <td class="c" style="width:80px">
+    <span class="tag down">탑재</span>
+    </td>
+  <td class="dim num"></td>
+</tr>
+
+<tr>
+  <td style="width:180px">선루프</td>
+  <td class="c" style="width:80px">
+    <span class="tag down">탑재</span>
+    </td>
+  <td class="dim num"></td>
+</tr>
+
+<tr>
+  <td style="width:180px">어라운드뷰 모니터</td>
+  <td class="c" style="width:80px">
+    <span class="tag down">탑재</span>
+    </td>
+  <td class="dim num"></td>
+</tr>
+
+<tr>
+  <td style="width:180px">스마트 크루즈 컨트롤</td>
+  <td class="c" style="width:80px">
+    <span class="tag down">탑재</span>
+    </td>
+  <td class="dim num"></td>
+</tr>
+
+<tr>
+  <td style="width:180px">후측방 경보</td>
+  <td class="c" style="width:80px">
+    <span class="tag down">탑재</span>
+    </td>
+  <td class="dim num"></td>
+</tr>
+
+<tr>
+  <td style="width:180px">틴팅</td>
+  <td class="c" style="width:80px">
+    <span class="tag">불명</span></td>
+  <td class="dim num"></td>
+</tr>
+
+<tr><td><b>합계</b></td>
+    <td class="c"><b>91%</b></td>
+    <td class="faint">불명은 감점하지 않습니다</td></tr>
+</table>
+</div>
+
+
+
+<div class="card" style="padding:9px 14px;margin-bottom:16px" class="dim">
+  <span class="faint">시세 위치 — 표본 부족 (3대)
+    (5대 이상이어야 중앙값이 의미가 있습니다)</span>
+</div>
+
+
+
+<h2>금융</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><th style="width:150px"></th><th class="r">중고</th>
+      <th class="r">신차 (동일 트림)</th></tr>
+  <tr><td>차량가</td>
+      <td class="r num">3,254만</td>
+      <td class="r num">4,270만
+        </td></tr>
+  <tr><td>취득세·등록비</td>
+      <td class="r num dim">137만</td>
+      <td class="r num dim">208만</td></tr>
+  <tr><td>선납</td>
+      <td class="r num dim">1,500만</td>
+      <td class="r num dim">1,500만</td></tr>
+  <tr><td>48개월</td>
+      <td class="r num dim">5.9%</td>
+      <td class="r num dim">4.0%</td></tr>
+  <tr><td><b>월 할부</b></td>
+      <td class="r num"><b>44.3만</b></td>
+      <td class="r num"><b>67.3만</b></td></tr>
+  <tr><td>총 이자</td>
+      <td class="r num dim">236만</td>
+      <td class="r num dim">249만</td></tr>
+</table>
+
+</div>
+
+<h2>월 총액</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><td style="width:160px">할부</td>
+      <td class="num">44.3만</td></tr>
+  <tr><td>유지비</td>
+      <td class="num">16.0만
+        <span class="faint">
+          연료 17 ·
+          자동차세 13 ·
+          보험 95 ·
+          정비 67 (연간)</span></td></tr>
+  <tr><td>주차</td>
+      <td class="num">7.0만</td></tr>
+  <tr><td><b>월 총액</b></td>
+      <td class="num"><b style="font-size:16px">
+        67.4만</b>
+        <span class="up-v">
+          목표 대비 +17.4만</span></td></tr>
+  <tr><td>10년 총비용</td>
+      <td class="num">0.64억</td></tr>
+</table>
+<div class="faint" style="margin-top:8px;font-size:11.5px">
+  ⓘ 보험료는 추정치입니다 (53세 남성 기준) · 잔존가치는 차감하지 않습니다
+</div>
+</div>
+
+
+
+<h2>자동차이력정보</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><td style="width:200px">① 내 보험으로 처리</td>
+      <td class="num">0회 ·
+        0만</td></tr>
+  <tr><td>② 타차보험으로 처리</td>
+      <td class="num">0회 ·
+        —만</td></tr>
+  <tr><td><b>내 차 손해 합계</b></td>
+      <td class="num"><b class="">
+        0만
+        </b>
+        <span class="faint">— 둘 다 내 차가 입은 손해입니다</span></td></tr>
+  <tr><td>소유자 변경</td><td class="num">0회</td></tr>
+  <tr><td>번호판 변경</td><td class="num">0회
+    </td></tr>
+  
+</table>
+</div>
+
+
+
+<h2>참고 자료</h2>
+<div class="card" style="padding:8px 12px;margin-bottom:16px">
+
+  
+  <div style="padding:4px 0;font-size:12.5px">
+    <span>🔴</span>
+    변속기 보호모드 — 교체비 800만
+    <span class="faint" style="font-size:11px">
+      결함
+      
+      · 링크 미등록</span>
+  </div>
+  
+
+  
+  <div style="padding:4px 0;font-size:12.5px">
+    <span>🟠</span>
+    인포테인먼트 설정 초기화 · 파워트레인 부품 수급
+    <span class="faint" style="font-size:11px">
+      결함
+      
+      · 링크 미등록</span>
+  </div>
+  
+
+  
+  <div style="padding:4px 0;font-size:12.5px">
+    <span>⚪</span>
+    루프랙 갈변 · 테일램프 크랙
+    <span class="faint" style="font-size:11px">
+      결함
+      
+      · 링크 미등록</span>
+  </div>
+  
+
+<div class="faint" style="font-size:11px;margin-top:6px">
+  🔴 치명적 결함 · 🟠 구매 판단 직결 · ⚪ 일반 참고
+</div>
+</div>
+
+
+
+<h2>플래그</h2>
+<div class="card" style="padding:10px 14px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px">
+  <span class="tag">딜러 정보 없음</span><span class="tag">틴팅 여부 불명 — 미시공 시 약 100만원</span>
+  </div>
+</div>
+
+<script>
+var ca = document.getElementById('cmp-add');
+if (ca) ca.onclick = function () {
+  fetch('/api/compare/add', {method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({listing_id: ca.dataset.id})})
+    .then(function (r) { return r.json(); })
+    .then(function (d) { ca.textContent = d.ok ? '담김 ✓' : d.error;
+                         ca.disabled = d.ok; });
+};
+</script>
+
+</main>
+
+<div id="peek">
+  <img id="peek-img" alt="">
+  <div class="pk">
+    <div class="pk-t" id="peek-title"></div>
+    <div class="pk-p" id="peek-price"></div>
+    <div class="pk-r" id="peek-tags"></div>
+    <div class="pk-d" id="peek-desc"></div>
+  </div>
+</div>
+
+<script>
+// ── 사진 자동 폴백 ──────────────────────────────────────
+// 서버가 고른 CDN 주소가 틀려도 브라우저가 후보를 순서대로 다시 시도한다.
+// 하나라도 성공하면 그 접두사를 기억해 이후 이미지에 먼저 적용한다.
+window.__photoOk = null;
+
+function photoFallback(img) {
+  var alts;
+  try { alts = JSON.parse(img.getAttribute('data-alts') || '[]'); }
+  catch (e) { alts = []; }
+  var i = parseInt(img.getAttribute('data-alt-i') || '-1', 10) + 1;
+  if (i < alts.length) {
+    img.setAttribute('data-alt-i', i);
+    img.src = alts[i];
+    return;
+  }
+  img.style.display = 'none';
+  if (img.nextElementSibling) img.nextElementSibling.style.display = 'flex';
+}
+
+document.addEventListener('load', function (e) {
+  var img = e.target;
+  if (img.tagName === 'IMG' && img.hasAttribute('data-alts')
+      && window.__photoOk === null) {
+    var m = String(img.currentSrc || img.src)
+      .match(/^(https?:\/\/[^/]+(?:\/carpicture)?)\//);
+    if (m) window.__photoOk = m[1];
+  }
+}, true);
+
+// ── 매물 미리보기 ────────────────────────────────────────
+// data-peek 속성이 붙은 요소에 마우스를 올리면 사진과 요약을 띄운다.
+(function () {
+  var box = document.getElementById('peek');
+  var img = document.getElementById('peek-img');
+  var cur = null;
+
+  function show(el, e) {
+    var d;
+    try { d = JSON.parse(el.getAttribute('data-peek')); } catch (x) { return; }
+    cur = el;
+
+    var src = d.photo;
+    if (!src && d.alts && d.alts.length) src = d.alts[0];
+    if (src) {
+      img.setAttribute('data-alts', JSON.stringify(d.alts || []));
+      img.removeAttribute('data-alt-i');
+      img.onerror = function () { photoFallback(img); };
+      img.src = src; img.style.display = '';
+    } else { img.style.display = 'none'; }
+
+    document.getElementById('peek-title').textContent = d.title || '';
+    document.getElementById('peek-price').textContent =
+      (d.price || '') + (d.price ? '만' : '');
+    document.getElementById('peek-tags').innerHTML =
+      (d.tags || []).map(function (t) {
+        return '<span class="tag ' + (t[1] || '') + '">' + t[0] + '</span>';
+      }).join('');
+    document.getElementById('peek-desc').textContent = d.desc || '';
+
+    box.style.display = 'block';
+    move(e);
+  }
+
+  function move(e) {
+    if (!cur) return;
+    var w = 290, h = box.offsetHeight || 300, pad = 16;
+    var x = e.clientX + pad, y = e.clientY + pad;
+    if (x + w > window.innerWidth - 8) x = e.clientX - w - pad;
+    if (y + h > window.innerHeight - 8) y = window.innerHeight - h - 8;
+    if (y < 8) y = 8;
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  function hide() { cur = null; box.style.display = 'none'; }
+
+  document.addEventListener('mouseover', function (e) {
+    var el = e.target.closest('[data-peek]');
+    if (el) show(el, e);
+  });
+  document.addEventListener('mousemove', function (e) { if (cur) move(e); });
+  document.addEventListener('mouseout', function (e) {
+    var el = e.target.closest('[data-peek]');
+    if (el && el === cur) hide();
+  });
+  document.addEventListener('scroll', hide, true);
+})();
+</script>
+
+<script>
+// 작업이 도는 동안 헤더에 표시하고, 끝나면 화면을 한 번 갱신한다.
+(function () {
+  var was = false;
+  function tick() {
+    fetch('/api/run/status').then(function (r) { return r.json(); })
+      .then(function (s) {
+        var b = document.getElementById('runbadge');
+        if (!b) return;
+        if (s.running) {
+          b.style.display = '';
+          document.getElementById('runphase').textContent =
+            (s.phase || '실행 중') + ' ' + (s.progress || 0) + '%';
+          was = true;
+        } else {
+          b.style.display = 'none';
+          if (was) { was = false; location.reload(); }
+        }
+      }).catch(function () {});
+  }
+  setInterval(tick, 2000); tick();
+})();
+</script>
+<div class="faint" style="text-align:right;font-size:11px;
+     margin:18px 0 8px;padding-right:4px">빌드 2026-08-10.1</div>
+</body>
+</html>

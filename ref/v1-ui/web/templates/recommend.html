@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% set page = 'rec' %}
+{% block title %}후보 · CarWatch<script>
+document.querySelectorAll('button.cmp-add').forEach(function (b) {
+  b.onclick = function () {
+    fetch('/api/compare/add', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({listing_id: b.dataset.id})})
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        b.textContent = d.ok ? '담김 ✓' : d.error;
+        b.disabled = d.ok;
+      });
+  };
+});
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="bar">
+  <form class="inline" method="get">
+    <select name="target" onchange="this.form.submit()">
+      <option value="">전체 차종</option>
+      {% for k, t in targets.items() %}
+      <option value="{{ k }}" {{ 'selected' if target==k }}>{{ t.label }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <a class="btn {{ 'on' if not rank }}"
+     href="/recommend?target={{ target or '' }}">전체</a>
+  {% for r in [1, 2, 3] %}
+  <a class="btn {{ 'on' if rank==r }}"
+     href="/recommend?target={{ target or '' }}&rank={{ r }}">{{ r }}순위</a>
+  {% endfor %}
+  <span class="faint num" style="margin-left:6px">{{ count }}건</span>
+</div>
+
+{% if items %}
+{% for r in [1, 2, 3] %}
+  {% set group = by_rank.get(r, []) %}
+  {% if group and (not rank or rank == r) %}
+  <h2>
+    {{ r }}순위
+    <span class="faint" style="font-size:10px;letter-spacing:0;
+      text-transform:none">
+      {% if r == 1 %}A등급 + 비렌트
+      {% elif r == 2 %}A등급 + 법인렌트 · 또는 B등급 + 비렌트
+      {% else %}A등급 + 개인렌트 · 또는 C등급{% endif %}
+      · {{ group|length }}건 · 가격 오름차순
+    </span>
+  </h2>
+  <div class="grid g2" style="margin-bottom:22px">
+  {% for it in group[:40] %}
+  <div class="card" style="padding:13px 15px">
+    <div style="display:flex;gap:13px">
+    <a href="{{ it.url or '#' }}" {% if it.url %}target="_blank"
+       rel="noopener"{% endif %} data-peek='{{ peek_data(it) }}'
+       style="flex:none">
+      {% set alts = photo_alts(it) %}
+      {% if alts != '[]' %}
+        <img class="thumb" src="{{ photo_url(it, photo_base) or '' }}" alt=""
+             loading="lazy" data-alts='{{ alts }}'
+             onerror="photoFallback(this)">
+        <div class="thumb thumb-none" style="display:none">사진<br>없음</div>
+      {% else %}
+        <div class="thumb thumb-none">사진 없음</div>
+      {% endif %}
+    </a>
+    <div style="flex:1;min-width:0">
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:7px">
+      <a href="/listings?target={{ it.target_key }}&grade={{ it.condition_grade }}"
+         class="tag {{ 'amber' if it.condition_grade=='A'
+                  else 'down' if it.condition_grade=='B' }}"
+         style="text-decoration:none">{{ it.condition_grade }}</a>
+      <a href="/listings?target={{ it.target_key }}&all=1"
+         style="font-size:14.5px;font-weight:700"
+         class="cellnum">{{ it.label }}</a>
+      <span class="num dim">{{ it.year_month|ym }}식</span>
+      <a href="/listings?target={{ it.target_key }}&axis=color_ext&bucket={{ it.color_ext_group }}&all=1"
+         class="tag" style="text-decoration:none">{{ it.color_ext or '?' }}</a>
+      <span style="margin-left:auto">
+      {% if it.in_watch %}
+        <form class="inline" method="post"
+              action="/watch/remove/{{ it.listing_id }}">
+          <button style="padding:1px 7px;color:var(--amber)">♥</button></form>
+      {% else %}
+        <form class="inline" method="post"
+              action="/watch/add/{{ it.listing_id }}">
+          <button style="padding:1px 7px">♡</button></form>
+      {% endif %}
+      </span>
+    </div>
+
+    <div style="display:flex;align-items:flex-end;gap:16px">
+      <div>
+        <div class="num" style="font-size:24px;font-weight:600;line-height:1.15">
+          {{ it.current_price|manwon }}<small
+            style="font-size:11px;color:var(--dim)">만</small></div>
+        {# ★ 실질가 표기를 없앴다  (마스터 확인 2026-08-09)
+             보증을 돈으로 환산해 빼는 것은 체감이 안 된다.
+             1년 넘게 남았으면 더 남은 것과 차이를 못 느낀다.
+             잔여 개월은 아래 태그에 이미 나온다. #}
+        <div class="dim num" style="font-size:12px">
+          {{ it.mileage|km }}km
+          {% if it.first_price and it.first_price != it.current_price %}
+            {% set d = it.current_price - it.first_price %}
+            · <span class="{{ 'down-v' if d < 0 else 'up-v' }}"
+              >{{ (d/10000)|round|int }}만</span>
+          {% endif %}
+        </div>
+      </div>
+      <div style="margin-left:auto;text-align:right;font-size:11.5px"
+           class="dim">
+        {% if it.trim %}<div style="max-width:210px;overflow:hidden;
+          text-overflow:ellipsis;white-space:nowrap">{{ it.trim }}</div>{% endif %}
+        <div class="num">등록 {{ it.dom if it.dom is not none else '—' }}일
+          {% if it.price_change_count %}· 변동 {{ it.price_change_count }}회{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px">
+      <a href="/listings?target={{ it.target_key }}&axis=hud&bucket={{ it.opt_hud }}&all=1"
+         class="tag {{ 'amber' if it.opt_hud }}" style="text-decoration:none">
+        HUD {{ '있음' if it.opt_hud else '없음' }}</a>
+      <a href="/listings?target={{ it.target_key }}&axis=warranty&bucket={{ it.warranty_code }}&all=1"
+         class="tag {{ 'down' if it.warranty_gen_left and it.warranty_gen_left >= 24
+                   else 'up' if it.warranty_gen_left == 0 }}"
+         style="text-decoration:none"
+         title="일반보증 잔여">보증
+        {% if it.warranty_gen_left is not none %}{{ it.warranty_gen_left }}개월
+        {% else %}{{ it.warranty_code or '?' }}{% endif %}</a>
+      <a href="/listings?target={{ it.target_key }}&axis=accident&bucket={{ it.accident_code }}&all=1"
+         class="tag {{ 'down' if it.accident_code=='AC1'
+                  else 'up' if it.accident_code in ('AC4','AC5','AC6','AC7') }}"
+         style="text-decoration:none"
+        >{{ codes_acc.get(it.accident_code, it.accident_code or '?') }}</a>
+      <a href="/listings?target={{ it.target_key }}&axis=insurance&bucket={{ it.insurance_grade }}&all=1"
+         class="tag {{ 'down' if it.insurance_grade=='I0'
+                  else 'up' if it.insurance_grade=='I3' }}"
+         style="text-decoration:none"
+        >보험 {{ codes_ins.get(it.insurance_grade, '?') }}</a>
+      <a href="/listings?target={{ it.target_key }}&axis=rental&bucket={{ it.rental_status }}&all=1"
+         class="tag {{ 'up' if it.rental_status
+                  and it.rental_status != 'none' }}" style="text-decoration:none">
+        {{ '비렌트' if it.rental_status=='none'
+           else '법인렌트' if it.rental_type=='corporate'
+           else '개인렌트' if it.rental_type=='personal'
+           else '렌트?' }}</a>
+      <a href="/listings?target={{ it.target_key }}&axis=color_int&bucket={{ it.color_int_group }}&all=1"
+         class="tag {{ 'up' if it.color_int_group=='nonpref' }}"
+         style="text-decoration:none">내장 {{ it.color_int or '?' }}</a>
+      {% if it.record_open %}
+        <span class="tag {{ 'down' if not it.my_accident_cost
+                       else 'up' if it.my_accident_cost > 2000000 }}"
+          title="상대차 피해는 내 차 가치와 무관합니다">
+          내차 피해 {{ (it.my_accident_cost or 0) // 10000 }}만</span>
+      {% elif it.record_fetched_at %}
+        <span class="tag up">이력 비공개</span>
+      {% endif %}
+      {% if it.spec_pct is not none %}
+      <span class="tag {{ 'down' if it.spec_pct >= 90
+                     else 'up' if it.spec_pct < 70 }}"
+        title="주요 옵션 충족도. 등급이 아니라 같은 순위 안 정렬에 씁니다"
+        >사양 {{ it.spec_pct }}%</span>
+      {% endif %}
+      {% if it.damage_frame %}
+        <span class="tag up" title="골격은 정렬·강성에 영향이 남습니다"
+          >골격 {{ it.damage_frame }}부위</span>
+      {% elif it.damage_outer %}
+        <span class="tag {{ '' if it.accident_code=='AC2' else 'up' }}"
+          title="{{ '외판 교환은 차체에 영향이 없습니다'
+                  if it.accident_code=='AC2'
+                  else '판금은 금속 피로가 남습니다' }}"
+          >외판 {{ it.damage_outer }}부위</span>
+      {% endif %}
+      {% if it.damage_corrosion %}
+        <span class="tag" title="사고가 아니라 노후·관리 문제입니다"
+          >부식 {{ it.damage_corrosion }}부위</span>
+      {% endif %}
+      {% if it.unrepaired_confirmed %}
+        <span class="tag up"
+          title="상대차 사고는 있는데 내 차 수리 기록이 없고, 점검에서 손상이 확인됐습니다"
+          >자비수리·미수리 의심</span>
+      {% elif it.unrepaired_suspect %}
+        <span class="tag up"
+          title="상대차 사고는 있는데 내 차 수리 기록이 없습니다"
+          >내차 수리기록 없음</span>
+      {% endif %}
+      {% if not it.verified %}
+        <span class="tag" title="사고·보험 이력이 확인되지 않았습니다"
+          >이력 미확인</span>
+      {% endif %}
+      {% if it.opt_fetched_at %}
+        <span class="tag down" title="옵션 목록 확인됨">옵션 ✓
+          {% if it.opt_total_price %}{{ it.opt_total_price }}만{% endif %}</span>
+      {% endif %}
+      {% if it.insp_fetched_at %}
+        <span class="tag down" title="성능점검기록부 확인됨">점검부 ✓</span>
+        {% if it.insp_car_state %}<span class="tag"
+          >상태 {{ it.insp_car_state }}</span>{% endif %}
+        {% if it.insp_usage_change %}<span class="tag up"
+          >용도변경 {{ it.insp_usage_change }}</span>{% endif %}
+        {% if it.insp_mileage_gap and it.insp_mileage_gap|abs >= 3000 %}
+          <span class="tag up">주행 불일치 {{ it.insp_mileage_gap }}km</span>
+        {% endif %}
+      {% else %}
+        <span class="tag faint" title="A~C등급·관심매물만 조회합니다"
+          >점검부 미조회</span>
+      {% endif %}
+    </div>
+
+    {% if it.fails %}
+    <div style="margin-top:8px;font-size:11px" class="dim">
+      미달 —
+      {% for ff in it.fail_codes %}
+        <a href="/listings?target={{ it.target_key }}&fail={{ ff }}&all=1"
+           class="cellnum dim">{{ relax_labels.get(ff, ff) }}</a
+        >{% if not loop.last %} · {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if it.flags %}
+    <div style="margin-top:5px;font-size:11px">
+      {% for f in it.flags[:4] %}<span class="tag">{{ f }}</span> {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:flex;gap:14px;margin-top:10px;padding-top:9px;
+                border-top:1px solid var(--line);font-size:11.5px"
+         class="faint">
+      <span class="num">{{ (it.dealer_id or '—')|replace('encar:','') }}</span>
+      {% if it.sample_sufficient and it.honesty_score %}
+        <span class="tag {{ it.quadrant|lower }}"
+          >정직도 {{ it.honesty_score|round|int }}</span>
+      {% else %}
+        <span class="faint">딜러 표본 부족</span>
+      {% endif %}
+      <button class="cmp-add" data-id="{{ it.listing_id }}"
+        style="margin-left:auto;padding:2px 8px;font-size:11.5px">⇄ 비교</button>
+      <a href="/why/{{ it.listing_id }}"
+         style="margin-left:10px;color:var(--dim)">판정 근거</a>
+      {% if it.url %}<a href="{{ it.url }}" target="_blank" rel="noopener"
+        style="margin-left:10px;color:var(--amber)">엔카 ↗</a>
+      {% endif %}
+    </div>
+    </div>
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+{% endfor %}
+
+<p class="faint" style="font-size:11.5px">
+  가격 단위 만원 · E등급(골격·침수·에어백·전손·수리비 200만 초과·렌트+보험0원)은
+  순위가 없어 여기 나오지 않습니다. 전체 매물은 '매물' 탭에서 보십시오.
+</p>
+
+{% else %}
+<div class="card empty">
+  <h3>후보가 없습니다</h3>
+  <p>수집이 끝나면 A~C등급 매물이 순위별로 표시됩니다.</p>
+  <p><a href="/run" class="btn on" style="display:inline-block;
+     margin-top:10px">수집 화면으로</a></p>
+</div>
+{% endif %}
+<script>
+document.querySelectorAll('button.cmp-add').forEach(function (b) {
+  b.onclick = function () {
+    fetch('/api/compare/add', {method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({listing_id: b.dataset.id})})
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        b.textContent = d.ok ? '담김 ✓' : d.error;
+        b.disabled = d.ok;
+      });
+  };
+});
+</script>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% set page = 'market' %}
+{% block title %}시세 · CarWatch{% endblock %}
+{% block body %}
+
+<h2>차종별 시세</h2>
+
+{% for key, s in series.items() %}
+<div class="card" style="margin-bottom:16px">
+
+  {% if s.empty %}
+  <div style="display:flex;align-items:center;gap:12px">
+    <b style="font-size:14.5px">{{ s.label }}</b>
+    <span class="tag {{ 'amber' if s.tier=='rare' }}">{{ s.tier }}</span>
+    {% if s.live %}
+      <a href="/listings?target={{ key }}&all=1" class="cellnum dim"
+         style="font-size:12.5px">매물 {{ s.live }}건 — 집계 대기</a>
+    {% elif s.last_run %}
+      <span class="dim" style="font-size:12.5px">
+        마지막 수집 <span class="tag {{ 'up' if s.last_run.status
+          in ('failed','blocked') }}">{{ s.last_run.status }}</span>
+        {% if s.last_run.skip_reason %}
+          <span class="faint">— {{ s.last_run.skip_reason }}</span>
+        {% endif %}</span>
+    {% else %}
+      <span class="faint" style="font-size:12.5px">아직 수집한 적 없음</span>
+    {% endif %}
+    <a href="/run" class="btn" style="margin-left:auto">수집하기</a>
+  </div>
+
+  {% else %}
+  {% set last = s.rows[-1] %}
+  <div style="display:flex;gap:24px;align-items:flex-start">
+    <div style="min-width:200px">
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <b style="font-size:14.5px">{{ s.label }}</b>
+        <span class="tag {{ 'amber' if last.volume_tier=='rare' }}"
+          >{{ last.volume_tier }}</span>
+      </div>
+      <div class="faint" style="font-size:10.5px;letter-spacing:.06em;
+           margin-top:6px">중앙값</div>
+      <div class="num" style="font-size:27px;font-weight:600;line-height:1.15">
+        {{ last.price_median|manwon }}<small
+          style="font-size:12px;color:var(--dim)">만</small></div>
+      <div class="dim num" style="font-size:12px;margin-top:2px">
+        {{ last.price_min|manwon }} ~ {{ last.price_max|manwon }}만</div>
+      <div style="font-size:12px;margin-top:3px">
+        <a href="/listings?target={{ key }}&all=1" class="cellnum dim"
+          >매물 {{ last.count_total }}건</a>
+        <span class="faint"> · </span>
+        <a href="/listings?target={{ key }}" class="cellnum dim"
+           title="E등급 제외">적격 {{ last.count_eligible }}건</a>
+      </div>
+    </div>
+
+    <div>
+      {% if s.spark.points %}
+      <svg width="{{ s.spark.w }}" height="{{ s.spark.h }}">
+        <polyline points="{{ s.spark.points }}" fill="none"
+          stroke="#e8a13a" stroke-width="1.8"
+          stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+      <div class="faint num" style="font-size:10.5px">
+        {{ s.spark.n }}일 · {{ (s.spark.min/10000)|round|int }}~{{ (s.spark.max/10000)|round|int }}만</div>
+      {% else %}
+      <div class="faint" style="font-size:11.5px;padding-top:12px">
+        추이를 그리려면 2일 이상 수집이 필요합니다</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% set ax = axes.get(key) %}
+  {% if ax %}
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+    <div class="faint" style="font-size:10.5px;letter-spacing:.06em;
+         text-transform:uppercase;margin-bottom:7px">축별 분포 · 클릭하면 목록</div>
+    {% for axis_name, buckets in ax.items() %}
+      {% if axis_name in ('grade','hud','warranty','accident','insurance',
+                          'rental','color_ext','mileage') %}
+      <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;
+                  margin-bottom:5px">
+        <span class="faint" style="font-size:11px;width:70px">
+          {{ axis_label.get(axis_name, axis_name) }}</span>
+        {% for b in buckets %}
+        <a href="/listings?target={{ key }}&axis={{ axis_name }}&bucket={{ b.bucket }}&all=1"
+           class="tag" style="text-decoration:none">
+          {{ bucket_label.get(b.bucket, b.bucket) }}
+          <b class="num">{{ b.count }}</b>
+          {% if b.price_median %}<span class="faint">·
+            {{ b.price_median|manwon }}</span>{% endif %}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <table style="margin-top:14px">
+  <thead><tr>
+    <th>날짜</th><th class="r">매물</th><th class="r">적격</th>
+    <th class="r">최저</th><th class="r">25%</th><th class="r">중앙</th>
+    <th class="r">75%</th><th class="r">최고</th>
+  </tr></thead>
+  <tbody>
+  {% for r in s.rows[-10:]|reverse %}
+    <tr>
+      <td class="num">{{ r.snapshot_date }}</td>
+      <td class="r num">{{ r.count_total }}</td>
+      <td class="r num dim">{{ r.count_eligible }}</td>
+      <td class="r num dim">{{ r.price_min|manwon }}</td>
+      <td class="r num dim">{{ r.price_p25|manwon }}</td>
+      <td class="r num"><b>{{ r.price_median|manwon }}</b></td>
+      <td class="r num dim">{{ r.price_p75|manwon }}</td>
+      <td class="r num dim">{{ r.price_max|manwon }}</td>
+    </tr>
+  {% endfor %}
+  </tbody></table>
+  {% endif %}
+</div>
+{% endfor %}
+
+<p class="faint" style="font-size:11.5px">
+  가격 단위 만원 · 교차 사이트 중복은 대표 1건으로 집계 ·
+  적격 = E등급(추천 배제)을 제외한 매물
+</p>
+{% endblock %}

@@ -1,0 +1,255 @@
+{
+  "calc_version": "c1",
+  "_ref": "지시서 7장 STEP 68 (배점) · STEP 71 (가격 곡선) · STEP 83 (분모) · STEP 84 (등급)",
+  "total_points": 555,
+  "components": {
+    "price": 200,
+    "warranty.general": 50,
+    "warranty.power": 50,
+    "spec.hud": 20,
+    "spec.hda": 20,
+    "spec.sunroof": 20,
+    "spec.svm": 10,
+    "spec.scc": 10,
+    "spec.bsd": 5,
+    "spec.tinting": 5,
+    "history.damage": 20,
+    "history.insurance": 15,
+    "history.rental": 20,
+    "safety.diagnosis": 20,
+    "safety.warranty_product": 20,
+    "color": 40,
+    "mileage": 30
+  },
+  "_component_form": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용 (STEP 128). 파서는 #5 에서 반영한다",
+  "admin": {
+    "query_row_limit": 1000,
+    "query_timeout_sec": 10,
+    "schedule": {
+      "collect": "daily 06:00"
+    },
+    "session_hours": 12,
+    "hash_rounds": 200000
+  },
+  "grade_cuts": {
+    "S": 0.9,
+    "A": 0.8,
+    "B": 0.7,
+    "C": 0.6
+  },
+  "min_denominator_ratio": 0.6,
+  "price_curve": [
+    {
+      "deviation": -0.25,
+      "points": 200
+    },
+    {
+      "deviation": -0.2,
+      "points": 180
+    },
+    {
+      "deviation": -0.15,
+      "points": 160
+    },
+    {
+      "deviation": -0.1,
+      "points": 140
+    },
+    {
+      "deviation": -0.05,
+      "points": 120
+    },
+    {
+      "deviation": 0.0,
+      "points": 100
+    },
+    {
+      "deviation": 0.05,
+      "points": 70
+    },
+    {
+      "deviation": 0.1,
+      "points": 40
+    },
+    {
+      "deviation": 0.15,
+      "points": 10
+    },
+    {
+      "deviation": 0.25,
+      "points": -40
+    },
+    {
+      "deviation": null,
+      "points": -100
+    }
+  ],
+  "_axis_rules_note": "axis_rules 는 7장 STEP 71~84 의 임계·구간이다. V4-13 이 코드에 박는 것을 금지하므로 여기에 둔다. ★ STEP 6 config 키 전량 표에 axis_rules 행 추가가 필요하다 (미승인)",
+  "axis_rules": {
+    "warranty": {
+      "full_months": 24,
+      "expire_penalty": -15,
+      "km_per_month": 1250
+    },
+    "spec": {
+      "hda_points": {
+        "2": 20,
+        "1": 12,
+        "0": 0
+      },
+      "hda_gate_open": true,
+      "hda_level2_phrases": [
+        "고속도로 주행 보조 2",
+        "고속도로 주행보조 2",
+        "HDA 2"
+      ],
+      "hda_level1_phrases": [
+        "고속도로 주행 보조",
+        "고속도로 주행보조",
+        "HDA"
+      ]
+    },
+    "history": {
+      "damage_by_swap": {
+        "0": 20,
+        "1": 15,
+        "2": 10,
+        "3": 5
+      },
+      "damage_by_status": {
+        "교환(교체)": "swap",
+        "용접,절단": "swap",
+        "판금/용접": "none",
+        "손상": "none"
+      },
+      "damage_min": 0,
+      "insurance_cap_by_count": {
+        "0": 15,
+        "1": 12,
+        "2": 9,
+        "3": 6
+      },
+      "insurance_cap_min": 6,
+      "rental": {
+        "non_rental": 20,
+        "rental": 0,
+        "unknown": 10
+      },
+      "insurance_cost_curve": [
+        {
+          "ratio": 0.0,
+          "points": 15
+        },
+        {
+          "ratio": 0.02,
+          "points": 13
+        },
+        {
+          "ratio": 0.04,
+          "points": 11
+        },
+        {
+          "ratio": 0.07,
+          "points": 8
+        },
+        {
+          "ratio": 0.1,
+          "points": 5
+        },
+        {
+          "ratio": 0.15,
+          "points": 2
+        },
+        {
+          "ratio": null,
+          "points": 0
+        }
+      ]
+    },
+    "safety": {
+      "diagnosis_yes": 20,
+      "diagnosis_no": 0,
+      "warranty_product_yes": 20,
+      "warranty_product_no": 0,
+      "warranty_product_na_targets": [
+        "MODEL_Y",
+        "GV60",
+        "G80_EV",
+        "GV70_EV"
+      ]
+    },
+    "color": {
+      "grade_points": {
+        "preferred": 40,
+        "neutral": 25,
+        "avoided": 10
+      },
+      "gate_open": true,
+      "_note": "목록은 config/dictionaries/color_grade.json. 기피 10점은 「이 축에서 손해」이지 「가치 없음」이 아니다"
+    },
+    "mileage": {
+      "full_km": 40000,
+      "zero_km": 100000,
+      "unknown_points": 0
+    },
+    "absolute_fail": {
+      "repair_cost_ratio": 0.139,
+      "sales_status_fail": [
+        "CONTRACT",
+        "SOLD"
+      ],
+      "advertisement_type_normal": "NORMAL",
+      "frame_ranks": [
+        "RANK_A",
+        "RANK_B",
+        "RANK_C"
+      ],
+      "outer_ranks": [
+        "RANK_ONE",
+        "RANK_TWO"
+      ],
+      "swap_status_title": "교환(교체)",
+      "_repair_cost_note": "10% 는 v1 초안이다. 실매물 15.6% 가 걸린다 — E 로는 과하다. 첫 수집 후 「E 로 뺄 비율」을 정하고 그 분위수를 임계로 잡는다 (STEP 82)"
+    }
+  },
+  "_peer_note": "유사군 파라미터 (7장 STEP 82e). 지시서 34번 개정으로 dealer_trust.json 에서 이관",
+  "peer_year_window": 1,
+  "peer_mileage_window": 10000,
+  "peer_min_sample": 10,
+  "validation": {
+    "sample_limit": 20,
+    "price_median_min_won": 1000000,
+    "mapping_ratio": {
+      "A": 1.0,
+      "B": 0.99,
+      "C": 0.8
+    },
+    "grade_dominant_ratio": 0.9,
+    "shuffle_sample": 100,
+    "min_value_kinds": 2,
+    "day_gap_total_limit": 0.3,
+    "day_gap_new_ratio": 0.2,
+    "actual_max": 120,
+    "parse_sample_chars": 80,
+    "grade_denom_probe": 0.9,
+    "all_fail_min_sample": 10,
+    "diagnosis_report_grade": 0,
+    "min_salvaged_fields": 2,
+    "conflict_warn": 10
+  },
+  "_validation_note": "6장 검증 임계다. V4-13 이 코드에 박는 것을 금지한다. ★ STEP 6 config 표에 validation 행 추가가 필요하다 (미승인)",
+  "report": {
+    "top_n": 5,
+    "market_quantiles": [
+      0.25,
+      0.5,
+      0.75
+    ]
+  },
+  "_report_note": "9장 리포트 표시 파라미터. 표본 수라 V4-13 이 코드에 박는 것을 금지한다. ★ STEP 6 config 표에 report 행 추가가 필요하다 (미승인)",
+  "peer_percentiles": [
+    0.25,
+    0.5,
+    0.75
+  ]
+}

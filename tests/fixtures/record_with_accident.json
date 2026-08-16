@@ -1,0 +1,64 @@
+{
+ "openData": true,
+ "regDate": "2026-08-04T14:07:37.856314",
+ "carNo": "29소2618",
+ "year": "2023",
+ "maker": "현대",
+ "carKind": "1",
+ "use": "2",
+ "displacement": "167",
+ "carName": null,
+ "firstDate": "2023-07-19",
+ "fuel": "전기",
+ "carShape": "세단 4도어",
+ "model": "일렉트리파이드 G80 (RG3)",
+ "transmission": null,
+ "carNameCode": null,
+ "myAccidentCnt": 0,
+ "otherAccidentCnt": 1,
+ "ownerChangeCnt": 1,
+ "robberCnt": 0,
+ "robberDate": null,
+ "totalLossCnt": 0,
+ "totalLossDate": null,
+ "floodTotalLossCnt": 0,
+ "floodPartLossCnt": null,
+ "floodDate": null,
+ "government": 0,
+ "business": 0,
+ "loan": 0,
+ "carNoChangeCnt": 0,
+ "myAccidentCost": 0,
+ "otherAccidentCost": 659330,
+ "carInfoChanges": [
+  {
+   "date": "2023-07-19",
+   "carNo": "29소XXXX"
+  }
+ ],
+ "carInfoUse1s": [
+  "2"
+ ],
+ "carInfoUse2s": [
+  "1"
+ ],
+ "ownerChanges": [
+  "2026-07-30"
+ ],
+ "notJoinDate1": "202307~202407",
+ "notJoinDate2": null,
+ "notJoinDate3": null,
+ "notJoinDate4": null,
+ "notJoinDate5": null,
+ "accidentCnt": 1,
+ "accidents": [
+  {
+   "type": "3",
+   "date": "2026-01-13",
+   "insuranceBenefit": 791220,
+   "partCost": 0,
+   "laborCost": 321020,
+   "paintingCost": 338310
+  }
+ ]
+}

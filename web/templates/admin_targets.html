@@ -1,0 +1,58 @@
+<h1>차종</h1>
+<p class="notice">
+  facet 확인 없이 <code>targets.json</code> 에 쓰지 않습니다.
+  사이트가 열거값을 주므로, 사람이 적으면 표기가 어긋납니다.<br>
+  ★ 새 차종은 <strong>확인 대기</strong>로 들어갑니다.
+  시험 수집으로 배기량 분포를 본 뒤에만 확정됩니다 — 자동 확정하지 않습니다.
+  <span class="muted">근거 STEP 130</span>
+</p>
+
+<h2>차종 추가</h2>
+<p class="muted">① 모델 지정 → ② facet 확인 → ③ 트림 선택 → ④ 등록(확인 대기) → ⑤ 시험 수집 → ⑥ 확정</p>
+<form method="post" action="/admin/targets">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <input type="hidden" name="previewed" value="1">
+  <input type="hidden" name="action" value="add">
+  <label>차종 키 <input name="target_key" size="20" placeholder="GV70_EV"></label>
+  <label>이름 <input name="label" size="30" placeholder="제네시스 GV70 전기"></label>
+  <label>수집 묶음 <input name="collect_group" size="20" placeholder="GV70"></label>
+  <label>구분
+    <select name="origin_type">
+      <option value="Y">국산 (CarType.Y)</option>
+      <option value="N">수입 (CarType.N)</option>
+    </select>
+    <span class="muted">★ 빠뜨리면 조건이 안 맞아 0건이 나옵니다</span>
+  </label>
+  <label>site_query <input name="site_query" size="70" placeholder="facet 으로 확인한 q 값"></label>
+  <label>사유 <input name="reason" size="30" placeholder="사유 (필수)" required></label>
+  <button type="submit">확인 대기로 등록</button>
+</form>
+
+<h2>등록된 차종 {{ target_rows | count }}종</h2>
+<table>
+<thead><tr><th>키</th><th>이름</th><th>구분</th><th class="num">매물</th><th>상태</th><th>수집</th><th></th></tr></thead>
+<tbody>
+{% for t in target_rows %}
+<tr>
+  <td class="runid">{{ t.key }}</td>
+  <td>{{ t.name }}</td>
+  <td>{% if t.origin_type %}{{ t.origin_type }}{% endif %}{% if !t.origin_type %}<span class="muted">—</span>{% endif %}</td>
+  <td class="num">{{ t.count | num }}</td>
+  <td>{% if t.pending %}<span class="warn-warn">확인 대기</span>{% endif %}{% if !t.pending %}확정{% endif %}</td>
+  <td>{% if t.collected %}됨{% endif %}{% if !t.collected %}<span class="muted">미수집</span>{% endif %}</td>
+  <td>
+    {% if t.pending %}
+    <form method="post" action="/admin/targets" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="confirm">
+      <input type="hidden" name="target_key" value="{{ t.key }}">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">확정</button>
+    </form>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>

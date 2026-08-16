@@ -1,0 +1,107 @@
+<h1>목록 반입</h1>
+
+<p class="notice">
+  <strong>이 화면으로 들어온 자료는 반입분입니다.</strong>
+  수집이 막힌 단계의 결과를 밖에서 받아 넣습니다.
+  반입은 「수집」이므로 원문이 <code>raw_response</code> 에
+  <code>origin='import'</code> 로 들어갑니다 —
+  <code>/admin/api</code>(탐색)와 다릅니다.
+  <span class="muted">근거 STEP 136a · 136b</span>
+</p>
+
+<p class="muted">
+  지금 상태 · <strong>{{ s4_label }}</strong>
+  {% if s4_at %}<span class="muted">({{ s4_at }})</span>{% endif %}
+  · 반입분 매물 {{ imported_listings | num }}건
+  · 수집분 매물 {{ collected_listings | num }}건
+</p>
+
+<h2>넣을 것</h2>
+<form method="post" action="/admin/import" enctype="multipart/form-data">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+
+  <p class="muted">형식은 <strong>붙여넣은 내용을 보고 스스로 판별</strong>합니다.
+    고르지 않아도 됩니다.</p>
+  <ul class="muted">
+    <li><strong>① 엔카 목록 응답 JSON 원문</strong> — 원칙입니다. 원문이 그대로 남습니다</li>
+    <li><strong>② 매물 ID 목록</strong> — 한 줄에 하나. 최소 입력이라 <strong>원문 없음</strong>으로 표시됩니다</li>
+    <li><strong>③ CSV</strong> — <code>source_id,target_key,trim,year_month,mileage_km,price_won</code>.
+      ②와 같이 <strong>원문 없음</strong>입니다</li>
+  </ul>
+
+  <label>붙여넣기<br>
+    <textarea name="paste" rows="14" cols="100"
+      placeholder="여기에 JSON 원문 · 매물 ID 목록 · CSV 를 붙여넣습니다">{{ paste }}</textarea>
+  </label>
+
+  <p class="muted">파일이 커서 붙여넣을 수 없으면 파일로 올립니다.
+    본문 상한을 넘으면 <strong>잘린 채 저장되지 않고 413 으로 거부</strong>합니다.</p>
+  <label>파일 올리기 <input type="file" name="upload" accept=".json,.csv,.txt"></label>
+
+  <h3>어디에 넣는가</h3>
+  <label>사이트 <input name="site" size="12" value="{{ site }}"></label>
+  <label>차종
+    <select name="target_key">
+      <option value="">— 고르지 않음 (행에 target_key 가 있어야 합니다) —</option>
+      {% for t in targets %}
+      <option value="{{ t.target_key }}">{{ t.target_key }} ({{ t.count | num }}건)</option>
+      {% endfor %}
+    </select>
+  </label>
+  <p class="muted">CSV 에 <code>target_key</code> 가 있으면 그 값이 먼저입니다.
+    차종이 없는 행은 <code>out_of_scope</code> 로 들어가 수집 대상이 되지 않습니다.</p>
+  <label>사유 <input name="reason" size="40" value="{{ reason }}"
+    placeholder="왜 반입하는가 (필수)" required></label>
+  <label>출처 이름 <input name="source_name" size="30"
+    placeholder="파일명 등 (선택)"></label>
+
+  <p><button type="submit" name="action" value="preview">① 미리보기</button></p>
+
+  {% if preview %}
+  <div class="notice">
+    <h3>미리보기 — 저장하지 않았습니다</h3>
+    <table>
+      <tbody>
+      <tr><th>형식</th><td>{{ preview.fmt }}
+        {% if preview.site_raw %}<span class="muted">사이트 원문 있음</span>{% endif %}
+        {% if !preview.site_raw %}<strong>원문 없음</strong>
+          <span class="muted">— 사이트 응답이 아니라 사람이 넣은 목록입니다</span>{% endif %}
+      </td></tr>
+      <tr><th>모두</th><td>{{ preview.total | num }}건</td></tr>
+      <tr><th>이미 있는 것</th><td>{{ preview.existing | num }}건</td></tr>
+      <tr><th>새 것</th><td>{{ preview.fresh | num }}건</td></tr>
+      <tr><th>크기</th><td>{{ preview.bytes_in | num }}바이트</td></tr>
+      </tbody>
+    </table>
+    <input type="hidden" name="previewed" value="1">
+    <p>
+      <button type="submit" name="action" value="import">② 반입</button>
+      <button type="submit" name="action" value="collect">③ 반입하고 이어서 수집</button>
+    </p>
+    <p class="muted">③ 은 반입한 뒤 S5(상세 수집)부터 <strong>큐에 넣습니다</strong>.
+      S4 는 반입이 대신하므로 다시 돌지 않습니다.
+      큐는 실행기가 가져갑니다 — 실행기가 돌고 있지 않으면 큐에만 남습니다.</p>
+  </div>
+  {% endif %}
+  {% if !preview %}
+  <p class="muted">★ 미리보기를 먼저 눌러야 반입 단추가 열립니다 (STEP 138 · 149k).</p>
+  {% endif %}
+</form>
+
+<h2>반입 이력 {{ import_batches | count }}건</h2>
+{% if import_batches %}
+<table>
+<thead><tr><th>시각</th><th class="num">raw_id</th><th>사이트</th>
+  <th class="num">크기</th><th>메모</th></tr></thead>
+<tbody>
+{% for b in import_batches %}
+<tr><td>{{ b.at }}</td><td class="num">{{ b.raw_id }}</td>
+  <td>{{ b.site }}</td><td class="num">{{ b.bytes | num }}</td>
+  <td class="muted">{{ b.meta }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !import_batches %}
+<p class="muted">아직 반입한 것이 없습니다.</p>
+{% endif %}

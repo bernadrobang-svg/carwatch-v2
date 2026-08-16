@@ -1,0 +1,344 @@
+{
+ "manage": {
+  "dummy": false,
+  "dummyVehicleId": null,
+  "reRegistered": false,
+  "webReserved": false,
+  "registDateTime": "2026-03-31T10:19:55",
+  "firstAdvertisedDateTime": "2026-06-08T18:18:47",
+  "modifyDateTime": "2026-07-25T23:18:03",
+  "subscribeCount": 32,
+  "viewCount": 3451
+ },
+ "category": {
+  "type": "CAR",
+  "manufacturerCd": "007",
+  "manufacturerName": "제네시스",
+  "modelCd": "006",
+  "modelName": "G80 (RG3)",
+  "gradeCd": "002",
+  "gradeName": "가솔린 2.5 터보 AWD",
+  "gradeEnglishName": "Gasoline 2.5 Turbo AWD",
+  "yearMonth": "202602",
+  "formYear": "2027",
+  "domestic": true,
+  "importType": "NONE_IMPORT_TYPE",
+  "originPrice": 6258,
+  "manufacturerEnglishName": "Genesis",
+  "modelGroupCd": "002",
+  "modelGroupName": "G80",
+  "modelGroupEnglishName": "G80",
+  "gradeDetailCd": "001",
+  "gradeDetailName": null,
+  "gradeDetailEnglishName": null,
+  "jatoVehicleId": 8174400202601081077,
+  "warranty": {
+   "userDefined": false,
+   "companyName": null,
+   "bodyMonth": 60,
+   "bodyMileage": 100000,
+   "transmissionMonth": 60,
+   "transmissionMileage": 100000
+  }
+ },
+ "advertisement": {
+  "type": "CAR",
+  "price": 4420,
+  "status": "ADVERTISE",
+  "warrantyStyleColor": null,
+  "trust": [],
+  "hotMark": [
+   14,
+   19,
+   24
+  ],
+  "oneLineText": "가성비옵션/차량상태훌륭/비흡연차량/저신용자심사가능",
+  "salesStatus": null,
+  "directInspected": false,
+  "preVerified": false,
+  "extendWarranty": false,
+  "deemedExtendWarranty": false,
+  "homeService": false,
+  "meetGo": false,
+  "encarCheck": false,
+  "preDelivery": false,
+  "leaseRentInfo": {
+   "residualMonth": 55,
+   "monthlyFee": 80,
+   "advancePrice": null,
+   "depositPrice": null
+  },
+  "encarPassType": null,
+  "encarPassCategoryType": null,
+  "underBodyPhotos": [],
+  "hasUnderBodyPhoto": false,
+  "advertisementType": "RENT_SUCCESSION",
+  "diagnosisCar": false
+ },
+ "contact": {
+  "userId": "khs7356",
+  "userType": "REPEAT",
+  "no": "05062294778",
+  "address": "서울 강남구",
+  "contactType": "MOBILE",
+  "isVerifyOwner": false,
+  "isOwnerPartner": false
+ },
+ "spec": {
+  "type": "CAR",
+  "mileage": 1755,
+  "displacement": 2497,
+  "transmissionName": "오토",
+  "fuelCd": "001",
+  "fuelName": "가솔린",
+  "colorName": "흰색",
+  "customColor": null,
+  "seatCount": 5,
+  "tradeType": null,
+  "tradeOwnerType": null,
+  "tradeCompanyName": null,
+  "bodyName": "대형차"
+ },
+ "photos": [
+  {
+   "code": "011",
+   "path": "/carpicture06/pic4176/41765232_001.jpg",
+   "type": "THUMBNAIL",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "025",
+   "path": "/carpicture06/pic4176/41765232_001.jpg",
+   "type": "THUMBNAIL",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "014",
+   "path": "/carpicture06/pic4176/41765232_007.jpg",
+   "type": "THUMBNAIL",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "016",
+   "path": "/carpicture06/pic4176/41765232_016.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "017",
+   "path": "/carpicture06/pic4176/41765232_017.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "001",
+   "path": "/carpicture06/pic4176/41765232_001.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "013",
+   "path": "/carpicture06/pic4176/41765232_001.jpg",
+   "type": "THUMBNAIL",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "005",
+   "path": "/carpicture06/pic4176/41765232_005.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "007",
+   "path": "/carpicture06/pic4176/41765232_007.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "018",
+   "path": "/carpicture06/pic4176/41765232_018.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "004",
+   "path": "/carpicture06/pic4176/41765232_004.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "003",
+   "path": "/carpicture06/pic4176/41765232_003.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "009",
+   "path": "/carpicture06/pic4176/41765232_009.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "012",
+   "path": "/carpicture06/pic4176/41765232_001.jpg",
+   "type": "THUMBNAIL",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "002",
+   "path": "/carpicture06/pic4176/41765232_002.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "008",
+   "path": "/carpicture06/pic4176/41765232_008.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "026",
+   "path": "/carpicture06/pic4176/41765232_001.jpg",
+   "type": "THUMBNAIL",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "010",
+   "path": "/carpicture06/pic4176/41765232_010.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "006",
+   "path": "/carpicture06/pic4176/41765232_006.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  },
+  {
+   "code": "015",
+   "path": "/carpicture06/pic4176/41765232_015.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-03-31T10:21:07",
+   "desc": null
+  }
+ ],
+ "options": {
+  "type": "CAR",
+  "standard": [
+   "001",
+   "002",
+   "005",
+   "006",
+   "007",
+   "008",
+   "014",
+   "015",
+   "017",
+   "019",
+   "020",
+   "021",
+   "022",
+   "023",
+   "024",
+   "026",
+   "027",
+   "030",
+   "031",
+   "032",
+   "033",
+   "034",
+   "035",
+   "051",
+   "055",
+   "056",
+   "057",
+   "058",
+   "059",
+   "063",
+   "072",
+   "074",
+   "075",
+   "077",
+   "078",
+   "079",
+   "081",
+   "082",
+   "083",
+   "084",
+   "085",
+   "086",
+   "087",
+   "088",
+   "092",
+   "093",
+   "094",
+   "095",
+   "096",
+   "097"
+  ],
+  "etc": [],
+  "choice": [],
+  "tuning": []
+ },
+ "condition": {
+  "accident": {
+   "recordView": true,
+   "resumeView": true
+  },
+  "inspection": {
+   "formats": []
+  },
+  "seizing": {
+   "seizingCount": null,
+   "pledgeCount": null
+  }
+ },
+ "partnership": {
+  "brand": null,
+  "testdrive": {
+   "active": false
+  },
+  "dealer": null,
+  "isPartneredVehicle": false,
+  "certifiedBrand": null,
+  "lease": null,
+  "rent": null
+ },
+ "contents": {
+  "text": "안녕하세요 \r\n\r\n가죽코팅까지 완료 해놓은\r\n\r\n\r\n조건좋은 G80차량 렌트 승계합니다\r\n\r\n\r\n선납 일부 들어가있는데 전차주 포기 조건으로 조건은 너무 좋습니다\r\n\r\n\r\n많은 문의 바랍니다 ",
+  "meetGoText": null
+ },
+ "view": {
+  "encarDiagnosis": -1,
+  "encarMeetGo": -1,
+  "hasEvBatteryInfo": false,
+  "isBatteryPass": false,
+  "isBatteryCompensable": false,
+  "photoPlus": 0,
+  "meetgoExpertAvailable": false,
+  "isSingleAd": false
+ },
+ "vehicleId": 41765232,
+ "vehicleType": "CAR",
+ "vin": null,
+ "vehicleNo": "188호7639"
+}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}초기화 필요 · car_monitor{% endblock %}
+{% block body %}
+<div class="card empty">
+  <h3>데이터베이스가 초기화되지 않았습니다</h3>
+  <p class="faint num" style="font-size:12px">{{ db_path }}</p>
+  <p style="margin-top:18px">아래를 실행한 뒤 새로고침하십시오.</p>
+  <p><code>python run.py init</code></p>
+  <p style="margin-top:18px">화면을 먼저 둘러보려면 데모 데이터를 쓸 수 있습니다.</p>
+  <p><code>demo.bat</code></p>
+</div>
+{% endblock %}

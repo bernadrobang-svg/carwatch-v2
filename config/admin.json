@@ -1,0 +1,20 @@
+{
+  "_ref": "지시서 부록 B · 13장 STEP 126 · 08-15 신설",
+  "_note": "★ 계정을 영구 잠그지 않는다. 1인 도구라 스스로 못 풀면 CLI 로 가야 한다",
+  "login_fail_limit": 10,
+  "login_lock_sec": 300,
+  "min_secret_length": 8,
+  "list_rows": 20,
+  "recent_rows": 5,
+  "activity_rows": 10,
+  "tool_min_sample": 20,
+  "tool_quantiles": [
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    0.9
+  ],
+  "api_body_chars": 4000,
+  "table_cols_shown": 10
+}

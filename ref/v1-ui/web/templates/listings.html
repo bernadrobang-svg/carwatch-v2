@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% set page = 'list' %}
+{% block title %}매물 · car_monitor{% endblock %}
+{% block body %}
+
+<div class="bar">
+  <form class="inline" method="get">
+    <select name="target" onchange="this.form.submit()">
+      <option value="">전체 차종</option>
+      {% for k, t in targets.items() %}
+      <option value="{{ k }}" {{ 'selected' if target==k }}>{{ t.label }}</option>
+      {% endfor %}
+    </select>
+    <select name="grade" onchange="this.form.submit()">
+      <option value="">전체 등급</option>
+      {% for g in ['A','B','C','D','E'] %}
+      <option value="{{ g }}" {{ 'selected' if grade==g }}>{{ g }}등급</option>
+      {% endfor %}
+    </select>
+    <select name="order" onchange="this.form.submit()">
+      <option value="rank"       {{ 'selected' if order=='rank' }}>추천 순위</option>
+      <option value="grade"      {{ 'selected' if order=='grade' }}>등급순</option>
+      <option value="price"      {{ 'selected' if order=='price' }}>가격 낮은순</option>
+      <option value="price_desc" {{ 'selected' if order=='price_desc' }}>가격 높은순</option>
+      <option value="mileage"    {{ 'selected' if order=='mileage' }}>주행거리</option>
+      <option value="year"       {{ 'selected' if order=='year' }}>연식 최신</option>
+      <option value="new"        {{ 'selected' if order=='new' }}>등록 최신</option>
+      <option value="dom"        {{ 'selected' if order=='dom' }}>오래된 매물</option>
+    </select>
+    {% if show_all %}<input type="hidden" name="all" value="1">{% endif %}
+  </form>
+  <a class="btn {{ 'on' if not show_all }}"
+     href="/listings?target={{ target or '' }}&order={{ order }}">추천 대상</a>
+  <a class="btn {{ 'on' if show_all }}"
+     href="/listings?target={{ target or '' }}&order={{ order }}&all=1">E등급 포함</a>
+  <span class="faint num" style="margin-left:6px">{{ count }}건</span>
+</div>
+
+{% if chips %}
+<div class="chips" style="margin:-6px 0 14px">
+  <span class="faint" style="font-size:11.5px">필터</span>
+  {% for c in chips %}<span class="chip">{{ c }}</span>{% endfor %}
+  <a href="/listings" class="chip" style="color:var(--dim)">✕ 해제</a>
+</div>
+{% endif %}
+
+<div class="card" style="padding:6px 10px">
+{% if items %}
+<table>
+<thead><tr>
+  <th></th><th class="c">등급</th><th class="c">순위</th>
+  <th>차종</th><th>트림</th>
+  <th class="r">연식</th><th class="r">주행</th>
+  <th class="c">외장</th><th class="c">내장</th>
+  <th class="c">HUD</th><th class="c">보증</th>
+  <th class="c">사고</th><th class="c">보험</th><th class="c">렌트</th>
+  <th class="r">가격</th>
+  <th class="r">시세차</th>
+  <th class="r">월</th><th class="r">변동</th><th class="r">경과</th>
+  <th>딜러</th><th class="r">정직도</th><th>비고</th><th></th>
+</tr></thead>
+<tbody>
+{% for it in items %}
+<tr class="{{ 'rejected' if it.condition_grade=='E' }}">
+  <td style="width:70px;padding:4px 6px">
+    <a href="{{ it.url or '#' }}" {% if it.url %}target="_blank"
+       rel="noopener"{% endif %} data-peek='{{ peek_data(it) }}'>
+      {% set alts = photo_alts(it) %}
+      {% if alts != '[]' %}
+        <img class="thumb sm" src="{{ photo_url(it, photo_base) or '' }}" alt=""
+             loading="lazy" data-alts='{{ alts }}'
+             onerror="photoFallback(this)">
+        <div class="thumb sm thumb-none" style="display:none">—</div>
+      {% else %}
+        <div class="thumb sm thumb-none">—</div>
+      {% endif %}
+    </a></td>
+  <td class="c">
+    {% if not it.verified %}<span class="faint"
+      title="이력 미확인">·</span>{% endif %}
+    <a href="/listings?target={{ it.target_key }}&grade={{ it.condition_grade }}{{ '&all=1' if it.condition_grade=='E' }}"
+       class="tag {{ 'amber' if it.condition_grade=='A'
+                 else 'down' if it.condition_grade=='B'
+                 else 'up' if it.condition_grade=='E' }}"
+       style="text-decoration:none">{{ it.condition_grade or '?' }}</a></td>
+  <td class="c num">
+    {% if it.recommend_rank %}
+      <a href="/recommend?target={{ it.target_key }}&rank={{ it.recommend_rank }}"
+         class="cellnum"><b>{{ it.recommend_rank }}</b></a>
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td><a href="/listings?target={{ it.target_key }}&all=1"
+      class="cellnum">{{ it.model_group }}</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">{{ it.trim or '—' }}</td>
+  <td class="r num">{{ it.year_month|ym }}</td>
+  <td class="r num">{{ it.mileage|km }}</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket={{ it.color_ext_group }}&all=1"
+    class="tag {{ 'up' if it.color_ext_group=='red' }}"
+    style="text-decoration:none">{{ it.color_ext or '?' }}</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket={{ it.color_int_group }}&all=1"
+       class="tag {{ 'up' if it.color_int_group=='nonpref' }}"
+       style="text-decoration:none">{{ it.color_int or '?' }}</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket={{ it.opt_hud }}&all=1"
+    class="tag {{ 'amber' if it.opt_hud }}" style="text-decoration:none"
+    >{{ 'HUD' if it.opt_hud else '—' }}</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket={{ it.warranty_code }}&all=1"
+    class="tag {{ 'down' if it.warranty_gen_left and it.warranty_gen_left >= 24
+              else 'up' if it.warranty_gen_left == 0 }}"
+    style="text-decoration:none"
+    title="{{ it.warranty_code }} · 일반보증 잔여">
+    {% if it.warranty_gen_left is not none %}{{ it.warranty_gen_left }}m
+    {% else %}{{ it.warranty_code or '?' }}{% endif %}</a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket={{ it.accident_code }}&all=1"
+    class="tag {{ 'up' if it.accident_code in ('AC4','AC5','AC6','AC7')
+              else 'down' if it.accident_code=='AC1' }}"
+    style="text-decoration:none">{{ it.accident_code or '?' }}</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket={{ it.insurance_grade }}&all=1"
+    class="tag {{ 'up' if it.insurance_grade=='I3'
+              else 'down' if it.insurance_grade=='I0' }}"
+    style="text-decoration:none">{{ it.insurance_grade or '?' }}</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket={{ it.rental_status }}&all=1"
+    class="tag {{ 'up' if it.rental_status and it.rental_status != 'none' }}"
+    style="text-decoration:none">
+    {{ '비렌트' if it.rental_status=='none'
+       else '렌트' if it.rental_status else '?' }}</a></td>
+  <td class="r num dim">
+    {% if it.price_diff is not none %}
+      <span class="{{ 'down-v' if it.price_diff < 0 else 'up-v' }}"
+        title="동일조건 {{ it.peer_count }}대 중앙값 대비"
+        >{{ '%+d'|format(it.price_diff // 10000) }}</span>
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num dim">
+    {% if it.monthly_total %}{{ '%.0f'|format(it.monthly_total / 10000) }}만
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num">
+    {% if it.price_anomaly %}
+      <span class="up-v" title="{{ it.price_anomaly_why }}"
+        >{{ it.current_price|manwon }}<sup>!</sup></span>
+    {% else %}<b>{{ it.current_price|manwon }}</b>{% endif %}</td>
+  <td class="r num">
+    {% if it.first_price and it.current_price
+          and it.first_price != it.current_price %}
+      {% set d = it.current_price - it.first_price %}
+      <span class="{{ 'down-v' if d < 0 else 'up-v' }}">
+        {{ (d/10000)|round|int }}</span>
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num dim">{{ it.dom if it.dom is not none else '—' }}일</td>
+  <td class="faint num" style="font-size:11.5px">
+    {% if it.dealer_id %}
+      <a href="/dealers?q={{ it.dealer_id }}" class="cellnum"
+        >{{ it.dealer_id|replace('encar:','') }}</a>
+      {% if it.d_total %}<span class="faint">·{{ it.d_total }}</span>{% endif %}
+    {% else %}—{% endif %}</td>
+  <td class="r num">
+    {% if it.sample_sufficient and it.honesty_score %}
+      <span class="tag {{ it.quadrant|lower }}">
+        {{ it.honesty_score|round|int }}</span>
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td style="font-size:11px">
+    {% if it.is_lease %}<span class="tag up">리스</span>{% endif %}
+    {% if it.exclude_reasons %}<span class="tag up">배제</span>{% endif %}
+    {% for ff in it.fail_codes[:3] %}
+      <a href="/listings?fail={{ ff }}&all=1" class="tag"
+         style="text-decoration:none">{{ relax_labels.get(ff, ff) }}</a>
+    {% endfor %}
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/{{ it.listing_id }}" class="faint"
+       title="판정 근거">?</a>
+    {% if it.url %}<a href="{{ it.url }}" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>{% endif %}
+    {% if it.in_watch %}
+      <form class="inline" method="post"
+            action="/watch/remove/{{ it.listing_id }}">
+        <button style="padding:1px 6px;color:var(--amber)">♥</button></form>
+    {% else %}
+      <form class="inline" method="post"
+            action="/watch/add/{{ it.listing_id }}">
+        <button style="padding:1px 6px">♡</button></form>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% else %}
+<div class="empty">
+  <h3>매물이 없습니다</h3>
+  <p>아직 수집하지 않았거나, 조건에 맞는 매물이 없습니다.</p>
+  <p><code>python collect.py</code></p>
+</div>
+{% endif %}
+</div>
+
+<p class="faint" style="font-size:11.5px;margin-top:12px">
+  가격 뒤 <b>!</b> 는 승계·문의 매물 등 가격 이상치입니다.
+  시세 집계와 후보 목록에서 제외됩니다.<br>
+  가격 단위 만원 · 등급 A=전 축 충족 / E=추천 배제 · 순위 1=A등급+비렌트 ·
+  AC1 무사고 / AC4 골격 / AC5 침수 · I0 보험0원 / I3 200만 초과 ·
+  W1 보증 모두 유효 · 회색 행은 E등급
+</p>
+{% endblock %}

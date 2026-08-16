@@ -1,0 +1,75 @@
+<h1>시세 <small>{{ m.target_key }}</small></h1>
+{% if !m.rows %}<p class="muted">아직 관측이 없습니다. 수집이 쌓이면 추이가 나옵니다.</p>{% endif %}
+<table>
+<thead><tr><th>관측일</th><th class="num">매물</th><th class="num">대상</th>
+<th class="num">최저</th><th class="num">p25</th><th class="num">중앙</th>
+<th class="num">p75</th><th class="num">최고</th></tr></thead>
+<tbody>
+{% for r in m.rows %}
+<tr><td>{{ r.observed_at | date }}</td>
+<td class="num">{{ r.listing_count | num }}</td>
+<td class="num">{{ r.eligible_count | num }}</td>
+<td class="num">{{ r.min_won | won }}</td>
+<td class="num">{{ r.p25_won | won }}</td>
+<td class="num">{{ r.median_won | won }}</td>
+<td class="num">{{ r.p75_won | won }}</td>
+<td class="num">{{ r.max_won | won }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+<p class="muted">연식별 분포는 감가 곡선으로 봅니다. 표본이 모자라면 보간하지 않습니다.</p>
+
+{% if m.coefficient_history %}
+<h2>계수 이력</h2>
+<ul>{% for h in m.coefficient_history %}<li>{{ h }}</li>{% endfor %}</ul>
+{% endif %}
+
+{% if m.price_bins %}
+<h2>가격 분포 <span class="muted">막대를 누르면 그 구간 매물로</span></h2>
+<table>
+<thead><tr><th>구간</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+<tbody>
+{% for b in m.price_bins %}
+<tr><td><a href="{{ b.filter_url }}">{{ b.min_won | won }} ~ {{ b.max_won | won }}</a></td>
+  <td class="num">{{ b.count | num }}</td>
+  <td class="num">{{ b.median_won | won }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% if m.by_year %}
+<h2>연식별 <span class="muted">중앙값 · 표본 5건 미만은 내지 않습니다</span></h2>
+<table>
+<thead><tr><th>연식</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+<tbody>
+{% for b in m.by_year %}
+<tr><td><a href="{{ b.filter_url }}">{{ b.label }}</a></td>
+  <td class="num">{{ b.count | num }}</td>
+  <td class="num">{% if b.enough %}{{ b.median_won | won }}{% endif %}{% if !b.enough %}<span class="excluded">표본 부족</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% if m.by_trim %}
+<h2>트림별</h2>
+<table>
+<thead><tr><th>트림</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+<tbody>
+{% for b in m.by_trim %}
+<tr><td><a href="{{ b.filter_url }}">{{ b.label }}</a></td>
+  <td class="num">{{ b.count | num }}</td>
+  <td class="num">{% if b.enough %}{{ b.median_won | won }}{% endif %}{% if !b.enough %}<span class="excluded">표본 부족</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<h2>다른 차종</h2>
+{% if m.other_targets %}
+<p>{% for b in m.other_targets %}<a class="chip" href="{{ b.filter_url }}">{{ b.label }} {{ b.count | num }}</a>{% endfor %}</p>
+{% endif %}
+{% if !m.other_targets %}
+<p class="muted">아직 이 차종만 수집됐습니다.</p>
+{% endif %}

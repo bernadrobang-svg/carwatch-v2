@@ -1,0 +1,23 @@
+<h1>{{ doc.title }}</h1>
+<p class="notice">읽기 전용입니다. 지시서는 세션에서 갱신됩니다 —
+  <strong>웹에서 고치지 않습니다.</strong>
+  <span class="muted">근거 STEP 136</span></p>
+
+<h2>문서 {{ doc.files | count }}개</h2>
+<table>
+<thead><tr><th>파일</th><th class="num">줄</th></tr></thead>
+<tbody>
+{% for f in doc.files %}
+<tr><td><a href="/admin/docs?path={{ f.path }}">{{ f.name }}</a></td>
+  <td class="num">{{ f.lines | num }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>목차 {{ doc.toc | count }}</h2>
+<ul class="toc">
+{% for t in doc.toc %}<li>{{ t }}</li>{% endfor %}
+</ul>
+
+<h2>본문</h2>
+<pre>{{ doc.body }}</pre>

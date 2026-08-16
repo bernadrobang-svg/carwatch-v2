@@ -1,0 +1,178 @@
+{
+ "inspection_clean.json": {
+  "outers_len": 0,
+  "ranks": {},
+  "statusTypes": {},
+  "외판교환_판수": 0,
+  "골격": false,
+  "usageChangeTypes": [
+   {
+    "code": "1",
+    "title": "렌트"
+   }
+  ],
+  "firstRegistrationDate": "20231215",
+  "mileage": 61133,
+  "firstRegistrationDate_core": "2023-12-15"
+ },
+ "inspection_frame.json": {
+  "outers_len": 5,
+  "ranks": {
+   "RANK_ONE": 3,
+   "RANK_B": 1,
+   "RANK_TWO": 1
+  },
+  "statusTypes": {
+   "교환(교체)": 5,
+   "용접,절단": 1
+  },
+  "외판교환_판수": 4,
+  "골격": true,
+  "usageChangeTypes": [],
+  "firstRegistrationDate": "20210615",
+  "mileage": 109551,
+  "firstRegistrationDate_core": "2021-06-15"
+ },
+ "inspection_outer_paint.json": {
+  "outers_len": 1,
+  "ranks": {
+   "RANK_TWO": 1
+  },
+  "statusTypes": {
+   "판금/용접": 1
+  },
+  "외판교환_판수": 0,
+  "골격": false,
+  "usageChangeTypes": [
+   {
+    "code": "1",
+    "title": "렌트"
+   }
+  ],
+  "firstRegistrationDate": "20210827",
+  "mileage": 42120,
+  "firstRegistrationDate_core": "2021-08-27"
+ },
+ "inspection_outer_swap.json": {
+  "outers_len": 7,
+  "ranks": {
+   "RANK_ONE": 6,
+   "RANK_TWO": 1
+  },
+  "statusTypes": {
+   "교환(교체)": 5,
+   "판금/용접": 2
+  },
+  "외판교환_판수": 5,
+  "골격": false,
+  "usageChangeTypes": [],
+  "firstRegistrationDate": "20250818",
+  "mileage": 17094,
+  "firstRegistrationDate_core": "2025-08-18"
+ },
+ "inspection_weld.json": {
+  "outers_len": 1,
+  "ranks": {
+   "RANK_TWO": 1
+  },
+  "statusTypes": {
+   "판금/용접": 1,
+   "용접,절단": 1
+  },
+  "외판교환_판수": 0,
+  "골격": false,
+  "usageChangeTypes": [],
+  "firstRegistrationDate": "20230703",
+  "mileage": 13880,
+  "firstRegistrationDate_core": "2023-07-03"
+ },
+ "record_clean.json": {
+  "carNo": "112거7801",
+  "accidents_len": 0,
+  "types": [],
+  "type12_합": 0,
+  "myAccidentCost": 0,
+  "myAccidentCnt": 0,
+  "otherAccidentCnt": 0
+ },
+ "record_with_accident.json": {
+  "carNo": "29소2618",
+  "accidents_len": 1,
+  "types": [
+   "3"
+  ],
+  "type12_합": 0,
+  "myAccidentCost": 0,
+  "myAccidentCnt": 0,
+  "otherAccidentCnt": 1
+ },
+ "detail_ev_tesla.json": {
+  "modelGroupName": "모델 Y",
+  "originPrice": 5299,
+  "displacement": 180,
+  "fuelName": "전기",
+  "warranty": {
+   "bodyMonth": 48,
+   "transmissionMonth": 96,
+   "transmissionMileage": 192000
+  },
+  "extendWarranty": false,
+  "deemedExtendWarranty": false,
+  "options_choice_len": 0,
+  "dealer_firm": "솔카"
+ },
+ "detail_gasoline_genesis.json": {
+  "modelGroupName": "G80",
+  "originPrice": 6258,
+  "displacement": 2497,
+  "fuelName": "가솔린",
+  "warranty": {
+   "bodyMonth": 60,
+   "transmissionMonth": 60,
+   "transmissionMileage": 100000
+  },
+  "extendWarranty": false,
+  "deemedExtendWarranty": false,
+  "options_choice_len": 0,
+  "dealer_firm": null
+ },
+ "detail_hybrid_renault.json": {
+  "modelGroupName": "그랑 콜레오스",
+  "originPrice": 3881,
+  "displacement": 1969,
+  "fuelName": "가솔린",
+  "warranty": {
+   "bodyMonth": 36,
+   "transmissionMonth": 60,
+   "transmissionMileage": 100000
+  },
+  "extendWarranty": false,
+  "deemedExtendWarranty": true,
+  "options_choice_len": 1,
+  "dealer_firm": "굿카대표[P]"
+ },
+ "detail_lpg_hyundai.json": {
+  "modelGroupName": "그랜저",
+  "originPrice": 4349,
+  "displacement": 3470,
+  "fuelName": "LPG(일반인 구입)",
+  "warranty": {
+   "bodyMonth": 36,
+   "transmissionMonth": 60,
+   "transmissionMileage": 100000
+  },
+  "extendWarranty": false,
+  "deemedExtendWarranty": false,
+  "options_choice_len": 5,
+  "dealer_firm": "남덕모터스"
+ },
+ "catalog.json": {
+  "len": 9,
+  "first": {
+   "optionCd": "1009",
+   "optionName": "BOSE 서라운드 사운드 시스템(10 스피커) + 액티브 노이즈 캔슬레이션",
+   "price": 129,
+   "description": null
+  }
+ }
+}

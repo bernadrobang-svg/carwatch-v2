@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>차종 · CarWatch v2</title>
+<style>
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header{border-bottom:1px solid var(--line);
+       background:linear-gradient(180deg,#171c21,#12161a);position:sticky;top:0;z-index:30}
+.hwrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:24px;height:52px}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase;margin-left:8px}
+nav{display:flex;gap:2px;margin-left:4px}
+nav a{padding:6px 12px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:14px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle;background:var(--down)}
+.who{border:1px solid var(--line2);border-radius:12px;padding:2px 10px;
+     font-size:11.5px;color:var(--amber)}
+
+.sub{border-bottom:1px solid var(--line);background:#12161a}
+.swrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:18px;height:40px;overflow-x:auto}
+.sgrp{display:flex;align-items:center;gap:2px}
+.sgrp .lbl{font-size:10px;letter-spacing:.08em;color:var(--faint);
+           text-transform:uppercase;margin-right:6px;white-space:nowrap}
+.sub a{padding:4px 10px;font-size:12.5px;color:var(--dim);border-radius:4px;
+       white-space:nowrap}
+.sub a:hover{color:var(--text);background:var(--surface2)}
+.sub a.on{color:var(--amber);background:#2a1f0e}
+.sub .sep{width:1px;height:16px;background:var(--line);flex:none}
+
+main{max-width:1280px;margin:0 auto;padding:18px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:22px 0 10px}
+h2:first-of-type{margin-top:0}
+h2 .more{float:right;font-size:11px;letter-spacing:0;text-transform:none;color:var(--faint)}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:14px 16px;margin-bottom:14px}
+.card.tight{padding:6px 12px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:6px 8px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.r{text-align:right} .c{text-align:center}
+
+.tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;
+     border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+select,button,.btn{background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;padding:5px 11px;
+  font-size:12.5px;font-family:inherit;cursor:pointer}
+.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+.btn.off{opacity:.4;cursor:not-allowed}
+input[type=text]{background:var(--surface2);border:1px solid var(--line2);
+  border-radius:5px;color:var(--text);padding:5px 10px;font-size:12.5px}
+input[type=checkbox]{accent-color:var(--amber);cursor:pointer}
+label{font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer}
+
+/* 단계 */
+.wiz{border:1px solid var(--line2);border-radius:8px;background:var(--surface);
+     overflow:hidden;margin-bottom:14px}
+.wtabs{display:flex;border-bottom:1px solid var(--line);background:#12161a}
+.wtab{flex:1;padding:11px 14px;font-size:12.5px;color:var(--faint);
+      border-right:1px solid var(--line);text-align:center}
+.wtab:last-child{border-right:0}
+.wtab.on{color:var(--amber);background:var(--surface);font-weight:600}
+.wtab.done{color:var(--down)}
+.wtab .n{font-family:var(--mono);margin-right:6px}
+.wbody{padding:16px 18px}
+.wrow{display:flex;align-items:center;gap:12px;padding:8px 0;flex-wrap:wrap}
+.wrow .k{width:96px;flex:none;font-size:12px;color:var(--faint);
+         letter-spacing:.06em;text-transform:uppercase}
+.wrow .v{flex:1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* facet 결과 */
+.facet{background:#0b0d10;border:1px solid var(--line);border-radius:6px;
+       padding:11px 13px;font-family:var(--mono);font-size:11.5px;
+       line-height:1.8;color:var(--dim);max-height:220px;overflow-y:auto}
+.facet .ok{color:var(--down)} .facet .wa{color:var(--amber)}
+.facet b{color:var(--text)}
+
+/* 후보 목록 */
+.cands{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cand{border:1px solid var(--line2);border-radius:5px;padding:4px 9px;
+      font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.cand:hover{border-color:var(--faint)}
+.cand.sel{background:#2a1f0e;border-color:#5c4520;color:var(--amber)}
+.cand .n{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.cand.sel .n{color:var(--amber)}
+
+.note{background:#12161a;border:1px solid var(--line);border-radius:6px;
+      padding:11px 14px;font-size:12.5px;color:var(--dim);line-height:1.7;
+      margin-bottom:12px}
+.note b{color:var(--text)} .note .k{color:var(--amber)}
+.warn{font-size:11.5px;color:var(--amber);margin-left:10px}
+.qprev{background:#0b0d10;border:1px solid var(--line);border-radius:6px;
+  padding:10px 12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);
+  line-height:1.8;margin-top:10px;word-break:break-all}
+.qprev b{color:var(--amber)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>CarWatch</b><span>v2</span></div>
+    <nav>
+      <a href="v2_dashboard_시안.html">현황</a>
+      <a href="v2_listings_시안.html">매물</a>
+      <a href="v2_admin_시안.html" class="on">관리</a>
+    </nav>
+    <div class="hmeta">
+      <a href="v2_login_시안.html" class="who" title="계정 · 로그아웃">마스터 · admin</a>
+      <span><span class="dot"></span>08-14 06:00</span>
+      <span class="num">c3 · d7 · p2</span>
+    </div>
+  </div>
+</header>
+
+<div class="sub">
+  <div class="swrap">
+    <div class="sgrp"><span class="lbl">운영</span>
+      <a href="v2_admin_시안.html">현황</a>
+      <a href="v2_admin_run_시안.html">수집 실행</a><a href="v2_admin_audit_시안.html">감사 조회</a>
+      <a href="v2_admin_users_시안.html">사용자</a></div>
+    <span class="sep"></span>
+    <div class="sgrp"><span class="lbl">조정</span>
+      <a href="v2_admin_registry_시안.html">등록부</a>
+      <a href="v2_admin_scoring_시안.html">배점</a>
+      <a href="v2_admin_targets_시안.html" class="on">차종</a>
+      <a href="v2_admin_config_시안.html">설정</a></div>
+    <span class="sep"></span>
+    <div class="sgrp"><span class="lbl">탐색</span>
+      <a href="v2_admin_query_시안.html">쿼리</a><a href="v2_admin_api_시안.html">API 조회</a><a href="v2_admin_tools_시안.html">도구</a>
+      <a href="#">문서</a><a href="v2_admin_requests_시안.html">개발 요청</a></div>
+  </div>
+</div>
+
+<main>
+
+<div class="note">
+  <b>수입차는 <span class="k">CarType.N</span> 입니다.</b>
+  국산과 축이 다릅니다. 빠뜨리면 조건이 안 맞아 <b>0건</b>이 나옵니다.
+  테슬라가 그 사례입니다 — 국산으로 잘못 넣으면 288건이 통째로 사라집니다.
+  <div style="margin-top:7px">
+    수입차에서 더 볼 것 —
+    <span class="k">병행수입</span>(<span class="num">importType</span>)은
+    같은 모델이어도 보증·신차가가 다릅니다 ·
+    <span class="k">신차가</span>는 국내 판매가로 넣으십시오
+  </div>
+</div>
+
+<div class="note">
+  <b>차종을 추가하려면 먼저 facet 을 한 번 받아야 합니다.</b>
+  사이트가 그 차종에 어떤 값을 쓰는지 확인하지 않고는 조건을 만들 수 없습니다.
+  <span class="k">추측으로 URL 을 만들지 않습니다.</span>
+</div>
+
+<!-- 추가 마법사 -->
+<h2>차종 추가</h2>
+<div class="wiz">
+  <div class="wtabs">
+    <div class="wtab on" id="t1"><span class="n">1</span>모델 지정</div>
+    <div class="wtab" id="t2"><span class="n">2</span>facet 확인</div>
+    <div class="wtab" id="t3"><span class="n">3</span>트림 선택</div>
+    <div class="wtab" id="t4"><span class="n">4</span>등록</div>
+  </div>
+
+  <!-- 1 -->
+  <div class="wbody" id="s1">
+    <div class="wrow"><div class="k">구분</div>
+      <div class="v">
+        <label><input type="radio" name="ct" value="Y" checked onchange="setCT('Y')">
+          국산 <span class="faint num">CarType.Y</span></label>
+        <label style="margin-left:14px"><input type="radio" name="ct" value="N"
+          onchange="setCT('N')">
+          수입 <span class="faint num">CarType.N</span></label>
+        <span class="warn" id="ctwarn"></span>
+      </div></div>
+    <div class="wrow"><div class="k">제조사</div>
+      <div class="v"><select id="mfr" onchange="onMfr()"></select>
+        <span class="faint" id="mfrnote"></span></div></div>
+    <div class="wrow"><div class="k">모델그룹</div>
+      <div class="v"><select id="mg"></select>
+        <span class="faint">엔카가 쓰는 표기 그대로입니다</span></div></div>
+    <div class="wrow"><div class="k">키</div>
+      <div class="v"><input type="text" id="key" value="GV70_25T" style="width:180px">
+        <span class="faint">영문 대문자·숫자·밑줄. 나중에 못 바꿉니다</span></div></div>
+    <div class="wrow"><div class="k">이름</div>
+      <div class="v"><input type="text" id="nm" value="GV70 2.5T" style="width:180px">
+        <span class="faint">화면에 나옵니다</span></div></div>
+    <div class="qprev" id="qprev"></div>
+    <div style="margin-top:12px">
+      <span class="btn on" onclick="go(2)">facet 받기 →
+        <span class="faint" style="font-weight:400">요청 1건</span></span>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="wbody" id="s2" style="display:none">
+    <div class="dim" style="font-size:12.5px;margin-bottom:9px">
+      <span class="num">GET /search/car/list/mobile?count=true&inav=|Metadata</span><br>
+      제네시스 · GV70 · 축 미지정 · 1회
+    </div>
+    <div class="facet" id="fout"></div>
+    <div style="margin-top:12px;display:flex;gap:9px">
+      <span class="btn on" onclick="go(3)">트림 선택 →</span>
+      <span class="btn" onclick="go(1)">← 다시</span>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="wbody" id="s3" style="display:none">
+    <div class="wrow"><div class="k">연료</div>
+      <div class="v">
+        <div class="cands">
+          <span class="cand sel" onclick="tog(this)">가솔린 <span class="n">1,204</span></span>
+          <span class="cand" onclick="tog(this)">디젤 <span class="n">312</span></span>
+          <span class="cand" onclick="tog(this)">전기 <span class="n">88</span></span>
+        </div></div></div>
+
+    <div class="wrow"><div class="k">트림</div>
+      <div class="v">
+        <div class="cands">
+          <span class="cand sel" onclick="tog(this)">가솔린 2.5T AWD <span class="n">642</span></span>
+          <span class="cand sel" onclick="tog(this)">가솔린 2.5T 2WD <span class="n">418</span></span>
+          <span class="cand" onclick="tog(this)">가솔린 3.5T AWD <span class="n">144</span></span>
+          <span class="cand" onclick="tog(this)">디젤 2.2 AWD <span class="n">312</span></span>
+        </div>
+        <div class="faint" style="font-size:11.5px;margin-top:6px;width:100%">
+          ★ 목록 응답의 <span class="num">Badge</span> 값입니다.
+          facet 의 <span class="num">BadgeGroup</span>(가솔린 AWD)은 배기량이 없어 쓰지 않습니다
+        </div></div></div>
+
+    <div class="wrow"><div class="k">연식</div>
+      <div class="v"><input type="text" value="2021" style="width:70px"> ~
+        <input type="text" value="2026" style="width:70px"></div></div>
+
+    <div class="wrow"><div class="k">수입 형태</div>
+      <div class="v" id="imp-row">
+        <div class="cands">
+          <span class="cand sel" onclick="tog(this)">정식수입
+            <span class="n">REGULAR_IMPORT</span></span>
+          <span class="cand" onclick="tog(this)">병행수입
+            <span class="n">PARALLEL_IMPORT</span></span>
+        </div>
+        <div class="faint" style="font-size:11.5px;margin-top:6px;width:100%">
+          병행수입은 제조사 보증이 다르고 신차가 기준도 다릅니다.
+          섞으면 기대가가 왜곡됩니다 — 나누는 것을 권합니다
+        </div></div></div>
+
+    <div class="wrow"><div class="k">신차가</div>
+      <div class="v"><input type="text" value="5,890" style="width:90px">
+        <span class="dim">만원</span>
+        <span class="faint">— 기대가 산출의 기준입니다. 없으면 가격 축이 제외됩니다</span>
+        <div class="faint" style="font-size:11.5px;width:100%;margin-top:4px"
+             id="pricenote"></div></div></div>
+
+    <div style="margin-top:12px;display:flex;gap:9px">
+      <span class="btn on" onclick="go(4)">확인 →</span>
+      <span class="btn" onclick="go(2)">← 다시</span>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="wbody" id="s4" style="display:none">
+    <table style="margin-bottom:12px">
+      <tr><td style="width:130px" class="dim">키</td>
+          <td class="num" id="r-key">GV70_25T</td></tr>
+      <tr><td class="dim">이름</td><td id="r-nm">GV70 2.5T</td></tr>
+      <tr><td class="dim">조건</td>
+          <td class="num" style="font-size:12px;line-height:1.7" id="r-cond"></td></tr>
+      <tr><td class="dim">예상 매물</td><td class="num">1,060건</td></tr>
+      <tr><td class="dim">수집 요청</td>
+          <td class="num">약 4,240건 <span class="faint">· 0.1초 간격이면 10분</span></td></tr>
+      <tr><td class="dim">신차가</td><td class="num">5,890만</td></tr>
+    </table>
+
+    <div class="note" style="margin-bottom:12px">
+      등록해도 <b>바로 수집하지 않습니다.</b>
+      다음 정기 수집이나 「수집 실행」에서 범위를 정해 돌리십시오.
+    </div>
+
+    <div class="wrow"><div class="k">사유</div>
+      <div class="v"><input type="text" placeholder="왜 추가하는가 (필수)"
+        style="width:340px" id="rs"></div></div>
+
+    <div style="margin-top:12px;display:flex;gap:9px">
+      <span class="btn on" onclick="reg()">등록</span>
+      <span class="btn" onclick="go(3)">← 다시</span>
+    </div>
+  </div>
+</div>
+
+<!-- 현재 차종 -->
+<h2>등록된 차종 <span class="more">10종</span></h2>
+<div class="card tight">
+<table>
+<thead>
+<tr><th>키</th><th>이름</th><th class="r">매물</th><th class="r">신차가</th>
+    <th class="r">계수</th><th>수집</th><th class="c" style="width:96px"></th></tr>
+</thead>
+<tbody>
+<tr><td class="num">KOLEOS_HEV</td><td>그랑 콜레오스 HEV</td>
+    <td class="r num">259</td><td class="r num">4,270만</td>
+    <td class="r num">0.970</td>
+    <td class="dim">08-14 06:00</td>
+    <td class="c"><span class="tag">수정</span> <span class="tag">중지</span></td></tr>
+<tr><td class="num">G80_25T</td><td>G80 2.5T</td>
+    <td class="r num">1,842</td><td class="r num">6,340만</td>
+    <td class="r num faint">1.000</td>
+    <td class="faint">미수집</td>
+    <td class="c"><span class="tag">수정</span> <span class="tag">중지</span></td></tr>
+<tr><td class="num">GV60</td><td>GV60</td>
+    <td class="r num">104</td><td class="r num">6,730만</td>
+    <td class="r num faint">1.000</td>
+    <td class="faint">미수집</td>
+    <td class="c"><span class="tag">수정</span> <span class="tag">중지</span></td></tr>
+<tr><td class="num">SPORTAGE_LPI</td><td>스포티지 LPi</td>
+    <td class="r num">431</td><td class="r num">3,180만</td>
+    <td class="r num faint">1.000</td>
+    <td class="faint">미수집</td>
+    <td class="c"><span class="tag">수정</span> <span class="tag">중지</span></td></tr>
+<tr><td class="num">MODEL_Y</td><td>테슬라 모델Y</td>
+    <td class="r num">288</td><td class="r num">5,499만</td>
+    <td class="r num faint">1.000</td>
+    <td class="faint">미수집</td>
+    <td class="c"><span class="tag">수정</span> <span class="tag">중지</span></td></tr>
+<tr><td colspan="7" class="faint" style="text-align:center;padding:9px">
+    … 5종 더</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="faint" style="font-size:11.5px;line-height:1.8">
+  ⓘ <b style="color:var(--text)">계수 1.000 은 아직 보정하지 않았다는 뜻입니다.</b>
+  수집이 끝나면 실측으로 산출합니다. 그 전에는 기대가가 부정확할 수 있습니다.
+  <br>
+  <b style="color:var(--text)">「중지」는 삭제가 아닙니다.</b>
+  수집만 멈추고 지금까지 받은 것은 남습니다.
+</div>
+
+<div class="faint" style="font-size:11px;text-align:right;margin-top:14px">
+  config/targets.json · dict d7
+</div>
+</main>
+
+<script>
+var MFR = {
+ Y: {  /* 국산 — CarType.Y */
+  "현대":["아반떼","쏘나타","그랜저","투싼","싼타페","팰리세이드","코나","아이오닉 5"],
+  "기아":["K5","K8","스포티지","쏘렌토","카니발","셀토스","EV6","EV9"],
+  "제네시스":["G70","G80","G90","GV60","GV70","GV80"],
+  "르노코리아(삼성)":["그랑 콜레오스","QM6","SM6","아르카나","XM3"],
+  "KGM":["토레스","액티언","렉스턴","티볼리","코란도"],
+  "쉐보레(GM대우)":["트랙스","트레일블레이저","콜로라도","타호"]
+ },
+ N: {  /* 수입 — CarType.N */
+  "테슬라":["모델 Y","모델 3","모델 S","모델 X"],
+  "BMW":["3시리즈","5시리즈","7시리즈","X3","X5","X7","i4","iX"],
+  "벤츠":["C클래스","E클래스","S클래스","GLC","GLE","EQE","EQS"],
+  "아우디":["A4","A6","A7","Q5","Q7","e-tron"],
+  "볼보":["S60","S90","XC40","XC60","XC90"],
+  "렉서스":["ES","IS","NX","RX","UX"],
+  "포르쉐":["911","카이엔","마칸","파나메라","타이칸"],
+  "폭스바겐":["골프","티구안","아테온","ID.4"],
+  "토요타":["캠리","프리우스","RAV4","시에나"],
+  "혼다":["어코드","CR-V","파일럿","오딧세이"],
+  "미니":["쿠퍼","컨트리맨","클럽맨"],
+  "랜드로버":["디스커버리","레인지로버","이보크","벨라"]
+ }
+};
+var CT = "Y";
+
+function setCT(v){
+  CT = v;
+  var ir = document.getElementById("imp-row");
+  if(ir) ir.parentElement.style.display = v==="N" ? "" : "none";
+  var pn = document.getElementById("pricenote");
+  if(pn) pn.textContent = v==="N"
+    ? "★ 수입차는 국내 판매가를 넣으십시오. 본국 가격이 아닙니다"
+    : "";
+  document.getElementById("ctwarn").textContent = v==="N"
+    ? "★ 수입은 CarType.N 입니다. 빠뜨리면 0건이 나옵니다"
+    : "";
+  fillMfr();
+}
+function fillMfr(){
+  var sel = document.getElementById("mfr");
+  sel.innerHTML = Object.keys(MFR[CT]).map(function(m){
+    return '<option>'+m+'</option>';}).join("");
+  document.getElementById("mfrnote").textContent =
+    CT==="N" ? "목록에 없으면 facet 으로 확인하십시오" : "";
+  onMfr();
+}
+function onMfr(){
+  var m = document.getElementById("mfr").value;
+  var sel = document.getElementById("mg");
+  sel.innerHTML = (MFR[CT][m]||[]).map(function(g){
+    return '<option>'+g+'</option>';}).join("");
+  sel.onchange = drawQ;
+  drawQ();
+}
+function drawQ(){
+  var m = document.getElementById("mfr").value;
+  var g = document.getElementById("mg").value;
+  var el = document.getElementById("qprev");
+  if(!el) return;
+  el.innerHTML =
+    '조립될 조건<br>' +
+    '(And.Hidden.N._.MultiViewHidden.N._.Year.range(202100..)._.' +
+    'Price.range(..6000)._.(C.<b>CarType.'+CT+'</b>._.(C.Manufacturer.'+
+    esc(m)+'._.ModelGroup.'+esc(g)+'.)))' +
+    '<div style="color:var(--faint);margin-top:6px">' +
+    (CT==="N" ? '★ 수입차는 CarType.N · 빠뜨리면 0건'
+              : 'CarType.Y — 국산') + '</div>';
+}
+function esc(s){
+  /* 문법 문자 이스케이프 — 괄호·점·언더바 */
+  return String(s).replace(/[()._]/g, function(c){return c==="("?"(":c==="_"?"_":c;});
+}
+
+var FACET = [
+ ['t','제네시스 · GV70 · inav=|Metadata · 1회 요청'],
+ ['ok','200 OK · 1.2초 · 노드 <b>47</b>개'],
+ ['t',''],
+ ['t','값이 있는 축 <b>34</b>개'],
+ ['ok','  FuelType      가솔린 1,204 · 디젤 312 · 전기 88'],
+ ['ok','  Badge         가솔린 2.5T AWD 642 · 가솔린 2.5T 2WD 418'],
+ ['ok','                가솔린 3.5T AWD 144 · 디젤 2.2 AWD 312'],
+ ['ok','  Year          2021 ~ 2026'],
+ ['ok','  Transmission  오토 1,598 · 기타 6'],
+ ['ok','  Color         흰색 402 · 검정 388 · 회색 281 · …'],
+ ['t',''],
+ ['wa','값이 없는 축 13개 — CarType · Separation 등'],
+ ['t',''],
+ ['ok','필수 축 확인 <b>통과</b> — FuelType · Year · Badge 존재'],
+ ['wa','BadgeGroup 은 「가솔린 AWD」 형태 — 배기량 없음. 트림 판정에 쓰지 않음'],
+ ['t','원문은 raw_facet 에 저장됐습니다']
+];
+
+function go(n){
+  [1,2,3,4].forEach(function(i){
+    document.getElementById("s"+i).style.display = i===n ? "" : "none";
+    var t = document.getElementById("t"+i);
+    t.className = "wtab" + (i===n ? " on" : i<n ? " done" : "");
+  });
+  if(n===2) drawFacet();
+}
+
+function drawFacet(){
+  var el = document.getElementById("fout");
+  el.innerHTML = ""; var i = 0;
+  var tm = setInterval(function(){
+    if(i >= FACET.length){ clearInterval(tm); return; }
+    var f = FACET[i++];
+    el.innerHTML += '<div class="'+f[0]+'">'+(f[1]||'&nbsp;')+'</div>';
+    el.scrollTop = el.scrollHeight;
+  }, 90);
+}
+
+function tog(el){ el.classList.toggle("sel"); }
+
+function reg(){
+  if(!document.getElementById("rs").value.trim()){
+    alert("사유를 적으십시오"); return;
+  }
+  alert("등록했습니다\\n\\n" +
+    "config/targets.json 에 GV70_25T 추가\\n" +
+    "dict_version d7 → d8\\n\\n" +
+    "아직 수집하지 않았습니다.\\n" +
+    "「수집 실행」에서 범위를 GV70 으로 정해 돌리십시오.");
+  go(1);
+}
+
+/* 4단계 요약을 실제 선택으로 채운다 */
+var _go = go;
+go = function(n){
+  _go(n);
+  if(n===4){
+    var m = document.getElementById("mfr").value;
+    var g = document.getElementById("mg").value;
+    document.getElementById("r-key").textContent =
+      document.getElementById("key").value;
+    document.getElementById("r-nm").textContent =
+      document.getElementById("nm").value;
+    var tr = [].slice.call(document.querySelectorAll("#s3 .cand.sel"))
+      .map(function(e){return e.childNodes[0].textContent.trim();});
+    document.getElementById("r-cond").innerHTML =
+      '<b style="color:var(--amber)">CarType.'+CT+'</b> · Manufacturer.'+m+
+      ' · ModelGroup.'+g+'<br>' +
+      'Badge.(' + (tr.slice(1).join(" | ") || "전 트림") + ')<br>' +
+      'Year.2021~2026 · Price.range(..6000)';
+  }
+};
+
+setCT("Y");
+</script>
+</body>
+</html>

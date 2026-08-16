@@ -1,0 +1,48 @@
+<h1>쿼리</h1>
+<p class="notice">읽기만 됩니다. 쓰기 연산은 SQL 바이트코드로 막습니다 — 주석·대소문자로 우회되지 않습니다.</p>
+<form method="post" action="/admin/query">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <textarea name="sql" rows="4" placeholder="SELECT ..."></textarea>
+  <button type="submit">실행</button>
+</form>
+{% if r %}
+<h2>결과</h2>
+<table>
+<thead><tr>{% for c in r.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+<tbody>
+{% for row in r.rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<h2>예제</h2>
+<p class="muted">처음에는 여기서 고르십시오.</p>
+<ul>{% for e in query_examples %}<li>{{ e.label }} — <code>{{ e.sql }}</code></li>{% endfor %}</ul>
+
+<h2>최근 쿼리 <span class="muted">거부된 것도 남습니다</span></h2>
+{% if query_history %}
+<table>
+<thead><tr><th>시각</th><th>SQL</th><th class="num">행</th><th class="num">시간</th><th>결과</th></tr></thead>
+<tbody>
+{% for q in query_history %}
+<tr><td>{{ q.at }}</td><td class="runid">{{ q.sql }}</td>
+  <td class="num">{{ q.rows | num }}</td><td class="num">{{ q.ms | num }}ms</td>
+  <td>{% if q.rejected %}<span class="warn-block">거부 — {{ q.rejected }}</span>{% endif %}{% if !q.rejected %}실행{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !query_history %}
+<p class="muted">아직 실행한 쿼리가 없습니다.</p>
+{% endif %}
+
+<h2>테이블 {{ db_tables | count }}</h2>
+<table>
+<thead><tr><th>표</th><th class="num">행</th><th>컬럼</th></tr></thead>
+<tbody>
+{% for t in db_tables %}
+<tr><td class="runid">{{ t.name }}</td><td class="num">{{ t.rows | num }}</td>
+  <td class="muted">{{ t.columns }}</td></tr>
+{% endfor %}
+</tbody>
+</table>

@@ -1,0 +1,748 @@
+# -*- coding: utf-8 -*-
+"""화면 데이터 생성.
+
+지시서   10장 STEP 93~107
+근거     모든 화면은 result_* 와 core_* 만 읽는다 (STEP 105)
+필수     모든 화면 함수는 Account 를 첫 인자로 받는다 (STEP 105 · 13장 STEP 126)
+         개인화는 watch_* 조회에 account_id 를 거는 것으로 끝난다
+금지     화면이 raw_response 를 직접 파싱 (V6-03)
+         판정 결과가 계정별로 달라지는 것 — 같은 차는 누가 봐도 같은 등급이다
+         NOT_RATED 에 순위를 매기는 것 (V6-04)
+         gone 을 팔린 것으로 표기하는 것 — 목록에서 사라진 것이다 (V6-06)
+         버전이 다른 결과를 한 목록에 섞어 정렬하는 것 (9장 STEP 91)
+"""
+from __future__ import annotations
+
+import json
+import os
+import sqlite3
+from urllib.parse import urlencode
+
+from report.finance import build_finance
+from report.render import render_listing, render_run
+from report.screens.views import (
+    MIN_SAMPLE,
+    Bucket,
+    ExcludedGroup,
+    PendingValue,
+    StepRow,
+    TodayChange,
+    TONE_BAD, TONE_GOOD, TONE_MUTED, TONE_UNKNOWN,
+    AttentionItem, AxisChip, ChangeRow, CompareView, DashboardView, DealerRow,
+    ListingFilter, ListingRow, MarketRow, MarketView, NotReadyView,
+    WatchRow,
+    TargetStat, ViewerState,
+)
+from report.views import AxisView, ReportMeta, VersionStamp
+from contracts import ROLE_ADMIN, ROLE_USER, Account, require_role
+
+NOT_RATED = "NOT_RATED"
+# 분위수는 표시 파라미터다.  config 가 정본이며 여기 값은 호출측 미지정 시 대체다
+MARKET_QUANTILES = (0.25, 0.50, 0.75)
+GONE = "gone"
+
+# 목록에 띄우는 축 요약 (STEP 97).  Component 이름을 쓴다
+CHIP_AXES = ("spec.hud", "warranty.general", "history.damage",
+             "history.insurance", "history.rental")
+
+RANK_ORDER = ("S", "A", "B", "C", "D", "E")
+
+
+def _labels(root: str = ".") -> dict:
+    with open(f"{root}/config/labels.json", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def viewer_state(account: Account) -> ViewerState:
+    """역할별 표시 분기.  ★ 화면 숨김은 권한이 아니다 — 서버가 막는다 (STEP 126)."""
+    return ViewerState(
+        role=account.role,
+        display_name=account.display_name,
+        can_watch=account.role in (ROLE_USER, ROLE_ADMIN),
+        can_admin=account.role == ROLE_ADMIN,
+        must_change_secret=account.must_change_secret)
+
+
+def chip(axis: str, value: int | None, excluded: bool, labels: dict,
+         base: str = "/listings") -> AxisChip:
+    """전 화면이 같은 문구를 쓴다.  화면마다 다르게 쓰지 않는다 (V6-02)."""
+    vl = labels["VALUE_LABELS"]
+    al = labels["AXIS_LABELS"]
+    if value is None and excluded:
+        label, tone, bucket = vl["unknown"], TONE_UNKNOWN, "unknown"
+    elif value == -1 and excluded:
+        label, tone, bucket = vl["na"], TONE_MUTED, "na"
+    elif value is None:
+        label, tone, bucket = vl["unknown"], TONE_UNKNOWN, "unknown"
+    elif value > 0:
+        label, tone, bucket = vl["1"], TONE_GOOD, "1"
+    else:
+        label, tone, bucket = vl["0"], TONE_BAD, "0"
+    url = f"{base}?{urlencode({'axis': axis, 'bucket': bucket})}"
+    # ★ 「없음」과 「모름」을 같은 기호로 내면 v1 사고가 되풀이된다.
+    #   O(있음) · ·(없음) · ?(확인 못 함) 셋으로 가른다 (STEP 149f · A-4)
+    mark = labels.get("VALUE_MARKS", {}).get(bucket, "?")
+    return AxisChip(axis, f"{al.get(axis, axis)} {label}", tone, url,
+                    mark=mark)
+
+
+def _stamp(calc_version: str, dict_version: str | None) -> VersionStamp:
+    return VersionStamp(None, dict_version, calc_version, None, None, None)
+
+
+def _bulk_axes(conn, lids: list, calc_version: str) -> dict:
+    """축 값을 한 번에 읽는다 (F-3 · V11-34).
+
+    ★ 행마다 5쿼리를 돌면 200행에 1,000쿼리다.  IN 절로 한 번에 받는다
+    """
+    if not lids:
+        return {}
+    marks = ",".join("?" * len(lids))
+    out: dict = {}
+    for lid, axis, value, excluded in conn.execute(
+        f"SELECT listing_id, axis, value, excluded FROM result_axis "
+        f"WHERE calc_version = ? AND listing_id IN ({marks})",
+        (calc_version, *lids)
+    ):
+        out.setdefault(lid, {})[axis] = (value, bool(excluded))
+    return out
+
+
+def _bulk_changes(conn, lids: list) -> dict:
+    if not lids:
+        return {}
+    marks = ",".join("?" * len(lids))
+    return {r[0]: r[1] for r in conn.execute(
+        f"SELECT listing_id, COUNT(*) FROM core_listing_change "
+        f"WHERE change_kind='price' AND listing_id IN ({marks}) "
+        f"GROUP BY listing_id", tuple(lids))}
+
+
+def _total_points() -> float:
+    """만점.  ★ 분모가 이보다 짧으면 색으로 가른다 (STEP 149f · A-2)."""
+    import json as _j
+    import os as _o
+
+    here = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+        _o.path.abspath(__file__))))
+    with open(_o.path.join(here, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        return float(_j.load(f)["total_points"])
+
+
+def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
+         axes: dict | None = None, changes_by: dict | None = None
+         ) -> ListingRow:
+    """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
+
+    워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
+    """
+    (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
+     dealer, dstatus, first_seen, last_seen, dv) = rec
+    got = (axes or {}).get(lid, {})
+    chips = []
+    for axis in CHIP_AXES:
+        if axis in got:
+            chips.append(chip(axis, got[axis][0], got[axis][1], labels))
+        else:
+            chips.append(chip(axis, None, True, labels))
+    fin = build_finance(price, fin_cfg, tk)
+    changes = (changes_by or {}).get(lid, 0)
+    return ListingRow(
+        listing_id=lid, grade=grade or NOT_RATED,
+        # ★ NOT_RATED 에 순위를 매기지 않는다.  비교 대상이 아니다
+        rank=None if (grade or NOT_RATED) == NOT_RATED else rank,
+        # ★ 비율이 크게 · 원점수/분모가 작게 (STEP 149f · A-1).
+        #   분모가 다른 매물을 눈으로 갈라야 한다
+        earned=earned, denominator=denom,
+        ratio_pct=(round(earned / denom * 100, 1)
+                   if earned is not None and denom else None),
+        # 분모가 만점보다 짧으면 색으로 가른다 (A-2)
+        denom_short=bool(denom and denom < _total_points()),
+        target_label=tk or "", trim=trim, year_month=ym, mileage_km=km,
+        color_ext=ce, color_int=ci, axis_chips=chips, price_won=price,
+        total_cost_won=(price + fin.acquisition_cost_won) if fin else None,
+        loan_principal_won=fin.loan_principal_won if fin else None,
+        monthly_won=fin.monthly_payment_won if fin else None,
+        price_gap_pct=None, price_change_cnt=changes, days_on_market=None,
+        dealer_shop=dealer, dealer_honesty=None, note=None,
+        versions=_stamp(calc_version, dv),
+        # ★ gone 은 목록에서 사라진 것이다.  팔렸다고 단정하지 않는다
+        status_label=labels["STATUS_LABELS"].get(dstatus) if dstatus else None)
+
+
+
+def _view_cfg(key: str, root: str = ".") -> int:
+    """화면 표시 정책.  ★ 코드에 박지 않는다 (config/web.json)."""
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return int(json.load(f)[key])
+
+
+GRADE_ORDER = ("S", "A", "B", "C", "D", "E", "NOT_RATED")
+# 가격 분포 칸 수 · 오늘 변동 줄 수.  ★ 표시 정책이라 코드에 박지 않는다
+PRICE_BINS = _view_cfg("price_bins")
+TODAY_ROWS = _view_cfg("today_rows")
+MS_PER_SEC = 1000.0
+
+
+# 정렬 1단.  ★ 뒤 3단은 어느 축을 골라도 그대로 붙는다 (STEP 106a · E-3)
+ORDER_SQL = {
+    # ★ earned/denominator 다.  score_total 은 555 환산이라 분모가 다른
+    #   매물이 잘못 섞인다 (E-1 · E-3)
+    "rank": "(s.earned * 1.0 / NULLIF(s.denominator, 0)) DESC",
+    "grade": "s.grade ASC",
+    "price": "l.price_current_won ASC",
+    "price_desc": "l.price_current_won DESC",
+    "mileage": "l.mileage_km ASC",
+    "year": "l.year_month DESC",
+    "new": "l.first_seen DESC",
+    "dom": "l.first_seen ASC",
+}
+
+# ★ E 와 NOT_RATED 는 뒤로.  비교 대상이 아니다
+ORDER_HEAD = ("(CASE WHEN s.grade IN ('E','NOT_RATED') THEN 1 ELSE 0 END)")
+# ★ 타이브레이커가 없으면 같은 점수가 페이지마다 다르게 나온다 (V6-07)
+ORDER_TAIL = ("(s.earned * 1.0 / NULLIF(s.denominator, 0)) DESC,"
+              " l.price_current_won ASC, l.listing_id ASC")
+
+
+def order_clause(order: str) -> str:
+    """4단 정렬.  ★ 축을 바꿔도 뒤 3단은 남는다."""
+    first = ORDER_SQL.get(order, ORDER_SQL["rank"])
+    return f"{ORDER_HEAD}, {first}, {ORDER_TAIL}"
+
+
+def view_listings(account: Account, conn: sqlite3.Connection,
+                  flt: ListingFilter, fin_cfg: dict, root: str = ".",
+                  page_size: int | None = None) -> list[ListingRow]:
+    """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1."""
+    where = ["l.site = ?"]
+    args: list = [flt.site]
+    if flt.target_key:
+        where.append("l.target_key = ?")
+        args.append(flt.target_key)
+    if flt.grade:
+        where.append("s.grade = ?")
+        args.append(flt.grade)
+    # ★ 시세 막대를 누르면 그 구간 매물로 간다 (STEP 97).
+    #   링크가 200 을 내는 것과 필터가 걸리는 것은 다르다 (실측 08-15)
+    if flt.price_min is not None:
+        where.append("l.price_current_won >= ?")
+        args.append(flt.price_min)
+    if flt.price_max is not None:
+        where.append("l.price_current_won <= ?")
+        args.append(flt.price_max)
+    if not flt.show_all:
+        where.append("l.status <> 'out_of_scope'")
+    if flt.axis and flt.bucket:
+        cond = {
+            "1": "a.value > 0 AND a.excluded = 0",
+            "0": "a.value = 0 AND a.excluded = 0",
+            "na": "a.value = -1 AND a.excluded = 1",
+            "unknown": "a.value IS NULL AND a.excluded = 1",
+        }[flt.bucket]
+        where.append(
+            "EXISTS (SELECT 1 FROM result_axis a WHERE a.listing_id=l.listing_id"
+            f" AND a.axis=? AND a.calc_version=? AND {cond})")
+        args += [flt.axis, flt.calc_version]
+
+    sql = (
+        "SELECT l.listing_id, l.target_key, l.trim_badge, l.year_month,"
+        " l.mileage_km, l.color_ext_raw, l.color_int_raw, l.price_current_won,"
+        # ★ earned 를 가져온다.  비율은 earned/denominator 다 —
+        #   score_total(555 환산)로 나누면 분모가 짧을수록 부풀려진다 (E-1)
+        " s.grade, s.earned, s.denominator, l.dealer_shop, l.status,"
+        " l.first_seen, l.last_seen, s.dict_version"
+        " FROM core_listing l LEFT JOIN result_score s"
+        " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+        f" WHERE {' AND '.join(where)}"
+        f" ORDER BY {order_clause(flt.order)}"
+        " LIMIT ? OFFSET ?")
+    labels = _labels(root)
+    # all=1 은 전체다.  페이지 크기는 정책값이라 config 에 둔다 (STEP 106)
+    if page_size is None:
+        # ★ 출처는 web.rows_per_page 하나다 (E-5).
+        #   옛 판은 scoring 쪽에도 같은 값이 있어 화면마다 갈렸다
+        with open(f"{root}/config/web.json", encoding="utf-8") as f:
+            page_size = int(json.load(f)["rows_per_page"])
+    limit = -1 if flt.show_all else page_size
+    recs = conn.execute(
+        sql, [flt.calc_version, *args, limit, (flt.page - 1) * limit]).fetchall()
+    lids = [r[0] for r in recs]
+    axes = _bulk_axes(conn, lids, flt.calc_version)
+    changes = _bulk_changes(conn, lids)
+    return [_row(conn, r, labels, fin_cfg, i + 1, flt.calc_version,
+                 axes, changes) for i, r in enumerate(recs)]
+
+
+def view_recommend(account: Account, conn, flt: ListingFilter,
+                   fin_cfg: dict, root: str = ".") -> list[ListingRow]:
+    """추천 대상만.  E 와 NOT_RATED 는 순위를 매기지 않는다 (7장 STEP 84)."""
+    rows = view_listings(account, conn, flt, fin_cfg, root)
+    return [r for r in rows if r.grade not in ("E", NOT_RATED)]
+
+
+# 절대조건 탈락 사유별 안내.  ★ 「왜 뺐는지」가 판단 재료다 (시안 v2_recommend)
+EXCLUDED_NOTES = {
+    "리스·렌트 상품": "표시가가 승계 인수금입니다. 월 사용료가 따로 듭니다",
+    "계약중·판매완료": "이미 계약된 매물입니다",
+    "골격 손상": "골격 수리 이력이 있습니다",
+    "수리비 10% 초과": "수리비가 차값의 10% 를 넘었습니다",
+    "전손": "전손 처리 이력이 있습니다",
+    "저당": "저당 · 압류가 걸려 있습니다",
+}
+
+
+def excluded_groups(conn, calc_version: str) -> list:
+    """후보에서 뺀 것.  ★ 몇 건인지보다 왜인지가 먼저다."""
+    counts: dict = {}
+    for (reason,) in conn.execute(
+        "SELECT absolute_fail FROM result_score "
+        "WHERE calc_version=? AND grade='E'", (calc_version,)
+    ):
+        for part in (reason or "사유 없음").split(";"):
+            key = part.strip() or "사유 없음"
+            counts[key] = counts.get(key, 0) + 1
+    return [ExcludedGroup(k, v, EXCLUDED_NOTES.get(k, ""),
+                          f"/listings?grade=E&reason={k}")
+            for k, v in sorted(counts.items(), key=lambda kv: -kv[1])]
+
+
+def view_why(account: Account, conn, listing_id: int, calc_version: str,
+             fin_cfg: dict, policy: dict, root: str = "."):
+    """L1 — 9장 STEP 90 L1 항목 전건."""
+    return render_listing(conn, listing_id, calc_version, fin_cfg, policy, root)
+
+
+def view_compare(account: Account, conn, listing_ids: list[int],
+                 calc_version: str, fin_cfg: dict, policy: dict,
+                 root: str = ".") -> CompareView:
+    """분모가 다르면 경고 · 버전이 다르면 비교 불가 (V6-05)."""
+    views = [render_listing(conn, i, calc_version, fin_cfg, policy, root)
+             for i in listing_ids]
+    axes = [a.axis for a in views[0].axes] if views else []
+    cells: dict[tuple[str, str], AxisView] = {}
+    for v in views:
+        for a in v.axes:
+            cells[(v.listing_id, a.axis)] = a
+    denoms = {v.denominator for v in views}
+    vers = {(v.versions.calc_version, v.versions.dict_version) for v in views}
+    flt = ListingFilter(calc_version=calc_version)
+    rows = [r for r in view_listings(account, conn, flt, fin_cfg, root)
+            if r.listing_id in set(listing_ids)]
+    # ★ 「이 셋 중에서」 — 축마다 누가 앞서는가.  표를 눈으로 훑게 두지 않는다
+    winner = {}
+    for axis in axes:
+        best, top = None, None
+        for v in views:
+            cell = cells.get((v.listing_id, axis))
+            if cell is None or cell.excluded:
+                continue
+            if top is None or cell.points > top:
+                best, top = v.listing_id, cell.points
+        winner[axis] = best
+    return CompareView(rows, axes, cells, len(denoms) > 1, len(vers) > 1,
+                       axis_winner=winner)
+
+
+def view_market(account: Account, conn, target_key: str,
+                depreciation: dict, quantiles=None) -> MarketView:
+    from report.render import CoefficientChange  # noqa: F401
+
+    prices = [r[0] for r in conn.execute(
+        "SELECT price_current_won FROM core_listing WHERE target_key=? "
+        "AND price_current_won IS NOT NULL ORDER BY price_current_won",
+        (target_key,))]
+
+    def q(p):
+        return prices[int(len(prices) * p)] if prices else None
+
+    qs = quantiles or MARKET_QUANTILES
+    row = MarketRow("", len(prices), len(prices),
+                    prices[0] if prices else None, q(qs[0]), q(qs[1]), q(qs[2]),
+                    prices[-1] if prices else None)
+    hist = [r for r in conn.execute(
+        "SELECT target_key, before_value, after_value, sample_size, reason,"
+        " changed_at FROM coefficient_history WHERE target_key=?", (target_key,))]
+    curve = sorted((int(k), float(v))
+                   for k, v in (depreciation.get("curve") or {}).items())
+    return MarketView(target_key, [row], list(hist), curve,
+                      price_bins=_price_bins(prices, target_key),
+                      by_year=_by_year(conn, target_key),
+                      by_trim=_by_trim(conn, target_key),
+                      other_targets=_other_targets(conn, target_key))
+
+
+def _web_cfg(key, root: str = "."):
+    """화면 설정.  ★ 수를 코드에 박지 않는다 (V4-17)."""
+    import json as _j
+    import os as _o
+
+    here = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+        _o.path.abspath(__file__))))
+    with open(_o.path.join(here, "config", "web.json"), encoding="utf-8") as f:
+        return _j.load(f)[key]
+
+
+
+
+
+def _median(xs: list):
+    xs = sorted(x for x in xs if x is not None)
+    return xs[len(xs) // 2] if xs else None
+
+
+def _price_bins(prices: list, target_key: str,
+                bins: int = PRICE_BINS) -> list:
+    """가격 분포.  ★ 막대를 누르면 그 구간 매물로 간다 (시안 v2_market)."""
+    if not prices:
+        return []
+    lo, hi = prices[0], prices[-1]
+    if hi <= lo:
+        return [Bucket("", lo, hi, len(prices), lo,
+                       f"/listings?target={target_key}")]
+    width = (hi - lo) / bins
+    out = []
+    for i in range(bins):
+        a = int(lo + width * i)
+        b = int(lo + width * (i + 1)) if i < bins - 1 else hi
+        got = [p for p in prices if a <= p <= b]
+        out.append(Bucket("", a, b, len(got), _median(got),
+                          f"/listings?target={target_key}"
+                          f"&price_min={a}&price_max={b}"))
+    return out
+
+
+def _by_year(conn, target_key: str) -> list:
+    """연식별 중앙값.  ★ 표본 5건 미만은 내지 않는다 — 시세로 믿게 된다."""
+    out = []
+    for ym, cnt in conn.execute(
+        "SELECT substr(year_month,1,4), COUNT(*) FROM core_listing "
+        "WHERE target_key=? AND year_month IS NOT NULL "
+        "GROUP BY 1 ORDER BY 1 DESC", (target_key,)
+    ):
+        prices = [r[0] for r in conn.execute(
+            "SELECT price_current_won FROM core_listing WHERE target_key=? "
+            "AND substr(year_month,1,4)=? AND price_current_won IS NOT NULL",
+            (target_key, ym))]
+        enough = len(prices) >= MIN_SAMPLE
+        out.append(Bucket(f"{ym}년", None, None, cnt,
+                          _median(prices) if enough else None,
+                          f"/listings?target={target_key}&year={ym}", enough))
+    return out
+
+
+def _by_trim(conn, target_key: str) -> list:
+    out = []
+    for trim, cnt in conn.execute(
+        "SELECT trim_badge, COUNT(*) FROM core_listing WHERE target_key=? "
+        "AND trim_badge IS NOT NULL GROUP BY 1 ORDER BY 2 DESC LIMIT 20",
+        (target_key,)
+    ):
+        prices = [r[0] for r in conn.execute(
+            "SELECT price_current_won FROM core_listing WHERE target_key=? "
+            "AND trim_badge=? AND price_current_won IS NOT NULL",
+            (target_key, trim))]
+        enough = len(prices) >= MIN_SAMPLE
+        out.append(Bucket(trim, None, None, cnt,
+                          _median(prices) if enough else None,
+                          f"/listings?target={target_key}&trim={trim}",
+                          enough))
+    return out
+
+
+def _other_targets(conn, target_key: str) -> list:
+    return [Bucket(tk, None, None, cnt, None, f"/market?target={tk}")
+            for tk, cnt in conn.execute(
+                "SELECT target_key, COUNT(*) FROM core_listing "
+                "WHERE target_key IS NOT NULL AND target_key<>? "
+                "GROUP BY 1 ORDER BY 2 DESC", (target_key,))]
+
+
+def view_dealers(account: Account, conn, site: str = "encar") -> list[DealerRow]:
+    """sample_sufficient=0 이면 trust_score 를 확정 표시하지 않는다 (V3-26)."""
+    out = []
+    for r in conn.execute(
+        # ★ 실명을 조회하지 않는다.  상호만 쓴다 (STEP 35)
+        "SELECT dealer_id, dealer_shop, region, career_years,"
+        " quadrant, trust_score, sample_sufficient, listing_count,"
+        " total_sales, recent_year_sales FROM core_dealer WHERE site=?",
+        (site,)
+    ):
+        out.append(DealerRow(r[0], r[1], r[2], r[3], r[4],
+                             r[5] if r[6] else None, bool(r[6]), r[7],
+                             r[8], r[9]))
+    return out
+
+
+def view_run(account: Account, conn, run_id: str, calc_version: str):
+    """수집·판정 실행 상태는 관리자만 본다 (STEP 126 권한 표)."""
+    require_role(account, ROLE_ADMIN)
+    return render_run(conn, run_id, calc_version)
+
+
+def _rank1_of(grades: dict) -> str | None:
+    """가장 높은 등급.  ★ 없으면 None 이다 — 0 이 아니다."""
+    for g in GRADE_ORDER:
+        if grades.get(g):
+            return g
+    return None
+
+
+def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
+                   fin_cfg: dict, root: str = ".") -> DashboardView:
+    # ★ 차종마다 조회하면 12차종에 24쿼리다.  한 번에 묶는다 (V11-34 · B-2)
+    grade_rows = conn.execute(
+        "SELECT l.target_key, s.grade, COUNT(*) FROM result_score s "
+        "JOIN core_listing l ON l.listing_id = s.listing_id "
+        "WHERE s.calc_version = ? GROUP BY 1, 2", (calc_version,)).fetchall()
+    by_target: dict = {}
+    for tk, grade, n in grade_rows:
+        by_target.setdefault(tk, {})[grade] = n
+    price_rows = conn.execute(
+        "SELECT l.target_key, l.price_current_won FROM result_score s "
+        "JOIN core_listing l ON l.listing_id = s.listing_id "
+        "WHERE s.calc_version = ? AND s.grade = 'A' "
+        "AND l.price_current_won IS NOT NULL ORDER BY 1, 2",
+        (calc_version,)).fetchall()
+    prices: dict = {}
+    for tk, p in price_rows:
+        prices.setdefault(tk, []).append(p)
+
+    stats = []
+    for tk in sorted(by_target):
+        grades = by_target[tk]
+        got = prices.get(tk, [])
+        stats.append(TargetStat(
+            target_key=tk, total=sum(grades.values()), grades=grades,
+            rank1=_rank1_of(grades),
+            median_price_a_won=got[len(got) // 2] if got else None))
+
+    changes = [ChangeRow(*r) for r in conn.execute(
+        "SELECT listing_id, field, old_value, new_value, change_kind,"
+        " changed_at FROM core_listing_change "
+        "ORDER BY changed_at DESC LIMIT 20")]
+
+    # ★ 조치가 필요한 것 — 세 물음을 한 번에 센다 (V11-34)
+    counts = conn.execute(
+        "SELECT (SELECT COUNT(*) FROM meta_field_usage "
+        "        WHERE usage='unclassified'), "
+        "       (SELECT COUNT(*) FROM dict_enum WHERE status='pending'), "
+        "       (SELECT COUNT(DISTINCT axis) FROM result_axis "
+        "        WHERE excluded=1 AND source IN "
+        "        ('gate_closed','coefficient_out_of_range'))").fetchone()
+    attention = []
+    for n, kind, detail, action in (
+        (counts[0], "unclassified", "등록부 미분류 경로",
+         "config/field_usage.suggested.json 을 확인·수정해 "
+         "config/field_usage.json 으로 옮긴 뒤 재실행한다"),
+        (counts[1], "pending", "사전 미검토 값",
+         "원문 표본 3건을 확인해 confirmed 로 올린 뒤 S9 를 재실행한다"),
+        (counts[2], "undecided", "미확정으로 분모에서 빠진 축",
+         "감가 곡선·HDA Gate·색상 목록을 확정한다"),
+    ):
+        if n:
+            attention.append(AttentionItem(kind, detail, n, action))
+
+    # ★ 같은 집계를 두 번 돌면 화면 한 쪽이 그만큼 늘어난다 (V11-34 · B-2)
+    grade_counts = _grade_counts(conn, calc_version)
+
+    return DashboardView(
+        meta=ReportMeta(run_id, "L3", "encar", None, calc_version, None),
+        viewer=viewer_state(account),
+        target_stats=stats, recent_changes=changes,
+        # ★ 상위 후보 — 점수순이 아니다.  view_recommend 와 같은 순서다
+        finalists=view_recommend(
+            account, conn, ListingFilter(calc_version=calc_version),
+            fin_cfg, root)[:5],
+        grade_counts=grade_counts,
+        grade_rows=[{"grade": k, "count": v}
+                    for k, v in grade_counts.items()],
+        grade_total=conn.execute(
+            "SELECT COUNT(*) FROM result_score WHERE calc_version=?",
+            (calc_version,)).fetchone()[0],
+        e_reasons=_e_reasons(conn, calc_version),
+        today_changes=_today_changes(conn),
+        steps=_step_rows(conn, run_id),
+        # 주의 항목은 관리자만 본다 — 조치가 관리자 행동이다
+        attention=attention if account.role == ROLE_ADMIN else [])
+
+
+# 등급 표시 차례.  ★ 색을 쓰지 않으므로 순서가 유일한 단서다 (STEP 145a)
+# 수집 단계 이름.  ★ 「없음(not_found)」과 「실패」는 뜻이 다르다
+STEP_LABELS = {"list": "S1 목록", "detail": "S5 상세",
+               "inspection": "S5 성능점검", "record": "S5 이력",
+               "diagnosis": "S6a 진단", "catalog": "S7 카탈로그",
+               "facet": "S2 분류"}
+
+
+def _grade_counts(conn, calc_version: str) -> dict:
+    got = {r[0]: r[1] for r in conn.execute(
+        "SELECT grade, COUNT(*) FROM result_score WHERE calc_version=? "
+        "GROUP BY grade", (calc_version,))}
+    return {g: got.get(g, 0) for g in GRADE_ORDER}
+
+
+def _e_reasons(conn, calc_version: str) -> dict:
+    """E 사유별 건수.
+
+    ★ 「E 33건」만 내면 사람이 아무것도 못 한다.  왜 E 인지가 판단 재료다.
+      absolute_fail 은 여러 사유가 「; 」로 붙는다 — 쪼개서 센다
+    """
+    out: dict = {}
+    for (reason,) in conn.execute(
+        "SELECT absolute_fail FROM result_score "
+        "WHERE calc_version=? AND grade='E'", (calc_version,)
+    ):
+        for part in (reason or "사유 없음").split(";"):
+            key = part.strip() or "사유 없음"
+            out[key] = out.get(key, 0) + 1
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+
+def _today_changes(conn, limit: int = TODAY_ROWS) -> list:
+    """오늘 변동.  ★ 인하는 좋음, 인상은 나쁨 — 색이 뜻을 갖는 유일한 자리다."""
+    rows = []
+    for lid, field_, old, new, kind, _at, tk in conn.execute(
+        "SELECT c.listing_id, c.field, c.old_value, c.new_value, "
+        "c.change_kind, c.changed_at, l.target_key "
+        "FROM core_listing_change c "
+        "JOIN core_listing l ON l.listing_id = c.listing_id "
+        "ORDER BY c.changed_at DESC LIMIT ?", (limit,)
+    ):
+        delta = None
+        if kind == "price" and old and new:
+            try:
+                delta = int(float(new)) - int(float(old))
+                kind = "인상" if delta > 0 else "인하"
+            except ValueError:
+                delta = None
+        try:
+            price = int(float(new)) if new else None
+        except ValueError:
+            price = None
+        rows.append(TodayChange(kind, tk or "-", field_, delta, price, lid))
+    return rows
+
+
+def _step_rows(conn, run_id: str) -> list:
+    """수집 단계.  ★ 「없음」을 실패로 세지 않는다 — 그 매물에 없는 것이다."""
+    out = []
+    for kind, req, ok, missing, failed, ms in conn.execute(
+        "SELECT kind, COUNT(*), "
+        " SUM(CASE WHEN status='ok' THEN 1 ELSE 0 END), "
+        " SUM(CASE WHEN status='not_found' THEN 1 ELSE 0 END), "
+        " SUM(CASE WHEN status NOT IN ('ok','not_found') THEN 1 ELSE 0 END), "
+        " SUM(elapsed_ms) FROM audit_request WHERE run_id=? "
+        "GROUP BY kind ORDER BY MIN(id)", (run_id,)
+    ):
+        out.append(StepRow(kind, STEP_LABELS.get(kind, kind), req, ok or 0,
+                           missing or 0, failed or 0, (ms or 0) / MS_PER_SEC,
+                           "정상" if not failed else f"실패 {failed}"))
+    return out
+
+
+def view_watch(account: Account, conn, fin_cfg: dict,
+               calc_version: str, root: str = ".") -> list:
+    """★ 개인화는 watch_* 조회에 account_id 를 거는 것으로 끝난다.
+
+    판정은 계정과 무관하다.  같은 차는 누가 봐도 같은 등급이다 (STEP 105).
+    비로그인은 관심 등록을 못 한다 (STEP 126 권한 표).
+    """
+    require_role(account, ROLE_USER)
+    # ★ watch_id 를 함께 낸다.  없으면 목표가 저장 · 추적 종료를 못 누른다
+    rows = conn.execute(
+        # ★ 관심 하나에 한 행이다.  vehicle_id 로 조인하면 같은 차의
+        #   매물이 여럿일 때 한 관심이 여러 행으로 늘어나고,
+        #   목표가가 어느 행 것인지 알 수 없다 (실측 08-15)
+        "SELECT w.watch_id, "
+        "       COALESCE(w.primary_listing_id, MIN(l.listing_id)), "
+        "       w.target_price_won, w.added_at, w.closed_at, w.memo "
+        "FROM watch_item w LEFT JOIN core_listing l "
+        "ON l.vehicle_id = w.vehicle_id "
+        "WHERE w.account_id = ? AND w.closed_at IS NULL "
+        "GROUP BY w.watch_id "
+        "ORDER BY w.added_at DESC", (account.account_id,)).fetchall()
+    if not rows:
+        return []
+    flt = ListingFilter(calc_version=calc_version)
+    by_id = {r.listing_id: r
+             for r in view_listings(account, conn, flt, fin_cfg, root)}
+    out = []
+    for wid, lid, target, added, closed, memo in rows:
+        listing = by_id.get(lid)
+        if listing is None:
+            continue          # 아직 채점 전이다 — 조용히 빼지 않고 다음 회차에
+        out.append(WatchRow(watch_id=wid, listing=listing,
+                            target_price_won=target, added_at=added,
+                            closed_at=closed, memo=memo))
+    return out
+
+
+# 사전 미검토 값이 막는 축.  ★ 「무엇을 막고 있나」가 판단 재료다
+DICT_AXIS_BLOCKS = {
+    "panel_status": "사고 축 판정에 씀 — 이 값이 감점 대상인지 정해야 합니다",
+    "panel_rank": "사고 축 — 골격인지 외판인지가 갈립니다",
+    "color_ext": "색상 축 — 선호 3색인지 정해야 합니다",
+    "color_int": "색상 축 — 내장색 선호를 정해야 합니다",
+    "fuel": "사양 축 — 연료 구분에 씁니다",
+    "accident_type": "이력 축 — 사고 유형 감점에 씁니다",
+}
+
+
+def _pending_values(conn) -> list:
+    """★ 「17건」이 아니라 축·값·건수·막는 것을 낸다 (G-1)."""
+    return [PendingValue(axis, value, cnt,
+                         DICT_AXIS_BLOCKS.get(axis, "판정에 쓰지 않습니다"))
+            for axis, value, cnt in conn.execute(
+                "SELECT axis, value, count_seen FROM dict_enum "
+                "WHERE status='pending' ORDER BY count_seen DESC LIMIT 40")]
+
+
+def _done_items(conn, calc_version: str) -> list:
+    """이미 된 것.
+
+    ★ 「아무것도 안 됐다」와 「등급만 없다」는 다르다.
+      가격·연식·주행·사양은 이미 파싱됐다 — 지금도 볼 수 있다
+    """
+    out = []
+    n = conn.execute("SELECT COUNT(*) FROM core_listing").fetchone()[0]
+    # ★ raw_* 를 화면이 직접 조회하지 않는다 (V6-03).
+    #   원문 건수는 요청 기록(audit_request)으로 센다 — 같은 사실의 표시용 면이다
+    raw = conn.execute(
+        "SELECT COUNT(*) FROM audit_request WHERE status='ok'").fetchone()[0]
+    if n:
+        out.append(f"수집 — 매물 {n:,}건 · 응답 {raw:,}건 저장")
+    n = conn.execute(
+        "SELECT COUNT(*) FROM core_listing "
+        "WHERE price_current_won IS NOT NULL").fetchone()[0]
+    if n:
+        out.append(f"파싱 — 가격 · 연식 · 주행 · 사양 {n:,}건 완료")
+    n = conn.execute("SELECT COUNT(*) FROM result_score "
+                     "WHERE calc_version=?", (calc_version,)).fetchone()[0]
+    if n:
+        out.append(f"채점 — {n:,}건 (등급은 아래 사유로 일부가 멈춰 있습니다)")
+    return out
+
+
+def view_notready(account: Account, conn, calc_version: str,
+                  run_id: str) -> NotReadyView:
+    """판정 결과를 빈 값으로 보여주지 않는다 (STEP 104)."""
+    reasons, actions = [], []
+    n = conn.execute("SELECT COUNT(*) FROM result_score "
+                     "WHERE calc_version=?", (calc_version,)).fetchone()[0]
+    if not n:
+        reasons.append("채점 결과가 없다 (S10 미실행 또는 중단)")
+        actions.append("python3 run.py collect 를 실행한다")
+    n = conn.execute(
+        "SELECT COUNT(*) FROM meta_field_usage WHERE usage='unclassified'"
+    ).fetchone()[0]
+    if n:
+        reasons.append(f"등록부 미분류 {n}건 — V4-11 이 판정을 막는다")
+        actions.append("config/field_usage.suggested.json 을 확인·수정해 "
+                       "config/field_usage.json 으로 옮긴 뒤 재실행한다")
+    return NotReadyView(
+        ReportMeta(run_id, "L3", "encar", None, calc_version, None),
+        reasons, actions,
+        pending_values=_pending_values(conn),
+        done=_done_items(conn, calc_version))

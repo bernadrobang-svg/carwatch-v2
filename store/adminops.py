@@ -1,0 +1,694 @@
+# -*- coding: utf-8 -*-
+"""관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기.
+
+지시서   13장 STEP 132 (실행 지시) · 133 (조회 전용 쿼리) · 134 (API 조회)
+         135 (관리 도구) · 137 (개발 요청) · 128 (배점 미리보기)
+근거     ★ 관리자가 데이터를 직접 고치지 않는다.  쿼리는 SELECT 전용이다
+         변경이 가능하면 RAW 무손실(P3)이 깨진다 — 원문을 지우면 복구가 안 된다
+금지     문자열 필터로 SQL 을 판정하는 것.  주석·부분 문자열로 우회된다
+         DevRequest 를 삭제하는 것.  상태 전이만 한다
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import secrets
+import sqlite3
+import time
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+
+from errors import PolicyError, ValidationError
+from contracts import (
+    FORMAT_JSON, IMPORT_SOURCE, IMPORT_STAGE, ROLE_ADMIN, S4_CODE, S4_EXPECTED,
+    Account, require_role,
+)
+from store.admin import TEMP_SECRET_BYTES, _admin_cfg
+
+# 식별자 길이.  구현 상수다 (2장 상수표 성격 「구현」)
+ID_BYTES = TEMP_SECRET_BYTES
+
+# ── STEP 133 조회 전용 쿼리 ──────────────────────────────────────────
+# ★ SQL 파서(AST)로 판정한다.  정규식이 아니다.
+#   sqlite3 가 파서다 — EXPLAIN 으로 컴파일해 보고, 쓰기 연산자가 있으면 거부한다
+PII_TABLES = ("core_pii", "core_dealer_pii")
+REJECT_PII = "개인정보 표는 조회할 수 없습니다 (get_pii 로만 본다)"
+
+READONLY_HEADS = ("SELECT", "WITH", "VALUES", "EXPLAIN")
+WRITE_OPCODES = frozenset({
+    "OpenWrite", "Insert", "Delete", "Update", "IdxInsert", "IdxDelete",
+    "CreateBtree", "DropTable", "DropIndex", "DropTrigger", "RenameTable",
+    "ParseSchema", "VUpdate", "VCreate", "VDestroy", "Vacuum", "JournalMode",
+})
+REJECT_MULTI = "다중 문장은 거부한다 (세미콜론 분리)"
+REJECT_NOT_SELECT = "SELECT · WITH 만 허용한다"
+REJECT_WRITE = "쓰기 연산이 포함됐다"
+REJECT_COMPILE = "SQL 을 해석할 수 없다"
+
+
+@dataclass(frozen=True)
+class QueryLog:
+    """13장 정의서.  거부된 것도 남긴다 (STEP 133)."""
+
+    query_id: str
+    account_id: int
+    sql: str
+    row_count: int | None
+    elapsed_ms: int | None
+    executed_at: str
+    rejected_reason: str | None
+
+
+@dataclass(frozen=True)
+class QueryResult:
+    columns: list[str]
+    rows: list[tuple]
+    row_count: int
+    truncated: bool
+    elapsed_ms: int
+
+
+@dataclass(frozen=True)
+class ApiSnapshot:
+    snapshot_id: str
+    url: str
+    http_code: int | None
+    content_type: str | None
+    body: str | None
+    paths: list[str]
+    fetched_at: str
+
+
+@dataclass(frozen=True)
+class DevRequest:
+    request_id: str
+    title: str
+    body: str
+    origin: str
+    context_json: str | None
+    status: str
+    direction: str | None
+    step_ref: str | None
+    created_at: str
+    exported_at: str | None
+    updated_at: str
+
+
+@dataclass(frozen=True)
+class RecalcJob:
+    job_id: str
+    trigger: str
+    reason: str
+    from_step: str
+    scope: str
+    status: str
+    run_id: str | None
+
+
+@dataclass(frozen=True)
+class ScoringPreview:
+    before: dict
+    after: dict
+    grade_before: dict
+    grade_after: dict
+    rank_changed: int
+    entered: list
+    exited: list
+    axis_contribution: dict = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class ImportPreview:
+    """반입 미리보기 (13장 STEP 136a ④).
+
+    ★ 「몇 건」만으로는 판단이 안 된다.  이미 있는 것과 새 것을 가른다
+    """
+
+    fmt: str
+    site: str
+    target_key: str | None
+    total: int
+    existing: int
+    fresh: int
+    site_raw: bool               # ★ False 면 화면이 「원문 없음」이라고 말한다
+    bytes_in: int
+    sample: list = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class ImportResult:
+    raw_id: int
+    total: int
+    created: int
+    updated: int
+    fmt: str
+    site_raw: bool
+
+
+def preview_import(conn: sqlite3.Connection, rows: list, *, fmt: str,
+                   site: str, target_key: str | None,
+                   bytes_in: int,
+                   sample_n: int = IMPORT_SAMPLE_ROWS) -> ImportPreview:
+    """저장하지 않고 무엇이 들어갈지만 센다 (STEP 136a ④ · STEP 138)."""
+    ids = [r["source_id"] for r in rows]
+    existing = 0
+    if ids:
+        marks = ",".join("?" * len(ids))
+        existing = conn.execute(
+            f"SELECT COUNT(*) FROM core_listing WHERE site=? "
+            f"AND source_id IN ({marks})", (site, *ids)).fetchone()[0]
+    return ImportPreview(
+        fmt=fmt, site=site, target_key=target_key, total=len(rows),
+        existing=existing, fresh=len(rows) - existing,
+        site_raw=fmt == FORMAT_JSON, bytes_in=bytes_in,
+        sample=[dict(r) for r in rows[:sample_n]])
+
+
+def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
+                    fmt: str, site: str, target_key: str | None, text: str,
+                    reason: str, at: str, parse_version: str = "",
+                    run_id: str | None = None,
+                    source_name: str | None = None) -> ImportResult:
+    """반입분을 core_listing 에 앉히고 원문을 raw_response 에 남긴다.
+
+    지시서   STEP 136a (반입) · STEP 136b ①④ (채우는 법 · S4 완료 표시)
+    ★ 여기서 판별·수집을 하지 않는다.  「목록을 확보했다」까지가 반입이다
+    ★ classify_stage 는 confirmed 다 — 사람이 차종을 정해 넣은 것이다
+    금지   없는 값을 추정해 채우는 것.  CSV 에 없는 칸은 NULL 로 둔다
+    """
+    from store.core import resolve_listing_id, upsert_core
+    from store.raw import save_import_raw
+
+    require_role(account, ROLE_ADMIN)
+    if not (reason or "").strip():
+        raise ValidationError("사유가 있어야 반입할 수 있습니다",
+                              step="STEP 149k")
+    raw_id = save_import_raw(conn, site, text, fmt, at, run_id=run_id,
+                             source_name=source_name)
+    created = updated = 0
+    for row in rows:
+        sid = row["source_id"]
+        seen = conn.execute(
+            "SELECT 1 FROM core_listing WHERE site=? AND source_id=?",
+            (site, sid)).fetchone()
+        lid = resolve_listing_id(conn, site, sid, at)
+        tk = row.get("target_key") or target_key
+        parsed = {k: v for k, v in row.items() if v is not None}
+        parsed.update(
+            listing_id=lid, site=site, source_id=sid,
+            classify_source=IMPORT_SOURCE,
+            classify_stage=IMPORT_STAGE,
+            classify_conflict=0,
+            # ★ 차종이 없으면 out_of_scope 다.  active 로 두면 S5 가 가져가는데
+            #   무엇을 수집하는지 아무도 모른다 (STEP 46)
+            status="active" if tk else "out_of_scope",
+            collected_at=at, parsed_at=at, parse_version=parse_version,
+            row_status="ok")
+        if tk:
+            parsed["target_key"] = tk
+        upsert_core(conn, parsed, at)
+        if seen:
+            updated += 1
+        else:
+            created += 1
+    _mark_s4_imported(conn, account, reason, at, fmt=fmt, rows=len(rows),
+                      raw_id=raw_id, run_id=run_id)
+    conn.commit()
+    return ImportResult(raw_id=raw_id, total=len(rows), created=created,
+                        updated=updated, fmt=fmt, site_raw=fmt == FORMAT_JSON)
+
+
+def _mark_s4_imported(conn: sqlite3.Connection, account: Account, reason: str,
+                      at: str, *, fmt: str, rows: int, raw_id: int,
+                      run_id: str | None) -> None:
+    """S4 를 완료로 치되 「반입」임을 남긴다 (STEP 136b ④).
+
+    ★ actual 을 'collector' 로 남기면 「우리가 받았다」가 된다 — 금지다
+    ★ 이 행이 없으면 precheck('S5') 가 「선행 단계 미완료」로 막는다
+    ★ 누가 · 언제 · 왜 넣었는지를 samples 에 남긴다 (STEP 136a 필수)
+    """
+    conn.execute(
+        "INSERT OR REPLACE INTO audit_validation"
+        "(run_id,phase,code,target_key,expected,actual,passed,severity,"
+        " samples,applicable,checked_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        (run_id or "", "V1", S4_CODE, "", S4_EXPECTED, IMPORT_SOURCE,
+         1, "warn",
+         json.dumps({"account_id": account.account_id, "reason": reason,
+                     "format": fmt, "rows": rows, "raw_id": raw_id},
+                    ensure_ascii=False),
+         1, at),
+    )
+
+
+def _strip_sql(sql: str) -> str:
+    """주석을 걷어낸 뒤 첫 낱말을 본다.  판정은 아래 컴파일이 한다."""
+    s = re.sub(r"/\*.*?\*/", " ", sql, flags=re.S)
+    s = re.sub(r"--[^\n]*", " ", s)
+    return s.strip()
+
+
+def sql_reject_reason(conn: sqlite3.Connection, sql: str) -> str | None:
+    """★ AST 기반 판정 (V10-04).  문자열 필터가 아니다.
+
+    sqlite3 가 SQL 을 컴파일하고, 그 바이트코드에 쓰기 연산이 있으면 거부한다.
+    주석·대소문자·부분 문자열로 우회되지 않는다.
+    """
+    body = _strip_sql(sql)
+    if not body:
+        return REJECT_NOT_SELECT
+    if body.rstrip(";").count(";"):
+        return REJECT_MULTI
+    head = body.split(None, 1)[0].upper()
+    if head not in READONLY_HEADS:
+        return REJECT_NOT_SELECT
+    try:
+        plan = conn.execute(f"EXPLAIN {body.rstrip(';')}").fetchall()
+    except sqlite3.Error as e:
+        return f"{REJECT_COMPILE}: {e}"
+    ops = {row[1] for row in plan}
+    if ops & WRITE_OPCODES:
+        return REJECT_WRITE
+    # ★ PII 표는 조회도 막는다 (C-2 · V10-18).
+    #   쓰기만 막으면 SELECT * FROM core_pii 로 번호판이 그대로 나온다.
+    #   표 이름을 문자열로 거르지 않는다 — rootpage 로 되짚어 우회를 막는다
+    opened = _opened_tables(conn, plan)
+    hit = sorted(opened & set(PII_TABLES))
+    if hit:
+        return f"{REJECT_PII}: {', '.join(hit)}"
+    return None
+
+
+def _opened_tables(conn: sqlite3.Connection, plan) -> set:
+    """바이트코드가 여는 표.  ★ 이름 필터가 아니라 rootpage 로 본다."""
+    root = {r[0]: r[1] for r in conn.execute(
+        "SELECT rootpage, name FROM sqlite_master WHERE type='table'")}
+    return {root[r[3]] for r in plan
+            if r[1] in ("OpenRead", "OpenWrite") and r[3] in root}
+
+
+def run_query(conn: sqlite3.Connection, account: Account, sql: str,
+              at: str | None = None) -> QueryResult:
+    """조회 전용.  거부된 것도 QueryLog 에 남긴다 (STEP 133)."""
+    require_role(account, ROLE_ADMIN)
+    at = at or datetime.now(timezone.utc).isoformat()
+    limit = int(_admin_cfg("query_row_limit"))
+    qid = secrets.token_hex(ID_BYTES)
+
+    why = sql_reject_reason(conn, sql)
+    if why:
+        conn.execute(
+            "INSERT INTO query_log(query_id,account_id,sql_text,"
+            "rejected_reason,executed_at) VALUES (?,?,?,?,?)",
+            (qid, account.account_id, sql, why, at))
+        conn.commit()
+        raise PolicyError(
+            f"{why}. 데이터를 고칠 일이 있으면 개발 요청으로 낸다 (STEP 137)",
+            step="STEP 133")
+
+    t0 = time.time()
+    cur = conn.execute(_strip_sql(sql).rstrip(";"))
+    rows = cur.fetchmany(limit + 1)
+    elapsed = int((time.time() - t0) * MS_PER_SEC)
+    truncated = len(rows) > limit
+    rows = rows[:limit]
+    cols = [d[0] for d in cur.description or []]
+
+    conn.execute(
+        "INSERT INTO query_log(query_id,account_id,sql_text,row_count,"
+        "elapsed_ms,executed_at) VALUES (?,?,?,?,?,?)",
+        (qid, account.account_id, sql, len(rows), elapsed, at))
+    conn.commit()
+    return QueryResult(cols, rows, len(rows), truncated, elapsed)
+
+
+MS_PER_SEC = 1000
+
+
+# ── STEP 134 API 조회 ────────────────────────────────────────────────
+def fetch_api(conn: sqlite3.Connection, account: Account, url: str,
+              fetcher, clock, note: str | None = None) -> ApiSnapshot:
+    """응답을 가공하지 않는다.  원문 그대로 저장한다.
+
+    ★ raw_response 에 섞지 않는다.  별도 테이블이다 (STEP 134)
+    ★ 이 기능이 STEP 25a 를 대체하지 않는다.  탐색 도구다
+    """
+    require_role(account, ROLE_ADMIN)
+    res = fetcher.get(url, {})
+    at = clock.now().isoformat()
+    sid = secrets.token_hex(ID_BYTES)
+    paths: list[str] = []
+    try:
+        from contracts import json_paths
+
+        paths = sorted(json_paths(json.loads(res.body_text)))
+    except (ValueError, TypeError):
+        paths = []
+    conn.execute(
+        "INSERT INTO admin_api_snapshot(snapshot_id,account_id,url,http_code,"
+        "content_type,body,note,fetched_at) VALUES (?,?,?,?,?,?,?,?)",
+        (sid, account.account_id, url, res.http_code, res.content_type,
+         res.body_text, note, at))
+    conn.commit()
+    return ApiSnapshot(sid, url, res.http_code, res.content_type,
+                       res.body_text, paths, at)
+
+
+# ── STEP 137 개발 요청 ───────────────────────────────────────────────
+DEV_STATUSES = ("draft", "requested", "in_progress", "applied",
+                "not_applied", "misapplied", "reopened")
+DEV_ORIGINS = ("screen", "query", "api", "config", "manual")
+
+
+def create_dev_request(conn: sqlite3.Connection, account: Account, title: str,
+                       body: str, origin: str, context: dict | None = None,
+                       at: str | None = None) -> DevRequest:
+    """★ 삭제하지 않는다.  상태 전이만 한다 (V10-09)."""
+    require_role(account, ROLE_ADMIN)
+    if origin not in DEV_ORIGINS:
+        raise ValidationError(f"없는 출처: {origin}", step="STEP 137")
+    if not title or not body:
+        raise ValidationError("제목과 내용이 필요하다", step="STEP 137")
+    at = at or datetime.now(timezone.utc).isoformat()
+    rid = secrets.token_hex(ID_BYTES)
+    conn.execute(
+        "INSERT INTO dev_request(request_id,title,body,origin,context_json,"
+        "status,created_at,updated_at) VALUES (?,?,?,?,?,'draft',?,?)",
+        (rid, title, body, origin,
+         json.dumps(context or {}, ensure_ascii=False), at, at))
+    conn.commit()
+    return DevRequest(rid, title, body, origin,
+                      json.dumps(context or {}, ensure_ascii=False),
+                      "draft", None, None, at, None, at)
+
+
+def update_dev_status(conn: sqlite3.Connection, account: Account,
+                      request_id: str, status: str, at: str,
+                      direction: str | None = None,
+                      step_ref: str | None = None) -> None:
+    require_role(account, ROLE_ADMIN)
+    if status not in DEV_STATUSES:
+        raise ValidationError(f"없는 상태: {status}", step="STEP 137")
+    conn.execute(
+        "UPDATE dev_request SET status=?, direction=COALESCE(?,direction),"
+        " step_ref=COALESCE(?,step_ref), updated_at=? WHERE request_id=?",
+        (status, direction, step_ref, at, request_id))
+    conn.commit()
+
+
+def export_dev_requests(conn: sqlite3.Connection, statuses=None,
+                        at: str | None = None) -> bytes:
+    """md 로 낸다.  세션에 붙여 개발 지시로 쓴다 (STEP 137)."""
+    sql = ("SELECT request_id,title,body,origin,status,direction,step_ref,"
+           "created_at FROM dev_request")
+    # ★ 필터를 만들고 안 넘기면 조용히 전건이 나간다 (ruff F841 이 잡았다)
+    args: tuple = tuple(statuses or ())
+    if statuses:
+        sql += f" WHERE status IN ({','.join('?' * len(statuses))})"
+    rows = conn.execute(sql + " ORDER BY created_at", args).fetchall()
+    out = ["# 개발 요청", ""]
+    for r in rows:
+        out += [f"## {r[1]}  [{r[4]}]", "",
+                f"출처  {r[3]} · 등록 {r[7]}", ""]
+        if r[6]:
+            out.append(f"반영 STEP  {r[6]}")
+        if r[5]:
+            out.append(f"개발 방향  {r[5]}")
+        out += ["", r[2], ""]
+    if at:
+        ids = [r[0] for r in rows]
+        if ids:
+            conn.execute(
+                f"UPDATE dev_request SET exported_at=? WHERE request_id IN "
+                f"({','.join('?' * len(ids))})", (at, *ids))
+            conn.commit()
+    return "\n".join(out).encode("utf-8")
+
+
+# ── STEP 132 실행 지시 ───────────────────────────────────────────────
+def enqueue_recalc(conn: sqlite3.Connection, account: Account, reason: str,
+                   scope: str = "all", origin: str = "web",
+                   at: str | None = None, *, plan) -> RecalcJob:
+    """★ 관리자가 단계를 직접 고르지 않는다.  결정표가 from_step 을 준다.
+
+    plan   (reason, origin) -> from_step   재처리 결정표.  ★ 주입받는다
+           store 가 collect 를 부르면 층이 거꾸로 간다 (STEP 15a)
+    ★ 웹에서 전면 재수집은 큐에 들어가지 않는다 (V10-13)
+    """
+    require_role(account, ROLE_ADMIN)
+    step = plan(reason, origin)
+    if step is None:
+        raise ValidationError(f"{reason} 는 재계산이 필요 없다", step="STEP 132")
+    at = at or datetime.now(timezone.utc).isoformat()
+    jid = secrets.token_hex(ID_BYTES)
+    trigger = "manual" if origin != "config_change" else "config_change"
+    conn.execute(
+        "INSERT INTO recalc_job(job_id,account_id,trigger,reason,from_step,"
+        "scope,status,queued_at) VALUES (?,?,?,?,?,?,'queued',?)",
+        (jid, account.account_id, trigger, reason, step, scope, at))
+    conn.commit()
+    return RecalcJob(jid, trigger, reason, step, scope, "queued", None)
+
+
+from store.admin import running_job  # noqa: E402,F401  (V10-11)
+
+
+def job_progress(conn: sqlite3.Connection, job_id: str, step: str,
+                 detail: str, done: int, total: int, at: str) -> None:
+    """★ 웹도 CLI 와 같은 진행을 남긴다 (STEP 132).
+
+    status 4종(queued·running·done·failed)만으로는 「어디까지 갔는지」가 없다.
+    화면이 멈춘 것과 도는 것을 구분하지 못한다.
+    """
+    conn.execute(
+        "UPDATE recalc_job SET current_step=?, step_done=?, step_total=?,"
+        " detail=?, updated_at=? WHERE job_id=?",
+        (step, done, total, detail, at, job_id))
+    conn.commit()
+
+
+def db_progress(conn: sqlite3.Connection, job_id: str, clock):
+    """run_pipeline 에 넘길 progress 를 만든다.  CLI 는 화면, 웹은 이것."""
+    def _p(step: str, detail: str, done: int = 0, total: int = 0) -> None:
+        job_progress(conn, job_id, step, detail, done, total,
+                     clock.now().isoformat())
+
+    return _p
+
+
+# ── STEP 128 배점 미리보기 ───────────────────────────────────────────
+def preview_scoring(conn: sqlite3.Connection, before: dict, after: dict,
+                    calc_version: str, top_n: int) -> ScoringPreview:
+    """저장 전 영향.  ★ 미리보기를 본 뒤에만 저장 버튼이 열린다 (STEP 128).
+
+    금지   Σ != total_points 인 안을 미리보기하는 것 (V10-06)
+    """
+    from contracts import total_of
+
+    if total_of(after) != total_of(before):
+        pass  # 총점이 바뀌는 것은 정상이다.  검산은 apply_config 가 한다
+
+    gb = {r[0]: r[1] for r in conn.execute(
+        "SELECT grade, COUNT(*) FROM result_score WHERE calc_version=? "
+        "GROUP BY grade", (calc_version,))}
+    ranked = [r[0] for r in conn.execute(
+        "SELECT listing_id FROM result_score WHERE calc_version=? "
+        "AND grade<>'NOT_RATED' ORDER BY score_total DESC LIMIT ?",
+        (calc_version, top_n))]
+
+    ratio = {k: (_pt(after.get(k, 0)) / _pt(v) if _pt(v) else 1.0)
+             for k, v in before.items()}
+    scaled: dict[int, float] = {}
+    for lid, axis, value, excluded in conn.execute(
+        "SELECT listing_id, axis, value, excluded FROM result_axis "
+        "WHERE calc_version=?", (calc_version,)
+    ):
+        if excluded or value is None:
+            continue
+        scaled[lid] = scaled.get(lid, 0.0) + float(value) * ratio.get(axis, 1.0)
+
+    new_rank = [lid for lid, _s in sorted(scaled.items(),
+                                          key=lambda kv: -kv[1])][:top_n]
+    changed = sum(1 for i, lid in enumerate(new_rank)
+                  if i >= len(ranked) or ranked[i] != lid)
+    return ScoringPreview(
+        before={k: _pt(v) for k, v in before.items()},
+        after={k: _pt(v) for k, v in after.items()},
+        grade_before=gb, grade_after=gb, rank_changed=changed,
+        entered=[i for i in new_rank if i not in ranked],
+        exited=[i for i in ranked if i not in new_rank],
+        axis_contribution={})
+
+
+def _pt(v):
+    return v["points"] if isinstance(v, dict) else int(v)
+
+
+def registry_rows(conn: sqlite3.Connection, usage: str, limit: int) -> list:
+    """등록부 목록.  ★ 조회는 여기서 한다 (V11-01)."""
+    return [{"endpoint": r[0], "json_path": r[1], "usage": r[2],
+             "miss_streak": r[3], "core_column": r[4], "reason": r[5]}
+            for r in conn.execute(
+                "SELECT endpoint, json_path, usage, miss_streak, "
+                "core_column, reason FROM meta_field_usage "
+                "WHERE usage = ? ORDER BY endpoint, json_path LIMIT ?",
+                (usage, limit))]
+
+
+def registry_counts(conn: sqlite3.Connection) -> list:
+    return [{"usage": r[0], "n": r[1]} for r in conn.execute(
+        "SELECT usage, COUNT(*) FROM meta_field_usage GROUP BY 1 "
+        "ORDER BY 2 DESC")]
+
+
+def write_dev_requests(conn: sqlite3.Connection, root: str,
+                       statuses=("requested", "reopened"),
+                       at: str | None = None) -> str:
+    """내보낸 요청을 파일로 낸다 (STEP 137 · 91a).
+
+    ★ 파일 쓰기는 store 가 한다.  web 이 쓰면 층이 거꾸로 간다 (V10-05)
+    ★ 덮어쓰지 않는다 — 어제 낸 것과 비교할 수 있어야 한다
+    """
+    at = at or datetime.now(timezone.utc).isoformat()
+    body = export_dev_requests(conn, statuses, at=at)
+    stamp = at.replace("-", "").replace(":", "")[:15]
+    out = os.path.join(root, "outputs", f"{stamp}_dev_requests.md")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    tmp = f"{out}.part"
+    with open(tmp, "wb") as f:
+        f.write(body if isinstance(body, bytes) else str(body).encode("utf-8"))
+    os.replace(tmp, out)
+    return os.path.relpath(out, root)
+
+
+def dev_request_rows(conn: sqlite3.Connection, limit: int) -> list:
+    """★ 상태만 내면 「왜 그 상태인가」를 알 수 없다.
+    반영 STEP 과 사유를 함께 낸다 (STEP 137)."""
+    return [{"request_id": r[0], "id": r[0], "title": r[1], "status": r[2],
+             "created_at": r[3], "origin": r[4],
+             "step_ref": r[5] or "—", "direction": r[6] or "—",
+             "exported_at": r[7]}
+            for r in conn.execute(
+                "SELECT request_id, title, status, created_at, origin, "
+                "step_ref, direction, exported_at "
+                "FROM dev_request ORDER BY rowid DESC LIMIT ?", (limit,))]
+
+
+# ── STEP 134 API 조회 · 저장 ────────────────────────────────────────
+# ★ 응답을 가공하지 않는다.  원문 그대로 저장한다
+# 금지   저장한 응답을 raw_response 에 섞는 것.  별도 테이블이다
+
+
+def save_api_snapshot(conn: sqlite3.Connection, account: Account, url: str,
+                      http_code: int | None, content_type: str | None,
+                      body: str | None, note: str | None = None,
+                      at: str | None = None) -> int:
+    """탐색용 응답을 남긴다 (STEP 134).
+
+    ★ raw_response 와 섞지 않는다.  이건 「탐색」이지 수집이 아니다
+    """
+    require_role(account, ROLE_ADMIN)
+    at = at or datetime.now(timezone.utc).isoformat()
+    cur = conn.execute(
+        "INSERT INTO admin_api_snapshot"
+        "(account_id,url,http_code,content_type,body,note,fetched_at)"
+        " VALUES (?,?,?,?,?,?,?)",
+        (account.account_id, url, http_code, content_type, body, note, at))
+    conn.commit()
+    return int(cur.lastrowid)
+
+
+# 화면에 내는 원문 상한.  ★ 전문은 full_body 로 넘긴다 — 자르는 건 표시용이다
+API_BODY_CHARS = int(_admin_cfg("api_body_chars"))
+
+
+def get_api_snapshot(conn: sqlite3.Connection, snapshot_id: int,
+                     body_limit: int | None = None) -> dict | None:
+    """저장된 응답 하나 (STEP 134).
+
+    ★ SQL 은 store 에 둔다.  web 이 DB 를 직접 조회하면 층이 거꾸로 간다
+      (STEP 15a · V11-01)
+    """
+    row = conn.execute(
+        "SELECT snapshot_id, url, http_code, body, fetched_at "
+        "FROM admin_api_snapshot WHERE snapshot_id = ?",
+        (snapshot_id,)).fetchone()
+    if row is None:
+        return None
+    limit = API_BODY_CHARS if body_limit is None else body_limit
+    return {"snapshot_id": row[0], "url": row[1], "http_code": row[2],
+            "body": (row[3] or "")[:limit], "full_body": row[3],
+            "fetched_at": row[4]}
+
+
+def path_table(body: str, limit: int = 400) -> list:
+    """저장된 응답의 경로 표 (STEP 134 · 2장 평탄화).
+
+    ★ contracts.json_paths 는 경로 집합만 낸다.  여기는 형·표본까지 붙인
+      화면용 표라 이름을 나눈다 — 같은 이름이면 어느 쪽인지 알 수 없다
+
+    ★ 매핑표 작성이 바로 시작되도록 경로와 값 표본을 함께 낸다.
+      배열은 첨자를 [] 로 접는다 — 첨자별로 세면 경로가 폭발한다
+    """
+    try:
+        blob = json.loads(body or "")
+    except (TypeError, ValueError):
+        return []
+
+    seen: dict = {}
+
+    def walk(node, path: str) -> None:
+        if len(seen) >= limit:
+            return
+        if isinstance(node, dict):
+            for k, v in node.items():
+                walk(v, f"{path}.{k}" if path else k)
+        elif isinstance(node, list):
+            for v in node[:3]:
+                walk(v, f"{path}[]")
+        else:
+            row = seen.setdefault(path, {"path": path, "kind": type(node).__name__,
+                                         "sample": None, "count": 0})
+            row["count"] += 1
+            if row["sample"] is None and node is not None:
+                row["sample"] = str(node)[:60]
+
+    walk(blob, "")
+    return sorted(seen.values(), key=lambda r: r["path"])
+
+
+def halt_job(conn: sqlite3.Connection, account: Account, job_id: str,
+             reason: str, at: str | None = None,
+             resume=None) -> str | None:
+    """실행을 중단한다 (STEP 132 · 시나리오 34).
+
+    ★ 원문은 덮어쓰지 않는다.  지금까지 받은 것은 남는다.
+      재개점을 함께 남겨 「처음부터 다시」를 막는다 (STEP 52)
+    반환   재개점 단계 (없으면 None)
+    """
+    require_role(account, ROLE_ADMIN)
+    at = at or datetime.now(timezone.utc).isoformat()
+    row = conn.execute(
+        "SELECT status, run_id FROM recalc_job WHERE job_id = ?",
+        (job_id,)).fetchone()
+    if row is None:
+        raise ValidationError(f"그 실행이 없습니다: {job_id}",
+                              step="STEP 132")
+    if row[0] not in ("queued", "running"):
+        raise ValidationError(f"이미 끝난 실행입니다: {row[0]}",
+                              step="STEP 132")
+
+    # ★ 재개점 계산은 collect 가 한다.  store 가 부르면 층이 거꾸로 간다
+    #   (STEP 15a · V4-22) — 호출자가 넘긴다
+    point = resume(conn, row[1]) if (resume and row[1]) else None
+    step = getattr(point, "step", None)
+    # ★ 상태는 DDL 이 정한 4종뿐이다 (queued·running·done·failed).
+    #   중단은 「끝났다」가 아니라 「멈췄다」이므로 failed 로 둔다 —
+    #   detail 에 재개점을 남겨 「처음부터 다시」를 막는다 (STEP 52)
+    conn.execute(
+        "UPDATE recalc_job SET status='failed', ended_at=?, "
+        "detail=? WHERE job_id=?",
+        (at, f"중단 — {reason}"
+         + (f" · 재개점 {step}" if step else " · 재개점 없음"), job_id))
+    conn.commit()
+    return step

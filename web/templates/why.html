@@ -1,0 +1,136 @@
+<h1>판정 근거 <span class="{{ v.grade | gradecls }}">{{ v.grade }}</span></h1>
+<p class="muted">{{ v.target_key }} · 매물 {{ v.listing_id }}</p>
+
+{% if v.not_rated_reason %}
+<p class="warn-warn">판정하지 못했습니다 — {{ v.not_rated_reason }}</p>
+{% endif %}
+
+{% if v.absolute_fail %}
+<p class="warn-block">E등급 사유 — {{ v.absolute_fail }}</p>
+{% endif %}
+
+<p class="score">
+  <strong>{{ v.earned | num }}</strong> / {{ v.denominator | num }}
+  <span class="muted">판정할 수 없는 축은 분모에서 뺍니다 ·
+    555 기준 환산 {{ v.score_total | num }}</span>
+</p>
+
+<h2>무엇을 조회했는가</h2>
+<p class="muted">★ 「안 부른 것」과 「불렀는데 못 받은 것」은 다릅니다.
+  앞은 우리 잘못이고, 뒤는 그 매물에 없는 것입니다.</p>
+<table>
+<thead><tr><th>응답</th><th>상태</th><th>무엇을 주는가</th><th>없으면</th></tr></thead>
+<tbody>
+{% for f in v.fetches %}
+<tr>
+  <td>{{ f.label }}</td>
+  <td>{{ f.status }}</td>
+  <td class="muted">{{ f.gives }}</td>
+  <td class="muted">{% if f.impact %}→ {{ f.impact }}{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>축별 판정 — 축을 누르면 세부가 열립니다</h2>
+<table>
+<thead><tr><th>축</th><th class="num">점수</th><th class="num">배점</th>
+<th>근거</th><th>우선순위</th></tr></thead>
+<tbody>
+{% for a in v.axes %}
+<tr>
+  <td><a href="/listings?axis={{ a.axis }}">{{ a.label }}</a></td>
+  <td class="num">{% if a.excluded %}<span class="excluded">—</span>{% endif %}{% if !a.excluded %}{{ a.points | num }}{% endif %}</td>
+  <td class="num">{{ a.max_points | num }}</td>
+  <td>{{ a.source }}</td>
+  <td>{{ a.prio }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if v.diagnosis %}
+<h2>엔카 진단</h2>
+<p class="muted">{{ v.diagnosis.diagnosed_at | date }} · {{ v.diagnosis.center_name }} ·
+  부위 {{ v.diagnosis.item_count | num }} 중 교환 {{ v.diagnosis.replacement_count | num }}</p>
+<p class="diag-verdict">{{ v.diagnosis.checker_comment }}</p>
+{% if v.diagnosis.outer_panel_comment %}<p class="muted">{{ v.diagnosis.outer_panel_comment }}</p>{% endif %}
+<p class="muted">★ 표시입니다. 사고 감점은 성능점검부로 판정합니다.</p>
+{% endif %}
+
+{% if !v.diagnosis %}
+<h2>엔카 진단</h2>
+<p class="muted">진단 리포트가 없습니다.</p>
+{% endif %}
+
+{% if v.pending_items %}
+<h2>확인 못 한 것 — 채우면 오를 수 있습니다</h2>
+<table>
+<thead><tr><th>축</th><th class="num">배점</th><th>왜 빠졌나</th></tr></thead>
+<tbody>
+{% for p in v.pending_items %}
+<tr><td>{{ p.label }}</td><td class="num">{{ p.points | num }}점</td>
+  <td class="muted">{{ p.reason }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% if v.pending_best %}
+<p class="notice">전부 채우면 <strong>최대 {{ v.pending_best.ratio_pct }}%
+  · {{ v.pending_best.grade }}등급</strong>까지 오를 수 있습니다
+  (지금 {{ v.pending_best.now_pct }}% · 배점 {{ v.pending_best.points | num }}점이
+  분모에서 빠져 있습니다).<br>
+  <span class="muted">★ 낙관값입니다 — 전부 만점을 받았을 때입니다.</span></p>
+{% endif %}
+{% endif %}
+{% if !v.pending_items %}
+<p class="muted">확인 못 한 것 — 없습니다. 17 Component 전부 판정됐습니다.</p>
+{% endif %}
+
+<h2>왜 {% if v.rank %}{{ v.rank }}순위{% endif %}{% if !v.rank %}이 등급인가{% endif %}</h2>
+{% if v.strengths %}
+<p><b>강점</b>{% for s in v.strengths %}<span class="chip-good">{{ s }}</span>{% endfor %}</p>
+{% endif %}
+{% if v.weaknesses %}
+<p><b>약점</b>{% for w in v.weaknesses %}<span class="chip-bad">{{ w }}</span>{% endfor %}</p>
+{% endif %}
+{% if v.pending_items %}
+<p class="muted">확인만 되면 오를 수 있습니다 — 제외된 축이 분모에서 빠져 있습니다.</p>
+{% endif %}
+
+{% if v.costs %}
+<h2>비용</h2>
+<p class="muted">중고 ↔ 신차 동일 트림. ★ 점수에 반영하지 않습니다.</p>
+<table>
+<thead><tr><th>항목</th><th class="num">중고</th><th class="num">신차 동일 트림</th></tr></thead>
+<tbody>
+{% for c in v.costs %}
+<tr><td>{{ c.label }}</td>
+  <td class="num">{{ c.used_won | won }}</td>
+  <td class="num">{{ c.new_won | won }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<h2>주요 옵션</h2>
+{% if v.options %}
+{% for g in v.options %}
+<h3>{{ g.group }} <small>{{ g.count | num }}개</small></h3>
+<p class="chips">{% for o in g.items %}<span class="chip{% if !o.known %} muted{% endif %}">{{ o.name }}</span>{% endfor %}</p>
+{% endfor %}
+<p class="muted">★ 이름이 흐린 것은 사전에 아직 뜻이 없는 코드입니다 —
+  추정해서 이름을 붙이지 않습니다.</p>
+{% endif %}
+{% if !v.options %}
+<p class="muted">옵션 정보를 받지 못했습니다. 「무엇을 조회했는가」를 보십시오.</p>
+{% endif %}
+
+<h2>참고 자료 — 점수에 반영하지 않습니다</h2>
+{% if v.known_issues %}
+<ul>{% for k in v.known_issues %}<li class="issue-{{ k.level }}">{{ k.text }}
+  <span class="muted">· {{ k.level }}</span></li>{% endfor %}</ul>
+{% endif %}
+{% if !v.known_issues %}
+<p class="muted">이 차종에 등록된 알려진 문제가 없습니다.
+  ★ 사람이 넣습니다 — 출처가 커뮤니티·리콜 공고라 수집으로 채우지 않습니다.</p>
+{% endif %}

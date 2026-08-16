@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% set page = 'rep' %}
+{% block title %}리포트 · CarWatch{% endblock %}
+{% block body %}
+
+<div class="card" style="margin-bottom:16px;border-color:#5c4520;
+     background:#1c1810">
+  <div style="font-weight:600;margin-bottom:7px;color:var(--amber)">
+    검증용 파일</div>
+  <div class="dim" style="font-size:12.5px;line-height:1.7">
+    <b>diagnostic_*.json</b> 이 파서 검증용입니다.
+    필드별 결측률·값 분포·원본 응답 샘플이 들어 있습니다.<br>
+    파싱이 잘못되면 <b>이 파일만 전달</b>하면 원인을 찾을 수 있습니다.
+    매물 전량이 아니라 통계와 샘플만 담기므로 크기가 작습니다.<br>
+    <b>daily_*.md</b> 는 사람이 읽는 일일 보고서입니다.
+  </div>
+</div>
+
+<div class="bar">
+  <button id="btn-build" class="btn on">지금 상태로 다시 생성</button>
+  <span id="msg" class="faint" style="font-size:12px"></span>
+  <span class="faint num" style="margin-left:auto;font-size:11.5px"
+    >{{ report_dir }}</span>
+</div>
+
+<div class="card" style="padding:6px 10px">
+{% if files %}
+<table>
+<thead><tr>
+  <th>파일</th><th>종류</th><th class="r">크기</th><th>생성</th><th></th>
+</tr></thead>
+<tbody>
+{% for f in files %}
+<tr>
+  <td class="num">{{ f.name }}</td>
+  <td>
+    <span class="tag {{ 'amber' if '진단' in f.kind }}">{{ f.kind }}</span>
+  </td>
+  <td class="r num dim">{{ '{:,}'.format(f.size) }}B</td>
+  <td class="faint num" style="font-size:11.5px">{{ f.mtime }}</td>
+  <td class="r"><a href="/reports/{{ f.name }}"
+    style="color:var(--amber)">내려받기 ↓</a></td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% else %}
+<div class="empty">
+  <h3>리포트가 없습니다</h3>
+  <p>수집을 실행하면 자동으로 생성됩니다.</p>
+  <p><a href="/run" class="btn on" style="display:inline-block;
+     margin-top:10px">수집 화면으로</a></p>
+</div>
+{% endif %}
+</div>
+
+<p class="faint" style="font-size:11.5px;margin-top:12px">
+  원본 응답은 차종당 {{ 20 }}건씩 {{ 14 }}일 보관합니다.
+  파서를 고친 뒤 재수집 없이 같은 데이터로 다시 검증하기 위한 것입니다.
+</p>
+
+<script>
+document.getElementById('btn-build').onclick = function () {
+  var b = this, m = document.getElementById('msg');
+  b.disabled = true; m.textContent = '생성 중...';
+  fetch('/api/report/build', {method: 'POST'})
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.ok) { m.textContent = '완료'; location.reload(); }
+      else { m.textContent = d.error || '실패'; b.disabled = false; }
+    }).catch(function (e) {
+      m.textContent = '실패: ' + e; b.disabled = false;
+    });
+};
+</script>
+{% endblock %}

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수집 실행 · CarWatch v2</title>
+<style>
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header{border-bottom:1px solid var(--line);
+       background:linear-gradient(180deg,#171c21,#12161a);position:sticky;top:0;z-index:20}
+.hwrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:24px;height:52px}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase;margin-left:8px}
+nav{display:flex;gap:2px;margin-left:4px}
+nav a{padding:6px 12px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:14px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle;background:var(--down)}
+.dot.warn{background:var(--amber);animation:bl 1.4s infinite}
+@keyframes bl{50%{opacity:.35}}
+.who{border:1px solid var(--line2);border-radius:12px;padding:2px 10px;
+     font-size:11.5px;color:var(--amber)}
+
+.sub{border-bottom:1px solid var(--line);background:#12161a}
+.swrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:18px;height:40px;overflow-x:auto}
+.sgrp{display:flex;align-items:center;gap:2px}
+.sgrp .lbl{font-size:10px;letter-spacing:.08em;color:var(--faint);
+           text-transform:uppercase;margin-right:6px;white-space:nowrap}
+.sub a{padding:4px 10px;font-size:12.5px;color:var(--dim);border-radius:4px;
+       white-space:nowrap}
+.sub a:hover{color:var(--text);background:var(--surface2)}
+.sub a.on{color:var(--amber);background:#2a1f0e}
+.sub .sep{width:1px;height:16px;background:var(--line);flex:none}
+
+main{max-width:1280px;margin:0 auto;padding:20px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:24px 0 11px}
+h2:first-of-type{margin-top:0}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:15px 17px;margin-bottom:14px}
+.card.tight{padding:8px 12px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:6px 8px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.r{text-align:right} .c{text-align:center}
+
+.tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;
+     border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+.up-v{color:var(--up)} .down-v{color:var(--down)}
+select,button,.btn{background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;padding:6px 13px;
+  font-size:12.5px;font-family:inherit;cursor:pointer}
+.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+.btn.danger{border-color:#4e2523;color:var(--up)}
+.btn:disabled,.btn.off{opacity:.4;cursor:not-allowed}
+label{font-size:12.5px;color:var(--dim);display:flex;align-items:center;gap:6px;
+      cursor:pointer}
+input[type=checkbox],input[type=radio]{accent-color:var(--amber)}
+
+/* 실행 상자 */
+.runbox{border:1px solid var(--line2);border-radius:8px;background:var(--surface);
+        padding:16px 18px;margin-bottom:14px}
+.rrow{display:flex;align-items:center;gap:12px;padding:9px 0;
+      border-bottom:1px solid var(--line);flex-wrap:wrap}
+.rrow:last-of-type{border-bottom:0}
+.rrow .k{width:96px;flex:none;font-size:12px;color:var(--faint);
+         letter-spacing:.06em;text-transform:uppercase}
+.rrow .v{flex:1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* 예상 */
+.est{background:#12161a;border:1px solid var(--line);border-radius:6px;
+     padding:12px 15px;margin-top:12px;font-size:13px}
+.est .l{display:flex;gap:14px;padding:3px 0;flex-wrap:wrap}
+.est .l .w{width:110px;color:var(--dim);flex:none}
+.est .l b{font-family:var(--mono)}
+.est .warn{color:var(--amber);margin-top:8px;padding-top:8px;
+           border-top:1px solid var(--line);font-size:12.5px}
+
+/* 확인 */
+.confirm{border:1px solid #5c4520;background:#1a1408;border-radius:7px;
+         padding:13px 16px;margin-top:12px;display:none}
+.confirm.show{display:block}
+.confirm .t{font-size:13px;margin-bottom:9px}
+.confirm .t b{color:var(--amber)}
+.confirm input[type=text]{background:var(--surface2);border:1px solid var(--line2);
+  border-radius:5px;color:var(--text);font-family:var(--mono);padding:5px 10px;
+  width:120px;font-size:13px}
+
+/* 진행 */
+.prog{margin-top:4px}
+.pline{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px}
+.pline .s{width:120px;flex:none;font-family:var(--mono);font-size:12px}
+.pline .b{flex:1;height:6px;background:var(--surface2);border:1px solid var(--line);
+          border-radius:3px;overflow:hidden}
+.pline .b i{display:block;height:100%;background:var(--down)}
+.pline .b i.run{background:var(--amber)}
+.pline .n{width:130px;text-align:right;flex:none;font-family:var(--mono);
+          font-size:11.5px;color:var(--dim)}
+.pline.wait{opacity:.4}
+
+/* 로그 */
+.log{background:#0b0d10;border:1px solid var(--line);border-radius:6px;
+     padding:11px 13px;font-family:var(--mono);font-size:11.5px;
+     line-height:1.75;max-height:220px;overflow-y:auto;color:var(--dim)}
+.log .t{color:var(--faint)}
+.log .ok{color:var(--down)}
+.log .wa{color:var(--amber)}
+.log .er{color:var(--up)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>CarWatch</b><span>v2</span></div>
+    <nav>
+      <a href="v2_dashboard_시안.html">현황</a>
+      <a href="v2_listings_시안.html">매물</a>
+      <a href="v2_admin_시안.html" class="on">관리</a>
+    </nav>
+    <div class="hmeta">
+      <a href="v2_login_시안.html" class="who" title="계정 · 로그아웃">마스터 · admin</a>
+      <span id="hstat"><span class="dot"></span>대기</span>
+      <span class="num">c3 · d7 · p2</span>
+    </div>
+  </div>
+</header>
+
+<div class="sub">
+  <div class="swrap">
+    <div class="sgrp"><span class="lbl">운영</span>
+      <a href="v2_admin_시안.html">현황</a>
+      <a href="v2_admin_run_시안.html" class="on">수집 실행</a>
+      <a href="v2_admin_audit_시안.html">감사 조회</a>
+      <a href="v2_admin_users_시안.html">사용자</a>
+    </div>
+    <span class="sep"></span>
+    <div class="sgrp"><span class="lbl">조정</span>
+      <a href="v2_admin_registry_시안.html">등록부</a>
+      <a href="v2_admin_scoring_시안.html">배점</a><a href="v2_admin_targets_시안.html">차종</a><a href="v2_admin_config_시안.html">설정</a>
+    </div>
+    <span class="sep"></span>
+    <div class="sgrp"><span class="lbl">탐색</span>
+      <a href="v2_admin_query_시안.html">쿼리</a><a href="v2_admin_api_시안.html">API 조회</a><a href="v2_admin_tools_시안.html">도구</a>
+      <a href="#">문서</a><a href="v2_admin_requests_시안.html">개발 요청</a>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- 실행 설정 -->
+<h2>무엇을 돌릴까</h2>
+<div class="runbox">
+
+  <div class="rrow">
+    <div class="k">사유</div>
+    <div class="v">
+      <select id="reason" onchange="calc()">
+        <option value="listing_updated">매물 갱신 — 새 매물·가격 확인</option>
+        <option value="raw_missing">빠진 원문 채우기 — 카탈로그 148건</option>
+        <option value="parse_rule">파싱 규칙 변경 — 재파싱</option>
+        <option value="dictionary">사전 변경 — 재판정</option>
+        <option value="scoring">배점 변경 — 재채점</option>
+        <option value="coefficient">계수 재산출</option>
+      </select>
+      <span class="faint" id="steps"></span>
+    </div>
+  </div>
+
+  <div class="rrow">
+    <div class="k">범위</div>
+    <div class="v">
+      <label><input type="radio" name="sc" value="one" checked onchange="calc()">
+        한 차종</label>
+      <select id="target" onchange="calc()">
+        <option value="KOLEOS_HEV">그랑 콜레오스 (259건)</option>
+        <option value="G80_25T">G80 2.5T (1,842건)</option>
+        <option value="GV60">GV60 (104건)</option>
+      </select>
+      <span style="width:8px"></span>
+      <label><input type="radio" name="sc" value="all" onchange="calc()">
+        전 차종 <span class="faint">10종 · 7,775건</span></label>
+    </div>
+  </div>
+
+  <div class="rrow">
+    <div class="k">간격</div>
+    <div class="v">
+      <select id="interval" onchange="calc()">
+        <option value="0.1">0.1초 — 현재 설정</option>
+        <option value="0.3">0.3초</option>
+        <option value="1.0">1.0초 — 보수적</option>
+        <option value="2.0">2.0초 — 초기값</option>
+      </select>
+      <span class="faint">실패가 나면 낮추지 말고 올리십시오</span>
+    </div>
+  </div>
+
+  <div class="rrow">
+    <div class="k">옵션</div>
+    <div class="v">
+      <label><input type="checkbox" id="diag"> 진단 모드
+        <span class="faint">— 멈추지 않고 전 결함을 모읍니다</span></label>
+    </div>
+  </div>
+
+  <!-- 예상 -->
+  <div class="est">
+    <div class="l"><span class="w">요청</span>
+      <b id="e-req">1,036</b><span class="faint">건</span></div>
+    <div class="l"><span class="w">예상 시간</span>
+      <b id="e-time">2분</b></div>
+    <div class="l"><span class="w">단계</span>
+      <b id="e-steps">S1 ~ S12</b></div>
+    <div class="l"><span class="w">되돌리기</span>
+      <span class="dim" id="e-undo">원문은 덮어쓰지 않습니다.
+        중단해도 지금까지 받은 것은 남습니다</span></div>
+    <div class="warn" id="e-warn" style="display:none"></div>
+  </div>
+
+  <!-- 확인 -->
+  <div class="confirm" id="cf">
+    <div class="t">
+      전 차종 수집은 <b>약 3.8시간</b>이 걸리고,
+      시작하면 중간에 세우기 어렵습니다.<br>
+      진행하려면 아래에 <b>all</b> 을 입력하십시오.
+    </div>
+    <div style="display:flex;gap:9px;align-items:center">
+      <input type="text" id="cfw" placeholder="all">
+      <span class="btn on" onclick="start(true)">시작</span>
+      <span class="btn" onclick="hideCf()">취소</span>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:9px;margin-top:14px;align-items:center">
+    <span class="btn on" id="btnStart" onclick="start(false)">▶ 실행</span>
+    <span class="btn" onclick="dry()">조립 확인만 <span class="faint">(요청 없음)</span></span>
+    <span class="btn danger off" id="btnStop" onclick="stop()">■ 중단</span>
+    <span class="faint" style="margin-left:auto;font-size:11.5px" id="lockmsg">
+      실행 중에는 배점·설정 변경이 잠깁니다</span>
+  </div>
+</div>
+
+<!-- 진행 -->
+<h2>진행</h2>
+<div class="card" id="progcard">
+  <div class="prog" id="prog"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:10px;
+       font-size:12px;color:var(--dim)">
+    <span id="pmsg">대기 중입니다</span>
+    <span class="num" id="ptime"></span>
+  </div>
+</div>
+
+<!-- 로그 -->
+<h2>로그</h2>
+<div class="log" id="log"><span class="t">08-14 06:04:12</span>
+  마지막 실행 종료 · S0~S12 정상 · 4분 12초</div>
+
+<div class="faint" style="font-size:11.5px;margin-top:12px;line-height:1.8">
+  ⓘ <b style="color:var(--text)">전면 재수집(사이트 응답 형태 변경)은 여기에 없습니다.</b>
+  18,800요청이라 되돌릴 수 없고, 원문을 열어 확인한 뒤 CLI 로만 실행합니다.
+  <br>
+  형식 검증 거부가 급증하면 이 화면에 신호가 뜹니다.
+</div>
+
+<div class="faint" style="font-size:11px;text-align:right;margin-top:14px">
+  calc c3 · dict d7 · parse p2
+</div>
+</main>
+
+<script>
+var PLAN = {
+  listing_updated: {from:"S1", steps:"S1 ~ S12", refetch:true,  per:4},
+  raw_missing:     {from:"S5", steps:"S5 ~ S12", refetch:true,  per:1},
+  parse_rule:      {from:"S4", steps:"S4 ~ S12", refetch:false, per:0},
+  dictionary:      {from:"S9", steps:"S9 ~ S12", refetch:false, per:0},
+  scoring:         {from:"S10",steps:"S10 ~ S12",refetch:false, per:0},
+  coefficient:     {from:"S8.5",steps:"S8.5 ~ S12",refetch:false,per:0}
+};
+var COUNT = {KOLEOS_HEV:259, G80_25T:1842, GV60:104};
+var ALL = 7775;
+var running = false, timer = null, t0 = 0;
+
+function scope(){
+  return document.querySelector('input[name=sc]:checked').value;
+}
+function nCars(){
+  return scope()==="all" ? ALL : COUNT[document.getElementById("target").value];
+}
+function calc(){
+  var r = document.getElementById("reason").value;
+  var p = PLAN[r];
+  var n = nCars();
+  var iv = +document.getElementById("interval").value;
+  var req = p.refetch ? (r==="raw_missing" ? Math.round(n*0.57) : n*p.per) : 0;
+  var sec = req * (iv + 0.14);
+
+  document.getElementById("e-req").textContent = req ? req.toLocaleString() : "0";
+  document.getElementById("e-steps").textContent = p.steps;
+  document.getElementById("e-time").textContent =
+    !req ? "수 초" :
+    sec < 90 ? Math.round(sec)+"초" :
+    sec < 5400 ? Math.round(sec/60)+"분" : (sec/3600).toFixed(1)+"시간";
+  document.getElementById("steps").textContent = "→ " + p.steps +
+    (p.refetch ? " · 재수집 있음" : " · 재수집 없음");
+  document.getElementById("e-undo").textContent = p.refetch
+    ? "원문은 덮어쓰지 않습니다. 중단해도 지금까지 받은 것은 남습니다"
+    : "저장된 원문으로 다시 계산합니다. 요청이 나가지 않습니다";
+
+  var w = document.getElementById("e-warn");
+  if(scope()==="all" && p.refetch){
+    w.style.display=""; w.innerHTML =
+      "★ 전 차종 재수집입니다. 밤에 돌리십시오. 시작 시 확인을 받습니다";
+  } else if(r==="dictionary" || r==="scoring"){
+    w.style.display=""; w.innerHTML =
+      "★ 판정 규칙이 바뀝니다. calc_version 이 올라가고 이전 결과와 구분됩니다";
+  } else { w.style.display="none"; }
+}
+
+function dry(){
+  addLog("t","--dry 조립 확인 · 요청 없음");
+  addLog("ok","q 8개 조립 완료 · collect_group 8 · CarType.N 1건 (모델Y)");
+  addLog("t","르노코리아(삼성_) 이스케이프 확인");
+}
+
+function start(confirmed){
+  if(running) return;
+  var p = PLAN[document.getElementById("reason").value];
+  if(scope()==="all" && p.refetch && !confirmed){
+    document.getElementById("cf").classList.add("show"); return;
+  }
+  if(confirmed && document.getElementById("cfw").value.trim() !== "all"){
+    alert("all 을 정확히 입력하십시오"); return;
+  }
+  hideCf();
+  running = true; t0 = Date.now();
+  document.getElementById("btnStart").classList.add("off");
+  document.getElementById("btnStop").classList.remove("off");
+  document.getElementById("hstat").innerHTML =
+    '<span class="dot warn"></span>실행 중';
+  document.getElementById("lockmsg").innerHTML =
+    '<span style="color:var(--amber)">배점 · 설정 변경이 잠겼습니다</span>';
+  addLog("t","실행 시작 · 사유 " +
+    document.getElementById("reason").selectedOptions[0].text.split(" —")[0] +
+    " · 범위 " + (scope()==="all" ? "전 차종" : "한 차종"));
+  runSteps();
+}
+
+function hideCf(){ document.getElementById("cf").classList.remove("show"); }
+
+function stop(){
+  if(!running) return;
+  clearInterval(timer); running = false;
+  document.getElementById("btnStart").classList.remove("off");
+  document.getElementById("btnStop").classList.add("off");
+  document.getElementById("hstat").innerHTML = '<span class="dot"></span>중단됨';
+  document.getElementById("pmsg").textContent =
+    "중단했습니다 · 지금까지 받은 원문은 남아 있습니다 · 이어받기 가능";
+  addLog("wa","사용자 중단 · ResumePoint 저장 (S5 · 412/816)");
+  document.getElementById("lockmsg").textContent =
+    "실행 중에는 배점·설정 변경이 잠깁니다";
+}
+
+var STEPS = [
+  ["S0 백업",       1,   400],
+  ["S1 목록",      13,  1200],
+  ["S2 facet",      1,   500],
+  ["S3 사전",      12,   400],
+  ["S4 목록 파싱", 513,  600],
+  ["S5 상세",      816, 3200],
+  ["S6 상세 파싱", 886,  800],
+  ["S6a 등록부",   372,  600],
+  ["S7 카탈로그",    1,   400],
+  ["S8 사전",        7,   300],
+  ["S8.5 계수",      0,   300],
+  ["S9 판정",      203,  700],
+  ["S10 채점",     203,  600],
+  ["S11 검증",     147,  700],
+  ["S12 리포트",     1,   400]
+];
+
+function runSteps(){
+  var i = 0, pct = 0;
+  draw(i, pct);
+  timer = setInterval(function(){
+    if(!running){ clearInterval(timer); return; }
+    pct += 8 + Math.random()*14;
+    if(pct >= 100){
+      var nm = STEPS[i][0];
+      addLog("ok", nm + " 완료 · " + STEPS[i][1] + "건");
+      if(nm.indexOf("S6a") === 0){
+        addLog("wa","등록부 미분류 3건 — 판정에 쓰지 않는 경로 · 계속 진행");
+      }
+      i++; pct = 0;
+      if(i >= STEPS.length){
+        clearInterval(timer); running = false;
+        document.getElementById("btnStart").classList.remove("off");
+        document.getElementById("btnStop").classList.add("off");
+        document.getElementById("hstat").innerHTML =
+          '<span class="dot"></span>완료';
+        document.getElementById("pmsg").innerHTML =
+          '완료 · 매물 <b class="num">203</b>건 채점 · ' +
+          '<a href="v2_dashboard_시안.html" style="color:var(--amber)">현황 보기 →</a>';
+        document.getElementById("lockmsg").textContent =
+          "실행 중에는 배점·설정 변경이 잠깁니다";
+        addLog("ok","전 단계 완료 · fatal 0 · warn 3");
+        draw(STEPS.length, 100);
+        return;
+      }
+    }
+    draw(i, pct);
+  }, 260);
+}
+
+function draw(cur, pct){
+  var h = "";
+  STEPS.forEach(function(s, i){
+    var done = i < cur, now = i === cur;
+    h += '<div class="pline'+(!done&&!now?" wait":"")+'">'+
+      '<span class="s">'+s[0]+'</span>'+
+      '<span class="b"><i class="'+(now?"run":"")+'" style="width:'+
+        (done?100:now?Math.min(pct,100):0)+'%"></i></span>'+
+      '<span class="n">'+(done?s[1].toLocaleString()+"건 ✓":
+        now?Math.round(Math.min(pct,100))+"%":"—")+'</span></div>';
+  });
+  document.getElementById("prog").innerHTML = h;
+  if(running){
+    var el = Math.round((Date.now()-t0)/1000);
+    document.getElementById("ptime").textContent =
+      Math.floor(el/60)+":"+String(el%60).padStart(2,"0");
+    document.getElementById("pmsg").textContent =
+      STEPS[Math.min(cur,STEPS.length-1)][0] + " 진행 중 · " +
+      (cur+1) + "/" + STEPS.length + " 단계";
+  }
+}
+
+function addLog(cls, msg){
+  var d = new Date();
+  var t = "08-14 " + String(d.getHours()).padStart(2,"0")+":"+
+          String(d.getMinutes()).padStart(2,"0")+":"+
+          String(d.getSeconds()).padStart(2,"0");
+  var el = document.getElementById("log");
+  el.innerHTML += '<br><span class="t">'+t+'</span> <span class="'+cls+'">'+msg+'</span>';
+  el.scrollTop = el.scrollHeight;
+}
+
+calc(); draw(-1, 0);
+</script>
+</body>
+</html>

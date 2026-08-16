@@ -1,0 +1,286 @@
+# -*- coding: utf-8 -*-
+"""화면 조립 (14장 STEP 144 · 147 · 149).
+
+지시서   STEP 149 (판정 결과가 없을 때) · 147 (폼) · 152 (경계)
+근거     ★ 10장·13장 화면 함수는 그대로다.  14장이 그것을 감싼다
+금지     view_* 시그니처를 바꾸는 것
+         빈 표를 내는 것 — 「무엇이 없고 무엇을 하면 되는가」를 낸다
+"""
+from __future__ import annotations
+
+import os
+import sqlite3
+
+from contracts import ANONYMOUS, ROLE_ADMIN, ROLE_USER
+from web.context import Banner, HTTP_OK, HTTP_SEE_OTHER, PageContext
+from web.routes import ROUTES
+from web.session import csrf_ok, new_csrf
+
+FLASH_KEY = "flash"
+
+
+def menu_items(account) -> list[dict]:
+    """라우팅 표에서 메뉴를 만든다.  ★ 표가 정본이다 (STEP 142)."""
+    from contracts import ROLE_RANK
+
+    rank = ROLE_RANK.get(getattr(account, "role", "anonymous"), 0)
+    out = []
+    for r in ROUTES:
+        # ★ POST 전용 · 경로 변수 · 인증은 메뉴가 아니다
+        if r.var or r.path in ("/", "/login", "/logout", "/join",
+                               "/password"):
+            continue
+        if "GET" not in r.methods:
+            continue
+        if ROLE_RANK[r.role] > rank:
+            continue
+        out.append({"label": _label(r.path), "path": r.path,
+                    "group": r.menu, "locked": False})
+    return out
+
+
+LABELS = {
+    "/listings": "매물", "/recommend": "후보", "/compare": "비교",
+    "/market": "시세", "/dealers": "딜러", "/watch": "관심",
+    "/notready": "미판정", "/admin": "관리",
+    "/admin/run": "실행 지시", "/admin/audit": "감사",
+    "/admin/scoring": "배점", "/admin/targets": "차종",
+    "/admin/registry": "등록부", "/admin/config": "설정",
+    "/admin/users": "사용자", "/admin/query": "쿼리", "/admin/api": "API", "/admin/tools": "도구",
+    "/admin/docs": "문서", "/admin/requests": "개발 요청",
+}
+
+
+def _label(path: str) -> str:
+    return LABELS.get(path, path)
+
+
+# ── STEP 149 판정 결과가 없을 때 ────────────────────────────────────
+def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
+    """★ 빈 표를 내지 않는다.  무엇이 없고 무엇을 하면 되는가를 낸다.
+
+    ★ 조회는 store.state_counts 가 한다.  화면에 SQL 을 두지 않는다 (V11-01)
+    """
+    from store.core import state_counts
+
+    # ★ 한 요청에 여러 번 부른다 — 부분 템플릿과 뼈대가 각각 부른다.
+    #   그때마다 4쿼리를 돌면 화면마다 헛되이 쓴다 (V11-34 · B-2)
+    n = getattr(conn, "_cw_state", None)
+    if n is None:
+        n = state_counts(conn)
+        try:
+            conn._cw_state = n
+        except AttributeError:
+            pass
+    if n["listings"] == 0:
+        act = ("run.py collect --target <차종>" if account.role == ROLE_ADMIN
+               else "관리자에게 수집을 요청하십시오")
+        return Banner("pending", "아직 수집하지 않았습니다", act)
+    if n["unclassified"]:
+        return Banner("unclassified", "등록부에 미분류가 있습니다",
+                      "판정에 쓰는 경로면 멈춥니다  (/notready)")
+    if n["scores"] == 0:
+        return Banner("pending", "판정 결과가 아직 없습니다",
+                      "S9~S10 을 실행하면 등급이 나옵니다")
+    if n["not_rated"] == n["scores"]:
+        return Banner("pending", "분모가 부족해 등급을 매기지 않았습니다",
+                      "축별 미확정을 확인하십시오  (/notready)")
+    return None
+
+
+def build_page(conn, account, title: str, body_html: str, *,
+               csrf: str = "", flashes=None, run_id: str = "",
+               calc_version: str = "", dict_version: str = "",
+               parse_version: str = "") -> PageContext:
+    """전 화면이 같은 것을 낸다 (STEP 144)."""
+    from report.screens.build import viewer_state
+
+    banner = empty_state(conn, account)
+    return PageContext(
+        title=title, body_html=body_html, viewer=viewer_state(account),
+        menu=menu_items(account), banners=[banner] if banner else [],
+        flashes=list(flashes or []), calc_version=calc_version,
+        dict_version=dict_version, parse_version=parse_version,
+        run_id=run_id,
+        generated_at=_display_now(),
+        csrf_token=csrf)
+
+
+# ── STEP 147 폼 ─────────────────────────────────────────────────────
+def check_post(req: dict, expected_csrf: str | None) -> None:
+    """★ 전 POST 에 CSRF 를 요구한다.  불일치면 403 (STEP 147)."""
+    from errors import PolicyError
+
+    if not csrf_ok(expected_csrf, req.get("form", {}).get("csrf")):
+        raise PolicyError("요청을 확인하지 못했습니다. 화면을 새로 열어 주십시오",
+                          step="STEP 147")
+
+
+# 다음 GET 에서 낼 알림.  ★ HTTP 헤더에 담지 않는다 — 한글이 안 들어간다
+_FLASH: dict[str, list] = {}
+
+
+def redirect(path: str, flash: str = "", key: str = "-") -> tuple:
+    """★ POST → 처리 → 303 → GET.  새로고침이 같은 변경을 두 번 하지 않는다.
+
+    flash 는 서버가 들고 있다가 다음 GET 에서 낸다.
+    헤더에 넣으면 latin-1 로 인코딩돼 한글에서 서버가 죽는다 (실측)
+    """
+    if flash:
+        _FLASH.setdefault(key, []).append(flash)
+    return HTTP_SEE_OTHER, {"Location": path}, b""
+
+
+def take_flashes(key: str = "-") -> list:
+    """한 번만 낸다.  읽으면 사라진다."""
+    return _FLASH.pop(key, [])
+
+
+__all__ = ["build_page", "check_post", "empty_state", "menu_items",
+           "redirect", "new_csrf", "ANONYMOUS", "ROLE_USER", "HTTP_OK"]
+
+
+# ── 요청 처리 (STEP 141 · 150) ──────────────────────────────────────
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _display_now(root: str | None = None) -> str:
+    """화면에 낼 지금 시각.
+
+    ★ 저장은 UTC · 표시는 로컬이다 (C-1).
+      DTZ005 를 고치면서 화면 표시까지 UTC 로 바꿨더니
+      한국 사용자에게 9시간 어긋났다 — 실측 08-15
+    """
+    import datetime as _dt
+    import json as _j
+    import os as _o
+    import zoneinfo
+
+    name = "Asia/Seoul"
+    # ★ 뿌리 기준이다.  cwd 에 기대면 서비스로 띄울 때 못 찾는다 (A-7)
+    path = _o.path.join(root or _ROOT, "config", "web.json")
+    if _o.path.isfile(path):
+        with open(path, encoding="utf-8") as f:
+            name = _j.load(f).get("display_timezone", name)
+    try:
+        tz = zoneinfo.ZoneInfo(name)
+    except Exception:                                        # noqa: BLE001
+        tz = _dt.timezone.utc
+    return _dt.datetime.now(_dt.timezone.utc).astimezone(tz).strftime(
+        "%Y-%m-%d %H:%M")
+
+
+def make_app(db_path: str, root: str = ".", plan=None,
+             reason_rows=None, fetch=None, resume=None) -> dict:
+    """서버가 쓰는 처리기.  ★ 요청마다 연결을 연다 — 스레드 공유를 피한다.
+
+    plan · reason_rows   재처리 결정표.  ★ run.py 가 주입한다.
+                         web 이 collect 를 부르면 층이 거꾸로 간다 (STEP 15a)
+    """
+    import sqlite3 as _sq
+
+    from contracts import ANONYMOUS
+    from web.context import HTTP_OK, NOT_FOUND, ErrorPage
+    from web.server import guard, load_web_config
+    from web.session import content_type, read_cookie, static_path
+    from web.views import HANDLERS
+
+    cfg = load_web_config(root)
+    csrf_by_session: dict[str, str] = {}
+
+    def account_of(req) -> object:
+        from datetime import datetime, timezone
+
+        sid = read_cookie(req.get("cookie"), cfg["session_cookie"])
+        if not sid:
+            return ANONYMOUS
+        conn = _sq.connect(db_path)
+        try:
+            from store.admin import session_account
+
+            return session_account(conn, sid, datetime.now(timezone.utc))
+        finally:
+            conn.close()
+
+    def blank_page(title: str):
+        conn = _sq.connect(db_path)
+        try:
+            return build_page(conn, ANONYMOUS, title, "")
+        finally:
+            conn.close()
+
+    def _csrf_for(req) -> str:
+        """세션당 토큰 1개 (STEP 147).
+
+        ★ 세션이 없어도 토큰이 필요하다 — 로그인 폼도 POST 다.
+          그때는 요청 쿠키를 키로 쓰고, 없으면 익명 키를 쓴다
+        """
+        key = read_cookie(req.get("cookie"), cfg["session_cookie"]) or "-"
+        if key not in csrf_by_session:
+            csrf_by_session[key] = new_csrf()
+        return csrf_by_session[key]
+
+    def resolve(route, path_vars, req):
+        account = account_of(req)
+        denied = guard(account, route)
+        if denied is not None:
+            raise _Denied(denied)
+
+        if route.view == "serve_static":
+            target = static_path(path_vars.get("path", ""),
+                                 os.path.join(root, "web", "static"))
+            if target is None:
+                raise _Denied(NOT_FOUND)
+            with open(target, "rb") as f:
+                return HTTP_OK, {
+                    "Content-Type": content_type(target),
+                    "Cache-Control": f"max-age={cfg['static_max_age_sec']}",
+                }, f.read()
+
+        handler = HANDLERS.get(route.view)
+        if handler is None:
+            raise _Denied(ErrorPage(NOT_FOUND.status, "준비 중입니다",
+                                    f"{route.path} 화면은 아직 없습니다.",
+                                    "매물 목록으로 돌아간다  (/listings)"))
+        conn = _sq.connect(db_path)
+        try:
+            key = read_cookie(req.get("cookie"),
+                              cfg["session_cookie"]) or "-"
+            return handler(conn, account, req, path_vars=path_vars,
+                           root=root, csrf=_csrf_for(req),
+                           flash_key=key, plan=plan,
+                           reason_rows=reason_rows, fetch=fetch,
+                           resume=resume)
+        finally:
+            conn.close()
+
+    return {"resolve": resolve, "blank_page": blank_page,
+            "max_form_bytes": cfg["max_form_bytes"], "run_id": "",
+            "csrf": csrf_by_session, "db_path": db_path, "root": root}
+
+
+class _Denied(Exception):
+    """guard · 404 를 오류 화면으로 넘긴다."""
+
+    def __init__(self, page):
+        super().__init__(page.title)
+        self.page = page
+
+
+def build_context(route, request: dict, conn, account, title: str = "",
+                  **kw) -> PageContext:
+    """규격 이름 (STEP 144).  Route · 요청 → 공통 문맥.
+
+    ★ 화면마다 다른 문구를 쓰지 않는다.  전 화면이 같은 것을 낸다
+    """
+    return build_page(conn, account, title or _title_of(route), "",
+                      csrf=kw.get("csrf", ""),
+                      flashes=take_flashes(kw.get("flash_key", "-")),
+                      run_id=kw.get("run_id", ""),
+                      calc_version=kw.get("calc_version", ""),
+                      dict_version=kw.get("dict_version", ""),
+                      parse_version=kw.get("parse_version", ""))
+
+
+def _title_of(route) -> str:
+    return LABELS.get(getattr(route, "path", ""), "")

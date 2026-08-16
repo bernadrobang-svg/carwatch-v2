@@ -1,0 +1,9 @@
+{% extends base.html %}
+{% block body %}
+<section class="error">
+  <h1>{{ err.title }}</h1>
+  <p class="reason">{{ err.reason }}</p>
+  <p class="action">{{ err.action }}</p>
+  {% if err.run_id %}<p class="runid">run_id {{ err.run_id }}</p>{% endif %}
+</section>
+{% endblock %}

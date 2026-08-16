@@ -1,0 +1,73 @@
+<h1>후보 <small>{{ count }}건 중 상위</small></h1>
+
+<p class="notice">
+  ⓘ <strong>점수순이 아닙니다.</strong> 예산 · 월납입 · 확인 못 한 축을 함께 봅니다.
+  「확인 못 한 것」은 그 축을 채웠을 때 오를 수 있는 항목입니다.
+</p>
+
+{% if !count %}
+<p class="muted">아직 후보가 없습니다. 판정이 끝나면 나옵니다.</p>
+{% endif %}
+
+{% for r in rows %}
+<article class="cand">
+  <header>
+    <span class="{{ r.grade | gradecls }}">{{ r.grade }}</span>
+    <strong>{{ r.target_label }} {{ r.trim }}</strong>
+    <span class="muted">{{ r.year_month }} · {{ r.mileage_km | km }}</span>
+    <span class="price">{{ r.price_won | won }}</span>
+  </header>
+
+  <p class="meta muted">
+    월 {{ r.monthly_won | won }} · 딜러 {{ r.dealer_shop }} ·
+    게시 {{ r.days_on_market | num }}일
+  </p>
+
+  {% if r.strengths %}
+  <p class="pros"><b>강점</b>
+    {% for c in r.strengths %}<span class="chip-good">{{ c.label }}</span>{% endfor %}
+  </p>
+  {% endif %}
+
+  {% if r.weaknesses %}
+  <p class="cons"><b>약점</b>
+    {% for c in r.weaknesses %}<span class="chip-bad">{{ c.label }}</span>{% endfor %}
+  </p>
+  {% endif %}
+
+  {% if r.unknowns %}
+  <p class="unknown"><b>확인 못 한 것</b> — 채우면 오를 수 있습니다
+    {% for c in r.unknowns %}<span class="chip-unknown">{{ c.label }}</span>{% endfor %}
+  </p>
+  {% endif %}
+  {% if !r.unknowns %}
+  <p class="muted">확인 못 한 것 — 없습니다. 전 축 판정됐습니다.</p>
+  {% endif %}
+
+  <p class="act"><a href="/why/{{ r.listing_id }}">판정 근거</a>
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
+      <button type="submit" class="mini">＋ 관심</button>
+    </form>
+  </p>
+</article>
+{% endfor %}
+
+<h2>왜 이 순서인가</h2>
+<p class="muted">점수순이 아닙니다. 예산 · 월납입 · 제외 축을 함께 봅니다.
+  같은 비율이면 값이 싼 쪽이, 그것도 같으면 먼저 본 매물이 앞입니다.</p>
+
+{% if r.excluded_groups %}
+<h2>후보에서 뺀 것 {{ r.excluded_total | num }}건</h2>
+<table>
+<thead><tr><th>사유</th><th class="num">건수</th><th>무엇을 뜻하나</th><th></th></tr></thead>
+<tbody>
+{% for g in r.excluded_groups %}
+<tr><td>{{ g.reason }}</td><td class="num">{{ g.count | num }}</td>
+  <td class="muted">{{ g.note }}</td>
+  <td><a href="{{ g.filter_url }}">보기</a></td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}

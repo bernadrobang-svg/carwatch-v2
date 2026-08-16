@@ -1,0 +1,67 @@
+{
+  "_ref": "지시서 10장 STEP 105 · 7장 STEP 84",
+  "AXIS_LABELS": {
+    "price": "가격",
+    "warranty": "보증",
+    "spec": "사양",
+    "history": "이력",
+    "safety": "안전",
+    "color": "색상",
+    "mileage": "주행거리",
+    "warranty.general": "일반보증",
+    "warranty.power": "동력계 보증",
+    "spec.hud": "HUD",
+    "spec.hda": "HDA",
+    "spec.sunroof": "선루프",
+    "spec.svm": "서라운드뷰",
+    "spec.scc": "어댑티브 크루즈",
+    "spec.bsd": "후측방 경보",
+    "spec.tinting": "틴팅",
+    "history.damage": "사고",
+    "history.insurance": "보험",
+    "history.rental": "렌트",
+    "safety.diagnosis": "진단",
+    "safety.warranty_product": "보증상품"
+  },
+  "GRADE_LABELS": {
+    "S": "S",
+    "A": "A",
+    "B": "B",
+    "C": "C",
+    "D": "D",
+    "E": "E",
+    "NOT_RATED": "평가 불가"
+  },
+  "VALUE_LABELS": {
+    "1": "있음",
+    "0": "없음",
+    "-1": "해당 없음",
+    "na": "해당 없음",
+    "unknown": "확인 불가",
+    "null": "확인 불가"
+  },
+  "STATUS_LABELS": {
+    "ok": "정상",
+    "empty": "자료 없음",
+    "not_found": "미존재",
+    "error": "수집 실패",
+    "not_requested": "미요청",
+    "new": "신규",
+    "active": "게시중",
+    "gone": "내려감",
+    "relisted": "재등록",
+    "out_of_scope": "대상 외",
+    "partial": "부분",
+    "confirmed": "확정",
+    "pending": "미검토",
+    "retired": "미관측"
+  },
+  "VALUE_MARKS": {
+    "1": "O",
+    "0": "·",
+    "-1": "·",
+    "na": "·",
+    "unknown": "?",
+    "null": "?"
+  }
+}

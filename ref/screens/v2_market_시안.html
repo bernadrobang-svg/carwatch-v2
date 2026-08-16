@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시세 · CarWatch v2</title>
+<style>
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header{border-bottom:1px solid var(--line);
+       background:linear-gradient(180deg,#171c21,#12161a);position:sticky;top:0;z-index:20}
+.hwrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:28px;height:52px}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase;margin-left:8px}
+nav{display:flex;gap:2px;margin-left:6px}
+nav a{padding:6px 13px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a:hover{color:var(--text);background:var(--surface2)}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:16px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle;background:var(--down)}
+
+main{max-width:1280px;margin:0 auto;padding:20px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:24px 0 11px}
+h2:first-of-type{margin-top:0}
+h2 .more{float:right;font-size:11px;letter-spacing:0;text-transform:none;color:var(--faint)}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:15px 17px;margin-bottom:14px}
+.card.tight{padding:8px 12px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:6px 8px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.r{text-align:right} .c{text-align:center}
+
+.tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;
+     border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+a.tag:hover{border-color:var(--amber)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+.up-v{color:var(--up)} .down-v{color:var(--down)}
+.f{border-bottom:1px dotted var(--line2);cursor:pointer}
+.f:hover{border-bottom-color:var(--amber);color:var(--amber)!important}
+select,button,.btn{background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;padding:5px 11px;
+  font-size:12.5px;font-family:inherit;cursor:pointer}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+
+.strip{display:flex;border:1px solid var(--line);border-radius:7px;
+       overflow:hidden;background:var(--surface);margin-bottom:16px}
+.stat{flex:1;padding:13px 16px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat .k{font-size:10.5px;letter-spacing:.07em;color:var(--faint);text-transform:uppercase}
+.stat .v{font-family:var(--mono);font-size:21px;font-weight:600;line-height:1.25;margin-top:2px}
+.stat .v small{font-size:11px;color:var(--dim);font-weight:400;margin-left:3px}
+.stat .d{font-size:11px;color:var(--dim);margin-top:3px}
+
+/* ── 가격 분포 히스토그램 ── */
+.hist{display:flex;align-items:flex-end;gap:3px;height:130px;
+      padding:0 4px;margin-bottom:6px}
+.hist .b{flex:1;background:var(--line2);border-radius:2px 2px 0 0;
+         position:relative;cursor:pointer;min-height:3px}
+.hist .b:hover{background:var(--dim)}
+.hist .b.mine{background:var(--amber)}
+.hist .b .n{position:absolute;top:-16px;left:0;right:0;text-align:center;
+            font-family:var(--mono);font-size:10px;color:var(--faint)}
+.histx{display:flex;gap:3px;padding:0 4px;font-family:var(--mono);
+       font-size:10px;color:var(--faint)}
+.histx span{flex:1;text-align:center;cursor:pointer}
+.histx span:hover{color:var(--amber)}
+.histx span.sel{color:var(--amber);font-weight:600}
+
+/* 막대 선택 · 안내 */
+.hist .b{transition:background .12s}
+.hist .b.sel{background:var(--amber)}
+.hist .b.inrange{background:#8a6a2a}
+.hist .b .tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  margin-bottom:20px;background:var(--surface2);border:1px solid var(--line2);
+  border-radius:5px;padding:5px 9px;font-family:var(--sans);font-size:11.5px;
+  color:var(--text);white-space:nowrap;display:none;z-index:15;
+  box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.hist .b .tip b{font-family:var(--mono);color:var(--amber)}
+.hist .b:hover .tip{display:block}
+.hnote{font-size:11.5px;margin-top:9px}
+.hsel{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px}
+.hsel .lab{color:var(--faint);font-size:11px;letter-spacing:.07em;
+  text-transform:uppercase}
+.hsel .rng{font-size:14px;font-weight:600;color:var(--amber)}
+.hsel .cnt{color:var(--dim)}
+.hsel .go{background:var(--amber);color:var(--bg);border-color:var(--amber);
+  font-weight:600}
+
+/* 내 후보 위치 표시 */
+.mark{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;
+      font-size:12.5px}
+.mrow{display:flex;align-items:center;gap:10px;padding:4px 0}
+.mrow .w{width:180px;flex:none}
+.mrow .pos{flex:1;height:5px;background:var(--surface2);border-radius:3px;
+           position:relative;border:1px solid var(--line)}
+.mrow .pos i{position:absolute;top:-3px;width:3px;height:9px;
+             background:var(--amber);border-radius:1px}
+.mrow .pct{font-family:var(--mono);width:70px;text-align:right;flex:none}
+
+/* 감가 곡선 */
+.curve{display:flex;align-items:flex-end;gap:6px;height:110px;padding:0 4px}
+.curve .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;
+          align-items:center;gap:3px}
+.curve .c .bar{width:100%;background:var(--line2);border-radius:2px 2px 0 0}
+.curve .c .bar.now{background:var(--amber)}
+.curve .c .l{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.curve .c .v{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+
+/* 표본 부족 */
+.thin{background:#12161a;border:1px solid var(--line);border-radius:6px;
+      padding:11px 14px;font-size:12.5px;color:var(--dim)}
+.thin b{color:var(--amber)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>CarWatch</b><span>v2</span></div>
+    <nav>
+      <a href="v2_dashboard_시안.html">현황</a>
+      <a href="v2_recommend_시안.html">후보</a>
+      <a href="v2_listings_시안.html">매물</a>
+      <a href="v2_watch_시안.html">관심</a>
+      <a href="v2_compare_시안.html">비교</a>
+      <a href="v2_market_시안.html" class="on">시세</a>
+      <a href="v2_dealers_시안.html">딜러</a>
+      <a href="v2_admin_시안.html" style="color:var(--amber)">관리</a>
+    </nav>
+    <div class="hmeta">
+      <a href="v2_login_시안.html" style="border:1px solid var(--line2);border-radius:12px;padding:2px 10px;color:var(--dim)">마스터</a>
+      <span><span class="dot"></span>08-14 06:00 수집</span>
+      <span class="num">c3 · d7 · p2</span>
+    </div>
+  </div>
+</header>
+<main>
+
+<div class="bar">
+  <select><option>그랑 콜레오스</option><option>G80 2.5T</option><option>스포티지 LPi</option></select>
+  <select><option>전 트림</option><option>1.5 E-TECH 아이코닉</option><option>1.5 E-TECH 에스프리</option></select>
+  <select><option>전 연식</option><option>2025년식</option><option>2024년식</option></select>
+  <span class="faint" style="margin-left:auto;font-size:12px">
+    표본 <span class="num">8</span>건 <span class="faint">(시연)</span> · E 제외 기준</span>
+</div>
+
+<div class="strip">
+  <div class="stat"><div class="k">중앙값</div>
+    <div class="v">3,035<small>만</small></div>
+    <div class="d">표본 8건</div></div>
+  <div class="stat"><div class="k">최저 · 최고</div>
+    <div class="v">2,870<small>~3,420</small></div>
+    <div class="d">폭 550만</div></div>
+  <div class="stat"><div class="k">기대가 (평균)</div>
+    <div class="v">3,413<small>만</small></div>
+    <div class="d">감가 곡선 기준</div></div>
+  <div class="stat"><div class="k">30일 변동</div>
+    <div class="v down-v">−94<small>만</small></div>
+    <div class="d">중앙값 기준 −2.9%</div></div>
+  <div class="stat"><div class="k">평균 게시</div>
+    <div class="v">17<small>일</small></div>
+    <div class="d">30일 초과 12건</div></div>
+</div>
+
+<!-- 가격 분포 -->
+<h2>가격 분포 <span class="more">막대를 누르면 그 구간 매물로</span></h2>
+<div class="card">
+  <div class="hist" id="hist"></div>
+  <div class="histx" id="histx"></div>
+  <div class="hnote faint" id="hnote">
+    막대에 마우스를 올리면 구간이 보이고, 누르면 그 가격대 매물로 갑니다
+  </div>
+  <div class="hsel" id="hsel" style="display:none">
+    <span class="lab">선택</span>
+    <span class="rng num" id="hrng"></span>
+    <span class="cnt num" id="hcnt"></span>
+    <a class="btn go" id="hgo" href="#">이 가격대 매물 보기 →</a>
+    <span class="btn" onclick="clearSel()">해제</span>
+    <span class="faint" id="hdrag">인접 막대를 함께 누르면 범위로 묶입니다</span>
+  </div>
+
+  <div class="mark">
+    <div class="mrow">
+      <span class="w"><span class="tag amber">A</span> 아이코닉 25/07</span>
+      <span class="pos"><i style="left:40%"></i></span>
+      <span class="pct">3,254만</span>
+      <span class="faint" style="width:96px">하위 <b class="num">40</b>%</span>
+    </div>
+    <div class="mrow">
+      <span class="w"><span class="tag amber">A</span> 에스프리 25/05</span>
+      <span class="pos"><i style="left:53%"></i></span>
+      <span class="pct">3,340만</span>
+      <span class="faint" style="width:96px">하위 <b class="num">53</b>%</span>
+    </div>
+    <div class="mrow">
+      <span class="w"><span class="tag">B</span> 에스프리 25/03</span>
+      <span class="pos"><i style="left:24%"></i></span>
+      <span class="pct">3,010만</span>
+      <span class="faint" style="width:96px">하위 <b class="num">24</b>%</span>
+    </div>
+    <div class="faint" style="font-size:11.5px;margin-top:8px">
+      ⓘ 가격만 본 위치입니다. 상태·사양은 반영되지 않았습니다.
+      싼 것이 좋은 것은 아닙니다 —
+      <a href="v2_why_시안.html" class="f">판정 근거</a>를 함께 보십시오.
+    </div>
+  </div>
+</div>
+
+<!-- 연식별 -->
+<h2>연식별 <span class="more">중앙값 · 표본 5건 미만은 내지 않습니다</span></h2>
+<div class="card">
+  <div class="curve">
+    <div class="c"><div class="v">3,680</div>
+      <div class="bar" style="height:88%"></div><div class="l">25/07</div></div>
+    <div class="c"><div class="v">3,520</div>
+      <div class="bar" style="height:84%"></div><div class="l">25/04</div></div>
+    <div class="c"><div class="v">3,310</div>
+      <div class="bar now" style="height:79%"></div><div class="l">25/01</div></div>
+    <div class="c"><div class="v">3,120</div>
+      <div class="bar" style="height:74%"></div><div class="l">24/10</div></div>
+    <div class="c"><div class="v">2,940</div>
+      <div class="bar" style="height:70%"></div><div class="l">24/07</div></div>
+    <div class="c"><div class="v faint">—</div>
+      <div class="bar" style="height:8%;background:var(--line)"></div>
+      <div class="l faint">24/04</div></div>
+    <div class="c"><div class="v faint">—</div>
+      <div class="bar" style="height:8%;background:var(--line)"></div>
+      <div class="l faint">24/01</div></div>
+  </div>
+  <div class="faint" style="font-size:11.5px;margin-top:10px;
+       border-top:1px solid var(--line);padding-top:9px">
+    24/04 이전은 표본이 <b style="color:var(--amber)">5건 미만</b>이라 내지 않습니다.
+    보간하지 않습니다 — 추정치를 사실처럼 보이게 하지 않기 위해서입니다.
+  </div>
+</div>
+
+<!-- 트림별 -->
+<h2>트림별</h2>
+<div class="card tight">
+<table>
+  <tr><th>트림</th><th class="r">건수</th><th class="r">중앙값</th>
+      <th class="r">최저</th><th class="r">최고</th><th class="r">30일</th><th></th></tr>
+  <tr><td>1.5 E-TECH 아이코닉 2WD</td>
+      <td class="r num">92</td><td class="r num">3,180만</td>
+      <td class="r num dim">2,890만</td><td class="r num dim">3,480만</td>
+      <td class="r num down-v">−72만</td>
+      <td class="r"><a href="v2_listings_시안.html?target=KOLEOS_HEV" class="tag">보기</a></td></tr>
+  <tr><td>1.5 E-TECH 에스프리 알핀 2WD</td>
+      <td class="r num">61</td><td class="r num">3,240만</td>
+      <td class="r num dim">3,010만</td><td class="r num dim">3,560만</td>
+      <td class="r num down-v">−110만</td>
+      <td class="r"><a href="v2_listings_시안.html?target=KOLEOS_HEV" class="tag">보기</a></td></tr>
+  <tr><td>1.5 E-TECH 에스카파드 2WD</td>
+      <td class="r num">11</td><td class="r num">3,090만</td>
+      <td class="r num dim">2,980만</td><td class="r num dim">3,210만</td>
+      <td class="r num dim">—</td>
+      <td class="r"><a href="#" class="tag">보기</a></td></tr>
+  <tr><td>2.0 아이코닉 2WD <span class="faint">— 대상 트림 아님</span></td>
+      <td class="r num dim">6</td><td class="r num dim">2,890만</td>
+      <td class="r num dim">2,780만</td><td class="r num dim">3,020만</td>
+      <td class="r num dim">—</td>
+      <td class="r"><span class="tag">제외</span></td></tr>
+</table>
+</div>
+
+<!-- 표본 부족 안내 -->
+<h2>다른 차종</h2>
+<div class="thin">
+  <b>G80 2.5T · GV60 · 스포티지 LPi</b> 는 아직 수집하지 않았습니다.
+  시세를 내려면 차종당 <b>5건 이상</b>이 필요합니다.
+  <div style="margin-top:8px">
+    <a href="v2_dashboard_시안.html" class="tag amber">수집 실행 →</a>
+  </div>
+</div>
+
+<div class="faint" style="font-size:11.5px;margin-top:14px;line-height:1.8">
+  ⓘ <b style="color:var(--text)">시세는 「지금 나온 매물」의 분포입니다.</b>
+  실거래가가 아닙니다. 팔린 가격은 사이트가 공개하지 않습니다.
+  <br>
+  「기대가」는 신차가에서 감가 곡선으로 산출한 값이고,
+  분포와 다를 수 있습니다 — 그 차이가 판정의 가격 축입니다.
+</div>
+
+<div class="faint" style="font-size:11px;text-align:right;margin-top:14px">
+  calc c3 · dict d7 · parse p2 · 2026-08-14 06:12
+</div>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────
+   가격 분포 — 막대를 누르면 그 구간이 필터가 된다.
+   두 개를 누르면 그 사이가 범위가 된다.
+   실제로는 서버가 /listings?price_min=&price_max= 로 거른다.
+   ───────────────────────────────────────────── */
+var TARGET = "KOLEOS_HEV";
+var BIN = 100;                 // 구간 폭 (만원)
+/* 시연 표본 — 목록 화면과 같은 8건.  실제로는 서버가 집계한다 */
+var BINS = [
+  {lo:2600, hi:2700, n:0},  {lo:2700, hi:2800, n:0},
+  {lo:2800, hi:2900, n:2},  {lo:2900, hi:3000, n:1},
+  {lo:3000, hi:3100, n:2},  {lo:3100, hi:3200, n:1},
+  {lo:3200, hi:3300, n:1},  {lo:3300, hi:3400, n:0},
+  {lo:3400, hi:3500, n:1},  {lo:3500, hi:3600, n:0},
+  {lo:3600, hi:9999, n:0}
+];
+var MAXN = Math.max.apply(null, BINS.map(function(b){return b.n;}));
+var selA = null, selB = null;   // 선택 구간 (인덱스)
+
+function fmt(n){ return n.toLocaleString(); }
+
+function drawHist(){
+  var h = "", x = "";
+  BINS.forEach(function(b,i){
+    var lo = selA===null ? null : Math.min(selA, selB===null?selA:selB);
+    var hi = selA===null ? null : Math.max(selA, selB===null?selA:selB);
+    var cls = "b";
+    if(lo!==null && i>=lo && i<=hi) cls += (i===selA||i===selB) ? " sel" : " inrange";
+    var label = b.hi===9999 ? (fmt(b.lo)+"만 이상")
+                            : (fmt(b.lo)+"~"+fmt(b.hi)+"만");
+    h += '<div class="'+cls+'" style="height:'+
+         Math.max(b.n/MAXN*100,3)+'%" onclick="pick('+i+')">'+
+         '<span class="n">'+b.n+'</span>'+
+         '<span class="tip">'+label+' · <b>'+b.n+'</b>건</span></div>';
+    x += '<span'+(lo!==null&&i>=lo&&i<=hi?' class="sel"':'')+
+         ' onclick="pick('+i+')">'+
+         (b.hi===9999 ? "3,6+" : (b.lo/1000).toFixed(1).replace(".",",")) +
+         '</span>';
+  });
+  document.getElementById("hist").innerHTML = h;
+  document.getElementById("histx").innerHTML = x;
+}
+
+function pick(i){
+  if(selA === null){ selA = i; selB = null; }
+  else if(selB === null && i !== selA){ selB = i; }
+  else if(i === selA && selB === null){ selA = null; }   // 같은 것 다시 → 해제
+  else { selA = i; selB = null; }                        // 새로 시작
+  drawHist(); showSel();
+}
+
+function clearSel(){ selA = null; selB = null; drawHist(); showSel(); }
+
+function showSel(){
+  var box = document.getElementById("hsel");
+  var note = document.getElementById("hnote");
+  if(selA === null){ box.style.display = "none"; note.style.display = ""; return; }
+  box.style.display = "flex"; note.style.display = "none";
+
+  var lo = Math.min(selA, selB===null?selA:selB);
+  var hi = Math.max(selA, selB===null?selA:selB);
+  var pmin = BINS[lo].lo, pmax = BINS[hi].hi;
+  var cnt = 0;
+  for(var i=lo;i<=hi;i++) cnt += BINS[i].n;
+
+  document.getElementById("hrng").textContent =
+    pmax >= 9999 ? (fmt(pmin)+"만 이상") : (fmt(pmin)+" ~ "+fmt(pmax)+"만");
+  document.getElementById("hcnt").textContent = "· " + cnt + "건";
+
+  var q = "target=" + TARGET + "&price_min=" + pmin +
+          (pmax>=9999 ? "" : "&price_max=" + pmax) + "&sort=price";
+  var a = document.getElementById("hgo");
+  a.href = "v2_listings_시안.html?" + q;
+  document.getElementById("hdrag").innerHTML =
+    selB === null
+      ? '인접 막대를 하나 더 누르면 범위로 묶입니다'
+      : '<span class="num" style="color:var(--faint)">?'+q+'</span>';
+}
+
+drawHist();
+</script>
+</body>
+</html>

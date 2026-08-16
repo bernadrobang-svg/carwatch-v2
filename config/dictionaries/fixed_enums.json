@@ -1,0 +1,8 @@
+{
+  "_ref": "지시서 4장 STEP 41 (AxisPolicy · halt 3축)",
+  "_note": "★ 부트스트랩. on_new=halt 인 축은 첫 수집에 사전이 비어 있어 전 값이 「새 값」이 된다. 지시서가 고정 집합을 명시한 축이므로 그 집합을 미리 심는다. 여기 없는 값이 나올 때만 멈춘다 — 원래 의도다",
+  "_source": "지시서 STEP 41 본문 · 실물 표본 12건",
+  "panel_rank": ["RANK_ONE", "RANK_TWO", "RANK_A", "RANK_B", "RANK_C"],
+  "panel_status": ["교환(교체)", "판금/용접", "용접,절단", "손상"],
+  "accident_type": ["1", "2", "3"]
+}

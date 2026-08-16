@@ -1,0 +1,15 @@
+{
+  "_ref": "지시서 7장 STEP 82b · 82c · 82e",
+  "_pending": "weights — v1 산출식은 근거가 없다. 지표 정의 후 재도출 (STEP 86 #11)",
+  "weights": {
+    "relist_rate": null,
+    "price_up_rate": null,
+    "drop_event_rate": null,
+    "price_volatility": null,
+    "median_dom_days": null,
+    "info_score": null
+  },
+  "min_sample": null,
+  "_moved": "peer_year_window · peer_mileage_window · peer_min_sample 는 scoring.json 으로 이관 (STEP 6 표)",
+  "_note": "★ null 이면 trust_score 를 산출하지 않는다. 0 으로 채우지 않는다. 지표 분포를 봐야 가중치가 정해진다 (7장 STEP 82c)"
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관심 · CarWatch v2</title>
+<style>
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header{border-bottom:1px solid var(--line);
+       background:linear-gradient(180deg,#171c21,#12161a);position:sticky;top:0;z-index:20}
+.hwrap{max-width:1280px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:28px;height:52px}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase;margin-left:8px}
+nav{display:flex;gap:2px;margin-left:6px}
+nav a{padding:6px 13px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a:hover{color:var(--text);background:var(--surface2)}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:16px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle;background:var(--down)}
+
+main{max-width:1280px;margin:0 auto;padding:20px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:24px 0 11px}
+h2:first-of-type{margin-top:0}
+h2 .more{float:right;font-size:11px;letter-spacing:0;text-transform:none;color:var(--faint)}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:15px 17px;margin-bottom:14px}
+.card.tight{padding:8px 12px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:6px 8px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.r{text-align:right} .c{text-align:center}
+
+.tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;
+     border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+a.tag:hover{border-color:var(--amber)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+.up-v{color:var(--up)} .down-v{color:var(--down)}
+.f{border-bottom:1px dotted var(--line2);cursor:pointer}
+.f:hover{border-bottom-color:var(--amber);color:var(--amber)!important}
+select,button,.btn{background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;padding:5px 11px;
+  font-size:12.5px;font-family:inherit;cursor:pointer}
+.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+
+/* ── 관심 항목 ── */
+.item{border:1px solid var(--line);border-radius:8px;background:var(--surface);
+      margin-bottom:12px;overflow:hidden}
+.item.gone{opacity:.55}
+.item.pin{border-color:#5c4520}
+.ihead{display:flex;align-items:flex-start;gap:13px;padding:13px 16px}
+.iinfo{flex:1;min-width:0}
+.ititle{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.ititle b{font-size:14.5px}
+.iprice{font-family:var(--mono);font-size:20px;font-weight:600;margin-top:4px}
+.iprice small{font-size:11px;color:var(--dim);font-weight:400;margin-left:2px}
+.imeta{font-size:12px;color:var(--dim);margin-top:3px}
+.iact{display:flex;gap:6px;flex:none;align-items:flex-start}
+
+/* 가격 추이 — SVG 없이 막대로 */
+.spark{display:flex;align-items:flex-end;gap:2px;height:34px;
+       padding:0 16px 10px}
+.spark i{flex:1;background:var(--line2);border-radius:1px 1px 0 0;
+         min-height:2px;position:relative}
+.spark i.now{background:var(--amber)}
+.spark i.dn{background:var(--down)}
+.sparkx{display:flex;justify-content:space-between;padding:0 16px 11px;
+        font-size:10px;color:var(--faint);font-family:var(--mono)}
+
+/* 변동 이력 */
+.log{border-top:1px solid var(--line);background:#12161a;padding:9px 16px}
+.lrow{display:flex;gap:10px;font-size:12px;padding:3px 0;align-items:center}
+.lrow .d{width:52px;color:var(--faint);font-family:var(--mono);flex:none}
+.lrow .t{flex:1}
+.lrow .n{font-family:var(--mono)}
+
+/* 목표가 */
+.goal{display:flex;align-items:center;gap:9px;padding:9px 16px;
+      border-top:1px solid var(--line);font-size:12.5px}
+.goal .lab{color:var(--dim);width:64px;flex:none}
+.goal input{background:var(--surface2);border:1px solid var(--line2);
+            border-radius:5px;color:var(--text);font-family:var(--mono);
+            padding:4px 9px;width:92px;font-size:12.5px;text-align:right}
+.goal .gap{font-family:var(--mono)}
+
+/* 조건 알림 */
+.cond{border:1px solid var(--line);border-radius:7px;background:var(--surface);
+      padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.cond .q{flex:1;font-size:13px}
+.cond .q b{color:var(--amber);font-family:var(--mono)}
+.cond .n{font-family:var(--mono);font-size:13px;color:var(--dim);flex:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>CarWatch</b><span>v2</span></div>
+    <nav>
+      <a href="v2_dashboard_시안.html">현황</a>
+      <a href="v2_recommend_시안.html">후보</a>
+      <a href="v2_listings_시안.html">매물</a>
+      <a href="v2_watch_시안.html" class="on">관심</a>
+      <a href="v2_compare_시안.html">비교</a>
+      <a href="v2_market_시안.html">시세</a>
+      <a href="v2_dealers_시안.html">딜러</a>
+      <a href="v2_admin_시안.html" style="color:var(--amber)">관리</a>
+    </nav>
+    <div class="hmeta">
+      <a href="v2_login_시안.html" style="border:1px solid var(--line2);border-radius:12px;padding:2px 10px;color:var(--dim)">마스터</a>
+      <span><span class="dot"></span>08-14 06:00 수집</span>
+      <span class="num">c3 · d7 · p2</span>
+    </div>
+  </div>
+</header>
+<main>
+
+<!-- 오늘 알림 -->
+<div class="card" style="border-color:#5c4520;padding:12px 16px">
+  <div style="font-size:11px;font-weight:600;letter-spacing:.09em;
+       color:var(--amber);text-transform:uppercase;margin-bottom:9px">
+    오늘 알림 3건</div>
+  <div class="lrow"><span class="d">06:02</span>
+    <span class="t">그랑 콜레오스 아이코닉 —
+      <span class="down-v">가격 인하 30만</span> · 3,284 → 3,254만</span>
+    <a href="v2_why_시안.html" class="tag">보기</a></div>
+  <div class="lrow"><span class="d">06:02</span>
+    <span class="t">그랑 콜레오스 에스카파드 —
+      <span class="up-v">사라짐</span> · 마지막 3,090만 · 게시 34일</span>
+    <span class="tag">기록</span></div>
+  <div class="lrow"><span class="d">06:02</span>
+    <span class="t">조건 <b style="color:var(--amber)">HUD · A 이상 · 3,500만 이하</b> —
+      <span class="down-v">새 매물 1건</span></span>
+    <a href="v2_listings_시안.html?grade=A&price=3500&ax:hud=1" class="tag">보기</a></div>
+</div>
+
+<div class="bar">
+  <span class="btn on">전체 5</span>
+  <span class="btn">최종 후보 1</span>
+  <span class="btn">사라짐 1</span>
+  <span style="width:10px"></span>
+  <span class="btn">＋ 매물 추가</span>
+  <span class="faint" style="margin-left:auto;font-size:12px">
+    매일 06:00 수집 후 확인합니다</span>
+</div>
+
+<!-- ★ 최종 후보 -->
+<h2>최종 후보</h2>
+<div class="item pin">
+  <div class="ihead">
+    <div class="iinfo">
+      <div class="ititle">
+        <span class="tag amber">A</span>
+        <b>그랑 콜레오스</b>
+        <span class="dim">1.5 E-TECH 아이코닉 2WD</span>
+        <span class="num dim">25/07식 · 6,318km</span>
+        <span class="tag amber">최종 후보</span>
+      </div>
+      <div class="iprice">3,254<small>만</small>
+        <span class="down-v" style="font-size:13px;margin-left:10px">−30만</span>
+        <span class="dim" style="font-size:12.5px;margin-left:8px">월 46.1만</span>
+      </div>
+      <div class="imeta">
+        83.4% · <span class="num">441.9/530</span> ·
+        등록 8일 전 · 딜러 (주)굿카 · 게시 12일
+      </div>
+    </div>
+    <div class="iact">
+      <a href="v2_why_시안.html" class="tag amber">근거</a>
+      <a href="v2_compare_시안.html" class="tag">비교</a>
+      <span class="tag">빼기</span>
+    </div>
+  </div>
+
+  <div class="spark">
+    <i style="height:100%"></i><i style="height:100%"></i>
+    <i style="height:100%"></i><i style="height:100%"></i>
+    <i style="height:100%"></i><i style="height:100%"></i>
+    <i class="dn" style="height:88%"></i><i class="dn" style="height:88%"></i>
+    <i class="dn" style="height:88%"></i><i class="dn" style="height:88%"></i>
+    <i class="dn" style="height:88%"></i>
+    <i class="now" style="height:79%"></i>
+  </div>
+  <div class="sparkx"><span>08-03</span><span>3,384 → 3,254만 (−130)</span><span>08-14</span></div>
+
+  <div class="goal">
+    <span class="lab">목표가</span>
+    <input value="3,100" >
+    <span class="dim">만</span>
+    <span class="gap up-v">+154만</span>
+    <span class="faint">도달하면 알립니다</span>
+    <span class="btn" style="margin-left:auto;padding:3px 9px">저장</span>
+  </div>
+
+  <div class="log">
+    <div class="lrow"><span class="d">08-14</span>
+      <span class="t down-v">가격 인하</span>
+      <span class="n">3,284 → 3,254만</span>
+      <span class="faint">−30</span></div>
+    <div class="lrow"><span class="d">08-09</span>
+      <span class="t down-v">가격 인하</span>
+      <span class="n">3,384 → 3,284만</span>
+      <span class="faint">−100</span></div>
+    <div class="lrow"><span class="d">08-06</span>
+      <span class="t">등급 상승 <span class="faint">B → A</span></span>
+      <span class="n faint">등급컷 비율 판정 적용</span>
+      <span class="tag">규칙 변경</span></div>
+    <div class="lrow"><span class="d">08-06</span>
+      <span class="t">관심 등록</span>
+      <span class="n faint">3,384만 · B</span></div>
+  </div>
+</div>
+
+<!-- 일반 관심 -->
+<h2>관심 <span class="more">4건</span></h2>
+
+<div class="item">
+  <div class="ihead">
+    <div class="iinfo">
+      <div class="ititle">
+        <span class="tag amber">A</span>
+        <b>그랑 콜레오스</b>
+        <span class="dim">에스프리 알핀 2WD</span>
+        <span class="num dim">25/05식 · 9,400km</span>
+      </div>
+      <div class="iprice">3,340<small>만</small>
+        <span class="dim" style="font-size:12.5px;margin-left:10px">월 47.3만 · 변동 없음</span>
+      </div>
+      <div class="imeta">81.9% · <span class="num">454.5/555</span> ·
+        <span class="tag down">전 축 판정 완료</span> · 게시 2일</div>
+    </div>
+    <div class="iact">
+      <a href="v2_why_시안.html" class="tag amber">근거</a>
+      <span class="tag">최종 후보로</span>
+      <span class="tag">빼기</span>
+    </div>
+  </div>
+  <div class="spark">
+    <i style="height:100%"></i><i style="height:100%"></i>
+    <i class="now" style="height:100%"></i>
+  </div>
+  <div class="sparkx"><span>08-12</span><span>변동 없음</span><span>08-14</span></div>
+</div>
+
+<div class="item">
+  <div class="ihead">
+    <div class="iinfo">
+      <div class="ititle">
+        <span class="tag">B</span>
+        <b>그랑 콜레오스</b>
+        <span class="dim">에스프리 알핀 2WD</span>
+        <span class="num dim">25/03식 · 12,840km</span>
+      </div>
+      <div class="iprice">3,010<small>만</small>
+        <span class="down-v" style="font-size:13px;margin-left:10px">−50만</span>
+        <span class="dim" style="font-size:12.5px;margin-left:8px">월 42.4만</span>
+      </div>
+      <div class="imeta">74.8% · <span class="num">396.4/530</span> ·
+        게시 28일 · <span class="faint">28일째 — 가격 협상 여지</span></div>
+    </div>
+    <div class="iact">
+      <a href="v2_why_시안.html" class="tag amber">근거</a>
+      <span class="tag">최종 후보로</span>
+      <span class="tag">빼기</span>
+    </div>
+  </div>
+  <div class="spark">
+    <i style="height:100%"></i><i style="height:100%"></i><i style="height:100%"></i>
+    <i class="dn" style="height:94%"></i><i class="dn" style="height:94%"></i>
+    <i class="now" style="height:92%"></i>
+  </div>
+  <div class="sparkx"><span>07-18</span><span>3,260 → 3,010만 (−250)</span><span>08-14</span></div>
+</div>
+
+<div class="item">
+  <div class="ihead">
+    <div class="iinfo">
+      <div class="ititle">
+        <span class="tag">B</span>
+        <b>G80</b>
+        <span class="dim">2.5T AWD 프리미엄</span>
+        <span class="num dim">22/03식 · 41,200km</span>
+      </div>
+      <div class="iprice">4,180<small>만</small>
+        <span class="up-v" style="font-size:13px;margin-left:10px">+87만</span>
+        <span class="dim" style="font-size:12.5px;margin-left:8px">월 64.2만</span>
+      </div>
+      <div class="imeta">81.2% · <span class="num">450.7/555</span> ·
+        <span class="up-v">예산 초과 · 목표 월 50만</span></div>
+    </div>
+    <div class="iact">
+      <a href="v2_why_시안.html" class="tag amber">근거</a>
+      <span class="tag">최종 후보로</span>
+      <span class="tag">빼기</span>
+    </div>
+  </div>
+</div>
+
+<div class="item gone">
+  <div class="ihead">
+    <div class="iinfo">
+      <div class="ititle">
+        <span class="tag">B</span>
+        <b>그랑 콜레오스</b>
+        <span class="dim">에스카파드 2WD</span>
+        <span class="num dim">24/11식 · 18,200km</span>
+        <span class="tag up">사라짐</span>
+      </div>
+      <div class="iprice faint">3,090<small>만</small>
+        <span class="faint" style="font-size:12.5px;margin-left:10px">마지막 확인 08-13</span>
+      </div>
+      <div class="imeta faint">
+        게시 34일 후 사라짐 · 팔렸는지 내렸는지는 알 수 없습니다
+      </div>
+    </div>
+    <div class="iact">
+      <span class="tag">기록 보기</span>
+      <span class="tag">빼기</span>
+    </div>
+  </div>
+</div>
+
+<!-- ★ 조건 알림 — 목록에서 등록한 것 -->
+<h2>조건 알림 <span class="more">매물이 아니라 조건을 지켜봅니다</span></h2>
+
+<div class="cond">
+  <div class="q">조건 <b>HUD 있음 · A 이상 · 3,500만 이하</b>
+    <div class="faint" style="font-size:11.5px;margin-top:3px">
+      08-10 등록 · 지금까지 3건 알림</div></div>
+  <div class="n">현재 <span style="color:var(--text)">2</span>건</div>
+  <a href="v2_listings_시안.html?grade=A&price=3500&ax:hud=1" class="tag">보기</a>
+  <span class="tag">끄기</span>
+</div>
+
+<div class="cond">
+  <div class="q">조건 <b>그랑 콜레오스 · 월 45만 이하</b>
+    <div class="faint" style="font-size:11.5px;margin-top:3px">
+      08-06 등록 · 지금까지 1건 알림</div></div>
+  <div class="n">현재 <span style="color:var(--text)">1</span>건</div>
+  <a href="v2_listings_시안.html?target=KOLEOS_HEV" class="tag">보기</a>
+  <span class="tag">끄기</span>
+</div>
+
+<div class="faint" style="font-size:11.5px;margin-top:12px;line-height:1.8">
+  ⓘ <b style="color:var(--text)">규칙이 바뀌어 등급이 변한 것은 알리지 않습니다.</b>
+  매물 자체가 변했을 때만 알립니다 —
+  가격 · 사라짐 · 재등록 · 상태 변경.
+  <br>
+  등급 변동 이력에 <span class="tag">규칙 변경</span> 표시가 붙은 것이 그것입니다.
+</div>
+
+<div class="faint" style="font-size:11px;text-align:right;margin-top:14px">
+  calc c3 · dict d7 · parse p2 · 2026-08-14 06:12
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<h1>아직 판정하지 못했습니다</h1>
+<p class="muted">무엇을 하면 되나 — 아래 조치를 순서대로 하십시오.</p>
+<h2>사유</h2>
+<ul>{% for r in nr.reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+<h2>조치</h2>
+<ul class="action">{% for a in nr.actions %}<li>{{ a }}</li>{% endfor %}</ul>
+
+<h2>무엇을 하면 되나</h2>
+{% if n.actions %}
+<ol>{% for a in n.actions %}<li>{{ a }}</li>{% endfor %}</ol>
+{% endif %}
+{% if !n.actions %}
+<p class="muted">지금 할 일은 없습니다. 수집을 돌리면 됩니다.</p>
+{% endif %}
+
+{% if n.done %}
+<h2>지금도 볼 수 있는 것</h2>
+<ul>{% for d in n.done %}<li>{{ d }}</li>{% endfor %}</ul>
+<p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
+{% endif %}
+
+{% if n.pending_values %}
+<h2>사전에 없는 값 — {{ n.pending_values | count }}건</h2>
+<table>
+<thead><tr><th>축</th><th>값</th><th class="num">건수</th><th>무엇을 막고 있나</th></tr></thead>
+<tbody>
+{% for p in n.pending_values %}
+<tr><td>{{ p.axis }}</td><td>{{ p.value }}</td>
+  <td class="num">{{ p.count | num }}</td><td class="muted">{{ p.blocks }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<h2>왜 멈추나</h2>
+<p>처음 보는 값을 모르는 채로 0점 처리하면 그 매물이 부당하게 낮은 등급을 받습니다.
+  반대로 무시하고 넘기면 감점해야 할 것을 놓칩니다.
+  그래서 사람이 볼 때까지 <strong>그 축만</strong> 멈춥니다.
+  나머지 축은 정상으로 판정됩니다.</p>
+
+<h2>지금도 볼 수 있는 것</h2>
+<p class="muted">판정이 멈춰 있어도 아래는 지금 볼 수 있습니다 —
+  ★ 판정 결과만 없을 뿐, 받아 둔 것은 그대로 있습니다.</p>
+<ul>
+  <li><a href="/listings">매물 목록</a> — 차종 · 연식 · 주행 · 가격</li>
+  <li><a href="/market">시세</a> — 가격 분포 · 연식별 · 트림별</li>
+  <li><a href="/dealers">딜러</a> — 판매점별 매물 수</li>
+  <li><a href="/admin/audit">감사</a> — 무엇이 실패했고 무엇이 미실행인지</li>
+</ul>

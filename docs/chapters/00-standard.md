@@ -1,0 +1,793 @@
+# 0장. 개발 표준
+
+## 실행 환경 — 08-16
+
+```
+필수   Python 3.11 이상
+근거   zip(strict=True) 는 3.10+ · match 문은 3.10+
+      3.9 에서는 TypeError: zip() takes no keyword arguments 로 죽는다
+      실측 08-16.  Amazon Linux 2023 기본이 3.9.25 라 5파일이 한꺼번에 터졌다
+필수   외부 의존이 없다.  pip install 없이 표준 라이브러리만 쓴다
+필수   실행·시험·검사를 전부 같은 인터프리터로 돌린다
+      python3 가 3.9 인 환경에서는 python3.11 을 명시한다
+금지   버전이 낮다는 이유로 코드를 내리는 것
+      zip(strict=True) 는 규격이다 (부록 E · S22 — B905 fatal)
+검산   S23  실행 인터프리터가 3.11 이상인가
+```
+
+```
+★ 확인
+  python3 -V        시스템 기본 — 3.9 일 수 있다
+  python3.11 -V     이것이 앱이 쓰는 것이다
+  systemd 서비스도 /usr/bin/python3.11 을 쓴다
+```
+
+
+## 도구와 시험 — 08-14 등재
+
+**소스에 있는데 규격에 없던 것을 적었습니다. 지우지 않고 등재합니다.**
+
+### `tools/` — 13종
+
+| 이름 | 무엇 | 성격 |
+|---|---|---|
+| `check_spec.py` | 지시서 자체 검사 13종 + `S17`~`S21` | 필수 |
+| `check_src.py` | 소스 ↔ 지시서 대조 `S1`~`S16` | 필수 |
+| `check_screens.py` | 시안 ↔ 템플릿 대조 | 필수 |
+| `check_all.py` | 실측 DB 로 `V1`~`V11` 전 차수 | 필수 |
+| `run_tests.py` | 시험 15종 실행 | 필수 |
+| `migrate.py` | DDL 변경을 기존 DB 에 반영 | 필수 |
+| `sync_registry.py` | RAW 경로 전수 → `meta_field_usage` | 필수 |
+| `build_dict.py` | RAW 에서 사전 생성 | 필수 |
+| `classify_fields.py` | 등록부 `usage` 분류 보조 | 보조 |
+| `inspect_dict.py` | 사전 조회 | 보조 |
+| `inspect_facet.py` | facet 축 확인 | 보조 |
+| `inspect_requests.py` | 요청 기록 조회 | 보조 |
+| `menu.py` | `run.bat` 이 부르는 메뉴 | 보조 |
+| `setup_check.py` | 환경 점검 | 보조 |
+
+```
+필수   「필수」는 checkall 에 들어간다.  「보조」는 사람이 필요할 때 부른다
+금지   보조 도구가 DB 를 고치는 것.  읽기만 한다
+★ menu.py 에만 있는 명령을 만들지 않는다.  run.py 가 전 명령을 받는다 (V1-13)
+```
+
+### `tests/` — 15종
+
+| 이름 | 무엇 |
+|---|---|
+| `test_invariants.py` | 0장 불변식 6개 (`S21`) |
+| `test_collect.py` | 수집 · 봉투 · 재시도 |
+| `test_pipeline.py` | 단계 순서 · 중단 · 재개 |
+| `test_store.py` | 적재 · 대리키 · 불변 필드 |
+| `test_dict.py` | 사전 · 완전 일치 |
+| `test_registry.py` | 등록부 |
+| `test_score.py` | 판정 · 채점 · 등급 |
+| `test_report.py` | 리포트 · 파일 출력 |
+| `test_watch.py` | 추적 · 알림 |
+| `test_admin.py` | 관리자 · 권한 |
+| `test_web.py` | 화면 · 라우팅 · 게이트 |
+| `test_screens.py` | 시안 대조 |
+| `test_crosssite.py` | 다중 사이트 |
+| `test_run.py` | 진입점 · CLI |
+| `test_fixtures.py` | 표본 무결성 |
+
+```
+필수   장을 착수하면 그 장의 시험을 함께 만든다
+금지   시험을 마지막에 몰아 붙이는 것
+표본   tests/fixtures/ 15개 — 상세 4종 · 점검부 4종 · 이력 2종 · 진단 · 카탈로그
+      EXPECTED.json 이 기대값이다.  NOTES.json 에 표본의 성격을 적는다
+```
+
+### ★ 시험은 격리된 상태에서 돈다 — 08-16
+
+```
+금지   운영 DB(carwatch.db)를 복사해 시험을 도는 것
+근거   실측 08-16.  test_integration.py:129 가 운영 DB 를 복사한다
+      거기에 status='queued' 인 recalc_job 이 1건 남아 있어
+      관리 화면이 전부 409 로 잠기고 test_spec_ui 가 9건 무더기로 실패했다
+      코드는 하나도 안 바뀌었는데 결과가 달라졌다
+필수   시험은 스키마만 만든 빈 DB 에서 시작한다
+필수   필요한 데이터는 시험이 스스로 넣는다.  fixtures 를 쓴다
+필수   같은 코드면 언제 돌려도 같은 결과가 나와야 한다
+       ★ 이것이 안 되면 「고쳤다」와 「환경이 바뀌었다」를 못 가른다
+검산   S24  시험이 운영 DB 를 읽지 않는가
+```
+
+```
+★ 왜 이것이 중요한가
+  v1 은 「어제는 됐는데 오늘은 안 된다」를 여러 번 겪었다
+  원인이 코드인지 데이터인지 가릴 수 없으면 고칠 수 없다
+  시험은 그 판단의 유일한 기준이므로 흔들리면 안 된다
+```
+
+```
+★ 실전을 피하라는 것이 아니다 — 자리를 나누라는 것이다
+
+  시험 (tools/run_tests.py)
+    빈 DB · fixtures · 격리
+    묻는 것   「코드가 맞나」
+    조건      같은 코드면 언제 돌려도 같은 결과
+
+  검증 (tools/check_all.py)
+    실측 DB · 실제 API 호출
+    묻는 것   「데이터가 맞나」
+    조건      실물이어야 한다.  꾸며 낸 것으로는 못 본다
+```
+
+```
+★ 실측으로만 보이는 것이 있다
+  · 원문에 문서에 없던 필드가 오는가
+  · 응답 구조가 바뀌었는가
+  · 사전에 없는 값이 몇 개 나오는가
+  · 등급 분포가 실제로 어떻게 나오는가
+근거   v1 은 문서만 보고 만들다 344건 미분류를 냈다
+      실호출을 할 수 있는 환경이면 반드시 한다.  그것이 이점이다
+필수   fatal 이 실측 데이터 부재로 나는 것인지 코드 결함인지 가른다
+      V4-25 · V3-30 은 사전이 비어서다 — 수집하면 사라진다
+      그것을 코드로 우회하지 않는다
+```
+
+
+---
+
+
+## ★ 지시서는 개발측이 고치지 않는다 — 08-15
+
+```
+필수   docs/ 를 고치는 것은 가이드다.  개발측은 읽기만 한다
+필수   정정이 필요하면 근거와 함께 요청한다.  직접 고치지 않는다
+근거   실측 08-15.  개발측 문서가 176 STEP 이었다.  정본은 205 다
+      양쪽이 다른 문서를 보면 「지시서대로 했다」가 서로 다른 뜻이 된다
+금지   개발측이 STEP 을 지우거나 합치는 것
+금지   가이드가 소스를 직접 고치는 것.  반대도 같다
+★ 문서를 받으면 diff 를 먼저 보십시오.  받은 것과 다르면 그때 알립니다
+```
+
+## ★ 규격서가 정본이다
+
+```
+필수   실물이 규격과 다르면 실물을 고친다
+예외   실물이 옳다는 근거가 실측일 때만 규격을 바꾼다
+      예 — 옵션 코드가 3자리다 (API 응답으로 확인)
+금지   「구현이 어렵다」 · 「migrate 가 막힌다」 를 근거로 규격을 낮추는 것
+      그것은 구현 사정이지 사실이 아니다
+금지   선택지를 만들어 타협하는 것.  규격이 이미 정하고 있다
+```
+
+```
+★ 08-14 에 실제로 3건이 그렇게 낮춰졌다
+  max_form_bytes 64KB → 1MB      「실물이 1MB 라서」
+  run_id NOT NULL → nullable     「migrate 가 막혀서」
+  rows_per_page 200 → 300        「실물이 300 이라서」
+  셋 다 되돌렸다 (개정 224~226)
+```
+
+
+## STEP 1 — 3티어 구조
+
+```
+Presentation   화면 · 리포트 · CLI
+Business       수집 · 파싱 · 분석 · 검증 · 채점
+Data           RAW 저장소 · CORE 저장소 · 사전
+```
+
+**계층 간 호출은 한 방향이다.**
+
+```
+Presentation  →  Business  →  Data
+```
+
+| 금지 | 이유 |
+|---|---|
+| Presentation 이 Data 를 직접 조회 | 화면을 바꾸면 SQL 이 바뀐다 |
+| Data 가 Business 를 호출 | 순환. 테스트 불가 |
+| Business 안에서 화면 문자열 생성 | 언어 이식 시 전부 다시 쓴다 |
+
+**계층 간 전달은 DTO 로만 한다.** DB Row 객체를 상위 계층으로 넘기지 않는다.
+
+```python
+# 금지
+def score(row): return row["origin_price"] * 0.87
+
+# 필수
+@dataclass(frozen=True)
+class ListingSnapshot:
+    listing_id: str
+    origin_price_won: int | None
+    ...
+def score(snap: ListingSnapshot) -> AxisResult: ...
+```
+
+**이유** — v1 은 352컬럼 Row 를 그대로 함수에 넘겼다.
+어떤 컬럼이 판정에 쓰이는지 시그니처만 봐서는 알 수 없었고, 그래서 「저장 O · 판정 미사용」이
+12건 발생해도 아무도 몰랐다. **DTO 는 사용 필드를 강제로 선언하게 만든다.**
+
+## STEP 2 — 언어 이식성 규칙
+
+**1차는 Python 로컬. 온라인 서비스 전환 시 Java 등으로 이식한다.**
+**이식 비용을 줄이는 것이 아니라, 이식이 가능하도록 만드는 것이 목표다.**
+
+| 규칙 | 내용 | 이유 |
+|---|---|---|
+| ORM 금지 | SQL 은 `sql/` 디렉터리의 `.sql` 파일 | ORM 은 언어에 종속된다 |
+| 표준 라이브러리 우선 | 외부 의존은 HTTP · JSON 파서로 제한 | 대체 라이브러리를 찾기 쉽다 |
+| 순수 함수 우선 | 분석·채점은 입력만으로 출력이 결정 | 언어 무관하게 그대로 옮겨진다 |
+| 부작용 격리 | I/O · 시각 · 난수는 주입 | 테스트·이식 양쪽에 필요 |
+| 타입 명시 | 전 함수 시그니처에 타입 | 정적 언어 이식의 전제 |
+| 설정 외부화 | 배점 · 임계값 · URL 은 `config/*.json` | 코드 수정 없이 정책 변경 |
+| 예외 표준화 | 도메인 예외 5종 고정 | 언어별 예외 체계 차이 흡수 |
+
+```python
+# 부작용 주입 — 시각·난수·HTTP
+class Clock(Protocol):
+    def now(self) -> datetime: ...
+class Fetcher(Protocol):
+    def get(self, url: str, headers: dict) -> Response: ...
+```
+
+**분석 계층은 `Clock` · `Fetcher` 를 모른다.** 스냅샷과 설정만 받는다.
+
+## STEP 3 — 도메인 예외 5종
+
+```
+CollectError      수집 실패 (네트워크 · 4xx · 5xx)
+FormatError       응답 형식 불일치 (라벨↔내용)
+ParseError        원문 → 필드 변환 실패
+ValidationError   검증 단계 위반
+PolicyError       설정·정책 모순 (배점 합 불일치 등)
+```
+
+**이 5종 외의 예외를 밖으로 던지지 않는다.** 하위 예외는 감싸서 올린다.
+**예외에는 반드시 `listing_id` · `endpoint` · `step` 을 담는다.** v1 은 「포기」만 찍혀 원인을 몰랐다.
+
+## STEP 4 — 명명 규칙
+
+### 접미사를 고정한다
+
+**같은 뜻에 다른 접미사를 쓰면 나중에 어느 것이 정본인지 모른다.**
+
+| 접미사 | 뜻 | 예 |
+|---|---|---|
+| `_won` | 원 단위 금액 | `price_current_won` · `down_payment_won` |
+| `_km` | 주행거리 | `mileage_km` · `warranty_body_km` |
+| `_month` · `_days` · `_years` | 기간 | `warranty_body_month` · `relist_window_days` |
+| `_cnt` | 개수 | `accident_my_cnt` · `owner_change_cnt` |
+| `_rate` · `_ratio` · `_pct` | 비율 | `relist_rate` · `min_denominator_ratio` |
+| `_json` | 직렬화 배열·객체 | `accidents_json` · `options_choice_json` |
+| `_at` | 시각 (datetime) | `fetched_at` · `decided_at` |
+| `_date` | 날짜 (date) | `first_registration_date` |
+| `_id` · `_key` | 식별자 | `listing_id` · `vehicle_id` |
+| `_source` · `_prio` | 판정 근거 | `spec_source` · `spec_prio` |
+| `_status` | 상태 | `record_status` · `row_status` |
+
+### `_cnt` 와 `_count` — 뜻이 다르다
+
+```
+_cnt     원문이 준 집계값.  사이트가 세어서 준 것
+         accident_my_cnt · owner_change_cnt · plate_change_cnt · total_loss_cnt
+
+_count   우리가 센 값.  수집·집계 과정에서 산출
+         listing_count · site_count · axis_count · unclassified_count
+         view_cnt · subscribe_cnt · seizing_cnt · pledge_cnt
+```
+
+```
+★ 접미사가 출처를 드러낸다
+  _cnt 는 사이트 값이라 우리가 검증할 수 없다.  원문 그대로 쓴다
+  _count 는 우리 산출이라 재계산으로 검증된다 (V2-01 · V1-01)
+판별   매핑표에 원천 경로가 있는가
+      있다  →  _cnt      seizing_cnt ← condition.seizing.seizingCount
+      없다  →  _count    listing_count (우리가 센 것)
+필수   새 컬럼을 만들 때 어느 쪽인지 판단해 접미사를 고른다
+금지   같은 값에 둘을 섞는 것
+검증   V4-18  매핑표에 원천이 있는 컬럼이 _count 로 끝나는가
+```
+
+**예외 — `facet_count`**
+
+```
+BANNED_SOURCES 의 문자열이다.  컬럼이 아니다
+「facet 의 Count 를 근거로 쓰지 말라」는 뜻이라 원문 용어를 그대로 쓴다
+```
+
+```
+금지   시각에 _date 를 쓰는 것              →  시각은 _at
+승계   v1 의 added_date 는 added_at 으로 옮긴다 (11장 STEP 119a)
+```
+
+
+```
+계층      collect_*   parse_*   analyze_*   score_*   validate_*   report_*
+테이블    raw_*  (원문)   core_*  (정규)   dict_*  (사전)   result_*  (판정)
+컬럼      {도메인}_{항목}_{단위}      예: price_current_won · warranty_body_month
+근거      {axis}_source · {axis}_prio
+상태      *_status  (ok / empty / not_found / error / not_requested)
+```
+
+**금지**
+
+```
+사이트 고유 명칭을 CORE 컬럼명에 쓰는 것
+  금지   insp_outer_json · encar_diagnosis
+  필수   inspection_panel_json · site_diagnosis_grade
+```
+
+**이유** — 2차 사이트를 붙일 때 컬럼명이 엔카 전용이면 CORE 를 쓸 수 없다.
+**사이트 고유값은 `site_*` 접두 또는 어댑터 내부에만 둔다.**
+
+## STEP 5 — 정의서 규격 · 착수 Gate
+
+**「정의서 없는 장은 착수하지 않는다」고 선언했으나 양식이 없었다. 여기서 확정한다.**
+
+### 5.1 스텝 정의서 양식
+
+**모든 STEP 은 착수 전 이 양식으로 제출한다. 항목이 비면 착수 금지다.**
+
+```
+STEP 번호 · 제목
+목적          한 줄.  무엇을 사실로 인정하려는가
+원천          RAW 의 어느 엔드포인트 · 어느 경로
+              「없음」이면 그 스텝은 성립하지 않는다
+입력          타입 · 의미 · NULL 허용
+출력          타입 · 의미
+사용 필드      DTO 의 어느 필드.  연결표와 대조된다
+근거          왜 이 로직·이 숫자인가.  출처 명시
+              추정이면 「추정」이라 쓰고 검증 계획을 적는다
+금지          쓰면 안 되는 입력과 이유
+NULL 규칙     값 없음 · 수집 실패 · 구조적 부재를 어떻게 구분하는가
+실패 규칙      예외 종류 · 재시도 여부 · 중단 조건
+검산          기대 분포 · 경계값 · 실측 표본
+```
+
+### 5.1a STEP 유형 — 필수 항목이 다르다
+
+**전 STEP 에 9항목을 요구하면 원칙 선언 스텝에서 실패가 쏟아진다.**
+**그러면 검사를 끄게 된다** (V4-13 과 같은 함정).
+
+| 유형 | 예 | 필수 항목 |
+|---|---|---|
+| **원칙** | 3티어 · 명명 규칙 · 금지 근거 | 목적 · 근거 · **금지** |
+| **규격** | 구조체 · 계약 · 스키마 형식 | 목적 · 입력 · 출력 · 제약 |
+| **판정** | 축별 분석 · 채점 | **9항목 전부** |
+| **수집** | 엔드포인트 · 요청 정책 | 목적 · 원천 · 실패 규칙 · 검산 |
+| **검증** | V1~V9 | 목적 · 검사 항목 · 등급 |
+| **화면** | 각 화면 | 목적 · 표시 항목 · 금지 |
+| **목록** | 미확정 · 승계 · 테이블 목록 | 목적 · 항목 |
+
+```
+헤딩에 유형을 표기한다   ## STEP 70 [판정] — 가격 · 기대가와 감가 곡선
+검사                   유형별 필수 항목만 본다
+누락                   그 STEP 을 목록으로 출력.  fatal 은 [판정] 유형에만
+```
+
+**「9항목 전부」는 판정 스텝에만 적용된다. 거기가 틀리면 점수가 틀리기 때문이다.**
+
+### 5.2 착수 Gate — 6개 전부 통과해야 코드를 쓴다
+
+```
+[ ] 원문 근거    RAW 에서 해당 경로를 실제로 확인했다
+[ ] 필드 존재    표본 300건 이상에서 출현율을 측정했다
+                희귀·조건부 필드는 그 조건 모집단 전수로 확인했다
+[ ] 값 종류      실제 관측된 값 전량을 나열했다
+                「0건 관측」을 「존재하지 않음」으로 해석하지 않았다
+[ ] NULL 규칙    3종(없음·실패·부재)이 구분돼 있다
+[ ] 금지 근거    BANNED_SOURCES 와 충돌하지 않는다
+[ ] 검산 기준    통과·실패를 판정할 수치가 있다
+```
+
+**「원문 근거」가 미통과인 스텝은 실측 대기로 표시하고 다음 스텝으로 넘어간다.**
+**추정으로 채우지 않는다.** v1 은 감가곡선·부위 사전·`accidents[].type` 을 추정으로 채웠고
+셋 다 틀렸다.
+
+### 5.2a 표본 규모 — 필드 성격에 따라 다르다
+
+| 필드 성격 | 표본 | 예 |
+|---|---|---|
+| 일반 (전건 출현) | 300건 이상 | `category.originPrice` · `spec.mileage` |
+| **조건부** | **그 조건 모집단 전수** | 사고 매물의 `accidents[]` · 리스 매물의 `LeaseType` |
+| **희귀값** | **전수 + 미관측 명시** | `RANK_C` (1건) · `손상` (1건) · `가솔린+LPG` (1건) |
+
+```
+금지   300건에서 안 나왔다는 이유로 「없는 값」으로 확정
+필수   「표본 N건에서 미관측」이라고 쓴다.  「존재하지 않음」과 구분한다
+검증   새 값이 나타나면 사전 생성이 실패한다 (3장 STEP 36)
+```
+
+**v1 실사고** — `accidents[].type` 을 표본 몇 건으로 보고 「1·3」이라 단정했다.
+실제로는 `1·2·3` 세 값이었고, `2` 가 가장 흔했다. **감점 규칙이 통째로 틀렸다.**
+
+### 5.2b 문서 자체 점검 — 부록 A
+
+**「정의서 없는 장은 착수하지 않는다」를 선언했으므로 문서 자체를 점검한다.**
+
+```
+도구   tools/check_spec.py <문서.md>      종료코드 0 통과 · 1 실패
+검사   13종.  항목과 판정 방식은 부록 A · 규격은 부록 E
+착수   전 STEP 은 이 검사를 통과한 문서를 정본으로 삼는다
+```
+
+**검사를 새로 만들 때는 부록 A 머리의 「두 방향의 실패」를 먼저 읽는다.**
+
+### 5.3 함수 정의 규격
+
+**모든 함수는 착수 전에 아래를 문서에 먼저 적는다. 코드가 먼저 나오지 않는다.**
+
+```
+이름
+목적          한 줄
+입력          타입 · 의미 · NULL 허용 여부
+출력          타입 · 의미
+사용 필드      DTO 의 어느 필드를 읽는가        ← 연결표(1장)와 대조된다
+근거          왜 이 로직인가.  숫자면 그 숫자의 출처
+금지          쓰면 안 되는 입력과 이유
+예외          어떤 조건에서 무엇을 던지는가
+검산          기대 분포 · 경계값
+```
+
+**「근거」가 비어 있으면 그 함수는 착수 금지다.**
+v1 의 감가곡선 87/69/55% 는 출처가 없었고, 가격 200점 전체가 그 위에 얹혀 있었다.
+
+### 5.4 RAW → 축 추적 사슬
+
+**2장 이후 모든 필드는 이 사슬이 끊기지 않아야 한다.**
+
+```
+RAW 원문 경로
+  ↓  실제 응답에서 확인 (표본 300건+)
+관측 값 종류 · 출현율
+  ↓  변환 명시 (×10,000 · ym · date10 · json)
+CORE 필드
+  ↓  연결표 (어느 파일이 읽는가)
+사용 축   또는   사용 불가 사유
+```
+
+**사슬이 끊긴 필드는 CORE 에 넣지 않는다.**
+**개발자가 API 를 보고 임의로 필드를 추가하거나 값을 추론해 채우는 것을 금지한다.**
+
+## STEP 5.5 — 수치의 자리 ★ 신설
+
+**새 프로그램은 빈 DB 로 시작한다. 이 문서의 관측 수치는 그 시점에 하나도 재현되지 않는다.**
+**그런데 규칙을 만들려면 근거가 필요하다. 그래서 수치를 세 갈래로 나눈다.**
+
+| 구분 | 성격 | 새 프로그램에서 | 자리 |
+|---|---|---|---|
+| **사양** | 열거값 · 필드 존재 · 구조 | **그대로 성립한다** | **본문** |
+| **관측** | 건수 · 비율 · 확보율 · 분포 | **재현되지 않는다** | **적지 않는다** |
+| **경계** | 임계값 · 범위 | 관측에서 유도됐다 | **유도식만 본문 · 값은 `config`** |
+
+### 판별 질문
+
+```
+그 수치가 없으면 규칙을 못 만드는가        →  사양.  본문에 남긴다
+아니면 규칙이 맞았는지 확인만 하는가        →  관측.  적지 않는다
+```
+
+### ★ 관측치를 부록으로 빼지 않는다 — 아예 적지 않는다
+
+```
+검토했던 방식   부록에 관측치를 모으고 본문은 참조만 한다
+문제           「부록 수치가 맞는지 어떻게 확인하나」가 따라붙는다
+              스냅샷 식별자 · 대조 절차 · 검사 규칙이 줄줄이 붙는다
+              그런데 그 수치가 맞든 틀리든 판정식 · 배점 · 스키마는 바뀌지 않는다
+
+예   record 정상 원문이 27건이든 42건이든
+    결론은 「이력 원문은 재수집이 선행된다」 하나뿐이다
+    숫자를 맞춰봐야 결론이 같다.  대조할 이유가 없다
+```
+
+**근거가 필요하면 v1 DB 를 직접 열면 된다. 문서가 그것을 대신하지 않는다.**
+
+### 예
+
+```
+사양   LeaseType 은 4값이다 (렌트승계·운용리스·장기렌트·금융리스)
+      usageChangeTypes 는 record 가 아니라 점검부 master.detail 에 있다
+      축 식별 키는 (Name, Type='Aspect') 다
+      → 이걸 지우면 다음 사람이 다시 추측한다.  v1 이 무너진 지점이다
+
+관측   매물 건수 · record 오염률 · 확보율 · 잔가율
+      → 규칙이 맞았는지 확인한 근거일 뿐이다.  적지 않는다
+
+경계   「보정계수 1.2 초과면 의심」  →  config.depreciation.coefficient_sane_range
+      「최소 분모 60%」            →  config.scoring.min_denominator_ratio
+      → 본문에는 유도식과 config 키 이름만 쓴다
+```
+
+### ★ 예외 — v1 사고 기록은 본문에 남긴다
+
+```
+「휀더/펜더로 344건 미분류」
+「dealer_shop 에 지역이 들어감」
+「판매글 키워드가 실장착을 이겨 선루프 84건 오판」
+```
+
+**이것은 관측치지만 금지 조항의 이유다. 이유를 지우면 다음 사람이 금지를 풀어버린다.**
+
+### ★ 관측치 표를 문서에 두지 않는 이유
+
+```
+v1 사고   작업지시서 부록에 카탈로그 34건 표를 넣었다
+         개발자가 그 표를 옵션 판정 근거로 썼다
+         표에 없는 옵션은 판정이 안 됐고, 표의 코드가 다른 차종에 적용됐다
+         부록이 스펙이 됐다
+```
+
+**표가 있으면 읽힌다. 「참고용」이라 적어도 읽힌다.**
+
+```
+필수   이 문서만으로 구현할 수 있어야 한다
+      v1 DB 를 봐야 구현되면 본문이 부실한 것이다
+검증   V4-13  매직 넘버 금지.  임계값은 config 참조여야 한다
+```
+
+### 관측치의 진짜 자리
+
+```
+audit_validation      실행마다 새로 생긴다.  날짜 · 표본 · 쿼리가 함께 남는다
+coefficient_history   계수 변동 이력
+meta_field_usage      필드 사용 구분
+watch_track           관심 매물 시계열
+```
+
+**문서에 숫자를 흩뿌리지 않는다. 테이블이 정본이다.**
+**문서에 숫자를 흩뿌리지 않는다. 실행 결과가 정본이다.**
+
+## STEP 6 — 설정과 코드의 분리
+
+```
+config/
+  sites.json         사이트 목록 · status (active · planned · paused)
+  endpoints.json     URL · 헤더 · 타임아웃 · 재시도 · 요청 간격
+  targets.json       차종 정의 · 분류 조건
+  scoring.json       축 · 배점 · 등급컷 · 분모 최소치
+  depreciation.json  감가 곡선 · 차종별 보정계수     ← 첫 수집 후 생성
+  finance.json       선납 · 할부 개월 · 이율 · 세율 · 부대비용
+  warnings.json      경고 임계값
+  dealer_trust.json  딜러 지표 가중치
+  labels.json        화면 문구 (AXIS · GRADE · VALUE)
+  dictionaries/      코드·열거값 사전               ← RAW 에서 생성
+sql/
+  ddl/               테이블 정의                    ← 정본
+  queries/           조회
+```
+
+### config 키 전량 — 파일별
+
+**본문에 등장하는 키는 전부 여기 있어야 한다. 없으면 그 키는 오타이거나 미정의다.**
+
+| 파일 | 키 | 용도 |
+|---|---|---|
+| `scoring.json` | `total_points` | 총점 |
+| | `components` | Component 별 배점 |
+| | `grade_cuts` | 등급컷 비율 |
+| | `min_denominator_ratio` | 분모 최소 비율 |
+| | `price_curve` | 가격 구간 배점 |
+| | `peer_year_window` · `peer_mileage_window` · `peer_min_sample` | 유사군 (7장 82e) |
+| | **`axis_rules`** | **축별 임계·상수 (7장)** — 아래 |
+| | ↳ `warranty.full_months` · `expire_penalty` · `km_per_month` | 보증 (STEP 72) |
+| | ↳ `spec.hda_points` · `hda_gate_open` · `hda_level2_phrases` | 사양 (STEP 75) |
+| | ↳ `history.damage_by_swap` · `damage_by_status` · `insurance_cost_curve` · `insurance_cap_by_count` · `rental` | 이력 (STEP 76~78) |
+| | ↳ `safety.warranty_product_na_targets` | 안전 (STEP 79) |
+| | ↳ `color.grade_points` · `gate_open` | 색상 (STEP 80) |
+| | ↳ `mileage.full_km` · `zero_km` | 주행 (STEP 81) |
+| | ↳ `absolute_fail.repair_cost_ratio` · `frame_ranks` · `outer_ranks` | E등급 (STEP 82) |
+| | **`validation`** | **검증 임계 (6장)** — 아래 |
+| | ↳ `sample_limit` | 위반 사례 보존 수 (STEP 66) |
+| | ↳ `price_median_min_won` | V2-05 단위 검사 |
+| | ↳ `mapping_ratio` (A·B·C) | V4-01 등급별 일치율 |
+| | ↳ `grade_dominant_ratio` | V5-05 쏠림 경고 |
+| | ↳ `shuffle_sample` | V3-11 표본 수 |
+| | ↳ `min_value_kinds` | V3-03·04 변별력 |
+| | ↳ `day_gap_total_limit` · `day_gap_new_ratio` | V2 전일 GAP (STEP 57) |
+| | **`report`** | 리포트 (9장) |
+| | ↳ `top_n` | L2 상위 N건 |
+| | ↳ `market_quantiles` | `/market` 분위수 (STEP 100) |
+| | **`admin`** | 관리자 (13장) |
+| | ↳ `query_row_limit` · `query_timeout_sec` | 조회 쿼리 제한 (STEP 133) |
+| | ↳ `schedule` | 자동 실행 주기 (STEP 132) |
+| | ↳ `session_hours` | 세션 유효 시간 (STEP 126) |
+| | ↳ `hash_rounds` | 비밀번호 해시 라운드 (STEP 126) |
+| | `components.{key}.skipped` | 성분 스킵 (13장 STEP 128). `{"points": N, "skipped": true}` |
+| `depreciation.json` | `curve` | 경과년 → 잔가율 |
+| | `coefficient` | 차종별 보정계수 |
+| | `coefficient_change_limit` | 계수 변동 상한 |
+| | `coefficient_min_sample` | 보정 최소 표본 |
+| | `coefficient_max_iter` | 수렴 반복 상한 |
+| | `coefficient_sane_range` | 계수 정상 범위 |
+| | `curve_min_sample` | **곡선 산출 최소 표본.** 미달이면 곡선 미산출 (STEP 70) |
+| `finance.json` | `down_payment_won` | 선납금 (취득 부대비용 포함) |
+| | `loan_months` · `loan_rate_annual` · `repay_method` | 할부 조건 |
+| | `tax_acquisition_rate` | 취득세율 |
+| | `bond_table` | 공채 |
+| | `fee_stamp` · `fee_transfer` · `fee_delivery` · `fee_tinting` | 부대비용 |
+| | `ev_tax_exempt` | 전기차 감면 대상 차종 |
+| | `hold_months` | 총소유비용 산정 기간 |
+| `warnings.json` | `price_anomaly_sigma` · `price_low_pct` | 저가 경고 |
+| | `relist_count` · `relist_window_days` | 재등록 경고 |
+| | `dealer_trust_floor` | 딜러 신뢰도 하한 |
+| `field_usage.json` | `seed` | `endpoint:json_path` → `usage` · `reason` · `unblock_condition` |
+| | `default` | 시드에 없는 경로의 초기 `usage` (= `unclassified`) |
+| | `ghost_miss_limit` | 유령 경로 전환 기준 (연속 미관측 횟수) |
+| `field_usage.suggested.json` | (생성물) | `sync_registry` 가 낸 분류 후보. 사람이 검토 후 정본으로 옮긴다 |
+| `dealer_trust.json` | `weights` | 지표별 가중치 |
+| | `min_sample` | 표본 충분 기준 |
+| `web.json` | `host` · `port` | 바인딩 (14장 STEP 141) |
+| | `session_cookie` · `static_max_age_sec` · `flash_max` | 화면 |
+| | `signup_policy` | 가입 정책 open·approval·closed (14장 STEP 149n) |
+| | `max_queries_per_request` | 요청당 쿼리 상한 기본 20 (`V11-34`) |
+| `checks.json` | `spec_glob` · `ref_glob` · `chapters` · `self_exclude` · `screens_dir` | 검사 대상 (부록 E) |
+| `admin.json` | `login_fail_limit` | 연속 실패 상한 기본 10 (13장 · `V10-20`) |
+| | `login_lock_sec` | 잠금 시간 기본 300 |
+| | `min_secret_length` | 비밀번호 최소 길이 기본 8 |
+| `scoring.json` | `validation.min_salvaged_fields` | 파싱 구제 후 최소 필드 수 기본 2 (`V2-28`) |
+| | `validation.conflict_warn` | 축 충돌 경고선 기본 10 (`V3-36`) |
+| `endpoints.json` | `interval_sec` · `timeout_sec` · `retry_max` | 요청 정책 |
+| | `fail_streak_limit` | **연속 실패 중단 기준** (5장 STEP 52) |
+| | `base_url` · `paths` · `headers` | 엔드포인트 (2장 STEP 17) |
+| `sites.json` | `{site_code}` → `label` · `status` · `order` · `multi_instance` | 사이트 목록 (8장 STEP 89) |
+| `targets.json` | `{target_key}` → `label` · `site_query` · `fuel_match` · `trim_include` · `trim_exclude` | 차종 정의 |
+| | `SPEC_DEFAULT_ON` · `SPEC_DEFAULT_OFF` | 차종별 기본 장착 (7장 STEP 74) |
+| `known_issues.json` | `{target_key}` → `[{level, text}]` | 차종별 알려진 결함 3단계 (14장 STEP 149c). **사람이 넣는다** |
+| `labels.json` | `AXIS_LABELS` · `GRADE_LABELS` · `VALUE_LABELS` · `STATUS_LABELS` | 화면 문구 (10장 STEP 105) |
+| `dictionaries/` | `tint_keywords` 외 | **생성물.** RAW 에서 만든다 (4장 STEP 42) |
+| `dictionaries/fixed_enums.json` | `panel_rank` · `panel_status` · `accident_type` · `condition_flag` | **`halt` 축 고정 집합.** 생성물이 아니다 (4장 STEP 41) |
+
+### config 파일 예시 — 부록 B
+
+**전 12종의 형태·중첩·초기값이 부록 B 에 있다.**
+
+```
+필수   새 config 키를 만들면 부록 B 예시도 함께 고친다
+      check_spec ⑨ 가 본문 표와 부록 예시를 대조한다
+정본   값이 갈리면 본문 STEP 표를 따른다.  예시는 발췌다
+```
+
+### 본문 참조 형식
+
+```
+필수   config.{파일}.{키}       config.scoring.min_denominator_ratio
+      또는 `config/{파일}.json` 의 `{키}`
+금지   config.{키}             어느 파일인지 알 수 없다
+```
+
+**표의 「파일」 열이 빈 행은 바로 위 행과 같은 파일이다.**
+
+```
+검증   V4-14  본문의 config 키가 이 표에 전건 있는가
+      V4-15  이 표의 키가 실제 config 파일에 있는가
+      V4-16  본문 참조가 config.{파일}.{키} 형식인가
+```
+
+**배점을 바꾸는 데 코드를 고치면 안 된다.** 정책 변경과 로직 변경을 분리한다.
+**사전은 손으로 적지 않는다.** `tools/build_dict.py` 가 RAW 에서 생성하고, 변경분은 리뷰한다.
+
+### 6.1 무엇을 빼고 무엇을 남기는가 — 경계
+
+**「하드코딩 제거 = 전부 JSON」이 아니다.** JSON 을 해석하는 코드가 또 하나의 하드코딩이 된다.
+
+| 종류 | 위치 | 판별 기준 | 예 |
+|---|---|---|---|
+| **정책값** | `config/*.json` | 마스터가 바꿀 수 있는 숫자 | 배점 · 등급컷 · 임계값 · 요청 간격 |
+| **사이트 설정** | `adapters/{site}/config` | 사이트 바뀌면 달라지는 것 | URL · 헤더 · 쿼리 문법 · `required_keys` |
+| **도메인 규칙** | **코드** | 바뀌면 로직이 바뀌는 것 | 우선순위 4단 · `-1` 의 의미 · 분모 축소 |
+| **데이터 사전** | `config/dictionaries/` **생성물** | RAW 에서 뽑는 것 | 부위명 · 옵션명 · 연료 · 색상 · `RANK_*` |
+
+```
+판별 질문   이 값을 바꾸면 「정책이 바뀌는가」 「로직이 바뀌는가」
+정책        config
+로직        코드.  JSON 으로 빼지 않는다
+```
+
+**금지** — 조건식·분기·우선순위를 JSON 에 넣는 것.
+
+```json
+// 금지.  이것은 설정이 아니라 코드다
+{"rule": "if fuel in ['가솔린+전기'] and displacement == 1499 then include"}
+```
+
+**v1 의 실제 문제는 config 부족이 아니었다.** `SPEC_DEFAULT_ON` 같은 도메인 규칙이
+코드 다섯 군데에 흩어져 서로 덮어쓴 것이다. **흩어짐이 문제지 위치가 문제가 아니었다.**
+
+## STEP 6a — 실물 표본 (fixtures) ★
+
+**모의 응답으로만 시험하면 「내가 만든 구조」를 검증하게 된다.**
+**v1 사고는 전부 「원문이 내 예상과 달랐다」에서 나왔다.**
+
+```
+위치   tests/fixtures/
+동봉   BJY_v2_실물표본.tar.gz — v1 원문에서 추출한 12건
+구성   응답 원문 12 + EXPECTED.json + NOTES.json
+```
+
+### 표본 12건 — 부록 C
+
+**어느 표본이 무엇을 고정하는지, `EXPECTED.json` 사용법, 표본을 늘리는 기준이 부록 C 에 있다.**
+
+```
+필수   새 표본은 v1 원문 또는 실수집 원문에서 뽑는다.  손으로 만들지 않는다
+금지   모의 응답을 fixtures 에 넣는 것
+      모의는 tests/ 안에서 경계 조건용으로만 쓴다
+필수   변환 결과는 EXPECTED 의 _core 값과 직접 비교한다
+      시험이 변환 로직을 다시 구현하면 둘 다 틀려도 통과한다
+```
+
+---
+
+## STEP 7 — 테스트 계층
+
+```
+단위     순수 함수 (분석 · 채점).  입력→출력만
+계약     어댑터가 인터페이스를 지키는가
+회귀     RAW 고정 표본 → 판정 결과 스냅샷 비교
+불변식   아래 6개는 항상 참이어야 한다
+```
+
+**불변식 6개**
+
+```
+① put() 호출 순서를 뒤섞어도 결과가 같다
+② 금지 근거(카탈로그 전체목록 · facet Count)가 판정에 들어가면 실패
+③ 전 축의 {axis}_source 가 전건 NULL 이면 실패
+④ 원문 라벨과 내용 형식이 어긋나면 저장 거부
+⑤ 배점 합계가 config 의 총점과 일치
+⑥ 사전 미분류 0건
+```
+
+```
+★ 불변식은 6개가 다 돌아야 한다 — 08-14
+실측   test_invariants.py 가 ①②⑤ 만 구현했다
+      「③④⑥ 은 2~4장 착수 후 추가한다」고 적어 두고 착수 후에 안 넣었다
+필수   장을 착수하면 그 장이 여는 불변식을 그 자리에서 넣는다
+금지   「나중에」.  시험이 「전부 통과」로 나오는데 절반만 본다
+검산   S21  불변식 6개가 시험에 전건 있는가
+```
+
+### 7.1 분모 시험 6종 — 필수
+
+**「값 없음 · 수집 실패 · 구조적 부재」가 섞이면 점수가 부풀려진다.**
+**분모가 줄어들수록 같은 획득 점수가 높은 비율이 되기 때문이다.**
+
+| # | 상황 | 기대 |
+|:--:|---|---|
+| A | 전 축 정상 | 정상 점수 |
+| B | 한 축 수집 실패 | 그 축 분모 제외 · 점수 산출 |
+| C | 한 축 구조적 부재(`-1`) | 그 축 분모 제외 · 점수 산출 |
+| D | **전 축 수집 실패** | **점수 생성 금지** |
+| E | **금지 근거만 존재** | **점수 생성 금지** |
+| F | **분모가 최소 기준 미만** | **등급 생성 금지** |
+
+```
+최소 분모   config.scoring.min_denominator_ratio
+근거       분모의 절반이 빠진 매물과 전부 있는 매물을 같은 등급표로 비교할 수 없다
+          초기값은 config 에 두고, 첫 수집 결과를 보고 조정한다
+표시       분모 미달 매물은 '평가 불가' 로 표시한다.  낮은 등급이 아니다
+```
+
+**D·E·F 가 핵심이다.** 「모든 축이 빠졌는데 평균 점수가 높게 나오는 것」을 반드시 차단한다.
+v1 은 사양 축에서 이것이 실제로 일어났다 — `[]` 가 `NULL` 로 저장돼 분모에서 빠졌다.
+
+## STEP 8 — 온라인 전환 대비
+
+**1차는 로컬 배치다. 그러나 아래를 지키면 서비스 전환이 재작성이 아니라 배치 교체가 된다.**
+
+| 항목 | 1차 (로컬) | 전환 시 |
+|---|---|---|
+| 실행 | CLI 배치 | 스케줄러 · 큐 |
+| 저장소 | SQLite | PostgreSQL 등 |
+| 상태 | 파일 | 외부 상태 저장소 |
+| 동시성 | 단일 프로세스 | 워커 다중화 |
+
+```
+필수   ① SQL 은 표준 문법 우선.  SQLite 고유 문법 최소화
+      ② 모든 배치는 멱등.  같은 입력에 같은 결과
+      ③ 처리 단위에 진행 상태를 남긴다 (재개 가능)
+      ④ 전역 가변 상태 금지        ← v1 의 last_raw 사고 원인
+      ⑤ 시각은 주입.  now() 직접 호출 금지
+```
+
+**④는 v1 에서 실제로 터진 것이다.** `last_raw` 라는 공유 변수 하나가 원문 2,183건을
+잘못된 라벨로 저장했고, 이력 축이 통째로 죽었다. **워커를 늘리면 같은 사고가 확률적으로 재현된다.**
+
+---
+

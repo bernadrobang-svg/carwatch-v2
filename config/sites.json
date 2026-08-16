@@ -1,0 +1,25 @@
+{
+  "_ref": "지시서 8장 STEP 89 · 12장",
+  "encar": {
+    "label": "엔카",
+    "status": "active",
+    "order": 1,
+    "multi_instance": false
+  },
+  "kcar": {
+    "label": "K카",
+    "status": "planned",
+    "order": 2
+  },
+  "kbchachacha": {
+    "label": "KB차차차",
+    "status": "planned",
+    "order": 3
+  },
+  "dealer_site": {
+    "label": "딜러 자체",
+    "status": "planned",
+    "order": 9,
+    "multi_instance": true
+  }
+}

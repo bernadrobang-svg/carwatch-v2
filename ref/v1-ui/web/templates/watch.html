@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% set page = 'watch' %}
+{% block title %}관심매물 · car_monitor{% endblock %}
+{% block body %}
+<h2>관심매물</h2>
+{% if items %}
+<div class="grid g2">
+{% for it in items %}
+<div class="card">
+  <div style="display:flex;gap:13px">
+  <a href="{{ it.url or '#' }}" {% if it.url %}target="_blank"
+     rel="noopener"{% endif %} data-peek='{{ peek_data(it) }}' style="flex:none">
+    {% set alts = photo_alts(it) %}
+    {% if alts != '[]' %}
+      <img class="thumb" src="{{ photo_url(it, photo_base) or '' }}" alt=""
+           loading="lazy" data-alts='{{ alts }}'
+           onerror="photoFallback(this)">
+      <div class="thumb thumb-none" style="display:none">사진<br>없음</div>
+    {% else %}<div class="thumb thumb-none">사진 없음</div>{% endif %}
+  </a>
+  <div style="flex:1;min-width:0">
+  <div style="display:flex;align-items:baseline;gap:9px;margin-bottom:9px">
+    <a href="/listings?target={{ it.target_key }}&all=1"
+       class="cellnum" style="font-size:15px;font-weight:700"
+      >{{ it.model_group }}</a>
+    <span class="num dim">{{ it.year_month|ym }}식</span>
+    <span class="num dim">{{ it.mileage|km }}km</span>
+    <span class="tag">{{ it.color_ext or '?' }}</span>
+    {% if it.status != 'active' %}
+      <span class="tag up">{{ it.status }}</span>{% endif %}
+    <form class="inline" method="post" style="margin-left:auto"
+          action="/watch/remove/{{ it.listing_id }}">
+      <button style="padding:2px 8px" title="관심 해제">해제</button></form>
+  </div>
+
+  <div style="display:flex;align-items:flex-end;gap:18px">
+    <div>
+      <div class="faint" style="font-size:10.5px;letter-spacing:.06em">
+        현재가</div>
+      <div class="num" style="font-size:26px;font-weight:600;line-height:1.2">
+        {{ it.current_price|manwon }}<small
+          style="font-size:12px;color:var(--dim)">만</small></div>
+      {% if it.first_price and it.first_price != it.current_price %}
+        {% set d = it.current_price - it.first_price %}
+        <div class="num {{ 'down-v' if d < 0 else 'up-v' }}"
+             style="font-size:12px">
+          등록가 {{ it.first_price|manwon }}만 →
+          {{ (d/10000)|round|int }}만</div>
+      {% else %}
+        <div class="faint num" style="font-size:12px">가격 변동 없음</div>
+      {% endif %}
+    </div>
+
+    <div style="margin-left:auto;text-align:right">
+      {% if it.spark.points %}
+      <svg width="{{ it.spark.w }}" height="{{ it.spark.h }}"
+           style="display:block">
+        <polyline points="{{ it.spark.points }}" fill="none"
+          stroke="{{ '#4fc3a1' if it.current_price <= it.first_price
+                    else '#e0655f' }}" stroke-width="1.6"
+          stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+      <div class="faint num" style="font-size:10.5px">
+        {{ it.spark.n }}일 추적</div>
+      {% else %}
+      <div class="faint" style="font-size:11.5px">
+        추이 없음<br>(수집 {{ it.spark.n }}일)</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="display:flex;gap:16px;margin-top:11px;padding-top:10px;
+              border-top:1px solid var(--line);font-size:11.5px"
+       class="faint">
+    <span>경과 <b class="num">{{ it.dom if it.dom is not none else '—' }}</b>일</span>
+    <span>변동 <b class="num">{{ it.price_change_count }}</b>회</span>
+    <span>최저 <b class="num">{{ it.lowest_price|manwon }}</b>만</span>
+    <span class="num">{{ (it.dealer_id or '')|replace('encar:','') }}</span>
+    {% if it.url %}<a href="{{ it.url }}" target="_blank"
+      style="margin-left:auto;color:var(--amber)">엔카에서 보기 ↗</a>{% endif %}
+  </div>
+  <form method="post" action="/watch/memo/{{ it.listing_id }}"
+        style="display:flex;gap:6px;margin-top:9px">
+    <input name="memo" value="{{ it.memo or '' }}" placeholder="메모"
+      style="flex:1;background:var(--surface2);border:1px solid var(--line2);
+             border-radius:5px;padding:4px 9px;color:var(--text);
+             font-family:inherit;font-size:12px">
+    <button style="padding:4px 11px">저장</button>
+  </form>
+
+  <form method="post" action="/watch/alert/{{ it.listing_id }}"
+        style="display:flex;gap:12px;align-items:center;margin-top:7px;
+               font-size:11.5px" class="dim">
+    <label style="cursor:pointer"><input type="checkbox" name="drop"
+      {{ 'checked' if it.alert_on_drop }} onchange="this.form.submit()">
+      가격 인하</label>
+    <label style="cursor:pointer"><input type="checkbox" name="sold"
+      {{ 'checked' if it.alert_on_sold }} onchange="this.form.submit()">
+      판매</label>
+    <label style="cursor:pointer"><input type="checkbox" name="dom"
+      {{ 'checked' if it.alert_on_dom }} onchange="this.form.submit()">
+      장기 미판매</label>
+    <input name="dom_days" value="{{ it.dom_threshold or 30 }}" size="3"
+      style="width:38px;background:var(--surface2);border:1px solid var(--line2);
+             border-radius:4px;padding:2px 5px;color:var(--text);
+             font-family:var(--mono);font-size:11px" title="일수">
+    <span class="faint">일 경과 시</span>
+  </form>
+  </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="card empty">
+  <h3>관심 등록한 매물이 없습니다</h3>
+  <p><b>후보</b> 또는 <b>매물</b> 탭에서 <b style="color:var(--amber)">♡</b>
+     를 누르면 여기에 추가됩니다.</p>
+  <p style="margin-top:14px">등록하면 그 매물만 따로 매일 추적합니다.</p>
+  <table style="max-width:420px;margin:12px auto 0;text-align:left">
+    <tr><td class="dim">가격 인하</td>
+        <td class="faint">얼마나·언제 내렸는지 기록</td></tr>
+    <tr><td class="dim">사라짐</td>
+        <td class="faint">팔렸는지 딜러가 내렸는지 구분</td></tr>
+    <tr><td class="dim">경과일</td>
+        <td class="faint">오래 안 팔리면 협상 여지</td></tr>
+  </table>
+  <p style="margin-top:16px">
+    <a href="/recommend" class="btn on"
+       style="display:inline-block">후보 보러 가기</a></p>
+</div>
+{% endif %}
+{% endblock %}

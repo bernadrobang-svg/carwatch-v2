@@ -1,0 +1,31 @@
+<h1>계정 만들기</h1>
+{% if closed %}
+<div class="notice">
+  <p><strong>지금은 가입을 받지 않습니다.</strong>
+     1인 도구로 쓰는 중입니다. 계정이 필요하면 관리자에게 요청하십시오.</p>
+</div>
+{% endif %}
+{% if !closed %}
+<p class="muted">관심 매물 추적과 조건 알림에 씁니다.
+  <strong>등급 · 판정 근거 · 시세는 계정 없이도 봅니다.</strong></p>
+{% if approval %}
+<p class="notice">승인제입니다. 신청을 받고 관리자가 승인합니다.
+  승인 전에는 관심 등록을 못 합니다.</p>
+{% endif %}
+<form method="post" action="/join">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <label>이름 <input name="name" required minlength="2" maxlength="20">
+    <span class="muted">2~20자 · 로그인에 씁니다. 바꾸지 않습니다</span></label>
+  <label>별명 <input name="display_name" maxlength="20">
+    <span class="muted">선택 — 화면에 이것이 보입니다. 비우면 이름을 씁니다</span></label>
+  <label>이메일 <input name="email" type="email" maxlength="120">
+    <span class="muted">선택 — 비밀번호를 잊었을 때만 씁니다. 광고는 보내지 않습니다</span></label>
+  <label>비밀번호 <input name="secret" type="password" required minlength="8">
+    <span class="muted">8자 이상</span></label>
+  <label>비밀번호 확인 <input name="secret2" type="password" required minlength="8">
+    <span class="muted">위와 같아야 합니다</span></label>
+  <button type="submit">계정 만들기</button>
+</form>
+{% endif %}
+<p class="muted">이미 계정이 있으면 <a href="/login">로그인</a></p>
+<p class="muted">가입하면 이름 · 별명 · 이메일 · 관심 목록만 저장합니다.</p>

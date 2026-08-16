@@ -1,0 +1,15 @@
+{
+ "inspection_clean.json": "outers 0 (무사고) 인데 usageChangeTypes 에 렌트. 두 축이 독립임을 보여준다",
+ "inspection_frame.json": "RANK_B 1건 = 골격 → E등급. 외판교환 4판이지만 골격이 우선",
+ "inspection_outer_swap.json": "외판교환 5판 · 골격 없음 → 사고 20점 0점",
+ "inspection_outer_paint.json": "판금/용접만 → 감점 없음. 교환이 아니다",
+ "inspection_weld.json": "「용접,절단」+「판금/용접」 동시. 미정의 항목 (STEP 86)",
+ "record_clean.json": "accidents 빈 배열. myAccidentCnt 0",
+ "record_with_accident.json": "type 3 만 1건 → myAccidentCost 0 · otherAccidentCnt 1. type 3 제외 규칙의 직접 검산",
+ "detail_ev_tesla.json": "displacement 180 — 전기차 쓰레기값. 배기량 분류 금지 (STEP 46)",
+ "detail_gasoline_genesis.json": "displacement 2497 → G80_25T. 2단 확정 정상 사례",
+ "detail_hybrid_renault.json": "★ modelGroupName 그랑 콜레오스인데 displacement 1969 · 가솔린 = 2.0 가솔린. KOLEOS_HEV 가 아니다",
+ "detail_lpg_hyundai.json": "displacement 3470 · LPG(일반인 구입)",
+ "catalog.json": "9개 옵션. optionCd 1009 = BOSE. 4자리 코드",
+ "diagnosis.json": "encarDiagnosis == 0 인 매물의 진단. items 에 판정(resultCode 있음)과 소견(null)이 섞여 있다 — 소견을 부위로 세면 수가 틀린다 (STEP 21b)"
+}

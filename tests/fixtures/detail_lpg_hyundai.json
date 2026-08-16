@@ -1,0 +1,521 @@
+{
+ "manage": {
+  "dummy": false,
+  "dummyVehicleId": 42291122,
+  "reRegistered": false,
+  "webReserved": true,
+  "registDateTime": "2026-06-30T10:20:39",
+  "firstAdvertisedDateTime": "2026-07-01T16:16:12",
+  "modifyDateTime": "2026-08-08T17:16:07",
+  "subscribeCount": 14,
+  "viewCount": 3284
+ },
+ "category": {
+  "type": "CAR",
+  "manufacturerCd": "001",
+  "manufacturerName": "현대",
+  "modelCd": "178",
+  "modelName": "그랜저 (GN7)",
+  "gradeCd": "004",
+  "gradeName": "3.5 LPG 2WD",
+  "gradeEnglishName": "3.5 LPG 2WD",
+  "yearMonth": "202302",
+  "formYear": "2023",
+  "domestic": true,
+  "importType": "NONE_IMPORT_TYPE",
+  "originPrice": 4349,
+  "manufacturerEnglishName": "Hyundai",
+  "modelGroupCd": "004",
+  "modelGroupName": "그랜저",
+  "modelGroupEnglishName": "Grandeur",
+  "gradeDetailCd": "002",
+  "gradeDetailName": "익스클루시브",
+  "gradeDetailEnglishName": "Exclusive",
+  "jatoVehicleId": 809091120221114,
+  "warranty": {
+   "userDefined": false,
+   "companyName": null,
+   "bodyMonth": 36,
+   "bodyMileage": 60000,
+   "transmissionMonth": 60,
+   "transmissionMileage": 100000
+  }
+ },
+ "advertisement": {
+  "type": "CAR",
+  "price": 9999,
+  "status": "ADVERTISE",
+  "warrantyStyleColor": "BLACK",
+  "trust": [
+   "HomeService",
+   "Warranty"
+  ],
+  "hotMark": [
+   9,
+   14,
+   26
+  ],
+  "oneLineText": "100%무사고/추가옵460만/엔진.미션AS잔여/최저가판매",
+  "salesStatus": "CONTRACT",
+  "directInspected": false,
+  "preVerified": true,
+  "extendWarranty": false,
+  "deemedExtendWarranty": false,
+  "homeService": true,
+  "meetGo": false,
+  "encarCheck": false,
+  "preDelivery": false,
+  "leaseRentInfo": null,
+  "encarPassType": "Y",
+  "encarPassCategoryType": "CLEAR",
+  "underBodyPhotos": [
+   {
+    "photoType": "UNDER_BODY",
+    "photoPath": "/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/696edc29-c895-4ece-b368-45ab3723892a.jpg",
+    "photoUrl": "http://imgcar.encar.com/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/696edc29-c895-4ece-b368-45ab3723892a.jpg"
+   },
+   {
+    "photoType": "UNDER_BODY_FRONT_LEFT",
+    "photoPath": "/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/f07d0e2b-7bfc-4324-95af-481ba04ce3ee.jpg",
+    "photoUrl": "http://imgcar.encar.com/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/f07d0e2b-7bfc-4324-95af-481ba04ce3ee.jpg"
+   },
+   {
+    "photoType": "UNDER_BODY_FRONT_RIGHT",
+    "photoPath": "/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/8a9f5189-a027-4d00-bb8c-bda0b5485c72.jpg",
+    "photoUrl": "http://imgcar.encar.com/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/8a9f5189-a027-4d00-bb8c-bda0b5485c72.jpg"
+   },
+   {
+    "photoType": "UNDER_BODY_REAR_RIGHT",
+    "photoPath": "/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/e069ade3-6a7c-49f4-99b0-503183f53b9f.jpg",
+    "photoUrl": "http://imgcar.encar.com/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/e069ade3-6a7c-49f4-99b0-503183f53b9f.jpg"
+   },
+   {
+    "photoType": "UNDER_BODY_REAR_LEFT",
+    "photoPath": "/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/b181e191-ff92-497b-9a65-88ca4ffd61fd.jpg",
+    "photoUrl": "http://imgcar.encar.com/diagnosis/evaluation/carphoto/car0/car80/insp/4132280/b181e191-ff92-497b-9a65-88ca4ffd61fd.jpg"
+   }
+  ],
+  "hasUnderBodyPhoto": true,
+  "advertisementType": "NORMAL",
+  "diagnosisCar": true
+ },
+ "contact": {
+  "userId": "dltldn1212",
+  "userType": "DEALER",
+  "no": "05062247084",
+  "address": "대구 동구",
+  "contactType": "MOBILE",
+  "isVerifyOwner": false,
+  "isOwnerPartner": true
+ },
+ "spec": {
+  "type": "CAR",
+  "mileage": 52320,
+  "displacement": 3470,
+  "transmissionName": "오토",
+  "fuelCd": "003",
+  "fuelName": "LPG(일반인 구입)",
+  "colorName": "흰색",
+  "customColor": null,
+  "seatCount": 5,
+  "tradeType": "D",
+  "tradeOwnerType": null,
+  "tradeCompanyName": null,
+  "bodyName": "대형차"
+ },
+ "photos": [
+  {
+   "code": "036",
+   "path": "/carpicture07/pic4227/42276134_036.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "048",
+   "path": "/carpicture07/pic4227/42276134_048.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "009",
+   "path": "/carpicture07/pic4227/42276134_009.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "049",
+   "path": "/carpicture07/pic4227/42276134_049.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "042",
+   "path": "/carpicture07/pic4227/42276134_042.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "001",
+   "path": "/carpicture07/pic4227/42276134_027.jpg",
+   "type": "DIAG2",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "016",
+   "path": "/carpicture07/pic4227/42276134_016.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "050",
+   "path": "/carpicture07/pic4227/42276134_050.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "047",
+   "path": "/carpicture07/pic4227/42276134_047.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "015",
+   "path": "/carpicture07/pic4227/42276134_015.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "024",
+   "path": "/carpicture07/pic4227/42276134_024.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "043",
+   "path": "/carpicture07/pic4227/42276134_043.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "017",
+   "path": "/carpicture07/pic4227/42276134_017.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "040",
+   "path": "/carpicture07/pic4227/42276134_040.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "005",
+   "path": "/carpicture07/pic4227/42276134_005.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "041",
+   "path": "/carpicture07/pic4227/42276134_041.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "004",
+   "path": "/carpicture07/pic4227/42276134_004.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "006",
+   "path": "/carpicture07/pic4227/42276134_006.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "021",
+   "path": "/carpicture07/pic4227/42276134_021.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "023",
+   "path": "/carpicture07/pic4227/42276134_023.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "033",
+   "path": "/carpicture07/pic4227/42276134_033.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "008",
+   "path": "/carpicture07/pic4227/42276134_008.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "032",
+   "path": "/carpicture07/pic4227/42276134_032.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "022",
+   "path": "/carpicture07/pic4227/42276134_022.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "044",
+   "path": "/carpicture07/pic4227/42276134_044.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "007",
+   "path": "/carpicture07/pic4227/42276134_007.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "003",
+   "path": "/carpicture07/pic4227/42276134_003.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "046",
+   "path": "/carpicture07/pic4227/42276134_046.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "002",
+   "path": "/carpicture07/pic4227/42276134_002.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "031",
+   "path": "/carpicture07/pic4227/42276134_031.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "045",
+   "path": "/carpicture07/pic4227/42276134_045.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "034",
+   "path": "/carpicture07/pic4227/42276134_034.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "010",
+   "path": "/carpicture07/pic4227/42276134_010.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "020",
+   "path": "/carpicture07/pic4227/42276134_020.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "019",
+   "path": "/carpicture07/pic4227/42276134_019.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "035",
+   "path": "/carpicture07/pic4227/42276134_035.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  },
+  {
+   "code": "018",
+   "path": "/carpicture07/pic4227/42276134_018.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-01T16:09:50",
+   "desc": null
+  }
+ ],
+ "options": {
+  "type": "CAR",
+  "standard": [
+   "001",
+   "004",
+   "005",
+   "006",
+   "007",
+   "008",
+   "010",
+   "014",
+   "015",
+   "017",
+   "019",
+   "020",
+   "021",
+   "022",
+   "023",
+   "024",
+   "026",
+   "027",
+   "030",
+   "031",
+   "032",
+   "033",
+   "034",
+   "035",
+   "051",
+   "055",
+   "056",
+   "057",
+   "058",
+   "059",
+   "063",
+   "072",
+   "074",
+   "075",
+   "077",
+   "079",
+   "081",
+   "082",
+   "083",
+   "084",
+   "085",
+   "086",
+   "087",
+   "088",
+   "091",
+   "093",
+   "094",
+   "095",
+   "096",
+   "097"
+  ],
+  "etc": [],
+  "choice": [
+   "10003",
+   "1045",
+   "1051",
+   "1044",
+   "1047"
+  ],
+  "tuning": []
+ },
+ "condition": {
+  "accident": {
+   "recordView": true,
+   "resumeView": true
+  },
+  "inspection": {
+   "formats": [
+    "TABLE"
+   ]
+  },
+  "seizing": {
+   "seizingCount": 0,
+   "pledgeCount": 0
+  }
+ },
+ "partnership": {
+  "brand": null,
+  "testdrive": {
+   "active": false
+  },
+  "dealer": {
+   "userId": "dltldn1212",
+   "name": "이시우",
+   "firm": {
+    "code": "7356",
+    "name": "남덕모터스",
+    "diag2Partnered": true,
+    "diagnosisCenters": [
+     {
+      "code": "147",
+      "name": "엔카진단센터 대구 동구점",
+      "major": true,
+      "telephoneNumber": "053-965-8746",
+      "address": "대구 동구 반야월로 257"
+     },
+     {
+      "code": "193",
+      "name": "엔카진단센터 대구 동촌점",
+      "major": false,
+      "telephoneNumber": "053-983-5455",
+      "address": "대구 동구 방촌로 64 1층"
+     }
+    ],
+    "meetgoCenters": []
+   },
+   "visitReservation": false
+  },
+  "isPartneredVehicle": true,
+  "certifiedBrand": null,
+  "lease": null,
+  "rent": null
+ },
+ "contents": {
+  "text": "--------------------------------차 량 설 명---------------------------------------\n\n★연식 : 2023년(최초등록일 2023년 02월 03일)\n\n★차명 :  그랜저 3.5 LPG 2WD 익스클루시브\n\n★차종 : 대형 승용\n\n★색상 : 흰색\n\n★ 사고: 무사고, 무교환(엔카진단차량)\n\n★내/외관상태 : 실내크리닝작업&실외광택작업 완료\n\n★주행거리 : 5만 2천KM (실주행거리 법적보장 당연히 해드립니다.)\n                 \n★기타 : \n             ▶ 정품 추가옵션 460만원추가!!\n              1. 세레니티 화이트 펄 (10만)\n              2. 현대 스마트센스Ⅱ (100만)\n              3. 헤드업 디스플레이 (100만)\n              4. 파노라마 선루프 (120만)\n              5. 플래티넘 (130만)\n        \n            ▶ 실매물.전국최저가\n       \n         \n\n                      \n----------------------------------------------------------------------------------\n\n반갑습니다 고객님!!\n\n대구 동구 [카월드매매단지] 남덕모터스 이시우 입니다.\n\n고객님들이 안심하시고 구매하실수 있도록 엔카에서 정밀진단,보증판매 합니다.\n\n★엔카 정밀진단.보증★은 사고확인 및 차량 옵션까지 체크하여\n\n고객님들이 더욱 믿고 거래하실수 있도록하는 서비스입니다.\n\n차량내용과 다른 내용이있을시 엔카에서 보상하는 서비스에도 가입된 차량입니다.\n\n감사합니다.\n\n----------------------------------------------------------------------------------\n\n\n▶구매방법 \n\n1.직접 방문\n\n 차주 되실분이 직접 본 업체를 방문하여 차량을 검토 구매하는방식으로 \n \n 차주되실 분이 직접 결정하실수있으며, 권장하는 방식입니다.\n\n2.탁송배차\n\n 탁송 기사분 배차하여 차량 검수 확인후 계좌이체 완납후 탁송기사편 차량 인수하는 방법으로\n\n 최근 타지역, 직장인, 바쁘신 업무로 내방이 불가한 고객님들께서 많이 이용하시는 방법입니다.\n\n 직접 방문 보다 경비가 적게 들며, 시간 또한 절약되어 최근 많이 이용되고 있습니다.\n\n 탁송예상비용 : 서울(10~13만원) 경기.인천(8~12만원) 강원(10~13만원 충청(8~11만원) 경상(6~10만원)\n\n3.출장 판매\n\n 차량을 직접보시고 싶으시나 시간이 되시지 않는 경우 계약금 입금후 차량을 보시는 방법입니다.\n\n (예상계약금은 차량 가격에 따라 틀리며 최소 계약금 30만원입니다.)\n  \n----------------------------------------------------------------------------------\n\n\n▶문의방법 \n\n대구 동구 율하역 - 반야월역 네거리 지나 첫 신호등에서 좌회전 - 150좌측 - 카월드매매단지내 - ★남덕모터스★ 찾으시면 됩니다.\n\n★본 매물은 본인 소유의 차량이며 직접 사진을 찍어서 올린 100% 실매물입니다.\n  \n (차량 등록증 & 성능기록부를 팩스로 보내드리겠습니다)\n\n★구주소 : 대구 동호동 102-2 카월드 매매단지내 ★남덕모터스★찾으시면됩니다.\n\n★신주소 : 대구 동구 안심로 59길 39 카월드 매매단지내 ★남덕모터스★찾으시면됩니다.",
+  "meetGoText": null
+ },
+ "view": {
+  "encarDiagnosis": 2,
+  "encarMeetGo": -1,
+  "hasEvBatteryInfo": false,
+  "isBatteryPass": false,
+  "isBatteryCompensable": false,
+  "photoPlus": 2,
+  "meetgoExpertAvailable": false,
+  "isSingleAd": false
+ },
+ "vehicleId": 42276134,
+ "vehicleType": "CAR",
+ "vin": "KMHN241FBPA015303",
+ "vehicleNo": "225다9586"
+}

@@ -1,0 +1,84 @@
+<h1>사용자 <small>{{ count }}명 · 관리자 {{ admins }}</small></h1>
+<p class="notice">
+  관리자를 <strong>0명으로 만들 수 없습니다.</strong>
+  마지막 관리자의 역할을 내리거나 중지하면 아무도 관리할 수 없게 됩니다.<br>
+  「중지」는 삭제가 아닙니다. 로그인만 막고 관심 목록과 이력은 남깁니다.
+</p>
+<p class="muted">가입 정책 — <strong>{{ policy }}</strong>
+  (open 공개 · approval 승인제 · closed 닫힘)</p>
+
+{% if pending %}
+<h2>승인 대기 {{ count }}건</h2>
+<table><tbody>
+{% for u in pending %}
+<tr><td>{{ u.display_name }}</td><td>{{ u.created_at | date }}</td>
+<td>
+  <form method="post" action="/admin/users" class="inline">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="account_id" value="{{ u.account_id }}">
+    <input type="hidden" name="action" value="approve">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini">승인</button>
+  </form>
+</td></tr>
+{% endfor %}
+</tbody></table>
+{% endif %}
+
+<table>
+<thead><tr><th>ID</th><th>이름</th><th>역할</th><th>마지막 접속</th>
+<th>가입</th><th>상태</th><th></th></tr></thead>
+<tbody>
+{% for u in rows %}
+<tr><td>{{ u.account_id }}</td><td>{{ u.display_name }}</td><td>{{ u.role }}</td>
+<td>{{ u.last_seen_at | date }}</td><td>{{ u.created_at | date }}</td>
+<td>{% if u.disabled %}<span class="warn-warn">중지</span>{% endif %}</td>
+<td>
+  <form method="post" action="/admin/users" class="inline">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="account_id" value="{{ u.account_id }}">
+    <input type="hidden" name="action" value="{% if u.disabled %}enable{% endif %}{% if !u.disabled %}disable{% endif %}">
+    <button type="submit" class="mini">{% if u.disabled %}되살리기{% endif %}{% if !u.disabled %}중지{% endif %}</button>
+  </form>
+</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>계정 활동 <span class="muted">최근 {{ account_activity | count }}건</span></h2>
+{% if account_activity %}
+<table>
+<thead><tr><th>시각</th><th>누가</th><th>무엇</th></tr></thead>
+<tbody>
+{% for a in account_activity %}
+<tr><td>{{ a.at }}</td><td>{{ a.who }}</td><td class="muted">{{ a.what }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !account_activity %}
+<p class="muted">아직 로그인 기록이 없습니다.</p>
+{% endif %}
+
+<h2>계정 만들기</h2>
+<p class="muted">임시 비밀번호로 만들고, 첫 로그인 때 본인이 바꿉니다.
+  ★ 임시 비밀번호는 저장하지 않습니다 — 해시만 남습니다.
+  화면에 한 번만 나오니 그때 전달하십시오.</p>
+<form method="post" action="/admin/users">
+  <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+  <input type="hidden" name="action" value="create">
+  <label>이름 <input name="name" required minlength="2" maxlength="20">
+    <span class="muted">로그인에 씁니다. 바꾸지 않습니다</span></label>
+  <label>별명 <input name="display_name" maxlength="20">
+    <span class="muted">선택 — 비우면 이름을 씁니다</span></label>
+  <label>이메일 <input name="email" type="email" maxlength="120">
+    <span class="muted">선택</span></label>
+  <label>역할
+    <select name="role">
+      <option value="user">user</option>
+      <option value="admin">admin</option>
+    </select>
+  </label>
+  <label>사유 <input name="reason" size="24" placeholder="사유 (필수)" required></label>
+  <button type="submit">계정 만들기</button>
+</form>

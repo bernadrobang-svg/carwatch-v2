@@ -1,0 +1,92 @@
+<h1>배점 조정</h1>
+<p class="notice">
+  축의 배점을 바꾸면 <strong>전 매물이 다시 채점됩니다.</strong>
+  합계가 <code>total_points</code> 와 맞지 않으면 저장할 수 없습니다.
+  <span class="muted">근거 STEP 128</span><br>
+  ★ <code>total_points</code> 는 직접 입력하지 않습니다 — 성분 합으로만 정해집니다.<br>
+  ★ 성분을 빼려면 <strong>스킵</strong>을 씁니다. 「0점」과 「스킵」은 다릅니다.
+</p>
+
+<p>합계 <strong class="num">{{ sum | num }}</strong> / {{ total_points | num }}
+  {% if gap %}<span class="warn-block">차이 {{ gap | num }} — 저장할 수 없습니다</span>{% endif %}
+</p>
+
+<h2>축 총점 <span class="muted">바꾸면 성분이 비율로 재배분됩니다</span></h2>
+<table>
+<thead><tr><th>축</th><th class="num">총점</th><th>바꾸기</th></tr></thead>
+<tbody>
+{% for a in axis_rows %}
+<tr><td>{{ a.axis }}</td><td class="num">{{ a.points | num }}</td>
+  <td>
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="axis">
+      <input type="hidden" name="target" value="{{ a.axis }}">
+      <input name="value" size="5" placeholder="새 총점">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>성분 {{ count | num }}</h2>
+<table>
+<thead><tr><th>성분</th><th class="num">점수</th><th>상태</th><th>바꾸기</th><th>스킵</th></tr></thead>
+<tbody>
+{% for c in components %}
+<tr>
+  <td class="runid">{{ c.axis }}</td>
+  <td class="num">{{ c.points | num }}</td>
+  <td>{% if c.skipped %}<span class="excluded">스킵 — 총점에서 뺍니다</span>{% endif %}</td>
+  <td>
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="component">
+      <input type="hidden" name="target" value="{{ c.axis }}">
+      <input name="value" size="4" placeholder="점수">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+  <td>
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="skip">
+      <input type="hidden" name="target" value="{{ c.axis }}">
+      <input type="hidden" name="value" value="{% if c.skipped %}false{% endif %}{% if !c.skipped %}true{% endif %}">
+      <input name="reason" size="12" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">{% if c.skipped %}되살리기{% endif %}{% if !c.skipped %}스킵{% endif %}</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h2>미리보기 <span class="muted">저장 전 필수</span></h2>
+<p class="muted">배점을 바꾸면 등급 분포가 어떻게 달라지는지 먼저 봅니다.
+  <a href="/admin/scoring?preview=1">미리보기</a></p>
+{% if preview %}
+<pre>{{ preview }}</pre>
+{% endif %}
+
+<h2>배점 변경 이력</h2>
+{% if config_history %}
+<table>
+<thead><tr><th>시각</th><th>무엇</th><th>사유</th></tr></thead>
+<tbody>
+{% for c in config_history %}
+<tr><td>{{ c.at }}</td><td class="runid">{{ c.key }}</td>
+  <td class="muted">{{ c.reason }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !config_history %}
+<p class="muted">아직 배점 변경이 없습니다.</p>
+{% endif %}

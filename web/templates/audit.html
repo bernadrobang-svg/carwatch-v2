@@ -1,0 +1,26 @@
+<h1>감사 조회</h1>
+<p class="muted">읽기 전용입니다. 이력을 고치거나 지우지 않습니다.</p>
+{% for t in a.tabs %}
+<h2>{{ t.title }} <small>{{ t.key }}</small></h2>
+<table>
+<tbody>
+{% for row in t.rows %}<tr><td>{{ row }}</td></tr>{% endfor %}
+</tbody>
+</table>
+{% endfor %}
+
+<h2>이력 <span class="muted">최근 {{ runs | count }}회</span></h2>
+{% if runs %}
+<table>
+<thead><tr><th>실행</th><th>시각</th><th class="num">통과</th>
+<th class="num">fatal</th><th class="num">warn</th></tr></thead>
+<tbody>
+{% for r in runs %}
+<tr><td class="runid">{{ r.run_id }}</td><td>{{ r.at }}</td>
+  <td class="num">{{ r.passed | num }}</td>
+  <td class="num">{{ r.fatal | num }}</td>
+  <td class="num">{{ r.warn | num }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}

@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+{% set page = 'dash' %}
+{% block title %}현황 · car_monitor{% endblock %}
+{% block body %}
+
+{% if empty %}
+<div class="card empty">
+  <h3>아직 수집한 데이터가 없습니다</h3>
+  <p>수집을 실행하면 조건 충족 현황과 시세가 여기에 표시됩니다.</p>
+  <p style="margin-top:18px">
+    <a href="/run" class="btn on" style="display:inline-block;
+       padding:8px 20px;font-size:13.5px">수집 화면으로</a></p>
+</div>
+{% else %}
+
+<div class="strip">
+  <div class="stat"><div class="k">신규</div>
+    <div class="v">{{ events.get('NEW', 0) }}</div></div>
+  <div class="stat"><div class="k">가격 인하</div>
+    <div class="v down-v">{{ events.get('PRICE_DOWN', 0) }}</div></div>
+  <div class="stat"><div class="k">가격 인상</div>
+    <div class="v up-v">{{ events.get('PRICE_UP', 0) }}</div></div>
+  <div class="stat"><div class="k">사라짐</div>
+    <div class="v">{{ events.get('GONE', 0) }}</div></div>
+  <div class="stat"><div class="k">재등록 의심</div>
+    <div class="v {{ 'up-v' if events.get('RELIST', 0) }}">{{ events.get('RELIST', 0) }}</div></div>
+  <div class="stat"><div class="k">리스·렌트</div>
+    <div class="v {{ 'up-v' if lease_cnt }}">
+      {{ lease_cnt or 0 }}<small>추천 제외</small></div></div>
+  <div class="stat"><div class="k">가격 이상</div>
+    <div class="v {{ 'up-v' if price_anomaly_cnt }}">
+      {{ price_anomaly_cnt or 0 }}<small>시세 제외</small></div></div>
+  <div class="stat"><div class="k">스냅샷</div>
+    <div class="v" style="font-size:15px">{{ snapshot }}</div></div>
+</div>
+
+{% if photo_stat and photo_stat.total and not photo_stat["with"] %}
+<div style="background:#2a1412;border:1px solid #4e2523;border-radius:6px;
+     padding:9px 14px;margin-bottom:16px;font-size:12.5px;color:var(--up)">
+  <b>사진 경로가 수집되지 않았습니다</b>
+  <span class="dim" style="margin-left:8px">
+    매물 {{ photo_stat.total }}건 중 0건입니다.
+    응답에 사진 정보가 없다는 뜻이라 파서 확인이 필요합니다.</span>
+</div>
+{% endif %}
+
+{% if detail_progress and detail_progress.pct < 95 %}
+<div class="card" style="padding:9px 14px;margin-bottom:14px;font-size:12.5px">
+  <b>상세 조회 {{ detail_progress.done }}/{{ detail_progress.total }}
+    ({{ detail_progress.pct }}%)</b>
+  <span class="dim" style="margin-left:8px">
+    HUD·이력·보험처리액은 조회가 끝나야 채워집니다.
+    그때까지 등급은 잠정치입니다.
+  </span>
+</div>
+{% endif %}
+
+{% if gone_stat and gone_stat.today %}
+<div class="card" style="padding:9px 14px;margin-bottom:14px;font-size:12.5px">
+  <b>오늘 소진 {{ gone_stat.today }}건</b>
+  <span class="dim" style="margin-left:8px">
+    활성 {{ gone_stat.active }}건
+    {% if gone_stat.by_detail %}
+    · 그중 {{ gone_stat.by_detail }}건은 상세 조회 중 확인 (판매·삭제)
+    {% endif %}
+  </span>
+</div>
+{% endif %}
+
+{% if cert_stat and cert_stat.unknown %}
+<div class="card" style="padding:9px 14px;margin-bottom:14px;font-size:12.5px">
+  <b>엔카 인증 미수집 {{ cert_stat.unknown }}건</b>
+  <span class="dim" style="margin-left:8px">
+    2026-08-05 부터 수집합니다. 재수집하면 채워집니다.
+    (인증 {{ cert_stat.certified }} · 없음 {{ cert_stat.none }})
+  </span>
+</div>
+{% endif %}
+
+{% if parse_alerts %}
+<div class="card" style="padding:9px 14px;margin-bottom:14px;font-size:12.5px;
+     border-color:var(--up)">
+  <b class="up-v">파싱 이상</b>
+  {% for a in parse_alerts %}
+  <div class="dim" style="margin-top:3px">
+    {{ '★' if a.level == 'CRITICAL' else '!' }}
+    {{ a.field }} NULL {{ '%.0f'|format(a.ratio * 100) }}%
+    <span class="faint">
+      {{ {'SITE_CHANGED':'사이트 구조 변경 의심 — 파서 수정 필요',
+          'SITE_NO_DATA':'사이트 미제공 — 상세 조회로 보완',
+          'PARSER_PARTIAL':'파싱 부분 실패 — 샘플 검토',
+          'DETAIL_PENDING':'상세 조회가 진행되면 채워집니다',
+          'LISTING_MISSING':'개별 매물 미기재'}.get(a.cause, a.cause) }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if color_int_stats and color_int_stats.unknown %}
+<div class="card" style="padding:9px 14px;margin-bottom:14px;font-size:12.5px">
+  <b>판정 보류</b>
+  <span class="dim" style="margin-left:8px">
+    내장색 미기재 {{ color_int_stats.unknown }}건
+    → 확인되면 S 또는 A 로 분류됩니다.
+    (통과 {{ color_int_stats.ok }} · 베이지계열 {{ color_int_stats.fail }})
+  </span>
+</div>
+{% endif %}
+
+{% if verify_stat and verify_stat.t %}
+<div class="card" style="padding:9px 14px;margin-bottom:14px;font-size:12.5px">
+  <b>이력 검증 {{ verify_stat.v or 0 }}/{{ verify_stat.t }}</b>
+  {% if verify_stat.t and (verify_stat.v or 0) < verify_stat.t * 0.5 %}
+  <span class="tag up">잠정치</span>
+  {% endif %}
+  <span class="dim" style="margin-left:8px">
+    자동차이력 조회 {{ verify_stat.r or 0 }}건
+    {% if verify_stat.rc %}(비공개 {{ verify_stat.rc }}건){% endif %} ·
+    사고 여부와 <b>내 차 피해액</b>이 모두 확인돼야 S·A등급입니다.
+    {% if verify_stat.t and (verify_stat.v or 0) < verify_stat.t * 0.5 %}
+    <b class="up-v">이력 확보가 50% 미만이라 등급 분포는 잠정치입니다.</b>
+    {% endif %}
+    상대차 피해액은 내 차 가치와 무관해 판정에서 제외합니다.
+  </span>
+</div>
+{% endif %}
+
+{% if finals %}
+<h2>최종후보 <span class="faint" style="font-size:10px;letter-spacing:0;
+  text-transform:none">{{ finals|length }}/3</span></h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+{% for f in finals %}
+<tr>
+  <td style="width:24px" class="dim">{{ loop.index }}</td>
+  <td>{% if f.listing_id %}
+      <a href="/why/{{ f.listing_id }}" style="color:inherit">
+        {{ f.target_key }} {{ f.year_month|ym }}</a>
+      {% else %}{{ f.new_car_key }} <span class="tag">신차</span>{% endif %}</td>
+  <td class="r num">{{ f.current_price|manwon }}만</td>
+  <td class="r num dim">{% if f.monthly_total
+    %}월 {{ '%.1f'|format(f.monthly_total / 10000) }}만{% endif %}</td>
+  <td class="c">{% if f.recommend_rank
+    %}<span class="tag">{{ f.recommend_rank }}순위</span>{% endif %}</td>
+</tr>
+{% if f.selected_reason %}
+<tr><td></td><td colspan="4" class="faint" style="font-size:11.5px;
+    padding-top:0">{{ f.selected_reason }}</td></tr>
+{% endif %}
+{% endfor %}
+</table>
+<div style="text-align:right;margin-top:8px">
+  <a href="/compare" class="tag" style="text-decoration:none">비교 보기</a>
+</div>
+</div>
+{% endif %}
+
+<h2>조건 충족 현황 <span class="faint" style="font-size:10px;
+  letter-spacing:0;text-transform:none">7축 분류 · A=전 축 충족</span></h2>
+<div class="card" style="padding:6px 10px;margin-bottom:8px">
+<table>
+<thead><tr>
+  <th>차종</th><th class="r">전체</th>
+  <th class="r" style="color:var(--amber)">A</th>
+  <th class="r">B</th><th class="r">C</th><th class="r">D</th>
+  <th class="r faint">E</th>
+  <th class="r">1순위</th><th class="r">A중앙가</th>
+  <th class="r">A−D 프리미엄</th><th>최다 미달</th>
+</tr></thead>
+<tbody>
+{% for c in cond %}
+<tr>
+  <td><a href="/listings?target={{ c.target_key }}&all=1"><b>{{ c.label }}</b></a>
+    {% if c.drought and c.drought >= 21 %}
+      <span class="tag up" title="A등급 0대 {{ c.drought }}일째">완화 검토</span>
+    {% endif %}</td>
+
+  <td class="r num">
+    <a href="/listings?target={{ c.target_key }}&all=1"
+       class="cellnum">{{ c.total }}</a></td>
+
+  {% for g in ['A','B','C','D','E'] %}
+    {% set n = c['grade_' ~ g|lower] %}
+    <td class="r num">
+      {% if n %}
+        <a href="/listings?target={{ c.target_key }}&grade={{ g }}{{ '&all=1' if g=='E' }}"
+           class="cellnum"
+           style="{% if g=='A' %}color:var(--amber);font-weight:600
+                  {% elif g=='E' %}color:var(--faint)
+                  {% else %}color:var(--dim){% endif %}"
+           title="{{ c.label }} {{ g }}등급 {{ n }}건 보기">{{ n }}</a>
+      {% else %}<span class="faint">0</span>{% endif %}
+    </td>
+  {% endfor %}
+
+  <td class="r num">
+    {% if c.rank1 %}
+      <a href="/recommend?target={{ c.target_key }}&rank=1" class="cellnum"
+         title="1순위 후보 {{ c.rank1 }}건 보기">{{ c.rank1 }}</a>
+    {% else %}<span class="faint">0</span>{% endif %}</td>
+
+  <td class="r num">{{ c.median_a|manwon }}</td>
+  <td class="r num {{ 'down-v' if c.premium_a_vs_d and c.premium_a_vs_d > 0 }}">
+    {% if c.premium_a_vs_d %}{{ (c.premium_a_vs_d/10000)|round|int }}만
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+
+  <td style="font-size:11px">
+    {% for f, n in c.top_fail[:3] %}
+      <a href="/listings?target={{ c.target_key }}&fail={{ f }}&all=1"
+         class="cellnum dim" title="{{ f }} 미달 {{ n }}건 보기"
+         >{{ relax_labels.get(f, f) }} {{ n }}</a>{% if not loop.last %}
+        <span class="faint"> · </span>{% endif %}
+    {% endfor %}</td>
+</tr>
+{% endfor %}
+</tbody></table>
+</div>
+<p class="faint" style="font-size:11.5px;margin:0 0 20px">
+  E등급은 추천 배제(골격·침수·에어백·전손·수리비 200만 초과·렌트+보험0원)이지만
+  DB와 통계에는 포함됩니다. 가격 단위 만원.
+</p>
+
+{% if relax %}
+<h2>조건 완화 시뮬레이션 <span class="faint" style="font-size:10px;
+  letter-spacing:0;text-transform:none">조건 하나를 풀면 A등급이 몇 대 늘어나는가</span></h2>
+<div class="grid g2" style="margin-bottom:20px">
+{% for tkey, rows in relax.items() %}
+<div class="card" style="padding:12px 14px">
+  <div style="font-weight:600;margin-bottom:8px">{{ targets[tkey].label }}</div>
+  <table>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.label }}</td>
+      <td class="r num faint">{{ r.current_a }}</td>
+      <td class="c faint" style="width:20px">→</td>
+      <td class="num">
+        <a href="/listings?target={{ tkey }}&fail={{ r.relax_axis }}"
+           class="cellnum" style="color:var(--amber);font-weight:600"
+           title="이 축만 미달인 매물 보기">{{ r.new_a }}</a></td>
+      <td class="r num down-v">+{{ r.gain }}</td>
+      <td class="r num {{ 'down-v' if r.median_change and r.median_change < 0
+                      else 'up-v' if r.median_change }}">
+        {% if r.median_change %}{{ (r.median_change/10000)|round|int }}만
+        {% else %}<span class="faint">—</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endfor %}
+</div>
+<p class="faint" style="font-size:11.5px;margin:-14px 0 20px">
+  마지막 열은 중앙가 변화입니다. 조건을 풀면 매물은 늘지만 평균 품질은 내려갑니다.
+</p>
+{% endif %}
+
+{% if fails %}
+<h2>축별 미달 건수</h2>
+<div class="card" style="padding:10px 14px;margin-bottom:20px">
+  <div style="display:flex;flex-wrap:wrap;gap:8px">
+  {% for f in fails %}
+    <a href="/listings?fail={{ f.bucket }}&all=1"
+       class="tag {{ 'up' if f.bucket in
+       ('ACCIDENT_MAJOR','REPAIR_MAJOR','RENTAL_NO_INSURANCE') }}"
+       style="text-decoration:none">
+      {{ f.label }} <b class="num">{{ f.c }}</b></a>
+  {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<h2>차종별 시세</h2>
+<div class="card" style="padding:6px 10px;margin-bottom:20px">
+<table>
+<thead><tr>
+  <th>차종</th><th class="r">매물</th><th class="r">적격</th>
+  <th class="r">최저</th><th class="r">25%</th><th class="r">중앙</th>
+  <th class="r">75%</th><th class="r">최고</th>
+  <th class="r">7일 추이</th><th class="r">신규7d</th><th class="r">판매7d</th>
+  <th class="c">물량</th>
+</tr></thead>
+<tbody>
+{% for m in market %}
+  {% if m.missing %}
+  <tr class="rejected"><td>{{ m.label }}</td>
+    <td colspan="11" class="faint">— 수집 없음</td></tr>
+  {% else %}
+  <tr>
+    <td><a href="/listings?target={{ m.key }}&all=1"><b>{{ m.label }}</b></a></td>
+    <td class="r num"><a href="/listings?target={{ m.key }}&all=1"
+      class="cellnum">{{ m.count_total }}</a></td>
+    <td class="r num dim"><a href="/listings?target={{ m.key }}"
+      class="cellnum" title="E등급 제외">{{ m.count_eligible }}</a></td>
+    <td class="r num dim">{{ m.price_min|manwon }}</td>
+    <td class="r num dim">{{ m.price_p25|manwon }}</td>
+    <td class="r num"><b>{{ m.price_median|manwon }}</b></td>
+    <td class="r num dim">{{ m.price_p75|manwon }}</td>
+    <td class="r num dim">{{ m.price_max|manwon }}</td>
+    <td class="r num {{ 'down-v' if m.trend and m.trend < 0
+                   else 'up-v' if m.trend and m.trend > 0 }}">
+      {{ m.trend|pct if m.trend is not none else '—' }}</td>
+    <td class="r num dim">{{ m.new_count_7d or 0 }}</td>
+    <td class="r num dim">{{ m.sold_count_7d or 0 }}</td>
+    <td class="c"><span class="tag {{ 'amber' if m.volume_tier=='rare' }}">
+      {{ m.volume_tier }}</span></td>
+  </tr>
+  {% endif %}
+{% endfor %}
+</tbody></table>
+</div>
+<p class="faint" style="font-size:11.5px;margin:-14px 0 22px">
+  가격 단위 만원 · 적격 = 하드 제외를 통과한 매물 · 매물 수는 중복 제거 후
+</p>
+
+<div class="grid g2">
+  <div>
+    <h2>최근 변동</h2>
+    <div class="card" style="padding:6px 10px">
+    {% if recent %}
+    <table><tbody>
+    {% for e in recent %}
+      <tr>
+        <td class="num faint" style="width:74px">{{ e.event_date[5:] }}</td>
+        <td style="width:82px">
+          {% if e.event_type=='PRICE_DOWN' %}<span class="tag down">인하</span>
+          {% elif e.event_type=='PRICE_UP' %}<span class="tag up">인상</span>
+          {% elif e.event_type=='RELIST' %}<span class="tag up">재등록</span>
+          {% else %}<span class="tag">사라짐</span>{% endif %}
+        </td>
+        <td>{{ e.model_group }}
+          <span class="faint num">{{ e.year_month|ym }}</span></td>
+        <td class="r num">
+          {% if e.delta %}
+            <span class="{{ 'down-v' if e.delta < 0 else 'up-v' }}">
+              {{ (e.delta/10000)|round|int }}만</span>
+          {% elif e.old_value %}
+            <span class="dim">{{ e.old_value|manwon }}만</span>
+          {% endif %}
+        </td>
+        <td class="r" style="width:44px">
+          {% if e.url %}<a href="{{ e.url }}" target="_blank" rel="noopener"
+            class="faint" title="엔카에서 보기">↗</a>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody></table>
+    {% else %}
+    <p class="dim" style="padding:14px 4px">
+      아직 변동 기록이 없습니다. 첫 수집일에는 비교할 이전 데이터가 없습니다.
+    </p>
+    {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <h2>관심매물</h2>
+    <div class="card" style="padding:6px 10px;margin-bottom:16px">
+    {% if watch_alerts %}
+    <table><tbody>
+    {% for w in watch_alerts %}
+      <tr>
+        <td>{{ w.model_group }}
+          <span class="faint num">{{ w.year_month|ym }}</span></td>
+        <td class="r num">{{ w.current_price|manwon }}만</td>
+        <td class="r num">
+        {% if w.first_price and w.current_price
+              and w.first_price != w.current_price %}
+          <span class="down-v">
+            {{ ((w.current_price - w.first_price)/10000)|round|int }}만</span>
+        {% endif %}
+        </td>
+        <td class="r">
+        {% if w.status != 'active' %}
+          <span class="tag">{{ w.status }}</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody></table>
+    {% else %}
+    <p class="dim" style="padding:14px 4px">
+      관심 등록한 매물이 없습니다. 매물 목록에서 ♡ 를 누르십시오.
+    </p>
+    {% endif %}
+    </div>
+
+    <h2>확인 필요</h2>
+    <div class="card" style="padding:6px 10px;margin-bottom:16px">
+    {% if flags %}
+    <table><tbody>
+    {% for f in flags %}
+      <tr><td>{{ f.flag_label }}</td>
+          <td class="r num">{{ f.c }}</td></tr>
+    {% endfor %}
+    </tbody></table>
+    {% else %}<p class="dim" style="padding:14px 4px">없음</p>{% endif %}
+    </div>
+    <p class="faint" style="font-size:11.5px;margin:-10px 0 16px">
+      자동 판정이 불가능한 항목입니다. 제외되지 않고 표시만 됩니다.
+    </p>
+
+    <h2>수집 로그</h2>
+    <div class="card" style="padding:6px 10px">
+    <table><tbody>
+    {% for s in site_runs %}
+      <tr>
+        <td>{{ s.site }}</td>
+        <td class="faint">{{ s.target_key }}</td>
+        <td class="c">
+          <span class="tag {{ 'down' if s.status=='done'
+                        else 'up' if s.status in ('failed','blocked') }}">
+            {{ s.status }}</span></td>
+        <td class="r num">{{ s.collected }}</td>
+        <td class="faint" style="font-size:11px">
+          {{ s.skip_reason or s.error_msg or '' }}</td>
+      </tr>
+    {% else %}
+      <tr><td class="dim">기록 없음</td></tr>
+    {% endfor %}
+    </tbody></table>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

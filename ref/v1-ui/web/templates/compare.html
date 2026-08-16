@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}비교 · CarWatch{% endblock %}
+{% block body %}
+
+<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
+  <h2 style="margin:0">비교</h2>
+  <span class="dim num">{{ cols|length }} / {{ max_slots }}</span>
+  {% if cols %}
+  <button id="btn-clear" style="margin-left:auto">전체 해제</button>
+  {% endif %}
+</div>
+<p class="faint" style="font-size:11.5px;margin:0 0 14px">
+  항목을 줄이지 않습니다. 화면이 좁으면 가로로 스크롤하십시오.
+  <b>★</b> 는 각 행에서 가장 유리한 값입니다. 신차는 비교에서 제외합니다.
+</p>
+
+{% if not cols %}
+<div class="card" style="padding:26px;text-align:center" class="dim">
+  <div>비교할 매물이 없습니다.</div>
+  <div class="faint" style="margin-top:6px;font-size:12px">
+    후보·매물 목록에서 <b>[⇄ 비교]</b> 를 누르면 여기 담깁니다.
+  </div>
+</div>
+{% else %}
+
+<div style="overflow-x:auto;border:1px solid var(--line);border-radius:8px">
+<table class="cmp" style="min-width:{{ 160 + cols|length * 150 }}px">
+<thead>
+<tr>
+  <th style="width:150px;position:sticky;left:0;background:var(--surface)"></th>
+  {% for c in cols %}
+  <th style="min-width:140px">
+    <div style="display:flex;align-items:center;gap:5px">
+      <b>{{ c.label }}</b>
+      {% if c.is_new %}<span class="tag">신차</span>{% endif %}
+      <button class="x" data-slot="{{ c.slot_no }}"
+        style="margin-left:auto;padding:1px 6px">×</button>
+    </div>
+    <div class="dim" style="font-weight:400;font-size:11.5px">
+      {% if c.is_new %}{{ c.trim or '' }}
+      {% else %}{{ c.it.year_month|ym }}식{% endif %}
+    </div>
+    <button class="fin {{ 'on' if c.is_final }}" data-slot="{{ c.slot_no }}"
+      style="margin-top:4px;padding:2px 7px;font-size:11px">
+      {{ '최종후보 ✓' if c.is_final else '최종후보' }}</button>
+  </th>
+  {% endfor %}
+</tr>
+</thead>
+<tbody>
+
+{% macro row(label, key, fmt='man', hint='') %}
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)"
+      {% if hint %}title="{{ hint }}"{% endif %}>{{ label }}</td>
+  {% for c in cols %}
+  <td class="r num">
+    {% if c.is_new %}
+      {% if key == 'current_price' %}{{ c.price|manwon }}만
+      {% elif key == 'monthly_total' %}{{ '%.1f'|format(c.fin.monthly_total / 10000) }}만
+      {% elif key == 'monthly_used' %}{{ '%.1f'|format(c.fin.monthly_loan / 10000) }}만
+      {% elif key == 'total_cost_10y' %}{{ '%.2f'|format(c.fin.total_cost_10y / 100000000) }}억
+      {% else %}<span class="faint">—</span>{% endif %}
+    {% else %}
+      {% set v = c.it[key] %}
+      {% if v is none %}<span class="faint">—</span>
+      {% else %}
+        {% if best.get(key) == c.slot_no %}<b class="down-v">★ </b>{% endif %}
+        {% if fmt == 'man' %}{{ v|manwon }}만
+        {% elif fmt == 'man1' %}{{ '%.1f'|format(v / 10000) }}만
+        {% elif fmt == 'eok' %}{{ '%.2f'|format(v / 100000000) }}억
+        {% elif fmt == 'km' %}{{ v|km }}km
+        {% elif fmt == 'signman' %}{{ '%+d'|format(v // 10000) }}만
+        {% elif fmt == 'pct' %}{{ v }}%
+        {% else %}{{ v }}{% endif %}
+      {% endif %}
+    {% endif %}
+  </td>
+  {% endfor %}
+</tr>
+{% endmacro %}
+
+{{ row('가격', 'current_price') }}
+{{ row('월 할부', 'monthly_used', 'man1') }}
+{{ row('월 유지비', 'monthly_upkeep', 'man1') }}
+{{ row('월 총액', 'monthly_total', 'man1') }}
+{{ row('10년 총비용', 'total_cost_10y', 'eok',
+       '잔존가치는 차감하지 않습니다') }}
+
+<tr class="sep"><td colspan="{{ cols|length + 1 }}"></td></tr>
+
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">등급</td>
+  {% for c in cols %}
+  <td class="c">
+    {% if c.is_new %}<span class="faint">—</span>
+    {% else %}
+      {% if best.get('condition_grade') == c.slot_no %}<b class="down-v">★</b>{% endif %}
+      <span class="tag {{ 'amber' if c.it.condition_grade == 'A' }}"
+        >{{ c.it.condition_grade or '?' }}</span>
+    {% endif %}</td>
+  {% endfor %}
+</tr>
+{{ row('추천순위', 'recommend_rank', 'raw') }}
+{{ row('사양', 'spec_pct', 'pct',
+       '등급이 아니라 동순위 정렬에 사용') }}
+
+<tr class="sep"><td colspan="{{ cols|length + 1 }}"></td></tr>
+
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">HUD</td>
+  {% for c in cols %}
+  <td class="c">
+    {% if c.is_new %}<span class="faint">—</span>
+    {% elif c.it.opt_hud == 1 %}<span class="tag down">있음</span>
+    {% elif c.it.opt_hud == 0 %}<span class="tag up">없음</span>
+    {% else %}<span class="tag">불명</span>{% endif %}</td>
+  {% endfor %}
+</tr>
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">보증</td>
+  {% for c in cols %}
+  <td class="r num">
+    {% if c.is_new %}<span class="dim">신차</span>
+    {% elif c.it.warranty_gen_left is not none %}
+      {% if best.get('warranty_gen_left') == c.slot_no %}<b class="down-v">★ </b>{% endif %}
+      {{ c.it.warranty_gen_left }}개월
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  {% endfor %}
+</tr>
+{{ row('주행거리', 'mileage', 'km') }}
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">색상 외/내</td>
+  {% for c in cols %}
+  <td class="c dim" style="font-size:12px">
+    {% if c.is_new %}<span class="faint">—</span>
+    {% else %}{{ c.it.color_ext or '?' }}/{{ c.it.color_int or '?' }}{% endif %}</td>
+  {% endfor %}
+</tr>
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">렌트</td>
+  {% for c in cols %}
+  <td class="c dim" style="font-size:12px">
+    {% if c.is_new %}<span class="faint">—</span>
+    {% else %}{{ {'none':'비렌트','past_rental':'과거렌트',
+                  'current_rental':'렌트'}.get(c.it.rental_status, '?') }}{% endif %}</td>
+  {% endfor %}
+</tr>
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">사고</td>
+  {% for c in cols %}
+  <td class="c dim" style="font-size:12px">
+    {% if c.is_new %}<span class="faint">—</span>
+    {% else %}{{ c.it.accident_code or '?' }}{% endif %}</td>
+  {% endfor %}
+</tr>
+
+<tr class="sep"><td colspan="{{ cols|length + 1 }}"></td></tr>
+
+{{ row('시세 대비', 'price_diff', 'signman', '동일조건 중앙값 대비') }}
+<tr>
+  <td class="dim" style="position:sticky;left:0;background:var(--surface)">추천 사유</td>
+  {% for c in cols %}
+  <td style="font-size:11.5px;vertical-align:top">
+    {% if c.is_new %}<span class="faint">—</span>
+    {% else %}
+      {% for ch in c.chips[:4] %}
+      <div class="{{ 'up-v' if ch.type=='fail' else 'dim' }}"
+        >{{ ch.icon }} {{ ch.label }}</div>
+      {% endfor %}
+    {% endif %}</td>
+  {% endfor %}
+</tr>
+<tr>
+  <td style="position:sticky;left:0;background:var(--surface)"></td>
+  {% for c in cols %}
+  <td class="c">
+    {% if not c.is_new %}
+    <a href="/why/{{ c.listing_id }}" class="tag"
+       style="text-decoration:none">상세</a>
+    {% endif %}</td>
+  {% endfor %}
+</tr>
+</tbody>
+</table>
+</div>
+{% endif %}
+
+<style>
+table.cmp { border-collapse:collapse; font-size:12.5px }
+table.cmp th, table.cmp td {
+  padding:7px 10px; border-bottom:1px solid var(--line);
+  text-align:left; vertical-align:middle }
+table.cmp th { background:var(--surface); font-weight:600;
+  border-bottom:1px solid var(--line2, var(--line)) }
+table.cmp tr.sep td { padding:0; height:6px;
+  background:var(--surface2); border:none }
+table.cmp td.r { text-align:right }
+table.cmp td.c { text-align:center }
+button.fin.on { background:var(--amber); color:#111 }
+</style>
+
+<script>
+function post(url, body) {
+  return fetch(url, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body || {})}).then(function (r) { return r.json(); });
+}
+document.querySelectorAll('button.x').forEach(function (b) {
+  b.onclick = function () {
+    post('/api/compare/remove', {slot_no: +b.dataset.slot})
+      .then(function () { location.reload(); });
+  };
+});
+document.querySelectorAll('button.fin').forEach(function (b) {
+  b.onclick = function () {
+    post('/api/compare/final', {slot_no: +b.dataset.slot})
+      .then(function (d) {
+        if (!d.ok) { alert(d.error); return; }
+        location.reload();
+      });
+  };
+});
+var bc = document.getElementById('btn-clear');
+if (bc) bc.onclick = function () {
+  if (!confirm('비교판을 비웁니다.')) return;
+  post('/api/compare/remove', {all: true}).then(function () { location.reload(); });
+};
+</script>
+{% endblock %}

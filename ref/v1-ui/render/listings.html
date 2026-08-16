@@ -1,0 +1,2896 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- ★ 로컬에서 파일로 연 것입니다. 링크는 동작하지 않습니다.
+     배치·색·간격을 보기 위한 것입니다. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>매물 · car_monitor</title>
+<meta http-equiv="refresh" content="30">
+<style>
+/* ─────────────────────────────────────────────────────────
+   야간 계기판. 값을 읽는 도구이지 보여주는 화면이 아니다.
+   숫자는 등폭, 라벨은 작게, 강조는 한 곳에만.
+   ───────────────────────────────────────────────────────── */
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a;          /* 계기판 조명 — 강조는 여기만 */
+  --down:#4fc3a1;           /* 인하 = 좋음 */
+  --up:#e0655f;             /* 인상 = 나쁨 */
+  --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','Cascadia Mono','D2Coding',
+         'Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Segoe UI',
+         'Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:var(--sans); font-size:14px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── 헤더 ── */
+header{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#171c21,#12161a);
+  position:sticky; top:0; z-index:20;
+}
+.hwrap{max-width:1560px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:28px;height:52px}
+.brand{display:flex;align-items:baseline;gap:9px;letter-spacing:-.01em}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase}
+nav{display:flex;gap:2px;margin-left:6px}
+nav a{padding:6px 13px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a:hover{color:var(--text);background:var(--surface2)}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:16px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle}
+.dot.ok{background:var(--down)} .dot.warn{background:var(--amber)}
+.dot.bad{background:var(--up)}  .dot.none{background:var(--faint)}
+
+/* ── 본문 ── */
+main{max-width:1560px;margin:0 auto;padding:22px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:0 0 11px}
+.card{background:var(--surface);border:1px solid var(--line);
+      border-radius:7px;padding:16px 18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1080px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ── 지표 스트립 ── */
+.strip{display:flex;gap:0;border:1px solid var(--line);border-radius:7px;
+       overflow:hidden;background:var(--surface);margin-bottom:18px}
+.stat{flex:1;padding:13px 16px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat .k{font-size:10.5px;letter-spacing:.07em;color:var(--faint);
+         text-transform:uppercase}
+.stat .v{font-family:var(--mono);font-size:22px;font-weight:600;
+         line-height:1.25;margin-top:2px}
+.stat .v small{font-size:11px;color:var(--dim);font-weight:400;
+               margin-left:3px}
+
+/* ── 표 ── */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:7px 9px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:var(--surface2)}
+.r{text-align:right} .c{text-align:center}
+tr.rejected{opacity:.4}
+
+/* ── 배지 ── */
+.tag{display:inline-block;font-size:10.5px;padding:1.5px 6px;
+     border-radius:3px;border:1px solid var(--line2);color:var(--dim);
+     white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.tag.q1{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.q2{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.tag.q3{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.q4{border-color:var(--line2);color:var(--faint)}
+
+/* 클릭해서 목록으로 들어갈 수 있는 값 */
+.cellnum{border-bottom:1px dotted var(--line2);cursor:pointer}
+.cellnum:hover{border-bottom-color:var(--amber);color:var(--amber)!important}
+a.tag{cursor:pointer}
+a.tag:hover{border-color:var(--amber)}
+
+/* 썸네일 */
+.thumb{width:112px;height:78px;border-radius:5px;object-fit:cover;
+       background:var(--surface2);border:1px solid var(--line);flex:none}
+.thumb.sm{width:64px;height:44px;border-radius:4px}
+.thumb-none{display:flex;align-items:center;justify-content:center;
+            font-size:10px;color:var(--faint);text-align:center;
+            line-height:1.3}
+
+/* 마우스 오버 미리보기 */
+#peek{position:fixed;z-index:200;display:none;pointer-events:none;
+      width:290px;background:var(--surface);border:1px solid var(--line2);
+      border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.55);
+      overflow:hidden}
+#peek img{width:100%;height:184px;object-fit:cover;display:block;
+          background:var(--surface2)}
+#peek .pk{padding:10px 12px}
+#peek .pk-t{font-weight:600;font-size:13.5px;margin-bottom:3px}
+#peek .pk-p{font-family:var(--mono);font-size:19px;font-weight:600;
+            line-height:1.2}
+#peek .pk-r{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+#peek .pk-d{font-size:11px;color:var(--dim);margin-top:7px;
+            padding-top:7px;border-top:1px solid var(--line)}
+
+/* 필터 요약 */
+.chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{font-size:11.5px;padding:2px 9px;border-radius:12px;
+      background:var(--surface2);border:1px solid var(--line2);
+      color:var(--text)}
+.chip b{color:var(--amber)}
+
+.up-v{color:var(--up)} .down-v{color:var(--down)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+
+/* ── 폼 ── */
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+     margin-bottom:14px}
+select,button,.btn{
+  background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;
+  padding:5px 11px;font-size:12.5px;font-family:inherit;cursor:pointer}
+select:hover,button:hover,.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);
+        font-weight:600}
+form.inline{display:inline}
+
+/* ── 빈 상태 ── */
+.empty{padding:56px 24px;text-align:center;color:var(--dim)}
+.empty h3{color:var(--text);font-size:16px;margin:0 0 8px;font-weight:600}
+.empty code{background:var(--surface2);padding:3px 8px;border-radius:4px;
+            font-family:var(--mono);font-size:12.5px;color:var(--amber)}
+.empty p{margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>car_monitor</b><span>중고차 시장 관측</span></div>
+    <nav>
+      <a href="/"          class="">현황</a>
+      <a href="/recommend" class="">후보</a>
+      <a href="/listings"  class="on">매물</a>
+      <a href="/watch"     class="">관심</a>
+  <a href="/compare" class="">비교</a>
+      <a href="/dealers"   class="">딜러</a>
+      <a href="/market"    class="">시세</a>
+      <a href="/run"       class="">수집</a>
+      <a href="/reports"   class="">리포트</a>
+    </nav>
+    <div class="hmeta">
+      
+        <span><span class="dot none"></span>수집 이력 없음</span>
+      
+      <span id="runbadge" style="display:none">
+        <span class="dot warn"></span><span id="runphase">실행 중</span>
+      </span>
+      <span class="num">2026-08-14 01:50</span>
+    </div>
+  </div>
+</header>
+<main>
+
+
+<div class="bar">
+  <form class="inline" method="get">
+    <select name="target" onchange="this.form.submit()">
+      <option value="">전체 차종</option>
+      
+      <option value="G80_25T" >G80 2.5T</option>
+      
+      <option value="G80_EV" >G80 전동화</option>
+      
+      <option value="G70_25T" >G70 2.5T</option>
+      
+      <option value="G70_20T" >G70 2.0T</option>
+      
+      <option value="GV70_EV" >GV70 전동화</option>
+      
+      <option value="GV60" >GV60</option>
+      
+      <option value="KOLEOS_HEV" selected>그랑 콜레오스</option>
+      
+      <option value="SPORTAGE_LPI" >스포티지 LPi</option>
+      
+      <option value="GRANDEUR_LPG" >그랜저 GN7 LPG</option>
+      
+      <option value="MODEL_Y" >테슬라 모델Y</option>
+      
+    </select>
+    <select name="grade" onchange="this.form.submit()">
+      <option value="">전체 등급</option>
+      
+      <option value="A" >A등급</option>
+      
+      <option value="B" >B등급</option>
+      
+      <option value="C" >C등급</option>
+      
+      <option value="D" >D등급</option>
+      
+      <option value="E" >E등급</option>
+      
+    </select>
+    <select name="order" onchange="this.form.submit()">
+      <option value="rank"       selected>추천 순위</option>
+      <option value="grade"      >등급순</option>
+      <option value="price"      >가격 낮은순</option>
+      <option value="price_desc" >가격 높은순</option>
+      <option value="mileage"    >주행거리</option>
+      <option value="year"       >연식 최신</option>
+      <option value="new"        >등록 최신</option>
+      <option value="dom"        >오래된 매물</option>
+    </select>
+    
+  </form>
+  <a class="btn on"
+     href="/listings?target=KOLEOS_HEV&order=rank">추천 대상</a>
+  <a class="btn "
+     href="/listings?target=KOLEOS_HEV&order=rank&all=1">E등급 포함</a>
+  <span class="faint num" style="margin-left:6px">30건</span>
+</div>
+
+
+<div class="chips" style="margin:-6px 0 14px">
+  <span class="faint" style="font-size:11.5px">필터</span>
+  <span class="chip">그랑 콜레오스</span>
+  <a href="/listings" class="chip" style="color:var(--dim)">✕ 해제</a>
+</div>
+
+
+<div class="card" style="padding:6px 10px">
+
+<table>
+<thead><tr>
+  <th></th><th class="c">등급</th><th class="c">순위</th>
+  <th>차종</th><th>트림</th>
+  <th class="r">연식</th><th class="r">주행</th>
+  <th class="c">외장</th><th class="c">내장</th>
+  <th class="c">HUD</th><th class="c">보증</th>
+  <th class="c">사고</th><th class="c">보험</th><th class="c">렌트</th>
+  <th class="r">가격</th>
+  <th class="r">시세차</th>
+  <th class="r">월</th><th class="r">변동</th><th class="r">경과</th>
+  <th>딜러</th><th class="r">정직도</th><th>비고</th><th></th>
+</tr></thead>
+<tbody>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,254&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;443점&#34;, &#34;amber&#34;], [&#34;상태 223 · 가격 120 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 23개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;6,318km · 2025-07식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">6,318</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    23m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,254</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142135" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142135">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,343&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;414점&#34;, &#34;amber&#34;], [&#34;상태 214 · 가격 100 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 19개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;43,839km · 2026-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">43,839</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    19m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,343</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142110" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142110">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,237&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;410점&#34;, &#34;amber&#34;], [&#34;상태 210 · 가격 100 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;28,954km · 2025-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">28,954</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,237</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142123" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142123">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,391&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;410점&#34;, &#34;amber&#34;], [&#34;상태 210 · 가격 100 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;13,154km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">13,154</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,391</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142132" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142132">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,750&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;395점&#34;, &#34;amber&#34;], [&#34;상태 225 · 가격 70 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 29개월&#34;, &#34;down&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;14,936km · 2026-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">14,936</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag down"
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    29m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,750</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142116" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142116">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,859&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;395점&#34;, &#34;amber&#34;], [&#34;상태 225 · 가격 70 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 29개월&#34;, &#34;down&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;5,992km · 2026-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">5,992</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag down"
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    29m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,859</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142117" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142117">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,720&#34;, &#34;tags&#34;: [[&#34;B등급&#34;, &#34;down&#34;], [&#34;3순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;393점&#34;, &#34;amber&#34;], [&#34;상태 223 · 가격 70 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 23개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;5,862km · 2025-07식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=B"
+       class="tag down"
+       style="text-decoration:none">B</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=3"
+         class="cellnum"><b>3</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">5,862</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    23m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,720</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142112" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142112">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,239&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;380점&#34;, &#34;amber&#34;], [&#34;상태 210 · 가격 70 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;37,432km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">37,432</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,239</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142124" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142124">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,788&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;365점&#34;, &#34;amber&#34;], [&#34;상태 225 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 29개월&#34;, &#34;down&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;33,584km · 2026-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">33,584</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag down"
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    29m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,788</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142125" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142125">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,815&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;365점&#34;, &#34;amber&#34;], [&#34;상태 225 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 29개월&#34;, &#34;down&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;26,390km · 2026-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">26,390</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag down"
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    29m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,815</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142130" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142130">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,531&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;363점&#34;, &#34;amber&#34;], [&#34;상태 223 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 23개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;38,242km · 2025-07식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">38,242</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    23m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,531</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142126" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142126">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,584&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;354점&#34;, &#34;amber&#34;], [&#34;상태 214 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 19개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;43,977km · 2026-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">43,977</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    19m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,584</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142120" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142120">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,263&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;352점&#34;, &#34;amber&#34;], [&#34;상태 182 · 가격 70 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 6개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;54,691km · 2026-01식 · 외장 white · 내장 black · 미달 주행거리 완화&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">54,691</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    6m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,263</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+      <a href="/listings?fail=MILEAGE&all=1" class="tag"
+         style="text-decoration:none">주행거리 완화</a>
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142118" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142118">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,478&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;351점&#34;, &#34;amber&#34;], [&#34;상태 211 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 18개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;44,578km · 2025-07식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">44,578</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    18m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,478</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142111" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142111">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,617&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;350점&#34;, &#34;&#34;], [&#34;상태 210 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;20,463km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">20,463</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,617</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142139" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142139">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,664&#34;, &#34;tags&#34;: [[&#34;C등급&#34;, &#34;&#34;], [&#34;4순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;350점&#34;, &#34;&#34;], [&#34;상태 210 · 가격 40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;20,357km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=C"
+       class="tag "
+       style="text-decoration:none">C</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=4"
+         class="cellnum"><b>4</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">20,357</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,664</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142113" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142113">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,646&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;324점&#34;, &#34;&#34;], [&#34;상태 214 · 가격 10 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 19개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;43,343km · 2025-07식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">43,343</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    19m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,646</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142127" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142127">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,506&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;314점&#34;, &#34;&#34;], [&#34;상태 204 · 가격 10 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 15개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;46,881km · 2025-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">46,881</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    15m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,506</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142115" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142115">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,720&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;309점&#34;, &#34;&#34;], [&#34;상태 199 · 가격 10 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 13개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;48,992km · 2026-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">48,992</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    13m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,720</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142129" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142129">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,444&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;307점&#34;, &#34;&#34;], [&#34;상태 197 · 가격 10 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 12개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;49,694km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">49,694</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    12m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,444</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142128" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142128">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,408&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;288점&#34;, &#34;&#34;], [&#34;상태 178 · 가격 10 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 4개월&#34;, &#34;up&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;56,123km · 2025-01식 · 외장 black · 내장 black · 미달 주행거리 완화&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">56,123</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    4m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,408</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+      <a href="/listings?fail=MILEAGE&all=1" class="tag"
+         style="text-decoration:none">주행거리 완화</a>
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142119" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142119">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,835&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;274점&#34;, &#34;&#34;], [&#34;상태 214 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 19개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;43,428km · 2025-07식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">43,428</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    19m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,835</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142138" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142138">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,887&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;270점&#34;, &#34;&#34;], [&#34;상태 210 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;32,210km · 2025-01식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">32,210</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,887</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142136" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142136">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,719&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;268점&#34;, &#34;&#34;], [&#34;상태 208 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 17개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;45,274km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">45,274</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    17m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,719</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142137" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142137">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,830&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;261점&#34;, &#34;&#34;], [&#34;상태 201 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 14개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;47,959km · 2025-01식 · 외장 black · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">47,959</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    14m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,830</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142131" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142131">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,831&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;237점&#34;, &#34;&#34;], [&#34;상태 177 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 4개월&#34;, &#34;up&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;56,649km · 2025-07식 · 외장 black · 내장 black · 미달 주행거리 완화&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">56,649</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    4m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,831</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+      <a href="/listings?fail=MILEAGE&all=1" class="tag"
+         style="text-decoration:none">주행거리 완화</a>
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142121" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142121">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,452&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;235점&#34;, &#34;&#34;], [&#34;상태 175 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 3개월&#34;, &#34;up&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;57,467km · 2025-01식 · 외장 black · 내장 black · 미달 주행거리 완화&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/01</td>
+  <td class="r num">57,467</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    3m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,452</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+      <a href="/listings?fail=MILEAGE&all=1" class="tag"
+         style="text-decoration:none">주행거리 완화</a>
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142134" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142134">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,845&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;235점&#34;, &#34;&#34;], [&#34;상태 175 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 3개월&#34;, &#34;up&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;57,488km · 2026-01식 · 외장 black · 내장 black · 미달 주행거리 완화&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">57,488</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    3m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,845</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+      <a href="/listings?fail=MILEAGE&all=1" class="tag"
+         style="text-decoration:none">주행거리 완화</a>
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142122" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142122">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,653&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;213점&#34;, &#34;&#34;], [&#34;상태 153 · 가격 -40 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 0개월&#34;, &#34;up&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;59,818km · 2026-01식 · 외장 black · 내장 black · 미달 주행거리 완화&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">26/01</td>
+  <td class="r num">59,818</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">black</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag up"
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    0m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,653</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+      <a href="/listings?fail=MILEAGE&all=1" class="tag"
+         style="text-decoration:none">주행거리 완화</a>
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142114" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142114">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+<tr class="">
+  <td style="width:70px;padding:4px 6px">
+    <a href="http://x" target="_blank"
+       rel="noopener" data-peek='{&#34;photo&#34;: null, &#34;alts&#34;: [], &#34;title&#34;: &#34;그랑 콜레오스 1.5 E-TECH 아이코닉 2WD&#34;, &#34;price&#34;: &#34;3,974&#34;, &#34;tags&#34;: [[&#34;D등급&#34;, &#34;&#34;], [&#34;5순위&#34;, &#34;down&#34;], [&#34;HUD 있음 (실장착 확인)&#34;, &#34;amber&#34;], [&#34;보증 W1&#34;, &#34;down&#34;], [&#34;무사고&#34;, &#34;down&#34;], [&#34;보험 내차 피해 없음&#34;, &#34;down&#34;], [&#34;비렌트&#34;, &#34;&#34;], [&#34;엔카진단 P1&#34;, &#34;amber&#34;], [&#34;엔카보증&#34;, &#34;down&#34;], [&#34;내차 손해 0만&#34;, &#34;down&#34;], [&#34;204점&#34;, &#34;&#34;], [&#34;상태 204 · 가격 -100 · 사양 60 · 안전 40&#34;, &#34;dim&#34;], [&#34;보증 15개월&#34;, &#34;&#34;], [&#34;이력 비공개&#34;, &#34;up&#34;], [&#34;점검부 확인&#34;, &#34;down&#34;]], &#34;desc&#34;: &#34;46,861km · 2025-07식 · 외장 white · 내장 black&#34;}'>
+      
+      
+        <div class="thumb sm thumb-none">—</div>
+      
+    </a></td>
+  <td class="c">
+    
+    <a href="/listings?target=KOLEOS_HEV&grade=D"
+       class="tag "
+       style="text-decoration:none">D</a></td>
+  <td class="c num">
+    
+      <a href="/recommend?target=KOLEOS_HEV&rank=5"
+         class="cellnum"><b>5</b></a>
+    </td>
+  <td><a href="/listings?target=KOLEOS_HEV&all=1"
+      class="cellnum">그랑 콜레오스</a></td>
+  <td class="dim" style="max-width:190px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">1.5 E-TECH 아이코닉 2WD</td>
+  <td class="r num">25/07</td>
+  <td class="r num">46,861</td>
+  <td class="c"><a href="/listings?axis=color_ext&bucket=mono&all=1"
+    class="tag "
+    style="text-decoration:none">white</a></td>
+  <td class="c">
+    <a href="/listings?axis=color_int&bucket=pref&all=1"
+       class="tag "
+       style="text-decoration:none">black</a></td>
+  <td class="c"><a href="/listings?axis=hud&bucket=1&all=1"
+    class="tag amber" style="text-decoration:none"
+    >HUD</a></td>
+  <td class="c"><a href="/listings?axis=warranty&bucket=W1&all=1"
+    class="tag "
+    style="text-decoration:none"
+    title="W1 · 일반보증 잔여">
+    15m
+    </a></td>
+  <td class="c"><a href="/listings?axis=accident&bucket=AC1&all=1"
+    class="tag down"
+    style="text-decoration:none">AC1</a></td>
+  <td class="c"><a href="/listings?axis=insurance&bucket=I0&all=1"
+    class="tag down"
+    style="text-decoration:none">I0</a></td>
+  <td class="c"><a href="/listings?axis=rental&bucket=none&all=1"
+    class="tag "
+    style="text-decoration:none">
+    비렌트</a></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num dim">
+    <span class="faint">—</span></td>
+  <td class="r num">
+    <b>3,974</b></td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td class="r num dim">4일</td>
+  <td class="faint num" style="font-size:11.5px">
+    —</td>
+  <td class="r num">
+    <span class="faint">—</span></td>
+  <td style="font-size:11px">
+    
+    
+    
+  </td>
+  <td class="r" style="white-space:nowrap">
+    <a href="/why/encar_42142133" class="faint"
+       title="판정 근거">?</a>
+    <a href="http://x" target="_blank" rel="noopener"
+       class="faint" title="엔카에서 보기">↗</a>
+    
+      <form class="inline" method="post"
+            action="/watch/add/encar_42142133">
+        <button style="padding:1px 6px">♡</button></form>
+    
+  </td>
+</tr>
+
+</tbody></table>
+
+</div>
+
+<p class="faint" style="font-size:11.5px;margin-top:12px">
+  가격 뒤 <b>!</b> 는 승계·문의 매물 등 가격 이상치입니다.
+  시세 집계와 후보 목록에서 제외됩니다.<br>
+  가격 단위 만원 · 등급 A=전 축 충족 / E=추천 배제 · 순위 1=A등급+비렌트 ·
+  AC1 무사고 / AC4 골격 / AC5 침수 · I0 보험0원 / I3 200만 초과 ·
+  W1 보증 모두 유효 · 회색 행은 E등급
+</p>
+
+</main>
+
+<div id="peek">
+  <img id="peek-img" alt="">
+  <div class="pk">
+    <div class="pk-t" id="peek-title"></div>
+    <div class="pk-p" id="peek-price"></div>
+    <div class="pk-r" id="peek-tags"></div>
+    <div class="pk-d" id="peek-desc"></div>
+  </div>
+</div>
+
+<script>
+// ── 사진 자동 폴백 ──────────────────────────────────────
+// 서버가 고른 CDN 주소가 틀려도 브라우저가 후보를 순서대로 다시 시도한다.
+// 하나라도 성공하면 그 접두사를 기억해 이후 이미지에 먼저 적용한다.
+window.__photoOk = null;
+
+function photoFallback(img) {
+  var alts;
+  try { alts = JSON.parse(img.getAttribute('data-alts') || '[]'); }
+  catch (e) { alts = []; }
+  var i = parseInt(img.getAttribute('data-alt-i') || '-1', 10) + 1;
+  if (i < alts.length) {
+    img.setAttribute('data-alt-i', i);
+    img.src = alts[i];
+    return;
+  }
+  img.style.display = 'none';
+  if (img.nextElementSibling) img.nextElementSibling.style.display = 'flex';
+}
+
+document.addEventListener('load', function (e) {
+  var img = e.target;
+  if (img.tagName === 'IMG' && img.hasAttribute('data-alts')
+      && window.__photoOk === null) {
+    var m = String(img.currentSrc || img.src)
+      .match(/^(https?:\/\/[^/]+(?:\/carpicture)?)\//);
+    if (m) window.__photoOk = m[1];
+  }
+}, true);
+
+// ── 매물 미리보기 ────────────────────────────────────────
+// data-peek 속성이 붙은 요소에 마우스를 올리면 사진과 요약을 띄운다.
+(function () {
+  var box = document.getElementById('peek');
+  var img = document.getElementById('peek-img');
+  var cur = null;
+
+  function show(el, e) {
+    var d;
+    try { d = JSON.parse(el.getAttribute('data-peek')); } catch (x) { return; }
+    cur = el;
+
+    var src = d.photo;
+    if (!src && d.alts && d.alts.length) src = d.alts[0];
+    if (src) {
+      img.setAttribute('data-alts', JSON.stringify(d.alts || []));
+      img.removeAttribute('data-alt-i');
+      img.onerror = function () { photoFallback(img); };
+      img.src = src; img.style.display = '';
+    } else { img.style.display = 'none'; }
+
+    document.getElementById('peek-title').textContent = d.title || '';
+    document.getElementById('peek-price').textContent =
+      (d.price || '') + (d.price ? '만' : '');
+    document.getElementById('peek-tags').innerHTML =
+      (d.tags || []).map(function (t) {
+        return '<span class="tag ' + (t[1] || '') + '">' + t[0] + '</span>';
+      }).join('');
+    document.getElementById('peek-desc').textContent = d.desc || '';
+
+    box.style.display = 'block';
+    move(e);
+  }
+
+  function move(e) {
+    if (!cur) return;
+    var w = 290, h = box.offsetHeight || 300, pad = 16;
+    var x = e.clientX + pad, y = e.clientY + pad;
+    if (x + w > window.innerWidth - 8) x = e.clientX - w - pad;
+    if (y + h > window.innerHeight - 8) y = window.innerHeight - h - 8;
+    if (y < 8) y = 8;
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  function hide() { cur = null; box.style.display = 'none'; }
+
+  document.addEventListener('mouseover', function (e) {
+    var el = e.target.closest('[data-peek]');
+    if (el) show(el, e);
+  });
+  document.addEventListener('mousemove', function (e) { if (cur) move(e); });
+  document.addEventListener('mouseout', function (e) {
+    var el = e.target.closest('[data-peek]');
+    if (el && el === cur) hide();
+  });
+  document.addEventListener('scroll', hide, true);
+})();
+</script>
+
+<script>
+// 작업이 도는 동안 헤더에 표시하고, 끝나면 화면을 한 번 갱신한다.
+(function () {
+  var was = false;
+  function tick() {
+    fetch('/api/run/status').then(function (r) { return r.json(); })
+      .then(function (s) {
+        var b = document.getElementById('runbadge');
+        if (!b) return;
+        if (s.running) {
+          b.style.display = '';
+          document.getElementById('runphase').textContent =
+            (s.phase || '실행 중') + ' ' + (s.progress || 0) + '%';
+          was = true;
+        } else {
+          b.style.display = 'none';
+          if (was) { was = false; location.reload(); }
+        }
+      }).catch(function () {});
+  }
+  setInterval(tick, 2000); tick();
+})();
+</script>
+<div class="faint" style="text-align:right;font-size:11px;
+     margin:18px 0 8px;padding-right:4px">빌드 2026-08-10.1</div>
+</body>
+</html>

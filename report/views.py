@@ -1,0 +1,298 @@
+# -*- coding: utf-8 -*-
+"""리포트 DTO (L9).
+
+지시서   9장 정의서 · STEP 90 (4층)
+근거     출력은 판정 결과를 그대로 보여주는 것이지 여기서 새로 계산하지 않는다.
+금지     Reporter 가 점수·판정을 계산하는 것.  표시용 파생값(순위·백분위)은 허용.
+         Reporter 가 DB 를 직접 조회하는 것 — DTO 를 받아 형식만 바꾼다.
+"""
+from __future__ import annotations
+
+from contracts import RegressionReport  # noqa: F401
+
+from dataclasses import dataclass
+from datetime import datetime
+
+
+@dataclass(frozen=True)
+class VersionStamp:
+    """coefficient 는 값만으로 부족하다.  coefficient_id 로 이력 행을 가리킨다."""
+
+    parse_version: str
+    dict_version: str
+    calc_version: str
+    coefficient: float | None
+    coefficient_id: int | None
+    calculated_at: datetime | None
+
+
+@dataclass(frozen=True)
+class ReportMeta:
+    run_id: str
+    layer: str  # 'L0' · 'L1' · 'L2' · 'L3'
+    site: str
+    target_key: str | None
+    calc_version: str
+    generated_at: datetime | None
+
+
+@dataclass(frozen=True)
+class AxisView:
+    axis: str  # 'price' · 'spec.hud' 처럼 점 표기
+    label: str
+    value: int | None
+    points: float
+    max_points: int
+    excluded: bool
+    source: str
+    prio: int
+
+
+@dataclass(frozen=True)
+class FinanceView:
+    """점수가 아니라 비용이다 (STEP 91).  점수 축에 넣지 않는다.
+
+    ★ 선납금 1,500만은 취득 부대비용을 포함한 초기 현금 부담이다.
+      표시가에 취득세를 더하고 거기서 선납금을 빼면 취득세가 두 번 반영된다.
+      배분이 먼저다 — 차값 선납 = 선납금 − 부대비용, 원금 = 표시가 − 차값 선납.
+    검산   차값 선납 + 할부 원금 == 표시가
+    """
+
+    price_listed_won: int
+    acquisition_cost_won: int
+    down_payment_won: int  # 초기 현금 부담.  표시가와 무관하게 고정
+    vehicle_down_won: int  # 차값 선납 = 선납금 − 부대비용
+    loan_principal_won: int
+    monthly_payment_won: int
+    total_interest_won: int
+    cash_only: bool
+    shortfall_won: int  # 부대비용 > 선납금 일 때 부족액
+    estimated_items: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class DiagnosisView:
+    """엔카 진단 리포트 (2장 STEP 21b).  ★ 사람이 읽을 문장이다."""
+
+    diagnosed_at: str | None
+    center_name: str | None
+    checker_comment: str | None      # 「외부패널 단순교환 차량」 등
+    outer_panel_comment: str | None
+    item_count: int | None = None        # 판정 부위 수 (소견 제외)
+    replacement_count: int | None = None
+
+
+@dataclass(frozen=True)
+class FetchView:
+    """무엇을 조회했는가 (시안 v2_why).
+
+    ★ 「안 부른 것」과 「불렀는데 못 받은 것」은 다르다.
+      전자는 우리 잘못이고 후자는 그 매물에 없는 것이다 — 사람이 판단에 쓴다
+    """
+    endpoint: str
+    label: str
+    status: str          # 받음 · 없음 · 미조회
+    gives: str           # 이 응답이 무엇을 주는가
+    impact: str | None = None   # 없으면 어느 축이 막히는가
+
+
+@dataclass(frozen=True)
+class CostRow:
+    """비용 비교 한 줄 (시안 v2_why · 중고 ↔ 신차 동일 트림)."""
+    label: str
+    used_won: int | None
+    new_won: int | None
+    note: str | None = None
+
+
+@dataclass(frozen=True)
+class ScoreView:
+    listing_id: int
+    target_key: str
+    grade: str
+    score_total: float          # 555 환산.  ★ 등급 판정에 쓰지 않는다
+    earned: float               # 실배점 합.  denominator 와 같은 자다
+    denominator: float
+    absolute_fail: str | None
+    axes: list[AxisView]
+    versions: VersionStamp
+    finance: FinanceView | None = None
+    # ★ {axis · label · points · reason · source} 사전이다.
+    #   축 이름만 내면 채우면 얼마나 오르는지 알 수 없다 (STEP 149h)
+    pending_items: tuple[dict, ...] = ()
+    # ★ NOT_RATED 사유 3종을 구분한다 (V5-12).  등급만 내지 않는다
+    not_rated_reason: str | None = None
+    # ★ 표시용이다.  점수에 반영하지 않는다 (STEP 21b).
+    #   진단 items 는 outers 와 같은 사실이라 판정에 쓰면 중복 감점이다
+    diagnosis: DiagnosisView | None = None
+    # ★ 무엇을 조회했는가 — 판정의 근거가 어디서 왔는지가 먼저다 (G-1)
+    fetches: tuple[FetchView, ...] = ()
+    # 왜 이 순위인가 — 강점 · 약점
+    strengths: tuple[str, ...] = ()
+    weaknesses: tuple[str, ...] = ()
+    rank: int | None = None
+    # 비용 (중고 ↔ 신차 동일 트림).  ★ 점수에 반영하지 않는다
+    costs: tuple[CostRow, ...] = ()
+    # 참고 자료 — 차종 공통 알려진 문제.  ★ 점수에 반영하지 않는다
+    known_issues: tuple[dict, ...] = ()
+    # ★ 5절 주요 옵션 — 옵션별 탑재 여부 (STEP 149c)
+    options: tuple = ()
+    # ★ 확인 못 한 축을 채웠을 때의 비율·등급 (STEP 149h · D-2)
+    pending_best: dict | None = None
+
+
+
+@dataclass(frozen=True)
+class CollectSummary:
+    listing_count: int
+    endpoint_rates: dict[str, float]
+    status_counts: dict[str, dict[str, int]]
+
+
+@dataclass(frozen=True)
+class ClassifySummary:
+    provisional: int
+    confirmed: int
+    conflict: int
+
+
+@dataclass(frozen=True)
+class PriceSummary:
+    median_actual_won: int
+    median_expected_won: int
+    coefficient: float | None
+    coefficient_id: int | None
+    bucket_counts: dict[str, int]
+
+
+@dataclass(frozen=True)
+class AxisStat:
+    axis: str
+    avg_points: float
+    max_points: int
+    distinct_values: int  # 1 이면 변별력 0 (6장 V3-04)
+    excluded_ratio: float
+    source_counts: dict[str, int]
+
+
+@dataclass(frozen=True)
+class CoefficientChange:
+    target_key: str
+    before: float | None
+    after: float
+    sample_size: int
+    reason: str
+    changed_at: str
+
+
+@dataclass(frozen=True)
+class DictChangeSummary:
+    pending: int
+    confirmed: int
+    retired: int
+    by_axis: dict[str, int]
+
+
+@dataclass(frozen=True)
+class TargetReport:
+    meta: ReportMeta
+    collect: CollectSummary
+    classify: ClassifySummary
+    price: PriceSummary
+    axes: list[AxisStat]
+    grades: dict[str, int]
+    top: list[ScoreView]
+    warnings: list[str]
+
+
+@dataclass(frozen=True)
+class RunStep:
+    """L3 단계 한 줄 (STEP 53).
+
+    ★ 화면이 필드로 읽는다.  튜플로 넘기면 조용히 빈다 (C-3)
+    """
+    step: str
+    expected: str
+    requested: int
+    ok: int
+    not_found: int
+    error: int
+    halted: bool
+
+
+@dataclass(frozen=True)
+class RunReport:
+    meta: ReportMeta
+    steps: list
+    checks: list
+    day_gap: object | None
+    coefficient_changes: list[CoefficientChange]
+    dict_changes: DictChangeSummary
+    unclassified_count: int
+
+
+@dataclass(frozen=True)
+class HaltReport:
+    """L0 — 실패가 아니라 「다음 행동」을 내는 리포트다 (STEP 90).
+
+    completed_steps 를 반드시 낸다.  처음부터 다시 도는 것이 아님을 알 수 있어야 한다.
+    """
+
+    meta: ReportMeta
+    halted_step: str
+    halted_at: datetime | None
+    failures: list  # CheckResult · severity='fatal'
+    actions: dict[str, str]  # code → 다음 행동
+    completed_steps: list  # StepReport · halted=False
+    artifacts: list[str]
+    versions: VersionStamp
+
+
+@dataclass(frozen=True)
+class FixAction:
+    """6장 STEP 62 보정안.  보정은 재파싱으로 한다.  재수집이 아니다."""
+
+    check_code: str
+    action: str  # reparse · rescore · recollect · manual
+    scope: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class NotifyResult:
+    """11장 STEP 116 알림.  cause 가 listing 이 아니면 발송하지 않는다."""
+
+    sent: int
+    skipped_cause: int
+    skipped_duplicate: int
+    failed: int
+
+
+# RegressionReport 는 contracts.py 다 — store/crosssite 도 쓴다 (STEP 15a)
+
+
+@dataclass(frozen=True)
+class ExportResult:
+    filename: str
+    content: bytes
+    content_type: str
+
+
+# ── 값 표시 대조표 (STEP 91) ─────────────────────────────────────────
+# 「해당 없음」과 「없음」을 같은 기호로 쓰지 않는다.
+# v1 은 셋을 섞어 수집 실패가 만점·0점으로 둔갑했다.
+def display_value(value: int | None, excluded: bool, labels: dict) -> str:
+    if value is None and excluded:
+        return labels.get("unknown", "미확인")
+    if value == -1 and excluded:
+        return labels.get("na", "해당 없음")
+    if value is None:
+        return labels.get("unknown", "미확인")
+    return labels.get(str(value), str(value))
+
+
+def display_points(points: float | None, excluded: bool, max_points: int) -> str:
+    """제외 축을 「0점」으로 쓰지 않는다.  — 또는 해당 없음이다."""
+    if excluded:
+        return f"—/{max_points}"
+    return f"{points:g}/{max_points}"

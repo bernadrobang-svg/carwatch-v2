@@ -1,0 +1,130 @@
+/* CarWatch — 단일 CSS (14장 STEP 145 · 145a).  빌드 도구도 JS 도 쓰지 않는다 */
+/* ★ 색 12 · 글꼴 2 밖의 값을 쓰지 않는다 (V11-13).
+   v1 이 이 제약으로 읽기 쉬웠다.  색이 늘면 강조가 사라진다 */
+:root {
+  --bg:#0e1013;  --surface:#161a1e;  --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c;     --faint:#5a626b;
+  --amber:#e8a13a;   /* 계기판 조명 — 강조는 여기 하나뿐 */
+  --down:#4fc3a1;    /* 인하 = 좋음 */
+  --up:#e0655f;      /* 인상 = 나쁨 */
+  --gone:#7d8590;    /* 소진 */
+  --mono:ui-monospace,"SFMono-Regular",Consolas,"D2Coding",monospace;
+  --sans:-apple-system,"Segoe UI","Malgun Gothic",sans-serif;
+}
+* { box-sizing:border-box; }
+body { margin:0; font:15px/1.65 var(--sans); color:var(--text);
+       background:var(--bg); }
+main { padding:20px 24px 40px; }
+a { color:var(--amber); }
+
+.top { display:flex; justify-content:space-between; align-items:center;
+       padding:10px 24px; border-bottom:1px solid var(--line); }
+.brand { font-weight:700; text-decoration:none; letter-spacing:.02em;
+         color:var(--text); }
+.who { color:var(--dim); font-size:13px; }
+.inline { display:inline; }
+
+.nav { display:flex; flex-wrap:wrap; gap:14px; padding:8px 24px;
+       border-bottom:1px solid var(--line); font-size:14px; }
+.nav-item { color:var(--dim); text-decoration:none; }
+.nav-item em { color:var(--faint); font-style:normal; font-size:12px; }
+.locked { color:var(--up); font-size:12px; }
+
+.flash { margin:10px 24px 0; padding:8px 12px; background:var(--surface2);
+         border-left:3px solid var(--down); }
+.banner { margin:10px 24px 0; padding:10px 12px; border-left:3px solid;
+          background:var(--surface); }
+.banner-unclassified { border-color:var(--amber); }
+.banner-pending      { border-color:var(--faint); }
+.banner-halted       { border-color:var(--up); }
+.banner-action { color:var(--dim); margin-left:8px; }
+.notice { padding:10px 12px; background:var(--surface); border-left:3px solid var(--amber);
+          margin:0 0 14px; }
+
+table { border-collapse:collapse; width:100%; font-size:14px; }
+th, td { border-bottom:1px solid var(--line); padding:7px 9px; text-align:left; }
+th { font-weight:600; color:var(--dim); }
+/* ★ 숫자가 표에 들어가면 mono 다.  예외 없다 (V11-14) */
+td.num, .num { text-align:right; font-family:var(--mono);
+               font-variant-numeric:tabular-nums; }
+
+/* 축 칩 4종 (10장) */
+/* 축 3상태.  ★ 「없음」과 「모름」을 눈으로 가른다 (STEP 149f) */
+.axis-good    { }
+.axis-bad     { }
+.axis-unknown { }
+.ratio        { font-size:1.15em; }
+.raw          { font-size:.82em; color:var(--dim); margin-left:.3em; }
+.denom-short  { color:var(--amber); }
+.bar          { display:inline-block; width:44px; height:4px;
+                background:var(--line); vertical-align:middle;
+                margin-left:.4em; }
+.bar i        { display:block; height:100%; background:var(--accent); }
+
+.chip-good    { color:var(--down); }
+.chip-bad     { color:var(--up); }
+.chip-muted   { color:var(--dim); }
+.chip-unknown { color:var(--faint); font-style:italic; }
+.excluded     { color:var(--faint); }
+.muted        { color:var(--dim); }
+
+/* 알려진 문제 3종 (부록 B).  ★ 점수에 반영하지 않는다 — 참고 자료다 */
+.issue-critical { color:var(--up); font-weight:600; }
+.issue-major    { color:var(--amber); }
+.issue-minor    { color:var(--dim); }
+
+/* 경고 3종 (7장 82d) */
+.warn-block { color:var(--up); font-weight:600; }
+.warn-warn  { color:var(--amber); }
+.warn-info  { color:var(--dim); }
+
+/* 등급 — ★ 색을 쓰지 않는다.  글자와 위치로 구분한다 (STEP 145a) */
+.grade-s, .grade-a, .grade-b, .grade-c, .grade-d, .grade-e, .grade-none {
+  display:inline-block; min-width:22px; text-align:center; padding:1px 6px;
+  border:1px solid var(--line2); border-radius:3px; font-weight:700;
+  font-family:var(--mono); }
+.grade-s, .grade-a { border-color:var(--amber); }
+.grade-e { color:var(--dim); }
+.grade-none { color:var(--faint); }
+
+.ver { display:flex; gap:16px; padding:10px 24px; border-top:1px solid var(--line);
+       color:var(--faint); font-size:12px; font-family:var(--mono); }
+.error .reason { font-size:16px; }
+.error .action { color:var(--amber); }
+.runid { color:var(--faint); font-size:12px; font-family:var(--mono); }
+
+/* 후보 카드 (10장 · 시안 v2_recommend) */
+.cand { border:1px solid var(--line); border-radius:4px; padding:12px 14px;
+        margin:0 0 12px; background:var(--surface); }
+.cand header { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+.cand .price { margin-left:auto; font-weight:700; font-family:var(--mono); }
+.cand .meta { margin:4px 0 8px; font-size:13px; }
+.cand p { margin:5px 0; font-size:14px; }
+.cand b { margin-right:6px; color:var(--dim); font-weight:600; }
+.cand span[class^="chip-"] { display:inline-block; padding:1px 7px;
+        border-radius:3px; margin:0 4px 3px 0; font-size:13px;
+        background:var(--surface2); }
+.legend { margin-top:14px; font-size:13px; }
+.pending li { color:var(--amber); }
+.score .muted { margin-left:10px; font-size:13px; }
+
+/* 진단 판정 문장 (2장 STEP 21b) — 표시용이다 */
+.diag-verdict { padding:9px 12px; background:var(--surface2);
+                border-left:3px solid var(--faint); }
+
+.mini { font-size:12px; padding:1px 6px; }
+form.inline { display:inline; margin-left:6px; }
+label { display:block; margin:6px 0; }
+input, textarea, button { font:inherit; background:var(--surface2);
+        color:var(--text); border:1px solid var(--line2); border-radius:3px;
+        padding:4px 7px; }
+button { cursor:pointer; }
+.opt { display:block; padding:3px 0; }
+pre, code { background:var(--surface2); font-family:var(--mono); }
+pre { padding:8px 10px; overflow-x:auto; }
+.chip { display:inline-block; padding:2px 8px; margin:0 5px 4px 0;
+        background:var(--surface2); border:1px solid var(--line2);
+        border-radius:3px; text-decoration:none; font-size:13px; }
+.stat { list-style:none; padding:0; display:flex; gap:20px; }
+.toc li { color:var(--dim); }

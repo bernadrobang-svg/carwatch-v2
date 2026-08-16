@@ -1,0 +1,1559 @@
+{
+  "_ref": "지시서 8장 STEP 87 등록 예 · blocked 표",
+  "_note": "★ 전량은 sync_registry 가 RAW 에서 생성한다. 여기 있는 것은 판정이 필요한 것뿐이다. 시드를 손으로 늘리지 않는다",
+  "_pending_approval": "STEP 6 config 키 전량 표에 field_usage.json 행 추가 필요",
+  "seed": {
+    "list:HomeServiceVerification": {
+      "usage": "unused_by_policy",
+      "core_column": "site_home_verify",
+      "reason": "엔카 배송 서비스 이용 여부. 차량 품질이 아니다"
+    },
+    "list:Advances": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "list:Deposit": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "list:Photos[].updatedDate": {
+      "usage": "unused_by_policy",
+      "reason": "사진 갱신 시각"
+    },
+    "detail:advertisement.preVerified": {
+      "usage": "unused_by_policy",
+      "reason": "엔카 마케팅 배지"
+    },
+    "detail:advertisement.encarCheck": {
+      "usage": "not_provided",
+      "reason": "전건 False. 변별력 0"
+    },
+    "detail:advertisement.meetGo": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:advertisement.homeService": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:manage.viewCount": {
+      "usage": "display_only",
+      "core_column": "view_cnt",
+      "reason": "인기도. 화면 표시"
+    },
+    "detail:manage.subscribeCount": {
+      "usage": "display_only",
+      "core_column": "subscribe_cnt",
+      "reason": "인기도. 화면 표시"
+    },
+    "detail:advertisement.underBodyPhotos[]": {
+      "usage": "display_only",
+      "core_column": "photo_underbody_json",
+      "reason": "하부 사진"
+    },
+    "inspection:inners[]": {
+      "usage": "display_only",
+      "core_column": "inspection_inner_json",
+      "reason": "내부 점검 40종. 전건 「양호」로 변별력 0 (STEP 67)"
+    },
+    "inspection:master.detail.comments": {
+      "usage": "display_only",
+      "core_column": "inspection_comment",
+      "reason": "점검 소견 텍스트"
+    },
+    "inspection:master.detail.motorType": {
+      "usage": "in_use",
+      "core_column": "motor_type_code",
+      "reason": "차종 검증 전용. 점수 축이 아니다"
+    },
+    "inspection:etcs[]": {
+      "usage": "deferred",
+      "core_column": "inspection_etc_json",
+      "reason": "미분석",
+      "use_when": "8차종 수집 완료 후 경로 전수",
+      "priority": 3
+    },
+    "inspection:master.detail.engineCheck": {
+      "usage": "blocked",
+      "reason": "값 분포 미확인",
+      "unblock_condition": "값 분포 확인 후 안전 축 편입 판단",
+      "priority": 2
+    },
+    "inspection:master.detail.trnsCheck": {
+      "usage": "blocked",
+      "reason": "값 분포 미확인",
+      "unblock_condition": "값 분포 확인 후 안전 축 편입 판단",
+      "priority": 2
+    },
+    "diagnosis:*": {
+      "usage": "blocked",
+      "reason": "원문 0건",
+      "unblock_condition": "진단 API 원문 확보 후 경로 전수",
+      "priority": 1
+    },
+    "record:*": {
+      "usage": "blocked",
+      "reason": "v1 원문 오염",
+      "unblock_condition": "이력 재수집. 유효 원문 비율은 등록 시점 실측값",
+      "priority": 1
+    },
+    "catalog:[].description": {
+      "usage": "not_provided",
+      "reason": "관측 7건 전건 null·false"
+    },
+    "detail:advertisement": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:advertisement.advertisementType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.deemedExtendWarranty": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.diagnosisCar": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.encarPassCategoryType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.encarPassType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.extendWarranty": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.hasUnderBodyPhoto": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.hotMark": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:advertisement.leaseRentInfo": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.leaseRentInfo.advancePrice": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "detail:advertisement.leaseRentInfo.depositPrice": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "detail:advertisement.leaseRentInfo.monthlyFee": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "detail:advertisement.leaseRentInfo.residualMonth": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "detail:advertisement.preDelivery": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:advertisement.price": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.trust": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:advertisement.underBodyPhotos": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.underBodyPhotos[].photoPath": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.underBodyPhotos[].photoType": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.underBodyPhotos[].photoUrl": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:category.gradeDetailCd": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:category.gradeDetailEnglishName": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:category.gradeDetailName": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:category.gradeName": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.jatoVehicleId": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.originPrice": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.warranty": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:category.warranty.bodyMileage": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.warranty.bodyMonth": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.warranty.companyName": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:category.warranty.transmissionMileage": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.warranty.transmissionMonth": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.warranty.userDefined": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:condition": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:condition.accident": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:condition.accident.recordView": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:condition.accident.resumeView": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:condition.inspection": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:condition.inspection.formats": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:condition.seizing": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:condition.seizing.pledgeCount": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:condition.seizing.seizingCount": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:contact": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:contact.address": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:contact.isVerifyOwner": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:contact.no": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:contents": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:contents.meetGoText": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식. 차량 품질이 아니다"
+    },
+    "detail:contents.text": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:manage": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:manage.dummy": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:manage.dummyVehicleId": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:manage.firstAdvertisedDateTime": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:manage.modifyDateTime": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:manage.registDateTime": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:options": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:options.choice": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:options.etc": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:options.standard": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:options.tuning": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:partnership.brand": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:partnership.certifiedBrand": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:partnership.dealer": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:partnership.dealer.firm": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.diagnosisCenters": {
+      "usage": "not_provided",
+      "reason": "관측 531건 전건 null·false"
+    },
+    "detail:partnership.dealer.firm.diagnosisCenters[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.diagnosisCenters[].name": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.meetgoCenters": {
+      "usage": "not_provided",
+      "reason": "관측 531건 전건 null·false"
+    },
+    "detail:partnership.dealer.firm.meetgoCenters[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.meetgoCenters[].name": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.name": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.name": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.lease": {
+      "usage": "unused_by_policy",
+      "reason": "리스 금융. 구매 대상이 아니다"
+    },
+    "detail:partnership.rent": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:partnership.testdrive": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:partnership.testdrive.active": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:photos": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:photos[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:photos[].desc": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:photos[].path": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:photos[].type": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:photos[].updateDateTime": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:spec.colorName": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.displacement": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.fuelName": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.mileage": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.tradeType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:vehicleNo": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:view": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:view.encarDiagnosis": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:view.hasEvBatteryInfo": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:view.isBatteryCompensable": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:view.isBatteryPass": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:view.isSingleAd": {
+      "usage": "not_provided",
+      "reason": "관측 612건 전건 null·false"
+    },
+    "detail:view.photoPlus": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "detail:vin": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:directManagement": {
+      "usage": "not_provided",
+      "reason": "관측 333건 전건 null·false"
+    },
+    "inspection:etcs": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].exists": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].statusItemTypes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].statusItemTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].statusItemTypes[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].statusTypes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].children[].type.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:etcs[].type.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:formats": {
+      "usage": "not_provided",
+      "reason": "관측 333건 전건 null·false"
+    },
+    "inspection:images": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:images[].path": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:images[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:images[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].description": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].statusItemTypes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].statusItemTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].statusItemTypes[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].statusType": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].statusType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].statusType.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].children[].type.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].description": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].statusItemTypes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].statusItemTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].statusItemTypes[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].statusType": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].statusType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].statusType.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].children[].type.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].price": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inners[].type.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inspectionSource": {
+      "usage": "not_provided",
+      "reason": "관측 333건 전건 null·false"
+    },
+    "inspection:inspectionSource.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master": {
+      "usage": "not_provided",
+      "reason": "관측 333건 전건 null·false"
+    },
+    "inspection:master.accdient": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.boardStateType": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.boardStateType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.carStateType": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.carStateType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.colorType": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.colorType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.firstRegistrationDate": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.guarantyType": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.guarantyType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.issueDate": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.mainOptionTypes": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.mileage": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.mileageStateType": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.paintPartTypes": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.performTester": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.recall": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.recallFullFillTypes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.recallFullFillTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.recallFullFillTypes[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.seriousTypes": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.smout": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.transmissionType": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.transmissionType.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.tuning": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.tuningStateTypes": {
+      "usage": "not_provided",
+      "reason": "관측 324건 전건 null·false"
+    },
+    "inspection:master.detail.usageChangeTypes": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.usageChangeTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.usageChangeTypes[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.validityEndDate": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.validityStartDate": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.vin": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.waterlog": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.simpleRepair": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].attributes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].statusTypes": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].statusTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].statusTypes[].title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].type": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:outers[].type.title": {
+      "usage": "in_use",
+      "reason": "컨테이너를 통째로 저장한다 (STEP 32). 원문 그대로 CORE 에",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:price": {
+      "usage": "not_provided",
+      "reason": "관측 333건 전건 null·false"
+    },
+    "list:AdType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Badge": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:BuyType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Color": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:ColorExpression": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Condition": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:DealerPhoto": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:FormYear": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:FuelType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Hotmark": {
+      "usage": "unused_by_policy",
+      "reason": "엔카 마케팅 표시. 차량 품질이 아니다"
+    },
+    "list:Id": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Manufacturer": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Mileage": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:MobileAdWords": {
+      "usage": "unused_by_policy",
+      "reason": "엔카 마케팅 표시. 차량 품질이 아니다"
+    },
+    "list:Model": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:ModelGroup": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:OfficeCityState": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Photo": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Photos": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Photos[].location": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "list:Photos[].ordering": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "list:Photos[].type": {
+      "usage": "display_only",
+      "reason": "사진. 화면 표시",
+      "core_column": "(확인 필요)"
+    },
+    "list:Price": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:SalesStatus": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:SeatColor": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:SeatColorExpression": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:SellType": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Separation": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:ServiceCopyCar": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:ServiceMark": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Transmission": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Trust": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "list:Year": {
+      "usage": "in_use",
+      "reason": "파서가 읽는 경로 (2장 STEP 20 매핑표)",
+      "core_column": "(확인 필요)"
+    },
+    "catalog:[].optionCd": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "catalog:[].optionName": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "catalog:[].price": {
+      "usage": "display_only",
+      "reason": "옵션 가격.  참조만 (STEP 80)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.directInspected": {
+      "usage": "deferred",
+      "reason": "직영 진단.  안전 축 후보",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "detail:advertisement.oneLineText": {
+      "usage": "display_only",
+      "reason": "광고 문구는 판정 근거로 쓰지 않는다 (STEP 14)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.salesStatus": {
+      "usage": "in_use",
+      "reason": "CONTRACT = 계약 중.  상태 판정",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.status": {
+      "usage": "display_only",
+      "reason": "광고 문구는 판정 근거로 쓰지 않는다 (STEP 14)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:advertisement.type": {
+      "usage": "unused_by_policy",
+      "reason": "전건 CAR"
+    },
+    "detail:advertisement.warrantyStyleColor": {
+      "usage": "unused_by_policy",
+      "reason": "배지 색상.  표시 스타일"
+    },
+    "detail:category.domestic": {
+      "usage": "display_only",
+      "reason": "국산·수입 구분",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.formYear": {
+      "usage": "in_use",
+      "reason": "형식연도.  yearMonth 와 대조",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.gradeCd": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.gradeEnglishName": {
+      "usage": "unused_by_policy",
+      "reason": "한글명이 정본이다"
+    },
+    "detail:category.importType": {
+      "usage": "display_only",
+      "reason": "국산·수입 구분",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.manufacturerCd": {
+      "usage": "display_only",
+      "reason": "코드.  이름과 대조 재료로 남긴다",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.manufacturerEnglishName": {
+      "usage": "unused_by_policy",
+      "reason": "한글명이 정본이다"
+    },
+    "detail:category.manufacturerName": {
+      "usage": "in_use",
+      "reason": "분류가 쓴다 (STEP 46 · 가이드 B)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.modelCd": {
+      "usage": "display_only",
+      "reason": "코드.  이름과 대조 재료로 남긴다",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.modelGroupCd": {
+      "usage": "display_only",
+      "reason": "코드.  이름과 대조 재료로 남긴다",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.modelGroupEnglishName": {
+      "usage": "unused_by_policy",
+      "reason": "한글명이 정본이다"
+    },
+    "detail:category.modelGroupName": {
+      "usage": "in_use",
+      "reason": "분류가 쓴다 (STEP 46 · 가이드 B)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.modelName": {
+      "usage": "in_use",
+      "reason": "분류가 쓴다 (STEP 46 · 가이드 B)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:category.type": {
+      "usage": "unused_by_policy",
+      "reason": "전건 CAR"
+    },
+    "detail:category.yearMonth": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:contact.contactType": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:contact.isOwnerPartner": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:contact.userId": {
+      "usage": "display_only",
+      "reason": "딜러 식별자",
+      "core_column": "(확인 필요)"
+    },
+    "detail:contact.userType": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:manage.reRegistered": {
+      "usage": "display_only",
+      "reason": "사이트 값.  판정은 vehicle_identity 가 한다 (STEP 112)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:manage.webReserved": {
+      "usage": "display_only",
+      "reason": "사이트 값.  판정은 vehicle_identity 가 한다 (STEP 112)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:options.type": {
+      "usage": "unused_by_policy",
+      "reason": "전건 CAR"
+    },
+    "detail:partnership.dealer.firm.diag2Partnered": {
+      "usage": "display_only",
+      "reason": "진단 제휴 여부",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.firm.diagnosisCenters[].address": {
+      "usage": "unused_by_policy",
+      "reason": "딜러가 쓰는 센터.  차량 품질이 아니다.  개인정보 인접 (STEP 35)"
+    },
+    "detail:partnership.dealer.firm.diagnosisCenters[].major": {
+      "usage": "unused_by_policy",
+      "reason": "딜러가 쓰는 센터.  차량 품질이 아니다.  개인정보 인접 (STEP 35)"
+    },
+    "detail:partnership.dealer.firm.diagnosisCenters[].telephoneNumber": {
+      "usage": "unused_by_policy",
+      "reason": "딜러가 쓰는 센터.  차량 품질이 아니다.  개인정보 인접 (STEP 35)"
+    },
+    "detail:partnership.dealer.firm.meetgoCenters[].address": {
+      "usage": "unused_by_policy",
+      "reason": "딜러가 쓰는 센터.  차량 품질이 아니다.  개인정보 인접 (STEP 35)"
+    },
+    "detail:partnership.dealer.firm.meetgoCenters[].major": {
+      "usage": "unused_by_policy",
+      "reason": "딜러가 쓰는 센터.  차량 품질이 아니다.  개인정보 인접 (STEP 35)"
+    },
+    "detail:partnership.dealer.firm.meetgoCenters[].telephoneNumber": {
+      "usage": "unused_by_policy",
+      "reason": "딜러가 쓰는 센터.  차량 품질이 아니다.  개인정보 인접 (STEP 35)"
+    },
+    "detail:partnership.dealer.userId": {
+      "usage": "display_only",
+      "reason": "딜러 식별자",
+      "core_column": "(확인 필요)"
+    },
+    "detail:partnership.dealer.visitReservation": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:partnership.isPartneredVehicle": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:partnership.rent.companyId": {
+      "usage": "deferred",
+      "reason": "렌트사 ID.  렌트 판정 보조 (STEP 78)",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "detail:partnership.rent.originCompanyId": {
+      "usage": "deferred",
+      "reason": "렌트사 ID.  렌트 판정 보조 (STEP 78)",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "detail:spec.bodyName": {
+      "usage": "deferred",
+      "reason": "전 차종 분포를 보고 정한다",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "detail:spec.customColor": {
+      "usage": "in_use",
+      "reason": "전 차종 33종.  색상 판정 보조 (STEP 80)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.fuelCd": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.seatCount": {
+      "usage": "deferred",
+      "reason": "전 차종 분포를 보고 정한다",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "detail:spec.tradeCompanyName": {
+      "usage": "unused_by_policy",
+      "reason": "전건 null"
+    },
+    "detail:spec.tradeOwnerType": {
+      "usage": "deferred",
+      "reason": "전 차종 분포를 보고 정한다",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "detail:spec.transmissionName": {
+      "usage": "display_only",
+      "reason": "전 차종 2종.  변별력 낮음",
+      "core_column": "(확인 필요)"
+    },
+    "detail:spec.type": {
+      "usage": "unused_by_policy",
+      "reason": "전건 CAR"
+    },
+    "detail:vehicleId": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "detail:vehicleType": {
+      "usage": "unused_by_policy",
+      "reason": "전건 CAR"
+    },
+    "detail:view.encarMeetGo": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "detail:view.meetgoExpertAvailable": {
+      "usage": "unused_by_policy",
+      "reason": "거래 방식"
+    },
+    "inspection:inspectionSource.inspectionVersion": {
+      "usage": "display_only",
+      "reason": "점검 양식 버전",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:inspectionSource.registrantId": {
+      "usage": "unused_by_policy",
+      "reason": "점검 등록자 식별자"
+    },
+    "inspection:inspectionSource.reservationId": {
+      "usage": "unused_by_policy",
+      "reason": "점검 등록자 식별자"
+    },
+    "inspection:inspectionSource.updaterId": {
+      "usage": "unused_by_policy",
+      "reason": "점검 등록자 식별자"
+    },
+    "inspection:master.detail.boardStateType.title": {
+      "usage": "display_only",
+      "reason": "점검 표시값",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.carStateType.title": {
+      "usage": "display_only",
+      "reason": "점검 표시값",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.colorType.title": {
+      "usage": "display_only",
+      "reason": "점검 표시값",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.coout": {
+      "usage": "deferred",
+      "reason": "전 차종 분포를 보고 정한다",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "inspection:master.detail.guarantyType.title": {
+      "usage": "display_only",
+      "reason": "점검 표시값",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.hcout": {
+      "usage": "deferred",
+      "reason": "전 차종 분포를 보고 정한다",
+      "use_when": "전 차종 수집 후 분포 확인"
+    },
+    "inspection:master.detail.inspName": {
+      "usage": "unused_by_policy",
+      "reason": "★ 개인 실명이 섞인다.  CORE 에 넣지 않는다 (STEP 35)"
+    },
+    "inspection:master.detail.modelYear": {
+      "usage": "display_only",
+      "reason": "점검 양식 버전",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.noticeName": {
+      "usage": "unused_by_policy",
+      "reason": "★ 개인 실명이 섞인다.  CORE 에 넣지 않는다 (STEP 35)"
+    },
+    "inspection:master.detail.recordNo": {
+      "usage": "display_only",
+      "reason": "점검 문서 번호",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.transmissionType.title": {
+      "usage": "display_only",
+      "reason": "점검 표시값",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.detail.version": {
+      "usage": "display_only",
+      "reason": "점검 양식 버전",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.registrationDate": {
+      "usage": "in_use",
+      "reason": "점검일.  최근 점검 여부·주행거리 조작 판정 (STEP 82d)",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:master.supplyNum": {
+      "usage": "display_only",
+      "reason": "점검 문서 번호",
+      "core_column": "(확인 필요)"
+    },
+    "inspection:vehicleId": {
+      "usage": "in_use",
+      "reason": "판정 근거 (가이드 A)",
+      "core_column": "(확인 필요)"
+    },
+    "list:LeaseType": {
+      "usage": "in_use",
+      "core_column": "lease_type",
+      "reason": "리스·렌트 구분. E등급 절대조건 판정 (7장 STEP 82)"
+    },
+    "list:MonthLeasePrice": {
+      "usage": "unused_by_policy",
+      "reason": "리스 월납입금. 리스 매물은 E등급이라 점수화하지 않는다"
+    },
+    "list:MonthLeaseRest": {
+      "usage": "unused_by_policy",
+      "reason": "리스 잔여 회차. 위와 같다"
+    },
+    "list:HomeServiceProgress": {
+      "usage": "unused_by_policy",
+      "reason": "엔카 배송 서비스 진행 상태. 거래 방식이지 차량 품질이 아니다"
+    }
+  },
+  "not_provided": {
+    "-:판매가·판매일": {
+      "usage": "not_provided",
+      "reason": "엔카는 판매 결과를 주지 않는다"
+    },
+    "-:실거래가": {
+      "usage": "not_provided",
+      "reason": "호가만 제공. 감가 곡선의 한계로 명시 (STEP 70)"
+    },
+    "-:틴팅 시공 여부": {
+      "usage": "not_provided",
+      "reason": "contents.text 키워드로 대체 (STEP 75)"
+    }
+  },
+  "default": {
+    "usage": "unclassified",
+    "reason": "sync_registry 자동 적재. 사람이 분류해야 한다"
+  },
+  "ghost_miss_limit": 3,
+  "_applied": "첫 수집 302경로 분류 반영 (가이드 BJY_등록부판단_91건_20260811). deferred 8건은 전 차종 수집 후 재판정한다"
+}

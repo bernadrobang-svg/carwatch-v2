@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% set page = 'dealer' %}
+{% block title %}딜러 · car_monitor{% endblock %}
+{% block body %}
+
+<div class="strip">
+  <div class="stat"><div class="k">Q1 신뢰·다물량</div>
+    <div class="v" style="color:var(--amber)">{{ quadrants.get('Q1', 0) }}
+      <small>협상 1순위</small></div></div>
+  <div class="stat"><div class="k">Q2 물량만</div>
+    <div class="v up-v">{{ quadrants.get('Q2', 0) }}<small>낚시 의심</small></div></div>
+  <div class="stat"><div class="k">Q3 소수정예</div>
+    <div class="v down-v">{{ quadrants.get('Q3', 0) }}<small>놓치면 아쉬움</small></div></div>
+  <div class="stat"><div class="k">Q4 회피</div>
+    <div class="v faint">{{ quadrants.get('Q4', 0) }}</div></div>
+  <div class="stat"><div class="k">점수 산출</div>
+    <div class="v">{{ scored|length }}<small>/ {{ dealers|length }}명</small></div></div>
+</div>
+
+{% if scored %}
+<h2>정직도 × 물량</h2>
+<div class="card" style="margin-bottom:20px">
+  <svg viewBox="0 0 640 300" style="width:100%;height:300px">
+    <!-- 사분면 -->
+    <line x1="320" y1="10" x2="320" y2="278" stroke="#333b44"
+          stroke-dasharray="3 3"/>
+    <line x1="30" y1="144" x2="620" y2="144" stroke="#333b44"
+          stroke-dasharray="3 3"/>
+    <text x="612" y="24"  fill="#5a626b" font-size="10" text-anchor="end">Q1 신뢰·다물량</text>
+    <text x="36"  y="24"  fill="#5a626b" font-size="10">Q3 소수정예</text>
+    <text x="612" y="272" fill="#5a626b" font-size="10" text-anchor="end">Q2 물량만</text>
+    <text x="36"  y="272" fill="#5a626b" font-size="10">Q4 회피</text>
+    <text x="325" y="294" fill="#5a626b" font-size="10">물량 →</text>
+    <text x="8" y="18" fill="#5a626b" font-size="10">정직도 ↑</text>
+    {% for d in scored %}
+      {% set cx = 30 + (d.volume_score or 0) * 5.9 %}
+      {% set cy = 278 - (d.honesty_score or 0) * 2.68 %}
+      <circle cx="{{ cx|round(1) }}" cy="{{ cy|round(1) }}"
+        r="{{ 2.5 + (d.total_listings or 1)|float ** 0.5 }}"
+        fill="{{ '#e8a13a' if d.quadrant=='Q1'
+              else '#4fc3a1' if d.quadrant=='Q3'
+              else '#e0655f' if d.quadrant=='Q2' else '#5a626b' }}"
+        fill-opacity="0.55" stroke="none">
+        <title>{{ d.dealer_id|replace('encar:','') }} · 정직 {{ d.honesty_score }} · {{ d.total_listings }}건</title>
+      </circle>
+    {% endfor %}
+  </svg>
+  <p class="faint" style="font-size:11.5px;margin:6px 0 0">
+    원 크기는 보유 매물 수 · 기준선은 고정값이 아니라 전체 딜러 분포의 중앙값
+  </p>
+</div>
+{% endif %}
+
+<h2>딜러 목록</h2>
+<div class="card" style="padding:6px 10px">
+{% if dealers %}
+<table>
+<thead><tr>
+  <th>딜러</th><th>상호</th><th>지역</th><th class="r">경력</th>
+  <th class="c">분면</th><th class="r">정직도</th><th class="r">물량</th>
+  <th class="r">누적판매</th><th class="r">최근1년</th><th class="r">판매중</th>
+  <th class="r">보유</th>
+  <th class="r">평균 인하</th><th class="r">인하율</th>
+  <th class="r">재등록</th><th class="r">인상률</th><th class="r">평균 DOM</th>
+</tr></thead>
+<tbody>
+{% for d in dealers %}
+<tr class="{{ 'rejected' if not d.sample_sufficient }}">
+  <td class="num">{{ d.dealer_id|replace('encar:','') }}
+    {% if d.dealer_name %}<span class="faint">{{ d.dealer_name }}</span>{% endif %}
+    {% if d.certified %}<span class="tag down" title="본인인증">✓</span>{% endif %}</td>
+  <td class="dim" style="max-width:150px;overflow:hidden;
+      text-overflow:ellipsis;white-space:nowrap">
+    {{ d.company_name or d.nickname or '—' }}</td>
+  <td class="dim">{{ (d.sido or '') }} {{ d.sigungu or '' }}</td>
+  <td class="r num dim">
+    {% if d.career_years %}{{ d.career_years|round|int }}년
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="c">
+    {% if d.sample_sufficient %}
+      <span class="tag {{ d.quadrant|lower }}">{{ d.quadrant }}</span>
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num">{% if d.sample_sufficient %}<b>{{ d.honesty_score|round|int }}</b>
+    {% else %}<span class="faint">표본부족</span>{% endif %}</td>
+  <td class="r num dim">{{ d.volume_score|round|int if d.volume_score else '—' }}</td>
+  <td class="r num">
+    {% if d.total_sales %}{{ '{:,}'.format(d.total_sales) }}
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num">
+    {% if d.recent_year_sales %}<b>{{ d.recent_year_sales }}</b>
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num dim">{{ d.currently_on_sales or '—' }}</td>
+  <td class="r num dim">{{ d.total_listings }}</td>
+  <td class="r num">
+    {% if d.avg_price_drop %}{{ (d.avg_price_drop * 100)|round(1) }}%
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num dim">
+    {% if d.drop_event_rate %}{{ (d.drop_event_rate * 100)|round|int }}%
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num {{ 'up-v' if d.relist_count }}">{{ d.relist_count }}</td>
+  <td class="r num {{ 'up-v' if d.price_up_rate and d.price_up_rate > 0.05 }}">
+    {% if d.price_up_rate %}{{ (d.price_up_rate * 100)|round|int }}%
+    {% else %}<span class="faint">—</span>{% endif %}</td>
+  <td class="r num dim">{{ d.avg_dom|round|int if d.avg_dom else '—' }}</td>
+</tr>
+{% endfor %}
+</tbody></table>
+{% else %}
+<div class="empty">
+  <h3>딜러 데이터가 없습니다</h3>
+  <p>수집 후 딜러 지표가 계산됩니다.</p>
+  <p><code>python collect.py</code></p>
+</div>
+{% endif %}
+</div>
+
+<p class="faint" style="font-size:11.5px;margin-top:12px">
+  누적판매·최근1년·판매중은 엔카 딜러 프로필의 실적 원본입니다.
+  관측 회전율보다 정확하며 첫날부터 확보됩니다.<br>
+  표본 {{ min_listings }}건 미만인 딜러는 정직도 점수를 내지 않습니다.
+  매물 1건짜리의 '인하율 0%' 는 정직한 것이 아니라 모르는 것입니다.<br>
+  평균 인하 · 재등록 · 평균 DOM 은 <b>2일차 수집부터</b> 값이 쌓입니다.
+</p>
+{% endblock %}

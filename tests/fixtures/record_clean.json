@@ -1,0 +1,53 @@
+{
+ "openData": true,
+ "regDate": "2026-07-20T09:10:40.162428",
+ "carNo": "112거7801",
+ "year": "2026",
+ "maker": "삼성",
+ "carKind": "1",
+ "use": "2",
+ "displacement": "1969",
+ "carName": null,
+ "firstDate": "2026-03-12",
+ "fuel": "가솔린",
+ "carShape": "SUV",
+ "model": "그랑 콜레오스",
+ "transmission": null,
+ "carNameCode": null,
+ "myAccidentCnt": 0,
+ "otherAccidentCnt": 0,
+ "ownerChangeCnt": 0,
+ "robberCnt": 0,
+ "robberDate": null,
+ "totalLossCnt": 0,
+ "totalLossDate": null,
+ "floodTotalLossCnt": 0,
+ "floodPartLossCnt": null,
+ "floodDate": null,
+ "government": 0,
+ "business": 0,
+ "loan": 0,
+ "carNoChangeCnt": 0,
+ "myAccidentCost": 0,
+ "otherAccidentCost": 0,
+ "carInfoChanges": [
+  {
+   "date": "2026-03-12",
+   "carNo": "112거XXXX"
+  }
+ ],
+ "carInfoUse1s": [
+  "2"
+ ],
+ "carInfoUse2s": [
+  "1"
+ ],
+ "ownerChanges": [],
+ "notJoinDate1": null,
+ "notJoinDate2": null,
+ "notJoinDate3": null,
+ "notJoinDate4": null,
+ "notJoinDate5": null,
+ "accidentCnt": 0,
+ "accidents": []
+}

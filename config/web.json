@@ -1,0 +1,20 @@
+{
+  "_ref": "지시서 14장 STEP 141",
+  "_note": "★ 1차는 단일 프로세스 · 로컬 바인딩. 1인 사용 도구다",
+  "host": "127.0.0.1",
+  "port": 8765,
+  "session_cookie": "cw_session",
+  "static_max_age_sec": 3600,
+  "flash_max": 5,
+  "max_form_bytes": 65536,
+  "session_max_age_sec": 43200,
+  "rows_per_page": 200,
+  "signup_policy": "closed",
+  "max_queries_per_request": 20,
+  "price_bins": 8,
+  "today_rows": 12,
+  "market_min_sample": 5,
+  "display_timezone": "Asia/Seoul",
+  "trim_rows": 20,
+  "doc_body_chars": 20000
+}

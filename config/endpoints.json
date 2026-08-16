@@ -1,0 +1,27 @@
+{
+  "_ref": "지시서 2장 STEP 17 (URL) · STEP 24 (요청 정책) · 마스터 회신 20260809",
+  "_pending": "encar.headers.User-Agent 는 v1 에 남아 있지 않다. 일반 모바일 UA 로 1차 시도하고, 전량 401·403 이면 STEP 25a 실측 요청서를 낸다. 일부만 실패하면 UA 문제가 아니다",
+  "encar": {
+    "base_url": "https://api.encar.com",
+    "paths": {
+      "list": "/search/car/list/mobile",
+      "detail": "/v1/readside/vehicle/{source_id}",
+      "inspection": "/v1/readside/inspection/vehicle/{source_id}",
+      "record": "/v1/readside/record/vehicle/{source_id}/open",
+      "diagnosis": "/v1/readside/diagnosis/vehicle/{source_id}",
+      "catalog": "/v1/readside/vehicles/car/{source_id}/options/choice",
+      "facet": "/search/car/list/mobile"
+    },
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+    },
+    "timeout_sec": 15.0,
+    "interval_sec": [
+      0.3,
+      0.3
+    ],
+    "retry_max": 2,
+    "fail_streak_limit": 20,
+    "page_size": 20
+  }
+}

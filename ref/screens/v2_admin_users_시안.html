@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사용자 · CarWatch v2</title>
+<style>
+:root{
+  --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228;
+  --line:#262c33; --line2:#333b44;
+  --text:#e4e2df; --dim:#8b939c; --faint:#5a626b;
+  --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+     font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header{border-bottom:1px solid var(--line);
+       background:linear-gradient(180deg,#171c21,#12161a);position:sticky;top:0;z-index:30}
+.hwrap{max-width:1400px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:24px;height:52px}
+.brand b{font-size:15px;font-weight:700}
+.brand span{font-size:10.5px;color:var(--faint);letter-spacing:.09em;
+            text-transform:uppercase;margin-left:8px}
+nav{display:flex;gap:2px;margin-left:4px}
+nav a{padding:6px 12px;font-size:13px;color:var(--dim);border-radius:5px}
+nav a.on{color:var(--bg);background:var(--amber);font-weight:600}
+.hmeta{margin-left:auto;display:flex;align-items:center;gap:14px;
+       font-size:11.5px;color:var(--faint)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;
+     margin-right:5px;vertical-align:middle;background:var(--down)}
+.who{border:1px solid var(--line2);border-radius:12px;padding:2px 10px;
+     font-size:11.5px;color:var(--amber)}
+
+.sub{border-bottom:1px solid var(--line);background:#12161a}
+.swrap{max-width:1400px;margin:0 auto;padding:0 20px;
+       display:flex;align-items:center;gap:18px;height:40px;overflow-x:auto}
+.sgrp{display:flex;align-items:center;gap:2px}
+.sgrp .lbl{font-size:10px;letter-spacing:.08em;color:var(--faint);
+           text-transform:uppercase;margin-right:6px;white-space:nowrap}
+.sub a{padding:4px 10px;font-size:12.5px;color:var(--dim);border-radius:4px;
+       white-space:nowrap}
+.sub a:hover{color:var(--text);background:var(--surface2)}
+.sub a.on{color:var(--amber);background:#2a1f0e}
+.sub .sep{width:1px;height:16px;background:var(--line);flex:none}
+
+main{max-width:1400px;margin:0 auto;padding:18px 20px 60px}
+h2{font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--dim);
+   text-transform:uppercase;margin:22px 0 10px}
+h2:first-of-type{margin-top:0}
+h2 .more{float:right;font-size:11px;letter-spacing:0;text-transform:none;color:var(--faint)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:7px}
+.card.pad{padding:14px 16px;margin-bottom:14px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--faint);
+   text-transform:uppercase;text-align:left;padding:7px 8px;
+   border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:var(--surface2)}
+.r{text-align:right} .c{text-align:center}
+
+.tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;
+     border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.tag.amber{border-color:#5c4520;background:#2a1f0e;color:var(--amber)}
+.tag.down{border-color:#1e4a3e;background:#12261f;color:var(--down)}
+.tag.up{border-color:#4e2523;background:#2a1412;color:var(--up)}
+.dim{color:var(--dim)} .faint{color:var(--faint)}
+select,button,.btn{background:var(--surface2);color:var(--text);
+  border:1px solid var(--line2);border-radius:5px;padding:5px 11px;
+  font-size:12.5px;font-family:inherit;cursor:pointer}
+.btn:hover{border-color:var(--faint)}
+.btn.on{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+.btn.danger{border-color:#4e2523;color:var(--up)}
+input[type=text]{background:var(--surface2);border:1px solid var(--line2);
+  border-radius:5px;color:var(--text);padding:5px 10px;font-size:12.5px}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+
+/* 가입 정책 */
+.pol{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+     border:1px solid var(--line2);border-radius:7px;background:var(--surface);
+     padding:13px 16px;margin-bottom:14px}
+.pol .k{font-size:10.5px;letter-spacing:.07em;color:var(--faint);
+        text-transform:uppercase;width:80px;flex:none}
+.pol .opts{display:flex;gap:5px}
+.pol .opt{font-size:12.5px;padding:5px 12px;border:1px solid var(--line2);
+  border-radius:5px;color:var(--dim);cursor:pointer}
+.pol .opt:hover{border-color:var(--faint)}
+.pol .opt.sel{background:var(--amber);color:var(--bg);border-color:var(--amber);
+  font-weight:600}
+.pol .d{font-size:11.5px;color:var(--faint);flex:1;min-width:200px}
+
+/* 승인 대기 */
+.pend{border:1px solid #5c4520;border-radius:7px;background:#1a1408;
+      padding:12px 15px;margin-bottom:14px}
+.pend .h{font-size:11px;letter-spacing:.08em;color:var(--amber);
+         text-transform:uppercase;margin-bottom:9px}
+.prow{display:flex;align-items:center;gap:12px;padding:7px 0;
+      border-bottom:1px solid rgba(92,69,32,.4);font-size:13px}
+.prow:last-child{border-bottom:0}
+.prow .n{flex:1}
+.prow .n .m{font-size:11.5px;color:var(--dim);font-family:var(--mono)}
+.prow .t{font-size:11.5px;color:var(--faint);font-family:var(--mono)}
+
+/* 역할 */
+.role{font-size:10.5px;padding:2px 8px;border-radius:4px;cursor:pointer;
+      border:1px solid var(--line2);color:var(--faint)}
+.role.admin{background:#2a1f0e;border-color:#5c4520;color:var(--amber)}
+.role.user{background:var(--surface2);color:var(--dim)}
+.role.off{background:#2a1412;border-color:#4e2523;color:var(--up)}
+
+tr.dis td{opacity:.45}
+tr.dis:hover td{opacity:.75}
+tr.me td{background:rgba(232,161,58,.05)}
+
+.note{background:#12161a;border:1px solid var(--line);border-radius:6px;
+      padding:11px 14px;font-size:12.5px;color:var(--dim);line-height:1.7;
+      margin-bottom:12px}
+.note b{color:var(--text)} .note .k{color:var(--amber)}
+
+/* 모달 */
+.dim-bg{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:60;
+  display:none;align-items:center;justify-content:center;padding:24px}
+.dim-bg.on{display:flex}
+.modal{width:100%;max-width:420px;background:var(--surface);
+  border:1px solid var(--line2);border-radius:9px;padding:20px 22px;
+  box-shadow:0 16px 44px rgba(0,0,0,.6)}
+.modal h3{margin:0 0 5px;font-size:15px;font-weight:600}
+.modal .s{font-size:12.5px;color:var(--dim);margin-bottom:16px;line-height:1.6}
+.mf{margin-bottom:12px}
+.mf label{display:block;font-size:11px;letter-spacing:.07em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:5px}
+.mf label .opt{color:var(--faint);text-transform:none;letter-spacing:0;
+  font-size:10.5px;margin-left:5px}
+.mf input{width:100%;background:var(--surface2);border:1px solid var(--line2);
+  border-radius:6px;color:var(--text);padding:8px 11px;font-size:13.5px;
+  font-family:var(--sans)}
+.mf input.mono{font-family:var(--mono)}
+.mf input:focus{outline:1px solid var(--amber);border-color:var(--amber)}
+.mf .h{font-size:11.5px;color:var(--faint);margin-top:4px}
+.mf .h.bad{color:var(--up)} .mf .h.ok{color:var(--down)}
+.mrole{display:flex;gap:6px}
+.mrole span{flex:1;text-align:center;font-size:12.5px;padding:7px 0;
+  border:1px solid var(--line2);border-radius:6px;color:var(--dim);cursor:pointer}
+.mrole span:hover{border-color:var(--faint)}
+.mrole span.sel{background:var(--amber);color:var(--bg);border-color:var(--amber);
+  font-weight:600}
+.mtemp{background:#1a1408;border:1px solid #5c4520;border-radius:6px;
+  padding:11px 13px;margin:14px 0;font-size:12.5px;color:var(--dim);line-height:1.7}
+.mtemp .v{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--text);
+  background:#0b0d10;border:1px solid var(--line2);border-radius:5px;
+  padding:7px 11px;text-align:center;margin:7px 0;user-select:all}
+.mtemp b{color:var(--amber)}
+.mbtn{display:flex;gap:8px;margin-top:16px}
+.mbtn .btn{flex:1;text-align:center;padding:9px}
+.mbtn .btn.on{font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><b>CarWatch</b><span>v2</span></div>
+    <nav>
+      <a href="v2_dashboard_시안.html">현황</a>
+      <a href="v2_listings_시안.html">매물</a>
+      <a href="v2_admin_시안.html" class="on">관리</a>
+    </nav>
+    <div class="hmeta">
+      <a href="v2_login_시안.html" class="who">마스터 · admin</a>
+      <span><span class="dot"></span>08-14 06:00</span>
+      <span class="num">c3 · d7 · p2</span>
+    </div>
+  </div>
+</header>
+
+<div class="sub">
+  <div class="swrap">
+    <div class="sgrp"><span class="lbl">운영</span>
+      <a href="v2_admin_시안.html">현황</a>
+      <a href="v2_admin_run_시안.html">수집 실행</a>
+      <a href="v2_admin_audit_시안.html">감사 조회</a>
+      <a href="v2_admin_users_시안.html" class="on">사용자</a></div>
+    <span class="sep"></span>
+    <div class="sgrp"><span class="lbl">조정</span>
+      <a href="v2_admin_registry_시안.html">등록부</a>
+      <a href="v2_admin_scoring_시안.html">배점</a>
+      <a href="v2_admin_targets_시안.html">차종</a>
+      <a href="v2_admin_config_시안.html">설정</a></div>
+    <span class="sep"></span>
+    <div class="sgrp"><span class="lbl">탐색</span>
+      <a href="v2_admin_query_시안.html">쿼리</a>
+      <a href="v2_admin_api_시안.html">API 조회</a><a href="v2_admin_tools_시안.html">도구</a>
+      <a href="#">문서</a><a href="v2_admin_requests_시안.html">개발 요청</a></div>
+  </div>
+</div>
+
+<main>
+
+<!-- 가입 정책 -->
+<div class="pol">
+  <span class="k">가입 정책</span>
+  <div class="opts" id="pol">
+    <span class="opt" onclick="setPol('open',this)">공개</span>
+    <span class="opt sel" onclick="setPol('approval',this)">승인제</span>
+    <span class="opt" onclick="setPol('closed',this)">닫힘</span>
+  </div>
+  <span class="d" id="pold">
+    신청을 받고 관리자가 승인합니다. 승인 전에는 관심 등록을 못 합니다</span>
+  <span class="btn" style="margin-left:auto">저장</span>
+</div>
+
+<!-- 승인 대기 -->
+<div class="pend" id="pend">
+  <div class="h">승인 대기 2건</div>
+  <div class="prow">
+    <div class="n">김민수 <span class="m">minsu@example.com</span></div>
+    <div class="t">08-13 21:04</div>
+    <span class="btn on" style="padding:3px 11px">승인</span>
+    <span class="btn danger" style="padding:3px 11px">거절</span>
+  </div>
+  <div class="prow">
+    <div class="n">박지현 <span class="m">jh.park@example.com</span></div>
+    <div class="t">08-14 07:12</div>
+    <span class="btn on" style="padding:3px 11px">승인</span>
+    <span class="btn danger" style="padding:3px 11px">거절</span>
+  </div>
+</div>
+
+<div class="bar">
+  <select id="f-role" onchange="render()">
+    <option value="">전체 (5)</option>
+    <option value="admin">관리자 (1)</option>
+    <option value="user">일반 (3)</option>
+    <option value="off">중지 (1)</option>
+  </select>
+  <input type="text" id="q" placeholder="이름 · 이메일 검색" oninput="render()"
+         style="width:200px">
+  <span class="btn on" onclick="openNew()">＋ 계정 만들기</span>
+  <span class="faint" id="cnt" style="margin-left:auto;font-size:12px"></span>
+</div>
+
+<div class="card" style="overflow-x:auto">
+<table>
+<thead>
+<tr><th style="width:44px" class="c">ID</th>
+    <th>이름</th><th style="width:210px">이메일</th>
+    <th style="width:170px">역할</th>
+    <th class="r" style="width:70px">관심</th>
+    <th class="r" style="width:70px">조건</th>
+    <th style="width:120px">마지막 접속</th>
+    <th style="width:110px">가입</th>
+    <th style="width:150px" class="c"></th></tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+
+<div class="note" style="margin-top:14px">
+  <b>관리자를 0명으로 만들 수 없습니다.</b>
+  마지막 관리자의 역할을 내리거나 중지하면 아무도 관리할 수 없게 됩니다.
+  <div style="margin-top:7px">
+    <b>「중지」는 삭제가 아닙니다.</b>
+    로그인만 막고 관심 목록과 이력은 남깁니다.
+    되살릴 수 있습니다.
+  </div>
+</div>
+
+<h2>계정 활동 <span class="more">최근 10건</span></h2>
+<div class="card" style="padding:6px 12px">
+<table>
+  <tr><th style="width:130px">시각</th><th style="width:100px">누가</th>
+      <th>무엇</th></tr>
+  <tr><td class="num">08-14 07:12</td><td>박지현</td>
+      <td class="dim">가입 신청 <span class="tag amber">대기</span></td></tr>
+  <tr><td class="num">08-14 06:22</td><td>마스터</td>
+      <td class="dim">쿼리 실행 · 4행</td></tr>
+  <tr><td class="num">08-13 23:41</td><td>마스터</td>
+      <td class="dim">쿼리 거부 <span class="tag up">UPDATE</span></td></tr>
+  <tr><td class="num">08-13 21:04</td><td>김민수</td>
+      <td class="dim">가입 신청 <span class="tag amber">대기</span></td></tr>
+  <tr><td class="num">08-13 19:30</td><td>이수진</td>
+      <td class="dim">관심 등록 · 그랑 콜레오스 아이코닉</td></tr>
+  <tr><td class="num">08-12 14:20</td><td>마스터</td>
+      <td class="dim">배점 변경 · 등급컷 절대 → 비율</td></tr>
+  <tr><td class="num">08-11 09:15</td><td>마스터</td>
+      <td class="dim">계정 중지 · 최윤호 <span class="faint">사유: 미사용</span></td></tr>
+</table>
+</div>
+
+<div class="faint" style="font-size:11.5px;margin-top:12px;line-height:1.8">
+  ⓘ <b style="color:var(--text)">저장하는 것은 이름 · 이메일 · 관심 목록뿐입니다.</b>
+  비밀번호는 해시로만 둡니다. 원문은 어디에도 없습니다.
+  <br>
+  <b style="color:var(--text)">계정 삭제</b>는 관심 목록과 이력을 함께 지웁니다.
+  되돌릴 수 없으므로 「중지」를 먼저 쓰십시오.
+</div>
+
+<div class="faint" style="font-size:11px;text-align:right;margin-top:14px">
+  account 5행 · auth_session 2활성
+</div>
+</main>
+
+<!-- 계정 만들기 -->
+<div class="dim-bg" id="mnew" onclick="if(event.target===this)closeNew()">
+<div class="modal">
+  <h3>계정 만들기</h3>
+  <div class="s">
+    임시 비밀번호로 만들고, 첫 로그인 때 본인이 바꿉니다.
+  </div>
+
+  <div class="mf">
+    <label>이름</label>
+    <input type="text" id="n-name" placeholder="실명 또는 식별할 이름" oninput="nchk()">
+    <div class="h" id="hn-name">2~20자 · 중복 안 됩니다</div>
+  </div>
+
+  <div class="mf">
+    <label>별명 <span class="opt">선택 — 화면에 이것이 보입니다</span></label>
+    <input type="text" id="n-nick" placeholder="비우면 이름을 씁니다" oninput="nchk()">
+    <div class="h" id="hn-nick">목록·관심에 표시됩니다</div>
+  </div>
+
+  <div class="mf">
+    <label>이메일 <span class="opt">선택</span></label>
+    <input type="text" id="n-mail" placeholder="비밀번호 재설정 · 알림" oninput="nchk()">
+    <div class="h" id="hn-mail">없으면 재설정을 관리자가 해줘야 합니다</div>
+  </div>
+
+  <div class="mf">
+    <label>역할</label>
+    <div class="mrole" id="n-role">
+      <span class="sel" onclick="nrole(this,'user')">일반</span>
+      <span onclick="nrole(this,'admin')">관리자</span>
+    </div>
+    <div class="h" id="hn-role">관심 목록과 조건 알림을 씁니다</div>
+  </div>
+
+  <div class="mtemp">
+    <b>임시 비밀번호</b>
+    <div class="v" id="n-temp">12345678</div>
+    본인에게 전달하십시오. 첫 로그인 때 반드시 바뀝니다.
+  </div>
+
+  <div class="mbtn">
+    <span class="btn on off" id="n-btn" onclick="nsave()">만들기</span>
+    <span class="btn" onclick="closeNew()">취소</span>
+  </div>
+</div>
+</div>
+
+<script>
+var U = [
+ {id:1, name:"마스터", mail:"master@local", role:"admin", watch:5, cond:2,
+  last:"08-14 06:00", join:"08-08", me:true},
+ {id:2, name:"이수진", mail:"sujin.lee@example.com", role:"user", watch:3, cond:1,
+  last:"08-13 19:30", join:"08-11"},
+ {id:3, name:"정태우", mail:"tw.jung@example.com", role:"user", watch:1, cond:0,
+  last:"08-12 22:14", join:"08-11"},
+ {id:4, name:"한소영", mail:"soyoung@example.com", role:"user", watch:0, cond:0,
+  last:"08-11 10:02", join:"08-11"},
+ {id:5, name:"최윤호", mail:"yh.choi@example.com", role:"off", watch:2, cond:1,
+  last:"07-28 14:40", join:"07-20"}
+];
+var POLD = {
+  open:    "누구나 가입할 수 있습니다. 가입 즉시 관심 등록이 됩니다",
+  approval:"신청을 받고 관리자가 승인합니다. 승인 전에는 관심 등록을 못 합니다",
+  closed:  "가입 화면이 닫힙니다. 관리자가 직접 계정을 만듭니다"
+};
+
+function setPol(k, el){
+  document.querySelectorAll("#pol .opt").forEach(function(e){
+    e.classList.remove("sel");});
+  el.classList.add("sel");
+  document.getElementById("pold").textContent = POLD[k];
+  document.getElementById("pend").style.display = k==="approval" ? "" : "none";
+}
+
+function nAdmin(){
+  return U.filter(function(u){return u.role==="admin";}).length;
+}
+
+function setRole(i, r){
+  var u = U[i];
+  if(u.role==="admin" && r!=="admin" && nAdmin() <= 1){
+    alert("마지막 관리자입니다.\\n\\n" +
+          "역할을 내리면 아무도 관리할 수 없게 됩니다.\\n" +
+          "다른 계정을 관리자로 올린 뒤 바꾸십시오.");
+    return;
+  }
+  if(u.me && r!=="admin"){
+    if(!confirm("자기 역할을 내립니다.\\n\\n" +
+                "바꾸면 이 화면에서 나가집니다. 계속할까요?")) return;
+  }
+  var was = u.role;
+  u.role = r;
+  render();
+  if(r==="off") alert(u.name + " 계정을 중지했습니다.\\n\\n" +
+    "로그인만 막습니다. 관심 목록 " + u.watch + "건과 이력은 남습니다.");
+}
+
+function del(i){
+  var u = U[i];
+  if(u.role==="admin" && nAdmin() <= 1){
+    alert("마지막 관리자는 지울 수 없습니다."); return;
+  }
+  if(!confirm(u.name + " 계정을 지웁니다.\\n\\n" +
+    "관심 목록 " + u.watch + "건 · 조건 알림 " + u.cond + "건이 함께 사라집니다.\\n" +
+    "되돌릴 수 없습니다.\\n\\n" +
+    "로그인만 막으려면 「중지」를 쓰십시오.")) return;
+  U.splice(i,1); render();
+}
+
+function reset(i){
+  if(!confirm(U[i].name + " 의 비밀번호를 초기화합니다.\\n\\n" +
+    "임시 비밀번호 12345678 로 바뀌고,\\n" +
+    "다음 로그인 때 변경을 강제합니다.")) return;
+  alert("초기화했습니다.\\n\\n임시 비밀번호 12345678\\n" +
+        "본인에게 전달하십시오.");
+}
+
+function render(){
+  var fr = document.getElementById("f-role").value;
+  var q  = document.getElementById("q").value.trim().toLowerCase();
+  var h = "", n = 0;
+  U.forEach(function(u,i){
+    if(fr && u.role !== fr) return;
+    if(q && (u.name+u.mail).toLowerCase().indexOf(q) < 0) return;
+    n++;
+    var cls = (u.role==="off"?" dis":"") + (u.me?" me":"");
+    h += '<tr class="'+cls.trim()+'">'+
+      '<td class="c num dim">'+u.id+'</td>'+
+      '<td><b>'+u.name+'</b>'+(u.me?' <span class="tag amber">나</span>':'')+'</td>'+
+      '<td class="dim num" style="font-size:12px">'+u.mail+'</td>'+
+      '<td><span class="role admin'+(u.role==="admin"?"":"")+'" '+
+        'style="'+(u.role!=="admin"?"background:transparent;border-color:var(--line2);color:var(--faint)":"")+'" '+
+        'onclick="setRole('+i+',\'admin\')">관리자</span> '+
+        '<span class="role user" style="'+(u.role!=="user"?"background:transparent;color:var(--faint)":"")+'" '+
+        'onclick="setRole('+i+',\'user\')">일반</span> '+
+        '<span class="role off" style="'+(u.role!=="off"?"background:transparent;border-color:var(--line2);color:var(--faint)":"")+'" '+
+        'onclick="setRole('+i+',\'off\')">중지</span></td>'+
+      '<td class="r num">'+u.watch+'</td>'+
+      '<td class="r num">'+u.cond+'</td>'+
+      '<td class="num dim" style="font-size:12px">'+u.last+'</td>'+
+      '<td class="num faint" style="font-size:12px">'+u.join+'</td>'+
+      '<td class="c"><span class="tag" onclick="reset('+i+')">비번 초기화</span> '+
+        '<span class="tag" style="color:var(--up);border-color:#4e2523" '+
+        'onclick="del('+i+')">삭제</span></td></tr>';
+  });
+  document.getElementById("rows").innerHTML = h ||
+    '<tr><td colspan="9" style="padding:32px;text-align:center;color:var(--dim)">'+
+    '해당하는 계정이 없습니다</td></tr>';
+  document.getElementById("cnt").innerHTML =
+    '<span class="num">'+n+'</span>명 표시 / 전체 <span class="num">'+U.length+
+    '</span> · 관리자 <span class="num">'+nAdmin()+'</span>';
+}
+
+var NROLE = "user";
+
+function openNew(){
+  ["n-name","n-nick","n-mail"].forEach(function(i){
+    document.getElementById(i).value = "";});
+  NROLE = "user";
+  document.querySelectorAll("#n-role span").forEach(function(e,i){
+    e.classList.toggle("sel", i===0);});
+  document.getElementById("hn-role").textContent =
+    "관심 목록과 조건 알림을 씁니다";
+  nchk();
+  document.getElementById("mnew").classList.add("on");
+  document.getElementById("n-name").focus();
+}
+function closeNew(){ document.getElementById("mnew").classList.remove("on"); }
+
+function nrole(el, r){
+  NROLE = r;
+  document.querySelectorAll("#n-role span").forEach(function(e){
+    e.classList.remove("sel");});
+  el.classList.add("sel");
+  document.getElementById("hn-role").innerHTML = r==="admin"
+    ? '<span style="color:var(--amber)">★ 수집 실행 · 배점 · 설정 · 쿼리를 할 수 있습니다</span>'
+    : "관심 목록과 조건 알림을 씁니다";
+  nchk();
+}
+
+function nchk(){
+  var n = document.getElementById("n-name").value.trim();
+  var k = document.getElementById("n-nick").value.trim();
+  var m = document.getElementById("n-mail").value.trim();
+
+  var dup = U.some(function(u){return u.name === n;});
+  var okName = n.length >= 2 && n.length <= 20 && !dup;
+  var okMail = !m || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m);
+  var dupMail = m && U.some(function(u){return u.mail === m;});
+
+  var h = document.getElementById("hn-name");
+  h.textContent = !n ? "2~20자 · 중복 안 됩니다"
+    : dup ? "이미 있는 이름입니다"
+    : okName ? "쓸 수 있습니다" : "2~20자여야 합니다";
+  h.className = "h" + (!n ? "" : okName ? " ok" : " bad");
+
+  var hk = document.getElementById("hn-nick");
+  hk.textContent = k ? ("화면에 「" + k + "」 로 보입니다")
+                     : (n ? ("비웠으므로 「" + n + "」 로 보입니다")
+                          : "목록·관심에 표시됩니다");
+  hk.className = "h";
+
+  var hm = document.getElementById("hn-mail");
+  hm.textContent = !m ? "없으면 재설정을 관리자가 해줘야 합니다"
+    : dupMail ? "이미 쓰는 이메일입니다"
+    : okMail ? "쓸 수 있습니다" : "형식이 맞지 않습니다";
+  hm.className = "h" + (!m ? "" : (okMail && !dupMail) ? " ok" : " bad");
+
+  document.getElementById("n-btn").classList.toggle("off",
+    !(okName && okMail && !dupMail));
+}
+
+function nsave(){
+  if(document.getElementById("n-btn").classList.contains("off")) return;
+  var n = document.getElementById("n-name").value.trim();
+  var k = document.getElementById("n-nick").value.trim();
+  var m = document.getElementById("n-mail").value.trim();
+  U.push({id: Math.max.apply(null, U.map(function(u){return u.id;})) + 1,
+          name: k || n, mail: m || "—", role: NROLE,
+          watch: 0, cond: 0, last: "—",
+          join: "08-14", real: n});
+  closeNew();
+  render();
+  alert("만들었습니다.\n\n" +
+        "이름 " + n + (k ? "  별명 " + k : "") + "\n" +
+        "역할 " + (NROLE === "admin" ? "관리자" : "일반") + "\n" +
+        "임시 비밀번호 12345678\n\n" +
+        "본인에게 전달하십시오. 첫 로그인 때 바뀝니다.");
+}
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape") closeNew();
+});
+
+render();
+</script>
+</body>
+</html>

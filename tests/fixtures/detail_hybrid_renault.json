@@ -1,0 +1,454 @@
+{
+ "manage": {
+  "dummy": false,
+  "dummyVehicleId": 42399887,
+  "reRegistered": false,
+  "webReserved": true,
+  "registDateTime": "2026-07-20T09:11:11",
+  "firstAdvertisedDateTime": "2026-07-21T09:12:11",
+  "modifyDateTime": "2026-07-21T09:12:12",
+  "subscribeCount": 13,
+  "viewCount": 1400
+ },
+ "category": {
+  "type": "CAR",
+  "manufacturerCd": "005",
+  "manufacturerName": "르노코리아(삼성)",
+  "modelCd": "077",
+  "modelName": "그랑 콜레오스",
+  "gradeCd": "002",
+  "gradeName": "2.0 아이코닉 2WD",
+  "gradeEnglishName": "2.0 Iconic 2WD",
+  "yearMonth": "202603",
+  "formYear": "2026",
+  "domestic": true,
+  "importType": "NONE_IMPORT_TYPE",
+  "originPrice": 3881,
+  "manufacturerEnglishName": "Renault-KoreaSamsung",
+  "modelGroupCd": "019",
+  "modelGroupName": "그랑 콜레오스",
+  "modelGroupEnglishName": "Grand Koleos",
+  "gradeDetailCd": null,
+  "gradeDetailName": null,
+  "gradeDetailEnglishName": null,
+  "jatoVehicleId": 843926120260101,
+  "warranty": {
+   "userDefined": false,
+   "companyName": null,
+   "bodyMonth": 36,
+   "bodyMileage": 60000,
+   "transmissionMonth": 60,
+   "transmissionMileage": 100000
+  }
+ },
+ "advertisement": {
+  "type": "CAR",
+  "price": 3370,
+  "status": "ADVERTISE",
+  "warrantyStyleColor": "NONE",
+  "trust": [
+   "HomeService",
+   "Warranty"
+  ],
+  "hotMark": [],
+  "oneLineText": "무사고/신차급/어라운드뷰/전동트렁크/스마트크루즈",
+  "salesStatus": null,
+  "directInspected": false,
+  "preVerified": true,
+  "extendWarranty": false,
+  "deemedExtendWarranty": true,
+  "homeService": true,
+  "meetGo": false,
+  "encarCheck": false,
+  "preDelivery": false,
+  "leaseRentInfo": null,
+  "encarPassType": null,
+  "encarPassCategoryType": null,
+  "underBodyPhotos": [],
+  "hasUnderBodyPhoto": false,
+  "advertisementType": "NORMAL",
+  "diagnosisCar": true
+ },
+ "contact": {
+  "userId": "dydtjdwh",
+  "userType": "DEALER",
+  "no": "05062437345",
+  "address": "인천 서구 염곡로 52",
+  "contactType": "MOBILE",
+  "isVerifyOwner": false,
+  "isOwnerPartner": true
+ },
+ "spec": {
+  "type": "CAR",
+  "mileage": 1454,
+  "displacement": 1969,
+  "transmissionName": "오토",
+  "fuelCd": "001",
+  "fuelName": "가솔린",
+  "colorName": "쥐색",
+  "customColor": null,
+  "seatCount": 5,
+  "tradeType": "D",
+  "tradeOwnerType": null,
+  "tradeCompanyName": null,
+  "bodyName": "SUV"
+ },
+ "photos": [
+  {
+   "code": "020",
+   "path": "/carpicture09/pic4239/42391233_020.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "032",
+   "path": "/carpicture09/pic4239/42391233_032.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "036",
+   "path": "/carpicture09/pic4239/42391233_036.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "031",
+   "path": "/carpicture09/pic4239/42391233_031.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "033",
+   "path": "/carpicture09/pic4239/42391233_033.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "034",
+   "path": "/carpicture09/pic4239/42391233_034.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "007",
+   "path": "/carpicture09/pic4239/42391233_007.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "035",
+   "path": "/carpicture09/pic4239/42391233_035.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "015",
+   "path": "/carpicture09/pic4239/42391233_015.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "003",
+   "path": "/carpicture09/pic4239/42391233_003.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "018",
+   "path": "/carpicture09/pic4239/42391233_018.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "040",
+   "path": "/carpicture09/pic4239/42391233_040.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "016",
+   "path": "/carpicture09/pic4239/42391233_016.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "044",
+   "path": "/carpicture09/pic4239/42391233_044.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "004",
+   "path": "/carpicture09/pic4239/42391233_004.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "001",
+   "path": "/carpicture09/pic4239/42391233_001.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "042",
+   "path": "/carpicture09/pic4239/42391233_042.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "006",
+   "path": "/carpicture09/pic4239/42391233_006.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "041",
+   "path": "/carpicture09/pic4239/42391233_041.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "017",
+   "path": "/carpicture09/pic4239/42391233_017.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "008",
+   "path": "/carpicture09/pic4239/42391233_008.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "019",
+   "path": "/carpicture09/pic4239/42391233_019.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "022",
+   "path": "/carpicture09/pic4239/42391233_022.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "023",
+   "path": "/carpicture09/pic4239/42391233_023.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "043",
+   "path": "/carpicture09/pic4239/42391233_043.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "045",
+   "path": "/carpicture09/pic4239/42391233_045.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "021",
+   "path": "/carpicture09/pic4239/42391233_021.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "024",
+   "path": "/carpicture09/pic4239/42391233_024.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "002",
+   "path": "/carpicture09/pic4239/42391233_002.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "009",
+   "path": "/carpicture09/pic4239/42391233_009.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "005",
+   "path": "/carpicture09/pic4239/42391233_005.jpg",
+   "type": "OUTER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "010",
+   "path": "/carpicture09/pic4239/42391233_010.jpg",
+   "type": "INNER",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  },
+  {
+   "code": "047",
+   "path": "/carpicture09/pic4239/42391233_047.jpg",
+   "type": "OPTION",
+   "updateDateTime": "2026-07-21T09:11:10",
+   "desc": null
+  }
+ ],
+ "options": {
+  "type": "CAR",
+  "standard": [
+   "001",
+   "004",
+   "005",
+   "006",
+   "007",
+   "008",
+   "014",
+   "015",
+   "017",
+   "019",
+   "020",
+   "021",
+   "022",
+   "023",
+   "024",
+   "026",
+   "027",
+   "030",
+   "031",
+   "032",
+   "033",
+   "034",
+   "035",
+   "051",
+   "055",
+   "056",
+   "057",
+   "058",
+   "059",
+   "062",
+   "063",
+   "072",
+   "074",
+   "075",
+   "077",
+   "079",
+   "081",
+   "082",
+   "085",
+   "086",
+   "087",
+   "088",
+   "094",
+   "096",
+   "097"
+  ],
+  "etc": [],
+  "choice": [
+   "1011"
+  ],
+  "tuning": []
+ },
+ "condition": {
+  "accident": {
+   "recordView": true,
+   "resumeView": true
+  },
+  "inspection": {
+   "formats": [
+    "TABLE"
+   ]
+  },
+  "seizing": {
+   "seizingCount": 0,
+   "pledgeCount": 0
+  }
+ },
+ "partnership": {
+  "brand": null,
+  "testdrive": {
+   "active": false
+  },
+  "dealer": {
+   "userId": "dydtjdwh",
+   "name": "조용성",
+   "firm": {
+    "code": "5098",
+    "name": "굿카대표[P]",
+    "diag2Partnered": false,
+    "diagnosisCenters": [
+     {
+      "code": "186",
+      "name": "엔카진단센터 인천 엠파크허브",
+      "major": true,
+      "telephoneNumber": "032-581-0350",
+      "address": "인천 서구 염곡로 52 엠파크허브 219호"
+     },
+     {
+      "code": "185",
+      "name": "엔카진단센터 인천 엠파크타워",
+      "major": false,
+      "telephoneNumber": "010-8653-0091",
+      "address": "인천 서구 봉수대로 158 엠파크타워 J112호(스튜디오 : 지하1층 S066호, S067호)"
+     }
+    ],
+    "meetgoCenters": []
+   },
+   "visitReservation": false
+  },
+  "isPartneredVehicle": true,
+  "certifiedBrand": null,
+  "lease": null,
+  "rent": null
+ },
+ "contents": {
+  "text": "▷ 안녕하세요 굿카대표 조용성 이사입니다.\n▷ 차량에 관심 가져주셔서 감사합니다.\n▷ 해당 차량은 엔카에서 진단하는 진단차량입니다.\n\n\n▣ 성능점검 [필수 체크]\n  ① 사고이력 : 없음\n  ② 수리이력 : 없음\n\n\n▣ 보험이력 [필수 체크]\n  ① 내차피해 : 없음\n  ② 타차가해 : 없음\n  ③ 용도이력 : 없음\n\n\n▣ 차량 히스토리\n  ① 26년 3월 등록차량\n  ② 26년 2월 제작차량\n  ③ 50대 남성분 운행차량\n\n\n▣ 이 차량만의 장점\n  ① 무사고차량\n  ② 보험이력 0원\n  ③ 신차급차량\n  ④ 어라운드뷰\n  ⑤ 전동트렁크\n  ⑥ 스마트크루즈컨트롤\n\n ☞ 주행 테스트 결과 엔진소음 없이 미션 상태도 준수합니다.  \n\n\n▣ 구매방법\n - 연락 주시면 친절하고 상세하게 설명 드리겠습니다.\n - 현금 / 할부 / 카드 / 대차 가능\n - 할부 구매시 최저 금리로 약속 드립니다.\n - 차량 대차시 전국 최고가 약속 드립니다.\n\n\n▣ 방문위치\n - 네비게이션에서 \"엠파크허브\" 검색으로 찾아주세요\n - 대중교통 지하철 가좌역 하차 도보 20분 / 택시 5분\n - 인천 서구 염곡로 52, 316호 (엠파크허브)",
+  "meetGoText": null
+ },
+ "view": {
+  "encarDiagnosis": 1,
+  "encarMeetGo": -1,
+  "hasEvBatteryInfo": false,
+  "isBatteryPass": false,
+  "isBatteryCompensable": false,
+  "photoPlus": 1,
+  "meetgoExpertAvailable": false,
+  "isSingleAd": false
+ },
+ "vehicleId": 42391233,
+ "vehicleType": "CAR",
+ "vin": "KNMP5C2B9TP008271",
+ "vehicleNo": "112거7801"
+}

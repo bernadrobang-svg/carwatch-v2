@@ -1,0 +1,14 @@
+<h1>실행</h1>
+<table>
+<thead><tr><th>단계</th><th class="num">예상</th><th class="num">요청</th>
+<th class="num">ok</th><th class="num">404</th><th class="num">오류</th><th>상태</th></tr></thead>
+<tbody>
+{% for s in r.steps %}
+<tr><td>{{ s.step }}</td><td class="num">{{ s.expected | num }}</td>
+<td class="num">{{ s.requested | num }}</td><td class="num">{{ s.ok | num }}</td>
+<td class="num">{{ s.not_found | num }}</td><td class="num">{{ s.error | num }}</td>
+<td>{% if s.halted %}<span class="warn-block">중단</span>{% endif %}{% if !s.halted %}정상{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% if r.halt_reason %}<p class="warn-block">{{ r.halt_reason }}</p>{% endif %}

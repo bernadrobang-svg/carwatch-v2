@@ -1,0 +1,71 @@
+{
+ "vehicleId": 42374259,
+ "diagnosisDate": "2026-07-15T00:00:00",
+ "diagnosisNo": 1704,
+ "realDiagnosisDate": "2026-07-15T14:34:47",
+ "ordNo": 26152064,
+ "centerCode": "182",
+ "reservationCenterName": "수원 권선",
+ "items": [
+  {
+   "code": "006003",
+   "name": "FRONT_DOOR_LEFT",
+   "result": "교환",
+   "resultCode": "REPLACEMENT"
+  },
+  {
+   "code": "006006",
+   "name": "BACK_DOOR_LEFT",
+   "result": "교환",
+   "resultCode": "REPLACEMENT"
+  },
+  {
+   "code": "006009",
+   "name": "TRUNK_LID",
+   "result": "정상",
+   "resultCode": "NORMAL"
+  },
+  {
+   "code": "006018",
+   "name": "BACK_DOOR_RIGHT",
+   "result": "정상",
+   "resultCode": "NORMAL"
+  },
+  {
+   "code": "006023",
+   "name": "FRONT_DOOR_RIGHT",
+   "result": "정상",
+   "resultCode": "NORMAL"
+  },
+  {
+   "code": "006026",
+   "name": "HOOD",
+   "result": "정상",
+   "resultCode": "NORMAL"
+  },
+  {
+   "code": "006027",
+   "name": "FRONT_FENDER_RIGHT",
+   "result": "정상",
+   "resultCode": "NORMAL"
+  },
+  {
+   "code": "006033",
+   "name": "FRONT_FENDER_LEFT",
+   "result": "정상",
+   "resultCode": "NORMAL"
+  },
+  {
+   "code": "006039",
+   "name": "CHECKER_COMMENT",
+   "result": "본 차량은 엔카의 진단 결과 외부패널부의  앞문(좌) 뒷문(좌)가 교환되었으며, 프레임(주요 골격) 부위는 모든 항목이 정상으로 확인되어, '외부패널 단순교환 차량'으로 진단 판정 합니다.",
+   "resultCode": null
+  },
+  {
+   "code": "006040",
+   "name": "OUTER_PANEL_COMMENT",
+   "result": "외부패널 확인 결과  앞문(좌) 뒷문(좌)가 교환되었음을 확인 하였습니다. 교환된 외부패널 부위를 둘러쌓은 프레임에 대한 상세 진단 결과, 관련된 프레임 교환이 없음을 확인하였습니다.\n정비이력있음/보허이력있음/비금속(FRP),크로스멤버 볼트체결방식 또는 탈부착 가능한 부품은 점검사항에서 제외되며 중고차 특성상 판금 도장 부식은 있을 수 있고 경미한 판금 및 도장은 표기치 않음/국민 257601-04-211425 비엠모터스",
+   "resultCode": null
+  }
+ ]
+}

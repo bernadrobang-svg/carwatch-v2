@@ -1,0 +1,216 @@
+{
+  "_ref": "지시서 2장 STEP 17a (q 문법 · 차종별 실측 조건) · STEP 23 (collect_group) · 4장 STEP 46",
+  "_note": "본문 예시(0장 STEP 6)가 정본이다. year_range · price_range 는 target 최상위다. build_q 는 site_query 와 이 둘을 합쳐 조립한다",
+  "G80_25T": {
+    "label": "G80 2.5T",
+    "collect_group": "encar:G80",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "G80"
+      }
+    },
+    "year_range": "202100..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "가솔린"
+    ],
+    "trim_include": [
+      "2.5"
+    ],
+    "trim_exclude": [],
+    "displacement_range": [
+      2400,
+      2600
+    ]
+  },
+  "G80_EV": {
+    "label": "G80 전동화",
+    "collect_group": "encar:G80",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "G80"
+      }
+    },
+    "year_range": "202100..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "전기"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null
+  },
+  "G70_25T": {
+    "label": "G70 2.5T",
+    "collect_group": "encar:G70",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "G70"
+      }
+    },
+    "year_range": "202100..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "가솔린"
+    ],
+    "trim_include": [
+      "2.5"
+    ],
+    "trim_exclude": [],
+    "displacement_range": [
+      2400,
+      2600
+    ]
+  },
+  "G70_20T": {
+    "label": "G70 2.0T",
+    "collect_group": "encar:G70",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "G70"
+      }
+    },
+    "year_range": "202100..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "가솔린"
+    ],
+    "trim_include": [
+      "2.0"
+    ],
+    "trim_exclude": [],
+    "displacement_range": [
+      1900,
+      2100
+    ]
+  },
+  "GV70_EV": {
+    "label": "GV70 전동화",
+    "collect_group": "encar:GV70",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "GV70"
+      }
+    },
+    "year_range": "202200..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "전기"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null
+  },
+  "GV60": {
+    "label": "GV60",
+    "collect_group": "encar:GV60",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "GV60"
+      }
+    },
+    "year_range": "202200..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "전기"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null
+  },
+  "KOLEOS_HEV": {
+    "label": "그랑 콜레오스 1.5 E-TECH",
+    "collect_group": "encar:KOLEOS",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "르노코리아(삼성)",
+        "ModelGroup": "그랑 콜레오스"
+      }
+    },
+    "year_range": "202400..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "가솔린+전기"
+    ],
+    "trim_include": [
+      "1.5 E-TECH"
+    ],
+    "trim_exclude": [],
+    "displacement_range": [
+      1450,
+      1550
+    ]
+  },
+  "SPORTAGE_LPI": {
+    "label": "스포티지 LPi",
+    "collect_group": "encar:SPORTAGE",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "기아",
+        "ModelGroup": "스포티지"
+      }
+    },
+    "year_range": "202200..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "LPG(일반인 구입)"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null
+  },
+  "GRANDEUR_LPG": {
+    "label": "그랜저 GN7 LPG",
+    "collect_group": "encar:GRANDEUR",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "현대",
+        "ModelGroup": "그랜저"
+      }
+    },
+    "year_range": "202300..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "LPG(일반인 구입)"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null
+  },
+  "MODEL_Y": {
+    "label": "테슬라 모델Y",
+    "collect_group": "encar:MODEL_Y",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "테슬라",
+        "ModelGroup": "모델 Y"
+      }
+    },
+    "year_range": "202200..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "전기"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null
+  },
+  "SPEC_DEFAULT_ON": {},
+  "SPEC_DEFAULT_OFF": {}
+}

@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% block title %}판정 근거 · CarWatch<script>
+var ca = document.getElementById('cmp-add');
+if (ca) ca.onclick = function () {
+  fetch('/api/compare/add', {method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({listing_id: ca.dataset.id})})
+    .then(function (r) { return r.json(); })
+    .then(function (d) { ca.textContent = d.ok ? '담김 ✓' : d.error;
+                         ca.disabled = d.ok; });
+};
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="card" style="margin-bottom:16px">
+  <div style="display:flex;gap:14px">
+    {% if it._photo_full %}
+    <img class="thumb" src="{{ it._photo_full }}" alt=""
+         onerror="this.style.display='none'">
+    {% endif %}
+    <div style="flex:1">
+      <div style="display:flex;align-items:baseline;gap:9px">
+        <span class="tag {{ 'amber' if ev.condition_grade=='A'
+                      else 'down' if ev.condition_grade=='B'
+                      else 'up' if ev.condition_grade=='E' }}"
+          >{{ ev.condition_grade }}</span>
+        <b style="font-size:15px">{{ label }}</b>
+        <span class="num dim">{{ it.year_month|ym }}식</span>
+        <span class="num dim">{{ it.mileage|km }}km</span>
+      </div>
+      <div class="num" style="font-size:22px;font-weight:600;margin-top:5px">
+        {{ it.current_price|manwon }}<small
+          style="font-size:11px;color:var(--dim)">만</small>
+        {% if it.warranty_value %}
+        <span class="down-v" style="font-size:12px">
+          </span>
+        {% endif %}
+      </div>
+      <div class="dim" style="font-size:12.5px;margin-top:4px">
+        순위 {{ ev.recommend_rank or '—' }} ·
+        검증 {{ '완료' if ev.verified else '미완료' }}
+        {% if ev.exclude_reasons %}
+        · <span class="up-v">배제: {{ ev.exclude_reasons }}</span>
+        {% endif %}
+      </div>
+      <div style="margin-top:7px;display:flex;gap:8px;align-items:center">
+        {% if it.url %}
+        <a href="{{ it.url }}" target="_blank" rel="noopener"
+           style="color:var(--amber);font-size:12.5px">엔카에서 보기 ↗</a>
+        {% endif %}
+        <button id="cmp-add" data-id="{{ it.listing_id }}"
+          style="padding:2px 9px;font-size:11.5px">⇄ 비교에 추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>무엇을 조회했는가</h2>
+<div class="card" style="padding:6px 10px;margin-bottom:16px">
+<table>
+{% for name, at, why in fetched %}
+<tr>
+  <td style="width:150px">{{ name }}</td>
+  <td class="c" style="width:70px">
+    <span class="tag {{ 'down' if at }}">{{ '받음' if at else '미조회' }}</span>
+  </td>
+  <td class="faint num" style="width:100px">{{ (at or '')[:10] }}</td>
+  <td class="dim" style="font-size:12px">{{ why }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% if not it.insp_fetched_at or not it.record_fetched_at %}
+<p class="dim" style="font-size:12.5px;margin:-10px 0 18px">
+  미조회 항목이 있습니다. <b>그 축은 판정할 수 없습니다.</b><br>
+  사고·보험 이력이 확인돼야 A등급을 받으므로,
+  <b>지금 등급은 실제보다 낮을 수 있습니다.</b>
+  관심 등록(♡)하면 다음 수집에서 최우선으로 조회합니다.
+</p>
+{% endif %}
+
+<h2>축별 판정</h2>
+<div class="card" style="padding:6px 10px;margin-bottom:16px">
+<table>
+{% for name, val, bad in axes %}
+<tr>
+  <td class="c" style="width:60px">
+    <span class="tag {{ 'up' if bad else 'down' }}"
+      >{{ '미달' if bad else 'OK' }}</span></td>
+  <td style="width:110px">{{ name }}</td>
+  <td class="dim">{{ val }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+{% if chips %}
+<h2>왜 {{ ev.recommend_rank or '—' }}순위인가</h2>
+<div class="card" style="padding:12px 14px;margin-bottom:16px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px">
+  {% for c in chips %}
+    <span class="tag {{ 'up' if c.type=='fail'
+                   else 'down' if c.type in ('good','price') }}"
+      >{{ c.icon }} {{ c.label }}</span>
+  {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if weighted %}
+<h2>주요 옵션 <span class="faint" style="font-size:10px;letter-spacing:0;
+  text-transform:none">등급이 아니라 동순위 정렬에 사용</span></h2>
+<div class="card" style="padding:6px 10px;margin-bottom:16px">
+<table>
+{% for name, has, pen in weighted %}
+<tr>
+  <td style="width:180px">{{ name }}</td>
+  <td class="c" style="width:80px">
+    {% if has == 1 %}<span class="tag down">탑재</span>
+    {% elif has == 0 %}<span class="tag up">미탑재</span>
+    {% else %}<span class="tag">불명</span>{% endif %}</td>
+  <td class="dim num">{% if has == 0 %}-{{ pen }}점{% endif %}</td>
+</tr>
+{% endfor %}
+<tr><td><b>합계</b></td>
+    <td class="c"><b>{{ ev.spec_pct }}%</b></td>
+    <td class="faint">불명은 감점하지 않습니다</td></tr>
+</table>
+</div>
+{% endif %}
+
+{% if pos and pos.available %}
+<h2>시세 위치</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><td style="width:160px">이 매물</td>
+      <td class="num"><b>{{ it.current_price|manwon }}만</b></td></tr>
+  <tr><td>동일조건 중앙값</td>
+      <td class="num">{{ pos.median|manwon }}만
+        <span class="{{ 'down-v' if pos.diff < 0 else 'up-v' }}">
+          {{ '%+d'|format(pos.diff // 10000) }}만</span></td></tr>
+  <tr><td>범위</td>
+      <td class="num dim">{{ pos.min|manwon }} ~ {{ pos.max|manwon }}만
+        · 표본 {{ pos.count }}대 · 하위 {{ pos.percentile }}%</td></tr>
+</table>
+{% if pos.histogram and pos.histogram.bins %}
+<div style="display:flex;align-items:flex-end;gap:3px;height:44px;
+     margin-top:10px">
+  {% set mx = pos.histogram.bins|max %}
+  {% for b in pos.histogram.bins %}
+  <div style="flex:1;background:{{ 'var(--amber)'
+      if loop.index0 == pos.histogram.here else 'var(--surface2)' }};
+      height:{{ (b / mx * 100) if mx else 0 }}%;min-height:2px;
+      border-radius:2px 2px 0 0" title="{{ b }}대"></div>
+  {% endfor %}
+</div>
+<div class="faint" style="font-size:11px;margin-top:3px">
+  연식 ±1년 · 주행 ±30% · E등급과 리스 상품 제외
+</div>
+{% endif %}
+</div>
+{% elif pos %}
+<div class="card" style="padding:9px 14px;margin-bottom:16px" class="dim">
+  <span class="faint">시세 위치 — {{ pos.reason }}
+    (5대 이상이어야 중앙값이 의미가 있습니다)</span>
+</div>
+{% endif %}
+
+{% if fin and fin.used and fin.used.available %}
+<h2>금융</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><th style="width:150px"></th><th class="r">중고</th>
+      <th class="r">{{ fin.new_label or '신차' }}</th></tr>
+  <tr><td>차량가</td>
+      <td class="r num">{{ fin.used.price|manwon }}만</td>
+      <td class="r num">{% if fin.new %}{{ fin.new.price|manwon }}만
+        {% else %}<span class="faint">—</span>{% endif %}</td></tr>
+  <tr><td>취득세·등록비</td>
+      <td class="r num dim">{{ (fin.used.tax + fin.used.registration)|manwon }}만</td>
+      <td class="r num dim">{% if fin.new
+        %}{{ (fin.new.tax + fin.new.registration)|manwon }}만{% endif %}</td></tr>
+  <tr><td>선납</td>
+      <td class="r num dim">{{ fin.used.down_payment|manwon }}만</td>
+      <td class="r num dim">{% if fin.new %}{{ fin.new.down_payment|manwon }}만{% endif %}</td></tr>
+  <tr><td>{{ fin.used.months }}개월</td>
+      <td class="r num dim">{{ '%.1f'|format(fin.used.rate * 100) }}%</td>
+      <td class="r num dim">{% if fin.new
+        %}{{ '%.1f'|format(fin.new.rate * 100) }}%{% endif %}</td></tr>
+  <tr><td><b>월 할부</b></td>
+      <td class="r num"><b>{{ '%.1f'|format(fin.used.monthly_loan / 10000) }}만</b></td>
+      <td class="r num">{% if fin.new
+        %}<b>{{ '%.1f'|format(fin.new.monthly_loan / 10000) }}만</b>{% endif %}</td></tr>
+  <tr><td>총 이자</td>
+      <td class="r num dim">{{ fin.used.total_interest|manwon }}만</td>
+      <td class="r num dim">{% if fin.new %}{{ fin.new.total_interest|manwon }}만{% endif %}</td></tr>
+</table>
+{% if fin.new_note %}
+<div class="faint" style="margin-top:8px;font-size:12px">{{ fin.new_note }}</div>
+{% elif fin.new_warn %}
+<div class="up-v" style="margin-top:8px;font-size:12px">⚠ {{ fin.new_warn }}</div>
+{% endif %}
+</div>
+
+<h2>월 총액</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><td style="width:160px">할부</td>
+      <td class="num">{{ '%.1f'|format(fin.used.monthly_loan / 10000) }}만</td></tr>
+  <tr><td>유지비</td>
+      <td class="num">{{ '%.1f'|format(fin.used.monthly_upkeep / 10000) }}만
+        <span class="faint">
+          연료 {{ fin.used.upkeep.fuel|manwon }} ·
+          자동차세 {{ fin.used.upkeep.auto_tax|manwon }} ·
+          보험 {{ fin.used.upkeep.insurance|manwon }} ·
+          정비 {{ fin.used.upkeep.maintenance|manwon }} (연간)</span></td></tr>
+  <tr><td>주차</td>
+      <td class="num">{{ '%.1f'|format(fin.used.monthly_parking / 10000) }}만</td></tr>
+  <tr><td><b>월 총액</b></td>
+      <td class="num"><b style="font-size:16px">
+        {{ '%.1f'|format(fin.used.monthly_total / 10000) }}만</b>
+        <span class="{{ 'up-v' if fin.used.over_target > 0 else 'down-v' }}">
+          목표 대비 {{ '%+.1f'|format(fin.used.over_target / 10000) }}만</span></td></tr>
+  <tr><td>10년 총비용</td>
+      <td class="num">{{ '%.2f'|format(fin.used.total_cost_10y / 100000000) }}억</td></tr>
+</table>
+<div class="faint" style="margin-top:8px;font-size:11.5px">
+  ⓘ 보험료는 추정치입니다 (53세 남성 기준) · 잔존가치는 차감하지 않습니다
+</div>
+</div>
+{% endif %}
+
+{% if it.record_open %}
+<h2>자동차이력정보</h2>
+<div class="card" style="margin-bottom:16px">
+<table>
+  <tr><td style="width:200px">① 내 보험으로 처리</td>
+      <td class="num">{{ it.my_accident_cnt or 0 }}회 ·
+        {{ it.my_accident_cost|manwon }}만</td></tr>
+  <tr><td>② 타차보험으로 처리</td>
+      <td class="num">{{ it.other_accident_cnt or 0 }}회 ·
+        {{ it.other_accident_cost|manwon }}만</td></tr>
+  <tr><td><b>내 차 손해 합계</b></td>
+      <td class="num"><b class="{{ 'up-v' if ev.insurance_grade=='I3' }}">
+        {{ ev.insurance_paid_total|manwon }}만
+        {% if ev.insurance_ratio %}
+          ({{ '%.1f'|format(ev.insurance_ratio*100) }}%)
+        {% endif %}</b>
+        <span class="faint">— 둘 다 내 차가 입은 손해입니다</span></td></tr>
+  <tr><td>소유자 변경</td><td class="num">{{ it.owner_change_cnt or 0 }}회</td></tr>
+  <tr><td>번호판 변경</td><td class="num">{{ it.plate_change_cnt or 0 }}회
+    {% if it.plate_was_rental %}
+      <span class="tag up">과거 '허' — 렌트 이력</span>
+    {% endif %}</td></tr>
+  {% if it.business_use %}
+  <tr><td>영업용</td><td><span class="tag up">이력 있음</span></td></tr>
+  {% endif %}
+</table>
+</div>
+{% elif it.record_fetched_at %}
+<div class="card" style="margin-bottom:16px">
+  <span class="tag up">이력 비공개</span>
+  <span class="dim" style="margin-left:8px">
+    보험처리액을 확인할 수 없어 A등급을 줄 수 없습니다.</span>
+</div>
+{% endif %}
+
+{% if refs %}
+<h2>참고 자료</h2>
+<div class="card" style="padding:8px 12px;margin-bottom:16px">
+{% for r in refs %}
+  {% if r.importance >= 4 or loop.index <= 3 %}
+  <div style="padding:4px 0;font-size:12.5px">
+    <span>{{ '🔴' if r.importance == 5
+             else '🟠' if r.importance == 4 else '⚪' }}</span>
+    {% if r.url %}<a href="{{ r.url }}" target="_blank" rel="noopener"
+      style="color:var(--amber)">{{ r.title }}</a>
+    {% else %}{{ r.title }}{% endif %}
+    <span class="faint" style="font-size:11px">
+      {{ {'defect':'결함','guide':'가이드','review':'리뷰',
+          'community':'커뮤니티'}.get(r.category, r.category) }}
+      {% if r.source %}· {{ r.source }}{% endif %}
+      {% if not r.url %}· 링크 미등록{% endif %}</span>
+  </div>
+  {% endif %}
+{% endfor %}
+<div class="faint" style="font-size:11px;margin-top:6px">
+  🔴 치명적 결함 · 🟠 구매 판단 직결 · ⚪ 일반 참고
+</div>
+</div>
+{% endif %}
+
+{% if flags %}
+<h2>플래그</h2>
+<div class="card" style="padding:10px 14px">
+  <div style="display:flex;flex-wrap:wrap;gap:6px">
+  {% for f in flags %}<span class="tag">{{ f.flag_label }}</span>{% endfor %}
+  </div>
+</div>
+{% endif %}
+<script>
+var ca = document.getElementById('cmp-add');
+if (ca) ca.onclick = function () {
+  fetch('/api/compare/add', {method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({listing_id: ca.dataset.id})})
+    .then(function (r) { return r.json(); })
+    .then(function (d) { ca.textContent = d.ok ? '담김 ✓' : d.error;
+                         ca.disabled = d.ok; });
+};
+</script>
+{% endblock %}
