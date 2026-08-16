@@ -147,6 +147,14 @@ C = {
                    "한 차종만 그 축을 못 받으면 그 차종이 통째로 불리해진다 "
                    "— 실측 08-17: 전기차의 safety.warranty_product 가 0% (개정 293)",
                    KIND_EXTERNAL),
+    "V3-39": Check("V3", "V3-39", "이론가와 실제 중앙값의 차가 상한 안",
+                   FATAL, "run",
+                   "이론가가 실제 시장보다 높으면 전부 「싸다」로 나온다. "
+                   "그러면 「싸다」가 아무 뜻이 없다 (개정 282)",
+                   KIND_EXTERNAL),
+    "V3-45": Check("V3", "V3-45", "배점 합이 만점과 같음", FATAL, "run",
+                   "합이 안 맞으면 비율이 뜻을 잃는다 (개정 292)",
+                   KIND_CONTRACT),
     "V3-31": Check("V3", "V3-31", "딜러 NULL 매물에 dealer_untrusted 없음",
                    FATAL, "run",
                    "딜러 없음을 나쁨으로 판정하는 경로를 찾는다. "
@@ -525,10 +533,84 @@ def _fill_gap_check(conn, rid):
                   f"{len(bad)}축", not bad, bad[:8])
 
 
+def _points_sum_check(rid):
+    """V3-45 — 배점 합이 만점과 같은가 (개정 292)."""
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        pol = _j.load(f)
+    total = float(pol["total_points"])
+    comps = pol.get("components") or {}
+    got = sum(float(v) for v in comps.values())
+    bad = ([] if got == total
+           else [f"배점 합 {got:g} != 만점 {total:g}"])
+    return result(C["V3-45"], rid, f"{total:g}", f"{got:g}", not bad, bad)
+
+
+def _market_gap_check(conn, rid):
+    """V3-39 — 이론가와 실제 중앙값의 차 (개정 282).
+
+    ★ 이론가가 늘 높으면 전부 「싸다」로 나오고 그 말이 뜻을 잃는다.
+      차종별로 재서 상한을 넘는 것을 낸다
+    """
+    import json as _j
+    import os as _o
+    import statistics
+
+    from analyze.axis._util import months_between
+    from analyze.axis.price import coefficient_sane, expected_price
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "depreciation.json"),
+              encoding="utf-8") as f:
+        dep = _j.load(f)
+    with open(_o.path.join(root, "config", "checks.json"),
+              encoding="utf-8") as f:
+        cap = float(_j.load(f).get("market_gap_max", 0.10))
+    as_of = conn.execute(
+        "SELECT MAX(calculated_at) FROM result_score").fetchone()[0]
+    if not as_of:
+        return not_applicable(C["V3-39"], rid, "판정 결과가 없다")
+    need = 5
+    bad, worst = [], 0.0
+    for (tk,) in conn.execute(
+            "SELECT DISTINCT target_key FROM core_listing"
+            " WHERE target_key IS NOT NULL ORDER BY 1"):
+        coef = (dep.get("coefficient") or {}).get(tk)
+        if not coefficient_sane(coef, dep.get("coefficient_sane_range")):
+            continue          # 판정에서 안 쓰는 차종이다
+        exp, real = [], []
+        for price, origin, ym in conn.execute(
+                "SELECT price_current_won, price_origin_won, year_month"
+                " FROM core_listing WHERE target_key=? AND status='active'"
+                " AND price_current_won IS NOT NULL"
+                " AND price_origin_won IS NOT NULL", (tk,)):
+            got = expected_price(origin, months_between(ym, as_of),
+                                 dep.get("curve"), coef,
+                                 dep.get("curve_beyond"))
+            if got:
+                exp.append(got)
+                real.append(price)
+        if len(exp) < need:
+            continue
+        te, tm = statistics.median(exp), statistics.median(real)
+        gap = (te - tm) / tm
+        worst = max(worst, abs(gap))
+        if abs(gap) > cap:
+            bad.append(f"{tk} 이론가가 실제 중앙값 대비 {gap * 100:+.1f}%")
+    return result(C["V3-39"], rid, f"|차| <= {cap * 100:.0f}%",
+                  f"최대 {worst * 100:.1f}%", not bad, bad[:8])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
     out.append(_denominator_check(conn, rid))
+    out.append(_points_sum_check(rid))
+    out.append(_market_gap_check(conn, rid))
     out.append(_core_axis_check(conn, rid))
     out.append(_fill_gap_check(conn, rid))
 

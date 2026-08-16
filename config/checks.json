@@ -27,5 +27,6 @@
     "validate/v*_*.py"
   ],
   "screens_dir": "ref/screens",
-  "fill_rate_gap_max": 0.9
+  "fill_rate_gap_max": 0.9,
+  "market_gap_max": 0.1
 }

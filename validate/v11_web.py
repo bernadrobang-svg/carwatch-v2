@@ -301,6 +301,18 @@ C = {
                     "차이만 내면 무엇에서 뺀 것인지 모른다.  기준이 틀리면 "
                     "차이도 틀리다 (STEP 149n-3 · 개정 283)",
                     KIND_CODE),
+    "V11-73": Check("V11", "V11-73", "화면마다 값이 나옴", FATAL, "run",
+                    "「빈 화면」과 「값이 없는 화면」을 가른다 (방법 D안)",
+                    KIND_CODE),
+    "V11-74": Check("V11", "V11-74", "숫자가 단위와 함께 나옴", FATAL, "run",
+                    "「3044」가 아니라 「3,044만」이다 (방법 D안)",
+                    KIND_CODE),
+    "V11-75": Check("V11", "V11-75", "링크가 유효함", FATAL, "run",
+                    "링크가 몇 개이고 그중 몇 개가 유효한가 (방법 D안)",
+                    KIND_CODE),
+    "V11-76": Check("V11", "V11-76", "화면 크기·시간이 상한 안", FATAL, "run",
+                    "dealers 139KB 는 이 검사가 잡아야 한다 (방법 D안)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -832,6 +844,7 @@ def _screen_checks(conn, rid) -> list:
     out.append(_axis_state_check(conn, rid))
     out.append(_photo_size_check(rid))
     out.append(_three_values_check(conn, rid))
+    out += _render_metrics_checks(conn, rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1126,6 +1139,13 @@ def _status_liveness_check(conn, rid):
                   not bad, bad)
 
 
+# 본문에 이만큼도 없으면 빈 화면이다 (V11-73)
+MIN_WORDS = 40
+# 이 말 뒤의 숫자는 식별자다.  단위가 없는 것이 맞다 (V11-74)
+ID_WORDS = ("매물", "계정", "run", "job", "id", "번호", "코드", "키")
+# ★ 원값을 그대로 고치는 화면이다.  단위를 붙이면 「100만」을 저장하게 된다.
+#   보는 화면이 아니라 고치는 화면이라 이 검사에서 뺀다 (V11-74)
+RAW_VALUE_SCREENS = ("/admin/config", "/admin/query", "/admin/api")
 MENU_TABLE = os.path.join(ROOT, "docs", "chapters", "60-admin", "c-tools.md")
 LISTINGS_TPL = os.path.join(TEMPLATES, "listings.html")
 APP_CSS = os.path.join(ROOT, "web", "static", "app.css")
@@ -1824,6 +1844,95 @@ def _photo_size_check(rid):
     got = " · ".join(f"{k} {v}px" for k, v in sorted(last.items()))
     return result(C["V11-80"], rid, f">= {want}px",
                   got or "없음", not bad, bad[:6])
+
+
+def _render_metrics_checks(conn, rid):
+    """V11-73~76 — 렌더 결과를 재서 화면이 쓸 만한지 본다 (방법 D안).
+
+    ★ 「돌아가는가」가 아니라 「쓸 수 있는가」다 (개정 279)
+    """
+    import json as _j
+    import sqlite3 as _sq
+    import time as _t
+
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from web.routes import GET, ROUTES
+    from web.server import guard
+    from web.views import HANDLERS
+
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        cfg = _j.load(f)
+    max_kb = int(cfg["screen_max_kb"])
+    max_sec = float(cfg["screen_max_sec"])
+    row = conn.execute(
+        "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+    if row is None:
+        return [not_applicable(C[c], rid, "판정 결과가 없다")
+                for c in ("V11-73", "V11-74", "V11-75", "V11-76")]
+    tmp = os.path.join(_scratch(), "metrics.db")
+    probe = _sq.connect(tmp)
+    conn.backup(probe)
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    empty, unitless, deadlink, heavy, seen = [], [], [], [], 0
+    for route in ROUTES:
+        if GET not in route.methods or guard(acc, route) is not None:
+            continue
+        fn = HANDLERS.get(route.view)
+        if fn is None:
+            continue
+        pv = {}
+        if "{" in route.path:
+            key = route.path.split("{")[1].split("}")[0]
+            if key != "listing_id":
+                continue
+            pv = {key: str(row[0])}
+        st = _t.time()
+        try:
+            _s, _h, body = fn(probe, acc,
+                              {"query": {}, "form": {}, "method": GET},
+                              path_vars=pv, csrf="t")
+        except (CarWatchError, KeyError, ValueError):
+            continue
+        except Exception:                                    # noqa: BLE001
+            continue
+        took = _t.time() - st
+        seen += 1
+        html = body.decode("utf-8", "replace")
+        text = re.sub(r"<script>.*?</script>", "", html, flags=re.S)
+        text = re.sub(r"<[^>]+>", " ", text)
+        # V11-73 — 값이 있는가.  머리말·메뉴 말고 본문에 숫자나 글이 있는가
+        if len(text.split()) < MIN_WORDS:
+            empty.append(f"{route.path} — 낱말 {len(text.split())}개")
+        # V11-74 — 원 단위 숫자가 맨몸으로 나오는가.
+        # ★ 매물번호·계정번호 같은 식별자는 단위가 없는 것이 맞다.
+        #   앞뒤 낱말로 가른다 — 「매물 42548963」은 식별자다
+        for m in re.finditer(r"(?<![\w,.])\d{7,}(?![\w,.%])", text):
+            if route.path in RAW_VALUE_SCREENS:
+                break
+            near = text[max(0, m.start() - 24):m.start()]
+            if any(w in near for w in ID_WORDS):
+                continue
+            unitless.append(f"{route.path} — 단위 없는 숫자 {m.group(0)}")
+            break
+        # V11-75 — 죽은 링크
+        dead = _dead_links(html)
+        if dead:
+            deadlink.append(f"{route.path} — {dead[0]}")
+        # V11-76 — 크기·시간
+        kb = len(body) / 1024
+        if kb > max_kb or took > max_sec:
+            heavy.append(f"{route.path} — {kb:.0f}KB · {took:.2f}초")
+    probe.close()
+    return [
+        result(C["V11-73"], rid, f"{seen}화면",
+               "값 있음" if not empty else f"{len(empty)}빈 화면",
+               not empty, empty[:6]),
+        result(C["V11-74"], rid, 0, len(unitless), not unitless, unitless[:6]),
+        result(C["V11-75"], rid, 0, len(deadlink), not deadlink, deadlink[:6]),
+        result(C["V11-76"], rid, f"<= {max_kb}KB · {max_sec}초",
+               f"{len(heavy)}곳", not heavy, heavy[:6]),
+    ]
 
 
 def _browser_scope_checks(rid):

@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 112개 · 총 34,933줄
+파일 112개 · 총 35,124줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
-| `validate/v11_web.py` | 2,216 | V11 표현 계층 검증 (14장 STEP 153). |
+| `validate/v11_web.py` | 2,325 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 1,802 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `tests/test_spec_ui.py` | 1,380 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `report/screens/build.py` | 1,311 | 화면 데이터 생성. |
@@ -15,10 +15,10 @@
 | `report/screens/admin.py` | 927 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `store/adminops.py` | 904 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `validate/v2_load.py` | 872 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
+| `validate/v3_logic.py` | 763 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tools/check_src.py` | 737 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `collect/pipeline.py` | 689 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `tests/test_score.py` | 681 | 7장 판정·채점 시험. |
-| `validate/v3_logic.py` | 681 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tests/test_run.py` | 675 | S0~S3 종단 시험 (모의 응답). |
 | `store/watch.py` | 612 | 후보 추적 (11장). |
 | `store/admin.py` | 609 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
@@ -121,10 +121,10 @@
 
 ## 큰 파일 — 무엇이 어디에 (200줄 이상 56개)
 
-### `validate/v11_web.py` — 2,216줄
+### `validate/v11_web.py` — 2,325줄
 
 ```
-_web_sources:348  run:360  _late_checks:470  _templates_with_form:534  _spec_routes:550  _routing_table_check:572  _count:606  ctx_account:613  _view_exists:619  _tpl:640  _all_templates:645  _screen_checks:650  _query_budget_check:856  _import_origin_check:928  _import_step4_check:963  _browser_origin_check:987  _browser_confirm_check:1005  _browser_chunk_check:1030  _status_screen_checks:1066  _status_liveness_check:1104  _menu_label_check:1135  _listing_paging_checks:1152  _photo_checks:1188  _sian_css_checks:1224  _cell_of:1286  _link_tip_checks:1299  _origin_link_check:1313  _choose_check:1341  _order_filter_checks:1357  _v1_parity_checks:1400  _media_blocks:1446  _responsive_checks:1462  _dead_links:1518  _null_link_check:1532  _sian_visual_check:1596  _cell_squeeze_check:1661  _static_version_check:1716  _axis_state_check:1734  _three_values_check:1775  _photo_size_check:1806  _browser_scope_checks:1829  _import_opened_steps_check:1850  _import_resume_check:1878  _watch_invite_check:1897  _post_smoke_check:1941  _template_roots:2019  _loop_fields:2029  _context_supplied_check:2051  _first_item:2118  _has_field:2132  _table_counts:2138  _save_button_check:2145  _scratch:2204
+_web_sources:360  run:372  _late_checks:482  _templates_with_form:546  _spec_routes:562  _routing_table_check:584  _count:618  ctx_account:625  _view_exists:631  _tpl:652  _all_templates:657  _screen_checks:662  _query_budget_check:869  _import_origin_check:941  _import_step4_check:976  _browser_origin_check:1000  _browser_confirm_check:1018  _browser_chunk_check:1043  _status_screen_checks:1079  _status_liveness_check:1117  _menu_label_check:1155  _listing_paging_checks:1172  _photo_checks:1208  _sian_css_checks:1244  _cell_of:1306  _link_tip_checks:1319  _origin_link_check:1333  _choose_check:1361  _order_filter_checks:1377  _v1_parity_checks:1420  _media_blocks:1466  _responsive_checks:1482  _dead_links:1538  _null_link_check:1552  _sian_visual_check:1616  _cell_squeeze_check:1681  _static_version_check:1736  _axis_state_check:1754  _three_values_check:1795  _photo_size_check:1826  _render_metrics_checks:1849  _browser_scope_checks:1938  _import_opened_steps_check:1959  _import_resume_check:1987  _watch_invite_check:2006  _post_smoke_check:2050  _template_roots:2128  _loop_fields:2138  _context_supplied_check:2160  _first_item:2227  _has_field:2241  _table_counts:2247  _save_button_check:2254  _scratch:2313
 ```
 
 ### `web/views.py` — 1,802줄
@@ -175,6 +175,12 @@ QueryLog:51  QueryResult:64  ApiSnapshot:73  DevRequest:84  RecalcJob:99  Scorin
 DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:304  _not_null_check:387  _chained_subscript_check:404  _Boom:452  _salvage_check:460  _table_exists:501  _exception_shape_checks:507  _schema_sync_check:573  _pii_access_check:610  gap_alerts:647  diff_prev_day:663  explain_gap:685  _pii_column_check:717  _secret_key_check:735  _parser_common_fields_check:773  _null_target_not_judged_check:824  _null_target_visible_check:849
 ```
 
+### `validate/v3_logic.py` — 763줄
+
+```
+_file_output_checks:189  _conflict_checks:242  _diagnosis_count_check:266  _hda_source_check:282  _sort_determinism:293  _warning_contract_checks:310  _list_observed_source_check:405  _facet_reconcile_check:435  _denominator_check:458  _core_axis_check:485  _fill_gap_check:503  _points_sum_check:536  _market_gap_check:553  run:608  _shuffle_check:712  _halt_dict_check:737
+```
+
 ### `tools/check_src.py` — 737줄
 
 ```
@@ -191,12 +197,6 @@ envelope_scope:41  Reprocess:91  reprocess_plan:110  should_refetch:127  expecte
 
 ```
 check:35  fx:41  snap:45  ctx:59  full_verdict:80  test_denominator:91  test_components_form:121  test_grade:164  test_order_independent:210  panels_of:233  test_history_real:238  test_rental_real:262  test_insurance:285  test_safety_real:324  test_spec_gate:350  test_price_real:380  test_color:436  test_price_pending:452  test_absolute_real:467  test_null_safe:507  test_empty_array_meaning:524  test_peer_group:547  test_damage_by_status:589  test_repair_cost_ratio:616  test_hda_gate:625
-```
-
-### `validate/v3_logic.py` — 681줄
-
-```
-_file_output_checks:181  _conflict_checks:234  _diagnosis_count_check:258  _hda_source_check:274  _sort_determinism:285  _warning_contract_checks:302  _list_observed_source_check:397  _facet_reconcile_check:427  _denominator_check:450  _core_axis_check:477  _fill_gap_check:495  run:528  _shuffle_check:630  _halt_dict_check:655
 ```
 
 ### `tests/test_run.py` — 675줄
