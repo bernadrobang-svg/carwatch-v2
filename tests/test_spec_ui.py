@@ -665,9 +665,12 @@ def spec_l(ad: Client) -> None:
     st, b, _h = ad.get("/listings")
     scripts = re.findall(r"<script[^>]*>", b)
     css = re.findall(r'href="([^"]*\.css)"', b)
+    # ★ JS 자체가 금지가 아니다.  빌드 산출물과 바깥 주소가 금지다
+    #   (STEP 145b · 개정 248 「바닐라·한 파일」 · 개정 277 data-peek)
+    outside = [t for t in scripts if "src=" in t]
     rec("L-2", "빌드 산출물에 의존 안 함", "정적 자원을 센다",
-        f"CSS {len(set(css))}장 · script {len(scripts)}",
-        len(set(css)) <= 1 and not scripts)
+        f"CSS {len(set(css))}장 · script {len(scripts)} (바깥 {len(outside)})",
+        len(set(css)) <= 1 and not outside)
 
     st, cb, _h = ad.get("/static/app.css")
     literals = re.findall(r"#[0-9a-fA-F]{3,6}\b", cb)

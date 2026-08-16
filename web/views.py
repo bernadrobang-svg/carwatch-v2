@@ -91,6 +91,9 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "axis_heads": axis_heads(root),
                  # ★ 조건 단추는 위에.  누르면 켜지고 다시 누르면 꺼진다 (149t)
                  "buttons": _filter_buttons(flt),
+                 # 정렬 드롭다운 8종 + 지금 조건을 들고 갈 hidden (개정 277)
+                 "orders": _order_menu(flt),
+                 "carry": _carry(flt),
                  # ★ 지금 조건을 칩으로 낸다.  누른 값이 보이지 않으면
                  #   무엇으로 걸렀는지 알 수 없다 (STEP 149d · 149g)
                  "chips": _filter_chips(flt),
@@ -288,6 +291,31 @@ ORDER_LABELS = {
     "mileage": "주행거리", "year": "연식", "recent": "최근 등록",
     "gap": "시세 차이", "total": "총비용", "grade": "등급",
 }
+
+# 정렬 드롭다운 8종 — v1 이 낸 것 그대로 (STEP 149o · 개정 277).
+# ★ 화면에 문구를 박지 않는다.  키는 ORDER_SQL 에 있는 것만 쓴다
+ORDER_MENU = (
+    ("rank", "추천 순위"), ("grade", "등급순"),
+    ("price", "가격 낮은순"), ("price_desc", "가격 높은순"),
+    ("mileage", "주행거리"), ("year", "연식 최신"),
+    ("new", "등록 최신"), ("dom", "오래된 매물"),
+)
+
+
+def _order_menu(flt) -> list:
+    """정렬 드롭다운.  ★ JS 가 꺼져도 <noscript> 단추로 낸다 (개정 248)."""
+    return [{"key": k, "label": lb, "on": flt.order == k}
+            for k, lb in ORDER_MENU]
+
+
+def _carry(flt) -> list:
+    """정렬 폼이 지금 조건을 그대로 들고 간다.
+    ★ 정렬을 바꿨더니 필터가 풀리면 무엇을 보는지 알 수 없다 (V11-58)"""
+    got = {URL_NAME[k]: getattr(flt, k) for k, _lb in CHIP_FIELDS
+           if getattr(flt, k, None)}
+    got.update({k: getattr(flt, k) for k in PRICE_FIELDS
+                if getattr(flt, k, None) is not None})
+    return [{"name": k, "value": v} for k, v in got.items()]
 
 
 def _order_label(order: str) -> str:

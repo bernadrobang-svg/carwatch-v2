@@ -95,8 +95,27 @@ def f_count(v) -> str:
         return "0"
 
 
+def f_signcls(v) -> str:
+    """증감 → CSS 클래스.  ★ 인하가 좋음(down) · 인상이 나쁨(up) 이다 (STEP 145a).
+    시세차도 같다 — 음수면 시세보다 싸다"""
+    try:
+        n = float(v)
+    except (TypeError, ValueError):
+        return "dim"
+    return "down-v" if n < 0 else "up-v" if n > 0 else "dim"
+
+
+def f_signwon(v) -> str:
+    """부호를 붙인 만원.  ★ 「-186만」의 부호가 이 열의 전부다."""
+    if v in (None, ""):
+        return "—"
+    n = int(float(v)) // WON_PER_MANWON
+    return f"{n:+,}만"
+
+
 FILTERS = {"won": f_won, "km": f_km, "pct": f_pct, "date": f_date,
-           "num": f_num, "gradecls": f_gradecls, "count": f_count}
+           "num": f_num, "gradecls": f_gradecls, "count": f_count,
+           "signcls": f_signcls, "signwon": f_signwon}
 
 # ★ 원문 삽입을 허용하는 자리.  쓰는 곳을 센다 (V11-05)
 RAW_ALLOW: frozenset[str] = frozenset({

@@ -42,11 +42,12 @@ MARKET_QUANTILES = (0.25, 0.50, 0.75)
 GONE = "gone"
 
 # 목록에 띄우는 축 요약 (STEP 97).  Component 이름을 쓴다
-# 목록에 좁은 칸으로 세우는 축.  ★ 순서와 종류는 시안이 정본이다
-# (ref/screens/v2_listings_시안.html — HUD · HDA · 선루프 · 사고 · 렌트 · 보증).
-# 한 칸에 몰아넣으면 200행에서 읽을 수 없다 — 축마다 한 칸이다
-CHIP_AXES = ("spec.hud", "spec.hda", "spec.sunroof", "history.damage",
-             "history.rental", "warranty.general")
+# 목록에 좁은 칸으로 세우는 축.  ★ v1 원본이 정본이다 (STEP 149o · 개정 277)
+# v1 22열 — HUD · 보증 · 사고 · 보험 · 렌트 (외장·내장은 원값 열로 따로 낸다).
+# HDA · 선루프는 시안이 더한 것이라 함께 둔다 — 넓으면 더 보여 준다 (개정 278).
+# ★ 한 칸에 몰아넣으면 「이 차만 HUD 가 없다」가 세로로 안 보인다
+CHIP_AXES = ("spec.hud", "spec.hda", "spec.sunroof", "warranty.general",
+             "history.damage", "history.insurance", "history.rental")
 
 
 def axis_heads(root: str = ".") -> list[dict]:
@@ -98,7 +99,7 @@ def chip(axis: str, value: int | None, excluded: bool, labels: dict,
     #   축별 문구가 있으면 그것을 쓴다 (config/labels.json)
     over = labels.get("AXIS_VALUE_LABELS", {}).get(axis, {}).get(bucket)
     text = over or f"{al.get(axis, axis)} {label}"
-    return AxisChip(axis, text, tone, url, mark=mark)
+    return AxisChip(axis, text, tone, url, head=al.get(axis, axis), mark=mark)
 
 
 def _stamp(calc_version: str, dict_version: str | None) -> VersionStamp:
@@ -124,13 +125,30 @@ def _bulk_axes(conn, lids: list, calc_version: str) -> dict:
 
 
 def _bulk_changes(conn, lids: list) -> dict:
+    """가격 변동 건수와 첫 게시가 (v1 「변동」 열 · 개정 277).
+
+    ★ 「몇 번 바뀌었나」만으로는 오른 건지 내린 건지 모른다.
+      가장 오래된 변경의 old_value 가 첫 게시가다
+    """
     if not lids:
         return {}
     marks = ",".join("?" * len(lids))
-    return {r[0]: r[1] for r in conn.execute(
-        f"SELECT listing_id, COUNT(*) FROM core_listing_change "
+    out: dict = {}
+    for lid, n, first_won in conn.execute(
+        f"SELECT listing_id, COUNT(*),"
+        f" (SELECT old_value FROM core_listing_change c2"
+        f"  WHERE c2.listing_id = c1.listing_id AND c2.change_kind='price'"
+        f"  ORDER BY c2.changed_at ASC LIMIT 1)"
+        f" FROM core_listing_change c1 "
         f"WHERE change_kind='price' AND listing_id IN ({marks}) "
-        f"GROUP BY listing_id", tuple(lids))}
+        f"GROUP BY listing_id", tuple(lids)
+    ):
+        try:
+            first = int(float(first_won)) if first_won is not None else None
+        except (TypeError, ValueError):
+            first = None            # 숫자가 아니면 없는 것으로 둔다 — 지어내지 않는다
+        out[lid] = (n, first)
+    return out
 
 
 def _total_points() -> float:
@@ -177,6 +195,38 @@ def photo_url(photos_json: str | None, base: str) -> str | None:
 
 
 YEAR_CHARS = 4
+DAY_CHARS = 10          # 'YYYY-MM-DD'
+
+
+def market_price(origin_won, year_month, as_of, target_key, dep: dict):
+    """기대가 = 신차가 × 감가계수(경과년) × 차종 보정계수 (7장 STEP 70).
+
+    ★ 판정과 같은 함수를 쓴다 — 화면이 식을 새로 쓰면 숫자가 갈린다.
+      계수가 범위 밖인 차종은 판정에서도 안 쓰므로 여기서도 안 쓴다
+    """
+    from analyze.axis._util import months_between
+    from analyze.axis.price import coefficient_sane, expected_price
+
+    coef = (dep.get("coefficient") or {}).get(target_key)
+    if not coefficient_sane(coef, dep.get("coefficient_sane_range")):
+        return None
+    age = months_between(year_month, as_of)
+    return expected_price(origin_won, age, dep.get("curve"), coef,
+                          dep.get("curve_beyond"))
+
+
+def _days_between(a: str | None, b: str | None) -> int | None:
+    """며칠.  ★ 시각을 직접 읽지 않는다 — 둘 다 저장된 값이다."""
+    from datetime import date
+
+    if not a or not b:
+        return None
+    try:
+        x = date.fromisoformat(str(a)[:DAY_CHARS])
+        y = date.fromisoformat(str(b)[:DAY_CHARS])
+    except ValueError:
+        return None
+    return (y - x).days
 
 
 def _ceil_to(value, unit: int):
@@ -189,13 +239,15 @@ def _ceil_to(value, unit: int):
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          axes: dict | None = None, changes_by: dict | None = None,
          photo_base: str = "", encar_tpl: str = "",
-         km_unit: int = 0, monthly_unit: int = 0) -> ListingRow:
+         km_unit: int = 0, monthly_unit: int = 0,
+         dep_cfg: dict | None = None) -> ListingRow:
     """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
 
     워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
     """
     (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
-     dealer, dstatus, first_seen, last_seen, dv, photos, sid) = rec
+     dealer, dstatus, first_seen, last_seen, dv, photos, sid,
+     origin_won, calc_at, absolute_fail, trust, quadrant, enough) = rec
     got = (axes or {}).get(lid, {})
     chips = []
     for axis in CHIP_AXES:
@@ -204,7 +256,17 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         else:
             chips.append(chip(axis, None, True, labels))
     fin = build_finance(price, fin_cfg, tk)
-    changes = (changes_by or {}).get(lid, 0)
+    changes, first_won = (changes_by or {}).get(lid, (0, None))
+    # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
+    exp = None
+    if dep_cfg is not None and not (got.get("price") or (None, True))[1]:
+        exp = market_price(origin_won, ym, calc_at, tk, dep_cfg)
+    gap = (price - exp) if (exp and price is not None) else None
+    # 경과 — 처음 본 날부터 며칠.  ★ 게시일이 아니라 우리가 처음 본 날이다
+    dom = _days_between(first_seen, calc_at)
+    tags = []
+    if absolute_fail:
+        tags.append(absolute_fail)
     return ListingRow(
         listing_id=lid, grade=grade or NOT_RATED,
         # ★ NOT_RATED 에 순위를 매기지 않는다.  비교 대상이 아니다
@@ -221,9 +283,20 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         total_cost_won=(price + fin.acquisition_cost_won) if fin else None,
         loan_principal_won=fin.loan_principal_won if fin else None,
         monthly_won=fin.monthly_payment_won if fin else None,
-        price_gap_pct=None, price_change_cnt=changes, days_on_market=None,
+        price_gap_pct=(round(gap / exp * 100, 1) if (gap is not None and exp)
+                       else None),
+        price_change_cnt=changes, days_on_market=dom,
         dealer_shop=dealer, dealer_honesty=None, note=None,
         versions=_stamp(calc_version, dv),
+        expected_price_won=int(exp) if exp else None,
+        price_gap_won=int(gap) if gap is not None else None,
+        price_change_won=((price - first_won)
+                          if (first_won is not None and price is not None)
+                          else None),
+        # ★ 표본이 모자란 딜러는 점수를 내지 않는다.  0 으로 내면 나쁜 딜러가 된다
+        dealer_trust=trust if enough else None,
+        dealer_quadrant=quadrant if enough else None,
+        note_tags=tuple(tags),
         photo_url=photo_url(photos, photo_base),
         source_id=sid,
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
@@ -365,9 +438,13 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         " s.grade, s.earned, s.denominator, l.dealer_shop, l.status,"
         # ★ 사진은 이미 원문에서 뽑아 앉아 있다 — 다시 받지 않는다 (개정 274)
         " l.first_seen, l.last_seen, s.dict_version, l.photo_list_json,"
-        " l.source_id"
+        # ★ 시세차 · 경과 · 정직도 · 비고 (개정 277 · 278).
+        #   행마다 따로 조회하면 200행에 1,000쿼리다 — 조인으로 한 번에 (V11-34)
+        " l.source_id, l.price_origin_won, s.calculated_at, s.absolute_fail,"
+        " d.trust_score, d.quadrant, d.sample_sufficient"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+        " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
         f" WHERE {' AND '.join(where)}"
         f" ORDER BY {order_clause(flt.order)}"
         " LIMIT ? OFFSET ?")
@@ -388,11 +465,14 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     encar_tpl = _view_str("encar_detail_url", root)
     km_unit = _view_cfg("km_bucket", root)
     monthly_unit = _view_cfg("monthly_bucket_won", root)
+    with open(os.path.join(root, "config", "depreciation.json"),
+              encoding="utf-8") as f:
+        dep_cfg = json.load(f)
     # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
     first = 0 if flt.show_all else (flt.page - 1) * page_size
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
-                 axes, changes, base, encar_tpl, km_unit, monthly_unit)
-            for i, r in enumerate(recs)]
+                 axes, changes, base, encar_tpl, km_unit, monthly_unit,
+                 dep_cfg) for i, r in enumerate(recs)]
 
 
 def recommend_funnel(conn, calc_version: str, shown: int) -> dict:

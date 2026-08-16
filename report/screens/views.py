@@ -37,6 +37,8 @@ class AxisChip:
     label: str
     tone: str
     filter_url: str
+    # ★ 축 이름만.  카드에서 「HUD 있음」을 라벨로 쓰면 값이 두 번 나온다
+    head: str = ""
     # ★ O 있음 · · 없음 · ? 확인 못 함 — 「없음」과 「모름」을
     #   같은 기호로 내면 v1 사고가 되풀이된다 (STEP 149f)
     mark: str = "?"
@@ -83,6 +85,18 @@ class ListingRow:
     # 「이 값으로 걸러 보기」에 쓰는 파생 (STEP 149p).
     # ★ 화면이 계산하지 않는다.  여기서 만들어 내려준다
     year: str | None = None           # 연식 4자리
+    # ★ 시세차 — 이 도구가 하는 일이 「시세보다 싼 차 찾기」다 (개정 277 · 278).
+    #   기대가 = 신차가 × 감가계수(경과년) × 차종 보정계수 (7장 STEP 70).
+    #   음수면 시세보다 싸다.  가격 축이 excluded 면 None 이다 — 지어내지 않는다
+    expected_price_won: int | None = None
+    price_gap_won: int | None = None
+    # 첫 게시가 대비 증감 (음수 = 내렸다).  변동이 없으면 None
+    price_change_won: int | None = None
+    # 딜러 정직도.  ★ 표본이 모자라면 None 이다 — 0 으로 내지 않는다
+    dealer_trust: float | None = None
+    dealer_quadrant: str | None = None
+    # E등급 사유 등 비고
+    note_tags: tuple = ()
     km_bucket: int | None = None      # 주행 상한 (만km 단위로 올림)
     monthly_bucket_won: int | None = None   # 월납입 상한 (10만 단위로 올림)
 

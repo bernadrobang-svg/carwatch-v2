@@ -1354,23 +1354,64 @@ pre { padding:8px 10px; overflow-x:auto; }
          border:1px solid var(--line); background:var(--surface2);
          display:block; }
 
-/* 좁은 폭 — 휴대폰에서 먼저 보일 열 (마스터 지시 08-16 · 6번).
-   ★ 열을 지우지 않는다.  좁을 때만 접는다 — 넓히면 그대로 돌아온다.
-   남기는 것  사진 · 등급 · 비율 · 차종 · 가격 · 월납 · 근거
-   접는 것    연식 · 주행 · 축 6칸 · 딜러 · 상태 */
-@media (max-width:820px) {
-  body.s-listings th:nth-child(5), body.s-listings td:nth-child(5),
-  body.s-listings th:nth-child(6), body.s-listings td:nth-child(6),
-  body.s-listings th:nth-child(7), body.s-listings td:nth-child(7),
-  body.s-listings th:nth-child(8), body.s-listings td:nth-child(8),
-  body.s-listings th:nth-child(9), body.s-listings td:nth-child(9),
-  body.s-listings th:nth-child(10), body.s-listings td:nth-child(10),
-  body.s-listings th:nth-child(11), body.s-listings td:nth-child(11),
-  body.s-listings th:nth-child(12), body.s-listings td:nth-child(12),
-  body.s-listings th:nth-child(15), body.s-listings td:nth-child(15),
-  body.s-listings th:nth-child(16), body.s-listings td:nth-child(16) { display:none }
-  main { padding:14px 12px 50px }
-  .top, .nav, .flash, .banner { padding-left:12px; padding-right:12px }
+/* ── 반응형 3단 (STEP 149o-2 · 개정 278) ─────────────────────────
+   ★ 값을 버리지 않는다.  좁으면 배치를 바꾼다.
+   ★ CSS 만으로 한다 — JS 로 폭을 재지 않는다 (개정 248).
+   ★ 가로 스크롤로 떠넘기지 않는다 — 오른쪽에 무엇이 있는지 모르게 된다.
+
+   넓음 ≥1100  표.  22열이 한 줄
+   중간 640~1099  카드 2장씩.  값은 그대로
+   좁음 <640   카드 1장씩.  마스터는 360px 로 본다
+   ─────────────────────────────────────────────────────────── */
+body.s-listings main { max-width:1560px; }
+.rows { table-layout:auto; }
+.rows td.photo { width:64px; }
+.rows td.ax a { display:inline-block; min-width:1.2em; }
+.rows td.act { white-space:nowrap; }
+.rows td.act .btn { margin-right:4px; }
+
+/* ≥1400 — 넓으면 더 보여 준다.  트림을 줄이지 않는다 */
+@media (min-width:1400px) {
+  .rows td[data-label="트림"] { max-width:none; white-space:normal; }
+}
+
+/* <1100 — 표를 카드로 바꾼다.  접는 것이 아니라 모양을 바꾸는 것이다 */
+@media (max-width:1099px) {
+  .rows, .rows tbody, .rows tr, .rows td { display:block; }
+  .rows thead { display:none; }          /* 머리말은 칸마다 data-label 로 붙는다 */
+  .rows tbody { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .rows tr {
+    background:var(--surface); border:1px solid var(--line); border-radius:7px;
+    padding:10px 12px;
+    /* ★ 카드 안 배치를 고정한다.  값이 없다고 자리를 당기지 않는다 */
+    display:grid; grid-template-columns:64px 1fr; gap:2px 10px;
+    align-content:start;
+  }
+  .rows td { border-bottom:0; padding:1px 0; grid-column:2; min-height:1.5em; }
+  .rows td.photo { grid-column:1; grid-row:1 / span 3; padding-top:2px; }
+  .rows td::before {
+    content:attr(data-label); color:var(--faint); font-size:10px;
+    letter-spacing:.05em; margin-right:6px;
+    display:inline-block; min-width:44px;
+  }
+  .rows td.photo::before, .rows td.act::before { content:""; min-width:0; }
+  /* 축 7칸은 기호 + 이름으로 한 줄에 나란히 — 카드끼리 세로로 맞는다 */
+  .rows td.ax { display:inline-block; grid-column:2; margin-right:10px;
+                min-width:5.5em; }
+  .rows td.ax::before { min-width:0; }
+  /* ★ 시세차를 크게.  이 도구의 핵심이다 */
+  .rows td.gap { font-size:1.25em; font-weight:600; }
+  .rows td.act { grid-column:1 / -1; margin-top:6px; }
+  /* 표가 아니므로 오른쪽 정렬을 풀어야 라벨과 값이 붙는다 */
+  .rows td.r, .rows td.c { text-align:left; }
+}
+
+/* <640 — 카드 한 장씩.  ★ 마스터는 360px 로 본다 */
+@media (max-width:639px) {
+  .rows tbody { grid-template-columns:1fr; }
+  main { padding:14px 12px 50px; }
+  .top, .nav, .flash, .banner { padding-left:12px; padding-right:12px; }
+  .bar { gap:6px; }
 }
 
 /* 시안에 대응이 없어 우리가 정한 것 — 이름을 화면과 맞춰 둔다 (V11-59) */
@@ -1380,3 +1421,21 @@ pre { padding:8px 10px; overflow-x:auto; }
 .cons li { color:var(--up); }
 .cmp-head { color:var(--dim); font-weight:600; }
 .unknown { color:var(--faint); font-style:italic; }
+
+/* 미리보기 (STEP 149o · 개정 277).  ★ v1 원본의 값을 그대로 옮겼다.
+   행에 손대면 그 차의 사진과 강점이 뜬다 — 브라우저만 할 수 있는 일이다 */
+#peek { position:fixed; z-index:200; display:none; pointer-events:none;
+        width:290px; background:var(--surface); border:1px solid var(--line2);
+        border-radius:8px; box-shadow:0 12px 32px rgba(0,0,0,.55);
+        overflow:hidden; }
+#peek img { width:100%; height:184px; object-fit:cover; display:block;
+            background:var(--surface2); }
+#peek .pk { padding:10px 12px; }
+#peek .pk-t { font-weight:600; font-size:13.5px; margin-bottom:3px; }
+#peek .pk-p { font-family:var(--mono); font-size:19px; font-weight:600;
+              line-height:1.2; }
+#peek .pk-r { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+#peek .pk-d { font-size:11px; color:var(--dim); margin-top:7px;
+              padding-top:7px; border-top:1px solid var(--line); }
+/* ★ 손가락으로 쓰는 폭에서는 미리보기를 띄우지 않는다 — 마우스가 없다 */
+@media (max-width:1099px) { #peek { display:none !important; } }

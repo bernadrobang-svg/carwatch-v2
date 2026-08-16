@@ -3,6 +3,13 @@
     {{ paging.page }}/{{ paging.pages }}쪽</small></h1>
 
 <div class="bar">
+  <form class="inline" method="get" action="/listings">
+    {% for h in carry %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
+    <select name="order" onchange="this.form.submit()" title="무엇을 먼저 볼지 고릅니다">
+      {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
+    </select>
+    <noscript><button type="submit" class="mini">정렬</button></noscript>
+  </form>
   {% for b in buttons %}<a class="btn{% if b.on %} on{% endif %}"
     href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endfor %}
   <span class="num dim">{{ paging.total | num }}건</span>
@@ -18,7 +25,7 @@
 <div class="chips">
   {% for c in chips %}<span class="chip"><b>{{ c.label }}</b> {{ c.value }}
     <a class="x" href="{{ c.remove_url }}" title="이 조건만 뺍니다">×</a></span>{% endfor %}
-  <a class="clear" href="/listings">전부 지우기</a>
+  <a class="clear" href="/listings">✕ 해제</a>
 </div>
 {% endif %}
 
@@ -31,40 +38,66 @@
 {% endif %}
 
 {% if count %}
-<table>
+<table class="rows">
 <thead><tr>
-<th style="width:64px"></th>
-<th class="c">등급</th><th class="r">비율</th>
-<th>차종 · 트림</th><th class="r">연식</th><th class="r">주행</th>
+<th class="c">사진</th>
+<th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
+<th>차종</th><th>트림</th>
+<th class="r">연식</th><th class="r">주행</th>
+<th class="c">외장</th><th class="c">내장</th>
 {% for a in axis_heads %}<th class="c">{{ a.label }}</th>{% endfor %}
-<th class="r">가격</th><th class="r">월납</th><th>딜러</th><th>상태</th><th></th>
+<th class="r">가격</th><th class="r">시세차</th><th class="r">월</th>
+<th class="r">변동</th><th class="r">경과</th>
+<th>딜러</th><th class="r">정직도</th><th>비고</th><th class="act">　</th>
 </tr></thead>
 <tbody>
 {% for r in rows %}
-<tr>
-  <td>
+<tr data-peek="1">
+  <td class="c photo" data-label="사진">
+    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" title="엔카에서 보기">{% endif %}
     {% if r.photo_url %}<img class="thumb" src="{{ r.photo_url }}" alt=""
       width="56" height="38" loading="lazy">{% endif %}
     {% if !r.photo_url %}<span class="thumb-none">사진 없음</span>{% endif %}
+    {% if r.encar_url %}</a>{% endif %}
   </td>
-  <td class="c"><a href="/listings?grade={{ r.grade }}" title="{{ r.grade }} 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
-  <td class="r num">
+  <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="{{ r.grade }} 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
+  <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim" title="E · 미판정은 순위를 매기지 않습니다">—</span>{% endif %}</td>
+  <td class="r num" data-label="비율">
     {% if r.ratio_pct %}<strong title="받은 점수 ÷ 판정한 축의 배점 합">{{ r.ratio_pct }}%</strong>
     <span class="raw{% if r.denom_short %} denom-short{% endif %}" title="원점수 {{ r.earned }} / 분모 {{ r.denominator }} — 판정할 수 없는 축은 0점이 아니라 분모에서 뺍니다">{{ r.earned }}/{{ r.denominator }}</span>
     <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>{% endif %}
     {% if !r.ratio_pct %}<span class="dim" title="아직 판정하지 못했습니다">—</span>{% endif %}
   </td>
-  <td><a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a>
-    <span class="dim">{{ r.trim }}</span></td>
-  <td class="r num"><a href="/listings?year={{ r.year }}" title="{{ r.year }}년식만 봅니다">{{ r.year_month }}</a></td>
-  <td class="r num"><a href="/listings?km_max={{ r.km_bucket }}" title="주행 {{ r.km_bucket | km }} 이하만 봅니다">{{ r.mileage_km | km }}</a></td>
-  {% for c in r.axis_chips %}<td class="c"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }} — O 있음 · · 없음 · ? 확인 못 함"><b>{{ c.mark }}</b></a></td>{% endfor %}
-  <td class="r num"><a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다">{{ r.price_won | won }}</a></td>
-  <td class="r num"><a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a></td>
-  <td><a href="/listings?dealer={{ r.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ r.dealer_shop }}</a></td>
-  <td><a href="/listings?status=active" title="게시 중인 매물만 봅니다">{{ r.status_label }}</a></td>
-  <td><a href="/why/{{ r.listing_id }}" title="이 등급이 나온 축별 근거">근거</a>
-    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
+  <td data-label="차종"><a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a></td>
+  <td class="dim" data-label="트림">{{ r.trim }}</td>
+  <td class="r num" data-label="연식"><a href="/listings?year={{ r.year }}" title="{{ r.year }}년식만 봅니다">{{ r.year_month }}</a></td>
+  <td class="r num" data-label="주행"><a href="/listings?km_max={{ r.km_bucket }}" title="주행 {{ r.km_bucket | km }} 이하만 봅니다">{{ r.mileage_km | km }}</a></td>
+  <td class="c" data-label="외장"><span class="tag" title="외장색 — 원문 그대로입니다">{{ r.color_ext }}</span></td>
+  <td class="c" data-label="내장"><span class="tag" title="내장색 — 원문 그대로입니다">{{ r.color_int }}</span></td>
+  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }} — O 있음 · · 없음 · ? 확인 못 함"><b>{{ c.mark }}</b></a></td>{% endfor %}
+  <td class="r num" data-label="가격"><a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다"><b>{{ r.price_won | won }}</b></a></td>
+  <td class="r num gap" data-label="시세차">
+    {% if r.price_gap_won %}<span class="{{ r.price_gap_won | signcls }}" title="기대가 {{ r.expected_price_won | won }} 대비 — 기대가는 신차가 × 감가계수(경과년) × 차종 보정계수입니다 (STEP 70)">{{ r.price_gap_won | signwon }}</span>{% endif %}
+    {% if !r.price_gap_won %}<span class="dim" title="기대가를 구하지 못했습니다 — 신차가가 없거나 차종 보정계수가 범위 밖입니다">—</span>{% endif %}
+  </td>
+  <td class="r num" data-label="월"><a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a></td>
+  <td class="r num" data-label="변동">
+    {% if r.price_change_won %}<span class="{{ r.price_change_won | signcls }}" title="첫 게시가 대비 · {{ r.price_change_cnt }}회 바뀜">{{ r.price_change_won | signwon }}</span>{% endif %}
+    {% if !r.price_change_won %}<span class="dim" title="가격이 바뀐 적이 없습니다">—</span>{% endif %}
+  </td>
+  <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market }}일{% endif %}{% if !r.days_on_market %}<span class="dim" title="처음 본 날과 판정한 날이 같습니다">0일</span>{% endif %}</td>
+  <td data-label="딜러"><a href="/listings?dealer={{ r.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ r.dealer_shop }}</a></td>
+  <td class="r num" data-label="정직도">
+    {% if r.dealer_trust %}<span class="tag" title="{{ r.dealer_quadrant }}">{{ r.dealer_trust }}</span>{% endif %}
+    {% if !r.dealer_trust %}<span class="dim" title="표본이 모자라 정직도를 내지 않습니다 — 0점이 아닙니다">—</span>{% endif %}
+  </td>
+  <td data-label="비고">
+    {% for t in r.note_tags %}<span class="tag up" title="E등급 사유">{{ t }}</span>{% endfor %}
+    {% if r.status_label %}<a class="tag" href="/listings?status=active" title="게시 중인 매물만 봅니다">{{ r.status_label }}</a>{% endif %}
+  </td>
+  <td class="act" data-label="">
+    <a class="btn mini" href="/why/{{ r.listing_id }}" title="이 등급이 나온 축별 근거">근거</a>
+    {% if r.encar_url %}<a class="btn mini" href="{{ r.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
@@ -94,8 +127,91 @@
   분모 555 전 축 판정 · 530 일부 제외 — <strong>비율로 정렬합니다</strong>.
   판정할 수 없는 축은 0 점이 아니라 분모에서 뺍니다.<br>
   축 칸 <strong>O</strong> 있음 · <strong>·</strong> 없음 · <strong>?</strong> 확인 못 함 —
-  「없음」과 「모름」을 가릅니다.
+  「없음」과 「모름」을 가릅니다.<br>
+  <strong>시세차</strong>는 기대가(신차가 × 감가계수 × 차종 보정계수) 대비입니다 —
+  <strong>음수가 시세보다 싼 것</strong>입니다.
 </p>
+
+<div id="peek">
+  <img id="peek-img" alt="">
+  <div class="pk">
+    <div class="pk-t" id="peek-title"></div>
+    <div class="pk-p" id="peek-price"></div>
+    <div class="pk-r" id="peek-tags"></div>
+    <div class="pk-d" id="peek-desc"></div>
+  </div>
+</div>
+<script>
+/* 매물 미리보기 (STEP 149o · 개정 277).  바닐라 · 한 파일 (개정 248).
+   ★ 값을 다시 실어 보내지 않는다 — 이미 그 행에 있는 칸을 읽는다.
+     서버가 낸 것과 미리보기가 어긋날 수 없다.
+   ★ JS 가 꺼져도 표는 그대로다.  이건 더해 주는 것이지 필요한 것이 아니다 */
+(function () {
+  var box = document.getElementById('peek');
+  if (!box) { return; }
+  var img = document.getElementById('peek-img');
+  var PAD = 16, W = 290, EDGE = 8;
+  var cur = null;
+
+  function cell(tr, label) {
+    var td = tr.querySelector('[data-label="' + label + '"]');
+    return td ? td.textContent.trim() : '';
+  }
+
+  function show(tr, e) {
+    cur = tr;
+    var pic = tr.querySelector('img.thumb');
+    if (pic) { img.src = pic.src; img.style.display = ''; }
+    else { img.removeAttribute('src'); img.style.display = 'none'; }
+
+    document.getElementById('peek-title').textContent =
+      cell(tr, '차종') + ' ' + cell(tr, '트림');
+    document.getElementById('peek-price').textContent =
+      cell(tr, '가격') + '   시세차 ' + cell(tr, '시세차');
+
+    /* ★ 강점만 모은다 — 「이 차의 무엇이 좋은가」가 미리보기의 뜻이다 */
+    var tags = [];
+    tr.querySelectorAll('td.ax').forEach(function (td) {
+      var a = td.querySelector('a');
+      if (!a) { return; }
+      var tone = a.className.indexOf('chip-good') >= 0 ? 'down'
+               : a.className.indexOf('chip-bad') >= 0 ? 'up' : '';
+      tags.push('<span class="tag ' + tone + '">'
+                + td.getAttribute('data-label') + ' ' + a.textContent.trim()
+                + '</span>');
+    });
+    document.getElementById('peek-tags').innerHTML = tags.join('');
+    document.getElementById('peek-desc').textContent =
+      cell(tr, '등급') + '등급 · ' + cell(tr, '비율')
+      + ' · ' + cell(tr, '연식') + ' · ' + cell(tr, '주행')
+      + ' · ' + cell(tr, '딜러');
+
+    box.style.display = 'block';
+    move(e);
+  }
+
+  function move(e) {
+    if (!cur) { return; }
+    var h = box.offsetHeight || 300;
+    var x = e.clientX + PAD, y = e.clientY + PAD;
+    if (x + W > window.innerWidth - EDGE) { x = e.clientX - W - PAD; }
+    if (y + h > window.innerHeight - EDGE) { y = window.innerHeight - h - EDGE; }
+    if (y < EDGE) { y = EDGE; }
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  function hide() { cur = null; box.style.display = 'none'; }
+
+  document.addEventListener('mouseover', function (e) {
+    var tr = e.target.closest ? e.target.closest('tr[data-peek]') : null;
+    if (tr && tr !== cur) { show(tr, e); }
+    else if (!tr && cur) { hide(); }
+  });
+  document.addEventListener('mousemove', move);
+  document.addEventListener('scroll', hide, true);
+})();
+</script>
 
 <h2>지금 조건으로</h2>
 <p><strong>{{ condition_sentence }}</strong></p>

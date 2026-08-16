@@ -257,6 +257,15 @@ C = {
                     "단추 on/off · 정렬 드롭다운 · 건수 · 칩 해제 · 엔카 링크 · "
                     "미리보기 (STEP 149o)",
                     KIND_CONTRACT),
+    "V11-70": Check("V11", "V11-70", "좁은 폭에서 값이 사라지지 않음",
+                    FATAL, "run",
+                    "「좁으니 뺀다」가 아니라 「좁으니 다르게 놓는다」다. "
+                    "어느 폭에서도 한 매물의 전부가 보인다 (STEP 149o-2)",
+                    KIND_CODE),
+    "V11-71": Check("V11", "V11-71", "가로 스크롤로 떠넘기지 않음", FATAL, "run",
+                    "오른쪽에 무엇이 있는지 모른 채 스크롤하게 하지 않는다 "
+                    "(STEP 149o-2 · 개정 278)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -780,6 +789,7 @@ def _screen_checks(conn, rid) -> list:
     out += _order_filter_checks(rid)
     # v1 원본 대조 (개정 277)
     out += _v1_parity_checks(rid)
+    out += _responsive_checks(rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1181,6 +1191,8 @@ def _sian_css_checks(rid):
         if not name.endswith(".html"):
             continue
         html = open(os.path.join(TEMPLATES, name), encoding="utf-8").read()
+        # ★ JS 가 만드는 class 문자열은 세지 않는다 — 따옴표 안이 코드다
+        html = re.sub(r"<script>.*?</script>", "", html, flags=re.S)
         for attr in re.findall(r'class="([^"{}]*)"', html):
             # ★ js- 는 JS 가 잡는 손잡이다.  꾸미지 않는다
             used |= {c for c in attr.split() if c and not c.startswith("js-")}
@@ -1382,6 +1394,67 @@ def _v1_parity_checks(rid):
                    f"{len(want) - len(bad68)}/{len(want)}", not bad68, bad68),
             result(C["V11-69"], rid, "조작",
                    f"{len(ops) - len(bad69)}/{len(ops)}", not bad69, bad69)]
+
+
+# 확인할 폭 (마스터 지시 08-16).  ★ 360 이 기준이다 — 휴대폰으로 본다
+WIDTHS = (360, 640, 900, 1100, 1400)
+# 이 폭 아래는 카드다 (STEP 149o-2).  넓음은 1100px 부터
+NARROW_MAX = 1099
+
+
+def _media_blocks(css: str):
+    """@media (max-width:N) 블록을 중괄호를 세어 잘라 낸다.
+
+    ★ 정규식으로 첫 } 까지 자르면 안쪽 규칙 하나만 잡는다 (실측)
+    """
+    for m in re.finditer(r"@media[^{]*max-width:\s*(\d+)px[^{]*\{", css):
+        width, i, depth = int(m.group(1)), m.end(), 1
+        while i < len(css) and depth:
+            if css[i] == "{":
+                depth += 1
+            elif css[i] == "}":
+                depth -= 1
+            i += 1
+        yield width, css[m.end():i - 1]
+
+
+def _responsive_checks(rid):
+    """V11-70 · V11-71 — 반응형 (STEP 149o-2 · 개정 278).
+
+    ★ 「반응형으로 했습니다」가 아니라 숫자로 본다.
+      좁은 폭에서 display:none 으로 값을 지우는지 CSS 를 실제로 읽는다
+    """
+    css = open(APP_CSS, encoding="utf-8").read()
+    html = open(LISTINGS_TPL, encoding="utf-8").read()
+    cells = re.findall(r'data-label="([^"]*)"', html)
+    bad70, bad71 = [], []
+    if not cells:
+        bad70.append("칸에 이름표(data-label)가 없다 — 카드로 못 바꾼다")
+
+    card = False
+    for width, body in _media_blocks(css):
+        if width > NARROW_MAX:
+            continue
+        if re.search(r"\.rows[^{}]*\{[^{}]*display:\s*block", body):
+            card = True
+        for rule in re.finditer(r"([^{}]+)\{([^{}]*)\}", body):
+            sel, decl = rule.group(1), rule.group(2)
+            if "display:none" not in decl.replace(" ", ""):
+                continue
+            if "thead" in sel or "#peek" in sel:
+                # 머리말은 data-label 로 칸마다 붙고,
+                # 미리보기는 값이 아니라 마우스용 덧창이다 (손가락에는 안 뜬다)
+                continue
+            bad70.append(f"{width}px 에서 값을 지운다 — {' '.join(sel.split())}")
+    if not card:
+        bad71.append("좁은 폭에서 표가 카드로 바뀌지 않는다")
+    # ★ 목록을 가로 스크롤에 떠넘기지 않는다
+    for m in re.finditer(r"([^{}]*)\{([^{}]*overflow-x[^{}]*)\}", css):
+        if "rows" in m.group(1) and "auto" not in m.group(2):
+            bad71.append(f"목록을 가로 스크롤에 떠넘긴다 — {m.group(1).strip()}")
+    return [result(C["V11-70"], rid, "칸", f"{len(cells)}칸", not bad70, bad70),
+            result(C["V11-71"], rid, "가로 스크롤",
+                   "없음" if not bad71 else "있음", not bad71, bad71)]
 
 
 def _browser_scope_checks(rid):
