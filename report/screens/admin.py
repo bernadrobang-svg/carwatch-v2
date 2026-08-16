@@ -798,8 +798,13 @@ def dict_state(conn) -> dict:
     rows = pending_enums(conn)
     # ★ 예시를 몇 개 보일지는 표시 정책이다 (config.web.recent_rows)
     n = _cfg_rows("recent_rows")
-    axes = [dict(a, sample=" · ".join(a["sample"][:n]))
+    # ★ 자른 것을 말한다.  조용히 자르면 「이게 전부」로 읽힌다 (검토 17)
+    axes = [dict(a, sample=" · ".join(a["sample"][:n])
+                 + (f"  외 {len(a['sample']) - n}종"
+                    if len(a["sample"]) > n else ""))
             for a in pending_axis_summary(conn)]
+    # ★ 자주 나온 순.  대기가 많은 축부터 봐야 한 번에 많이 열린다 (검토 15)
+    axes.sort(key=lambda a: (-a["values"], a["axis"]))
     confirmed = conn.execute(
         "SELECT axis, COUNT(*) FROM dict_enum WHERE status='confirmed' "
         "GROUP BY 1 ORDER BY 1").fetchall()

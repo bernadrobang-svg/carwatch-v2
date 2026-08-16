@@ -103,35 +103,27 @@
 <h3>축 단위로 한 번에</h3>
 <p class="muted">35종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.</p>
-<table>
-<thead><tr><th>축</th><th class="num">대기</th><th class="num">매물</th>
-  <th>출처</th><th>값 예시</th><th></th></tr></thead>
-<tbody>
 
-<tr>
-  <td><strong>panel</strong></td>
-  <td class="num">35종</td>
-  <td class="num">0건</td>
-  <td>
-      facet</td>
-  <td class="muted">프론트 휀더(좌) · 프론트 휀더(우) · 리어 도어(우) · 후드 · 쿼터 패널(우)</td>
-  <td>
-    <form method="post" action="/admin/dict">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="axis" value="panel">
-      <input type="hidden" name="previewed" value="1">
-      <label>사유 <input name="reason" size="24"
-        placeholder="왜 확정하는가 (필수)" required></label>
-      <button type="submit" name="action" value="confirm">이 축 35종 확정</button>
-      <button type="submit" name="action" value="retire">폐기</button>
-    </form>
-    <p class="muted">확정하면 이 축을 쓰는 판정이 열립니다
-      (매물 0건이 이 값을 갖고 있습니다).</p>
-  </td>
-</tr>
+<details class="card tight">
+  <summary><strong>panel</strong>
+    <span class="dim">35종 · 매물 0건 ·
+      facet</span></summary>
+  <p class="dim">값 예시 프론트 휀더(좌) · 프론트 휀더(우) · 리어 도어(우) · 후드 · 쿼터 패널(우)  외 30종</p>
+  <form method="post" action="/admin/dict">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="axis" value="panel">
+    <input type="hidden" name="previewed" value="1">
+    <label>사유 <input name="reason" size="24"
+      placeholder="왜 확정하는가 (필수)" required></label>
+    <button type="submit" name="action" value="confirm"
+      title="이 축의 대기 값을 한 번에 확정합니다">이 축 35종 확정</button>
+    <button type="submit" name="action" value="retire"
+      title="쓰지 않는 값으로 내립니다">폐기</button>
+  </form>
+  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다
+    (매물 0건이 이 값을 갖고 있습니다).</p>
+</details>
 
-</tbody>
-</table>
 
 <h3>값 하나씩</h3>
 <table>
@@ -454,7 +446,6 @@
   <td class="muted">2026-08-16</td>
 </tr>
 
-</tbody>
 </table>
 
 
@@ -482,7 +473,6 @@
 
 <tr><td>trim</td><td class="num">68종</td></tr>
 
-</tbody>
 </table>
 
 
@@ -497,7 +487,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260816T083439</span>
-  <span>2026-08-16 22:51</span>
+  <span>2026-08-16 23:01</span>
 </footer>
 
 </body>

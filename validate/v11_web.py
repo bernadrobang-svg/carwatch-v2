@@ -277,6 +277,11 @@ C = {
                     ".hist 를 CSS 에 넣어도 market.html 이 <table> 이면 "
                     "소용없다 — 실측 08-16 (검토 14)",
                     KIND_CODE),
+    "V11-78": Check("V11", "V11-78", "좁은 폭에서 글자가 세로로 안 떨어짐",
+                    FATAL, "run",
+                    "표가 화면에 맞춰 쥐어짜이면 한 글자가 한 줄이 된다. "
+                    "실측 08-16 admin_dict — 「프/론/트/휀/더」 (검토 17)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -803,6 +808,7 @@ def _screen_checks(conn, rid) -> list:
     out += _responsive_checks(rid)
     out.append(_null_link_check(conn, rid))
     out.append(_sian_visual_check(conn, rid))
+    out.append(_cell_squeeze_check(rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1616,6 +1622,56 @@ def _sian_visual_check(conn, rid):
     total = sum(len(v) for v in SIAN_VISUAL.values())
     return result(C["V11-77"], rid, f"{total}종", f"{ok}/{total}", not bad,
                   bad[:8])
+
+
+def _cell_squeeze_check(rid):
+    """V11-78 — 좁은 폭에서 글자가 세로로 떨어지지 않는가.
+
+    ★ 렌더 결과의 표를 세고, 그 표가 좁은 폭에서
+      ① 카드로 바뀌거나 ② 안쪽 최소 폭을 갖고 가로로 넘기는지를 본다.
+      둘 다 아니면 열 수만큼 쥐어짜여 한 글자가 한 줄이 된다
+    """
+    import json as _j
+
+    # ★ 한 칸이 이 글자 수보다 좁아지면 세로로 떨어진다 (검토 17).
+    #   폭을 브라우저 없이 재려면 「열 수 × 최소 칸 폭」이 화면 폭을 넘는지 본다.
+    #   숫자는 표시 정책이라 config 에 둔다 (S14)
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        cfg = _j.load(f)
+    min_chars = int(cfg["min_cell_chars"])
+    char_px = int(cfg["char_px"])
+    narrow = int(cfg["narrow_px"])
+    wide = int(cfg["narrow_max_px"])
+    css = open(APP_CSS, encoding="utf-8").read()
+    guarded = False
+    for width, body in _media_blocks(css):
+        if narrow <= width <= wide:
+            if re.search(r"min-width:\s*\d+px", body) and "table" in body:
+                guarded = True
+    bad = []
+    if not guarded:
+        bad.append("좁은 폭에서 표에 최소 폭이 없다 — 열 수만큼 쥐어짜인다")
+    render_dir = os.path.join(ROOT, "outputs", "render")
+    worst = 0
+    if os.path.isdir(render_dir):
+        for name in sorted(os.listdir(render_dir)):
+            if not name.endswith(".html"):
+                continue
+            html = open(os.path.join(render_dir, name), encoding="utf-8").read()
+            for tbl in re.findall(r"<table.*?</table>", html, re.S):
+                cols = max((len(re.findall(r"<t[dh]\b", tr))
+                            for tr in re.findall(r"<tr.*?</tr>", tbl, re.S)),
+                           default=0)
+                worst = max(worst, cols)
+                # ★ 카드로 바뀌는 표(.rows)는 열 수와 무관하다
+                if 'class="rows"' in tbl:
+                    continue
+                if cols * min_chars * char_px > narrow and not guarded:
+                    bad.append(f"{name} — {cols}열 표가 {narrow}px 에서 "
+                               f"한 칸 {min_chars}글자 미만이 된다")
+    return result(C["V11-78"], rid, f"최대 {worst}열",
+                  "안 떨어짐" if not bad else f"{len(bad)}곳",
+                  not bad, bad[:6])
 
 
 def _browser_scope_checks(rid):

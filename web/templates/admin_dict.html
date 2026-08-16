@@ -23,36 +23,27 @@
 <h3>축 단위로 한 번에</h3>
 <p class="muted">{{ pending_total | num }}종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.</p>
-<table>
-<thead><tr><th>축</th><th class="num">대기</th><th class="num">매물</th>
-  <th>출처</th><th>값 예시</th><th></th></tr></thead>
-<tbody>
 {% for a in pending_axes %}
-<tr>
-  <td><strong>{{ a.axis }}</strong></td>
-  <td class="num">{{ a.values | num }}종</td>
-  <td class="num">{{ a.listings | num }}건</td>
-  <td>{% if a.from_list %}<strong>list</strong>
-      <span class="muted">전체 집합 아님</span>{% endif %}
-      {% if !a.from_list %}facet{% endif %}</td>
-  <td class="muted">{{ a.sample }}</td>
-  <td>
-    <form method="post" action="/admin/dict">
-      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
-      <input type="hidden" name="axis" value="{{ a.axis }}">
-      <input type="hidden" name="previewed" value="1">
-      <label>사유 <input name="reason" size="24"
-        placeholder="왜 확정하는가 (필수)" required></label>
-      <button type="submit" name="action" value="confirm">이 축 {{ a.values }}종 확정</button>
-      <button type="submit" name="action" value="retire">폐기</button>
-    </form>
-    <p class="muted">확정하면 이 축을 쓰는 판정이 열립니다
-      (매물 {{ a.listings | num }}건이 이 값을 갖고 있습니다).</p>
-  </td>
-</tr>
+<details class="card tight">
+  <summary><strong>{{ a.axis }}</strong>
+    <span class="dim">{{ a.values | num }}종 · 매물 {{ a.listings | num }}건 ·
+      {% if a.from_list %}list <span class="dim">전체 집합 아님</span>{% endif %}{% if !a.from_list %}facet{% endif %}</span></summary>
+  <p class="dim">값 예시 {{ a.sample }}</p>
+  <form method="post" action="/admin/dict">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="axis" value="{{ a.axis }}">
+    <input type="hidden" name="previewed" value="1">
+    <label>사유 <input name="reason" size="24"
+      placeholder="왜 확정하는가 (필수)" required></label>
+    <button type="submit" name="action" value="confirm"
+      title="이 축의 대기 값을 한 번에 확정합니다">이 축 {{ a.values }}종 확정</button>
+    <button type="submit" name="action" value="retire"
+      title="쓰지 않는 값으로 내립니다">폐기</button>
+  </form>
+  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다
+    (매물 {{ a.listings | num }}건이 이 값을 갖고 있습니다).</p>
+</details>
 {% endfor %}
-</tbody>
-</table>
 
 <h3>값 하나씩</h3>
 <table>
@@ -69,7 +60,6 @@
   <td class="muted">{{ r.first_seen | date }}</td>
 </tr>
 {% endfor %}
-</tbody>
 </table>
 {% endif %}
 
@@ -85,7 +75,6 @@
 {% for c in confirmed_rows %}
 <tr><td>{{ c.axis }}</td><td class="num">{{ c.n | num }}종</td></tr>
 {% endfor %}
-</tbody>
 </table>
 {% endif %}
 {% if !confirmed_rows %}

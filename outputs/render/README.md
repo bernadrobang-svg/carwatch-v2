@@ -28,7 +28,7 @@
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 28,341B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 6,371B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 14,184B |
-| `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 11,809B |
+| `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 11,739B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 70,743B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 12,728B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,708B |
