@@ -68,6 +68,28 @@ python3.11 tools/run_tests.py
 필수   check_all · run_tests 를 돌린 실제 출력을 붙인다
 ```
 
+## 규칙 8. 형상 관리
+
+`~/v2` 는 git 저장소이고 GitHub 에 push 한다.
+`https://github.com/bernadrobang-svg/carwatch-v2` (public · main)
+
+```
+작업 시작 전   git status 로 깨끗한지 본다.  아니면 먼저 물어본다
+작업 후        git add -A
+              git commit -m "규격코드: 무엇을 왜"
+              git push
+```
+
+```
+필수   커밋 메시지 첫머리에 규격 코드나 STEP 번호
+      예) "V11-34: 화면 쿼리 21→17. 중복 집계 제거"
+필수   outputs/ 의 작업 기록에 커밋 해시를 적는다
+필수   작업이 끝나면 반드시 push 한다 — 가이드가 그걸 읽는다
+금지   여러 작업을 한 커밋에 섞는 것
+금지   .bak 파일로 백업하는 것 — git 이 그 일을 한다
+되돌릴 때  git revert <해시>   ★ git reset 은 쓰지 않는다
+```
+
 ---
 
 ## 환경 — 반드시 `python3.11` 로 돌린다

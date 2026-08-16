@@ -476,8 +476,11 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         from collect.pipeline import ENVELOPE_ALL, envelope_scope
 
         scope_kind = envelope_scope(getattr(ctx, "reprocess_reason", None))
+        # ★ 반입분은 봉투가 아니다.  CSV·ID 목록을 json.loads 하면 죽는다.
+        #   반입은 이미 core_listing 에 앉았다 — S4 가 다시 펼칠 것이 없다
+        #   (13장 STEP 136a 「출력 S4 결과와 같은 형태로 core_listing 에 반영」)
         sql = ("SELECT body FROM raw_response "
-               "WHERE endpoint='list' AND status='ok'")
+               "WHERE endpoint='list' AND status='ok' AND origin <> 'import'")
         args: tuple = ()
         if scope_kind != ENVELOPE_ALL:
             # raw_response 에 run_id 컬럼이 없다.  실행 시작 시각으로 가른다.
