@@ -25,6 +25,8 @@ ORIGIN_COLLECTOR = "collector"
 ORIGIN_MASTER = "master_manual"
 # 밖에서 받아 넣은 목록 (13장 STEP 136a).  ★ collector 와 절대 섞지 않는다
 ORIGIN_IMPORT = "import"
+# 브라우저가 사용자 회선으로 받은 것 (13장 STEP 136c).  ★ 서버가 받은 것이 아니다
+ORIGIN_BROWSER = "browser"
 
 
 # 단계 트랜잭션 중인 연결.  sqlite3.Connection 은 임의 속성을 받지 않는다
@@ -167,6 +169,61 @@ def save_import_raw(
     )
     conn.commit()
     return cur.lastrowid
+
+
+def save_browser_raw(
+    conn: sqlite3.Connection,
+    site: str,
+    text: str,
+    endpoint: str,
+    request_url: str,
+    at: str,
+    http_code: int | None = None,
+    run_id: str | None = None,
+) -> int:
+    """브라우저가 받아 온 원문 (13장 STEP 136c).
+
+    ★ 사이트가 실제로 준 응답이다 — 반입과 다르다.  URL 도 있다
+    ★ 서버가 이 응답을 다시 검증하려고 엔카를 부르지 않는다.  막혀 있다
+    금지   origin 을 'collector' 로 넣는 것 — 서버가 받은 것이 아니다
+    반환   raw_response.id
+    """
+    meta = json.dumps({"fetched_by": "browser", "http_code": http_code},
+                      ensure_ascii=False)
+    cur = conn.execute(
+        "INSERT INTO raw_response"
+        "(run_id,site,listing_id,source_id,endpoint,request_url,request_meta,"
+        " http_code,response_meta,status,body,origin,fetched_at)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        (run_id, site, None, None, endpoint, request_url, None,
+         http_code, meta, "ok", text, ORIGIN_BROWSER, at),
+    )
+    conn.commit()
+    return cur.lastrowid
+
+
+def save_browser_facet(
+    conn: sqlite3.Connection,
+    site: str,
+    target_key: str,
+    text: str,
+    request_url: str,
+    at: str,
+    axis_count: int | None = None,
+    http_code: int | None = None,
+    run_id: str | None = None,
+) -> int:
+    """브라우저가 받아 온 facet.  S3 이 읽는 자리에도 넣는다 (STEP 136c)."""
+    conn.execute(
+        "INSERT INTO raw_facet"
+        "(site,target_key,request_kind,request_url,axis_count,body,fetched_at)"
+        " VALUES (?,?,?,?,?,?,?)",
+        (site, target_key, "unspecified", request_url, axis_count, text, at),
+    )
+    rid = save_browser_raw(conn, site, text, "facet", request_url, at,
+                           http_code=http_code, run_id=run_id)
+    conn.commit()
+    return rid
 
 
 def save_import_facet(

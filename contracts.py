@@ -112,6 +112,8 @@ CSV_COLUMNS: tuple[str, ...] = (
 )
 # 반입분 표시 (STEP 136b ①④).  ★ 수집분과 섞이지 않게 하는 값들이다
 IMPORT_SOURCE = "import"
+# 브라우저가 사용자 회선으로 받은 것 (13장 STEP 136c).  ★ 서버가 받은 것이 아니다
+ORIGIN_BROWSER = "browser"
 IMPORT_STAGE = "confirmed"       # 사람이 정한 것이다.  잠정(provisional)이 아니다
 # S4 완료 행의 expected.  actual 이 collector 인지 import 인지로 갈린다
 S4_EXPECTED = "collector 또는 import"

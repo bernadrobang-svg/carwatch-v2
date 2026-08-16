@@ -21,8 +21,8 @@ from datetime import datetime, timezone
 
 from errors import PolicyError, ValidationError
 from contracts import (
-    FORMAT_FACET, FORMAT_JSON, IMPORT_SOURCE, IMPORT_STAGE, ROLE_ADMIN,
-    S1_CODE, S2_CODE, S4_CODE, S4_EXPECTED, Account, require_role,
+    FORMAT_FACET, FORMAT_JSON, IMPORT_SOURCE, IMPORT_STAGE, ORIGIN_BROWSER,
+    ROLE_ADMIN, S1_CODE, S2_CODE, S4_CODE, S4_EXPECTED, Account, require_role,
 )
 from store.admin import TEMP_SECRET_BYTES, _admin_cfg
 
@@ -269,8 +269,62 @@ def _import_facet(conn: sqlite3.Connection, account: Account, *, text: str,
                         updated=0, fmt=FORMAT_FACET, site_raw=True)
 
 
+@dataclass(frozen=True)
+class BrowserCatch:
+    raw_id: int
+    kind: str                # 'list' · 'facet'
+    count: int | None        # 목록이면 Count · facet 이면 축 수
+    items: int               # 목록이면 매물 수
+    opened: str              # 이 저장으로 연 단계
+
+
+def save_browser_catch(conn: sqlite3.Connection, account: Account, *,
+                       kind: str, text: str, site: str,
+                       target_key: str | None, request_url: str,
+                       reason: str, at: str, http_code: int | None = None,
+                       count: int | None = None, items: int = 0,
+                       axis_count: int | None = None,
+                       run_id: str | None = None) -> BrowserCatch:
+    """브라우저가 받아 온 원문을 저장하고 그 단계를 연다 (STEP 136c).
+
+    ★ 사람이 ②에서 눈으로 본 뒤에만 여기 온다 — 호출자가 _gate 를 지난다
+    ★ 원문을 가공하지 않는다.  받은 글자 그대로 넣는다 (P3)
+    금지   서버가 이 응답을 검증하려고 엔카를 다시 부르는 것 — 막혀 있다
+    """
+    from store.raw import save_browser_facet, save_browser_raw
+
+    require_role(account, ROLE_ADMIN)
+    if not (reason or "").strip():
+        raise ValidationError("사유가 있어야 저장합니다", step="STEP 149k")
+    if kind == "facet":
+        if not target_key:
+            raise ValidationError(
+                "facet 은 차종별로 받습니다 — 차종을 고르십시오",
+                step="STEP 136c")
+        raw_id = save_browser_facet(conn, site, target_key, text, request_url,
+                                    at, axis_count=axis_count,
+                                    http_code=http_code, run_id=run_id)
+        code = S2_CODE
+    else:
+        raw_id = save_browser_raw(conn, site, text, "list", request_url, at,
+                                  http_code=http_code, run_id=run_id)
+        code = S1_CODE
+    mark_step_imported(
+        conn, code, at,
+        {"account_id": account.account_id, "reason": reason,
+         "fetched_by": ORIGIN_BROWSER, "target_key": target_key,
+         "url": request_url, "count": count, "items": items,
+         "axis_count": axis_count, "raw_id": raw_id},
+        run_id=run_id, actual=ORIGIN_BROWSER)
+    conn.commit()
+    return BrowserCatch(raw_id=raw_id, kind=kind,
+                        count=count if kind == "list" else axis_count,
+                        items=items, opened=code)
+
+
 def mark_step_imported(conn: sqlite3.Connection, code: str, at: str,
-                       detail: dict, run_id: str | None = None) -> None:
+                       detail: dict, run_id: str | None = None,
+                       actual: str = IMPORT_SOURCE) -> None:
     """단계를 「반입이 대신했다」로 연다 (STEP 136b ④ · 개정 259).
 
     ★ actual 을 'collector' 로 남기면 「우리가 받았다」가 된다 — 금지다
@@ -281,7 +335,7 @@ def mark_step_imported(conn: sqlite3.Connection, code: str, at: str,
         "INSERT OR REPLACE INTO audit_validation"
         "(run_id,phase,code,target_key,expected,actual,passed,severity,"
         " samples,applicable,checked_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-        (run_id or "", "V1", code, "", S4_EXPECTED, IMPORT_SOURCE,
+        (run_id or "", "V1", code, "", S4_EXPECTED, actual,
          1, "warn",
          json.dumps(detail, ensure_ascii=False),
          1, at),

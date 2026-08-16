@@ -22,8 +22,10 @@ CREATE TABLE IF NOT EXISTS raw_response (
   origin         TEXT NOT NULL,
   fetched_at     TEXT NOT NULL,
   CHECK (status IN ('ok','empty','not_found','error')),
-  -- import = 밖에서 받아 넣은 목록 (13장 STEP 136a).  collector 와 구분한다
-  CHECK (origin IN ('collector','master_manual','import'))
+  -- import  = 밖에서 받아 넣은 목록 (13장 STEP 136a)
+  -- browser = 브라우저가 사용자 회선으로 받은 것 (13장 STEP 136c)
+  -- ★ 셋을 섞지 않는다.  「누가 받았나」가 판정의 근거를 가른다
+  CHECK (origin IN ('collector','master_manual','import','browser'))
 );
 
 CREATE INDEX IF NOT EXISTS ix_raw_lookup

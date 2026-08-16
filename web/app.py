@@ -171,11 +171,14 @@ def _display_now(root: str | None = None) -> str:
 
 
 def make_app(db_path: str, root: str = ".", plan=None,
-             reason_rows=None, fetch=None, resume=None) -> dict:
+             reason_rows=None, fetch=None, resume=None,
+             collect_urls=None) -> dict:
     """서버가 쓰는 처리기.  ★ 요청마다 연결을 연다 — 스레드 공유를 피한다.
 
     plan · reason_rows   재처리 결정표.  ★ run.py 가 주입한다.
                          web 이 collect 를 부르면 층이 거꾸로 간다 (STEP 15a)
+    collect_urls         차종 → 조회 URL.  ★ 어댑터가 만든다 —
+                         web 은 adapters 를 못 부른다 (STEP 136c · V4-22)
     """
     import sqlite3 as _sq
 
@@ -250,7 +253,7 @@ def make_app(db_path: str, root: str = ".", plan=None,
                            root=root, csrf=_csrf_for(req),
                            flash_key=key, plan=plan,
                            reason_rows=reason_rows, fetch=fetch,
-                           resume=resume)
+                           resume=resume, collect_urls=collect_urls)
         finally:
             conn.close()
 

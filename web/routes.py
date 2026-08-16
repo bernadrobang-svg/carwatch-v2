@@ -70,6 +70,9 @@ ROUTES: tuple[Route, ...] = (
     # 반입은 수집이다 — 탐색(/admin/api)이 아니라 운영이다 (STEP 136a)
     Route("/admin/import", (GET, POST), "view_admin_import", ROLE_ADMIN,
           GROUP_OPS),
+    # 브라우저가 사용자 회선으로 부른다 — 서버 IP 가 막힌 자리다 (STEP 136c)
+    Route("/admin/collect", (GET, POST), "view_admin_collect", ROLE_ADMIN,
+          GROUP_OPS),
     Route("/admin/users", (GET, POST), "view_admin_users", ROLE_ADMIN,
           GROUP_OPS),
     Route("/admin/scoring", (GET, POST), "view_admin_scoring", ROLE_ADMIN,

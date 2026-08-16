@@ -819,6 +819,50 @@ def _target_rows(conn) -> list:
 IMPORT_PREVIEW, IMPORT_SAVE, IMPORT_COLLECT = "preview", "import", "collect"
 
 
+def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
+                  flash_key: str = "-", collect_urls=None, **_kw):
+    """브라우저 수집 (13장 STEP 136c).
+
+    ★ 브라우저가 사용자 회선으로 엔카를 부르고, 서버는 받은 원문을 저장만 한다.
+      서버 IP 는 /search/ 가 407 이다 — 그 차이를 메우는 것이 이 화면이다
+    ★ ②(사람이 눈으로 확인)를 건너뛰지 않는다.  _gate 가 previewed 를 요구한다
+    금지   서버가 이 응답을 다시 검증하려고 엔카를 부르는 것 — 막혀 있다
+    """
+    from report.screens.admin import collect_state
+    from store.adminops import save_browser_catch
+    from web.app import redirect
+
+    if req.get("method") == "POST":
+        form = _gate(conn, account, req, csrf)
+        kind = (form.get("kind") or "list").strip()
+        body = form.get("body") or ""
+        if not body.strip():
+            raise ValidationError(
+                "받은 원문이 비어 있습니다 — 먼저 「조회」를 눌러 확인하십시오",
+                step="STEP 136c")
+        got = save_browser_catch(
+            conn, account, kind=kind, text=body, site=form.get("site") or "encar",
+            target_key=(form.get("target_key") or "").strip() or None,
+            request_url=form.get("url") or "", reason=form.get("reason", ""),
+            at=_now(), http_code=_int_or_none(form.get("http_code")),
+            count=_int_or_none(form.get("count")),
+            items=_int_or_none(form.get("items")) or 0,
+            axis_count=_int_or_none(form.get("axis_count")))
+        return redirect(
+            "/admin/collect",
+            f"{kind} 원문을 저장했습니다 — raw_id {got.raw_id} · "
+            f"{got.opened} 를 열었습니다 (origin=browser)", flash_key)
+
+    ctx = collect_state(conn, collect_urls)
+    return page(conn, account, "브라우저 수집", "admin_collect.html", ctx,
+                csrf=csrf, root=root, flash_key=flash_key)
+
+
+def _int_or_none(value):
+    raw = (value or "").strip()
+    return int(raw) if raw.lstrip("-").isdigit() else None
+
+
 def admin_import(conn, account, req, root: str = ROOT, csrf: str = "",
                  flash_key: str = "-", plan=None, **_kw):
     """목록 반입 (13장 STEP 136a · 136b).
@@ -1462,6 +1506,7 @@ HANDLERS = {
     "watch_update": watch_update_post,
     "view_admin_run": admin_run,
     "view_admin_import": admin_import,
+    "view_admin_collect": admin_collect,
     "view_admin_scoring": admin_scoring,
     "view_admin_registry": admin_registry,
     "view_admin_query": admin_query,

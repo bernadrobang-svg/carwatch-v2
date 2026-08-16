@@ -197,6 +197,37 @@ def cmd_admin_create(name: str) -> int:
     return 0
 
 
+def _collect_urls(target_key: str | None = None) -> list[dict]:
+    """브라우저가 부를 주소를 만든다 (13장 STEP 136c).
+
+    ★ 어댑터가 q 를 조립한다.  web 은 adapters 를 못 부른다 (STEP 15a).
+      화면이 URL 을 손으로 만들면 수집분과 다른 조건이 된다
+    반환   [{'kind','target_key','label','url','interval_sec'}]
+    """
+    cfg = load("endpoints.json")["encar"]
+    adapter = EncarAdapter(cfg)
+    targets = load_targets(os.path.join(ROOT, "config", "targets.json"))
+    # ★ 기본값을 코드에 두지 않는다.  없으면 그 자리에서 드러나야 한다
+    gap = float(cfg["interval_sec"][0])
+    out = []
+    # ★ 수집 단위는 collect_group 이다.  facet 은 그 단위로만 존재한다
+    #   (2장 STEP 23 · 「G80_EV 의 facet」은 없다)
+    for group in collect_groups(targets, adapter.site_code):
+        if target_key and target_key not in group.target_keys:
+            continue
+        spec = group.as_target_spec()
+        keys = " · ".join(group.target_keys)
+        out.append({"kind": "list", "target_key": group.target_keys[0],
+                    "label": f"{keys} 목록 1쪽",
+                    "url": adapter.list_url(spec, 0).url,
+                    "interval_sec": gap})
+        for req in adapter.facet_urls(spec):
+            out.append({"kind": "facet", "target_key": group.target_keys[0],
+                        "label": f"{keys} facet",
+                        "url": req.url, "interval_sec": gap})
+    return out
+
+
 def cmd_web(host: str | None, port: str | None) -> int:
     """화면을 띄운다 (14장 STEP 141).  ★ 기본은 127.0.0.1 이다."""
     from web.app import make_app
@@ -217,7 +248,8 @@ def cmd_web(host: str | None, port: str | None) -> int:
     from collect.pipeline import resume_point
 
     app = make_app(DB_PATH, ROOT, plan=plan, reason_rows=rows,
-                   fetch=_api_fetch, resume=resume_point)
+                   fetch=_api_fetch, resume=resume_point,
+                   collect_urls=_collect_urls)
     return serve(app, host, int(port) if port else None, ROOT)
 
 

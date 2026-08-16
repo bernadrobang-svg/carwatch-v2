@@ -40,6 +40,7 @@ MENU: tuple[tuple[str, str, str, str], ...] = (
     (GROUP_OPS, "/admin/run", "실행 지시 · 큐", "STEP 132"),
     (GROUP_OPS, "/admin/audit", "감사 조회", "STEP 138a"),
     (GROUP_OPS, "/admin/import", "목록 반입", "STEP 136a · 136b"),
+    (GROUP_OPS, "/admin/collect", "브라우저 수집", "STEP 136c"),
     (GROUP_TUNE, "/admin/scoring", "배점 조정", "STEP 128 · 129"),
     (GROUP_TUNE, "/admin/targets", "차종 추가 · 수정", "STEP 130"),
     (GROUP_TUNE, "/admin/registry", "등록부 분류", "STEP 131"),
@@ -523,6 +524,32 @@ def parse_import_text(text: str, site: str) -> tuple:
     # ★ facet 해석도 여기서 한다.  store 는 parse 를 못 부른다 (V4-22)
     facet = parse_facet(text) if fmt == FORMAT_FACET else None
     return fmt, parse_import(text, fmt, site), facet
+
+
+def collect_state(conn, collect_urls=None, limit: int | None = None) -> dict:
+    """브라우저 수집 화면 (13장 STEP 136c).
+
+    ★ 부를 주소는 어댑터가 만든 것을 그대로 낸다.  화면이 손으로 만들지 않는다
+    ★ JS 를 못 쓰는 환경도 있다 — 주소를 눈에 보이게 내서 붙여넣기로 돌아갈 수 있게 한다
+    """
+    limit = _cfg_rows("recent_rows") if limit is None else limit
+    from contracts import ORIGIN_BROWSER
+
+    urls = list(collect_urls() if callable(collect_urls) else (collect_urls or []))
+    rows = [{"raw_id": rid, "at": at, "endpoint": ep, "bytes": len(body or ""),
+             "url": url or "", "code": code}
+            for rid, at, ep, body, url, code in conn.execute(
+                "SELECT id, fetched_at, endpoint, body, request_url, http_code "
+                "FROM raw_response WHERE origin=? ORDER BY id DESC LIMIT ?",
+                (ORIGIN_BROWSER, limit))]
+    opened = [{"code": c, "actual": a, "at": t} for c, a, t in conn.execute(
+        "SELECT code, actual, checked_at FROM audit_validation "
+        "WHERE code LIKE 'STEP53-%' AND actual IN (?, 'import') "
+        "ORDER BY checked_at DESC", (ORIGIN_BROWSER,))]
+    return {"collect_urls": urls, "browser_batches": rows,
+            "browser_count": len(rows), "opened_steps": opened,
+            # ★ 주소가 없으면 부를 것도 없다.  간격도 0 이다
+            "interval_sec": (urls[0]["interval_sec"] if urls else 0)}
 
 
 def import_state(conn, limit: int | None = None) -> dict:

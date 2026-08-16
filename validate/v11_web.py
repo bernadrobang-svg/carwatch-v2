@@ -172,6 +172,16 @@ C = {
                     "반입이 S4 완료를 안 남기면 precheck('S5') 가 "
                     "「선행 단계 미완료」로 막는다 (STEP 136b ④)",
                     KIND_CODE),
+    "V11-43": Check("V11", "V11-43", "브라우저 수집분의 origin 이 'browser' 임",
+                    FATAL, "run",
+                    "사용자 회선으로 받은 것을 collector 로 남기면 "
+                    "「서버가 받았다」가 된다 (STEP 136c)",
+                    KIND_CODE),
+    "V11-44": Check("V11", "V11-44", "사람 확인 없이 저장되지 않음",
+                    FATAL, "run",
+                    "②를 건너뛰고 자동 저장하면 무엇이 들어갔는지 모른다 "
+                    "(STEP 136c · 149k)",
+                    KIND_CODE),
     "V11-46": Check("V11", "V11-46", "반입으로 연 단계의 actual 이 'import' 임",
                     FATAL, "run",
                     "S1·S2·S4 를 반입이 대신했으면 그렇게 남긴다. "
@@ -554,9 +564,12 @@ def _screen_checks(conn, rid) -> list:
                       "링크" if ok18 else "글자만", ok18,
                       [] if ok18 else ["축 칩이 filter_url 을 안 쓴다"]))
 
-    # V11-19 — 폴링 실패에도 화면이 안 깨진다 (JS 를 안 쓰므로 구조로 본다)
-    ok19 = not any("setInterval" in b or "fetch(" in b
-                   for b in tpls.values())
+    # V11-19 — 폴링 실패에도 화면이 안 깨진다.
+    # ★ 개정 248 — 금지된 것은 빌드 도구이지 JS 자체가 아니다.
+    #   「브라우저만 할 수 있는 일」(STEP 136c)에만 열어 준다.  나머지는 그대로 금지다
+    JS_ALLOWED = ("admin_collect.html",)
+    ok19 = not any(("setInterval" in b or "fetch(" in b)
+                   for name, b in tpls.items() if name not in JS_ALLOWED)
     out.append(result(C["V11-19"], rid, "JS 없음",
                       "JS 없음" if ok19 else "JS 있음", ok19))
 
@@ -622,7 +635,8 @@ def _screen_checks(conn, rid) -> list:
         if "저장했습니다" in body and not re.search(
                 r"\b(conn\.execute|apply_config|set_role|set_disabled|"
                 r"enqueue_recalc|change_secret|classify_field|_upd|"
-                r"watch_close|create_dev_request|preview_scoring)\b", body):
+                r"watch_close|create_dev_request|preview_scoring|"
+                r"import_listings|save_browser_catch)\b", body):
             bad.append(f"{node.name}: 저장 없이 성공을 낸다")
     out.append(result(C["V11-33"], rid, 0, bad or 0, not bad, bad))
 
@@ -641,6 +655,9 @@ def _screen_checks(conn, rid) -> list:
     out.append(_import_resume_check(conn, rid))
     out.append(_import_step4_check(conn, rid))
     out.append(_import_opened_steps_check(conn, rid))
+    # 브라우저 수집 2종 (13장 STEP 136c)
+    out.append(_browser_origin_check(conn, rid))
+    out.append(_browser_confirm_check(conn, rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -789,6 +806,49 @@ def _import_step4_check(conn, rid):
     if not passed:
         bad.append("passed=0 — S4 가 완료로 남지 않았다")
     return result(C["V11-42"], rid, IMPORT_SOURCE, str(actual), not bad, bad)
+
+
+def _browser_origin_check(conn, rid):
+    """V11-43 — 브라우저가 받은 것이 서버가 받은 것으로 안 보이는가 (136c)."""
+    from contracts import ORIGIN_BROWSER
+    from store.raw import ORIGIN_COLLECTOR
+
+    n = conn.execute("SELECT COUNT(*) FROM raw_response WHERE origin=?",
+                     (ORIGIN_BROWSER,)).fetchone()[0]
+    src = open(os.path.join(ROOT, "store", "adminops.py"),
+               encoding="utf-8").read()
+    body = src.split("def save_browser_catch", 1)[-1].split("\ndef ", 1)[0]
+    bad = []
+    if ORIGIN_COLLECTOR in body or "'collector'" in body:
+        bad.append("save_browser_catch 가 collector 를 쓴다")
+    if not n and not bad:
+        return not_applicable(C["V11-43"], rid, "브라우저 수집분이 없다")
+    return result(C["V11-43"], rid, ORIGIN_BROWSER, f"{n}건", not bad, bad)
+
+
+def _browser_confirm_check(conn, rid):
+    """V11-44 — 사람 확인 없이 저장되지 않는가 (136c ② · STEP 149k).
+
+    ★ 「사람이 본다」를 글로 두지 않는다.  저장 경로가 관문을 지나는지 본다
+    """
+    src = open(os.path.join(ROOT, "web", "views.py"), encoding="utf-8").read()
+    body = src.split("def admin_collect", 1)[-1].split("\ndef ", 1)[0]
+    bad = []
+    if "_gate(" not in body:
+        bad.append("admin_collect 의 POST 가 _gate 를 지나지 않는다")
+    if "save_browser_catch" in body and "_gate(" not in body:
+        bad.append("확인 없이 저장한다")
+    tpl = os.path.join(ROOT, "web", "templates", "admin_collect.html")
+    if os.path.isfile(tpl):
+        html = open(tpl, encoding="utf-8").read()
+        # ★ previewed 를 처음부터 1 로 박아 두면 ②를 건너뛴 것이다
+        if 'name="previewed" id="f_seen" value="1"' in html:
+            bad.append("previewed 가 처음부터 1 이다 — ②를 건너뛴다")
+    else:
+        bad.append("admin_collect.html 이 없다")
+    _ = conn
+    return result(C["V11-44"], rid, "미리보기 필수",
+                  "관문 통과" if not bad else "관문 없음", not bad, bad)
 
 
 def _import_opened_steps_check(conn, rid):
