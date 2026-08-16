@@ -207,6 +207,7 @@ python3 run.py web --port N
 | `/admin/import` | GET·POST | `view_admin_import` | **admin** | 운영 | 08-16 신설 |
 | `/admin/collect` | GET·POST | `view_admin_collect` | **admin** | 운영 | 08-16 신설 |
 | `/admin/dict` | GET·POST | `view_admin_dict` | **admin** | 조정 | 08-16 신설 |
+| `/admin/status` | GET | `view_admin_status` | **admin** | 운영 | 08-16 신설 |
 | `/admin/requests` | GET·POST | `view_admin_requests` | **admin** | 탐색 | 시안 |
 
 ```
@@ -1367,6 +1368,8 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-47 | 브라우저 수집이 한 번에 `max_form_bytes` 를 넘기지 않음 | code | fatal |
 | V11-48 | 전 차종 수집에 확인 절차가 있음 | code | fatal |
 | V11-49 | 한 차종 실패가 나머지를 멈추지 않음 | code | fatal |
+| V11-51 | 모니터 화면에 실행 단추가 없음 | code | fatal |
+| V11-52 | 마지막 갱신 시각이 표시됨 | code | fatal |
 
 ---
 
