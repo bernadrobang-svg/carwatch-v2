@@ -205,10 +205,17 @@ def make_app(db_path: str, root: str = ".", plan=None,
         finally:
             conn.close()
 
-    def blank_page(title: str):
+    def blank_page(title: str, req=None):
+        """오류 화면의 머리말.
+
+        ★ 요청의 세션을 읽는다.  ANONYMOUS 로 고정하면 로그인해 둔 사람이
+          413·400·403·404 를 만날 때마다 「비로그인」으로 보인다 —
+          로그아웃된 줄 알고 다시 로그인하게 된다 (실측 08-16 · 마스터 보고)
+        """
+        account = account_of(req) if req is not None else ANONYMOUS
         conn = _sq.connect(db_path)
         try:
-            return build_page(conn, ANONYMOUS, title, "")
+            return build_page(conn, account, title, "")
         finally:
             conn.close()
 

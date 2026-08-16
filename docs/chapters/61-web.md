@@ -1363,6 +1363,9 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-44 | 사람 확인 없이 저장되지 않음 | code | fatal |
 | V11-45 | CLI 로만 되는 기능이 없음 (부트스트랩 제외) | contract | fatal |
 | V11-46 | 반입으로 연 단계의 `actual` 이 `'import'` 임 | code | fatal |
+| V11-47 | 브라우저 수집이 한 번에 `max_form_bytes` 를 넘기지 않음 | code | fatal |
+| V11-48 | 전 차종 수집에 확인 절차가 있음 | code | fatal |
+| V11-49 | 한 차종 실패가 나머지를 멈추지 않음 | code | fatal |
 
 ---
 

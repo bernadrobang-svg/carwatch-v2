@@ -153,8 +153,11 @@ def make_handler(app):
                 left -= len(chunk)
 
         def _error(self, err: ErrorPage):
+            # ★ 쿠키를 넘긴다.  안 넘기면 오류 화면마다 「비로그인」이 된다
+            req = {"cookie": self.headers.get("Cookie")}
             html = render("_error.html",
-                          {"page": app["blank_page"](err.title), "err": err})
+                          {"page": app["blank_page"](err.title, req),
+                           "err": err})
             self._send(err.status, html.encode("utf-8"),
                        "text/html; charset=utf-8")
 
