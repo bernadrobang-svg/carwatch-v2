@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>등록부 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-registry">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>등록부 <small>unclassified 10건</small></h1>
+<p class="notice">
+  엔카 응답의 모든 경로를 여기서 구분합니다.
+  분류하지 않은 경로가 <strong>판정에 쓰이는 축</strong>에 있으면 그 축이 멈춥니다.
+  판정에 쓰지 않는 경로는 미분류여도 진행됩니다.
+</p>
+<p class="muted">
+  ⓘ 한 차종만 본 관측으로 「값이 하나뿐」을 판단하지 마십시오.
+  전 차종에서는 갈릴 수 있습니다 — 그럴 때는 <code>deferred</code> 로 두고 해소 조건을 적습니다.
+  미등록이 곧 미분류가 아닙니다. 파서가 이미 쓰는데 표기가 달라 잡힌 것일 수 있습니다.
+</p>
+<p class="chips">
+<a class="chip" href="/admin/registry?usage=in_use">in_use (170)</a><a class="chip" href="/admin/registry?usage=unclassified">unclassified (110)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (54)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (45)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
+</p>
+<table>
+<thead><tr><th>엔드포인트</th><th>경로</th><th class="num">미관측</th>
+<th>구분</th><th>컬럼</th><th>근거</th><th>분류</th></tr></thead>
+<tbody>
+
+<tr><td>core</td><td><code>accident_my_cnt</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accident_my_cnt">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>accident_my_cost</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accident_my_cost">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>accident_other_cnt</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accident_other_cnt">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>accident_other_cost</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accident_other_cost">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>accident_total_cnt</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accident_total_cnt">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>accidents_json</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accidents_json">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>check_engine</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="check_engine">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>check_transmission</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="check_transmission">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>first_registration_date</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="first_registration_date">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td>core</td><td><code>flood_date</code></td>
+<td class="num">2</td><td>unclassified</td>
+<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
+<td>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="flood_date">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+</tbody>
+</table>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비교 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-compare">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>비교</h1>
+<p class="muted">비교할 매물을 고르십시오. <code>/compare?ids=1,2</code></p>
+
+
+<table>
+<thead><tr><th>축</th></tr></thead>
+<tbody>
+<tr class="cmp-head"><th>등급</th>
+  </tr>
+<tr class="cmp-head"><th>비율</th>
+  </tr>
+<tr class="cmp-head"><th>가격</th>
+  </tr>
+
+</tbody>
+</table>
+
+<h2>이 셋 중에서</h2>
+<p class="muted">★ <strong>비율로 견줍니다.</strong> 원점수를 나란히 두면
+  분모가 짧은 매물이 유리해 보입니다 — 분수를 함께 냈으니 확인하십시오.<br>
+  「확실한 것」은 전 축이 판정된 매물입니다 — 더 오르지도 내리지도 않습니다.</p>
+
+
+<h2>최종 후보로</h2>
+<p class="muted">지정하면 관심 목록에 고정되고, 가격 · 상태 변동을 추적합니다.</p>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

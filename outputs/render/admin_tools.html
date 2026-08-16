@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>도구 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-tools">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>도구</h1>
+<p class="notice">
+  도구는 <strong>읽기 또는 설정 변경만</strong> 합니다. 데이터를 고치지 않습니다 —
+  데이터 수정은 재파싱·재판정으로 합니다.<br>
+  ★ 도구 결과는 <strong>제안</strong>입니다. 적용은 설정 화면에서 사유와 함께 합니다 —
+  「산출했다」와 「바꿨다」는 다릅니다.
+  <span class="muted">근거 STEP 135</span>
+</p>
+
+<h2>점검 — 읽기만 합니다</h2>
+<table>
+<thead><tr><th>도구</th><th>하는 일</th><th>근거</th><th></th></tr></thead>
+<tbody>
+
+<tr><td>검증 실행</td><td class="muted">V1~V11 을 지금 돌린다</td>
+  <td class="muted">6장</td>
+  <td>
+    <form method="post" action="/admin/tools" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="reason" value="점검">
+      <input type="hidden" name="tool" value="validate">
+      <button type="submit" class="mini">실행</button>
+    </form>
+  </td></tr>
+
+<tr><td>등급 분포</td><td class="muted">현재 배점의 등급 분포</td>
+  <td class="muted">V5-05</td>
+  <td>
+    <form method="post" action="/admin/tools" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="reason" value="점검">
+      <input type="hidden" name="tool" value="grade_dist">
+      <button type="submit" class="mini">실행</button>
+    </form>
+  </td></tr>
+
+<tr><td>매핑 대조</td><td class="muted">원문 값 ↔ CORE 값 일치율</td>
+  <td class="muted">V4-01</td>
+  <td>
+    <form method="post" action="/admin/tools" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="reason" value="점검">
+      <input type="hidden" name="tool" value="mapping">
+      <button type="submit" class="mini">실행</button>
+    </form>
+  </td></tr>
+
+<tr><td>경로 전수</td><td class="muted">엔드포인트별 경로 · 값 표본</td>
+  <td class="muted">2장</td>
+  <td>
+    <form method="post" action="/admin/tools" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="reason" value="점검">
+      <input type="hidden" name="tool" value="paths">
+      <button type="submit" class="mini">실행</button>
+    </form>
+  </td></tr>
+
+<tr><td>임계 제안</td><td class="muted">분포 분위수 → warnings.json 후보</td>
+  <td class="muted">STEP 82d</td>
+  <td>
+    <form method="post" action="/admin/tools" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="reason" value="점검">
+      <input type="hidden" name="tool" value="threshold">
+      <button type="submit" class="mini">실행</button>
+    </form>
+  </td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>정비 — 되돌릴 수 있습니다</h2>
+<p class="muted">DDL 을 고쳤을 때 기존 DB 를 따라가게 합니다. 데이터를 지우지 않습니다.</p>
+<pre>python run.py migrate</pre>
+
+<h2>내보내기</h2>
+<p class="muted">매물 · 판정 · 축별 근거를 CSV 로 냅니다. 개인정보는 빠집니다.
+  덮어쓰지 않고 새 파일로 냅니다.</p>
+<pre>python run.py export --format csv
+python run.py report</pre>
+
+<h2>여기에 없는 것</h2>
+<p class="muted">아래는 CLI 에서만 합니다.
+  버튼이 있으면 「일단 눌러보자」가 됩니다 — 원문을 확인한 뒤 손으로 치는 편이 안전합니다.</p>
+<ul class="muted">
+  <li><code>collect --full</code> 전면 재수집 — 되돌릴 수 없습니다</li>
+  <li><code>db reset</code> DB 초기화 — 원문이 사라집니다</li>
+  <li><code>admin reset</code> 비밀번호 재설정 — 잠겼을 때 씁니다</li>
+</ul>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

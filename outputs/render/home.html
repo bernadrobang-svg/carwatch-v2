@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>현황 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-dashboard">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>현황</h1>
+
+
+<h2>해야 할 일</h2>
+<ul>
+<li class="warn-warn">unclassified <strong>110건</strong>
+  <span class="muted">— config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</span></li>
+
+<li class="warn-warn">pending <strong>35건</strong>
+  <span class="muted">— 원문 표본 3건을 확인해 confirmed 로 올린 뒤 S9 를 재실행한다</span></li>
+
+<li class="warn-warn">undecided <strong>1건</strong>
+  <span class="muted">— 감가 곡선·HDA Gate·색상 목록을 확정한다</span></li>
+</ul>
+
+
+<h2>등급 분포 3,470건 · 전 차종</h2>
+<table>
+<thead><tr><th class="num">S</th><th class="num">A</th><th class="num">B</th><th class="num">C</th><th class="num">D</th><th class="num">E</th><th class="num">NOT_RATED</th></tr></thead>
+<tbody><tr><td class="num"><a href="/listings?grade=S">7</a></td><td class="num"><a href="/listings?grade=A">31</a></td><td class="num"><a href="/listings?grade=B">415</a></td><td class="num"><a href="/listings?grade=C">655</a></td><td class="num"><a href="/listings?grade=D">1,602</a></td><td class="num"><a href="/listings?grade=E">654</a></td><td class="num"><a href="/listings?grade=NOT_RATED">106</a></td></tr></tbody>
+</table>
+
+<p class="muted">E 사유 — <span class="chip">리스·렌트 상품 368</span><span class="chip">골격 손상 110</span><span class="chip">계약중·판매완료 103</span><span class="chip">수리비 10% 초과 89</span><span class="chip">저당 27</span><span class="chip">전손 16</span></p>
+
+
+<h2>차종별 <span class="muted">막대는 A / B / C 이하</span></h2>
+<table>
+<thead><tr><th>차종</th><th class="num">매물</th><th>1위</th>
+<th class="num">A등급 중앙가</th><th>등급 분포</th></tr></thead>
+<tbody>
+
+<tr><td><a href="/listings?target=G70_20T">G70_20T</a></td><td class="num">240</td>
+<td class="num">A</td>
+<td class="num">2,670만</td>
+<td class="muted">{&#x27;A&#x27;: 1, &#x27;B&#x27;: 20, &#x27;C&#x27;: 32, &#x27;D&#x27;: 150, &#x27;E&#x27;: 37}</td></tr>
+
+<tr><td><a href="/listings?target=G70_25T">G70_25T</a></td><td class="num">92</td>
+<td class="num">A</td>
+<td class="num">2,800만</td>
+<td class="muted">{&#x27;A&#x27;: 2, &#x27;B&#x27;: 4, &#x27;C&#x27;: 24, &#x27;D&#x27;: 43, &#x27;E&#x27;: 19}</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T">G80_25T</a></td><td class="num">1,713</td>
+<td class="num">S</td>
+<td class="num">3,890만</td>
+<td class="muted">{&#x27;A&#x27;: 13, &#x27;B&#x27;: 204, &#x27;C&#x27;: 330, &#x27;D&#x27;: 874, &#x27;E&#x27;: 287, &#x27;NOT_RATED&#x27;: 4, &#x27;S&#x27;: 1}</td></tr>
+
+<tr><td><a href="/listings?target=G80_EV">G80_EV</a></td><td class="num">60</td>
+<td class="num">C</td>
+<td class="num">—</td>
+<td class="muted">{&#x27;C&#x27;: 4, &#x27;D&#x27;: 46, &#x27;E&#x27;: 10}</td></tr>
+
+<tr><td><a href="/listings?target=GRANDEUR_LPG">GRANDEUR_LPG</a></td><td class="num">242</td>
+<td class="num">C</td>
+<td class="num">—</td>
+<td class="muted">{&#x27;C&#x27;: 14, &#x27;D&#x27;: 199, &#x27;E&#x27;: 28, &#x27;NOT_RATED&#x27;: 1}</td></tr>
+
+<tr><td><a href="/listings?target=GV60">GV60</a></td><td class="num">116</td>
+<td class="num">B</td>
+<td class="num">—</td>
+<td class="muted">{&#x27;B&#x27;: 18, &#x27;C&#x27;: 24, &#x27;D&#x27;: 64, &#x27;E&#x27;: 10}</td></tr>
+
+<tr><td><a href="/listings?target=GV70_EV">GV70_EV</a></td><td class="num">71</td>
+<td class="num">B</td>
+<td class="num">—</td>
+<td class="muted">{&#x27;B&#x27;: 11, &#x27;C&#x27;: 11, &#x27;D&#x27;: 34, &#x27;E&#x27;: 15}</td></tr>
+
+<tr><td><a href="/listings?target=KOLEOS_HEV">KOLEOS_HEV</a></td><td class="num">237</td>
+<td class="num">B</td>
+<td class="num">—</td>
+<td class="muted">{&#x27;B&#x27;: 46, &#x27;C&#x27;: 102, &#x27;D&#x27;: 24, &#x27;E&#x27;: 35, &#x27;NOT_RATED&#x27;: 30}</td></tr>
+
+<tr><td><a href="/listings?target=MODEL_Y">MODEL_Y</a></td><td class="num">522</td>
+<td class="num">A</td>
+<td class="num">4,300만</td>
+<td class="muted">{&#x27;A&#x27;: 5, &#x27;B&#x27;: 94, &#x27;C&#x27;: 95, &#x27;D&#x27;: 125, &#x27;E&#x27;: 203}</td></tr>
+
+<tr><td><a href="/listings?target=SPORTAGE_LPI">SPORTAGE_LPI</a></td><td class="num">177</td>
+<td class="num">S</td>
+<td class="num">3,950만</td>
+<td class="muted">{&#x27;A&#x27;: 10, &#x27;B&#x27;: 18, &#x27;C&#x27;: 19, &#x27;D&#x27;: 43, &#x27;E&#x27;: 10, &#x27;NOT_RATED&#x27;: 71, &#x27;S&#x27;: 6}</td></tr>
+
+</tbody>
+</table>
+
+
+<h2>주의</h2>
+<ul><li class="warn-warn">unclassified 110건 — 등록부 미분류 경로</li><li class="warn-warn">pending 35건 — 사전 미검토 값</li><li class="warn-warn">undecided 1건 — 미확정으로 분모에서 빠진 축</li></ul>
+
+
+
+<h2>오늘 변동</h2>
+<table>
+<thead><tr><th>구분</th><th>차종</th><th>항목</th><th class="num">변화</th>
+<th class="num">현재가</th></tr></thead>
+<tbody>
+
+<tr><td>status</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">—</td>
+  <td class="num">—</td></tr>
+
+<tr><td>status</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">—</td>
+  <td class="num">—</td></tr>
+
+<tr><td>status</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">—</td>
+  <td class="num">—</td></tr>
+
+<tr><td>status</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">—</td>
+  <td class="num">—</td></tr>
+
+<tr><td>인상</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">10만</td>
+  <td class="num">3,870만</td></tr>
+
+<tr><td>인상</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">10만</td>
+  <td class="num">3,870만</td></tr>
+
+<tr><td>인하</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">-20만</td>
+  <td class="num">3,359만</td></tr>
+
+<tr><td>인하</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">-20만</td>
+  <td class="num">3,359만</td></tr>
+
+<tr><td>인하</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">-20만</td>
+  <td class="num">3,430만</td></tr>
+
+<tr><td>인하</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">-20만</td>
+  <td class="num">3,430만</td></tr>
+
+<tr><td>인하</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">-80만</td>
+  <td class="num">3,070만</td></tr>
+
+<tr><td>인하</td><td>KOLEOS_HEV</td>
+  <td class="muted">price_current_won</td>
+  <td class="num">-50만</td>
+  <td class="num">3,350만</td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>수집</h2>
+<p class="muted">★ 「없음」은 그 매물에 그 응답이 없는 것입니다. 실패가 아닙니다.</p>
+<table>
+<thead><tr><th>단계</th><th class="num">요청</th><th class="num">성공</th>
+<th class="num">없음</th><th class="num">실패</th><th class="num">시간</th>
+<th>판정</th></tr></thead>
+<tbody>
+
+<tr><td>S5 상세</td><td class="num">3,235</td>
+  <td class="num">3,228</td><td class="num">7</td>
+  <td class="num">0</td>
+  <td class="num">205.1초</td><td>정상</td></tr>
+
+<tr><td>S5 성능점검</td><td class="num">3,235</td>
+  <td class="num">1,801</td><td class="num">1,434</td>
+  <td class="num">0</td>
+  <td class="num">141.0초</td><td>정상</td></tr>
+
+<tr><td>S5 이력</td><td class="num">3,235</td>
+  <td class="num">2,110</td><td class="num">1,125</td>
+  <td class="num">0</td>
+  <td class="num">188.9초</td><td>정상</td></tr>
+
+<tr><td>S6a 진단</td><td class="num">451</td>
+  <td class="num">428</td><td class="num">23</td>
+  <td class="num">0</td>
+  <td class="num">15.7초</td><td>정상</td></tr>
+
+<tr><td>S7 카탈로그</td><td class="num">126</td>
+  <td class="num">104</td><td class="num">1</td>
+  <td class="num">21</td>
+  <td class="num">5.3초</td><td>실패 21</td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>상위 후보 <span class="muted">추천순</span></h2>
+<table>
+<thead><tr><th class="num">순위</th><th>등급</th><th>차종</th>
+<th class="num">가격</th><th></th></tr></thead>
+<tbody>
+
+<tr><td class="num">1</td>
+  <td><span class="grade-s">S</span></td>
+  <td>SPORTAGE_LPI LPG 2.0 2WD</td>
+  <td class="num">4,400만</td>
+  <td><a href="/why/6668">근거</a></td></tr>
+
+<tr><td class="num">2</td>
+  <td><span class="grade-s">S</span></td>
+  <td>SPORTAGE_LPI LPG 2.0 2WD</td>
+  <td class="num">5,390만</td>
+  <td><a href="/why/6834">근거</a></td></tr>
+
+<tr><td class="num">3</td>
+  <td><span class="grade-s">S</span></td>
+  <td>SPORTAGE_LPI LPG 2.0 2WD</td>
+  <td class="num">4,080만</td>
+  <td><a href="/why/7086">근거</a></td></tr>
+
+<tr><td class="num">4</td>
+  <td><span class="grade-s">S</span></td>
+  <td>SPORTAGE_LPI LPG 2.0 2WD</td>
+  <td class="num">4,685만</td>
+  <td><a href="/why/7162">근거</a></td></tr>
+
+<tr><td class="num">5</td>
+  <td><span class="grade-s">S</span></td>
+  <td>SPORTAGE_LPI LPG 2.0 2WD</td>
+  <td class="num">3,850만</td>
+  <td><a href="/why/6812">근거</a></td></tr>
+
+</tbody>
+</table>
+<p class="muted">★ 점수순이 아닙니다. 예산 · 월납입 · 제외 축을 함께 봅니다.</p>
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

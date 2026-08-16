@@ -45,7 +45,7 @@ a { color:var(--amber); }
 .banner-halted       { border-color:var(--up); }
 .banner-action { color:var(--dim); margin-left:8px; }
 
-/* ── 1. 공통 — 시안 545규칙 (모든 시안이 같은 값을 쓰는 것) ── */
+/* ── 1. 공통 — 시안 544규칙 (모든 시안이 같은 값을 쓰는 것) ── */
 .num { font-family:var(--mono);font-variant-numeric:tabular-nums }
 nav a.on { color:var(--bg);background:var(--amber);font-weight:600 }
 .sgrp { display:flex;align-items:center;gap:2px }
@@ -396,7 +396,6 @@ table.cmp tr:last-child td { border-bottom:0 }
 .f .hint { font-size:11.5px;color:var(--faint);margin-top:5px;line-height:1.6 }
 .f .hint.bad { color:var(--up) }
 .f .hint.ok { color:var(--down) }
-.btn { width:100%;background:var(--amber);color:var(--bg);border:1px solid var(--amber); border-radius:6px;padding:10px;font-size:14px;font-weight:600; font-family:inherit;cursor:pointer;margin-top:5px }
 .btn.ghost { background:var(--surface2);color:var(--text);border-color:var(--line2); font-weight:400 }
 .err.on { display:block }
 .foot { text-align:center;font-size:11.5px;color:var(--faint);margin-top:16px; line-height:1.8 }
@@ -1063,6 +1062,7 @@ body.s-join .pol .k { color:var(--amber) }
 body.s-join .box { width:100%;max-width:400px }
 body.s-join .brand { text-align:center;margin-bottom:24px }
 body.s-join .f input.mono { font-family:var(--mono) }
+body.s-join .btn { width:100%;background:var(--amber);color:var(--bg);border:1px solid var(--amber); border-radius:6px;padding:10px;font-size:14px;font-weight:600; font-family:inherit;cursor:pointer;margin-top:5px }
 body.s-join .lead { background:#1a1408;border:1px solid #5c4520;border-radius:7px; padding:13px 15px;margin-bottom:16px;font-size:13px;line-height:1.7 }
 /* listings */
 body.s-listings :root { --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228; --line:#262c33; --line2:#333b44; --text:#e4e2df; --dim:#8b939c; --faint:#5a626b; --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590; --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace; --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif; }
@@ -1103,6 +1103,7 @@ body.s-login .err { background:#2a1412;border:1px solid #4e2523;border-radius:6p
 body.s-login .box { width:100%;max-width:380px }
 body.s-login .brand { text-align:center;margin-bottom:26px }
 body.s-login .f input.mono { font-family:var(--mono);letter-spacing:.04em }
+body.s-login .btn { width:100%;background:var(--amber);color:var(--bg);border:1px solid var(--amber); border-radius:6px;padding:10px;font-size:14px;font-weight:600; font-family:inherit;cursor:pointer;margin-top:5px }
 body.s-login .steps { display:flex;gap:5px;margin-bottom:18px;justify-content:center }
 /* market */
 body.s-market :root { --bg:#0e1013; --surface:#161a1e; --surface2:#1d2228; --line:#262c33; --line2:#333b44; --text:#e4e2df; --dim:#8b939c; --faint:#5a626b; --amber:#e8a13a; --down:#4fc3a1; --up:#e0655f; --gone:#7d8590; --mono:ui-monospace,'JetBrains Mono','D2Coding','Consolas',monospace; --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif; }
@@ -1375,34 +1376,56 @@ body.s-listings main { max-width:1560px; }
   .rows td[data-label="트림"] { max-width:none; white-space:normal; }
 }
 
-/* <1100 — 표를 카드로 바꾼다.  접는 것이 아니라 모양을 바꾸는 것이다 */
+/* <1100 — 표를 카드로 바꾼다.  접는 것이 아니라 모양을 바꾸는 것이다.
+   ★ 한 칸이 한 줄이면 카드가 25줄이 된다 — 실측 08-16 스크린샷.
+     규격은 「한 카드가 화면 절반을 넘지 않는다.  두 개는 보여야 비교가 된다」다.
+     그래서 관련된 값을 한 줄에 모아 10줄로 앉힌다 (STEP 149o-2 카드 배치) */
 @media (max-width:1099px) {
   .rows, .rows tbody, .rows tr, .rows td { display:block; }
   .rows thead { display:none; }          /* 머리말은 칸마다 data-label 로 붙는다 */
   .rows tbody { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .rows tr {
     background:var(--surface); border:1px solid var(--line); border-radius:7px;
-    padding:10px 12px;
+    padding:9px 11px;
     /* ★ 카드 안 배치를 고정한다.  값이 없다고 자리를 당기지 않는다 */
-    display:grid; grid-template-columns:64px 1fr; gap:2px 10px;
-    align-content:start;
+    display:grid; grid-template-columns:repeat(6, minmax(0, 1fr));
+    gap:1px 6px; align-content:start; font-size:12.5px; line-height:1.5;
   }
-  .rows td { border-bottom:0; padding:1px 0; grid-column:2; min-height:1.5em; }
-  .rows td.photo { grid-column:1; grid-row:1 / span 3; padding-top:2px; }
+  /* ★ 자르지 않는다.  「94…」로 잘리면 그것도 값이 사라진 것이다 (개정 278).
+     칸을 넘으면 줄을 바꾼다 — 실측 08-16 스크린샷 */
+  .rows td { border-bottom:0; padding:0; min-width:0;
+             white-space:normal; overflow-wrap:anywhere; }
   .rows td::before {
-    content:attr(data-label); color:var(--faint); font-size:10px;
-    letter-spacing:.05em; margin-right:6px;
-    display:inline-block; min-width:44px;
+    content:attr(data-label); color:var(--faint); font-size:9.5px;
+    letter-spacing:.04em; margin-right:4px;
   }
-  .rows td.photo::before, .rows td.act::before { content:""; min-width:0; }
-  /* 축 7칸은 기호 + 이름으로 한 줄에 나란히 — 카드끼리 세로로 맞는다 */
-  .rows td.ax { display:inline-block; grid-column:2; margin-right:10px;
-                min-width:5.5em; }
-  .rows td.ax::before { min-width:0; }
+  /* 사진 — 왼쪽 두 칸 · 세 줄.  ★ tr 에 position:relative 를 줘도
+     격자에서 빼내지 못했다 (실측).  격자 안에 두되 딱 세 줄만 차지시킨다 */
+  .rows td.photo { grid-column:1 / span 2; grid-row:1 / span 3; }
+  .rows td.photo::before { content:""; margin:0; }
+  /* 차종 · 트림 · 딜러 · 비고는 넓게 */
+  /* ★ 여섯 칸으로 나눠 관련된 값을 한 줄에 모은다 (STEP 149o-2 카드 배치).
+     기본은 세 칸(한 줄에 둘), 넓은 값만 더 준다 */
+  .rows td { grid-column:span 2; }
+  .rows td[data-label="차종"], .rows td[data-label="트림"],
+  .rows td[data-label="딜러"] { grid-column:span 4; }
+  .rows td[data-label="등급"], .rows td[data-label="순위"],
+  .rows td[data-label="비율"] { grid-column:span 4; }
+  /* 축 7칸 — 한 줄에 셋.  값이 O · · · ? 하나뿐이라 좁아도 된다 */
+  .rows td.ax { grid-column:span 2; font-size:11.5px; }
+  .rows td[data-label="비고"] { grid-column:span 6; }
+
   /* ★ 시세차를 크게.  이 도구의 핵심이다 */
-  .rows td.gap { font-size:1.25em; font-weight:600; }
-  .rows td.act { grid-column:1 / -1; margin-top:6px; }
-  /* 표가 아니므로 오른쪽 정렬을 풀어야 라벨과 값이 붙는다 */
+  /* ★ 시세차를 크게.  이 도구의 핵심이다 */
+  .rows td.gap { grid-column:span 3; font-size:1.2em; font-weight:600; }
+  .rows td[data-label="가격"] { grid-column:span 3; font-size:1.1em; }
+  .rows td[data-label="비고"] { grid-column:span 6; }
+  .rows td.gap::before { font-size:9.5px; font-weight:400; }
+  /* 축 7칸 — 기호 + 이름으로 나란히.  카드끼리 세로로 맞는다 */
+  /* 조작은 맨 아래 한 줄 */
+  .rows td.act { grid-column:1 / -1; margin-top:6px; white-space:nowrap; }
+  .rows td.act::before { content:""; margin:0; }
+  /* 표가 아니므로 오른쪽 정렬을 풀어야 이름표와 값이 붙는다 */
   .rows td.r, .rows td.c { text-align:left; }
 }
 
@@ -1412,15 +1435,9 @@ body.s-listings main { max-width:1560px; }
   main { padding:14px 12px 50px; }
   .top, .nav, .flash, .banner { padding-left:12px; padding-right:12px; }
   .bar { gap:6px; }
+  /* ★ 조건 단추가 한 줄씩 꽉 차면 다섯 줄이 된다 — 실측 08-16 스크린샷 */
+  .bar .btn { width:auto; flex:0 0 auto; padding:5px 10px; font-size:12px; }
 }
-
-/* 시안에 대응이 없어 우리가 정한 것 — 이름을 화면과 맞춰 둔다 (V11-59) */
-.notice { padding:10px 12px; background:var(--surface);
-          border-left:3px solid var(--amber); margin:0 0 14px; }
-.pros li { color:var(--down); }
-.cons li { color:var(--up); }
-.cmp-head { color:var(--dim); font-weight:600; }
-.unknown { color:var(--faint); font-style:italic; }
 
 /* 미리보기 (STEP 149o · 개정 277).  ★ v1 원본의 값을 그대로 옮겼다.
    행에 손대면 그 차의 사진과 강점이 뜬다 — 브라우저만 할 수 있는 일이다 */
@@ -1439,3 +1456,11 @@ body.s-listings main { max-width:1560px; }
               padding-top:7px; border-top:1px solid var(--line); }
 /* ★ 손가락으로 쓰는 폭에서는 미리보기를 띄우지 않는다 — 마우스가 없다 */
 @media (max-width:1099px) { #peek { display:none !important; } }
+
+/* 시안에 대응이 없어 우리가 정한 것 — 이름을 화면과 맞춰 둔다 (V11-59) */
+.notice { padding:10px 12px; background:var(--surface);
+          border-left:3px solid var(--amber); margin:0 0 14px; }
+.pros li { color:var(--down); }
+.cons li { color:var(--up); }
+.cmp-head { color:var(--dim); font-weight:600; }
+.unknown { color:var(--faint); font-style:italic; }

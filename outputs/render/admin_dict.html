@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사전 확정 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-dict">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>사전 확정</h1>
+
+<p class="notice">
+  <strong>사전은 「같은 값을 같은 것으로 인정하는 규칙」입니다.</strong>
+  기계가 정하면 「흰색」과 「화이트」를 다른 것으로 두거나 「진주색」을 흰색에 넣어 버립니다.
+  그 판단은 사람이 합니다 — 그래서 <code>pending</code> 이 있습니다.
+  <strong>확정 전에는 그 축을 쓰는 판정이 돌지 않습니다.</strong>
+  <span class="muted">근거 STEP 136e · 4장 STEP 45</span>
+</p>
+
+
+
+<h2>확정 대기 35종</h2>
+
+
+<h3>축 단위로 한 번에</h3>
+<p class="muted">35종을 하나씩 누르지 않습니다.
+  다만 <strong>몇 종인지 먼저 봅니다</strong>.</p>
+<table>
+<thead><tr><th>축</th><th class="num">대기</th><th class="num">매물</th>
+  <th>출처</th><th>값 예시</th><th></th></tr></thead>
+<tbody>
+
+<tr>
+  <td><strong>panel</strong></td>
+  <td class="num">35종</td>
+  <td class="num">0건</td>
+  <td>
+      facet</td>
+  <td class="muted">프론트 휀더(좌) · 프론트 휀더(우) · 리어 도어(우) · 후드 · 쿼터 패널(우)</td>
+  <td>
+    <form method="post" action="/admin/dict">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="axis" value="panel">
+      <input type="hidden" name="previewed" value="1">
+      <label>사유 <input name="reason" size="24"
+        placeholder="왜 확정하는가 (필수)" required></label>
+      <button type="submit" name="action" value="confirm">이 축 35종 확정</button>
+      <button type="submit" name="action" value="retire">폐기</button>
+    </form>
+    <p class="muted">확정하면 이 축을 쓰는 판정이 열립니다
+      (매물 0건이 이 값을 갖고 있습니다).</p>
+  </td>
+</tr>
+
+</tbody>
+</table>
+
+<h3>값 하나씩</h3>
+<table>
+<thead><tr><th>축</th><th>값</th><th class="num">관측</th><th class="num">매물</th>
+  <th>출처</th><th>처음 본 시각</th></tr></thead>
+<tbody>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 휀더(좌)</strong></td>
+  <td class="num">189</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 휀더(우)</strong></td>
+  <td class="num">177</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 도어(우)</strong></td>
+  <td class="num">130</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>후드</strong></td>
+  <td class="num">107</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>쿼터 패널(우)</strong></td>
+  <td class="num">95</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>트렁크 리드</strong></td>
+  <td class="num">95</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>쿼터 패널(좌)</strong></td>
+  <td class="num">93</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 패널</strong></td>
+  <td class="num">76</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>라디에이터 서포트(볼트체결부품)</strong></td>
+  <td class="num">74</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 도어(좌)</strong></td>
+  <td class="num">73</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 도어(우)</strong></td>
+  <td class="num">69</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 도어(좌)</strong></td>
+  <td class="num">69</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>트렁크 플로어</strong></td>
+  <td class="num">31</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 사이드 멤버(우)</strong></td>
+  <td class="num">20</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>인사이드 패널(우)</strong></td>
+  <td class="num">18</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>인사이드 패널(좌)</strong></td>
+  <td class="num">17</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 사이드 멤버(좌)</strong></td>
+  <td class="num">15</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 패널</strong></td>
+  <td class="num">12</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 사이드 멤버(좌)</strong></td>
+  <td class="num">8</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 휠하우스(좌)</strong></td>
+  <td class="num">8</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>사이드실 패널(좌)</strong></td>
+  <td class="num">6</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>필러 패널(앞)(우)</strong></td>
+  <td class="num">6</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>루프 패널</strong></td>
+  <td class="num">4</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 사이드 멤버(우)</strong></td>
+  <td class="num">4</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>프론트 휠하우스(우)</strong></td>
+  <td class="num">4</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>필러 패널(앞)(좌)</strong></td>
+  <td class="num">4</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>필러 패널(중간)(우)</strong></td>
+  <td class="num">4</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 휠하우스(우)</strong></td>
+  <td class="num">3</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>사이드실 패널(우)</strong></td>
+  <td class="num">3</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>리어 휠하우스(좌)</strong></td>
+  <td class="num">2</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>크로스 멤버</strong></td>
+  <td class="num">1</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>패키지 트레이</strong></td>
+  <td class="num">1</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>플로어 패널</strong></td>
+  <td class="num">1</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>필러 패널(뒤)(우)</strong></td>
+  <td class="num">1</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+<tr>
+  <td>panel</td>
+  <td><strong>필러 패널(뒤)(좌)</strong></td>
+  <td class="num">1</td>
+  <td class="num">0</td>
+  <td>facet</td>
+  <td class="muted">2026-08-16</td>
+</tr>
+
+</tbody>
+</table>
+
+
+
+
+<h2>확정된 사전</h2>
+
+<table>
+<thead><tr><th>축</th><th class="num">확정</th></tr></thead>
+<tbody>
+
+<tr><td>accident_type</td><td class="num">3종</td></tr>
+
+<tr><td>color_ext</td><td class="num">23종</td></tr>
+
+<tr><td>color_int</td><td class="num">10종</td></tr>
+
+<tr><td>fuel</td><td class="num">5종</td></tr>
+
+<tr><td>panel_rank</td><td class="num">5종</td></tr>
+
+<tr><td>panel_status</td><td class="num">4종</td></tr>
+
+<tr><td>sell_type</td><td class="num">3종</td></tr>
+
+<tr><td>trim</td><td class="num">68종</td></tr>
+
+</tbody>
+</table>
+
+
+
+<p class="muted">★ 확정은 <a href="/admin/audit">감사 조회</a>의 「설정 변경」 탭에
+  누가·언제·왜 남습니다 (V10-24). 자동으로 확정하지 않습니다.</p>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

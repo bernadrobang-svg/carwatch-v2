@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>브라우저 수집 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-collect">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>브라우저 수집</h1>
+
+<p class="notice">
+  <strong>이 화면은 브라우저가 엔카를 직접 부릅니다.</strong>
+  서버 IP 에서 <code>/search/</code> 는 <strong>407</strong> 로 막혀 있고,
+  여러분의 회선은 열려 있습니다. 그 차이를 메우는 것이 이 화면의 존재 이유입니다.
+  받은 원문은 <code>origin='browser'</code> 로 남습니다 —
+  <code>collector</code>(서버가 받음) · <code>import</code>(파일 반입) 와 구분합니다.
+  <span class="muted">근거 STEP 136c</span>
+</p>
+
+<p class="muted">
+  한 번에 <strong>20건</strong>씩 부르고, 한 번에
+  <strong>65,536바이트</strong>를 넘지 않게
+  <strong>나눠서 보냅니다</strong> — 사람이 나눌 일이 아닙니다 (개정 263).
+  호출 간격은 <strong>0.0초</strong>입니다 (개정 265).
+  응답이 <code>407</code>·<code>403</code>·<code>429</code> 면 그대로 냅니다.
+</p>
+
+<h2>① 무엇을 받을까 — 범위</h2>
+<form method="post" action="/admin/collect" id="saveform">
+  <input type="hidden" name="csrf" value="render">
+  <input type="hidden" name="site" value="encar">
+  <input type="hidden" name="kind" id="f_kind" value="list">
+  <input type="hidden" name="target_key" id="f_target" value="">
+  <input type="hidden" name="url" id="f_url" value="">
+  <input type="hidden" name="http_code" id="f_code" value="">
+  <input type="hidden" name="count" id="f_count" value="">
+  <input type="hidden" name="items" id="f_items" value="">
+  <input type="hidden" name="axis_count" id="f_axes" value="">
+  <input type="hidden" name="previewed" id="f_seen" value="">
+  <input type="hidden" name="body" id="f_body" value="">
+
+  <label class="opt"><input type="radio" name="scope_mode" value="one" checked>
+    <strong>차종 하나</strong></label>
+  <label class="opt"><input type="radio" name="scope_mode" value="some">
+    <strong>여러 차종</strong> <span class="muted">고른 것만</span></label>
+  <label class="opt"><input type="radio" name="scope_mode" value="facet">
+    <strong>facet 만</strong>
+    <span class="muted">사전을 채우는 것.  이것이 없으면 S3 부터 전부 막힙니다</span></label>
+  <label class="opt"><input type="radio" name="scope_mode" value="all">
+    <strong>전 차종</strong>
+    <span class="warn-block">0개 묶음 · 되돌릴 수 없이 오래 돕니다</span></label>
+
+  <div id="scopelist">
+  
+  </div>
+
+  <p class="muted">★ 전 차종은 「높음」입니다 (STEP 149l). 아래에
+    <code>all</code> 을 직접 입력해야 시작합니다. 예상은 ② 에서 먼저 냅니다.</p>
+  <label>확인 <input name="confirm" id="f_confirm" size="10" placeholder="all"
+    autocomplete="off"> <span class="muted">전 차종일 때만 필요합니다</span></label>
+
+  <label>사유 <input name="reason" id="f_reason" size="40"
+    placeholder="왜 받는가 (필수)" required></label>
+
+  <p>
+    <button type="button" id="btn_probe">① 조회 — 얼마나 되는지 먼저 봅니다</button>
+    <button type="button" id="btn_save" disabled>③ 저장 (나눠서)</button>
+    <button type="button" id="btn_stop" disabled>중단</button>
+  </p>
+</form>
+
+<h2>② 무엇이 왔는지 눈으로 봅니다</h2>
+<p class="muted">사람이 보고 저장합니다. <strong>자동으로 저장하지 않습니다</strong> —
+  무엇이 들어갔는지 모르게 되기 때문입니다 (STEP 136c).</p>
+<div id="result" class="notice"><p class="muted">아직 부르지 않았습니다.</p></div>
+
+<h2>진행</h2>
+<div id="progress" class="notice"><p class="muted">—</p></div>
+
+<h2>받았다 ↔ 쓰였다</h2>
+<p class="notice">
+  <strong>「받았다」와 「쓰였다」는 다릅니다.</strong>
+  목록 원문 <strong>393쪽</strong>을 받았고,
+  그중에서 펼쳐 <code>core_listing</code> 에 앉은 매물이
+  <strong>7,661건</strong>입니다.
+  상세 원문 <strong>3,648건</strong> · 파싱된 매물
+  <strong>7,631건</strong>.
+  <span class="muted">받았는데 안 펼쳐진 것이 있으면 V1-21 이 잡습니다 (개정 268)</span>
+</p>
+
+<h2>지금까지 브라우저로 받은 것 5건</h2>
+<p class="muted">목록 392쪽 · facet 0건 저장돼 있습니다.
+  중간에 실패해도 <strong>여기까지는 남습니다</strong> — 처음부터 다시 하지 않습니다.</p>
+
+<table>
+<thead><tr><th>시각</th><th class="num">raw_id</th><th>엔드포인트</th>
+  <th class="num">코드</th><th class="num">크기</th></tr></thead>
+<tbody>
+
+<tr><td>2026-08-16T06:46:46.286706+00:00</td><td class="num">1030</td>
+  <td>list</td><td class="num">200</td>
+  <td class="num">8,799</td></tr>
+
+<tr><td>2026-08-16T06:46:46.073185+00:00</td><td class="num">1029</td>
+  <td>list</td><td class="num">200</td>
+  <td class="num">20,838</td></tr>
+
+<tr><td>2026-08-16T06:46:45.815547+00:00</td><td class="num">1028</td>
+  <td>list</td><td class="num">200</td>
+  <td class="num">22,113</td></tr>
+
+<tr><td>2026-08-16T06:46:45.570904+00:00</td><td class="num">1027</td>
+  <td>list</td><td class="num">200</td>
+  <td class="num">20,804</td></tr>
+
+<tr><td>2026-08-16T06:46:45.319161+00:00</td><td class="num">1026</td>
+  <td>list</td><td class="num">200</td>
+  <td class="num">21,951</td></tr>
+
+</tbody>
+</table>
+
+
+
+
+<h3>밖에서 받아 연 단계</h3>
+<table>
+<thead><tr><th>단계</th><th>어떻게 확보했나</th><th>시각</th></tr></thead>
+<tbody>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:55:02.437095+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:46.286706+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:45.815547+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:44.728427+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:43.796161+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:42.754551+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:41.955881+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:40.921879+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:39.846921+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:38.832258+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:37.818569+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:36.777887+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:35.779177+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:34.817226+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:33.844522+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:32.791021+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:31.837730+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:30.928140+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:29.898136+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:28.953156+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:27.961922+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:26.777901+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:25.818090+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:24.722052+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:23.995696+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:22.836783+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:21.905569+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:20.899165+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:19.855819+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:18.898998+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:17.591238+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:16.917813+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:15.981922+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:14.809711+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:13.814668+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:12.785810+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:11.823298+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:10.883342+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:09.942498+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:08.947616+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:07.988697+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:06.796187+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:05.830912+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:04.890589+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:03.635766+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:02.818036+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:01.491423+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:46:00.766202+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:59.928494+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:58.777082+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:57.788351+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:56.827201+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:55.893718+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:54.972091+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:53.775805+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:52.839821+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:51.902950+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:50.969570+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:49.798031+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:48.841231+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:47.008550+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:46.683421+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:45.968430+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:44.962897+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:43.808228+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:42.883554+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:41.940731+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:40.854283+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:39.886743+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:38.919209+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:37.996081+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:36.785792+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:35.842489+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:34.888069+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:33.940980+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:32.976918+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:31.766427+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:30.835338+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:29.878201+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:28.944112+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:27.793560+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:26.837853+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:25.833736+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:24.878340+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:23.892850+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:22.977936+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:21.811818+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:20.860369+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:19.916831+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:18.988238+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:17.774205+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:16.852937+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:15.920154+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:14.983436+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:13.843106+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:12.822430+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:11.937984+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:10.963924+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:09.789222+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:08.825646+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:45:07.105962+00:00</td></tr>
+
+<tr><td>STEP53-S1</td><td><strong>browser</strong></td><td>2026-08-16T06:09:06.537726+00:00</td></tr>
+
+<tr><td>STEP53-S4</td><td><strong>import</strong></td><td>2026-08-16T03:48:10.711790+00:00</td></tr>
+
+</tbody>
+</table>
+
+
+<h3>부를 주소 (JS 가 꺼져 있을 때)</h3>
+<table>
+<thead><tr><th>종류</th><th>대상</th><th>주소</th></tr></thead>
+<tbody>
+
+</tbody>
+</table>
+<p class="muted">JS 가 꺼져 있으면 새 탭에서 연 뒤 본문을 복사해
+  <a href="/admin/import">목록 반입</a> 화면에 붙여넣으십시오 (STEP 136a).</p>
+
+<script>
+// 13장 STEP 136c · 개정 263 · 264 · 265 · 14장 STEP 145b
+// ★ 바닐라 JS · 한 파일 · CDN 도 npm 도 쓰지 않는다
+// ★ JS 가 하는 일은 「브라우저만 할 수 있는 일」뿐이다 — 엔카를 부르고 나눠 보내는 것
+(function () {
+  var PLAN = [];
+  var ROWS = 20;
+  var GAP_MS = Math.round((0.0) * 1000);
+  var CAP = 65536;
+  // ★ 폼에는 원문 말고도 사유·URL·경계가 함께 간다.  그만큼 뺀 자리에서 잰다
+  var ROOM = Math.floor(CAP * 0.8);
+  var CSRF = document.querySelector('input[name=csrf]').value;
+  var stopped = false;
+  var probed = null;
+
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  function bytes(s) {
+    // ★ 글자 수가 아니라 바이트다.  한글은 글자당 3바이트다 (실측 08-16)
+    return new Blob([s]).size;
+  }
+  function show(id, lines, body) {
+    var h = '';
+    for (var i = 0; i < lines.length; i++) { h += '<p>' + lines[i] + '</p>'; }
+    if (body) { h += '<pre>' + esc(body.slice(0, 1200)) + '</pre>'; }
+    el(id).innerHTML = h;
+  }
+  function mode() {
+    var r = document.querySelector('input[name=scope_mode]:checked');
+    return r ? r.value : 'one';
+  }
+  function chosen() {
+    var out = [], b = document.getElementsByClassName('js-target');
+    for (var i = 0; i < b.length; i++) { if (b[i].checked) { out.push(b[i].value); } }
+    return out;
+  }
+  function planFor() {
+    var m = mode();
+    if (m === 'all') { return PLAN.slice(); }
+    // ★ facet 만 — S2 를 여는 것이 급할 때 쓴다 (V4-25 가 여기 걸려 있다)
+    if (m === 'facet') {
+      var only = [];
+      for (var k = 0; k < PLAN.length; k++) {
+        if (PLAN[k].kind === 'facet') { only.push(PLAN[k]); }
+      }
+      return only;
+    }
+    var want = chosen();
+    if (m === 'one' && want.length > 1) { want = want.slice(0, 1); }
+    var out = [];
+    for (var i = 0; i < PLAN.length; i++) {
+      if (want.indexOf(PLAN[i].target_key) >= 0) { out.push(PLAN[i]); }
+    }
+    return out;
+  }
+  function wait(ms) {
+    return new Promise(function (ok) { window.setTimeout(ok, ms); });
+  }
+  function grab(url) {
+    // ★ 헤더를 붙이지 않는다 — preflight 가 생기면 CORS 가 아닌 이유로 막힌다
+    return fetch(url, {method: 'GET', mode: 'cors', credentials: 'omit'})
+      .then(function (res) {
+        return res.text().then(function (body) {
+          return {status: res.status, body: body, size: bytes(body)};
+        });
+      });
+  }
+  function pageUrl(job, offset, rows) {
+    return job.url_template.replace('{offset}', String(offset))
+                           .replace('{rows}', String(rows));
+  }
+  // ★ 바이트가 들어갈 때까지 건수를 줄여 같은 자리를 다시 부른다.
+  //   건수로만 나누면 사진 많은 차종에서 한 쪽이 상한을 넘는다 (실측 413)
+  function fit(job, offset, rows) {
+    return grab(pageUrl(job, offset, rows)).then(function (got) {
+      if (got.status === 200 && got.size > ROOM && rows > 1) {
+        var half = Math.max(1, Math.floor(rows / 2));
+        return fit(job, offset, half);
+      }
+      got.rows = rows;
+      return got;
+    });
+  }
+  function post(job, got, url) {
+    var doc = null;
+    try { doc = JSON.parse(got.body); } catch (e) { doc = null; }
+    var form = new FormData();
+    form.append('csrf', CSRF);
+    form.append('site', 'encar');
+    form.append('kind', job.kind);
+    form.append('target_key', job.target_key);
+    form.append('url', url);
+    form.append('http_code', got.status);
+    form.append('body', got.body);
+    form.append('reason', el('f_reason').value);
+    form.append('previewed', '1');   // ★ ②를 사람이 본 뒤에만 여기 온다
+    if (doc && typeof doc.Count === 'number') { form.append('count', doc.Count); }
+    if (doc && doc.SearchResults) { form.append('items', doc.SearchResults.length); }
+    if (doc && doc.iNav && doc.iNav.Nodes) {
+      var n = 0;
+      for (var i = 0; i < doc.iNav.Nodes.length; i++) {
+        if (doc.iNav.Nodes[i].Type === 'Aspect') { n += 1; }
+      }
+      form.append('axis_count', n);
+    }
+    return fetch('/admin/collect', {method: 'POST', body: form,
+                                    credentials: 'same-origin'})
+      .then(function (res) {
+        if (!res.ok && res.status !== 303) {
+          throw new Error('저장 ' + res.status + ' (' + got.size + '바이트)');
+        }
+        return res;
+      });
+  }
+
+  function probe() {
+    var jobs = planFor();
+    if (!jobs.length) { show('result', ['범위를 고르십시오.']); return; }
+    var first = jobs[0];
+    show('result', ['부르는 중…']);
+    fit(first, 0, ROWS).then(function (got) {
+      var doc = null;
+      try { doc = JSON.parse(got.body); } catch (e) { doc = null; }
+      var count = doc && typeof doc.Count === 'number' ? doc.Count : null;
+      var pages = count === null ? '?' : Math.ceil(count / got.rows);
+      var lines = [
+        '<strong>' + got.status + '</strong> · ' + got.size + '바이트 (' +
+        got.rows + '건) · 한 번에 보낼 수 있는 자리 ' + ROOM + '바이트',
+        'Count <strong>' + (count === null ? '?' : count) + '</strong>' +
+        ' · 예상 <strong>' + pages + '쪽</strong> · 묶음 <strong>' +
+        jobs.length + '</strong>개'
+      ];
+      if (got.rows < ROWS) {
+        lines.push('한 쪽이 커서 <strong>' + ROWS + '건 → ' + got.rows +
+                   '건</strong>으로 줄였습니다. 차종마다 다시 잽니다.');
+      }
+      if (got.status !== 200) {
+        // ★ 407·403·429 를 삼키지 않는다 (STEP 136c)
+        lines.push('<strong>200 이 아닙니다.</strong> 이 상태로 저장하면 ' +
+                   '잘못된 것이 들어갑니다.');
+      }
+      lines.push('확인했으면 ③ 저장을 누르십시오. <strong>나눠서 보냅니다.</strong>');
+      show('result', lines, got.body);
+      probed = {count: count, pages: pages, jobs: jobs.length};
+      el('btn_save').disabled = false;
+    }).catch(function (err) {
+      show('result', ['<strong>부르지 못했습니다</strong> — 응답을 읽을 수 없습니다.',
+                      esc(err && err.message ? err.message : err),
+                      '브라우저가 직접 못 부르는 상태입니다. ' +
+                      '「직접 열기」로 연 뒤 <a href="/admin/import">붙여넣기</a>로 하십시오.']);
+    });
+  }
+
+  function save() {
+    if (probed === null) { show('progress', ['① 조회를 먼저 누르십시오.']); return; }
+    if (!el('f_reason').value.trim()) {
+      show('progress', ['사유를 적어야 저장합니다.']); return;
+    }
+    // ★ 전 차종은 확인 문구를 받는다 (STEP 149l · V11-48).
+    //   대소문자를 가리지 않는다 — 확인의 목적은 실수 방지이지 타자 시험이 아니다
+    if (mode() === 'all' &&
+        el('f_confirm').value.trim().toLowerCase() !== 'all') {
+      show('progress', ['<strong>전 차종은 확인 칸에 <code>all</code> 을 ' +
+                        '입력해야 시작합니다.</strong> 되돌릴 수 없이 오래 돕니다.']);
+      return;
+    }
+    var jobs = planFor();
+    stopped = false;
+    el('btn_stop').disabled = false;
+    el('btn_save').disabled = true;
+    var failed = [], okPages = 0, okItems = 0, ji = 0;
+
+    function report(extra) {
+      var lines = [];
+      // ★ 실패가 있으면 그것이 머리말이다.  저장이 0 이면 더더욱 (V11-33 정신)
+      if (failed.length && okPages === 0) {
+        lines.push('<strong>하나도 저장되지 않았습니다 — 실패 ' +
+                   failed.length + '건</strong>');
+      } else if (failed.length) {
+        lines.push('<strong>실패 ' + failed.length + '건</strong> · 저장 ' +
+                   okPages + '쪽 (' + okItems + '건)');
+      } else {
+        lines.push('저장 <strong>' + okPages + '쪽</strong> (' + okItems + '건)');
+      }
+      lines.push('묶음 ' + Math.min(ji + 1, jobs.length) + '/' + jobs.length);
+      if (extra) { lines.push(extra); }
+      if (failed.length) {
+        lines.push('실패한 것 — ' + esc(failed.join(' · ')) +
+                   '<br>그 묶음만 다시 고르면 됩니다. 저장된 쪽은 남아 있습니다.');
+      }
+      show('progress', lines);
+    }
+
+    function runJob(i) {
+      if (i >= jobs.length || stopped) {
+        report(stopped ? '중단했습니다.'
+                       : (failed.length ? '' : '끝났습니다.'));
+        el('btn_stop').disabled = true;
+        el('btn_save').disabled = false;
+        return Promise.resolve();
+      }
+      ji = i;
+      var job = jobs[i];
+      // ★ 한 묶음이 실패해도 나머지를 이어서 한다 (V11-49)
+      return runPages(job).catch(function (err) {
+        failed.push(job.target_key + '/' + job.kind + ' ' +
+                    (err && err.message ? err.message : err));
+        report('');
+      }).then(function () { return runJob(i + 1); });
+    }
+
+    function runPages(job) {
+      if (job.kind === 'facet') {
+        return fit(job, 0, ROWS).then(function (got) {
+          if (got.status !== 200) { throw new Error('HTTP ' + got.status); }
+          if (got.size > ROOM) {
+            throw new Error('facet 이 ' + got.size + '바이트 — 나눌 수 없습니다');
+          }
+          return post(job, got, job.url).then(function () {
+            okPages += 1; report(job.target_key + ' facet 저장');
+          });
+        });
+      }
+      var offset = 0, rows = ROWS, total = null, seen = 0;
+      function step() {
+        if (stopped) { return Promise.resolve(); }
+        return fit(job, offset, rows).then(function (got) {
+          if (got.status !== 200) { throw new Error('HTTP ' + got.status); }
+          rows = got.rows;                       // 줄인 건수를 이어서 쓴다
+          var doc = null;
+          try { doc = JSON.parse(got.body); } catch (e) { doc = null; }
+          if (total === null && doc && typeof doc.Count === 'number') {
+            total = doc.Count;
+          }
+          var items = doc && doc.SearchResults ? doc.SearchResults.length : 0;
+          return post(job, got, pageUrl(job, offset, rows)).then(function () {
+            okPages += 1;
+            okItems += items;
+            seen += items;
+            offset += rows;
+            report(job.target_key + ' ' + seen + '/' +
+                   (total === null ? '?' : total) + '건 저장했습니다');
+            if (items === 0 || items < rows ||
+                (total !== null && seen >= total)) {
+              return null;                       // 마지막 쪽이다
+            }
+            return wait(GAP_MS).then(step);
+          });
+        });
+      }
+      return step();
+    }
+
+    report('시작합니다.');
+    runJob(0);
+  }
+
+  el('btn_probe').addEventListener('click', probe);
+  el('btn_save').addEventListener('click', save);
+  el('btn_stop').addEventListener('click', function () {
+    stopped = true;                       // ★ 중단하면 어디까지 됐는지 남는다
+    el('btn_stop').disabled = true;
+  });
+})();
+</script>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

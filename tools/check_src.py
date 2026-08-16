@@ -673,6 +673,7 @@ _SCREEN_FOR = {
     "tools/inspect_requests.py": "/admin/requests",
     "tools/menu.py": "/admin",
     "tools/migrate.py": "/admin/tools",
+    "tools/render_screens.py": "/admin/tools",
     "tools/report_cli.py": "/admin/tools",
     "tools/run_tests.py": "/admin/audit",
     "tools/setup_check.py": "/admin/tools",

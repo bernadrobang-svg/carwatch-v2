@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>개발 요청 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-requests">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>개발 요청 <small>0건</small></h1>
+<p class="notice">
+  없는 기능 · 막힌 것을 기록해 세션에 전달합니다.
+  <strong>요청은 삭제하지 않습니다</strong> — 상태 전이로만 관리합니다.<br>
+  ★ <code>applied</code> 는 어느 STEP 에 반영됐는지를,
+  <code>not_applied</code> · <code>misapplied</code> 는 사유를 받습니다.
+  <span class="muted">근거 STEP 137</span>
+</p>
+
+<h2>새 요청</h2>
+<form method="post" action="/admin/requests">
+  <input type="hidden" name="csrf" value="render">
+  <input type="hidden" name="action" value="create">
+  <label>제목 <input name="title" size="50" required></label>
+  <label>내용 <textarea name="body" rows="4" cols="70" required></textarea></label>
+  <label>출처
+    <select name="origin">
+      <option value="screen">screen</option><option value="query">query</option><option value="api">api</option><option value="config">config</option><option value="manual">manual</option>
+    </select>
+  </label>
+  <button type="submit">남기기</button>
+</form>
+
+<h2>요청 목록</h2>
+
+
+<p class="muted">아직 요청이 없습니다.</p>
+
+
+<h2>내보내기</h2>
+<p class="muted"><code>requested</code> · <code>reopened</code> 를 md 로 냅니다.
+  세션에 붙여 개발 지시로 씁니다. 덮어쓰지 않고 새 파일로 냅니다.</p>
+<form method="post" action="/admin/requests">
+  <input type="hidden" name="csrf" value="render">
+  <input type="hidden" name="action" value="export">
+  <button type="submit">내보내기</button>
+</form>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

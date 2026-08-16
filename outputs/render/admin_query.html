@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>쿼리 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-query">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>쿼리</h1>
+<p class="notice">읽기만 됩니다. 쓰기 연산은 SQL 바이트코드로 막습니다 — 주석·대소문자로 우회되지 않습니다.</p>
+<form method="post" action="/admin/query">
+  <input type="hidden" name="csrf" value="render">
+  <textarea name="sql" rows="4" placeholder="SELECT ..."></textarea>
+  <button type="submit">실행</button>
+</form>
+
+
+<h2>예제</h2>
+<p class="muted">처음에는 여기서 고르십시오.</p>
+<ul><li>분모별 매물 수 — <code>SELECT denominator, COUNT(*) FROM result_score GROUP BY 1</code></li><li>축별 제외 건수 — <code>SELECT axis, SUM(excluded) FROM result_axis GROUP BY 1</code></li><li>E등급 사유 — <code>SELECT absolute_fail, COUNT(*) FROM result_score WHERE grade=&#x27;E&#x27; GROUP BY 1</code></li><li>엔드포인트별 응답 코드 — <code>SELECT kind, http_code, COUNT(*) FROM audit_request GROUP BY 1,2</code></li></ul>
+
+<h2>최근 쿼리 <span class="muted">거부된 것도 남습니다</span></h2>
+
+
+<p class="muted">아직 실행한 쿼리가 없습니다.</p>
+
+
+<h2>테이블 43</h2>
+<table>
+<thead><tr><th>표</th><th class="num">행</th><th>컬럼</th></tr></thead>
+<tbody>
+
+<tr><td class="runid">account</td><td class="num">2</td>
+  <td class="muted">account_id · role · login_name · display_name · email · secret_hash · must_change_secret · created_at · last_seen_at · disabled_at</td></tr>
+
+<tr><td class="runid">admin_api_snapshot</td><td class="num">0</td>
+  <td class="muted">snapshot_id · account_id · url · http_code · content_type · body · note · fetched_at</td></tr>
+
+<tr><td class="runid">audit_request</td><td class="num">11,816</td>
+  <td class="muted">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
+
+<tr><td class="runid">audit_validation</td><td class="num">552</td>
+  <td class="muted">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
+
+<tr><td class="runid">auth_login_attempt</td><td class="num">16</td>
+  <td class="muted">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
+
+<tr><td class="runid">auth_session</td><td class="num">14</td>
+  <td class="muted">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
+
+<tr><td class="runid">coefficient_history</td><td class="num">0</td>
+  <td class="muted">id · site · target_key · before_value · after_value · sample_size · measured · reason · changed_at</td></tr>
+
+<tr><td class="runid">config_change</td><td class="num">4</td>
+  <td class="muted">change_id · account_id · file · key_path · before_value · after_value · reason · applied_at · reverted_at · recalc_job_id</td></tr>
+
+<tr><td class="runid">core_dealer</td><td class="num">719</td>
+  <td class="muted">dealer_id · site · site_dealer_id · dealer_shop · shop_code · region · career_years · total_sales · recent_year_sales · certified</td></tr>
+
+<tr><td class="runid">core_dealer_history</td><td class="num">807</td>
+  <td class="muted">dealer_id · run_id · observed_at · listing_count · trust_score · quadrant · sample_sufficient</td></tr>
+
+<tr><td class="runid">core_dealer_pii</td><td class="num">719</td>
+  <td class="muted">dealer_id · dealer_name · phone · address · created_at</td></tr>
+
+<tr><td class="runid">core_diagnosis</td><td class="num">455</td>
+  <td class="muted">listing_id · diagnosis_no · diagnosed_at · center_code · center_name · item_count · replacement_count · normal_count · checker_comment · outer_panel_comment</td></tr>
+
+<tr><td class="runid">core_diagnosis_item</td><td class="num">3,640</td>
+  <td class="muted">diagnosis_item_id · listing_id · item_code · part_name · result_code · result_text</td></tr>
+
+<tr><td class="runid">core_inspection</td><td class="num">1,914</td>
+  <td class="muted">listing_id · site · inspection_vin · inspection_mileage_km · first_registration_date · inspection_valid_from · inspection_valid_to · inspection_issued_at · check_engine · check_transmission</td></tr>
+
+<tr><td class="runid">core_listing</td><td class="num">7,661</td>
+  <td class="muted">listing_id · site · source_id · target_key · vehicle_id · classify_stage · classify_source · classify_conflict · price_current_won · price_detail_won</td></tr>
+
+<tr><td class="runid">core_listing_change</td><td class="num">7,713</td>
+  <td class="muted">listing_id · changed_at · field · old_value · new_value · change_kind · cause</td></tr>
+
+<tr><td class="runid">core_parse_issue</td><td class="num">0</td>
+  <td class="muted">id · listing_id · endpoint · json_path · reason · raw_sample · parse_version · detected_at</td></tr>
+
+<tr><td class="runid">core_pii</td><td class="num">3,436</td>
+  <td class="muted">listing_id · plate_no · plate_history_json · record_plate_no · created_at</td></tr>
+
+<tr><td class="runid">core_record</td><td class="num">2,243</td>
+  <td class="muted">listing_id · site · record_plate_hash · plate_use_char · record_first_date · record_reg_date · record_open · accident_my_cnt · accident_my_cost · accident_other_cnt</td></tr>
+
+<tr><td class="runid">core_vehicle</td><td class="num">2,311</td>
+  <td class="muted">vehicle_id · site_count · listing_count · min_price_won · max_price_won · price_spread_won · first_seen · last_seen · updated_at</td></tr>
+
+<tr><td class="runid">depreciation_curve_history</td><td class="num">0</td>
+  <td class="muted">id · run_id · curve_json · sample_json · anomalies · created_at</td></tr>
+
+<tr><td class="runid">dev_request</td><td class="num">0</td>
+  <td class="muted">request_id · title · body · origin · context_json · status · direction · step_ref · created_at · exported_at</td></tr>
+
+<tr><td class="runid">dict_enum</td><td class="num">156</td>
+  <td class="muted">site · axis · value · display · count_seen · status · source_endpoint · dict_version · first_seen · last_seen</td></tr>
+
+<tr><td class="runid">dict_model_option</td><td class="num">1,474</td>
+  <td class="muted">site · model_catalog_key · option_code · option_name · price_manwon · description · status · dict_version · first_seen · last_seen</td></tr>
+
+<tr><td class="runid">dict_option_code</td><td class="num">327</td>
+  <td class="muted">site · target_key · code · display · count_seen · status · dict_version · first_seen · last_seen</td></tr>
+
+<tr><td class="runid">listing_warning</td><td class="num">463</td>
+  <td class="muted">listing_id · warning_code · severity · evidence · detected_at · acknowledged · resolved_at</td></tr>
+
+<tr><td class="runid">meta_field_usage</td><td class="num">491</td>
+  <td class="muted">site · endpoint · json_path · core_column · usage · reason · unblock_condition · use_when · priority · miss_streak</td></tr>
+
+<tr><td class="runid">query_log</td><td class="num">0</td>
+  <td class="muted">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · executed_at</td></tr>
+
+<tr><td class="runid">raw_facet</td><td class="num">0</td>
+  <td class="muted">site · target_key · request_kind · request_url · axis_count · body · fetched_at</td></tr>
+
+<tr><td class="runid">raw_response</td><td class="num">12,209</td>
+  <td class="muted">id · run_id · site · listing_id · source_id · endpoint · request_url · request_meta · http_code · response_meta</td></tr>
+
+<tr><td class="runid">raw_response_reject</td><td class="num">0</td>
+  <td class="muted">id · site · listing_id · endpoint · request_url · http_code · body · reject_reason · fetched_at</td></tr>
+
+<tr><td class="runid">recalc_job</td><td class="num">2</td>
+  <td class="muted">job_id · account_id · trigger · reason · from_step · scope · status · run_id · current_step · step_done</td></tr>
+
+<tr><td class="runid">result_axis</td><td class="num">59,007</td>
+  <td class="muted">listing_id · calc_version · dict_version · axis · value · source · prio · excluded · max_points · score</td></tr>
+
+<tr><td class="runid">result_axis_conflict</td><td class="num">0</td>
+  <td class="muted">conflict_id · listing_id · calc_version · axis · prio · value · source</td></tr>
+
+<tr><td class="runid">result_score</td><td class="num">3,471</td>
+  <td class="muted">listing_id · calc_version · dict_version · score_total · earned · denominator · grade · absolute_fail · not_rated_reason · calculated_at</td></tr>
+
+<tr><td class="runid">vehicle_duplicate</td><td class="num">0</td>
+  <td class="muted">vehicle_id · listing_id · kind · representative · peer_count · detected_at</td></tr>
+
+<tr><td class="runid">vehicle_identity</td><td class="num">3,997</td>
+  <td class="muted">id · vehicle_id · kind · value_hash · confidence · first_seen · last_seen</td></tr>
+
+<tr><td class="runid">watch_candidate</td><td class="num">0</td>
+  <td class="muted">listing_id · decided_at · decision · checklist_json · note</td></tr>
+
+<tr><td class="runid">watch_event</td><td class="num">0</td>
+  <td class="muted">id · listing_id · vehicle_id · run_id · kind · before_value · after_value · cause · occurred_at · notified</td></tr>
+
+<tr><td class="runid">watch_item</td><td class="num">1</td>
+  <td class="muted">watch_id · account_id · vehicle_id · primary_listing_id · added_at · memo · target_price_won · on_price_drop · on_target_price · on_gone</td></tr>
+
+<tr><td class="runid">watch_query</td><td class="num">0</td>
+  <td class="muted">query_id · account_id · name · conditions_json · min_grade · max_price_won · notify_on_new · notify_on_price · created_at · last_run_at</td></tr>
+
+<tr><td class="runid">watch_query_hit</td><td class="num">0</td>
+  <td class="muted">query_id · listing_id · first_hit_at · notified</td></tr>
+
+<tr><td class="runid">watch_track</td><td class="num">0</td>
+  <td class="muted">listing_id · run_id · observed_at · price_won · listing_status · calc_version · dict_version · parse_version · coefficient_id</td></tr>
+
+</tbody>
+</table>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>판정 근거 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-why">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>판정 근거 <span class="grade-e">E</span></h1>
+<p class="muted">GRANDEUR_LPG · 매물 3
+  · <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=38016911" target="_blank" rel="noopener"
+    title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a></p>
+<p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
+
+
+
+
+<p class="warn-block">E등급 사유 — 리스·렌트 상품</p>
+
+
+<p class="score">
+  <strong>360</strong> / 515
+  <span class="muted">판정할 수 없는 축은 분모에서 뺍니다 ·
+    555 기준 환산 388.0</span>
+</p>
+
+<h2>무엇을 조회했는가</h2>
+<p class="muted">★ 「안 부른 것」과 「불렀는데 못 받은 것」은 다릅니다.
+  앞은 우리 잘못이고, 뒤는 그 매물에 없는 것입니다.</p>
+<table>
+<thead><tr><th>응답</th><th>상태</th><th>무엇을 주는가</th><th>없으면</th></tr></thead>
+<tbody>
+
+<tr>
+  <td>상세</td>
+  <td>받음</td>
+  <td class="muted">가격 · 보증 · 사양 · 색상</td>
+  <td class="muted"></td>
+</tr>
+
+<tr>
+  <td>성능점검기록부</td>
+  <td>없음</td>
+  <td class="muted">사고 부위 · 상태 · 렌트 이력</td>
+  <td class="muted">→ 사고 · 렌트 판정 불가</td>
+</tr>
+
+<tr>
+  <td>자동차이력정보</td>
+  <td>없음</td>
+  <td class="muted">보험처리액 · 번호판 이력</td>
+  <td class="muted">→ 보험 판정 불가</td>
+</tr>
+
+<tr>
+  <td>카탈로그</td>
+  <td>미조회</td>
+  <td class="muted">HDA 등급</td>
+  <td class="muted">→ 사양 축 판정 불가</td>
+</tr>
+
+<tr>
+  <td>엔카 자체진단</td>
+  <td>미조회</td>
+  <td class="muted">외판 부위별 판정</td>
+  <td class="muted">→ 이 매물은 미진단</td>
+</tr>
+
+</tbody>
+</table>
+
+<h2>축별 판정 — 축을 누르면 세부가 열립니다</h2>
+<table>
+<thead><tr><th>축</th><th class="num">점수</th><th class="num">배점</th>
+<th>근거</th><th>우선순위</th></tr></thead>
+<tbody>
+
+<tr>
+  <td><a href="/listings?axis=color">색상</a></td>
+  <td class="num">40</td>
+  <td class="num">40</td>
+  <td>detail_color</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=history.damage">사고</a></td>
+  <td class="num"><span class="excluded">—</span></td>
+  <td class="num">20</td>
+  <td>missing</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=history.insurance">보험</a></td>
+  <td class="num"><span class="excluded">—</span></td>
+  <td class="num">15</td>
+  <td>missing</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=history.rental">렌트</a></td>
+  <td class="num">10</td>
+  <td class="num">20</td>
+  <td>unknown</td>
+  <td>3</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=mileage">주행거리</a></td>
+  <td class="num">30</td>
+  <td class="num">30</td>
+  <td>list_mileage</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=price">가격</a></td>
+  <td class="num">120</td>
+  <td class="num">200</td>
+  <td>expected_price</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=safety.diagnosis">진단</a></td>
+  <td class="num">0</td>
+  <td class="num">20</td>
+  <td>advertisement_diagnosisCar</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=safety.warranty_product">보증상품</a></td>
+  <td class="num">20</td>
+  <td class="num">20</td>
+  <td>advertisement_warranty</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.bsd">후측방 경보</a></td>
+  <td class="num">5</td>
+  <td class="num">5</td>
+  <td>installed</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.hda">HDA</a></td>
+  <td class="num">0</td>
+  <td class="num">20</td>
+  <td>catalog_description</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.hud">HUD</a></td>
+  <td class="num">20</td>
+  <td class="num">20</td>
+  <td>installed</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.scc">어댑티브 크루즈</a></td>
+  <td class="num">10</td>
+  <td class="num">10</td>
+  <td>installed</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.sunroof">선루프</a></td>
+  <td class="num">20</td>
+  <td class="num">20</td>
+  <td>installed</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.svm">서라운드뷰</a></td>
+  <td class="num">10</td>
+  <td class="num">10</td>
+  <td>installed</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=spec.tinting">틴팅</a></td>
+  <td class="num"><span class="excluded">—</span></td>
+  <td class="num">5</td>
+  <td>no_mention</td>
+  <td>4</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=warranty.general">일반보증</a></td>
+  <td class="num">25</td>
+  <td class="num">50</td>
+  <td>encar</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=warranty.power">동력계 보증</a></td>
+  <td class="num">50</td>
+  <td class="num">50</td>
+  <td>encar</td>
+  <td>1</td>
+</tr>
+
+</tbody>
+</table>
+
+
+
+
+<h2>엔카 진단</h2>
+<p class="muted">진단 리포트가 없습니다.</p>
+
+
+
+
+<p class="muted">확인 못 한 것 — 없습니다. 17 Component 전부 판정됐습니다.</p>
+
+
+<h2>왜 이 등급인가</h2>
+
+<p><b>강점</b><span class="chip-good">색상</span><span class="chip-good">주행거리</span><span class="chip-good">보증상품</span><span class="chip-good">후측방 경보</span><span class="chip-good">HUD</span><span class="chip-good">어댑티브 크루즈</span><span class="chip-good">선루프</span><span class="chip-good">서라운드뷰</span><span class="chip-good">동력계 보증</span></p>
+
+
+<p><b>약점</b><span class="chip-bad">진단 0/20</span><span class="chip-bad">HDA 0/20</span></p>
+
+
+
+
+<h2>비용</h2>
+<p class="muted">중고 ↔ 신차 동일 트림. ★ 점수에 반영하지 않습니다.</p>
+<table>
+<thead><tr><th>항목</th><th class="num">중고</th><th class="num">신차 동일 트림</th></tr></thead>
+<tbody>
+
+<tr><td>차량가</td>
+  <td class="num">3,044만</td>
+  <td class="num">—</td></tr>
+
+<tr><td>할부 원금</td>
+  <td class="num">1,757만</td>
+  <td class="num">—</td></tr>
+
+<tr><td>총 이자</td>
+  <td class="num">204만</td>
+  <td class="num">—</td></tr>
+
+</tbody>
+</table>
+
+
+<h2>주요 옵션</h2>
+
+
+<h3>선택 옵션 <small>5개</small></h3>
+<p class="chips"><span class="chip">10004</span><span class="chip">10001</span><span class="chip">1057</span><span class="chip">1056</span><span class="chip">1060</span></p>
+
+<h3>기본 옵션 <small>51개</small></h3>
+<p class="chips"><span class="chip">001</span><span class="chip">002</span><span class="chip">004</span><span class="chip">005</span><span class="chip">006</span><span class="chip">007</span><span class="chip">008</span><span class="chip">010</span><span class="chip">014</span><span class="chip">015</span><span class="chip">017</span><span class="chip">019</span><span class="chip">020</span><span class="chip">021</span><span class="chip">022</span><span class="chip">023</span><span class="chip">024</span><span class="chip">026</span><span class="chip">027</span><span class="chip">030</span><span class="chip">031</span><span class="chip">032</span><span class="chip">033</span><span class="chip">034</span><span class="chip">035</span><span class="chip">051</span><span class="chip">055</span><span class="chip">056</span><span class="chip">057</span><span class="chip">058</span><span class="chip">059</span><span class="chip">063</span><span class="chip">072</span><span class="chip">074</span><span class="chip">075</span><span class="chip">077</span><span class="chip">079</span><span class="chip">081</span><span class="chip">082</span><span class="chip">083</span><span class="chip">084</span><span class="chip">085</span><span class="chip">086</span><span class="chip">087</span><span class="chip">088</span><span class="chip">091</span><span class="chip">093</span><span class="chip">094</span><span class="chip">095</span><span class="chip">096</span><span class="chip">097</span></p>
+
+<h3>기타 <small>3개</small></h3>
+<p class="chips"><span class="chip">취등록세 0원</span><span class="chip"> 초기비용 0원</span><span class="chip"> 장기렌트</span></p>
+
+<h3>튜닝 <small>2개</small></h3>
+<p class="chips"><span class="chip">023</span><span class="chip">024</span></p>
+
+<p class="muted">★ 이름이 흐린 것은 사전에 아직 뜻이 없는 코드입니다 —
+  추정해서 이름을 붙이지 않습니다.</p>
+
+
+
+<h2>참고 자료 — 점수에 반영하지 않습니다</h2>
+
+
+<p class="muted">이 차종에 등록된 알려진 문제가 없습니다.
+  ★ 사람이 넣습니다 — 출처가 커뮤니티·리콜 공고라 수집으로 채우지 않습니다.</p>
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관심 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-watch">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>관심 <small>1건</small></h1>
+
+<table>
+<thead><tr><th>등급</th><th>트림</th><th>연식</th>
+<th class="num">가격</th><th class="num">목표가</th><th>상태</th><th></th></tr></thead>
+<tbody>
+
+<tr><td><span class="grade-s">S</span></td>
+<td>LPG 2.0 2WD</td><td>2025-08</td>
+<td class="num">4,400만</td>
+<td class="num">—</td><td>게시중</td>
+<td><a href="/why/6668">근거</a>
+  <form method="post" action="/watch/1" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input name="target_price_won" placeholder="목표가(원)" size="10">
+    <button type="submit" class="mini">저장</button>
+  </form>
+  <form method="post" action="/watch/1" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="remove">
+    <button type="submit" class="mini" data-confirm="관심에서 뺍니다. 가격 추이 기록도 멈춥니다">빼기</button>
+  </form>
+</td></tr>
+
+</tbody>
+</table>
+
+<h2>최종 후보</h2>
+<p class="muted">최종 후보로 지정한 매물입니다. 가격 · 상태 변동을 추적합니다.</p>
+
+<h2>관심 1건</h2>
+
+<h2>조건 알림 <span class="muted">매물이 아니라 조건을 지켜봅니다</span></h2>
+<p class="muted">★ 매물은 사라집니다. 조건은 남습니다 —
+  조건에 맞는 새 매물이 뜨면 알립니다.</p>
+
+<form method="post" action="/watch/add">
+  <input type="hidden" name="kind" value="query">
+  <input type="hidden" name="csrf" value="render">
+  <label>이름 <input name="name" size="30" placeholder="그랑 콜레오스 B 이상" required></label>
+  <label>차종 <input name="target_key" size="16" placeholder="KOLEOS_HEV"></label>
+  <label>트림 <input name="trim_badge" size="20"></label>
+  <label>최소 등급 <input name="min_grade" size="3" placeholder="B"></label>
+  <label>최고가(원) <input name="max_price_won" size="12" placeholder="34000000"></label>
+  <label>주행 이하(km) <input name="mileage_max" size="10"></label>
+  <button type="submit">조건 등록</button>
+</form>
+
+
+
+<p class="muted">등록한 조건이 없습니다.</p>
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

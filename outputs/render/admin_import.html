@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>목록 반입 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-import">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>목록 반입</h1>
+
+<p class="notice">
+  <strong>이 화면으로 들어온 자료는 반입분입니다.</strong>
+  수집이 막힌 단계의 결과를 밖에서 받아 넣습니다.
+  반입은 「수집」이므로 원문이 <code>raw_response</code> 에
+  <code>origin='import'</code> 로 들어갑니다 —
+  <code>/admin/api</code>(탐색)와 다릅니다.
+  <span class="muted">근거 STEP 136a · 136b</span>
+</p>
+
+<p class="muted">
+  지금 상태 · <strong>S4 · 반입(import)</strong>
+  <span class="muted">(2026-08-16T03:48:10.711790+00:00)</span>
+  · 반입분 매물 30건
+  · 수집분 매물 7,631건
+</p>
+
+<h2>넣을 것</h2>
+<form method="post" action="/admin/import" enctype="multipart/form-data">
+  <input type="hidden" name="csrf" value="render">
+
+  <p class="muted">형식은 <strong>붙여넣은 내용을 보고 스스로 판별</strong>합니다.
+    고르지 않아도 됩니다.</p>
+  <ul class="muted">
+    <li><strong>① 엔카 목록 응답 JSON 원문</strong> — 원칙입니다. 원문이 그대로 남습니다</li>
+    <li><strong>② 매물 ID 목록</strong> — 한 줄에 하나. 최소 입력이라 <strong>원문 없음</strong>으로 표시됩니다</li>
+    <li><strong>③ CSV</strong> — <code>source_id,target_key,trim,year_month,mileage_km,price_won</code>.
+      ②와 같이 <strong>원문 없음</strong>입니다</li>
+    <li><strong>④ facet 원문 JSON</strong> — <code>iNav.Nodes</code> 가 있는 응답.
+      <code>color_ext</code>·<code>color_int</code>·<code>fuel</code> 사전은
+      <strong>여기서만</strong> 나옵니다. 상세를 아무리 받아도 안 채워집니다.
+      받으면 <strong>S2 를 대신</strong>합니다 — 차종을 함께 골라야 합니다</li>
+  </ul>
+
+  <label>붙여넣기<br>
+    <textarea name="paste" rows="14" cols="100"
+      placeholder="여기에 JSON 원문 · 매물 ID 목록 · CSV 를 붙여넣습니다"></textarea>
+  </label>
+
+  <p class="muted">파일이 커서 붙여넣을 수 없으면 파일로 올립니다.
+    본문 상한을 넘으면 <strong>잘린 채 저장되지 않고 413 으로 거부</strong>합니다.</p>
+  <label>파일 올리기 <input type="file" name="upload" accept=".json,.csv,.txt"></label>
+
+  <h3>어디에 넣는가</h3>
+  <label>사이트 <input name="site" size="12" value="encar"></label>
+  <label>차종
+    <select name="target_key">
+      <option value="">— 고르지 않음 (행에 target_key 가 있어야 합니다) —</option>
+      
+      <option value="G80_25T">G80_25T (1,713건)</option>
+      
+      <option value="MODEL_Y">MODEL_Y (522건)</option>
+      
+      <option value="GRANDEUR_LPG">GRANDEUR_LPG (242건)</option>
+      
+      <option value="G70_20T">G70_20T (240건)</option>
+      
+      <option value="KOLEOS_HEV">KOLEOS_HEV (237건)</option>
+      
+      <option value="SPORTAGE_LPI">SPORTAGE_LPI (177건)</option>
+      
+      <option value="GV60">GV60 (116건)</option>
+      
+      <option value="G70_25T">G70_25T (92건)</option>
+      
+      <option value="GV70_EV">GV70_EV (71건)</option>
+      
+      <option value="G80_EV">G80_EV (60건)</option>
+      
+    </select>
+  </label>
+  <p class="muted">CSV 에 <code>target_key</code> 가 있으면 그 값이 먼저입니다.
+    차종이 없는 행은 <code>out_of_scope</code> 로 들어가 수집 대상이 되지 않습니다.</p>
+  <label>사유 <input name="reason" size="40" value=""
+    placeholder="왜 반입하는가 (필수)" required></label>
+  <label>출처 이름 <input name="source_name" size="30"
+    placeholder="파일명 등 (선택)"></label>
+
+  <p><button type="submit" name="action" value="preview">① 미리보기</button></p>
+
+  
+  
+  <p class="muted">★ 미리보기를 먼저 눌러야 반입 단추가 열립니다 (STEP 138 · 149k).</p>
+  
+</form>
+
+<h2>받았다 ↔ 쓰였다</h2>
+<p class="notice">
+  <strong>「받았다」와 「쓰였다」는 다릅니다.</strong>
+  목록 원문 <strong>393쪽</strong>을 받았고,
+  그중에서 펼쳐 <code>core_listing</code> 에 앉은 매물이
+  <strong>7,661건</strong>입니다.
+  상세 원문 <strong>3,648건</strong> · 파싱된 매물
+  <strong>7,631건</strong>.
+  <span class="muted">받았는데 안 펼쳐진 것이 있으면 V1-21 이 잡습니다 (개정 268)</span>
+</p>
+
+<h2>반입 이력 1건</h2>
+
+<table>
+<thead><tr><th>시각</th><th class="num">raw_id</th><th>사이트</th>
+  <th class="num">크기</th><th>메모</th></tr></thead>
+<tbody>
+
+<tr><td>2026-08-16T03:48:10.711790+00:00</td><td class="num">1</td>
+  <td>encar</td><td class="num">13,211</td>
+  <td class="muted">{&quot;format&quot;: &quot;csv&quot;, &quot;site_raw&quot;: false, &quot;source_name&quot;: &quot;koleos_hev_ids_20260810.csv&quot;}</td></tr>
+
+</tbody>
+</table>
+
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

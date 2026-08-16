@@ -1,0 +1,5163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>딜러 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-dealers">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>딜러 <small>719곳</small></h1>
+<p class="notice">
+  ⓘ 딜러는 <strong>차량 판정에 들어가지 않습니다</strong>. 555점과 무관한 별도 축입니다.
+  같은 차라면 어느 딜러에게 사도 그 차입니다. 연락하기 전에 참고하는 것입니다.
+</p>
+<p class="muted">표본이 모자란 딜러는 점수를 내지 않습니다 — 「표본 부족」입니다.</p>
+<table>
+<thead><tr><th>상사</th><th>지역</th><th class="num">연차</th>
+<th>사분면</th><th class="num">정직도</th><th class="num">보유</th>
+<th class="num">판매</th><th class="num">1년</th></tr></thead>
+<tbody>
+
+<tr><td>명문자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>바른자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>스핀모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)프라임모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세븐모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>골드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>형채와자동차(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>중앙상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>정한상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)위드카갤러리</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플러스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">16</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>고진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 혜성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>jj모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에이원오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>나래모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)차조아네트웍스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)제네럴모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)예일자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에쓰아이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카카오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">20</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)아이오토스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">35</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태백상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신세계자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>코리아모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">16</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>좋은차닷컴</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>안산상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>알차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)애플카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>경북모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>자마이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>수성자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>준모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">11</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)월드도이치오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)카웨이</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>무한자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>달성자동차상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한결모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)카카오토샵</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대잠상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>참좋은자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>조아조아자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)파인뱅크</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>베스트자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)케이원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)진흥자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)거성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>장군모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)씨제이천지모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대구자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>로얄모터스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주) 유카 대구지점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카모아</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토크루</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)하나자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>보배모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>모든카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)드림카마켓</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>가온모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)한영모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>선경상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)피스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴현대모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)타워모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)대진자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우수상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)왓카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)네바퀴</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>재경상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)모터풀</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)정진엠티에스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)한경자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>서진모터스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카담파트너스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>다둥이차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)새롬모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>베스트모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>블랙케이</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>MK모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)드림오토상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)행운자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)전라도모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카누리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>믿음모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)히든모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>일주모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>케이에스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>서대구중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">41</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)123모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)라임모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세림상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)프로모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)선비</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>명가모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>탑모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>통일모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오렌지카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>탑오토 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이엠지모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>모토모토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>씨와이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)윤카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하늘모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)한라자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)시우자동차[1]</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>경영상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>OK 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>수모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)스마일모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)퍼스트다이렉트모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우신모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토라인</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)으뜸모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)우리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)명성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>도하모터스(이창호)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>모던모터스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)더바른모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>굿모닝모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)센텀</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우일모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>해태자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)케이에스상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하나모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)뉴카카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">15</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)라인자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>CAR유모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)그랜드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유일상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)리드옥션</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>백제모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>두드림자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>BK모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)더오토(세트)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)올뉴카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토피아</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토리카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>중고차마트</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>기능장중고차(카투데이)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>풍년자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)용일상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)보라카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>합천모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)서진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>트루카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>진장모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)제이엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토빌리지</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>영모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>윤모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>고고모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오투모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>행운모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>앤탑모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)태양모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)로또자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>국제모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)국민상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)카고고</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>두리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우진종합자동차상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>쏭카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)정일모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴정우모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)가양자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엄모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>미래자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>BM모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 대양모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더뉴스타상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>K1 CAR</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>영모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하나로홀딩스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>부릉모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대신모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에스유카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)지후모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)뉴에버모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)새롬모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>블루오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">27</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)쿨모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더원오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대곡자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대흥자동차 주식회사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)미라클</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)예스오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)아이오카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아슬란모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>투게더카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)케이비국민차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>스타모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>부릉부릉닷컴(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>좋은자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">22</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)우리집자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)킹모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">16</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)경보모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)신한길모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>위즈오토모티브</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스제이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>캡틴카모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>정인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)태양자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>로또모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)영진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>SJ모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)지온컴퍼니</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)국민모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)세종자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>재경모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)달인중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴코리아모터스(V1)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)디오토카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>서희디오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 삼일상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토파크</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이제이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>YD모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)엠플러스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">15</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)준모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>1호모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플러스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)알차이노베이션</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>행운모터스306호</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)스피드자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)SH모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차차모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카펀</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카라모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태양자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>로마자동차 주식회사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태양모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아주자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더블유오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)미소모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더나은모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>착한중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>마이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>민모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>SK자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>그랜드상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신호등모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우정 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유일모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>월드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>다나자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)해승모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>천사모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하입카즈</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)이든자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>퍼스트다이렉트중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>믿음모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>The중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)대기자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>지니어스Bay</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>노빌리티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토랜드</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>남수원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">11</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토피아_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)리더카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>지디카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>울트라모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>다모아모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이씨모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>이십일세기모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)모터라인</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>으뜸자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>무결점카모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">22</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>힐링모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>스카이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">18</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>다산다모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신원자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)성진모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>무한모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)강변모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>기운모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>성광상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>킹모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에스에이</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>JS모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴엠제이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>화인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토룩2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">30</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)좋은자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)스마트자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)경기모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)우리카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>수성자동차2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세븐모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토월드</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)우리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한성월드</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>은혜상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>벧엘자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">32</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>시그니처모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>청학e모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)더챔</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>미남자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)태성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>굿모닝모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>경동모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>트러스트 오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>온드림모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">15</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카리브 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>와이티모터스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>토토자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>극동모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>포스카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)티엠씨모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>명성모터스(현대단지)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>수원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)로얄티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)나우모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아이엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)바른모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)빅보스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)카인드카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)플레이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)셀렉트오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주) 설레임오토모티브_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)정든모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>와이엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>기분좋은자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아차차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카스토어</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>클린오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>솔카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)우리들모터스 </td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>탑라인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>킹카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카맥스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토라인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플래닛_법인제휴2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)고려자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이더블유</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이디모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)수한모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)타보고모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태경모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>넘버원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)뉴부산모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)뉴행복드림카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>청운자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)모던카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">30</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>DK모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하나오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 씨피오토모티브</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>비전모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>위드카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)차담진에스제이</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차사인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)탑기어모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>굿카대표[P]</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카카오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>알모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)카스토리</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)서울자동차선물거래소</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토웨이브</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>해피카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>힐링모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)유카 전주점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">38</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>베스트모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>드림디오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>와이 오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우송모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에스원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플러스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">11</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>케이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)엘씨</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>고고카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)서울오토벨</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카메이트</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토리안</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)다올오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>수정오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>NEW익산모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)자동차이야기</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)제이스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아이러브카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플러스상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">19</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>성운모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>원모터스(ONE모터스)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>알뜰중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엔케이모터스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)트리에이치오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하이마이카_진단2.0</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">18</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)153모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>퍼스트카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하나모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우리자동차상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토씨티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아이앤지모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한빛모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토핸즈</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">20</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>빛나는 자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>연산자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하나모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)비케이투모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>승진자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>양주중고차 에이원오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스케이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>진솔 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>민모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>스마트상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에어라인오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td> 신드롬 모터스 </td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)이조은모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>행운모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴월드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차투차(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차칸</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>순수자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플러스(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">16</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아우토반</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)미래카월드</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)일공공일카부카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴AK모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>슬기로운 딜러생활</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>파트너스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">15</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>선두모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>넘버원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>KCC CAR</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태양모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">11</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>히트모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신명가모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엘림오토갤러리</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제일모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)V모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)시우자동차[2]</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>호차모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>일등모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)시우자동차[3]</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴한길모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)골드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>용인중고차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이비씨오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하이엔드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)건모터스풍동</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대경모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대한종합자동차상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>JC모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)다산모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토멤버스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)유카2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)대원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>디에이치모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>다올모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에스유즈드카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)산다모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>시아모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카플릭스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>워너비카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)제우스토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)타요</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>조이갤러리</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스제이자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>온모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>재운모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>정모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한우카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더블유(W)오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>보석모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>청춘모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신진모터스 </td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 아하에이전트</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신사 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토플래닛(일산풍동)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>가온오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)동남모터스상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>미르모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세온모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>왕카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">29</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)경기자동차앤카앤톡</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토엠</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세화모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 하이엔드중고사업부</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플러스㈜2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">24</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세븐카 마스터</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>씨에스엠</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>형산자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오케이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토피아</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하늘 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 정이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>위드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아피스오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)주안모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세이프카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)씨에스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">15</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)스마트모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오영모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>윤프로모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>바론카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)카다오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하늘오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더 선 오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에스앤케이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)디에이치모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)달모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제로모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신도청모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)이레모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토핸즈  대구직영점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오뚜기모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에이스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>로얄모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에스비즈</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>강성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>강철</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엠지모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태성모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하이오토코리아</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>W모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>헬로모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>장군모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)프랜즈모빌리티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>K2모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>티원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)더쿨모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>코오롱모빌리티그룹 주식회사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이치에스HS 모빌리티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카톡모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 제이에이치플러스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뮤카 주식회사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>도담자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>강한모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>대한자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">23</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>탑모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)초심모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)예스카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>점보모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>태영모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>  나이스카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하이코르오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)엔터카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>토마토모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유레카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>우민모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>도양자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토핸즈 광주지점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>국제자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>다옴중고자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>마스터카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">17</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)굿카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>삼덕상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>코오롱모빌리티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">9</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)호인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>울트라모터스_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>빅모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더드림 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 모터웨이</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>준모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>MK모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>선모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>왓차중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)우진오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)차란차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)에이아이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하이브모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>현우카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엠모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)정직한놈들</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카뱅모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오늘의차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 주원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>명문자동차_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>일품모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>홍모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>롯데렌탈(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">14</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴에스케이상사(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스유모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>원카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>누리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)아시아모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유로오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>모터스밸리(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>드림카마켓2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">13</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)제이디모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>희망드림자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>천안 오토플러스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">17</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토핸즈</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>가나 모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>롯데렌탈(주)부천점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">15</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유케이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>이에스(ES)오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오뚜기자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>형제모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더 다이렉트</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토클래스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에이치엔카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)브이아이피준모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)투에이치컴퍼니</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>부산 중고차 매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)제이씨오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토프라임_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)하나로모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토플래닛(일산풍동)-리스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>미래상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>디아이(DI)모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)픽카소</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)더오토(단품)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토프라자</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(유)카마트상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>중고차랩</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한스오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)팔팔판다중고차 수원1호지점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>코오롱모빌리티그룹(주)장안평</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더좋은자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>안심카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>마린오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>롯데렌탈_용인점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제로모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>착한자동차(19호)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플래닛_강서오토플렉스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>원모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카미팅모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">11</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차두리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토브릿지</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>Anyone MOTORS</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세이프웨이오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신세계자동차(주)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>최강모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>뉴럭키</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아람모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제로카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>비모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 손오공</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 온누리모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>윈드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 빅보스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>케이오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>위드카2</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">11</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>유니언모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차마이카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 더케이오토모티브</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>리본카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">16</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>차 잘하는 남자</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>정이모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>바로모터컴퍼니</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>2N모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>하모니모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>마니카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>코오롱702Prime</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">8</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>올바른모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카올모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">7</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>가람자동차상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 하이엔드모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">10</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>솔카 (진단2.0) </td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주) 설레임오토모티브(진단2.0)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)씨엔에프</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>바른손모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신화모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한우카부산</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)다스오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)아이오토마스터</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>702코오롱모빌리티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">6</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>티에스오토_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>세인모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한길인증중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>올림모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카멘토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)유카 서대구지점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>한결자동차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>엠엔제이오토모빌</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>WITH CAR</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토창원</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사케이엘마스터</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>스카이모터스_진단++</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>카슐랭모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)비앤비모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)카사블랑카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>코오롱모빌리티702 prime</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>오토플래닛_부천 DY카랜드</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">3</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아이러브카 자동차매매센터</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>아이러브 카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주) 설레임오토모티브</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">12</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>리더카</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>신서울모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>지모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이(J)모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>이지카(Ez Car)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>원큐모빌리티</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>지에스모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>에스오토</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>주식회사 인생내차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)중앙자동차매매상사</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">5</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>정안자동차(정상선)</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>스마일중고차</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>팀모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>SK렌터카 오토옥션 제휴</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>브라더모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>(주)오토핸즈 오토인사이드 수원직영점</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">4</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>남덕모터스</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>더 클래스 원</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">1</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+<tr><td>제이원모터스_프리미엄</td><td></td>
+<td class="num">—</td><td></td>
+<td class="num"><span class="excluded">표본 부족</span></td>
+<td class="num">2</td>
+<td class="num">—</td>
+<td class="num">—</td></tr>
+
+</tbody>
+</table>
+
+<h2>정직도 · 매물 수 <span class="muted">점을 누르면 그 딜러 매물로</span></h2>
+<p class="muted">가로는 표시가 차이, 세로는 매물 수입니다.</p>
+
+<h2>딜러 목록</h2>
+
+<h2>이 지표가 무엇인가</h2>
+<dl class="muted">
+  <dt>표시가 차이</dt>
+  <dd>같은 조건 매물의 시세 중앙값 대비 그 딜러 가격이 얼마나 벗어나는가.
+    ★ 높다고 나쁜 것은 아닙니다 — 상태가 좋을 수도 있습니다.</dd>
+  <dt>평균 게시</dt>
+  <dd>그 딜러 매물이 평균 며칠 걸려 사라지는가. 길면 가격 협상 여지가 있을 수 있습니다.</dd>
+  <dt>표본 부족</dt>
+  <dd>매물이 적으면 정직도를 확정 표시하지 않습니다.</dd>
+</dl>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

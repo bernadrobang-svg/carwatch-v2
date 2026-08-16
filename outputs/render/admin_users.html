@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사용자 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-users">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>사용자 <small>2명 · 관리자 2</small></h1>
+<p class="notice">
+  관리자를 <strong>0명으로 만들 수 없습니다.</strong>
+  마지막 관리자의 역할을 내리거나 중지하면 아무도 관리할 수 없게 됩니다.<br>
+  「중지」는 삭제가 아닙니다. 로그인만 막고 관심 목록과 이력은 남깁니다.
+</p>
+<p class="muted">가입 정책 — <strong>closed</strong>
+  (open 공개 · approval 승인제 · closed 닫힘)</p>
+
+
+
+<table>
+<thead><tr><th>ID</th><th>이름</th><th>역할</th><th>마지막 접속</th>
+<th>가입</th><th>상태</th><th></th></tr></thead>
+<tbody>
+
+<tr><td>1</td><td>admin</td><td>admin</td>
+<td>—</td><td>2026-08-15</td>
+<td></td>
+<td>
+  <form method="post" action="/admin/users" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="account_id" value="1">
+    <input type="hidden" name="action" value="disable">
+    <button type="submit" class="mini">중지</button>
+  </form>
+</td></tr>
+
+<tr><td>2</td><td>반입작업</td><td>admin</td>
+<td>—</td><td>2026-08-16</td>
+<td></td>
+<td>
+  <form method="post" action="/admin/users" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="account_id" value="2">
+    <input type="hidden" name="action" value="disable">
+    <button type="submit" class="mini">중지</button>
+  </form>
+</td></tr>
+
+</tbody>
+</table>
+
+<h2>계정 활동 <span class="muted">최근 10건</span></h2>
+
+<table>
+<thead><tr><th>시각</th><th>누가</th><th>무엇</th></tr></thead>
+<tbody>
+
+<tr><td>2026-08-16T08:55:56.097188+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T08:25:24.660925+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T08:22:34.305301+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T08:18:20.975337+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T07:27:49.349780+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T06:55:02.273216+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T06:21:52.396295+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T06:20:51.819724+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T05:55:53.778883+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+<tr><td>2026-08-16T03:47:35.429208+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>계정 만들기</h2>
+<p class="muted">임시 비밀번호로 만들고, 첫 로그인 때 본인이 바꿉니다.
+  ★ 임시 비밀번호는 저장하지 않습니다 — 해시만 남습니다.
+  화면에 한 번만 나오니 그때 전달하십시오.</p>
+<form method="post" action="/admin/users">
+  <input type="hidden" name="csrf" value="render">
+  <input type="hidden" name="action" value="create">
+  <label>이름 <input name="name" required minlength="2" maxlength="20">
+    <span class="muted">로그인에 씁니다. 바꾸지 않습니다</span></label>
+  <label>별명 <input name="display_name" maxlength="20">
+    <span class="muted">선택 — 비우면 이름을 씁니다</span></label>
+  <label>이메일 <input name="email" type="email" maxlength="120">
+    <span class="muted">선택</span></label>
+  <label>역할
+    <select name="role">
+      <option value="user">user</option>
+      <option value="admin">admin</option>
+    </select>
+  </label>
+  <label>사유 <input name="reason" size="24" placeholder="사유 (필수)" required></label>
+  <button type="submit">계정 만들기</button>
+</form>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

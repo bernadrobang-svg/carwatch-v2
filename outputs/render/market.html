@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시세 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-market">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>시세 <small>G80_25T</small></h1>
+
+<table>
+<thead><tr><th>관측일</th><th class="num">매물</th><th class="num">대상</th>
+<th class="num">최저</th><th class="num">p25</th><th class="num">중앙</th>
+<th class="num">p75</th><th class="num">최고</th></tr></thead>
+<tbody>
+
+<tr><td>—</td>
+<td class="num">1,713</td>
+<td class="num">1,713</td>
+<td class="num">0</td>
+<td class="num">3,100만</td>
+<td class="num">3,680만</td>
+<td class="num">4,440만</td>
+<td class="num">6,000만</td></tr>
+
+</tbody>
+</table>
+<p class="muted">연식별 분포는 감가 곡선으로 봅니다. 표본이 모자라면 보간하지 않습니다.</p>
+
+
+
+
+<h2>가격 분포 <span class="muted">막대를 누르면 그 구간 매물로</span></h2>
+<table>
+<thead><tr><th>구간</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+<tbody>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=0&amp;price_max=7500000">0 ~ 750만</a></td>
+  <td class="num">22</td>
+  <td class="num">647만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=7500000&amp;price_max=15000000">750만 ~ 1,500만</a></td>
+  <td class="num">19</td>
+  <td class="num">864만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=15000000&amp;price_max=22500000">1,500만 ~ 2,250만</a></td>
+  <td class="num">37</td>
+  <td class="num">2,100만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=22500000&amp;price_max=30000000">2,250만 ~ 3,000만</a></td>
+  <td class="num">303</td>
+  <td class="num">2,790만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=30000000&amp;price_max=37500000">3,000만 ~ 3,750만</a></td>
+  <td class="num">545</td>
+  <td class="num">3,390만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=37500000&amp;price_max=45000000">3,750만 ~ 4,500만</a></td>
+  <td class="num">405</td>
+  <td class="num">4,050만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=45000000&amp;price_max=52500000">4,500만 ~ 5,250만</a></td>
+  <td class="num">214</td>
+  <td class="num">4,880만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;price_min=52500000&amp;price_max=60000000">5,250만 ~ 6,000만</a></td>
+  <td class="num">203</td>
+  <td class="num">5,490만</td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>연식별 <span class="muted">중앙값 · 표본 5건 미만은 내지 않습니다</span></h2>
+<table>
+<thead><tr><th>연식</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+<tbody>
+
+<tr><td><a href="/listings?target=G80_25T&amp;year=2026">2026년</a></td>
+  <td class="num">26</td>
+  <td class="num">5,590만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;year=2025">2025년</a></td>
+  <td class="num">115</td>
+  <td class="num">5,190만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;year=2024">2024년</a></td>
+  <td class="num">283</td>
+  <td class="num">5,190만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;year=2023">2023년</a></td>
+  <td class="num">285</td>
+  <td class="num">3,990만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;year=2022">2022년</a></td>
+  <td class="num">465</td>
+  <td class="num">3,490만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;year=2021">2021년</a></td>
+  <td class="num">539</td>
+  <td class="num">3,190만</td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>트림별</h2>
+<table>
+<thead><tr><th>트림</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
+<tbody>
+
+<tr><td><a href="/listings?target=G80_25T&amp;trim=가솔린 2.5 터보 AWD">가솔린 2.5 터보 AWD</a></td>
+  <td class="num">1,223</td>
+  <td class="num">3,750만</td></tr>
+
+<tr><td><a href="/listings?target=G80_25T&amp;trim=가솔린 2.5 터보 2WD">가솔린 2.5 터보 2WD</a></td>
+  <td class="num">490</td>
+  <td class="num">3,490만</td></tr>
+
+</tbody>
+</table>
+
+
+<h2>다른 차종</h2>
+
+<p><a class="chip" href="/market?target=MODEL_Y">MODEL_Y 522</a><a class="chip" href="/market?target=GRANDEUR_LPG">GRANDEUR_LPG 242</a><a class="chip" href="/market?target=G70_20T">G70_20T 240</a><a class="chip" href="/market?target=KOLEOS_HEV">KOLEOS_HEV 237</a><a class="chip" href="/market?target=SPORTAGE_LPI">SPORTAGE_LPI 177</a><a class="chip" href="/market?target=GV60">GV60 116</a><a class="chip" href="/market?target=G70_25T">G70_25T 92</a><a class="chip" href="/market?target=GV70_EV">GV70_EV 71</a><a class="chip" href="/market?target=G80_EV">G80_EV 60</a></p>
+
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

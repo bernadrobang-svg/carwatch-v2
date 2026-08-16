@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수집 실행 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+<meta http-equiv="refresh" content="5">
+</head>
+<body class="s-admin-run">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>수집 실행</h1>
+
+<div class="notice" id="progress">
+  <h2>진행</h2>
+  
+  <p><strong>failed</strong> · 사유 raw_missing · 범위 KOLEOS_HEV
+    </p>
+  <p>단계 <strong>-</strong>
+    
+    <span class="muted">· 넣은 시각 2026-08-16T03:48:11.495028+00:00</span></p>
+  <p class="muted">중단 — S5 는 CLI 로 이미 돌렸다. 큐를 가져가는 실행기가 없어 잠금만 남는다 · 재개점 없음</p>
+  
+  
+
+  
+  
+  <p class="muted">대기 중인 작업이 없습니다 — 「멈춘 것」이 아니라 「할 일이 없는 것」입니다.</p>
+  
+
+  <h3>지금까지 받은 것</h3>
+  <table>
+  <thead><tr><th>엔드포인트</th><th class="num">원문</th></tr></thead>
+  <tbody>
+  
+  <tr><td>catalog</td><td class="num">125</td></tr>
+  
+  <tr><td>detail</td><td class="num">3,648</td></tr>
+  
+  <tr><td>diagnosis</td><td class="num">486</td></tr>
+  
+  <tr><td>inspection</td><td class="num">2,034</td></tr>
+  
+  <tr><td>list</td><td class="num">393</td></tr>
+  
+  <tr><td>record</td><td class="num">2,379</td></tr>
+  
+  </tbody>
+  </table>
+  <p class="muted">매물 7,661건 · 판정 3,471건</p>
+
+  <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
+    갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
+</div>
+
+
+
+<form method="post" action="/admin/run">
+  <input type="hidden" name="csrf" value="render">
+  <input type="hidden" name="previewed" value="1">
+
+  <h2>무엇을 돌릴까 — 사유</h2>
+  <p class="muted">단계를 직접 고르지 않습니다. 사유가 시작 단계를 정합니다.</p>
+  
+
+  <h2>범위</h2>
+  
+  <label class="opt"><input type="radio" name="scope" value="G80_25T" checked>
+    G80_25T <span class="muted">(1,713건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="MODEL_Y">
+    MODEL_Y <span class="muted">(522건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="GRANDEUR_LPG">
+    GRANDEUR_LPG <span class="muted">(242건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="G70_20T">
+    G70_20T <span class="muted">(240건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="KOLEOS_HEV">
+    KOLEOS_HEV <span class="muted">(237건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="SPORTAGE_LPI">
+    SPORTAGE_LPI <span class="muted">(177건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="GV60">
+    GV60 <span class="muted">(116건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="G70_25T">
+    G70_25T <span class="muted">(92건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="GV70_EV">
+    GV70_EV <span class="muted">(71건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="G80_EV">
+    G80_EV <span class="muted">(60건)</span></label>
+  
+  <label class="opt"><input type="radio" name="scope" value="all">
+    <strong>전 차종</strong>
+    <span class="warn-block">10차종 · 약 3.6시간</span></label>
+  <p class="muted">★ 전 차종은 되돌릴 수 없이 오래 돕니다.
+    잘못 눌러 3.8시간이 그냥 도는 일을 막으려고
+    <strong>아래에 <code>all</code> 을 직접 입력</strong>해야 시작합니다.</p>
+  <label>확인 <input name="confirm" size="10" placeholder="all"
+    autocomplete="off">
+    <span class="muted">전 차종일 때만 필요합니다</span></label>
+
+  <h2>사유 기록</h2>
+  <label>왜 돌리는가 <input name="reason_note" required></label>
+  <input type="hidden" name="reason" value="listing_updated">
+
+  <p class="muted">원문은 덮어쓰지 않습니다. 중단해도 지금까지 받은 것은 남습니다.<br>
+    전 차종 수집은 약 3.8시간이 걸리고, 시작하면 중간에 세우기 어렵습니다.</p>
+  <button type="submit">▶ 실행</button>
+</form>
+
+<h2>진행</h2>
+
+<table>
+<thead><tr><th>시각</th><th>상태</th><th>단계</th><th class="num">진행</th><th>사유</th><th></th></tr></thead>
+<tbody>
+
+<tr><td>2026-08-16T03:48:11.495028+00:00</td><td>failed</td><td>-</td>
+  <td class="num">—/—</td>
+  <td class="muted">raw_missing</td>
+  <td></td></tr>
+
+<tr><td>2026-08-15T16:36:43.278091+00:00</td><td>failed</td><td>-</td>
+  <td class="num">—/—</td>
+  <td class="muted">listing_updated</td>
+  <td></td></tr>
+
+</tbody>
+</table>
+
+
+
+<h2>로그</h2>
+
+<ul class="muted"><li>2026-08-16T08:34:39.174734+00:00 · 20260816T083439 · fatal 5 · 556초</li><li>2026-08-16T08:32:22.559181+00:00 · 20260816T083222 · 정상 · 2.2초</li><li>2026-08-16T08:31:39.699106+00:00 · 20260816T083139 · 정상 · 4.4초</li><li>2026-08-16T07:39:32.403179+00:00 · 20260816T073929 · fatal 7 · 0.8초</li><li>2026-08-16T07:29:48.989949+00:00 · 20260816T072948 · 정상 · 38.3초</li></ul>
+
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

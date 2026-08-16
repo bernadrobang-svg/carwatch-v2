@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>차종 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin-targets">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>차종</h1>
+<p class="notice">
+  facet 확인 없이 <code>targets.json</code> 에 쓰지 않습니다.
+  사이트가 열거값을 주므로, 사람이 적으면 표기가 어긋납니다.<br>
+  ★ 새 차종은 <strong>확인 대기</strong>로 들어갑니다.
+  시험 수집으로 배기량 분포를 본 뒤에만 확정됩니다 — 자동 확정하지 않습니다.
+  <span class="muted">근거 STEP 130</span>
+</p>
+
+<h2>차종 추가</h2>
+<p class="muted">① 모델 지정 → ② facet 확인 → ③ 트림 선택 → ④ 등록(확인 대기) → ⑤ 시험 수집 → ⑥ 확정</p>
+<form method="post" action="/admin/targets">
+  <input type="hidden" name="csrf" value="render">
+  <input type="hidden" name="previewed" value="1">
+  <input type="hidden" name="action" value="add">
+  <label>차종 키 <input name="target_key" size="20" placeholder="GV70_EV"></label>
+  <label>이름 <input name="label" size="30" placeholder="제네시스 GV70 전기"></label>
+  <label>수집 묶음 <input name="collect_group" size="20" placeholder="GV70"></label>
+  <label>구분
+    <select name="origin_type">
+      <option value="Y">국산 (CarType.Y)</option>
+      <option value="N">수입 (CarType.N)</option>
+    </select>
+    <span class="muted">★ 빠뜨리면 조건이 안 맞아 0건이 나옵니다</span>
+  </label>
+  <label>site_query <input name="site_query" size="70" placeholder="facet 으로 확인한 q 값"></label>
+  <label>사유 <input name="reason" size="30" placeholder="사유 (필수)" required></label>
+  <button type="submit">확인 대기로 등록</button>
+</form>
+
+<h2>등록된 차종 10종</h2>
+<table>
+<thead><tr><th>키</th><th>이름</th><th>구분</th><th class="num">매물</th><th>상태</th><th>수집</th><th></th></tr></thead>
+<tbody>
+
+<tr>
+  <td class="runid">G80_25T</td>
+  <td>G80 2.5T</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">1,713</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">G80_EV</td>
+  <td>G80 전동화</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">60</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">G70_25T</td>
+  <td>G70 2.5T</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">92</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">G70_20T</td>
+  <td>G70 2.0T</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">240</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">GV70_EV</td>
+  <td>GV70 전동화</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">71</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">GV60</td>
+  <td>GV60</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">116</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">KOLEOS_HEV</td>
+  <td>그랑 콜레오스 1.5 E-TECH</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">237</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">SPORTAGE_LPI</td>
+  <td>스포티지 LPi</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">177</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">GRANDEUR_LPG</td>
+  <td>그랜저 GN7 LPG</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">242</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid">MODEL_Y</td>
+  <td>테슬라 모델Y</td>
+  <td><span class="muted">—</span></td>
+  <td class="num">522</td>
+  <td>확정</td>
+  <td>됨</td>
+  <td>
+    
+  </td>
+</tr>
+
+</tbody>
+</table>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>

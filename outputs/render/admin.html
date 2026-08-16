@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관리 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css">
+
+</head>
+<body class="s-admin">
+
+<header class="top">
+  <a class="brand" href="/">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings">매물</a>
+  
+  <a class="nav-item" href="/recommend">후보</a>
+  
+  <a class="nav-item" href="/compare">비교</a>
+  
+  <a class="nav-item" href="/market">시세</a>
+  
+  <a class="nav-item" href="/dealers">딜러</a>
+  
+  <a class="nav-item" href="/notready">미판정</a>
+  
+  <a class="nav-item" href="/watch">관심</a>
+  
+  <a class="nav-item" href="/admin">관리</a>
+  
+  <a class="nav-item" href="/admin/run">실행 지시 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/audit">감사 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/status">진행 모니터 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/import">목록 반입 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/collect">브라우저 수집 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/users">사용자 <em>운영</em></a>
+  
+  <a class="nav-item" href="/admin/scoring">배점 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/targets">차종 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/registry">등록부 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/dict">사전 확정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/config">설정 <em>조정</em></a>
+  
+  <a class="nav-item" href="/admin/query">쿼리 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/api">API <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/tools">도구 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/docs">문서 <em>탐색</em></a>
+  
+  <a class="nav-item" href="/admin/requests">개발 요청 <em>탐색</em></a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+</div>
+
+
+<main>
+<h1>관리</h1>
+
+
+<h2>조치가 필요한 것</h2>
+<table>
+<thead><tr><th>무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
+<tbody>
+
+<tr><td class="warn-warn">사전 미검토</td><td class="num">35</td>
+  <td class="muted">그 축의 판정이 멈춰 있습니다</td><td class="muted">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
+  <td><a href="/notready">가기</a></td></tr>
+
+<tr><td class="warn-warn">등록부 미분류</td><td class="num">110</td>
+  <td class="muted">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted">등록부에서 구분을 정합니다</td>
+  <td><a href="/admin/registry">가기</a></td></tr>
+
+<tr><td class="warn-warn">카탈로그 미조회</td><td class="num">802</td>
+  <td class="muted">사양 축이 판정되지 않아 분모가 줄어 있습니다</td><td class="muted">카탈로그를 수집하면 등급이 오를 수 있습니다</td>
+  <td><a href="/admin/run">가기</a></td></tr>
+
+</tbody>
+</table>
+
+
+
+
+
+<ul class="stat">
+  <li>등록부 미분류 <strong>110</strong></li>
+  <li>개발 요청 <strong>0</strong></li>
+  <li>대기 작업 <strong>0</strong></li>
+</ul>
+<h2>메뉴</h2>
+<table>
+<thead><tr><th>분류</th><th>화면</th><th>근거</th><th>상태</th></tr></thead>
+<tbody>
+
+<tr><td></td><td><a href="/admin">현황</a></td>
+<td>STEP 138</td>
+<td></td></tr>
+
+<tr><td>운영</td><td><a href="/admin/run">실행 지시 · 큐</a></td>
+<td>STEP 132</td>
+<td></td></tr>
+
+<tr><td>운영</td><td><a href="/admin/audit">감사 조회</a></td>
+<td>STEP 138a</td>
+<td></td></tr>
+
+<tr><td>운영</td><td><a href="/admin/status">진행 지켜보기</a></td>
+<td>STEP 136f</td>
+<td></td></tr>
+
+<tr><td>운영</td><td><a href="/admin/import">목록 반입</a></td>
+<td>STEP 136a · 136b</td>
+<td></td></tr>
+
+<tr><td>운영</td><td><a href="/admin/collect">브라우저 수집</a></td>
+<td>STEP 136c</td>
+<td></td></tr>
+
+<tr><td>조정</td><td><a href="/admin/scoring">배점 조정</a></td>
+<td>STEP 128 · 129</td>
+<td></td></tr>
+
+<tr><td>조정</td><td><a href="/admin/targets">차종 추가 · 수정</a></td>
+<td>STEP 130</td>
+<td></td></tr>
+
+<tr><td>조정</td><td><a href="/admin/registry">등록부 분류</a></td>
+<td>STEP 131</td>
+<td></td></tr>
+
+<tr><td>조정</td><td><a href="/admin/dict">사전 확정</a></td>
+<td>STEP 136e</td>
+<td></td></tr>
+
+<tr><td>조정</td><td><a href="/admin/config">config 편집 · 이력</a></td>
+<td>STEP 127</td>
+<td></td></tr>
+
+<tr><td>탐색</td><td><a href="/admin/query">조회 쿼리</a></td>
+<td>STEP 133</td>
+<td></td></tr>
+
+<tr><td>탐색</td><td><a href="/admin/api">API 조회 · 저장</a></td>
+<td>STEP 134</td>
+<td></td></tr>
+
+<tr><td>탐색</td><td><a href="/admin/tools">관리 도구</a></td>
+<td>STEP 135</td>
+<td></td></tr>
+
+<tr><td>탐색</td><td><a href="/admin/docs">문서 뷰어</a></td>
+<td>STEP 136</td>
+<td></td></tr>
+
+<tr><td>탐색</td><td><a href="/admin/requests">개발 요청</a></td>
+<td>STEP 137</td>
+<td></td></tr>
+
+</tbody>
+</table>
+
+
+<h2>최근 실행 5건</h2>
+<table>
+<thead><tr><th>시각</th><th>사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
+<tbody>
+
+<tr><td>2026-08-16T08:34:39.174734+00:00</td><td class="muted">요청 10,282건</td>
+  <td class="runid">20260816T083439</td>
+  <td class="num">556초</td><td>fatal 5</td></tr>
+
+<tr><td>2026-08-16T08:32:22.559181+00:00</td><td class="muted">요청 53건</td>
+  <td class="runid">20260816T083222</td>
+  <td class="num">2.2초</td><td>정상</td></tr>
+
+<tr><td>2026-08-16T08:31:39.699106+00:00</td><td class="muted">요청 80건</td>
+  <td class="runid">20260816T083139</td>
+  <td class="num">4.4초</td><td>정상</td></tr>
+
+<tr><td>2026-08-16T07:39:32.403179+00:00</td><td class="muted">요청 21건</td>
+  <td class="runid">20260816T073929</td>
+  <td class="num">0.8초</td><td>fatal 7</td></tr>
+
+<tr><td>2026-08-16T07:29:48.989949+00:00</td><td class="muted">요청 743건</td>
+  <td class="runid">20260816T072948</td>
+  <td class="num">38.3초</td><td>정상</td></tr>
+
+</tbody>
+</table>
+
+
+<h2>최근 변경 <span class="muted">되돌릴 수 있습니다</span></h2>
+
+<table>
+<thead><tr><th>시각</th><th>무엇</th><th>사유</th><th></th></tr></thead>
+<tbody>
+
+<tr><td>2026-08-16T07:28:00.430084+00:00</td><td>color_ext[23] pending → confirm</td><td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+  <td><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="d1d6beaa6b86d5c7a0">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+<tr><td>2026-08-16T07:28:00.353171+00:00</td><td>fuel[5] pending → confirm</td><td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+  <td><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="6b6be2dec4911dc629">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+<tr><td>2026-08-16T07:28:00.590132+00:00</td><td>sell_type[3] pending → confirm</td><td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+  <td><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="640b0ac71bc7c87866">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+<tr><td>2026-08-16T07:28:00.532735+00:00</td><td>color_int[10] pending → confirm</td><td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+  <td><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="0e1501a03e5452a36b">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+</tbody>
+</table>
+
+
+
+<h2>관리 기능</h2>
+<p class="muted">수집이 도는 동안은 조정 기능이 잠깁니다.
+  도는 중에 규칙이 바뀌면 어느 규칙으로 나온 결과인지 알 수 없기 때문입니다.</p>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260816T083439</span>
+  <span>2026-08-16 22:17</span>
+</footer>
+
+</body>
+</html>
