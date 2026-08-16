@@ -598,6 +598,54 @@ for _f in sorted(os.listdir(_tests_dir)) if os.path.isdir(_tests_dir) else []:
             _leaks.append(f"tests/{_f}:{_n} — 운영 DB 를 가리킨다")
 say("S24", "시험 격리 (운영 DB 미사용)", 1 if not _leaks else 0, [], _leaks)
 
+# ── S25 형상 관리 (0장 · 부록 E · 개정 257) ─────────────────────────
+# ★ 커밋 안 한 변경이 남으면 가이드가 읽는 GitHub 과 실물이 갈린다.
+#   「작업은 했는데 안 올라왔다」가 실제로 났다 (실측 08-16)
+import subprocess as _sp
+
+
+def _git(*args) -> tuple[int, str]:
+    try:
+        p = _sp.run(("git", "-C", ROOT, *args), capture_output=True,
+                    text=True, timeout=30)
+        return p.returncode, (p.stdout or "").strip()
+    except (OSError, _sp.SubprocessError) as exc:      # noqa: BLE001
+        return 1, str(exc)
+
+
+_rc, _out = _git("status", "--porcelain")
+if _rc:
+    # ★ git 이 없으면 「통과」가 아니라 실패다 (S22 와 같은 이유)
+    say("S25", "형상 관리 (미커밋 없음)", 0, [], ["git 을 돌리지 못했다: " + _out[:60]])
+else:
+    _dirty = [ln for ln in _out.splitlines() if ln.strip()]
+    _rc2, _ahead = _git("rev-list", "--count", "@{u}..HEAD")
+    _bad = [f"미커밋 {len(_dirty)}건 — " + ", ".join(x[3:] for x in _dirty[:4])] \
+        if _dirty else []
+    if not _rc2 and _ahead.isdigit() and int(_ahead) > 0:
+        _bad.append(f"push 안 된 커밋 {_ahead}개 — 가이드가 GitHub 을 읽는다")
+    say("S25", "형상 관리 (미커밋·미push 없음)", 0 if _bad else 1, [], _bad)
+
+# ── S26 작업 기록 (0장 · 부록 E · 개정 257) ─────────────────────────
+# ★ 숫자 없는 기록은 기록이 아니다.  여섯 절과 실제 출력을 요구한다
+_OUT_DIR = os.path.join(ROOT, "outputs")
+_NAME = re.compile(r"^\d{8}_\d{4}_v\d+_.+\.md$")
+_SECTIONS = ("무엇을 하려 했나", "무엇을 했나", "왜 그렇게 했나",
+             "1차 결과", "조치 후 결과", "못 한 것")
+_recs, _bad26 = [], []
+for _f in sorted(os.listdir(_OUT_DIR)) if os.path.isdir(_OUT_DIR) else []:
+    if not _f.endswith(".md") or not _NAME.match(_f):
+        continue
+    _recs.append(_f)
+    with io.open(os.path.join(_OUT_DIR, _f), encoding="utf-8") as _fh:
+        _b = _fh.read()
+    _miss = [s for s in _SECTIONS if s not in _b]
+    if _miss:
+        _bad26.append(f"{_f} — 빠진 절: {', '.join(_miss)}")
+if not _recs:
+    _bad26.append("outputs/ 에 작업 기록이 없다 (YYYYMMDD_HHMM_v버전_제목.md)")
+say("S26", "작업 기록 (6절 · 이름 규칙)", len(_recs) - len(_bad26), [], _bad26)
+
 print()
 print(f"미착수 합계 {todo_total}")
 print("결과:", "통과" if not fail else "실패 — " + " / ".join(fail))
