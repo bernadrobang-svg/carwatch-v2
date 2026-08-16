@@ -503,6 +503,19 @@ web/static/
 ★ JS 는 바닐라.  프레임워크를 화면에 넣지 않는다
 ```
 
+```
+★ JS 를 쓰는 자리 — 08-16 명확화
+  금지된 것은 빌드 도구이지 JS 자체가 아니다
+필수   바닐라 JS · 한 파일 · CDN 도 npm 도 쓰지 않는다
+필수   JS 가 꺼져도 조회·필터·정렬은 링크로 돈다 (STEP 106)
+       JS 가 필요한 것은 「브라우저만 할 수 있는 일」 뿐이다
+★ 브라우저만 할 수 있는 일이란
+  서버 IP 가 막힌 API 를 사용자 회선으로 부르는 것 (STEP 136c)
+  그 밖의 것은 서버가 한다
+금지   JS 로 화면을 그리는 것.  HTML 은 서버가 만든다
+금지   JS 없이 아무것도 안 보이는 화면
+```
+
 ---
 
 ### ★ 중첩 `if` — 08-14
@@ -1320,6 +1333,9 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-40 | 반입분의 `origin` 이 `'import'` 임 | code | fatal |
 | V11-41 | 반입 뒤 S5~S10 이 이어서 돎 | code | fatal |
 | V11-42 | S4 완료 행의 `actual` 이 `'import'` 임 | code | fatal |
+| V11-43 | 브라우저 수집분의 `origin` 이 `'browser'` 임 | code | fatal |
+| V11-44 | 사람 확인 없이 저장되지 않음 | code | fatal |
+| V11-45 | CLI 로만 되는 기능이 없음 (부트스트랩 제외) | contract | fatal |
 
 ---
 
