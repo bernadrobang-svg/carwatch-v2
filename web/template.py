@@ -20,14 +20,17 @@ TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 RE_EXTENDS = re.compile(r"\{%\s*extends\s+([\w.]+)\s*%\}")
 RE_BLOCK = re.compile(r"\{%\s*block\s+(\w+)\s*%\}(.*?)\{%\s*endblock\s*%\}",
                       re.S)
-RE_FOR_OPEN = re.compile(r"\{%\s*for\s+(\w+)\s+in\s+([\w.]+)\s*%\}")
-RE_FOR_ANY = re.compile(r"\{%\s*(for)\s+\w+\s+in\s+[\w.]+\s*%\}"
+# 이름 경로.  ★ 대괄호 첨자를 여기서 받아야 _lookup 까지 간다.
+#   안 받으면 {{ d.gc[g] }} 가 「값 없음」이 아니라 글자 그대로 찍힌다 (N-1)
+PATH = r"[\w.\[\]'\"-]+"
+RE_FOR_OPEN = re.compile(r"\{%\s*for\s+(\w+)\s+in\s+(" + PATH + r")\s*%\}")
+RE_FOR_ANY = re.compile(r"\{%\s*(for)\s+\w+\s+in\s+" + PATH + r"\s*%\}"
                         r"|\{%\s*(endfor)\s*%\}")
-RE_IF_OPEN = re.compile(r"\{%\s*if\s+([\w.!]+)\s*%\}")
-RE_IF_ANY = re.compile(r"\{%\s*(if)\s+[\w.!]+\s*%\}"
+RE_IF_OPEN = re.compile(r"\{%\s*if\s+(!?" + PATH + r")\s*%\}")
+RE_IF_ANY = re.compile(r"\{%\s*(if)\s+!?" + PATH + r"\s*%\}"
                        r"|\{%\s*(else)\s*%\}|\{%\s*(endif)\s*%\}")
 RE_RAW = re.compile(r"\{\{!\s*([\w.]+)\s*\}\}")
-RE_VAR = re.compile(r"\{\{\s*([\w.]+)\s*(?:\|\s*(\w+)\s*)?\}\}")
+RE_VAR = re.compile(r"\{\{\s*(" + PATH + r")\s*(?:\|\s*(\w+)\s*)?\}\}")
 
 # ── 표시 필터 (STEP 152) ────────────────────────────────────────────
 # ★ 필터는 표시만 한다.  반올림으로 값을 바꾸지 않는다.
@@ -102,13 +105,42 @@ RAW_ALLOW: frozenset[str] = frozenset({
 })
 
 
+# 이름 조각 또는 [첨자].  ★ 점만 처리하면 {{ d.gc[g] }} 가 그대로 찍힌다
+#   — 값이 없어서가 아니라 이름을 못 읽어서다 (N-1 · 실측 08-16)
+_PATH_SEG = re.compile(r"([^.\[\]]+)|\[([^\]]*)\]")
+
+
+def _index_key(ctx: dict, raw: str):
+    """[ ] 안의 첨자를 값으로 바꾼다.
+
+    'x' · "x"   글자 그대로
+    3           정수 — 목록 첨자다
+    g           문맥의 변수 (반복 변수를 첨자로 쓰는 자리다)
+    """
+    token = raw.strip()
+    if len(token) >= 2 and token[0] == token[-1] and token[0] in "\"'":
+        return token[1:-1]
+    if token.lstrip("-").isdigit():
+        return int(token)
+    return _lookup(ctx, token)
+
+
+def _step(cur, key):
+    if key is None:
+        return None
+    if isinstance(cur, dict):
+        return cur.get(key)
+    if isinstance(cur, (list, tuple)):
+        # ★ 범위를 벗어나면 None 이다.  터뜨리면 화면 하나가 통째로 500 이 된다
+        return cur[key] if isinstance(key, int) and -len(cur) <= key < len(cur) \
+            else None
+    return getattr(cur, str(key), None)
+
+
 def _lookup(ctx: dict, path: str):
     cur = ctx
-    for part in path.split("."):
-        if isinstance(cur, dict):
-            cur = cur.get(part)
-        else:
-            cur = getattr(cur, part, None)
+    for name, sub in _PATH_SEG.findall(path):
+        cur = _step(cur, name if name else _index_key(ctx, sub))
         if cur is None:
             return None
     return cur
