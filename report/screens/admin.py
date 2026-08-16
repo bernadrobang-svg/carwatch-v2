@@ -573,6 +573,7 @@ def collect_state(conn, collect_urls=None, root: str = ".",
                       "url": u["url"], "url_template": u["url_template"]}
                      for u in urls], ensure_ascii=False)
     return {"collect_urls": urls, "collect_plan_json": plan,
+            **received_vs_used(conn),
             "browser_batches": rows,
             "browser_count": len(rows), "opened_steps": opened,
             "scopes": scopes, "scope_count": len(scopes),
@@ -581,6 +582,27 @@ def collect_state(conn, collect_urls=None, root: str = ".",
             "rows_per_call": int(web["browser_collect_rows"]),
             "interval_sec": float(web["browser_interval_sec"]),
             "max_form_bytes": int(web["max_form_bytes"])}
+
+
+def received_vs_used(conn) -> dict:
+    """받았다 ↔ 쓰였다 (개정 268).
+
+    ★ 둘을 한 자리에 낸다.  「저장했습니다」는 사실인데 아무 일도 안 일어난
+      상태를 화면이 못 보여 주면 사람이 못 잡는다 (실측 08-16 — 392쪽)
+    """
+    got = conn.execute(
+        "SELECT COUNT(*) FROM raw_response WHERE endpoint='list' "
+        "AND status='ok'").fetchone()[0]
+    items = conn.execute(
+        "SELECT COUNT(*) FROM core_listing").fetchone()[0]
+    detail = conn.execute(
+        "SELECT COUNT(*) FROM raw_response WHERE endpoint='detail' "
+        "AND status='ok'").fetchone()[0]
+    parsed = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE parse_version IS NOT NULL "
+        "AND parse_version <> ''").fetchone()[0]
+    return {"got_list_pages": got, "used_listings": items,
+            "got_detail": detail, "used_parsed": parsed}
 
 
 def dict_state(conn) -> dict:
@@ -627,6 +649,7 @@ def import_state(conn, limit: int | None = None) -> dict:
         "SELECT actual, checked_at FROM audit_validation WHERE code=? "
         "ORDER BY checked_at DESC LIMIT 1", (S4_CODE,)).fetchone()
     return {
+        **received_vs_used(conn),
         "import_batches": rows,
         "imported_listings": imported,
         "collected_listings": collected,

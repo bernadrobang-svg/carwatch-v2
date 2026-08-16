@@ -522,6 +522,10 @@ def parse_diagnosis(body: dict, site: str, source_id: str) -> dict:
                             if i["resultCode"] == DIAG_NORMAL),
         "checker_comment": _diag_comment(items, DIAG_CHECKER_CODE),
         "outer_panel_comment": _diag_comment(items, DIAG_PANEL_CODE),
+        # ★ core_diagnosis.row_status 는 NOT NULL 이다 (3장 STEP 35).
+        #   다른 파서 셋은 내는데 여기만 빠져 있었다 — 실물 진단이 처음
+        #   들어온 08-16 에 S6 이 통째로 죽었다 (IntegrityError)
+        "row_status": "ok",
     }
 
 

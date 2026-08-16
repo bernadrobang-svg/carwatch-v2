@@ -58,6 +58,12 @@ C = {
                    FATAL, "run",
                    "S5 에서 0 인 매물만 요청한다. 1·2 는 404 다 (STEP 21b)",
                    KIND_CODE),
+    "V1-21": Check("V1", "V1-21", "받아 두고 안 펼쳐진 원문이 없음", FATAL,
+                   "run",
+                   "「받았다」와 「쓰였다」는 다르다.  목록 392쪽을 받고도 "
+                   "core_listing 이 그대로였다 — 화면은 「저장했습니다」를 "
+                   "냈고 사실이었지만 아무 일도 안 일어났다 (개정 268)",
+                   KIND_CODE),
     "V1-20": Check("V1", "V1-20", "카탈로그를 모델당 1회만 받음", FATAL,
                    "run",
                    "호출 키(source_id)와 중복 제거 키(model_catalog_key)가 "
@@ -231,6 +237,7 @@ def run(conn, ctx) -> list:
     out.append(_entrypoint_parity_check(rid))
     out.append(_run_id_filled_check(conn, rid))
     out.append(_catalog_key_check(conn, rid))
+    out.append(_unparsed_envelope_check(conn, rid))
     out.append(_empty_db_check(conn, rid))
     return out
 
@@ -497,3 +504,43 @@ def _catalog_key_check(conn, rid):
         "GROUP BY source_id HAVING COUNT(*) > 1", (rid,)).fetchall()
     bad = [f"{sid}: {n}회 호출" for sid, n in rows]
     return result(C["V1-20"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _unparsed_envelope_check(conn, rid):
+    """V1-21 — 받아 두고 안 펼쳐진 목록 원문이 있는가 (개정 268).
+
+    ★ 「받았다」와 「쓰였다」를 가른다.  raw_response 에 있는데 그 안의
+      매물이 core_listing 에 없으면, 저장은 됐고 아무 일도 안 일어난 것이다
+    ★ 원문을 전부 펼쳐 보지 않는다 — 봉투마다 첫 매물 하나만 대조한다.
+      전건을 펼치면 검사가 파이프라인만큼 무거워진다
+    """
+    import json as _j
+
+    rows = conn.execute(
+        "SELECT id, origin, body FROM raw_response "
+        "WHERE endpoint='list' AND status='ok' AND origin <> 'import'"
+    ).fetchall()
+    if not rows:
+        return not_applicable(C["V1-21"], rid, "목록 원문이 없다")
+    bad, checked = [], 0
+    for rid_, origin, body in rows:
+        try:
+            doc = _j.loads(body)
+        except ValueError:
+            continue
+        items = doc.get("SearchResults") if isinstance(doc, dict) else None
+        if not items:
+            continue
+        first = items[0]
+        sid = first.get("Id")
+        if sid is None:
+            continue
+        checked += 1
+        got = conn.execute(
+            "SELECT 1 FROM core_listing WHERE source_id=?",
+            (str(sid),)).fetchone()
+        if not got:
+            bad.append(f"raw {rid_} ({origin}) 의 매물 {sid} 이 core 에 없다")
+    if not checked:
+        return not_applicable(C["V1-21"], rid, "펼칠 매물이 있는 봉투가 없다")
+    return result(C["V1-21"], rid, 0, len(bad), not bad, bad[:8])

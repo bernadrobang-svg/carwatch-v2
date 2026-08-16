@@ -39,6 +39,7 @@
 | V1-16 | 검사가 이번 `run_id` 밖의 행을 보지 않음 | code | fatal |
 | V1-17 | `diagnosis` 가 `detail` 뒤에 있음 | code | fatal |
 | V1-18 | 빈 DB 에서 전 진입점이 예외 없이 끝남 | code | fatal |
+| V1-21 | 받아 두고 안 펼쳐진 원문이 없음 | code | fatal |
 
 ### ★ 「이번 실행분」은 `run_id` 로 가른다 — 08-14
 

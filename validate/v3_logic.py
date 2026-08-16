@@ -393,10 +393,17 @@ def _list_observed_source_check(conn, rid):
         tuple(LIST_FALLBACK)).fetchall()
     if not rows:
         return not_applicable(C["V3-37"], rid, "그 축의 사전이 비어 있다")
+    # ★ 사람이 /admin/dict 에서 확정한 것은 정상이다 (개정 267).
+    #   금지된 것은 「목록 관측만으로 코드가 confirmed 를 만드는 것」이다
+    confirmed_by_human = {
+        r[0].split("[")[0] for r in conn.execute(
+            "SELECT key_path FROM config_change WHERE file='dict_enum' "
+            "AND after_value='confirm'")}
     bad = []
     for axis, status, src, n in rows:
-        if src == "list" and status == "confirmed":
-            bad.append(f"{axis}: 목록 관측인데 confirmed {n}건")
+        if src == "list" and status == "confirmed" \
+                and axis not in confirmed_by_human:
+            bad.append(f"{axis}: 사람 확정 없이 confirmed {n}건")
     got = " · ".join(f"{a}={s}/{src}({n})" for a, s, src, n in rows)
     return result(C["V3-37"], rid, "list → pending", got, not bad, bad)
 
