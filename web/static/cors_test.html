@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CORS 확인 — 브라우저가 엔카를 직접 부를 수 있나</title>
+<!--
+  13장 STEP 136c 준비 확인.  이 페이지 하나로 갈림길을 정한다.
+  성공  →  /admin/collect 를 만든다 (브라우저 수집)
+  실패  →  /admin/import 붙여넣기로 간다 (STEP 136a)
+
+  ★ 바닐라 JS · 한 파일 · CDN 도 npm 도 쓰지 않는다 (14장 STEP 145b · 개정 248)
+  ★ 이 페이지는 「브라우저만 할 수 있는 일」을 재는 자리다.  화면을 그리지 않는다
+-->
+<style>
+  body { font: 16px/1.6 system-ui, -apple-system, sans-serif;
+         margin: 0; padding: 16px; background: #fff; color: #111; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p.sub { color: #666; margin: 0 0 16px; font-size: 14px; }
+  button { font-size: 17px; padding: 12px 18px; margin: 4px 4px 4px 0;
+           border: 1px solid #333; background: #fff; border-radius: 6px; }
+  .big { font-size: 40px; font-weight: 700; margin: 12px 0; }
+  .ok { color: #0a6b2d; }
+  .bad { color: #a11; }
+  pre { background: #f4f4f4; padding: 12px; border-radius: 6px;
+        white-space: pre-wrap; word-break: break-all; font-size: 13px;
+        max-height: 50vh; overflow: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+  th { background: #f7f7f7; width: 38%; }
+</style>
+</head>
+<body>
+
+<h1>CORS 확인</h1>
+<p class="sub">브라우저 JS 가 <code>api.encar.com</code> 을 직접 부를 수 있는지 잽니다.
+  주소창으로 여는 것과 <code>fetch()</code> 로 부르는 것은 다릅니다.
+  <br>근거 13장 STEP 136c</p>
+
+<button id="run">① 목록 API 를 부른다 (count=true)</button>
+<button id="run2">② 상세 API 도 부른다 (readside)</button>
+
+<div id="verdict" class="big"></div>
+<div id="out"></div>
+
+<script>
+// 재는 대상 두 개.  ①이 본 게임이고 ②는 대조군이다.
+// 서버(AWS 서울)에서는 ①이 407, ②가 200 이었다 — 브라우저는 다를 수 있다.
+var TARGETS = {
+  run:  { name: '목록 /search/car/list/mobile',
+          url: 'https://api.encar.com/search/car/list/mobile?count=true&q=' +
+               encodeURIComponent('(And.Hidden.N._.CarType.Y.)') },
+  run2: { name: '상세 /v1/readside/vehicle',
+          url: 'https://api.encar.com/v1/readside/vehicle/39554653' }
+};
+
+function el(id) { return document.getElementById(id); }
+
+function show(rows, verdict, cls) {
+  el('verdict').textContent = verdict;
+  el('verdict').className = 'big ' + cls;
+  var t = '<table><tbody>';
+  for (var i = 0; i < rows.length; i++) {
+    t += '<tr><th>' + rows[i][0] + '</th><td>' + rows[i][1] + '</td></tr>';
+  }
+  t += '</tbody></table>';
+  el('out').innerHTML = t;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+}
+
+function probe(key) {
+  var target = TARGETS[key];
+  el('verdict').textContent = '부르는 중…';
+  el('verdict').className = 'big';
+  el('out').innerHTML = '';
+  var t0 = Date.now();
+
+  // ★ 헤더를 붙이지 않는다.  붙이면 preflight 가 생겨 CORS 가 아닌 이유로 막힌다
+  fetch(target.url, { method: 'GET', mode: 'cors', credentials: 'omit' })
+    .then(function (res) {
+      var ms = Date.now() - t0;
+      return res.text().then(function (body) {
+        var count = null;
+        try { count = JSON.parse(body).Count; } catch (e) { count = null; }
+        var rows = [
+          ['대상', esc(target.name)],
+          ['HTTP 상태', res.status + ' ' + esc(res.statusText || '')],
+          ['걸린 시간', ms + ' ms'],
+          ['응답 크기', body.length + ' 글자'],
+          ['Count', count === null || count === undefined ? '(없음)' : count]
+        ];
+        rows.push(['원문 앞부분',
+                   '<pre>' + esc(body.slice(0, 1200)) + '</pre>']);
+        if (res.status === 200) {
+          show(rows, count !== null && count !== undefined
+                     ? 'Count = ' + count : '200 · CORS 통과', 'ok');
+        } else {
+          // ★ 407·403 을 삼키지 않는다.  그대로 낸다 (STEP 136c)
+          show(rows, res.status + ' — 응답은 왔다 (CORS 는 통과)', 'bad');
+        }
+      });
+    })
+    .catch(function (err) {
+      var ms = Date.now() - t0;
+      // fetch 가 던지면 대개 CORS 다.  응답 자체를 못 읽은 것이다
+      show([
+        ['대상', esc(target.name)],
+        ['결과', '요청이 던져졌다 (응답을 못 읽음)'],
+        ['걸린 시간', ms + ' ms'],
+        ['오류', '<pre>' + esc(err && err.message ? err.message : err) +
+                 '</pre>'],
+        ['뜻', 'CORS 차단이면 브라우저가 상태 코드조차 안 준다. ' +
+               '개발자도구 Network 탭에 407 이 보이면 CORS 문제다']
+      ], '막혔다 — 직접 못 부른다', 'bad');
+    });
+}
+
+el('run').addEventListener('click', function () { probe('run'); });
+el('run2').addEventListener('click', function () { probe('run2'); });
+</script>
+
+<p class="sub">결과 읽는 법 —
+  <strong>Count 가 숫자로 뜨면</strong> 브라우저 수집(STEP 136c)이 성립합니다.
+  <strong>「막혔다」가 뜨면</strong> 붙여넣기(STEP 136a)로 갑니다.
+  <strong>407 이 뜨면</strong> CORS 는 통과했지만 엔카가 이 회선도 막은 것입니다.</p>
+
+</body>
+</html>

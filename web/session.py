@@ -26,6 +26,9 @@ STATIC_TYPES = {
     ".css": "text/css; charset=utf-8",
     ".txt": "text/plain; charset=utf-8",
     ".svg": "image/svg+xml",
+    # ★ 없으면 octet-stream 이 되어 브라우저가 화면 대신 내려받는다 (STEP 136c)
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
 }
 
 
