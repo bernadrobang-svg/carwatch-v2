@@ -73,6 +73,27 @@ python3.11 tools/run_tests.py
 `~/v2` 는 git 저장소이고 GitHub 에 push 한다.
 `https://github.com/bernadrobang-svg/carwatch-v2` (public · main)
 
+### 형상 관리 — 자동
+
+**작업이 끝나면 물어보지 말고 바로 커밋하고 push 한다.
+자격 증명은 저장돼 있다. 인증을 묻지 않는다.**
+
+```
+git add -A
+git commit -m "규격코드: 무엇을 왜"
+git push
+```
+
+```
+필수  커밋 메시지 첫머리에 규격 코드나 STEP 번호
+필수  작업 하나에 커밋 하나.  섞지 않는다
+필수  outputs/ 기록을 남긴 뒤 함께 커밋한다
+필수  push 까지 끝내야 작업이 끝난 것이다
+      가이드가 GitHub 을 읽는다 (개정 257 · S25)
+금지  「커밋할까요?」를 묻는 것.  그냥 해라
+금지  push 를 미루는 것
+```
+
 ```
 작업 시작 전   git status 로 깨끗한지 본다.  아니면 먼저 물어본다
 작업 후        git add -A
