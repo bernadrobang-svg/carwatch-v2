@@ -573,10 +573,10 @@ def parse_record_summary(body: dict, site: str, source_id: str) -> dict:
     }
 
 
-def parse_clean_encar(body: dict, site: str, source_id: str) -> dict:
+def parse_platform_check(body: dict, site: str, source_id: str) -> dict:
     """엔카 클린 판정.  ★ 플랫폼이 책임지는 판정이다 (개정 297 §2)."""
     got = body.get("cleaned")
-    return {"encar_cleaned": 1 if got is True else 0 if got is False else None,
+    return {"platform_verified": 1 if got is True else 0 if got is False else None,
             "row_status": "ok"}
 
 

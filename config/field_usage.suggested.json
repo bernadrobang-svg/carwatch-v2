@@ -1,5 +1,236 @@
 {
   "_note": "sync_registry 가 낸 분류 후보다. 정본은 config/field_usage.json 이다. 그대로 옮기지 않는다 — 사람이 확인·수정한다",
-  "count": 0,
-  "candidates": {}
+  "count": 23,
+  "candidates": {
+    "clean_encar:cleaned": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        true,
+        true,
+        true
+      ]
+    },
+    "clean_encar:vehicleId": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        1,
+        1,
+        1
+      ]
+    },
+    "ev_battery:encarComputedInfo": {
+      "suggested_usage": "not_provided",
+      "reason_hint": "전건 null·false",
+      "observed": 3,
+      "samples": [
+        null,
+        null,
+        null
+      ]
+    },
+    "ev_battery:ensolRawInfo": {
+      "suggested_usage": "not_provided",
+      "reason_hint": "전건 null·false",
+      "observed": 3,
+      "samples": [
+        null,
+        null,
+        null
+      ]
+    },
+    "ev_battery:jatoBatteryInfo": {
+      "suggested_usage": "not_provided",
+      "reason_hint": "전건 null·false",
+      "observed": 3,
+      "samples": [
+        null,
+        null,
+        null
+      ]
+    },
+    "inspection_summary:inspName": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        "시험 점검원",
+        "시험 점검원",
+        "시험 점검원"
+      ]
+    },
+    "inspection_summary:outerSummarys": {
+      "suggested_usage": "not_provided",
+      "reason_hint": "전건 null·false",
+      "observed": 3,
+      "samples": [
+        null,
+        null,
+        null
+      ]
+    },
+    "inspection_summary:outers": {
+      "suggested_usage": "in_use",
+      "reason_hint": "매핑표에 있는 경로",
+      "observed": 3,
+      "samples": [
+        null,
+        null,
+        null
+      ]
+    },
+    "inspection_summary:vehicleId": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        1,
+        1,
+        1
+      ]
+    },
+    "record_summary:accidentCnt": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:business": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:carNo": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        "12가3456",
+        "12가3456",
+        "12가3456"
+      ]
+    },
+    "record_summary:floodTotalLossCnt": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:fuel": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        "가솔린",
+        "가솔린",
+        "가솔린"
+      ]
+    },
+    "record_summary:government": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:loan": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:ownerChangeCnt": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:robberCnt": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:totalLossCnt": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        0,
+        0,
+        0
+      ]
+    },
+    "record_summary:use": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        "1",
+        "1",
+        "1"
+      ]
+    },
+    "record_summary:year": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        "2023",
+        "2023",
+        "2023"
+      ]
+    },
+    "sellingpoint:sellingPoint": {
+      "suggested_usage": "not_provided",
+      "reason_hint": "전건 null·false",
+      "observed": 3,
+      "samples": [
+        null,
+        null,
+        null
+      ]
+    },
+    "sellingpoint:vehicleId": {
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "observed": 3,
+      "samples": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
 }

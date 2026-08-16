@@ -13,7 +13,7 @@
       "facet": "/search/car/list/mobile",
       "record_summary": "/v1/readside/record/vehicle/{source_id}/summary",
       "inspection_summary": "/v1/readside/inspection/vehicle/{source_id}/summary",
-      "clean_encar": "/v1/readside/clean-encar/vehicle/{source_id}",
+      "platform_check": "/v1/readside/clean-encar/vehicle/{source_id}",
       "sellingpoint": "/v1/readside/diagnosis/vehicle/{source_id}/sellingpoint",
       "ev_battery": "/v1/readside/vehicle/ev-battery/{source_id}",
       "extend_warrant": "/v1/readside/extend-warrant/vehicle/{source_id}"

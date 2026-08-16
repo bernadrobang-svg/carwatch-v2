@@ -39,13 +39,13 @@ from adapters.encar import LISTING_ENDPOINT_KINDS as LISTING_ENDPOINTS  # noqa: 
 # ★ 진단 원문이 오는 값.  1·2 는 404 다 (2026-08-14 실측 3요청 · STEP 21b)
 from validate.v1_collect import DIAG_HAS_REPORT  # noqa: E402
 from parse.encar.mapping import (  # noqa: E402
-    parse_clean_encar, parse_ev_battery, parse_inspection_summary,
+    parse_platform_check, parse_ev_battery, parse_inspection_summary,
     parse_record_summary, parse_sellingpoint,
 )
 
 EXTRA_PARSERS = {
     "record_summary": parse_record_summary,
-    "clean_encar": parse_clean_encar,
+    "platform_check": parse_platform_check,
     "inspection_summary": parse_inspection_summary,
     "ev_battery": parse_ev_battery,
     "sellingpoint": parse_sellingpoint,

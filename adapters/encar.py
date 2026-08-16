@@ -43,8 +43,8 @@ _SCHEMA: dict[str, EndpointSpec] = {
     "inspection_summary": EndpointSpec(
         kind="inspection_summary", scope="listing",
         required_keys=["vehicleId"], root_type="object", per_call="매물 1"),
-    "clean_encar": EndpointSpec(
-        kind="clean_encar", scope="listing",
+    "platform_check": EndpointSpec(
+        kind="platform_check", scope="listing",
         required_keys=["vehicleId", "cleaned"], root_type="object",
         per_call="매물 1"),
     "sellingpoint": EndpointSpec(
@@ -159,7 +159,7 @@ def load_site_config(root: str = ".") -> dict:
 LISTING_ENDPOINT_KINDS: tuple[str, ...] = (
     "detail", "inspection", "record", "diagnosis",
     # 개정 296·297 — 인증 없이 받을 수 있는 것 (docs/ENCAR_API.md)
-    "record_summary", "inspection_summary", "clean_encar",
+    "record_summary", "inspection_summary", "platform_check",
     "sellingpoint", "ev_battery",
     # ★ extend_warrant 는 뺐다 — 실측 08-17: 쿠폰이 붙은 매물에만 있어
     #   160건 전량 404 였고 V1-08 이 「경로 오류」로 잡았다.

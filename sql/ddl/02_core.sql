@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS core_listing (
   -- ★ 인증 없이 200 인 것만이다.  /v2/verification/* 은 401 이라 안 넣는다
   record_summary_status     TEXT,
   inspection_summary_status TEXT,
-  clean_encar_status        TEXT,
+  platform_check_status        TEXT,
   sellingpoint_status       TEXT,
   ev_battery_status         TEXT,
   extend_warrant_status     TEXT,
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS core_listing (
   loan_flag                 INTEGER,  -- 저당
   business_flag             INTEGER,
   government_flag           INTEGER,
-  encar_cleaned             INTEGER,  -- 엔카 클린 판정
+  platform_verified         INTEGER,  -- 플랫폼이 「클린」으로 판정했나
   inspector_name            TEXT,     -- 성능점검을 누가 했나
   ev_battery_known          INTEGER,
   selling_point             TEXT,

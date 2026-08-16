@@ -103,6 +103,30 @@ class StubEncar:
 
     def get(self, url: str, headers):
         u = unquote(url)
+        # ★ 개정 296·297 로 늘어난 6종 (docs/ENCAR_API.md).
+        #   시험이 실물과 다르면 시험이 아니다 — 실측한 모양 그대로 준다.
+        #   ★ 긴 경로를 먼저 본다 — /record/…/summary 가 /record/ 에 먼저 걸린다
+        for path, doc in (
+            ("/summary", None),
+            ("/clean-encar/", {"vehicleId": 1, "cleaned": True}),
+            ("/sellingpoint", {"vehicleId": 1, "sellingPoint": None}),
+            ("/ev-battery/", {"ensolRawInfo": None, "jatoBatteryInfo": None,
+                              "encarComputedInfo": None}),
+        ):
+            if path not in u:
+                continue
+            if path == "/summary":
+                doc = ({"vehicleId": 1, "outers": [], "outerSummarys": [],
+                        "inspName": "시험 점검원"}
+                       if "/inspection/" in u
+                       else {"carNo": "12가3456", "use": "1", "year": "2023",
+                             "fuel": "가솔린", "ownerChangeCnt": 0,
+                             "totalLossCnt": 0, "floodTotalLossCnt": 0,
+                             "robberCnt": 0, "loan": 0, "business": 0,
+                             "government": 0, "accidentCnt": 0})
+            self.detail_calls += 1
+            return Response(200, json.dumps(doc, ensure_ascii=False),
+                            "application/json", "utf-8")
         # 진단은 「받지 않은 차」가 정상이다.  200 + 빈 응답 → empty (STEP 21b)
         for path, doc in (("/inspection/", INSPECTION), ("/record/", RECORD),
                           ("/diagnosis/", {})):
