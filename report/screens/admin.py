@@ -514,12 +514,15 @@ def parse_import_text(text: str, site: str) -> tuple:
     """붙여넣은 것을 해석한다 (13장 STEP 136a).
 
     ★ web 은 parse 층을 못 부른다 (STEP 15a · LAYER_ALLOW).  여기서 잇는다
-    반환   (형식, 행 목록)
+    반환   (형식, 행 목록, facet 해석 | None)
     """
-    from parse.importer import detect_format, parse_import
+    from contracts import FORMAT_FACET
+    from parse.importer import detect_format, parse_facet, parse_import
 
     fmt = detect_format(text)
-    return fmt, parse_import(text, fmt, site)
+    # ★ facet 해석도 여기서 한다.  store 는 parse 를 못 부른다 (V4-22)
+    facet = parse_facet(text) if fmt == FORMAT_FACET else None
+    return fmt, parse_import(text, fmt, site), facet
 
 
 def import_state(conn, limit: int | None = None) -> dict:

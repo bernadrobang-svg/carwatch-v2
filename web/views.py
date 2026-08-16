@@ -846,24 +846,24 @@ def admin_import(conn, account, req, root: str = ROOT, csrf: str = "",
         if act == IMPORT_PREVIEW:
             # ★ 미리보기는 저장이 아니다.  _gate 를 지나지 않는다
             check_post(req, csrf)
-            fmt, rows = parse_import_text(text, site)
+            fmt, rows, facet = parse_import_text(text, site)
             ctx.update(
                 paste=text, site=site, target_key=target_key or "",
                 reason=raw_form.get("reason") or "",
                 preview=preview_import(conn, rows, fmt=fmt, site=site,
                                        target_key=target_key,
                                        bytes_in=len(text.encode("utf-8")),
-                                       _facet_text=text))
+                                       facet=facet))
         else:
             # ★ 미리보기 없이 · 사유 없이 저장 못 한다 (STEP 149k · 138)
             form = _gate(conn, account, req, csrf)
-            fmt, rows = parse_import_text(text, site)
+            fmt, rows, facet = parse_import_text(text, site)
             res = import_listings(
                 conn, account, rows, fmt=fmt, site=site,
                 target_key=target_key, text=text,
                 reason=form.get("reason", ""), at=_now(),
                 parse_version=_versions(conn).get("parse_version") or "",
-                source_name=form.get("source_name") or None)
+                source_name=form.get("source_name") or None, facet=facet)
             note = ("원문 있음" if res.site_raw else "원문 없음")
             msg = (f"반입 {res.total}건 — 새 {res.created} · 갱신 "
                    f"{res.updated} · {note} · S4 = 반입(import)")

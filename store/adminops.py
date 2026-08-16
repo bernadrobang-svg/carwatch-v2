@@ -148,16 +148,15 @@ class ImportResult:
 def preview_import(conn: sqlite3.Connection, rows: list, *, fmt: str,
                    site: str, target_key: str | None,
                    bytes_in: int,
-                   _facet_text: str | None = None) -> ImportPreview:
+                   facet: dict | None = None) -> ImportPreview:
     """저장하지 않고 무엇이 들어갈지만 센다 (STEP 136a ④ · STEP 138)."""
     if fmt == FORMAT_FACET:
         # facet 은 매물이 아니라 축이다 — 「몇 축이 오는가」를 낸다 (개정 260)
-        from parse.importer import parse_facet
-
-        got = parse_facet(_facet_text or "")
+        # ★ 해석은 호출자가 해서 넘긴다.  store 는 parse 를 못 부른다 (V4-22)
+        n = int((facet or {}).get("axis_count") or 0)
         return ImportPreview(
             fmt=fmt, site=site, target_key=target_key,
-            total=got["axis_count"], existing=0, fresh=got["axis_count"],
+            total=n, existing=0, fresh=n,
             site_raw=True, bytes_in=bytes_in)
     ids = [r["source_id"] for r in rows]
     existing = 0
@@ -176,7 +175,8 @@ def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
                     fmt: str, site: str, target_key: str | None, text: str,
                     reason: str, at: str, parse_version: str = "",
                     run_id: str | None = None,
-                    source_name: str | None = None) -> ImportResult:
+                    source_name: str | None = None,
+                    facet: dict | None = None) -> ImportResult:
     """반입분을 core_listing 에 앉히고 원문을 raw_response 에 남긴다.
 
     지시서   STEP 136a (반입) · STEP 136b ①④ (채우는 법 · S4 완료 표시)
@@ -194,7 +194,8 @@ def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
     if fmt == FORMAT_FACET:
         return _import_facet(conn, account, text=text, site=site,
                              target_key=target_key, reason=reason, at=at,
-                             run_id=run_id, source_name=source_name)
+                             run_id=run_id, source_name=source_name,
+                             facet=facet)
     raw_id = save_import_raw(conn, site, text, fmt, at, run_id=run_id,
                              source_name=source_name)
     created = updated = 0
@@ -236,19 +237,23 @@ def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
 
 def _import_facet(conn: sqlite3.Connection, account: Account, *, text: str,
                   site: str, target_key: str | None, reason: str, at: str,
-                  run_id: str | None, source_name: str | None) -> ImportResult:
+                  run_id: str | None, source_name: str | None,
+                  facet: dict | None) -> ImportResult:
     """facet 원문을 받아 S2 를 연다 (STEP 136a ④ · 개정 260).
 
     ★ 매물을 넣지 않는다.  facet 은 「축이 무엇인가」이지 매물이 아니다
     ★ 사전은 여기서 만들지 않는다 — S3(build_dict)의 일이다 (2장 STEP 23)
     """
-    from parse.importer import parse_facet
     from store.raw import save_import_facet
 
     if not target_key:
         raise ValidationError(
             "facet 은 차종별로 받습니다 — 차종을 고르십시오", step="STEP 136a")
-    got = parse_facet(text)
+    got = facet or {}
+    if not got.get("axis_count"):
+        # ★ store 는 원문을 해석하지 않는다.  호출자가 해석해 넘긴다 (V4-22)
+        raise ValidationError("facet 해석 결과가 넘어오지 않았습니다",
+                              step="STEP 136a")
     raw_id = save_import_facet(conn, site, target_key, text, at,
                                axis_count=got["axis_count"], run_id=run_id,
                                source_name=source_name)
