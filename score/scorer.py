@@ -3,9 +3,12 @@
 
 지시서   7장 STEP 83 · 0장 STEP 7.1 (분모 시험 6종)
 근거     분모의 절반이 빠진 매물과 전부 있는 매물을 같은 등급표로 비교할 수 없다
-값규칙   분모 = 555 − Σ(excluded Component 배점).  NULL 이 아니라 excluded 가 결정한다
-금지     if value is None: denominator -= weight    모든 NULL 이 자동 제외된다
-         if value is None: score = 0               모든 NULL 이 0점이 된다
+값규칙   ★ 분모는 만점 그대로다.  555 다.  예외 없다 (개정 289)
+         못 본 축은 0점이다 — 「우리가 못 받았다」는 그 차의 사정이 아니다
+         excluded 는 「왜 0점인가」의 사유로만 남긴다.  분모 조정에 쓰지 않는다
+금지     분모를 줄이는 것.  어떤 사유로도
+         ★ 08-16 실측 — 330/350 = 94.3% S · 330/555 = 59.5% D.
+           같은 차가 분모에 따라 등급이 갈렸다.  못 찾을수록 좋은 등급이 됐다
          보증 잔여 가치를 실구매가에서 차감하는 것 — 가격·보증 이중 계산
 """
 from __future__ import annotations
@@ -61,17 +64,16 @@ def score(v: Verdict, policy: ScoringPolicy,
         earned += float(value)
         by_axis[axis_of(comp)] = by_axis.get(axis_of(comp), 0.0) + float(value)
 
+    # ★ applicable 은 「확인한 축의 배점 합」이다.  분모가 아니다.
+    #   화면이 「555점 중 330점 · 205점은 확인하지 못했습니다」를 내는 데 쓴다
     applicable = total - excluded_points
     fail = "; ".join(absolute) if absolute else None
 
     if applicable <= 0:
-        return ScoreResult(0.0, 0.0, 0.0, earned, "NOT_RATED", fail, by_axis,
+        # 한 축도 못 봤다.  점수를 매길 근거가 하나도 없다
+        return ScoreResult(0.0, total, 0.0, earned, "NOT_RATED", fail, by_axis,
                            REASON_ALL_MISSING)
-    ratio = applicable / total
-    if ratio < float(policy.raw["min_denominator_ratio"]):
-        return ScoreResult(0.0, applicable, applicable, earned, "NOT_RATED",
-                           fail, by_axis, REASON_MIN_DENOM)
 
-    final = earned / applicable * total
-    return ScoreResult(round(final, 2), applicable, applicable, earned,
+    # ★ 분모는 언제나 만점이다.  못 본 축은 0점으로 남는다 (개정 289)
+    return ScoreResult(round(earned, 2), total, applicable, earned,
                        None, fail, by_axis, None)

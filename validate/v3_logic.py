@@ -131,6 +131,12 @@ C = {
                    "facet 에만 있는 값은 새 pending 이고, 목록에만 있는 값은 "
                    "확인이 필요하다 — facet 에 없는 값이 왜 매물에 있나 (개정 266)",
                    KIND_CODE),
+    "V3-41": Check("V3", "V3-41", "전 매물의 분모가 만점과 같음",
+                   FATAL, "run",
+                   "축을 못 보면 분모에서 빼던 것을 없앴다 (개정 289). "
+                   "못 볼수록 비율이 올라가면 못 찾을수록 좋은 등급이 된다 — "
+                   "실측 08-16: 같은 차가 330/350 S · 330/555 D 였다",
+                   KIND_CONTRACT),
     "V3-31": Check("V3", "V3-31", "딜러 NULL 매물에 dealer_untrusted 없음",
                    FATAL, "run",
                    "딜러 없음을 나쁨으로 판정하는 경로를 찾는다. "
@@ -431,9 +437,34 @@ def _facet_reconcile_check(conn, rid):
                   not bad, bad)
 
 
+def _denominator_check(conn, rid):
+    """V3-41 — 분모는 만점 고정이다 (개정 289).
+
+    ★ 하나라도 다르면 fatal.  「우리가 못 받았다」로 평가를 바꾸지 않는다
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        total = float(_j.load(f)["total_points"])
+    rows = conn.execute(
+        "SELECT calc_version, denominator, COUNT(*) FROM result_score "
+        "GROUP BY 1, 2").fetchall()
+    if not rows:
+        return not_applicable(C["V3-41"], rid, "판정 결과가 없다")
+    bad = [f"{cv} 분모 {d} — {n}건" for cv, d, n in rows
+           if float(d or 0) != total]
+    kinds = len({d for _cv, d, _n in rows})
+    return result(C["V3-41"], rid, f"{total:g}",
+                  f"{kinds}종" if bad else f"{total:g} 하나", not bad, bad[:8])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
+    out.append(_denominator_check(conn, rid))
 
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL").fetchone()[0]
