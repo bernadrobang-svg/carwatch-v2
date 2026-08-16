@@ -182,6 +182,12 @@ C = {
                     "②를 건너뛰고 자동 저장하면 무엇이 들어갔는지 모른다 "
                     "(STEP 136c · 149k)",
                     KIND_CODE),
+    "V11-53": Check("V11", "V11-53",
+                    "진행 판정이 큐만 보지 않음", FATAL, "run",
+                    "큐를 안 거친 실행을 「할 일 없음」으로 단정하면 화면이 "
+                    "스스로 모순된다 — 「도는 것이 없다」와 「0분 전 처리」가 "
+                    "같은 화면에 있었다 (개정 273)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -682,6 +688,7 @@ def _screen_checks(conn, rid) -> list:
     out.append(_browser_confirm_check(conn, rid))
     out.append(_browser_chunk_check(conn, rid))
     out += _status_screen_checks(rid)
+    out.append(_status_liveness_check(conn, rid))
     out += _browser_scope_checks(rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
@@ -948,6 +955,31 @@ def _status_screen_checks(rid):
                    "갱신" if not bad51 else "없음", not bad51, bad51),
             result(C["V11-52"], rid, "읽기 전용",
                    "읽기 전용" if not bad52 else "단추 있음", not bad52, bad52)]
+
+
+def _status_liveness_check(conn, rid):
+    """V11-53 — 진행 판정이 큐만 보는가 (개정 273).
+
+    ★ 코드가 셋을 보는지, 그리고 지금 화면이 스스로 모순되지 않는지 함께 본다
+    """
+    from report.screens.admin import status_view
+
+    src = open(os.path.join(ROOT, "report", "screens", "admin.py"),
+               encoding="utf-8").read()
+    body = src.split("def _live_progress", 1)[-1].split("\ndef ", 1)[0]
+    bad = []
+    if "audit_request" not in body:
+        bad.append("최근 요청을 안 본다 — 큐만 본다")
+    if "requested_at" not in body:
+        bad.append("마지막 처리 시각을 안 본다")
+    view = status_view(conn, ROOT)
+    # ★ 「도는 것이 없다」와 「방금 처리했다」가 같이 나오면 모순이다
+    last = view.get("last_item") or {}
+    if view.get("idle") and last.get("minutes") == 0:
+        bad.append("「할 일 없음」인데 마지막 처리가 0분 전이다")
+    return result(C["V11-53"], rid, "실측 기준",
+                  "도는 중" if view.get("live_running") else "조용함",
+                  not bad, bad)
 
 
 def _browser_scope_checks(rid):

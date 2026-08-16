@@ -15,6 +15,25 @@
 </p>
 
 <h2>① 지금 도는 것</h2>
+
+{% if live_running %}
+<div class="notice">
+  <p class="big"><strong>{{ live_step }} · {{ live_done | num }} / {{ live_total | num }}</strong>
+    <span class="muted">요청</span></p>
+  <p><strong>{{ live_rate }} 요청/초</strong> ·
+    남은 <strong>{{ live_left | num }}</strong> →
+    약 <strong>{{ live_eta_min }}분</strong></p>
+  <p class="muted">최근 {{ live_window }}초에 {{ live_recent | num }}건 ·
+    원문 <strong>{{ raw_rows | num }}</strong>행 ·
+    run {{ live_run_id }}</p>
+  <p class="muted">★ 전체는 상한입니다 — 진단은 <code>encarDiagnosis == 0</code> 인
+    매물만 부르므로 실제 요청은 이보다 적게 끝납니다 (STEP 21b).</p>
+</div>
+{% endif %}
+{% if !live_running %}
+<p class="muted">최근 {{ live_window }}초 동안 새 요청이 없습니다.</p>
+{% endif %}
+
 {% if running %}
 <table>
 <tbody>

@@ -558,6 +558,7 @@ def status_view(conn, root: str = ".") -> dict:
             return None
         return int((now - t).total_seconds() // SEC_PER_MIN)
 
+    live = _live_progress(conn, now)
     # 마지막으로 처리한 매물 — 「진척이 있나」를 이것으로 가른다
     last = conn.execute(
         "SELECT source_id, endpoint, fetched_at FROM raw_response "
@@ -588,11 +589,66 @@ def status_view(conn, root: str = ".") -> dict:
                      "run_id": running[9] or ""} if running else None),
         "last_item": ({"source_id": last[0], "endpoint": last[1],
                        "at": last[2], "minutes": last_min} if last else None),
-        # ★ 「대기 중」인지 「멈춘 것」인지 — 마지막 진척으로 가른다
-        "idle": running is None and base["queued_waiting"] == 0,
+        **live,
+        # ★ 큐만 보지 않는다.  셋 중 하나라도 참이면 「도는 중」이다 (개정 273).
+        #   큐를 안 거친 실행(진입점 직접 호출)도 도는 것이다
+        "idle": (running is None and base["queued_waiting"] == 0
+                 and not live["live_running"]),
         "stalled_min": (last_min if running is not None else None),
         "recent_jobs": recent,
         "failed_jobs": failed,
+    }
+
+
+# 「도는 중」으로 볼 최근 구간(초).  ★ 이보다 오래 조용하면 멈춘 것으로 본다
+LIVE_WINDOW_SEC = 60
+# 매물당 요청 4종 (2장 STEP 25).  ★ 여기서 세지 않는다 — 수집 계약이 정본이다
+from report.render import LISTING_ENDPOINTS  # noqa: E402
+
+
+def _live_progress(conn, now) -> dict:
+    """실제로 도는가 · 얼마나 남았나 (개정 273 · STEP 136f).
+
+    ★ recalc_job 만 보면 큐를 안 거친 실행을 「할 일 없음」으로 단정한다.
+      실측 08-16 — 터미널은 2,052/13,888 인데 화면은 「도는 것이 없습니다」였다
+    ★ 판정 근거 셋 — ① 큐에 running ② 최근에 요청이 늘었나 ③ 마지막 처리 시각
+    """
+    from datetime import timedelta
+
+    since = (now - timedelta(seconds=LIVE_WINDOW_SEC)).isoformat()
+    recent = conn.execute(
+        "SELECT COUNT(*) FROM audit_request WHERE requested_at >= ?",
+        (since,)).fetchone()[0]
+    row = conn.execute(
+        "SELECT run_id, kind, requested_at FROM audit_request "
+        "ORDER BY id DESC LIMIT 1").fetchone()
+    run_id = row[0] if row else ""
+    done = conn.execute(
+        "SELECT COUNT(*) FROM audit_request WHERE run_id = ?",
+        (run_id,)).fetchone()[0] if run_id else 0
+    active = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE status='active'"
+    ).fetchone()[0]
+    # ★ 상한이다.  진단은 encarDiagnosis==0 인 매물만 부르므로 실제는 더 적다
+    total = active * len(LISTING_ENDPOINTS)
+    rate = recent / float(LIVE_WINDOW_SEC)
+    left = max(0, total - done)
+    eta_min = int(left / rate / SEC_PER_MIN) if rate else None
+    step = {"list": "S1", "facet": "S2", "catalog": "S7"}.get(
+        row[1] if row else "", "S5") if row else "-"
+    return {
+        "live_running": recent > 0,
+        "live_recent": recent,
+        "live_window": LIVE_WINDOW_SEC,
+        "live_rate": round(rate, 1),
+        "live_step": step,
+        "live_run_id": run_id,
+        "live_done": done,
+        "live_total": total,
+        "live_left": left,
+        "live_eta_min": eta_min,
+        "raw_rows": conn.execute(
+            "SELECT COUNT(*) FROM raw_response").fetchone()[0],
     }
 
 
