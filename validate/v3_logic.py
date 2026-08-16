@@ -121,6 +121,16 @@ C = {
                    "S9 를 다시 돌린다 (verdict_rule). "
                    "옛 판정 결과에는 경고가 없다 — absolute_check 도입 전이다",
                    KIND_CONTRACT),
+    "V3-37": Check("V3", "V3-37", "목록 관측분의 source 가 'list' 임",
+                   FATAL, "run",
+                   "facet 없이 목록에서 관측한 값은 출처를 남기고 pending 으로 "
+                   "둔다.  「전체 집합을 봤다」가 아니다 (개정 266)",
+                   KIND_CODE),
+    "V3-38": Check("V3", "V3-38", "facet 수신 후 목록 관측분과 대조함",
+                   FATAL, "run",
+                   "facet 에만 있는 값은 새 pending 이고, 목록에만 있는 값은 "
+                   "확인이 필요하다 — facet 에 없는 값이 왜 매물에 있나 (개정 266)",
+                   KIND_CODE),
     "V3-31": Check("V3", "V3-31", "딜러 NULL 매물에 dealer_untrusted 없음",
                    FATAL, "run",
                    "딜러 없음을 나쁨으로 판정하는 경로를 찾는다. "
@@ -368,6 +378,52 @@ def _warning_contract_checks(conn, rid) -> list:
     return out
 
 
+def _list_observed_source_check(conn, rid):
+    """V3-37 — 목록에서 관측한 값이 출처를 남기고 pending 인가 (개정 266).
+
+    ★ facet 이 정본이다.  목록은 「지금 매물이 가진 값」일 뿐이므로
+      confirmed 로 올리면 「전체를 봤다」는 거짓이 된다
+    """
+    from tools.build_dict import LIST_FALLBACK
+
+    marks = ",".join("?" * len(LIST_FALLBACK))
+    rows = conn.execute(
+        f"SELECT axis, status, source_endpoint, COUNT(*) FROM dict_enum "
+        f"WHERE axis IN ({marks}) GROUP BY 1, 2, 3",
+        tuple(LIST_FALLBACK)).fetchall()
+    if not rows:
+        return not_applicable(C["V3-37"], rid, "그 축의 사전이 비어 있다")
+    bad = []
+    for axis, status, src, n in rows:
+        if src == "list" and status == "confirmed":
+            bad.append(f"{axis}: 목록 관측인데 confirmed {n}건")
+    got = " · ".join(f"{a}={s}/{src}({n})" for a, s, src, n in rows)
+    return result(C["V3-37"], rid, "list → pending", got, not bad, bad)
+
+
+def _facet_reconcile_check(conn, rid):
+    """V3-38 — facet 을 받았으면 목록 관측분과 대조했는가 (개정 266).
+
+    ★ 목록에만 있는 값이 남으면 그것을 알아야 한다 —
+      엔카가 facet 에 안 넣은 값이거나 우리가 잘못 읽은 것이다.  둘 다 결함이다
+    """
+    from tools.build_dict import LIST_FALLBACK
+
+    n_facet = conn.execute("SELECT COUNT(*) FROM raw_facet").fetchone()[0]
+    if not n_facet:
+        return not_applicable(C["V3-38"], rid, "facet 을 아직 못 받았다")
+    marks = ",".join("?" * len(LIST_FALLBACK))
+    left = conn.execute(
+        f"SELECT axis, COUNT(*) FROM dict_enum "
+        f"WHERE axis IN ({marks}) AND source_endpoint='list' GROUP BY 1",
+        tuple(LIST_FALLBACK)).fetchall()
+    bad = [f"{a}: 목록에만 있는 값 {n}건 — facet 에 없는 값이 왜 매물에 있나"
+           for a, n in left]
+    return result(C["V3-38"], rid, "대조 완료",
+                  "남은 목록 관측 " + str(sum(n for _a, n in left)),
+                  not bad, bad)
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
@@ -443,6 +499,8 @@ def run(conn, ctx) -> list:
     out.append(_diagnosis_count_check(conn, rid))
     out += _conflict_checks(conn, rid)
     out.append(_halt_dict_check(conn, rid))
+    out.append(_list_observed_source_check(conn, rid))
+    out.append(_facet_reconcile_check(conn, rid))
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다

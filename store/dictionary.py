@@ -165,10 +165,14 @@ def seed_fixed_enums(conn: sqlite3.Connection, site: str, fixed: dict,
 # ── 적재 (STEP 42) ───────────────────────────────────────────────────
 def upsert_enum(conn: sqlite3.Connection, site: str, axis: str, value: str,
                 display: str, count_seen: int, source_endpoint: str,
-                dict_version: str, at: str) -> str:
+                dict_version: str, at: str,
+                force_pending: bool = False) -> str:
     """반환   'new' · 'seen' · 'conflict'
 
     Count=0 이라고 건너뛰지 않는다.  사이트가 정의한 열거값이다 (STEP 43).
+
+    force_pending   facet 없이 목록에서 관측한 값이다 (개정 266).
+                    ★ 「전체 집합을 봤다」가 아니므로 confirmed 로 올리지 않는다
     """
     pol = policy(axis)
     cur = conn.execute(
@@ -184,6 +188,8 @@ def upsert_enum(conn: sqlite3.Connection, site: str, axis: str, value: str,
                 step="STEP 41",
             )
         status = STATUS_CONFIRMED if pol.on_new == "confirm" else STATUS_PENDING
+        if force_pending:
+            status = STATUS_PENDING
         conn.execute(
             "INSERT INTO dict_enum"
             "(site,axis,value,display,count_seen,status,source_endpoint,"

@@ -126,6 +126,38 @@ unknown      →  이 상태는 없다.  v1 은 미분류를 unknown 으로 삼�
 | `option3` | global | facet `Options` | 3자리 코드 → 옵션명 |
 | `option_model` | model | catalog API | 4~5자리 → 이름·가격 |
 | `fuel` | global | facet `FuelType` | 연료 완전일치 |
+
+```
+★ 08-16 — 목록 원문에도 같은 값이 있다
+실측   목록 7,631건에서 fuel 5종 · color_ext 23종 · color_int 10종 · trim 68종 관측
+       facet 을 못 받아도 사전을 채울 길이 있다는 뜻이다
+
+★ 다만 facet 과 목록은 다르다
+  facet   그 사이트가 인정하는 값의 전체 집합
+  목록    지금 등록된 매물이 가진 값만
+  목록으로 만들면 「아직 매물이 없는 값」이 빠진다
+  나중에 그 값이 뜨면 미분류가 된다
+
+필수   facet 이 있으면 facet 이 정본이다
+필수   facet 이 없으면 목록에서 관측한 값으로 pending 을 만든다
+       confirmed 로 바로 올리지 않는다
+필수   그 pending 에 출처를 남긴다 — source='list' · 'facet'
+       화면에 「facet 없이 목록에서 관측한 것입니다」를 낸다
+필수   나중에 facet 을 받으면 목록 관측분과 대조한다
+       facet 에만 있는 값은 새로 pending 으로 들어온다
+       목록에만 있는 값은 ★ 확인이 필요하다 — facet 에 없는 값이 왜 매물에 있나
+금지   목록 관측만으로 confirmed 를 만드는 것
+       「전체 집합을 봤다」가 아니기 때문이다
+검산   V3-37  목록 관측분의 source 가 'list' 인가
+       V3-38  facet 수신 후 목록 관측분과 대조하는가
+```
+
+```
+★ 왜 이것이 중요한가
+  지금 AWS 에서 facet 을 못 받으면 S3 가 영원히 막힌다
+  목록으로 pending 을 만들면 파이프라인이 끝까지 돈다
+  다만 「완전하지 않다」를 잊지 않게 표시한다
+```
 | `color_ext` · `color_int` | global | facet `Color` · `SeatColor` | 색상명 + hex |
 | `trim` | target | **목록 `SearchResults[].Badge`** | 트림. facet 이 아니다 |
 | `sell_type` | global | facet `SellType` | 일반·렌트·리스 |

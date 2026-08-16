@@ -29,6 +29,15 @@ from store.dictionary import (  # noqa: E402
 #   halt 축이라 비면 S9 가 통째로 멈춘다 (V3-30 · 실측 08-15)
 LATE_AXES = frozenset({"option3", "panel"})
 
+# facet 을 못 받았을 때 대신 볼 목록 경로 (개정 266).
+# ★ facet 이 정본이다.  이것은 「지금 매물이 가진 값」일 뿐이라 pending 으로만 들어간다
+LIST_FALLBACK: dict[str, str] = {
+    "fuel": "SearchResults[].FuelType",
+    "color_ext": "SearchResults[].Color",
+    "color_int": "SearchResults[].SeatColor",
+    "sell_type": "SearchResults[].SellType",
+}
+
 AXIS_SOURCES: tuple[tuple[str, str, str, str], ...] = (
     # ★ facet 은 옵션 열거를 주지 않는다 (실측 08-15 · raw_facet 에 Options 없음).
     #   detail.options 가 3자리 코드를 준다 — '001' · '1009' 형태다.
@@ -58,6 +67,8 @@ class DictBuildReport:
     new_values: dict[str, list[str]] = field(default_factory=dict)
     conflicts: dict[str, list[str]] = field(default_factory=dict)
     seen_counts: dict[str, int] = field(default_factory=dict)
+    # facet 없이 목록에서 관측한 축 (개정 266).  ★ 완전한 집합이 아니다
+    from_list: dict[str, list[str]] = field(default_factory=dict)
 
     @property
     def pending_total(self) -> int:
@@ -161,6 +172,16 @@ def build_dict(conn: sqlite3.Connection, site: str, dict_version: str,
         if axis in LATE_AXES:
             continue  # ★ 매물 원문이 필요하다 — S6a 가 담당한다 (V3-30)
         values = extract_distinct(conn, endpoint, path)
+        # ★ facet 을 못 받으면 목록에서 관측한 값으로 pending 을 만든다
+        #   (개정 266).  「전체 집합을 봤다」가 아니므로 confirmed 로 올리지 않는다
+        observed = False
+        if not values and endpoint == "facet" and axis in LIST_FALLBACK:
+            endpoint = "list"
+            path = LIST_FALLBACK[axis]
+            values = extract_distinct(conn, endpoint, path)
+            if values:
+                observed = True
+                rep.from_list.setdefault(axis, []).extend(v for v, _n in values)
         rep.seen_counts[axis] = len(values)
         for value, cnt in values:
             if axis == "option3":
@@ -173,12 +194,39 @@ def build_dict(conn: sqlite3.Connection, site: str, dict_version: str,
             # on_new='halt' 인 축은 여기서 ValidationError 가 올라온다.
             # 삼키지 않는다 — 새 값이 뜨면 판정 방향을 알 수 없는 축이다 (STEP 41)
             r = upsert_enum(conn, site, axis, value, value, cnt,
-                            endpoint, dict_version, at)
+                            endpoint, dict_version, at,
+                            force_pending=observed)
             if r == "new":
                 rep.new_values.setdefault(axis, []).append(value)
             elif r == "conflict":
                 rep.conflicts.setdefault(axis, []).append(value)
+    if rep.from_list:
+        _mark_facet_substituted(conn, rep, at)
     return rep
+
+
+def _mark_facet_substituted(conn: sqlite3.Connection, rep: "DictBuildReport",
+                            at: str) -> None:
+    """facet 을 목록 관측이 대신했음을 남긴다 (개정 266 · 259 방식).
+
+    ★ 근거 없이 단계를 열지 않는다.  실제로 관측한 축과 값 수를 함께 적는다
+    ★ actual 을 'facet' 이나 'collector' 로 적지 않는다 —
+      「전체 집합을 봤다」가 아니기 때문이다.  화면과 감사 기록이 그렇게 말한다
+    """
+    from contracts import S2_CODE, S4_EXPECTED
+    from store.adminops import mark_step_imported
+
+    mark_step_imported(
+        conn, S2_CODE, at,
+        {"substituted_by": "list",
+         "reason": "facet 을 못 받아 목록 관측으로 대신한다 (개정 266)",
+         "axes": {a: len(v) for a, v in rep.from_list.items()},
+         "note": "전체 집합이 아니다 — 사전은 pending 으로만 들어간다",
+         "expected": S4_EXPECTED},
+        run_id="list", actual="list")
+    # ★ mark_step_imported 는 커밋하지 않는다.  여기서 끝맺지 않으면
+    #   CLI 로 돌렸을 때 그 행이 사라진다 (실측 08-16)
+    conn.commit()
 
 
 def build_catalog_dict(conn: sqlite3.Connection, site: str, dict_version: str,

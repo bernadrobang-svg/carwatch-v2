@@ -88,6 +88,8 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 | V3-28 | `PeerGroup` 이 확장 단계를 표시 | fatal |
 | V3-29 | 배점 변경 시 `calc_version` 이 증가 | fatal |
 | V3-30 | `halt` 축의 사전이 비어 있지 않음 (S9 선행) | fatal |
+| V3-37 | 목록 관측분의 `source` 가 `'list'` 임 | code | fatal |
+| V3-38 | facet 수신 후 목록 관측분과 대조함 | code | warn |
 | V3-31 | 딜러 NULL 매물에 `dealer_untrusted` 경고가 없음 | fatal |
 | V3-32 | `seizing` null 매물이 「저당 없음」으로 판정되지 않음 | fatal |
 | V3-33 | HDA 판정이 전건 `description` 근거 (`source='catalog_description'`) | fatal |

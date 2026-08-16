@@ -229,7 +229,9 @@ def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
     detail = {"account_id": account.account_id, "reason": reason,
               "format": fmt, "rows": len(rows), "raw_id": raw_id}
     for code in (S1_CODE, S4_CODE):
-        mark_step_imported(conn, code, at, detail, run_id=run_id)
+        # ★ 단계 행은 방법당 하나다 (위 save_browser_catch 주석과 같은 이유)
+        mark_step_imported(conn, code, at, {**detail, "last_run_id": run_id},
+                           run_id=IMPORT_SOURCE)
     conn.commit()
     return ImportResult(raw_id=raw_id, total=len(rows), created=created,
                         updated=updated, fmt=fmt, site_raw=fmt == FORMAT_JSON)
@@ -309,13 +311,16 @@ def save_browser_catch(conn: sqlite3.Connection, account: Account, *,
         raw_id = save_browser_raw(conn, site, text, "list", request_url, at,
                                   http_code=http_code, run_id=run_id)
         code = S1_CODE
+    # ★ 단계 행은 「확보 방법」당 하나다.  저장마다 run_id 를 새로 주면
+    #   PK(run_id,phase,code,target_key) 가 달라져 같은 단계가 수백 행이 된다
+    #   (실측 08-16 — STEP53-S1 이 102행이었다).  원문 쪽 run_id 는 그대로 둔다
     mark_step_imported(
         conn, code, at,
         {"account_id": account.account_id, "reason": reason,
          "fetched_by": ORIGIN_BROWSER, "target_key": target_key,
          "url": request_url, "count": count, "items": items,
-         "axis_count": axis_count, "raw_id": raw_id},
-        run_id=run_id, actual=ORIGIN_BROWSER)
+         "axis_count": axis_count, "raw_id": raw_id, "last_run_id": run_id},
+        run_id=ORIGIN_BROWSER, actual=ORIGIN_BROWSER)
     conn.commit()
     return BrowserCatch(raw_id=raw_id, kind=kind,
                         count=count if kind == "list" else axis_count,
