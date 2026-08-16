@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -195,8 +196,12 @@ def shoot(base: str = "", paths=None) -> int:
             if not f.endswith(".html"):
                 continue
             html = open(os.path.join(OUT_DIR, f), encoding="utf-8").read()
-            # ★ file:// 에서는 /static 이 안 잡힌다.  같은 CSS 를 옆에 둔다
-            html = html.replace('href="/static/app.css"', 'href="app.css"')
+            # ★ file:// 에서는 /static 이 안 잡힌다.  같은 CSS 를 옆에 둔다.
+            #   ★ ?v=<지문>이 붙는다 (V11-82) — 무늬로 바꾼다.
+            #     글자 그대로 바꾸면 지문이 붙는 순간 CSS 가 통째로 빠진다
+            #     (실측 08-17: 스크린샷이 전부 민무늬로 나왔다)
+            html = re.sub(r'href="/static/app\.css[^"]*"',
+                          'href="app.css"', html)
             open(os.path.join(site, f), "w", encoding="utf-8").write(html)
             name = f[:-5]
             wide = any(name == (p.replace("{listing_id}", SAMPLE["listing_id"]

@@ -512,7 +512,7 @@ def _fill_gap_check(conn, rid):
     root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
     with open(_o.path.join(root, "config", "checks.json"),
               encoding="utf-8") as f:
-        cap = float(_j.load(f).get("fill_rate_gap_max", 0.9))
+        cap = float(_j.load(f)["fill_rate_gap_max"])
     rows = conn.execute(
         "SELECT a.axis, l.target_key,"
         " SUM(CASE WHEN a.excluded=0 THEN 1 ELSE 0 END) * 1.0 / COUNT(*)"
@@ -569,12 +569,13 @@ def _market_gap_check(conn, rid):
         dep = _j.load(f)
     with open(_o.path.join(root, "config", "checks.json"),
               encoding="utf-8") as f:
-        cap = float(_j.load(f).get("market_gap_max", 0.10))
+        got = _j.load(f)
+    cap = float(got["market_gap_max"])
+    need = int(got["market_gap_min_sample"])
     as_of = conn.execute(
         "SELECT MAX(calculated_at) FROM result_score").fetchone()[0]
     if not as_of:
         return not_applicable(C["V3-39"], rid, "판정 결과가 없다")
-    need = 5
     bad, worst = [], 0.0
     for (tk,) in conn.execute(
             "SELECT DISTINCT target_key FROM core_listing"

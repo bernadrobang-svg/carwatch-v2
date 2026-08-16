@@ -6,22 +6,22 @@
 
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
-| `/` | [home.html](home.html) | 200 | 13,242B |
+| `/` | [home.html](home.html) | 200 | 13,066B |
 | `/listings` | [listings.html](listings.html) | 200 | 68,827B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 25,861B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 14,383B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 14,401B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,002B |
-| `/market` | [market.html](market.html) | 200 | 12,150B |
+| `/market` | [market.html](market.html) | 200 | 12,222B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 20,154B |
 | `/notready` | [notready.html](notready.html) | 200 | 16,420B |
 | `/watch` | [watch.html](watch.html) | 200 | 7,594B |
 | `/login` | [login.html](login.html) | 200 | 4,793B |
 | `/join` | [join.html](join.html) | 200 | 4,622B |
 | `/password` | [password.html](password.html) | 200 | 4,613B |
-| `/admin` | [admin.html](admin.html) | 200 | 13,827B |
-| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 10,409B |
+| `/admin` | [admin.html](admin.html) | 200 | 13,830B |
+| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 10,418B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 23,957B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 9,366B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 9,369B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,134B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 40,224B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,900B |

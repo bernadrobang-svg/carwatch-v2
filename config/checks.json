@@ -28,5 +28,6 @@
   ],
   "screens_dir": "ref/screens",
   "fill_rate_gap_max": 0.9,
-  "market_gap_max": 0.1
+  "market_gap_max": 0.1,
+  "market_gap_min_sample": 5
 }

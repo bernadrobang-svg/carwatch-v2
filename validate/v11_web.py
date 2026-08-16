@@ -1138,13 +1138,13 @@ def _status_liveness_check(conn, rid):
                   not bad, bad)
 
 
-# 본문에 이만큼도 없으면 빈 화면이다 (V11-73)
-MIN_WORDS = 40
 # 이 말 뒤의 숫자는 식별자다.  단위가 없는 것이 맞다 (V11-74)
 ID_WORDS = ("매물", "계정", "run", "job", "id", "번호", "코드", "키")
 # ★ 원값을 그대로 고치는 화면이다.  단위를 붙이면 「100만」을 저장하게 된다.
 #   보는 화면이 아니라 고치는 화면이라 이 검사에서 뺀다 (V11-74)
 RAW_VALUE_SCREENS = ("/admin/config", "/admin/query", "/admin/api")
+# 단위 환산 (2장 상수표 · V4-13)
+BYTES_PER_KB = 1_024
 MENU_TABLE = os.path.join(ROOT, "docs", "chapters", "60-admin", "c-tools.md")
 LISTINGS_TPL = os.path.join(TEMPLATES, "listings.html")
 APP_CSS = os.path.join(ROOT, "web", "static", "app.css")
@@ -1845,6 +1845,8 @@ def _render_metrics_checks(conn, rid):
         cfg = _j.load(f)
     max_kb = int(cfg["screen_max_kb"])
     max_sec = float(cfg["screen_max_sec"])
+    # 본문에 이만큼도 없으면 빈 화면이다 (V11-73).  표시 정책이라 config 에 둔다
+    min_words = int(cfg["min_body_words"])
     row = conn.execute(
         "SELECT listing_id FROM result_score LIMIT 1").fetchone()
     if row is None:
@@ -1880,7 +1882,7 @@ def _render_metrics_checks(conn, rid):
         text = re.sub(r"<script>.*?</script>", "", html, flags=re.S)
         text = re.sub(r"<[^>]+>", " ", text)
         # V11-73 — 값이 있는가.  머리말·메뉴 말고 본문에 숫자나 글이 있는가
-        if len(text.split()) < MIN_WORDS:
+        if len(text.split()) < min_words:
             empty.append(f"{route.path} — 낱말 {len(text.split())}개")
         # V11-74 — 원 단위 숫자가 맨몸으로 나오는가.
         # ★ 매물번호·계정번호 같은 식별자는 단위가 없는 것이 맞다.
@@ -1898,7 +1900,7 @@ def _render_metrics_checks(conn, rid):
         if dead:
             deadlink.append(f"{route.path} — {dead[0]}")
         # V11-76 — 크기·시간
-        kb = len(body) / 1024
+        kb = len(body) / BYTES_PER_KB
         if kb > max_kb or took > max_sec:
             heavy.append(f"{route.path} — {kb:.0f}KB · {took:.2f}초")
     return [

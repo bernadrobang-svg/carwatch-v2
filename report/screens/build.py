@@ -239,7 +239,9 @@ def _ceil_to(value, unit: int):
 
 # 개월을 해로 끊는 자리.  ★ 「남은 26개월」보다 「2년 2개월」이 읽힌다
 MONTHS_PER_YEAR = 12
-MANWON = 10_000
+# 단위 환산.  ★ 화면 표기를 한 자리에 모은다 (2장 상수표 · V4-13)
+WON_PER_MANWON = 10_000
+M_PER_KM = 1_000
 
 
 def _bulk_market(conn, lids: list, root: str = ".") -> dict:
@@ -338,7 +340,7 @@ def _warranty_state(got, as_of) -> tuple:
         years, rest = divmod(mo, MONTHS_PER_YEAR)
         span = (f"{years}년 {rest}개월" if years and rest
                 else f"{years}년" if years else f"{rest}개월")
-        out.append(f"{span} · {left_km // 1000:,}천km")
+        out.append(f"{span} · {left_km // M_PER_KM:,}천km")
     return tuple(out)
 
 
@@ -369,7 +371,7 @@ def _axis_state(axis: str, chip, state: dict, as_of: str) -> str:
         _mycnt, cost, _o, _t = rec
         if cost is None:
             return ""
-        return "0원" if not cost else f"{int(cost) // MANWON:,}만"
+        return "0원" if not cost else f"{int(cost) // WON_PER_MANWON:,}만"
     if axis == "history.rental":
         # ★ 점수를 받았으면 렌트가 아니다 (excluded 가 아니라 값이 있을 때만)
         return "렌트 아님" if chip.tone == TONE_GOOD else "렌트 이력"
