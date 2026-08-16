@@ -706,6 +706,31 @@ for _cap in sorted(_have):
 say("S27", "기능마다 화면 (CLI 는 완성이 아니다)",
     len(_have) - len(_todo27) - len(_bad27), _todo27, _bad27)
 
+# ── S28 색인 (규칙 11) ──────────────────────────────────────────────
+# ★ 227개 검사가 규격과 맞는지 아무도 확인한 적이 없었다.
+#   색인을 「만들었다」가 아니라 「지금 코드·규격과 같은가」를 본다
+try:
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    import build_index as _bi
+
+    _code = _bi._checks_in_code()
+    _spec = _bi._checks_in_docs(set(_code))
+    _missing = sorted(c for c in _spec if c not in _code and _spec[c]["asked"])
+    _stale = []
+    _idx = os.path.join(ROOT, "docs", "CHECKS.md")
+    if not os.path.isfile(_idx):
+        _stale.append("docs/CHECKS.md 가 없다 — tools/build_index.py 를 돌린다")
+    else:
+        with io.open(_idx, encoding="utf-8") as _fh:
+            _body = _fh.read()
+        for _c in sorted(_code):
+            if f"`{_c}`" not in _body:
+                _stale.append(f"{_c} 가 색인에 없다 — 색인이 낡았다")
+    say("S28", "검사 색인 (규격 ↔ 코드)", len(_code) - len(_stale),
+        _missing, _stale[:8])
+except Exception as _e:                                  # noqa: BLE001
+    say("S28", "검사 색인 (규격 ↔ 코드)", 0, [], [f"색인을 못 만들었다: {_e}"])
+
 print()
 print(f"미착수 합계 {todo_total}")
 print("결과:", "통과" if not fail else "실패 — " + " / ".join(fail))
