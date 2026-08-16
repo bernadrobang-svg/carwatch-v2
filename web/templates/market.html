@@ -30,7 +30,7 @@
 <thead><tr><th>구간</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
 <tbody>
 {% for b in m.price_bins %}
-<tr><td><a href="{{ b.filter_url }}">{{ b.min_won | won }} ~ {{ b.max_won | won }}</a></td>
+<tr><td>{% if b.filter_url %}<a href="{{ b.filter_url }}">{{ b.min_won | won }} ~ {{ b.max_won | won }}</a>{% endif %}</td>
   <td class="num">{{ b.count | num }}</td>
   <td class="num">{{ b.median_won | won }}</td></tr>
 {% endfor %}
@@ -44,7 +44,7 @@
 <thead><tr><th>연식</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
 <tbody>
 {% for b in m.by_year %}
-<tr><td><a href="{{ b.filter_url }}">{{ b.label }}</a></td>
+<tr><td>{% if b.filter_url %}<a href="{{ b.filter_url }}">{{ b.label }}</a>{% endif %}</td>
   <td class="num">{{ b.count | num }}</td>
   <td class="num">{% if b.enough %}{{ b.median_won | won }}{% endif %}{% if !b.enough %}<span class="excluded">표본 부족</span>{% endif %}</td></tr>
 {% endfor %}
@@ -58,7 +58,7 @@
 <thead><tr><th>트림</th><th class="num">건수</th><th class="num">중앙</th></tr></thead>
 <tbody>
 {% for b in m.by_trim %}
-<tr><td><a href="{{ b.filter_url }}">{{ b.label }}</a></td>
+<tr><td>{% if b.filter_url %}<a href="{{ b.filter_url }}">{{ b.label }}</a>{% endif %}</td>
   <td class="num">{{ b.count | num }}</td>
   <td class="num">{% if b.enough %}{{ b.median_won | won }}{% endif %}{% if !b.enough %}<span class="excluded">표본 부족</span>{% endif %}</td></tr>
 {% endfor %}
@@ -68,7 +68,7 @@
 
 <h2>다른 차종</h2>
 {% if m.other_targets %}
-<p>{% for b in m.other_targets %}<a class="chip" href="{{ b.filter_url }}">{{ b.label }} {{ b.count | num }}</a>{% endfor %}</p>
+<p>{% for b in m.other_targets %}{% if b.filter_url %}<a class="chip" href="{{ b.filter_url }}">{{ b.label }} {{ b.count | num }}</a>{% endif %}{% endfor %}</p>
 {% endif %}
 {% if !m.other_targets %}
 <p class="muted">아직 이 차종만 수집됐습니다.</p>

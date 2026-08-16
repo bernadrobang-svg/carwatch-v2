@@ -150,6 +150,26 @@ git push
 `zip() takes no keyword arguments` 가 보이면 코드 문제가 아니라 3.9 로 돌린 것이다.
 근거: `docs/guide/03_이력.md` 개정 242 (0장 · 부록 E 에 Python 3.11 이상 명시)
 
+## ★ 8765 를 뺏지 않는다 — 마스터가 보는 화면이다
+
+`carwatch.service` 가 `--host 0.0.0.0 --port 8765` 로 돈다. **그것이 마스터가 보는 화면이다.**
+
+```
+금지   python3.11 run.py web 을 8765 로 띄우는 것
+      → 서비스가 포트를 못 잡아 재시작 루프에 빠진다
+      → 마스터 브라우저에 「사이트에 접근할 수 없음」이 뜬다
+      실측 2026-08-16.  내 개발 서버가 127.0.0.1:8765 를 쥐고 있어
+      밖에서 접속이 통째로 막혀 있었다
+```
+
+```
+확인   systemctl is-active carwatch      active 여야 한다
+      ss -tlnp | grep 8765               0.0.0.0:8765 여야 한다
+      curl -sI http://43.201.16.78:8765/listings
+고친 뒤  sudo systemctl restart carwatch   ★ 코드를 고쳤으면 반드시 재시작
+시험용   포트를 따로 쓴다 — run.py web --port 8799
+```
+
 ## 알아 둘 것 — 시험은 씨앗 DB 로 돈다 (S24 · 개정 246)
 
 `tests/seed.py` 의 `build_seed_db()` 가 `StubEncar` 로 S0~S10 을 돌려

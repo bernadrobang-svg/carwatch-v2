@@ -121,7 +121,7 @@
 <tbody>
 {% for u in collect_urls %}
 <tr><td>{{ u.kind }}</td><td>{{ u.label }}</td>
-  <td class="runid"><a href="{{ u.url }}" target="_blank" rel="noopener">직접 열기</a></td></tr>
+  <td class="runid">{% if u.url %}<a href="{{ u.url }}" target="_blank" rel="noopener">직접 열기</a>{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>

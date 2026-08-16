@@ -266,6 +266,11 @@ C = {
                     "오른쪽에 무엇이 있는지 모른 채 스크롤하게 하지 않는다 "
                     "(STEP 149o-2 · 개정 278)",
                     KIND_CODE),
+    "V11-72": Check("V11", "V11-72", "빈 주소로 가는 링크가 없음", FATAL, "run",
+                    "주소가 될 값이 비었으면 링크를 만들지 않는다 — "
+                    "「빈 링크」가 아니라 「링크 아님」이다.  실측 08-16: "
+                    "마스터가 링크를 눌렀더니 주소가 null 이었다",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -790,6 +795,7 @@ def _screen_checks(conn, rid) -> list:
     # v1 원본 대조 (개정 277)
     out += _v1_parity_checks(rid)
     out += _responsive_checks(rid)
+    out.append(_null_link_check(conn, rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1466,6 +1472,74 @@ def _responsive_checks(rid):
     return [result(C["V11-70"], rid, "칸", f"{len(cells)}칸", not bad70, bad70),
             result(C["V11-71"], rid, "가로 스크롤",
                    "없음" if not bad71 else "있음", not bad71, bad71)]
+
+
+# 주소가 될 수 없는 값.  ★ 화면에 이 글자가 찍히면 그것이 뿌리다
+DEAD_URL = ("", "null", "None", "undefined", "#")
+RE_URL_ATTR = re.compile(r'(href|src|action)="([^"]*)"')
+
+
+def _dead_links(html: str) -> list:
+    """렌더 결과에서 죽은 주소를 고른다.  ★ 템플릿이 아니라 결과를 본다."""
+    body = re.sub(r"<script>.*?</script>", "", html, flags=re.S)
+    out = []
+    for attr, val in RE_URL_ATTR.findall(body):
+        v = val.strip()
+        if v in DEAD_URL:
+            out.append(f'{attr}="{val}"')
+        elif re.search(r"[?&][\w_]+=(&|$)", v):
+            # ?dealer= 처럼 값이 빈 조건 — 누르면 조건이 안 걸린 전건이 나온다
+            out.append(f'{attr}="{v[:60]}" (빈 조건)')
+    return out
+
+
+def _null_link_check(conn, rid):
+    """V11-72 — 빈 주소로 가는 링크 (개정 279 · 마스터 실측).
+
+    ★ 전 화면을 실제로 렌더해 결과 HTML 을 본다.
+      템플릿을 읽어 「{% if %} 로 막혀 있다」고 하는 것은 검사가 아니다
+    """
+    import sqlite3 as _sq
+
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from web.routes import GET, ROUTES
+    from web.server import guard
+    from web.views import HANDLERS
+
+    row = conn.execute(
+        "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+    if row is None:
+        return not_applicable(C["V11-72"], rid, "판정 결과가 없다")
+    tmp = os.path.join(_scratch(), "linkscan.db")
+    probe = _sq.connect(tmp)
+    conn.backup(probe)
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    bad, seen = [], 0
+    for route in ROUTES:
+        if GET not in route.methods or guard(acc, route) is not None:
+            continue
+        fn = HANDLERS.get(route.view)
+        if fn is None:
+            continue
+        pv = {}
+        if "{" in route.path:
+            k = route.path.split("{")[1].split("}")[0]
+            pv = {k: str(row[0]) if k == "listing_id" else "1"}
+        try:
+            _st, _h, body = fn(probe, acc,
+                               {"query": {}, "form": {}, "method": GET},
+                               path_vars=pv, csrf="t")
+        except (CarWatchError, KeyError, ValueError):
+            continue          # 입력이 없어 못 그리는 화면은 이 검사 대상이 아니다
+        except Exception:                                    # noqa: BLE001
+            continue
+        seen += 1
+        for hit in _dead_links(body.decode("utf-8", "replace")):
+            bad.append(f"{route.path} {hit}")
+    probe.close()
+    return result(C["V11-72"], rid, f"{seen}화면",
+                  "없음" if not bad else f"{len(bad)}곳", not bad, bad[:10])
 
 
 def _browser_scope_checks(rid):

@@ -72,7 +72,7 @@
 {% for g in r.excluded_groups %}
 <tr><td>{{ g.reason }}</td><td class="num">{{ g.count | num }}</td>
   <td class="muted">{{ g.note }}</td>
-  <td><a href="{{ g.filter_url }}">보기</a></td></tr>
+  <td>{% if g.filter_url %}<a href="{{ g.filter_url }}">보기</a>{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>

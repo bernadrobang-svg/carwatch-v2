@@ -10,8 +10,8 @@
     </select>
     <noscript><button type="submit" class="mini">정렬</button></noscript>
   </form>
-  {% for b in buttons %}<a class="btn{% if b.on %} on{% endif %}"
-    href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endfor %}
+  {% for b in buttons %}{% if b.url %}<a class="btn{% if b.on %} on{% endif %}"
+    href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endif %}{% endfor %}
   <span class="num dim">{{ paging.total | num }}건</span>
   <a class="clear" href="/listings">전부 지우기</a>
 </div>
@@ -24,7 +24,7 @@
 {% if chips %}
 <div class="chips">
   {% for c in chips %}<span class="chip"><b>{{ c.label }}</b> {{ c.value }}
-    <a class="x" href="{{ c.remove_url }}" title="이 조건만 뺍니다">×</a></span>{% endfor %}
+    {% if c.remove_url %}<a class="x" href="{{ c.remove_url }}" title="이 조건만 뺍니다">×</a>{% endif %}</span>{% endfor %}
   <a class="clear" href="/listings">✕ 해제</a>
 </div>
 {% endif %}
@@ -68,25 +68,43 @@
     <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>{% endif %}
     {% if !r.ratio_pct %}<span class="dim" title="아직 판정하지 못했습니다">—</span>{% endif %}
   </td>
-  <td data-label="차종"><a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a></td>
+  <td data-label="차종">
+    {% if r.target_label %}<a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a>{% endif %}
+    {% if !r.target_label %}<span class="dim" title="차종을 아직 못 붙였습니다">차종 미정</span>{% endif %}
+  </td>
   <td class="dim" data-label="트림">{{ r.trim }}</td>
-  <td class="r num" data-label="연식"><a href="/listings?year={{ r.year }}" title="{{ r.year }}년식만 봅니다">{{ r.year_month }}</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max={{ r.km_bucket }}" title="주행 {{ r.km_bucket | km }} 이하만 봅니다">{{ r.mileage_km | km }}</a></td>
+  <td class="r num" data-label="연식">
+    {% if r.year %}<a href="/listings?year={{ r.year }}" title="{{ r.year }}년식만 봅니다">{{ r.year_month }}</a>{% endif %}
+    {% if !r.year %}<span class="dim" title="원문에 연식이 없습니다">—</span>{% endif %}
+  </td>
+  <td class="r num" data-label="주행">
+    {% if r.km_bucket %}<a href="/listings?km_max={{ r.km_bucket }}" title="주행 {{ r.km_bucket | km }} 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}
+    {% if !r.km_bucket %}<span class="dim" title="원문에 주행거리가 없습니다">—</span>{% endif %}
+  </td>
   <td class="c" data-label="외장"><span class="tag" title="외장색 — 원문 그대로입니다">{{ r.color_ext }}</span></td>
   <td class="c" data-label="내장"><span class="tag" title="내장색 — 원문 그대로입니다">{{ r.color_int }}</span></td>
   {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }} — O 있음 · · 없음 · ? 확인 못 함"><b>{{ c.mark }}</b></a></td>{% endfor %}
-  <td class="r num" data-label="가격"><a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다"><b>{{ r.price_won | won }}</b></a></td>
+  <td class="r num" data-label="가격">
+    {% if r.price_won %}<a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}
+    {% if !r.price_won %}<span class="dim" title="원문에 가격이 없습니다">—</span>{% endif %}
+  </td>
   <td class="r num gap" data-label="시세차">
     {% if r.price_gap_won %}<span class="{{ r.price_gap_won | signcls }}" title="기대가 {{ r.expected_price_won | won }} 대비 — 기대가는 신차가 × 감가계수(경과년) × 차종 보정계수입니다 (STEP 70)">{{ r.price_gap_won | signwon }}</span>{% endif %}
     {% if !r.price_gap_won %}<span class="dim" title="기대가를 구하지 못했습니다 — 신차가가 없거나 차종 보정계수가 범위 밖입니다">—</span>{% endif %}
   </td>
-  <td class="r num" data-label="월"><a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a></td>
+  <td class="r num" data-label="월">
+    {% if r.monthly_bucket_won %}<a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a>{% endif %}
+    {% if !r.monthly_bucket_won %}<span class="dim" title="가격이 없어 월납입을 못 냅니다">—</span>{% endif %}
+  </td>
   <td class="r num" data-label="변동">
     {% if r.price_change_won %}<span class="{{ r.price_change_won | signcls }}" title="첫 게시가 대비 · {{ r.price_change_cnt }}회 바뀜">{{ r.price_change_won | signwon }}</span>{% endif %}
     {% if !r.price_change_won %}<span class="dim" title="가격이 바뀐 적이 없습니다">—</span>{% endif %}
   </td>
   <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market }}일{% endif %}{% if !r.days_on_market %}<span class="dim" title="처음 본 날과 판정한 날이 같습니다">0일</span>{% endif %}</td>
-  <td data-label="딜러"><a href="/listings?dealer={{ r.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ r.dealer_shop }}</a></td>
+  <td data-label="딜러">
+    {% if r.dealer_shop %}<a href="/listings?dealer={{ r.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ r.dealer_shop }}</a>{% endif %}
+    {% if !r.dealer_shop %}<span class="dim" title="원문에 딜러 상호가 없습니다">—</span>{% endif %}
+  </td>
   <td class="r num" data-label="정직도">
     {% if r.dealer_trust %}<span class="tag" title="{{ r.dealer_quadrant }}">{{ r.dealer_trust }}</span>{% endif %}
     {% if !r.dealer_trust %}<span class="dim" title="표본이 모자라 정직도를 내지 않습니다 — 0점이 아닙니다">—</span>{% endif %}
@@ -114,7 +132,7 @@
 <div class="page">
   {% if paging.first %}<a href="{{ paging.first }}">« 처음</a>{% endif %}
   {% if paging.prev %}<a href="{{ paging.prev }}">‹ 이전</a>{% endif %}
-  {% for p in paging.links %}<a href="{{ p.url }}"{% if p.on %} class="on"{% endif %}>{{ p.n }}</a>{% endfor %}
+  {% for p in paging.links %}{% if p.url %}<a href="{{ p.url }}"{% if p.on %} class="on"{% endif %}>{{ p.n }}</a>{% endif %}{% endfor %}
   {% if paging.next %}<a href="{{ paging.next }}">다음 ›</a>{% endif %}
   {% if paging.last %}<a href="{{ paging.last }}">끝 »</a>{% endif %}
   <span class="dim">한 쪽 {{ paging.size | num }}건 · 모두 {{ paging.pages }}쪽</span>
@@ -207,7 +225,8 @@
   function hide() { cur = null; box.style.display = 'none'; }
 
   document.addEventListener('mouseover', function (e) {
-    var tr = e.target.closest ? e.target.closest('tr[data-peek]') : null;
+    if (!e.target.closest) { return; }          /* 아주 낡은 브라우저 */
+    var tr = e.target.closest('tr[data-peek]');
     if (tr && tr !== cur) { show(tr, e); }
     else if (!tr && cur) { hide(); }
   });

@@ -32,6 +32,17 @@ STATIC_TYPES = {
 }
 
 
+HTTPS = "https"
+
+
+def is_https(req: dict | None) -> bool:
+    """앞단이 TLS 를 맡으므로 X-Forwarded-Proto 로만 안다 (14장).
+
+    ★ 없으면 http 로 본다 — 평문인데 Secure 를 붙이면 쿠키가 아예 안 간다
+    """
+    return (req or {}).get("proto") == HTTPS
+
+
 def set_cookie(name: str, value: str, max_age: int,
                secure: bool = False) -> str:
     """★ session_id 만 담는다.  역할·이름을 담지 않는다 (STEP 146)."""

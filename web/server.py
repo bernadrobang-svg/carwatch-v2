@@ -132,6 +132,11 @@ def make_handler(app):
                 #   GET Route 면 빈 dict — GET 으로 상태를 바꾸지 않는다
                 "form": parse_form(route, body),
                 "cookie": self.headers.get("Cookie"),
+                # ★ 앞단(리버스 프록시)이 TLS 를 맡는다 — 앱은 평문으로 듣는다.
+                #   그래서 「지금 HTTPS 인가」는 이 머리글로만 알 수 있다.
+                #   이것이 없으면 쿠키에 Secure 를 붙일 수 없다 (14장 · ORDER_https)
+                "proto": (self.headers.get("X-Forwarded-Proto")
+                          or "http").split(",")[0].strip().lower(),
                 "method": method,
             }
             try:

@@ -21,6 +21,6 @@
   <a class="chip" href="/login?next=/watch/add&amp;listing_id={{ listing_id }}">로그인</a>
   <a class="chip" href="/join">계정 만들기</a>
   <a class="chip" href="/why/{{ listing_id }}">판정 근거 보기</a>
-  <a class="chip" href="{{ back }}">돌아가기</a>
+  {% if back %}<a class="chip" href="{{ back }}">돌아가기</a>{% endif %}
 </p>
 <p class="muted">★ 등급 · 판정 근거 · 시세는 로그인 없이 볼 수 있습니다.</p>

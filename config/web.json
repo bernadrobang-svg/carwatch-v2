@@ -24,7 +24,7 @@
   "status_poll_sec": 5,
   "live_window_sec": 60,
   "photo_base_url": "https://ci.encar.com",
-  "encar_detail_url": "http://www.encar.com/dc/dc_cardetailview.do?carid={source_id}",
+  "encar_detail_url": "https://www.encar.com/dc/dc_cardetailview.do?carid={source_id}",
   "km_bucket": 10000,
   "monthly_bucket_won": 100000,
   "page_links": 9,

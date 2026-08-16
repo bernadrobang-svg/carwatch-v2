@@ -597,7 +597,7 @@ def login(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str =
             return _login_again(conn, account,
                                 "이름이나 비밀번호가 맞지 않습니다",
                                 root, csrf, flash_key)
-        return _open_session(conn, acc)
+        return _open_session(conn, acc, req)
 
     ctx = {"no_account": account_count(conn) == 0,
            "must_change": getattr(account, "must_change_secret", False)}
@@ -620,22 +620,29 @@ def _login_again(conn, account, why: str, root: str, csrf: str,
                 root=root, flash_key=flash_key)
 
 
-def _open_session(conn, acc):
-    """세션을 열고 쿠키를 준다.  ★ 쿠키에는 session_id 만 담는다."""
+def _open_session(conn, acc, req=None):
+    """세션을 열고 쿠키를 준다.  ★ 쿠키에는 session_id 만 담는다.
+
+    ★ req 를 받는 이유는 하나다 — 지금이 HTTPS 인지 알아야
+      Secure 를 붙일지 정할 수 있다 (X-Forwarded-Proto)
+    """
     from datetime import datetime, timezone
 
     from store.admin import open_session
     from web.context import HTTP_SEE_OTHER
     from web.server import load_web_config
-    from web.session import set_cookie
+    from web.session import is_https, set_cookie
 
     sid = open_session(conn, acc, datetime.now(timezone.utc))
     cfg = load_web_config(ROOT)
     target = "/login" if acc.must_change_secret else "/"
     return HTTP_SEE_OTHER, {
         "Location": target,
+        # ★ HTTPS 로 들어왔으면 Secure 를 붙인다.  평문이면 붙이지 않는다 —
+        #   붙이면 쿠키가 아예 안 가서 로그인이 안 된다
         "Set-Cookie": set_cookie(cfg["session_cookie"], sid,
-                                 cfg["session_max_age_sec"]),
+                                 cfg["session_max_age_sec"],
+                                 secure=is_https(req)),
     }, b""
 
 
@@ -644,13 +651,14 @@ def logout(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str 
     from web.app import check_post
     from web.context import HTTP_SEE_OTHER
     from web.server import load_web_config
-    from web.session import set_cookie
+    from web.session import is_https, set_cookie
 
     check_post(req, csrf)
     cfg = load_web_config(root)
     return HTTP_SEE_OTHER, {
         "Location": "/",
-        "Set-Cookie": set_cookie(cfg["session_cookie"], "", 0),
+        "Set-Cookie": set_cookie(cfg["session_cookie"], "", 0,
+                                 secure=is_https(req)),
     }, b""
 
 
