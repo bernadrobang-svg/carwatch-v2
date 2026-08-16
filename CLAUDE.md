@@ -152,7 +152,14 @@ git push
 
 ## ★ 8765 를 뺏지 않는다 — 마스터가 보는 화면이다
 
-`carwatch.service` 가 `--host 0.0.0.0 --port 8765` 로 돈다. **그것이 마스터가 보는 화면이다.**
+**2026-08-16 부터 앞단에 Caddy 가 있다.  주소는 `https://43.201.16.78.sslip.io` 다.**
+
+```
+브라우저 ──https──▶ Caddy :443 ──http──▶ CarWatch 127.0.0.1:8765
+자세한 것   deploy/README.md
+```
+
+`carwatch.service` 가 `--host 127.0.0.1 --port 8765` 로 돈다. **그것이 마스터가 보는 화면이다.**
 
 ```
 금지   python3.11 run.py web 을 8765 로 띄우는 것
@@ -163,9 +170,9 @@ git push
 ```
 
 ```
-확인   systemctl is-active carwatch      active 여야 한다
-      ss -tlnp | grep 8765               0.0.0.0:8765 여야 한다
-      curl -sI http://43.201.16.78:8765/listings
+확인   systemctl is-active carwatch caddy    둘 다 active 여야 한다
+      ss -tln | grep 8765                   127.0.0.1:8765 여야 한다
+      curl -sI https://43.201.16.78.sslip.io/listings
 고친 뒤  sudo systemctl restart carwatch   ★ 코드를 고쳤으면 반드시 재시작
 시험용   포트를 따로 쓴다 — run.py web --port 8799
 ```

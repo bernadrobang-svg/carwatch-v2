@@ -1,0 +1,23 @@
+# CarWatch v2 앞단 HTTPS (14장 1584줄 「HTTPS 는 앞단에 맡긴다」)
+[Unit]
+Description=Caddy (CarWatch 앞단 TLS)
+Documentation=https://caddyserver.com/docs/
+After=network.target carwatch.service
+
+[Service]
+Type=notify
+User=caddy
+Group=caddy
+ExecStart=/usr/local/bin/caddy run --environ --config /etc/caddy/Caddyfile
+ExecReload=/usr/local/bin/caddy reload --config /etc/caddy/Caddyfile --force
+TimeoutStopSec=5s
+LimitNOFILE=1048576
+PrivateTmp=true
+ProtectSystem=full
+# ★ 80·443 은 특권 포트다.  root 로 돌리지 않고 능력만 준다
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

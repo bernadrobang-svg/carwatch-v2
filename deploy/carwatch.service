@@ -1,0 +1,16 @@
+[Unit]
+Description=CarWatch v2
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/v2
+Environment=LANG=ko_KR.UTF-8
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3.11 run.py web --host 127.0.0.1 --port 8765
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
