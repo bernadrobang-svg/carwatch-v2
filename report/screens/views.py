@@ -77,6 +77,14 @@ class ListingRow:
     #   그대로 부른다.  없으면 None 이고 화면은 thumb-none 으로 자리를 채운다.
     #   ★ 판정에 쓰지 않는다.  보는 사람을 위한 것이다
     photo_url: str | None = None
+    # 엔카 원문 (STEP 149q).  ★ 우리 판정은 참고다.  실제 매물은 엔카에 있다
+    source_id: str | None = None
+    encar_url: str | None = None
+    # 「이 값으로 걸러 보기」에 쓰는 파생 (STEP 149p).
+    # ★ 화면이 계산하지 않는다.  여기서 만들어 내려준다
+    year: str | None = None           # 연식 4자리
+    km_bucket: int | None = None      # 주행 상한 (만km 단위로 올림)
+    monthly_bucket_won: int | None = None   # 월납입 상한 (10만 단위로 올림)
 
     # ★ tone 으로 나눈다.  화면이 판정하지 않는다 (STEP 152)
     @property
@@ -104,6 +112,15 @@ class ListingFilter:
     #   없으면 링크는 200 을 내지만 필터가 안 걸려 전건이 나온다
     price_min: int | None = None
     price_max: int | None = None
+    # ★ 값을 누르면 그 조건으로 (STEP 149g · 149p).  절반만 링크면
+    #   사람이 「누를 수 있는 것」과 「없는 것」을 구분 못 한다 (개정 276)
+    dealer: str | None = None       # 그 딜러 매물만
+    year: str | None = None         # 연식 4자리
+    km_max: int | None = None       # 주행 상한 (구간)
+    monthly_max: int | None = None  # 월납입 상한 — 가격 상한으로 환산한다
+    listing_status: str | None = None
+    # ★ 「A 이상만」 한 번에 (STEP 149s).  C·D 가 비율 순으로 앞에 섞인다
+    min_grade: str | None = None
     order: str = "rank"
     show_all: bool = False
     page: int = 1

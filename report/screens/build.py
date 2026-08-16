@@ -91,8 +91,14 @@ def chip(axis: str, value: int | None, excluded: bool, labels: dict,
     # ★ 「없음」과 「모름」을 같은 기호로 내면 v1 사고가 되풀이된다.
     #   O(있음) · ·(없음) · ?(확인 못 함) 셋으로 가른다 (STEP 149f · A-4)
     mark = labels.get("VALUE_MARKS", {}).get(bucket, "?")
-    return AxisChip(axis, f"{al.get(axis, axis)} {label}", tone, url,
-                    mark=mark)
+    # ★ 9장 대조표는 value=1/0 을 전제하는데 result_axis.value 는 점수(0~20)다.
+    #   위험 축(사고·렌트·보험)은 「점수를 받았다 = 그 일이 없다」라
+    #   대조표를 그대로 쓰면 뜻이 뒤집힌다 —
+    #   실측 08-16: S등급 매물에 「사고 있음」이 떴다.
+    #   축별 문구가 있으면 그것을 쓴다 (config/labels.json)
+    over = labels.get("AXIS_VALUE_LABELS", {}).get(axis, {}).get(bucket)
+    text = over or f"{al.get(axis, axis)} {label}"
+    return AxisChip(axis, text, tone, url, mark=mark)
 
 
 def _stamp(calc_version: str, dict_version: str | None) -> VersionStamp:
@@ -170,15 +176,26 @@ def photo_url(photos_json: str | None, base: str) -> str | None:
     return f"{base}{best}" if best else None
 
 
+YEAR_CHARS = 4
+
+
+def _ceil_to(value, unit: int):
+    """구간 상한.  ★ 「이 값 이하」로 걸 때 자기 자신은 반드시 들어와야 한다."""
+    if value is None or unit <= 0:
+        return None
+    return -(-int(value) // unit) * unit
+
+
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          axes: dict | None = None, changes_by: dict | None = None,
-         photo_base: str = "") -> ListingRow:
+         photo_base: str = "", encar_tpl: str = "",
+         km_unit: int = 0, monthly_unit: int = 0) -> ListingRow:
     """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
 
     워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
     """
     (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
-     dealer, dstatus, first_seen, last_seen, dv, photos) = rec
+     dealer, dstatus, first_seen, last_seen, dv, photos, sid) = rec
     got = (axes or {}).get(lid, {})
     chips = []
     for axis in CHIP_AXES:
@@ -208,6 +225,14 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         dealer_shop=dealer, dealer_honesty=None, note=None,
         versions=_stamp(calc_version, dv),
         photo_url=photo_url(photos, photo_base),
+        source_id=sid,
+        # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
+        encar_url=(encar_tpl.format(source_id=sid)
+                   if sid and encar_tpl else None),
+        year=(ym or "")[:YEAR_CHARS] or None,
+        km_bucket=_ceil_to(km, km_unit),
+        monthly_bucket_won=_ceil_to(
+            fin.monthly_payment_won if fin else None, monthly_unit),
         # ★ gone 은 목록에서 사라진 것이다.  팔렸다고 단정하지 않는다
         status_label=labels["STATUS_LABELS"].get(dstatus) if dstatus else None)
 
@@ -278,6 +303,26 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if flt.price_max is not None:
         where.append("l.price_current_won <= ?")
         args.append(flt.price_max)
+    # ★ 값을 누르면 그 조건으로 (STEP 149p · 개정 276).
+    #   링크만 걸고 조건이 안 걸리면 200 은 나오지만 전건이 나온다 (실측 08-15)
+    if flt.dealer:
+        where.append("l.dealer_shop = ?")
+        args.append(flt.dealer)
+    if flt.year:
+        where.append("l.year_month LIKE ?")
+        args.append(f"{flt.year}%")
+    if flt.km_max is not None:
+        where.append("l.mileage_km <= ?")
+        args.append(flt.km_max)
+    if flt.listing_status:
+        where.append("l.status = ?")
+        args.append(flt.listing_status)
+    # ★ 「A 이상만」 (STEP 149s).  NOT_RATED 는 등급이 아니라 뺀다
+    if flt.min_grade:
+        ok = [g for g in RANK_ORDER
+              if RANK_ORDER.index(g) <= RANK_ORDER.index(flt.min_grade)]
+        where.append(f"s.grade IN ({','.join('?' * len(ok))})")
+        args += ok
     if not flt.show_all:
         where.append("l.status <> 'out_of_scope'")
     if flt.axis and flt.bucket:
@@ -319,7 +364,8 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         #   score_total(555 환산)로 나누면 분모가 짧을수록 부풀려진다 (E-1)
         " s.grade, s.earned, s.denominator, l.dealer_shop, l.status,"
         # ★ 사진은 이미 원문에서 뽑아 앉아 있다 — 다시 받지 않는다 (개정 274)
-        " l.first_seen, l.last_seen, s.dict_version, l.photo_list_json"
+        " l.first_seen, l.last_seen, s.dict_version, l.photo_list_json,"
+        " l.source_id"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         f" WHERE {' AND '.join(where)}"
@@ -339,10 +385,14 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     axes = _bulk_axes(conn, lids, flt.calc_version)
     changes = _bulk_changes(conn, lids)
     base = _view_str("photo_base_url", root)
+    encar_tpl = _view_str("encar_detail_url", root)
+    km_unit = _view_cfg("km_bucket", root)
+    monthly_unit = _view_cfg("monthly_bucket_won", root)
     # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
     first = 0 if flt.show_all else (flt.page - 1) * page_size
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
-                 axes, changes, base) for i, r in enumerate(recs)]
+                 axes, changes, base, encar_tpl, km_unit, monthly_unit)
+            for i, r in enumerate(recs)]
 
 
 def recommend_funnel(conn, calc_version: str, shown: int) -> dict:

@@ -219,6 +219,44 @@ C = {
                     "시안이 정본이다. 손으로 옮겨 적으면 값이 갈린다 "
                     "(개정 275)",
                     KIND_CODE),
+    "V11-61": Check("V11", "V11-61", "이어질 수 있는 값이 링크임", FATAL, "run",
+                    "절반만 링크면 사람이 「누를 수 있는 것」과 「없는 것」을 "
+                    "구분 못 한다 (STEP 149p · 개정 276)",
+                    KIND_CODE),
+    "V11-62": Check("V11", "V11-62", "코드·줄임말에 title 이 있음", FATAL, "run",
+                    "「320.0/415.0」이 무엇인지 아무도 모른다. "
+                    "「O · · · ?」도 마찬가지다 (STEP 149p)",
+                    KIND_CODE),
+    "V11-63": Check("V11", "V11-63", "매물 화면에 원문 링크가 있음", FATAL, "run",
+                    "우리 판정은 참고다. 실제 매물은 엔카에 있다 — "
+                    "그 길을 막으면 도구가 아니라 벽이 된다 (STEP 149q)",
+                    KIND_CODE),
+    "V11-64": Check("V11", "V11-64", "고를 수 있는 값이 목록으로 제공됨",
+                    FATAL, "run",
+                    "「KOLEOS_HEV」를 외워 치라는 것은 도구가 아니다 "
+                    "(STEP 149r)",
+                    KIND_CODE),
+    "V11-65": Check("V11", "V11-65", "기본 정렬이 규격대로임", FATAL, "run",
+                    "볼 필요 없는 C·D·미분류가 앞에 잔뜩 나온다. "
+                    "「A 이상만」을 한 번에 거는 단추를 둔다 (STEP 149s)",
+                    KIND_CODE),
+    "V11-66": Check("V11", "V11-66", "필터가 목록 위에 있음", FATAL, "run",
+                    "조건을 걸려면 표의 값을 눌러야만 하면 안 된다 (STEP 149t)",
+                    KIND_CODE),
+    "V11-67": Check("V11", "V11-67", "단추가 켜짐·꺼짐을 오감", FATAL, "run",
+                    "누르면 켜지고 다시 누르면 꺼진다. 켜진 것은 amber "
+                    "(STEP 149t)",
+                    KIND_CODE),
+    "V11-68": Check("V11", "V11-68", "v1 이 낸 열이 v2 에도 있음",
+                    FATAL, "run",
+                    "v1 목록은 22열이고 축을 열로 갈랐다. 칩으로 뭉치면 "
+                    "「이 차만 HUD 가 없다」가 안 보인다 (STEP 149o · 개정 277)",
+                    KIND_CONTRACT),
+    "V11-69": Check("V11", "V11-69", "v1 이 가진 조작이 v2 에도 있음",
+                    FATAL, "run",
+                    "단추 on/off · 정렬 드롭다운 · 건수 · 칩 해제 · 엔카 링크 · "
+                    "미리보기 (STEP 149o)",
+                    KIND_CONTRACT),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -735,6 +773,13 @@ def _screen_checks(conn, rid) -> list:
     out += _listing_paging_checks(conn, rid)
     out += _photo_checks(conn, rid)
     out += _sian_css_checks(rid)
+    # 링크 · 툴팁 · 원문 · 고르기 · 순서 · 필터 (개정 276)
+    out += _link_tip_checks(rid)
+    out.append(_origin_link_check(rid))
+    out.append(_choose_check(rid))
+    out += _order_filter_checks(rid)
+    # v1 원본 대조 (개정 277)
+    out += _v1_parity_checks(rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1165,6 +1210,178 @@ def _sian_css_checks(rid):
                    not bad59, bad59),
             result(C["V11-60"], rid, "시안과 같음",
                    "같음" if not bad60 else "다름", not bad60, bad60)]
+
+
+V1_UI = os.path.join(ROOT, "ref", "v1-ui", "web", "templates")
+
+# 이어질 수 있는 값 — 링크가 되어야 하는 것 (STEP 149p · 실측 08-16).
+# ★ 「값을 누르면 그 조건으로」가 이 도구의 설계다 (STEP 149g)
+LINKED_FIELDS = {
+    "r.dealer_shop": "딜러 — 그 딜러 매물로",
+    "r.year_month": "연식 — 그 연식으로",
+    "r.mileage_km": "주행 — 구간으로",
+    "r.price_won": "가격 — 가격대로",
+    "r.monthly_won": "월납입 — 예산대로",
+    "r.status_label": "상태 — 게시중만",
+}
+# 툴팁이 필요한 것 — 사람이 「이게 뭔가」를 물어볼 것 (STEP 149p)
+TIPPED = ("r.grade", "r.ratio_pct", "r.denominator", "c.mark", "r.monthly_won")
+ENCAR_DETAIL = "encar.com/dc/dc_cardetailview.do"
+
+
+def _cell_of(html: str, expr: str) -> str:
+    """그 값을 낸 <td> 한 칸을 통째로 잘라 온다.  ★ 링크·title 이
+    그 칸 안에 있는지를 봐야 한다 — 화면 어딘가에 있는 것으로는 안 된다."""
+    i = html.find("{{ " + expr)
+    if i < 0:
+        i = html.find(expr)
+    if i < 0:
+        return ""
+    a = html.rfind("<td", 0, i)
+    b = html.find("</td>", i)
+    return html[a:b] if a >= 0 and b > a else ""
+
+
+def _link_tip_checks(rid):
+    """V11-61 · V11-62 — 링크와 툴팁 (STEP 149p · 개정 276)."""
+    html = open(LISTINGS_TPL, encoding="utf-8").read()
+    bad61 = [f"{e} — {why}" for e, why in LINKED_FIELDS.items()
+             if "<a " not in _cell_of(html, e)]
+    bad62 = [e for e in TIPPED if 'title="' not in _cell_of(html, e)]
+    return [result(C["V11-61"], rid, "링크",
+                   f"{len(LINKED_FIELDS) - len(bad61)}/{len(LINKED_FIELDS)}",
+                   not bad61, bad61),
+            result(C["V11-62"], rid, "툴팁",
+                   f"{len(TIPPED) - len(bad62)}/{len(TIPPED)}",
+                   not bad62, bad62)]
+
+
+def _origin_link_check(rid):
+    """V11-63 — 엔카 원문 링크 (STEP 149q).
+
+    ★ 주소는 config 에 있고 화면은 encar_url 만 쓴다.
+      글자를 찾지 말고 「주소가 규격대로 만들어지는가」를 본다
+    """
+    import json as _j
+
+    bad = []
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        tpl = str(_j.load(f).get("encar_detail_url", ""))
+    if ENCAR_DETAIL not in tpl:
+        bad.append(f"config 의 주소가 규격과 다르다 — {tpl or '없음'}")
+    if "{source_id}" not in tpl:
+        bad.append("주소에 source_id 자리가 없다")
+    for name in ("why.html", "listings.html"):
+        html = open(os.path.join(TEMPLATES, name), encoding="utf-8").read()
+        if "encar_url" not in html:
+            bad.append(f"{name} 에 원문 링크가 없다")
+            continue
+        if 'target="_blank"' not in html or 'rel="noopener"' not in html:
+            bad.append(f"{name} 새 탭으로 안 연다")
+        if "엔카에서 보기" not in html:
+            bad.append(f"{name} 「엔카에서 보기」라고 안 적었다")
+    return result(C["V11-63"], rid, "원문 링크",
+                  "있음" if not bad else "없음", not bad, bad)
+
+
+def _choose_check(rid):
+    """V11-64 — 고르는 칸은 고르게 (STEP 149r).
+
+    ★ 차종 추가에서 target_key 를 손으로 치게 두지 않는다
+    """
+    path = os.path.join(TEMPLATES, "admin_targets.html")
+    html = open(path, encoding="utf-8").read() if os.path.isfile(path) else ""
+    bad = []
+    if "<select" not in html:
+        bad.append("고를 목록이 하나도 없다 — 전부 자유 입력이다")
+    if "target_key" in html and "<select" not in html:
+        bad.append("차종 키를 사람이 외워 치게 한다")
+    return result(C["V11-64"], rid, "목록 제공",
+                  f"select {html.count('<select')}개", not bad, bad)
+
+
+def _order_filter_checks(rid):
+    """V11-65 · V11-66 · V11-67 — 기본 순서 · 필터 위치 · 켜짐꺼짐."""
+    from report.screens.build import ORDER_HEAD, ORDER_TAIL
+
+    html = open(LISTINGS_TPL, encoding="utf-8").read()
+    bad65 = []
+    if "E','NOT_RATED'" not in ORDER_HEAD.replace('"', "'"):
+        bad65.append("E · NOT_RATED 를 뒤로 보내지 않는다")
+    if "earned" not in ORDER_TAIL:
+        bad65.append("비율 높은 순이 아니다")
+    from web.views import FILTER_BUTTONS
+
+    if not any(f == "min_grade" and v == "A" for f, v, _lb, _t in FILTER_BUTTONS):
+        bad65.append("「A 이상만」 단추가 없다")
+    if "기본" not in html:
+        bad65.append("기본으로 무엇이 걸렸는지 안 적는다")
+
+    # V11-66 — 필터가 표보다 위에 있는가.  ★ 줄 번호로 본다
+    bad66 = []
+    i_bar = min([x for x in (html.find('class="bar"'), html.find('class="chips"'))
+                 if x >= 0] or [-1])
+    i_tab = html.find("<table")
+    if i_bar < 0:
+        bad66.append("필터 줄이 없다")
+    elif i_tab >= 0 and i_bar > i_tab:
+        bad66.append("필터가 표 아래에 있다")
+
+    # V11-67 — 누르면 켜지고 다시 누르면 꺼지는가
+    bad67 = []
+    if 'class="btn' not in html:
+        bad67.append("조건 단추가 없다")
+    if "btn on" not in html and 'on"' not in html:
+        bad67.append("켜진 단추를 구분하지 않는다")
+    if ".btn.on" not in open(APP_CSS, encoding="utf-8").read():
+        bad67.append("켜진 단추가 amber 로 안 보인다")
+    return [result(C["V11-65"], rid, "기본 순서",
+                   "규격대로" if not bad65 else "모자람", not bad65, bad65),
+            result(C["V11-66"], rid, "필터 위치",
+                   "위" if not bad66 else "아래", not bad66, bad66),
+            result(C["V11-67"], rid, "켜짐·꺼짐",
+                   "오감" if not bad67 else "없음", not bad67, bad67)]
+
+
+def _v1_parity_checks(rid):
+    """V11-68 · V11-69 — v1 원본과 대조한다 (STEP 149o · 개정 277).
+
+    ★ 「v1 이 낸 것」을 v1 템플릿에서 직접 읽는다.  손으로 적은 표를 안 쓴다
+    """
+    src = os.path.join(V1_UI, "listings.html")
+    if not os.path.isfile(src):
+        return [not_applicable(C["V11-68"], rid, "v1 원본이 없다"),
+                not_applicable(C["V11-69"], rid, "v1 원본이 없다")]
+    v1 = open(src, encoding="utf-8").read()
+    ours = open(LISTINGS_TPL, encoding="utf-8").read()
+
+    head = re.search(r"<thead>(.*?)</thead>", v1, re.S)
+    want = [re.sub(r"<[^>]+>", "", t).strip()
+            for t in re.findall(r"<th[^>]*>(.*?)</th>", head.group(1), re.S)]
+    want = [w for w in want if w]
+    # ★ 축 열의 머리말은 config 에서 온다 (axis_heads).  템플릿 글자만 보면
+    #   화면에 있는 열을 「없다」고 한다 — 실제로 낼 이름을 합쳐서 본다
+    from report.screens.build import axis_heads
+
+    got = re.sub(r"<[^>]+>", " ", ours) + " " + " ".join(
+        a["label"] for a in axis_heads(ROOT))
+    bad68 = [w for w in want if w not in got]
+
+    # v1 이 가진 조작 — v1 템플릿에서 실제로 세어 확인한다
+    ops = {
+        "정렬 드롭다운": ("<select", "<select"),
+        "필터 단추 on/off": ("'on' if", "btn"),
+        "건수 표시": ("}}건", "건"),
+        "칩 해제": ("해제", "지우기"),
+        "엔카 링크": ('target="_blank"', 'target="_blank"'),
+        "미리보기": ("data-peek", "data-peek"),
+    }
+    bad69 = [name for name, (in_v1, in_v2) in ops.items()
+             if in_v1 in v1 and in_v2 not in ours]
+    return [result(C["V11-68"], rid, "열",
+                   f"{len(want) - len(bad68)}/{len(want)}", not bad68, bad68),
+            result(C["V11-69"], rid, "조작",
+                   f"{len(ops) - len(bad69)}/{len(ops)}", not bad69, bad69)]
 
 
 def _browser_scope_checks(rid):

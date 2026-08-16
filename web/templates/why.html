@@ -1,5 +1,8 @@
 <h1>판정 근거 <span class="{{ v.grade | gradecls }}">{{ v.grade }}</span></h1>
-<p class="muted">{{ v.target_key }} · 매물 {{ v.listing_id }}</p>
+<p class="muted">{{ v.target_key }} · 매물 {{ v.listing_id }}
+  {% if v.encar_url %}· <a href="{{ v.encar_url }}" target="_blank" rel="noopener"
+    title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a>{% endif %}</p>
+<p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
 
 {% if v.not_rated_reason %}
 <p class="warn-warn">판정하지 못했습니다 — {{ v.not_rated_reason }}</p>

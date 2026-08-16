@@ -137,6 +137,10 @@ class ScoreView:
     known_issues: tuple[dict, ...] = ()
     # ★ 5절 주요 옵션 — 옵션별 탑재 여부 (STEP 149c)
     options: tuple = ()
+    # 엔카 원문 (STEP 149q).  ★ 우리 판정은 참고다.  실제 매물은 엔카에 있다.
+    #   사람은 결국 거기서 사진을 보고 전화한다 — 그 길을 막으면 벽이 된다
+    source_id: str | None = None
+    encar_url: str | None = None
     # ★ 확인 못 한 축을 채웠을 때의 비율·등급 (STEP 149h · D-2)
     pending_best: dict | None = None
 

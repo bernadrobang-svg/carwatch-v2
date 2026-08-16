@@ -2,8 +2,17 @@
   <small>{{ paging.total | num }}건 중 {{ paging.shown | num }}건 ·
     {{ paging.page }}/{{ paging.pages }}쪽</small></h1>
 
+<div class="bar">
+  {% for b in buttons %}<a class="btn{% if b.on %} on{% endif %}"
+    href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endfor %}
+  <span class="num dim">{{ paging.total | num }}건</span>
+  <a class="clear" href="/listings">전부 지우기</a>
+</div>
+
 {% if !chips %}
-<div class="chips"><span class="none">필터 없음 — 표의 값을 누르면 그 조건으로 걸러집니다</span></div>
+<div class="chips"><span class="none">필터 없음 —
+  기본: 전체 · 비율 높은 순 · E · 미판정은 뒤로.
+  위 단추를 누르거나 표의 값을 누르면 그 조건으로 걸러집니다</span></div>
 {% endif %}
 {% if chips %}
 <div class="chips">
@@ -38,23 +47,24 @@
       width="56" height="38" loading="lazy">{% endif %}
     {% if !r.photo_url %}<span class="thumb-none">사진 없음</span>{% endif %}
   </td>
-  <td class="c"><a href="/listings?grade={{ r.grade }}" title="이 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
+  <td class="c"><a href="/listings?grade={{ r.grade }}" title="{{ r.grade }} 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
   <td class="r num">
-    {% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
-    <span class="raw{% if r.denom_short %} denom-short{% endif %}">{{ r.earned }}/{{ r.denominator }}</span>
+    {% if r.ratio_pct %}<strong title="받은 점수 ÷ 판정한 축의 배점 합">{{ r.ratio_pct }}%</strong>
+    <span class="raw{% if r.denom_short %} denom-short{% endif %}" title="원점수 {{ r.earned }} / 분모 {{ r.denominator }} — 판정할 수 없는 축은 0점이 아니라 분모에서 뺍니다">{{ r.earned }}/{{ r.denominator }}</span>
     <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>{% endif %}
-    {% if !r.ratio_pct %}<span class="dim">—</span>{% endif %}
+    {% if !r.ratio_pct %}<span class="dim" title="아직 판정하지 못했습니다">—</span>{% endif %}
   </td>
   <td><a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a>
     <span class="dim">{{ r.trim }}</span></td>
-  <td class="r num">{{ r.year_month }}</td>
-  <td class="r num">{{ r.mileage_km | km }}</td>
-  {% for c in r.axis_chips %}<td class="c"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}"><b>{{ c.mark }}</b></a></td>{% endfor %}
-  <td class="r num">{{ r.price_won | won }}</td>
-  <td class="r num">{{ r.monthly_won | won }}</td>
-  <td>{{ r.dealer_shop }}</td>
-  <td>{{ r.status_label }}</td>
-  <td><a href="/why/{{ r.listing_id }}">근거</a>
+  <td class="r num"><a href="/listings?year={{ r.year }}" title="{{ r.year }}년식만 봅니다">{{ r.year_month }}</a></td>
+  <td class="r num"><a href="/listings?km_max={{ r.km_bucket }}" title="주행 {{ r.km_bucket | km }} 이하만 봅니다">{{ r.mileage_km | km }}</a></td>
+  {% for c in r.axis_chips %}<td class="c"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }} — O 있음 · · 없음 · ? 확인 못 함"><b>{{ c.mark }}</b></a></td>{% endfor %}
+  <td class="r num"><a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다">{{ r.price_won | won }}</a></td>
+  <td class="r num"><a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a></td>
+  <td><a href="/listings?dealer={{ r.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ r.dealer_shop }}</a></td>
+  <td><a href="/listings?status=active" title="게시 중인 매물만 봅니다">{{ r.status_label }}</a></td>
+  <td><a href="/why/{{ r.listing_id }}" title="이 등급이 나온 축별 근거">근거</a>
+    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="listing_id" value="{{ r.listing_id }}">

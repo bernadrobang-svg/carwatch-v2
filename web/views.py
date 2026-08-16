@@ -79,24 +79,9 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
          **_kw) -> tuple:
     from report.screens.build import axis_heads, view_listings
 
-    q = req.get("query", {})
     ver = _versions(conn)
-    # ★ URL 파라미터 → 필터.  값은 view_listings 가 해석한다 (STEP 106a)
-    flt = ListingFilter(
-        site=q.get("site") or "encar",
-        target_key=q.get("target") or None,
-        grade=q.get("grade") or None,
-        axis=q.get("axis") or None,
-        bucket=q.get("bucket") or None,
-        order=q.get("order") or ListingFilter.__dataclass_fields__[
-            "order"].default,
-        # ★ 가격은 0 원도 뜻이 있다 — minimum 0 이다
-        price_min=_int_param(q, "price_min", None, minimum=0),
-        price_max=_int_param(q, "price_max", None, minimum=0),
-        show_all=q.get("all") == "1",
-        page=_int_param(q, "page", 1),
-        calc_version=ver["calc_version"],
-    )
+    # ★ 필터 조립은 _filter 하나다 (STEP 106a)
+    flt = _filter(conn, req.get("query", {}), ver, root)
     rows = view_listings(account, conn, flt, _cfg("finance.json", root), root)
     return page(conn, account, "매물", "listings.html",
                 {"rows": rows, "count": len(rows), "filter": flt,
@@ -104,6 +89,8 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  #   200건만 보이면서 전체를 안 적으면 3,471건을 못 본다
                  "paging": _paging(conn, flt, len(rows), root),
                  "axis_heads": axis_heads(root),
+                 # ★ 조건 단추는 위에.  누르면 켜지고 다시 누르면 꺼진다 (149t)
+                 "buttons": _filter_buttons(flt),
                  # ★ 지금 조건을 칩으로 낸다.  누른 값이 보이지 않으면
                  #   무엇으로 걸렀는지 알 수 없다 (STEP 149d · 149g)
                  "chips": _filter_chips(flt),
@@ -232,8 +219,24 @@ def _int_param(q: dict, name: str, default, minimum: int = 1):
 
 
 # 화면에 칩으로 낼 조건.  ★ 정렬은 조건이 아니라 순서다 — 따로 낸다
-CHIP_FIELDS = (("target_key", "차종"), ("grade", "등급"),
-               ("axis", "축"), ("bucket", "구간"))
+# (필드, URL 이름, 라벨).  ★ 필드 이름과 URL 이름이 다르다 —
+# 한쪽만 적으면 링크는 걸리는데 필터가 안 걸린다.
+# 실측 08-16: 쪽 넘김이 target_key= 로 내보내는데 읽는 이름은 target 이라
+# 차종 필터가 2쪽에서 통째로 풀렸다 (V11-58 이 grade 만 봐서 놓쳤다)
+CHIP_FIELDS_FULL = (
+    ("target_key", "target", "차종"),
+    ("grade", "grade", "등급"),
+    ("min_grade", "min_grade", "등급 하한"),
+    ("axis", "axis", "축"),
+    ("bucket", "bucket", "구간"),
+    ("dealer", "dealer", "딜러"),
+    ("year", "year", "연식"),
+    ("km_max", "km_max", "주행 상한"),
+    ("monthly_max", "monthly_max", "월납입 상한"),
+    ("listing_status", "status", "상태"),
+)
+CHIP_FIELDS = tuple((f, lb) for f, _u, lb in CHIP_FIELDS_FULL)
+URL_NAME = {f: u for f, u, _lb in CHIP_FIELDS_FULL}
 # ★ 가격 상·하한은 한 칩이다.  × 하나로 둘 다 빠져야 한다 (STEP 149d · B-3)
 PRICE_FIELDS = ("price_min", "price_max")
 # 만원 단위.  ★ 화면이 만원으로 읽으므로 여기서 한 번만 나눈다 (V4-13)
@@ -250,7 +253,7 @@ def _filter_chips(flt) -> list:
     import urllib.parse as _u
 
     def _rest(drop: tuple) -> dict:
-        got = {k: getattr(flt, k) for k, _lb in CHIP_FIELDS
+        got = {URL_NAME[k]: getattr(flt, k) for k, _lb in CHIP_FIELDS
                if getattr(flt, k, None) and k not in drop}
         got.update({k: getattr(flt, k) for k in PRICE_FIELDS
                     if getattr(flt, k, None) is not None and k not in drop})
@@ -317,7 +320,7 @@ def _query_string(flt) -> str:
     """지금 조건을 그대로 다음 행동에 넘긴다 (STEP 149g)."""
     import urllib.parse as _u
 
-    got = {k: getattr(flt, k) for k, _lb in CHIP_FIELDS
+    got = {URL_NAME[k]: getattr(flt, k) for k, _lb in CHIP_FIELDS
            if getattr(flt, k, None)}
     got.update({k: getattr(flt, k) for k in PRICE_FIELDS
                 if getattr(flt, k, None) is not None})
@@ -364,8 +367,67 @@ def _paging(conn, flt, shown: int, root: str) -> dict:
     }
 
 
-def _filter(conn, q: dict, ver: dict) -> ListingFilter:
-    """URL 파라미터 → 필터.  값 해석은 view_* 가 한다 (STEP 106a)."""
+# 자주 쓰는 조건 단추 (STEP 149t).  ★ (필드, 값, 라벨, 설명)
+# 누르면 켜지고 다시 누르면 꺼진다 — 켜진 것은 amber
+FILTER_BUTTONS = (
+    ("min_grade", "A", "A 이상만", "S · A 만 봅니다"),
+    ("min_grade", "B", "B 이상만", "S · A · B 만 봅니다"),
+    # ★ 위험 축은 「점수를 받았다 = 그 일이 없다」다.  bucket=1 이 양호다
+    ("axis", "history.damage", "사고 양호", "사고 이력에서 점수를 받은 매물만"),
+    ("axis", "history.rental", "렌트 아님", "렌트 이력에서 점수를 받은 매물만"),
+    ("year", "2024", "2024년 이후", "2024년식 이후만"),
+)
+# ★ 축 단추는 「점수를 받은」 구간이다 — bucket=1.  0 으로 걸면 정반대가 된다
+AXIS_BUTTON_BUCKET = "1"
+
+
+def _filter_buttons(flt) -> list:
+    """자주 쓰는 조건을 단추로 (STEP 149t · V11-66 · V11-67).
+
+    ★ 조건을 걸려면 표의 값을 눌러야만 하면 안 된다.
+      표를 눌러 거는 것은 그것대로 두되, 위에도 있어야 한다
+    """
+    import urllib.parse as _u
+
+    out = []
+    for field, value, label, tip in FILTER_BUTTONS:
+        on = getattr(flt, field, None) == value
+        got = {URL_NAME[k]: getattr(flt, k) for k, _lb in CHIP_FIELDS
+               if getattr(flt, k, None)}
+        got.update({k: getattr(flt, k) for k in PRICE_FIELDS
+                    if getattr(flt, k, None) is not None})
+        # ★ 다시 누르면 꺼진다 — 켜져 있으면 그 조건을 뺀 주소를 준다
+        if on:
+            got.pop(URL_NAME[field], None)
+            if field == "axis":
+                got.pop("bucket", None)
+        else:
+            got[URL_NAME[field]] = value
+            if field == "axis":
+                got["bucket"] = AXIS_BUTTON_BUCKET
+        if flt.order != "rank":
+            got["order"] = flt.order
+        out.append({"label": label, "tip": tip, "on": on,
+                    "url": "/listings?" + _u.urlencode(got) if got
+                    else "/listings"})
+    return out
+
+
+def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
+    """URL 파라미터 → 필터.  값 해석은 view_* 가 한다 (STEP 106a).
+
+    ★ 목록을 만드는 곳이 여기 하나다.  두 벌로 두면 새 조건이 한쪽에만
+      붙어 「링크는 걸리는데 필터는 안 걸린다」가 된다 (실측 08-15)
+    """
+    # ★ 월납입 상한은 가격 상한으로 되짚는다 — SQL 로 걸어야 쪽·건수가 맞는다
+    price_max = _int_param(q, "price_max", None, minimum=0)
+    monthly_max = _int_param(q, "monthly_max", None, minimum=0)
+    if monthly_max is not None:
+        from report.finance import price_for_monthly
+
+        cap = price_for_monthly(monthly_max, _cfg("finance.json", root),
+                                q.get("target") or None)
+        price_max = cap if price_max is None else min(price_max, cap)
     return ListingFilter(
         site=q.get("site") or "encar",
         target_key=q.get("target") or None,
@@ -376,7 +438,13 @@ def _filter(conn, q: dict, ver: dict) -> ListingFilter:
         or ListingFilter.__dataclass_fields__["order"].default,
         # ★ 가격은 0 원도 뜻이 있다 — minimum 0 이다
         price_min=_int_param(q, "price_min", None, minimum=0),
-        price_max=_int_param(q, "price_max", None, minimum=0),
+        price_max=price_max,
+        dealer=q.get("dealer") or None,
+        year=q.get("year") or None,
+        km_max=_int_param(q, "km_max", None, minimum=0),
+        monthly_max=monthly_max,
+        listing_status=q.get("status") or None,
+        min_grade=q.get("min_grade") or None,
         show_all=q.get("all") == "1",
         page=_int_param(q, "page", 1),
         calc_version=ver["calc_version"])

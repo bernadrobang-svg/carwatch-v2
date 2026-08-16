@@ -63,5 +63,19 @@
     "na": "·",
     "unknown": "?",
     "null": "?"
+  },
+  "AXIS_VALUE_LABELS": {
+    "history.damage": {
+      "1": "사고 이력 양호",
+      "0": "사고 이력 있음"
+    },
+    "history.rental": {
+      "1": "렌트 이력 없음",
+      "0": "렌트 이력 있음"
+    },
+    "history.insurance": {
+      "1": "보험 이력 양호",
+      "0": "보험 이력 많음"
+    }
   }
 }

@@ -46,6 +46,15 @@ def _stamp(conn, lid: str, calc_version: str) -> VersionStamp:
                         coef[0] if coef else None, row[3] if row else None)
 
 
+def _encar_url(source_id: str, root: str = ".") -> str:
+    """엔카 원문 주소 (STEP 149q).  ★ 주소를 코드에 박지 않는다 (config/web.json)."""
+    import json as _j
+    import os as _o
+
+    with open(_o.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return str(_j.load(f)["encar_detail_url"]).format(source_id=source_id)
+
+
 def render_listing(conn: sqlite3.Connection, listing_id: int,
                    calc_version: str, fin_cfg: dict, policy: dict,
                    root: str = ".") -> ScoreView:
@@ -54,7 +63,7 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
     head = conn.execute(
         "SELECT l.target_key, l.price_current_won, s.score_total, s.denominator,"
         " s.earned, s.not_rated_reason,"
-        " s.grade, s.absolute_fail FROM core_listing l "
+        " s.grade, s.absolute_fail, l.source_id FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
         (calc_version, listing_id)).fetchone()
@@ -100,7 +109,10 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         costs=_cost_rows(head[1], build_finance(head[1], fin_cfg, head[0])),
         # ★ 5절 주요 옵션 — 옵션별 탑재 여부 (STEP 149c)
         options=_option_rows(conn, listing_id),
-        known_issues=_known_issues(head[0], root))
+        known_issues=_known_issues(head[0], root),
+        source_id=head[8],
+        # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
+        encar_url=(_encar_url(head[8], root) if head[8] else None))
 
 
 # 왜 분모에서 빠졌는가.  ★ 코드가 아니라 사람 말로 낸다 (STEP 149h)

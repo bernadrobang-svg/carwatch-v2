@@ -69,3 +69,30 @@ def build_finance(price_listed_won: int | None, fin: dict,
     pay = monthly_payment(principal, float(fin["loan_rate_annual"]), months)
     return FinanceView(price_listed_won, cost, down, vehicle_down, principal,
                        pay, pay * months - principal, False, shortfall, est)
+
+
+# 월납입 상한 → 가격 상한을 되짚는 데 쓰는 값 (STEP 149p).
+# ★ 월납입은 가격의 단조 증가 함수다.  이분법으로 되짚는다 —
+#   근사식을 새로 쓰면 화면의 숫자와 필터가 어긋난다
+PRICE_CEILING_WON = 10_000_000_000
+BISECT_STEPS = 48
+
+
+def price_for_monthly(monthly_cap_won: int, fin: dict,
+                      target_key: str | None) -> int:
+    """월납입이 상한 이하가 되는 가장 비싼 표시가.
+
+    ★ 「월 80만 이하」를 SQL 로 걸려면 가격 상한이 필요하다.
+      build_finance 를 그대로 불러 되짚는다 — 식을 두 벌 두지 않는다
+    """
+    if monthly_cap_won <= 0:
+        return 0
+    lo, hi = 0, PRICE_CEILING_WON
+    for _ in range(BISECT_STEPS):
+        mid = (lo + hi) // 2
+        got = build_finance(mid, fin, target_key)
+        if got and got.monthly_payment_won <= monthly_cap_won:
+            lo = mid
+        else:
+            hi = mid
+    return lo
