@@ -9,15 +9,15 @@
 <p>{% for f in files %}<a class="chip" href="/admin/config?file={{ f }}">{{ f }}</a>{% endfor %}</p>
 
 <h2>{{ file }}</h2>
-<table>
+<table class="rows">
 <thead><tr><th>키</th><th class="num">현재 값</th><th>형</th><th>바꾸기</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
-  <td class="runid">{{ r.key }}</td>
-  <td class="num">{{ r.value }}</td>
-  <td class="muted">{{ r.kind }}</td>
-  <td>
+  <td class="runid" data-label="키">{{ r.key }}</td>
+  <td class="num" data-label="현재 값">{{ r.value }}</td>
+  <td class="muted" data-label="형">{{ r.kind }}</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="previewed" value="1">
@@ -35,13 +35,13 @@
 
 <h2>변경 이력</h2>
 {% if config_history %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>키</th><th class="num">값</th><th>사유</th></tr></thead>
 <tbody>
 {% for c in config_history %}
-<tr><td>{{ c.at }}</td><td class="runid">{{ c.key }}</td>
-  <td class="num">{{ c.before }} → {{ c.after }}</td>
-  <td class="muted">{{ c.reason }}{% if c.reverted %} · 되돌림{% endif %}</td></tr>
+<tr><td data-label="시각">{{ c.at }}</td><td class="runid" data-label="키">{{ c.key }}</td>
+  <td class="num" data-label="값">{{ c.before }} → {{ c.after }}</td>
+  <td class="muted" data-label="사유">{{ c.reason }}{% if c.reverted %} · 되돌림{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>

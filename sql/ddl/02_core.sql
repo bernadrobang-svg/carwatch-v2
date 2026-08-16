@@ -119,6 +119,20 @@ CREATE TABLE IF NOT EXISTS core_listing (
   sellingpoint_status       TEXT,
   ev_battery_status         TEXT,
   extend_warrant_status     TEXT,
+  -- 개정 296·297 로 받은 값 (docs/ENCAR_API.md).  ★ 원문에 있는 것만이다
+  record_use_code           TEXT,     -- 용도.  렌트 판정에 쓴다
+  owner_change_cnt_summary  INTEGER,
+  total_loss_cnt_summary    INTEGER,  -- 전손
+  flood_total_cnt_summary   INTEGER,  -- 침수(전손)
+  flood_part_cnt_summary    INTEGER,  -- 침수(분손)
+  robber_cnt_summary        INTEGER,  -- 도난
+  loan_flag                 INTEGER,  -- 저당
+  business_flag             INTEGER,
+  government_flag           INTEGER,
+  encar_cleaned             INTEGER,  -- 엔카 클린 판정
+  inspector_name            TEXT,     -- 성능점검을 누가 했나
+  ev_battery_known          INTEGER,
+  selling_point             TEXT,
   -- 공통 (STEP 31)
   collected_at           TEXT,
   parsed_at              TEXT,

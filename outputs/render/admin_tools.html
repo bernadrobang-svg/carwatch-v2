@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>도구 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 
 </head>
 <body class="s-admin-tools">
@@ -95,13 +95,13 @@
 </p>
 
 <h2>점검 — 읽기만 합니다</h2>
-<table>
+<table class="rows">
 <thead><tr><th>도구</th><th>하는 일</th><th>근거</th><th></th></tr></thead>
 <tbody>
 
-<tr><td>검증 실행</td><td class="muted">V1~V11 을 지금 돌린다</td>
-  <td class="muted">6장</td>
-  <td>
+<tr><td data-label="도구">검증 실행</td><td class="muted" data-label="하는 일">V1~V11 을 지금 돌린다</td>
+  <td class="muted" data-label="근거">6장</td>
+  <td data-label="">
     <form method="post" action="/admin/tools" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -111,9 +111,9 @@
     </form>
   </td></tr>
 
-<tr><td>등급 분포</td><td class="muted">현재 배점의 등급 분포</td>
-  <td class="muted">V5-05</td>
-  <td>
+<tr><td data-label="도구">등급 분포</td><td class="muted" data-label="하는 일">현재 배점의 등급 분포</td>
+  <td class="muted" data-label="근거">V5-05</td>
+  <td data-label="">
     <form method="post" action="/admin/tools" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -123,9 +123,9 @@
     </form>
   </td></tr>
 
-<tr><td>매핑 대조</td><td class="muted">원문 값 ↔ CORE 값 일치율</td>
-  <td class="muted">V4-01</td>
-  <td>
+<tr><td data-label="도구">매핑 대조</td><td class="muted" data-label="하는 일">원문 값 ↔ CORE 값 일치율</td>
+  <td class="muted" data-label="근거">V4-01</td>
+  <td data-label="">
     <form method="post" action="/admin/tools" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -135,9 +135,9 @@
     </form>
   </td></tr>
 
-<tr><td>경로 전수</td><td class="muted">엔드포인트별 경로 · 값 표본</td>
-  <td class="muted">2장</td>
-  <td>
+<tr><td data-label="도구">경로 전수</td><td class="muted" data-label="하는 일">엔드포인트별 경로 · 값 표본</td>
+  <td class="muted" data-label="근거">2장</td>
+  <td data-label="">
     <form method="post" action="/admin/tools" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -147,9 +147,9 @@
     </form>
   </td></tr>
 
-<tr><td>임계 제안</td><td class="muted">분포 분위수 → warnings.json 후보</td>
-  <td class="muted">STEP 82d</td>
-  <td>
+<tr><td data-label="도구">임계 제안</td><td class="muted" data-label="하는 일">분포 분위수 → warnings.json 후보</td>
+  <td class="muted" data-label="근거">STEP 82d</td>
+  <td data-label="">
     <form method="post" action="/admin/tools" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -189,8 +189,8 @@ python run.py report</pre>
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>

@@ -12,12 +12,12 @@
 </p>
 
 <h2>축 총점 <span class="muted">바꾸면 성분이 비율로 재배분됩니다</span></h2>
-<table>
+<table class="rows">
 <thead><tr><th>축</th><th class="num">총점</th><th>바꾸기</th></tr></thead>
 <tbody>
 {% for a in axis_rows %}
-<tr><td>{{ a.axis }}</td><td class="num">{{ a.points | num }}</td>
-  <td>
+<tr><td data-label="축">{{ a.axis }}</td><td class="num" data-label="총점">{{ a.points | num }}</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="previewed" value="1">
@@ -33,15 +33,15 @@
 </table>
 
 <h2>성분 {{ count | num }}</h2>
-<table>
+<table class="rows">
 <thead><tr><th>성분</th><th class="num">점수</th><th>상태</th><th>바꾸기</th><th>스킵</th></tr></thead>
 <tbody>
 {% for c in components %}
 <tr>
-  <td class="runid">{{ c.axis }}</td>
-  <td class="num">{{ c.points | num }}</td>
-  <td>{% if c.skipped %}<span class="excluded">스킵 — 총점에서 뺍니다</span>{% endif %}</td>
-  <td>
+  <td class="runid" data-label="성분">{{ c.axis }}</td>
+  <td class="num" data-label="점수">{{ c.points | num }}</td>
+  <td data-label="상태">{% if c.skipped %}<span class="excluded">스킵 — 총점에서 뺍니다</span>{% endif %}</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="previewed" value="1">
@@ -52,7 +52,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="previewed" value="1">
@@ -77,12 +77,12 @@
 
 <h2>배점 변경 이력</h2>
 {% if config_history %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>무엇</th><th>사유</th></tr></thead>
 <tbody>
 {% for c in config_history %}
-<tr><td>{{ c.at }}</td><td class="runid">{{ c.key }}</td>
-  <td class="muted">{{ c.reason }}</td></tr>
+<tr><td data-label="시각">{{ c.at }}</td><td class="runid" data-label="무엇">{{ c.key }}</td>
+  <td class="muted" data-label="사유">{{ c.reason }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

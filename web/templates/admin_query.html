@@ -7,10 +7,10 @@
 </form>
 {% if r %}
 <h2>결과</h2>
-<table>
+<table class="rows">
 <thead><tr>{% for c in r.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
 <tbody>
-{% for row in r.rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}
+{% for row in r.rows %}<tr>{% for cell in row %}<td data-label="{{ c }}">{{ cell }}</td>{% endfor %}</tr>{% endfor %}
 </tbody>
 </table>
 {% endif %}
@@ -21,13 +21,13 @@
 
 <h2>최근 쿼리 <span class="muted">거부된 것도 남습니다</span></h2>
 {% if query_history %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>SQL</th><th class="num">행</th><th class="num">시간</th><th>결과</th></tr></thead>
 <tbody>
 {% for q in query_history %}
-<tr><td>{{ q.at }}</td><td class="runid">{{ q.sql }}</td>
-  <td class="num">{{ q.rows | num }}</td><td class="num">{{ q.ms | num }}ms</td>
-  <td>{% if q.rejected %}<span class="warn-block">거부 — {{ q.rejected }}</span>{% endif %}{% if !q.rejected %}실행{% endif %}</td></tr>
+<tr><td data-label="시각">{{ q.at }}</td><td class="runid" data-label="SQL">{{ q.sql }}</td>
+  <td class="num" data-label="행">{{ q.rows | num }}</td><td class="num" data-label="시간">{{ q.ms | num }}ms</td>
+  <td data-label="결과">{% if q.rejected %}<span class="warn-block">거부 — {{ q.rejected }}</span>{% endif %}{% if !q.rejected %}실행{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -37,12 +37,12 @@
 {% endif %}
 
 <h2>테이블 {{ db_tables | count }}</h2>
-<table>
+<table class="rows">
 <thead><tr><th>표</th><th class="num">행</th><th>컬럼</th></tr></thead>
 <tbody>
 {% for t in db_tables %}
-<tr><td class="runid">{{ t.name }}</td><td class="num">{{ t.rows | num }}</td>
-  <td class="muted">{{ t.columns }}</td></tr>
+<tr><td class="runid" data-label="표">{{ t.name }}</td><td class="num" data-label="행">{{ t.rows | num }}</td>
+  <td class="muted" data-label="컬럼">{{ t.columns }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

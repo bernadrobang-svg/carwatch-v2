@@ -535,3 +535,67 @@ def parse_diagnosis_items(body: dict) -> list[dict]:
              "result_code": i["resultCode"], "result_text": i.get("result")}
             for i in as_list(body.get("items"))
             if isinstance(i, dict) and i.get("resultCode")]
+
+
+def _text(value) -> str | None:
+    """문자열로 남긴다.  ★ 빈 문자는 None 이 아니다 — 「없음」과 「못 받음」은 다르다"""
+    if value is None:
+        return None
+    got = str(value).strip()
+    return got or None
+
+
+# ── 개정 296·297 로 늘어난 원문 (docs/ENCAR_API.md) ──────────────────
+# ★ 원문에 있는 것만 넣는다.  추정하지 않는다 (OVERNIGHT ③)
+def parse_record_summary(body: dict, site: str, source_id: str) -> dict:
+    """보험이력 요약 → core_listing 보강.
+
+    ★ 용도(use) · 특수 사고이력(전손 · 침수 · 도난) · 소유자 변경 · 저당.
+      우리가 advertisementType 으로만 보던 렌트가 여기 명시돼 있다 (개정 296 §4)
+    """
+    def num(v):
+        try:
+            return int(v)
+        except (TypeError, ValueError):
+            return None
+
+    return {
+        "record_use_code": _text(body.get("use")),
+        "owner_change_cnt_summary": num(body.get("ownerChangeCnt")),
+        "total_loss_cnt_summary": num(body.get("totalLossCnt")),
+        "flood_total_cnt_summary": num(body.get("floodTotalLossCnt")),
+        "flood_part_cnt_summary": num(body.get("floodPartLossCnt")),
+        "robber_cnt_summary": num(body.get("robberCnt")),
+        "loan_flag": num(body.get("loan")),
+        "business_flag": num(body.get("business")),
+        "government_flag": num(body.get("government")),
+        "row_status": "ok",
+    }
+
+
+def parse_clean_encar(body: dict, site: str, source_id: str) -> dict:
+    """엔카 클린 판정.  ★ 플랫폼이 책임지는 판정이다 (개정 297 §2)."""
+    got = body.get("cleaned")
+    return {"encar_cleaned": 1 if got is True else 0 if got is False else None,
+            "row_status": "ok"}
+
+
+def parse_inspection_summary(body: dict, site: str, source_id: str) -> dict:
+    """성능점검 요약 — 점검자 이름.  ★ 누가 점검했는지가 신뢰의 근거다."""
+    return {"inspector_name": _text(body.get("inspName")), "row_status": "ok"}
+
+
+def parse_ev_battery(body: dict, site: str, source_id: str) -> dict:
+    """전기차 배터리.  ★ 지금은 전건 null 이다 — 그것도 사실로 남긴다."""
+    got = any(body.get(k) for k in
+              ("ensolRawInfo", "jatoBatteryInfo", "encarComputedInfo"))
+    return {"ev_battery_known": 1 if got else 0, "row_status": "ok"}
+
+
+def parse_sellingpoint(body: dict, site: str, source_id: str) -> dict:
+    """판매 포인트.  ★ 표시용이다.  판정에 쓰지 않는다."""
+    sp = body.get("sellingPoint")
+    name = None
+    if isinstance(sp, dict):
+        name = sp.get("smallCategoryName") or sp.get("mediumCategoryName")
+    return {"selling_point": _text(name), "row_status": "ok"}

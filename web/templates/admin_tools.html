@@ -8,13 +8,13 @@
 </p>
 
 <h2>점검 — 읽기만 합니다</h2>
-<table>
+<table class="rows">
 <thead><tr><th>도구</th><th>하는 일</th><th>근거</th><th></th></tr></thead>
 <tbody>
 {% for t in tools %}
-<tr><td>{{ t.label }}</td><td class="muted">{{ t.what }}</td>
-  <td class="muted">{{ t.step }}</td>
-  <td>
+<tr><td data-label="도구">{{ t.label }}</td><td class="muted" data-label="하는 일">{{ t.what }}</td>
+  <td class="muted" data-label="근거">{{ t.step }}</td>
+  <td data-label="">
     <form method="post" action="/admin/tools" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="previewed" value="1">
@@ -31,11 +31,11 @@
 <h2>{{ result.title }}</h2>
 <p class="muted">{{ result.note }}</p>
 {% if result.rows %}
-<table>
+<table class="rows">
 <thead><tr>{% for k in result.rows.0 %}<th>{{ k }}</th>{% endfor %}</tr></thead>
 <tbody>
 {% for r in result.rows %}
-<tr>{% for k in r %}<td>{{ r[k] }}</td>{% endfor %}</tr>
+<tr>{% for k in r %}<td data-label="{{ k }}">{{ r[k] }}</td>{% endfor %}</tr>
 {% endfor %}
 </tbody>
 </table>

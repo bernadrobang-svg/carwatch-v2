@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-run">
@@ -105,21 +105,33 @@
   
 
   <h3>지금까지 받은 것</h3>
-  <table>
+  <table class="rows">
   <thead><tr><th>엔드포인트</th><th class="num">원문</th></tr></thead>
   <tbody>
   
-  <tr><td>catalog</td><td class="num">125</td></tr>
+  <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">125</td></tr>
   
-  <tr><td>detail</td><td class="num">3,648</td></tr>
+  <tr><td data-label="엔드포인트">clean_encar</td><td class="num" data-label="원문">383</td></tr>
   
-  <tr><td>diagnosis</td><td class="num">486</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">3,648</td></tr>
   
-  <tr><td>inspection</td><td class="num">2,034</td></tr>
+  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">486</td></tr>
   
-  <tr><td>list</td><td class="num">393</td></tr>
+  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">385</td></tr>
   
-  <tr><td>record</td><td class="num">2,379</td></tr>
+  <tr><td data-label="엔드포인트">extend_warrant</td><td class="num" data-label="원문">1</td></tr>
+  
+  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">2,034</td></tr>
+  
+  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">216</td></tr>
+  
+  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">393</td></tr>
+  
+  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">2,379</td></tr>
+  
+  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">239</td></tr>
+  
+  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">383</td></tr>
   
   </tbody>
   </table>
@@ -192,19 +204,19 @@
 
 <h2>진행</h2>
 
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>상태</th><th>단계</th><th class="num">진행</th><th>사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td>2026-08-16T03:48:11.495028+00:00</td><td>failed</td><td>-</td>
-  <td class="num">—/—</td>
-  <td class="muted">raw_missing</td>
-  <td></td></tr>
+<tr><td data-label="시각">2026-08-16T03:48:11.495028+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">—/—</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
 
-<tr><td>2026-08-15T16:36:43.278091+00:00</td><td>failed</td><td>-</td>
-  <td class="num">—/—</td>
-  <td class="muted">listing_updated</td>
-  <td></td></tr>
+<tr><td data-label="시각">2026-08-15T16:36:43.278091+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">—/—</td>
+  <td class="muted" data-label="사유">listing_updated</td>
+  <td data-label=""></td></tr>
 
 </tbody>
 </table>
@@ -213,7 +225,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-16T08:34:39.174734+00:00 · 20260816T083439 · fatal 5 · 556초</li><li>2026-08-16T08:32:22.559181+00:00 · 20260816T083222 · 정상 · 2.2초</li><li>2026-08-16T08:31:39.699106+00:00 · 20260816T083139 · 정상 · 4.4초</li><li>2026-08-16T07:39:32.403179+00:00 · 20260816T073929 · fatal 7 · 0.8초</li><li>2026-08-16T07:29:48.989949+00:00 · 20260816T072948 · 정상 · 38.3초</li></ul>
+<ul class="muted"><li>2026-08-16T16:54:18.984381+00:00 · 20260816T165418 · 정상 · 87.9초</li><li>2026-08-16T08:34:39.174734+00:00 · 20260816T083439 · fatal 5 · 556초</li><li>2026-08-16T08:32:22.559181+00:00 · 20260816T083222 · 정상 · 2.2초</li><li>2026-08-16T08:31:39.699106+00:00 · 20260816T083139 · 정상 · 4.4초</li><li>2026-08-16T07:39:32.403179+00:00 · 20260816T073929 · fatal 7 · 0.8초</li></ul>
 
 
 
@@ -223,8 +235,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>

@@ -38,7 +38,21 @@ TRIM_FIELD = "Badge"
 from adapters.encar import LISTING_ENDPOINT_KINDS as LISTING_ENDPOINTS  # noqa: E402
 # ★ 진단 원문이 오는 값.  1·2 는 404 다 (2026-08-14 실측 3요청 · STEP 21b)
 from validate.v1_collect import DIAG_HAS_REPORT  # noqa: E402
+from parse.encar.mapping import (  # noqa: E402
+    parse_clean_encar, parse_ev_battery, parse_inspection_summary,
+    parse_record_summary, parse_sellingpoint,
+)
 
+EXTRA_PARSERS = {
+    "record_summary": parse_record_summary,
+    "clean_encar": parse_clean_encar,
+    "inspection_summary": parse_inspection_summary,
+    "ev_battery": parse_ev_battery,
+    "sellingpoint": parse_sellingpoint,
+}
+
+# 개정 296·297 로 늘어난 원문의 파서.  ★ core_listing 을 보강만 한다 —
+# 새 표를 만들지 않는다.  매물당 한 줄짜리 값들이다
 # 축은 Type 이 'Aspect' 인 노드다.  Name 만으로 훑지 않는다 (STEP 23).
 ASPECT = "Aspect"
 
@@ -692,6 +706,18 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                              split_pii(conn, rec, adapter.site_code,
                                        pii_key, at),
                              ctx.parse_version, at)
+            elif kind in EXTRA_PARSERS:
+                # ★ 개정 296·297 로 늘어난 원문 — core_listing 을 보강한다.
+                #   원문에 있는 것만 넣는다.  추정하지 않는다
+                got, issues = parse_with_issues(
+                    EXTRA_PARSERS[kind], doc, adapter.site_code, sid, kind)
+                _save_issues(conn, lid, issues, ctx.parse_version, at)
+                fields = {k: v for k, v in got.items() if k != "row_status"}
+                if fields:
+                    sets = ", ".join(f"{k}=?" for k in fields)
+                    conn.execute(
+                        f"UPDATE core_listing SET {sets} WHERE listing_id=?",
+                        [*fields.values(), lid])
             else:
                 # ★ 표시용이다.  교환 판정은 outers 가 한다 (STEP 21b)
                 dg, issues = parse_with_issues(

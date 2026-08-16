@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>등록부 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 
 </head>
 <body class="s-admin-registry">
@@ -99,15 +99,15 @@
 <p class="chips">
 <a class="chip" href="/admin/registry?usage=in_use">in_use (170)</a><a class="chip" href="/admin/registry?usage=unclassified">unclassified (110)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (54)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (45)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
 </p>
-<table>
+<table class="rows">
 <thead><tr><th>엔드포인트</th><th>경로</th><th class="num">미관측</th>
 <th>구분</th><th>컬럼</th><th>근거</th><th>분류</th></tr></thead>
 <tbody>
 
-<tr><td>core</td><td><code>accident_my_cnt</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_my_cnt</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -122,10 +122,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>accident_my_cost</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_my_cost</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -140,10 +140,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>accident_other_cnt</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_other_cnt</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -158,10 +158,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>accident_other_cost</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_other_cost</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -176,10 +176,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>accident_total_cnt</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_total_cnt</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -194,10 +194,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>accidents_json</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accidents_json</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -212,10 +212,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>check_engine</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>check_engine</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -230,10 +230,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>check_transmission</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>check_transmission</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -248,10 +248,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>first_registration_date</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>first_registration_date</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -266,10 +266,10 @@
   </form>
 </td></tr>
 
-<tr><td>core</td><td><code>flood_date</code></td>
-<td class="num">2</td><td>unclassified</td>
-<td></td><td class="muted">upsert 가 버린 키 — 컬럼이 없다</td>
-<td>
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>flood_date</code></td>
+<td class="num" data-label="미관측">2</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
@@ -293,8 +293,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>

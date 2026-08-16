@@ -12,15 +12,15 @@
 <p class="chips">
 {% for c in counts %}<a class="chip" href="/admin/registry?usage={{ c.usage }}">{{ c.usage }} ({{ c.n | num }})</a>{% endfor %}
 </p>
-<table>
+<table class="rows">
 <thead><tr><th>엔드포인트</th><th>경로</th><th class="num">미관측</th>
 <th>구분</th><th>컬럼</th><th>근거</th><th>분류</th></tr></thead>
 <tbody>
 {% for r in rows %}
-<tr><td>{{ r.endpoint }}</td><td><code>{{ r.json_path }}</code></td>
-<td class="num">{{ r.miss_streak | num }}</td><td>{{ r.usage }}</td>
-<td>{{ r.core_column }}</td><td class="muted">{{ r.reason }}</td>
-<td>
+<tr><td data-label="엔드포인트">{{ r.endpoint }}</td><td data-label="경로"><code>{{ r.json_path }}</code></td>
+<td class="num" data-label="미관측">{{ r.miss_streak | num }}</td><td data-label="구분">{{ r.usage }}</td>
+<td data-label="컬럼">{{ r.core_column }}</td><td class="muted" data-label="근거">{{ r.reason }}</td>
+<td data-label="분류">
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="previewed" value="1">

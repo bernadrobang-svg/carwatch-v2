@@ -105,14 +105,14 @@
 
 <h2>반입 이력 {{ import_batches | count }}건</h2>
 {% if import_batches %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th class="num">raw_id</th><th>사이트</th>
   <th class="num">크기</th><th>메모</th></tr></thead>
 <tbody>
 {% for b in import_batches %}
-<tr><td>{{ b.at }}</td><td class="num">{{ b.raw_id }}</td>
-  <td>{{ b.site }}</td><td class="num">{{ b.bytes | num }}</td>
-  <td class="muted">{{ b.meta }}</td></tr>
+<tr><td data-label="시각">{{ b.at }}</td><td class="num" data-label="raw_id">{{ b.raw_id }}</td>
+  <td data-label="사이트">{{ b.site }}</td><td class="num" data-label="크기">{{ b.bytes | num }}</td>
+  <td class="muted" data-label="메모">{{ b.meta }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

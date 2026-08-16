@@ -2,13 +2,13 @@
 
 {% if h.todos %}
 <h2>조치가 필요한 것</h2>
-<table>
+<table class="rows">
 <thead><tr><th>무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
 <tbody>
 {% for t in h.todos %}
-<tr><td class="warn-warn">{{ t.label }}</td><td class="num">{{ t.count | num }}</td>
-  <td class="muted">{{ t.why }}</td><td class="muted">{{ t.action }}</td>
-  <td>{% if t.url %}<a href="{{ t.url }}">가기</a>{% endif %}</td></tr>
+<tr><td class="warn-warn" data-label="무엇">{{ t.label }}</td><td class="num" data-label="건수">{{ t.count | num }}</td>
+  <td class="muted" data-label="왜">{{ t.why }}</td><td class="muted" data-label="하면 되는 것">{{ t.action }}</td>
+  <td data-label="">{% if t.url %}<a href="{{ t.url }}">가기</a>{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -26,26 +26,26 @@
   <li>대기 작업 <strong>{{ h.queued_jobs | num }}</strong></li>
 </ul>
 <h2>메뉴</h2>
-<table>
+<table class="rows">
 <thead><tr><th>분류</th><th>화면</th><th>근거</th><th>상태</th></tr></thead>
 <tbody>
 {% for m in h.menu %}
-<tr><td>{{ m.group }}</td><td><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td>{{ m.step_ref }}</td>
-<td>{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+<tr><td data-label="분류">{{ m.group }}</td><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+<td data-label="근거">{{ m.step_ref }}</td>
+<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>
 
 {% if h.recent_runs %}
 <h2>최근 실행 {{ h.recent_runs | count }}건</h2>
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 {% for r in h.recent_runs %}
-<tr><td>{{ r.at }}</td><td class="muted">{{ r.reason }}</td>
-  <td class="runid">{{ r.steps }}</td>
-  <td class="num">{{ r.seconds | num }}초</td><td>{{ r.verdict }}</td></tr>
+<tr><td data-label="시각">{{ r.at }}</td><td class="muted" data-label="사유">{{ r.reason }}</td>
+  <td class="runid" data-label="실행">{{ r.steps }}</td>
+  <td class="num" data-label="소요">{{ r.seconds | num }}초</td><td data-label="판정">{{ r.verdict }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -53,12 +53,12 @@
 
 <h2>최근 변경 <span class="muted">되돌릴 수 있습니다</span></h2>
 {% if h.recent_changes %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>무엇</th><th>사유</th><th></th></tr></thead>
 <tbody>
 {% for c in h.recent_changes %}
-<tr><td>{{ c.at }}</td><td>{{ c.what }}</td><td class="muted">{{ c.reason }}</td>
-  <td>{% if c.revertible %}<form method="post" action="/admin/config" class="inline">
+<tr><td data-label="시각">{{ c.at }}</td><td data-label="무엇">{{ c.what }}</td><td class="muted" data-label="사유">{{ c.reason }}</td>
+  <td data-label="">{% if c.revertible %}<form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="action" value="revert">
     <input type="hidden" name="change_id" value="{{ c.change_id }}">

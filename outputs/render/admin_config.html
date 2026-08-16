@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>설정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 
 </head>
 <body class="s-admin-config">
@@ -96,15 +96,15 @@
 <p><a class="chip" href="/admin/config?file=admin.json">admin.json</a><a class="chip" href="/admin/config?file=checks.json">checks.json</a><a class="chip" href="/admin/config?file=dealer_trust.json">dealer_trust.json</a><a class="chip" href="/admin/config?file=depreciation.json">depreciation.json</a><a class="chip" href="/admin/config?file=endpoints.json">endpoints.json</a><a class="chip" href="/admin/config?file=field_usage.json">field_usage.json</a><a class="chip" href="/admin/config?file=finance.json">finance.json</a><a class="chip" href="/admin/config?file=known_issues.json">known_issues.json</a><a class="chip" href="/admin/config?file=labels.json">labels.json</a><a class="chip" href="/admin/config?file=scoring.json">scoring.json</a><a class="chip" href="/admin/config?file=sites.json">sites.json</a><a class="chip" href="/admin/config?file=targets.json">targets.json</a><a class="chip" href="/admin/config?file=warnings.json">warnings.json</a><a class="chip" href="/admin/config?file=web.json">web.json</a></p>
 
 <h2>scoring.json</h2>
-<table>
+<table class="rows">
 <thead><tr><th>키</th><th class="num">현재 값</th><th>형</th><th>바꾸기</th></tr></thead>
 <tbody>
 
 <tr>
-  <td class="runid">calc_version</td>
-  <td class="num">c1</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">calc_version</td>
+  <td class="num" data-label="현재 값">c1</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -118,10 +118,10 @@
 </tr>
 
 <tr>
-  <td class="runid">total_points</td>
-  <td class="num">555</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">total_points</td>
+  <td class="num" data-label="현재 값">555</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -135,10 +135,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.price</td>
-  <td class="num">200</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.price</td>
+  <td class="num" data-label="현재 값">200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -152,10 +152,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.warranty.general</td>
-  <td class="num">50</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.warranty.general</td>
+  <td class="num" data-label="현재 값">50</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -169,10 +169,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.warranty.power</td>
-  <td class="num">50</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.warranty.power</td>
+  <td class="num" data-label="현재 값">50</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -186,10 +186,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.hud</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.hud</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -203,10 +203,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.hda</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.hda</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -220,10 +220,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.sunroof</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.sunroof</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -237,10 +237,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.svm</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.svm</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -254,10 +254,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.scc</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.scc</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -271,10 +271,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.bsd</td>
-  <td class="num">5</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.bsd</td>
+  <td class="num" data-label="현재 값">5</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -288,10 +288,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.spec.tinting</td>
-  <td class="num">5</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.spec.tinting</td>
+  <td class="num" data-label="현재 값">5</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -305,10 +305,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.history.damage</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.history.damage</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -322,10 +322,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.history.insurance</td>
-  <td class="num">15</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.history.insurance</td>
+  <td class="num" data-label="현재 값">15</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -339,10 +339,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.history.rental</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.history.rental</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -356,10 +356,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.safety.diagnosis</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.safety.diagnosis</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -373,10 +373,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.safety.warranty_product</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.safety.warranty_product</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -390,10 +390,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.color</td>
-  <td class="num">40</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.color</td>
+  <td class="num" data-label="현재 값">40</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -407,10 +407,10 @@
 </tr>
 
 <tr>
-  <td class="runid">components.mileage</td>
-  <td class="num">30</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">components.mileage</td>
+  <td class="num" data-label="현재 값">30</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -424,10 +424,10 @@
 </tr>
 
 <tr>
-  <td class="runid">admin.query_row_limit</td>
-  <td class="num">1000</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">admin.query_row_limit</td>
+  <td class="num" data-label="현재 값">1000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -441,10 +441,10 @@
 </tr>
 
 <tr>
-  <td class="runid">admin.query_timeout_sec</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">admin.query_timeout_sec</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -458,10 +458,10 @@
 </tr>
 
 <tr>
-  <td class="runid">admin.schedule.collect</td>
-  <td class="num">daily 06:00</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">admin.schedule.collect</td>
+  <td class="num" data-label="현재 값">daily 06:00</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -475,10 +475,10 @@
 </tr>
 
 <tr>
-  <td class="runid">admin.session_hours</td>
-  <td class="num">12</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">admin.session_hours</td>
+  <td class="num" data-label="현재 값">12</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -492,10 +492,10 @@
 </tr>
 
 <tr>
-  <td class="runid">admin.hash_rounds</td>
-  <td class="num">200000</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">admin.hash_rounds</td>
+  <td class="num" data-label="현재 값">200000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -509,10 +509,10 @@
 </tr>
 
 <tr>
-  <td class="runid">grade_cuts.S</td>
-  <td class="num">0.9</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">grade_cuts.S</td>
+  <td class="num" data-label="현재 값">0.9</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -526,10 +526,10 @@
 </tr>
 
 <tr>
-  <td class="runid">grade_cuts.A</td>
-  <td class="num">0.8</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">grade_cuts.A</td>
+  <td class="num" data-label="현재 값">0.8</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -543,10 +543,10 @@
 </tr>
 
 <tr>
-  <td class="runid">grade_cuts.B</td>
-  <td class="num">0.7</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">grade_cuts.B</td>
+  <td class="num" data-label="현재 값">0.7</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -560,10 +560,10 @@
 </tr>
 
 <tr>
-  <td class="runid">grade_cuts.C</td>
-  <td class="num">0.6</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">grade_cuts.C</td>
+  <td class="num" data-label="현재 값">0.6</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -577,10 +577,10 @@
 </tr>
 
 <tr>
-  <td class="runid">min_denominator_ratio</td>
-  <td class="num">0.6</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">min_denominator_ratio</td>
+  <td class="num" data-label="현재 값">0.6</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -594,10 +594,10 @@
 </tr>
 
 <tr>
-  <td class="runid">price_curve</td>
-  <td class="num">[{&quot;deviation&quot;: -0.25, &quot;points&quot;: 200}, {&quot;deviation&quot;: -0.2, &quot;points&quot;: 180}, {&quot;devi</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">price_curve</td>
+  <td class="num" data-label="현재 값">[{&quot;deviation&quot;: -0.25, &quot;points&quot;: 200}, {&quot;deviation&quot;: -0.2, &quot;points&quot;: 180}, {&quot;devi</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -611,10 +611,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.warranty.full_months</td>
-  <td class="num">24</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.warranty.full_months</td>
+  <td class="num" data-label="현재 값">24</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -628,10 +628,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.warranty.expire_penalty</td>
-  <td class="num">-15</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.warranty.expire_penalty</td>
+  <td class="num" data-label="현재 값">-15</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -645,10 +645,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.warranty.km_per_month</td>
-  <td class="num">1250</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.warranty.km_per_month</td>
+  <td class="num" data-label="현재 값">1250</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -662,10 +662,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.spec.hda_points.2</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.spec.hda_points.2</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -679,10 +679,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.spec.hda_points.1</td>
-  <td class="num">12</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.spec.hda_points.1</td>
+  <td class="num" data-label="현재 값">12</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -696,10 +696,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.spec.hda_points.0</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.spec.hda_points.0</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -713,10 +713,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.spec.hda_gate_open</td>
-  <td class="num">True</td>
-  <td class="muted">bool</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.spec.hda_gate_open</td>
+  <td class="num" data-label="현재 값">True</td>
+  <td class="muted" data-label="형">bool</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -730,10 +730,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.spec.hda_level2_phrases</td>
-  <td class="num">[&quot;고속도로 주행 보조 2&quot;, &quot;고속도로 주행보조 2&quot;, &quot;HDA 2&quot;]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.spec.hda_level2_phrases</td>
+  <td class="num" data-label="현재 값">[&quot;고속도로 주행 보조 2&quot;, &quot;고속도로 주행보조 2&quot;, &quot;HDA 2&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -747,10 +747,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.spec.hda_level1_phrases</td>
-  <td class="num">[&quot;고속도로 주행 보조&quot;, &quot;고속도로 주행보조&quot;, &quot;HDA&quot;]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.spec.hda_level1_phrases</td>
+  <td class="num" data-label="현재 값">[&quot;고속도로 주행 보조&quot;, &quot;고속도로 주행보조&quot;, &quot;HDA&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -764,10 +764,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_swap.0</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_swap.0</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -781,10 +781,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_swap.1</td>
-  <td class="num">15</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_swap.1</td>
+  <td class="num" data-label="현재 값">15</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -798,10 +798,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_swap.2</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_swap.2</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -815,10 +815,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_swap.3</td>
-  <td class="num">5</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_swap.3</td>
+  <td class="num" data-label="현재 값">5</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -832,10 +832,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_status.교환(교체)</td>
-  <td class="num">swap</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_status.교환(교체)</td>
+  <td class="num" data-label="현재 값">swap</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -849,10 +849,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_status.용접,절단</td>
-  <td class="num">swap</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_status.용접,절단</td>
+  <td class="num" data-label="현재 값">swap</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -866,10 +866,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_status.판금/용접</td>
-  <td class="num">none</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_status.판금/용접</td>
+  <td class="num" data-label="현재 값">none</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -883,10 +883,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_by_status.손상</td>
-  <td class="num">none</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_by_status.손상</td>
+  <td class="num" data-label="현재 값">none</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -900,10 +900,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.damage_min</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.damage_min</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -917,10 +917,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.insurance_cap_by_count.0</td>
-  <td class="num">15</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.insurance_cap_by_count.0</td>
+  <td class="num" data-label="현재 값">15</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -934,10 +934,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.insurance_cap_by_count.1</td>
-  <td class="num">12</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.insurance_cap_by_count.1</td>
+  <td class="num" data-label="현재 값">12</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -951,10 +951,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.insurance_cap_by_count.2</td>
-  <td class="num">9</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.insurance_cap_by_count.2</td>
+  <td class="num" data-label="현재 값">9</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -968,10 +968,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.insurance_cap_by_count.3</td>
-  <td class="num">6</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.insurance_cap_by_count.3</td>
+  <td class="num" data-label="현재 값">6</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -985,10 +985,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.insurance_cap_min</td>
-  <td class="num">6</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.insurance_cap_min</td>
+  <td class="num" data-label="현재 값">6</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1002,10 +1002,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.rental.non_rental</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.rental.non_rental</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1019,10 +1019,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.rental.rental</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.rental.rental</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1036,10 +1036,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.rental.unknown</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.rental.unknown</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1053,10 +1053,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.history.insurance_cost_curve</td>
-  <td class="num">[{&quot;ratio&quot;: 0.0, &quot;points&quot;: 15}, {&quot;ratio&quot;: 0.02, &quot;points&quot;: 13}, {&quot;ratio&quot;: 0.04, &quot;p</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.history.insurance_cost_curve</td>
+  <td class="num" data-label="현재 값">[{&quot;ratio&quot;: 0.0, &quot;points&quot;: 15}, {&quot;ratio&quot;: 0.02, &quot;points&quot;: 13}, {&quot;ratio&quot;: 0.04, &quot;p</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1070,10 +1070,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.safety.diagnosis_yes</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.safety.diagnosis_yes</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1087,10 +1087,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.safety.diagnosis_no</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.safety.diagnosis_no</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1104,10 +1104,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.safety.warranty_product_yes</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.safety.warranty_product_yes</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1121,10 +1121,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.safety.warranty_product_no</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.safety.warranty_product_no</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1138,10 +1138,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.safety.warranty_product_na_targets</td>
-  <td class="num">[&quot;MODEL_Y&quot;, &quot;GV60&quot;, &quot;G80_EV&quot;, &quot;GV70_EV&quot;]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.safety.warranty_product_na_targets</td>
+  <td class="num" data-label="현재 값">[&quot;MODEL_Y&quot;, &quot;GV60&quot;, &quot;G80_EV&quot;, &quot;GV70_EV&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1155,10 +1155,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.color.grade_points.preferred</td>
-  <td class="num">40</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.color.grade_points.preferred</td>
+  <td class="num" data-label="현재 값">40</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1172,10 +1172,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.color.grade_points.neutral</td>
-  <td class="num">25</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.color.grade_points.neutral</td>
+  <td class="num" data-label="현재 값">25</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1189,10 +1189,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.color.grade_points.avoided</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.color.grade_points.avoided</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1206,10 +1206,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.color.gate_open</td>
-  <td class="num">True</td>
-  <td class="muted">bool</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.color.gate_open</td>
+  <td class="num" data-label="현재 값">True</td>
+  <td class="muted" data-label="형">bool</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1223,10 +1223,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.mileage.full_km</td>
-  <td class="num">40000</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.mileage.full_km</td>
+  <td class="num" data-label="현재 값">40000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1240,10 +1240,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.mileage.zero_km</td>
-  <td class="num">100000</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.mileage.zero_km</td>
+  <td class="num" data-label="현재 값">100000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1257,10 +1257,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.mileage.unknown_points</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.mileage.unknown_points</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1274,10 +1274,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.absolute_fail.repair_cost_ratio</td>
-  <td class="num">0.139</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.absolute_fail.repair_cost_ratio</td>
+  <td class="num" data-label="현재 값">0.139</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1291,10 +1291,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.absolute_fail.sales_status_fail</td>
-  <td class="num">[&quot;CONTRACT&quot;, &quot;SOLD&quot;]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.absolute_fail.sales_status_fail</td>
+  <td class="num" data-label="현재 값">[&quot;CONTRACT&quot;, &quot;SOLD&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1308,10 +1308,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.absolute_fail.advertisement_type_normal</td>
-  <td class="num">NORMAL</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.absolute_fail.advertisement_type_normal</td>
+  <td class="num" data-label="현재 값">NORMAL</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1325,10 +1325,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.absolute_fail.frame_ranks</td>
-  <td class="num">[&quot;RANK_A&quot;, &quot;RANK_B&quot;, &quot;RANK_C&quot;]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.absolute_fail.frame_ranks</td>
+  <td class="num" data-label="현재 값">[&quot;RANK_A&quot;, &quot;RANK_B&quot;, &quot;RANK_C&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1342,10 +1342,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.absolute_fail.outer_ranks</td>
-  <td class="num">[&quot;RANK_ONE&quot;, &quot;RANK_TWO&quot;]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.absolute_fail.outer_ranks</td>
+  <td class="num" data-label="현재 값">[&quot;RANK_ONE&quot;, &quot;RANK_TWO&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1359,10 +1359,10 @@
 </tr>
 
 <tr>
-  <td class="runid">axis_rules.absolute_fail.swap_status_title</td>
-  <td class="num">교환(교체)</td>
-  <td class="muted">str</td>
-  <td>
+  <td class="runid" data-label="키">axis_rules.absolute_fail.swap_status_title</td>
+  <td class="num" data-label="현재 값">교환(교체)</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1376,10 +1376,10 @@
 </tr>
 
 <tr>
-  <td class="runid">peer_year_window</td>
-  <td class="num">1</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">peer_year_window</td>
+  <td class="num" data-label="현재 값">1</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1393,10 +1393,10 @@
 </tr>
 
 <tr>
-  <td class="runid">peer_mileage_window</td>
-  <td class="num">10000</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">peer_mileage_window</td>
+  <td class="num" data-label="현재 값">10000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1410,10 +1410,10 @@
 </tr>
 
 <tr>
-  <td class="runid">peer_min_sample</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">peer_min_sample</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1427,10 +1427,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.sample_limit</td>
-  <td class="num">20</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.sample_limit</td>
+  <td class="num" data-label="현재 값">20</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1444,10 +1444,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.price_median_min_won</td>
-  <td class="num">1000000</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.price_median_min_won</td>
+  <td class="num" data-label="현재 값">1000000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1461,10 +1461,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.mapping_ratio.A</td>
-  <td class="num">1.0</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.mapping_ratio.A</td>
+  <td class="num" data-label="현재 값">1.0</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1478,10 +1478,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.mapping_ratio.B</td>
-  <td class="num">0.99</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.mapping_ratio.B</td>
+  <td class="num" data-label="현재 값">0.99</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1495,10 +1495,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.mapping_ratio.C</td>
-  <td class="num">0.8</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.mapping_ratio.C</td>
+  <td class="num" data-label="현재 값">0.8</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1512,10 +1512,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.grade_dominant_ratio</td>
-  <td class="num">0.9</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.grade_dominant_ratio</td>
+  <td class="num" data-label="현재 값">0.9</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1529,10 +1529,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.shuffle_sample</td>
-  <td class="num">100</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.shuffle_sample</td>
+  <td class="num" data-label="현재 값">100</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1546,10 +1546,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.min_value_kinds</td>
-  <td class="num">2</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.min_value_kinds</td>
+  <td class="num" data-label="현재 값">2</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1563,10 +1563,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.day_gap_total_limit</td>
-  <td class="num">0.3</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.day_gap_total_limit</td>
+  <td class="num" data-label="현재 값">0.3</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1580,10 +1580,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.day_gap_new_ratio</td>
-  <td class="num">0.2</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.day_gap_new_ratio</td>
+  <td class="num" data-label="현재 값">0.2</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1597,10 +1597,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.actual_max</td>
-  <td class="num">120</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.actual_max</td>
+  <td class="num" data-label="현재 값">120</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1614,10 +1614,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.parse_sample_chars</td>
-  <td class="num">80</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.parse_sample_chars</td>
+  <td class="num" data-label="현재 값">80</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1631,10 +1631,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.grade_denom_probe</td>
-  <td class="num">0.9</td>
-  <td class="muted">float</td>
-  <td>
+  <td class="runid" data-label="키">validation.grade_denom_probe</td>
+  <td class="num" data-label="현재 값">0.9</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1648,10 +1648,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.all_fail_min_sample</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.all_fail_min_sample</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1665,10 +1665,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.diagnosis_report_grade</td>
-  <td class="num">0</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.diagnosis_report_grade</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1682,10 +1682,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.min_salvaged_fields</td>
-  <td class="num">2</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.min_salvaged_fields</td>
+  <td class="num" data-label="현재 값">2</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1699,10 +1699,10 @@
 </tr>
 
 <tr>
-  <td class="runid">validation.conflict_warn</td>
-  <td class="num">10</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">validation.conflict_warn</td>
+  <td class="num" data-label="현재 값">10</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1716,10 +1716,10 @@
 </tr>
 
 <tr>
-  <td class="runid">report.top_n</td>
-  <td class="num">5</td>
-  <td class="muted">int</td>
-  <td>
+  <td class="runid" data-label="키">report.top_n</td>
+  <td class="num" data-label="현재 값">5</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1733,10 +1733,10 @@
 </tr>
 
 <tr>
-  <td class="runid">report.market_quantiles</td>
-  <td class="num">[0.25, 0.5, 0.75]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">report.market_quantiles</td>
+  <td class="num" data-label="현재 값">[0.25, 0.5, 0.75]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1750,10 +1750,10 @@
 </tr>
 
 <tr>
-  <td class="runid">peer_percentiles</td>
-  <td class="num">[0.25, 0.5, 0.75]</td>
-  <td class="muted">복합 — CLI 로 고칩니다</td>
-  <td>
+  <td class="runid" data-label="키">peer_percentiles</td>
+  <td class="num" data-label="현재 값">[0.25, 0.5, 0.75]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -1771,25 +1771,25 @@
 
 <h2>변경 이력</h2>
 
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>키</th><th class="num">값</th><th>사유</th></tr></thead>
 <tbody>
 
-<tr><td>2026-08-16T07:28:00.430084+00:00</td><td class="runid">color_ext[23]</td>
-  <td class="num">pending → confirm</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td class="runid" data-label="키">color_ext[23]</td>
+  <td class="num" data-label="값">pending → confirm</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
-<tr><td>2026-08-16T07:28:00.353171+00:00</td><td class="runid">fuel[5]</td>
-  <td class="num">pending → confirm</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td class="runid" data-label="키">fuel[5]</td>
+  <td class="num" data-label="값">pending → confirm</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
-<tr><td>2026-08-16T07:28:00.590132+00:00</td><td class="runid">sell_type[3]</td>
-  <td class="num">pending → confirm</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td class="runid" data-label="키">sell_type[3]</td>
+  <td class="num" data-label="값">pending → confirm</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
-<tr><td>2026-08-16T07:28:00.532735+00:00</td><td class="runid">color_int[10]</td>
-  <td class="num">pending → confirm</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.532735+00:00</td><td class="runid" data-label="키">color_int[10]</td>
+  <td class="num" data-label="값">pending → confirm</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
 </tbody>
 </table>
@@ -1802,8 +1802,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>

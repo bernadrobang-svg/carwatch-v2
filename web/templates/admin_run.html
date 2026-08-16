@@ -24,11 +24,11 @@
   {% endif %}
 
   <h3>지금까지 받은 것</h3>
-  <table>
+  <table class="rows">
   <thead><tr><th>엔드포인트</th><th class="num">원문</th></tr></thead>
   <tbody>
   {% for r in raw_counts %}
-  <tr><td>{{ r.endpoint }}</td><td class="num">{{ r.n | num }}</td></tr>
+  <tr><td data-label="엔드포인트">{{ r.endpoint }}</td><td class="num" data-label="원문">{{ r.n | num }}</td></tr>
   {% endfor %}
   </tbody>
   </table>
@@ -79,14 +79,14 @@
 
 <h2>진행</h2>
 {% if job_log %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>상태</th><th>단계</th><th class="num">진행</th><th>사유</th><th></th></tr></thead>
 <tbody>
 {% for j in job_log %}
-<tr><td>{{ j.at }}</td><td>{{ j.status }}</td><td>{{ j.step }}</td>
-  <td class="num">{{ j.done | num }}/{{ j.total | num }}</td>
-  <td class="muted">{{ j.reason }}</td>
-  <td>{% if j.open %}<form method="post" action="/admin/run" class="inline">
+<tr><td data-label="시각">{{ j.at }}</td><td data-label="상태">{{ j.status }}</td><td data-label="단계">{{ j.step }}</td>
+  <td class="num" data-label="진행">{{ j.done | num }}/{{ j.total | num }}</td>
+  <td class="muted" data-label="사유">{{ j.reason }}</td>
+  <td data-label="">{% if j.open %}<form method="post" action="/admin/run" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="previewed" value="1">
     <input type="hidden" name="action" value="halt">

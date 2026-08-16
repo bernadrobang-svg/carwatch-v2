@@ -87,14 +87,14 @@
 <p class="muted">목록 {{ saved_list | num }}쪽 · facet {{ saved_facet | num }}건 저장돼 있습니다.
   중간에 실패해도 <strong>여기까지는 남습니다</strong> — 처음부터 다시 하지 않습니다.</p>
 {% if browser_batches %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th class="num">raw_id</th><th>엔드포인트</th>
   <th class="num">코드</th><th class="num">크기</th></tr></thead>
 <tbody>
 {% for b in browser_batches %}
-<tr><td>{{ b.at }}</td><td class="num">{{ b.raw_id }}</td>
-  <td>{{ b.endpoint }}</td><td class="num">{{ b.code }}</td>
-  <td class="num">{{ b.bytes | num }}</td></tr>
+<tr><td data-label="시각">{{ b.at }}</td><td class="num" data-label="raw_id">{{ b.raw_id }}</td>
+  <td data-label="엔드포인트">{{ b.endpoint }}</td><td class="num" data-label="코드">{{ b.code }}</td>
+  <td class="num" data-label="크기">{{ b.bytes | num }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -105,23 +105,23 @@
 
 {% if opened_steps %}
 <h3>밖에서 받아 연 단계</h3>
-<table>
+<table class="rows">
 <thead><tr><th>단계</th><th>어떻게 확보했나</th><th>시각</th></tr></thead>
 <tbody>
 {% for s in opened_steps %}
-<tr><td>{{ s.code }}</td><td><strong>{{ s.actual }}</strong></td><td>{{ s.at }}</td></tr>
+<tr><td data-label="단계">{{ s.code }}</td><td data-label="어떻게 확보했나"><strong>{{ s.actual }}</strong></td><td data-label="시각">{{ s.at }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
 {% endif %}
 
 <h3>부를 주소 (JS 가 꺼져 있을 때)</h3>
-<table>
+<table class="rows">
 <thead><tr><th>종류</th><th>대상</th><th>주소</th></tr></thead>
 <tbody>
 {% for u in collect_urls %}
-<tr><td>{{ u.kind }}</td><td>{{ u.label }}</td>
-  <td class="runid">{% if u.url %}<a href="{{ u.url }}" target="_blank" rel="noopener">직접 열기</a>{% endif %}</td></tr>
+<tr><td data-label="종류">{{ u.kind }}</td><td data-label="대상">{{ u.label }}</td>
+  <td class="runid" data-label="주소">{% if u.url %}<a href="{{ u.url }}" target="_blank" rel="noopener">직접 열기</a>{% endif %}</td></tr>
 {% endfor %}
 </tbody>
 </table>

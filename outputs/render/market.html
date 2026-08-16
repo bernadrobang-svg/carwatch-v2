@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>시세 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 
 </head>
 <body class="s-market">
@@ -106,6 +106,15 @@
 </table>
 <p class="muted">연식별 분포는 감가 곡선으로 봅니다. 표본이 모자라면 보간하지 않습니다.</p>
 
+
+
+<div class="bar">
+  <span class="dim">트림</span>
+  <a class="btn on" href="/market?target=G80_25T" title="이 차종 전체를 봅니다">전체</a>
+  <a class="btn{% if t.trim == trim %} on{% endif %}" href="/market?target=G80_25T&amp;trim=%EA%B0%80%EC%86%94%EB%A6%B0%202.5%20%ED%84%B0%EB%B3%B4%20AWD"
+    title="가솔린 2.5 터보 AWD · 1,223건">가솔린 2.5 터보 AWD <span class="num">1,223</span></a><a class="btn{% if t.trim == trim %} on{% endif %}" href="/market?target=G80_25T&amp;trim=%EA%B0%80%EC%86%94%EB%A6%B0%202.5%20%ED%84%B0%EB%B3%B4%202WD"
+    title="가솔린 2.5 터보 2WD · 490건">가솔린 2.5 터보 2WD <span class="num">490</span></a>
+</div>
 
 
 
@@ -244,8 +253,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>

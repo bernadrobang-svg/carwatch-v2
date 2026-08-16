@@ -18,13 +18,13 @@
 
 <h2>저장된 응답 {{ api_snapshots | count }}건</h2>
 {% if api_snapshots %}
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>URL</th><th class="num">코드</th><th class="num">크기</th></tr></thead>
 <tbody>
 {% for s in api_snapshots %}
-<tr><td>{{ s.at }}</td>
-  <td class="runid"><a href="/admin/api?snapshot={{ s.snapshot_id }}">{{ s.url }}</a></td>
-  <td class="num">{{ s.code }}</td><td class="num">{{ s.size | num }}</td></tr>
+<tr><td data-label="시각">{{ s.at }}</td>
+  <td class="runid" data-label="URL"><a href="/admin/api?snapshot={{ s.snapshot_id }}">{{ s.url }}</a></td>
+  <td class="num" data-label="코드">{{ s.code }}</td><td class="num" data-label="크기">{{ s.size | num }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -39,12 +39,12 @@
 <h3>경로 전수 {{ paths | count }}</h3>
 <p class="muted">매핑표 작성이 바로 시작되도록 경로와 값 표본을 함께 냅니다.
   배열은 첨자를 <code>[]</code> 로 접습니다.</p>
-<table>
+<table class="rows">
 <thead><tr><th>경로</th><th>형</th><th>표본</th></tr></thead>
 <tbody>
 {% for p in paths %}
-<tr><td class="runid">{{ p.path }}</td><td class="muted">{{ p.kind }}</td>
-  <td class="muted">{{ p.sample }}</td></tr>
+<tr><td class="runid" data-label="경로">{{ p.path }}</td><td class="muted" data-label="형">{{ p.kind }}</td>
+  <td class="muted" data-label="표본">{{ p.sample }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

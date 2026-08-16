@@ -61,18 +61,18 @@
 </form>
 
 <h2>등록된 차종 {{ target_rows | count }}종</h2>
-<table>
+<table class="rows">
 <thead><tr><th>키</th><th>이름</th><th>구분</th><th class="num">매물</th><th>상태</th><th>수집</th><th></th></tr></thead>
 <tbody>
 {% for t in target_rows %}
 <tr>
-  <td class="runid">{{ t.key }}</td>
-  <td>{{ t.name }}</td>
-  <td>{% if t.origin_type %}{{ t.origin_type }}{% endif %}{% if !t.origin_type %}<span class="muted">—</span>{% endif %}</td>
-  <td class="num">{{ t.count | num }}</td>
-  <td>{% if t.pending %}<span class="warn-warn">확인 대기</span>{% endif %}{% if !t.pending %}확정{% endif %}</td>
-  <td>{% if t.collected %}됨{% endif %}{% if !t.collected %}<span class="muted">미수집</span>{% endif %}</td>
-  <td>
+  <td class="runid" data-label="키">{{ t.key }}</td>
+  <td data-label="이름">{{ t.name }}</td>
+  <td data-label="구분">{% if t.origin_type %}{{ t.origin_type }}{% endif %}{% if !t.origin_type %}<span class="muted">—</span>{% endif %}</td>
+  <td class="num" data-label="매물">{{ t.count | num }}</td>
+  <td data-label="상태">{% if t.pending %}<span class="warn-warn">확인 대기</span>{% endif %}{% if !t.pending %}확정{% endif %}</td>
+  <td data-label="수집">{% if t.collected %}됨{% endif %}{% if !t.collected %}<span class="muted">미수집</span>{% endif %}</td>
+  <td data-label="">
     {% if t.pending %}
     <form method="post" action="/admin/targets" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">

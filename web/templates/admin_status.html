@@ -76,15 +76,15 @@
 
 <h2>② 방금 끝난 것</h2>
 {% if recent_jobs %}
-<table>
+<table class="rows">
 <thead><tr><th>작업</th><th>상태</th><th>사유 · 범위</th><th>언제</th><th>메모</th></tr></thead>
 <tbody>
 {% for j in recent_jobs %}
-<tr><td class="runid">{{ j.job_id }}</td>
-  <td><strong>{{ j.status }}</strong></td>
-  <td>{{ j.reason }} · {{ j.scope }}</td>
-  <td class="muted">{{ j.minutes }}분 전</td>
-  <td class="muted">{{ j.detail }}</td></tr>
+<tr><td class="runid" data-label="작업">{{ j.job_id }}</td>
+  <td data-label="상태"><strong>{{ j.status }}</strong></td>
+  <td data-label="사유 · 범위">{{ j.reason }} · {{ j.scope }}</td>
+  <td class="muted" data-label="언제">{{ j.minutes }}분 전</td>
+  <td class="muted" data-label="메모">{{ j.detail }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -95,11 +95,11 @@
 
 <h2>③ 숫자가 어떻게 변했나</h2>
 <p class="muted"><strong>「받았다」와 「쓰였다」는 다릅니다</strong> (개정 268).</p>
-<table>
+<table class="rows">
 <thead><tr><th>엔드포인트</th><th class="num">받은 원문</th></tr></thead>
 <tbody>
 {% for r in raw_counts %}
-<tr><td>{{ r.endpoint }}</td><td class="num">{{ r.n | num }}</td></tr>
+<tr><td data-label="엔드포인트">{{ r.endpoint }}</td><td class="num" data-label="받은 원문">{{ r.n | num }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
@@ -108,13 +108,13 @@
 
 <h2>④ 실패</h2>
 {% if failed_jobs %}
-<table>
+<table class="rows">
 <thead><tr><th>작업</th><th>사유 · 범위</th><th>무엇이 왜</th></tr></thead>
 <tbody>
 {% for j in failed_jobs %}
-<tr><td class="runid">{{ j.job_id }}</td>
-  <td>{{ j.reason }} · {{ j.scope }}</td>
-  <td>{{ j.detail }}</td></tr>
+<tr><td class="runid" data-label="작업">{{ j.job_id }}</td>
+  <td data-label="사유 · 범위">{{ j.reason }} · {{ j.scope }}</td>
+  <td data-label="무엇이 왜">{{ j.detail }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

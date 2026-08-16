@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>사용자 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 
 </head>
 <body class="s-admin-users">
@@ -96,15 +96,15 @@
 
 
 
-<table>
+<table class="rows">
 <thead><tr><th>ID</th><th>이름</th><th>역할</th><th>마지막 접속</th>
 <th>가입</th><th>상태</th><th></th></tr></thead>
 <tbody>
 
-<tr><td>1</td><td>admin</td><td>admin</td>
-<td>—</td><td>2026-08-15</td>
-<td></td>
-<td>
+<tr><td data-label="ID">1</td><td data-label="이름">admin</td><td data-label="역할">admin</td>
+<td data-label="마지막 접속">—</td><td data-label="가입">2026-08-15</td>
+<td data-label="상태"></td>
+<td data-label="">
   <form method="post" action="/admin/users" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="account_id" value="1">
@@ -113,10 +113,10 @@
   </form>
 </td></tr>
 
-<tr><td>2</td><td>반입작업</td><td>admin</td>
-<td>—</td><td>2026-08-16</td>
-<td></td>
-<td>
+<tr><td data-label="ID">2</td><td data-label="이름">반입작업</td><td data-label="역할">admin</td>
+<td data-label="마지막 접속">—</td><td data-label="가입">2026-08-16</td>
+<td data-label="상태"></td>
+<td data-label="">
   <form method="post" action="/admin/users" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="account_id" value="2">
@@ -130,29 +130,29 @@
 
 <h2>계정 활동 <span class="muted">최근 10건</span></h2>
 
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>누가</th><th>무엇</th></tr></thead>
 <tbody>
 
-<tr><td>2026-08-16T14:54:09.246339+00:00</td><td>admin</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T14:54:09.246339+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T08:55:56.097188+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T08:55:56.097188+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T08:25:24.660925+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T08:25:24.660925+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T08:22:34.305301+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T08:22:34.305301+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T08:18:20.975337+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T08:18:20.975337+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T07:27:49.349780+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T07:27:49.349780+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T06:55:02.273216+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T06:55:02.273216+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T06:21:52.396295+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T06:21:52.396295+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T06:20:51.819724+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T06:20:51.819724+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td>2026-08-16T05:55:53.778883+00:00</td><td>반입작업</td><td class="muted">로그인</td></tr>
+<tr><td data-label="시각">2026-08-16T05:55:53.778883+00:00</td><td data-label="누가">반입작업</td><td class="muted" data-label="무엇">로그인</td></tr>
 
 </tbody>
 </table>
@@ -188,8 +188,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>

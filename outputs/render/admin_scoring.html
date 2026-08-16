@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>배점 조정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=82be73c086">
+<link rel="stylesheet" href="/static/app.css?v=1c1ba61de7">
 
 </head>
 <body class="s-admin-scoring">
@@ -99,12 +99,12 @@
 </p>
 
 <h2>축 총점 <span class="muted">바꾸면 성분이 비율로 재배분됩니다</span></h2>
-<table>
+<table class="rows">
 <thead><tr><th>축</th><th class="num">총점</th><th>바꾸기</th></tr></thead>
 <tbody>
 
-<tr><td>color</td><td class="num">40</td>
-  <td>
+<tr><td data-label="축">color</td><td class="num" data-label="총점">40</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -116,8 +116,8 @@
     </form>
   </td></tr>
 
-<tr><td>history</td><td class="num">55</td>
-  <td>
+<tr><td data-label="축">history</td><td class="num" data-label="총점">55</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -129,8 +129,8 @@
     </form>
   </td></tr>
 
-<tr><td>mileage</td><td class="num">30</td>
-  <td>
+<tr><td data-label="축">mileage</td><td class="num" data-label="총점">30</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -142,8 +142,8 @@
     </form>
   </td></tr>
 
-<tr><td>price</td><td class="num">200</td>
-  <td>
+<tr><td data-label="축">price</td><td class="num" data-label="총점">200</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -155,8 +155,8 @@
     </form>
   </td></tr>
 
-<tr><td>safety</td><td class="num">40</td>
-  <td>
+<tr><td data-label="축">safety</td><td class="num" data-label="총점">40</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -168,8 +168,8 @@
     </form>
   </td></tr>
 
-<tr><td>spec</td><td class="num">90</td>
-  <td>
+<tr><td data-label="축">spec</td><td class="num" data-label="총점">90</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -181,8 +181,8 @@
     </form>
   </td></tr>
 
-<tr><td>warranty</td><td class="num">100</td>
-  <td>
+<tr><td data-label="축">warranty</td><td class="num" data-label="총점">100</td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -198,15 +198,15 @@
 </table>
 
 <h2>성분 17</h2>
-<table>
+<table class="rows">
 <thead><tr><th>성분</th><th class="num">점수</th><th>상태</th><th>바꾸기</th><th>스킵</th></tr></thead>
 <tbody>
 
 <tr>
-  <td class="runid">color</td>
-  <td class="num">40</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">color</td>
+  <td class="num" data-label="점수">40</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -217,7 +217,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -231,10 +231,10 @@
 </tr>
 
 <tr>
-  <td class="runid">history.damage</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">history.damage</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -245,7 +245,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -259,10 +259,10 @@
 </tr>
 
 <tr>
-  <td class="runid">history.insurance</td>
-  <td class="num">15</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">history.insurance</td>
+  <td class="num" data-label="점수">15</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -273,7 +273,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -287,10 +287,10 @@
 </tr>
 
 <tr>
-  <td class="runid">history.rental</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">history.rental</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -301,7 +301,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -315,10 +315,10 @@
 </tr>
 
 <tr>
-  <td class="runid">mileage</td>
-  <td class="num">30</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">mileage</td>
+  <td class="num" data-label="점수">30</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -329,7 +329,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -343,10 +343,10 @@
 </tr>
 
 <tr>
-  <td class="runid">price</td>
-  <td class="num">200</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">price</td>
+  <td class="num" data-label="점수">200</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -357,7 +357,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -371,10 +371,10 @@
 </tr>
 
 <tr>
-  <td class="runid">safety.diagnosis</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">safety.diagnosis</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -385,7 +385,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -399,10 +399,10 @@
 </tr>
 
 <tr>
-  <td class="runid">safety.warranty_product</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">safety.warranty_product</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -413,7 +413,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -427,10 +427,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.bsd</td>
-  <td class="num">5</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.bsd</td>
+  <td class="num" data-label="점수">5</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -441,7 +441,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -455,10 +455,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.hda</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.hda</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -469,7 +469,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -483,10 +483,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.hud</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.hud</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -497,7 +497,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -511,10 +511,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.scc</td>
-  <td class="num">10</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.scc</td>
+  <td class="num" data-label="점수">10</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -525,7 +525,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -539,10 +539,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.sunroof</td>
-  <td class="num">20</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.sunroof</td>
+  <td class="num" data-label="점수">20</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -553,7 +553,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -567,10 +567,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.svm</td>
-  <td class="num">10</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.svm</td>
+  <td class="num" data-label="점수">10</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -581,7 +581,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -595,10 +595,10 @@
 </tr>
 
 <tr>
-  <td class="runid">spec.tinting</td>
-  <td class="num">5</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">spec.tinting</td>
+  <td class="num" data-label="점수">5</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -609,7 +609,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -623,10 +623,10 @@
 </tr>
 
 <tr>
-  <td class="runid">warranty.general</td>
-  <td class="num">50</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">warranty.general</td>
+  <td class="num" data-label="점수">50</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -637,7 +637,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -651,10 +651,10 @@
 </tr>
 
 <tr>
-  <td class="runid">warranty.power</td>
-  <td class="num">50</td>
-  <td></td>
-  <td>
+  <td class="runid" data-label="성분">warranty.power</td>
+  <td class="num" data-label="점수">50</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -665,7 +665,7 @@
       <button type="submit" class="mini">저장</button>
     </form>
   </td>
-  <td>
+  <td data-label="스킵">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
@@ -688,21 +688,21 @@
 
 <h2>배점 변경 이력</h2>
 
-<table>
+<table class="rows">
 <thead><tr><th>시각</th><th>무엇</th><th>사유</th></tr></thead>
 <tbody>
 
-<tr><td>2026-08-16T07:28:00.430084+00:00</td><td class="runid">color_ext[23]</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td class="runid" data-label="무엇">color_ext[23]</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
-<tr><td>2026-08-16T07:28:00.353171+00:00</td><td class="runid">fuel[5]</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td class="runid" data-label="무엇">fuel[5]</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
-<tr><td>2026-08-16T07:28:00.590132+00:00</td><td class="runid">sell_type[3]</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td class="runid" data-label="무엇">sell_type[3]</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
-<tr><td>2026-08-16T07:28:00.532735+00:00</td><td class="runid">color_int[10]</td>
-  <td class="muted">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
+<tr><td data-label="시각">2026-08-16T07:28:00.532735+00:00</td><td class="runid" data-label="무엇">color_int[10]</td>
+  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td></tr>
 
 </tbody>
 </table>
@@ -715,8 +715,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260816T083439</span>
-  <span>2026-08-17 00:11</span>
+  <span>run 20260816T165418</span>
+  <span>2026-08-17 02:07</span>
 </footer>
 
 </body>
