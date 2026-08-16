@@ -111,6 +111,27 @@ git push
 되돌릴 때  git revert <해시>   ★ git reset 은 쓰지 않는다
 ```
 
+## 규칙 9. 가이드가 GitHub 에 직접 push 한다
+
+**2026-08-16 부터.  마스터를 안 거친다.**
+
+```
+전       가이드 → 파일 → 마스터 → SFTP → inbox/
+지금부터  가이드 → GitHub push → 나는 git pull
+```
+
+```
+필수   작업을 시작하기 전에 항상 git pull 한다
+필수   inbox/ 에 새 파일이 있으면 규칙 5 대로 처리한다
+      ① 읽는다 ② docs/ 는 이미 반영돼 있다 (tar 를 풀 필요가 없다)
+      ③ 처리 후 지운다 ④ 무엇을 읽었는지 보고한다
+      ⑤ 지금 작업과 어긋나면 멈추고 묻는다
+필수   push 하기 전에 git pull --rebase 한다
+      docs/ 는 가이드만, 그 밖은 나만 쓰므로 실제 충돌은 드물다
+★     docs/ 는 여전히 내가 고치지 않는다 (규칙 2).  읽기만 한다
+      정정이 필요하면 보고한다
+```
+
 ---
 
 ## 환경 — 반드시 `python3.11` 로 돌린다
@@ -129,14 +150,15 @@ git push
 `zip() takes no keyword arguments` 가 보이면 코드 문제가 아니라 3.9 로 돌린 것이다.
 근거: `docs/guide/03_이력.md` 개정 242 (0장 · 부록 E 에 Python 3.11 이상 명시)
 
-## 알아 둘 것 — 시험이 실제 `carwatch.db` 를 복사해서 돈다
+## 알아 둘 것 — 시험은 씨앗 DB 로 돈다 (S24 · 개정 246)
 
-`tests/test_integration.py:129` 가 `shutil.copy(ROOT/carwatch.db, ...)` 를 한다.
-`tests/test_spec_ui.py` 도 그 `start_server` 를 쓴다.
+`tests/seed.py` 의 `build_seed_db()` 가 `StubEncar` 로 S0~S10 을 돌려
+판정까지 끝난 DB 를 만든다. **운영 `carwatch.db` 를 복사하지 않는다.**
 
-그래서 **실제 DB 에 남은 상태가 시험 결과를 바꾼다.** 예: `recalc_job` 에
-`queued` 행이 하나 남으면(`store/admin.py:83` `JOB_OPEN = ("queued","running")`)
-관리 화면이 전부 409 로 잠기고 `test_spec_ui` 가 5건 더 실패하며
-`test_spec_ui.py:930` 에서 `TypeError` 로 죽는다.
+전에는 `test_integration.py` 가 운영 DB 를 복사했고, 거기 남은 `queued`
+`recalc_job` 하나 때문에 관리 화면이 409 로 잠겨 `test_spec_ui` 가
+9건 무더기로 실패했다 — 코드는 하나도 안 바뀌었는데 결과가 달라졌다.
+`check_src` 의 `S24` 가 그 재발을 막는다.
 
-시험 결과가 갑자기 나빠지면 **코드를 의심하기 전에 `carwatch.db` 상태를 본다.**
+그래도 시험 결과가 갑자기 달라지면 **씨앗이 무엇을 넣는지부터 본다**
+(`python3.11 tests/seed.py` 가 건수를 찍는다).
