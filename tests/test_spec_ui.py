@@ -183,6 +183,25 @@ def spec_c(ad: Client, lid: int) -> None:
     rec("C-2b", "/why 엔드포인트가 무엇을 결정", "설명을 찾는다",
         "있음" if got else "받음/못 받음만", got)
 
+    # C-10  절 순서 (개정 256).  ★ 있는지만 보면 순서가 바뀌어도 통과한다.
+    #   「무엇을 조회했나 → 어떻게 판정했나 → 무엇이 빠졌나」가 읽는 순서다
+    order = [h.split("<")[0].split("—")[0].strip()
+             for h in re.findall(r"<h2[^>]*>(.*?)</h2>", wb, re.S)]
+    want = ["무엇을 조회했는가", "축별 판정", "엔카 진단", "확인 못 한 것",
+            "왜", "비용", "주요 옵션", "참고 자료"]
+    seen, at = [], 0
+    for w in want:
+        hit = next((i for i, h in enumerate(order[at:], start=at)
+                    if w in h), None)
+        if hit is None:
+            continue
+        seen.append(w)
+        at = hit + 1
+    rec("C-10", "/why 절 순서가 규격 순서다", "h2 를 차례로 읽는다",
+        f"{len(seen)}/{len(want)} · {' → '.join(seen[:4])}",
+        len(seen) == len(want),
+        "순서가 뒤바뀌면 규격을 먼저 고쳐야 한다 (개정 256)")
+
 
 # ── D  「확인 못 한 것」 (STEP 149h) ─────────────────────────────────
 def spec_d(ad: Client, db: str) -> None:
