@@ -83,6 +83,15 @@ class ListingRow:
     # ★ 분모로 등급을 막지 않는 대신 얼마나 봤는지를 낸다
     confirmed_points: float | None = None
     confirm_pct: float | None = None
+    # 신차가 = 등급기준 + 선택옵션 (개정 301).  ★ 셋을 다 낸다
+    option_price_won: int | None = None
+    origin_total_won: int | None = None
+    # 플랫폼 신뢰도 (개정 300) — 높음 · 보통 · 낮음 · 없음
+    platform_trust: str | None = None
+    platform_trust_why: list = field(default_factory=list)
+    # 「왜 싼가」 (개정 299 · V3-52).  ★ 못 찾으면 그것도 낸다
+    why_cheap: str | None = None
+    why_cheap_reasons: list = field(default_factory=list)
     # 대표 사진 주소 (개정 274).  ★ 우리가 내려받지 않는다 — ci.encar.com 을
     #   그대로 부른다.  없으면 None 이고 화면은 thumb-none 으로 자리를 채운다.
     #   ★ 판정에 쓰지 않는다.  보는 사람을 위한 것이다

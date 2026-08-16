@@ -109,16 +109,18 @@ def flow_scoring(conn, acc, root) -> None:
 
     pol = _cfg(root, "scoring.json")
     before_total = pol["total_points"]
+    # ★ 축 이름을 박지 않는다 — 개정 292 로 배점이 통째로 바뀌었다
+    axis = "state"
     before_war = {k: v for k, v in pol["components"].items()
-                  if k.startswith("warranty")}
+                  if k.startswith(axis + ".")}
 
     _post(admin_scoring, conn, acc,
           {"csrf": "t", "previewed": "1", "action": "axis",
-           "target": "warranty", "value": "120",
-           "reason": "보증을 더 본다"}, root)
+           "target": axis, "value": "120",
+           "reason": "상태를 더 본다"}, root)
     pol = _cfg(root, "scoring.json")
     after_war = {k: v for k, v in pol["components"].items()
-                 if k.startswith("warranty")}
+                 if k.startswith(axis + ".")}
     check("배점 — 축 총점이 비율로 재배분된다",
           sum(after_war.values()) == 120,
           f"{before_war} → {after_war}")
@@ -131,17 +133,19 @@ def flow_scoring(conn, acc, root) -> None:
 
     _post(admin_scoring, conn, acc,
           {"csrf": "t", "previewed": "1", "action": "skip",
-           "target": "spec.tinting", "value": "true",
+           "target": "taste.sunroof", "value": "true",
            "reason": "원문에 언급이 없다"}, root)
     pol = _cfg(root, "scoring.json")
     check("배점 — 스킵은 빼지 않고 표시한다",
-          pol["components"]["spec.tinting"].get("skipped") is True,
-          str(pol["components"]["spec.tinting"]))
+          pol["components"]["taste.sunroof"].get("skipped") is True,
+          str(pol["components"]["taste.sunroof"]))
 
     try:
         _post(admin_scoring, conn, acc,
               {"csrf": "t", "previewed": "1", "action": "axis",
-               "target": "spec", "value": "6", "reason": "0점 시험"}, root)
+               # ★ 개정 292 로 spec 은 트림 45 · 옵션 30 둘뿐이다.
+               #   1 로 줄이면 옵션이 0 이 된다
+               "target": "spec", "value": "1", "reason": "0점 시험"}, root)
         check("배점 — 0 이 되는 성분을 만들지 않는다", False, "만들어졌다")
     except (PolicyError, ValidationError) as e:
         check("배점 — 0 이 되는 성분을 만들지 않는다", "스킵" in str(e),

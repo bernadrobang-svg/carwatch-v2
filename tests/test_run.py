@@ -50,7 +50,8 @@ DETAIL = {
     "options": {"standard": ["010", "095"], "choice": [], "etc": None},
     "condition": {"seizing": {"seizingCount": 0, "pledgeCount": 0},
                   "accident": {"recordView": True, "resumeView": False},
-                  "inspection": {"formats": ["A"]}},
+                  # ★ TABLE 엔카직영 · IMAGE 판매자가 사진으로 올린 것 (개정 300)
+                  "inspection": {"formats": ["TABLE"]}},
     "advertisement": {"price": 5000, "diagnosisCar": True,
                       "encarPassType": "PASS",
                       "encarPassCategoryType": "CLEAR"},
@@ -82,6 +83,8 @@ RECORD = {
     "accidents": [{"type": "2", "date": "2026-02-03",
                    "insuranceBenefit": 19440000}],
     "ownerChangeCnt": 1, "carNoChangeCnt": 0,
+    # ★ 보험이력 용도 변경이력 — 렌트를 세 곳에서 대조한다 (개정 302)
+    "use": "2", "carInfoUse1s": ["2"], "carInfoUse2s": ["1"],
     "fuel": "하이브리드", "maker": "삼성",
 }
 
@@ -130,10 +133,28 @@ class StubEncar:
         # 진단은 「받지 않은 차」가 정상이다.  200 + 빈 응답 → empty (STEP 21b)
         for path, doc in (("/inspection/", INSPECTION), ("/record/", RECORD),
                           ("/diagnosis/", {})):
-            if path in u:
-                self.detail_calls += 1
-                return Response(200, json.dumps(doc, ensure_ascii=False),
-                                "application/json", "utf-8")
+            if path not in u:
+                continue
+            self.detail_calls += 1
+            # ★ 렌트 근거 셋을 다 나오게 섞는다 (개정 302).
+            #   전건이 자가용이면 「보험이력으로도 잡는가」를 시험할 수 없다
+            if path == "/record/":
+                import copy as _c
+
+                doc = _c.deepcopy(doc)
+                vid = u.rstrip("/open").rsplit("/", 1)[-1]
+                if vid.isdigit() and int(vid) % 4 == 0:
+                    doc["carInfoUse1s"] = ["3", "2"]     # 영업용 → 자가용
+            elif path == "/inspection/":
+                import copy as _c
+
+                doc = _c.deepcopy(doc)
+                vid = u.rsplit("/", 1)[-1].split("?")[0]
+                if vid.isdigit() and int(vid) % 6 == 0:
+                    doc["master"]["detail"]["usageChangeTypes"] = [
+                        {"code": "1", "title": "렌트"}]
+            return Response(200, json.dumps(doc, ensure_ascii=False),
+                            "application/json", "utf-8")
         if "/options/choice" in u:
             # ★ 매물 ID 로 온다 — jatoVehicleId 가 아니다 (실측)
             self.catalog_ids.append(u.split("/car/")[1].split("/")[0])
@@ -151,6 +172,17 @@ class StubEncar:
 
             doc = copy.deepcopy(DETAIL)
             vid = u.split("/vehicle/")[1].split("?")[0]
+            # ★ 점검 출처와 광고 형태를 섞는다 — 실물이 섞여 있다 (개정 300·302).
+            #   전건이 같으면 「가르는가」를 시험할 수 없다
+            n = int(vid) if vid.isdigit() else 0
+            if n % 5 == 0:
+                doc["condition"]["inspection"] = {"formats": ["IMAGE"]}
+            elif n % 5 == 1:
+                doc["condition"]["inspection"] = {"formats": []}
+            if n % 7 == 0:
+                doc["advertisement"]["advertisementType"] = "RENT_SUCCESSION"
+            elif n % 7 == 1:
+                doc["advertisement"]["advertisementType"] = "OPERATING_LEASE"
             if vid.isdigit() and int(vid) % 3 == 0:
                 doc["condition"].pop("seizing", None)      # 모른다
             elif vid.isdigit() and int(vid) % 3 == 1:
@@ -450,7 +482,8 @@ def test_score_pipeline() -> None:
           " / ".join(f"{r.step}:{r.halt_reason}" for r in reps if r.halted))
 
     n = conn.execute("SELECT COUNT(*) FROM result_axis").fetchone()[0]
-    check("result_axis 는 Component 단위", n == 3 * 17, f"{n}행")
+    from analyze.axes import COMPONENTS
+    check("result_axis 는 Component 단위", n == 3 * len(COMPONENTS), f"{n}행")
     bad = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL OR prio IS NULL"
     ).fetchone()[0]
@@ -468,14 +501,22 @@ def test_score_pipeline() -> None:
 
     ex_axes = {a for (a,) in conn.execute(
         "SELECT DISTINCT axis FROM result_axis WHERE excluded=1")}
-    check("★ 감가 곡선이 들어와 price 축이 살아났다",
-          "price" not in ex_axes, str(sorted(ex_axes)))
-    check("★ 색상 등급이 확정돼 color 축이 살아났다",
-          "color" not in ex_axes or True, str(sorted(ex_axes)))
-    check("미확정 1축(spec.hda)은 여전히 excluded",
-          "spec.hda" in ex_axes, str(sorted(ex_axes)))
-    check("★ 분모가 최소 기준을 넘어 등급이 나온다",
-          denom / 555 >= 0.60 and g != "NOT_RATED", f"{g} {total}/{denom}")
+    check("★ 감가 곡선이 들어와 감가 축이 살아났다",
+          "value.depreciation" not in ex_axes, str(sorted(ex_axes)))
+    check("★ 색상 등급이 확정돼 취향 색상 축이 살아났다",
+          "taste.color" not in ex_axes, str(sorted(ex_axes)))
+    # ★ 씨앗은 3건뿐이라 시세 표본(5건)이 안 찬다 — 그것이 정답이다.
+    #   이론가로 메우지 않는다 (개정 292 ①)
+    check("★ 표본이 모자란 시세 축은 excluded — 이론가로 안 메운다",
+          "value.market" in ex_axes, str(sorted(ex_axes)))
+    # ★ 개정 298 — 분모는 늘 555 다.  개정 287 — 핵심 축을 못 보면 NOT_RATED.
+    #   E(절대조건)는 점수와 무관하므로 빼고 본다
+    rated = [r for r in rows if r[0] != "E"]
+    check("★ 전건 분모가 555 다 (개정 298 G)",
+          all(r[2] == 555 for r in rows), str({r[2] for r in rows}))
+    check("★ 핵심 축(시세)을 못 봐 NOT_RATED 다 — 씨앗은 3건이라 표본이 안 찬다",
+          all(r[0] == "NOT_RATED" for r in rated) if rated else True,
+          str([r[0] for r in rows]))
 
 
 # ── S11 검증 5차 (6장) ───────────────────────────────────────────────

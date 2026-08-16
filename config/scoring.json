@@ -3,23 +3,20 @@
   "_ref": "지시서 7장 STEP 68 (배점) · STEP 71 (가격 곡선) · STEP 83 (분모) · STEP 84 (등급)",
   "total_points": 555,
   "components": {
-    "price": 200,
-    "warranty.general": 50,
-    "warranty.power": 50,
-    "spec.hud": 20,
-    "spec.hda": 20,
-    "spec.sunroof": 20,
-    "spec.svm": 10,
-    "spec.scc": 10,
-    "spec.bsd": 5,
-    "spec.tinting": 5,
-    "history.damage": 20,
-    "history.insurance": 15,
-    "history.rental": 20,
-    "safety.diagnosis": 20,
-    "safety.warranty_product": 20,
-    "color": 40,
-    "mileage": 30
+    "value.market": 120,
+    "value.depreciation": 70,
+    "value.mileage": 60,
+    "state.accident": 70,
+    "state.frame": 40,
+    "state.repair": 30,
+    "state.usage": 25,
+    "state.warranty": 15,
+    "spec.trim": 45,
+    "spec.options": 30,
+    "taste.hud": 15,
+    "taste.sunroof": 10,
+    "taste.color": 10,
+    "taste.picked": 15
   },
   "_component_form": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용 (STEP 128). 파서는 #5 에서 반영한다",
   "admin": {
@@ -32,10 +29,10 @@
     "hash_rounds": 200000
   },
   "grade_cuts": {
-    "S": 0.9,
-    "A": 0.8,
-    "B": 0.7,
-    "C": 0.6
+    "S": 0.75,
+    "A": 0.69,
+    "B": 0.6,
+    "C": 0.53
   },
   "price_curve": [
     {
@@ -106,7 +103,10 @@
         "고속도로 주행 보조",
         "고속도로 주행보조",
         "HDA"
-      ]
+      ],
+      "ladder_min": 3,
+      "option_full_won": 8000000,
+      "_option_full_note": "선택 옵션 800만이면 만점 (개정 292 ③). 실측 08-17 — 엔카 G80 파퓰러 510 + 컴포트 250 = 760만"
     },
     "history": {
       "damage_by_swap": {
@@ -213,6 +213,131 @@
       ],
       "swap_status_title": "교환(교체)",
       "_repair_cost_note": "10% 는 v1 초안이다. 실매물 15.6% 가 걸린다 — E 로는 과하다. 첫 수집 후 「E 로 뺄 비율」을 정하고 그 분위수를 임계로 잡는다 (STEP 82)"
+    },
+    "value": {
+      "_note": "개정 292 ① — 시세 대비 120 · 신차가 대비 감가 70 · 주행 대비 60",
+      "market_curve": [
+        {
+          "deviation": -0.2,
+          "points": 120
+        },
+        {
+          "deviation": -0.1,
+          "points": 90
+        },
+        {
+          "deviation": 0.0,
+          "points": 60
+        },
+        {
+          "deviation": 0.1,
+          "points": 30
+        },
+        {
+          "deviation": null,
+          "points": 0
+        }
+      ],
+      "depreciation_curve": [
+        {
+          "deviation": -0.2,
+          "points": 70
+        },
+        {
+          "deviation": -0.1,
+          "points": 53
+        },
+        {
+          "deviation": 0.0,
+          "points": 35
+        },
+        {
+          "deviation": 0.1,
+          "points": 18
+        },
+        {
+          "deviation": null,
+          "points": 0
+        }
+      ],
+      "mileage_curve": [
+        {
+          "km_per_year": 10000,
+          "points": 60
+        },
+        {
+          "km_per_year": 15000,
+          "points": 45
+        },
+        {
+          "km_per_year": 20000,
+          "points": 30
+        },
+        {
+          "km_per_year": 25000,
+          "points": 15
+        },
+        {
+          "km_per_year": 30000,
+          "points": 0
+        },
+        {
+          "km_per_year": null,
+          "points": 0
+        }
+      ],
+      "mileage_unknown_points": 0,
+      "market_min_sample": 5,
+      "high_mileage_km": 100000,
+      "_high_mileage_note": "이만큼 넘으면 「많이 달렸다」를 싼 이유로 낸다 (개정 299 ⑤)"
+    },
+    "state": {
+      "_note": "개정 292 ② — 사고 70 · 골격 40 · 수리비 30 · 용도 25 · 보증 15",
+      "accident_by_count": {
+        "0": 70,
+        "1": 40,
+        "2": 20
+      },
+      "accident_min": 0,
+      "frame_points": {
+        "none": 40,
+        "sheet": 20,
+        "swap": 0
+      },
+      "repair_curve": [
+        {
+          "won": 1,
+          "points": 30
+        },
+        {
+          "won": 1000000,
+          "points": 20
+        },
+        {
+          "won": 3000000,
+          "points": 10
+        },
+        {
+          "won": null,
+          "points": 0
+        }
+      ],
+      "usage_private": 25,
+      "usage_lease": 10,
+      "usage_rental": 0,
+      "usage_unknown": 10,
+      "lease_ad_types": [
+        "OPERATING_LEASE",
+        "FINANCING_LEASE"
+      ]
+    },
+    "taste": {
+      "_note": "개정 292 ④ — 색상 흰·검정 10 · 회색·은색 7 · 유색 3 (시장 선호 순서)",
+      "color_points": {
+        "preferred": 10,
+        "neutral": 7,
+        "avoided": 3
+      }
     }
   },
   "_peer_note": "유사군 파라미터 (7장 STEP 82e). 지시서 34번 개정으로 dealer_trust.json 에서 이관",
@@ -254,5 +379,14 @@
     0.25,
     0.5,
     0.75
-  ]
+  ],
+  "grade_base_points": 505,
+  "_grade_base_note": "①+②+③ = 505 가 「시장이 보는 값」이다. ④ 50 은 「내가 원하는가」다 (개정 292 · V3-46)",
+  "_grade_cuts_note": "505 기준 실측 분포에서 S 상위 1% · A 5% · B 20% · C 40% (개정 292)",
+  "score_core_axes": [
+    "value.market",
+    "value.depreciation",
+    "state.accident"
+  ],
+  "_score_core_axes_note": "핵심 축 — 빠지면 NOT_RATED (개정 287 · V3-40). 값을 못 보고 매긴 등급, 사고를 모르고 매긴 등급은 뜻이 없다"
 }

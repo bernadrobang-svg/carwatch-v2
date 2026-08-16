@@ -142,7 +142,7 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         absolute_fail=head[7], not_rated_reason=head[5], axes=axes,
         versions=_stamp(conn, listing_id, calc_version),
         finance=build_finance(head[1], fin_cfg, head[0]),
-        pending_items=tuple(pending),
+        pending_items=tuple(pending), component_count=len(axes),
         # ★ 채웠을 때 어디까지 오르는지 낸다 (STEP 149h · D-2).
         #   「점수는 낮은데 확실한 것」과 「높은데 불확실한 것」을 가른다
         pending_best=_pending_best(pending, float(head[4] or 0),

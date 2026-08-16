@@ -1,27 +1,24 @@
 {
   "_ref": "지시서 10장 STEP 105 · 7장 STEP 84",
   "AXIS_LABELS": {
-    "price": "가격",
-    "warranty": "보증",
+    "value": "값",
+    "state": "상태",
     "spec": "사양",
-    "history": "이력",
-    "safety": "안전",
-    "color": "색상",
-    "mileage": "주행거리",
-    "warranty.general": "일반보증",
-    "warranty.power": "동력계 보증",
-    "spec.hud": "HUD",
-    "spec.hda": "HDA",
-    "spec.sunroof": "선루프",
-    "spec.svm": "서라운드뷰",
-    "spec.scc": "어댑티브 크루즈",
-    "spec.bsd": "후측방 경보",
-    "spec.tinting": "틴팅",
-    "history.damage": "사고",
-    "history.insurance": "보험",
-    "history.rental": "렌트",
-    "safety.diagnosis": "진단",
-    "safety.warranty_product": "보증상품"
+    "taste": "취향",
+    "value.market": "시세 대비",
+    "value.depreciation": "감가",
+    "value.mileage": "주행",
+    "state.accident": "사고",
+    "state.frame": "골격",
+    "state.repair": "보험 수리비",
+    "state.usage": "용도",
+    "state.warranty": "보증",
+    "spec.trim": "트림",
+    "spec.options": "옵션",
+    "taste.hud": "HUD",
+    "taste.sunroof": "선루프",
+    "taste.color": "색상",
+    "taste.picked": "지정 옵션"
   },
   "GRADE_LABELS": {
     "S": "S",
@@ -65,17 +62,29 @@
     "null": "?"
   },
   "AXIS_VALUE_LABELS": {
-    "history.damage": {
+    "state.accident": {
       "1": "사고 이력 양호",
       "0": "사고 이력 있음"
     },
-    "history.rental": {
+    "state.frame": {
+      "1": "골격 이상 없음",
+      "0": "골격 손상 있음"
+    },
+    "state.repair": {
+      "1": "수리비 적음",
+      "0": "수리비 많음"
+    },
+    "state.usage": {
       "1": "렌트 이력 없음",
       "0": "렌트 이력 있음"
     },
-    "history.insurance": {
-      "1": "보험 이력 양호",
-      "0": "보험 이력 많음"
+    "value.market": {
+      "1": "시세보다 싸다",
+      "0": "시세보다 비싸다"
+    },
+    "value.depreciation": {
+      "1": "감가 대비 싸다",
+      "0": "감가 대비 비싸다"
     }
   }
 }

@@ -12,6 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from analyze.axes import COMPONENTS  # noqa: E402
 from report.exports.export import export, filename  # noqa: E402
 from report.finance import build_finance, monthly_payment  # noqa: E402
 from report.render import (  # noqa: E402
@@ -120,13 +121,14 @@ def test_layers() -> None:
     lid = conn.execute("SELECT listing_id FROM core_listing LIMIT 1").fetchone()[0]
 
     v = render_listing(conn, lid, ctx.calc_version, FIN, POLICY, ROOT)
-    check("L1 — 17 Component 전건", len(v.axes) == 17, f"{len(v.axes)}축")
+    check(f"L1 — {len(COMPONENTS)} Component 전건",
+          len(v.axes) == len(COMPONENTS), f"{len(v.axes)}축")
     check("★ 축마다 source · prio 를 낸다",
           all(a.source and a.prio for a in v.axes))
     check("L1 에 비용이 붙는다", v.finance is not None)
     # ★ hda Gate 가 열려 미확정이 줄었다.  기전을 시험하려면 하나 만든다
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
-                 "source='gate_closed' WHERE axis='spec.hda'")
+                 "source='gate_closed' WHERE axis='spec.options'")
     conn.commit()
     v2 = render_listing(conn, v.listing_id, ctx.calc_version, FIN, POLICY,
                         ROOT)
@@ -208,7 +210,7 @@ def test_export() -> None:
     check("버전이 본문에 있다", "calc=" in body)
 
     cs = export([v], "csv", meta=m1).content.decode("utf-8")
-    check("★ csv 헤더에 배점을 표기한다", "price(200)" in cs and "spec.hud(20)" in cs,
+    check("★ csv 헤더에 배점을 표기한다", "value.market(120)" in cs and "taste.hud(15)" in cs,
           cs.splitlines()[0][:60])
 
     js = json.loads(export(v, "json", meta=m1).content.decode("utf-8"))

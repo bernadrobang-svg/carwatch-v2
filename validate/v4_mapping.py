@@ -478,7 +478,11 @@ from store.dictionary import JUDGING_AXES  # noqa: E402
 
 # target_config 가 담아도 되는 것.  ★ 차종·실행 단위 값만이다
 TARGET_CONFIG_KEYS = ("as_of", "depreciation", "SPEC_DEFAULT_ON",
-                      "SPEC_DEFAULT_OFF")
+                      "SPEC_DEFAULT_OFF",
+                      # 차종 단위 — 그 차종의 트림 신차가 사다리 (개정 292 ③)
+                      "trim_ladder",
+                      # 실행 단위 — 사용자가 끈 취향 · 고른 옵션 (개정 292 ④)
+                      "taste_off", "picked_options")
 
 
 def _listing_value_scope_check(rid):

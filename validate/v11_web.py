@@ -282,6 +282,10 @@ C = {
                     "표가 화면에 맞춰 쥐어짜이면 한 글자가 한 줄이 된다. "
                     "실측 08-16 admin_dict — 「프/론/트/휀/더」 (검토 17)",
                     KIND_CODE),
+    "V11-92": Check("V11", "V11-92", "신차가가 등급기준 + 옵션 합", FATAL, "run",
+                    "엔카는 6,547만(등급 5,787 + 옵션 760)인데 "
+                    "우리는 5,787만만 냈다.  셋을 다 낸다 (개정 301)",
+                    KIND_CONTRACT),
     "V11-82": Check("V11", "V11-82", "정적 파일에 버전이 붙음", FATAL, "run",
                     "화면을 고쳤는데 브라우저가 옛 CSS 를 쓰면 사람이 강제 "
                     "새로고침을 해야 한다 — 마스터가 히스토그램을 못 봤다 "
@@ -1416,6 +1420,25 @@ def _order_filter_checks(rid):
                    "오감" if not bad67 else "없음", not bad67, bad67)]
 
 
+def _origin_price_check(rid):
+    """V11-92 — 신차가 = 등급기준 + 선택옵션 (개정 301).
+
+    ★ 실측 — 엔카 신차가 6,547만은 등급기준 5,787 + 옵션 760 이다.
+      우리는 등급기준만 냈다.  옵션 760만이 통째로 빠져 있었다
+    """
+    path = os.path.join(ROOT, "outputs", "render", "listings.html")
+    if not os.path.isfile(path):
+        return not_applicable(C["V11-92"], rid, "렌더 결과가 없다")
+    html = open(path, encoding="utf-8").read()
+    bad = []
+    if "등급 " not in html or "+ 옵션 " not in html:
+        bad.append("「등급 5,787만 + 옵션 760만」 형태로 안 낸다")
+    if "판매자가 입력한" not in html:
+        bad.append("「판매자가 입력한 것」임을 안 밝힌다")
+    return result(C["V11-92"], rid, "셋을 다 낸다",
+                  "낸다" if not bad else bad, not bad, bad)
+
+
 def _v1_parity_checks(rid):
     """V11-68 · V11-69 — v1 원본과 대조한다 (STEP 149o · 개정 277).
 
@@ -1451,7 +1474,8 @@ def _v1_parity_checks(rid):
     }
     bad69 = [name for name, (in_v1, in_v2) in ops.items()
              if in_v1 in v1 and in_v2 not in ours]
-    return [result(C["V11-68"], rid, "열",
+    return [_origin_price_check(rid),
+            result(C["V11-68"], rid, "열",
                    f"{len(want) - len(bad68)}/{len(want)}", not bad68, bad68),
             result(C["V11-69"], rid, "조작",
                    f"{len(ops) - len(bad69)}/{len(ops)}", not bad69, bad69)]

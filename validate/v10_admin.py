@@ -305,10 +305,10 @@ def run(conn, ctx) -> list:
     # V10-14 — 점이 든 키 경로
     from store.admin import get_path
 
-    probe = {"components": {"spec.hud": 20}}
-    ok = get_path(probe, "components.spec.hud") == 20
-    out.append(result(C["V10-14"], rid, 20,
-                      get_path(probe, "components.spec.hud"), ok))
+    probe = {"components": {"taste.hud": 15}}
+    ok = get_path(probe, "components.taste.hud") == 15
+    out.append(result(C["V10-14"], rid, 15,
+                      get_path(probe, "components.taste.hud"), ok))
     out += _admin_guard_checks(conn, rid)
     out += _session_checks(rid)
     out.append(_pii_query_check(conn, rid))

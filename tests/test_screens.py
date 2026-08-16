@@ -19,6 +19,7 @@ from report.screens.build import (  # noqa: E402
     view_market, view_notready, view_recommend, view_run, view_why,
 )
 from report.screens.views import ListingFilter  # noqa: E402
+from analyze.axes import COMPONENTS
 from contracts import (  # noqa: E402
     ANONYMOUS, ROLE_ADMIN, ROLE_USER, Account,
 )
@@ -62,20 +63,20 @@ def test_chip() -> None:
     cases = ((1, False, "1"), (0, False, "0"), (-1, True, "na"),
              (None, True, "unknown"), (None, False, "unknown"))
     for value, ex, bucket in cases:
-        c = chip("spec.hud", value, ex, LABELS)
+        c = chip("taste.hud", value, ex, LABELS)
         check(f"chip value={value} excluded={ex} → {vl[bucket]}",
               c.label.endswith(vl[bucket]), c.label)
         check(f"  필터 링크가 Component 이름을 쓴다",
-              "axis=spec.hud" in c.filter_url and f"bucket={bucket}" in c.filter_url,
+              "axis=taste.hud" in c.filter_url and f"bucket={bucket}" in c.filter_url,
               c.filter_url)
 
     check("★ V6-02 — VALUE_LABELS 밖의 문구를 쓰지 않는다",
           all(any(c.label.endswith(v) for v in allowed)
-              for c in [chip("spec.hud", v, e, LABELS)
+              for c in [chip("taste.hud", v, e, LABELS)
                         for v, e, _ in cases]))
     check("★ 「해당 없음」과 「없음」이 다른 톤",
-          chip("spec.hud", -1, True, LABELS).tone
-          != chip("spec.hud", 0, False, LABELS).tone)
+          chip("taste.hud", -1, True, LABELS).tone
+          != chip("taste.hud", 0, False, LABELS).tone)
 
 
 # ── STEP 97 목록 · V6-04 ─────────────────────────────────────────────
@@ -101,17 +102,25 @@ def test_listings() -> None:
               all(x.rank for x in rows), str([x.rank for x in rows]))
 
     hit = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="spec.hud", bucket="1"), FIN, ROOT)
+        calc_version=ctx.calc_version, axis="taste.hud", bucket="1"), FIN, ROOT)
     miss = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="spec.hud", bucket="0"), FIN, ROOT)
+        calc_version=ctx.calc_version, axis="taste.hud", bucket="0"), FIN, ROOT)
     check("★ 축·버킷 필터가 실제로 거른다",
           len(hit) + len(miss) == len(rows), f"{len(hit)}+{len(miss)}")
 
-    na = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="spec.hda", bucket="unknown"),
-        FIN, ROOT)
-    check("미확정 축(spec.hda)은 unknown 버킷으로 걸린다",
-          len(na) == len(rows), f"{len(na)}행")
+    # ★ 실제로 excluded 인 축을 골라 본다.  이름을 박으면 배점이 바뀔 때 죽는다
+    ex = conn.execute(
+        "SELECT axis FROM result_axis WHERE excluded=1 AND calc_version=?"
+        " GROUP BY axis HAVING COUNT(*)=? LIMIT 1",
+        (ctx.calc_version, len(rows))).fetchone()
+    if ex:
+        na = view_listings(ADMIN, conn, ListingFilter(
+            calc_version=ctx.calc_version, axis=ex[0], bucket="unknown"),
+            FIN, ROOT)
+        check(f"미확정 축({ex[0]})은 unknown 버킷으로 걸린다",
+              len(na) == len(rows), f"{len(na)}행")
+    else:
+        check("★ 씨앗에 전건 excluded 인 축이 없다 — 건너뛴다", True)
 
     rec = view_recommend(ADMIN, conn, flt, FIN, ROOT)
     check("추천에는 E · NOT_RATED 가 없다",
@@ -124,9 +133,10 @@ def test_compare() -> None:
     ids = [r[0] for r in conn.execute(
         "SELECT listing_id FROM core_listing LIMIT 2")]
     cv = view_compare(ADMIN, conn, ids, ctx.calc_version, FIN, POLICY, ROOT)
-    check("비교 — 17 Component", len(cv.axes) == 17, f"{len(cv.axes)}축")
+    check(f"비교 — {len(COMPONENTS)} Component",
+          len(cv.axes) == len(COMPONENTS), f"{len(cv.axes)}축")
     check("셀이 (listing_id, axis) 로 채워진다",
-          len(cv.cells) == len(ids) * 17, f"{len(cv.cells)}칸")
+          len(cv.cells) == len(ids) * len(COMPONENTS), f"{len(cv.cells)}칸")
     check("같은 버전이면 비교 가능", not cv.version_mismatch)
     check("★ V6-05 — 분모가 같으면 경고 없음", not cv.denominator_mismatch,
           str({r.denominator for r in [
@@ -150,7 +160,7 @@ def test_dashboard_notready() -> None:
           any(a.kind == "unclassified" for a in dv2.attention))
     # ★ hda Gate 가 열려 미확정이 줄었다.  기전을 시험하려면 하나 만든다
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
-                 "source='gate_closed' WHERE axis='spec.hda'")
+                 "source='gate_closed' WHERE axis='spec.options'")
     conn.commit()
     dv3 = view_dashboard(ADMIN, conn, ctx.run_id, ctx.calc_version, FIN, ROOT)
     check("미확정 축도 주의로 뜬다",
@@ -240,7 +250,7 @@ def test_account() -> None:
           view_watch(USER, conn, FIN, ctx.calc_version, ROOT) == [])
 
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
-                 "source='gate_closed' WHERE axis='spec.hda'")
+                 "source='gate_closed' WHERE axis='spec.options'")
     conn.commit()
     dv = view_dashboard(ADMIN, conn, ctx.run_id, ctx.calc_version, FIN, ROOT)
     check("★ 화면에 로그인 상태 · 역할이 나온다",

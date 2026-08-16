@@ -78,8 +78,10 @@ def run(conn, ctx) -> list:
 
     pol = ScoringPolicy(policy)
     _ = cutoffs(pol)
+    # ★ 등급컷은 505(취향 제외) 기준이다 (개정 292).  555 로 재면 어긋난다
+    base = float(policy.get("grade_base_points") or total)
     bad = [f"{g}:{c}" for g, c in grade_cut_points(pol)
-           if abs(c - total * policy["grade_cuts"][g]) > 1]
+           if abs(c - base * policy["grade_cuts"][g]) > 1]
     out.append(result(C["V5-02"], rid, "일치", bad or "일치", not bad, bad))
 
     out.append(_denominator_suite(rid, policy))
@@ -212,6 +214,8 @@ def _denominator_suite(run_id: str, policy: dict):
         return v
 
     total = float(policy["total_points"])
+    # ★ 성분 이름을 박지 않는다.  배점이 바뀌면 시험이 먼저 죽는다 (개정 292 실측)
+    probe = p.active_components()[0]
     fails = []
     if score(build(), p).grade == "NOT_RATED":
         fails.append("A 전 축 정상인데 등급이 안 났다")
@@ -222,17 +226,17 @@ def _denominator_suite(run_id: str, policy: dict):
 
     # G — 분모는 늘 만점이다.  어떤 축을 빼도 555 다 (개정 298)
     heavy = ("price", "warranty.general", "warranty.power", "spec.hud")
-    for excl in ((), ("spec.hud",), heavy):
+    for excl in ((), (probe,), heavy):
         if score(build(excl), p).denominator != total:
             fails.append(f"G 분모가 만점이 아니다 ({len(excl)}축 제외)")
 
     # H — 못 본 축은 0점이다.  분모가 아니라 획득이 줄어야 한다
-    r_one = score(build(("spec.hud",)), p)
-    if r_one.earned != score(build(), p).earned - p.comp("spec.hud"):
+    r_one = score(build((probe,)), p)
+    if r_one.earned != score(build(), p).earned - p.comp(probe):
         fails.append("H 못 본 축이 0점으로 안 남았다")
 
     # I — 확인율을 낼 수 있다.  applicable 이 「확인한 배점 합」이다
-    if r_one.applicable != total - p.comp("spec.hud"):
+    if r_one.applicable != total - p.comp(probe):
         fails.append("I 확인율을 낼 수 없다")
     return result(C["V5-03"], run_id, "A·D·E·G·H·I 전건",
                   fails or "통과", not fails, fails)

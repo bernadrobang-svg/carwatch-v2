@@ -53,10 +53,12 @@ def spec_a(ad: Client, lid: int) -> None:
         bool(ratio) and bool(raw),
         "분모가 다른 매물을 눈으로 갈라야 한다")
 
-    # A-2 분모 < 555 면 색 구분
-    rec("A-2", "분모 < 555 는 색 구분", "class 를 본다",
-        "denom-short 있음" if "denom-short" in lb else "표시 없음",
-        "denom-short" in lb)
+    # A-2  ★ 개정 298 로 분모는 늘 555 다 — 「분모 < 555 색 구분」은 폐기됐다.
+    #   대신 「555 중 350점 확인 (63%)」을 낸다 (개정 298 I)
+    _conf = re.search(r"\d+점 확인 \(\d+(?:\.\d+)?%\)", text(lb))
+    rec("A-2", "확인율을 함께 낸다 (개정 298 I)", "확인 문구를 본다",
+        _conf.group(0) if _conf else "표시 없음", bool(_conf),
+        "분모로 막지 않는 대신 얼마나 봤는지를 낸다")
 
     # A-3 막대는 비율
     rec("A-3", "막대는 비율을 그린다", "style 폭을 본다",
@@ -71,11 +73,24 @@ def spec_a(ad: Client, lid: int) -> None:
             os.path.abspath(__file__))), "config", "labels.json"),
             encoding="utf-8") as _f:
         _marks = _j.load(_f)["VALUE_MARKS"]
+    # ★ 어느 10행이 걸리느냐에 따라 결과가 달라지면 안 된다.
+    #   기호를 만드는 규칙 자체를 본다 — 셋이 서로 다른가
+    from report.screens.build import chip as _chip
+    _APP_CSS = open(os.path.join(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__))), "web", "static", "app.css"),
+        encoding="utf-8").read()
+    _lab = _j.load(open(os.path.join(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__))), "config", "labels.json"),
+        encoding="utf-8"))
+    _three = [_chip("state.accident", v, e, _lab)
+              for v, e in ((70, False), (0, False), (None, True))]
     want = {_marks["1"], _marks["0"], _marks["unknown"]}
-    got3 = (all(m in lb for m in ("axis-good", "axis-bad", "axis-unknown"))
-            and set(re.findall(r"<b>(.)</b>", lb)) >= want)
-    rec("A-4", "축 3상태 O · · · ?", "축 표시를 본다",
-        "3상태 구분" if got3 else "구분 없음", got3,
+    got3 = ({c.mark for c in _three} >= want
+            and len({c.tone for c in _three}) == 3
+            and all(f"axis-{c.tone}" in _APP_CSS for c in _three))
+    rec("A-4", "축 3상태 O · - · ?", "기호를 만드는 규칙을 본다",
+        " · ".join(f"{c.mark}({c.tone})" for c in _three) if got3
+        else "구분 없음", got3,
         "「없음」과 「모름」이 같으면 v1 사고")
 
     # A-5 등급 흰 글자
@@ -751,7 +766,7 @@ def spec_monkey(port: int, ad: Client, db: str, lid: int) -> None:
          {"previewed": "1", "file": "web.json",
           "key_path": "rows_per_page", "value": "111"}),
         ("미리보기 없이", "/admin/scoring",
-         {"action": "component", "target": "spec.hud", "value": "22",
+         {"action": "component", "target": "taste.hud", "value": "22",
           "reason": "순서 어김"}),
     ):
         token = ad.csrf(path)
@@ -942,6 +957,16 @@ def flow_s5(port: int, ad: Client, db: str, root: str) -> None:
     rec("S5-7", "진행 표시가 단계별로", "7걸음",
         "있음" if "진행" in text(rb) else "없음", "진행" in text(rb))
 
+    # ★ 씨앗에 미실행 검사가 없으면 이 화면이 그것을 낼 줄 아는지 알 수 없다.
+    #   실제로 한 줄 넣고 화면이 「미실행」으로 내는지 본다 (A-7 · S5-8)
+    _c = sqlite3.connect(db)
+    _c.execute(
+        "INSERT INTO audit_validation(run_id, phase, code, expected, actual,"
+        " passed, severity, checked_at, applicable)"
+        " VALUES ('spec-ui','V0','V0-00','-','미실행',0,'warn',"
+        "'2026-08-17T09:00:00+00:00',0)")
+    _c.commit()
+    _c.close()
     st, ab, _h = ad.get("/admin/audit")
     rec("S5-11", "안 돈 단계가 「미실행」", "11걸음",
         "미실행 표기" if "미실행" in ab else "없음", "미실행" in ab)
@@ -956,7 +981,7 @@ def flow_s5(port: int, ad: Client, db: str, root: str) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "spec.hud", "value": "26",
+                         "target": "taste.hud", "value": "26",
                          "reason": "미리 막히나"})
     rec("S5-16", "미리보기 없이 저장 → 미리 막힌다", "16걸음",
         f"{st} · {text(b)[:20]}", st in (400, 409))
@@ -1269,30 +1294,39 @@ def guide_v132(port: int, ad: Client, db: str, root: str, lid: int) -> None:
                              "secret": "usersecret9", "reason": "B-7"})
     u = Client(port, "g-b7")
     u.login("축조건자", "usersecret9")
-    st, lb, _h = u.get("/listings?axis=spec.hud&bucket=1&target=KOLEOS_HEV")
+    st, lb, _h = u.get("/listings?axis=taste.hud&bucket=1&target=KOLEOS_HEV")
     fields = dict(re.findall(
         r'name="(axis|bucket|target_key|min_grade)" value="([^"]*)"', lb))
     rec("가이드-3a", "축·구간이 폼에 실린다", "목록에서 축을 걸고 본다",
         f"{fields}",
-        fields.get("axis") == "spec.hud" and fields.get("bucket") == "1",
+        fields.get("axis") == "taste.hud" and fields.get("bucket") == "1",
         "문장에 적고 폼에 안 실으면 어긋난다")
 
-    token = u.csrf("/watch")
-    st, b, _l = u.post("/watch/add",
-                       {"csrf": token, "kind": "query",
-                        "name": "HUD 있는 차", "target_key": "KOLEOS_HEV",
-                        "axis": "spec.hud", "bucket": "1"})
-    from store.watch import run_watch_queries
-
+    # ★ 차종·축을 시험에 박지 않는다.  씨앗에 실제로 갈리는 축을 골라 건다 —
+    #   개정 292 로 축이 통째로 바뀌자 「없는 차종」을 걸고 있었다
     conn = sqlite3.connect(db)
     ver = conn.execute(
         "SELECT MAX(calc_version) FROM result_score").fetchone()[0]
+    pick = conn.execute(
+        "SELECT l.target_key, a.axis FROM result_axis a"
+        " JOIN core_listing l USING(listing_id)"
+        " WHERE a.calc_version=? AND a.excluded=0"
+        " GROUP BY l.target_key, a.axis"
+        " HAVING COUNT(DISTINCT CASE WHEN a.value>0 THEN 1 ELSE 0 END)=2"
+        " LIMIT 1", (ver,)).fetchone() or ("G80_25T", "taste.hud")
+    token = u.csrf("/watch")
+    st, b, _l = u.post("/watch/add",
+                       {"csrf": token, "kind": "query",
+                        "name": "조건 있는 차", "target_key": pick[0],
+                        "axis": pick[1], "bucket": "1"})
+    from store.watch import run_watch_queries
+
     hits = run_watch_queries(conn, ver, "2026-08-15T00:00:00+00:00")
     total = conn.execute(
         "SELECT COUNT(*) FROM result_score WHERE calc_version=?",
         (ver,)).fetchone()[0]
     got = sum(hits.values())
-    rec("가이드-3b", "「HUD 있는 차」 조건이 실제로 걸린다", "알림을 돌린다",
+    rec("가이드-3b", f"「{pick[1]} 있는 차」 조건이 실제로 걸린다", "알림을 돌린다",
         f"{got}건 / 전체 {total}건", 0 < got < total,
         "전건이면 조건이 안 걸린 것이다")
 

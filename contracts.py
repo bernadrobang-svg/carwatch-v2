@@ -185,6 +185,10 @@ class ListingSnapshot:
     warranty_deemed: int | None = None
     # ★ 보험이력 용도 변경이력 (개정 302).  렌트를 세 곳에서 대조한다
     record_use_json: str | None = None
+    # ★ 같은 차종·트림·연식 실매물 중앙값과 그 표본 수 (개정 292 ①).
+    #   매물별 값이라 target_config 에 숨기지 않는다 (F-1 · V4-24)
+    market_median_won: int | None = None
+    market_sample_n: int | None = None
 
 
 @dataclass(frozen=True)

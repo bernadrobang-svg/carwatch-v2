@@ -92,6 +92,8 @@
 <p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
 
 
+<p class="warn-warn">판정하지 못했습니다 — 핵심 축을 확인하지 못했다 — value.market · state.accident</p>
+
 
 
 <p class="warn-block">E등급 사유 — 리스·렌트 상품</p>
@@ -139,9 +141,9 @@
 
 
 <p class="score">
-  <strong>350</strong> / 555
+  <strong>233</strong> / 555
   <span class="muted">판정할 수 없는 축은 분모에서 뺍니다 ·
-    555 기준 환산 350</span>
+    555 기준 환산 0</span>
 </p>
 
 <h2>무엇을 조회했는가</h2>
@@ -196,139 +198,115 @@
 <tbody>
 
 <tr>
-  <td><a href="/listings?axis=color">색상</a></td>
-  <td class="num">40</td>
-  <td class="num">40</td>
-  <td>detail_color</td>
-  <td>2</td>
+  <td><a href="/listings?axis=spec.options">옵션</a></td>
+  <td class="num">30</td>
+  <td class="num">30</td>
+  <td>options_choice_price</td>
+  <td>1</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=history.damage">사고</a></td>
+  <td><a href="/listings?axis=spec.trim">트림</a></td>
+  <td class="num">43</td>
+  <td class="num">45</td>
+  <td>trim_origin_price</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=state.accident">사고</a></td>
   <td class="num"><span class="excluded">—</span></td>
-  <td class="num">20</td>
+  <td class="num">70</td>
   <td>missing</td>
   <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=history.insurance">보험</a></td>
+  <td><a href="/listings?axis=state.frame">골격</a></td>
   <td class="num"><span class="excluded">—</span></td>
-  <td class="num">15</td>
+  <td class="num">40</td>
   <td>missing</td>
   <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=history.rental">렌트</a></td>
+  <td><a href="/listings?axis=state.repair">보험 수리비</a></td>
+  <td class="num"><span class="excluded">—</span></td>
+  <td class="num">30</td>
+  <td>missing</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=state.usage">용도</a></td>
   <td class="num">0</td>
-  <td class="num">20</td>
+  <td class="num">25</td>
   <td>advertisement_type</td>
   <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=mileage">주행거리</a></td>
-  <td class="num">30</td>
-  <td class="num">30</td>
-  <td>list_mileage</td>
+  <td><a href="/listings?axis=state.warranty">보증</a></td>
+  <td class="num">15</td>
+  <td class="num">15</td>
+  <td>encar</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=taste.color">색상</a></td>
+  <td class="num">10</td>
+  <td class="num">10</td>
+  <td>detail_color</td>
   <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=price">가격</a></td>
-  <td class="num">120</td>
-  <td class="num">200</td>
+  <td><a href="/listings?axis=taste.hud">HUD</a></td>
+  <td class="num">15</td>
+  <td class="num">15</td>
+  <td>option_codes</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=taste.picked">지정 옵션</a></td>
+  <td class="num">15</td>
+  <td class="num">15</td>
+  <td>nothing_picked</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=taste.sunroof">선루프</a></td>
+  <td class="num">10</td>
+  <td class="num">10</td>
+  <td>option_codes</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=value.depreciation">감가</a></td>
+  <td class="num">35</td>
+  <td class="num">70</td>
   <td>expected_price</td>
   <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=safety.diagnosis">진단</a></td>
-  <td class="num">0</td>
-  <td class="num">20</td>
-  <td>advertisement_diagnosisCar</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=safety.warranty_product">보증상품</a></td>
-  <td class="num">20</td>
-  <td class="num">20</td>
-  <td>advertisement_warranty</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.bsd">후측방 경보</a></td>
-  <td class="num">5</td>
-  <td class="num">5</td>
-  <td>installed</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.hda">HDA</a></td>
-  <td class="num">0</td>
-  <td class="num">20</td>
-  <td>catalog_description</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.hud">HUD</a></td>
-  <td class="num">20</td>
-  <td class="num">20</td>
-  <td>installed</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.scc">어댑티브 크루즈</a></td>
-  <td class="num">10</td>
-  <td class="num">10</td>
-  <td>installed</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.sunroof">선루프</a></td>
-  <td class="num">20</td>
-  <td class="num">20</td>
-  <td>installed</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.svm">서라운드뷰</a></td>
-  <td class="num">10</td>
-  <td class="num">10</td>
-  <td>installed</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.tinting">틴팅</a></td>
+  <td><a href="/listings?axis=value.market">시세 대비</a></td>
   <td class="num"><span class="excluded">—</span></td>
-  <td class="num">5</td>
-  <td>no_mention</td>
-  <td>4</td>
+  <td class="num">120</td>
+  <td>market_sample_short</td>
+  <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=warranty.general">일반보증</a></td>
-  <td class="num">25</td>
-  <td class="num">50</td>
-  <td>encar</td>
-  <td>1</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=warranty.power">동력계 보증</a></td>
-  <td class="num">50</td>
-  <td class="num">50</td>
-  <td>encar</td>
-  <td>1</td>
+  <td><a href="/listings?axis=value.mileage">주행</a></td>
+  <td class="num">60</td>
+  <td class="num">60</td>
+  <td>mileage_per_year</td>
+  <td>2</td>
 </tr>
 
 </tbody>
@@ -341,17 +319,19 @@
 <p class="muted">진단 리포트가 없습니다.</p>
 
 
+<h2>확인 못 한 것 — 채우면 오를 수 있습니다</h2>
 
 
-<p class="muted">확인 못 한 것 — 없습니다. 17 Component 전부 판정됐습니다.</p>
+<p class="muted">없습니다. 14 Component 전부 판정됐습니다 —
+  확인율 100% 입니다 (분모 555점 · 개정 298).</p>
 
 
 <h2>왜 이 등급인가</h2>
 
-<p><b>강점</b><span class="chip-good">색상</span><span class="chip-good">주행거리</span><span class="chip-good">보증상품</span><span class="chip-good">후측방 경보</span><span class="chip-good">HUD</span><span class="chip-good">어댑티브 크루즈</span><span class="chip-good">선루프</span><span class="chip-good">서라운드뷰</span><span class="chip-good">동력계 보증</span></p>
+<p><b>강점</b><span class="chip-good">옵션</span><span class="chip-good">보증</span><span class="chip-good">색상</span><span class="chip-good">HUD</span><span class="chip-good">지정 옵션</span><span class="chip-good">선루프</span><span class="chip-good">주행</span></p>
 
 
-<p><b>약점</b><span class="chip-bad">렌트 0/20</span><span class="chip-bad">진단 0/20</span><span class="chip-bad">HDA 0/20</span></p>
+<p><b>약점</b><span class="chip-bad">용도 0/25</span></p>
 
 
 
@@ -412,7 +392,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260816T172401</span>
-  <span>2026-08-17 07:49</span>
+  <span>2026-08-17 08:37</span>
 </footer>
 
 </body>

@@ -180,7 +180,7 @@ def test_value_validation() -> None:
     snapshot = open(path, encoding="utf-8").read()
 
     try:
-        apply_config(conn, admin, "scoring.json", "components.spec.hud", 999,
+        apply_config(conn, admin, "scoring.json", "components.taste.hud", 999,
                      "배점 늘림", root=d, at=T1)
         check("★ 배점 합이 깨지면 거부 (V5-01 을 저장 시점에 건다)", False)
     except ValidationError as e:

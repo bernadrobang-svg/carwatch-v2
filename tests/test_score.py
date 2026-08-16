@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import itertools
+import math
 import json
 import os
 import sys
@@ -53,7 +54,9 @@ def snap(**kw) -> ListingSnapshot:
 # ★ 매물별 값은 스냅샷으로 간다 (F-1 · V4-24).
 #   차종 설정에 담으면 어떤 값이 판정에 쓰이는지 시그니처로 알 수 없다
 SNAP_KEYS = ("diagnosis_car", "advertisement_type", "lease_rent_info",
-             "usage_change_types_json", "warranty_extend", "warranty_deemed")
+             "usage_change_types_json", "warranty_extend", "warranty_deemed",
+             # 개정 302 · 292 — 보험이력 용도 · 시세 중앙값
+             "record_use_json", "market_median_won", "market_sample_n")
 
 
 def ctx(s: ListingSnapshot, **tc) -> AxisContext:
@@ -77,14 +80,16 @@ def ctx(s: ListingSnapshot, **tc) -> AxisContext:
 
 
 # ── 분모 시험 6종 (STEP 83 · V5-03) ──────────────────────────────────
-def full_verdict(excluded_comps=(), values=None) -> Verdict:
+def full_verdict(excluded_comps=(), values=None, taste_full=False) -> Verdict:
     v = Verdict()
     for c in COMPONENTS:
         if c in excluded_comps:
             put(v, c, None, PRIO_OBSERVED, "na", excluded=True)
-        else:
-            put(v, c, values if values is not None else POLICY.comp(c),
-                PRIO_OBSERVED, "test")
+            continue
+        # ★ 취향만 만점을 줘 「취향으로 등급이 오르지 않는가」를 잰다 (개정 292 ④)
+        got = (POLICY.comp(c) if taste_full and c.startswith("taste.")
+               else values if values is not None else POLICY.comp(c))
+        put(v, c, got, PRIO_OBSERVED, "test")
     return v
 
 
@@ -96,13 +101,15 @@ def test_denominator() -> None:
           f"{r.score_total}/{r.denominator}")
 
     # ★ B · C 는 폐기됐다 (개정 298).  한 축을 못 봐도 분모는 555 다
-    r = score(full_verdict(excluded_comps=("spec.hud",)), POLICY)
+    # ★ 성분 이름을 박지 않는다 — 배점이 바뀌면 시험이 먼저 죽는다 (개정 292)
+    probe = POLICY.active_components()[-1]
+    r = score(full_verdict(excluded_comps=(probe,)), POLICY)
     check("G 한 축 제외 → 분모는 그대로 · 그 축이 0점",
           r.denominator == total
-          and r.score_total == total - POLICY.comp("spec.hud"),
+          and r.score_total == total - POLICY.comp(probe),
           f"{r.denominator} · {r.score_total}")
     check("I 확인율을 낼 수 있다 (applicable = 확인한 배점 합)",
-          r.applicable == total - POLICY.comp("spec.hud"), f"{r.applicable}")
+          r.applicable == total - POLICY.comp(probe), f"{r.applicable}")
 
     r = score(full_verdict(excluded_comps=COMPONENTS), POLICY)
     check("D 전 축 실패 → 점수 생성 금지 (NOT_RATED)",
@@ -110,13 +117,18 @@ def test_denominator() -> None:
 
     # ★ F 도 폐기됐다 (개정 298).  분모로 등급을 막지 않는다.
     #   많이 못 봤으면 분모를 줄이는 것이 아니라 비율이 낮게 나와야 한다
-    heavy = ("price", "warranty.general", "warranty.power",
-             "spec.hud", "spec.hda")
+    # ★ 핵심 축을 빼면 NOT_RATED 라 (개정 287) 비율을 못 본다 — 보조 축으로 잰다
+    core = set(POLICY.raw["score_core_axes"])
+    heavy = tuple(sorted((c for c in POLICY.active_components()
+                          if c not in core), key=lambda c: -POLICY.comp(c))[:4])
     r = score(full_verdict(excluded_comps=heavy), POLICY)
     heavy_pts = sum(POLICY.comp(c) for c in heavy)
     check("H 많이 못 봐도 분모는 555 · 못 본 만큼 점수가 빠진다",
           r.denominator == total and r.score_total == total - heavy_pts,
           f"{r.score_total}/{r.denominator}")
+    check("★ 핵심 축(값·사고)이 빠지면 NOT_RATED (개정 287)",
+          score(full_verdict(excluded_comps=tuple(core)), POLICY).grade
+          == "NOT_RATED")
     check("★ 못 볼수록 비율이 내려간다 (v1 사고의 반대)",
           r.score_total / r.denominator < 1.0,
           f"{r.score_total / r.denominator:.1%}")
@@ -146,25 +158,27 @@ def test_components_form() -> None:
         check("★ 0 이 되는 성분이 생기면 거부", "스킵" in str(e), str(e)[:40])
 
     raw = copy.deepcopy(POLICY.raw)
-    raw["components"] = apply_skip(raw["components"], "spec.tinting")
+    raw["components"] = apply_skip(raw["components"], "taste.sunroof")
     check("★ components 에서 빼지 않는다 — skipped 로 표시",
-          isinstance(raw["components"]["spec.tinting"], dict))
+          isinstance(raw["components"]["taste.sunroof"], dict))
     raw["total_points"] = total_of(raw["components"])
-    check("스킵한 만큼 총점이 준다", raw["total_points"] == 550,
+    check("스킵한 만큼 총점이 준다",
+          raw["total_points"] == 555 - POLICY.comp("taste.sunroof"),
           str(raw["total_points"]))
 
     p = ScoringPolicy(raw)
     check("파서가 두 형태를 다 받는다",
-          p.comp("spec.hud") == 20 and p.comp("spec.tinting") == 0)
-    check("Component 수도 준다", len(p.active_components()) == 16,
+          p.comp("taste.hud") == 15 and p.comp("taste.sunroof") == 0)
+    check("Component 수도 준다", len(p.active_components()) == len(COMPONENTS) - 1,
           str(len(p.active_components())))
 
     v = Verdict()
     for c in COMPONENTS:
         put(v, c, p.comp(c), PRIO_OBSERVED, "test")
     r2 = score(v, p)
+    want = 555 - POLICY.comp("taste.sunroof")
     check("★ 스킵은 총점에도 분모에도 없다 (excluded 와 다르다)",
-          r2.denominator == 550 and r2.score_total == 550,
+          r2.denominator == want and r2.score_total == want,
           f"{r2.score_total}/{r2.denominator}")
 
 
@@ -172,28 +186,32 @@ def test_grade() -> None:
     from score.grade import grade_cut_points
 
     # ★ 판정은 비율이다.  점수 컷이 아니다 (STEP 84)
-    check("등급컷은 비율 0.9/0.8/0.7/0.6",
-          [c for _, c in cutoffs(POLICY)] == [0.9, 0.8, 0.7, 0.6],
+    # ★ 개정 292 — 505 기준 실측 분포에서 S 상위 1% · A 5% · B 20% · C 40%
+    check("등급컷은 비율 0.75/0.69/0.60/0.53",
+          [c for _, c in cutoffs(POLICY)] == [0.75, 0.69, 0.60, 0.53],
           str(cutoffs(POLICY)))
-    check("「555 기준」 500/444/388/333 은 표시용",
-          [c for _, c in grade_cut_points(POLICY)] == [500, 444, 388, 333],
+    # ★ 등급컷 점수는 505 기준이다 (개정 292).  555 로 곱하면 어긋난다
+    base = POLICY.raw["grade_base_points"]
+    want = [math.ceil(base * 0.75)] + [math.floor(base * r)
+                                       for r in (0.69, 0.60, 0.53)]
+    check(f"「{base} 기준」 {want} 는 표시용",
+          [c for _, c in grade_cut_points(POLICY)] == want,
           str(grade_cut_points(POLICY)))
 
     # ★ 분모가 다른 매물이 같은 비율이면 같은 등급이다
     from score.scorer import ScoreResult
 
     def g(earned, den):
-        # ★ 등급은 earned / denominator 다.  score_total 은 555 환산이라 안 쓴다
+        # ★ 등급은 grade_earned / grade_base 다 (개정 292 — 취향 제외 505)
         return grade_of(ScoreResult(0.0, den, [], earned, "B", None, {},
-                                    None), POLICY)
+                                    None, earned, den), POLICY)
 
-    check("★ 분모 495 매물도 S 를 받을 수 있다", g(450, 495.0) == "S",
-          f"{450 / 495:.1%}")
-    check("★ 실사고 — 441.91/530 = 83.4% → A", g(441.91, 530.0) == "A")
+    check("★ 90.9% → S", g(450, 495.0) == "S", f"{450 / 495:.1%}")
+    check("★ 83.4% → S (개정 292 컷 75%)", g(441.91, 530.0) == "S")
     # ★ E-1 — score_total 로 재면 한 등급 부풀려진다 (실측)
-    check("★ 245/455 = 53.8% → D", g(245, 455.0) == "D")
-    check("★ 298.85 를 쓰면 65.7% → C 로 올라간다 (그래서 안 쓴다)",
-          g(298.85, 455.0) == "C")
+    check("★ 245/455 = 53.8% → C (컷 53%)", g(245, 455.0) == "C")
+    check("★ 298.85 를 쓰면 65.7% → B 로 올라간다 (그래서 안 쓴다)",
+          g(298.85, 455.0) == "B")
     check("분모가 0 이면 NOT_RATED", g(100, 0) == "NOT_RATED")
 
     # ★ 이름 충돌 — 역할이 다르면 이름을 바꾼다 (V4-21)
@@ -209,6 +227,9 @@ def test_grade() -> None:
     check("만점 → S", grade_of(r, POLICY) == "S")
     r2 = score(full_verdict(values=0), POLICY)
     check("0점 → D", grade_of(r2, POLICY) == "D", str(r2.score_total))
+    check("★ 취향이 만점이어도 등급은 505 로 매긴다 (개정 292 ④)",
+          grade_of(score(full_verdict(values=0, taste_full=True), POLICY),
+                   POLICY) == "D")
     r3 = score(full_verdict(), POLICY, absolute=[FAIL_SEIZING])
     check("절대조건 → E (점수와 무관)", grade_of(r3, POLICY) == "E")
 
@@ -252,143 +273,198 @@ def test_history_real() -> None:
                                ["damage_by_status"])
         check(f"{name[11:-5]:12} 외판 교환 {want}판", got == want, f"{got}판")
 
-    r = POLICY.rule("history")
+    # ★ 개정 292 — 사고는 회수(70점) · 골격은 따로 40점이다
+    r = POLICY.rule("state")
+    s = snap(inspection_panels=panels_of("inspection_frame.json"))
+    v = analyze_listing(ctx(s))
+    check("★ 골격 교환 → 골격 40점이 0점", v.values["state.frame"] == 0,
+          str(v.values["state.frame"]))
     s = snap(inspection_panels=panels_of("inspection_outer_swap.json"))
     v = analyze_listing(ctx(s))
-    check("★ 외판 5판 → 사고 20점이 0점", v.values["history.damage"] == 0)
-    s = snap(inspection_panels=panels_of("inspection_outer_paint.json"))
-    v = analyze_listing(ctx(s))
-    check("판금/용접만 → 감점 없음 (20점)",
-          v.values["history.damage"] == r["damage_by_swap"]["0"])
+    check("외판만 교환 → 골격은 만점 (랭크가 가른다)",
+          v.values["state.frame"] == r["frame_points"]["none"],
+          str(v.values["state.frame"]))
     s = snap(inspection_panels=[])
     v = analyze_listing(ctx(s))
-    check("무사고 0판 → 20점",
-          v.values["history.damage"] == r["damage_by_swap"]["0"])
+    check("점검부 빈 배열 → 골격 이상 없음 40점",
+          v.values["state.frame"] == r["frame_points"]["none"])
+    v = analyze_listing(ctx(snap(accident_my_cnt=0, accident_other_cnt=0)))
+    check("무사고 → 사고 70점",
+          v.values["state.accident"] == r["accident_by_count"]["0"])
+    v = analyze_listing(ctx(snap(accident_my_cnt=1, accident_other_cnt=0)))
+    check("사고 1회 → 40점",
+          v.values["state.accident"] == r["accident_by_count"]["1"])
+    v = analyze_listing(ctx(snap(accident_my_cnt=2, accident_other_cnt=1)))
+    check("★ 3회 이상 → 0점", v.values["state.accident"] == r["accident_min"])
 
 
 def test_rental_real() -> None:
-    r = POLICY.rule("history")["rental"]
+    """용도 25점 — 렌트를 세 곳에서 대조한다 (개정 292 ② · 302)."""
+    r = POLICY.rule("state")
     ins = parse_inspection(fx("inspection_clean.json"), "encar", "1")
     s = snap(inspection_panels=json.loads(ins["inspection_panel_json"]))
     v = analyze_listing(
         ctx(s, usage_change_types_json=ins["usage_change_types_json"]))
-    check("★ outers 0판(무사고)인데 렌트 이력 → 렌트 0점",
-          v.values["history.damage"] == 20
-          and v.values["history.rental"] == r["rental"],
-          str(v.values["history.rental"]))
+    check("★ 점검부 용도변경이 렌트 → 용도 0점",
+          v.values["state.usage"] == r["usage_rental"],
+          str(v.values["state.usage"]))
 
     ins2 = parse_inspection(fx("inspection_frame.json"), "encar", "1")
     v = analyze_listing(
         ctx(snap(), usage_change_types_json=ins2["usage_change_types_json"]))
-    check("usageChangeTypes 빈 배열 → 비렌트 20점",
-          v.values["history.rental"] == r["non_rental"])
+    check("usageChangeTypes 빈 배열 → 자가용 25점",
+          v.values["state.usage"] == r["usage_private"])
+
+    # ★ 개정 302 — 광고형태만으로도 잡는다.  옛 코드는 이것을 놓쳤다
+    v = analyze_listing(ctx(snap(), advertisement_type="RENT_SUCCESSION"))
+    check("★ 광고형태가 렌트 승계 → 용도 0점 (점검부가 없어도)",
+          v.values["state.usage"] == r["usage_rental"],
+          str(v.values["state.usage"]))
+    v = analyze_listing(ctx(snap(), advertisement_type="OPERATING_LEASE"))
+    check("★ 운용리스는 렌트와 다르다 — 10점",
+          v.values["state.usage"] == r["usage_lease"],
+          str(v.values["state.usage"]))
+    # ★ 보험이력 용도 변경이력 (셋째 근거)
+    v = analyze_listing(ctx(snap(), record_use_json='["3", "2"]'))
+    check("★ 보험이력 용도 3(영업용) → 용도 0점",
+          v.values["state.usage"] == r["usage_rental"])
+    v = analyze_listing(ctx(snap(), record_use_json='["2"]'))
+    check("보험이력 자가용만 → 25점",
+          v.values["state.usage"] == r["usage_private"])
 
     v = analyze_listing(ctx(snap()))
     check("근거 없음 → 불명 10점 (0 이 아니다)",
-          v.values["history.rental"] == r["unknown"])
+          v.values["state.usage"] == r["usage_unknown"])
 
 
-# ── 보험 15점 금액 곡선 (STEP 77) ────────────────────────────────────
+# ── 자차 수리비 30점 (개정 292 ②) ──────────────────────────────────
 def test_insurance() -> None:
-    from parse.encar.mapping import parse_record
-    full = POLICY.comp("history.insurance")
-    ORG = 70000000
+    """★ 옛 「보험 15점 금액 곡선」이 「자차 수리비 30점」이 됐다 (개정 292)."""
+    r = POLICY.rule("state")["repair_curve"]
+    full = POLICY.comp("state.repair")
 
-    v = analyze_listing(ctx(snap(accident_my_cost=0, accident_my_cnt=0,
-                                 price_origin_won=ORG)))
-    check("무사고 → 15점", v.values["history.insurance"] == full)
-
-    # ★ 표본 record_with_accident — type 3 만 1건
-    rec = parse_record(fx("record_with_accident.json"), "encar", "1")
-    check("표본 확인 — myAccidentCost 0 · otherAccidentCnt 1",
-          rec["accident_my_cost"] == 0 and rec["accident_other_cnt"] == 1)
-    v = analyze_listing(ctx(snap(accident_my_cost=rec["accident_my_cost"],
-                                 accident_my_cnt=rec["accident_my_cnt"],
-                                 price_origin_won=ORG)))
-    check("★ type 3 만 → 15점 만점 (건수 상한 미적용)",
-          v.values["history.insurance"] == full,
-          str(v.values["history.insurance"]))
-
-    cases = ((0.01, 13), (0.03, 11), (0.06, 8), (0.09, 5), (0.13, 2), (0.20, 0))
-    for ratio, want in cases:
-        v = analyze_listing(ctx(snap(accident_my_cost=int(ORG * ratio),
-                                     accident_my_cnt=1, price_origin_won=ORG)))
-        got = v.values["history.insurance"]
-        check(f"수리비 {ratio:.0%} → {want}점", got == min(want, 12), f"{got}점")
-
-    v = analyze_listing(ctx(snap(accident_my_cost=int(ORG * 0.01),
-                                 accident_my_cnt=3, price_origin_won=ORG)))
-    check("★ 건수 3 → 상한 6 이 금액 점수 13 을 누른다",
-          v.values["history.insurance"] == 6,
-          str(v.values["history.insurance"]))
-
-    v = analyze_listing(ctx(snap(price_origin_won=ORG)))
-    check("이력 미확보 → NULL + excluded (0원으로 채우지 않는다)",
-          v.values["history.insurance"] is None
-          and "history.insurance" in v.excluded)
+    v = analyze_listing(ctx(snap(accident_my_cost=0, accident_my_cnt=0)))
+    check("수리비 0원 → 30점", v.values["state.repair"] == full,
+          str(v.values["state.repair"]))
+    v = analyze_listing(ctx(snap(accident_my_cost=990000, accident_my_cnt=1)))
+    check("100만 미만 → 20점", v.values["state.repair"] == r[1]["points"],
+          str(v.values["state.repair"]))
+    v = analyze_listing(ctx(snap(accident_my_cost=2900000, accident_my_cnt=1)))
+    check("300만 미만 → 10점", v.values["state.repair"] == r[2]["points"],
+          str(v.values["state.repair"]))
+    v = analyze_listing(ctx(snap(accident_my_cost=9000000, accident_my_cnt=2)))
+    check("300만 이상 → 0점", v.values["state.repair"] == 0,
+          str(v.values["state.repair"]))
+    # ★ 「없다」와 「모른다」를 가른다 — 수리비 미확보는 excluded 다
+    v = analyze_listing(ctx(snap()))
+    check("★ 수리비 미확보 → NULL + excluded (0점 아님)",
+          v.values["state.repair"] is None and "state.repair" in v.excluded)
 
 
 def test_safety_real() -> None:
-    r = POLICY.rule("safety")
+    """플랫폼 신뢰도 — 점검 출처 · 엔카진단 · 엔카보증 (개정 300).
+
+    ★ 개정 292 배점표에 엔카진단·엔카보증의 자리가 없어졌다.
+      점수를 임의로 만들지 않고 「화면에 사실을 낸다」로만 구현했다 —
+      가이드 판단이 필요하다 (아침 보고)
+    """
+    from analyze.trust import (
+        FORMAT_OFFICIAL, FORMAT_SELLER, TRUST_HIGH, TRUST_LOW, TRUST_MEDIUM,
+        TRUST_NONE, platform_trust,
+    )
+
     ev = parse_detail(fx("detail_ev_tesla.json"), "encar", "1")
     check("표본 확인 — 전기차 extendWarranty·deemed 둘 다 거짓",
           not ev["warranty_extend"] and not ev["warranty_deemed"])
 
-    v = analyze_listing(ctx(snap(target_key="MODEL_Y"),
-                            diagnosis_car=1, warranty_extend=False,
-                            warranty_deemed=False))
-    check("★ 전기차 보증상품 → -1 · 분모 제외",
-          v.values["safety.warranty_product"] == -1
-          and "safety.warranty_product" in v.excluded)
+    got, _why = platform_trust([FORMAT_OFFICIAL], 1, True)
+    check("엔카직영 점검 + 진단 + 보증 → 높음", got == TRUST_HIGH, str(got))
+    got, why = platform_trust([FORMAT_OFFICIAL], 0, False)
+    check("엔카직영 점검만 → 보통", got == TRUST_MEDIUM, str(got))
+    check("★ 왜 보통인지를 함께 낸다",
+          "엔카진단이 없습니다" in why and "엔카보증이 없습니다" in why, str(why))
+    got, why = platform_trust([FORMAT_SELLER], 1, True)
+    check("★ 판매자가 올린 점검 → 낮음 (진단·보증이 있어도)",
+          got == TRUST_LOW, str(got))
+    check("★ 화면에 그대로 낸다 — 「점검을 판매자가 올렸습니다」",
+          "점검을 판매자가 올렸습니다" in why, str(why))
+    got, _why = platform_trust([], 1, True)
+    check("점검 자체가 없음 → 없음", got == TRUST_NONE, str(got))
+    got, _why = platform_trust(None, None, None)
+    check("★ 확인 못 한 것은 「없음」이 아니다", got is None, str(got))
 
-    v = analyze_listing(ctx(snap(target_key="G80_25T"),
-                            diagnosis_car=1, warranty_extend=False,
-                            warranty_deemed=True))
-    check("내연 + 보증상품 있음 → 20점",
-          v.values["safety.warranty_product"] == r["warranty_product_yes"]
-          and "safety.warranty_product" not in v.excluded)
-
-    r2 = score(v, POLICY)
-    ev = score(analyze_listing(ctx(snap(target_key="MODEL_Y"), diagnosis_car=1)),
-               POLICY)
-    # ★ 분모가 아니라 확인율이 줄어든다 (개정 298).  전기차라고 만점이 되면 안 된다
-    check("전기차는 안전 축을 못 봐 확인율이 20 줄어든다",
-          ev.denominator == r2.denominator and ev.applicable < r2.applicable,
-          f"분모 {ev.denominator} · 확인 {ev.applicable} < {r2.applicable}")
+    # ── 보증 잔여 15점 (개정 292 ②) ──
+    r2 = score(analyze_listing(ctx(snap(
+        warranty_body_month=60, warranty_body_km=100000,
+        warranty_power_month=120, warranty_power_km=200000,
+        first_registration_date="2023-05-02", mileage_km=30000))), POLICY)
+    check("★ 보증은 100점이 아니라 15점이다 (개정 292)",
+          POLICY.comp("state.warranty") == 15, str(POLICY.comp("state.warranty")))
+    check("보증이 남아 있으면 점수가 난다", r2.earned > 0)
 
 
 def test_spec_gate() -> None:
-    v = analyze_listing(ctx(snap(options_standard=["010", "095"],
-                                 options_choice=[])))
-    check("HUD 095 장착 → 20점", v.values["spec.hud"] == 20)
-    check("선루프 010 장착 → 20점", v.values["spec.sunroof"] == 20)
-    check("SVM 미장착 → 0점 (분모 제외 아님)",
-          v.values["spec.svm"] == 0 and "spec.svm" not in v.excluded)
-    check("★ HDA Gate 미통과 → NULL + excluded (추정 금지)",
-          v.values["spec.hda"] is None and "spec.hda" in v.excluded)
+    """③ 사양 75점 (트림 45 · 옵션 30) · ④ 취향 50점 (개정 292).
+
+    ★ 마스터 지적 — 「깡통에 HUD 만 있어도 만점」.
+      이 배점이면 깡통은 트림 45 중 낮은 점수를 받고
+      HUD 는 취향 15점이라 등급(505)에 안 들어간다
+    """
+    ladder = {"G80_25T": [40000000, 50000000, 60000000, 70000000]}
+    # 깡통 — 사다리 맨 아래
+    low = analyze_listing(ctx(snap(target_key="G80_25T",
+                                   price_origin_won=40000000,
+                                   options_standard=["095"], options_choice=[]),
+                              trim_ladder=ladder))
+    # 풀옵션 — 사다리 맨 위 · HUD 는 없다
+    high = analyze_listing(ctx(snap(target_key="G80_25T",
+                                    price_origin_won=70000000,
+                                    options_standard=[], options_choice=[]),
+                               trim_ladder=ladder))
+    check("★ 깡통은 트림 점수가 낮다",
+          low.values["spec.trim"] < high.values["spec.trim"],
+          f"{low.values['spec.trim']} < {high.values['spec.trim']}")
+    check("★ 「풀옵션에 HUD 없음」이 「깡통에 HUD」보다 등급이 높다",
+          score(high, POLICY).grade_earned > score(low, POLICY).grade_earned,
+          f"{score(high, POLICY).grade_earned} > "
+          f"{score(low, POLICY).grade_earned}")
+    check("HUD 095 장착 → 취향 15점", low.values["taste.hud"] == 15,
+          str(low.values["taste.hud"]))
+    check("HUD 미장착 → 0점", high.values["taste.hud"] == 0)
+    check("★ HUD 는 등급(505)에 안 들어간다 — 취향이다",
+          "taste" in __import__("analyze.axes", fromlist=["x"]
+                                ).GRADE_EXCLUDED_AXES)
 
     v = analyze_listing(ctx(snap(target_key="MODEL_Y", options_standard=[],
                                  options_choice=[]),
-                            SPEC_DEFAULT_OFF={"spec.hud": True}))
+                            SPEC_DEFAULT_OFF={"spec.hud": True},
+                            trim_ladder=ladder))
     check("★ 모델Y HUD → -1 · 분모 제외 (사양표 근거)",
-          v.values["spec.hud"] == -1 and "spec.hud" in v.excluded)
+          v.values["taste.hud"] == -1 and "taste.hud" in v.excluded)
 
     v = analyze_listing(ctx(snap(options_standard=[], options_choice=[],
                                  ad_body_text="선루프 있습니다")))
     check("★ 판매글 키워드가 실장착을 이기지 못한다 (v1 사고)",
-          v.values["spec.sunroof"] == 0)
+          v.values["taste.sunroof"] == 0)
 
-    v = analyze_listing(ctx(snap(options_standard=[], options_choice=[],
-                                 ad_body_text="루마 틴팅 시공")))
-    check("틴팅 키워드 명중 → 5점", v.values["spec.tinting"] == 5)
-    v = analyze_listing(ctx(snap(options_standard=[], options_choice=[],
-                                 ad_body_text="깨끗한 차량")))
-    check("틴팅 언급 없음 → NULL + excluded (0 아님)",
-          v.values["spec.tinting"] is None and "spec.tinting" in v.excluded)
+    # ★ 취향은 끌 수 있다 — 끄면 만점이다 (개정 292 ④)
+    off = analyze_listing(ctx(snap(options_standard=[], options_choice=[]),
+                              taste_off=("taste.sunroof",)))
+    check("★ 「나는 선루프 필요 없다」 → 만점 처리 (감점이 아니다)",
+          off.values["taste.sunroof"] == POLICY.comp("taste.sunroof"),
+          str(off.values["taste.sunroof"]))
+    check("고른 옵션이 없으면 지정 옵션은 만점",
+          off.values["taste.picked"] == POLICY.comp("taste.picked"))
+    picked = analyze_listing(ctx(snap(options_standard=["095"],
+                                      options_choice=[]),
+                                 picked_options=("095", "010")))
+    check("★ 고른 둘 중 하나만 있으면 절반",
+          picked.values["taste.picked"] == round(POLICY.comp("taste.picked") / 2),
+          str(picked.values["taste.picked"]))
 
 
 def test_price_real() -> None:
-    """실제 depreciation.json 초기값으로 채점되는가 (STEP 70)."""
+    """① 값 250 — 시세 대비 120 · 감가 70 · 주행 60 (개정 292)."""
     dep = json.load(open(os.path.join(ROOT, "config", "depreciation.json"),
                          encoding="utf-8"))
     check("감가 곡선 6구간 확보", len(dep["curve"]) == 6, str(len(dep["curve"])))
@@ -396,83 +472,96 @@ def test_price_real() -> None:
     # 3년 경과 · 계수 1.053 → 기대가 = 원가 × 0.710 × 1.053
     org = 70000000
     exp = org * dep["curve"]["3"] * dep["coefficient"]["G80_25T"]
-    v = analyze_listing(ctx(snap(target_key="G80_25T",
-                                 price_current_won=int(exp),
-                                 price_origin_won=org,
-                                 first_registration_date="2023-05-02"),
-                            depreciation=dep))
-    check("★ 기대가와 같으면 100점 (200점의 절반)",
-          v.values["price"] == 100, str(v.values["price"]))
-    check("가격 축이 살아난다 (excluded 아님)", "price" not in v.excluded)
 
-    v = analyze_listing(ctx(snap(target_key="G80_25T",
-                                 price_current_won=int(exp * 0.80),
-                                 price_origin_won=org,
-                                 first_registration_date="2023-05-02"),
-                            depreciation=dep))
-    check("기대가 −20% → 180점", v.values["price"] == 180, str(v.values["price"]))
-    v = analyze_listing(ctx(snap(target_key="G80_25T",
-                                 price_current_won=int(exp * 1.30),
-                                 price_origin_won=org,
-                                 first_registration_date="2023-05-02"),
-                            depreciation=dep))
-    check("기대가 +30% → −100점 (음수 구간)",
-          v.values["price"] == -100, str(v.values["price"]))
+    def at(price, **kw):
+        return analyze_listing(ctx(snap(target_key="G80_25T",
+                                        price_current_won=int(price),
+                                        price_origin_won=org,
+                                        first_registration_date="2023-05-02",
+                                        **kw), depreciation=dep))
+
+    v = at(exp)
+    check("★ 기대가와 같으면 감가 35점 (70점의 절반)",
+          v.values["value.depreciation"] == 35,
+          str(v.values["value.depreciation"]))
+    check("감가 축이 살아난다 (excluded 아님)",
+          "value.depreciation" not in v.excluded)
+    check("기대가 −20% → 70점 만점",
+          at(exp * 0.80).values["value.depreciation"] == 70)
+    check("기대가 +30% → 0점 (음수 구간이 없다 — 만점이 250 이라)",
+          at(exp * 1.30).values["value.depreciation"] == 0)
+
+    # ★ 시세는 실매물 중앙값이다.  이론가가 아니다 (개정 292 ①)
+    v = at(exp, market_median_won=50000000, market_sample_n=12)
+    check("★ 중앙값보다 20% 싸면 시세 축 120점 만점",
+          at(50000000 * 0.80, market_median_won=50000000,
+             market_sample_n=12).values["value.market"] == 120)
+    check("중앙값과 같으면 60점",
+          at(50000000, market_median_won=50000000,
+             market_sample_n=12).values["value.market"] == 60)
+    check("★ 표본이 모자라면 excluded — 이론가로 메우지 않는다",
+          at(exp).values["value.market"] is None
+          and "value.market" in at(exp).excluded)
+
+    # ★ 주행은 연 주행거리로 본다.  총 km 가 아니다 (개정 292)
+    check("★ 3년에 3만(연 1만) → 60점 만점",
+          at(exp, mileage_km=30000).values["value.mileage"] == 60,
+          str(at(exp, mileage_km=30000).values["value.mileage"]))
+    check("3년에 9만(연 3만) → 0점",
+          at(exp, mileage_km=90000).values["value.mileage"] == 0)
 
     # ★ 스포티지 계수 1.517 은 sane_range [0.80, 1.20] 밖이다
     check("표본 확인 — 스포티지 계수가 가드 밖",
           dep["coefficient"]["SPORTAGE_LPI"] > dep["coefficient_sane_range"][1])
-    v = analyze_listing(ctx(snap(target_key="SPORTAGE_LPI",
-                                 price_current_won=36000000,
-                                 price_origin_won=32840000,
-                                 first_registration_date="2023-05-02"),
-                            depreciation=dep))
-    check("★ 계수 가드 밖 → 가격 축 excluded (자르지도, 그대로 쓰지도 않는다)",
-          v.values["price"] is None and "price" in v.excluded)
-    check("다른 축은 정상 판정된다",
-          v.values["mileage"] is not None)
-
-    ok = analyze_listing(ctx(snap(target_key="G80_25T",
-                                  price_current_won=36000000,
-                                  price_origin_won=32840000,
-                                  first_registration_date="2023-05-02"),
-                             depreciation=dep))
-    check("스포티지는 가격 200 만큼 확인율이 줄어든다 (분모가 아니라)",
-          score(ok, POLICY).applicable - score(v, POLICY).applicable == 200
-          and score(ok, POLICY).denominator == score(v, POLICY).denominator,
-          f"확인 {score(ok, POLICY).applicable} → {score(v, POLICY).applicable}")
+    bad = analyze_listing(ctx(snap(target_key="SPORTAGE_LPI",
+                                   price_current_won=36000000,
+                                   price_origin_won=32840000,
+                                   first_registration_date="2023-05-02"),
+                              depreciation=dep))
+    check("★ 계수 가드 밖 → 감가 축 excluded (자르지도, 그대로 쓰지도 않는다)",
+          bad.values["value.depreciation"] is None
+          and "value.depreciation" in bad.excluded)
+    check("다른 축은 정상 판정된다", bad.values["value.mileage"] is not None)
+    check("★ 핵심 축이라 등급이 안 난다 (개정 287)",
+          score(bad, POLICY).grade == "NOT_RATED")
 
 
 # ── 색상 40점 (STEP 80) ──────────────────────────────────────────────
 def test_color() -> None:
-    r = POLICY.rule("color")["grade_points"]
+    """④ 취향 — 색상 10점.  흰·검정 10 · 회색·은색 7 · 유색 3 (개정 292)."""
+    r = POLICY.rule("taste")["color_points"]
     for name, want in (("흰색", r["preferred"]), ("청색", r["neutral"]),
                        ("노란색", r["avoided"])):
         v = analyze_listing(ctx(snap(color_ext_raw=name)))
-        check(f"색상 {name} → {want}점", v.values["color"] == want,
-              str(v.values["color"]))
+        check(f"색상 {name} → {want}점", v.values["taste.color"] == want,
+              str(v.values["taste.color"]))
     check("★ 기피색도 0 점이 아니다 — 가치 없음이 아니라 이 축에서 손해",
           r["avoided"] > 0)
     check("★ 여집합 규칙 — 열거 밖은 기피 (미분류가 아니다)",
-          "color" not in analyze_listing(ctx(snap(color_ext_raw="분홍"))).excluded)
+          "taste.color" not in
+          analyze_listing(ctx(snap(color_ext_raw="분홍"))).excluded)
     v = analyze_listing(ctx(snap()))
     check("색상 미확보 → NULL + excluded (0점 아님)",
-          v.values["color"] is None and "color" in v.excluded)
+          v.values["taste.color"] is None and "taste.color" in v.excluded)
+    check("★ 색은 취향이라 등급(505)에 안 들어간다",
+          POLICY.comp("taste.color") == 10)
 
 
 def test_price_pending() -> None:
     v = analyze_listing(ctx(snap(price_current_won=50000000,
                                  price_origin_won=70000000,
                                  year_month="2023-05")))
-    check("★ 감가 곡선 미확정 → 가격 NULL + excluded (0점 아님)",
-          v.values["price"] is None and "price" in v.excluded)
+    check("★ 감가 곡선 미확정 → 감가 NULL + excluded (0점 아님)",
+          v.values["value.depreciation"] is None
+          and "value.depreciation" in v.excluded)
 
     dep = {"curve": {"3": 0.70}, "coefficient": {"G80_25T": 1.0}}
     v = analyze_listing(ctx(snap(price_current_won=49000000,
                                  price_origin_won=70000000,
                                  year_month="2023-05"), depreciation=dep))
-    check("곡선이 주어지면 기대가 대비로 채점 (±0% → 100점)",
-          v.values["price"] == 100, str(v.values["price"]))
+    check("곡선이 주어지면 기대가 대비로 채점 (±0% → 35점)",
+          v.values["value.depreciation"] == 35,
+          str(v.values["value.depreciation"]))
 
 
 def test_absolute_real() -> None:
@@ -539,19 +628,19 @@ def test_empty_array_meaning() -> None:
         "analyze.absolute", fromlist=["absolute_check"]).absolute_check(ctx(s))
     check("빈 outers → 골격 손상 아님", FAIL_FRAME not in fails)
 
-    from analyze.axis.history import analyze_history
+    from analyze.axis.state import analyze_state
 
     v = Verdict()
-    analyze_history(ctx(s), v)
-    check("★ 빈 outers → history.damage 만점 (excluded 아니다)",
-          v.values.get("history.damage") == POLICY.comp("history.damage")
-          and "history.damage" not in v.excluded,
-          f"{v.values.get('history.damage')} / {v.sources.get('history.damage')}")
+    analyze_state(ctx(s), v)
+    check("★ 빈 outers → state.frame 만점 (excluded 아니다)",
+          v.values.get("state.frame") == POLICY.comp("state.frame")
+          and "state.frame" not in v.excluded,
+          f"{v.values.get('state.frame')} / {v.sources.get('state.frame')}")
 
     v2 = Verdict()
-    analyze_history(ctx(snap()), v2)
+    analyze_state(ctx(snap()), v2)
     check("점검부 없음 → excluded (만점 아니다)",
-          "history.damage" in v2.excluded)
+          "state.frame" in v2.excluded)
 
 
 # ── STEP 82e 유사군 ─────────────────────────────────────────────────

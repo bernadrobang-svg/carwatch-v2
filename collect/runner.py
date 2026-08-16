@@ -58,6 +58,8 @@ ASPECT = "Aspect"
 
 # 진행 표시 주기.  건마다 찍으면 화면이 넘친다 (형식)
 PROGRESS_EVERY = 20
+# 단위 환산 (2장 상수표 · V4-13).  ★ 옵션가 사전은 만원 단위다 (개정 292 ③)
+WON_PER_MANWON = 10_000
 
 
 # ── 차종 · collect_group (STEP 23 collect_group) ─────────────────────
@@ -875,13 +877,71 @@ def _dicts(conn, root: str) -> DictionarySet:
         cg = json.load(f)
     grade = {c: "preferred" for c in cg["preferred"]}
     grade.update({c: "neutral" for c in cg["neutral"]})
+    # 선택 옵션가 (원).  ★ 사전은 만원 단위다 (개정 292 ③)
+    # ★ 같은 코드가 카탈로그마다 있다 (10001 은 52행).  중앙값을 쓴다 —
+    #   합치면 옵션 합이 4.7억이 됐다 (실측 08-17)
+    by_code: dict = {}
+    for code, mw in conn.execute(
+        "SELECT option_code, price_manwon FROM dict_model_option"
+        " WHERE price_manwon IS NOT NULL"
+    ):
+        by_code.setdefault(code, []).append(int(mw))
+    prices = {code: sorted(v)[len(v) // 2] * WON_PER_MANWON
+              for code, v in by_code.items()}
     return DictionarySet(option_names=names, option_descriptions=desc,
+                         option_prices=prices,
                          tint_keywords=tk, color_grade=grade,
                          color_default=cg["default"])
 
 
-def _listing_config(conn, lid: str, targets: dict, dep: dict,
-                    as_of: str) -> dict:
+def _market_medians(conn, need: int) -> dict:
+    """매물별 「같은 차종·트림·연식」 실매물 중앙값 (개정 292 ①).
+
+    ★ 이론가가 아니다.  실제로 팔리고 있는 값이다.
+      표본이 need 미만이면 넣지 않는다 — 그 매물은 시세 축이 excluded 다
+    금지   렌트·리스 승계를 표본에 넣는 것.  같은 차의 값이 아니다
+    """
+    groups: dict = {}
+    for lid, tk, trim, ym, price in conn.execute(
+        "SELECT listing_id, target_key, trim_badge, substr(year_month,1,4),"
+        " price_current_won FROM core_listing"
+        " WHERE status='active' AND price_current_won IS NOT NULL"
+        " AND target_key IS NOT NULL"
+        " AND (advertisement_type IS NULL OR advertisement_type='NORMAL')"
+    ):
+        groups.setdefault((tk, trim, ym), []).append((lid, price))
+    out: dict = {}
+    for rows in groups.values():
+        if len(rows) < need:
+            continue
+        prices = sorted(p for _lid, p in rows)
+        mid = len(prices) // 2
+        median = (prices[mid] if len(prices) % 2
+                  else (prices[mid - 1] + prices[mid]) / 2)
+        for lid, _p in rows:
+            out[lid] = (median, len(prices))
+    return out
+
+
+def _trim_ladders(conn) -> dict:
+    """차종별 트림 신차가 사다리 (개정 292 ③).
+
+    ★ 백분위를 매기려면 그 차종의 트림을 다 알아야 한다.
+      매물이 아니라 트림 단위로 센다 — 인기 트림이 여러 번 세지면 안 된다
+    """
+    # ★ trim_badge 는 차종 안에서 1~7종뿐이다 — target_key 가 이미 트림을 담는다.
+    #   서로 다른 「등급 기준 신차가」가 실제 트림이다 (실측 08-17: 차종당 3~21종)
+    ladder: dict = {}
+    for tk, origin in conn.execute(
+        "SELECT DISTINCT target_key, price_origin_won FROM core_listing"
+        " WHERE target_key IS NOT NULL AND price_origin_won IS NOT NULL"
+    ):
+        ladder.setdefault(tk, []).append(int(origin))
+    return ladder
+
+
+def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
+                    ladder: dict) -> dict:
     """차종 설정만 담는다.
 
     ★ 매물별 값은 여기 넣지 않는다 (F-1 · V4-24).
@@ -897,6 +957,8 @@ def _listing_config(conn, lid: str, targets: dict, dep: dict,
         "depreciation": dep,
         "SPEC_DEFAULT_ON": tk.get("SPEC_DEFAULT_ON"),
         "SPEC_DEFAULT_OFF": tk.get("SPEC_DEFAULT_OFF"),
+        # ★ 개정 292 — 트림 사다리는 차종 단위다.  전 매물을 한 번만 훑는다
+        "trim_ladder": ladder,
     }
 
 
@@ -919,6 +981,16 @@ def _listing_values(conn, lid: str) -> dict:
             "record_use_json": row[6]}
 
 
+def _market_of(market: dict, lid: str) -> dict:
+    """매물별 시세 중앙값 → ListingSnapshot (F-1 · V4-24).
+
+    ★ target_config 에 담으면 어떤 값이 판정에 쓰이는지 시그니처로 알 수 없다
+    """
+    got = market.get(lid)
+    return {"market_median_won": int(got[0]) if got else None,
+            "market_sample_n": got[1] if got else None}
+
+
 def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                          depreciation: dict) -> dict:
     policy = ScoringPolicy(policy_raw)
@@ -934,6 +1006,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         t0 = time.time()
         at = clock.now().isoformat()
         dicts = _dicts(conn, root)
+        # ★ 시세·트림 사다리는 전 매물을 한 번만 훑는다 (개정 292)
+        market = _market_medians(conn, policy.rule("value")["market_min_sample"])
+        ladder = _trim_ladders(conn)
         # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
         #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
         #   그대로 두면 등급 분포에 대상 아닌 것이 섞인다
@@ -950,11 +1025,20 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
                     "WHERE status='active'"))]
+        # ★ 배점이 바뀌면 옛 성분 행이 남는다 (개정 292 실측 — 17 → 14 성분).
+        #   그대로 두면 화면과 검사가 없어진 축을 계속 읽는다
+        gone = [r[0] for r in conn.execute(
+            "SELECT DISTINCT axis FROM result_axis") if r[0] not in COMPONENTS]
+        if gone:
+            conn.execute("DELETE FROM result_axis WHERE axis IN "
+                         f"({','.join('?' * len(gone))})", tuple(gone))
+            conn.commit()
         rows = 0
         for lid in lids:
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
-            snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid))
-            tc = _listing_config(conn, lid, targets, depreciation, at)
+            snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
+                           **_market_of(market, lid))
+            tc = _listing_config(conn, lid, targets, depreciation, at, ladder)
             actx = AxisContext(snap, dicts, policy,
                                TargetSpec(snap.target_key or "", "", {}), tc)
             v = analyze_listing(actx)
@@ -992,6 +1076,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         t0 = time.time()
         at = clock.now().isoformat()
         dicts = _dicts(conn, root)
+        # ★ 시세·트림 사다리는 전 매물을 한 번만 훑는다 (개정 292)
+        market = _market_medians(conn, policy.rule("value")["market_min_sample"])
+        ladder = _trim_ladders(conn)
         # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
         #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
         #   그대로 두면 등급 분포에 대상 아닌 것이 섞인다
@@ -1010,8 +1097,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                     "WHERE status='active'"))]
         for lid in lids:
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
-            snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid))
-            tc = _listing_config(conn, lid, targets, depreciation, at)
+            snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
+                           **_market_of(market, lid))
+            tc = _listing_config(conn, lid, targets, depreciation, at, ladder)
             actx = AxisContext(snap, dicts, policy,
                                TargetSpec(snap.target_key or "", "", {}), tc)
             v = analyze_listing(actx)

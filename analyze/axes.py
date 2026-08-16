@@ -30,6 +30,8 @@ class DictionarySet:
     """Analyzer 가 읽는 사전.  DB 접근을 대신한다 (순수 함수 유지)."""
 
     option_names: dict[str, str] = field(default_factory=dict)
+    # 선택 옵션가 (원).  ★ 사양 축의 「옵션 합」 백분위에 쓴다 (개정 292 ③)
+    option_prices: dict[str, int] = field(default_factory=dict)
     option_descriptions: dict[str, str] = field(default_factory=dict)
     tint_keywords: tuple[str, ...] = ()
     color_grade: dict[str, str] = field(default_factory=dict)
@@ -80,17 +82,19 @@ class AxisContext:
     target_config: dict = field(default_factory=dict)
 
 
-# Component 목록 — result_axis 는 이 단위로 저장한다 (STEP 68)
+# Component 목록 — result_axis 는 이 단위로 저장한다 (STEP 68 · 개정 292)
+# ★ 갈래별 합   값 250 · 상태 180 · 사양 75 · 취향 50 = 555
+#   등급은 ①+②+③ = 505 로 매긴다.  ④ 취향은 순위에만 쓴다
 COMPONENTS: tuple[str, ...] = (
-    "price",
-    "warranty.general", "warranty.power",
-    "spec.hud", "spec.hda", "spec.sunroof", "spec.svm", "spec.scc",
-    "spec.bsd", "spec.tinting",
-    "history.damage", "history.insurance",
-    "history.rental",
-    "safety.diagnosis", "safety.warranty_product",
-    "color", "mileage",
+    "value.market", "value.depreciation", "value.mileage",
+    "state.accident", "state.frame", "state.repair",
+    "state.usage", "state.warranty",
+    "spec.trim", "spec.options",
+    "taste.hud", "taste.sunroof", "taste.color", "taste.picked",
 )
+
+# 등급에 들어가지 않는 갈래 (개정 292 ④).  ★ 취향으로 등급이 오르내리면 안 된다
+GRADE_EXCLUDED_AXES: tuple[str, ...] = ("taste",)
 
 
 def axis_of(component: str) -> str:

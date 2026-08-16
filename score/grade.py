@@ -32,12 +32,14 @@ def cutoffs(policy: ScoringPolicy) -> list[tuple[str, float]]:
 
 
 def grade_cut_points(policy: ScoringPolicy) -> list[tuple[str, int]]:
-    """화면 설명용 「555 기준」 점수.  ★ 판정에 쓰지 않는다 (STEP 84).
+    """화면 설명용 「505 기준」 점수.  ★ 판정에 쓰지 않는다 (STEP 84).
 
     ★ display_points 로 부르지 않는다 — report.views 에 같은 이름이 있다.
       역할이 다르다 (여기는 등급컷, 저기는 축 점수 「—/20」 표기)
     """
-    total = float(policy.raw["total_points"])
+    # ★ 등급컷은 505 기준이다 (개정 292).  555 로 곱하면 컷이 어긋난다
+    total = float(policy.raw.get("grade_base_points")
+                  or policy.raw["total_points"])
     out = []
     for g, ratio in policy.raw["grade_cuts"].items():
         raw = total * float(ratio)
@@ -56,7 +58,12 @@ def grade_of(result: ScoreResult, policy: ScoringPolicy) -> str:
     # ★ earned 와 denominator 는 같은 자 (실배점).  score_total 은 555 환산값이다.
     #   섞으면 분모가 작을수록 부풀려진다 — 245/455=53.8%(D) 가
     #   298.85/455=65.7%(C) 로 한 등급 올라갔다 (실측 · E-1)
-    ratio = result.earned / result.denominator
+    # ★ 등급은 ①+②+③ = 505 로 매긴다.  ④ 취향은 순위에만 쓴다 (개정 292 · V3-46)
+    #   취향으로 등급이 오르내리면 남에게 못 보여 준다
+    if result.grade_base:
+        ratio = result.grade_earned / result.grade_base
+    else:
+        ratio = result.earned / result.denominator
     for g, cut in cutoffs(policy):
         if ratio >= cut:
             return g

@@ -22,6 +22,8 @@ from dataclasses import replace
 
 from report.finance import build_finance
 from report.render import render_listing, render_run
+from analyze.trust import inspection_source, platform_trust
+from report.why_cheap import verdict as why_verdict
 from report.screens.views import (
     MIN_SAMPLE,
     Bucket,
@@ -45,13 +47,15 @@ GONE = "gone"
 
 # 목록에 띄우는 축 요약 (STEP 97).  Component 이름을 쓴다
 # 목록에 좁은 칸으로 세우는 축.  ★ v1 원본이 정본이다 (STEP 149o · 개정 277)
-# v1 22열 — HUD · 보증 · 사고 · 보험 · 렌트 (외장·내장은 원값 열로 따로 낸다).
-# HDA · 선루프는 시안이 더한 것이라 함께 둔다 — 넓으면 더 보여 준다 (개정 278).
-# ★ 한 칸에 몰아넣으면 「이 차만 HUD 가 없다」가 세로로 안 보인다
-CHIP_AXES = ("spec.hud", "spec.hda", "spec.sunroof",
-             # ★ 일반보증·엔진보증을 따로 낸다.  하나로 뭉치지 않는다 (STEP 149n)
-             "warranty.general", "warranty.power",
-             "history.damage", "history.insurance", "history.rental")
+# v1 22열 — 사고 · 골격 · 수리비 · 용도 · 보증 · 트림 · 옵션 · HUD · 선루프.
+# ★ 개정 292 로 축이 다시 짜였다.  상태(180)가 사양(75)보다 크다 —
+#   마스터 지적 「깡통에 HUD 만 있어도 만점」이 이 순서로 뒤집힌다
+# ★ 한 칸에 몰아넣으면 「이 차만 사고가 있다」가 세로로 안 보인다
+CHIP_AXES = ("state.accident", "state.frame", "state.repair",
+             "state.usage", "state.warranty",
+             "spec.trim", "spec.options",
+             # 취향은 등급에 안 들어간다.  그래도 화면에는 낸다 (개정 292 ④)
+             "taste.hud", "taste.sunroof")
 
 
 def axis_heads(root: str = ".") -> list[dict]:
@@ -360,8 +364,8 @@ def _warranty_state(got, as_of) -> tuple:
 
 # 축 → 상태를 어디서 가져오는가 (STEP 149n).
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
-STATE_AXES = ("warranty.general", "warranty.power",
-              "history.damage", "history.insurance", "history.rental")
+STATE_AXES = ("state.warranty", "state.accident", "state.frame",
+              "state.repair", "state.usage")
 
 
 # 렌트를 어디서 찾았는가 → 화면 문구 (개정 302).  ★ 「렌트 이력」만 내지 않는다
@@ -380,19 +384,22 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         return ""            # 확인 못 한 것은 기호가 정확하다
     w = state.get("warranty")
     rec = state.get("record")
-    if axis in ("warranty.general", "warranty.power") and w:
+    if axis == "state.warranty" and w:
         gen, power = _warranty_state(w, as_of)
-        return gen if axis == "warranty.general" else power
-    if axis == "history.damage" and rec:
+        # ★ 둘 중 긴 쪽으로 점수를 준다 (개정 292).  화면도 그렇게 낸다
+        return power if power not in ("?", "만료") else gen
+    if axis == "state.accident" and rec:
         mycnt, _cost, othcnt, tot = rec
         n = tot if tot is not None else (mycnt or 0) + (othcnt or 0)
         return "무사고" if not n else f"{n}회"
-    if axis == "history.insurance" and rec:
+    if axis == "state.frame":
+        return "골격 이상" if chip.tone != TONE_GOOD else "골격 이상 없음"
+    if axis == "state.repair" and rec:
         _mycnt, cost, _o, _t = rec
         if cost is None:
             return ""
         return "0원" if not cost else f"{int(cost) // WON_PER_MANWON:,}만"
-    if axis == "history.rental":
+    if axis == "state.usage":
         # ★ 점수를 받았으면 렌트가 아니다 (excluded 가 아니라 값이 있을 때만)
         if chip.tone == TONE_GOOD:
             return "렌트 아님"
@@ -407,18 +414,20 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
 
 
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
+         opt_prices: dict | None = None,   # noqa: ARG001 — 아래에서 쓴다
          axes: dict | None = None, changes_by: dict | None = None,
          photo_base: str = "", encar_tpl: str = "",
          km_unit: int = 0, monthly_unit: int = 0,
          dep_cfg: dict | None = None, state_by: dict | None = None,
-         market_by: dict | None = None) -> ListingRow:
+         market_by: dict | None = None, high_km: int = 0) -> ListingRow:
     """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
 
     워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
     """
     (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
-     origin_won, calc_at, absolute_fail, trust, quadrant, enough) = rec
+     origin_won, calc_at, absolute_fail, trust, quadrant, enough,
+     insp_fmt, diag_car, w_ext, w_deemed, opt_json) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     chips = []
@@ -431,14 +440,34 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         chips.append(replace(one, state=_axis_state(
             axis, one, st, calc_at, (got.get(axis) or (0, 0, ""))[2])))
     _confirm = confirm_ratio(got, float(denom or _total_points()))
+    _opt_won = sum((opt_prices or {}).get(c, 0)
+                   for c in json.loads(opt_json or "[]"))
+    _fmt = json.loads(insp_fmt) if insp_fmt else None
+    _has_w = bool(w_ext and w_ext != "0") or bool(w_deemed and w_deemed != "0")
+    _trust, _why = platform_trust(_fmt, diag_car, _has_w)
     fin = build_finance(price, fin_cfg, tk)
     changes, first_won = (changes_by or {}).get(lid, (0, None))
     # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
     exp = None
-    if dep_cfg is not None and not (got.get("price") or (None, True))[1]:
+    if dep_cfg is not None and not (got.get("value.depreciation")
+                                    or (None, True))[1]:
         exp = market_price(origin_won, ym, calc_at, tk, dep_cfg)
     gap = (price - exp) if (exp and price is not None) else None
     mkt, mkt_n = (market_by or {}).get(lid, (None, 0))
+    _gap_won = (price - mkt) if (mkt and price is not None) else None
+    _rec = (state_by or {}).get(lid, {}).get("record")
+    _rental = next((c for c in chips if c.axis == "state.usage"), None)
+    _why_cheap = why_verdict(_gap_won, {
+        "inspection_formats": _fmt, "diagnosis_car": diag_car,
+        "has_warranty": _has_w, "inspection_source": inspection_source(_fmt),
+        "rental_note": (_rental.state if _rental and _rental.state
+                        and "렌트 이력" in _rental.state else None),
+        "accident_cnt": (_rec[3] if _rec else None),
+        "repair_won": (_rec[1] if _rec else None),
+        "mileage_note": (f"주행 {km:,}km"
+                         if km and high_km and km >= high_km else None),
+        "color_note": None, "not_join": None,
+    })
     # 경과 — 처음 본 날부터 며칠.  ★ 게시일이 아니라 우리가 처음 본 날이다
     dom = _days_between(first_seen, calc_at)
     tags = []
@@ -469,9 +498,19 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         versions=_stamp(calc_version, dv),
         expected_price_won=int(exp) if exp else None,
         origin_price_won=origin_won,
+        # ★ 신차가 = 등급기준 + 선택옵션 (개정 301).  셋을 다 낸다 —
+        #   엔카는 6,547만(5,787 + 760)인데 우리는 5,787만만 냈다
+        option_price_won=_opt_won,
+        origin_total_won=(origin_won + _opt_won) if origin_won else None,
+        # 플랫폼 신뢰도 (개정 300) — 같은 값이라도 누가 보증하느냐가 다르다
+        platform_trust=_trust, platform_trust_why=_why,
         market_price_won=mkt,
         market_sample=mkt_n,
-        market_gap_won=((price - mkt) if (mkt and price is not None) else None),
+        market_gap_won=_gap_won,
+        # ★ 「싸다」를 말할 때 「왜 싼가」를 함께 낸다 (개정 299 · V3-52).
+        #   금지 — 「시세차 −1,100만」만 내고 끝내는 것
+        why_cheap=_why_cheap[0] if _gap_won and _gap_won < 0 else None,
+        why_cheap_reasons=_why_cheap[1] if _gap_won and _gap_won < 0 else [],
         price_gap_won=int(gap) if gap is not None else None,
         price_change_won=((price - first_won)
                           if (first_won is not None and price is not None)
@@ -627,7 +666,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★ 시세차 · 경과 · 정직도 · 비고 (개정 277 · 278).
         #   행마다 따로 조회하면 200행에 1,000쿼리다 — 조인으로 한 번에 (V11-34)
         " l.source_id, l.price_origin_won, s.calculated_at, s.absolute_fail,"
-        " d.trust_score, d.quadrant, d.sample_sufficient"
+        " d.trust_score, d.quadrant, d.sample_sufficient,"
+        # 개정 300·301 — 점검 출처 · 엔카진단 · 엔카보증 · 선택 옵션가
+        " l.inspection_formats_json, l.diagnosis_car,"
+        " l.warranty_extend, l.warranty_deemed, l.options_choice_json"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -660,9 +702,34 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         dep_cfg = json.load(f)
     # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
     first = 0 if flt.show_all else (flt.page - 1) * page_size
+    # ★ 옵션가 사전은 한 번만 읽는다 (개정 301).  행마다 읽으면 쿼리가 는다
+    opt_prices = _option_prices(conn) if extras else {}
+    high_km = _high_km(root)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
-                 axes, changes, base, encar_tpl, km_unit, monthly_unit,
-                 dep_cfg, state_by, market_by) for i, r in enumerate(recs)]
+                 opt_prices, axes, changes, base, encar_tpl, km_unit,
+                 monthly_unit, dep_cfg, state_by, market_by, high_km)
+            for i, r in enumerate(recs)]
+
+
+def _high_km(root: str) -> int:
+    """이만큼 넘으면 「많이 달렸다」를 싼 이유로 낸다 (개정 299 ⑤).
+
+    ★ 정책값이라 config 에 둔다 — 코드에 박지 않는다 (V4-13)
+    """
+    with open(f"{root}/config/scoring.json", encoding="utf-8") as f:
+        return int(json.load(f)["axis_rules"]["value"]["high_mileage_km"])
+
+
+def _option_prices(conn) -> dict:
+    """선택 옵션 코드 → 값 (원).  ★ 같은 코드가 카탈로그마다 있어 중앙값을 쓴다."""
+    by_code: dict = {}
+    for code, mw in conn.execute(
+        "SELECT option_code, price_manwon FROM dict_model_option"
+        " WHERE price_manwon IS NOT NULL"
+    ):
+        by_code.setdefault(code, []).append(int(mw))
+    return {c: sorted(v)[len(v) // 2] * WON_PER_MANWON
+            for c, v in by_code.items()}
 
 
 def recommend_funnel(conn, calc_version: str, shown: int) -> dict:

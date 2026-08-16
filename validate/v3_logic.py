@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import collections
 import random
 
 from analyze.axis.history import RENT_AD_TYPES
@@ -153,6 +154,15 @@ C = {
                    "이론가가 실제 시장보다 높으면 전부 「싸다」로 나온다. "
                    "그러면 「싸다」가 아무 뜻이 없다 (개정 282)",
                    KIND_EXTERNAL),
+    "V3-52": Check("V3", "V3-52", "「싸다」에 이유가 붙어 있음", FATAL, "run",
+                   "이유 없이 싼 차는 없다.  못 찾았으면 그렇게 적는다 "
+                   "— 마스터 지적 「엔카 보증이 없는 것이 가격이 왜 싼지가 "
+                   "중요해」 (개정 299)",
+                   KIND_CONTRACT),
+    "V3-53": Check("V3", "V3-53", "점검 출처가 판정에 반영됨", FATAL, "run",
+                   "엔카직영 점검과 판매자 등록 점검은 다르다 — "
+                   "「모든 책임은 판매자에게 있습니다」 (개정 300)",
+                   KIND_CONTRACT),
     "V3-54": Check("V3", "V3-54", "렌트 이력을 세 곳에서 대조", FATAL, "run",
                    "advertisementType 만 보면 「지금 리스 상품인가」다. "
                    "과거 렌트는 점검부 용도변경과 보험이력에 있다 "
@@ -485,7 +495,8 @@ def _denominator_check(conn, rid):
                   f"{kinds}종" if bad else f"{total:g} 하나", not bad, bad[:8])
 
 
-CORE_AXES = ("price", "history.damage", "mileage")
+# 이것을 못 보고 매긴 등급은 뜻이 없다 (개정 287 · 292 배점 기준)
+CORE_AXES = ("value.market", "value.depreciation", "state.accident")
 
 
 def _core_axis_check(conn, rid):
@@ -516,19 +527,20 @@ def _rental_cross_check(conn, rid):
     cv = conn.execute("SELECT calc_version FROM result_score"
                       " ORDER BY calculated_at DESC LIMIT 1").fetchone()
     cv = cv[0] if cv else ""
-    n = conn.execute(
+    # ★ 리스는 10점이 맞다 (개정 292).  「자가용 25점」이라 한 것만 잡는다
+    private = conn.execute(
         "SELECT COUNT(*) FROM result_axis a JOIN core_listing l"
         " ON l.listing_id = a.listing_id"
-        " WHERE a.axis = 'history.rental' AND a.value > 0"
+        " WHERE a.axis = 'state.usage' AND a.source = 'checked_three'"
         " AND a.calc_version = ? AND l.advertisement_type IN"
         f" ({','.join('?' * len(RENT_AD_TYPES))})",
         (cv, *sorted(RENT_AD_TYPES))).fetchone()[0]
-    if n:
-        bad.append(f"광고형태가 렌트·리스인데 「렌트 아님」 {n}건")
+    if private:
+        bad.append(f"광고형태가 렌트·리스인데 「자가용」 {private}건")
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis a JOIN core_inspection i"
         " ON i.listing_id = a.listing_id"
-        " WHERE a.axis = 'history.rental' AND a.value > 0"
+        " WHERE a.axis = 'state.usage' AND a.source = 'checked_three'"
         " AND a.calc_version = ?"
         " AND i.usage_change_types_json LIKE '%\"렌트\"%'", (cv,)).fetchone()[0]
     if n:
@@ -536,11 +548,60 @@ def _rental_cross_check(conn, rid):
     # 근거 이름에 세 곳이 다 등장하는가 — 한 곳만 보고 있으면 여기서 걸린다
     seen = {r[0] for r in conn.execute(
         "SELECT DISTINCT source FROM result_axis"
-        " WHERE axis='history.rental' AND calc_version=?", (cv,))}
+        " WHERE axis='state.usage' AND calc_version=?", (cv,))}
     for want in ("advertisement_type", "usage_change_types", "record_use"):
         if not any(want in got for got in seen):
             bad.append(f"근거에 {want} 가 한 번도 안 나온다")
     return result(C["V3-54"], rid, 0, len(bad), not bad, bad)
+
+
+def _why_cheap_check(conn, rid):
+    """V3-52 · V3-53 — 「왜 싼가」와 점검 출처 (개정 299 · 300).
+
+    ★ 화면이 「시세차 −1,100만」만 내고 끝내면 안 된다
+    """
+    import json
+
+    from analyze.trust import TRUST_LOW, TRUST_NONE, platform_trust
+    from report.why_cheap import NOT_FOUND
+
+    bad52, bad53 = [], []
+    seen = collections.Counter()
+    for fmt, diag, ext, deemed in conn.execute(
+        "SELECT inspection_formats_json, diagnosis_car, warranty_extend,"
+        " warranty_deemed FROM core_listing WHERE status='active'"
+    ):
+        trust, _why = platform_trust(json.loads(fmt) if fmt else None, diag,
+                                     bool(ext and ext != '0')
+                                     or bool(deemed and deemed != '0'))
+        seen[trust] += 1
+    if not seen:
+        return [not_applicable(C["V3-52"], rid, "매물이 없다"),
+                not_applicable(C["V3-53"], rid, "매물이 없다")]
+    # V3-53 — 출처가 갈리는가.  전부 한 값이면 안 가르고 있는 것이다
+    if len([k for k in seen if k]) < 2:
+        bad53.append(f"신뢰도가 한 값뿐이다 — {dict(seen)}")
+    if TRUST_LOW not in seen and TRUST_NONE not in seen:
+        bad53.append("판매자 등록 점검을 하나도 못 가렸다")
+    # V3-52 — 화면 문구가 있는가
+    html = _rendered_listings()
+    if html is None:
+        bad52.append("렌더 결과가 없다 — tools/render_screens.py 를 돌린다")
+    elif "싼 이유" not in html and NOT_FOUND not in html:
+        bad52.append("「싸다」에 이유가 붙어 있지 않다")
+    return [result(C["V3-52"], rid, 0, len(bad52), not bad52, bad52),
+            result(C["V3-53"], rid, "출처가 갈린다",
+                   dict(seen) if not bad53 else bad53, not bad53, bad53)]
+
+
+def _rendered_listings():
+    import os
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(root, "outputs", "render", "listings.html")
+    if not os.path.isfile(path):
+        return None
+    return open(path, encoding="utf-8").read()
 
 
 def _fill_gap_check(conn, rid):
@@ -658,6 +719,7 @@ def run(conn, ctx) -> list:
     out.append(_core_axis_check(conn, rid))
     out.append(_fill_gap_check(conn, rid))
     out.append(_rental_cross_check(conn, rid))
+    out += _why_cheap_check(conn, rid)
 
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL").fetchone()[0]

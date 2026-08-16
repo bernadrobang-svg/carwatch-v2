@@ -385,7 +385,7 @@ def m3(ad: Client, db: str, root: str) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "previewed": "1",
-                         "action": "component", "target": "spec.hud",
+                         "action": "component", "target": "taste.hud",
                          "value": "25", "reason": "실행 중 변경"})
     rec("S5-2", "/admin/scoring", "실행 중 조정 잠김", str(st),
         st == 409, "409 Conflict (Q-3)")
@@ -451,19 +451,19 @@ def m3(ad: Client, db: str, root: str) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "spec.hud", "value": "25",
+                         "target": "taste.hud", "value": "25",
                          "reason": "HUD 를 더 본다", "previewed": "1"})
     with open(os.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
         pol = json.load(f)
     rec(40, "/admin/scoring", "성분 점수 변경",
-        f"{st} · hud={pol['components'].get('spec.hud')}",
-        pol["components"].get("spec.hud") == 25)
+        f"{st} · hud={pol['components'].get('taste.hud')}",
+        pol["components"].get("taste.hud") == 25)
 
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "spec.hud", "value": "30",
+                         "target": "taste.hud", "value": "30",
                          "reason": "미리보기 없이"})
     # ★ 잠금(409)이 아니라 「미리보기 없음」(400)으로 거부돼야 한다.
     #   잠금이 먼저 걸리면 이 검사가 헛돈다 — 큐를 비운 뒤에 본다
@@ -487,8 +487,10 @@ def m3(ad: Client, db: str, root: str) -> None:
 
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
+                        # ★ 개정 292 로 spec 은 트림 45 · 옵션 30 둘뿐이다.
+                        #   1 로 줄여야 옵션이 0 이 된다
                         {"csrf": token, "action": "axis", "target": "spec",
-                         "value": "6", "reason": "0점", "previewed": "1"})
+                         "value": "1", "reason": "0점", "previewed": "1"})
     rec(43, "/admin/scoring", "성분 0점", f"{st}", st == 400)
 
     # 44~45  차종
@@ -957,7 +959,7 @@ def flows(anon: Client, u1: Client, ad: Client, db: str, lid: int) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "previewed": "1",
-                         "action": "component", "target": "spec.hud",
+                         "action": "component", "target": "taste.hud",
                          "value": "21", "reason": "실행 중"})
     msg = text(b)
     rec("S5-2", "/admin/scoring", "실행 중 조정 잠김",
@@ -967,6 +969,13 @@ def flows(anon: Client, u1: Client, ad: Client, db: str, lid: int) -> None:
 
     conn = sqlite3.connect(db)
     conn.execute("UPDATE recalc_job SET status='done'")
+    # ★ 미실행 검사가 하나도 없으면 화면이 그것을 낼 줄 아는지 알 수 없다.
+    #   실제로 한 줄 넣고 화면이 「미실행」으로 내는지 본다 (A-7 · S5-8)
+    conn.execute(
+        "INSERT INTO audit_validation(run_id, phase, code, expected, actual,"
+        " passed, severity, checked_at, applicable)"
+        " VALUES ('integration','V0','V0-00','-','미실행',0,'warn',"
+        "'2026-08-17T09:00:00+00:00',0)")
     conn.commit()
 
     st, ub2, _h = ad.get("/admin/audit")

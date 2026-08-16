@@ -82,8 +82,8 @@
 <p class="muted">진단 리포트가 없습니다.</p>
 {% endif %}
 
-{% if v.pending_items %}
 <h2>확인 못 한 것 — 채우면 오를 수 있습니다</h2>
+{% if v.pending_items %}
 <table>
 <thead><tr><th>축</th><th class="num">배점</th><th>왜 빠졌나</th></tr></thead>
 <tbody>
@@ -102,7 +102,8 @@
 {% endif %}
 {% endif %}
 {% if !v.pending_items %}
-<p class="muted">확인 못 한 것 — 없습니다. 17 Component 전부 판정됐습니다.</p>
+<p class="muted">없습니다. {{ v.component_count }} Component 전부 판정됐습니다 —
+  확인율 100% 입니다 (분모 {{ v.denominator | num }}점 · 개정 298).</p>
 {% endif %}
 
 <h2>왜 {% if v.rank %}{{ v.rank }}순위{% endif %}{% if !v.rank %}이 등급인가{% endif %}</h2>

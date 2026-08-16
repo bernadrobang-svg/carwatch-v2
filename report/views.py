@@ -120,6 +120,8 @@ class ScoreView:
     # ★ {axis · label · points · reason · source} 사전이다.
     #   축 이름만 내면 채우면 얼마나 오르는지 알 수 없다 (STEP 149h)
     pending_items: tuple[dict, ...] = ()
+    # ★ 「17 Component」를 화면에 박지 않는다 — 배점이 바뀌면 거짓말이 된다
+    component_count: int = 0
     # ★ NOT_RATED 사유 3종을 구분한다 (V5-12).  등급만 내지 않는다
     not_rated_reason: str | None = None
     # ★ 표시용이다.  점수에 반영하지 않는다 (STEP 21b).
