@@ -6,6 +6,7 @@
          python3 run.py collect --target KOLEOS_HEV   범위 제한 (여러 번 가능)
          python3 run.py collect --diagnose            결함을 한 번에 모은다 (재수집 없음)
          python3 run.py collect --only S11            단계 하나만
+         python3 run.py collect --resume              끊긴 실행을 이어서 (STEP 52)
          python3 run.py web                          화면 (127.0.0.1:8765)
          python3 run.py admin create --name <이름>   최초 관리자 (STEP 126)
          python3 run.py setup                        HMAC 키 + 최초 관리자
@@ -103,7 +104,7 @@ def cmd_collect(dry: bool, only: list[str] | None = None,
                 from_step: str | None = None,
                 only_step: str | None = None,
                 diagnose_mode: bool = False,
-                refetch: bool = False) -> int:
+                refetch: bool = False, resume: bool = False) -> int:
     cfg = load("endpoints.json")["encar"]
     targets = _filter_targets(
         load_targets(os.path.join(ROOT, "config", "targets.json")), only or [])
@@ -124,7 +125,7 @@ def cmd_collect(dry: bool, only: list[str] | None = None,
     ctx = make_context(adapter.site_code)
     ex = make_executors(adapter, UrlFetcher(), SystemClock(), cfg, targets,
                         backup_path=BACKUP_PATH, rng=random.Random(),
-                        root_dir=ROOT, progress=print_progress)
+                        root_dir=ROOT, progress=print_progress, resume=resume)
     ex.update(make_score_executors(ROOT, SystemClock(), targets,
                                    load("scoring.json"),
                                    load("depreciation.json")))
@@ -133,6 +134,8 @@ def cmd_collect(dry: bool, only: list[str] | None = None,
     ex.update(make_validate_executor(load("scoring.json"),
                                      load("depreciation.json"),
                                      target_keys=tuple(targets)))
+    if resume:
+        print("★ 재개 — 이미 답을 받은 요청은 다시 던지지 않는다 (STEP 52)")
 
     print(f"\nrun_id {ctx.run_id}")
     print("진행 — 단계 · 건수 · 대상\n")
@@ -395,7 +398,7 @@ if __name__ == "__main__":
     try:
         sys.exit(cmd_collect("--dry" in args, only, opt("--from"),
                              opt("--only"), "--diagnose" in args,
-                             "--refetch" in args))
+                             "--refetch" in args, "--resume" in args))
     except PolicyError as e:
         print(f"[X] {e}")
         sys.exit(2)

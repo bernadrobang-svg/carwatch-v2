@@ -312,11 +312,17 @@ def _save_issues(conn, listing_id: int, issues: list, parse_version: str,
 
 def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                    backup_path: str | None = None, rng=None,
-                   root_dir: str = ".", progress=None) -> dict:
+                   root_dir: str = ".", progress=None,
+                   resume: bool = False) -> dict:
     """S0~S3 실행기.  I/O 는 전부 주입받는다 (0장 STEP 2).
 
     progress   진행 표시.  ★ 없으면 단계가 끝나야 한 줄이 나와
                멈춘 것과 구분이 안 된다 (STEP 53)
+    resume     끊긴 실행을 이어서 한다 (5장 STEP 52).
+               ★ 기본은 False 다 — 새 수집은 전건을 다시 던진다.
+                 skip_done 을 기본으로 두면 v1 처럼 208건 중 76건만 받는다
+               ★ True 일 때만 should_refetch 를 본다.  ok·empty·not_found 는
+                 이미 답을 받은 것이라 다시 안 던진다.  error·미요청만 던진다
     """
     from collect.pipeline import silent_progress
 
@@ -537,9 +543,30 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                     "WHERE status='active'")
         ).fetchall()
         skipped = 0
+        done_before = 0
+        # ★ 재개일 때만 이미 답을 받은 것을 뺀다 (STEP 52 · should_refetch)
+        have: dict = {}
+        if resume:
+            cols = ", ".join(f"{k}_status" for k in LISTING_ENDPOINTS)
+            for row in conn.execute(
+                    *_scope(f"SELECT listing_id, {cols} FROM core_listing "
+                            f"WHERE status='active'")):
+                have[row[0]] = dict(zip(LISTING_ENDPOINTS, row[1:],
+                                        strict=True))
         for i, (lid, sid) in enumerate(lids, start=1):
             diag_grade = None
             for kind, req in zip(LISTING_ENDPOINTS, adapter.detail_urls(sid), strict=True):
+                if resume:
+                    from collect.pipeline import should_refetch
+
+                    got = (have.get(lid) or {}).get(kind)
+                    if got is not None and not should_refetch(got):
+                        # ★ 이미 답을 받았다.  「건너뛴」 것이 아니라
+                        #   「받은 것」이다 — expected 에서도 뺀다
+                        done_before += 1
+                        if kind == "detail":
+                            diag_grade = None
+                        continue
                 # ★ 진단은 encarDiagnosis == 0 인 매물만 부른다 (STEP 21b).
                 #   1·2 는 404 다.  전량 호출이 v1 에서 「원문 0건」을 만들었다
                 if kind == "diagnosis" and diag_grade != DIAG_HAS_REPORT:
@@ -574,7 +601,7 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 _sleep(cfg, rng)
         # ★ 안 부르기로 한 것은 expected 에서 뺀다.
         #   빼지 않으면 「미완성 매물」로 잡힌다 (V1-01 · V1-02)
-        expected = len(lids) * len(LISTING_ENDPOINTS) - skipped
+        expected = len(lids) * len(LISTING_ENDPOINTS) - skipped - done_before
         rep = step_report("S5", None, expected, tally,
                           rejected, time.time() - t0)
         if halted:
