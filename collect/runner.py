@@ -33,9 +33,9 @@ REQUIRED_FACET_AXES: frozenset[str] = frozenset(
 # ★ Badge 는 facet 에 오지 않는다 (실측).  트림 원천은 목록 응답이다
 TRIM_FIELD = "Badge"
 
-# 매물당 요청 4종.  condition 값과 무관하게 전부 던진다 (STEP 25).
-LISTING_ENDPOINTS: tuple[str, ...] = ("detail", "inspection", "record",
-                                      "diagnosis")
+# 매물당 요청.  condition 값과 무관하게 전부 던진다 (STEP 25).
+# ★ 어댑터가 정본이다.  두 곳에 적으면 순서가 어긋나 status 가 뒤섞인다
+from adapters.encar import LISTING_ENDPOINT_KINDS as LISTING_ENDPOINTS  # noqa: E402
 # ★ 진단 원문이 오는 값.  1·2 는 404 다 (2026-08-14 실측 3요청 · STEP 21b)
 from validate.v1_collect import DIAG_HAS_REPORT  # noqa: E402
 

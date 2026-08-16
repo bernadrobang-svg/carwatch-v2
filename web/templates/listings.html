@@ -46,7 +46,7 @@
 <th class="r">연식</th><th class="r">주행</th>
 <th class="c">외장</th><th class="c">내장</th>
 {% for a in axis_heads %}<th class="c">{{ a.label }}</th>{% endfor %}
-<th class="r">가격</th><th class="r">시세차</th><th class="r">월</th>
+<th class="r">신차가</th><th class="r">시세</th><th class="r">가격</th><th class="r">시세차</th><th class="r">월</th>
 <th class="r">변동</th><th class="r">경과</th>
 <th>딜러</th><th class="r">정직도</th><th>비고</th><th class="act">　</th>
 </tr></thead>
@@ -83,14 +83,22 @@
   </td>
   <td class="c" data-label="외장"><span class="tag" title="외장색 — 원문 그대로입니다">{{ r.color_ext }}</span></td>
   <td class="c" data-label="내장"><span class="tag" title="내장색 — 원문 그대로입니다">{{ r.color_int }}</span></td>
-  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }} — O 있음 · · 없음 · ? 확인 못 함"><b>{{ c.mark }}</b></a></td>{% endfor %}
+  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }} — 기호 O 있음 · - 없음 · ? 확인 못 함">{% if c.state %}{{ c.state }}{% endif %}{% if !c.state %}<b>{{ c.mark }}</b>{% endif %}</a></td>{% endfor %}
+  <td class="r num" data-label="신차가">
+    {% if r.origin_price_won %}<span title="이 트림의 새 차 값입니다 — 원문 category.originPrice">{{ r.origin_price_won | won }}</span>{% endif %}
+    {% if !r.origin_price_won %}<span class="dim" title="원문에 신차가가 없습니다">—</span>{% endif %}
+  </td>
+  <td class="r num" data-label="시세">
+    {% if r.market_price_won %}<span title="같은 차종·트림·연식 매물 {{ r.market_sample | num }}건의 중앙값입니다. 렌트·리스 승계는 뺐습니다 — 표시가가 인수금이라 중앙값을 끌어내립니다">{{ r.market_price_won | won }}</span>{% endif %}
+    {% if !r.market_price_won %}<span class="dim" title="같은 조건 매물이 {{ r.market_sample | num }}건뿐입니다 — 중앙값을 내지 않습니다">표본 {{ r.market_sample | num }}건</span>{% endif %}
+  </td>
   <td class="r num" data-label="가격">
     {% if r.price_won %}<a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}
     {% if !r.price_won %}<span class="dim" title="원문에 가격이 없습니다">—</span>{% endif %}
   </td>
   <td class="r num gap" data-label="시세차">
-    {% if r.price_gap_won %}<span class="{{ r.price_gap_won | signcls }}" title="기대가 {{ r.expected_price_won | won }} 대비 — 기대가는 신차가 × 감가계수(경과년) × 차종 보정계수입니다 (STEP 70)">{{ r.price_gap_won | signwon }}</span>{% endif %}
-    {% if !r.price_gap_won %}<span class="dim" title="기대가를 구하지 못했습니다 — 신차가가 없거나 차종 보정계수가 범위 밖입니다">—</span>{% endif %}
+    {% if r.market_gap_won %}<span class="{{ r.market_gap_won | signcls }}" title="가격 − 시세(같은 조건 {{ r.market_sample | num }}건 중앙값). 음수가 시세보다 싼 것입니다">{{ r.market_gap_won | signwon }}</span>{% endif %}
+    {% if !r.market_gap_won %}<span class="dim" title="같은 조건 표본이 모자라 시세를 못 냈습니다">—</span>{% endif %}
   </td>
   <td class="r num" data-label="월">
     {% if r.monthly_bucket_won %}<a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a>{% endif %}
@@ -146,11 +154,11 @@
   판정할 수 없는 축은 0 점이 아니라 분모에서 뺍니다.<br>
   축 칸 <strong>O</strong> 있음 · <strong>·</strong> 없음 · <strong>?</strong> 확인 못 함 —
   「없음」과 「모름」을 가릅니다.<br>
-  <strong>시세차</strong>는 <strong>기대가</strong>(신차가 × 감가계수(경과년) × 차종 보정계수)
-  대비입니다 — <strong>음수가 시세보다 싼 것</strong>입니다.
-  같은 차종·트림·연식 실매물의 중앙값이 아니라 <strong>감가 곡선의 이론가</strong>입니다
-  (7장 STEP 70). 차종 보정계수가 범위(0.8~1.2) 밖이면 판정에서도 안 쓰므로
-  여기에도 내지 않습니다.
+  <strong>신차가 · 시세 · 가격</strong> 셋을 나란히 냅니다 (개정 283).
+  신차가는 원문 그대로이고, <strong>시세는 같은 차종·트림·연식 매물의 실제 중앙값</strong>입니다
+  — 감가 곡선의 이론가가 아닙니다. 렌트·리스 승계는 뺐습니다.
+  표본이 모자라면 「표본 N건」이라 적고 내지 않습니다.
+  <strong>시세차 = 가격 − 시세</strong>이고 음수가 싼 것입니다.
 </p>
 
 <div id="peek">

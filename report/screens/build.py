@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from dataclasses import replace
 
@@ -48,7 +48,9 @@ GONE = "gone"
 # v1 22열 — HUD · 보증 · 사고 · 보험 · 렌트 (외장·내장은 원값 열로 따로 낸다).
 # HDA · 선루프는 시안이 더한 것이라 함께 둔다 — 넓으면 더 보여 준다 (개정 278).
 # ★ 한 칸에 몰아넣으면 「이 차만 HUD 가 없다」가 세로로 안 보인다
-CHIP_AXES = ("spec.hud", "spec.hda", "spec.sunroof", "warranty.general",
+CHIP_AXES = ("spec.hud", "spec.hda", "spec.sunroof",
+             # ★ 일반보증·엔진보증을 따로 낸다.  하나로 뭉치지 않는다 (STEP 149n)
+             "warranty.general", "warranty.power",
              "history.damage", "history.insurance", "history.rental")
 
 
@@ -235,11 +237,147 @@ def _ceil_to(value, unit: int):
     return -(-int(value) // unit) * unit
 
 
+# 개월을 해로 끊는 자리.  ★ 「남은 26개월」보다 「2년 2개월」이 읽힌다
+MONTHS_PER_YEAR = 12
+MANWON = 10_000
+
+
+def _bulk_market(conn, lids: list, root: str = ".") -> dict:
+    """같은 차종·트림·연식의 실제 매물 중앙값 (STEP 149n-3 · 개정 283).
+
+    ★ 감가 곡선의 이론가가 아니다.  우리가 가진 매물의 중앙값이다
+    ★ 렌트·리스 승계를 뺀다 — 표시가가 인수금이라 중앙값을 끌어내린다
+      (실측 08-17: 2023 G80 2.5T AWD 에서 3,990만 → 4,115만)
+    ★ 표본이 모자라면 내지 않는다.  「표본 N건」을 함께 낸다
+    """
+    if not lids:
+        return {}
+    need = _view_cfg("market_min_sample", root)
+    marks = ",".join("?" * len(lids))
+    keys = {r[0]: (r[1], r[2], r[3]) for r in conn.execute(
+        f"SELECT listing_id, target_key, trim_badge, substr(year_month,1,4)"
+        f" FROM core_listing WHERE listing_id IN ({marks})", tuple(lids))}
+    want = {k for k in keys.values() if all(k)}
+    out: dict = {}
+    for tk, trim, year in want:
+        prices = [r[0] for r in conn.execute(
+            "SELECT price_current_won FROM core_listing"
+            " WHERE target_key=? AND trim_badge=? AND year_month LIKE ?"
+            " AND status='active' AND price_current_won IS NOT NULL"
+            " AND (advertisement_type IS NULL"
+            "      OR advertisement_type NOT LIKE '%SUCCESSION%')"
+            " ORDER BY price_current_won", (tk, trim, f"{year}%"))]
+        if len(prices) >= need:
+            out[(tk, trim, year)] = (prices[len(prices) // 2], len(prices))
+        else:
+            out[(tk, trim, year)] = (None, len(prices))
+    return {lid: out.get(k, (None, 0)) for lid, k in keys.items()}
+
+
+def _bulk_state(conn, lids: list) -> dict:
+    """축 칸에 낼 「상태」의 재료 (STEP 149n · 개정 280).
+
+    ★ 점수를 상태인 것처럼 내지 않는다.  원문에 있는 사실을 그대로 낸다.
+      「일반보증은 얼마가 남았는지」 「사고 없으면 무사고라고」 —
+      마스터가 물은 것이 그대로 답이다
+    ★ 행마다 돌지 않는다.  IN 절 한 번이다 (V11-34)
+    """
+    if not lids:
+        return {}
+    marks = ",".join("?" * len(lids))
+    out: dict = {}
+    for (lid, bm, bkm, pm, pkm, km, ym) in conn.execute(
+        f"SELECT listing_id, warranty_body_month, warranty_body_km,"
+        f" warranty_power_month, warranty_power_km, mileage_km, year_month"
+        f" FROM core_listing WHERE listing_id IN ({marks})", tuple(lids)
+    ):
+        out[lid] = {"warranty": (bm, bkm, pm, pkm, km, ym)}
+    for (lid, mycnt, mycost, othcnt, tot) in conn.execute(
+        f"SELECT listing_id, accident_my_cnt, accident_my_cost,"
+        f" accident_other_cnt, accident_total_cnt FROM core_record"
+        f" WHERE listing_id IN ({marks})", tuple(lids)
+    ):
+        out.setdefault(lid, {})["record"] = (mycnt, mycost, othcnt, tot)
+    return out
+
+
+def _left(total_month, total_km, used_month, used_km):
+    """보증 잔여.  ★ 둘 중 하나라도 지나면 만료다 (실제 보증 약관)."""
+    if total_month is None:
+        return None
+    mo = total_month - (used_month or 0)
+    km = (total_km or 0) - (used_km or 0)
+    return (mo, km)
+
+
+def _warranty_state(got, as_of) -> tuple:
+    """(일반보증, 엔진보증) 상태 문구."""
+    from analyze.axis._util import months_between
+
+    bm, bkm, pm, pkm, km, ym = got
+    used = months_between(ym, as_of)
+    if used is None:
+        return ("?", "?")
+    out = []
+    for tot_m, tot_km in ((bm, bkm), (pm, pkm)):
+        got_left = _left(tot_m, tot_km, used, km)
+        if got_left is None:
+            out.append("?")
+            continue
+        mo, left_km = got_left
+        if mo <= 0 or left_km <= 0:
+            out.append("만료")
+            continue
+        years, rest = divmod(mo, MONTHS_PER_YEAR)
+        span = (f"{years}년 {rest}개월" if years and rest
+                else f"{years}년" if years else f"{rest}개월")
+        out.append(f"{span} · {left_km // 1000:,}천km")
+    return tuple(out)
+
+
+# 축 → 상태를 어디서 가져오는가 (STEP 149n).
+# ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
+STATE_AXES = ("warranty.general", "warranty.power",
+              "history.damage", "history.insurance", "history.rental")
+
+
+def _axis_state(axis: str, chip, state: dict, as_of: str) -> str:
+    """축 칸에 낼 상태 문구 (STEP 149n · 개정 280).
+
+    ★ 「0」 하나로 일곱 축을 다 말할 수 없다.  축마다 말이 다르다
+    ★ 원문에 없으면 빈 문자다 — 화면이 기호로 되돌아간다
+    """
+    if chip.mark == "?":
+        return ""            # 확인 못 한 것은 기호가 정확하다
+    w = state.get("warranty")
+    rec = state.get("record")
+    if axis in ("warranty.general", "warranty.power") and w:
+        gen, power = _warranty_state(w, as_of)
+        return gen if axis == "warranty.general" else power
+    if axis == "history.damage" and rec:
+        mycnt, _cost, othcnt, tot = rec
+        n = tot if tot is not None else (mycnt or 0) + (othcnt or 0)
+        return "무사고" if not n else f"{n}회"
+    if axis == "history.insurance" and rec:
+        _mycnt, cost, _o, _t = rec
+        if cost is None:
+            return ""
+        return "0원" if not cost else f"{int(cost) // MANWON:,}만"
+    if axis == "history.rental":
+        # ★ 점수를 받았으면 렌트가 아니다 (excluded 가 아니라 값이 있을 때만)
+        return "렌트 아님" if chip.tone == TONE_GOOD else "렌트 이력"
+    if axis.startswith("spec."):
+        # 사양 축은 있고 없고가 전부다 (STEP 149n 표)
+        return "있음" if chip.tone == TONE_GOOD else "없음"
+    return ""
+
+
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          axes: dict | None = None, changes_by: dict | None = None,
          photo_base: str = "", encar_tpl: str = "",
          km_unit: int = 0, monthly_unit: int = 0,
-         dep_cfg: dict | None = None) -> ListingRow:
+         dep_cfg: dict | None = None, state_by: dict | None = None,
+         market_by: dict | None = None) -> ListingRow:
     """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
 
     워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
@@ -248,12 +386,15 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough) = rec
     got = (axes or {}).get(lid, {})
+    st = (state_by or {}).get(lid, {})
     chips = []
     for axis in CHIP_AXES:
         if axis in got:
-            chips.append(chip(axis, got[axis][0], got[axis][1], labels))
+            one = chip(axis, got[axis][0], got[axis][1], labels)
         else:
-            chips.append(chip(axis, None, True, labels))
+            one = chip(axis, None, True, labels)
+        # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)
+        chips.append(replace(one, state=_axis_state(axis, one, st, calc_at)))
     fin = build_finance(price, fin_cfg, tk)
     changes, first_won = (changes_by or {}).get(lid, (0, None))
     # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
@@ -261,6 +402,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     if dep_cfg is not None and not (got.get("price") or (None, True))[1]:
         exp = market_price(origin_won, ym, calc_at, tk, dep_cfg)
     gap = (price - exp) if (exp and price is not None) else None
+    mkt, mkt_n = (market_by or {}).get(lid, (None, 0))
     # 경과 — 처음 본 날부터 며칠.  ★ 게시일이 아니라 우리가 처음 본 날이다
     dom = _days_between(first_seen, calc_at)
     tags = []
@@ -288,6 +430,10 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         dealer_shop=dealer, dealer_honesty=None, note=None,
         versions=_stamp(calc_version, dv),
         expected_price_won=int(exp) if exp else None,
+        origin_price_won=origin_won,
+        market_price_won=mkt,
+        market_sample=mkt_n,
+        market_gap_won=((price - mkt) if (mkt and price is not None) else None),
         price_gap_won=int(gap) if gap is not None else None,
         price_change_won=((price - first_won)
                           if (first_won is not None and price is not None)
@@ -461,6 +607,8 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     lids = [r[0] for r in recs]
     axes = _bulk_axes(conn, lids, flt.calc_version)
     changes = _bulk_changes(conn, lids)
+    state_by = _bulk_state(conn, lids)
+    market_by = _bulk_market(conn, lids, root)
     base = _view_str("photo_base_url", root)
     encar_tpl = _view_str("encar_detail_url", root)
     km_unit = _view_cfg("km_bucket", root)
@@ -472,7 +620,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     first = 0 if flt.show_all else (flt.page - 1) * page_size
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
                  axes, changes, base, encar_tpl, km_unit, monthly_unit,
-                 dep_cfg) for i, r in enumerate(recs)]
+                 dep_cfg, state_by, market_by) for i, r in enumerate(recs)]
 
 
 def recommend_funnel(conn, calc_version: str, shown: int) -> dict:
@@ -590,14 +738,38 @@ def view_compare(account: Account, conn, listing_ids: list[int],
                        axis_winner=winner)
 
 
+def market_trims(conn, target_key: str, root: str = ".") -> list:
+    """그 차종의 트림 목록 — 고를 수 있게 (V11-83 · 개정 282).
+
+    ★ 「G80_25T 1,713건을 한 시세로 묶으면 뜻이 없다」 (개정 285).
+      트림을 고르면 분포도 그 트림만 본다
+    """
+    need = _view_cfg("market_min_sample", root)
+    out = []
+    for trim, n in conn.execute(
+        "SELECT trim_badge, COUNT(*) FROM core_listing"
+        " WHERE target_key=? AND status='active' AND trim_badge IS NOT NULL"
+        " GROUP BY 1 ORDER BY 2 DESC", (target_key,)
+    ):
+        out.append({"trim": trim, "count": n, "enough": n >= need,
+                    "url": f"/market?target={target_key}"
+                           f"&trim={quote(trim, safe='')}"})
+    return out
+
+
 def view_market(account: Account, conn, target_key: str,
-                depreciation: dict, quantiles=None) -> MarketView:
+                depreciation: dict, quantiles=None, trim: str | None = None,
+                root: str = ".") -> MarketView:
     from report.render import CoefficientChange  # noqa: F401
 
+    # ★ 트림을 고르면 그 트림만 본다 (V11-83)
+    trim_sql = " AND trim_badge=?" if trim else ""
+    trim_arg = (trim,) if trim else ()
     prices = [r[0] for r in conn.execute(
         "SELECT price_current_won FROM core_listing WHERE target_key=? "
-        "AND price_current_won IS NOT NULL ORDER BY price_current_won",
-        (target_key,))]
+        + trim_sql +
+        " AND price_current_won IS NOT NULL ORDER BY price_current_won",
+        (target_key, *trim_arg))]
 
     def q(p):
         return prices[int(len(prices) * p)] if prices else None
@@ -612,7 +784,7 @@ def view_market(account: Account, conn, target_key: str,
     curve = sorted((int(k), float(v))
                    for k, v in (depreciation.get("curve") or {}).items())
     return MarketView(target_key, [row], list(hist), curve,
-                      price_bins=_price_bins(prices, target_key),
+                      price_bins=_price_bins(prices, target_key, root=root),
                       by_year=_by_year(conn, target_key),
                       by_trim=_by_trim(conn, target_key),
                       other_targets=_other_targets(conn, target_key))

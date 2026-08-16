@@ -39,9 +39,13 @@ class AxisChip:
     filter_url: str
     # ★ 축 이름만.  카드에서 「HUD 있음」을 라벨로 쓰면 값이 두 번 나온다
     head: str = ""
-    # ★ O 있음 · · 없음 · ? 확인 못 함 — 「없음」과 「모름」을
+    # ★ O 있음 · - 없음 · ? 확인 못 함 — 「없음」과 「모름」을
     #   같은 기호로 내면 v1 사고가 되풀이된다 (STEP 149f)
     mark: str = "?"
+    # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n · 개정 280).
+    #   「HUD 0 은 있다는 거야 없다는 거야」 — 점수는 툴팁으로 옮긴다
+    #   빈 문자면 화면이 mark 를 쓴다 (아직 상태를 못 만든 축)
+    state: str = ""
 
 
 @dataclass(frozen=True)
@@ -90,6 +94,13 @@ class ListingRow:
     #   음수면 시세보다 싸다.  가격 축이 excluded 면 None 이다 — 지어내지 않는다
     expected_price_won: int | None = None
     price_gap_won: int | None = None
+    # ★ 셋을 나란히 낸다 (STEP 149n-3 · 개정 283).
+    #   신차가 = 원문 category.originPrice · 시세 = 같은 차종·트림·연식 중앙값
+    #   ★ 차이만 내면 무엇에서 뺀 것인지 모른다
+    origin_price_won: int | None = None
+    market_price_won: int | None = None   # 실제 매물 중앙값
+    market_sample: int = 0                # 그 중앙값의 표본 수
+    market_gap_won: int | None = None     # 가격 − 시세
     # 첫 게시가 대비 증감 (음수 = 내렸다).  변동이 없으면 None
     price_change_won: int | None = None
     # 딜러 정직도.  ★ 표본이 모자라면 None 이다 — 0 으로 내지 않는다

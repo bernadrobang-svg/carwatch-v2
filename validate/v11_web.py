@@ -287,6 +287,20 @@ C = {
                     "새로고침을 해야 한다 — 마스터가 히스토그램을 못 봤다 "
                     "(개정 282)",
                     KIND_CODE),
+    "V11-79": Check("V11", "V11-79", "축 칸에 맨 숫자가 나오지 않음",
+                    FATAL, "run",
+                    "「HUD 0 은 있다는 거야 없다는 거야」 — 점수는 판정의 "
+                    "결과이지 사람이 알고 싶은 것이 아니다 (STEP 149n · 개정 280)",
+                    KIND_CODE),
+    "V11-80": Check("V11", "V11-80", "사진이 최소 크기 이상", FATAL, "run",
+                    "64px 은 차가 안 보인다.  차를 고르는 도구다 "
+                    "(개정 281).  좁아도 줄이지 않는다",
+                    KIND_CODE),
+    "V11-81": Check("V11", "V11-81", "신차가 · 시세 · 가격 셋이 함께 나옴",
+                    FATAL, "run",
+                    "차이만 내면 무엇에서 뺀 것인지 모른다.  기준이 틀리면 "
+                    "차이도 틀리다 (STEP 149n-3 · 개정 283)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -815,6 +829,9 @@ def _screen_checks(conn, rid) -> list:
     out.append(_sian_visual_check(conn, rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
+    out.append(_axis_state_check(conn, rid))
+    out.append(_photo_size_check(rid))
+    out.append(_three_values_check(conn, rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1712,6 +1729,101 @@ def _static_version_check(rid):
     if not got:
         bad.append("지문을 만들지 못했다 — web/static/app.css 를 못 읽는다")
     return result(C["V11-82"], rid, "버전", got or "없음", not bad, bad)
+
+
+def _axis_state_check(conn, rid):
+    """V11-79 — 축 칸에 맨 숫자가 나오지 않는가 (STEP 149n).
+
+    ★ 렌더 결과의 축 칸을 실제로 읽는다.  템플릿을 읽지 않는다
+    """
+    import sqlite3 as _sq
+
+    from contracts import ROLE_ADMIN, Account
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    route = {r.path: r for r in ROUTES}.get("/listings")
+    if route is None or GET not in route.methods:
+        return not_applicable(C["V11-79"], rid, "/listings 가 없다")
+    tmp = os.path.join(_scratch(), "axis.db")
+    probe = _sq.connect(tmp)
+    conn.backup(probe)
+    try:
+        _st, _h, body = HANDLERS[route.view](
+            probe, Account(1, ROLE_ADMIN, "마스터"),
+            {"query": {}, "form": {}, "method": GET}, path_vars={}, csrf="t")
+    except Exception as e:                                   # noqa: BLE001
+        probe.close()
+        return not_applicable(C["V11-79"], rid, f"못 그렸다: {e}")
+    probe.close()
+    html = body.decode("utf-8", "replace")
+    bad, seen = [], 0
+    for cell in re.findall(r'<td class="c ax".*?</td>', html, re.S):
+        seen += 1
+        text = re.sub(r"<[^>]+>", "", cell).strip()
+        # ★ 맨 숫자만 있는 칸이 결함이다.  「1회」 「111만」은 상태다
+        if re.fullmatch(r"-?\d+(\.\d+)?", text):
+            bad.append(f"축 칸이 숫자뿐이다 — {text}")
+    return result(C["V11-79"], rid, f"{seen}칸",
+                  "상태" if not bad else f"{len(bad)}칸 숫자",
+                  not bad, bad[:6])
+
+
+THREE_VALUES = ("신차가", "시세", "가격")
+
+
+def _three_values_check(conn, rid):
+    """V11-81 — 신차가 · 시세 · 가격 셋이 함께 나오는가 (STEP 149n-3)."""
+    import sqlite3 as _sq
+
+    from contracts import ROLE_ADMIN, Account
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    route = {r.path: r for r in ROUTES}.get("/listings")
+    if route is None:
+        return not_applicable(C["V11-81"], rid, "/listings 가 없다")
+    tmp = os.path.join(_scratch(), "three.db")
+    probe = _sq.connect(tmp)
+    conn.backup(probe)
+    try:
+        _st, _h, body = HANDLERS[route.view](
+            probe, Account(1, ROLE_ADMIN, "마스터"),
+            {"query": {}, "form": {}, "method": GET}, path_vars={}, csrf="t")
+    except Exception as e:                                   # noqa: BLE001
+        probe.close()
+        return not_applicable(C["V11-81"], rid, f"못 그렸다: {e}")
+    probe.close()
+    html = body.decode("utf-8", "replace")
+    row = re.search(r"<tr[^>]*>.*?</tr>", html.split("<tbody>", 1)[-1], re.S)
+    bad = [w for w in THREE_VALUES
+           if f'data-label="{w}"' not in (row.group(0) if row else "")]
+    return result(C["V11-81"], rid, "셋",
+                  f"{len(THREE_VALUES) - len(bad)}/{len(THREE_VALUES)}",
+                  not bad, [f"{w} 칸이 없다" for w in bad])
+
+
+def _photo_size_check(rid):
+    """V11-80 — 사진이 최소 크기 이상인가 (개정 281)."""
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        want = int(_j.load(f)["photo_min_px"])
+    css = open(APP_CSS, encoding="utf-8").read()
+    # ★ 겹치기(cascade)를 본다.  뒤에 온 규칙이 이긴다 —
+    #   앞의 시안 규칙만 보고 「작다」고 하면 검사가 거짓말한다 (실측 08-17)
+    last: dict = {}
+    for m in re.finditer(r"(\.thumb(?:-none)?)\s*(?:,[^{]*)?\{([^}]*)\}", css):
+        w = re.search(r"width:\s*(\d+)px", m.group(2))
+        if w:
+            last[m.group(1)] = int(w.group(1))
+    bad = [f"{sel} 폭 {px}px < {want}px"
+           for sel, px in sorted(last.items()) if px < want]
+    if not last:
+        bad.append("사진 규칙이 없다")
+    got = " · ".join(f"{k} {v}px" for k, v in sorted(last.items()))
+    return result(C["V11-80"], rid, f">= {want}px",
+                  got or "없음", not bad, bad[:6])
 
 
 def _browser_scope_checks(rid):

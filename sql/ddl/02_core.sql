@@ -111,6 +111,14 @@ CREATE TABLE IF NOT EXISTS core_listing (
   inspection_status      TEXT,
   record_status          TEXT,
   diagnosis_status       TEXT,
+  -- 개정 296·297 로 늘어난 요청 6종 (docs/ENCAR_API.md 2절).
+  -- ★ 인증 없이 200 인 것만이다.  /v2/verification/* 은 401 이라 안 넣는다
+  record_summary_status     TEXT,
+  inspection_summary_status TEXT,
+  clean_encar_status        TEXT,
+  sellingpoint_status       TEXT,
+  ev_battery_status         TEXT,
+  extend_warrant_status     TEXT,
   -- 공통 (STEP 31)
   collected_at           TEXT,
   parsed_at              TEXT,

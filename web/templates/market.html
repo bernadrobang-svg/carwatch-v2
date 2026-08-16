@@ -24,6 +24,18 @@
 <ul>{% for h in m.coefficient_history %}<li>{{ h }}</li>{% endfor %}</ul>
 {% endif %}
 
+<div class="bar">
+  <span class="dim">트림</span>
+  <a class="btn{% if !trim %} on{% endif %}" href="{{ all_url }}" title="이 차종 전체를 봅니다">전체</a>
+  {% for t in trims %}<a class="btn{% if t.trim == trim %} on{% endif %}" href="{{ t.url }}"
+    title="{{ t.trim }} · {{ t.count | num }}건{% if !t.enough %} — 표본이 모자라 분포를 못 냅니다{% endif %}">{{ t.trim }} <span class="num">{{ t.count | num }}</span></a>{% endfor %}
+</div>
+{% if trim %}
+<p class="dim">지금 <strong>{{ trim }}</strong> 만 봅니다 —
+  아래 분포·연식별·트림별이 전부 이 트림 기준입니다.
+  <a href="{{ all_url }}" title="차종 전체로 돌아갑니다">전체로</a></p>
+{% endif %}
+
 {% if m.price_bins %}
 <h2>가격 분포 <span class="more">막대를 누르면 그 구간 매물로</span></h2>
 <div class="card">

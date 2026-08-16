@@ -35,6 +35,27 @@ _SCHEMA: dict[str, EndpointSpec] = {
         root_type="object",
         per_call="collect_group × page",
     ),
+    # ── 개정 296·297 로 늘어난 6종 (docs/ENCAR_API.md 2절) ──
+    # ★ required_keys 는 「그 응답이 맞는지」를 보는 것이다.  실측한 키만 적는다
+    "record_summary": EndpointSpec(
+        kind="record_summary", scope="listing",
+        required_keys=["carNo", "use"], root_type="object", per_call="매물 1"),
+    "inspection_summary": EndpointSpec(
+        kind="inspection_summary", scope="listing",
+        required_keys=["vehicleId"], root_type="object", per_call="매물 1"),
+    "clean_encar": EndpointSpec(
+        kind="clean_encar", scope="listing",
+        required_keys=["vehicleId", "cleaned"], root_type="object",
+        per_call="매물 1"),
+    "sellingpoint": EndpointSpec(
+        kind="sellingpoint", scope="listing",
+        required_keys=["vehicleId"], root_type="object", per_call="매물 1"),
+    "ev_battery": EndpointSpec(
+        kind="ev_battery", scope="listing",
+        required_keys=[], root_type="object", per_call="매물 1"),
+    "extend_warrant": EndpointSpec(
+        kind="extend_warrant", scope="listing",
+        required_keys=["vehicleId"], root_type="object", per_call="매물 1"),
     "detail": EndpointSpec(
         kind="detail",
         scope="listing",
@@ -134,6 +155,19 @@ def load_site_config(root: str = ".") -> dict:
         return json.load(f)[SITE_CODE]
 
 
+# 매물당 던지는 요청 종류.  ★ 순서가 LISTING_ENDPOINTS 와 같아야 한다
+LISTING_ENDPOINT_KINDS: tuple[str, ...] = (
+    "detail", "inspection", "record", "diagnosis",
+    # 개정 296·297 — 인증 없이 받을 수 있는 것 (docs/ENCAR_API.md)
+    "record_summary", "inspection_summary", "clean_encar",
+    "sellingpoint", "ev_battery",
+    # ★ extend_warrant 는 뺐다 — 실측 08-17: 쿠폰이 붙은 매물에만 있어
+    #   160건 전량 404 였고 V1-08 이 「경로 오류」로 잡았다.
+    #   경로는 맞지만 그 자원이 없는 것이다.  3,470 요청을 쓸 값이 없다.
+    #   필요해지면 detail 의 advertisement 에서 쿠폰 유무를 보고 그때만 부른다
+)
+
+
 class EncarAdapter:
     """SiteAdapter 구현 (1장 STEP 11)."""
 
@@ -210,12 +244,14 @@ class EncarAdapter:
         return Request("GET", url, self.headers(), self._timeout)
 
     def detail_urls(self, source_id: str) -> list[Request]:
-        """매물당 4종.  condition 값과 무관하게 전부 던진다 (STEP 25).
+        """매물당 10종.  condition 값과 무관하게 전부 던진다 (STEP 25).
 
+        ★ 뒤 6종은 개정 296·297 로 늘었다 (docs/ENCAR_API.md 2절).
+          인증 없이 200 인 것만 넣는다 — /v2/verification/* 은 401 이라 뺐다
         금지   include 파라미터.  skip_done 류 건너뛰기 플래그
         """
         out = []
-        for kind in ("detail", "inspection", "record", "diagnosis"):
+        for kind in LISTING_ENDPOINT_KINDS:
             url = self._base + self._paths[kind].format(source_id=source_id)
             out.append(Request("GET", url, self.headers(), self._timeout))
         return out

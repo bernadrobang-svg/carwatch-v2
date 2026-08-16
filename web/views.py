@@ -526,15 +526,22 @@ def compare(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str
 
 def market(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
-    from report.screens.build import view_market
+    from report.screens.build import market_trims, view_market
 
-    target = req.get("query", {}).get("target") or _first_target(conn)
+    q = req.get("query", {})
+    target = q.get("target") or _first_target(conn)
     if not target:
         return page(conn, account, "시세", "empty.html", {}, csrf=csrf,
                 root=root, flash_key=flash_key)
-    m = view_market(account, conn, target, _cfg("depreciation.json", root))
-    return page(conn, account, "시세", "market.html", {"m": m}, csrf=csrf,
-                root=root, flash_key=flash_key)
+    # ★ 트림을 고르면 분포도 그 트림만 본다 (V11-83 · 개정 282·285)
+    trim = q.get("trim") or None
+    m = view_market(account, conn, target, _cfg("depreciation.json", root),
+                    trim=trim)
+    trims = market_trims(conn, target, root)
+    return page(conn, account, "시세", "market.html",
+                {"m": m, "trims": trims, "trim": trim,
+                 "all_url": f"/market?target={target}"},
+                csrf=csrf, root=root, flash_key=flash_key)
 
 
 def _first_target(conn):

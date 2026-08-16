@@ -10,7 +10,13 @@
       "record": "/v1/readside/record/vehicle/{source_id}/open",
       "diagnosis": "/v1/readside/diagnosis/vehicle/{source_id}",
       "catalog": "/v1/readside/vehicles/car/{source_id}/options/choice",
-      "facet": "/search/car/list/mobile"
+      "facet": "/search/car/list/mobile",
+      "record_summary": "/v1/readside/record/vehicle/{source_id}/summary",
+      "inspection_summary": "/v1/readside/inspection/vehicle/{source_id}/summary",
+      "clean_encar": "/v1/readside/clean-encar/vehicle/{source_id}",
+      "sellingpoint": "/v1/readside/diagnosis/vehicle/{source_id}/sellingpoint",
+      "ev_battery": "/v1/readside/vehicle/ev-battery/{source_id}",
+      "extend_warrant": "/v1/readside/extend-warrant/vehicle/{source_id}"
     },
     "headers": {
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
