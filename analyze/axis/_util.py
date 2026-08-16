@@ -16,8 +16,12 @@ def months_between(ym_from: str | None, ym_to: str | None) -> int | None:
     """`2023-05` · `2023-05-02` → 경과 개월.  시각을 직접 읽지 않는다."""
     if not ym_from or not ym_to:
         return None
-    a = [int(x) for x in str(ym_from)[:7].split("-")]
-    b = [int(x) for x in str(ym_to)[:7].split("-")]
+    # ★ 「2023」처럼 달이 없는 값이 온다 (실측 08-17).  죽지 말고 모른다고 한다 —
+    #   추정한 달을 넣으면 그것이 판정에 섞인다
+    a = [int(x) for x in str(ym_from)[:7].split("-") if x.isdigit()]
+    b = [int(x) for x in str(ym_to)[:7].split("-") if x.isdigit()]
+    if len(a) < 2 or len(b) < 2:
+        return None
     return (b[0] - a[0]) * MONTHS_PER_YEAR + (b[1] - a[1])
 
 

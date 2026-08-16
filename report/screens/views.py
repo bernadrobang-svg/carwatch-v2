@@ -90,6 +90,9 @@ class ListingRow:
     platform_trust: str | None = None
     platform_trust_why: list = field(default_factory=list)
     # 「왜 싼가」 (개정 299 · V3-52).  ★ 못 찾으면 그것도 낸다
+    # 순위용 — 취향까지 넣은 555 기준 (개정 292 ④).  등급은 505 다
+    rank_earned: float | None = None
+    rank_total: float | None = None
     why_cheap: str | None = None
     why_cheap_reasons: list = field(default_factory=list)
     # 대표 사진 주소 (개정 274).  ★ 우리가 내려받지 않는다 — ci.encar.com 을

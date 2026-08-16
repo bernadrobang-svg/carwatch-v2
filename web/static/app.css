@@ -1413,20 +1413,25 @@ body.s-listings main { max-width:1560px; }
   .rows td[data-label="딜러"] { grid-column:span 4; }
   .rows td[data-label="등급"], .rows td[data-label="순위"],
   .rows td[data-label="비율"] { grid-column:span 4; }
-  /* ★ 보증은 「1년 10개월 · 65천km」라 길다.  한 줄을 통째로 준다 —
-     둘을 나란히 두면 글자가 겹친다 (실측 08-17 스크린샷) */
-  /* ★ .rows td.ax 가 뒤에 와서 이긴다 — 축 칸은 더 좁은 선택자로 덮는다 */
-  .rows td.ax[data-label="일반보증"], .rows td.ax[data-label="동력계 보증"],
-  .rows td[data-label="신차가"], .rows td[data-label="시세"] {
+  /* ★ 축 7칸 — 한 줄에 셋.  값이 O · - · ? 하나뿐이라 좁아도 된다.
+     긴 상태 문구가 붙는 칸만 아래에서 넓힌다 */
+  .rows td.ax { grid-column:span 2; font-size:11.5px; }
+  /* ★ .rows td.ax 가 뒤에 와서 이긴다 — 축 칸은 더 좁은 선택자로 덮는다.
+     ★ 개정 292 로 축 이름이 바뀌었다 — 사고 · 골격 · 보험 수리비 · 용도 · 보증 */
+  .rows td.ax[data-label="골격"], .rows td.ax[data-label="보증"],
+  .rows td[data-label="시세"] {
     grid-column:span 3;
   }
-  /* 축 7칸 — 한 줄에 셋.  값이 O · · · ? 하나뿐이라 좁아도 된다 */
-  .rows td.ax { grid-column:span 2; font-size:11.5px; }
+  /* ★ 「렌트 이력 (점검부·보험·번호판)」은 한 줄을 통째로 써야 안 겹친다
+     (실측 08-17 스크린샷 — 보증과 겹쳐 읽을 수 없었다) */
+  .rows td.ax[data-label="용도"],
+  /* 신차가는 「등급 4,560만 + 옵션 713만」 두 줄이다 (개정 301) */
+  .rows td[data-label="신차가"] { grid-column:span 6; }
   .rows td[data-label="비고"] { grid-column:span 6; }
 
-  /* ★ 시세차를 크게.  이 도구의 핵심이다 */
-  /* ★ 시세차를 크게.  이 도구의 핵심이다 */
-  .rows td.gap { grid-column:span 3; font-size:1.2em; font-weight:600; }
+  /* ★ 시세차를 크게.  이 도구의 핵심이다.
+     ★ 「싼 이유 3가지를 찾았습니다」가 붙어 한 줄을 통째로 쓴다 (개정 299) */
+  .rows td.gap { grid-column:span 6; font-size:1.2em; font-weight:600; }
   .rows td[data-label="가격"] { grid-column:span 3; font-size:1.1em; }
   .rows td[data-label="비고"] { grid-column:span 6; }
   .rows td.gap::before { font-size:9.5px; font-weight:400; }

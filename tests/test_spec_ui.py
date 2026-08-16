@@ -55,7 +55,7 @@ def spec_a(ad: Client, lid: int) -> None:
 
     # A-2  ★ 개정 298 로 분모는 늘 555 다 — 「분모 < 555 색 구분」은 폐기됐다.
     #   대신 「555 중 350점 확인 (63%)」을 낸다 (개정 298 I)
-    _conf = re.search(r"\d+점 확인 \(\d+(?:\.\d+)?%\)", text(lb))
+    _conf = re.search(r"확인 \d+(?:\.\d+)?%", text(lb))
     rec("A-2", "확인율을 함께 낸다 (개정 298 I)", "확인 문구를 본다",
         _conf.group(0) if _conf else "표시 없음", bool(_conf),
         "분모로 막지 않는 대신 얼마나 봤는지를 낸다")

@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS result_score (
   absolute_fail  TEXT,            -- E등급 사유
   -- ★ 08-14. NOT_RATED 사유 3종을 구분한다 (V5-12)
   not_rated_reason TEXT,
+  -- ★ 08-17 개정 292.  등급은 취향(④ 50점)을 뺀 505 로 매긴다.
+  --   555 로 잰 비율을 화면에 내면 등급과 어긋난다 — 둘 다 남긴다
+  grade_earned   REAL,
+  grade_base     REAL,
   calculated_at  TEXT NOT NULL,
   PRIMARY KEY (listing_id, calc_version),
   FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),

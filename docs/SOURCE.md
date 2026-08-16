@@ -2,15 +2,15 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 118개 · 총 36,447줄
+파일 118개 · 총 36,492줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v11_web.py` | 2,339 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 1,802 | 화면 어댑터 (14장 STEP 142 · 152). |
-| `report/screens/build.py` | 1,429 | 화면 데이터 생성. |
+| `report/screens/build.py` | 1,463 | 화면 데이터 생성. |
 | `tests/test_spec_ui.py` | 1,414 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `collect/runner.py` | 1,213 | 수집 실행 규칙. |
+| `collect/runner.py` | 1,215 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,212 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `report/screens/admin.py` | 927 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `store/adminops.py` | 904 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
@@ -33,7 +33,7 @@
 | `report/render.py` | 491 | 리포트 생성 (L9). |
 | `store/dictionary.py` | 440 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `contracts.py` | 431 | 계층 간 계약 — Protocol · DTO. |
-| `report/screens/views.py` | 419 | 화면 전용 DTO. |
+| `report/screens/views.py` | 422 | 화면 전용 DTO. |
 | `run.py` | 404 | CarWatch v2 진입점. |
 | `tests/test_pipeline.py` | 382 | 5장 수집 순서 시험. |
 | `web/app.py` | 371 | 화면 조립 (14장 STEP 144 · 147 · 149). |
@@ -96,9 +96,9 @@
 | `analyze/axis/price.py` | 90 | 가격 200점. |
 | `analyze/absolute.py` | 88 | E등급 절대조건 10종. |
 | `analyze/peer.py` | 80 | 유사군 — 「이런 차가 보통 얼마인가」 (7장 STEP 82e). |
+| `report/why_cheap.py` | 75 | 「왜 싼가」 — 싼 이유를 순서대로 찾아 낸다 (개정 299 · V3-52). |
 | `tools/inspect_dict.py` | 75 | 사전 검토 — pending 값과 원문 표본을 본다. |
 | `tools/inspect_facet.py` | 74 | facet 원문에 실제로 어떤 축이 왔는지 본다. |
-| `report/why_cheap.py` | 73 | 「왜 싼가」 — 싼 이유를 순서대로 찾아 낸다 (개정 299 · V3-52). |
 | `analyze/trust.py` | 70 | 플랫폼 신뢰도 — 점검 출처 · 엔카진단 · 엔카보증 (개정 300). |
 | `score/grade.py` | 70 | 등급 (L7). |
 | `analyze/axis/trim.py` | 64 | ③ 사양 75점 — 트림 등급 45 · 옵션 합 30. |
@@ -107,9 +107,9 @@
 | `analyze/axis/safety.py` | 44 | 안전 40점 — 진단 20 + 보증상품 20. |
 | `adapters/base.py` | 36 | 사이트 어댑터 인터페이스. |
 | `report/peer.py` | 35 | 유사군 조회 (7장 STEP 82e). |
+| `analyze/axis/_util.py` | 33 | 축 공용 도우미. |
 | `analyze/axis/color.py` | 33 | 색상 40점. |
 | `analyze/axis/mileage.py` | 31 | 주행거리 30점. |
-| `analyze/axis/_util.py` | 29 | 축 공용 도우미. |
 | `analyze/engine.py` | 28 | 판정 실행 (L6).  축 함수를 순서 무관하게 호출한다. |
 | `adapters/__init__.py` | 1 | — |
 | `analyze/__init__.py` | 1 | — |
@@ -139,10 +139,10 @@ _web_sources:364  run:376  _late_checks:486  _templates_with_form:550  _spec_rou
 _rows_per_page:27  _cfg:31  _versions:36  page:55  listings:78  why:108  notready:139  dashboard:149  admin_home:164  admin_audit:173  admin_docs:186  _int_param:210  _manwon:249  _filter_chips:254  _order_menu:305  _carry:311  _order_label:321  ORDERS_LABELS_GET:325  _condition_sentence:329  _query_string:347  _page_links:360  _simple_paging:381  _paging:391  _filter_buttons:421  _filter:453  recommend:490  compare:512  market:527  _first_target:547  dealers:553  watch:573  run_view:587  login:599  _login_again:633  _open_session:648  logout:674  _watch_queries:691  watch_query_post:700  _int_or_none:730  watch_add_post:734  _watch_invite:790  watch_update_post:811  _now:835  _reason_gate:842  _gate:863  _first_flag:902  _all_hours:907  admin_run:934  _target_rows:1000  admin_dict:1013  admin_status:1047  admin_collect:1062  _run_stamp:1102  _int_or_none:1113  admin_import:1118  admin_scoring:1190  admin_registry:1243  admin_query:1279  admin_requests:1301  _admin_extra:1363  _config_files:1378  _config_rows:1385  admin_config:1417  _typed:1468  admin_api:1484  _site_query:1534  admin_targets:1547  admin_tools:1645  join:1664  password:1695  admin_users:1710  _account_activity:1762
 ```
 
-### `report/screens/build.py` — 1,429줄
+### `report/screens/build.py` — 1,463줄
 
 ```
-axis_heads:61  _labels:69  viewer_state:74  chip:84  _stamp:113  _bulk_axes:117  confirm_ratio:138  _bulk_changes:149  _total_points:176  photo_url:188  market_price:219  _days_between:236  _ceil_to:251  _bulk_market:267  _bulk_state:306  _left:333  _warranty_state:342  _axis_state:378  _row:418  _view_cfg:538  order_clause:573  _view_str:579  _listings_where:585  count_listings:640  view_listings:652  _option_prices:714  recommend_funnel:726  _bulk_upside:743  view_recommend:758  excluded_groups:791  view_why:806  view_compare:812  market_trims:843  view_market:862  _web_cfg:895  _median:909  _with_height:914  _price_bins:929  _group_prices:950  _by_year:968  _by_trim:985  _other_targets:1003  count_dealers:1011  _dealer_targets:1017  _dealer_region:1037  view_dealers:1052  view_run:1088  _rank1_of:1094  view_dashboard:1102  _grade_counts:1194  _e_reasons:1201  _today_changes:1218  _step_rows:1243  _bulk_spark:1260  view_watch:1296  _pending_values:1346  _done_items:1355  view_notready:1381  _unmatched_rows:1416
+axis_heads:61  _labels:69  viewer_state:74  chip:84  _stamp:113  _bulk_axes:117  confirm_ratio:138  _bulk_changes:149  _total_points:176  photo_url:188  market_price:219  _days_between:236  _ceil_to:251  _bulk_market:265  _bulk_state:304  _left:331  _warranty_state:340  _axis_state:376  _row:428  _view_cfg:559  order_clause:594  _view_str:600  _listings_where:606  count_listings:661  view_listings:673  _high_km:739  _option_prices:748  recommend_funnel:760  _bulk_upside:777  view_recommend:792  excluded_groups:825  view_why:840  view_compare:846  market_trims:877  view_market:896  _web_cfg:929  _median:943  _with_height:948  _price_bins:963  _group_prices:984  _by_year:1002  _by_trim:1019  _other_targets:1037  count_dealers:1045  _dealer_targets:1051  _dealer_region:1071  view_dealers:1086  view_run:1122  _rank1_of:1128  view_dashboard:1136  _grade_counts:1228  _e_reasons:1235  _today_changes:1252  _step_rows:1277  _bulk_spark:1294  view_watch:1330  _pending_values:1380  _done_items:1389  view_notready:1415  _unmatched_rows:1450
 ```
 
 ### `tests/test_spec_ui.py` — 1,414줄
@@ -151,10 +151,10 @@ axis_heads:61  _labels:69  viewer_state:74  chip:84  _stamp:113  _bulk_axes:117 
 rec:33  spec_a:43  spec_b:117  spec_c:191  spec_d:231  spec_f:264  spec_g:290  spec_h:338  spec_j:371  spec_m:414  spec_e:482  spec_i:525  spec_k:631  spec_l:686  spec_monkey:725  flow_s1:797  flow_s2:859  flow_s5:942  flow_s3:1055  flow_s4:1130  flow_s6:1201  guide_v132:1257  main:1349  _write:1392
 ```
 
-### `collect/runner.py` — 1,213줄
+### `collect/runner.py` — 1,215줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_names:153  check_facet_axes:157  interpret_failure:171  collect_check:200  FailStreak:267  _sleep:301  _log_request:307  _save_issues:318  make_executors:329  _group_of:820  _fuel_of:835  _badge_of:841  _pages_for:847  _dicts:861  _market_medians:897  _trim_ladders:926  _listing_config:943  _listing_values:965  _market_of:984  make_score_executors:994  make_validate_executor:1142  make_registry_executor:1184
+CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_names:153  check_facet_axes:157  interpret_failure:171  collect_check:200  FailStreak:267  _sleep:301  _log_request:307  _save_issues:318  make_executors:329  _group_of:820  _fuel_of:835  _badge_of:841  _pages_for:847  _dicts:861  _market_medians:897  _trim_ladders:926  _listing_config:943  _listing_values:965  _market_of:984  make_score_executors:994  make_validate_executor:1144  make_registry_executor:1186
 ```
 
 ### `tests/test_integration.py` — 1,212줄
@@ -289,10 +289,10 @@ CodeEntry:31  AxisPolicy:57  policy:97  scope_key:105  seed_fixed_enums:130  ups
 Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:135  AxisResult:195  Account:214  require_role:231  RunContext:248  StepReport:268  ResumePoint:292  clean_vin:313  total_of:324  RegressionReport:337  json_paths:348  shape_ok:396  shape_violations:429
 ```
 
-### `report/screens/views.py` — 419줄
+### `report/screens/views.py` — 422줄
 
 ```
-AxisChip:30  ListingRow:52  ListingFilter:148  WatchRow:174  TargetStat:192  RelaxRow:201  MarketRow:208  ChangeRow:220  AttentionItem:230  ViewerState:238  DashboardView:252  CompareView:276  MarketView:287  DealerRow:300  NotReadyView:321  TodayChange:339  StepRow:351  _min_sample:363  PendingValue:381  Bucket:394  ExcludedGroup:414
+AxisChip:30  ListingRow:52  ListingFilter:151  WatchRow:177  TargetStat:195  RelaxRow:204  MarketRow:211  ChangeRow:223  AttentionItem:233  ViewerState:241  DashboardView:255  CompareView:279  MarketView:290  DealerRow:303  NotReadyView:324  TodayChange:342  StepRow:354  _min_sample:366  PendingValue:384  Bucket:397  ExcludedGroup:417
 ```
 
 ### `run.py` — 404줄

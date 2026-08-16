@@ -1118,10 +1118,12 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                 "INSERT OR REPLACE INTO result_score"
                 "(listing_id,calc_version,dict_version,score_total,earned,"
                 " denominator,grade,absolute_fail,not_rated_reason,"
-                " calculated_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                " grade_earned,grade_base,calculated_at)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                 (lid, ctx.calc_version, ctx.dict_version, res.score_total,
                  res.earned, res.denominator, grade_of(res, policy),
-                 res.absolute_fail, res.not_rated_reason, at))
+                 res.absolute_fail, res.not_rated_reason,
+                 res.grade_earned, res.grade_base, at))
         conn.commit()
         # ★ 매 실행 후 조건을 돌린다 (STEP 117a).
         #   매물은 사라지지만 조건은 남는다 — 새로 맞는 매물을 쌓는다

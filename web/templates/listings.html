@@ -41,7 +41,7 @@
 <table class="rows">
 <thead><tr>
 <th class="c">사진</th>
-<th class="c">등급</th><th class="r">순위</th><th class="r" title="받은 점수 ÷ 만점. 아래 줄은 원점수/만점과 「그 매물에서 실제로 확인한 배점 합」입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다">비율</th>
+<th class="c">등급</th><th class="r">순위</th><th class="r" title="등급은 취향 50점을 뺀 505 로 매깁니다 (개정 292). 아래 줄은 순위용 555 기준 점수와 확인율입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298)">비율</th>
 <th>차종</th><th>트림</th>
 <th class="r">연식</th><th class="r">주행</th>
 <th class="c">외장</th><th class="c">내장</th>
@@ -66,7 +66,7 @@
     {% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
     <span class="raw{% if r.denom_short %} denom-short{% endif %}">{{ r.earned }}/{{ r.denominator }}</span>
     <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>
-    <span class="raw">{{ r.confirmed_points }}점 확인 ({{ r.confirm_pct }}%)</span>{% endif %}
+    <span class="raw">취향까지 {{ r.rank_earned }}/{{ r.rank_total }} · 확인 {{ r.confirm_pct }}%</span>{% endif %}
     {% if !r.ratio_pct %}<span class="dim" title="아직 판정하지 못했습니다">—</span>{% endif %}
   </td>
   <td data-label="차종">

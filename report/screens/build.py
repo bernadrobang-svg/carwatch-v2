@@ -365,7 +365,7 @@ def _warranty_state(got, as_of) -> tuple:
 # 축 → 상태를 어디서 가져오는가 (STEP 149n).
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
 STATE_AXES = ("state.warranty", "state.accident", "state.frame",
-              "state.repair", "state.usage")
+              "state.repair", "state.usage", "spec.trim", "spec.options")
 
 
 # 렌트를 어디서 찾았는가 → 화면 문구 (개정 302).  ★ 「렌트 이력」만 내지 않는다
@@ -407,8 +407,20 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         got = [RENT_SOURCE_WORDS[k] for k in source.split("+")
                if k in RENT_SOURCE_WORDS]
         return f"렌트 이력 ({'·'.join(got)})" if got else "렌트 이력"
-    if axis.startswith("spec."):
-        # 사양 축은 있고 없고가 전부다 (STEP 149n 표)
+    if axis == "spec.trim":
+        # ★ 트림은 그 차종 신차가 사다리의 백분위다.  「있음/없음」이 아니다
+        pts, mx = state.get("points", {}).get(axis, (None, None))
+        if pts is None or not mx:
+            return ""
+        return f"상위 {max(1, 100 - round(pts / mx * 100))}%"
+    if axis == "spec.options":
+        # ★ 옵션은 금액이다.  얼마짜리를 달았는지가 사실이다 (개정 301)
+        won = state.get("option_won")
+        if won is None:
+            return ""
+        return "없음" if not won else f"{won // WON_PER_MANWON:,}만"
+    if axis.startswith(("spec.", "taste.")):
+        # 사양·취향 축은 있고 없고가 전부다 (STEP 149n 표)
         return "있음" if chip.tone == TONE_GOOD else "없음"
     return ""
 
@@ -427,9 +439,13 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
-     insp_fmt, diag_car, w_ext, w_deemed, opt_json) = rec
+     insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
+    # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
+    _codes = json.loads(opt_json) if opt_json else []
+    _opt_won = (sum((opt_prices or {}).get(c, 0) for c in _codes)
+                if isinstance(_codes, list) else 0)
     chips = []
     for axis in CHIP_AXES:
         if axis in got:
@@ -438,10 +454,10 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
             one = chip(axis, None, True, labels)
         # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)
         chips.append(replace(one, state=_axis_state(
-            axis, one, st, calc_at, (got.get(axis) or (0, 0, ""))[2])))
+            axis, one, dict(st, option_won=_opt_won, points={
+                a: (v[0], v[3]) for a, v in got.items()}),
+            calc_at, (got.get(axis) or (0, 0, ""))[2])))
     _confirm = confirm_ratio(got, float(denom or _total_points()))
-    _opt_won = sum((opt_prices or {}).get(c, 0)
-                   for c in json.loads(opt_json or "[]"))
     _fmt = json.loads(insp_fmt) if insp_fmt else None
     _has_w = bool(w_ext and w_ext != "0") or bool(w_deemed and w_deemed != "0")
     _trust, _why = platform_trust(_fmt, diag_car, _has_w)
@@ -479,9 +495,15 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         rank=None if (grade or NOT_RATED) == NOT_RATED else rank,
         # ★ 비율이 크게 · 원점수/분모가 작게 (STEP 149f · A-1).
         #   분모가 다른 매물을 눈으로 갈라야 한다
-        earned=earned, denominator=denom,
-        ratio_pct=(round(earned / denom * 100, 1)
+        # ★ 비율은 등급과 같은 자로 낸다 — 505 기준 (개정 292)
+        earned=g_earned if g_earned is not None else earned,
+        denominator=g_base if g_base else denom,
+        ratio_pct=(round(g_earned / g_base * 100, 1)
+                   if g_earned is not None and g_base
+                   else round(earned / denom * 100, 1)
                    if earned is not None and denom else None),
+        # 순위는 취향까지 넣은 555 로 매긴다 (개정 292 ④)
+        rank_earned=earned, rank_total=denom,
         # 분모가 만점보다 짧으면 색으로 가른다 (A-2).
         # ★ 개정 298 로 분모는 늘 만점이다 — 짧으면 그것 자체가 사고다
         denom_short=bool(denom and denom < _total_points()),
@@ -669,7 +691,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         " d.trust_score, d.quadrant, d.sample_sufficient,"
         # 개정 300·301 — 점검 출처 · 엔카진단 · 엔카보증 · 선택 옵션가
         " l.inspection_formats_json, l.diagnosis_car,"
-        " l.warranty_extend, l.warranty_deemed, l.options_choice_json"
+        " l.warranty_extend, l.warranty_deemed, l.options_choice_json,"
+        # ★ 등급은 취향을 뺀 505 로 매긴다 (개정 292).  555 로 잰 비율을 내면
+        #   화면과 등급이 어긋난다 — 실측 08-17: 84.9%(555) 인데 S(505 기준)
+        " s.grade_earned, s.grade_base"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
