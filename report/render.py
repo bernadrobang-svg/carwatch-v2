@@ -46,6 +46,49 @@ def _stamp(conn, lid: str, calc_version: str) -> VersionStamp:
                         coef[0] if coef else None, row[3] if row else None)
 
 
+def _curve_points(year_month: str | None, as_of: str | None,
+                  root: str = ".") -> tuple:
+    """감가 곡선 + 이 차의 자리 (시안 v2_why .curve).
+
+    ★ 기대가가 어떻게 나왔는지를 보여 준다.  시세차 숫자만 내면 근거가 없다
+    """
+    import json as _j
+    import os as _o
+
+    path = _o.path.join(root, "config", "depreciation.json")
+    if not _o.path.isfile(path):
+        return ()
+    with open(path, encoding="utf-8") as f:
+        dep = _j.load(f)
+    # 막대의 최대 높이(px).  ★ % 로 주면 안 그려진다 —
+    #   .curve .c .bar 는 높이가 정해진 상자의 손자라 백분율이 0 이 된다.
+    #   표시 정책이라 config 에 둔다 (S14)
+    with open(_o.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        max_px = int(_j.load(f)["curve_max_px"])
+    curve = dep.get("curve") or {}
+    if not curve:
+        return ()
+    years = sorted(int(k) for k in curve)
+    # ★ 지금 시각을 읽지 않는다.  판정한 시각(calculated_at)을 쓴다 —
+    #   그래야 화면의 곡선과 판정이 같은 기준이 된다
+    from analyze.axis._util import months_between
+
+    months = months_between(year_month, as_of)
+    mine = None
+    if months is not None:
+        age = months // MONTHS_PER_YEAR
+        mine = age if age in years else (years[-1] if age > years[-1] else None)
+    top = max(float(curve[str(y)]) for y in years) or 1.0
+    return tuple({"year": y, "rate": float(curve[str(y)]),
+                  "pct": round(float(curve[str(y)]) / top * 100),
+                  "px": round(float(curve[str(y)]) / top * max_px),
+                  "now": y == mine}
+                 for y in years)
+
+
+MONTHS_PER_YEAR = 12
+
+
 def _encar_url(source_id: str, root: str = ".") -> str:
     """엔카 원문 주소 (STEP 149q).  ★ 주소를 코드에 박지 않는다 (config/web.json)."""
     import json as _j
@@ -63,7 +106,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
     head = conn.execute(
         "SELECT l.target_key, l.price_current_won, s.score_total, s.denominator,"
         " s.earned, s.not_rated_reason,"
-        " s.grade, s.absolute_fail, l.source_id FROM core_listing l "
+        " s.grade, s.absolute_fail, l.source_id, l.year_month,"
+        " s.calculated_at FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
         (calc_version, listing_id)).fetchone()
@@ -111,6 +155,7 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         options=_option_rows(conn, listing_id),
         known_issues=_known_issues(head[0], root),
         source_id=head[8],
+        curve=_curve_points(head[9], head[10], root),
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
         encar_url=(_encar_url(head[8], root) if head[8] else None))
 

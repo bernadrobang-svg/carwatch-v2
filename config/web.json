@@ -32,5 +32,6 @@
   "hist_min_bar_pct": 3,
   "min_cell_chars": 3,
   "char_px": 7,
-  "narrow_px": 360
+  "narrow_px": 360,
+  "curve_max_px": 84
 }

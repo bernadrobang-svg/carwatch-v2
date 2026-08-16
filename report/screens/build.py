@@ -492,11 +492,39 @@ def recommend_funnel(conn, calc_version: str, shown: int) -> dict:
             "eligible": judged - dropped, "shown": shown}
 
 
+def _bulk_upside(conn, lids: list, calc_version: str) -> dict:
+    """확인 못 한 축의 배점 합 (시안 v2_recommend .pbar).
+
+    ★ 행마다 돌지 않는다.  IN 절로 한 번에 받는다 (V11-34)
+    """
+    if not lids:
+        return {}
+    marks = ",".join("?" * len(lids))
+    return {r[0]: float(r[1] or 0) for r in conn.execute(
+        f"SELECT listing_id, SUM(max_points) FROM result_axis "
+        f"WHERE calc_version = ? AND excluded = 1 AND value IS NULL "
+        f"AND listing_id IN ({marks}) GROUP BY listing_id",
+        (calc_version, *lids))}
+
+
 def view_recommend(account: Account, conn, flt: ListingFilter,
                    fin_cfg: dict, root: str = ".") -> list[ListingRow]:
     """추천 대상만.  E 와 NOT_RATED 는 순위를 매기지 않는다 (7장 STEP 84)."""
-    rows = view_listings(account, conn, flt, fin_cfg, root)
-    return [r for r in rows if r.grade not in ("E", NOT_RATED)]
+    rows = [r for r in view_listings(account, conn, flt, fin_cfg, root)
+            if r.grade not in ("E", NOT_RATED)]
+    # ★ 「지금 얼마」와 「채우면 얼마까지」를 함께 낸다 (STEP 105 · 149h).
+    #   지금 비율만 보면 이 차가 끝인지 아닌지 알 수 없다
+    up = _bulk_upside(conn, [r.listing_id for r in rows], flt.calc_version)
+    total = _total_points()
+    out = []
+    for r in rows:
+        gain = up.get(r.listing_id, 0.0)
+        out.append(replace(
+            r,
+            upside_points=gain,
+            got_pct=round((r.earned or 0) / total * 100, 1) if total else 0.0,
+            may_pct=round(gain / total * 100, 1) if total else 0.0))
+    return out
 
 
 # 절대조건 탈락 사유별 안내.  ★ 「왜 뺐는지」가 판단 재료다 (시안 v2_recommend)
@@ -704,7 +732,16 @@ def view_dealers(account: Account, conn, site: str = "encar") -> list[DealerRow]
         out.append(DealerRow(r[0], r[1], r[2], r[3], r[4],
                              r[5] if r[6] else None, bool(r[6]), r[7],
                              r[8], r[9]))
-    return out
+    # ★ 4분면 좌표 (시안 v2_dealers .quad).  가로는 매물 수, 세로는 정직도다.
+    #   표본이 모자란 딜러는 좌표를 주지 않는다 — 0 으로 찍으면
+    #   「정직도 0인 딜러」가 되어 없는 사실을 만든다 (V3-26)
+    top = max((d.volume or 0 for d in out), default=0)
+    return [replace(d,
+                    quad_x=round((d.volume or 0) / top * 100, 1) if top else None,
+                    quad_y=(round(float(d.honesty_score), 1)
+                            if d.sample_sufficient and d.honesty_score is not None
+                            else None))
+            for d in out]
 
 
 def view_run(account: Account, conn, run_id: str, calc_version: str):
@@ -878,6 +915,42 @@ def _step_rows(conn, run_id: str) -> list:
     return out
 
 
+def _bulk_spark(conn, lids: list) -> dict:
+    """관심 매물의 가격 추이 (시안 v2_watch .spark).
+
+    ★ 「지금 얼마」만으로는 내려가는 중인지 올라가는 중인지 모른다.
+    ★ 행마다 돌지 않는다 — IN 절로 한 번에 (V11-34)
+    """
+    lids = [x for x in lids if x is not None]
+    if not lids:
+        return {}
+    marks = ",".join("?" * len(lids))
+    series: dict = {}
+    for lid, old, new in conn.execute(
+        f"SELECT listing_id, old_value, new_value FROM core_listing_change "
+        f"WHERE change_kind='price' AND listing_id IN ({marks}) "
+        f"ORDER BY changed_at ASC", tuple(lids)
+    ):
+        try:
+            a, b = int(float(old)), int(float(new))
+        except (TypeError, ValueError):
+            continue          # 숫자가 아니면 없는 것으로 둔다 — 지어내지 않는다
+        got = series.setdefault(lid, [])
+        if not got:
+            got.append(a)
+        got.append(b)
+    out: dict = {}
+    for lid, prices in series.items():
+        top = max(prices) or 1
+        out[lid] = tuple(
+            {"pct": round(p / top * 100), "won": p,
+             # ★ 인하가 좋음 · 인상이 나쁨 (STEP 145a)
+             "dn": i > 0 and p < prices[i - 1],
+             "now": i == len(prices) - 1}
+            for i, p in enumerate(prices))
+    return out
+
+
 def view_watch(account: Account, conn, fin_cfg: dict,
                calc_version: str, root: str = ".") -> list:
     """★ 개인화는 watch_* 조회에 account_id 를 거는 것으로 끝난다.
@@ -904,6 +977,7 @@ def view_watch(account: Account, conn, fin_cfg: dict,
     flt = ListingFilter(calc_version=calc_version)
     by_id = {r.listing_id: r
              for r in view_listings(account, conn, flt, fin_cfg, root)}
+    spark = _bulk_spark(conn, [r[1] for r in rows])
     out = []
     for wid, lid, target, added, closed, memo in rows:
         listing = by_id.get(lid)
@@ -911,7 +985,8 @@ def view_watch(account: Account, conn, fin_cfg: dict,
             continue          # 아직 채점 전이다 — 조용히 빼지 않고 다음 회차에
         out.append(WatchRow(watch_id=wid, listing=listing,
                             target_price_won=target, added_at=added,
-                            closed_at=closed, memo=memo))
+                            closed_at=closed, memo=memo,
+                            spark=spark.get(lid, ())))
     return out
 
 

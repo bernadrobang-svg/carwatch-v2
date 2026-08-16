@@ -1473,12 +1473,12 @@ body.s-listings main { max-width:1560px; }
    ★ 스크롤바가 흰 줄로만 보이면 무엇인지 모른다 — 스크롤바로 보이게 한다
      (실측 08-16 검토 16 — 「표 아래 흰 띠가 하나 있습니다」) */
 @media (max-width:1099px) {
-  /* ★ 안쪽에 최소 폭을 주지 않으면 표가 화면에 맞춰 쥐어짜여
-     글자가 한 자씩 세로로 떨어진다 — 실측 08-16 admin_dict_360.png */
-  main table > thead, main table > tbody {
-    display:table; width:100%; min-width:520px;
-  }
-  main table td, main table th { word-break:keep-all; }
+  /* ★ thead 와 tbody 에 각각 display:table 을 주면 둘이 따로 폭을 정해
+     머리말과 값이 어긋난다 — 실측 08-16 검토 18
+     (「관측·매물·출처가 빈 칸이고 오른쪽에 ] 만 보인다」).
+     칸을 안 접게만 하면 안쪽 표가 스스로 넓어져 가로로 넘어간다.
+     ★ 그래야 머리말과 값이 같은 표 안에서 줄을 맞춘다 */
+  main table td, main table th { white-space:nowrap; word-break:keep-all; }
   main table {
     display:block; overflow-x:auto;
     scrollbar-color:var(--line2) var(--surface2);

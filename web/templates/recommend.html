@@ -24,6 +24,17 @@
     <span class="price">{{ r.price_won | won }}</span>
   </header>
 
+  <div class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다">
+    <div class="got" style="width:{{ r.got_pct }}%"></div>
+    <div class="may" style="width:{{ r.may_pct }}%"></div>
+  </div>
+  <p class="sum dim">지금 <span class="num">{{ r.earned | num }}/{{ r.denominator | num }} = {{ r.ratio_pct }}%</span>
+    · <b>{{ r.grade }}</b>
+    {% if r.upside_points %}→ <strong>17축 전건</strong> 기준으로 확인 못 한 축이
+    <span class="num">{{ r.upside_points | num }}점</span> 남아 있습니다.
+    채우면 만점 대비 <span class="num">{{ r.may_pct }}%</span>가 더 열립니다{% endif %}
+    {% if !r.upside_points %}→ 확인 못 한 축이 없습니다{% endif %}</p>
+
   <p class="meta muted">
     월 {{ r.monthly_won | won }} · 딜러 {{ r.dealer_shop }} ·
     게시 {{ r.days_on_market | num }}일
@@ -42,12 +53,15 @@
   {% endif %}
 
   {% if r.unknowns %}
-  <p class="unknown"><b>확인 못 한 것</b> — 채우면 오를 수 있습니다
+  <p class="unknown"><b>위 축 중 확인 못 한 것</b> — 채우면 오를 수 있습니다
     {% for c in r.unknowns %}<span class="chip-unknown">{{ c.label }}</span>{% endfor %}
   </p>
   {% endif %}
   {% if !r.unknowns %}
-  <p class="muted">확인 못 한 것 — 없습니다. 전 축 판정됐습니다.</p>
+  <p class="muted">위에 적은 축은 전부 판정됐습니다.
+    {% if r.upside_points %}<strong>다만 화면에 안 적은 축에
+    {{ r.upside_points | num }}점이 남아 있습니다</strong> —
+    <a href="/why/{{ r.listing_id }}" title="17축 전건을 봅니다">근거에서 17축 전건</a>을 보십시오.{% endif %}</p>
   {% endif %}
 
   <p class="act"><a href="/why/{{ r.listing_id }}">판정 근거</a>

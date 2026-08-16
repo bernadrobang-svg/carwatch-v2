@@ -540,6 +540,8 @@ def dealers(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str
     rows = view_dealers(account, conn)
     return page(conn, account, "딜러", "dealers.html",
                 {"rows": rows, "count": len(rows),
+                 # ★ 점이 하나도 없으면 화면이 그렇게 말한다 (V3-26)
+                 "plotted": [d for d in rows if d.quad_y is not None],
                  # ★ 매물이 아니라 조건을 지켜본다 (STEP 117a)
                  "queries": _watch_queries(conn, account)},
                 root=root, csrf=csrf, flash_key=flash_key)

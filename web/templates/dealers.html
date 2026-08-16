@@ -4,6 +4,26 @@
   같은 차라면 어느 딜러에게 사도 그 차입니다. 연락하기 전에 참고하는 것입니다.
 </p>
 <p class="muted">표본이 모자란 딜러는 점수를 내지 않습니다 — 「표본 부족」입니다.</p>
+
+<h2>정직도 · 매물 수 <span class="more">점을 누르면 그 딜러 매물로</span></h2>
+<div class="quad">
+  <div class="axis v"></div>
+  <div class="axis h"></div>
+  <div class="qlabel" style="top:10px;left:14px">정직도 높음 · 매물 적음</div>
+  <div class="qlabel" style="top:10px;right:14px">정직도 높음 · 매물 많음</div>
+  <div class="qlabel" style="bottom:10px;left:14px">정직도 낮음 · 매물 적음</div>
+  <div class="qlabel" style="bottom:10px;right:14px">정직도 낮음 · 매물 많음</div>
+  {% for d in rows %}{% if d.quad_y %}<a class="dot"
+    style="left:{{ d.quad_x }}%;bottom:{{ d.quad_y }}%"
+    href="/listings?dealer={{ d.dealer_shop }}"
+    title="{{ d.dealer_shop }} · 정직도 {{ d.quad_y }} · 보유 {{ d.volume | num }}건"></a>{% endif %}{% endfor %}
+</div>
+{% if !plotted %}
+<p class="warn-warn">아직 점이 하나도 없습니다 —
+  <strong>{{ count | num }}곳 전부 정직도 표본이 모자랍니다.</strong>
+  딜러별 매물이 더 쌓이면 S11 집계가 점수를 냅니다.
+  <span class="muted">가로는 보유 매물 수, 세로는 정직도입니다.</span></p>
+{% endif %}
 <table>
 <thead><tr><th>상사</th><th>지역</th><th class="num">연차</th>
 <th>사분면</th><th class="num">정직도</th><th class="num">보유</th>

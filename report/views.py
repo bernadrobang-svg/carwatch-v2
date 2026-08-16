@@ -141,6 +141,9 @@ class ScoreView:
     #   사람은 결국 거기서 사진을 보고 전화한다 — 그 길을 막으면 벽이 된다
     source_id: str | None = None
     encar_url: str | None = None
+    # 감가 곡선 (시안 v2_why .curve).  ★ 이 차가 곡선의 어디에 있는지를 낸다 —
+    #   기대가가 어떻게 나왔는지가 시세차의 근거다 (7장 STEP 70)
+    curve: tuple = ()
     # ★ 확인 못 한 축을 채웠을 때의 비율·등급 (STEP 149h · D-2)
     pending_best: dict | None = None
 

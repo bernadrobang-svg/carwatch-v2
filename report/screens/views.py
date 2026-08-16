@@ -97,6 +97,11 @@ class ListingRow:
     dealer_quadrant: str | None = None
     # E등급 사유 등 비고
     note_tags: tuple = ()
+    # 「확인 못 한 축을 채우면 얼마나 오를 수 있나」 (시안 v2_recommend .pbar).
+    # ★ 지금 비율만 보면 「이 차가 끝인가」를 모른다
+    got_pct: float = 0.0        # 지금 받은 몫 (만점 대비)
+    may_pct: float = 0.0        # 채우면 더 받을 수 있는 몫
+    upside_points: float = 0.0  # 확인 못 한 축의 배점 합
     km_bucket: int | None = None      # 주행 상한 (만km 단위로 올림)
     monthly_bucket_won: int | None = None   # 월납입 상한 (10만 단위로 올림)
 
@@ -154,6 +159,9 @@ class WatchRow:
     added_at: str
     closed_at: str | None
     memo: str | None
+    # 가격 추이 막대 (시안 v2_watch .spark).  ★ 「지금 얼마」만으로는
+    #   내려가는 중인지 올라가는 중인지 모른다.  각 칸은 {pct, dn, now}
+    spark: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -276,6 +284,10 @@ class DealerRow:
     volume: int
     sold_total: int | None
     sold_1y: int | None
+    # 4분면 좌표 (시안 v2_dealers .quad).  ★ 표본이 모자라면 None 이다 —
+    #   0 으로 찍으면 「정직도 0」인 딜러가 된다
+    quad_x: float | None = None    # 매물 수 (가로)
+    quad_y: float | None = None    # 정직도 (세로)
 
 
 @dataclass(frozen=True)

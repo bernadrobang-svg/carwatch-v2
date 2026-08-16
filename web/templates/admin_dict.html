@@ -22,11 +22,14 @@
 {% if pending_axes %}
 <h3>축 단위로 한 번에</h3>
 <p class="muted">{{ pending_total | num }}종을 하나씩 누르지 않습니다.
-  다만 <strong>몇 종인지 먼저 봅니다</strong>.</p>
+  다만 <strong>몇 종인지 먼저 봅니다</strong>.
+  지금 대기 중인 축은 <strong>{{ pending_axes | count }}가지</strong>입니다 —
+  나머지 축은 이미 확정됐습니다.</p>
 {% for a in pending_axes %}
 <details class="card tight">
   <summary><strong>{{ a.axis }}</strong>
-    <span class="dim">{{ a.values | num }}종 · 매물 {{ a.listings | num }}건 ·
+    <span class="dim">{{ a.values | num }}종 ·
+      {% if a.countable %}매물 {{ a.listings | num }}건{% endif %}{% if !a.countable %}<span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span>{% endif %} ·
       {% if a.from_list %}list <span class="dim">전체 집합 아님</span>{% endif %}{% if !a.from_list %}facet{% endif %}</span></summary>
   <p class="dim">값 예시 {{ a.sample }}</p>
   <form method="post" action="/admin/dict">
@@ -40,8 +43,8 @@
     <button type="submit" name="action" value="retire"
       title="쓰지 않는 값으로 내립니다">폐기</button>
   </form>
-  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다
-    (매물 {{ a.listings | num }}건이 이 값을 갖고 있습니다).</p>
+  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다{% if a.countable %}
+    (매물 {{ a.listings | num }}건이 이 값을 갖고 있습니다){% endif %}.</p>
 </details>
 {% endfor %}
 
@@ -55,7 +58,7 @@
   <td>{{ r.axis }}</td>
   <td><strong>{{ r.value }}</strong></td>
   <td class="num">{{ r.count_seen | num }}</td>
-  <td class="num">{{ r.listings | num }}</td>
+  <td class="num">{% if r.listings %}{{ r.listings | num }}{% endif %}{% if !r.listings %}<span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span>{% endif %}</td>
   <td>{% if r.from_list %}<strong>list</strong>{% endif %}{% if !r.from_list %}facet{% endif %}</td>
   <td class="muted">{{ r.first_seen | date }}</td>
 </tr>

@@ -12,6 +12,22 @@
 <p class="warn-block">E등급 사유 — {{ v.absolute_fail }}</p>
 {% endif %}
 
+{% if v.curve %}
+<h2>감가 곡선 <span class="more">이 차가 어디에 있는가</span></h2>
+<div class="card tight">
+  <div class="curve">
+    {% for c in v.curve %}<div class="c">
+      <span class="v">{{ c.rate }}</span>
+      <span class="bar{% if c.now %} now{% endif %}" style="height:{{ c.px }}px"
+        title="{{ c.year }}년차 잔가율 {{ c.rate }}{% if c.now %} — 이 차입니다{% endif %}"></span>
+      <span class="l">{{ c.year }}년</span>
+    </div>{% endfor %}
+  </div>
+  <p class="dim">기대가 = 신차가 × 이 잔가율 × 차종 보정계수 (7장 STEP 70).
+    노란 막대가 이 차의 연차입니다. 시세차는 그 기대가와의 차이입니다.</p>
+</div>
+{% endif %}
+
 <p class="score">
   <strong>{{ v.earned | num }}</strong> / {{ v.denominator | num }}
   <span class="muted">판정할 수 없는 축은 분모에서 뺍니다 ·

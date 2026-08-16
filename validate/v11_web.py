@@ -1557,13 +1557,16 @@ def _null_link_check(conn, rid):
 
 # 화면마다 반드시 나와야 하는 시안의 시각 요소 (검토 14 · 개정 275).
 # ★ 「그 화면이 무엇으로 보여 주는가」다.  표로 대신하면 시안이 아니다
+# (그려야 할 class, 그릴 자료가 있다는 표시).
+# ★ 자료가 없어 못 그린 것과 구조가 없는 것은 다르다 —
+#   관심 0건이면 spark 를 그릴 수가 없다.  그것을 코드 결함으로 세지 않는다
 SIAN_VISUAL = {
-    "/market": ("hist", "histx"),
-    "/dealers": ("quad",),
-    "/watch": ("spark",),
-    "/recommend": ("pbar",),
-    "/why/{listing_id}": ("curve",),
-    "/listings": ("thumb", "peek"),
+    "/market": (("hist", "histx"), None),
+    "/dealers": (("quad",), None),
+    "/watch": (("spark",), "watch_id"),
+    "/recommend": (("pbar",), None),
+    "/why/{listing_id}": (("curve",), None),
+    "/listings": (("thumb", "peek"), None),
 }
 
 
@@ -1589,8 +1592,8 @@ def _sian_visual_check(conn, rid):
     conn.backup(probe)
     acc = Account(1, ROLE_ADMIN, "마스터")
     routes = {r.path: r for r in ROUTES}
-    bad, ok = [], 0
-    for path, want in SIAN_VISUAL.items():
+    bad, ok, skipped = [], 0, []
+    for path, (want, needs) in SIAN_VISUAL.items():
         route = routes.get(path)
         if route is None or GET not in route.methods:
             bad.append(f"{path} — 그런 화면이 없다")
@@ -1609,6 +1612,9 @@ def _sian_visual_check(conn, rid):
             bad.append(f"{path} — 못 그렸다: {type(e).__name__} {e}")
             continue
         html = body.decode("utf-8", "replace")
+        if needs and needs not in html:
+            skipped.append(f"{path} — 그릴 자료가 없다 ({needs})")
+            continue
         used = set()
         for attr in re.findall(r'class="([^"{}]*)"', html):
             used |= set(attr.split())
@@ -1619,9 +1625,14 @@ def _sian_visual_check(conn, rid):
             else:
                 bad.append(f"{path} — .{cls} 가 화면에 없다 (표로 내고 있다)")
     probe.close()
-    total = sum(len(v) for v in SIAN_VISUAL.values())
-    return result(C["V11-77"], rid, f"{total}종", f"{ok}/{total}", not bad,
-                  bad[:8])
+    total = sum(len(w) for w, _n in SIAN_VISUAL.values())
+    seen = total - sum(len(SIAN_VISUAL[p.split(" —")[0]][0])
+                       for p in [s.split(" —")[0] for s in skipped]
+                       if p in SIAN_VISUAL)
+    note = f"{ok}/{seen}" + (f" · 자료 없어 못 본 것 {len(skipped)}"
+                             if skipped else "")
+    return result(C["V11-77"], rid, f"{total}종", note, not bad,
+                  bad[:8] + skipped)
 
 
 def _cell_squeeze_check(rid):
@@ -1645,12 +1656,17 @@ def _cell_squeeze_check(rid):
     css = open(APP_CSS, encoding="utf-8").read()
     guarded = False
     for width, body in _media_blocks(css):
-        if narrow <= width <= wide:
-            if re.search(r"min-width:\s*\d+px", body) and "table" in body:
+        if narrow <= width <= wide and "table" in body:
+            # ★ 막는 방법은 둘이다 — 안쪽에 최소 폭을 주거나,
+            #   칸을 안 접게 해서 표가 스스로 넓어지게 하거나.
+            #   둘 다 바깥이 가로로 넘어가게 만든다
+            if (re.search(r"min-width:\s*\d+px", body)
+                    or re.search(r"white-space:\s*nowrap", body)):
                 guarded = True
     bad = []
     if not guarded:
-        bad.append("좁은 폭에서 표에 최소 폭이 없다 — 열 수만큼 쥐어짜인다")
+        bad.append("좁은 폭에서 표를 막는 것이 없다 — 열 수만큼 쥐어짜인다 "
+                   "(안쪽 최소 폭이나 white-space:nowrap 이 필요하다)")
     render_dir = os.path.join(ROOT, "outputs", "render")
     worst = 0
     if os.path.isdir(render_dir):

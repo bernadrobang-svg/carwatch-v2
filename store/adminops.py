@@ -370,7 +370,10 @@ def pending_enums(conn: sqlite3.Connection, site: str = "encar") -> list:
         "ORDER BY axis, count_seen DESC, value", (site,)
     ):
         col = DICT_AXIS_COLUMN.get(axis)
-        listings = 0
+        # ★ 셀 수 없는 축은 0 이 아니라 None 이다.  0 으로 내면
+        #   「확정할 이유가 없다」로 읽힌다 — panel 은 core_listing 에 열이 없고
+        #   점검 원문(core_inspection)에 있다 (실측 08-16 검토 18)
+        listings = None
         if col:
             listings = conn.execute(
                 f"SELECT COUNT(*) FROM core_listing WHERE {col}=?",
@@ -388,10 +391,13 @@ def pending_axis_summary(conn: sqlite3.Connection, site: str = "encar") -> list:
     rows: dict = {}
     for r in pending_enums(conn, site):
         a = rows.setdefault(r["axis"], {"axis": r["axis"], "values": 0,
-                                        "listings": 0, "from_list": False,
-                                        "sample": []})
+                                        "listings": 0, "countable": True,
+                                        "from_list": False, "sample": []})
         a["values"] += 1
-        a["listings"] += r["listings"]
+        if r["listings"] is None:
+            a["countable"] = False
+        else:
+            a["listings"] += r["listings"]
         a["from_list"] = a["from_list"] or r["from_list"]
         # ★ 몇 개만 보일지는 표시 정책이다.  표현 계층이 자른다 (STEP 152)
         a["sample"].append(r["value"])
