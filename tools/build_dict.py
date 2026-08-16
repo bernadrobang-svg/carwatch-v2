@@ -79,8 +79,11 @@ def extract_distinct(conn: sqlite3.Connection, endpoint: str,
                 #   「이 쿼리 범위에 없다」다.  사이트가 정의한 열거값이다 (STEP 43)
                 counts[value] = counts.get(value, 0) + cnt
     else:
+        # ★ 반입분은 사이트 응답이 아니다.  CSV·ID 목록을 json.loads 하면
+        #   사전 만들기가 통째로 죽는다 (13장 STEP 136a · 실측 08-16)
         rows = conn.execute(
-            "SELECT body FROM raw_response WHERE endpoint = ? AND status = 'ok'",
+            "SELECT body FROM raw_response WHERE endpoint = ? "
+            "AND status = 'ok' AND origin <> 'import'",
             (endpoint,),
         )
         for (body,) in rows:
