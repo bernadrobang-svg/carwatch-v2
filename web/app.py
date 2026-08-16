@@ -35,6 +35,7 @@ def menu_items(account) -> list[dict]:
         if ROLE_RANK[r.role] > rank:
             continue
         out.append({"label": _label(r.path), "path": r.path,
+                    "tip": _tip(r.path),
                     "group": r.menu, "locked": False})
     return out
 
@@ -53,6 +54,41 @@ LABELS = {
     "/admin/import": "목록 반입", "/admin/collect": "브라우저 수집",
     "/admin/dict": "사전 확정", "/admin/status": "진행 모니터",
 }
+
+
+# 메뉴 설명.  ★ 13장 STEP 138 메뉴표의 「내용」 칸이 정본이다.
+#   이름만으로는 무엇을 하는 곳인지 모른다 (STEP 149p · 마스터 지적 ①)
+MENU_TIPS = {
+    "/listings": "판정한 매물을 표로 봅니다. 값을 누르면 그 조건으로 걸러집니다",
+    "/recommend": "E · 미판정을 뺀 후보. 점수순이 아니라 예산·확인 못 한 축을 함께 봅니다",
+    "/compare": "고른 매물을 축별로 나란히 놓습니다. 분모가 다르면 총점을 비교하지 않습니다",
+    "/market": "차종별 시세 — 가격 분포 · 연식별 중앙값 · 감가 계수 이력",
+    "/dealers": "딜러 정직도와 보유 차종. ★ 차량 판정에는 들어가지 않습니다",
+    "/watch": "관심으로 담은 매물과 조건 알림",
+    "/notready": "아직 판정하지 못한 것과 그 이유",
+    "/admin": "관리 현황 · 큐 상태 · 미분류 · 대기 요청",
+    "/admin/run": "수집·재계산 실행 지시와 큐 (STEP 132)",
+    "/admin/status": "지금 도는 것을 지켜봅니다. 읽기 전용입니다 (STEP 136f)",
+    "/admin/audit": "설정 변경 · 쿼리 · 작업 이력 조회 (STEP 138a)",
+    "/admin/import": "목록을 파일·붙여넣기로 반입합니다 (STEP 136a · 136b)",
+    "/admin/collect": "사용자 회선으로 API 를 부릅니다 (STEP 136c)",
+    "/admin/dict": "같은 값을 같은 것으로 인정하는 규칙을 확정합니다 (STEP 136e)",
+    "/admin/scoring": "배점 조정 + 미리보기 (STEP 128 · 129)",
+    "/admin/targets": "차종 추가 · 수정 (STEP 130)",
+    "/admin/registry": "원문 필드 분류 (STEP 131)",
+    "/admin/config": "config 전체 편집과 이력 (STEP 127)",
+    "/admin/users": "사용자 승인과 역할",
+    "/admin/query": "조회 쿼리 (STEP 133)",
+    "/admin/api": "API 를 직접 불러 원문을 봅니다 (STEP 134)",
+    "/admin/tools": "관리 도구 (STEP 135)",
+    "/admin/docs": "지시서 문서 뷰어 (STEP 136)",
+    "/admin/requests": "개발 요청 (STEP 137)",
+}
+
+
+def _tip(path: str) -> str:
+    """메뉴 설명.  ★ 없으면 빈 문자다 — 지어내지 않는다."""
+    return MENU_TIPS.get(path, "")
 
 
 def _label(path: str) -> str:

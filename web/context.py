@@ -33,6 +33,9 @@ class MenuItem:
     path: str
     group: str | None = None
     locked: bool = False
+    # ★ 이름만으로는 무엇을 하는 곳인지 모른다 (STEP 149p · 마스터 지적 ①).
+    #   13장 STEP 138 메뉴표의 「내용」 칸이 정본이다
+    tip: str = ""
 
 
 @dataclass(frozen=True)

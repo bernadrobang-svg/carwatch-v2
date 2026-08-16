@@ -357,6 +357,37 @@ def _query_string(flt) -> str:
     return _u.urlencode(got)
 
 
+def _page_links(total: int, now: int, shown: int, size: int, links: int,
+                url, one_page: bool = False) -> dict:
+    """쪽 넘김 한 벌.  ★ 목록과 딜러가 같은 것을 쓴다 —
+    두 벌로 두면 한쪽만 고쳐진다 (실측: 조건이 2쪽에서 풀렸다)"""
+    pages = 1 if one_page else max(1, -(-total // size)) if size else 1
+    now = min(max(1, now), pages)
+    lo = max(1, now - links // 2)
+    hi = min(pages, lo + links - 1)
+    lo = max(1, hi - links + 1)
+    return {
+        "total": total, "shown": shown, "size": size,
+        "page": now, "pages": pages, "many": pages > 1,
+        "prev": url(now - 1) if now > 1 else "",
+        "next": url(now + 1) if now < pages else "",
+        "first": url(1) if lo > 1 else "",
+        "last": url(pages) if hi < pages else "",
+        "links": [{"n": n, "url": url(n), "on": n == now}
+                  for n in range(lo, hi + 1)],
+    }
+
+
+def _simple_paging(total: int, now: int, shown: int, base: str,
+                   root: str) -> dict:
+    """조건이 없는 목록의 쪽 넘김 (딜러 등)."""
+    from report.screens.build import _view_cfg
+
+    return _page_links(total, now, shown, _view_cfg("rows_per_page", root),
+                       _view_cfg("page_links", root),
+                       lambda n: f"{base}?page={n}")
+
+
 def _paging(conn, flt, shown: int, root: str) -> dict:
     """「3,471건 중 200건 · 1/18쪽」 + 쪽 넘김 (V11-55 · V11-58).
 
@@ -365,33 +396,12 @@ def _paging(conn, flt, shown: int, root: str) -> dict:
     """
     from report.screens.build import _view_cfg, count_listings
 
-    total = count_listings(conn, flt)
-    size = _view_cfg("rows_per_page", root)
-    # 한 번에 내보일 쪽 번호 수.  ★ 70쪽을 다 늘어놓으면 줄이 넘친다.
-    #   표시 정책이라 코드에 박지 않는다 (config/web.json · S14)
-    links = _view_cfg("page_links", root)
-    pages = 1 if flt.show_all else max(1, -(-total // size))
-    now = min(max(1, flt.page), pages)
     qs = _query_string(flt)
     sep = "&" if qs else ""
-
-    def url(n: int) -> str:
-        return f"/listings?{qs}{sep}page={n}"
-
-    lo = max(1, now - links // 2)
-    hi = min(pages, lo + links - 1)
-    lo = max(1, hi - links + 1)
-    return {
-        "total": total, "shown": shown, "size": size,
-        "page": now, "pages": pages,
-        "many": pages > 1,
-        "prev": url(now - 1) if now > 1 else "",
-        "next": url(now + 1) if now < pages else "",
-        "first": url(1) if lo > 1 else "",
-        "last": url(pages) if hi < pages else "",
-        "links": [{"n": n, "url": url(n), "on": n == now}
-                  for n in range(lo, hi + 1)],
-    }
+    return _page_links(
+        count_listings(conn, flt), flt.page, shown,
+        _view_cfg("rows_per_page", root), _view_cfg("page_links", root),
+        lambda n: f"/listings?{qs}{sep}page={n}", one_page=flt.show_all)
 
 
 # 자주 쓰는 조건 단추 (STEP 149t).  ★ (필드, 값, 라벨, 설명)
@@ -535,11 +545,17 @@ def _first_target(conn):
 
 def dealers(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
-    from report.screens.build import view_dealers
+    from report.screens.build import count_dealers, view_dealers
 
-    rows = view_dealers(account, conn)
+    q = req.get("query", {})
+    now = _int_param(q, "page", 1)
+    rows = view_dealers(account, conn, root=root, page=now)
+    # ★ 719곳을 한 번에 보내지 않는다 — 139KB 였다 (검토 15)
+    total = count_dealers(conn)
     return page(conn, account, "딜러", "dealers.html",
                 {"rows": rows, "count": len(rows),
+                 "paging": _simple_paging(total, now, len(rows), "/dealers",
+                                          root),
                  # ★ 점이 하나도 없으면 화면이 그렇게 말한다 (V3-26)
                  "plotted": [d for d in rows if d.quad_y is not None],
                  # ★ 매물이 아니라 조건을 지켜본다 (STEP 117a)
@@ -1508,6 +1524,19 @@ TARGET_PENDING = "pending_review"
 TARGET_ACTIVE = "active"
 
 
+def _site_query(origin: str, maker: str, model_group: str) -> str:
+    """고른 값으로 엔카 검색 조건을 조립한다 (STEP 149r).
+
+    ★ 엔카 쿼리 문법을 사람이 알아야 하는 것이 지적 ⑧ 이었다.
+      facet 으로 확인한 값이 있으면 그것이 우선이다 — 여기 것은 초안이다
+    """
+    if not (maker and model_group):
+        return ""
+    kind = "Y" if origin == "Y" else "N"
+    return (f"(And.Hidden.N._.CarType.{kind}._."
+            f"(C.Manufacturer.{maker}._.ModelGroup.{model_group}.))")
+
+
 def admin_targets(conn, account, req, root: str = ROOT, csrf: str = "",
                   flash_key: str = "-", **_kw):
     """차종 추가 (STEP 130).
@@ -1516,17 +1545,25 @@ def admin_targets(conn, account, req, root: str = ROOT, csrf: str = "",
       사이트가 열거값을 준다 — 사람이 적으면 표기가 어긋난다 (STEP 42)
     ★ 배기량 범위는 「확인 필요」로 남긴다.  facet 이 배기량을 주지 않는다
     """
-    from report.screens.admin import target_rows
+    from report.screens.admin import target_choices, target_rows
     from store.admin import add_config_key, apply_config
     from web.app import redirect
 
     if req.get("method") == "POST":
         form = _gate(conn, account, req, csrf)
         act = form.get("action") or "add"
-        key = (form.get("target_key") or "").strip().upper()
+        # ★ 고른 값에서 만들어 준다.  사람이 적었으면 그것을 쓴다 (STEP 149r)
+        from report.screens.admin import make_target_key
+
+        picked_group = (form.get("model_group") or "").strip()
+        picked_fuel = (form.get("fuel") or "").strip()
+        key = ((form.get("target_key") or "").strip()
+               or make_target_key(picked_group, picked_fuel)).upper()
         if not key or not key.replace("_", "").isalnum():
             raise ValidationError(
-                "차종 키는 영문·숫자·밑줄이다: " + key, step="STEP 130")
+                "차종 키를 만들지 못했다 — 모델군이 한글뿐이면 로마자가 없다. "
+                f"「차종 키」 칸에 직접 적어 주십시오 (예 KOLEOS_HEV): {key}",
+                step="STEP 130 · 149r")
         blob = _cfg("targets.json", root)
         if act == "confirm":
             if key not in blob:
@@ -1550,12 +1587,17 @@ def admin_targets(conn, account, req, root: str = ROOT, csrf: str = "",
                 "국산(Y)·수입(N) 중 하나를 골라야 한다 — "
                 "빠뜨리면 facet 조건이 안 맞아 0건이 나온다",
                 step="STEP 130")
+        maker = (form.get("maker") or "").strip()
         spec = {
-            "label": form.get("label") or key,
+            "label": (form.get("label")
+                      or (f"{maker} {picked_group}".strip() if picked_group
+                          else key)),
             # ★ 국산 CarType.Y · 수입 CarType.N (STEP 130)
             "origin_type": origin,
-            "collect_group": form.get("collect_group") or key,
-            "site_query": form.get("site_query") or "",
+            "collect_group": form.get("collect_group") or picked_group or key,
+            # ★ 비어 있으면 고른 값으로 조립한다.  그래도 못 만들면 아래에서 막는다
+            "site_query": (form.get("site_query")
+                           or _site_query(origin, maker, picked_group)),
             "status": TARGET_PENDING,
         }
         if not spec["site_query"]:
@@ -1570,7 +1612,9 @@ def admin_targets(conn, account, req, root: str = ROOT, csrf: str = "",
                         f"시험 수집 뒤 확정합니다", flash_key)
 
     return page(conn, account, "차종", "admin_targets.html",
-                {"target_rows": target_rows(conn, root=root)},
+                {"target_rows": target_rows(conn, root=root),
+                 # ★ 고르는 칸은 고를 수 있게 (STEP 149r)
+                 "choices": target_choices(conn)},
                 csrf=csrf, root=root, flash_key=flash_key)
 
 

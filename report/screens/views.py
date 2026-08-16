@@ -288,6 +288,9 @@ class DealerRow:
     #   0 으로 찍으면 「정직도 0」인 딜러가 된다
     quad_x: float | None = None    # 매물 수 (가로)
     quad_y: float | None = None    # 정직도 (세로)
+    # 이 딜러가 가진 차종 분포 — 「G80 12 · GV70 8」 (마스터 지적 ⑤).
+    # ★ 건수만 보면 「무엇을 파는 딜러인가」를 모른다
+    targets: tuple = ()
 
 
 @dataclass(frozen=True)

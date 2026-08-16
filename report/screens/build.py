@@ -719,15 +719,62 @@ def _other_targets(conn, target_key: str) -> list:
                 "GROUP BY 1 ORDER BY 2 DESC", (target_key,))]
 
 
-def view_dealers(account: Account, conn, site: str = "encar") -> list[DealerRow]:
-    """sample_sufficient=0 이면 trust_score 를 확정 표시하지 않는다 (V3-26)."""
+def count_dealers(conn, site: str = "encar") -> int:
+    """딜러 전체 곳수.  ★ SQL 은 web/ 에 두지 않는다 (V11-01)."""
+    return conn.execute("SELECT COUNT(*) FROM core_dealer WHERE site=?",
+                        (site,)).fetchone()[0]
+
+
+def _dealer_targets(conn, dealer_ids: list, top: int) -> dict:
+    """딜러별 차종 분포 (마스터 지적 ⑤).
+
+    ★ 행마다 돌지 않는다 — IN 절로 한 번에 받는다 (V11-34)
+    """
+    if not dealer_ids:
+        return {}
+    marks = ",".join("?" * len(dealer_ids))
+    out: dict = {}
+    for did, tk, n in conn.execute(
+        f"SELECT dealer_id, target_key, COUNT(*) FROM core_listing "
+        f"WHERE dealer_id IN ({marks}) AND target_key IS NOT NULL "
+        f"GROUP BY 1, 2 ORDER BY 1, 3 DESC", tuple(dealer_ids)
+    ):
+        got = out.setdefault(did, [])
+        if len(got) < top:
+            got.append({"target_key": tk, "count": n})
+    return {k: tuple(v) for k, v in out.items()}
+
+
+def _dealer_region(conn, dealer_ids: list) -> dict:
+    """지역.  ★ core_dealer.region 이 전건 비어 있다 (실측 08-16 · 719/719).
+
+    원문에는 있다 — core_listing.dealer_region 이 7,629건 채워져 있다.
+    S11 딜러 집계가 그것을 안 옮긴다.  고쳐지기 전까지 매물에서 읽는다
+    """
+    if not dealer_ids:
+        return {}
+    marks = ",".join("?" * len(dealer_ids))
+    return {r[0]: r[1] for r in conn.execute(
+        f"SELECT dealer_id, MAX(dealer_region) FROM core_listing "
+        f"WHERE dealer_id IN ({marks}) AND dealer_region IS NOT NULL "
+        f"GROUP BY 1", tuple(dealer_ids))}
+
+
+def view_dealers(account: Account, conn, site: str = "encar",
+                 root: str = ".", page: int = 1) -> list[DealerRow]:
+    """sample_sufficient=0 이면 trust_score 를 확정 표시하지 않는다 (V3-26).
+
+    ★ 719곳을 한 번에 보내지 않는다 — 139KB 였다 (검토 15).  쪽으로 나눈다
+    """
+    size = _view_cfg("rows_per_page", root)
     out = []
     for r in conn.execute(
         # ★ 실명을 조회하지 않는다.  상호만 쓴다 (STEP 35)
         "SELECT dealer_id, dealer_shop, region, career_years,"
         " quadrant, trust_score, sample_sufficient, listing_count,"
-        " total_sales, recent_year_sales FROM core_dealer WHERE site=?",
-        (site,)
+        " total_sales, recent_year_sales FROM core_dealer WHERE site=?"
+        " ORDER BY listing_count DESC, dealer_id LIMIT ? OFFSET ?",
+        (site, size, (max(1, page) - 1) * size)
     ):
         out.append(DealerRow(r[0], r[1], r[2], r[3], r[4],
                              r[5] if r[6] else None, bool(r[6]), r[7],
@@ -736,7 +783,12 @@ def view_dealers(account: Account, conn, site: str = "encar") -> list[DealerRow]
     #   표본이 모자란 딜러는 좌표를 주지 않는다 — 0 으로 찍으면
     #   「정직도 0인 딜러」가 되어 없는 사실을 만든다 (V3-26)
     top = max((d.volume or 0 for d in out), default=0)
+    ids = [d.dealer_id for d in out]
+    by_target = _dealer_targets(conn, ids, _view_cfg("dealer_target_top", root))
+    by_region = _dealer_region(conn, ids)
     return [replace(d,
+                    dealer_region=d.dealer_region or by_region.get(d.dealer_id),
+                    targets=by_target.get(d.dealer_id, ()),
                     quad_x=round((d.volume or 0) / top * 100, 1) if top else None,
                     quad_y=(round(float(d.honesty_score), 1)
                             if d.sample_sufficient and d.honesty_score is not None

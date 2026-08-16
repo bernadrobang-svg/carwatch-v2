@@ -485,6 +485,49 @@ def account_activity(conn, limit: int | None = None) -> list:
     return rows
 
 
+# 연료 이름 → 차종 키 꼬리 (STEP 149r).  ★ 사람이 짓지 않는다
+FUEL_SUFFIX = (("전기", "EV"), ("가솔린+전기", "HEV"), ("하이브리드", "HEV"),
+               ("LPG", "LPG"), ("디젤", "DSL"), ("가솔린", "G"))
+
+
+def make_target_key(model_group: str, fuel: str) -> str:
+    """고른 값에서 차종 키를 만든다 (STEP 149r · 마스터 지적 ⑧).
+
+    ★ 「KOLEOS_HEV」를 사람이 외워 치게 하지 않는다.
+      한글 모델군은 로마자가 없으므로 영문·숫자만 남기고,
+      비면 site_model 의 영문 조각을 쓴다 — 그래도 비면 사람이 적는다
+    """
+    tail = ""
+    for word, suffix in FUEL_SUFFIX:
+        if word in (fuel or ""):
+            tail = suffix
+            break
+    head = "".join(ch for ch in (model_group or "").upper()
+                   if ch.isascii() and ch.isalnum())
+    if not head:
+        return ""
+    return f"{head}_{tail}" if tail else head
+
+
+def target_choices(conn, site: str = "encar") -> dict:
+    """차종을 「고르게」 하는 값 (STEP 149r · 마스터 지적 ⑧).
+
+    ★ 「KOLEOS_HEV」를 외워 치라는 것은 도구가 아니다.
+      우리가 이미 받은 원문에 제조사·모델군·모델·연료·트림이 다 있다.
+      facet 은 아직 0건이라(서울 IP 가 /search/ 에 막힘) 목록에서 뽑는다
+    """
+    def col(name: str) -> list:
+        return [{"value": r[0], "count": r[1]} for r in conn.execute(
+            f"SELECT {name}, COUNT(*) FROM core_listing "
+            f"WHERE site=? AND {name} IS NOT NULL "
+            f"GROUP BY 1 ORDER BY 2 DESC", (site,))]
+
+    return {"maker": col("site_manufacturer"),
+            "model_group": col("site_model_group"),
+            "model": col("site_model"),
+            "fuel": col("fuel_raw")}
+
+
 def target_rows(conn, root: str = ".") -> list:
     """등록된 차종.  ★ 수집된 것과 설정에만 있는 것을 함께 낸다."""
     import json as _j

@@ -13,9 +13,39 @@
   <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
   <input type="hidden" name="previewed" value="1">
   <input type="hidden" name="action" value="add">
-  <label>차종 키 <input name="target_key" size="20" placeholder="GV70_EV"></label>
-  <label>이름 <input name="label" size="30" placeholder="제네시스 GV70 전기"></label>
-  <label>수집 묶음 <input name="collect_group" size="20" placeholder="GV70"></label>
+  <p class="dim">★ 우리가 이미 받은 원문에서 고릅니다 —
+    외워서 치지 않습니다 (STEP 149r).
+    facet 은 아직 0건이라(서울 IP 가 <code>/search/</code> 에 막힘) 목록에서 뽑았습니다.</p>
+  <label>제조사
+    <select name="maker" title="원문에서 관측한 제조사입니다">
+      <option value="">— 고르십시오 —</option>
+      {% for m in choices.maker %}<option value="{{ m.value }}">{{ m.value }} ({{ m.count | num }}건)</option>{% endfor %}
+    </select>
+  </label>
+  <label>모델군
+    <select name="model_group" title="같은 이름으로 묶이는 모델 무리입니다 — 수집 묶음이 됩니다">
+      <option value="">— 고르십시오 —</option>
+      {% for m in choices.model_group %}<option value="{{ m.value }}">{{ m.value }} ({{ m.count | num }}건)</option>{% endfor %}
+    </select>
+  </label>
+  <label>모델
+    <select name="model" title="세대까지 구분한 이름입니다">
+      <option value="">— 고르십시오 —</option>
+      {% for m in choices.model %}<option value="{{ m.value }}">{{ m.value }} ({{ m.count | num }}건)</option>{% endfor %}
+    </select>
+  </label>
+  <label>연료
+    <select name="fuel" title="차종 키 뒤에 붙습니다 — 예 _HEV · _EV">
+      <option value="">— 고르십시오 —</option>
+      {% for m in choices.fuel %}<option value="{{ m.value }}">{{ m.value }} ({{ m.count | num }}건)</option>{% endfor %}
+    </select>
+  </label>
+  <label>차종 키 <input name="target_key" size="20" placeholder="비워 두면 고른 값에서 만듭니다"
+    title="비워 두면 모델군 + 연료로 만듭니다 — 예 G80 + 전기 → G80_EV"></label>
+  <p class="dim">★ 모델군이 한글뿐이면(그랑 콜레오스 · 그랜저) 로마자를 만들 수 없습니다.
+    그때만 「차종 키」를 직접 적으십시오 — <code>KOLEOS_HEV</code> 처럼.</p>
+  <label>이름 <input name="label" size="30" placeholder="비워 두면 제조사 + 모델"></label>
+  <label>수집 묶음 <input name="collect_group" size="20" placeholder="비워 두면 모델군"></label>
   <label>구분
     <select name="origin_type">
       <option value="Y">국산 (CarType.Y)</option>
@@ -23,7 +53,9 @@
     </select>
     <span class="muted">★ 빠뜨리면 조건이 안 맞아 0건이 나옵니다</span>
   </label>
-  <label>site_query <input name="site_query" size="70" placeholder="facet 으로 확인한 q 값"></label>
+  <label>site_query <input name="site_query" size="70"
+    placeholder="비워 두면 고른 값에서 만듭니다"
+    title="엔카 검색 조건입니다. 비워 두면 구분·제조사·모델군으로 조립합니다 — facet 으로 확인한 값이 있으면 그것을 넣으십시오"></label>
   <label>사유 <input name="reason" size="30" placeholder="사유 (필수)" required></label>
   <button type="submit">확인 대기로 등록</button>
 </form>
