@@ -67,6 +67,9 @@ ROUTES: tuple[Route, ...] = (
     Route("/admin", (GET,), "view_admin", ROLE_ADMIN),
     Route("/admin/run", (GET, POST), "view_admin_run", ROLE_ADMIN, GROUP_OPS),
     Route("/admin/audit", (GET,), "view_admin_audit", ROLE_ADMIN, GROUP_OPS),
+    # ★ 지켜보는 곳.  실행하는 곳(/admin/run)과 나눈다 — 보다가 또 누르면
+    #   10,000 호출이 도는 중에 다시 시작된다 (STEP 136f · 개정 272)
+    Route("/admin/status", (GET,), "view_admin_status", ROLE_ADMIN, GROUP_OPS),
     # 반입은 수집이다 — 탐색(/admin/api)이 아니라 운영이다 (STEP 136a)
     Route("/admin/import", (GET, POST), "view_admin_import", ROLE_ADMIN,
           GROUP_OPS),

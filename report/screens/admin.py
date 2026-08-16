@@ -42,6 +42,7 @@ MENU: tuple[tuple[str, str, str, str], ...] = (
     ("", "/admin", "현황", "STEP 138"),
     (GROUP_OPS, "/admin/run", "실행 지시 · 큐", "STEP 132"),
     (GROUP_OPS, "/admin/audit", "감사 조회", "STEP 138a"),
+    (GROUP_OPS, "/admin/status", "진행 지켜보기", "STEP 136f"),
     (GROUP_OPS, "/admin/import", "목록 반입", "STEP 136a · 136b"),
     (GROUP_OPS, "/admin/collect", "브라우저 수집", "STEP 136c"),
     (GROUP_TUNE, "/admin/scoring", "배점 조정", "STEP 128 · 129"),
@@ -528,6 +529,71 @@ def parse_import_text(text: str, site: str) -> tuple:
     # ★ facet 해석도 여기서 한다.  store 는 parse 를 못 부른다 (V4-22)
     facet = parse_facet(text) if fmt == FORMAT_FACET else None
     return fmt, parse_import(text, fmt, site), facet
+
+
+def status_view(conn, root: str = ".") -> dict:
+    """진행 지켜보기 (13장 STEP 136f · 개정 272).
+
+    ★ 읽기 전용이다.  실행 단추를 두지 않는다 — 보다가 또 누르면
+      1만 호출이 도는 중에 다시 시작된다
+    ★ 「대기 중」과 「멈춘 것」을 가른다.  마지막 진척이 언제인지로 가른다
+    """
+    import json as _j
+    from datetime import datetime, timezone
+
+    base = run_progress(conn, root)
+    web = {}
+    path = os.path.join(root, "config", "web.json")
+    if os.path.isfile(path):
+        with open(path, encoding="utf-8") as f:
+            web = _j.load(f)
+    now = datetime.now(timezone.utc)
+
+    def _mins(ts):
+        if not ts:
+            return None
+        try:
+            t = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        except ValueError:
+            return None
+        return int((now - t).total_seconds() // SEC_PER_MIN)
+
+    # 마지막으로 처리한 매물 — 「진척이 있나」를 이것으로 가른다
+    last = conn.execute(
+        "SELECT source_id, endpoint, fetched_at FROM raw_response "
+        "ORDER BY id DESC LIMIT 1").fetchone()
+    last_min = _mins(last[2]) if last else None
+    running = conn.execute(
+        "SELECT job_id, reason, scope, current_step, step_done, step_total, "
+        "       detail, queued_at, updated_at, run_id FROM recalc_job "
+        "WHERE status='running' ORDER BY queued_at DESC LIMIT 1").fetchone()
+    recent = [{"job_id": r[0], "status": r[1], "reason": r[2],
+               "scope": r[3], "detail": (r[4] or "")[:120],
+               "at": r[5], "minutes": _mins(r[5])}
+              for r in conn.execute(
+                  "SELECT job_id, status, reason, scope, detail, "
+                  "       COALESCE(ended_at, queued_at) "
+                  "FROM recalc_job ORDER BY COALESCE(ended_at, queued_at) "
+                  "DESC LIMIT ?", (_cfg_rows("recent_rows"),))]
+    failed = [r for r in recent if r["status"] == "failed"]
+    return {
+        **base,
+        "poll_sec": int(web.get("status_poll_sec") or 0),
+        "checked_at": now.isoformat(timespec="seconds"),
+        "running": ({"job_id": running[0], "reason": running[1],
+                     "scope": running[2], "step": running[3] or "-",
+                     "done": running[4] or 0, "total": running[5] or 0,
+                     "detail": running[6] or "",
+                     "elapsed_min": _mins(running[7]),
+                     "run_id": running[9] or ""} if running else None),
+        "last_item": ({"source_id": last[0], "endpoint": last[1],
+                       "at": last[2], "minutes": last_min} if last else None),
+        # ★ 「대기 중」인지 「멈춘 것」인지 — 마지막 진척으로 가른다
+        "idle": running is None and base["queued_waiting"] == 0,
+        "stalled_min": (last_min if running is not None else None),
+        "recent_jobs": recent,
+        "failed_jobs": failed,
+    }
 
 
 def run_progress(conn, root: str = ".") -> dict:

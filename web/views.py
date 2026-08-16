@@ -866,6 +866,21 @@ def admin_dict(conn, account, req, root: str = ROOT, csrf: str = "",
                 dict_state(conn), csrf=csrf, root=root, flash_key=flash_key)
 
 
+def admin_status(conn, account, req, root: str = ROOT, csrf: str = "",
+                 flash_key: str = "-", **_kw):
+    """진행 지켜보기 (13장 STEP 136f).
+
+    ★ 읽기 전용이다.  POST 가 없다 — 실행은 /admin/run 에서만 한다
+    ★ JS 를 쓰지 않는다.  meta refresh 라 꺼져 있어도 새로고침으로 보인다
+    """
+    from report.screens.admin import status_view
+
+    ctx = status_view(conn, root)
+    return page(conn, account, "진행", "admin_status.html", ctx,
+                csrf=csrf, root=root, flash_key=flash_key,
+                refresh_sec=ctx.get("poll_sec", 0))
+
+
 def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
                   flash_key: str = "-", collect_urls=None, **_kw):
     """브라우저 수집 (13장 STEP 136c).
@@ -1567,6 +1582,7 @@ HANDLERS = {
     "view_admin_run": admin_run,
     "view_admin_import": admin_import,
     "view_admin_collect": admin_collect,
+    "view_admin_status": admin_status,
     "view_admin_dict": admin_dict,
     "view_admin_scoring": admin_scoring,
     "view_admin_registry": admin_registry,

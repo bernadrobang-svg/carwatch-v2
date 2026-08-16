@@ -182,6 +182,14 @@ C = {
                     "②를 건너뛰고 자동 저장하면 무엇이 들어갔는지 모른다 "
                     "(STEP 136c · 149k)",
                     KIND_CODE),
+    "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
+                    "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
+                    "간격은 config 에 둔다 (STEP 136f · 개정 272)",
+                    KIND_CODE),
+    "V11-52": Check("V11", "V11-52", "진행 화면에 실행 단추가 없음", FATAL, "run",
+                    "지켜보는 곳과 실행하는 곳을 나눈다.  보다가 또 누르면 "
+                    "1만 호출이 도는 중에 다시 시작된다 (STEP 136f)",
+                    KIND_CODE),
     "V11-47": Check("V11", "V11-47",
                     "브라우저 수집이 한 번에 max_form_bytes 를 넘기지 않음",
                     FATAL, "run",
@@ -673,6 +681,7 @@ def _screen_checks(conn, rid) -> list:
     out.append(_browser_origin_check(conn, rid))
     out.append(_browser_confirm_check(conn, rid))
     out.append(_browser_chunk_check(conn, rid))
+    out += _status_screen_checks(rid)
     out += _browser_scope_checks(rid)
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
@@ -901,6 +910,44 @@ def _browser_chunk_check(conn, rid):
     if worst > cap:
         bad.append(f"저장된 한 건이 {worst}바이트 — 상한 {cap} 초과")
     return result(C["V11-47"], rid, f"<= {cap}", worst, not bad, bad)
+
+
+def _status_screen_checks(rid):
+    """V11-51 · V11-52 — 진행 화면 (STEP 136f · 개정 272)."""
+    import json as _j
+
+    tpl = os.path.join(ROOT, "web", "templates", "admin_status.html")
+    bad51, bad52 = [], []
+    if not os.path.isfile(tpl):
+        bad51.append("admin_status.html 이 없다")
+        bad52.append("admin_status.html 이 없다")
+        html = ""
+    else:
+        html = open(tpl, encoding="utf-8").read()
+    with open(os.path.join(ROOT, "config", "web.json"),
+              encoding="utf-8") as f:
+        web = _j.load(f)
+    if "status_poll_sec" not in web:
+        bad51.append("config.web.status_poll_sec 가 없다")
+    src = open(os.path.join(ROOT, "web", "views.py"),
+               encoding="utf-8").read()
+    body = src.split("def admin_status", 1)[-1].split("\ndef ", 1)[0]
+    if "refresh_sec" not in body:
+        bad51.append("화면이 갱신 간격을 넘기지 않는다")
+    if "마지막 확인" not in html:
+        bad51.append("마지막 갱신 시각을 안 낸다")
+    # ★ 지켜보는 화면에 실행 단추가 있으면 안 된다
+    if "<form" in html or "type=\"submit\"" in html:
+        bad52.append("진행 화면에 폼·단추가 있다")
+    from web.routes import ROUTES
+
+    for r in ROUTES:
+        if r.path == "/admin/status" and "POST" in r.methods:
+            bad52.append("/admin/status 가 POST 를 받는다")
+    return [result(C["V11-51"], rid, "갱신",
+                   "갱신" if not bad51 else "없음", not bad51, bad51),
+            result(C["V11-52"], rid, "읽기 전용",
+                   "읽기 전용" if not bad52 else "단추 있음", not bad52, bad52)]
 
 
 def _browser_scope_checks(rid):
