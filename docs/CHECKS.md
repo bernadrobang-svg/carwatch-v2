@@ -9,7 +9,7 @@
 | `S1` | 디렉터리 (STEP 15) | fatal | `tools/check_src.py:159` | ref/E-attach.md:54 · guide/01_시작.md:213 · guide/03_이력.md:266 |
 | `S2` | 구조체 정의 | fatal | `tools/check_src.py:181` | ref/E-attach.md:55 · guide/03_이력.md:266 · chapters/13-pipeline.md:101 |
 | `S3` | 함수 정의 | fatal | `tools/check_src.py:202` | ref/E-attach.md:55 · guide/03_이력.md:266 · chapters/12-dict.md:175 |
-| `S4` | 매물 적재 | fatal | `collect/runner.py:505` | ref/E-attach.md:56 · guide/03_이력.md:124 · guide/03_이력.md:142 |
+| `S4` | 매물 적재 | fatal | `collect/runner.py:519` | ref/E-attach.md:56 · guide/03_이력.md:124 · guide/03_이력.md:142 |
 | `S5` | config 키 (V4-15) | fatal | `tools/check_src.py:264` | ref/E-attach.md:57 · guide/01_시작.md:112 · guide/01_시작.md:189 |
 | `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:292` | ref/E-attach.md:58 · guide/03_이력.md:277 · chapters/13-pipeline.md:105 |
 | `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:347` | ref/E-attach.md:59 · chapters/13-pipeline.md:106 · chapters/13-pipeline.md:107 |
@@ -35,8 +35,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:37` | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:40` | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:43` | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:46` | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
 | `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:49` | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
+| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:46` | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:106` | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:103` | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:53` | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |

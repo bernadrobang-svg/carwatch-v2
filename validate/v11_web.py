@@ -934,7 +934,6 @@ def _query_budget_check(conn, rid):
         worst = max(worst, Counting.n)
         if Counting.n > cap:
             bad.append(f"{route.path} 한 쪽에 {Counting.n} 쿼리")
-    probe.close()
     return result(C["V11-34"], rid, f"<= {cap}", worst, not bad, bad[:8])
 
 
@@ -1555,7 +1554,6 @@ def _null_link_check(conn, rid):
     ★ 전 화면을 실제로 렌더해 결과 HTML 을 본다.
       템플릿을 읽어 「{% if %} 로 막혀 있다」고 하는 것은 검사가 아니다
     """
-    import sqlite3 as _sq
 
     from contracts import ROLE_ADMIN, Account
     from errors import CarWatchError
@@ -1567,9 +1565,7 @@ def _null_link_check(conn, rid):
         "SELECT listing_id FROM result_score LIMIT 1").fetchone()
     if row is None:
         return not_applicable(C["V11-72"], rid, "판정 결과가 없다")
-    tmp = os.path.join(_scratch(), "linkscan.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
     acc = Account(1, ROLE_ADMIN, "마스터")
     bad, seen = [], 0
     for route in ROUTES:
@@ -1593,7 +1589,6 @@ def _null_link_check(conn, rid):
         seen += 1
         for hit in _dead_links(body.decode("utf-8", "replace")):
             bad.append(f"{route.path} {hit}")
-    probe.close()
     return result(C["V11-72"], rid, f"{seen}화면",
                   "없음" if not bad else f"{len(bad)}곳", not bad, bad[:10])
 
@@ -1618,7 +1613,6 @@ def _sian_visual_check(conn, rid):
 
     ★ CSS 도 템플릿도 보지 않는다.  나온 HTML 에서 class 를 센다
     """
-    import sqlite3 as _sq
 
     from contracts import ROLE_ADMIN, Account
     from errors import CarWatchError
@@ -1630,9 +1624,7 @@ def _sian_visual_check(conn, rid):
         "SELECT listing_id FROM result_score LIMIT 1").fetchone()
     if row is None:
         return not_applicable(C["V11-77"], rid, "판정 결과가 없다")
-    tmp = os.path.join(_scratch(), "visual.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
     acc = Account(1, ROLE_ADMIN, "마스터")
     routes = {r.path: r for r in ROUTES}
     bad, ok, skipped = [], 0, []
@@ -1667,7 +1659,6 @@ def _sian_visual_check(conn, rid):
                 ok += 1
             else:
                 bad.append(f"{path} — .{cls} 가 화면에 없다 (표로 내고 있다)")
-    probe.close()
     total = sum(len(w) for w, _n in SIAN_VISUAL.values())
     seen = total - sum(len(SIAN_VISUAL[p.split(" —")[0]][0])
                        for p in [s.split(" —")[0] for s in skipped]
@@ -1756,7 +1747,6 @@ def _axis_state_check(conn, rid):
 
     ★ 렌더 결과의 축 칸을 실제로 읽는다.  템플릿을 읽지 않는다
     """
-    import sqlite3 as _sq
 
     from contracts import ROLE_ADMIN, Account
     from web.routes import GET, ROUTES
@@ -1765,17 +1755,13 @@ def _axis_state_check(conn, rid):
     route = {r.path: r for r in ROUTES}.get("/listings")
     if route is None or GET not in route.methods:
         return not_applicable(C["V11-79"], rid, "/listings 가 없다")
-    tmp = os.path.join(_scratch(), "axis.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
     try:
         _st, _h, body = HANDLERS[route.view](
             probe, Account(1, ROLE_ADMIN, "마스터"),
             {"query": {}, "form": {}, "method": GET}, path_vars={}, csrf="t")
     except Exception as e:                                   # noqa: BLE001
-        probe.close()
         return not_applicable(C["V11-79"], rid, f"못 그렸다: {e}")
-    probe.close()
     html = body.decode("utf-8", "replace")
     bad, seen = [], 0
     for cell in re.findall(r'<td class="c ax".*?</td>', html, re.S):
@@ -1794,7 +1780,6 @@ THREE_VALUES = ("신차가", "시세", "가격")
 
 def _three_values_check(conn, rid):
     """V11-81 — 신차가 · 시세 · 가격 셋이 함께 나오는가 (STEP 149n-3)."""
-    import sqlite3 as _sq
 
     from contracts import ROLE_ADMIN, Account
     from web.routes import GET, ROUTES
@@ -1803,17 +1788,13 @@ def _three_values_check(conn, rid):
     route = {r.path: r for r in ROUTES}.get("/listings")
     if route is None:
         return not_applicable(C["V11-81"], rid, "/listings 가 없다")
-    tmp = os.path.join(_scratch(), "three.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
     try:
         _st, _h, body = HANDLERS[route.view](
             probe, Account(1, ROLE_ADMIN, "마스터"),
             {"query": {}, "form": {}, "method": GET}, path_vars={}, csrf="t")
     except Exception as e:                                   # noqa: BLE001
-        probe.close()
         return not_applicable(C["V11-81"], rid, f"못 그렸다: {e}")
-    probe.close()
     html = body.decode("utf-8", "replace")
     row = re.search(r"<tr[^>]*>.*?</tr>", html.split("<tbody>", 1)[-1], re.S)
     bad = [w for w in THREE_VALUES
@@ -1852,7 +1833,6 @@ def _render_metrics_checks(conn, rid):
     ★ 「돌아가는가」가 아니라 「쓸 수 있는가」다 (개정 279)
     """
     import json as _j
-    import sqlite3 as _sq
     import time as _t
 
     from contracts import ROLE_ADMIN, Account
@@ -1870,9 +1850,7 @@ def _render_metrics_checks(conn, rid):
     if row is None:
         return [not_applicable(C[c], rid, "판정 결과가 없다")
                 for c in ("V11-73", "V11-74", "V11-75", "V11-76")]
-    tmp = os.path.join(_scratch(), "metrics.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
     acc = Account(1, ROLE_ADMIN, "마스터")
     empty, unitless, deadlink, heavy, seen = [], [], [], [], 0
     for route in ROUTES:
@@ -1923,7 +1901,6 @@ def _render_metrics_checks(conn, rid):
         kb = len(body) / 1024
         if kb > max_kb or took > max_sec:
             heavy.append(f"{route.path} — {kb:.0f}KB · {took:.2f}초")
-    probe.close()
     return [
         result(C["V11-73"], rid, f"{seen}화면",
                "값 있음" if not empty else f"{len(empty)}빈 화면",
@@ -2053,8 +2030,6 @@ def _post_smoke_check(conn, rid):
     ★ 화면이 뜨는 것만 보면 쓰기 경로가 통째로 검사 밖에 있다.
       실측 08-15: 로그인 실패가 403 「권한 부족」을 냈는데 아무 검사도 안 잡았다
     """
-    import os
-    import sqlite3 as _sq
 
     from contracts import ANONYMOUS, ROLE_ADMIN, ROLE_USER, Account
     from errors import PolicyError, ValidationError, WiringError
@@ -2069,9 +2044,7 @@ def _post_smoke_check(conn, rid):
 
     # ★ 사본에 대고 누른다.  검사가 실제 DB 를 고치면 안 된다
     # ★ 파일을 복사하지 않는다.  커밋 안 된 스키마가 사본에 안 따라온다
-    tmp = os.path.join(_scratch(), "smoke.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
 
     accs = {"anonymous": ANONYMOUS, "user": Account(2, ROLE_USER, "사용자"),
             "admin": Account(1, ROLE_ADMIN, "마스터")}
@@ -2113,7 +2086,6 @@ def _post_smoke_check(conn, rid):
             except Exception as e:                           # noqa: BLE001
                 bad.append(f"{route.path}[{who}] "
                            f"{type(e).__name__}: {str(e)[:50]}")
-    probe.close()
     return result(C["V11-37"], rid, 0, len(bad), not bad, bad[:8])
 
 
@@ -2259,9 +2231,7 @@ def _save_button_check(conn, rid):
       저장 단추를 내놓고 DB 를 전혀 건드리지 않았다
     준비 중이면 disabled 로 두고 그렇게 적는다 — 그건 검사 대상이 아니다
     """
-    import os
     import re as _re
-    import sqlite3 as _sq
 
     from contracts import ROLE_ADMIN, Account
     from errors import PolicyError, ValidationError
@@ -2270,9 +2240,7 @@ def _save_button_check(conn, rid):
 
     _ = GET
     # ★ 파일을 복사하지 않는다.  커밋 안 된 스키마가 사본에 안 따라온다
-    tmp = os.path.join(_scratch(), "save.db")
-    probe = _sq.connect(tmp)
-    conn.backup(probe)
+    probe = _probe(conn)
     acc = Account(1, ROLE_ADMIN, "마스터")
 
     bad = []
@@ -2306,8 +2274,28 @@ def _save_button_check(conn, rid):
             continue          # V11-37 이 잡는다
         if _table_counts(probe) == before:
             bad.append(f"{route.view}: 저장 단추가 아무것도 안 바꾼다")
-    probe.close()
     return result(C["V11-39"], rid, 0, len(bad), not bad, bad[:8])
+
+
+_PROBE: dict = {}
+
+
+def _probe(conn):
+    """검사용 DB 사본.  ★ 한 번만 만든다.
+
+    실측 08-17: 검사마다 conn.backup 을 하면 231MB × 검사 수가 되어
+    /tmp(여유 0.8GB)가 차고 「database or disk is full」로 V11 전체가 죽었다.
+    검사가 디스크를 채우면 검사가 아니다
+    """
+    import sqlite3 as _sq
+
+    got = _PROBE.get("conn")
+    if got is None:
+        path = os.path.join(_scratch(), "probe.db")
+        got = _sq.connect(path)
+        conn.backup(got)
+        _PROBE["conn"] = got
+    return got
 
 
 def _scratch() -> str:

@@ -18,8 +18,8 @@
 | `/login` | [login.html](login.html) | 200 | 4,793B |
 | `/join` | [join.html](join.html) | 200 | 4,622B |
 | `/password` | [password.html](password.html) | 200 | 4,613B |
-| `/admin` | [admin.html](admin.html) | 200 | 13,826B |
-| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 10,408B |
+| `/admin` | [admin.html](admin.html) | 200 | 13,827B |
+| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 10,409B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 23,957B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 9,366B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,134B |
@@ -28,7 +28,7 @@
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 32,373B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 13,211B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 17,299B |
-| `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 17,714B |
+| `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 22,372B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 80,585B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 16,645B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,290B |

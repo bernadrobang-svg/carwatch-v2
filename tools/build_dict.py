@@ -277,8 +277,12 @@ def build_late_dict(conn: sqlite3.Connection, site: str,
       사람이 뜻을 붙인다 (V4-20)
     """
     n = 0
+    # ★ options.etc 는 코드가 아니라 딜러 자유 입력이다 — 사전에 넣지 않는다.
+    #   실측 08-17: 「타이어는 소모품으로 …」 「완전무사고 신차급차량 저렴한운용리스」
+    #   같은 광고 문구 176건이 옵션 코드 사전에 들어와 V4-20 이 잡았다.
+    #   이름·가격은 catalog(dict_model_option 1,474행)가 준다
     for path in ("options.standard[]", "options.choice[]",
-                 "options.etc[]", "options.tuning[]"):
+                 "options.tuning[]"):
         for value, cnt in extract_distinct(conn, "detail", path):
             if upsert_option3(conn, site, "*", value, value, cnt,
                               dict_version, at) == "new":

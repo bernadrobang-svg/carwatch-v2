@@ -49,18 +49,21 @@
 {% endfor %}
 
 <h3>값 하나씩</h3>
-<table>
+<p class="dim">★ 축별로 접어 둔 위쪽에서 한 번에 확정하는 것이 빠릅니다.
+  여기는 어떤 값이 몇 번 관측됐는지 확인할 때 봅니다.
+  좁은 폭에서는 표가 옆으로 넘어갑니다 — 표 안에서만 넘어갑니다.</p>
+<table class="rows">
 <thead><tr><th>축</th><th>값</th><th class="num">관측</th><th class="num">매물</th>
   <th>출처</th><th>처음 본 시각</th></tr></thead>
 <tbody>
 {% for r in pending_rows %}
 <tr>
-  <td>{{ r.axis }}</td>
-  <td><strong>{{ r.value }}</strong></td>
-  <td class="num">{{ r.count_seen | num }}</td>
-  <td class="num">{% if r.listings %}{{ r.listings | num }}{% endif %}{% if !r.listings %}<span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span>{% endif %}</td>
-  <td>{% if r.from_list %}<strong>list</strong>{% endif %}{% if !r.from_list %}facet{% endif %}</td>
-  <td class="muted">{{ r.first_seen | date }}</td>
+  <td data-label="축">{{ r.axis }}</td>
+  <td data-label="값"><strong>{{ r.value }}</strong></td>
+  <td class="num" data-label="관측">{{ r.count_seen | num }}</td>
+  <td class="num" data-label="매물">{% if r.listings %}{{ r.listings | num }}{% endif %}{% if !r.listings %}<span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span>{% endif %}</td>
+  <td data-label="출처">{% if r.from_list %}<strong>list</strong>{% endif %}{% if !r.from_list %}facet{% endif %}</td>
+  <td class="muted" data-label="처음 본 시각">{{ r.first_seen | date }}</td>
 </tr>
 {% endfor %}
 </table>

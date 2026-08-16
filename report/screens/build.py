@@ -258,19 +258,26 @@ def _bulk_market(conn, lids: list, root: str = ".") -> dict:
         f"SELECT listing_id, target_key, trim_badge, substr(year_month,1,4)"
         f" FROM core_listing WHERE listing_id IN ({marks})", tuple(lids))}
     want = {k for k in keys.values() if all(k)}
+    if not want:
+        return {lid: (None, 0) for lid in keys}
+    # ★ 조합마다 한 번씩 돌면 한 쪽에 50쿼리다 — 한 번에 받는다 (V11-34).
+    #   실측 08-17: 그렇게 했다가 화면 쿼리가 20 → 35 로 늘었다
+    groups: dict = {}
+    for tk, trim, year, price in conn.execute(
+        "SELECT target_key, trim_badge, substr(year_month,1,4),"
+        " price_current_won FROM core_listing"
+        " WHERE status='active' AND price_current_won IS NOT NULL"
+        " AND target_key IS NOT NULL AND trim_badge IS NOT NULL"
+        " AND (advertisement_type IS NULL"
+        "      OR advertisement_type NOT LIKE '%SUCCESSION%')"
+        " ORDER BY target_key, trim_badge, 3, price_current_won"
+    ):
+        groups.setdefault((tk, trim, year), []).append(price)
     out: dict = {}
-    for tk, trim, year in want:
-        prices = [r[0] for r in conn.execute(
-            "SELECT price_current_won FROM core_listing"
-            " WHERE target_key=? AND trim_badge=? AND year_month LIKE ?"
-            " AND status='active' AND price_current_won IS NOT NULL"
-            " AND (advertisement_type IS NULL"
-            "      OR advertisement_type NOT LIKE '%SUCCESSION%')"
-            " ORDER BY price_current_won", (tk, trim, f"{year}%"))]
-        if len(prices) >= need:
-            out[(tk, trim, year)] = (prices[len(prices) // 2], len(prices))
-        else:
-            out[(tk, trim, year)] = (None, len(prices))
+    for k in want:
+        prices = groups.get(k, [])
+        out[k] = ((prices[len(prices) // 2], len(prices))
+                  if len(prices) >= need else (None, len(prices)))
     return {lid: out.get(k, (None, 0)) for lid, k in keys.items()}
 
 
@@ -466,6 +473,7 @@ def _view_cfg(key: str, root: str = ".") -> int:
 GRADE_ORDER = ("S", "A", "B", "C", "D", "E", "NOT_RATED")
 # 가격 분포 칸 수 · 오늘 변동 줄 수.  ★ 표시 정책이라 코드에 박지 않는다
 PRICE_BINS = _view_cfg("price_bins")
+TRIM_ROWS = _view_cfg("trim_rows")
 TODAY_ROWS = _view_cfg("today_rows")
 MS_PER_SEC = 1000.0
 
@@ -572,7 +580,8 @@ def count_listings(conn: sqlite3.Connection, flt: ListingFilter) -> int:
 
 def view_listings(account: Account, conn: sqlite3.Connection,
                   flt: ListingFilter, fin_cfg: dict, root: str = ".",
-                  page_size: int | None = None) -> list[ListingRow]:
+                  page_size: int | None = None,
+                  extras: bool = True) -> list[ListingRow]:
     """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1."""
     where, args = _listings_where(flt)
 
@@ -607,8 +616,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     lids = [r[0] for r in recs]
     axes = _bulk_axes(conn, lids, flt.calc_version)
     changes = _bulk_changes(conn, lids)
-    state_by = _bulk_state(conn, lids)
-    market_by = _bulk_market(conn, lids, root)
+    # ★ 화면이 안 쓰는 값은 안 받는다 (V11-34).  현황판은 등급·가격만 쓴다 —
+    #   상태·시세까지 받으면 한 화면이 3쿼리씩 무거워진다
+    state_by = _bulk_state(conn, lids) if extras else {}
+    market_by = _bulk_market(conn, lids, root) if extras else {}
     base = _view_str("photo_base_url", root)
     encar_tpl = _view_str("encar_detail_url", root)
     km_unit = _view_cfg("km_bucket", root)
@@ -656,9 +667,11 @@ def _bulk_upside(conn, lids: list, calc_version: str) -> dict:
 
 
 def view_recommend(account: Account, conn, flt: ListingFilter,
-                   fin_cfg: dict, root: str = ".") -> list[ListingRow]:
+                   fin_cfg: dict, root: str = ".",
+                   extras: bool = True) -> list[ListingRow]:
     """추천 대상만.  E 와 NOT_RATED 는 순위를 매기지 않는다 (7장 STEP 84)."""
-    rows = [r for r in view_listings(account, conn, flt, fin_cfg, root)
+    rows = [r for r in view_listings(account, conn, flt, fin_cfg, root,
+                                     extras=extras)
             if r.grade not in ("E", NOT_RATED)]
     # ★ 「지금 얼마」와 「채우면 얼마까지」를 함께 낸다 (STEP 105 · 149h).
     #   지금 비율만 보면 이 차가 끝인지 아닌지 알 수 없다
@@ -845,41 +858,56 @@ def _price_bins(prices: list, target_key: str,
     return _with_height(out, root)
 
 
+def _group_prices(conn, target_key: str, expr: str) -> dict:
+    """묶음별 가격 목록을 한 번에 받는다.
+
+    ★ 항목마다 한 번씩 돌면 연식 6종 + 트림 20종 = 26쿼리다 (V11-34).
+      실측 08-17: 시세 화면이 13쿼리였다
+    """
+    out: dict = {}
+    for key, price in conn.execute(
+        f"SELECT {expr}, price_current_won FROM core_listing"
+        f" WHERE target_key=? AND {expr} IS NOT NULL"
+        f" ORDER BY 1, price_current_won", (target_key,)
+    ):
+        got = out.setdefault(key, [])
+        if price is not None:
+            got.append(price)
+    return out
+
+
 def _by_year(conn, target_key: str) -> list:
     """연식별 중앙값.  ★ 표본 5건 미만은 내지 않는다 — 시세로 믿게 된다."""
-    out = []
-    for ym, cnt in conn.execute(
+    groups = _group_prices(conn, target_key, "substr(year_month,1,4)")
+    counts = dict(conn.execute(
         "SELECT substr(year_month,1,4), COUNT(*) FROM core_listing "
-        "WHERE target_key=? AND year_month IS NOT NULL "
-        "GROUP BY 1 ORDER BY 1 DESC", (target_key,)
-    ):
-        prices = [r[0] for r in conn.execute(
-            "SELECT price_current_won FROM core_listing WHERE target_key=? "
-            "AND substr(year_month,1,4)=? AND price_current_won IS NOT NULL",
-            (target_key, ym))]
+        "WHERE target_key=? AND year_month IS NOT NULL GROUP BY 1",
+        (target_key,)))
+    out = []
+    for ym in sorted(counts, reverse=True):
+        prices = groups.get(ym, [])
         enough = len(prices) >= MIN_SAMPLE
-        out.append(Bucket(f"{ym}년", None, None, cnt,
+        out.append(Bucket(f"{ym}년", None, None, counts[ym],
                           _median(prices) if enough else None,
                           f"/listings?target={target_key}&year={ym}", enough))
     return out
 
 
-def _by_trim(conn, target_key: str) -> list:
+def _by_trim(conn, target_key: str, top: int = TRIM_ROWS) -> list:
+    """트림별 중앙값.  ★ 항목마다 돌지 않는다 — 한 번에 받는다 (V11-34)."""
+    groups = _group_prices(conn, target_key, "trim_badge")
     out = []
     for trim, cnt in conn.execute(
         "SELECT trim_badge, COUNT(*) FROM core_listing WHERE target_key=? "
-        "AND trim_badge IS NOT NULL GROUP BY 1 ORDER BY 2 DESC LIMIT 20",
-        (target_key,)
+        "AND trim_badge IS NOT NULL GROUP BY 1 ORDER BY 2 DESC LIMIT ?",
+        (target_key, top)
     ):
-        prices = [r[0] for r in conn.execute(
-            "SELECT price_current_won FROM core_listing WHERE target_key=? "
-            "AND trim_badge=? AND price_current_won IS NOT NULL",
-            (target_key, trim))]
+        prices = groups.get(trim, [])
         enough = len(prices) >= MIN_SAMPLE
         out.append(Bucket(trim, None, None, cnt,
                           _median(prices) if enough else None,
-                          f"/listings?target={target_key}&trim={trim}",
-                          enough))
+                          f"/listings?target={target_key}"
+                          f"&trim={quote(trim, safe='')}", enough))
     return out
 
 
@@ -1049,9 +1077,10 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         viewer=viewer_state(account),
         target_stats=stats, recent_changes=changes,
         # ★ 상위 후보 — 점수순이 아니다.  view_recommend 와 같은 순서다
+        # ★ 현황판은 등급·가격만 낸다.  상태·시세는 안 받는다 (V11-34)
         finalists=view_recommend(
             account, conn, ListingFilter(calc_version=calc_version),
-            fin_cfg, root)[:5],
+            fin_cfg, root, extras=False)[:5],
         grade_counts=grade_counts,
         grade_rows=[{"grade": k, "count": v}
                     for k, v in grade_counts.items()],
