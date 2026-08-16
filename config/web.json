@@ -34,5 +34,6 @@
   "char_px": 7,
   "narrow_px": 360,
   "curve_max_px": 84,
-  "dealer_target_top": 4
+  "dealer_target_top": 4,
+  "static_fingerprint_chars": 10
 }

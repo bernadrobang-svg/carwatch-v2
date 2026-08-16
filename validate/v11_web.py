@@ -282,6 +282,11 @@ C = {
                     "표가 화면에 맞춰 쥐어짜이면 한 글자가 한 줄이 된다. "
                     "실측 08-16 admin_dict — 「프/론/트/휀/더」 (검토 17)",
                     KIND_CODE),
+    "V11-82": Check("V11", "V11-82", "정적 파일에 버전이 붙음", FATAL, "run",
+                    "화면을 고쳤는데 브라우저가 옛 CSS 를 쓰면 사람이 강제 "
+                    "새로고침을 해야 한다 — 마스터가 히스토그램을 못 봤다 "
+                    "(개정 282)",
+                    KIND_CODE),
     "V11-51": Check("V11", "V11-51", "진행 화면이 스스로 갱신됨", FATAL, "run",
                     "1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다. "
                     "간격은 config 에 둔다 (STEP 136f · 개정 272)",
@@ -809,6 +814,7 @@ def _screen_checks(conn, rid) -> list:
     out.append(_null_link_check(conn, rid))
     out.append(_sian_visual_check(conn, rid))
     out.append(_cell_squeeze_check(rid))
+    out.append(_static_version_check(rid))
     out.append(_post_smoke_check(conn, rid))
     out.append(_context_supplied_check(conn, rid))
     out.append(_save_button_check(conn, rid))
@@ -1688,6 +1694,24 @@ def _cell_squeeze_check(rid):
     return result(C["V11-78"], rid, f"최대 {worst}열",
                   "안 떨어짐" if not bad else f"{len(bad)}곳",
                   not bad, bad[:6])
+
+
+def _static_version_check(rid):
+    """V11-82 — 정적 파일에 버전이 붙는가 (개정 282).
+
+    ★ run_id 로 붙이면 수집할 때마다 전부 다시 받는다.  내용 지문이어야 한다
+    """
+    from web.app import static_version
+
+    html = open(os.path.join(TEMPLATES, "base.html"), encoding="utf-8").read()
+    bad = []
+    for m in re.finditer(r'(?:href|src)="(/static/[^"]*)"', html):
+        if "?v=" not in m.group(1):
+            bad.append(f"버전이 없다 — {m.group(1)}")
+    got = static_version()
+    if not got:
+        bad.append("지문을 만들지 못했다 — web/static/app.css 를 못 읽는다")
+    return result(C["V11-82"], rid, "버전", got or "없음", not bad, bad)
 
 
 def _browser_scope_checks(rid):

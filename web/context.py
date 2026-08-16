@@ -74,6 +74,10 @@ class PageContext:
     #   (.bar · .cand · .prog · .log …) 그것만 이 클래스 안에 가둬 뒀다.
     #   비어 있으면 공통 규칙만 걸린다 — 화면이 깨지지 않는다 (개정 275)
     screen: str = ""
+    # ★ 정적 파일 지문.  화면을 고쳤는데 브라우저가 옛 CSS 를 쓰면
+    #   사람이 강제 새로고침을 해야 한다 — 마스터가 히스토그램을 못 봤다
+    #   (실측 08-16 · V11-82).  내용이 바뀔 때만 바뀐다
+    static_version: str = ""
 
     @property
     def is_admin(self) -> bool:

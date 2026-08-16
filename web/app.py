@@ -130,6 +130,37 @@ def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
     return None
 
 
+_STATIC_VERSION: dict[str, str] = {}
+
+
+def static_version(name: str = "app.css") -> str:
+    """정적 파일의 내용 지문 (V11-82).
+
+    ★ run_id 를 쓰지 않는다 — 수집할 때마다 바뀌어 CSS 가 그대로여도
+      전부 다시 받게 된다.  내용이 바뀔 때만 바뀌어야 한다.
+    ★ 한 번 읽고 기억한다.  화면마다 파일을 여는 것은 낭비다
+    """
+    import hashlib
+    import json as _j
+    import os as _o
+
+    got = _STATIC_VERSION.get(name)
+    if got is None:
+        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+        try:
+            # 지문 길이는 표시 정책이라 config 에 둔다 (S14).
+            # ★ 충돌만 안 나면 된다 — 주소를 짧게 둔다
+            with open(_o.path.join(root, "config", "web.json"),
+                      encoding="utf-8") as f:
+                n = int(_j.load(f)["static_fingerprint_chars"])
+            with open(_o.path.join(root, "web", "static", name), "rb") as f:
+                got = hashlib.sha256(f.read()).hexdigest()[:n]
+        except (OSError, KeyError, ValueError):
+            got = ""          # 못 읽어도 화면은 떠야 한다
+        _STATIC_VERSION[name] = got
+    return got
+
+
 def build_page(conn, account, title: str, body_html: str, *,
                csrf: str = "", flashes=None, run_id: str = "",
                calc_version: str = "", dict_version: str = "",
@@ -146,7 +177,8 @@ def build_page(conn, account, title: str, body_html: str, *,
         dict_version=dict_version, parse_version=parse_version,
         run_id=run_id,
         generated_at=_display_now(),
-        csrf_token=csrf, refresh_sec=refresh_sec, screen=screen)
+        csrf_token=csrf, refresh_sec=refresh_sec, screen=screen,
+        static_version=static_version())
 
 
 # ── STEP 147 폼 ─────────────────────────────────────────────────────
