@@ -5,6 +5,5 @@ carwatch.db
 carwatch.db.*
 *.bak
 secrets/
-outputs/
 inbox/
 *.log

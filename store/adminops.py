@@ -133,7 +133,6 @@ class ImportPreview:
     fresh: int
     site_raw: bool               # ★ False 면 화면이 「원문 없음」이라고 말한다
     bytes_in: int
-    sample: list = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -148,8 +147,7 @@ class ImportResult:
 
 def preview_import(conn: sqlite3.Connection, rows: list, *, fmt: str,
                    site: str, target_key: str | None,
-                   bytes_in: int,
-                   sample_n: int = IMPORT_SAMPLE_ROWS) -> ImportPreview:
+                   bytes_in: int) -> ImportPreview:
     """저장하지 않고 무엇이 들어갈지만 센다 (STEP 136a ④ · STEP 138)."""
     ids = [r["source_id"] for r in rows]
     existing = 0
@@ -161,8 +159,7 @@ def preview_import(conn: sqlite3.Connection, rows: list, *, fmt: str,
     return ImportPreview(
         fmt=fmt, site=site, target_key=target_key, total=len(rows),
         existing=existing, fresh=len(rows) - existing,
-        site_raw=fmt == FORMAT_JSON, bytes_in=bytes_in,
-        sample=[dict(r) for r in rows[:sample_n]])
+        site_raw=fmt == FORMAT_JSON, bytes_in=bytes_in)
 
 
 def import_listings(conn: sqlite3.Connection, account: Account, rows: list, *,
