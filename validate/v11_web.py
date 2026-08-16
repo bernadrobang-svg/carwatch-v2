@@ -1430,7 +1430,14 @@ def _responsive_checks(rid):
     # 이 폭 아래는 카드다 (STEP 149o-2).  ★ 폭은 표시 정책이라 config 에 둔다
     with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
         narrow_max = int(_j.load(f)["narrow_max_px"])
-    cells = re.findall(r'data-label="([^"]*)"', html)
+    from report.screens.build import CHIP_AXES
+
+    # ★ 축 칸은 반복문 하나로 적혀 있다.  화면에 실제로 나오는 수로 센다 —
+    #   템플릿 글자 수를 세어 보고하면 마스터가 보는 수와 다르다.
+    #   JS 안의 문자열도 빼야 한다 — 실측: ' + label + ' 이 한 칸으로 세어졌다
+    body = re.sub(r"<script>.*?</script>", "", html, flags=re.S)
+    cells = [c for c in re.findall(r'data-label="([^"]*)"', body) if c]
+    cells += [""] * (len(CHIP_AXES) - 1)
     bad70, bad71 = [], []
     if not cells:
         bad70.append("칸에 이름표(data-label)가 없다 — 카드로 못 바꾼다")
