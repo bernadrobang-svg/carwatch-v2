@@ -3,6 +3,9 @@ __pycache__/
 .ruff_cache/
 carwatch.db
 carwatch.db.*
+# ★ SQLite 내부 파일.  수집이 도는 동안 계속 바뀐다 — 커밋 대상이 아니다
+carwatch.db-shm
+carwatch.db-wal
 *.bak
 secrets/
 inbox/
