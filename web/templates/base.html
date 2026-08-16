@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ page.title }} · CarWatch</title>
 <link rel="stylesheet" href="/static/app.css">
+{% if page.refresh_sec %}<meta http-equiv="refresh" content="{{ page.refresh_sec }}">{% endif %}
 </head>
 <body>
 

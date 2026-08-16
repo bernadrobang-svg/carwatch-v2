@@ -24,6 +24,9 @@ GROUP_OPS, GROUP_TUNE, GROUP_EXPLORE = "운영", "조정", "탐색"
 # ★ 탐색은 잠그지 않는다.  읽기만 하므로 안전하다
 LOCKED_GROUPS = (GROUP_TUNE,)
 
+# 단위 환산.  ★ 임계값이 아니라 규격이다 (2장 상수표 성격 「단위」)
+SEC_PER_MIN = 60
+
 
 @dataclass(frozen=True)
 class AdminMenuItem:
@@ -525,6 +528,56 @@ def parse_import_text(text: str, site: str) -> tuple:
     # ★ facet 해석도 여기서 한다.  store 는 parse 를 못 부른다 (V4-22)
     facet = parse_facet(text) if fmt == FORMAT_FACET else None
     return fmt, parse_import(text, fmt, site), facet
+
+
+def run_progress(conn, root: str = ".") -> dict:
+    """실행 진행 (STEP 132 · 132a · 개정 261).
+
+    ★ 「대기 중」과 「멈춘 것」을 가른다.  진행이 없는 동안 빈 화면을 내지 않는다
+    ★ 오래 대기한 큐는 그렇게 말한다 — 실행기가 도는지 사람이 확인해야 한다
+    """
+    import json as _j
+    from datetime import datetime, timezone
+
+    web = {}
+    path = os.path.join(root, "config", "web.json")
+    if os.path.isfile(path):
+        with open(path, encoding="utf-8") as f:
+            web = _j.load(f)
+    row = conn.execute(
+        "SELECT job_id, status, reason, scope, current_step, step_done, "
+        "       step_total, detail, queued_at, updated_at, run_id "
+        "FROM recalc_job ORDER BY queued_at DESC LIMIT 1").fetchone()
+    waiting = conn.execute(
+        "SELECT COUNT(*) FROM recalc_job WHERE status='queued'").fetchone()[0]
+    stale_min = 0
+    if row and row[1] == "queued":
+        try:
+            q = datetime.fromisoformat(str(row[8]).replace("Z", "+00:00"))
+            stale_min = int(
+                (datetime.now(timezone.utc) - q).total_seconds()
+                // SEC_PER_MIN)
+        except ValueError:
+            stale_min = 0
+    # 단계별 원문 수 — 「무엇이 얼마나 됐나」를 실측으로 낸다
+    got = {k: n for k, n in conn.execute(
+        "SELECT endpoint, COUNT(*) FROM raw_response WHERE status='ok' "
+        "GROUP BY 1")}
+    return {
+        "job": ({"job_id": row[0], "status": row[1], "reason": row[2],
+                 "scope": row[3], "step": row[4] or "-", "done": row[5] or 0,
+                 "total": row[6] or 0, "detail": row[7] or "",
+                 "queued_at": row[8], "updated_at": row[9],
+                 "run_id": row[10] or ""} if row else None),
+        "queued_waiting": waiting,
+        "stale_minutes": stale_min,
+        "refresh_sec": int(web.get("progress_refresh_sec") or 0),
+        "raw_counts": [{"endpoint": k, "n": n} for k, n in sorted(got.items())],
+        "listings": conn.execute(
+            "SELECT COUNT(*) FROM core_listing").fetchone()[0],
+        "judged": conn.execute(
+            "SELECT COUNT(*) FROM result_score").fetchone()[0],
+    }
 
 
 def collect_state(conn, collect_urls=None, root: str = ".",

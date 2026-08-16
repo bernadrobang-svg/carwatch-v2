@@ -63,6 +63,10 @@ class PageContext:
     run_id: str = ""
     generated_at: str = ""
     csrf_token: str = ""
+    # ★ 스스로 갱신하는 화면의 간격(초).  0 이면 갱신하지 않는다.
+    #   JS 가 아니라 meta refresh 다 — JS 가 꺼져도 돌고, 실패해도
+    #   지금까지의 진행은 서버가 만든 화면에 그대로 남는다 (V11-19 · STEP 132a)
+    refresh_sec: int = 0
 
     @property
     def is_admin(self) -> bool:

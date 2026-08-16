@@ -83,6 +83,16 @@ C = {
                     "session_account 가 disabled_at 을 본다 · "
                     "change_secret 이 다른 세션을 폐기한다 (C-3 · C-4)",
                     KIND_CONTRACT),
+    "V10-22": Check("V10", "V10-22", "queued 를 소비하는 코드가 있음", FATAL,
+                    "run",
+                    "넣기만 하고 아무도 안 가져가면 화면이 거짓말을 한다. "
+                    "두 번 갇혔다 (STEP 132a · 개정 261)",
+                    KIND_CODE),
+    "V10-23": Check("V10", "V10-23", "오래된 queued 가 화면에 표시됨", WARN,
+                    "run",
+                    "「N분째 대기 중 — 실행기가 도는지 확인하십시오」를 낸다 "
+                    "(STEP 132a)",
+                    KIND_CODE),
     "V10-24": Check("V10", "V10-24", "사전 확정에 사유가 남음", FATAL, "run",
                     "무엇을 왜 확정했는지가 없으면 되짚을 수 없다 "
                     "(STEP 136e · 149k)",
@@ -353,6 +363,8 @@ def _session_checks(rid) -> list:
         except PolicyError:
             locked = True
             break
+    out.append(_queue_consumer_check(conn, rid))
+    out.append(_queue_stale_shown_check(rid))
     out.append(_dict_reason_check(conn, rid))
     out.append(_dict_source_shown_check(rid))
     out.append(result(C["V10-20"], rid, "거부",
@@ -467,4 +479,49 @@ def _dict_source_shown_check(rid):
     if "전체 집합" not in html:
         bad.append("「전체 집합이 아니다」를 말하지 않는다")
     return result(C["V10-25"], rid, "표시",
+                  "표시" if not bad else "없음", not bad, bad)
+
+
+def _queue_consumer_check(conn, rid):
+    """V10-22 — 큐를 가져가는 코드가 있는가 (STEP 132a · 개정 261).
+
+    ★ 「만들었다」를 글로 두지 않는다.  소비기가 status 를 바꾸는 코드를 보고,
+      실제로 소비된 흔적(done·failed)이 있으면 그것도 함께 센다
+    """
+    import os as _o
+
+    path = _o.path.join(ROOT, "collect", "worker.py")
+    bad = []
+    if not _o.path.isfile(path):
+        bad.append("collect/worker.py 가 없다 — 큐를 가져가는 코드가 없다")
+    else:
+        src = open(path, encoding="utf-8").read()
+        if "STATUS_QUEUED" not in src or "UPDATE recalc_job" not in src:
+            bad.append("소비기가 queued 를 집지 않는다")
+        if "run_recalc" not in src:
+            bad.append("소비기가 파이프라인을 돌리지 않는다")
+    run_py = _o.path.join(ROOT, "run.py")
+    if _o.path.isfile(run_py):
+        if "start_worker" not in open(run_py, encoding="utf-8").read():
+            bad.append("run.py web 이 소비기를 띄우지 않는다")
+    taken = conn.execute(
+        "SELECT COUNT(*) FROM recalc_job WHERE status IN ('done','failed')"
+    ).fetchone()[0]
+    return result(C["V10-22"], rid, "있음",
+                  f"소비 흔적 {taken}건", not bad, bad)
+
+
+def _queue_stale_shown_check(rid):
+    """V10-23 — 오래 대기한 큐를 화면이 알리는가 (STEP 132a)."""
+    import os as _o
+
+    tpl = _o.path.join(ROOT, "web", "templates", "admin_run.html")
+    if not _o.path.isfile(tpl):
+        return result(C["V10-23"], rid, "표시", "화면이 없다", False,
+                      ["admin_run.html 이 없다"])
+    html = open(tpl, encoding="utf-8").read()
+    bad = []
+    if "대기 중" not in html:
+        bad.append("오래된 대기를 알리는 문구가 없다")
+    return result(C["V10-23"], rid, "표시",
                   "표시" if not bad else "없음", not bad, bad)

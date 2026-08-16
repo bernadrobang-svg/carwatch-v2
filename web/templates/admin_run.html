@@ -1,4 +1,43 @@
 <h1>수집 실행</h1>
+
+<div class="notice" id="progress">
+  <h2>진행</h2>
+  {% if job %}
+  <p><strong>{{ job.status }}</strong> · 사유 {{ job.reason }} · 범위 {{ job.scope }}
+    {% if job.run_id %}<span class="muted">· run {{ job.run_id }}</span>{% endif %}</p>
+  <p>단계 <strong>{{ job.step }}</strong>
+    {% if job.total %}· {{ job.done | num }}/{{ job.total | num }}{% endif %}
+    <span class="muted">· 넣은 시각 {{ job.queued_at }}</span></p>
+  {% if job.detail %}<p class="muted">{{ job.detail }}</p>{% endif %}
+  {% endif %}
+  {% if !job %}
+  <p class="muted">아직 실행한 것이 없습니다. 아래에서 시작합니다.</p>
+  {% endif %}
+
+  {% if queued_waiting %}
+  <p class="warn-warn">대기 중 {{ queued_waiting }}건
+    {% if stale_minutes %}— <strong>{{ stale_minutes }}분째 대기 중</strong>입니다.
+      실행기가 도는지 확인하십시오{% endif %}</p>
+  {% endif %}
+  {% if !queued_waiting %}
+  <p class="muted">대기 중인 작업이 없습니다 — 「멈춘 것」이 아니라 「할 일이 없는 것」입니다.</p>
+  {% endif %}
+
+  <h3>지금까지 받은 것</h3>
+  <table>
+  <thead><tr><th>엔드포인트</th><th class="num">원문</th></tr></thead>
+  <tbody>
+  {% for r in raw_counts %}
+  <tr><td>{{ r.endpoint }}</td><td class="num">{{ r.n | num }}</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  <p class="muted">매물 {{ listings | num }}건 · 판정 {{ judged | num }}건</p>
+
+  <p class="muted">이 화면은 <strong>{{ refresh_sec }}초</strong>마다 스스로 갱신됩니다.
+    갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
+</div>
+
 {% if running %}<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>{% endif %}
 
 <form method="post" action="/admin/run">

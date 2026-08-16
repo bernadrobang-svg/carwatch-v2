@@ -18,5 +18,7 @@
   "trim_rows": 20,
   "doc_body_chars": 20000,
   "browser_collect_rows": 20,
-  "browser_interval_sec": 0
+  "browser_interval_sec": 0,
+  "worker_poll_sec": 2,
+  "progress_refresh_sec": 5
 }

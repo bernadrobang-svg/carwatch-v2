@@ -54,7 +54,7 @@ def _versions(conn: sqlite3.Connection) -> dict:
 
 def page(conn, account, title: str, template: str, ctx: dict, *,
          csrf: str = "", flashes=None, root: str = ROOT,
-         flash_key: str = "-") -> tuple:
+         flash_key: str = "-", refresh_sec: int = 0) -> tuple:
     """부분 템플릿 → PageContext → base.html.  반환 (status, headers, bytes)."""
     ver = _versions(conn)
     # ★ 부분 템플릿도 page 를 본다.  폼의 {{ page.csrf_token }} 이 여기서 채워진다.
@@ -63,10 +63,10 @@ def page(conn, account, title: str, template: str, ctx: dict, *,
 
     flashes = list(flashes or []) + take_flashes(flash_key)
     p = build_page(conn, account, title, "", csrf=csrf, flashes=flashes,
-                   **ver)
+                   refresh_sec=refresh_sec, **ver)
     body = render(template, {"page": p, **ctx})
     p = build_page(conn, account, title, body, csrf=csrf, flashes=flashes,
-                   **ver)
+                   refresh_sec=refresh_sec, **ver)
     html = render("_page.html", {"page": p, **ctx})
     return HTTP_OK, {}, html.encode("utf-8")
 
@@ -682,17 +682,24 @@ def _reason_gate(conn, account, req, csrf: str) -> dict:
     return form
 
 
-def _gate(conn, account, req, csrf: str):
-    """★ 미리보기 없이 저장이 안 된다 (V11-09 · STEP 138)."""
-    from report.screens.admin import SaveGate
+def _gate(conn, account, req, csrf: str, group: str | None = None):
+    """★ 미리보기 없이 저장이 안 된다 (V11-09 · STEP 138).
+
+    group   이 화면의 메뉴 분류.  ★ 잠금은 「조정」에만 건다 (STEP 132a).
+            큐가 밀렸다고 운영·탐색까지 잠그면, 큐를 푸는 화면조차 못 연다 —
+            실제로 두 번 갇혔다 (실측 08-16).  화면 표시(LOCKED_GROUPS)는
+            조정만 잠근다고 하는데 관문은 전부 잠그고 있었다
+    """
+    from report.screens.admin import LOCKED_GROUPS, SaveGate
     from store.adminops import running_job
     from web.app import check_post
 
     check_post(req, csrf)
     form = req.get("form", {})
+    locks = group is None or group in LOCKED_GROUPS
     gate = SaveGate(previewed=form.get("previewed") == "1",
                     reason_given=bool(form.get("reason", "").strip()),
-                    locked=bool(running_job(conn)))
+                    locked=bool(running_job(conn)) and locks)
     if gate.can_save:
         return form
 
@@ -764,7 +771,7 @@ def admin_run(conn, account, req, root: str = ROOT, csrf: str = "",
                 raise ValidationError("사유가 있어야 중단합니다",
                                       step="STEP 132")
         else:
-            form = _gate(conn, account, req, csrf)
+            form = _gate(conn, account, req, csrf, group=GROUP_OPS)
         if (form.get("action") or "") == "halt":
             # ★ 중단해도 지금까지 받은 것은 남는다.  재개점을 낸다 (STEP 52)
             from store.adminops import halt_job
@@ -794,9 +801,10 @@ def admin_run(conn, account, req, root: str = ROOT, csrf: str = "",
                        form.get("scope") or "all", "web", plan=plan)
         return redirect("/admin/run", "실행을 큐에 넣었습니다", flash_key)
 
-    from report.screens.admin import job_log, _recent_runs
+    from report.screens.admin import job_log, run_progress, _recent_runs
 
     ctx = {"reasons": list(reason_rows or ()),
+           **run_progress(conn, root),
            "running": running_job(conn),
            "targets": _first_flag(_target_rows(conn)),
            # 전 차종에 걸리는 시간.  ★ 「얼마나 오래」를 안 적으면
@@ -805,8 +813,10 @@ def admin_run(conn, account, req, root: str = ROOT, csrf: str = "",
            # ★ 절만 만들고 값을 안 넘기면 화면이 빈 채로 뜬다 (실측 08-15)
            "job_log": job_log(conn),
            "recent_runs": _recent_runs(conn)}
+    # ★ 1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다 (개정 261 지시)
     return page(conn, account, "수집 실행", "admin_run.html", ctx, csrf=csrf,
-                root=root, flash_key=flash_key)
+                root=root, flash_key=flash_key,
+                refresh_sec=ctx.get("refresh_sec", 0))
 
 
 def _target_rows(conn) -> list:
@@ -817,6 +827,9 @@ def _target_rows(conn) -> list:
 
 # 반입 행동 3종 (STEP 136a ④⑤⑥).  ★ 미리보기는 저장이 아니다
 IMPORT_PREVIEW, IMPORT_SAVE, IMPORT_COLLECT = "preview", "import", "collect"
+
+# 이 화면들의 메뉴 분류.  ★ 잠금 단위가 메뉴 단위와 같아야 한다 (STEP 138)
+GROUP_OPS = "운영"
 
 
 def admin_dict(conn, account, req, root: str = ROOT, csrf: str = "",
@@ -867,7 +880,7 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
     from web.app import redirect
 
     if req.get("method") == "POST":
-        form = _gate(conn, account, req, csrf)
+        form = _gate(conn, account, req, csrf, group=GROUP_OPS)
         kind = (form.get("kind") or "list").strip()
         body = form.get("body") or ""
         if not body.strip():
@@ -946,7 +959,7 @@ def admin_import(conn, account, req, root: str = ROOT, csrf: str = "",
                                        facet=facet))
         else:
             # ★ 미리보기 없이 · 사유 없이 저장 못 한다 (STEP 149k · 138)
-            form = _gate(conn, account, req, csrf)
+            form = _gate(conn, account, req, csrf, group=GROUP_OPS)
             fmt, rows, facet = parse_import_text(text, site)
             res = import_listings(
                 conn, account, rows, fmt=fmt, site=site,

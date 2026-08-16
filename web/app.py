@@ -91,7 +91,7 @@ def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
 def build_page(conn, account, title: str, body_html: str, *,
                csrf: str = "", flashes=None, run_id: str = "",
                calc_version: str = "", dict_version: str = "",
-               parse_version: str = "") -> PageContext:
+               parse_version: str = "", refresh_sec: int = 0) -> PageContext:
     """전 화면이 같은 것을 낸다 (STEP 144)."""
     from report.screens.build import viewer_state
 
@@ -103,7 +103,7 @@ def build_page(conn, account, title: str, body_html: str, *,
         dict_version=dict_version, parse_version=parse_version,
         run_id=run_id,
         generated_at=_display_now(),
-        csrf_token=csrf)
+        csrf_token=csrf, refresh_sec=refresh_sec)
 
 
 # ── STEP 147 폼 ─────────────────────────────────────────────────────

@@ -275,7 +275,39 @@ def cmd_web(host: str | None, port: str | None) -> int:
     app = make_app(DB_PATH, ROOT, plan=plan, reason_rows=rows,
                    fetch=_api_fetch, resume=resume_point,
                    collect_urls=_collect_urls)
+    # ★ 큐를 가져가는 소비기를 함께 띄운다 (STEP 132a · 개정 261).
+    #   넣기만 하고 아무도 안 가져가면 화면이 거짓말을 하게 된다
+    from collect.worker import start as start_worker
+
+    start_worker(DB_PATH, make_worker_ctx, make_worker_executors, ROOT)
+    print("큐 소비기 시작 — /admin/run 에서 진행을 봅니다")
     return serve(app, host, int(port) if port else None, ROOT)
+
+
+def make_worker_ctx():
+    """소비기가 쓸 실행 맥락.  ★ 실행마다 새 run_id 다."""
+    cfg = load("endpoints.json")["encar"]
+    return make_context(EncarAdapter(cfg).site_code)
+
+
+def make_worker_executors():
+    """소비기가 쓸 단계 실행기.  ★ CLI 와 같은 것을 쓴다 —
+    화면으로 돌린 것과 터미널로 돌린 것이 다르면 안 된다 (B-6)."""
+    cfg = load("endpoints.json")["encar"]
+    targets = load_targets(os.path.join(ROOT, "config", "targets.json"))
+    adapter = EncarAdapter(cfg)
+    ex = make_executors(adapter, UrlFetcher(), SystemClock(), cfg, targets,
+                        backup_path=BACKUP_PATH, rng=random.Random(),
+                        root_dir=ROOT, progress=print_progress)
+    ex.update(make_score_executors(ROOT, SystemClock(), targets,
+                                   load("scoring.json"),
+                                   load("depreciation.json")))
+    ex.update(make_registry_executor(ROOT, SystemClock(),
+                                     load("field_usage.json")))
+    ex.update(make_validate_executor(load("scoring.json"),
+                                     load("depreciation.json"),
+                                     target_keys=tuple(targets)))
+    return ex
 
 
 # 도구로 넘기는 명령 (B-6 · V1-13).
