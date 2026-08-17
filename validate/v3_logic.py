@@ -187,6 +187,12 @@ C = {
     "V3-57": Check("V3", "V3-57", "등급이 555 기준", FATAL, "run",
                    "취향 50 은 순위에만 쓴다 — 등급은 ①②③⑤ 555 다 (개정 306)",
                    KIND_CONTRACT),
+    "V3-68": Check("V3", "V3-68", "부록 F 전 24축이 구현돼 있음",
+                   FATAL, "run",
+                   "축 목록을 코드에 박지 않는다 — 부록 F 「축 목록 — 전 24축」"
+                   "을 읽어 배점표와 맞춘다.  축 하나가 빠지면 그 배점만큼 "
+                   "전건이 0점인데 아무도 모른다 (개정 329 전수 검증)",
+                   KIND_CONTRACT),
     "V3-52": Check("V3", "V3-52", "「싸다」에 이유가 붙어 있음", FATAL, "run",
                    "이유 없이 싼 차는 없다.  못 찾았으면 그렇게 적는다 "
                    "— 마스터 지적 「엔카 보증이 없는 것이 가격이 왜 싼지가 "
@@ -721,6 +727,66 @@ def _confirm_ratio_check(conn, rid):
     return result(C["V3-65"], rid, 0, len(bad), not bad, bad)
 
 
+# 부록 F 축 목록 표의 「축」 이름 ↔ 코드의 축 코드
+SPEC_AXIS_NAMES = {
+    "시세 대비": "value.market", "신차가 대비": "value.depreciation",
+    "주행 대비": "value.mileage",
+    # ★ 부록 F 축 목록에서 배점이 「(30)」 괄호다 — 따로 선 축이 아니라
+    #   전기차일 때 주행 70 을 주행 40 + SOH 30 으로 나눈 것이다 (1-3 · 개정 318)
+    "배터리 SOH": "value.mileage",
+    "사고 이력": "state.accident", "골격": "state.frame",
+    "외판": "state.outer", "자차 수리비": "state.repair",
+    "특수 사고": "state.special", "누유": "state.leak",
+    "소모품": "state.consumable", "진정성": "state.integrity",
+    "용도": "history.usage", "자차 미가입": "history.not_join",
+    "소유자 변경": "history.owner", "압류·저당": "history.lien",
+    "트림": "spec.trim", "옵션": "spec.options",
+    "제조사 보증": "warranty.maker", "사이트 우수등급": "warranty.site",
+    "점검 출처": "warranty.inspection", "HUD": "taste.hud",
+    "지정 옵션": "taste.picked", "색상": "taste.color",
+    "선루프": "taste.sunroof",
+}
+
+
+def _spec_axis_check(conn, rid):
+    """V3-68 — 부록 F 전 24축이 구현돼 있는가.
+
+    ★ 축 이름을 여기 적지 않는다.  부록 F 「축 목록」 표를 읽는다 —
+      규격이 축을 더하면 이 검사가 먼저 걸린다
+    """
+    import json
+    import os
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    spec = os.path.join(root, "docs", "ref", "F-scoring.md")
+    if not os.path.isfile(spec):
+        return not_applicable(C["V3-68"], rid, "부록 F 가 없다")
+    body = open(spec, encoding="utf-8").read()
+    head = body.find("# 축 목록")
+    if head < 0:
+        return not_applicable(C["V3-68"], rid, "부록 F 에 축 목록이 없다")
+    block = body[head:body.find("\n#", head + 1)]
+    want = []
+    for line in block.splitlines():
+        got = re.match(r"^\| *[\w]+ *\| *[^|]+? *\| *([^|]+?) *\|", line)
+        if got and got.group(1) not in ("축", "---"):
+            want.append(got.group(1))
+    if not want:
+        return not_applicable(C["V3-68"], rid, "축 목록 표를 못 읽었다")
+    with open(os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        have = set(json.load(f)["components"])
+    bad = []
+    for name in want:
+        code = SPEC_AXIS_NAMES.get(name)
+        if code is None:
+            bad.append(f"부록 F 의 축 「{name}」을 코드 이름으로 못 잇는다")
+        elif code not in have:
+            bad.append(f"{name} ({code}) 이 scoring.json 에 없다")
+    return result(C["V3-68"], rid, len(want), len(want) - len(bad),
+                  not bad, bad[:8])
+
+
 def _site_axis_checks(conn, rid):
     """V3-55 · V3-56 · V3-57 — 사이트 보증 축과 605 배점 (개정 306)."""
     import json
@@ -906,6 +972,7 @@ def run(conn, ctx) -> list:
     out.append(_rental_cross_check(conn, rid))
     out += _why_cheap_check(conn, rid)
     out += _site_axis_checks(conn, rid)
+    out.append(_spec_axis_check(conn, rid))
     out.append(_source_before_value_check(conn, rid))
     out.append(_absolute_cut_check(rid))
     out.append(_confirm_ratio_check(conn, rid))

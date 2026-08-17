@@ -21,11 +21,16 @@ OPTIONS = "spec.options"
 def rank_ratio(value: float, ladder: list) -> float:
     """오름차순 사다리에서 value 의 자리 (0.0~1.0) — k / n (F ④-1).
 
-    ★ 같은 값이 여럿이면 그 무리의 가운데를 준다 — 순서에 안 흔들린다
+    ★ 부록 F 는 「내 트림 순위 k · 전체 트림 수 n · (k/n)×25」다.
+      k 는 1부터다 — 맨 위 트림은 k=n 이라 만점이다.
+    ★ 전에는 같은 값 무리의 가운데(below + same/2)를 줬다.  그런데
+      사다리는 DISTINCT 신차가라 같은 값이 늘 하나뿐이다 —
+      가운데를 주면 언제나 k−0.5 가 되어 모든 트림이 0.5 칸씩 낮았다.
+      실측 08-18 손계산 — 맨 위 트림이 25 가 아니라 24 였다 (n=13)
     """
     below = sum(1 for x in ladder if x < value)
     same = sum(1 for x in ladder if x == value)
-    return (below + same / 2) / len(ladder)
+    return (below + same) / len(ladder)
 
 
 def _trim(ctx: AxisContext, v: Verdict) -> None:

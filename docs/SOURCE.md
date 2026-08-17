@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 128개 · 총 39,791줄
+파일 128개 · 총 40,530줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,7 +12,8 @@
 | `tests/test_spec_ui.py` | 1,450 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `collect/runner.py` | 1,306 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,212 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
-| `validate/v3_logic.py` | 1,065 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 1,132 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `tools/verify_axes.py` | 957 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `store/adminops.py` | 931 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `report/screens/admin.py` | 927 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `validate/v2_load.py` | 872 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
@@ -43,7 +44,6 @@
 | `report/views.py` | 320 | 리포트 DTO (L9). |
 | `tools/render_screens.py` | 302 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/build_dict.py` | 298 | RAW → 사전 생성. |
-| `tools/verify_axes.py` | 290 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `adapters/encar.py` | 285 | 엔카 어댑터 — URL · 헤더 · 쿼리 조립. |
 | `store/raw.py` | 285 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
@@ -105,10 +105,10 @@
 | `score/penalty.py` | 86 | 마이너스 점수 (개정 322). |
 | `analyze/peer.py` | 80 | 유사군 — 「이런 차가 보통 얼마인가」 (7장 STEP 82e). |
 | `report/why_cheap.py` | 80 | 「왜 싼가」 — 싼 이유를 순서대로 찾아 낸다 (개정 299 · V3-52). |
+| `analyze/axis/trim.py` | 78 | ④ 사양 45 — 트림 25 · 옵션 20 (docs/ref/F-scoring.md ④). |
 | `store/chunk.py` | 77 | 조각 전송 — 바이트를 나누고 서버가 이어붙인다 (개정 307). |
 | `tools/inspect_dict.py` | 75 | 사전 검토 — pending 값과 원문 표본을 본다. |
 | `tools/inspect_facet.py` | 74 | facet 원문에 실제로 어떤 축이 왔는지 본다. |
-| `analyze/axis/trim.py` | 73 | ④ 사양 45 — 트림 25 · 옵션 20 (docs/ref/F-scoring.md ④). |
 | `analyze/trust.py` | 70 | 플랫폼 신뢰도 — 점검 출처 · 엔카진단 · 엔카보증 (개정 300). |
 | `score/grade.py` | 70 | 등급 (L7). |
 | `analyze/curve.py` | 61 | 구간별 점수표 (docs/ref/F-scoring.md). |
@@ -173,10 +173,16 @@ CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_nam
 rec:31  Client:41  text:96  links:101  start_server:105  seed_admin:149  m1:165  m2:253  m3:327  m4:631  s3:696  unit:749  gaps:778  flows:886  guide7:987  _account_id:1116  make_users:1123  main:1141  _write_table:1190
 ```
 
-### `validate/v3_logic.py` — 1,065줄
+### `validate/v3_logic.py` — 1,132줄
 
 ```
-_file_output_checks:238  _conflict_checks:291  _diagnosis_count_check:315  _hda_source_check:331  _sort_determinism:342  _warning_contract_checks:359  _list_observed_source_check:454  _facet_reconcile_check:484  _denominator_check:507  _core_axis_check:535  _rental_cross_check:553  _why_cheap_check:591  _source_before_value_check:632  _absolute_cut_check:659  _spec_files:685  _confirm_ratio_check:695  _site_axis_checks:724  _rendered_why:772  _rendered_listings:782  _fill_gap_check:792  _points_sum_check:825  _market_gap_check:842  run:898  _shuffle_check:1008  _halt_dict_check:1033  _ensure_tmp:1062
+_file_output_checks:244  _conflict_checks:297  _diagnosis_count_check:321  _hda_source_check:337  _sort_determinism:348  _warning_contract_checks:365  _list_observed_source_check:460  _facet_reconcile_check:490  _denominator_check:513  _core_axis_check:541  _rental_cross_check:559  _why_cheap_check:597  _source_before_value_check:638  _absolute_cut_check:665  _spec_files:691  _confirm_ratio_check:701  _spec_axis_check:751  _site_axis_checks:790  _rendered_why:838  _rendered_listings:848  _fill_gap_check:858  _points_sum_check:891  _market_gap_check:908  run:964  _shuffle_check:1075  _halt_dict_check:1100  _ensure_tmp:1129
+```
+
+### `tools/verify_axes.py` — 957줄
+
+```
+spec_tables:43  _num:66  pick:84  _flag:98  hand_market:106  _median_for:117  hand_mileage:137  _years:150  conn_now:159  lookup:164  hand_accident:188  hand_repair:198  hand_owner:206  hand_maker_warranty:214  _km_per_month:241  _json:270  hand_option_won:283  hand_depreciation:320  hand_frame:347  hand_outer:368  _leak_states:388  hand_leak:400  hand_lien:415  hand_not_join:425  hand_trim:455  hand_special:475  spec_section:485  spec_head_points:493  lookup_label:500  hand_integrity:508  hand_special_points:534  _taste_points:543  _has_option:554  hand_color:589  hand_usage:613  hand_site_grade:637  hand_inspection_src:657  hand_hud:670  hand_sunroof:679  hand_picked:688  _has_table:701  _option_prices:707  hand_options:725  survey:763  main:826
 ```
 
 ### `store/adminops.py` — 931줄
@@ -357,12 +363,6 @@ _tmp_root:44  main:62  shot_paths:143  _localize_images:168  shoot:205
 
 ```
 DictBuildReport:63  extract_distinct:78  _facet_values:106  _walk_path:122  load_fixed_enums:149  build_dict:157  _mark_facet_substituted:208  build_catalog_dict:232  build_late_dict:270
-```
-
-### `tools/verify_axes.py` — 290줄
-
-```
-spec_tables:39  _num:62  pick:80  hand_market:89  _median_for:100  hand_mileage:120  _years:133  conn_now:142  lookup:147  hand_accident:171  hand_repair:181  hand_owner:189  hand_maker_warranty:197  _km_per_month:224  main:233
 ```
 
 ### `adapters/encar.py` — 285줄
