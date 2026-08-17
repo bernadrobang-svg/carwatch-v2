@@ -1604,3 +1604,55 @@ body.s-listings main { max-width:1560px; }
   }
   .rows td[data-label="가격"] { grid-column:span 6; }
 }
+
+/* ── 부록 G — 좁은 폭 카드 줄 수 상한 (개정 332 · G-2) ────────────────
+   목록 6줄 · 추천 8줄.  ★ 한 화면에 매물이 2개 이상 보여야 비교가 된다
+   ★ 격자는 6칸이다.  span 합이 6 을 넘으면 칸이 겹쳐 글자가 뭉갠다
+     (실측 08-18 — 「시세 대비 −14.0% 시세 5,290만」이 서로 겹쳤다)
+   ★ 칸을 지우지 않고 접는다 — 넓은 폭에서는 그대로 보인다 */
+@media (max-width: 639px) {
+  /* 1줄 — 사진(3줄) · ♡ · 등급 · 차종 */
+  .rows td.photo { grid-column:1 / span 2; grid-row:1 / span 3; }
+  .rows td[data-label="관심"] { grid-column:span 1; }
+  .rows td[data-label="등급"] { grid-column:span 1; }
+  .rows td[data-label="차종"] { grid-column:span 2; }
+  /* 2줄 — 트림 (사진 오른쪽 4칸) */
+  .rows td.trim { grid-column:span 4; }
+  /* 3줄 — 연식 · 주행 */
+  .rows td[data-label="연식"] { grid-column:span 2; }
+  .rows td[data-label="주행"] { grid-column:span 2; }
+  /* 4줄 — 값 세 개.  ★ 사진이 끝나 6칸을 다 쓴다.
+     ★ 이름표를 옆에 두면 폭을 먹어 숫자가 겹친다 — 위에 얹는다
+       (실측 08-18 — 「시세 대비 −14.0% 시세 5,290만」이 서로 뭉갰다) */
+  .rows td[data-label="가격"],
+  .rows td[data-label="시세 대비"],
+  .rows td[data-label="신차가 대비"] {
+    grid-column:span 2; display:flex; flex-direction:column;
+    align-items:flex-start; gap:1px; min-width:0;
+  }
+  .rows td[data-label="가격"]::before,
+  .rows td[data-label="시세 대비"]::before,
+  .rows td[data-label="신차가 대비"]::before { margin:0; }
+  .rows td[data-label="가격"] { font-size:1.15em; }
+  /* 원값(시세 5,290만)은 %보다 작게 — 큰 글씨가 %다 */
+  .rows td[data-label="시세 대비"] .raw,
+  .rows td[data-label="신차가 대비"] .raw { font-size:10px; }
+  /* 5줄 — 축 넷 */
+  .rows td.ax { grid-column:span 3; font-size:11px; }
+  /* 6줄 — 옵션 · 링크 */
+  .rows td[data-label="옵션"] { grid-column:span 6; }
+  .rows td.act { grid-column:1 / -1; margin-top:4px; }
+  /* ★ 값을 지우지 않는다 (V11-70).  좁은 폭에서 값이 사라지면
+     「없는 것」과 구분이 안 된다 — 작게 묶어 한 줄에 넣는다.
+     ★ 부록 G 6줄과 V11-70 이 부딪히면 「값을 낸다」가 이긴다 */
+  .rows td[data-label="순위"], .rows td[data-label="비율"],
+  .rows td[data-label="월"], .rows td[data-label="딜러"],
+  .rows td[data-label="경과"], .rows td[data-label="상태"],
+  .rows td[data-label="사이트"] {
+    grid-column:span 2; font-size:10.5px; padding:2px 6px;
+  }
+  .rows td[data-label="딜러"] { grid-column:span 4; }
+  /* 추천은 8줄 — 비율 막대와 이유 한 줄이 더 있다 */
+  .cand-rows td[data-label="비율"] { display:block; grid-column:span 6; }
+  .cand-rows td[data-label="왜 이 순위인가"] { grid-column:1 / -1; }
+}

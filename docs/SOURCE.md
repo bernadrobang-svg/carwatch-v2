@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 126개 · 총 38,957줄
+파일 127개 · 총 39,246줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -46,6 +46,7 @@
 | `adapters/encar.py` | 285 | 엔카 어댑터 — URL · 헤더 · 쿼리 조립. |
 | `store/raw.py` | 285 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
+| `tools/verify_axes.py` | 283 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `tests/test_dict.py` | 280 | 4장 키·코드·사전 시험. |
 | `web/template.py` | 278 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tests/test_crosssite.py` | 275 | 12장 다중 사이트 시험. |
@@ -71,8 +72,8 @@
 | `tests/seed.py` | 178 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `tools/migrate.py` | 174 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
-| `tools/daily_check.py` | 167 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
-| `tools/weekly_check.py` | 160 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
+| `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
+| `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
 | `score/adjust.py` | 145 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `tools/repair_facet_chunks.py` | 144 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
@@ -133,7 +134,7 @@
 | `tests/__init__.py` | 1 | — |
 | `validate/__init__.py` | 1 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 57개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 58개)
 
 ### `validate/v11_web.py` — 2,569줄
 
@@ -373,6 +374,12 @@ batch:36  commit:62  open_db:68  _safe_headers:85  save_raw:92  save_import_raw:
 
 ```
 check:33  fx:39  test_inspection:53  test_frame_vs_outer:84  test_record:123  test_detail:152  test_classify_real:172  test_catalog:207  test_diagnosis:219
+```
+
+### `tools/verify_axes.py` — 283줄
+
+```
+spec_tables:32  _num:55  pick:73  hand_market:82  _median_for:93  hand_mileage:113  _years:126  conn_now:135  lookup:140  hand_accident:164  hand_repair:174  hand_owner:182  hand_maker_warranty:190  _km_per_month:217  main:226
 ```
 
 ### `tests/test_dict.py` — 280줄
