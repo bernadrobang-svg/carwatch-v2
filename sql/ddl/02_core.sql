@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS core_listing (
   displacement_cc        INTEGER,
   trim_badge             TEXT,
   trim_grade_name        TEXT,
+  -- ★ 세부등급 (개정 313).  목록 원문 BadgeDetail — 「트렌디」 · 「시그니처」
+  --   Badge 만으로는 「가솔린 2.5 터보 AWD」가 끝이다.  깡통과 풀옵션이 같아진다
+  trim_badge_detail      TEXT,
   transmission           TEXT,
   fuel_raw               TEXT,
   fuel_detail            TEXT,

@@ -83,6 +83,9 @@ class ListingRow:
     # ★ 분모로 등급을 막지 않는 대신 얼마나 봤는지를 낸다
     confirmed_points: float | None = None
     confirm_pct: float | None = None
+    # 트림 세부등급 · 옵션 종수 (개정 313)
+    trim_detail_known: bool = False
+    option_count: int = 0
     # 신차가 = 등급기준 + 선택옵션 (개정 301).  ★ 셋을 다 낸다
     option_price_won: int | None = None
     origin_total_won: int | None = None

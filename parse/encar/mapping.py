@@ -134,6 +134,9 @@ def parse_list_item(item: dict, site: str) -> dict:
         "site_model": item.get("Model"),
         "site_manufacturer": item.get("Manufacturer"),
         "trim_badge": item.get("Badge"),
+        # ★ 세부등급 (개정 313).  Badge 만으로는 트림이 안 갈린다 —
+        #   「가솔린 2.5 터보 AWD」가 깡통과 시그니처를 같게 만든다
+        "trim_badge_detail": item.get("BadgeDetail"),
         "fuel_raw": item.get("FuelType"),
         "year_month": _ym(item.get("Year")),
         "form_year": _int(item.get("FormYear")),

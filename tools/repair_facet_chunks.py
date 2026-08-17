@@ -95,6 +95,38 @@ def main() -> int:
             " || ' | 조각이다 — 이어붙인 것이 따로 있다 (개정 307 복구)'"
             f" WHERE id IN ({','.join('?' * len(parts))})",
             tuple(rid for rid, _b in parts))
+    # ★ raw_facet 에도 같은 조각이 들어가 있다 (store/raw.py 가 둘 다 넣는다).
+    #   S3 는 이쪽을 읽는다 — 여기를 안 고치면 파이프라인이 JSON 에서 죽는다
+    fixed2 = 0
+    facet_groups: dict = collections.OrderedDict()
+    for site, tk, kind, url, axis, body, at in conn.execute(
+        "SELECT site, target_key, request_kind, request_url, axis_count,"
+        " body, fetched_at FROM raw_facet ORDER BY rowid"
+    ):
+        facet_groups.setdefault((site, tk), []).append(
+            (kind, url, axis, body, at))
+    for (site, tk), parts in facet_groups.items():
+        if len(parts) == 1 and len(parts[0][3]) >= WHOLE_MIN_BYTES:
+            continue
+        if len(parts) == 1:
+            continue
+        body, why = join([(0, p[3]) for p in parts])
+        if body is None:
+            print(f"  ✗ raw_facet {tk} — {why}")
+            continue
+        print(f"  ✓ raw_facet {tk} 조각 {len(parts)}개 → {len(body):,}B  {why}")
+        fixed2 += 1
+        if not apply:
+            continue
+        conn.execute("DELETE FROM raw_facet WHERE site=? AND target_key=?",
+                     (site, tk))
+        head = parts[0]
+        conn.execute(
+            "INSERT INTO raw_facet(site,target_key,request_kind,request_url,"
+            "axis_count,body,fetched_at) VALUES (?,?,?,?,?,?,?)",
+            (site, tk, head[0], head[1], head[2], body, head[4]))
+    print(f"raw_facet 이어붙인 것 {fixed2}")
+
     if apply:
         conn.commit()
     print(f"\n이어붙인 것 {fixed} · 못 한 것 {skipped}"

@@ -177,6 +177,114 @@ def _record_dropped(conn: sqlite3.Connection, parsed: dict, cols,
              "upsert 가 버린 키 — 컬럼이 없다", at, at))
 
 
+# 같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)
+SCHEMA_CHANGE_MIN = 5
+
+
+# 불변 필드 → 목록 원문의 키.  ★ 여기 없는 필드는 기계가 분류하지 못한다
+INVARIANT_SOURCE_KEY = {
+    "trim_badge": "Badge",
+    "year_month": "Year",
+    "form_year": "FormYear",
+    "color_ext_raw": "Color",
+}
+
+CAUSE_PARSE = "parse_error"        # ① 같은 원문을 다시 읽으면 이전 값이 나온다
+CAUSE_SOURCE_EDIT = "source_edit"  # ② 원문이 실제로 바뀌었다 (딜러 오기입 정정)
+CAUSE_REPLACED = "listing_replaced"  # ③ source_id 재사용 · vin/plate 불일치
+CAUSE_SCHEMA = "site_schema_change"  # ④ 여러 매물에서 동시 발생
+
+
+def classify_invariant_change(conn, lid: str, field: str, old, new,
+                              parsed: dict, observed_at: str) -> str:
+    """불변 필드가 바뀐 원인을 규격의 판별 순서대로 가른다 (STEP 29).
+
+    판별 순서   ① 이전 원문과 현재 원문을 비교한다  → 같으면 ① 다르면 ②③④
+               ② 동시 발생 건수를 본다            → 다수면 ④
+               ③ vin · plate 를 대조한다          → 불일치면 ③
+    ★ 사람이 아니라 이 순서가 분류한다.  다만 수용은 ②만이다
+    금지   원인 분류 없이 새 값으로 덮어쓰는 것
+    """
+    # ③ 먼저 걸러 낸다 — 다른 차면 원문 비교가 뜻이 없다
+    for key in ("vin", "plate_hash"):
+        a, b = parsed.get(key), _current(conn, lid, key)
+        if a and b and a != b:
+            return CAUSE_REPLACED
+    # ④ 같은 필드가 이번 실행에 여럿 바뀌었는가
+    n = conn.execute(
+        "SELECT COUNT(DISTINCT listing_id) FROM core_listing_change"
+        " WHERE field = ? AND change_kind = 'invariant_violation'"
+        " AND changed_at >= ?", (field, _today(parsed))).fetchone()[0]
+    if n >= SCHEMA_CHANGE_MIN:
+        return CAUSE_SCHEMA
+    # ① 이전 원문을 실제로 읽어 본다.  ★ 못 읽으면 분류하지 않는다 —
+    #   「모르는 것을 ②로 두면」 이 가드가 있으나 마나 해진다
+    key = INVARIANT_SOURCE_KEY.get(field)
+    if key is None:
+        return ""
+    got = _source_history(conn, parsed.get("source_id"), key)
+    if len(got) < 2:
+        return ""                      # 견줄 원문이 하나뿐이다.  사람이 봐야 한다
+    before, now = got[-2][1], got[-1][1]
+    if str(before) == str(now):
+        # 원문은 안 바뀌었는데 값이 달라졌다 — 우리가 잘못 읽고 있었다
+        return CAUSE_PARSE
+    if str(before) == str(old) and str(now) == str(new):
+        # 원문이 실제로 바뀌었다 (딜러 오기입 정정) — 규격 ②
+        return CAUSE_SOURCE_EDIT
+    return ""                          # 어느 쪽도 아니다.  사람이 봐야 한다
+
+
+def _lookback() -> int:
+    """이전 원문을 몇 봉투까지 거슬러 찾는가 (STEP 29 ①).
+
+    ★ 임계값은 config 다 (V4-13).  하루 395쪽이라 이틀치를 덮어야 한다
+    """
+    import json as _json
+    import os as _os
+
+    root = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    with open(_os.path.join(root, "config", "web.json"),
+              encoding="utf-8") as f:
+        return int(_json.load(f)["invariant_source_lookback"])
+
+
+def _source_history(conn, source_id, key: str) -> list:
+    """그 매물이 나온 목록 원문을 시각순으로 (봉투 시각, 값) (STEP 29 ①).
+
+    ★ 원문을 다시 읽는다.  「우리가 저장한 값」과 견주면 순환이다
+    ★ 같은 봉투 묶음에서 여러 번 나오면 한 번만 센다 — 쪽이 여럿이다
+    """
+    import json as _json
+
+    if not source_id:
+        return []
+    out: dict = {}
+    for at, body in conn.execute(
+        "SELECT fetched_at, body FROM raw_response"
+        " WHERE endpoint='list' AND status='ok'"
+        " ORDER BY id DESC LIMIT ?", (_lookback(),)
+    ):
+        try:
+            doc = _json.loads(body)
+        except (ValueError, TypeError):
+            continue
+        for item in doc.get("SearchResults") or []:
+            if str(item.get("Id")) == str(source_id):
+                out.setdefault(at[:10], (at, item.get(key)))
+    return [v for _k, v in sorted(out.items())]
+
+
+def _current(conn, lid: str, key: str):
+    row = conn.execute(f"SELECT {key} FROM core_listing WHERE listing_id = ?",
+                       (lid,)).fetchone()
+    return row[0] if row else None
+
+
+def _today(parsed: dict) -> str:
+    return (parsed.get("last_seen") or parsed.get("first_seen") or "")[:10]
+
+
 def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int:
     """파싱 결과를 core_listing 에 적재한다.
 
@@ -225,12 +333,20 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
             continue
         if old.get(field) is not None and parsed[field] is not None \
                 and old[field] != parsed[field]:
+            cause = classify_invariant_change(conn, lid, field, old[field],
+                                              parsed[field], parsed,
+                                              observed_at)
             record_change(conn, lid, field, old[field], parsed[field],
-                          observed_at, "invariant_violation", cause=None)
+                          observed_at, "invariant_violation",
+                          cause=cause or None)
             commit(conn)
+            if cause == CAUSE_SOURCE_EDIT:
+                # ★ 원문이 실제로 바뀌었다 (딜러 오기입 정정).
+                #   조치는 「변경 수용 · 이력 기록」이다 (STEP 29 ②)
+                continue
             raise ValidationError(
-                f"불변 필드 변경: {field} {old[field]!r} → {parsed[field]!r}. "
-                "원인 분류 전에는 덮어쓰지 않는다",
+                f"불변 필드 변경: {field} {old[field]!r} → {parsed[field]!r} "
+                f"— 원인 {cause or '분류 못 함'}. 이 원인은 사람이 봐야 한다",
                 listing_id=lid,
                 step="STEP 29",
             )

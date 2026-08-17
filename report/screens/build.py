@@ -549,7 +549,14 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 개정 298 로 분모는 늘 만점이다 — 짧으면 그것 자체가 사고다
         denom_short=bool(denom and denom < _total_points()),
         confirmed_points=_confirm[0], confirm_pct=round(_confirm[1] * 100, 1),
-        target_label=tk or "", trim=trim, year_month=ym, mileage_km=km,
+        target_label=tk or "",
+        # ★ 세부등급을 못 받았으면 그렇게 적는다.  빈 값으로 두지 않는다 (개정 285)
+        trim=(trim if trim and " · " in trim
+              else f"{trim} · 세부등급 없음" if trim else ""),
+        trim_detail_known=bool(trim and " · " in trim),
+        # 옵션 — 「5종 890만」.  ★ 「옵션 있음」 같은 말을 쓰지 않는다 (개정 313)
+        option_count=len(_codes) if isinstance(_codes, list) else 0,
+        year_month=ym, mileage_km=km,
         color_ext=ce, color_int=ci, axis_chips=chips, price_won=price,
         total_cost_won=(price + fin.acquisition_cost_won) if fin else None,
         loan_principal_won=fin.loan_principal_won if fin else None,
@@ -720,7 +727,11 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     where, args = _listings_where(flt)
 
     sql = (
-        "SELECT l.listing_id, l.target_key, l.trim_badge, l.year_month,"
+        "SELECT l.listing_id, l.target_key,"
+        # ★ 트림은 Badge + BadgeDetail 이다 (개정 313).
+        #   「가솔린 2.5 터보 AWD」만으로는 깡통과 시그니처가 같아진다
+        " l.trim_badge || CASE WHEN l.trim_badge_detail IS NULL THEN ''"
+        "   ELSE ' · ' || l.trim_badge_detail END, l.year_month,"
         " l.mileage_km, l.color_ext_raw, l.color_int_raw, l.price_current_won,"
         # ★ earned 를 가져온다.  비율은 earned/denominator 다 —
         #   score_total(555 환산)로 나누면 분모가 짧을수록 부풀려진다 (E-1)
