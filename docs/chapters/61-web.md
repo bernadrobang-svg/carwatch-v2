@@ -2076,6 +2076,8 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-95 | 매물마다 추천 이유가 있음 | code | fatal |
 | V11-96 | ♡ 가 제목 줄에 있음 | code | fatal |
 | V11-97 | 매물 화면 다섯에 ♡ 가 같은 자리 | code | fatal |
+| V11-98 | 이어붙인 원문의 길이·해시가 같은가 | code | fatal |
+| V11-99 | 같은 화면에서 연속 POST 가 되는가 | code | fatal |
 | V11-85 | 트림에 세부등급이 포함됨 | code | fatal |
 | V11-86 | 시세가 트림 단위로 나옴 | code | fatal |
 | V11-87 | 신차가의 뜻이 화면에 밝혀져 있음 | code | fatal |
