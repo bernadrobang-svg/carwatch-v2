@@ -683,6 +683,33 @@ def spec_k(port: int, ad: Client, lid: int) -> None:
 
 
 # ── L  성능 · 구조 (STEP 145b · 152) ────────────────────────────────
+def spec_csrf(ad: Client, lid: int) -> None:
+    """개정 308 — 같은 화면에서 여러 번 POST 가 되는가 (V11-99).
+
+    ★ 마스터 실측 08-17 — 전 차종 수집에서 첫 묶음만 성공하고
+      나머지 7개가 403 이었다.  토큰이 서버 메모리에 있어
+      서비스를 재시작하면 열려 있던 화면의 토큰이 전부 무효가 된다
+    ★ 시험이 한 번만 POST 했다.  연속으로 안 해 봤다 —
+      시험은 실제 사용 패턴대로 한다.  전 차종은 16묶음이니 여러 번 보낸다
+    """
+    print("\n[CSRF] 한 화면에서 여러 번 POST (개정 308)")
+    token = ad.csrf("/listings")
+    codes = []
+    for _i in range(5):
+        st, _b, _l = ad.post("/watch/add",
+                             {"csrf": token, "listing_id": str(lid)})
+        codes.append(st)
+    rec("V11-99", "같은 토큰으로 5번 연속 POST", "한 번 받은 토큰을 5번 쓴다",
+        " · ".join(str(c) for c in codes), all(c != 403 for c in codes),
+        "1회용이면 두 번째부터 403 이다")
+
+    # ★ 토큰이 세션에서 만들어지므로 다시 열어도 같아야 한다
+    again = ad.csrf("/listings")
+    rec("V11-99b", "화면을 다시 열어도 같은 토큰", "두 번 읽어 견준다",
+        "같다" if again == token else "바뀐다", again == token,
+        "화면마다 토큰이 바뀌면 여러 탭이 서로를 무효로 만든다")
+
+
 def spec_l(ad: Client) -> None:
     print("\n[L] 성능 · 구조 (STEP 145b · 152)")
     st, b, _h = ad.get("/listings")
@@ -1364,6 +1391,7 @@ def main() -> int:
         spec_g(ad, root, db)
         spec_h(ad)
         spec_m(ad, db, root)
+        spec_csrf(ad, lid)
         spec_e(port, ad, db, lid)
         spec_i(port, ad, db, root, lid)
         spec_k(port, ad, lid)

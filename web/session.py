@@ -9,6 +9,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import hmac
 import os
 import posixpath
@@ -60,10 +61,28 @@ def read_cookie(header: str | None, name: str) -> str | None:
     return None
 
 
-# ── CSRF (STEP 147) ─────────────────────────────────────────────────
+# ── CSRF (STEP 147 · 개정 308) ──────────────────────────────────────
 def new_csrf() -> str:
-    """세션당 토큰 1개.  폼에 hidden 으로 넣는다."""
+    """세션당 토큰 1개.  폼에 hidden 으로 넣는다.
+
+    ★ 세션 키가 있으면 csrf_for() 를 쓴다.  이건 세션이 없을 때만이다
+    """
     return secrets.token_urlsafe(TOKEN_BYTES)
+
+
+def csrf_for(session_key: str, secret: bytes) -> str:
+    """세션 키에서 토큰을 만든다 — 저장하지 않는다 (개정 308).
+
+    ★ 실측 08-17 — 토큰을 메모리 dict 에 두고 있었다.
+      서비스를 재시작하면 전부 무효가 되고, 그때 열려 있던 화면의
+      다음 POST 부터 전부 403 이 난다.
+      마스터의 전 차종 수집이 「첫 묶음만 성공하고 나머지 7개 403」이었다
+    ★ 한 화면에서 수십 번 POST 하는 경로가 있다 (브라우저 수집 16묶음).
+      1회용도, 메모리 저장도 그것을 견디지 못한다
+    금지   토큰을 서버 메모리에 쌓는 것 — 워커를 늘리면 즉시 갈린다
+    """
+    return hmac.new(secret, f"csrf:{session_key}".encode(),
+                    hashlib.sha256).hexdigest()[:TOKEN_BYTES * 2]
 
 
 def csrf_ok(expected: str | None, got: str | None) -> bool:

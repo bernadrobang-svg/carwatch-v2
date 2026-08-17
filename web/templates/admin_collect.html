@@ -211,6 +211,65 @@
       return got;
     });
   }
+  // ★ 개정 307 — facet 은 하나의 JSON 이라 내용으로 못 나눈다.
+  //   바이트를 나누고 서버가 이어붙인다.  원문은 그대로 복원된다 (P3)
+  function sha256hex(text) {
+    var bytes = new TextEncoder().encode(text);
+    return crypto.subtle.digest('SHA-256', bytes).then(function (buf) {
+      var out = '', view = new Uint8Array(buf);
+      for (var i = 0; i < view.length; i++) {
+        out += ('0' + view[i].toString(16)).slice(-2);
+      }
+      return {hash: out, len: bytes.length, bytes: bytes};
+    });
+  }
+
+  function postChunks(job, got, url, onStep) {
+    return sha256hex(got.body).then(function (sig) {
+      // ★ UTF-8 바이트로 자른다.  글자로 자르면 길이·해시가 안 맞는다
+      var room = Math.floor(ROOM * 0.6);      // csrf·url 등 다른 칸 자리를 남긴다
+      var parts = [], dec = new TextDecoder();
+      for (var off = 0; off < sig.bytes.length; off += room) {
+        parts.push(sig.bytes.subarray(off, Math.min(off + room,
+                                                    sig.bytes.length)));
+      }
+      var key = job.target_key + ':' + job.kind + ':' + sig.hash.slice(0, 16);
+      function send(i) {
+        if (i >= parts.length) { return Promise.resolve(); }
+        var form = new FormData();
+        form.append('csrf', CSRF);
+        form.append('site', 'encar');
+        form.append('kind', job.kind);
+        form.append('target_key', job.target_key);
+        form.append('url', url);
+        form.append('http_code', got.status);
+        form.append('reason', el('f_reason').value);
+        form.append('previewed', '1');
+        form.append('chunk_key', key);
+        form.append('chunk_seq', i);
+        form.append('chunk_total', parts.length);
+        form.append('chunk_len', sig.len);
+        form.append('chunk_hash', sig.hash);
+        // ★ 조각은 바이트 그대로 실어야 이어붙였을 때 원문이 된다
+        form.append('body', new Blob([parts[i]]), 'part');
+        if (onStep) {
+          onStep(job.target_key + ' ' + job.kind + ' ' +
+                 (i + 1) + '/' + parts.length + ' 조각');
+        }
+        return fetch('/admin/collect', {method: 'POST', body: form,
+                                        credentials: 'same-origin'})
+          .then(function (res) {
+            if (!res.ok && res.status !== 303) {
+              throw new Error('조각 ' + (i + 1) + '/' + parts.length +
+                              ' 저장 ' + res.status);
+            }
+            return send(i + 1);
+          });
+      }
+      return send(0);
+    });
+  }
+
   function post(job, got, url) {
     var doc = null;
     try { doc = JSON.parse(got.body); } catch (e) { doc = null; }
@@ -343,10 +402,11 @@
       if (job.kind === 'facet') {
         return fit(job, 0, ROWS).then(function (got) {
           if (got.status !== 200) { throw new Error('HTTP ' + got.status); }
-          if (got.size > ROOM) {
-            throw new Error('facet 이 ' + got.size + '바이트 — 나눌 수 없습니다');
-          }
-          return post(job, got, job.url).then(function () {
+          // ★ 크면 바이트로 나눠 보낸다 (개정 307).  상한을 올리지 않는다
+          var send = got.size > ROOM
+            ? postChunks(job, got, job.url, function (m) { report(m); })
+            : post(job, got, job.url);
+          return send.then(function () {
             okPages += 1; report(job.target_key + ' facet 저장');
           });
         });

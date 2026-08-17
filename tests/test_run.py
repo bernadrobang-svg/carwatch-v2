@@ -494,8 +494,14 @@ def test_score_pipeline() -> None:
         "FROM result_score").fetchall()
     check("매물마다 점수 1행", len(rows) == 3, f"{len(rows)}행")
     g, total, denom, fail = rows[0]
-    # ★ 개정 298 — 분모는 늘 555 다.  못 본 축은 분모가 아니라 점수에서 빠진다
-    check("분모는 늘 555 다 (개정 298 G)", denom == 555, str(denom))
+    # ★ 개정 298 — 분모는 늘 만점이다.  못 본 축은 분모가 아니라 점수에서 빠진다.
+    #   ★ 숫자를 박지 않는다 — 개정 306 으로 555 → 605 가 됐다
+    from analyze.axes import ScoringPolicy
+
+    full = float(ScoringPolicy(json.load(open(
+        os.path.join(ROOT, "config", "scoring.json"),
+        encoding="utf-8"))).raw["total_points"])
+    check(f"분모는 늘 {full:g} 다 (개정 298 G)", denom == full, str(denom))
     check("등급이 매겨진다", g in ("S", "A", "B", "C", "D", "E", "NOT_RATED"),
           f"{g} {total}/{denom}")
 
@@ -512,8 +518,8 @@ def test_score_pipeline() -> None:
     # ★ 개정 298 — 분모는 늘 555 다.  개정 287 — 핵심 축을 못 보면 NOT_RATED.
     #   E(절대조건)는 점수와 무관하므로 빼고 본다
     rated = [r for r in rows if r[0] != "E"]
-    check("★ 전건 분모가 555 다 (개정 298 G)",
-          all(r[2] == 555 for r in rows), str({r[2] for r in rows}))
+    check(f"★ 전건 분모가 {full:g} 다 (개정 298 G)",
+          all(r[2] == full for r in rows), str({r[2] for r in rows}))
     check("★ 핵심 축(시세)을 못 봐 NOT_RATED 다 — 씨앗은 3건이라 표본이 안 찬다",
           all(r[0] == "NOT_RATED" for r in rated) if rated else True,
           str([r[0] for r in rows]))

@@ -39,5 +39,6 @@
   "photo_min_px": 128,
   "screen_max_kb": 300,
   "screen_max_sec": 2.0,
-  "min_body_words": 40
+  "min_body_words": 40,
+  "chunk_stale_sec": 600
 }

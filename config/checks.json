@@ -29,5 +29,9 @@
   "screens_dir": "ref/screens",
   "fill_rate_gap_max": 0.9,
   "market_gap_max": 0.1,
-  "market_gap_min_sample": 5
+  "market_gap_min_sample": 5,
+  "chunk_probe_chars": 40000,
+  "chunk_probe_room": 40000,
+  "csrf_repeat": 5,
+  "_chunk_probe_note": "조각 전송 시험 크기 (개정 307). 실측 facet 은 19~21만 바이트다"
 }

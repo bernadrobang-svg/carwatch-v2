@@ -1084,6 +1084,12 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
         form = _gate(conn, account, req, csrf, group=GROUP_OPS)
         kind = (form.get("kind") or "list").strip()
         body = form.get("body") or ""
+        # ★ 조각 전송 (개정 307) — facet 은 하나의 JSON 이라 내용으로 못 나눈다.
+        #   바이트를 나누고 여기서 이어붙인다.  원문은 그대로 복원된다 (P3)
+        if form.get("chunk_key"):
+            done, body = _take_chunk(form)
+            if not done:
+                return redirect("/admin/collect", body, flash_key)
         if not body.strip():
             raise ValidationError(
                 "받은 원문이 비어 있습니다 — 먼저 「조회」를 눌러 확인하십시오",
@@ -1105,6 +1111,33 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
     ctx = collect_state(conn, collect_urls, root=root)
     return page(conn, account, "브라우저 수집", "admin_collect.html", ctx,
                 csrf=csrf, root=root, flash_key=flash_key)
+
+
+def _take_chunk(form: dict) -> tuple:
+    """조각을 모은다.  다 오면 (True, 원문) · 아니면 (False, 진행 문구).
+
+    ★ 하나라도 빠지면 저장하지 않는다 — 반쪽을 원문이라 부르지 않는다
+    """
+    import time
+
+    from store import chunk
+
+    key = form["chunk_key"].strip()
+    seq = _int_or_none(form.get("chunk_seq")) or 0
+    total = _int_or_none(form.get("chunk_total")) or 1
+    part = (form.get("body") or "").encode("utf-8")
+    got = chunk.put(key, seq, total, part, time.time(),
+                    float(_cfg("web.json", ROOT)["chunk_stale_sec"]))
+    if not got["done"]:
+        return False, f"{form.get('kind', 'facet')} {got['got']}/{total} 조각"
+    want_len = _int_or_none(form.get("chunk_len"))
+    want_hash = (form.get("chunk_hash") or "").strip()
+    try:
+        body = chunk.take(key, want_len, want_hash)
+    except ValueError as e:
+        raise ValidationError(f"조각을 잇지 못했습니다 — {e}",
+                              step="STEP 136c") from e
+    return True, body.decode("utf-8", "replace")
 
 
 def _run_stamp(prefix: str) -> str:

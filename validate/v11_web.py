@@ -282,6 +282,17 @@ C = {
                     "표가 화면에 맞춰 쥐어짜이면 한 글자가 한 줄이 된다. "
                     "실측 08-16 admin_dict — 「프/론/트/휀/더」 (검토 17)",
                     KIND_CODE),
+    "V11-98": Check("V11", "V11-98", "큰 원문을 조각으로 보내고 이어붙이는가",
+                    FATAL, "run",
+                    "facet 은 하나의 JSON 이라 내용으로 못 나눈다 — "
+                    "바이트를 나눈다.  상한을 올려 해결하지 않는다 (개정 307)",
+                    KIND_CONTRACT),
+    "V11-99": Check("V11", "V11-99", "같은 화면에서 여러 번 POST 가 되는가",
+                    FATAL, "run",
+                    "토큰을 서버 메모리에 두면 재시작에 전부 무효가 된다 — "
+                    "마스터 실측 08-17: 전 차종 수집이 첫 묶음만 되고 "
+                    "나머지 7개가 403 이었다 (개정 308)",
+                    KIND_CONTRACT),
     "V11-92": Check("V11", "V11-92", "신차가가 등급기준 + 옵션 합", FATAL, "run",
                     "엔카는 6,547만(등급 5,787 + 옵션 760)인데 "
                     "우리는 5,787만만 냈다.  셋을 다 낸다 (개정 301)",
@@ -1420,6 +1431,84 @@ def _order_filter_checks(rid):
                    "오감" if not bad67 else "없음", not bad67, bad67)]
 
 
+def _checks_cfg() -> dict:
+    """검사 임계값은 config 에 둔다 (V4-13 · V4-17)."""
+    import json
+
+    with open(os.path.join(ROOT, "config", "checks.json"),
+              encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _chunk_check(rid):
+    """V11-98 — 바이트 조각을 이어붙여 원문이 그대로 나오는가 (개정 307)."""
+    from store import chunk
+
+    bad = []
+    # ★ 실측 facet 크기(19~21만)보다 크게 잡는다.  작으면 시험이 안 된다
+    cfg = _checks_cfg()
+    body = ("가나다" * int(cfg["chunk_probe_chars"])).encode("utf-8")
+    room = int(cfg["chunk_probe_room"])
+    parts = [body[i:i + room] for i in range(0, len(body), room)]
+    key, sig = "probe", chunk.digest(body)
+    for i, part in enumerate(parts):
+        chunk.put(key, i, len(parts), part, 0.0)
+    got = chunk.take(key, len(body), sig)
+    if got != body:
+        bad.append("이어붙인 것이 원문과 다르다")
+
+    # ★ 하나라도 빠지면 저장하지 않는다 — 반쪽을 원문이라 부르지 않는다
+    for i, part in enumerate(parts):
+        if i == 1:
+            continue
+        chunk.put("half", i, len(parts), part, 0.0)
+    try:
+        chunk.take("half", len(body), sig)
+        bad.append("★ 조각이 빠졌는데 저장했다")
+    except ValueError as e:
+        if "2/" not in str(e):
+            bad.append(f"몇 번째가 빠졌는지 안 밝힌다 — {e}")
+
+    # 화면이 조각을 보내는가
+    tpl = open(os.path.join(TEMPLATES, "admin_collect.html"),
+               encoding="utf-8").read()
+    if "chunk_seq" not in tpl or "chunk_hash" not in tpl:
+        bad.append("화면이 조각으로 안 보낸다")
+    if "나눌 수 없습니다" in tpl:
+        bad.append("★ 아직 「나눌 수 없습니다」로 포기한다")
+    return result(C["V11-98"], rid, "원문 그대로",
+                  "그대로" if not bad else bad, not bad, bad)
+
+
+def _csrf_reuse_check(rid):
+    """V11-99 — 한 세션에서 토큰이 몇 번이고 쓰이는가 (개정 308).
+
+    ★ 브라우저 수집은 한 화면에서 수십 번 POST 한다 (전 차종 16묶음).
+      1회용도, 서버 메모리 저장도 그것을 견디지 못한다
+    """
+    from web.session import csrf_for, csrf_ok
+
+    bad = []
+    try:
+        from store.pii import load_key
+
+        key = load_key(os.path.join(ROOT, "secrets", "plate_hmac.key"))
+    except (FileNotFoundError, ValueError):
+        return not_applicable(C["V11-99"], rid, "HMAC 키가 없다")
+    a = csrf_for("session-a", key)
+    if not all(csrf_ok(a, csrf_for("session-a", key))
+               for _ in range(int(_checks_cfg()["csrf_repeat"]))):
+        bad.append("같은 세션인데 토큰이 매번 다르다")
+    if csrf_ok(a, csrf_for("session-b", key)):
+        bad.append("★ 다른 세션의 토큰이 통과한다")
+    # ★ 메모리 dict 에 쌓고 있으면 재시작에 무효가 된다 — 그 자리를 찾는다
+    app = open(os.path.join(ROOT, "web", "app.py"), encoding="utf-8").read()
+    if "csrf_for(" not in app:
+        bad.append("토큰을 세션에서 만들지 않는다")
+    return result(C["V11-99"], rid, "5번 다 통과",
+                  "통과" if not bad else bad, not bad, bad)
+
+
 def _origin_price_check(rid):
     """V11-92 — 신차가 = 등급기준 + 선택옵션 (개정 301).
 
@@ -1499,7 +1588,8 @@ def _v1_parity_checks(rid):
                 continue          # v1 에 없던 것은 요구하지 않는다
             if not any(x in src_b for x in in_v2):
                 bad69.append(f"{v2_name} — {op}")
-    return [_origin_price_check(rid),
+    return [_chunk_check(rid), _csrf_reuse_check(rid),
+            _origin_price_check(rid),
             result(C["V11-68"], rid, "열",
                    f"{len(want) - len(bad68)}/{len(want)}", not bad68, bad68),
             result(C["V11-69"], rid, "화면별 조작",

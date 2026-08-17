@@ -14,7 +14,7 @@ import sqlite3
 from contracts import ANONYMOUS, ROLE_ADMIN, ROLE_USER
 from web.context import Banner, HTTP_OK, HTTP_SEE_OTHER, PageContext
 from web.routes import ROUTES
-from web.session import csrf_ok, new_csrf
+from web.session import csrf_for, csrf_ok, new_csrf
 
 FLASH_KEY = "flash"
 
@@ -186,9 +186,15 @@ def check_post(req: dict, expected_csrf: str | None) -> None:
     """★ 전 POST 에 CSRF 를 요구한다.  불일치면 403 (STEP 147)."""
     from errors import PolicyError
 
-    if not csrf_ok(expected_csrf, req.get("form", {}).get("csrf")):
-        raise PolicyError("요청을 확인하지 못했습니다. 화면을 새로 열어 주십시오",
-                          step="STEP 147")
+    got = req.get("form", {}).get("csrf")
+    if not csrf_ok(expected_csrf, got):
+        # ★ 「저장 403」만 내면 원인을 모른다 (개정 308).  무엇이 어긋났는지 밝힌다
+        why = ("폼에 토큰이 없습니다" if not got
+               else "토큰이 이 세션의 것이 아닙니다 — "
+                    "다른 계정으로 로그인했거나 로그아웃됐습니다")
+        raise PolicyError(
+            f"요청을 확인하지 못했습니다 ({why}). 화면을 새로 열어 주십시오",
+            step="STEP 147")
 
 
 # 다음 GET 에서 낼 알림.  ★ HTTP 헤더에 담지 않는다 — 한글이 안 들어간다
@@ -265,6 +271,13 @@ def make_app(db_path: str, root: str = ".", plan=None,
 
     cfg = load_web_config(root)
     csrf_by_session: dict[str, str] = {}
+    # ★ 토큰을 세션 키에서 만든다 (개정 308).  재시작·워커 증설에 견딘다
+    try:
+        from store.pii import load_key
+
+        _csrf_secret = load_key(os.path.join(root, "secrets", "plate_hmac.key"))
+    except (FileNotFoundError, ValueError):
+        _csrf_secret = b""
 
     def account_of(req) -> object:
         from datetime import datetime, timezone
@@ -295,12 +308,18 @@ def make_app(db_path: str, root: str = ".", plan=None,
             conn.close()
 
     def _csrf_for(req) -> str:
-        """세션당 토큰 1개 (STEP 147).
+        """세션당 토큰 1개 (STEP 147 · 개정 308).
 
         ★ 세션이 없어도 토큰이 필요하다 — 로그인 폼도 POST 다.
           그때는 요청 쿠키를 키로 쓰고, 없으면 익명 키를 쓴다
+        ★ 세션 키에서 만든다.  서버에 쌓지 않는다 —
+          실측 08-17: 메모리 dict 라 재시작하면 전부 무효가 됐고,
+          마스터의 전 차종 수집이 첫 묶음만 되고 나머지 7개가 403 이었다
         """
         key = read_cookie(req.get("cookie"), cfg["session_cookie"]) or "-"
+        if _csrf_secret:
+            return csrf_for(key, _csrf_secret)
+        # 키가 없으면(설치 전) 옛 방식으로 돈다.  ★ 조용히 막지 않는다
         if key not in csrf_by_session:
             csrf_by_session[key] = new_csrf()
         return csrf_by_session[key]
