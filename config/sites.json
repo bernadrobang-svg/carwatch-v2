@@ -4,22 +4,39 @@
     "label": "엔카",
     "status": "active",
     "order": 1,
-    "multi_instance": false
+    "multi_instance": false,
+    "site_grade_rule": {
+      "all_of": {
+        "diagnosis_car": 1,
+        "site_pass_grade": "CLEAR"
+      }
+    },
+    "_site_grade_note": "엔카진단 + 우수등급(encarPassGrade=CLEAR). 실측 08-17 — 우수등급 490건"
   },
   "kcar": {
     "label": "K카",
     "status": "planned",
-    "order": 2
+    "order": 2,
+    "site_grade_rule": {
+      "all_of": {}
+    }
   },
   "kbchachacha": {
     "label": "KB차차차",
     "status": "planned",
-    "order": 3
+    "order": 3,
+    "site_grade_rule": {
+      "all_of": {}
+    }
   },
   "dealer_site": {
     "label": "딜러 자체",
     "status": "planned",
     "order": 9,
-    "multi_instance": true
-  }
+    "multi_instance": true,
+    "site_grade_rule": {
+      "all_of": {}
+    }
+  },
+  "_site_grade_note": "사이트마다 「무엇이 우수등급인가」가 다르다 (개정 306). all_of 가 비면 「등록된 것 자체가 우수등급」이다. ★ 코드에 사이트 이름을 박지 않는다"
 }

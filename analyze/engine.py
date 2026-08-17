@@ -8,16 +8,18 @@
 from __future__ import annotations
 
 from analyze.axes import AxisContext
+from analyze.axis.site import analyze_site
 from analyze.axis.state import analyze_state
 from analyze.axis.taste import analyze_taste
 from analyze.axis.trim import analyze_trim
 from analyze.axis.value import analyze_value
 from analyze.verdict import Verdict
 
-# ★ 개정 292 로 축이 다시 짜였다 — 값 250 · 상태 180 · 사양 75 · 취향 50.
+# ★ 개정 292·306 으로 축이 다시 짜였다 —
+#   값 250 · 상태 180 · 사양 75 · 사이트 보증 50 · 취향 50 = 605.
 #   옛 축 함수(analyze_price · analyze_spec 등)는 그 안에서 재료로 쓰인다
 ANALYZERS = (
-    analyze_value, analyze_state, analyze_trim, analyze_taste,
+    analyze_value, analyze_state, analyze_trim, analyze_site, analyze_taste,
 )
 
 

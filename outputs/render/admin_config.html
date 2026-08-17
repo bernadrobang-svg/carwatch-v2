@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>설정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2a38629c5a">
+<link rel="stylesheet" href="/static/app.css?v=2640b7eaa0">
 
 </head>
 <body class="s-admin-config">
@@ -119,7 +119,7 @@
 
 <tr>
   <td class="runid" data-label="키">total_points</td>
-  <td class="num" data-label="현재 값">555</td>
+  <td class="num" data-label="현재 값">605</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -297,6 +297,57 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="components.spec.options">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">components.site.certified</td>
+  <td class="num" data-label="현재 값">30</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="components.site.certified">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">components.site.inspection</td>
+  <td class="num" data-label="현재 값">12</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="components.site.inspection">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">components.site.warranty</td>
+  <td class="num" data-label="현재 값">8</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="components.site.warranty">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -1733,6 +1784,57 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="키">axis_rules.site.inspection_official</td>
+  <td class="num" data-label="현재 값">12</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.site.inspection_official">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">axis_rules.site.inspection_seller</td>
+  <td class="num" data-label="현재 값">4</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.site.inspection_seller">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">axis_rules.site.inspection_none</td>
+  <td class="num" data-label="현재 값">0</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.site.inspection_none">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="키">peer_year_window</td>
   <td class="num" data-label="현재 값">1</td>
   <td class="muted" data-label="형">int</td>
@@ -2125,7 +2227,7 @@
 
 <tr>
   <td class="runid" data-label="키">grade_base_points</td>
-  <td class="num" data-label="현재 값">505</td>
+  <td class="num" data-label="현재 값">555</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2194,7 +2296,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260816T172401</span>
-  <span>2026-08-17 08:47</span>
+  <span>2026-08-17 09:05</span>
 </footer>
 
 </body>

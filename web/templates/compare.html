@@ -1,4 +1,9 @@
 <h1>비교</h1>
+<div class="bar">
+  <a class="btn" href="/listings" title="목록으로 돌아가 더 담습니다">목록에서 더 담기</a>
+  <a class="btn" href="/recommend" title="추천에서 담습니다">추천에서 담기</a>
+  <a class="clear" href="/compare">전부 지우기</a>
+</div>
 {% if !c.rows %}<p class="muted">비교할 매물을 고르십시오. <code>/compare?ids=1,2</code></p>{% endif %}
 {% if c.denominator_mismatch %}
 <p class="warn-warn">★ 분모가 다릅니다. 총점을 직접 비교하지 마십시오 — 비율로 보십시오.</p>

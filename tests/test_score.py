@@ -163,7 +163,8 @@ def test_components_form() -> None:
           isinstance(raw["components"]["taste.sunroof"], dict))
     raw["total_points"] = total_of(raw["components"])
     check("스킵한 만큼 총점이 준다",
-          raw["total_points"] == 555 - POLICY.comp("taste.sunroof"),
+          raw["total_points"] == POLICY.raw["total_points"]
+          - POLICY.comp("taste.sunroof"),
           str(raw["total_points"]))
 
     p = ScoringPolicy(raw)
@@ -176,7 +177,7 @@ def test_components_form() -> None:
     for c in COMPONENTS:
         put(v, c, p.comp(c), PRIO_OBSERVED, "test")
     r2 = score(v, p)
-    want = 555 - POLICY.comp("taste.sunroof")
+    want = POLICY.raw["total_points"] - POLICY.comp("taste.sunroof")
     check("★ 스킵은 총점에도 분모에도 없다 (excluded 와 다르다)",
           r2.denominator == want and r2.score_total == want,
           f"{r2.score_total}/{r2.denominator}")
@@ -186,14 +187,15 @@ def test_grade() -> None:
     from score.grade import grade_cut_points
 
     # ★ 판정은 비율이다.  점수 컷이 아니다 (STEP 84)
-    # ★ 개정 292 — 505 기준 실측 분포에서 S 상위 1% · A 5% · B 20% · C 40%
-    check("등급컷은 비율 0.75/0.69/0.60/0.53",
-          [c for _, c in cutoffs(POLICY)] == [0.75, 0.69, 0.60, 0.53],
+    # ★ 개정 306 — 555(취향 제외) 기준 실측 분포에서 상위 1% · 5% · 20% · 40%
+    check("등급컷은 비율 0.73/0.68/0.61/0.55",
+          [c for _, c in cutoffs(POLICY)] == [0.73, 0.68, 0.61, 0.55],
           str(cutoffs(POLICY)))
     # ★ 등급컷 점수는 505 기준이다 (개정 292).  555 로 곱하면 어긋난다
     base = POLICY.raw["grade_base_points"]
-    want = [math.ceil(base * 0.75)] + [math.floor(base * r)
-                                       for r in (0.69, 0.60, 0.53)]
+    cuts = [float(POLICY.raw["grade_cuts"][g]) for g in ("S", "A", "B", "C")]
+    want = [math.ceil(base * cuts[0])] + [math.floor(base * r)
+                                          for r in cuts[1:]]
     check(f"「{base} 기준」 {want} 는 표시용",
           [c for _, c in grade_cut_points(POLICY)] == want,
           str(grade_cut_points(POLICY)))
@@ -207,9 +209,9 @@ def test_grade() -> None:
                                     None, earned, den), POLICY)
 
     check("★ 90.9% → S", g(450, 495.0) == "S", f"{450 / 495:.1%}")
-    check("★ 83.4% → S (개정 292 컷 75%)", g(441.91, 530.0) == "S")
+    check("★ 83.4% → S (개정 306 컷 73%)", g(441.91, 530.0) == "S")
     # ★ E-1 — score_total 로 재면 한 등급 부풀려진다 (실측)
-    check("★ 245/455 = 53.8% → C (컷 53%)", g(245, 455.0) == "C")
+    check("★ 245/455 = 53.8% → D (컷 55%)", g(245, 455.0) == "D")
     check("★ 298.85 를 쓰면 65.7% → B 로 올라간다 (그래서 안 쓴다)",
           g(298.85, 455.0) == "B")
     check("분모가 0 이면 NOT_RATED", g(100, 0) == "NOT_RATED")

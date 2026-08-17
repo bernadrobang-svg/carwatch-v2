@@ -1,7 +1,7 @@
 {
   "calc_version": "c1",
   "_ref": "지시서 7장 STEP 68 (배점) · STEP 71 (가격 곡선) · STEP 83 (분모) · STEP 84 (등급)",
-  "total_points": 555,
+  "total_points": 605,
   "components": {
     "value.market": 120,
     "value.depreciation": 70,
@@ -13,6 +13,9 @@
     "state.warranty": 15,
     "spec.trim": 45,
     "spec.options": 30,
+    "site.certified": 30,
+    "site.inspection": 12,
+    "site.warranty": 8,
     "taste.hud": 15,
     "taste.sunroof": 10,
     "taste.color": 10,
@@ -29,10 +32,10 @@
     "hash_rounds": 200000
   },
   "grade_cuts": {
-    "S": 0.75,
-    "A": 0.69,
-    "B": 0.6,
-    "C": 0.53
+    "S": 0.73,
+    "A": 0.68,
+    "B": 0.61,
+    "C": 0.55
   },
   "price_curve": [
     {
@@ -338,6 +341,13 @@
         "neutral": 7,
         "avoided": 3
       }
+    },
+    "site": {
+      "_note": "개정 306 ⑤ — 우수등급 30 · 점검 출처 12 · 플랫폼 보증 잔여 8",
+      "inspection_official": 12,
+      "inspection_seller": 4,
+      "inspection_none": 0,
+      "_inspection_note": "「모든 책임은 판매자에게 있습니다」 — 판매자 등록은 3분의 1만 (개정 300)"
     }
   },
   "_peer_note": "유사군 파라미터 (7장 STEP 82e). 지시서 34번 개정으로 dealer_trust.json 에서 이관",
@@ -380,9 +390,9 @@
     0.5,
     0.75
   ],
-  "grade_base_points": 505,
-  "_grade_base_note": "①+②+③ = 505 가 「시장이 보는 값」이다. ④ 50 은 「내가 원하는가」다 (개정 292 · V3-46)",
-  "_grade_cuts_note": "505 기준 실측 분포에서 S 상위 1% · A 5% · B 20% · C 40% (개정 292)",
+  "grade_base_points": 555,
+  "_grade_base_note": "①값 250 + ②상태 180 + ③사양 75 + ⑤사이트 보증 50 = 555 가 「시장이 보는 값」이다.  ④취향 50 은 「내가 원하는가」라 순위에만 쓴다 (개정 306 · V3-57)",
+  "_grade_cuts_note": "555(취향 제외) 기준 실측 분포에서 S 상위 1% · A 5% · B 20% · C 40% — 그 자리의 비율을 반올림했다 (개정 306 재계산 08-17). ★ 개정 292 때 제안한 75/69/60/53 은 505 기준이었다",
   "score_core_axes": [
     "value.market",
     "value.depreciation",

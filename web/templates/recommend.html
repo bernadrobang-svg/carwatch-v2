@@ -1,82 +1,91 @@
 <h1>후보 <small>{{ funnel.shown | num }}건</small></h1>
 
-<p class="dim">판정 <strong>{{ funnel.judged | num }}건</strong>
-  → E · 미판정 <strong>{{ funnel.dropped | num }}건</strong> 뺌
-  → 후보 <strong>{{ funnel.eligible | num }}건</strong>
-  → 이 쪽 <strong>{{ funnel.shown | num }}건</strong>
-  <span class="dim">★ 후보가 적으면 어느 단계에서 줄었는지 여기서 봅니다</span></p>
+{# ★ 조건을 한 줄로.  「왜 이 목록인지」가 먼저다 (개정 304) #}
+<p class="cond"><strong>{{ funnel.shown | num }}건</strong> —
+  E · 미판정을 뺀 후보 <strong>{{ funnel.eligible | num }}건</strong> 중
+  <strong>이유를 댈 수 있는 것</strong>만 · 비율 높은 순
+  <span class="dim">판정 {{ funnel.judged | num }}건
+    → E · 미판정 {{ funnel.dropped | num }}건 뺌</span></p>
 
-<p class="notice">
-  ⓘ <strong>점수순이 아닙니다.</strong> 예산 · 월납입 · 확인 못 한 축을 함께 봅니다.
-  「확인 못 한 것」은 그 축을 채웠을 때 오를 수 있는 항목입니다.
-</p>
+{# 조작은 목록과 같은 자리 · 같은 모양 (개정 306 §3 · STEP 148) #}
+<div class="bar">
+  <form class="inline" method="get" action="/recommend">
+    {% for h in carry %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
+    <select name="order" onchange="this.form.submit()" title="무엇을 먼저 볼지 고릅니다">
+      {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
+    </select>
+    <noscript><button type="submit" class="mini">정렬</button></noscript>
+  </form>
+  {% for b in buttons %}{% if b.url %}<a class="btn{% if b.on %} on{% endif %}"
+    href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endif %}{% endfor %}
+  <a class="clear" href="/recommend">전부 지우기</a>
+</div>
 
 {% if !count %}
-<p class="muted">아직 후보가 없습니다. 판정이 끝나면 나옵니다.</p>
+<div class="empty">
+  <h3>이유를 댈 수 있는 후보가 없습니다</h3>
+  <p class="dim">★ 「그냥 점수가 높아서」는 추천이 아닙니다 (개정 304).
+    시세보다 싸거나 · 무사고거나 · 플랫폼이 보증하는 것만 냅니다</p>
+</div>
 {% endif %}
 
+{% if count %}
+{# ★ 목록은 요약이다 — 한 매물이 한 줄.  근거는 /why 로 (개정 303) #}
+<table class="rows">
+<thead><tr>
+<th class="c">사진</th><th class="c">관심</th>
+<th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
+<th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
+<th class="r">가격</th><th class="r">시세차</th><th>왜 이 순위인가</th>
+<th class="c">보기</th>
+</tr></thead>
+<tbody>
 {% for r in rows %}
-<article class="cand">
-  <header>
-    <span class="{{ r.grade | gradecls }}">{{ r.grade }}</span>
-    <strong>{{ r.target_label }} {{ r.trim }}</strong>
-    <span class="muted">{{ r.year_month }} · {{ r.mileage_km | km }}</span>
-    <span class="price">{{ r.price_won | won }}</span>
-  </header>
-
-  <div class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다">
-    <div class="got" style="width:{{ r.got_pct }}%"></div>
-    <div class="may" style="width:{{ r.may_pct }}%"></div>
-  </div>
-  <p class="sum dim">지금 <span class="num">{{ r.earned | num }}/{{ r.denominator | num }} = {{ r.ratio_pct }}%</span>
-    · <b>{{ r.grade }}</b>
-    {% if r.upside_points %}→ <strong>17축 전건</strong> 기준으로 확인 못 한 축이
-    <span class="num">{{ r.upside_points | num }}점</span> 남아 있습니다.
-    채우면 만점 대비 <span class="num">{{ r.may_pct }}%</span>가 더 열립니다{% endif %}
-    {% if !r.upside_points %}→ 확인 못 한 축이 없습니다{% endif %}</p>
-
-  <p class="meta muted">
-    월 {{ r.monthly_won | won }} · 딜러 {{ r.dealer_shop }} ·
-    게시 {{ r.days_on_market | num }}일
-  </p>
-
-  {% if r.strengths %}
-  <p class="pros"><b>강점</b>
-    {% for c in r.strengths %}<span class="chip-good">{{ c.label }}</span>{% endfor %}
-  </p>
-  {% endif %}
-
-  {% if r.weaknesses %}
-  <p class="cons"><b>약점</b>
-    {% for c in r.weaknesses %}<span class="chip-bad">{{ c.label }}</span>{% endfor %}
-  </p>
-  {% endif %}
-
-  {% if r.unknowns %}
-  <p class="unknown"><b>위 축 중 확인 못 한 것</b> — 채우면 오를 수 있습니다
-    {% for c in r.unknowns %}<span class="chip-unknown">{{ c.label }}</span>{% endfor %}
-  </p>
-  {% endif %}
-  {% if !r.unknowns %}
-  <p class="muted">위에 적은 축은 전부 판정됐습니다.
-    {% if r.upside_points %}<strong>다만 화면에 안 적은 축에
-    {{ r.upside_points | num }}점이 남아 있습니다</strong> —
-    <a href="/why/{{ r.listing_id }}" title="17축 전건을 봅니다">근거에서 17축 전건</a>을 보십시오.{% endif %}</p>
-  {% endif %}
-
-  <p class="act"><a href="/why/{{ r.listing_id }}">판정 근거</a>
+<tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}">
+  <td class="c photo" data-label="사진">
+    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
+    {% if !r.photo_url %}<span class="nophoto" title="원문에 사진이 없습니다"></span>{% endif %}
+  </td>
+  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
       <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
-      <button type="submit" class="mini">＋ 관심</button>
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
-  </p>
-</article>
+  </td>
+  <td class="c" data-label="등급"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></td>
+  <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}</td>
+  <td class="r num" data-label="비율">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
+    <span class="raw">{{ r.earned }}/{{ r.denominator }}</span>
+    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:{{ r.got_pct }}%"></i><i class="may" style="width:{{ r.may_pct }}%"></i></span>{% endif %}</td>
+  <td data-label="차종">{{ r.target_label }}</td>
+  <td data-label="트림">{{ r.trim }}</td>
+  <td class="r" data-label="연식">{{ r.year_month }}</td>
+  <td class="r num" data-label="주행">{{ r.mileage_km | km }}</td>
+  <td class="r num" data-label="가격"><b>{{ r.price_won | won }}</b></td>
+  <td class="r num gap" data-label="시세차">
+    {% if r.market_gap_won %}<span class="{{ r.market_gap_won | signcls }}">{{ r.market_gap_won | signwon }}</span>{% endif %}
+    {% if !r.market_gap_won %}<span class="dim">—</span>{% endif %}
+  </td>
+  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <td data-label="왜 이 순위인가"><span class="reason">{{ r.recommend_reason }}</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
+    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini">엔카 ↗</a>{% endif %}
+    <a href="/compare?ids={{ r.listing_id }}" class="mini">⇄ 비교</a>
+  </td>
+</tr>
 {% endfor %}
+</tbody>
+</table>
+{% endif %}
 
 <h2>왜 이 순서인가</h2>
-<p class="muted">점수순이 아닙니다. 예산 · 월납입 · 제외 축을 함께 봅니다.
-  같은 비율이면 값이 싼 쪽이, 그것도 같으면 먼저 본 매물이 앞입니다.</p>
+<p class="muted">점수순이 아닙니다. 예산 · 월납입 · 확인 못 한 축을 함께 봅니다.
+  같은 비율이면 값이 싼 쪽이, 그것도 같으면 먼저 본 매물이 앞입니다.
+  <strong>이유를 못 대는 매물은 아예 내지 않습니다</strong> (개정 304).</p>
 
 {% if r.excluded_groups %}
 <h2>후보에서 뺀 것 {{ r.excluded_total | num }}건</h2>

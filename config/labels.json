@@ -15,6 +15,10 @@
     "state.warranty": "보증",
     "spec.trim": "트림",
     "spec.options": "옵션",
+    "site": "사이트 보증",
+    "site.certified": "우수등급",
+    "site.inspection": "점검 출처",
+    "site.warranty": "플랫폼 보증",
     "taste.hud": "HUD",
     "taste.sunroof": "선루프",
     "taste.color": "색상",
@@ -85,6 +89,14 @@
     "value.depreciation": {
       "1": "감가 대비 싸다",
       "0": "감가 대비 비싸다"
+    },
+    "site.certified": {
+      "1": "우수등급",
+      "0": "우수등급 없음"
+    },
+    "site.inspection": {
+      "1": "플랫폼 직영 점검",
+      "0": "점검 없음"
     }
   }
 }

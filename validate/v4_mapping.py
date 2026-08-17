@@ -482,7 +482,9 @@ TARGET_CONFIG_KEYS = ("as_of", "depreciation", "SPEC_DEFAULT_ON",
                       # 차종 단위 — 그 차종의 트림 신차가 사다리 (개정 292 ③)
                       "trim_ladder",
                       # 실행 단위 — 사용자가 끈 취향 · 고른 옵션 (개정 292 ④)
-                      "taste_off", "picked_options")
+                      "taste_off", "picked_options",
+                      # 사이트 단위 — 그 사이트의 우수등급 규칙 (개정 306)
+                      "site_grade_rule")
 
 
 def _listing_value_scope_check(rid):

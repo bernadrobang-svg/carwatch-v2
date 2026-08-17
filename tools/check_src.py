@@ -276,9 +276,14 @@ if os.path.isfile(sc_path):
               if not (isinstance(v, dict) and v.get("skipped"))}
     if sum(active.values()) != total:
         bad.append(f"배점 합 {sum(active.values())} != total_points {total}")
-    spec_total = re.search(r"\| \*\*합\*\* \| \*\*(\d+)\*\*", S)
-    if spec_total and int(spec_total.group(1)) != total:
-        bad.append(f"total_points {total} != 지시서 {spec_total.group(1)}")
+    # ★ 배점표가 여러 판 실려 있다 (개정 292 555 → 개정 306 605).
+    #   갈래 소계표(사양 90 등)와 섞이지 않게 5장 배점표만 본다.
+    #   그 안에서 가장 나중 것이 최신이다 — 첫 것을 잡으면 옛 판과 대조한다
+    frame = next((b for f, b in _spec_files(SPEC)
+                  if f.endswith("a-frame.md")), "")
+    spec_totals = re.findall(r"\| \*\*합\*\* \| \*\*(\d+)\*\*", frame)
+    if spec_totals and int(spec_totals[-1]) != total:
+        bad.append(f"total_points {total} != 지시서 {spec_totals[-1]}")
     claim = re.search(r"총 (\d+)행", S)
     if claim and len(active) != int(claim.group(1)):
         bad.append(f"Component {len(active)} != 지시서 {claim.group(1)}")

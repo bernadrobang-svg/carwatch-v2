@@ -1515,3 +1515,28 @@ body.s-listings main { max-width:1560px; }
 /* ★ 시안의 .thumb-none(56px)이 앞에 있다.  뒤에서 덮는다 —
    사진이 없는 칸도 같은 크기여야 표가 흔들리지 않는다 (V11-80) */
 .thumb-none { width:128px; height:86px; font-size:11px; }
+
+/* ── 개정 305 · 306 — 매물 화면 여섯의 공통 조작 ─────────────────────
+   ★ 같은 것은 같은 자리 · 같은 모양 (STEP 148).
+     ♡ 는 제목 줄에 — 훑다가 바로 담는다.  카드 끝까지 안 내려간다 */
+.heart {
+  background:none; border:none; cursor:pointer; padding:2px 4px;
+  font-size:16px; line-height:1; color:var(--dim);
+}
+.heart:hover { color:var(--amber); }
+.heart.on { color:var(--amber); }
+/* 사진이 없는 자리.  ★ 빈 칸으로 두면 줄이 흔들린다 */
+.nophoto {
+  display:block; width:100%; aspect-ratio:4/3; border-radius:6px;
+  background:var(--surface); border:1px solid var(--line);
+}
+/* 왜 이 순위인가 — 문장 하나 (개정 304) */
+.rows td .reason { font-size:12px; color:var(--fg); white-space:normal; }
+
+/* 시안 v2_recommend 의 진행 막대 — 한 줄에 들어가게 얇게 (개정 303) */
+.rows .pbar {
+  display:flex; height:4px; border-radius:2px; overflow:hidden;
+  background:var(--line); margin-top:3px; width:100%;
+}
+.rows .pbar .got { background:var(--down); }
+.rows .pbar .may { background:var(--line); opacity:.7; }

@@ -189,6 +189,8 @@ class ListingSnapshot:
     #   매물별 값이라 target_config 에 숨기지 않는다 (F-1 · V4-24)
     market_median_won: int | None = None
     market_sample_n: int | None = None
+    # ★ 점검 출처 — TABLE 플랫폼 직영 · IMAGE 판매자 등록 (개정 300 · 306)
+    inspection_formats: list | None = None
 
 
 @dataclass(frozen=True)

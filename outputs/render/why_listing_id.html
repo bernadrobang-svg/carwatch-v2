@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>판정 근거 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2a38629c5a">
+<link rel="stylesheet" href="/static/app.css?v=2640b7eaa0">
 
 </head>
 <body class="s-why">
@@ -89,6 +89,15 @@
 <p class="muted">GRANDEUR_LPG · 매물 3
   · <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=38016911" target="_blank" rel="noopener"
     title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a></p>
+<p class="act">
+  {# ★ 어디서나 같은 자리에 ♡ (개정 305) #}
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="listing_id" value="3">
+    <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+  </form>
+  <a href="/compare?ids=3" class="mini">⇄ 비교</a>
+</p>
 <p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
 
 
@@ -141,7 +150,7 @@
 
 
 <p class="score">
-  <strong>233</strong> / 555
+  <strong>233</strong> / 605
   <span class="muted">판정할 수 없는 축은 분모에서 뺍니다 ·
     555 기준 환산 0</span>
 </p>
@@ -196,6 +205,30 @@
 <thead><tr><th>축</th><th class="num">점수</th><th class="num">배점</th>
 <th>근거</th><th>우선순위</th></tr></thead>
 <tbody>
+
+<tr>
+  <td><a href="/listings?axis=site.certified">우수등급</a></td>
+  <td class="num">0</td>
+  <td class="num">30</td>
+  <td>site_grade_rule</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=site.inspection">점검 출처</a></td>
+  <td class="num">0</td>
+  <td class="num">12</td>
+  <td>inspection_none</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=site.warranty">플랫폼 보증</a></td>
+  <td class="num">0</td>
+  <td class="num">8</td>
+  <td>no_platform_warranty</td>
+  <td>2</td>
+</tr>
 
 <tr>
   <td><a href="/listings?axis=spec.options">옵션</a></td>
@@ -322,8 +355,8 @@
 <h2>확인 못 한 것 — 채우면 오를 수 있습니다</h2>
 
 
-<p class="muted">없습니다. 14 Component 전부 판정됐습니다 —
-  확인율 100% 입니다 (분모 555점 · 개정 298).</p>
+<p class="muted">없습니다. 17 Component 전부 판정됐습니다 —
+  확인율 100% 입니다 (분모 605점 · 개정 298).</p>
 
 
 <h2>왜 이 등급인가</h2>
@@ -331,7 +364,7 @@
 <p><b>강점</b><span class="chip-good">옵션</span><span class="chip-good">보증</span><span class="chip-good">색상</span><span class="chip-good">HUD</span><span class="chip-good">지정 옵션</span><span class="chip-good">선루프</span><span class="chip-good">주행</span></p>
 
 
-<p><b>약점</b><span class="chip-bad">용도 0/25</span></p>
+<p><b>약점</b><span class="chip-bad">우수등급 0/30</span><span class="chip-bad">점검 출처 0/12</span><span class="chip-bad">플랫폼 보증 0/8</span><span class="chip-bad">용도 0/25</span></p>
 
 
 
@@ -392,7 +425,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260816T172401</span>
-  <span>2026-08-17 08:47</span>
+  <span>2026-08-17 09:05</span>
 </footer>
 
 </body>

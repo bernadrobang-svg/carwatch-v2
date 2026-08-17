@@ -316,6 +316,8 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         options_standard=jload("options_standard_json"),
         options_choice=jload("options_choice_json"),
         inspection_panels=jload("inspection_panel_json"),
+        # ★ 점검 출처 — TABLE 플랫폼 직영 · IMAGE 판매자 등록 (개정 300 · 306)
+        inspection_formats=jload("inspection_formats_json"),
         flood_total_cnt=d.get("flood_total_cnt"),
         flood_part_cnt=d.get("flood_part_cnt"),
         total_loss_cnt=d.get("total_loss_cnt"),

@@ -93,6 +93,8 @@ class ListingRow:
     # 순위용 — 취향까지 넣은 555 기준 (개정 292 ④).  등급은 505 다
     rank_earned: float | None = None
     rank_total: float | None = None
+    # 왜 이 순위인가 — 한 문장 (개정 304).  ★ 태그 나열이 아니다
+    recommend_reason: str = ""
     why_cheap: str | None = None
     why_cheap_reasons: list = field(default_factory=list)
     # 대표 사진 주소 (개정 274).  ★ 우리가 내려받지 않는다 — ci.encar.com 을

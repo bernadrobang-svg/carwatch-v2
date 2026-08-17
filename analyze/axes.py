@@ -83,13 +83,14 @@ class AxisContext:
 
 
 # Component 목록 — result_axis 는 이 단위로 저장한다 (STEP 68 · 개정 292)
-# ★ 갈래별 합   값 250 · 상태 180 · 사양 75 · 취향 50 = 555
-#   등급은 ①+②+③ = 505 로 매긴다.  ④ 취향은 순위에만 쓴다
+# ★ 갈래별 합   값 250 · 상태 180 · 사양 75 · 사이트 보증 50 · 취향 50 = 605
+#   등급은 ①②③⑤ = 555 로 매긴다.  ④ 취향은 순위에만 쓴다 (개정 306)
 COMPONENTS: tuple[str, ...] = (
     "value.market", "value.depreciation", "value.mileage",
     "state.accident", "state.frame", "state.repair",
     "state.usage", "state.warranty",
     "spec.trim", "spec.options",
+    "site.certified", "site.inspection", "site.warranty",
     "taste.hud", "taste.sunroof", "taste.color", "taste.picked",
 )
 

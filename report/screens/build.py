@@ -22,7 +22,7 @@ from dataclasses import replace
 
 from report.finance import build_finance
 from report.render import render_listing, render_run
-from analyze.trust import inspection_source, platform_trust
+from analyze.trust import SOURCE_WORDS, inspection_source, platform_trust
 from report.why_cheap import verdict as why_verdict
 from report.screens.views import (
     MIN_SAMPLE,
@@ -54,6 +54,8 @@ GONE = "gone"
 CHIP_AXES = ("state.accident", "state.frame", "state.repair",
              "state.usage", "state.warranty",
              "spec.trim", "spec.options",
+             # ⑤ 사이트 보증 — 「누가 보증하느냐」가 값의 5분의 1이다 (개정 306)
+             "site.certified", "site.inspection",
              # 취향은 등급에 안 들어간다.  그래도 화면에는 낸다 (개정 292 ④)
              "taste.hud", "taste.sunroof")
 
@@ -365,7 +367,8 @@ def _warranty_state(got, as_of) -> tuple:
 # 축 → 상태를 어디서 가져오는가 (STEP 149n).
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
 STATE_AXES = ("state.warranty", "state.accident", "state.frame",
-              "state.repair", "state.usage", "spec.trim", "spec.options")
+              "state.repair", "state.usage", "spec.trim", "spec.options",
+              "site.certified", "site.inspection")
 
 
 # 렌트를 어디서 찾았는가 → 화면 문구 (개정 302).  ★ 「렌트 이력」만 내지 않는다
@@ -413,6 +416,13 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         if pts is None or not mx:
             return ""
         return f"상위 {max(1, 100 - round(pts / mx * 100))}%"
+    if axis == "site.certified":
+        # ★ 우수등급이 없으면 30점을 못 받는다.  그것이 「왜 싼가」의 첫 답이다
+        return "우수등급" if chip.tone == TONE_GOOD else "우수등급 없음"
+    if axis == "site.inspection":
+        # ★ 「모든 책임은 판매자에게 있습니다」 — 누가 점검했는지가 사실이다
+        return {"엔카직영 점검": "엔카직영", "점검을 판매자가 올렸습니다": "판매자 등록",
+                "": ""}.get(state.get("inspection_word", ""), "점검 없음")
     if axis == "spec.options":
         # ★ 옵션은 금액이다.  얼마짜리를 달았는지가 사실이다 (개정 301)
         won = state.get("option_won")
@@ -446,6 +456,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     _codes = json.loads(opt_json) if opt_json else []
     _opt_won = (sum((opt_prices or {}).get(c, 0) for c in _codes)
                 if isinstance(_codes, list) else 0)
+    _fmt = json.loads(insp_fmt) if insp_fmt else None
+    _insp_word = SOURCE_WORDS.get(inspection_source(_fmt), "")
     chips = []
     for axis in CHIP_AXES:
         if axis in got:
@@ -454,7 +466,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
             one = chip(axis, None, True, labels)
         # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)
         chips.append(replace(one, state=_axis_state(
-            axis, one, dict(st, option_won=_opt_won, points={
+            axis, one, dict(st, option_won=_opt_won,
+                            inspection_word=_insp_word, points={
                 a: (v[0], v[3]) for a, v in got.items()}),
             calc_at, (got.get(axis) or (0, 0, ""))[2])))
     _confirm = confirm_ratio(got, float(denom or _total_points()))
@@ -673,7 +686,8 @@ def count_listings(conn: sqlite3.Connection, flt: ListingFilter) -> int:
 def view_listings(account: Account, conn: sqlite3.Connection,
                   flt: ListingFilter, fin_cfg: dict, root: str = ".",
                   page_size: int | None = None,
-                  extras: bool = True) -> list[ListingRow]:
+                  extras: bool = True,
+                  with_state: bool = True) -> list[ListingRow]:
     """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1."""
     where, args = _listings_where(flt)
 
@@ -716,7 +730,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     changes = _bulk_changes(conn, lids)
     # ★ 화면이 안 쓰는 값은 안 받는다 (V11-34).  현황판은 등급·가격만 쓴다 —
     #   상태·시세까지 받으면 한 화면이 3쿼리씩 무거워진다
-    state_by = _bulk_state(conn, lids) if extras else {}
+    state_by = _bulk_state(conn, lids) if (extras and with_state) else {}
     market_by = _bulk_market(conn, lids, root) if extras else {}
     base = _view_str("photo_base_url", root)
     encar_tpl = _view_str("encar_detail_url", root)
@@ -728,7 +742,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
     first = 0 if flt.show_all else (flt.page - 1) * page_size
     # ★ 옵션가 사전은 한 번만 읽는다 (개정 301).  행마다 읽으면 쿼리가 는다
-    opt_prices = _option_prices(conn) if extras else {}
+    opt_prices = _option_prices(conn) if (extras and with_state) else {}
     high_km = _high_km(root)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
                  opt_prices, axes, changes, base, encar_tpl, km_unit,
@@ -791,10 +805,11 @@ def _bulk_upside(conn, lids: list, calc_version: str) -> dict:
 
 def view_recommend(account: Account, conn, flt: ListingFilter,
                    fin_cfg: dict, root: str = ".",
-                   extras: bool = True) -> list[ListingRow]:
+                   extras: bool = True,
+                   with_state: bool = True) -> list[ListingRow]:
     """추천 대상만.  E 와 NOT_RATED 는 순위를 매기지 않는다 (7장 STEP 84)."""
     rows = [r for r in view_listings(account, conn, flt, fin_cfg, root,
-                                     extras=extras)
+                                     extras=extras, with_state=with_state)
             if r.grade not in ("E", NOT_RATED)]
     # ★ 「지금 얼마」와 「채우면 얼마까지」를 함께 낸다 (STEP 105 · 149h).
     #   지금 비율만 보면 이 차가 끝인지 아닌지 알 수 없다
@@ -806,9 +821,49 @@ def view_recommend(account: Account, conn, flt: ListingFilter,
         out.append(replace(
             r,
             upside_points=gain,
+            # ★ 이유를 못 대면 추천하지 않는다 (개정 304)
+            recommend_reason=recommend_reason(r),
             got_pct=round((r.earned or 0) / total * 100, 1) if total else 0.0,
             may_pct=round(gain / total * 100, 1) if total else 0.0))
-    return out
+    # ★ 이유를 못 댄 것은 뺀다.  「그냥 점수가 높아서」는 추천이 아니다 (개정 304).
+    #   ★ extras 를 끄면 시세·상태를 안 읽어 이유를 만들 재료가 없다 —
+    #     그때는 버리지 않는다.  「못 봤다」와 「이유가 없다」는 다르다
+    return [r for r in out if r.recommend_reason] if extras else out
+
+
+_EMPTY = AxisChip("", "", TONE_UNKNOWN, "")
+
+
+def recommend_reason(row) -> str:
+    """왜 이 순위인가 — 한 문장 (개정 304).
+
+    ★ 강점 태그 나열이 아니라 문장 하나다.
+      마스터 지적 — 「추천하는 이유가 내 눈에 보여야지」
+    금지   이유를 못 대는데 추천 목록에 두는 것
+    """
+    parts = []
+    if row.market_gap_won and row.market_gap_won < 0:
+        parts.append(f"시세보다 {abs(row.market_gap_won) // WON_PER_MANWON:,}만 싸고")
+    # ★ 축 점수로 만든다.  상태 문구에 기대면 그 조회를 켠 화면에서만 이유가 난다
+    full = {c.axis: c for c in row.axis_chips}
+    if (full.get("state.accident") or _EMPTY).tone == TONE_GOOD:
+        parts.append("무사고이며")
+    if (full.get("state.usage") or _EMPTY).tone == TONE_GOOD:
+        parts.append("렌트 이력이 없고")
+    if (full.get("site.certified") or _EMPTY).tone == TONE_GOOD:
+        parts.append("사이트가 우수등급을 준")
+    if not parts:
+        return ""
+    # ★ 조사를 이어 한 문장으로 만든다.  「무사고 엔카가 보증합니다」는 말이 아니다
+    last = parts[-1]
+    tail = {"싸고": "쌉니다", "무사고이며": "무사고입니다",
+            "렌트 이력이 없고": "렌트 이력이 없습니다",
+            "사이트가 우수등급을 준": "사이트가 우수등급을 줬습니다"}
+    for k, v in tail.items():
+        if last.endswith(k):
+            parts[-1] = last[:len(last) - len(k)] + v
+            break
+    return " ".join(parts)
 
 
 # 절대조건 탈락 사유별 안내.  ★ 「왜 뺐는지」가 판단 재료다 (시안 v2_recommend)
@@ -1201,9 +1256,11 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         target_stats=stats, recent_changes=changes,
         # ★ 상위 후보 — 점수순이 아니다.  view_recommend 와 같은 순서다
         # ★ 현황판은 등급·가격만 낸다.  상태·시세는 안 받는다 (V11-34)
+        # ★ 현황판에서도 「왜 이 순위인가」와 시세차를 봐야 한다 (개정 304).
+        #   다만 상태·옵션 조회는 끈다 — 이유는 축 점수로 만든다 (V11-34 쿼리 상한)
         finalists=view_recommend(
             account, conn, ListingFilter(calc_version=calc_version),
-            fin_cfg, root, extras=False)[:5],
+            fin_cfg, root, with_state=False)[:5],
         grade_counts=grade_counts,
         grade_rows=[{"grade": k, "count": v}
                     for k, v in grade_counts.items()],

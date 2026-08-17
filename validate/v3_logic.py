@@ -154,6 +154,17 @@ C = {
                    "이론가가 실제 시장보다 높으면 전부 「싸다」로 나온다. "
                    "그러면 「싸다」가 아무 뜻이 없다 (개정 282)",
                    KIND_EXTERNAL),
+    "V3-55": Check("V3", "V3-55", "사이트 보증 축이 config 규칙을 읽는가",
+                   FATAL, "run",
+                   "사이트마다 우수등급의 뜻이 다르다 — 엔카 진단+우수등급 · "
+                   "K카 등록됨.  코드에 사이트 이름을 박지 않는다 (개정 306)",
+                   KIND_CONTRACT),
+    "V3-56": Check("V3", "V3-56", "배점 합이 605", FATAL, "run",
+                   "합이 안 맞으면 비율이 뜻을 잃는다 (개정 306)",
+                   KIND_CONTRACT),
+    "V3-57": Check("V3", "V3-57", "등급이 555 기준", FATAL, "run",
+                   "취향 50 은 순위에만 쓴다 — 등급은 ①②③⑤ 555 다 (개정 306)",
+                   KIND_CONTRACT),
     "V3-52": Check("V3", "V3-52", "「싸다」에 이유가 붙어 있음", FATAL, "run",
                    "이유 없이 싼 차는 없다.  못 찾았으면 그렇게 적는다 "
                    "— 마스터 지적 「엔카 보증이 없는 것이 가격이 왜 싼지가 "
@@ -594,6 +605,54 @@ def _why_cheap_check(conn, rid):
                    dict(seen) if not bad53 else bad53, not bad53, bad53)]
 
 
+def _site_axis_checks(conn, rid):
+    """V3-55 · V3-56 · V3-57 — 사이트 보증 축과 605 배점 (개정 306)."""
+    import json
+    import os
+
+    from analyze.axes import GRADE_EXCLUDED_AXES, axis_of
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "scoring.json"), encoding="utf-8") as f:
+        pol = json.load(f)
+    with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
+        sites = json.load(f)
+
+    # V3-55 — 규칙이 config 에 있고 코드에 사이트 이름이 없는가
+    bad55 = []
+    active = [k for k, v in sites.items()
+              if isinstance(v, dict) and v.get("status") == "active"]
+    for site in active:
+        if not isinstance(sites[site].get("site_grade_rule"), dict):
+            bad55.append(f"{site} — site_grade_rule 이 없다")
+    src = open(os.path.join(root, "analyze", "axis", "site.py"),
+               encoding="utf-8").read()
+    body = "\n".join(ln for ln in src.splitlines()
+                     if not ln.lstrip().startswith("#"))
+    body = body.split('"""', 2)[-1]        # 파일 머리 설명은 뺀다
+    for site in sites:
+        if f'"{site}"' in body or f"'{site}'" in body:
+            bad55.append(f"코드에 사이트 이름 {site} 이 박혀 있다")
+
+    # V3-56 — 배점 합
+    total = sum(v if isinstance(v, int) else v.get("points", 0)
+                for v in pol["components"].values()
+                if not (isinstance(v, dict) and v.get("skipped")))
+    want = int(pol["total_points"])
+
+    # V3-57 — 등급 기준은 취향을 뺀 합인가
+    base = sum(v if isinstance(v, int) else v.get("points", 0)
+               for k, v in pol["components"].items()
+               if axis_of(k) not in GRADE_EXCLUDED_AXES
+               and not (isinstance(v, dict) and v.get("skipped")))
+    want_base = int(pol.get("grade_base_points") or 0)
+    return [
+        result(C["V3-55"], rid, 0, len(bad55), not bad55, bad55[:6]),
+        result(C["V3-56"], rid, want, total, total == want),
+        result(C["V3-57"], rid, want_base, base, base == want_base),
+    ]
+
+
 def _rendered_listings():
     import os
 
@@ -720,6 +779,7 @@ def run(conn, ctx) -> list:
     out.append(_fill_gap_check(conn, rid))
     out.append(_rental_cross_check(conn, rid))
     out += _why_cheap_check(conn, rid)
+    out += _site_axis_checks(conn, rid)
 
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL").fetchone()[0]

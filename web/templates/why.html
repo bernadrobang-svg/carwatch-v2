@@ -2,6 +2,15 @@
 <p class="muted">{{ v.target_key }} · 매물 {{ v.listing_id }}
   {% if v.encar_url %}· <a href="{{ v.encar_url }}" target="_blank" rel="noopener"
     title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a>{% endif %}</p>
+<p class="act">
+  {# ★ 어디서나 같은 자리에 ♡ (개정 305) #}
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="listing_id" value="{{ v.listing_id }}">
+    <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+  </form>
+  <a href="/compare?ids={{ v.listing_id }}" class="mini">⇄ 비교</a>
+</p>
 <p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
 
 {% if v.not_rated_reason %}

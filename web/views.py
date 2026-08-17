@@ -157,8 +157,11 @@ def dashboard(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                 root=root, flash_key=flash_key)
     dv = view_dashboard(account, conn, ver["run_id"], ver["calc_version"],
                         _cfg("finance.json", root), root)
-    return page(conn, account, "현황", "dashboard.html", {"d": dv}, csrf=csrf,
-                root=root, flash_key=flash_key)
+    return page(conn, account, "현황", "dashboard.html",
+                {"d": dv, "buttons": _filter_buttons(
+                    ListingFilter(calc_version=ver["calc_version"]),
+                    base="/listings")},
+                csrf=csrf, root=root, flash_key=flash_key)
 
 
 def admin_home(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
@@ -418,11 +421,13 @@ FILTER_BUTTONS = (
 AXIS_BUTTON_BUCKET = "1"
 
 
-def _filter_buttons(flt) -> list:
+def _filter_buttons(flt, base: str = "/listings") -> list:
     """자주 쓰는 조건을 단추로 (STEP 149t · V11-66 · V11-67).
 
     ★ 조건을 걸려면 표의 값을 눌러야만 하면 안 된다.
       표를 눌러 거는 것은 그것대로 두되, 위에도 있어야 한다
+    ★ base — 매물이 나오는 화면은 조작이 같다 (개정 306 §3).
+      추천에서 단추를 누르면 추천 안에서 걸려야 한다
     """
     import urllib.parse as _u
 
@@ -445,8 +450,7 @@ def _filter_buttons(flt) -> list:
         if flt.order != "rank":
             got["order"] = flt.order
         out.append({"label": label, "tip": tip, "on": on,
-                    "url": "/listings?" + _u.urlencode(got) if got
-                    else "/listings"})
+                    "url": base + "?" + _u.urlencode(got) if got else base})
     return out
 
 
@@ -494,16 +498,20 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
     )
 
     ver = _versions(conn)
-    rows = view_recommend(account, conn, _filter(conn, req.get("query", {}),
-                                                 ver),
-                          _cfg("finance.json", root), root)
+    flt = _filter(conn, req.get("query", {}), ver)
+    rows = view_recommend(account, conn, flt, _cfg("finance.json", root), root)
     # ★ 뺀 것을 숨기지 않는다.  왜 뺐는지가 판단 재료다 (G-1)
     groups = excluded_groups(conn, ver["calc_version"])
     # ★ 단계마다 숫자를 낸다 — 어디서 줄었는지 눈으로 본다 (7번).
     #   ★ SQL 은 web/ 에 두지 않는다 (V11-01)
     funnel = recommend_funnel(conn, ver["calc_version"], len(rows))
+    # ★ 매물이 나오는 화면은 조작이 같다 (개정 306 §3 · STEP 148).
+    #   목록에만 정렬·단추를 두면 추천이 v1 보다 못해진다
     return page(conn, account, "추천", "recommend.html",
                 {"rows": rows, "count": len(rows), "funnel": funnel,
+                 "buttons": _filter_buttons(flt, base="/recommend"),
+                 "orders": _order_menu(flt),
+                 "carry": _carry(flt),
                  "r": {"excluded_groups": groups,
                        "excluded_total": sum(g.count for g in groups)}},
                 root=root, csrf=csrf, flash_key=flash_key)

@@ -1439,9 +1439,29 @@ def _origin_price_check(rid):
                   "낸다" if not bad else bad, not bad, bad)
 
 
-def _v1_parity_checks(rid):
-    """V11-68 · V11-69 — v1 원본과 대조한다 (STEP 149o · 개정 277).
+# v1 이 낸 조작 → 그 조작을 v2 에서 찾는 무늬 (개정 303~305 · ORDER 08-17).
+# ★ 손으로 적은 표가 아니다 — v1 템플릿에 그 무늬가 있을 때만 「v1 에 있다」로 센다
+V1_OPS = {
+    "관심 ♡": (("♡", "watch/add", "관심"), ("♡", "watch/add", "관심")),
+    "미리보기": (("data-peek", "preview"), ("data-peek", "preview")),
+    "엔카 링크": (('target="_blank"',), ('target="_blank"',)),
+    "비교 담기": (("compare",), ("compare",)),
+    "정렬 드롭다운": (("<select",), ("<select",)),
+    "조건 단추": (("btn",), ("btn",)),
+}
+# ★ 매물이 나오는 화면 여섯만이다 (개정 306 §3).
+#   base 는 껍데기고 run·market·dealers 는 매물 목록이 아니다 — 요구하지 않는다
+V1_SCREENS = (("listings", "listings"), ("recommend", "recommend"),
+              ("why", "why"), ("dashboard", "dashboard"),
+              ("compare", "compare"), ("watch", "watch"))
 
+
+def _v1_parity_checks(rid):
+    """V11-68 · V11-69 — v1 전 화면과 대조한다 (개정 277 · 303~305).
+
+    ★ 가이드 지적 — 「개정 277 에서 v1 목록만 봤다.  추천은 안 봤다」
+      마스터가 화면을 볼 때마다 「v1 에 있던 것」이 하나씩 나온다.
+      검사가 한 번에 다 찾아야 한다 (ORDER_v1_compare 08-17)
     ★ 「v1 이 낸 것」을 v1 템플릿에서 직접 읽는다.  손으로 적은 표를 안 쓴다
     """
     src = os.path.join(V1_UI, "listings.html")
@@ -1451,6 +1471,7 @@ def _v1_parity_checks(rid):
     v1 = open(src, encoding="utf-8").read()
     ours = open(LISTINGS_TPL, encoding="utf-8").read()
 
+    # ── V11-68 — 목록 열 ─────────────────────────────────────────────
     head = re.search(r"<thead>(.*?)</thead>", v1, re.S)
     want = [re.sub(r"<[^>]+>", "", t).strip()
             for t in re.findall(r"<th[^>]*>(.*?)</th>", head.group(1), re.S)]
@@ -1463,22 +1484,27 @@ def _v1_parity_checks(rid):
         a["label"] for a in axis_heads(ROOT))
     bad68 = [w for w in want if w not in got]
 
-    # v1 이 가진 조작 — v1 템플릿에서 실제로 세어 확인한다
-    ops = {
-        "정렬 드롭다운": ("<select", "<select"),
-        "필터 단추 on/off": ("'on' if", "btn"),
-        "건수 표시": ("}}건", "건"),
-        "칩 해제": ("해제", "지우기"),
-        "엔카 링크": ('target="_blank"', 'target="_blank"'),
-        "미리보기": ("data-peek", "data-peek"),
-    }
-    bad69 = [name for name, (in_v1, in_v2) in ops.items()
-             if in_v1 in v1 and in_v2 not in ours]
+    # ── V11-69 — 화면마다 조작 ───────────────────────────────────────
+    # ★ 화면 하나만 보면 「listings 는 v1 수준인데 recommend 가 없다」를 못 본다
+    bad69 = []
+    for v1_name, v2_name in V1_SCREENS:
+        a = os.path.join(V1_UI, f"{v1_name}.html")
+        b = os.path.join(TEMPLATES, f"{v2_name}.html")
+        if not (os.path.isfile(a) and os.path.isfile(b)):
+            continue
+        src_a = open(a, encoding="utf-8").read()
+        src_b = open(b, encoding="utf-8").read()
+        for op, (in_v1, in_v2) in V1_OPS.items():
+            if not any(x in src_a for x in in_v1):
+                continue          # v1 에 없던 것은 요구하지 않는다
+            if not any(x in src_b for x in in_v2):
+                bad69.append(f"{v2_name} — {op}")
     return [_origin_price_check(rid),
             result(C["V11-68"], rid, "열",
                    f"{len(want) - len(bad68)}/{len(want)}", not bad68, bad68),
-            result(C["V11-69"], rid, "조작",
-                   f"{len(ops) - len(bad69)}/{len(ops)}", not bad69, bad69)]
+            result(C["V11-69"], rid, "화면별 조작",
+                   f"빠진 것 {len(bad69)}" if bad69 else "v1 과 같다",
+                   not bad69, bad69[:12])]
 
 
 # 확인할 폭 (마스터 지시 08-16).  ★ 360 이 기준이다 — 휴대폰으로 본다
