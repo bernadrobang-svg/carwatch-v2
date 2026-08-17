@@ -8,6 +8,14 @@
 """
 from __future__ import annotations
 
+import os as _os
+
+# ★ 검사 사본을 /tmp 에 두지 않는다 — 921MB tmpfs 인데 DB 가 484MB 다.
+#   실측 08-17: 「database or disk is full」로 검사가 통째로 죽었다
+CHECK_TMP = _os.path.join(
+    _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+    "outputs", "check-tmp")
+
 import ast
 import os
 
@@ -330,7 +338,7 @@ def _session_checks(rid) -> list:
     from store.raw import open_db
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    conn = open_db(os.path.join(tempfile.mkdtemp(), "v1019.db"),
+    conn = open_db(os.path.join(tempfile.mkdtemp(dir=_ensure_tmp()), "v1019.db"),
                    os.path.join(root, "sql", "ddl"))
     now = datetime.now(timezone.utc)
     aid, pw = create_account(conn, "검사용", ROLE_USER, now.isoformat())
@@ -443,7 +451,7 @@ def _scratch() -> str:
     import shutil
     import tempfile
 
-    path = tempfile.mkdtemp(prefix="cw-check-")
+    path = tempfile.mkdtemp(prefix="cw-check-", dir=_ensure_tmp())
     atexit.register(shutil.rmtree, path, ignore_errors=True)
     return path
 
@@ -525,3 +533,9 @@ def _queue_stale_shown_check(rid):
         bad.append("오래된 대기를 알리는 문구가 없다")
     return result(C["V10-23"], rid, "표시",
                   "표시" if not bad else "없음", not bad, bad)
+
+
+def _ensure_tmp() -> str:
+    """검사 사본 자리.  ★ /tmp(tmpfs)가 아니라 디스크에 둔다."""
+    _os.makedirs(CHECK_TMP, exist_ok=True)
+    return CHECK_TMP

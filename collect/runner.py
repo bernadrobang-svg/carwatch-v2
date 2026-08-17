@@ -940,6 +940,36 @@ def _trim_ladders(conn) -> dict:
     return ladder
 
 
+def _option_base(conn, prices: dict, pct: float, need: int) -> dict:
+    """차종별 옵션가 합의 P90 (F-scoring ④-2).
+
+    ★ 최대값을 쓰면 한 매물이 기준을 좌우한다.  P90 이 그 흔들림을 막는다
+    """
+    import json as _json
+
+    sums: dict = {}
+    for tk, raw in conn.execute(
+        "SELECT target_key, options_choice_json FROM core_listing"
+        " WHERE target_key IS NOT NULL AND options_choice_json IS NOT NULL"
+    ):
+        try:
+            codes = _json.loads(raw)
+        except (ValueError, TypeError):
+            continue
+        if not isinstance(codes, list) or not codes:
+            continue
+        got = sum(prices.get(c, 0) for c in codes)
+        if got:
+            sums.setdefault(tk, []).append(got)
+    out = {}
+    for tk, vals in sums.items():
+        if len(vals) < need:
+            continue
+        vals.sort()
+        out[tk] = vals[min(len(vals) - 1, int(len(vals) * pct))]
+    return out
+
+
 def _site_grade_rules(root: str) -> dict:
     """사이트별 우수등급 규칙 (개정 306 · V3-55).
 
@@ -951,7 +981,7 @@ def _site_grade_rules(root: str) -> dict:
 
 
 def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
-                    ladder: dict, site_rule: dict) -> dict:
+                    ladder: dict, site_rule: dict, opt_base: dict) -> dict:
     """차종 설정만 담는다.
 
     ★ 매물별 값은 여기 넣지 않는다 (F-1 · V4-24).
@@ -968,7 +998,7 @@ def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
         "SPEC_DEFAULT_ON": tk.get("SPEC_DEFAULT_ON"),
         "SPEC_DEFAULT_OFF": tk.get("SPEC_DEFAULT_OFF"),
         # ★ 개정 292 — 트림 사다리는 차종 단위다.  전 매물을 한 번만 훑는다
-        "trim_ladder": ladder,
+        "trim_ladder": ladder, "option_base": opt_base,
         # ★ 개정 306 — 사이트마다 「무엇이 우수등급인가」가 다르다.
         #   코드에 사이트 이름을 박지 않는다 (V3-55)
         "site_grade_rule": site_rule,
@@ -992,6 +1022,25 @@ def _listing_values(conn, lid: str) -> dict:
             "warranty_deemed": row[2], "advertisement_type": row[3],
             "lease_rent_info": row[4], "usage_change_types_json": row[5],
             "record_use_json": row[6]}
+
+
+def _option_money(snap, prices: dict) -> dict:
+    """선택 옵션가 합과 신차가 합 (개정 301 · F-scoring ①-2 · ④-2).
+
+    ★ 신차가 = 등급기준 + 선택옵션가 합.  그래서 옵션 많은 차가 자동 반영된다
+    ★ 카탈로그에 값이 없으면 None 이다 — 「0원」이 아니다 (개정 325)
+    """
+    codes = snap.options_choice
+    if codes is None:
+        return {"option_total_won": None, "origin_total_won": snap.price_origin_won}
+    if not codes:
+        total = 0
+    else:
+        got = [prices.get(c) for c in codes]
+        total = sum(x for x in got if x) if any(x for x in got) else None
+    origin = snap.price_origin_won
+    return {"option_total_won": total,
+            "origin_total_won": (origin + (total or 0)) if origin else None}
 
 
 def _owned_months(snap, as_of: str) -> int | None:
@@ -1034,6 +1083,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         # ★ 시세·트림 사다리는 전 매물을 한 번만 훑는다 (개정 292)
         market = _market_medians(conn, policy.rule("value")["market_min_sample"])
         ladder = _trim_ladders(conn)
+        opt_base = _option_base(conn, dicts.option_prices,
+                                float(policy.rule("spec")["option_percentile"]),
+                                int(policy.rule("spec")["option_min_sample"]))
         site_rules = _site_grade_rules(root)
         # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
         #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
@@ -1064,9 +1116,10 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
-            snap = replace(snap, owned_months=_owned_months(snap, at))
+            snap = replace(snap, owned_months=_owned_months(snap, at),
+                           **_option_money(snap, dicts.option_prices))
             tc = _listing_config(conn, lid, targets, depreciation, at, ladder,
-                                 site_rules.get(snap.site, {}))
+                                 site_rules.get(snap.site, {}), opt_base)
             actx = AxisContext(snap, dicts, policy,
                                TargetSpec(snap.target_key or "", "", {}), tc)
             v = analyze_listing(actx)
@@ -1107,6 +1160,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         # ★ 시세·트림 사다리는 전 매물을 한 번만 훑는다 (개정 292)
         market = _market_medians(conn, policy.rule("value")["market_min_sample"])
         ladder = _trim_ladders(conn)
+        opt_base = _option_base(conn, dicts.option_prices,
+                                float(policy.rule("spec")["option_percentile"]),
+                                int(policy.rule("spec")["option_min_sample"]))
         site_rules = _site_grade_rules(root)
         # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
         #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
@@ -1128,9 +1184,10 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
-            snap = replace(snap, owned_months=_owned_months(snap, at))
+            snap = replace(snap, owned_months=_owned_months(snap, at),
+                           **_option_money(snap, dicts.option_prices))
             tc = _listing_config(conn, lid, targets, depreciation, at, ladder,
-                                 site_rules.get(snap.site, {}))
+                                 site_rules.get(snap.site, {}), opt_base)
             actx = AxisContext(snap, dicts, policy,
                                TargetSpec(snap.target_key or "", "", {}), tc)
             v = analyze_listing(actx)

@@ -512,16 +512,21 @@ def test_score_pipeline() -> None:
     check("★ 색상 등급이 확정돼 취향 색상 축이 살아났다",
           "taste.color" not in ex_axes, str(sorted(ex_axes)))
     # ★ 씨앗은 3건뿐이라 시세 표본(5건)이 안 찬다 — 그것이 정답이다.
-    #   이론가로 메우지 않는다 (개정 292 ①)
-    check("★ 표본이 모자란 시세 축은 excluded — 이론가로 안 메운다",
-          "value.market" in ex_axes, str(sorted(ex_axes)))
+    #   ★ 개정 325 — excluded 가 아니라 「0점 + 확인 안 됨」이다
+    short = {a for (a,) in conn.execute(
+        "SELECT DISTINCT axis FROM result_axis"
+        " WHERE source='market_sample_short'")}
+    check("★ 표본이 모자란 시세 축은 0점 · 확인 안 됨 — 이론가로 안 메운다",
+          "value.market" in short, str(sorted(short)))
     # ★ 개정 298 — 분모는 늘 555 다.  개정 287 — 핵심 축을 못 보면 NOT_RATED.
     #   E(절대조건)는 점수와 무관하므로 빼고 본다
     rated = [r for r in rows if r[0] != "E"]
     check(f"★ 전건 분모가 {full:g} 다 (개정 298 G)",
           all(r[2] == full for r in rows), str({r[2] for r in rows}))
-    check("★ 핵심 축(시세)을 못 봐 NOT_RATED 다 — 씨앗은 3건이라 표본이 안 찬다",
-          all(r[0] == "NOT_RATED" for r in rated) if rated else True,
+    # ★ 개정 325 로 「확인 안 됨」이 excluded 가 아니게 됐다 —
+    #   핵심 축이 0점이면 비율이 낮아 D·E 로 떨어진다.  등급을 막지 않는다
+    check("★ 표본이 모자라면 비율이 낮아 낮은 등급이 된다 (막지 않는다)",
+          all(r[0] in ("D", "E", "NOT_RATED") for r in rated) if rated else True,
           str([r[0] for r in rows]))
 
 

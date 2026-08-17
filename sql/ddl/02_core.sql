@@ -269,6 +269,8 @@ CREATE TABLE IF NOT EXISTS core_inspection (
   inspection_simple_repair  TEXT,
   inspection_flood          TEXT,
   inspection_tuning         TEXT,
+  -- ★ 진정성 축 (F-scoring ②-8).  실측 — 「양호」 382 / 400
+  inspection_car_state      TEXT,
   inspection_recall         TEXT,
   usage_change_types_json   TEXT,
   inspection_panel_json     TEXT,

@@ -3,26 +3,34 @@
   "AXIS_LABELS": {
     "value": "값",
     "state": "상태",
+    "history": "이력",
     "spec": "사양",
+    "warranty": "보증",
     "taste": "취향",
     "value.market": "시세 대비",
-    "value.depreciation": "감가",
+    "value.depreciation": "신차가 대비",
     "value.mileage": "주행",
     "state.accident": "사고",
     "state.frame": "골격",
+    "state.outer": "외판",
     "state.repair": "보험 수리비",
-    "state.usage": "용도",
-    "state.warranty": "보증",
+    "state.special": "특수 사고",
+    "state.leak": "누유",
+    "state.consumable": "소모품",
+    "state.integrity": "진정성",
+    "history.usage": "용도",
+    "history.not_join": "자차 미가입",
+    "history.owner": "소유자 변경",
+    "history.lien": "압류·저당",
     "spec.trim": "트림",
     "spec.options": "옵션",
-    "site": "사이트 보증",
-    "site.certified": "우수등급",
-    "site.inspection": "점검 출처",
-    "site.warranty": "플랫폼 보증",
+    "warranty.maker": "제조사 보증",
+    "warranty.site": "우수등급",
+    "warranty.inspection": "점검 출처",
     "taste.hud": "HUD",
-    "taste.sunroof": "선루프",
+    "taste.picked": "지정 옵션",
     "taste.color": "색상",
-    "taste.picked": "지정 옵션"
+    "taste.sunroof": "선루프"
   },
   "GRADE_LABELS": {
     "S": "S",
@@ -74,29 +82,41 @@
       "1": "골격 이상 없음",
       "0": "골격 손상 있음"
     },
+    "state.outer": {
+      "1": "외판 양호",
+      "0": "외판 손상 있음"
+    },
     "state.repair": {
       "1": "수리비 적음",
       "0": "수리비 많음"
     },
-    "state.usage": {
-      "1": "렌트 이력 없음",
-      "0": "렌트 이력 있음"
+    "state.special": {
+      "1": "전손·침수·도난 없음",
+      "0": "특수 사고 있음"
+    },
+    "state.leak": {
+      "1": "누유 없음",
+      "0": "누유 있음"
+    },
+    "history.usage": {
+      "1": "자가용",
+      "0": "렌트·영업용"
+    },
+    "history.not_join": {
+      "1": "자차 가입",
+      "0": "자차 미가입 김"
+    },
+    "history.lien": {
+      "1": "압류·저당 없음",
+      "0": "압류·저당 있음"
     },
     "value.market": {
       "1": "시세보다 싸다",
       "0": "시세보다 비싸다"
     },
     "value.depreciation": {
-      "1": "감가 대비 싸다",
-      "0": "감가 대비 비싸다"
-    },
-    "site.certified": {
-      "1": "우수등급",
-      "0": "우수등급 없음"
-    },
-    "site.inspection": {
-      "1": "플랫폼 직영 점검",
-      "0": "점검 없음"
+      "1": "신차가 대비 싸다",
+      "0": "신차가 대비 비싸다"
     }
   }
 }

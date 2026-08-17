@@ -195,6 +195,19 @@ class ListingSnapshot:
     #   「기간이 있다」가 아니라 「보유 기간의 몇 %인가」가 흠이다
     not_join_months: int | None = None
     owned_months: int | None = None
+    # ★ F-scoring ② 가 쓰는 것 (개정 329).  없으면 「확인 안 됨」이다
+    inspection_inner_json: str | None = None
+    inspection_tuning: int | None = None
+    car_state_ok: bool | None = None
+    tire_tread_mm: float | None = None
+    # 신차가 = 등급기준 + 선택옵션가 합 (개정 301) — ①-2 가 이것을 쓴다
+    origin_total_won: int | None = None
+    ev_battery_soh: float | None = None
+    # ★ 용도 축 (F-scoring ③-1).  관용 · 영업용은 보험이력에 있다
+    use_gov: int | None = None
+    use_business: int | None = None
+    # 선택 옵션가 합 (원).  ★ 카탈로그가 없으면 None — 「0원」이 아니다
+    option_total_won: int | None = None
 
 
 @dataclass(frozen=True)

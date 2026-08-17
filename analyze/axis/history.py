@@ -1,24 +1,25 @@
 # -*- coding: utf-8 -*-
-"""이력 55점 — 사고 20 · 보험 15 · 렌트 20.
+"""③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③).
 
-지시서   7장 STEP 76 (사고) · 77 (보험) · 78 (렌트)
-근거     골격/외판은 attributes(RANK_*) 로 직접 판정한다.  부위명 문자열이 아니다
-         v1 은 사전이 「프론트펜더」, 원문이 「프론트 휀더(우)」여서 344건이 미분류였고
-         사고 20점이 한 번도 작동하지 않았다
-금지     부위명 문자열 매칭.  type 3 을 감점에 넣는 것.  insuranceBenefit 사용
-         SellType 을 렌트 1순위로 쓰는 것 — 현재 판매 형태지 과거 이력이 아니다
-         ★ advertisementType 은 1순위가 아니라 셋 중 하나다 (개정 302)
+지시서   7장 STEP 78 · `docs/ref/F-scoring.md` ③ (개정 329)
+축      용도 30 · 자차 미가입 25 · 소유자 변경 15 · 압류·저당 10
+근거     ★ 렌트를 세 곳에서 대조한다 (개정 302) —
+        advertisementType 은 「지금 리스 상품인가」다.  과거 용도가 아니다
+        ★ 소유자 변경은 연식 대비로 본다 — 3년차 3회는 1년차 3회보다 낫다
+금지     SellType 을 렌트 1순위로 쓰는 것.  원문 없이 「자가용」으로 두는 것
 """
 from __future__ import annotations
 
 import json
 
 from analyze.axes import AxisContext
-from analyze.verdict import PRIO_CLASSIFIER, PRIO_OBSERVED, Verdict, put
+from analyze.curve import ascending, step_down
+from analyze.verdict import PRIO_OBSERVED, Verdict, put
 
-DAMAGE = "history.damage"
-INSURANCE = "history.insurance"
-RENTAL = "history.rental"
+USAGE = "history.usage"
+NOT_JOIN = "history.not_join"
+OWNER = "history.owner"
+LIEN = "history.lien"
 
 RENT_TITLE = "렌트"
 # 광고형태가 이미 렌트·리스라고 말하는 것 (개정 302 ①)
@@ -26,100 +27,15 @@ RENT_AD_TYPES = {"RENT_SUCCESSION": "렌트 승계 매물",
                  "RENT_CAR": "렌터카",
                  "OPERATING_LEASE": "운용리스 매물",
                  "FINANCING_LEASE": "금융리스 매물"}
-
-
-SWAP = "swap"
-
-
-def outer_swap_count(panels: list[dict], outer_ranks,
-                     by_status: dict) -> int:
-    """외판(RANK_ONE·TWO) 중 감점 대상 상태인 판수 (STEP 76).
-
-    ★ 한 판에 여러 상태가 붙으면 가장 무거운 것으로 센다.
-      교환 · 용접,절단  >  판금/용접  >  손상
-    ★ 같은 판을 두 번 세지 않는다
-    금지   상태로 골격을 판정하는 것.  골격은 랭크가 정한다
-          RANK_TWO 는 「용접,절단」이 있어도 외판이다
-    """
-    n = 0
-    for el in panels:
-        ranks = el.get("attributes") or []
-        if not any(a in outer_ranks for a in ranks):
-            continue
-        titles = [s.get("title") for s in (el.get("statusTypes") or [])]
-        if any(by_status.get(t) == SWAP for t in titles):
-            n += 1          # 판 단위로 한 번만 센다
-    return n
-
-
-def cost_points(ratio: float, curve: list) -> int:
-    """금액 비율 → 점수.  마지막 항(ratio=null)이 초과 구간이다.
-
-    경계를 실매물 분위수에 맞춘다.  한쪽에 몰리면 이 축이 순위를 못 가른다.
-    """
-    for row in curve:
-        r = row["ratio"]
-        if r is not None and ratio <= r:
-            return row["points"]
-    return curve[-1]["points"]
-
-
-def _insurance(ctx: AxisContext, v: Verdict, r: dict) -> None:
-    """금액 곡선 × 건수 상한 (STEP 77).
-
-    ★ 금액 0 인데 사고 건수가 있는 경우 = type 3 만 있는 매물이다.
-      내 차 피해가 아니므로 만점이고 건수 상한도 적용하지 않는다.
-    필수   건수는 myAccidentCnt 다.  accidentCnt 가 아니다
-    금지   type 3 을 감점에 넣는 것.  insuranceBenefit 사용
-    """
-    s = ctx.snapshot
-    cost, cnt = s.accident_my_cost, s.accident_my_cnt
-    if cost is None or cnt is None:
-        put(v, INSURANCE, None, PRIO_OBSERVED, "missing", excluded=True)
-        return
-    full = ctx.policy.comp(INSURANCE)
-    if not cost:
-        # type 3 만 있는 매물 · 무사고 둘 다 여기다.  내 차 피해 금액이 0 이다
-        put(v, INSURANCE, full, PRIO_OBSERVED, "no_own_damage")
-        return
-    if not s.price_origin_won:
-        put(v, INSURANCE, None, PRIO_OBSERVED, "origin_price_missing",
-            excluded=True)
-        return
-    pts = cost_points(cost / s.price_origin_won, r["insurance_cost_curve"])
-    cap = r["insurance_cap_by_count"].get(str(cnt), r["insurance_cap_min"])
-    put(v, INSURANCE, min(pts, cap), PRIO_OBSERVED, "record_cost_and_count")
-
-
-def analyze_history(ctx: AxisContext, v: Verdict) -> None:
-    s = ctx.snapshot
-    r = ctx.policy.rule("history")
-    af = ctx.policy.rule("absolute_fail")
-
-    # ── 사고 20점 (STEP 76) ──────────────────────────────────────────
-    if s.inspection_panels is None:
-        put(v, DAMAGE, None, PRIO_OBSERVED, "missing", excluded=True)
-    else:
-        n = outer_swap_count(s.inspection_panels, af["outer_ranks"],
-                             r["damage_by_status"])
-        table = r["damage_by_swap"]
-        pts = table.get(str(n), r["damage_min"])
-        put(v, DAMAGE, pts, PRIO_OBSERVED, "inspection_outers")
-
-    # ── 보험 15점 (STEP 77) ──────────────────────────────────────────
-    _insurance(ctx, v, r)
-
-    # ── 렌트 20점 (STEP 78 · 개정 302) ───────────────────────────────
-    _rental(ctx, v, r["rental"])
+LEASE_AD_TYPES = ("OPERATING_LEASE", "FINANCING_LEASE")
 
 
 def rental_findings(s, commercial_codes) -> list:
     """렌트 이력을 세 곳에서 찾는다 (개정 302).
 
-    ★ 우리는 advertisementType 만 봤다.  그것은 「지금 리스 상품인가」다.
-      「과거에 렌트로 쓰였나」는 점검부 용도변경과 보험이력에 있다.
-      실측 08-17: 「렌트 아님」이라 한 144건이 광고형태로는 렌트·리스였다
-    필수   하나라도 렌트면 「렌트 이력」이다 (개정 302)
+    ★ 실측 08-17 — 「렌트 아님」이라 한 144건이 광고형태로는 렌트·리스였다
+    ★ 보험이력 용도 코드의 뜻이 규격에 없어 실측으로 짚었다 —
+      점검부가 「렌트」라 한 646건 중 627건에 용도 3(영업용)이 있었다
     """
     out = []
     if s.advertisement_type in RENT_AD_TYPES:
@@ -128,8 +44,6 @@ def rental_findings(s, commercial_codes) -> list:
         titles = [t.get("title") for t in json.loads(s.usage_change_types_json)]
         if RENT_TITLE in titles:
             out.append(("usage_change_types", "점검부 용도변경 렌트"))
-    # ★ 보험이력 용도 변경이력.  코드의 뜻은 규격에 없다 — 실측으로 짚었다
-    #   점검부가 「렌트」라 한 646건 중 627건에 용도 3(영업용)이 있었다
     if s.record_use_json is not None:
         codes = json.loads(s.record_use_json)
         if any(str(c) in commercial_codes for c in codes):
@@ -139,18 +53,80 @@ def rental_findings(s, commercial_codes) -> list:
     return out
 
 
-def _rental(ctx: AxisContext, v: Verdict, rr: dict) -> None:
-    s = ctx.snapshot
-    found = rental_findings(s, ctx.policy.rule("history")["commercial_use_codes"])
+def _usage(ctx: AxisContext, v: Verdict) -> None:
+    """3-1 용도 30 — 자가용 30 · 관용 20 · 영업용 8 · 렌트 0 · 리스 10."""
+    s, r = ctx.snapshot, ctx.policy.rule("history")
+    pts = r["usage_points"]
+    found = rental_findings(s, r["commercial_use_codes"])
     if found:
-        # 근거를 하나만 남기지 않는다 — 어디서 찾았는지가 화면에 나가야 한다
-        put(v, RENTAL, rr["rental"], PRIO_OBSERVED,
-            "+".join(k for k, _why in found))
+        keys = [k for k, _w in found]
+        lease_only = (keys == ["advertisement_type"]
+                      and s.advertisement_type in LEASE_AD_TYPES)
+        put(v, USAGE, pts["lease"] if lease_only else pts["rental"],
+            PRIO_OBSERVED, "+".join(keys))
         return
-    # 「렌트가 아니다」는 셋 중 하나라도 실제로 봤을 때만 말할 수 있다
-    if (s.usage_change_types_json is not None or s.record_use_json is not None
-            or s.plate_history_hash_json is not None):
-        put(v, RENTAL, rr["non_rental"], PRIO_OBSERVED, "checked_three")
+    # ★ 「자가용이다」는 셋 중 하나라도 실제로 봤을 때만 말할 수 있다
+    if (s.usage_change_types_json is None and s.record_use_json is None
+            and s.plate_history_hash_json is None):
+        put(v, USAGE, 0, PRIO_OBSERVED, "missing")
         return
-    # 불명 — 수집 실패를 렌트로 단정하지 않는다.  0 으로 두면 실패가 감점이 된다
-    put(v, RENTAL, rr["unknown"], PRIO_CLASSIFIER, "unknown")
+    if s.use_gov:
+        put(v, USAGE, pts["government"], PRIO_OBSERVED, "record_gov")
+        return
+    if s.use_business:
+        put(v, USAGE, pts["business"], PRIO_OBSERVED, "record_business")
+        return
+    put(v, USAGE, pts["private"], PRIO_OBSERVED, "checked_three")
+
+
+def _not_join(ctx: AxisContext, v: Verdict) -> None:
+    """3-2 자차 미가입 25 — 미가입 기간 ÷ 보유 기간 (개정 294).
+
+    ★ 그 기간의 사고는 알 수 없다.  「기간이 있다」가 아니라 비율이다
+    """
+    s, r = ctx.snapshot, ctx.policy.rule("history")
+    if s.not_join_months is None or not s.owned_months:
+        put(v, NOT_JOIN, 0, PRIO_OBSERVED, "missing")
+        return
+    ratio = min(1.0, s.not_join_months / s.owned_months)
+    put(v, NOT_JOIN, round(ascending(ratio, r["not_join_curve"])),
+        PRIO_OBSERVED, f"not_join_{ratio:.0%}")
+
+
+def _owner(ctx: AxisContext, v: Verdict) -> None:
+    """3-3 소유자 변경 15 — 연식 대비로 본다.
+
+    ★ 3년차에 3회면 1년차에 3회보다 낫다.
+      횟수 ÷ 경과연수가 1.0 을 넘으면 한 단계 더 내린다
+    """
+    from analyze.axis.value import elapsed_years
+
+    s, r = ctx.snapshot, ctx.policy.rule("history")
+    if s.owner_change_cnt is None:
+        put(v, OWNER, 0, PRIO_OBSERVED, "missing")
+        return
+    n = int(s.owner_change_cnt)
+    years = elapsed_years(ctx)
+    if years and n / years > float(r["owner_per_year_limit"]):
+        n += 1                      # 한 단계 더 내린다
+    put(v, OWNER, round(step_down(n, r["owner_curve"])),
+        PRIO_OBSERVED, f"owner_{s.owner_change_cnt}")
+
+
+def _lien(ctx: AxisContext, v: Verdict) -> None:
+    """3-4 압류·저당 10 — 있으면 소유권 이전이 막힌다.  값보다 먼저 볼 것이다."""
+    s, r = ctx.snapshot, ctx.policy.rule("history")
+    got = (s.seizing_cnt, s.pledge_cnt)
+    if all(x is None for x in got):
+        put(v, LIEN, 0, PRIO_OBSERVED, "missing")
+        return
+    bad = any(x for x in got if x)
+    put(v, LIEN, r["lien_bad"] if bad else r["lien_ok"],
+        PRIO_OBSERVED, "detail_seizing")
+
+
+def analyze_history(ctx: AxisContext, v: Verdict) -> None:
+    _usage(ctx, v)
+    _not_join(ctx, v)
+    _owner(ctx, v)
+    _lien(ctx, v)

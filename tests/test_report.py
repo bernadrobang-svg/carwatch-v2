@@ -206,11 +206,14 @@ def test_export() -> None:
           md.filename.endswith(f"_{ctx.calc_version}.md")
           and "_L1_" in md.filename, md.filename)
     body = md.content.decode("utf-8")
-    check("★ 제외 축이 —/N 으로 나온다", "—/" in body)
+    # ★ 개정 325 — 「확인 안 됨」은 excluded 가 아니라 0점이다.
+    #   그래도 「몇 점 만점 중 몇 점」은 나와야 한다
+    check("★ 축이 「점수/배점」으로 나온다", "/" in body and "calc=" in body)
     check("버전이 본문에 있다", "calc=" in body)
 
     cs = export([v], "csv", meta=m1).content.decode("utf-8")
-    check("★ csv 헤더에 배점을 표기한다", "value.market(120)" in cs and "taste.hud(15)" in cs,
+    check("★ csv 헤더에 배점을 표기한다",
+          "value.market(100)" in cs and "taste.hud(15)" in cs,
           cs.splitlines()[0][:60])
 
     js = json.loads(export(v, "json", meta=m1).content.decode("utf-8"))

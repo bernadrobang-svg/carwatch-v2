@@ -52,12 +52,11 @@ GONE = "gone"
 # ★ 개정 292 로 축이 다시 짜였다.  상태(180)가 사양(75)보다 크다 —
 #   마스터 지적 「깡통에 HUD 만 있어도 만점」이 이 순서로 뒤집힌다
 # ★ 한 칸에 몰아넣으면 「이 차만 사고가 있다」가 세로로 안 보인다
-CHIP_AXES = ("state.accident", "state.frame", "state.repair",
-             "state.usage", "state.warranty",
+CHIP_AXES = ("state.accident", "state.frame", "state.outer", "state.repair",
+             "history.usage", "history.not_join",
              "spec.trim", "spec.options",
-             # ⑤ 사이트 보증 — 「누가 보증하느냐」가 값의 5분의 1이다 (개정 306)
-             "site.certified", "site.inspection",
-             # 취향은 등급에 안 들어간다.  그래도 화면에는 낸다 (개정 292 ④)
+             "warranty.maker", "warranty.site",
+             # 취향은 등급에 안 들어간다.  그래도 화면에는 낸다 (F-scoring ⑥)
              "taste.hud", "taste.sunroof")
 
 
@@ -396,9 +395,10 @@ def _warranty_state(got, as_of) -> tuple:
 
 # 축 → 상태를 어디서 가져오는가 (STEP 149n).
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
-STATE_AXES = ("state.warranty", "state.accident", "state.frame",
-              "state.repair", "state.usage", "spec.trim", "spec.options",
-              "site.certified", "site.inspection")
+STATE_AXES = ("warranty.maker", "state.accident", "state.frame",
+              "state.outer", "state.repair", "history.usage",
+              "history.not_join", "spec.trim", "spec.options",
+              "warranty.site", "warranty.inspection")
 
 
 # 렌트를 어디서 찾았는가 → 화면 문구 (개정 302).  ★ 「렌트 이력」만 내지 않는다
@@ -417,7 +417,7 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         return ""            # 확인 못 한 것은 기호가 정확하다
     w = state.get("warranty")
     rec = state.get("record")
-    if axis == "state.warranty" and w:
+    if axis == "warranty.maker" and w:
         gen, power = _warranty_state(w, as_of)
         # ★ 둘 중 긴 쪽으로 점수를 준다 (개정 292).  화면도 그렇게 낸다
         return power if power not in ("?", "만료") else gen
@@ -425,14 +425,14 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         mycnt, _cost, othcnt, tot = rec
         n = tot if tot is not None else (mycnt or 0) + (othcnt or 0)
         return "무사고" if not n else f"{n}회"
-    if axis == "state.frame":
+    if axis in ("state.frame", "state.outer"):
         return "골격 이상" if chip.tone != TONE_GOOD else "골격 이상 없음"
     if axis == "state.repair" and rec:
         _mycnt, cost, _o, _t = rec
         if cost is None:
             return ""
         return "0원" if not cost else f"{int(cost) // WON_PER_MANWON:,}만"
-    if axis == "state.usage":
+    if axis == "history.usage":
         # ★ 점수를 받았으면 렌트가 아니다 (excluded 가 아니라 값이 있을 때만)
         if chip.tone == TONE_GOOD:
             return "렌트 아님"
@@ -446,10 +446,10 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         if pts is None or not mx:
             return ""
         return f"상위 {max(1, 100 - round(pts / mx * 100))}%"
-    if axis == "site.certified":
+    if axis == "warranty.site":
         # ★ 우수등급이 없으면 30점을 못 받는다.  그것이 「왜 싼가」의 첫 답이다
         return "우수등급" if chip.tone == TONE_GOOD else "우수등급 없음"
-    if axis == "site.inspection":
+    if axis == "warranty.inspection":
         # ★ 「모든 책임은 판매자에게 있습니다」 — 누가 점검했는지가 사실이다
         return {"엔카직영 점검": "엔카직영", "점검을 판매자가 올렸습니다": "판매자 등록",
                 "": ""}.get(state.get("inspection_word", ""), "점검 없음")
@@ -905,9 +905,9 @@ def recommend_reason(row) -> str:
     full = {c.axis: c for c in row.axis_chips}
     if (full.get("state.accident") or _EMPTY).tone == TONE_GOOD:
         parts.append("무사고이며")
-    if (full.get("state.usage") or _EMPTY).tone == TONE_GOOD:
+    if (full.get("history.usage") or _EMPTY).tone == TONE_GOOD:
         parts.append("렌트 이력이 없고")
-    if (full.get("site.certified") or _EMPTY).tone == TONE_GOOD:
+    if (full.get("warranty.site") or _EMPTY).tone == TONE_GOOD:
         parts.append("사이트가 우수등급을 준")
     if not parts:
         return ""

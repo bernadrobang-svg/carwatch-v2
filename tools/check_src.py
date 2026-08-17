@@ -276,17 +276,19 @@ if os.path.isfile(sc_path):
               if not (isinstance(v, dict) and v.get("skipped"))}
     if sum(active.values()) != total:
         bad.append(f"배점 합 {sum(active.values())} != total_points {total}")
-    # ★ 배점표가 여러 판 실려 있다 (개정 292 555 → 개정 306 605).
-    #   갈래 소계표(사양 90 등)와 섞이지 않게 5장 배점표만 본다.
-    #   그 안에서 가장 나중 것이 최신이다 — 첫 것을 잡으면 옛 판과 대조한다
+    # ★ 배점의 유일한 정본은 부록 F 다 (개정 330).
+    #   본문 배점표는 전부 폐기됐다 — 읽으면 옛 판과 대조하게 된다
     frame = next((b for f, b in _spec_files(SPEC)
-                  if f.endswith("a-frame.md")), "")
+                  if f.endswith("F-scoring.md")), "")
     spec_totals = re.findall(r"\| \*\*합\*\* \| \*\*(\d+)\*\*", frame)
     if spec_totals and int(spec_totals[-1]) != total:
-        bad.append(f"total_points {total} != 지시서 {spec_totals[-1]}")
-    claim = re.search(r"총 (\d+)행", S)
-    if claim and len(active) != int(claim.group(1)):
-        bad.append(f"Component {len(active)} != 지시서 {claim.group(1)}")
+        bad.append(f"total_points {total} != 부록 F {spec_totals[-1]}")
+    # 축 수 — 부록 F 의 「축 목록」 표에서 센다.
+    # ★ 「3e 배터리 SOH」는 주행 축에 딸린 것이라 별도 성분이 아니다 —
+    #   부록 F 도 점수를 (30) 괄호로 적었다
+    axes = re.findall(r"^\| *\d+ *\| *[가-힣]+ *\|", frame, re.M)
+    if axes and len(active) != len(axes):
+        bad.append(f"Component {len(active)} != 부록 F {len(axes)}")
     cuts = sc.get("grade_cuts") or {}
     for g, ratio in cuts.items():
         row = re.search(r"\| `%s` \| (\d+)%% \| \*\*(\d+)\*\*" % g, S)

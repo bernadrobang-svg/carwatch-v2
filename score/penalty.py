@@ -17,9 +17,9 @@ RENTAL = "rental_history"
 NO_SITE_GRADE = "no_site_grade"
 NOT_JOIN = "not_join_ratio"
 SELLER_INSPECTION = "seller_inspection"
-ACCIDENT_EACH = "accident_each"
 FRAME_SHEET = "frame_sheet"
 FRAME_SWAP = "frame_swap"
+LIEN = "lien"
 
 # 화면 문구.  ★ 무엇을 왜 뺐는지가 보여야 한다
 LABELS = {
@@ -27,9 +27,9 @@ LABELS = {
     NO_SITE_GRADE: "사이트 우수등급 없음",
     NOT_JOIN: "자차 미가입 기간이 김",
     SELLER_INSPECTION: "점검을 판매자가 등록",
-    ACCIDENT_EACH: "사고",
     FRAME_SHEET: "골격 판금",
     FRAME_SWAP: "골격 용접·교환",
+    LIEN: "압류·저당 있음",
 }
 
 
@@ -51,22 +51,22 @@ def penalties_of(verdict, policy, snapshot) -> list:
 
     values, excluded = verdict.values, verdict.excluded
     # 렌트·영업용 — 셋 중 하나라도 렌트면 (개정 302)
-    if "state.usage" not in excluded and values.get("state.usage") == 0:
+    if "history.usage" not in excluded and values.get("history.usage") == 0:
         add(RENTAL)
     # 사이트 우수등급 — ★ 「확인 못 함」과 「없음」을 가른다 (개정 323)
-    if "site.certified" not in excluded and values.get("site.certified") == 0:
+    if "warranty.site" not in excluded and values.get("warranty.site") == 0:
         add(NO_SITE_GRADE)
     # 점검을 판매자가 올렸다 (개정 300)
-    src = verdict.sources.get("site.inspection") or ""
+    src = verdict.sources.get("warranty.inspection") or ""
     if src.endswith("IMAGE"):
         add(SELLER_INSPECTION)
-    # 사고 1회당 — 누적
-    n = (snapshot.accident_my_cnt or 0) + (snapshot.accident_other_cnt or 0)
-    if "state.accident" not in excluded and n:
-        add(ACCIDENT_EACH, n, f" {n}회")
+    # ★ 압류·저당 — 있으면 소유권 이전이 막힌다 (F-scoring 마이너스)
+    if verdict.sources.get("history.lien") == "detail_seizing" \
+            and values.get("history.lien") == 0:
+        add(LIEN)
     # 골격
     frame_src = verdict.sources.get("state.frame") or ""
-    if frame_src == "frame_sheet":
+    if frame_src.startswith("frame_sheet"):
         add(FRAME_SHEET)
     elif frame_src == "frame_swap":
         add(FRAME_SWAP)

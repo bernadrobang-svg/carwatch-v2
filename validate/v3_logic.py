@@ -8,6 +8,14 @@
 """
 from __future__ import annotations
 
+import os as _os
+
+# ★ 검사 사본을 /tmp 에 두지 않는다 — 921MB tmpfs 인데 DB 가 484MB 다.
+#   실측 08-17: 「database or disk is full」로 검사가 통째로 죽었다
+CHECK_TMP = _os.path.join(
+    _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+    "outputs", "check-tmp")
+
 import collections
 import random
 import re
@@ -252,7 +260,7 @@ def _file_output_checks(conn, rid) -> list:
               encoding="utf-8") as f:
         lab = _j.load(f)
     view = render_listing(conn, row[0], row[1], fin, root)
-    out_dir = tempfile.mkdtemp()
+    out_dir = tempfile.mkdtemp(dir=_ensure_tmp())
     # ★ 전 요소를 ReportMeta 에서 가져온다.  손으로 조립하지 않는다 (STEP 91a)
     meta = ReportMeta(run_id=rid, layer="L1", site="encar",
                       target_key=str(row[0]), calc_version=row[1],
@@ -556,7 +564,7 @@ def _rental_cross_check(conn, rid):
     private = conn.execute(
         "SELECT COUNT(*) FROM result_axis a JOIN core_listing l"
         " ON l.listing_id = a.listing_id"
-        " WHERE a.axis = 'state.usage' AND a.source = 'checked_three'"
+        " WHERE a.axis = 'history.usage' AND a.source = 'checked_three'"
         " AND a.calc_version = ? AND l.advertisement_type IN"
         f" ({','.join('?' * len(RENT_AD_TYPES))})",
         (cv, *sorted(RENT_AD_TYPES))).fetchone()[0]
@@ -565,7 +573,7 @@ def _rental_cross_check(conn, rid):
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis a JOIN core_inspection i"
         " ON i.listing_id = a.listing_id"
-        " WHERE a.axis = 'state.usage' AND a.source = 'checked_three'"
+        " WHERE a.axis = 'history.usage' AND a.source = 'checked_three'"
         " AND a.calc_version = ?"
         " AND i.usage_change_types_json LIKE '%\"렌트\"%'", (cv,)).fetchone()[0]
     if n:
@@ -573,7 +581,7 @@ def _rental_cross_check(conn, rid):
     # 근거 이름에 세 곳이 다 등장하는가 — 한 곳만 보고 있으면 여기서 걸린다
     seen = {r[0] for r in conn.execute(
         "SELECT DISTINCT source FROM result_axis"
-        " WHERE axis='state.usage' AND calc_version=?", (cv,))}
+        " WHERE axis='history.usage' AND calc_version=?", (cv,))}
     for want in ("advertisement_type", "usage_change_types", "record_use"):
         if not any(want in got for got in seen):
             bad.append(f"근거에 {want} 가 한 번도 안 나온다")
@@ -633,9 +641,11 @@ def _source_before_value_check(conn, rid):
     for axis, table in (("state.accident", "core_record"),
                         ("state.repair", "core_record"),
                         ("state.frame", "core_inspection")):
+        # ★ 「0점 + 확인 안 됨」은 값을 만든 것이 아니다 (개정 325).
+        #   source 가 missing 이면 우리가 「모른다」고 말한 것이다
         n = conn.execute(
             "SELECT COUNT(*) FROM result_axis a WHERE a.axis=?"
-            " AND a.calc_version=? AND a.excluded=0"
+            " AND a.calc_version=? AND a.excluded=0 AND a.source <> 'missing'"
             f" AND NOT EXISTS (SELECT 1 FROM {table} t"
             "   WHERE t.listing_id = a.listing_id AND t.row_status='ok')",
             (axis, cv)).fetchone()[0]
@@ -1035,3 +1045,9 @@ def _halt_dict_check(conn, rid):
         got |= {"option3", "option_model"}
     bad = [f"{a}: 확정된 값이 없다" for a in halt_axes if a not in got]
     return result(C["V3-30"], rid, 0, len(bad), not bad, bad)
+
+
+def _ensure_tmp() -> str:
+    """검사 사본 자리.  ★ /tmp(tmpfs)가 아니라 디스크에 둔다."""
+    _os.makedirs(CHECK_TMP, exist_ok=True)
+    return CHECK_TMP

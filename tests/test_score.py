@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from analyze.absolute import FAIL_FRAME, FAIL_SEIZING, absolute_fail  # noqa: E402
 from analyze.axes import COMPONENTS, AxisContext, DictionarySet, ScoringPolicy  # noqa: E402
-from analyze.axis.history import outer_swap_count  # noqa: E402
+from analyze.axis.state import _rank_worst  # noqa: E402
 from analyze.engine import ANALYZERS, analyze_listing  # noqa: E402
 from analyze.verdict import PRIO_OBSERVED, Verdict, put  # noqa: E402
 from contracts import ListingSnapshot, TargetSpec  # noqa: E402
@@ -56,7 +56,11 @@ def snap(**kw) -> ListingSnapshot:
 SNAP_KEYS = ("diagnosis_car", "advertisement_type", "lease_rent_info",
              "usage_change_types_json", "warranty_extend", "warranty_deemed",
              # 개정 302 · 292 — 보험이력 용도 · 시세 중앙값
-             "record_use_json", "market_median_won", "market_sample_n")
+             "record_use_json", "market_median_won", "market_sample_n",
+             # F-scoring ① · ② 가 쓰는 것 (개정 329)
+             "ev_battery_soh", "origin_total_won", "option_total_won",
+             "inspection_inner_json", "inspection_tuning", "car_state_ok",
+             "not_join_months", "owned_months", "use_gov", "use_business")
 
 
 def ctx(s: ListingSnapshot, **tc) -> AxisContext:
@@ -278,9 +282,9 @@ def test_history_real() -> None:
     for name in ("inspection_clean.json", "inspection_frame.json",
                  "inspection_outer_swap.json", "inspection_outer_paint.json"):
         want = EXPECTED[name]["외판교환_판수"]
-        got = outer_swap_count(panels_of(name), af["outer_ranks"],
-                               POLICY.raw["axis_rules"]["history"]
-                               ["damage_by_status"])
+        from analyze.axis.state import SWAP_TITLES
+
+        got = _rank_worst(panels_of(name), af["outer_ranks"], SWAP_TITLES)
         check(f"{name[11:-5]:12} 외판 교환 {want}판", got == want, f"{got}판")
 
     # ★ 개정 292 — 사고는 회수(70점) · 골격은 따로 40점이다
@@ -300,75 +304,79 @@ def test_history_real() -> None:
           v.values["state.frame"] == r["frame_points"]["none"])
     v = analyze_listing(ctx(snap(accident_my_cnt=0, accident_other_cnt=0)))
     check("무사고 → 사고 70점",
-          v.values["state.accident"] == r["accident_by_count"]["0"])
+          v.values["state.accident"] == r["accident_curve"][0][1])
     v = analyze_listing(ctx(snap(accident_my_cnt=1, accident_other_cnt=0)))
     check("사고 1회 → 40점",
-          v.values["state.accident"] == r["accident_by_count"]["1"])
+          v.values["state.accident"] == r["accident_curve"][1][1])
     v = analyze_listing(ctx(snap(accident_my_cnt=2, accident_other_cnt=1)))
-    check("★ 3회 이상 → 0점", v.values["state.accident"] == r["accident_min"])
+    check("★ 3회 이상 → 0점", v.values["state.accident"] == 0)
 
 
 def test_rental_real() -> None:
     """용도 25점 — 렌트를 세 곳에서 대조한다 (개정 292 ② · 302)."""
-    r = POLICY.rule("state")
+    r = POLICY.rule("history")
     ins = parse_inspection(fx("inspection_clean.json"), "encar", "1")
     s = snap(inspection_panels=json.loads(ins["inspection_panel_json"]))
     v = analyze_listing(
         ctx(s, usage_change_types_json=ins["usage_change_types_json"]))
     check("★ 점검부 용도변경이 렌트 → 용도 0점",
-          v.values["state.usage"] == r["usage_rental"],
-          str(v.values["state.usage"]))
+          v.values["history.usage"] == r["usage_points"]["rental"],
+          str(v.values["history.usage"]))
 
     ins2 = parse_inspection(fx("inspection_frame.json"), "encar", "1")
     v = analyze_listing(
         ctx(snap(), usage_change_types_json=ins2["usage_change_types_json"]))
     check("usageChangeTypes 빈 배열 → 자가용 25점",
-          v.values["state.usage"] == r["usage_private"])
+          v.values["history.usage"] == r["usage_points"]["private"])
 
     # ★ 개정 302 — 광고형태만으로도 잡는다.  옛 코드는 이것을 놓쳤다
     v = analyze_listing(ctx(snap(), advertisement_type="RENT_SUCCESSION"))
     check("★ 광고형태가 렌트 승계 → 용도 0점 (점검부가 없어도)",
-          v.values["state.usage"] == r["usage_rental"],
-          str(v.values["state.usage"]))
+          v.values["history.usage"] == r["usage_points"]["rental"],
+          str(v.values["history.usage"]))
     v = analyze_listing(ctx(snap(), advertisement_type="OPERATING_LEASE"))
     check("★ 운용리스는 렌트와 다르다 — 10점",
-          v.values["state.usage"] == r["usage_lease"],
-          str(v.values["state.usage"]))
+          v.values["history.usage"] == r["usage_points"]["lease"],
+          str(v.values["history.usage"]))
     # ★ 보험이력 용도 변경이력 (셋째 근거)
     v = analyze_listing(ctx(snap(), record_use_json='["3", "2"]'))
     check("★ 보험이력 용도 3(영업용) → 용도 0점",
-          v.values["state.usage"] == r["usage_rental"])
+          v.values["history.usage"] == r["usage_points"]["rental"])
     v = analyze_listing(ctx(snap(), record_use_json='["2"]'))
     check("보험이력 자가용만 → 25점",
-          v.values["state.usage"] == r["usage_private"])
+          v.values["history.usage"] == r["usage_points"]["private"])
 
     v = analyze_listing(ctx(snap()))
-    check("근거 없음 → 불명 10점 (0 이 아니다)",
-          v.values["state.usage"] == r["usage_unknown"])
+    # ★ 개정 325 — 근거가 없으면 0점 + 「확인 안 됨」이다
+    check("근거 없음 → 0점 · 확인 안 됨",
+          v.values["history.usage"] == 0
+          and v.sources["history.usage"] == "missing")
 
 
 # ── 자차 수리비 30점 (개정 292 ②) ──────────────────────────────────
 def test_insurance() -> None:
     """★ 옛 「보험 15점 금액 곡선」이 「자차 수리비 30점」이 됐다 (개정 292)."""
-    r = POLICY.rule("state")["repair_curve"]
+    curve = POLICY.rule("state")["repair_curve"]
     full = POLICY.comp("state.repair")
 
     v = analyze_listing(ctx(snap(accident_my_cost=0, accident_my_cnt=0)))
     check("수리비 0원 → 30점", v.values["state.repair"] == full,
           str(v.values["state.repair"]))
-    v = analyze_listing(ctx(snap(accident_my_cost=990000, accident_my_cnt=1)))
-    check("100만 미만 → 20점", v.values["state.repair"] == r[1]["points"],
+    v = analyze_listing(ctx(snap(accident_my_cost=400000, accident_my_cnt=1)))
+    check("50만 이하 → 16점", v.values["state.repair"] == curve[1][1],
           str(v.values["state.repair"]))
-    v = analyze_listing(ctx(snap(accident_my_cost=2900000, accident_my_cnt=1)))
-    check("300만 미만 → 10점", v.values["state.repair"] == r[2]["points"],
+    v = analyze_listing(ctx(snap(accident_my_cost=900000, accident_my_cnt=1)))
+    check("100만 이하 → 12점", v.values["state.repair"] == curve[2][1],
           str(v.values["state.repair"]))
     v = analyze_listing(ctx(snap(accident_my_cost=9000000, accident_my_cnt=2)))
-    check("300만 이상 → 0점", v.values["state.repair"] == 0,
+    check("500만 초과 → 0점", v.values["state.repair"] == 0,
           str(v.values["state.repair"]))
     # ★ 「없다」와 「모른다」를 가른다 — 수리비 미확보는 excluded 다
     v = analyze_listing(ctx(snap()))
-    check("★ 수리비 미확보 → NULL + excluded (0점 아님)",
-          v.values["state.repair"] is None and "state.repair" in v.excluded)
+    # ★ 개정 325 — 근거가 없으면 0점 + 「확인 안 됨」이다
+    check("★ 수리비 미확보 → 0점 · 확인 안 됨",
+          v.values["state.repair"] == 0
+          and v.sources["state.repair"] == "missing")
 
 
 def test_safety_real() -> None:
@@ -409,7 +417,8 @@ def test_safety_real() -> None:
         warranty_power_month=120, warranty_power_km=200000,
         first_registration_date="2023-05-02", mileage_km=30000))), POLICY)
     check("★ 보증은 100점이 아니라 15점이다 (개정 292)",
-          POLICY.comp("state.warranty") == 15, str(POLICY.comp("state.warranty")))
+          POLICY.comp("warranty.maker") == 15,
+          str(POLICY.comp("warranty.maker")))
     check("보증이 남아 있으면 점수가 난다", r2.earned > 0)
 
 
@@ -474,66 +483,61 @@ def test_spec_gate() -> None:
 
 
 def test_price_real() -> None:
-    """① 값 250 — 시세 대비 120 · 감가 70 · 주행 60 (개정 292)."""
-    dep = json.load(open(os.path.join(ROOT, "config", "depreciation.json"),
-                         encoding="utf-8"))
-    check("감가 곡선 6구간 확보", len(dep["curve"]) == 6, str(len(dep["curve"])))
+    """① 값 250 — 시세 100 · 신차가 80 · 주행 70 (docs/ref/F-scoring.md)."""
+    from analyze.axis.value import elapsed_years, residual_expected
 
-    # 3년 경과 · 계수 1.053 → 기대가 = 원가 × 0.710 × 1.053
-    org = 70000000
-    exp = org * dep["curve"]["3"] * dep["coefficient"]["G80_25T"]
+    r = POLICY.rule("value")
+    org = 70_000_000
 
     def at(price, **kw):
         return analyze_listing(ctx(snap(target_key="G80_25T",
                                         price_current_won=int(price),
                                         price_origin_won=org,
                                         first_registration_date="2023-05-02",
-                                        **kw), depreciation=dep))
+                                        **kw)))
 
-    v = at(exp)
-    check("★ 기대가와 같으면 감가 35점 (70점의 절반)",
-          v.values["value.depreciation"] == 35,
-          str(v.values["value.depreciation"]))
-    check("감가 축이 살아난다 (excluded 아님)",
-          "value.depreciation" not in v.excluded)
-    check("기대가 −20% → 70점 만점",
-          at(exp * 0.80).values["value.depreciation"] == 70)
-    check("기대가 +30% → 0점 (음수 구간이 없다 — 만점이 250 이라)",
-          at(exp * 1.30).values["value.depreciation"] == 0)
+    # ── 1-1 시세 대비 100 ──
+    mid = 50_000_000
+    v = at(mid, market_median_won=mid, market_sample_n=12)
+    check("★ 중앙값과 같으면 50점", v.values["value.market"] == 50,
+          str(v.values["value.market"]))
+    check("★ 25% 싸면 100점 만점",
+          at(mid * 0.75, market_median_won=mid,
+             market_sample_n=12).values["value.market"] == 100)
+    check("★ 20% 비싸면 0점",
+          at(mid * 1.20, market_median_won=mid,
+             market_sample_n=12).values["value.market"] == 0)
+    check("★ 표본이 모자라면 0점 · 확인 안 됨 — 이론가로 메우지 않는다",
+          at(mid).values["value.market"] == 0
+          and at(mid).sources["value.market"] == "market_sample_short")
 
-    # ★ 시세는 실매물 중앙값이다.  이론가가 아니다 (개정 292 ①)
-    v = at(exp, market_median_won=50000000, market_sample_n=12)
-    check("★ 중앙값보다 20% 싸면 시세 축 120점 만점",
-          at(50000000 * 0.80, market_median_won=50000000,
-             market_sample_n=12).values["value.market"] == 120)
-    check("중앙값과 같으면 60점",
-          at(50000000, market_median_won=50000000,
-             market_sample_n=12).values["value.market"] == 60)
-    check("★ 표본이 모자라면 excluded — 이론가로 메우지 않는다",
-          at(exp).values["value.market"] is None
-          and "value.market" in at(exp).excluded)
+    # ── 1-2 신차가 대비 80 ──
+    years = elapsed_years(ctx(snap(first_registration_date="2023-05-02")))
+    expected = residual_expected(years, r)
+    v = at(org * expected)
+    check("★ 기준 잔가율과 같으면 45점", v.values["value.depreciation"] == 45,
+          f"{years:.1f}년 · 기준 {expected:.2f} · {v.values['value.depreciation']}")
+    check("★ 기준보다 0.15 더 떨어졌으면 80점 만점",
+          at(org * (expected - 0.15)).values["value.depreciation"] == 80)
+    check("★ 신차가가 없으면 0점 · 확인 안 됨",
+          analyze_listing(ctx(snap(price_current_won=30_000_000)))
+          .sources["value.depreciation"] == "origin_price_missing")
 
-    # ★ 주행은 연 주행거리로 본다.  총 km 가 아니다 (개정 292)
-    check("★ 3년에 3만(연 1만) → 60점 만점",
-          at(exp, mileage_km=30000).values["value.mileage"] == 60,
-          str(at(exp, mileage_km=30000).values["value.mileage"]))
-    check("3년에 9만(연 3만) → 0점",
-          at(exp, mileage_km=90000).values["value.mileage"] == 0)
+    # ── 1-3 주행 대비 70 ──
+    check("★ 연 5,000km 이하 → 70점 만점",
+          at(org, mileage_km=int(5_000 * years)).values["value.mileage"] == 70,
+          str(at(org, mileage_km=int(5_000 * years)).values["value.mileage"]))
+    check("★ 연 30,000km 이상 → 0점",
+          at(org, mileage_km=int(31_000 * years)).values["value.mileage"] == 0)
+    # ★ 전기차는 주행 40 + SOH 30 (개정 318)
+    ev = at(org, mileage_km=int(5_000 * years), ev_battery_soh=97.0)
+    check("★ 전기차 — 주행 40 만점 + SOH 30 만점 = 70",
+          ev.values["value.mileage"] == 70, str(ev.values["value.mileage"]))
+    low = at(org, mileage_km=int(5_000 * years), ev_battery_soh=85.0)
+    check("★ SOH 85% → 배터리 0점.  주행만 40",
+          low.values["value.mileage"] == 40, str(low.values["value.mileage"]))
 
-    # ★ 스포티지 계수 1.517 은 sane_range [0.80, 1.20] 밖이다
-    check("표본 확인 — 스포티지 계수가 가드 밖",
-          dep["coefficient"]["SPORTAGE_LPI"] > dep["coefficient_sane_range"][1])
-    bad = analyze_listing(ctx(snap(target_key="SPORTAGE_LPI",
-                                   price_current_won=36000000,
-                                   price_origin_won=32840000,
-                                   first_registration_date="2023-05-02"),
-                              depreciation=dep))
-    check("★ 계수 가드 밖 → 감가 축 excluded (자르지도, 그대로 쓰지도 않는다)",
-          bad.values["value.depreciation"] is None
-          and "value.depreciation" in bad.excluded)
-    check("다른 축은 정상 판정된다", bad.values["value.mileage"] is not None)
-    check("★ 핵심 축이라 등급이 안 난다 (개정 287)",
-          score(bad, POLICY).grade == "NOT_RATED")
+
 
 
 # ── 색상 40점 (STEP 80) ──────────────────────────────────────────────
@@ -558,20 +562,22 @@ def test_color() -> None:
 
 
 def test_price_pending() -> None:
-    v = analyze_listing(ctx(snap(price_current_won=50000000,
-                                 price_origin_won=70000000,
-                                 year_month="2023-05")))
-    check("★ 감가 곡선 미확정 → 감가 NULL + excluded (0점 아님)",
-          v.values["value.depreciation"] is None
-          and "value.depreciation" in v.excluded)
+    """★ 개정 329 — 감가는 config 곡선이 아니라 기준 잔가율로 본다.
 
-    dep = {"curve": {"3": 0.70}, "coefficient": {"G80_25T": 1.0}}
-    v = analyze_listing(ctx(snap(price_current_won=49000000,
-                                 price_origin_won=70000000,
-                                 year_month="2023-05"), depreciation=dep))
-    check("곡선이 주어지면 기대가 대비로 채점 (±0% → 35점)",
-          v.values["value.depreciation"] == 35,
-          str(v.values["value.depreciation"]))
+    ★ 감가 곡선(depreciation.json)은 화면의 「기대가」에만 쓴다.
+      판정은 F-scoring ①-2 의 기준 잔가율이 정본이다
+    """
+    v = analyze_listing(ctx(snap(price_current_won=50_000_000,
+                                 price_origin_won=70_000_000,
+                                 year_month="2023-05")))
+    check("★ 감가 곡선이 없어도 신차가만 있으면 판정한다",
+          v.sources["value.depreciation"] == "origin_price",
+          v.sources["value.depreciation"])
+    check("★ 신차가가 없으면 0점 · 확인 안 됨 (0점이 「싸다」가 아니다)",
+          analyze_listing(ctx(snap(price_current_won=50_000_000)))
+          .values["value.depreciation"] == 0)
+
+
 
 
 def test_absolute_real() -> None:
@@ -649,8 +655,10 @@ def test_empty_array_meaning() -> None:
 
     v2 = Verdict()
     analyze_state(ctx(snap()), v2)
-    check("점검부 없음 → excluded (만점 아니다)",
-          "state.frame" in v2.excluded)
+    # ★ 개정 325 — 원문이 없으면 0점 + 「확인 안 됨」이다.  만점이 아니다
+    check("점검부 없음 → 0점 · 확인 안 됨 (만점 아니다)",
+          v2.values["state.frame"] == 0
+          and v2.sources["state.frame"] == "missing")
 
 
 # ── STEP 82e 유사군 ─────────────────────────────────────────────────
@@ -697,17 +705,16 @@ def test_peer_group() -> None:
 
 # ── STEP 76 확정 — 「용접,절단」은 교환과 같게 센다 ──────────────────
 def test_damage_by_status() -> None:
-    from analyze.axis.history import outer_swap_count
+    from analyze.axis.state import SWAP_TITLES, _rank_worst
 
-    r = POLICY.raw["axis_rules"]
-    by, outer = r["history"]["damage_by_status"], r["absolute_fail"]["outer_ranks"]
+    outer = POLICY.raw["axis_rules"]["absolute_fail"]["outer_ranks"]
 
     def panel(rank, *st):
         return {"attributes": [rank],
                 "statusTypes": [{"title": x} for x in st]}
 
     def n(*panels):
-        return outer_swap_count(list(panels), outer, by)
+        return _rank_worst(list(panels), outer, SWAP_TITLES)
 
     check("교환 1판", n(panel("RANK_ONE", "교환(교체)")) == 1)
     check("판금/용접 단독은 감점 없음", n(panel("RANK_ONE", "판금/용접")) == 0)
@@ -731,38 +738,22 @@ def test_repair_cost_ratio() -> None:
     check("초안 10% 는 15.6% 를 뺐다 — 더 엄격했다", ratio > 0.10)
 
 
-# ── STEP 75 HDA Gate 확정 ───────────────────────────────────────────
+# ── STEP 75 HDA — 개정 329 로 축이 없어졌다 ────────────────────────
 def test_hda_gate() -> None:
-    """★ 판정 근거는 description 이다.  옵션명의 Ⅰ·II 로 가르지 않는다."""
-    r = POLICY.raw["axis_rules"]["spec"]
-    check("★ Gate 가 열렸다 (2026-08-11 실측)", r["hda_gate_open"] is True)
-    check("2 문구가 1 문구보다 먼저 검사된다",
-          all(any(p2.startswith(p1) for p1 in r["hda_level1_phrases"])
-              for p2 in r["hda_level2_phrases"] if p2.startswith("고속도로")))
-    check("띄어쓰기 변형을 담는다",
-          "고속도로 주행보조 2" in r["hda_level2_phrases"])
+    """★ HDA 축은 개정 329(F-scoring 24축)에서 빠졌다.
 
-    # 실측 표 — description 으로 갈린다
-    def level(desc: str) -> str:
-        if any(p in desc for p in r["hda_level2_phrases"]):
-            return "2"
-        if any(p in desc for p in r["hda_level1_phrases"]):
-            return "1"
-        return "0"
+    ★ 「판매글 키워드가 실장착을 이기지 못한다」는 규칙은 살아 있다 —
+      취향 축(HUD · 선루프)이 그것을 지킨다.  아래에서 그것만 확인한다
+    ★ 없어진 축의 config 를 계속 시험하면 시험이 규격보다 뒤처진다
+    """
+    from analyze.axes import COMPONENTS
 
-    cases = [
-        ("드라이빙 어시스턴스 패키지 II",
-         "스마트 크루즈 컨트롤, 고속도로 주행 보조 2(차로 변경 보조)", "2"),
-        ("현대 스마트센스 II", "고속도로 주행 보조 2, 전방 충돌방지", "2"),
-        ("드라이빙 어시스턴스 패키지 Ⅰ",
-         "서라운드 뷰 모니터, 후측방 모니터, 원격 스마트 주차 보조", "0"),
-        ("현대 스마트센스 I", "후측방 충돌 경고, 차로 이탈방지", "0"),
-    ]
-    for name, desc, want in cases:
-        got = level(desc)
-        check(f"★ {name[:22]} → {want}", got == want, f"{got}")
-    check("★ Ⅰ(로마) 와 I(라틴) 이 결과를 안 가른다",
-          level("서라운드 뷰 모니터") == level("후측방 충돌 경고"))
+    check("★ HDA 축은 더 없다 (개정 329 · 24축)",
+          "spec.hda" not in COMPONENTS)
+    v = analyze_listing(ctx(snap(options_standard=[], options_choice=[],
+                                 ad_body_text="HUD 있습니다 선루프도 있습니다")))
+    check("★ 판매글 키워드가 실장착을 이기지 못한다 (v1 사고)",
+          v.values["taste.hud"] == 0 and v.values["taste.sunroof"] == 0)
 
 
 if __name__ == "__main__":

@@ -83,15 +83,23 @@ class AxisContext:
 
 
 # Component 목록 — result_axis 는 이 단위로 저장한다 (STEP 68 · 개정 292)
-# ★ 갈래별 합   값 250 · 상태 180 · 사양 75 · 사이트 보증 50 · 취향 50 = 605
-#   등급은 ①②③⑤ = 555 로 매긴다.  ④ 취향은 순위에만 쓴다 (개정 306)
+# ★ 배점의 유일한 정본은 docs/ref/F-scoring.md 다 (개정 330).
+#   갈래별 합  ①값 250 · ②상태 150 · ③이력 80 · ④사양 45 · ⑤보증 30 · ⑥취향 50
+#   등급은 ①~⑤ = 555 로 매긴다.  ⑥ 취향 50 은 순위에만 쓴다
 COMPONENTS: tuple[str, ...] = (
+    # ① 값 250
     "value.market", "value.depreciation", "value.mileage",
-    "state.accident", "state.frame", "state.repair",
-    "state.usage", "state.warranty",
+    # ② 상태 150
+    "state.accident", "state.frame", "state.outer", "state.repair",
+    "state.special", "state.leak", "state.consumable", "state.integrity",
+    # ③ 이력 80
+    "history.usage", "history.not_join", "history.owner", "history.lien",
+    # ④ 사양 45
     "spec.trim", "spec.options",
-    "site.certified", "site.inspection", "site.warranty",
-    "taste.hud", "taste.sunroof", "taste.color", "taste.picked",
+    # ⑤ 보증 30
+    "warranty.maker", "warranty.site", "warranty.inspection",
+    # ⑥ 취향 50 — 등급에 안 들어간다
+    "taste.hud", "taste.picked", "taste.color", "taste.sunroof",
 )
 
 # 등급에 들어가지 않는 갈래 (개정 292 ④).  ★ 취향으로 등급이 오르내리면 안 된다

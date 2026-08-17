@@ -270,6 +270,10 @@ def parse_inspection(body: dict, site: str, source_id: str) -> dict:
         "inspection_simple_repair": _get(body, "master.simpleRepair"),
         "inspection_flood": d.get("waterlog"),
         "inspection_tuning": d.get("tuning"),
+        # ★ 진정성 축 (F-scoring ②-8).  「양호」인지만 본다 —
+        #   코드는 사이트가 바꿀 수 있다
+        "inspection_car_state": _text((d.get("carStateType") or {})
+                                      .get("title")),
         "inspection_recall": d.get("recall"),
         # ★ usageChangeTypes 는 record 가 아니라 점검부 master.detail 에 있다.
         #   v1 은 record 에서 찾다가 「존재하지 않는 필드」로 금지했다 (STEP 21a)

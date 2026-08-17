@@ -1,145 +1,203 @@
 # -*- coding: utf-8 -*-
-"""② 상태 180점 — 사고 70 · 골격 40 · 수리비 30 · 용도 25 · 보증 15.
+"""② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②).
 
-지시서   7장 STEP 76 · 77 · 78 · 72 · 5장 「배점 재설계 — 시장 기준」 (개정 292) · 개정 302 (렌트 세 곳 대조)
-근거     「사고는 가격 결정에 가장 큰 영향을 미치는 감가 요인」
-        A등급 사고차(프론트휀더·도어패널·트렁크리드) 평균 감가 12.02±5.43%
-        「렌트·리스는 정상 시세보다 큰 감가 요인」
-★ 마스터 지적 — 「깡통에 HUD 만 있어도 만점」.  옛 배점은 상태 55 < 사양 90 이었다
+지시서   7장 STEP 76 · 77 · `docs/ref/F-scoring.md` ② (개정 329)
+근거     마스터 지적 — 「등급 산정에 넣어야 하는 항목이 너무 한정적이다」
+        17축은 임의로 좁힌 것이었다.  원문에 있는 것을 다 넣는다
+축      사고 40 · 골격 30 · 외판 20 · 수리비 20
+        특수사고 15 · 누유 10 · 소모품 10 · 진정성 5
 금지     부위명 문자열로 골격을 판정하는 것.  RANK_A/B/C 를 쓴다
+        원문이 없는데 「없음」으로 두는 것 — 「확인 안 됨」이다 (개정 323)
 """
 from __future__ import annotations
 
+import json
+
 from analyze.axes import AxisContext
-from analyze.axis._util import months_between
-from analyze.axis.history import rental_findings
-from analyze.axis.warranty import _remaining_months
-from analyze.verdict import PRIO_MANUFACTURER, PRIO_OBSERVED, Verdict, put
+from analyze.curve import ascending, step_down
+from analyze.verdict import PRIO_OBSERVED, Verdict, put
 
 ACCIDENT = "state.accident"
 FRAME = "state.frame"
+OUTER = "state.outer"
 REPAIR = "state.repair"
-USAGE = "state.usage"
-WARRANTY = "state.warranty"
+SPECIAL = "state.special"
+LEAK = "state.leak"
+CONSUMABLE = "state.consumable"
+INTEGRITY = "state.integrity"
 
-# 골격 상태 — 무거운 쪽이 이긴다.  한 판에 여러 상태가 붙는다
-FRAME_SWAP = ("교환(교체)", "용접,절단")
-FRAME_SHEET = ("판금/용접",)
+# 상태 문구 — 원문 그대로 (실측).  ★ 코드를 쓰지 않는다 — 사이트가 바꿀 수 있다
+SWAP_TITLES = ("교환(교체)", "용접,절단")
+SHEET_TITLES = ("판금/용접",)
+# 누유 — statusItemTypes 가 「없음 · 미세누유 · 누유」다
+LEAK_MINOR = ("미세누유", "미세누수")
+LEAK_BAD = ("누유", "누수")
+
+
+def _panels(snap):
+    return snap.inspection_panels
+
+
+def _rank_worst(panels, ranks, titles) -> int:
+    """그 랭크의 판 중 titles 상태인 판 수.  ★ 판 단위로 한 번만 센다."""
+    n = 0
+    for el in panels:
+        if not any(a in ranks for a in (el.get("attributes") or [])):
+            continue
+        got = [t.get("title") for t in (el.get("statusTypes") or [])]
+        if any(t in titles for t in got):
+            n += 1
+    return n
 
 
 def _accident(ctx: AxisContext, v: Verdict) -> None:
-    """사고 회수 70 — 무사고 70 · 1회 40 · 2회 20 · 3회 이상 0."""
+    """2-1 사고 이력 40 — 무사고 40 · 1회 22 · 2회 10 · 3회 이상 0."""
     s, r = ctx.snapshot, ctx.policy.rule("state")
     my, other = s.accident_my_cnt, s.accident_other_cnt
     if my is None and other is None:
-        put(v, ACCIDENT, None, PRIO_OBSERVED, "missing", excluded=True)
+        # ★ 원문이 없으면 「확인 안 됨」이다.  「무사고」가 아니다 (개정 323)
+        put(v, ACCIDENT, 0, PRIO_OBSERVED, "missing")
         return
-    n = (my or 0) + (other or 0)
-    table = r["accident_by_count"]
-    put(v, ACCIDENT, table.get(str(n), r["accident_min"]),
+    put(v, ACCIDENT, round(step_down((my or 0) + (other or 0),
+                                     r["accident_curve"])),
         PRIO_OBSERVED, "record_accident_count")
 
 
-def frame_state(panels: list, frame_ranks) -> str:
-    """골격 판의 가장 무거운 상태 (개정 292 ②).
-
-    ★ 랭크가 골격을 정한다.  부위명 문자열이 아니다 —
-      v1 은 사전이 「프론트펜더」, 원문이 「프론트 휀더(우)」여서 344건이 미분류였다
-    """
-    worst = "none"
-    for el in panels:
-        if not any(a in frame_ranks for a in (el.get("attributes") or [])):
-            continue
-        titles = [t.get("title") for t in (el.get("statusTypes") or [])]
-        if any(t in FRAME_SWAP for t in titles):
-            return "swap"
-        if any(t in FRAME_SHEET for t in titles):
-            worst = "sheet"
-    return worst
-
-
 def _frame(ctx: AxisContext, v: Verdict) -> None:
-    """골격 손상 40 — 없음 40 · 판금 20 · 용접·교환 0."""
+    """2-2 골격 30 — 이상없음 30 · 판금1 18 · 판금2+ 8 · 용접·교환 0."""
     s, r = ctx.snapshot, ctx.policy.rule("state")
-    if s.inspection_panels is None:
-        put(v, FRAME, None, PRIO_OBSERVED, "missing", excluded=True)
+    if _panels(s) is None:
+        put(v, FRAME, 0, PRIO_OBSERVED, "missing")
         return
-    got = frame_state(s.inspection_panels,
-                      ctx.policy.rule("absolute_fail")["frame_ranks"])
-    put(v, FRAME, r["frame_points"][got], PRIO_OBSERVED, f"frame_{got}")
+    ranks = ctx.policy.rule("absolute_fail")["frame_ranks"]
+    if _rank_worst(_panels(s), ranks, SWAP_TITLES):
+        key = "swap"
+    else:
+        n = _rank_worst(_panels(s), ranks, SHEET_TITLES)
+        key = "none" if not n else ("sheet1" if n == 1 else "sheet2")
+    put(v, FRAME, r["frame_points"][key], PRIO_OBSERVED, f"frame_{key}")
+
+
+def _outer(ctx: AxisContext, v: Verdict) -> None:
+    """2-3 외판 20 — 골격과 따로 센다.  외판 교환은 값을 깎는다."""
+    s, r = ctx.policy.rule("state"), None
+    snap = ctx.snapshot
+    if _panels(snap) is None:
+        put(v, OUTER, 0, PRIO_OBSERVED, "missing")
+        return
+    ranks = ctx.policy.rule("absolute_fail")["outer_ranks"]
+    if _rank_worst(_panels(snap), ranks, SWAP_TITLES):
+        key = "swap"
+    else:
+        n = _rank_worst(_panels(snap), ranks, SHEET_TITLES)
+        key = "none" if not n else ("paint12" if n <= 2 else "paint3")
+    put(v, OUTER, s["outer_points"][key], PRIO_OBSERVED, f"outer_{key}")
+    del r
 
 
 def _repair(ctx: AxisContext, v: Verdict) -> None:
-    """자차 수리비 30 — 0원 30 · 100만 미만 20 · 300만 미만 10 · 그 이상 0.
+    """2-4 자차 수리비 20 — 0원 20 · 50만 16 · 100만 12 · 200만 8 · 500만 4."""
+    s, r = ctx.snapshot, ctx.policy.rule("state")
+    if s.accident_my_cost is None:
+        put(v, REPAIR, 0, PRIO_OBSERVED, "missing")
+        return
+    put(v, REPAIR, round(step_down(s.accident_my_cost, r["repair_curve"],
+                                   r["repair_min"])),
+        PRIO_OBSERVED, "record_my_cost")
 
-    금지   insuranceBenefit 사용.  type 3(내 차 피해가 아닌 것)을 감점에 넣는 것
+
+def _special(ctx: AxisContext, v: Verdict) -> None:
+    """2-5 특수 사고 15 — 전손 · 침수 · 도난.  하나라도 있으면 0."""
+    s, r = ctx.snapshot, ctx.policy.rule("state")
+    got = (s.total_loss_cnt, s.flood_total_cnt, s.flood_part_cnt)
+    if all(x is None for x in got):
+        put(v, SPECIAL, 0, PRIO_OBSERVED, "missing")
+        return
+    bad = any(x for x in got if x)
+    put(v, SPECIAL, r["special_bad"] if bad else r["special_ok"],
+        PRIO_OBSERVED, "record_special")
+
+
+def leak_state(inners) -> str:
+    """누유 상태 — 원동기·변속기·동력전달 (F ②-6).
+
+    ★ 상태 문구를 그대로 본다.  코드를 쓰면 사이트가 바꿀 때 조용히 틀린다
+    """
+    minor = bad = 0
+    stack = list(inners or [])
+    while stack:
+        node = stack.pop()
+        if not isinstance(node, dict):
+            continue
+        title = ((node.get("statusType") or {}).get("title") or "")
+        if title in LEAK_BAD:
+            bad += 1
+        elif title in LEAK_MINOR:
+            minor += 1
+        stack.extend(node.get("children") or [])
+    if bad:
+        return "leak"
+    return "none" if not minor else ("minor1" if minor == 1 else "minor2")
+
+
+def _leak(ctx: AxisContext, v: Verdict) -> None:
+    s, r = ctx.snapshot, ctx.policy.rule("state")
+    raw = s.inspection_inner_json
+    if raw is None:
+        put(v, LEAK, 0, PRIO_OBSERVED, "missing")
+        return
+    key = leak_state(json.loads(raw))
+    put(v, LEAK, r["leak_points"][key], PRIO_OBSERVED, f"leak_{key}")
+
+
+def _consumable(ctx: AxisContext, v: Verdict) -> None:
+    """2-7 소모품 10 — 타이어 트레드 잔량.
+
+    ★ 실측 08-17 — 엔카 점검 원문 300건에 트레드가 하나도 없다.
+      그러면 「확인 안 됨 · 0점」이다.  0mm 로 두면 없는 것을 있다고 하는 것이다
     """
     s, r = ctx.snapshot, ctx.policy.rule("state")
-    cost = s.accident_my_cost
-    if cost is None:
-        put(v, REPAIR, None, PRIO_OBSERVED, "missing", excluded=True)
+    tread = getattr(s, "tire_tread_mm", None)
+    if tread is None:
+        put(v, CONSUMABLE, 0, PRIO_OBSERVED, "missing")
         return
-    for row in r["repair_curve"]:
-        edge = row["won"]
-        if edge is None or cost < edge:
-            put(v, REPAIR, int(row["points"]), PRIO_OBSERVED, "record_my_cost")
-            return
-    put(v, REPAIR, int(r["repair_curve"][-1]["points"]), PRIO_OBSERVED,
-        "record_my_cost")
+    put(v, CONSUMABLE, round(ascending(-float(tread),
+                                       [[-a, b] for a, b in r["tread_curve"]])),
+        PRIO_OBSERVED, "tire_tread")
 
 
-def _usage(ctx: AxisContext, v: Verdict) -> None:
-    """용도 25 — 자가용 25 · 리스 10 · 렌트 0 (개정 292 · 302).
+def _integrity(ctx: AxisContext, v: Verdict) -> None:
+    """2-8 진정성 5 — 계기판 교환 2 · 불법 구조변경 2 · 튜닝 1.
 
-    ★ 렌트를 세 곳에서 대조한다 — 광고형태 · 점검부 용도변경 · 보험이력
+    ★ 계기판 교환은 주행거리를 못 믿는다는 뜻이다
+    ★ 실측 08-17 — 엔카 점검 원문 400건에 mileageStateType 이 전건 null 이다.
+      그 2점은 못 준다.  「없다」가 아니라 「모른다」라 0 이다 (개정 325)
     """
     s, r = ctx.snapshot, ctx.policy.rule("state")
-    hist = ctx.policy.rule("history")
-    found = rental_findings(s, hist["commercial_use_codes"])
-    if found:
-        keys = [k for k, _why in found]
-        # 리스만 있고 렌트 근거가 없으면 리스다.  둘을 같은 점수로 두지 않는다
-        lease_only = (keys == ["advertisement_type"]
-                      and s.advertisement_type in r["lease_ad_types"])
-        put(v, USAGE, r["usage_lease"] if lease_only else r["usage_rental"],
-            PRIO_OBSERVED, "+".join(keys))
+    table = r["integrity"]
+    if s.inspection_tuning is None:
+        put(v, INTEGRITY, 0, PRIO_OBSERVED, "missing")
         return
-    if (s.usage_change_types_json is not None or s.record_use_json is not None
-            or s.plate_history_hash_json is not None):
-        put(v, USAGE, r["usage_private"], PRIO_OBSERVED, "checked_three")
-        return
-    put(v, USAGE, r["usage_unknown"], PRIO_OBSERVED, "unknown")
-
-
-def _warranty(ctx: AxisContext, v: Verdict) -> None:
-    """보증 잔여 15 — 일반·엔진 잔여에 비례 (개정 292 ②).
-
-    ★ 옛 배점은 보증만 100점이었다.  시장은 그만큼 안 쳐 준다
-    """
-    s = ctx.snapshot
-    r = ctx.policy.rule("warranty")
-    base = s.first_registration_date or s.year_month
-    elapsed = months_between(base, ctx.target_config.get("as_of"))
-    kpm = r["km_per_month"]
-    remains = [
-        _remaining_months(m, km, elapsed, s.mileage_km, kpm)
-        for m, km in ((s.warranty_body_month, s.warranty_body_km),
-                      (s.warranty_power_month, s.warranty_power_km))
-    ]
-    got = [x for x in remains if x is not None]
-    if not got:
-        put(v, WARRANTY, None, PRIO_MANUFACTURER, "missing", excluded=True)
-        return
-    full, cap = float(r["full_months"]), ctx.policy.comp(WARRANTY)
-    # 둘 중 긴 쪽으로 본다.  ★ 엔진 보증이 남았으면 그것이 값이다
-    best = max(got)
-    pts = 0 if best <= 0 else round(min(best, full) / full * cap)
-    put(v, WARRANTY, pts, PRIO_MANUFACTURER, "encar")
+    got, why = 0, []
+    if not s.inspection_tuning:
+        got += table["tuning"]
+    else:
+        why.append("튜닝")
+    if s.car_state_ok:
+        got += table["structure"]
+    elif s.car_state_ok is not None:
+        why.append("구조 상태 불량")
+    # ★ 계기판 교환은 원문에 없다 — 그 2점은 확인 못 한 것이다
+    why.append("계기판 확인 못 함")
+    put(v, INTEGRITY, got, PRIO_OBSERVED, "integrity_" + "+".join(why))
 
 
 def analyze_state(ctx: AxisContext, v: Verdict) -> None:
     _accident(ctx, v)
     _frame(ctx, v)
+    _outer(ctx, v)
     _repair(ctx, v)
-    _usage(ctx, v)
-    _warranty(ctx, v)
+    _special(ctx, v)
+    _leak(ctx, v)
+    _consumable(ctx, v)
+    _integrity(ctx, v)

@@ -1,25 +1,32 @@
 {
   "calc_version": "c1",
-  "_ref": "지시서 7장 STEP 68 (배점) · STEP 71 (가격 곡선) · STEP 83 (분모) · STEP 84 (등급)",
+  "_ref": "★ 배점의 유일한 정본은 docs/ref/F-scoring.md 다 (개정 330). 본문 배점표는 전부 폐기",
   "total_points": 605,
   "components": {
-    "value.market": 120,
-    "value.depreciation": 70,
-    "value.mileage": 60,
-    "state.accident": 70,
-    "state.frame": 40,
-    "state.repair": 30,
-    "state.usage": 25,
-    "state.warranty": 15,
-    "spec.trim": 45,
-    "spec.options": 30,
-    "site.certified": 30,
-    "site.inspection": 12,
-    "site.warranty": 8,
+    "value.market": 100,
+    "value.depreciation": 80,
+    "value.mileage": 70,
+    "state.accident": 40,
+    "state.frame": 30,
+    "state.outer": 20,
+    "state.repair": 20,
+    "state.special": 15,
+    "state.leak": 10,
+    "state.consumable": 10,
+    "state.integrity": 5,
+    "history.usage": 30,
+    "history.not_join": 25,
+    "history.owner": 15,
+    "history.lien": 10,
+    "spec.trim": 25,
+    "spec.options": 20,
+    "warranty.maker": 15,
+    "warranty.site": 10,
+    "warranty.inspection": 5,
     "taste.hud": 15,
-    "taste.sunroof": 10,
+    "taste.picked": 15,
     "taste.color": 10,
-    "taste.picked": 15
+    "taste.sunroof": 10
   },
   "_component_form": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용 (STEP 128). 파서는 #5 에서 반영한다",
   "admin": {
@@ -87,88 +94,104 @@
   "_axis_rules_note": "axis_rules 는 7장 STEP 71~84 의 임계·구간이다. V4-13 이 코드에 박는 것을 금지하므로 여기에 둔다. ★ STEP 6 config 키 전량 표에 axis_rules 행 추가가 필요하다 (미승인)",
   "axis_rules": {
     "warranty": {
-      "full_months": 24,
-      "expire_penalty": -15,
-      "km_per_month": 1250
+      "_note": "⑤ 보증 30 — F-scoring 5-1~5-3",
+      "km_per_month": 1250,
+      "maker_curve": [
+        [
+          36,
+          15
+        ],
+        [
+          24,
+          12
+        ],
+        [
+          12,
+          8
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "site_points": {
+        "certified": 10,
+        "diagnosis_only": 6,
+        "none": 0
+      },
+      "inspection_points": {
+        "official": 5,
+        "seller": 2,
+        "none": 0
+      }
     },
     "spec": {
-      "hda_points": {
-        "2": 20,
-        "1": 12,
-        "0": 0
-      },
-      "hda_gate_open": true,
-      "hda_level2_phrases": [
-        "고속도로 주행 보조 2",
-        "고속도로 주행보조 2",
-        "HDA 2"
-      ],
-      "hda_level1_phrases": [
-        "고속도로 주행 보조",
-        "고속도로 주행보조",
-        "HDA"
-      ],
-      "ladder_min": 3,
-      "option_full_won": 8000000,
-      "_option_full_note": "선택 옵션 800만이면 만점 (개정 292 ③). 실측 08-17 — 엔카 G80 파퓰러 510 + 컴포트 250 = 760만"
+      "_note": "④ 사양 45 — F-scoring 4-1·4-2",
+      "trim_single_full": true,
+      "option_percentile": 0.9,
+      "option_min_sample": 5
     },
     "history": {
-      "damage_by_swap": {
-        "0": 20,
-        "1": 15,
-        "2": 10,
-        "3": 5
-      },
-      "damage_by_status": {
-        "교환(교체)": "swap",
-        "용접,절단": "swap",
-        "판금/용접": "none",
-        "손상": "none"
-      },
-      "damage_min": 0,
-      "insurance_cap_by_count": {
-        "0": 15,
-        "1": 12,
-        "2": 9,
-        "3": 6
-      },
-      "insurance_cap_min": 6,
-      "rental": {
-        "non_rental": 20,
+      "_note": "③ 이력 80 — F-scoring 3-1~3-4",
+      "usage_points": {
+        "private": 30,
+        "government": 20,
+        "business": 8,
         "rental": 0,
-        "unknown": 10
+        "lease": 10
       },
-      "insurance_cost_curve": [
-        {
-          "ratio": 0.0,
-          "points": 15
-        },
-        {
-          "ratio": 0.02,
-          "points": 13
-        },
-        {
-          "ratio": 0.04,
-          "points": 11
-        },
-        {
-          "ratio": 0.07,
-          "points": 8
-        },
-        {
-          "ratio": 0.1,
-          "points": 5
-        },
-        {
-          "ratio": 0.15,
-          "points": 2
-        },
-        {
-          "ratio": null,
-          "points": 0
-        }
+      "not_join_curve": [
+        [
+          0.0,
+          25
+        ],
+        [
+          0.1,
+          20
+        ],
+        [
+          0.2,
+          14
+        ],
+        [
+          0.3,
+          8
+        ],
+        [
+          0.5,
+          3
+        ]
       ],
-      "_commercial_note": "보험이력 용도 코드 3=영업용 (개정 302).  규격에 코드표가 없어 실측으로 짚었다 — 점검부가 「렌트」라 한 646건 중 627건",
+      "not_join_min": 0,
+      "owner_curve": [
+        [
+          0,
+          15
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          0
+        ]
+      ],
+      "owner_per_year_limit": 1.0,
+      "lien_ok": 10,
+      "lien_bad": 0,
       "commercial_use_codes": [
         "3"
       ]
@@ -219,126 +242,259 @@
       "_repair_cost_note": "10% 는 v1 초안이다. 실매물 15.6% 가 걸린다 — E 로는 과하다. 첫 수집 후 「E 로 뺄 비율」을 정하고 그 분위수를 임계로 잡는다 (STEP 82)"
     },
     "value": {
-      "_note": "개정 292 ① — 시세 대비 120 · 신차가 대비 감가 70 · 주행 대비 60",
+      "_note": "① 값 250 — F-scoring 1-1·1-2·1-3",
       "market_curve": [
-        {
-          "deviation": -0.2,
-          "points": 120
-        },
-        {
-          "deviation": -0.1,
-          "points": 90
-        },
-        {
-          "deviation": 0.0,
-          "points": 60
-        },
-        {
-          "deviation": 0.1,
-          "points": 30
-        },
-        {
-          "deviation": null,
-          "points": 0
-        }
+        [
+          0.25,
+          100
+        ],
+        [
+          0.2,
+          90
+        ],
+        [
+          0.15,
+          80
+        ],
+        [
+          0.1,
+          70
+        ],
+        [
+          0.05,
+          60
+        ],
+        [
+          0.0,
+          50
+        ],
+        [
+          -0.05,
+          35
+        ],
+        [
+          -0.1,
+          20
+        ],
+        [
+          -0.15,
+          10
+        ],
+        [
+          -0.2,
+          0
+        ]
       ],
-      "depreciation_curve": [
-        {
-          "deviation": -0.2,
-          "points": 70
-        },
-        {
-          "deviation": -0.1,
-          "points": 53
-        },
-        {
-          "deviation": 0.0,
-          "points": 35
-        },
-        {
-          "deviation": 0.1,
-          "points": 18
-        },
-        {
-          "deviation": null,
-          "points": 0
-        }
-      ],
-      "mileage_curve": [
-        {
-          "km_per_year": 10000,
-          "points": 60
-        },
-        {
-          "km_per_year": 15000,
-          "points": 45
-        },
-        {
-          "km_per_year": 20000,
-          "points": 30
-        },
-        {
-          "km_per_year": 25000,
-          "points": 15
-        },
-        {
-          "km_per_year": 30000,
-          "points": 0
-        },
-        {
-          "km_per_year": null,
-          "points": 0
-        }
-      ],
-      "mileage_unknown_points": 0,
       "market_min_sample": 5,
+      "depreciation_curve": [
+        [
+          0.15,
+          80
+        ],
+        [
+          0.1,
+          70
+        ],
+        [
+          0.05,
+          58
+        ],
+        [
+          0.0,
+          45
+        ],
+        [
+          -0.05,
+          30
+        ],
+        [
+          -0.1,
+          15
+        ],
+        [
+          -0.15,
+          0
+        ]
+      ],
+      "residual_by_year": {
+        "1": 0.88,
+        "2": 0.78,
+        "3": 0.67
+      },
+      "residual_step": 0.07,
+      "residual_floor": 0.15,
+      "mileage_curve": [
+        [
+          5000,
+          70
+        ],
+        [
+          8000,
+          62
+        ],
+        [
+          10000,
+          55
+        ],
+        [
+          12000,
+          48
+        ],
+        [
+          15000,
+          40
+        ],
+        [
+          18000,
+          30
+        ],
+        [
+          20000,
+          22
+        ],
+        [
+          25000,
+          10
+        ],
+        [
+          30000,
+          0
+        ]
+      ],
+      "ev_mileage_points": 40,
+      "soh_curve": [
+        [
+          97,
+          30
+        ],
+        [
+          95,
+          26
+        ],
+        [
+          94,
+          24
+        ],
+        [
+          92,
+          20
+        ],
+        [
+          90,
+          16
+        ],
+        [
+          87,
+          10
+        ],
+        [
+          85,
+          0
+        ]
+      ],
+      "min_years": 0.5,
       "high_mileage_km": 100000,
       "_high_mileage_note": "이만큼 넘으면 「많이 달렸다」를 싼 이유로 낸다 (개정 299 ⑤)",
       "battery_soh_low": 92,
-      "_battery_soh_note": "이보다 낮으면 「배터리가 닳았다」를 싼 이유로 낸다 (개정 296). 실측 08-17 — 30건 SOH 91.1~96.8 · 중앙 94.4"
+      "_battery_soh_note": "이보다 낮으면 「배터리가 닳았다」를 싼 이유로 낸다 (개정 296). 실측 08-17 SOH 91.1~96.8"
     },
     "state": {
-      "_note": "개정 292 ② — 사고 70 · 골격 40 · 수리비 30 · 용도 25 · 보증 15",
-      "accident_by_count": {
-        "0": 70,
-        "1": 40,
-        "2": 20
-      },
-      "accident_min": 0,
+      "_note": "② 상태 150 — F-scoring 2-1~2-8",
+      "accident_curve": [
+        [
+          0,
+          40
+        ],
+        [
+          1,
+          22
+        ],
+        [
+          2,
+          10
+        ],
+        [
+          3,
+          0
+        ]
+      ],
       "frame_points": {
-        "none": 40,
-        "sheet": 20,
+        "none": 30,
+        "sheet1": 18,
+        "sheet2": 8,
+        "swap": 0
+      },
+      "outer_points": {
+        "none": 20,
+        "paint12": 12,
+        "paint3": 6,
         "swap": 0
       },
       "repair_curve": [
-        {
-          "won": 1,
-          "points": 30
-        },
-        {
-          "won": 1000000,
-          "points": 20
-        },
-        {
-          "won": 3000000,
-          "points": 10
-        },
-        {
-          "won": null,
-          "points": 0
-        }
+        [
+          0,
+          20
+        ],
+        [
+          500000,
+          16
+        ],
+        [
+          1000000,
+          12
+        ],
+        [
+          2000000,
+          8
+        ],
+        [
+          5000000,
+          4
+        ]
       ],
-      "usage_private": 25,
-      "usage_lease": 10,
-      "usage_rental": 0,
-      "usage_unknown": 10,
-      "lease_ad_types": [
-        "OPERATING_LEASE",
-        "FINANCING_LEASE"
-      ]
+      "repair_min": 0,
+      "special_ok": 15,
+      "special_bad": 0,
+      "leak_points": {
+        "none": 10,
+        "minor1": 6,
+        "minor2": 3,
+        "leak": 0
+      },
+      "tread_curve": [
+        [
+          7,
+          10
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      "integrity": {
+        "cluster": 2,
+        "structure": 2,
+        "tuning": 1
+      }
     },
     "taste": {
-      "_note": "개정 292 ④ — 색상 흰·검정 10 · 회색·은색 7 · 유색 3 (시장 선호 순서)",
+      "_note": "⑥ 취향 50 — F-scoring ⑥",
       "color_points": {
         "preferred": 10,
         "neutral": 7,
@@ -394,7 +550,7 @@
     0.75
   ],
   "grade_base_points": 555,
-  "_grade_base_note": "①값 250 + ②상태 180 + ③사양 75 + ⑤사이트 보증 50 = 555 가 「시장이 보는 값」이다.  ④취향 50 은 「내가 원하는가」라 순위에만 쓴다 (개정 306 · V3-57)",
+  "_grade_base_note": "①값250 + ②상태150 + ③이력80 + ④사양45 + ⑤보증30 = 555 (docs/ref/F-scoring.md). ⑥취향 50 은 순위에만",
   "_grade_cuts_note": "★ 절대 기준이다 (개정 324).  백분위로 정하지 않는다 — 전체가 나쁘면 나쁜 차가 S 가 된다. 그 등급이 0건이어도 그대로 둔다 — 「S 가 0건」이 사실이면 그것이 정보다",
   "score_core_axes": [
     "value.market",
@@ -403,15 +559,16 @@
   ],
   "_score_core_axes_note": "핵심 축 — 빠지면 NOT_RATED (개정 287 · V3-40). 값을 못 보고 매긴 등급, 사고를 모르고 매긴 등급은 뜻이 없다",
   "penalties": {
-    "_note": "★ 상한을 두지 않는다.  총점에서 뺀다.  0 아래로도 내려간다 (개정 322)",
+    "_note": "★ 축 합계를 다 더한 뒤에 뺀다.  0 아래로 내려간다 (개정 322 · F-scoring)",
     "rental_history": -50,
-    "no_site_grade": -30,
     "not_join_ratio": -40,
     "seller_inspection": -20,
-    "accident_each": -25,
-    "frame_sheet": -40,
+    "no_site_grade": -30,
     "frame_swap": -80,
-    "_not_join_ratio_note": "자차 미가입 기간이 보유 기간의 이 비율을 넘으면",
+    "frame_sheet": -40,
+    "cluster_swap": -60,
+    "illegal_structure": -40,
+    "lien": -30,
     "not_join_ratio_limit": 0.3
   }
 }

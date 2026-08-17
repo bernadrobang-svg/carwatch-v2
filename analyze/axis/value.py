@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-"""① 값 250점 — 시세 대비 120 · 신차가 대비 감가 70 · 주행 대비 60.
+"""① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70.
 
-지시서   7장 STEP 70 · 71 · 81 · 5장 「배점 재설계 — 시장 기준」 (개정 292)
-근거     ★ 이 도구는 「값이 싼가」를 보는 것이다.  ①이 가장 크다
-        감가율 1년 12% · 2년 22% · 3년 33% · 이후 연 7%
-        주행 연 15,000~20,000km 가 평균
-값규칙   시세는 실매물 중앙값이다.  이론가가 아니다 (개정 292)
-        표본이 모자라면 시세 축만 excluded 다 — 감가·주행은 그대로 본다
+지시서   7장 STEP 70 · 71 · 81 · `docs/ref/F-scoring.md` ① (개정 329)
+근거     ★ 이 도구는 「얼마짜리를 얼마에 사나」를 보는 것이다.  ①이 가장 크다
+        마스터 지적 — 「신차가 대비 얼마나 싼지 없음 · 시세보다 낮은지 높은지 없음」
+값규칙   시세는 실매물 중앙값이다.  이론가가 아니다
+        신차가 = 등급기준 + 선택옵션가 합 (개정 301) —
+        ★ 그래서 옵션 많은 차가 자동으로 반영된다
+        전기차는 주행 40 + 배터리 SOH 30 (개정 318)
 금지     중앙값을 못 냈을 때 이론가로 대신하는 것.  그것이 v1 의 「전부 싸다」다
+        본문 배점표를 읽는 것 — 전부 폐기됐다.  부록 F 만 본다 (개정 330)
 """
 from __future__ import annotations
 
 from analyze.axes import AxisContext
 from analyze.axis._util import months_between
-from analyze.axis.price import coefficient_sane, expected_price
+from analyze.curve import ascending, descending
 from analyze.verdict import PRIO_OBSERVED, Verdict, put
 
 MARKET = "value.market"
@@ -23,78 +25,79 @@ MILEAGE = "value.mileage"
 MONTHS_PER_YEAR = 12
 
 
-def points_from_curve(x: float, curve: list, key: str) -> int:
-    """구간 곡선 → 점수.  마지막 항(값 null)이 초과 구간이다.
+def elapsed_years(ctx: AxisContext) -> float | None:
+    """최초등록부터 경과 연수.  ★ 최소 0.5 — 갓 나온 차의 연평균이 폭발한다."""
+    s = ctx.snapshot
+    months = months_between(s.first_registration_date or s.year_month,
+                            ctx.target_config.get("as_of"))
+    if months is None:
+        return None
+    return max(float(ctx.policy.rule("value")["min_years"]),
+               months / MONTHS_PER_YEAR)
 
-    ★ price.py 의 score_from_curve 와 같은 모양이다.  키 이름만 다르다
-    """
-    for row in curve:
-        edge = row[key]
-        if edge is not None and x <= edge:
-            return int(row["points"])
-    return int(curve[-1]["points"])
+
+def residual_expected(years: float, r: dict) -> float:
+    """기준 잔가율 — 1년 0.88 · 2년 0.78 · 3년 0.67 · 이후 연 −0.07 (F ①-2)."""
+    table = r["residual_by_year"]
+    key = str(int(years)) if years >= 1 else "1"
+    if key in table:
+        return float(table[key])
+    got = float(table["3"]) - (int(years) - 3) * float(r["residual_step"])
+    return max(float(r["residual_floor"]), got)
 
 
 def _market(ctx: AxisContext, v: Verdict) -> None:
-    """시세 대비 120 — 같은 차종·트림·연식 실매물 중앙값 대비 (개정 292 ①)."""
-    s = ctx.snapshot
+    """1-1 시세 대비 100 — 같은 차종·트림·연식 실매물 중앙값 대비."""
+    s, r = ctx.snapshot, ctx.policy.rule("value")
     if s.price_current_won is None:
-        put(v, MARKET, None, PRIO_OBSERVED, "price_missing", excluded=True)
+        put(v, MARKET, 0, PRIO_OBSERVED, "missing")
         return
     median, n = s.market_median_won, s.market_sample_n
     if not median:
         # ★ 표본이 모자라면 그렇게 적는다.  이론가로 메우지 않는다
-        put(v, MARKET, None, PRIO_OBSERVED, "market_sample_short", excluded=True)
+        put(v, MARKET, 0, PRIO_OBSERVED, "market_sample_short")
         return
-    deviation = (s.price_current_won - median) / median
-    pts = points_from_curve(deviation, ctx.policy.rule("value")["market_curve"],
-                            "deviation")
-    put(v, MARKET, pts, PRIO_OBSERVED, f"market_median_{n}")
+    cheaper = (median - s.price_current_won) / median
+    put(v, MARKET, round(descending(cheaper, r["market_curve"])),
+        PRIO_OBSERVED, f"market_median_{n}")
 
 
 def _depreciation(ctx: AxisContext, v: Verdict) -> None:
-    """신차가 대비 감가 70 — 시장 평균보다 더 떨어졌으면 그만큼 싸게 사는 것."""
-    s = ctx.snapshot
-    dep = ctx.target_config.get("depreciation") or {}
-    coef = (dep.get("coefficient") or {}).get(s.target_key)
-    if not coefficient_sane(coef, dep.get("coefficient_sane_range")):
-        put(v, DEPRECIATION, None, PRIO_OBSERVED, "coefficient_out_of_range",
-            excluded=True)
+    """1-2 신차가 대비 80 — 기준 잔가율보다 더 떨어졌으면 그만큼 싸게 산다."""
+    s, r = ctx.snapshot, ctx.policy.rule("value")
+    origin = s.origin_total_won or s.price_origin_won
+    years = elapsed_years(ctx)
+    if not origin or s.price_current_won is None or years is None:
+        put(v, DEPRECIATION, 0, PRIO_OBSERVED, "origin_price_missing")
         return
-    age = months_between(s.first_registration_date or s.year_month,
-                         ctx.target_config.get("as_of"))
-    exp = expected_price(s.price_origin_won, age, dep.get("curve"), coef,
-                         dep.get("curve_beyond"))
-    if not exp or s.price_current_won is None:
-        put(v, DEPRECIATION, None, PRIO_OBSERVED, "expected_unavailable",
-            excluded=True)
-        return
-    deviation = (s.price_current_won - exp) / exp
-    pts = points_from_curve(deviation,
-                            ctx.policy.rule("value")["depreciation_curve"],
-                            "deviation")
-    put(v, DEPRECIATION, pts, PRIO_OBSERVED, "expected_price")
+    actual = s.price_current_won / origin
+    gap = residual_expected(years, r) - actual
+    put(v, DEPRECIATION, round(descending(gap, r["depreciation_curve"])),
+        PRIO_OBSERVED, "origin_price")
 
 
 def _mileage(ctx: AxisContext, v: Verdict) -> None:
-    """주행 대비 60 — 연 주행거리로 본다.  총 주행거리가 아니다 (개정 292).
+    """1-3 주행 대비 70 — 연평균으로 본다.  총 주행거리가 아니다.
 
-    ★ 「3년에 6만」과 「1년에 6만」은 다른 차다.  총 km 만 보면 같아진다
+    ★ 「3년에 6만」과 「1년에 6만」은 다른 차다
+    ★ 전기차는 주행 40 + SOH 30 (개정 318)
     """
-    s = ctx.snapshot
-    r = ctx.policy.rule("value")
-    if s.mileage_km is None:
-        # 전 매물에 있어야 하는 값이다.  없으면 그것이 결함 신호다 (STEP 81)
-        put(v, MILEAGE, r["mileage_unknown_points"], PRIO_OBSERVED, "missing")
+    s, r = ctx.snapshot, ctx.policy.rule("value")
+    full = float(ctx.policy.comp(MILEAGE))
+    is_ev = s.ev_battery_soh is not None
+    cap = float(r["ev_mileage_points"]) if is_ev else full
+    years = elapsed_years(ctx)
+    if s.mileage_km is None or years is None:
+        put(v, MILEAGE, 0, PRIO_OBSERVED, "missing")
         return
-    age = months_between(s.first_registration_date or s.year_month,
-                         ctx.target_config.get("as_of"))
-    if not age:
-        put(v, MILEAGE, None, PRIO_OBSERVED, "age_unknown", excluded=True)
+    per_year = s.mileage_km / years
+    got = ascending(per_year, r["mileage_curve"]) * cap / full
+    if not is_ev:
+        put(v, MILEAGE, round(got), PRIO_OBSERVED, "mileage_per_year")
         return
-    per_year = s.mileage_km / (age / MONTHS_PER_YEAR)
-    pts = points_from_curve(per_year, r["mileage_curve"], "km_per_year")
-    put(v, MILEAGE, pts, PRIO_OBSERVED, "mileage_per_year")
+    # ★ 전기차는 배터리가 남은 값을 가른다 (개정 318)
+    got += descending(float(s.ev_battery_soh), r["soh_curve"])
+    put(v, MILEAGE, round(got), PRIO_OBSERVED, "mileage_and_soh")
 
 
 def analyze_value(ctx: AxisContext, v: Verdict) -> None:

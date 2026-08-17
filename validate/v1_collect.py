@@ -7,6 +7,14 @@
 """
 from __future__ import annotations
 
+import os as _os
+
+# ★ 검사 사본을 /tmp 에 두지 않는다 — 921MB tmpfs 인데 DB 가 484MB 다.
+#   실측 08-17: 「database or disk is full」로 검사가 통째로 죽었다
+CHECK_TMP = _os.path.join(
+    _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+    "outputs", "check-tmp")
+
 from validate.base import (
     not_applicable,
     Check, FATAL, KIND_CODE, KIND_EXTERNAL, KIND_TOTAL, WARN, _cfg, result,
@@ -268,7 +276,7 @@ def _empty_db_check(conn, rid):
     from store.raw import open_db
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    probe = open_db(os.path.join(tempfile.mkdtemp(), "empty.db"),
+    probe = open_db(os.path.join(tempfile.mkdtemp(dir=_ensure_tmp()), "empty.db"),
                     os.path.join(root, "sql", "ddl"))
     try:
         _diagnosis_none_count(probe, "none")
@@ -587,3 +595,9 @@ def _unparsed_envelope_check(conn, rid):
     if not checked:
         return not_applicable(C["V1-21"], rid, "펼칠 매물이 있는 봉투가 없다")
     return result(C["V1-21"], rid, 0, len(bad), not bad, bad[:8])
+
+
+def _ensure_tmp() -> str:
+    """검사 사본 자리.  ★ /tmp(tmpfs)가 아니라 디스크에 둔다."""
+    _os.makedirs(CHECK_TMP, exist_ok=True)
+    return CHECK_TMP

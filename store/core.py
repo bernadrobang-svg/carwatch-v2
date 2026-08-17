@@ -413,7 +413,10 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         " r.flood_total_cnt, r.flood_part_cnt, r.total_loss_cnt,"
         " r.accident_my_cost, r.accident_my_cnt, r.accident_other_cnt,"
         " r.owner_change_cnt, r.plate_use_char, r.plate_history_hash_json,"
-        " r.not_join_json"
+        " r.not_join_json,"
+        # ★ F-scoring ② 가 쓰는 것 (개정 329)
+        " i.inspection_inner_json, i.inspection_tuning, i.inspection_car_state,"
+        " r.use_gov, r.use_business"
         " FROM core_listing l"
         " LEFT JOIN core_inspection i ON i.listing_id = l.listing_id"
         " LEFT JOIN core_record r ON r.listing_id = l.listing_id"
@@ -450,6 +453,13 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         # ★ 점검 출처 — TABLE 플랫폼 직영 · IMAGE 판매자 등록 (개정 300 · 306)
         inspection_formats=jload("inspection_formats_json"),
         not_join_months=_not_join_months(d.get("not_join_json")),
+        # ★ F-scoring ② 가 쓰는 것 (개정 329)
+        inspection_inner_json=d.get("inspection_inner_json"),
+        inspection_tuning=_flag(d.get("inspection_tuning")),
+        car_state_ok=(None if d.get("inspection_car_state") is None
+                      else d.get("inspection_car_state") == CAR_STATE_OK),
+        ev_battery_soh=d.get("ev_battery_soh"),
+        use_gov=_flag(d.get("use_gov")), use_business=_flag(d.get("use_business")),
         flood_total_cnt=d.get("flood_total_cnt"),
         flood_part_cnt=d.get("flood_part_cnt"),
         total_loss_cnt=d.get("total_loss_cnt"),
@@ -617,6 +627,24 @@ def upsert_child(conn: sqlite3.Connection, table: str, parsed: dict,
 
 
 # ── 화면 안내용 집계 (14장 STEP 149) ─────────────────────────────────
+# 점검부의 「차량 상태」가 정상인 문구.  ★ 코드가 아니라 문구다 (실측)
+CAR_STATE_OK = "양호"
+
+
+def _flag(raw) -> int | None:
+    """'0' · '1' · True · False → 0 · 1.  ★ 「모른다」는 None 으로 남긴다."""
+    if raw is None:
+        return None
+    if isinstance(raw, bool):
+        return int(raw)
+    got = str(raw).strip().lower()
+    if got in ("1", "true", "y"):
+        return 1
+    if got in ("0", "false", "n", ""):
+        return 0
+    return None
+
+
 def _not_join_months(raw) -> int | None:
     """자차 미가입 개월 합 (개정 294).
 
