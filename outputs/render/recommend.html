@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추천 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=cecdb7bd09">
+<link rel="stylesheet" href="/static/app.css?v=69660ba23e">
 
 </head>
 <body class="s-recommend">
@@ -122,7 +122,9 @@
 <th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
 <th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
 <th class="r">시세 대비</th><th class="r">신차가 대비</th>
-<th class="r">가격</th><th>왜 이 순위인가</th>
+<th class="r">가격</th>
+<th class="c">사고</th><th class="c">골격</th><th class="c">용도</th><th class="c">제조사 보증</th>
+<th class="r">옵션</th><th>왜 이 순위인가</th>
 <th class="c">보기</th>
 </tr></thead>
 <tbody>
@@ -146,7 +148,7 @@
   <td class="r num" data-label="비율"><strong>88.1%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.8%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-11</td>
   <td class="r num" data-label="주행">7,591km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -158,6 +160,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>4,550만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 3개월 · 92천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    
+    <span class="dim">없음</span>
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 740만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -186,7 +195,7 @@
   <td class="r num" data-label="비율"><strong>83.1%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:76.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-09</td>
   <td class="r num" data-label="주행">28,698km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -198,6 +207,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>4,890만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 1개월 · 71천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/1915">4종 715만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 400만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -226,7 +242,7 @@
   <td class="r num" data-label="비율"><strong>80.7%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:74.0%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-04</td>
   <td class="r num" data-label="주행">10,708km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -238,6 +254,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>5,290만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">2년 8개월 · 89천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/2111">4종 829만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -266,7 +289,7 @@
   <td class="r num" data-label="비율"><strong>80.2%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-10</td>
   <td class="r num" data-label="주행">21,364km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -278,6 +301,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>5,420만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 2개월 · 78천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/2600">3종 820만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -306,7 +336,7 @@
   <td class="r num" data-label="비율"><strong>80.9%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:74.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
-  <td data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
+  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
   <td class="r" data-label="연식">2024-10</td>
   <td class="r num" data-label="주행">10,393km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -318,6 +348,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>3,499만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 2개월 · 89천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/22">3종 283만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -346,7 +383,7 @@
   <td class="r num" data-label="비율"><strong>80.4%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.7%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
-  <td data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
+  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
   <td class="r" data-label="연식">2025-01</td>
   <td class="r num" data-label="주행">13,849km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -358,6 +395,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>3,430만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 5개월 · 86천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/27">1종 114만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 100만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -386,7 +430,7 @@
   <td class="r num" data-label="비율"><strong>78.6%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:72.1%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-12</td>
   <td class="r num" data-label="주행">15,185km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -398,6 +442,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>5,390만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 4개월 · 84천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/991">2종 550만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -426,7 +477,7 @@
   <td class="r num" data-label="비율"><strong>78.6%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:72.1%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-07</td>
   <td class="r num" data-label="주행">20,146km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -438,6 +489,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>5,470만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">2년 11개월 · 79천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/1897">5종 1,179만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -466,7 +524,7 @@
   <td class="r num" data-label="비율"><strong>80.2%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-06</td>
   <td class="r num" data-label="주행">20,876km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -478,6 +536,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>5,170만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">2년 10개월 · 79천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/2630">3종 760만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -506,7 +571,7 @@
   <td class="r num" data-label="비율"><strong>80.0%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.4%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
-  <td data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
+  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
   <td class="r" data-label="연식">2024-12</td>
   <td class="r num" data-label="주행">15,087km</td>
   <td class="r num gap" data-label="시세 대비">
@@ -518,6 +583,13 @@
     
   </td>
   <td class="r num" data-label="가격"><b>3,400만</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.maker&amp;bucket=1" title="제조사 보증 있음">3년 4개월 · 84천km</a></td>
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    <a href="/why/56">2종 134만</a>
+    
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
@@ -578,7 +650,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 01:09</span>
+  <span>2026-08-18 01:52</span>
 </footer>
 
 </body>

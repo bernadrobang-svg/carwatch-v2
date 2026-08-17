@@ -260,7 +260,10 @@ C = {
     "V11-70": Check("V11", "V11-70", "좁은 폭에서 값이 사라지지 않음",
                     FATAL, "run",
                     "「좁으니 뺀다」가 아니라 「좁으니 다르게 놓는다」다. "
-                    "어느 폭에서도 한 매물의 전부가 보인다 (STEP 149o-2)",
+                    "어느 폭에서도 한 매물의 전부가 보인다 (STEP 149o-2). "
+                    "★ 부록 G 「좁음 (<640)」 도면이 뺀 칸만 접을 수 있다 "
+                    "— config/web.json narrow_folded_labels 에 적은 것만 "
+                    "(개정 332).  적지 않고 지우면 여기서 걸린다",
                     KIND_CODE),
     "V11-71": Check("V11", "V11-71", "가로 스크롤로 떠넘기지 않음", FATAL, "run",
                     "오른쪽에 무엇이 있는지 모른 채 스크롤하게 하지 않는다 "
@@ -1767,7 +1770,14 @@ def _responsive_checks(rid):
     html = open(LISTINGS_TPL, encoding="utf-8").read()
     # 이 폭 아래는 카드다 (STEP 149o-2).  ★ 폭은 표시 정책이라 config 에 둔다
     with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
-        narrow_max = int(_j.load(f)["narrow_max_px"])
+        web = _j.load(f)
+    narrow_max = int(web["narrow_max_px"])
+    # ★ 부록 G 「좁음 (<640)」 도면에 없는 칸 (개정 332).
+    #   지우는 것이 아니라 접는 것이다 — 640 이상과 /why 에는 그대로 있다.
+    #   ★ 여기 적힌 것만 접을 수 있다.  적지 않고 지우면 아래에서 걸린다
+    folded = set(web.get("narrow_folded_labels", []))
+    # 칸 안의 조각 — 칸은 그대로 보이고 그 안의 원값만 상세로 간다
+    folded_parts = tuple(web.get("narrow_folded_parts", []))
     from report.screens.build import CHIP_AXES
 
     # ★ 축 칸은 반복문 하나로 적혀 있다.  화면에 실제로 나오는 수로 센다 —
@@ -1793,6 +1803,20 @@ def _responsive_checks(rid):
             if "thead" in sel or "#peek" in sel:
                 # 머리말은 data-label 로 칸마다 붙고,
                 # 미리보기는 값이 아니라 마우스용 덧창이다 (손가락에는 안 뜬다)
+                continue
+            # ★ 부록 G 도면이 좁은 폭에서 뺀 칸은 접어도 된다 (개정 332).
+            #   config 에 적힌 것만이다 — 몰래 늘어나면 여기서 걸린다.
+            #   한 규칙이 여러 칸을 지우면 전부 적혀 있어야 한다
+            # ★ 주석 안의 쉼표가 선택자를 쪼갠다 — 먼저 뗀다
+            #   («/* 원값(시세 5,290만)은 … */» 가 한 조각으로 세어졌다)
+            sel = re.sub(r"/\*.*?\*/", " ", sel, flags=re.S)
+            named = re.findall(r'data-label="([^"]*)"', sel)
+            if named and all(x in folded for x in named):
+                continue
+            # 칸이 아니라 칸 안의 조각을 접는 것은 따로 못박아 둔다
+            parts = [x.strip() for x in sel.split(",") if x.strip()]
+            if folded_parts and parts and all(
+                    x.endswith(folded_parts) for x in parts):
                 continue
             bad70.append(f"{width}px 에서 값을 지운다 — {' '.join(sel.split())}")
     if not card:

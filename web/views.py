@@ -515,7 +515,7 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
 def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
     from report.screens.build import (
-        excluded_groups, recommend_funnel, view_recommend,
+        axis_heads, excluded_groups, recommend_funnel, view_recommend,
     )
 
     ver = _versions(conn)
@@ -530,6 +530,8 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
     #   목록에만 정렬·단추를 두면 추천이 v1 보다 못해진다
     return page(conn, account, "추천", "recommend.html",
                 {"rows": rows, "count": len(rows), "funnel": funnel,
+                 # 부록 G 2절 — 후보 카드 6줄이 축 넷이다 (목록과 같은 머리말)
+                 "axis_heads": axis_heads(root),
                  "buttons": _filter_buttons(flt, base="/recommend"),
                  "orders": _order_menu(flt),
                  "carry": _carry(flt),

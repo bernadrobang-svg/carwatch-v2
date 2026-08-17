@@ -221,7 +221,11 @@ def test_filters() -> None:
     check("원 → 만", render_str("{{ p | won }}", {"p": 31200000}) == "3,120만")
     check("억 단위", render_str("{{ p | won }}", {"p": 168300000})
           == "1억 6,830만")
-    check("None 은 —", render_str("{{ p | won }}", {"p": None}) == "—")
+    # ★ 부록 G · G-4 — 값 자리에 줄표를 쓰지 않는다.  없으면 말로 적는다
+    #   (가이드 지적 08-17 — 「—」가 21곳에서 41곳으로 늘었다.  V11-106)
+    check("None 은 「없습니다」",
+          render_str("{{ p | won }}", {"p": None}) == "없습니다")
+    check("0 은 줄표가 아니라 0", render_str("{{ p | won }}", {"p": 0}) == "0")
     check("주행", render_str("{{ m | km }}", {"m": 43705}) == "43,705km")
     check("비율", render_str("{{ r | pct }}", {"r": 0.139}) == "13.9%")
     check("날짜는 자르기만",

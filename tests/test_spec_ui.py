@@ -45,13 +45,15 @@ def spec_a(ad: Client, lid: int) -> None:
     st, lb, _h = ad.get("/listings")
     body = text(lb)
 
-    # A-1 비율이 크게 · 원점수/분모가 작게
+    # A-1 ★ 부록 G 로 계산식이 상세(/why)로 갔다 (개정 332).
+    #   목록에는 비율 %만, 「489/555」는 상세에서 본다
     ratio = re.search(r"\d+\.\d\s*%", body)
-    raw = re.search(r"\d+(?:\.\d+)?\s*/\s*\d+", body)
-    rec("A-1", "비율 % + 원점수/분모 함께", "목록을 본다",
-        f"비율={bool(ratio)} · 분수={bool(raw)}",
-        bool(ratio) and bool(raw),
-        "분모가 다른 매물을 눈으로 갈라야 한다")
+    _st, _wb, _hh = ad.get(f"/why/{lid}")
+    frac = re.search(r"\d+(?:\.\d+)?\s*/\s*\d+", text(_wb))
+    rec("A-1", "목록은 비율 % · 원점수/분모는 상세 (부록 G)", "둘 다 본다",
+        f"목록 비율={bool(ratio)} · 상세 분수={bool(frac)}",
+        bool(ratio) and bool(frac),
+        "분모가 다른 매물을 눈으로 갈라야 한다 — 그건 상세에서다")
 
     # A-2  ★ 부록 G 로 확인율이 상세(/why)로 갔다 (개정 332).
     #   목록은 요약이다 — 계산식과 확인율은 상세에서 본다

@@ -37,7 +37,9 @@
 <th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
 <th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
 <th class="r">시세 대비</th><th class="r">신차가 대비</th>
-<th class="r">가격</th><th>왜 이 순위인가</th>
+<th class="r">가격</th>
+{% for a in axis_heads %}<th class="c">{{ a.label }}</th>{% endfor %}
+<th class="r">옵션</th><th>왜 이 순위인가</th>
 <th class="c">보기</th>
 </tr></thead>
 <tbody>
@@ -61,7 +63,7 @@
   <td class="r num" data-label="비율">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:{{ r.got_pct }}%"></i><i class="may" style="width:{{ r.may_pct }}%"></i></span>{% endif %}</td>
   <td data-label="차종">{{ r.target_label }}</td>
-  <td data-label="트림">{{ r.trim }}</td>
+  <td class="trim" data-label="트림">{{ r.trim }}</td>
   <td class="r" data-label="연식">{{ r.year_month }}</td>
   <td class="r num" data-label="주행">{{ r.mileage_km | km }}</td>
   <td class="r num gap" data-label="시세 대비">
@@ -73,6 +75,13 @@
     {% if !r.origin_gap_pct %}<span class="dim">신차가 없음</span>{% endif %}
   </td>
   <td class="r num" data-label="가격"><b>{{ r.price_won | won }}</b></td>
+  <!-- 부록 G 2절 6줄 — 축 넷.  목록과 같은 모양이다 -->
+  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}">{% if c.state %}{{ c.state }}{% endif %}{% if !c.state %}<b>{{ c.mark }}</b>{% endif %}</a></td>{% endfor %}
+  <!-- 부록 G 2절 7줄 — 「옵션 4종 713만」 -->
+  <td class="r num" data-label="옵션">
+    {% if r.option_count %}<a href="/why/{{ r.listing_id }}">{{ r.option_count }}종{% if r.option_price_won %} {{ r.option_price_won | won }}{% endif %}</a>{% endif %}
+    {% if !r.option_count %}<span class="dim">없음</span>{% endif %}
+  </td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">{{ r.recommend_reason }}</span></td>
   <td class="c act" data-label="보기">

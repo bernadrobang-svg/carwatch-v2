@@ -161,7 +161,7 @@ def shot_paths() -> list:
 
 
 # 사진을 몇 장까지 받아 둘 것인가.  ★ 스크린샷이 오래 걸리면 아무도 안 본다
-SHOT_IMAGE_MAX = 40
+SHOT_IMAGE_MAX = 120
 SHOT_IMAGE_TIMEOUT = 8
 
 
@@ -187,11 +187,19 @@ def _localize_images(html: str, site: str, cache: dict) -> str:
                 with open(os.path.join(site, name), "wb") as f:
                     f.write(body)
                 cache[url] = name
-            except Exception:                                # noqa: BLE001
-                cache[url] = None                            # 못 받았다
+            except Exception as err:                         # noqa: BLE001
+                # ★ 조용히 넘기지 않는다.  「사진이 안 나온다」로 보이는데
+                #   왜인지 모르면 검토가 헛돈다 (규칙 4)
+                cache[url] = None
+                print(f"  사진 못 받음 {type(err).__name__} {url[-34:]}")
         if cache.get(url):
             html = html.replace(f'src="{url}"', f'src="{cache[url]}"')
-    return html
+    # ★ loading="lazy" 는 화면 밖 사진을 안 받는다.  한 장으로 찍는
+    #   스크린샷에서는 아래쪽 카드가 전부 빈 상자로 나온다
+    #   (실측 08-18 — 목록은 나오는데 추천만 빈 상자였다.  CSS 가 아니라
+    #    추천 화면이 머리말이 길어 카드가 더 아래에 있어서였다).
+    #   ★ 사본에서만 뗀다.  실서비스는 그대로 lazy 다 — 스크롤하면 나온다
+    return html.replace(' loading="lazy"', "")
 
 
 def shoot(base: str = "", paths=None) -> int:
