@@ -1,4 +1,4 @@
-<h1>딜러 <small>{{ paging.total | num }}곳 중 {{ paging.shown | num }}곳 · {{ paging.page }}/{{ paging.pages }}쪽</small></h1>
+<h1>딜러 <small>{{ paging.total | num }}곳 중 {{ paging.shown | num }}곳 · {{ paging.pages }}쪽 중 {{ paging.page }}쪽</small></h1>
 <p class="notice">
   ⓘ 딜러는 <strong>차량 판정에 들어가지 않습니다</strong>. 555점과 무관한 별도 축입니다.
   같은 차라면 어느 딜러에게 사도 그 차입니다. 연락하기 전에 참고하는 것입니다.
@@ -32,15 +32,15 @@
 <tbody>
 {% for d in rows %}
 <tr>
-<td data-label="상사">{% if d.dealer_shop %}<a href="/listings?dealer={{ d.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ d.dealer_shop }}</a>{% endif %}{% if !d.dealer_shop %}<span class="dim" title="원문에 상호가 없습니다">—</span>{% endif %}</td>
+<td data-label="상사">{% if d.dealer_shop %}<a href="/listings?dealer={{ d.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ d.dealer_shop }}</a>{% endif %}{% if !d.dealer_shop %}<span class="dim">없습니다</span>{% endif %}</td>
 <td data-label="지역">{{ d.dealer_region }}</td>
-<td class="num" data-label="연차">{% if d.years %}{{ d.years | num }}{% endif %}{% if !d.years %}<span class="dim" title="딜러 집계가 아직 연차를 못 냈습니다">—</span>{% endif %}</td>
-<td data-label="사분면">{% if d.quadrant %}{{ d.quadrant }}{% endif %}{% if !d.quadrant %}<span class="dim" title="정직도 표본이 모자라 사분면을 못 정합니다">—</span>{% endif %}</td>
+<td class="num" data-label="연차">{% if d.years %}{{ d.years | num }}{% endif %}{% if !d.years %}<span class="dim">확인 못 함</span>{% endif %}</td>
+<td data-label="사분면">{% if d.quadrant %}{{ d.quadrant }}{% endif %}{% if !d.quadrant %}<span class="excluded">표본 부족</span>{% endif %}</td>
 <td class="num" data-label="정직도">{% if d.sample_sufficient %}{{ d.honesty_score | num }}{% endif %}{% if !d.sample_sufficient %}<span class="excluded" title="표본이 모자랍니다 — 0점이 아닙니다">표본 부족</span>{% endif %}</td>
 <td class="num" data-label="보유">{{ d.volume | num }}</td>
 <td data-label="차종">{% for t in d.targets %}<a class="tag" href="/listings?dealer={{ d.dealer_shop }}&target={{ t.target_key }}" title="이 딜러의 {{ t.target_key }} 매물만 봅니다">{{ t.target_key }} {{ t.count | num }}</a> {% endfor %}</td>
-<td class="num" data-label="판매">{% if d.sold_total %}{{ d.sold_total | num }}{% endif %}{% if !d.sold_total %}<span class="dim" title="딜러 집계가 아직 누적 판매를 못 냈습니다">—</span>{% endif %}</td>
-<td class="num" data-label="1년">{% if d.sold_1y %}{{ d.sold_1y | num }}{% endif %}{% if !d.sold_1y %}<span class="dim" title="딜러 집계가 아직 최근 1년 판매를 못 냈습니다">—</span>{% endif %}</td>
+<td class="num" data-label="판매">{% if d.sold_total %}{{ d.sold_total | num }}{% endif %}{% if !d.sold_total %}<span class="dim">확인 못 함</span>{% endif %}</td>
+<td class="num" data-label="1년">{% if d.sold_1y %}{{ d.sold_1y | num }}{% endif %}{% if !d.sold_1y %}<span class="dim">확인 못 함</span>{% endif %}</td>
 </tr>
 {% endfor %}
 </tbody>

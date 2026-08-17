@@ -20,7 +20,7 @@
   {% for r in c.rows %}<td class="num">
     {% if r.ratio_pct %}<strong class="ratio">{{ r.ratio_pct }}%</strong>
     <span class="raw{% if r.denom_short %} denom-short{% endif %}">{{ r.earned }}/{{ r.denominator }}</span>{% endif %}
-    {% if !r.ratio_pct %}<span class="muted">—</span>{% endif %}
+    {% if !r.ratio_pct %}<span class="muted">없습니다</span>{% endif %}
   </td>{% endfor %}</tr>
 <tr class="cmp-head"><th>가격</th>
   {% for r in c.rows %}<td class="num">{{ r.price_won | won }}</td>{% endfor %}</tr>

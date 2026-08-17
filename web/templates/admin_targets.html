@@ -68,7 +68,7 @@
 <tr>
   <td class="runid" data-label="키">{{ t.key }}</td>
   <td data-label="이름">{{ t.name }}</td>
-  <td data-label="구분">{% if t.origin_type %}{{ t.origin_type }}{% endif %}{% if !t.origin_type %}<span class="muted">—</span>{% endif %}</td>
+  <td data-label="구분">{% if t.origin_type %}{{ t.origin_type }}{% endif %}{% if !t.origin_type %}<span class="muted">없습니다</span>{% endif %}</td>
   <td class="num" data-label="매물">{{ t.count | num }}</td>
   <td data-label="상태">{% if t.pending %}<span class="warn-warn">확인 대기</span>{% endif %}{% if !t.pending %}확정{% endif %}</td>
   <td data-label="수집">{% if t.collected %}됨{% endif %}{% if !t.collected %}<span class="muted">미수집</span>{% endif %}</td>

@@ -287,6 +287,13 @@ C = {
                      "엔진이 모르는 문법은 글자 그대로 나온다 — "
                      "{# 주석 #} 과 {% if a == b %} 이 화면에 찍혔다 (개정 325)",
                      KIND_CODE),
+    "V11-106": Check("V11", "V11-106", "값 자리에 「—」가 없음",
+                     FATAL, "run",
+                     "줄표는 못 받은 것인지 0 인지 안 봐도 되는 것인지를 감춘다. "
+                     "가이드 지적 08-17 — 「—」가 21곳에서 41곳으로 늘었다. "
+                     "값이 없으면 「없습니다」 · 0 이면 「0원」 · "
+                     "모르면 「확인 못 함」 (부록 G · G-4)",
+                     KIND_CODE),
     "V11-107": Check("V11", "V11-107", "화면별 사진 크기가 부록 G 와 같음",
                      FATAL, "run",
                      "추천은 목록보다 작다 — 한 화면에 여러 후보가 보여야 한다. "
@@ -1504,6 +1511,34 @@ def _template_leak_check(rid):
     return result(C["V11-104"], rid, 0, len(bad), not bad, bad[:6])
 
 
+# 값 칸 — 여기 줄표가 있으면 마스터가 못 읽는다 (부록 G · G-4)
+RE_VALUE_CELL = re.compile(r"<(td|dd)\b[^>]*>(.*?)</\1>", re.S)
+DASHES = ("\u2014", "\u2013")
+
+
+def _em_dash_check(rid):
+    """V11-106 — 값 자리에 「—」가 나오지 않는가 (부록 G · G-4).
+
+    ★ 검사가 없으니 계속 늘어났다 — 21곳 → 41곳 (가이드 08-17).
+    ★ 셀 전체가 줄표인 것만 잡는다.  문장 속 줄표는 글이지 값이 아니다
+      («받은 원문은 origin='browser' 로 남습니다 — …»)
+    ★ 렌더 결과를 본다.  템플릿만 보면 필터가 만드는 줄표를 못 본다
+    """
+    base = os.path.join(ROOT, "outputs", "render")
+    if not os.path.isdir(base):
+        return not_applicable(C["V11-106"], rid, "렌더 결과가 없다")
+    bad = []
+    for name in sorted(os.listdir(base)):
+        if not name.endswith(".html"):
+            continue
+        html = open(os.path.join(base, name), encoding="utf-8").read()
+        for got in RE_VALUE_CELL.finditer(html):
+            text = re.sub(r"<[^>]+>", "", got.group(2)).strip()
+            if text in DASHES:
+                bad.append(f"{name} — {got.group(0)[:60]}")
+    return result(C["V11-106"], rid, 0, len(bad), not bad, bad[:6])
+
+
 def _screen_contradiction_check(rid):
     """V11-105 — 화면 위아래가 어긋나지 않는가 (개정 325).
 
@@ -1688,7 +1723,7 @@ def _v1_parity_checks(rid):
             if not any(x in src_b for x in in_v2):
                 bad69.append(f"{v2_name} — {op}")
     return [_photo_size_by_screen_check(rid), _template_leak_check(rid),
-            _screen_contradiction_check(rid),
+            _em_dash_check(rid), _screen_contradiction_check(rid),
             _chunk_check(rid),
             _csrf_reuse_check(rid),
             _origin_price_check(rid),

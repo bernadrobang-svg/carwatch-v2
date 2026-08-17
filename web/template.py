@@ -38,11 +38,17 @@ RE_VAR = re.compile(r"\{\{\s*(" + PATH + r")\s*(?:\|\s*(\w+)\s*)?\}\}")
 WON_PER_MANWON = 10000
 WON_PER_EOKWON = 100000000
 
+# ★ 값이 없을 때 무엇이라 적는가 (부록 G · G-4).
+#   「—」는 못 받은 것인지 0 인지 안 봐도 되는 것인지를 감춘다.
+#   마스터는 줄표를 읽을 수 없다 — 말로 적는다.
+#   0 은 여기 오지 않는다.  0 은 「0」으로 찍힌다 (None·"" 만 걸린다)
+NO_VALUE = "없습니다"
+
 
 def f_won(v) -> str:
     """원 → 사람이 읽는 금액.  ★ 원본을 바꾸지 않는다."""
     if v in (None, ""):
-        return "—"
+        return NO_VALUE
     n = int(v)
     if abs(n) >= WON_PER_EOKWON:
         eok, rest = divmod(abs(n), WON_PER_EOKWON)
@@ -56,17 +62,17 @@ def f_won(v) -> str:
 
 
 def f_km(v) -> str:
-    return "—" if v in (None, "") else f"{int(v):,}km"
+    return NO_VALUE if v in (None, "") else f"{int(v):,}km"
 
 
 def f_pct(v) -> str:
-    return "—" if v in (None, "") else f"{float(v) * 100:.1f}%"
+    return NO_VALUE if v in (None, "") else f"{float(v) * 100:.1f}%"
 
 
 def f_date(v) -> str:
     """ISO → YYYY-MM-DD.  ★ 표준 라이브러리가 형식을 안다 — 숫자를 안 적는다."""
     if not v:
-        return "—"
+        return NO_VALUE
     s = str(v).replace("Z", "+00:00")
     try:
         return datetime.date.fromisoformat(s.split("T")[0]).isoformat()
@@ -76,7 +82,7 @@ def f_date(v) -> str:
 
 def f_num(v) -> str:
     if v in (None, ""):
-        return "—"
+        return NO_VALUE
     n = float(v)
     return f"{int(n):,}" if n == int(n) else f"{n:,.1f}"
 
@@ -108,7 +114,7 @@ def f_signcls(v) -> str:
 def f_signwon(v) -> str:
     """부호를 붙인 만원.  ★ 「-186만」의 부호가 이 열의 전부다."""
     if v in (None, ""):
-        return "—"
+        return NO_VALUE
     n = int(float(v)) // WON_PER_MANWON
     return f"{n:+,}만"
 

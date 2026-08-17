@@ -945,7 +945,8 @@ def _all_hours(conn, root: str) -> str:
         per = float(gap[1] if isinstance(gap, list) else gap)
         targets = max(len(_cfg("targets.json", root)), 1)
     except (KeyError, TypeError, ValueError, IndexError):
-        return "—"
+        # ★ 「—」로 적지 않는다 (부록 G · G-4).  왜 못 내는지를 적는다
+        return "설정을 읽지 못했습니다"
     from store.core import collect_scale
 
     seen, known = collect_scale(conn)

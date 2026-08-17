@@ -1652,7 +1652,21 @@ body.s-listings main { max-width:1560px; }
     grid-column:span 2; font-size:10.5px; padding:2px 6px;
   }
   .rows td[data-label="딜러"] { grid-column:span 4; }
-  /* 추천은 8줄 — 비율 막대와 이유 한 줄이 더 있다 */
-  .cand-rows td[data-label="비율"] { display:block; grid-column:span 6; }
+  /* ── 추천 카드 8줄 (부록 G 2절) ─────────────────────────────────
+     ★ 목록과 열이 다르다.  목록 규칙을 물려받으면 사진 칸이 눌려
+       빈 상자로 보인다 (실측 08-18 — 목록은 나오는데 추천만 안 나왔다) */
+  .cand-rows td.photo { grid-column:1 / span 2; grid-row:1 / span 2; }
+  .cand-rows td[data-label="관심"] { grid-column:span 2; }
+  .cand-rows td[data-label="등급"] { grid-column:span 1; }
+  .cand-rows td[data-label="순위"] { grid-column:span 1; }
+  .cand-rows td[data-label="비율"] { grid-column:span 4; }
+  .cand-rows td[data-label="차종"] { grid-column:span 2; }
+  .cand-rows td.trim { grid-column:span 4; }
+  .cand-rows td[data-label="연식"] { grid-column:span 2; }
+  .cand-rows td[data-label="주행"] { grid-column:span 2; }
+  .cand-rows td[data-label="시세 대비"],
+  .cand-rows td[data-label="신차가 대비"],
+  .cand-rows td[data-label="가격"] { grid-column:span 2; }
   .cand-rows td[data-label="왜 이 순위인가"] { grid-column:1 / -1; }
+  .cand-rows td.act { grid-column:1 / -1; }
 }
