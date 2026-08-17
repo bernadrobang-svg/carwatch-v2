@@ -14,6 +14,49 @@
   서버가 만든 화면이라 JS 가 없어도 새로고침하면 지금 상태가 나옵니다.
 </p>
 
+<!-- 가벼운 점검 — 4시간마다 저절로 센 결과 (개정 335 · S29-0).
+     ★ 마스터가 「다 했어?」를 묻지 않아도 여기 남아 있습니다 -->
+<h2>⓪ 마지막 점검 <span class="more">4시간마다 저절로 셉니다</span></h2>
+
+{% if !light %}
+<p class="muted">아직 한 번도 안 돌았습니다. 다음 점검은 02·06·10·14·18·22 시입니다.</p>
+{% endif %}
+
+{% if light %}
+<p>
+  <strong>{{ light.at }}</strong>
+  <span class="muted">{{ light.minutes | num }}분 전</span>
+  {% if light.clean %}<span class="chip-good">어긋난 것이 없습니다</span>{% endif %}
+  {% if !light.clean %}<span class="chip-bad">어긋난 것이 있습니다</span>{% endif %}
+</p>
+<!-- ★ class="rows" 라야 좁은 폭에서 카드로 접힌다.  안 그러면
+     「걸린 시간」이 화면 밖으로 잘린다 (실측 08-18 360px) -->
+<table class="rows">
+<thead><tr><th>fatal</th><th>warn</th><th>시험 실패</th><th>「—」</th>
+  <th>계산식</th><th>템플릿 문법</th><th>걸린 시간</th></tr></thead>
+<tbody><tr>
+  <td class="num" data-label="fatal">{{ light.fatal | num }}</td>
+  <td class="num" data-label="warn">{{ light.warn | num }}</td>
+  <td class="num" data-label="시험 실패">{{ light.tests | num }}</td>
+  <td class="num" data-label="「—」">{{ light.dash | num }}</td>
+  <td class="num" data-label="계산식">{{ light.calc | num }}</td>
+  <td class="num" data-label="템플릿 문법">{{ light.leak | num }}</td>
+  <td class="num" data-label="걸린 시간">{{ light.took | num }}초</td>
+</tr></tbody>
+</table>
+{% if light.over %}
+<p class="muted">★ 시간 예산 {{ light.budget | num }}초를 넘겼습니다 —
+  check_all 과 run_tests 가 각각 70초대입니다. 4시간에 한 번이라 그대로 둡니다.</p>
+{% endif %}
+{% if light.changes %}
+<p><b>지난 번과 달라진 것</b>
+  {% for c in light.changes %}<span class="chip-bad">{{ c }}</span>{% endfor %}</p>
+{% endif %}
+{% if !light.changes %}
+<p class="muted">지난 번과 같습니다.</p>
+{% endif %}
+{% endif %}
+
 <h2>① 지금 도는 것</h2>
 
 {% if live_running %}

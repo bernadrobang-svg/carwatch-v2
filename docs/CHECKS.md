@@ -2,32 +2,33 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 282개 · 규격이 요구했는데 코드에 없는 것 **33개** · 코드에 있는데 규격에 없는 것 **14개**
+검사 283개 · 규격이 요구했는데 코드에 없는 것 **33개** · 코드에 있는데 규격에 없는 것 **14개**
 
 | 코드 | 무엇 | 등급 | 소스 | 규격 |
 |---|---|---|---|---|
-| `S1` | 디렉터리 (STEP 15) | fatal | `tools/check_src.py:159` | ref/E-attach.md:54 · guide/01_시작.md:213 · guide/03_이력.md:266 |
-| `S2` | 구조체 정의 | fatal | `tools/check_src.py:181` | ref/E-attach.md:55 · guide/03_이력.md:266 · chapters/13-pipeline.md:101 |
-| `S3` | 함수 정의 | fatal | `tools/check_src.py:202` | ref/E-attach.md:55 · guide/03_이력.md:266 · chapters/12-dict.md:175 |
+| `S1` | 디렉터리 (STEP 15) | fatal | `tools/check_src.py:160` | ref/E-attach.md:54 · guide/01_시작.md:213 · guide/03_이력.md:266 |
+| `S2` | 구조체 정의 | fatal | `tools/check_src.py:182` | ref/E-attach.md:55 · guide/03_이력.md:266 · chapters/13-pipeline.md:101 |
+| `S3` | 함수 정의 | fatal | `tools/check_src.py:203` | ref/E-attach.md:55 · guide/03_이력.md:266 · chapters/12-dict.md:175 |
 | `S4` | 매물 적재 | fatal | `collect/runner.py:521` | ref/E-attach.md:56 · guide/03_이력.md:124 · guide/03_이력.md:142 |
-| `S5` | config 키 (V4-15) | fatal | `tools/check_src.py:301` | ref/E-attach.md:57 · guide/01_시작.md:112 · guide/01_시작.md:189 |
-| `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:336` | ref/E-attach.md:58 · guide/03_이력.md:277 · chapters/13-pipeline.md:105 |
-| `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:391` | ref/E-attach.md:59 · chapters/13-pipeline.md:106 · chapters/13-pipeline.md:107 |
-| `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:398` | ref/E-attach.md:60 · guide/03_이력.md:80 · chapters/13-pipeline.md:107 |
-| `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:414` | ref/A-check.md:47 · ref/E-attach.md:61 · guide/03_이력.md:191 |
-| `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:420` | ref/E-attach.md:62 · guide/03_이력.md:256 · chapters/13-pipeline.md:111 |
-| `S11` | 분석 계층 순수성 (STEP 2) | fatal | `tools/check_src.py:439` | ref/E-attach.md:63 · guide/01_시작.md:60 · guide/01_시작.md:92 |
-| `S12` | 축 파일 STEP 주석 | fatal | `tools/check_src.py:454` | ref/E-attach.md:64 · guide/01_시작.md:224 · chapters/13-pipeline.md:113 |
-| `S13` | 본문 config 예시 대조 | fatal | `tools/check_src.py:521` | ref/B-config.md:290 · ref/D-update.md:23 · ref/E-attach.md:65 |
-| `S14` | 상수 등록·성격 (V4-17) | fatal | `tools/check_src.py:570` | ref/E-attach.md:66 · chapters/20-verify/c-v3v4.md:198 · chapters/20-verify/c-v3v4.md:204 |
-| `S15` | 계층 의존 (STEP 15) | fatal | `tools/check_src.py:481` | ref/E-attach.md:67 · guide/03_이력.md:108 · chapters/10-collect/00-intro.md:218 |
-| `S16` | 검증 코드 대조 | fatal | `tools/check_src.py:617` | ref/E-attach.md:68 · ref/E-attach.md:198 · guide/03_이력.md:145 |
-| `S23` | 실행 환경 (Python 3.11+) | fatal | `tools/check_src.py:624` | ref/E-attach.md:75 · guide/03_이력.md:249 · chapters/00-standard.md:15 |
-| `S24` | 시험 격리 (운영 DB 미사용) | fatal | `tools/check_src.py:643` | ref/E-attach.md:76 · guide/03_이력.md:253 · chapters/00-standard.md:94 |
-| `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:663` | ref/E-attach.md:77 · guide/03_이력.md:264 · chapters/00-standard.md:166 |
-| `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:691` | ref/E-attach.md:78 · guide/03_이력.md:264 · chapters/00-standard.md:190 |
-| `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:750` | ref/E-attach.md:79 · guide/03_이력.md:286 · chapters/00-standard.md:143 |
-| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:773` | ref/E-attach.md:80 · guide/03_이력.md:340 · guide/03_이력.md:341 |
+| `S5` | config 키 (V4-15) | fatal | `tools/check_src.py:302` | ref/E-attach.md:57 · guide/01_시작.md:112 · guide/01_시작.md:189 |
+| `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:337` | ref/E-attach.md:58 · guide/03_이력.md:277 · chapters/13-pipeline.md:105 |
+| `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:392` | ref/E-attach.md:59 · chapters/13-pipeline.md:106 · chapters/13-pipeline.md:107 |
+| `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:399` | ref/E-attach.md:60 · guide/03_이력.md:80 · chapters/13-pipeline.md:107 |
+| `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:415` | ref/A-check.md:47 · ref/E-attach.md:61 · guide/03_이력.md:191 |
+| `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:421` | ref/E-attach.md:62 · guide/03_이력.md:256 · chapters/13-pipeline.md:111 |
+| `S11` | 분석 계층 순수성 (STEP 2) | fatal | `tools/check_src.py:440` | ref/E-attach.md:63 · guide/01_시작.md:60 · guide/01_시작.md:92 |
+| `S12` | 축 파일 STEP 주석 | fatal | `tools/check_src.py:455` | ref/E-attach.md:64 · guide/01_시작.md:224 · chapters/13-pipeline.md:113 |
+| `S13` | 본문 config 예시 대조 | fatal | `tools/check_src.py:522` | ref/B-config.md:290 · ref/D-update.md:23 · ref/E-attach.md:65 |
+| `S14` | 상수 등록·성격 (V4-17) | fatal | `tools/check_src.py:571` | ref/E-attach.md:66 · chapters/20-verify/c-v3v4.md:198 · chapters/20-verify/c-v3v4.md:204 |
+| `S15` | 계층 의존 (STEP 15) | fatal | `tools/check_src.py:482` | ref/E-attach.md:67 · guide/03_이력.md:108 · chapters/10-collect/00-intro.md:218 |
+| `S16` | 검증 코드 대조 | fatal | `tools/check_src.py:618` | ref/E-attach.md:68 · ref/E-attach.md:198 · guide/03_이력.md:145 |
+| `S23` | 실행 환경 (Python 3.11+) | fatal | `tools/check_src.py:625` | ref/E-attach.md:75 · guide/03_이력.md:249 · chapters/00-standard.md:15 |
+| `S24` | 시험 격리 (운영 DB 미사용) | fatal | `tools/check_src.py:644` | ref/E-attach.md:76 · guide/03_이력.md:253 · chapters/00-standard.md:94 |
+| `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:664` | ref/E-attach.md:77 · guide/03_이력.md:264 · chapters/00-standard.md:166 |
+| `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:692` | ref/E-attach.md:78 · guide/03_이력.md:264 · chapters/00-standard.md:190 |
+| `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:751` | ref/E-attach.md:79 · guide/03_이력.md:286 · chapters/00-standard.md:143 |
+| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:774` | ref/E-attach.md:80 · guide/03_이력.md:340 · guide/03_이력.md:341 |
+| `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:805` | guide/03_이력.md:342 · chapters/00-standard.md:1011 |
 | `V0-01` | — | — | **★ 코드에 없다** | guide/00_버전.md:18 · guide/03_이력.md:337 |
 | `V0-02` | — | — | **★ 코드에 없다** | guide/00_버전.md:41 |
 | `V0-03` | — | — | **★ 코드에 없다** | guide/00_버전.md:63 · guide/03_이력.md:337 |
@@ -150,8 +151,8 @@
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:174 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:175 |
 | `V4-10` | display_only 인데 core_column NULL | run | `validate/v4_mapping.py:49` | chapters/31-registry.md:289 · chapters/20-verify/c-v3v4.md:176 |
-| `V4-11` | unclassified 존재 | run | `validate/v4_mapping.py:52` | guide/01_시작.md:214 · guide/01_시작.md:224 · guide/03_이력.md:129 |
 | `V4-11b` | 판정에 안 쓰는 미분류 경로 | run | `validate/v4_mapping.py:55` | guide/03_이력.md:129 · chapters/31-registry.md:127 · chapters/31-registry.md:160 |
+| `V4-11` | unclassified 존재 | run | `validate/v4_mapping.py:52` | guide/01_시작.md:214 · guide/01_시작.md:224 · guide/03_이력.md:129 |
 | `V4-12` | facet 필수 축 집합 존재 | run | `validate/v4_mapping.py:58` | chapters/20-verify/c-v3v4.md:179 |
 | `V4-13` | 매직 넘버 없음 (tools/check_src.py S7) | run | `validate/v4_mapping.py:61` | ref/A-check.md:6 · ref/E-attach.md:59 · ref/E-attach.md:98 |
 | `V4-19` | 성격(kind)이 없는 Check 가 없음 | run | `validate/v4_mapping.py:82` | guide/03_이력.md:132 · chapters/20-verify/00-intro.md:112 · chapters/20-verify/c-v3v4.md:186 |

@@ -56,6 +56,12 @@ def _tmp_root(rows: int) -> str:
     with open(os.path.join(tmp, "config", "web.json"), "w",
               encoding="utf-8") as f:
         json.dump(cfg, f, ensure_ascii=False, indent=2)
+    # ★ 화면이 읽는 산출물도 옮긴다.  안 옮기면 「아직 한 번도 안 돌았습니다」로
+    #   찍혀 스크린샷이 실제와 달라진다 (실측 08-18 — 가벼운 점검 결과)
+    got = os.path.join(ROOT, "outputs", "light", "last.json")
+    if os.path.isfile(got):
+        os.makedirs(os.path.join(tmp, "outputs", "light"), exist_ok=True)
+        shutil.copy(got, os.path.join(tmp, "outputs", "light", "last.json"))
     return tmp
 
 

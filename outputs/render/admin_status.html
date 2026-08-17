@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>진행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=edf5884d58">
+<link rel="stylesheet" href="/static/app.css?v=30af8a529c">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-status">
@@ -96,10 +96,48 @@
 
 <p class="muted">
   <strong>5초</strong>마다 스스로 갱신합니다 ·
-  마지막 확인 <strong>2026-08-17T17:39:18+00:00</strong>.
+  마지막 확인 <strong>2026-08-17T18:00:37+00:00</strong>.
   갱신이 실패해도 <strong>여기 보이는 것은 그대로 남습니다</strong> —
   서버가 만든 화면이라 JS 가 없어도 새로고침하면 지금 상태가 나옵니다.
 </p>
+
+<!-- 가벼운 점검 — 4시간마다 저절로 센 결과 (개정 335 · S29-0).
+     ★ 마스터가 「다 했어?」를 묻지 않아도 여기 남아 있습니다 -->
+<h2>⓪ 마지막 점검 <span class="more">4시간마다 저절로 셉니다</span></h2>
+
+
+
+
+<p>
+  <strong>2026-08-17T17:46:21Z</strong>
+  <span class="muted">14분 전</span>
+  
+  <span class="chip-bad">어긋난 것이 있습니다</span>
+</p>
+<!-- ★ class="rows" 라야 좁은 폭에서 카드로 접힌다.  안 그러면
+     「걸린 시간」이 화면 밖으로 잘린다 (실측 08-18 360px) -->
+<table class="rows">
+<thead><tr><th>fatal</th><th>warn</th><th>시험 실패</th><th>「—」</th>
+  <th>계산식</th><th>템플릿 문법</th><th>걸린 시간</th></tr></thead>
+<tbody><tr>
+  <td class="num" data-label="fatal">6</td>
+  <td class="num" data-label="warn">7</td>
+  <td class="num" data-label="시험 실패">1</td>
+  <td class="num" data-label="「—」">0</td>
+  <td class="num" data-label="계산식">18</td>
+  <td class="num" data-label="템플릿 문법">0</td>
+  <td class="num" data-label="걸린 시간">155초</td>
+</tr></tbody>
+</table>
+
+<p class="muted">★ 시간 예산 60초를 넘겼습니다 —
+  check_all 과 run_tests 가 각각 70초대입니다. 4시간에 한 번이라 그대로 둡니다.</p>
+
+
+
+<p class="muted">지난 번과 같습니다.</p>
+
+
 
 <h2>① 지금 도는 것</h2>
 
@@ -121,7 +159,7 @@
 <h3>마지막으로 처리한 것</h3>
 
 <p>매물 <strong>833582320230701</strong> · catalog
-  · <strong>854분 전</strong>
+  · <strong>876분 전</strong>
   <span class="muted">(2026-08-17T03:24:36.718621+00:00)</span></p>
 
 
@@ -135,13 +173,13 @@
 <tr><td class="runid" data-label="작업">cdaf9a0fe6c5ca47fe</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">raw_missing · KOLEOS_HEV</td>
-  <td class="muted" data-label="언제">2238분 전</td>
+  <td class="muted" data-label="언제">2259분 전</td>
   <td class="muted" data-label="메모">중단 — S5 는 CLI 로 이미 돌렸다. 큐를 가져가는 실행기가 없어 잠금만 남는다 · 재개점 없음</td></tr>
 
 <tr><td class="runid" data-label="작업">0528852458168f2a8b</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">listing_updated · G80</td>
-  <td class="muted" data-label="언제">2271분 전</td>
+  <td class="muted" data-label="언제">2292분 전</td>
   <td class="muted" data-label="메모">중단 — 08-16 01:36 부터 큐에 남아 관리 화면을 잠그고 있었다. 큐를 가져가는 실행기가 없다 · 재개점 없음</td></tr>
 
 </tbody>
@@ -213,7 +251,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 02:39</span>
+  <span>2026-08-18 03:00</span>
 </footer>
 
 </body>

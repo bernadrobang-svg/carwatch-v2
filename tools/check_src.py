@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import ast
+import datetime as _dt
 import io
 import json
 import os
@@ -774,6 +775,38 @@ try:
         _missing, _stale[:8])
 except Exception as _e:                                  # noqa: BLE001
     say("S28", "검사 색인 (규격 ↔ 코드)", 0, [], [f"색인을 못 만들었다: {_e}"])
+
+# ── S29-0 가벼운 점검이 실제로 도는가 (0장 S29 · 개정 335) ──────────
+# ★ 「타이머를 만들었습니다」와 「돌고 있습니다」는 다르다.
+#   마지막 결과가 주기의 두 배보다 오래됐으면 안 도는 것이다
+_bad29: list[str] = []
+_LIGHT_STALE_FACTOR = 2
+try:
+    with io.open(os.path.join(ROOT, "config", "web.json"),
+                 encoding="utf-8") as _fh:
+        _every = int(json.load(_fh).get("check_light_every_h") or 0)
+    if not _every:
+        _bad29.append("config/web.json 에 check_light_every_h 가 없다")
+    for _need in ("tools/light_check.py", "tools/daily_check.py",
+                  "tools/weekly_check.py",
+                  "deploy/carwatch-check-light.timer",
+                  "deploy/carwatch-check-light.service"):
+        if not os.path.isfile(os.path.join(ROOT, _need)):
+            _bad29.append(f"{_need} 가 없다")
+    _last = os.path.join(ROOT, "outputs", "light", "last.json")
+    if not os.path.isfile(_last):
+        _bad29.append("가벼운 점검이 한 번도 안 돌았다 — outputs/light/last.json 이 없다")
+    elif _every:
+        _age = (_dt.datetime.now(_dt.timezone.utc).timestamp()
+                - os.path.getmtime(_last)) / 3600
+        if _age > _every * _LIGHT_STALE_FACTOR:
+            _bad29.append(f"마지막 가벼운 점검이 {_age:.0f}시간 전이다 "
+                          f"— 주기 {_every}시간의 {_LIGHT_STALE_FACTOR}배를 넘었다")
+    say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)",
+        0 if _bad29 else 1, [], _bad29)
+except Exception as _e:                                  # noqa: BLE001
+    say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)", 0, [],
+        [f"점검 상태를 못 읽었다: {_e}"])
 
 print()
 print(f"미착수 합계 {todo_total}")

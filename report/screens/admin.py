@@ -622,6 +622,9 @@ def status_view(conn, root: str = ".") -> dict:
     failed = [r for r in recent if r["status"] == "failed"]
     return {
         **base,
+        # ★ 4시간마다 저절로 센 결과 (개정 335 · S29-0).
+        #   마스터가 「다 했어?」를 묻지 않아도 화면에 남아 있게 한다
+        "light": _light_result(root, _mins),
         "poll_sec": int(web.get("status_poll_sec") or 0),
         "checked_at": now.isoformat(timespec="seconds"),
         "running": ({"job_id": running[0], "reason": running[1],
@@ -640,6 +643,42 @@ def status_view(conn, root: str = ".") -> dict:
         "stalled_min": (last_min if running is not None else None),
         "recent_jobs": recent,
         "failed_jobs": failed,
+    }
+
+
+def _light_result(root: str, mins) -> dict | None:
+    """가벼운 점검의 마지막 결과 (개정 335).
+
+    ★ 도구가 남긴 것을 읽기만 한다.  화면이 검사를 돌리지 않는다 —
+      화면을 열 때마다 150초짜리를 돌릴 수는 없다
+    """
+    import json as _j
+
+    path = os.path.join(root, "outputs", "light", "last.json")
+    if not os.path.isfile(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as f:
+            got = _j.load(f)
+    except (ValueError, OSError):
+        return None
+    num = got.get("숫자") or {}
+    return {
+        "at": got.get("at"),
+        "minutes": mins(got.get("at")),
+        "fatal": num.get("fatal"),
+        "warn": num.get("warn"),
+        "tests": num.get("시험 실패"),
+        "dash": num.get("—"),
+        "calc": num.get("계산식"),
+        "leak": num.get("템플릿 문법"),
+        "took": got.get("걸린 초"),
+        "budget": got.get("예산 초"),
+        "over": bool(got.get("예산 초")
+                     and (got.get("걸린 초") or 0) > got["예산 초"]),
+        "changes": got.get("바뀐 것") or [],
+        "clean": not (num.get("fatal") or num.get("시험 실패")
+                      or num.get("—") or num.get("템플릿 문법")),
     }
 
 

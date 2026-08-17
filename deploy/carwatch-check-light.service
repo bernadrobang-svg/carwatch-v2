@@ -1,0 +1,14 @@
+# 가벼운 점검 (S29-0 · 개정 335).
+# ★ 4시간마다 재기만 한다.  고치지 않는다 — 고치면 마스터의 작업을 끊는다
+# ★ 서비스를 재시작하지 않는다 (개정 308)
+# ★ 수집이 도는 중이면 스스로 건너뛴다 — 원문이 들어오는 중에 세면 흔들린다
+[Unit]
+Description=CarWatch v2 — 가벼운 점검 (4시간)
+
+[Service]
+Type=oneshot
+User=ec2-user
+WorkingDirectory=/home/ec2-user/v2
+Environment=LANG=ko_KR.UTF-8
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3.11 tools/light_check.py

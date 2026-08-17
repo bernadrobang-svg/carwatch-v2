@@ -1559,18 +1559,35 @@ def _em_dash_check(rid):
     return result(C["V11-106"], rid, 0, len(bad), not bad, bad[:6])
 
 
-# 부록 G 줄 수 상한 (개정 332) — 화면 : (템플릿, 줄 수 상한)
+# 화면 : (템플릿, 부록 G 줄 수 상한 표의 줄 이름).
+# ★ 줄 수를 여기 적지 않는다 — 부록 G 「줄 수 상한」 표에서 읽는다
 CARD_SHAPES = {
-    "rows": (os.path.join(ROOT, "web", "templates", "listings.html"), 6),
-    "cand-rows": (os.path.join(ROOT, "web", "templates", "recommend.html"), 8),
+    "car-rows": (os.path.join(ROOT, "web", "templates", "listings.html"),
+                 "목록 (좁음)"),
+    "cand-rows": (os.path.join(ROOT, "web", "templates", "recommend.html"),
+                  "추천 (좁음)"),
 }
 CARD_AXES = ("사고", "골격", "용도", "보증")
-# 부록 G 「좁은 폭에서 한 화면(약 700px)에 매물이 2개 이상 보인다」
-SCREEN_PX = 700
+# 부록 G 「한 화면에 매물이 2개 이상 보인다」 — 그 「2개」다
 CARDS_PER_SCREEN = 2
-# 줄 높이 어림 — 글자 크기 × 이것.  ★ 넉넉히 잡는다 (상한을 보는 것이다)
-LINE_FACTOR = 1.7
-CARD_PAD_PX = 24
+
+
+def _card_limits() -> dict:
+    """부록 G 「줄 수 상한」 표.  ★ 6줄·8줄을 코드에 적지 않는다."""
+    path = os.path.join(ROOT, "docs", "ref", "G-screens.md")
+    if not os.path.isfile(path):
+        return {}
+    body = open(path, encoding="utf-8").read()
+    head = body.find("## 줄 수 상한")
+    if head < 0:
+        return {}
+    block = body[head:body.find("\n#", head + 1)]
+    out = {}
+    for line in block.splitlines():
+        got = re.match(r"\| *([^|]+?) *\| *\*{0,2}(\d+)줄", line)
+        if got:
+            out[got.group(1)] = int(got.group(2))
+    return out
 
 
 def _cells_of(tpl: str, axes: int) -> list:
@@ -1620,7 +1637,8 @@ def _matches(sel: str, klass: str, cls: set, label: str) -> int:
     return score
 
 
-def _place_cards(css: str, tpl: str, klass: str, narrow_px: int):
+def _place_cards(css: str, tpl: str, klass: str, narrow_px: int,
+                 card_px: int):
     """칸을 격자에 실제로 놓아 본다.
 
     반환   (놓인 칸, 격자 칸 수, 가장 큰 글자 크기, 넘친 것)
@@ -1629,13 +1647,19 @@ def _place_cards(css: str, tpl: str, klass: str, narrow_px: int):
     # ★ 주석을 먼저 뗀다.  주석 안의 중괄호·쉼표가 규칙 쪼개기를 깨뜨린다
     #   (실측 08-18 — 주석에 적은 예시 하나로 축 규칙 넷이 통째로 사라졌다)
     css = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
-    rules, cols, biggest = [], 12, 0.0
+    # ★ 어림값을 두지 않는다.  CSS 에 없으면 그것이 결함이다 —
+    #   기본값을 두면 「격자를 안 정했다」가 조용히 통과한다
+    rules, cols, biggest = [], 0, 0.0
     for width, body in _media_blocks(css):
-        if width > narrow_px:
+        # ★ 격자 칸 수는 표가 카드로 바뀌는 폭(1099)에서 정해진다.
+        #   좁은 폭(639) 블록만 보면 「격자가 없다」로 헛짚는다 (실측 08-18)
+        if width > card_px:
             continue
         got = re.search(r"grid-template-columns:\s*repeat\((\d+)", body)
         if got:
             cols = int(got.group(1))
+        if width > narrow_px:
+            continue
         for rule in re.finditer(r"([^{}]+)\{([^{}]*)\}", body):
             sel = rule.group(1)
             decl = rule.group(2).replace(" ", "")
@@ -1697,7 +1721,7 @@ def _place_cards(css: str, tpl: str, klass: str, narrow_px: int):
     for idx, span in sorted(flow.items()):
         used += 1
         placed[idx] = (used, used + 1)
-    return placed, cols, biggest or 12.0, spill, hidden, len(cells)
+    return placed, cols, biggest, spill, hidden, len(cells)
 
 
 def _card_shape_checks(rid):
@@ -1717,14 +1741,32 @@ def _card_shape_checks(rid):
     with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
         # ★ 1099 가 아니라 639 다.  1099 는 표가 카드로 바뀌는 폭이고
         #   줄 수 상한은 부록 G 「좁음 (<640)」에서 잰다
-        narrow = int(_j.load(f)["card_narrow_max_px"])
+        web = _j.load(f)
+    narrow = int(web["card_narrow_max_px"])
+    screen_px = float(web["card_screen_px"])
+    line_factor = float(web["card_line_factor"])
+    pad_px = float(web["card_pad_px"])
+    limits = _card_limits()
+    if not limits:
+        return [not_applicable(C["V11-108"], rid, "부록 G 줄 수 상한을 못 읽었다"),
+                not_applicable(C["V11-109"], rid, "부록 G 줄 수 상한을 못 읽었다")]
     bad109, bad108 = [], []
-    for klass, (tpl_path, limit) in CARD_SHAPES.items():
+    for klass, (tpl_path, row_name) in CARD_SHAPES.items():
+        limit = limits.get(row_name)
+        if limit is None:
+            bad109.append(f"부록 G 줄 수 상한 표에 「{row_name}」 줄이 없다")
+            continue
         tpl = open(tpl_path, encoding="utf-8").read()
         placed, cols, biggest, spill, hidden, total = _place_cards(
-            css, tpl, klass, narrow)
+            css, tpl, klass, narrow, int(web["narrow_max_px"]))
         if not placed:
             bad109.append(f"{klass} 의 카드 배치를 못 찾았다")
+            continue
+        if not cols:
+            bad109.append(f"{klass} — 좁은 폭에 grid-template-columns 가 없다")
+            continue
+        if not biggest:
+            bad108.append(f"{klass} — 좁은 폭에 글자 크기가 없어 높이를 못 잰다")
             continue
         used = max(r2 - 1 for _r1, r2 in placed.values())
         if used > limit:
@@ -1733,12 +1775,11 @@ def _card_shape_checks(rid):
         if len(placed) + len(hidden) != total:
             bad109.append(f"{klass} 칸 {total}개 중 "
                           f"{total - len(placed) - len(hidden)}개를 못 놓았다")
-        del cols
         # 두 장이 한 화면에 들어가는가 — 줄 수 × 글자 크기로 상한을 잡는다
-        tall = used * biggest * LINE_FACTOR + CARD_PAD_PX
-        if tall * CARDS_PER_SCREEN > SCREEN_PX:
+        tall = used * biggest * line_factor + pad_px
+        if tall * CARDS_PER_SCREEN > screen_px:
             bad108.append(f"{klass} 한 장 약 {tall:.0f}px — "
-                          f"{CARDS_PER_SCREEN}장이 {SCREEN_PX}px 를 넘는다")
+                          f"{CARDS_PER_SCREEN}장이 {screen_px:.0f}px 를 넘는다")
     return [result(C["V11-108"], rid, f"{CARDS_PER_SCREEN}장",
                    "들어간다" if not bad108 else "안 들어간다",
                    not bad108, bad108),

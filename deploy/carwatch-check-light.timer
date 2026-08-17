@@ -1,0 +1,13 @@
+# ★ 02·06·10·14·18·22 — 4시간마다 (개정 335)
+#   ★ 02:00 이 04:00 수집(STEP 136h)보다 앞선다.  결과를 보고 수집한다
+#   ★ 1시간이면 하루 24번이라 기록이 쌓여 안 보게 된다.
+#     하루 한 번이면 밤에 깨진 것을 저녁에야 안다
+[Unit]
+Description=CarWatch v2 — 가벼운 점검 4시간마다
+
+[Timer]
+OnCalendar=*-*-* 02,06,10,14,18,22:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

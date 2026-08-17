@@ -1,9 +1,14 @@
 <h1>관리</h1>
 
-<h2>정기 점검 <span class="muted">S29 · 개정 334</span></h2>
+<h2>정기 점검 <span class="muted">S29 · 개정 334 · 335</span></h2>
 <table class="rows">
 <thead><tr><th>주기</th><th>언제</th><th>마지막</th><th>기록</th></tr></thead>
 <tbody>
+<tr><td data-label="주기">가벼운 점검</td>
+  <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
+  <td data-label="마지막">{% if checks.light.name %}{{ checks.light.name }}{% endif %}{% if !checks.light.name %}<span class="dim">어긋난 것이 없었습니다</span>{% endif %}</td>
+  <td data-label="기록" class="muted">outputs/light/ · {{ checks.light.count }}건 ·
+    <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
   <td data-label="마지막">{% if checks.daily.name %}{{ checks.daily.name }}{% endif %}{% if !checks.daily.name %}<span class="dim">아직 없습니다</span>{% endif %}</td>
   <td data-label="기록" class="muted">outputs/daily/ · {{ checks.daily.count }}건</td></tr>

@@ -252,9 +252,22 @@ def _km_per_month() -> float:
 #   숫자 표는 위와 같이 값을 재서 보간한다.
 #   ★ 어느 쪽이든 부록 F 를 읽는다 — 구간표를 여기 다시 적지 않는다
 
-RESIDUAL_BY_YEAR = {1: 0.88, 2: 0.78, 3: 0.67}   # 부록 F 1-2 (아래에서 검산)
-RESIDUAL_STEP = 0.07
-RESIDUAL_FLOOR = 0.15
+
+
+def residual_spec() -> tuple:
+    """부록 F ①-2 의 기준 잔가율.  ★ 숫자를 여기 적지 않는다 — 읽는다.
+
+    「기준 잔가율 e = 1년 0.88 · 2년 0.78 · 3년 0.67
+      4년 이상 = 0.67 − (y−3)×0.07,  하한 0.15」
+    """
+    text = spec_section("1-2")
+    by_year = {int(y): float(v)
+               for y, v in re.findall(r"(\d+)년 +(0\.\d+)", text)}
+    step = re.search(r"[×x]\s*(0\.\d+)", text)
+    floor = re.search(r"하한 *(0\.\d+)", text)
+    return (by_year,
+            float(step.group(1)) if step else 0.0,
+            float(floor.group(1)) if floor else 0.0)
 FRAME_SWAP = ("교환(교체)", "용접,절단")
 FRAME_SHEET = ("판금/용접",)
 LEAK_LEAK = ("누유", "누수")
@@ -335,11 +348,14 @@ def hand_depreciation(conn, lid) -> float | None:
         return None
     # ★ 반올림이 아니라 버림이다.  1.67년은 2년이 아니라 1년으로 본다
     #   (실측 08-18 — 반올림으로 재니 46점이 11점으로 나왔다)
+    by_year, drop, floor = residual_spec()
+    if not by_year:
+        return None
     step = max(1, int(years))
-    want = RESIDUAL_BY_YEAR.get(step)
+    want = by_year.get(step)
     if want is None:
-        want = max(RESIDUAL_FLOOR,
-                   RESIDUAL_BY_YEAR[3] - (step - 3) * RESIDUAL_STEP)
+        last = max(by_year)
+        want = max(floor, by_year[last] - (step - last) * drop)
     origin = row[1] + hand_option_won(conn, lid)
     return want - row[0] / origin
 

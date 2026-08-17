@@ -169,7 +169,8 @@ def admin_home(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: 
     from report.screens.admin import view_admin_home
 
     home = view_admin_home(account, conn)
-    # ★ 마스터는 금요일 아침에 /admin 을 열면 된다 (S29 · 개정 334)
+    # ★ 마스터는 금요일 아침에 /admin 을 열면 된다 (S29 · 개정 334).
+    #   가벼운 점검은 4시간마다다 (개정 335) — 밤에 깨져도 아침에 안다
     return page(conn, account, "관리", "admin.html",
                 {"h": home, "checks": _check_reports(root)},
                 csrf=csrf, root=root, flash_key=flash_key)
@@ -185,10 +186,14 @@ def _check_reports(root: str) -> dict:
     del root
     home = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
     out = {}
-    for key, sub in (("daily", "daily"), ("weekly", "weekly")):
+    # ★ 가벼운 점검은 「어긋난 것이 있을 때만」 기록한다 (개정 335) —
+    #   기록이 0건인 것이 정상이다.  그래서 건수만으로 판단하지 않는다
+    for key, sub in (("light", "light"), ("daily", "daily"),
+                     ("weekly", "weekly")):
         base = _o.path.join(home, "outputs", sub)
         got = sorted(f for f in _o.listdir(base)
                      if f.endswith(".md")) if _o.path.isdir(base) else []
+        got = [f for f in got if f != "last.json"]
         out[key] = {"name": got[-1][:-3] if got else None,
                     "count": len(got)}
     return out
