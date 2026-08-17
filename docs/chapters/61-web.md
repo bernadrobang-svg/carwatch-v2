@@ -2156,6 +2156,7 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 | V11-100 | 목록에 옵션 개수와 합계가 나옴 | code | fatal |
 | V11-101 | 상세에 옵션 전체 목록이 나옴 | code | fatal |
 | V11-102 | 비교에 옵션 차이가 나옴 | code | fatal |
+| V11-104 | 렌더 결과에 템플릿 문법이 남아 있지 않음 | code | fatal |
 | V11-98 | 이어붙인 원문의 길이·해시가 같은가 | code | fatal |
 | V11-99 | 같은 화면에서 연속 POST 가 되는가 | code | fatal |
 | V11-85 | 트림에 세부등급이 포함됨 | code | fatal |
