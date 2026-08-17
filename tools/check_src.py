@@ -225,6 +225,36 @@ if "3" in DONE_CHAPTERS:
 else:
     say("S4", "테이블 DDL (STEP 28)", 0, tables, [])
 
+def _retired_config_keys() -> set:
+    """더는 요구되지 않는 config 키 (개정 330 · 331).
+
+    ★ 개발측이 지시서를 고치지 않는다 (규칙 2).  검사가 폐기를 안다
+    근거 둘
+      ① 00_버전.md 폐기 표에 이름이 적힌 키
+      ② 부록 F 가 배점의 정본이다 (개정 330) —
+        scoring.json 의 axis_rules 아래 키는 부록 F 에 있어야 산다
+    ★ 부록 F 에 없는 축의 키를 계속 요구하면 24축으로 옮긴 것이 실패로 나온다
+    """
+    ver = next((b for f, b in _spec_files(SPEC)
+                if f.endswith("00_버전.md")), "")
+    frame = next((b for f, b in _spec_files(SPEC)
+                  if f.endswith("F-scoring.md")), "")
+    out: set = set()
+    if ver:
+        block = ver.split("폐기된 규격", 1)[-1].split("\n## ", 1)[0]
+        out |= set(re.findall(r"`([a-z_][a-z0-9_]*(?:\.[a-z0-9_]+)*)`", block))
+    if not frame:
+        return out
+    # ② axis_rules 아래 키 — 본문 표의 「↳」 줄이 그것이다
+    for line in re.findall(r"^\| *\| *↳ *(.+)$", S, re.M):
+        for key in re.findall(r"`([a-z_][a-z0-9_]*(?:\.[a-z0-9_]+)*)`", line):
+            leaf = key.split(".")[-1]
+            if leaf not in frame:
+                out.add(key)
+                out.add(leaf)
+    return out
+
+
 # ── S5 config 키 (STEP 6 표 ↔ 실제 파일) · V4-15 ─────────────────────
 i = S.find("### config 키 전량")
 j = S.find("### 본문 참조 형식")
@@ -243,6 +273,13 @@ for row in S[i:j].split("\n"):
         continue
     for k in re.findall(r"`([A-Za-z_][A-Za-z0-9_]*)`", cells[1]):
         want.setdefault(cur_file, []).append(k)
+
+# ★ 폐기된 규격이 요구하던 키는 빼고 본다 (개정 330 · 331).
+#   00_버전.md 의 폐기 표가 정본이다 — 본문 표에는 표시가 없다.
+#   ★ 개발측이 지시서를 고치지 않는다 (규칙 2).  검사가 폐기를 알게 한다
+RETIRED_KEYS = _retired_config_keys()
+for fname in list(want):
+    want[fname] = [k for k in want[fname] if k not in RETIRED_KEYS]
 
 bad, okn = [], 0
 for fname, keys in want.items():

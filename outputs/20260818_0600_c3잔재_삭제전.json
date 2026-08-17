@@ -1,0 +1,18 @@
+[
+ {
+  "listing_id": 3,
+  "calc_version": "c3",
+  "dict_version": "d7",
+  "score_total": 427.95,
+  "earned": 320.0,
+  "denominator": 415.0,
+  "grade": "B",
+  "absolute_fail": null,
+  "not_rated_reason": null,
+  "grade_earned": null,
+  "grade_base": null,
+  "confirmed_points": null,
+  "penalties_json": null,
+  "calculated_at": "2026-08-15T14:32:48.373051+00:00"
+ }
+]
