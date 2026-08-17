@@ -782,6 +782,15 @@ CATALOG_ENDPOINT = "catalog"
 OUR_FAULT = ("not_called", "http_error", "parse_failed", "error")
 
 
+def our_fault(why: str) -> bool:
+    """그 사유가 우리 잘못인가.
+
+    ★ 함수로 낸다.  표현 계층(report/)은 store 의 대문자 이름을
+      import 하지 않는다 — 그것은 DTO 자리다 (S15 · STEP 15)
+    """
+    return why in OUR_FAULT
+
+
 def catalog_coverage(conn) -> dict:
     """필요한 조합 · 받은 것 · 못 받은 사유 (개정 327).
 

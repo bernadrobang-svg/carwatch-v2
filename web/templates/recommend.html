@@ -63,7 +63,10 @@
   <td class="r num" data-label="비율">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:{{ r.got_pct }}%"></i><i class="may" style="width:{{ r.may_pct }}%"></i></span>{% endif %}</td>
   <td data-label="차종">{{ r.target_label }}</td>
-  <td class="trim" data-label="트림">{{ r.trim }}</td>
+  <!-- ★ 배지는 트림 줄에 둔다.  차종 칸은 좁은 폭에서 세 칸(78px)이라
+       「G80_25T 엔카」가 두 줄로 넘쳐 카드가 8줄을 넘겼다 (실측 08-18) -->
+  <td class="trim" data-label="트림">{{ r.trim }}
+    <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.site_badge }}</span></td>
   <td class="r" data-label="연식">{{ r.year_month }}</td>
   <td class="r num" data-label="주행">{{ r.mileage_km | km }}</td>
   <td class="r num gap" data-label="시세 대비">

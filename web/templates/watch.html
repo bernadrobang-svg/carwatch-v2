@@ -16,6 +16,7 @@
 <td class="c" data-label="등급"><a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><span class="{{ r.listing.grade | gradecls }}">{{ r.listing.grade }}</span></a></td>
 <td data-label="차종 · 트림">
   <a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><strong>{{ r.listing.target_label }}</strong></a>
+  <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.listing.site_badge }}</span>
   <span class="dim">{{ r.listing.trim }}</span></td>
 <td class="r num" data-label="연식">{{ r.listing.year_month }}</td>
 <td class="r num" data-label="주행">{{ r.listing.mileage_km | km }}</td>

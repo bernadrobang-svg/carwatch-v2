@@ -58,6 +58,26 @@ CHIP_AXES = ("state.accident", "state.frame", "history.usage",
              "warranty.maker")
 
 
+def site_badge(site: str | None, sell_type: str | None,
+               root: str = ".") -> str:
+    """사이트 배지 — 「엔카」 · 「K카 직영」 · 「K카 직거래」 (50-multisite).
+
+    ★ 사이트 이름을 코드에 박지 않는다.  config/sites.json 이 정본이다
+    ★ 판매 유형을 함께 내는 사이트만 낸다.  엔카의 sell_type 은
+      「일반·렌트·리스」로 용도지 판매 유형이 아니다 —
+      그것을 붙이면 「엔카 렌트」가 배지가 된다
+    """
+    with open(f"{root}/config/sites.json", encoding="utf-8") as f:
+        sites = json.load(f)
+    one = sites.get(site or "")
+    if not isinstance(one, dict):
+        return str(site or "")
+    label = one.get("label") or str(site)
+    kinds = one.get("sell_type_labels") or {}
+    tail = kinds.get(str(sell_type or "").strip())
+    return f"{label} {tail}" if tail else label
+
+
 def axis_heads(root: str = ".") -> list[dict]:
     """목록 축 열의 머리말.  ★ 문구를 화면에 박지 않는다 (STEP 91 · V6-02)."""
     al = _labels(root)["AXIS_LABELS"]
@@ -479,7 +499,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     (lid, tk, trim, ym, km, ce, ci, price, grade, earned, denom,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
-     insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base) = rec
+     insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
+     _site, _sell_type) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -569,6 +590,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         option_count=len(_codes) if isinstance(_codes, list) else 0,
         year_month=ym, mileage_km=km,
         color_ext=ce, color_int=ci, axis_chips=chips, price_won=price,
+        # ★ 어느 사이트에서 왔는지 매물마다 낸다 (V9-06).
+        #   화면이 「엔카」를 글자로 박고 있었다 — 사이트가 둘이 되면 거짓말이다
+        site_badge=site_badge(_site, _sell_type, root),
         total_cost_won=(price + fin.acquisition_cost_won) if fin else None,
         loan_principal_won=fin.loan_principal_won if fin else None,
         monthly_won=fin.monthly_payment_won if fin else None,
@@ -767,7 +791,9 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         " l.warranty_extend, l.warranty_deemed, l.options_choice_json,"
         # ★ 등급은 취향을 뺀 505 로 매긴다 (개정 292).  555 로 잰 비율을 내면
         #   화면과 등급이 어긋난다 — 실측 08-17: 84.9%(555) 인데 S(505 기준)
-        " s.grade_earned, s.grade_base"
+        " s.grade_earned, s.grade_base,"
+        # 사이트 배지 (50-multisite · V9-06) — 「K카 직영」까지 낸다
+        " l.site, l.sell_type"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"

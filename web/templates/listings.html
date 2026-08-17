@@ -92,7 +92,7 @@
   <td data-label="딜러">{% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}">{{ r.dealer_shop }}</a>{% endif %}{% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</td>
   <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market | num }}일{% endif %}{% if !r.days_on_market %}<span class="dim">오늘</span>{% endif %}</td>
   <td class="c" data-label="상태">{% if r.status_key %}<a href="/listings?status={{ r.status_key }}" title="게시중 · 내려감 · 재등록">{{ r.status_label }}</a>{% endif %}{% if !r.status_key %}<span class="dim">상태 없음</span>{% endif %}</td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">{{ r.site_badge }}</span></td>
   <td class="c act" data-label="링크">
     <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
     {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>{% endif %}

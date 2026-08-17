@@ -72,6 +72,9 @@ class ListingRow:
     dealer_honesty: float | None
     note: str | None
     versions: VersionStamp
+    # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 · 「K카 직거래」
+    # ★ 사이트가 둘 이상이면 값의 뜻이 사이트에 달려 있다 (50-multisite)
+    site_badge: str = ""
     status_label: str | None = None  # gone → 「목록에서 사라짐」 (V6-06)
     # ★ 비율이 크게 · 원점수/분모가 작게 (STEP 149f).
     #   분모가 다른 매물을 눈으로 갈라야 한다

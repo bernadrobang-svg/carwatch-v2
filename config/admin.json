@@ -16,5 +16,7 @@
     0.9
   ],
   "api_body_chars": 4000,
-  "table_cols_shown": 10
+  "table_cols_shown": 10,
+  "catalog_rows": 8,
+  "_catalog_rows_note": "카탈로그를 못 받은 조합을 몇 개까지 화면에 내는가 (개정 327). ★ 매물이 많은 조합부터 낸다 — 매물 72건이 걸린 조합과 1건짜리는 급한 정도가 다르다"
 }

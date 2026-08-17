@@ -167,14 +167,14 @@ def run_phase(conn: sqlite3.Connection, ctx, phase: str) -> list[CheckResult]:
     """한 차수 실행.  V1 → V2·V4 → V3 → V5 순이다 (STEP 54)."""
     from validate import (
         v1_collect, v2_load, v3_logic, v4_mapping, v5_value, v7_watch,
-        v10_admin, v11_web,
+        v9_multisite, v10_admin, v11_web,
     )
 
     runner = {"V1": v1_collect, "V2": v2_load, "V3": v3_logic,
               "V4": v4_mapping, "V5": v5_value, "V7": v7_watch,
-              "V10": v10_admin, "V11": v11_web}[phase]
+              "V9": v9_multisite, "V10": v10_admin, "V11": v11_web}[phase]
     return runner.run(conn, ctx)
 
 
 PHASE_ORDER: tuple[str, ...] = ("V1", "V2", "V4", "V3", "V5", "V7",
-                                "V10", "V11")
+                                "V9", "V10", "V11")

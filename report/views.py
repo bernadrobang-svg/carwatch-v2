@@ -122,6 +122,8 @@ class ScoreView:
     pending_items: tuple[dict, ...] = ()
     # ★ 「17 Component」를 화면에 박지 않는다 — 배점이 바뀌면 거짓말이 된다
     component_count: int = 0
+    # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 (50-multisite · V9-06)
+    site_badge: str = ""
     # 등급 기준 (개정 292 · 306).  ★ 총점과 다르다
     grade_earned: float = 0.0
     grade_base: float = 0.0

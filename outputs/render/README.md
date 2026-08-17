@@ -7,21 +7,21 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 18,301B |
-| `/listings` | [listings.html](listings.html) | 200 | 52,092B |
-| `/recommend` | [recommend.html](recommend.html) | 200 | 39,666B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 17,424B |
+| `/listings` | [listings.html](listings.html) | 200 | 52,562B |
+| `/recommend` | [recommend.html](recommend.html) | 200 | 42,416B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 17,587B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,286B |
 | `/market` | [market.html](market.html) | 200 | 12,157B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 18,034B |
 | `/notready` | [notready.html](notready.html) | 200 | 16,437B |
-| `/watch` | [watch.html](watch.html) | 200 | 11,752B |
+| `/watch` | [watch.html](watch.html) | 200 | 11,998B |
 | `/login` | [login.html](login.html) | 200 | 4,793B |
 | `/join` | [join.html](join.html) | 200 | 4,622B |
 | `/password` | [password.html](password.html) | 200 | 4,613B |
 | `/admin` | [admin.html](admin.html) | 200 | 14,611B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 10,828B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 24,177B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 14,232B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 14,233B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,134B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 43,318B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,911B |

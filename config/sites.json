@@ -19,7 +19,12 @@
     "order": 2,
     "site_grade_rule": {
       "all_of": {}
-    }
+    },
+    "sell_type_labels": {
+      "직영": "직영",
+      "직거래": "직거래"
+    },
+    "_sell_type_note": "판매 유형을 배지에 함께 낸다 — 「K카 직영」·「K카 직거래」 (50-multisite). ★ 직영은 K카가 사서 진단·보증하고 판다. 직거래는 개인·딜러가 판다 — 진단·보증이 다르다. ★ 엔카에는 이 갈래가 없다 (sell_type 이 일반·렌트·리스로 용도다) — 그래서 encar 에는 이 표가 없다"
   },
   "kbchachacha": {
     "label": "KB차차차",

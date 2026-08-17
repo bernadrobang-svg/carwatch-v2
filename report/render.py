@@ -158,6 +158,13 @@ def _penalty_rows(raw) -> tuple:
     return tuple({"key": k, "points": p, "label": w} for k, p, w in got)
 
 
+def _site_badge(site, sell_type, root: str = ".") -> str:
+    """사이트 배지.  ★ report/screens/build 와 같은 하나를 쓴다 (V4-21)."""
+    from report.screens.build import site_badge
+
+    return site_badge(site, sell_type, root)
+
+
 def render_listing(conn: sqlite3.Connection, listing_id: int,
                    calc_version: str, fin_cfg: dict, policy: dict,
                    root: str = ".") -> ScoreView:
@@ -170,7 +177,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         " s.grade, s.absolute_fail, l.source_id, l.year_month,"
         " s.calculated_at,"
         # 개정 322 · 325 — 뺀 것 · 근거가 있는 축의 배점 합
-        " s.grade_earned, s.grade_base, s.confirmed_points, s.penalties_json"
+        " s.grade_earned, s.grade_base, s.confirmed_points, s.penalties_json,"
+        # 사이트 배지 (50-multisite · V9-06) — 상세에도 출처를 낸다
+        " l.site, l.sell_type"
         " FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
@@ -205,6 +214,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         denominator=float(head[3] or 0),
         absolute_fail=head[7], not_rated_reason=head[5], axes=axes,
         versions=_stamp(conn, listing_id, calc_version),
+        # ★ 값이 어느 사이트 원문에서 왔는지 사람이 알아야 한다
+        site_badge=_site_badge(head[15], head[16], root),
         finance=build_finance(head[1], fin_cfg, head[0]),
         pending_items=tuple(pending), component_count=len(axes),
         grade_earned=float(head[11] or 0), grade_base=float(head[12] or 0),
