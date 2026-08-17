@@ -58,6 +58,11 @@ C = {
                    FATAL, "run",
                    "S5 에서 0 인 매물만 요청한다. 1·2 는 404 다 (STEP 21b)",
                    KIND_CODE),
+    "V1-23": Check("V1", "V1-23", "ok 로 저장된 원문이 온전한가", FATAL, "run",
+                   "조각을 이어붙이지 못하고 낱개로 저장한 자리를 찾는다 "
+                   "— 실측 08-17: facet 55조각이 ok 로 들어와 있었다. "
+                   "「실패 안 났다」와 「제대로 들어왔다」는 다르다 (개정 307)",
+                   KIND_CODE),
     "V1-21": Check("V1", "V1-21", "받아 두고 안 펼쳐진 원문이 없음", FATAL,
                    "run",
                    "「받았다」와 「쓰였다」는 다르다.  목록 392쪽을 받고도 "
@@ -238,6 +243,7 @@ def run(conn, ctx) -> list:
     out.append(_run_id_filled_check(conn, rid))
     out.append(_catalog_key_check(conn, rid))
     out.append(_unparsed_envelope_check(conn, rid))
+    out.append(_whole_body_check(conn, rid))
     out.append(_empty_db_check(conn, rid))
     return out
 
@@ -504,6 +510,43 @@ def _catalog_key_check(conn, rid):
         "GROUP BY source_id HAVING COUNT(*) > 1", (rid,)).fetchall()
     bad = [f"{sid}: {n}회 호출" for sid, n in rows]
     return result(C["V1-20"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _whole_probe() -> int:
+    """최근 몇 건을 볼 것인가.  ★ 임계값은 config 다 (V4-13)."""
+    import json as _json
+    import os as _os
+
+    root = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    with open(_os.path.join(root, "config", "checks.json"),
+              encoding="utf-8") as f:
+        return int(_json.load(f)["whole_body_probe"])
+
+
+def _whole_body_check(conn, rid):
+    """V1-23 — ok 원문이 통째로 들어왔는가 (개정 307).
+
+    ★ 사고 08-17 — 화면은 바이트를 나눠 보냈는데 서버가 이어붙일 줄 몰라
+      조각 55개가 각각 「ok」로 저장됐다.  수집 화면은 「실패 0건」이라 했다
+    ★ JSON 을 받는 자리는 JSON 이어야 한다.  그것이 「온전하다」의 뜻이다
+    금지   길이로만 판단하는 것 — 조각도 2만 바이트는 넘는다
+    """
+    import json as _json
+
+    bad = []
+    for kind in ("facet", "list"):
+        for raw_id, body in conn.execute(
+            "SELECT id, body FROM raw_response"
+            " WHERE endpoint=? AND status='ok'"
+            " ORDER BY id DESC LIMIT ?", (kind, _whole_probe())
+        ):
+            try:
+                _json.loads(body)
+            except (ValueError, TypeError):
+                bad.append(f"{kind} raw {raw_id} 이 JSON 이 아니다 "
+                           f"({len(body):,}B) — 조각일 수 있다")
+                break
+    return result(C["V1-23"], rid, 0, len(bad), not bad, bad[:6])
 
 
 def _unparsed_envelope_check(conn, rid):

@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import json
+import re
 import os
 import sqlite3
 from urllib.parse import quote, urlencode
@@ -321,13 +322,39 @@ def _bulk_state(conn, lids: list) -> dict:
         f" FROM core_listing WHERE listing_id IN ({marks})", tuple(lids)
     ):
         out[lid] = {"warranty": (bm, bkm, pm, pkm, km, ym)}
-    for (lid, mycnt, mycost, othcnt, tot) in conn.execute(
+    for (lid, mycnt, mycost, othcnt, tot, not_join) in conn.execute(
         f"SELECT listing_id, accident_my_cnt, accident_my_cost,"
-        f" accident_other_cnt, accident_total_cnt FROM core_record"
-        f" WHERE listing_id IN ({marks})", tuple(lids)
+        f" accident_other_cnt, accident_total_cnt, not_join_json"
+        f" FROM core_record WHERE listing_id IN ({marks})", tuple(lids)
     ):
         out.setdefault(lid, {})["record"] = (mycnt, mycost, othcnt, tot)
+        # ★ 자차 미가입 기간 — 받아 두고 안 쓰고 있었다 (개정 294 · 299 ⑦).
+        #   실측 08-17: 2,243건 중 1,308건(58%)에 기간이 있다
+        out[lid]["not_join"] = not_join_months(not_join)
     return out
+
+
+def not_join_months(raw: str | None) -> int:
+    """자차 미가입 개월 수 합 (개정 294).
+
+    원문   ["202412~202502", null, null, null, null]
+    ★ 「기간이 있다」가 아니라 「몇 달인가」다 — 1달과 5년은 다른 사실이다
+    """
+    if not raw:
+        return 0
+    try:
+        spans = [x for x in json.loads(raw) if x]
+    except (ValueError, TypeError):
+        return 0
+    total = 0
+    for span in spans:
+        got = re.match(r"(\d{4})(\d{2})~(\d{4})(\d{2})", str(span))
+        if not got:
+            continue
+        a = int(got.group(1)) * MONTHS_PER_YEAR + int(got.group(2))
+        b = int(got.group(3)) * MONTHS_PER_YEAR + int(got.group(4))
+        total += max(0, b - a)
+    return total
 
 
 def _left(total_month, total_km, used_month, used_km):
@@ -495,7 +522,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         "repair_won": (_rec[1] if _rec else None),
         "mileage_note": (f"주행 {km:,}km"
                          if km and high_km and km >= high_km else None),
-        "color_note": None, "not_join": None,
+        "color_note": None,
+        "not_join": (st or {}).get("not_join") or 0,
     })
     # 경과 — 처음 본 날부터 며칠.  ★ 게시일이 아니라 우리가 처음 본 날이다
     dom = _days_between(first_seen, calc_at)

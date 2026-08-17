@@ -33,5 +33,7 @@
   "chunk_probe_chars": 40000,
   "chunk_probe_room": 40000,
   "csrf_repeat": 5,
-  "_chunk_probe_note": "조각 전송 시험 크기 (개정 307). 실측 facet 은 19~21만 바이트다"
+  "_chunk_probe_note": "조각 전송 시험 크기 (개정 307). 실측 facet 은 19~21만 바이트다",
+  "whole_body_probe": 40,
+  "_whole_body_note": "ok 원문이 온전한 JSON 인지 최근 몇 건을 보는가 (개정 307 · V1-23)"
 }

@@ -57,9 +57,10 @@ def reasons(row) -> list:
     # ⑥ 인기 없는 색
     if row.get("color_note"):
         out.append(row["color_note"])
-    # ⑦ 자차 미가입 기간
-    if row.get("not_join"):
-        out.append("자차 미가입 기간이 있습니다")
+    # ⑦ 자차 미가입 기간 — ★ 몇 달인지가 사실이다 (개정 294)
+    got = row.get("not_join")
+    if got:
+        out.append(f"자차 미가입 {got}개월")
     return out
 
 
