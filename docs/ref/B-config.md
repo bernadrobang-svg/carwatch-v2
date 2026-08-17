@@ -391,3 +391,5 @@ enum_{axis}.json        연료 · 색상 · 트림 · 부위 · 상태
 | `browser_collect_rows` | 브라우저 수집이 한 번에 부르는 건수 | `20` | 08-16 · V11-47 |
 | `browser_interval_sec` | 브라우저 수집 호출 간격 (초) | `0` | 08-16 · 사용자 회선은 안 막힌다 |
 | `status_poll_sec` | 진행 모니터 갱신 간격 (초) | `5` | 08-16 · STEP 136f |
+| `collect_daily_at` | 매일 자동 수집 시각 | `04:00` | 08-17 · STEP 136h |
+| `list_stale_days` | 목록이 오래됐다고 보는 날 수 | `1` | 08-17 · STEP 136i |
