@@ -187,13 +187,16 @@ def test_grade() -> None:
     from score.grade import grade_cut_points
 
     # ★ 판정은 비율이다.  점수 컷이 아니다 (STEP 84)
-    # ★ 개정 306 — 555(취향 제외) 기준 실측 분포에서 상위 1% · 5% · 20% · 40%
-    check("등급컷은 비율 0.73/0.68/0.61/0.55",
-          [c for _, c in cutoffs(POLICY)] == [0.73, 0.68, 0.61, 0.55],
+    # ★ 개정 324 — 절대 기준이다.  백분위로 정하지 않는다.
+    #   전체가 나쁘면 나쁜 차가 S 가 된다 — 「우리가 가진 것 중 제일 나은 것」은
+    #   「좋은 차」가 아니다
+    check("등급컷은 절대 기준 0.90/0.80/0.70/0.60/0.50",
+          [c for _, c in cutoffs(POLICY)] == [0.9, 0.8, 0.7, 0.6, 0.5],
           str(cutoffs(POLICY)))
     # ★ 등급컷 점수는 505 기준이다 (개정 292).  555 로 곱하면 어긋난다
     base = POLICY.raw["grade_base_points"]
-    cuts = [float(POLICY.raw["grade_cuts"][g]) for g in ("S", "A", "B", "C")]
+    cuts = [float(POLICY.raw["grade_cuts"][g])
+            for g in ("S", "A", "B", "C", "D")]
     want = [math.ceil(base * cuts[0])] + [math.floor(base * r)
                                           for r in cuts[1:]]
     check(f"「{base} 기준」 {want} 는 표시용",
@@ -209,11 +212,16 @@ def test_grade() -> None:
                                     None, earned, den), POLICY)
 
     check("★ 90.9% → S", g(450, 495.0) == "S", f"{450 / 495:.1%}")
-    check("★ 83.4% → S (개정 306 컷 73%)", g(441.91, 530.0) == "S")
+    check("★ 83.4% → A (개정 324 절대 컷 S 90 · A 80)",
+          g(441.91, 530.0) == "A", f"{441.91 / 530:.1%}")
     # ★ E-1 — score_total 로 재면 한 등급 부풀려진다 (실측)
-    check("★ 245/455 = 53.8% → D (컷 55%)", g(245, 455.0) == "D")
-    check("★ 298.85 를 쓰면 65.7% → B 로 올라간다 (그래서 안 쓴다)",
-          g(298.85, 455.0) == "B")
+    check("★ 245/455 = 53.8% → D (컷 D 50)", g(245, 455.0) == "D")
+    check("★ 298.85 를 쓰면 65.7% → C 로 올라간다 (그래서 안 쓴다)",
+          g(298.85, 455.0) == "C")
+    # ★ 표본이 바뀌어도 등급의 뜻이 안 바뀐다 — 비율만 보면 등급이 정해진다
+    check("★ 절대 기준 — 90% 는 S · 49% 는 D 아래다",
+          g(90, 100.0) == "S" and g(49, 100.0) == "D",
+          f"{g(90, 100.0)} · {g(49, 100.0)}")
     check("분모가 0 이면 NOT_RATED", g(100, 0) == "NOT_RATED")
 
     # ★ 이름 충돌 — 역할이 다르면 이름을 바꾼다 (V4-21)

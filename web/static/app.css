@@ -1545,3 +1545,9 @@ body.s-listings main { max-width:1560px; }
    ★ 좁은 폭에서도 줄이지 않는다.  트림이 없으면 무슨 차인지 모른다 */
 .rows td.trim { color:var(--fg); white-space:normal; min-width:9em; }
 .rows td.trim:empty::after { content:"—"; color:var(--dim); }
+
+/* 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다 —
+   0 아래로도 내려간다.  조용히 깎지 않는다 */
+.minus { margin:6px 0 10px; display:flex; flex-wrap:wrap; gap:6px;
+         align-items:center; }
+.minus b { color:var(--down); margin-right:4px; }

@@ -282,6 +282,16 @@ C = {
                     "표가 화면에 맞춰 쥐어짜이면 한 글자가 한 줄이 된다. "
                     "실측 08-16 admin_dict — 「프/론/트/휀/더」 (검토 17)",
                     KIND_CODE),
+    "V11-104": Check("V11", "V11-104", "템플릿 문법이 화면에 새지 않음",
+                     FATAL, "run",
+                     "엔진이 모르는 문법은 글자 그대로 나온다 — "
+                     "{# 주석 #} 과 {% if a == b %} 이 화면에 찍혔다 (개정 325)",
+                     KIND_CODE),
+    "V11-105": Check("V11", "V11-105", "화면 위아래가 어긋나지 않음",
+                     FATAL, "run",
+                     "표는 「카탈로그 미조회」라 하고 문장은 「확인율 100%」라 "
+                     "했다.  표가 옳고 문장이 표를 배신했다 (개정 325)",
+                     KIND_CONTRACT),
     "V11-98": Check("V11", "V11-98", "큰 원문을 조각으로 보내고 이어붙이는가",
                     FATAL, "run",
                     "facet 은 하나의 JSON 이라 내용으로 못 나눈다 — "
@@ -1445,6 +1455,49 @@ def _checks_cfg() -> dict:
         return json.load(f)
 
 
+def _template_leak_check(rid):
+    """V11-104 — 템플릿 문법이 화면에 그대로 나오는가.
+
+    ★ 엔진이 모르는 문법은 조용히 글자로 나온다.
+      {# 주석 #} 과 {% if a == b %} 이 마스터 화면에 찍혀 있었다
+    ★ 렌더 결과를 본다 — 템플릿만 보면 「엔진이 아는가」를 못 본다
+    """
+    base = os.path.join(ROOT, "outputs", "render")
+    if not os.path.isdir(base):
+        return not_applicable(C["V11-104"], rid, "렌더 결과가 없다")
+    bad = []
+    for name in sorted(os.listdir(base)):
+        if not name.endswith(".html"):
+            continue
+        html = open(os.path.join(base, name), encoding="utf-8").read()
+        got = re.search(r"\{[%{#][^}]{0,60}", html)
+        if got:
+            bad.append(f"{name} — {got.group(0)[:40]}")
+    return result(C["V11-104"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _screen_contradiction_check(rid):
+    """V11-105 — 화면 위아래가 어긋나지 않는가 (개정 325).
+
+    ★ 마스터가 본 것 — 위에서 「미조회」, 아래에서 「확인율 100%」.
+      표는 정확했고 그 아래 문장이 표를 배신했다
+    """
+    path = os.path.join(ROOT, "outputs", "render", "why_listing_id.html")
+    if not os.path.isfile(path):
+        return not_applicable(C["V11-105"], rid, "렌더 결과가 없다")
+    html = open(path, encoding="utf-8").read()
+    text = re.sub(r"<[^>]+>", " ", html)
+    bad = []
+    if "확인율 100%" in text and "미조회" in text:
+        bad.append("「미조회」가 있는데 「확인율 100%」라 한다")
+    # ★ 옛 규격 문구가 남아 있으면 화면이 옛말을 한다 (개정 289 · 298)
+    if "분모에서 뺍니다" in text:
+        bad.append("★ 「분모에서 뺍니다」 — 개정 289 로 폐기된 문구다")
+    if "확인율" not in text:
+        bad.append("확인율을 아예 안 낸다")
+    return result(C["V11-105"], rid, 0, len(bad), not bad, bad)
+
+
 def _chunk_check(rid):
     """V11-98 — 바이트 조각을 이어붙여 원문이 그대로 나오는가 (개정 307)."""
     from store import chunk
@@ -1593,7 +1646,9 @@ def _v1_parity_checks(rid):
                 continue          # v1 에 없던 것은 요구하지 않는다
             if not any(x in src_b for x in in_v2):
                 bad69.append(f"{v2_name} — {op}")
-    return [_chunk_check(rid), _csrf_reuse_check(rid),
+    return [_template_leak_check(rid), _screen_contradiction_check(rid),
+            _chunk_check(rid),
+            _csrf_reuse_check(rid),
             _origin_price_check(rid),
             result(C["V11-68"], rid, "열",
                    f"{len(want) - len(bad68)}/{len(want)}", not bad68, bad68),

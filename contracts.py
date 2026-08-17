@@ -191,6 +191,10 @@ class ListingSnapshot:
     market_sample_n: int | None = None
     # ★ 점검 출처 — TABLE 플랫폼 직영 · IMAGE 판매자 등록 (개정 300 · 306)
     inspection_formats: list | None = None
+    # ★ 자차 미가입 개월 · 보유 개월 (개정 294 · 322).
+    #   「기간이 있다」가 아니라 「보유 기간의 몇 %인가」가 흠이다
+    not_join_months: int | None = None
+    owned_months: int | None = None
 
 
 @dataclass(frozen=True)

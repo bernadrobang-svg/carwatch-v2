@@ -36,6 +36,11 @@ CREATE TABLE IF NOT EXISTS result_score (
   --   555 로 잰 비율을 화면에 내면 등급과 어긋난다 — 둘 다 남긴다
   grade_earned   REAL,
   grade_base     REAL,
+  -- ★ 근거가 있는 축의 배점 합 (개정 325).  applicable 과 다르다 —
+  --   「원문을 안 받아 0점」은 확인한 것이 아니다.  화면이 100% 라 거짓말했다
+  confirmed_points REAL,
+  -- 뺀 것 [[키, 점수, 문구], …] (개정 322).  ★ 0 아래로도 내려간다
+  penalties_json TEXT,
   calculated_at  TEXT NOT NULL,
   PRIMARY KEY (listing_id, calc_version),
   FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),

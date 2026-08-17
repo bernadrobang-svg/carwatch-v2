@@ -986,7 +986,8 @@ def view_compare(account: Account, conn, listing_ids: list[int],
                        axis_winner=winner)
 
 
-def market_trims(conn, target_key: str, root: str = ".") -> list:
+def market_trims(conn, target_key: str, root: str = ".",
+                 picked: str | None = None) -> list:
     """그 차종의 트림 목록 — 고를 수 있게 (V11-83 · 개정 282).
 
     ★ 「G80_25T 1,713건을 한 시세로 묶으면 뜻이 없다」 (개정 285).
@@ -1000,6 +1001,8 @@ def market_trims(conn, target_key: str, root: str = ".") -> list:
         " GROUP BY 1 ORDER BY 2 DESC", (target_key,)
     ):
         out.append({"trim": trim, "count": n, "enough": n >= need,
+                    # ★ 템플릿은 비교를 모른다.  켜짐을 여기서 정한다 (V11-104)
+                    "on": trim == picked,
                     "url": f"/market?target={target_key}"
                            f"&trim={quote(trim, safe='')}"})
     return out

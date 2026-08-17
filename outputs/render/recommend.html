@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추천 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=7c1379cdfa">
+<link rel="stylesheet" href="/static/app.css?v=7941e0899c">
 
 </head>
 <body class="s-recommend">
@@ -87,14 +87,14 @@
 <main>
 <h1>후보 <small>10건</small></h1>
 
-{# ★ 조건을 한 줄로.  「왜 이 목록인지」가 먼저다 (개정 304) #}
+<!-- ★ 조건을 한 줄로.  「왜 이 목록인지」가 먼저다 (개정 304) -->
 <p class="cond"><strong>10건</strong> —
   E · 미판정을 뺀 후보 <strong>1,584건</strong> 중
   <strong>이유를 댈 수 있는 것</strong>만 · 비율 높은 순
   <span class="dim">판정 3,528건
     → E · 미판정 1,944건 뺌</span></p>
 
-{# 조작은 목록과 같은 자리 · 같은 모양 (개정 306 §3 · STEP 148) #}
+<!-- 조작은 목록과 같은 자리 · 같은 모양 (개정 306 §3 · STEP 148) -->
 <div class="bar">
   <form class="inline" method="get" action="/recommend">
     
@@ -115,7 +115,7 @@
 
 
 
-{# ★ 목록은 요약이다 — 한 매물이 한 줄.  근거는 /why 로 (개정 303) #}
+<!-- ★ 목록은 요약이다 — 한 매물이 한 줄.  근거는 /why 로 (개정 303) -->
 <table class="rows">
 <thead><tr>
 <th class="c">사진</th><th class="c">관심</th>
@@ -126,49 +126,12 @@
 </tr></thead>
 <tbody>
 
-<tr data-peek="https://ci.encar.com/carpicture09/pic4229/42297296_001.jpg" data-href="/why/478">
-  <td class="c photo" data-label="사진">
-    <a href="/why/478"><img src="https://ci.encar.com/carpicture09/pic4229/42297296_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="478">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>1</b></td>
-  <td class="r num" data-label="비율"><strong>78.0%</strong>
-    <span class="raw">433.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:71.6%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">G70_20T</td>
-  <td data-label="트림">가솔린 2.0T 4WD · (세부등급 없음)</td>
-  <td class="r" data-label="연식">2022-11</td>
-  <td class="r num" data-label="주행">52,176km</td>
-  <td class="r num" data-label="가격"><b>2,670만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-400만</span>
-    
-  </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 400만 싸고 무사고입니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/478" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42297296" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
-    <a href="/compare?ids=478" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
 <tr data-peek="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" data-href="/why/2111">
   <td class="c photo" data-label="사진">
     <a href="/why/2111"><img src="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" alt="" loading="lazy"></a>
     
   </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -176,11 +139,11 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>2</b></td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>1</b></td>
   <td class="r num" data-label="비율"><strong>78.0%</strong>
     <span class="raw">433.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:71.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
@@ -191,7 +154,7 @@
     
     <span class="dim">—</span>
   </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/2111" class="mini">근거</a>
@@ -205,7 +168,7 @@
     <a href="/why/2630"><img src="https://ci.encar.com/carpicture08/pic4248/42489324_027.jpg" alt="" loading="lazy"></a>
     
   </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -213,11 +176,11 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>3</b></td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>2</b></td>
   <td class="r num" data-label="비율"><strong>77.7%</strong>
     <span class="raw">431.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:71.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
@@ -228,7 +191,7 @@
     <span class="down-v">-120만</span>
     
   </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/2630" class="mini">근거</a>
@@ -237,86 +200,12 @@
   </td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture01/pic4201/42015754_001.jpg" data-href="/why/315">
-  <td class="c photo" data-label="사진">
-    <a href="/why/315"><img src="https://ci.encar.com/carpicture01/pic4201/42015754_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="315">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>4</b></td>
-  <td class="r num" data-label="비율"><strong>79.8%</strong>
-    <span class="raw">443.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.2%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">G70_25T</td>
-  <td data-label="트림">가솔린 2.5T 4WD · (세부등급 없음)</td>
-  <td class="r" data-label="연식">2023-12</td>
-  <td class="r num" data-label="주행">30,840km</td>
-  <td class="r num" data-label="가격"><b>2,800만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-740만</span>
-    
-  </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 740만 싸고 무사고입니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/315" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42015754" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
-    <a href="/compare?ids=315" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
-<tr data-peek="https://ci.encar.com/carpicture04/pic4244/42443080_001.jpg" data-href="/why/1427">
-  <td class="c photo" data-label="사진">
-    <a href="/why/1427"><img src="https://ci.encar.com/carpicture04/pic4244/42443080_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="1427">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>5</b></td>
-  <td class="r num" data-label="비율"><strong>78.9%</strong>
-    <span class="raw">438.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:72.4%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식">2024-11</td>
-  <td class="r num" data-label="주행">7,591km</td>
-  <td class="r num" data-label="가격"><b>4,550만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-740만</span>
-    
-  </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 740만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/1427" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42443080" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
-    <a href="/compare?ids=1427" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
 <tr data-peek="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" data-href="/why/1974">
   <td class="c photo" data-label="사진">
     <a href="/why/1974"><img src="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" alt="" loading="lazy"></a>
     
   </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -324,11 +213,11 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>6</b></td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>3</b></td>
   <td class="r num" data-label="비율"><strong>76.9%</strong>
     <span class="raw">427.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:70.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 2WD · (세부등급 없음)</td>
@@ -339,7 +228,7 @@
     <span class="down-v">-290만</span>
     
   </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 290만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/1974" class="mini">근거</a>
@@ -348,49 +237,12 @@
   </td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture09/pic4249/42490218_027.jpg" data-href="/why/2085">
-  <td class="c photo" data-label="사진">
-    <a href="/why/2085"><img src="https://ci.encar.com/carpicture09/pic4249/42490218_027.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="2085">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>7</b></td>
-  <td class="r num" data-label="비율"><strong>78.6%</strong>
-    <span class="raw">436.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:72.1%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">G80_25T</td>
-  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식">2023-02</td>
-  <td class="r num" data-label="주행">27,978km</td>
-  <td class="r num" data-label="가격"><b>3,690만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-400만</span>
-    
-  </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 400만 싸고 무사고이며 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/2085" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42490218" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
-    <a href="/compare?ids=2085" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
 <tr data-peek="https://ci.encar.com/carpicture01/pic4241/42419178_027.jpg" data-href="/why/1897">
   <td class="c photo" data-label="사진">
     <a href="/why/1897"><img src="https://ci.encar.com/carpicture01/pic4241/42419178_027.jpg" alt="" loading="lazy"></a>
     
   </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -398,11 +250,11 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>8</b></td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>4</b></td>
   <td class="r num" data-label="비율"><strong>72.6%</strong>
     <span class="raw">403.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:66.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
@@ -413,7 +265,7 @@
     <span class="up-v">+180만</span>
     
   </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/1897" class="mini">근거</a>
@@ -427,7 +279,7 @@
     <a href="/why/2546"><img src="https://ci.encar.com/carpicture04/pic4234/42340662_027.jpg" alt="" loading="lazy"></a>
     
   </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -435,11 +287,11 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>9</b></td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>5</b></td>
   <td class="r num" data-label="비율"><strong>72.6%</strong>
     <span class="raw">403.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:66.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
@@ -450,7 +302,7 @@
     <span class="up-v">+260만</span>
     
   </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/2546" class="mini">근거</a>
@@ -464,7 +316,7 @@
     <a href="/why/1326"><img src="https://ci.encar.com/carpicture03/pic4253/42539651_027.jpg" alt="" loading="lazy"></a>
     
   </td>
-  {# ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) #}
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -472,11 +324,11 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>10</b></td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>6</b></td>
   <td class="r num" data-label="비율"><strong>76.8%</strong>
     <span class="raw">426.0/555.0</span>
-    {# ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) #}
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:70.4%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
@@ -487,12 +339,160 @@
     <span class="down-v">-640만</span>
     
   </td>
-  {# ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) #}
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">시세보다 640만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/1326" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42539651" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
     <a href="/compare?ids=1326" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture03/pic4253/42532916_027.jpg" data-href="/why/1052">
+  <td class="c photo" data-label="사진">
+    <a href="/why/1052"><img src="https://ci.encar.com/carpicture03/pic4253/42532916_027.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="1052">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>7</b></td>
+  <td class="r num" data-label="비율"><strong>74.4%</strong>
+    <span class="raw">413.0/555.0</span>
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:68.3%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">G80_25T</td>
+  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="r" data-label="연식">2024-06</td>
+  <td class="r num" data-label="주행">32,981km</td>
+  <td class="r num" data-label="가격"><b>4,890만</b></td>
+  <td class="r num gap" data-label="시세차">
+    <span class="down-v">-400만</span>
+    
+  </td>
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 400만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/1052" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42532916" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
+    <a href="/compare?ids=1052" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture04/pic4254/42541352_027.jpg" data-href="/why/1599">
+  <td class="c photo" data-label="사진">
+    <a href="/why/1599"><img src="https://ci.encar.com/carpicture04/pic4254/42541352_027.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="1599">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>8</b></td>
+  <td class="r num" data-label="비율"><strong>72.3%</strong>
+    <span class="raw">401.0/555.0</span>
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:66.3%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">G80_25T</td>
+  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="r" data-label="연식">2025-01</td>
+  <td class="r num" data-label="주행">11,726km</td>
+  <td class="r num" data-label="가격"><b>5,620만</b></td>
+  <td class="r num gap" data-label="시세차">
+    <span class="up-v">+170만</span>
+    
+  </td>
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/1599" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42541352" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
+    <a href="/compare?ids=1599" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture03/pic4223/42236395_027.jpg" data-href="/why/775">
+  <td class="c photo" data-label="사진">
+    <a href="/why/775"><img src="https://ci.encar.com/carpicture03/pic4223/42236395_027.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="775">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-b">B</span></td>
+  <td class="r num" data-label="순위"><b>9</b></td>
+  <td class="r num" data-label="비율"><strong>72.6%</strong>
+    <span class="raw">403.0/555.0</span>
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:66.6%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">G80_25T</td>
+  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="r" data-label="연식">2024-04</td>
+  <td class="r num" data-label="주행">18,993km</td>
+  <td class="r num" data-label="가격"><b>5,400만</b></td>
+  <td class="r num gap" data-label="시세차">
+    <span class="up-v">+110만</span>
+    
+  </td>
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/775" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42236395" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
+    <a href="/compare?ids=775" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture03/pic4253/42532963_027.jpg" data-href="/why/2600">
+  <td class="c photo" data-label="사진">
+    <a href="/why/2600"><img src="https://ci.encar.com/carpicture03/pic4253/42532963_027.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="2600">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-c">C</span></td>
+  <td class="r num" data-label="순위"><b>10</b></td>
+  <td class="r num" data-label="비율"><strong>69.9%</strong>
+    <span class="raw">388.0/555.0</span>
+    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:64.1%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">G80_25T</td>
+  <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
+  <td class="r" data-label="연식">2024-10</td>
+  <td class="r num" data-label="주행">21,364km</td>
+  <td class="r num" data-label="가격"><b>5,420만</b></td>
+  <td class="r num gap" data-label="시세차">
+    <span class="up-v">+130만</span>
+    
+  </td>
+  <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/2600" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42532963" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
+    <a href="/compare?ids=2600" class="mini">⇄ 비교</a>
   </td>
 </tr>
 
@@ -546,7 +546,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-17 12:48</span>
+  <span>2026-08-17 14:06</span>
 </footer>
 
 </body>

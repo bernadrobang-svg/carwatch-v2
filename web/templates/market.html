@@ -27,7 +27,7 @@
 <div class="bar">
   <span class="dim">트림</span>
   <a class="btn{% if !trim %} on{% endif %}" href="{{ all_url }}" title="이 차종 전체를 봅니다">전체</a>
-  {% for t in trims %}<a class="btn{% if t.trim == trim %} on{% endif %}" href="{{ t.url }}"
+  {% for t in trims %}<a class="btn{% if t.on %} on{% endif %}" href="{{ t.url }}"
     title="{{ t.trim }} · {{ t.count | num }}건{% if !t.enough %} — 표본이 모자라 분포를 못 냅니다{% endif %}">{{ t.trim }} <span class="num">{{ t.count | num }}</span></a>{% endfor %}
 </div>
 {% if trim %}

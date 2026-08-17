@@ -545,7 +545,7 @@ def market(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str 
     trim = q.get("trim") or None
     m = view_market(account, conn, target, _cfg("depreciation.json", root),
                     trim=trim)
-    trims = market_trims(conn, target, root)
+    trims = market_trims(conn, target, root, picked=trim)
     return page(conn, account, "시세", "market.html",
                 {"m": m, "trims": trims, "trim": trim,
                  "all_url": f"/market?target={target}"},

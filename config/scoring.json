@@ -32,10 +32,11 @@
     "hash_rounds": 200000
   },
   "grade_cuts": {
-    "S": 0.73,
-    "A": 0.68,
-    "B": 0.61,
-    "C": 0.55
+    "S": 0.9,
+    "A": 0.8,
+    "B": 0.7,
+    "C": 0.6,
+    "D": 0.5
   },
   "price_curve": [
     {
@@ -394,11 +395,23 @@
   ],
   "grade_base_points": 555,
   "_grade_base_note": "①값 250 + ②상태 180 + ③사양 75 + ⑤사이트 보증 50 = 555 가 「시장이 보는 값」이다.  ④취향 50 은 「내가 원하는가」라 순위에만 쓴다 (개정 306 · V3-57)",
-  "_grade_cuts_note": "555(취향 제외) 기준 실측 분포에서 S 상위 1% · A 5% · B 20% · C 40% — 그 자리의 비율을 반올림했다 (개정 306 재계산 08-17). ★ 개정 292 때 제안한 75/69/60/53 은 505 기준이었다",
+  "_grade_cuts_note": "★ 절대 기준이다 (개정 324).  백분위로 정하지 않는다 — 전체가 나쁘면 나쁜 차가 S 가 된다. 그 등급이 0건이어도 그대로 둔다 — 「S 가 0건」이 사실이면 그것이 정보다",
   "score_core_axes": [
     "value.market",
     "value.depreciation",
     "state.accident"
   ],
-  "_score_core_axes_note": "핵심 축 — 빠지면 NOT_RATED (개정 287 · V3-40). 값을 못 보고 매긴 등급, 사고를 모르고 매긴 등급은 뜻이 없다"
+  "_score_core_axes_note": "핵심 축 — 빠지면 NOT_RATED (개정 287 · V3-40). 값을 못 보고 매긴 등급, 사고를 모르고 매긴 등급은 뜻이 없다",
+  "penalties": {
+    "_note": "★ 상한을 두지 않는다.  총점에서 뺀다.  0 아래로도 내려간다 (개정 322)",
+    "rental_history": -50,
+    "no_site_grade": -30,
+    "not_join_ratio": -40,
+    "seller_inspection": -20,
+    "accident_each": -25,
+    "frame_sheet": -40,
+    "frame_swap": -80,
+    "_not_join_ratio_note": "자차 미가입 기간이 보유 기간의 이 비율을 넘으면",
+    "not_join_ratio_limit": 0.3
+  }
 }

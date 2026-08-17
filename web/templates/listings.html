@@ -73,7 +73,7 @@
     {% if r.target_label %}<a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a>{% endif %}
     {% if !r.target_label %}<span class="dim" title="차종을 아직 못 붙였습니다">차종 미정</span>{% endif %}
   </td>
-  {# ★ 좁은 폭에서도 트림을 줄이지 않는다 — 없으면 무슨 차인지 모른다 (개정 313) #}
+  <!-- ★ 좁은 폭에서도 트림을 줄이지 않는다 — 없으면 무슨 차인지 모른다 (개정 313) -->
   <td class="trim" data-label="트림">{{ r.trim }}</td>
   <td class="r num" data-label="옵션">
     {% if r.option_count %}<a href="/why/{{ r.listing_id }}">{{ r.option_count }}종{% if r.option_price_won %} {{ r.option_price_won | won }}{% endif %}</a>{% endif %}

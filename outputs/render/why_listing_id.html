@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>판정 근거 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=7c1379cdfa">
+<link rel="stylesheet" href="/static/app.css?v=7941e0899c">
 
 </head>
 <body class="s-why">
@@ -90,7 +90,7 @@
   · <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=38016911" target="_blank" rel="noopener"
     title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a></p>
 <p class="act">
-  {# ★ 어디서나 같은 자리에 ♡ (개정 305) #}
+  <!-- ★ 어디서나 같은 자리에 ♡ (개정 305) -->
   <form method="post" action="/watch/add" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="listing_id" value="3">
@@ -151,9 +151,16 @@
 
 <p class="score">
   <strong>233</strong> / 605
-  <span class="muted">판정할 수 없는 축은 분모에서 뺍니다 ·
-    555 기준 환산 0</span>
+  <span class="muted">분모는 늘 만점입니다.
+    못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298) ·
+    등급은 취향을 뺀 555 기준
+    183점입니다</span>
 </p>
+
+<p class="muted">
+  ★ 확인율 <strong>57.0%</strong> —
+  근거가 있는 축의 배점 합 345 / 605 입니다.
+  「안 받아서 0점」은 확인한 것이 아닙니다 (개정 325)</p>
 
 <h2>무엇을 조회했는가</h2>
 <p class="muted">★ 「안 부른 것」과 「불렀는데 못 받은 것」은 다릅니다.
@@ -355,8 +362,9 @@
 <h2>확인 못 한 것 — 채우면 오를 수 있습니다</h2>
 
 
-<p class="muted">없습니다. 17 Component 전부 판정됐습니다 —
-  확인율 100% 입니다 (분모 605점 · 개정 298).</p>
+<p class="muted">분모에서 뺀 축은 없습니다 (17 Component).
+  다만 확인율은 <strong>57.0%</strong> 입니다 —
+  안 받은 원문이 있으면 그 축은 0점이고, 그것은 확인한 것이 아닙니다 (개정 325).</p>
 
 
 <h2>왜 이 등급인가</h2>
@@ -425,7 +433,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-17 12:48</span>
+  <span>2026-08-17 14:06</span>
 </footer>
 
 </body>

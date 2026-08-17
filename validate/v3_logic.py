@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import collections
 import random
+import re
 
 from analyze.axis.history import RENT_AD_TYPES
 from analyze.verdict import BANNED_SOURCES
@@ -154,6 +155,19 @@ C = {
                    "이론가가 실제 시장보다 높으면 전부 「싸다」로 나온다. "
                    "그러면 「싸다」가 아무 뜻이 없다 (개정 282)",
                    KIND_EXTERNAL),
+    "V3-62": Check("V3", "V3-62", "원문이 없는데 값을 만든 축이 없음",
+                   FATAL, "run",
+                   "원문이 없으면 「확인 못 함」이지 「없음」이 아니다 — "
+                   "v1 의 「[] 가 NULL 로」와 같은 유형 (개정 323)",
+                   KIND_CONTRACT),
+    "V3-64": Check("V3", "V3-64", "등급 경계가 절대 기준", FATAL, "run",
+                   "백분위는 상대 기준이라 전체가 나쁘면 나쁜 차가 S 가 된다 "
+                   "— S 90 · A 80 · B 70 · C 60 · D 50 (개정 324)",
+                   KIND_CONTRACT),
+    "V3-65": Check("V3", "V3-65", "확인율이 근거 있는 축만 셈", FATAL, "run",
+                   "「안 받아서 0점」을 확인했다고 하면 화면이 거짓말한다 "
+                   "— 「카탈로그 미조회」인데 「확인율 100%」였다 (개정 325)",
+                   KIND_CONTRACT),
     "V3-55": Check("V3", "V3-55", "사이트 보증 축이 config 규칙을 읽는가",
                    FATAL, "run",
                    "사이트마다 우수등급의 뜻이 다르다 — 엔카 진단+우수등급 · "
@@ -605,6 +619,96 @@ def _why_cheap_check(conn, rid):
                    dict(seen) if not bad53 else bad53, not bad53, bad53)]
 
 
+def _source_before_value_check(conn, rid):
+    """V3-62 — 원문이 없는데 축에 값을 만들었는가 (개정 323).
+
+    ★ 마스터 지적 — 「보험이력도 성능기록도 없는데 왜 S 냐」
+    ★ 셋을 가른다 — 원문에 「없음」이 적혔다 / 원문이 없다 / 항목이 없다.
+      셋을 같은 값으로 저장하면 여기서 끝난다
+    """
+    cv = conn.execute("SELECT calc_version FROM result_score"
+                      " ORDER BY calculated_at DESC LIMIT 1").fetchone()
+    cv = cv[0] if cv else ""
+    bad = []
+    for axis, table in (("state.accident", "core_record"),
+                        ("state.repair", "core_record"),
+                        ("state.frame", "core_inspection")):
+        n = conn.execute(
+            "SELECT COUNT(*) FROM result_axis a WHERE a.axis=?"
+            " AND a.calc_version=? AND a.excluded=0"
+            f" AND NOT EXISTS (SELECT 1 FROM {table} t"
+            "   WHERE t.listing_id = a.listing_id AND t.row_status='ok')",
+            (axis, cv)).fetchone()[0]
+        if n:
+            bad.append(f"{axis} — {table} 원문 없이 값 {n}건")
+    return result(C["V3-62"], rid, 0, len(bad), not bad, bad)
+
+
+def _absolute_cut_check(rid):
+    """V3-64 — 등급 경계가 절대 기준인가 (개정 324)."""
+    import json
+    import os
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cuts = json.load(f)["grade_cuts"]
+    # ★ 규격의 표에서 읽는다.  코드에 두 벌 두면 어느 쪽이 정본인지 모른다
+    text = "\n".join(b for _f, b in _spec_files())
+    want = {g: int(n) / 100
+            for g, n in re.findall(
+                r"^\s*(?:필수\s+)?([SABCD])\s+(\d{2})%?\s*(?:이상)?", text,
+                re.M)}
+    # 규격에서 읽은 등급 수 — S·A·B·C·D.  ★ E 는 절대 배제라 경계가 없다
+    if len(want) < len(cuts):
+        return not_applicable(C["V3-64"], rid, "규격에서 경계를 못 읽었다")
+    # ★ 백분율을 정수로 견준다.  실수 비교 오차를 만들지 않는다
+    bad = [f"{g} {cuts.get(g)} != {v}" for g, v in sorted(want.items())
+           if round(float(cuts.get(g, 0)) * 100) != round(v * 100)]
+    got = " · ".join(f"{g}{int(v * 100)}" for g, v in sorted(want.items()))
+    return result(C["V3-64"], rid, got,
+                  "맞다" if not bad else bad, not bad, bad)
+
+
+def _spec_files():
+    import glob
+    import os
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return [(f, open(f, encoding="utf-8").read())
+            for f in sorted(glob.glob(os.path.join(root, "docs", "**", "*.md"),
+                                      recursive=True))]
+
+
+def _confirm_ratio_check(conn, rid):
+    """V3-65 — 확인율이 근거 있는 축만 세는가 (개정 325).
+
+    ★ 「안 받아서 0점」을 확인했다고 하면 화면이 거짓말한다
+    """
+    cv = conn.execute("SELECT calc_version FROM result_score"
+                      " ORDER BY calculated_at DESC LIMIT 1").fetchone()
+    cv = cv[0] if cv else ""
+    bad = []
+    n = conn.execute(
+        "SELECT COUNT(*) FROM result_score WHERE calc_version=?"
+        " AND confirmed_points IS NULL", (cv,)).fetchone()[0]
+    if n:
+        bad.append(f"확인율을 안 낸 매물 {n}건")
+    # ★ 근거가 없는 축이 있는데 확인율이 만점이면 거짓이다
+    n = conn.execute(
+        "SELECT COUNT(*) FROM result_score s WHERE s.calc_version=?"
+        " AND s.confirmed_points >= s.denominator"
+        " AND EXISTS (SELECT 1 FROM result_axis a"
+        "   WHERE a.listing_id=s.listing_id AND a.calc_version=s.calc_version"
+        "   AND (a.excluded=1 OR a.source IN"
+        "        ('missing','na','unknown','gate_closed',"
+        "         'market_sample_short','expected_unavailable')))",
+        (cv,)).fetchone()[0]
+    if n:
+        bad.append(f"근거 없는 축이 있는데 확인율이 만점인 매물 {n}건")
+    return result(C["V3-65"], rid, 0, len(bad), not bad, bad)
+
+
 def _site_axis_checks(conn, rid):
     """V3-55 · V3-56 · V3-57 — 사이트 보증 축과 605 배점 (개정 306)."""
     import json
@@ -780,6 +884,9 @@ def run(conn, ctx) -> list:
     out.append(_rental_cross_check(conn, rid))
     out += _why_cheap_check(conn, rid)
     out += _site_axis_checks(conn, rid)
+    out.append(_source_before_value_check(conn, rid))
+    out.append(_absolute_cut_check(rid))
+    out.append(_confirm_ratio_check(conn, rid))
 
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE source IS NULL").fetchone()[0]

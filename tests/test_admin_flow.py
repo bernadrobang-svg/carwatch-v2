@@ -153,9 +153,11 @@ def flow_scoring(conn, acc, root) -> None:
 
     # ★ 여기가 핵심 — 바꾼 배점으로 실제 재채점하면 등급이 달라지는가
     changed = _rescore(conn, root)
-    check("배점 — 바꾼 값으로 재채점하면 등급 분포가 달라진다",
-          changed is not None and changed[0] != changed[1],
-          f"{changed[0]} → {changed[1]}" if changed else "재채점 못 함")
+    # ★ 등급은 절대 기준이라 (개정 324) 배점을 옮겨도 같은 칸일 수 있다.
+    #   화면 입력이 판정까지 갔는지는 「점수가 달라졌는가」로 본다
+    check("배점 — 바꾼 값으로 재채점하면 점수가 달라진다",
+          changed is not None and changed[2] != changed[3],
+          f"{changed[2]} → {changed[3]}" if changed else "재채점 못 함")
 
 
 def _rescore(conn, root: str):
@@ -214,7 +216,16 @@ def _rescore(conn, root: str):
             (lid, new_ver, dver, 0.0, earned, denom,
              grade_of(res, policy), fail, notr, T))
     conn.commit()
-    return before, _dist(conn, new_ver)
+    # ★ 점수도 함께 돌려준다 (개정 324).  등급은 절대 기준이라
+    #   배점을 옮겨도 같은 칸에 머물 수 있다 — 그래도 채점은 달라져야 한다
+    return before, _dist(conn, new_ver), _sum(conn, ver), _sum(conn, new_ver)
+
+
+def _sum(conn, ver: str) -> float:
+    got = conn.execute(
+        "SELECT ROUND(SUM(earned), 2) FROM result_score WHERE calc_version=?",
+        (ver,)).fetchone()[0]
+    return float(got or 0)
 
 
 def _dist(conn, ver: str) -> dict:

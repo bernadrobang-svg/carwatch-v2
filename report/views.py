@@ -122,6 +122,16 @@ class ScoreView:
     pending_items: tuple[dict, ...] = ()
     # ★ 「17 Component」를 화면에 박지 않는다 — 배점이 바뀌면 거짓말이 된다
     component_count: int = 0
+    # 등급 기준 (개정 292 · 306).  ★ 총점과 다르다
+    grade_earned: float = 0.0
+    grade_base: float = 0.0
+    # ★ 근거가 있는 축의 배점 합과 그 비율 (개정 325).
+    #   「안 받아서 0점」은 확인한 것이 아니다
+    confirmed_points: float = 0.0
+    confirm_pct: float = 0.0
+    # 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다
+    penalties: tuple = ()
+    penalty_total: float = 0.0
     # ★ NOT_RATED 사유 3종을 구분한다 (V5-12).  등급만 내지 않는다
     not_rated_reason: str | None = None
     # ★ 표시용이다.  점수에 반영하지 않는다 (STEP 21b).

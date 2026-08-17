@@ -33,9 +33,14 @@ class ScoreResult:
     absolute_fail: str | None
     by_axis: dict[str, float]
     not_rated_reason: str | None
+    # 뺀 것 (키, 점수, 문구).  ★ 화면에 그대로 낸다 (개정 322)
+    penalties: tuple = ()
     # ★ 등급용 — ①+②+③ = 505.  취향(④)을 뺀 것이다 (개정 292 · V3-46)
     grade_earned: float = 0.0
     grade_base: float = 0.0
+    # ★ 근거가 있는 축의 배점 합 (개정 325).  applicable 과 다르다 —
+    #   「원문을 안 받아 0점」은 확인한 것이 아니다
+    confirmed: float = 0.0
 
 
 REASON_ALL_MISSING = "전 축 수집 실패"
@@ -44,8 +49,18 @@ REASON_BANNED_ONLY = "금지 근거만 존재"
 # ★ REASON_MIN_DENOM 은 폐기됐다 (개정 298).  분모로 등급을 막지 않는다
 
 
+# 근거가 아닌 사유 (개정 325).  ★ 이 사유로 0점이면 「확인했다」가 아니다
+UNCONFIRMED_SOURCES: frozenset[str] = frozenset({
+    "missing", "na", "rule_or_source_missing", "market_sample_short",
+    "expected_unavailable", "coefficient_out_of_range", "age_unknown",
+    "ladder_short", "option_top_unknown", "gate_closed", "unclassified",
+    "origin_price_missing", "curve_sample_short", "unknown",
+})
+
+
 def score(v: Verdict, policy: ScoringPolicy,
-          absolute: list[str] | None = None) -> ScoreResult:
+          absolute: list[str] | None = None,
+          snapshot=None) -> ScoreResult:
     total = float(policy.raw["total_points"])
     if policy.points_sum() != policy.raw["total_points"]:
         raise PolicyError(
@@ -59,6 +74,7 @@ def score(v: Verdict, policy: ScoringPolicy,
     earned = 0.0
     grade_earned = 0.0
     grade_base = 0.0
+    confirmed = 0.0
     by_axis: dict[str, float] = {}
 
     for comp in COMPONENTS:
@@ -79,6 +95,10 @@ def score(v: Verdict, policy: ScoringPolicy,
             excluded_points += weight
             continue
         earned += float(value)
+        # ★ 확인율은 「근거가 있는 축」만 센다 (개정 325).
+        #   「카탈로그를 안 받아 0점」을 확인했다고 하면 화면이 거짓말을 한다
+        if v.sources.get(comp) not in UNCONFIRMED_SOURCES:
+            confirmed += weight
         if for_grade:
             grade_earned += float(value)
         by_axis[axis_of(comp)] = by_axis.get(axis_of(comp), 0.0) + float(value)
@@ -92,7 +112,8 @@ def score(v: Verdict, policy: ScoringPolicy,
         # 한 축도 못 봤다.  점수를 매길 근거가 하나도 없다 (분모 시험 D)
         # ★ 핵심 축보다 먼저 본다 — 「전 축 실패」가 더 정확한 사유다
         return ScoreResult(0.0, total, 0.0, earned, "NOT_RATED", fail, by_axis,
-                           REASON_ALL_MISSING, grade_earned, grade_base)
+                           REASON_ALL_MISSING, (), grade_earned, grade_base,
+                           confirmed)
 
     missing_core = [c for c in core
                     if c in v.excluded or v.values.get(c) is None]
@@ -100,9 +121,22 @@ def score(v: Verdict, policy: ScoringPolicy,
         return ScoreResult(0.0, total, applicable, earned, "NOT_RATED", fail,
                            by_axis,
                            f"{REASON_CORE_MISSING} — {' · '.join(missing_core)}",
-                           grade_earned, grade_base)
+                           (), grade_earned, grade_base, confirmed)
+
+    # ★ 마이너스는 총점에서 뺀다.  0 아래로도 내려간다 (개정 322)
+    cut = _penalties(v, policy, snapshot)
+    minus = sum(p for _k, p, _w in cut)
 
     # ★ 분모는 언제나 만점이다.  못 본 축은 0점으로 남는다 (개정 289)
-    return ScoreResult(round(earned, 2), total, applicable, earned,
-                       None, fail, by_axis, None,
-                       round(grade_earned, 2), grade_base)
+    return ScoreResult(round(earned + minus, 2), total, applicable,
+                       earned + minus, None, fail, by_axis, None,
+                       tuple(cut), round(grade_earned + minus, 2), grade_base,
+                       confirmed)
+
+
+def _penalties(v: Verdict, policy: ScoringPolicy, snapshot) -> list:
+    if snapshot is None:
+        return []
+    from score.penalty import penalties_of
+
+    return penalties_of(v, policy, snapshot)

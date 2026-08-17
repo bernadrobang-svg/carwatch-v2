@@ -21,6 +21,9 @@ from store.raw import commit
 TRACKED_FIELDS: tuple[str, ...] = ("price_current_won", "sales_status", "status")
 
 # 이것이 바뀌면 변경 이력이 아니라 검증 실패다 (STEP 29 · 6장 V2).
+# 단위 환산 (2장 상수표 · V4-13)
+MONTHS_PER_YEAR = 12
+
 INVARIANT_FIELDS: tuple[str, ...] = (
     "displacement_cc",
     "year_month",
@@ -446,6 +449,7 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         inspection_panels=jload("inspection_panel_json"),
         # ★ 점검 출처 — TABLE 플랫폼 직영 · IMAGE 판매자 등록 (개정 300 · 306)
         inspection_formats=jload("inspection_formats_json"),
+        not_join_months=_not_join_months(d.get("not_join_json")),
         flood_total_cnt=d.get("flood_total_cnt"),
         flood_part_cnt=d.get("flood_part_cnt"),
         total_loss_cnt=d.get("total_loss_cnt"),
@@ -613,6 +617,31 @@ def upsert_child(conn: sqlite3.Connection, table: str, parsed: dict,
 
 
 # ── 화면 안내용 집계 (14장 STEP 149) ─────────────────────────────────
+def _not_join_months(raw) -> int | None:
+    """자차 미가입 개월 합 (개정 294).
+
+    원문   ["202412~202502", null, null, null, null]
+    ★ 「있다」가 아니라 몇 달인지다 — 1달과 5년은 다른 사실이다
+    """
+    import re as _re
+
+    if not raw:
+        return None
+    try:
+        spans = [x for x in json.loads(raw) if x]
+    except (ValueError, TypeError):
+        return None
+    total = 0
+    for span in spans:
+        got = _re.match(r"(\d{4})(\d{2})~(\d{4})(\d{2})", str(span))
+        if not got:
+            continue
+        a = int(got.group(1)) * MONTHS_PER_YEAR + int(got.group(2))
+        b = int(got.group(3)) * MONTHS_PER_YEAR + int(got.group(4))
+        total += max(0, b - a)
+    return total
+
+
 def state_counts(conn: sqlite3.Connection) -> dict:
     """★ 조회는 여기서 한다.  화면에 SQL 을 두지 않는다 (V11-01)."""
     def one(sql: str) -> int:

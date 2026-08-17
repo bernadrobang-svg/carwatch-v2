@@ -98,6 +98,17 @@ def _encar_url(source_id: str, root: str = ".") -> str:
         return str(_j.load(f)["encar_detail_url"]).format(source_id=source_id)
 
 
+def _penalty_rows(raw) -> tuple:
+    """뺀 것 → 화면 행 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다."""
+    if not raw:
+        return ()
+    try:
+        got = json.loads(raw)
+    except (ValueError, TypeError):
+        return ()
+    return tuple({"key": k, "points": p, "label": w} for k, p, w in got)
+
+
 def render_listing(conn: sqlite3.Connection, listing_id: int,
                    calc_version: str, fin_cfg: dict, policy: dict,
                    root: str = ".") -> ScoreView:
@@ -107,7 +118,10 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         "SELECT l.target_key, l.price_current_won, s.score_total, s.denominator,"
         " s.earned, s.not_rated_reason,"
         " s.grade, s.absolute_fail, l.source_id, l.year_month,"
-        " s.calculated_at FROM core_listing l "
+        " s.calculated_at,"
+        # 개정 322 · 325 — 뺀 것 · 근거가 있는 축의 배점 합
+        " s.grade_earned, s.grade_base, s.confirmed_points, s.penalties_json"
+        " FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
         (calc_version, listing_id)).fetchone()
@@ -143,6 +157,13 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         versions=_stamp(conn, listing_id, calc_version),
         finance=build_finance(head[1], fin_cfg, head[0]),
         pending_items=tuple(pending), component_count=len(axes),
+        grade_earned=float(head[11] or 0), grade_base=float(head[12] or 0),
+        # ★ 「안 받아서 0점」은 확인한 것이 아니다 (개정 325)
+        confirmed_points=float(head[13] or 0),
+        confirm_pct=(round(float(head[13] or 0) / float(head[3]) * 100, 1)
+                     if head[3] else 0.0),
+        penalties=_penalty_rows(head[14]),
+        penalty_total=sum(p["points"] for p in _penalty_rows(head[14])),
         # ★ 채웠을 때 어디까지 오르는지 낸다 (STEP 149h · D-2).
         #   「점수는 낮은데 확실한 것」과 「높은데 불확실한 것」을 가른다
         pending_best=_pending_best(pending, float(head[4] or 0),

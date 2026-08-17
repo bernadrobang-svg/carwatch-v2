@@ -994,6 +994,18 @@ def _listing_values(conn, lid: str) -> dict:
             "record_use_json": row[6]}
 
 
+def _owned_months(snap, as_of: str) -> int | None:
+    """보유 개월 — 최초등록부터 지금까지 (개정 322).
+
+    ★ 자차 미가입 「기간」이 아니라 「보유 기간의 몇 %」가 흠이다.
+      3년 중 1달과 3년 중 3년은 다른 사실이다
+    """
+    from analyze.axis._util import months_between
+
+    return months_between(
+        snap.first_registration_date or snap.year_month, as_of)
+
+
 def _market_of(market: dict, lid: str) -> dict:
     """매물별 시세 중앙값 → ListingSnapshot (F-1 · V4-24).
 
@@ -1052,6 +1064,7 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
+            snap = replace(snap, owned_months=_owned_months(snap, at))
             tc = _listing_config(conn, lid, targets, depreciation, at, ladder,
                                  site_rules.get(snap.site, {}))
             actx = AxisContext(snap, dicts, policy,
@@ -1115,6 +1128,7 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
+            snap = replace(snap, owned_months=_owned_months(snap, at))
             tc = _listing_config(conn, lid, targets, depreciation, at, ladder,
                                  site_rules.get(snap.site, {}))
             actx = AxisContext(snap, dicts, policy,
@@ -1128,19 +1142,22 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                     "(listing_id,warning_code,severity,evidence,detected_at)"
                     " VALUES (?,?,?,?,?)",
                     (lid, "seizing_unknown", "info", reason, at))
-            res = score_listing(v, policy, fails)
+            # ★ 마이너스는 스냅샷을 봐야 정해진다 (개정 322)
+            res = score_listing(v, policy, fails, snapshot=snap)
             conn.execute(
                 # ★ earned 를 함께 남긴다.  등급은 earned/denominator 다 (E-1)
                 #   not_rated_reason 이 없으면 「왜 판정 못 했나」를 못 낸다
                 "INSERT OR REPLACE INTO result_score"
                 "(listing_id,calc_version,dict_version,score_total,earned,"
                 " denominator,grade,absolute_fail,not_rated_reason,"
-                " grade_earned,grade_base,calculated_at)"
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                " grade_earned,grade_base,confirmed_points,penalties_json,"
+                " calculated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (lid, ctx.calc_version, ctx.dict_version, res.score_total,
                  res.earned, res.denominator, grade_of(res, policy),
                  res.absolute_fail, res.not_rated_reason,
-                 res.grade_earned, res.grade_base, at))
+                 res.grade_earned, res.grade_base, res.confirmed,
+                 json.dumps([list(p) for p in res.penalties],
+                            ensure_ascii=False), at))
         conn.commit()
         # ★ 매 실행 후 조건을 돌린다 (STEP 117a).
         #   매물은 사라지지만 조건은 남는다 — 새로 맞는 매물을 쌓는다
