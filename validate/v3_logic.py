@@ -758,10 +758,12 @@ def _spec_axis_check(conn, rid):
     import os
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    spec = os.path.join(root, "docs", "ref", "F-scoring.md")
-    if not os.path.isfile(spec):
-        return not_applicable(C["V3-68"], rid, "부록 F 가 없다")
-    body = open(spec, encoding="utf-8").read()
+    # ★ 정본 위치는 config/checks.json 이 안다 (개정 342)
+    from validate.base import canon_text
+
+    body = canon_text("배점", root)
+    if not body:
+        return not_applicable(C["V3-68"], rid, "배점 정본을 못 찾았다")
     head = body.find("# 축 목록")
     if head < 0:
         return not_applicable(C["V3-68"], rid, "부록 F 에 축 목록이 없다")

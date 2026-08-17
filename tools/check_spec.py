@@ -354,10 +354,11 @@ if _bad22:
 # ★ 가이드가 자기를 검사하면 같은 맹점을 넘긴다.
 #   「고치는 쪽」과 「검사하는 쪽」이 갈린다 — 그것이 검사의 뜻이다
 #   ★ 개발측은 지시서를 고치지 않는다 (규칙 2).  잡아서 넘긴다
-CANON = {
-    "배점": "ref/F-scoring.md",
-    "화면": "ref/G-screens.md",
-}
+# ★ 정본 위치는 config/checks.json 이 안다 (개정 342).
+#   여기 박아 두면 문서가 옮겨진 날 S28 이 빈 파일을 검사한다
+CANON_ALL = (_cfg.get("canon") or {}) if "_cfg" in dir() else {}
+CANON = {k: (v[0] if isinstance(v, list) else v)
+         for k, v in CANON_ALL.items()}
 # 정본 밖에 나오면 안 되는 숫자.  ★ 배점의 총합과 등급 기준이다
 CANON_NUMBERS = ("605", "555")
 # 폐기 표시 문구 — 이것이 있으면 그 절은 건너뛴다
@@ -394,7 +395,11 @@ for _f in _guide_files():
             if re.search(rf"\b{_n}\b *점", _sec):
                 _bad28_1.append(f"{_rel} — 배점 {_n} 이 정본 밖에 있다")
                 break
-        if re.search(r"\d+×\d+", _sec) and "G-screens" not in _rel:
+        # ★ 화면 정본이 일곱 파일로 쪼개졌다 (개정 342).  전부 정본이다 —
+        #   첫 파일만 정본으로 보면 나머지 여섯이 「정본 밖」이 된다
+        if re.search(r"\d+×\d+", _sec) and not any(
+                _rel.replace("\\", "/").endswith(w)
+                for w in (CANON_ALL.get("화면") or ())):
             _bad28_2.append(f"{_rel} — 화면 크기가 정본 밖에 있다")
 
 # S28-4 — 이력 마지막 개정 = 00_버전.md
@@ -438,8 +443,10 @@ for _n in sorted(_retired_tbl):
 
 # S28-7 — 정본끼리 모순되지 않는가 (부록 F 축 ↔ CHECKS.md)
 _bad28_7 = []
+_want_f = tuple(CANON_ALL.get("배점") or ())
 _f_scoring = next((io.open(f, encoding="utf-8").read() for f in _spec_files()
-                   if f.endswith("F-scoring.md")), "")
+                   if any(f.replace("\\", "/").endswith(w)
+                          for w in _want_f)), "")
 if _f_scoring:
     _sums = re.findall(r"\| \*\*합\*\* \| \*\*(\d+)\*\*", _f_scoring)
     _axes = re.findall(r"^\| *\d+ *\| *[가-힣]+ *\|", _f_scoring, re.M)

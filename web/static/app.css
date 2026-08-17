@@ -1382,16 +1382,33 @@ body.s-listings main { max-width:1560px; }
    ★ 한 칸이 한 줄이면 카드가 25줄이 된다 — 실측 08-16 스크린샷.
      규격은 「한 카드가 화면 절반을 넘지 않는다.  두 개는 보여야 비교가 된다」다.
      그래서 관련된 값을 한 줄에 모아 10줄로 앉힌다 (STEP 149o-2 카드 배치) */
-@media (max-width:1099px) {
+/* ★★ 폭 세 단계 (부록 G 14장-1) — 좁음 <640 카드 · 중간 640~1749 표 2줄
+   · 넓음 ≥1750 표 22열.
+   ★ 넓음 경계가 규격의 1100 이 아니라 1750 이다.  부록 G 목록 22열의
+     폭 합이 1,710px 이라 1100px 에서는 오른쪽 일곱 열이 잘린다
+     (실측 08-18 — 마스터 화면 약 1200px 에서 글자가 세로로 떨어졌다).
+     이 어긋남은 가이드에게 보고했다 (config/web.json list_wide_min_px)
+   ★ 전에는 이 블록이 max-width:1099 였다.  그래서
+     640~1099 가 카드로 바뀌고 1100~1749 는 표가 넘쳤다 — 가운데가 통째로
+     깨져 있었는데 360·1400 만 찍어 아무도 못 봤다 */
+@media (max-width:1749px) {
   .rows, .rows tbody, .rows tr, .rows td { display:block; }
   .rows thead { display:none; }          /* 머리말은 칸마다 data-label 로 붙는다 */
-  .rows tbody { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .rows tbody { display:grid; grid-template-columns:1fr; gap:10px; }
   .rows tr {
-    background:var(--surface); border:1px solid var(--line); border-radius:7px;
-    padding:9px 11px;
-    /* ★ 카드 안 배치를 고정한다.  값이 없다고 자리를 당기지 않는다 */
+    padding:6px 0; border-bottom:1px solid var(--line);
+    /* ★ 배치를 고정한다.  값이 없다고 자리를 당기지 않는다 */
     display:grid; grid-template-columns:repeat(12, minmax(0, 1fr));
     gap:1px 6px; align-content:start; font-size:12.5px; line-height:1.5;
+  }
+  /* 카드 모양(테두리·배경·둥근 모서리)은 좁은 폭에서만.
+     ★ 중간 폭은 「표 · 묶어서」다 — 카드가 아니다 (부록 G 14장-1) */
+  @media (max-width:639px) {
+    .rows tbody { grid-template-columns:1fr 1fr; }
+    .rows tr {
+      background:var(--surface); border:1px solid var(--line);
+      border-radius:7px; padding:9px 11px;
+    }
   }
   /* ★ 자르지 않는다.  「94…」로 잘리면 그것도 값이 사라진 것이다 (개정 278).
      칸을 넘으면 줄을 바꾼다 — 실측 08-16 스크린샷 */
@@ -1473,7 +1490,7 @@ body.s-listings main { max-width:1560px; }
 #peek .pk-d { font-size:11px; color:var(--dim); margin-top:7px;
               padding-top:7px; border-top:1px solid var(--line); }
 /* ★ 손가락으로 쓰는 폭에서는 미리보기를 띄우지 않는다 — 마우스가 없다 */
-@media (max-width:1099px) { #peek { display:none !important; } }
+@media (max-width:639px) { #peek { display:none !important; } }
 
 /* 시안에 대응이 없어 우리가 정한 것 — 이름을 화면과 맞춰 둔다 (V11-59) */
 .notice { padding:10px 12px; background:var(--surface);
@@ -1512,7 +1529,7 @@ body.s-listings main { max-width:1560px; }
 }
 
 /* 사진 — 넓으면 더 크게 (개정 281 · V11-80) */
-@media (min-width:1100px) {
+@media (min-width:1750px) {
   .thumb, .thumb-none { width:160px; height:107px; }
   .rows td.photo { width:170px; }
 }
@@ -1548,7 +1565,7 @@ body.s-listings main { max-width:1560px; }
 /* 트림 — Badge · BadgeDetail (개정 313).
    ★ 좁은 폭에서도 줄이지 않는다.  트림이 없으면 무슨 차인지 모른다 */
 .rows td.trim { color:var(--fg); white-space:normal; }
-@media (min-width:1100px) { .rows td.trim { min-width:9em; } }
+@media (min-width:1750px) { .rows td.trim { min-width:9em; } }
 .rows td.trim:empty::after { content:"—"; color:var(--dim); }
 
 /* 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다 —
@@ -1569,7 +1586,7 @@ body.s-listings main { max-width:1560px; }
 .cand-rows td.photo img, .cand-rows td.photo .nophoto {
   width:80px; height:60px;
 }
-@media (max-width: 1099px) {
+@media (max-width: 1749px) {
   .rows td.photo img, .rows td.photo .nophoto { width:88px; height:66px; }
   .cand-rows td.photo img, .cand-rows td.photo .nophoto {
     width:72px; height:54px;
@@ -1598,7 +1615,7 @@ body.s-listings main { max-width:1560px; }
    min-width 를 걸면 카드가 화면 밖으로 밀려 오른쪽 값이 잘린다
    (실측 08-18 — 「3년 3개월 · 92천k」에서 잘렸다.  min-width:9em 이
    격자 칸 69px 을 94px 로 벌렸다) */
-@media (min-width:1100px) {
+@media (min-width:1750px) {
   .rows th, .rows td { min-width:3.2em; }
   .rows td.trim, .rows td[data-label="딜러"] { min-width:8em; }
   .rows td[data-label="제조사 보증"] { min-width:9em; white-space:nowrap; }
@@ -1607,7 +1624,7 @@ body.s-listings main { max-width:1560px; }
 /* ★ 추천 이유는 문장이다.  좁은 폭에서도 한 칸을 통째로 쓴다 (개정 304 · G-7)
    실측 08-17 — 「시세보 다 740만 싸고」로 한 자씩 떨어졌다 */
 .rows td[data-label="왜 이 순위인가"] { grid-column:1 / -1; }
-@media (min-width:1100px) {
+@media (min-width:1750px) {
   .rows td[data-label="왜 이 순위인가"] { min-width:12em; }
 }
 .rows td[data-label="왜 이 순위인가"] .reason { white-space:normal; }
@@ -1625,25 +1642,58 @@ body.s-listings main { max-width:1560px; }
    1줄  사진 ♡ 등급 차종 트림 연식 주행 가격 링크
    2줄  비율 · 시세대비 · 신차가대비 · 월 · 사고 · 골격 · 용도 · 보증
         · 옵션 · 딜러 · 경과 */
-@media (min-width:640px) and (max-width:1099px) {
+/* ── 중간 640~1749 — 표 · 한 행 2줄 (부록 G 14장-2) ─────────────
+   1줄  사진 ♡ 등급 차종 트림 연식 주행 가격 링크
+   2줄  비율 · 시세대비 · 신차가대비 · 월 · 사고 · 골격 · 용도 · 보증
+        · 옵션 · 딜러 · 경과
+   ★ 12칸에 정확히 맞춘다.  전에 act 를 grid-area:1/13/3/13 로 둬서
+     13번째 칸이 생겼다 — 그 칸이 「근거 엔카에서 보기 ↗」 nowrap 폭을
+     먹어 나머지 12칸이 쥐어짜였고 글자가 세로로 떨어졌다 (실측 08-18)
+   ★ 이름표를 끈다.  칸이 70px 대라 「시세 대비 −14.0%」가 안 들어간다
+   ★ 순위 · 상태 · 사이트 는 부록 G 2줄 배치에 없다 — 접는다.
+     넓은 폭(≥1750)과 /why 에는 그대로 있다 */
+@media (min-width:640px) and (max-width:1749px) {
+  .car-rows td::before, .cand-rows td::before { content:""; margin:0; }
+  .car-rows td[data-label="시세 대비"]::before   { content:"시세 ";
+                                                  font-size:10px; }
+  .car-rows td[data-label="신차가 대비"]::before { content:"신차 ";
+                                                  font-size:10px; }
+  /* 원값(시세 5,290만 · 신차가 6,885만 (등급 …))은 상세로.
+     ★ 70px 칸에서 세로로 늘어져 한 행이 다섯 줄이 됐다 (실측 08-18) */
+  .car-rows td[data-label="시세 대비"] .raw,
+  .car-rows td[data-label="신차가 대비"] .raw { display:none; }
+  .car-rows td[data-label="순위"],
+  .car-rows td[data-label="상태"],
+  .car-rows td[data-label="사이트"] { display:none; }
+
+  .car-rows td { font-size:11.5px; }
   .car-rows td.photo            { grid-area:1 / 1 / 2 / 3; }
   .car-rows td[data-label="관심"] { grid-area:1 / 3 / 2 / 4; }
   .car-rows td[data-label="등급"] { grid-area:1 / 4 / 2 / 5; }
-  .car-rows td[data-label="차종"] { grid-area:1 / 5 / 2 / 7; }
-  .car-rows td.trim             { grid-area:1 / 7 / 2 / 10; }
-  .car-rows td[data-label="연식"] { grid-area:1 / 10 / 2 / 11; }
-  .car-rows td[data-label="주행"] { grid-area:1 / 11 / 2 / 12; }
-  .car-rows td[data-label="가격"] { grid-area:1 / 12 / 2 / 13; }
-  /* 2줄 — 나머지는 흐름에 맡긴다.  줄만 못박으면 겹치지 않는다 */
-  .car-rows td[data-label="순위"], .car-rows td[data-label="비율"],
-  .car-rows td[data-label="시세 대비"], .car-rows td[data-label="신차가 대비"],
-  .car-rows td[data-label="월"], .car-rows td.ax, .car-rows td[data-label="옵션"],
-  .car-rows td[data-label="딜러"], .car-rows td[data-label="경과"],
-  .car-rows td[data-label="상태"], .car-rows td[data-label="사이트"] {
-    grid-row:2; grid-column:span 1; font-size:10.5px;
-  }
-  .car-rows td[data-label="딜러"] { grid-column:span 2; }
-  .car-rows td.act { grid-area:1 / 13 / 3 / 13; }
+  .car-rows td[data-label="차종"] { grid-area:1 / 5 / 2 / 6; }
+  .car-rows td.trim             { grid-area:1 / 6 / 2 / 8; }
+  .car-rows td[data-label="연식"] { grid-area:1 / 8 / 2 / 9; }
+  .car-rows td[data-label="주행"] { grid-area:1 / 9 / 2 / 10; }
+  .car-rows td[data-label="가격"] { grid-area:1 / 10 / 2 / 11;
+                                   font-weight:700; }
+  /* ★ 링크는 두 칸이다.  한 칸(70px)에 넣으면 「근거 / 엔카에서 / 보기 ↗」
+     세 줄로 접혀 행이 통째로 높아진다 (실측 08-18) */
+  .car-rows td.act              { grid-area:1 / 11 / 2 / 13;
+                                  white-space:normal; text-align:left;
+                                  font-size:10.5px; }
+
+  /* 2줄 — 열한 칸이 정확히 12칸을 채운다.
+     ★ 보증만 두 칸이다 (「3년 3개월 · 92천km」).  합이 13이 되면
+       한 칸이 밀려나 「못 놓았다」가 된다 (V11-109 실측 08-18) */
+  .car-rows td[data-label="비율"]        { grid-area:2 / 1 / 3 / 2; }
+  .car-rows td[data-label="시세 대비"]    { grid-area:2 / 2 / 3 / 3; }
+  .car-rows td[data-label="신차가 대비"]  { grid-area:2 / 3 / 3 / 4; }
+  .car-rows td[data-label="월"]          { grid-area:2 / 4 / 3 / 5; }
+  .car-rows td.ax[data-label]           { grid-row:2; grid-column:span 1; }
+  .car-rows td.ax[data-label="제조사 보증"] { grid-column:span 2; }
+  .car-rows td[data-label="옵션"]        { grid-area:2 / 10 / 3 / 11; }
+  .car-rows td[data-label="딜러"]        { grid-area:2 / 11 / 3 / 12; }
+  .car-rows td[data-label="경과"]        { grid-area:2 / 12 / 3 / 13; }
 }
 
 /* ── 좁음 <640 — 카드 6줄 (부록 G 도면) ─────────────────────────
@@ -1757,7 +1807,7 @@ body.s-listings main { max-width:1560px; }
 /* ── 카탈로그 못 받은 조합 표 (개정 327) ─────────────────────────
    ★ 칸 셋을 똑같이 나누면 「MODEL_Y · 2025-03」이 50px 에 뭉갠다.
      이 표에만 폭을 준다 — .rows 에 걸면 관리 화면 열아홉이 같이 움직인다 */
-@media (max-width:1099px) {
+@media (max-width:1749px) {
   /* 한 줄에 셋을 넣으면 52px 씩이라 「MODEL_Y · 2025-03」이 넉 줄로 쪼개진다.
      ★ 차종은 한 줄을 통째로 쓰고, 사유와 건수를 그 아래 한 줄에 둔다 */
   .cat-rows td[data-label="차종 · 연식"] {

@@ -35,5 +35,20 @@
   "csrf_repeat": 5,
   "_chunk_probe_note": "조각 전송 시험 크기 (개정 307). 실측 facet 은 19~21만 바이트다",
   "whole_body_probe": 40,
-  "_whole_body_note": "ok 원문이 온전한 JSON 인지 최근 몇 건을 보는가 (개정 307 · V1-23)"
+  "_whole_body_note": "ok 원문이 온전한 JSON 인지 최근 몇 건을 보는가 (개정 307 · V1-23)",
+  "canon": {
+    "배점": [
+      "chapters/30-score/f-table.md"
+    ],
+    "화면": [
+      "chapters/61-web/a-common.md",
+      "chapters/61-web/b-list.md",
+      "chapters/61-web/c-recommend.md",
+      "chapters/61-web/d-detail.md",
+      "chapters/61-web/e-compare.md",
+      "chapters/61-web/f-width.md",
+      "chapters/61-web/g-chart.md"
+    ]
+  },
+  "_canon_note": "배점·화면 정본이 어디 있는가 (개정 342 · SPEC-2026.08.18-r342). ★ 전에는 ref/F-scoring.md · ref/G-screens.md 였다 — 기준은 부록이 아니라 본문에 둔다는 원칙 때문에 옮겨졌다. ★ 옮겨지면 여기만 고친다 — 검사 여섯이 이 값을 읽는다"
 }

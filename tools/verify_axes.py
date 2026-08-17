@@ -20,7 +20,22 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 DB = os.path.join(ROOT, "carwatch.db")
-SPEC = os.path.join(ROOT, "docs", "ref", "F-scoring.md")
+# ★ 배점 정본이 어디인지는 config/checks.json 이 안다 (개정 342).
+#   경로를 박아 두면 문서가 옮겨진 날 손계산이 조용히 빈 표를 읽는다
+#   (실측 08-18 — 부록 F 가 11줄짜리 폐기 안내로 바뀌자 6건이 어긋났다)
+def _spec_text() -> str:
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "checks.json"),
+              encoding="utf-8") as f:
+        got = (_j.load(f).get("canon") or {}).get("배점") or []
+    out = []
+    for one in got:
+        path = os.path.join(ROOT, "docs", one)
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8") as f:
+                out.append(f.read())
+    return "\n\n".join(out)
 # 축마다 몇 건을 손으로 재는가 (개정 329)
 SAMPLE_PER_AXIS = 3
 MONTHS_PER_YEAR = 12
@@ -42,7 +57,7 @@ GRADE_ORDER = ("S", "A", "B", "C", "D", "E")
 
 def spec_tables() -> dict:
     """부록 F 의 구간표를 읽는다.  ★ config 를 읽지 않는다 — 규격이 정본이다."""
-    body = open(SPEC, encoding="utf-8").read()
+    body = _spec_text()
     out: dict = {}
     for head, block in re.findall(r"^## ([\d\-e.]+\. [^\n]+)\n(.*?)(?=^## |\Z)",
                                   body, re.S | re.M):
@@ -500,7 +515,7 @@ def hand_special(conn, lid):
 
 def spec_section(sec: str) -> str:
     """부록 F 의 그 절 본문.  ★ 규칙이 말로 적힌 축은 여기서 숫자를 읽는다."""
-    body = open(SPEC, encoding="utf-8").read()
+    body = _spec_text()
     got = re.search(rf"^## {re.escape(sec)}\.[^\n]*\n(.*?)(?=^## |\Z)",
                     body, re.S | re.M)
     return got.group(1) if got else ""
@@ -508,7 +523,7 @@ def spec_section(sec: str) -> str:
 
 def spec_head_points(sec: str) -> float:
     """「## 4-1. 트림 25」의 25.  ★ 만점을 코드에 적지 않는다."""
-    body = open(SPEC, encoding="utf-8").read()
+    body = _spec_text()
     got = re.search(rf"^## {re.escape(sec)}\. *[^\n]*?(\d+) *$", body, re.M)
     return float(got.group(1)) if got else 0.0
 
@@ -558,7 +573,7 @@ def hand_special_points(conn, lid) -> float | None:
 
 def _taste_points(name: str) -> tuple:
     """⑥ 취향 절에서 「HUD 15」 같은 줄을 읽는다."""
-    body = open(SPEC, encoding="utf-8").read()
+    body = _spec_text()
     got = re.search(r"^# ⑥ 취향[^\n]*\n(.*?)(?=^# |\Z)", body, re.S | re.M)
     if not got:
         return ()

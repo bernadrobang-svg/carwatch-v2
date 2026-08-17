@@ -178,3 +178,30 @@ def run_phase(conn: sqlite3.Connection, ctx, phase: str) -> list[CheckResult]:
 
 PHASE_ORDER: tuple[str, ...] = ("V1", "V2", "V4", "V3", "V5", "V7",
                                 "V9", "V10", "V11")
+
+
+# ── 정본 위치 (개정 342 · SPEC-2026.08.18-r342) ──────────────────────
+# ★ 기준은 부록이 아니라 본문에 있다.  전에는 ref/F-scoring · ref/G-screens
+#   였다.  옮겨지면 config/checks.json 의 canon 만 고친다 —
+#   검사 여섯이 이 값을 읽는다.  옛 경로를 코드에 박아 두면
+#   문서가 옮겨진 날 검사가 조용히 「미실행」이 된다 (실측 08-18: 넷)
+def canon_files(topic: str, root: str = "") -> list:
+    """그 주제의 정본 파일 목록 (경로).  ★ 없으면 빈 목록이다."""
+    import json as _j
+    import os as _o
+
+    base = root or ROOT
+    with open(_o.path.join(base, "config", "checks.json"),
+              encoding="utf-8") as f:
+        got = (_j.load(f).get("canon") or {}).get(topic) or []
+    out = [_o.path.join(base, "docs", x) for x in got]
+    return [x for x in out if _o.path.isfile(x)]
+
+
+def canon_text(topic: str, root: str = "") -> str:
+    """정본 본문을 이어 붙인 것.  ★ 여러 파일로 쪼개져 있다 (개정 342)."""
+    out = []
+    for path in canon_files(topic, root):
+        with open(path, encoding="utf-8") as f:
+            out.append(f.read())
+    return "\n\n".join(out)

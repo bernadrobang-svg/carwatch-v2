@@ -29,10 +29,23 @@ SAMPLE = {"listing_id": None, "watch_id": "1", "account_id": "1"}
 
 # 스크린샷 (가이드 요청 B안).  ★ 마스터는 360px 로 본다
 SHOT_DIR = os.path.join(ROOT, "outputs", "shot")
-SHOT_WIDTHS = (360, 1400)
+def _shot_widths() -> tuple:
+    """찍을 폭 (개정 337).  ★ 360·1400 둘만 찍어 가운데를 놓쳤다 —
+    마스터가 보는 1200px 대가 아무에게도 안 보였다."""
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        return tuple(_j.load(f)["shot_widths"])
+
+
+SHOT_WIDTHS = _shot_widths()
 # 넓은 폭까지 찍을 화면.  ★ 마스터가 주로 보는 곳이다
 # ★ 저장소가 커밋마다 불어난다.  넓은 폭은 마스터가 PC 로 주로 보는 셋만
-WIDE_PATHS = ("/listings", "/why/{listing_id}", "/market")
+# 다섯 폭 전부에서 찍는 화면 (개정 337).
+# ★ 매물이 나오는 화면은 폭마다 배치가 통째로 달라진다 —
+#   추천 · 관심 · 비교도 넣는다.  목록만 봐서 추천이 깨진 채로 있었다
+WIDE_PATHS = ("/listings", "/why/{listing_id}", "/market",
+              "/recommend", "/watch", "/compare", "/dealers")
 # ★ 나머지는 360 만 찍는다 — 관리 화면도 전부 찍는다 (가이드 요청 검토 14 §7).
 #   「관리 UI 가 엉망」이라는 지적을 가이드가 직접 보고 판단할 수 있어야 한다
 SHOT_TIMEOUT_SEC = 180
