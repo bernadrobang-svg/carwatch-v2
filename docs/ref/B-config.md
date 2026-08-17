@@ -395,5 +395,6 @@ enum_{axis}.json        연료 · 색상 · 트림 · 부위 · 상태
 | `list_stale_days` | 목록이 오래됐다고 보는 날 수 | `1` | 08-17 · STEP 136i |
 | `detail_refresh_days` | 상세를 다시 받는 기준 날 수 | `7` | 08-17 · STEP 136h |
 | `check_light_every_h` | 가벼운 점검 간격 (시간) | `4` | 08-17 · S29 |
+| `check_light_budget_sec` | 가벼운 점검 시간 예산 (초) | `180` | 08-17 · 실측 155초 |
 | `check_daily_at` | 일일 점검 시각 | `23:00` | 08-17 · S29 |
 | `check_weekly_at` | 주간 일제 점검 시각 | `FRI 02:00` | 08-17 · S29 |
