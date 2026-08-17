@@ -135,6 +135,12 @@ CREATE TABLE IF NOT EXISTS core_listing (
   platform_verified         INTEGER,  -- 플랫폼이 「클린」으로 판정했나
   inspector_name            TEXT,     -- 성능점검을 누가 했나
   ev_battery_known          INTEGER,
+  -- ★ 전기차 배터리 진단 (개정 296).  SOH 는 「배터리가 얼마나 남았나」다 —
+  --   08-17 실측: 30건 · SOH 91.1~96.8 · 등급 SS 24 · S+ 6.
+  --   08-16 에는 전건 null 이라 「있다/없다」만 남겼었다
+  ev_battery_soh            REAL,
+  ev_battery_grade          TEXT,
+  ev_battery_checked_at     TEXT,
   selling_point             TEXT,
   -- 공통 (STEP 31)
   collected_at           TEXT,

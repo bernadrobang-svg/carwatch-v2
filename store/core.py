@@ -177,8 +177,6 @@ def _record_dropped(conn: sqlite3.Connection, parsed: dict, cols,
              "upsert 가 버린 키 — 컬럼이 없다", at, at))
 
 
-# 같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)
-SCHEMA_CHANGE_MIN = 5
 
 
 # 불변 필드 → 목록 원문의 키.  ★ 여기 없는 필드는 기계가 분류하지 못한다
@@ -215,7 +213,7 @@ def classify_invariant_change(conn, lid: str, field: str, old, new,
         "SELECT COUNT(DISTINCT listing_id) FROM core_listing_change"
         " WHERE field = ? AND change_kind = 'invariant_violation'"
         " AND changed_at >= ?", (field, _today(parsed))).fetchone()[0]
-    if n >= SCHEMA_CHANGE_MIN:
+    if n >= _schema_change_min():
         return CAUSE_SCHEMA
     # ① 이전 원문을 실제로 읽어 본다.  ★ 못 읽으면 분류하지 않는다 —
     #   「모르는 것을 ②로 두면」 이 가드가 있으나 마나 해진다
@@ -273,6 +271,20 @@ def _source_history(conn, source_id, key: str) -> list:
             if str(item.get("Id")) == str(source_id):
                 out.setdefault(at[:10], (at, item.get(key)))
     return [v for _k, v in sorted(out.items())]
+
+
+def _schema_change_min() -> int:
+    """같은 필드가 몇 건 동시에 바뀌면 사이트 스키마 변경인가 (STEP 29 ④).
+
+    ★ 임계값은 config 다 (V4-13)
+    """
+    import json as _json
+    import os as _os
+
+    root = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    with open(_os.path.join(root, "config", "web.json"),
+              encoding="utf-8") as f:
+        return int(_json.load(f)["invariant_schema_change_min"])
 
 
 def _current(conn, lid: str, key: str):

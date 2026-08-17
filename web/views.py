@@ -1086,7 +1086,8 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
         body = form.get("body") or ""
         # ★ 조각 전송 (개정 307) — facet 은 하나의 JSON 이라 내용으로 못 나눈다.
         #   바이트를 나누고 여기서 이어붙인다.  원문은 그대로 복원된다 (P3)
-        if form.get("chunk_key"):
+        chunked = bool(form.get("chunk_key"))
+        if chunked:
             done, body = _take_chunk(form)
             if not done:
                 return redirect("/admin/collect", body, flash_key)
@@ -1102,7 +1103,7 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
             count=_int_or_none(form.get("count")),
             items=_int_or_none(form.get("items")) or 0,
             axis_count=_int_or_none(form.get("axis_count")),
-            run_id=_run_stamp("browser"))
+            run_id=_run_stamp("browser"), chunked=chunked)
         # ★ 목록이 들어왔으면 나머지를 서버가 이어서 한다 (STEP 136g · 개정 314).
         #   사람이 「이어서 해라」를 말해야 하는 것을 없앤다
         queued = ""
@@ -1148,6 +1149,11 @@ def _take_chunk(form: dict) -> tuple:
         raise ValidationError(f"조각을 잇지 못했습니다 — {e}",
                               step="STEP 136c") from e
     return True, body.decode("utf-8", "replace")
+
+
+# ★ 이어붙인 원문임을 남긴다 (개정 307).  한 번에 보낸 것이 아니다 —
+#   V11-47 은 「한 POST 가 상한을 넘지 않았는가」를 보는 검사다
+CHUNKED_MARK = "chunked"
 
 
 def _run_stamp(prefix: str) -> str:

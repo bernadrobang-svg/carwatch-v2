@@ -292,7 +292,9 @@
       "mileage_unknown_points": 0,
       "market_min_sample": 5,
       "high_mileage_km": 100000,
-      "_high_mileage_note": "이만큼 넘으면 「많이 달렸다」를 싼 이유로 낸다 (개정 299 ⑤)"
+      "_high_mileage_note": "이만큼 넘으면 「많이 달렸다」를 싼 이유로 낸다 (개정 299 ⑤)",
+      "battery_soh_low": 92,
+      "_battery_soh_note": "이보다 낮으면 「배터리가 닳았다」를 싼 이유로 낸다 (개정 296). 실측 08-17 — 30건 SOH 91.1~96.8 · 중앙 94.4"
     },
     "state": {
       "_note": "개정 292 ② — 사고 70 · 골격 40 · 수리비 30 · 용도 25 · 보증 15",

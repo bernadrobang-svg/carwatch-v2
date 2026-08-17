@@ -8,7 +8,11 @@
 필수     이미 도는 것이 있으면 건너뛴다 — 겹쳐 돌면 원문이 꼬인다
 금지     서비스를 재시작하는 것 — 마스터의 CSRF 가 끊긴다 (개정 308)
 금지     cron — systemd 가 이미 서비스를 돌린다.  둘을 섞지 않는다
-사용     systemd timer 가 부른다.  손으로는 python3.11 -m collect.daily
+★        큐를 꺼내 도는 것은 collect/worker.py 다 (STEP 132a · 개정 261).
+         웹 서버 안 스레드로 이미 돈다 — 여기서는 넣기만 한다
+사용     systemd timer 가 부른다.  손으로는 python3.11 tools/daily_enqueue.py
+★        tools/ 에 둔다 — collect/ 는 라이브러리라 __main__ 블록을 두지 않는다
+         (V4-23 모듈 최상위 부작용)
 """
 from __future__ import annotations
 
@@ -25,6 +29,10 @@ DB = os.path.join(ROOT, "carwatch.db")
 # 매일 어디부터 도는가.  ★ 목록(S1)은 빼고 상세(S5)부터다 — 407 이라 못 부른다
 DAILY_FROM_STEP = "S5"
 DAILY_REASON = "raw_missing"
+# 단위 환산 (2장 상수표 · V4-13)
+SECONDS_PER_DAY = 86_400
+JOB_ID_BYTES = 8
+DB_TIMEOUT_SEC = 30
 
 
 def _now() -> str:
@@ -43,7 +51,7 @@ def enqueue_daily(conn, at: str) -> str | None:
     if conn.execute("SELECT COUNT(*) FROM recalc_job"
                     " WHERE status IN ('queued','running')").fetchone()[0]:
         return None                    # 이미 있다.  겹쳐 넣지 않는다
-    jid = secrets.token_hex(8)
+    jid = secrets.token_hex(JOB_ID_BYTES)
     conn.execute(
         "INSERT INTO recalc_job(job_id,account_id,trigger,reason,from_step,"
         "scope,status,queued_at) VALUES (?,NULL,'schedule',?,?,'all',"
@@ -64,12 +72,12 @@ def list_age_days(conn, at: str) -> float | None:
         return None
     then = datetime.fromisoformat(row[0])
     now = datetime.fromisoformat(at)
-    return (now - then).total_seconds() / 86_400
+    return (now - then).total_seconds() / SECONDS_PER_DAY
 
 
 def main() -> int:
     at = _now()
-    conn = sqlite3.connect(DB, timeout=30)
+    conn = sqlite3.connect(DB, timeout=DB_TIMEOUT_SEC)
     try:
         age = list_age_days(conn, at)
         stale = float(_cfg()["list_stale_days"])

@@ -97,6 +97,10 @@ def _label(path: str) -> str:
     return LABELS.get(path, path)
 
 
+# 단위 환산 (2장 상수표 · V4-13)
+SECONDS_PER_DAY = 86_400
+
+
 # ── STEP 149 판정 결과가 없을 때 ────────────────────────────────────
 def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
     """★ 빈 표를 내지 않는다.  무엇이 없고 무엇을 하면 되는가를 낸다.
@@ -158,7 +162,7 @@ def _list_stale(at: str | None) -> float | None:
         then = _dt.fromisoformat(at)
     except ValueError:
         return None
-    days = (_dt.now(then.tzinfo) - then).total_seconds() / 86_400
+    days = (_dt.now(then.tzinfo) - then).total_seconds() / SECONDS_PER_DAY
     return days if days > limit else None
 
 

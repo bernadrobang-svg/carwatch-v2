@@ -589,10 +589,23 @@ def parse_inspection_summary(body: dict, site: str, source_id: str) -> dict:
 
 
 def parse_ev_battery(body: dict, site: str, source_id: str) -> dict:
-    """전기차 배터리.  ★ 지금은 전건 null 이다 — 그것도 사실로 남긴다."""
+    """전기차 배터리 진단 (개정 296).
+
+    ★ 08-16 에는 전건 null 이라 「있다/없다」만 남겼다.
+      08-17 재수집에 실제 진단이 들어왔다 — SOH 93.9 · 등급 SS.
+      「있다」만 남기면 그 값을 버리는 것이다
+    """
+    summary = ((body.get("ensolRawInfo") or {}).get("summaryInfo") or {})
+    soh = summary.get("soh")
     got = any(body.get(k) for k in
               ("ensolRawInfo", "jatoBatteryInfo", "encarComputedInfo"))
-    return {"ev_battery_known": 1 if got else 0, "row_status": "ok"}
+    return {"ev_battery_known": 1 if got else 0,
+            # ★ SOH 는 「배터리가 얼마나 남았나」다.  전기차의 주행거리에 해당한다
+            "ev_battery_soh": float(soh) if soh is not None else None,
+            "ev_battery_grade": _text(summary.get("sohGrade")),
+            "ev_battery_checked_at": _text(
+                summary.get("diagnosisCompletedDate")),
+            "row_status": "ok"}
 
 
 def parse_sellingpoint(body: dict, site: str, source_id: str) -> dict:

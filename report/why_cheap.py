@@ -57,6 +57,10 @@ def reasons(row) -> list:
     # ⑥ 인기 없는 색
     if row.get("color_note"):
         out.append(row["color_note"])
+    # ★ 전기차는 배터리가 값을 가른다 (개정 296).  SOH 가 낮으면 그것이 이유다
+    soh = row.get("battery_soh")
+    if soh is not None and soh < (row.get("battery_soh_low") or 0):
+        out.append(f"배터리 SOH {soh}%")
     # ⑦ 자차 미가입 기간 — ★ 몇 달인지가 사실이다 (개정 294)
     got = row.get("not_join")
     if got:

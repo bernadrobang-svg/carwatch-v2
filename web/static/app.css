@@ -1540,3 +1540,8 @@ body.s-listings main { max-width:1560px; }
 }
 .rows .pbar .got { background:var(--down); }
 .rows .pbar .may { background:var(--line); opacity:.7; }
+
+/* 트림 — Badge · BadgeDetail (개정 313).
+   ★ 좁은 폭에서도 줄이지 않는다.  트림이 없으면 무슨 차인지 모른다 */
+.rows td.trim { color:var(--fg); white-space:normal; min-width:9em; }
+.rows td.trim:empty::after { content:"—"; color:var(--dim); }

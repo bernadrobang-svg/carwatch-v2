@@ -83,6 +83,9 @@ class ListingRow:
     # ★ 분모로 등급을 막지 않는 대신 얼마나 봤는지를 낸다
     confirmed_points: float | None = None
     confirm_pct: float | None = None
+    # 전기차 배터리 진단 — SOH · 등급 (개정 296)
+    battery_soh: float | None = None
+    battery_grade: str | None = None
     # 트림 세부등급 · 옵션 종수 (개정 313)
     trim_detail_known: bool = False
     option_count: int = 0

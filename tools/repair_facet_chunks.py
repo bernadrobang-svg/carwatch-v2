@@ -82,11 +82,16 @@ def main() -> int:
             "SELECT run_id, site, endpoint, request_url, request_meta,"
             " http_code, response_meta, origin, fetched_at"
             " FROM raw_response WHERE id = ?", (first,)).fetchone()
+        # ★ 「여러 POST 를 이어붙였다」를 남긴다 (개정 307).
+        #   한 번에 보낸 것이 아니라는 사실이다 — V11-47 이 그것으로 가른다
+        meta = (row[6] or "{}").rstrip("}")
+        meta = (meta + (", " if len(meta) > 1 else "")
+                + '"transfer": "chunked"}')
         conn.execute(
             "INSERT INTO raw_response(run_id, site, endpoint, request_url,"
             " request_meta, http_code, response_meta, status, body, origin,"
             " fetched_at) VALUES (?,?,?,?,?,?,?,'ok',?,?,?)",
-            (row[0], row[1], row[2], row[3], row[4], row[5], row[6], body,
+            (row[0], row[1], row[2], row[3], row[4], row[5], meta, body,
              row[7], row[8]))
         # ★ 조각을 지우지 않는다.  「원문이 아니다」로만 표시한다 (P3)
         conn.execute(

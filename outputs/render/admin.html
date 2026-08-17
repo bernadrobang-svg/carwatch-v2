@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2640b7eaa0">
+<link rel="stylesheet" href="/static/app.css?v=7c1379cdfa">
 
 </head>
 <body class="s-admin">
@@ -97,7 +97,7 @@
   <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
   <td data-label=""><a href="/notready">가기</a></td></tr>
 
-<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">110</td>
+<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">408</td>
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
   <td data-label=""><a href="/admin/registry">가기</a></td></tr>
 
@@ -109,7 +109,7 @@
 
 
 <ul class="stat">
-  <li>등록부 미분류 <strong>110</strong></li>
+  <li>등록부 미분류 <strong>408</strong></li>
   <li>개발 요청 <strong>0</strong></li>
   <li>대기 작업 <strong>0</strong></li>
 </ul>
@@ -191,6 +191,14 @@
 <thead><tr><th>시각</th><th>사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-17T03:21:42.129409+00:00</td><td class="muted" data-label="사유">요청 250건</td>
+  <td class="runid" data-label="실행">20260817T032131</td>
+  <td class="num" data-label="소요">11.2초</td><td data-label="판정">정상</td></tr>
+
+<tr><td data-label="시각">2026-08-17T03:13:36.680408+00:00</td><td class="muted" data-label="사유">요청 8건</td>
+  <td class="runid" data-label="실행">20260817T031336</td>
+  <td class="num" data-label="소요">0.2초</td><td data-label="판정">fatal 1</td></tr>
+
 <tr><td data-label="시각">2026-08-17T01:07:18.969382+00:00</td><td class="muted" data-label="사유">요청 21,648건</td>
   <td class="runid" data-label="실행">20260817T010712</td>
   <td class="num" data-label="소요">959.0초</td><td data-label="판정">정상</td></tr>
@@ -202,14 +210,6 @@
 <tr><td data-label="시각">2026-08-16T17:24:01.500753+00:00</td><td class="muted" data-label="사유">요청 14,044건</td>
   <td class="runid" data-label="실행">20260816T172401</td>
   <td class="num" data-label="소요">541.2초</td><td data-label="판정">정상</td></tr>
-
-<tr><td data-label="시각">2026-08-16T16:54:18.984381+00:00</td><td class="muted" data-label="사유">요청 4,959건</td>
-  <td class="runid" data-label="실행">20260816T165418</td>
-  <td class="num" data-label="소요">193.3초</td><td data-label="판정">정상</td></tr>
-
-<tr><td data-label="시각">2026-08-16T08:34:39.174734+00:00</td><td class="muted" data-label="사유">요청 10,282건</td>
-  <td class="runid" data-label="실행">20260816T083439</td>
-  <td class="num" data-label="소요">556초</td><td data-label="판정">fatal 5</td></tr>
 
 </tbody>
 </table>
@@ -276,8 +276,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260817T010712</span>
-  <span>2026-08-17 12:12</span>
+  <span>run 20260817T032131</span>
+  <span>2026-08-17 12:48</span>
 </footer>
 
 </body>

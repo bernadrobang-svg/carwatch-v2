@@ -316,12 +316,15 @@ def _bulk_state(conn, lids: list) -> dict:
         return {}
     marks = ",".join("?" * len(lids))
     out: dict = {}
-    for (lid, bm, bkm, pm, pkm, km, ym) in conn.execute(
+    for (lid, bm, bkm, pm, pkm, km, ym, soh, sohg) in conn.execute(
         f"SELECT listing_id, warranty_body_month, warranty_body_km,"
-        f" warranty_power_month, warranty_power_km, mileage_km, year_month"
+        f" warranty_power_month, warranty_power_km, mileage_km, year_month,"
+        # ★ 전기차는 SOH 가 주행거리에 해당한다 (개정 296)
+        f" ev_battery_soh, ev_battery_grade"
         f" FROM core_listing WHERE listing_id IN ({marks})", tuple(lids)
     ):
-        out[lid] = {"warranty": (bm, bkm, pm, pkm, km, ym)}
+        out[lid] = {"warranty": (bm, bkm, pm, pkm, km, ym),
+                    "battery": (soh, sohg)}
     for (lid, mycnt, mycost, othcnt, tot, not_join) in conn.execute(
         f"SELECT listing_id, accident_my_cnt, accident_my_cost,"
         f" accident_other_cnt, accident_total_cnt, not_join_json"
@@ -468,7 +471,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          photo_base: str = "", encar_tpl: str = "",
          km_unit: int = 0, monthly_unit: int = 0,
          dep_cfg: dict | None = None, state_by: dict | None = None,
-         market_by: dict | None = None, high_km: int = 0) -> ListingRow:
+         market_by: dict | None = None, high_km: int = 0,
+         root: str = ".") -> ListingRow:
     """★ calc_version 을 인자로 받는다.  함수 속성은 전역 상태다 (F-2).
 
     워커를 늘리면 즉시 섞인다 — 증상이 재현되지 않는 부류다
@@ -524,6 +528,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
                          if km and high_km and km >= high_km else None),
         "color_note": None,
         "not_join": (st or {}).get("not_join") or 0,
+        "battery_soh": (st.get("battery") or (None, None))[0],
+        "battery_soh_low": _soh_low(root),
     })
     # 경과 — 처음 본 날부터 며칠.  ★ 게시일이 아니라 우리가 처음 본 날이다
     dom = _days_between(first_seen, calc_at)
@@ -574,6 +580,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         origin_total_won=(origin_won + _opt_won) if origin_won else None,
         # 플랫폼 신뢰도 (개정 300) — 같은 값이라도 누가 보증하느냐가 다르다
         platform_trust=_trust, platform_trust_why=_why,
+        # ★ 전기차 배터리 (개정 296).  「있다」만 남기면 그 값을 버리는 것이다
+        battery_soh=(st.get("battery") or (None, None))[0],
+        battery_grade=(st.get("battery") or (None, None))[1],
         market_price_won=mkt,
         market_sample=mkt_n,
         market_gap_won=_gap_won,
@@ -785,8 +794,17 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     high_km = _high_km(root)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
                  opt_prices, axes, changes, base, encar_tpl, km_unit,
-                 monthly_unit, dep_cfg, state_by, market_by, high_km)
+                 monthly_unit, dep_cfg, state_by, market_by, high_km, root)
             for i, r in enumerate(recs)]
+
+
+def _soh_low(root: str) -> float:
+    """이보다 낮으면 「배터리가 닳았다」를 싼 이유로 낸다 (개정 296).
+
+    ★ 실측 08-17 — 30건의 SOH 가 91.1~96.8, 중앙 94.4 다
+    """
+    with open(f"{root}/config/scoring.json", encoding="utf-8") as f:
+        return float(json.load(f)["axis_rules"]["value"]["battery_soh_low"])
 
 
 def _high_km(root: str) -> int:

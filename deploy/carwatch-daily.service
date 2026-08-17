@@ -1,7 +1,8 @@
 # 매일 한 번 (STEP 136h · 개정 315).
 # ★ 서버에서 부를 수 있는 것만 — 엔카 상세·새 5종·재판정·검사.
 #   엔카 목록은 407 이라 자동이 아니다.  마스터를 기다린다
-# ★ 큐에 넣기만 한다.  서비스를 재시작하지 않는다 (개정 308)
+# ★ 큐에 넣기만 한다.  꺼내 도는 것은 웹 서버 안의 소비기다 (STEP 132a).
+#   서비스를 재시작하지 않는다 (개정 308)
 [Unit]
 Description=CarWatch v2 — 하루 한 번 재수집·재판정
 
@@ -11,4 +12,4 @@ User=ec2-user
 WorkingDirectory=/home/ec2-user/v2
 Environment=LANG=ko_KR.UTF-8
 Environment=PYTHONIOENCODING=utf-8
-ExecStart=/usr/bin/python3.11 -m collect.daily
+ExecStart=/usr/bin/python3.11 tools/daily_enqueue.py

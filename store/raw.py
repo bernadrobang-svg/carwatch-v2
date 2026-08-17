@@ -180,15 +180,19 @@ def save_browser_raw(
     at: str,
     http_code: int | None = None,
     run_id: str | None = None,
+    chunked: bool = False,
 ) -> int:
     """브라우저가 받아 온 원문 (13장 STEP 136c).
 
     ★ 사이트가 실제로 준 응답이다 — 반입과 다르다.  URL 도 있다
     ★ 서버가 이 응답을 다시 검증하려고 엔카를 부르지 않는다.  막혀 있다
+    ★ chunked 는 「여러 POST 를 이어붙였다」다 (개정 307).
+      한 번에 보낸 것이 아니라는 사실을 남긴다 — V11-47 이 그것으로 가른다
     금지   origin 을 'collector' 로 넣는 것 — 서버가 받은 것이 아니다
     반환   raw_response.id
     """
-    meta = json.dumps({"fetched_by": "browser", "http_code": http_code},
+    meta = json.dumps({"fetched_by": "browser", "http_code": http_code,
+                       "transfer": "chunked" if chunked else "single"},
                       ensure_ascii=False)
     cur = conn.execute(
         "INSERT INTO raw_response"
@@ -212,6 +216,7 @@ def save_browser_facet(
     axis_count: int | None = None,
     http_code: int | None = None,
     run_id: str | None = None,
+    chunked: bool = False,
 ) -> int:
     """브라우저가 받아 온 facet.  S3 이 읽는 자리에도 넣는다 (STEP 136c)."""
     conn.execute(
@@ -221,7 +226,8 @@ def save_browser_facet(
         (site, target_key, "unspecified", request_url, axis_count, text, at),
     )
     rid = save_browser_raw(conn, site, text, "facet", request_url, at,
-                           http_code=http_code, run_id=run_id)
+                           http_code=http_code, run_id=run_id,
+                           chunked=chunked)
     conn.commit()
     return rid
 

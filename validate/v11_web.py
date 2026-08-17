@@ -1081,12 +1081,17 @@ def _browser_chunk_check(conn, rid):
         bad.append("건수를 줄여 다시 부를 수 없다")
     if "나눠서 보내" in html and "사람" not in html:
         bad.append("사람에게 나누라고 안내한다")
+    # ★ 「한 번에」는 한 POST 다.  이어붙인 원문은 여러 POST 로 왔다 (개정 307).
+    #   저장된 크기로 재면 조각 전송을 넣은 것이 도리어 실패로 나온다
+    if "chunk_seq" not in html or "chunk_hash" not in html:
+        bad.append("큰 원문을 조각으로 안 보낸다 (개정 307)")
     row = conn.execute(
-        "SELECT MAX(LENGTH(body)) FROM raw_response WHERE origin=?",
+        "SELECT MAX(LENGTH(body)) FROM raw_response WHERE origin=?"
+        " AND COALESCE(response_meta,'') NOT LIKE '%chunked%'",
         (ORIGIN_BROWSER,)).fetchone()
     worst = row[0] or 0
     if worst > cap:
-        bad.append(f"저장된 한 건이 {worst}바이트 — 상한 {cap} 초과")
+        bad.append(f"한 번에 보낸 것이 {worst}바이트 — 상한 {cap} 초과")
     return result(C["V11-47"], rid, f"<= {cap}", worst, not bad, bad)
 
 

@@ -286,7 +286,8 @@ def save_browser_catch(conn: sqlite3.Connection, account: Account, *,
                        reason: str, at: str, http_code: int | None = None,
                        count: int | None = None, items: int = 0,
                        axis_count: int | None = None,
-                       run_id: str | None = None) -> BrowserCatch:
+                       run_id: str | None = None,
+                       chunked: bool = False) -> BrowserCatch:
     """브라우저가 받아 온 원문을 저장하고 그 단계를 연다 (STEP 136c).
 
     ★ 사람이 ②에서 눈으로 본 뒤에만 여기 온다 — 호출자가 _gate 를 지난다
@@ -305,11 +306,13 @@ def save_browser_catch(conn: sqlite3.Connection, account: Account, *,
                 step="STEP 136c")
         raw_id = save_browser_facet(conn, site, target_key, text, request_url,
                                     at, axis_count=axis_count,
-                                    http_code=http_code, run_id=run_id)
+                                    http_code=http_code, run_id=run_id,
+                                    chunked=chunked)
         code = S2_CODE
     else:
         raw_id = save_browser_raw(conn, site, text, "list", request_url, at,
-                                  http_code=http_code, run_id=run_id)
+                                  http_code=http_code, run_id=run_id,
+                                  chunked=chunked)
         code = S1_CODE
     # ★ 단계 행은 「확보 방법」당 하나다.  저장마다 run_id 를 새로 주면
     #   PK(run_id,phase,code,target_key) 가 달라져 같은 단계가 수백 행이 된다
