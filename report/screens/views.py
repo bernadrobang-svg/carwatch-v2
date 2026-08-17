@@ -86,6 +86,9 @@ class ListingRow:
     # 전기차 배터리 진단 — SOH · 등급 (개정 296)
     battery_soh: float | None = None
     battery_grade: str | None = None
+    # ★ 부록 G 10·11 — 시세 대비 % · 신차가 대비 % (개정 332)
+    market_gap_pct: float | None = None
+    origin_gap_pct: float | None = None
     # 트림 세부등급 · 옵션 종수 (개정 313)
     trim_detail_known: bool = False
     option_count: int = 0
@@ -139,6 +142,10 @@ class ListingRow:
     upside_points: float = 0.0  # 확인 못 한 축의 배점 합
     km_bucket: int | None = None      # 주행 상한 (만km 단위로 올림)
     monthly_bucket_won: int | None = None   # 월납입 상한 (10만 단위로 올림)
+    # ★ 값을 누르면 그 조건으로 걸러진다 (부록 G).  빈 주소를 만들지 않는다
+    price_bucket_won: int | None = None
+    mileage_bucket_km: int | None = None
+    status_key: str | None = None
 
     # ★ tone 으로 나눈다.  화면이 판정하지 않는다 (STEP 152)
     @property

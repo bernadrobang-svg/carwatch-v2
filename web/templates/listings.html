@@ -40,107 +40,62 @@
 {% if count %}
 <table class="rows">
 <thead><tr>
-<th class="c">사진</th>
-<th class="c">등급</th><th class="r">순위</th><th class="r" title="등급은 취향 50점을 뺀 505 로 매깁니다 (개정 292). 아래 줄은 순위용 555 기준 점수와 확인율입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298)">비율</th>
-<th>차종</th><th title="Badge + BadgeDetail (개정 313). 세부등급이 원문에 없으면 「세부등급 없음」이라 적습니다">트림</th><th class="r" title="선택 옵션 종수와 값. 카탈로그에 값이 없으면 종수만 냅니다">옵션</th>
-<th class="r">연식</th><th class="r">주행</th>
-<th class="c">외장</th><th class="c">내장</th>
+<th class="c">사진</th><th class="c">♡</th>
+<th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
+<th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
+<th class="r" title="같은 차종·트림·연식 실매물 중앙값 대비. 음수가 싼 것입니다">시세 대비</th>
+<th class="r" title="신차가(등급기준 + 선택옵션) 대비 얼마나 내렸는가">신차가 대비</th>
+<th class="r">가격</th><th class="r">월</th>
 {% for a in axis_heads %}<th class="c" title="기호 O 있음 · - 없음 · ? 확인 못 함">{{ a.label }}</th>{% endfor %}
-<th class="r" title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준으로 산출된 값입니다">신차가</th><th class="r" title="같은 차종·트림·연식 매물의 실제 중앙값입니다. 렌트·리스 승계는 뺐습니다 — 표시가가 인수금이라 중앙값을 끌어내립니다. 표본이 모자라면 중앙값을 내지 않습니다">시세</th><th class="r">가격</th><th class="r" title="가격 − 시세(같은 조건 매물 중앙값). 음수가 싼 것입니다. 아래 줄이 「왜 싼가」입니다 — 이유 없이 싼 차는 없습니다 (개정 299)">시세차</th><th class="r">월</th><th class="c" title="엔카직영 점검 · 엔카진단 · 엔카보증 셋을 묶은 것입니다. 높음 셋 다 · 보통 직영 점검만 · 낮음 판매자가 올린 점검만 · 없음 점검 자체가 없음">신뢰도</th>
-<th class="r">변동</th><th class="r">경과</th>
-<th>딜러</th><th class="r">정직도</th><th>비고</th><th class="act">　</th>
+<th class="r">옵션</th><th>딜러</th><th class="r">경과</th><th class="c">상태</th><th class="c">사이트</th>
+<th class="c">링크</th>
 </tr></thead>
 <tbody>
 {% for r in rows %}
-<tr data-peek="1">
+<tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}">
   <td class="c photo" data-label="사진">
-    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" title="엔카에서 보기">{% endif %}
-    {% if r.photo_url %}<img class="thumb" src="{{ r.photo_url }}" alt=""
-      width="56" height="38" loading="lazy">{% endif %}
-    {% if !r.photo_url %}<span class="thumb-none">사진 없음</span>{% endif %}
-    {% if r.encar_url %}</a>{% endif %}
+    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
+    {% if !r.photo_url %}<span class="nophoto thumb-none" title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
   </td>
-  <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="{{ r.grade }} 등급만 봅니다"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
-  <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim" title="E · 미판정은 순위를 매기지 않습니다">—</span>{% endif %}</td>
-  <td class="r num" data-label="비율">
-    {% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
-    <span class="raw{% if r.denom_short %} denom-short{% endif %}">{{ r.earned }}/{{ r.denominator }}</span>
-    <span class="ratio"><i style="width:{{ r.ratio_pct }}%"></i></span>
-    <span class="raw">취향까지 {{ r.rank_earned }}/{{ r.rank_total }} · 확인 {{ r.confirm_pct }}%</span>{% endif %}
-    {% if !r.ratio_pct %}<span class="dim" title="아직 판정하지 못했습니다">—</span>{% endif %}
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
   </td>
-  <td data-label="차종">
-    {% if r.target_label %}<a href="/listings?target={{ r.target_label }}" title="이 차종만 봅니다">{{ r.target_label }}</a>{% endif %}
-    {% if !r.target_label %}<span class="dim" title="차종을 아직 못 붙였습니다">차종 미정</span>{% endif %}
+  <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="S·A·B·C·D·E 여섯 등급입니다. 절대 기준 — S 90% 이상"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
+  <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim">순위 없음</span>{% endif %}</td>
+  <td class="r num" data-label="비율" title="등급 기준 점수 중 몇 %를 받았는가입니다 (취향 제외)">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
+    <span class="raw" title="받은 점수 / 등급 기준 만점입니다. 자세한 근거는 상세에서 봅니다">{{ r.earned | num }}/{{ r.denominator | num }}</span>{% endif %}{% if !r.ratio_pct %}<span class="dim">판정 전</span>{% endif %}</td>
+  <td data-label="차종">{% if r.target_label %}<a href="/listings?target={{ r.target_label }}">{{ r.target_label }}</a>{% endif %}</td>
+  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">{{ r.trim }}</td>
+  <td class="r" data-label="연식"><a href="/listings?year_from={{ r.year_month }}" title="이 연식 이후만 봅니다">{{ r.year_month }}</a></td>
+  <td class="r num" data-label="주행">{% if r.mileage_bucket_km %}<a href="/listings?km_max={{ r.mileage_bucket_km }}" title="이 주행거리 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}{% if !r.mileage_bucket_km %}<span class="dim">주행 없음</span>{% endif %}</td>
+  <td class="r num gap" data-label="시세 대비">
+    {% if r.market_gap_pct %}<span class="{{ r.market_gap_pct | signcls }}">{{ r.market_gap_pct }}%</span>{% endif %}
+    {% if !r.market_gap_pct %}<span class="dim">표본 부족</span>{% endif %}
+    {% if r.market_price_won %}<span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 {{ r.market_price_won | won }}</span>{% endif %}
   </td>
-  <!-- ★ 좁은 폭에서도 트림을 줄이지 않는다 — 없으면 무슨 차인지 모른다 (개정 313) -->
-  <td class="trim" data-label="트림">{{ r.trim }}</td>
+  <td class="r num gap" data-label="신차가 대비">
+    {% if r.origin_gap_pct %}<span class="{{ r.origin_gap_pct | signcls }}">{{ r.origin_gap_pct }}%</span>{% endif %}
+    {% if !r.origin_gap_pct %}<span class="dim">신차가 없음</span>{% endif %}
+    {% if r.origin_total_won %}<span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %} (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}
+  </td>
+  <td class="r num" data-label="가격">{% if r.price_bucket_won %}<a href="/listings?price_max={{ r.price_bucket_won }}" title="이 가격대 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}{% if !r.price_bucket_won %}<span class="dim">가격 없음</span>{% endif %}</td>
+  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다">{% if r.monthly_won %}<a href="/listings?monthly_max={{ r.monthly_bucket_won }}">{{ r.monthly_won | won }}</a>{% endif %}</td>
+  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}">{% if c.state %}{{ c.state }}{% endif %}{% if !c.state %}<b>{{ c.mark }}</b>{% endif %}</a></td>{% endfor %}
   <td class="r num" data-label="옵션">
     {% if r.option_count %}<a href="/why/{{ r.listing_id }}">{{ r.option_count }}종{% if r.option_price_won %} {{ r.option_price_won | won }}{% endif %}</a>{% endif %}
     {% if !r.option_count %}<span class="dim">없음</span>{% endif %}
   </td>
-  <td class="r num" data-label="연식">
-    {% if r.year %}<a href="/listings?year={{ r.year }}" title="{{ r.year }}년식만 봅니다">{{ r.year_month }}</a>{% endif %}
-    {% if !r.year %}<span class="dim" title="원문에 연식이 없습니다">—</span>{% endif %}
-  </td>
-  <td class="r num" data-label="주행">
-    {% if r.km_bucket %}<a href="/listings?km_max={{ r.km_bucket }}" title="주행 {{ r.km_bucket | km }} 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}
-    {% if !r.km_bucket %}<span class="dim" title="원문에 주행거리가 없습니다">—</span>{% endif %}
-  </td>
-  <td class="c" data-label="외장"><span class="tag" title="외장색 — 원문 그대로입니다">{{ r.color_ext }}</span></td>
-  <td class="c" data-label="내장"><span class="tag" title="내장색 — 원문 그대로입니다">{{ r.color_int }}</span></td>
-  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}">{% if c.state %}{{ c.state }}{% endif %}{% if !c.state %}<b>{{ c.mark }}</b>{% endif %}</a></td>{% endfor %}
-  <td class="r num" data-label="신차가">
-    {% if r.origin_total_won %}<span>{{ r.origin_total_won | won }}</span>{% endif %}
-    {% if r.option_price_won %}<span class="raw">등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}</span>{% endif %}
-    {% if !r.origin_total_won %}<span class="dim">—</span>{% endif %}
-  </td>
-  <td class="r num" data-label="시세">
-    {% if r.market_price_won %}<span>{{ r.market_price_won | won }}</span>{% endif %}
-    {% if !r.market_price_won %}<span class="dim">표본 {{ r.market_sample | num }}건</span>{% endif %}
-  </td>
-  <td class="r num" data-label="가격">
-    {% if r.price_won %}<a href="/listings?price_max={{ r.price_won }}" title="이 가격 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}
-    {% if !r.price_won %}<span class="dim" title="원문에 가격이 없습니다">—</span>{% endif %}
-  </td>
-  <td class="r num gap" data-label="시세차">
-    {% if r.market_gap_won %}<span class="{{ r.market_gap_won | signcls }}">{{ r.market_gap_won | signwon }}</span>{% endif %}
-    {% if !r.market_gap_won %}<span class="dim">—</span>{% endif %}
-    {% if r.why_cheap %}<span class="raw why" title="{% for w in r.why_cheap_reasons %}{{ w }} · {% endfor %}">{{ r.why_cheap }}</span>{% endif %}
-  </td>
-  <td class="c" data-label="신뢰도">
-    {% if r.platform_trust %}<span class="tag" title="{% for w in r.platform_trust_why %}{{ w }} {% endfor %}">{{ r.platform_trust }}</span>{% endif %}
-    {% if !r.platform_trust %}<span class="dim">?</span>{% endif %}
-  </td>
-  <td class="r num" data-label="월">
-    {% if r.monthly_bucket_won %}<a href="/listings?monthly_max={{ r.monthly_bucket_won }}" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다. 누르면 월 {{ r.monthly_bucket_won | won }} 이하만 봅니다">{{ r.monthly_won | won }}</a>{% endif %}
-    {% if !r.monthly_bucket_won %}<span class="dim" title="가격이 없어 월납입을 못 냅니다">—</span>{% endif %}
-  </td>
-  <td class="r num" data-label="변동">
-    {% if r.price_change_won %}<span class="{{ r.price_change_won | signcls }}" title="첫 게시가 대비 · {{ r.price_change_cnt }}회 바뀜">{{ r.price_change_won | signwon }}</span>{% endif %}
-    {% if !r.price_change_won %}<span class="dim" title="가격이 바뀐 적이 없습니다">—</span>{% endif %}
-  </td>
-  <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market }}일{% endif %}{% if !r.days_on_market %}<span class="dim" title="처음 본 날과 판정한 날이 같습니다">0일</span>{% endif %}</td>
-  <td data-label="딜러">
-    {% if r.dealer_shop %}<a href="/listings?dealer={{ r.dealer_shop }}" title="이 딜러 매물만 봅니다">{{ r.dealer_shop }}</a>{% endif %}
-    {% if !r.dealer_shop %}<span class="dim" title="원문에 딜러 상호가 없습니다">—</span>{% endif %}
-  </td>
-  <td class="r num" data-label="정직도">
-    {% if r.dealer_trust %}<span class="tag" title="{{ r.dealer_quadrant }}">{{ r.dealer_trust }}</span>{% endif %}
-    {% if !r.dealer_trust %}<span class="dim" title="표본이 모자라 정직도를 내지 않습니다 — 0점이 아닙니다">—</span>{% endif %}
-  </td>
-  <td data-label="비고">
-    {% for t in r.note_tags %}<span class="tag up" title="E등급 사유">{{ t }}</span>{% endfor %}
-    {% if r.status_label %}<a class="tag" href="/listings?status=active" title="게시 중인 매물만 봅니다">{{ r.status_label }}</a>{% endif %}
-  </td>
-  <td class="act" data-label="">
-    <a class="btn mini" href="/why/{{ r.listing_id }}" title="이 등급이 나온 축별 근거">근거</a>
-    {% if r.encar_url %}<a class="btn mini" href="{{ r.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
-      <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
-      <button type="submit" class="mini">＋ 관심</button>
-    </form>
+  <td data-label="딜러">{% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}">{{ r.dealer_shop }}</a>{% endif %}{% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</td>
+  <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market | num }}일{% endif %}{% if !r.days_on_market %}<span class="dim">오늘</span>{% endif %}</td>
+  <td class="c" data-label="상태">{% if r.status_key %}<a href="/listings?status={{ r.status_key }}" title="게시중 · 내려감 · 재등록">{{ r.status_label }}</a>{% endif %}{% if !r.status_key %}<span class="dim">상태 없음</span>{% endif %}</td>
+  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="c act" data-label="링크">
+    <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
+    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>{% endif %}
   </td>
 </tr>
 {% endfor %}
@@ -162,17 +117,18 @@
 
 <p class="legend dim">
   값을 누르면 그 조건으로 걸러집니다 · <strong>지금 조건</strong>이 그대로 다음 행동의 조건이 됩니다.<br>
-  분모는 늘 555 입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298).
-  「350점 확인」은 그 매물에서 실제로 본 축의 배점 합입니다.
-  등급은 취향 50점을 뺀 <strong>505 기준</strong>입니다 (개정 292) — <strong>비율로 정렬합니다</strong>.
-  판정할 수 없는 축은 0 점이 아니라 분모에서 뺍니다.<br>
+  총점 <strong>605</strong> 중 등급은 취향 50점을 뺀 <strong>555 기준</strong>입니다
+  (docs/ref/F-scoring.md · 24축) — <strong>비율로 정렬합니다</strong>.
+  분모는 늘 만점입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298).
+  등급 경계는 절대 기준입니다 — S 90 · A 80 · B 70 · C 60 · D 50 (개정 324).<br>
   축 칸 <strong>O</strong> 있음 · <strong>·</strong> 없음 · <strong>?</strong> 확인 못 함 —
   「없음」과 「모름」을 가릅니다.<br>
   <strong>신차가 · 시세 · 가격</strong> 셋을 나란히 냅니다 (개정 283).
   신차가는 원문 그대로이고, <strong>시세는 같은 차종·트림·연식 매물의 실제 중앙값</strong>입니다
   — 감가 곡선의 이론가가 아닙니다. 렌트·리스 승계는 뺐습니다.
   표본이 모자라면 「표본 N건」이라 적고 내지 않습니다.
-  <strong>시세차 = 가격 − 시세</strong>이고 음수가 싼 것입니다.
+  <strong>시세 대비 · 신차가 대비</strong>는 %로 냅니다 — 음수가 싼 것입니다.
+  자세한 근거는 <strong>매물을 눌러 상세</strong>에서 봅니다.
 </p>
 
 <div id="peek">

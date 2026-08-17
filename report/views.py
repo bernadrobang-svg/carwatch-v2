@@ -132,6 +132,9 @@ class ScoreView:
     # 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다
     penalties: tuple = ()
     penalty_total: float = 0.0
+    # ③ 왜 싼가 / 왜 비싼가 (개정 299 · 부록 G 상세 ③절)
+    why_cheap: str | None = None
+    why_cheap_reasons: tuple = ()
     # ★ NOT_RATED 사유 3종을 구분한다 (V5-12).  등급만 내지 않는다
     not_rated_reason: str | None = None
     # ★ 표시용이다.  점수에 반영하지 않는다 (STEP 21b).

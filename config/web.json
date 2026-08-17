@@ -46,5 +46,8 @@
   "list_stale_days": 1,
   "_list_stale_note": "엔카 목록이 며칠째 안 들어오면 화면에 내는가 (STEP 136i · 개정 316)",
   "invariant_schema_change_min": 5,
-  "_invariant_schema_note": "같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)"
+  "_invariant_schema_note": "같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)",
+  "price_bucket_won": 5000000,
+  "mileage_bucket_km": 10000,
+  "_bucket_note": "값을 누를 때 올려 잡는 단위 (부록 G). ★ 딱 그 값이 아니라 「이하」다"
 }

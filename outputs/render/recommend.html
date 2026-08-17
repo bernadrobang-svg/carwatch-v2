@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추천 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=7941e0899c">
+<link rel="stylesheet" href="/static/app.css?v=c4d6999506">
 
 </head>
 <body class="s-recommend">
@@ -116,12 +116,13 @@
 
 
 <!-- ★ 목록은 요약이다 — 한 매물이 한 줄.  근거는 /why 로 (개정 303) -->
-<table class="rows">
+<table class="rows cand-rows">
 <thead><tr>
 <th class="c">사진</th><th class="c">관심</th>
 <th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
 <th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
-<th class="r">가격</th><th class="r">시세차</th><th>왜 이 순위인가</th>
+<th class="r">시세 대비</th><th class="r">신차가 대비</th>
+<th class="r">가격</th><th>왜 이 순위인가</th>
 <th class="c">보기</th>
 </tr></thead>
 <tbody>
@@ -141,21 +142,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>1</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>88.1%</strong>
-    <span class="raw">489.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.8%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-11</td>
   <td class="r num" data-label="주행">7,591km</td>
-  <td class="r num" data-label="가격"><b>4,550만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-740만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-14.0%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-26.3%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>4,550만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 740만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 740만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/1427" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42443080" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -178,21 +182,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>2</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>83.1%</strong>
-    <span class="raw">461.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:76.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-09</td>
   <td class="r num" data-label="주행">28,698km</td>
-  <td class="r num" data-label="가격"><b>4,890만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-400만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-7.6%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-29.0%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>4,890만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 400만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 400만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/1915" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42154234" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -215,21 +222,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>3</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>80.7%</strong>
-    <span class="raw">448.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:74.0%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-04</td>
   <td class="r num" data-label="주행">10,708km</td>
-  <td class="r num" data-label="가격"><b>5,290만</b></td>
-  <td class="r num gap" data-label="시세차">
+  <td class="r num gap" data-label="시세 대비">
     
-    <span class="dim">—</span>
+    <span class="dim">표본 부족</span>
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-24.4%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>5,290만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/2111" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42284607" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -252,21 +262,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>4</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>80.2%</strong>
-    <span class="raw">445.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-10</td>
   <td class="r num" data-label="주행">21,364km</td>
-  <td class="r num" data-label="가격"><b>5,420만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="up-v">+130만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">2.5%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-22.5%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>5,420만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/2600" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42532963" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -289,21 +302,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>5</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>80.9%</strong>
-    <span class="raw">449.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:74.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   <td data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
   <td class="r" data-label="연식">2024-10</td>
   <td class="r num" data-label="주행">10,393km</td>
-  <td class="r num" data-label="가격"><b>3,499만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="up-v">+109만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">3.2%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-24.5%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,499만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/22" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=41675685" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -326,21 +342,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>6</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>80.4%</strong>
-    <span class="raw">446.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.7%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   <td data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
   <td class="r" data-label="연식">2025-01</td>
   <td class="r num" data-label="주행">13,849km</td>
-  <td class="r num" data-label="가격"><b>3,430만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-100만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-2.8%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-23.2%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,430만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 100만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 100만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/27" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=41730197" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -363,21 +382,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-b">B</span></td>
   <td class="r num" data-label="순위"><b>7</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>78.6%</strong>
-    <span class="raw">436.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:72.1%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-12</td>
   <td class="r num" data-label="주행">15,185km</td>
-  <td class="r num" data-label="가격"><b>5,390만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="up-v">+100만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">1.9%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-19.8%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>5,390만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/991" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42053011" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -400,21 +422,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-b">B</span></td>
   <td class="r num" data-label="순위"><b>8</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>78.6%</strong>
-    <span class="raw">436.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:72.1%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-07</td>
   <td class="r num" data-label="주행">20,146km</td>
-  <td class="r num" data-label="가격"><b>5,470만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="up-v">+180만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">3.4%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-25.6%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>5,470만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/1897" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42419178" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -437,21 +462,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>9</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>80.2%</strong>
-    <span class="raw">445.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.6%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">G80_25T</td>
   <td data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
   <td class="r" data-label="연식">2024-06</td>
   <td class="r num" data-label="주행">20,876km</td>
-  <td class="r num" data-label="가격"><b>5,170만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="down-v">-120만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-2.3%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-25.4%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>5,170만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/2630" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42489324" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -474,21 +502,24 @@
   </td>
   <td class="c" data-label="등급"><span class="grade-a">A</span></td>
   <td class="r num" data-label="순위"><b>10</b></td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율"><strong>80.0%</strong>
-    <span class="raw">444.0/555.0</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:73.4%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   <td data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</td>
   <td class="r" data-label="연식">2024-12</td>
   <td class="r num" data-label="주행">15,087km</td>
-  <td class="r num" data-label="가격"><b>3,400만</b></td>
-  <td class="r num gap" data-label="시세차">
-    <span class="up-v">+10만</span>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">0.3%</span>
     
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-24.2%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,400만</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없습니다</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/56" class="mini">근거</a>
     <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=41914842" target="_blank" rel="noopener" class="mini">엔카 ↗</a>
@@ -501,9 +532,10 @@
 
 
 <h2>왜 이 순서인가</h2>
-<p class="muted">점수순이 아닙니다. 예산 · 월납입 · 확인 못 한 축을 함께 봅니다.
+<p class="muted">점수순이 아닙니다. 예산 · 월납입을 함께 봅니다.
   같은 비율이면 값이 싼 쪽이, 그것도 같으면 먼저 본 매물이 앞입니다.
-  <strong>이유를 못 대는 매물은 아예 내지 않습니다</strong> (개정 304).</p>
+  <strong>이유를 못 대는 매물은 아예 내지 않습니다</strong> (개정 304).
+  자세한 근거는 <strong>매물을 눌러 상세</strong>에서 봅니다.</p>
 
 
 <h2>후보에서 뺀 것 729건</h2>
@@ -546,7 +578,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-17 14:47</span>
+  <span>2026-08-17 15:26</span>
 </footer>
 
 </body>

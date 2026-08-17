@@ -54,6 +54,17 @@
   근거가 있는 축의 배점 합 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 입니다.
   「안 받아서 0점」은 확인한 것이 아닙니다 (개정 325)</p>
 
+<h2>왜 싼가</h2>
+{% if v.why_cheap %}
+<p class="why"><strong>{{ v.why_cheap }}</strong></p>
+<ul class="why-list">
+  {% for w in v.why_cheap_reasons %}<li>{{ w }}</li>{% endfor %}
+</ul>
+{% endif %}
+{% if !v.why_cheap %}
+<p class="muted">시세보다 싸지 않거나, 시세를 낼 표본이 모자랍니다.</p>
+{% endif %}
+
 <h2>무엇을 조회했는가</h2>
 <p class="muted">★ 「안 부른 것」과 「불렀는데 못 받은 것」은 다릅니다.
   앞은 우리 잘못이고, 뒤는 그 매물에 없는 것입니다.</p>

@@ -1551,3 +1551,34 @@ body.s-listings main { max-width:1560px; }
 .minus { margin:6px 0 10px; display:flex; flex-wrap:wrap; gap:6px;
          align-items:center; }
 .minus b { color:var(--down); margin-right:4px; }
+
+/* ── 부록 G 0절 — 화면별 사진 크기 (개정 332) ────────────────────────
+   ★ 마스터 지적 — 「추천에는 이미지 너무 커」.
+     추천은 목록보다 작다.  한 화면에 여러 후보가 보여야 한다
+   ★ 크기를 CSS 로 고정한다 — 이미지가 오기 전에 칸이 흔들리지 않게
+   ★ 비율 4:3 을 지킨다.  찌그러뜨리지 않는다 */
+.rows td.photo img, .rows td.photo .nophoto {
+  width:96px; height:72px; object-fit:cover; border-radius:4px;
+  display:block; background:var(--surface); border:1px solid var(--line);
+}
+.cand-rows td.photo img, .cand-rows td.photo .nophoto {
+  width:80px; height:60px;
+}
+@media (max-width: 1099px) {
+  .rows td.photo img, .rows td.photo .nophoto { width:88px; height:66px; }
+  .cand-rows td.photo img, .cand-rows td.photo .nophoto {
+    width:72px; height:54px;
+  }
+}
+@media (max-width: 639px) {
+  .rows td.photo img, .rows td.photo .nophoto { width:80px; height:60px; }
+  .cand-rows td.photo img, .cand-rows td.photo .nophoto {
+    width:64px; height:48px;
+  }
+}
+
+/* ③ 왜 싼가 — 상세 (부록 G 상세 ③절 · 개정 299).
+   ★ 「시세차 −1,100만」만 내고 끝내지 않는다.  이유를 함께 낸다 */
+.why { font-size:15px; margin:10px 0 4px; }
+.why-list { margin:0 0 14px 18px; padding:0; }
+.why-list li { margin:3px 0; color:var(--fg); }

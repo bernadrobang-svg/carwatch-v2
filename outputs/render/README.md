@@ -7,9 +7,9 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 18,103B |
-| `/listings` | [listings.html](listings.html) | 200 | 72,688B |
-| `/recommend` | [recommend.html](recommend.html) | 200 | 30,025B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 17,088B |
+| `/listings` | [listings.html](listings.html) | 200 | 51,966B |
+| `/recommend` | [recommend.html](recommend.html) | 200 | 30,232B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 17,254B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,286B |
 | `/market` | [market.html](market.html) | 200 | 12,148B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 20,187B |
@@ -33,5 +33,5 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 16,648B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,290B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 8,603B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 15,094B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 15,212B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 5,774B |

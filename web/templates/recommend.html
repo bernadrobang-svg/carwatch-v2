@@ -31,12 +31,13 @@
 
 {% if count %}
 <!-- ★ 목록은 요약이다 — 한 매물이 한 줄.  근거는 /why 로 (개정 303) -->
-<table class="rows">
+<table class="rows cand-rows">
 <thead><tr>
 <th class="c">사진</th><th class="c">관심</th>
 <th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
 <th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
-<th class="r">가격</th><th class="r">시세차</th><th>왜 이 순위인가</th>
+<th class="r">시세 대비</th><th class="r">신차가 대비</th>
+<th class="r">가격</th><th>왜 이 순위인가</th>
 <th class="c">보기</th>
 </tr></thead>
 <tbody>
@@ -56,19 +57,22 @@
   </td>
   <td class="c" data-label="등급"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></td>
   <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}</td>
+  <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
-    <span class="raw">{{ r.earned }}/{{ r.denominator }}</span>
-    <!-- ★ 초록은 지금 받은 몫 · 어두운 쪽은 확인 못 한 축을 채우면 더 받을 몫 (시안) -->
     <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:{{ r.got_pct }}%"></i><i class="may" style="width:{{ r.may_pct }}%"></i></span>{% endif %}</td>
   <td data-label="차종">{{ r.target_label }}</td>
   <td data-label="트림">{{ r.trim }}</td>
   <td class="r" data-label="연식">{{ r.year_month }}</td>
   <td class="r num" data-label="주행">{{ r.mileage_km | km }}</td>
-  <td class="r num" data-label="가격"><b>{{ r.price_won | won }}</b></td>
-  <td class="r num gap" data-label="시세차">
-    {% if r.market_gap_won %}<span class="{{ r.market_gap_won | signcls }}">{{ r.market_gap_won | signwon }}</span>{% endif %}
-    {% if !r.market_gap_won %}<span class="dim">—</span>{% endif %}
+  <td class="r num gap" data-label="시세 대비">
+    {% if r.market_gap_pct %}<span class="{{ r.market_gap_pct | signcls }}">{{ r.market_gap_pct }}%</span>{% endif %}
+    {% if !r.market_gap_pct %}<span class="dim">표본 부족</span>{% endif %}
   </td>
+  <td class="r num gap" data-label="신차가 대비">
+    {% if r.origin_gap_pct %}<span class="{{ r.origin_gap_pct | signcls }}">{{ r.origin_gap_pct }}%</span>{% endif %}
+    {% if !r.origin_gap_pct %}<span class="dim">신차가 없음</span>{% endif %}
+  </td>
+  <td class="r num" data-label="가격"><b>{{ r.price_won | won }}</b></td>
   <!-- ★ 이유는 문장 하나다.  태그 나열이 아니다 (개정 304) -->
   <td data-label="왜 이 순위인가"><span class="reason">{{ r.recommend_reason }}</span></td>
   <td class="c act" data-label="보기">
@@ -83,9 +87,10 @@
 {% endif %}
 
 <h2>왜 이 순서인가</h2>
-<p class="muted">점수순이 아닙니다. 예산 · 월납입 · 확인 못 한 축을 함께 봅니다.
+<p class="muted">점수순이 아닙니다. 예산 · 월납입을 함께 봅니다.
   같은 비율이면 값이 싼 쪽이, 그것도 같으면 먼저 본 매물이 앞입니다.
-  <strong>이유를 못 대는 매물은 아예 내지 않습니다</strong> (개정 304).</p>
+  <strong>이유를 못 대는 매물은 아예 내지 않습니다</strong> (개정 304).
+  자세한 근거는 <strong>매물을 눌러 상세</strong>에서 봅니다.</p>
 
 {% if r.excluded_groups %}
 <h2>후보에서 뺀 것 {{ r.excluded_total | num }}건</h2>

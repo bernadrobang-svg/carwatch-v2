@@ -53,17 +53,19 @@ def spec_a(ad: Client, lid: int) -> None:
         bool(ratio) and bool(raw),
         "분모가 다른 매물을 눈으로 갈라야 한다")
 
-    # A-2  ★ 개정 298 로 분모는 늘 555 다 — 「분모 < 555 색 구분」은 폐기됐다.
-    #   대신 「555 중 350점 확인 (63%)」을 낸다 (개정 298 I)
-    _conf = re.search(r"확인 \d+(?:\.\d+)?%", text(lb))
-    rec("A-2", "확인율을 함께 낸다 (개정 298 I)", "확인 문구를 본다",
+    # A-2  ★ 부록 G 로 확인율이 상세(/why)로 갔다 (개정 332).
+    #   목록은 요약이다 — 계산식과 확인율은 상세에서 본다
+    _st, _wb, _hh = ad.get(f"/why/{lid}")
+    _conf = re.search(r"확인율 \d+(?:\.\d+)?%", text(_wb))
+    rec("A-2", "확인율을 상세에 낸다 (개정 298 I · 부록 G)", "상세를 본다",
         _conf.group(0) if _conf else "표시 없음", bool(_conf),
         "분모로 막지 않는 대신 얼마나 봤는지를 낸다")
 
-    # A-3 막대는 비율
-    rec("A-3", "막대는 비율을 그린다", "style 폭을 본다",
-        "% 폭" if re.search(r'width:\s*\d+(?:\.\d+)?%', lb) else "없음",
-        bool(re.search(r'width:\s*\d+(?:\.\d+)?%', lb)))
+    # A-3 막대는 비율.  ★ 목록에서 뺐으므로 추천·상세에서 본다 (부록 G)
+    _st, _rb, _hh = ad.get("/recommend")
+    _bar = re.search(r'width:\s*\d+(?:\.\d+)?%', _rb + _wb)
+    rec("A-3", "막대는 비율을 그린다 (추천·상세)", "style 폭을 본다",
+        "% 폭" if _bar else "없음", bool(_bar))
 
     # A-4 축 3상태
     # ★ 기호를 시험에 박지 않는다.  config/labels.json 이 정본이다 —

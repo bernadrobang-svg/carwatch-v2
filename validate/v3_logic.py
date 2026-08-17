@@ -616,12 +616,14 @@ def _why_cheap_check(conn, rid):
         bad53.append(f"신뢰도가 한 값뿐이다 — {dict(seen)}")
     if TRUST_LOW not in seen and TRUST_NONE not in seen:
         bad53.append("판매자 등록 점검을 하나도 못 가렸다")
-    # V3-52 — 화면 문구가 있는가
-    html = _rendered_listings()
+    # V3-52 — 화면 문구가 있는가.
+    # ★ 부록 G 로 「왜 싼가」가 상세 ③절로 갔다 (개정 332).
+    #   목록은 요약이라 이유는 상세에 둔다
+    html = _rendered_why()
     if html is None:
         bad52.append("렌더 결과가 없다 — tools/render_screens.py 를 돌린다")
     elif "싼 이유" not in html and NOT_FOUND not in html:
-        bad52.append("「싸다」에 이유가 붙어 있지 않다")
+        bad52.append("상세 ③절에 「왜 싼가」가 없다")
     return [result(C["V3-52"], rid, 0, len(bad52), not bad52, bad52),
             result(C["V3-53"], rid, "출처가 갈린다",
                    dict(seen) if not bad53 else bad53, not bad53, bad53)]
@@ -765,6 +767,16 @@ def _site_axis_checks(conn, rid):
         result(C["V3-56"], rid, want, total, total == want),
         result(C["V3-57"], rid, want_base, base, base == want_base),
     ]
+
+
+def _rendered_why():
+    import os
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(root, "outputs", "render", "why_listing_id.html")
+    if not os.path.isfile(path):
+        return None
+    return open(path, encoding="utf-8").read()
 
 
 def _rendered_listings():

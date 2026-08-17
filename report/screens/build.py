@@ -52,12 +52,10 @@ GONE = "gone"
 # ★ 개정 292 로 축이 다시 짜였다.  상태(180)가 사양(75)보다 크다 —
 #   마스터 지적 「깡통에 HUD 만 있어도 만점」이 이 순서로 뒤집힌다
 # ★ 한 칸에 몰아넣으면 「이 차만 사고가 있다」가 세로로 안 보인다
-CHIP_AXES = ("state.accident", "state.frame", "state.outer", "state.repair",
-             "history.usage", "history.not_join",
-             "spec.trim", "spec.options",
-             "warranty.maker", "warranty.site",
-             # 취향은 등급에 안 들어간다.  그래도 화면에는 낸다 (F-scoring ⑥)
-             "taste.hud", "taste.sunroof")
+# ★ 부록 G 의 목록 열 14~17 이다 (개정 332).
+#   35열을 늘어놓으면 「고를 것을 좁힌다」가 안 된다 — 상세로 보낸다
+CHIP_AXES = ("state.accident", "state.frame", "history.usage",
+             "warranty.maker")
 
 
 def axis_heads(root: str = ".") -> list[dict]:
@@ -261,6 +259,7 @@ def _ceil_to(value, unit: int):
 MONTHS_PER_YEAR = 12
 # 단위 환산.  ★ 화면 표기를 한 자리에 모은다 (2장 상수표 · V4-13)
 WON_PER_MANWON = 10_000
+
 M_PER_KM = 1_000
 
 
@@ -489,6 +488,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
                 if isinstance(_codes, list) else 0)
     _fmt = json.loads(insp_fmt) if insp_fmt else None
     _insp_word = SOURCE_WORDS.get(inspection_source(_fmt), "")
+    # 신차가 = 등급기준 + 선택옵션 (개정 301)
+    _origin_total = (origin_won + _opt_won) if origin_won else None
     chips = []
     for axis in CHIP_AXES:
         if axis in got:
@@ -555,6 +556,10 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 개정 298 로 분모는 늘 만점이다 — 짧으면 그것 자체가 사고다
         denom_short=bool(denom and denom < _total_points()),
         confirmed_points=_confirm[0], confirm_pct=round(_confirm[1] * 100, 1),
+        # ★ 값을 누르면 그 조건으로 걸러진다 (부록 G).  없으면 링크를 안 만든다
+        price_bucket_won=_bucket(price, _view_int("price_bucket_won", root)),
+        mileage_bucket_km=_bucket(km, _view_int("mileage_bucket_km", root)),
+        status_key=dstatus or None,
         target_label=tk or "",
         # ★ 세부등급을 못 받았으면 그렇게 적는다.  빈 값으로 두지 않는다 (개정 285)
         trim=(trim if trim and " · " in trim
@@ -577,7 +582,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 신차가 = 등급기준 + 선택옵션 (개정 301).  셋을 다 낸다 —
         #   엔카는 6,547만(5,787 + 760)인데 우리는 5,787만만 냈다
         option_price_won=_opt_won,
-        origin_total_won=(origin_won + _opt_won) if origin_won else None,
+        origin_total_won=_origin_total,
         # 플랫폼 신뢰도 (개정 300) — 같은 값이라도 누가 보증하느냐가 다르다
         platform_trust=_trust, platform_trust_why=_why,
         # ★ 전기차 배터리 (개정 296).  「있다」만 남기면 그 값을 버리는 것이다
@@ -586,6 +591,12 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         market_price_won=mkt,
         market_sample=mkt_n,
         market_gap_won=_gap_won,
+        # ★ 부록 G 10·11 — 마스터가 「없다」고 지적한 그것이다.
+        #   금액이 아니라 %다.  「−13.0%」가 사람에게 읽힌다
+        market_gap_pct=(round(_gap_won / mkt * 100, 1)
+                        if (_gap_won is not None and mkt) else None),
+        origin_gap_pct=(round((price - _origin_total) / _origin_total * 100, 1)
+                        if (_origin_total and price is not None) else None),
         # ★ 「싸다」를 말할 때 「왜 싼가」를 함께 낸다 (개정 299 · V3-52).
         #   금지 — 「시세차 −1,100만」만 내고 끝내는 것
         why_cheap=_why_cheap[0] if _gap_won and _gap_won < 0 else None,
@@ -805,6 +816,19 @@ def _soh_low(root: str) -> float:
     """
     with open(f"{root}/config/scoring.json", encoding="utf-8") as f:
         return float(json.load(f)["axis_rules"]["value"]["battery_soh_low"])
+
+
+def _view_int(key: str, root: str) -> int:
+    """화면 임계값은 config 다 (V4-13 · V4-17)."""
+    with open(f"{root}/config/web.json", encoding="utf-8") as f:
+        return int(json.load(f)[key])
+
+
+def _bucket(value, step: int):
+    """값을 그 단위로 올려 잡는다.  ★ 없으면 None — 빈 주소를 만들지 않는다."""
+    if value is None:
+        return None
+    return ((int(value) + step - 1) // step) * step
 
 
 def _high_km(root: str) -> int:

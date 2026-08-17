@@ -287,6 +287,11 @@ C = {
                      "엔진이 모르는 문법은 글자 그대로 나온다 — "
                      "{# 주석 #} 과 {% if a == b %} 이 화면에 찍혔다 (개정 325)",
                      KIND_CODE),
+    "V11-107": Check("V11", "V11-107", "화면별 사진 크기가 부록 G 와 같음",
+                     FATAL, "run",
+                     "추천은 목록보다 작다 — 한 화면에 여러 후보가 보여야 한다. "
+                     "크기를 CSS 로 고정한다 (부록 G 0절 · 개정 332)",
+                     KIND_CONTRACT),
     "V11-105": Check("V11", "V11-105", "화면 위아래가 어긋나지 않음",
                      FATAL, "run",
                      "표는 「카탈로그 미조회」라 하고 문장은 「확인율 100%」라 "
@@ -1455,6 +1460,29 @@ def _checks_cfg() -> dict:
         return json.load(f)
 
 
+def _photo_size_by_screen_check(rid):
+    """V11-107 — 화면별 사진 크기가 부록 G 와 같은가 (개정 332).
+
+    ★ 부록 G 0절의 표에서 읽는다.  코드에 두 벌 두지 않는다
+    """
+    spec = os.path.join(ROOT, "docs", "ref", "G-screens.md")
+    if not os.path.isfile(spec):
+        return not_applicable(C["V11-107"], rid, "부록 G 가 없다")
+    css = open(APP_CSS, encoding="utf-8").read()
+    text = open(spec, encoding="utf-8").read()
+    bad = []
+    # 표의 「목록 | 96×72 | 88×66 | 80×60」 꼴을 읽는다
+    for line in text.splitlines():
+        got = re.match(r"\| *(목록|추천) *\|((?: *\d+×\d+ *\|)+)", line)
+        if not got:
+            continue
+        for size in re.findall(r"(\d+)×(\d+)", got.group(2)):
+            w, h = size
+            if f"width:{w}px" not in css.replace(" ", ""):
+                bad.append(f"{got.group(1)} {w}×{h} 가 CSS 에 없다")
+    return result(C["V11-107"], rid, 0, len(bad), not bad, bad[:6])
+
+
 def _template_leak_check(rid):
     """V11-104 — 템플릿 문법이 화면에 그대로 나오는가.
 
@@ -1619,9 +1647,22 @@ def _v1_parity_checks(rid):
     ours = open(LISTINGS_TPL, encoding="utf-8").read()
 
     # ── V11-68 — 목록 열 ─────────────────────────────────────────────
-    head = re.search(r"<thead>(.*?)</thead>", v1, re.S)
-    want = [re.sub(r"<[^>]+>", "", t).strip()
-            for t in re.findall(r"<th[^>]*>(.*?)</th>", head.group(1), re.S)]
+    # ★ 개정 332(부록 G)가 개정 277(v1 22열)을 대신한다.
+    #   부록 G 가 목록 열의 정본이다 — v1 은 그 앞의 판이다.
+    #   부록 G 가 있으면 그것과 대조하고, 없으면 v1 과 대조한다
+    spec = os.path.join(ROOT, "docs", "ref", "G-screens.md")
+    want = []
+    if os.path.isfile(spec):
+        text = open(spec, encoding="utf-8").read()
+        block = text.split("## 넓음 (≥1100)", 1)[-1].split("## 중간", 1)[0]
+        # ★ 표에 **굵게** 가 섞여 있다.  이름만 뽑는다
+        want = [m.group(1).strip().strip("*").strip()
+                for m in re.finditer(r"^\| *\d+ *\| *([^|]+?) *\|", block,
+                                     re.M)]
+    if not want:
+        head = re.search(r"<thead>(.*?)</thead>", v1, re.S)
+        want = [re.sub(r"<[^>]+>", "", t).strip()
+                for t in re.findall(r"<th[^>]*>(.*?)</th>", head.group(1), re.S)]
     want = [w for w in want if w]
     # ★ 축 열의 머리말은 config 에서 온다 (axis_heads).  템플릿 글자만 보면
     #   화면에 있는 열을 「없다」고 한다 — 실제로 낼 이름을 합쳐서 본다
@@ -1646,7 +1687,8 @@ def _v1_parity_checks(rid):
                 continue          # v1 에 없던 것은 요구하지 않는다
             if not any(x in src_b for x in in_v2):
                 bad69.append(f"{v2_name} — {op}")
-    return [_template_leak_check(rid), _screen_contradiction_check(rid),
+    return [_photo_size_by_screen_check(rid), _template_leak_check(rid),
+            _screen_contradiction_check(rid),
             _chunk_check(rid),
             _csrf_reuse_check(rid),
             _origin_price_check(rid),
@@ -1975,7 +2017,9 @@ def _axis_state_check(conn, rid):
                   not bad, bad[:6])
 
 
-THREE_VALUES = ("신차가", "시세", "가격")
+# ★ 부록 G 로 열 이름이 「시세 대비」 「신차가 대비」가 됐다 (개정 332).
+#   값을 함께 내는 것은 그대로다 — 이름만 바뀌었다
+THREE_VALUES = ("신차가 대비", "시세 대비", "가격")
 
 
 def _three_values_check(conn, rid):
@@ -1997,8 +2041,12 @@ def _three_values_check(conn, rid):
         return not_applicable(C["V11-81"], rid, f"못 그렸다: {e}")
     html = body.decode("utf-8", "replace")
     row = re.search(r"<tr[^>]*>.*?</tr>", html.split("<tbody>", 1)[-1], re.S)
-    bad = [w for w in THREE_VALUES
-           if f'data-label="{w}"' not in (row.group(0) if row else "")]
+    got = row.group(0) if row else ""
+    bad = [w for w in THREE_VALUES if f'data-label="{w}"' not in got]
+    # ★ 값 자체도 나와야 한다 — 「대비 %」만 내고 원값을 숨기면 안 된다
+    for word in ("시세", "신차가"):
+        if word not in got:
+            bad.append(f"{word} 원값이 없다")
     return result(C["V11-81"], rid, "셋",
                   f"{len(THREE_VALUES) - len(bad)}/{len(THREE_VALUES)}",
                   not bad, [f"{w} 칸이 없다" for w in bad])

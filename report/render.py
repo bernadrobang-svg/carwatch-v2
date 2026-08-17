@@ -98,6 +98,55 @@ def _encar_url(source_id: str, root: str = ".") -> str:
         return str(_j.load(f)["encar_detail_url"]).format(source_id=source_id)
 
 
+def _why_cheap_of(conn, listing_id: int, root: str) -> tuple:
+    """③ 왜 싼가 (개정 299).  ★ 목록은 요약이고 이유는 상세에 둔다 (부록 G).
+
+    ★ 이유를 못 찾으면 그것도 낸다 — 그것이 오히려 위험 신호다
+    ★ 화면을 다시 그리지 않는다.  판정 결과와 원문에서 바로 만든다
+    """
+    from analyze.trust import inspection_source
+    from report.why_cheap import verdict as why_verdict
+    from store.core import _not_join_months
+
+    row = conn.execute(
+        "SELECT l.inspection_formats_json, l.diagnosis_car,"
+        " l.warranty_extend, l.warranty_deemed, l.mileage_km,"
+        " l.ev_battery_soh, r.accident_my_cnt, r.accident_my_cost,"
+        " r.not_join_json, s.grade"
+        " FROM core_listing l"
+        " LEFT JOIN core_record r ON r.listing_id = l.listing_id"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        " WHERE l.listing_id = ? LIMIT 1", (listing_id,)).fetchone()
+    if row is None:
+        return None, []
+    fmt = json.loads(row[0]) if row[0] else None
+    has_w = bool(row[2] and str(row[2]) != "0") or \
+        bool(row[3] and str(row[3]) != "0")
+    cfg = _scoring(root)["axis_rules"]["value"]
+    got = why_verdict(-1, {
+        "inspection_formats": fmt, "diagnosis_car": row[1],
+        "has_warranty": has_w, "inspection_source": inspection_source(fmt),
+        "rental_note": None,
+        "accident_cnt": row[6], "repair_won": row[7],
+        "mileage_note": (f"주행 {row[4]:,}km"
+                         if row[4] and row[4] >= int(cfg["high_mileage_km"])
+                         else None),
+        "color_note": None,
+        "not_join": _not_join_months(row[8]) or 0,
+        "battery_soh": row[5],
+        "battery_soh_low": float(cfg["battery_soh_low"]),
+    })
+    return got[0], list(got[1])
+
+
+def _scoring(root: str) -> dict:
+    import os
+
+    with open(os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        return json.load(f)
+
+
 def _penalty_rows(raw) -> tuple:
     """뺀 것 → 화면 행 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다."""
     if not raw:
@@ -114,6 +163,7 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
                    root: str = ".") -> ScoreView:
     """L1 — 왜 이 점수인가.  축별 source · prio 를 반드시 낸다."""
     lab = _labels(root)["AXIS_LABELS"]
+    _why = _why_cheap_of(conn, listing_id, root)
     head = conn.execute(
         "SELECT l.target_key, l.price_current_won, s.score_total, s.denominator,"
         " s.earned, s.not_rated_reason,"
@@ -164,6 +214,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
                      if head[3] else 0.0),
         penalties=_penalty_rows(head[14]),
         penalty_total=sum(p["points"] for p in _penalty_rows(head[14])),
+        # ★ 「싸다」를 말할 때 「왜 싼가」를 함께 낸다 (개정 299 · 부록 G ③)
+        why_cheap=_why[0], why_cheap_reasons=tuple(_why[1]),
         # ★ 채웠을 때 어디까지 오르는지 낸다 (STEP 149h · D-2).
         #   「점수는 낮은데 확실한 것」과 「높은데 불확실한 것」을 가른다
         pending_best=_pending_best(pending, float(head[4] or 0),
