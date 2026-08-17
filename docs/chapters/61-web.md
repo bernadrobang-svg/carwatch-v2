@@ -2198,3 +2198,25 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 
 ---
 
+
+
+---
+
+# ★★★ 화면 배치 규격은 `chapters/61-web/` 로 옮겼다 — 개정 342
+
+```
+★★ 이 파일의 STEP 149n · 149o · 149o-2 · 149o-3 · 149u · 149v · 149w · 149x
+   가운데 「자리 · 크기 · 줄 수 · 절 순서」를 정한 부분은 폐기다
+   지금 정본
+     chapters/61-web/a-common.md    폭 · 크기 · 줄 수
+     chapters/61-web/b-list.md      목록 22열 · 카드
+     chapters/61-web/c-recommend.md 추천
+     chapters/61-web/d-detail.md    상세 10절
+     chapters/61-web/e-compare.md   비교 · 이동 · 금지
+     chapters/61-web/f-width.md     폭 다섯 곳 · 상세 링크
+     chapters/61-web/g-chart.md     차트 · 미분류
+
+★ 이 파일에는 라우팅 · 권한 · 클래스 표 · 검사 표만 남긴다
+근거   마스터 지적 08-18 — 「원문이랑 부록이랑 이격이 나잖아」
+      한 파일이 2,200줄이라 부록으로 뺐던 것이 잘못이었다.  쪼개는 것이 맞다
+```
