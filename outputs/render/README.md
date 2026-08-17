@@ -9,7 +9,7 @@
 | `/` | [home.html](home.html) | 200 | 18,265B |
 | `/listings` | [listings.html](listings.html) | 200 | 52,083B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 39,666B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 17,281B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 17,387B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,286B |
 | `/market` | [market.html](market.html) | 200 | 12,157B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 18,034B |

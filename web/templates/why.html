@@ -44,11 +44,6 @@
     등급은 취향을 뺀 {{ v.grade_base | num }} 기준
     {{ v.grade_earned | num }}점입니다</span>
 </p>
-{% if v.penalties %}
-<p class="minus"><b>뺀 것</b>
-  {% for p in v.penalties %}<span class="chip-bad">{{ p.label }} {{ p.points }}</span>{% endfor %}
-  <span class="muted">합 {{ v.penalty_total }}점</span></p>
-{% endif %}
 <p class="muted">
   ★ 확인율 <strong>{{ v.confirm_pct }}%</strong> —
   근거가 있는 축의 배점 합 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 입니다.
@@ -98,6 +93,17 @@
 {% endfor %}
 </tbody>
 </table>
+
+<!-- 부록 G ⑥ 마이너스 — 축별 판정 다음이다.  값 절에 섞지 않는다 -->
+<h2>마이너스</h2>
+{% if v.penalties %}
+<p class="minus">
+  {% for p in v.penalties %}<span class="chip-bad">{{ p.label }} {{ p.points }}</span>{% endfor %}
+  <span class="muted">합 {{ v.penalty_total }}점</span></p>
+{% endif %}
+{% if !v.penalties %}
+<p class="muted">뺀 것이 없습니다.</p>
+{% endif %}
 
 {% if v.diagnosis %}
 <h2>엔카 진단</h2>
@@ -149,6 +155,19 @@
 <p class="muted">확인만 되면 오를 수 있습니다 — 제외된 축이 분모에서 빠져 있습니다.</p>
 {% endif %}
 
+<h2>주요 옵션</h2>
+{% if v.options %}
+{% for g in v.options %}
+<h3>{{ g.group }} <small>{{ g.count | num }}개</small></h3>
+<p class="chips">{% for o in g.items %}<span class="chip{% if !o.known %} muted{% endif %}">{{ o.name }}</span>{% endfor %}</p>
+{% endfor %}
+<p class="muted">★ 이름이 흐린 것은 사전에 아직 뜻이 없는 코드입니다 —
+  추정해서 이름을 붙이지 않습니다.</p>
+{% endif %}
+{% if !v.options %}
+<p class="muted">옵션 정보를 받지 못했습니다. 「무엇을 조회했는가」를 보십시오.</p>
+{% endif %}
+
 {% if v.costs %}
 <h2>비용</h2>
 <p class="muted">중고 ↔ 신차 동일 트림. ★ 점수에 반영하지 않습니다.</p>
@@ -162,19 +181,6 @@
 {% endfor %}
 </tbody>
 </table>
-{% endif %}
-
-<h2>주요 옵션</h2>
-{% if v.options %}
-{% for g in v.options %}
-<h3>{{ g.group }} <small>{{ g.count | num }}개</small></h3>
-<p class="chips">{% for o in g.items %}<span class="chip{% if !o.known %} muted{% endif %}">{{ o.name }}</span>{% endfor %}</p>
-{% endfor %}
-<p class="muted">★ 이름이 흐린 것은 사전에 아직 뜻이 없는 코드입니다 —
-  추정해서 이름을 붙이지 않습니다.</p>
-{% endif %}
-{% if !v.options %}
-<p class="muted">옵션 정보를 받지 못했습니다. 「무엇을 조회했는가」를 보십시오.</p>
 {% endif %}
 
 <h2>참고 자료 — 점수에 반영하지 않습니다</h2>

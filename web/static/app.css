@@ -1694,8 +1694,8 @@ body.s-listings main { max-width:1560px; }
   .rows td[data-label="신차가 대비"] .raw { display:none; }
 
   /* 5줄 — 축 넷.  흐름에 맡기되 줄을 못박는다 (이름이 c.head 라 못 짚는다).
-     ★ [data-label] 을 붙여야 한다.  위쪽 넓은 폭 규칙이
-       .rows td.ax[data-label="용도"] { span 6 } 으로 더 좁아 이긴다.
+     ★ [data-label] 을 붙여야 한다.
+       위쪽 규칙이 「용도」에 span 6 을 주는데 그게 더 좁아 이긴다.
        그것 때문에 5줄이 15칸이 되어 격자가 통째로 어긋났다
        (실측 08-18 — 칸 폭이 10.1px 아홉 · 30.3px 셋으로 갈렸다) */
   .rows td.ax[data-label] { grid-row:5; grid-column:span 3;

@@ -50,6 +50,8 @@
   "price_bucket_won": 5000000,
   "mileage_bucket_km": 10000,
   "_bucket_note": "값을 누를 때 올려 잡는 단위 (부록 G). ★ 딱 그 값이 아니라 「이하」다",
+  "card_narrow_max_px": 639,
+  "_card_narrow_note": "★ 부록 G 「좁음 (<640)」의 경계다. narrow_max_px(1099)는 표가 카드로 바뀌는 폭이고, 줄 수 상한(목록 6 · 추천 8)은 이 폭 아래에서 잰다",
   "narrow_folded_labels": ["순위", "비율", "월", "상태", "딜러", "경과", "사이트"],
   "narrow_folded_parts": [".raw"],
   "_narrow_folded_parts_note": "★ 칸이 아니라 칸 안의 조각이다. 부록 G 도면은 「시세 −13.0%」만 낸다 — 원값 「시세 5,290만」은 상세로 간다. 칸 자체는 그대로 보인다",

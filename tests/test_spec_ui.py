@@ -211,12 +211,16 @@ def spec_c(ad: Client, lid: int) -> None:
     rec("C-2b", "/why 엔드포인트가 무엇을 결정", "설명을 찾는다",
         "있음" if got else "받음/못 받음만", got)
 
-    # C-10  절 순서 (개정 256).  ★ 있는지만 보면 순서가 바뀌어도 통과한다.
-    #   「무엇을 조회했나 → 어떻게 판정했나 → 무엇이 빠졌나」가 읽는 순서다
+    # C-10  절 순서.  ★ 있는지만 보면 순서가 바뀌어도 통과한다.
+    #   ★ 순서를 시험에 박지 않는다 — 부록 G 3장이 정본이다 (개정 332).
+    #     전에는 개정 256 순서를 박아 뒀는데 부록 G 가 옵션을 비용 앞으로,
+    #     마이너스를 축별 판정 뒤로 옮겼다.  V11-110 과 같은 곳을 읽는다
+    from validate.v11_web import WHY_SECTION_WORDS, _why_order_spec
+
     order = [h.split("<")[0].split("—")[0].strip()
              for h in re.findall(r"<h2[^>]*>(.*?)</h2>", wb, re.S)]
-    want = ["무엇을 조회했는가", "축별 판정", "엔카 진단", "확인 못 한 것",
-            "왜", "비용", "주요 옵션", "참고 자료"]
+    want = [WHY_SECTION_WORDS.get(n, (n,))[0] for n in _why_order_spec()
+            if n != "머리말"]
     seen, at = [], 0
     for w in want:
         hit = next((i for i, h in enumerate(order[at:], start=at)

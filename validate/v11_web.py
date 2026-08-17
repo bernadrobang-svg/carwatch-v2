@@ -297,6 +297,23 @@ C = {
                      "값이 없으면 「없습니다」 · 0 이면 「0원」 · "
                      "모르면 「확인 못 함」 (부록 G · G-4)",
                      KIND_CODE),
+    "V11-110": Check("V11", "V11-110", "상세 절 순서가 부록 G 와 같음",
+                     FATAL, "run",
+                     "순서가 판단 순서다 — 값을 먼저 보고 근거를 나중에 본다. "
+                     "★ 절 이름을 코드에 박지 않는다.  부록 G 3장에서 읽는다",
+                     KIND_CODE),
+    "V11-108": Check("V11", "V11-108", "좁은 폭에서 한 화면에 매물 2개 이상",
+                     FATAL, "run",
+                     "하나만 보이면 비교가 안 된다 (부록 G 줄 수 상한). "
+                     "★ 격자 줄 수와 글자 크기로 카드 높이의 상한을 잡는다 "
+                     "— 두 장이 700px 안에 들어가야 한다",
+                     KIND_CODE),
+    "V11-109": Check("V11", "V11-109", "카드가 부록 G 줄 수 상한을 안 넘음",
+                     FATAL, "run",
+                     "목록 6줄 · 추천 8줄 (부록 G).  ★ 한 줄의 칸 span 합이 "
+                     "격자 칸 수를 넘으면 칸이 겹쳐 글자가 뭉갠다 — "
+                     "실측 08-18 「용도」 하나가 span 6 이라 5줄이 15칸이 됐다",
+                     KIND_CODE),
     "V11-107": Check("V11", "V11-107", "화면별 사진 크기가 부록 G 와 같음",
                      FATAL, "run",
                      "추천은 목록보다 작다 — 한 화면에 여러 후보가 보여야 한다. "
@@ -1542,6 +1559,260 @@ def _em_dash_check(rid):
     return result(C["V11-106"], rid, 0, len(bad), not bad, bad[:6])
 
 
+# 부록 G 줄 수 상한 (개정 332) — 화면 : (템플릿, 줄 수 상한)
+CARD_SHAPES = {
+    "rows": (os.path.join(ROOT, "web", "templates", "listings.html"), 6),
+    "cand-rows": (os.path.join(ROOT, "web", "templates", "recommend.html"), 8),
+}
+CARD_AXES = ("사고", "골격", "용도", "보증")
+# 부록 G 「좁은 폭에서 한 화면(약 700px)에 매물이 2개 이상 보인다」
+SCREEN_PX = 700
+CARDS_PER_SCREEN = 2
+# 줄 높이 어림 — 글자 크기 × 이것.  ★ 넉넉히 잡는다 (상한을 보는 것이다)
+LINE_FACTOR = 1.7
+CARD_PAD_PX = 24
+
+
+def _cells_of(tpl: str, axes: int) -> list:
+    """템플릿의 칸을 나오는 차례대로 낸다.  반환 [(클래스집합, 이름표)].
+
+    ★ 축 칸은 반복문 하나로 적혀 있다 — 실제로 나오는 수만큼 편다.
+      이걸 안 하면 5줄이 축 하나로 세어져 겹침을 못 본다 (실측 08-18)
+    """
+    from report.screens.build import axis_heads
+
+    body = re.sub(r"<script>.*?</script>", "", tpl, flags=re.S)
+    # ★ 첫 <tbody> 하나만 본다.  아래쪽 「후보에서 뺀 것」 표까지 세면
+    #   빈 칸 넷이 더 세어져 카드가 12줄로 잡힌다 (실측 08-18)
+    body = body[body.find("<tbody>"):body.find("</tbody>")]
+    labels = [h["label"] for h in axis_heads(ROOT)][:axes]
+    out = []
+    for got in re.finditer(r"<td([^>]*)>", body):
+        attrs = got.group(1)
+        cls = set(re.findall(r'class="([^"]*)"', attrs)[0].split()) \
+            if 'class="' in attrs else set()
+        name = re.findall(r'data-label="([^"]*)"', attrs)
+        label = name[0] if name else ""
+        if "{{" in label:                       # 축 — 이름이 반복문 변수다
+            for one in labels:
+                out.append((cls, one))
+            continue
+        out.append((cls, label))
+    return out
+
+
+def _matches(sel: str, klass: str, cls: set, label: str) -> int:
+    """선택자가 이 칸에 걸리는가.  걸리면 좁기(특정도)를 낸다 · 아니면 -1."""
+    sel = sel.strip()
+    if not sel.startswith(f".{klass}"):
+        return -1
+    rest = sel[len(klass) + 1:]
+    score = 1
+    for want in re.findall(r'\[data-label="([^"]*)"\]', rest):
+        if want != label:
+            return -1
+        score += 1
+    rest = re.sub(r'\[data-label="[^"]*"\]', "", rest)
+    for want in re.findall(r"\.([a-zA-Z][\w-]*)", rest):
+        if want not in cls:
+            return -1
+        score += 1
+    return score
+
+
+def _place_cards(css: str, tpl: str, klass: str, narrow_px: int):
+    """칸을 격자에 실제로 놓아 본다.
+
+    반환   (놓인 칸, 격자 칸 수, 가장 큰 글자 크기, 넘친 것)
+    ★ CSS 를 눈으로 읽어서는 겹침이 안 보인다 — 놓아 보고 센다
+    """
+    # ★ 주석을 먼저 뗀다.  주석 안의 중괄호·쉼표가 규칙 쪼개기를 깨뜨린다
+    #   (실측 08-18 — 주석에 적은 예시 하나로 축 규칙 넷이 통째로 사라졌다)
+    css = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
+    rules, cols, biggest = [], 12, 0.0
+    for width, body in _media_blocks(css):
+        if width > narrow_px:
+            continue
+        got = re.search(r"grid-template-columns:\s*repeat\((\d+)", body)
+        if got:
+            cols = int(got.group(1))
+        for rule in re.finditer(r"([^{}]+)\{([^{}]*)\}", body):
+            sel = rule.group(1)
+            decl = rule.group(2).replace(" ", "")
+            for one in sel.split(","):
+                rules.append((one, decl))
+    cells = _cells_of(tpl, len(CARD_AXES))
+    placed, spill = {}, []
+    hidden, area, rowspan, flow = set(), {}, {}, {}
+    for idx, (cls, label) in enumerate(cells):
+        best = {}
+        for one, decl in rules:
+            score = _matches(one, klass, cls, label)
+            if score < 0:
+                continue
+            size = re.search(r"font-size:([\d.]+)px", decl)
+            if size:
+                biggest = max(biggest, float(size.group(1)))
+            if "display:none" in decl:
+                best[("hide", score)] = True
+            got = re.search(r"grid-area:(\d+)/(\d+)/(\d+)/(\d+)", decl)
+            if got:
+                best[("area", score)] = tuple(int(x) for x in got.groups())
+            row = re.search(r"grid-row:(\d+);", decl)
+            span = re.search(r"grid-column:span(\d+)", decl)
+            if row:
+                best[("row", score)] = int(row.group(1))
+            if span:
+                best[("span", score)] = int(span.group(1))
+        def pick(kind):
+            got = [(sc, v) for (k, sc), v in best.items() if k == kind]
+            return max(got)[1] if got else None
+        if pick("hide"):
+            hidden.add(idx)
+            continue
+        if pick("area"):
+            area[idx] = pick("area")
+        elif pick("row"):
+            rowspan[idx] = (pick("row"), pick("span") or 1)
+        else:
+            flow[idx] = pick("span") or 1
+    grid: dict = {}
+    for idx, (r1, c1, r2, c2) in area.items():
+        for r in range(r1, r2):
+            for c in range(c1, c2):
+                if grid.get((r, c)) is not None:
+                    spill.append(f"{r}줄 {c}칸 겹침")
+                grid[(r, c)] = idx
+        placed[idx] = (r1, r2)
+    for idx, (row, span) in sorted(rowspan.items()):
+        for c in range(1, cols - span + 2):
+            if all(grid.get((row, c + k)) is None for k in range(span)):
+                for k in range(span):
+                    grid[(row, c + k)] = idx
+                placed[idx] = (row, row + 1)
+                break
+        else:
+            spill.append(f"{row}줄 — 칸 {span} 개가 안 들어간다 (남은 자리 없음)")
+    used = max((r for r, _c in grid), default=0)
+    for idx, span in sorted(flow.items()):
+        used += 1
+        placed[idx] = (used, used + 1)
+    return placed, cols, biggest or 12.0, spill, hidden, len(cells)
+
+
+def _card_shape_checks(rid):
+    """V11-108 · V11-109 — 부록 G 줄 수 상한과 칸 겹침.
+
+    ★ 「6줄로 묶었습니다」를 믿지 않는다.  템플릿의 칸을 하나하나
+      격자에 놓아 보고 줄 번호를 센다.
+    ★ 실측 08-18 — .rows td.ax[data-label="용도"] 하나가 span 6 이라
+      5줄이 15칸이 되어 격자가 통째로 어긋났다.  스크린샷만 보고는
+      「배치가 잘못됐다」로 여섯 번 헛짚었다.
+      ★ 축은 반복문 하나로 적혀 있어 CSS 만 세면 한 칸으로 세어진다 —
+        그래서 템플릿에서 실제 칸 수를 편다
+    """
+    import json as _j
+
+    css = open(APP_CSS, encoding="utf-8").read()
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        # ★ 1099 가 아니라 639 다.  1099 는 표가 카드로 바뀌는 폭이고
+        #   줄 수 상한은 부록 G 「좁음 (<640)」에서 잰다
+        narrow = int(_j.load(f)["card_narrow_max_px"])
+    bad109, bad108 = [], []
+    for klass, (tpl_path, limit) in CARD_SHAPES.items():
+        tpl = open(tpl_path, encoding="utf-8").read()
+        placed, cols, biggest, spill, hidden, total = _place_cards(
+            css, tpl, klass, narrow)
+        if not placed:
+            bad109.append(f"{klass} 의 카드 배치를 못 찾았다")
+            continue
+        used = max(r2 - 1 for _r1, r2 in placed.values())
+        if used > limit:
+            bad109.append(f"{klass} {used}줄 — 부록 G 상한 {limit}줄")
+        bad109 += [f"{klass} {x}" for x in spill[:4]]
+        if len(placed) + len(hidden) != total:
+            bad109.append(f"{klass} 칸 {total}개 중 "
+                          f"{total - len(placed) - len(hidden)}개를 못 놓았다")
+        del cols
+        # 두 장이 한 화면에 들어가는가 — 줄 수 × 글자 크기로 상한을 잡는다
+        tall = used * biggest * LINE_FACTOR + CARD_PAD_PX
+        if tall * CARDS_PER_SCREEN > SCREEN_PX:
+            bad108.append(f"{klass} 한 장 약 {tall:.0f}px — "
+                          f"{CARDS_PER_SCREEN}장이 {SCREEN_PX}px 를 넘는다")
+    return [result(C["V11-108"], rid, f"{CARDS_PER_SCREEN}장",
+                   "들어간다" if not bad108 else "안 들어간다",
+                   not bad108, bad108),
+            result(C["V11-109"], rid, "상한 안", "넘음" if bad109 else "안 넘음",
+                   not bad109, bad109[:8])]
+
+
+# 부록 G 절 이름 ↔ 화면 제목.  ★ 순서는 부록 G 가 정한다 — 여기는 이름표뿐
+WHY_SECTION_WORDS = {
+    "머리말": ("판정 근거",),
+    "값": ("감가 곡선", "값"),
+    "왜 싼가": ("왜 싼가", "왜 비싼가"),
+    "무엇을 조회했는가": ("무엇을 조회했는가",),
+    "축별 판정": ("축별 판정",),
+    "마이너스": ("마이너스",),
+    "확인 못 한 것": ("확인 못 한 것",),
+    "옵션": ("옵션",),
+    "비용": ("비용",),
+    "참고 자료": ("참고 자료",),
+}
+WHY_RENDER = "why_listing_id.html"
+
+
+def _why_order_spec() -> list:
+    """부록 G 3장 「절 순서」를 읽는다.  ★ 순서를 코드에 박지 않는다."""
+    path = os.path.join(ROOT, "docs", "ref", "G-screens.md")
+    if not os.path.isfile(path):
+        return []
+    body = open(path, encoding="utf-8").read()
+    head = body.find("## 절 순서")
+    if head < 0:
+        return []
+    block = body[head:body.find("```", body.find("```", head) + 3)]
+    # ★ 「값 — ★ 가장 크게」처럼 뒤에 설명이 붙는다.  이름만 뗀다
+    out = []
+    for got in re.finditer(r"^[①-⑩]\s*(.+)$", block, re.M):
+        name = re.split(r"\s+[—(]|\s*/\s*", got.group(1).strip())[0]
+        out.append(name.strip())
+    return out
+
+
+def _why_order_check(rid):
+    """V11-110 — 상세 절 순서가 부록 G 와 같은가.
+
+    ★ 순서가 판단 순서다.  값을 먼저 보고 근거를 나중에 본다.
+    ★ 렌더 결과의 제목을 차례대로 읽는다 — 템플릿 순서가 아니라
+      실제로 나온 순서다 (절이 조건부로 빠질 수 있다)
+    """
+    want = _why_order_spec()
+    path = os.path.join(ROOT, "outputs", "render", WHY_RENDER)
+    if not want:
+        return not_applicable(C["V11-110"], rid, "부록 G 에서 절 순서를 못 읽었다")
+    if not os.path.isfile(path):
+        return not_applicable(C["V11-110"], rid, "렌더 결과가 없다")
+    html = open(path, encoding="utf-8").read()
+    heads = [re.sub(r"<[^>]+>", "", x.group(1)).strip()
+             for x in re.finditer(r"<h[12][^>]*>(.*?)</h[12]>", html, re.S)]
+    # 부록 G 의 절이 화면 어디에 나왔는가
+    at = []
+    for name in want:
+        words = WHY_SECTION_WORDS.get(name, (name,))
+        found = [i for i, h in enumerate(heads)
+                 if any(w in h for w in words)]
+        at.append((name, found[0] if found else None))
+    bad = [f"{n} 절이 없다" for n, i in at if i is None]
+    seen = [(n, i) for n, i in at if i is not None]
+    for (n1, i1), (n2, i2) in zip(seen, seen[1:], strict=False):
+        if i1 > i2:
+            bad.append(f"{n1} 이 {n2} 보다 뒤에 있다 "
+                       f"— 부록 G 는 {n1} → {n2} 다")
+    return result(C["V11-110"], rid, "부록 G 순서",
+                  "같다" if not bad else "다르다", not bad, bad[:6])
+
+
 def _screen_contradiction_check(rid):
     """V11-105 — 화면 위아래가 어긋나지 않는가 (개정 325).
 
@@ -1726,7 +1997,9 @@ def _v1_parity_checks(rid):
             if not any(x in src_b for x in in_v2):
                 bad69.append(f"{v2_name} — {op}")
     return [_photo_size_by_screen_check(rid), _template_leak_check(rid),
-            _em_dash_check(rid), _screen_contradiction_check(rid),
+            _em_dash_check(rid), *_card_shape_checks(rid),
+            _why_order_check(rid),
+            _screen_contradiction_check(rid),
             _chunk_check(rid),
             _csrf_reuse_check(rid),
             _origin_price_check(rid),
