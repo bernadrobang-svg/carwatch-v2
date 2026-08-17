@@ -773,3 +773,54 @@ def collect_scale(conn: sqlite3.Connection) -> tuple[int, int]:
         "SELECT COUNT(DISTINCT target_key) FROM core_listing "
         "WHERE target_key IS NOT NULL").fetchone()[0] or 1
     return int(seen), int(known)
+
+
+# 카탈로그를 못 받은 사유 (개정 327).  ★ not_called 는 우리 잘못이다
+CATALOG_ENDPOINT = "catalog"
+# 못 받은 사유 중 우리 잘못인 것 (개정 327).
+# ★ empty · not_found 는 사이트가 안 주는 것이다 — 세되 벌하지 않는다
+OUR_FAULT = ("not_called", "http_error", "parse_failed", "error")
+
+
+def catalog_coverage(conn) -> dict:
+    """필요한 조합 · 받은 것 · 못 받은 사유 (개정 327).
+
+    ★ 카탈로그는 「모델·연식·트림」 조합 단위다.  매물 단위가 아니다.
+      호출 키가 곧 조합 키다 — raw_response.source_id 가 model_catalog_key 다
+    ★ 「몇 건 받았다」가 아니라 「몇 개 중 몇 개」를 낸다
+    """
+    # ★ 판정하는 매물의 조합만 「필요」다.  out_of_scope 는 안 판정하므로
+    #   그 카탈로그를 안 부른 것은 잘못이 아니다 — 그대로 세면
+    #   「not_called 3조합 · 우리 잘못」이 영영 뜬다 (실측 08-18)
+    need = {r[0] for r in conn.execute(
+        "SELECT DISTINCT model_catalog_key FROM core_listing"
+        " WHERE model_catalog_key IS NOT NULL AND status='active'")}
+    tried: dict = {}
+    for key, status in conn.execute(
+        "SELECT source_id, status FROM raw_response WHERE endpoint=?",
+        (CATALOG_ENDPOINT,)
+    ):
+        tried.setdefault(key, set()).add(status)
+    ok = {k for k, v in tried.items() if "ok" in v}
+    why: dict = {"not_called": sorted(need - set(tried))}
+    for key in set(tried) - ok:
+        for status in sorted(tried[key]):
+            why.setdefault(status, []).append(key)
+    # 조합마다 매물이 몇 건 걸려 있는가 — 급한 정도가 다르다
+    weight = dict(conn.execute(
+        "SELECT model_catalog_key, COUNT(*) FROM core_listing"
+        " WHERE model_catalog_key IS NOT NULL AND status='active'"
+        " GROUP BY model_catalog_key"))
+    # ★ 마스터가 읽는 것은 15자리 키가 아니라 「G80_25T · 2024-11」이다
+    label = {}
+    for key, target, ym in conn.execute(
+        "SELECT model_catalog_key, MIN(target_key), MIN(year_month)"
+        " FROM core_listing WHERE model_catalog_key IS NOT NULL"
+        " AND status='active' GROUP BY model_catalog_key"
+    ):
+        label[key] = " · ".join(x for x in (target, ym) if x) or key
+    return {"need": need, "ok": ok, "why": why, "weight": weight,
+            "label": label,
+            "linked": {r[0] for r in conn.execute(
+                "SELECT DISTINCT model_catalog_key FROM dict_model_option"
+                " WHERE model_catalog_key IS NOT NULL")}}

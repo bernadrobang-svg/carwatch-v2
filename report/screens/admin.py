@@ -625,6 +625,8 @@ def status_view(conn, root: str = ".") -> dict:
         # ★ 4시간마다 저절로 센 결과 (개정 335 · S29-0).
         #   마스터가 「다 했어?」를 묻지 않아도 화면에 남아 있게 한다
         "light": _light_result(root, _mins),
+        # ★ 카탈로그는 조합 단위다.  「147건 받았다」로 끝내지 않는다 (개정 327)
+        "catalog": _catalog_state(conn),
         "poll_sec": int(web.get("status_poll_sec") or 0),
         "checked_at": now.isoformat(timespec="seconds"),
         "running": ({"job_id": running[0], "reason": running[1],
@@ -643,6 +645,40 @@ def status_view(conn, root: str = ".") -> dict:
         "stalled_min": (last_min if running is not None else None),
         "recent_jobs": recent,
         "failed_jobs": failed,
+    }
+
+
+# 화면에 몇 조합까지 보일 것인가.  ★ 매물 많은 조합부터 낸다
+CATALOG_ROWS = 8
+
+
+def _catalog_state(conn) -> dict:
+    """카탈로그 조합 전수 (개정 327 · V1-23 · V1-24).
+
+    ★ 「몇 건 받았다」가 아니라 「몇 개 중 몇 개」와 「왜 못 받았나」를 낸다.
+      마스터 지적 「카탈로그가 왜 없어. 수집하다가 버린 거겠지」
+    """
+    from store.core import OUR_FAULT, catalog_coverage
+
+    got = catalog_coverage(conn)
+    need, ok, weight = got["need"], got["ok"], got["weight"]
+    rows = []
+    for why, keys in got["why"].items():
+        for key in keys:
+            rows.append({"key": key,
+                         "label": got["label"].get(key, key),
+                         "why": why,
+                         "listings": weight.get(key, 0),
+                         "ours": why in OUR_FAULT})
+    rows.sort(key=lambda r: -r["listings"])
+    blind = sum(n for k, n in weight.items() if k not in got["linked"])
+    return {
+        "need": len(need), "got": len(ok & need),
+        "pct": round(len(ok & need) * 100 / len(need), 1) if need else 0,
+        "blind": blind,
+        "ours": sum(1 for r in rows if r["ours"]),
+        "missing": rows[:CATALOG_ROWS],
+        "more": max(0, len(rows) - CATALOG_ROWS),
     }
 
 

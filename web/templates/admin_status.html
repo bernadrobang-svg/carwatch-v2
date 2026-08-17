@@ -57,6 +57,39 @@
 {% endif %}
 {% endif %}
 
+<!-- 카탈로그 조합 전수 (개정 327 · V1-23 · V1-24).
+     ★ 「147건 받았다」로 끝내지 않는다 — 몇 개 중 몇 개인지 낸다 -->
+<h2>⓪-2 카탈로그 <span class="more">조합 단위로 셉니다</span></h2>
+
+<p>
+  <strong>{{ catalog.need | num }}조합</strong> 중
+  <strong>{{ catalog.got | num }}조합</strong>을 받았습니다
+  <span class="muted">{{ catalog.pct }}%</span>
+  {% if catalog.blind %}<span class="chip-bad">카탈로그 없는 매물 {{ catalog.blind | num }}건</span>{% endif %}
+  {% if catalog.ours %}<span class="chip-bad">우리 잘못 {{ catalog.ours | num }}조합</span>{% endif %}
+  {% if !catalog.ours %}<span class="chip-good">못 부른 조합 없음</span>{% endif %}
+</p>
+<p class="muted">★ 카탈로그가 없으면 옵션 값을 못 매겨 <strong>옵션 축이 0점</strong>이 됩니다 —
+  「0점」이 아니라 <strong>「확인 안 됨」</strong>으로 셉니다 (개정 325).</p>
+
+{% if catalog.missing %}
+<table class="rows cat-rows">
+<thead><tr><th>차종 · 연식</th><th>왜 못 받았나</th><th class="r">걸린 매물</th></tr></thead>
+<tbody>
+{% for m in catalog.missing %}
+<tr><td data-label="차종 · 연식" title="카탈로그 키 {{ m.key }}">{{ m.label }}</td>
+  <td data-label="왜 못 받았나">{% if m.ours %}<span class="chip-bad">{{ m.why }} · 우리 잘못</span>{% endif %}{% if !m.ours %}<span class="muted">{{ m.why }} · 사이트가 안 줍니다</span>{% endif %}</td>
+  <td class="r num" data-label="걸린 매물">{{ m.listings | num }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% if catalog.more %}<p class="muted">그 밖 {{ catalog.more | num }}조합이 더 있습니다.</p>{% endif %}
+{% endif %}
+
+{% if !catalog.missing %}
+<p class="muted">못 받은 조합이 없습니다.</p>
+{% endif %}
+
 <h2>① 지금 도는 것</h2>
 
 {% if live_running %}

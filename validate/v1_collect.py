@@ -66,10 +66,24 @@ C = {
                    FATAL, "run",
                    "S5 에서 0 인 매물만 요청한다. 1·2 는 404 다 (STEP 21b)",
                    KIND_CODE),
-    "V1-23": Check("V1", "V1-23", "ok 로 저장된 원문이 온전한가", FATAL, "run",
+    # ★ V1-23·V1-24 는 규격이 카탈로그 조합 전수에 배정했다 (개정 327).
+    #   개발측이 만든 이 검사는 V1-25 로 옮긴다 — 번호는 규격이 정한다 (규칙 2)
+    "V1-25": Check("V1", "V1-25", "ok 로 저장된 원문이 온전한가", FATAL, "run",
                    "조각을 이어붙이지 못하고 낱개로 저장한 자리를 찾는다 "
                    "— 실측 08-17: facet 55조각이 ok 로 들어와 있었다. "
                    "「실패 안 났다」와 「제대로 들어왔다」는 다르다 (개정 307)",
+                   KIND_CODE),
+    "V1-23": Check("V1", "V1-23", "필요한 조합 대비 받은 카탈로그 비율",
+                   FATAL, "run",
+                   "매물에서 나온 것만 받지 않는다 — 필요한 조합을 먼저 세고 "
+                   "못 받은 것은 사유를 남긴다.  not_called 는 우리 잘못이다. "
+                   "마스터 지적 「카탈로그가 왜 없어. 수집하다가 버린 거겠지」 "
+                   "(개정 327)",
+                   KIND_CODE),
+    "V1-24": Check("V1", "V1-24", "받은 카탈로그가 매물과 이어짐",
+                   FATAL, "run",
+                   "받았는데 매물과 안 이어지면 받은 것이 아니다 — "
+                   "매칭 키를 검사한다 (개정 327)",
                    KIND_CODE),
     "V1-21": Check("V1", "V1-21", "받아 두고 안 펼쳐진 원문이 없음", FATAL,
                    "run",
@@ -252,6 +266,7 @@ def run(conn, ctx) -> list:
     out.append(_catalog_key_check(conn, rid))
     out.append(_unparsed_envelope_check(conn, rid))
     out.append(_whole_body_check(conn, rid))
+    out += _catalog_checks(conn, rid)
     out.append(_empty_db_check(conn, rid))
     return out
 
@@ -532,7 +547,7 @@ def _whole_probe() -> int:
 
 
 def _whole_body_check(conn, rid):
-    """V1-23 — ok 원문이 통째로 들어왔는가 (개정 307).
+    """V1-25 — ok 원문이 통째로 들어왔는가 (개정 307).
 
     ★ 사고 08-17 — 화면은 바이트를 나눠 보냈는데 서버가 이어붙일 줄 몰라
       조각 55개가 각각 「ok」로 저장됐다.  수집 화면은 「실패 0건」이라 했다
@@ -554,7 +569,59 @@ def _whole_body_check(conn, rid):
                 bad.append(f"{kind} raw {raw_id} 이 JSON 이 아니다 "
                            f"({len(body):,}B) — 조각일 수 있다")
                 break
-    return result(C["V1-23"], rid, 0, len(bad), not bad, bad[:6])
+    return result(C["V1-25"], rid, 0, len(bad), not bad, bad[:6])
+
+
+# 카탈로그 조합 전수 조회는 store 에 있다 (개정 327).
+# ★ report 화면도 같은 것을 쓴다 — report 는 validate 를 못 부른다 (V4-22)
+from store.core import OUR_FAULT, catalog_coverage   # noqa: E402
+
+
+def _catalog_checks(conn, rid):
+    """V1-23 · V1-24 — 카탈로그 조합 전수 (개정 327).
+
+    ★ 마스터 지적 「카탈로그가 왜 없어. 수집하다가 버린 거겠지」.
+      147건을 받았는데 필요한 조합이 몇 개인지 센 적이 없었다
+    ★ 비율을 「내는가」가 검산이다.  100%를 요구하는 것이 아니다 —
+      엔카가 안 주는 조합이 있다 (실측 08-18: 22조합이 `[]` 다).
+      우리 잘못(not_called · http_error · parse_failed)에만 걸린다
+    """
+    got = catalog_coverage(conn)
+    need, ok = got["need"], got["ok"]
+    if not need:
+        return [not_applicable(C["V1-23"], rid, "매물에 카탈로그 키가 없다"),
+                not_applicable(C["V1-24"], rid, "매물에 카탈로그 키가 없다")]
+    ratio = len(ok & need) / len(need)
+    lines, ours = [], []
+    for why, keys in sorted(got["why"].items(),
+                            key=lambda kv: -sum(got["weight"].get(k, 0)
+                                                for k in kv[1])):
+        if not keys:
+            continue
+        rows = sum(got["weight"].get(k, 0) for k in keys)
+        note = f"{why} {len(keys)}조합 · 매물 {rows:,}건 (예: {keys[0]})"
+        if why in OUR_FAULT:
+            ours.append(note + "  ★ 우리 잘못이다")
+        else:
+            lines.append(note)
+    blind = sum(n for k, n in got["weight"].items() if k not in got["linked"])
+    actual = (f"{len(ok & need)}조합 · {ratio * 100:.1f}% · "
+              f"카탈로그 없는 매물 {blind:,}건"
+              + (f" · 사이트가 안 줌 {'; '.join(lines)}" if lines else ""))
+    # V1-24 — 받았는데 매물과 안 이어진 것.  받은 것이 아니다
+    bad24 = []
+    stray = got["linked"] - need
+    if stray:
+        bad24.append(f"사전에 있는데 매물과 안 이어지는 조합 {len(stray)}개"
+                     f" (예: {sorted(stray)[0]})")
+    lost = sorted(ok & need - got["linked"])
+    if lost:
+        bad24.append(f"ok 로 받았는데 사전에 안 들어간 조합 {len(lost)}개"
+                     f" (예: {lost[0]}) — 받은 것이 아니다")
+    return [
+        result(C["V1-23"], rid, f"{len(need)}조합", actual, not ours, ours[:6]),
+        result(C["V1-24"], rid, 0, len(bad24), not bad24, bad24[:4]),
+    ]
 
 
 def _unparsed_envelope_check(conn, rid):

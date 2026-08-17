@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 283개 · 규격이 요구했는데 코드에 없는 것 **33개** · 코드에 있는데 규격에 없는 것 **14개**
+검사 285개 · 규격이 요구했는데 코드에 없는 것 **33개** · 코드에 있는데 규격에 없는 것 **15개**
 
 | 코드 | 무엇 | 등급 | 소스 | 규격 |
 |---|---|---|---|---|
@@ -39,23 +39,25 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:45` | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:48` | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:51` | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
 | `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
-| `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:119` | chapters/20-verify/b-v1v2.md:32 |
-| `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:116` | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
+| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:133` | chapters/20-verify/b-v1v2.md:32 |
+| `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:130` | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:61` | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
-| `V1-12` | 연속 실패 중단 시 ResumePoint 가 남음 | run | `validate/v1_collect.py:112` | guide/03_이력.md:115 · chapters/20-verify/b-v1v2.md:35 |
-| `V1-13` | 껍데기를 거친 실행과 직접 실행의 인자가 같음 | run | `validate/v1_collect.py:90` | guide/01_시작.md:113 · guide/03_이력.md:123 · guide/03_이력.md:211 |
+| `V1-12` | 연속 실패 중단 시 ResumePoint 가 남음 | run | `validate/v1_collect.py:126` | guide/03_이력.md:115 · chapters/20-verify/b-v1v2.md:35 |
+| `V1-13` | 껍데기를 거친 실행과 직접 실행의 인자가 같음 | run | `validate/v1_collect.py:104` | guide/01_시작.md:113 · guide/03_이력.md:123 · guide/03_이력.md:211 |
 | `V1-14` | diagnosis 호출 대상이 encarDiagnosis == 0 으로 좁혀짐 | run | `validate/v1_collect.py:64` | guide/03_이력.md:170 · guide/03_이력.md:186 · chapters/13-pipeline.md:160 |
-| `V1-15` | expected == 요청 대상 수 (skipped 제외) | run | `validate/v1_collect.py:107` | guide/03_이력.md:193 · chapters/13-pipeline.md:160 · chapters/20-verify/b-v1v2.md:38 |
-| `V1-16` | 이번 run_id 밖의 행을 보지 않음 | run | `validate/v1_collect.py:102` | guide/03_이력.md:191 · guide/03_이력.md:193 · guide/03_이력.md:195 |
-| `V1-17` | diagnosis 가 detail 뒤에 있음 | run | `validate/v1_collect.py:95` | guide/03_이력.md:212 · chapters/20-verify/b-v1v2.md:40 · chapters/10-collect/a-endpoint.md:152 |
-| `V1-18` | 빈 DB 에서도 검사가 돈다 | run | `validate/v1_collect.py:99` | guide/03_이력.md:210 · chapters/13-pipeline.md:133 · chapters/20-verify/b-v1v2.md:41 |
-| `V1-19` | 이번 실행이 저장한 원문에 run_id 가 있음 | run | `validate/v1_collect.py:85` | — |
-| `V1-20` | 카탈로그를 모델당 1회만 받음 | run | `validate/v1_collect.py:80` | — |
-| `V1-21` | 받아 두고 안 펼쳐진 원문이 없음 | run | `validate/v1_collect.py:74` | guide/03_이력.md:275 · chapters/13-pipeline.md:205 · chapters/20-verify/b-v1v2.md:42 |
+| `V1-15` | expected == 요청 대상 수 (skipped 제외) | run | `validate/v1_collect.py:121` | guide/03_이력.md:193 · chapters/13-pipeline.md:160 · chapters/20-verify/b-v1v2.md:38 |
+| `V1-16` | 이번 run_id 밖의 행을 보지 않음 | run | `validate/v1_collect.py:116` | guide/03_이력.md:191 · guide/03_이력.md:193 · guide/03_이력.md:195 |
+| `V1-17` | diagnosis 가 detail 뒤에 있음 | run | `validate/v1_collect.py:109` | guide/03_이력.md:212 · chapters/20-verify/b-v1v2.md:40 · chapters/10-collect/a-endpoint.md:152 |
+| `V1-18` | 빈 DB 에서도 검사가 돈다 | run | `validate/v1_collect.py:113` | guide/03_이력.md:210 · chapters/13-pipeline.md:133 · chapters/20-verify/b-v1v2.md:41 |
+| `V1-19` | 이번 실행이 저장한 원문에 run_id 가 있음 | run | `validate/v1_collect.py:99` | — |
+| `V1-20` | 카탈로그를 모델당 1회만 받음 | run | `validate/v1_collect.py:94` | — |
+| `V1-21` | 받아 두고 안 펼쳐진 원문이 없음 | run | `validate/v1_collect.py:88` | guide/03_이력.md:275 · chapters/13-pipeline.md:205 · chapters/20-verify/b-v1v2.md:42 |
 | `V1-22` | — | — | **★ 코드에 없다** | guide/03_이력.md:303 · chapters/30-score/a-frame.md:542 |
-| `V1-23` | ok 로 저장된 원문이 온전한가 | run | `validate/v1_collect.py:69` | guide/03_이력.md:334 · chapters/10-collect/00-intro.md:341 |
+| `V1-23` | 필요한 조합 대비 받은 카탈로그 비율 | run | `validate/v1_collect.py:76` | guide/03_이력.md:334 · chapters/10-collect/00-intro.md:341 |
+| `V1-24` | 받은 카탈로그가 매물과 이어짐 | run | `validate/v1_collect.py:83` | guide/03_이력.md:334 · chapters/10-collect/00-intro.md:342 |
+| `V1-25` | ok 로 저장된 원문이 온전한가 | run | `validate/v1_collect.py:71` | — |
 | `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | chapters/00-standard.md:354 · chapters/11-store/a-key.md:298 · chapters/20-verify/b-v1v2.md:97 |
 | `V2-02` | 필수 컬럼 NOT NULL 위반 없음 | run | `validate/v2_load.py:29` | chapters/20-verify/b-v1v2.md:98 |
 | `V2-03` | — | — | **★ 코드에 없다** | chapters/11-store/a-key.md:339 · chapters/20-verify/b-v1v2.md:99 |
@@ -363,6 +365,7 @@
 
 - `V1-19` 이번 실행이 저장한 원문에 run_id 가 있음 — `validate/v1_collect.py`
 - `V1-20` 카탈로그를 모델당 1회만 받음 — `validate/v1_collect.py`
+- `V1-25` ok 로 저장된 원문이 온전한가 — `validate/v1_collect.py`
 - `V11-37` POST 가 예상 밖 500 을 내지 않음 — `validate/v11_web.py`
 - `V11-38` 템플릿이 쓰는 값을 뷰가 넘김 — `validate/v11_web.py`
 - `V11-39` 저장 단추가 실제로 저장함 — `validate/v11_web.py`

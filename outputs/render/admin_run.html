@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=30af8a529c">
+<link rel="stylesheet" href="/static/app.css?v=c68963eb09">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-run">
@@ -90,12 +90,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>failed</strong> · 사유 raw_missing · 범위 KOLEOS_HEV
-    </p>
+  <p><strong>failed</strong> · 사유 raw_missing · 범위 all
+    <span class="muted">· run 20260817T190036</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-16T03:48:11.495028+00:00</span></p>
-  <p class="muted">중단 — S5 는 CLI 로 이미 돌렸다. 큐를 가져가는 실행기가 없어 잠금만 남는다 · 재개점 없음</p>
+    <span class="muted">· 넣은 시각 2026-08-17T19:00:36.585924+00:00</span></p>
+  <p class="muted">S5: 선행 조건 미충족: 선행 단계 미완료: S4</p>
   
   
 
@@ -210,6 +210,11 @@
 <thead><tr><th>시각</th><th>상태</th><th>단계</th><th class="num">진행</th><th>사유</th><th></th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-17T19:00:36.585924+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
 <tr><td data-label="시각">2026-08-16T03:48:11.495028+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
@@ -238,7 +243,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 03:00</span>
+  <span>2026-08-18 07:32</span>
 </footer>
 
 </body>

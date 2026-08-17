@@ -754,22 +754,33 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         #   응답이 모델-연식 카탈로그라 모델당 1회면 된다
         # ★ GROUP BY 는 WHERE 뒤에 와야 한다 — _scope 가 조건을 덧붙이므로
         #   여기서는 직접 조립한다
+        # ★ 대표를 여럿 들고 온다.  하나가 404 여도 조합이 없는 것이 아니다 —
+        #   실측 08-18: 같은 조합 23매물 중 셋은 404, 셋은 200 [] 이었다.
+        #   대표 하나로 포기하면 「없다」와 「못 물어봤다」가 섞인다 (개정 327)
         sql, args = _scope(
-            "SELECT model_catalog_key, MIN(source_id) FROM core_listing "
+            "SELECT model_catalog_key, source_id FROM core_listing "
             "WHERE model_catalog_key IS NOT NULL AND status='active' "
             "AND model_catalog_key NOT IN (SELECT source_id "
             "FROM raw_response WHERE endpoint='catalog')")
-        keys = [(k, s) for k, s in
-                conn.execute(sql + " GROUP BY model_catalog_key", args)
-                .fetchall() if k]
-        for k, rep_sid in keys:
+        reps: dict = {}
+        for k, sid in conn.execute(sql + " ORDER BY source_id", args):
+            if k:
+                reps.setdefault(k, []).append(sid)
+        keys = sorted(reps)
+        for k in keys:
             say("S7", f"카탈로그 {k}", rows, len(keys))
-            req = adapter.catalog_url(rep_sid)
-            st = time.time()
-            # 저장 키는 모델이다 — 다음 실행의 중복 제거가 이 값으로 돈다
-            res = fetch(req, fetcher, "catalog", clock, source_id=k)
-            _log_request(conn, ctx, "catalog", k, req.url, res,
-                         int((time.time() - st) * MS_PER_SEC))
+            res = req = None
+            for rep_sid in reps[k][:int(cfg.get("catalog_reps") or 1)]:
+                req = adapter.catalog_url(rep_sid)
+                st = time.time()
+                # 저장 키는 모델이다 — 다음 실행의 중복 제거가 이 값으로 돈다
+                res = fetch(req, fetcher, "catalog", clock, source_id=k)
+                _log_request(conn, ctx, "catalog", k, req.url, res,
+                             int((time.time() - st) * MS_PER_SEC))
+                if res.status != "not_found":
+                    break
+                # ★ 이 매물만 사라진 것일 수 있다 — 다음 대표로 다시 묻는다
+                _sleep(cfg, rng)
             tally[res.status] = tally.get(res.status, 0) + 1
             streak.observe(res)
             if streak.tripped:
