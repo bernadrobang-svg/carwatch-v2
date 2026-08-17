@@ -393,3 +393,4 @@ enum_{axis}.json        연료 · 색상 · 트림 · 부위 · 상태
 | `status_poll_sec` | 진행 모니터 갱신 간격 (초) | `5` | 08-16 · STEP 136f |
 | `collect_daily_at` | 매일 자동 수집 시각 | `04:00` | 08-17 · STEP 136h |
 | `list_stale_days` | 목록이 오래됐다고 보는 날 수 | `1` | 08-17 · STEP 136i |
+| `detail_refresh_days` | 상세를 다시 받는 기준 날 수 | `7` | 08-17 · STEP 136h |
