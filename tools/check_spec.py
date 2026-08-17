@@ -350,5 +350,119 @@ print(f"S22 정적 검사 등재 {len(_bad22)} {_bad22}")
 if _bad22:
     fail.append(f"정적 검사 {_bad22}")
 
+# ── S28 가이드 작업 규칙 (개정 333) ─────────────────────────────────
+# ★ 가이드가 자기를 검사하면 같은 맹점을 넘긴다.
+#   「고치는 쪽」과 「검사하는 쪽」이 갈린다 — 그것이 검사의 뜻이다
+#   ★ 개발측은 지시서를 고치지 않는다 (규칙 2).  잡아서 넘긴다
+CANON = {
+    "배점": "ref/F-scoring.md",
+    "화면": "ref/G-screens.md",
+}
+# 정본 밖에 나오면 안 되는 숫자.  ★ 배점의 총합과 등급 기준이다
+CANON_NUMBERS = ("605", "555")
+# 폐기 표시 문구 — 이것이 있으면 그 절은 건너뛴다
+RETIRED_MARK = "폐기"
+
+
+def _guide_files() -> list:
+    return [f for f in _spec_files()
+            if "/ref/" not in f.replace("\\", "/")]
+
+
+def _sections(body: str) -> list:
+    """머리말 단위로 자른다.  ★ 「폐기」가 붙은 절을 건너뛰기 위해서다."""
+    out, cur = [], []
+    for line in body.splitlines():
+        if line.startswith("#") and cur:
+            out.append("\n".join(cur))
+            cur = []
+        cur.append(line)
+    if cur:
+        out.append("\n".join(cur))
+    return out
+
+
+# S28-1 · S28-2 — 정본 밖 숫자
+_bad28_1, _bad28_2 = [], []
+for _f in _guide_files():
+    _rel = _f.split("docs/", 1)[-1]
+    for _sec in _sections(io.open(_f, encoding="utf-8").read()):
+        head = _sec.splitlines()[0] if _sec else ""
+        if RETIRED_MARK in head or RETIRED_MARK in _sec[:400]:
+            continue                    # 폐기 표시가 있으면 건너뛴다
+        for _n in CANON_NUMBERS:
+            if re.search(rf"\b{_n}\b *점", _sec):
+                _bad28_1.append(f"{_rel} — 배점 {_n} 이 정본 밖에 있다")
+                break
+        if re.search(r"\d+×\d+", _sec) and "G-screens" not in _rel:
+            _bad28_2.append(f"{_rel} — 화면 크기가 정본 밖에 있다")
+
+# S28-4 — 이력 마지막 개정 = 00_버전.md
+_hist = next((io.open(f, encoding="utf-8").read() for f in _spec_files()
+              if f.endswith("03_이력.md")), "")
+_ver = next((io.open(f, encoding="utf-8").read() for f in _spec_files()
+             if f.endswith("00_버전.md")), "")
+_nums = sorted(int(x) for x in re.findall(r"^\| *(\d{2,3}) *\|", _hist, re.M))
+_bad28_4 = []
+_declared = re.search(r"SPEC-[\d.\-]+-r(\d+)", _ver)
+if _nums and _declared and int(_declared.group(1)) != _nums[-1]:
+    _bad28_4.append(f"버전 r{_declared.group(1)} != 이력 마지막 {_nums[-1]}")
+
+# S28-5 — 본문이 참조하는 개정 번호가 이력에 실재하는가
+_have = set(_nums)
+_bad28_5 = []
+for _f in _guide_files() + [f for f in _spec_files() if "/ref/" in f]:
+    _rel = _f.split("docs/", 1)[-1]
+    for _m in re.finditer(r"개정 (\d{2,3})", io.open(_f, encoding="utf-8").read()):
+        if int(_m.group(1)) not in _have:
+            _bad28_5.append(f"{_rel} — 개정 {_m.group(1)} 이 이력에 없다")
+            break
+
+# S28-6 — 개정 번호가 건너뛰거나 겹치지 않는가
+_bad28_6 = []
+if _nums:
+    _dup = {n for n in _nums if _nums.count(n) > 1}
+    if _dup:
+        _bad28_6.append(f"겹친 개정 {sorted(_dup)}")
+    _gap = [n for n in range(_nums[0], _nums[-1] + 1) if n not in _have]
+    if _gap:
+        _bad28_6.append(f"빠진 개정 {_gap[:8]}")
+
+# S28-3 — 폐기 표시와 00_버전.md 폐기 표가 일치하는가
+_bad28_3 = []
+# ★ 이력은 「| 306 | 08-17 | …」 꼴이다.  「개정 306」 문자열이 아니다
+_retired_tbl = {int(x) for x in re.findall(r"^\| *개정 (\d{2,3})", _ver, re.M)}
+for _n in sorted(_retired_tbl):
+    if _n not in _have:
+        _bad28_3.append(f"폐기 표의 개정 {_n} 이 이력에 없다")
+
+# S28-7 — 정본끼리 모순되지 않는가 (부록 F 축 ↔ CHECKS.md)
+_bad28_7 = []
+_f_scoring = next((io.open(f, encoding="utf-8").read() for f in _spec_files()
+                   if f.endswith("F-scoring.md")), "")
+if _f_scoring:
+    _sums = re.findall(r"\| \*\*합\*\* \| \*\*(\d+)\*\*", _f_scoring)
+    _axes = re.findall(r"^\| *\d+ *\| *[가-힣]+ *\|", _f_scoring, re.M)
+    if _sums and _axes:
+        _rows = re.findall(r"^\| *\d+ *\| *[가-힣]+ *\| *[^|]+\| *(\d+) *\|",
+                           _f_scoring, re.M)
+        if _rows and sum(int(x) for x in _rows) != int(_sums[-1]):
+            _bad28_7.append(
+                f"부록 F 축 합 {sum(int(x) for x in _rows)} != 표기 {_sums[-1]}")
+
+for _code, _title, _bad in (
+    ("S28-1", "배점이 정본 밖에", _bad28_1),
+    ("S28-2", "화면 크기가 정본 밖에", _bad28_2),
+    ("S28-3", "폐기 표 ↔ 이력", _bad28_3),
+    ("S28-4", "버전 ↔ 이력 마지막", _bad28_4),
+    ("S28-5", "참조한 개정이 실재", _bad28_5),
+    ("S28-6", "개정 번호 연속", _bad28_6),
+    ("S28-7", "정본끼리 모순 없음", _bad28_7),
+):
+    print(f"{_code} {_title} {len(_bad)} {_bad[:4]}")
+    if _bad:
+        # ★ 개발측이 고치지 않는다.  기록에 남겨 가이드에게 넘긴다 (규칙 2)
+        fail.append(f"{_code} {_bad[:2]}")
+
 print("\n결과:", "통과" if not fail else "실패 — " + " / ".join(fail))
 sys.exit(1 if fail else 0)

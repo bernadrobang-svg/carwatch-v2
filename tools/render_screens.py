@@ -160,6 +160,40 @@ def shot_paths() -> list:
     return out
 
 
+# 사진을 몇 장까지 받아 둘 것인가.  ★ 스크린샷이 오래 걸리면 아무도 안 본다
+SHOT_IMAGE_MAX = 40
+SHOT_IMAGE_TIMEOUT = 8
+
+
+def _localize_images(html: str, site: str, cache: dict) -> str:
+    """원격 사진을 받아 옆에 두고 그것을 가리키게 한다.
+
+    ★ file:// 에서는 https 이미지를 안 받는다.  받아 두지 않으면
+      「사진이 안 나온다」로 보이고 검토가 헛돈다 (실측 08-17 —
+      가이드가 「빈 회색 상자」라 했는데 실서비스는 멀쩡했다)
+    ★ 못 받으면 그대로 둔다 — 없는 사진을 만들지 않는다
+    """
+    import urllib.request
+
+    for url in dict.fromkeys(re.findall(r'src="(https?://[^"]+)"', html)):
+        if url not in cache:
+            if len(cache) >= SHOT_IMAGE_MAX:
+                break
+            name = f"img{len(cache):03d}" + os.path.splitext(url)[1][:5]
+            try:
+                with urllib.request.urlopen(
+                        url, timeout=SHOT_IMAGE_TIMEOUT) as res:  # noqa: S310
+                    body = res.read()
+                with open(os.path.join(site, name), "wb") as f:
+                    f.write(body)
+                cache[url] = name
+            except Exception:                                # noqa: BLE001
+                cache[url] = None                            # 못 받았다
+        if cache.get(url):
+            html = html.replace(f'src="{url}"', f'src="{cache[url]}"')
+    return html
+
+
 def shoot(base: str = "", paths=None) -> int:
     """★ outputs/render/ 의 HTML 을 그대로 찍는다 (가이드 요청 B안).
 
@@ -189,6 +223,7 @@ def shoot(base: str = "", paths=None) -> int:
     _sh.rmtree(SHOT_DIR, ignore_errors=True)
     os.makedirs(SHOT_DIR)
     made, empty = [], []
+    cache: dict = {}
     with tempfile.TemporaryDirectory() as site:
         _sh.copy(os.path.join(ROOT, "web", "static", "app.css"),
                  os.path.join(site, "app.css"))
@@ -202,6 +237,10 @@ def shoot(base: str = "", paths=None) -> int:
             #     (실측 08-17: 스크린샷이 전부 민무늬로 나왔다)
             html = re.sub(r'href="/static/app\.css[^"]*"',
                           'href="app.css"', html)
+            # ★ file:// 은 원격 이미지를 안 받는다 (실측 08-17 — 사진이 전부
+            #   빈 회색 상자였다).  받아서 옆에 두고 그것을 가리킨다 —
+            #   ★ 「화면이 멀쩡한데 스크린샷만 문제」면 검토가 계속 헛돈다
+            html = _localize_images(html, site, cache)
             open(os.path.join(site, f), "w", encoding="utf-8").write(html)
             name = f[:-5]
             wide = any(name == (p.replace("{listing_id}", SAMPLE["listing_id"]

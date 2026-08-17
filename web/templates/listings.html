@@ -66,8 +66,8 @@
   </td>
   <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="S·A·B·C·D·E 여섯 등급입니다. 절대 기준 — S 90% 이상"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
   <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim">순위 없음</span>{% endif %}</td>
-  <td class="r num" data-label="비율" title="등급 기준 점수 중 몇 %를 받았는가입니다 (취향 제외)">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
-    <span class="raw" title="받은 점수 / 등급 기준 만점입니다. 자세한 근거는 상세에서 봅니다">{{ r.earned | num }}/{{ r.denominator | num }}</span>{% endif %}{% if !r.ratio_pct %}<span class="dim">판정 전</span>{% endif %}</td>
+  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
+  <td class="r num" data-label="비율" title="{{ r.earned | num }} / {{ r.denominator | num }} 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>{% endif %}{% if !r.ratio_pct %}<span class="dim">판정 전</span>{% endif %}</td>
   <td data-label="차종">{% if r.target_label %}<a href="/listings?target={{ r.target_label }}">{{ r.target_label }}</a>{% endif %}</td>
   <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">{{ r.trim }}</td>
   <td class="r" data-label="연식"><a href="/listings?year_from={{ r.year_month }}" title="이 연식 이후만 봅니다">{{ r.year_month }}</a></td>

@@ -1,5 +1,21 @@
 <h1>관리</h1>
 
+<h2>정기 점검 <span class="muted">S29 · 개정 334</span></h2>
+<table class="rows">
+<thead><tr><th>주기</th><th>언제</th><th>마지막</th><th>기록</th></tr></thead>
+<tbody>
+<tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
+  <td data-label="마지막">{% if checks.daily.name %}{{ checks.daily.name }}{% endif %}{% if !checks.daily.name %}<span class="dim">아직 없습니다</span>{% endif %}</td>
+  <td data-label="기록" class="muted">outputs/daily/ · {{ checks.daily.count }}건</td></tr>
+<tr><td data-label="주기">주간 <span class="muted">서로 점검</span></td>
+  <td data-label="언제" class="muted">금 02:00</td>
+  <td data-label="마지막">{% if checks.weekly.name %}{{ checks.weekly.name }}{% endif %}{% if !checks.weekly.name %}<span class="dim">아직 없습니다</span>{% endif %}</td>
+  <td data-label="기록" class="muted">outputs/weekly/ · {{ checks.weekly.count }}건</td></tr>
+</tbody>
+</table>
+<p class="muted">★ 주간은 <strong>개발측이 규격을, 가이드가 구현을</strong> 검사합니다.
+  각자 자기를 검사하면 같은 맹점을 넘깁니다.</p>
+
 {% if h.todos %}
 <h2>조치가 필요한 것</h2>
 <table class="rows">

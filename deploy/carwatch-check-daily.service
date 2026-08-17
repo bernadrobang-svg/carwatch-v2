@@ -1,0 +1,13 @@
+# 일일 점검 (S29 · 개정 334).
+# ★ 하루 마무리 시점에 일제 점검한다.  어제와 견줘 「fatal 4 → 6」을 신호로 낸다
+# ★ 서비스를 재시작하지 않는다 — 마스터의 CSRF 가 끊긴다 (개정 308)
+[Unit]
+Description=CarWatch v2 — 일일 점검
+
+[Service]
+Type=oneshot
+User=ec2-user
+WorkingDirectory=/home/ec2-user/v2
+Environment=LANG=ko_KR.UTF-8
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3.11 tools/daily_check.py

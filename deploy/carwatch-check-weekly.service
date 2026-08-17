@@ -1,0 +1,13 @@
+# 주간 일제 점검 — 개발측 몫 (S29 · 개정 334).
+# ★ 개발측이 규격을 검사한다.  고치지 않는다 (규칙 2) — 가이드에게 넘긴다
+# ★ 02:00 이라 04:00 수집(STEP 136h)보다 앞이다.  결과를 보고 수집한다
+[Unit]
+Description=CarWatch v2 — 주간 일제 점검 (개발측 몫)
+
+[Service]
+Type=oneshot
+User=ec2-user
+WorkingDirectory=/home/ec2-user/v2
+Environment=LANG=ko_KR.UTF-8
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3.11 tools/weekly_check.py

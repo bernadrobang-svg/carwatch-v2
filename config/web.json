@@ -49,5 +49,8 @@
   "_invariant_schema_note": "같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)",
   "price_bucket_won": 5000000,
   "mileage_bucket_km": 10000,
-  "_bucket_note": "값을 누를 때 올려 잡는 단위 (부록 G). ★ 딱 그 값이 아니라 「이하」다"
+  "_bucket_note": "값을 누를 때 올려 잡는 단위 (부록 G). ★ 딱 그 값이 아니라 「이하」다",
+  "check_daily_at": "23:00",
+  "check_weekly_at": "Fri 02:00",
+  "_check_note": "정기 점검 시각 (개정 334 · S29). 주간은 수집(04:00)보다 앞이다 — 결과를 보고 수집한다"
 }

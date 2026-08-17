@@ -1,0 +1,10 @@
+# ★ 금 02:00 — 사람이 안 쓸 때 · 수집(04:00)보다 앞 (개정 334)
+[Unit]
+Description=CarWatch v2 — 주간 일제 점검 금 02:00
+
+[Timer]
+OnCalendar=Fri *-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

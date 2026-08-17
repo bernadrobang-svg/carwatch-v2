@@ -1,11 +1,11 @@
 <h1>후보 <small>{{ funnel.shown | num }}건</small></h1>
 
 <!-- ★ 조건을 한 줄로.  「왜 이 목록인지」가 먼저다 (개정 304) -->
-<p class="cond"><strong>{{ funnel.shown | num }}건</strong> —
-  E · 미판정을 뺀 후보 <strong>{{ funnel.eligible | num }}건</strong> 중
-  <strong>이유를 댈 수 있는 것</strong>만 · 비율 높은 순
-  <span class="dim">판정 {{ funnel.judged | num }}건
-    → E · 미판정 {{ funnel.dropped | num }}건 뺌</span></p>
+<p class="cond"><span class="q"><strong>{{ funnel.shown | num }}건</strong> —
+  E · 미판정을 뺀 후보 {{ funnel.eligible | num }}건 중
+  <strong>이유를 댈 수 있는 것</strong>만 · 비율 높은 순</span>
+  <span class="n">판정 {{ funnel.judged | num }}건 →
+    E · 미판정 {{ funnel.dropped | num }}건 뺌</span></p>
 
 <!-- 조작은 목록과 같은 자리 · 같은 모양 (개정 306 §3 · STEP 148) -->
 <div class="bar">

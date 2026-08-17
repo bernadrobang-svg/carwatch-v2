@@ -1,0 +1,10 @@
+# ★ 23:00 — 하루 마무리 (개정 334)
+[Unit]
+Description=CarWatch v2 — 일일 점검 23:00
+
+[Timer]
+OnCalendar=*-*-* 23:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

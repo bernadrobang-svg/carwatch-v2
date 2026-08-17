@@ -169,8 +169,29 @@ def admin_home(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: 
     from report.screens.admin import view_admin_home
 
     home = view_admin_home(account, conn)
-    return page(conn, account, "관리", "admin.html", {"h": home}, csrf=csrf,
-                root=root, flash_key=flash_key)
+    # ★ 마스터는 금요일 아침에 /admin 을 열면 된다 (S29 · 개정 334)
+    return page(conn, account, "관리", "admin.html",
+                {"h": home, "checks": _check_reports(root)},
+                csrf=csrf, root=root, flash_key=flash_key)
+
+
+def _check_reports(root: str) -> dict:
+    """마지막 점검 기록.  ★ 「언제 봤는가」가 없으면 점검이 아니다 (S29).
+
+    ★ 기록은 프로젝트에 쌓인다.  렌더용 임시 root 를 보면 늘 「없음」이다
+    """
+    import os as _o
+
+    del root
+    home = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    out = {}
+    for key, sub in (("daily", "daily"), ("weekly", "weekly")):
+        base = _o.path.join(home, "outputs", sub)
+        got = sorted(f for f in _o.listdir(base)
+                     if f.endswith(".md")) if _o.path.isdir(base) else []
+        out[key] = {"name": got[-1][:-3] if got else None,
+                    "count": len(got)}
+    return out
 
 
 def admin_audit(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",

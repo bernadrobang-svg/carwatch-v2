@@ -1582,3 +1582,25 @@ body.s-listings main { max-width:1560px; }
 .why { font-size:15px; margin:10px 0 4px; }
 .why-list { margin:0 0 14px 18px; padding:0; }
 .why-list li { margin:3px 0; color:var(--fg); }
+
+/* ── 칸이 쥐어짜여 글자가 세로로 떨어지는 것을 막는다 (개정 307 · G-7)
+   ★ 실측 08-17 — 추천 머리말이 「10건 / — E · 미판정을 뺀 후 보」로
+     한 자씩 떨어졌다.  min-width 가 없어 칸이 0 까지 줄어든 것이다 */
+.cond { flex-wrap:wrap; }
+.cond .q { min-width:22em; }
+.cond .n { min-width:14em; }
+.rows th, .rows td { min-width:3.2em; }
+.rows td.trim, .rows td[data-label="딜러"] { min-width:8em; }
+.rows td[data-label="제조사 보증"] { min-width:9em; white-space:nowrap; }
+
+/* ★ 추천 이유는 문장이다.  좁은 폭에서도 한 칸을 통째로 쓴다 (개정 304 · G-7)
+   실측 08-17 — 「시세보 다 740만 싸고」로 한 자씩 떨어졌다 */
+.rows td[data-label="왜 이 순위인가"] { grid-column:1 / -1; min-width:12em; }
+.rows td[data-label="왜 이 순위인가"] .reason { white-space:normal; }
+@media (max-width: 639px) {
+  /* 카드에서 값 세 개를 한 줄에 (부록 G 목록 4줄) */
+  .rows td[data-label="시세 대비"], .rows td[data-label="신차가 대비"] {
+    grid-column:span 3;
+  }
+  .rows td[data-label="가격"] { grid-column:span 6; }
+}
