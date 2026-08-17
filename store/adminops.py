@@ -651,13 +651,37 @@ def enqueue_recalc(conn: sqlite3.Connection, account: Account, reason: str,
         raise ValidationError(f"{reason} 는 재계산이 필요 없다", step="STEP 132")
     at = at or datetime.now(timezone.utc).isoformat()
     jid = secrets.token_hex(ID_BYTES)
-    trigger = "manual" if origin != "config_change" else "config_change"
+    # ★ 무엇이 이 일을 시작했는지 화면이 밝혀야 한다 (STEP 132 · 136g)
+    trigger = {"config_change": "config_change",
+               "list_save": "schedule"}.get(origin, "manual")
     conn.execute(
         "INSERT INTO recalc_job(job_id,account_id,trigger,reason,from_step,"
         "scope,status,queued_at) VALUES (?,?,?,?,?,?,'queued',?)",
         (jid, account.account_id, trigger, reason, step, scope, at))
     conn.commit()
     return RecalcJob(jid, trigger, reason, step, scope, "queued", None)
+
+
+def enqueue_after_list_save(conn: sqlite3.Connection, account: Account,
+                            *, at: str, plan) -> str | None:
+    """목록 저장이 끝나면 나머지를 큐에 넣는다 (STEP 136g · 개정 314).
+
+    ★ 마스터 지시 — 「셋팅해줘」.
+      지금은 사람이 「이어서 해라」를 말해야 한다.  그것을 없앤다
+    ★ 마스터는 화면을 닫아도 된다.  서버가 계속한다
+    금지   이미 도는 것이 있는데 또 넣는 것 — 겹쳐 돌면 원문이 꼬인다
+    금지   사람이 「이어서 해라」를 말해야 하는 것
+    """
+    got = running_job(conn)
+    if got is not None:
+        return None                    # 이미 돈다.  겹쳐 넣지 않는다
+    job = enqueue_recalc(conn, account, LIST_SAVED_REASON, scope="all",
+                         origin="list_save", at=at, plan=plan)
+    return job.job_id
+
+
+# 목록이 새로 들어왔을 때의 재처리 사유.  ★ 표에 있는 이름을 쓴다 (STEP 50a)
+LIST_SAVED_REASON = "listing_updated"
 
 
 from store.admin import running_job  # noqa: E402,F401  (V10-11)

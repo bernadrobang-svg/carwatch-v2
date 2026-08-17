@@ -1,0 +1,11 @@
+# ★ 새벽 4시 — 사람이 안 쓸 때 (개정 315).
+#   cron 을 두지 않는다.  systemd 가 이미 서비스를 돌린다
+[Unit]
+Description=CarWatch v2 — 하루 한 번
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

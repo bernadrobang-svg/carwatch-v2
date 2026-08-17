@@ -10,3 +10,4 @@ carwatch.db-wal
 secrets/
 inbox/
 *.log
+outputs/check-tmp/

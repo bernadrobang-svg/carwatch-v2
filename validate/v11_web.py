@@ -2445,11 +2445,17 @@ def _scratch() -> str:
 
     실측 08-15: 사본 63MB 가 실행마다 쌓여 디스크가 100% 가 됐고
     그 뒤 전 시험이 한꺼번에 깨졌다
+    ★ 실측 08-17: /tmp 는 921MB tmpfs 인데 DB 가 484MB 로 자랐다.
+      수집이 도는 중에 사본을 뜨자 「database or disk is full」로 죽었다.
+      메모리에 뜨지 않는다 — 여유가 있는 디스크에 둔다
     """
     import atexit
     import shutil
     import tempfile
 
-    path = tempfile.mkdtemp(prefix="cw-check-")
+    # ★ 프로젝트 옆에 둔다.  /tmp 는 tmpfs 라 DB 사본이 안 들어간다
+    base = os.path.join(ROOT, "outputs", "check-tmp")
+    os.makedirs(base, exist_ok=True)
+    path = tempfile.mkdtemp(prefix="cw-check-", dir=base)
     atexit.register(shutil.rmtree, path, ignore_errors=True)
     return path

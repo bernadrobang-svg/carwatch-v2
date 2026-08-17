@@ -118,6 +118,15 @@ def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
         act = ("run.py collect --target <차종>" if account.role == ROLE_ADMIN
                else "관리자에게 수집을 요청하십시오")
         return Banner("pending", "아직 수집하지 않았습니다", act)
+    # ★ 조용히 옛 목록으로 판정하지 않는다 (STEP 136i · 개정 316).
+    #   미분류보다 먼저 낸다 — 목록이 멈추면 그 뒤 숫자가 다 옛것이다
+    stale = _list_stale(n.get("list_at"))
+    if stale is not None:
+        return Banner(
+            "stale",
+            f"엔카 목록이 {stale:.0f}일째 갱신되지 않았습니다 — "
+            "그동안의 가격 변동을 알 수 없습니다",
+            "브라우저 수집을 눌러 주십시오  (/admin/collect)")
     if n["unclassified"]:
         return Banner("unclassified", "등록부에 미분류가 있습니다",
                       "판정에 쓰는 경로면 멈춥니다  (/notready)")
@@ -128,6 +137,29 @@ def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
         return Banner("pending", "분모가 부족해 등급을 매기지 않았습니다",
                       "축별 미확정을 확인하십시오  (/notready)")
     return None
+
+
+def _list_stale(at: str | None) -> float | None:
+    """엔카 목록이 며칠째 안 들어왔나 (STEP 136i).
+
+    ★ 엔카 목록은 407 이라 자동이 아니다.  마스터가 눌러야 한다 —
+      그러니 오래되면 말해야 한다.  조용히 옛것으로 판정하지 않는다
+    """
+    import json as _json
+    from datetime import datetime as _dt
+
+    if not at:
+        return None
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "web.json"),
+              encoding="utf-8") as f:
+        limit = float(_json.load(f)["list_stale_days"])
+    try:
+        then = _dt.fromisoformat(at)
+    except ValueError:
+        return None
+    days = (_dt.now(then.tzinfo) - then).total_seconds() / 86_400
+    return days if days > limit else None
 
 
 _STATIC_VERSION: dict[str, str] = {}

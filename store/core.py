@@ -616,6 +616,10 @@ def state_counts(conn: sqlite3.Connection) -> dict:
         "scores": "SELECT COUNT(*) FROM result_score",
         "not_rated": "SELECT COUNT(*) FROM result_score "
                      "WHERE grade='NOT_RATED'",
+        # ★ 목록이 언제 들어왔나 (STEP 136i · 개정 316).
+        #   가격 변동은 목록에서 온다 — 목록이 멈추면 변동이 멈춘다
+        "list_at": "SELECT COALESCE(MAX(fetched_at),'') FROM raw_response "
+                   "WHERE endpoint='list' AND status='ok'",
     }
     # ★ 넷을 한 번에 센다 — 화면 한 쪽의 쿼리 수를 줄인다 (V11-34 · B-2)
     try:

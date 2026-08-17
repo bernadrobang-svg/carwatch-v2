@@ -1,0 +1,20 @@
+# 큐 일꾼 (STEP 136g · 개정 314).
+# ★ 목록이 저장되면 나머지가 이어서 돈다.  마스터가 화면을 닫아도 된다
+# ★ 이 유닛은 carwatch.service 를 건드리지 않는다 —
+#   재시작이 마스터의 CSRF 를 끊는다 (개정 308 실측)
+[Unit]
+Description=CarWatch v2 — 재처리 큐 일꾼
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/v2
+Environment=LANG=ko_KR.UTF-8
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3.11 -m collect.worker --watch
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target

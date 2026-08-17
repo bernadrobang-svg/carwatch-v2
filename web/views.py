@@ -1068,7 +1068,7 @@ def admin_status(conn, account, req, root: str = ROOT, csrf: str = "",
 
 
 def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
-                  flash_key: str = "-", collect_urls=None, **_kw):
+                  flash_key: str = "-", collect_urls=None, plan=None, **_kw):
     """브라우저 수집 (13장 STEP 136c).
 
     ★ 브라우저가 사용자 회선으로 엔카를 부르고, 서버는 받은 원문을 저장만 한다.
@@ -1103,10 +1103,20 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
             items=_int_or_none(form.get("items")) or 0,
             axis_count=_int_or_none(form.get("axis_count")),
             run_id=_run_stamp("browser"))
+        # ★ 목록이 들어왔으면 나머지를 서버가 이어서 한다 (STEP 136g · 개정 314).
+        #   사람이 「이어서 해라」를 말해야 하는 것을 없앤다
+        queued = ""
+        if kind == "list" and plan is not None:
+            from store.adminops import enqueue_after_list_save
+
+            job = enqueue_after_list_save(conn, account, at=_now(), plan=plan)
+            queued = (f" · 나머지를 이어서 합니다 (작업 {job[:8]}) — "
+                      "화면을 닫으셔도 됩니다"
+                      if job else " · 이미 도는 작업이 있어 큐에 넣지 않았습니다")
         return redirect(
             "/admin/collect",
             f"{kind} 원문을 저장했습니다 — raw_id {got.raw_id} · "
-            f"{got.opened} 를 열었습니다 (origin=browser)", flash_key)
+            f"{got.opened} 를 열었습니다 (origin=browser){queued}", flash_key)
 
     ctx = collect_state(conn, collect_urls, root=root)
     return page(conn, account, "브라우저 수집", "admin_collect.html", ctx,
