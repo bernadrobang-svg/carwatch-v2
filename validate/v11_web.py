@@ -361,6 +361,23 @@ C = {
                     "★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다. "
                     "이전등록비·보증 가입비가 사이트마다 다르다 (개정 353)",
                     KIND_CODE),
+    "V11-134": Check("V11", "V11-134", "상세에 「받은 원문」 절이 있음",
+                    FATAL, "run",
+                    "마스터 지적 — 「내가 보는 게 우선이지 않니?  그런데 네가 "
+                    "판정을 못 내려서 받아 놓고 안 보이는데 말이 되니?」. "
+                    "★ 판정이 늦어도 원문은 보여야 한다 (개정 378)",
+                    KIND_CODE),
+    "V11-135": Check("V11", "V11-135", "파서가 없어도 원문을 그대로 냄",
+                    FATAL, "run",
+                    "「파서를 만들 때까지 안 보여준다」는 안 된다.  키를 사전으로 "
+                    "못 옮기면 원문 키 그대로 낸다 (개정 378)",
+                    KIND_CODE),
+    "V11-136": Check("V11", "V11-136", "받은 것 중 묻혀 있는 것이 없음",
+                    FATAL, "run",
+                    "raw_response 의 엔드포인트와 상세에 나온 것을 견준다. "
+                    "「받은 9종 중 5종만 나옵니다 — 4종이 묻혀 있습니다」 "
+                    "(개정 378)",
+                    KIND_CODE),
     "V11-132": Check("V11", "V11-132", "상세에 큰 사진과 썸네일이 있음",
                     FATAL, "run",
                     "마스터 지적 — 「상세는 최대한 모든 정보가 들어가야 한다고 "
@@ -966,6 +983,8 @@ def _screen_checks(conn, rid) -> list:
     out.append(_report_popup_check(conn, rid))
     # 상세 사진 (개정 375)
     out.append(_detail_photo_check(conn, rid))
+    # 받은 원문 (개정 378)
+    out.extend(_raw_shown_checks(conn, rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -2785,6 +2804,93 @@ def _detail_photo_check(conn, rid):
                   f"{len(shown)}장", not bad, bad[:5])
 
 
+def _raw_shown_checks(conn, rid):
+    """V11-134 · V11-135 · V11-136 — 받은 것은 판정 전에도 보여주는가 (개정 378).
+
+    마스터 지적 — 「내가 보는 게 우선이지 않니?  그런데 네가 판정을 못 내려서
+    받아 놓고 안 보이는데 말이 되니?」
+    ★ 「우리가 판정 못 하니 마스터도 못 본다」는 앞뒤가 바뀐 것이다
+    """
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from store.core import raw_sections, used_endpoints
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    route = {r.path: r for r in ROUTES}.get("/why/{listing_id}")
+    row = conn.execute(
+        "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+    if route is None or row is None:
+        return [not_applicable(c, rid, "상세를 열 수 없다")
+                for c in (C["V11-134"], C["V11-135"], C["V11-136"])]
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "web.json"),
+              encoding="utf-8") as f:
+        probe_n = int(_j.load(f)["raw_probe_listings"])
+    probe = _probe(conn)
+    try:
+        _st, _h, body = HANDLERS[route.view](
+            probe, Account(1, ROLE_ADMIN, "마스터"),
+            {"query": {}, "form": {}, "method": GET},
+            path_vars={"listing_id": str(row[0])}, csrf="t")
+    except (CarWatchError, KeyError, ValueError) as e:
+        bad = [f"{type(e).__name__}: {e}"[:70]]
+        return [result(c, rid, "낸다", "못 그렸다", False, bad)
+                for c in (C["V11-134"], C["V11-135"], C["V11-136"])]
+    html = body.decode("utf-8", "replace")
+    # ★ 주석을 걷고 본다.  주석에 든 글자로 통과하면 검사가 거짓말한다
+    #   (실측 08-19 — 절을 지웠는데 HTML 주석 때문에 통과했다)
+    shown_html = re.sub(r"<!--.*?-->", " ", html, flags=re.S)
+
+    # V11-134 — 절이 있는가
+    bad34 = []
+    # ★ 절 제목으로 본다.  「안 받은 원문이 있으면」 같은 딴 문장에 걸린다
+    #   (실측 08-19 — 「받은 원문」만 찾다가 확인율 설명에 걸려 통과했다)
+    if not re.search(r"<h2>\s*받은 원문", shown_html):
+        bad34.append("상세에 「받은 원문」 절이 없다")
+    a = result(C["V11-134"], rid, "있다",
+               "있다" if not bad34 else "없다", not bad34, bad34)
+
+    # V11-135 — 파서가 없어도 원문을 그대로 펴는가
+    got = raw_sections(conn, row[0])
+    bad35 = []
+    for one in got:
+        if one["endpoint"] not in shown_html:
+            bad35.append(f"{one['endpoint']} 를 받아 놓고 상세에 안 낸다")
+    b = result(C["V11-135"], rid, f"{len(got)}종",
+               f"{len(got) - len(bad35)}종", not bad35, bad35[:5])
+
+    # V11-136 — 받은 것 ↔ 상세에 낼 수 있는 것을 센다
+    # ★ 매물 하나로 재면 안 된다.  그 매물에 그 원문이 없을 뿐일 수 있다.
+    #   엔드포인트마다 「낼 수 있는 매물이 하나라도 있는가」를 본다 (실측 08-19)
+    endpoints = {r[0] for r in conn.execute(
+        "SELECT DISTINCT endpoint FROM raw_response WHERE status='ok'"
+        "   AND listing_id IS NOT NULL")}
+    used = used_endpoints(conn)
+    spare = sorted(endpoints - used)
+    buried = []
+    for ep in spare:
+        seen = False
+        for (lid,) in conn.execute(
+            "SELECT DISTINCT listing_id FROM raw_response"
+            " WHERE endpoint=? AND status='ok' AND listing_id IS NOT NULL"
+            " LIMIT ?", (ep, probe_n)
+        ):
+            if any(one["endpoint"] == ep for one in raw_sections(conn, lid)):
+                seen = True
+                break
+        if not seen:
+            buried.append(ep)
+    return [a, b, result(
+        C["V11-136"], rid, f"{len(endpoints)}종",
+        f"판정에 쓰는 것 {len(used & endpoints)}종 · "
+        f"원문으로 내는 것 {len(spare) - len(buried)}종",
+        not buried,
+        [f"{len(buried)}종이 묻혀 있다 — {' · '.join(buried[:5])}"]
+        if buried else [])]
+
+
 def _cell_squeeze_check(rid):
     """V11-78 — 좁은 폭에서 글자가 세로로 떨어지지 않는가.
 
@@ -3005,6 +3111,11 @@ def _render_metrics_checks(conn, rid):
         seen += 1
         html = body.decode("utf-8", "replace")
         text = re.sub(r"<script>.*?</script>", "", html, flags=re.S)
+        # ★ 「받은 원문」 절은 원문 그대로를 내는 자리다 (개정 378).
+        #   거기 숫자에 단위를 붙이면 원문이 아니게 된다 —
+        #   ★ 화면 전체를 빼지 않는다.  그 절만 뺀다.  나머지는 그대로 본다
+        text = re.sub(r'<details class="rawbox">.*?</details>', " ", text,
+                      flags=re.S)
         text = re.sub(r"<[^>]+>", " ", text)
         # V11-73 — 값이 있는가.  머리말·메뉴 말고 본문에 숫자나 글이 있는가
         if len(text.split()) < min_words:

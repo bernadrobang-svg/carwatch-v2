@@ -279,6 +279,39 @@
 </table>
 {% endif %}
 
+<!-- ★★★ 받은 원문 (개정 378 · V11-134).
+     마스터 지적 — 「내가 보는 게 우선이지 않니?  그런데 네가 판정을
+     못 내려서 받아 놓고 안 보이는데 말이 되니?」
+     ★ 파서가 없어도 원문을 그대로 편다.  일단 보이게 -->
+<h2>받은 원문 — 아직 판정에 안 쓰는 것</h2>
+{% if rep_raw %}
+<p class="muted">엔카에서 받아 두었지만 아직 점수에 넣지 않는 값입니다.
+  ★ <strong>판정에 쓰이기 시작하면 위쪽 「축별 판정」으로 올라가고
+  여기서 사라집니다.</strong></p>
+{% for s in rep_raw %}
+<details class="rawbox">
+  <summary>{{ s.endpoint }} <span class="dim">· {{ s.at | date }}
+    {% if s.empty %}· 받았지만 비어 있습니다{% endif %}
+    {% if !s.empty %}· {{ s.rows | count }}줄{% if s.deep %} (더 있습니다){% endif %}{% endif %}</span></summary>
+  {% if s.empty %}<p class="muted">사이트가 값을 주지 않았습니다 —
+    요청은 성공했고 내용이 비어 있습니다.
+    ★ <strong>「안 받았다」와 다릅니다.</strong></p>{% endif %}
+  <table class="rows raw-rows">
+  <tbody>
+  {% for r in s.rows %}
+  <tr><td data-label="키"><code>{{ r.key }}</code></td>
+    <td data-label="값">{{ r.value }}</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+</details>
+{% endfor %}
+{% endif %}
+{% if !rep_raw %}
+<p class="muted">받아 두고 안 쓰는 원문이 없습니다 —
+  받은 것을 전부 판정에 쓰고 있습니다.</p>
+{% endif %}
+
 <h2>참고 자료 — 점수에 반영하지 않습니다</h2>
 {% if v.known_issues %}
 <ul>{% for k in v.known_issues %}<li class="issue-{{ k.level }}">{{ k.text }}

@@ -239,6 +239,16 @@ def _axis_why(source: str, site: str, axis: str, root: str) -> str:
     return f"{mine}는 이 값을 제공하지 않습니다.{tail}"
 
 
+def _raw_sections(conn, listing_id: int) -> list:
+    """받아 놓고 아직 판정에 안 쓰는 원문 (개정 378).
+
+    ★ 조회는 store 가 갖는다 (S15 · V4-22)
+    """
+    from store.core import raw_sections
+
+    return raw_sections(conn, listing_id)
+
+
 def _photo_urls(photos_json, root: str) -> tuple:
     """상세에 낼 사진 전부 (개정 375).
 
@@ -372,6 +382,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         # ★ 5절 주요 옵션 — 옵션별 탑재 여부 (STEP 149c)
         options=_option_rows(conn, listing_id),
         known_issues=_known_issues(head[0], root),
+        # ★ 받은 것은 판정 여부와 무관하게 낸다 (개정 378)
+        raw_sections=tuple(_raw_sections(conn, listing_id)),
         source_id=head[8],
         # ★ 상세는 사진을 전부 낸다 (개정 375).  주소는 config 가 갖는다
         photos=_photo_urls(head[17], root),

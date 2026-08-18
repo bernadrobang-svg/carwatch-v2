@@ -1101,3 +1101,87 @@ def _blocking_paths(conn) -> set:
         "                            length(u.json_path)"
         "                            - length(replace(u.json_path, '.', ''))) "
         "                     || '%')")}
+
+
+# 이미 판정에 쓰는 엔드포인트 — 「받은 원문」 절에 또 내지 않는다 (개정 378).
+# ★ 판정에 쓰이기 시작하면 위쪽 축별 판정으로 올라가고 여기서 사라진다
+def _raw_rows_max() -> int:
+    """「받은 원문」 절에 낼 줄 수.  ★ config 가 정본이다 (V4-13)."""
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return int(_j.load(f)["raw_rows_max"])
+
+
+def used_endpoints(conn: sqlite3.Connection) -> set:
+    """판정에 쓰는 엔드포인트 (meta_field_usage).
+
+    ★ 등록부가 정본이다.  코드에 이름을 박지 않는다
+    """
+    return {r[0] for r in conn.execute(
+        "SELECT DISTINCT endpoint FROM meta_field_usage WHERE usage='in_use'")}
+
+
+def raw_sections(conn: sqlite3.Connection, listing_id: int,
+                 used: set | None = None,
+                 cap: int | None = None) -> list:
+    """받아 놓고 아직 판정에 안 쓰는 원문 (개정 378 · V11-134).
+
+    마스터 지적 — 「내가 보는 게 우선이지 않니?  그런데 네가 판정을 못 내려서
+    받아 놓고 안 보이는데 말이 되니?」
+    ★ 파서가 없으면 원문 JSON 을 그대로 편다.
+      「파서를 만들 때까지 안 보여준다」는 안 된다
+    돌려줌   [{endpoint, at, rows:[{key, value}], deep}]
+    """
+    import json as _j
+
+    # ★ 이미 판정에 쓰는 엔드포인트는 여기 또 내지 않는다.
+    #   판정에 쓰이기 시작하면 위쪽 축별 판정으로 올라가고 여기서 사라진다
+    used = used if used is not None else used_endpoints(conn)
+    cap = _raw_rows_max() if cap is None else cap
+    out = []
+    for endpoint, at, body in conn.execute(
+        "SELECT endpoint, fetched_at, body FROM raw_response"
+        " WHERE listing_id = ? AND status = 'ok'"
+        " GROUP BY endpoint HAVING MAX(fetched_at) = fetched_at"
+        " ORDER BY endpoint", (listing_id,)
+    ):
+        if endpoint in used:
+            continue
+        try:
+            doc = _j.loads(body)
+        except (ValueError, TypeError):
+            continue
+        rows = _flatten(doc, cap)
+        # ★ 비어 있어도 낸다.  「받았는데 사이트가 값을 안 줬다」는
+        #   마스터가 알아야 할 사실이다 — 전기차 7,374건이 그렇다 (실측 08-19).
+        #   안 내면 「안 받았다」와 구별이 안 된다
+        out.append({"endpoint": endpoint, "at": at, "rows": rows,
+                    "deep": len(rows) >= cap, "empty": not rows})
+    return out
+
+
+def _flatten(node, cap: int, prefix: str = "") -> list:
+    """원문을 「키 = 값」 줄로 편다.
+
+    ★ 값이 없는 가지는 안 낸다 — 빈 줄만 수십 개가 되면 못 읽는다
+    ★ 너무 깊으면 그 자리에서 멈춘다.  한 쪽이 수백 KB 가 된다
+    """
+    out: list = []
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if len(out) >= cap:
+                break
+            out += _flatten(v, cap - len(out), f"{prefix}.{k}" if prefix else k)
+    elif isinstance(node, list):
+        if not node:
+            return out
+        # ★ 목록은 첫 것만 편다.  나머지는 「그 밖 N개」로 센다
+        out += _flatten(node[0], cap, f"{prefix}[0]")
+        if len(node) > 1:
+            out.append({"key": prefix, "value": f"그 밖 {len(node) - 1}개"})
+    elif node not in (None, "", {}, []):
+        out.append({"key": prefix, "value": str(node)[:80]})
+    return out[:cap]

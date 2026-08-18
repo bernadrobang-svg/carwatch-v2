@@ -1946,3 +1946,10 @@ svg.line circle { fill:var(--amber); }
                       margin-top:6px }
 /* ★ 색은 토큰만 쓴다 (V11-13).  --up 이 「나쁨」이다 */
 .tag.bad { background:var(--up); color:var(--bg) }
+
+/* 받은 원문 (개정 378 · V11-134).  ★ 받아 놓고 안 보여주지 않는다 */
+.rawbox { border:1px solid var(--line); border-radius:6px; padding:6px 10px;
+          margin:4px 0; background:var(--surface) }
+.rawbox summary { cursor:pointer; font-size:13px }
+.raw-rows { font-size:12px; margin-top:6px }
+.raw-rows td:first-child { white-space:nowrap; color:var(--faint) }

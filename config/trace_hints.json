@@ -63,6 +63,8 @@
     "RG-002": "store/core.py::unclassified_cards",
     "OP-065": "web/templates/admin_registry.html",
     "SC-011": "analyze/axis/price.py::_mileage",
-    "SC-013": "analyze/axis/state.py::_accident"
+    "SC-013": "analyze/axis/state.py::_accident",
+    "CO-018": "config/endpoints.json::encar.paths",
+    "WB-047": "store/core.py::raw_sections"
   }
 }

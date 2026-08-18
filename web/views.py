@@ -162,7 +162,10 @@ def why(conn, account, req, path_vars: dict, root: str = ROOT,
                              {"miss": miss}, root=root, csrf=csrf,
                              flash_key=flash_key)
         return HTTP_NOT_FOUND, hd, body
-    return page(conn, account, "판정 근거", "why.html", {"v": v}, csrf=csrf,
+    # ★ 받은 원문은 따로 넘긴다 — 「v.raw_sections」는 이름이 겹쳐
+    #   ScoreView 의 다른 절과 헷갈린다 (개정 378)
+    return page(conn, account, "판정 근거", "why.html",
+                {"v": v, "rep_raw": v.raw_sections}, csrf=csrf,
                 root=root, flash_key=flash_key)
 
 
