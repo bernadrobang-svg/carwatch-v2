@@ -49,15 +49,20 @@ UNKNOWN = "미확인"
 # 층 → 그 층의 디렉터리 (지시 §1).  ★ 층이 정해져 있으니 거기만 본다.
 #   ★ 지난번에 층을 안 보고 전부 뒤져 374건이 딴 층으로 갔다
 LAYER_DIRS: dict = {
-    "수집": ("collect/", "adapters/"),
-    "저장": ("store/", "sql/ddl/"),
+    "수집": ("collect/", "adapters/", "config/endpoints.json",
+             "config/targets.json"),
+    "저장": ("store/", "sql/ddl/", "config/field_usage.json"),
     "파싱": ("parse/",),
-    "사전": ("store/dict.py",),
-    "판정": ("analyze/", "score/"),
-    "화면": ("web/", "report/"),
+    "사전": ("store/dict.py", "config/dictionaries/", "tools/build_dict.py"),
+    # ★ 축 점수는 코드가 아니라 config 에 있다 (지시 §0).
+    #   config 를 안 보면 배점 요구가 전부 「미구현」이 된다 — 오판 40건이 그것이다
+    "판정": ("analyze/", "score/", "config/scoring.json",
+             "config/depreciation.json", "config/sites.json",
+             "config/dictionaries/"),
+    "화면": ("web/", "report/", "config/labels.json", "config/web.json"),
     "검사": ("validate/", "tools/"),
     "운영": ("store/adminops.py", "store/admin.py", "deploy/", "web/views.py",
-             "tools/"),
+             "tools/", "config/admin.json", "config/checks.json"),
 }
 NO_UI = "화면 없음"
 NO_UI_NA = "해당 없음"
@@ -65,8 +70,8 @@ NO_CHK = "검사 없음"
 NO_CHK_SPEC = "검사 없음(규격에만)"
 
 # 코드를 뒤질 디렉터리.  ★ ref/ 는 v1 사본이라 뺀다
-CODE_DIRS = ("adapters", "analyze", "collect", "parse", "report", "score",
-             "store", "tools", "validate", "web")
+CODE_DIRS = ("adapters", "analyze", "collect", "config", "parse", "report",
+             "score", "sql", "store", "tools", "validate", "web")
 SKIP_DIRS = {"__pycache__", "ref", ".git", "node_modules"}
 
 
@@ -163,7 +168,7 @@ def build_texts() -> dict:
         for dirpath, dirs, files in os.walk(top):
             dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
             for name in sorted(files):
-                if not name.endswith((".py", ".html")):
+                if not name.endswith((".py", ".html", ".json", ".sql")):
                     continue
                 full = os.path.join(dirpath, name)
                 rel = os.path.relpath(full, ROOT)
@@ -320,7 +325,62 @@ def _rare_hit(words: list, pool: list, texts: dict, by_line: dict) -> str:
                 break
     if not best[1]:
         return ""
-    rel, at = best[1], best[2]
+    return _place(best[1], best[2], by_line, texts)
+
+
+def axis_words() -> dict:
+    """한글 축 이름 → 축 키 (config/labels.json AXIS_LABELS).
+
+    ★ 「사고 회수 40점」의 「사고」가 코드에는 `state.accident` 로 있다.
+      한글만으로는 못 잇는다 — 정본이 이 표를 이미 갖고 있다
+    """
+    import json as _j
+
+    path = os.path.join(ROOT, "config", "labels.json")
+    if not os.path.isfile(path):
+        return {}
+    got = _j.load(open(path, encoding="utf-8")).get("AXIS_LABELS") or {}
+    out: dict = {}
+    for key, name in got.items():
+        for part in re.split(r"[\s·]+", str(name)):
+            part = part.strip()
+            if len(part) >= 2:
+                out.setdefault(part, []).append(key)
+    return out
+
+
+def json_key_at(lines: list, at: int) -> str:
+    """그 줄이 속한 JSON 키 경로 (지시 §0).
+
+    ★ `config/scoring.json:120` 은 「그 파일 어딘가」다.
+      `config/scoring.json::components.warranty.site` 라야 짚은 것이다
+    """
+    path: list = []
+    depth_of: list = []
+    depth = 0
+    for i, line in enumerate(lines[:at], 1):
+        key = re.match(r'\s*"([^"]+)"\s*:', line)
+        opens = line.count("{") + line.count("[")
+        closes = line.count("}") + line.count("]")
+        if key and opens > closes:
+            path.append(key.group(1))
+            depth_of.append(depth)
+        elif key and i == at:
+            path.append(key.group(1))
+            depth_of.append(depth)
+        depth += opens - closes
+        while depth_of and depth <= depth_of[-1] and i != at:
+            path.pop()
+            depth_of.pop()
+    got = [p for p in path if not p.startswith("_")]
+    return ".".join(got[:4])
+
+
+def _place(rel: str, at: int, by_line: dict, texts: dict) -> str:
+    """찾은 자리를 사람이 읽을 꼴로.  ★ 형식마다 짚는 법이 다르다."""
+    if rel.endswith(".json"):
+        key = json_key_at(texts.get(rel) or [], at)
+        return f"{rel}::{key}" if key else rel
     if rel.endswith((".html", ".sql")):
         return rel
     fn = enclosing(by_line, rel, at)
@@ -339,6 +399,13 @@ def find_in_layer(what: str, cell: str, texts: dict, by_line: dict,
     words = tokens(what)
     if not words:
         return ""
+    # ★ 한글 축 이름을 축 키로 바꿔 함께 찾는다 —
+    #   「사고」는 코드에 `state.accident` 로 있다 (config/labels.json)
+    amap = axis_words()
+    for w in list(words):
+        for key in amap.get(w, ()):
+            if key not in words:
+                words.append(key)
     # ① 이름이 그대로 있는가 — ★ 그 층의 파일에 있는 것만
     inpool = set(pool)
     for w in words:
@@ -357,11 +424,7 @@ def find_in_layer(what: str, cell: str, texts: dict, by_line: dict,
     # ★ 낱말이 많은 요구는 더 많이 겹쳐야 믿는다.  열 낱말 중 셋은 우연이다
     need = max(min(MIN_TOKEN_HIT, len(words)), (len(words) + 2) // 3)
     if best[0] >= need:
-        rel, at = best[1], best[2]
-        if rel.endswith((".html", ".sql")):
-            return rel
-        fn = enclosing(by_line, rel, at)
-        return f"{rel}::{fn}" if fn else f"{rel}:{at}"
+        return _place(best[1], best[2], by_line, texts)
     # ③ 규격의 STEP 을 닻으로 — ★ 그래도 그 층 안에서만
     step = anchor_step(what, spec, slines)
     if step:
@@ -403,7 +466,8 @@ def _best_step_in(step: str, pool: list, texts: dict, by_line: dict,
 
 
 
-def fill_file(path: str, ctxs: dict, write: bool) -> dict:
+def fill_file(path: str, ctxs: dict, write: bool,
+              recheck: bool = False) -> dict:
     """「미확인」인 소스 칸만 다시 찾는다.
 
     ★ 가이드가 적어 둔 것은 손대지 않는다 (규칙 2 · S35-1).
@@ -417,7 +481,11 @@ def fill_file(path: str, ctxs: dict, write: bool) -> dict:
             out.append(line)
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) != len(COLS) or cells[I_SRC] != UNKNOWN:
+        # ★ 「미구현」도 다시 본다 (--recheck).  층·config 를 넓히면
+        #   전에 못 찾던 것이 잡힌다 — 지시 §0 의 「오판 40건」이 그것이다
+        redo = (cells[I_SRC] == UNKNOWN
+                or (recheck and NO_SRC in cells[I_SRC]))
+        if len(cells) != len(COLS) or not redo:
             out.append(line)
             continue
         stat["봄"] += 1
@@ -535,7 +603,8 @@ def main() -> int:
     for name in sorted(os.listdir(TRACE)):
         if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):
             continue
-        got = fill_file(os.path.join(TRACE, name), ctxs, write)
+        got = fill_file(os.path.join(TRACE, name), ctxs, write,
+                        "--recheck" in sys.argv)
         for k in total:
             total[k] += got[k]
     after = survey()

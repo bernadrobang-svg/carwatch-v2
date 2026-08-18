@@ -17,7 +17,7 @@
 | WB-002 | `[화면]` | 세 단계 — 넓음 표 · 중간 묶음 · 좁음 카드 | `[마스터]` 278 | `61-web/a-common` | `web/views.py::recommend` | `/recommend` | V11-114 | **!** |
 | WB-003 | `[화면]` | **폭 다섯에서 재고 찍는다** | `[마스터]` 337 | `61-web/f-width` | `report/screens/views.py::Bucket` | 화면 없음 | V11-113 | **!** |
 | WB-004 | `[화면]` | 어느 폭에서도 글자가 세로로 안 떨어진다 | `[마스터]` 337 | `61-web/f-width` | `web/templates/recommend.html` | `/recommend` | V11-115 | **!** |
-| WB-005 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — 넓으면 더 보여 준다 | `[마스터]` 278 | `61-web/a-common` | 미구현 | 화면 없음 | 검사 없음 | ✗ |
+| WB-005 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — 넓으면 더 보여 준다 | `[마스터]` 278 | `61-web/a-common` | `web/server.py:44` | 화면 없음 | 검사 없음 | ✗ |
 | WB-006 | `[판정·화면]` | **사진 크기** — 목록 80 · 추천 64 · 상세 480 | `[마스터]` 332 | `61-web/a-common` | `report/screens/build.py::recommend_reason` | 화면 없음 | V11-107 | **!** |
 | WB-007 | `[화면]` | 사진 최소 128px — 좁아도 안 줄인다 | `[마스터]` 281 | `61-web/a-common` | 미구현 | 화면 없음 | V11-80 | ◐ |
 | WB-008 | `[화면]` | 한 화면에 매물 2개 이상 | `[마스터]` 332 | `61-web/a-common` | `web/views.py::listings` | `/listings` | V11-108 | ○ |
@@ -40,13 +40,13 @@
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
 | WB-017 | `[운영]` | 목록 /listings — **목록은 요약이다** | `[마스터]` 303 | `61-web/b-list` | `web/views.py::listings` | `/listings` | V11-93 — 검사 없음(규격에만) | **!** |
-| WB-018 | `[화면]` | 22열 · 폭(px) 지정 | `[시안]` 332 | `61-web/b-list` | 미구현 | 화면 없음 | 검사 없음 | ✗ |
-| WB-019 | `[판정]` | 목록 /listings — **시세 대비 %** | `[마스터]` 283 | `61-web/b-list` | 미구현 | 10열 | 검사 없음 | ◐ |
+| WB-018 | `[화면]` | 22열 · 폭(px) 지정 | `[시안]` 332 | `61-web/b-list` | `config/labels.json::AXIS_LABELS.taste.picked` | 화면 없음 | 검사 없음 | ✗ |
+| WB-019 | `[판정]` | 목록 /listings — **시세 대비 %** | `[마스터]` 283 | `61-web/b-list` | `analyze/axis/value.py:2` | 10열 | 검사 없음 | ◐ |
 | WB-020 | `[화면]` | 목록 /listings — **신차가 대비 %** | `[마스터]` 283 | `61-web/b-list` | `web/templates/recommend.html` | 11열 | 검사 없음 | ◐ |
-| WB-021 | `[운영]` | 옵션 「4종 715만」 | `[마스터]` 313 | `61-web/b-list` | 미구현 | 18열 | V11-100 — 검사 없음(규격에만) | ✗ |
+| WB-021 | `[운영]` | 옵션 「4종 715만」 | `[마스터]` 313 | `61-web/b-list` | `tools/verify_axes.py::main` | 18열 | V11-100 — 검사 없음(규격에만) | ✗ |
 | WB-022 | `[판정]` | 목록 /listings — 트림에 세부등급 | `[마스터]` 285 | `61-web/b-list` | 미구현 | 7열 | V11-85 — 검사 없음(규격에만) | ◐ |
 | WB-023 | `[판정]` | **축은 상태로** — 있음·없음·? | `[마스터]` 280 | `61-web/b-list` | `analyze/axis/state.py:2` | `/admin/import` | V11-79 | ○ |
-| WB-024 | `[판정]` | 목록 /listings — 보증은 남은 기간으로 | `[마스터]` 283 | `61-web/b-list` | 미구현 | — | 검사 없음 | ◐ |
+| WB-024 | `[판정]` | 목록 /listings — 보증은 남은 기간으로 | `[마스터]` 283 | `61-web/b-list` | `config/scoring.json::components.warranty.general` | — | 검사 없음 | ◐ |
 | WB-025 | `[판정]` | 사고는 회수 · 보험은 자차 수리비 | `[마스터]` 283 | `61-web/b-list` | `analyze/absolute.py:19` | — | V3-42 · V3-43 | ◐ |
 | WB-026 | `[운영]` | 목록 /listings — **♡ 를 제목 줄에** | `[마스터]` 305 | `61-web/b-list` | `web/views.py::listings` | `/recommend` | V11-96 — 검사 없음(규격에만) | ◐ |
 | WB-027 | `[저장·화면]` | 링크 — 딜러·연식·주행·가격·월납·상태 | `[마스터]` 276 | `61-web/b-list` | `web/views.py:384` | 화면 없음 | V11-61 | ◐ |
