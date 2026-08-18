@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 133개 · 총 44,184줄
+파일 134개 · 총 45,106줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -14,11 +14,12 @@
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `validate/v3_logic.py` | 1,205 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tools/verify_axes.py` | 1,051 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
-| `tools/check_src.py` | 1,014 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
+| `tools/check_src.py` | 1,048 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `report/screens/admin.py` | 1,000 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `store/core.py` | 947 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `store/adminops.py` | 931 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `validate/v2_load.py` | 917 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
+| `tools/trace_fill.py` | 888 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `tests/test_score.py` | 786 | 7장 판정·채점 시험. |
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
 | `validate/v1_collect.py` | 737 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
@@ -140,7 +141,7 @@
 | `tests/__init__.py` | 1 | — |
 | `validate/__init__.py` | 1 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 61개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 62개)
 
 ### `validate/v11_web.py` — 3,404줄
 
@@ -190,7 +191,7 @@ _file_output_checks:254  _conflict_checks:307  _diagnosis_count_check:331  _hda_
 _spec_text:26  spec_tables:58  _num:81  pick:99  _flag:113  hand_market:121  _median_for:132  hand_mileage:152  _years:165  conn_now:174  lookup:179  hand_accident:203  hand_repair:213  hand_owner:221  _warranty_left:229  hand_warranty_general:250  hand_warranty_power:255  hand_site_warranty:261  hand_maker_warranty:291  _km_per_month:318  residual_spec:334  _json:360  hand_option_won:373  hand_depreciation:410  hand_frame:440  hand_outer:461  _leak_states:481  hand_leak:493  hand_lien:508  hand_not_join:518  hand_trim:548  hand_special:568  spec_section:578  spec_head_points:586  lookup_label:593  hand_integrity:601  hand_special_points:627  _taste_points:636  _has_option:647  hand_color:682  hand_usage:706  hand_site_grade:730  hand_inspection_src:750  hand_hud:763  hand_sunroof:772  hand_picked:781  _has_table:794  _option_prices:800  hand_options:818  survey:856  main:919
 ```
 
-### `tools/check_src.py` — 1,014줄
+### `tools/check_src.py` — 1,048줄
 
 ```
 _spec_files:36  _read_spec:54  say:65  py_files:79  chapter_of:119  _declared_chapters:129  split_done:149  _illustration:168  _retired_config_keys:232  _git:689
@@ -218,6 +219,12 @@ QueryLog:51  QueryResult:64  ApiSnapshot:73  DevRequest:84  RecalcJob:99  Scorin
 
 ```
 DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:347  _not_null_check:432  _chained_subscript_check:449  _Boom:497  _salvage_check:505  _table_exists:546  _exception_shape_checks:552  _schema_sync_check:618  _pii_access_check:655  gap_alerts:692  diff_prev_day:708  explain_gap:730  _pii_column_check:762  _secret_key_check:780  _parser_common_fields_check:818  _null_target_not_judged_check:869  _null_target_visible_check:894
+```
+
+### `tools/trace_fill.py` — 888줄
+
+```
+_tables:54  build_symbols:66  enclosing:100  build_texts:109  _stem:146  tokens:154  _mapping:183  _candidates:198  _best_in:212  find_source:248  _checks_index:291  _check_titles:311  find_check:336  spec_pairs:369  find_check_by_spec:398  find_check_merged:417  _routes:467  find_ui:479  widen:519  _only_in_spec:533  _source_of_check:547  restate:567  fill_file:591  _spec_of:668  survey:673  lists:694  write_index:713  main:777  spec_lines:822  anchor_step:839  source_by_step:857
 ```
 
 ### `tests/test_score.py` — 786줄

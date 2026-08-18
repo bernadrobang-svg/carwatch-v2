@@ -958,16 +958,50 @@ try:
         say("S34-4", "규격이 표에 있음", len(_in_spec) - len(_b344),
             _b344[:12], [])
 
-        # S35-1 — 자기 칸이 아닌 곳을 고쳤는가
-        # ★ 개발측이 고쳐도 되는 칸은 소스 · 화면 · 검사 · 상태다.
-        #   요구사항 · 출처 · 규격을 고쳤으면 git 이 안다
+        # S35-1 — 자기 칸이 아닌 곳을 고쳤는가 (00-standard 「누가 무엇을 하나」)
+        # ★ 규격이 정한 개발측 칸은 소스 · 화면·메뉴 · 검사 · 상태다.
+        #   그 칸을 채우는 것이 개발측의 일이다 — 고쳤다고 잡으면 안 된다.
+        #   ★ 실측 08-19 — 지시대로 추적표를 채웠더니 이 검사가 걸렸다.
+        #     「고쳤나」가 아니라 「어느 칸을 고쳤나」를 봐야 한다
+        # 칸 번호 (split("|") 기준).  1=R · 2=요구사항 · 3=출처 · 4=규격
+        #   5=소스 · 6=화면 · 7=검사 · 8=테스트 · 9=결함 · 10=상태
+        _MINE = (5, 6, 7, 10)          # 개발측이 채운다
+        _THEIRS = (2, 3, 4, 8, 9)      # 마스터 · 가이드 · 테스터의 칸
         _b351 = []
+
+        def _rows_of(text: str) -> dict:
+            got = {}
+            for _ln in text.splitlines():
+                if not _ln.startswith("| R-"):
+                    continue
+                _c = _ln.rstrip("\n").split("|")
+                if len(_c) == _TRACE_COLS:
+                    got[_c[1].strip()] = [x.strip() for x in _c]
+            return got
+
+        for _f in sorted(_g.glob(os.path.join(_trace, "*.md"))):
+            _rel = os.path.relpath(_f, ROOT).replace("\\", "/")
+            _rc3, _old = _git("show", f"HEAD~1:{_rel}")
+            if _rc3:
+                continue
+            _was, _now = _rows_of(_old), _rows_of(
+                io.open(_f, encoding="utf-8").read())
+            for _rid, _cells in _now.items():
+                _prev = _was.get(_rid)
+                if not _prev:
+                    continue
+                for _i in _THEIRS:
+                    if _prev[_i] != _cells[_i]:
+                        _b351.append(
+                            f"{_rid} — 남의 칸을 고쳤다 ({_i}번): "
+                            f"「{_prev[_i][:24]}」 → 「{_cells[_i][:24]}」")
+        # 지시서 본문은 그대로다 — 한 글자도 개발측이 고치지 않는다 (규칙 2)
         _rc2, _diff = _git("diff", "--stat", "HEAD~1", "--",
-                           "docs/trace", "docs/guide", "docs/chapters")
+                           "docs/guide", "docs/chapters")
         if not _rc2 and _diff.strip():
-            _b351.append("개발측이 지시서·추적표를 고쳤다 — "
+            _b351.append("개발측이 지시서를 고쳤다 — "
                          + " ".join(_diff.split())[:90])
-        say("S35-1", "자기 칸만 고침", 0 if _b351 else 1, [], _b351)
+        say("S35-1", "자기 칸만 고침", 0 if _b351 else 1, [], _b351[:8])
 
     # ── S36-1 · S37-1 (개정 359 · 362) ──────────────────────────────
     # ★ 지금 안 하기로 한 것을 「어디에 모아 뒀는가」와
