@@ -209,6 +209,36 @@ def _site_badge(site, sell_type, root: str = ".") -> str:
     return site_badge(site, sell_type, root)
 
 
+def _axis_why(source: str, site: str, axis: str, root: str) -> str:
+    """축이 0점인 사유를 사람 말로 (개정 306).
+
+    ★ 「우리가 못 받았다」와 「그 사이트가 아예 안 준다」는 다르다.
+      뒤는 우리 잘못이 아니고, 사람이 「그럼 다른 사이트에서 찾아볼까」를 한다
+    """
+    import json as _j
+    import os as _o
+
+    from contracts import SITE_UNAVAILABLE
+    from store.crosssite import active_sites
+
+    if source != SITE_UNAVAILABLE:
+        return ""
+    with open(_o.path.join(root, "config", "sites.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    mine = (cfg.get(site) or {}).get("label") or site
+    # ★ 쓰는 사이트만 안내한다.  아직 안 쓰는 사이트를 대안이라 하면
+    #   「거기 가서 보십시오」가 거짓말이 된다
+    others = sorted(
+        (cfg[name].get("label") or name)
+        for name in active_sites(cfg)
+        if name != site
+        and axis not in (cfg[name].get("axes_not_provided") or []))
+    tail = (f"  {' · '.join(others)} 매물은 확인할 수 있습니다."
+            if others else "  다른 사이트를 붙이면 확인할 수 있습니다.")
+    return f"{mine}는 이 값을 제공하지 않습니다.{tail}"
+
+
 def _photo_urls(photos_json, root: str) -> tuple:
     """상세에 낼 사진 전부 (개정 375).
 
@@ -287,7 +317,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
     ):
         axes.append(AxisView(axis, lab.get(axis, axis), value,
                              float(score or (value or 0)), int(mx or 0),
-                             bool(excluded), source, prio))
+                             bool(excluded), source, prio,
+                             why=_axis_why(source, head[15], axis, root)))
         if excluded and source in ("gate_closed", "coefficient_out_of_range",
                                    "rule_undefined", "catalog_missing",
                                    "not_provided"):

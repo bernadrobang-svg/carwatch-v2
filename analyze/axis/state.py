@@ -24,6 +24,12 @@ REPAIR = "state.repair"
 SPECIAL = "state.special"
 LEAK = "state.leak"
 CONSUMABLE = "state.consumable"
+# 그 사이트가 아예 안 주는 축의 사유 (개정 306).
+# ★ contracts 가 정본이다 — analyze 는 store 를 부르지 않는다 (V4-22)
+from contracts import SITE_UNAVAILABLE  # noqa: E402
+
+# sites.json 은 한 실행 안에서 안 바뀐다.  한 번만 읽는다
+_SITES: dict | None = None
 INTEGRITY = "state.integrity"
 
 # 상태 문구 — 원문 그대로 (실측).  ★ 코드를 쓰지 않는다 — 사이트가 바꿀 수 있다
@@ -150,6 +156,36 @@ def _leak(ctx: AxisContext, v: Verdict) -> None:
     put(v, LEAK, r["leak_points"][key], PRIO_OBSERVED, f"leak_{key}")
 
 
+def _site_never(ctx: AxisContext, axis: str) -> bool:
+    """이 사이트가 그 축을 아예 안 주는가 (config/sites.json).
+
+    ★ 사이트 이름을 코드에 박지 않는다 (V3-55).  정본이 표를 갖는다
+    """
+    site = getattr(ctx.snapshot, "site", None)
+    if not site:
+        return False
+    one = _sites_table().get(site) or {}
+    return axis in (one.get("axes_not_provided") or [])
+
+
+def _sites_table() -> dict:
+    """config/sites.json.  ★ 매물마다 파일을 열지 않는다 — 3,528건이다."""
+    global _SITES
+    if _SITES is None:
+        import json as _j
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+            _o.path.abspath(__file__))))
+        path = _o.path.join(root, "config", "sites.json")
+        try:
+            with open(path, encoding="utf-8") as f:
+                _SITES = _j.load(f)
+        except (OSError, ValueError):
+            _SITES = {}
+    return _SITES
+
+
 def _consumable(ctx: AxisContext, v: Verdict) -> None:
     """2-7 소모품 10 — 타이어 트레드 잔량.
 
@@ -159,7 +195,13 @@ def _consumable(ctx: AxisContext, v: Verdict) -> None:
     s, r = ctx.snapshot, ctx.policy.rule("state")
     tread = getattr(s, "tire_tread_mm", None)
     if tread is None:
-        put(v, CONSUMABLE, 0, PRIO_OBSERVED, "missing")
+        # ★ 「우리가 못 받았다」와 「그 사이트가 아예 안 준다」는 다르다 (개정 306).
+        #   엔카는 트레드를 unified-report 에만 두고 그 경로가 401 이다 —
+        #   로그인 없이는 못 받는다.  우리 잘못이 아니다.
+        #   ★ 그래도 분모는 안 줄인다 — 사이트별로 분모를 달리하면
+        #     사이트끼리 비교가 안 된다 (규격 금지)
+        put(v, CONSUMABLE, 0, PRIO_OBSERVED,
+            SITE_UNAVAILABLE if _site_never(ctx, CONSUMABLE) else "missing")
         return
     put(v, CONSUMABLE, round(ascending(-float(tread),
                                        [[-a, b] for a, b in r["tread_curve"]])),

@@ -138,7 +138,7 @@
   <td><a href="/listings?axis={{ a.axis }}">{{ a.label }}</a></td>
   <td class="num">{% if a.excluded %}<span class="excluded">해당 없음</span>{% endif %}{% if !a.excluded %}{{ a.points | num }}{% endif %}</td>
   <td class="num">{{ a.max_points | num }}</td>
-  <td>{{ a.source }}</td>
+  <td>{{ a.source }}{% if a.why %}<br><span class="muted">{{ a.why }}</span>{% endif %}</td>
   <td>{{ a.prio }}</td>
 </tr>
 {% endfor %}

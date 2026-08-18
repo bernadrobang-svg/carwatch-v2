@@ -41,6 +41,24 @@
     "CO-017": "config/endpoints.json::encar.paths.ev_battery",
     "CO-031": "adapters/kcar.py::KcarAdapter",
     "CO-033": "adapters/kcar.py::KcarAdapter",
-    "AD-107": "config/endpoints.json::encar.detail_refresh_days"
+    "AD-107": "config/endpoints.json::encar.detail_refresh_days",
+    "MS-009": "contracts.py::SITE_UNAVAILABLE",
+    "MS-011": "store/crosssite.py::axes_by_site",
+    "MS-012": "store/crosssite.py::site_only_axes",
+    "WB-011": "web/app.py::static_version",
+    "CO-022": "tools/daily_enqueue.py::main",
+    "MS-002": "store/watch.py::run_watch_queries",
+    "MS-003": "store/watch.py::run_watch_queries",
+    "AD-019": "validate/v3_logic.py::_denominator_check",
+    "AD-081": "config/web.json::status_poll_sec",
+    "AD-069": "config/web.json::browser_interval_sec",
+    "AD-092": "config/web.json::max_form_bytes",
+    "AD-090": "store/adminops.py::save_request_result",
+    "AD-091": "web/templates/admin_requests.html",
+    "VW-008": "report/screens/views.py::AxisChip",
+    "DI-016": "analyze/verdict.py::verdict_of",
+    "DI-002": "tools/build_dict.py::AXIS_SOURCES",
+    "AD-104": "report/screens/admin.py::view_status",
+    "ST-003": "store/core.py::classify_invariant_change"
   }
 }

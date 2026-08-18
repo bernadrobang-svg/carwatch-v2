@@ -41,7 +41,7 @@
 | AD-016 | `[운영]` | 1~4 가 실패하면 파일을 쓰지 않는다 | `[기술]` 반쪽 상태를 만들지 않는다 | `60-admin` | `store/admin.py::apply_config` | — | 검사 없음 | ◐ |
 | AD-017 | `[수집]` | config 조정 — 변경 사유를 받는다 | `[마스터]` **「왜 이렇게 됐나」의 근거** | `60-admin` | `collect/runner.py:88` | `/login` | 검사 없음 | ◐ |
 | AD-018 | `[수집]` | 파서는 두 형태를 다 받는다 | `[기술]` 형식이 바뀌어도 안 깨진다 | `60-admin` | `collect/runner.py:54` | — | 검사 없음 | ◐ |
-| AD-019 | `[운영]` | `Σ(points) == total_points` | `[기술]` `V3-56` | `60-admin` | 미구현 | — | 검사 없음 | ✗ |
+| AD-019 | `[운영]` | `Σ(points) == total_points` | `[기술]` `V3-56` | `60-admin` | `validate/v3_logic.py::_denominator_check` | — | 검사 없음 | ✗ |
 | AD-020 | `[저장·화면]` | 미리보기를 본 뒤에만 저장 | `[마스터]` **되돌리려면 재계산이 필요하다** | `60-admin` | `store/adminops.py::preview_scoring` | 화면 없음 | 검사 없음 | ◐ |
 | AD-021 | `[운영]` | 관리자가 확인 버튼을 눌러야 `active` | `[마스터]` 위와 같음 | `60-admin` | `web/views.py:1750` | — | 검사 없음 | ◐ |
 | AD-022 | `[운영]` | 차종 추가 첫 항목이 국산·수입 선택 | `[원문]` **축이 다르다 — 제조사보다 앞이다** | `60-admin` | `web/views.py::_first_flag` | — | V2-05 | ◐ |
@@ -111,7 +111,7 @@
 | AD-066 | `[수집]` | 브라우저 수집 — 진행을 차종 단위로 | `[마스터]` | `60-admin` | `collect/runner.py::CollectGroup` | — | V11-48 · V11-49 | ◐ |
 | AD-067 | `[수집]` | 중단할 수 있다. 어디까지 됐는지 남긴다 | `[마스터]` | `60-admin` | 미구현 | `/admin/collect` | V11-48 · V11-49 | ○ |
 | AD-068 | `[수집]` | 브라우저 수집 기본 간격은 0 | `[마스터]` **개정 265 — 사용자 회선은 안 막힌다** | `60-admin` | `collect/runner.py::make_executors` | `/admin/collect` | V11-47 | ○ |
-| AD-069 | `[수집]` | `browser_interval_sec` 을 config 에 | `[마스터]` | `60-admin` | 미구현 | — | 검사 없음 | ◐ |
+| AD-069 | `[수집]` | `browser_interval_sec` 을 config 에 | `[마스터]` | `60-admin` | `config/web.json::browser_interval_sec` | — | 검사 없음 | ◐ |
 | AD-070 | `[수집·화면]` | 막히면 화면에 그대로 (407·429 를 안 삼킨다) | `[마스터]` | `60-admin` | `web/static/cors_test.html` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 화면 원칙
@@ -138,7 +138,7 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| AD-081 | `[저장]` | 스스로 갱신 (`status_poll_sec` 기본 5) | `[마스터]` | `60-admin` | 미구현 | — | 검사 없음 | ◐ |
+| AD-081 | `[저장]` | 스스로 갱신 (`status_poll_sec` 기본 5) | `[마스터]` | `60-admin` | `config/web.json::status_poll_sec` | — | 검사 없음 | ◐ |
 | AD-082 | `[수집·화면]` | 갱신 간격과 마지막 갱신 시각을 낸다 | `[마스터]` | `60-admin` | `report/screens/admin.py::_live_progress` | `/admin/collect` | V11-51 · V11-52 | ○ |
 | AD-083 | `[저장]` | 폴링이 실패해도 진행은 남는다 | `[기술]` | `60-admin` | `store/watch.py::notify` | — | 검사 없음 | ◐ |
 | AD-084 | `[저장]` | 「대기 중」과 「멈춘 것」을 가른다 | `[마스터]` | `60-admin` | `store/adminops.py::ImportPreview` | — | 검사 없음 | ◐ |
@@ -152,14 +152,14 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| AD-090 | `[수집]` | `applied`·`not_applied`·`misapplied` 는 사유를 받는다 | `[마스터]` | `60-admin` | 미구현 | `/admin/requests` | 검사 없음 | ◐ |
-| AD-091 | `[수집]` | `applied` 는 `step_ref` 를 받는다 | `[마스터]` 어느 STEP 에 반영됐는가 | `60-admin` | 미구현 | `/admin/requests` | 검사 없음 | ◐ |
+| AD-090 | `[수집]` | `applied`·`not_applied`·`misapplied` 는 사유를 받는다 | `[마스터]` | `60-admin` | `store/adminops.py::save_request_result` | `/admin/requests` | 검사 없음 | ◐ |
+| AD-091 | `[수집]` | `applied` 는 `step_ref` 를 받는다 | `[마스터]` 어느 STEP 에 반영됐는가 | `60-admin` | `web/templates/admin_requests.html` | `/admin/requests` | 검사 없음 | ◐ |
 
 ## 조각 전송 · CSRF (11건 · 개정
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| AD-092 | `[수집]` | 조각 하나는 `max_form_bytes` 안 | `[마스터]` | `60-admin` | 미구현 | `/admin/collect` | V11-98 | ○ |
+| AD-092 | `[수집]` | 조각 하나는 `max_form_bytes` 안 | `[마스터]` | `60-admin` | `config/web.json::max_form_bytes` | `/admin/collect` | V11-98 | ○ |
 | AD-093 | `[수집]` | 중간에 끊기면 받은 조각을 버린다 | `[마스터]` 반쪽을 저장하지 않는다 | `60-admin` | `collect/runner.py::s4` | — | V11-98 | ◐ |
 | AD-094 | `[수집·화면]` | 진행을 화면에 — 「facet 3/4 조각」 | `[마스터]` | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-98 | ○ |
 | AD-095 | `[수집]` | 여러 번 보내는 경로는 토큰이 세션 단위 | `[마스터]` 개정 308 | `60-admin` | `collect/runner.py::_trim_ladders` | — | V11-99 | ◐ |
@@ -176,7 +176,7 @@
 | AD-101 | `[운영]` | 마스터는 화면을 닫아도 된다 | `[마스터]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | — | 검사 없음 | ◐ |
 | AD-102 | `[사전]` | ④ 는 pending 까지만 | `[마스터]` 확정은 사람이 | `60-admin` | `tools/build_dict.py:33` | — | 검사 없음 | ◐ |
 | AD-103 | `[운영]` | ⑤ 는 ②③ 이 끝난 뒤에 | `[마스터]` **중간 상태로 판정하지 않는다** | `60-admin` | `store/adminops.py::save_browser_catch` | — | 검사 없음 | ◐ |
-| AD-104 | `[저장]` | 진행을 `/admin/status` 에 | `[마스터]` | `60-admin` | 미구현 | /admin/status | 검사 없음 | ◐ |
+| AD-104 | `[저장]` | 진행을 `/admin/status` 에 | `[마스터]` | `60-admin` | `report/screens/admin.py::view_status` | /admin/status | 검사 없음 | ◐ |
 | AD-105 | `[운영]` | 실패해도 다음 단계로 가지 않는다 | `[마스터]` | `60-admin` | `web/views.py::_query_string` | — | V10-27 | ◐ |
 | AD-106 | `[수집]` | 「전체 재수집」은 사람이 명시할 때만 | `[마스터]` 개정 317 | `60-admin` | `adapters/encar.py:9` | — | V10-29 · V10-30 | ◐ |
 | AD-107 | `[운영]` | `detail_refresh_days` | `[마스터]` | `60-admin` | `config/endpoints.json::encar.detail_refresh_days` | — | 검사 없음 | ✗ |

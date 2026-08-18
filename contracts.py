@@ -131,6 +131,12 @@ IMPORT_STEP_CODES = (S1_CODE, S2_CODE, S4_CODE)
 #   축을 추가하려면 이 DTO 를 먼저 고친다.
 
 
+# 축이 0점인 사유 중 「그 사이트가 아예 안 준다」 (개정 306).
+# ★ missing(우리가 못 받음)과 다르다 — 우리 잘못이 아니다.
+#   ★ analyze · store · report 가 다 쓴다.  아래 계층인 여기에 둔다 (V4-22)
+SITE_UNAVAILABLE = "site_unavailable"
+
+
 @dataclass(frozen=True)
 class ListingSnapshot:
     """Analyzer 입력.  core_* 조인 결과.  Row 를 직접 넘기지 않는다."""

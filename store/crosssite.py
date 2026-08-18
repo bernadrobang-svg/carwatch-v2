@@ -219,6 +219,55 @@ def readiness(conn: sqlite3.Connection, sites_cfg: dict, target_site: str,
     return rep
 
 
+
+# 그 사이트가 아예 안 주는 축의 사유.  ★ 정본은 contracts 다 (V4-22)
+from contracts import SITE_UNAVAILABLE  # noqa: E402,F401
+
+
+def axes_by_site(conn: sqlite3.Connection, sites_cfg: dict) -> dict:
+    """축 × 사이트 표 (개정 306 · V9-01).
+
+    ★ 축마다 사이트별 채움률.  어느 축이 어느 사이트에만 있는지 안다
+    ★ 분모는 안 줄인다 — 사이트별로 분모를 달리하면 사이트끼리 비교가 안 된다
+    돌려줌   {축: {사이트: {"찬 것": n, "전체": n, "안 줌": bool}}}
+    """
+    out: dict = {}
+    rows = conn.execute(
+        "SELECT a.axis, l.site,"
+        "       SUM(CASE WHEN a.source <> 'missing' THEN 1 ELSE 0 END),"
+        "       COUNT(*)"
+        " FROM result_axis a JOIN core_listing l ON l.listing_id = a.listing_id"
+        " GROUP BY 1, 2 ORDER BY 1, 2").fetchall()
+    for axis, site, got, total in rows:
+        one = sites_cfg.get(site)
+        never = axis in ((one or {}).get("axes_not_provided") or [])
+        out.setdefault(axis, {})[site] = {
+            "찬 것": int(got or 0), "전체": int(total or 0), "안 줌": never}
+    return out
+
+
+def site_only_axes(conn: sqlite3.Connection, sites_cfg: dict) -> list:
+    """어느 축이 어느 사이트에만 있는가 (개정 306 · MS-012).
+
+    ★ 「그 사이트에서만 볼 수 있는 값」이 다중 사이트를 하는 진짜 값이다
+    """
+    table = axes_by_site(conn, sites_cfg)
+    out = []
+    for axis, by in sorted(table.items()):
+        gives = [s for s, v in by.items() if not v["안 줌"] and v["찬 것"]]
+        misses = [s for s, v in by.items() if v["안 줌"]]
+        # 아직 안 쓰는 사이트도 「안 준다」면 목록에 낸다 — 사람이 고를 근거다
+        for name, one in sites_cfg.items():
+            if not isinstance(one, dict) or name in by:
+                continue
+            if axis in (one.get("axes_not_provided") or []):
+                misses.append(name)
+        if misses:
+            out.append({"axis": axis, "gives": sorted(set(gives)),
+                        "misses": sorted(set(misses))})
+    return out
+
+
 def load_sites(path: str = "config/sites.json") -> dict:
     with open(path, encoding="utf-8") as f:
         return json.load(f)

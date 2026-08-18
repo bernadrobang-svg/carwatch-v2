@@ -42,6 +42,16 @@ C: dict[str, Check] = {
                    "합이 만점과 다르면 그 사이트는 만점을 못 받거나 넘는다 "
                    "(개정 365)",
                    KIND_CODE),
+    "V9-01": Check("V9", "V9-01", "축 × 사이트 표가 있음", FATAL, "run",
+                   "축마다 사이트별 채움률.  어느 축이 어느 사이트에만 있는지 "
+                   "알아야 사이트를 늘릴 값이 있는지 판단한다 (개정 306)",
+                   KIND_CODE),
+    "V9-02": Check("V9", "V9-02", "site_unavailable 이 화면에 나옴",
+                   FATAL, "run",
+                   "「우리가 못 받았다」와 「그 사이트가 아예 안 준다」는 다르다. "
+                   "뒤는 우리 잘못이 아니다 — 사람이 「그럼 K카에서 찾아볼까」를 "
+                   "할 수 있어야 한다 (개정 306)",
+                   KIND_CODE),
     "V9-09": Check("V9", "V9-09", "같은 점수에서 사이트 보증이 높은 쪽이 앞",
                    FATAL, "run",
                    "마스터 — 「최고급 우선이야」.  그 우선이 정렬에도 들어간다. "
@@ -236,7 +246,48 @@ def _tie_break_check(conn, rid):
     return result(C["V9-09"], rid, "앞선다", f"{pairs}짝", not bad, bad[:4])
 
 
+def _axis_site_check(conn, rid):
+    """V9-01 · V9-02 — 축 × 사이트 표 · site_unavailable 이 화면에 나오는가.
+
+    ★ 「우리가 못 받았다(missing)」와 「그 사이트가 아예 안 준다」는 다르다.
+      뒤는 우리 잘못이 아니고, 사람이 「그럼 다른 사이트에서」를 할 수 있다
+    ★ 분모는 안 줄인다 — 사이트별로 분모를 달리하면 사이트끼리 비교가 안 된다
+    """
+    from store.crosssite import (
+        SITE_UNAVAILABLE, axes_by_site, site_only_axes,
+    )
+
+    sites = _sites()
+    table = axes_by_site(conn, sites)
+    bad1 = [] if table else ["축 × 사이트 표가 비었다"]
+    a = result(C["V9-01"], rid, "있다", f"축 {len(table)}", not bad1, bad1)
+
+    # V9-02 — 그 사유가 실제로 붙고 화면에 나오는가
+    declared = {ax for one in sites.values() if isinstance(one, dict)
+                for ax in (one.get("axes_not_provided") or [])}
+    if not declared:
+        return [a, not_applicable(C["V9-02"], rid,
+                                  "안 주는 축이라 적어 둔 것이 없다")]
+    bad2 = []
+    used = {r[0] for r in conn.execute(
+        "SELECT DISTINCT axis FROM result_axis WHERE source = ?",
+        (SITE_UNAVAILABLE,))}
+    for ax in sorted(declared - used):
+        bad2.append(f"{ax} 를 「안 준다」고 적어 두고 판정은 missing 이라 한다")
+    # ★ 화면에 사람 말로 나오는가.  코드에만 있으면 사람은 모른다
+    path = os.path.join(ROOT, "outputs", "render", "why_listing_id.html")
+    if used and os.path.isfile(path):
+        html = open(path, encoding="utf-8").read()
+        if "제공하지 않습니다" not in html:
+            bad2.append("상세에 「제공하지 않습니다」가 안 나온다")
+    got = site_only_axes(conn, sites)
+    return [a, result(C["V9-02"], rid, "나온다",
+                      f"{len(used)}축 · 사이트만 있는 축 {len(got)}",
+                      not bad2, bad2[:4])]
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     return [_badge_check(rid), _origin_check(conn, rid),
-            _warranty_sum_check(rid), _tie_break_check(conn, rid)]
+            _warranty_sum_check(rid), _tie_break_check(conn, rid),
+            *_axis_site_check(conn, rid)]

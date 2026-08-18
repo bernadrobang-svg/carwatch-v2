@@ -42,7 +42,11 @@
       "etc_fee": 0,
       "delivery_fee": 0,
       "extra_benefit": []
-    }
+    },
+    "axes_not_provided": [
+      "state.consumable"
+    ],
+    "_axes_not_provided_note": "★ 이 사이트가 아예 제공하지 않는 축 (개정 306). missing(우리가 못 받음)과 다르다 — 우리 잘못이 아니다. state.consumable 은 타이어 트레드가 unified-report 에 있고 그 경로가 401 이다 — 로그인 없이는 못 받는다 (실측 08-18). ★ 분모는 안 줄인다 — 사이트별로 분모를 달리하면 사이트끼리 비교가 안 된다"
   },
   "kcar": {
     "label": "K카",
@@ -75,7 +79,9 @@
       "etc_fee": 385000,
       "delivery_fee": 0,
       "extra_benefit": []
-    }
+    },
+    "axes_not_provided": [],
+    "_axes_not_provided_note": "★ K카는 tirResQty(타이어 트레드)를 준다 — 실측 08-18 · 상세 74KB JSON. 엔카가 못 주는 것을 K카가 준다"
   },
   "kbchachacha": {
     "label": "KB차차차",

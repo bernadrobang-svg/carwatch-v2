@@ -46,6 +46,10 @@ class AxisView:
     excluded: bool
     source: str
     prio: int
+    # ★ 사람이 읽을 사유 (개정 306).  「missing」과 「site_unavailable」은 다르다 —
+    #   앞은 우리가 못 받은 것이고 뒤는 그 사이트가 아예 안 주는 것이다.
+    #   사람이 「그럼 K카에서 찾아볼까」를 할 수 있어야 한다
+    why: str = ""
 
 
 @dataclass(frozen=True)
