@@ -8,7 +8,7 @@
 |---|--:|---|
 | ② 죽은 검사 — 통과도 실패도 한 적 없다 | **76** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **13** | 가이드가 판단 |
-| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **35** | 개발측 |
+| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **41** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
 
@@ -84,8 +84,8 @@
 | `V2-07` | 전건 NULL 컬럼 | run | `validate/v2_load.py:41` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:103 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:144 |
 | `V2-08` | 값 종류 1인 컬럼 | run | `validate/v2_load.py:121` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:104 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:145 |
 | `V2-09` | core_pii 를 직접 조회하는 코드 없음 | run | `validate/v2_load.py:44` | 2026-08-17 05:33 | 없음 | SCHEMA.md:37 · guide/03_이력.md:84 · chapters/11-store/b-core.md:480 |
-| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-10b` | core_* 에 마스킹 컬럼 없음 | run | `validate/v2_load.py:57` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:121 |
+| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-11` | plate_hash 가 전건 16자 hex | run | `validate/v2_load.py:118` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:438 · chapters/20-verify/b-v1v2.md:122 · trace/11-store.md:45 |
 | `V2-12` | secrets/plate_hmac.key 가 버전 관리 밖 | run | `validate/v2_load.py:53` | 2026-08-17 05:33 | 없음 | chapters/60-admin/00-intro.md:173 · chapters/20-verify/b-v1v2.md:123 |
 | `V2-13` | core_record 에 record_plate_no 원본 없음 | run | `validate/v2_load.py:80` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:635 · chapters/20-verify/b-v1v2.md:124 |
@@ -170,8 +170,8 @@
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:171 · chapters/20-verify/c-v3v4.md:287 |
 | `V4-04` | 매핑표에 없는 CORE 컬럼 | run | `validate/v4_mapping.py:100` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:172 |
 | `V4-05` | 원문 경로 수 변동 | run | `validate/v4_mapping.py:102` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:295 · chapters/20-verify/c-v3v4.md:173 · chapters/20-verify/c-v3v4.md:300 |
-| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-06` | RAW 경로가 등록부에 있는가 | run | `validate/v4_mapping.py:34` | 2026-08-17 05:33 | 2026-08-16 23:59 | chapters/31-registry.md:58 · chapters/31-registry.md:203 · chapters/31-registry.md:211 |
+| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-07` | in_use 인데 core_column NULL | run | `validate/v4_mapping.py:40` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:286 · chapters/60-admin/b-ops.md:121 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:177 · trace/RULES.md:200 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:178 |
@@ -259,6 +259,7 @@
 | `V10-28` | 타이머가 겹쳐 돌지 않음 | run | `validate/v10_admin.py:117` | **★ 없음** | 없음 | guide/01_요구사항.md:627 · guide/01_요구사항.md:636 · guide/03_이력.md:322 |
 | `V10-29` | 목록 저장이 전건 재수집을 안 부름 | run | `validate/v10_admin.py:122` | **★ 없음** | 없음 | guide/01_요구사항.md:182 · guide/01_요구사항.md:191 · guide/03_이력.md:324 |
 | `V10-30` | 재판정이 수집 없이 돎 | run | `validate/v10_admin.py:127` | **★ 없음** | 없음 | guide/01_요구사항.md:182 · guide/01_요구사항.md:191 · guide/03_이력.md:324 |
+| `V10-31` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:395 · chapters/60-admin/c-tools.md:1059 |
 | `V11-01` | web/ 에 SQL 문자열이 없음 | run | `validate/v11_web.py:36` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:149 · chapters/61-web.md:28 · chapters/61-web.md:1516 |
 | `V11-02` | 기본 바인딩이 127.0.0.1 | run | `validate/v11_web.py:39` | 2026-08-17 05:33 | 없음 | chapters/61-web.md:99 · chapters/61-web.md:2014 · chapters/61-web.md:2083 |
 | `V11-03` | 전 Route 에 role 이 지정됨 | run | `validate/v11_web.py:43` | 2026-08-17 05:33 | 없음 | chapters/61-web.md:167 · chapters/61-web.md:2084 |
@@ -372,13 +373,18 @@
 | `V11-122` | 리포트를 화면에서 읽을 수 있음 | run | `validate/v11_web.py:392` | **★ 없음** | 없음 | guide/03_이력.md:364 · chapters/40-report.md:733 · trace/40-report.md:69 |
 | `V11-123` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:376 · chapters/61-web/h-admin.md:21 · chapters/61-web/h-admin.md:264 |
 | `V11-124` | — | — | **★ 코드에 없다** | — | — | chapters/61-web/h-admin.md:77 · chapters/61-web/h-admin.md:265 |
-| `V11-128` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:378 · chapters/00-standard.md:1806 · chapters/61-web/i-admin-mock.md:306 |
+| `V11-128` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:378 · chapters/00-standard.md:1806 · chapters/61-web/i-admin-mock.md:381 |
 | `V11-131` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:380 · chapters/00-standard.md:1883 |
 | `V11-132` | 상세에 큰 사진과 썸네일이 있음 | run | `validate/v11_web.py:386` | **★ 없음** | 없음 | guide/03_이력.md:382 · chapters/61-web/d-detail.md:98 |
 | `V11-133` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:384 · chapters/61-web/d-detail.md:151 |
 | `V11-134` | 상세에 「받은 원문」 절이 있음 | run | `validate/v11_web.py:364` | **★ 없음** | 없음 | guide/03_이력.md:385 · chapters/61-web/d-detail.md:184 |
 | `V11-135` | 파서가 없어도 원문을 그대로 냄 | run | `validate/v11_web.py:370` | **★ 없음** | 없음 | chapters/61-web/d-detail.md:185 |
 | `V11-136` | 받은 것 중 묻혀 있는 것이 없음 | run | `validate/v11_web.py:375` | **★ 없음** | 없음 | guide/03_이력.md:385 · chapters/61-web/d-detail.md:203 |
+| `V11-137` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:390 · chapters/61-web/d-detail.md:250 |
+| `V11-138` | — | — | **★ 코드에 없다** | — | — | chapters/61-web/d-detail.md:251 · chapters/61-web/d-detail.md:262 |
+| `V11-141` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:392 · chapters/61-web/j-admin-mock2.md:208 |
+| `V11-143` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:393 · chapters/61-web/i-admin-mock.md:201 |
+| `V11-144` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:393 · chapters/61-web/i-admin-mock.md:240 |
 
 ## ② 죽은 검사 — 한 번도 안 돌았다
 
@@ -467,15 +473,21 @@
 - `V0-02` — guide/00_버전.md:44
 - `V0-03` — guide/00_버전.md:66 · guide/03_이력.md:337
 - `V1-22` — guide/01_요구사항.md:115 · guide/01_요구사항.md:124 · guide/03_이력.md:303
+- `V10-31` — guide/03_이력.md:395 · chapters/60-admin/c-tools.md:1059
 - `V11-100` — guide/03_이력.md:320 · chapters/00-standard.md:1512 · chapters/61-web.md:675
 - `V11-103` — guide/03_이력.md:323 · chapters/60-admin/c-tools.md:1030 · trace/02-collect.md:48
 - `V11-111` — chapters/61-web/e-compare.md:30
 - `V11-118` — guide/03_이력.md:345 · chapters/61-web/d-detail.md:112 · chapters/61-web/f-width.md:70
 - `V11-123` — guide/03_이력.md:376 · chapters/61-web/h-admin.md:21 · chapters/61-web/h-admin.md:264
 - `V11-124` — chapters/61-web/h-admin.md:77 · chapters/61-web/h-admin.md:265
-- `V11-128` — guide/03_이력.md:378 · chapters/00-standard.md:1806 · chapters/61-web/i-admin-mock.md:306
+- `V11-128` — guide/03_이력.md:378 · chapters/00-standard.md:1806 · chapters/61-web/i-admin-mock.md:381
 - `V11-131` — guide/03_이력.md:380 · chapters/00-standard.md:1883
 - `V11-133` — guide/03_이력.md:384 · chapters/61-web/d-detail.md:151
+- `V11-137` — guide/03_이력.md:390 · chapters/61-web/d-detail.md:250
+- `V11-138` — chapters/61-web/d-detail.md:251 · chapters/61-web/d-detail.md:262
+- `V11-141` — guide/03_이력.md:392 · chapters/61-web/j-admin-mock2.md:208
+- `V11-143` — guide/03_이력.md:393 · chapters/61-web/i-admin-mock.md:201
+- `V11-144` — guide/03_이력.md:393 · chapters/61-web/i-admin-mock.md:240
 - `V11-45` — guide/01_요구사항.md:560 · guide/01_요구사항.md:569 · guide/03_이력.md:257
 - `V11-85` — guide/02_결함대장.md:32 · guide/02_결함대장.md:42 · guide/03_이력.md:292
 - `V11-87` — guide/01_요구사항.md:59 · guide/01_요구사항.md:69 · guide/03_이력.md:293

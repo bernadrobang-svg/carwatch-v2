@@ -30,7 +30,7 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| PI-008 | `[저장]` | S1·S2 도 반입 완료를 남길 수 있다 | `[마스터]` 개정 244 — 밖에서 받은 것도 근거가 된다 | `STEP 48` | 미구현 | `/admin/import` | 검사 없음 | ✗ |
+| PI-008 | `[저장]` | S1·S2 도 반입 완료를 남길 수 있다 | `[마스터]` 개정 244 — 밖에서 받은 것도 근거가 된다 | `STEP 48` | `parse/importer.py` | `/admin/import` | 검사 없음 | ✗ |
 | PI-009 | `[저장]` | 무엇을 반입했는지 `samples` 에 남긴다 | `[마스터]` 위와 같음 | `STEP 48` | `store/adminops.py::mark_step_imported` | — | V11-46 | ◐ |
 | PI-010 | `[수집]` | `/admin/import` 가 facet 응답 JSON 도 받는다 | `[마스터]` 개정 244 | `STEP 48` | `collect/fetcher.py::fetch` | `/admin/import` | V1-21 | ○ |
 | PI-011 | `[수집]` | 받은 facet 으로 S2 완료를 남기고 S3 가 사전을 만든다 | `[마스터]` 위와 같음 | `STEP 48` | `collect/runner.py:4` | — | V1-21 | ◐ |

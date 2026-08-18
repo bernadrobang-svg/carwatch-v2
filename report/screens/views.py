@@ -76,6 +76,10 @@ class ListingRow:
     # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 · 「K카 직거래」
     # ★ 사이트가 둘 이상이면 값의 뜻이 사이트에 달려 있다 (50-multisite)
     site_badge: str = ""
+    # ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
+    #   금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다
+    down_payment_won: int | None = None
+    cash_only: bool = False
     # 총액이 우리가 계산한 것인가 (개정 353).  ★ 「추정」을 숨기지 않는다
     buy_estimated: bool = False
     status_label: str | None = None  # gone → 「목록에서 사라짐」 (V6-06)

@@ -655,6 +655,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         buy_estimated=bool(_buy and _buy.estimated),
         loan_principal_won=fin.loan_principal_won if fin else None,
         monthly_won=fin.monthly_payment_won if fin else None,
+        # ★ 현금은 초기 부담이다.  표시가와 무관하게 고정이다 (STEP 83)
+        down_payment_won=fin.down_payment_won if fin else None,
+        cash_only=bool(fin and fin.cash_only),
         price_gap_pct=(round(gap / exp * 100, 1) if (gap is not None and exp)
                        else None),
         price_change_cnt=changes, days_on_market=dom,

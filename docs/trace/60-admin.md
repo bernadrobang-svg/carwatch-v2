@@ -58,7 +58,7 @@
 | AD-028 | `[저장]` | 자동·수동 모두 같은 경로 | `[기술]` 자동 전용 코드는 검증이 안 된다 | `60-admin` | `store/adminops.py::enqueue_recalc` | — | 검사 없음 | ◐ |
 | AD-029 | `[저장]` | 큐에 넣은 것은 누군가 가져간다 | `[마스터]` **개정 261 — 실행기 없이 큐만 두면 거짓말이다** | `60-admin` | `store/adminops.py::import_listings` | — | V10-22 · V10-23 | ◐ |
 | AD-030 | `[저장]` | 실행기가 없으면 큐에 넣지 않는다 | `[마스터]` 위와 같음 | `60-admin` | `store/adminops.py::import_listings` | `/admin/collect` | V10-22 · V10-23 | ○ |
-| AD-031 | `[저장]` | **화면 문구가 사실이어야 한다** | `[마스터]` 위와 같음 | `60-admin` | 미구현 | — | 검사 없음 | ◐ |
+| AD-031 | `[저장]` | **화면 문구가 사실이어야 한다** | `[마스터]` 위와 같음 | `60-admin` | `validate/v10_admin.py::_automation_checks` | — | 검사 없음 | ◐ |
 | AD-032 | `[저장·화면]` | `queued` 가 오래 남으면 화면이 알린다 | `[마스터]` 개정 273 | `60-admin` | `store/watch.py:35` | 화면 없음 | V10-22 · V10-23 | ◐ |
 
 ## 쿼리 탐색
@@ -67,7 +67,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | AD-033 | `[화면]` | 거부된 것도 `QueryLog` 에 | `[마스터]` 무엇을 시도했는지가 기록이다 | `60-admin` | `report/screens/admin.py::query_history` | 화면 없음 | 검사 없음 | ◐ |
 | AD-120 | `[화면]` | 결과를 그대로 복사할 수 있게 | `[판단]` 밖에서 분석하려면 필요하다. ★ 조사 없음 | `60-admin` | `web/views.py:5` | 화면 없음 | V10-18 | ◐ |
-| AD-035 | `[화면]` | `EXPLAIN` 의 `OpenRead` 대상을 본다 | `[기술]` 문자열로는 못 막는다 | `60-admin` | 미구현 | 화면 없음 | V10-18 | ◐ |
+| AD-035 | `[화면]` | `EXPLAIN` 의 `OpenRead` 대상을 본다 | `[기술]` 문자열로는 못 막는다 | `60-admin` | `store/adminops.py::explain_query` | 화면 없음 | V10-18 | ◐ |
 | AD-036 | `[저장·화면]` | 거부해도 `query_log` 에 남긴다 | `[마스터]` 위와 같음 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 | ◐ |
 
 ## 목록 반입
@@ -142,11 +142,11 @@
 | AD-082 | `[수집·화면]` | 갱신 간격과 마지막 갱신 시각을 낸다 | `[마스터]` | `60-admin` | `report/screens/admin.py::_live_progress` | `/admin/collect` | V11-51 · V11-52 | ○ |
 | AD-083 | `[저장]` | 폴링이 실패해도 진행은 남는다 | `[기술]` | `60-admin` | `store/watch.py::notify` | — | 검사 없음 | ◐ |
 | AD-084 | `[저장]` | 「대기 중」과 「멈춘 것」을 가른다 | `[마스터]` | `60-admin` | `store/adminops.py::ImportPreview` | — | 검사 없음 | ◐ |
-| AD-085 | `[저장]` | **큐만 보지 않는다. 실제로 도는 것을 본다** | `[마스터]` **08-16 실측** | `60-admin` | 미구현 | `/admin/run` | V11-53 | ○ |
+| AD-085 | `[저장]` | **큐만 보지 않는다. 실제로 도는 것을 본다** | `[마스터]` **08-16 실측** | `60-admin` | `validate/v10_admin.py::_automation_checks` | `/admin/run` | V11-53 | ○ |
 | AD-086 | `[판정]` | 판정 근거를 셋 다 본다 | `[마스터]` | `60-admin` | `analyze/verdict.py:10` | `/why/{listing_id}` | 검사 없음 | ◐ |
 | AD-087 | `[저장·화면]` | 「도는 것이 없다」와 「마지막 처리 0분 전」이 같은 화면에 있으면 안 된다 | `[마스터]` | `60-admin` | `web/views.py::_site_query` | 화면 없음 | V11-51 · V11-52 | ◐ |
 | AD-088 | `[저장]` | 진행 모니터 — 읽기 전용 | `[마스터]` | `60-admin` | `store/adminops.py::preview_import` | `/admin/docs` | 검사 없음 | ◐ |
-| AD-089 | `[저장]` | JS 가 꺼져도 새로고침하면 보인다 | `[기술]` | `60-admin` | 미구현 | — | V11-51 · V11-52 | ◐ |
+| AD-089 | `[저장]` | JS 가 꺼져도 새로고침하면 보인다 | `[기술]` | `60-admin` | `web/templates/admin_status.html` | — | V11-51 · V11-52 | ◐ |
 
 ## 개발 요청 · 이력
 
@@ -163,7 +163,7 @@
 | AD-093 | `[수집]` | 중간에 끊기면 받은 조각을 버린다 | `[마스터]` 반쪽을 저장하지 않는다 | `60-admin` | `collect/runner.py::s4` | — | V11-98 | ◐ |
 | AD-094 | `[수집·화면]` | 진행을 화면에 — 「facet 3/4 조각」 | `[마스터]` | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-98 | ○ |
 | AD-095 | `[수집]` | 여러 번 보내는 경로는 토큰이 세션 단위 | `[마스터]` 개정 308 | `60-admin` | `collect/runner.py::_trim_ladders` | — | V11-99 | ◐ |
-| AD-096 | `[수집]` | 갱신이 필요하면 응답에 새 토큰 | `[마스터]` | `60-admin` | 미구현 | — | V11-99 | ◐ |
+| AD-096 | `[수집]` | 갱신이 필요하면 응답에 새 토큰 | `[마스터]` | `60-admin` | `web/app.py::redirect` | — | V11-99 | ◐ |
 | AD-097 | `[수집·화면]` | 403 이 나면 왜인지 화면에 | `[마스터]` **「저장 403」만으로는 원인을 모른다** | `60-admin` | `report/screens/build.py::excluded_groups` | 화면 없음 | 검사 없음 | ◐ |
 | AD-098 | `[수집]` | 조각 전송 · CSRF (11건 · 개정 — 502 도 밝힌다 | `[마스터]` | `60-admin` | 미구현 | — | 검사 없음 | ✗ |
 | AD-099 | `[검사]` | **시험은 실제 사용 패턴대로** | `[마스터]` **한 번만 POST 해서 못 잡았다** | `60-admin` | `tools/check_src.py:689` | — | 검사 없음 | ◐ |
@@ -189,7 +189,7 @@
 | AD-114 | `[운영]` | 결과를 `outputs` 에 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 | ◐ |
 | AD-115 | `[운영]` | 목록이 N일 이상 안 들어왔으면 알린다 | `[마스터]` 개정 316 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-103 — 검사 없음(규격에만) | ◐ |
 | AD-116 | `[운영]` | `list_stale_days` (기본 1) | `[마스터]` | `60-admin` | `tools/daily_enqueue.py::main` | — | 검사 없음 | ◐ |
-| AD-117 | `[운영·화면]` | 자동화 (23건 · 개정 314317 · — 전 화면 머리말에 | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 | ✗ |
+| AD-117 | `[운영·화면]` | 자동화 (23건 · 개정 314317 · — 전 화면 머리말에 | `[마스터]` | `60-admin` | `web/app.py::build_page` | 화면 없음 | 검사 없음 | ✗ |
 | AD-118 | `[운영·화면]` | **가격 변동은 목록에서 온다** | `[마스터]` **목록이 멈추면 변동이 멈춘다** | `60-admin` | `tools/daily_enqueue.py::list_age_days` | 화면 없음 | V11-103 — 검사 없음(규격에만) | ◐ |
 
 ## 마스터께 여쭐 것

@@ -93,7 +93,11 @@
     {% if !r.origin_gap_pct %}<span class="dim">신차가 없음</span>{% endif %}
     {% if r.origin_total_won %}<span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %} (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}
   </td>
-  <td class="r num" data-label="가격">{% if r.price_bucket_won %}<a href="/listings?price_max={{ r.price_bucket_won }}" title="이 가격대 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}{% if !r.price_bucket_won %}<span class="dim">가격 없음</span>{% endif %}</td>
+  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
+       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
+  <td class="r num" data-label="가격">{% if r.price_bucket_won %}<a href="/listings?price_max={{ r.price_bucket_won }}" title="이 가격대 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}{% if !r.price_bucket_won %}<span class="dim">가격 없음</span>{% endif %}{% if r.cash_only %}
+    <span class="dim cash" title="표시가 + 부대비용이 선납금 안입니다">전액 현금</span>{% endif %}{% if !r.cash_only %}{% if r.monthly_won %}
+    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 {{ r.down_payment_won | won }} · 월 {{ r.monthly_won | won }} 추정</span>{% endif %}{% endif %}</td>
   <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다">{% if r.monthly_won %}<a href="/listings?monthly_max={{ r.monthly_bucket_won }}">{{ r.monthly_won | won }}</a>{% endif %}</td>
   {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}">{% if c.state %}{{ c.state }}{% endif %}{% if !c.state %}<b>{{ c.mark }}</b>{% endif %}</a></td>{% endfor %}
   <td class="r num" data-label="옵션">

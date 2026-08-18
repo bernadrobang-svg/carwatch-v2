@@ -1953,3 +1953,7 @@ svg.line circle { fill:var(--amber); }
 .rawbox summary { cursor:pointer; font-size:13px }
 .raw-rows { font-size:12px; margin-top:6px }
 .raw-rows td:first-child { white-space:nowrap; color:var(--faint) }
+
+/* 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
+   ★ 표시가만 보면 부대비용 차이로 순위가 뒤집힌다 */
+.rows td .pay, .rows td .cash { display:block; font-size:11px; line-height:1.3 }

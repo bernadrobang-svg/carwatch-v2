@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**86파일 · 25,631줄 · 1,080KB**
+**87파일 · 26,340줄 · 1,114KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - guide/01_요구사항.md 841줄
 - chapters/00-standard.md 1,885줄
 - chapters/61-web.md 2,223줄
-- chapters/60-admin/c-tools.md 1,032줄
+- chapters/60-admin/c-tools.md 1,076줄
 
 | 파일 | 줄 | KB |
 |---|--:|--:|
@@ -60,17 +60,18 @@
 | `chapters/60-admin/00-intro.md` | 219 | 8 |
 | `chapters/60-admin/a-auth.md` | 388 | 14 |
 | `chapters/60-admin/b-ops.md` | 304 | 11 |
-| `chapters/60-admin/c-tools.md`  ★ | 1,032 | 41 |
+| `chapters/60-admin/c-tools.md`  ★ | 1,076 | 43 |
 | `chapters/61-web.md`  ★ | 2,223 | 83 |
 | `chapters/61-web/a-common.md` | 61 | 2 |
 | `chapters/61-web/b-list.md` | 84 | 3 |
 | `chapters/61-web/c-recommend.md` | 42 | 1 |
-| `chapters/61-web/d-detail.md` | 205 | 7 |
+| `chapters/61-web/d-detail.md` | 293 | 11 |
 | `chapters/61-web/e-compare.md` | 52 | 1 |
 | `chapters/61-web/f-width.md` | 76 | 2 |
 | `chapters/61-web/g-chart.md` | 101 | 4 |
 | `chapters/61-web/h-admin.md` | 277 | 9 |
-| `chapters/61-web/i-admin-mock.md` | 310 | 13 |
+| `chapters/61-web/i-admin-mock.md` | 385 | 17 |
+| `chapters/61-web/j-admin-mock2.md` | 495 | 22 |
 | `guide/00_개요.md` | 138 | 6 |
 | `guide/00_버전.md` | 91 | 3 |
 | `guide/01_시작.md` | 280 | 10 |
@@ -78,14 +79,14 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 400 | 87 |
+| `guide/03_이력.md` | 406 | 89 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
 | `guide/05_가이드역할.md` | 294 | 9 |
 | `guide/05_노션.md` | 188 | 5 |
 | `ref/00-intro.md` | 25 | 0 |
 | `ref/A-check.md` | 68 | 3 |
-| `ref/B-config.md` | 404 | 12 |
+| `ref/B-config.md` | 405 | 12 |
 | `ref/C-fixture.md` | 65 | 2 |
 | `ref/D-update.md` | 32 | 1 |
 | `ref/E-attach.md` | 526 | 19 |
