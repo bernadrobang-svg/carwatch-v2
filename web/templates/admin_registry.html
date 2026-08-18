@@ -9,6 +9,28 @@
   전 차종에서는 갈릴 수 있습니다 — 그럴 때는 <code>deferred</code> 로 두고 해소 조건을 적습니다.
   미등록이 곧 미분류가 아닙니다. 파서가 이미 쓰는데 표기가 달라 잡힌 것일 수 있습니다.
 </p>
+<!-- 미분류를 원인별로 (개정 341 · V4-26).
+     ★ 「349건」이라고만 내면 아무도 안 봅니다 -->
+{% if split.total %}
+<h2>미분류 {{ split.total | num }}건 — 원인별</h2>
+<p class="chips">{% for k in split.kinds %}<span class="chip">{{ k.kind }} {{ k.n | num }}</span>{% endfor %}</p>
+<p class="big"><strong>사람이 봐야 할 것 {{ split.need | num }}건</strong>
+  <span class="muted">나머지 {{ split.done | num }}건은 제안이 있습니다</span></p>
+{% if split.top %}
+<table class="rows reg-rows">
+<thead><tr><th>경로</th><th>제안</th><th class="r">관측</th></tr></thead>
+<tbody>
+{% for t in split.top %}
+<tr><td data-label="경로"><code>{{ t.endpoint }}:{{ t.path }}</code></td>
+  <td data-label="제안" class="muted">{{ t.hint }}</td>
+  <td class="r num" data-label="관측">{{ t.hits | num }} / {{ t.total | num }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% if split.more %}<p class="muted">그 밖 {{ split.more | num }}건이 더 있습니다.</p>{% endif %}
+{% endif %}
+{% endif %}
+
 <p class="chips">
 {% for c in counts %}<a class="chip" href="/admin/registry?usage={{ c.usage }}">{{ c.usage }} ({{ c.n | num }})</a>{% endfor %}
 </p>

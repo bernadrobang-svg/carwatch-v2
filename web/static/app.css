@@ -1810,10 +1810,14 @@ body.s-listings main { max-width:1560px; }
 @media (max-width:1749px) {
   /* 한 줄에 셋을 넣으면 52px 씩이라 「MODEL_Y · 2025-03」이 넉 줄로 쪼개진다.
      ★ 차종은 한 줄을 통째로 쓰고, 사유와 건수를 그 아래 한 줄에 둔다 */
-  .cat-rows td[data-label="차종 · 연식"] {
+  .cat-rows td[data-label="차종 · 연식"],
+  .reg-rows td[data-label="경로"] {
     grid-column:1 / -1; font-weight:600;
   }
-  .cat-rows td[data-label="차종 · 연식"]::before { content:""; margin:0; }
-  .cat-rows td[data-label="왜 못 받았나"] { grid-column:span 4; }
-  .cat-rows td[data-label="걸린 매물"]   { grid-column:span 2; }
+  .cat-rows td[data-label="차종 · 연식"]::before,
+  .reg-rows td[data-label="경로"]::before { content:""; margin:0; }
+  .cat-rows td[data-label="왜 못 받았나"],
+  .reg-rows td[data-label="제안"] { grid-column:span 4; }
+  .cat-rows td[data-label="걸린 매물"],
+  .reg-rows td[data-label="관측"]   { grid-column:span 2; }
 }

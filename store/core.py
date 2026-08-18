@@ -833,3 +833,105 @@ def catalog_coverage(conn) -> dict:
             "linked": {r[0] for r in conn.execute(
                 "SELECT DISTINCT model_catalog_key FROM dict_model_option"
                 " WHERE model_catalog_key IS NOT NULL")}}
+
+
+def _walk(node, prefix: str, out: dict) -> None:
+    """원문을 훑어 경로마다 「값이 있었는가」를 센다.
+
+    ★ 배열은 `[]` 로 접는다 — 등록부가 그렇게 적는다
+    """
+    if isinstance(node, dict):
+        for key, val in node.items():
+            path = f"{prefix}.{key}" if prefix else key
+            out[path] = out.get(path, 0) + (0 if val in (None, "", [], {})
+                                            else 1)
+            _walk(val, path, out)
+    elif isinstance(node, list):
+        for one in node[:3]:
+            _walk(one, f"{prefix}[]", out)
+
+
+def _sample_bodies() -> int:
+    """엔드포인트마다 원문 몇 개를 열어 볼 것인가 (개정 341).
+
+    ★ 전건을 열면 오래 걸린다.  「늘 비어 있는가」는 표본으로 충분하다
+    """
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "checks.json"),
+              encoding="utf-8") as f:
+        return int(json.load(f)["unclassified_sample_bodies"])
+
+
+def observed(conn, endpoint: str) -> tuple:
+    """그 엔드포인트에서 경로마다 값이 있었던 횟수 · 본 원문 수."""
+    seen: dict = {}
+    rows = conn.execute(
+        "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
+        " AND body IS NOT NULL ORDER BY id DESC LIMIT ?",
+        (endpoint, _sample_bodies())).fetchall()
+    for (body,) in rows:
+        try:
+            got = json.loads(body)
+        except (ValueError, TypeError):
+            continue
+        _walk(got, "", seen)
+    return seen, len(rows)
+
+
+def known_leaves(conn) -> dict:
+    """이미 분류된 경로의 잎 이름 → (분류, 경로).
+
+    ★ 이름이 같으면 같은 것일 「가능성」이다.  단정하지 않는다
+    """
+    out: dict = {}
+    for endpoint, usage, path in conn.execute(
+        "SELECT endpoint, usage, json_path FROM meta_field_usage"
+        " WHERE usage NOT IN ('unclassified')"
+    ):
+        leaf = path.replace("[]", "").split(".")[-1]
+        out.setdefault(leaf.lower(), (usage, path, endpoint))
+    return out
+
+
+def has_unclassified(conn) -> bool:
+    """미분류가 하나라도 있는가.  ★ SQL 은 store 가 갖는다 (V11-01)."""
+    return bool(conn.execute(
+        "SELECT 1 FROM meta_field_usage WHERE usage='unclassified' LIMIT 1"
+    ).fetchone())
+
+
+def classify_unclassified(conn) -> list:
+    """미분류 경로마다 (엔드포인트, 경로, 관측, 표본, 갈래, 제안)."""
+    leaves = known_leaves(conn)
+    by_ep: dict = {}
+    for endpoint, path in conn.execute(
+        "SELECT endpoint, json_path FROM meta_field_usage"
+        " WHERE usage='unclassified' ORDER BY endpoint, json_path"
+    ):
+        by_ep.setdefault(endpoint, []).append(path)
+
+    out = []
+    for endpoint, paths in sorted(by_ep.items()):
+        seen, total = observed(conn, endpoint)
+        for path in paths:
+            bare = path.replace("[]", "")
+            hits = seen.get(path, seen.get(bare, 0))
+            leaf = bare.split(".")[-1].lower()
+            twin = leaves.get(leaf)
+            if total and not hits:
+                kind, hint = "③ 늘 비어 있음", "not_provided — 안 쓰기로 정하면 됩니다"
+            elif twin and (twin[2], twin[1]) != (endpoint, path):
+                # ★ 같은 잎 이름이 다른 엔드포인트에 이미 분류돼 있다.
+                #   경로 글자만 견주면 record 와 record_summary 처럼
+                #   이름이 똑같은 짝을 놓친다 (실측 08-18)
+                kind = "② 이름만 다름"
+                hint = (f"{twin[0]} — 「{twin[2]}:{twin[1]}」과 "
+                        "같은 것으로 보입니다")
+            else:
+                kind, hint = "④ 새로운 것", "사람이 봐야 합니다"
+            out.append({"endpoint": endpoint, "path": path, "hits": hits,
+                        "total": total, "kind": kind, "hint": hint})
+    out.sort(key=lambda r: (-r["hits"], r["endpoint"], r["path"]))
+    return out

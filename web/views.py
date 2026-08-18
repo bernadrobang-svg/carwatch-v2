@@ -176,6 +176,44 @@ def admin_home(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: 
                 csrf=csrf, root=root, flash_key=flash_key)
 
 
+def _unclassified_split(conn, root: str = ROOT) -> dict:
+    """미분류를 원인별로 (개정 341 · V4-26).
+
+    ★ 원문을 훑는 일이라 가볍지 않다.  미분류가 없으면 아예 안 돈다
+    ★ SQL 은 web/ 에 두지 않는다 (V11-01) — store 가 센다
+    """
+    from store.core import classify_unclassified, has_unclassified
+
+    if not has_unclassified(conn):
+        return {}
+    rows = classify_unclassified(conn)
+    top = _rows_of("split_rows", root)
+    kinds: dict = {}
+    for one in rows:
+        kinds[one["kind"]] = kinds.get(one["kind"], 0) + 1
+    mine = [r for r in rows if r["kind"].startswith("④")]
+    return {
+        "total": len(rows),
+        "kinds": [{"kind": k, "n": n} for k, n in sorted(kinds.items())],
+        "need": len(mine),
+        "done": len(rows) - len(mine),
+        "top": [{"endpoint": r["endpoint"], "path": r["path"],
+                 "hits": r["hits"], "total": r["total"], "hint": r["hint"]}
+                for r in mine[:top]],
+        "more": max(0, len(mine) - top),
+    }
+
+
+def _rows_of(key: str, root: str) -> int:
+    """관리 화면이 내는 줄 수.  ★ 코드에 박지 않는다 (config/admin.json)."""
+    import json as _j
+    import os as _o
+
+    with open(_o.path.join(root, "config", "admin.json"),
+              encoding="utf-8") as f:
+        return int(_j.load(f)[key])
+
+
 def _check_reports(root: str) -> dict:
     """마지막 점검 기록.  ★ 「언제 봤는가」가 없으면 점검이 아니다 (S29).
 
@@ -1357,6 +1395,9 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
     return page(conn, account, "등록부", "admin_registry.html",
                 {"rows": rows, "counts": counts, "usage": usage,
                  "count": len(rows),
+                 # ★ 「349건 미분류」라고만 내면 아무도 안 본다 (개정 341).
+                 #   원인별로 갈라 「사람이 봐야 할 것」만 남긴다
+                 "split": _unclassified_split(conn),
                  "usages": [u for u in sorted(USAGE_VALUES)
                             if u != "unclassified"]},
                 csrf=csrf, root=root, flash_key=flash_key)

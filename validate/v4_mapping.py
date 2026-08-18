@@ -55,6 +55,18 @@ C = {
     "V4-11b": Check("V4", "V4-11b", "판정에 안 쓰는 미분류 경로", WARN, "run",
                     "다음 회차에 모아서 분류한다. 파이프라인은 막지 않는다",
                     KIND_EXTERNAL),
+    "V4-26": Check("V4", "V4-26", "미분류가 원인별로 갈려 있음",
+                   FATAL, "run",
+                   "「349건 미분류」라고만 내면 아무도 안 본다. "
+                   "② 이름만 다른 것 · ③ 늘 비어 있는 것 · ④ 정말 새로운 것으로 "
+                   "가르고, 엔드포인트별·관측 건수와 함께 낸다 (개정 341)",
+                   KIND_CODE),
+    "V4-27": Check("V4", "V4-27", "판정을 막는 것만 막음",
+                   FATAL, "run",
+                   "미분류가 전부 판정을 막으면 새 필드 하나에 판정이 영영 "
+                   "멈춘다.  판정에 쓰는 경로만 막는다 — 나머지는 등록만 하고 "
+                   "진행한다 (개정 341)",
+                   KIND_CODE),
     "V4-12": Check("V4", "V4-12", "facet 필수 축 집합 존재", FATAL, "run",
                      "facet 을 재수집한다 (S2). 축을 열거해 요청하지 않는다",
                     KIND_CODE),
@@ -161,6 +173,44 @@ SAFE_TOP_CALLS = frozenset({
 def _layer_of(rel: str) -> str:
     head = rel.split("/")[0]
     return head[:-3] if head.endswith(".py") else head
+
+
+def _unclassified_split(conn, rid, blocking: list, pending: list) -> list:
+    """V4-26 · V4-27 — 미분류를 원인별로 가르고, 막는 것만 막는가 (개정 341).
+
+    ★ 가이드 지적 — 「349개를 사람이 하나씩 보라는 뜻입니다.  아무도 안 봅니다」
+    ★ 「몇 건」이 아니라 「무엇이 왜」를 낸다
+    """
+    from store.core import classify_unclassified as classify
+
+    total = len(blocking) + len(pending)
+    if not total:
+        return [not_applicable(C["V4-26"], rid, "미분류가 없다"),
+                not_applicable(C["V4-27"], rid, "미분류가 없다")]
+    rows = classify(conn)
+    kinds: dict = {}
+    for one in rows:
+        kinds[one["kind"]] = kinds.get(one["kind"], 0) + 1
+    need = kinds.get("④ 새로운 것", 0)
+    bad26 = []
+    if len(rows) != total:
+        bad26.append(f"가른 것 {len(rows)}건 != 미분류 {total}건")
+    if need == len(rows) and rows:
+        bad26.append("전부 「새로운 것」이다 — 가르지 못했다")
+    # V4-27 — 막는 것이 전체가 아니어야 한다
+    bad27 = []
+    if blocking and len(blocking) == total:
+        bad27.append(f"미분류 {total}건이 전부 판정을 막는다 — "
+                     "판정에 쓰는 경로만 막아야 한다")
+    return [
+        result(C["V4-26"], rid, f"{total}건",
+               " · ".join(f"{k} {n}" for k, n in sorted(kinds.items()))
+               + f" · 사람 몫 {need}",
+               not bad26, bad26[:4]),
+        result(C["V4-27"], rid, f"{total}건 중",
+               f"막는 것 {len(blocking)}건 · 진행 {len(pending)}건",
+               not bad27, bad27[:4]),
+    ]
 
 
 def _layer_checks(rid) -> list:
@@ -406,6 +456,7 @@ def run(conn, ctx) -> list:
                       blocking))
     out.append(result(C["V4-11b"], rid, "분류 대기", len(pending),
                       not pending, pending))
+    out += _unclassified_split(conn, rid, blocking, pending)
 
     from collect.runner import REQUIRED_FACET_AXES, aspect_names
 
