@@ -145,6 +145,21 @@
 </tbody>
 </table>
 
+<!-- 가점 (개정 380).  ★ 축이 아니다 — 분모를 안 늘린다.
+     마스터 확정 — 「그건 가점이니 필수는 아닌 듯해」 -->
+{% if v.bonuses %}
+<h2>가점</h2>
+<ul>{% for b in v.bonuses %}<li>{{ b.label }}
+  <strong>+{{ b.points | num }}</strong></li>{% endfor %}</ul>
+<p class="muted">★ 분모를 늘리지 않습니다 — 가점이 크면 100%를 넘습니다.
+  그대로 냅니다.</p>
+{% endif %}
+{% if !v.bonuses %}{% if v.ev %}
+<h2>가점</h2>
+<p class="muted">배터리 진단 없음 — 이 매물은 배터리 진단을 받지 않았습니다.
+  <strong>0점이 아니고 감점도 아닙니다.</strong> 진단받은 차만 가점을 받습니다.</p>
+{% endif %}{% endif %}
+
 <!-- 부록 G ⑥ 마이너스 — 축별 판정 다음이다.  값 절에 섞지 않는다 -->
 <h2>마이너스</h2>
 {% if v.penalties %}

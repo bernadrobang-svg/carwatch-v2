@@ -1251,12 +1251,16 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                 "(listing_id,calc_version,dict_version,score_total,earned,"
                 " denominator,grade,absolute_fail,not_rated_reason,"
                 " grade_earned,grade_base,confirmed_points,penalties_json,"
-                " calculated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                " bonuses_json, calculated_at)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (lid, ctx.calc_version, ctx.dict_version, res.score_total,
                  res.earned, res.denominator, grade_of(res, policy),
                  res.absolute_fail, res.not_rated_reason,
                  res.grade_earned, res.grade_base, res.confirmed,
                  json.dumps([list(p) for p in res.penalties],
+                            ensure_ascii=False),
+                 # ★ 가점도 남긴다.  화면이 「배터리 SOH 94.6% (+24)」를 낸다
+                 json.dumps([list(b) for b in res.bonuses],
                             ensure_ascii=False), at))
         conn.commit()
         # ★ 매 실행 후 조건을 돌린다 (STEP 117a).

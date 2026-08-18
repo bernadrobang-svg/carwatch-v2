@@ -12,6 +12,9 @@
 """
 from __future__ import annotations
 
+# 가점 키 (개정 380).  ★ 점수는 config 에 있다 (V4-13)
+BATTERY_SOH = "battery_soh"
+
 # 흠 → config/scoring.json 의 penalties 키.  ★ 점수는 코드에 없다 (V4-13)
 RENTAL = "rental_history"
 NO_SITE_GRADE = "no_site_grade"
@@ -86,3 +89,35 @@ def _not_join_ratio(snapshot) -> float | None:
     if not months or not owned:
         return None
     return min(1.0, months / owned)
+
+
+def bonuses_of(policy, snapshot) -> list:
+    """더할 것들 (키, 점수, 문구) — 개정 380.
+
+    마스터 확정 — 「그게 있는 데 있고 대부분이 없는데.
+    그건 가점이니 필수는 아닌 듯해」
+    ★ 축이 아니다.  있으면 더하고 없으면 아무 일도 없다
+    ★ 없다고 감점하지 않는다 — 엔카가 진단 안 한 죄를 차에 묻는 것이다
+    ★ 분모를 안 늘린다.  가점이 크면 100%를 넘고 그대로 낸다
+    """
+    if snapshot is None:
+        return []
+    table = policy.raw.get("bonus") or {}
+    full = table.get(BATTERY_SOH)
+    soh = getattr(snapshot, "ev_battery_soh", None)
+    if not full or soh is None:
+        return []
+    curve = (policy.raw.get("axis_rules", {}).get("value", {})
+             or {}).get("soh_curve")
+    if not curve:
+        return []
+    # ★ 곡선은 내림차순 [[97,30],[95,26],…].  닿는 첫 칸이 그 점수다
+    got = 0
+    for edge, pts in curve:
+        if float(soh) >= float(edge):
+            got = int(pts)
+            break
+    if not got:
+        return []
+    got = min(got, int(full))
+    return [(BATTERY_SOH, got, f"배터리 SOH {float(soh):g}%")]

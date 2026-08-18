@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**86파일 · 25,444줄 · 1,071KB**
+**86파일 · 25,631줄 · 1,080KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -49,7 +49,7 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md` | 616 | 17 |
+| `chapters/30-score/f-table.md` | 746 | 22 |
 | `chapters/30-score/g-absolute.md` | 139 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 673 | 28 |
@@ -65,7 +65,7 @@
 | `chapters/61-web/a-common.md` | 61 | 2 |
 | `chapters/61-web/b-list.md` | 84 | 3 |
 | `chapters/61-web/c-recommend.md` | 42 | 1 |
-| `chapters/61-web/d-detail.md` | 153 | 5 |
+| `chapters/61-web/d-detail.md` | 205 | 7 |
 | `chapters/61-web/e-compare.md` | 52 | 1 |
 | `chapters/61-web/f-width.md` | 76 | 2 |
 | `chapters/61-web/g-chart.md` | 101 | 4 |
@@ -78,7 +78,7 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 395 | 85 |
+| `guide/03_이력.md` | 400 | 87 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
 | `guide/05_가이드역할.md` | 294 | 9 |

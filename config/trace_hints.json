@@ -61,6 +61,8 @@
     "AD-104": "report/screens/admin.py::view_status",
     "ST-003": "store/core.py::classify_invariant_change",
     "RG-002": "store/core.py::unclassified_cards",
-    "OP-065": "web/templates/admin_registry.html"
+    "OP-065": "web/templates/admin_registry.html",
+    "SC-011": "analyze/axis/price.py::_mileage",
+    "SC-013": "analyze/axis/state.py::_accident"
   }
 }

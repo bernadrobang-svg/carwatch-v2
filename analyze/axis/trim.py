@@ -3,7 +3,8 @@
 
 지시서   7장 STEP 73 · 74 · `docs/ref/F-scoring.md` ④ (개정 329)
 근거     ★ 마스터 지적 — 「깡통에 HUD 만 있어도 만점」.
-        트림은 신차가 순으로 줄 세운 자리다.  「있다/없다」가 아니다
+        ★★ 개정 382 — 트림은 「몇째 자리인가」가 아니라 「얼마짜리 급인가」다.
+        마스터 — 「트림의 신차 가격이 중요해.  그게 차량의 가격 차이야」
 값규칙   트림이 1종뿐이면 만점 — 그 차종 안에서 못 가르는 것이지 나쁜 것이 아니다
         옵션가는 그 차종·트림 P90 을 만점 기준으로 삼는다
 금지     셋을 같은 값으로 두는 것 —
@@ -18,19 +19,21 @@ TRIM = "spec.trim"
 OPTIONS = "spec.options"
 
 
-def rank_ratio(value: float, ladder: list) -> float:
-    """오름차순 사다리에서 value 의 자리 (0.0~1.0) — k / n (F ④-1).
+def price_ratio(value: float, ladder: list) -> float:
+    """내 트림 신차가 ÷ 그 차종 최고 트림 신차가 (0.0~1.0) — 개정 382.
 
-    ★ 부록 F 는 「내 트림 순위 k · 전체 트림 수 n · (k/n)×25」다.
-      k 는 1부터다 — 맨 위 트림은 k=n 이라 만점이다.
-    ★ 전에는 같은 값 무리의 가운데(below + same/2)를 줬다.  그런데
-      사다리는 DISTINCT 신차가라 같은 값이 늘 하나뿐이다 —
-      가운데를 주면 언제나 k−0.5 가 되어 모든 트림이 0.5 칸씩 낮았다.
-      실측 08-18 손계산 — 맨 위 트림이 25 가 아니라 24 였다 (n=13)
+    ★★ 마스터 지적 — 「그건 너다.  트림별 가격 차이를 고려 안 해서야.
+      트림의 신차 가격이 중요해.  그게 차량의 가격 차이야」
+    ★ 순위(k/n)로 재면 가격 차이가 사라진다.
+      스탠다드 6,500 · 스포츠 7,200 · 플러스 7,800 이면
+      순위로는 8.3/16.7/25 다 — 700만·600만 차이가 안 보인다.
+      신차가로 재면 20.8/23.1/25 다
+    ★ 트림이 10종인 차종이면 한 칸이 2.5점이라 값과 무관해졌다
     """
-    below = sum(1 for x in ladder if x < value)
-    same = sum(1 for x in ladder if x == value)
-    return (below + same) / len(ladder)
+    top = max(ladder)
+    if not top:
+        return 0.0
+    return min(float(value) / float(top), 1.0)
 
 
 def _trim(ctx: AxisContext, v: Verdict) -> None:
@@ -47,7 +50,9 @@ def _trim(ctx: AxisContext, v: Verdict) -> None:
         # ★ 트림이 1종뿐이다.  못 가르는 것이지 나쁜 것이 아니다
         put(v, TRIM, full, PRIO_MANUFACTURER, "trim_single")
         return
-    put(v, TRIM, round(rank_ratio(s.price_origin_won, ladder) * full),
+    # ★ 신차가로 잰다.  순위로 재지 않는다 (개정 382).
+    #   최고 트림이 25 · 나머지는 그에 대한 비율
+    put(v, TRIM, round(price_ratio(s.price_origin_won, ladder) * full, 1),
         PRIO_MANUFACTURER, "trim_origin_price")
 
 

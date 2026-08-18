@@ -142,6 +142,25 @@ C = {
                    "facet 에만 있는 값은 새 pending 이고, 목록에만 있는 값은 "
                    "확인이 필요하다 — facet 에 없는 값이 왜 매물에 있나 (개정 266)",
                    KIND_CODE),
+    "V3-58": Check("V3", "V3-58", "배터리 SOH 가 축이 아니라 가점임",
+                   FATAL, "run",
+                   "마스터 확정 — 「그게 있는 데 있고 대부분이 없는데. "
+                   "그건 가점이니 필수는 아닌 듯해」.  전기차 778건 중 33건만 "
+                   "있다 — 축으로 두면 745건이 억울하다 (개정 380)",
+                   KIND_CODE),
+    "V3-59": Check("V3", "V3-59", "가점이 분모를 늘리지 않음", FATAL, "run",
+                   "분모는 675 그대로다.  가점이 크면 100%를 넘고 그대로 낸다. "
+                   "★ 없다고 감점하지도 않는다 (개정 380)",
+                   KIND_CONTRACT),
+    "V3-72": Check("V3", "V3-72", "SOH 가점이 곡선대로 붙음", FATAL, "run",
+                   "97%→+30 · 94%→+24 · 87%→+10 · 85% 이하 0. "
+                   "화면에 「배터리 SOH 94.6% (+24)」로 따로 낸다 (개정 380)",
+                   KIND_CODE),
+    "V3-75": Check("V3", "V3-75", "트림 점수를 신차가로 잼", FATAL, "run",
+                   "마스터 지적 — 「트림의 신차 가격이 중요해.  그게 차량의 "
+                   "가격 차이야」.  순위(k/n)로 재면 700만 차이가 한 칸이 된다 "
+                   "(개정 382)",
+                   KIND_CODE),
     "V3-41": Check("V3", "V3-41", "전 매물의 분모가 만점과 같음",
                    FATAL, "run",
                    "축을 못 보면 분모에서 빼던 것을 없앴다 (개정 289). "
@@ -1033,10 +1052,136 @@ def _market_gap_check(conn, rid):
                   f"최대 {worst * 100:.1f}%", not bad, bad[:8])
 
 
+def _bonus_checks(conn, rid):
+    """V3-58 · V3-59 · V3-72 — 배터리 SOH 가점 (개정 380).
+
+    마스터 확정 — 「그건 가점이니 필수는 아닌 듯해」
+    ★ 없다고 감점하지 않는다 — 엔카가 진단 안 한 죄를 차에 묻는 것이다
+    ★ 분모를 안 늘린다.  가점이 크면 100%를 넘고 그대로 낸다
+    """
+    import json as _j
+    import os as _os
+
+    root = _os.path.dirname(_os.path.dirname(
+        _os.path.abspath(__file__)))
+
+    with open(_os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        raw = _j.load(f)
+    full = (raw.get("bonus") or {}).get("battery_soh")
+    if not full:
+        return [result(C["V3-58"], rid, "있다", "없다", False,
+                       ["config/scoring.json 에 bonus.battery_soh 가 없다"]),
+                not_applicable(C["V3-59"], rid, "가점 표가 없다"),
+                not_applicable(C["V3-72"], rid, "가점 표가 없다")]
+    # V3-58 — 축이 아니라 가점인가
+    bad58 = []
+    if "battery_soh" in (raw.get("components") or {}):
+        bad58.append("battery_soh 가 components 에 있다 — 축이 아니다")
+    a = result(C["V3-58"], rid, "가점", f"+{full}", not bad58, bad58)
+
+    # V3-59 — 없다고 감점하지 않는가.  분모를 안 늘리는가
+    bad59 = []
+    if "battery_soh" in (raw.get("penalties") or {}):
+        bad59.append("battery_soh 가 penalties 에 있다 — 없다고 벌하면 안 된다")
+    rows = conn.execute(
+        "SELECT COUNT(*), COUNT(DISTINCT denominator) FROM result_score"
+        " WHERE bonuses_json NOT IN ('', '[]') AND bonuses_json IS NOT NULL"
+    ).fetchone()
+    n = rows[0] if rows else 0
+    if n:
+        # ★ 가점을 받은 매물과 못 받은 매물의 분모가 같아야 한다
+        two = conn.execute(
+            "SELECT COUNT(DISTINCT denominator) FROM result_score").fetchone()
+        if two and two[0] > 1:
+            bad59.append(f"분모가 {two[0]}가지다 — 가점이 분모를 늘렸다")
+    b = result(C["V3-59"], rid, "한 가지", f"가점 {n}건", not bad59, bad59)
+
+    # V3-72 — 곡선대로 붙는가.  화면에 따로 나오는가
+    bad72 = []
+    curve = (raw.get("axis_rules", {}).get("value", {}) or {}).get("soh_curve")
+    if not curve:
+        bad72.append("soh_curve 가 없다")
+    for soh, got in conn.execute(
+        "SELECT l.ev_battery_soh, s.bonuses_json FROM result_score s"
+        " JOIN core_listing l ON l.listing_id = s.listing_id"
+        " WHERE l.ev_battery_soh IS NOT NULL LIMIT 40"
+    ):
+        want = 0
+        for edge, pts in (curve or []):
+            if float(soh) >= float(edge):
+                want = int(pts)
+                break
+        have = 0
+        for _k, p, _w in _j.loads(got or "[]"):
+            have += int(p)
+        if want != have:
+            bad72.append(f"SOH {soh} 는 +{want} 여야 하는데 +{have} 다")
+    path = _os.path.join(root, "outputs", "render", "why_listing_id.html")
+    if _os.path.isfile(path):
+        html = open(path, encoding="utf-8").read()
+        if "가점" not in html:
+            bad72.append("상세에 가점 절이 없다")
+    return [a, b, result(C["V3-72"], rid, "곡선대로",
+                         "맞다" if not bad72 else "다르다",
+                         not bad72, bad72[:4])]
+
+
+def _trim_price_check(conn, rid):
+    """V3-75 — 트림 점수를 신차가로 재는가 (개정 382).
+
+    마스터 지적 — 「트림의 신차 가격이 중요해.  그게 차량의 가격 차이야」
+    ★ 순위(k/n)로 재면 700만 차이가 한 칸이 된다
+    """
+    from analyze.axis.trim import price_ratio
+
+    from validate.base import canon_text
+
+    bad = []
+    # ★ 손계산 표를 코드에 박지 않는다.  규격의 표에서 읽는다 (배점 정본).
+    #   「| 스탠다드 | 6,500만 | 0.833 | **20.8** |」 꼴이다
+    rows = re.findall(
+        r"^\|[^|]+\|\s*([\d,]+)만\s*\|[^|]*\|\s*\*{0,2}([\d.]+)\*{0,2}\s*\|",
+        canon_text("배점"), re.M)
+    table = [(int(a.replace(",", "")), float(b)) for a, b in rows]
+    if len(table) < 2:
+        bad.append("배점 정본에 트림 표가 없다 — 손계산을 못 한다")
+    else:
+        full = max(p for _n, p in table)
+        ladder = [n for n, _p in table]
+        for man, want in table:
+            got = round(price_ratio(man, ladder) * full, 1)
+            # ★ 표는 소수 한 자리다.  반올림 자리만큼만 봐준다
+            if round(got, 1) != round(want, 1):
+                bad.append(f"{man}만 은 {want} 여야 하는데 {got} 다")
+    # ★ 실제 판정도 그런가 — 같은 차종에서 신차가가 높으면 점수도 높아야 한다
+    rows = conn.execute(
+        # ★ 점수는 score 가 비면 value 에 있다 — 둘 중 있는 것을 본다
+        "SELECT l.target_key, l.price_origin_won,"
+        "       COALESCE(a.score, a.value)"
+        " FROM result_axis a JOIN core_listing l ON l.listing_id = a.listing_id"
+        " WHERE a.axis = 'spec.trim' AND a.source = 'trim_origin_price'"
+        "   AND l.price_origin_won IS NOT NULL"
+        " ORDER BY l.target_key, l.price_origin_won").fetchall()
+    prev = None
+    for tk, price, score in rows:
+        if score is None:
+            continue          # ★ 점수가 없는 행은 견줄 것이 없다
+        if prev and prev[0] == tk and price > prev[1] and score < prev[2]:
+            bad.append(f"{tk} — 신차가가 높은데 트림 점수가 낮다 "
+                       f"({price:,} {score} < {prev[1]:,} {prev[2]})")
+        prev = (tk, price, score)
+    return result(C["V3-75"], rid, "신차가 비율",
+                  f"{len(rows)}건", not bad, bad[:4])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
     out.append(_denominator_check(conn, rid))
+    # 가점 (개정 380) · 트림 신차가 (개정 382)
+    out.extend(_bonus_checks(conn, rid))
+    out.append(_trim_price_check(conn, rid))
     out.append(_points_sum_check(rid))
     out.append(_market_gap_check(conn, rid))
     out.append(_core_axis_check(conn, rid))

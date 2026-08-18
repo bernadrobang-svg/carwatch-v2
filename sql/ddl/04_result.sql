@@ -41,6 +41,9 @@ CREATE TABLE IF NOT EXISTS result_score (
   confirmed_points REAL,
   -- 뺀 것 [[키, 점수, 문구], …] (개정 322).  ★ 0 아래로도 내려간다
   penalties_json TEXT,
+  -- 더한 것 [[키, 점수, 문구], …] (개정 380).  ★ 축이 아니다 — 분모를 안 늘린다.
+  --   마스터 확정 — 「그건 가점이니 필수는 아닌 듯해」.  없다고 감점하지 않는다
+  bonuses_json   TEXT,
   calculated_at  TEXT NOT NULL,
   PRIMARY KEY (listing_id, calc_version),
   FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),

@@ -173,6 +173,11 @@ class ScoreView:
     # 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다
     penalties: tuple = ()
     penalty_total: float = 0.0
+    # 더한 것 (개정 380).  ★ 축이 아니다 — 분모를 안 늘린다.
+    #   ★ 없으면 「배터리 진단 없음」이다.  0점이라 적지 않는다
+    bonuses: tuple = ()
+    bonus_total: float = 0.0
+    ev: bool = False
     # ③ 왜 싼가 / 왜 비싼가 (개정 299 · 부록 G 상세 ③절)
     why_cheap: str | None = None
     why_cheap_reasons: tuple = ()

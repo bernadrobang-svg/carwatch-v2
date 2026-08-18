@@ -301,7 +301,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         # 사이트 배지 (50-multisite · V9-06) — 상세에도 출처를 낸다
         " l.site, l.sell_type,"
         # 상세 사진 (개정 375).  ★ 대표 하나가 아니라 전부다
-        " l.photo_list_json"
+        " l.photo_list_json,"
+        # 가점 (개정 380) · 전기차인가 — 「배터리 진단 없음」을 낼지 정한다
+        " s.bonuses_json, l.ev_battery_known"
         " FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
@@ -350,6 +352,10 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
                      if head[3] else 0.0),
         penalties=_penalty_rows(head[14]),
         penalty_total=sum(p["points"] for p in _penalty_rows(head[14])),
+        # ★ 가점 (개정 380).  없으면 「배터리 진단 없음」을 낸다
+        bonuses=_penalty_rows(head[18]),
+        bonus_total=sum(b["points"] for b in _penalty_rows(head[18])),
+        ev=bool(head[19]),
         # ★ 「싸다」를 말할 때 「왜 싼가」를 함께 낸다 (개정 299 · 부록 G ③)
         why_cheap=_why[0], why_cheap_reasons=tuple(_why[1]),
         # ★ 채웠을 때 어디까지 오르는지 낸다 (STEP 149h · D-2).

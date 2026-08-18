@@ -41,6 +41,8 @@ class ScoreResult:
     # ★ 근거가 있는 축의 배점 합 (개정 325).  applicable 과 다르다 —
     #   「원문을 안 받아 0점」은 확인한 것이 아니다
     confirmed: float = 0.0
+    # 더한 것 (키, 점수, 문구) — 개정 380.  ★ 축이 아니다.  분모를 안 늘린다
+    bonuses: tuple = ()
 
 
 REASON_ALL_MISSING = "전 축 수집 실패"
@@ -126,12 +128,25 @@ def score(v: Verdict, policy: ScoringPolicy,
     # ★ 마이너스는 총점에서 뺀다.  0 아래로도 내려간다 (개정 322)
     cut = _penalties(v, policy, snapshot)
     minus = sum(p for _k, p, _w in cut)
+    # ★ 가점은 더한다 (개정 380).  축이 아니다 —
+    #   분모를 안 늘린다.  가점이 크면 100%를 넘고 그대로 낸다
+    plus_rows = _bonuses(policy, snapshot)
+    plus = sum(p for _k, p, _w in plus_rows)
 
     # ★ 분모는 언제나 만점이다.  못 본 축은 0점으로 남는다 (개정 289)
-    return ScoreResult(round(earned + minus, 2), total, applicable,
-                       earned + minus, None, fail, by_axis, None,
-                       tuple(cut), round(grade_earned + minus, 2), grade_base,
-                       confirmed)
+    return ScoreResult(round(earned + minus + plus, 2), total, applicable,
+                       earned + minus + plus, None, fail, by_axis, None,
+                       tuple(cut), round(grade_earned + minus + plus, 2),
+                       grade_base, confirmed, bonuses=tuple(plus_rows))
+
+
+def _bonuses(policy: ScoringPolicy, snapshot) -> list:
+    """더할 것들 (개정 380).  ★ 없으면 아무 일도 없다."""
+    if snapshot is None:
+        return []
+    from score.penalty import bonuses_of
+
+    return bonuses_of(policy, snapshot)
 
 
 def _penalties(v: Verdict, policy: ScoringPolicy, snapshot) -> list:
