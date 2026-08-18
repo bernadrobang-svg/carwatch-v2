@@ -982,12 +982,15 @@ def _option_base(conn, prices: dict, pct: float, need: int) -> dict:
 
 
 def _site_grade_rules(root: str) -> dict:
-    """사이트별 우수등급 규칙 (개정 306 · V3-55).
+    """사이트별 보증 규칙 (개정 365 · V3-55).
 
     ★ config/sites.json 이 정본이다.  코드에 사이트 이름을 박지 않는다
+    ★ 개정 365 로 「우수등급 하나」에서 「항목 여럿의 합」이 됐다 —
+      엔카는 검증 10 + 보증 10 + 보증++ 30 = 50
     """
     with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
-        return {k: (v.get("site_grade_rule") or {})
+        return {k: {"warranty_items": v.get("warranty_items") or [],
+                    "warranty_evidence": v.get("warranty_evidence")}
                 for k, v in json.load(f).items() if isinstance(v, dict)}
 
 
@@ -1010,9 +1013,9 @@ def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
         "SPEC_DEFAULT_OFF": tk.get("SPEC_DEFAULT_OFF"),
         # ★ 개정 292 — 트림 사다리는 차종 단위다.  전 매물을 한 번만 훑는다
         "trim_ladder": ladder, "option_base": opt_base,
-        # ★ 개정 306 — 사이트마다 「무엇이 우수등급인가」가 다르다.
+        # ★ 개정 365 — 사이트마다 「무엇이 몇 점인가」가 다르다.
         #   코드에 사이트 이름을 박지 않는다 (V3-55)
-        "site_grade_rule": site_rule,
+        "site_warranty": site_rule,
     }
 
 

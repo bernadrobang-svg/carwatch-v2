@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**83파일 · 25,072줄 · 1,008KB**
+**83파일 · 25,089줄 · 1,009KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -41,7 +41,7 @@
 | `chapters/20-verify/00-intro.md` | 194 | 8 |
 | `chapters/20-verify/a-frame.md` | 19 | 0 |
 | `chapters/20-verify/b-v1v2.md` | 202 | 9 |
-| `chapters/20-verify/c-v3v4.md` | 322 | 14 |
+| `chapters/20-verify/c-v3v4.md` | 325 | 14 |
 | `chapters/20-verify/d-v5.md` | 250 | 8 |
 | `chapters/30-score/00-intro.md` | 59 | 1 |
 | `chapters/30-score/a-frame.md` | 753 | 29 |
@@ -49,7 +49,7 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md` | 602 | 16 |
+| `chapters/30-score/f-table.md` | 616 | 17 |
 | `chapters/30-score/g-absolute.md` | 139 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 611 | 25 |

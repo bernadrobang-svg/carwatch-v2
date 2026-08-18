@@ -1,7 +1,7 @@
 {
   "calc_version": "c1",
-  "_ref": "★ 배점의 유일한 정본은 docs/ref/F-scoring.md 다 (개정 330). 본문 배점표는 전부 폐기",
-  "total_points": 605,
+  "_ref": "★ 배점의 유일한 정본은 docs/chapters/30-score/f-table.md 다 (개정 342 로 옮김 · 개정 365 로 675). 본문 배점표는 전부 폐기",
+  "total_points": 675,
   "components": {
     "value.market": 100,
     "value.depreciation": 80,
@@ -20,9 +20,9 @@
     "history.lien": 10,
     "spec.trim": 25,
     "spec.options": 20,
-    "warranty.maker": 15,
-    "warranty.site": 10,
-    "warranty.inspection": 5,
+    "warranty.general": 20,
+    "warranty.power": 30,
+    "warranty.site": 50,
     "taste.hud": 15,
     "taste.picked": 15,
     "taste.color": 10,
@@ -94,40 +94,65 @@
   "_axis_rules_note": "axis_rules 는 7장 STEP 71~84 의 임계·구간이다. V4-13 이 코드에 박는 것을 금지하므로 여기에 둔다. ★ STEP 6 config 키 전량 표에 axis_rules 행 추가가 필요하다 (미승인)",
   "axis_rules": {
     "warranty": {
-      "_note": "⑤ 보증 30 — F-scoring 5-1~5-3",
+      "_note": "⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30) — 개정 365",
       "km_per_month": 1250,
-      "maker_curve": [
-        [
-          36,
-          15
-        ],
+      "general_curve": [
         [
           24,
-          12
+          20
+        ],
+        [
+          18,
+          16
         ],
         [
           12,
-          8
+          12
         ],
         [
           6,
-          4
+          6
+        ],
+        [
+          3,
+          3
         ],
         [
           0,
           0
         ]
       ],
-      "site_points": {
-        "certified": 10,
-        "diagnosis_only": 6,
-        "none": 0
-      },
-      "inspection_points": {
-        "official": 5,
-        "seller": 2,
-        "none": 0
-      }
+      "power_curve": [
+        [
+          36,
+          30
+        ],
+        [
+          30,
+          26
+        ],
+        [
+          24,
+          22
+        ],
+        [
+          18,
+          17
+        ],
+        [
+          12,
+          12
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "_curve_note": "잔여개월 = min(기간 잔여, 잔여km ÷ (연평균 주행 ÷ 12)). ★ 보증은 둘 중 먼저 닿는 쪽에서 끝난다 (개정 365). 전기차는 배터리·모터를 동력계로 (개정 293)"
     },
     "spec": {
       "_note": "④ 사양 45 — F-scoring 4-1·4-2",
@@ -549,7 +574,7 @@
     0.5,
     0.75
   ],
-  "grade_base_points": 555,
+  "grade_base_points": 625,
   "_grade_base_note": "①값250 + ②상태150 + ③이력80 + ④사양45 + ⑤보증30 = 555 (docs/ref/F-scoring.md). ⑥취향 50 은 순위에만",
   "_grade_cuts_note": "★ 절대 기준이다 (개정 324).  백분위로 정하지 않는다 — 전체가 나쁘면 나쁜 차가 S 가 된다. 그 등급이 0건이어도 그대로 둔다 — 「S 가 0건」이 사실이면 그것이 정보다",
   "score_core_axes": [

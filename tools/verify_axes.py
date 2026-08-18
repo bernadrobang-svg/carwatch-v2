@@ -226,6 +226,68 @@ def hand_owner(conn, lid) -> float | None:
     return None if not row or row[0] is None else float(row[0])
 
 
+def _warranty_left(conn, lid, months_col, km_col):
+    """보증 잔여 개월 — min(기간 잔여, 잔여km ÷ 월주행) (개정 365)."""
+    row = conn.execute(
+        f"SELECT l.{months_col}, l.{km_col}, l.mileage_km,"
+        " COALESCE(i.first_registration_date, l.year_month)"
+        " FROM core_listing l LEFT JOIN core_inspection i"
+        " ON i.listing_id=l.listing_id WHERE l.listing_id=?",
+        (lid,)).fetchone()
+    if not row or row[0] is None or not row[3]:
+        return None
+    got = [int(x) for x in str(row[3])[:ISO_YM_END].split("-") if x.isdigit()]
+    if len(got) < 2:
+        return None
+    at = conn_now()
+    elapsed = (at[0] - got[0]) * MONTHS_PER_YEAR + (at[1] - got[1])
+    left = row[0] - elapsed
+    if row[1] is not None and row[2] is not None:
+        left = min(left, (row[1] - row[2]) / _km_per_month())
+    return max(left, 0)
+
+
+def hand_warranty_general(conn, lid) -> float | None:
+    """⑦-1 일반·차체 보증 20 — 손으로."""
+    return _warranty_left(conn, lid, "warranty_body_month", "warranty_body_km")
+
+
+def hand_warranty_power(conn, lid) -> float | None:
+    """⑦-2 동력계 보증 30 — 손으로."""
+    return _warranty_left(conn, lid, "warranty_power_month",
+                          "warranty_power_km")
+
+
+def hand_site_warranty(conn, lid) -> float | None:
+    """⑤ 사이트 보증 50 — 손으로: sites.json 의 항목을 더한다 (개정 365)."""
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "sites.json"),
+              encoding="utf-8") as f:
+        sites = _j.load(f)
+    row = conn.execute(
+        "SELECT site, diagnosis_car, site_pass_grade, warranty_deemed,"
+        " warranty_extend, sell_type FROM core_listing WHERE listing_id=?",
+        (lid,)).fetchone()
+    if not row:
+        return None
+    one = sites.get(row[0] or "") or {}
+    items = one.get("warranty_items") or []
+    flags = {"diagnosis_car": row[1], "site_pass_grade": row[2],
+             "warranty_deemed": row[3], "warranty_extend": row[4],
+             "sell_type": row[5]}
+    if flags.get(one.get("warranty_evidence")) is None:
+        return None
+    got = 0.0
+    for item in items:
+        need = item.get("when") or {}
+        if need and all(flags.get(k) is not None
+                        and str(flags.get(k)) == str(v)
+                        for k, v in need.items()):
+            got += float(item.get("points") or 0)
+    return got
+
+
 def hand_maker_warranty(conn, lid) -> float | None:
     """5-1 제조사 보증 잔여 — 손으로: 일반·동력계 중 긴 쪽 (개월)."""
     row = conn.execute(
@@ -902,12 +964,13 @@ def main() -> int:
          "트림 순위 ÷ 전체"),
         ("spec.options", "options_choice_price", "4-2", hand_options,
          "ratio", "옵션가 ÷ 그 차종 P90"),
-        ("warranty.maker", "encar_warranty", "5-1", hand_maker_warranty,
-         "desc", "제조사 보증 잔여 개월"),
-        ("warranty.site", "%", "5-2", hand_site_grade, "label",
-         "사이트 우수등급"),
-        ("warranty.inspection", "inspection_%", "5-3", hand_inspection_src,
-         "label", "점검 출처"),
+        ("warranty.general", "encar_warranty_general", "7-1",
+         hand_warranty_general, "desc", "일반·차체 보증 잔여 개월"),
+        ("warranty.power", "encar_warranty_power", "7-2",
+         hand_warranty_power, "desc", "동력계 보증 잔여 개월"),
+        ("warranty.site", "%", "5-0", hand_site_warranty, "point",
+         "사이트 보증 (항목 합)"),
+
         ("taste.hud", "option_codes", "6", hand_hud, "point", "HUD"),
         ("taste.picked", "%", "6", hand_picked, "point", "지정 옵션"),
         ("taste.color", "detail_color", "6", hand_color, "point", "색상"),

@@ -96,8 +96,8 @@ COMPONENTS: tuple[str, ...] = (
     "history.usage", "history.not_join", "history.owner", "history.lien",
     # ④ 사양 45
     "spec.trim", "spec.options",
-    # ⑤ 보증 30
-    "warranty.maker", "warranty.site", "warranty.inspection",
+    # ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (개정 365)
+    "warranty.site", "warranty.general", "warranty.power",
     # ⑥ 취향 50 — 등급에 안 들어간다
     "taste.hud", "taste.picked", "taste.color", "taste.sunroof",
 )

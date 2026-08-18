@@ -411,14 +411,18 @@ def test_safety_real() -> None:
     got, _why = platform_trust(None, None, None)
     check("★ 확인 못 한 것은 「없음」이 아니다", got is None, str(got))
 
-    # ── 보증 잔여 15점 (개정 292 ②) ──
+    # ── ⑦ 제조사 보증 50점 — 일반 20 + 동력계 30 (개정 365) ──
     r2 = score(analyze_listing(ctx(snap(
         warranty_body_month=60, warranty_body_km=100000,
         warranty_power_month=120, warranty_power_km=200000,
         first_registration_date="2023-05-02", mileage_km=30000))), POLICY)
-    check("★ 보증은 100점이 아니라 15점이다 (개정 292)",
-          POLICY.comp("warranty.maker") == 15,
-          str(POLICY.comp("warranty.maker")))
+    # ★ 개정 365 — warranty.maker 15 가 general 20 + power 30 으로 갈렸다.
+    #   긴 쪽 하나로 뭉치지 않는다 (V3-70)
+    check("★ 제조사 보증은 일반 20 + 동력계 30 = 50 이다 (개정 365)",
+          POLICY.comp("warranty.general") == 20
+          and POLICY.comp("warranty.power") == 30,
+          f"{POLICY.comp('warranty.general')} + "
+          f"{POLICY.comp('warranty.power')}")
     check("보증이 남아 있으면 점수가 난다", r2.earned > 0)
 
 

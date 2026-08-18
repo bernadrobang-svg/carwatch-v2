@@ -55,7 +55,7 @@ GONE = "gone"
 # ★ 부록 G 의 목록 열 14~17 이다 (개정 332).
 #   35열을 늘어놓으면 「고를 것을 좁힌다」가 안 된다 — 상세로 보낸다
 CHIP_AXES = ("state.accident", "state.frame", "history.usage",
-             "warranty.maker")
+             "warranty.power")
 
 
 def site_badge(site: str | None, sell_type: str | None,
@@ -414,10 +414,10 @@ def _warranty_state(got, as_of) -> tuple:
 
 # 축 → 상태를 어디서 가져오는가 (STEP 149n).
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
-STATE_AXES = ("warranty.maker", "state.accident", "state.frame",
-              "state.outer", "state.repair", "history.usage",
+STATE_AXES = ("warranty.general", "warranty.power", "state.accident",
+              "state.frame", "state.outer", "state.repair", "history.usage",
               "history.not_join", "spec.trim", "spec.options",
-              "warranty.site", "warranty.inspection")
+              "warranty.site")
 
 
 # 렌트를 어디서 찾았는가 → 화면 문구 (개정 302).  ★ 「렌트 이력」만 내지 않는다
@@ -436,10 +436,10 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         return ""            # 확인 못 한 것은 기호가 정확하다
     w = state.get("warranty")
     rec = state.get("record")
-    if axis == "warranty.maker" and w:
+    # ★ 개정 365 — 일반과 동력계를 따로 낸다.  긴 쪽 하나로 뭉치지 않는다
+    if axis in ("warranty.general", "warranty.power") and w:
         gen, power = _warranty_state(w, as_of)
-        # ★ 둘 중 긴 쪽으로 점수를 준다 (개정 292).  화면도 그렇게 낸다
-        return power if power not in ("?", "만료") else gen
+        return power if axis == "warranty.power" else gen
     if axis == "state.accident" and rec:
         mycnt, _cost, othcnt, tot = rec
         n = tot if tot is not None else (mycnt or 0) + (othcnt or 0)
@@ -466,12 +466,11 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
             return ""
         return f"상위 {max(1, 100 - round(pts / mx * 100))}%"
     if axis == "warranty.site":
-        # ★ 우수등급이 없으면 30점을 못 받는다.  그것이 「왜 싼가」의 첫 답이다
-        return "우수등급" if chip.tone == TONE_GOOD else "우수등급 없음"
-    if axis == "warranty.inspection":
-        # ★ 「모든 책임은 판매자에게 있습니다」 — 누가 점검했는지가 사실이다
-        return {"엔카직영 점검": "엔카직영", "점검을 판매자가 올렸습니다": "판매자 등록",
-                "": ""}.get(state.get("inspection_word", ""), "점검 없음")
+        # ★ 개정 365 — 무엇으로 받았는지 낸다.
+        #   「엔카검증 10 + 엔카보증 10 = 20 / 50」
+        got = (chip.source or "").replace("+", " + ")
+        return got if got and got not in ("missing", "no_warranty") else (
+            "보증 없음" if got == "no_warranty" else "확인 못 함")
     if axis == "spec.options":
         # ★ 옵션은 금액이다.  얼마짜리를 달았는지가 사실이다 (개정 301)
         won = state.get("option_won")

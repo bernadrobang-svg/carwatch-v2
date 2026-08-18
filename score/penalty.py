@@ -56,9 +56,11 @@ def penalties_of(verdict, policy, snapshot) -> list:
     # 사이트 우수등급 — ★ 「확인 못 함」과 「없음」을 가른다 (개정 323)
     if "warranty.site" not in excluded and values.get("warranty.site") == 0:
         add(NO_SITE_GRADE)
-    # 점검을 판매자가 올렸다 (개정 300)
-    src = verdict.sources.get("warranty.inspection") or ""
-    if src.endswith("IMAGE"):
+    # 점검을 판매자가 올렸다 (개정 300).
+    # ★ 개정 365 로 warranty.inspection 축이 없어졌다 —
+    #   근거는 원문(inspection_formats)이지 축이 아니다.  스냅샷에서 본다
+    fmt = str(getattr(snapshot, "inspection_formats", "") or "")
+    if "IMAGE" in fmt and "TABLE" not in fmt:
         add(SELLER_INSPECTION)
     # ★ 압류·저당 — 있으면 소유권 이전이 막힌다 (F-scoring 마이너스)
     if verdict.sources.get("history.lien") == "detail_seizing" \

@@ -187,6 +187,16 @@ C = {
     "V3-57": Check("V3", "V3-57", "등급이 555 기준", FATAL, "run",
                    "취향 50 은 순위에만 쓴다 — 등급은 ①②③⑤ 555 다 (개정 306)",
                    KIND_CONTRACT),
+    "V3-70": Check("V3", "V3-70", "일반·동력계 보증을 따로 냄",
+                   FATAL, "run",
+                   "긴 쪽 하나로 뭉치면 「일반은 끝났고 동력계만 남았다」를 "
+                   "못 본다.  일반 20 · 동력계 30 (개정 365)",
+                   KIND_CONTRACT),
+    "V3-71": Check("V3", "V3-71", "보증 잔여가 기간·거리 중 낮은 쪽임",
+                   FATAL, "run",
+                   "보증은 둘 중 먼저 닿는 쪽에서 끝난다 — "
+                   "기간만 보면 주행이 많은 차를 과대평가한다 (개정 365)",
+                   KIND_CODE),
     "V3-68": Check("V3", "V3-68", "부록 F 전 24축이 구현돼 있음",
                    FATAL, "run",
                    "축 목록을 코드에 박지 않는다 — 부록 F 「축 목록 — 전 24축」"
@@ -745,11 +755,45 @@ SPEC_AXIS_NAMES = {
     "용도": "history.usage", "자차 미가입": "history.not_join",
     "소유자 변경": "history.owner", "압류·저당": "history.lien",
     "트림": "spec.trim", "옵션": "spec.options",
-    "제조사 보증": "warranty.maker", "사이트 우수등급": "warranty.site",
-    "점검 출처": "warranty.inspection", "HUD": "taste.hud",
+    "사이트 보증": "warranty.site", "일반·차체": "warranty.general",
+    "동력계": "warranty.power", "HUD": "taste.hud",
     "지정 옵션": "taste.picked", "색상": "taste.color",
     "선루프": "taste.sunroof",
 }
+
+
+def _warranty_checks(conn, rid):
+    """V3-70 · V3-71 — 제조사 보증을 둘로 · 낮은 쪽으로 (개정 365)."""
+    import json
+    import os
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        pol = json.load(f)
+    comp = pol["components"]
+    bad70 = [x for x in ("warranty.general", "warranty.power")
+             if x not in comp]
+    if "warranty.maker" in comp:
+        bad70.append("warranty.maker 가 남아 있다 — 개정 365 로 둘로 갈렸다")
+    # V3-71 — 기간만 보면 주행 많은 차가 과대평가된다.  식을 직접 재 본다
+    from analyze.axis.site import remaining_months
+
+    per = float(pol["axis_rules"]["warranty"]["km_per_month"])
+    # 기간은 넉넉한데 거리를 다 쓴 차 — 낮은 쪽(거리)이 나와야 한다.
+    # ★ 견본 값은 config 에 둔다 (V4-13) — 검사가 숫자를 박지 않는다
+    with open(os.path.join(root, "config", "checks.json"),
+              encoding="utf-8") as f:
+        probe = json.load(f)["warranty_probe"]
+    got = remaining_months(probe["months"], probe["km_limit"],
+                           probe["elapsed"], probe["mileage"], per)
+    want = min(probe["months"] - probe["elapsed"],
+               (probe["km_limit"] - probe["mileage"]) / per)
+    bad71 = ([] if got is not None and abs(got - want) < float(probe["eps"])
+             else [f"기간·거리 중 낮은 쪽이 아니다 — {got} != {want}"])
+    return [result(C["V3-70"], rid, 0, len(bad70), not bad70, bad70[:4]),
+            result(C["V3-71"], rid, "낮은 쪽",
+                   "맞다" if not bad71 else "아니다", not bad71, bad71)]
 
 
 def _spec_axis_check(conn, rid):
@@ -811,8 +855,9 @@ def _site_axis_checks(conn, rid):
     active = [k for k, v in sites.items()
               if isinstance(v, dict) and v.get("status") == "active"]
     for site in active:
-        if not isinstance(sites[site].get("site_grade_rule"), dict):
-            bad55.append(f"{site} — site_grade_rule 이 없다")
+        items = sites[site].get("warranty_items")
+        if not isinstance(items, list) or not items:
+            bad55.append(f"{site} — warranty_items 가 없다 (개정 365)")
     src = open(os.path.join(root, "analyze", "axis", "site.py"),
                encoding="utf-8").read()
     body = "\n".join(ln for ln in src.splitlines()
@@ -979,6 +1024,7 @@ def run(conn, ctx) -> list:
     out += _why_cheap_check(conn, rid)
     out += _site_axis_checks(conn, rid)
     out.append(_spec_axis_check(conn, rid))
+    out += _warranty_checks(conn, rid)
     out.append(_source_before_value_check(conn, rid))
     out.append(_absolute_cut_check(rid))
     out.append(_confirm_ratio_check(conn, rid))

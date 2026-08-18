@@ -36,6 +36,12 @@ C: dict[str, Check] = {
                    "★ 화면이 「엔카」를 글자로 박고 있었다 — 사이트가 둘이 "
                    "되는 순간 거짓말이 된다 (50-multisite)",
                    KIND_CODE),
+    "V9-10": Check("V9", "V9-10", "사이트 보증 항목의 합이 만점과 같음",
+                   FATAL, "run",
+                   "엔카는 검증 10 + 보증 10 + 보증++ 30 = 50. "
+                   "합이 만점과 다르면 그 사이트는 만점을 못 받거나 넘는다 "
+                   "(개정 365)",
+                   KIND_CODE),
     "V9-07": Check("V9", "V9-07", "합친 값에 출처가 붙어 있음", FATAL, "run",
                    "「자차 미가입 10개월 (K카 제공)」처럼 어느 사이트 원문에서 "
                    "온 값인지 사람이 알아야 한다.  값이 다르면 둘 다 낸다 "
@@ -161,6 +167,32 @@ def _origin_check(conn, rid):
     return result(C["V9-07"], rid, 0, len(bad), not bad, bad[:4])
 
 
+def _warranty_sum_check(rid):
+    """V9-10 — 사이트마다 보증 항목의 합이 만점과 같은가 (개정 365)."""
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        full = _j.load(f)["components"].get("warranty.site")
+    full = full if isinstance(full, int) else (full or {}).get("points")
+    if not full:
+        return not_applicable(C["V9-10"], rid, "scoring 에 warranty.site 가 없다")
+    bad = []
+    for name, one in _sites().items():
+        if not isinstance(one, dict) or one.get("status") == "planned":
+            continue
+        items = one.get("warranty_items") or []
+        if not items:
+            bad.append(f"{name} — warranty_items 가 없다")
+            continue
+        got = sum(int(x.get("points") or 0) for x in items)
+        if got != full:
+            bad.append(f"{name} — 항목 합 {got} != 만점 {full}")
+    return result(C["V9-10"], rid, full, "맞다" if not bad else "다르다",
+                  not bad, bad[:4])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
-    return [_badge_check(rid), _origin_check(conn, rid)]
+    return [_badge_check(rid), _origin_check(conn, rid),
+            _warranty_sum_check(rid)]

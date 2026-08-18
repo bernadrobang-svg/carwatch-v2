@@ -78,9 +78,9 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
 </div>
 
 
@@ -173,15 +173,15 @@
 
 
 <p class="score">
-  <strong>178</strong> / 605
+  <strong>205</strong> / 675
   <span class="muted">분모는 늘 만점입니다.
     못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298) ·
-    등급은 취향을 뺀 555 기준
-    128점입니다</span>
+    등급은 취향을 뺀 625 기준
+    155점입니다</span>
 </p>
 <p class="muted">
-  ★ 확인율 <strong>50.4%</strong> —
-  근거가 있는 축의 배점 합 305 / 605 입니다.
+  ★ 확인율 <strong>55.6%</strong> —
+  근거가 있는 축의 배점 합 375 / 675 입니다.
   「안 받아서 0점」은 확인한 것이 아닙니다 (개정 325)</p>
 
 <h2>왜 싼가</h2>
@@ -413,26 +413,26 @@
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=warranty.inspection">점검 출처</a></td>
-  <td class="num">0</td>
-  <td class="num">5</td>
-  <td>inspection_none</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=warranty.maker">제조사 보증</a></td>
-  <td class="num">15</td>
-  <td class="num">15</td>
-  <td>encar_warranty</td>
+  <td><a href="/listings?axis=warranty.general">일반 보증</a></td>
+  <td class="num">12</td>
+  <td class="num">20</td>
+  <td>encar_warranty_general</td>
   <td>1</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=warranty.site">우수등급</a></td>
+  <td><a href="/listings?axis=warranty.power">보증</a></td>
+  <td class="num">30</td>
+  <td class="num">30</td>
+  <td>encar_warranty_power</td>
+  <td>1</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=warranty.site">사이트 보증</a></td>
   <td class="num">0</td>
-  <td class="num">10</td>
-  <td>no_diagnosis</td>
+  <td class="num">50</td>
+  <td>no_warranty</td>
   <td>2</td>
 </tr>
 
@@ -459,16 +459,16 @@
 
 
 <p class="muted">분모에서 뺀 축은 없습니다 (24 Component).
-  다만 확인율은 <strong>50.4%</strong> 입니다 —
+  다만 확인율은 <strong>55.6%</strong> 입니다 —
   안 받은 원문이 있으면 그 축은 0점이고, 그것은 확인한 것이 아닙니다 (개정 325).</p>
 
 
 <h2>왜 이 등급인가</h2>
 
-<p><b>강점</b><span class="chip-good">트림</span><span class="chip-good">색상</span><span class="chip-good">HUD</span><span class="chip-good">지정 옵션</span><span class="chip-good">선루프</span><span class="chip-good">신차가 대비</span><span class="chip-good">주행</span><span class="chip-good">제조사 보증</span></p>
+<p><b>강점</b><span class="chip-good">트림</span><span class="chip-good">색상</span><span class="chip-good">HUD</span><span class="chip-good">지정 옵션</span><span class="chip-good">선루프</span><span class="chip-good">신차가 대비</span><span class="chip-good">주행</span><span class="chip-good">보증</span></p>
 
 
-<p><b>약점</b><span class="chip-bad">압류·저당 0/10</span><span class="chip-bad">자차 미가입 0/25</span><span class="chip-bad">소유자 변경 0/15</span><span class="chip-bad">용도 0/30</span><span class="chip-bad">사고 0/40</span><span class="chip-bad">소모품 0/10</span><span class="chip-bad">골격 0/30</span><span class="chip-bad">진정성 0/5</span><span class="chip-bad">누유 0/10</span><span class="chip-bad">외판 0/20</span><span class="chip-bad">보험 수리비 0/20</span><span class="chip-bad">특수 사고 0/15</span><span class="chip-bad">시세 대비 0/100</span><span class="chip-bad">점검 출처 0/5</span><span class="chip-bad">우수등급 0/10</span></p>
+<p><b>약점</b><span class="chip-bad">압류·저당 0/10</span><span class="chip-bad">자차 미가입 0/25</span><span class="chip-bad">소유자 변경 0/15</span><span class="chip-bad">용도 0/30</span><span class="chip-bad">사고 0/40</span><span class="chip-bad">소모품 0/10</span><span class="chip-bad">골격 0/30</span><span class="chip-bad">진정성 0/5</span><span class="chip-bad">누유 0/10</span><span class="chip-bad">외판 0/20</span><span class="chip-bad">보험 수리비 0/20</span><span class="chip-bad">특수 사고 0/15</span><span class="chip-bad">시세 대비 0/100</span><span class="chip-bad">사이트 보증 0/50</span></p>
 
 
 
@@ -529,7 +529,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 11:50</span>
+  <span>2026-08-18 13:05</span>
 </footer>
 
 </body>

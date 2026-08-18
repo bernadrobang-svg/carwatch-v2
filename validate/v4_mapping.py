@@ -535,7 +535,9 @@ TARGET_CONFIG_KEYS = ("as_of", "depreciation", "SPEC_DEFAULT_ON",
                       # 실행 단위 — 사용자가 끈 취향 · 고른 옵션 (개정 292 ④)
                       "taste_off", "picked_options",
                       # 사이트 단위 — 그 사이트의 우수등급 규칙 (개정 306)
-                      "site_grade_rule")
+                      # 개정 365 — 「우수등급 하나」가 「항목 여럿의 합」이 됐다.
+                      # ★ 사이트 설정이지 매물 값이 아니다
+                      "site_warranty")
 
 
 def _listing_value_scope_check(rid):
