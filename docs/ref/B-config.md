@@ -395,6 +395,7 @@ enum_{axis}.json        연료 · 색상 · 트림 · 부위 · 상태
 | `list_stale_days` | 목록이 오래됐다고 보는 날 수 | `1` | 08-17 · STEP 136i |
 | `detail_refresh_days` | 상세를 다시 받는 기준 날 수 | `7` | 08-17 · STEP 136h |
 | `check_light_every_h` | 가벼운 점검 간격 (시간) | `4` | 08-17 · S29 |
+| `collect_daily_at` | 자동 수집 시각 | `13:00` | 08-18 · 마스터 — 사람 손이 필요해서 |
 | `check_light_budget_sec` | 가벼운 점검 시간 예산 (초) | `180` | 08-17 · 실측 155초 |
 | `finance.cash_limit` | 전액 현금 판정 기준 (원) | `15000000` | 08-18 · 마스터 |
 | `view.page_size_max` | 목록 한 쪽 상한 | `200` | 08-18 · 마스터 |
