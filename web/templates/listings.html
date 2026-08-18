@@ -52,7 +52,8 @@
 </tr></thead>
 <tbody>
 {% for r in rows %}
-<tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}">
+<tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}"
+    data-buy="{{ r.total_cost_won | won }}" data-buyest="{{ r.buy_estimated }}">
   <td class="c photo" data-label="사진">
     {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
     {% if !r.photo_url %}<span class="nophoto thumb-none" title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
@@ -136,6 +137,9 @@
   <div class="pk">
     <div class="pk-t" id="peek-title"></div>
     <div class="pk-p" id="peek-price"></div>
+    <!-- ⑨ 비용 — 「실제로 내는 돈」 (개정 353).  ★ 표시가가 싼 쪽이
+         실제로 싼 쪽이 아닐 수 있다.  열을 늘리지 않고 여기에 낸다 -->
+    <div class="pk-b" id="peek-buy"></div>
     <div class="pk-r" id="peek-tags"></div>
     <div class="pk-d" id="peek-desc"></div>
   </div>
@@ -167,6 +171,12 @@
       cell(tr, '차종') + ' ' + cell(tr, '트림');
     document.getElementById('peek-price').textContent =
       cell(tr, '가격') + '   시세차 ' + cell(tr, '시세차');
+
+    /* ★ 「얼마에 파는가」가 아니라 「얼마를 내는가」다 (개정 353) */
+    var buy = tr.getAttribute('data-buy');
+    document.getElementById('peek-buy').textContent =
+      buy ? ('실제로 내는 돈 ' + buy +
+             (tr.getAttribute('data-buyest') === 'True' ? ' (추정)' : '')) : '';
 
     /* ★ 강점만 모은다 — 「이 차의 무엇이 좋은가」가 미리보기의 뜻이다 */
     var tags = [];

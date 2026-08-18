@@ -32,6 +32,54 @@ def acquisition_cost(price_won: int, fin: dict, target_key: str | None,
     return tax + fees, tuple(fin.get("_estimated") or ())
 
 
+def purchase_cost(site: str, price_won: int | None, fin: dict, sites: dict,
+                  target_key: str | None = None,
+                  site_total_won: int | None = None):
+    """그 사이트에서 사면 실제로 얼마를 내는가 (8장 · 개정 353).
+
+    마스터 확정 — 「사이트별로 정책이 다를 건데.  케이카로 구매 시 가격이고
+    엔카 구매 시 가격이잖아.  사이트별 총합을 내라」
+
+    ★ 사이트가 총액을 주면 그것을 쓴다 — 우리가 계산하지 않는다 (개정 353 [원문])
+    ★ 안 주면 계산하고 「추정」이라 적는다.  단정하지 않는다
+    금지   차량가만 내는 것
+    금지   점수에 넣는 것 — 가격 축과 이중 계산이 된다
+    ★ 사이트 이름을 코드에 박지 않는다 (V3-55).  sites.json 이 정본이다
+    """
+    from report.views import PurchaseCostItem, PurchaseCostView
+
+    one = sites.get(site) if isinstance(sites.get(site), dict) else None
+    rule = (one or {}).get("purchase_cost")
+    if price_won is None or not rule:
+        return None
+    label = (one or {}).get("label") or site
+    items = [PurchaseCostItem("차량가", int(price_won), False)]
+
+    # 사이트가 총액을 줬으면 내역을 우리가 지어내지 않는다
+    if site_total_won is not None:
+        rest = int(site_total_won) - int(price_won)
+        if rest:
+            items.append(PurchaseCostItem("사이트가 낸 부대비용", rest, False))
+        return PurchaseCostView(
+            site, label, tuple(items), int(site_total_won), True,
+            tuple(rule.get("extra_benefit") or ()))
+
+    # ★ 이전등록비는 법정 요율이라 계산할 수 있다.  다만 공채·증지는
+    #   finance.json 의 bond_table 이 비어 있어 못 넣는다 — 그래서 「추정」이다
+    if rule.get("transfer_fee_rule") == "acquisition":
+        got, est = acquisition_cost(int(price_won), fin, target_key)
+        items.append(PurchaseCostItem("이전등록비", got, bool(est)))
+    for key, name in (("warranty_fee", "보증 가입비"),
+                      ("etc_fee", "기타"),
+                      ("delivery_fee", "배송비")):
+        won = int(rule.get(key) or 0)
+        if won:
+            items.append(PurchaseCostItem(name, won, False))
+    total = sum(x.won for x in items)
+    return PurchaseCostView(site, label, tuple(items), total, False,
+                            tuple(rule.get("extra_benefit") or ()))
+
+
 def monthly_payment(principal: int, annual_rate: float, months: int) -> int:
     """원리금 균등.  월 납입 = 원금 × r × (1+r)^n ÷ ((1+r)^n − 1)."""
     if principal <= 0 or months <= 0:

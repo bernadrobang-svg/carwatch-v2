@@ -62,6 +62,7 @@ class ListingRow:
     color_int: str | None
     axis_chips: list[AxisChip]
     price_won: int | None
+    # ★ 그 사이트에서 사면 실제로 내는 돈 (개정 353).  차량가가 아니다
     total_cost_won: int | None
     loan_principal_won: int | None
     monthly_won: int | None
@@ -75,6 +76,8 @@ class ListingRow:
     # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 · 「K카 직거래」
     # ★ 사이트가 둘 이상이면 값의 뜻이 사이트에 달려 있다 (50-multisite)
     site_badge: str = ""
+    # 총액이 우리가 계산한 것인가 (개정 353).  ★ 「추정」을 숨기지 않는다
+    buy_estimated: bool = False
     status_label: str | None = None  # gone → 「목록에서 사라짐」 (V6-06)
     # ★ 비율이 크게 · 원점수/분모가 작게 (STEP 149f).
     #   분모가 다른 매물을 눈으로 갈라야 한다

@@ -21,7 +21,10 @@ from urllib.parse import quote, urlencode
 
 from dataclasses import replace
 
-from report.finance import build_finance
+from report.finance import build_finance, purchase_cost
+
+# sites.json 은 한 요청 안에서 안 바뀐다.  root 별로 한 번만 읽는다
+_SITES_CACHE: dict = {}
 from report.render import render_listing, render_run
 from analyze.trust import SOURCE_WORDS, inspection_source, platform_trust
 from report.why_cheap import verdict as why_verdict
@@ -483,6 +486,19 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
     return ""
 
 
+def _sites_cfg(root: str) -> dict:
+    """sites.json.  ★ 행마다 파일을 열지 않는다 — 목록이 200행이다."""
+    import os as _o
+
+    from store.crosssite import load_sites
+
+    got = _SITES_CACHE.get(root)
+    if got is None:
+        got = load_sites(_o.path.join(root, "config", "sites.json"))
+        _SITES_CACHE[root] = got
+    return got
+
+
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          opt_prices: dict | None = None,   # noqa: ARG001 — 아래에서 쓴다
          axes: dict | None = None, changes_by: dict | None = None,
@@ -527,6 +543,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     _has_w = bool(w_ext and w_ext != "0") or bool(w_deemed and w_deemed != "0")
     _trust, _why = platform_trust(_fmt, diag_car, _has_w)
     fin = build_finance(price, fin_cfg, tk)
+    # ⑨ 비용 — 그 사이트 기준 총액 (개정 353 · V11-120)
+    _buy = purchase_cost(_site, price, fin_cfg, _sites_cfg(root), tk)
     changes, first_won = (changes_by or {}).get(lid, (0, None))
     # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
     exp = None
@@ -592,7 +610,12 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 어느 사이트에서 왔는지 매물마다 낸다 (V9-06).
         #   화면이 「엔카」를 글자로 박고 있었다 — 사이트가 둘이 되면 거짓말이다
         site_badge=site_badge(_site, _sell_type, root),
-        total_cost_won=(price + fin.acquisition_cost_won) if fin else None,
+        # ★ 「그 사이트에서 사면 얼마를 내는가」다 (개정 353).
+        #   사이트마다 정책이 다르다 — K카는 보증 가입비·기타가 붙는다.
+        #   ★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다
+        total_cost_won=(_buy.total_won if _buy else
+                        ((price + fin.acquisition_cost_won) if fin else None)),
+        buy_estimated=bool(_buy and _buy.estimated),
         loan_principal_won=fin.loan_principal_won if fin else None,
         monthly_won=fin.monthly_payment_won if fin else None,
         price_gap_pct=(round(gap / exp * 100, 1) if (gap is not None and exp)

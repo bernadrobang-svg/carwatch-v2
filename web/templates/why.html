@@ -195,8 +195,38 @@
 <p class="muted">옵션 정보를 받지 못했습니다. 「무엇을 조회했는가」를 보십시오.</p>
 {% endif %}
 
+{% if v.purchase_costs %}
+<h2>비용 — 이 차를 사면 실제로 내는 돈</h2>
+<p class="muted">★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있습니다.
+  ★ 점수에 반영하지 않습니다 — 가격 축과 이중 계산이 됩니다.</p>
+<div class="buys">
+{% for p in v.purchase_costs %}
+<div class="buy">
+  <div class="buy-h">{{ p.site_label }}에서 사면</div>
+  {% if p.estimated %}<div class="buy-t est">{{ p.total_won | won }}
+    <span class="dim">추정</span></div>{% endif %}
+  {% if !p.estimated %}<div class="buy-t">{{ p.total_won | won }}</div>{% endif %}
+  <table class="rows buy-rows">
+  <tbody>
+  {% for i in p.items %}
+  <tr><td data-label="항목">{{ i.label }}{% if i.estimated %}<span class="dim" title="공채·증지 요율을 아직 못 받아 취득세만 넣었습니다">
+    추정</span>{% endif %}</td>
+    <td class="num" data-label="금액">{{ i.won | won }}</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  {% if p.estimated %}<p class="muted">★ 사이트가 총액을 주지 않아
+    우리가 계산했습니다. 공채·증지·이전등록 대행비는 요율을 아직 못 받아
+    빠져 있습니다 — 실제로는 이보다 조금 더 나옵니다.</p>{% endif %}
+  {% if !p.estimated %}<p class="muted">사이트가 낸 총액을 그대로 씁니다.</p>{% endif %}
+  {% for b in p.benefits %}<p class="tag">{{ b }}</p>{% endfor %}
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
 {% if v.costs %}
-<h2>비용</h2>
+<h2>비용 — 중고 ↔ 신차 유지비</h2>
 <p class="muted">중고 ↔ 신차 동일 트림. ★ 점수에 반영하지 않습니다.</p>
 <table>
 <thead><tr><th>항목</th><th class="num">중고</th><th class="num">신차 동일 트림</th></tr></thead>

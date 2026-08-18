@@ -1872,3 +1872,19 @@ svg.line circle { fill:var(--amber); }
   .mk-rows td { grid-column:span 3; font-size:11px; }
   .mk-rows td[data-label="관측일"] { grid-column:1 / -1; font-weight:600; }
 }
+
+/* ⑨ 비용 — 사이트별 구매 총액 (부록 G 상세 ⑨ · 개정 353) ─────────────
+   ★ 「실제로 내는 돈」이다.  크게 낸다 (40-report 「화면에서는 크게 낸다」)
+   ★ 사이트가 여럿이면 나란히 — 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다 */
+.buys { display:flex; flex-wrap:wrap; gap:12px; margin:8px 0 4px }
+.buy { flex:1 1 260px; min-width:0; border:1px solid var(--line);
+       border-radius:6px; padding:10px 12px; background:var(--surface) }
+.buy-h { font-size:12px; color:var(--faint) }
+.buy-t { font-size:26px; font-weight:700; line-height:1.2; margin:2px 0 6px;
+         font-variant-numeric:tabular-nums }
+.buy-t .dim { font-size:12px; font-weight:400 }
+.buy-t.est { color:var(--ink) }
+.buy-rows td { padding:2px 0 }
+.buy .muted { font-size:11px; margin:4px 0 0 }
+/* 미리보기의 실구매 총액 (개정 353).  ★ 표시가 아래에 붙는다 */
+#peek .pk-b { font-size:12px; color:var(--faint); margin-top:2px }

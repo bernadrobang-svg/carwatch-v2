@@ -209,6 +209,34 @@ def _site_badge(site, sell_type, root: str = ".") -> str:
     return site_badge(site, sell_type, root)
 
 
+def _purchase_costs(conn, listing_id: int, site, price_won, target_key,
+                    fin_cfg: dict, root: str) -> tuple:
+    """⑨ 비용 — 사이트별 총액 (부록 G 상세 ⑨ · 개정 353 · V11-120 · V11-121).
+
+    ★ 여러 사이트에 같은 차가 있으면 나란히 낸다.
+      표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다
+    ★ 사이트가 총액을 주면 그것을 쓴다.  지금은 K카 파서가 없어 못 받는다 —
+      못 받으면 계산하고 「추정」이라 적는다 (개정 353 [판단])
+    """
+    import os as _o
+
+    from report.finance import purchase_cost
+    from store.crosssite import load_sites, site_prices_of
+
+    if not site:
+        return ()
+    sites = load_sites(_o.path.join(root, "config", "sites.json"))
+    out = []
+    mine = purchase_cost(site, price_won, fin_cfg, sites, target_key)
+    if mine:
+        out.append(mine)
+    for other, other_price in site_prices_of(conn, listing_id):
+        got = purchase_cost(other, other_price, fin_cfg, sites, target_key)
+        if got:
+            out.append(got)
+    return tuple(out)
+
+
 def render_listing(conn: sqlite3.Connection, listing_id: int,
                    calc_version: str, fin_cfg: dict, policy: dict,
                    root: str = ".") -> ScoreView:
@@ -281,6 +309,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         fetches=_fetch_views(conn, listing_id, axes),
         strengths=_strengths(axes), weaknesses=_weaknesses(axes),
         costs=_cost_rows(head[1], build_finance(head[1], fin_cfg, head[0])),
+        # ⑨ 비용 — 사이트별 총액 (개정 353).  ★ 점수에 넣지 않는다
+        purchase_costs=_purchase_costs(conn, listing_id, head[15],
+                                       head[1], head[0], fin_cfg, root),
         # ★ 5절 주요 옵션 — 옵션별 탑재 여부 (STEP 149c)
         options=_option_rows(conn, listing_id),
         known_issues=_known_issues(head[0], root),

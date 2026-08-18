@@ -71,6 +71,39 @@ class FinanceView:
 
 
 @dataclass(frozen=True)
+class PurchaseCostItem:
+    """구매비용 한 줄 (개정 353)."""
+
+    label: str
+    won: int
+    estimated: bool  # 우리가 계산한 것인가
+
+
+@dataclass(frozen=True)
+class PurchaseCostView:
+    """★ 어디서 사느냐에 따라 실제로 내는 돈이 다르다 (개정 353).
+
+    마스터 확정 — 「케이카로 구매 시 가격이고 엔카 구매 시 가격이잖아.
+    사이트별 총합을 내라」
+    ★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다
+    금지   차량가만 내는 것 · 사이트가 다른 매물을 표시가로만 견주는 것
+    금지   점수에 넣는 것 — 가격 축과 이중 계산이 된다
+    """
+
+    site: str
+    site_label: str
+    items: tuple[PurchaseCostItem, ...]
+    total_won: int
+    from_site: bool  # 사이트가 준 총액인가.  아니면 우리가 계산한 것이다
+    benefits: tuple[str, ...]  # 추가 혜택 — 「10년 보증 포함」
+
+    @property
+    def estimated(self) -> bool:
+        """총액에 「추정」을 붙여야 하는가."""
+        return not self.from_site or any(x.estimated for x in self.items)
+
+
+@dataclass(frozen=True)
 class DiagnosisView:
     """엔카 진단 리포트 (2장 STEP 21b).  ★ 사람이 읽을 문장이다."""
 
@@ -152,6 +185,9 @@ class ScoreView:
     rank: int | None = None
     # 비용 (중고 ↔ 신차 동일 트림).  ★ 점수에 반영하지 않는다
     costs: tuple[CostRow, ...] = ()
+    # ⑨ 비용 — 사이트별 구매 총액 (개정 353).  ★ 여럿이면 나란히 낸다.
+    #   표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다
+    purchase_costs: tuple = ()
     # 참고 자료 — 차종 공통 알려진 문제.  ★ 점수에 반영하지 않는다
     known_issues: tuple[dict, ...] = ()
     # ★ 5절 주요 옵션 — 옵션별 탑재 여부 (STEP 149c)

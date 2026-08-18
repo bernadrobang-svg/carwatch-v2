@@ -89,6 +89,23 @@ def match_cross_site(conn: sqlite3.Connection, vehicle_id: int,
                           head[0], head[1], msg)
 
 
+def site_prices_of(conn: sqlite3.Connection, listing_id: int) -> list:
+    """같은 차가 다른 사이트에 얼마로 올라 있는가 (개정 353 · V11-121).
+
+    ★ 결합 근거는 vehicle_id 다 — 차대번호·번호판으로 이은 것이다 (STEP 30).
+      제목이 같다는 이유로 잇지 않는다
+    돌려줌   [(사이트, 표시가)] — 자기 자신은 뺀다.  사이트당 가장 싼 것 하나
+    """
+    rows = conn.execute(
+        "SELECT o.site, MIN(o.price_current_won) FROM core_listing me"
+        " JOIN core_listing o ON o.vehicle_id = me.vehicle_id"
+        " WHERE me.listing_id = ? AND me.vehicle_id IS NOT NULL"
+        "   AND o.listing_id <> me.listing_id AND o.site <> me.site"
+        "   AND o.status = 'active' AND o.price_current_won IS NOT NULL"
+        " GROUP BY o.site ORDER BY o.site", (listing_id,)).fetchall()
+    return [(r[0], r[1]) for r in rows]
+
+
 def rebuild_core_vehicle(conn: sqlite3.Connection, at: str) -> int:
     """core_vehicle 집계 갱신.  site_count 는 실제 사이트 수다."""
     n = 0

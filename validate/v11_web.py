@@ -350,6 +350,17 @@ C = {
                      "격자 칸 수를 넘으면 칸이 겹쳐 글자가 뭉갠다 — "
                      "실측 08-18 「용도」 하나가 span 6 이라 5줄이 15칸이 됐다",
                      KIND_CODE),
+    "V11-120": Check("V11", "V11-120", "매물마다 사이트별 구매 총액이 나옴",
+                    FATAL, "run",
+                    "마스터 확정 — 「케이카로 구매 시 가격이고 엔카 구매 시 "
+                    "가격이잖아.  사이트별 총합을 내라」.  차량가는 「얼마에 "
+                    "파는가」이지 「얼마를 내는가」가 아니다 (개정 353)",
+                    KIND_CODE),
+    "V11-121": Check("V11", "V11-121", "여러 사이트에 있는 차는 총액을 나란히 냄",
+                    FATAL, "run",
+                    "★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다. "
+                    "이전등록비·보증 가입비가 사이트마다 다르다 (개정 353)",
+                    KIND_CODE),
     "V11-107": Check("V11", "V11-107", "화면별 사진 크기가 부록 G 와 같음",
                      FATAL, "run",
                      "추천은 목록보다 작다 — 한 화면에 여러 후보가 보여야 한다. "
@@ -932,6 +943,8 @@ def _screen_checks(conn, rid) -> list:
     out += _responsive_checks(rid)
     out.append(_null_link_check(conn, rid))
     out.append(_sian_visual_check(conn, rid))
+    # ⑨ 비용 — 사이트별 구매 총액 (개정 353)
+    out.extend(_purchase_cost_checks(conn, rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -2537,6 +2550,93 @@ def _sian_visual_check(conn, rid):
                              if skipped else "")
     return result(C["V11-77"], rid, f"{total}종", note, not bad,
                   bad[:8] + skipped)
+
+
+def _purchase_cost_checks(conn, rid):
+    """V11-120 · V11-121 — 사이트별 구매비용 (8장 · 개정 353).
+
+    마스터 확정 — 「케이카로 구매 시 가격이고 엔카 구매 시 가격이잖아.
+    사이트별 총합을 내라」
+    ★ 「매물마다 총액이 나오는가」다.  차량가만 내면 안 된다
+    ★ V11-121 은 두 사이트에 같은 차가 있어야 잴 수 있다 —
+      없으면 「해당 없음」이고 왜 그런지 적는다.
+      「사이트가 하나라서 통과」와 「나란히 냈으니 통과」는 다르다
+    """
+    import json as _j
+
+    from report.finance import purchase_cost
+
+    with open(os.path.join(ROOT, "config", "sites.json"),
+              encoding="utf-8") as f:
+        sites = _j.load(f)
+    with open(os.path.join(ROOT, "config", "finance.json"),
+              encoding="utf-8") as f:
+        fin = _j.load(f)
+
+    # ① 쓰는 사이트마다 구매비용 구성이 config 에 있는가
+    bad = []
+    for name, one in sorted(sites.items()):
+        if not isinstance(one, dict) or one.get("status") == "planned":
+            continue
+        if not one.get("purchase_cost"):
+            bad.append(f"{name} — sites.json 에 purchase_cost 가 없다")
+
+    # ② 매물마다 총액이 나오고, 그것이 차량가보다 큰가
+    rows = conn.execute(
+        "SELECT l.listing_id, l.site, l.price_current_won, l.target_key"
+        " FROM core_listing l JOIN result_score s"
+        "   ON s.listing_id = l.listing_id"
+        " WHERE l.price_current_won IS NOT NULL LIMIT 40").fetchall()
+    seen = 0
+    for lid, site, price, tk in rows:
+        got = purchase_cost(site, price, fin, sites, tk)
+        if got is None:
+            bad.append(f"매물 {lid} ({site}) — 총액을 못 낸다")
+            continue
+        if got.total_won <= price:
+            bad.append(f"매물 {lid} ({site}) — 총액 {got.total_won:,} 이 "
+                       f"차량가 {price:,} 보다 크지 않다.  차량가만 낸 것이다")
+        seen += 1
+    # ③ 화면에 실제로 나오는가 — 계산만 하고 안 내면 낸 것이 아니다
+    for name in ("why_listing_id", "listings"):
+        path = os.path.join(ROOT, "outputs", "render",
+                            f"{name}.html")
+        if not os.path.isfile(path):
+            continue
+        html = open(path, encoding="utf-8").read()
+        if "data-buy=" not in html and "buy-t" not in html:
+            bad.append(f"{name} — 화면에 구매 총액이 없다")
+    a = result(C["V11-120"], rid, "전건", f"{seen}건", not bad, bad[:6])
+
+    # V11-121 — 여러 사이트에 있는 차는 나란히 내는가
+    n = conn.execute(
+        "SELECT COUNT(*) FROM (SELECT vehicle_id FROM core_listing"
+        " WHERE vehicle_id IS NOT NULL AND status='active'"
+        " GROUP BY vehicle_id HAVING COUNT(DISTINCT site) > 1)").fetchone()[0]
+    if not n:
+        return [a, not_applicable(
+            C["V11-121"], rid,
+            "두 사이트에 같이 올라온 차가 없다 — 나란히 낼 것이 없다")]
+    from store.crosssite import site_prices_of
+
+    bad2, checked = [], 0
+    for lid, site, price, tk in rows:
+        peers = site_prices_of(conn, lid)
+        if not peers:
+            continue
+        checked += 1
+        mine = purchase_cost(site, price, fin, sites, tk)
+        for other, other_price in peers:
+            got = purchase_cost(other, other_price, fin, sites, tk)
+            if got is None:
+                bad2.append(f"매물 {lid} — {other} 총액을 못 낸다")
+                continue
+            # ★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다.
+            #   그것을 보여 주려면 둘 다 총액이 있어야 한다
+            if mine is None:
+                bad2.append(f"매물 {lid} — 자기 사이트 총액이 없다")
+    return [a, result(C["V11-121"], rid, "나란히", f"{checked}건",
+                      not bad2, bad2[:6])]
 
 
 def _cell_squeeze_check(rid):
