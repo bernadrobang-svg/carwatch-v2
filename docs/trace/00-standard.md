@@ -16,12 +16,12 @@
 공통 근거   [기술] AWS t4g.small 한 대.  의존을 늘리면 마스터가 못 고친다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-500a | Python 3.11 이상 | `[기술]` | `00-standard` | `tools/setup_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-501a | **외부 의존이 없다.** 표준 라이브러리만 | `[마스터]` **v1 실패 — 프레임워크가 얽혔다** | `00-standard` | `web/server.py:5` | 해당 없음 | S23 |  |  | ○ |
-| R-502a | 실행·시험·검사를 같은 인터프리터로 | `[기술]` 다르면 「내 환경에선 됐다」가 된다 | `00-standard` | `tools/run_tests.py:2` | 해당 없음 | S23 |  |  | ○ |
-| R-503a | **금지** 버전이 낮다고 코드를 내리는 것 | `[기술]` 환경을 올린다 | `00-standard` | `tools/check_src.py:662` | 해당 없음 | S23 |  |  | ○ |
+| R-500a | `[저장]` Python 3.11 이상 | `[기술]` | `00-standard` | `tools/setup_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-501a | `[저장]` **외부 의존이 없다.** 표준 라이브러리만 | `[마스터]` **v1 실패 — 프레임워크가 얽혔다** | `00-standard` | `web/server.py:5` | 해당 없음 | S23 |  |  | ○ |
+| R-502a | `[검사]` 실행·시험·검사를 같은 인터프리터로 | `[기술]` 다르면 「내 환경에선 됐다」가 된다 | `00-standard` | `tools/run_tests.py:2` | 해당 없음 | S23 |  |  | ○ |
+| R-503a | `[저장]` **금지** 버전이 낮다고 코드를 내리는 것 | `[기술]` 환경을 올린다 | `00-standard` | `tools/check_src.py:662` | 해당 없음 | S23 |  |  | ○ |
 
 ---
 
@@ -32,16 +32,16 @@
            [기술] 08-15 사고 — 운영 DB 를 복사해 시험을 돌렸다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-510a | 「필수」는 `check_all` 에 들어간다 | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-511a | **금지** 보조 도구가 DB 를 고치는 것 | `[기술]` 파이프라인 밖에서 값이 바뀐다 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-512a | 장을 착수하면 그 장의 시험을 함께 | `[마스터]` | `00-standard` | `web/templates/admin_collect.html` | `/admin/collect` | S24 |  |  | ○ |
-| R-513a | **금지** 시험을 마지막에 몰아 붙이는 것 | `[마스터]` | `00-standard` | `web/views.py::_versions` | 해당 없음 | S24 |  |  | ○ |
-| R-514a | **금지** 운영 DB 를 복사해 시험 | `[마스터]` **개정 246 — 실측이 시험을 오염시켰다** | `00-standard` | `tools/check_src.py:681` | 해당 없음 | S24 |  |  | ○ |
-| R-515a | 시험은 빈 DB 에서 시작 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py::admin_targets` | `/admin/targets` | S24 |  |  | ○ |
-| R-516a | 데이터는 시험이 스스로 넣는다 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py::admin_targets` | `/admin/targets` | S24 |  |  | ○ |
-| R-517a | 같은 코드면 언제 돌려도 같은 결과 | `[기술]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S24 |  |  | ○ |
+| R-510a | `[검사]` 「필수」는 `check_all` 에 들어간다 | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-511a | `[검사]` **금지** 보조 도구가 DB 를 고치는 것 | `[기술]` 파이프라인 밖에서 값이 바뀐다 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-512a | `[검사]` 장을 착수하면 그 장의 시험을 함께 | `[마스터]` | `00-standard` | `web/templates/admin_collect.html` | `/admin/collect` | S24 |  |  | ○ |
+| R-513a | `[검사]` **금지** 시험을 마지막에 몰아 붙이는 것 | `[마스터]` | `00-standard` | `web/views.py::_versions` | 해당 없음 | S24 |  |  | ○ |
+| R-514a | `[검사]` **금지** 운영 DB 를 복사해 시험 | `[마스터]` **개정 246 — 실측이 시험을 오염시켰다** | `00-standard` | `tools/check_src.py:681` | 해당 없음 | S24 |  |  | ○ |
+| R-515a | `[검사]` 시험은 빈 DB 에서 시작 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py::admin_targets` | `/admin/targets` | S24 |  |  | ○ |
+| R-516a | `[검사]` 데이터는 시험이 스스로 넣는다 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py::admin_targets` | `/admin/targets` | S24 |  |  | ○ |
+| R-517a | `[검사]` 같은 코드면 언제 돌려도 같은 결과 | `[기술]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S24 |  |  | ○ |
 
 ---
 
@@ -52,14 +52,14 @@
                     화면으로 못 하면 개판된다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-520a | **화면이 본체다.** 진입점은 화면이 부르는 도구 | `[마스터]` | `00-standard` | `report/screens/admin.py:55` | 화면 없음 | S27 · V11-45 |  |  | ◐ |
-| R-521a | 완성 판단은 화면에서 한다 | `[마스터]` | `00-standard` | `collect/pipeline.py:30` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-522a | 화면을 못 만들면 미완이다 | `[마스터]` | `00-standard` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-523a | 검사는 「쓸 수 있는가」를 본다 | `[마스터]` | `00-standard` | `tools/daily_enqueue.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-524a | **금지** 진입점에만 있는 기능 | `[마스터]` | `00-standard` | `tools/check_src.py:788` | 해당 없음 | S27 · V11-45 |  |  | ○ |
-| R-525a | **금지** 「화면은 나중에」 | `[마스터]` | `00-standard` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
+| R-520a | `[화면]` **화면이 본체다.** 진입점은 화면이 부르는 도구 | `[마스터]` | `00-standard` | `report/screens/admin.py:55` | 화면 없음 | S27 · V11-45 |  |  | ◐ |
+| R-521a | `[화면]` 완성 판단은 화면에서 한다 | `[마스터]` | `00-standard` | `collect/pipeline.py:30` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-522a | `[화면]` 화면을 못 만들면 미완이다 | `[마스터]` | `00-standard` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
+| R-523a | `[검사·화면]` 검사는 「쓸 수 있는가」를 본다 | `[마스터]` | `00-standard` | `tools/daily_enqueue.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-524a | `[화면]` **금지** 진입점에만 있는 기능 | `[마스터]` | `00-standard` | `tools/check_src.py:788` | 해당 없음 | S27 · V11-45 |  |  | ○ |
+| R-525a | `[화면]` **금지** 「화면은 나중에」 | `[마스터]` | `00-standard` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
 
 ---
 
@@ -69,17 +69,17 @@
 공통 근거   [마스터] 개정 257 — 「서버가 죽어도 남고, 가이드가 읽는다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-530a | 소스는 git. 모든 변경을 커밋 | `[마스터]` | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
-| R-531a | GitHub 원격에 push | `[마스터]` | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
-| R-532a | 커밋 첫머리에 규격 코드·STEP 번호 | `[마스터]` 무엇 때문에 고쳤는지 | `00-standard` | `web/views.py::watch_add_post` | 해당 없음 | S25 |  |  | ○ |
-| R-533a | 작업 기록에 커밋 해시 | `[마스터]` | `00-standard` | `store/admin.py:36` | 해당 없음 | S25 · S26 |  |  | ○ |
-| R-534a | **금지** 여러 작업을 한 커밋에 | `[기술]` 되돌릴 수 없다 | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
-| R-535a | **금지** `.bak` 파일 백업 | `[기술]` git 이 그 일을 한다 | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
-| R-536a | **금지** `carwatch.db`·`secrets/` 커밋 | `[기술]` 개인정보·용량 | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
-| R-537a | 소스가 바뀌면 올린다. 문서만이면 안 올린다 | `[판단]` 버전 번호가 부풀려진다. ★ 조사 없음 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-538a | `outputs/` 파일명 버전은 그 시점 소스 버전 | `[기술]` | `00-standard` | `report/exports/export.py::output_path` | 해당 없음 | S26 |  |  | ○ |
+| R-530a | `[운영]` 소스는 git. 모든 변경을 커밋 | `[마스터]` | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
+| R-531a | `[운영]` GitHub 원격에 push | `[마스터]` | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
+| R-532a | `[운영]` 커밋 첫머리에 규격 코드·STEP 번호 | `[마스터]` 무엇 때문에 고쳤는지 | `00-standard` | `web/views.py::watch_add_post` | 해당 없음 | S25 |  |  | ○ |
+| R-533a | `[저장]` 작업 기록에 커밋 해시 | `[마스터]` | `00-standard` | `store/admin.py:36` | 해당 없음 | S25 · S26 |  |  | ○ |
+| R-534a | `[운영]` **금지** 여러 작업을 한 커밋에 | `[기술]` 되돌릴 수 없다 | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
+| R-535a | `[운영]` **금지** `.bak` 파일 백업 | `[기술]` git 이 그 일을 한다 | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
+| R-536a | `[운영]` **금지** `carwatch.db`·`secrets/` 커밋 | `[기술]` 개인정보·용량 | `00-standard` | `tools/check_src.py:701` | 해당 없음 | S25 |  |  | ○ |
+| R-537a | `[운영]` 소스가 바뀌면 올린다. 문서만이면 안 올린다 | `[판단]` 버전 번호가 부풀려진다. ★ 조사 없음 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-538a | `[운영]` `outputs/` 파일명 버전은 그 시점 소스 버전 | `[기술]` | `00-standard` | `report/exports/export.py::output_path` | 해당 없음 | S26 |  |  | ○ |
 
 ---
 
@@ -89,15 +89,15 @@
 공통 근거   [마스터] 「고쳤습니다」만으로는 믿을 수 없다.  숫자가 기록이다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-540a | 모든 작업의 처리와 결과를 `outputs/` 에 | `[마스터]` | `00-standard` | `report/screens/build.py::_report_files` | 해당 없음 | S26 |  |  | ○ |
-| R-541a | 파일명은 `YYYYMMDD_HHMM_v버전_제목.md` | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-542a | 여섯 절을 담는다 | `[마스터]` | `00-standard` | `tools/check_src.py:729` | 해당 없음 | S26 |  |  | ○ |
-| R-543a | **금지** 「고쳤습니다」만 적는 것 | `[마스터]` **숫자가 없으면 기록이 아니다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-544a | **금지** 1차 결과를 빼고 조치 후만 적는 것 | `[마스터]` **뭘 틀렸는지가 남아야 한다** | `00-standard` | `web/views.py::why` | `/why/{listing_id}` | S26 |  |  | ○ |
-| R-545a | `check_all`·`run_tests` 실제 출력을 붙인다 | `[마스터]` | `00-standard` | `tools/light_check.py:135` | 해당 없음 | S26 |  |  | ○ |
-| R-546a | fatal 이 자료 부재인지 코드 결함인지 가른다 | `[마스터]` | `00-standard` | `tools/repair_facet_chunks.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-540a | `[운영]` 모든 작업의 처리와 결과를 `outputs/` 에 | `[마스터]` | `00-standard` | `report/screens/build.py::_report_files` | 해당 없음 | S26 |  |  | ○ |
+| R-541a | `[운영]` 파일명은 `YYYYMMDD_HHMM_v버전_제목.md` | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-542a | `[운영]` 여섯 절을 담는다 | `[마스터]` | `00-standard` | `tools/check_src.py:729` | 해당 없음 | S26 |  |  | ○ |
+| R-543a | `[운영]` **금지** 「고쳤습니다」만 적는 것 | `[마스터]` **숫자가 없으면 기록이 아니다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-544a | `[운영]` **금지** 1차 결과를 빼고 조치 후만 적는 것 | `[마스터]` **뭘 틀렸는지가 남아야 한다** | `00-standard` | `web/views.py::why` | `/why/{listing_id}` | S26 |  |  | ○ |
+| R-545a | `[검사]` `check_all`·`run_tests` 실제 출력을 붙인다 | `[마스터]` | `00-standard` | `tools/light_check.py:135` | 해당 없음 | S26 |  |  | ○ |
+| R-546a | `[검사]` fatal 이 자료 부재인지 코드 결함인지 가른다 | `[마스터]` | `00-standard` | `tools/repair_facet_chunks.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -107,15 +107,15 @@
 공통 근거   [마스터] 개정 238 — 「지시서는 개발측이 고치지 않는다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-550a | `docs/` 를 고치는 것은 가이드 | `[마스터]` | `00-standard` | `tools/build_index.py:8` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-551a | 정정이 필요하면 근거와 함께 요청 | `[마스터]` | `00-standard` | `web/templates/join.html` | `/join` | 검사 없음 |  |  | ◐ |
-| R-552a | **금지** 개발측이 STEP 을 지우거나 합치는 것 | `[마스터]` | `00-standard` | `collect/runner.py:4` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-553a | **금지** 가이드가 소스를 직접 고치는 것 | `[마스터]` | `00-standard` | `tools/render_screens.py:5` | 해당 없음 | S35-1 |  |  | ○ |
-| R-554a | 실물이 규격과 다르면 **실물을 고친다** | `[마스터]` | `00-standard` | `web/app.py:64` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-555a | **금지** 「구현이 어렵다」로 규격을 낮추는 것 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-556a | **금지** 선택지를 만들어 타협하는 것 | `[마스터]` **규격이 이미 정하고 있다** | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-550a | `[운영]` `docs/` 를 고치는 것은 가이드 | `[마스터]` | `00-standard` | `tools/build_index.py:8` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-551a | `[운영]` 정정이 필요하면 근거와 함께 요청 | `[마스터]` | `00-standard` | `web/templates/join.html` | `/join` | 검사 없음 |  |  | ◐ |
+| R-552a | `[운영]` **금지** 개발측이 STEP 을 지우거나 합치는 것 | `[마스터]` | `00-standard` | `collect/runner.py:4` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-553a | `[운영]` **금지** 가이드가 소스를 직접 고치는 것 | `[마스터]` | `00-standard` | `tools/render_screens.py:5` | 해당 없음 | S35-1 |  |  | ○ |
+| R-554a | `[운영]` 실물이 규격과 다르면 **실물을 고친다** | `[마스터]` | `00-standard` | `web/app.py:64` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-555a | `[운영]` **금지** 「구현이 어렵다」로 규격을 낮추는 것 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-556a | `[운영]` **금지** 선택지를 만들어 타협하는 것 | `[마스터]` **규격이 이미 정하고 있다** | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
 
 ---
 
@@ -125,13 +125,13 @@
 공통 근거   [마스터] v1 사고 — 같은 값에 이름이 여럿이라 뭐가 뭔지 몰랐다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-560a | 새 컬럼은 `_cnt`·`_count` 중 판단해 고른다 | `[기술]` | `00-standard` | `validate/v11_web.py::_count` | 해당 없음 | V4-18 |  |  | ○ |
-| R-561a | **금지** 같은 값에 둘을 섞는 것 | `[기술]` | `00-standard` | `store/dictionary.py::policy` | 해당 없음 | V4-18 |  |  | ○ |
-| R-562a | **금지** 시각에 `_date` | `[기술]` 시각은 `_at` | `00-standard` | `tools/verify_axes.py:47` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-563a | **금지** `insp_outer_json`·`encar_diagnosis` | `[마스터]` 줄임말은 나중에 못 읽는다 | `00-standard` | `store/dictionary.py::policy` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-564a | `inspection_panel_json`·`site_diagnosis_grade` | `[마스터]` 위와 같음 | `00-standard` | `tools/verify_axes.py::hand_frame` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-560a | `[저장]` 새 컬럼은 `_cnt`·`_count` 중 판단해 고른다 | `[기술]` | `00-standard` | `validate/v11_web.py::_count` | 해당 없음 | V4-18 |  |  | ○ |
+| R-561a | `[사전]` **금지** 같은 값에 둘을 섞는 것 | `[기술]` | `00-standard` | `store/dictionary.py::policy` | 해당 없음 | V4-18 |  |  | ○ |
+| R-562a | `[운영]` **금지** 시각에 `_date` | `[기술]` 시각은 `_at` | `00-standard` | `tools/verify_axes.py:47` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-563a | `[운영]` **금지** `insp_outer_json`·`encar_diagnosis` | `[마스터]` 줄임말은 나중에 못 읽는다 | `00-standard` | `store/dictionary.py::policy` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-564a | `[운영]` `inspection_panel_json`·`site_diagnosis_grade` | `[마스터]` 위와 같음 | `00-standard` | `tools/verify_axes.py::hand_frame` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -141,21 +141,21 @@
 공통 근거   [마스터] 「이 문서만으로 구현할 수 있어야 한다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-570a | 쓰면 안 되는 입력과 이유를 적는다 | `[기술]` | `00-standard` | `web/views.py::_watch_notes` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-571a | **금지** 300건 미관측을 「없는 값」으로 확정 | `[마스터]` **v1 사고 — 표본이 적어 없다고 단정했다** | `00-standard` | `store/dictionary.py::normalize_enum` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-572a | 「표본 N건에서 미관측」이라 쓴다 | `[마스터]` 위와 같음 | `00-standard` | `collect/pipeline.py::envelope_scope` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-573a | 이 문서만으로 구현할 수 있어야 한다 | `[마스터]` | `00-standard` | `validate/v4_mapping.py:73` | 해당 없음 | V4-13 |  |  | ○ |
-| R-574a | 새 config 키를 만들면 부록 B 도 함께 | `[마스터]` S28-1 | `00-standard` | `web/views.py::admin_targets` | `/admin/targets` | V4-14 · V4-15 |  |  | ○ |
-| R-575a | `config.{파일}.{키}` 형식 | `[기술]` | `00-standard` | `analyze/verdict.py::put` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-576a | **금지** `config.{키}` | `[기술]` 어느 파일인지 모른다 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-577a | 새 표본은 실수집 원문에서 뽑는다 | `[마스터]` **손으로 만들면 진짜 형태를 모른다** | `00-standard` | `report/screens/admin.py::_todos` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-578a | **금지** 모의 응답을 fixtures 에 | `[마스터]` 위와 같음 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-579a | 변환 결과는 `EXPECTED` 와 직접 비교 | `[기술]` | `00-standard` | `store/adminops.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-580a | 장을 착수하면 불변식을 그 자리에서 | `[마스터]` | `00-standard` | `analyze/axis/spec.py::_hda` | 해당 없음 | S21 |  |  | ○ |
-| R-581a | **금지** 「나중에」 | `[마스터]` **시험이 「전부 통과」인데 절반만 본다** | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-582a | SQL 은 표준 문법 우선 | `[기술]` 온라인 전환 대비 | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-570a | `[운영]` 쓰면 안 되는 입력과 이유를 적는다 | `[기술]` | `00-standard` | `web/views.py::_watch_notes` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-571a | `[사전]` **금지** 300건 미관측을 「없는 값」으로 확정 | `[마스터]` **v1 사고 — 표본이 적어 없다고 단정했다** | `00-standard` | `store/dictionary.py::normalize_enum` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-572a | `[운영]` 「표본 N건에서 미관측」이라 쓴다 | `[마스터]` 위와 같음 | `00-standard` | `collect/pipeline.py::envelope_scope` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-573a | `[운영]` 이 문서만으로 구현할 수 있어야 한다 | `[마스터]` | `00-standard` | `validate/v4_mapping.py:73` | 해당 없음 | V4-13 |  |  | ○ |
+| R-574a | `[저장]` 새 config 키를 만들면 부록 B 도 함께 | `[마스터]` S28-1 | `00-standard` | `web/views.py::admin_targets` | `/admin/targets` | V4-14 · V4-15 |  |  | ○ |
+| R-575a | `[저장]` `config.{파일}.{키}` 형식 | `[기술]` | `00-standard` | `analyze/verdict.py::put` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-576a | `[저장]` **금지** `config.{키}` | `[기술]` 어느 파일인지 모른다 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-577a | `[수집]` 새 표본은 실수집 원문에서 뽑는다 | `[마스터]` **손으로 만들면 진짜 형태를 모른다** | `00-standard` | `report/screens/admin.py::_todos` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-578a | `[수집]` **금지** 모의 응답을 fixtures 에 | `[마스터]` 위와 같음 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-579a | `[운영]` 변환 결과는 `EXPECTED` 와 직접 비교 | `[기술]` | `00-standard` | `store/adminops.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-580a | `[운영]` 장을 착수하면 불변식을 그 자리에서 | `[마스터]` | `00-standard` | `analyze/axis/spec.py::_hda` | 해당 없음 | S21 |  |  | ○ |
+| R-581a | `[운영]` **금지** 「나중에」 | `[마스터]` **시험이 「전부 통과」인데 절반만 본다** | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-582a | `[운영]` SQL 은 표준 문법 우선 | `[기술]` 온라인 전환 대비 | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -165,18 +165,18 @@
 공통 근거   [마스터] 「너도 이런 대충하는데」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-590a | 새 규격은 표로. 말로 주지 않는다 | `[마스터]` **「백분위」라 써서 옵션 축이 0점이 됐다** | `00-standard` | `web/views.py::_condition_sentence` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-591a | 같은 주제는 정본 한 파일에만 | `[마스터]` **배점표가 세 군데였다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-592a | 바꾸면 앞의 것을 폐기 표시 | `[마스터]` | `00-standard` | `tools/repair_facet_chunks.py:11` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-593a | **매 검토마다 스크린샷 대조** | `[마스터]` **안 봤다가 매번 틀렸다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-594a | 숫자를 말할 때 근거를 함께 | `[마스터]` | `00-standard` | `tools/light_check.py:37` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-595a | 개정마다 이력 한 줄 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-596a | 버전을 갱신 | `[마스터]` | `00-standard` | `web/context.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-597a | **이 검사는 개발측이 만들고 돌린다** | `[마스터]` **가이드가 자기를 검사하면 맹점을 넘긴다** | `00-standard` | `web/views.py::page_extras` | 해당 없음 | S28 |  |  | ○ |
-| R-598a | `check_all` 에 넣는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-599a | 실패하면 가이드에게 알린다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S28 |  |  | ○ |
+| R-590a | `[검사]` 새 규격은 표로. 말로 주지 않는다 | `[마스터]` **「백분위」라 써서 옵션 축이 0점이 됐다** | `00-standard` | `web/views.py::_condition_sentence` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-591a | `[검사]` 같은 주제는 정본 한 파일에만 | `[마스터]` **배점표가 세 군데였다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-592a | `[검사·화면]` 바꾸면 앞의 것을 폐기 표시 | `[마스터]` | `00-standard` | `tools/repair_facet_chunks.py:11` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-593a | `[검사]` **매 검토마다 스크린샷 대조** | `[마스터]` **안 봤다가 매번 틀렸다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-594a | `[검사]` 숫자를 말할 때 근거를 함께 | `[마스터]` | `00-standard` | `tools/light_check.py:37` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-595a | `[검사]` 개정마다 이력 한 줄 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-596a | `[검사]` 버전을 갱신 | `[마스터]` | `00-standard` | `web/context.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-597a | `[검사]` **이 검사는 개발측이 만들고 돌린다** | `[마스터]` **가이드가 자기를 검사하면 맹점을 넘긴다** | `00-standard` | `web/views.py::page_extras` | 해당 없음 | S28 |  |  | ○ |
+| R-598a | `[검사]` `check_all` 에 넣는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-599a | `[검사]` 실패하면 가이드에게 알린다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S28 |  |  | ○ |
 
 ---
 
@@ -189,64 +189,64 @@
 
 ## ⓪ 4시간 점검 (12건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-600b | 1분 안에 끝나는 것만 | `[마스터]` ★ **실측 155초 — 예산을 180초로 고침 (개정 336)** | `00-standard` | `web/views.py::_versions` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-601b | 어긋난 것이 있을 때만 기록 | `[마스터]` 하루 6개가 쌓이면 안 본다 | `00-standard` | `web/views.py::_check_reports` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-602b | 무엇이 늘고 줄었는지 | `[마스터]` **변화가 신호다** | `00-standard` | `tools/light_check.py:9` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-603b | `/admin/status` 에 마지막 시각 | `[마스터]` | `00-standard` | `report/screens/admin.py::_live_progress` | /admin/status | 검사 없음 |  |  | ◐ |
-| R-604b | 수집 중이면 건너뛴다 | `[기술]` 숫자가 흔들린다 | `00-standard` | `tools/light_check.py:10` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-605b | **금지** 재시작하는 것 | `[마스터]` 개정 308 — 마스터의 CSRF 를 끊는다 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-606b | ~~**금지** 고치는 것~~ | ★ **폐기 — 개정 339** | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | — |
-| R-607b | **점검이 fatal 을 찾으면 그 자리에서 고친다** | `[마스터]` **「4시간마다 돌라고 했으면 잔여 작업이 없어야」** | `00-standard` | `tools/light_check.py:11` | 해당 없음 | S29-4 |  |  | ○ |
-| R-608b | 고쳐도 되는 것과 물어야 하는 것을 가른다 | `[마스터]` | `00-standard` | `tools/light_check.py::repair` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
-| R-609b | 고친 것을 기록에 | `[마스터]` | `00-standard` | `tools/light_check.py::repair` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
-| R-610b | 수집 중이면 고치지 않는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
-| R-611b | 한 번에 3건까지 | `[판단]` 많이 고치면 뭐가 깨졌는지 모른다. ★ 조사 없음 | `00-standard` | `tools/light_check.py:17` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-600b | `[운영]` 1분 안에 끝나는 것만 | `[마스터]` ★ **실측 155초 — 예산을 180초로 고침 (개정 336)** | `00-standard` | `web/views.py::_versions` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-601b | `[운영]` 어긋난 것이 있을 때만 기록 | `[마스터]` 하루 6개가 쌓이면 안 본다 | `00-standard` | `web/views.py::_check_reports` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-602b | `[운영]` 무엇이 늘고 줄었는지 | `[마스터]` **변화가 신호다** | `00-standard` | `tools/light_check.py:9` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-603b | `[운영]` `/admin/status` 에 마지막 시각 | `[마스터]` | `00-standard` | `report/screens/admin.py::_live_progress` | /admin/status | 검사 없음 |  |  | ◐ |
+| R-604b | `[수집]` 수집 중이면 건너뛴다 | `[기술]` 숫자가 흔들린다 | `00-standard` | `tools/light_check.py:10` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-605b | `[운영]` **금지** 재시작하는 것 | `[마스터]` 개정 308 — 마스터의 CSRF 를 끊는다 | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-606b | `[운영]` ~~**금지** 고치는 것~~ | ★ **폐기 — 개정 339** | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | — |
+| R-607b | `[검사]` **점검이 fatal 을 찾으면 그 자리에서 고친다** | `[마스터]` **「4시간마다 돌라고 했으면 잔여 작업이 없어야」** | `00-standard` | `tools/light_check.py:11` | 해당 없음 | S29-4 |  |  | ○ |
+| R-608b | `[운영]` 고쳐도 되는 것과 물어야 하는 것을 가른다 | `[마스터]` | `00-standard` | `tools/light_check.py::repair` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
+| R-609b | `[운영]` 고친 것을 기록에 | `[마스터]` | `00-standard` | `tools/light_check.py::repair` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
+| R-610b | `[수집]` 수집 중이면 고치지 않는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
+| R-611b | `[운영]` 한 번에 3건까지 | `[판단]` 많이 고치면 뭐가 깨졌는지 모른다. ★ 조사 없음 | `00-standard` | `tools/light_check.py:17` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ## ① 작업 점검 (6건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-620b | `check_all` — fatal 이 늘었으면 고치고 끝낸다 | `[마스터]` | `00-standard` | `tools/light_check.py::failing` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-621b | 화면을 고쳤으면 스크린샷 다시 찍고 대조 | `[마스터]` | `00-standard` | `tools/light_check.py::main` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-622b | 배점을 고쳤으면 표본 3건 손계산 | `[마스터]` **트림 축 `k−0.5` 를 이렇게 잡았다** | `00-standard` | `tools/verify_axes.py:2` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-623b | `outputs` 기록에 | `[마스터]` | `00-standard` | `web/templates/admin.html` | `/admin` | 검사 없음 |  |  | ◐ |
-| R-624b | 작업 기록에 지시서 버전 | `[마스터]` | `00-standard` | `report/screens/build.py::_report_files` | 해당 없음 | S26 |  |  | ○ |
-| R-625b | **금지** 「고쳤습니다」만 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-620b | `[검사·화면]` `check_all` — fatal 이 늘었으면 고치고 끝낸다 | `[마스터]` | `00-standard` | `tools/light_check.py::failing` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-621b | `[운영]` 화면을 고쳤으면 스크린샷 다시 찍고 대조 | `[마스터]` | `00-standard` | `tools/light_check.py::main` | — | 검사 없음 |  |  | ◐ |
+| R-622b | `[판정]` 배점을 고쳤으면 표본 3건 손계산 | `[마스터]` **트림 축 `k−0.5` 를 이렇게 잡았다** | `00-standard` | `tools/verify_axes.py:2` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-623b | `[운영]` `outputs` 기록에 | `[마스터]` | `00-standard` | `web/templates/admin.html` | `/admin` | 검사 없음 |  |  | ◐ |
+| R-624b | `[운영]` 작업 기록에 지시서 버전 | `[마스터]` | `00-standard` | `report/screens/build.py::_report_files` | 해당 없음 | S26 |  |  | ○ |
+| R-625b | `[운영]` **금지** 「고쳤습니다」만 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
 
 ## ② 일일 점검 (7건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-630b | `check_all` 전수 · fatal 목록 | `[마스터]` | `00-standard` | `web/templates/admin_status.html` | `/admin/status` | 검사 없음 |  |  | ◐ |
-| R-631b | `run_tests` 전수 | `[마스터]` | `00-standard` | `web/templates/admin_status.html` | `/admin/status` | 검사 없음 |  |  | ◐ |
-| R-632b | 숫자 요약 | `[마스터]` | `00-standard` | `report/screens/build.py:56` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-633b | 어제와 견준다 | `[마스터]` | `00-standard` | `tools/daily_check.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-634b | 미해결 목록 | `[마스터]` | `00-standard` | `tools/daily_check.py:8` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-635b | `outputs/daily/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-636b | `/admin/status` 에 시각 | `[마스터]` | `00-standard` | `web/templates/admin.html` | `/admin` | 검사 없음 |  |  | ◐ |
+| R-630b | `[검사]` `check_all` 전수 · fatal 목록 | `[마스터]` | `00-standard` | `web/templates/admin_status.html` | `/admin/status` | 검사 없음 |  |  | ◐ |
+| R-631b | `[검사]` `run_tests` 전수 | `[마스터]` | `00-standard` | `web/templates/admin_status.html` | `/admin/status` | 검사 없음 |  |  | ◐ |
+| R-632b | `[운영]` 숫자 요약 | `[마스터]` | `00-standard` | `report/screens/build.py:56` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-633b | `[운영]` 어제와 견준다 | `[마스터]` | `00-standard` | `tools/daily_check.py:6` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-634b | `[운영]` 미해결 목록 | `[마스터]` | `00-standard` | `tools/daily_check.py:8` | — | 검사 없음 |  |  | ◐ |
+| R-635b | `[운영]` `outputs/daily/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-636b | `[운영]` `/admin/status` 에 시각 | `[마스터]` | `00-standard` | `web/templates/admin.html` | `/admin` | 검사 없음 |  |  | ◐ |
 
 ## ③ 주간 일제 점검 (16건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-640b | 규격끼리 충돌하는 곳을 목록으로 | `[마스터]` **오늘 7장에서 하나 찾았다** | `00-standard` | `tools/sync_registry.py::facet_path` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-641b | 참조하는 STEP·검사 번호가 실재하는가 | `[마스터]` | `00-standard` | `web/views.py::admin_users` | `/admin/users` | S28 |  |  | ○ |
-| R-642b | 「미확정」 목록 — 몇 주째인지 | `[마스터]` **두 주 넘으면 그것도 결함** | `00-standard` | `tools/sync_registry.py::facet_path` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-643b | `outputs/weekly/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-644b | 전 화면 스크린샷 대조 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-645b | 배점 대조 — 축 수 · 합 · 경계 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-646b | v1 대조 결과 확인 | `[마스터]` | `00-standard` | `web/templates/admin_dict.html` | `/admin/dict` | 검사 없음 |  |  | ◐ |
-| R-647b | 지난 주 지적 중 안 고쳐진 것 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-648b | 자료 없어 못 도는 검사 목록 | `[마스터]` | `00-standard` | `tools/weekly_check.py::idle_checks` | 화면 없음 | S30-1 · S30-2 |  |  | ◐ |
-| R-649b | **마스터 지적 대장을 훑는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
-| R-650b | 폐기 후보 — 안 쓰는 규격·검사·config | `[마스터]` | `00-standard` | `tools/weekly_check.py::unused_config` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
-| R-651b | 다음 주 우선순위 셋 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-652b | 한 파일로 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-653b | `/admin` 에 링크 | `[마스터]` **마스터가 아침에 본다** | `00-standard` | `report/screens/admin.py::AdminMenuItem` | /admin | 검사 없음 |  |  | ◐ |
-| R-654b | `systemd timer` · 02:00 에 개발측 몫 먼저 | `[마스터]` | `00-standard` | `tools/weekly_check.py:9` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
-| R-655b | 타이머가 서비스를 재시작하지 않는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
+| R-640b | `[운영]` 규격끼리 충돌하는 곳을 목록으로 | `[마스터]` **오늘 7장에서 하나 찾았다** | `00-standard` | `tools/sync_registry.py::facet_path` | — | 검사 없음 |  |  | ◐ |
+| R-641b | `[검사]` 참조하는 STEP·검사 번호가 실재하는가 | `[마스터]` | `00-standard` | `web/views.py::admin_users` | `/admin/users` | S28 |  |  | ○ |
+| R-642b | `[사전]` 「미확정」 목록 — 몇 주째인지 | `[마스터]` **두 주 넘으면 그것도 결함** | `00-standard` | `tools/sync_registry.py::facet_path` | — | 검사 없음 |  |  | ◐ |
+| R-643b | `[운영]` `outputs/weekly/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-644b | `[운영]` 전 화면 스크린샷 대조 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | — | 검사 없음 |  |  | ◐ |
+| R-645b | `[판정]` 배점 대조 — 축 수 · 합 · 경계 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-646b | `[운영]` v1 대조 결과 확인 | `[마스터]` | `00-standard` | `web/templates/admin_dict.html` | `/admin/dict` | 검사 없음 |  |  | ◐ |
+| R-647b | `[운영]` 지난 주 지적 중 안 고쳐진 것 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-648b | `[검사]` 자료 없어 못 도는 검사 목록 | `[마스터]` | `00-standard` | `tools/weekly_check.py::idle_checks` | — | S30-1 · S30-2 |  |  | ◐ |
+| R-649b | `[운영]` **마스터 지적 대장을 훑는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
+| R-650b | `[검사]` 폐기 후보 — 안 쓰는 규격·검사·config | `[마스터]` | `00-standard` | `tools/weekly_check.py::unused_config` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
+| R-651b | `[판정]` 다음 주 우선순위 셋 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-652b | `[운영]` 한 파일로 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-653b | `[운영·화면]` `/admin` 에 링크 | `[마스터]` **마스터가 아침에 본다** | `00-standard` | `report/screens/admin.py::AdminMenuItem` | /admin | 검사 없음 |  |  | ◐ |
+| R-654b | `[운영]` `systemd timer` · 02:00 에 개발측 몫 먼저 | `[마스터]` | `00-standard` | `tools/weekly_check.py:9` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
+| R-655b | `[운영]` 타이머가 서비스를 재시작하지 않는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-1 · S29-2 |  |  | ○ |
 
 ---
 
@@ -257,49 +257,49 @@
                     파일이 크면 쪼개야지 왜 부록으로 넘어가?」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-660b | 기준을 부록에 두지 않는다 | `[마스터]` | `00-standard` | `web/views.py::_versions` | 해당 없음 | S28-8 · S28-9 |  |  | ○ |
-| R-661b | 부록에는 목록·표만. 「왜」를 안 적는다 | `[마스터]` | `00-standard` | `tools/verify_axes.py::spec_tables` | 화면 없음 | S28-8 · S28-9 |  |  | ◐ |
-| R-662b | **금지** 본문이 크다고 부록으로 옮기는 것 | `[마스터]` | `00-standard` | `analyze/axis/value.py:12` | 해당 없음 | S28-8 · S28-9 |  |  | ○ |
-| R-663b | 800줄 넘으면 폴더로 쪼갠다 | `[마스터]` | `00-standard` | `tools/build_index.py::build_doc_index` | 해당 없음 | S28-9 |  |  | ○ |
-| R-664b | 이름은 `a- b- c-` 순 | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-665b | 원래 파일에는 색인만 | `[기술]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S28-9 |  |  | ○ |
-| R-666b | 색인 넷을 기계로 | `[마스터]` **손으로 적으면 오늘처럼 빠진다** | `00-standard` | `tools/light_check.py:55` | 해당 없음 | S28-10 · S28-11 |  |  | ○ |
-| R-667b | 파일이 늘거나 줄면 색인도 | `[마스터]` | `00-standard` | `tools/light_check.py::measure` | 해당 없음 | S28-10 · S28-11 |  |  | ○ |
-| R-668b | 색인과 실제가 다르면 실패 | `[마스터]` | `00-standard` | `report/screens/build.py::_bulk_market` | 해당 없음 | S28-10 · S28-11 |  |  | ○ |
-| R-669b | **★ 800줄 넘는 파일** — `00-standard` 1,400 · `60-admin` 1,031 | — | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | **D-500b** |
+| R-660b | `[운영]` 기준을 부록에 두지 않는다 | `[마스터]` | `00-standard` | `web/views.py::_versions` | 해당 없음 | S28-8 · S28-9 |  |  | ○ |
+| R-661b | `[운영]` 부록에는 목록·표만. 「왜」를 안 적는다 | `[마스터]` | `00-standard` | `tools/verify_axes.py::spec_tables` | — | S28-8 · S28-9 |  |  | ◐ |
+| R-662b | `[화면]` **금지** 본문이 크다고 부록으로 옮기는 것 | `[마스터]` | `00-standard` | `analyze/axis/value.py:12` | 해당 없음 | S28-8 · S28-9 |  |  | ○ |
+| R-663b | `[운영]` 800줄 넘으면 폴더로 쪼갠다 | `[마스터]` | `00-standard` | `tools/build_index.py::build_doc_index` | 해당 없음 | S28-9 |  |  | ○ |
+| R-664b | `[운영]` 이름은 `a- b- c-` 순 | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-665b | `[화면]` 원래 파일에는 색인만 | `[기술]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S28-9 |  |  | ○ |
+| R-666b | `[화면]` 색인 넷을 기계로 | `[마스터]` **손으로 적으면 오늘처럼 빠진다** | `00-standard` | `tools/light_check.py:55` | 해당 없음 | S28-10 · S28-11 |  |  | ○ |
+| R-667b | `[화면]` 파일이 늘거나 줄면 색인도 | `[마스터]` | `00-standard` | `tools/light_check.py::measure` | 해당 없음 | S28-10 · S28-11 |  |  | ○ |
+| R-668b | `[화면]` 색인과 실제가 다르면 실패 | `[마스터]` | `00-standard` | `report/screens/build.py::_bulk_market` | 해당 없음 | S28-10 · S28-11 |  |  | ○ |
+| R-669b | `[화면]` **★ 800줄 넘는 파일** — `00-standard` 1,400 · `60-admin` 1,031 | — | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | **D-500b** |
 
 ---
 
 # 12. S30 검사 정리 (10건 · 개정 344)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-670b | `validate/` 에서 `Check(...)` 를 뽑는다 | `[마스터]` | `00-standard` | `validate/base.py::Check` | 해당 없음 | S28-13 |  |  | ○ |
-| R-671b | `docs/` 에서 검산 코드를 뽑는다 | `[마스터]` | `00-standard` | `tools/build_index.py::_checks_in_docs` | 해당 없음 | S28-13 |  |  | ○ |
-| R-672b | 둘을 잇는다 | `[마스터]` | `00-standard` | `report/screens/admin.py::parse_import_text` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-673b | 마지막 통과·실패 시각을 함께 | `[마스터]` **한 번도 안 돈 검사가 드러난다** | `00-standard` | `report/screens/admin.py::view_audit` | 해당 없음 | S28-13 |  |  | ○ |
-| R-674b | 중복이면 더 넓은 것을 남긴다 | `[마스터]` | `00-standard` | `tools/render_screens.py:2` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
-| R-675b | **「못 잡은 검사」는 지우지 않고 고친다** | `[마스터]` | `00-standard` | `tools/light_check.py:11` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
-| R-676b | 죽은 검사는 왜 안 도는지 적는다 | `[마스터]` | `00-standard` | `tools/build_index.py::sort_checks` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
-| R-677b | ⑤(검사 없는 규격)를 가장 먼저 | `[마스터]` **규격이 빈말이 되고 있다** | `00-standard` | `tools/build_index.py::sort_checks` | 해당 없음 | S28-13 |  |  | ○ |
-| R-678b | 지울 때 왜 지우는지 이력에 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
-| R-679b | **금지** 숫자를 줄이려고 지우는 것 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
+| R-670b | `[검사]` `validate/` 에서 `Check(...)` 를 뽑는다 | `[마스터]` | `00-standard` | `validate/base.py::Check` | 해당 없음 | S28-13 |  |  | ○ |
+| R-671b | `[검사]` `docs/` 에서 검산 코드를 뽑는다 | `[마스터]` | `00-standard` | `tools/build_index.py::_checks_in_docs` | 해당 없음 | S28-13 |  |  | ○ |
+| R-672b | `[검사]` 둘을 잇는다 | `[마스터]` | `00-standard` | `report/screens/admin.py::parse_import_text` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-673b | `[검사]` 마지막 통과·실패 시각을 함께 | `[마스터]` **한 번도 안 돈 검사가 드러난다** | `00-standard` | `report/screens/admin.py::view_audit` | 해당 없음 | S28-13 |  |  | ○ |
+| R-674b | `[검사]` 중복이면 더 넓은 것을 남긴다 | `[마스터]` | `00-standard` | `tools/render_screens.py:2` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
+| R-675b | `[검사]` **「못 잡은 검사」는 지우지 않고 고친다** | `[마스터]` | `00-standard` | `tools/light_check.py:11` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
+| R-676b | `[검사]` 죽은 검사는 왜 안 도는지 적는다 | `[마스터]` | `00-standard` | `tools/build_index.py::sort_checks` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
+| R-677b | `[검사]` ⑤(검사 없는 규격)를 가장 먼저 | `[마스터]` **규격이 빈말이 되고 있다** | `00-standard` | `tools/build_index.py::sort_checks` | 해당 없음 | S28-13 |  |  | ○ |
+| R-678b | `[검사]` 지울 때 왜 지우는지 이력에 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
+| R-679b | `[검사]` **금지** 숫자를 줄이려고 지우는 것 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S30-1 · S30-2 |  |  | ○ |
 
 ---
 
 # 13. S31 테스터 (7건 · 개정 345)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-680b | **소스를 보지 않는다** | `[마스터]` **「왜 그런지」를 알면 눈이 흐려진다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-681b | 보는 것 — 규격 · 렌더 · 스크린샷 · DB | `[마스터]` | `00-standard` | `tools/light_check.py:56` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-682b | **고치지 않는다. 적기만 한다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-683b | **「고치는 법」을 제안하지 않는다** | `[마스터]` **제안하면 원인을 안 찾는다** | `00-standard` | `store/tools.py:4` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-684b | 재현 절차를 적는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S31-1 · S31-2 |  |  | ○ |
-| R-685b | `outputs/test/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-686b | 별도 세션 — `tmux new -s tester` | `[마스터]` | `00-standard` | `web/views.py:395` | 해당 없음 | S31-1 · S31-2 |  |  | ○ |
+| R-680b | `[운영]` **소스를 보지 않는다** | `[마스터]` **「왜 그런지」를 알면 눈이 흐려진다** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-681b | `[화면]` 보는 것 — 규격 · 렌더 · 스크린샷 · DB | `[마스터]` | `00-standard` | `tools/light_check.py:56` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-682b | `[운영]` **고치지 않는다. 적기만 한다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-683b | `[운영]` **「고치는 법」을 제안하지 않는다** | `[마스터]` **제안하면 원인을 안 찾는다** | `00-standard` | `store/tools.py:4` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-684b | `[운영]` 재현 절차를 적는다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S31-1 · S31-2 |  |  | ○ |
+| R-685b | `[운영]` `outputs/test/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-686b | `[운영]` 별도 세션 — `tmux new -s tester` | `[마스터]` | `00-standard` | `web/views.py:395` | 해당 없음 | S31-1 · S31-2 |  |  | ○ |
 
 ---
 
@@ -310,55 +310,55 @@
                     내가 요구하는 것도 있을 거고 로직도 있을 건데」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-690b | 「필수·금지」 줄마다 표시 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | **◐ 오늘 진행 중** |
-| R-691b | `[마스터]` 예 — 총점 605 · 등급 555 | `[마스터]` | `00-standard` | `web/templates/listings.html` | `/listings` | 검사 없음 |  |  | ◐ |
-| R-692b | `[조사]` 예 — 감가율 | `[조사]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-693b | `[판단]` 예 — 옵션 P90 | `[판단]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-694b | `[원문]` 예 — 신차가 구성 | `[원문]` | `00-standard` | `report/screens/views.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-695b | `[기술]` 예 — JS 로 폭을 재지 않는다 | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-696b | **`[판단]` 에는 근거를 반드시** | `[마스터]` | `00-standard` | `store/dictionary.py:6` | 해당 없음 | S32-1 · S32-2 |  |  | ○ |
-| R-697b | **`[마스터]`·`[시안]` 을 가이드가 안 바꾼다** | `[마스터]` | `00-standard` | `tools/verify_axes.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-698b | 결함을 찾으면 어느 층인지 함께 | `[마스터]` | `00-standard` | `web/views.py::_versions` | 해당 없음 | S32-1 · S32-2 |  |  | ○ |
-| R-699b | **`ref/screens/` 는 마스터 요구사항** | `[시안]` **개정 275 — 시안이 정본** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | V11-59 · V11-60 |  |  | ○ |
-| R-700b | 시안과 다르면 결함. 「더 낫다」는 이유가 안 된다 | `[시안]` | `00-standard` | `web/views.py::page` | 해당 없음 | V11-59 · V11-60 |  |  | ○ |
-| R-701b | 바꾸려면 마스터께 여쭌다 | `[시안]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | V11-59 · V11-60 |  |  | ○ |
+| R-690b | `[화면]` 「필수·금지」 줄마다 표시 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | **◐ 오늘 진행 중** |
+| R-691b | `[판정·화면]` `[마스터]` 예 — 총점 605 · 등급 555 | `[마스터]` | `00-standard` | `web/templates/listings.html` | `/listings` | 검사 없음 |  |  | ◐ |
+| R-692b | `[판정·화면]` `[조사]` 예 — 감가율 | `[조사]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-693b | `[화면]` `[판단]` 예 — 옵션 P90 | `[판단]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-694b | `[화면]` `[원문]` 예 — 신차가 구성 | `[원문]` | `00-standard` | `report/screens/views.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-695b | `[화면]` `[기술]` 예 — JS 로 폭을 재지 않는다 | `[기술]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-696b | `[화면]` **`[판단]` 에는 근거를 반드시** | `[마스터]` | `00-standard` | `store/dictionary.py:6` | 해당 없음 | S32-1 · S32-2 |  |  | ○ |
+| R-697b | `[화면]` **`[마스터]`·`[시안]` 을 가이드가 안 바꾼다** | `[마스터]` | `00-standard` | `tools/verify_axes.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-698b | `[화면]` 결함을 찾으면 어느 층인지 함께 | `[마스터]` | `00-standard` | `web/views.py::_versions` | 해당 없음 | S32-1 · S32-2 |  |  | ○ |
+| R-699b | `[화면]` **`ref/screens/` 는 마스터 요구사항** | `[시안]` **개정 275 — 시안이 정본** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | V11-59 · V11-60 |  |  | ○ |
+| R-700b | `[화면]` 시안과 다르면 결함. 「더 낫다」는 이유가 안 된다 | `[시안]` | `00-standard` | `web/views.py::page` | 해당 없음 | V11-59 · V11-60 |  |  | ○ |
+| R-701b | `[화면]` 바꾸려면 마스터께 여쭌다 | `[시안]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | V11-59 · V11-60 |  |  | ○ |
 
 ---
 
 # 15. S33 요구사항 대장 (11건 · 개정 347·348)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-710b | 셋을 한 표에 넣지 않는다 | `[마스터]` **「테스트 지적과 요구사항을 구분을 못하네」** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-711b | 결함이 재발하면 검사로. 「재발 N회」 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-712b | 원칙 지적은 S 검사로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-713b | 이력에서 마스터 지시만 뽑아 한 곳에 | `[마스터]` | `00-standard` | `store/admin.py:4` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-714b | 갈래별로 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-715b | 한 줄에 다섯 칸 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-716b | **말씀은 원문 그대로. 요약하지 않는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-717b | 상태를 넷으로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-718b | **가이드가 임의로 고치지 않는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-719b | 새 지시가 오면 한 줄 더한다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-720b | 개발측이 상태를 갱신 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-710b | `[저장]` 셋을 한 표에 넣지 않는다 | `[마스터]` **「테스트 지적과 요구사항을 구분을 못하네」** | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-711b | `[검사]` 결함이 재발하면 검사로. 「재발 N회」 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-712b | `[검사]` 원칙 지적은 S 검사로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-713b | `[운영]` 이력에서 마스터 지시만 뽑아 한 곳에 | `[마스터]` | `00-standard` | `store/admin.py:4` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-714b | `[운영]` 갈래별로 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-715b | `[운영]` 한 줄에 다섯 칸 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-716b | `[운영]` **말씀은 원문 그대로. 요약하지 않는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-717b | `[운영]` 상태를 넷으로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-718b | `[운영]` **가이드가 임의로 고치지 않는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-719b | `[운영]` 새 지시가 오면 한 줄 더한다 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-720b | `[운영]` 개발측이 상태를 갱신 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
 
 ---
 
 # 16. S34·S35 추적표 · 역할 (11건 · 개정 349·350)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-730b | **한 줄이 비면 그것이 결함이다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S34-1 · S34-2 |  |  | ○ |
-| R-731b | **요구사항을 규격에서 역으로 뽑는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S34-1 · S34-2 |  |  | **◐ 오늘** |
-| R-732b | 장마다 한 파일 | `[마스터]` | `00-standard` | `store/adminops.py:34` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-733b | 새 요구·개선·결함이 오면 한 줄 더한다 | `[마스터]` | `00-standard` | `web/views.py::_int_param` | 해당 없음 | S34-1 · S34-2 |  |  | ○ |
-| R-734b | **자기 칸만 채운다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S35-1 |  |  | ○ |
-| R-735b | **금지** 가이드가 「상태」를 짐작으로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-736b | **금지** 개발측이 「요구사항」을 지우는 것 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
-| R-737b | **금지** 테스터가 「고치는 법」을 적는 것 | `[마스터]` | `00-standard` | `tools/build_index.py:8` | 해당 없음 | S31-1 · S31-2 |  |  | ○ |
-| R-738b | 막히면 「막힘 — 왜」를 적고 다음으로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S35-1 |  |  | ○ |
-| R-739b | 주간 점검에 빈 칸을 함께 센다 | `[마스터]` | `00-standard` | `tools/weekly_check.py:2` | 해당 없음 | S35-1 |  |  | ○ |
+| R-730b | `[운영]` **한 줄이 비면 그것이 결함이다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S34-1 · S34-2 |  |  | ○ |
+| R-731b | `[파싱]` **요구사항을 규격에서 역으로 뽑는다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S34-1 · S34-2 |  |  | **◐ 오늘** |
+| R-732b | `[화면]` 장마다 한 파일 | `[마스터]` | `00-standard` | `store/adminops.py:34` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-733b | `[운영]` 새 요구·개선·결함이 오면 한 줄 더한다 | `[마스터]` | `00-standard` | `web/views.py::_int_param` | 해당 없음 | S34-1 · S34-2 |  |  | ○ |
+| R-734b | `[운영]` **자기 칸만 채운다** | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S35-1 |  |  | ○ |
+| R-735b | `[운영]` **금지** 가이드가 「상태」를 짐작으로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-736b | `[운영]` **금지** 개발측이 「요구사항」을 지우는 것 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S33-1 · S33-2 |  |  | ○ |
+| R-737b | `[운영]` **금지** 테스터가 「고치는 법」을 적는 것 | `[마스터]` | `00-standard` | `tools/build_index.py:8` | 해당 없음 | S31-1 · S31-2 |  |  | ○ |
+| R-738b | `[운영]` 막히면 「막힘 — 왜」를 적고 다음으로 | `[마스터]` | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S35-1 |  |  | ○ |
+| R-739b | `[운영]` 주간 점검에 빈 칸을 함께 센다 | `[마스터]` | `00-standard` | `tools/weekly_check.py:2` | 해당 없음 | S35-1 |  |  | ○ |
 
 ---
 
@@ -376,8 +376,8 @@
 
 | R | 무엇 | 왜 |
 |---|---|---|
-| R-611b | 「한 번에 3건까지 고친다」 | ★ 근거 없음. 더 많이 해도 될지 모릅니다 |
-| R-537a | 「문서만 바뀌면 버전을 안 올린다」 | ★ 조사 없음 |
+| R-611b | `[운영]` 「한 번에 3건까지 고친다」 | ★ 근거 없음. 더 많이 해도 될지 모릅니다 |
+| R-537a | `[운영]` 「문서만 바뀌면 버전을 안 올린다」 | ★ 조사 없음 |
 
 ---
 
@@ -396,46 +396,46 @@
 
 ## 17. S36 보안은 정식 서비스 전에 (6건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-750b | **비밀번호 길이·문자 제한을 두지 않는다** | `[마스터]` **「그냥 제한 없애. 정식 서비스할 때 강화해. 보안은 제일 마지막에 해」** | `00-standard` S36 | `web/views.py::_versions` | `/admin/account` | S36-1 |  |  | ○ |
-| R-751b | 보안 강화는 「정식 서비스 착수」에 모아 둔다 | `[마스터]` 위와 같음 | `00-standard` | `store/admin.py::create_account` | 해당 없음 | S36-1 |  |  | ○ |
-| R-752b | 해시를 로그에 안 남긴다 | `[기술]` **나중에 붙이면 이미 샌 뒤다** | `00-standard` | `store/core.py::split_pii` | 해당 없음 | S36-1 |  |  | ○ |
-| R-753b | PII 를 쿼리로 안 연다 | `[기술]` 위와 같음 | `00-standard` | `web/views.py::_versions` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-754b | HTTPS · 쿠키 Secure·HttpOnly | `[기술]` 위와 같음 | `00-standard` | `web/session.py:23` | 해당 없음 | S36-1 |  |  | ○ |
-| R-755b | **금지** 지금 보안으로 기능을 막는 것 | `[마스터]` | `00-standard` | `store/adminops.py::mark_step_imported` | 해당 없음 | S36-1 |  |  | ○ |
+| R-750b | `[운영]` **비밀번호 길이·문자 제한을 두지 않는다** | `[마스터]` **「그냥 제한 없애. 정식 서비스할 때 강화해. 보안은 제일 마지막에 해」** | `00-standard` S36 | `web/views.py::_versions` | `/admin/account` | S36-1 |  |  | ○ |
+| R-751b | `[운영]` 보안 강화는 「정식 서비스 착수」에 모아 둔다 | `[마스터]` 위와 같음 | `00-standard` | `store/admin.py::create_account` | 해당 없음 | S36-1 |  |  | ○ |
+| R-752b | `[저장]` 해시를 로그에 안 남긴다 | `[기술]` **나중에 붙이면 이미 샌 뒤다** | `00-standard` | `store/core.py::split_pii` | 해당 없음 | S36-1 |  |  | ○ |
+| R-753b | `[저장]` PII 를 쿼리로 안 연다 | `[기술]` 위와 같음 | `00-standard` | `web/views.py::_versions` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-754b | `[저장]` HTTPS · 쿠키 Secure·HttpOnly | `[기술]` 위와 같음 | `00-standard` | `web/session.py:23` | 해당 없음 | S36-1 |  |  | ○ |
+| R-755b | `[운영]` **금지** 지금 보안으로 기능을 막는 것 | `[마스터]` | `00-standard` | `store/adminops.py::mark_step_imported` | 해당 없음 | S36-1 |  |  | ○ |
 
 ## 18. S37 사는 사람을 위한 것 (4건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-760b | **새 기능 전에 「차를 사는 데 쓰는가」를 묻는다** | `[마스터]` **「내가 엔카랑 직거래를 하기 위한 용도지 판매 대행 용도가 아닌데」** | `00-standard` S37 | `web/views.py::dashboard` | `/` | S37-1 |  |  | ○ |
-| R-761b | **금지** 판매 대행 · 계약서 · 수수료 · 정산 | `[마스터]` 위와 같음 | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S37-1 |  | **D-503b** | **!** |
-| R-762b | **금지** 여러 사용자 · 권한 등급 · 고객 관리 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py:7` | 해당 없음 | S37-1 |  |  | ○ |
-| R-763b | **금지** 매물 등록 · 판매 관리 | `[마스터]` 위와 같음 | `00-standard` | `report/screens/build.py:1005` | 해당 없음 | S37-1 |  |  | ○ |
+| R-760b | `[판정]` **새 기능 전에 「차를 사는 데 쓰는가」를 묻는다** | `[마스터]` **「내가 엔카랑 직거래를 하기 위한 용도지 판매 대행 용도가 아닌데」** | `00-standard` S37 | `web/views.py::dashboard` | `/` | S37-1 |  |  | ○ |
+| R-761b | `[저장]` **금지** 판매 대행 · 계약서 · 수수료 · 정산 | `[마스터]` 위와 같음 | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S37-1 |  | **D-503b** | **!** |
+| R-762b | `[판정]` **금지** 여러 사용자 · 권한 등급 · 고객 관리 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py:7` | 해당 없음 | S37-1 |  |  | ○ |
+| R-763b | `[운영]` **금지** 매물 등록 · 판매 관리 | `[마스터]` 위와 같음 | `00-standard` | `report/screens/build.py:1005` | 해당 없음 | S37-1 |  |  | ○ |
 
 ## 19. 4시간 점검 — 상한 없이 (3건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-770b | **찾은 fatal 을 전부 고친다. 상한 없이** | `[마스터]` **08-18 확정** | `00-standard` | `tools/light_check.py:11` | 해당 없음 | S29-4 |  |  | ○ |
-| R-771b | 하나씩 고치고 하나씩 커밋 | `[기술]` 무엇이 깨졌는지 알 수 있게 | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
-| R-772b | 고치다 새 fatal 이 나면 멈추고 기록 | `[기술]` | `00-standard` | `collect/pipeline.py::diagnose` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
+| R-770b | `[검사]` **찾은 fatal 을 전부 고친다. 상한 없이** | `[마스터]` **08-18 확정** | `00-standard` | `tools/light_check.py:11` | 해당 없음 | S29-4 |  |  | ○ |
+| R-771b | `[운영]` 하나씩 고치고 하나씩 커밋 | `[기술]` 무엇이 깨졌는지 알 수 있게 | `00-standard` | `tools/sync_registry.py::facet_path` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
+| R-772b | `[검사]` 고치다 새 fatal 이 나면 멈추고 기록 | `[기술]` | `00-standard` | `collect/pipeline.py::diagnose` | 해당 없음 | S29-0 · S29-4 |  |  | ○ |
 
 ## 20. 여쭐 것과 정할 것 (3건 · 개정 361)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-780b | 여쭌다 — 값의 뜻 · 시장 지식 · 우선순위 · 화면 모양 | `[마스터]` **「이게 뭐야? 내가 알아야 해?」** | `00-standard` | `tools/sync_registry.py::facet_path` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-781b | 정한다 — 계산 방식 · 자료 구조 · 파일 배치 · 검사 설계 | `[마스터]` 위와 같음 | `00-standard` | `collect/pipeline.py::should_refetch` | 해당 없음 | S28-13 |  |  | ○ |
-| R-782b | **금지** 기술 세부를 여쭤 마스터 시간을 쓰는 것 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py::admin_home` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-780b | `[판정]` 여쭌다 — 값의 뜻 · 시장 지식 · 우선순위 · 화면 모양 | `[마스터]` **「이게 뭐야? 내가 알아야 해?」** | `00-standard` | `tools/sync_registry.py::facet_path` | — | 검사 없음 |  |  | ◐ |
+| R-781b | `[검사]` 정한다 — 계산 방식 · 자료 구조 · 파일 배치 · 검사 설계 | `[마스터]` 위와 같음 | `00-standard` | `collect/pipeline.py::should_refetch` | 해당 없음 | S28-13 |  |  | ○ |
+| R-782b | `[운영]` **금지** 기술 세부를 여쭤 마스터 시간을 쓰는 것 | `[마스터]` 위와 같음 | `00-standard` | `web/views.py::admin_home` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ## 21. 가이드 역할 정본 (2건 · 개정 364)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-790b | **가이드 역할을 규격에 박고 매번 읽는다** | `[마스터]` **「너의 역할을 여기에 정하지 말고 가이드에 박아 넣고 너가 계속 읽어서 각인하게」** | `guide/05_가이드역할.md` | `web/views.py::_versions` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-791b | 스킬이 그 파일을 먼저 읽는다 | `[마스터]` 위와 같음 | 스킬 | `web/views.py::page` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-790b | `[운영]` **가이드 역할을 규격에 박고 매번 읽는다** | `[마스터]` **「너의 역할을 여기에 정하지 말고 가이드에 박아 넣고 너가 계속 읽어서 각인하게」** | `guide/05_가이드역할.md` | `web/views.py::_versions` | — | 검사 없음 |  |  | ◐ |
+| R-791b | `[화면]` 스킬이 그 파일을 먼저 읽는다 | `[마스터]` 위와 같음 | 스킬 | `web/views.py::page` | 화면 없음 | 검사 없음 |  |  | ◐ |
 
 ## 열린 결함 (추가)
 
