@@ -67,6 +67,12 @@ C = {
                    "멈춘다.  판정에 쓰는 경로만 막는다 — 나머지는 등록만 하고 "
                    "진행한다 (개정 341)",
                    KIND_CODE),
+    "V4-30": Check("V4", "V4-30", "판정을 막는 것의 목록 파일이 있음",
+                   FATAL, "run",
+                   "마스터 지시 — 「실제값으로 너랑 나랑 판단해야지」. "
+                   "★ 저장소 어디에도 32건의 경로가 없었다 — DB 와 화면에만 "
+                   "있었다.  목록이 없으니 아무것도 못 정한다 (개정 390)",
+                   KIND_CODE),
     "V4-28": Check("V4", "V4-28", "미분류 항목에 값 분포와 선택지가 있음",
                    FATAL, "run",
                    "마스터 지적 — 「이걸 보고 내가 무엇을 하라는 말이지?  "
@@ -415,6 +421,48 @@ def _decide_material_check(conn, rid):
                       "그렇다" if not bad29 else "아니다", not bad29, bad29)]
 
 
+def _blocking_list_check(conn, rid):
+    """V4-30 — 판정을 막는 것의 목록 파일이 있고 줄 수가 맞는가 (개정 390).
+
+    마스터 지시 — 「실제값으로 너랑 나랑 판단해야지」
+    ★ 「지금 저장소 어디에도 32건의 경로가 없다.  DB 와 화면에만 있다.
+      목록이 없으니 가이드도 마스터도 아무것도 못 정한다」
+    ★ 줄 수가 V4-11 이 세는 수와 같아야 한다 — 다르면 딴 것을 센 것이다
+    """
+    import glob as _g
+    import os as _o
+    import re as _re
+
+    _ROOT = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+
+    from store.core import blocking_rows
+
+    want = blocking_rows(conn)
+    if not want:
+        return not_applicable(C["V4-30"], rid, "판정을 막는 것이 없다")
+    found = sorted(_g.glob(_o.path.join(_ROOT, "outputs",
+                                        "*_registry32_목록.md")))
+    if not found:
+        return result(C["V4-30"], rid, f"{len(want)}줄", "파일이 없다", False,
+                      ["python3.11 tools/classify_unclassified.py "
+                       "--blocking --list 로 만든다"])
+    body = open(found[-1], encoding="utf-8").read()
+    rows = _re.findall(r"^\| *\d+ \|", body, _re.M)
+    bad = []
+    if len(rows) != len(want):
+        bad.append(f"목록 {len(rows)}줄 != 막는 것 {len(want)}건 — "
+                   "딴 것을 셌다")
+    # ★ 「파서가 읽는 곳」이 비어 있으면 「정말 읽는지」를 못 본다
+    blank = body.count("★ 못 찾음")
+    if blank:
+        bad.append(f"파서가 읽는 곳을 못 찾은 줄 {blank}개")
+    for one in want[:5]:
+        if f"{one['endpoint']}:{one['path']}" not in body:
+            bad.append(f"{one['endpoint']}:{one['path']} 가 목록에 없다")
+    return result(C["V4-30"], rid, f"{len(want)}줄", f"{len(rows)}줄",
+                  not bad, bad[:4])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
@@ -529,6 +577,8 @@ def run(conn, ctx) -> list:
     out += _unclassified_split(conn, rid, blocking, pending)
     # 판단할 재료 다섯 (개정 367).  ★ 물을 때는 고를 것을 함께 준다
     out += _decide_material_check(conn, rid)
+    # 막는 것의 목록 파일 (개정 390)
+    out.append(_blocking_list_check(conn, rid))
 
     from collect.runner import REQUIRED_FACET_AXES, aspect_names
 

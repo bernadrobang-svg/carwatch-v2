@@ -62,9 +62,63 @@ def write_suggestion(rows: list) -> str:
     return path
 
 
+def write_blocking_list(conn) -> str:
+    """판정을 막는 32건을 목록으로 (개정 390 · V4-30).
+
+    ★ 값 분포는 2단계다.  목록을 먼저 낸다 —
+      「목록이 없으니 가이드도 마스터도 아무것도 못 정한다」
+    ★ 저장소에 남긴다.  DB 와 화면에만 있으면 아무도 못 본다
+    """
+    from datetime import datetime, timezone
+
+    from store.core import blocking_rows
+
+    rows = blocking_rows(conn)
+    day = datetime.now(timezone.utc).strftime("%Y%m%d")
+    path = os.path.join(ROOT, "outputs", f"{day}_registry32_목록.md")
+    out = [
+        "# 판정을 막는 미분류 — 목록",
+        "",
+        "**`python3.11 tools/classify_unclassified.py --blocking --list` "
+        "가 만든다. 손으로 고치지 않는다.**",
+        "",
+        f"**{len(rows)}건** · 많이 관측된 순",
+        "",
+        "```",
+        "★ 이 목록은 「파서가 실제로 그 경로를 읽는 것」이다.",
+        "  그래서 분류 전에는 판정을 막는다 (V4-11).",
+        "★ 정말 읽는지 「파서가 읽는 곳」의 파일·줄로 보실 수 있다.",
+        "★ 값 분포는 2단계다 — /admin/registry 에서 항목마다 봅니다",
+        "```",
+        "",
+        "| # | 엔드포인트 | 경로 | 관측 | 파서가 읽는 곳 |",
+        "|--:|---|---|--:|---|",
+    ]
+    for i, r in enumerate(rows, 1):
+        out.append(f"| {i} | {r['endpoint']} | `{r['endpoint']}:{r['path']}` "
+                   f"| {r['hits']}/{r['total']} "
+                   f"| `{r['where'] or '★ 못 찾음'}` |")
+    got: dict = {}
+    for r in rows:
+        got[r["endpoint"]] = got.get(r["endpoint"], 0) + 1
+    out += ["", "## 엔드포인트별", "", "| 엔드포인트 | 몇 개 |", "|---|--:|"]
+    for name, n in sorted(got.items(), key=lambda kv: -kv[1]):
+        out.append(f"| {name} | {n} |")
+    out.append("")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
+    return os.path.relpath(path, ROOT)
+
+
 def main() -> int:
     conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
     try:
+        if "--blocking" in sys.argv and "--list" in sys.argv:
+            where = write_blocking_list(conn)
+            print(f"판정을 막는 것 목록 → {where}")
+            print("★ 「파서가 읽는 곳」을 파일·줄로 적었습니다 — "
+                  "정말 읽는지 보실 수 있습니다\n")
+            return 0
         rows = classify_unclassified(conn)
     finally:
         conn.close()
