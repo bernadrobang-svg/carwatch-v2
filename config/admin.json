@@ -25,5 +25,9 @@
   "login_probe_tries": 10,
   "_login_probe_note": "상한이 0(안 잠금)일 때 검사가 몇 번 두드려 보는가 (V10-20 · S36). ★ 「안 잠긴다」를 눈으로 확인하려면 몇 번은 두드려야 한다",
   "collect_daily_at": "04:00",
-  "_collect_daily_note": "매일 스스로 도는 시각 (STEP 136h). ★ systemd timer 가 부른다 — cron 을 두지 않는다. 엔카 목록은 407 이라 자동이 아니다 — 마스터를 기다린다"
+  "_collect_daily_note": "매일 스스로 도는 시각 (STEP 136h). ★ systemd timer 가 부른다 — cron 을 두지 않는다. 엔카 목록은 407 이라 자동이 아니다 — 마스터를 기다린다",
+  "decide_cards": 8,
+  "_decide_cards_note": "미분류 화면에 한 번에 낼 판단 카드 수 (개정 367). ★ 120건을 한꺼번에 보라 하면 아무도 안 본다. 판정을 막는 것부터 낸다",
+  "decide_value_chars": 20,
+  "_decide_value_chars_note": "화면에 낼 값 한 조각의 길이. ★ 통째로 내면 한 쪽이 129KB 가 된다 (실측 08-19 · V11-76)"
 }

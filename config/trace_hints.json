@@ -59,6 +59,8 @@
     "DI-016": "analyze/verdict.py::verdict_of",
     "DI-002": "tools/build_dict.py::AXIS_SOURCES",
     "AD-104": "report/screens/admin.py::view_status",
-    "ST-003": "store/core.py::classify_invariant_change"
+    "ST-003": "store/core.py::classify_invariant_change",
+    "RG-002": "store/core.py::unclassified_cards",
+    "OP-065": "web/templates/admin_registry.html"
   }
 }

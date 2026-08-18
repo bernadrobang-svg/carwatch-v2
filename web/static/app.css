@@ -1934,3 +1934,15 @@ svg.line circle { fill:var(--amber); }
 /* 사이트별 거르기 단추 (개정 306).  ★ 사이트가 둘 이상일 때만 나온다 */
 .sitebar { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 }
 .sitebar .btn.on { background:var(--ink); color:var(--surface); cursor:default }
+
+/* 미분류 — 판단할 재료 (개정 367 · V4-28).
+   ★ 경로만 내고 「사람이 봐야 합니다」라 하면 아무도 못 정한다 */
+.decide { border:1px solid var(--line); border-radius:6px; padding:8px 10px;
+          margin:6px 0; background:var(--surface) }
+.dec-h { display:flex; flex-wrap:wrap; gap:6px; align-items:baseline;
+         margin-bottom:4px }
+.decide p { margin:2px 0; font-size:12px }
+.decide form.inline { display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+                      margin-top:6px }
+/* ★ 색은 토큰만 쓴다 (V11-13).  --up 이 「나쁨」이다 */
+.tag.bad { background:var(--up); color:var(--bg) }

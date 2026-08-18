@@ -136,7 +136,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | OP-063 | `[운영]` | 규격끼리 충돌하는 곳을 목록으로 | `[마스터]` **오늘 7장에서 하나 찾았다** | `00-standard` | `tools/sync_registry.py::facet_path` | — | 검사 없음 | ◐ |
 | OP-064 | `[검사]` | 참조하는 STEP·검사 번호가 실재하는가 | `[마스터]` | `00-standard` | `tools/check_spec.py:416` | `/admin/users` | S28 | ○ |
-| OP-065 | `[사전]` | 「미확정」 목록 — 몇 주째인지 | `[마스터]` **두 주 넘으면 그것도 결함** | `00-standard` | 미구현 | — | 검사 없음 | ◐ |
+| OP-065 | `[사전]` | 「미확정」 목록 — 몇 주째인지 | `[마스터]` **두 주 넘으면 그것도 결함** | `00-standard` | `web/templates/admin_registry.html` | — | 검사 없음 | ◐ |
 | OP-066 | `[운영]` | `outputs/weekly/` 에 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 | ✗ |
 | OP-067 | `[운영]` | 전 화면 스크린샷 대조 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | — | 검사 없음 | ◐ |
 | OP-068 | `[판정]` | 배점 대조 — 축 수 · 합 · 경계 | `[마스터]` | `00-standard` | `score/grade.py::cutoffs` | 해당 없음 | 검사 없음 | ◐ |

@@ -22,13 +22,13 @@
 | `/admin` | [admin.html](admin.html) | 200 | 15,211B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,157B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 37,283B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,436B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 16,059B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,453B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 43,812B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,461B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 41,181B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 13,549B |
-| `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 21,575B |
+| `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 32,978B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 22,905B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 119,410B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,011B |

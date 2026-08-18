@@ -67,6 +67,17 @@ C = {
                    "멈춘다.  판정에 쓰는 경로만 막는다 — 나머지는 등록만 하고 "
                    "진행한다 (개정 341)",
                    KIND_CODE),
+    "V4-28": Check("V4", "V4-28", "미분류 항목에 값 분포와 선택지가 있음",
+                   FATAL, "run",
+                   "마스터 지적 — 「이걸 보고 내가 무엇을 하라는 말이지?  "
+                   "뭔지도 모르겠는데」.  경로만 내고 「사람이 봐야 합니다」라 "
+                   "하면 아무도 못 정하고 V4-11 이 영영 열려 있다 (개정 367)",
+                   KIND_CODE),
+    "V4-29": Check("V4", "V4-29", "기본 화면이 판정 막는 것만 냄",
+                   FATAL, "run",
+                   "120건을 한꺼번에 보라 하면 아무도 안 본다. "
+                   "판정을 막는 것부터 낸다 (개정 367)",
+                   KIND_CODE),
     "V4-12": Check("V4", "V4-12", "facet 필수 축 집합 존재", FATAL, "run",
                      "facet 을 재수집한다 (S2). 축을 열거해 요청하지 않는다",
                     KIND_CODE),
@@ -347,6 +358,63 @@ def _key():
     return load_key()
 
 
+def _decide_material_check(conn, rid):
+    """V4-28 · V4-29 — 미분류에 판단할 재료가 있는가 (개정 367).
+
+    마스터 지적 — 「이걸 보고 내가 무엇을 하라는 말이지?  뭔지도 모르겠는데」
+    ★ 경로만 내고 「사람이 봐야 합니다」라 하면 아무도 못 정한다.
+      그러면 V4-11 이 영영 열려 있다
+    """
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from store.core import has_unclassified
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    if not has_unclassified(conn):
+        return [not_applicable(C["V4-28"], rid, "미분류가 없다"),
+                not_applicable(C["V4-29"], rid, "미분류가 없다")]
+    route = {r.path: r for r in ROUTES}.get("/admin/registry")
+    if route is None:
+        bad = ["/admin/registry 가 없다"]
+        return [result(C["V4-28"], rid, "있다", "없다", False, bad),
+                result(C["V4-29"], rid, "있다", "없다", False, bad)]
+    try:
+        _st, _h, body = HANDLERS[route.view](
+            conn, Account(1, ROLE_ADMIN, "마스터"),
+            {"query": {}, "form": {}, "method": GET},
+            path_vars={}, csrf="t")
+    except (CarWatchError, KeyError, ValueError) as e:
+        bad = [f"{type(e).__name__}: {e}"[:70]]
+        return [result(C["V4-28"], rid, "있다", "못 그렸다", False, bad),
+                result(C["V4-29"], rid, "있다", "못 그렸다", False, bad)]
+    html = body.decode("utf-8", "replace")
+    bad28 = []
+    # ① 값 분포 ③ 형제 ⑤ 막히는 것 ④ 단추
+    for mark, why in (("① 실제 값", "값 분포가 없다"),
+                      ("③ 옆에 있던 것", "형제 필드가 없다"),
+                      ("⑤ 안 정하면", "안 정하면 무엇이 막히는지 없다"),
+                      ('name="usage" value="in_use"', "고를 단추가 없다")):
+        if mark not in html:
+            bad28.append(why)
+    # ★ 「사람이 봐야 합니다」만 있고 단추가 없으면 선택지가 아니다
+    if "class=\"decide\"" not in html:
+        bad28.append("판단 재료 자리(.decide)가 없다")
+    a = result(C["V4-28"], rid, "다섯", "있다" if not bad28 else "모자라다",
+               not bad28, bad28[:5])
+
+    # V4-29 — 기본 화면이 판정 막는 것만 먼저 내는가
+    bad29 = []
+    first = html.find("판정을 막습니다")
+    later = html.find("지금 안 쓰입니다")
+    if first < 0:
+        bad29.append("판정을 막는 것을 표시하지 않는다")
+    elif 0 <= later < first:
+        bad29.append("판정을 안 막는 것이 먼저 나온다")
+    return [a, result(C["V4-29"], rid, "막는 것 먼저",
+                      "그렇다" if not bad29 else "아니다", not bad29, bad29)]
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
@@ -459,6 +527,8 @@ def run(conn, ctx) -> list:
     out.append(result(C["V4-11b"], rid, "분류 대기", len(pending),
                       not pending, pending))
     out += _unclassified_split(conn, rid, blocking, pending)
+    # 판단할 재료 다섯 (개정 367).  ★ 물을 때는 고를 것을 함께 준다
+    out += _decide_material_check(conn, rid)
 
     from collect.runner import REQUIRED_FACET_AXES, aspect_names
 

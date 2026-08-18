@@ -206,7 +206,7 @@ def admin_home(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: 
                 csrf=csrf, root=root, flash_key=flash_key)
 
 
-def _unclassified_split(conn, root: str = ROOT) -> dict:
+def _unclassified_split(conn, root: str = ROOT, rows=None) -> dict:
     """미분류를 원인별로 (개정 341 · V4-26).
 
     ★ 원문을 훑는 일이라 가볍지 않다.  미분류가 없으면 아예 안 돈다
@@ -216,7 +216,7 @@ def _unclassified_split(conn, root: str = ROOT) -> dict:
 
     if not has_unclassified(conn):
         return {}
-    rows = classify_unclassified(conn)
+    rows = list(rows if rows is not None else classify_unclassified(conn))
     top = _rows_of("split_rows", root)
     kinds: dict = {}
     for one in rows:
@@ -1495,6 +1495,30 @@ def admin_scoring(conn, account, req, root: str = ROOT, csrf: str = "", flash_ke
                 csrf=csrf, root=root, flash_key=flash_key)
 
 
+def _decide_cards(conn, root: str = ROOT, rows=None) -> list:
+    """미분류 항목마다 판단할 재료 (개정 367).
+
+    ★ 조회는 store 가 갖는다 — 화면은 조회를 갖지 않는다 (S15 · V4-22)
+    ★ 고를 것을 단추로 준다.  「사람이 봐야 합니다」는 선택지가 아니다
+    """
+    from store.core import unclassified_cards
+
+    # ★ 한 쪽에 다 내지 않는다.  「120건을 한꺼번에 보라 하면 아무도 안 본다」
+    #   ★ 장수는 store 가 config 에서 읽는다 — 여기서 또 정하지 않는다
+    got = unclassified_cards(conn, rows=rows)
+    # ★ 고를 것 셋 — 「쓴다」 「안 쓴다」 「나중에」 (개정 367 ④)
+    for one in got:
+        one["choices"] = [
+            {"usage": "in_use", "label": "쓴다",
+             "why": "판정에 씁니다"},
+            {"usage": "not_provided", "label": "안 쓴다",
+             "why": "사이트가 이 값을 주지 않습니다"},
+            {"usage": "deferred", "label": "나중에",
+             "why": "지금 정하지 않습니다"},
+        ]
+    return got
+
+
 def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
                    flash_key: str = "-", **_kw):
     """등록부 분류.  ★ 한 차종 관측으로 「값이 하나뿐」을 판단하지 않는다."""
@@ -1518,6 +1542,10 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
     from store.adminops import registry_counts, registry_rows
 
     rows = registry_rows(conn, usage, _rows_per_page(root))
+    # ★ 미분류를 한 번만 센다.  아래 둘이 나눠 쓴다 (V11-34 — 한 쪽 20쿼리)
+    from store.core import classify_unclassified as _cls, has_unclassified
+
+    _seen = _cls(conn) if has_unclassified(conn) else []
     counts = registry_counts(conn)
     from store.admin import USAGE_VALUES
 
@@ -1528,7 +1556,12 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
                  "count": len(rows),
                  # ★ 「349건 미분류」라고만 내면 아무도 안 본다 (개정 341).
                  #   원인별로 갈라 「사람이 봐야 할 것」만 남긴다
-                 "split": _unclassified_split(conn),
+                 "split": _unclassified_split(conn, root, _seen),
+                 # ★ 판단할 재료 다섯 (개정 367 · V4-28).
+                 #   마스터 지적 — 「이걸 보고 내가 무엇을 하라는 말이지?」
+                 #   ★ 판정을 막는 것만 먼저 낸다 (V4-29)
+                 "cards": (_decide_cards(conn, root, _seen)
+                           if usage == "unclassified" else []),
                  "usages": [u for u in sorted(USAGE_VALUES)
                             if u != "unclassified"]},
                 csrf=csrf, root=root, flash_key=flash_key)

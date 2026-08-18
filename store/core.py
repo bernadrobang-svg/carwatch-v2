@@ -945,3 +945,159 @@ def classify_unclassified(conn) -> list:
                         "total": total, "kind": kind, "hint": hint})
     out.sort(key=lambda r: (-r["hits"], r["endpoint"], r["path"]))
     return out
+
+
+
+def _card_limit() -> int:
+    """미분류 화면에 한 번에 낼 카드 수.  ★ config 가 정본이다 (V4-13)."""
+    return int(_admin_cfg()["decide_cards"])
+
+
+def _value_chars() -> int:
+    """화면에 낼 값 한 조각의 길이.  ★ config 가 정본이다 (V4-13)."""
+    return int(_admin_cfg()["decide_value_chars"])
+
+
+def _admin_cfg() -> dict:
+    """config/admin.json.  ★ 한 번만 읽는다."""
+    import json as _j
+    import os as _o
+
+    global _ADMIN
+    if _ADMIN is None:
+        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+        with open(_o.path.join(root, "config", "admin.json"),
+                  encoding="utf-8") as f:
+            _ADMIN = _j.load(f)
+    return _ADMIN
+
+
+_ADMIN: dict | None = None
+
+
+def unclassified_cards(conn, limit: int | None = None,
+                       rows: list | None = None) -> list:
+    """미분류 항목마다 판단할 재료 다섯 (개정 367 · V4-28).
+
+    마스터 지적 — 「이걸 보고 내가 무엇을 하라는 말이지?  뭔지도 모르겠는데」
+    ★ 원문 경로만 내고 「사람이 봐야 합니다」라 하면 아무도 못 정한다
+
+    한 항목에 이 다섯
+      ① 실제 값과 분포 ② 판정에 쓰이는가 ③ 원문에서 어디에 있었나
+      ④ 고를 것을 단추로 ⑤ 안 정하면 무엇이 막히나
+
+    ★ 원문은 엔드포인트마다 한 번만 읽는다.  항목마다 읽으면
+      한 쪽에 378쿼리 · 11.8초가 된다 (실측 08-19 · V11-34 가 잡았다)
+    """
+    limit = _card_limit() if limit is None else limit
+    stops = _blocking_paths(conn)
+    # ★ 이미 센 것이 있으면 다시 세지 않는다.  같은 쪽에서 두 번 세면
+    #   한 쪽 쿼리가 상한(20)을 넘는다 — V11-34 가 30으로 잡았다
+    rows = list(rows if rows is not None else classify_unclassified(conn))
+    # ★ 막는 것 먼저 · 그다음 많이 관측된 순.  자를 것을 먼저 자른다
+    rows.sort(key=lambda r: ((r["endpoint"], r["path"]) not in stops,
+                             -r["hits"]))
+    rows = rows[:limit]
+
+    want: dict = {}
+    for one in rows:
+        want.setdefault(one["endpoint"], []).append(
+            one["path"].replace("[]", ""))
+    facts = {ep: _peek(conn, ep, paths) for ep, paths in want.items()}
+
+    out = []
+    for one in rows:
+        ep, path = one["endpoint"], one["path"]
+        bare = path.replace("[]", "")
+        blocks = (ep, path) in stops
+        got = facts.get(ep, {}).get(bare, ({}, []))
+        out.append({
+            "endpoint": ep, "path": path, "leaf": bare.split(".")[-1],
+            "hits": one["hits"], "total": one["total"], "kind": one["kind"],
+            "hint": one["hint"],
+            "values": got[0], "siblings": got[1],
+            "used": "판정을 막습니다" if blocks else "지금 안 쓰입니다",
+            "if_left": ("판정이 막힙니다 — 이 매물들이 등급을 못 받습니다"
+                        if blocks else "막지 않습니다 — 그냥 안 씁니다"),
+            "blocks": blocks,
+        })
+    return out
+
+
+def _peek(conn, endpoint: str, paths: list) -> dict:
+    """그 엔드포인트 원문을 한 번 읽어 경로마다 값·형제를 뽑는다.
+
+    ★ 표본으로 본다.  전건을 펼치면 화면이 안 뜬다
+    ★ 값이 길면 자른다 — 화면이 129KB 가 됐다 (V11-76)
+    """
+    import json as _j
+
+    seen: dict = {p: {} for p in paths}
+    sibs: dict = {p: {} for p in paths}
+    for (body,) in conn.execute(
+        "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
+        " ORDER BY id DESC LIMIT ?", (endpoint, _sample_bodies())
+    ):
+        try:
+            doc = _j.loads(body)
+        except (ValueError, TypeError):
+            continue
+        for p in paths:
+            parts = p.split(".")
+            node = doc
+            for key in parts[:-1]:
+                if isinstance(node, list):
+                    node = node[0] if node else None
+                if not isinstance(node, dict):
+                    node = None
+                    break
+                node = node.get(key)
+            if isinstance(node, list):
+                node = node[0] if node else None
+            if not isinstance(node, dict):
+                continue
+            leaf = parts[-1]
+            for k in node:
+                if k != leaf:
+                    sibs[p][k] = sibs[p].get(k, 0) + 1
+            got = node.get(leaf)
+            key = "없음" if got is None else _short(got)
+            seen[p][key] = seen[p].get(key, 0) + 1
+    out = {}
+    for p in paths:
+        values = [{"value": k, "n": v}
+                  for k, v in sorted(seen[p].items(),
+                                     key=lambda kv: -kv[1])[:5]]
+        top = [k for k, _v in sorted(sibs[p].items(),
+                                     key=lambda kv: -kv[1])[:3]]
+        out[p] = (values, top)
+    return out
+
+
+def _short(value) -> str:
+    """화면에 낼 값 한 조각.  ★ 통째로 내면 한 쪽이 129KB 가 된다."""
+    if isinstance(value, dict):
+        return "{" + " · ".join(sorted(value)[:3]) + " …}"
+    if isinstance(value, list):
+        return f"[{len(value)}개]"
+    got = str(value)
+    cap = _value_chars()
+    return got if len(got) <= cap else got[:cap] + "…"
+
+
+def _blocking_paths(conn) -> set:
+    """판정을 막는 미분류 경로 (V4-11 이 세는 것과 같은 것을 본다).
+
+    ★ 검사와 화면이 다른 것을 세면 「32건」과 화면의 수가 어긋난다
+    """
+    return {(r[0], r[1]) for r in conn.execute(
+        "SELECT u.endpoint, u.json_path FROM meta_field_usage u"
+        " WHERE u.usage='unclassified'"
+        "   AND EXISTS (SELECT 1 FROM meta_field_usage k"
+        "               WHERE k.endpoint = u.endpoint"
+        "                 AND k.usage NOT IN ('unclassified','not_provided')"
+        "                 AND k.json_path LIKE"
+        "                     substr(u.json_path, 1,"
+        "                            length(u.json_path)"
+        "                            - length(replace(u.json_path, '.', ''))) "
+        "                     || '%')")}
