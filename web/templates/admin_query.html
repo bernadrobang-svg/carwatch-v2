@@ -22,7 +22,7 @@
 <h2>최근 쿼리 <span class="muted">거부된 것도 남습니다</span></h2>
 {% if query_history %}
 <table class="rows">
-<thead><tr><th>시각</th><th>SQL</th><th class="num">행</th><th class="num">시간</th><th>결과</th></tr></thead>
+<thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th>SQL</th><th class="num" title="표의 줄 수입니다">행</th><th class="num">시간</th><th>결과</th></tr></thead>
 <tbody>
 {% for q in query_history %}
 <tr><td data-label="시각">{{ q.at }}</td><td class="runid" data-label="SQL">{{ q.sql }}</td>
@@ -38,7 +38,7 @@
 
 <h2>테이블 {{ db_tables | count }}</h2>
 <table class="rows">
-<thead><tr><th>표</th><th class="num">행</th><th>컬럼</th></tr></thead>
+<thead><tr><th>표</th><th class="num" title="표의 줄 수입니다">행</th><th title="우리 DB 의 어느 칸에 담기는지입니다">컬럼</th></tr></thead>
 <tbody>
 {% for t in db_tables %}
 <tr><td class="runid" data-label="표">{{ t.name }}</td><td class="num" data-label="행">{{ t.rows | num }}</td>

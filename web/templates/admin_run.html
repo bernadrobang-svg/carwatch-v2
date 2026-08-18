@@ -25,7 +25,7 @@
 
   <h3>지금까지 받은 것</h3>
   <table class="rows">
-  <thead><tr><th>엔드포인트</th><th class="num">원문</th></tr></thead>
+  <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th class="num">원문</th></tr></thead>
   <tbody>
   {% for r in raw_counts %}
   <tr><td data-label="엔드포인트">{{ r.endpoint }}</td><td class="num" data-label="원문">{{ r.n | num }}</td></tr>
@@ -80,7 +80,7 @@
 <h2>진행</h2>
 {% if job_log %}
 <table class="rows">
-<thead><tr><th>시각</th><th>상태</th><th>단계</th><th class="num">진행</th><th>사유</th><th></th></tr></thead>
+<thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 {% for j in job_log %}
 <tr><td data-label="시각">{{ j.at }}</td><td data-label="상태">{{ j.status }}</td><td data-label="단계">{{ j.step }}</td>

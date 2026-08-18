@@ -89,7 +89,7 @@
     {% if r.option_count %}<a href="/why/{{ r.listing_id }}">{{ r.option_count }}종{% if r.option_price_won %} {{ r.option_price_won | won }}{% endif %}</a>{% endif %}
     {% if !r.option_count %}<span class="dim">없음</span>{% endif %}
   </td>
-  <td data-label="딜러">{% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}">{{ r.dealer_shop }}</a>{% endif %}{% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</td>
+  <td data-label="딜러" title="{{ r.dealer_shop }}">{% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}">{{ r.dealer_shop }}</a>{% endif %}{% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</td>
   <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market | num }}일{% endif %}{% if !r.days_on_market %}<span class="dim">오늘</span>{% endif %}</td>
   <td class="c" data-label="상태">{% if r.status_key %}<a href="/listings?status={{ r.status_key }}" title="게시중 · 내려감 · 재등록">{{ r.status_label }}</a>{% endif %}{% if !r.status_key %}<span class="dim">상태 없음</span>{% endif %}</td>
   <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">{{ r.site_badge }}</span></td>
@@ -210,6 +210,35 @@
   });
   document.addEventListener('mousemove', move);
   document.addEventListener('scroll', hide, true);
+
+  /* ★ 행 어디를 눌러도 상세로 (V11-116).
+     「근거」 글자 하나만 링크면 손가락으로 못 누른다 (마스터 지적 08-18).
+     ★ 이미 링크·단추·입력인 곳은 그대로 둔다 — 그것이 제 일을 한다 */
+  function ownLink(el) {
+    return el.closest('a, button, input, select, label, form');
+  }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) { return; }
+    var tr = e.target.closest('tr[data-href]');
+    if (!tr || ownLink(e.target)) { return; }
+    if (window.getSelection && String(window.getSelection())) { return; }
+    window.location.href = tr.getAttribute('data-href');
+  });
+
+  /* ★ 터치에서도 미리보기가 뜬다 (V11-117).
+     마스터는 휴대폰·태블릿으로 본다 — hover 가 없다.
+     한 번 대면 뜨고, 같은 행을 다시 대면 상세로 간다 */
+  var tapped = null;
+  document.addEventListener('touchstart', function (e) {
+    if (!e.target.closest) { return; }
+    var tr = e.target.closest('tr[data-peek]');
+    if (!tr || ownLink(e.target)) { tapped = null; hide(); return; }
+    if (tapped === tr) { return; }              /* 두 번째 — 클릭이 넘긴다 */
+    e.preventDefault();
+    tapped = tr;
+    var t = e.touches && e.touches[0];
+    show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
+  }, {passive: false});
 })();
 </script>
 

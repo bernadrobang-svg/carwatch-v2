@@ -10,7 +10,7 @@
 
 <h2>{{ file }}</h2>
 <table class="rows">
-<thead><tr><th>키</th><th class="num">현재 값</th><th>형</th><th>바꾸기</th></tr></thead>
+<thead><tr><th title="설정 파일의 키 이름입니다">키</th><th class="num">현재 값</th><th title="값의 형입니다 — 글자·숫자·참거짓">형</th><th title="여기서 값을 고칩니다. 고치면 이력에 남습니다">바꾸기</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>
@@ -36,7 +36,7 @@
 <h2>변경 이력</h2>
 {% if config_history %}
 <table class="rows">
-<thead><tr><th>시각</th><th>키</th><th class="num">값</th><th>사유</th></tr></thead>
+<thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="설정 파일의 키 이름입니다">키</th><th class="num" title="지금 들어 있는 값입니다">값</th><th title="왜 그렇게 됐는지입니다">사유</th></tr></thead>
 <tbody>
 {% for c in config_history %}
 <tr><td data-label="시각">{{ c.at }}</td><td class="runid" data-label="키">{{ c.key }}</td>

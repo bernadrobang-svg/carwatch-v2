@@ -316,6 +316,17 @@ C = {
                      "마스터 실측 — 약 1200px 에서 「A 8 0 _ 2 5 T」로 "
                      "한 자씩 떨어졌다.  V11-78 은 좁은 폭만 봤다",
                      KIND_CODE),
+    "V11-116": Check("V11", "V11-116", "카드 전체가 상세 링크임",
+                     FATAL, "run",
+                     "마스터 지적 — 「리스트를 클릭하면 상세나 툴팁이 보여야 "
+                     "하는데 그것도 없고」.  「근거」 글자 하나만 링크면 "
+                     "손가락으로 못 누른다 (개정 337)",
+                     KIND_CODE),
+    "V11-117": Check("V11", "V11-117", "터치로 미리보기가 뜸",
+                     FATAL, "run",
+                     "마스터는 휴대폰·태블릿으로 본다 — hover 가 없다. "
+                     "한 번 대면 뜨고 다시 대면 상세로 간다 (개정 337)",
+                     KIND_CODE),
     "V11-119": Check("V11", "V11-119", "화면마다 부록 G 가 정한 차트가 있음",
                      FATAL, "run",
                      "마스터 지적 — 「차트가 안 보이잖아」. "
@@ -2040,6 +2051,46 @@ def _chart_check(rid):
                   not bad, bad[:6])
 
 
+# 매물이 나오는 화면 — 행 전체가 링크여야 하고 터치로 미리보기가 떠야 한다
+ROW_LINK_SCREENS = ("listings", "recommend", "watch")
+
+
+def _row_link_checks(rid):
+    """V11-116 · V11-117 — 행 전체 링크 · 터치 미리보기 (개정 337).
+
+    ★ 렌더 결과를 본다.  템플릿에 있어도 값이 안 실리면 링크가 없다
+    ★ 행 수와 data-href 수를 견준다 — 하나만 있으면 「있다」가 아니다
+    """
+    base = os.path.join(ROOT, "outputs", "render")
+    if not os.path.isdir(base):
+        return [not_applicable(C["V11-116"], rid, "렌더 결과가 없다"),
+                not_applicable(C["V11-117"], rid, "렌더 결과가 없다")]
+    bad116, bad117, seen = [], [], 0
+    for name in ROW_LINK_SCREENS:
+        path = os.path.join(base, f"{name}.html")
+        if not os.path.isfile(path):
+            continue
+        html = open(path, encoding="utf-8").read()
+        rows = len(re.findall(r"<tr[^>]*\bdata-peek=", html))
+        if not rows:
+            continue
+        seen += 1
+        links = len(re.findall(r"<tr[^>]*\bdata-href=", html))
+        if links < rows:
+            bad116.append(f"{name} — 행 {rows}개인데 data-href {links}개")
+        if "touchstart" not in html:
+            bad117.append(f"{name} — touchstart 를 안 듣는다")
+        if 'id="peek"' not in html:
+            bad117.append(f"{name} — 미리보기 상자가 없다")
+    if not seen:
+        return [not_applicable(C["V11-116"], rid, "매물 화면 렌더가 없다"),
+                not_applicable(C["V11-117"], rid, "매물 화면 렌더가 없다")]
+    return [result(C["V11-116"], rid, f"{seen}화면", f"{seen - len(bad116)}화면",
+                   not bad116, bad116[:6]),
+            result(C["V11-117"], rid, f"{seen}화면", f"{seen - len(bad117)}화면",
+                   not bad117, bad117[:6])]
+
+
 def _screen_contradiction_check(rid):
     """V11-105 — 화면 위아래가 어긋나지 않는가 (개정 325).
 
@@ -2224,6 +2275,7 @@ def _v1_parity_checks(rid):
                 bad69.append(f"{v2_name} — {op}")
     return [_photo_size_by_screen_check(rid), _template_leak_check(rid),
             _em_dash_check(rid), _chart_check(rid),
+            *_row_link_checks(rid),
             *_card_shape_checks(rid),
             *_width_checks(rid),
             _why_order_check(rid),

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>시세 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=e6e963934e">
+<link rel="stylesheet" href="/static/app.css?v=f3e71e2e1f">
 
 </head>
 <body class="s-market">
@@ -87,20 +87,22 @@
 <main>
 <h1>시세 <small>G80_25T</small></h1>
 
-<table>
+<!-- ★ class="rows" 라야 좁은 폭에서 카드로 접힌다.
+     안 그러면 360px 에서 p75·최고가 화면 밖으로 잘린다 (마스터 실측 08-18) -->
+<table class="rows mk-rows">
 <thead><tr><th>관측일</th><th class="num">매물</th><th class="num">대상</th>
 <th class="num">최저</th><th class="num">p25</th><th class="num">중앙</th>
 <th class="num">p75</th><th class="num">최고</th></tr></thead>
 <tbody>
 
-<tr><td>없습니다</td>
-<td class="num">1,756</td>
-<td class="num">1,756</td>
-<td class="num">0</td>
-<td class="num">3,100만</td>
-<td class="num">3,670만</td>
-<td class="num">4,430만</td>
-<td class="num">6,000만</td></tr>
+<tr><td data-label="관측일"><span class="dim" title="시세는 수집한 매물에서 그때그때 냅니다. 날짜를 따로 적는 관측 기록은 아직 없습니다">지금 매물 기준</span></td>
+<td class="num" data-label="매물">1,756</td>
+<td class="num" data-label="대상">1,756</td>
+<td class="num" data-label="최저">0</td>
+<td class="num" data-label="p25">3,100만</td>
+<td class="num" data-label="중앙">3,670만</td>
+<td class="num" data-label="p75">4,430만</td>
+<td class="num" data-label="최고">6,000만</td></tr>
 
 </tbody>
 </table>
@@ -272,7 +274,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 13:32</span>
+  <span>2026-08-18 13:56</span>
 </footer>
 
 </body>

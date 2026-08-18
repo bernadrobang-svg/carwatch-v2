@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 132개 · 총 42,687줄
+파일 132개 · 총 42,739줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
-| `validate/v11_web.py` | 3,138 | V11 표현 계층 검증 (14장 STEP 153). |
+| `validate/v11_web.py` | 3,190 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 1,929 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,675 | 화면 데이터 생성. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
@@ -141,10 +141,10 @@
 
 ## 큰 파일 — 무엇이 어디에 (200줄 이상 60개)
 
-### `validate/v11_web.py` — 3,138줄
+### `validate/v11_web.py` — 3,190줄
 
 ```
-_web_sources:442  run:454  _late_checks:564  _templates_with_form:628  _spec_routes:644  _routing_table_check:666  _count:700  ctx_account:707  _view_exists:713  _tpl:734  _all_templates:739  _screen_checks:744  _query_budget_check:951  _import_origin_check:1022  _import_step4_check:1057  _browser_origin_check:1081  _browser_confirm_check:1099  _browser_chunk_check:1124  _status_screen_checks:1165  _status_liveness_check:1203  _menu_label_check:1241  _listing_paging_checks:1258  _photo_checks:1294  _sian_css_checks:1330  _cell_of:1392  _link_tip_checks:1405  _origin_link_check:1419  _choose_check:1447  _order_filter_checks:1463  _checks_cfg:1506  _photo_size_by_screen_check:1515  _template_leak_check:1539  _em_dash_check:1565  _card_limits:1601  _cells_of:1618  _matches:1646  _place_cards:1665  _card_shape_checks:1787  _why_order_spec:1869  _why_order_check:1886  _width_policy:1921  _width_checks:1928  _chart_check:2016  _screen_contradiction_check:2043  _chunk_check:2065  _csrf_reuse_check:2105  _origin_price_check:2134  _v1_parity_checks:2170  _media_blocks:2246  _responsive_checks:2267  _dead_links:2348  _null_link_check:2362  _sian_visual_check:2422  _cell_squeeze_check:2483  _static_version_check:2538  _axis_state_check:2556  _three_values_check:2594  _photo_size_check:2624  _render_metrics_checks:2647  _browser_scope_checks:2734  _import_opened_steps_check:2755  _import_resume_check:2783  _watch_invite_check:2802  _post_smoke_check:2846  _template_roots:2919  _loop_fields:2929  _context_supplied_check:2951  _first_item:3018  _has_field:3032  _table_counts:3038  _save_button_check:3045  _probe:3102  _scratch:3120
+_web_sources:453  run:465  _late_checks:575  _templates_with_form:639  _spec_routes:655  _routing_table_check:677  _count:711  ctx_account:718  _view_exists:724  _tpl:745  _all_templates:750  _screen_checks:755  _query_budget_check:962  _import_origin_check:1033  _import_step4_check:1068  _browser_origin_check:1092  _browser_confirm_check:1110  _browser_chunk_check:1135  _status_screen_checks:1176  _status_liveness_check:1214  _menu_label_check:1252  _listing_paging_checks:1269  _photo_checks:1305  _sian_css_checks:1341  _cell_of:1403  _link_tip_checks:1416  _origin_link_check:1430  _choose_check:1458  _order_filter_checks:1474  _checks_cfg:1517  _photo_size_by_screen_check:1526  _template_leak_check:1550  _em_dash_check:1576  _card_limits:1612  _cells_of:1629  _matches:1657  _place_cards:1676  _card_shape_checks:1798  _why_order_spec:1880  _why_order_check:1897  _width_policy:1932  _width_checks:1939  _chart_check:2027  _row_link_checks:2058  _screen_contradiction_check:2094  _chunk_check:2116  _csrf_reuse_check:2156  _origin_price_check:2185  _v1_parity_checks:2221  _media_blocks:2298  _responsive_checks:2319  _dead_links:2400  _null_link_check:2414  _sian_visual_check:2474  _cell_squeeze_check:2535  _static_version_check:2590  _axis_state_check:2608  _three_values_check:2646  _photo_size_check:2676  _render_metrics_checks:2699  _browser_scope_checks:2786  _import_opened_steps_check:2807  _import_resume_check:2835  _watch_invite_check:2854  _post_smoke_check:2898  _template_roots:2971  _loop_fields:2981  _context_supplied_check:3003  _first_item:3070  _has_field:3084  _table_counts:3090  _save_button_check:3097  _probe:3154  _scratch:3172
 ```
 
 ### `web/views.py` — 1,929줄

@@ -19,7 +19,7 @@
 <h2>저장된 응답 {{ api_snapshots | count }}건</h2>
 {% if api_snapshots %}
 <table class="rows">
-<thead><tr><th>시각</th><th>URL</th><th class="num">코드</th><th class="num">크기</th></tr></thead>
+<thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th>URL</th><th class="num" title="검사·오류 코드입니다">코드</th><th class="num" title="저장된 바이트 수입니다">크기</th></tr></thead>
 <tbody>
 {% for s in api_snapshots %}
 <tr><td data-label="시각">{{ s.at }}</td>
@@ -40,7 +40,7 @@
 <p class="muted">매핑표 작성이 바로 시작되도록 경로와 값 표본을 함께 냅니다.
   배열은 첨자를 <code>[]</code> 로 접습니다.</p>
 <table class="rows">
-<thead><tr><th>경로</th><th>형</th><th>표본</th></tr></thead>
+<thead><tr><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th title="값의 형입니다 — 글자·숫자·참거짓">형</th><th>표본</th></tr></thead>
 <tbody>
 {% for p in paths %}
 <tr><td class="runid" data-label="경로">{{ p.path }}</td><td class="muted" data-label="형">{{ p.kind }}</td>

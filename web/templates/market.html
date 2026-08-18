@@ -1,19 +1,21 @@
 <h1>시세 <small>{{ m.target_key }}</small></h1>
 {% if !m.rows %}<p class="muted">아직 관측이 없습니다. 수집이 쌓이면 추이가 나옵니다.</p>{% endif %}
-<table>
+<!-- ★ class="rows" 라야 좁은 폭에서 카드로 접힌다.
+     안 그러면 360px 에서 p75·최고가 화면 밖으로 잘린다 (마스터 실측 08-18) -->
+<table class="rows mk-rows">
 <thead><tr><th>관측일</th><th class="num">매물</th><th class="num">대상</th>
 <th class="num">최저</th><th class="num">p25</th><th class="num">중앙</th>
 <th class="num">p75</th><th class="num">최고</th></tr></thead>
 <tbody>
 {% for r in m.rows %}
-<tr><td>{{ r.observed_at | date }}</td>
-<td class="num">{{ r.listing_count | num }}</td>
-<td class="num">{{ r.eligible_count | num }}</td>
-<td class="num">{{ r.min_won | won }}</td>
-<td class="num">{{ r.p25_won | won }}</td>
-<td class="num">{{ r.median_won | won }}</td>
-<td class="num">{{ r.p75_won | won }}</td>
-<td class="num">{{ r.max_won | won }}</td></tr>
+<tr><td data-label="관측일">{% if r.observed_at %}{{ r.observed_at | date }}{% endif %}{% if !r.observed_at %}<span class="dim" title="시세는 수집한 매물에서 그때그때 냅니다. 날짜를 따로 적는 관측 기록은 아직 없습니다">지금 매물 기준</span>{% endif %}</td>
+<td class="num" data-label="매물">{{ r.listing_count | num }}</td>
+<td class="num" data-label="대상">{{ r.eligible_count | num }}</td>
+<td class="num" data-label="최저">{{ r.min_won | won }}</td>
+<td class="num" data-label="p25">{{ r.p25_won | won }}</td>
+<td class="num" data-label="중앙">{{ r.median_won | won }}</td>
+<td class="num" data-label="p75">{{ r.p75_won | won }}</td>
+<td class="num" data-label="최고">{{ r.max_won | won }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추천 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=e6e963934e">
+<link rel="stylesheet" href="/static/app.css?v=f3e71e2e1f">
 
 </head>
 <body class="s-recommend">
@@ -673,6 +673,118 @@
 </table>
 
 
+<!-- 매물 미리보기 상자 (V11-117).  ★ 목록 · 추천 · 관심이 함께 쓴다 -->
+<div id="peek">
+  <img id="peek-img" alt="">
+  <div class="pk">
+    <div class="pk-t" id="peek-title"></div>
+    <div class="pk-p" id="peek-price"></div>
+    <div class="pk-r" id="peek-tags"></div>
+    <div class="pk-d" id="peek-desc"></div>
+  </div>
+</div>
+<script>
+/* 매물 미리보기 (STEP 149o · 개정 277).  바닐라 · 한 파일 (개정 248).
+   ★ 값을 다시 실어 보내지 않는다 — 이미 그 행에 있는 칸을 읽는다.
+     서버가 낸 것과 미리보기가 어긋날 수 없다.
+   ★ JS 가 꺼져도 표는 그대로다.  이건 더해 주는 것이지 필요한 것이 아니다 */
+(function () {
+  var box = document.getElementById('peek');
+  if (!box) { return; }
+  var img = document.getElementById('peek-img');
+  var PAD = 16, W = 290, EDGE = 8;
+  var cur = null;
+
+  function cell(tr, label) {
+    var td = tr.querySelector('[data-label="' + label + '"]');
+    return td ? td.textContent.trim() : '';
+  }
+
+  function show(tr, e) {
+    cur = tr;
+    var pic = tr.querySelector('img.thumb');
+    if (pic) { img.src = pic.src; img.style.display = ''; }
+    else { img.removeAttribute('src'); img.style.display = 'none'; }
+
+    document.getElementById('peek-title').textContent =
+      cell(tr, '차종') + ' ' + cell(tr, '트림');
+    document.getElementById('peek-price').textContent =
+      cell(tr, '가격') + '   시세차 ' + cell(tr, '시세차');
+
+    /* ★ 강점만 모은다 — 「이 차의 무엇이 좋은가」가 미리보기의 뜻이다 */
+    var tags = [];
+    tr.querySelectorAll('td.ax').forEach(function (td) {
+      var a = td.querySelector('a');
+      if (!a) { return; }
+      var tone = a.className.indexOf('chip-good') >= 0 ? 'down'
+               : a.className.indexOf('chip-bad') >= 0 ? 'up' : '';
+      tags.push('<span class="tag ' + tone + '">'
+                + td.getAttribute('data-label') + ' ' + a.textContent.trim()
+                + '</span>');
+    });
+    document.getElementById('peek-tags').innerHTML = tags.join('');
+    document.getElementById('peek-desc').textContent =
+      cell(tr, '등급') + '등급 · ' + cell(tr, '비율')
+      + ' · ' + cell(tr, '연식') + ' · ' + cell(tr, '주행')
+      + ' · ' + cell(tr, '딜러');
+
+    box.style.display = 'block';
+    move(e);
+  }
+
+  function move(e) {
+    if (!cur) { return; }
+    var h = box.offsetHeight || 300;
+    var x = e.clientX + PAD, y = e.clientY + PAD;
+    if (x + W > window.innerWidth - EDGE) { x = e.clientX - W - PAD; }
+    if (y + h > window.innerHeight - EDGE) { y = window.innerHeight - h - EDGE; }
+    if (y < EDGE) { y = EDGE; }
+    box.style.left = x + 'px';
+    box.style.top = y + 'px';
+  }
+
+  function hide() { cur = null; box.style.display = 'none'; }
+
+  document.addEventListener('mouseover', function (e) {
+    if (!e.target.closest) { return; }          /* 아주 낡은 브라우저 */
+    var tr = e.target.closest('tr[data-peek]');
+    if (tr && tr !== cur) { show(tr, e); }
+    else if (!tr && cur) { hide(); }
+  });
+  document.addEventListener('mousemove', move);
+  document.addEventListener('scroll', hide, true);
+
+  /* ★ 행 어디를 눌러도 상세로 (V11-116).
+     「근거」 글자 하나만 링크면 손가락으로 못 누른다 (마스터 지적 08-18).
+     ★ 이미 링크·단추·입력인 곳은 그대로 둔다 — 그것이 제 일을 한다 */
+  function ownLink(el) {
+    return el.closest('a, button, input, select, label, form');
+  }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest) { return; }
+    var tr = e.target.closest('tr[data-href]');
+    if (!tr || ownLink(e.target)) { return; }
+    if (window.getSelection && String(window.getSelection())) { return; }
+    window.location.href = tr.getAttribute('data-href');
+  });
+
+  /* ★ 터치에서도 미리보기가 뜬다 (V11-117).
+     마스터는 휴대폰·태블릿으로 본다 — hover 가 없다.
+     한 번 대면 뜨고, 같은 행을 다시 대면 상세로 간다 */
+  var tapped = null;
+  document.addEventListener('touchstart', function (e) {
+    if (!e.target.closest) { return; }
+    var tr = e.target.closest('tr[data-peek]');
+    if (!tr || ownLink(e.target)) { tapped = null; hide(); return; }
+    if (tapped === tr) { return; }              /* 두 번째 — 클릭이 넘긴다 */
+    e.preventDefault();
+    tapped = tr;
+    var t = e.touches && e.touches[0];
+    show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
+  }, {passive: false});
+})();
+</script>
+
 </main>
 
 <footer class="ver">
@@ -680,7 +792,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 13:31</span>
+  <span>2026-08-18 13:56</span>
 </footer>
 
 </body>

@@ -24,8 +24,8 @@
 <h2>요청 목록</h2>
 {% if rows %}
 <table class="rows">
-<thead><tr><th>제목</th><th>출처</th><th>상태</th><th>반영 STEP</th>
-<th>사유</th><th>상태 바꾸기</th></tr></thead>
+<thead><tr><th>제목</th><th title="어디서 온 값인지입니다">출처</th><th title="지금 어떤 상태인지입니다">상태</th><th>반영 STEP</th>
+<th title="왜 그렇게 됐는지입니다">사유</th><th>상태 바꾸기</th></tr></thead>
 <tbody>
 {% for r in rows %}
 <tr>

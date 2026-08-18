@@ -113,13 +113,13 @@
 {% if running %}
 <table>
 <tbody>
-<tr><th>작업</th><td>{{ running.job_id }}
+<tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><td>{{ running.job_id }}
   {% if running.run_id %}<span class="muted">· run {{ running.run_id }}</span>{% endif %}</td></tr>
-<tr><th>사유 · 범위</th><td>{{ running.reason }} · {{ running.scope }}</td></tr>
-<tr><th>단계</th><td><strong>{{ running.step }}</strong>
+<tr><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><td>{{ running.reason }} · {{ running.scope }}</td></tr>
+<tr><th title="수집 단계입니다 (S0~S11)">단계</th><td><strong>{{ running.step }}</strong>
   {% if running.total %} · {{ running.done | num }}/{{ running.total | num }}{% endif %}</td></tr>
 <tr><th>경과</th><td>{{ running.elapsed_min }}분</td></tr>
-{% if running.detail %}<tr><th>메모</th><td class="muted">{{ running.detail }}</td></tr>{% endif %}
+{% if running.detail %}<tr><th title="사람이 적어 둔 말입니다">메모</th><td class="muted">{{ running.detail }}</td></tr>{% endif %}
 </tbody>
 </table>
 {% if stalled_min %}
@@ -153,7 +153,7 @@
 <h2>② 방금 끝난 것</h2>
 {% if recent_jobs %}
 <table class="rows">
-<thead><tr><th>작업</th><th>상태</th><th>사유 · 범위</th><th>언제</th><th>메모</th></tr></thead>
+<thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="지금 어떤 상태인지입니다">상태</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th title="언제 도는지입니다">언제</th><th title="사람이 적어 둔 말입니다">메모</th></tr></thead>
 <tbody>
 {% for j in recent_jobs %}
 <tr><td class="runid" data-label="작업">{{ j.job_id }}</td>
@@ -172,7 +172,7 @@
 <h2>③ 숫자가 어떻게 변했나</h2>
 <p class="muted"><strong>「받았다」와 「쓰였다」는 다릅니다</strong> (개정 268).</p>
 <table class="rows">
-<thead><tr><th>엔드포인트</th><th class="num">받은 원문</th></tr></thead>
+<thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th class="num">받은 원문</th></tr></thead>
 <tbody>
 {% for r in raw_counts %}
 <tr><td data-label="엔드포인트">{{ r.endpoint }}</td><td class="num" data-label="받은 원문">{{ r.n | num }}</td></tr>
@@ -185,7 +185,7 @@
 <h2>④ 실패</h2>
 {% if failed_jobs %}
 <table class="rows">
-<thead><tr><th>작업</th><th>사유 · 범위</th><th>무엇이 왜</th></tr></thead>
+<thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th>무엇이 왜</th></tr></thead>
 <tbody>
 {% for j in failed_jobs %}
 <tr><td class="runid" data-label="작업">{{ j.job_id }}</td>
