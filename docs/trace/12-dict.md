@@ -25,7 +25,7 @@
 | DI-005 | `[수집]` | `pending` 에 출처를 남긴다 (`list`·`facet`) | `[마스터]` 개정 269 — 출처와 확정은 다르다 | `STEP 41` | `collect/pipeline.py::precheck` | `/admin/dict` | V10-25 | ○ |
 | DI-006 | `[수집]` | 나중에 `facet` 을 받으면 목록 관측분과 대조 | `[마스터]` 개정 266 | `STEP 41` | `adapters/encar.py:9` | `/admin/dict` | V3-38 | ○ |
 | DI-007 | `[검사]` | `V3-37` 은 「자동 확정을 했는가」를 본다 | `[마스터]` 개정 269 — **가이드가 출처와 확정을 한 필드로 봤다** | `STEP 41` | `validate/v3_logic.py:135` | `/admin/dict` | V3-37 | ○ |
-| DI-008 | `[수집]` | 사람이 확정했는지는 `config_change` 이력으로 | `[마스터]` 위와 같음 | `STEP 41` | 미구현 | — | 검사 없음 | ◐ |
+| DI-008 | `[수집]` | 사람이 확정했는지는 `config_change` 이력으로 | `[마스터]` 위와 같음 | `STEP 41` | `store/admin.py::classify_field` | — | 검사 없음 | ◐ |
 | DI-009 | `[수집]` | `Count` 와 무관하게 `facet` 전 값을 사전에 | `[원문]` 실측 — `Count=0` 인 값도 실재한다 | `12-dict` | `collect/runner.py:4` | 해당 없음 | 검사 없음 | ◐ |
 
 ## 정규화 — 추정 금지

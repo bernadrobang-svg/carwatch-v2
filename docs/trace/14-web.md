@@ -118,6 +118,6 @@
 | WB-068 | `[화면]` | **차종 추가를 드롭다운으로** | `[마스터]` 276 | `STEP 149r` | `web/views.py::admin_targets` | `/admin/targets` | V11-64 | **!** |
 | WB-069 | `[사전·화면]` | **사전 확정을 축별로 접는다** | `[마스터]` 276 | `STEP 136e` | `web/templates/admin_dict.html` | `/admin/dict` | V11-78 | ○ |
 | WB-070 | `[화면]` | 관리 표를 좁은 폭에서 카드로 | `[마스터]` 276 | `60-admin` | `web/templates/market.html` | `/market` | 검사 없음 | ◐ |
-| WB-071 | `[화면]` | 관리 화면 — 관리 화면에 툴팁 | `[마스터]` 276 | `60-admin` | 미구현 | 화면 없음 | V11-62 | **!** |
+| WB-071 | `[화면]` | 관리 화면 — 관리 화면에 툴팁 | `[마스터]` 276 | `60-admin` | `web/templates/admin.html` | 화면 없음 | V11-62 | **!** |
 | WB-072 | `[저장]` | 진행 모니터는 읽기 전용 | `[마스터]` 272 | `STEP 136f` | `store/adminops.py::preview_import` | `/admin/status` | V11-51 | ○ |
-| WB-073 | `[운영]` | 관리 화면 — 큐만 보지 않는다 | `[마스터]` 273 | `STEP 136f` | 미구현 | `/admin/status` | V11-53 | ○ |
+| WB-073 | `[운영]` | 관리 화면 — 큐만 보지 않는다 | `[마스터]` 273 | `STEP 136f` | `report/screens/admin.py::view_status` | `/admin/status` | V11-53 | ○ |

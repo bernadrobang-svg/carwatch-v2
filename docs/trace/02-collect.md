@@ -17,7 +17,7 @@
 | CO-002 | `[수집]` | 엔카 `/search/` 가 서울 IP 에서 407 | `[원문]` 262 | `10-collect` | `adapters/kcar.py:6` | /search/ | S10 · S5 | ○ |
 | CO-003 | `[수집]` | **브라우저로 받는다** — 마스터 회선 | `[마스터]` 248 | `STEP 136c` | `adapters/kcar.py:5` | `/admin/collect` | V11-47 | ○ |
 | CO-004 | `[수집·화면]` | JS 가 바이트를 재서 나눠 보낸다 | `[마스터]` 263 | `STEP 136c` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 | ○ |
-| CO-005 | `[수집]` | **나눌 수 없는 원문은 조각으로** | `[마스터]` 307 | `STEP 136c` | 미구현 | — | V11-98 | ◐ |
+| CO-005 | `[수집]` | **나눌 수 없는 원문은 조각으로** | `[마스터]` 307 | `STEP 136c` | `store/adminops.py::save_browser_catch` | — | V11-98 | ◐ |
 | CO-006 | `[수집]` | 범위 — 차종별 · 전 차종 | `[마스터]` 264 | `STEP 136c` | `collect/runner.py::_trim_ladders` | — | V11-48·49 | ◐ |
 | CO-007 | `[수집]` | 간격 0 — 사용자 회선은 안 막힌다 | `[마스터]` 265 | `B-config` | `collect/pipeline.py::envelope_scope` | `/admin/collect` | 검사 없음 | ◐ |
 | CO-008 | `[수집]` | **중단해도 이어서 받는다** | `[마스터]` | `STEP 52` | `collect/runner.py` | — | 검사 없음 | ◐ |
@@ -30,9 +30,9 @@
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
 | CO-012 | `[수집]` | 상세 수집 — 상세 4종을 받는다 | `[원문]` | `10-collect` | `collect/runner.py::make_executors` | `/admin/run` | V1-02 | ○ |
-| CO-013 | `[수집]` | `?include=` 를 붙이지 않는다 | `[원문]` | `E-attach` | 미구현 | — | 검사 없음 | ✗ |
+| CO-013 | `[수집]` | `?include=` 를 붙이지 않는다 | `[원문]` | `E-attach` | `adapters/encar.py::EncarAdapter` | — | 검사 없음 | ✗ |
 | CO-014 | `[수집]` | 상세 수집 — **새 5종을 받는다** | `[원문]` 296 | `ENCAR_API` | `collect/runner.py::make_executors` | — | 검사 없음 | ◐ |
-| CO-015 | `[수집]` | `record/summary` — 용도 · 전손 · 침수 | `[원문]` 296 | `ENCAR_API` | 미구현 | — | 검사 없음 | ◐ |
+| CO-015 | `[수집]` | `record/summary` — 용도 · 전손 · 침수 | `[원문]` 296 | `ENCAR_API` | `parse/encar/mapping.py::parse_record_summary` | — | 검사 없음 | ◐ |
 | CO-016 | `[수집]` | `clean-encar` — 엔카 진단 | `[원문]` 296 | `ENCAR_API` | `config/endpoints.json::encar.paths.platform_check` | — | 검사 없음 | **!** |
 | CO-017 | `[수집]` | `ev-battery` — 배터리 SOH | `[원문]` 318 | `ENCAR_API` | `config/endpoints.json::encar.paths.ev_battery` | — | 검사 없음 | **!** |
 | CO-018 | `[수집]` | **로그인 리포트** — 틴팅 · 키 · 타이어 | `[원문]` 296 | `ENCAR_API` | `collect/pipeline.py::run_step` | `/admin/collect` | 검사 없음 | **!** |
@@ -53,7 +53,7 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| CO-026 | `[수집]` | 받은 그대로 둔다 (P3) | `[마스터]` | `01_raw.sql` | 미구현 | `/watch` | V1-05 | ○ |
+| CO-026 | `[수집]` | 받은 그대로 둔다 (P3) | `[마스터]` | `01_raw.sql` | `store/raw.py::save_response` | `/watch` | V1-05 | ○ |
 | CO-027 | `[수집]` | 밖에서 받은 것은 `run_id` 로 고른다 | `[마스터]` 268 | `10-collect` | `collect/runner.py::FailStreak` | — | V1-21 | ◐ |
 | CO-028 | `[수집]` | `origin` 4종 — collector·manual·import·browser | `[마스터]` 252 | `01_raw.sql` | `collect/runner.py::s4` | — | V11-43 | ◐ |
 | CO-029 | `[수집]` | 목록 반입 — 밖에서 받은 것을 넣는다 | `[마스터]` 244 | `STEP 136a` | `collect/runner.py::s4` | `/admin/import` | S10 · S5 | ○ |

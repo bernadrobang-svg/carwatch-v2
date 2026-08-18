@@ -30,7 +30,7 @@
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
 | WT-007 | `[운영]` | `account_id` 는 필수 인자. 기본값을 두지 않는다 | `[기술]` 08-14 실측 — 기본값이 남의 관심을 열었다 | `42-watch` 서명 | `tools/check_src.py::_declared_chapters` | — | V7-11 | ◐ |
-| WT-008 | `[수집]` | `watch_update` · `watch_close` 도 `account_id` 를 받는다 | `[기술]` 위와 같음 | `42-watch` | 미구현 | — | V7-12 | ◐ |
+| WT-008 | `[수집]` | `watch_update` · `watch_close` 도 `account_id` 를 받는다 | `[기술]` 위와 같음 | `42-watch` | `store/watch.py::watch_update` | — | V7-12 | ◐ |
 | WT-009 | `[운영]` | `WHERE watch_id=? AND account_id=?` 로 건다 | `[기술]` 위와 같음 | `42-watch` | `store/admin.py::change_secret` | — | V7-12 | ◐ |
 | WT-010 | `[검사]` | 영향 0 행이면 `PolicyError`. 조용히 통과 금지 | `[기술]` 0 행을 성공으로 보면 남의 것을 못 고쳤는데 됐다고 한다 | `42-watch` | `validate/v11_web.py::_place_cards` | — | V7-12 | ◐ |
 
@@ -38,7 +38,7 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| WT-011 | `[수집]` | `watch_id` 는 DB 가 부여. `lastrowid` 를 받는다 | `[기술]` 08-14 실측 — 호출자가 만들면 충돌한다 | `42-watch` | 미구현 | — | V7-11 | ◐ |
+| WT-011 | `[수집]` | `watch_id` 는 DB 가 부여. `lastrowid` 를 받는다 | `[기술]` 08-14 실측 — 호출자가 만들면 충돌한다 | `42-watch` | `store/watch.py::watch_add` | — | V7-11 | ◐ |
 | WT-012 | `[저장]` | 조회·수정·종료는 `watch_id` 로. `listing_id` 가 아니다 | `[기술]` 한 매물을 여러 사람이 담는다 | `42-watch` | `store/watch.py::watch_add` | — | V7-11 | ◐ |
 | WT-013 | `[저장]` | DDL 의 `CHECK` 로 집합을 강제 | `[기술]` 3장 STEP 39 | `42-watch` | `store/watch.py::watch_close` | — | 검사 없음 | ◐ |
 

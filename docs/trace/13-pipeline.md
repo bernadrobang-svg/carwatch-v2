@@ -17,7 +17,7 @@
 | PI-002 | `[저장]` | **빈 DB 에서 전 도구가 돈다** | `[마스터]` **08-13 사고 — 첫 실행에서 전부 죽었다** | `13-pipeline` | `store/watch.py:9` | 해당 없음 | V10-01 | ○ |
 | PI-003 | `[저장]` | 집계의 NULL 을 전제 — `COUNT` 0 · `MIN/MAX` None | `[기술]` 위와 같음 | `13-pipeline` | `store/watch.py::AlertConfig` | `/notready` | V1-13 · V1-18 | ○ |
 | PI-004 | `[수집]` | `run.py` 가 전 명령을 받는다 | `[마스터]` 08-14 — 진입점이 여럿이면 어느 것이 정본인지 모른다 | `13-pipeline` | `collect/pipeline.py::run_recalc` | 해당 없음 | V1-13 | ○ |
-| PI-005 | `[저장]` | `run.bat` 은 껍데기 | `[마스터]` 위와 같음 | `13-pipeline` | 미구현 | 해당 없음 | 검사 없음 | ◐ |
+| PI-005 | `[저장]` | `run.bat` 은 껍데기 | `[마스터]` 위와 같음 | `13-pipeline` | `run.py::main` | 해당 없음 | 검사 없음 | ◐ |
 
 ## 건너뛴 요청
 

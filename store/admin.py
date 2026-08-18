@@ -154,6 +154,10 @@ def needs_bootstrap(conn: sqlite3.Connection) -> bool:
 REJECT_LOCKED = "로그인 시도가 많습니다. 잠시 뒤 다시 해 주십시오"
 
 
+# 잠금을 푼 기록의 사유 머리말.  ★ 기록을 지우지 않고 한 줄을 더한다
+UNLOCK_REASON = "관리자가 잠금을 풀었습니다"
+
+
 def _recent_failures(conn: sqlite3.Connection, display_name: str,
                      now: datetime) -> int:
     """잠금 창 안의 연속 실패 수.  ★ 성공하면 0 으로 돌아간다."""
@@ -179,6 +183,50 @@ def _log_attempt(conn: sqlite3.Connection, display_name: str, ok: bool,
         "INSERT INTO auth_login_attempt(display_name,succeeded,reason,"
         "attempted_at) VALUES (?,?,?,?)",
         (display_name, int(ok), reason, now.isoformat()))
+    conn.commit()
+
+
+
+def is_locked(conn: sqlite3.Connection, display_name: str,
+              now: datetime | None = None) -> bool:
+    """지금 잠겨 있는가 (60-admin/a-auth).
+
+    ★ 잠금은 시간이 지나면 스스로 풀린다.  「지금」을 묻는 것이다
+    """
+    from datetime import datetime as _dt, timezone as _tz
+
+    limit = int(_admin_cfg("login_fail_limit"))
+    if not limit:
+        return False        # 상한이 0 이면 잠그지 않는다 (개정 359)
+    now = now or _dt.now(_tz.utc)
+    return _recent_failures(conn, display_name, now) >= limit
+
+
+def unlock_account(conn: sqlite3.Connection, actor: Account,
+                   display_name: str, reason: str, at: str) -> None:
+    """관리자가 다른 관리자의 잠금을 화면에서 푼다 (60-admin/a-auth).
+
+    ★ 마스터 지적 — 「PC 가 없어 CLI 로 못 푼다」.  화면에서 풀 수 있어야 한다
+    ★ 시도 기록은 지우지 않는다 — 되돌릴 수 없는 것은 하지 않는다.
+      「푼다」를 성공 시도 한 줄로 남긴다.  그러면 연속 실패가 0 으로 돌아간다
+    ★ 누가 왜 풀었는지가 남는다 (감사)
+    """
+    from datetime import datetime as _dt, timezone as _tz
+
+    require_role(actor, ROLE_ADMIN)
+    if not (reason or "").strip():
+        raise ValidationError("왜 푸는지 적어 주십시오", step="STEP 126")
+    row = conn.execute(
+        "SELECT 1 FROM account WHERE display_name=? OR login_name=?",
+        (display_name, display_name)).fetchone()
+    if row is None:
+        raise ValidationError(f"없는 계정입니다: {display_name[:40]}",
+                              step="STEP 126")
+    conn.execute(
+        "INSERT INTO auth_login_attempt(display_name,succeeded,reason,"
+        "attempted_at) VALUES (?,1,?,?)",
+        (display_name, f"{UNLOCK_REASON} — {actor.display_name}: {reason}",
+         at or _dt.now(_tz.utc).isoformat()))
     conn.commit()
 
 
@@ -516,9 +564,12 @@ def classify_field(conn: sqlite3.Connection, account: Account, endpoint: str,
 
 def account_rows(conn: sqlite3.Connection) -> list:
     """계정 목록.  ★ secret_hash 는 내지 않는다 (STEP 35)."""
+    # ★ 지금 잠겨 있는지도 낸다 — 화면에서 풀 수 있어야 한다 (60-admin/a-auth).
+    #   마스터 지적 「PC 가 없어 CLI 로 못 푼다」
     return [{"account_id": r[0], "display_name": r[1], "role": r[2],
              "created_at": r[3], "last_seen_at": r[4],
-             "disabled": bool(r[5])}
+             "disabled": bool(r[5]),
+             "locked": is_locked(conn, r[1])}
             for r in conn.execute(
                 "SELECT account_id, display_name, role, created_at, "
                 "last_seen_at, disabled_at IS NOT NULL FROM account "

@@ -2040,6 +2040,14 @@ def admin_users(conn, account, req, root: str = ROOT, csrf: str = "",
         elif act == "enable":
             set_disabled(conn, aid, False, _now())
             msg = "되살렸습니다"
+        elif act == "unlock":
+            # ★ 마스터 지적 — 「PC 가 없어 CLI 로 못 푼다」.
+            #   화면에서 풀 수 있어야 한다 (60-admin/a-auth)
+            from store.admin import unlock_account
+
+            who = (form.get("display_name") or "").strip()
+            unlock_account(conn, account, who, form.get("reason", ""), _now())
+            msg = f"{who} 의 잠금을 풀었습니다 — 시도 기록은 남습니다"
         else:
             set_role(conn, aid, form.get("role") or ROLE_USER, _now())
             msg = "역할을 바꿨습니다"

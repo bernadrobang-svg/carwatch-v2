@@ -2,12 +2,12 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 134개 · 총 46,149줄
+파일 134개 · 총 46,208줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v11_web.py` | 3,647 | V11 표현 계층 검증 (14장 STEP 153). |
-| `web/views.py` | 2,141 | 화면 어댑터 (14장 STEP 142 · 152). |
+| `web/views.py` | 2,149 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,856 | 화면 데이터 생성. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `validate/v3_logic.py` | 1,354 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
@@ -27,9 +27,9 @@
 | `validate/v4_mapping.py` | 698 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `validate/v10_admin.py` | 687 | V10 관리자 검증. |
 | `store/watch.py` | 679 | 후보 추적 (11장). |
+| `store/admin.py` | 665 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
 | `tools/trace_fill.py` | 652 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `parse/encar/mapping.py` | 621 | 엔카 원문 → CORE 필드 (L3). |
-| `store/admin.py` | 614 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
 | `tests/test_admin_flow.py` | 566 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
 | `tests/test_admin.py` | 537 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
@@ -149,10 +149,10 @@
 _web_sources:498  run:510  _late_checks:620  _templates_with_form:684  _spec_routes:702  _routing_table_check:724  _count:761  ctx_account:768  _view_exists:774  _tpl:795  _all_templates:800  _screen_checks:805  _query_budget_check:1022  _import_origin_check:1093  _import_step4_check:1128  _browser_origin_check:1152  _browser_confirm_check:1170  _browser_chunk_check:1195  _status_screen_checks:1236  _status_liveness_check:1274  _menu_label_check:1312  _listing_paging_checks:1329  _photo_checks:1365  _sian_css_checks:1401  _cell_of:1463  _link_tip_checks:1476  _origin_link_check:1490  _choose_check:1518  _order_filter_checks:1534  _checks_cfg:1577  _photo_size_by_screen_check:1586  _template_leak_check:1610  _em_dash_check:1636  _card_limits:1672  _cells_of:1689  _matches:1717  _place_cards:1736  _card_shape_checks:1858  _why_order_spec:1940  _why_order_check:1957  _width_policy:1992  _width_checks:1999  _chart_check:2087  _row_link_checks:2118  _screen_contradiction_check:2154  _chunk_check:2176  _csrf_reuse_check:2216  _origin_price_check:2260  _v1_parity_checks:2296  _media_blocks:2373  _responsive_checks:2394  _dead_links:2475  _null_link_check:2489  _sian_visual_check:2553  _purchase_cost_checks:2617  _report_popup_check:2704  _detail_photo_check:2778  _raw_shown_checks:2829  _compare_diff_check:2916  _cell_squeeze_check:2980  _static_version_check:3035  _axis_state_check:3053  _three_values_check:3091  _photo_size_check:3121  _render_metrics_checks:3147  _browser_scope_checks:3239  _import_opened_steps_check:3260  _import_resume_check:3288  _watch_invite_check:3307  _post_smoke_check:3351  _template_roots:3424  _loop_fields:3434  _context_supplied_check:3456  _first_item:3527  _has_field:3541  _table_counts:3547  _save_button_check:3554  _probe:3611  _scratch:3629
 ```
 
-### `web/views.py` — 2,141줄
+### `web/views.py` — 2,149줄
 
 ```
-_rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  listings:105  why:138  notready:172  dashboard:182  admin_home:200  _unclassified_split:212  _rows_of:240  _check_reports:250  admin_audit:273  admin_docs:286  _int_param:310  _manwon:349  _site_buttons:354  _filter_chips:385  _order_menu:436  _carry:442  _order_label:452  ORDERS_LABELS_GET:456  _condition_sentence:460  _query_string:478  _page_links:491  _simple_paging:512  _paging:522  _filter_buttons:552  _filter:585  recommend:625  compare:653  market:668  _first_target:688  dealers:694  watch:714  _note_kinds:731  _watch_notes:738  run_view:765  login:777  _login_again:811  _open_session:826  logout:852  _watch_queries:869  watch_query_post:878  _int_or_none:908  watch_add_post:912  _watch_note_post:972  _watch_invite:998  watch_update_post:1019  _now:1043  _reason_gate:1050  _gate:1071  _first_flag:1110  _all_hours:1115  admin_run:1143  _target_rows:1209  admin_dict:1222  admin_status:1256  admin_collect:1271  _take_chunk:1330  _run_stamp:1362  _int_or_none:1373  admin_import:1378  admin_scoring:1450  _decide_cards:1503  admin_registry:1527  admin_query:1575  admin_requests:1597  _admin_extra:1659  _config_files:1674  _config_rows:1681  admin_config:1713  _typed:1764  admin_api:1780  _site_query:1830  admin_targets:1843  admin_tools:1941  join:1960  password:1991  admin_users:2006  _account_activity:2058  reports:2064  report_download:2080
+_rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  listings:105  why:138  notready:172  dashboard:182  admin_home:200  _unclassified_split:212  _rows_of:240  _check_reports:250  admin_audit:273  admin_docs:286  _int_param:310  _manwon:349  _site_buttons:354  _filter_chips:385  _order_menu:436  _carry:442  _order_label:452  ORDERS_LABELS_GET:456  _condition_sentence:460  _query_string:478  _page_links:491  _simple_paging:512  _paging:522  _filter_buttons:552  _filter:585  recommend:625  compare:653  market:668  _first_target:688  dealers:694  watch:714  _note_kinds:731  _watch_notes:738  run_view:765  login:777  _login_again:811  _open_session:826  logout:852  _watch_queries:869  watch_query_post:878  _int_or_none:908  watch_add_post:912  _watch_note_post:972  _watch_invite:998  watch_update_post:1019  _now:1043  _reason_gate:1050  _gate:1071  _first_flag:1110  _all_hours:1115  admin_run:1143  _target_rows:1209  admin_dict:1222  admin_status:1256  admin_collect:1271  _take_chunk:1330  _run_stamp:1362  _int_or_none:1373  admin_import:1378  admin_scoring:1450  _decide_cards:1503  admin_registry:1527  admin_query:1575  admin_requests:1597  _admin_extra:1659  _config_files:1674  _config_rows:1681  admin_config:1713  _typed:1764  admin_api:1780  _site_query:1830  admin_targets:1843  admin_tools:1941  join:1960  password:1991  admin_users:2006  _account_activity:2066  reports:2072  report_download:2088
 ```
 
 ### `report/screens/build.py` — 1,856줄
@@ -269,6 +269,12 @@ _sources:168  _admin_guard_checks:189  _sql_strings:234  run:246  _session_check
 AlertConfig:55  WatchItem:68  TrackPoint:83  TrackEvent:98  WatchEvent:112  classify_duplicates:124  sync_duplicates:164  deduped_count:187  watch_add:197  assert_owner:236  watch_update:251  watch_close:271  note_add:292  notes_of:317  note_delete:335  track_snapshot:350  track_points:379  classify_cause:388  detect_events:400  message:458  notify:486  add_watch_query:556  run_watch_queries:591  watch_query_rows:647  close_watch_query:661
 ```
 
+### `store/admin.py` — 665줄
+
+```
+_admin_cfg:46  ConfigChange:68  running_job:86  hash_secret:96  _split:104  create_account:109  account_count:145  needs_bootstrap:149  _recent_failures:161  _log_attempt:180  is_locked:190  unlock_account:205  authenticate:233  open_session:269  session_account:289  change_secret:306  revoke_sessions:330  _walk:341  get_path:365  set_path:370  _atomic_write:377  apply_config:387  _validate_blob:451  revert_config:464  history:488  classify_field:512  account_rows:565  admin_count:579  set_role:586  set_disabled:603  add_config_key:623
+```
+
 ### `tools/trace_fill.py` — 652줄
 
 ```
@@ -279,12 +285,6 @@ spec_lines:79  anchor_step:97  build_symbols:116  enclosing:151  build_texts:161
 
 ```
 _get:30  _json:42  _won:53  _ym:73  _date10:83  _int:99  _bool:105  unpack_envelope:116  parse_list_item:124  parse_detail:171  parse_inspection:247  parse_record:291  _sample_chars:345  safe_field:359  parse_with_issues:381  _salvage:399  _parses:442  dig:449  as_list:472  _diag_comment:500  parse_diagnosis:507  parse_diagnosis_items:539  _text:547  parse_record_summary:557  parse_platform_check:583  parse_inspection_summary:590  parse_ev_battery:595  parse_sellingpoint:615
-```
-
-### `store/admin.py` — 614줄
-
-```
-_admin_cfg:46  ConfigChange:68  running_job:86  hash_secret:96  _split:104  create_account:109  account_count:145  needs_bootstrap:149  _recent_failures:157  _log_attempt:176  authenticate:185  open_session:221  session_account:241  change_secret:258  revoke_sessions:282  _walk:293  get_path:317  set_path:322  _atomic_write:329  apply_config:339  _validate_blob:403  revert_config:416  history:440  classify_field:464  account_rows:517  admin_count:528  set_role:535  set_disabled:552  add_config_key:572
 ```
 
 ### `tests/test_admin_flow.py` — 566줄

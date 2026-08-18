@@ -32,13 +32,26 @@
 {% for u in rows %}
 <tr><td data-label="ID">{{ u.account_id }}</td><td data-label="이름">{{ u.display_name }}</td><td data-label="역할">{{ u.role }}</td>
 <td data-label="마지막 접속">{{ u.last_seen_at | date }}</td><td data-label="가입">{{ u.created_at | date }}</td>
-<td data-label="상태">{% if u.disabled %}<span class="warn-warn">중지</span>{% endif %}</td>
+<td data-label="상태">{% if u.disabled %}<span class="warn-warn">중지</span>{% endif %}{% if u.locked %}
+  <span class="warn-warn" title="연속 실패 상한을 넘겼습니다. 시간이 지나면 스스로 풀립니다">잠김</span>{% endif %}</td>
 <td data-label="">
   <form method="post" action="/admin/users" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="account_id" value="{{ u.account_id }}">
     <input type="hidden" name="action" value="{% if u.disabled %}enable{% endif %}{% if !u.disabled %}disable{% endif %}">
     <button type="submit" class="mini">{% if u.disabled %}되살리기{% endif %}{% if !u.disabled %}중지{% endif %}</button>
+  </form>
+  {% if u.locked %}
+  <!-- ★ 마스터 지적 — 「PC 가 없어 CLI 로 못 푼다」.  화면에서 푼다 -->
+  <form method="post" action="/admin/users" class="inline">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="action" value="unlock">
+    <input type="hidden" name="account_id" value="{{ u.account_id }}">
+    <input type="hidden" name="display_name" value="{{ u.display_name }}">
+    <input name="reason" size="16" placeholder="왜 푸는지" required>
+    <button type="submit" class="mini"
+      title="시도 기록은 지우지 않습니다 — 「풀었다」를 한 줄 남깁니다">잠금 풀기</button>
+  {% endif %}
   </form>
 </td></tr>
 {% endfor %}

@@ -141,6 +141,22 @@
   var ROOM = Math.floor(CAP * 0.8);
   var CSRF = document.querySelector('input[name=csrf]').value;
 
+  /* ★ 왜 실패했는지 밝힌다 (개정 307).
+     「저장 403」만 내면 원인을 모른다 — 토큰인지 앞단인지 알아야 한다 */
+  function why(code) {
+    if (code === 403) {
+      return ' — 토큰이 만료됐습니다. 화면을 새로고침하십시오';
+    }
+    if (code === 502) {
+      return ' — 앞단(Caddy)이 서버 응답을 못 받았습니다. ' +
+             '서버가 재시작 중일 수 있습니다. 잠시 뒤 다시 누르십시오';
+    }
+    if (code === 413) {
+      return ' — 한 번에 보낸 양이 상한을 넘었습니다';
+    }
+    return '';
+  }
+
   /* ★ 응답에 새 토큰이 실려 오면 갈아 끼운다 (개정 307 · AD-096).
      한 화면에서 수십 번 POST 한다 — 토큰이 만료되면 통째로 막힌다 */
   function takeToken(res) {
@@ -270,7 +286,7 @@
           .then(function (res) {
             if (!res.ok && res.status !== 303) {
               throw new Error('조각 ' + (i + 1) + '/' + parts.length +
-                              ' 저장 ' + res.status);
+                              ' 저장 ' + res.status + why(res.status));
             }
             return send(i + 1);
           });
@@ -306,7 +322,8 @@
       .then(takeToken)
       .then(function (res) {
         if (!res.ok && res.status !== 303) {
-          throw new Error('저장 ' + res.status + ' (' + got.size + '바이트)');
+          throw new Error('저장 ' + res.status + why(res.status) +
+                          ' (' + got.size + '바이트)');
         }
         return res;
       });

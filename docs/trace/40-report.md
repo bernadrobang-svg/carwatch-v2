@@ -36,7 +36,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | RP-015 | `[화면]` | 전 요소를 `ReportMeta` 에서 가져온다 | `[판단]` 손으로 조립하면 형식이 갈린다. ★ 근거 약함 | `40-report` | `report/views.py::ReportMeta` | 화면 없음 | V8-02 | ? |
 | RP-008 | `[화면]` | 같은 이름이 있으면 `FileExistsError` | `[기술]` 덮어쓰기 금지 | `40-report` | `report/exports/export.py:231` | 화면 없음 | V8-02 | ◐ |
-| RP-009 | `[화면]` | UTF-8 · BOM 없음 | `[기술]` 엑셀이 BOM 을 넣으면 파싱이 깨진다 | `40-report` | 미구현 | 화면 없음 | 검사 없음 | ✗ |
+| RP-009 | `[화면]` | UTF-8 · BOM 없음 | `[기술]` 엑셀이 BOM 을 넣으면 파싱이 깨진다 | `40-report` | `report/exports/export.py::write_export` | 화면 없음 | 검사 없음 | ✗ |
 | RP-010 | `[화면]` | 줄바꿈 LF. Windows 에서도 LF | `[기술]` 형상 관리에서 diff 가 깨진다 | `40-report` | `report/exports/export.py:229` | 화면 없음 | V8-02 | ◐ |
 | RP-011 | `[화면]` | **파일을 지우는 코드를 두지 않는다** | `[마스터]` P3 — 잃으면 복구가 안 된다 | `40-report` | `web/views.py::_versions` | 화면 없음 | 검사 없음 | ◐ |
 | RP-012 | `[화면]` | 임시 파일에 쓰고 `os.replace` | `[기술]` 쓰다 죽으면 반쪽 파일이 남는다 | `40-report` | `report/exports/export.py::write_export` | 화면 없음 | 검사 없음 | ◐ |
