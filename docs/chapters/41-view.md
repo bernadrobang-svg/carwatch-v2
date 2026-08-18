@@ -644,7 +644,13 @@ page_size config.web.rows_per_page (기본 200)
 
 ```
 필수   총 건수를 함께 낸다.  「몇 건인지 모르는 목록」을 내지 않는다
-금지   page_size 를 URL 로 받는 것.  config 가 정한다
+★★ 08-18 마스터 확정 — URL 로도 받는다
+
+필수 [마스터]   page_size 를 URL 로 받는다
+필수 [마스터]   상한 200.  넘으면 200 으로 자르고 화면에 알린다
+필수 [기술]     상한은 config — config.view.page_size_max (기본 200)
+금지 [기술]     상한 없이 받는 것.  큰 값이면 서버가 멈춘다
+~~금지   page_size 를 URL 로 받는 것.  config 가 정한다~~
 근거   큰 값이 들어오면 전건이 나온다
 ```
 
