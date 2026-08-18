@@ -65,6 +65,19 @@ def _ruff_ok() -> bool:
 SWEEP_WINDOW_SEC = 60
 
 
+# 한 시간은 몇 초인가 (2장 상수표 · V4-13)
+SEC_PER_HOUR = 3600
+
+
+def _stale_hours() -> float:
+    """죽은 실행이 남긴 것으로 볼 나이.  ★ config 가 정본이다 (V4-13)."""
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "checks.json"),
+              encoding="utf-8") as f:
+        return float(_j.load(f)["temp_stale_hours"])
+
+
 def _sweep_temp() -> int:
     """시험이 남긴 임시 DB 를 치운다.  ★ 남의 것은 건드리지 않는다."""
     import shutil
@@ -72,15 +85,23 @@ def _sweep_temp() -> int:
     import time
 
     root = tempfile.gettempdir()
-    cutoff = time.time() - SWEEP_WINDOW_SEC
+    now = time.time()
+    cutoff = now - SWEEP_WINDOW_SEC
+    # ★★ 죽은 실행이 남긴 것도 치운다 (개정 395 실측).
+    #   전에는 「이번 실행이 만든 것」만 치웠다 — 끊긴 실행이 남긴 것은
+    #   영영 쌓여 2,155개가 되고 /tmp 921M 이 꽉 찼다.
+    #   ★ 그러면 다음 검사가 아예 못 돈다.  「검사가 디스크를 채우지 않는다」가
+    #     지켜지려면 남의 잔해도 치워야 한다
+    stale = now - _stale_hours() * SEC_PER_HOUR
     n = 0
     for name in os.listdir(root):
         path = os.path.join(root, name)
         if not name.startswith("tmp") or not os.path.isdir(path):
             continue
         try:
-            if os.path.getmtime(path) < cutoff:
-                continue
+            made = os.path.getmtime(path)
+            if made < cutoff and made > stale:
+                continue          # 남의 것이고 아직 쓸 수 있다
             if not any(f.endswith(".db") for f in os.listdir(path)):
                 continue
             shutil.rmtree(path, ignore_errors=True)
