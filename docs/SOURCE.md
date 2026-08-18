@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 132개 · 총 42,739줄
+파일 132개 · 총 42,779줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -23,7 +23,7 @@
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
 | `collect/pipeline.py` | 689 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `validate/v1_collect.py` | 670 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
-| `validate/v4_mapping.py` | 626 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
+| `validate/v4_mapping.py` | 628 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `parse/encar/mapping.py` | 621 | 엔카 원문 → CORE 필드 (L3). |
 | `report/render.py` | 621 | 리포트 생성 (L9). |
 | `store/admin.py` | 614 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
@@ -95,6 +95,7 @@
 | `analyze/axes.py` | 111 | 축 판정 계약. |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
 | `tools/check_all.py` | 107 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
+| `tools/classify_unclassified.py` | 107 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `analyze/axis/value.py` | 106 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
 | `tools/daily_enqueue.py` | 97 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
@@ -114,7 +115,6 @@
 | `tools/inspect_facet.py` | 74 | facet 원문에 실제로 어떤 축이 왔는지 본다. |
 | `analyze/trust.py` | 70 | 플랫폼 신뢰도 — 점검 출처 · 엔카진단 · 엔카보증 (개정 300). |
 | `score/grade.py` | 70 | 등급 (L7). |
-| `tools/classify_unclassified.py` | 69 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `analyze/curve.py` | 61 | 구간별 점수표 (docs/ref/F-scoring.md). |
 | `analyze/axis/warranty.py` | 56 | 보증 100점 — 일반 50 + 파워트레인 50. |
 | `tools/inspect_requests.py` | 52 | 요청 기록을 본다 — 무엇을 던졌고 무엇이 돌아왔는가. |
@@ -243,10 +243,10 @@ envelope_scope:41  Reprocess:91  reprocess_plan:110  should_refetch:127  expecte
 run:141  _endpoint_order_check:274  _empty_db_check:286  _run_scope_check:313  _ctx_started:338  _has_run_id:346  _expected_scope_check:351  _diagnosis_scope_check:372  _diagnosis_none_count:410  _query_key_check:433  _entrypoint_parity_check:458  _enclosing_def:487  _run_id_filled_check:496  _catalog_key_check:516  _whole_probe:538  _whole_body_check:549  _catalog_checks:580  _unparsed_envelope_check:627  _ensure_tmp:667
 ```
 
-### `validate/v4_mapping.py` — 626줄
+### `validate/v4_mapping.py` — 628줄
 
 ```
-_paths:126  _layer_of:173  _unclassified_split:178  _layer_checks:216  _name_collision_check:310  _key:344  run:350  _mapping_coverage_checks:485  _our_columns:515  _listing_value_scope_check:543  _dict_filled_check:563  _kind_check:574  propose_fix:588  _option_code_check:603  _is_sentence:620
+_paths:126  _layer_of:173  _unclassified_split:178  _layer_checks:216  _name_collision_check:310  _key:344  run:350  _mapping_coverage_checks:487  _our_columns:517  _listing_value_scope_check:545  _dict_filled_check:565  _kind_check:576  propose_fix:590  _option_code_check:605  _is_sentence:622
 ```
 
 ### `parse/encar/mapping.py` — 621줄

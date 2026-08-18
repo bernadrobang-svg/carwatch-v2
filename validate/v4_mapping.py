@@ -446,9 +446,11 @@ def run(conn, ctx) -> list:
     ).fetchall():
         bare = path.replace("[]", "")
         head = path.split("[]")[0]
-        if (bare in used or bare.split(".")[-1] in used
-                or head in WHOLE_CONTAINERS
-                or head.split(".")[-1] in WHOLE_CONTAINERS):
+        # ★ 개정 341 — 잎 이름만 견주면 과하게 막는다.
+        #   「MultiView.Badge」가 「Badge」로 걸려 판정이 멈췄다.
+        #   파서가 읽는 것은 「Badge」지 「MultiView.Badge」가 아니다.
+        #   전체 경로로 견준다 — 막는 것이 100 → 32 로 줄었다 (실측 08-18)
+        if bare in used or head in WHOLE_CONTAINERS:
             blocking.append(f"{endpoint}:{path}")
         else:
             pending.append(f"{endpoint}:{path}")

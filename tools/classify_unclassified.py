@@ -9,9 +9,13 @@
         ④ 정말 새로운 것              ← 사람이 봐야 한다
 금지     「349건 미분류」라고만 내는 것
 사용     python3.11 tools/classify_unclassified.py
+        python3.11 tools/classify_unclassified.py --suggest
+        ★ --suggest 는 config/field_usage.suggested.json 을 새로 만든다.
+          ★ 정본(field_usage.json)에 넣지 않는다 — 사람이 옮긴다 (STEP 87)
 """
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 import sys
@@ -29,6 +33,33 @@ TOP_ROWS = 20
 # 조회는 store 에 있다.  ★ web · report 도 같은 것을 쓴다 —
 # 그 계층은 tools 를 부르지 못한다 (V4-22 · S15)
 from store.core import classify_unclassified   # noqa: E402
+
+
+def write_suggestion(rows: list) -> str:
+    """제안을 파일로 낸다 (STEP 87).
+
+    ★ 정본에 자동으로 넣지 않는다.  「이렇게 보입니다」까지만이다
+    ★ ④ 정말 새로운 것은 넣지 않는다 — 사람이 봐야 한다
+    """
+    out = {"_note": "tools/classify_unclassified.py --suggest 가 만든다. "
+                    "★ 사람이 확인한 뒤 config/field_usage.json 으로 "
+                    "옮긴다 (STEP 87).  자동으로 정본이 되지 않는다",
+           "_kinds": {}, "candidates": {}}
+    for one in rows:
+        kind = one["kind"]
+        out["_kinds"][kind] = out["_kinds"].get(kind, 0) + 1
+        if kind.startswith("④"):
+            continue
+        usage = ("not_provided" if kind.startswith("③") else "")
+        out["candidates"][f"{one['endpoint']}:{one['path']}"] = {
+            "kind": kind, "suggested_usage": usage,
+            "reason": one["hint"],
+            "observed": one["hits"], "of": one["total"]}
+    path = os.path.join(ROOT, "config", "field_usage.suggested.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    return path
 
 
 def main() -> int:
@@ -57,6 +88,13 @@ def main() -> int:
     need = by_kind.get("④ 새로운 것", 0)
     print(f"\n★ 사람이 봐야 할 것 {need}건 · "
           f"나머지 {len(rows) - need}건은 제안이 있습니다\n")
+
+    if "--suggest" in sys.argv:
+        where = write_suggestion(rows)
+        print(f"제안 → {where}")
+        print("★ 정본에 자동으로 넣지 않았습니다.  "
+              "사람이 확인한 뒤 config/field_usage.json 으로 옮깁니다 "
+              "(STEP 87)\n")
 
     print(f"자주 나온 순 {TOP_ROWS}건 — ★ 급한 정도가 다릅니다")
     for one in rows[:TOP_ROWS]:
