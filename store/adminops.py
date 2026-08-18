@@ -45,8 +45,6 @@ REJECT_MULTI = "다중 문장은 거부한다 (세미콜론 분리)"
 REJECT_NOT_SELECT = "SELECT · WITH 만 허용한다"
 REJECT_WRITE = "쓰기 연산이 포함됐다"
 REJECT_COMPILE = "SQL 을 해석할 수 없다"
-# 표를 못 찾을 때 보기로 낼 표 수.  ★ 전부 내면 못 읽는다
-HINT_TABLES = 12
 
 
 @dataclass(frozen=True)
@@ -532,8 +530,9 @@ def columns_hint(conn: sqlite3.Connection, sql: str) -> str:
     used = [t for t in re.findall(r"(?:FROM|JOIN)\s+([A-Za-z_][\w]*)",
                                   sql, re.I) if t in known]
     if not used:
+        cap = int(_admin_cfg("query_hint_tables"))
         return ("어느 표를 보려 하셨습니까 — "
-                + " · ".join(sorted(known)[:HINT_TABLES]))
+                + " · ".join(sorted(known)[:cap]))
     out = []
     for name in dict.fromkeys(used):
         cols = [r[1] for r in conn.execute(f"PRAGMA table_info({name})")]

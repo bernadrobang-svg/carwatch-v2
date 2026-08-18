@@ -29,5 +29,7 @@
   "decide_cards": 8,
   "_decide_cards_note": "미분류 화면에 한 번에 낼 판단 카드 수 (개정 367). ★ 120건을 한꺼번에 보라 하면 아무도 안 본다. 판정을 막는 것부터 낸다",
   "decide_value_chars": 20,
-  "_decide_value_chars_note": "화면에 낼 값 한 조각의 길이. ★ 통째로 내면 한 쪽이 129KB 가 된다 (실측 08-19 · V11-76)"
+  "_decide_value_chars_note": "화면에 낼 값 한 조각의 길이. ★ 통째로 내면 한 쪽이 129KB 가 된다 (실측 08-19 · V11-76)",
+  "query_hint_tables": 12,
+  "_query_hint_tables_note": "쿼리 오타 안내에서 표를 못 찾았을 때 보기로 낼 표 수 (개정 391). ★ 전부 내면 못 읽는다"
 }
