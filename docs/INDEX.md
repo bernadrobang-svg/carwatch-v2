@@ -9,12 +9,12 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**83파일 · 25,089줄 · 1,009KB**
+**83파일 · 25,219줄 · 1,015KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - guide/01_요구사항.md 841줄
-- chapters/00-standard.md 1,677줄
+- chapters/00-standard.md 1,742줄
 - chapters/61-web.md 2,223줄
 - chapters/60-admin/c-tools.md 1,032줄
 
@@ -23,7 +23,7 @@
 | `ENCAR_API.md` | 183 | 7 |
 | `KCAR_API.md` | 140 | 5 |
 | `README.md` | 57 | 1 |
-| `chapters/00-standard.md`  ★ | 1,677 | 72 |
+| `chapters/00-standard.md`  ★ | 1,742 | 74 |
 | `chapters/01-arch.md` | 227 | 8 |
 | `chapters/10-collect/00-intro.md` | 368 | 14 |
 | `chapters/10-collect/a-endpoint.md` | 301 | 11 |
@@ -52,7 +52,7 @@
 | `chapters/30-score/f-table.md` | 616 | 17 |
 | `chapters/30-score/g-absolute.md` | 139 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
-| `chapters/31-registry.md` | 611 | 25 |
+| `chapters/31-registry.md` | 673 | 28 |
 | `chapters/40-report.md` | 755 | 26 |
 | `chapters/41-view.md` | 744 | 25 |
 | `chapters/42-watch.md` | 713 | 26 |
@@ -76,7 +76,7 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 383 | 81 |
+| `guide/03_이력.md` | 385 | 82 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
 | `guide/05_가이드역할.md` | 294 | 9 |
@@ -86,7 +86,7 @@
 | `ref/B-config.md` | 404 | 12 |
 | `ref/C-fixture.md` | 65 | 2 |
 | `ref/D-update.md` | 32 | 1 |
-| `ref/E-attach.md` | 523 | 19 |
+| `ref/E-attach.md` | 524 | 19 |
 | `ref/F-scoring.md` | 12 | 0 |
 | `ref/G-screens.md` | 12 | 0 |
 | `trace/00-standard.md` | 445 | 23 |

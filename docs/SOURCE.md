@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 133개 · 총 44,154줄
+파일 133개 · 총 44,184줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -22,9 +22,9 @@
 | `tests/test_score.py` | 786 | 7장 판정·채점 시험. |
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
 | `validate/v1_collect.py` | 737 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
-| `collect/pipeline.py` | 689 | 실행 순서 · 중단 · 재처리 · 재개. |
+| `collect/pipeline.py` | 696 | 실행 순서 · 중단 · 재처리 · 재개. |
+| `validate/v10_admin.py` | 687 | V10 관리자 검증. |
 | `store/watch.py` | 679 | 후보 추적 (11장). |
-| `validate/v10_admin.py` | 664 | V10 관리자 검증. |
 | `report/render.py` | 652 | 리포트 생성 (L9). |
 | `validate/v4_mapping.py` | 628 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `parse/encar/mapping.py` | 621 | 엔카 원문 → CORE 필드 (L3). |
@@ -238,22 +238,22 @@ check:36  StubEncar:92  Clock:236  setup:241  test_envelope:279  test_last_page_
 run:149  _endpoint_order_check:282  _empty_db_check:294  _sql_groups:321  _cumulative_codes:357  _run_scope_check:367  _ctx_started:405  _has_run_id:413  _expected_scope_check:418  _diagnosis_scope_check:439  _diagnosis_none_count:477  _query_key_check:500  _entrypoint_parity_check:525  _enclosing_def:554  _run_id_filled_check:563  _catalog_key_check:583  _whole_probe:605  _whole_body_check:616  _catalog_checks:647  _unparsed_envelope_check:694  _ensure_tmp:734
 ```
 
-### `collect/pipeline.py` — 689줄
+### `collect/pipeline.py` — 696줄
 
 ```
-envelope_scope:41  Reprocess:91  reprocess_plan:110  should_refetch:127  expected_for:139  step_report:173  halt_if:189  precheck:222  resume_point:276  config_hash:296  build_run_context_fields:302  stale_rows:311  save_step_report:326  run_step:350  _execute:388  completed_steps:405  run_pipeline:417  print_progress:453  silent_progress:472  from_step_for:486  web_reasons:492  check_recalc_origin:497  plan_recalc:509  _current:526  run_recalc:532  Defect:546  DefectReport:557  diagnose:578  _DiagCtx:602  _collect_defects:612  format_defects:666
+envelope_scope:41  Reprocess:91  reprocess_plan:110  should_refetch:127  expected_for:139  step_report:173  halt_if:189  precheck:222  resume_point:276  config_hash:296  build_run_context_fields:302  stale_rows:311  save_step_report:326  run_step:350  _execute:388  completed_steps:405  run_pipeline:417  print_progress:453  silent_progress:472  from_step_for:486  web_reasons:492  check_recalc_origin:497  plan_recalc:509  _current:526  run_recalc:532  Defect:553  DefectReport:564  diagnose:585  _DiagCtx:609  _collect_defects:619  format_defects:673
+```
+
+### `validate/v10_admin.py` — 687줄
+
+```
+_sources:168  _admin_guard_checks:189  _sql_strings:234  run:246  _session_checks:352  _pii_query_check:429  _scratch:476  _dict_reason_check:491  _dict_source_shown_check:507  _automation_checks:525  _queue_consumer_check:639  _queue_stale_shown_check:668  _ensure_tmp:684
 ```
 
 ### `store/watch.py` — 679줄
 
 ```
 AlertConfig:55  WatchItem:68  TrackPoint:83  TrackEvent:98  WatchEvent:112  classify_duplicates:124  sync_duplicates:164  deduped_count:187  watch_add:197  assert_owner:236  watch_update:251  watch_close:271  note_add:292  notes_of:317  note_delete:335  track_snapshot:350  track_points:379  classify_cause:388  detect_events:400  message:458  notify:486  add_watch_query:556  run_watch_queries:591  watch_query_rows:647  close_watch_query:661
-```
-
-### `validate/v10_admin.py` — 664줄
-
-```
-_sources:168  _admin_guard_checks:189  _sql_strings:234  run:246  _session_checks:352  _pii_query_check:429  _scratch:476  _dict_reason_check:491  _dict_source_shown_check:507  _automation_checks:525  _queue_consumer_check:616  _queue_stale_shown_check:645  _ensure_tmp:661
 ```
 
 ### `report/render.py` — 652줄

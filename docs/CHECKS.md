@@ -8,7 +8,7 @@
 |---|--:|---|
 | ② 죽은 검사 — 통과도 실패도 한 적 없다 | **62** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **13** | 가이드가 판단 |
-| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
+| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **33** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
 
@@ -30,7 +30,7 @@
 | `S14` | 상수 등록·성격 (V4-17) | fatal | `tools/check_src.py:574` | **★ 없음** | 없음 | ref/E-attach.md:66 · chapters/20-verify/c-v3v4.md:201 · chapters/20-verify/c-v3v4.md:207 |
 | `S14-1` | 화면에 배점을 박지 않음 (V4-17) | fatal | `tools/check_src.py:607` | **★ 없음** | 없음 | — |
 | `S15` | 계층 의존 (STEP 15) | fatal | `tools/check_src.py:485` | **★ 없음** | 없음 | ref/E-attach.md:67 · guide/03_이력.md:108 · chapters/10-collect/00-intro.md:218 |
-| `S16` | 검증 코드 대조 | fatal | `tools/check_src.py:655` | **★ 없음** | 없음 | ref/E-attach.md:68 · ref/E-attach.md:206 · guide/03_이력.md:145 |
+| `S16` | 검증 코드 대조 | fatal | `tools/check_src.py:655` | **★ 없음** | 없음 | ref/E-attach.md:68 · ref/E-attach.md:207 · guide/03_이력.md:145 |
 | `S23` | 실행 환경 (Python 3.11+) | fatal | `tools/check_src.py:662` | **★ 없음** | 없음 | ref/E-attach.md:75 · guide/03_이력.md:249 · chapters/00-standard.md:15 |
 | `S24` | 시험 격리 (운영 DB 미사용) | fatal | `tools/check_src.py:681` | **★ 없음** | 없음 | ref/E-attach.md:76 · guide/03_이력.md:253 · chapters/00-standard.md:94 |
 | `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:701` | **★ 없음** | 없음 | ref/E-attach.md:77 · guide/01_요구사항.md:829 · guide/01_요구사항.md:838 |
@@ -41,7 +41,7 @@
 | `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:865` | **★ 없음** | 없음 | guide/03_원칙지적.md:98 · guide/03_원칙지적.md:108 · guide/03_이력.md:346 |
 | `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:947` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1531 |
 | `S34-2` | 표의 소스·검사가 실재 | fatal | `tools/check_src.py:948` | **★ 없음** | 없음 | chapters/00-standard.md:1532 |
-| `S34-3` | 추적표 빈 칸을 센다 | fatal | `tools/check_src.py:899` | **★ 없음** | 없음 | chapters/00-standard.md:1533 · trace/05-score.md:7 · trace/05-score.md:124 |
+| `S34-3` | 추적표 빈 칸을 센다 | fatal | `tools/check_src.py:899` | **★ 없음** | 없음 | chapters/00-standard.md:1533 · chapters/00-standard.md:1715 · trace/05-score.md:7 |
 | `S34-4` | 규격이 표에 있음 | fatal | `tools/check_src.py:958` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1534 |
 | `S35-1` | 자기 칸만 고침 | fatal | `tools/check_src.py:970` | **★ 없음** | 없음 | guide/03_이력.md:357 · chapters/00-standard.md:1563 |
 | `S36-1` | 「정식 서비스 착수」 목록이 있음 | fatal | `tools/check_src.py:987` | **★ 없음** | 없음 | guide/03_이력.md:366 · chapters/00-standard.md:1600 · trace/00-standard.md:402 |
@@ -175,7 +175,7 @@
 | `V4-11b` | 판정에 안 쓰는 미분류 경로 | run | `validate/v4_mapping.py:55` | **★ 없음** | 2026-08-17 05:33 | guide/01_요구사항.md:18 · guide/01_요구사항.md:27 · guide/03_이력.md:129 |
 | `V4-11` | unclassified 존재 | run | `validate/v4_mapping.py:52` | **★ 없음** | 2026-08-17 05:33 | guide/01_시작.md:214 · guide/01_시작.md:224 · guide/01_요구사항.md:18 |
 | `V4-12` | facet 필수 축 집합 존재 | run | `validate/v4_mapping.py:70` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:182 |
-| `V4-13` | 매직 넘버 없음 (tools/check_src.py S7) | run | `validate/v4_mapping.py:73` | 2026-08-17 05:33 | 없음 | ref/A-check.md:6 · ref/E-attach.md:59 · ref/E-attach.md:106 |
+| `V4-13` | 매직 넘버 없음 (tools/check_src.py S7) | run | `validate/v4_mapping.py:73` | 2026-08-17 05:33 | 없음 | ref/A-check.md:6 · ref/E-attach.md:59 · ref/E-attach.md:107 |
 | `V4-19` | 성격(kind)이 없는 Check 가 없음 | run | `validate/v4_mapping.py:94` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:132 · chapters/20-verify/00-intro.md:112 · chapters/20-verify/c-v3v4.md:189 |
 | `V4-20` | dict_option_code 에 문장(공백·한글)이 없음 | run | `validate/v4_mapping.py:109` | 2026-08-17 05:33 | 2026-08-16 08:34 | guide/03_이력.md:138 · chapters/20-verify/c-v3v4.md:190 · chapters/10-collect/e-catalog.md:174 |
 | `V4-21` | 같은 이름의 공개 함수가 두 모듈에 없음 | run | `validate/v4_mapping.py:105` | 2026-08-16 23:59 | 2026-08-17 05:33 | guide/03_이력.md:144 · chapters/30-score/h-verdict.md:67 · chapters/20-verify/c-v3v4.md:191 |
@@ -185,6 +185,8 @@
 | `V4-25` | 판정에 쓰는 축의 사전이 비어 있지 않음 | run | `validate/v4_mapping.py:81` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:230 · guide/03_이력.md:267 · chapters/00-standard.md:202 |
 | `V4-26` | 미분류가 원인별로 갈려 있음 | run | `validate/v4_mapping.py:58` | **★ 없음** | 없음 | guide/01_요구사항.md:640 · guide/01_요구사항.md:650 · guide/03_이력.md:348 |
 | `V4-27` | 판정을 막는 것만 막음 | run | `validate/v4_mapping.py:64` | **★ 없음** | 없음 | guide/01_요구사항.md:640 · guide/01_요구사항.md:650 · guide/03_이력.md:348 |
+| `V4-28` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:374 · chapters/31-registry.md:652 |
+| `V4-29` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:374 · chapters/31-registry.md:664 |
 | `V5-01` | 배점 합계 == config 총점 | run | `validate/v5_value.py:16` | 2026-08-17 05:33 | 없음 | chapters/20-verify/d-v5.md:7 |
 | `V5-02` | 표시용 등급 점수가 비율과 일치 | run | `validate/v5_value.py:19` | 2026-08-17 05:33 | 2026-08-16 23:01 | chapters/20-verify/d-v5.md:8 |
 | `V5-03` | 분모 시험 A·D·E·G·H·I 통과 | run | `validate/v5_value.py:22` | 2026-08-17 05:33 | 2026-08-16 22:44 | chapters/20-verify/d-v5.md:9 · chapters/20-verify/d-v5.md:20 |
@@ -455,6 +457,8 @@
 - `V3-66` — guide/02_결함대장.md:130 · guide/02_결함대장.md:140 · guide/03_이력.md:333
 - `V3-67` — guide/01_요구사항.md:209 · guide/01_요구사항.md:219 · guide/03_이력.md:335
 - `V3-69` — guide/03_이력.md:338 · chapters/30-score/a-frame.md:751
+- `V4-28` — guide/03_이력.md:374 · chapters/31-registry.md:652
+- `V4-29` — guide/03_이력.md:374 · chapters/31-registry.md:664
 - `V6-01` — chapters/41-view.md:675 · chapters/61-web.md:328
 - `V7-14` — guide/03_이력.md:362 · chapters/42-watch.md:427
 - `V9-01` — guide/03_이력.md:316 · chapters/50-multisite.md:214 · chapters/50-multisite.md:298

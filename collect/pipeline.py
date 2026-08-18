@@ -538,7 +538,14 @@ def run_recalc(conn: sqlite3.Connection, ctx, executors: dict, reason: str,
     plan = plan_recalc(conn, reason, scope, origin)
     if not plan["steps"]:
         return []
-    return run_pipeline(conn, ctx, executors, steps=tuple(plan["steps"]))
+    # ★★ 이어서 도는 것이다.  앞 단계는 이미 끝나 있다 —
+    #   done 을 안 넘기면 S5 의 선행 S4 가 영원히 「미완료」다.
+    #   실측 08-18 — 웹·예약으로 넣은 재계산 60건이 전부
+    #   「S5: 선행 조건 미충족: 선행 단계 미완료: S4」로 죽어 있었다.
+    #   ★ 한 번도 성공한 적이 없다.  큐는 도는데 일이 안 된 것이다
+    #   ★ diagnose() 는 처음부터 completed_steps 를 쓴다 — 여기만 빠져 있었다
+    return run_pipeline(conn, ctx, executors, steps=tuple(plan["steps"]),
+                        done=completed_steps(conn))
 
 
 # ── STEP 50b 진단 모드 ───────────────────────────────────────────────

@@ -560,6 +560,29 @@ def _automation_checks(conn, rid):
             bad26.append(f"목록을 {saved[0]}쪽 받아 두고도 "
                          "listing_updated 로 큐에 든 작업이 없다")
 
+    # ★★ 「큐에 들었다」와 「이어서 돌았다」는 다르다.
+    #   실측 08-18 — 큐에는 60건이 들었고 60건 전부
+    #   「S5: 선행 단계 미완료: S4」로 죽어 있었다.  한 번도 성공한 적이 없다.
+    #   그런데 이 검사는 「큐에 있다」만 보고 통과하고 있었다
+    # ★ 「돌 수 있는가」를 본다 — 「돈 적이 있는가」가 아니다.
+    #   지금 상태에서 각 사유의 첫 단계가 선행 조건을 통과하는지 실제로 묻는다
+    from collect.pipeline import (
+        REPROCESS_TABLE, completed_steps, precheck, web_reasons,
+    )
+
+    # ★ 큐에 들어갈 수 있는 사유만 본다.  전면 재수집(site_response_shape)은
+    #   CLI 전용이고 사람이 S0 부터 돈다 — 그것까지 세면 거짓 경보가 된다
+    steps_done = completed_steps(conn)
+    if steps_done:
+        for _reason in web_reasons():
+            _plan = REPROCESS_TABLE[_reason]
+            if not _plan.steps:
+                continue
+            _ok, _why = precheck(conn, _plan.steps[0], steps_done)
+            if not _ok:
+                bad26.append(f"{_reason} 를 큐에 넣어도 못 돈다 "
+                             f"— {_plan.steps[0]}: {_why}")
+
     # V10-27 — 앞 단계가 안 끝났는데 다음으로 갔는가
     gone = conn.execute(
         "SELECT COUNT(*) FROM recalc_job WHERE status='done'"
