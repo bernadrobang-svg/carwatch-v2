@@ -38,6 +38,16 @@
 {% endif %}
 
 {% if count %}
+{% if site_buttons %}
+<!-- 사이트별로 거르기 (개정 306).  ★ 사이트 이름은 config/sites.json 이 정본 -->
+<p class="sitebar">
+  {% for b in site_buttons %}
+  {% if b.on %}<span class="btn on" title="지금 이 사이트만 봅니다">{{ b.label }}</span>{% endif %}
+  {% if !b.on %}<a class="btn" href="/listings?site={{ b.q }}&sell_type={{ b.sell }}"
+    title="이 사이트 매물만 봅니다">{{ b.label }}</a>{% endif %}
+  {% endfor %}
+</p>
+{% endif %}
 <table class="rows car-rows">
 <thead><tr>
 <th class="c">사진</th><th class="c">♡</th>

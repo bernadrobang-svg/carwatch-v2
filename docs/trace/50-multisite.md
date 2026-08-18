@@ -55,7 +55,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | MS-021 | `[화면]` | 매물마다 어느 사이트에서 왔는지 | `[마스터]` **「UI 는 이게 출처를 알아야 하고」** | `50-multisite` | `report/screens/build.py::_row` | 목록 21열 | V9-06 | ○ |
 | MS-022 | `[화면]` | 배지에 판매 유형도 — 「K카 직영」 | `[마스터]` 위와 같음 | `50-multisite` | `report/screens/build.py::site_badge` | 화면 없음 | V9-06 | ◐ |
-| MS-023 | `[화면]` | 사이트별로 거를 수 있게 | `[마스터]` 위와 같음 | `50-multisite` | 미구현 | 필터 | V9-06 · V9-07 | ○ |
+| MS-023 | `[화면]` | 사이트별로 거를 수 있게 | `[마스터]` 위와 같음 | `50-multisite` | `report/screens/build.py::_listings_where` | 필터 | V9-06 · V9-07 | ○ |
 | MS-024 | `[화면]` | `/why` 에 「어디서 무엇을 받았는가」 절 | `[마스터]` 위와 같음 | `50-multisite` | `report/screens/build.py::_axis_state` | `/why`④ | V9-06 · V9-07 | ○ |
 
 ## K카 직영 (개정 312)

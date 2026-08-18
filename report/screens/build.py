@@ -737,8 +737,17 @@ ORDER_SQL = {
 
 # ★ E 와 NOT_RATED 는 뒤로.  비교 대상이 아니다
 ORDER_HEAD = ("(CASE WHEN s.grade IN ('E','NOT_RATED') THEN 1 ELSE 0 END)")
+# ★★ 같은 점수면 사이트 보증이 높은 쪽이 앞이다 (개정 306 · V9-09).
+#   마스터 — 「최고급 우선이야」.  그 우선이 정렬에도 들어간다.
+#   ★ 사이트 이름으로 올리지 않는다 — ⑤ 사이트 보증 축의 점수로 올린다.
+#     K카 직거래까지 올리면 안 된다 (규격 금지)
+SITE_WARRANTY_ORDER = (
+    "(SELECT a.score FROM result_axis a WHERE a.listing_id = l.listing_id"
+    "   AND a.calc_version = s.calc_version AND a.axis = 'warranty.site')"
+    " DESC")
 # ★ 타이브레이커가 없으면 같은 점수가 페이지마다 다르게 나온다 (V6-07)
 ORDER_TAIL = ("(s.earned * 1.0 / NULLIF(s.denominator, 0)) DESC,"
+              f" {SITE_WARRANTY_ORDER},"
               " l.price_current_won ASC, l.listing_id ASC")
 
 
@@ -757,8 +766,18 @@ def _view_str(key: str, root: str = ".") -> str:
 def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
     갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
-    where = ["l.site = ?"]
-    args: list = [flt.site]
+    # ★ 사이트별로 거를 수 있게 한다 — 「엔카만」 「K카 직영만」 「전부」 (개정 306).
+    #   ★ site 가 비면 「전부」다.  전에는 늘 encar 로 고정돼 전부를 볼 수 없었다
+    where: list = []
+    args: list = []
+    if flt.site:
+        where.append("l.site = ?")
+        args.append(flt.site)
+    if getattr(flt, "sell_type", None):
+        where.append("l.sell_type = ?")
+        args.append(flt.sell_type)
+    if not where:
+        where.append("1=1")
     if flt.target_key:
         where.append("l.target_key = ?")
         args.append(flt.target_key)

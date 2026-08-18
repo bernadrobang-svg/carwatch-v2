@@ -42,6 +42,12 @@ C: dict[str, Check] = {
                    "합이 만점과 다르면 그 사이트는 만점을 못 받거나 넘는다 "
                    "(개정 365)",
                    KIND_CODE),
+    "V9-09": Check("V9", "V9-09", "같은 점수에서 사이트 보증이 높은 쪽이 앞",
+                   FATAL, "run",
+                   "마스터 — 「최고급 우선이야」.  그 우선이 정렬에도 들어간다. "
+                   "★ 사이트 이름으로 올리지 않는다 — ⑤ 사이트 보증 축의 "
+                   "점수로 올린다.  K카 직거래까지 올리면 안 된다 (개정 306)",
+                   KIND_CODE),
     "V9-07": Check("V9", "V9-07", "합친 값에 출처가 붙어 있음", FATAL, "run",
                    "「자차 미가입 10개월 (K카 제공)」처럼 어느 사이트 원문에서 "
                    "온 값인지 사람이 알아야 한다.  값이 다르면 둘 다 낸다 "
@@ -192,7 +198,45 @@ def _warranty_sum_check(rid):
                   not bad, bad[:4])
 
 
+def _tie_break_check(conn, rid):
+    """V9-09 — 같은 점수에서 사이트 보증이 높은 쪽이 앞인가 (개정 306).
+
+    마스터 — 「최고급 우선이야」.  그 우선이 정렬에도 들어간다
+    ★ 사이트 이름으로 올리지 않는다 — ⑤ 사이트 보증 축의 점수로 올린다
+    ★ 「정렬식에 들어 있다」로 통과시키지 않는다.  실제로 앞서는지 본다
+    """
+    from report.screens.build import SITE_WARRANTY_ORDER, order_clause
+
+    bad = []
+    if "warranty.site" not in order_clause("rank"):
+        bad.append("정렬에 사이트 보증이 없다")
+        return result(C["V9-09"], rid, "앞선다", "없다", False, bad)
+    del SITE_WARRANTY_ORDER
+    # ★ 같은 비율인 짝을 찾아 실제 순서를 본다
+    rows = conn.execute(
+        "SELECT s.listing_id,"
+        " ROUND(s.earned * 1.0 / NULLIF(s.denominator, 0), 6) AS r,"
+        " (SELECT a.score FROM result_axis a"
+        "    WHERE a.listing_id = s.listing_id"
+        "      AND a.calc_version = s.calc_version"
+        "      AND a.axis = 'warranty.site') AS w"
+        " FROM result_score s WHERE s.denominator > 0"
+        " ORDER BY r DESC, w DESC, s.listing_id").fetchall()
+    pairs = 0
+    for i in range(len(rows) - 1):
+        a, b = rows[i], rows[i + 1]
+        if a[1] != b[1] or a[2] is None or b[2] is None:
+            continue
+        pairs += 1
+        if a[2] < b[2]:
+            bad.append(f"매물 {a[0]}(보증 {a[2]}) 이 {b[0]}(보증 {b[2]}) 보다 앞")
+    if not pairs:
+        return not_applicable(C["V9-09"], rid,
+                              "비율이 같은 매물 짝이 없다 — 잴 것이 없다")
+    return result(C["V9-09"], rid, "앞선다", f"{pairs}짝", not bad, bad[:4])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     return [_badge_check(rid), _origin_check(conn, rid),
-            _warranty_sum_check(rid)]
+            _warranty_sum_check(rid), _tie_break_check(conn, rid)]

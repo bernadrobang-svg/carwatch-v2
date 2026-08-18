@@ -112,6 +112,9 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
     rows = view_listings(account, conn, flt, _cfg("finance.json", root), root)
     return page(conn, account, "매물", "listings.html",
                 {"rows": rows, "count": len(rows), "filter": flt,
+                 # 사이트별로 거르는 단추 (개정 306).
+                 # ★ 쓰는 사이트가 하나면 안 낸다 — 늘 켜진 단추는 조작이 아니다
+                 "site_buttons": _site_buttons(flt, root),
                  # ★ 「3,471건 중 200건 · 1/18쪽」 (V11-55).
                  #   200건만 보이면서 전체를 안 적으면 3,471건을 못 본다
                  "paging": _paging(conn, flt, len(rows), root),
@@ -345,6 +348,37 @@ def _manwon(won) -> str:
     return f"{(won or 0) // WON_PER_MANWON:,}만"
 
 
+def _site_buttons(flt, root: str = ROOT) -> list:
+    """사이트별로 거르는 단추 (개정 306 — 「엔카만」 「K카 직영만」 「전부」).
+
+    ★ 사이트 이름을 코드에 박지 않는다.  config/sites.json 이 정본이다
+    ★ 쓰는 사이트가 하나뿐이면 단추를 안 낸다 —
+      늘 켜져 있는 단추 하나는 조작이 아니다
+    """
+    from store.crosssite import active_sites, load_sites
+
+    import os as _o
+
+    sites = load_sites(_o.path.join(root, "config", "sites.json"))
+    live = active_sites(sites)
+    if len(live) < 2:
+        return []
+    out = [{"label": "전부", "q": "all", "sell": "",
+            "on": not flt.site}]
+    for name in live:
+        one = sites.get(name) or {}
+        label = one.get("label") or name
+        tails = one.get("sell_type_labels") or {}
+        if not tails:
+            out.append({"label": f"{label}만", "q": name, "sell": "",
+                        "on": flt.site == name and not flt.sell_type})
+            continue
+        for key, tail in tails.items():
+            out.append({"label": f"{label} {tail}만", "q": name, "sell": key,
+                        "on": flt.site == name and flt.sell_type == key})
+    return out
+
+
 def _filter_chips(flt) -> list:
     """지금 걸린 조건.  ★ × 를 누르면 그 조건만 빠진다 (STEP 149d)."""
     import urllib.parse as _u
@@ -561,7 +595,10 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
                                 q.get("target") or None)
         price_max = cap if price_max is None else min(price_max, cap)
     return ListingFilter(
-        site=q.get("site") or "encar",
+        # ★ site=all 이면 전부 (개정 306).  없으면 기본 사이트다
+        site=(None if (q.get("site") or "") == "all"
+              else (q.get("site") or "encar")),
+        sell_type=q.get("sell_type") or None,
         target_key=q.get("target") or None,
         grade=q.get("grade") or None,
         axis=q.get("axis") or None,

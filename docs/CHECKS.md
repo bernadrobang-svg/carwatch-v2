@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **317개**
+검사 **318개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **63** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **64** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **13** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **38** | 개발측 |
 
@@ -56,8 +56,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:45` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:56 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:48` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:51` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:141` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:138` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:61` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
@@ -84,8 +84,8 @@
 | `V2-07` | 전건 NULL 컬럼 | run | `validate/v2_load.py:41` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:103 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:144 |
 | `V2-08` | 값 종류 1인 컬럼 | run | `validate/v2_load.py:121` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:104 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:145 |
 | `V2-09` | core_pii 를 직접 조회하는 코드 없음 | run | `validate/v2_load.py:44` | 2026-08-17 05:33 | 없음 | SCHEMA.md:37 · guide/03_이력.md:84 · chapters/11-store/b-core.md:480 |
-| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-10b` | core_* 에 마스킹 컬럼 없음 | run | `validate/v2_load.py:57` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:121 |
+| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-11` | plate_hash 가 전건 16자 hex | run | `validate/v2_load.py:118` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:438 · chapters/20-verify/b-v1v2.md:122 · trace/11-store.md:45 |
 | `V2-12` | secrets/plate_hmac.key 가 버전 관리 밖 | run | `validate/v2_load.py:53` | 2026-08-17 05:33 | 없음 | chapters/60-admin/00-intro.md:173 · chapters/20-verify/b-v1v2.md:123 |
 | `V2-13` | core_record 에 record_plate_no 원본 없음 | run | `validate/v2_load.py:80` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:635 · chapters/20-verify/b-v1v2.md:124 |
@@ -166,8 +166,8 @@
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:171 · chapters/20-verify/c-v3v4.md:287 |
 | `V4-04` | 매핑표에 없는 CORE 컬럼 | run | `validate/v4_mapping.py:89` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:172 |
 | `V4-05` | 원문 경로 수 변동 | run | `validate/v4_mapping.py:91` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:295 · chapters/20-verify/c-v3v4.md:173 · chapters/20-verify/c-v3v4.md:300 |
-| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-06` | RAW 경로가 등록부에 있는가 | run | `validate/v4_mapping.py:34` | 2026-08-17 05:33 | 2026-08-16 23:59 | chapters/31-registry.md:58 · chapters/31-registry.md:203 · chapters/31-registry.md:211 |
+| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-07` | in_use 인데 core_column NULL | run | `validate/v4_mapping.py:40` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:286 · chapters/60-admin/b-ops.md:121 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:177 · trace/RULES.md:200 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:178 |
@@ -221,8 +221,9 @@
 | `V9-04` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:317 · chapters/50-multisite.md:217 · chapters/50-multisite.md:347 |
 | `V9-05` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:317 · chapters/50-multisite.md:361 · trace/02-collect.md:68 |
 | `V9-06` | 매물마다 사이트 배지가 있음 | run | `validate/v9_multisite.py:33` | **★ 없음** | 없음 | guide/01_요구사항.md:449 · guide/01_요구사항.md:459 · guide/03_이력.md:318 |
-| `V9-07` | 합친 값에 출처가 붙어 있음 | run | `validate/v9_multisite.py:45` | **★ 없음** | 없음 | guide/01_요구사항.md:449 · guide/01_요구사항.md:459 · guide/03_이력.md:318 |
+| `V9-07` | 합친 값에 출처가 붙어 있음 | run | `validate/v9_multisite.py:51` | **★ 없음** | 없음 | guide/01_요구사항.md:449 · guide/01_요구사항.md:459 · guide/03_이력.md:318 |
 | `V9-08` | — | — | **★ 코드에 없다** | — | — | guide/01_요구사항.md:168 · guide/01_요구사항.md:178 · guide/03_이력.md:319 |
+| `V9-09` | 같은 점수에서 사이트 보증이 높은 쪽이 앞 | run | `validate/v9_multisite.py:45` | **★ 없음** | 없음 | guide/01_요구사항.md:168 · guide/01_요구사항.md:178 · guide/03_이력.md:319 |
 | `V9-10` | 사이트 보증 항목의 합이 만점과 같음 | run | `validate/v9_multisite.py:39` | **★ 없음** | 없음 | guide/03_이력.md:358 · chapters/30-score/f-table.md:404 · chapters/20-verify/c-v3v4.md:107 |
 | `V10-01` | admin 전용을 user 로 호출 시 PolicyError | run | `validate/v10_admin.py:28` | 2026-08-17 05:33 | 없음 | chapters/60-admin/c-tools.md:767 · trace/13-pipeline.md:17 |
 | `V10-02` | 서버 권한 검증 존재 (화면 숨김 아님) | run | `validate/v10_admin.py:31` | 2026-08-17 05:33 | 없음 | chapters/60-admin/c-tools.md:768 |
@@ -436,6 +437,7 @@
 - `V7-15` 진행 메모를 자유롭게 적을 수 있음 — `validate/v7_watch.py`
 - `V9-06` 매물마다 사이트 배지가 있음 — `validate/v9_multisite.py`
 - `V9-07` 합친 값에 출처가 붙어 있음 — `validate/v9_multisite.py`
+- `V9-09` 같은 점수에서 사이트 보증이 높은 쪽이 앞 — `validate/v9_multisite.py`
 - `V9-10` 사이트 보증 항목의 합이 만점과 같음 — `validate/v9_multisite.py`
 
 ## ⑤ ★ 규격이 요구했는데 코드에 없는 검사

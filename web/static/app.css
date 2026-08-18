@@ -1930,3 +1930,7 @@ svg.line circle { fill:var(--amber); }
   .shot-big { width:100% }
   .shot-thumbs img { width:80px; height:60px }
 }
+
+/* 사이트별 거르기 단추 (개정 306).  ★ 사이트가 둘 이상일 때만 나온다 */
+.sitebar { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 }
+.sitebar .btn.on { background:var(--ink); color:var(--surface); cursor:default }

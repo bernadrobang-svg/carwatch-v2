@@ -170,7 +170,10 @@ class ListingRow:
 
 @dataclass(frozen=True)
 class ListingFilter:
-    site: str = "encar"
+    # ★ 비면 「전부」다 (개정 306).  「엔카만」 「K카 직영만」 「전부」
+    site: str | None = "encar"
+    # 판매 유형 — 「K카 직영만」 (sites.json sell_type_labels)
+    sell_type: str | None = None
     target_key: str | None = None
     grade: str | None = None
     axis: str | None = None  # Component 이름 'spec.hud'
