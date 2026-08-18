@@ -48,9 +48,12 @@
       "chapters/61-web/e-compare.md",
       "chapters/61-web/f-width.md",
       "chapters/61-web/g-chart.md"
+    ],
+    "등급": [
+      "chapters/30-score/g-absolute.md"
     ]
   },
-  "_canon_note": "배점·화면 정본이 어디 있는가 (개정 342 · SPEC-2026.08.18-r342). ★ 전에는 ref/F-scoring.md · ref/G-screens.md 였다 — 기준은 부록이 아니라 본문에 둔다는 원칙 때문에 옮겨졌다. ★ 옮겨지면 여기만 고친다 — 검사 여섯이 이 값을 읽는다",
+  "_canon_note": "배점·화면 정본이 어디 있는가 (개정 342 · SPEC-2026.08.18-r342). ★ 전에는 ref/F-scoring.md · ref/G-screens.md 였다 — 기준은 부록이 아니라 본문에 둔다는 원칙 때문에 옮겨졌다. ★ 옮겨지면 여기만 고친다 — 검사 여섯이 이 값을 읽는다 ★ 「등급」은 경계(S90·A80…)의 정본이다 — 지시서 전체를 훑으면 다른 글의 「A 50」 같은 줄을 주워 헛걸린다 (실측 08-18: guide/04_질의.md)",
   "unclassified_sample_bodies": 200,
   "_unclassified_sample_note": "미분류를 원인별로 가를 때 엔드포인트마다 원문 몇 개를 열어 보는가 (개정 341). ★ 전건을 열면 오래 걸린다 — 「값이 늘 비어 있는가」는 표본으로 충분하다"
 }

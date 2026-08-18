@@ -50,9 +50,12 @@ def _sites() -> dict:
         return json.load(f)
 
 
-def active_sites() -> list:
-    return [k for k, v in _sites().items()
-            if isinstance(v, dict) and v.get("status") == "active"]
+def live_sites() -> list:
+    """쓰는 사이트.  ★ store 의 것을 쓴다 — 같은 이름의 공개 함수를
+    두 모듈에 두지 않는다 (V4-21).  「active」의 뜻은 store 가 정한다."""
+    from store.crosssite import active_sites
+
+    return active_sites(_sites())
 
 
 def _labels() -> set:
@@ -134,7 +137,7 @@ def _origin_check(conn, rid):
     ★ 사이트가 하나뿐이면 합칠 것이 없다 — 그때는 「해당 없음」이다.
       「사이트가 하나라서 통과」와 「출처를 붙였으니 통과」는 다르다
     """
-    live = active_sites()
+    live = live_sites()
     if len(live) < 2:
         return not_applicable(
             C["V9-07"], rid,

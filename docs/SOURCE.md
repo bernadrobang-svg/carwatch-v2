@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 131개 · 총 42,053줄
+파일 131개 · 총 42,170줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,13 +12,13 @@
 | `tests/test_spec_ui.py` | 1,450 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `collect/runner.py` | 1,317 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,212 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
-| `validate/v3_logic.py` | 1,134 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 1,138 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `report/screens/admin.py` | 1,000 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `tools/verify_axes.py` | 988 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `store/core.py` | 937 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `store/adminops.py` | 931 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `validate/v2_load.py` | 872 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
-| `tools/check_src.py` | 814 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
+| `tools/check_src.py` | 837 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `tests/test_score.py` | 782 | 7장 판정·채점 시험. |
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
 | `collect/pipeline.py` | 689 | 실행 순서 · 중단 · 재처리 · 재개. |
@@ -42,6 +42,7 @@
 | `tests/test_pipeline.py` | 382 | 5장 수집 순서 시험. |
 | `tests/test_collect.py` | 368 | 2장 수집 시험. |
 | `tools/sync_registry.py` | 345 | RAW 경로 전수 → meta_field_usage. |
+| `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `report/views.py` | 322 | 리포트 DTO (L9). |
 | `tools/render_screens.py` | 321 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/build_dict.py` | 298 | RAW → 사전 생성. |
@@ -59,7 +60,6 @@
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
 | `tests/test_report.py` | 244 | 9장 리포트 시험. |
 | `validate/v5_value.py` | 242 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
-| `tools/light_check.py` | 238 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `tests/test_store.py` | 233 | 3장 테이블 시험. |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `tools/check_screens.py` | 230 | 화면 ↔ 시안 대조 (10장 · 14장). |
@@ -74,8 +74,8 @@
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `tools/migrate.py` | 174 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
+| `validate/v9_multisite.py` | 166 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
-| `validate/v9_multisite.py` | 163 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
 | `score/adjust.py` | 145 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `tools/repair_facet_chunks.py` | 144 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
@@ -176,10 +176,10 @@ CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_nam
 rec:31  Client:41  text:96  links:101  start_server:105  seed_admin:149  m1:165  m2:253  m3:327  m4:631  s3:696  unit:749  gaps:778  flows:886  guide7:987  _account_id:1116  make_users:1123  main:1141  _write_table:1190
 ```
 
-### `validate/v3_logic.py` — 1,134줄
+### `validate/v3_logic.py` — 1,138줄
 
 ```
-_file_output_checks:244  _conflict_checks:297  _diagnosis_count_check:321  _hda_source_check:337  _sort_determinism:348  _warning_contract_checks:365  _list_observed_source_check:460  _facet_reconcile_check:490  _denominator_check:513  _core_axis_check:541  _rental_cross_check:559  _why_cheap_check:597  _source_before_value_check:638  _absolute_cut_check:665  _spec_files:691  _confirm_ratio_check:701  _spec_axis_check:751  _site_axis_checks:792  _rendered_why:840  _rendered_listings:850  _fill_gap_check:860  _points_sum_check:893  _market_gap_check:910  run:966  _shuffle_check:1077  _halt_dict_check:1102  _ensure_tmp:1131
+_file_output_checks:244  _conflict_checks:297  _diagnosis_count_check:321  _hda_source_check:337  _sort_determinism:348  _warning_contract_checks:365  _list_observed_source_check:460  _facet_reconcile_check:490  _denominator_check:513  _core_axis_check:541  _rental_cross_check:559  _why_cheap_check:597  _source_before_value_check:638  _absolute_cut_check:665  _spec_files:695  _confirm_ratio_check:705  _spec_axis_check:755  _site_axis_checks:796  _rendered_why:844  _rendered_listings:854  _fill_gap_check:864  _points_sum_check:897  _market_gap_check:914  run:970  _shuffle_check:1081  _halt_dict_check:1106  _ensure_tmp:1135
 ```
 
 ### `report/screens/admin.py` — 1,000줄
@@ -212,7 +212,7 @@ QueryLog:51  QueryResult:64  ApiSnapshot:73  DevRequest:84  RecalcJob:99  Scorin
 DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:304  _not_null_check:387  _chained_subscript_check:404  _Boom:452  _salvage_check:460  _table_exists:501  _exception_shape_checks:507  _schema_sync_check:573  _pii_access_check:610  gap_alerts:647  diff_prev_day:663  explain_gap:685  _pii_column_check:717  _secret_key_check:735  _parser_common_fields_check:773  _null_target_not_judged_check:824  _null_target_visible_check:849
 ```
 
-### `tools/check_src.py` — 814줄
+### `tools/check_src.py` — 837줄
 
 ```
 _spec_files:33  _read_spec:51  say:62  py_files:76  chapter_of:116  _declared_chapters:126  split_done:146  _illustration:165  _retired_config_keys:229  _git:652
@@ -356,6 +356,12 @@ check:34  R:40  test_verify_shape:45  _Stub:80  _Clock:88  test_fetch_status:93 
 FieldUsage:31  RegistrySyncReport:48  facet_path:66  scan_paths:74  shape_ok:79  _walk_values:92  collect_values:106  collect_paths:130  _seed_for:153  sync_registry:164  suggest_usage:246  write_suggested:258  halt_report:285  list_by_usage:308  assert_registered:315
 ```
 
+### `tools/light_check.py` — 325줄
+
+```
+_repair_max:45  _cfg:63  _run:68  collecting:74  screen_counts:95  db_counts:121  measure:139  index_counts:161  changed:185  _worse:203  failing:207  repair:220  main:253
+```
+
 ### `report/views.py` — 322줄
 
 ```
@@ -456,12 +462,6 @@ check:33  test_finance:40  test_display:92  _pipeline:108  test_layers:119  test
 
 ```
 run:60  _grade_ratio_checks:151  _denominator_suite:193
-```
-
-### `tools/light_check.py` — 238줄
-
-```
-_cfg:39  _run:44  collecting:50  screen_counts:71  db_counts:97  measure:111  index_counts:132  changed:156  _worse:174  main:178
 ```
 
 ### `tests/test_store.py` — 233줄

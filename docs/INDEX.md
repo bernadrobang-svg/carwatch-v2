@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**81파일 · 24,000줄 · 969KB**
+**82파일 · 24,259줄 · 970KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -49,10 +49,10 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md` | 499 | 12 |
+| `chapters/30-score/f-table.md` | 543 | 14 |
 | `chapters/30-score/g-absolute.md` | 139 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
-| `chapters/31-registry.md` | 607 | 25 |
+| `chapters/31-registry.md` | 611 | 25 |
 | `chapters/40-report.md` | 639 | 21 |
 | `chapters/41-view.md` | 738 | 24 |
 | `chapters/42-watch.md` | 683 | 25 |
@@ -76,8 +76,9 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 368 | 77 |
+| `guide/03_이력.md` | 370 | 78 |
 | `guide/04_구성.md` | 37 | 2 |
+| `guide/04_질의.md` | 256 | 5 |
 | `guide/05_노션.md` | 188 | 5 |
 | `ref/00-intro.md` | 25 | 0 |
 | `ref/A-check.md` | 68 | 3 |
@@ -87,7 +88,7 @@
 | `ref/E-attach.md` | 521 | 19 |
 | `ref/F-scoring.md` | 12 | 0 |
 | `ref/G-screens.md` | 12 | 0 |
-| `trace/00-standard.md` | 438 | 26 |
+| `trace/00-standard.md` | 391 | 19 |
 | `trace/02-collect.md` | 100 | 5 |
 | `trace/05-score.md` | 137 | 7 |
 | `trace/11-store.md` | 130 | 8 |

@@ -671,8 +671,12 @@ def _absolute_cut_check(rid):
     with open(os.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
         cuts = json.load(f)["grade_cuts"]
-    # ★ 규격의 표에서 읽는다.  코드에 두 벌 두면 어느 쪽이 정본인지 모른다
-    text = "\n".join(b for _f, b in _spec_files())
+    # ★ 규격의 표에서 읽는다.  코드에 두 벌 두면 어느 쪽이 정본인지 모른다.
+    #   ★ 지시서 전체를 훑지 않는다 — 다른 글의 「A   50 으로 되돌린다」
+    #     같은 줄을 주워 헛걸린다 (실측 08-18 · guide/04_질의.md)
+    from validate.base import canon_text
+
+    text = canon_text("등급", root)
     want = {g: int(n) / 100
             for g, n in re.findall(
                 r"^\s*(?:필수\s+)?([SABCD])\s+(\d{2})%?\s*(?:이상)?", text,

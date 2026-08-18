@@ -804,6 +804,29 @@ try:
                           f"— 주기 {_every}시간의 {_LIGHT_STALE_FACTOR}배를 넘었다")
     say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)",
         0 if _bad29 else 1, [], _bad29)
+
+    # ── S29-4 점검이 고친다 (개정 339) ──────────────────────────────
+    # ★ 「재기만 한다」는 폐기됐다.  점검이 찾은 fatal 이
+    #   다음 점검까지 그대로 남아 있으면 고치는 사람이 없는 것이다
+    _bad294 = []
+    _light_dir = os.path.join(ROOT, "outputs", "light")
+    _keeps = sorted(f for f in os.listdir(_light_dir)
+                    if f.endswith(".md")) if os.path.isdir(_light_dir) else []
+    if not os.path.isfile(_last):
+        _bad294.append("가벼운 점검 기록이 없다")
+    else:
+        with io.open(_last, encoding="utf-8") as _fh:
+            _cur = json.load(_fh)
+        if "고친 것" not in _cur:
+            _bad294.append("점검이 「고친 것」을 안 남긴다 — 개정 339 이전 판이다")
+        # 고칠 수 있는 것(REPAIRS)에 걸리는 fatal 이 두 차례 이어지면 결함이다
+        _asked = _cur.get("물어야 하는 것") or []
+        _stuck = [x for x in _asked if "상한" in x]
+        if _stuck:
+            _bad294.append(f"상한에 걸려 못 고친 것 {len(_stuck)}건 — "
+                           "다음 차례에 고쳐야 한다")
+    say("S29-4", "점검이 찾은 fatal 을 고침",
+        0 if _bad294 else 1, [], _bad294)
 except Exception as _e:                                  # noqa: BLE001
     say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)", 0, [],
         [f"점검 상태를 못 읽었다: {_e}"])

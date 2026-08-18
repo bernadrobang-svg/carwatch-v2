@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **292개**
+검사 **293개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **38** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **39** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **12** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **35** | 개발측 |
 
@@ -37,6 +37,7 @@
 | `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:751` | **★ 없음** | 없음 | ref/E-attach.md:79 · guide/02_결함대장.md:163 · guide/02_결함대장.md:173 |
 | `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:774` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · ref/E-attach.md:80 |
 | `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:805` | **★ 없음** | 없음 | guide/03_원칙지적.md:84 · guide/03_원칙지적.md:94 · guide/03_이력.md:342 |
+| `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:828` | **★ 없음** | 없음 | guide/03_원칙지적.md:98 · guide/03_원칙지적.md:108 · guide/03_이력.md:346 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:18 · guide/03_이력.md:337 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:43 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:65 · guide/03_이력.md:337 |
@@ -47,8 +48,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:45` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:57 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:48` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:51` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:133` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:130` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:61` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
@@ -75,8 +76,8 @@
 | `V2-07` | 전건 NULL 컬럼 | run | `validate/v2_load.py:41` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:103 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:144 |
 | `V2-08` | 값 종류 1인 컬럼 | run | `validate/v2_load.py:121` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:104 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:145 |
 | `V2-09` | core_pii 를 직접 조회하는 코드 없음 | run | `validate/v2_load.py:44` | 2026-08-17 05:33 | 없음 | SCHEMA.md:37 · guide/03_이력.md:84 · chapters/11-store/b-core.md:480 |
-| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-10b` | core_* 에 마스킹 컬럼 없음 | run | `validate/v2_load.py:57` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:121 |
+| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-11` | plate_hash 가 전건 16자 hex | run | `validate/v2_load.py:118` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:438 · chapters/20-verify/b-v1v2.md:122 |
 | `V2-12` | secrets/plate_hmac.key 가 버전 관리 밖 | run | `validate/v2_load.py:53` | 2026-08-17 05:33 | 없음 | chapters/60-admin/00-intro.md:173 · chapters/20-verify/b-v1v2.md:123 |
 | `V2-13` | core_record 에 record_plate_no 원본 없음 | run | `validate/v2_load.py:80` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:635 · chapters/20-verify/b-v1v2.md:124 |
@@ -139,8 +140,8 @@
 | `V3-52` | 「싸다」에 이유가 붙어 있음 | run | `validate/v3_logic.py:196` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:141 · guide/01_요구사항.md:150 · guide/03_이력.md:306 |
 | `V3-53` | 점검 출처가 판정에 반영됨 | run | `validate/v3_logic.py:201` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:307 · chapters/30-score/a-frame.md:614 · trace/05-score.md:82 |
 | `V3-54` | 렌트 이력을 세 곳에서 대조 | run | `validate/v3_logic.py:205` | 2026-08-17 05:33 | 2026-08-16 23:01 | guide/03_이력.md:309 · chapters/30-score/a-frame.md:658 · trace/05-score.md:58 |
-| `V3-55` | 사이트 보증 축이 config 규칙을 읽는가 | run | `validate/v3_logic.py:179` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · trace/05-score.md:81 |
-| `V3-56` | 배점 합이 605 | run | `validate/v3_logic.py:184` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:1318 · chapters/30-score/f-table.md:491 · trace/05-score.md:17 |
+| `V3-55` | 사이트 보증 축이 config 규칙을 읽는가 | run | `validate/v3_logic.py:179` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · chapters/30-score/f-table.md:395 · trace/05-score.md:81 |
+| `V3-56` | 배점 합이 605 | run | `validate/v3_logic.py:184` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:1318 · chapters/30-score/f-table.md:535 · trace/05-score.md:17 |
 | `V3-57` | 등급이 555 기준 | run | `validate/v3_logic.py:187` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · trace/05-score.md:18 |
 | `V3-58` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:325 · chapters/30-score/a-frame.md:718 · trace/05-score.md:35 |
 | `V3-62` | 원문이 없는데 값을 만든 축이 없음 | run | `validate/v3_logic.py:166` | 2026-08-17 05:00 | 2026-08-17 05:33 | guide/02_결함대장.md:116 · guide/02_결함대장.md:126 · guide/03_이력.md:330 |
@@ -362,6 +363,7 @@
 - `S27` 기능마다 화면 (CLI 는 완성이 아니다) — `tools/check_src.py`
 - `S28` 검사 색인 (규격 ↔ 코드) — `tools/check_src.py`
 - `S29-0` 가벼운 점검 (4시간 · 실제로 돎) — `tools/check_src.py`
+- `S29-4` 점검이 찾은 fatal 을 고침 — `tools/check_src.py`
 - `S3` 함수 정의 — `tools/check_src.py`
 - `S4` 매물 적재 — `collect/runner.py`
 - `S5` config 키 (V4-15) — `tools/check_src.py`
