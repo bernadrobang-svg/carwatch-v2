@@ -1087,6 +1087,9 @@ def view_market(account: Account, conn, target_key: str,
     return MarketView(target_key, [row], list(hist), curve,
                       price_bins=_price_bins(prices, target_key, root=root),
                       by_year=_by_year(conn, target_key),
+                      # 연식별 중앙값을 선으로 (개정 340 · V11-119).
+                      # ★ 표로만 내면 기울기가 안 보인다
+                      year_line=_year_line(_by_year(conn, target_key), root),
                       by_trim=_by_trim(conn, target_key),
                       other_targets=_other_targets(conn, target_key))
 
@@ -1178,6 +1181,32 @@ def _by_year(conn, target_key: str) -> list:
         out.append(Bucket(f"{ym}년", None, None, counts[ym],
                           _median(prices) if enough else None,
                           f"/listings?target={target_key}&year={ym}", enough))
+    return out
+
+
+def _year_line(rows: list, root: str = ".") -> list:
+    """연식별 중앙값을 선으로 그릴 좌표 (개정 340).
+
+    ★ 화면이 좌표를 계산하지 않는다 (STEP 152).  여기서 낸다
+    ★ 표본이 모자란 해는 점을 찍지 않는다 — 이으면 없는 값을 만든다
+    """
+    got = [(r.label, r.median_won) for r in rows if r.median_won]
+    if len(got) < 2:
+        return []
+    got.sort()                       # 연식 오름차순 — 왼쪽이 옛 차다
+    pad = _view_cfg("chart_line_pad_pct", root)
+    lo = min(v for _y, v in got)
+    hi = max(v for _y, v in got)
+    span = (hi - lo) or 1
+    room = 100 - pad * 2
+    out = []
+    for i, (year, won) in enumerate(got):
+        out.append({
+            "year": year, "won": won,
+            "x": round(i * 100 / (len(got) - 1), 1),
+            # ★ 위가 비싼 쪽이다.  SVG 는 아래가 y 가 크다 — 뒤집는다
+            "y": round(pad + room - (won - lo) * room / span, 1),
+        })
     return out
 
 
@@ -1372,8 +1401,10 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
             account, conn, ListingFilter(calc_version=calc_version),
             fin_cfg, root, with_state=False)[:5],
         grade_counts=grade_counts,
-        grade_rows=[{"grade": k, "count": v}
-                    for k, v in grade_counts.items()],
+        # ★ 막대 높이를 화면이 계산하지 않는다 (STEP 152).
+        #   첫 화면에 그림이 하나도 없으면 무엇이 있는지 모른다 (개정 340)
+        grade_rows=_bars([{"grade": k, "count": v}
+                          for k, v in grade_counts.items()], "count", root),
         grade_total=conn.execute(
             "SELECT COUNT(*) FROM result_score WHERE calc_version=?",
             (calc_version,)).fetchone()[0],
@@ -1390,6 +1421,21 @@ STEP_LABELS = {"list": "S1 목록", "detail": "S5 상세",
                "inspection": "S5 성능점검", "record": "S5 이력",
                "diagnosis": "S6a 진단", "catalog": "S7 카탈로그",
                "facet": "S2 분류"}
+
+
+def _bars(rows: list, key: str, root: str = ".") -> list:
+    """막대 높이(%)를 붙인다 (개정 340).
+
+    ★ 화면이 나눗셈을 하지 않는다 (STEP 152).  여기서 낸다
+    ★ 0 이 아닌데 안 보이면 「없다」로 읽힌다 — 최소 높이를 준다
+    """
+    least = _view_cfg("chart_bar_min_pct", root)
+    top = max((r.get(key) or 0) for r in rows) if rows else 0
+    for one in rows:
+        got = one.get(key) or 0
+        one["pct"] = (max(least, round(got * 100 / top))
+                      if top and got else 0)
+    return rows
 
 
 def _grade_counts(conn, calc_version: str) -> dict:

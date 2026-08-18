@@ -313,6 +313,8 @@ class MarketView:
     # 가격 분포 · 연식별 중앙값 · 트림별.  ★ 표본 5건 미만은 내지 않는다
     price_bins: list = field(default_factory=list)
     by_year: list = field(default_factory=list)
+    # 연식별 중앙값 선 (개정 340) — {year · won · x · y}
+    year_line: list = field(default_factory=list)
     by_trim: list = field(default_factory=list)
     other_targets: list = field(default_factory=list)
 

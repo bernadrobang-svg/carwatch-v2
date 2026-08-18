@@ -471,6 +471,14 @@ tr.ex:hover td { opacity:.8 }
 .steps i.on { background:var(--amber) }
 .steps i.done { background:var(--down) }
 .hist { display:flex;align-items:flex-end;gap:3px;height:130px; padding:0 4px;margin-bottom:6px }
+/* ★ 막대 자체는 공통이다.  body.s-market 에만 걸려 있어
+   다른 화면에서는 막대가 안 보였다 (실측 08-18 · 개정 340) */
+.hist .b { flex:1;background:var(--line2);border-radius:2px 2px 0 0;
+           position:relative;cursor:pointer;min-height:3px;
+           transition:background .12s }
+/* 등급 막대 — 등급 색을 그대로 쓴다 (개정 340) */
+.hist .b.grade-b { background:var(--dim) }
+.hist .b.grade-b:hover { background:var(--amber) }
 .hist .b:hover { background:var(--dim) }
 .hist .b.mine { background:var(--amber) }
 .hist .b .n { position:absolute;top:-16px;left:0;right:0;text-align:center; font-family:var(--mono);font-size:10px;color:var(--faint) }
@@ -1821,3 +1829,24 @@ body.s-listings main { max-width:1560px; }
   .cat-rows td[data-label="걸린 매물"],
   .reg-rows td[data-label="관측"]   { grid-column:span 2; }
 }
+
+/* ── 시세 위치 (개정 340 · V11-119) ─────────────────────────────
+   ★ 「3,100만 ─── ● 4,550만 ─── 6,000만」.
+     퍼센트만 내면 싼 것인지 감이 안 온다 — 자리를 보여 준다 */
+.pos { position:relative; height:26px; margin:6px 4px 2px; }
+.pos .line { position:absolute; left:0; right:0; top:12px; height:2px;
+             background:var(--line2); border-radius:1px; }
+.pos .mid { position:absolute; top:6px; width:2px; height:14px;
+            background:var(--dim); transform:translateX(-1px); }
+.pos .me { position:absolute; top:0; transform:translateX(-50%);
+           color:var(--amber); font-size:16px; line-height:26px; }
+.posx { display:flex; justify-content:space-between; margin:0 4px 6px;
+        font-family:var(--mono); font-size:11px; color:var(--faint); }
+.posx .md { color:var(--dim); }
+
+/* ── 감가 곡선 (개정 340 · V11-119) ─────────────────────────────
+   ★ 선으로 보면 기울기가 보인다.  표로만 내면 안 보인다 */
+svg.line { display:block; width:100%; height:140px; margin:6px 0 2px; }
+svg.line polyline { fill:none; stroke:var(--amber); stroke-width:1.2;
+                    vector-effect:non-scaling-stroke; }
+svg.line circle { fill:var(--amber); }

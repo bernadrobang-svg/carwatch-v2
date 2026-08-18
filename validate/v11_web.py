@@ -316,6 +316,12 @@ C = {
                      "마스터 실측 — 약 1200px 에서 「A 8 0 _ 2 5 T」로 "
                      "한 자씩 떨어졌다.  V11-78 은 좁은 폭만 봤다",
                      KIND_CODE),
+    "V11-119": Check("V11", "V11-119", "화면마다 부록 G 가 정한 차트가 있음",
+                     FATAL, "run",
+                     "마스터 지적 — 「차트가 안 보이잖아」. "
+                     "차트가 없으면 왜 없는지 적는다.  ★ 자리를 비워 두지 "
+                     "않는다 (개정 340)",
+                     KIND_CODE),
     "V11-110": Check("V11", "V11-110", "상세 절 순서가 부록 G 와 같음",
                      FATAL, "run",
                      "순서가 판단 순서다 — 값을 먼저 보고 근거를 나중에 본다. "
@@ -1996,6 +2002,44 @@ def _width_checks(rid):
     ]
 
 
+# 화면 : (렌더 파일, 있어야 할 차트 표시, 없을 때 적어야 할 말)
+# ★ 어느 화면에 어떤 차트인지는 부록 G 14장-7 이 정한다
+CHART_SCREENS = {
+    "home": ("class=\"hist\"", "분포를 낼 수 없습니다"),
+    "market": ("svg class=\"line\"", "선을 낼 수 없습니다"),
+    "why_listing_id": ("class=\"pos\"", "분포를 내지 않습니다"),
+    "dealers": ("class=\"quad\"", "표본"),
+    "watch": ("class=\"spark\"", "추이 없음"),
+}
+
+
+def _chart_check(rid):
+    """V11-119 — 화면마다 차트가 있는가 (개정 340).
+
+    ★ 마스터 지적 — 「차트가 안 보이잖아」
+    ★ 차트가 없으면 「왜 없는지」가 있어야 한다.  자리를 비워 두지 않는다
+    """
+    base = os.path.join(ROOT, "outputs", "render")
+    if not os.path.isdir(base):
+        return not_applicable(C["V11-119"], rid, "렌더 결과가 없다")
+    bad, seen = [], 0
+    for name, (mark, why) in sorted(CHART_SCREENS.items()):
+        path = os.path.join(base, f"{name}.html")
+        if not os.path.isfile(path):
+            continue
+        seen += 1
+        html = open(path, encoding="utf-8").read()
+        if mark in html:
+            continue
+        if why in html:
+            continue                  # 차트가 없는 까닭을 적었다
+        bad.append(f"{name} — 차트({mark})도 없고 왜 없는지도 안 적었다")
+    if not seen:
+        return not_applicable(C["V11-119"], rid, "차트 화면 렌더가 없다")
+    return result(C["V11-119"], rid, f"{seen}화면", f"{seen - len(bad)}화면",
+                  not bad, bad[:6])
+
+
 def _screen_contradiction_check(rid):
     """V11-105 — 화면 위아래가 어긋나지 않는가 (개정 325).
 
@@ -2179,7 +2223,8 @@ def _v1_parity_checks(rid):
             if not any(x in src_b for x in in_v2):
                 bad69.append(f"{v2_name} — {op}")
     return [_photo_size_by_screen_check(rid), _template_leak_check(rid),
-            _em_dash_check(rid), *_card_shape_checks(rid),
+            _em_dash_check(rid), _chart_check(rid),
+            *_card_shape_checks(rid),
             *_width_checks(rid),
             _why_order_check(rid),
             _screen_contradiction_check(rid),

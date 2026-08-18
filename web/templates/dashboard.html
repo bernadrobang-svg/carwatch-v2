@@ -9,6 +9,25 @@
 {% endif %}
 
 <h2>등급 분포 {{ d.grade_total | num }}건 · 전 차종</h2>
+<!-- 차트 (개정 340) — ★ 첫 화면에 그림이 하나도 없으면
+     무엇이 있는지를 모릅니다.  막대를 누르면 그 등급 매물로 갑니다 -->
+{% if d.grade_rows %}
+<div class="card">
+  <div class="hist">
+    {% for r in d.grade_rows %}<a class="b grade-b" href="/listings?grade={{ r.grade }}"
+      style="height:{{ r.pct }}%"
+      title="{{ r.grade }} 등급 {{ r.count | num }}건"><span class="n">{{ r.count | num }}</span></a>{% endfor %}
+  </div>
+  <div class="histx">
+    {% for r in d.grade_rows %}<span>{{ r.grade }}</span>{% endfor %}
+  </div>
+  <div class="hnote dim">막대를 누르면 그 등급 매물로 갑니다.
+    막대 위 숫자가 건수입니다.</div>
+</div>
+{% endif %}
+{% if !d.grade_rows %}
+<p class="muted">판정된 매물이 없어 분포를 낼 수 없습니다.</p>
+{% endif %}
 <table>
 <thead><tr>{% for r in d.grade_rows %}<th class="num">{{ r.grade }}</th>{% endfor %}</tr></thead>
 <tbody><tr>{% for r in d.grade_rows %}<td class="num"><a href="/listings?grade={{ r.grade }}">{{ r.count | num }}</a></td>{% endfor %}</tr></tbody>

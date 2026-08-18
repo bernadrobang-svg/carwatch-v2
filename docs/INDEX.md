@@ -9,12 +9,12 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**82파일 · 24,259줄 · 970KB**
+**83파일 · 24,973줄 · 1,003KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - guide/01_요구사항.md 841줄
-- chapters/00-standard.md 1,570줄
+- chapters/00-standard.md 1,677줄
 - chapters/61-web.md 2,223줄
 - chapters/60-admin/c-tools.md 1,032줄
 
@@ -23,7 +23,7 @@
 | `ENCAR_API.md` | 183 | 7 |
 | `KCAR_API.md` | 140 | 5 |
 | `README.md` | 57 | 1 |
-| `chapters/00-standard.md`  ★ | 1,570 | 68 |
+| `chapters/00-standard.md`  ★ | 1,677 | 72 |
 | `chapters/01-arch.md` | 227 | 8 |
 | `chapters/10-collect/00-intro.md` | 368 | 14 |
 | `chapters/10-collect/a-endpoint.md` | 301 | 11 |
@@ -34,7 +34,7 @@
 | `chapters/10-collect/e-catalog.md` | 200 | 7 |
 | `chapters/11-store/00-intro.md` | 95 | 3 |
 | `chapters/11-store/a-key.md` | 531 | 22 |
-| `chapters/11-store/b-core.md` | 690 | 24 |
+| `chapters/11-store/b-core.md` | 708 | 25 |
 | `chapters/11-store/c-result.md` | 217 | 7 |
 | `chapters/12-dict.md` | 592 | 23 |
 | `chapters/13-pipeline.md` | 641 | 24 |
@@ -53,9 +53,9 @@
 | `chapters/30-score/g-absolute.md` | 139 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 611 | 25 |
-| `chapters/40-report.md` | 639 | 21 |
-| `chapters/41-view.md` | 738 | 24 |
-| `chapters/42-watch.md` | 683 | 25 |
+| `chapters/40-report.md` | 755 | 26 |
+| `chapters/41-view.md` | 744 | 25 |
+| `chapters/42-watch.md` | 713 | 26 |
 | `chapters/50-multisite.md` | 445 | 15 |
 | `chapters/60-admin/00-intro.md` | 219 | 8 |
 | `chapters/60-admin/a-auth.md` | 388 | 14 |
@@ -76,30 +76,31 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 370 | 78 |
+| `guide/03_이력.md` | 382 | 81 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
+| `guide/05_가이드역할.md` | 294 | 9 |
 | `guide/05_노션.md` | 188 | 5 |
 | `ref/00-intro.md` | 25 | 0 |
 | `ref/A-check.md` | 68 | 3 |
-| `ref/B-config.md` | 401 | 12 |
+| `ref/B-config.md` | 404 | 12 |
 | `ref/C-fixture.md` | 65 | 2 |
 | `ref/D-update.md` | 32 | 1 |
-| `ref/E-attach.md` | 521 | 19 |
+| `ref/E-attach.md` | 523 | 19 |
 | `ref/F-scoring.md` | 12 | 0 |
 | `ref/G-screens.md` | 12 | 0 |
-| `trace/00-standard.md` | 391 | 19 |
+| `trace/00-standard.md` | 445 | 23 |
 | `trace/02-collect.md` | 100 | 5 |
-| `trace/05-score.md` | 137 | 7 |
+| `trace/05-score.md` | 174 | 8 |
 | `trace/11-store.md` | 130 | 8 |
 | `trace/12-dict.md` | 101 | 6 |
 | `trace/13-pipeline.md` | 92 | 6 |
 | `trace/14-web.md` | 177 | 11 |
 | `trace/20-verify.md` | 90 | 6 |
-| `trace/31-registry.md` | 97 | 5 |
-| `trace/40-report.md` | 102 | 5 |
+| `trace/31-registry.md` | 98 | 5 |
+| `trace/40-report.md` | 131 | 8 |
 | `trace/41-view.md` | 152 | 9 |
-| `trace/42-watch.md` | 124 | 7 |
+| `trace/42-watch.md` | 129 | 8 |
 | `trace/50-multisite.md` | 105 | 7 |
 | `trace/60-admin.md` | 363 | 20 |
 

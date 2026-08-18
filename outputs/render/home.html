@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>현황 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=c14ef7c7e3">
+<link rel="stylesheet" href="/static/app.css?v=e6e963934e">
 
 </head>
 <body class="s-dashboard">
@@ -99,6 +99,35 @@
 
 
 <h2>등급 분포 3,528건 · 전 차종</h2>
+<!-- 차트 (개정 340) — ★ 첫 화면에 그림이 하나도 없으면
+     무엇이 있는지를 모릅니다.  막대를 누르면 그 등급 매물로 갑니다 -->
+
+<div class="card">
+  <div class="hist">
+    <a class="b grade-b" href="/listings?grade=S"
+      style="height:0%"
+      title="S 등급 0건"><span class="n">0</span></a><a class="b grade-b" href="/listings?grade=A"
+      style="height:2%"
+      title="A 등급 14건"><span class="n">14</span></a><a class="b grade-b" href="/listings?grade=B"
+      style="height:10%"
+      title="B 등급 228건"><span class="n">228</span></a><a class="b grade-b" href="/listings?grade=C"
+      style="height:14%"
+      title="C 등급 318건"><span class="n">318</span></a><a class="b grade-b" href="/listings?grade=D"
+      style="height:100%"
+      title="D 등급 2,296건"><span class="n">2,296</span></a><a class="b grade-b" href="/listings?grade=E"
+      style="height:29%"
+      title="E 등급 672건"><span class="n">672</span></a><a class="b grade-b" href="/listings?grade=NOT_RATED"
+      style="height:0%"
+      title="NOT_RATED 등급 0건"><span class="n">0</span></a>
+  </div>
+  <div class="histx">
+    <span>S</span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>NOT_RATED</span>
+  </div>
+  <div class="hnote dim">막대를 누르면 그 등급 매물로 갑니다.
+    막대 위 숫자가 건수입니다.</div>
+</div>
+
+
 <table>
 <thead><tr><th class="num">S</th><th class="num">A</th><th class="num">B</th><th class="num">C</th><th class="num">D</th><th class="num">E</th><th class="num">NOT_RATED</th></tr></thead>
 <tbody><tr><td class="num"><a href="/listings?grade=S">0</a></td><td class="num"><a href="/listings?grade=A">14</a></td><td class="num"><a href="/listings?grade=B">228</a></td><td class="num"><a href="/listings?grade=C">318</a></td><td class="num"><a href="/listings?grade=D">2,296</a></td><td class="num"><a href="/listings?grade=E">672</a></td><td class="num"><a href="/listings?grade=NOT_RATED">0</a></td></tr></tbody>
@@ -412,7 +441,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 11:23</span>
+  <span>2026-08-18 11:50</span>
 </footer>
 
 </body>

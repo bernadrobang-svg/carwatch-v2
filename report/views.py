@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from contracts import RegressionReport  # noqa: F401
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 
@@ -124,6 +124,8 @@ class ScoreView:
     component_count: int = 0
     # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 (50-multisite · V9-06)
     site_badge: str = ""
+    # 시세 분포 위의 자리 (개정 340).  ★ 표본이 모자라면 why 만 있다
+    market_pos: dict = field(default_factory=dict)
     # 등급 기준 (개정 292 · 306).  ★ 총점과 다르다
     grade_earned: float = 0.0
     grade_base: float = 0.0

@@ -36,6 +36,27 @@
   <a href="{{ all_url }}" title="차종 전체로 돌아갑니다">전체로</a></p>
 {% endif %}
 
+<!-- 감가 곡선 (개정 340 · V11-119) — ★ 표로만 내면 기울기가 안 보입니다 -->
+<h2>감가 곡선 <span class="more">연식별 중앙값</span></h2>
+{% if m.year_line %}
+<div class="card tight">
+  <svg class="line" viewBox="0 0 100 100" preserveAspectRatio="none"
+       role="img" aria-label="연식별 중앙값 선">
+    <polyline points="{% for p in m.year_line %}{{ p.x }},{{ p.y }} {% endfor %}"></polyline>
+    {% for p in m.year_line %}<circle cx="{{ p.x }}" cy="{{ p.y }}" r="1.6"></circle>{% endfor %}
+  </svg>
+  <p class="posx">
+    {% for p in m.year_line %}<span title="{{ p.year }} 중앙값 {{ p.won | won }}">{{ p.year }}</span>{% endfor %}
+  </p>
+  <p class="dim">왼쪽이 옛 차입니다. 기울기가 가파를수록 그 해에 값이 많이 떨어집니다.
+    표본 5건 미만인 해는 점을 찍지 않습니다 — 이으면 없는 값을 만듭니다.</p>
+</div>
+{% endif %}
+{% if !m.year_line %}
+<p class="muted">연식별 중앙값이 두 해 미만이라 선을 낼 수 없습니다.
+  아래 표로 대신 봅니다.</p>
+{% endif %}
+
 {% if m.price_bins %}
 <h2>가격 분포 <span class="more">막대를 누르면 그 구간 매물로</span></h2>
 <div class="card">

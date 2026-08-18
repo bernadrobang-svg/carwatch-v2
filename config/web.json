@@ -92,5 +92,8 @@
   "check_weekly_at": "Fri 02:00",
   "_check_note": "정기 점검 시각 (개정 334 · S29). 주간은 수집(04:00)보다 앞이다 — 결과를 보고 수집한다",
   "check_repair_max": 3,
-  "_check_repair_note": "4시간 점검이 한 번에 고치는 상한 (개정 339 · S29-4). ★ 한꺼번에 많이 고치면 무엇이 깨졌는지 모른다. 고쳐도 되는 것은 되돌릴 수 있고 규격이 정해진 것뿐이다 — tools/light_check.py 의 REPAIRS"
+  "_check_repair_note": "4시간 점검이 한 번에 고치는 상한 (개정 339 · S29-4). ★ 한꺼번에 많이 고치면 무엇이 깨졌는지 모른다. 고쳐도 되는 것은 되돌릴 수 있고 규격이 정해진 것뿐이다 — tools/light_check.py 의 REPAIRS",
+  "chart_bar_min_pct": 2,
+  "chart_line_pad_pct": 8,
+  "_chart_note": "차트 그리기 (개정 340 · V11-119). chart_bar_min_pct — 0 이 아닌데 안 보이면 「없다」로 읽힌다. chart_line_pad_pct — 위아래가 붙으면 점이 잘린다"
 }

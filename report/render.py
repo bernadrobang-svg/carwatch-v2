@@ -158,6 +158,50 @@ def _penalty_rows(raw) -> tuple:
     return tuple({"key": k, "points": p, "label": w} for k, p, w in got)
 
 
+def _market_pos(conn, listing_id: int, root: str = ".") -> dict:
+    """이 차가 시세 분포의 어디인가 (개정 340 · V11-119).
+
+    ★ 「−13.0%」만 내면 그것이 싼 것인지 감이 안 온다.
+      분포 위의 자리를 보면 눈으로 안다
+    ★ 표본이 모자라면 내지 않는다.  왜 없는지를 적는다 (개정 325)
+    """
+    import json as _j
+
+    with open(f"{root}/config/web.json", encoding="utf-8") as f:
+        need = int(_j.load(f)["market_min_sample"])
+    key = conn.execute(
+        "SELECT target_key, trim_badge, substr(year_month,1,4),"
+        " price_current_won FROM core_listing WHERE listing_id=?",
+        (listing_id,)).fetchone()
+    if not key or not all(key[:3]) or key[3] is None:
+        return {"why": "차종·트림·연식이나 가격이 없어 분포를 못 냅니다"}
+    prices = [r[0] for r in conn.execute(
+        "SELECT price_current_won FROM core_listing"
+        " WHERE status='active' AND price_current_won IS NOT NULL"
+        " AND target_key=? AND trim_badge=? AND substr(year_month,1,4)=?"
+        " AND (advertisement_type IS NULL OR advertisement_type='NORMAL')"
+        " ORDER BY price_current_won", key[:3])]
+    if len(prices) < need:
+        return {"why": f"같은 조건 매물이 {len(prices)}건뿐입니다 "
+                       f"— {need}건 미만이라 분포를 내지 않습니다"}
+    low, high, mine = prices[0], prices[-1], key[3]
+    mid = prices[len(prices) // 2]
+    span = high - low
+    if not span:
+        # ★ 전부 같은 값이면 분포가 없다.  가운데에 점을 찍으면
+        #   「가운데쯤이다」로 읽혀 없는 뜻이 생긴다
+        return {"why": f"같은 조건 {len(prices)}건이 모두 "
+                       f"{low:,}원이라 분포가 없습니다"}
+
+    def at(v):
+        return round((v - low) * 100 / span)
+
+    return {"low": low, "high": high, "mid": mid, "mine": mine,
+            "count": len(prices),
+            "mine_pct": max(0, min(at(high), at(mine))), "mid_pct": at(mid),
+            "cheaper": sum(1 for p in prices if p < mine)}
+
+
 def _site_badge(site, sell_type, root: str = ".") -> str:
     """사이트 배지.  ★ report/screens/build 와 같은 하나를 쓴다 (V4-21)."""
     from report.screens.build import site_badge
@@ -216,6 +260,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         versions=_stamp(conn, listing_id, calc_version),
         # ★ 값이 어느 사이트 원문에서 왔는지 사람이 알아야 한다
         site_badge=_site_badge(head[15], head[16], root),
+        # 시세 위치 — 「3,100만 ─── ● 4,550만 ─── 6,000만」 (개정 340)
+        market_pos=_market_pos(conn, listing_id, root),
         finance=build_finance(head[1], fin_cfg, head[0]),
         pending_items=tuple(pending), component_count=len(axes),
         grade_earned=float(head[11] or 0), grade_base=float(head[12] or 0),
