@@ -2,12 +2,12 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **315개**
+검사 **316개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **61** | 개발측 |
-| ④ 규격에 근거가 없는 검사 | **12** | 가이드가 판단 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **62** | 개발측 |
+| ④ 규격에 근거가 없는 검사 | **13** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
@@ -28,23 +28,24 @@
 | `S12` | 축 파일 STEP 주석 | fatal | `tools/check_src.py:458` | **★ 없음** | 없음 | ref/E-attach.md:64 · guide/01_시작.md:224 · chapters/13-pipeline.md:113 |
 | `S13` | 본문 config 예시 대조 | fatal | `tools/check_src.py:525` | **★ 없음** | 없음 | ref/B-config.md:290 · ref/D-update.md:23 · ref/E-attach.md:65 |
 | `S14` | 상수 등록·성격 (V4-17) | fatal | `tools/check_src.py:574` | **★ 없음** | 없음 | ref/E-attach.md:66 · chapters/20-verify/c-v3v4.md:201 · chapters/20-verify/c-v3v4.md:207 |
+| `S14-1` | 화면에 배점을 박지 않음 (V4-17) | fatal | `tools/check_src.py:607` | **★ 없음** | 없음 | — |
 | `S15` | 계층 의존 (STEP 15) | fatal | `tools/check_src.py:485` | **★ 없음** | 없음 | ref/E-attach.md:67 · guide/03_이력.md:108 · chapters/10-collect/00-intro.md:218 |
-| `S16` | 검증 코드 대조 | fatal | `tools/check_src.py:621` | **★ 없음** | 없음 | ref/E-attach.md:68 · ref/E-attach.md:206 · guide/03_이력.md:145 |
-| `S23` | 실행 환경 (Python 3.11+) | fatal | `tools/check_src.py:628` | **★ 없음** | 없음 | ref/E-attach.md:75 · guide/03_이력.md:249 · chapters/00-standard.md:15 |
-| `S24` | 시험 격리 (운영 DB 미사용) | fatal | `tools/check_src.py:647` | **★ 없음** | 없음 | ref/E-attach.md:76 · guide/03_이력.md:253 · chapters/00-standard.md:94 |
-| `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:667` | **★ 없음** | 없음 | ref/E-attach.md:77 · guide/01_요구사항.md:829 · guide/01_요구사항.md:838 |
-| `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:695` | **★ 없음** | 없음 | ref/E-attach.md:78 · guide/01_요구사항.md:829 · guide/01_요구사항.md:838 |
-| `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:754` | **★ 없음** | 없음 | ref/E-attach.md:79 · guide/02_결함대장.md:163 · guide/02_결함대장.md:173 |
-| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:777` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · ref/E-attach.md:80 |
-| `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:808` | **★ 없음** | 없음 | guide/03_원칙지적.md:84 · guide/03_원칙지적.md:94 · guide/03_이력.md:342 |
-| `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:831` | **★ 없음** | 없음 | guide/03_원칙지적.md:98 · guide/03_원칙지적.md:108 · guide/03_이력.md:346 |
-| `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:913` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1531 |
-| `S34-2` | 표의 소스·검사가 실재 | fatal | `tools/check_src.py:914` | **★ 없음** | 없음 | chapters/00-standard.md:1532 |
-| `S34-3` | 추적표 빈 칸을 센다 | fatal | `tools/check_src.py:865` | **★ 없음** | 없음 | chapters/00-standard.md:1533 · trace/05-score.md:7 · trace/05-score.md:124 |
-| `S34-4` | 규격이 표에 있음 | fatal | `tools/check_src.py:924` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1534 |
-| `S35-1` | 자기 칸만 고침 | fatal | `tools/check_src.py:936` | **★ 없음** | 없음 | guide/03_이력.md:357 · chapters/00-standard.md:1563 |
-| `S36-1` | 「정식 서비스 착수」 목록이 있음 | fatal | `tools/check_src.py:953` | **★ 없음** | 없음 | guide/03_이력.md:366 · chapters/00-standard.md:1600 · trace/00-standard.md:402 |
-| `S37-1` | 파는 쪽 개념이 안 남아 있음 | fatal | `tools/check_src.py:971` | **★ 없음** | 없음 | guide/03_이력.md:369 · chapters/00-standard.md:1669 · trace/00-standard.md:412 |
+| `S16` | 검증 코드 대조 | fatal | `tools/check_src.py:655` | **★ 없음** | 없음 | ref/E-attach.md:68 · ref/E-attach.md:206 · guide/03_이력.md:145 |
+| `S23` | 실행 환경 (Python 3.11+) | fatal | `tools/check_src.py:662` | **★ 없음** | 없음 | ref/E-attach.md:75 · guide/03_이력.md:249 · chapters/00-standard.md:15 |
+| `S24` | 시험 격리 (운영 DB 미사용) | fatal | `tools/check_src.py:681` | **★ 없음** | 없음 | ref/E-attach.md:76 · guide/03_이력.md:253 · chapters/00-standard.md:94 |
+| `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:701` | **★ 없음** | 없음 | ref/E-attach.md:77 · guide/01_요구사항.md:829 · guide/01_요구사항.md:838 |
+| `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:729` | **★ 없음** | 없음 | ref/E-attach.md:78 · guide/01_요구사항.md:829 · guide/01_요구사항.md:838 |
+| `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:788` | **★ 없음** | 없음 | ref/E-attach.md:79 · guide/02_결함대장.md:163 · guide/02_결함대장.md:173 |
+| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:811` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · ref/E-attach.md:80 |
+| `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:842` | **★ 없음** | 없음 | guide/03_원칙지적.md:84 · guide/03_원칙지적.md:94 · guide/03_이력.md:342 |
+| `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:865` | **★ 없음** | 없음 | guide/03_원칙지적.md:98 · guide/03_원칙지적.md:108 · guide/03_이력.md:346 |
+| `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:947` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1531 |
+| `S34-2` | 표의 소스·검사가 실재 | fatal | `tools/check_src.py:948` | **★ 없음** | 없음 | chapters/00-standard.md:1532 |
+| `S34-3` | 추적표 빈 칸을 센다 | fatal | `tools/check_src.py:899` | **★ 없음** | 없음 | chapters/00-standard.md:1533 · trace/05-score.md:7 · trace/05-score.md:124 |
+| `S34-4` | 규격이 표에 있음 | fatal | `tools/check_src.py:958` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1534 |
+| `S35-1` | 자기 칸만 고침 | fatal | `tools/check_src.py:970` | **★ 없음** | 없음 | guide/03_이력.md:357 · chapters/00-standard.md:1563 |
+| `S36-1` | 「정식 서비스 착수」 목록이 있음 | fatal | `tools/check_src.py:987` | **★ 없음** | 없음 | guide/03_이력.md:366 · chapters/00-standard.md:1600 · trace/00-standard.md:402 |
+| `S37-1` | 파는 쪽 개념이 안 남아 있음 | fatal | `tools/check_src.py:1005` | **★ 없음** | 없음 | guide/03_이력.md:369 · chapters/00-standard.md:1669 · trace/00-standard.md:412 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:18 · guide/03_이력.md:337 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:43 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:65 · guide/03_이력.md:337 |
@@ -55,8 +56,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:45` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:57 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:48` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:51` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
 | `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
+| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:141` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:138` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:61` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
@@ -165,14 +166,14 @@
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:171 · chapters/20-verify/c-v3v4.md:287 |
 | `V4-04` | 매핑표에 없는 CORE 컬럼 | run | `validate/v4_mapping.py:89` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:172 |
 | `V4-05` | 원문 경로 수 변동 | run | `validate/v4_mapping.py:91` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:295 · chapters/20-verify/c-v3v4.md:173 · chapters/20-verify/c-v3v4.md:300 |
-| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-06` | RAW 경로가 등록부에 있는가 | run | `validate/v4_mapping.py:34` | 2026-08-17 05:33 | 2026-08-16 23:59 | chapters/31-registry.md:58 · chapters/31-registry.md:203 · chapters/31-registry.md:211 |
+| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-07` | in_use 인데 core_column NULL | run | `validate/v4_mapping.py:40` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:286 · chapters/60-admin/b-ops.md:121 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:177 · trace/12-dict.md:42 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:178 |
 | `V4-10` | display_only 인데 core_column NULL | run | `validate/v4_mapping.py:49` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:289 · chapters/20-verify/c-v3v4.md:179 |
-| `V4-11` | unclassified 존재 | run | `validate/v4_mapping.py:52` | **★ 없음** | 2026-08-17 05:33 | guide/01_시작.md:214 · guide/01_시작.md:224 · guide/01_요구사항.md:18 |
 | `V4-11b` | 판정에 안 쓰는 미분류 경로 | run | `validate/v4_mapping.py:55` | **★ 없음** | 2026-08-17 05:33 | guide/01_요구사항.md:18 · guide/01_요구사항.md:27 · guide/03_이력.md:129 |
+| `V4-11` | unclassified 존재 | run | `validate/v4_mapping.py:52` | **★ 없음** | 2026-08-17 05:33 | guide/01_시작.md:214 · guide/01_시작.md:224 · guide/01_요구사항.md:18 |
 | `V4-12` | facet 필수 축 집합 존재 | run | `validate/v4_mapping.py:70` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:182 |
 | `V4-13` | 매직 넘버 없음 (tools/check_src.py S7) | run | `validate/v4_mapping.py:73` | 2026-08-17 05:33 | 없음 | ref/A-check.md:6 · ref/E-attach.md:59 · ref/E-attach.md:106 |
 | `V4-19` | 성격(kind)이 없는 Check 가 없음 | run | `validate/v4_mapping.py:94` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:132 · chapters/20-verify/00-intro.md:112 · chapters/20-verify/c-v3v4.md:189 |
@@ -371,6 +372,7 @@
 - `S12` 축 파일 STEP 주석 — `tools/check_src.py`
 - `S13` 본문 config 예시 대조 — `tools/check_src.py`
 - `S14` 상수 등록·성격 (V4-17) — `tools/check_src.py`
+- `S14-1` 화면에 배점을 박지 않음 (V4-17) — `tools/check_src.py`
 - `S15` 계층 의존 (STEP 15) — `tools/check_src.py`
 - `S16` 검증 코드 대조 — `tools/check_src.py`
 - `S2` 구조체 정의 — `tools/check_src.py`
@@ -463,6 +465,7 @@
 
 ## ④ 코드에 있는데 규격에 안 적힌 검사
 
+- `S14-1` 화면에 배점을 박지 않음 (V4-17) — `tools/check_src.py`
 - `V1-19` 이번 실행이 저장한 원문에 run_id 가 있음 — `validate/v1_collect.py`
 - `V1-20` 카탈로그를 모델당 1회만 받음 — `validate/v1_collect.py`
 - `V1-25` ok 로 저장된 원문이 온전한가 — `validate/v1_collect.py`

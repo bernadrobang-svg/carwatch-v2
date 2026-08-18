@@ -573,6 +573,40 @@ for p, src in SRC.items():
                 okn += 1
 say("S14", "상수 등록·성격 (V4-17)", okn, [], bad)
 
+# ★ 화면 글에 배점을 박았는가 (V4-17 · 개정 365).
+#   실측 08-19 — 목록이 「총점 605 중 555 기준」이라 적고 있었다.
+#   config 는 675/625 로 바뀐 지 하루가 지났는데 화면만 옛말을 했다.
+#   ★ 이것이 이 프로젝트가 막으려는 「선언과 실제의 괴리」다.
+#   숫자를 안 쓰는 것이 답이 아니라 config 에서 받아 쓰는 것이 답이다
+#   ★ 태그를 걷어낸 뒤 본다 — <strong>605</strong> 중 처럼 태그가 끼어 있다
+#   ★ 「STEP 135」·「개정 365」는 식별자다.  배점이 아니다 (V11-74 와 같은 갈래)
+_POINT_NEAR = re.compile(
+    r"(?<!\d)(?<!STEP )(?<!개정 )(?<!STEP)(?<!개정)"
+    r"(\d{3})(?!\d)\s{0,2}(?:점|중\s|기준)")
+_TPL_DIR = os.path.join(ROOT, "web", "templates")
+tpl_ok, tpl_bad = 0, []
+if os.path.isdir(_TPL_DIR):
+    for _name in sorted(os.listdir(_TPL_DIR)):
+        if not _name.endswith(".html"):
+            continue
+        _body = open(os.path.join(_TPL_DIR, _name), encoding="utf-8").read()
+        # 주석은 설명이다.  화면에 안 나온다
+        _body = re.sub(r"<!--.*?-->", "", _body, flags=re.S)
+        # ★ 값이 오는 자리는 뺀다 — {{ points.total }} 은 config 에서 온다
+        _body = re.sub(r"\{\{.*?\}\}|\{%.*?%\}", "", _body, flags=re.S)
+        # ★ 태그를 걷는다.  글로 보이는 것만 남긴다 —
+        #   placeholder="…42505007" 같은 속성값이 배점으로 잡히면 안 된다
+        _body = re.sub(r"<[^>]+>", " ", _body)
+        _hit = sorted({m.group(1) for m in _POINT_NEAR.finditer(_body)})
+        if _hit:
+            tpl_bad.append(
+                f"templates/{_name} — 배점을 글자로 박았다 ({' · '.join(_hit)}). "
+                f"config/scoring.json 에서 받는다 ({{{{ points.total }}}})")
+        else:
+            tpl_ok += 1
+say("S14-1", "화면에 배점을 박지 않음 (V4-17)", tpl_ok, [], tpl_bad)
+
+
 # ── S16 검증 코드 대조 (개선요청 3) ─────────────────────────────────
 # ★ 검증표는 지시서에 있는데 코드에 있는지 아무도 세지 않았다.
 #   이번에 33개가 조용히 비어 있었다.  대조는 기계로 된다

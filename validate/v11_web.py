@@ -3231,8 +3231,12 @@ def _context_supplied_check(conn, rid):
     seen: dict = {}
     orig = _views.page
 
+    # ★ page() 가 전 화면에 얹어 주는 값도 「넘긴 것」이다.
+    #   ctx 만 보면 「points 를 아무도 안 넘긴다」는 거짓 경보가 난다 (실측 08-19)
+    extras = _views.page_extras()
+
     def spy(conn_, account, title, template, ctx, **kw):
-        seen[template] = dict(ctx)
+        seen[template] = {**extras, **ctx}
         return orig(conn_, account, title, template, ctx, **kw)
 
     _views.page = spy

@@ -52,6 +52,29 @@ def _versions(conn: sqlite3.Connection) -> dict:
     return got
 
 
+def page_extras(root: str = ROOT) -> dict:
+    """page() 가 전 화면에 얹어 주는 값 (STEP 144).
+
+    ★ 여기 한 곳이 정본이다.  검사(V11-38)도 이것을 부른다 —
+      각자 목록을 들면 「아무도 안 넘긴다」는 거짓 경보가 난다
+    """
+    return {"points": _points(root)}
+
+
+def _points(root: str = ROOT) -> dict:
+    """배점.  ★ config 가 정본이다 — 화면에 숫자를 박지 않는다 (V4-13).
+
+    total   전체 만점
+    grade   등급을 매기는 기준 점수 (취향을 뺀 것)
+    taste   그 차이 — 「취향 N점을 뺀」에 쓴다
+    """
+    raw = _cfg("scoring.json", root)
+    total = int(raw["total_points"])
+    grade = int(raw.get("grade_base_points") or total)
+    return {"total": total, "grade": grade, "taste": total - grade,
+            "axes": len(raw.get("components") or {})}
+
+
 def page(conn, account, title: str, template: str, ctx: dict, *,
          csrf: str = "", flashes=None, root: str = ROOT,
          flash_key: str = "-", refresh_sec: int = 0) -> tuple:
@@ -67,10 +90,14 @@ def page(conn, account, title: str, template: str, ctx: dict, *,
     screen = "s-" + template.removesuffix(".html").replace("_", "-")
     p = build_page(conn, account, title, "", csrf=csrf, flashes=flashes,
                    refresh_sec=refresh_sec, screen=screen, **ver)
-    body = render(template, {"page": p, **ctx})
+    # ★ 배점을 화면에 박지 않는다.  배점이 바뀌면 화면이 거짓말이 된다.
+    #   실측 08-19 — 목록이 「총점 605 중 555 기준」이라 적고 있었다.
+    #   개정 365 로 675/625 가 된 지 하루가 지났는데 화면만 옛말을 했다
+    extra = page_extras(root)
+    body = render(template, {"page": p, **extra, **ctx})
     p = build_page(conn, account, title, body, csrf=csrf, flashes=flashes,
                    refresh_sec=refresh_sec, screen=screen, **ver)
-    html = render("_page.html", {"page": p, **ctx})
+    html = render("_page.html", {"page": p, **extra, **ctx})
     return HTTP_OK, {}, html.encode("utf-8")
 
 
