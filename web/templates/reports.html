@@ -1,0 +1,57 @@
+<h1>리포트</h1>
+<p class="muted">판정 결과를 파일로 낸 것입니다.
+  ★ <strong>누르면 여기서 바로 읽습니다.</strong>
+  내려받아야만 볼 수 있으면 휴대폰에서 못 봅니다.</p>
+
+{% if rep.open_name %}
+<!-- 팝업 — ★ JS 없이 닫힌다.  별도 경로다 (개정 357) -->
+<div class="pop">
+  <div class="pop-h">
+    <strong>{{ rep.open_name }}</strong>
+    <span class="pop-x"><a href="/reports">닫기</a></span>
+  </div>
+  <p class="muted">
+    <a class="btn" href="/reports/{{ rep.open_name }}">이 파일 내려받기</a>
+    <span class="dim">{{ rep.open_bytes | count }}바이트</span>
+  </p>
+  {% if rep.truncated %}
+  <p class="muted">★ 파일이 커서 앞부분만 냈습니다.
+    전체는 내려받으십시오.</p>
+  {% endif %}
+  {% if rep.open_rows %}
+  <table class="rows rep-rows">
+  <thead><tr>{% for h in rep.open_head %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for r in rep.open_rows %}
+  <tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  {% endif %}
+  {% if !rep.open_rows %}<pre class="rep-body">{{ rep.open_text }}</pre>{% endif %}
+</div>
+{% endif %}
+
+{% if rep.files %}
+<table class="rows rep-list">
+<thead><tr><th>무엇</th><th>파일</th><th class="r">크기</th><th>만든 때</th>
+  <th></th></tr></thead>
+<tbody>
+{% for f in rep.files %}
+<tr>
+  <td data-label="무엇"><a href="/reports?open={{ f.name }}"
+    title="여기서 바로 읽습니다">{{ f.label }}</a></td>
+  <td data-label="파일"><span class="dim">{{ f.ext }}</span></td>
+  <td class="num" data-label="크기">{{ f.bytes | count }}</td>
+  <td data-label="만든 때">{{ f.made_at | date }}</td>
+  <td data-label=""><a href="/reports/{{ f.name }}"
+    title="누를 때만 내려받습니다">내려받기</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !rep.files %}
+<p class="muted">아직 만든 리포트가 없습니다.
+  <code>python3.11 tools/report_cli.py</code> 가 만듭니다.</p>
+{% endif %}

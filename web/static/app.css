@@ -1888,3 +1888,16 @@ svg.line circle { fill:var(--amber); }
 .buy .muted { font-size:11px; margin:4px 0 0 }
 /* 미리보기의 실구매 총액 (개정 353).  ★ 표시가 아래에 붙는다 */
 #peek .pk-b { font-size:12px; color:var(--faint); margin-top:2px }
+
+/* 리포트 팝업 (개정 357).  ★ JS 없이 닫힌다 — 별도 경로다 */
+.pop { border:1px solid var(--line); border-radius:6px; background:var(--surface);
+       padding:10px 12px; margin:8px 0 14px }
+.pop-h { display:flex; justify-content:space-between; align-items:baseline;
+         gap:8px; border-bottom:1px solid var(--line); padding-bottom:6px }
+.pop-x a { font-size:12px }
+.rep-body { white-space:pre-wrap; word-break:break-word; font-size:12px;
+            max-height:60vh; overflow:auto; margin:8px 0 0 }
+.rep-list td, .rep-list th { white-space:nowrap }
+.rep-list td:first-child { white-space:normal; word-break:keep-all }
+.rep-rows { font-size:12px }
+.rep-rows td, .rep-rows th { white-space:nowrap }

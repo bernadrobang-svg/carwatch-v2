@@ -1892,6 +1892,47 @@ def _account_activity(conn) -> list:
     return account_activity(conn)
 
 
+def reports(conn, account, req, root: str = ROOT, csrf: str = "",
+            flash_key: str = "-", **_kw) -> tuple:
+    """리포트를 화면에서 읽는다 (개정 357 · V11-122).
+
+    마스터 확정 — 「목록을 보고 클릭하면 내용을 볼 수 있게 팝업 박스로.
+    다운로드 누를 때 다운로드」
+    ★ 열자마자 내려받지 않는다.  팝업은 JS 없이 닫힌다 — 별도 경로다
+    """
+    from report.screens.build import view_reports
+
+    want = (req.get("query", {}).get("open") or "").strip() or None
+    rv = view_reports(account, open_name=want, root=root)
+    return page(conn, account, "리포트", "reports.html", {"rep": rv},
+                root=root, csrf=csrf, flash_key=flash_key)
+
+
+def report_download(conn, account, req, path_vars: dict | None = None,
+                    root: str = ROOT, **_kw) -> tuple:
+    """누를 때만 내려받는다 (개정 357).
+
+    ★ 목록에 있는 것만 준다.  임의 경로를 받으면 파일이 새 나간다
+    """
+    from report.exports.export import CONTENT_TYPE, ENCODING, OUTPUT_DIR
+    from web.context import HTTP_OK
+    from report.screens.build import view_reports
+
+    del conn, req
+    name = (path_vars or {}).get("name", "")
+    known = {f.name: f for f in view_reports(account, root=root).files}
+    one = known.get(name)
+    if one is None:
+        raise ValidationError(f"없는 리포트입니다: {name[:60]}", step="STEP 91b")
+    with open(os.path.join(root, OUTPUT_DIR, one.name), "rb") as f:
+        body = f.read()
+    return HTTP_OK, {
+        "Content-Type": f"{CONTENT_TYPE[one.ext]}; charset={ENCODING}",
+        # ★ 파일 이름에 따옴표·줄바꿈이 못 들어간다 — 이름 규칙이 막는다
+        "Content-Disposition": f'attachment; filename="{one.name}"',
+    }, body
+
+
 HANDLERS = {
     "view_listings": listings,
     "view_why": why,
@@ -1899,6 +1940,8 @@ HANDLERS = {
     "view_dashboard": dashboard,
     "view_admin": admin_home,
     "view_admin_audit": admin_audit,
+    "view_reports": reports,
+    "view_report_download": report_download,
     "view_admin_docs": admin_docs,
     "view_recommend": recommend,
     "view_compare": compare,

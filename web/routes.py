@@ -57,6 +57,10 @@ ROUTES: tuple[Route, ...] = (
     Route("/market", (GET,), "view_market", ROLE_ANONYMOUS),
     Route("/dealers", (GET,), "view_dealers", ROLE_ANONYMOUS),
     Route("/notready", (GET,), "view_notready", ROLE_ANONYMOUS),
+    # 리포트 — ★ 목록만 내고 내용을 못 보게 하지 않는다 (개정 357 · V11-122).
+    #   /reports?open=… 이 팝업이다.  JS 없이 닫힌다 — 별도 경로다
+    Route("/reports", (GET,), "view_reports", ROLE_USER),
+    Route("/reports/{name}", (GET,), "view_report_download", ROLE_USER),
     Route("/watch", (GET,), "view_watch", ROLE_USER),
     Route("/watch/add", (POST,), "watch_add", ROLE_USER),
     Route("/watch/{watch_id}", (POST,), "watch_update", ROLE_USER),
@@ -99,6 +103,13 @@ ROUTES: tuple[Route, ...] = (
     Route("/admin/requests", (GET, POST), "view_admin_requests", ROLE_ADMIN,
           GROUP_EXPLORE),
     Route("/static/{path}", (GET,), "serve_static", ROLE_ANONYMOUS),
+)
+
+# ★ 화면이 아닌 것 — 파일을 준다.  <h1> 도 시안도 없다 (V11-30 · V11-12).
+#   ★ 여기 한 곳이 정본이다.  검사와 도구가 각자 목록을 들면 갈린다
+NON_SCREEN_VIEWS: tuple = (
+    "serve_static",       # 정적 파일
+    "view_report_download",  # 리포트 내려받기 (개정 357)
 )
 
 

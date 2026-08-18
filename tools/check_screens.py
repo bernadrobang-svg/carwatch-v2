@@ -182,14 +182,16 @@ def check_render(db: str) -> None:
     """★ 실제로 도는가.  시안대로 만들어도 안 돌면 소용없다."""
     sys.path.insert(0, ROOT)
     from contracts import ANONYMOUS, Account
-    from web.routes import ROLE_ADMIN, ROLE_USER, ROUTES
+    from web.routes import NON_SCREEN_VIEWS, ROLE_ADMIN, ROLE_USER, ROUTES
     from web.views import HANDLERS
 
     conn = sqlite3.connect(db)
     ok, bad = 0, []
     for route in ROUTES:
         fn = HANDLERS.get(route.view)
-        if fn is None or "GET" not in route.methods:
+        # ★ 화면이 아닌 것은 건너뛴다 — 파일을 준다.  <h1> 이 없는 것이 맞다
+        if (fn is None or "GET" not in route.methods
+                or route.view in NON_SCREEN_VIEWS):
             continue
         who = {ROLE_ADMIN: Account(1, ROLE_ADMIN, "마스터"),
                ROLE_USER: Account(2, ROLE_USER, "사용자")}.get(route.role,

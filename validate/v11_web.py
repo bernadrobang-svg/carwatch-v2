@@ -361,6 +361,12 @@ C = {
                     "★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다. "
                     "이전등록비·보증 가입비가 사이트마다 다르다 (개정 353)",
                     KIND_CODE),
+    "V11-122": Check("V11", "V11-122", "리포트를 화면에서 읽을 수 있음",
+                    FATAL, "run",
+                    "마스터 확정 — 「목록을 보고 클릭하면 내용을 볼 수 있게 "
+                    "팝업 박스로.  다운로드 누를 때 다운로드」. "
+                    "★ 휴대폰에서 내려받으면 볼 도구가 마땅치 않다 (개정 357)",
+                    KIND_CODE),
     "V11-107": Check("V11", "V11-107", "화면별 사진 크기가 부록 G 와 같음",
                      FATAL, "run",
                      "추천은 목록보다 작다 — 한 화면에 여러 후보가 보여야 한다. "
@@ -655,7 +661,9 @@ def _templates_with_form() -> list:
 
 
 # 화면이 아닌 Route.  파일을 낸다 — HANDLERS 에 없는 것이 맞다
-NON_SCREEN_VIEWS = ("serve_static",)
+# 화면이 아닌 것.  ★ 목록은 web/routes.py 가 갖는다 —
+# 검사가 따로 들면 새 파일 경로가 생긴 날 조용히 갈린다 (V4-21)
+from web.routes import NON_SCREEN_VIEWS  # noqa: E402
 
 
 # 라우팅 표 행.  ★ 표가 여러 개로 나뉘어도 합쳐 센다 (실측: 26 + 3)
@@ -712,10 +720,13 @@ def _routing_table_check(rid):
 
     bad += [f"{r.path} → {r.view} 가 HANDLERS 에 없다" for r in ROUTES
             if r.view not in HANDLERS and r.view not in NON_SCREEN_VIEWS]
-    n = len(HANDLERS) + len(NON_SCREEN_VIEWS)
+    # ★ 「비화면」이 곧 「HANDLERS 에 없다」는 아니다.  리포트 내려받기는
+    #   handler 가 있는데 화면이 아니다 — 겹쳐 세면 수가 안 맞는다 (실측 08-18)
+    off = [x for x in NON_SCREEN_VIEWS if x not in HANDLERS]
+    n = len(HANDLERS) + len(off)
     if n != len(ROUTES):
         bad.append(f"Route {len(ROUTES)} ≠ HANDLERS {len(HANDLERS)} "
-                   f"+ 비화면 {len(NON_SCREEN_VIEWS)}")
+                   f"+ handler 없는 비화면 {len(off)}")
     return result(C["V11-12"], rid, 0, len(bad), not bad, bad[:20])
 
 
@@ -945,6 +956,8 @@ def _screen_checks(conn, rid) -> list:
     out.append(_sian_visual_check(conn, rid))
     # ⑨ 비용 — 사이트별 구매 총액 (개정 353)
     out.extend(_purchase_cost_checks(conn, rid))
+    # 리포트를 화면에서 읽는다 (개정 357)
+    out.append(_report_popup_check(conn, rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -2637,6 +2650,80 @@ def _purchase_cost_checks(conn, rid):
                 bad2.append(f"매물 {lid} — 자기 사이트 총액이 없다")
     return [a, result(C["V11-121"], rid, "나란히", f"{checked}건",
                       not bad2, bad2[:6])]
+
+
+def _report_popup_check(conn, rid):
+    """V11-122 — 리포트를 화면에서 읽을 수 있는가 (8장 · 개정 357).
+
+    마스터 확정 — 「목록을 보고 클릭하면 내용을 볼 수 있게 팝업 박스로.
+    다운로드 누를 때 다운로드」
+    ★ 휴대폰에서 내려받으면 볼 도구가 마땅치 않다
+    ★ 「목록이 있다」로 통과시키지 않는다.  내용이 실제로 나와야 한다
+    """
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from report.screens.build import view_reports
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    routes = {r.path: r for r in ROUTES}
+    bad = []
+    for path in ("/reports", "/reports/{name}"):
+        if path not in routes:
+            bad.append(f"{path} 화면이 없다 — 목록만 내고 내용을 못 본다")
+    if bad:
+        return result(C["V11-122"], rid, "읽을 수 있다", "없다", False, bad)
+
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    files = view_reports(acc, root=ROOT).files
+    if not files:
+        return not_applicable(C["V11-122"], rid, "아직 만든 리포트가 없다")
+    probe = _probe(conn)
+    # ★ 형식마다 하나씩 연다.  md 만 되고 csv 가 깨지는 것을 잡는다
+    by_ext: dict = {}
+    for one in files:
+        by_ext.setdefault(one.ext, one)
+    opened = 0
+    for ext, one in sorted(by_ext.items()):
+        try:
+            _st, _h, body = HANDLERS[routes["/reports"].view](
+                probe, acc, {"query": {"open": one.name}, "form": {},
+                             "method": GET},
+                path_vars={}, csrf="t")
+        except (CarWatchError, KeyError, ValueError) as e:
+            bad.append(f"{ext} — 못 열었다: {type(e).__name__} {e}")
+            continue
+        html = body.decode("utf-8", "replace")
+        if "pop-h" not in html:
+            bad.append(f"{ext} — 팝업이 안 열린다")
+            continue
+        # 내용이 실제로 실렸는가 — 파일 이름만 있고 본문이 없으면 못 읽는 것이다
+        if "rep-body" not in html and "rep-rows" not in html:
+            bad.append(f"{ext} — 팝업에 내용이 없다.  이름만 낸다")
+        # ★ 다운로드는 따로 눌러야 한다 — 열자마자 받으면 안 된다
+        if f"/reports/{one.name}" not in html:
+            bad.append(f"{ext} — 팝업에 다운로드 단추가 없다")
+        opened += 1
+    # ★ 누를 때만 내려받는가 — 첨부로 보내는가
+    head = files[0]
+    try:
+        _st, hdr, _b = HANDLERS[routes["/reports/{name}"].view](
+            probe, acc, {"query": {}, "form": {}, "method": GET},
+            path_vars={"name": head.name})
+        if "attachment" not in (hdr.get("Content-Disposition") or ""):
+            bad.append("내려받기가 첨부로 안 나간다")
+    except (CarWatchError, KeyError, ValueError) as e:
+        bad.append(f"내려받기가 안 된다: {type(e).__name__} {e}")
+    # ★ 목록에 없는 이름을 주면 거절해야 한다.  파일이 새 나가면 안 된다
+    try:
+        HANDLERS[routes["/reports/{name}"].view](
+            probe, acc, {"query": {}, "form": {}, "method": GET},
+            path_vars={"name": "../config/secrets.json"})
+        bad.append("★ 목록에 없는 경로를 열어 준다 — 파일이 샌다")
+    except (CarWatchError, KeyError, ValueError, OSError):
+        pass
+    return result(C["V11-122"], rid, f"{len(by_ext)}형식",
+                  f"{opened}형식 · 리포트 {len(files)}건", not bad, bad[:6])
 
 
 def _cell_squeeze_check(rid):

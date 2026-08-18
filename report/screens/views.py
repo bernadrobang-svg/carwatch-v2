@@ -443,3 +443,34 @@ class ExcludedGroup:
     count: int
     note: str
     filter_url: str | None = None
+
+
+@dataclass(frozen=True)
+class ReportFile:
+    """리포트 파일 한 줄 (개정 357)."""
+
+    name: str
+    layer: str  # L1 매물 · L2 차종 · L3 실행
+    ext: str  # md · csv · json
+    bytes: int
+    made_at: str
+    label: str  # 사람이 읽을 이름
+
+
+@dataclass(frozen=True)
+class ReportsView:
+    """★ 목록만 내고 내용을 못 보게 하지 않는다 (개정 357).
+
+    마스터 확정 — 「목록을 보고 클릭하면 내용을 볼 수 있게 팝업 박스로.
+    다운로드 누를 때 다운로드」
+    ★ 휴대폰에서 내려받으면 볼 도구가 마땅치 않다
+    """
+
+    files: tuple
+    open_name: str | None = None
+    open_ext: str = ""
+    open_text: str = ""  # md · json 은 그대로
+    open_rows: tuple = ()  # csv 는 표로
+    open_head: tuple = ()
+    truncated: bool = False  # 앞부분만 냈는가
+    open_bytes: int = 0

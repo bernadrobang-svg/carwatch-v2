@@ -25,6 +25,9 @@ from report.finance import build_finance, purchase_cost
 
 # sites.json 은 한 요청 안에서 안 바뀐다.  root 별로 한 번만 읽는다
 _SITES_CACHE: dict = {}
+
+# 리포트 계층 이름 (STEP 91).  ★ 코드가 아니라 사람 말로 낸다
+REPORT_LAYERS = {"L1": "매물 리포트", "L2": "차종 리포트", "L3": "실행 리포트"}
 from report.render import render_listing, render_run
 from analyze.trust import SOURCE_WORDS, inspection_source, platform_trust
 from report.why_cheap import verdict as why_verdict
@@ -38,6 +41,7 @@ from report.screens.views import (
     TONE_BAD, TONE_GOOD, TONE_MUTED, TONE_UNKNOWN,
     AttentionItem, AxisChip, ChangeRow, CompareView, DashboardView, DealerRow,
     ListingFilter, ListingRow, MarketRow, MarketView, NotReadyView,
+    ReportFile, ReportsView,
     WatchRow,
     TargetStat, ViewerState,
 )
@@ -1696,3 +1700,92 @@ def _unmatched_rows(conn, limit: int | None = None) -> list:
                 "       trim_badge, COUNT(*) "
                 "FROM core_listing WHERE target_key IS NULL "
                 "GROUP BY 1, 2, 3 ORDER BY 5 DESC LIMIT ?", (limit,))]
+
+
+# 리포트 파일 이름 — {run_id}_{layer}_{target|ALL}_{calc_version}.{ext}
+# ★ 이름 규칙은 report/exports/export.py:filename 이 정본이다.
+#   여기서 다시 정하지 않는다 — 갈리면 목록에 안 뜨는 파일이 생긴다
+REPORT_NAME = re.compile(
+    r"^(?P<run>[^_]+)_(?P<layer>L\d)_(?P<target>.+)_(?P<calc>[^_.]+)"
+    r"\.(?P<ext>md|csv|json)$")
+
+
+def _report_files(root: str = ".") -> list:
+    """낼 수 있는 리포트 목록 (개정 357).
+
+    ★ outputs/ 에는 작업 기록도 있다.  이름 규칙에 맞는 것만 낸다 —
+      아무 파일이나 열어 주면 그것이 파일 새는 구멍이다
+    """
+    from datetime import datetime, timezone
+
+    from report.exports.export import OUTPUT_DIR
+
+    base = os.path.join(root, OUTPUT_DIR)
+    if not os.path.isdir(base):
+        return []
+    out = []
+    for name in sorted(os.listdir(base), reverse=True):
+        got = REPORT_NAME.match(name)
+        if not got:
+            continue
+        full = os.path.join(base, name)
+        if not os.path.isfile(full):
+            continue
+        st = os.stat(full)
+        layer = got.group("layer")
+        out.append(ReportFile(
+            name=name, layer=layer, ext=got.group("ext"), bytes=st.st_size,
+            made_at=datetime.fromtimestamp(st.st_mtime,
+                                           tz=timezone.utc).isoformat(),
+            label=f"{REPORT_LAYERS.get(layer, layer)} · "
+                  f"{got.group('target')} · {got.group('calc')}"))
+    return out
+
+
+def view_reports(account: Account, open_name: str | None = None,
+                 root: str = ".") -> ReportsView:
+    """리포트를 화면에서 읽는다 (8장 · 개정 357 · V11-122).
+
+    마스터 확정 — 「목록을 보고 클릭하면 내용을 볼 수 있게 팝업 박스로.
+    다운로드 누를 때 다운로드」
+    ★ 열자마자 내려받지 않는다.  다운로드는 따로 누른다
+    ★ 큰 파일은 앞부분만 낸다 — 상한은 config 다 (V4-13)
+    """
+    import csv as _csv
+    import io as _io
+    import json as _cfgjson
+
+    from errors import ValidationError
+
+    require_role(account, ROLE_USER)
+    files = _report_files(root)
+    if not open_name:
+        return ReportsView(files=tuple(files))
+    # ★ 목록에 있는 것만 연다.  임의 경로를 받으면 파일이 새 나간다
+    known = {f.name: f for f in files}
+    one = known.get(open_name)
+    if one is None:
+        raise ValidationError(f"열 수 없는 리포트입니다: {open_name[:60]}",
+                              step="STEP 91b")
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        cap = int(_cfgjson.load(f)["report_preview_bytes"])
+    from report.exports.export import ENCODING, OUTPUT_DIR
+
+    with open(os.path.join(root, OUTPUT_DIR, one.name),
+              encoding=ENCODING) as f:
+        body = f.read(cap + 1)
+    cut = len(body) > cap
+    body = body[:cap]
+    rows: tuple = ()
+    head: tuple = ()
+    if one.ext == "csv":
+        got = list(_csv.reader(_io.StringIO(body)))
+        # ★ 잘렸으면 마지막 줄은 반쪽일 수 있다.  버린다
+        if cut and got:
+            got = got[:-1]
+        head = tuple(got[0]) if got else ()
+        rows = tuple(tuple(r) for r in got[1:])
+        body = ""
+    return ReportsView(files=tuple(files), open_name=one.name,
+                       open_ext=one.ext, open_text=body, open_rows=rows,
+                       open_head=head, truncated=cut, open_bytes=one.bytes)
