@@ -33,5 +33,23 @@
     "page_size": 20,
     "detail_refresh_days": 7,
     "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다"
+  },
+  "kcar": {
+    "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",
+    "_note": "★ 문서에 없던 호스트를 번들에서 뽑았다 — mapi.kcar.com. api.kcar.com · marketm-api.kcar.com 은 전부 404 다. /bc/detail/popup/* 은 API 가 아니라 SPA 껍데기(2.1MB HTML)다",
+    "base_url": "https://mapi.kcar.com",
+    "paths": {
+      "detail": "/bc/car-info-detail-of-ng?i_sCarCd={source_id}",
+      "inspection": "/bc/car-insp/photo/cm?i_sCarCd={source_id}"
+    },
+    "_paths_note": "★ detail 하나가 상세·옵션 42·보증 5·타이어 5·소유이력·보험·진단을 함께 준다. 타이어 트레드(tirResQty)가 여기 있다 — 엔카는 401 이라 못 받는다",
+    "_list_note": "★ 목록 경로는 아직 못 찾았다. mapi 에서 여섯 경로를 눌러 전부 404 였다 (2026-08-18)",
+    "timeout_sec": 20,
+    "interval_sec": 1.5,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile Safari/604.1",
+      "Accept": "application/json, text/plain, */*",
+      "Referer": "https://m.kcar.com/"
+    }
   }
 }

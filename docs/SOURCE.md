@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 132개 · 총 43,023줄
+파일 133개 · 총 43,127줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -97,6 +97,7 @@
 | `tools/check_all.py` | 107 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `tools/classify_unclassified.py` | 107 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `analyze/axis/value.py` | 106 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
+| `adapters/kcar.py` | 104 | K카 어댑터 — URL · 헤더 (12장 · STEP 11). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
 | `tools/daily_enqueue.py` | 97 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `report/finance.py` | 95 | 금융 — 점수가 아니라 비용이다. |
