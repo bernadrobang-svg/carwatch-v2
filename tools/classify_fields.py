@@ -116,3 +116,24 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def parser_lines() -> dict:
+    """파서가 그 경로를 읽는 파일·줄.  ★ 코드에서 뽑는다 — 손으로 안 적는다.
+
+    ★ store 가 이것을 못 부른다 (V4-22 — store 는 contracts·errors 만).
+      부르는 쪽이 store 에 넘긴다
+    """
+    rel = os.path.relpath(MAPPING, ROOT)
+    out: dict = {}
+    tree = ast.parse(open(MAPPING, encoding="utf-8").read())
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        fn = getattr(node.func, "attr", getattr(node.func, "id", ""))
+        if fn not in ("_get", "get"):
+            continue
+        for arg in node.args:
+            if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                out.setdefault(arg.value, f"{rel}:{node.lineno}")
+    return out

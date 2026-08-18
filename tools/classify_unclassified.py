@@ -72,8 +72,12 @@ def write_blocking_list(conn) -> str:
     from datetime import datetime, timezone
 
     from store.core import blocking_rows
+    from tools.classify_fields import (
+        WHOLE_CONTAINERS, parser_lines, parser_paths,
+    )
 
-    rows = blocking_rows(conn)
+    rows = blocking_rows(conn, parser_paths(), WHOLE_CONTAINERS,
+                         parser_lines())
     day = datetime.now(timezone.utc).strftime("%Y%m%d")
     path = os.path.join(ROOT, "outputs", f"{day}_registry32_목록.md")
     out = [

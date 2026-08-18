@@ -327,12 +327,29 @@ def test_run_query() -> None:
     admin = authenticate(conn, "마스터", temp)
     user = Account(9, ROLE_USER, "사용자")
 
+    # ★ 거부는 갈린다 (개정 391) — 오타는 ValidationError · 정책 위반은 PolicyError.
+    #   ★ 「전부 PolicyError」로 두면 컬럼 이름 하나 틀린 것에
+    #     「개발 요청으로 낸다 (STEP 137)」이 붙는다.  마스터가 갇힌다
+    from errors import ValidationError as _VE
+    from store.adminops import KIND_COMPILE, KIND_POLICY, reject_kind_of
+
     for q in REJECT:
+        head = q.splitlines()[0][:28]
+        why = sql_reject_reason(conn, q)
+        want = _VE if reject_kind_of(why or "") == KIND_COMPILE else PolicyError
         try:
             run_query(conn, admin, q, T1)
-            check(f"★ 거부 — {q.splitlines()[0][:28]}", False)
-        except PolicyError:
-            check(f"★ 거부 — {q.splitlines()[0][:28]}", True)
+            check(f"★ 거부 — {head}", False)
+        except (PolicyError, _VE) as e:
+            check(f"★ 거부 — {head} ({type(e).__name__})",
+                  isinstance(e, want))
+            # ★ 오타에는 「개발 요청으로 낸다」를 붙이지 않는다
+            if want is _VE:
+                check(f"★ 오타에 STEP 137 이 안 붙는다 — {head}",
+                      "STEP 137" not in str(e))
+    check("★ 거부 갈래가 둘 다 쓰인다",
+          {reject_kind_of(sql_reject_reason(conn, q) or "") for q in REJECT}
+          == {KIND_COMPILE, KIND_POLICY})
 
     r = run_query(conn, admin, "SELECT COUNT(*) FROM core_listing", T1)
     check("SELECT 는 실행된다", r.row_count == 1 and r.columns)

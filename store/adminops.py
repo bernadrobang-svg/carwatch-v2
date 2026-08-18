@@ -36,6 +36,10 @@ PII_TABLES = ("core_pii", "core_dealer_pii")
 REJECT_PII = "개인정보 표는 조회할 수 없습니다 (get_pii 로만 본다)"
 
 READONLY_HEADS = ("SELECT", "WITH", "VALUES", "EXPLAIN")
+# 쓰려는 뜻이 분명한 머리말 (개정 391).  ★ 이것은 오타가 아니라 정책 위반이다
+WRITE_HEADS = ("INSERT", "UPDATE", "DELETE", "REPLACE", "DROP", "CREATE",
+               "ALTER", "TRUNCATE", "PRAGMA", "ATTACH", "DETACH", "VACUUM",
+               "REINDEX", "BEGIN", "COMMIT", "ROLLBACK")
 WRITE_OPCODES = frozenset({
     "OpenWrite", "Insert", "Delete", "Update", "IdxInsert", "IdxDelete",
     "CreateBtree", "DropTable", "DropIndex", "DropTrigger", "RenameTable",
@@ -474,7 +478,10 @@ def sql_reject_reason(conn: sqlite3.Connection, sql: str) -> str | None:
         return REJECT_MULTI
     head = body.split(None, 1)[0].upper()
     if head not in READONLY_HEADS:
-        return REJECT_NOT_SELECT
+        # ★ 「쓰려고 한 것」과 「문장이 아닌 것」은 다르다 (개정 391 표).
+        #   DELETE·DROP 은 정책 위반이라 「개발 요청으로 낸다」가 붙는다.
+        #   아무 말이나 친 것은 오타라 「쿼리를 고치십시오」다
+        return REJECT_WRITE if head in WRITE_HEADS else REJECT_NOT_SELECT
     try:
         plan = conn.execute(f"EXPLAIN {body.rstrip(';')}").fetchall()
     except sqlite3.Error as e:

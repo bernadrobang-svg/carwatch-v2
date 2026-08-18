@@ -436,8 +436,12 @@ def _blocking_list_check(conn, rid):
     _ROOT = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
 
     from store.core import blocking_rows
+    from tools.classify_fields import (
+        WHOLE_CONTAINERS, parser_lines, parser_paths,
+    )
 
-    want = blocking_rows(conn)
+    want = blocking_rows(conn, parser_paths(), WHOLE_CONTAINERS,
+                         parser_lines())
     if not want:
         return not_applicable(C["V4-30"], rid, "판정을 막는 것이 없다")
     found = sorted(_g.glob(_o.path.join(_ROOT, "outputs",

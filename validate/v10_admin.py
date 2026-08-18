@@ -282,10 +282,14 @@ def _query_error_checks(conn, rid):
     acc = Account(1, ROLE_ADMIN, "마스터")
     bad33, bad34, bad35 = [], [], []
     # (쿼리, 기대 예외, 기대 갈래)
+    # ★ 규격의 표 그대로 (개정 391 §2-2)
+    #   오타 · SELECT 아님 · 여러 문장  → ValidationError · STEP 137 안 붙음
+    #   쓰기 연산 · PII 조회            → PolicyError    · STEP 137 붙음
     cases = (
         ("SELECT created_at FROM raw_response LIMIT 1",
          ValidationError, KIND_COMPILE),
-        ("DELETE FROM core_listing", ValidationError, KIND_COMPILE),
+        ("SELECT 1; SELECT 2", ValidationError, KIND_COMPILE),
+        ("DELETE FROM core_listing", PolicyError, KIND_POLICY),
         ("SELECT * FROM core_pii LIMIT 1", PolicyError, KIND_POLICY),
     )
     for sql, want, kind in cases:

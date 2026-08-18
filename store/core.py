@@ -1241,7 +1241,8 @@ def _option_names(conn: sqlite3.Connection) -> tuple:
     return names, prices
 
 
-def blocking_rows(conn) -> list:
+def blocking_rows(conn, used: set, containers: tuple,
+                  where: dict | None = None) -> list:
     """판정을 막는 미분류 경로 — 목록 (개정 390 · V4-30).
 
     마스터 지시 — 「실제값으로 너랑 나랑 판단해야지」
@@ -1252,10 +1253,9 @@ def blocking_rows(conn) -> list:
       정말 읽는지 줄로 보여야 한다
     돌려줌   [{endpoint, path, hits, total, where}] — 많이 관측된 순
     """
-    from tools.classify_fields import WHOLE_CONTAINERS, parser_paths
-
-    used = parser_paths()
-    where = _parser_lines()
+    # ★ 파서 지식은 부르는 쪽이 준다 — store 는 contracts·errors 만 부른다 (V4-22).
+    #   실측 08-19 — tools 를 부르다 역방향 import 로 걸렸다
+    where = where or {}
     out = []
     for endpoint, path in conn.execute(
         "SELECT endpoint, json_path FROM meta_field_usage"
@@ -1263,7 +1263,7 @@ def blocking_rows(conn) -> list:
     ):
         bare = path.replace("[]", "")
         head = path.split("[]")[0]
-        if not (bare in used or head in WHOLE_CONTAINERS):
+        if not (bare in used or head in containers):
             continue
         seen, total = observed(conn, endpoint)
         # ★ 통째로 읽는 컨테이너는 잎 이름으로 안 잡힌다 —
@@ -1271,34 +1271,11 @@ def blocking_rows(conn) -> list:
         #   그 자리를 짚어야 「정말 읽는지」를 볼 수 있다 (실측 08-19)
         spot = (where.get(bare) or where.get(bare.split(".")[-1])
                 or (f"{where[head]} (컨테이너 통째)" if head in where
-                    and head in WHOLE_CONTAINERS else ""))
+                    and head in containers else ""))
         out.append({
             "endpoint": endpoint, "path": path,
             "hits": seen.get(path, seen.get(bare, 0)), "total": total,
             "where": spot,
         })
     out.sort(key=lambda r: (-r["hits"], r["endpoint"], r["path"]))
-    return out
-
-
-def _parser_lines() -> dict:
-    """파서가 그 경로를 읽는 파일·줄.  ★ 코드에서 뽑는다 — 손으로 안 적는다."""
-    import ast as _ast
-    import os as _o
-
-    from tools.classify_fields import MAPPING
-
-    rel = _o.path.relpath(MAPPING, _o.path.dirname(
-        _o.path.dirname(_o.path.abspath(__file__))))
-    out: dict = {}
-    tree = _ast.parse(open(MAPPING, encoding="utf-8").read())
-    for node in _ast.walk(tree):
-        if not isinstance(node, _ast.Call):
-            continue
-        fn = getattr(node.func, "attr", getattr(node.func, "id", ""))
-        if fn not in ("_get", "get"):
-            continue
-        for arg in node.args:
-            if isinstance(arg, _ast.Constant) and isinstance(arg.value, str):
-                out.setdefault(arg.value, f"{rel}:{node.lineno}")
     return out
