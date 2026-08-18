@@ -209,6 +209,8 @@ python3 run.py web --port N
 | `/admin/dict` | GET·POST | `view_admin_dict` | **admin** | 조정 | 08-16 신설 |
 | `/admin/status` | GET | `view_admin_status` | **admin** | 운영 | 08-16 신설 |
 | `/admin/requests` | GET·POST | `view_admin_requests` | **admin** | 탐색 | 시안 |
+| **`/reports`** | GET | `view_reports` | **user** | 리포트 | 구현 |
+| **`/reports/{name}`** | GET | `view_report_download` | **user** | — | 구현 |
 
 ```
 ★ 한 행에 한 경로다.  묶어 적지 않는다
@@ -225,6 +227,35 @@ python3 run.py web --port N
 경로   ref/screens/v2_*_시안.html
 필수   구현이 시안과 다르면 시안을 먼저 고친다.  코드가 먼저 가지 않는다
 ```
+
+
+## STEP 142a [규격] — 메뉴 이름 (개정 396 신설)
+
+**★ `web/app.py` 의 `LABELS` · `MENU_TIPS` 정본이다. 코드에 이름을 짓지 않는다.**
+
+| path | 이름 | 설명 |
+|---|---|---|
+| `/listings` | 매물 | 판정한 매물을 표로 봅니다 |
+| `/recommend` | 후보 | E · 미판정을 뺀 후보 |
+| `/compare` | 비교 | 고른 매물을 축별로 나란히 |
+| `/market` | 시세 | 차종별 가격 분포 · 감가 계수 |
+| `/dealers` | 딜러 | 딜러 정직도와 보유 차종 |
+| `/notready` | 미판정 | 아직 판정 못 한 것과 그 이유 |
+| **`/reports`** | **리포트** | **낸 리포트를 화면에서 읽고 내려받습니다** |
+| `/watch` | 관심 | 담은 매물과 조건 알림 |
+
+```
+★ 관리 화면 이름은 60-admin/c-tools.md 메뉴 3분류 표가 정본이다
+필수   메뉴에 나오는 경로는 반드시 이 표나 관리 메뉴표에 있어야 한다
+근거   ★ 실측 08-19 07:16 — 메뉴에 「/reports」가 경로 그대로 떴다.
+       web/app.py:95 가 「이름이 없으면 경로를 그대로 낸다」이고
+       :53 주석이 이미 그 경고를 적어 뒀는데 또 반복됐다 (V11-54 는 관리 메뉴만 본다)
+금지   코드의 LABELS 에만 이름을 두는 것
+검산   V11-54  ★ 관리 메뉴 + 이 표 둘 다와 대조한다
+       V11-150 메뉴 라벨이 「/」로 시작하는 것이 하나라도 있는가 (있으면 실패)
+```
+
+---
 
 ```
 ★ 경로 변수는 {name} 하나만 쓴다.  중첩·정규식을 쓰지 않는다
