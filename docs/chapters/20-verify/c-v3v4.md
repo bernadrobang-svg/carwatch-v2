@@ -102,6 +102,9 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 | V3-50 | 성능부와 보험이력이 어긋난 건을 셈 | data | warn |
 | V3-60 | 등급 상한이 적용됨 | code | fatal |
 | V3-61 | 상한으로 내려간 매물에 사유가 붙어 있음 | code | fatal |
+| V3-70 | 제조사 보증을 일반·동력계로 따로 내는가 | code | fatal |
+| V3-71 | 보증 잔여가 기간·거리 중 낮은 쪽인가 | code | fatal |
+| V9-10 | 사이트 보증 규칙이 sites.json 대로인가 | code | fatal |
 | V3-38 | facet 수신 후 목록 관측분과 대조함 | code | warn |
 | V3-31 | 딜러 NULL 매물에 `dealer_untrusted` 경고가 없음 | fatal |
 | V3-32 | `seizing` null 매물이 「저당 없음」으로 판정되지 않음 | fatal |
