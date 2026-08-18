@@ -864,8 +864,112 @@ try:
                     _bad34.append(f"{_k} 칸이 {_wide}행 전부 비었다")
         say("S34-3", "추적표 빈 칸을 센다",
             0 if _bad34 else _wide, [], _bad34)
-        print(f"      · 빈 칸 — " + " · ".join(
+        print("      · 빈 칸 — " + " · ".join(
             f"{_k} {_n}/{_wide}" for _k, _n in _blank.items()))
+
+        # ── S34-1 · S34-2 · S34-4 · S35-1 ────────────────────────────
+        # ★ 표가 가리키는 것이 실재하는가.  적어 두고 없으면 빈말이다
+        _spec_body = "\n".join(_b for _f, _b in _spec_files(SPEC))
+        _src_files = {os.path.relpath(p2, ROOT).replace("\\", "/")
+                      for p2 in SRC}
+        _known = set()
+        _idx2 = os.path.join(ROOT, "docs", "CHECKS.md")
+        if os.path.isfile(_idx2):
+            with io.open(_idx2, encoding="utf-8") as _fh:
+                for _ln in _fh:
+                    _m2 = re.match(r"^\| `([VS][\w-]+)` \|(.*)$", _ln)
+                    if _m2 and "코드에 없다" not in _m2.group(2):
+                        _known.add(_m2.group(1))
+        _b341, _b342 = [], []
+        for _f in sorted(_g.glob(os.path.join(_trace, "*.md"))):
+            if _f.endswith("INDEX.md"):
+                continue
+            for _ln in io.open(_f, encoding="utf-8"):
+                if not _ln.startswith("| R-"):
+                    continue
+                _c = _ln.rstrip("\n").split("|")
+                if len(_c) != _TRACE_COLS:
+                    continue
+                _rid = _c[1].strip()
+                # S34-1 — 규격 칸이 가리키는 문서가 실재하는가
+                for _doc in re.findall(r"`([\w./-]+)`", _c[4]):
+                    if "/" not in _doc:
+                        continue
+                    # ★ 표는 확장자를 안 적는다 — 「30-score/a-frame」
+                    _hit = _g.glob(os.path.join(ROOT, "docs", "**",
+                                                _doc + ".md"),
+                                   recursive=True) or _g.glob(
+                        os.path.join(ROOT, "docs", "**", _doc),
+                        recursive=True)
+                    if not _hit:
+                        _b341.append(f"{_rid} — 규격 {_doc} 이 없다")
+                # S34-2 — 소스 칸의 파일 · 검사 칸의 검사가 실재하는가
+                for _f2 in re.findall(r"`([\w./]+\.py)`", _c[5]):
+                    if not any(x.endswith(_f2) for x in _src_files):
+                        _b342.append(f"{_rid} — 소스 {_f2} 가 없다")
+                for _cc in re.findall(r"\b([VS]\d+-\d+[a-z]?)\b", _c[7]):
+                    if _known and _cc not in _known:
+                        _b342.append(f"{_rid} — 검사 {_cc} 가 코드에 없다")
+        say("S34-1", "표의 규격이 실재", 0 if _b341 else 1, [], _b341[:8])
+        say("S34-2", "표의 소스·검사가 실재", 0 if _b342 else 1, [], _b342[:8])
+
+        # S34-4 — 규격에 있는데 표에 없는 것 (왜 있는지 모르는 규격)
+        _in_trace = set()
+        for _f in _g.glob(os.path.join(_trace, "*.md")):
+            _in_trace |= set(re.findall(r"\b(STEP \d+[a-z]?)\b",
+                                        io.open(_f, encoding="utf-8").read()))
+        _in_spec = set(re.findall(r"^#+ *(STEP \d+[a-z]?)\b", _spec_body,
+                                  re.M))
+        _b344 = sorted(_in_spec - _in_trace)
+        say("S34-4", "규격이 표에 있음", len(_in_spec) - len(_b344),
+            _b344[:12], [])
+
+        # S35-1 — 자기 칸이 아닌 곳을 고쳤는가
+        # ★ 개발측이 고쳐도 되는 칸은 소스 · 화면 · 검사 · 상태다.
+        #   요구사항 · 출처 · 규격을 고쳤으면 git 이 안다
+        _b351 = []
+        _rc2, _diff = _git("diff", "--stat", "HEAD~1", "--",
+                           "docs/trace", "docs/guide", "docs/chapters")
+        if not _rc2 and _diff.strip():
+            _b351.append("개발측이 지시서·추적표를 고쳤다 — "
+                         + " ".join(_diff.split())[:90])
+        say("S35-1", "자기 칸만 고침", 0 if _b351 else 1, [], _b351)
+
+    # ── S36-1 · S37-1 (개정 359 · 362) ──────────────────────────────
+    # ★ 지금 안 하기로 한 것을 「어디에 모아 뒀는가」와
+    #   「파는 쪽 기능이 코드에 남아 있는가」를 본다
+    _b361 = []
+    _later = os.path.join(ROOT, "outputs", "LATER.md")
+    if not os.path.isfile(_later):
+        _b361.append("outputs/LATER.md 가 없다 — "
+                     "「정식 서비스 착수」 목록을 여기에 모은다")
+    else:
+        with io.open(_later, encoding="utf-8") as _fh:
+            _lb = _fh.read()
+        for _need in ("min_secret_length", "login_fail_limit"):
+            if _need not in _lb:
+                _b361.append(f"LATER.md 에 {_need} 가 없다 — "
+                             "지금 꺼 둔 것은 거기 적어야 되돌릴 수 있다")
+    say("S36-1", "「정식 서비스 착수」 목록이 있음",
+        0 if _b361 else 1, [], _b361)
+
+    # S37-1 — 파는 쪽·대행하는 쪽 개념이 코드에 남아 있는가
+    _SELL_WORDS = ("계약서", "수수료", "정산", "판매 대행", "매물 등록",
+                   "고객 관리")
+    _b371 = []
+    for _p, _src2 in SRC.items():
+        _rel2 = os.path.relpath(_p, ROOT).replace("\\", "/")
+        for _w in _SELL_WORDS:
+            if _w in _src2:
+                _b371.append(f"{_rel2} — 「{_w}」")
+    for _t in sorted(_g.glob(os.path.join(ROOT, "web", "templates",
+                                          "*.html"))):
+        _tb = io.open(_t, encoding="utf-8").read()
+        for _w in _SELL_WORDS:
+            if _w in _tb:
+                _b371.append(f"templates/{os.path.basename(_t)} — 「{_w}」")
+    say("S37-1", "파는 쪽 개념이 안 남아 있음",
+        0 if _b371 else 1, [], sorted(set(_b371))[:8])
 except Exception as _e:                                  # noqa: BLE001
     say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)", 0, [],
         [f"점검 상태를 못 읽었다: {_e}"])
