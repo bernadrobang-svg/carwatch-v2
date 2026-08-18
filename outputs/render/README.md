@@ -21,8 +21,8 @@
 | `/password` | [password.html](password.html) | 200 | 4,676B |
 | `/admin` | [admin.html](admin.html) | 200 | 15,659B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,619B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 38,094B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,583B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 38,775B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,585B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,454B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 46,157B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,480B |
@@ -31,7 +31,7 @@
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 32,958B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 22,912B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 120,125B |
-| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,750B |
+| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 18,914B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,353B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 8,710B |
 | `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 20,743B |

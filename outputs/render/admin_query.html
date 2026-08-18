@@ -106,11 +106,23 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th>SQL</th><th class="num" title="표의 줄 수입니다">행</th><th class="num">시간</th><th>결과</th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-18T23:09:42.562722+00:00</td><td class="runid" data-label="SQL">DELETE FROM core_listing</td>
+  <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
+  <td data-label="결과"><span class="warn-block">거부 — SELECT · WITH 만 허용한다</span></td></tr>
+
+<tr><td data-label="시각">2026-08-18T23:09:42.555608+00:00</td><td class="runid" data-label="SQL">SELECT created_at FROM raw_response LIMIT 1</td>
+  <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
+  <td data-label="결과"><span class="warn-block">거부 — SQL 을 해석할 수 없다: no such column: created_at</span></td></tr>
+
 <tr><td data-label="시각">2026-08-18T22:15:53.679785+00:00</td><td class="runid" data-label="SQL">-- 조각이 서버에 몇 개 도착했나
 SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
   AND created_at &gt; &#x27;2026-08-19&#x27; ORDER BY </td>
   <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
   <td data-label="결과"><span class="warn-block">거부 — SQL 을 해석할 수 없다: no such column: created_at</span></td></tr>
+
+<tr><td data-label="시각">2026-08-18T23:09:42.564851+00:00</td><td class="runid" data-label="SQL">SELECT * FROM core_pii LIMIT 1</td>
+  <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
+  <td data-label="결과"><span class="warn-block">거부 — 개인정보 표는 조회할 수 없습니다 (get_pii 로만 본다): core_pii</span></td></tr>
 
 </tbody>
 </table>
@@ -203,8 +215,8 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">meta_field_usage</td><td class="num" data-label="행">839</td>
   <td class="muted" data-label="컬럼">site · endpoint · json_path · core_column · usage · reason · unblock_condition · use_when · priority · miss_streak</td></tr>
 
-<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">1</td>
-  <td class="muted" data-label="컬럼">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · executed_at</td></tr>
+<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">4</td>
+  <td class="muted" data-label="컬럼">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · reject_kind · executed_at</td></tr>
 
 <tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">14</td>
   <td class="muted" data-label="컬럼">site · target_key · request_kind · request_url · axis_count · body · fetched_at</td></tr>
@@ -264,7 +276,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260818T215533</span>
-  <span>2026-08-19 08:06</span>
+  <span>2026-08-19 08:11</span>
 </footer>
 
 </body>

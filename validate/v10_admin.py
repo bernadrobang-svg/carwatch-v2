@@ -105,6 +105,27 @@ C = {
                     "무엇을 왜 확정했는지가 없으면 되짚을 수 없다 "
                     "(STEP 136e · 149k)",
                     KIND_CONTRACT),
+    "V10-33": Check("V10", "V10-33", "컴파일 실패가 PolicyError 로 안 감",
+                    FATAL, "run",
+                    "마스터 실측 — 「조회」를 눌렀는데 「아직 저장할 수 "
+                    "없습니다」가 떴다.  컬럼 이름 하나 틀린 것에 「개발 "
+                    "요청으로 낸다」가 붙었다.  ★ 컴파일 실패는 정책 위반이 "
+                    "아니라 사용자 오타다 (개정 391)",
+                    KIND_CODE),
+    "V10-34": Check("V10", "V10-34", "거부 응답에 고칠 재료가 있음",
+                    FATAL, "run",
+                    "고치라 하면서 무엇으로 고치는지를 안 주면 같은 잘못이다 "
+                    "(개정 367).  그 표의 실제 컬럼 목록을 낸다 (개정 391)",
+                    KIND_CODE),
+    "V10-35": Check("V10", "V10-35", "query_log 가 compile · policy 로 갈림",
+                    FATAL, "run",
+                    "오타와 정책 위반을 같은 자리에 쌓으면 거부 통계가 "
+                    "오염된다 (개정 391)",
+                    KIND_CODE),
+    "V10-36": Check("V10", "V10-36", "표를 누르면 컬럼이 보임", FATAL, "run",
+                    "화면이 컬럼을 안 보여 주니 마스터가 칠 수밖에 없었다. "
+                    "created_at 은 표마다 있고 없다 (개정 391)",
+                    KIND_CODE),
     "V10-26": Check("V10", "V10-26", "목록 저장 후 큐에 작업이 들어감",
                     FATAL, "run",
                     "마스터가 「이어서 해라」를 말하지 않아도 되게 한다 "
@@ -241,6 +262,72 @@ def _sql_strings(src: str) -> list[str]:
             if isinstance(n, ast.Constant) and isinstance(n.value, str)
             and any(k in n.value for k in ("SELECT ", "INSERT ", "UPDATE ",
                                            "DELETE ", "FROM "))]
+
+
+def _query_error_checks(conn, rid):
+    """V10-33 ~ V10-36 — 쿼리 오류 분류 (개정 391).
+
+    마스터 실측 — 「조회」를 눌렀는데 「아직 저장할 수 없습니다」가 떴다.
+    컬럼 이름 하나 틀린 것에 「개발 요청으로 낸다 (STEP 137)」이 붙었다
+    ★ 컴파일 실패는 정책 위반이 아니다.  사용자 오타다
+    """
+    import sqlite3 as _s
+
+    from contracts import ROLE_ADMIN, Account
+    from errors import PolicyError, ValidationError
+    from store.adminops import KIND_COMPILE, KIND_POLICY, run_query
+
+    probe = _s.connect(":memory:")
+    conn.backup(probe)
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    bad33, bad34, bad35 = [], [], []
+    # (쿼리, 기대 예외, 기대 갈래)
+    cases = (
+        ("SELECT created_at FROM raw_response LIMIT 1",
+         ValidationError, KIND_COMPILE),
+        ("DELETE FROM core_listing", ValidationError, KIND_COMPILE),
+        ("SELECT * FROM core_pii LIMIT 1", PolicyError, KIND_POLICY),
+    )
+    for sql, want, kind in cases:
+        try:
+            run_query(probe, acc, sql)
+            bad33.append(f"거부돼야 하는데 통과한다: {sql[:40]}")
+            continue
+        except (PolicyError, ValidationError) as e:
+            got = e
+        if not isinstance(got, want):
+            bad33.append(f"{sql[:34]} → {type(got).__name__} "
+                         f"({want.__name__} 여야 한다)")
+        # V10-34 — 거부 응답에 고칠 재료가 있는가
+        if kind == KIND_COMPILE and not (getattr(got, "action", "") or ""):
+            bad34.append(f"{sql[:34]} — 고칠 재료(컬럼 목록)가 없다")
+        # ★ 오타에 「개발 요청으로 낸다」를 붙이지 않는다
+        if kind == KIND_COMPILE and "STEP 137" in str(got):
+            bad33.append(f"{sql[:34]} — 오타에 「개발 요청」이 붙는다")
+    # V10-35 — query_log 가 갈래를 나누는가
+    kinds = {r[0] for r in probe.execute(
+        "SELECT reject_kind FROM query_log WHERE reject_kind IS NOT NULL")}
+    if not {KIND_COMPILE, KIND_POLICY} <= kinds:
+        bad35.append(f"갈래가 안 나뉜다: {sorted(kinds)}")
+    probe.close()
+
+    # V10-36 — 표를 누르면 컬럼이 보이는가
+    bad36 = []
+    path = os.path.join(ROOT, "outputs", "render", "admin_query.html")
+    if os.path.isfile(path):
+        html = open(path, encoding="utf-8").read()
+        if "컬럼" not in html:
+            bad36.append("쿼리 화면에 표별 컬럼이 없다")
+    return [
+        result(C["V10-33"], rid, "갈라 던진다",
+               "맞다" if not bad33 else "틀리다", not bad33, bad33[:4]),
+        result(C["V10-34"], rid, "고칠 재료",
+               "있다" if not bad34 else "없다", not bad34, bad34[:4]),
+        result(C["V10-35"], rid, "compile · policy",
+               "나뉜다" if not bad35 else "안 나뉜다", not bad35, bad35),
+        result(C["V10-36"], rid, "컬럼이 보인다",
+               "보인다" if not bad36 else "안 보인다", not bad36, bad36),
+    ]
 
 
 def run(conn, ctx) -> list:
@@ -401,6 +488,8 @@ def _session_checks(rid) -> list:
             break
     out.append(_queue_consumer_check(conn, rid))
     out += _automation_checks(conn, rid)
+    # 쿼리 오류 분류 (개정 391)
+    out += _query_error_checks(conn, rid)
     out.append(_queue_stale_shown_check(rid))
     out.append(_dict_reason_check(conn, rid))
     out.append(_dict_source_shown_check(rid))

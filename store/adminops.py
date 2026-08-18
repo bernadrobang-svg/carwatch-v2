@@ -45,6 +45,8 @@ REJECT_MULTI = "다중 문장은 거부한다 (세미콜론 분리)"
 REJECT_NOT_SELECT = "SELECT · WITH 만 허용한다"
 REJECT_WRITE = "쓰기 연산이 포함됐다"
 REJECT_COMPILE = "SQL 을 해석할 수 없다"
+# 표를 못 찾을 때 보기로 낼 표 수.  ★ 전부 내면 못 읽는다
+HINT_TABLES = 12
 
 
 @dataclass(frozen=True)
@@ -500,6 +502,45 @@ def _opened_tables(conn: sqlite3.Connection, plan) -> set:
             if r[1] in ("OpenRead", "OpenWrite") and r[3] in root}
 
 
+
+# 거부 갈래 (개정 391).  ★ 컴파일 실패는 정책 위반이 아니다.  사용자 오타다
+KIND_COMPILE, KIND_POLICY = "compile", "policy"
+# 컴파일 실패에 붙는 제목.  ★ 「저장」이 아니다 — 마스터는 「조회」를 눌렀다
+TITLE_FIX = "쿼리를 고치십시오"
+
+
+def reject_kind_of(why: str) -> str:
+    """거부 사유 → 갈래.
+
+    ★ 오타와 정책 위반을 같은 자리에 쌓으면 거부 통계가 오염된다
+    """
+    if why.startswith((REJECT_COMPILE, REJECT_NOT_SELECT, REJECT_MULTI)):
+        return KIND_COMPILE
+    return KIND_POLICY
+
+
+def columns_hint(conn: sqlite3.Connection, sql: str) -> str:
+    """고칠 재료 — 그 표의 실제 컬럼 목록 (개정 391 · 367).
+
+    ★ 고치라 하면서 무엇으로 고치는지를 안 주면 같은 잘못이다
+    ★ 표 이름을 못 찾으면 「어느 표를 보려 하셨습니까」와 표 목록을 낸다
+    금지   컬럼 이름을 짐작해 「~를 쓰시려던 것 같습니다」라 하는 것
+    """
+    known = {r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+        " AND name NOT LIKE 'sqlite_%'")}
+    used = [t for t in re.findall(r"(?:FROM|JOIN)\s+([A-Za-z_][\w]*)",
+                                  sql, re.I) if t in known]
+    if not used:
+        return ("어느 표를 보려 하셨습니까 — "
+                + " · ".join(sorted(known)[:HINT_TABLES]))
+    out = []
+    for name in dict.fromkeys(used):
+        cols = [r[1] for r in conn.execute(f"PRAGMA table_info({name})")]
+        out.append(f"{name} 의 컬럼 — " + " · ".join(cols))
+    return "\n".join(out)
+
+
 def run_query(conn: sqlite3.Connection, account: Account, sql: str,
               at: str | None = None) -> QueryResult:
     """조회 전용.  거부된 것도 QueryLog 에 남긴다 (STEP 133)."""
@@ -510,11 +551,19 @@ def run_query(conn: sqlite3.Connection, account: Account, sql: str,
 
     why = sql_reject_reason(conn, sql)
     if why:
+        kind = reject_kind_of(why)
         conn.execute(
             "INSERT INTO query_log(query_id,account_id,sql_text,"
-            "rejected_reason,executed_at) VALUES (?,?,?,?,?)",
-            (qid, account.account_id, sql, why, at))
+            "rejected_reason,reject_kind,executed_at) VALUES (?,?,?,?,?,?)",
+            (qid, account.account_id, sql, why, kind, at))
         conn.commit()
+        # ★★ 컴파일 실패는 정책 위반이 아니다.  사용자 오타다 (개정 391).
+        #   마스터는 「조회」를 눌렀는데 화면이 「아직 저장할 수 없습니다」라 했고
+        #   컬럼 이름 하나 틀린 것에 「개발 요청으로 낸다」가 붙었다.
+        #   ★ 마칠 절차가 없는데 「절차를 마친 뒤」라 하면 사용자가 갇힌다
+        if kind == KIND_COMPILE:
+            raise ValidationError(why, step="STEP 133",
+                                  action=columns_hint(conn, sql))
         raise PolicyError(
             f"{why}. 데이터를 고칠 일이 있으면 개발 요청으로 낸다 (STEP 137)",
             step="STEP 133")

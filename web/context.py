@@ -138,6 +138,20 @@ def _clean(exc: Exception) -> str:
     return re.sub(r"\s*\[step=[^\]]*\]\s*$", "", str(exc)).strip()
 
 
+# 쿼리 오타에 붙는 제목 (개정 391).  ★ 「저장」이 아니다 — 조회를 눌렀다
+SQL_FIX_TITLE = "쿼리를 고치십시오"
+
+
+def _is_sql_typo(exc) -> bool:
+    """쿼리 컴파일 실패인가.  ★ store 가 정한 말을 그대로 본다."""
+    from store.adminops import (
+        REJECT_COMPILE, REJECT_MULTI, REJECT_NOT_SELECT,
+    )
+
+    return str(exc).startswith((REJECT_COMPILE, REJECT_MULTI,
+                                REJECT_NOT_SELECT))
+
+
 def error_page(exc: Exception, run_id: str = "") -> ErrorPage:
     """도메인 예외는 사유와 조치를 낸다.  그 외는 run_id 만 낸다.
 
@@ -171,6 +185,13 @@ def error_page(exc: Exception, run_id: str = "") -> ErrorPage:
                          or "화면의 안내대로 절차를 마친 뒤 다시 누른다",
                          run_id)
     if isinstance(exc, CarWatchError):
+        # ★ 쿼리 오타는 「저장」도 「처리」도 아니다.  고칠 것을 말한다 (개정 391).
+        #   마스터가 「조회」를 눌렀는데 「아직 저장할 수 없습니다」가 떴다.
+        #   ★ 마칠 절차가 없는데 「절차를 마친 뒤」라 하면 사용자가 갇힌다
+        if _is_sql_typo(exc):
+            return ErrorPage(HTTP_BAD_REQUEST, SQL_FIX_TITLE, _clean(exc),
+                             getattr(exc, "action", "")
+                             or "쿼리를 고쳐 다시 누른다", run_id)
         return ErrorPage(HTTP_BAD_REQUEST, "처리하지 못했습니다", _clean(exc),
                          getattr(exc, "action", "")
                          or "입력을 확인하고 다시 시도한다", run_id)

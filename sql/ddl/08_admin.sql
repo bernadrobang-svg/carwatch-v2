@@ -53,6 +53,10 @@ CREATE TABLE IF NOT EXISTS query_log (
   row_count       INTEGER,
   elapsed_ms      INTEGER,
   rejected_reason TEXT,
+  -- 거부 갈래 (개정 391) — compile(사용자 오타) · policy(정책 위반).
+  -- ★ 둘을 한 자리에 쌓으면 거부 통계가 오염된다.
+  --   컴파일 실패는 정책 위반이 아니다.  사용자 오타다
+  reject_kind    TEXT,
   executed_at     TEXT NOT NULL
 );
 
