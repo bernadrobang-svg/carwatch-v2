@@ -126,7 +126,7 @@ def flow_config_effect():
     import tempfile
 
     from analyze.axes import ScoringPolicy
-    from score.grade import cutoffs
+    from score.grade import GRADE_E, NOT_RATED, cutoffs
 
     root = tempfile.mkdtemp()
     shutil.copytree(os.path.join(ROOT, "config"),
@@ -146,9 +146,22 @@ def flow_config_effect():
           all(0 < v <= 1 for _g, v in cutoffs(ScoringPolicy(raw))),
           str(sorted(raw["grade_cuts"].items())[:2]))
 
-    # ★ 컷을 올리면 같은 점수가 낮은 등급이 된다 (STEP 84)
-    raw["grade_cuts"] = {g: min(0.99, v + 0.20)
-                         for g, v in raw["grade_cuts"].items()}
+    # ★ 컷을 움직이면 같은 점수가 다른 등급이 된다 (STEP 84).
+    #   ★ 어느 쪽으로 움직일지는 지금 분포가 정한다 —
+    #     올리기만 하면 이미 바닥(D)인 무리는 꿈쩍도 안 한다.
+    #     실측 08-18 — 씨앗이 D 21 · E 24 라 컷을 올려도 D 그대로였고
+    #     시험이 「config 가 안 먹힌다」로 여덟 달 내내 실패하고 있었다.
+    #     ★ 검사는 「움직일 수 있는가」를 봐야 한다 — 「움직인 적이 있는가」가 아니다
+    tops = {g for g, _c in cutoffs(ScoringPolicy(raw))[:1]}
+    rated = {g for g in before if g not in (NOT_RATED, GRADE_E)}
+    if rated - tops:
+        # 바닥 쪽에 몰려 있다 — 컷을 내리면 등급이 오른다
+        raw["grade_cuts"] = {g: round(max(0.01, v - 0.45), 2)
+                             for g, v in raw["grade_cuts"].items()}
+    else:
+        # 이미 꼭대기다 — 컷을 올리면 등급이 내린다
+        raw["grade_cuts"] = {g: min(0.99, v + 0.20)
+                             for g, v in raw["grade_cuts"].items()}
     with open(path, "w", encoding="utf-8") as f:
         json.dump(raw, f, ensure_ascii=False, indent=2)
 
