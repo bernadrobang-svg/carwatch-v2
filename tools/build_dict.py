@@ -119,6 +119,25 @@ def _facet_values(body, axis_name: str):
             stack.extend(v for v in node if isinstance(v, (dict, list)))
 
 
+def facet_value_set(conn: sqlite3.Connection, axis: str) -> set:
+    """그 축에 대해 사이트가 인정하는 값의 전체 집합 (12-dict).
+
+    ★ `dict_enum.source_endpoint` 로는 이것을 알 수 없다.  그 컬럼은
+      「어디서 처음 봤나」지 「facet 에 있나」가 아니다 —
+      facet 이 늦게 와도 이미 목록에서 본 값은 'list' 로 남는다.
+      둘을 같은 것으로 읽어 V3-38 이 41건을 「facet 에 없다」고 했다 (실측 08-18)
+    돌려줌   빈 집합이면 facet 이 그 축을 안 주는 것이다 (trim 이 그렇다)
+    """
+    name = {a: p for a, _s, ep, p in AXIS_SOURCES if ep == "facet"}.get(axis)
+    if not name:
+        return set()
+    out = set()
+    for (body,) in conn.execute("SELECT body FROM raw_facet"):
+        for _n, value, _cnt in _facet_values(json.loads(body), name):
+            out.add(value)
+    return out
+
+
 def _walk_path(body, path: str):
     """`outers[].type.title` 같은 경로를 따라간다."""
     cur = [body]

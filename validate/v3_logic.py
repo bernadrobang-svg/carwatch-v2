@@ -498,26 +498,47 @@ def _list_observed_source_check(conn, rid):
 
 
 def _facet_reconcile_check(conn, rid):
-    """V3-38 — facet 을 받았으면 목록 관측분과 대조했는가 (개정 266).
+    """V3-38 — facet 을 받았으면 목록 관측분과 대조했는가 (개정 266 · 12-dict).
 
-    ★ 목록에만 있는 값이 남으면 그것을 알아야 한다 —
-      엔카가 facet 에 안 넣은 값이거나 우리가 잘못 읽은 것이다.  둘 다 결함이다
+    ★ 값으로 대조한다.  `source_endpoint` 로 대조하면 안 된다 —
+      그 컬럼은 「어디서 처음 봤나」지 「facet 에 있나」가 아니다.
+      facet 이 늦게 오면 이미 목록에서 본 값은 'list' 로 남는다.
+      둘을 같은 것으로 읽어 이 검사가 41건을 「facet 에 없다」고 하고 있었다.
+      실측 08-18 — 값으로 견주니 facet 에 없는 값은 0건이었다.
+      ★ 「있는 것을 없다고」 한 것이라 놓친 것보다 나쁘다
+    양쪽을 다 본다 (12-dict)
+      facet 에만 있는 값   새 pending 으로 들어와야 한다
+      목록에만 있는 값     ★ 확인이 필요하다 — facet 에 없는 값이 왜 매물에 있나
     """
-    from tools.build_dict import LIST_FALLBACK
+    import json as _j
 
+    from tools.build_dict import LIST_FALLBACK, facet_value_set
+
+    del _j
     n_facet = conn.execute("SELECT COUNT(*) FROM raw_facet").fetchone()[0]
     if not n_facet:
         return not_applicable(C["V3-38"], rid, "facet 을 아직 못 받았다")
-    marks = ",".join("?" * len(LIST_FALLBACK))
-    left = conn.execute(
-        f"SELECT axis, COUNT(*) FROM dict_enum "
-        f"WHERE axis IN ({marks}) AND source_endpoint='list' GROUP BY 1",
-        tuple(LIST_FALLBACK)).fetchall()
-    bad = [f"{a}: 목록에만 있는 값 {n}건 — facet 에 없는 값이 왜 매물에 있나"
-           for a, n in left]
+    bad, left, added = [], 0, 0
+    for axis in sorted(LIST_FALLBACK):
+        theirs = facet_value_set(conn, axis)
+        if not theirs:
+            # facet 이 그 축을 안 준다 — 목록에서 뽑는 것이 맞다 (trim 이 그렇다)
+            continue
+        mine = {v for (v,) in conn.execute(
+            "SELECT value FROM dict_enum WHERE axis=?", (axis,))}
+        only = sorted(mine - theirs)
+        left += len(only)
+        added += len(theirs & mine)
+        if only:
+            bad.append(f"{axis}: facet 에 없는 값 {len(only)}건 "
+                       f"— {', '.join(only[:4])}.  왜 매물에 있나")
+        missing = sorted(theirs - mine)
+        if missing:
+            bad.append(f"{axis}: facet 이 준 값 {len(missing)}건이 사전에 "
+                       f"안 들어왔다 — {', '.join(missing[:4])}")
     return result(C["V3-38"], rid, "대조 완료",
-                  "남은 목록 관측 " + str(sum(n for _a, n in left)),
-                  not bad, bad)
+                  f"facet 과 맞은 값 {added} · 목록에만 있는 값 {left}",
+                  not bad, bad[:6])
 
 
 def _denominator_check(conn, rid):

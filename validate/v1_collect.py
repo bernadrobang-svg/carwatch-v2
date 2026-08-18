@@ -72,7 +72,11 @@ C = {
                    "조각을 이어붙이지 못하고 낱개로 저장한 자리를 찾는다 "
                    "— 실측 08-17: facet 55조각이 ok 로 들어와 있었다. "
                    "「실패 안 났다」와 「제대로 들어왔다」는 다르다 (개정 307)",
-                   KIND_CODE),
+                   KIND_CODE,
+                   # ★ 누적이다.  조각으로 저장된 원문은 실행이 끝난 뒤에도
+                   #   DB 에 그대로 남는다.  이번 실행분만 보면 08-17 의
+                   #   facet 55조각을 영영 못 찾는다
+                   cumulative=True),
     "V1-23": Check("V1", "V1-23", "필요한 조합 대비 받은 카탈로그 비율",
                    FATAL, "run",
                    "매물에서 나온 것만 받지 않는다 — 필요한 조합을 먼저 세고 "
@@ -90,7 +94,11 @@ C = {
                    "「받았다」와 「쓰였다」는 다르다.  목록 392쪽을 받고도 "
                    "core_listing 이 그대로였다 — 화면은 「저장했습니다」를 "
                    "냈고 사실이었지만 아무 일도 안 일어났다 (개정 268)",
-                   KIND_CODE),
+                   KIND_CODE,
+                   # ★ 누적이다.  이번 실행에서 목록을 안 받아도 어제 받아
+                   #   둔 봉투가 안 펼쳐져 있으면 그것이 결함이다.
+                   #   run_id 를 걸면 「안 받은 실행」에서 늘 통과가 된다
+                   cumulative=True),
     "V1-20": Check("V1", "V1-20", "카탈로그를 모델당 1회만 받음", FATAL,
                    "run",
                    "호출 키(source_id)와 중복 제거 키(model_catalog_key)가 "
@@ -310,12 +318,65 @@ RUN_SCOPED_PHASES = ("v1_collect.py",)
 RUN_SCOPED = ("raw_response", "audit_request")
 
 
+def _sql_groups(body: str) -> list:
+    """붙어 있는 문자열 리터럴을 한 덩어리로 묶는다 (파이썬 암묵 연결).
+
+    ★ SQL 한 문장이 소스에서는 조각 넷일 수 있다.  조각 하나만 보면
+      뒤 조각의 `WHERE run_id = ?` 를 놓친다
+    ★ 반대로 함수 전체를 보면 안 된다 — 인자 이름이 `run_id` 라는 이유로
+      전부 통과했다 (실측 08-18 · 되살림 시험에서 지렛대가 안 들었다)
+    돌려줌   [(소스 위치, 이어붙인 글), …]
+    """
+    import io as _io
+    import token as _token
+    import tokenize as _tokenize
+
+    off, n = [0], 0
+    for line in body.splitlines(keepends=True):
+        n += len(line)
+        off.append(n)
+    out, cur, pos = [], [], 0
+    skip = (_token.NL, _token.NEWLINE, _token.COMMENT, _token.INDENT,
+            _token.DEDENT)
+    for tk in _tokenize.generate_tokens(_io.StringIO(body).readline):
+        if tk.type == _token.STRING:
+            if not cur:
+                pos = off[tk.start[0] - 1] + tk.start[1]
+            cur.append(tk.string)
+            continue
+        if tk.type in skip:
+            continue
+        if cur:
+            out.append((pos, "".join(cur)))
+            cur = []
+    if cur:
+        out.append((pos, "".join(cur)))
+    return out
+
+
+def _cumulative_codes() -> set:
+    """「누적」이라고 적어 둔 검사 코드 (b-v1v2 「V1-16 의 대상」).
+
+    ★ 규격이 요구하는 것은 「검사마다 이번 실행분인가 누적인가를 적는 것」이지
+      모든 조회에 run_id 를 거는 것이 아니다 —
+      「전 검사에 run_id 를 일괄로 거는 것.  누적 검사가 무의미해진다」
+    """
+    return {code for code, chk in C.items() if chk.cumulative}
+
+
 def _run_scope_check(run_id: str):
-    """★ 검사가 옛 실행분을 보면 정상 동작이 결함으로 잡힌다 (실측 V1-14)."""
+    """★ 검사가 옛 실행분을 보면 정상 동작이 결함으로 잡힌다 (실측 V1-14).
+
+    ★ 「누적」이라 적어 둔 검사는 대상이 아니다.  V1-21(안 펼쳐진 봉투)·
+      V1-25(조각으로 저장된 원문)는 어제 받은 것에서도 찾아야 한다.
+      실측 08-18 — 이 둘을 걸러 내지 않아 V1-16 이 계속 fatal 이었다.
+      ★ 「누적이라 적었는가」를 보는 것이지 「run_id 가 없어도 봐준다」가 아니다
+    """
     import os
     import re
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    known = _cumulative_codes()
     bad = []
     for base, dirs, files in os.walk(os.path.join(root, "validate")):
         dirs[:] = [d for d in dirs if d != "__pycache__"]
@@ -323,14 +384,20 @@ def _run_scope_check(run_id: str):
             if f not in RUN_SCOPED_PHASES:
                 continue
             body = open(os.path.join(base, f), encoding="utf-8").read()
-            for m in re.finditer(r'"[^"]*FROM (\w+)[^"]*"', body):
-                if m.group(1) not in RUN_SCOPED:
+            for pos, sql in _sql_groups(body):
+                hit = [t for t in RUN_SCOPED
+                       if re.search(rf"\bFROM {t}\b", sql)]
+                if not hit or "run_id" in sql:
                     continue
-                # ★ 문장 하나가 아니라 그 문장이 든 함수를 본다.
-                #   여러 줄로 이어진 SQL 은 400자 창을 넘어간다 (실측 08-15)
-                head = _enclosing_def(body, m.start())
-                if "run_id" not in head:
-                    bad.append(f"{f}: {m.group(1)} 에 run_id 조건이 없다")
+                # ★ 그 조회가 든 함수가 내는 검사가 전부 「누적」이면 대상이
+                #   아니다.  검사를 하나도 안 내는 함수는 그대로 대상이다 —
+                #   「어디에도 안 적혔다」를 봐주면 규격이 무의미해진다
+                head = _enclosing_def(body, pos)
+                mine = set(re.findall(r'C\["([\w-]+)"\]', head))
+                if mine and mine <= known:
+                    continue
+                where = f" ({', '.join(sorted(mine))})" if mine else ""
+                bad.append(f"{f}: {hit[0]} 에 run_id 조건이 없다{where}")
     return result(C["V1-16"], run_id, 0, len(bad), not bad,
                   sorted(set(bad))[:10])
 

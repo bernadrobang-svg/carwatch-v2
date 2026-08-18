@@ -171,12 +171,33 @@ def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = []
 
+    # V2-01 — ok 원문이 전부 CORE 행이 됐는가 (STEP 56).
+    # ★ 「지금까지 한 번이라도 ok 였던 매물」과 「지금 ok 인 행」을 견주면 안 된다.
+    #   08-16 에 ok 였다가 08-17 에 404 가 된 매물이 24건 있다 — 팔려서
+    #   내려간 것이다.  detail_status='not_found' 가 맞는 값이고
+    #   원문 ok 도 버리면 안 되는 사실이다 (P3 무손실).
+    #   견줄 것은 「매물마다 마지막 detail 봉투」다 (실측 08-18)
     ok_raw = conn.execute(
-        "SELECT COUNT(DISTINCT listing_id) FROM raw_response "
-        "WHERE endpoint='detail' AND status='ok'").fetchone()[0]
+        "SELECT COUNT(*) FROM ("
+        " SELECT listing_id, status,"
+        "        ROW_NUMBER() OVER (PARTITION BY listing_id"
+        "                           ORDER BY fetched_at DESC, id DESC) AS n"
+        " FROM raw_response WHERE endpoint='detail' AND listing_id IS NOT NULL"
+        ") WHERE n=1 AND status='ok'").fetchone()[0]
     core = conn.execute(
         "SELECT COUNT(*) FROM core_listing WHERE detail_status='ok'").fetchone()[0]
-    out.append(result(C["V2-01"], rid, ok_raw, core, ok_raw == core))
+    # ★ ok 로 받아 놓고 CORE 에 행이 아예 없는 것 — v1 의 사고가 이 모양이었다
+    lost = conn.execute(
+        "SELECT COUNT(DISTINCT r.listing_id) FROM raw_response r"
+        " WHERE r.endpoint='detail' AND r.status='ok'"
+        " AND r.listing_id IS NOT NULL"
+        " AND NOT EXISTS (SELECT 1 FROM core_listing l"
+        "                 WHERE l.listing_id=r.listing_id)").fetchone()[0]
+    out.append(result(C["V2-01"], rid, ok_raw,
+                      core if not lost else f"{core} · 행이 없는 매물 {lost}",
+                      ok_raw == core and not lost,
+                      [] if not lost else
+                      [f"ok 로 받았는데 core_listing 에 행이 없는 매물 {lost}건"]))
 
     n = conn.execute(
         "SELECT COUNT(*) FROM core_listing WHERE site IS NULL OR source_id IS NULL "
@@ -264,12 +285,34 @@ def run(conn, ctx) -> list:
         "GROUP BY endpoint, json_path ORDER BY 3 DESC LIMIT 20")]
     out.append(result(C["V2-21"], rid, 0, len(broken), not broken, broken))
 
+    # V2-18 — parse_rule 재처리 후 옛 판이 남아 있는가 (13-pipeline · STEP 31).
+    # ★ MAX(parse_version) 을 쓰지 않는다.  글자 최대값은 'p10' < 'p9' 다 —
+    #   store/core.py 가 이미 겪고 적어 둔 함정이다.  「가장 최근에 펼친 판」이다
     cur = conn.execute(
-        "SELECT MAX(parse_version) FROM core_listing").fetchone()[0]
+        "SELECT parse_version FROM core_listing WHERE parse_version <> ''"
+        " ORDER BY parsed_at DESC, rowid DESC LIMIT 1").fetchone()
+    cur = cur[0] if cur else None
+    # ★ 「옛 판이 남았다」와 「펼친 적이 없다」는 다르다.
+    #   detail 이 404 라 펼칠 본문이 없는 행은 parse_version 이 비어 있는 것이
+    #   맞는 값이다 (실측 08-18 · 30건 전부 detail_status='not_found').
+    #   비었는데 본문이 ok 인 행은 진짜 결함이다 — 그것만 잡는다
     stale = conn.execute(
-        "SELECT COUNT(*) FROM core_listing WHERE parse_version <> ?",
+        "SELECT COUNT(*) FROM core_listing"
+        " WHERE parse_version <> '' AND parse_version <> ?",
         (cur,)).fetchone()[0] if cur else 0
-    out.append(result(C["V2-18"], rid, 0, stale, stale == 0))
+    unparsed = conn.execute(
+        "SELECT COUNT(*) FROM core_listing"
+        " WHERE parse_version = '' AND detail_status = 'ok'").fetchone()[0]
+    never = conn.execute(
+        "SELECT COUNT(*) FROM core_listing"
+        " WHERE parse_version = ''").fetchone()[0]
+    note = [] if not unparsed else [
+        f"본문을 ok 로 받아 놓고 펼친 적이 없는 행 {unparsed}건"]
+    out.append(result(
+        C["V2-18"], rid, 0,
+        f"{stale + unparsed}" + (f" · 펼칠 본문이 없는 행 {never}"
+                                 if never else ""),
+        stale == 0 and unparsed == 0, note))
 
     # ★ 2 가 실패하면 3 을 하지 않는다.  PII 만 남는 고아를 만들지 않는다 (STEP 35)
     orphan = conn.execute(

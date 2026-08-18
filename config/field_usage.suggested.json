@@ -5,7 +5,7 @@
     "ev_battery:encarComputedInfo": {
       "suggested_usage": "not_provided",
       "reason_hint": "전건 null·false",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         null,
         null,
@@ -15,7 +15,7 @@
     "ev_battery:ensolRawInfo": {
       "suggested_usage": "not_provided",
       "reason_hint": "전건 null·false",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         null,
         null,
@@ -25,7 +25,7 @@
     "ev_battery:jatoBatteryInfo": {
       "suggested_usage": "not_provided",
       "reason_hint": "전건 null·false",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         null,
         null,
@@ -35,7 +35,7 @@
     "inspection_summary:inspName": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         "시험 점검원",
         "시험 점검원",
@@ -45,7 +45,7 @@
     "inspection_summary:outerSummarys": {
       "suggested_usage": "not_provided",
       "reason_hint": "전건 null·false",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         null,
         null,
@@ -55,7 +55,7 @@
     "inspection_summary:outers": {
       "suggested_usage": "in_use",
       "reason_hint": "매핑표에 있는 경로",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         null,
         null,
@@ -65,7 +65,7 @@
     "inspection_summary:vehicleId": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         1,
         1,
@@ -75,7 +75,7 @@
     "platform_check:cleaned": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         true,
         true,
@@ -85,7 +85,7 @@
     "platform_check:vehicleId": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         1,
         1,
@@ -95,7 +95,7 @@
     "record_summary:accidentCnt": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -105,7 +105,7 @@
     "record_summary:business": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -115,7 +115,7 @@
     "record_summary:carNo": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         "12가3456",
         "12가3456",
@@ -125,7 +125,7 @@
     "record_summary:floodTotalLossCnt": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -135,7 +135,7 @@
     "record_summary:fuel": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         "가솔린",
         "가솔린",
@@ -145,7 +145,7 @@
     "record_summary:government": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -155,7 +155,7 @@
     "record_summary:loan": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -165,7 +165,7 @@
     "record_summary:ownerChangeCnt": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -175,7 +175,7 @@
     "record_summary:robberCnt": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -185,7 +185,7 @@
     "record_summary:totalLossCnt": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         0,
         0,
@@ -195,7 +195,7 @@
     "record_summary:use": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         "1",
         "1",
@@ -205,7 +205,7 @@
     "record_summary:year": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         "2023",
         "2023",
@@ -215,7 +215,7 @@
     "sellingpoint:sellingPoint": {
       "suggested_usage": "not_provided",
       "reason_hint": "전건 null·false",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         null,
         null,
@@ -225,7 +225,7 @@
     "sellingpoint:vehicleId": {
       "suggested_usage": "unused_by_policy",
       "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
+      "observed": 45,
       "samples": [
         1,
         1,

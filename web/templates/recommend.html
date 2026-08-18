@@ -46,7 +46,7 @@
 {% for r in rows %}
 <tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}">
   <td class="c photo" data-label="사진">
-    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
+    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
     {% if !r.photo_url %}<span class="nophoto" title="원문에 사진이 없습니다"></span>{% endif %}
   </td>
   <!-- ♡ 는 제목 줄에.  훑다가 바로 담는다 (개정 305) -->

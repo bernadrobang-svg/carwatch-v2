@@ -54,7 +54,7 @@
 {% for r in rows %}
 <tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}">
   <td class="c photo" data-label="사진">
-    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
+    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
     {% if !r.photo_url %}<span class="nophoto thumb-none" title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
   </td>
   <td class="c" data-label="관심">

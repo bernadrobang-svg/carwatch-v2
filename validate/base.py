@@ -69,6 +69,11 @@ class Check:
     scope: str  # run · target · listing · axis
     action: str = ""  # 이 검사가 걸리면 사람이 할 행동
     kind: str = ""  # code · contract · external · total (STEP 54)
+    # ★ 이번 실행분을 보는가, 누적을 보는가 (b-v1v2 「V1-16 의 대상」).
+    #   규격   「검사마다 「이번 실행분인가 누적인가」를 Check 에 적는다」
+    #          「전 검사에 run_id 를 일괄로 거는 것 — 누적 검사가 무의미해진다」
+    #   ★ 기본은 「이번 실행분」이다.  누적으로 두려면 왜 그런지 함께 적는다
+    cumulative: bool = False
 
     def __post_init__(self) -> None:
         """★ 성격이 등급을 정한다.  손으로 적은 등급과 어긋나면 성격을 따른다.

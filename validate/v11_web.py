@@ -2461,13 +2461,17 @@ def _null_link_check(conn, rid):
 # (그려야 할 class, 그릴 자료가 있다는 표시).
 # ★ 자료가 없어 못 그린 것과 구조가 없는 것은 다르다 —
 #   관심 0건이면 spark 를 그릴 수가 없다.  그것을 코드 결함으로 세지 않는다
+# (그려야 할 class, 화면을 그릴 자료가 있다는 표시, 「그 자료가 없다」는 표시)
+# ★ 셋째 칸 — 그 자리를 「없음」으로 그린 흔적이다.  씨앗 DB 는 사진이 없어
+#   (StubEncar 가 "Photos": [] 를 준다) 목록이 전건 .thumb-none 으로 나온다.
+#   그것을 「썸네일을 안 만들었다」로 세면 검사가 거짓말한다 (실측 08-18)
 SIAN_VISUAL = {
-    "/market": (("hist", "histx"), None),
-    "/dealers": (("quad",), None),
-    "/watch": (("spark",), "watch_id"),
-    "/recommend": (("pbar",), None),
-    "/why/{listing_id}": (("curve",), None),
-    "/listings": (("thumb", "peek"), None),
+    "/market": (("hist", "histx"), None, None),
+    "/dealers": (("quad",), None, None),
+    "/watch": (("spark",), "watch_id", None),
+    "/recommend": (("pbar",), None, "thumb-none"),
+    "/why/{listing_id}": (("curve",), None, None),
+    "/listings": (("thumb", "peek"), None, "thumb-none"),
 }
 
 
@@ -2491,7 +2495,7 @@ def _sian_visual_check(conn, rid):
     acc = Account(1, ROLE_ADMIN, "마스터")
     routes = {r.path: r for r in ROUTES}
     bad, ok, skipped = [], 0, []
-    for path, (want, needs) in SIAN_VISUAL.items():
+    for path, (want, needs, none_mark) in SIAN_VISUAL.items():
         route = routes.get(path)
         if route is None or GET not in route.methods:
             bad.append(f"{path} — 그런 화면이 없다")
@@ -2520,12 +2524,15 @@ def _sian_visual_check(conn, rid):
         for cls in want:
             if cls in used:
                 ok += 1
+            elif none_mark and none_mark in used:
+                # ★ 자리는 만들었고 넣을 것이 없어 「없음」을 그린 것이다.
+                #   구조가 없는 것과 다르다 — 코드 결함으로 세지 않는다
+                skipped.append(f"{path} — .{cls} 를 그릴 자료가 없다 "
+                               f"(.{none_mark} 로 나온다)")
             else:
                 bad.append(f"{path} — .{cls} 가 화면에 없다 (표로 내고 있다)")
-    total = sum(len(w) for w, _n in SIAN_VISUAL.values())
-    seen = total - sum(len(SIAN_VISUAL[p.split(" —")[0]][0])
-                       for p in [s.split(" —")[0] for s in skipped]
-                       if p in SIAN_VISUAL)
+    total = sum(len(w) for w, _n, _m in SIAN_VISUAL.values())
+    seen = ok + len(bad)
     note = f"{ok}/{seen}" + (f" · 자료 없어 못 본 것 {len(skipped)}"
                              if skipped else "")
     return result(C["V11-77"], rid, f"{total}종", note, not bad,
@@ -2674,26 +2681,42 @@ def _three_values_check(conn, rid):
 
 
 def _photo_size_check(rid):
-    """V11-80 — 사진이 최소 크기 이상인가 (개정 281)."""
+    """V11-80 — 사진이 최소 크기 이상인가 (R-206 · `[마스터]` 개정 281).
+
+    ★ `.thumb` 규칙의 글자만 읽고 통과하고 있었다.  그 class 가 목록
+      `<img>` 에 붙어 있지 않아 실제로는 아무 데도 안 먹는 죽은 규칙이었고,
+      화면에는 `.rows td.photo img` 의 96px 이 그려지고 있었다.
+      검사는 「128px 이다」라고 했고 화면은 96px 이었다 —
+      이 프로젝트가 막으려는 바로 그 「선언과 실제의 괴리」다 (실측 08-18)
+    ★ 지금은 정본 표(`61-web/a-common` 사진 크기)를 읽는다.
+      CSS 가 그 표대로인지는 V11-107 이 본다.  두 검사가 이어져야
+      「표대로 그렸고 그 표가 최소치를 넘는다」가 성립한다
+    """
     import json as _j
 
     with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
         want = int(_j.load(f)["photo_min_px"])
-    css = open(APP_CSS, encoding="utf-8").read()
-    # ★ 겹치기(cascade)를 본다.  뒤에 온 규칙이 이긴다 —
-    #   앞의 시안 규칙만 보고 「작다」고 하면 검사가 거짓말한다 (실측 08-17)
-    last: dict = {}
-    for m in re.finditer(r"(\.thumb(?:-none)?)\s*(?:,[^{]*)?\{([^}]*)\}", css):
-        w = re.search(r"width:\s*(\d+)px", m.group(2))
-        if w:
-            last[m.group(1)] = int(w.group(1))
-    bad = [f"{sel} 폭 {px}px < {want}px"
-           for sel, px in sorted(last.items()) if px < want]
-    if not last:
-        bad.append("사진 규칙이 없다")
-    got = " · ".join(f"{k} {v}px" for k, v in sorted(last.items()))
-    return result(C["V11-80"], rid, f">= {want}px",
-                  got or "없음", not bad, bad[:6])
+    text = canon_text("화면")
+    if not text:
+        return not_applicable(C["V11-80"], rid, "화면 정본을 못 찾았다")
+    # 표의 「| 목록 | 96×72 | 88×66 | 80×60 |」 꼴을 읽는다.
+    # ★ 목록·관심이 R-206 이 말하는 「목록 사진」이다.  추천은 마스터가
+    #   따로 「추천에는 이미지 너무 커」라고 해 작게 정한 화면이다
+    seen: dict = {}
+    for line in text.splitlines():
+        got = re.match(r"\| *\**(목록|관심)\** *\|((?: *\d+×\d+ *\|)+)", line)
+        if not got:
+            continue
+        for w, _h in re.findall(r"(\d+)×(\d+)", got.group(2)):
+            seen.setdefault(got.group(1), []).append(int(w))
+    if not seen:
+        return not_applicable(C["V11-80"], rid, "정본에 사진 크기 표가 없다")
+    bad = [f"{name} {min(px)}px < {want}px "
+           f"(정본 {' · '.join(str(x) for x in px)})"
+           for name, px in sorted(seen.items()) if min(px) < want]
+    got = " · ".join(f"{k} {'/'.join(str(x) for x in v)}px"
+                     for k, v in sorted(seen.items()))
+    return result(C["V11-80"], rid, f">= {want}px", got, not bad, bad[:6])
 
 
 def _render_metrics_checks(conn, rid):
