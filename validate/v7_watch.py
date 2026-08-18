@@ -12,7 +12,8 @@ import ast
 import os
 
 from validate.base import (
-    FATAL, KIND_CODE, KIND_CONTRACT, KIND_EXTERNAL, WARN, Check, result,
+    FATAL, KIND_CODE, KIND_CONTRACT, KIND_EXTERNAL, WARN, Check,
+    not_applicable, result,
 )
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -62,6 +63,13 @@ C = {
                    FATAL, "run",
                    "체크리스트는 사람의 확인이다. 점수에 넣지 않는다",
                    KIND_CONTRACT),
+    "V7-15": Check("V7", "V7-15", "진행 메모를 자유롭게 적을 수 있음",
+                   FATAL, "run",
+                   "이 도구는 엔카와 직거래를 하기 위한 것이다.  폐기된 "
+                   "4단계는 파는 쪽을 대신하는 사람이 쓰던 것이었다. "
+                   "연락함 · 보러 감 · 끝 세 메모다. "
+                   "★ 단계를 강제하지 않는다 (개정 362)",
+                   KIND_CODE),
     "V7-09": Check("V7", "V7-09", "실구매가·총소유비용이 점수에 반영되지 않음",
                    FATAL, "run",
                    "금융 조건은 표시다. 차량 품질 점수와 섞지 않는다",
@@ -99,6 +107,90 @@ def _reads(dirs: tuple, needles: tuple) -> list:
                         if needle in n.value:
                             bad.append(f"{rel}: {needle}")
     return sorted(set(bad))
+
+
+def _progress_note_check(conn, rid):
+    """V7-15 — 진행 메모를 자유롭게 적을 수 있는가 (11장 STEP 118 · 개정 362).
+
+    ★★ 계약 4단계를 폐기하고 이것이 대신 들어왔다.
+      마스터 지적 — 이 도구는 엔카와 직거래를 하기 위한 것이지
+      파는 쪽을 대신해 주는 것이 아니다 (개정 362).
+      폐기된 4단계는 파는 쪽을 대신하는 사람이 쓰는 것이었다
+    ★ 「자유롭게」가 검산이다 —
+      ① 단계를 강제하지 않는가 (앞 단계 없이 '끝'을 적을 수 있는가)
+      ② 메모가 본체인가 (빈 메모를 거절하는가)
+      ③ 화면에 적을 자리가 있는가 (CLI 는 완성이 아니다 · S27)
+      ④ 남의 메모를 못 보고 못 지우는가 (V7-12)
+    """
+    import sqlite3 as _s
+
+    from errors import CarWatchError
+    from store.watch import NOTE_KINDS, note_add, note_delete, notes_of
+
+    bad = []
+    # ★ 운영 DB 를 건드리지 않는다.  메모리 사본에서 시험한다
+    probe = _s.connect(":memory:")
+    conn.backup(probe)
+    lid = probe.execute("SELECT listing_id FROM core_listing LIMIT 1").fetchone()
+    if lid is None:
+        probe.close()
+        return not_applicable(C["V7-15"], rid, "매물이 없다")
+    lid = lid[0]
+    at = "2026-01-01T00:00:00+00:00"
+    # ★ 검사가 예외로 죽으면 진단이 안 나온다.  붙잡아 결함으로 낸다.
+    #   실측 08-19 — 되살림 시험에서 검사가 통째로 죽어 무엇이 틀렸는지
+    #   한 줄도 안 나왔다.  「죽는 검사」는 「없는 검사」와 같다
+    blew = (CarWatchError, _s.Error)
+    try:
+        # ① 앞 단계 없이 「끝」을 적을 수 있어야 한다
+        try:
+            note_add(probe, 1, lid, "done", "안 샀다. 실차가 사진과 달랐다", at)
+        except blew as e:
+            bad.append(f"★ 단계를 강제한다 — 앞 단계 없이 「끝」을 못 적는다: "
+                       f"{type(e).__name__} {e}")
+            note_add(probe, 1, lid, "contacted", "되살림용", at)
+            note_add(probe, 1, lid, "done", "되살림용", at)
+        got = notes_of(probe, 1, lid)
+        if not got:
+            bad.append("적었는데 안 보인다")
+        if len(NOTE_KINDS) != 3:
+            bad.append(f"갈래가 셋이 아니다: {sorted(NOTE_KINDS)}")
+        # ② 빈 메모는 거절해야 한다 — 메모가 본체다
+        try:
+            note_add(probe, 1, lid, "contacted", "   ", at)
+            bad.append("빈 메모를 받는다 — 메모가 본체다")
+        except blew:
+            pass
+        # ★ 계약·대행 갈래가 들어오면 안 된다.
+        #   ★ DDL 의 CHECK 가 막으면 IntegrityError 다 — 그것도 「막았다」다
+        try:
+            note_add(probe, 1, lid, "contract", "폐기된 갈래", at)
+            bad.append("★ 계약 갈래를 받는다 — 폐기된 개념이다 (개정 362)")
+        except blew:
+            pass
+        # ③ 남의 메모는 안 보이고 못 지운다
+        if notes_of(probe, 2, lid):
+            bad.append("★ 남의 메모가 보인다 (V7-12)")
+        rows = notes_of(probe, 1, lid)
+        if rows:
+            try:
+                note_delete(probe, rows[0][0], 2)
+                bad.append("★ 남의 메모를 지울 수 있다 (V7-12)")
+            except blew:
+                pass
+    except blew as e:                                   # noqa: BLE001
+        bad.append(f"진행 메모가 안 돈다: {type(e).__name__} {e}"[:80])
+    finally:
+        probe.close()
+
+    # ④ 화면에 적을 자리가 있는가 — CLI 는 완성이 아니다 (S27)
+    tpl = os.path.join(ROOT, "web", "templates", "watch.html")
+    if os.path.isfile(tpl):
+        body = open(tpl, encoding="utf-8").read()
+        if 'name="note_kind"' not in body or 'name="body"' not in body:
+            bad.append("관심 화면에 진행을 적을 자리가 없다")
+    return result(C["V7-15"], rid, "적을 수 있다",
+                  "된다" if not bad else "안 된다", not bad, bad[:6])
 
 
 def run(conn, ctx) -> list:
@@ -183,6 +275,9 @@ def run(conn, ctx) -> list:
     bad += [f"{p} — CHECK 밖의 문구" for p in _reads(
         ("web", "report", "store"), ("사용자 해제", "직접 해제"))]
     out.append(result(C["V7-11"], rid, 0, bad or 0, not bad, bad))
+
+    # V7-15 — 진행 메모 (개정 362).  ★ 계약 4단계 대신 들어온 것이다
+    out.append(_progress_note_check(conn, rid))
 
     # V7-08 · V7-09 — 판정 계층이 사람의 확인·금융을 읽는가
     for code, needles in (

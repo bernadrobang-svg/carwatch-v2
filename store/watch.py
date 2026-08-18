@@ -279,6 +279,73 @@ def watch_close(conn: sqlite3.Connection, watch_id: int, reason: str,
     conn.commit()
 
 
+# 진행 메모의 갈래 (개정 362).  ★ 순서가 아니다 — 정리하는 이름일 뿐이다.
+#   ★ 계약 4단계를 폐기하고 이것이 대신 들어왔다.
+#     마스터는 사는 사람이다.  파는 쪽을 대행하지 않는다
+NOTE_KINDS: dict = {
+    "contacted": "연락함",
+    "visited": "보러 감",
+    "done": "끝",
+}
+
+
+def note_add(conn: sqlite3.Connection, account_id: int, listing_id: int,
+             kind: str, body: str, at: str) -> int:
+    """담아 둔 매물에 진행을 적는다 (11장 STEP 118 · 개정 362 · V7-15).
+
+    ★ 단계를 강제하지 않는다.  건너뛸 수 있다 —
+      「연락함」 없이 「끝」을 적어도 된다.  전화만 하고 끝날 수도 있다
+    ★ 메모가 본체다.  빈 메모는 받지 않는다
+    금지   계약·대행 절차를 넣는 것
+    금지   메모를 점수에 반영하는 것 (V7-08 이 잡는다)
+    """
+    if kind not in NOTE_KINDS:
+        raise ValidationError(
+            f"진행은 {' · '.join(NOTE_KINDS.values())} 셋입니다: {kind[:20]}",
+            step="STEP 118")
+    body = (body or "").strip()
+    if not body:
+        raise ValidationError(
+            "무엇을 했는지 적어 주십시오.  메모가 본체입니다", step="STEP 118")
+    cur = conn.execute(
+        "INSERT INTO watch_note(account_id, listing_id, kind, body, noted_at)"
+        " VALUES(?,?,?,?,?)", (account_id, listing_id, kind, body, at))
+    conn.commit()
+    return int(cur.lastrowid)
+
+
+def notes_of(conn: sqlite3.Connection, account_id: int,
+             listing_id: int | None = None) -> list:
+    """내가 적은 진행 메모.  ★ 남의 메모는 안 보인다 (V7-12).
+
+    돌려줌   [(note_id, listing_id, kind, 갈래이름, body, noted_at)]
+            ★ 최근 것이 위다 — 무슨 일이 있었나를 거꾸로 읽는다
+    """
+    sql = ("SELECT note_id, listing_id, kind, body, noted_at FROM watch_note"
+           " WHERE account_id = ?")
+    args: list = [account_id]
+    if listing_id is not None:
+        sql += " AND listing_id = ?"
+        args.append(listing_id)
+    return [(r[0], r[1], r[2], NOTE_KINDS.get(r[2], r[2]), r[3], r[4])
+            for r in conn.execute(sql + " ORDER BY noted_at DESC, note_id DESC",
+                                  args)]
+
+
+def note_delete(conn: sqlite3.Connection, note_id: int,
+                account_id: int) -> None:
+    """★ 남의 메모는 못 지운다.  note_id 는 연속 정수다 (V7-12)."""
+    row = conn.execute("SELECT account_id FROM watch_note WHERE note_id=?",
+                       (note_id,)).fetchone()
+    if row is None:
+        raise ValidationError(f"없는 메모: {note_id}", step="STEP 118")
+    if int(row[0]) != int(account_id):
+        raise PolicyError("남의 메모는 지울 수 없습니다", step="STEP 118")
+    conn.execute("DELETE FROM watch_note WHERE note_id=? AND account_id=?",
+                 (note_id, account_id))
+    conn.commit()
+
+
 # ── STEP 113 스냅샷 ──────────────────────────────────────────────────
 def track_snapshot(conn: sqlite3.Connection, run_id: str, at: str,
              coefficient_id: int | None = None) -> int:

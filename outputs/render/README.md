@@ -15,7 +15,7 @@
 | `/dealers` | [dealers.html](dealers.html) | 200 | 18,097B |
 | `/notready` | [notready.html](notready.html) | 200 | 16,500B |
 | `/reports` | [reports.html](reports.html) | 200 | 4,628B |
-| `/watch` | [watch.html](watch.html) | 200 | 16,884B |
+| `/watch` | [watch.html](watch.html) | 200 | 19,622B |
 | `/login` | [login.html](login.html) | 200 | 4,856B |
 | `/join` | [join.html](join.html) | 200 | 4,685B |
 | `/password` | [password.html](password.html) | 200 | 4,676B |
@@ -31,7 +31,7 @@
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 21,575B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 22,905B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 119,331B |
-| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 16,802B |
+| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,011B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,353B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 8,710B |
 | `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 20,037B |

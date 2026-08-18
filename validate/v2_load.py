@@ -396,6 +396,8 @@ OUR_COLUMNS: frozenset[str] = frozenset({
     "queued_at", "changed_at", "added_at", "occurred_at", "checked_at",
     "requested_at", "expires_at", "first_hit_at", "last_hit_at", "decided_at",
     "parsed_at", "collected_at",
+    # 진행 메모 — 사람이 적는다.  원문에서 오지 않는다 (개정 362)
+    "noted_at",
     # 진단 부위 — resultCode 가 있는 것만 넣는다.  거르고 남은 것이라 필수다
     "item_code", "part_name", "result_code",
     # 로그인 시도 — 우리가 찍는다 (STEP 126)

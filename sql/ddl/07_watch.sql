@@ -120,3 +120,26 @@ CREATE TABLE IF NOT EXISTS vehicle_duplicate (
   PRIMARY KEY (vehicle_id, listing_id),
   CHECK (kind IN ('concurrent_same_dealer','concurrent_cross_dealer','relist'))
 );
+
+-- 진행 메모 (11장 STEP 118 · 개정 362 · V7-15).
+-- ★★ 계약 4단계를 폐기하고 이것이 대신 들어왔다.
+--    마스터 지적 — 이 도구는 엔카와 직거래를 하기 위한 것이지
+--    파는 쪽을 대신해 주는 것이 아니다.  폐기된 4단계는 그쪽이 쓰던 것이다
+-- ★ 메모가 본체다.  kind 는 메모를 정리하는 이름일 뿐이다
+-- ★ 단계를 강제하지 않는다 — 전화만 하고 끝날 수도 있다.
+--   순서도 없고, 앞 단계 없이 'done' 을 적어도 된다
+CREATE TABLE IF NOT EXISTS watch_note (
+  note_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  account_id   INTEGER NOT NULL,   -- ★ 계정별이다 (13장 STEP 126)
+  listing_id   INTEGER NOT NULL,
+  kind         TEXT NOT NULL,      -- contacted · visited · done
+  body         TEXT NOT NULL,      -- ★ 본체.  비워 둘 수 없다
+  noted_at     TEXT NOT NULL,
+  FOREIGN KEY (account_id) REFERENCES account(account_id),
+  FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),
+  CHECK (kind IN ('contacted','visited','done')),
+  CHECK (body <> '')
+);
+
+CREATE INDEX IF NOT EXISTS ix_watch_note_who
+  ON watch_note(account_id, listing_id, noted_at);

@@ -76,7 +76,7 @@
 | `audit_request` | 11 | 검증 결과를 테이블에 남긴다.  화면 출력만 하면 어제와 비교할 수 없다 |
 | `audit_validation` | 11 |  |
 
-## `sql/ddl/07_watch.sql` — 표 8개
+## `sql/ddl/07_watch.sql` — 표 9개
 
 > 활용 테이블.  지시서 11장 STEP 112a · 113 · 117a · 118 · 7장 STEP 82d / ★ status 는 네 곳에서 뜻이 다르다.  DDL 의 CHECK 로 집합을 강제한다
 
@@ -90,6 +90,7 @@
 | `watch_query_hit` | 4 |  |
 | `watch_candidate` | 5 |  |
 | `vehicle_duplicate` | 6 | 동시 중복 게시.  ★ 재등록이 아니다 (STEP 112) |
+| `watch_note` | 6 | 순서도 없고, 앞 단계 없이 'done' 을 적어도 된다 |
 
 ## `sql/ddl/08_admin.sql` — 표 8개
 
@@ -106,5 +107,5 @@
 | `admin_api_snapshot` | 8 |  |
 | `auth_login_attempt` | 5 | 금지   계정을 영구 잠그는 것.  1인 도구라 스스로 못 풀면 CLI 로 가야 한다 |
 
-**표 43개.**
+**표 44개.**
 

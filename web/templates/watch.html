@@ -52,6 +52,48 @@
 <p class="muted">★ 매물은 사라집니다. 조건은 남습니다 —
   조건에 맞는 새 매물이 뜨면 알립니다.</p>
 
+<h2>진행</h2>
+<p class="muted">전화했는지 · 보러 갔는지 · 어떻게 끝났는지를 적어 둡니다.
+  ★ <strong>순서가 없습니다.</strong> 전화만 하고 끝날 수도 있습니다.
+  ★ 점수에 반영하지 않습니다 — 이것은 기록이지 평가가 아닙니다.</p>
+{% if notes %}
+{% for n in notes %}
+<div class="prog">
+  <div class="prog-h"><a href="/why/{{ n.listing_id }}">{{ n.label }}</a></div>
+  {% if n.notes %}
+  <ul class="prog-l">
+  {% for m in n.notes %}
+  <li><span class="tag">{{ m.kind_label }}</span>
+    <span class="dim">{{ m.noted_at | date }}</span>
+    {{ m.body }}
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+      <input type="hidden" name="kind" value="note_delete">
+      <input type="hidden" name="note_id" value="{{ m.note_id }}">
+      <button type="submit" class="mini" data-confirm="이 메모를 지웁니다">지우기</button>
+    </form></li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+  {% if !n.notes %}<p class="muted">아직 적은 것이 없습니다.</p>{% endif %}
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="kind" value="note">
+    <input type="hidden" name="listing_id" value="{{ n.listing_id }}">
+    <label>무엇을 <select name="note_kind">
+      {% for k in note_kinds %}<option value="{{ k.key }}">{{ k.label }}</option>{% endfor %}
+    </select></label>
+    <label>내용 <input name="body" size="46"
+      placeholder="딜러에게 전화. 실차 있음. 주말 방문 가능" required></label>
+    <button type="submit">적기</button>
+  </form>
+</div>
+{% endfor %}
+{% endif %}
+{% if !notes %}
+<p class="muted">관심에 담은 매물이 있어야 진행을 적을 수 있습니다.</p>
+{% endif %}
+
 <form method="post" action="/watch/add">
   <input type="hidden" name="kind" value="query">
   <input type="hidden" name="csrf" value="{{ page.csrf_token }}">

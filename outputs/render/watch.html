@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관심 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=ab512c82d2">
+<link rel="stylesheet" href="/static/app.css?v=02620a673f">
 
 </head>
 <body class="s-watch">
@@ -206,6 +206,66 @@
 <p class="muted">★ 매물은 사라집니다. 조건은 남습니다 —
   조건에 맞는 새 매물이 뜨면 알립니다.</p>
 
+<h2>진행</h2>
+<p class="muted">전화했는지 · 보러 갔는지 · 어떻게 끝났는지를 적어 둡니다.
+  ★ <strong>순서가 없습니다.</strong> 전화만 하고 끝날 수도 있습니다.
+  ★ 점수에 반영하지 않습니다 — 이것은 기록이지 평가가 아닙니다.</p>
+
+
+<div class="prog">
+  <div class="prog-h"><a href="/why/27">KOLEOS_HEV 1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</a></div>
+  
+  <p class="muted">아직 적은 것이 없습니다.</p>
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="kind" value="note">
+    <input type="hidden" name="listing_id" value="27">
+    <label>무엇을 <select name="note_kind">
+      <option value="contacted">연락함</option><option value="visited">보러 감</option><option value="done">끝</option>
+    </select></label>
+    <label>내용 <input name="body" size="46"
+      placeholder="딜러에게 전화. 실차 있음. 주말 방문 가능" required></label>
+    <button type="submit">적기</button>
+  </form>
+</div>
+
+<div class="prog">
+  <div class="prog-h"><a href="/why/1915">G80_25T 가솔린 2.5 터보 AWD · (세부등급 없음)</a></div>
+  
+  <p class="muted">아직 적은 것이 없습니다.</p>
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="kind" value="note">
+    <input type="hidden" name="listing_id" value="1915">
+    <label>무엇을 <select name="note_kind">
+      <option value="contacted">연락함</option><option value="visited">보러 감</option><option value="done">끝</option>
+    </select></label>
+    <label>내용 <input name="body" size="46"
+      placeholder="딜러에게 전화. 실차 있음. 주말 방문 가능" required></label>
+    <button type="submit">적기</button>
+  </form>
+</div>
+
+<div class="prog">
+  <div class="prog-h"><a href="/why/1427">G80_25T 가솔린 2.5 터보 AWD · (세부등급 없음)</a></div>
+  
+  <p class="muted">아직 적은 것이 없습니다.</p>
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="kind" value="note">
+    <input type="hidden" name="listing_id" value="1427">
+    <label>무엇을 <select name="note_kind">
+      <option value="contacted">연락함</option><option value="visited">보러 감</option><option value="done">끝</option>
+    </select></label>
+    <label>내용 <input name="body" size="46"
+      placeholder="딜러에게 전화. 실차 있음. 주말 방문 가능" required></label>
+    <button type="submit">적기</button>
+  </form>
+</div>
+
+
+
+
 <form method="post" action="/watch/add">
   <input type="hidden" name="kind" value="query">
   <input type="hidden" name="csrf" value="render">
@@ -342,7 +402,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260817T032131</span>
-  <span>2026-08-18 17:11</span>
+  <span>2026-08-18 17:23</span>
 </footer>
 
 </body>

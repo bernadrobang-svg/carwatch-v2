@@ -2,13 +2,13 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **314개**
+검사 **315개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **60** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **61** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **12** | 가이드가 판단 |
-| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **32** | 개발측 |
+| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
 
@@ -55,8 +55,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:45` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:57 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:48` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:51` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:141` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:138` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:61` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
@@ -165,8 +165,8 @@
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:171 · chapters/20-verify/c-v3v4.md:287 |
 | `V4-04` | 매핑표에 없는 CORE 컬럼 | run | `validate/v4_mapping.py:89` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:172 |
 | `V4-05` | 원문 경로 수 변동 | run | `validate/v4_mapping.py:91` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:295 · chapters/20-verify/c-v3v4.md:173 · chapters/20-verify/c-v3v4.md:300 |
-| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-06` | RAW 경로가 등록부에 있는가 | run | `validate/v4_mapping.py:34` | 2026-08-17 05:33 | 2026-08-16 23:59 | chapters/31-registry.md:58 · chapters/31-registry.md:203 · chapters/31-registry.md:211 |
+| `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
 | `V4-07` | in_use 인데 core_column NULL | run | `validate/v4_mapping.py:40` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:286 · chapters/60-admin/b-ops.md:121 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:177 · trace/12-dict.md:42 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:178 |
@@ -198,19 +198,19 @@
 | `V5-12` | NOT_RATED 인데 not_rated_reason 이 NULL 인 행 없음 | run | `validate/v5_value.py:37` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:227 · chapters/11-store/c-result.md:115 · chapters/20-verify/d-v5.md:18 |
 | `V6-01` | — | — | **★ 코드에 없다** | — | — | chapters/41-view.md:675 · chapters/61-web.md:328 |
 | `V6-07` | ORDER BY 에 4단이 전부 있음 | run | `validate/v3_logic.py:125` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:152 · guide/03_이력.md:206 · chapters/41-view.md:563 |
-| `V7-01` | watch_track 에 버전 4종 전건 있음 | run | `validate/v7_watch.py:29` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:147 · chapters/42-watch.md:610 |
-| `V7-02` | cause != 'listing' 인 이벤트가 알림되지 않음 | run | `validate/v7_watch.py:33` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:616 |
-| `V7-04` | 같은 이벤트 중복 발송 0건 | run | `validate/v7_watch.py:37` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:618 · chapters/50-multisite.md:118 · trace/50-multisite.md:22 |
-| `V7-05` | gone 매물이 목록에서 삭제되지 않음 | run | `validate/v7_watch.py:39` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:619 |
-| `V7-06` | 검증 실패 실행에서 알림이 나가지 않음 | run | `validate/v7_watch.py:42` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:620 · chapters/50-multisite.md:110 · trace/50-multisite.md:17 |
-| `V7-07` | relist 결합에 identity_kind 기록 | run | `validate/v7_watch.py:46` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:621 |
-| `V7-08` | 구매 체크리스트가 점수·등급에 반영되지 않음 | run | `validate/v7_watch.py:61` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:622 |
-| `V7-09` | 실구매가·총소유비용이 점수에 반영되지 않음 | run | `validate/v7_watch.py:65` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:623 |
-| `V7-10` | 발송 시도 대비 성공률 | run | `validate/v7_watch.py:49` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:153 · chapters/42-watch.md:624 · chapters/50-multisite.md:59 |
-| `V7-11` | closed_reason 이 CHECK 안의 값 | run | `validate/v7_watch.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:175 · guide/03_이력.md:217 · chapters/42-watch.md:185 |
-| `V7-12` | 남의 관심 항목을 고치지 못함 | run | `validate/v7_watch.py:53` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:393 · guide/01_요구사항.md:403 · guide/03_이력.md:199 |
+| `V7-01` | watch_track 에 버전 4종 전건 있음 | run | `validate/v7_watch.py:30` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:147 · chapters/42-watch.md:610 |
+| `V7-02` | cause != 'listing' 인 이벤트가 알림되지 않음 | run | `validate/v7_watch.py:34` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:616 |
+| `V7-04` | 같은 이벤트 중복 발송 0건 | run | `validate/v7_watch.py:38` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:618 · chapters/50-multisite.md:118 · trace/50-multisite.md:22 |
+| `V7-05` | gone 매물이 목록에서 삭제되지 않음 | run | `validate/v7_watch.py:40` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:619 |
+| `V7-06` | 검증 실패 실행에서 알림이 나가지 않음 | run | `validate/v7_watch.py:43` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:620 · chapters/50-multisite.md:110 · trace/50-multisite.md:17 |
+| `V7-07` | relist 결합에 identity_kind 기록 | run | `validate/v7_watch.py:47` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:621 |
+| `V7-08` | 구매 체크리스트가 점수·등급에 반영되지 않음 | run | `validate/v7_watch.py:62` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:622 |
+| `V7-09` | 실구매가·총소유비용이 점수에 반영되지 않음 | run | `validate/v7_watch.py:73` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:623 |
+| `V7-10` | 발송 시도 대비 성공률 | run | `validate/v7_watch.py:50` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:153 · chapters/42-watch.md:624 · chapters/50-multisite.md:59 |
+| `V7-11` | closed_reason 이 CHECK 안의 값 | run | `validate/v7_watch.py:58` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:175 · guide/03_이력.md:217 · chapters/42-watch.md:185 |
+| `V7-12` | 남의 관심 항목을 고치지 못함 | run | `validate/v7_watch.py:54` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:393 · guide/01_요구사항.md:403 · guide/03_이력.md:199 |
 | `V7-14` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:362 · chapters/42-watch.md:427 |
-| `V7-15` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:369 · chapters/42-watch.md:596 · trace/42-watch.md:83 |
+| `V7-15` | 진행 메모를 자유롭게 적을 수 있음 | run | `validate/v7_watch.py:66` | **★ 없음** | 없음 | guide/03_이력.md:369 · chapters/42-watch.md:596 · trace/42-watch.md:83 |
 | `V8-01` | 같은 파일명이 두 번 생성되지 않음 | run | `validate/v3_logic.py:92` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:151 · chapters/40-report.md:542 · chapters/41-view.md:695 |
 | `V8-02` | 출력 파일에 BOM · CRLF 가 없음 | run | `validate/v3_logic.py:97` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:151 · chapters/40-report.md:571 · chapters/41-view.md:696 |
 | `V9-01` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:316 · chapters/50-multisite.md:214 · chapters/50-multisite.md:298 |
@@ -422,6 +422,7 @@
 - `V3-71` 보증 잔여가 기간·거리 중 낮은 쪽임 — `validate/v3_logic.py`
 - `V4-26` 미분류가 원인별로 갈려 있음 — `validate/v4_mapping.py`
 - `V4-27` 판정을 막는 것만 막음 — `validate/v4_mapping.py`
+- `V7-15` 진행 메모를 자유롭게 적을 수 있음 — `validate/v7_watch.py`
 - `V9-06` 매물마다 사이트 배지가 있음 — `validate/v9_multisite.py`
 - `V9-07` 합친 값에 출처가 붙어 있음 — `validate/v9_multisite.py`
 - `V9-10` 사이트 보증 항목의 합이 만점과 같음 — `validate/v9_multisite.py`
@@ -454,7 +455,6 @@
 - `V3-69` — guide/03_이력.md:338 · chapters/30-score/a-frame.md:751
 - `V6-01` — chapters/41-view.md:675 · chapters/61-web.md:328
 - `V7-14` — guide/03_이력.md:362 · chapters/42-watch.md:427
-- `V7-15` — guide/03_이력.md:369 · chapters/42-watch.md:596 · trace/42-watch.md:83
 - `V9-01` — guide/03_이력.md:316 · chapters/50-multisite.md:214 · chapters/50-multisite.md:298
 - `V9-03` — guide/03_이력.md:316 · chapters/50-multisite.md:216 · chapters/50-multisite.md:320
 - `V9-04` — guide/03_이력.md:317 · chapters/50-multisite.md:217 · chapters/50-multisite.md:347

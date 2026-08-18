@@ -654,8 +654,45 @@ def watch(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str =
     return page(conn, account, "관심", "watch.html",
                 {"rows": rows, "count": len(rows),
                  # ★ 매물이 아니라 조건을 지켜본다 (STEP 117a)
-                 "queries": _watch_queries(conn, account)},
+                 "queries": _watch_queries(conn, account),
+                 # 진행 메모 (개정 362).  ★ 계약 4단계 대신 들어온 것이다
+                 "notes": _watch_notes(conn, account, rows),
+                 "note_kinds": _note_kinds()},
                 root=root, csrf=csrf, flash_key=flash_key)
+
+
+def _note_kinds() -> list:
+    """진행 갈래.  ★ 순서가 아니다 — 정리하는 이름일 뿐이다 (개정 362)."""
+    from store.watch import NOTE_KINDS
+
+    return [{"key": k, "label": v} for k, v in NOTE_KINDS.items()]
+
+
+def _watch_notes(conn, account, rows) -> list:
+    """관심 매물별 진행 메모 (11장 STEP 118 · 개정 362 · V7-15).
+
+    ★ 메모가 없는 매물도 낸다 — 적을 자리가 보여야 적는다
+    ★ 남의 메모는 안 보인다 (V7-12).  notes_of 가 account_id 로 막는다
+    """
+    from store.watch import notes_of
+
+    if account.role == ROLE_ANONYMOUS:
+        return []
+    mine: dict = {}
+    for _nid, lid, _k, _kl, _b, _at in notes_of(conn, account.account_id):
+        mine.setdefault(lid, [])
+    got = []
+    for r in rows:
+        lid = r.listing.listing_id
+        got.append({
+            "listing_id": lid,
+            "label": f"{r.listing.target_label} {r.listing.trim or ''}".strip(),
+            "notes": [{"note_id": n[0], "kind": n[2], "kind_label": n[3],
+                       "body": n[4], "noted_at": n[5]}
+                      for n in notes_of(conn, account.account_id, lid)],
+        })
+    del mine
+    return got
 
 
 def run_view(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
@@ -830,6 +867,10 @@ def watch_add_post(conn, account, req, root: str = ROOT, csrf: str = "", flash_k
     if kind == "query":
         return watch_query_post(conn, account, req, root=root, csrf=csrf,
                                 flash_key=flash_key, checked=True)
+    if kind in ("note", "note_delete"):
+        # 진행 메모 (개정 362).  ★ 새 경로를 만들지 않는다 —
+        #   라우팅 표에 없는 경로는 V11-12 가 잡는다
+        return _watch_note_post(conn, account, req, kind, flash_key)
     raw = req.get("form", {}).get("listing_id") or ""
     if not raw.isdigit():
         return redirect("/listings", "그 매물은 담을 수 없습니다", flash_key)
@@ -859,6 +900,32 @@ def watch_add_post(conn, account, req, root: str = ROOT, csrf: str = "", flash_k
         # ★ 결함이 아니다.  뒤로가기 재전송에서 흔하다 — 알리고 보낸다
         return redirect("/watch", "이미 관심에 담은 차량입니다", flash_key)
     return redirect("/watch", "관심에 담았습니다", flash_key)
+
+
+def _watch_note_post(conn, account, req, kind: str, flash_key: str):
+    """진행 메모를 적거나 지운다 (11장 STEP 118 · 개정 362).
+
+    ★ 단계를 강제하지 않는다.  「연락함」 없이 「끝」을 적어도 된다
+    금지   계약·대행 절차를 넣는 것 (S37-1)
+    """
+    from store.admin import require_role
+    from store.watch import note_add, note_delete
+    from web.app import redirect
+
+    require_role(account, ROLE_USER)
+    form = req.get("form", {})
+    if kind == "note_delete":
+        raw = form.get("note_id") or ""
+        if not raw.isdigit():
+            raise ValidationError("그 메모가 없습니다", step="STEP 118")
+        note_delete(conn, int(raw), account.account_id)
+        return redirect("/watch", "메모를 지웠습니다", flash_key)
+    raw = form.get("listing_id") or ""
+    if not raw.isdigit():
+        raise ValidationError("그 매물이 없습니다", step="STEP 118")
+    note_add(conn, account.account_id, int(raw), form.get("note_kind") or "",
+             form.get("body") or "", _now())
+    return redirect("/watch", "진행을 적었습니다", flash_key)
 
 
 def _watch_invite(conn, account, listing_id: int, root: str, csrf: str,

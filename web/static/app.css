@@ -1901,3 +1901,11 @@ svg.line circle { fill:var(--amber); }
 .rep-list td:first-child { white-space:normal; word-break:keep-all }
 .rep-rows { font-size:12px }
 .rep-rows td, .rep-rows th { white-space:nowrap }
+
+/* 진행 메모 (11장 STEP 118 · 개정 362).  ★ 계약 4단계 대신 들어온 것 */
+.prog { border:1px solid var(--line); border-radius:6px; padding:8px 10px;
+        margin:6px 0; background:var(--surface) }
+.prog-h { font-weight:600; margin-bottom:4px }
+.prog-l { margin:0 0 6px; padding-left:18px; font-size:13px }
+.prog-l li { margin:2px 0 }
+.prog form.inline { display:flex; flex-wrap:wrap; gap:6px; align-items:center }

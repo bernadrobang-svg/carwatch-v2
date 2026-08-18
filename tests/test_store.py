@@ -11,6 +11,7 @@ import json
 import os
 import sqlite3
 import sys
+import re
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -74,9 +75,23 @@ def db():
 # ── DDL (STEP 28 · 39) ───────────────────────────────────────────────
 def test_schema() -> None:
     conn = db()
+    # ★ sqlite_sequence 는 AUTOINCREMENT 가 있으면 SQLite 가 스스로 만든다.
+    #   우리 표가 아니다 — DDL 과 견줄 때 빼야 수가 맞는다
     names = {r[0] for r in conn.execute(
-        "SELECT name FROM sqlite_master WHERE type='table'")}
-    check("테이블 44개 생성", len(names) == 44, f"{len(names)}개")
+        "SELECT name FROM sqlite_master WHERE type='table' "
+        "AND name NOT LIKE 'sqlite_%'")}
+    # ★ 수를 소스에 박지 않는다.  DDL 이 정본이다 —
+    #   박아 두면 표가 하나 늘 때마다 시험이 규격 변경을 막는다.
+    #   실측 08-19 — watch_note 를 더하자 「44개 생성」이 틀렸다고 했다
+    want = len(re.findall(r"CREATE TABLE(?: IF NOT EXISTS)? (\w+)",
+                          "\n".join(
+                              open(os.path.join(ROOT, "sql", "ddl", f),
+                                   encoding="utf-8").read()
+                              for f in sorted(os.listdir(
+                                  os.path.join(ROOT, "sql", "ddl")))
+                              if f.endswith(".sql"))))
+    check(f"DDL 의 표 {want}개가 다 생긴다", len(names) == want,
+          f"{len(names)}개")
     # ★ 2026-08-14 실측으로 원문 582건 확보 — 스키마가 확정됐다 (STEP 21b)
     check("core_diagnosis · _item 이 있다",
           {"core_diagnosis", "core_diagnosis_item"} <= names)
