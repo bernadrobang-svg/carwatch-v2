@@ -383,6 +383,12 @@ C = {
                     "같은 트림이면 옵션이 값을 가른다 — 이것이 비교 화면의 "
                     "핵심이다 (61-web 「비교」)",
                     KIND_CODE),
+    "V11-149": Check("V11", "V11-149", "조각 실패 문구에 서버 message 가 있음",
+                    FATAL, "run",
+                    "서버는 「길이가 다릅니다 — 받은 192,431 · 보낸 192,557」을 "
+                    "적어 보내는데 화면에는 「저장 400」만 떴다.  마스터가 "
+                    "원인을 못 보신다.  ★ 상태 코드 안내로는 안 된다 (개정 395)",
+                    KIND_CODE),
     "V11-132": Check("V11", "V11-132", "상세에 큰 사진과 썸네일이 있음",
                     FATAL, "run",
                     "마스터 지적 — 「상세는 최대한 모든 정보가 들어가야 한다고 "
@@ -992,6 +998,8 @@ def _screen_checks(conn, rid) -> list:
     out.extend(_raw_shown_checks(conn, rid))
     # 비교는 차이만 (61-web)
     out.append(_compare_diff_check(conn, rid))
+    # 조각 실패 때 서버 문구 (개정 395)
+    out.append(_chunk_message_check(rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -2975,6 +2983,33 @@ def _compare_diff_check(conn, rid):
     return result(C["V11-102"], rid, "차이만",
                   f"다른 것 {sum(len(v) for v in got['only'].values())} · "
                   f"같은 것 {len(got['same'])}", not bad, bad[:4])
+
+
+def _chunk_message_check(rid):
+    """V11-149 — 조각 실패 문구에 서버 message 가 들어 있는가 (개정 395).
+
+    ★ 서버는 「길이가 다릅니다 — 받은 192,431 · 보낸 192,557」이라 적어
+      보내는데 화면에는 「저장 400」만 떴다.  마스터가 원인을 못 보신다
+    ★ 상태 코드 안내(why)로는 안 된다.  원인은 서버만 안다
+    """
+    path = os.path.join(TEMPLATES, "admin_collect.html")
+    if not os.path.isfile(path):
+        return not_applicable(C["V11-149"], rid, "브라우저 수집 화면이 없다")
+    body = open(path, encoding="utf-8").read()
+    bad = []
+    if "res.text()" not in body:
+        bad.append("응답 본문을 안 읽는다 — 상태 코드만 던진다")
+    # ★ 던지는 자리마다 본문이 붙는가.  한 곳만 고치면 다른 길에서 또 깜깜해진다
+    throws = re.findall(r"throw new Error\(([^;]{0,400})\)", body, re.S)
+    for one in throws:
+        if "저장 " not in one:
+            continue
+        if "said(" not in one:
+            bad.append(f"서버 문구를 안 잇는 자리가 있다: {one.strip()[:48]}")
+    if "function said" not in body:
+        bad.append("서버 문구를 꺼내는 자리가 없다")
+    return result(C["V11-149"], rid, "잇는다",
+                  f"throw {len(throws)}곳", not bad, bad[:4])
 
 
 def _cell_squeeze_check(rid):
