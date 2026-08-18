@@ -361,6 +361,12 @@ C = {
                     "★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다. "
                     "이전등록비·보증 가입비가 사이트마다 다르다 (개정 353)",
                     KIND_CODE),
+    "V11-132": Check("V11", "V11-132", "상세에 큰 사진과 썸네일이 있음",
+                    FATAL, "run",
+                    "마스터 지적 — 「상세는 최대한 모든 정보가 들어가야 한다고 "
+                    "했는데 왜 반영 안 해.  그게 1순위야」. "
+                    "★ 실측 08-18 — /why 의 <img> 가 0개였다 (개정 375)",
+                    KIND_CODE),
     "V11-122": Check("V11", "V11-122", "리포트를 화면에서 읽을 수 있음",
                     FATAL, "run",
                     "마스터 확정 — 「목록을 보고 클릭하면 내용을 볼 수 있게 "
@@ -958,6 +964,8 @@ def _screen_checks(conn, rid) -> list:
     out.extend(_purchase_cost_checks(conn, rid))
     # 리포트를 화면에서 읽는다 (개정 357)
     out.append(_report_popup_check(conn, rid))
+    # 상세 사진 (개정 375)
+    out.append(_detail_photo_check(conn, rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -2726,6 +2734,57 @@ def _report_popup_check(conn, rid):
                   f"{opened}형식 · 리포트 {len(files)}건", not bad, bad[:6])
 
 
+def _detail_photo_check(conn, rid):
+    """V11-132 — 상세에 큰 사진과 썸네일이 있는가 (개정 375).
+
+    마스터 지적 — 「목록은 간략하게 상세는 최대한 모든 정보가 들어가야 한다고
+    했는데 왜 반영 안 해.  그게 1순위야」
+    ★ 실측 08-18 — /why 의 <img> 가 0개였다.  상세인데 실물을 못 봤다
+    ★ 「사진 태그가 있다」로 통과시키지 않는다 — 원문이 준 만큼 다 내는가를 본다
+    """
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from report.screens.build import photo_urls
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    row = conn.execute(
+        "SELECT s.listing_id, l.photo_list_json FROM result_score s"
+        " JOIN core_listing l ON l.listing_id = s.listing_id"
+        " WHERE l.photo_list_json IS NOT NULL"
+        "   AND l.photo_list_json NOT IN ('', '[]') LIMIT 1").fetchone()
+    if row is None:
+        return not_applicable(C["V11-132"], rid, "사진이 있는 판정 매물이 없다")
+    route = {r.path: r for r in ROUTES}.get("/why/{listing_id}")
+    if route is None:
+        return result(C["V11-132"], rid, "있다", "없다", False, ["/why 가 없다"])
+    probe = _probe(conn)
+    try:
+        _st, _h, body = HANDLERS[route.view](
+            probe, Account(1, ROLE_ADMIN, "마스터"),
+            {"query": {}, "form": {}, "method": GET},
+            path_vars={"listing_id": str(row[0])}, csrf="t")
+    except (CarWatchError, KeyError, ValueError) as e:
+        return result(C["V11-132"], rid, "있다",
+                      f"{type(e).__name__}", False, [str(e)[:70]])
+    html = body.decode("utf-8", "replace")
+    want = photo_urls(row[1], "https://ci.encar.com")
+    bad = []
+    if "shot-big" not in html:
+        bad.append("큰 사진 자리가 없다")
+    if "shot-thumbs" not in html:
+        bad.append("썸네일 자리가 없다")
+    # ★ 원문이 준 만큼 다 내는가.  하나만 내면 「상세에 사진이 있다」가 아니다
+    shown = [u for u in want if u in html]
+    if len(shown) < len(want):
+        bad.append(f"원문 사진 {len(want)}장 중 {len(shown)}장만 낸다")
+    # ★ 썸네일을 누르면 큰 사진이 바뀌는가 — JS 없이 (앵커)
+    if want and "#p1" not in html:
+        bad.append("썸네일이 큰 사진을 갈아 끼우는 앵커가 아니다")
+    return result(C["V11-132"], rid, f"{len(want)}장",
+                  f"{len(shown)}장", not bad, bad[:5])
+
+
 def _cell_squeeze_check(rid):
     """V11-78 — 좁은 폭에서 글자가 세로로 떨어지지 않는가.
 
@@ -2868,42 +2927,29 @@ def _three_values_check(conn, rid):
 
 
 def _photo_size_check(rid):
-    """V11-80 — 사진이 최소 크기 이상인가 (R-206 · `[마스터]` 개정 281).
+    """V11-80 — 사진이 최소 크기 이상인가 (개정 368).
 
-    ★ `.thumb` 규칙의 글자만 읽고 통과하고 있었다.  그 class 가 목록
-      `<img>` 에 붙어 있지 않아 실제로는 아무 데도 안 먹는 죽은 규칙이었고,
-      화면에는 `.rows td.photo img` 의 96px 이 그려지고 있었다.
-      검사는 「128px 이다」라고 했고 화면은 96px 이었다 —
-      이 프로젝트가 막으려는 바로 그 「선언과 실제의 괴리」다 (실측 08-18)
-    ★ 지금은 정본 표(`61-web/a-common` 사진 크기)를 읽는다.
-      CSS 가 그 표대로인지는 V11-107 이 본다.  두 검사가 이어져야
-      「표대로 그렸고 그 표가 최소치를 넘는다」가 성립한다
+    ★★ 08-18 마스터 확정 — 「사진 크기는 목록은 80/88 · 상세는 128」.
+      개정 281(목록도 최소 128)은 **폐기**다.  그것과 개정 332(96/88/80)가
+      어긋나 이 검사가 계속 fatal 이었다 — 이제 상세 썸네일을 잰다
+    ★ 목록·관심·추천의 크기는 V11-107 이 정본 표와 대조한다.
+      여기서 또 재면 같은 것을 두 곳에서 판단하게 된다
     """
     import json as _j
 
     with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
         want = int(_j.load(f)["photo_min_px"])
-    text = canon_text("화면")
-    if not text:
-        return not_applicable(C["V11-80"], rid, "화면 정본을 못 찾았다")
-    # 표의 「| 목록 | 96×72 | 88×66 | 80×60 |」 꼴을 읽는다.
-    # ★ 목록·관심이 R-206 이 말하는 「목록 사진」이다.  추천은 마스터가
-    #   따로 「추천에는 이미지 너무 커」라고 해 작게 정한 화면이다
-    seen: dict = {}
-    for line in text.splitlines():
-        got = re.match(r"\| *\**(목록|관심)\** *\|((?: *\d+×\d+ *\|)+)", line)
-        if not got:
-            continue
-        for w, _h in re.findall(r"(\d+)×(\d+)", got.group(2)):
-            seen.setdefault(got.group(1), []).append(int(w))
-    if not seen:
-        return not_applicable(C["V11-80"], rid, "정본에 사진 크기 표가 없다")
-    bad = [f"{name} {min(px)}px < {want}px "
-           f"(정본 {' · '.join(str(x) for x in px)})"
-           for name, px in sorted(seen.items()) if min(px) < want]
-    got = " · ".join(f"{k} {'/'.join(str(x) for x in v)}px"
-                     for k, v in sorted(seen.items()))
-    return result(C["V11-80"], rid, f">= {want}px", got, not bad, bad[:6])
+    css = open(APP_CSS, encoding="utf-8").read().replace(" ", "")
+    # 상세 썸네일 자리 — .shot-thumbs img
+    got = re.findall(r"\.shot-thumbsimg\{[^}]*width:(\d+)px", css)
+    if not got:
+        return result(C["V11-80"], rid, f">= {want}px", "규칙이 없다", False,
+                      ["상세 썸네일(.shot-thumbs img) 규칙이 없다 — "
+                       "상세에 사진이 없다는 뜻이다 (개정 375)"])
+    px = int(got[0])
+    bad = ([] if px >= want else
+           [f"상세 썸네일 {px}px < {want}px (개정 368 — 상세는 128)"])
+    return result(C["V11-80"], rid, f">= {want}px", f"{px}px", not bad, bad)
 
 
 def _render_metrics_checks(conn, rid):

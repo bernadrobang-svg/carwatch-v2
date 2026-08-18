@@ -209,6 +209,24 @@ def _site_badge(site, sell_type, root: str = ".") -> str:
     return site_badge(site, sell_type, root)
 
 
+def _photo_urls(photos_json, root: str) -> tuple:
+    """상세에 낼 사진 전부 (개정 375).
+
+    ★ 우리가 내려받지 않는다 — ci.encar.com 을 직접 참조한다 (개정 274)
+    """
+    import json as _j
+    import os as _o
+
+    from report.screens.build import photo_urls
+
+    with open(_o.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        base = _j.load(f)["photo_base_url"]
+    # ★ 번호를 여기서 붙인다.  템플릿 엔진에 loop.index 가 없다 —
+    #   없는 것을 쓰면 앵커가 전부 id="p" 가 되어 :target 이 안 듣는다
+    return tuple({"n": i, "url": u}
+                 for i, u in enumerate(photo_urls(photos_json, base), 1))
+
+
 def _purchase_costs(conn, listing_id: int, site, price_won, target_key,
                     fin_cfg: dict, root: str) -> tuple:
     """⑨ 비용 — 사이트별 총액 (부록 G 상세 ⑨ · 개정 353 · V11-120 · V11-121).
@@ -251,7 +269,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         # 개정 322 · 325 — 뺀 것 · 근거가 있는 축의 배점 합
         " s.grade_earned, s.grade_base, s.confirmed_points, s.penalties_json,"
         # 사이트 배지 (50-multisite · V9-06) — 상세에도 출처를 낸다
-        " l.site, l.sell_type"
+        " l.site, l.sell_type,"
+        # 상세 사진 (개정 375).  ★ 대표 하나가 아니라 전부다
+        " l.photo_list_json"
         " FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
@@ -316,6 +336,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         options=_option_rows(conn, listing_id),
         known_issues=_known_issues(head[0], root),
         source_id=head[8],
+        # ★ 상세는 사진을 전부 낸다 (개정 375).  주소는 config 가 갖는다
+        photos=_photo_urls(head[17], root),
         curve=_curve_points(head[9], head[10], root),
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
         encar_url=(_encar_url(head[8], root) if head[8] else None))

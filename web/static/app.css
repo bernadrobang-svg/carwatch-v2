@@ -1909,3 +1909,24 @@ svg.line circle { fill:var(--amber); }
 .prog-l { margin:0 0 6px; padding-left:18px; font-size:13px }
 .prog-l li { margin:2px 0 }
 .prog form.inline { display:flex; flex-wrap:wrap; gap:6px; align-items:center }
+
+/* ① 상세 사진 (개정 375 · V11-132).  ★ 상세인데 사진이 하나도 없었다.
+   ★ JS 없이 갈아 끼운다 — 썸네일은 앵커이고 :target 이 큰 사진을 고른다.
+     아무것도 안 눌렀을 때는 첫 장이 보인다 */
+.shots { margin:8px 0 12px }
+.shot-big { position:relative; width:480px; max-width:100%; aspect-ratio:4/3;
+            background:var(--surface2); border:1px solid var(--line);
+            border-radius:6px; overflow:hidden }
+.shot-big .big { position:absolute; inset:0; display:none }
+.shot-big .big:first-child { display:block }
+.shot-big .big:target { display:block }
+.shot-big .big:target ~ .big:first-child { display:none }
+.shot-big img { width:100%; height:100%; object-fit:cover; display:block }
+.shot-thumbs { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px }
+.shot-thumbs img { width:128px; height:96px; object-fit:cover;
+                   border:1px solid var(--line); border-radius:4px;
+                   display:block }
+@media (max-width:639px) {
+  .shot-big { width:100% }
+  .shot-thumbs img { width:80px; height:60px }
+}

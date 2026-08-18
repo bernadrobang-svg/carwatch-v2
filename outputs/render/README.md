@@ -9,7 +9,7 @@
 | `/` | [home.html](home.html) | 200 | 19,672B |
 | `/listings` | [listings.html](listings.html) | 200 | 55,080B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 47,050B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 19,482B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 21,321B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,349B |
 | `/market` | [market.html](market.html) | 200 | 14,020B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 18,097B |
@@ -20,11 +20,11 @@
 | `/join` | [join.html](join.html) | 200 | 4,685B |
 | `/password` | [password.html](password.html) | 200 | 4,676B |
 | `/admin` | [admin.html](admin.html) | 200 | 15,211B |
-| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,155B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 33,161B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,434B |
-| `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,451B |
-| `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 43,808B |
+| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,157B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 37,283B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,436B |
+| `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,453B |
+| `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 43,812B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,461B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 41,181B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 13,549B |
@@ -34,7 +34,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,011B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,353B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 8,710B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 20,037B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 20,430B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 5,837B |
 
 ## 못 낸 화면

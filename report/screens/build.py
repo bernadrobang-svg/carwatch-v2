@@ -212,6 +212,39 @@ def _total_points() -> float:
         return float(_j.load(f)["total_points"])
 
 
+
+def photo_urls(photos_json: str | None, base: str) -> list:
+    """사진 전부 (개정 375).  ★ 순서대로.  ★ 우리가 내려받지 않는다.
+
+    ★ 상세는 「최대한 모든 정보」다.  대표 하나만 내면 실물을 못 본다 —
+      마스터 지적 「목록은 간략하게 상세는 최대한 모든 정보가 들어가야 한다」
+    ★ 엔카는 33장까지 준다.  상한을 두지 않는다 — 원문이 주는 만큼 낸다
+    """
+    if not photos_json:
+        return []
+    try:
+        photos = json.loads(photos_json)
+    except (ValueError, TypeError):
+        return []
+    if not isinstance(photos, list):
+        return []
+    got = []
+    for p in photos:
+        if not isinstance(p, dict):
+            continue
+        loc = p.get("location")
+        if not loc or not str(loc).startswith("/"):
+            continue
+        try:
+            o = float(p.get("ordering"))
+        except (TypeError, ValueError):
+            o = float("inf")       # 순서를 모르면 맨 뒤 — 있는 것을 버리지 않는다
+        got.append((o, f"{base}{loc}"))
+    got.sort(key=lambda x: x[0])
+    # 같은 주소가 두 번 오면 한 번만 — 화면에 같은 사진이 겹친다
+    return list(dict.fromkeys(u for _o, u in got))
+
+
 def photo_url(photos_json: str | None, base: str) -> str | None:
     """대표 사진 주소 (개정 274).
 
