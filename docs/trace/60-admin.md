@@ -16,11 +16,11 @@
 공통 근거   [기술] 13장이 앞장을 고치면 앞장 규격이 흔들린다.  표에 적고 고친다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-600a | **금지** 표에 없는 장을 13장 때문에 고치는 것 | `[기술]` | `60-admin` | `web/views.py::watch_add_post` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-601a | `view_` 시그니처를 바꾸지 않는다 | `[기술]` | `60-admin` | `web/views.py:6` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-602a | 앞장을 고치는 결정은 이 표에 행을 추가 | `[기술]` | `60-admin` | `web/views.py:736` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-600a | `[저장]` **금지** 표에 없는 장을 13장 때문에 고치는 것 | `[기술]` | `60-admin` | `web/views.py::watch_add_post` | — | 검사 없음 |  |  | ◐ |
+| R-601a | `[운영]` `view_` 시그니처를 바꾸지 않는다 | `[기술]` | `60-admin` | `web/views.py:6` | — | 검사 없음 |  |  | ◐ |
+| R-602a | `[저장]` 앞장을 고치는 결정은 이 표에 행을 추가 | `[기술]` | `60-admin` | `web/views.py:736` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -31,29 +31,29 @@
            ★ 08-16 — 「PC 가 없으므로 CLI 로 못 푼다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-610a | **금지** 화면 숨김만으로 권한을 대신 | `[기술]` URL 을 치면 열린다 | `60-admin` | `store/admin.py:7` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-611a | 최초 계정만 CLI. 다른 기능은 화면 밖에 두지 않는다 | `[마스터]` **개정 254 — 「CLI 는 없다」** | `60-admin` | `store/admin.py:10` | 화면 없음 | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
-| R-612a | 화면에 「최초 계정은 서버에서 만듭니다」 안내 | `[마스터]` 위와 같음 | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
-| R-613a | **금지** 부트스트랩을 핑계로 다른 기능을 CLI 에 | `[마스터]` 위와 같음 | `60-admin` | `store/admin.py::create_account` | 화면 없음 | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
-| R-614a | **금지** 웹에서 최초 계정을 만드는 것 | `[기술]` 누구나 관리자가 된다 | `60-admin` | `web/views.py:7` | 화면 없음 | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
-| R-615a | `account` 가 비면 「초기화 필요」 화면만 | `[기술]` 위와 같음 | `60-admin` | `web/views.py::page` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-616a | **금지** 기본 비밀번호를 코드·config 에 | `[기술]` 그대로 두면 누구나 들어온다 | `60-admin` | `web/views.py::_rows_of` | 화면 없음 | V10-16 |  |  | ◐ |
-| R-617a | `must_change_secret=1` 로 만든다 | `[기술]` 임시 비밀번호로 계속 쓰는 것을 막는다 | `60-admin` | `store/admin.py::create_account` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-618a | 변경 전 세션은 변경 화면 외 전 경로 403 | `[기술]` 위와 같음 | `60-admin` | `web/views.py::admin_docs` | `/admin/docs` | V10-19 |  |  | ○ |
-| R-619a | **금지** 임시 비밀번호를 config 에 | `[기술]` 코드 상수다 | `60-admin` | `web/views.py::join` | `/join` | V10-16 |  |  | ○ |
-| R-620a | **금지** 변경 후에도 그 값으로 로그인 | `[기술]` 위와 같음 | `60-admin` | `web/views.py::login` | `/login` | V10-16 |  |  | ○ |
-| R-621a | `revoked_at` 을 채운다. 행을 지우지 않는다 | `[마스터]` **이력이다 (P3)** | `60-admin` | `store/admin.py::create_account` | 화면 없음 | V10-19 |  |  | ◐ |
-| R-622a | **금지** `disabled_at` 을 보는 것으로 대신 | `[기술]` 세션과 계정은 다르다 | `60-admin` | `tools/render_screens.py:9` | 화면 없음 | V10-19 |  |  | ◐ |
-| R-623a | 연속 실패가 `login_fail_limit` 를 넘으면 잠근다 | `[기술]` 무차별 대입 방지 | `60-admin` | `store/admin.py::authenticate` | 화면 없음 | V10-20 |  |  | ◐ |
-| R-624a | 거부도 audit 에 남긴다 | `[마스터]` **누가 언제 시도했는지가 신호다** | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | S10 · S5 |  |  | ◐ |
-| R-625a | **금지** 계정을 영구 잠그는 것 | `[마스터]` **08-16 — PC 가 없어 CLI 로 못 푼다** | `60-admin` | `store/admin.py::create_account` | 화면 없음 | V10-20 |  |  | ◐ |
-| R-626a | 잠금은 시간이 지나면 스스로 풀린다 | `[마스터]` 위와 같음 | `60-admin` | `collect/pipeline.py:138` | 화면 없음 | V10-20 |  |  | ◐ |
-| R-627a | 관리자가 다른 관리자를 화면에서 풀 수 있다 | `[마스터]` 위와 같음 | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-628a | 8자 이상 | `[판단]` ★ 근거 없음 — 통념 | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ? |
-| R-629a | 임시 비밀번호와 다름 | `[기술]` | `60-admin` | `store/admin.py::create_account` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-630a | **금지** 문자 종류·기호 강제·주기적 변경 강요 | `[마스터]` **1인 시스템에 번거롭기만 하다** | `60-admin` | `web/views.py::page` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-610a | `[운영]` **금지** 화면 숨김만으로 권한을 대신 | `[기술]` URL 을 치면 열린다 | `60-admin` | `store/admin.py:7` | — | 검사 없음 |  |  | ◐ |
+| R-611a | `[운영]` 최초 계정만 CLI. 다른 기능은 화면 밖에 두지 않는다 | `[마스터]` **개정 254 — 「CLI 는 없다」** | `60-admin` | `store/admin.py:10` | — | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
+| R-612a | `[운영·화면]` 화면에 「최초 계정은 서버에서 만듭니다」 안내 | `[마스터]` 위와 같음 | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
+| R-613a | `[운영]` **금지** 부트스트랩을 핑계로 다른 기능을 CLI 에 | `[마스터]` 위와 같음 | `60-admin` | `store/admin.py::create_account` | — | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
+| R-614a | `[운영]` **금지** 웹에서 최초 계정을 만드는 것 | `[기술]` 누구나 관리자가 된다 | `60-admin` | `web/views.py:7` | — | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
+| R-615a | `[운영]` `account` 가 비면 「초기화 필요」 화면만 | `[기술]` 위와 같음 | `60-admin` | `web/views.py::page` | — | 검사 없음 |  |  | ◐ |
+| R-616a | `[운영]` **금지** 기본 비밀번호를 코드·config 에 | `[기술]` 그대로 두면 누구나 들어온다 | `60-admin` | `web/views.py::_rows_of` | — | V10-16 |  |  | ◐ |
+| R-617a | `[운영]` `must_change_secret=1` 로 만든다 | `[기술]` 임시 비밀번호로 계속 쓰는 것을 막는다 | `60-admin` | `store/admin.py::create_account` | — | 검사 없음 |  |  | ◐ |
+| R-618a | `[수집]` 변경 전 세션은 변경 화면 외 전 경로 403 | `[기술]` 위와 같음 | `60-admin` | `web/views.py::admin_docs` | `/admin/docs` | V10-19 |  |  | ○ |
+| R-619a | `[운영]` **금지** 임시 비밀번호를 config 에 | `[기술]` 코드 상수다 | `60-admin` | `web/views.py::join` | `/join` | V10-16 |  |  | ○ |
+| R-620a | `[운영]` **금지** 변경 후에도 그 값으로 로그인 | `[기술]` 위와 같음 | `60-admin` | `web/views.py::login` | `/login` | V10-16 |  |  | ○ |
+| R-621a | `[저장]` `revoked_at` 을 채운다. 행을 지우지 않는다 | `[마스터]` **이력이다 (P3)** | `60-admin` | `store/admin.py::create_account` | — | V10-19 |  |  | ◐ |
+| R-622a | `[운영]` **금지** `disabled_at` 을 보는 것으로 대신 | `[기술]` 세션과 계정은 다르다 | `60-admin` | `tools/render_screens.py:9` | — | V10-19 |  |  | ◐ |
+| R-623a | `[운영]` 연속 실패가 `login_fail_limit` 를 넘으면 잠근다 | `[기술]` 무차별 대입 방지 | `60-admin` | `store/admin.py::authenticate` | — | V10-20 |  |  | ◐ |
+| R-624a | `[저장]` 거부도 audit 에 남긴다 | `[마스터]` **누가 언제 시도했는지가 신호다** | `60-admin` | `store/adminops.py::QueryLog` | — | S10 · S5 |  |  | ◐ |
+| R-625a | `[운영]` **금지** 계정을 영구 잠그는 것 | `[마스터]` **08-16 — PC 가 없어 CLI 로 못 푼다** | `60-admin` | `store/admin.py::create_account` | — | V10-20 |  |  | ◐ |
+| R-626a | `[운영]` 잠금은 시간이 지나면 스스로 풀린다 | `[마스터]` 위와 같음 | `60-admin` | `collect/pipeline.py:138` | — | V10-20 |  |  | ◐ |
+| R-627a | `[운영·화면]` 관리자가 다른 관리자를 화면에서 풀 수 있다 | `[마스터]` 위와 같음 | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
+| R-628a | `[운영]` 8자 이상 | `[판단]` ★ 근거 없음 — 통념 | `60-admin` | 미구현 | — | 검사 없음 |  |  | ? |
+| R-629a | `[운영]` 임시 비밀번호와 다름 | `[기술]` | `60-admin` | `store/admin.py::create_account` | — | 검사 없음 |  |  | ◐ |
+| R-630a | `[운영]` **금지** 문자 종류·기호 강제·주기적 변경 강요 | `[마스터]` **1인 시스템에 번거롭기만 하다** | `60-admin` | `web/views.py::page` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -64,27 +64,27 @@
            config 는 화면에서 고치고 이력이 남아야 한다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-640a | **금지** 파일을 직접 편집 | `[마스터]` **이력이 안 남는다** | `60-admin` | `web/app.py:73` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-641a | `apply_config`·`ConfigChange`·`require_role` 을 먼저 | `[기술]` 다른 장이 이것에 기댄다 | `60-admin` | `store/admin.py::apply_config` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-642a | **금지** 「이력은 나중에 붙인다」 | `[마스터]` 나중은 안 온다 | `60-admin` | `web/views.py:507` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-643a | config 조회·쓰기 전부 `key_path` 방식 | `[기술]` 방식이 갈리면 검사가 못 잡는다 | `60-admin` | `web/views.py::admin_query` | `/admin/query` | V10-14 |  |  | ○ |
-| R-644a | 1~4 가 실패하면 파일을 쓰지 않는다 | `[기술]` 반쪽 상태를 만들지 않는다 | `60-admin` | `store/admin.py::apply_config` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-645a | 변경 사유를 받는다 | `[마스터]` **「왜 이렇게 됐나」의 근거** | `60-admin` | `web/views.py::login` | `/login` | 검사 없음 |  |  | ◐ |
-| R-646a | **금지** `total_points` 를 직접 입력 | `[기술]` 성분 합과 어긋난다 | `60-admin` | `web/templates/admin_scoring.html` | `/admin/scoring` | 검사 없음 |  |  | ◐ |
-| R-647a | 파서는 두 형태를 다 받는다 | `[기술]` 형식이 바뀌어도 안 깨진다 | `60-admin` | `collect/runner.py:54` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-648a | `Σ(points) == total_points` | `[기술]` `V3-56` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-649a | **금지** 「실제로 쓸 때 검사기를 고치자」 | `[마스터]` **그때는 이미 틀린 값이 들어가 있다** | `60-admin` | `score/adjust.py::redistribute` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-650a | 형식 확장 커밋에 검사기 확장을 함께 | `[마스터]` 위와 같음 | `60-admin` | `collect/runner.py:59` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-651a | 미리보기를 본 뒤에만 저장 | `[마스터]` **되돌리려면 재계산이 필요하다** | `60-admin` | `store/adminops.py::preview_scoring` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-652a | **금지** 임의 문자열로 성분 추가 | `[기술]` 오타가 새 축이 된다 | `60-admin` | `web/views.py::page` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-653a | **금지** facet 확인 없이 `targets.json` 에 쓰는 것 | `[마스터]` 실측 콜레오스 — 임의 필터 사고 | `60-admin` | `web/views.py::admin_targets` | `/admin/targets` | V11-48 · V11-49 |  |  | ○ |
-| R-654a | 관리자가 확인 버튼을 눌러야 `active` | `[마스터]` 위와 같음 | `60-admin` | `web/views.py:1750` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-655a | 차종 추가 첫 항목이 국산·수입 선택 | `[원문]` **축이 다르다 — 제조사보다 앞이다** | `60-admin` | `web/views.py::_first_flag` | 화면 없음 | V2-05 |  |  | ◐ |
-| R-656a | `domestic=false` 인데 `importType=NONE` 을 확인 | `[원문]` 실측 | `60-admin` | `web/views.py::admin_targets` | `/admin/targets` | V4-06 |  |  | ○ |
-| R-657a | **금지** `unclassified` 로 되돌리는 것 외 사유 없이 바꾸기 | `[마스터]` 되돌릴 수 있어야 한다 | `60-admin` | `web/views.py::admin_import` | `/admin/import` | V4-06 |  |  | ○ |
-| R-658a | **금지** 실행 중 config 를 바꾸는 것 | `[기술]` 도는 중에 바뀌면 결과가 섞인다 | `60-admin` | `web/views.py::_reason_gate` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-640a | `[운영]` **금지** 파일을 직접 편집 | `[마스터]` **이력이 안 남는다** | `60-admin` | `web/app.py:73` | — | 검사 없음 |  |  | ◐ |
+| R-641a | `[운영]` `apply_config`·`ConfigChange`·`require_role` 을 먼저 | `[기술]` 다른 장이 이것에 기댄다 | `60-admin` | `store/admin.py::apply_config` | — | 검사 없음 |  |  | ◐ |
+| R-642a | `[운영]` **금지** 「이력은 나중에 붙인다」 | `[마스터]` 나중은 안 온다 | `60-admin` | `web/views.py:507` | — | 검사 없음 |  |  | ◐ |
+| R-643a | `[운영]` config 조회·쓰기 전부 `key_path` 방식 | `[기술]` 방식이 갈리면 검사가 못 잡는다 | `60-admin` | `web/views.py::admin_query` | `/admin/query` | V10-14 |  |  | ○ |
+| R-644a | `[운영]` 1~4 가 실패하면 파일을 쓰지 않는다 | `[기술]` 반쪽 상태를 만들지 않는다 | `60-admin` | `store/admin.py::apply_config` | — | 검사 없음 |  |  | ◐ |
+| R-645a | `[수집]` 변경 사유를 받는다 | `[마스터]` **「왜 이렇게 됐나」의 근거** | `60-admin` | `web/views.py::login` | `/login` | 검사 없음 |  |  | ◐ |
+| R-646a | `[운영]` **금지** `total_points` 를 직접 입력 | `[기술]` 성분 합과 어긋난다 | `60-admin` | `web/templates/admin_scoring.html` | `/admin/scoring` | 검사 없음 |  |  | ◐ |
+| R-647a | `[수집]` 파서는 두 형태를 다 받는다 | `[기술]` 형식이 바뀌어도 안 깨진다 | `60-admin` | `collect/runner.py:54` | — | 검사 없음 |  |  | ◐ |
+| R-648a | `[운영]` `Σ(points) == total_points` | `[기술]` `V3-56` | `60-admin` | 미구현 | — | 검사 없음 |  |  | ✗ |
+| R-649a | `[검사]` **금지** 「실제로 쓸 때 검사기를 고치자」 | `[마스터]` **그때는 이미 틀린 값이 들어가 있다** | `60-admin` | `score/adjust.py::redistribute` | — | 검사 없음 |  |  | ◐ |
+| R-650a | `[검사]` 형식 확장 커밋에 검사기 확장을 함께 | `[마스터]` 위와 같음 | `60-admin` | `collect/runner.py:59` | — | 검사 없음 |  |  | ◐ |
+| R-651a | `[저장·화면]` 미리보기를 본 뒤에만 저장 | `[마스터]` **되돌리려면 재계산이 필요하다** | `60-admin` | `store/adminops.py::preview_scoring` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-652a | `[운영]` **금지** 임의 문자열로 성분 추가 | `[기술]` 오타가 새 축이 된다 | `60-admin` | `web/views.py::page` | — | 검사 없음 |  |  | ◐ |
+| R-653a | `[수집]` **금지** facet 확인 없이 `targets.json` 에 쓰는 것 | `[마스터]` 실측 콜레오스 — 임의 필터 사고 | `60-admin` | `web/views.py::admin_targets` | `/admin/targets` | V11-48 · V11-49 |  |  | ○ |
+| R-654a | `[운영]` 관리자가 확인 버튼을 눌러야 `active` | `[마스터]` 위와 같음 | `60-admin` | `web/views.py:1750` | — | 검사 없음 |  |  | ◐ |
+| R-655a | `[운영]` 차종 추가 첫 항목이 국산·수입 선택 | `[원문]` **축이 다르다 — 제조사보다 앞이다** | `60-admin` | `web/views.py::_first_flag` | — | V2-05 |  |  | ◐ |
+| R-656a | `[운영]` `domestic=false` 인데 `importType=NONE` 을 확인 | `[원문]` 실측 | `60-admin` | `web/views.py::admin_targets` | `/admin/targets` | V4-06 |  |  | ○ |
+| R-657a | `[운영]` **금지** `unclassified` 로 되돌리는 것 외 사유 없이 바꾸기 | `[마스터]` 되돌릴 수 있어야 한다 | `60-admin` | `web/views.py::admin_import` | `/admin/import` | V4-06 |  |  | ○ |
+| R-658a | `[저장]` **금지** 실행 중 config 를 바꾸는 것 | `[기술]` 도는 중에 바뀌면 결과가 섞인다 | `60-admin` | `web/views.py::_reason_gate` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -95,20 +95,20 @@
            개정 273 — 「큐만 보지 않는다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-660a | 예외로 종료된 실행이 없어야 한다. 전부 `halted` | `[마스터]` 빈 화면으로 끝내지 않는다 | `60-admin` | `web/context.py::Banner` | 화면 없음 | V1-11 |  |  | ◐ |
-| R-661a | **금지** 웹에 전면 재수집 버튼 | `[마스터]` **3만 호출이 한 번에 나간다** | `60-admin` | `store/adminops.py::enqueue_recalc` | 화면 없음 | V10-13 |  |  | ◐ |
-| R-662a | 화면은 판단 재료를 낸다. 실행하지 않는다 | `[마스터]` 위와 같음 | `60-admin` | `collect/pipeline.py::check_recalc_origin` | 화면 없음 | V10-13 |  |  | ◐ |
-| R-663a | `resume_point` 를 남긴다 | `[마스터]` 어디까지 갔는지 알아야 한다 | `60-admin` | `collect/pipeline.py::resume_point` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-664a | 재시도는 새 `RecalcJob` | `[기술]` 실패 이력을 지우지 않는다 | `60-admin` | `store/adminops.py::RecalcJob` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-665a | **금지** 자동 재시도를 무한히 | `[기술]` config 로 횟수를 정한다 | `60-admin` | `store/adminops.py::enqueue_recalc` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-666a | 자동·수동 모두 같은 경로 | `[기술]` 자동 전용 코드는 검증이 안 된다 | `60-admin` | `report/render.py::_market_pos` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-667a | 큐에 넣은 것은 누군가 가져간다 | `[마스터]` **개정 261 — 실행기 없이 큐만 두면 거짓말이다** | `60-admin` | `web/views.py:502` | 화면 없음 | V10-22 · V10-23 |  |  | ◐ |
-| R-668a | 실행기가 없으면 큐에 넣지 않는다 | `[마스터]` 위와 같음 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V10-22 · V10-23 |  |  | ○ |
-| R-669a | **화면 문구가 사실이어야 한다** | `[마스터]` 위와 같음 | `60-admin` | `collect/worker.py::run_once` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-670a | `queued` 가 오래 남으면 화면이 알린다 | `[마스터]` 개정 273 | `60-admin` | `collect/worker.py::run_once` | 화면 없음 | V10-22 · V10-23 |  |  | ◐ |
-| R-671a | **금지** 큐가 밀렸다고 관리 화면 전체가 잠기는 것 | `[마스터]` 손을 쓸 수 없게 된다 | `60-admin` | `web/views.py::_gate` | 화면 없음 | V10-22 · V10-23 |  |  | ◐ |
+| R-660a | `[저장]` 예외로 종료된 실행이 없어야 한다. 전부 `halted` | `[마스터]` 빈 화면으로 끝내지 않는다 | `60-admin` | `web/context.py::Banner` | — | V1-11 |  |  | ◐ |
+| R-661a | `[수집]` **금지** 웹에 전면 재수집 버튼 | `[마스터]` **3만 호출이 한 번에 나간다** | `60-admin` | `store/adminops.py::enqueue_recalc` | — | V10-13 |  |  | ◐ |
+| R-662a | `[저장·화면]` 화면은 판단 재료를 낸다. 실행하지 않는다 | `[마스터]` 위와 같음 | `60-admin` | `collect/pipeline.py::check_recalc_origin` | 화면 없음 | V10-13 |  |  | ◐ |
+| R-663a | `[수집]` `resume_point` 를 남긴다 | `[마스터]` 어디까지 갔는지 알아야 한다 | `60-admin` | `collect/pipeline.py::resume_point` | — | 검사 없음 |  |  | ◐ |
+| R-664a | `[저장]` 재시도는 새 `RecalcJob` | `[기술]` 실패 이력을 지우지 않는다 | `60-admin` | `store/adminops.py::RecalcJob` | — | 검사 없음 |  |  | ◐ |
+| R-665a | `[저장]` **금지** 자동 재시도를 무한히 | `[기술]` config 로 횟수를 정한다 | `60-admin` | `store/adminops.py::enqueue_recalc` | — | 검사 없음 |  |  | ◐ |
+| R-666a | `[저장]` 자동·수동 모두 같은 경로 | `[기술]` 자동 전용 코드는 검증이 안 된다 | `60-admin` | `report/render.py::_market_pos` | — | 검사 없음 |  |  | ◐ |
+| R-667a | `[저장]` 큐에 넣은 것은 누군가 가져간다 | `[마스터]` **개정 261 — 실행기 없이 큐만 두면 거짓말이다** | `60-admin` | `web/views.py:502` | — | V10-22 · V10-23 |  |  | ◐ |
+| R-668a | `[저장]` 실행기가 없으면 큐에 넣지 않는다 | `[마스터]` 위와 같음 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V10-22 · V10-23 |  |  | ○ |
+| R-669a | `[저장]` **화면 문구가 사실이어야 한다** | `[마스터]` 위와 같음 | `60-admin` | `collect/worker.py::run_once` | — | 검사 없음 |  |  | ◐ |
+| R-670a | `[저장·화면]` `queued` 가 오래 남으면 화면이 알린다 | `[마스터]` 개정 273 | `60-admin` | `collect/worker.py::run_once` | 화면 없음 | V10-22 · V10-23 |  |  | ◐ |
+| R-671a | `[저장]` **금지** 큐가 밀렸다고 관리 화면 전체가 잠기는 것 | `[마스터]` 손을 쓸 수 없게 된다 | `60-admin` | `web/views.py::_gate` | — | V10-22 · V10-23 |  |  | ◐ |
 
 ---
 
@@ -119,25 +119,25 @@
            [마스터] 개인정보는 조회도 막는다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-680a | **금지** 문자열 필터로 판정 | `[기술]` **주석·부분 문자열로 우회된다** | `60-admin` | `store/adminops.py:8` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-681a | 거부된 것도 `QueryLog` 에 | `[마스터]` 무엇을 시도했는지가 기록이다 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-682a | 결과를 그대로 복사할 수 있게 | `[판단]` 밖에서 분석하려면 필요하다. ★ 조사 없음 | `60-admin` | `web/views.py:5` | 화면 없음 | V10-18 |  |  | ◐ |
-| R-683a | **금지** `core_pii`·`core_dealer_pii` 를 쿼리로 여는 것 | `[마스터]` 개인정보 | `60-admin` | `store/adminops.py:35` | 화면 없음 | V10-18 |  |  | ◐ |
-| R-684a | `EXPLAIN` 의 `OpenRead` 대상을 본다 | `[기술]` 문자열로는 못 막는다 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 |  |  | ◐ |
-| R-685a | **금지** SQL 문자열에서 테이블명을 찾는 것 | `[기술]` 별칭·주석으로 우회된다 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 |  |  | ◐ |
-| R-686a | 거부해도 `query_log` 에 남긴다 | `[마스터]` 위와 같음 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 |  |  | ◐ |
+| R-680a | `[판정·화면]` **금지** 문자열 필터로 판정 | `[기술]` **주석·부분 문자열로 우회된다** | `60-admin` | `store/adminops.py:8` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-681a | `[화면]` 거부된 것도 `QueryLog` 에 | `[마스터]` 무엇을 시도했는지가 기록이다 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-682a | `[화면]` 결과를 그대로 복사할 수 있게 | `[판단]` 밖에서 분석하려면 필요하다. ★ 조사 없음 | `60-admin` | `web/views.py:5` | 화면 없음 | V10-18 |  |  | ◐ |
+| R-683a | `[화면]` **금지** `core_pii`·`core_dealer_pii` 를 쿼리로 여는 것 | `[마스터]` 개인정보 | `60-admin` | `store/adminops.py:35` | 화면 없음 | V10-18 |  |  | ◐ |
+| R-684a | `[화면]` `EXPLAIN` 의 `OpenRead` 대상을 본다 | `[기술]` 문자열로는 못 막는다 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 |  |  | ◐ |
+| R-685a | `[화면]` **금지** SQL 문자열에서 테이블명을 찾는 것 | `[기술]` 별칭·주석으로 우회된다 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 |  |  | ◐ |
+| R-686a | `[저장·화면]` 거부해도 `query_log` 에 남긴다 | `[마스터]` 위와 같음 | `60-admin` | `store/adminops.py::QueryLog` | 화면 없음 | V10-18 |  |  | ◐ |
 
 ---
 
 # 6. 도구 · 뷰어 (3건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-690a | **금지** 저장한 응답을 `raw_response` 에 섞는 것 | `[마스터]` **P3 — 수집분과 시험분을 가른다** | `60-admin` | `store/adminops.py:816` | 화면 없음 | V11-43 · V11-44 |  |  | ◐ |
-| R-691a | **금지** 도구가 `core_` 를 직접 UPDATE | `[기술]` 파이프라인 밖에서 값이 바뀐다 | `60-admin` | `web/views.py:1851` | 화면 없음 | V1 · V9 |  |  | ◐ |
-| R-692a | **금지** 뷰어에 편집 기능 | `[기술]` 원문은 안 고친다 (P3) | `60-admin` | `store/adminops.py::ImportPreview` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-690a | `[수집]` **금지** 저장한 응답을 `raw_response` 에 섞는 것 | `[마스터]` **P3 — 수집분과 시험분을 가른다** | `60-admin` | `store/adminops.py:816` | — | V11-43 · V11-44 |  |  | ◐ |
+| R-691a | `[저장]` **금지** 도구가 `core_` 를 직접 UPDATE | `[기술]` 파이프라인 밖에서 값이 바뀐다 | `60-admin` | `web/views.py:1851` | — | V1 · V9 |  |  | ◐ |
+| R-692a | `[운영]` **금지** 뷰어에 편집 기능 | `[기술]` 원문은 안 고친다 (P3) | `60-admin` | `store/adminops.py::ImportPreview` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -148,24 +148,24 @@
            다만 「우리가 받았다」로 보이면 안 된다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-700a | `origin` 을 `import` 로 남긴다 | `[마스터]` `collector` 와 구분 | `60-admin` | `web/templates/admin_import.html` | `/admin/import` | S10 · S5 |  |  | ○ |
-| R-701a | 누가·언제·왜 넣었는지 audit 에 | `[마스터]` | `60-admin` | `web/templates/admin_dict.html` | `/admin/dict` | S10 · S5 |  |  | ○ |
-| R-702a | 원문을 그대로 저장 (P3) | `[마스터]` | `60-admin` | `web/views.py::admin_api` | `/admin/api` | S10 · S5 |  |  | ○ |
-| R-703a | 반입분에 그 뒤 단계를 이어서 돌릴 수 있다 | `[마스터]` | `60-admin` | `web/views.py::recommend` | `/recommend` | S10 · S5 |  |  | ○ |
-| R-704a | 화면에 「이 데이터는 반입분입니다」 | `[마스터]` | `60-admin` | `report/screens/admin.py::import_state` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-705a | **금지** 반입분을 수집분과 섞어 「우리가 받았다」로 | `[마스터]` **가장 중요한 금지** | `60-admin` | `web/views.py::admin_import` | `/admin/import` | S10 · S5 |  |  | ○ |
-| R-706a | **금지** 반입 없이 「매물 0건」만 내는 것 | `[마스터]` 무엇을 하면 되는지 낸다 | `60-admin` | `store/adminops.py::mark_step_imported` | 화면 없음 | S10 · S5 |  |  | ◐ |
-| R-707a | CSV·JSON 값을 그대로. 추정하지 않는다 | `[마스터]` P3 | `60-admin` | `report/render.py::_j` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-708a | `classify_source` 를 `import` 로 | `[마스터]` | `60-admin` | `store/adminops.py:11` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-709a | CSV 에 없는 칸은 NULL | `[마스터]` 3장 R-321 과 같음 | `60-admin` | `store/adminops.py::import_listings` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-710a | **금지** 반입 시점에 `fuel_match` 등으로 거르는 것 | `[마스터]` 거르는 것은 분류 단계다 | `60-admin` | `parse/importer.py:8` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-711a | 반입이 못 채우는 칸은 nullable | `[기술]` 3장 R-320 | `60-admin` | `store/adminops.py::import_listings` | 화면 없음 | S9 · V4-25 |  |  | ◐ |
-| R-712a | 반입 직후 S9 를 돌리지 않는다 | `[기술]` **사전이 비어 있으면 판정이 틀린다** | `60-admin` | `report/screens/admin.py:46` | 화면 없음 | S10 · S4 |  |  | ◐ |
-| R-713a | 반입이 끝나면 S4 완료를 남긴다 | `[마스터]` | `60-admin` | `store/adminops.py::import_listings` | 화면 없음 | S10 · S5 |  |  | ◐ |
-| R-714a | 화면에는 「S4 · 반입(import)」 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | S10 · S5 |  |  | ○ |
-| R-715a | **금지** `actual` 을 `collector` 로 남기는 것 | `[마스터]` **「우리가 받았다」가 된다** | `60-admin` | `web/views.py::admin_import` | `/admin/import` | S10 · S4 |  |  | ○ |
+| R-700a | `[저장]` `origin` 을 `import` 로 남긴다 | `[마스터]` `collector` 와 구분 | `60-admin` | `web/templates/admin_import.html` | `/admin/import` | S10 · S5 |  |  | ○ |
+| R-701a | `[운영]` 누가·언제·왜 넣었는지 audit 에 | `[마스터]` | `60-admin` | `web/templates/admin_dict.html` | `/admin/dict` | S10 · S5 |  |  | ○ |
+| R-702a | `[수집]` 원문을 그대로 저장 (P3) | `[마스터]` | `60-admin` | `web/views.py::admin_api` | `/admin/api` | S10 · S5 |  |  | ○ |
+| R-703a | `[운영]` 반입분에 그 뒤 단계를 이어서 돌릴 수 있다 | `[마스터]` | `60-admin` | `web/views.py::recommend` | `/recommend` | S10 · S5 |  |  | ○ |
+| R-704a | `[운영·화면]` 화면에 「이 데이터는 반입분입니다」 | `[마스터]` | `60-admin` | `report/screens/admin.py::import_state` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-705a | `[수집]` **금지** 반입분을 수집분과 섞어 「우리가 받았다」로 | `[마스터]` **가장 중요한 금지** | `60-admin` | `web/views.py::admin_import` | `/admin/import` | S10 · S5 |  |  | ○ |
+| R-706a | `[운영]` **금지** 반입 없이 「매물 0건」만 내는 것 | `[마스터]` 무엇을 하면 되는지 낸다 | `60-admin` | `store/adminops.py::mark_step_imported` | — | S10 · S5 |  |  | ◐ |
+| R-707a | `[운영]` CSV·JSON 값을 그대로. 추정하지 않는다 | `[마스터]` P3 | `60-admin` | `report/render.py::_j` | — | 검사 없음 |  |  | ◐ |
+| R-708a | `[운영]` `classify_source` 를 `import` 로 | `[마스터]` | `60-admin` | `store/adminops.py:11` | — | 검사 없음 |  |  | ◐ |
+| R-709a | `[저장]` CSV 에 없는 칸은 NULL | `[마스터]` 3장 R-321 과 같음 | `60-admin` | `store/adminops.py::import_listings` | — | 검사 없음 |  |  | ◐ |
+| R-710a | `[운영]` **금지** 반입 시점에 `fuel_match` 등으로 거르는 것 | `[마스터]` 거르는 것은 분류 단계다 | `60-admin` | `parse/importer.py:8` | — | 검사 없음 |  |  | ◐ |
+| R-711a | `[운영]` 반입이 못 채우는 칸은 nullable | `[기술]` 3장 R-320 | `60-admin` | `store/adminops.py::import_listings` | — | S9 · V4-25 |  |  | ◐ |
+| R-712a | `[운영]` 반입 직후 S9 를 돌리지 않는다 | `[기술]` **사전이 비어 있으면 판정이 틀린다** | `60-admin` | `report/screens/admin.py:46` | — | S10 · S4 |  |  | ◐ |
+| R-713a | `[저장]` 반입이 끝나면 S4 완료를 남긴다 | `[마스터]` | `60-admin` | `store/adminops.py::import_listings` | — | S10 · S5 |  |  | ◐ |
+| R-714a | `[운영·화면]` 화면에는 「S4 · 반입(import)」 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | S10 · S5 |  |  | ○ |
+| R-715a | `[운영]` **금지** `actual` 을 `collector` 로 남기는 것 | `[마스터]` **「우리가 받았다」가 된다** | `60-admin` | `web/views.py::admin_import` | `/admin/import` | S10 · S4 |  |  | ○ |
 
 ---
 
@@ -176,34 +176,34 @@
            개정 263~265 · 307~308 — 크기 · 범위 · 간격 · 조각 · CSRF
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-720a | ②를 건너뛰지 않는다. 사람이 보고 저장 | `[마스터]` **무엇이 들어가는지 보고 넣는다** | `60-admin` | `web/views.py::_condition_sentence` | 화면 없음 | V11-43 · V11-44 |  |  | ◐ |
-| R-721a | 원문을 가공하지 않고 그대로 (P3) | `[마스터]` | `60-admin` | `web/views.py::admin_api` | `/admin/api` | V11-43 · V11-44 |  |  | ○ |
-| R-722a | `origin` 을 `browser` 로 | `[마스터]` 개정 252 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-43 |  |  | ○ |
-| R-723a | 호출 간격을 브라우저에서도 지킨다 | `[마스터]` | `60-admin` | `web/static/cors_test.html` | 화면 없음 | V11-43 · V11-44 |  |  | ◐ |
-| R-724a | 407·403 을 그대로 화면에 낸다 | `[마스터]` **삼키면 왜 안 되는지 모른다** | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-725a | **금지** 서버가 다시 엔카를 부르는 것 | `[원문]` 막혀 있다 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-43 · V11-44 |  |  | ○ |
-| R-726a | 막혔을 때의 갈래를 남긴다 | `[마스터]` 개정 262 CORS 실측 | `60-admin` | `web/static/cors_test.html` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-727a | 막히면 「붙여넣기로 하십시오」 | `[마스터]` 위와 같음 | `60-admin` | `web/static/cors_test.html` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-728a | JS 가 꺼져도 「직접 열기」로 새 탭 | `[기술]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | 검사 없음 |  |  | ◐ |
-| R-729a | 한 번에 부르는 건수를 상한 안에서 | `[마스터]` 개정 263 | `60-admin` | `web/views.py::_filter` | 화면 없음 | V11-47 |  |  | ◐ |
-| R-730a | 여러 쪽이면 JS 가 이어서 부르고 나눠 보낸다 | `[마스터]` 위와 같음 | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 |  |  | ○ |
-| R-731a | 진행을 화면에 — 「3/8쪽 저장했습니다」 | `[마스터]` | `60-admin` | `web/views.py::watch` | `/watch` | 검사 없음 |  |  | ◐ |
-| R-732a | 중간 실패 시 어디까지 됐는지 남긴다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V10-27 · V11-47 |  |  | ○ |
-| R-733a | **금지** 사람에게 「나눠서 보내십시오」 | `[마스터]` **기계가 알아서 잰다** | `60-admin` | `web/static/cors_test.html` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-734a | 상한은 그대로 두고 JS 가 나눈다 | `[마스터]` **상한을 올리면 붙여넣기 상자도 커진다** | `60-admin` | `web/views.py:5` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-735a | 범위를 고른다 | `[마스터]` 개정 264 | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 |  |  | ◐ |
-| R-736a | 전 차종은 「높음」이다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | 검사 없음 |  |  | ◐ |
-| R-737a | 차종마다 목록과 facet 을 함께 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-48 · V11-49 |  |  | ○ |
-| R-738a | 한 차종이 실패해도 나머지를 이어서 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-49 |  |  | ○ |
-| R-739a | 진행을 차종 단위로 | `[마스터]` | `60-admin` | `web/views.py:322` | 화면 없음 | V11-48 · V11-49 |  |  | ◐ |
-| R-740a | 중단할 수 있다. 어디까지 됐는지 남긴다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-48 · V11-49 |  |  | ○ |
-| R-741a | **금지** 전 차종을 확인 없이 시작 | `[마스터]` | `60-admin` | `web/views.py::admin_run` | `/admin/run` | V11-48 |  |  | ○ |
-| R-742a | **금지** 한 차종 실패로 전체를 멈추는 것 | `[마스터]` | `60-admin` | `web/views.py::_points` | 화면 없음 | V11-49 |  |  | ◐ |
-| R-743a | 브라우저 수집 기본 간격은 0 | `[마스터]` **개정 265 — 사용자 회선은 안 막힌다** | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-47 |  |  | ○ |
-| R-744a | `browser_interval_sec` 을 config 에 | `[마스터]` | `60-admin` | `report/screens/admin.py:52` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-745a | 막히면 화면에 그대로 (407·429 를 안 삼킨다) | `[마스터]` | `60-admin` | `web/static/cors_test.html` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-720a | `[수집]` ②를 건너뛰지 않는다. 사람이 보고 저장 | `[마스터]` **무엇이 들어가는지 보고 넣는다** | `60-admin` | `web/views.py::_condition_sentence` | — | V11-43 · V11-44 |  |  | ◐ |
+| R-721a | `[수집]` 원문을 가공하지 않고 그대로 (P3) | `[마스터]` | `60-admin` | `web/views.py::admin_api` | `/admin/api` | V11-43 · V11-44 |  |  | ○ |
+| R-722a | `[수집]` `origin` 을 `browser` 로 | `[마스터]` 개정 252 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-43 |  |  | ○ |
+| R-723a | `[수집]` 호출 간격을 브라우저에서도 지킨다 | `[마스터]` | `60-admin` | `web/static/cors_test.html` | — | V11-43 · V11-44 |  |  | ◐ |
+| R-724a | `[수집·화면]` 407·403 을 그대로 화면에 낸다 | `[마스터]` **삼키면 왜 안 되는지 모른다** | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
+| R-725a | `[수집]` **금지** 서버가 다시 엔카를 부르는 것 | `[원문]` 막혀 있다 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-43 · V11-44 |  |  | ○ |
+| R-726a | `[수집]` 막혔을 때의 갈래를 남긴다 | `[마스터]` 개정 262 CORS 실측 | `60-admin` | `web/static/cors_test.html` | — | 검사 없음 |  |  | ◐ |
+| R-727a | `[수집]` 막히면 「붙여넣기로 하십시오」 | `[마스터]` 위와 같음 | `60-admin` | `web/static/cors_test.html` | — | 검사 없음 |  |  | ◐ |
+| R-728a | `[수집]` JS 가 꺼져도 「직접 열기」로 새 탭 | `[기술]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | 검사 없음 |  |  | ◐ |
+| R-729a | `[수집]` 한 번에 부르는 건수를 상한 안에서 | `[마스터]` 개정 263 | `60-admin` | `web/views.py::_filter` | — | V11-47 |  |  | ◐ |
+| R-730a | `[수집·화면]` 여러 쪽이면 JS 가 이어서 부르고 나눠 보낸다 | `[마스터]` 위와 같음 | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 |  |  | ○ |
+| R-731a | `[수집·화면]` 진행을 화면에 — 「3/8쪽 저장했습니다」 | `[마스터]` | `60-admin` | `web/views.py::watch` | `/watch` | 검사 없음 |  |  | ◐ |
+| R-732a | `[수집]` 중간 실패 시 어디까지 됐는지 남긴다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V10-27 · V11-47 |  |  | ○ |
+| R-733a | `[수집]` **금지** 사람에게 「나눠서 보내십시오」 | `[마스터]` **기계가 알아서 잰다** | `60-admin` | `web/static/cors_test.html` | — | 검사 없음 |  |  | ◐ |
+| R-734a | `[수집]` 상한은 그대로 두고 JS 가 나눈다 | `[마스터]` **상한을 올리면 붙여넣기 상자도 커진다** | `60-admin` | `web/views.py:5` | — | 검사 없음 |  |  | ◐ |
+| R-735a | `[수집]` 범위를 고른다 | `[마스터]` 개정 264 | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 |  |  | ◐ |
+| R-736a | `[수집]` 전 차종은 「높음」이다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | 검사 없음 |  |  | ◐ |
+| R-737a | `[수집]` 차종마다 목록과 facet 을 함께 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-48 · V11-49 |  |  | ○ |
+| R-738a | `[수집]` 한 차종이 실패해도 나머지를 이어서 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-49 |  |  | ○ |
+| R-739a | `[수집]` 진행을 차종 단위로 | `[마스터]` | `60-admin` | `web/views.py:322` | — | V11-48 · V11-49 |  |  | ◐ |
+| R-740a | `[수집]` 중단할 수 있다. 어디까지 됐는지 남긴다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-48 · V11-49 |  |  | ○ |
+| R-741a | `[수집]` **금지** 전 차종을 확인 없이 시작 | `[마스터]` | `60-admin` | `web/views.py::admin_run` | `/admin/run` | V11-48 |  |  | ○ |
+| R-742a | `[수집]` **금지** 한 차종 실패로 전체를 멈추는 것 | `[마스터]` | `60-admin` | `web/views.py::_points` | — | V11-49 |  |  | ◐ |
+| R-743a | `[수집]` 브라우저 수집 기본 간격은 0 | `[마스터]` **개정 265 — 사용자 회선은 안 막힌다** | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-47 |  |  | ○ |
+| R-744a | `[수집]` `browser_interval_sec` 을 config 에 | `[마스터]` | `60-admin` | `report/screens/admin.py:52` | — | 검사 없음 |  |  | ◐ |
+| R-745a | `[수집·화면]` 막히면 화면에 그대로 (407·429 를 안 삼킨다) | `[마스터]` | `60-admin` | `web/static/cors_test.html` | 화면 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -213,13 +213,13 @@
 공통 근거   [마스터] 개정 254·279 — 「CLI 로 되는 것은 완성이 아니다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-750a | 위 전부가 화면에서 실행되고 결과를 화면에서 본다 | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-751a | 오래 걸리는 것은 진행 표시 | `[마스터]` | `60-admin` | `web/views.py::admin_run` | `/admin/run` | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
-| R-752a | 실패하면 무엇이 왜 실패했는지 화면에 | `[마스터]` **「로그를 보라」고 하지 않는다** | `60-admin` | 미구현 | 화면 없음 | V11-45 — 검사 없음(규격에만) |  |  | ✗ |
-| R-753a | 부트스트랩 하나만 CLI | `[마스터]` | `60-admin` | `tools/menu.py:4` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-754a | 「최초 계정은 서버에서 만듭니다」 안내 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
+| R-750a | `[저장·화면]` 위 전부가 화면에서 실행되고 결과를 화면에서 본다 | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
+| R-751a | `[저장·화면]` 오래 걸리는 것은 진행 표시 | `[마스터]` | `60-admin` | `web/views.py::admin_run` | `/admin/run` | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
+| R-752a | `[화면]` 실패하면 무엇이 왜 실패했는지 화면에 | `[마스터]` **「로그를 보라」고 하지 않는다** | `60-admin` | 미구현 | 화면 없음 | V11-45 — 검사 없음(규격에만) |  |  | ✗ |
+| R-753a | `[운영]` 부트스트랩 하나만 CLI | `[마스터]` | `60-admin` | `tools/menu.py:4` | — | 검사 없음 |  |  | ◐ |
+| R-754a | `[운영]` 「최초 계정은 서버에서 만듭니다」 안내 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | V11-45 — 검사 없음(규격에만) |  |  | ◐ |
 
 ---
 
@@ -229,15 +229,15 @@
 공통 근거   [마스터] 4장 STEP 40 — 「사람이 본다는 것이 이 단계의 전부다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-760a | 사유를 받는다 | `[마스터]` | `60-admin` | `web/views.py::login` | `/login` | 검사 없음 |  |  | ◐ |
-| R-761a | 미리보기 없이 확정 불가 | `[마스터]` | `60-admin` | `web/views.py::_gate` | 화면 없음 | V10-24 · V10-25 |  |  | ◐ |
-| R-762a | 출처가 `list` 인 것은 그렇게 표시 | `[마스터]` 개정 269 | `60-admin` | `web/views.py::admin_dict` | `/admin/dict` | V10-25 |  |  | ○ |
-| R-763a | facet 을 나중에 받으면 대조 결과를 낸다 | `[마스터]` 개정 266 | `60-admin` | `web/templates/admin_dict.html` | `/admin/dict` | V10-24 · V10-25 |  |  | ○ |
-| R-764a | 폐기한 값이 다시 관측되면 알린다 | `[기술]` | `60-admin` | `store/adminops.py::pending_enums` | 화면 없음 | V10-24 · V10-25 |  |  | ◐ |
-| R-765a | **금지** 확정을 자동으로 | `[마스터]` **이 단계의 전부다** | `60-admin` | `web/views.py::admin_dict` | `/admin/dict` | 검사 없음 |  |  | ◐ |
-| R-766a | **금지** `pending` 인 채로 판정에 쓰는 것 | `[마스터]` | `60-admin` | `store/chunk.py::pending` | 화면 없음 | V10-24 · V10-25 |  |  | ◐ |
+| R-760a | `[수집]` 사유를 받는다 | `[마스터]` | `60-admin` | `web/views.py::login` | `/login` | 검사 없음 |  |  | ◐ |
+| R-761a | `[사전·화면]` 미리보기 없이 확정 불가 | `[마스터]` | `60-admin` | `web/views.py::_gate` | 화면 없음 | V10-24 · V10-25 |  |  | ◐ |
+| R-762a | `[사전·화면]` 출처가 `list` 인 것은 그렇게 표시 | `[마스터]` 개정 269 | `60-admin` | `web/views.py::admin_dict` | `/admin/dict` | V10-25 |  |  | ○ |
+| R-763a | `[수집·화면]` facet 을 나중에 받으면 대조 결과를 낸다 | `[마스터]` 개정 266 | `60-admin` | `web/templates/admin_dict.html` | `/admin/dict` | V10-24 · V10-25 |  |  | ○ |
+| R-764a | `[사전]` 폐기한 값이 다시 관측되면 알린다 | `[기술]` | `60-admin` | `store/adminops.py::pending_enums` | — | V10-24 · V10-25 |  |  | ◐ |
+| R-765a | `[사전]` **금지** 확정을 자동으로 | `[마스터]` **이 단계의 전부다** | `60-admin` | `web/views.py::admin_dict` | `/admin/dict` | 검사 없음 |  |  | ◐ |
+| R-766a | `[사전]` **금지** `pending` 인 채로 판정에 쓰는 것 | `[마스터]` | `60-admin` | `store/chunk.py::pending` | — | V10-24 · V10-25 |  |  | ◐ |
 
 ---
 
@@ -247,32 +247,32 @@
 공통 근거   [마스터] 개정 272·273 — 「큐만 보지 않는다.  셋 다 본다」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-770a | 스스로 갱신 (`status_poll_sec` 기본 5) | `[마스터]` | `60-admin` | `report/screens/admin.py::DocView` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-771a | 갱신 간격과 마지막 갱신 시각을 낸다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-51 · V11-52 |  |  | ○ |
-| R-772a | 폴링이 실패해도 진행은 남는다 | `[기술]` | `60-admin` | `web/context.py::PageContext` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-773a | 「대기 중」과 「멈춘 것」을 가른다 | `[마스터]` | `60-admin` | `store/adminops.py::ImportPreview` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-774a | **큐만 보지 않는다. 실제로 도는 것을 본다** | `[마스터]` **08-16 실측** | `60-admin` | `web/views.py::admin_run` | `/admin/run` | V11-53 |  |  | ○ |
-| R-775a | 판정 근거를 셋 다 본다 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 |  |  | ◐ |
-| R-776a | 「도는 것이 없다」와 「마지막 처리 0분 전」이 같은 화면에 있으면 안 된다 | `[마스터]` | `60-admin` | `web/views.py::_site_query` | 화면 없음 | V11-51 · V11-52 |  |  | ◐ |
-| R-777a | **금지** 큐가 비었다고 「할 일이 없다」 단정 | `[마스터]` | `60-admin` | `web/views.py::_unclassified_split` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-778a | 읽기 전용 | `[마스터]` | `60-admin` | `web/views.py::admin_docs` | `/admin/docs` | 검사 없음 |  |  | ◐ |
-| R-779a | JS 가 꺼져도 새로고침하면 보인다 | `[기술]` | `60-admin` | `report/screens/admin.py::status_view` | 화면 없음 | V11-51 · V11-52 |  |  | ◐ |
-| R-780a | **금지** 실행 단추를 이 화면에 | `[마스터]` | `60-admin` | `web/views.py::listings` | `/listings` | V11-52 |  |  | ○ |
-| R-781a | **금지** 진행이 없는 동안 빈 화면 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | V11-51 · V11-52 |  |  | ○ |
+| R-770a | `[저장]` 스스로 갱신 (`status_poll_sec` 기본 5) | `[마스터]` | `60-admin` | `report/screens/admin.py::DocView` | — | 검사 없음 |  |  | ◐ |
+| R-771a | `[수집·화면]` 갱신 간격과 마지막 갱신 시각을 낸다 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-51 · V11-52 |  |  | ○ |
+| R-772a | `[저장]` 폴링이 실패해도 진행은 남는다 | `[기술]` | `60-admin` | `web/context.py::PageContext` | — | 검사 없음 |  |  | ◐ |
+| R-773a | `[저장]` 「대기 중」과 「멈춘 것」을 가른다 | `[마스터]` | `60-admin` | `store/adminops.py::ImportPreview` | — | 검사 없음 |  |  | ◐ |
+| R-774a | `[저장]` **큐만 보지 않는다. 실제로 도는 것을 본다** | `[마스터]` **08-16 실측** | `60-admin` | `web/views.py::admin_run` | `/admin/run` | V11-53 |  |  | ○ |
+| R-775a | `[판정]` 판정 근거를 셋 다 본다 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 |  |  | ◐ |
+| R-776a | `[저장·화면]` 「도는 것이 없다」와 「마지막 처리 0분 전」이 같은 화면에 있으면 안 된다 | `[마스터]` | `60-admin` | `web/views.py::_site_query` | 화면 없음 | V11-51 · V11-52 |  |  | ◐ |
+| R-777a | `[저장]` **금지** 큐가 비었다고 「할 일이 없다」 단정 | `[마스터]` | `60-admin` | `web/views.py::_unclassified_split` | — | 검사 없음 |  |  | ◐ |
+| R-778a | `[저장]` 읽기 전용 | `[마스터]` | `60-admin` | `web/views.py::admin_docs` | `/admin/docs` | 검사 없음 |  |  | ◐ |
+| R-779a | `[저장]` JS 가 꺼져도 새로고침하면 보인다 | `[기술]` | `60-admin` | `report/screens/admin.py::status_view` | — | V11-51 · V11-52 |  |  | ◐ |
+| R-780a | `[저장·화면]` **금지** 실행 단추를 이 화면에 | `[마스터]` | `60-admin` | `web/views.py::listings` | `/listings` | V11-52 |  |  | ○ |
+| R-781a | `[저장]` **금지** 진행이 없는 동안 빈 화면 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | V11-51 · V11-52 |  |  | ○ |
 
 ---
 
 # 12. 개발 요청 · 이력 (5건)
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-790a | **금지** 요청을 삭제. 상태 전이로만 | `[마스터]` 이력이다 | `60-admin` | `web/templates/admin_requests.html` | `/admin/requests` | 검사 없음 |  |  | ◐ |
-| R-791a | `applied`·`not_applied`·`misapplied` 는 사유를 받는다 | `[마스터]` | `60-admin` | `web/views.py::admin_requests` | `/admin/requests` | 검사 없음 |  |  | ◐ |
-| R-792a | `applied` 는 `step_ref` 를 받는다 | `[마스터]` 어느 STEP 에 반영됐는가 | `60-admin` | `web/views.py::admin_requests` | `/admin/requests` | 검사 없음 |  |  | ◐ |
-| R-793a | **금지** 미리보기 없이 저장 버튼을 여는 것 | `[마스터]` | `60-admin` | `store/adminops.py::preview_scoring` | 화면 없음 | V11-09 |  |  | ◐ |
-| R-794a | **금지** 이력 삭제 버튼 | `[마스터]` | `60-admin` | `web/views.py:507` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-790a | `[운영]` **금지** 요청을 삭제. 상태 전이로만 | `[마스터]` 이력이다 | `60-admin` | `web/templates/admin_requests.html` | `/admin/requests` | 검사 없음 |  |  | ◐ |
+| R-791a | `[수집]` `applied`·`not_applied`·`misapplied` 는 사유를 받는다 | `[마스터]` | `60-admin` | `web/views.py::admin_requests` | `/admin/requests` | 검사 없음 |  |  | ◐ |
+| R-792a | `[수집]` `applied` 는 `step_ref` 를 받는다 | `[마스터]` 어느 STEP 에 반영됐는가 | `60-admin` | `web/views.py::admin_requests` | `/admin/requests` | 검사 없음 |  |  | ◐ |
+| R-793a | `[저장·화면]` **금지** 미리보기 없이 저장 버튼을 여는 것 | `[마스터]` | `60-admin` | `store/adminops.py::preview_scoring` | 화면 없음 | V11-09 |  |  | ◐ |
+| R-794a | `[운영]` **금지** 이력 삭제 버튼 | `[마스터]` | `60-admin` | `web/views.py:507` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -283,19 +283,19 @@
            개발측 실측 — 재시작 22회가 CSRF 토큰을 날렸다
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-800a | 나눌 수 없는 원문은 조각으로 | `[마스터]` 개정 307 | `60-admin` | `web/views.py::_take_chunk` | 화면 없음 | V11-98 |  |  | ◐ |
-| R-801a | 조각 하나는 `max_form_bytes` 안 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-98 |  |  | ○ |
-| R-802a | 중간에 끊기면 받은 조각을 버린다 | `[마스터]` 반쪽을 저장하지 않는다 | `60-admin` | `web/views.py:507` | 화면 없음 | V11-98 |  |  | ◐ |
-| R-803a | 진행을 화면에 — 「facet 3/4 조각」 | `[마스터]` | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-98 |  |  | ○ |
-| R-804a | **금지** 상한을 올려 해결 | `[마스터]` | `60-admin` | `validate/v11_web.py:380` | 화면 없음 | V11-98 |  |  | ◐ |
-| R-805a | 여러 번 보내는 경로는 토큰이 세션 단위 | `[마스터]` 개정 308 | `60-admin` | `web/views.py::_versions` | 화면 없음 | V11-99 |  |  | ◐ |
-| R-806a | 갱신이 필요하면 응답에 새 토큰 | `[마스터]` | `60-admin` | `web/views.py::page` | 화면 없음 | V11-99 |  |  | ◐ |
-| R-807a | 403 이 나면 왜인지 화면에 | `[마스터]` **「저장 403」만으로는 원인을 모른다** | `60-admin` | `report/screens/build.py::_left` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-808a | 502 도 밝힌다 | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-809a | **금지** 1회용 토큰 | `[마스터]` | `60-admin` | `web/session.py::new_csrf` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-810a | **시험은 실제 사용 패턴대로** | `[마스터]` **한 번만 POST 해서 못 잡았다** | `60-admin` | `web/views.py::_gate` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-800a | `[수집]` 나눌 수 없는 원문은 조각으로 | `[마스터]` 개정 307 | `60-admin` | `web/views.py::_take_chunk` | — | V11-98 |  |  | ◐ |
+| R-801a | `[수집]` 조각 하나는 `max_form_bytes` 안 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V11-98 |  |  | ○ |
+| R-802a | `[수집]` 중간에 끊기면 받은 조각을 버린다 | `[마스터]` 반쪽을 저장하지 않는다 | `60-admin` | `web/views.py:507` | — | V11-98 |  |  | ◐ |
+| R-803a | `[수집·화면]` 진행을 화면에 — 「facet 3/4 조각」 | `[마스터]` | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-98 |  |  | ○ |
+| R-804a | `[수집]` **금지** 상한을 올려 해결 | `[마스터]` | `60-admin` | `validate/v11_web.py:380` | — | V11-98 |  |  | ◐ |
+| R-805a | `[수집]` 여러 번 보내는 경로는 토큰이 세션 단위 | `[마스터]` 개정 308 | `60-admin` | `web/views.py::_versions` | — | V11-99 |  |  | ◐ |
+| R-806a | `[수집]` 갱신이 필요하면 응답에 새 토큰 | `[마스터]` | `60-admin` | `web/views.py::page` | — | V11-99 |  |  | ◐ |
+| R-807a | `[수집·화면]` 403 이 나면 왜인지 화면에 | `[마스터]` **「저장 403」만으로는 원인을 모른다** | `60-admin` | `report/screens/build.py::_left` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-808a | `[수집]` 502 도 밝힌다 | `[마스터]` | `60-admin` | 미구현 | — | 검사 없음 |  |  | ✗ |
+| R-809a | `[수집]` **금지** 1회용 토큰 | `[마스터]` | `60-admin` | `web/session.py::new_csrf` | — | 검사 없음 |  |  | ◐ |
+| R-810a | `[검사]` **시험은 실제 사용 패턴대로** | `[마스터]` **한 번만 POST 해서 못 잡았다** | `60-admin` | `web/views.py::_gate` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
@@ -305,31 +305,31 @@
 공통 근거   [마스터] 「저장하면 나머지가 이어서 돈다」 · 「4시간 간격으로」
 ```
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-820b | 목록 저장이 끝난 시각에 큐에 넣는다 | `[마스터]` 개정 314 | `60-admin` | `store/adminops.py::enqueue_after_list_save` | 화면 없음 | V10-26 |  |  | ◐ |
-| R-821b | 마스터는 화면을 닫아도 된다 | `[마스터]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-822b | ④ 는 pending 까지만 | `[마스터]` 확정은 사람이 | `60-admin` | `store/chunk.py::pending` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-823b | ⑤ 는 ②③ 이 끝난 뒤에 | `[마스터]` **중간 상태로 판정하지 않는다** | `60-admin` | `store/adminops.py::save_browser_catch` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-824b | 진행을 `/admin/status` 에 | `[마스터]` | `60-admin` | `web/app.py:55` | /admin/status | 검사 없음 |  |  | ◐ |
-| R-825b | 실패해도 다음 단계로 가지 않는다 | `[마스터]` | `60-admin` | `web/views.py::_query_string` | 화면 없음 | V10-27 |  |  | ◐ |
-| R-826b | **금지** 사람이 「이어서 해라」를 말해야 하는 것 | `[마스터]` **개정 339 — 「4시간마다 돌라고 했으면」** | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V10-26 · V10-27 |  |  | ○ |
-| R-827b | 「전체 재수집」은 사람이 명시할 때만 | `[마스터]` 개정 317 | `60-admin` | `tools/menu.py::cmd_setup` | 화면 없음 | V10-29 · V10-30 |  |  | ◐ |
-| R-828b | `detail_refresh_days` | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-829b | 가격이 바뀐 매물은 기준일과 무관하게 | `[마스터]` | `60-admin` | `web/templates/watch.html` | `/watch` | V10-29 · V10-30 |  |  | ○ |
-| R-830b | 화면에 무엇을 하는지 적는다 | `[마스터]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | 화면 없음 | V10-29 · V10-30 |  |  | ◐ |
-| R-831b | **금지** 「재수집」만 쓰고 무엇을 하는지 안 밝히는 것 | `[마스터]` | `60-admin` | `store/adminops.py::import_listings` | 화면 없음 | V10-29 · V10-30 |  |  | ◐ |
-| R-832b | 하루 한 번 정해진 시각 | `[마스터]` 개정 315 | `60-admin` | `store/core.py::split_pii` | 화면 없음 | V10-28 |  |  | ◐ |
-| R-833b | 서버에서 부를 수 있는 것만 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V10-28 |  |  | ○ |
-| R-834b | **엔카 목록은 자동이 아니다** | `[원문]` 407 | `60-admin` | `web/app.py::_list_stale` | 화면 없음 | V10-28 |  |  | ◐ |
-| R-835b | `systemd timer`. `cron` 을 두지 않는다 | `[기술]` 둘을 섞지 않는다 | `60-admin` | `tools/daily_enqueue.py:10` | 화면 없음 | V10-28 |  |  | ◐ |
-| R-836b | 이미 도는 것이 있으면 건너뛴다 | `[기술]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | 화면 없음 | V10-28 |  |  | ◐ |
-| R-837b | 결과를 `outputs` 에 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 |  |  | ◐ |
-| R-838b | 목록이 N일 이상 안 들어왔으면 알린다 | `[마스터]` 개정 316 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-103 — 검사 없음(규격에만) |  |  | ◐ |
-| R-839b | `list_stale_days` (기본 1) | `[마스터]` | `60-admin` | `web/app.py::empty_state` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-840b | 전 화면 머리말에 | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-841b | **가격 변동은 목록에서 온다** | `[마스터]` **목록이 멈추면 변동이 멈춘다** | `60-admin` | `web/app.py::empty_state` | 화면 없음 | V11-103 — 검사 없음(규격에만) |  |  | ◐ |
-| R-842b | **금지** 조용히 옛 목록으로 판정 | `[마스터]` | `60-admin` | `web/app.py::empty_state` | 화면 없음 | V11-103 — 검사 없음(규격에만) |  |  | ◐ |
+| R-820b | `[저장]` 목록 저장이 끝난 시각에 큐에 넣는다 | `[마스터]` 개정 314 | `60-admin` | `store/adminops.py::enqueue_after_list_save` | — | V10-26 |  |  | ◐ |
+| R-821b | `[운영]` 마스터는 화면을 닫아도 된다 | `[마스터]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | — | 검사 없음 |  |  | ◐ |
+| R-822b | `[사전]` ④ 는 pending 까지만 | `[마스터]` 확정은 사람이 | `60-admin` | `store/chunk.py::pending` | — | 검사 없음 |  |  | ◐ |
+| R-823b | `[운영]` ⑤ 는 ②③ 이 끝난 뒤에 | `[마스터]` **중간 상태로 판정하지 않는다** | `60-admin` | `store/adminops.py::save_browser_catch` | — | 검사 없음 |  |  | ◐ |
+| R-824b | `[저장]` 진행을 `/admin/status` 에 | `[마스터]` | `60-admin` | `web/app.py:55` | /admin/status | 검사 없음 |  |  | ◐ |
+| R-825b | `[운영]` 실패해도 다음 단계로 가지 않는다 | `[마스터]` | `60-admin` | `web/views.py::_query_string` | — | V10-27 |  |  | ◐ |
+| R-826b | `[운영]` **금지** 사람이 「이어서 해라」를 말해야 하는 것 | `[마스터]` **개정 339 — 「4시간마다 돌라고 했으면」** | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V10-26 · V10-27 |  |  | ○ |
+| R-827b | `[수집]` 「전체 재수집」은 사람이 명시할 때만 | `[마스터]` 개정 317 | `60-admin` | `tools/menu.py::cmd_setup` | — | V10-29 · V10-30 |  |  | ◐ |
+| R-828b | `[운영]` `detail_refresh_days` | `[마스터]` | `60-admin` | 미구현 | — | 검사 없음 |  |  | ✗ |
+| R-829b | `[운영]` 가격이 바뀐 매물은 기준일과 무관하게 | `[마스터]` | `60-admin` | `web/templates/watch.html` | `/watch` | V10-29 · V10-30 |  |  | ○ |
+| R-830b | `[운영·화면]` 화면에 무엇을 하는지 적는다 | `[마스터]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | 화면 없음 | V10-29 · V10-30 |  |  | ◐ |
+| R-831b | `[수집]` **금지** 「재수집」만 쓰고 무엇을 하는지 안 밝히는 것 | `[마스터]` | `60-admin` | `store/adminops.py::import_listings` | — | V10-29 · V10-30 |  |  | ◐ |
+| R-832b | `[운영]` 하루 한 번 정해진 시각 | `[마스터]` 개정 315 | `60-admin` | `store/core.py::split_pii` | — | V10-28 |  |  | ◐ |
+| R-833b | `[운영]` 서버에서 부를 수 있는 것만 | `[마스터]` | `60-admin` | `web/templates/admin_collect.html` | `/admin/collect` | V10-28 |  |  | ○ |
+| R-834b | `[운영]` **엔카 목록은 자동이 아니다** | `[원문]` 407 | `60-admin` | `web/app.py::_list_stale` | — | V10-28 |  |  | ◐ |
+| R-835b | `[운영]` `systemd timer`. `cron` 을 두지 않는다 | `[기술]` 둘을 섞지 않는다 | `60-admin` | `tools/daily_enqueue.py:10` | — | V10-28 |  |  | ◐ |
+| R-836b | `[운영]` 이미 도는 것이 있으면 건너뛴다 | `[기술]` | `60-admin` | `store/adminops.py::enqueue_after_list_save` | — | V10-28 |  |  | ◐ |
+| R-837b | `[운영]` 결과를 `outputs` 에 | `[마스터]` | `60-admin` | `web/views.py::why` | `/why/{listing_id}` | 검사 없음 |  |  | ◐ |
+| R-838b | `[운영]` 목록이 N일 이상 안 들어왔으면 알린다 | `[마스터]` 개정 316 | `60-admin` | `web/views.py::admin_collect` | `/admin/collect` | V11-103 — 검사 없음(규격에만) |  |  | ◐ |
+| R-839b | `[운영]` `list_stale_days` (기본 1) | `[마스터]` | `60-admin` | `web/app.py::empty_state` | — | 검사 없음 |  |  | ◐ |
+| R-840b | `[운영·화면]` 전 화면 머리말에 | `[마스터]` | `60-admin` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
+| R-841b | `[운영·화면]` **가격 변동은 목록에서 온다** | `[마스터]` **목록이 멈추면 변동이 멈춘다** | `60-admin` | `web/app.py::empty_state` | 화면 없음 | V11-103 — 검사 없음(규격에만) |  |  | ◐ |
+| R-842b | `[판정]` **금지** 조용히 옛 목록으로 판정 | `[마스터]` | `60-admin` | `web/app.py::empty_state` | — | V11-103 — 검사 없음(규격에만) |  |  | ◐ |
 
 ---
 
@@ -348,8 +348,8 @@
 
 | R | 무엇 | 왜 |
 |---|---|---|
-| R-628a | 「비밀번호 8자 이상」 | ★ 통념일 뿐 근거가 없습니다. 1인 시스템에 필요합니까 |
-| R-682a | 「결과를 그대로 복사」 | ★ 조사 없음. 쓰시는지 확인이 필요합니다 |
+| R-628a | `[운영]` 「비밀번호 8자 이상」 | ★ 통념일 뿐 근거가 없습니다. 1인 시스템에 필요합니까 |
+| R-682a | `[운영]` 「결과를 그대로 복사」 | ★ 조사 없음. 쓰시는지 확인이 필요합니다 |
 
 ---
 
