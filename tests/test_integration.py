@@ -688,8 +688,14 @@ def m4(anon: Client, u1: Client, ad: Client, lid: int, db: str) -> None:
         if "시도가 많습니다" in b2:
             break
     locked = any("시도가 많습니다" in x for x in [b2])
-    rec(69, "/login", "11회 실패", f"{codes[-1]} · "
-        f"{'잠김' if locked else '안 잠김'}", locked)
+    # ★ S36 (개정 359) — 상한이 0 이면 안 잠그는 것이 규격이다.
+    #   마스터 지시 「그냥 제한 없애.  정식 서비스할 때 강화해」
+    import json as _j
+
+    with open("config/admin.json", encoding="utf-8") as _f:
+        limit = int(_j.load(_f)["login_fail_limit"])
+    rec(69, "/login", f"12회 실패 · 상한 {limit}", f"{codes[-1]} · "
+        f"{'잠김' if locked else '안 잠김'}", locked == bool(limit))
 
 
 # ── 시나리오 S-3  남의 것을 건드릴 수 있나 ──────────────────────────

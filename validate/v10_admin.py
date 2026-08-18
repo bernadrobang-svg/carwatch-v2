@@ -109,10 +109,12 @@ C = {
                     "facet 없이 목록에서 관측한 것은 전체 집합이 아니다. "
                     "화면이 그렇게 말해야 한다 (STEP 136e)",
                     KIND_CODE),
-    "V10-20": Check("V10", "V10-20", "연속 로그인 실패 상한을 넘으면 거부됨",
+    "V10-20": Check("V10", "V10-20", "로그인 실패 상한이 config 대로 돎",
                     FATAL, "run",
-                    "config.admin.login_fail_limit 를 건다. "
-                    "비밀번호 8자 최소라 무제한이면 뚫린다 (C-5)",
+                    "config.admin.login_fail_limit 를 그대로 따른다. "
+                    "★ S36 (개정 359) — 마스터 지시로 지금은 0(안 잠금)이다. "
+                    "검사가 「잠긴다」를 박아 두면 규격을 못 따른다. "
+                    "0 이면 「안 잠긴다」가 통과다",
                     KIND_CONTRACT),
 }
 
@@ -365,7 +367,9 @@ def _session_checks(rid) -> list:
 
     limit = int(_admin_cfg("login_fail_limit"))
     locked = False
-    for _ in range(limit + 2):
+    # ★ 0 이면 잠그지 않는 것이 규격이다 (S36 · 개정 359).
+    #   그래도 몇 번 두드려 본다 — 「안 잠긴다」를 눈으로 확인한다
+    for _ in range((limit or int(_admin_cfg("login_probe_tries"))) + 2):
         try:
             authenticate(conn, "검사용", "틀린비번", now)
         except PolicyError:
@@ -375,9 +379,12 @@ def _session_checks(rid) -> list:
     out.append(_queue_stale_shown_check(rid))
     out.append(_dict_reason_check(conn, rid))
     out.append(_dict_source_shown_check(rid))
-    out.append(result(C["V10-20"], rid, "거부",
-                      "거부" if locked else "무제한", locked,
-                      [] if locked else [f"{limit}회를 넘겨도 계속 받는다"]))
+    want = bool(limit)
+    out.append(result(
+        C["V10-20"], rid, "거부" if want else "안 잠금",
+        "거부" if locked else "안 잠금", locked == want,
+        [] if locked == want else
+        [f"상한 {limit} 인데 {'안 잠긴다' if want else '잠긴다'}"]))
     return out
 
 

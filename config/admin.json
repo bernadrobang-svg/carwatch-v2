@@ -1,9 +1,9 @@
 {
   "_ref": "지시서 부록 B · 13장 STEP 126 · 08-15 신설",
   "_note": "★ 계정을 영구 잠그지 않는다. 1인 도구라 스스로 못 풀면 CLI 로 가야 한다",
-  "login_fail_limit": 10,
+  "login_fail_limit": 0,
   "login_lock_sec": 300,
-  "min_secret_length": 8,
+  "min_secret_length": 1,
   "list_rows": 20,
   "recent_rows": 5,
   "activity_rows": 10,
@@ -20,5 +20,8 @@
   "catalog_rows": 8,
   "_catalog_rows_note": "카탈로그를 못 받은 조합을 몇 개까지 화면에 내는가 (개정 327). ★ 매물이 많은 조합부터 낸다 — 매물 72건이 걸린 조합과 1건짜리는 급한 정도가 다르다",
   "split_rows": 12,
-  "_split_rows_note": "미분류를 원인별로 가른 뒤 화면에 몇 줄까지 낼 것인가 (개정 341). ★ 자주 나온 순으로 — 3,528건 전부에 있는 필드와 1건짜리는 급한 정도가 다르다"
+  "_split_rows_note": "미분류를 원인별로 가른 뒤 화면에 몇 줄까지 낼 것인가 (개정 341). ★ 자주 나온 순으로 — 3,528건 전부에 있는 필드와 1건짜리는 급한 정도가 다르다",
+  "_security_note": "S36 (개정 359) — 마스터 지시 「그냥 제한 없애. 정식 서비스할 때 강화해. 보안은 제일 마지막에 해」. min_secret_length 1 · login_fail_limit 0(잠그지 않는다). ★ 되돌릴 수 없는 것은 그대로 둔다 — 해시를 로그에 안 남기고, PII 를 쿼리로 안 열고, HTTPS 와 쿠키 Secure 는 유지한다. ★ 정식 서비스 전에 되돌린다",
+  "login_probe_tries": 10,
+  "_login_probe_note": "상한이 0(안 잠금)일 때 검사가 몇 번 두드려 보는가 (V10-20 · S36). ★ 「안 잠긴다」를 눈으로 확인하려면 몇 번은 두드려야 한다"
 }

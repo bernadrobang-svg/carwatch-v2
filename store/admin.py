@@ -123,7 +123,9 @@ def create_account(conn: sqlite3.Connection, login_name: str, role: str,
     if not (login_name or "").strip():
         raise ValidationError("이름이 필요하다", step="STEP 126")
     if secret is not None:
-        # ★ 본인이 정한 것이면 최소 길이를 건다 (STEP 126)
+        # ★ 본인이 정한 것이면 최소 길이를 건다 (STEP 126).
+        #   ★ S36 (개정 359) — 마스터 지시로 지금은 1 이다.
+        #     「보안은 제일 마지막에 해」.  정식 서비스 전에 되돌린다
         need = int(_admin_cfg("min_secret_length"))
         if len(secret) < need:
             raise ValidationError(f"비밀번호는 {need}자 이상이다",
@@ -190,8 +192,11 @@ def authenticate(conn: sqlite3.Connection, display_name: str,
     from datetime import datetime as _dt, timezone as _tz
 
     now = now or _dt.now(_tz.utc)
-    if _recent_failures(conn, display_name, now) >= int(
-            _admin_cfg("login_fail_limit")):
+    # ★ S36 (개정 359) — login_fail_limit 이 0 이면 잠그지 않는다.
+    #   마스터 지시 「그냥 제한 없애」.  ★ 시도 기록은 그대로 남긴다 —
+    #   기록을 지우는 것은 되돌릴 수 없다 (규칙 「되돌릴 수 없는 것은 안 한다」)
+    _limit = int(_admin_cfg("login_fail_limit"))
+    if _limit and _recent_failures(conn, display_name, now) >= _limit:
         _log_attempt(conn, display_name, False, REJECT_LOCKED, now)
         raise PolicyError(REJECT_LOCKED, step="STEP 126")
 

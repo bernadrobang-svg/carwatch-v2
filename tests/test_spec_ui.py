@@ -625,9 +625,16 @@ def spec_i(port: int, ad: Client, db: str, root: str, lid: int) -> None:
         _s, last, _l = lock.login("마스터", "틀린비번")
         if "시도가 많습니다" in last:
             break
-    rec("I-11", "로그인 시도 상한", "11회 실패",
-        "잠김" if "시도가 많습니다" in last else "안 잠김",
-        "시도가 많습니다" in last)
+    # ★ S36 (개정 359) — 마스터 지시로 상한이 0 이면 안 잠그는 것이 규격이다.
+    #   「잠긴다」를 시험에 박아 두면 규격을 못 따른다
+    import json as _j
+
+    with open("config/admin.json", encoding="utf-8") as _f:
+        _limit = int(_j.load(_f)["login_fail_limit"])
+    _locked = "시도가 많습니다" in last
+    rec("I-11", "로그인 시도 상한이 config 대로", "12회 실패",
+        ("잠김" if _locked else "안 잠김") + f" (상한 {_limit})",
+        _locked == bool(_limit))
     fresh = Client(port, "i-msg")
     _s, msg, _l = fresh.login("없는사람", "아무비번")
     rec("I-12", "실패 사유를 말하지 않는다", "없는 계정으로",

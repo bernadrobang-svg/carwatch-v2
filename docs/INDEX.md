@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**83파일 · 24,973줄 · 1,003KB**
+**83파일 · 25,072줄 · 1,008KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -49,7 +49,7 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md` | 543 | 14 |
+| `chapters/30-score/f-table.md` | 602 | 16 |
 | `chapters/30-score/g-absolute.md` | 139 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 611 | 25 |
@@ -76,7 +76,7 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 382 | 81 |
+| `guide/03_이력.md` | 383 | 81 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
 | `guide/05_가이드역할.md` | 294 | 9 |
@@ -91,7 +91,7 @@
 | `ref/G-screens.md` | 12 | 0 |
 | `trace/00-standard.md` | 445 | 23 |
 | `trace/02-collect.md` | 100 | 5 |
-| `trace/05-score.md` | 174 | 8 |
+| `trace/05-score.md` | 213 | 11 |
 | `trace/11-store.md` | 130 | 8 |
 | `trace/12-dict.md` | 101 | 6 |
 | `trace/13-pipeline.md` | 92 | 6 |
