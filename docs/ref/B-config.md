@@ -397,5 +397,7 @@ enum_{axis}.json        연료 · 색상 · 트림 · 부위 · 상태
 | `check_light_every_h` | 가벼운 점검 간격 (시간) | `4` | 08-17 · S29 |
 | `check_light_budget_sec` | 가벼운 점검 시간 예산 (초) | `180` | 08-17 · 실측 155초 |
 | `finance.cash_limit` | 전액 현금 판정 기준 (원) | `15000000` | 08-18 · 마스터 |
+| `view.page_size_max` | 목록 한 쪽 상한 | `200` | 08-18 · 마스터 |
+| `report_preview_bytes` | 리포트 미리보기 상한 | `204800` | 08-18 |
 | `check_daily_at` | 일일 점검 시각 | `23:00` | 08-17 · S29 |
 | `check_weekly_at` | 주간 일제 점검 시각 | `FRI 02:00` | 08-17 · S29 |
