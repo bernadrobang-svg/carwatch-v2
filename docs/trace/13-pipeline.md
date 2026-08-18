@@ -9,76 +9,76 @@
 
 # 단계 · 첫 실행
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-400 | 같은 `scope` 가 `running` 이면 새로 큐에 안 넣는다 | `[기술]` 겹쳐 돌면 원문이 꼬인다 (개정 261) | `STEP 47` | `store/adminops.py::enqueue_after_list_save` | `/admin/status` | V10-14 |  |  | ○ |
-| R-401 | **빈 DB 에서 전 도구가 돈다** | `[마스터]` **08-13 사고 — 첫 실행에서 전부 죽었다** | `13-pipeline` | `web/views.py::_versions` | 해당 없음 | V10-01 |  |  | ○ |
-| R-402 | 집계의 NULL 을 전제 — `COUNT` 0 · `MIN/MAX` None | `[기술]` 위와 같음 | `13-pipeline` | `report/screens/build.py::view_notready` | `/notready` | V1-13 · V1-18 |  |  | ○ |
-| R-403 | `run.py` 가 전 명령을 받는다 | `[마스터]` 08-14 — 진입점이 여럿이면 어느 것이 정본인지 모른다 | `13-pipeline` | `collect/pipeline.py::run_recalc` | 해당 없음 | V1-13 |  |  | ○ |
-| R-404 | `run.bat` 은 껍데기 | `[마스터]` 위와 같음 | `13-pipeline` | `tools/menu.py:8` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-400 | `[저장]` 같은 `scope` 가 `running` 이면 새로 큐에 안 넣는다 | `[기술]` 겹쳐 돌면 원문이 꼬인다 (개정 261) | `STEP 47` | `store/adminops.py::enqueue_after_list_save` | `/admin/status` | V10-14 |  |  | ○ |
+| R-401 | `[저장]` **빈 DB 에서 전 도구가 돈다** | `[마스터]` **08-13 사고 — 첫 실행에서 전부 죽었다** | `13-pipeline` | `web/views.py::_versions` | 해당 없음 | V10-01 |  |  | ○ |
+| R-402 | `[저장]` 집계의 NULL 을 전제 — `COUNT` 0 · `MIN/MAX` None | `[기술]` 위와 같음 | `13-pipeline` | `report/screens/build.py::view_notready` | `/notready` | V1-13 · V1-18 |  |  | ○ |
+| R-403 | `[수집]` `run.py` 가 전 명령을 받는다 | `[마스터]` 08-14 — 진입점이 여럿이면 어느 것이 정본인지 모른다 | `13-pipeline` | `collect/pipeline.py::run_recalc` | 해당 없음 | V1-13 |  |  | ○ |
+| R-404 | `[저장]` `run.bat` 은 껍데기 | `[마스터]` 위와 같음 | `13-pipeline` | `tools/menu.py:8` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
 # 건너뛴 요청
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-410 | 조건부 엔드포인트는 `skipped` 로 센다 | `[원문]` **실측 — `encarDiagnosis==0` 이면 진단이 없다** | `13-pipeline` | `analyze/axes.py::skipped` | 해당 없음 | V1-14 · V1-15 |  |  | ○ |
-| R-411 | `expected` 에서 `skipped` 를 뺀다 | `[기술]` 전량 호출을 가정하면 늘 미달로 나온다 | `13-pipeline` | `analyze/axes.py::skipped` | 해당 없음 | V1-15 |  |  | ○ |
-| R-412 | **금지** 건너뛴 것을 「미완성」으로 세는 것 | `[마스터]` **전 매물이 미완성이 된다** | `13-pipeline` | `collect/runner.py::s10` | 해당 없음 | V1-14 · V1-15 |  |  | ○ |
+| R-410 | `[수집]` 조건부 엔드포인트는 `skipped` 로 센다 | `[원문]` **실측 — `encarDiagnosis==0` 이면 진단이 없다** | `13-pipeline` | `analyze/axes.py::skipped` | 해당 없음 | V1-14 · V1-15 |  |  | ○ |
+| R-411 | `[수집]` `expected` 에서 `skipped` 를 뺀다 | `[기술]` 전량 호출을 가정하면 늘 미달로 나온다 | `13-pipeline` | `analyze/axes.py::skipped` | 해당 없음 | V1-15 |  |  | ○ |
+| R-412 | `[운영]` **금지** 건너뛴 것을 「미완성」으로 세는 것 | `[마스터]` **전 매물이 미완성이 된다** | `13-pipeline` | `collect/runner.py::s10` | 해당 없음 | V1-14 · V1-15 |  |  | ○ |
 
 ---
 
 # 선행 조건
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-420 | S1·S2 도 반입 완료를 남길 수 있다 | `[마스터]` 개정 244 — 밖에서 받은 것도 근거가 된다 | `STEP 48` | 미구현 | `/admin/import` | 검사 없음 |  |  | ✗ |
-| R-421 | 무엇을 반입했는지 `samples` 에 남긴다 | `[마스터]` 위와 같음 | `STEP 48` | `store/adminops.py::mark_step_imported` | 화면 없음 | V11-46 |  |  | ◐ |
-| R-422 | **금지** 반입 없이 S1·S2 를 통과로 치는 것 | `[마스터]` **근거 없이 열지 않는다** | `STEP 48` | `store/watch.py:7` | 화면 없음 | V11-46 |  |  | ◐ |
-| R-423 | `/admin/import` 가 facet 응답 JSON 도 받는다 | `[마스터]` 개정 244 | `STEP 48` | `web/views.py::admin_collect` | `/admin/import` | V1-21 |  |  | ○ |
-| R-424 | 받은 facet 으로 S2 완료를 남기고 S3 가 사전을 만든다 | `[마스터]` 위와 같음 | `STEP 48` | `store/adminops.py::pending_enums` | 화면 없음 | V1-21 |  |  | ◐ |
-| R-425 | 처리할 원문을 `run_id` 로 고른다. 시각이 아니다 | `[마스터]` **개정 268 — 시각으로 고르면 겹친 수집이 섞인다** | `STEP 48` | `store/core.py::_source_history` | 화면 없음 | V1-21 |  |  | ◐ |
-| R-426 | `origin` 이 무엇이든 안 펼친 것은 펼친다 | `[마스터]` 개정 252 | `STEP 48` | `parse/encar/mapping.py::unpack_envelope` | 화면 없음 | V1-21 |  |  | ◐ |
-| R-427 | 「받았다」와 「쓰였다」를 화면에서 가른다 | `[마스터]` **개정 — 받았다고 쓰인 것이 아니다** | `STEP 48` | `report/screens/admin.py::received_vs_used` | `/admin/status` | 검사 없음 |  |  | ◐ |
-| R-428 | **금지** 조건 미충족을 경고만 남기고 진행 | `[마스터]` 반쪽으로 판정하면 등급이 틀린다 | `STEP 48` | `collect/pipeline.py:6` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-420 | `[저장]` S1·S2 도 반입 완료를 남길 수 있다 | `[마스터]` 개정 244 — 밖에서 받은 것도 근거가 된다 | `STEP 48` | 미구현 | `/admin/import` | 검사 없음 |  |  | ✗ |
+| R-421 | `[저장]` 무엇을 반입했는지 `samples` 에 남긴다 | `[마스터]` 위와 같음 | `STEP 48` | `store/adminops.py::mark_step_imported` | — | V11-46 |  |  | ◐ |
+| R-422 | `[검사]` **금지** 반입 없이 S1·S2 를 통과로 치는 것 | `[마스터]` **근거 없이 열지 않는다** | `STEP 48` | `store/watch.py:7` | — | V11-46 |  |  | ◐ |
+| R-423 | `[수집]` `/admin/import` 가 facet 응답 JSON 도 받는다 | `[마스터]` 개정 244 | `STEP 48` | `web/views.py::admin_collect` | `/admin/import` | V1-21 |  |  | ○ |
+| R-424 | `[수집]` 받은 facet 으로 S2 완료를 남기고 S3 가 사전을 만든다 | `[마스터]` 위와 같음 | `STEP 48` | `store/adminops.py::pending_enums` | — | V1-21 |  |  | ◐ |
+| R-425 | `[수집]` 처리할 원문을 `run_id` 로 고른다. 시각이 아니다 | `[마스터]` **개정 268 — 시각으로 고르면 겹친 수집이 섞인다** | `STEP 48` | `store/core.py::_source_history` | — | V1-21 |  |  | ◐ |
+| R-426 | `[파싱·화면]` `origin` 이 무엇이든 안 펼친 것은 펼친다 | `[마스터]` 개정 252 | `STEP 48` | `parse/encar/mapping.py::unpack_envelope` | 화면 없음 | V1-21 |  |  | ◐ |
+| R-427 | `[저장·화면]` 「받았다」와 「쓰였다」를 화면에서 가른다 | `[마스터]` **개정 — 받았다고 쓰인 것이 아니다** | `STEP 48` | `report/screens/admin.py::received_vs_used` | `/admin/status` | 검사 없음 |  |  | ◐ |
+| R-428 | `[저장]` **금지** 조건 미충족을 경고만 남기고 진행 | `[마스터]` 반쪽으로 판정하면 등급이 틀린다 | `STEP 48` | `collect/pipeline.py:6` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
 # 재처리
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-430 | **금지** 「확실하지 않으니 처음부터」 | `[마스터]` **4,700건 × 4엔드포인트가 다시 나간다** | `STEP 50a` | `collect/pipeline.py::reprocess_plan` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-431 | 아홉 가지 외의 이유로 재수집하지 않는다 | `[마스터]` 개정 317 — 재수집·재파싱·재판정을 가른다 | `STEP 50a` | `collect/pipeline.py::envelope_scope` | 화면 없음 | V10-29 |  |  | ◐ |
-| R-432 | 버전이 있는 것은 버전을 올린다 | `[마스터]` 안 올리면 이전 결과를 덮어쓴다 | `STEP 50a` | `store/dictionary.py:50` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-433 | 결정표에 「어느 봉투를 훑는가」를 적는다 | `[기술]` 범위를 모르면 재현이 안 된다 | `STEP 50a` | `collect/pipeline.py:29` | 화면 없음 | V2-18 |  |  | ◐ |
-| R-434 | **금지** `result_` 를 버전 무시하고 덮어쓰는 것 | `[마스터]` 3장 STEP 37 | `13-pipeline` | `store/dictionary.py:8` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-430 | `[운영]` **금지** 「확실하지 않으니 처음부터」 | `[마스터]` **4,700건 × 4엔드포인트가 다시 나간다** | `STEP 50a` | `collect/pipeline.py::reprocess_plan` | — | 검사 없음 |  |  | ◐ |
+| R-431 | `[수집]` 아홉 가지 외의 이유로 재수집하지 않는다 | `[마스터]` 개정 317 — 재수집·재파싱·재판정을 가른다 | `STEP 50a` | `collect/pipeline.py::envelope_scope` | — | V10-29 |  |  | ◐ |
+| R-432 | `[운영]` 버전이 있는 것은 버전을 올린다 | `[마스터]` 안 올리면 이전 결과를 덮어쓴다 | `STEP 50a` | `store/dictionary.py:50` | — | 검사 없음 |  |  | ◐ |
+| R-433 | `[저장]` 결정표에 「어느 봉투를 훑는가」를 적는다 | `[기술]` 범위를 모르면 재현이 안 된다 | `STEP 50a` | `collect/pipeline.py:29` | — | V2-18 |  |  | ◐ |
+| R-434 | `[저장]` **금지** `result_` 를 버전 무시하고 덮어쓰는 것 | `[마스터]` 3장 STEP 37 | `13-pipeline` | `store/dictionary.py:8` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
 # 진단 모드
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-440 | **금지** 이 모드의 결과를 판정에 쓰는 것 | `[기술]` 진단은 진단이다 | `STEP 50b` | `collect/pipeline.py::precheck` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-441 | RAW 가 있으면 S4 부터. 다시 던지지 않는다 | `[마스터]` 위 R-430 과 같음 | `STEP 50b` | `collect/pipeline.py::diagnose` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-442 | 같은 뿌리에서 나온 결함을 묶어 낸다 | `[마스터]` **개정 — 증상 100개가 원인 1개일 수 있다** | `STEP 50b` | `collect/pipeline.py:571` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-443 | **금지** 결함을 자동으로 고치는 것 | `[마스터]` 진단이 고치면 원인을 못 본다 | `STEP 50b` | `collect/pipeline.py::diagnose` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-444 | **금지** `result_` 를 쓰는 것 | `[기술]` 위와 같음 | `STEP 50b` | `collect/pipeline.py::diagnose` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-445 | **금지** `config` 를 바꾸는 것 | `[마스터]` 진단이 설정을 바꾸면 재현이 안 된다 | `STEP 50b` | `web/templates/admin_config.html` | `/admin/config` | 검사 없음 |  |  | ◐ |
+| R-440 | `[판정]` **금지** 이 모드의 결과를 판정에 쓰는 것 | `[기술]` 진단은 진단이다 | `STEP 50b` | `collect/pipeline.py::precheck` | — | 검사 없음 |  |  | ◐ |
+| R-441 | `[수집]` RAW 가 있으면 S4 부터. 다시 던지지 않는다 | `[마스터]` 위 R-430 과 같음 | `STEP 50b` | `collect/pipeline.py::diagnose` | — | 검사 없음 |  |  | ◐ |
+| R-442 | `[화면]` 같은 뿌리에서 나온 결함을 묶어 낸다 | `[마스터]` **개정 — 증상 100개가 원인 1개일 수 있다** | `STEP 50b` | `collect/pipeline.py:571` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-443 | `[운영]` **금지** 결함을 자동으로 고치는 것 | `[마스터]` 진단이 고치면 원인을 못 본다 | `STEP 50b` | `collect/pipeline.py::diagnose` | — | 검사 없음 |  |  | ◐ |
+| R-444 | `[운영]` **금지** `result_` 를 쓰는 것 | `[기술]` 위와 같음 | `STEP 50b` | `collect/pipeline.py::diagnose` | — | 검사 없음 |  |  | ◐ |
+| R-445 | `[운영]` **금지** `config` 를 바꾸는 것 | `[마스터]` 진단이 설정을 바꾸면 재현이 안 된다 | `STEP 50b` | `web/templates/admin_config.html` | `/admin/config` | 검사 없음 |  |  | ◐ |
 
 ---
 
 # 중단 · 재개
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-450a | `ok` 가 하나라도 나오면 카운터를 0 으로 | `[기술]` 연속 실패만 본다 | `13-pipeline` | `collect/runner.py::FailStreak` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-451a | **금지** 전체 실패율로 판정 | `[기술]` **앞이 성공했으면 비율이 안 오른다 — 끝까지 돈다** | `13-pipeline` | `collect/runner.py::FailStreak` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-452a | **금지** 진행 상태를 메모리·전역에만 두는 것 | `[마스터]` 0장 STEP 8-④ — 죽으면 처음부터가 된다 | `13-pipeline` | `collect/pipeline.py:8` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-453a | 중단되어도 처음부터 다시 돌리지 않는다 | `[마스터]` 위와 같음 | `13-pipeline` | `report/screens/admin.py::collect_state` | 해당 없음 | 검사 없음 | 08-17 실측 |  | ◐ |
-| R-454a | **금지** 매물 간 공유 상태 | `[마스터]` **v1 `last_raw` 사고 — 앞 매물의 값이 뒤에 붙었다** | `13-pipeline` | `collect/runner.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-450a | `[수집]` `ok` 가 하나라도 나오면 카운터를 0 으로 | `[기술]` 연속 실패만 본다 | `13-pipeline` | `collect/runner.py::FailStreak` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-451a | `[수집]` **금지** 전체 실패율로 판정 | `[기술]` **앞이 성공했으면 비율이 안 오른다 — 끝까지 돈다** | `13-pipeline` | `collect/runner.py::FailStreak` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-452a | `[수집]` **금지** 진행 상태를 메모리·전역에만 두는 것 | `[마스터]` 0장 STEP 8-④ — 죽으면 처음부터가 된다 | `13-pipeline` | `collect/pipeline.py:8` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-453a | `[수집]` 중단되어도 처음부터 다시 돌리지 않는다 | `[마스터]` 위와 같음 | `13-pipeline` | `report/screens/admin.py::collect_state` | 해당 없음 | 검사 없음 | 08-17 실측 |  | ◐ |
+| R-454a | `[수집]` **금지** 매물 간 공유 상태 | `[마스터]` **v1 `last_raw` 사고 — 앞 매물의 값이 뒤에 붙었다** | `13-pipeline` | `collect/runner.py:5` | 해당 없음 | 검사 없음 |  |  | ◐ |
 
 ---
 
