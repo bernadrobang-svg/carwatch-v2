@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 131개 · 총 41,733줄
+파일 131개 · 총 42,053줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -29,14 +29,15 @@
 | `store/admin.py` | 609 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
 | `report/render.py` | 575 | 리포트 생성 (L9). |
 | `tests/test_admin_flow.py` | 566 | 관리 화면 동작 시험 (13장 · 14장). |
+| `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
 | `validate/v10_admin.py` | 541 | V10 관리자 검증. |
 | `tests/test_admin.py` | 537 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tests/test_web.py` | 497 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
-| `tools/check_spec.py` | 475 | CarWatch v2 지시서 자체 점검 — 7종 |
 | `contracts.py` | 450 | 계층 간 계약 — Protocol · DTO. |
 | `report/screens/views.py` | 440 | 화면 전용 DTO. |
 | `store/dictionary.py` | 440 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `web/app.py` | 426 | 화면 조립 (14장 STEP 144 · 147 · 149). |
+| `tools/build_index.py` | 420 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `run.py` | 404 | CarWatch v2 진입점. |
 | `tests/test_pipeline.py` | 382 | 5장 수집 순서 시험. |
 | `tests/test_collect.py` | 368 | 2장 수집 시험. |
@@ -58,12 +59,11 @@
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
 | `tests/test_report.py` | 244 | 9장 리포트 시험. |
 | `validate/v5_value.py` | 242 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
+| `tools/light_check.py` | 238 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `tests/test_store.py` | 233 | 3장 테이블 시험. |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `tools/check_screens.py` | 230 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `store/crosssite.py` | 225 | 다중 사이트 확장 (12장). |
-| `tools/build_index.py` | 212 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
-| `tools/light_check.py` | 208 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `validate/base.py` | 207 | 검증 계약. |
 | `analyze/axis/state.py` | 203 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `web/server.py` | 199 | HTTP 서버 (14장 STEP 141 · 150). |
@@ -278,6 +278,12 @@ _labels:29  _stamp:34  _curve_points:49  _encar_url:92  _why_cheap_of:101  _scor
 check:32  _env:38  _cfg:55  _post:60  _get:65  flow_config:71  flow_scoring:107  _rescore:163  _sum:224  _dist:231  flow_targets:238  flow_registry:273  flow_run:313  flow_query:346  flow_api:372  flow_tools:409  flow_users:431  flow_requests:476  flow_permission:518  main:531
 ```
 
+### `tools/check_spec.py` — 557줄
+
+```
+_read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373  _md:468
+```
+
 ### `validate/v10_admin.py` — 541줄
 
 ```
@@ -294,12 +300,6 @@ _spec_menu_paths:31  check:46  setup:52  test_bootstrap:64  test_auth:94  test_a
 
 ```
 check:21  test_routes:28  test_template:77  test_no_logic_in_template:118  test_static_escape:133  test_session_cookie:145  test_error_page:163  test_layout:190  test_filters:219  test_empty_state:242  test_menu_by_role:269  test_guard_and_csrf:286  _call:328  test_screens_render:345  test_sketch_match:428  test_account_policy:443
-```
-
-### `tools/check_spec.py` — 475줄
-
-```
-_read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373
 ```
 
 ### `contracts.py` — 450줄
@@ -324,6 +324,12 @@ CodeEntry:31  AxisPolicy:57  policy:97  scope_key:105  seed_fixed_enums:130  ups
 
 ```
 menu_items:22  _tip:89  _label:94  empty_state:105  _list_stale:146  static_version:172  build_page:200  check_post:221  redirect:240  take_flashes:251  _display_now:264  make_app:290  _Denied:402  build_context:410  _title_of:425
+```
+
+### `tools/build_index.py` — 420줄
+
+```
+_py_files:48  _checks_in_code:63  _checks_in_docs:95  last_runs:128  _run_time:157  sort_checks:167  build_checks:184  _outline:246  build_source:257  build_schema:289  build_doc_index:348  main:399
 ```
 
 ### `run.py` — 404줄
@@ -452,6 +458,12 @@ check:33  test_finance:40  test_display:92  _pipeline:108  test_layers:119  test
 run:60  _grade_ratio_checks:151  _denominator_suite:193
 ```
 
+### `tools/light_check.py` — 238줄
+
+```
+_cfg:39  _run:44  collecting:50  screen_counts:71  db_counts:97  measure:111  index_counts:132  changed:156  _worse:174  main:178
+```
+
 ### `tests/test_store.py` — 233줄
 
 ```
@@ -474,18 +486,6 @@ _pairs:23  say:70  _text:79  check_pairs:86  check_phrases:99  _heads:124  check
 
 ```
 CrossSiteMatch:31  ReadinessReport:41  active_sites:51  match_cross_site:56  rebuild_core_vehicle:92  regression_check:111  snapshot_baseline:142  readiness:166  load_sites:205  site_addition_regression:210
-```
-
-### `tools/build_index.py` — 212줄
-
-```
-_py_files:35  _checks_in_code:50  _checks_in_docs:82  build_checks:115  _outline:156  build_source:167  main:199
-```
-
-### `tools/light_check.py` — 208줄
-
-```
-_cfg:39  _run:44  collecting:50  screen_counts:71  db_counts:97  measure:111  changed:128  _worse:144  main:148
 ```
 
 ### `validate/base.py` — 207줄

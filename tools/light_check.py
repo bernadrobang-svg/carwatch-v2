@@ -110,6 +110,9 @@ def db_counts(conn) -> dict:
 
 def measure() -> dict:
     """재기만 한다.  ★ 고치지 않는다."""
+    # ★ 색인 넷을 먼저 갱신한다 (개정 343).  파일이 늘거나 줄면
+    #   색인이 함께 바뀌어야 한다 — 손으로 적으면 빠진다
+    _run(os.path.join(ROOT, "tools", "build_index.py"))
     checks = _run(os.path.join(ROOT, "tools", "check_all.py"))
     tests = _run(os.path.join(ROOT, "tools", "run_tests.py"))
     _run(os.path.join(ROOT, "tools", "render_screens.py"))
@@ -122,6 +125,31 @@ def measure() -> dict:
         "시험 실패": len([x for x in fails.group(1).split(",")]) if fails else 0,
     }
     out.update(screen_counts())
+    out.update(index_counts())
+    return out
+
+
+def index_counts() -> dict:
+    """색인 넷의 숫자 (개정 343 · 344).  ★ 검사가 몇 개인지 늘 보인다."""
+    got = _run(os.path.join(ROOT, "tools", "check_spec.py"))
+    out = {}
+    for code, key in (("S28-9", "800줄 넘는 문서"),
+                      ("S28-8", "부록에 있는 기준")):
+        # ★ 「S28-9 본문 파일이 800줄 이하 3 [...]」 — 제목의 800 이 아니라
+        #   그 뒤의 건수다.  앞의 숫자를 주우면 늘 800 이 된다 (실측 08-18)
+        hit = re.search(rf"^{code} .*?(\d+) \[", got, re.M)
+        if hit:
+            out[key] = int(hit.group(1))
+    body = ""
+    path = os.path.join(ROOT, "docs", "CHECKS.md")
+    if os.path.isfile(path):
+        body = open(path, encoding="utf-8").read()
+    for key, pat in (("검사", r"검사 \*\*(\d+)개\*\*"),
+                     ("죽은 검사", r"죽은 검사[^|]*\| \*\*(\d+)\*\*"),
+                     ("검사 없는 규격", r"코드에 없는 검사 \| \*\*(\d+)\*\*")):
+        hit = re.search(pat, body)
+        if hit:
+            out[key] = int(hit.group(1))
     return out
 
 
@@ -138,7 +166,9 @@ def changed(now: dict, was: dict) -> list:
 
 
 # 늘어나면 나쁜 것 · 줄어들면 나쁜 것
-WORSE_WHEN_UP = ("fatal", "warn", "시험 실패", "—", "계산식", "템플릿 문법")
+WORSE_WHEN_UP = ("fatal", "warn", "시험 실패", "—", "계산식", "템플릿 문법",
+                 "죽은 검사", "검사 없는 규격", "800줄 넘는 문서",
+                 "부록에 있는 기준")
 
 
 def _worse(key: str, before, now) -> bool:

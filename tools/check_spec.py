@@ -457,6 +457,82 @@ if _f_scoring:
             _bad28_7.append(
                 f"부록 F 축 합 {sum(int(x) for x in _rows)} != 표기 {_sums[-1]}")
 
+# ── S28-8 ~ S28-13 색인 넷 · 부록 원칙 (개정 342 · 343) ──────────────
+# ★ 손으로 적으면 오늘처럼 빠진다.  기계가 만들고 기계가 대조한다
+_D = _os.path.join(_root, "docs")
+# 지시서 한 파일이 이보다 길면 폴더로 쪼갠다 (개정 342)
+DOC_SPLIT_LINES = 800
+MADE = ("INDEX.md", "SCHEMA.md", "CHECKS.md", "SOURCE.md", "MAPPING.md")
+
+
+def _md(rel):
+    _p = _os.path.join(_D, rel)
+    return io.open(_p, encoding="utf-8").read() if _os.path.isfile(_p) else ""
+
+
+_bad28_8 = []
+_ref_dir = _os.path.join(_D, "ref")
+if _os.path.isdir(_ref_dir):
+    for _f in sorted(_os.listdir(_ref_dir)):
+        if not _f.endswith(".md"):
+            continue
+        _b = _md("ref/" + _f)
+        if RETIRED_MARK in _b[:400]:
+            continue
+        _hit = [w for w in ("필수", "금지", "근거") if "\n" + w + " " in _b]
+        if _hit:
+            _bad28_8.append("ref/%s — %s 가 있다.  기준은 본문 몫이다"
+                            % (_f, " · ".join(_hit)))
+
+_bad28_9 = []
+for _base, _dirs, _files in _os.walk(_os.path.join(_D, "chapters")):
+    for _f in sorted(_files):
+        if not _f.endswith(".md"):
+            continue
+        _p2 = _os.path.join(_base, _f)
+        _n = io.open(_p2, encoding="utf-8").read().count("\n") + 1
+        if _n > DOC_SPLIT_LINES:
+            _bad28_9.append("%s %s줄 — 폴더로 쪼갠다"
+                            % (_os.path.relpath(_p2, _D).replace("\\", "/"),
+                               format(_n, ",")))
+
+_bad28_10 = []
+_schema = _md("SCHEMA.md")
+_ddl_dir = _os.path.join(_root, "sql", "ddl")
+if not _schema:
+    _bad28_10 = ["docs/SCHEMA.md 가 없다 — tools/build_index.py 를 돌린다"]
+elif _os.path.isdir(_ddl_dir):
+    _want = set()
+    for _f in _os.listdir(_ddl_dir):
+        if _f.endswith(".sql"):
+            _want |= set(re.findall(
+                r"CREATE TABLE(?: IF NOT EXISTS)? (\w+)",
+                io.open(_os.path.join(_ddl_dir, _f), encoding="utf-8").read()))
+    _have = set(re.findall(r"^\| `(\w+)` \|", _schema, re.M))
+    _bad28_10 = ["SCHEMA.md 에 없는 표 " + t for t in sorted(_want - _have)]
+    _bad28_10 += ["DDL 에 없는 표 " + t for t in sorted(_have - _want)]
+
+_bad28_11 = []
+_index = _md("INDEX.md")
+if not _index:
+    _bad28_11 = ["docs/INDEX.md 가 없다"]
+else:
+    _real = set()
+    for _base, _dirs, _files in _os.walk(_D):
+        _dirs[:] = [d for d in _dirs if not d.startswith(".")]
+        for _f in _files:
+            if _f.endswith(".md") and _f not in MADE:
+                _real.add(_os.path.relpath(_os.path.join(_base, _f),
+                                           _D).replace("\\", "/"))
+    _listed = set(re.findall(r"^\| `([^`]+\.md)`", _index, re.M))
+    _bad28_11 = ["INDEX.md 에 없는 파일 " + x for x in sorted(_real - _listed)]
+    _bad28_11 += ["실제로 없는 파일 " + x for x in sorted(_listed - _real)]
+
+_bad28_12 = [] if _md("SOURCE.md") else ["docs/SOURCE.md 가 없다"]
+_bad28_13 = ([] if "| 코드 |" in _md("CHECKS.md")
+             else ["docs/CHECKS.md 에 검사 표가 없다"])
+
+
 for _code, _title, _bad in (
     ("S28-1", "배점이 정본 밖에", _bad28_1),
     ("S28-2", "화면 크기가 정본 밖에", _bad28_2),
@@ -465,6 +541,12 @@ for _code, _title, _bad in (
     ("S28-5", "참조한 개정이 실재", _bad28_5),
     ("S28-6", "개정 번호 연속", _bad28_6),
     ("S28-7", "정본끼리 모순 없음", _bad28_7),
+    ("S28-8", "부록에 기준이 없음", _bad28_8),
+    ("S28-9", "본문 파일이 800줄 이하", _bad28_9),
+    ("S28-10", "SCHEMA.md 가 DDL 과 같음", _bad28_10),
+    ("S28-11", "INDEX.md 가 실제와 같음", _bad28_11),
+    ("S28-12", "SOURCE.md 가 있음", _bad28_12),
+    ("S28-13", "CHECKS.md 에 검사 표가 있음", _bad28_13),
 ):
     print(f"{_code} {_title} {len(_bad)} {_bad[:4]}")
     if _bad:
