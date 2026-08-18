@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 132개 · 총 42,666줄
+파일 132개 · 총 42,687줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -10,12 +10,12 @@
 | `web/views.py` | 1,929 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,675 | 화면 데이터 생성. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `collect/runner.py` | 1,320 | 수집 실행 규칙. |
+| `collect/runner.py` | 1,325 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `validate/v3_logic.py` | 1,184 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tools/verify_axes.py` | 1,051 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `report/screens/admin.py` | 1,000 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
-| `store/core.py` | 937 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 947 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `store/adminops.py` | 931 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `tools/check_src.py` | 876 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `validate/v2_load.py` | 872 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
@@ -60,7 +60,7 @@
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
 | `tests/test_report.py` | 244 | 9장 리포트 시험. |
 | `validate/v5_value.py` | 242 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
-| `tests/test_store.py` | 233 | 3장 테이블 시험. |
+| `tests/test_store.py` | 239 | 3장 테이블 시험. |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `tools/check_screens.py` | 230 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `store/crosssite.py` | 225 | 다중 사이트 확장 (12장). |
@@ -165,10 +165,10 @@ site_badge:61  axis_heads:81  _labels:89  viewer_state:94  chip:104  _stamp:133 
 rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:272  spec_g:298  spec_h:346  spec_j:379  spec_m:422  spec_e:490  spec_i:533  spec_k:646  spec_csrf:701  spec_l:728  spec_monkey:767  flow_s1:839  flow_s2:901  flow_s5:984  flow_s3:1097  flow_s4:1172  flow_s6:1243  guide_v132:1299  main:1391  _write:1435
 ```
 
-### `collect/runner.py` — 1,320줄
+### `collect/runner.py` — 1,325줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_names:153  check_facet_axes:157  interpret_failure:171  collect_check:200  FailStreak:267  _sleep:301  _log_request:307  _save_issues:318  make_executors:329  _group_of:831  _fuel_of:846  _badge_of:852  _pages_for:858  _dicts:872  _market_medians:908  _trim_ladders:937  _option_base:954  _site_grade_rules:984  _listing_config:997  _listing_values:1022  _option_money:1041  _owned_months:1060  _market_of:1072  make_score_executors:1082  make_validate_executor:1249  make_registry_executor:1291
+CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_names:153  check_facet_axes:157  interpret_failure:171  collect_check:200  FailStreak:267  _sleep:301  _log_request:307  _save_issues:318  make_executors:329  _group_of:836  _fuel_of:851  _badge_of:857  _pages_for:863  _dicts:877  _market_medians:913  _trim_ladders:942  _option_base:959  _site_grade_rules:989  _listing_config:1002  _listing_values:1027  _option_money:1046  _owned_months:1065  _market_of:1077  make_score_executors:1087  make_validate_executor:1254  make_registry_executor:1296
 ```
 
 ### `tests/test_integration.py` — 1,218줄
@@ -195,10 +195,10 @@ _spec_text:26  spec_tables:58  _num:81  pick:99  _flag:113  hand_market:121  _me
 AdminMenuItem:32  AdminHome:62  SaveGate:78  AuditTab:92  AuditView:100  DocView:107  menu_for:118  view_admin_home:130  _todos:155  _recent_runs:195  _recent_changes:226  save_gate:237  view_audit:245  view_docs:291  _doc_files:322  Todo:343  RunRow:357  ChangeRow:367  _cfg_rows:387  config_history:397  query_history:409  db_tables:423  api_snapshots:464  account_activity:475  make_target_key:493  target_choices:512  target_rows:531  parse_import_text:562  status_view:577  _catalog_state:651  _light_result:683  _live_window:723  _live_progress:732  run_progress:779  collect_state:829  received_vs_used:886  dict_state:907  import_state:934  job_log:971  validation_runs:985
 ```
 
-### `store/core.py` — 937줄
+### `store/core.py` — 947줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:496  resolve_vehicle_id:522  merge_conflict:554  upsert_vehicle:565  upsert_dealer:586  upsert_child:613  _flag:634  _not_join_months:648  state_counts:673  current_versions:703  diagnosis_of:733  target_counts:746  top_target:753  vehicle_of:758  collect_scale:765  our_fault:785  catalog_coverage:794  _walk:838  _sample_bodies:854  observed:867  known_leaves:883  has_unclassified:898  classify_unclassified:905
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:506  resolve_vehicle_id:532  merge_conflict:564  upsert_vehicle:575  upsert_dealer:596  upsert_child:623  _flag:644  _not_join_months:658  state_counts:683  current_versions:713  diagnosis_of:743  target_counts:756  top_target:763  vehicle_of:768  collect_scale:775  our_fault:795  catalog_coverage:804  _walk:848  _sample_bodies:864  observed:877  known_leaves:893  has_unclassified:908  classify_unclassified:915
 ```
 
 ### `store/adminops.py` — 931줄
@@ -465,10 +465,10 @@ check:33  test_finance:40  test_display:92  _pipeline:108  test_layers:119  test
 run:60  _grade_ratio_checks:151  _denominator_suite:193
 ```
 
-### `tests/test_store.py` — 233줄
+### `tests/test_store.py` — 239줄
 
 ```
-check:39  seed:45  base:51  db:69  test_schema:75  test_key:108  test_null_three:119  test_change_history:126  test_invariant_violation:147  test_snapshot:165  test_dictionary:184
+check:39  seed:45  base:51  db:69  test_schema:75  test_key:108  test_null_three:119  test_change_history:126  test_invariant_violation:147  test_snapshot:165  test_dictionary:190
 ```
 
 ### `tests/test_invariants.py` — 232줄

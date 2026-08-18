@@ -483,9 +483,19 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         plate_hash=d["plate_hash"],
         ad_body_text=d["ad_body_text"],
         site_flags={
-            k: d[k] for k in cols if k.startswith("site_") and d.get(k) is not None
+            # ★ site_* 만이 아니다.  ⑤ 사이트 보증의 근거는 이름이
+            #   site_ 로 시작하지 않는다 (개정 365) — 전건 0점이 됐다
+            k: d[k] for k in cols
+            if (k.startswith("site_") or k in SITE_WARRANTY_FIELDS)
+            and d.get(k) is not None
         },
     )
+
+
+# ⑤ 사이트 보증의 근거가 되는 칸 (개정 365).
+# ★ config/sites.json 의 warranty_items 가 이 이름들을 가리킨다
+SITE_WARRANTY_FIELDS = ("platform_verified", "warranty_deemed",
+                        "warranty_extend", "sell_type", "diagnosis_car")
 
 
 # ── vehicle_id 결합 (STEP 30) ────────────────────────────────────────

@@ -638,8 +638,13 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             "SELECT r.listing_id, r.source_id, r.endpoint, r.body "
             "FROM raw_response r JOIN core_listing l "
             "ON l.site = r.site AND l.source_id = r.source_id "
+            # ★ EXTRA_PARSERS 다섯을 함께 읽는다 (개정 296·297).
+            #   전에는 넷만 읽어 record_summary · platform_check ·
+            #   inspection_summary · ev_battery · sellingpoint 가
+            #   8천 건씩 쌓여 있는데 아무도 안 펼쳤다 —
+            #   platform_verified 가 전건 NULL 이었다 (실측 08-18)
             "WHERE r.endpoint IN ('detail','inspection','record',"
-            "'diagnosis') "
+            f"'diagnosis',{','.join(repr(k) for k in EXTRA_PARSERS)}) "
             f"AND r.status='ok' AND l.target_key IN "
             f"({','.join('?' * len(scope))})", scope
         ).fetchall():

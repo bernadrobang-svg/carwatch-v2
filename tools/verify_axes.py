@@ -267,15 +267,15 @@ def hand_site_warranty(conn, lid) -> float | None:
         sites = _j.load(f)
     row = conn.execute(
         "SELECT site, diagnosis_car, site_pass_grade, warranty_deemed,"
-        " warranty_extend, sell_type FROM core_listing WHERE listing_id=?",
-        (lid,)).fetchone()
+        " warranty_extend, sell_type, platform_verified"
+        " FROM core_listing WHERE listing_id=?", (lid,)).fetchone()
     if not row:
         return None
     one = sites.get(row[0] or "") or {}
     items = one.get("warranty_items") or []
     flags = {"diagnosis_car": row[1], "site_pass_grade": row[2],
              "warranty_deemed": row[3], "warranty_extend": row[4],
-             "sell_type": row[5]}
+             "sell_type": row[5], "platform_verified": row[6]}
     if flags.get(one.get("warranty_evidence")) is None:
         return None
     got = 0.0

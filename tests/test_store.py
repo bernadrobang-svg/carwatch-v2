@@ -177,7 +177,13 @@ def test_snapshot() -> None:
     check("점검 원문 배열 그대로", s.inspection_panels[0]["attributes"] == ["RANK_ONE"])
     check("이력 미확보 → None (수집 실패와 구분은 status 컬럼)",
           s.accident_my_cnt is None)
-    check("site_flags 는 site_* 만", all(k.startswith("site_") for k in s.site_flags))
+    # ★ 개정 365 — ⑤ 사이트 보증의 근거는 이름이 site_ 로 시작하지 않는다
+    #   (platform_verified · warranty_deemed …).  그것만 더 담는다
+    from store.core import SITE_WARRANTY_FIELDS
+
+    check("site_flags 는 site_* 와 보증 근거만",
+          all(k.startswith("site_") or k in SITE_WARRANTY_FIELDS
+              for k in s.site_flags))
 
 
 # ── 사전 (STEP 36 · 4장 STEP 45) ─────────────────────────────────────

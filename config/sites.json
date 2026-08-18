@@ -11,9 +11,9 @@
         "key": "엔카검증",
         "points": 10,
         "when": {
-          "site_pass_grade": "CLEAR"
+          "platform_verified": 1
         },
-        "why": "엔카진단 결과 무사고 차량으로 판정"
+        "why": "엔카진단 결과 무사고 차량으로 판정 (clean-encar cleaned=true)"
       },
       {
         "key": "엔카보증",
@@ -32,7 +32,7 @@
         "why": "엔카종합보증 ~180일/10,000km · 약 160개 부품"
       }
     ],
-    "_warranty_note": "⑤ 사이트 보증 50 (개정 365). 엔카는 셋을 더한다 — 하나만 있으면 그만큼만. ★ 어느 원문 칸이 어느 항목인지는 개발측 추정이다: 검증←site_pass_grade=CLEAR(495건) · 보증←warranty_deemed=1(1,634건) · 보증++←warranty_extend=1(41건). 가이드 확인 필요"
+    "_warranty_note": "⑤ 사이트 보증 50 (개정 365). 엔카는 셋을 더한다 — 하나만 있으면 그만큼만. 검증←platform_verified(clean-encar cleaned · 3,470건) · 보증←warranty_deemed=1(1,634건) · 보증++←warranty_extend=1(41건). ★ 보증·보증++ 를 어느 칸으로 볼지는 개발측 추정이다 — 가이드 확인 필요"
   },
   "kcar": {
     "label": "K카",
