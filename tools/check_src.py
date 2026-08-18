@@ -25,6 +25,9 @@ import sys
 #   근거   예외 목록을 손으로 늘리면, 늘리는 김에 통과시키게 된다
 CONST_NAME = r"[A-Z][A-Z0-9_]*"
 
+# 추적표의 온전한 행은 | 로 잘랐을 때 이만큼이다 (개정 349 · S34)
+_TRACE_COLS = 12
+
 SPEC = sys.argv[1] if len(sys.argv) > 1 else "docs"
 ROOT = sys.argv[2] if len(sys.argv) > 2 else "."
 
@@ -805,7 +808,7 @@ try:
     say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)",
         0 if _bad29 else 1, [], _bad29)
 
-    # ── S29-4 점검이 고친다 (개정 339) ──────────────────────────────
+        # ── S29-4 점검이 고친다 (개정 339) ──────────────────────────────
     # ★ 「재기만 한다」는 폐기됐다.  점검이 찾은 fatal 이
     #   다음 점검까지 그대로 남아 있으면 고치는 사람이 없는 것이다
     _bad294 = []
@@ -827,6 +830,42 @@ try:
                            "다음 차례에 고쳐야 한다")
     say("S29-4", "점검이 찾은 fatal 을 고침",
         0 if _bad294 else 1, [], _bad294)
+
+    # ── S34 추적표 (개정 349 · 350) ─────────────────────────────────
+    # ★ 「한 줄이 비면 그것이 할 일이다」.  빈 칸을 세어 늘 보이게 한다
+    _bad34 = []
+    _trace = os.path.join(ROOT, "docs", "trace")
+    if not os.path.isdir(_trace):
+        _bad34.append("docs/trace/ 가 없다")
+    else:
+        import glob as _g
+
+        _wide = 0
+        _blank = {"소스": 0, "화면": 0, "검사": 0, "테스트": 0}
+        for _f in sorted(_g.glob(os.path.join(_trace, "*.md"))):
+            if _f.endswith("INDEX.md"):
+                continue
+            for _ln in io.open(_f, encoding="utf-8"):
+                if not _ln.startswith("| R-"):
+                    continue
+                _c = _ln.rstrip("\n").split("|")
+                if len(_c) != _TRACE_COLS:
+                    continue
+                _wide += 1
+                for _i, _k in ((5, "소스"), (6, "화면"), (7, "검사"),
+                               (8, "테스트")):
+                    if not _c[_i].strip():
+                        _blank[_k] += 1
+        if not _wide:
+            _bad34.append("온전한 추적 행이 없다")
+        else:
+            for _k, _n in _blank.items():
+                if _n == _wide:
+                    _bad34.append(f"{_k} 칸이 {_wide}행 전부 비었다")
+        say("S34-3", "추적표 빈 칸을 센다",
+            0 if _bad34 else _wide, [], _bad34)
+        print(f"      · 빈 칸 — " + " · ".join(
+            f"{_k} {_n}/{_wide}" for _k, _n in _blank.items()))
 except Exception as _e:                                  # noqa: BLE001
     say("S29-0", "가벼운 점검 (4시간 · 실제로 돎)", 0, [],
         [f"점검 상태를 못 읽었다: {_e}"])
