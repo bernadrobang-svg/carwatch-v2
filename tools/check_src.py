@@ -25,8 +25,16 @@ import sys
 #   근거   예외 목록을 손으로 늘리면, 늘리는 김에 통과시키게 된다
 CONST_NAME = r"[A-Z][A-Z0-9_]*"
 
-# 추적표의 온전한 행은 | 로 잘랐을 때 이만큼이다 (개정 349 · S34)
-_TRACE_COLS = 12
+# 추적표의 온전한 행은 | 로 잘랐을 때 이만큼이다 (개정 349 · S34).
+# ★ 08-19 가이드가 다시 짰다 — R | 층 | 요구사항 | 출처 | 규격 | 소스 |
+#   화면 | 검사 | 상태.  R 번호도 SC-001 · WB-001 처럼 층 머리글자로 바뀌었다.
+#   ★ 수를 박아 두면 표가 바뀐 날 「온전한 행이 없다」가 된다 (실측 08-19)
+_TRACE_COLS = 11
+# 행을 가리는 무늬.  ★ 「| R- 」로 가리면 새 번호를 못 잡는다
+_TRACE_ROW = re.compile(r"^\| [A-Z]{2}-\d")
+# 칸 번호 (split("|") 기준) — 1=R 2=층 3=요구사항 4=출처 5=규격
+#   6=소스 7=화면 8=검사 9=상태
+_C_LAYER, _C_WHAT, _C_SPEC, _C_SRC, _C_UI, _C_CHK, _C_ST = 2, 3, 5, 6, 7, 8, 9
 
 SPEC = sys.argv[1] if len(sys.argv) > 1 else "docs"
 ROOT = sys.argv[2] if len(sys.argv) > 2 else "."
@@ -880,14 +888,14 @@ try:
             if _f.endswith("INDEX.md"):
                 continue
             for _ln in io.open(_f, encoding="utf-8"):
-                if not _ln.startswith("| R-"):
+                if not _TRACE_ROW.match(_ln):
                     continue
                 _c = _ln.rstrip("\n").split("|")
                 if len(_c) != _TRACE_COLS:
                     continue
                 _wide += 1
-                for _i, _k in ((5, "소스"), (6, "화면"), (7, "검사"),
-                               (8, "테스트")):
+                for _i, _k in ((_C_SRC, "소스"), (_C_UI, "화면"),
+                               (_C_CHK, "검사")):
                     if not _c[_i].strip():
                         _blank[_k] += 1
         if not _wide:
@@ -919,7 +927,7 @@ try:
             if _f.endswith("INDEX.md"):
                 continue
             for _ln in io.open(_f, encoding="utf-8"):
-                if not _ln.startswith("| R-"):
+                if not _TRACE_ROW.match(_ln):
                     continue
                 _c = _ln.rstrip("\n").split("|")
                 if len(_c) != _TRACE_COLS:
@@ -972,7 +980,7 @@ try:
         def _rows_of(text: str) -> dict:
             got = {}
             for _ln in text.splitlines():
-                if not _ln.startswith("| R-"):
+                if not _TRACE_ROW.match(_ln):
                     continue
                 _c = _ln.rstrip("\n").split("|")
                 if len(_c) == _TRACE_COLS:

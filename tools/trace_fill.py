@@ -20,10 +20,11 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRACE = os.path.join(ROOT, "docs", "trace")
 
-# 온전한 표의 칸 순서.  ★ 손으로 세지 않는다
-COLS = ("R", "요구사항", "출처 · 근거", "규격", "소스", "화면", "검사",
-        "테스트", "결함", "상태")
-I_R, I_WHAT, I_WHY, I_SPEC, I_SRC, I_UI, I_CHK, I_TEST, I_DEF, I_ST = range(
+# 표의 칸 순서 (08-19 가이드가 다시 짰다).  ★ 손으로 세지 않는다
+#   ★ R 번호가 SC-001 · WB-001 처럼 층 머리글자로 바뀌었고
+#     금지·규칙 227건은 docs/trace/RULES.md 로 빠졌다 — 소스가 없는 게 맞다
+COLS = ("R", "층", "요구사항", "출처", "규격", "소스", "화면", "검사", "상태")
+I_R, I_LAYER, I_WHAT, I_WHY, I_SPEC, I_SRC, I_UI, I_CHK, I_ST = range(
     len(COLS))
 N_COLS = len(COLS)
 
@@ -35,11 +36,29 @@ MIN_PAIR_SCORE = 6       # 규격의 「검산」 짝을 믿을 최소 점수
 MIN_ANCHOR_SCORE = 7     # 요구를 규격의 STEP 절에 붙일 최소 점수
 CTX_LINES = 18           # 「검산」 줄 위로 몇 줄을 그 요구의 문맥으로 볼 것인가
 SAMPLE = 5               # 보고에 낼 보기 수
+RARE_MIN_LEN = 3         # 드문 낱말로 볼 최소 길이.  두 글자는 흔하다
+RARE_MAX_FILES = 2       # 이 수 이하의 파일에만 있으면 「드물다」
 NARROW_COLS = 4          # 좁은 표의 칸 수 — R · 요구사항 · 출처 · 상태
 CHECKS_SPEC_COL = 7      # docs/CHECKS.md 의 「규격」 칸 번호
 
 # 못 찾았을 때 적는 말.  ★ 빈 칸과 다르다
 NO_SRC = "미구현"
+# 가이드가 「층과 안 맞는다」고 되돌린 표시.  ★ 이것만 다시 찾는다
+UNKNOWN = "미확인"
+
+# 층 → 그 층의 디렉터리 (지시 §1).  ★ 층이 정해져 있으니 거기만 본다.
+#   ★ 지난번에 층을 안 보고 전부 뒤져 374건이 딴 층으로 갔다
+LAYER_DIRS: dict = {
+    "수집": ("collect/", "adapters/"),
+    "저장": ("store/", "sql/ddl/"),
+    "파싱": ("parse/",),
+    "사전": ("store/dict.py",),
+    "판정": ("analyze/", "score/"),
+    "화면": ("web/", "report/"),
+    "검사": ("validate/", "tools/"),
+    "운영": ("store/adminops.py", "store/admin.py", "deploy/", "web/views.py",
+             "tools/"),
+}
 NO_UI = "화면 없음"
 NO_UI_NA = "해당 없음"
 NO_CHK = "검사 없음"
@@ -51,18 +70,44 @@ CODE_DIRS = ("adapters", "analyze", "collect", "parse", "report", "score",
 SKIP_DIRS = {"__pycache__", "ref", ".git", "node_modules"}
 
 
-def _tables(path: str) -> list:
-    """R 행을 그대로 돌려준다.  [(줄번호, 칸들)]."""
+
+def spec_lines() -> list:
+    """[(규격 파일, 줄 내용, 그 줄이 속한 STEP)]."""
+    import glob as _g
+
     out = []
-    for i, line in enumerate(open(path, encoding="utf-8")):
-        if not line.startswith("| R-"):
-            continue
-        cells = [c.strip() for c in line.rstrip("\n").strip().strip("|").split("|")]
-        out.append((i, cells))
+    for path in sorted(_g.glob(os.path.join(ROOT, "docs", "chapters",
+                                            "**", "*.md"), recursive=True)):
+        rel = os.path.relpath(path, os.path.join(ROOT, "docs"))
+        cur = ""
+        for line in open(path, encoding="utf-8"):
+            got = re.match(r"#{1,4}\s+(STEP [\w.-]+)", line.strip())
+            if got:
+                cur = got.group(1)
+            out.append((rel, line.rstrip("\n"), cur))
     return out
 
 
-# ── 소스 색인 ────────────────────────────────────────────────────────
+
+def anchor_step(what: str, spec: str, slines: list) -> str:
+    """이 요구가 규격의 어느 STEP 절에 있는가.  ★ 없으면 빈 문자열."""
+    words = [w for w in tokens(what) if len(w) >= 2]
+    if not words:
+        return ""
+    best = (0, "")
+    for rel, line, step in slines:
+        if not step:
+            continue
+        share = sum(1 for w in words if w in line)
+        if share < 2:
+            continue
+        score = share * 2 + (3 if spec and spec in rel else 0)
+        if score > best[0]:
+            best = (score, step)
+    return best[1] if best[0] >= MIN_ANCHOR_SCORE else ""
+
+
+
 def build_symbols() -> tuple[dict, dict]:
     """파일마다 (줄 → 함수 이름) · (이름 → [파일::함수]).
 
@@ -97,6 +142,7 @@ def build_symbols() -> tuple[dict, dict]:
     return by_line, by_name
 
 
+
 def enclosing(by_line: dict, rel: str, lineno: int) -> str:
     """그 줄이 든 가장 안쪽 함수·클래스 이름."""
     best = None
@@ -104,6 +150,7 @@ def enclosing(by_line: dict, rel: str, lineno: int) -> str:
         if start <= lineno <= end and (best is None or start > best[0]):
             best = (start, name)
     return best[1] if best else ""
+
 
 
 def build_texts() -> dict:
@@ -143,12 +190,14 @@ _JOSA = ("으로써", "에서는", "이라는", "으로", "에서", "에게", "�
          "가", "은", "는", "에", "의", "로", "와", "과", "도", "만", "고")
 
 
+
 def _stem(word: str) -> str:
     """조사를 뗀 줄기.  ★ 두 글자 아래로 줄면 떼지 않는다 — 딴 말이 된다."""
     for j in _JOSA:
         if word.endswith(j) and len(word) - len(j) >= 2:
             return word[: -len(j)]
     return word
+
 
 
 def tokens(text: str) -> list:
@@ -179,34 +228,6 @@ def tokens(text: str) -> list:
             uniq.append(w)
     return uniq[:MAX_TOKENS]
 
-
-def _mapping() -> dict:
-    """챕터 → 디렉터리·파일 (docs/MAPPING.md).  ★ 손으로 적지 않는다."""
-    out: dict = {}
-    path = os.path.join(ROOT, "docs", "MAPPING.md")
-    if not os.path.isfile(path):
-        return out
-    for line in open(path, encoding="utf-8"):
-        got = re.match(r"^\| `([\w./-]+)` \| (.+?) \|", line)
-        if not got:
-            continue
-        where = [x.strip(" `") for x in got.group(2).split("·")]
-        out[got.group(1)] = [w for w in where if w and w != "—"]
-    return out
-
-
-def _candidates(spec: str, mapping: dict, texts: dict) -> list:
-    """그 챕터가 가리키는 파일들.  없으면 전부 본다.
-
-    ★ 챕터로 좁히면 「같은 낱말이 딴 층에도 있는」 오답이 준다
-    """
-    where = mapping.get(spec) or []
-    got = []
-    for w in where:
-        w = w.rstrip("/")
-        got += [r for r in texts if r == w or r.startswith(w + "/")
-                or r == w]
-    return got or list(texts)
 
 
 def _best_in(pool: list, words: list, texts: dict) -> tuple:
@@ -245,535 +266,262 @@ def _best_in(pool: list, words: list, texts: dict) -> tuple:
     return (best_file[0], rel, at)
 
 
-def find_source(what: str, spec: str, mapping: dict, texts: dict,
-                by_line: dict, by_name: dict) -> str:
-    """요구 하나의 소스 자리.  없으면 빈 문자열.
 
-    순서   ① 백틱 식별자가 함수·클래스 이름과 그대로 같은가
-          ② 챕터가 가리키는 파일에서 낱말이 가장 많이 겹치는 줄
-          ③ 못 찾으면 빈 문자열 — 부르는 쪽이 「미구현」이라 적는다
+def _rows(path: str) -> list:
+    """[(줄 번호, 칸들)].  ★ 표는 이제 한 형식이다 (9칸)."""
+    out = []
+    for i, line in enumerate(open(path, encoding="utf-8").read().splitlines()):
+        if not re.match(r"^\| [A-Z]{2}-\d", line):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) == len(COLS):
+            out.append((i, cells))
+    return out
+
+
+
+def layers_of(cell: str) -> list:
+    """「`[수집·화면]`」 → ["수집", "화면"].  ★ 층이 둘이면 둘 다 본다."""
+    got = cell.strip("`[] ")
+    return [x for x in re.split(r"[·,/]", got) if x.strip()]
+
+
+
+def layer_pool(cell: str, texts: dict) -> list:
+    """그 층의 디렉터리만.  ★ 층이 정해져 있으니 거기만 본다 (지시 §2)."""
+    want: list = []
+    for name in layers_of(cell):
+        want += list(LAYER_DIRS.get(name.strip(), ()))
+    if not want:
+        return []
+    return [r for r in texts
+            if any(r == w or r.startswith(w) for w in want)]
+
+
+
+def _rare_hit(words: list, pool: list, texts: dict, by_line: dict) -> str:
+    """드문 낱말이 있는 자리.
+
+    ★ 「연락함」 · 「보러 감」 처럼 그 요구에만 쓰는 말은 저장소에 한두 곳뿐이다.
+      겹친 낱말 수만 세면 그 한 곳이 문턱에 걸려 「미구현」이 된다
+    ★ 두 글자 낱말은 뺀다 — 흔해서 드물어 보일 뿐이다
     """
+    best = (RARE_MAX_FILES + 1, "", 0)
+    for w in words:
+        if len(w) < RARE_MIN_LEN:
+            continue
+        where = [r for r in pool if w in "\n".join(texts.get(r) or ())]
+        if not where or len(where) > RARE_MAX_FILES:
+            continue
+        rel = where[0]
+        for i, ln in enumerate(texts[rel], 1):
+            if w in ln and len(where) < best[0]:
+                best = (len(where), rel, i)
+                break
+    if not best[1]:
+        return ""
+    rel, at = best[1], best[2]
+    if rel.endswith((".html", ".sql")):
+        return rel
+    fn = enclosing(by_line, rel, at)
+    return f"{rel}::{fn}" if fn else f"{rel}:{at}"
+
+
+def find_in_layer(what: str, cell: str, texts: dict, by_line: dict,
+                  by_name: dict, slines: list, spec: str = "") -> str:
+    """그 층 안에서 소스를 찾는다.
+
+    ★ 층 밖으로 나가지 않는다.  나가면 지난번처럼 딴 층으로 간다
+    """
+    pool = layer_pool(cell, texts)
+    if not pool:
+        return ""
     words = tokens(what)
     if not words:
         return ""
-    # ① 이름이 그대로 있는가
+    # ① 이름이 그대로 있는가 — ★ 그 층의 파일에 있는 것만
+    inpool = set(pool)
     for w in words:
         if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", w):
             continue
-        hit = by_name.get(w)
-        if hit:
-            return hit[0]
-    # ② 챕터가 가리키는 곳에서 찾는다.
-    #   ★ validate/ 는 뺀다 — 검사는 「지키는가」이지 「하는 곳」이 아니다.
-    #     Check 선언이 규격 문구를 그대로 인용해서 그냥 두면 늘 검사가 이긴다
-    pool = [r for r in _candidates(spec, mapping, texts)
-            if not r.startswith(NOT_IMPL)]
+        for hit in by_name.get(w, ()):
+            if hit.split("::")[0] in inpool:
+                return hit
+    # ② 낱말이 겹치는 자리
+    # ★ 드문 낱말은 하나로 충분하다.  「연락함」은 저장소에 한 곳뿐이다 —
+    #   개수만 세면 그 한 곳을 놓친다 (실측 08-19 — 진행 메모 셋을 다 놓쳤다)
+    rare = _rare_hit(words, pool, texts, by_line)
+    if rare:
+        return rare
     best = _best_in(pool, words, texts)
-    # ③ 없으면 전부 뒤진다.  ★ MAPPING 은 대표 디렉터리만 적는다 —
-    #   「사이트별 구매비용」은 40-report 인데 report/finance.py 에 있다
-    if best[0] < MIN_TOKEN_HIT:          # 챕터 안에서 약하면 전부 뒤진다
-        whole = _best_in([r for r in texts if not r.startswith(NOT_IMPL)],
-                         words, texts)
-        if whole[0] > best[0]:
-            best = whole
-    # ★ 짧은 요구는 낱말이 둘뿐이다 — 문턱을 그대로 걸면 「Python 3.11 이상」이
-    #   미구현이 된다.  있는 것을 없다고 하는 것이라 더 나쁘다 (실측 08-19)
-    need = min(MIN_TOKEN_HIT, len(words))
-    if best[0] < need:
-        return ""
-    rel, lineno = best[1], best[2]
-    if rel.endswith(".html"):
-        return rel
-    fn = enclosing(by_line, rel, lineno)
-    return f"{rel}::{fn}" if fn else f"{rel}:{lineno}"
-
-
-def _checks_index() -> dict:
-    """docs/CHECKS.md — 코드 → (소스 자리, 코드에 있는가)."""
-    out: dict = {}
-    path = os.path.join(ROOT, "docs", "CHECKS.md")
-    if not os.path.isfile(path):
-        return out
-    for line in open(path, encoding="utf-8"):
-        got = re.match(r"^\| `([VS][\w.-]+)` \| (.*?) \| (.*?) \| (.*?) \|",
-                       line)
-        if not got:
-            continue
-        where = got.group(4).strip(" `")
-        out[got.group(1)] = {
-            "what": got.group(2),
-            "src": "" if "없다" in where else where,
-            "in_code": "없다" not in where,
-        }
-    return out
-
-
-def _check_titles() -> dict:
-    """코드 → (무엇, 규격 챕터들, 코드에 있는가).  ★ CHECKS.md 가 정본."""
-    out: dict = {}
-    path = os.path.join(ROOT, "docs", "CHECKS.md")
-    if not os.path.isfile(path):
-        return out
-    for line in open(path, encoding="utf-8"):
-        got = re.match(r"^\| `([VS][\w.-]+)` \| (.*?) \| (.*?) \| (.*?) \|"
-                       r" (.*?) \| (.*?) \| (.*?) \|", line)
-        if not got:
-            continue
-        # CHECKS.md 의 마지막 칸이 규격 자리다 — 「코드 · 무엇 · 등급 ·
-        # 소스 · 마지막 통과 · 마지막 실패 · 규격」 일곱 칸이다
-        chapters = set(re.findall(r"chapters/([\w-]+)",
-                                  got.group(CHECKS_SPEC_COL)))
-        where = got.group(4).strip(" `")
-        out[got.group(1)] = {
-            "what": got.group(2).strip(),
-            "src": "" if "없다" in where else where,
-            "chapters": chapters,
-            "in_code": "없다" not in got.group(4),
-        }
-    return out
-
-
-def find_check(what: str, spec: str, titles: dict) -> tuple:
-    """이 요구를 지키는 검사 번호.  돌려줌 (코드, 코드에 있는가).
-
-    ★ 검사 이름과 요구 문구를 견준다.  같은 말로 쓰여 있다 —
-      규격이 「검산 V11-120」 처럼 짝을 지어 두기 때문이다
-    ★ 같은 챕터를 근거로 든 검사에 가산점을 준다
-    """
-    words = set(tokens(what))
-    if not words:
-        return "", False
-    best = (0, "")
-    for code, one in titles.items():
-        title = one["what"]
-        if not title or title == "—":
-            continue
-        share = len(words & set(tokens(title)))
-        if not share:
-            continue
-        score = share * 2 + (1 if spec in one["chapters"] else 0)
-        if score > best[0]:
-            best = (score, code)
-    if best[0] < 4:
-        return "", False
-    return best[1], titles[best[1]]["in_code"]
-
-
-# 소스로 삼지 않는 곳.  ★ 검사는 「지키는가」이지 「하는 곳」이 아니다
-NOT_IMPL = ("validate/", "tools/check_", "tools/trace_")
-
-# ── 규격 본문에서 짝을 읽는다 ────────────────────────────────────────
-# ★★ 「검산 V11-120」은 규격이 이미 적어 둔 짝이다.
-#   낱말이 겹치는 검사를 고르면 V3-56 자리에 V3-57 이 들어간다 (실측 08-19 —
-#   맞음 31 · 틀림 22 였다).  추측하지 말고 규격이 적은 것을 읽는다
-def spec_pairs() -> list:
-    """[(규격 파일, 줄, 그 자리의 검사 코드들, 그 위 문맥)].
-
-    ★ 「검산」 줄 위쪽이 그 검사가 지키는 요구다
-    """
-    import glob as _g
-
-    out = []
-    for path in sorted(_g.glob(os.path.join(ROOT, "docs", "chapters",
-                                            "**", "*.md"), recursive=True)):
-        rel = os.path.relpath(path, os.path.join(ROOT, "docs"))
-        lines = open(path, encoding="utf-8").read().splitlines()
-        for i, line in enumerate(lines):
-            if not re.match(r"\s*(검산|검증)\s", line):
-                continue
-            codes = re.findall(r"\b([VS]\d+[\w.-]*)\b", line)
-            # ★ 한 줄에 다 안 들어가면 다음 줄로 이어진다
-            for nxt in lines[i + 1:i + 4]:
-                if re.match(r"\s{4,}[VS]\d", nxt):
-                    codes += re.findall(r"\b([VS]\d+[\w.-]*)\b", nxt)
-                else:
-                    break
-            if not codes:
-                continue
-            lo = max(0, i - CTX_LINES)
-            out.append((rel, i + 1, codes, "\n".join(lines[lo:i])))
-    return out
-
-
-def find_check_by_spec(what: str, spec: str, pairs: list) -> str:
-    """규격 본문의 「검산」 짝에서 고른다.
-
-    ★ 그 요구 문구가 검산 줄 바로 위 문맥에 있는가를 본다
-    """
-    words = [w for w in tokens(what) if len(w) >= 2]
-    if not words:
-        return ""
-    best = (0, "")
-    for rel, _at, codes, ctx in pairs:
-        share = sum(1 for w in words if w in ctx)
-        if not share:
-            continue
-        score = share * 2 + (3 if spec and spec in rel else 0)
-        if score > best[0]:
-            best = (score, " · ".join(dict.fromkeys(codes)))
-    return best[1] if best[0] >= MIN_PAIR_SCORE else ""
-
-
-def find_check_merged(what: str, spec: str, pairs: list, titles: dict) -> str:
-    """규격의 짝 + 검사 이름, 둘을 더해 고른다.
-
-    ★ 하나만 쓰면 이웃 번호가 들어간다 (V3-56 자리에 V3-57).
-      둘이 같은 것을 가리킬 때 믿는다
-    """
-    words = [w for w in tokens(what) if len(w) >= 2]
-    if not words:
-        return ""
-    score: dict = {}
-    for rel, _at, codes, ctx in pairs:
-        share = sum(1 for w in words if w in ctx)
-        if not share:
-            continue
-        pt = share * 2 + (3 if spec and spec in rel else 0)
-        if pt < MIN_PAIR_SCORE:
-            continue
-        for c in codes:
-            score[c] = score.get(c, 0) + pt
-    ws = set(words)
-    for code, one in titles.items():
-        title = one.get("what") or ""
-        if not title or title == "—":
-            continue
-        share = len(ws & set(tokens(title)))
-        if share >= 2:
-            score[code] = score.get(code, 0) + share * 2 + (
-                1 if spec in one.get("chapters", ()) else 0)
-    if not score:
-        return ""
-    top = max(score.values())
-    if top < MIN_CHECK_SCORE:
-        return ""
-    best = sorted(c for c, v in score.items() if v == top)
-    return " · ".join(best[:2])
-
-
-# 화면이 필요 없는 챕터.  ★ 계층 · 이름 · 제약 · 검사 설계는 화면이 없다
-NO_UI_SPECS = frozenset({
-    "00-standard", "01-arch", "11-store", "12-dict", "13-pipeline",
-    "20-verify", "31-registry", "50-multisite",
-})
-# 화면임을 알리는 말.  ★ 요구 문구에 이것이 있으면 화면이 있어야 한다
-# ★ 「낸다」 「표시」 「링크」는 뺐다 — 어디에나 있어 전부 「화면 없음」이 된다.
-#   실측 08-19 — 파일 쓰기 규칙까지 「화면 없음」으로 나왔다
-UI_WORDS = ("화면", "목록", "추천 화면", "상세", "비교 화면", "관심 목록",
-            "딜러", "시세", "카드", "단추", "배지", "팝업", "메뉴", "폼",
-            "그린다", "보여 준다", "눌러", "누르면", "쪽 나눔", "툴팁")
-
-
-def _routes() -> dict:
-    """경로 → 템플릿.  ★ web/routes.py 가 정본이다."""
-    out: dict = {}
-    path = os.path.join(ROOT, "web", "routes.py")
-    if not os.path.isfile(path):
-        return out
-    for m in re.finditer(r'Route\("([^"]+)",\s*\([^)]*\),\s*"(\w+)"', 
-                         open(path, encoding="utf-8").read()):
-        out[m.group(2)] = m.group(1)
-    return out
-
-
-def find_ui(what: str, spec: str, src: str, routes: dict) -> str:
-    """어느 화면 · 어느 자리.
-
-    ★ 「해당 없음」과 「화면 없음」은 다르다 —
-      앞은 화면이 필요 없는 규칙이고, 뒤는 있어야 하는데 없는 것이다 (S27)
-    """
-    # 소스가 화면 쪽이면 그 화면이다
-    if src.startswith("web/templates/"):
-        name = os.path.basename(src).removesuffix(".html")
-        for view, path in routes.items():
-            if view.replace("view_", "").replace("_", "-") == name or \
-                    path.strip("/").replace("/", "_") == name:
-                return f"`{path}`"
-        return f"`{name}` 템플릿"
-    if src.startswith(("web/views.py", "report/screens/")):
-        for view, path in routes.items():
-            fn = src.split("::")[-1]
-            if fn and (fn in view or view.endswith(fn)):
-                return f"`{path}`"
-    got = re.findall(r"`(/[\w{}/-]+)`", what)
-    if got:
-        return " · ".join(dict.fromkeys(got))
-    if any(w in what for w in UI_WORDS):
-        return ""            # 화면이 있어야 한다 — 부르는 쪽이 「화면 없음」
-    if spec in NO_UI_SPECS:
-        return NO_UI_NA
-    return ""
-
-
-# 좁은 표(4칸)의 머리말.  ★ 이것도 요구다 — 칸이 없을 뿐이다
-NARROW_HEAD = "| R | 요구사항 | 출처 | 상태 |"
-WIDE_HEAD = ("| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 "
-             "| 테스트 | 결함 | 상태 |")
-WIDE_SEP = "|---|---|---|---|---|---|---|---|---|:--:|"
-# 질문 표.  ★ 요구가 아니라 마스터께 여쭐 것이다 — 소스가 없다.
-#   ★ 머리글로 가린다.  표 머리말은 「왜」 · 「왜 여쭙나」 로 갈린다 —
-#     그것으로 가렸더니 하나를 놓쳐 질문 넷이 요구로 넓혀졌다 (실측 08-19)
-QUESTION_HEAD_RE = re.compile(r"^#+\s*★?\s*마스터께 여쭐 것")
-
-
-def widen(cells: list, spec: str) -> list:
-    """좁은 표를 온전한 10칸으로 넓힌다.
-
-    ★ 4칸 표도 요구다.  칸이 없다는 이유로 「모른다」로 두지 않는다
-    """
-    if len(cells) >= N_COLS:
-        return cells[:N_COLS]
-    if len(cells) == NARROW_COLS:
-        r, what, why, st = cells
-        return [r, what, why, f"`{spec}`", "", "", "", "", "", st]
-    out = list(cells) + [""] * (N_COLS - len(cells))
-    return out[:N_COLS]
-
-
-def _only_in_spec(chk: str, titles: dict) -> bool:
-    """그 칸의 검사가 전부 「규격에만 있고 코드에 없다」인가.
-
-    ★ 판정을 한 곳에 둔다.  두 곳에서 각자 기본값을 정하면
-      같은 표를 두 번 돌릴 때 답이 갈린다 (실측 08-19 — 표시가 두 번 붙었다)
-    ★ CHECKS.md 에 아예 없는 번호는 「모른다」다.  단정하지 않는다
-    """
-    codes = re.findall(r"[VS]\d+[\w.-]*", chk or "")
-    known = [c for c in codes if c in titles]
-    if not codes or len(known) != len(codes):
-        return False
-    return all(not titles[c].get("in_code") for c in known)
-
-
-def _source_of_check(chk: str, titles: dict, by_line: dict) -> str:
-    """검사가 소스인 요구도 있다.
-
-    ★ 「금지 여러 작업을 한 커밋에」 는 구현 파일이 없다.
-      그것을 막는 검사(S25)가 그 요구를 지키는 자리다
-    """
-    for code in re.findall(r"[VS]\d+[\w.-]*", chk or ""):
-        one = titles.get(code)
-        if not one or not one.get("in_code"):
-            continue
-        where = one.get("src") or ""
-        got = re.match(r"([\w./-]+):(\d+)", where.strip(" `"))
-        if not got:
-            continue
-        rel, at = got.group(1), int(got.group(2))
+    # ★ 낱말이 많은 요구는 더 많이 겹쳐야 믿는다.  열 낱말 중 셋은 우연이다
+    need = max(min(MIN_TOKEN_HIT, len(words)), (len(words) + 2) // 3)
+    if best[0] >= need:
+        rel, at = best[1], best[2]
+        if rel.endswith((".html", ".sql")):
+            return rel
         fn = enclosing(by_line, rel, at)
         return f"{rel}::{fn}" if fn else f"{rel}:{at}"
+    # ③ 규격의 STEP 을 닻으로 — ★ 그래도 그 층 안에서만
+    step = anchor_step(what, spec, slines)
+    if step:
+        got = _best_step_in(step, pool, texts, by_line, words)
+        if got:
+            return got
     return ""
 
 
-def restate(cells: list) -> str:
-    """S38 — 칸이 채워진 정도로 상태를 다시 매긴다.
 
-    소스 「미구현」   →  ✗
-    화면 「화면 없음」 →  ◐
-    검사 「검사 없음」 →  ◐
-    넷이 다 차면     →  ○  (테스트는 비어도 된다)
-    ★ 「!」(결함) · 「?」(확인 필요)는 사람이 적은 것이라 손대지 않는다
+def _best_step_in(step: str, pool: list, texts: dict, by_line: dict,
+                  words: list) -> str:
+    """그 STEP 을 인용한 자리 — ★ 주어진 층 안에서만.
+
+    ★ STEP 을 많이 인용한다고 그 요구를 하는 파일은 아니다.
+      요구의 낱말이 하나도 없으면 거절한다 —
+      「SQL 은 표준 문법 우선」이 sync_registry 로 갔다 (실측 08-19)
     """
-    now = cells[I_ST]
-    # ★ 사람이 적은 것은 손대지 않는다 (규칙 2).
-    #   ○ · ◐ · ✗ 만 다시 매긴다 — 「◐ 오늘」 · 「D-500b」 처럼 가이드가
-    #   덧붙인 말을 덮으면 그 판단이 사라진다 (실측 08-19 · 되돌렸다)
-    if now.strip("* ") not in ("○", "◐", "✗", ""):
-        return now
-    if NO_SRC in cells[I_SRC]:
-        return "✗"
-    if NO_UI in cells[I_UI] or NO_CHK in cells[I_CHK]:
-        return "◐"
-    if cells[I_SRC] and cells[I_UI] and cells[I_CHK]:
-        return "○"
-    return now
+    best = (0, "")
+    for rel in pool:
+        lines = texts.get(rel) or []
+        n = sum(1 for ln in lines if step in ln)
+        if not n:
+            continue
+        if words and not any(w in "\n".join(lines) for w in words):
+            continue
+        if n > best[0]:
+            best = (n, rel)
+    if not best[1]:
+        return ""
+    rel = best[1]
+    for i, ln in enumerate(texts[rel], 1):
+        if step not in ln:
+            continue
+        fn = enclosing(by_line, rel, i)
+        if fn:
+            return f"{rel}::{fn}"
+    return rel
 
 
-def fill_file(path: str, spec: str, ctxs: dict, write: bool) -> dict:
-    """파일 하나를 채운다.  돌려줌 통계."""
+
+def fill_file(path: str, ctxs: dict, write: bool) -> dict:
+    """「미확인」인 소스 칸만 다시 찾는다.
+
+    ★ 가이드가 적어 둔 것은 손대지 않는다 (규칙 2 · S35-1).
+      되돌린 것은 「미확인」이라 적혀 있다 — 그것만 내 몫이다
+    """
     lines = open(path, encoding="utf-8").read().splitlines()
-    out, stat = [], {"행": 0, "소스": 0, "화면": 0, "검사": 0, "넓힘": 0}
-    in_question = False
+    stat = {"봄": 0, "찾음": 0, "못 찾음": 0}
+    out = []
     for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("#"):
-            in_question = bool(QUESTION_HEAD_RE.match(stripped))
+        if not re.match(r"^\| [A-Z]{2}-\d", line):
             out.append(line)
             continue
-        if stripped.startswith("| R ") and not in_question:
-            out.append(WIDE_HEAD)
-            continue
-        if (stripped.startswith("|---") and out and out[-1] == WIDE_HEAD
-                and not in_question):
-            out.append(WIDE_SEP)
-            continue
-        if not stripped.startswith("| R-") or in_question:
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != len(COLS) or cells[I_SRC] != UNKNOWN:
             out.append(line)
             continue
-
-        cells = [c.strip() for c in stripped.strip("|").split("|")]
-        was = len(cells)
-        cells = widen(cells, spec)
-        if was < N_COLS:
-            stat["넓힘"] += 1
-        stat["행"] += 1
-
-        what = cells[I_WHAT]
-        row_spec = cells[I_SPEC].strip(" `") or spec
-        # ★ 이미 적힌 것은 그대로 둔다 — 가이드가 적은 판단이다 (규칙 2)
-        # ★ 검사를 먼저 찾는다.  「금지」 · 「작업 규칙」은 구현 파일이 없고
-        #   그것을 막는 검사가 곧 그 요구를 지키는 자리다 (실측 08-19 —
-        #   00-standard 38건이 「미구현」으로 나왔는데 git·커밋 규칙이었다)
-        if not cells[I_CHK]:
-            got = find_check_merged(what, row_spec, ctxs["pairs"],
-                                    ctxs["titles"])
-            if got:
-                cells[I_CHK] = (f"{got} — {NO_CHK_SPEC}"
-                                if _only_in_spec(got, ctxs["titles"]) else got)
-            else:
-                cells[I_CHK] = NO_CHK
-            stat["검사"] += 1
-        elif NO_CHK not in cells[I_CHK]:
-            # ★ 이미 적힌 검사가 규격에만 있고 코드에 없을 수 있다 (S16 이 42건).
-            #   값을 지우지 않고 표시만 단다 — 그것이 만들 목록이다 (지시 §3)
-            if _only_in_spec(cells[I_CHK], ctxs["titles"]):
-                cells[I_CHK] = f"{cells[I_CHK]} — {NO_CHK_SPEC}"
-        if not cells[I_SRC]:
-            got = find_source(what, row_spec, ctxs["mapping"], ctxs["texts"],
-                              ctxs["by_line"], ctxs["by_name"])
-            if not got:
-                # ★ 낱말로 못 찾으면 규격의 STEP 을 닻으로 삼는다.
-                #   코드 주석이 「STEP 91a」 처럼 근거를 적어 둔다 (1,242곳)
-                got = source_by_step(
-                    anchor_step(what, row_spec, ctxs["slines"]),
-                    ctxs["texts"], ctxs["by_line"])
-            if not got:
-                got = _source_of_check(cells[I_CHK], ctxs["titles"],
-                                       ctxs["by_line"])
-            cells[I_SRC] = f"`{got}`" if got else NO_SRC
-            stat["소스"] += 1
-        if not cells[I_UI]:
-            src = cells[I_SRC].strip(" `")
-            got = find_ui(what, row_spec, src, ctxs["routes"])
-            cells[I_UI] = got or NO_UI
-            stat["화면"] += 1
-        cells[I_ST] = restate(cells)
+        stat["봄"] += 1
+        got = find_in_layer(cells[I_WHAT], cells[I_LAYER], ctxs["texts"],
+                            ctxs["by_line"], ctxs["by_name"], ctxs["slines"],
+                            cells[I_SPEC].strip(" `"))
+        if got:
+            cells[I_SRC] = f"`{got}`"
+            stat["찾음"] += 1
+        else:
+            cells[I_SRC] = NO_SRC
+            stat["못 찾음"] += 1
         out.append("| " + " | ".join(cells) + " |")
-
     if write:
         with open(path, "w", encoding="utf-8") as f:
             f.write("\n".join(out) + "\n")
     return stat
 
 
-def _spec_of(name: str) -> str:
-    """파일 이름 → 규격 챕터.  ★ 손으로 표를 두지 않는다."""
-    return name.removesuffix(".md")
-
 
 def survey() -> dict:
-    """지금 채움 상태.  ★ 전·후를 같은 자로 잰다."""
-    got = {"행": 0, "소스": 0, "화면": 0, "검사": 0, "테스트": 0, "상태": {}}
+    """지금 상태.  층별 · 소스별 · 상태별."""
+    from collections import Counter
+
+    got = {"행": 0, "층": Counter(), "소스": Counter(), "상태": Counter(),
+           "층별상태": {}}
     for name in sorted(os.listdir(TRACE)):
-        if not name.endswith(".md") or name == "INDEX.md":
+        if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):
             continue
-        for _i, cells in _tables(os.path.join(TRACE, name)):
+        for _i, cells in _rows(os.path.join(TRACE, name)):
             got["행"] += 1
-            if len(cells) < N_COLS:
-                st = cells[-1] if len(cells) == NARROW_COLS else ""
-            else:
-                st = cells[I_ST]
-                for i, k in ((I_SRC, "소스"), (I_UI, "화면"),
-                             (I_CHK, "검사"), (I_TEST, "테스트")):
-                    if cells[i]:
-                        got[k] += 1
-            key = st.strip("* ") or "—"
-            got["상태"][key] = got["상태"].get(key, 0) + 1
+            lay = cells[I_LAYER].strip("`[] ") or "?"
+            st = cells[I_ST].strip("* ")
+            src = cells[I_SRC]
+            kind = (UNKNOWN if src == UNKNOWN
+                    else NO_SRC if NO_SRC in src
+                    else "있음" if src and src != "—" else "없음")
+            got["층"][lay] += 1
+            got["소스"][kind] += 1
+            got["상태"][st] += 1
+            got["층별상태"].setdefault(lay, Counter())[st] += 1
+            got["층별상태"][lay][f"소스:{kind}"] += 1
     return got
 
 
+
 def lists() -> dict:
-    """§6 — 마스터가 볼 셋."""
-    out = {"미구현": [], "화면 없음": [], "검사 없음": []}
+    """§5-③ · §6 — 마스터가 볼 목록."""
+    out = {"미구현": [], "화면 없음": [], "미확인": [], "층 모름": []}
     for name in sorted(os.listdir(TRACE)):
-        if not name.endswith(".md") or name == "INDEX.md":
+        if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):
             continue
-        for _i, cells in _tables(os.path.join(TRACE, name)):
-            if len(cells) < N_COLS:
-                continue
-            row = (cells[I_R], cells[I_WHAT][:60], _spec_of(name))
-            if NO_SRC in cells[I_SRC]:
+        for _i, cells in _rows(os.path.join(TRACE, name)):
+            lay = cells[I_LAYER].strip("`[] ") or "?"
+            row = (cells[I_R], cells[I_WHAT][:56], lay)
+            if cells[I_SRC] == UNKNOWN:
+                out["미확인"].append(row)
+            elif NO_SRC in cells[I_SRC]:
                 out["미구현"].append(row)
-            if NO_UI in cells[I_UI]:
+            if cells[I_UI] in ("화면 없음",):
                 out["화면 없음"].append(row)
-            if NO_CHK in cells[I_CHK]:
-                out["검사 없음"].append(row)
+            if lay in ("?", ""):
+                out["층 모름"].append(row)
     return out
 
 
-def write_index(before: dict, after: dict) -> str:
-    """docs/trace/INDEX.md — ★ 기계로 만든다 (지시 §7)."""
-    rows = []
-    for name in sorted(os.listdir(TRACE)):
-        if not name.endswith(".md") or name == "INDEX.md":
-            continue
-        n = {"행": 0, "소스": 0, "화면": 0, "검사": 0}
-        st: dict = {}
-        for _i, cells in _tables(os.path.join(TRACE, name)):
-            n["행"] += 1
-            if len(cells) >= N_COLS:
-                for i, k in ((I_SRC, "소스"), (I_UI, "화면"), (I_CHK, "검사")):
-                    if cells[i]:
-                        n[k] += 1
-                st[cells[I_ST].strip("* ")] = st.get(
-                    cells[I_ST].strip("* "), 0) + 1
-        rows.append((name, n, st))
-    now = after
+
+def write_index(now: dict) -> None:
+    """docs/trace/INDEX.md — ★ 기계로 만든다 (지시 §7 · 층별 요약)."""
     body = [
         "# 추적표 색인",
         "",
         "**`python3.11 tools/trace_fill.py --write` 가 만든다. "
         "손으로 고치지 않는다.**",
         "",
-        f"요구 **{now['행']}건**",
+        f"요구 **{now['행']}건** · 금지·규칙 227건은 "
+        "[RULES.md](RULES.md) 로 뺐다 — 소스가 없는 게 맞다",
         "",
-        "## 칸별 채움",
+        "## 층별",
         "",
-        "★ 지금 상태다.  「전 → 후」는 그때그때 달라지므로 적지 않는다 —",
-        "  옮긴 기록은 `outputs/` 가 갖는다",
-        "",
-        "| 칸 | 찬 것 | 빈 것 | 채움률 |",
-        "|---|--:|--:|--:|",
+        "| 층 | R | ○ | ◐ | ✗ | 소스 있음 | 미구현 | 미확인 |",
+        "|---|--:|--:|--:|--:|--:|--:|--:|",
     ]
-    for k in ("소스", "화면", "검사", "테스트"):
-        pct = (now[k] / now["행"] * 100) if now["행"] else 0
-        body.append(f"| {k} | {now[k]} | {now['행'] - now[k]} | {pct:.0f}% |")
-    del before
+    for lay in sorted(now["층"], key=lambda k: -now["층"][k]):
+        c = now["층별상태"].get(lay, {})
+        body.append(
+            f"| {lay} | {now['층'][lay]} | {c.get('○', 0)} | {c.get('◐', 0)}"
+            f" | {c.get('✗', 0)} | {c.get('소스:있음', 0)}"
+            f" | {c.get('소스:미구현', 0)} | {c.get('소스:미확인', 0)} |")
+    body += ["", "## 소스 칸", "", "| 무엇 | 몇 개 |", "|---|--:|"]
+    for k in sorted(now["소스"]):
+        body.append(f"| {k} | {now['소스'][k]} |")
     body += ["", "## 상태", "", "| 상태 | 몇 개 |", "|---|--:|"]
     for k in sorted(now["상태"]):
         body.append(f"| {k} | {now['상태'][k]} |")
-    body += ["", "## 장별", "",
-             "| 표 | 요구 | 소스 | 화면 | 검사 | 상태 |",
-             "|---|--:|--:|--:|--:|---|"]
-    for name, n, st in rows:
-        shown = " · ".join(f"{k} {v}" for k, v in sorted(st.items()) if k)
-        body.append(f"| [{name}]({name}) | {n['행']} | {n['소스']} "
-                    f"| {n['화면']} | {n['검사']} | {shown} |")
     body += ["", "```",
-             "★ 「미구현」 · 「화면 없음」 · 「검사 없음」은 빈 칸이 아니다.",
-             "  빈 칸은 「모른다」이고 그것이 가장 나쁘다",
-             "",
-             "★ 소스 · 화면 · 검사 칸은 기계가 찾은 것이다 — 추정이다.",
-             "  ① 요구 문구의 낱말이 겹치는 코드",
-             "  ② 못 찾으면 규격의 STEP 번호를 인용한 코드",
-             "  ③ 그래도 없으면 「미구현」",
-             "  ★ 단정인 것은 「미구현」 · 「화면 없음」 · 「검사 없음」 뿐이다 —",
-             "    그것은 「기계가 못 찾았다」는 사실이고, 그것이 만들 목록이다",
-             "★ 가이드가 이미 적어 둔 칸은 그대로 두었다 (규칙 2)",
+             "★ 소스 칸은 기계가 그 층의 디렉터리에서 찾은 것이다.",
+             "  층 밖으로 나가지 않는다 — 나가면 딴 층의 코드가 들어온다",
+             "★ 단정인 것은 「미구현」뿐이다 — 「그 층에서 못 찾았다」는 사실이다",
+             "★ 가이드가 적어 둔 칸은 손대지 않는다 (S35-1)",
              "```", ""]
-    text = "\n".join(body)
     with open(os.path.join(TRACE, "INDEX.md"), "w", encoding="utf-8") as f:
-        f.write(text)
-    return text
+        f.write("\n".join(body) + "\n")
+
 
 
 def main() -> int:
@@ -782,108 +530,35 @@ def main() -> int:
     ctxs = {}
     ctxs["by_line"], ctxs["by_name"] = build_symbols()
     ctxs["texts"] = build_texts()
-    ctxs["mapping"] = _mapping()
-    ctxs["titles"] = _check_titles()
-    ctxs["pairs"] = spec_pairs()
-    ctxs["routes"] = _routes()
     ctxs["slines"] = spec_lines()
-    total = {"행": 0, "소스": 0, "화면": 0, "검사": 0, "넓힘": 0}
+    total = {"봄": 0, "찾음": 0, "못 찾음": 0}
     for name in sorted(os.listdir(TRACE)):
-        if not name.endswith(".md") or name == "INDEX.md":
+        if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):
             continue
-        got = fill_file(os.path.join(TRACE, name), _spec_of(name), ctxs, write)
+        got = fill_file(os.path.join(TRACE, name), ctxs, write)
         for k in total:
             total[k] += got[k]
     after = survey()
-    print(f"{'쓰기' if write else '미리보기'} — 채운 칸 "
-          f"소스 {total['소스']} · 화면 {total['화면']} · 검사 {total['검사']}"
-          f" · 넓힌 행 {total['넓힘']}\n")
-    print("| 칸 | 전 | 후 |")
+    print(f"{'쓰기' if write else '미리보기'} — 미확인 {total['봄']}건 중 "
+          f"찾음 {total['찾음']} · 못 찾음 {total['못 찾음']}\n")
+    print("| 소스 칸 | 전 | 후 |")
     print("|---|--:|--:|")
-    for k in ("소스", "화면", "검사", "테스트"):
-        print(f"| {k} | {before[k]} | {after[k]} |")
-    print("\n| 상태 | 전 | 후 |")
-    print("|---|--:|--:|")
-    for k in sorted(set(before["상태"]) | set(after["상태"])):
-        print(f"| {k} | {before['상태'].get(k, 0)} | {after['상태'].get(k, 0)} |")
+    for k in sorted(set(before["소스"]) | set(after["소스"])):
+        print(f"| {k} | {before['소스'].get(k, 0)} | {after['소스'].get(k, 0)} |")
+    print("\n| 층 | R | ○ | ◐ | ✗ | 소스 있음 | 미구현 |")
+    print("|---|--:|--:|--:|--:|--:|--:|")
+    for lay in sorted(after["층"], key=lambda k: -after["층"][k]):
+        c = after["층별상태"].get(lay, {})
+        print(f"| {lay} | {after['층'][lay]} | {c.get('○', 0)} "
+              f"| {c.get('◐', 0)} | {c.get('✗', 0)} "
+              f"| {c.get('소스:있음', 0)} | {c.get('소스:미구현', 0)} |")
     if write:
-        write_index(before, after)
-        got = lists()
-        for k, v in got.items():
-            print(f"\n★ {k} {len(v)}건")
-            for r in v[:SAMPLE]:
-                print(f"  {r[0]} {r[1]}")
+        write_index(after)
     return 0
 
 
-
-# ── 규격의 STEP 을 닻으로 삼는다 ─────────────────────────────────────
-# ★★ 코드 주석이 「STEP 91a」 처럼 규격 번호를 적어 둔다 (1,242곳).
-#   요구 문구를 규격에서 찾아 그 절의 STEP 을 알면, 그 번호를 인용한
-#   코드가 곧 그 요구를 하는 곳이다.  낱말만으로 고르는 것보다 훨씬 낫다
-def spec_lines() -> list:
-    """[(규격 파일, 줄 내용, 그 줄이 속한 STEP)]."""
-    import glob as _g
-
-    out = []
-    for path in sorted(_g.glob(os.path.join(ROOT, "docs", "chapters",
-                                            "**", "*.md"), recursive=True)):
-        rel = os.path.relpath(path, os.path.join(ROOT, "docs"))
-        cur = ""
-        for line in open(path, encoding="utf-8"):
-            got = re.match(r"#{1,4}\s+(STEP [\w.-]+)", line.strip())
-            if got:
-                cur = got.group(1)
-            out.append((rel, line.rstrip("\n"), cur))
-    return out
-
-
-def anchor_step(what: str, spec: str, slines: list) -> str:
-    """이 요구가 규격의 어느 STEP 절에 있는가.  ★ 없으면 빈 문자열."""
-    words = [w for w in tokens(what) if len(w) >= 2]
-    if not words:
-        return ""
-    best = (0, "")
-    for rel, line, step in slines:
-        if not step:
-            continue
-        share = sum(1 for w in words if w in line)
-        if share < 2:
-            continue
-        score = share * 2 + (3 if spec and spec in rel else 0)
-        if score > best[0]:
-            best = (score, step)
-    return best[1] if best[0] >= MIN_ANCHOR_SCORE else ""
-
-
-def source_by_step(step: str, texts: dict, by_line: dict) -> str:
-    """그 STEP 을 인용한 코드 자리.  ★ 주석이 근거를 적어 둔 덕이다."""
-    if not step:
-        return ""
-    needle = step.replace("STEP ", "STEP ")
-    best = (0, "", 0)
-    for rel, lines in texts.items():
-        if rel.startswith(NOT_IMPL):
-            continue
-        hits = [i for i, ln in enumerate(lines, 1) if needle in ln]
-        if not hits:
-            continue
-        # ★ 여러 곳이 같은 STEP 을 인용한다.  가장 많이 인용한 파일이 본체다
-        if len(hits) > best[0]:
-            best = (len(hits), rel, hits[0])
-    if not best[1]:
-        return ""
-    rel = best[1]
-    lines = texts[rel]
-    # ★ 첫 인용은 파일 첫머리 주석인 때가 많다.  함수 안에 있는 인용을 고른다 —
-    #   「export.py:4」는 「그 파일 어딘가」라는 말밖에 안 된다 (실측 08-19)
-    for i, ln in enumerate(lines, 1):
-        if needle not in ln:
-            continue
-        fn = enclosing(by_line, rel, i)
-        if fn:
-            return f"{rel}::{fn}"
-    return rel
+if __name__ == "__main__":
+    sys.exit(main())
 
 
 if __name__ == "__main__":
