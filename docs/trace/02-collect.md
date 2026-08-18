@@ -6,73 +6,73 @@
 
 # 목록 수집
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-100 | 차종별로 목록을 받는다 | `[마스터]` | `10-collect` | `collect/runner.py` | `/admin/run` | V1-01 |  |  | ○ |
-| R-101 | 엔카 `/search/` 가 서울 IP 에서 407 | `[원문]` 262 | `10-collect` | `adapters/kcar.py:6` | /search/ | S10 · S5 |  |  | ○ |
-| R-102 | **브라우저로 받는다** — 마스터 회선 | `[마스터]` 248 | `STEP 136c` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 |  |  | ○ |
-| R-103 | JS 가 바이트를 재서 나눠 보낸다 | `[마스터]` 263 | `STEP 136c` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 |  |  | ○ |
-| R-104 | **나눌 수 없는 원문은 조각으로** | `[마스터]` 307 | `STEP 136c` | `web/views.py::_take_chunk` | 화면 없음 | V11-98 |  |  | ◐ |
-| R-105 | 범위 — 차종별 · 전 차종 | `[마스터]` 264 | `STEP 136c` | `collect/runner.py::_trim_ladders` | 화면 없음 | V11-48·49 |  |  | ◐ |
-| R-106 | 간격 0 — 사용자 회선은 안 막힌다 | `[마스터]` 265 | `B-config` | `web/views.py::admin_collect` | `/admin/collect` | 검사 없음 |  |  | ◐ |
-| R-107 | **중단해도 이어서 받는다** | `[마스터]` | `STEP 52` | `collect/runner.py` | 화면 없음 | 검사 없음 | 08-17 실측 |  | ◐ |
-| R-108 | 기본은 전건 재요청 — `--resume` 만 건너뜀 | `[판단]` | `STEP 52` | `tools/migrate.py::main` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-109 | 사라진 매물을 지우지 않는다 | `[마스터]` | `11-store` | `store/watch.py:532` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-110 | 가격 변동을 남긴다 | `[마스터]` | `11-store` | `store/core.py::state_counts` | 목록 「변동」 | 검사 없음 |  | **D-100** | **!** |
+| R-100 | `[수집]` 차종별로 목록을 받는다 | `[마스터]` | `10-collect` | `collect/runner.py` | `/admin/run` | V1-01 |  |  | ○ |
+| R-101 | `[수집]` 엔카 `/search/` 가 서울 IP 에서 407 | `[원문]` 262 | `10-collect` | `adapters/kcar.py:6` | /search/ | S10 · S5 |  |  | ○ |
+| R-102 | `[수집]` **브라우저로 받는다** — 마스터 회선 | `[마스터]` 248 | `STEP 136c` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 |  |  | ○ |
+| R-103 | `[수집·화면]` JS 가 바이트를 재서 나눠 보낸다 | `[마스터]` 263 | `STEP 136c` | `web/templates/admin_collect.html` | `/admin/collect` | V11-47 |  |  | ○ |
+| R-104 | `[수집]` **나눌 수 없는 원문은 조각으로** | `[마스터]` 307 | `STEP 136c` | `web/views.py::_take_chunk` | — | V11-98 |  |  | ◐ |
+| R-105 | `[수집]` 범위 — 차종별 · 전 차종 | `[마스터]` 264 | `STEP 136c` | `collect/runner.py::_trim_ladders` | — | V11-48·49 |  |  | ◐ |
+| R-106 | `[수집]` 간격 0 — 사용자 회선은 안 막힌다 | `[마스터]` 265 | `B-config` | `web/views.py::admin_collect` | `/admin/collect` | 검사 없음 |  |  | ◐ |
+| R-107 | `[수집]` **중단해도 이어서 받는다** | `[마스터]` | `STEP 52` | `collect/runner.py` | — | 검사 없음 | 08-17 실측 |  | ◐ |
+| R-108 | `[수집]` 기본은 전건 재요청 — `--resume` 만 건너뜀 | `[판단]` | `STEP 52` | `tools/migrate.py::main` | — | 검사 없음 |  |  | ◐ |
+| R-109 | `[수집]` 사라진 매물을 지우지 않는다 | `[마스터]` | `11-store` | `store/watch.py:532` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-110 | `[수집]` 가격 변동을 남긴다 | `[마스터]` | `11-store` | `store/core.py::state_counts` | 목록 「변동」 | 검사 없음 |  | **D-100** | **!** |
 
 ---
 
 # 상세 수집
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-120 | 상세 4종을 받는다 | `[원문]` | `10-collect` | `validate/v1_collect.py:36` | `/admin/run` | V1-02 |  |  | ○ |
-| R-121 | `?include=` 를 붙이지 않는다 | `[원문]` | `E-attach` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-122 | **새 5종을 받는다** | `[원문]` 296 | `ENCAR_API` | `store/adminops.py::import_listings` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-123 | `record/summary` — 용도 · 전손 · 침수 | `[원문]` 296 | `ENCAR_API` | `parse/encar/mapping.py::parse_record_summary` | 화면 없음 | 검사 없음 |  |  | ◐ |
-| R-124 | `clean-encar` — 엔카 진단 | `[원문]` 296 | `ENCAR_API` | 미구현 | 화면 없음 | 검사 없음 |  | **D-101** | **!** |
-| R-125 | `ev-battery` — 배터리 SOH | `[원문]` 318 | `ENCAR_API` | 미구현 | 화면 없음 | 검사 없음 |  | **D-102** | **!** |
-| R-126 | **로그인 리포트** — 틴팅 · 키 · 타이어 | `[원문]` 296 | `ENCAR_API` | 미구현 | `/admin/collect` | 검사 없음 |  | **D-103** | **!** |
-| R-127 | 카탈로그 — 조합 전수 | `[마스터]` 327 | `10-collect` | `web/templates/admin_status.html` | `/admin/status` | V1-23·24 |  | **D-104** | **!** |
-| R-128 | 못 받은 사유를 기록 | `[마스터]` 327 | `10-collect` | `collect/runner.py::interpret_failure` | 화면 없음 | 검사 없음 |  |  | ◐ |
+| R-120 | `[수집]` 상세 4종을 받는다 | `[원문]` | `10-collect` | `validate/v1_collect.py:36` | `/admin/run` | V1-02 |  |  | ○ |
+| R-121 | `[수집]` `?include=` 를 붙이지 않는다 | `[원문]` | `E-attach` | 미구현 | — | 검사 없음 |  |  | ✗ |
+| R-122 | `[수집]` **새 5종을 받는다** | `[원문]` 296 | `ENCAR_API` | `store/adminops.py::import_listings` | — | 검사 없음 |  |  | ◐ |
+| R-123 | `[수집]` `record/summary` — 용도 · 전손 · 침수 | `[원문]` 296 | `ENCAR_API` | `parse/encar/mapping.py::parse_record_summary` | — | 검사 없음 |  |  | ◐ |
+| R-124 | `[수집]` `clean-encar` — 엔카 진단 | `[원문]` 296 | `ENCAR_API` | 미구현 | — | 검사 없음 |  | **D-101** | **!** |
+| R-125 | `[수집]` `ev-battery` — 배터리 SOH | `[원문]` 318 | `ENCAR_API` | 미구현 | — | 검사 없음 |  | **D-102** | **!** |
+| R-126 | `[수집]` **로그인 리포트** — 틴팅 · 키 · 타이어 | `[원문]` 296 | `ENCAR_API` | 미구현 | `/admin/collect` | 검사 없음 |  | **D-103** | **!** |
+| R-127 | `[수집]` 카탈로그 — 조합 전수 | `[마스터]` 327 | `10-collect` | `web/templates/admin_status.html` | `/admin/status` | V1-23·24 |  | **D-104** | **!** |
+| R-128 | `[수집]` 못 받은 사유를 기록 | `[마스터]` 327 | `10-collect` | `collect/runner.py::interpret_failure` | — | 검사 없음 |  |  | ◐ |
 
 ---
 
 # 자동화
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-140 | **저장하면 나머지가 이어서 돈다** | `[마스터]` 314 | `STEP 136g` | `web/views.py::admin_collect` | `/admin/status` | V10-26·27 |  |  | ○ |
-| R-141 | 매일 04:00 자동 | `[마스터]` 315 | `STEP 136h` | `tools/daily_enqueue.py:7` | 화면 없음 | V10-28 |  |  | ◐ |
-| R-142 | 목록이 오래되면 알린다 | `[마스터]` 316 | `STEP 136i` | 미구현 | 머리말 | V11-103 — 검사 없음(규격에만) |  |  | ✗ |
-| R-143 | **재수집·재파싱·재판정을 가른다** | `[마스터]` 317 | `STEP 136h` | `web/templates/admin_tools.html` | `/admin/tools` | V10-29·30 |  |  | ○ |
-| R-144 | 상세는 오래된 것만 다시 | `[판단]` 317 | `B-config` | `web/views.py::listings` | `/listings` | 검사 없음 |  |  | ◐ |
+| R-140 | `[저장]` **저장하면 나머지가 이어서 돈다** | `[마스터]` 314 | `STEP 136g` | `web/views.py::admin_collect` | `/admin/status` | V10-26·27 |  |  | ○ |
+| R-141 | `[운영]` 매일 04:00 자동 | `[마스터]` 315 | `STEP 136h` | `tools/daily_enqueue.py:7` | — | V10-28 |  |  | ◐ |
+| R-142 | `[운영]` 목록이 오래되면 알린다 | `[마스터]` 316 | `STEP 136i` | 미구현 | 머리말 | V11-103 — 검사 없음(규격에만) |  |  | ✗ |
+| R-143 | `[수집]` **재수집·재파싱·재판정을 가른다** | `[마스터]` 317 | `STEP 136h` | `web/templates/admin_tools.html` | `/admin/tools` | V10-29·30 |  |  | ○ |
+| R-144 | `[운영]` 상세는 오래된 것만 다시 | `[판단]` 317 | `B-config` | `web/views.py::listings` | `/listings` | 검사 없음 |  |  | ◐ |
 
 ---
 
 # 원문 보존
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-160 | 받은 그대로 둔다 (P3) | `[마스터]` | `01_raw.sql` | `web/templates/watch.html` | `/watch` | V1-05 |  |  | ○ |
-| R-161 | 밖에서 받은 것은 `run_id` 로 고른다 | `[마스터]` 268 | `10-collect` | `collect/runner.py::FailStreak` | 화면 없음 | V1-21 |  |  | ◐ |
-| R-162 | `origin` 4종 — collector·manual·import·browser | `[마스터]` 252 | `01_raw.sql` | `store/raw.py::save_import_raw` | 화면 없음 | V11-43 |  |  | ◐ |
-| R-163 | 목록 반입 — 밖에서 받은 것을 넣는다 | `[마스터]` 244 | `STEP 136a` | `collect/runner.py::s4` | `/admin/import` | S10 · S5 |  |  | ○ |
+| R-160 | `[수집]` 받은 그대로 둔다 (P3) | `[마스터]` | `01_raw.sql` | `web/templates/watch.html` | `/watch` | V1-05 |  |  | ○ |
+| R-161 | `[수집]` 밖에서 받은 것은 `run_id` 로 고른다 | `[마스터]` 268 | `10-collect` | `collect/runner.py::FailStreak` | — | V1-21 |  |  | ◐ |
+| R-162 | `[수집]` `origin` 4종 — collector·manual·import·browser | `[마스터]` 252 | `01_raw.sql` | `store/raw.py::save_import_raw` | — | V11-43 |  |  | ◐ |
+| R-163 | `[수집]` 목록 반입 — 밖에서 받은 것을 넣는다 | `[마스터]` 244 | `STEP 136a` | `collect/runner.py::s4` | `/admin/import` | S10 · S5 |  |  | ○ |
 
 ---
 
 # 다중 사이트
 
-| R | 요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
+| R | 층·요구사항 | 출처 · 근거 | 규격 | 소스 | 화면 | 검사 | 테스트 | 결함 | 상태 |
 |---|---|---|---|---|---|---|---|---|:--:|
-| R-180 | 어댑터로 사이트를 늘린다 | `[마스터]` | `50-multisite` | `adapters/base.py` | 해당 없음 | 검사 없음 |  |  | ◐ |
-| R-181 | **K카** — 서버에서 200 | `[원문]` | `KCAR_API` | 미구현 | 화면 없음 | 검사 없음 |  |  | ✗ |
-| R-182 | K카 XHR 6경로 | `[원문]` | `KCAR_API` | 미구현 | 화면 없음 | 검사 없음 |  | **D-120** | **!** |
-| R-183 | `source_id` 가 문자를 받는다 | `[원문]` 310 | `50-multisite` | `store/adminops.py:8` | 해당 없음 | V9-05 — 검사 없음(규격에만) |  |  | ◐ |
-| R-184 | **차대번호로 같은 차를 잇는다** | `[원문]` | `50-multisite` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
-| R-185 | 사이트마다 주는 것이 다르다 | `[판단]` 309 | `50-multisite` | `web/views.py::_watch_invite` | 해당 없음 | V9-01~03 — 검사 없음(규격에만) |  |  | ◐ |
-| R-186 | 화면에 출처를 낸다 | `[마스터]` 311 | `50-multisite` | `validate/v9_multisite.py:33` | 목록 사이트 열 | V9-06·07 |  |  | ○ |
-| R-187 | **K카 직영은 최고급** | `[마스터]` 312 | `50-multisite` | `adapters/kcar.py:5` | 해당 없음 | V9-08·09 — 검사 없음(규격에만) |  |  | ◐ |
+| R-180 | `[수집]` 어댑터로 사이트를 늘린다 | `[마스터]` | `50-multisite` | `adapters/base.py` | 해당 없음 | 검사 없음 |  |  | ◐ |
+| R-181 | `[수집]` **K카** — 서버에서 200 | `[원문]` | `KCAR_API` | 미구현 | — | 검사 없음 |  |  | ✗ |
+| R-182 | `[수집]` K카 XHR 6경로 | `[원문]` | `KCAR_API` | 미구현 | — | 검사 없음 |  | **D-120** | **!** |
+| R-183 | `[수집]` `source_id` 가 문자를 받는다 | `[원문]` 310 | `50-multisite` | `store/adminops.py:8` | 해당 없음 | V9-05 — 검사 없음(규격에만) |  |  | ◐ |
+| R-184 | `[저장]` **차대번호로 같은 차를 잇는다** | `[원문]` | `50-multisite` | 미구현 | 해당 없음 | 검사 없음 |  |  | ✗ |
+| R-185 | `[운영]` 사이트마다 주는 것이 다르다 | `[판단]` 309 | `50-multisite` | `web/views.py::_watch_invite` | 해당 없음 | V9-01~03 — 검사 없음(규격에만) |  |  | ◐ |
+| R-186 | `[화면]` 화면에 출처를 낸다 | `[마스터]` 311 | `50-multisite` | `validate/v9_multisite.py:33` | 목록 사이트 열 | V9-06·07 |  |  | ○ |
+| R-187 | `[운영]` **K카 직영은 최고급** | `[마스터]` 312 | `50-multisite` | `adapters/kcar.py:5` | 해당 없음 | V9-08·09 — 검사 없음(규격에만) |  |  | ◐ |
 
 ---
 
