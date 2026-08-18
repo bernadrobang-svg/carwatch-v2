@@ -1250,10 +1250,14 @@ def run(conn, ctx) -> list:
     out.append(result(C["V3-20"], rid, 0, n, n == 0))
     out.append(result(C["V3-21"], rid, 0, n, n == 0))
 
-    # 경고가 있어도 매물이 목록에서 빠지지 않는다
+    # 경고가 있어도 매물이 목록에서 빠지지 않는다.
+    # ★ 「경고 때문에 빠졌나」를 본다.  「빠진 것 중에 경고가 있나」가 아니다 —
+    #   차종이 우리 대상이 아니라 빠진 매물에 경고가 붙어 있을 수 있다.
+    #   실측 08-19 — target_key 가 없는 두 건이 그래서 걸렸다 (거짓 경보)
     warned = conn.execute(
         "SELECT COUNT(*) FROM listing_warning w JOIN core_listing l "
-        "ON l.listing_id = w.listing_id WHERE l.status='out_of_scope'").fetchone()[0]
+        "ON l.listing_id = w.listing_id WHERE l.status='out_of_scope' "
+        "AND l.target_key IS NOT NULL").fetchone()[0]
     out.append(result(C["V3-22"], rid, 0, warned, warned == 0))
 
     n = conn.execute(

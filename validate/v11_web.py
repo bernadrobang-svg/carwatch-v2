@@ -378,6 +378,11 @@ C = {
                     "「받은 9종 중 5종만 나옵니다 — 4종이 묻혀 있습니다」 "
                     "(개정 378)",
                     KIND_CODE),
+    "V11-102": Check("V11", "V11-102", "비교가 옵션 차이만 냄", FATAL, "run",
+                    "「옵션 차이만 낸다.  같은 것은 접는다」. "
+                    "같은 트림이면 옵션이 값을 가른다 — 이것이 비교 화면의 "
+                    "핵심이다 (61-web 「비교」)",
+                    KIND_CODE),
     "V11-132": Check("V11", "V11-132", "상세에 큰 사진과 썸네일이 있음",
                     FATAL, "run",
                     "마스터 지적 — 「상세는 최대한 모든 정보가 들어가야 한다고 "
@@ -985,6 +990,8 @@ def _screen_checks(conn, rid) -> list:
     out.append(_detail_photo_check(conn, rid))
     # 받은 원문 (개정 378)
     out.extend(_raw_shown_checks(conn, rid))
+    # 비교는 차이만 (61-web)
+    out.append(_compare_diff_check(conn, rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -2231,6 +2238,21 @@ def _csrf_reuse_check(rid):
     app = open(os.path.join(ROOT, "web", "app.py"), encoding="utf-8").read()
     if "csrf_for(" not in app:
         bad.append("토큰을 세션에서 만들지 않는다")
+    # ★ 갱신이 필요하면 응답에 새 토큰을 실어 보낸다 (개정 307 · AD-096).
+    #   ★ 실제로 실리는지 부른다.  「코드에 있다」로 통과시키지 않는다
+    from web.app import CSRF_HEADER, redirect
+
+    _st, head, _b = redirect("/admin/collect", "", "-", csrf="probe-token")
+    if head.get(CSRF_HEADER) != "probe-token":
+        bad.append("응답에 새 토큰을 실어 보내지 않는다")
+    _st, head2, _b = redirect("/admin/collect", "", "-")
+    if CSRF_HEADER in head2:
+        bad.append("★ 안 넘겼는데 토큰이 실린다 — 새 나간다")
+    tpl = os.path.join(TEMPLATES, "admin_collect.html")
+    if os.path.isfile(tpl):
+        body = open(tpl, encoding="utf-8").read()
+        if "X-CSRF-Token" not in body:
+            bad.append("화면이 새 토큰을 갈아 끼우지 않는다")
     return result(C["V11-99"], rid, "5번 다 통과",
                   "통과" if not bad else bad, not bad, bad)
 
@@ -2889,6 +2911,70 @@ def _raw_shown_checks(conn, rid):
         not buried,
         [f"{len(buried)}종이 묻혀 있다 — {' · '.join(buried[:5])}"]
         if buried else [])]
+
+
+def _compare_diff_check(conn, rid):
+    """V11-102 — 비교가 차이만 내는가 (61-web 「비교 (/compare)」).
+
+    ★ 「옵션 차이만 낸다.  같은 것은 접는다」
+      같은 트림이면 옵션이 값을 가른다 — 이것이 비교 화면의 핵심이다
+    """
+    from contracts import ROLE_ADMIN, Account
+    from errors import CarWatchError
+    from store.core import option_diff
+    from web.routes import GET, ROUTES
+    from web.views import HANDLERS
+
+    route = {r.path: r for r in ROUTES}.get("/compare")
+    if route is None:
+        return result(C["V11-102"], rid, "낸다", "없다", False, ["/compare 없음"])
+    # ★ 옵션이 실제로 다른 두 매물을 고른다.  같은 것끼리 보면 늘 통과한다
+    import json as _j
+
+    seen: dict = {}
+    for lid, raw in conn.execute(
+        "SELECT s.listing_id, l.options_choice_json FROM result_score s"
+        " JOIN core_listing l ON l.listing_id = s.listing_id"
+        " WHERE l.options_choice_json NOT IN ('', '[]')"
+        "   AND l.options_choice_json IS NOT NULL LIMIT 200"
+    ):
+        try:
+            key = tuple(sorted(_j.loads(raw)))
+        except (ValueError, TypeError):
+            continue
+        seen.setdefault(key, lid)
+        if len(seen) >= 2:
+            break
+    ids = list(seen.values())[:2]
+    if len(ids) < 2:
+        return not_applicable(C["V11-102"], rid,
+                              "옵션이 다른 매물 짝이 없다")
+    probe = _probe(conn)
+    try:
+        _st, _h, body = HANDLERS[route.view](
+            probe, Account(1, ROLE_ADMIN, "마스터"),
+            {"query": {"ids": ",".join(str(i) for i in ids)}, "form": {},
+             "method": GET}, path_vars={}, csrf="t")
+    except (CarWatchError, KeyError, ValueError) as e:
+        return result(C["V11-102"], rid, "낸다", f"{type(e).__name__}",
+                      False, [str(e)[:70]])
+    html = re.sub(r"<!--.*?-->", " ", body.decode("utf-8", "replace"),
+                  flags=re.S)
+    got = option_diff(conn, ids)
+    bad = []
+    if "옵션 차이" not in html:
+        bad.append("비교에 「옵션 차이」 절이 없다")
+    for _lid, items in got["only"].items():
+        for one in items:
+            if one["name"] not in html:
+                bad.append(f"「{one['name']}」 를 한쪽에만 있는데 안 낸다")
+                break
+    # ★ 같은 것은 접혀야 한다 — 펼쳐 두면 「차이만」이 아니다
+    if got["same"] and "<details" not in html:
+        bad.append("같은 옵션을 접지 않는다")
+    return result(C["V11-102"], rid, "차이만",
+                  f"다른 것 {sum(len(v) for v in got['only'].values())} · "
+                  f"같은 것 {len(got['same'])}", not bad, bad[:4])
 
 
 def _cell_squeeze_check(rid):

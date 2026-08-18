@@ -140,6 +140,14 @@
   // ★ 폼에는 원문 말고도 사유·URL·경계가 함께 간다.  그만큼 뺀 자리에서 잰다
   var ROOM = Math.floor(CAP * 0.8);
   var CSRF = document.querySelector('input[name=csrf]').value;
+
+  /* ★ 응답에 새 토큰이 실려 오면 갈아 끼운다 (개정 307 · AD-096).
+     한 화면에서 수십 번 POST 한다 — 토큰이 만료되면 통째로 막힌다 */
+  function takeToken(res) {
+    var got = res && res.headers && res.headers.get('X-CSRF-Token');
+    if (got) { CSRF = got; }
+    return res;
+  }
   var stopped = false;
   var probed = null;
 
@@ -258,6 +266,7 @@
         }
         return fetch('/admin/collect', {method: 'POST', body: form,
                                         credentials: 'same-origin'})
+          .then(takeToken)
           .then(function (res) {
             if (!res.ok && res.status !== 303) {
               throw new Error('조각 ' + (i + 1) + '/' + parts.length +
@@ -294,6 +303,7 @@
     }
     return fetch('/admin/collect', {method: 'POST', body: form,
                                     credentials: 'same-origin'})
+      .then(takeToken)
       .then(function (res) {
         if (!res.ok && res.status !== 303) {
           throw new Error('저장 ' + res.status + ' (' + got.size + '바이트)');

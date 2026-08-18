@@ -308,6 +308,10 @@ class CompareView:
     version_mismatch: bool  # 버전이 다르면 비교 불가
     # ★ 「이 셋 중에서」 — 축별로 누가 앞서는지를 낸다
     axis_winner: dict = field(default_factory=dict)
+    # ★ 옵션 차이만 낸다.  같은 것은 접는다 (61-web 「비교」).
+    #   같은 트림이면 옵션이 값을 가른다 — 이것이 비교 화면의 핵심이다
+    option_same: tuple = ()
+    option_only: tuple = ()
 
 
 @dataclass(frozen=True)

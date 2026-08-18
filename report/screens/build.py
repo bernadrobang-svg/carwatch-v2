@@ -1110,8 +1110,18 @@ def view_compare(account: Account, conn, listing_ids: list[int],
             if top is None or cell.points > top:
                 best, top = v.listing_id, cell.points
         winner[axis] = best
+    # ★ 옵션 차이만 낸다.  같은 것은 접는다 (61-web 「비교」)
+    from store.core import option_diff
+
+    diff = option_diff(conn, list(listing_ids))
+    by_id = {r.listing_id: r for r in rows}
+    only = tuple({"listing_id": lid,
+                  "label": (by_id[lid].trim if lid in by_id else str(lid)),
+                  "items": got}
+                 for lid, got in sorted(diff["only"].items()) if got)
     return CompareView(rows, axes, cells, len(denoms) > 1, len(vers) > 1,
-                       axis_winner=winner)
+                       axis_winner=winner,
+                       option_same=tuple(diff["same"]), option_only=only)
 
 
 def market_trims(conn, target_key: str, root: str = ".",

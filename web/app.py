@@ -233,19 +233,31 @@ def check_post(req: dict, expected_csrf: str | None) -> None:
             step="STEP 147")
 
 
+# 응답에 새 토큰을 실을 헤더 이름 (개정 307 · AD-096)
+CSRF_HEADER = "X-CSRF-Token"
+
 # 다음 GET 에서 낼 알림.  ★ HTTP 헤더에 담지 않는다 — 한글이 안 들어간다
 _FLASH: dict[str, list] = {}
 
 
-def redirect(path: str, flash: str = "", key: str = "-") -> tuple:
+def redirect(path: str, flash: str = "", key: str = "-",
+             csrf: str = "") -> tuple:
     """★ POST → 처리 → 303 → GET.  새로고침이 같은 변경을 두 번 하지 않는다.
 
     flash 는 서버가 들고 있다가 다음 GET 에서 낸다.
     헤더에 넣으면 latin-1 로 인코딩돼 한글에서 서버가 죽는다 (실측)
+
+    csrf   ★ 갱신이 필요하면 응답에 새 토큰을 실어 보낸다 (개정 307 · AD-096).
+           JS 가 그것으로 갈아 끼운다 — 한 화면에서 수십 번 POST 하는
+           브라우저 수집이 토큰 만료로 통째로 막히지 않게 한다.
+           ★ 토큰은 ASCII 다.  헤더에 넣어도 한글 문제가 없다
     """
     if flash:
         _FLASH.setdefault(key, []).append(flash)
-    return HTTP_SEE_OTHER, {"Location": path}, b""
+    head = {"Location": path}
+    if csrf:
+        head[CSRF_HEADER] = csrf
+    return HTTP_SEE_OTHER, head, b""
 
 
 def take_flashes(key: str = "-") -> list:

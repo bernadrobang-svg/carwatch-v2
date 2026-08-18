@@ -1185,3 +1185,57 @@ def _flatten(node, cap: int, prefix: str = "") -> list:
     elif node not in (None, "", {}, []):
         out.append({"key": prefix, "value": str(node)[:80]})
     return out[:cap]
+
+
+def option_diff(conn: sqlite3.Connection, listing_ids: list,
+                dicts=None) -> dict:
+    """비교 — 옵션 차이만 (61-web 「비교 (/compare)」).
+
+    ★ 「옵션 차이만 낸다.  같은 것은 접는다」
+      「A 에만 있음: 파노라마 선루프 140만 · 드라이빙 어시스트 150만」
+    ★ 이것이 비교 화면의 핵심이다.  같은 트림이면 옵션이 값을 가른다
+    돌려줌   {"same": [이름…], "only": {매물: [{code,name,won}…]}}
+    """
+    import json as _j
+
+    del dicts
+    picked: dict = {}
+    for lid in listing_ids:
+        row = conn.execute(
+            "SELECT options_choice_json FROM core_listing WHERE listing_id=?",
+            (lid,)).fetchone()
+        try:
+            codes = _j.loads(row[0]) if row and row[0] else []
+        except (ValueError, TypeError):
+            codes = []
+        picked[lid] = [str(c) for c in codes] if isinstance(codes, list) else []
+    names, prices = _option_names(conn)
+    every = [set(v) for v in picked.values()]
+    same = sorted(set.intersection(*every)) if every else []
+    only = {}
+    for lid, codes in picked.items():
+        rest = set()
+        for other, o_codes in picked.items():
+            if other != lid:
+                rest |= set(o_codes)
+        mine = sorted(set(codes) - rest)
+        only[lid] = [{"code": c, "name": names.get(c, c),
+                      "won": prices.get(c)} for c in mine]
+    return {"same": [{"code": c, "name": names.get(c, c)} for c in same],
+            "only": only}
+
+
+def _option_names(conn: sqlite3.Connection) -> tuple:
+    """옵션 코드 → 이름 · 값.  ★ 없으면 코드를 그대로 쓴다 (추정하지 않는다)."""
+    names, prices = {}, {}
+    for code, display in conn.execute(
+            "SELECT value, display FROM dict_enum WHERE axis='option3'"):
+        if display:
+            names[str(code)] = display
+    try:
+        for code, won in conn.execute(
+                "SELECT option_code, price_won FROM dict_option_price"):
+            prices[str(code)] = won
+    except sqlite3.OperationalError:
+        pass
+    return names, prices

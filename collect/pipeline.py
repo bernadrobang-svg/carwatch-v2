@@ -426,7 +426,20 @@ def run_pipeline(conn: sqlite3.Connection, ctx, executors: dict,
     done = set(done or ())
     out: list[StepReport] = []
     for step in steps:
-        rep = run_step(conn, ctx, step, done, executors, progress)
+        try:
+            rep = run_step(conn, ctx, step, done, executors, progress)
+        except (KeyboardInterrupt, SystemExit) as stop:
+            # ★★ 중단은 리포트를 내는 것이지 죽는 것이 아니다 (STEP 48).
+            #   밖에서 끊겨도 「어디까지 갔는지」가 남아야 한다 —
+            #   실측 08-19 — 내가 프로세스를 죽였더니 요청 5,000건은 남고
+            #   단계 리포트가 하나도 안 남아 V1-11 이 걸렸다.
+            #   그때 「무엇이 돌다 끊겼나」를 아무도 몰랐다
+            rep = step_report(step, None, 0, {}, 0, 0.0)
+            rep.halted = True
+            rep.halt_reason = f"밖에서 끊겼다 ({type(stop).__name__})"
+            save_step_report(conn, ctx.run_id, rep)
+            out.append(rep)
+            raise
         out.append(rep)
         if rep.halted:
             break

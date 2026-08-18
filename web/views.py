@@ -1291,7 +1291,8 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
         if chunked:
             done, body = _take_chunk(form)
             if not done:
-                return redirect("/admin/collect", body, flash_key)
+                # ★ 조각마다 새 토큰을 실어 보낸다 — 수십 번 POST 한다
+                return redirect("/admin/collect", body, flash_key, csrf=csrf)
         if not body.strip():
             raise ValidationError(
                 "받은 원문이 비어 있습니다 — 먼저 「조회」를 눌러 확인하십시오",
@@ -1318,7 +1319,8 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
         return redirect(
             "/admin/collect",
             f"{kind} 원문을 저장했습니다 — raw_id {got.raw_id} · "
-            f"{got.opened} 를 열었습니다 (origin=browser){queued}", flash_key)
+            f"{got.opened} 를 열었습니다 (origin=browser){queued}", flash_key,
+            csrf=csrf)
 
     ctx = collect_state(conn, collect_urls, root=root)
     return page(conn, account, "브라우저 수집", "admin_collect.html", ctx,
