@@ -127,7 +127,7 @@
 | OP-058 | `[운영]` | ② 일일 점검 — 숫자 요약 | `[마스터]` | `00-standard` | `tools/daily_check.py:2` | 해당 없음 | 검사 없음 | ◐ |
 | OP-059 | `[운영]` | ② 일일 점검 — 어제와 견준다 | `[마스터]` | `00-standard` | `tools/daily_check.py:6` | 해당 없음 | 검사 없음 | ◐ |
 | OP-060 | `[운영]` | ② 일일 점검 — 미해결 목록 | `[마스터]` | `00-standard` | `tools/daily_check.py:8` | — | 검사 없음 | ◐ |
-| OP-061 | `[운영]` | `outputs/daily/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 | ✗ |
+| OP-061 | `[운영]` | `outputs/daily/` 에 | `[마스터]` | `00-standard` | `tools/daily_check.py::main` | 해당 없음 | 검사 없음 | ✗ |
 | OP-062 | `[운영]` | `/admin/status` 에 시각 | `[마스터]` | `00-standard` | `tools/check_src.py` | `/admin` | 검사 없음 | ◐ |
 
 ## ③ 주간 일제 점검
@@ -137,7 +137,7 @@
 | OP-063 | `[운영]` | 규격끼리 충돌하는 곳을 목록으로 | `[마스터]` **오늘 7장에서 하나 찾았다** | `00-standard` | `tools/sync_registry.py::facet_path` | — | 검사 없음 | ◐ |
 | OP-064 | `[검사]` | 참조하는 STEP·검사 번호가 실재하는가 | `[마스터]` | `00-standard` | `tools/check_spec.py:416` | `/admin/users` | S28 | ○ |
 | OP-065 | `[사전]` | 「미확정」 목록 — 몇 주째인지 | `[마스터]` **두 주 넘으면 그것도 결함** | `00-standard` | 미구현 | — | 검사 없음 | ◐ |
-| OP-066 | `[운영]` | `outputs/weekly/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 | ✗ |
+| OP-066 | `[운영]` | `outputs/weekly/` 에 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 | ✗ |
 | OP-067 | `[운영]` | 전 화면 스크린샷 대조 | `[마스터]` | `00-standard` | `tools/weekly_check.py::main` | — | 검사 없음 | ◐ |
 | OP-068 | `[판정]` | 배점 대조 — 축 수 · 합 · 경계 | `[마스터]` | `00-standard` | `score/grade.py::cutoffs` | 해당 없음 | 검사 없음 | ◐ |
 | OP-069 | `[운영]` | ③ 주간 일제 점검 — v1 대조 결과 확인 | `[마스터]` | `00-standard` | `tools/weekly_check.py:2` | `/admin/dict` | 검사 없음 | ◐ |
@@ -184,7 +184,7 @@
 | OP-095 | `[화면]` | 보는 것 — 규격 · 렌더 · 스크린샷 · DB | `[마스터]` | `00-standard` | `web/views.py::page` | 해당 없음 | 검사 없음 | ◐ |
 | OP-096 | `[운영]` | **고치지 않는다. 적기만 한다** | `[마스터]` | `00-standard` | `tools/check_src.py` | 해당 없음 | 검사 없음 | ◐ |
 | OP-097 | `[운영]` | **「고치는 법」을 제안하지 않는다** | `[마스터]` **제안하면 원인을 안 찾는다** | `00-standard` | `tools/check_src.py` | 해당 없음 | 검사 없음 | ◐ |
-| OP-098 | `[운영]` | `outputs/test/` 에 | `[마스터]` | `00-standard` | 미구현 | 해당 없음 | 검사 없음 | ✗ |
+| OP-098 | `[운영]` | `outputs/test/` 에 | `[마스터]` | `00-standard` | `outputs/test/README.md` | 해당 없음 | 검사 없음 | ✗ |
 | OP-099 | `[운영]` | 별도 세션 — `tmux new -s tester` | `[마스터]` | `00-standard` | `web/views.py:395` | 해당 없음 | S31-1 · S31-2 | ○ |
 
 ## S32 출처 표시 (12건 · 개정 34

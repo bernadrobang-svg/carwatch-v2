@@ -387,6 +387,22 @@ def _place(rel: str, at: int, by_line: dict, texts: dict) -> str:
     return f"{rel}::{fn}" if fn else f"{rel}:{at}"
 
 
+def _hints() -> dict:
+    """사람이 짚어 준 소스 자리 (config/trace_hints.json).
+
+    ★ 낱말이 안 겹쳐 기계가 못 잇는 요구가 있다.  「만들면 그 자리에서
+      표를 고친다」를 지키려면 만든 사람이 짚어 주는 길이 있어야 한다
+    ★ 표는 여전히 이 도구가 만든다 — 표를 손으로 고치지 않는다
+    ★ 여기 적힌 것은 「확인했다」는 뜻이다.  확인 안 한 것은 적지 않는다
+    """
+    import json as _j
+
+    path = os.path.join(ROOT, "config", "trace_hints.json")
+    if not os.path.isfile(path):
+        return {}
+    return _j.load(open(path, encoding="utf-8")).get("hints") or {}
+
+
 def find_in_layer(what: str, cell: str, texts: dict, by_line: dict,
                   by_name: dict, slines: list, spec: str = "") -> str:
     """그 층 안에서 소스를 찾는다.
@@ -489,7 +505,8 @@ def fill_file(path: str, ctxs: dict, write: bool,
             out.append(line)
             continue
         stat["봄"] += 1
-        got = find_in_layer(cells[I_WHAT], cells[I_LAYER], ctxs["texts"],
+        got = ctxs["hints"].get(cells[I_R], "")
+        got = got or find_in_layer(cells[I_WHAT], cells[I_LAYER], ctxs["texts"],
                             ctxs["by_line"], ctxs["by_name"], ctxs["slines"],
                             cells[I_SPEC].strip(" `"))
         if got:
@@ -599,6 +616,7 @@ def main() -> int:
     ctxs["by_line"], ctxs["by_name"] = build_symbols()
     ctxs["texts"] = build_texts()
     ctxs["slines"] = spec_lines()
+    ctxs["hints"] = _hints()
     total = {"봄": 0, "찾음": 0, "못 찾음": 0}
     for name in sorted(os.listdir(TRACE)):
         if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):

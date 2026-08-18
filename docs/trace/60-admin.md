@@ -179,7 +179,7 @@
 | AD-104 | `[저장]` | 진행을 `/admin/status` 에 | `[마스터]` | `60-admin` | 미구현 | /admin/status | 검사 없음 | ◐ |
 | AD-105 | `[운영]` | 실패해도 다음 단계로 가지 않는다 | `[마스터]` | `60-admin` | `web/views.py::_query_string` | — | V10-27 | ◐ |
 | AD-106 | `[수집]` | 「전체 재수집」은 사람이 명시할 때만 | `[마스터]` 개정 317 | `60-admin` | `adapters/encar.py:9` | — | V10-29 · V10-30 | ◐ |
-| AD-107 | `[운영]` | `detail_refresh_days` | `[마스터]` | `60-admin` | 미구현 | — | 검사 없음 | ✗ |
+| AD-107 | `[운영]` | `detail_refresh_days` | `[마스터]` | `60-admin` | `config/endpoints.json::encar.detail_refresh_days` | — | 검사 없음 | ✗ |
 | AD-108 | `[운영]` | 가격이 바뀐 매물은 기준일과 무관하게 | `[마스터]` | `60-admin` | `tools/check_src.py:666` | `/watch` | V10-29 · V10-30 | ○ |
 | AD-109 | `[운영]` | 하루 한 번 정해진 시각 | `[마스터]` 개정 315 | `60-admin` | `tools/light_check.py:14` | — | V10-28 | ◐ |
 | AD-110 | `[운영]` | 서버에서 부를 수 있는 것만 | `[마스터]` | `60-admin` | `tools/daily_enqueue.py:6` | `/admin/collect` | V10-28 | ○ |

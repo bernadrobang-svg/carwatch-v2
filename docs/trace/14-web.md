@@ -19,7 +19,7 @@
 | WB-004 | `[화면]` | 어느 폭에서도 글자가 세로로 안 떨어진다 | `[마스터]` 337 | `61-web/f-width` | `web/templates/recommend.html` | `/recommend` | V11-115 | **!** |
 | WB-005 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — 넓으면 더 보여 준다 | `[마스터]` 278 | `61-web/a-common` | `web/server.py:44` | 화면 없음 | 검사 없음 | ✗ |
 | WB-006 | `[판정·화면]` | **사진 크기** — 목록 80 · 추천 64 · 상세 480 | `[마스터]` 332 | `61-web/a-common` | `report/screens/build.py::recommend_reason` | 화면 없음 | V11-107 | **!** |
-| WB-007 | `[화면]` | 사진 최소 128px — 좁아도 안 줄인다 | `[마스터]` 281 | `61-web/a-common` | 미구현 | 화면 없음 | V11-80 | ◐ |
+| WB-007 | `[화면]` | 사진 최소 128px — 좁아도 안 줄인다 | `[마스터]` 281 | `61-web/a-common` | `web/static/app.css` | 화면 없음 | V11-80 | ◐ |
 | WB-008 | `[화면]` | 한 화면에 매물 2개 이상 | `[마스터]` 332 | `61-web/a-common` | `web/views.py::listings` | `/listings` | V11-108 | ○ |
 | WB-009 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — JS 없이 돈다 | `[기술]` 248 | `61-web` | `web/views.py::_unclassified_split` | 화면 없음 | 검사 없음 | ◐ |
 | WB-010 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — 색 12 · 글꼴 2 | `[기술]` | `61-web` | 미구현 | 화면 없음 | 검사 없음 | ✗ |
@@ -56,8 +56,8 @@
 | WB-031 | `[화면]` | 기본 정렬 · 「A 이상만」 | `[마스터]` 276 | `STEP 149s` | `web/views.py::listings` | `/listings` | V11-65 | ○ |
 | WB-032 | `[화면]` | 전체 건수 · 쪽 넘김 | `[마스터]` 332 | `61-web/b-list` | `web/views.py::_points` | 화면 없음 | V11-55 | ◐ |
 | WB-033 | `[수집]` | 목록 /listings — 사이트 배지 | `[마스터]` 311 | `50-multisite` | `collect/pipeline.py::expected_for` | 21열 | V9-06 | ○ |
-| WB-034 | `[저장]` | **행 어디를 눌러도 상세로** | `[마스터]` 338 | `61-web/f-width` | 미구현 | `/watch` | V11-116 | **!** |
-| WB-035 | `[화면]` | **손대면 미리보기 (터치)** | `[마스터]` 338 | `61-web/f-width` | 미구현 | 화면 없음 | V11-117 | **!** |
+| WB-034 | `[저장]` | **행 어디를 눌러도 상세로** | `[마스터]` 338 | `61-web/f-width` | `web/templates/listings.html` | `/watch` | V11-116 | **!** |
+| WB-035 | `[화면]` | **손대면 미리보기 (터치)** | `[마스터]` 338 | `61-web/f-width` | `web/templates/listings.html` | 화면 없음 | V11-117 | **!** |
 | WB-036 | `[판정·화면]` | 계산식을 목록에 안 낸다 | `[마스터]` 332 | `61-web/e-compare` | `web/templates/listings.html` | `/listings` | 검사 없음 | **!** |
 | WB-037 | `[화면]` | 목록 /listings — 「—」 를 안 쓴다 | `[마스터]` 332 | `61-web/e-compare` | `web/views.py::listings` | 화면 없음 | V11-106 | **!** |
 
@@ -91,7 +91,7 @@
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
 | WB-053 | `[화면]` | 차트 — 가격 분포 히스토그램 | `[시안]` 275 | `61-web/g-chart` | `web/context.py::PageContext` | `/market` | V11-77 | ○ |
-| WB-054 | `[판정·화면]` | 차트 — **감가 곡선** | `[마스터]` 340 | `61-web/g-chart` | 미구현 | `/market` | V11-119 | **!** |
+| WB-054 | `[판정·화면]` | 차트 — **감가 곡선** | `[마스터]` 340 | `61-web/g-chart` | `report/render.py::_curve_points` | `/market` | V11-119 | **!** |
 | WB-055 | `[판정·화면]` | 차트 — **등급 분포 · 차종별** | `[마스터]` 340 | `61-web/g-chart` | `web/templates/dashboard.html` | `/` | V11-119 | **!** |
 | WB-056 | `[화면]` | 차트 — 딜러 4분면 | `[시안]` 275 | `61-web/g-chart` | `web/templates/dealers.html` | `/dealers` | V11-77 | ○ |
 | WB-057 | `[화면]` | 차트 — 가격 추이 선 | `[시안]` 275 | `61-web/g-chart` | `web/templates/watch.html` | `/watch` | V11-77 | ○ |

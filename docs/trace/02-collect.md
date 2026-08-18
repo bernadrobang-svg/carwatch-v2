@@ -63,9 +63,9 @@
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
 | CO-030 | `[수집]` | 어댑터로 사이트를 늘린다 | `[마스터]` | `50-multisite` | `adapters/base.py` | 해당 없음 | 검사 없음 | ◐ |
-| CO-031 | `[수집]` | **K카** — 서버에서 200 | `[원문]` | `KCAR_API` | 미구현 | — | 검사 없음 | ✗ |
+| CO-031 | `[수집]` | **K카** — 서버에서 200 | `[원문]` | `KCAR_API` | `adapters/kcar.py::KcarAdapter` | — | 검사 없음 | ✗ |
 | CO-032 | `[수집]` | 다중 사이트 — K카 XHR 6경로 | `[원문]` | `KCAR_API` | `adapters/kcar.py:4` | — | 검사 없음 | **!** |
-| CO-033 | `[수집]` | `source_id` 가 문자를 받는다 | `[원문]` 310 | `50-multisite` | 미구현 | 해당 없음 | V9-05 — 검사 없음(규격에만) | ◐ |
+| CO-033 | `[수집]` | `source_id` 가 문자를 받는다 | `[원문]` 310 | `50-multisite` | `adapters/kcar.py::KcarAdapter` | 해당 없음 | V9-05 — 검사 없음(규격에만) | ◐ |
 | CO-034 | `[저장]` | **차대번호로 같은 차를 잇는다** | `[원문]` | `50-multisite` | `store/core.py::build_identities` | 해당 없음 | 검사 없음 | ✗ |
 | CO-035 | `[운영]` | 사이트마다 주는 것이 다르다 | `[판단]` 309 | `50-multisite` | `web/views.py::_watch_invite` | 해당 없음 | V9-01~03 — 검사 없음(규격에만) | ◐ |
 | CO-036 | `[화면]` | 다중 사이트 — 화면에 출처를 낸다 | `[마스터]` 311 | `50-multisite` | `config/labels.json::AXIS_LABELS.warranty.site` | 목록 사이트 열 | V9-06·07 | ○ |
