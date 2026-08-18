@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 132개 · 총 42,883줄
+파일 132개 · 총 43,023줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -10,7 +10,7 @@
 | `web/views.py` | 1,929 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,675 | 화면 데이터 생성. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `collect/runner.py` | 1,325 | 수집 실행 규칙. |
+| `collect/runner.py` | 1,349 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `validate/v3_logic.py` | 1,184 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tools/verify_axes.py` | 1,051 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
@@ -23,6 +23,7 @@
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
 | `collect/pipeline.py` | 689 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `validate/v1_collect.py` | 670 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
+| `validate/v10_admin.py` | 664 | V10 관리자 검증. |
 | `validate/v4_mapping.py` | 628 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `parse/encar/mapping.py` | 621 | 엔카 원문 → CORE 필드 (L3). |
 | `report/render.py` | 621 | 리포트 생성 (L9). |
@@ -30,7 +31,6 @@
 | `store/watch.py` | 612 | 후보 추적 (11장). |
 | `tests/test_admin_flow.py` | 566 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
-| `validate/v10_admin.py` | 548 | V10 관리자 검증. |
 | `tests/test_admin.py` | 537 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tests/test_web.py` | 497 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `contracts.py` | 450 | 계층 간 계약 — Protocol · DTO. |
@@ -165,10 +165,10 @@ site_badge:61  axis_heads:81  _labels:89  viewer_state:94  chip:104  _stamp:133 
 rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:272  spec_g:298  spec_h:346  spec_j:379  spec_m:422  spec_e:490  spec_i:533  spec_k:646  spec_csrf:701  spec_l:728  spec_monkey:767  flow_s1:839  flow_s2:901  flow_s5:984  flow_s3:1097  flow_s4:1172  flow_s6:1243  guide_v132:1299  main:1391  _write:1435
 ```
 
-### `collect/runner.py` — 1,325줄
+### `collect/runner.py` — 1,349줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_names:153  check_facet_axes:157  interpret_failure:171  collect_check:200  FailStreak:267  _sleep:301  _log_request:307  _save_issues:318  make_executors:329  _group_of:836  _fuel_of:851  _badge_of:857  _pages_for:863  _dicts:877  _market_medians:913  _trim_ladders:942  _option_base:959  _site_grade_rules:989  _listing_config:1002  _listing_values:1027  _option_money:1046  _owned_months:1065  _market_of:1077  make_score_executors:1087  make_validate_executor:1254  make_registry_executor:1296
+CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:132  aspect_names:153  check_facet_axes:157  interpret_failure:171  collect_check:200  FailStreak:267  _sleep:301  _log_request:307  _save_issues:318  make_executors:329  _group_of:860  _fuel_of:875  _badge_of:881  _pages_for:887  _dicts:901  _market_medians:937  _trim_ladders:966  _option_base:983  _site_grade_rules:1013  _listing_config:1026  _listing_values:1051  _option_money:1070  _owned_months:1089  _market_of:1101  make_score_executors:1111  make_validate_executor:1278  make_registry_executor:1320
 ```
 
 ### `tests/test_integration.py` — 1,218줄
@@ -243,6 +243,12 @@ envelope_scope:41  Reprocess:91  reprocess_plan:110  should_refetch:127  expecte
 run:141  _endpoint_order_check:274  _empty_db_check:286  _run_scope_check:313  _ctx_started:338  _has_run_id:346  _expected_scope_check:351  _diagnosis_scope_check:372  _diagnosis_none_count:410  _query_key_check:433  _entrypoint_parity_check:458  _enclosing_def:487  _run_id_filled_check:496  _catalog_key_check:516  _whole_probe:538  _whole_body_check:549  _catalog_checks:580  _unparsed_envelope_check:627  _ensure_tmp:667
 ```
 
+### `validate/v10_admin.py` — 664줄
+
+```
+_sources:168  _admin_guard_checks:189  _sql_strings:234  run:246  _session_checks:352  _pii_query_check:429  _scratch:476  _dict_reason_check:491  _dict_source_shown_check:507  _automation_checks:525  _queue_consumer_check:616  _queue_stale_shown_check:645  _ensure_tmp:661
+```
+
 ### `validate/v4_mapping.py` — 628줄
 
 ```
@@ -283,12 +289,6 @@ check:32  _env:38  _cfg:55  _post:60  _get:65  flow_config:71  flow_scoring:107 
 
 ```
 _read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373  _md:468
-```
-
-### `validate/v10_admin.py` — 548줄
-
-```
-_sources:144  _admin_guard_checks:165  _sql_strings:210  run:222  _session_checks:328  _pii_query_check:404  _scratch:451  _dict_reason_check:466  _dict_source_shown_check:482  _queue_consumer_check:500  _queue_stale_shown_check:529  _ensure_tmp:545
 ```
 
 ### `tests/test_admin.py` — 537줄

@@ -501,7 +501,9 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         # ★ 반입분은 봉투가 아니다.  CSV·ID 목록을 json.loads 하면 죽는다.
         #   반입은 이미 core_listing 에 앉았다 — S4 가 다시 펼칠 것이 없다
         #   (13장 STEP 136a 「출력 S4 결과와 같은 형태로 core_listing 에 반영」)
-        sql = ("SELECT body FROM raw_response "
+        # ★ 봉투 시각을 함께 가져와 오래된 것부터 적용한다 (STEP 29).
+        #   그래야 마지막에 적용되는 것이 가장 새 관측이다
+        sql = ("SELECT body, fetched_at FROM raw_response "
                "WHERE endpoint='list' AND status='ok' AND origin <> 'import'")
         args: tuple = ()
         if scope_kind != ENVELOPE_ALL:
@@ -513,7 +515,9 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             #   「옛 수집분을 매번 훑지 않는다」이지 「밖에서 온 것을 버린다」가 아니다)
             sql += " AND (fetched_at >= ? OR origin = 'browser')"
             args = (ctx.started_at.isoformat(),)
-        for (body,) in conn.execute(sql, args).fetchall():
+        sql += " ORDER BY fetched_at, id"
+        skipped_old = 0
+        for body, seen_at in conn.execute(sql, args).fetchall():
             _count, items = unpack_envelope(json.loads(body))
             for item in items:
                 rows += 1
@@ -522,6 +526,22 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 parsed = parse_list_item(item, adapter.site_code)
                 parsed["listing_id"] = resolve_listing_id(
                     conn, adapter.site_code, parsed["source_id"], at)
+                # ★ 이미 더 새 관측이 있으면 적용하지 않는다.
+                #   옛 봉투를 다시 읽어 옛 값을 새 값 위에 쓰면
+                #   불변 가드(STEP 29)가 걸려 S4 가 통째로 멈춘다 —
+                #   그 뒤 S5·S6 이 「선행 단계 미완료」로 줄줄이 실패했다
+                #   (실측 08-18 — 큐 작업 40건이 그렇게 죽었다)
+                # ★ 아직 안 실린 빈 행(status='new')은 건너뛰지 않는다.
+                #   resolve_listing_id 가 방금 만든 행은 last_seen 이
+                #   「지금」이라 모든 옛 봉투가 오래된 것으로 보인다 —
+                #   그러면 새 매물이 영영 안 실린다 (실측 08-18: 38건)
+                have = conn.execute(
+                    "SELECT last_seen, status FROM core_listing"
+                    " WHERE listing_id=?", (parsed["listing_id"],)).fetchone()
+                if (have and have[1] != "new" and have[0] and seen_at
+                        and str(have[0]) > str(seen_at)):
+                    skipped_old += 1
+                    continue
                 cg = _group_of(parsed, groups)
                 cls = classify(targets, cg, parsed.get("fuel_raw"),
                                parsed.get("trim_badge"), None, None)
@@ -540,6 +560,10 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 )
                 upsert_core(conn, parsed, at)
                 ok += 1
+        if skipped_old:
+            # ★ 조용히 건너뛰지 않는다.  몇 건을 왜 건너뛰었는지 남긴다
+            say("S4", f"옛 봉투 {skipped_old}건 건너뜀 — 더 새 관측이 있다",
+                rows, rows)
         rep = step_report("S4", None, rows, {"ok": ok}, 0, time.time() - t0)
         return rep, ok
 

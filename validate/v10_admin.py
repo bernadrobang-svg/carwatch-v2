@@ -105,6 +105,30 @@ C = {
                     "무엇을 왜 확정했는지가 없으면 되짚을 수 없다 "
                     "(STEP 136e · 149k)",
                     KIND_CONTRACT),
+    "V10-26": Check("V10", "V10-26", "목록 저장 후 큐에 작업이 들어감",
+                    FATAL, "run",
+                    "마스터가 「이어서 해라」를 말하지 않아도 되게 한다 "
+                    "(STEP 136g)",
+                    KIND_CODE),
+    "V10-27": Check("V10", "V10-27", "중간 실패에서 다음 단계로 안 넘어감",
+                    FATAL, "run",
+                    "상세가 반만 왔는데 판정하면 등급이 틀린다 (STEP 136g)",
+                    KIND_CODE),
+    "V10-28": Check("V10", "V10-28", "타이머가 겹쳐 돌지 않음",
+                    FATAL, "run",
+                    "겹쳐 돌면 원문이 꼬인다.  이미 도는 것이 있으면 "
+                    "건너뛴다 (STEP 136h)",
+                    KIND_CODE),
+    "V10-29": Check("V10", "V10-29", "목록 저장이 전건 재수집을 안 부름",
+                    FATAL, "run",
+                    "3,470건 × 9종 = 3만 호출이다.  매일 할 일이 아니다. "
+                    "상세는 새로 뜬 것 · 가격이 바뀐 것만 (개정 315)",
+                    KIND_CODE),
+    "V10-30": Check("V10", "V10-30", "재판정이 수집 없이 돎",
+                    FATAL, "run",
+                    "배점을 고쳤으면 ③ 재판정만 돈다.  다시 안 받는다 "
+                    "— 그것을 몰라서 매번 다시 받으면 하루가 간다 (개정 315)",
+                    KIND_CODE),
     "V10-25": Check("V10", "V10-25", "'list' 출처가 화면에 표시됨", FATAL, "run",
                     "facet 없이 목록에서 관측한 것은 전체 집합이 아니다. "
                     "화면이 그렇게 말해야 한다 (STEP 136e)",
@@ -376,6 +400,7 @@ def _session_checks(rid) -> list:
             locked = True
             break
     out.append(_queue_consumer_check(conn, rid))
+    out += _automation_checks(conn, rid)
     out.append(_queue_stale_shown_check(rid))
     out.append(_dict_reason_check(conn, rid))
     out.append(_dict_source_shown_check(rid))
@@ -495,6 +520,97 @@ def _dict_source_shown_check(rid):
         bad.append("「전체 집합이 아니다」를 말하지 않는다")
     return result(C["V10-25"], rid, "표시",
                   "표시" if not bad else "없음", not bad, bad)
+
+
+def _automation_checks(conn, rid):
+    """V10-26~30 — 자동화 (STEP 136g · 136h · 개정 315).
+
+    ★ 「타이머를 만들었다」와 「돌고 있다」는 다르다.  실제 기록을 본다
+    """
+    import json as _j
+    import os as _o
+    import subprocess as _sp
+
+    # ★ 값을 그대로 쓴다.  store 를 import 하면 시험 DB 로 도는
+    #   check_all 에서 경로가 갈린다
+    LIST_SAVED_REASON = "listing_updated"
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    bad26, bad27, bad28, bad29, bad30 = [], [], [], [], []
+
+    # V10-26 — 목록 저장이 큐에 넣는가.  ★ 코드와 기록을 함께 본다
+    src = ""
+    hook = _o.path.join(root, "store", "adminops.py")
+    if _o.path.isfile(hook):
+        src = open(hook, encoding="utf-8").read()
+    if LIST_SAVED_REASON not in src:
+        bad26.append("목록 저장이 큐에 넣는 자리가 없다 (listing_updated)")
+    else:
+        # ★ 「listing_updated」는 trigger 가 아니라 reason 이다.
+        #   trigger 는 누가 눌렀나(manual · schedule)를 적는다
+        # ★ 목록을 받은 적이 없는 DB 에서는 작업이 없는 것이 맞다 —
+        #   시험 DB 로 도는 check_all 이 여기 걸렸다 (실측 08-18)
+        saved = conn.execute(
+            "SELECT COUNT(*) FROM raw_response WHERE endpoint='list'"
+            " AND origin='browser'").fetchone()
+        got = conn.execute(
+            "SELECT COUNT(*) FROM recalc_job WHERE reason=?",
+            (LIST_SAVED_REASON,)).fetchone()
+        if saved and saved[0] and not (got and got[0]):
+            bad26.append(f"목록을 {saved[0]}쪽 받아 두고도 "
+                         "listing_updated 로 큐에 든 작업이 없다")
+
+    # V10-27 — 앞 단계가 안 끝났는데 다음으로 갔는가
+    gone = conn.execute(
+        "SELECT COUNT(*) FROM recalc_job WHERE status='done'"
+        " AND detail LIKE '%선행 단계 미완료%'").fetchone()
+    if gone and gone[0]:
+        bad27.append(f"선행 단계가 안 끝났는데 done 이 된 작업 {gone[0]}건")
+
+    # V10-28 — 타이머가 겹쳐 돌지 않는가
+    if "이미 도는 작업" not in open(
+            _o.path.join(root, "tools", "daily_enqueue.py"),
+            encoding="utf-8").read():
+        bad28.append("daily_enqueue 가 겹침을 안 본다")
+    try:
+        units = _sp.run(["systemctl", "list-timers", "--all"],
+                        capture_output=True, text=True, check=False).stdout
+        if "carwatch-daily.timer" not in units:
+            bad28.append("carwatch-daily.timer 가 등록돼 있지 않다")
+    except OSError:
+        pass
+
+    # V10-29 — 목록 저장이 전건 재수집을 부르는가
+    with open(_o.path.join(root, "config", "endpoints.json"),
+              encoding="utf-8") as f:
+        eps = _j.load(f)
+    if "detail_refresh_days" not in str(eps):
+        bad29.append("detail_refresh_days 가 config 에 없다 — "
+                     "무엇을 다시 받을지 기준이 없다")
+    full = conn.execute(
+        "SELECT COUNT(*) FROM recalc_job WHERE reason=?"
+        " AND from_step IN ('S1','S2','S3')", (LIST_SAVED_REASON,)).fetchone()
+    if full and full[0]:
+        bad29.append(f"목록 저장이 전건 재수집을 부른 작업 {full[0]}건")
+
+    # V10-30 — 재판정이 수집 없이 도는가.
+    # ★ 「--only S9」로 판정만 부를 수 있어야 한다.  배점을 고쳤을 때
+    #   다시 받지 않고 ③ 재판정만 돌린다 (개정 315)
+    run_py = open(_o.path.join(root, "run.py"), encoding="utf-8").read()
+    if "--only" not in run_py:
+        bad30.append("run.py 가 --only 를 안 받는다 — 단계 하나만 못 돌린다")
+    scoring = open(_o.path.join(root, "collect", "runner.py"),
+                   encoding="utf-8").read()
+    for step in ('"S9"', '"S10"'):
+        if step not in scoring:
+            bad30.append(f"판정 단계 {step} 를 따로 못 부른다")
+    return [
+        result(C["V10-26"], rid, 0, len(bad26), not bad26, bad26),
+        result(C["V10-27"], rid, 0, len(bad27), not bad27, bad27),
+        result(C["V10-28"], rid, 0, len(bad28), not bad28, bad28),
+        result(C["V10-29"], rid, 0, len(bad29), not bad29, bad29),
+        result(C["V10-30"], rid, 0, len(bad30), not bad30, bad30),
+    ]
 
 
 def _queue_consumer_check(conn, rid):
