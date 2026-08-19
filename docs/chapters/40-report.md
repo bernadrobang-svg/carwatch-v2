@@ -602,7 +602,9 @@ outputs/       지우지 않는다.  마스터가 판단한다
 
 ```
 필수   전 형식에 VersionStamp 포함
-필수   csv 는 헤더에 배점을 표기한다 — price(200) · spec.hud(20)
+필수   csv 는 헤더에 배점을 표기한다 — value.market(100) · taste.hud(15)
+       ★ 예시를 손으로 적지 않는다.  config/scoring.json 성분에서 읽는다 (개정 412)
+       ~~price(200)~~ ★ 폐기 — 개정 329·365 로 배점이 두 번 바뀌었다
 금지   화면 전용 문구를 csv·json 에 넣는 것.  값과 코드로 낸다
 ```
 
