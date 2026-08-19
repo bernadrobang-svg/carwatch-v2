@@ -1,10 +1,13 @@
-# ★ 새벽 4시 — 사람이 안 쓸 때 (개정 315).
+# ★ 오후 1시 — 마스터가 화면을 보는 시간 (개정 388).
+#   ★ 전에는 04:00 이었다.  엔카 목록은 407 이라 마스터가 눌러야 들어오는데
+#     새벽에 알림이 떠도 못 본다 — 그동안 가격 변동이 멈춘다
+#   ★ 시각은 config/admin.json collect_daily_at 이 정본이다 (V10-31)
 #   cron 을 두지 않는다.  systemd 가 이미 서비스를 돌린다
 [Unit]
 Description=CarWatch v2 — 하루 한 번
 
 [Timer]
-OnCalendar=*-*-* 04:00:00
+OnCalendar=*-*-* 13:00:00
 Persistent=true
 
 [Install]

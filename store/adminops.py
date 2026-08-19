@@ -17,7 +17,7 @@ import secrets
 import sqlite3
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from errors import PolicyError, ValidationError
 from contracts import (
@@ -561,6 +561,41 @@ def columns_hint(conn: sqlite3.Connection, sql: str) -> str:
         cols = [r[1] for r in conn.execute(f"PRAGMA table_info({name})")]
         out.append(f"{name} 의 컬럼 — " + " · ".join(cols))
     return "\n".join(out)
+
+
+def reap_stale_jobs(conn: sqlite3.Connection, hours: float,
+                    at: str | None = None) -> list:
+    """갱신이 끊긴 `running` 작업을 실패로 닫는다 (개정 413 · AD-085).
+
+    ★★ 실측 08-19 — 08-18 에 끊긴 작업 하나가 28시간째 `running` 이었다.
+      `daily_enqueue` 는 「이미 도는 것이 있으면 건너뛴다」라서
+      **그 하나가 자동화를 통째로 막고 있었다.**  큐만 보면 「도는 중」이다
+    ★ 지우지 않는다.  실패로 닫고 왜 그런지 적는다 — 흔적이 남아야 한다
+    돌려줌   닫은 job_id 목록
+    """
+    at = at or datetime.now(timezone.utc).isoformat()
+    cut = (datetime.fromisoformat(at)
+           - timedelta(hours=float(hours))).isoformat()
+    # ★★ 큐만 보지 않는다 (c-tools 「판단 근거를 셋 다 본다」 · AD-085).
+    #   실측 08-19 — 도는 작업의 updated_at 이 안 움직인다.  그것만 보면
+    #   45초에 원문 125행을 받고 있는 **살아 있는 실행**을 죽인다
+    fresh = conn.execute(
+        "SELECT MAX(fetched_at) FROM raw_response").fetchone()[0] or ""
+    if fresh > cut:
+        return []                      # 원문이 늘고 있다 — 도는 중이다
+    rows = conn.execute(
+        "SELECT job_id, COALESCE(updated_at, queued_at) FROM recalc_job"
+        " WHERE status='running'").fetchall()
+    dead = [jid for jid, seen in rows if (seen or "") < cut]
+    for jid in dead:
+        conn.execute(
+            "UPDATE recalc_job SET status='failed', ended_at=?, detail=?"
+            " WHERE job_id=?",
+            (at, f"{hours:.0f}시간 넘게 갱신이 없어 끊긴 것으로 닫았다 — "
+                 "재시작·강제 종료로 끊기면 running 이 남는다", jid))
+    if dead:
+        conn.commit()
+    return dead
 
 
 def run_query(conn: sqlite3.Connection, account: Account, sql: str,

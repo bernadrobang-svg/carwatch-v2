@@ -35,6 +35,13 @@ JOB_ID_BYTES = 8
 DB_TIMEOUT_SEC = 30
 
 
+def _admin_cfg() -> dict:
+    """★ 상한은 config 에 있다 (S14).  코드에 시간을 안 적는다."""
+    with open(os.path.join(ROOT, "config", "admin.json"),
+              encoding="utf-8") as f:
+        return json.load(f)
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -85,6 +92,14 @@ def main() -> int:
             # ★ 조용히 옛 목록으로 판정하지 않는다.  화면이 이것을 낸다
             print(f"★ 엔카 목록이 {age:.1f}일째 갱신되지 않았습니다 — "
                   "브라우저 수집을 눌러 주십시오 (/admin/collect)")
+        # ★ 끊긴 작업을 먼저 닫는다 (개정 413).  하나가 running 으로 남으면
+        #   「이미 도는 것이 있으면 건너뛴다」에 걸려 자동화가 통째로 멈춘다
+        from store.adminops import reap_stale_jobs
+
+        dead = reap_stale_jobs(conn, _admin_cfg()["job_stale_hours"], at)
+        if dead:
+            print(f"끊긴 작업 {len(dead)}건을 닫았습니다 — "
+                  f"{' · '.join(d[:8] for d in dead)}")
         got = enqueue_daily(conn, at)
     finally:
         conn.close()

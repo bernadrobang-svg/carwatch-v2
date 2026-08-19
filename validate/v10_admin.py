@@ -126,6 +126,23 @@ C = {
                     "화면이 컬럼을 안 보여 주니 마스터가 칠 수밖에 없었다. "
                     "created_at 은 표마다 있고 없다 (개정 391)",
                     KIND_CODE),
+    "V10-31": Check("V10", "V10-31", "자동 수집이 13:00 인가", FATAL, "run",
+                    "마스터 지시 — 「수집은 내가 해줘야 한다면 시간이 틀렸다. "
+                    "오후 1시로 바꾸자」. ★ 새벽 4시에 알림이 떠도 마스터가 "
+                    "못 본다 — 그동안 가격 변동이 멈춘다 (개정 388)",
+                    KIND_CONTRACT),
+    "V10-32": Check("V10", "V10-32", "사람 손이 필요한 작업이 낮 시간대인가",
+                    FATAL, "run",
+                    "★ 사람 손이 필요한 일은 사람이 깨어 있을 때 돈다. "
+                    "서버가 혼자 하는 것은 시간을 안 가린다 (개정 388)",
+                    KIND_CONTRACT),
+    "V10-38": Check("V10", "V10-38", "끊긴 실행이 큐를 막고 있지 않음",
+                    FATAL, "run",
+                    "★★ 실측 08-19 — 08-18 에 끊긴 작업 하나가 28시간째 "
+                    "running 이었다. daily_enqueue 는 「이미 도는 것이 있으면 "
+                    "건너뛴다」라 그 하나가 자동화를 통째로 막았다. "
+                    "★ 큐만 보면 「도는 중」이다 (AD-085)",
+                    KIND_CONTRACT),
     "V10-37": Check("V10", "V10-37", "결과 표 위에 복사 단추가 있음",
                     FATAL, "run",
                     "마스터가 결과를 다른 곳에 옮겨 보신다 (개정 358 "
@@ -268,6 +285,49 @@ def _sql_strings(src: str) -> list[str]:
             if isinstance(n, ast.Constant) and isinstance(n.value, str)
             and any(k in n.value for k in ("SELECT ", "INSERT ", "UPDATE ",
                                            "DELETE ", "FROM "))]
+
+
+def _schedule_checks(conn, rid):
+    """V10-31 · V10-32 · V10-38 — 시간표와 끊긴 실행 (개정 388 · 413)."""
+    import json as _j
+    from datetime import datetime, timedelta, timezone
+
+    with open(os.path.join(ROOT, "config", "admin.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    want = "13:00"
+    got = str(cfg.get("collect_daily_at") or "")
+    bad31 = [] if got == want else [
+        f"collect_daily_at 이 「{got}」다 — 「{want}」여야 한다"]
+
+    # V10-32 — 사람 손이 필요한 것이 낮인가.  ★ 서버 혼자 하는 것은 안 본다
+    bad32 = []
+    hour = int(got.split(":")[0]) if ":" in got else -1
+    day = cfg.get("daytime_hours") or [9, 18]
+    if not (int(day[0]) <= hour < int(day[1])):
+        bad32.append(f"자동 수집이 {hour}시다 — 마스터가 화면을 보는 "
+                     f"{day[0]}~{day[1]}시가 아니다")
+
+    # V10-38 — 끊긴 실행이 큐를 막고 있는가.  ★ 큐만 보지 않는다
+    limit = float(cfg.get("job_stale_hours") or 6)
+    now = datetime.now(timezone.utc)
+    cut = (now - timedelta(hours=limit)).isoformat()
+    # ★ 큐만 보지 않는다.  원문이 늘고 있으면 도는 중이다 (AD-085)
+    fresh = conn.execute(
+        "SELECT MAX(fetched_at) FROM raw_response").fetchone()[0] or ""
+    stuck = [] if fresh > cut else [
+        f"{jid[:8]} — {seen} 뒤로 갱신이 없다 ({limit:.0f}시간 상한). "
+        "★ 이 하나가 daily_enqueue 를 막는다"
+        for jid, seen in conn.execute(
+            "SELECT job_id, COALESCE(updated_at, queued_at)"
+            " FROM recalc_job WHERE status='running'")
+        if (seen or "") < cut]
+    return [
+        result(C["V10-31"], rid, want, got or "없다", not bad31, bad31),
+        result(C["V10-32"], rid, f"{day[0]}~{day[1]}시", f"{hour}시",
+               not bad32, bad32),
+        result(C["V10-38"], rid, 0, len(stuck), not stuck, stuck[:4]),
+    ]
 
 
 def _query_error_checks(conn, rid):
@@ -529,6 +589,7 @@ def _session_checks(rid) -> list:
     out += _automation_checks(conn, rid)
     # 쿼리 오류 분류 (개정 391)
     out += _query_error_checks(conn, rid)
+    out += _schedule_checks(conn, rid)
     out.append(_queue_stale_shown_check(rid))
     out.append(_dict_reason_check(conn, rid))
     out.append(_dict_source_shown_check(rid))

@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 48,367줄
+파일 135개 · 총 48,478줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -16,11 +16,11 @@
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,130 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `tools/verify_axes.py` | 1,051 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
+| `store/adminops.py` | 1,037 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `report/screens/admin.py` | 1,012 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
-| `store/adminops.py` | 1,002 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `validate/v2_load.py` | 917 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
+| `validate/v10_admin.py` | 876 | V10 관리자 검증. |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
-| `validate/v10_admin.py` | 815 | V10 관리자 검증. |
 | `tests/test_score.py` | 786 | 7장 판정·채점 시험. |
 | `validate/v1_collect.py` | 775 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `validate/v4_mapping.py` | 770 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
@@ -96,13 +96,13 @@
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `errors.py` | 115 | 도메인 예외 5종. |
 | `analyze/axis/site.py` | 114 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
+| `tools/daily_enqueue.py` | 112 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `analyze/axes.py` | 111 | 축 판정 계약. |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
 | `tools/check_all.py` | 107 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `analyze/axis/value.py` | 106 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `adapters/kcar.py` | 104 | K카 어댑터 — URL · 헤더 (12장 · STEP 11). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
-| `tools/daily_enqueue.py` | 97 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `analyze/axis/taste.py` | 94 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
 | `tools/export_cli.py` | 93 | 데이터 내보내기 (9장 STEP 91a · B-6). |
@@ -204,16 +204,16 @@ _spec_files:44  _read_spec:62  say:73  py_files:87  chapter_of:127  _declared_ch
 _spec_text:26  spec_tables:58  _num:81  pick:99  _flag:113  hand_market:121  _median_for:132  hand_mileage:152  _years:165  conn_now:174  lookup:179  hand_accident:203  hand_repair:213  hand_owner:221  _warranty_left:229  hand_warranty_general:250  hand_warranty_power:255  hand_site_warranty:261  hand_maker_warranty:291  _km_per_month:318  residual_spec:334  _json:360  hand_option_won:373  hand_depreciation:410  hand_frame:440  hand_outer:461  _leak_states:481  hand_leak:493  hand_lien:508  hand_not_join:518  hand_trim:548  hand_special:568  spec_section:578  spec_head_points:586  lookup_label:593  hand_integrity:601  hand_special_points:627  _taste_points:636  _has_option:647  hand_color:682  hand_usage:706  hand_site_grade:730  hand_inspection_src:750  hand_hud:763  hand_sunroof:772  hand_picked:781  _has_table:794  _option_prices:800  hand_options:818  survey:856  main:919
 ```
 
+### `store/adminops.py` — 1,037줄
+
+```
+QueryLog:55  QueryResult:68  ApiSnapshot:93  DevRequest:104  RecalcJob:119  ScoringPreview:130  ImportPreview:142  ImportResult:159  preview_import:168  import_listings:194  _import_facet:260  BrowserCatch:295  save_browser_catch:303  mark_step_imported:353  pending_enums:384  pending_axis_summary:412  apply_dict_decision:433  _strip_sql:477  sql_reject_reason:484  _opened_tables:518  reject_kind_of:533  columns_hint:543  reap_stale_jobs:566  run_query:601  fetch_api:648  create_dev_request:682  update_dev_status:704  export_dev_requests:718  enqueue_recalc:748  enqueue_after_list_save:774  job_progress:799  db_progress:813  preview_scoring:823  _pt:866  registry_rows:870  registry_counts:881  write_dev_requests:887  dev_request_rows:907  save_api_snapshot:925  get_api_snapshot:948  path_table:967  halt_job:1003
+```
+
 ### `report/screens/admin.py` — 1,012줄
 
 ```
 AdminMenuItem:32  AdminHome:62  SaveGate:78  AuditTab:92  AuditView:100  DocView:107  menu_for:118  view_admin_home:130  _todos:155  _recent_runs:195  _recent_changes:226  save_gate:237  view_audit:245  view_docs:291  _doc_files:322  Todo:343  RunRow:357  ChangeRow:367  _cfg_rows:387  config_history:397  query_history:409  db_tables:423  api_snapshots:464  account_activity:475  make_target_key:493  target_choices:512  target_rows:531  parse_import_text:562  status_view:577  _catalog_state:651  _light_result:683  _live_window:723  _live_progress:732  run_progress:779  collect_state:829  received_vs_used:886  dict_state:907  import_state:934  job_log:971  validation_runs:985  blocking_set:1003
-```
-
-### `store/adminops.py` — 1,002줄
-
-```
-QueryLog:55  QueryResult:68  ApiSnapshot:93  DevRequest:104  RecalcJob:119  ScoringPreview:130  ImportPreview:142  ImportResult:159  preview_import:168  import_listings:194  _import_facet:260  BrowserCatch:295  save_browser_catch:303  mark_step_imported:353  pending_enums:384  pending_axis_summary:412  apply_dict_decision:433  _strip_sql:477  sql_reject_reason:484  _opened_tables:518  reject_kind_of:533  columns_hint:543  run_query:566  fetch_api:613  create_dev_request:647  update_dev_status:669  export_dev_requests:683  enqueue_recalc:713  enqueue_after_list_save:739  job_progress:764  db_progress:778  preview_scoring:788  _pt:831  registry_rows:835  registry_counts:846  write_dev_requests:852  dev_request_rows:872  save_api_snapshot:890  get_api_snapshot:913  path_table:932  halt_job:968
 ```
 
 ### `validate/v2_load.py` — 917줄
@@ -222,16 +222,16 @@ QueryLog:55  QueryResult:68  ApiSnapshot:93  DevRequest:104  RecalcJob:119  Scor
 DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:347  _not_null_check:432  _chained_subscript_check:449  _Boom:497  _salvage_check:505  _table_exists:546  _exception_shape_checks:552  _schema_sync_check:618  _pii_access_check:655  gap_alerts:692  diff_prev_day:708  explain_gap:730  _pii_column_check:762  _secret_key_check:780  _parser_common_fields_check:818  _null_target_not_judged_check:869  _null_target_visible_check:894
 ```
 
+### `validate/v10_admin.py` — 876줄
+
+```
+_sources:212  _admin_guard_checks:233  _sql_strings:278  _schedule_checks:290  _query_error_checks:333  run:432  _session_checks:538  _pii_query_check:618  _scratch:665  _dict_reason_check:680  _dict_source_shown_check:696  _automation_checks:714  _queue_consumer_check:828  _queue_stale_shown_check:857  _ensure_tmp:873
+```
+
 ### `tools/trace_fill.py` — 840줄
 
 ```
 spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:176  _stem:214  tokens:223  _best_in:253  _rows:290  layers_of:303  layer_pool:310  _rare_hit:322  axis_words:346  json_key_at:367  _place:394  _hints:405  find_in_layer:421  _best_step_in:469  _layers:500  derive_state:520  src_mark:546  relayer:559  restate:574  fill_file:597  move_to_rules:665  survey:708  lists:736  write_index:757  main:796
-```
-
-### `validate/v10_admin.py` — 815줄
-
-```
-_sources:195  _admin_guard_checks:216  _sql_strings:261  _query_error_checks:273  run:372  _session_checks:478  _pii_query_check:557  _scratch:604  _dict_reason_check:619  _dict_source_shown_check:635  _automation_checks:653  _queue_consumer_check:767  _queue_stale_shown_check:796  _ensure_tmp:812
 ```
 
 ### `tests/test_score.py` — 786줄

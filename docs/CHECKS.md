@@ -2,13 +2,13 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **359개**
+검사 **362개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **105** | 개발측 |
-| ④ 규격에 근거가 없는 검사 | **16** | 가이드가 판단 |
-| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **33** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **108** | 개발측 |
+| ④ 규격에 근거가 없는 검사 | **17** | 가이드가 판단 |
+| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **32** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
 
@@ -60,8 +60,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:46` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:56 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:49` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:52` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:58` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:55` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:58` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:149` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:146` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:62` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
@@ -184,8 +184,8 @@
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:177 · trace/RULES.md:200 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:178 |
 | `V4-10` | display_only 인데 core_column NULL | run | `validate/v4_mapping.py:49` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:289 · chapters/20-verify/c-v3v4.md:179 |
-| `V4-11b` | 판정에 안 쓰는 미분류 경로 | run | `validate/v4_mapping.py:55` | **★ 없음** | 2026-08-17 05:33 | guide/01_요구사항.md:18 · guide/01_요구사항.md:27 · guide/03_이력.md:129 |
 | `V4-11` | unclassified 존재 | run | `validate/v4_mapping.py:52` | **★ 없음** | 2026-08-17 05:33 | guide/01_시작.md:214 · guide/01_시작.md:224 · guide/01_요구사항.md:18 |
+| `V4-11b` | 판정에 안 쓰는 미분류 경로 | run | `validate/v4_mapping.py:55` | **★ 없음** | 2026-08-17 05:33 | guide/01_요구사항.md:18 · guide/01_요구사항.md:27 · guide/03_이력.md:129 |
 | `V4-12` | facet 필수 축 집합 존재 | run | `validate/v4_mapping.py:87` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:182 |
 | `V4-13` | 매직 넘버 없음 (tools/check_src.py S7) | run | `validate/v4_mapping.py:90` | 2026-08-17 05:33 | 없음 | ref/A-check.md:6 · ref/E-attach.md:59 · ref/E-attach.md:109 |
 | `V4-19` | 성격(kind)이 없는 Check 가 없음 | run | `validate/v4_mapping.py:111` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:132 · chapters/20-verify/00-intro.md:112 · chapters/20-verify/c-v3v4.md:189 |
@@ -258,22 +258,24 @@
 | `V10-17` | admin 수가 0 이 되는 변경이 거부됨 | run | `validate/v10_admin.py:78` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:166 · guide/03_이력.md:203 · chapters/61-web.md:1979 |
 | `V10-18` | core_pii · core_dealer_pii 조회가 거부됨 | run | `validate/v10_admin.py:83` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:200 · chapters/60-admin/c-tools.md:73 · chapters/60-admin/c-tools.md:784 |
 | `V10-19` | 중지·비밀번호 변경 후 옛 세션이 anonymous | run | `validate/v10_admin.py:88` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:204 · chapters/60-admin/a-auth.md:79 · chapters/60-admin/c-tools.md:785 |
-| `V10-20` | 로그인 실패 상한이 config 대로 돎 | run | `validate/v10_admin.py:163` | 2026-08-17 05:33 | 없음 | ref/B-config.md:386 · guide/03_이력.md:205 · chapters/00-standard.md:696 |
+| `V10-20` | 로그인 실패 상한이 config 대로 돎 | run | `validate/v10_admin.py:180` | 2026-08-17 05:33 | 없음 | ref/B-config.md:386 · guide/03_이력.md:205 · chapters/00-standard.md:696 |
 | `V10-22` | queued 를 소비하는 코드가 있음 | run | `validate/v10_admin.py:94` | 2026-08-17 05:33 | 2026-08-17 03:30 | guide/03_이력.md:268 · chapters/60-admin/b-ops.md:295 · chapters/60-admin/c-tools.md:787 |
 | `V10-23` | 오래된 queued 가 화면에 표시됨 | run | `validate/v10_admin.py:99` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:268 · chapters/60-admin/b-ops.md:296 · chapters/60-admin/c-tools.md:788 |
 | `V10-24` | 사전 확정에 사유가 남음 | run | `validate/v10_admin.py:104` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:274 · chapters/60-admin/c-tools.md:530 · chapters/60-admin/c-tools.md:789 |
-| `V10-25` | 'list' 출처가 화면에 표시됨 | run | `validate/v10_admin.py:159` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:274 · chapters/60-admin/c-tools.md:531 · chapters/60-admin/c-tools.md:790 |
-| `V10-26` | 목록 저장 후 큐에 작업이 들어감 | run | `validate/v10_admin.py:135` | **★ 없음** | 없음 | guide/01_요구사항.md:613 · guide/01_요구사항.md:623 · guide/03_이력.md:321 |
-| `V10-27` | 중간 실패에서 다음 단계로 안 넘어감 | run | `validate/v10_admin.py:140` | **★ 없음** | 없음 | guide/01_요구사항.md:613 · guide/01_요구사항.md:623 · guide/03_이력.md:321 |
-| `V10-28` | 타이머가 겹쳐 돌지 않음 | run | `validate/v10_admin.py:144` | **★ 없음** | 없음 | guide/01_요구사항.md:627 · guide/01_요구사항.md:636 · guide/03_이력.md:322 |
-| `V10-29` | 목록 저장이 전건 재수집을 안 부름 | run | `validate/v10_admin.py:149` | **★ 없음** | 없음 | guide/01_요구사항.md:182 · guide/01_요구사항.md:191 · guide/03_이력.md:324 |
-| `V10-30` | 재판정이 수집 없이 돎 | run | `validate/v10_admin.py:154` | **★ 없음** | 없음 | guide/01_요구사항.md:182 · guide/01_요구사항.md:191 · guide/03_이력.md:324 |
-| `V10-31` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:395 · chapters/60-admin/c-tools.md:1059 |
+| `V10-25` | 'list' 출처가 화면에 표시됨 | run | `validate/v10_admin.py:176` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:274 · chapters/60-admin/c-tools.md:531 · chapters/60-admin/c-tools.md:790 |
+| `V10-26` | 목록 저장 후 큐에 작업이 들어감 | run | `validate/v10_admin.py:152` | **★ 없음** | 없음 | guide/01_요구사항.md:613 · guide/01_요구사항.md:623 · guide/03_이력.md:321 |
+| `V10-27` | 중간 실패에서 다음 단계로 안 넘어감 | run | `validate/v10_admin.py:157` | **★ 없음** | 없음 | guide/01_요구사항.md:613 · guide/01_요구사항.md:623 · guide/03_이력.md:321 |
+| `V10-28` | 타이머가 겹쳐 돌지 않음 | run | `validate/v10_admin.py:161` | **★ 없음** | 없음 | guide/01_요구사항.md:627 · guide/01_요구사항.md:636 · guide/03_이력.md:322 |
+| `V10-29` | 목록 저장이 전건 재수집을 안 부름 | run | `validate/v10_admin.py:166` | **★ 없음** | 없음 | guide/01_요구사항.md:182 · guide/01_요구사항.md:191 · guide/03_이력.md:324 |
+| `V10-30` | 재판정이 수집 없이 돎 | run | `validate/v10_admin.py:171` | **★ 없음** | 없음 | guide/01_요구사항.md:182 · guide/01_요구사항.md:191 · guide/03_이력.md:324 |
+| `V10-31` | 자동 수집이 13:00 인가 | run | `validate/v10_admin.py:129` | **★ 없음** | 없음 | guide/03_이력.md:395 · chapters/60-admin/c-tools.md:1059 |
+| `V10-32` | 사람 손이 필요한 작업이 낮 시간대인가 | run | `validate/v10_admin.py:134` | **★ 없음** | 없음 | guide/03_이력.md:395 · chapters/60-admin/c-tools.md:1060 |
 | `V10-33` | 컴파일 실패가 PolicyError 로 안 감 | run | `validate/v10_admin.py:108` | **★ 없음** | 없음 | guide/03_이력.md:399 |
 | `V10-34` | 거부 응답에 고칠 재료가 있음 | run | `validate/v10_admin.py:115` | **★ 없음** | 없음 | — |
 | `V10-35` | query_log 가 compile · policy 로 갈림 | run | `validate/v10_admin.py:120` | **★ 없음** | 없음 | — |
 | `V10-36` | 표를 누르면 컬럼이 보임 | run | `validate/v10_admin.py:125` | **★ 없음** | 없음 | guide/03_이력.md:399 |
-| `V10-37` | 결과 표 위에 복사 단추가 있음 | run | `validate/v10_admin.py:129` | **★ 없음** | 없음 | guide/03_이력.md:409 |
+| `V10-37` | 결과 표 위에 복사 단추가 있음 | run | `validate/v10_admin.py:146` | **★ 없음** | 없음 | guide/03_이력.md:409 |
+| `V10-38` | 끊긴 실행이 큐를 막고 있지 않음 | run | `validate/v10_admin.py:139` | **★ 없음** | 없음 | — |
 | `V11-01` | web/ 에 SQL 문자열이 없음 | run | `validate/v11_web.py:40` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:149 · chapters/61-web.md:28 · chapters/61-web.md:1548 |
 | `V11-02` | 기본 바인딩이 127.0.0.1 | run | `validate/v11_web.py:43` | 2026-08-17 05:33 | 없음 | chapters/61-web.md:99 · chapters/61-web.md:2046 · chapters/61-web.md:2115 |
 | `V11-03` | 전 Route 에 role 이 지정됨 | run | `validate/v11_web.py:47` | 2026-08-17 05:33 | 없음 | chapters/61-web.md:167 · chapters/61-web.md:2116 |
@@ -455,11 +457,14 @@
 - `V10-28` 타이머가 겹쳐 돌지 않음 — `validate/v10_admin.py`
 - `V10-29` 목록 저장이 전건 재수집을 안 부름 — `validate/v10_admin.py`
 - `V10-30` 재판정이 수집 없이 돎 — `validate/v10_admin.py`
+- `V10-31` 자동 수집이 13:00 인가 — `validate/v10_admin.py`
+- `V10-32` 사람 손이 필요한 작업이 낮 시간대인가 — `validate/v10_admin.py`
 - `V10-33` 컴파일 실패가 PolicyError 로 안 감 — `validate/v10_admin.py`
 - `V10-34` 거부 응답에 고칠 재료가 있음 — `validate/v10_admin.py`
 - `V10-35` query_log 가 compile · policy 로 갈림 — `validate/v10_admin.py`
 - `V10-36` 표를 누르면 컬럼이 보임 — `validate/v10_admin.py`
 - `V10-37` 결과 표 위에 복사 단추가 있음 — `validate/v10_admin.py`
+- `V10-38` 끊긴 실행이 큐를 막고 있지 않음 — `validate/v10_admin.py`
 - `V11-100` 목록에 옵션 개수와 합계가 나옴 — `validate/v11_web.py`
 - `V11-102` 비교가 옵션 차이만 냄 — `validate/v11_web.py`
 - `V11-103` 목록이 오래되면 화면에 나옴 — `validate/v11_web.py`
@@ -523,7 +528,6 @@
 - `V0-02` — guide/00_버전.md:47
 - `V0-03` — guide/00_버전.md:69 · guide/03_이력.md:337 · guide/03_이력.md:401
 - `V1-22` — guide/01_요구사항.md:115 · guide/01_요구사항.md:124 · guide/03_이력.md:303
-- `V10-31` — guide/03_이력.md:395 · chapters/60-admin/c-tools.md:1059
 - `V11-111` — chapters/61-web/e-compare.md:30
 - `V11-118` — guide/03_이력.md:345 · chapters/61-web/d-detail.md:112 · chapters/61-web/f-width.md:70
 - `V11-123` — guide/03_이력.md:376 · chapters/61-web/h-admin.md:21 · chapters/61-web/h-admin.md:264
@@ -562,6 +566,7 @@
 - `V1-26` 판정 축이 통째로 비지 않음 — `validate/v1_collect.py`
 - `V10-34` 거부 응답에 고칠 재료가 있음 — `validate/v10_admin.py`
 - `V10-35` query_log 가 compile · policy 로 갈림 — `validate/v10_admin.py`
+- `V10-38` 끊긴 실행이 큐를 막고 있지 않음 — `validate/v10_admin.py`
 - `V11-37` POST 가 예상 밖 500 을 내지 않음 — `validate/v11_web.py`
 - `V11-38` 템플릿이 쓰는 값을 뷰가 넘김 — `validate/v11_web.py`
 - `V11-39` 저장 단추가 실제로 저장함 — `validate/v11_web.py`
