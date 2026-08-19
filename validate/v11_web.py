@@ -383,6 +383,18 @@ C = {
                     "같은 트림이면 옵션이 값을 가른다 — 이것이 비교 화면의 "
                     "핵심이다 (61-web 「비교」)",
                     KIND_CODE),
+    "V11-147": Check("V11", "V11-147", "조각 절단면이 글자 경계임",
+                    FATAL, "run",
+                    "한글은 UTF-8 로 3바이트다.  바이트 수로만 자르면 글자 "
+                    "가운데가 잘려 그 조각이 단독으로 유효한 UTF-8 이 "
+                    "아니게 된다.  서버가 decode 하면 U+FFFD 가 되어 "
+                    "길이·해시가 어긋난다 (개정 395)",
+                    KIND_CODE),
+    "V11-148": Check("V11", "V11-148", "조각마다 길이·해시를 대조함",
+                    FATAL, "run",
+                    "마지막에 몰아 터지면 어느 조각이 문제인지 알 수 없다. "
+                    "「조각 3/9 가 깨졌습니다」라 적는다 (개정 395)",
+                    KIND_CODE),
     "V11-149": Check("V11", "V11-149", "조각 실패 문구에 서버 message 가 있음",
                     FATAL, "run",
                     "서버는 「길이가 다릅니다 — 받은 192,431 · 보낸 192,557」을 "
@@ -1000,6 +1012,8 @@ def _screen_checks(conn, rid) -> list:
     out.append(_compare_diff_check(conn, rid))
     # 조각 실패 때 서버 문구 (개정 395)
     out.append(_chunk_message_check(rid))
+    # 조각 절단점 · 조각별 대조 (개정 395)
+    out.extend(_chunk_boundary_check(rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -3010,6 +3024,107 @@ def _chunk_message_check(rid):
         bad.append("서버 문구를 꺼내는 자리가 없다")
     return result(C["V11-149"], rid, "잇는다",
                   f"throw {len(throws)}곳", not bad, bad[:4])
+
+
+def _whole_char(part: bytes) -> bool:
+    """이 조각이 단독으로 유효한 UTF-8 인가.
+
+    ★ 0xC0·0x80 을 코드에 쓰지 않는다 — 파이썬이 이미 안다.
+      규격의 뜻은 「각 조각이 단독으로 유효한 UTF-8 이어야 한다」다
+    """
+    try:
+        part.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    return True
+
+
+def _chunk_boundary_check(rid):
+    """V11-147 · V11-148 — 조각 절단점과 조각별 대조 (개정 395).
+
+    ★ 한글은 UTF-8 로 3바이트다.  바이트 수로만 자르면 글자 가운데가 잘려
+      그 조각이 단독으로 유효한 UTF-8 이 아니게 된다.
+      서버가 decode 하면 U+FFFD 가 되어 길이·해시가 어긋난다 (실측 400)
+    ★★ 「코드에 있다」로 통과시키지 않는다 — 실제로 잘라 본다 (S42-2)
+    """
+    import hashlib
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "checks.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    rooms = cfg["chunk_probe_rooms"]
+    repeat = int(cfg["chunk_probe_repeat"])
+    probe_seq, probe_total = cfg["chunk_probe_seq"]
+
+    path = os.path.join(TEMPLATES, "admin_collect.html")
+    if not os.path.isfile(path):
+        return [not_applicable(c, rid, "브라우저 수집 화면이 없다")
+                for c in (C["V11-147"], C["V11-148"])]
+    body = open(path, encoding="utf-8").read()
+
+    # V11-147 — 절단면이 이어지는 바이트가 아닌가.  ★ 같은 규칙을 여기서 돌린다
+    bad147 = []
+    if "0xC0" not in body or "0x80" not in body:
+        bad147.append("절단점을 글자 경계로 물리는 자리가 없다")
+    # ★ 한글이 섞인 글로 시험한다 — 세 바이트라 경계에 걸린다
+    text = "가나다라마바사아자차카타파하" * repeat + "abc" + "힣" * repeat
+    raw = text.encode("utf-8")
+    for room in rooms:
+        off, cuts = 0, []
+        while off < len(raw):
+            end = min(off + room, len(raw))
+            # ★ 조각이 통째로 유효한 UTF-8 이 될 때까지 뒤로 물린다
+            while end > off and not _whole_char(raw[off:end]):
+                end -= 1
+            if end <= off:
+                bad147.append(f"room {room} 에서 한 글자도 안 들어간다")
+                break
+            cuts.append(raw[off:end])
+            off = end
+        else:
+            joined = b"".join(cuts)
+            if joined != raw:
+                bad147.append(f"room {room} — 이어붙인 것이 원문과 다르다")
+            for i, one in enumerate(cuts, 1):
+                # ★ 조각 하나하나가 단독으로 유효한 UTF-8 이어야 한다
+                if one.decode("utf-8", "replace").count("�"):
+                    bad147.append(f"room {room} 조각 {i} 가 깨진다")
+                    break
+            if joined.decode("utf-8", "replace").count("�"):
+                bad147.append(f"room {room} — 이어붙인 것에 U+FFFD 가 있다")
+
+    # V11-148 — 조각마다 길이·해시를 보내고 서버가 그 자리에서 대조하는가
+    from errors import ValidationError
+    from web.views import _verify_part
+
+    bad148 = []
+    for mark in ("chunk_part_len", "chunk_part_hash"):
+        if mark not in body:
+            bad148.append(f"화면이 {mark} 를 안 보낸다")
+    part = "엔카 원문".encode("utf-8")
+    good = {"chunk_part_len": str(len(part)),
+            "chunk_part_hash": hashlib.sha256(part).hexdigest()}
+    try:
+        _verify_part(part.decode("utf-8"), part, good, 0, 3)
+    except ValidationError as e:
+        bad148.append(f"맞는 조각을 막는다: {e}")
+    for broken, why in (({"chunk_part_len": "999"}, "길이"),
+                        ({"chunk_part_hash": "0" * len(hashlib.sha256(b"").hexdigest())}, "해시")):
+        try:
+            _verify_part(part.decode("utf-8"), part, broken,
+                         probe_seq, probe_total)
+            bad148.append(f"{why} 가 달라도 통과한다")
+        except ValidationError as e:
+            # ★ 몇 번째 조각인지 적어야 한다
+            if f"{probe_seq + 1}/{probe_total}" not in str(e):
+                bad148.append(f"{why} 오류에 조각 번호가 없다")
+    return [
+        result(C["V11-147"], rid, "글자 경계",
+               "맞다" if not bad147 else "깨진다", not bad147, bad147[:4]),
+        result(C["V11-148"], rid, "조각별 대조",
+               "한다" if not bad148 else "안 한다", not bad148, bad148[:4]),
+    ]
 
 
 def _cell_squeeze_check(rid):

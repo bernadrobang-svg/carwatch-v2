@@ -253,6 +253,28 @@
   }
   // ★ 개정 307 — facet 은 하나의 JSON 이라 내용으로 못 나눈다.
   //   바이트를 나누고 서버가 이어붙인다.  원문은 그대로 복원된다 (P3)
+  /* ★ 절단점을 글자 첫 바이트까지 뒤로 물린다 (V11-147).
+     0b10xxxxxx (0x80~0xBF) 는 이어지는 바이트다 — 거기서 자르면 글자가 깨진다 */
+  function cut(bytes, off, room) {
+    var end = Math.min(off + room, bytes.length);
+    while (end > off && end < bytes.length && (bytes[end] & 0xC0) === 0x80) {
+      end -= 1;
+    }
+    return end;                    /* ★ end === off 면 room 이 너무 작다 */
+  }
+
+  /* 조각 하나의 길이·해시 (V11-148).
+     ★ 마지막에 몰아 터지면 어느 조각이 문제인지 알 수 없다 */
+  function partSig(bytes) {
+    return crypto.subtle.digest('SHA-256', bytes).then(function (buf) {
+      var out = '', view = new Uint8Array(buf);
+      for (var i = 0; i < view.length; i++) {
+        out += ('0' + view[i].toString(16)).slice(-2);
+      }
+      return {hash: out, len: bytes.length};
+    });
+  }
+
   function sha256hex(text) {
     var bytes = new TextEncoder().encode(text);
     return crypto.subtle.digest('SHA-256', bytes).then(function (buf) {
@@ -269,9 +291,18 @@
       // ★ UTF-8 바이트로 자른다.  글자로 자르면 길이·해시가 안 맞는다
       var room = Math.floor(ROOM * 0.6);      // csrf·url 등 다른 칸 자리를 남긴다
       var parts = [], dec = new TextDecoder();
-      for (var off = 0; off < sig.bytes.length; off += room) {
-        parts.push(sig.bytes.subarray(off, Math.min(off + room,
-                                                    sig.bytes.length)));
+      /* ★★ 절단점을 글자 경계로 당긴다 (V11-147).
+         한글은 UTF-8 로 3바이트다.  바이트 수로만 자르면 글자 한가운데가
+         잘려 그 조각이 단독으로 유효한 UTF-8 이 아니게 된다.
+         서버가 decode 하면 U+FFFD 가 되어 길이·해시가 어긋난다 (실측 400)
+         ★ room 을 키워 해결하지 않는다 — max_form_bytes 상한은 그대로다 */
+      for (var off = 0; off < sig.bytes.length; ) {
+        var end = cut(sig.bytes, off, room);
+        if (end <= off) {
+          throw new Error('조각 크기가 너무 작습니다 — 한 글자도 안 들어갑니다');
+        }
+        parts.push(sig.bytes.subarray(off, end));
+        off = end;
       }
       var key = job.target_key + ':' + job.kind + ':' + sig.hash.slice(0, 16);
       function send(i) {
@@ -296,8 +327,14 @@
           onStep(job.target_key + ' ' + job.kind + ' ' +
                  (i + 1) + '/' + parts.length + ' 조각');
         }
-        return fetch('/admin/collect', {method: 'POST', body: form,
-                                        credentials: 'same-origin'})
+        /* ★ 조각마다 길이·해시를 함께 보낸다 (V11-148).
+           서버가 그 자리에서 대조하고 어긋나면 그 조각에서 400 이다 */
+        return partSig(parts[i]).then(function (ps) {
+          form.append('chunk_part_len', ps.len);
+          form.append('chunk_part_hash', ps.hash);
+          return fetch('/admin/collect', {method: 'POST', body: form,
+                                          credentials: 'same-origin'});
+        })
           .then(takeToken)
           .then(function (res) {
             if (!res.ok && res.status !== 303) {

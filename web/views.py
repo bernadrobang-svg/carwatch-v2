@@ -1339,7 +1339,12 @@ def _take_chunk(form: dict) -> tuple:
     key = form["chunk_key"].strip()
     seq = _int_or_none(form.get("chunk_seq")) or 0
     total = _int_or_none(form.get("chunk_total")) or 1
-    part = (form.get("body") or "").encode("utf-8")
+    raw = form.get("body") or ""
+    part = raw.encode("utf-8")
+    # ★★ 조각마다 그 자리에서 대조한다 (V11-148).
+    #   마지막에 몰아 터지면 어느 조각이 문제인지 알 수 없다.
+    #   ★ 「몇 번째 조각인지」를 문구에 적는다
+    _verify_part(raw, part, form, seq, total)
     got = chunk.put(key, seq, total, part, time.time(),
                     float(_cfg("web.json", ROOT)["chunk_stale_sec"]))
     if not got["done"]:
@@ -1351,7 +1356,53 @@ def _take_chunk(form: dict) -> tuple:
     except ValueError as e:
         raise ValidationError(f"조각을 잇지 못했습니다 — {e}",
                               step="STEP 136c") from e
-    return True, body.decode("utf-8", "replace")
+    text = body.decode("utf-8", "replace")
+    # ★ 이어붙인 것이 온전한가 (S42-2).  U+FFFD 가 하나라도 있으면
+    #   글자가 깨진 것이다 — 「400 이 안 났다」는 완료 근거가 아니다
+    lost = text.count("\ufffd")
+    if lost:
+        raise ValidationError(
+            f"이어붙인 원문에 깨진 글자가 {lost}자 있습니다 — "
+            f"조각 절단면이 글자 가운데를 잘랐습니다",
+            step="STEP 136c",
+            action="화면을 새로 열고 다시 저장하십시오. "
+                   "그래도 나면 조각 크기를 줄여야 합니다")
+    return True, text
+
+
+def _verify_part(raw: str, part: bytes, form: dict, seq: int,
+                 total: int) -> None:
+    """조각 하나가 온 그대로인가 (V11-148 · 개정 395).
+
+    ★ 브라우저가 보낸 길이·해시와 서버가 받은 것을 그 자리에서 견준다.
+      어긋나면 그 조각에서 멈춘다 — 「조각 3/9 가 깨졌습니다」
+    ★ 안 보내면 안 본다.  옛 화면과도 돈다
+    """
+    import hashlib
+
+    want_len = _int_or_none(form.get("chunk_part_len"))
+    want_hash = (form.get("chunk_part_hash") or "").strip()
+    where = f"조각 {seq + 1}/{total}"
+    # ★ 글자가 깨졌으면 길이부터 다르다.  먼저 그것을 말한다
+    if "\ufffd" in raw:
+        raise ValidationError(
+            f"{where} 가 깨졌습니다 — 글자 가운데가 잘렸습니다",
+            step="STEP 136c",
+            action="화면을 새로 열고 다시 저장하십시오 (절단점 규칙이 바뀌었습니다)")
+    if want_len is not None and want_len != len(part):
+        raise ValidationError(
+            f"{where} 가 깨졌습니다 — 길이가 다릅니다 "
+            f"(받은 {len(part):,} · 보낸 {want_len:,})",
+            step="STEP 136c",
+            action="화면을 새로 열고 다시 저장하십시오")
+    if want_hash:
+        got = hashlib.sha256(part).hexdigest()
+        if got != want_hash:
+            raise ValidationError(
+                f"{where} 가 깨졌습니다 — 해시가 다릅니다 "
+                f"(받은 {got[:12]} · 보낸 {want_hash[:12]})",
+                step="STEP 136c",
+                action="화면을 새로 열고 다시 저장하십시오")
 
 
 # ★ 이어붙인 원문임을 남긴다 (개정 307).  한 번에 보낸 것이 아니다 —
