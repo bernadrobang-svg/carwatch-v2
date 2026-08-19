@@ -955,6 +955,44 @@ try:
         say("S34-1", "표의 규격이 실재", 0 if _b341 else 1, [], _b341[:8])
         say("S34-2", "표의 소스·검사가 실재", 0 if _b342 else 1, [], _b342[:8])
 
+        # ── S38-4 · S38-5 (개정 405 · 409) ───────────────────────────
+        # ★ 상태는 계산값이다.  사람이 적지 않는다.
+        #   실측 08-19 — 「✗ 46건」이 전부 유령이었다.  소스가 채워졌는데
+        #   상태가 안 따라온 것이다.  사람 칸과 기계 칸이 섞이면 늘 그렇다
+        # ★ 도구와 같은 함수를 쓴다.  다른 규칙으로 매기면
+        #   「도구는 됐다는데 검사는 아니다」가 된다
+        from tools.trace_fill import DERIVED as _DRV
+        from tools.trace_fill import _hints as _th
+        from tools.trace_fill import restate as _restate
+
+        _hint = _th()
+        _b384, _b385, _keep = [], [], 0
+        for _f in sorted(_g.glob(os.path.join(_trace, "*.md"))):
+            if _f.endswith("INDEX.md") or _f.endswith("RULES.md"):
+                continue
+            for _ln in io.open(_f, encoding="utf-8"):
+                if not _TRACE_ROW.match(_ln):
+                    continue
+                _c = [x.strip() for x in _ln.rstrip("\n").split("|")]
+                if len(_c) != _TRACE_COLS:
+                    continue
+                _rid, _st = _c[1], _c[_C_ST]
+                _cells = _c[1:-1]          # 앞뒤 빈 칸을 뗀다 — 표는 9칸이다
+                _new = _restate(list(_cells), _hint)
+                if _st.strip("* ")[:1] not in _DRV:
+                    # S38-5 — 사람이 적은 것은 도구가 돌아도 그대로여야 한다
+                    _keep += 1
+                    if _new[-1] != _st or _new[_C_SRC - 1] != _c[_C_SRC]:
+                        _b385.append(f"{_rid} — 사람이 적은 「{_st}」를 "
+                                     f"도구가 「{_new[-1]}」로 덮는다")
+                elif _new[-1] != _st or _new[_C_SRC - 1] != _c[_C_SRC]:
+                    _b384.append(f"{_rid} — 상태가 「{_st}」인데 "
+                                 f"세 칸에서 유도하면 「{_new[-1]}」다")
+        say("S38-4", "상태가 세 칸에서 유도한 값과 같음",
+            0 if _b384 else 1, [], _b384[:8])
+        say("S38-5", "「!」·「?」 가 도구 실행 뒤에도 남음",
+            _keep if not _b385 else 0, [], _b385[:8])
+
         # S34-4 — 규격에 있는데 표에 없는 것 (왜 있는지 모르는 규격)
         _in_trace = set()
         for _f in _g.glob(os.path.join(_trace, "*.md")):
@@ -971,10 +1009,13 @@ try:
         #   그 칸을 채우는 것이 개발측의 일이다 — 고쳤다고 잡으면 안 된다.
         #   ★ 실측 08-19 — 지시대로 추적표를 채웠더니 이 검사가 걸렸다.
         #     「고쳤나」가 아니라 「어느 칸을 고쳤나」를 봐야 한다
-        # 칸 번호 (split("|") 기준).  1=R · 2=요구사항 · 3=출처 · 4=규격
-        #   5=소스 · 6=화면 · 7=검사 · 8=테스트 · 9=결함 · 10=상태
-        _MINE = (5, 6, 7, 10)          # 개발측이 채운다
-        _THEIRS = (2, 3, 4, 8, 9)      # 마스터 · 가이드 · 테스터의 칸
+        # 칸 번호 (split("|") 기준).  ★ 08-19 에 표가 9칸으로 다시 짜였다 —
+        #   여기 번호가 10칸 시절 그대로여서 상태·검사를 「남의 칸」으로 잡았다.
+        #   ★ 위 _C_SRC 들과 같은 번호를 쓴다.  두 벌로 적지 않는다
+        #   1=R · 2=층 · 3=요구사항 · 4=출처 · 5=규격
+        #   6=소스 · 7=화면 · 8=검사 · 9=상태
+        _MINE = (_C_SRC, _C_UI, _C_CHK, _C_ST)   # 개발측이 채운다
+        _THEIRS = (_C_LAYER, _C_WHAT, 4, _C_SPEC)  # 마스터 · 가이드의 칸
         _b351 = []
 
         def _rows_of(text: str) -> dict:

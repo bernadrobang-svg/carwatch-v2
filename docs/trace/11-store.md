@@ -13,67 +13,67 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-001 | `[저장]` | `price_current_won` 을 추적한다 | `[원문]` 실측 — 거의 유일한 변동 항목 | `11-store` 추적 | `store/watch.py::classify_duplicates` | 목록 「변동」 | 검사 없음 | **!** |
+| ST-001 | `[저장]` | `price_current_won` 을 추적한다 | `[원문]` 실측 — 거의 유일한 변동 항목 | `11-store` 추적 | ~ `store/watch.py::classify_duplicates` | 목록 「변동」 | 검사 없음 | **!** |
 
 ## 키 체계
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-002 | `[저장]` | 자연키는 UNIQUE 로 남긴다 | `[기술]` 중복 방지는 그대로 작동한다 | `STEP 30` | `sql/ddl/02_core.sql` | — | 검사 없음 | ✗ |
-| ST-003 | `[저장]` | VIN 은 17자리 · 영숫자 · I·O·Q 미포함 | `[원문]` 국제 규격 | `11-store` VIN | `store/core.py::classify_invariant_change` | — | 검사 없음 | ◐ |
+| ST-002 | `[저장]` | 자연키는 UNIQUE 로 남긴다 | `[기술]` 중복 방지는 그대로 작동한다 | `STEP 30` | ~ `sql/ddl/02_core.sql` | — | 검사 없음 | ◐ |
+| ST-003 | `[저장]` | VIN 은 17자리 · 영숫자 · I·O·Q 미포함 | `[원문]` 국제 규격 | `11-store` VIN | ✓ `store/core.py::classify_invariant_change` | — | 검사 없음 | ◐ |
 
 ## NULL · 형식
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-004 | `[저장]` | 빈 컨테이너는 그대로. `None` 은 「없었다」일 때만 | `[마스터]` 위와 같음 | `STEP 32` | `store/core.py::serialize_container` | — | 검사 없음 | ◐ |
-| ST-005 | `[저장]` | 그룹 서술이어도 아래는 반드시 명시 | `[기술]` 뭉뚱그리면 무엇이 빠졌는지 모른다 | `STEP 32a` | `store/raw.py::open_db` | — | 검사 없음 | ◐ |
-| ST-006 | `[저장]` | `CHECK` 에 넷을 다 넣는다 | `[기술]` V11-40·43 이 이 값을 요구한다 | `STEP 33` | `store/watch.py::watch_close` | — | 검사 없음 | ◐ |
+| ST-004 | `[저장]` | 빈 컨테이너는 그대로. `None` 은 「없었다」일 때만 | `[마스터]` 위와 같음 | `STEP 32` | ~ `store/core.py::serialize_container` | — | 검사 없음 | ◐ |
+| ST-005 | `[저장]` | 그룹 서술이어도 아래는 반드시 명시 | `[기술]` 뭉뚱그리면 무엇이 빠졌는지 모른다 | `STEP 32a` | ~ `store/raw.py::open_db` | — | 검사 없음 | ◐ |
+| ST-006 | `[저장]` | `CHECK` 에 넷을 다 넣는다 | `[기술]` V11-40·43 이 이 값을 요구한다 | `STEP 33` | ~ `store/watch.py::watch_close` | — | 검사 없음 | ◐ |
 
 ## 이행 · 트랜잭션
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-007 | `[저장]` | 재작성 전후 행 수를 세고 같은지 확인 | `[기술]` 조용히 잃는 것을 막는다 | `STEP 32b` | `tools/migrate.py::rebuild_to_ddl` | — | 검사 없음 | ✗ |
-| ST-008 | `[검사]` | `migrate` 후 실측 DB 로 전 검사 | `[마스터]` 개발측 원칙 1 — 돌려 확인한다 | `STEP 32b` | `tools/menu.py:175` | — | 검사 없음 | ◐ |
+| ST-007 | `[저장]` | 재작성 전후 행 수를 세고 같은지 확인 | `[기술]` 조용히 잃는 것을 막는다 | `STEP 32b` | ✓ `tools/migrate.py::rebuild_to_ddl` | — | 검사 없음 | ◐ |
+| ST-008 | `[검사]` | `migrate` 후 실측 DB 로 전 검사 | `[마스터]` 개발측 원칙 1 — 돌려 확인한다 | `STEP 32b` | ~ `tools/menu.py:175` | — | 검사 없음 | ◐ |
 
 ## 개인정보
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-009 | `[저장]` | 개인정보 — 상호와 실명을 가른다 | `[마스터]` **v1 은 한 컬럼에 섞여 있었다** | `11-store` | `store/core.py::upsert_dealer` | 해당 없음 | 검사 없음 | ◐ |
-| ST-010 | `[저장]` | `plate_hash` 키가 없으면 시작하지 않는다 | `[기술]` 키 없이 해시하면 되돌릴 수 없다 | `11-store` | `store/pii.py::plate_hash` | 해당 없음 | V2-11 | ○ |
-| ST-011 | `[저장]` | 원본과 결합용 해시를 나눈다. 해시는 결정적 | `[기술]` 번호판은 결합 키다 | `11-store` | `store/pii.py:6` | 해당 없음 | 검사 없음 | ◐ |
-| ST-012 | `[저장]` | `plate_history_json` 의 과거 번호도 같은 처리 | `[기술]` 위와 같음 | `11-store` | `store/pii.py::hash_list` | 해당 없음 | 검사 없음 | ◐ |
-| ST-013 | `[저장]` | 1에서 뗀 값이 CORE 로 새지 않는다 | `[기술]` 같은 딕셔너리를 재사용하면 샌다 | `11-store` PII | `store/core.py::split_pii` | — | 검사 없음 | ◐ |
-| ST-014 | `[저장]` | 2가 실패하면 3을 하지 않는다 | `[기술]` PII 만 남는 고아 행을 만들지 않는다 | `11-store` PII | `store/admin.py::apply_config` | — | 검사 없음 | ✗ |
-| ST-015 | `[저장]` | PII 는 지정 함수로만 읽는다 | `[기술]` `core_pii` 직접 SELECT 금지 | `11-store` PII | `store/core.py::our_fault` | — | 검사 없음 | ✗ |
+| ST-009 | `[저장]` | 개인정보 — 상호와 실명을 가른다 | `[마스터]` **v1 은 한 컬럼에 섞여 있었다** | `11-store` | ~ `store/core.py::upsert_dealer` | 해당 없음 | 검사 없음 | ◐ |
+| ST-010 | `[저장]` | `plate_hash` 키가 없으면 시작하지 않는다 | `[기술]` 키 없이 해시하면 되돌릴 수 없다 | `11-store` | ~ `store/pii.py::plate_hash` | 해당 없음 | V2-11 | ◐ |
+| ST-011 | `[저장]` | 원본과 결합용 해시를 나눈다. 해시는 결정적 | `[기술]` 번호판은 결합 키다 | `11-store` | ~ `store/pii.py:6` | 해당 없음 | 검사 없음 | ◐ |
+| ST-012 | `[저장]` | `plate_history_json` 의 과거 번호도 같은 처리 | `[기술]` 위와 같음 | `11-store` | ~ `store/pii.py::hash_list` | 해당 없음 | 검사 없음 | ◐ |
+| ST-013 | `[저장]` | 1에서 뗀 값이 CORE 로 새지 않는다 | `[기술]` 같은 딕셔너리를 재사용하면 샌다 | `11-store` PII | ~ `store/core.py::split_pii` | — | 검사 없음 | ◐ |
+| ST-014 | `[저장]` | 2가 실패하면 3을 하지 않는다 | `[기술]` PII 만 남는 고아 행을 만들지 않는다 | `11-store` PII | ~ `store/admin.py::apply_config` | — | 검사 없음 | ◐ |
+| ST-015 | `[저장]` | PII 는 지정 함수로만 읽는다 | `[기술]` `core_pii` 직접 SELECT 금지 | `11-store` PII | ~ `store/core.py::our_fault` | — | 검사 없음 | ◐ |
 
 ## 관리자 표
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-028 | `[저장]` | `display_name` 이 비면 `login_name` 을 넣는다 | `[판단]` 빈 이름이 화면에 나오면 누군지 모른다. ★ 조사 없음 | `11-store` 관리자 | `store/admin.py::create_account` | — | 검사 없음 | ◐ |
-| ST-017 | `[저장]` | `item_count` 는 `resultCode IS NOT NULL` 만 센다 | `[원문]` 실측 — null 행이 섞여 있다 | `11-store` | `store/core.py::target_counts` | 해당 없음 | V3-34 | ○ |
-| ST-018 | `[저장]` | 잠금 중 거부도 `succeeded=0` 으로 남긴다 | `[기술]` 왜 못 들어갔는지 알아야 한다 | `11-store` 관리자 | `store/admin.py::_recent_failures` | — | V10-20 | ◐ |
+| ST-028 | `[저장]` | `display_name` 이 비면 `login_name` 을 넣는다 | `[판단]` 빈 이름이 화면에 나오면 누군지 모른다. ★ 조사 없음 | `11-store` 관리자 | ~ `store/admin.py::create_account` | — | 검사 없음 | ◐ |
+| ST-017 | `[저장]` | `item_count` 는 `resultCode IS NOT NULL` 만 센다 | `[원문]` 실측 — null 행이 섞여 있다 | `11-store` | ~ `store/core.py::target_counts` | 해당 없음 | V3-34 | ◐ |
+| ST-018 | `[저장]` | 잠금 중 거부도 `succeeded=0` 으로 남긴다 | `[기술]` 왜 못 들어갔는지 알아야 한다 | `11-store` 관리자 | ~ `store/admin.py::_recent_failures` | — | V10-20 | ◐ |
 
 ## target_key NULL
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-019 | `[저장]` | 저장은 한다. 원문은 무손실 | `[마스터]` P3 | `11-store` · 개정 271 | `store/raw.py:2` | — | 검사 없음 | ◐ |
-| ST-020 | `[판정]` | NULL 이면 판정 대상이 아니다 | `[마스터]` 개정 271 | `11-store` | `analyze/absolute.py:6` | 해당 없음 | V2-31 | ○ |
-| ST-021 | `[저장·화면]` | 화면에서 갈라 낸다 — 「범위 안 N · 차종 미정 N」 | `[마스터]` 개정 271 — 섞어서 「매물 N건」으로 내지 않는다 | `11-store` | `report/screens/build.py::market_price` | `/notready` | V2-31 · V2-32 | ○ |
-| ST-022 | `[저장]` | **왜 안 붙었는지 알 수 있어야 한다** | `[마스터]` 개정 271 | `11-store` | `store/core.py::split_pii` | `/notready` | V2-32 | ○ |
+| ST-019 | `[저장]` | 저장은 한다. 원문은 무손실 | `[마스터]` P3 | `11-store` · 개정 271 | ~ `store/raw.py:2` | — | 검사 없음 | ◐ |
+| ST-020 | `[판정]` | NULL 이면 판정 대상이 아니다 | `[마스터]` 개정 271 | `11-store` | ~ `analyze/absolute.py:6` | 해당 없음 | V2-31 | ◐ |
+| ST-021 | `[저장·화면]` | 화면에서 갈라 낸다 — 「범위 안 N · 차종 미정 N」 | `[마스터]` 개정 271 — 섞어서 「매물 N건」으로 내지 않는다 | `11-store` | ~ `report/screens/build.py::market_price` | `/notready` | V2-31 · V2-32 | ◐ |
+| ST-022 | `[저장]` | **왜 안 붙었는지 알 수 있어야 한다** | `[마스터]` 개정 271 | `11-store` | ~ `store/core.py::split_pii` | `/notready` | V2-32 | ◐ |
 
 ## 결과 저장
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| ST-023 | `[판정]` | `NOT_RATED` 이면 반드시 채운다. 등급만 내지 않는다 | `[마스터]` 왜 못 매겼는지가 있어야 한다 | `STEP 37` | `score/grade.py:6` | `/why` | V5-12 | ○ |
-| ST-024 | `[저장·화면]` | 충돌은 「같은 근거 두 값」으로 낸다 | `[마스터]` 개정 — 버리지 않는다 | `11-store` 충돌 | `store/dictionary.py:6` | `/why` · L1 | 검사 없음 | ◐ |
-| ST-027 | `[저장·화면]` | 확보율은 「원문 기준」과 「컬럼 기준」을 나눠 낸다 | `[판단]` 둘이 다르다. ★ 어느 쪽을 볼지는 마스터 판단 | `11-store` | `report/exports/export.py::target_md` | 해당 없음 | V2-01 | ? |
-| ST-026 | `[사전]` | 미확정이 해소되면 본문 서술도 함께 고친다 | `[마스터]` S28 — 표만 고치면 이격이 난다 | `11-store` | `config/dictionaries/color_grade.json` | 해당 없음 | S28-3 | ○ |
+| ST-023 | `[판정]` | `NOT_RATED` 이면 반드시 채운다. 등급만 내지 않는다 | `[마스터]` 왜 못 매겼는지가 있어야 한다 | `STEP 37` | ~ `score/grade.py:6` | `/why` | V5-12 | ◐ |
+| ST-024 | `[저장·화면]` | 충돌은 「같은 근거 두 값」으로 낸다 | `[마스터]` 개정 — 버리지 않는다 | `11-store` 충돌 | ~ `store/dictionary.py:6` | `/why` · L1 | 검사 없음 | ◐ |
+| ST-027 | `[저장·화면]` | 확보율은 「원문 기준」과 「컬럼 기준」을 나눠 낸다 | `[판단]` 둘이 다르다. ★ 어느 쪽을 볼지는 마스터 판단 | `11-store` | ~ `report/exports/export.py::target_md` | 해당 없음 | V2-01 | ? |
+| ST-026 | `[사전]` | 미확정이 해소되면 본문 서술도 함께 고친다 | `[마스터]` S28 — 표만 고치면 이격이 난다 | `11-store` | ~ `config/dictionaries/color_grade.json` | 해당 없음 | S28-3 | ◐ |
 
 ## 마스터께 여쭐 것
 

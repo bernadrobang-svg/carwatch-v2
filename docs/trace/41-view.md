@@ -13,71 +13,71 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-001 | `[화면]` | 템플릿은 View DTO 를 그대로 렌더 | `[기술]` 위와 같음 | `STEP 109` | `web/views.py:5` | 화면 없음 | 검사 없음 | ◐ |
-| VW-002 | `[화면]` | 인자로 넘긴다. DTO 가 싫으면 인자를 늘린다 | `[기술]` 위와 같음 | `41-view` | `web/views.py::listings` | `/listings` | V11-34 · V4-23 | ○ |
-| VW-003 | `[판정]` | Component 이름·등급 코드·상태값은 상수로 공유 | `[기술]` 화면마다 다르면 대조가 안 된다 | `STEP 105` | `analyze/axes.py:5` | — | 검사 없음 | ◐ |
+| VW-001 | `[화면]` | 템플릿은 View DTO 를 그대로 렌더 | `[기술]` 위와 같음 | `STEP 109` | ~ `web/views.py:5` | 화면 없음 | 검사 없음 | ◐ |
+| VW-002 | `[화면]` | 인자로 넘긴다. DTO 가 싫으면 인자를 늘린다 | `[기술]` 위와 같음 | `41-view` | ~ `web/views.py::listings` | `/listings` | V11-34 · V4-23 | ◐ |
+| VW-003 | `[판정]` | Component 이름·등급 코드·상태값은 상수로 공유 | `[기술]` 화면마다 다르면 대조가 안 된다 | `STEP 105` | ~ `analyze/axes.py:5` | — | 검사 없음 | ◐ |
 
 ## 전 화면 공통 표시
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-004 | `[운영·화면]` | `Account` 를 낸다. 비로그인은 `anonymous` | `[판단]` 지금 누구로 보는지 몰라 헷갈린다. ★ 조사 없음 | `41-view` | `report/screens/views.py::ViewerState` | 전 화면 | 검사 없음 | ◐ |
-| VW-005 | `[사전·화면]` | `VersionStamp` — parse·dict·calc·coefficient | `[마스터]` 어느 판으로 본 것인지 알아야 한다 | `41-view` | `report/views.py::VersionStamp` | 꼬리 | 검사 없음 | ◐ |
-| VW-006 | `[수집·화면]` | 데이터 기준 시각 (마지막 수집) | `[마스터]` 개정 316 — 목록이 멈추면 변동이 멈춘다 | `41-view` | `report/screens/admin.py::_live_progress` | 전 화면 | V11-103 — 검사 없음(규격에만) | **!** |
-| VW-007 | `[사전·화면]` | 미확정 항목이 판정에 쓰였으면 표시 | `[마스터]` 사전이 pending 이면 뜻이 흐려진다 | `41-view` | `report/screens/build.py:9` | 머리말 | 검사 없음 | ◐ |
+| VW-004 | `[운영·화면]` | `Account` 를 낸다. 비로그인은 `anonymous` | `[판단]` 지금 누구로 보는지 몰라 헷갈린다. ★ 조사 없음 | `41-view` | ~ `report/screens/views.py::ViewerState` | 전 화면 | 검사 없음 | ◐ |
+| VW-005 | `[사전·화면]` | `VersionStamp` — parse·dict·calc·coefficient | `[마스터]` 어느 판으로 본 것인지 알아야 한다 | `41-view` | ~ `report/views.py::VersionStamp` | 꼬리 | 검사 없음 | ◐ |
+| VW-006 | `[수집·화면]` | 데이터 기준 시각 (마지막 수집) | `[마스터]` 개정 316 — 목록이 멈추면 변동이 멈춘다 | `41-view` | ~ `report/screens/admin.py::_live_progress` | 전 화면 | V11-103 — 검사 없음(규격에만) | **!** |
+| VW-007 | `[사전·화면]` | 미확정 항목이 판정에 쓰였으면 표시 | `[마스터]` 사전이 pending 이면 뜻이 흐려진다 | `41-view` | ~ `report/screens/build.py:9` | 머리말 | 검사 없음 | ◐ |
 
 ## 값 표기
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-008 | `[화면]` | `AxisChip.label` 하나로 전 화면이 같은 문구 | `[기술]` 한 곳에서 만든다 | `STEP 91` | `report/screens/views.py::AxisChip` | 화면 없음 | V11-84 | ✗ |
-| VW-009 | `[화면]` | `axis` 값은 Component 이름. 화면 라벨이 아니다 | `[기술]` 라벨은 바뀐다. 필터가 깨진다 | `41-view` | `report/screens/views.py::ListingFilter` | 화면 없음 | 검사 없음 | ◐ |
+| VW-008 | `[화면]` | `AxisChip.label` 하나로 전 화면이 같은 문구 | `[기술]` 한 곳에서 만든다 | `STEP 91` | ✓ `report/screens/views.py::AxisChip` | 화면 없음 | V11-84 | ◐ |
+| VW-009 | `[화면]` | `axis` 값은 Component 이름. 화면 라벨이 아니다 | `[기술]` 라벨은 바뀐다. 필터가 깨진다 | `41-view` | ~ `report/screens/views.py::ListingFilter` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 가격 · 할부
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-010 | `[화면]` | 세 값을 한 셀에 — 바로 비교되게 | `[마스터]` 개정 283 — 「시세차가 아니라 시세고 신차가도」 | `41-view` 금융 | `web/templates/listings.html` | 목록 | V11-81 | ○ |
-| VW-029 | `[화면]` | 월 납입·이전등록비에 「추정」 표시 | `[마스터]` **08-18 확정 — 「붙인다」** | `41-view` 금융 | `report/finance.py::price_for_monthly` | 목록 | 검사 없음 | ◐ |
-| VW-026 | `[화면]` | 표시가+부대비용 ≤ **1,500만** 이면 「전액 현금」 | `[마스터]` **08-18 확정 — 「1500보다 싸다는 이야기잖아. 그렇게 해」** · `config.finance.cash_limit` | `41-view` 금융 | `report/finance.py::build_finance` | 화면 없음 | 검사 없음 | ◐ |
-| VW-027 | `[화면]` | 넘으면 부족액 표시 — 「1,740만원 부족」 | `[마스터]` 08-18 확정 | `41-view` 금융 | `report/finance.py::build_finance` | 화면 없음 | 검사 없음 | ◐ |
-| VW-014 | `[판정]` | 시세차는 기대가 대비 % + 절대 금액 | `[마스터]` 개정 283 | `41-view` | `config/scoring.json::components.value.market` | 목록 | 검사 없음 | ◐ |
+| VW-010 | `[화면]` | 세 값을 한 셀에 — 바로 비교되게 | `[마스터]` 개정 283 — 「시세차가 아니라 시세고 신차가도」 | `41-view` 금융 | ✓ `web/templates/listings.html` | 목록 | V11-81 | ○ |
+| VW-029 | `[화면]` | 월 납입·이전등록비에 「추정」 표시 | `[마스터]` **08-18 확정 — 「붙인다」** | `41-view` 금융 | ~ `report/finance.py::price_for_monthly` | 목록 | 검사 없음 | ◐ |
+| VW-026 | `[화면]` | 표시가+부대비용 ≤ **1,500만** 이면 「전액 현금」 | `[마스터]` **08-18 확정 — 「1500보다 싸다는 이야기잖아. 그렇게 해」** · `config.finance.cash_limit` | `41-view` 금융 | ~ `report/finance.py::build_finance` | 화면 없음 | 검사 없음 | ◐ |
+| VW-027 | `[화면]` | 넘으면 부족액 표시 — 「1,740만원 부족」 | `[마스터]` 08-18 확정 | `41-view` 금융 | ~ `report/finance.py::build_finance` | 화면 없음 | 검사 없음 | ◐ |
+| VW-014 | `[판정]` | 시세차는 기대가 대비 % + 절대 금액 | `[마스터]` 개정 283 | `41-view` | ~ `config/scoring.json::components.value.market` | 목록 | 검사 없음 | ◐ |
 
 ## 경고 · 신뢰
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-015 | `[판정]` | 표본 부족 딜러는 점수를 흐리게 | `[마스터]` 점을 0 으로 찍지 않는다 | `STEP 99` | `analyze/peer.py::stage_conditions` | `/dealers` | V3-26 | ○ |
+| VW-015 | `[판정]` | 표본 부족 딜러는 점수를 흐리게 | `[마스터]` 점을 0 으로 찍지 않는다 | `STEP 99` | ✓ `analyze/peer.py::stage_conditions` | `/dealers` | V3-26 | ○ |
 
 ## 정렬 · 쪽
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-016 | `[운영]` | `ORDER BY` 한 줄에 4단이 전부 | `[기술]` 08-16 실측 — 나눠 쓰니 쪽마다 순서가 달랐다 | `41-view` | `web/views.py::listings` | `/listings` | V6-07 | ○ |
-| VW-017 | `[화면]` | 전 정렬에 `listing_id` 타이브레이커 | `[기술]` 위와 같음 | `41-view` | `report/screens/build.py:12` | 화면 없음 | V6-07 | ◐ |
-| VW-018 | `[화면]` | 정렬 · 쪽 — 총 건수를 함께 낸다 | `[마스터]` 개정 332 — 「매물 200건」이 거짓이었다 | `41-view` | `report/screens/build.py::site_badge` | 머리말 | V11-55 | ○ |
-| VW-028 | `[수집]` | **`page_size` 를 URL 로 받는다 (상한 200)** | `[마스터]` **08-18 확정** · `config.view.page_size_max` | `41-view` | `adapters/encar.py::__init__` | — | 검사 없음 | ◐ |
+| VW-016 | `[운영]` | `ORDER BY` 한 줄에 4단이 전부 | `[기술]` 08-16 실측 — 나눠 쓰니 쪽마다 순서가 달랐다 | `41-view` | ~ `web/views.py::listings` | `/listings` | V6-07 | ◐ |
+| VW-017 | `[화면]` | 전 정렬에 `listing_id` 타이브레이커 | `[기술]` 위와 같음 | `41-view` | ~ `report/screens/build.py:12` | 화면 없음 | V6-07 | ◐ |
+| VW-018 | `[화면]` | 정렬 · 쪽 — 총 건수를 함께 낸다 | `[마스터]` 개정 332 — 「매물 200건」이 거짓이었다 | `41-view` | ~ `report/screens/build.py::site_badge` | 머리말 | V11-55 | ◐ |
+| VW-028 | `[수집]` | **`page_size` 를 URL 로 받는다 (상한 200)** | `[마스터]` **08-18 확정** · `config.view.page_size_max` | `41-view` | ~ `adapters/encar.py::__init__` | — | 검사 없음 | ◐ |
 
 ## 쿼리
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-020 | `[판정]` | 축 칩은 한 번에 (`IN`) | `[기술]` 08-16 실측 — 쿼리가 200번 넘었다 | `41-view` | `report/screens/build.py::axis_chips` | `/listings` | V11-34 | ○ |
+| VW-020 | `[판정]` | 축 칩은 한 번에 (`IN`) | `[기술]` 08-16 실측 — 쿼리가 200번 넘었다 | `41-view` | ✓ `report/screens/build.py::axis_chips` | `/listings` | V11-34 | ○ |
 
 ## URL 파라미터
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-021 | `[화면]` | 파라미터가 없어도 화면이 뜬다 | `[기술]` 링크를 잘라 붙여도 열려야 한다 | `41-view` | `web/views.py::listings` | `/listings` | 검사 없음 | ◐ |
-| VW-022 | `[화면]` | 모르는 파라미터는 무시 | `[기술]` 위와 같음 | `41-view` | `web/views.py::listings` | 화면 없음 | 검사 없음 | ◐ |
+| VW-021 | `[화면]` | 파라미터가 없어도 화면이 뜬다 | `[기술]` 링크를 잘라 붙여도 열려야 한다 | `41-view` | ~ `web/views.py::listings` | `/listings` | 검사 없음 | ◐ |
+| VW-022 | `[화면]` | 모르는 파라미터는 무시 | `[기술]` 위와 같음 | `41-view` | ~ `web/views.py::listings` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 그 밖
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VW-023 | `[운영]` | 버전이 다르면 비교 불가로 막는다 | `[기술]` 다른 판을 나란히 두면 틀린다 | `41-view` | `web/views.py::compare` | `/compare` | 검사 없음 | ◐ |
-| VW-024 | `[화면]` | 그 밖 — 조정 전 미리보기 | `[마스터]` 되돌리려면 재계산이 필요하다 | `41-view` | `report/screens/admin.py:7` | `/admin/scoring` | 검사 없음 | ◐ |
-| VW-025 | `[화면]` | 적용 시 `calc_version` 을 올린다 | `[마스터]` 3장 STEP 31 — 이전 결과를 안 지운다 | `41-view` | `web/session.py::_parse_multipart` | 화면 없음 | 검사 없음 | ◐ |
+| VW-023 | `[운영]` | 버전이 다르면 비교 불가로 막는다 | `[기술]` 다른 판을 나란히 두면 틀린다 | `41-view` | ~ `web/views.py::compare` | `/compare` | 검사 없음 | ◐ |
+| VW-024 | `[화면]` | 그 밖 — 조정 전 미리보기 | `[마스터]` 되돌리려면 재계산이 필요하다 | `41-view` | ~ `report/screens/admin.py:7` | `/admin/scoring` | 검사 없음 | ◐ |
+| VW-025 | `[화면]` | 적용 시 `calc_version` 을 올린다 | `[마스터]` 3장 STEP 31 — 이전 결과를 안 지운다 | `41-view` | ~ `web/session.py::_parse_multipart` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 마스터께 여쭐 것 — 근거를 못 대는 것
 

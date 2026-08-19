@@ -13,40 +13,40 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| RP-001 | `[화면]` | 모든 화면에 `VersionStamp` | `[마스터]` 어느 판으로 낸 것인지 알아야 한다 | `40-report` | `report/views.py::VersionStamp` | 전 화면 | 검사 없음 | ◐ |
-| RP-002 | `[화면]` | `Reporter` 는 DTO 를 받아 형식만 바꾼다 | `[기술]` DB 를 직접 조회하면 온라인 전환이 막힌다 | `40-report` | `report/views.py:7` | 화면 없음 | 검사 없음 | ◐ |
+| RP-001 | `[화면]` | 모든 화면에 `VersionStamp` | `[마스터]` 어느 판으로 낸 것인지 알아야 한다 | `40-report` | ~ `report/views.py::VersionStamp` | 전 화면 | 검사 없음 | ◐ |
+| RP-002 | `[화면]` | `Reporter` 는 DTO 를 받아 형식만 바꾼다 | `[기술]` DB 를 직접 조회하면 온라인 전환이 막힌다 | `40-report` | ~ `report/views.py:7` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 중단 리포트
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| RP-003 | `[저장]` | 「조치」는 사람이 할 수 있는 행동으로 | `[마스터]` 위와 같음 | `40-report` L0 | `report/screens/admin.py::view_status` | `/notready` | 검사 없음 | ◐ |
-| RP-004 | `[저장·화면]` | 중단 리포트 — 진행분을 낸다 | `[마스터]` 처음부터 다시 도는 게 아님을 알 수 있게 | `40-report` L0 | `report/exports/export.py::halt_md` | 화면 없음 | 검사 없음 | ✗ |
+| RP-003 | `[저장]` | 「조치」는 사람이 할 수 있는 행동으로 | `[마스터]` 위와 같음 | `40-report` L0 | ✓ `report/screens/admin.py::view_status` | `/notready` | 검사 없음 | ◐ |
+| RP-004 | `[저장·화면]` | 중단 리포트 — 진행분을 낸다 | `[마스터]` 처음부터 다시 도는 게 아님을 알 수 있게 | `40-report` L0 | ~ `report/exports/export.py::halt_md` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 금융 계산
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| RP-005 | `[판정]` | 세율·이율은 config | `[마스터]` 0장 STEP 6 | `40-report` | `config/sites.json` | — | 검사 없음 | ◐ |
-| RP-016 | `[판정·화면]` | 추정 항목은 「추정」으로 표시 | `[판단]` 실비가 아니다. ★ 법적 검토 없음 | `40-report` | `web/templates/why.html` | 목록 | 검사 없음 | ◐ |
+| RP-005 | `[판정]` | 세율·이율은 config | `[마스터]` 0장 STEP 6 | `40-report` | ✓ `config/sites.json` | — | 검사 없음 | ◐ |
+| RP-016 | `[판정·화면]` | 추정 항목은 「추정」으로 표시 | `[판단]` 실비가 아니다. ★ 법적 검토 없음 | `40-report` | ~ `web/templates/why.html` | 목록 | 검사 없음 | ◐ |
 
 ## 파일 출력
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| RP-015 | `[화면]` | 전 요소를 `ReportMeta` 에서 가져온다 | `[판단]` 손으로 조립하면 형식이 갈린다. ★ 근거 약함 | `40-report` | `report/views.py::ReportMeta` | 화면 없음 | V8-02 | ? |
-| RP-008 | `[화면]` | 같은 이름이 있으면 `FileExistsError` | `[기술]` 덮어쓰기 금지 | `40-report` | `report/exports/export.py:231` | 화면 없음 | V8-02 | ◐ |
-| RP-009 | `[화면]` | UTF-8 · BOM 없음 | `[기술]` 엑셀이 BOM 을 넣으면 파싱이 깨진다 | `40-report` | `report/exports/export.py::write_export` | 화면 없음 | 검사 없음 | ✗ |
-| RP-010 | `[화면]` | 줄바꿈 LF. Windows 에서도 LF | `[기술]` 형상 관리에서 diff 가 깨진다 | `40-report` | `report/exports/export.py:229` | 화면 없음 | V8-02 | ◐ |
-| RP-011 | `[화면]` | **파일을 지우는 코드를 두지 않는다** | `[마스터]` P3 — 잃으면 복구가 안 된다 | `40-report` | `web/views.py::_versions` | 화면 없음 | 검사 없음 | ◐ |
-| RP-012 | `[화면]` | 임시 파일에 쓰고 `os.replace` | `[기술]` 쓰다 죽으면 반쪽 파일이 남는다 | `40-report` | `report/exports/export.py::write_export` | 화면 없음 | 검사 없음 | ◐ |
+| RP-015 | `[화면]` | 전 요소를 `ReportMeta` 에서 가져온다 | `[판단]` 손으로 조립하면 형식이 갈린다. ★ 근거 약함 | `40-report` | ~ `report/views.py::ReportMeta` | 화면 없음 | V8-02 | ? |
+| RP-008 | `[화면]` | 같은 이름이 있으면 `FileExistsError` | `[기술]` 덮어쓰기 금지 | `40-report` | ~ `report/exports/export.py:231` | 화면 없음 | V8-02 | ◐ |
+| RP-009 | `[화면]` | UTF-8 · BOM 없음 | `[기술]` 엑셀이 BOM 을 넣으면 파싱이 깨진다 | `40-report` | ✓ `report/exports/export.py::write_export` | 화면 없음 | 검사 없음 | ◐ |
+| RP-010 | `[화면]` | 줄바꿈 LF. Windows 에서도 LF | `[기술]` 형상 관리에서 diff 가 깨진다 | `40-report` | ~ `report/exports/export.py:229` | 화면 없음 | V8-02 | ◐ |
+| RP-011 | `[화면]` | **파일을 지우는 코드를 두지 않는다** | `[마스터]` P3 — 잃으면 복구가 안 된다 | `40-report` | ~ `web/views.py::_versions` | 화면 없음 | 검사 없음 | ◐ |
+| RP-012 | `[화면]` | 임시 파일에 쓰고 `os.replace` | `[기술]` 쓰다 죽으면 반쪽 파일이 남는다 | `40-report` | ~ `report/exports/export.py::write_export` | 화면 없음 | 검사 없음 | ◐ |
 
 ## 형식
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| RP-013 | `[화면]` | 전 형식에 `VersionStamp` | `[마스터]` 위와 같음 | `40-report` | `report/views.py::VersionStamp` | 화면 없음 | 검사 없음 | ◐ |
-| RP-014 | `[판정]` | csv 헤더에 배점을 표기 | `[판단]` ★ **규격이 낡았다 — 「price(200)」은 개정 329 로 250 이다** | `40-report` | `report/exports/export.py::listing_csv` | — | S28-1 | **!** |
+| RP-013 | `[화면]` | 전 형식에 `VersionStamp` | `[마스터]` 위와 같음 | `40-report` | ~ `report/views.py::VersionStamp` | 화면 없음 | 검사 없음 | ◐ |
+| RP-014 | `[판정]` | csv 헤더에 배점을 표기 | `[판단]` ★ **규격이 낡았다 — 「price(200)」은 개정 329 로 250 이다** | `40-report` | ✓ `report/exports/export.py::listing_csv` | — | S28-1 | **!** |
 
 ## 마스터께 여쭐 것
 
@@ -59,16 +59,16 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| RP-017 | `[화면]` | **사이트별 구매비용 총액을 낸다** | `[마스터]` **「케이카로 구매 시 가격이고 엔카 구매 시 가격이잖아. 사이트별 총합을 내라」** | `40-report` | `report/views.py::ScoreView` | 목록·`/why`⑨ | V11-120 | ○ |
-| RP-018 | `[화면]` | `sites.json` 에 `purchase_cost` | `[마스터]` 위와 같음 | `40-report` | `report/finance.py::purchase_cost` | 화면 없음 | 검사 없음 | ◐ |
-| RP-019 | `[수집]` | 여러 사이트에 같은 차면 나란히 | `[마스터]` **표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다** | `40-report` | `report/render.py::_purchase_costs` | — | V11-121 | ◐ |
-| RP-020 | `[수집]` | 사이트가 총액을 주면 그것을 쓴다 | `[원문]` K카는 화면에 낸다 | `40-report` | `report/finance.py::purchase_cost` | — | V11-121 | ◐ |
-| RP-021 | `[판정]` | 안 주면 계산하고 「추정」 | `[판단]` 이전등록비는 법정 요율. ★ 요율 조사 필요 | `40-report` | `config/sites.json::encar.purchase_cost` | — | V11-120 · V11-121 | ◐ |
-| RP-022 | `[판정]` | 추가 혜택을 따로 — 「10년 보증 포함」 | `[마스터]` **제네시스 인증중고차** | `40-report` | `config/scoring.json::components.warranty.general` | — | V11-120 · V11-121 | ◐ |
-| RP-023 | `[화면]` | 전액 현금 — `cash_limit` 1,500만 | `[마스터]` **「1500보다 싸다는 이야기잖아」** | `40-report` | `report/exports/export.py` | 화면 없음 | 검사 없음 | ◐ |
-| RP-024 | `[화면]` | **리포트를 누르면 팝업으로 내용** | `[마스터]` **「목록을 보고 클릭하면 내용을 볼 수 있게 팝업 박스로」** | `40-report` | `web/views.py::reports` | `/reports` | V11-122 | ○ |
-| RP-025 | `[화면]` | 팝업 안에 「다운로드」 단추 | `[마스터]` **「다운로드 누를 때 다운로드」** | `40-report` | `web/views.py::_filter_buttons` | 화면 없음 | V11-122 | ◐ |
-| RP-026 | `[화면]` | md 렌더 · csv 표 · json 트리 | `[기술]` 휴대폰에서 볼 도구가 없다 | `40-report` | `report/exports/export.py` | 화면 없음 | V11-122 | ◐ |
-| RP-027 | `[화면]` | 큰 파일은 앞부분만 (200KB) | `[기술]` | `40-report` | `web/templates/reports.html` | `/reports` | 검사 없음 | ◐ |
-| RP-028 | `[화면]` | 쿼리 붙여넣기 상자를 크게 | `[마스터]` **「네가 쿼리를 줘서 내가 보려고 만든 창」** | `40-report` | `report/exports/export.py` | `/admin/query` | 검사 없음 | ◐ |
-| RP-029 | `[저장]` | 자주 쓰는 쿼리를 저장 | `[판단]` 매번 붙여넣게 하지 않는다. ★ 마스터 확인 필요 | `40-report` | `store/dictionary.py:2` | — | 검사 없음 | ? |
+| RP-017 | `[화면]` | **사이트별 구매비용 총액을 낸다** | `[마스터]` **「케이카로 구매 시 가격이고 엔카 구매 시 가격이잖아. 사이트별 총합을 내라」** | `40-report` | ~ `report/views.py::ScoreView` | 목록·`/why`⑨ | V11-120 | ◐ |
+| RP-018 | `[화면]` | `sites.json` 에 `purchase_cost` | `[마스터]` 위와 같음 | `40-report` | ~ `report/finance.py::purchase_cost` | 화면 없음 | 검사 없음 | ◐ |
+| RP-019 | `[수집]` | 여러 사이트에 같은 차면 나란히 | `[마스터]` **표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다** | `40-report` | ✓ `report/render.py::_purchase_costs` | — | V11-121 | ○ |
+| RP-020 | `[수집]` | 사이트가 총액을 주면 그것을 쓴다 | `[원문]` K카는 화면에 낸다 | `40-report` | ✓ `report/finance.py::purchase_cost` | — | V11-121 | ○ |
+| RP-021 | `[판정]` | 안 주면 계산하고 「추정」 | `[판단]` 이전등록비는 법정 요율. ★ 요율 조사 필요 | `40-report` | ✓ `config/sites.json::encar.purchase_cost` | — | V11-120 · V11-121 | ○ |
+| RP-022 | `[판정]` | 추가 혜택을 따로 — 「10년 보증 포함」 | `[마스터]` **제네시스 인증중고차** | `40-report` | ✓ `config/scoring.json::components.warranty.general` | — | V11-120 · V11-121 | ○ |
+| RP-023 | `[화면]` | 전액 현금 — `cash_limit` 1,500만 | `[마스터]` **「1500보다 싸다는 이야기잖아」** | `40-report` | ~ `report/exports/export.py` | 화면 없음 | 검사 없음 | ◐ |
+| RP-024 | `[화면]` | **리포트를 누르면 팝업으로 내용** | `[마스터]` **「목록을 보고 클릭하면 내용을 볼 수 있게 팝업 박스로」** | `40-report` | ~ `web/views.py::reports` | `/reports` | V11-122 | ◐ |
+| RP-025 | `[화면]` | 팝업 안에 「다운로드」 단추 | `[마스터]` **「다운로드 누를 때 다운로드」** | `40-report` | ~ `web/views.py::_filter_buttons` | 화면 없음 | V11-122 | ◐ |
+| RP-026 | `[화면]` | md 렌더 · csv 표 · json 트리 | `[기술]` 휴대폰에서 볼 도구가 없다 | `40-report` | ~ `report/exports/export.py` | 화면 없음 | V11-122 | ◐ |
+| RP-027 | `[화면]` | 큰 파일은 앞부분만 (200KB) | `[기술]` | `40-report` | ~ `web/templates/reports.html` | `/reports` | 검사 없음 | ◐ |
+| RP-028 | `[화면]` | 쿼리 붙여넣기 상자를 크게 | `[마스터]` **「네가 쿼리를 줘서 내가 보려고 만든 창」** | `40-report` | ~ `report/exports/export.py` | `/admin/query` | 검사 없음 | ◐ |
+| RP-029 | `[저장]` | 자주 쓰는 쿼리를 저장 | `[판단]` 매번 붙여넣게 하지 않는다. ★ 마스터 확인 필요 | `40-report` | ~ `store/dictionary.py:2` | — | 검사 없음 | ? |

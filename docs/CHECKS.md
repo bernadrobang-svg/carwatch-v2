@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **339개**
+검사 **341개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **85** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **87** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **15** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **44** | 개발측 |
 
@@ -42,10 +42,12 @@
 | `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:955` | **★ 없음** | 없음 | guide/03_이력.md:356 · chapters/00-standard.md:1531 · trace/00-standard.md:227 |
 | `S34-2` | 표의 소스·검사가 실재 | fatal | `tools/check_src.py:956` | **★ 없음** | 없음 | chapters/00-standard.md:1532 · trace/00-standard.md:227 · trace/00-standard.md:228 |
 | `S34-3` | 추적표 빈 칸을 센다 | fatal | `tools/check_src.py:907` | **★ 없음** | 없음 | guide/03_이력.md:415 · chapters/00-standard.md:1533 · chapters/00-standard.md:1787 |
-| `S34-4` | 규격이 표에 있음 | fatal | `tools/check_src.py:966` | **★ 없음** | 없음 | guide/03_이력.md:356 · guide/03_이력.md:411 · chapters/00-standard.md:1534 |
-| `S35-1` | 자기 칸만 고침 | fatal | `tools/check_src.py:1012` | **★ 없음** | 없음 | guide/03_이력.md:357 · chapters/00-standard.md:1563 · trace/00-standard.md:231 |
-| `S36-1` | 「정식 서비스 착수」 목록이 있음 | fatal | `tools/check_src.py:1029` | **★ 없음** | 없음 | guide/03_이력.md:366 · chapters/00-standard.md:1600 · trace/00-standard.md:246 |
-| `S37-1` | 파는 쪽 개념이 안 남아 있음 | fatal | `tools/check_src.py:1047` | **★ 없음** | 없음 | guide/03_이력.md:369 · chapters/00-standard.md:1697 · trace/00-standard.md:256 |
+| `S34-4` | 규격이 표에 있음 | fatal | `tools/check_src.py:1005` | **★ 없음** | 없음 | guide/03_이력.md:356 · guide/03_이력.md:411 · chapters/00-standard.md:1534 |
+| `S35-1` | 자기 칸만 고침 | fatal | `tools/check_src.py:1054` | **★ 없음** | 없음 | guide/03_이력.md:357 · chapters/00-standard.md:1563 · trace/00-standard.md:231 |
+| `S36-1` | 「정식 서비스 착수」 목록이 있음 | fatal | `tools/check_src.py:1071` | **★ 없음** | 없음 | guide/03_이력.md:366 · chapters/00-standard.md:1600 · trace/00-standard.md:246 |
+| `S37-1` | 파는 쪽 개념이 안 남아 있음 | fatal | `tools/check_src.py:1089` | **★ 없음** | 없음 | guide/03_이력.md:369 · chapters/00-standard.md:1697 · trace/00-standard.md:256 |
+| `S38-4` | 상태가 세 칸에서 유도한 값과 같음 | fatal | `tools/check_src.py:992` | **★ 없음** | 없음 | guide/03_이력.md:413 · chapters/00-standard.md:1774 |
+| `S38-5` | 「!」·「?」 가 도구 실행 뒤에도 남음 | fatal | `tools/check_src.py:994` | **★ 없음** | 없음 | guide/03_이력.md:413 · chapters/00-standard.md:1775 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:18 · guide/03_이력.md:337 · guide/03_이력.md:401 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:47 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:69 · guide/03_이력.md:337 · guide/03_이력.md:401 |
@@ -56,8 +58,8 @@
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:45` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:56 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:48` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:51` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:54` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:57` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:141` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:138` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
 | `V1-11` | 예외로 종료된 실행이 없음 | run | `validate/v1_collect.py:61` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:117 · chapters/60-admin/b-ops.md:157 · chapters/20-verify/b-v1v2.md:34 |
@@ -84,8 +86,8 @@
 | `V2-07` | 전건 NULL 컬럼 | run | `validate/v2_load.py:41` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:103 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:144 |
 | `V2-08` | 값 종류 1인 컬럼 | run | `validate/v2_load.py:121` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:104 · chapters/20-verify/b-v1v2.md:140 · chapters/20-verify/b-v1v2.md:145 |
 | `V2-09` | core_pii 를 직접 조회하는 코드 없음 | run | `validate/v2_load.py:44` | 2026-08-17 05:33 | 없음 | SCHEMA.md:37 · guide/03_이력.md:84 · chapters/11-store/b-core.md:480 |
-| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-10b` | core_* 에 마스킹 컬럼 없음 | run | `validate/v2_load.py:57` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:121 |
+| `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:84 · chapters/20-verify/b-v1v2.md:120 |
 | `V2-11` | plate_hash 가 전건 16자 hex | run | `validate/v2_load.py:118` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:438 · chapters/20-verify/b-v1v2.md:122 · trace/11-store.md:45 |
 | `V2-12` | secrets/plate_hmac.key 가 버전 관리 밖 | run | `validate/v2_load.py:53` | 2026-08-17 05:33 | 없음 | chapters/60-admin/00-intro.md:173 · chapters/20-verify/b-v1v2.md:123 |
 | `V2-13` | core_record 에 record_plate_no 원본 없음 | run | `validate/v2_load.py:80` | 2026-08-17 05:33 | 없음 | chapters/11-store/b-core.md:635 · chapters/20-verify/b-v1v2.md:124 |
@@ -428,6 +430,8 @@
 - `S35-1` 자기 칸만 고침 — `tools/check_src.py`
 - `S36-1` 「정식 서비스 착수」 목록이 있음 — `tools/check_src.py`
 - `S37-1` 파는 쪽 개념이 안 남아 있음 — `tools/check_src.py`
+- `S38-4` 상태가 세 칸에서 유도한 값과 같음 — `tools/check_src.py`
+- `S38-5` 「!」·「?」 가 도구 실행 뒤에도 남음 — `tools/check_src.py`
 - `S4` 매물 적재 — `collect/runner.py`
 - `S5` config 키 (V4-15) — `tools/check_src.py`
 - `S6` 배점 검산 (불변식 ⑤) — `tools/check_src.py`

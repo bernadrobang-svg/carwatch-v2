@@ -43,6 +43,21 @@ CHECKS_SPEC_COL = 7      # docs/CHECKS.md 의 「규격」 칸 번호
 
 # 못 찾았을 때 적는 말.  ★ 빈 칸과 다르다
 NO_SRC = "미구현"
+# ★ 소스 칸 앞에 붙이는 표시 (개정 409).  「찾았다」와 「확인했다」는 다르다
+SRC_OK = "✓"        # 사람이 확인했다 — config/trace_hints.json 에 적힌 것
+SRC_GUESS = "~"     # 기계가 낱말 겹침으로 추정했다.  ★ 이것으로는 ○ 를 못 준다
+SRC_MARKS = (SRC_OK, SRC_GUESS)
+# 그 층에 코드가 있을 자리가 아니라는 뜻.  ★ 사람이 정한다 (hints 로 적는다)
+NA_SRC = "해당 없음"
+# ★ 도구가 손대지 않는 상태.  사람이 적는 칸이다 (개정 405 §2-2)
+#   ! = 결함이다 → guide/02_결함대장.md 로도 간다
+#   ? = 확인 필요.  답이 나오면 사람이 지운다
+#   ★ 도구가 덮으면 결함이 조용히 사라진다.  그것이 가장 나쁘다
+KEEP = ("!", "?")
+# 기계가 다시 매기는 상태.  ★ 이 셋이 아니면 사람이 쓴 것으로 보고 안 덮는다.
+#   실측 08-19 — 상태 칸에 결함 번호(`D-500b`)를 적어 둔 행이 있었다.
+#   KEEP 을 「!·?」로만 잡으면 그 결함이 조용히 사라진다 (개정 405 §2-2)
+DERIVED = ("○", "◐", "✗")
 # 가이드가 「층과 안 맞는다」고 되돌린 표시.  ★ 이것만 다시 찾는다
 UNKNOWN = "미확인"
 
@@ -482,6 +497,63 @@ def _best_step_in(step: str, pool: list, texts: dict, by_line: dict,
 
 
 
+def derive_state(src: str, ui: str, chk: str) -> str:
+    """★ 상태는 계산값이다.  사람이 적지 않는다 (개정 405 · 409).
+
+    | 소스 | 화면 | 검사 | 상태 |
+    |---|---|---|---|
+    | `✓` 사람이 확인 | 참·「해당 없음」·「—」 | 있음 | ○ |
+    | `✓` | 하나라도 빔 | | ◐ |
+    | `~` 기계 추정 | | | ◐ |
+    | 미구현 · 미확인 · 빔 | | | ✗ |
+
+    ★ 개정 409 — `~` 로는 ○ 를 못 준다.  「기계가 낱말로 이어 봤다」는
+      「사람이 그 자리를 확인했다」가 아니다.  ★ 숫자가 나빠진다.
+      그것이 사실에 가깝다
+    """
+    bare = src.strip().lstrip("".join(SRC_MARKS)).strip()
+    if not bare or bare in (NO_SRC, UNKNOWN, "—") or NO_SRC in bare:
+        return "✗"
+    if not src.strip().startswith(SRC_OK):
+        return "◐"
+    # 화면 칸 「—」는 층이 화면이 아니라는 뜻이다 (S39).  「해당 없음」과 같다
+    ui_ok = ui.strip() not in (NO_UI, "")
+    chk = chk.strip()
+    chk_ok = bool(chk) and chk != "—" and NO_CHK not in chk
+    return "○" if (ui_ok and chk_ok) else "◐"
+
+
+def src_mark(rid: str, src: str, hints: dict) -> str:
+    """소스 칸에 `✓` 또는 `~` 를 붙인다 (개정 409).
+
+    ★ 확인한 것은 hints 에 적힌 것뿐이다.  나머지는 기계가 추정한 것이다
+    ★ 표시를 지우고 다시 붙인다 — 두 번 돌려도 「✓ ✓」가 되지 않는다
+    """
+    bare = src.strip().lstrip("".join(SRC_MARKS)).strip()
+    if not bare or bare in (NO_SRC, UNKNOWN, "—") or NO_SRC in bare:
+        return bare or src.strip()
+    mark = SRC_OK if (rid in hints or bare.startswith(NA_SRC)) else SRC_GUESS
+    return f"{mark} {bare}"
+
+
+def restate(cells: list, hints: dict) -> list:
+    """소스 표시와 상태를 다시 매긴다.  ★ 파일을 안 뒤진다 — 칸만 본다.
+
+    ★ 이 함수를 검사(S38-4 · S38-5)도 그대로 쓴다.  도구와 검사가
+      다른 규칙으로 매기면 「도구는 됐다는데 검사는 아니다」가 된다
+    """
+    out = list(cells)
+    # ★ hints 에 「해당 없음 …」처럼 경로가 아닌 것이 적혀 있으면 그것을 쓴다
+    want = hints.get(out[I_R], "")
+    if want.startswith(NA_SRC):
+        out[I_SRC] = want
+    out[I_SRC] = src_mark(out[I_R], out[I_SRC], hints)
+    if out[I_ST].strip("* ")[:1] not in DERIVED:
+        return out                       # ★ 사람 몫이다.  덮지 않는다
+    out[I_ST] = derive_state(out[I_SRC], out[I_UI], out[I_CHK])
+    return out
+
+
 def fill_file(path: str, ctxs: dict, write: bool,
               recheck: bool = False) -> dict:
     """「미확인」인 소스 칸만 다시 찾는다.
@@ -490,19 +562,30 @@ def fill_file(path: str, ctxs: dict, write: bool,
       되돌린 것은 「미확인」이라 적혀 있다 — 그것만 내 몫이다
     """
     lines = open(path, encoding="utf-8").read().splitlines()
-    stat = {"봄": 0, "찾음": 0, "못 찾음": 0}
+    stat = {"봄": 0, "찾음": 0, "못 찾음": 0,
+            "상태 바뀜": 0, "사람 몫": 0}
     out = []
     for line in lines:
         if not re.match(r"^\| [A-Z]{2}-\d", line):
             out.append(line)
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != len(COLS):
+            out.append(line)
+            continue
         # ★ 「미구현」도 다시 본다 (--recheck).  층·config 를 넓히면
         #   전에 못 찾던 것이 잡힌다 — 지시 §0 의 「오판 40건」이 그것이다
         redo = (cells[I_SRC] == UNKNOWN
                 or (recheck and NO_SRC in cells[I_SRC]))
-        if len(cells) != len(COLS) or not redo:
-            out.append(line)
+        if not redo:
+            # ★ 소스를 다시 안 찾아도 표시와 상태는 매긴다 (개정 405 · 409).
+            #   전에는 이 칸을 사람이 썼고, 그래서 소스가 채워져도
+            #   상태가 안 따라와 「✗ 46건」이 유령으로 남았다
+            done = restate(cells, ctxs["hints"])
+            stat["상태 바뀜"] += done[I_ST] != cells[I_ST]
+            stat["사람 몫"] += (
+                cells[I_ST].strip("* ")[:1] not in DERIVED)
+            out.append("| " + " | ".join(done) + " |")
             continue
         stat["봄"] += 1
         got = ctxs["hints"].get(cells[I_R], "")
@@ -515,6 +598,9 @@ def fill_file(path: str, ctxs: dict, write: bool,
         else:
             cells[I_SRC] = NO_SRC
             stat["못 찾음"] += 1
+        was = cells[I_ST]
+        cells = restate(cells, ctxs["hints"])
+        stat["상태 바뀜"] += cells[I_ST] != was
         out.append("| " + " | ".join(cells) + " |")
     if write:
         with open(path, "w", encoding="utf-8") as f:
@@ -539,6 +625,8 @@ def survey() -> dict:
             src = cells[I_SRC]
             kind = (UNKNOWN if src == UNKNOWN
                     else NO_SRC if NO_SRC in src
+                    else f"확인 {SRC_OK}" if src.startswith(SRC_OK)
+                    else f"추정 {SRC_GUESS}" if src.startswith(SRC_GUESS)
                     else "있음" if src and src != "—" else "없음")
             got["층"][lay] += 1
             got["소스"][kind] += 1
@@ -617,7 +705,8 @@ def main() -> int:
     ctxs["texts"] = build_texts()
     ctxs["slines"] = spec_lines()
     ctxs["hints"] = _hints()
-    total = {"봄": 0, "찾음": 0, "못 찾음": 0}
+    total = {"봄": 0, "찾음": 0, "못 찾음": 0,
+             "상태 바뀜": 0, "사람 몫": 0}
     for name in sorted(os.listdir(TRACE)):
         if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):
             continue
@@ -627,7 +716,10 @@ def main() -> int:
             total[k] += got[k]
     after = survey()
     print(f"{'쓰기' if write else '미리보기'} — 미확인 {total['봄']}건 중 "
-          f"찾음 {total['찾음']} · 못 찾음 {total['못 찾음']}\n")
+          f"찾음 {total['찾음']} · 못 찾음 {total['못 찾음']}")
+    print(f"상태 다시 매김 {total['상태 바뀜']}건 · "
+          f"★ 「!」 {after['상태'].get('!', 0)} · "
+          f"「?」 {after['상태'].get('?', 0)} 은 사람 몫이라 두었습니다\n")
     print("| 소스 칸 | 전 | 후 |")
     print("|---|--:|--:|")
     for k in sorted(set(before["소스"]) | set(after["소스"])):
@@ -642,10 +734,6 @@ def main() -> int:
     if write:
         write_index(after)
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
 
 
 if __name__ == "__main__":

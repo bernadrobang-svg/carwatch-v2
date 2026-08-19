@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 47,040줄
+파일 135개 · 총 47,170줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -14,7 +14,7 @@
 | `collect/runner.py` | 1,353 | 수집 실행 규칙. |
 | `store/core.py` | 1,306 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
-| `tools/check_src.py` | 1,056 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
+| `tools/check_src.py` | 1,098 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `tools/verify_axes.py` | 1,051 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `report/screens/admin.py` | 1,012 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `store/adminops.py` | 986 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
@@ -23,12 +23,12 @@
 | `validate/v10_admin.py` | 780 | V10 관리자 검증. |
 | `validate/v4_mapping.py` | 770 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
+| `tools/trace_fill.py` | 740 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `validate/v1_collect.py` | 737 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `report/render.py` | 723 | 리포트 생성 (L9). |
 | `collect/pipeline.py` | 709 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `store/watch.py` | 679 | 후보 추적 (11장). |
 | `store/admin.py` | 665 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
-| `tools/trace_fill.py` | 652 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `parse/encar/mapping.py` | 621 | 엔카 원문 → CORE 필드 (L3). |
 | `tests/test_admin_flow.py` | 566 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
@@ -192,7 +192,7 @@ resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_chan
 rec:31  Client:41  text:96  links:101  start_server:105  seed_admin:149  m1:165  m2:253  m3:327  m4:631  s3:702  unit:755  gaps:784  flows:892  guide7:993  _account_id:1122  make_users:1129  main:1147  _write_table:1196
 ```
 
-### `tools/check_src.py` — 1,056줄
+### `tools/check_src.py` — 1,098줄
 
 ```
 _spec_files:44  _read_spec:62  say:73  py_files:87  chapter_of:127  _declared_chapters:137  split_done:157  _illustration:176  _retired_config_keys:240  _git:697
@@ -246,6 +246,12 @@ _paths:143  _layer_of:190  _unclassified_split:195  _layer_checks:233  _name_col
 check:36  StubEncar:92  Clock:236  setup:241  test_envelope:279  test_last_page_exact:307  test_facet:314  test_facet_missing_axis:328  test_dict_step:337  test_all_groups:359  test_parse_pipeline:370  test_score_pipeline:474  test_validate:534  test_registry_gate:577  test_target_scope:634  test_catalog_key:666  test_wrapper_args:684  test_unclassified_listing:721
 ```
 
+### `tools/trace_fill.py` — 740줄
+
+```
+spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:176  _stem:214  tokens:223  _best_in:253  _rows:290  layers_of:303  layer_pool:310  _rare_hit:322  axis_words:346  json_key_at:367  _place:394  _hints:405  find_in_layer:421  _best_step_in:469  derive_state:500  src_mark:526  restate:539  fill_file:557  survey:612  lists:640  write_index:661  main:700
+```
+
 ### `validate/v1_collect.py` — 737줄
 
 ```
@@ -274,12 +280,6 @@ AlertConfig:55  WatchItem:68  TrackPoint:83  TrackEvent:98  WatchEvent:112  clas
 
 ```
 _admin_cfg:46  ConfigChange:68  running_job:86  hash_secret:96  _split:104  create_account:109  account_count:145  needs_bootstrap:149  _recent_failures:161  _log_attempt:180  is_locked:190  unlock_account:205  authenticate:233  open_session:269  session_account:289  change_secret:306  revoke_sessions:330  _walk:341  get_path:365  set_path:370  _atomic_write:377  apply_config:387  _validate_blob:451  revert_config:464  history:488  classify_field:512  account_rows:565  admin_count:579  set_role:586  set_disabled:603  add_config_key:623
-```
-
-### `tools/trace_fill.py` — 652줄
-
-```
-spec_lines:79  anchor_step:97  build_symbols:116  enclosing:151  build_texts:161  _stem:199  tokens:208  _best_in:238  _rows:275  layers_of:288  layer_pool:295  _rare_hit:307  axis_words:331  json_key_at:352  _place:379  _hints:390  find_in_layer:406  _best_step_in:454  fill_file:485  survey:526  lists:552  write_index:573  main:612
 ```
 
 ### `parse/encar/mapping.py` — 621줄

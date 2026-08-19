@@ -13,35 +13,35 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VF-001 | `[검사]` | `save_results` 가 `applicable` 을 함께 쓴다 | `[마스터]` **「전건 통과」가 거짓이 되는 것을 막는다** | `20-verify` | `validate/base.py::save_results` | 해당 없음 | V1-16 | ○ |
-| VF-002 | `[검사]` | 전일 비교는 `applicable=0` 을 뺀다 | `[기술]` 안 돈 것과 실패한 것이 섞인다 | `20-verify` | `validate/v2_load.py:2` | 해당 없음 | V1-16 | ○ |
-| VF-003 | `[검사]` | `run_id` 기록이 0건이면 `applicable=False` | `[마스터]` 개정 268 | `20-verify` | `validate/base.py::not_applicable` | 해당 없음 | V1-16 | ○ |
-| VF-004 | `[검사·화면]` | 화면·리포트에서 「미실행」으로 낸다 | `[마스터]` 통과로도 실패로도 세지 않는다 | `20-verify` | `validate/v11_web.py:7` | 화면 없음 | V1-16 | ◐ |
-| VF-005 | `[검사]` | `raw_response.run_id` · `audit_request.run_id` 로 가른다 | `[마스터]` 위와 같음 | `20-verify` | `validate/v1_collect.py:124` | 해당 없음 | V1-16 | ○ |
-| VF-006 | `[검사]` | 안 돈 단계의 검사는 `not_applicable` | `[마스터]` 위와 같음 | `20-verify` | `validate/base.py::not_applicable` | 해당 없음 | V1-16 | ○ |
-| VF-007 | `[검사]` | `migrate` 는 옛 행에 `run_id` 를 채우고 NOT NULL | `[기술]` 빈 값이 남으면 검사가 못 돈다 | `20-verify` | `validate/v2_load.py::_parser_common_fields_check` | 해당 없음 | V2-22 | ○ |
+| VF-001 | `[검사]` | `save_results` 가 `applicable` 을 함께 쓴다 | `[마스터]` **「전건 통과」가 거짓이 되는 것을 막는다** | `20-verify` | ~ `validate/base.py::save_results` | 해당 없음 | V1-16 | ◐ |
+| VF-002 | `[검사]` | 전일 비교는 `applicable=0` 을 뺀다 | `[기술]` 안 돈 것과 실패한 것이 섞인다 | `20-verify` | ~ `validate/v2_load.py:2` | 해당 없음 | V1-16 | ◐ |
+| VF-003 | `[검사]` | `run_id` 기록이 0건이면 `applicable=False` | `[마스터]` 개정 268 | `20-verify` | ~ `validate/base.py::not_applicable` | 해당 없음 | V1-16 | ◐ |
+| VF-004 | `[검사·화면]` | 화면·리포트에서 「미실행」으로 낸다 | `[마스터]` 통과로도 실패로도 세지 않는다 | `20-verify` | ~ `validate/v11_web.py:7` | 화면 없음 | V1-16 | ◐ |
+| VF-005 | `[검사]` | `raw_response.run_id` · `audit_request.run_id` 로 가른다 | `[마스터]` 위와 같음 | `20-verify` | ~ `validate/v1_collect.py:124` | 해당 없음 | V1-16 | ◐ |
+| VF-006 | `[검사]` | 안 돈 단계의 검사는 `not_applicable` | `[마스터]` 위와 같음 | `20-verify` | ~ `validate/base.py::not_applicable` | 해당 없음 | V1-16 | ◐ |
+| VF-007 | `[검사]` | `migrate` 는 옛 행에 `run_id` 를 채우고 NOT NULL | `[기술]` 빈 값이 남으면 검사가 못 돈다 | `20-verify` | ~ `validate/v2_load.py::_parser_common_fields_check` | 해당 없음 | V2-22 | ◐ |
 
 ## 등급 · 성격
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VF-008 | `[검사]` | 새 검사는 4분류 중 어디인지 먼저 정한다 | `[마스터]` **`fatal` 은 우리 결함에만** | `20-verify` | `tools/verify_axes.py:23` | 해당 없음 | V4-19 | ○ |
-| VF-009 | `[판정]` | `kind` 를 안 정하면 `Check` 생성 거부 | `[기술]` 강제하지 않으면 안 적는다 | `20-verify` | `config/scoring.json::validation.min_value_kinds` | 해당 없음 | V4-19 | ○ |
-| VF-010 | `[검사]` | 시험이 이 검사를 부른다 | `[기술]` 머지 전에 막힌다 | `20-verify` | `validate/v1_collect.py:122` | 해당 없음 | S19 | ○ |
+| VF-008 | `[검사]` | 새 검사는 4분류 중 어디인지 먼저 정한다 | `[마스터]` **`fatal` 은 우리 결함에만** | `20-verify` | ~ `tools/verify_axes.py:23` | 해당 없음 | V4-19 | ◐ |
+| VF-009 | `[판정]` | `kind` 를 안 정하면 `Check` 생성 거부 | `[기술]` 강제하지 않으면 안 적는다 | `20-verify` | ✓ `config/scoring.json::validation.min_value_kinds` | 해당 없음 | V4-19 | ○ |
+| VF-010 | `[검사]` | 시험이 이 검사를 부른다 | `[기술]` 머지 전에 막힌다 | `20-verify` | ~ `validate/v1_collect.py:122` | 해당 없음 | S19 | ◐ |
 
 ## 시안 대조
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VF-011 | `[화면]` | `ref/screens/` 를 훑어 짝을 만든다. 짝 없으면 실패 | `[시안]` **개정 275 — 시안이 정본이다** | `20-verify` | `report/screens/build.py::_row` | 해당 없음 | V11-59 | ○ |
-| VF-012 | `[화면]` | 시안의 h2 절 목록과 템플릿을 대조 | `[시안]` 위와 같음 | `20-verify` | `report/screens/build.py:1002` | 화면 없음 | V11-60 | ◐ |
-| VF-013 | `[화면]` | 절이 있어도 데이터 필드가 없으면 실패 | `[마스터]` **08-16 사고 — 절 이름만 보고 통과시켰다** | `20-verify` | `web/views.py::_unclassified_split` | 해당 없음 | V11-60 | ○ |
-| VF-014 | `[화면]` | 차수를 늘리면 정규식도 함께 고친다 | `[기술]` `\d+` 로 받는 편이 낫다 | `20-verify` | `report/screens/build.py::_row` | 해당 없음 | S19 | ○ |
+| VF-011 | `[화면]` | `ref/screens/` 를 훑어 짝을 만든다. 짝 없으면 실패 | `[시안]` **개정 275 — 시안이 정본이다** | `20-verify` | ~ `report/screens/build.py::_row` | 해당 없음 | V11-59 | ◐ |
+| VF-012 | `[화면]` | 시안의 h2 절 목록과 템플릿을 대조 | `[시안]` 위와 같음 | `20-verify` | ~ `report/screens/build.py:1002` | 화면 없음 | V11-60 | ◐ |
+| VF-013 | `[화면]` | 절이 있어도 데이터 필드가 없으면 실패 | `[마스터]` **08-16 사고 — 절 이름만 보고 통과시켰다** | `20-verify` | ~ `web/views.py::_unclassified_split` | 해당 없음 | V11-60 | ◐ |
+| VF-014 | `[화면]` | 차수를 늘리면 정규식도 함께 고친다 | `[기술]` `\d+` 로 받는 편이 낫다 | `20-verify` | ~ `report/screens/build.py::_row` | 해당 없음 | S19 | ◐ |
 
 ## 정적 검사
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| VF-015 | `[검사]` | 검사 대상에서 검사기 자신을 뺀다 | `[기술]` 08-17 사고 — **자기 CSS 주석의 중괄호에 걸렸다** | `20-verify` | `validate/v3_logic.py::_warning_contract_checks` | 해당 없음 | V1-16 | ○ |
-| VF-016 | `[검사]` | AST 로 문자열 리터럴만 뽑는다 | `[기술]` 주석·docstring 은 대상이 아니다 | `20-verify` | `tools/sync_registry.py` | 해당 없음 | 검사 없음 | ◐ |
-| VF-017 | `[검사]` | SQL 인지 화면 문구인지 나눈다 | `[기술]` 용도가 다르면 다른 검사다 | `20-verify` | `tools/sync_registry.py` | — | 검사 없음 | ◐ |
+| VF-015 | `[검사]` | 검사 대상에서 검사기 자신을 뺀다 | `[기술]` 08-17 사고 — **자기 CSS 주석의 중괄호에 걸렸다** | `20-verify` | ~ `validate/v3_logic.py::_warning_contract_checks` | 해당 없음 | V1-16 | ◐ |
+| VF-016 | `[검사]` | AST 로 문자열 리터럴만 뽑는다 | `[기술]` 주석·docstring 은 대상이 아니다 | `20-verify` | ~ `tools/sync_registry.py` | 해당 없음 | 검사 없음 | ◐ |
+| VF-017 | `[검사]` | SQL 인지 화면 문구인지 나눈다 | `[기술]` 용도가 다르면 다른 검사다 | `20-verify` | ~ `tools/sync_registry.py` | — | 검사 없음 | ◐ |

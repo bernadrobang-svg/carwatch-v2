@@ -115,7 +115,8 @@
     "OP-010": "tools/check_screens.py::main",
     "OP-105": "web/static/app.css",
     "OP-102": "config/depreciation.json::curve",
-    "AD-119": "outputs/LATER.md"
+    "AD-119": "outputs/LATER.md",
+    "OP-124": "해당 없음 — 가이드 산출물"
   },
   "_deferred": {
     "OP-124": "가이드가 하는 일이다 — 규격에서 요구를 역으로 뽑는 것은 개발측 산출물이 아니다. 소스 칸을 억지로 채우지 않는다",

@@ -13,48 +13,48 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| DI-001 | `[사전]` | 사전 키는 `(scope_key, axis, code)` | `[원문]` **실측 — 4~5자리 코드는 모델마다 다른 물건이다** | `12-dict` scope | `store/dictionary.py::scope_key` | — | V4-05 | ◐ |
-| DI-002 | `[사전]` | 자릿수로 판단하지 않는다. 3자리는 전역 | `[원문]` 실측 | `12-dict` | `tools/build_dict.py::AXIS_SOURCES` | 해당 없음 | 검사 없음 | ◐ |
+| DI-001 | `[사전]` | 사전 키는 `(scope_key, axis, code)` | `[원문]` **실측 — 4~5자리 코드는 모델마다 다른 물건이다** | `12-dict` scope | ~ `store/dictionary.py::scope_key` | — | V4-05 | ◐ |
+| DI-002 | `[사전]` | 자릿수로 판단하지 않는다. 3자리는 전역 | `[원문]` 실측 | `12-dict` | ✓ `tools/build_dict.py::AXIS_SOURCES` | 해당 없음 | 검사 없음 | ◐ |
 
 ## facet 과 목록 관측
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| DI-003 | `[수집]` | `facet` 이 있으면 `facet` 이 정본 | `[원문]` 사이트가 열거값을 준다 | `STEP 41` | `collect/runner.py:4` | — | 검사 없음 | ◐ |
-| DI-004 | `[수집]` | `facet` 이 없으면 목록 관측으로 `pending` | `[마스터]` 개정 266 — facet 이 막혀도 멈추지 않게 | `STEP 41` | `collect/pipeline.py::precheck` | — | V3-37 | ◐ |
-| DI-005 | `[수집]` | `pending` 에 출처를 남긴다 (`list`·`facet`) | `[마스터]` 개정 269 — 출처와 확정은 다르다 | `STEP 41` | `collect/pipeline.py::precheck` | `/admin/dict` | V10-25 | ○ |
-| DI-006 | `[수집]` | 나중에 `facet` 을 받으면 목록 관측분과 대조 | `[마스터]` 개정 266 | `STEP 41` | `adapters/encar.py:9` | `/admin/dict` | V3-38 | ○ |
-| DI-007 | `[검사]` | `V3-37` 은 「자동 확정을 했는가」를 본다 | `[마스터]` 개정 269 — **가이드가 출처와 확정을 한 필드로 봤다** | `STEP 41` | `validate/v3_logic.py:135` | `/admin/dict` | V3-37 | ○ |
-| DI-008 | `[수집]` | 사람이 확정했는지는 `config_change` 이력으로 | `[마스터]` 위와 같음 | `STEP 41` | `store/admin.py::classify_field` | — | 검사 없음 | ◐ |
-| DI-009 | `[수집]` | `Count` 와 무관하게 `facet` 전 값을 사전에 | `[원문]` 실측 — `Count=0` 인 값도 실재한다 | `12-dict` | `collect/runner.py:4` | 해당 없음 | 검사 없음 | ◐ |
+| DI-003 | `[수집]` | `facet` 이 있으면 `facet` 이 정본 | `[원문]` 사이트가 열거값을 준다 | `STEP 41` | ~ `collect/runner.py:4` | — | 검사 없음 | ◐ |
+| DI-004 | `[수집]` | `facet` 이 없으면 목록 관측으로 `pending` | `[마스터]` 개정 266 — facet 이 막혀도 멈추지 않게 | `STEP 41` | ~ `collect/pipeline.py::precheck` | — | V3-37 | ◐ |
+| DI-005 | `[수집]` | `pending` 에 출처를 남긴다 (`list`·`facet`) | `[마스터]` 개정 269 — 출처와 확정은 다르다 | `STEP 41` | ~ `collect/pipeline.py::precheck` | `/admin/dict` | V10-25 | ◐ |
+| DI-006 | `[수집]` | 나중에 `facet` 을 받으면 목록 관측분과 대조 | `[마스터]` 개정 266 | `STEP 41` | ~ `adapters/encar.py:9` | `/admin/dict` | V3-38 | ◐ |
+| DI-007 | `[검사]` | `V3-37` 은 「자동 확정을 했는가」를 본다 | `[마스터]` 개정 269 — **가이드가 출처와 확정을 한 필드로 봤다** | `STEP 41` | ~ `validate/v3_logic.py:135` | `/admin/dict` | V3-37 | ◐ |
+| DI-008 | `[수집]` | 사람이 확정했는지는 `config_change` 이력으로 | `[마스터]` 위와 같음 | `STEP 41` | ✓ `store/admin.py::classify_field` | — | 검사 없음 | ◐ |
+| DI-009 | `[수집]` | `Count` 와 무관하게 `facet` 전 값을 사전에 | `[원문]` 실측 — `Count=0` 인 값도 실재한다 | `12-dict` | ~ `collect/runner.py:4` | 해당 없음 | 검사 없음 | ◐ |
 
 ## 정규화 — 추정 금지
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| DI-010 | `[사전]` | 표기 변형은 RAW 에서 둘 다 관측됐을 때만 동일시 | `[마스터]` 위와 같음 | `12-dict` | `tools/build_dict.py:7` | 해당 없음 | 검사 없음 | ◐ |
-| DI-011 | `[사전]` | 원문 값을 그대로 키로. `display` 만 읽기 좋게 | `[기술]` 키를 고치면 원문과 대조가 안 된다 | `12-dict` | `tools/build_dict.py::build_dict` | 해당 없음 | 검사 없음 | ◐ |
-| DI-012 | `[사전]` | `fuel in ("가솔린+전기",)` 완전 일치 + 사전 기반 | `[원문]` 위와 같음 | `STEP 43` | `store/dictionary.py:5` | — | 검사 없음 | ◐ |
+| DI-010 | `[사전]` | 표기 변형은 RAW 에서 둘 다 관측됐을 때만 동일시 | `[마스터]` 위와 같음 | `12-dict` | ~ `tools/build_dict.py:7` | 해당 없음 | 검사 없음 | ◐ |
+| DI-011 | `[사전]` | 원문 값을 그대로 키로. `display` 만 읽기 좋게 | `[기술]` 키를 고치면 원문과 대조가 안 된다 | `12-dict` | ~ `tools/build_dict.py::build_dict` | 해당 없음 | 검사 없음 | ◐ |
+| DI-012 | `[사전]` | `fuel in ("가솔린+전기",)` 완전 일치 + 사전 기반 | `[원문]` 위와 같음 | `STEP 43` | ~ `store/dictionary.py:5` | — | 검사 없음 | ◐ |
 
 ## halt · 충돌
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| DI-013 | `[판정]` | 충돌 사실을 남기고 사람이 판정. 그전엔 안 쓴다 | `[마스터]` 위와 같음 | `12-dict` 충돌 | `analyze/verdict.py::verdict_of` | `/admin/dict` | 검사 없음 | ◐ |
-| DI-014 | `[사전]` | 판정에 쓰는 축의 `dict_enum` 이 0행이면 실패 | `[마스터]` 개정 — **「사전이 비어 있는 것도 실패다」** | `12-dict` | `tools/build_dict.py::facet_value_set` | 해당 없음 | V4-25 | ○ |
+| DI-013 | `[판정]` | 충돌 사실을 남기고 사람이 판정. 그전엔 안 쓴다 | `[마스터]` 위와 같음 | `12-dict` 충돌 | ✓ `analyze/verdict.py::verdict_of` | `/admin/dict` | 검사 없음 | ◐ |
+| DI-014 | `[사전]` | 판정에 쓰는 축의 `dict_enum` 이 0행이면 실패 | `[마스터]` 개정 — **「사전이 비어 있는 것도 실패다」** | `12-dict` | ~ `tools/build_dict.py::facet_value_set` | 해당 없음 | V4-25 | ◐ |
 
 ## 차종 분류
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| DI-015 | `[사전]` | `maker` null 가드 (테슬라) | `[원문]` 실측 | `12-dict` | `store/dictionary.py::upsert_enum` | 해당 없음 | 검사 없음 | ◐ |
-| DI-016 | `[사전]` | `fuel_match` 가 「전기」면 `displacement_range` 는 null | `[원문]` 전기차에 배기량이 없다 | `12-dict` | `analyze/verdict.py::verdict_of` | 해당 없음 | 검사 없음 | ◐ |
+| DI-015 | `[사전]` | `maker` null 가드 (테슬라) | `[원문]` 실측 | `12-dict` | ~ `store/dictionary.py::upsert_enum` | 해당 없음 | 검사 없음 | ◐ |
+| DI-016 | `[사전]` | `fuel_match` 가 「전기」면 `displacement_range` 는 null | `[원문]` 전기차에 배기량이 없다 | `12-dict` | ✓ `analyze/verdict.py::verdict_of` | 해당 없음 | 검사 없음 | ◐ |
 
 ## 08-18 새 요구 — 미분류 원인 분석
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| DI-017 | `[저장]` | 미분류를 원인별로 가른다 (넷) | `[마스터]` 개정 341 — **「미분류는 왜 있는 거야. 원인 분석 안 해?」** | `12-dict` | `store/core.py::has_unclassified` | `/notready` | V4-26 | **!** |
-| DI-018 | `[운영]` | 이름만 다른 것 · 늘 빈 것은 자동 제안 | `[마스터]` 위와 같음 | `12-dict` | `tools/classify_unclassified.py:6` | `/admin/registry` | V4-27 | **!** |
-| DI-019 | `[수집·화면]` | 08-18 새 요구 — 미분류 원인 분석 — 엔드포인트별로 낸다 | `[마스터]` 위와 같음 — 어디서 왔는지 알면 왜 늘었는지 안다 | `12-dict` | `report/screens/admin.py:459` | 해당 없음 | 검사 없음 | **!** |
-| DI-020 | `[판정]` | **판정을 막는 것만 막는다** | `[마스터]` 승인됨 — 개정 372 · 390 | `12-dict` | `analyze/verdict.py:7` | `/notready` | V4-11 | **!** |
+| DI-017 | `[저장]` | 미분류를 원인별로 가른다 (넷) | `[마스터]` 개정 341 — **「미분류는 왜 있는 거야. 원인 분석 안 해?」** | `12-dict` | ~ `store/core.py::has_unclassified` | `/notready` | V4-26 | **!** |
+| DI-018 | `[운영]` | 이름만 다른 것 · 늘 빈 것은 자동 제안 | `[마스터]` 위와 같음 | `12-dict` | ~ `tools/classify_unclassified.py:6` | `/admin/registry` | V4-27 | **!** |
+| DI-019 | `[수집·화면]` | 08-18 새 요구 — 미분류 원인 분석 — 엔드포인트별로 낸다 | `[마스터]` 위와 같음 — 어디서 왔는지 알면 왜 늘었는지 안다 | `12-dict` | ~ `report/screens/admin.py:459` | 해당 없음 | 검사 없음 | **!** |
+| DI-020 | `[판정]` | **판정을 막는 것만 막는다** | `[마스터]` 승인됨 — 개정 372 · 390 | `12-dict` | ~ `analyze/verdict.py:7` | `/notready` | V4-11 | **!** |

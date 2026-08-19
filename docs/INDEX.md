@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**87파일 · 26,718줄 · 1,145KB**
+**87파일 · 26,718줄 · 1,147KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -104,7 +104,7 @@
 | `trace/40-report.md` | 75 | 7 |
 | `trace/41-view.md` | 90 | 7 |
 | `trace/42-watch.md` | 85 | 7 |
-| `trace/50-multisite.md` | 69 | 6 |
-| `trace/60-admin.md` | 201 | 23 |
+| `trace/50-multisite.md` | 69 | 7 |
+| `trace/60-admin.md` | 201 | 24 |
 | `trace/RULES.md` | 298 | 21 |
 
