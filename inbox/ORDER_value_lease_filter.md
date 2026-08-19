@@ -21,9 +21,40 @@
 **정본은 `docs/chapters/30-score/f-table.md` ①-1 · ①-2 다.**
 
 ```
-1-1 시세 대비 100    점수 = round(r% × 5)    범위 −100 ~ +100
-1-2 신차가 대비 80   점수 = round(d% × 1)    범위 −20 ~ +80
+1-1 시세 대비 100    싼 쪽 ×5 · 비싼 쪽 ×8    범위 −100 ~ +100
+                    ★ 옵션 보정 — adj_median 으로 견준다 (개정 421)
+1-2 신차가 대비 80   싼 쪽 ×1 · 비싼 쪽 ×3    범위 −30 ~ +80
 ★ 계단표를 없앤다 — market_curve · depreciation_curve · residual_by_year 폐기
+```
+
+## ★ 개정 421 — 1-1 에 옵션·트림 값을 반영한다
+
+**마스터 — 「옵션의 총합 가격도 트림별 가격 차이도 가격 점수에 넣자.**
+**그랜저도 깡통이 4000이면 최고트림의 풀옵션이 7000이니」**
+
+```
+adj_median = market_median + (내 옵션가 합 − option_median_by_trim)
+r% = (adj_median − price) ÷ adj_median × 100
+
+표본 <5   adj_median = 차종 중앙값 × (내 origin_price ÷ 차종 origin_price 중앙값)
+```
+
+```
+★ 1-2 신차가 대비는 손대지 않는다 — origin_price 에 옵션·트림이 이미 들어 있다
+필수   새로 낼 값 둘 — option_median_by_trim · origin_median_by_model
+       ★ 있는 데이터로 낸다.  새로 받을 것은 없다
+필수   ★ 실측 먼저 — 트림별 옵션가 표본이 5건을 넘는가.  안 넘으면 보정이 흔들린다
+       트림별 표본 수 분포를 표로 낸다
+필수   넓혀서 낸 것은 화면에 밝힌다 — 「같은 트림 3건뿐 · 차종 전체로 견줬습니다」
+검산   V3-85  ★ 신설 — 옵션 보정 없이 원 중앙값으로 견준 매물이 있는가
+```
+
+## ★ 왜 비대칭인가
+
+```
+싼 데는 이유가 있다   사고 · 침수 · 수출용 · 급매
+                    ★ 그 이유는 ② 상태 · ③ 이력이 이미 잡는다.  후해도 안전하다
+비싼 데는 이유가 없다  그냥 손해다.  다른 축이 잡아 주지 않는다
 ```
 
 ## 왜 바꾸나 — 실측
@@ -46,8 +77,11 @@
 
 ```
 필수   config/scoring.json axis_rules.value 를 바꾼다
-       market_per_percent 5 · market_min −100 · market_max 100
-       origin_per_percent 1 · origin_min −20 · origin_max 80
+       market_per_percent_cheap 5 · market_per_percent_over 8
+       market_min −100 · market_max 100
+       origin_per_percent_cheap 1 · origin_per_percent_over 3
+       origin_min −30 · origin_max 80
+       option_adjust true · option_min_sample 5
        ★ 계수를 코드에 박지 않는다 (S14 · V4-13)
 필수   폐기 키를 지운다 — market_curve · depreciation_curve
        residual_by_year · residual_step · residual_floor
@@ -57,7 +91,8 @@
 금지   residual_by_year 로 되돌리는 것
 검산   V3-82  시세 점수가 계단값만 나오는가 (나오면 실패)
        V3-83  시세보다 비싼 매물에 음수 점수가 붙는가
-       V3-84  신차가 점수가 d% 와 1:1 인가
+       V3-84  신차가 점수가 d% 와 1:1 인가 (싼 쪽)
+       V3-85  옵션 보정 없이 원 중앙값으로 견준 매물이 있는가
 ```
 
 ## ★ 돌린 뒤 반드시 낼 것
@@ -67,6 +102,9 @@
 필수   ★ 값 점수가 음수인 매물 수와 그 등급 분포
 필수   ★ 「무사고인데 시세보다 비싼」 매물의 등급이 실제로 내려갔는지 표본 5건
 필수   ★ 「B 등급인데 값이 싸고 무사고·저주행」인 매물이 올라갔는지 표본 5건
+필수   ★ A 등급 건수.  20~60건이 아니면 등급 컷을 다시 정해야 한다
+       근거 — 마스터 「난 A 이상만 보고 싶은데」.  한 화면에서 훑고 고를 양이다
+필수   ★ 풀옵션 매물이 옵션 보정 전후로 몇 점 달라졌는지 표본 5건
        근거 — 마스터 「B 등급인데 가격이 매력적이고 무사고에 킬로가 적은 것도 있고」
 ```
 
