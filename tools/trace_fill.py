@@ -622,9 +622,12 @@ def fill_file(path: str, ctxs: dict, write: bool,
         #     「확인이 취소됐다」는 뜻이라 다시 찾아야 한다
         moved_layer = (cells[I_R] in ctxs["dec"]["layers"]
                        and cells[I_R] not in ctxs["hints"])
+        # ★ 빈 칸도 찾는다 (실측 08-19).  가이드가 「?」 19건을 답으로 닫자
+        #   그 행들의 소스 칸이 빈 채로 남아 ✗ 13건이 됐다 —
+        #   「빈 칸으로 두지 않는다」가 이 도구의 규칙이다
         redo = (cells[I_ST].strip("* ")[:1] in DERIVED
                 and cells[I_R] not in ctxs["dec"]["unbuilt"]
-                and (cells[I_SRC] == UNKNOWN or moved_layer
+                and (cells[I_SRC] in (UNKNOWN, "") or moved_layer
                      or (recheck and NO_SRC in cells[I_SRC])))
         if not redo:
             # ★ 소스를 다시 안 찾아도 표시와 상태는 매긴다 (개정 405 · 409).

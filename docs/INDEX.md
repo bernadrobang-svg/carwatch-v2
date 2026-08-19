@@ -9,13 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**87파일 · 26,762줄 · 1,148KB**
+**87파일 · 26,806줄 · 1,153KB**
 
-★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 5개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - guide/01_요구사항.md 841줄
 - chapters/00-standard.md 2,172줄
 - chapters/61-web.md 2,255줄
+- chapters/30-score/f-table.md 802줄
 - chapters/60-admin/c-tools.md 1,076줄
 
 | 파일 | 줄 | KB |
@@ -49,7 +50,7 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md` | 759 | 23 |
+| `chapters/30-score/f-table.md`  ★ | 802 | 26 |
 | `chapters/30-score/g-absolute.md` | 142 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 673 | 28 |
@@ -79,7 +80,7 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 431 | 103 |
+| `guide/03_이력.md` | 432 | 104 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
 | `guide/05_가이드역할.md` | 319 | 10 |
@@ -101,7 +102,7 @@
 | `trace/14-web.md` | 124 | 14 |
 | `trace/20-verify.md` | 48 | 4 |
 | `trace/31-registry.md` | 56 | 3 |
-| `trace/40-report.md` | 75 | 6 |
+| `trace/40-report.md` | 75 | 7 |
 | `trace/41-view.md` | 90 | 7 |
 | `trace/42-watch.md` | 85 | 7 |
 | `trace/50-multisite.md` | 69 | 7 |
