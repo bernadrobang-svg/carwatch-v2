@@ -9,7 +9,7 @@
 | `/` | [home.html](home.html) | 200 | 19,711B |
 | `/listings` | [listings.html](listings.html) | 200 | 59,054B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 47,070B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 23,081B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 22,170B |
 | `/compare` | [compare.html](compare.html) | 200 | 5,591B |
 | `/market` | [market.html](market.html) | 200 | 14,076B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 18,153B |
@@ -28,10 +28,10 @@
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,536B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 41,237B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 13,605B |
-| `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 33,380B |
+| `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 33,265B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 22,968B |
-| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 121,093B |
-| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 19,641B |
+| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 126,444B |
+| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 19,643B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 5,409B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 8,766B |
 | `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 20,801B |

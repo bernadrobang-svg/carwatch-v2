@@ -127,8 +127,16 @@ def collect_values(conn: sqlite3.Connection
     return seen
 
 
-def collect_paths(conn: sqlite3.Connection) -> dict[tuple[str, str], int]:
-    """(endpoint, json_path) → 관측 건수.  형식 검증 통과분만."""
+def collect_paths(conn: sqlite3.Connection,
+                  value_hits: dict | None = None,
+                  totals: dict | None = None) -> dict[tuple[str, str], int]:
+    """(endpoint, json_path) → 관측 건수.  형식 검증 통과분만.
+
+    value_hits   ★ 함께 준다 — 「키가 있었나」가 아니라 「값이 있었나」다.
+                 실측 08-19 — 이 둘을 구분 못 해 「0/200」이 「없다」로 읽혔다
+    totals       엔드포인트마다 본 원문 수
+    ★ 전 원문을 한 번 도는 김에 같이 센다.  화면이 다시 열지 않게 (V11-34)
+    """
     seen: dict[tuple[str, str], int] = {}
     for endpoint, body in conn.execute(
         "SELECT endpoint, body FROM raw_response WHERE status='ok'"
@@ -139,15 +147,39 @@ def collect_paths(conn: sqlite3.Connection) -> dict[tuple[str, str], int]:
             continue
         if not shape_ok(endpoint, doc):
             continue  # 오염분.  등록부에 넣지 않는다
+        if totals is not None:
+            totals[endpoint] = totals.get(endpoint, 0) + 1
         # 목록은 봉투다.  요소 경로를 함께 뽑는다 (STEP 18a)
         targets = [doc]
         if endpoint == "list":
             targets = (doc.get("SearchResults") or [])[:1] or [doc]
+        one: set = set()
         for t in targets:
             for p in json_paths(t):
                 key = (endpoint, p)
                 seen[key] = seen.get(key, 0) + 1
+                if value_hits is not None and _has_value(t, p):
+                    one.add(key)
+        if value_hits is not None:
+            for key in one:      # ★ 원문 하나를 한 번으로 센다
+                value_hits[key] = value_hits.get(key, 0) + 1
     return seen
+
+
+def _has_value(doc, path: str) -> bool:
+    """그 경로에 **값**이 있었나.  ★ 배열은 하나라도 차 있으면 참이다."""
+    node = doc
+    for key in path.split("."):
+        arr = key.endswith("[]")
+        name = key[:-2] if arr else key
+        if not isinstance(node, dict):
+            return False
+        node = node.get(name)
+        if arr:
+            if not isinstance(node, list) or not node:
+                return False
+            node = node[0]
+    return node not in (None, "", [], {})
 
 
 def _seed_for(cfg: dict, endpoint: str, path: str) -> dict:
@@ -168,12 +200,14 @@ def sync_registry(conn: sqlite3.Connection, cfg: dict, at: str,
     「매핑표에 없으니 등록도 안 한다」가 v1 방치의 경로였다.
     반환   RegistrySyncReport
     """
-    observed = collect_paths(conn)
+    hits: dict = {}
+    totals: dict = {}
+    observed = collect_paths(conn, hits, totals)
     stat = RegistrySyncReport()
 
     for (endpoint, path), _n in sorted(observed.items()):
         row = conn.execute(
-            "SELECT usage FROM meta_field_usage "
+            "SELECT usage, core_column FROM meta_field_usage "
             "WHERE site=? AND endpoint=? AND json_path=?",
             (site, endpoint, path)).fetchone()
         if row is None:
@@ -181,31 +215,42 @@ def sync_registry(conn: sqlite3.Connection, cfg: dict, at: str,
             conn.execute(
                 "INSERT INTO meta_field_usage"
                 "(site,endpoint,json_path,core_column,usage,reason,"
-                " unblock_condition,use_when,priority,miss_streak,"
-                " first_seen,last_seen) VALUES (?,?,?,?,?,?,?,?,?,0,?,?)",
+                " unblock_condition,use_when,priority,observed_hits,"
+                " observed_total,miss_streak,first_seen,last_seen)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,0,?,?)",
                 (site, endpoint, path, s.get("core_column"), s["usage"],
                  s["reason"], s.get("unblock_condition"), s.get("use_when"),
-                 s.get("priority"), at, at))
+                 s.get("priority"), hits.get((endpoint, path), 0),
+                 totals.get(endpoint, 0), at, at))
             stat.added += 1
         else:
             # ★ 사람이 field_usage.json 을 채운 뒤 재실행하면 반영돼야 한다.
             #   기존 행이라고 건너뛰면 분류가 영영 안 붙는다 (실측: 305건)
             s = _seed_for(cfg, endpoint, path)
-            if row[0] == USAGE_UNCLASSIFIED and s["usage"] != USAGE_UNCLASSIFIED:
+            # ★ 이미 분류된 행이라도 CORE 칸이 비어 있으면 채운다 (실측 08-19).
+            #   32건을 in_use 로 올린 뒤 core_column 을 적었더니
+            #   「기존 행」이라 안 들어가 V4-07 이 32건 fatal 이었다
+            filled = bool(s.get("core_column")) and not (row[1] or "").strip()
+            if filled or (row[0] == USAGE_UNCLASSIFIED
+                          and s["usage"] != USAGE_UNCLASSIFIED):
                 conn.execute(
                     "UPDATE meta_field_usage SET usage=?, reason=?,"
                     " core_column=?, unblock_condition=?, use_when=?,"
-                    " priority=?, last_seen=?, miss_streak=0"
+                    " priority=?, last_seen=?, miss_streak=0,"
+                    " observed_hits=?, observed_total=?"
                     " WHERE site=? AND endpoint=? AND json_path=?",
                     (s["usage"], s["reason"], s.get("core_column"),
                      s.get("unblock_condition"), s.get("use_when"),
-                     s.get("priority"), at, site, endpoint, path))
+                     s.get("priority"), at, hits.get((endpoint, path), 0),
+                     totals.get(endpoint, 0), site, endpoint, path))
                 stat.added += 1
             else:
                 conn.execute(
-                    "UPDATE meta_field_usage SET last_seen=?, miss_streak=0 "
+                    "UPDATE meta_field_usage SET last_seen=?, miss_streak=0,"
+                    " observed_hits=?, observed_total=? "
                     "WHERE site=? AND endpoint=? AND json_path=?",
-                    (at, site, endpoint, path))
+                    (at, hits.get((endpoint, path), 0),
+                     totals.get(endpoint, 0), site, endpoint, path))
                 stat.seen += 1
 
     # ★ 유령 경로 — 등록부에만 있는 항목 (STEP 87)

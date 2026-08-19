@@ -1380,7 +1380,10 @@ def _status_liveness_check(conn, rid):
 
 
 # 이 말 뒤의 숫자는 식별자다.  단위가 없는 것이 맞다 (V11-74)
-ID_WORDS = ("매물", "계정", "run", "job", "id", "번호", "코드", "키")
+# ★ 「원문 그대로」도 넣는다 — 등록부는 사이트가 준 값을 **그대로** 보여 준다.
+#   거기에 단위를 붙이면 원문이 아니게 된다.  대신 화면이 그렇게 말해야 한다
+ID_WORDS = ("매물", "계정", "run", "job", "id", "번호", "코드", "키",
+            "원문 그대로")
 # ★ 원값을 그대로 고치는 화면이다.  단위를 붙이면 「100만」을 저장하게 된다.
 #   보는 화면이 아니라 고치는 화면이라 이 검사에서 뺀다 (V11-74)
 RAW_VALUE_SCREENS = ("/admin/config", "/admin/query", "/admin/api")
@@ -3746,7 +3749,14 @@ def _render_metrics_checks(conn, rid):
         for m in re.finditer(r"(?<![\w,.])\d{7,}(?![\w,.%])", text):
             if route.path in RAW_VALUE_SCREENS:
                 break
-            near = text[max(0, m.start() - 24):m.start()]
+            # ★ 같은 문장 안을 본다.  24자로 자르면 「실제 값 · A · B」에서
+            #   둘째 값부터 창 밖으로 나가 거짓 실패가 된다 (실측 08-19)
+            # ★ 줄바꿈은 경계가 아니다 — 태그를 지우면 HTML 의 줄바꿈이
+            #   문장 한가운데 남는다.  문장 끝으로만 가른다
+            head = text[:m.start()]
+            cut = max(head.rfind(". "), head.rfind("。"),
+                      m.start() - int(_checks_cfg()["id_word_span"]))
+            near = head[cut + 1:]
             if any(w in near for w in ID_WORDS):
                 continue
             unitless.append(f"{route.path} — 단위 없는 숫자 {m.group(0)}")

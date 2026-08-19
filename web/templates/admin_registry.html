@@ -28,7 +28,7 @@
     {% if c.blocks %}<span class="tag bad">판정을 막습니다</span>{% endif %}
     {% if !c.blocks %}<span class="tag">지금 안 쓰입니다</span>{% endif %}
   </div>
-  <p class="muted">① 실제 값
+  <p class="muted">① 실제 값 — 원문 그대로
     {% for x in c.values %}<code>{{ x.value }}</code> {{ x.n }}건 · {% endfor %}
     <span class="dim">관측 {{ c.hits | num }}/{{ c.total | num }}</span></p>
   <p class="muted">③ 옆에 있던 것

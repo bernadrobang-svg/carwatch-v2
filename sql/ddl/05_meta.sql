@@ -12,6 +12,10 @@ CREATE TABLE IF NOT EXISTS meta_field_usage (
   unblock_condition  TEXT,
   use_when           TEXT,
   priority           INTEGER,
+  -- ★ 관측 — 값이 실제로 몇 번 왔나 (개정 413).
+  -- 화면이 매번 원문을 다시 열지 않게 여기 적어 둔다.  sync_registry 가 쓴다
+  observed_hits   INTEGER,
+  observed_total  INTEGER,
   miss_streak        INTEGER NOT NULL DEFAULT 0,   -- 연속 미관측 (유령 경로)
   first_seen         TEXT NOT NULL,
   last_seen          TEXT NOT NULL,

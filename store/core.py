@@ -874,20 +874,114 @@ def _sample_bodies() -> int:
         return int(json.load(f)["unclassified_sample_bodies"])
 
 
+def hits_of(seen: dict, path: str) -> int:
+    """등록부가 적은 경로를 관측 결과에서 찾는다.
+
+    ★★ 실측 08-19 — 등록부는 `list:BadgeDetail` 이라 적는데
+      원문을 훑으면 `SearchResults[].BadgeDetail` 로 나온다.  이름이 달라
+      **값이 20,204건 있는데도 「0/200」이 됐다** (개정 413 갈래 ②).
+      ★ 「관측 0」이 「값이 없다」로 읽히므로 이 어긋남은 조용히 틀린다
+    ★ 꼬리가 같은 것이 여럿이면 안 고른다 — 단정하지 않는다
+    """
+    if path in seen:
+        return seen[path]
+    bare = path.replace("[]", "")
+    if bare in seen:
+        return seen[bare]
+    tails = [k for k in seen
+             if k.endswith(f"[].{path}") or k.endswith(f".{path}")]
+    return seen[tails[0]] if len(tails) == 1 else 0
+
+
+def key_seen(seen: dict, path: str) -> bool:
+    """그 키가 원문에 **있기라도** 했는가 (값은 없어도).
+
+    ★ 「키가 아예 없다」와 「키는 있는데 값이 전건 null」은 다르다.
+      앞은 사이트가 그 필드를 안 준다는 뜻이고,
+      뒤는 그 엔드포인트가 비워서 준다는 뜻이다 (개정 413 갈래 ①)
+    """
+    if path in seen:
+        return True
+    if path.replace("[]", "") in seen:
+        return True
+    return any(k.endswith(f"[].{path}") or k.endswith(f".{path}")
+               for k in seen)
+
+
+def stored_hits(conn) -> dict:
+    """등록부에 적힌 관측 수 (개정 413).  ★ 전건을 센 값이다.
+
+    ★ 화면이 원문을 다시 열지 않는다 — /admin/registry 한 쪽이 26쿼리였다.
+      `sync_registry` 가 전 원문을 한 번 도는 김에 세어 적어 둔다 (V11-34)
+    ★ 표본 200 이 아니라 전건이라 「0/200」 같은 착시가 없다
+    """
+    out: dict = {}
+    for endpoint, path, hits, total in conn.execute(
+        "SELECT endpoint, json_path, observed_hits, observed_total"
+        " FROM meta_field_usage"
+    ):
+        out[(endpoint, path)] = (hits, total)
+    return out
+
+
+def sample_bodies(conn, endpoint: str) -> list:
+    """그 엔드포인트 원문 표본.  ★ 한 요청에 한 번만 읽는다.
+
+    실측 08-19 — `observed()` 와 `_peek()` 가 같은 원문을 따로 읽어
+    /admin/registry 한 쪽이 26쿼리였다 (상한 20).  둘이 나눠 쓴다
+    """
+    cache = getattr(conn, "_cw_bodies", None)
+    if cache is None:
+        cache = {}
+        try:
+            conn._cw_bodies = cache
+        except AttributeError:
+            pass
+    if endpoint not in cache:
+        cache[endpoint] = [b for (b,) in conn.execute(
+            "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
+            " AND body IS NOT NULL"
+            " ORDER BY (id * 2654435761) % 1000003 LIMIT ?",
+            (endpoint, _sample_bodies()))]
+    return cache[endpoint]
+
+
 def observed(conn, endpoint: str) -> tuple:
-    """그 엔드포인트에서 경로마다 값이 있었던 횟수 · 본 원문 수."""
+    """그 엔드포인트에서 경로마다 값이 있었던 횟수 · 본 원문 수.
+
+    ★★ 표본을 id 순으로 자르지 않는다 (실측 08-19).  `ev_battery` 는
+      최신 200건이 전부 비전기차라 `ensolRawInfo` 가 「0/200」으로 나왔다 —
+      값은 전기차 1,838건 중 55건에 있다.  ★ 「없다」가 아니라 「안 봤다」였다
+    ★ 흩어 뽑되 무작위가 아니다.  같은 DB 면 같은 표본이 나온다 —
+      돌릴 때마다 숫자가 달라지면 그것도 못 믿는다
+    """
+    # ★ 한 요청에 여러 번 부른다 — 카드·갈래·목록이 각각 부른다.
+    #   그때마다 원문 200개를 열면 화면 하나가 무거워진다 (V11-34)
+    cache = getattr(conn, "_cw_observed", None)
+    if cache is None:
+        cache = {}
+        try:
+            conn._cw_observed = cache
+        except AttributeError:
+            pass
+    if endpoint in cache:
+        return cache[endpoint]
     seen: dict = {}
-    rows = conn.execute(
-        "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
-        " AND body IS NOT NULL ORDER BY id DESC LIMIT ?",
-        (endpoint, _sample_bodies())).fetchall()
-    for (body,) in rows:
+    rows = sample_bodies(conn, endpoint)
+    for body in rows:
         try:
             got = json.loads(body)
         except (ValueError, TypeError):
             continue
-        _walk(got, "", seen)
-    return seen, len(rows)
+        # ★ 원문 하나를 「한 번」으로 센다.  배열 안을 도는 경로는
+        #   본문 하나에서 여러 번 나온다 — 그대로 더하면 「459/200」이 된다
+        one: dict = {}
+        _walk(got, "", one)
+        for key, hit in one.items():
+            base = seen.setdefault(key, 0)
+            seen[key] = base + (1 if hit else 0)
+    cache[endpoint] = (seen, len(rows))
+    return cache[endpoint]
 
 
 def known_leaves(conn) -> dict:
@@ -923,11 +1017,18 @@ def classify_unclassified(conn) -> list:
         by_ep.setdefault(endpoint, []).append(path)
 
     out = []
+    counted = stored_hits(conn)
     for endpoint, paths in sorted(by_ep.items()):
-        seen, total = observed(conn, endpoint)
+        seen, total = ({}, 0)
+        if not all(counted.get((endpoint, p), (None, 0))[1] for p in paths):
+            seen, total = observed(conn, endpoint)   # 아직 안 세어진 것만
         for path in paths:
             bare = path.replace("[]", "")
-            hits = seen.get(path, seen.get(bare, 0))
+            got = counted.get((endpoint, path))
+            if got and got[1]:
+                hits, total = got[0], got[1]
+            else:
+                hits = hits_of(seen, path)
             leaf = bare.split(".")[-1].lower()
             twin = leaves.get(leaf)
             if total and not hits:
@@ -1041,10 +1142,7 @@ def _peek(conn, endpoint: str, paths: list) -> dict:
 
     seen: dict = {p: {} for p in paths}
     sibs: dict = {p: {} for p in paths}
-    for (body,) in conn.execute(
-        "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
-        " ORDER BY id DESC LIMIT ?", (endpoint, _sample_bodies())
-    ):
+    for body in sample_bodies(conn, endpoint):
         try:
             doc = _j.loads(body)
         except (ValueError, TypeError):
@@ -1266,6 +1364,68 @@ def blocking_keys(conn, used: set, containers: tuple) -> set:
     return out
 
 
+def full_hits(conn, endpoint: str, path: str) -> tuple:
+    """그 엔드포인트 원문을 **전건** 열어 그 경로에 값이 몇 번 있었나.
+
+    ★ 표본이 0 일 때만 부른다.  「0/200」이 「없다」인지 「드물다」인지는
+      전건을 봐야 갈린다 — ev_battery 는 12,589건 중 55건에만 값이 있다.
+      표본 200 으로는 못 본다 (실측 08-19)
+    ★ 전건을 늘 여는 것이 아니다.  0 인 것만 한 번 더 본다
+    """
+    hits = total = 0
+    for (body,) in conn.execute(
+        "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
+        " AND body IS NOT NULL", (endpoint,)
+    ):
+        try:
+            got = json.loads(body)
+        except (ValueError, TypeError):
+            continue
+        total += 1
+        one: dict = {}
+        _walk(got, "", one)
+        if hits_of(one, path):
+            hits += 1
+    return hits, total
+
+
+def axis_paths_empty(conn, used: set) -> list:
+    """판정 축이 쓰는 경로 중 **어디서도** 값이 안 오는 것 (개정 413).
+
+    ★ 엔드포인트 하나가 0 이라고 축이 빈 것이 아니다.
+      `record_summary:myAccidentCost` 는 전건 null 이지만
+      같은 값을 `record` 가 준다 — 축은 안 빈다 (실측 08-19)
+    ★ 그래서 **잎 이름**으로 묶어 모든 엔드포인트를 함께 본다.
+      전부 0 이어야 「축 하나가 통째로 빈 것」이다
+    돌려줌   [{leaf, paths, endpoints, hits, total}] — 값이 0 인 것만
+    """
+    by_leaf: dict = {}
+    for endpoint, path in conn.execute(
+        "SELECT endpoint, json_path FROM meta_field_usage"
+    ):
+        bare = path.replace("[]", "")
+        if bare not in used:
+            continue
+        by_leaf.setdefault(bare.split(".")[-1], []).append((endpoint, path))
+    cache: dict = {}
+    out = []
+    for leaf, pairs in sorted(by_leaf.items()):
+        best, where, tot = 0, [], 0
+        for endpoint, path in pairs:
+            if endpoint not in cache:
+                cache[endpoint] = observed(conn, endpoint)
+            seen, total = cache[endpoint]
+            got = hits_of(seen, path)
+            if not got:
+                # ★ 표본이 0 이면 전건을 한 번 더 본다.  드문 것을 「없다」 하지 않는다
+                got, total = full_hits(conn, endpoint, path)
+            where.append(f"{endpoint}:{path}")
+            best, tot = max(best, got), max(tot, total)
+        if not best:
+            out.append({"leaf": leaf, "paths": where, "hits": 0, "total": tot})
+    return out
+
+
 def blocking_rows(conn, used: set, containers: tuple,
                   where: dict | None = None) -> list:
     """판정을 막는 미분류 경로 — 목록 (개정 390 · V4-30).
@@ -1282,6 +1442,7 @@ def blocking_rows(conn, used: set, containers: tuple,
     #   실측 08-19 — tools 를 부르다 역방향 import 로 걸렸다
     where = where or {}
     out = []
+    counted = stored_hits(conn)
     for endpoint, path in conn.execute(
         "SELECT endpoint, json_path FROM meta_field_usage"
         " WHERE usage='unclassified' ORDER BY endpoint, json_path"
@@ -1290,17 +1451,24 @@ def blocking_rows(conn, used: set, containers: tuple,
         head = path.split("[]")[0]
         if not (bare in used or head in containers):
             continue
-        seen, total = observed(conn, endpoint)
+        got = counted.get((endpoint, path))
+        seen, total = ({path: got[0]}, got[1]) if got and got[1] else (
+            observed(conn, endpoint))
         # ★ 통째로 읽는 컨테이너는 잎 이름으로 안 잡힌다 —
         #   파서가 outers 를 통째로 받아 그 안을 도는 것이다.
         #   그 자리를 짚어야 「정말 읽는지」를 볼 수 있다 (실측 08-19)
         spot = (where.get(bare) or where.get(bare.split(".")[-1])
                 or (f"{where[head]} (컨테이너 통째)" if head in where
                     and head in containers else ""))
+        hits = hits_of(seen, path)
         out.append({
             "endpoint": endpoint, "path": path,
-            "hits": seen.get(path, seen.get(bare, 0)), "total": total,
+            "hits": hits, "total": total,
             "where": spot,
+            # ★ 관측 0 을 「없다」로 읽지 않게 한다 (개정 413)
+            "why": ("" if hits else
+                    "키는 있는데 값이 전건 비었다" if key_seen(seen, path)
+                    else "키 자체가 원문에 없다"),
         })
     out.sort(key=lambda r: (-r["hits"], r["endpoint"], r["path"]))
     return out

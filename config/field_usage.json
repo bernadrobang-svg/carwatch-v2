@@ -1534,6 +1534,166 @@
     "list:HomeServiceProgress": {
       "usage": "unused_by_policy",
       "reason": "엔카 배송 서비스 진행 상태. 거래 방식이지 차량 품질이 아니다"
+    },
+    "inspection_summary:inspName": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:592 · 관측 200/200",
+      "core_column": "inspector_name"
+    },
+    "platform_check:cleaned": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:585 · 관측 200/200",
+      "core_column": "platform_verified"
+    },
+    "record_summary:accidentCnt": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:312 · 관측 200/200",
+      "core_column": "accident_total_cnt"
+    },
+    "record_summary:business": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:326 · 관측 200/200",
+      "core_column": "business_flag"
+    },
+    "record_summary:carNo": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:304 · 관측 200/200",
+      "core_column": "_pii_record_plate_no"
+    },
+    "record_summary:firstDate": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:305 · 관측 200/200",
+      "core_column": "record_first_date"
+    },
+    "record_summary:floodTotalLossCnt": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:320 · 관측 200/200",
+      "core_column": "flood_total_cnt_summary"
+    },
+    "record_summary:fuel": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:332 · 관측 200/200",
+      "core_column": "record_fuel"
+    },
+    "record_summary:government": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:325 · 관측 200/200",
+      "core_column": "government_flag"
+    },
+    "record_summary:loan": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:327 · 관측 200/200",
+      "core_column": "loan_flag"
+    },
+    "record_summary:myAccidentCnt": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:308 · 관측 200/200",
+      "core_column": "accident_my_cnt"
+    },
+    "record_summary:otherAccidentCnt": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:310 · 관측 200/200",
+      "core_column": "accident_other_cnt"
+    },
+    "record_summary:regDate": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:306 · 관측 200/200",
+      "core_column": "record_reg_date"
+    },
+    "record_summary:use": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:328 · 관측 200/200",
+      "core_column": "record_use_code"
+    },
+    "list:BadgeDetail": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:139 · 관측 174/200. 값이 있다 (174/200). 전에 「0/200」이던 것은 관측기가 SearchResults[] 아래를 안 본 탓이다",
+      "core_column": "trim_badge_detail"
+    },
+    "inspection_summary:outers": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:282 · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "inspection_summary:outers[].attributes": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:282 (컨테이너 통째) · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "inspection_summary:outers[].statusTypes": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:282 (컨테이너 통째) · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "inspection_summary:outers[].statusTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:233 · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "inspection_summary:outers[].statusTypes[].title": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:275 · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "inspection_summary:outers[].type.code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:233 · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "inspection_summary:outers[].type.title": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:275 · 관측 72/200",
+      "core_column": "inspection_panel_json"
+    },
+    "facet:Count": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:120 · 관측 14/14. ★ CORE 칸이 아니라 사전으로 간다 — facet 봉투를 열어 dict_enum 을 짓는다",
+      "core_column": "dict_enum.value"
+    },
+    "facet:SearchResults": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:120 · 관측 14/14. ★ CORE 칸이 아니라 사전으로 간다 — facet 봉투를 열어 dict_enum 을 짓는다",
+      "core_column": "dict_enum.value"
+    },
+    "ev_battery:ensolRawInfo": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:602 · 관측 0/200. 전기차만 준다. 전기차 1,838건 중 55건에 값이 있다 — 비전기차는 전건 null",
+      "core_column": "ev_battery_soh"
+    },
+    "inspection:etcs[].children[].statusTypes[].code": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:233 · 관측 0/200. ★ 키 자체가 없다. 값은 statusItemTypes 로 옮겨 갔다 (53,880 children 중 3건만 statusTypes 가 참)",
+      "core_column": "inspection_etc_json"
+    },
+    "inspection:etcs[].children[].statusTypes[].title": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:275 · 관측 0/200. 〃",
+      "core_column": "inspection_etc_json"
+    },
+    "record_summary:carNoChangeCnt": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:316 · 관측 0/200. 〃 (core_record.plate_change_cnt 2,305/2,305)",
+      "core_column": "plate_change_cnt"
+    },
+    "record_summary:floodPartLossCnt": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:321 · 관측 0/200. ★ record 에서도 전건 null — 사이트가 안 준다. V1-26 이 매번 센다",
+      "core_column": "flood_part_cnt_summary"
+    },
+    "record_summary:maker": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:333 · 관측 0/200. 〃 (core_record.record_maker 2,037/2,305)",
+      "core_column": "record_maker"
+    },
+    "record_summary:myAccidentCost": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:309 · 관측 0/200. 그 엔드포인트는 비워서 준다. 같은 값을 record 가 준다 (core_record.accident_my_cost 2,305/2,305)",
+      "core_column": "accident_my_cost"
+    },
+    "record_summary:otherAccidentCost": {
+      "usage": "in_use",
+      "reason": "파서가 읽는다 — parse/encar/mapping.py:311 · 관측 0/200. 〃 (core_record.accident_other_cost 2,305/2,305)",
+      "core_column": "accident_other_cost"
     }
   },
   "not_provided": {
@@ -1555,5 +1715,6 @@
     "reason": "sync_registry 자동 적재. 사람이 분류해야 한다"
   },
   "ghost_miss_limit": 3,
-  "_applied": "첫 수집 302경로 분류 반영 (가이드 BJY_등록부판단_91건_20260811). deferred 8건은 전 차종 수집 후 재판정한다"
+  "_applied": "첫 수집 302경로 분류 반영 (가이드 BJY_등록부판단_91건_20260811). deferred 8건은 전 차종 수집 후 재판정한다",
+  "_note_r412": "★ 개정 412 — 등록부 32건 전부 in_use 로 등록한다. 「새로 쓸까 말까」가 아니라 파서가 이미 읽는데 사전에 없던 것이다. ★ 관측 0 인 것도 in_use 다 — 「값이 안 온다」와 「안 쓴다」는 다르다. 관측이 0 이라고 안 쓰는 것으로 돌리면 축이 조용히 사라진다"
 }

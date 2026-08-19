@@ -545,6 +545,125 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="키">groups.값</td>
+  <td class="num" data-label="현재 값">[&quot;value.&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.값">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">groups.상태</td>
+  <td class="num" data-label="현재 값">[&quot;state.&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.상태">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">groups.이력</td>
+  <td class="num" data-label="현재 값">[&quot;history.&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.이력">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">groups.사양</td>
+  <td class="num" data-label="현재 값">[&quot;spec.&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.사양">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">groups.사이트 보증</td>
+  <td class="num" data-label="현재 값">[&quot;warranty.site&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.사이트 보증">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">groups.제조사 보증</td>
+  <td class="num" data-label="현재 값">[&quot;warranty.general&quot;, &quot;warranty.power&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.제조사 보증">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">groups.취향</td>
+  <td class="num" data-label="현재 값">[&quot;taste.&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="groups.취향">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="키">admin.query_row_limit</td>
   <td class="num" data-label="현재 값">1000</td>
   <td class="muted" data-label="형">int</td>
@@ -2706,7 +2825,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260818T215533</span>
-  <span>2026-08-19 12:00</span>
+  <span>2026-08-19 14:11</span>
 </footer>
 
 </body>

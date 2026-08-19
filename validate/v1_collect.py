@@ -17,7 +17,8 @@ CHECK_TMP = _os.path.join(
 
 from validate.base import (
     not_applicable,
-    Check, FATAL, KIND_CODE, KIND_EXTERNAL, KIND_TOTAL, WARN, _cfg, result,
+    Check, FATAL, KIND_CODE, KIND_CONTRACT, KIND_EXTERNAL, KIND_TOTAL, WARN,
+    _cfg, result,
 )
 
 # 「전량 실패」를 말할 수 있는 최소 표본 (V1-08 · V1-08b).
@@ -84,6 +85,13 @@ C = {
                    "마스터 지적 「카탈로그가 왜 없어. 수집하다가 버린 거겠지」 "
                    "(개정 327)",
                    KIND_CODE),
+    "V1-26": Check("V1", "V1-26", "판정 축이 통째로 비지 않음", FATAL, "run",
+                   "★ 개정 289 가 「못 본 축은 0점 + 확인 안 됨」이라 정했다. "
+                   "그래서 축이 통째로 비어도 화면은 조용히 「확인 안 됨」을 "
+                   "내고 등급만 낮아진다 — 아무도 안 놀란다 (개정 413 · S42 ①). "
+                   "★ 개정 413 은 이것을 V1-24 라 했으나 그 번호는 개정 327 이 "
+                   "이미 썼다 — 번호는 가이드 판단 대기다",
+                   KIND_CONTRACT),
     "V1-24": Check("V1", "V1-24", "받은 카탈로그가 매물과 이어짐",
                    FATAL, "run",
                    "받았는데 매물과 안 이어지면 받은 것이 아니다 — "
@@ -146,9 +154,39 @@ C = {
 LISTING_ENDPOINTS = ("detail", "inspection", "record", "diagnosis")
 
 
+def _axis_empty_check(conn, rid):
+    """V1-26 — 판정 축이 통째로 비지 않는가 (개정 413).
+
+    두 가지를 함께 낸다
+      ① 축 전건이 「확인 안 됨」인가        ← 이것이 fatal 이다
+      ② 파서가 읽는 경로 중 어디서도 값이 안 오는 것  ← 목록으로 낸다
+
+    ★ ②만으로 fatal 을 내지 않는다.  실측 08-19 — `floodDate` ·
+      `robberDate` 는 침수·도난이 **일어난 매물에만** 채워지는 날짜다.
+      한 건도 없으면 전건 null 이 맞다.  거짓 경보는 검사가 아니다
+    ★ ①은 다르다.  축 하나가 통째로 비면 그 배점이 전건에서 사라진다
+    """
+    from parse.encar.paths import parser_paths
+    from store.core import axis_paths_empty
+
+    rows = conn.execute(
+        "SELECT axis, COUNT(*), SUM(excluded) FROM result_axis"
+        " GROUP BY axis").fetchall()
+    if not rows:
+        return not_applicable(C["V1-26"], rid, "판정 결과가 없다")
+    bad = [f"{axis} — {n}건 전부 「확인 안 됨」이다.  축이 통째로 비었다"
+           for axis, n, exc in rows if n and (exc or 0) >= n]
+    empty = axis_paths_empty(conn, parser_paths())
+    note = [f"{g['leaf']} — 어디서도 값이 안 온다 ({' · '.join(g['paths'])})"
+            for g in empty]
+    return result(C["V1-26"], rid, f"{len(rows)}축",
+                  f"통째로 빈 축 {len(bad)} · 값이 안 오는 경로 {len(note)}",
+                  not bad, (bad + note)[:8])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
-    out = []
+    out = [_axis_empty_check(conn, ctx.run_id)]
 
     tally = dict(conn.execute(
         "SELECT status, COUNT(*) FROM audit_request WHERE run_id=? GROUP BY status",

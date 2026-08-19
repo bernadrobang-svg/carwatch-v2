@@ -101,10 +101,10 @@
 <!-- 미분류를 원인별로 (개정 341 · V4-26).
      ★ 「349건」이라고만 내면 아무도 안 봅니다 -->
 
-<h2>미분류 350건 — 원인별</h2>
-<p class="chips"><span class="chip">② 이름만 다름 64</span><span class="chip">③ 늘 비어 있음 233</span><span class="chip">④ 새로운 것 53</span></p>
-<p class="big"><strong>사람이 봐야 할 것 53건</strong>
-  <span class="muted">나머지 297건은 제안이 있습니다</span></p>
+<h2>미분류 318건 — 원인별</h2>
+<p class="chips"><span class="chip">② 이름만 다름 79</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 106</span></p>
+<p class="big"><strong>사람이 봐야 할 것 106건</strong>
+  <span class="muted">나머지 212건은 제안이 있습니다</span></p>
 
 
 <h2>정해 주십시오 — 판정을 막는 것부터</h2>
@@ -113,52 +113,21 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>inspection_summary:inspName</code>
-    <span class="tag bad">판정을 막습니다</span>
+    <code>platform_check:vehicleId</code>
     
+    <span class="tag">지금 안 쓰입니다</span>
   </div>
-  <p class="muted">① 실제 값
-    <code>엔카 일산 풍동 성능장 이정우</code> 7건 · <code>오토즈 안이찬</code> 7건 · <code>아라성능장 엄주용</code> 6건 · <code>가양오토서비스 조범준</code> 6건 · <code>네바퀴자동차 1급 공업사 김재근</code> 6건 · 
-    <span class="dim">관측 200/200</span></p>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>42452394</code> 2건 · <code>41298666</code> 2건 · <code>42267440</code> 2건 · <code>42401953</code> 1건 · <code>42481821</code> 1건 · 
+    <span class="dim">관측 12,937/12,937</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>vehicleId</code> <code>outers</code> <code>outerSummarys</code> 
-    <span class="dim">— unused_by_policy — 「inspection:master.detail.inspName」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="inspection_summary">
-    <input type="hidden" name="json_path" value="inspName">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>platform_check:cleaned</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>True</code> 200건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>vehicleId</code> 
-    <span class="dim">— 사람이 봐야 합니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
+    <code>cleaned</code> 
+    <span class="dim">— in_use — 「detail:vehicleId」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="endpoint" value="platform_check">
-    <input type="hidden" name="json_path" value="cleaned">
+    <input type="hidden" name="json_path" value="vehicleId">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -175,21 +144,176 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>record_summary:accidentCnt</code>
-    <span class="tag bad">판정을 막습니다</span>
+    <code>detail:advertisement.verification</code>
     
+    <span class="tag">지금 안 쓰입니다</span>
   </div>
-  <p class="muted">① 실제 값
-    <code>0</code> 73건 · <code>1</code> 54건 · <code>2</code> 30건 · <code>3</code> 22건 · <code>4</code> 9건 · 
-    <span class="dim">관측 200/200</span></p>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>{reportExists · reportVersion · version …}</code> 200건 · 
+    <span class="dim">관측 12,348/12,348</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>type</code> <code>price</code> <code>status</code> 
+    <span class="dim">— 사람이 봐야 합니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="detail">
+    <input type="hidden" name="json_path" value="advertisement.verification">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>detail:advertisement.verification.reportExists</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>False</code> 200건 · 
+    <span class="dim">관측 12,348/12,348</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>version</code> <code>reportVersion</code> 
+    <span class="dim">— 사람이 봐야 합니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="detail">
+    <input type="hidden" name="json_path" value="advertisement.verification.reportExists">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>detail:view.meetgoCheckupAvailable</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>False</code> 200건 · 
+    <span class="dim">관측 12,348/12,348</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
+    <span class="dim">— 사람이 봐야 합니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="detail">
+    <input type="hidden" name="json_path" value="view.meetgoCheckupAvailable">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>detail:view.meetgoVisitAvailable</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>False</code> 200건 · 
+    <span class="dim">관측 12,348/12,348</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
+    <span class="dim">— 사람이 봐야 합니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="detail">
+    <input type="hidden" name="json_path" value="view.meetgoVisitAvailable">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>sellingpoint:vehicleId</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>42549596</code> 3건 · <code>42394693</code> 2건 · <code>42441443</code> 2건 · <code>42001570</code> 2건 · <code>42264945</code> 2건 · 
+    <span class="dim">관측 12,111/12,111</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>sellingPoint</code> <code>uniqueOptionPhotos</code> <code>choiceOptionPhotos</code> 
+    <span class="dim">— in_use — 「detail:vehicleId」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="sellingpoint">
+    <input type="hidden" name="json_path" value="vehicleId">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>record_summary:carKind</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>1</code> 200건 · 
+    <span class="dim">관측 7,824/7,824</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
-    <span class="dim">— blocked — 「record:accidentCnt」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
+    <span class="dim">— blocked — 「record:carKind」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="accidentCnt">
+    <input type="hidden" name="json_path" value="carKind">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -206,145 +330,21 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>record_summary:business</code>
-    <span class="tag bad">판정을 막습니다</span>
+    <code>record_summary:displacement</code>
     
+    <span class="tag">지금 안 쓰입니다</span>
   </div>
-  <p class="muted">① 실제 값
-    <code>0</code> 200건 · 
-    <span class="dim">관측 200/200</span></p>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>2497</code> 109건 · <code>1998</code> 19건 · <code>3470</code> 16건 · <code>1499</code> 15건 · <code>180</code> 9건 · 
+    <span class="dim">관측 7,824/7,824</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
-    <span class="dim">— blocked — 「record:business」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
+    <span class="dim">— in_use — 「detail:spec.displacement」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="business">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>record_summary:carNo</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>155소4178</code> 1건 · <code>155너1908</code> 1건 · <code>58거2685</code> 1건 · <code>302서9735</code> 1건 · <code>243주9619</code> 1건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>regDate</code> <code>year</code> <code>maker</code> 
-    <span class="dim">— blocked — 「record:carInfoChanges[].carNo」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="carNo">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>record_summary:firstDate</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>2021-12-23</code> 2건 · <code>2021-10-19</code> 2건 · <code>2021-12-15</code> 2건 · <code>2023-05-16</code> 2건 · <code>2021-11-15</code> 2건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>regDate</code> <code>carNo</code> <code>year</code> 
-    <span class="dim">— blocked — 「record:firstDate」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="firstDate">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>record_summary:floodTotalLossCnt</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>0</code> 200건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>regDate</code> <code>carNo</code> <code>year</code> 
-    <span class="dim">— blocked — 「record:floodTotalLossCnt」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="floodTotalLossCnt">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>record_summary:fuel</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>가솔린</code> 191건 · <code>전기</code> 9건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>regDate</code> <code>carNo</code> <code>year</code> 
-    <span class="dim">— blocked — 「record:fuel」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="fuel">
+    <input type="hidden" name="json_path" value="displacement">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -367,60 +367,60 @@
 
 <tr><td data-label="경로"><code>detail:advertisement.verification</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">200 / 200</td></tr>
+  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
 
 <tr><td data-label="경로"><code>detail:advertisement.verification.reportExists</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">200 / 200</td></tr>
+  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
 
 <tr><td data-label="경로"><code>detail:view.meetgoCheckupAvailable</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">200 / 200</td></tr>
+  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
 
 <tr><td data-label="경로"><code>detail:view.meetgoVisitAvailable</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">200 / 200</td></tr>
-
-<tr><td data-label="경로"><code>platform_check:cleaned</code></td>
-  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">200 / 200</td></tr>
-
-<tr><td data-label="경로"><code>sellingpoint:choiceOptionPhotos[].attachment.url</code></td>
-  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">153 / 200</td></tr>
-
-<tr><td data-label="경로"><code>sellingpoint:uniqueOptionPhotos</code></td>
-  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">117 / 200</td></tr>
+  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.sellingPointId</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">105 / 200</td></tr>
+  <td class="r num" data-label="관측">5,538 / 12,111</td></tr>
+
+<tr><td data-label="경로"><code>sellingpoint:uniqueOptionPhotos</code></td>
+  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
+  <td class="r num" data-label="관측">5,430 / 12,111</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.largeCategoryCode</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">100 / 200</td></tr>
+  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.largeCategoryName</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">100 / 200</td></tr>
+  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.mediumCategoryCode</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">100 / 200</td></tr>
+  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.mediumCategoryName</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">100 / 200</td></tr>
+  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+
+<tr><td data-label="경로"><code>sellingpoint:sellingPoint.sentence</code></td>
+  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
+  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+
+<tr><td data-label="경로"><code>sellingpoint:sellingPoint.smallCategoryCode</code></td>
+  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
+  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
 
 </tbody>
 </table>
-<p class="muted">그 밖 41건이 더 있습니다.</p>
+<p class="muted">그 밖 94건이 더 있습니다.</p>
 
 
 
 <p class="chips">
-<a class="chip" href="/admin/registry?usage=unclassified">unclassified (350)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (190)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (141)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
+<a class="chip" href="/admin/registry?usage=unclassified">unclassified (318)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (222)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (141)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
 </p>
 <table class="rows">
 <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th class="num">미관측</th>
@@ -535,24 +535,6 @@
   </form>
 </td></tr>
 
-<tr><td data-label="엔드포인트">ev_battery</td><td data-label="경로"><code>ensolRawInfo</code></td>
-<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
-<td data-label="컬럼"></td><td class="muted" data-label="근거">되돌림 — core_column 을 못 찾았다</td>
-<td data-label="분류">
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="ev_battery">
-    <input type="hidden" name="json_path" value="ensolRawInfo">
-    <select name="usage">
-      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
-    </select>
-    <input name="core_column" placeholder="컬럼" size="12">
-    <input name="reason" placeholder="근거 (필수)" size="18" required>
-    <button type="submit" class="mini">저장</button>
-  </form>
-</td></tr>
-
 <tr><td data-label="엔드포인트">ev_battery</td><td data-label="경로"><code>ensolRawInfo.batteryInfo</code></td>
 <td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
 <td data-label="컬럼"></td><td class="muted" data-label="근거">sync_registry 자동 적재. 사람이 분류해야 한다</td>
@@ -607,6 +589,24 @@
   </form>
 </td></tr>
 
+<tr><td data-label="엔드포인트">ev_battery</td><td data-label="경로"><code>ensolRawInfo.batteryInfo.batteryBasicInfo</code></td>
+<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">sync_registry 자동 적재. 사람이 분류해야 한다</td>
+<td data-label="분류">
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="ev_battery">
+    <input type="hidden" name="json_path" value="ensolRawInfo.batteryInfo.batteryBasicInfo">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
 </tbody>
 </table>
 
@@ -617,7 +617,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260818T215533</span>
-  <span>2026-08-19 12:00</span>
+  <span>2026-08-19 14:11</span>
 </footer>
 
 </body>
