@@ -18,7 +18,7 @@
 | WB-003 | `[화면]` | **폭 다섯에서 재고 찍는다** | `[마스터]` 337 | `61-web/f-width` | ~ `report/screens/views.py::Bucket` | 화면 없음 | V11-113 | **!** |
 | WB-004 | `[화면]` | 어느 폭에서도 글자가 세로로 안 떨어진다 | `[마스터]` 337 | `61-web/f-width` | ~ `web/templates/recommend.html` | `/recommend` | V11-115 | **!** |
 | WB-005 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — 넓으면 더 보여 준다 | `[마스터]` 278 | `61-web/a-common` | ~ `web/server.py:44` | 화면 없음 | 검사 없음 | ◐ |
-| WB-006 | `[판정·화면]` | **사진 크기** — 목록 80 · 추천 64 · 상세 480 | `[마스터]` 332 | `61-web/a-common` | ~ `report/screens/build.py::recommend_reason` | 화면 없음 | V11-107 | **!** |
+| WB-006 | `[판정·화면]` | **사진 크기** — ★ 정본은 `61-web/a-common.md` 사진 크기 표 하나다 | `[마스터]` 332 · 368 · 404 | `61-web/a-common` | ~ `report/screens/build.py::recommend_reason` | 화면 없음 | V11-107 | ◐ |
 | WB-007 | `[화면]` | 사진 최소 128px — 좁아도 안 줄인다 | `[마스터]` 281 | `61-web/a-common` | ✓ `web/static/app.css` | 화면 없음 | V11-80 | ◐ |
 | WB-008 | `[화면]` | 한 화면에 매물 2개 이상 | `[마스터]` 332 | `61-web/a-common` | ~ `web/views.py::listings` | `/listings` | V11-108 | ◐ |
 | WB-009 | `[화면]` | 공통 — 폭 · 크기 · 줄 수 — JS 없이 돈다 | `[기술]` 248 | `61-web` | ~ `web/views.py::_unclassified_split` | 화면 없음 | 검사 없음 | ◐ |
@@ -69,7 +69,7 @@
 | WB-039 | `[판정]` | 추천 /recommend — 조건을 한 줄로 | `[마스터]` 304 | `61-web/c-recommend` | ✓ `web/templates/recommend.html` | `/recommend` | V11-94 — 검사 없음(규격에만) | ◐ |
 | WB-040 | `[화면]` | 이유를 못 대면 추천 안 한다 | `[마스터]` 304 | `61-web/c-recommend` | ✓ `report/screens/build.py::view_recommend` | `/recommend` | V11-109 | ○ |
 | WB-041 | `[판정·화면]` | 추천 /recommend — 순위·차종 단추 | `[시안]` 304 | `61-web/c-recommend` | ~ `web/views.py::recommend` | `/listings` | 검사 없음 | ◐ |
-| WB-042 | `[판정·화면]` | 추천 /recommend — **사진이 목록보다 작다** | `[마스터]` 332 | `61-web/a-common` | ~ `web/views.py::recommend` | 화면 없음 | V11-107 | **!** |
+| WB-042 | `[판정·화면]` | 추천 /recommend — 사진이 목록보다 작다 (`a-common` 표 — 80/72/64) | `[마스터]` 332 · 368 | `61-web/a-common` | ~ `web/views.py::recommend` | 화면 없음 | V11-107 | ◐ |
 | WB-043 | `[판정·화면]` | 추천 /recommend — 카드 8줄 이내 | `[마스터]` 332 | `61-web/c-recommend` | ~ `web/views.py::recommend` | 화면 없음 | V11-109 | ◐ |
 
 ## 상세 /why
