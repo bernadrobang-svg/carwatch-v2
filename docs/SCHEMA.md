@@ -101,7 +101,7 @@
 | `account` | 10 | ★ 관리자 화면에서 하는 일은 전부 config 변경 또는 실행 지시다 |
 | `auth_session` | 5 |  |
 | `config_change` | 10 | config 에도 버전이 필요하다.  result_* 가 calc_version 을 갖는 것과 같다 |
-| `query_log` | 7 |  |
+| `query_log` | 8 |  |
 | `dev_request` | 11 |  |
 | `recalc_job` | 15 | 관리자가 단계를 직접 고르지 않는다.  재처리 결정표가 from_step 을 준다 |
 | `admin_api_snapshot` | 8 |  |

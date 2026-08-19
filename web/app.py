@@ -53,6 +53,10 @@ LABELS = {
     #   빠지면 메뉴에 경로가 그대로 나온다 (실측 08-16 · V11-54)
     "/admin/import": "목록 반입", "/admin/collect": "브라우저 수집",
     "/admin/dict": "사전 확정", "/admin/status": "진행 모니터",
+    # ★ 실측 08-19 — 메뉴에 「/reports」가 경로 그대로 떴다.
+    #   :53 주석이 이미 경고했는데 또 반복됐다 — V11-54 가 관리 메뉴만 봤다.
+    #   이제 STEP 142a 표까지 본다 (개정 396)
+    "/reports": "리포트",
 }
 
 
@@ -83,6 +87,7 @@ MENU_TIPS = {
     "/admin/tools": "관리 도구 (STEP 135)",
     "/admin/docs": "지시서 문서 뷰어 (STEP 136)",
     "/admin/requests": "개발 요청 (STEP 137)",
+    "/reports": "낸 리포트를 화면에서 읽고 내려받습니다",
 }
 
 

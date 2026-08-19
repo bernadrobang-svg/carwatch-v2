@@ -395,6 +395,11 @@ C = {
                     "마지막에 몰아 터지면 어느 조각이 문제인지 알 수 없다. "
                     "「조각 3/9 가 깨졌습니다」라 적는다 (개정 395)",
                     KIND_CODE),
+    "V11-150": Check("V11", "V11-150", "메뉴 라벨이 경로가 아님", FATAL, "run",
+                    "실측 08-19 — 메뉴에 「/reports」가 경로 그대로 떴다. "
+                    "「이름이 없으면 경로를 그대로 낸다」가 대체 규칙이라 "
+                    "조용히 지나간다.  ★ 그린 메뉴를 본다 (개정 396)",
+                    KIND_CODE),
     "V11-149": Check("V11", "V11-149", "조각 실패 문구에 서버 message 가 있음",
                     FATAL, "run",
                     "서버는 「길이가 다릅니다 — 받은 192,431 · 보낸 192,557」을 "
@@ -1014,6 +1019,8 @@ def _screen_checks(conn, rid) -> list:
     out.append(_chunk_message_check(rid))
     # 조각 절단점 · 조각별 대조 (개정 395)
     out.extend(_chunk_boundary_check(rid))
+    # 메뉴 라벨 (개정 396)
+    out.append(_menu_no_path_check(rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -1332,20 +1339,74 @@ SIAN = os.path.join(ROOT, "ref", "screens")
 
 
 def _menu_label_check(rid):
-    """V11-54 — 메뉴에 경로가 그대로 나오는가 (개정 274).
+    """V11-54 — 메뉴에 경로가 그대로 나오는가 (개정 274 · 396).
 
-    ★ 13장 STEP 138 메뉴표와 대조한다.  표에 있는데 이름이 없으면 결함이다
+    ★★ 관리 메뉴표만 보고 있었다.  그래서 08-19 에 메뉴에 「/reports」가
+      경로 그대로 떴다 — 그 경로가 관리 메뉴가 아니라 STEP 142a 표에 있었다.
+      :53 주석이 이미 경고했는데 검사가 절반만 봐서 또 반복됐다
+    ★ 이제 둘 다 본다 — 관리 메뉴표(60-admin/c-tools) + STEP 142a 표(61-web)
     """
-    from web.app import LABELS
+    from web.app import LABELS, MENU_TIPS
 
     bad = [p for p in LABELS.values() if p.startswith("/")]
+    seen = 0
+    for path, name in _menu_paths():
+        seen += 1
+        if path not in LABELS:
+            bad.append(f"{path} — 메뉴표에 있는데 이름이 없다")
+        elif name and LABELS[path] != name:
+            # ★ 표가 정본이다.  코드에 딴 이름을 지어 두지 않는다
+            bad.append(f"{path} — 표는 「{name}」인데 코드는 "
+                       f"「{LABELS[path]}」다")
+        if path not in MENU_TIPS:
+            bad.append(f"{path} — 설명이 없다 (MENU_TIPS)")
+    if not seen:
+        return not_applicable(C["V11-54"], rid, "메뉴표를 못 찾았다")
+    return result(C["V11-54"], rid, f"{seen}줄",
+                  "이름" if not bad else "경로", not bad, bad[:8])
+
+
+def _menu_paths() -> list:
+    """정본 표의 (경로, 이름).  ★ 두 표를 다 본다 (개정 396).
+
+    관리 메뉴   60-admin/c-tools.md   — 이름 칸이 없는 표라 경로만 본다
+    화면 메뉴   61-web.md STEP 142a   — 「| `/reports` | 리포트 | … |」
+    """
+    out: list = []
     if os.path.isfile(MENU_TABLE):
         doc = open(MENU_TABLE, encoding="utf-8").read()
-        for path in re.findall(r"\|\s*`(/admin[a-z/]*)`\s*\|", doc):
-            if path not in LABELS:
-                bad.append(f"{path} — 메뉴표에 있는데 이름이 없다")
-    return result(C["V11-54"], rid, "이름", "이름" if not bad else "경로",
-                  not bad, bad)
+        out += [(p, "") for p in
+                re.findall(r"\|\s*`(/admin[a-z/]*)`\s*\|", doc)]
+    web = os.path.join(ROOT, "docs", "chapters", "61-web.md")
+    if os.path.isfile(web):
+        doc = open(web, encoding="utf-8").read()
+        head = doc.find("STEP 142a")
+        if head >= 0:
+            # ★ 그 절만 본다.  문서 전체를 훑으면 딴 표의 줄을 줍는다
+            body = doc[head:doc.find("\n---", head)]
+            out += [(p, n.strip(" *"))
+                    for p, n in re.findall(
+                        r"\|\s*\*{0,2}`([/\w{}-]+)`\*{0,2}\s*\|\s*([^|]+?)\s*\|",
+                        body)]
+    return out
+
+
+def _menu_no_path_check(rid):
+    """V11-150 — 메뉴 라벨이 「/」로 시작하는 것이 있는가 (개정 396).
+
+    ★ 실제로 그린 메뉴를 본다.  LABELS 만 보면 「이름이 없으면 경로를
+      그대로 낸다」는 대체 규칙(web/app.py:95)을 못 잡는다
+    """
+    from contracts import ANONYMOUS, ROLE_ADMIN, Account
+    from web.app import menu_items
+
+    bad = []
+    for who in (ANONYMOUS, Account(1, ROLE_ADMIN, "마스터")):
+        for one in menu_items(who):
+            label = one.get("label") if isinstance(one, dict) else str(one)
+            if str(label).startswith("/"):
+                bad.append(f"메뉴에 경로가 그대로 나온다: {label}")
+    return result(C["V11-150"], rid, 0, len(bad), not bad, bad[:6])
 
 
 def _listing_paging_checks(conn, rid):

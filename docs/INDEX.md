@@ -9,13 +9,13 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**87파일 · 26,340줄 · 1,114KB**
+**87파일 · 26,718줄 · 1,145KB**
 
 ★ 800줄을 넘는 파일 4개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - guide/01_요구사항.md 841줄
-- chapters/00-standard.md 1,885줄
-- chapters/61-web.md 2,223줄
+- chapters/00-standard.md 2,172줄
+- chapters/61-web.md 2,255줄
 - chapters/60-admin/c-tools.md 1,076줄
 
 | 파일 | 줄 | KB |
@@ -23,7 +23,7 @@
 | `ENCAR_API.md` | 183 | 7 |
 | `KCAR_API.md` | 140 | 5 |
 | `README.md` | 57 | 1 |
-| `chapters/00-standard.md`  ★ | 1,885 | 80 |
+| `chapters/00-standard.md`  ★ | 2,172 | 93 |
 | `chapters/01-arch.md` | 227 | 8 |
 | `chapters/10-collect/00-intro.md` | 368 | 14 |
 | `chapters/10-collect/a-endpoint.md` | 301 | 11 |
@@ -49,19 +49,19 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md` | 746 | 22 |
-| `chapters/30-score/g-absolute.md` | 139 | 5 |
+| `chapters/30-score/f-table.md` | 737 | 23 |
+| `chapters/30-score/g-absolute.md` | 142 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 673 | 28 |
 | `chapters/40-report.md` | 755 | 26 |
-| `chapters/41-view.md` | 744 | 25 |
-| `chapters/42-watch.md` | 713 | 26 |
+| `chapters/41-view.md` | 757 | 26 |
+| `chapters/42-watch.md` | 714 | 26 |
 | `chapters/50-multisite.md` | 445 | 15 |
 | `chapters/60-admin/00-intro.md` | 219 | 8 |
 | `chapters/60-admin/a-auth.md` | 388 | 14 |
 | `chapters/60-admin/b-ops.md` | 304 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,076 | 43 |
-| `chapters/61-web.md`  ★ | 2,223 | 83 |
+| `chapters/61-web.md`  ★ | 2,255 | 85 |
 | `chapters/61-web/a-common.md` | 61 | 2 |
 | `chapters/61-web/b-list.md` | 84 | 3 |
 | `chapters/61-web/c-recommend.md` | 42 | 1 |
@@ -73,16 +73,16 @@
 | `chapters/61-web/i-admin-mock.md` | 385 | 17 |
 | `chapters/61-web/j-admin-mock2.md` | 495 | 22 |
 | `guide/00_개요.md` | 138 | 6 |
-| `guide/00_버전.md` | 91 | 3 |
+| `guide/00_버전.md` | 96 | 4 |
 | `guide/01_시작.md` | 280 | 10 |
 | `guide/01_요구사항.md`  ★ | 841 | 19 |
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 406 | 89 |
+| `guide/03_이력.md` | 427 | 101 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
-| `guide/05_가이드역할.md` | 294 | 9 |
+| `guide/05_가이드역할.md` | 319 | 10 |
 | `guide/05_노션.md` | 188 | 5 |
 | `ref/00-intro.md` | 25 | 0 |
 | `ref/A-check.md` | 68 | 3 |
