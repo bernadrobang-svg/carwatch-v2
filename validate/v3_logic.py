@@ -167,6 +167,17 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
+    "V3-76": Check("V3", "V3-76", "⑤ 의 하위 축 합이 갈래 표기와 같음",
+                   FATAL, "run",
+                   "개정 351 이 ⑤ 를 50 으로 확정했는데 하위 축을 안 지워 "
+                   "50+10+5=65 로 어긋나 있었다. ★ 절이 폐기됐는데 "
+                   "숫자가 남는 것을 아무도 못 봤다 (개정 392)",
+                   KIND_CONTRACT),
+    "V3-77": Check("V3", "V3-77", "갈래마다 하위 축 합 = 갈래 표기 (전 갈래)",
+                   FATAL, "run",
+                   "⑤ 하나만 재면 다음에 다른 갈래가 어긋난다. "
+                   "★ 갈래를 다 잰다 — 표와 config 를 한 줄씩 맞춘다",
+                   KIND_CONTRACT),
     "V3-78": Check("V3", "V3-78", "「그 밖」으로 옮긴 값이 축을 덮지 않음",
                    WARN, "run",
                    "사이트가 분류를 포기한 값을 우리가 「other」로 받는다. "
@@ -655,6 +666,77 @@ def _curve_table_check(rid):
     return result(C["V3-66"], rid, f"{len(curves)}곡선",
                   f"{len(curves) - len(bad)}곡선이 표와 같다",
                   not bad, bad[:6])
+
+
+def _group_sum_checks(rid):
+    """V3-76 · V3-77 — 갈래마다 하위 축 합 = 갈래 표기인가 (개정 392).
+
+    ★ 세 곳을 한자리에서 맞춘다
+      ① f-table 의 갈래 표기   「① 값 250 = 100+80+70」
+      ② f-table 24축 표의 그 갈래 행 합
+      ③ config/scoring.json 의 그 갈래 성분 합
+    ★ ①과 ③만 맞추면 표가 틀린 것을 못 잡는다.  ⑤ 가 그랬다 —
+      「축 목록 표에 5-2·5-3 이 처음부터 없었다.  표가 맞고 절이 틀렸다」
+    """
+    import json as _j
+    import os as _o
+    import re as _re
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    doc = _o.path.join(root, "docs", "chapters", "30-score", "f-table.md")
+    if not _o.path.isfile(doc):
+        return [not_applicable(C["V3-76"], rid, "f-table 이 없다"),
+                not_applicable(C["V3-77"], rid, "f-table 이 없다")]
+    text = open(doc, encoding="utf-8").read()
+    # ① 갈래 표기 — 「⑤ 사이트 보증 50 = 20+30」 · 「⑤ 사이트 보증 50」
+    said: dict = {}
+    for name, pts in _re.findall(
+            r"^[①-⑨]\s*([가-힣 ]+?)\s+(\d+)\s*(?:=|$)", text, _re.M):
+        said[name.strip()] = int(pts)
+    # ② 24축 표 — 「| 4 | 상태 | 사고 이력 | 40 | record |」
+    rows: dict = {}
+    for _no, group, pts in _re.findall(
+            r"^\|\s*\*{0,2}(\d+)\*{0,2}\s*\|\s*\*{0,2}([가-힣 ]+?)\*{0,2}"
+            r"\s*\|\s*\*{0,2}[^|]+?\*{0,2}\s*\|\s*\*{0,2}(\d+)\*{0,2}"
+            r"\s*\|", text, _re.M):
+        rows[group.strip()] = rows.get(group.strip(), 0) + int(pts)
+    # ③ config
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    comps = cfg["components"]
+    groups = cfg.get("groups") or {}
+    if not groups or not said:
+        return [not_applicable(C["V3-76"], rid, "갈래 표기를 못 읽었다"),
+                not_applicable(C["V3-77"], rid, "갈래 표기를 못 읽었다")]
+    bad, seen = [], 0
+    for name, pres in sorted(groups.items()):
+        want = said.get(name)
+        if want is None:
+            bad.append(f"{name} — f-table 에 갈래 표기가 없다")
+            continue
+        seen += 1
+        got = sum(v for k, v in comps.items()
+                  if any(k == p or k.startswith(p) for p in pres))
+        if got != want:
+            bad.append(f"{name} — config 합 {got} 인데 갈래 표기는 {want} 다")
+        in_doc = rows.get(name)
+        if in_doc is not None and in_doc != want:
+            bad.append(f"{name} — 24축 표 합 {in_doc} 인데 갈래 표기는 "
+                       f"{want} 다 (표와 절이 어긋난다)")
+    # ★ 성분이 어느 갈래에도 안 들어가면 그것도 어긋남이다
+    for k in sorted(comps):
+        if not any(k == p or k.startswith(p)
+                   for pres in groups.values() for p in pres):
+            bad.append(f"{k} — 어느 갈래에도 안 들어간다")
+    site = [x for x in bad if x.startswith("사이트 보증")]
+    return [result(C["V3-76"], rid, said.get("사이트 보증"),
+                   sum(v for k, v in comps.items()
+                       if k.startswith("warranty.site")),
+                   not site, site),
+            result(C["V3-77"], rid, f"{seen}갈래",
+                   f"{seen - len({b.split(' —')[0] for b in bad})}갈래가 맞다"
+                   if bad else f"{seen}갈래 모두 맞다", not bad, bad[:6])]
 
 
 def _mapped_other_check(conn, rid):
@@ -1429,6 +1511,8 @@ def run(conn, ctx) -> list:
     # 검사 1차 10개 (개정 407)
     out.append(_record_mismatch_check(conn, rid))
     out.append(_curve_table_check(rid))
+    # 배점 갈래 합 (개정 392)
+    out += _group_sum_checks(rid)
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다

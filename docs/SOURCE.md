@@ -2,16 +2,16 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 48,008줄
+파일 135개 · 총 48,098줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v11_web.py` | 4,181 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 2,206 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,880 | 화면 데이터 생성. |
-| `validate/v3_logic.py` | 1,511 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 1,595 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `store/core.py` | 1,363 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 1,369 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,353 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,125 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
@@ -162,10 +162,10 @@ _rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  l
 site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142  _bulk_axes:146  confirm_ratio:167  _bulk_changes:178  _total_points:205  photo_urls:218  photo_url:250  market_price:281  _days_between:298  _ceil_to:313  _bulk_market:328  _bulk_state:367  not_join_months:400  _left:423  _warranty_state:432  _axis_state:470  _sites_cfg:528  _row:541  _view_cfg:717  order_clause:761  _view_str:767  _listings_where:773  count_listings:840  view_listings:852  _soh_low:928  _view_int:937  _bucket:943  _high_km:950  _option_prices:959  recommend_funnel:971  _bulk_upside:988  view_recommend:1003  recommend_reason:1034  excluded_groups:1077  view_why:1092  view_compare:1098  market_trims:1139  view_market:1161  _web_cfg:1197  _median:1211  _with_height:1216  _price_bins:1231  _group_prices:1252  _by_year:1270  _year_line:1287  _by_trim:1313  _other_targets:1331  count_dealers:1339  _dealer_targets:1345  _dealer_region:1365  view_dealers:1380  view_run:1416  _rank1_of:1422  view_dashboard:1430  _bars:1526  _grade_counts:1541  _e_reasons:1548  _today_changes:1565  _step_rows:1590  _bulk_spark:1607  view_watch:1643  _pending_values:1708  _done_items:1717  view_notready:1743  _unmatched_rows:1778  _report_files:1802  view_reports:1834
 ```
 
-### `validate/v3_logic.py` — 1,511줄
+### `validate/v3_logic.py` — 1,595줄
 
 ```
-_file_output_checks:290  _conflict_checks:343  _diagnosis_count_check:367  _hda_source_check:383  _sort_determinism:394  _warning_contract_checks:411  _list_observed_source_check:506  _facet_reconcile_check:536  _record_mismatch_check:580  _curve_table_check:610  _mapped_other_check:660  _denominator_check:687  _core_axis_check:715  _rental_cross_check:733  _why_cheap_check:771  _source_before_value_check:812  _absolute_cut_check:839  _spec_files:869  _confirm_ratio_check:879  _warranty_checks:929  _spec_axis_check:963  _site_axis_checks:1004  _rendered_why:1053  _rendered_listings:1063  _fill_gap_check:1073  _points_sum_check:1106  _market_gap_check:1123  _bonus_checks:1179  _trim_price_check:1283  run:1331  _shuffle_check:1454  _halt_dict_check:1479  _ensure_tmp:1508
+_file_output_checks:301  _conflict_checks:354  _diagnosis_count_check:378  _hda_source_check:394  _sort_determinism:405  _warning_contract_checks:422  _list_observed_source_check:517  _facet_reconcile_check:547  _record_mismatch_check:591  _curve_table_check:621  _group_sum_checks:671  _mapped_other_check:742  _denominator_check:769  _core_axis_check:797  _rental_cross_check:815  _why_cheap_check:853  _source_before_value_check:894  _absolute_cut_check:921  _spec_files:951  _confirm_ratio_check:961  _warranty_checks:1011  _spec_axis_check:1045  _site_axis_checks:1086  _rendered_why:1135  _rendered_listings:1145  _fill_gap_check:1155  _points_sum_check:1188  _market_gap_check:1205  _bonus_checks:1261  _trim_price_check:1365  run:1413  _shuffle_check:1538  _halt_dict_check:1563  _ensure_tmp:1592
 ```
 
 ### `tests/test_spec_ui.py` — 1,457줄
@@ -174,10 +174,10 @@ _file_output_checks:290  _conflict_checks:343  _diagnosis_count_check:367  _hda_
 rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:272  spec_g:298  spec_h:346  spec_j:379  spec_m:422  spec_e:490  spec_i:533  spec_k:646  spec_csrf:701  spec_l:728  spec_monkey:767  flow_s1:839  flow_s2:901  flow_s5:984  flow_s3:1097  flow_s4:1172  flow_s6:1243  guide_v132:1299  main:1391  _write:1435
 ```
 
-### `store/core.py` — 1,363줄
+### `store/core.py` — 1,369줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:506  resolve_vehicle_id:532  merge_conflict:564  upsert_vehicle:575  upsert_dealer:596  upsert_child:623  _flag:644  _not_join_months:658  state_counts:683  current_versions:713  diagnosis_of:743  target_counts:756  top_target:763  vehicle_of:768  collect_scale:775  our_fault:795  catalog_coverage:804  _walk:848  _sample_bodies:864  observed:877  known_leaves:893  has_unclassified:908  classify_unclassified:915  _card_limit:951  _value_chars:956  _admin_cfg:961  unclassified_cards:978  _peek:1034  _short:1084  _blocking_paths:1095  _raw_rows_max:1115  used_endpoints:1125  raw_sections:1134  _flatten:1173  option_diff:1197  _option_names:1235  blocking_keys:1251  blocking_rows:1269  record_mismatch_count:1323  relist_counts:1349
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:506  resolve_vehicle_id:532  merge_conflict:564  upsert_vehicle:575  upsert_dealer:596  upsert_child:623  _flag:644  _not_join_months:658  state_counts:683  current_versions:713  diagnosis_of:743  target_counts:756  top_target:763  vehicle_of:768  collect_scale:775  our_fault:795  catalog_coverage:804  _walk:848  _sample_bodies:864  observed:877  known_leaves:893  has_unclassified:908  classify_unclassified:915  _card_limit:951  _value_chars:956  _admin_cfg:961  unclassified_cards:978  _peek:1034  _short:1084  _blocking_paths:1095  _raw_rows_max:1115  used_endpoints:1125  raw_sections:1134  _flatten:1173  option_diff:1197  _option_names:1235  blocking_keys:1251  blocking_rows:1269  record_mismatch_sql:1323  record_mismatch_count:1329  relist_counts:1355
 ```
 
 ### `collect/runner.py` — 1,353줄

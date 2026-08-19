@@ -28,6 +28,31 @@
     "taste.color": 10,
     "taste.sunroof": 10
   },
+  "_groups_note": "★ f-table 의 갈래 표기다 (개정 392 · V3-76·V3-77). 갈래마다 하위 축 합이 표기와 같아야 한다 — ⑤ 가 50+10+5=65 로 어긋난 채 남아 있었다. 성분 이름이 어느 갈래인지는 여기 하나에만 적는다",
+  "groups": {
+    "값": [
+      "value."
+    ],
+    "상태": [
+      "state."
+    ],
+    "이력": [
+      "history."
+    ],
+    "사양": [
+      "spec."
+    ],
+    "사이트 보증": [
+      "warranty.site"
+    ],
+    "제조사 보증": [
+      "warranty.general",
+      "warranty.power"
+    ],
+    "취향": [
+      "taste."
+    ]
+  },
   "_component_form": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용 (STEP 128). 파서는 #5 에서 반영한다",
   "admin": {
     "query_row_limit": 1000,
