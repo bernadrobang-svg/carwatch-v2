@@ -15,7 +15,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | CO-001 | `[수집]` | 차종별로 목록을 받는다 | `[마스터]` | `10-collect` | ~ `collect/runner.py` | `/admin/run` | V1-01 | ◐ |
 | CO-002 | `[수집]` | 엔카 `/search/` 가 서울 IP 에서 407 | `[원문]` 262 | `10-collect` | ~ `adapters/kcar.py:6` | /search/ | S10 · S5 | ◐ |
-| CO-003 | `[수집]` | **브라우저로 받는다** — 마스터 회선 | `[마스터]` 248 | `STEP 136c` | ~ `adapters/kcar.py:5` | `/admin/collect` | V11-47 | ◐ |
+| CO-003 | `[수집·화면]` | **브라우저로 받는다** — 마스터 회선 | `[마스터]` 248 | `STEP 136c` | ~ `web/views.py::admin_collect` | `/admin/collect` | V11-47 | ◐ |
 | CO-004 | `[수집·화면]` | JS 가 바이트를 재서 나눠 보낸다 | `[마스터]` 263 | `STEP 136c` | ~ `web/templates/admin_collect.html` | `/admin/collect` | V11-47 | ◐ |
 | CO-005 | `[수집]` | **나눌 수 없는 원문은 조각으로** | `[마스터]` 307 | `STEP 136c` | ✓ `store/adminops.py::save_browser_catch` | — | V11-98 | ○ |
 | CO-006 | `[수집]` | 범위 — 차종별 · 전 차종 | `[마스터]` 264 | `STEP 136c` | ~ `collect/runner.py::_trim_ladders` | — | V11-48·49 | ◐ |
@@ -46,14 +46,14 @@
 | CO-021 | `[저장]` | **저장하면 나머지가 이어서 돈다** | `[마스터]` 314 | `STEP 136g` | ~ `store/pii.py::plate_use_char` | `/admin/status` | V10-26·27 | ◐ |
 | CO-022 | `[운영]` | 자동화 — 매일 04:00 자동 | `[마스터]` 315 | `STEP 136h` | ✓ `tools/daily_enqueue.py::main` | — | V10-28 | ○ |
 | CO-023 | `[운영]` | 목록이 오래되면 알린다 | `[마스터]` 316 | `STEP 136i` | ~ `tools/build_dict.py::build_dict` | 머리말 | V11-103 — 검사 없음(규격에만) | ◐ |
-| CO-024 | `[수집]` | **재수집·재파싱·재판정을 가른다** | `[마스터]` 317 | `STEP 136h` | ~ `collect/pipeline.py:36` | `/admin/tools` | V10-29·30 | ◐ |
+| CO-024 | `[운영]` | **재수집·재파싱·재판정을 가른다** | `[마스터]` 317 | `STEP 136h` | ~ `store/adminops.py::enqueue_recalc` | `/admin/tools` | V10-29·30 | ◐ |
 | CO-025 | `[운영]` | 상세는 오래된 것만 다시 | `[판단]` 317 | `B-config` | ~ `web/views.py::listings` | `/listings` | 검사 없음 | ◐ |
 
 ## 원문 보존
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| CO-026 | `[수집]` | 받은 그대로 둔다 (P3) | `[마스터]` | `01_raw.sql` | ✓ `store/raw.py::save_response` | `/watch` | V1-05 | ○ |
+| CO-026 | `[저장]` | 받은 그대로 둔다 (P3) | `[마스터]` | `01_raw.sql` | ✓ `store/raw.py::save_response` | `/watch` | V1-05 | ○ |
 | CO-027 | `[수집]` | 밖에서 받은 것은 `run_id` 로 고른다 | `[마스터]` 268 | `10-collect` | ~ `collect/runner.py::FailStreak` | — | V1-21 | ◐ |
 | CO-028 | `[수집]` | `origin` 4종 — collector·manual·import·browser | `[마스터]` 252 | `01_raw.sql` | ~ `collect/runner.py::s4` | — | V11-43 | ◐ |
 | CO-029 | `[수집]` | 목록 반입 — 밖에서 받은 것을 넣는다 | `[마스터]` 244 | `STEP 136a` | ~ `collect/runner.py::s4` | `/admin/import` | S10 · S5 | ◐ |
@@ -68,5 +68,5 @@
 | CO-033 | `[수집]` | `source_id` 가 문자를 받는다 | `[원문]` 310 | `50-multisite` | ✓ `adapters/kcar.py::KcarAdapter` | 해당 없음 | V9-05 — 검사 없음(규격에만) | ◐ |
 | CO-034 | `[저장]` | **차대번호로 같은 차를 잇는다** | `[원문]` | `50-multisite` | ~ `store/core.py::build_identities` | 해당 없음 | 검사 없음 | ◐ |
 | CO-035 | `[운영]` | 사이트마다 주는 것이 다르다 | `[판단]` 309 | `50-multisite` | ~ `web/views.py::_watch_invite` | 해당 없음 | V9-01~03 — 검사 없음(규격에만) | ◐ |
-| CO-036 | `[화면]` | 다중 사이트 — 화면에 출처를 낸다 | `[마스터]` 311 | `50-multisite` | ~ `config/labels.json::AXIS_LABELS.warranty.site` | 목록 사이트 열 | V9-06·07 | ◐ |
+| CO-036 | `[화면]` | 다중 사이트 — 화면에 출처를 낸다 | `[마스터]` 311 | `50-multisite` | 미구현 | 목록 사이트 열 | V9-06·07 | ✗ |
 | CO-037 | `[운영]` | 다중 사이트 — **K카 직영은 최고급** | `[마스터]` 312 | `50-multisite` | ~ `tools/trace_fill.py::json_key_at` | 해당 없음 | V9-08·09 — 검사 없음(규격에만) | ◐ |

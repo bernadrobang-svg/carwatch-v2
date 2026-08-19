@@ -993,6 +993,43 @@ try:
         say("S38-5", "「!」·「?」 가 도구 실행 뒤에도 남음",
             _keep if not _b385 else 0, [], _b385[:8])
 
+        # ── S39-1 · S39-2 (00-standard 「층 칸」 · 개정 397) ─────────
+        # ★ 「화면 없음 354건」이 실은 「수집 40 · 저장 60 · 판정 80 …」이다.
+        #   층을 알면 누가 무엇을 해야 하는지가 나온다
+        _b391, _t391, _b392, _n39 = [], [], [], 0
+        for _f in sorted(_g.glob(os.path.join(_trace, "*.md"))):
+            if _f.endswith("INDEX.md") or _f.endswith("RULES.md"):
+                continue
+            for _ln in io.open(_f, encoding="utf-8"):
+                if not _TRACE_ROW.match(_ln):
+                    continue
+                _c = [x.strip() for x in _ln.rstrip("\n").split("|")]
+                if len(_c) != _TRACE_COLS:
+                    continue
+                _n39 += 1
+                _rid = _c[1]
+                _lay = _c[_C_LAYER].strip("`[] ")
+                # ★ 「!」·「?」 행은 사람(가이드·마스터)이 답할 몫이다.
+                #   층도 그쪽 칸이라 개발측이 못 채운다 (규칙 2) —
+                #   실패가 아니라 미착수로 낸다.  ★ 없어지지는 않는다
+                _ask = _c[_C_ST].strip("* ")[:1] in ("!", "?")
+                if not _lay:
+                    (_t391 if _ask else _b391).append(
+                        f"{_rid} — 층이 없다"
+                        + (" (가이드 몫 — 여쭐 행이다)" if _ask else ""))
+                elif _lay == "?":
+                    # ★ 「?」 는 「못 정했다」다.  가이드가 판단할 몫이라
+                    #   실패가 아니라 미착수로 낸다 (S39 「층을 못 정하면」)
+                    _t391.append(f"{_rid} — 층이 「?」다 (가이드 판단 대기)")
+                # S39-2 — 층이 화면이 아닌데 「화면 없음」이라 적힌 것
+                if "화면" not in _lay and _c[_C_UI] == "화면 없음":
+                    _b392.append(f"{_rid} — 층이 「{_lay}」인데 "
+                                 "화면 칸이 「화면 없음」이다 (「—」여야 한다)")
+        say("S39-1", "R 마다 층이 적혀 있음",
+            _n39 - len(_b391) - len(_t391), _t391[:8], _b391[:8])
+        say("S39-2", "화면 층이 아닌데 「화면 없음」이 아님",
+            _n39 - len(_b392), [], _b392[:8])
+
         # S34-4 — 규격에 있는데 표에 없는 것 (왜 있는지 모르는 규격)
         _in_trace = set()
         for _f in _g.glob(os.path.join(_trace, "*.md")):
@@ -1014,6 +1051,11 @@ try:
         #   ★ 위 _C_SRC 들과 같은 번호를 쓴다.  두 벌로 적지 않는다
         #   1=R · 2=층 · 3=요구사항 · 4=출처 · 5=규격
         #   6=소스 · 7=화면 · 8=검사 · 9=상태
+        _lay397 = {}
+        _ldec = os.path.join(ROOT, "config", "trace_layers.json")
+        if os.path.isfile(_ldec):
+            _lay397 = json.load(io.open(_ldec, encoding="utf-8")).get(
+                "layers") or {}
         _MINE = (_C_SRC, _C_UI, _C_CHK, _C_ST)   # 개발측이 채운다
         _THEIRS = (_C_LAYER, _C_WHAT, 4, _C_SPEC)  # 마스터 · 가이드의 칸
         _b351 = []
@@ -1040,8 +1082,17 @@ try:
                 if not _prev:
                     continue
                 for _i in _THEIRS:
-                    if _prev[_i] != _cells[_i]:
-                        _b351.append(
+                    if _prev[_i] == _cells[_i]:
+                        continue
+                    # ★ 층은 가이드의 칸이다.  개발측은 옮기기만 한다 —
+                    #   가이드가 정한 값(config/trace_layers.json)과 같으면
+                    #   그것은 「고친 것」이 아니라 「옮긴 것」이다 (개정 397).
+                    #   ★ 다른 값으로 바꾸면 그대로 걸린다
+                    if (_i == _C_LAYER
+                            and _cells[_i].strip("`[] ")
+                            == _lay397.get(_rid, "\x00")):
+                        continue
+                    _b351.append(
                             f"{_rid} — 남의 칸을 고쳤다 ({_i}번): "
                             f"「{_prev[_i][:24]}」 → 「{_cells[_i][:24]}」")
         # 지시서 본문은 그대로다 — 한 글자도 개발측이 고치지 않는다 (규칙 2)

@@ -13,7 +13,7 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| WB-001 | `[화면]` | **가변형 반응형** — 값을 버리지 않는다 | `[마스터]` 278 | `61-web/a-common` | ~ `report/screens/build.py::view_recommend` | 전 화면 | V11-70·71 | ◐ |
+| WB-001 | `[화면]` | **가변형 반응형** — 값을 버리지 않는다 | `[마스터]` 278 | `61-web/a-common` | 미구현 | 전 화면 | V11-70·71 | ✗ |
 | WB-002 | `[화면]` | 세 단계 — 넓음 표 · 중간 묶음 · 좁음 카드 | `[마스터]` 278 | `61-web/a-common` | ~ `web/views.py::recommend` | `/recommend` | V11-114 | **!** |
 | WB-003 | `[화면]` | **폭 다섯에서 재고 찍는다** | `[마스터]` 337 | `61-web/f-width` | ~ `report/screens/views.py::Bucket` | 화면 없음 | V11-113 | **!** |
 | WB-004 | `[화면]` | 어느 폭에서도 글자가 세로로 안 떨어진다 | `[마스터]` 337 | `61-web/f-width` | ~ `web/templates/recommend.html` | `/recommend` | V11-115 | **!** |
@@ -32,7 +32,7 @@
 | WB-012 | `[화면]` | 시안 — [마스터] 층 — **시안이 정본이다** | `[시안]` 275 | `61-web` | ~ `web/views.py::page_extras` | 전 화면 | V11-59 | ◐ |
 | WB-013 | `[화면]` | 시안 구조를 표로 바꾸지 않는다 | `[시안]` 275 | `61-web` | ~ `report/screens/build.py::_bulk_spark` | 화면 없음 | V11-60 | ◐ |
 | WB-014 | `[화면]` | **v1 원본이 더 앞선다** | `[시안]` 277 | `61-web` | ~ `report/screens/build.py` | 화면 없음 | V11-68·69 | ◐ |
-| WB-015 | `[판정·화면]` | v1 22열 · 축을 열로 | `[시안]` 277 | `61-web/b-list` | ~ `analyze/axis/state.py:9` | 목록 | V11-68 | ◐ |
+| WB-015 | `[화면]` | v1 22열 · 축을 열로 | `[시안]` 277 | `61-web/b-list` | 미구현 | 목록 | V11-68 | ✗ |
 | WB-016 | `[화면]` | v1 조작 — 단추·드롭다운·미리보기 | `[시안]` 277 | `61-web` | ~ `web/views.py::_order_menu` | 화면 없음 | V11-69 | ◐ |
 
 ## 목록 /listings
@@ -41,7 +41,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | WB-017 | `[운영]` | 목록 /listings — **목록은 요약이다** | `[마스터]` 303 | `61-web/b-list` | ~ `web/views.py::listings` | `/listings` | V11-93 — 검사 없음(규격에만) | **!** |
 | WB-018 | `[화면]` | 22열 · 폭(px) 지정 | `[시안]` 332 | `61-web/b-list` | ~ `config/labels.json::AXIS_LABELS.taste.picked` | 화면 없음 | 검사 없음 | ◐ |
-| WB-019 | `[판정]` | 목록 /listings — **시세 대비 %** | `[마스터]` 283 | `61-web/b-list` | ✓ `analyze/axis/value.py:2` | 10열 | 검사 없음 | ◐ |
+| WB-019 | `[판정]` | 목록 /listings — **시세 대비 %** | `[마스터]` 283 | `61-web/b-list` | ✓ `report/screens/build.py::_row` | 10열 | 검사 없음 | ◐ |
 | WB-020 | `[화면]` | 목록 /listings — **신차가 대비 %** | `[마스터]` 283 | `61-web/b-list` | ~ `web/templates/recommend.html` | 11열 | 검사 없음 | ◐ |
 | WB-021 | `[운영]` | 옵션 「4종 715만」 | `[마스터]` 313 | `61-web/b-list` | ~ `tools/verify_axes.py::main` | 18열 | V11-100 — 검사 없음(규격에만) | ◐ |
 | WB-022 | `[판정]` | 목록 /listings — 트림에 세부등급 | `[마스터]` 285 | `61-web/b-list` | ✓ `report/screens/build.py::_row` | 7열 | V11-85 — 검사 없음(규격에만) | ◐ |
@@ -67,7 +67,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | WB-038 | `[판정·화면]` | 추천 /recommend — **추천 이유를 낸다** | `[마스터]` 304 | `61-web/c-recommend` | ~ `web/views.py::recommend` | `/recommend` | V11-95 | ◐ |
 | WB-039 | `[판정]` | 추천 /recommend — 조건을 한 줄로 | `[마스터]` 304 | `61-web/c-recommend` | ✓ `web/templates/recommend.html` | `/recommend` | V11-94 — 검사 없음(규격에만) | ◐ |
-| WB-040 | `[판정]` | 이유를 못 대면 추천 안 한다 | `[마스터]` 304 | `61-web/c-recommend` | ✓ `report/screens/build.py::view_recommend` | `/recommend` | V11-109 | ○ |
+| WB-040 | `[화면]` | 이유를 못 대면 추천 안 한다 | `[마스터]` 304 | `61-web/c-recommend` | ✓ `report/screens/build.py::view_recommend` | `/recommend` | V11-109 | ○ |
 | WB-041 | `[판정·화면]` | 추천 /recommend — 순위·차종 단추 | `[시안]` 304 | `61-web/c-recommend` | ~ `web/views.py::recommend` | `/listings` | 검사 없음 | ◐ |
 | WB-042 | `[판정·화면]` | 추천 /recommend — **사진이 목록보다 작다** | `[마스터]` 332 | `61-web/a-common` | ~ `web/views.py::recommend` | 화면 없음 | V11-107 | **!** |
 | WB-043 | `[판정·화면]` | 추천 /recommend — 카드 8줄 이내 | `[마스터]` 332 | `61-web/c-recommend` | ~ `web/views.py::recommend` | 화면 없음 | V11-109 | ◐ |
@@ -107,7 +107,7 @@
 | WB-062 | `[판정]` | 시세 · 딜러 · 관심 · 비교 — **딜러 보유 차종** | `[마스터]` 276 | `41-view` | ~ `analyze/peer.py:8` | `/dealers` | 검사 없음 | **!** |
 | WB-063 | `[판정·화면]` | 시세 · 딜러 · 관심 · 비교 — **관심에 사진·차종** | `[마스터]` 284 | `42-watch` | ~ `web/templates/recommend.html` | `/watch` | V7-12 | **!** |
 | WB-064 | `[판정·화면]` | 관심 행 전체가 상세 링크 | `[마스터]` 284 | `42-watch` | ~ `web/views.py::_points` | 화면 없음 | V7-13 | ◐ |
-| WB-065 | `[판정]` | 시세 · 딜러 · 관심 · 비교 — **비교는 차이만** | `[마스터]` 313 | `61-web/e-compare` | ✓ `store/core.py::option_diff` | `/compare` | V11-102 | ○ |
+| WB-065 | `[화면]` | 시세 · 딜러 · 관심 · 비교 — **비교는 차이만** | `[마스터]` 313 | `61-web/e-compare` | ✓ `web/templates/compare.html` | `/compare` | V11-102 | ○ |
 | WB-066 | `[사전]` | 매물 화면 다섯이 같은 값 | `[마스터]` 284 | `61-web` | ✓ `report/screens/views.py::AxisChip` | — | V11-84 | ○ |
 
 ## 관리 화면
@@ -120,4 +120,4 @@
 | WB-070 | `[화면]` | 관리 표를 좁은 폭에서 카드로 | `[마스터]` 276 | `60-admin` | ~ `web/templates/market.html` | `/market` | 검사 없음 | ◐ |
 | WB-071 | `[화면]` | 관리 화면 — 관리 화면에 툴팁 | `[마스터]` 276 | `60-admin` | ✓ `web/templates/admin.html` | 화면 없음 | V11-62 | **!** |
 | WB-072 | `[저장]` | 진행 모니터는 읽기 전용 | `[마스터]` 272 | `STEP 136f` | ~ `store/adminops.py::preview_import` | `/admin/status` | V11-51 | ◐ |
-| WB-073 | `[운영]` | 관리 화면 — 큐만 보지 않는다 | `[마스터]` 273 | `STEP 136f` | ✓ `report/screens/admin.py::view_status` | `/admin/status` | V11-53 | ○ |
+| WB-073 | `[화면]` | 관리 화면 — 큐만 보지 않는다 | `[마스터]` 273 | `STEP 136f` | ✓ `report/screens/admin.py::view_status` | `/admin/status` | V11-53 | ○ |

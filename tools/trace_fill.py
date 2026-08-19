@@ -497,6 +497,26 @@ def _best_step_in(step: str, pool: list, texts: dict, by_line: dict,
 
 
 
+def _layers() -> dict:
+    """가이드가 정한 층 (config/trace_layers.json · 개정 397).
+
+    ★ 층은 가이드의 칸이다 (S35).  개발측은 **옮기기만** 한다 —
+      그래서 값을 코드가 아니라 config 에 두고, 검사(S35-1)가
+      「그 표에 있는 값으로만 바뀌었나」를 잰다
+    ★ 유지 6건은 층이 아니라 소스가 없는 것이다.  「미구현」으로 둔다 —
+      층을 바꿔 억지로 찾히게 만들지 않는다 (개정 397 「금지」)
+    """
+    import json as _j
+
+    path = os.path.join(ROOT, "config", "trace_layers.json")
+    if not os.path.isfile(path):
+        return {"layers": {}, "unbuilt": {}, "to_rules": {}}
+    got = _j.load(open(path, encoding="utf-8"))
+    for k in ("layers", "unbuilt", "to_rules"):
+        got.setdefault(k, {})
+    return got
+
+
 def derive_state(src: str, ui: str, chk: str) -> str:
     """★ 상태는 계산값이다.  사람이 적지 않는다 (개정 405 · 409).
 
@@ -536,6 +556,21 @@ def src_mark(rid: str, src: str, hints: dict) -> str:
     return f"{mark} {bare}"
 
 
+def relayer(cells: list, dec: dict) -> list:
+    """가이드가 정한 층으로 옮기고, 「유지」는 미구현으로 되돌린다.
+
+    ★ 「유지 6건」은 소스 칸에 기계 추정이 들어가 있었다.  그대로 두면
+      「미구현인데 ○」가 된다 — 개정 397 이 금지한 바로 그것이다
+    """
+    out = list(cells)
+    rid = out[I_R]
+    if rid in dec["layers"]:
+        out[I_LAYER] = f"`[{dec['layers'][rid]}]`"
+    if rid in dec["unbuilt"]:
+        out[I_SRC] = NO_SRC
+    return out
+
+
 def restate(cells: list, hints: dict) -> list:
     """소스 표시와 상태를 다시 매긴다.  ★ 파일을 안 뒤진다 — 칸만 본다.
 
@@ -543,13 +578,18 @@ def restate(cells: list, hints: dict) -> list:
       다른 규칙으로 매기면 「도구는 됐다는데 검사는 아니다」가 된다
     """
     out = list(cells)
-    # ★ hints 에 「해당 없음 …」처럼 경로가 아닌 것이 적혀 있으면 그것을 쓴다
-    want = hints.get(out[I_R], "")
-    if want.startswith(NA_SRC):
-        out[I_SRC] = want
-    out[I_SRC] = src_mark(out[I_R], out[I_SRC], hints)
     if out[I_ST].strip("* ")[:1] not in DERIVED:
-        return out                       # ★ 사람 몫이다.  덮지 않는다
+        # ★ 사람 몫이다.  상태만이 아니라 소스도 안 건드린다.
+        #   실측 08-19 — 파일 끝의 「질문」 행이 이미 있는 R 번호를 다시 쓴다
+        #   (AD-119 등 13건).  hints 를 R 로 걸면 그 질문 행까지 채워진다
+        return out
+    # ★ hints 가 있으면 자리도 그것으로 바꾼다.
+    #   실측 08-19 — 표시(`✓`)만 붙고 자리는 기계가 찾은 옛 값이 남았다.
+    #   「사람이 확인했다」와 「사람이 짚은 자리」가 어긋나면 ✓ 가 거짓말이 된다
+    want = hints.get(out[I_R], "")
+    if want:
+        out[I_SRC] = want if want.startswith(NA_SRC) else f"`{want}`"
+    out[I_SRC] = src_mark(out[I_R], out[I_SRC], hints)
     out[I_ST] = derive_state(out[I_SRC], out[I_UI], out[I_CHK])
     return out
 
@@ -575,19 +615,29 @@ def fill_file(path: str, ctxs: dict, write: bool,
             continue
         # ★ 「미구현」도 다시 본다 (--recheck).  층·config 를 넓히면
         #   전에 못 찾던 것이 잡힌다 — 지시 §0 의 「오판 40건」이 그것이다
-        redo = (cells[I_SRC] == UNKNOWN
-                or (recheck and NO_SRC in cells[I_SRC]))
+        # ★ 층이 바뀌면 소스도 그 층에서 다시 찾는다 (개정 397).
+        #   안 그러면 「층은 화면인데 소스는 analyze/」가 남는다 —
+        #   층을 옮긴 뜻이 없어진다.  ✓(사람이 확인한 것)는 건드리지 않는다
+        #   ★ 표의 `✓` 를 보지 않고 hints 를 본다.  hints 에서 뺀 것은
+        #     「확인이 취소됐다」는 뜻이라 다시 찾아야 한다
+        moved_layer = (cells[I_R] in ctxs["dec"]["layers"]
+                       and cells[I_R] not in ctxs["hints"])
+        redo = (cells[I_ST].strip("* ")[:1] in DERIVED
+                and cells[I_R] not in ctxs["dec"]["unbuilt"]
+                and (cells[I_SRC] == UNKNOWN or moved_layer
+                     or (recheck and NO_SRC in cells[I_SRC])))
         if not redo:
             # ★ 소스를 다시 안 찾아도 표시와 상태는 매긴다 (개정 405 · 409).
             #   전에는 이 칸을 사람이 썼고, 그래서 소스가 채워져도
             #   상태가 안 따라와 「✗ 46건」이 유령으로 남았다
-            done = restate(cells, ctxs["hints"])
+            done = restate(relayer(cells, ctxs["dec"]), ctxs["hints"])
             stat["상태 바뀜"] += done[I_ST] != cells[I_ST]
             stat["사람 몫"] += (
                 cells[I_ST].strip("* ")[:1] not in DERIVED)
             out.append("| " + " | ".join(done) + " |")
             continue
         stat["봄"] += 1
+        cells = relayer(cells, ctxs["dec"])   # ★ 새 층으로 먼저 옮긴다
         got = ctxs["hints"].get(cells[I_R], "")
         got = got or find_in_layer(cells[I_WHAT], cells[I_LAYER], ctxs["texts"],
                             ctxs["by_line"], ctxs["by_name"], ctxs["slines"],
@@ -599,7 +649,7 @@ def fill_file(path: str, ctxs: dict, write: bool,
             cells[I_SRC] = NO_SRC
             stat["못 찾음"] += 1
         was = cells[I_ST]
-        cells = restate(cells, ctxs["hints"])
+        cells = restate(relayer(cells, ctxs["dec"]), ctxs["hints"])
         stat["상태 바뀜"] += cells[I_ST] != was
         out.append("| " + " | ".join(cells) + " |")
     if write:
@@ -607,6 +657,49 @@ def fill_file(path: str, ctxs: dict, write: bool,
             f.write("\n".join(out) + "\n")
     return stat
 
+
+
+def move_to_rules(dec: dict, write: bool) -> list:
+    """소스가 없는 게 맞는 요구를 RULES.md 로 옮긴다 (개정 397).
+
+    ★ 지우지 않는다.  옮긴다 — RULES.md 는 「금지·규칙」의 자리다
+    ★ R 번호를 「무엇」 앞에 남긴다.  어디서 왔는지가 지워지면 추적이 끊긴다
+    """
+    rules = os.path.join(TRACE, "RULES.md")
+    if not dec["to_rules"] or not os.path.isfile(rules):
+        return []
+    moved, add = [], []
+    for name in sorted(os.listdir(TRACE)):
+        if not name.endswith(".md") or name in ("INDEX.md", "RULES.md"):
+            continue
+        path = os.path.join(TRACE, name)
+        keep = []
+        for line in open(path, encoding="utf-8").read().splitlines():
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if (re.match(r"^\| [A-Z]{2}-\d", line) and len(cells) == len(COLS)
+                    and cells[I_R] in dec["to_rules"]):
+                moved.append(cells[I_R])
+                add.append(f"| {cells[I_LAYER]} | **{cells[I_R]}** "
+                           f"{cells[I_WHAT]} | {cells[I_CHK]} | "
+                           f"{derive_state(NO_SRC, '', cells[I_CHK])} |")
+                continue
+            keep.append(line)
+        if write and moved:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write("\n".join(keep) + "\n")
+    if write and add:
+        body = open(rules, encoding="utf-8").read().rstrip("\n")
+        body += ("\n\n\n## 추적표에서 옮겨 온 것 — 개정 397\n\n"
+                 "```\n"
+                 "★ 소스가 없는 게 맞다.  문서 규칙이다 —\n"
+                 "  「이 문서만으로 구현할 수 있어야 한다」에 소스를 요구하면\n"
+                 "  영영 「미구현」으로 남는다\n"
+                 "```\n\n"
+                 "| 층 | 무엇 | 검사 | 상태 |\n|---|---|---|:--:|\n"
+                 + "\n".join(add) + "\n")
+        with open(rules, "w", encoding="utf-8") as f:
+            f.write(body)
+    return moved
 
 
 def survey() -> dict:
@@ -705,6 +798,7 @@ def main() -> int:
     ctxs["texts"] = build_texts()
     ctxs["slines"] = spec_lines()
     ctxs["hints"] = _hints()
+    ctxs["dec"] = _layers()
     total = {"봄": 0, "찾음": 0, "못 찾음": 0,
              "상태 바뀜": 0, "사람 몫": 0}
     for name in sorted(os.listdir(TRACE)):
@@ -714,9 +808,12 @@ def main() -> int:
                         "--recheck" in sys.argv)
         for k in total:
             total[k] += got[k]
+    moved = move_to_rules(ctxs["dec"], write)
     after = survey()
     print(f"{'쓰기' if write else '미리보기'} — 미확인 {total['봄']}건 중 "
           f"찾음 {total['찾음']} · 못 찾음 {total['못 찾음']}")
+    if moved:
+        print(f"RULES.md 로 옮김 {len(moved)}건 — {' · '.join(moved)}")
     print(f"상태 다시 매김 {total['상태 바뀜']}건 · "
           f"★ 「!」 {after['상태'].get('!', 0)} · "
           f"「?」 {after['상태'].get('?', 0)} 은 사람 몫이라 두었습니다\n")

@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 47,170줄
+파일 135개 · 총 47,317줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -14,16 +14,16 @@
 | `collect/runner.py` | 1,353 | 수집 실행 규칙. |
 | `store/core.py` | 1,306 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
-| `tools/check_src.py` | 1,098 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
+| `tools/check_src.py` | 1,148 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `tools/verify_axes.py` | 1,051 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `report/screens/admin.py` | 1,012 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `store/adminops.py` | 986 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `validate/v2_load.py` | 917 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
+| `tools/trace_fill.py` | 837 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `tests/test_score.py` | 786 | 7장 판정·채점 시험. |
 | `validate/v10_admin.py` | 780 | V10 관리자 검증. |
 | `validate/v4_mapping.py` | 770 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `tests/test_run.py` | 754 | S0~S3 종단 시험 (모의 응답). |
-| `tools/trace_fill.py` | 740 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `validate/v1_collect.py` | 737 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `report/render.py` | 723 | 리포트 생성 (L9). |
 | `collect/pipeline.py` | 709 | 실행 순서 · 중단 · 재처리 · 재개. |
@@ -192,7 +192,7 @@ resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_chan
 rec:31  Client:41  text:96  links:101  start_server:105  seed_admin:149  m1:165  m2:253  m3:327  m4:631  s3:702  unit:755  gaps:784  flows:892  guide7:993  _account_id:1122  make_users:1129  main:1147  _write_table:1196
 ```
 
-### `tools/check_src.py` — 1,098줄
+### `tools/check_src.py` — 1,148줄
 
 ```
 _spec_files:44  _read_spec:62  say:73  py_files:87  chapter_of:127  _declared_chapters:137  split_done:157  _illustration:176  _retired_config_keys:240  _git:697
@@ -222,6 +222,12 @@ QueryLog:55  QueryResult:68  ApiSnapshot:77  DevRequest:88  RecalcJob:103  Scori
 DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:347  _not_null_check:432  _chained_subscript_check:449  _Boom:497  _salvage_check:505  _table_exists:546  _exception_shape_checks:552  _schema_sync_check:618  _pii_access_check:655  gap_alerts:692  diff_prev_day:708  explain_gap:730  _pii_column_check:762  _secret_key_check:780  _parser_common_fields_check:818  _null_target_not_judged_check:869  _null_target_visible_check:894
 ```
 
+### `tools/trace_fill.py` — 837줄
+
+```
+spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:176  _stem:214  tokens:223  _best_in:253  _rows:290  layers_of:303  layer_pool:310  _rare_hit:322  axis_words:346  json_key_at:367  _place:394  _hints:405  find_in_layer:421  _best_step_in:469  _layers:500  derive_state:520  src_mark:546  relayer:559  restate:574  fill_file:597  move_to_rules:662  survey:705  lists:733  write_index:754  main:793
+```
+
 ### `tests/test_score.py` — 786줄
 
 ```
@@ -244,12 +250,6 @@ _paths:143  _layer_of:190  _unclassified_split:195  _layer_checks:233  _name_col
 
 ```
 check:36  StubEncar:92  Clock:236  setup:241  test_envelope:279  test_last_page_exact:307  test_facet:314  test_facet_missing_axis:328  test_dict_step:337  test_all_groups:359  test_parse_pipeline:370  test_score_pipeline:474  test_validate:534  test_registry_gate:577  test_target_scope:634  test_catalog_key:666  test_wrapper_args:684  test_unclassified_listing:721
-```
-
-### `tools/trace_fill.py` — 740줄
-
-```
-spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:176  _stem:214  tokens:223  _best_in:253  _rows:290  layers_of:303  layer_pool:310  _rare_hit:322  axis_words:346  json_key_at:367  _place:394  _hints:405  find_in_layer:421  _best_step_in:469  derive_state:500  src_mark:526  restate:539  fill_file:557  survey:612  lists:640  write_index:661  main:700
 ```
 
 ### `validate/v1_collect.py` — 737줄

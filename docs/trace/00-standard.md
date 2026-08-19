@@ -70,7 +70,6 @@
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
 | OP-023 | `[운영]` | 「표본 N건에서 미관측」이라 쓴다 | `[마스터]` 위와 같음 | `00-standard` | ~ `tools/sync_registry.py::sync_registry` | 해당 없음 | 검사 없음 | ◐ |
-| OP-024 | `[운영]` | 이 문서만으로 구현할 수 있어야 한다 | `[마스터]` | `00-standard` | ~ `web/views.py::admin_docs` | 해당 없음 | V4-13 | ◐ |
 | OP-025 | `[저장]` | 새 config 키를 만들면 부록 B 도 함께 | `[마스터]` S28-1 | `00-standard` | ~ `store/admin.py::add_config_key` | `/admin/targets` | V4-14 · V4-15 | ◐ |
 | OP-026 | `[저장]` | `config.{파일}.{키}` 형식 | `[기술]` | `00-standard` | ~ `config/field_usage.json` | 해당 없음 | 검사 없음 | ◐ |
 | OP-027 | `[수집]` | 새 표본은 실수집 원문에서 뽑는다 | `[마스터]` **손으로 만들면 진짜 형태를 모른다** | `00-standard` | ~ `collect/runner.py::facet_axes` | 해당 없음 | 검사 없음 | ◐ |
@@ -247,7 +246,7 @@
 | OP-133 | `[운영]` | 보안 강화는 「정식 서비스 착수」에 모아 둔다 | `[마스터]` 위와 같음 | `00-standard` | ~ `tools/check_src.py:1021` | 해당 없음 | S36-1 | ◐ |
 | OP-134 | `[저장]` | 해시를 로그에 안 남긴다 | `[기술]` **나중에 붙이면 이미 샌 뒤다** | `00-standard` | ~ `store/core.py::split_pii` | 해당 없음 | S36-1 | ◐ |
 | OP-135 | `[저장]` | PII 를 쿼리로 안 연다 | `[기술]` 위와 같음 | `00-standard` | ~ `store/adminops.py:2` | 해당 없음 | 검사 없음 | ◐ |
-| OP-136 | `[저장]` | HTTPS · 쿠키 Secure·HttpOnly | `[기술]` 위와 같음 | `00-standard` | ✓ `web/server.py` | 해당 없음 | S36-1 | ○ |
+| OP-136 | `[운영]` | HTTPS · 쿠키 Secure·HttpOnly | `[기술]` 위와 같음 | `00-standard` | ~ `config/admin.json` | 해당 없음 | S36-1 | ◐ |
 
 ## S37 사는 사람을 위한 것
 
