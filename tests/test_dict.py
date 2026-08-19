@@ -100,7 +100,10 @@ def test_axis_policy() -> None:
     conn = db()
     # panel_rank — 5값 고정.  새 값은 pending 이 아니라 중단
     for v in ("RANK_ONE", "RANK_A"):
-        conn.execute("INSERT INTO dict_enum VALUES "
+        conn.execute("INSERT INTO dict_enum"
+                 "(site,axis,value,display,count_seen,status,"
+                 "source_endpoint,dict_version,first_seen,last_seen)"
+                 " VALUES "
                      "('encar','panel_rank',?,?,1,'confirmed','inspection','d1',?,?)",
                      (v, v, T1, T1))
     conn.commit()
@@ -147,7 +150,10 @@ def test_conflict() -> None:
     check("충돌 값은 판정에서 빠진다", st == ("pending",), str(st))
 
     conn2 = db()
-    conn2.execute("INSERT INTO dict_enum VALUES "
+    conn2.execute("INSERT INTO dict_enum"
+                 "(site,axis,value,display,count_seen,status,"
+                 "source_endpoint,dict_version,first_seen,last_seen)"
+                 " VALUES "
                   "('encar','accident_type','1','1',5,'confirmed','record','d1',?,?)",
                   (T1, T1))
     conn2.commit()

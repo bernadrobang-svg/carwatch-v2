@@ -131,14 +131,20 @@ def test_precheck() -> None:
 
     # ★ 부위명(panel)은 표시 전용이다.  판정을 막지 않는다 (STEP 44) —
     #   막으면 새 부위명 하나에 전 매물이 멈춘다 (실측 08-15)
-    conn.execute("INSERT INTO dict_enum VALUES "
+    conn.execute("INSERT INTO dict_enum"
+                 "(site,axis,value,display,count_seen,status,"
+                 "source_endpoint,dict_version,first_seen,last_seen)"
+                 " VALUES "
                  "('encar','panel','x','x',1,'pending','inspection',"
                  "'d1','t','t')")
     conn.commit()
     ok, why = precheck(conn, "S9", done={"S6", "S6a", "S8", "S8.5"})
     check("표시 전용 축 pending 은 S9 를 막지 않는다", ok, why)
 
-    conn.execute("INSERT INTO dict_enum VALUES "
+    conn.execute("INSERT INTO dict_enum"
+                 "(site,axis,value,display,count_seen,status,"
+                 "source_endpoint,dict_version,first_seen,last_seen)"
+                 " VALUES "
                  "('encar','panel_rank','RANK_Z','RANK_Z',1,'pending',"
                  "'inspection','d1','t','t')")
     conn.commit()

@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 47,317줄
+파일 135개 · 총 47,377줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -10,7 +10,7 @@
 | `web/views.py` | 2,204 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,856 | 화면 데이터 생성. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `validate/v3_logic.py` | 1,354 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 1,388 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `collect/runner.py` | 1,353 | 수집 실행 규칙. |
 | `store/core.py` | 1,306 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -35,9 +35,9 @@
 | `tests/test_admin.py` | 554 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tests/test_web.py` | 505 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `report/screens/views.py` | 487 | 화면 전용 DTO. |
+| `store/dictionary.py` | 466 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `contracts.py` | 456 | 계층 간 계약 — Protocol · DTO. |
 | `web/app.py` | 443 | 화면 조립 (14장 STEP 144 · 147 · 149). |
-| `store/dictionary.py` | 440 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `tools/build_index.py` | 420 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `run.py` | 404 | CarWatch v2 진입점. |
 | `tests/test_pipeline.py` | 382 | 5장 수집 순서 시험. |
@@ -168,10 +168,10 @@ site_badge:68  axis_heads:88  _labels:96  viewer_state:101  chip:111  _stamp:140
 rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:272  spec_g:298  spec_h:346  spec_j:379  spec_m:422  spec_e:490  spec_i:533  spec_k:646  spec_csrf:701  spec_l:728  spec_monkey:767  flow_s1:839  flow_s2:901  flow_s5:984  flow_s3:1097  flow_s4:1172  flow_s6:1243  guide_v132:1299  main:1391  _write:1435
 ```
 
-### `validate/v3_logic.py` — 1,354줄
+### `validate/v3_logic.py` — 1,388줄
 
 ```
-_file_output_checks:273  _conflict_checks:326  _diagnosis_count_check:350  _hda_source_check:366  _sort_determinism:377  _warning_contract_checks:394  _list_observed_source_check:489  _facet_reconcile_check:519  _denominator_check:563  _core_axis_check:591  _rental_cross_check:609  _why_cheap_check:647  _source_before_value_check:688  _absolute_cut_check:715  _spec_files:745  _confirm_ratio_check:755  _warranty_checks:805  _spec_axis_check:839  _site_axis_checks:880  _rendered_why:929  _rendered_listings:939  _fill_gap_check:949  _points_sum_check:982  _market_gap_check:999  _bonus_checks:1055  _trim_price_check:1130  run:1178  _shuffle_check:1297  _halt_dict_check:1322  _ensure_tmp:1351
+_file_output_checks:279  _conflict_checks:332  _diagnosis_count_check:356  _hda_source_check:372  _sort_determinism:383  _warning_contract_checks:400  _list_observed_source_check:495  _facet_reconcile_check:525  _mapped_other_check:569  _denominator_check:596  _core_axis_check:624  _rental_cross_check:642  _why_cheap_check:680  _source_before_value_check:721  _absolute_cut_check:748  _spec_files:778  _confirm_ratio_check:788  _warranty_checks:838  _spec_axis_check:872  _site_axis_checks:913  _rendered_why:962  _rendered_listings:972  _fill_gap_check:982  _points_sum_check:1015  _market_gap_check:1032  _bonus_checks:1088  _trim_price_check:1163  run:1211  _shuffle_check:1331  _halt_dict_check:1356  _ensure_tmp:1385
 ```
 
 ### `collect/runner.py` — 1,353줄
@@ -318,6 +318,12 @@ check:21  test_routes:28  test_template:77  test_no_logic_in_template:118  test_
 AxisChip:30  ListingRow:52  ListingFilter:176  WatchRow:205  TargetStat:223  RelaxRow:232  MarketRow:239  ChangeRow:251  AttentionItem:261  ViewerState:269  DashboardView:283  CompareView:307  MarketView:322  DealerRow:337  NotReadyView:358  TodayChange:376  StepRow:388  _min_sample:400  PendingValue:418  Bucket:431  ExcludedGroup:451  ReportFile:460  ReportsView:472
 ```
 
+### `store/dictionary.py` — 466줄
+
+```
+CodeEntry:31  AxisPolicy:57  policy:97  scope_key:105  seed_fixed_enums:130  mapped_of:169  upsert_enum:190  _handle_conflict:242  upsert_option3:263  retire_unseen:299  resolve_code:314  installed_option_names:352  normalize_enum:370  assert_no_unknown:386  bump_dict_version:429  list_pending:439  confirm_enum:447
+```
+
 ### `contracts.py` — 456줄
 
 ```
@@ -328,12 +334,6 @@ Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchRes
 
 ```
 menu_items:22  _tip:94  _label:99  empty_state:110  _list_stale:151  static_version:177  build_page:205  check_post:226  redirect:248  take_flashes:268  _display_now:281  make_app:307  _Denied:419  build_context:427  _title_of:442
-```
-
-### `store/dictionary.py` — 440줄
-
-```
-CodeEntry:31  AxisPolicy:57  policy:97  scope_key:105  seed_fixed_enums:130  upsert_enum:166  _handle_conflict:216  upsert_option3:237  retire_unseen:273  resolve_code:288  installed_option_names:326  normalize_enum:344  assert_no_unknown:360  bump_dict_version:403  list_pending:413  confirm_enum:421
 ```
 
 ### `tools/build_index.py` — 420줄

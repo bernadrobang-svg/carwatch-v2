@@ -45,7 +45,7 @@
 |---|--:|---|
 | `dict_option_code` | 9 | 상태 4종.  retired 는 삭제하지 않는다 — 과거 매물 해석에 필요하다 |
 | `dict_model_option` | 10 |  |
-| `dict_enum` | 10 |  |
+| `dict_enum` | 11 |  |
 
 ## `sql/ddl/04_result.sql` — 표 5개
 

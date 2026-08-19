@@ -557,7 +557,9 @@
     "all_fail_min_sample": 10,
     "diagnosis_report_grade": 0,
     "min_salvaged_fields": 2,
-    "conflict_warn": 10
+    "conflict_warn": 10,
+    "_note_mapped_other": "개정 398 V3-78 — 사이트가 분류를 포기한 값을 「그 밖」으로 받는다. 그것이 그 축의 이 비율을 넘으면 사전이 게을러진 것이다",
+    "mapped_other_warn_ratio": 0.2
   },
   "_validation_note": "6장 검증 임계다. V4-13 이 코드에 박는 것을 금지한다. ★ STEP 6 config 표에 validation 행 추가가 필요하다 (미승인)",
   "report": {

@@ -163,6 +163,30 @@ def seed_fixed_enums(conn: sqlite3.Connection, site: str, fixed: dict,
 
 
 # ── 적재 (STEP 42) ───────────────────────────────────────────────────
+_MAPPED: dict | None = None
+
+
+def mapped_of(axis: str, value: str) -> str | None:
+    """사이트가 분류를 포기한 값을 우리 갈래로 (개정 398).
+
+    ★ 값은 `config/dictionaries/mapped_values.json` 에 있다.
+      가이드가 정하는 것이라 코드에 적지 않는다 (규칙 2 · S14)
+    돌려줌   None 이면 값 그대로다.  「모름」이 아니다
+    """
+    global _MAPPED
+
+    if _MAPPED is None:
+        import json as _j
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+        path = _o.path.join(root, "config", "dictionaries",
+                            "mapped_values.json")
+        _MAPPED = ((_j.load(open(path, encoding="utf-8")).get("mapped") or {})
+                   if _o.path.isfile(path) else {})
+    return (_MAPPED.get(axis) or {}).get(value)
+
+
 def upsert_enum(conn: sqlite3.Connection, site: str, axis: str, value: str,
                 display: str, count_seen: int, source_endpoint: str,
                 dict_version: str, at: str,
@@ -192,10 +216,11 @@ def upsert_enum(conn: sqlite3.Connection, site: str, axis: str, value: str,
             status = STATUS_PENDING
         conn.execute(
             "INSERT INTO dict_enum"
-            "(site,axis,value,display,count_seen,status,source_endpoint,"
-            " dict_version,first_seen,last_seen) VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (site, axis, value, display, count_seen, status,
-             source_endpoint, dict_version, at, at),
+            "(site,axis,value,display,mapped,count_seen,status,"
+            " source_endpoint,dict_version,first_seen,last_seen)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (site, axis, value, display, mapped_of(axis, value), count_seen,
+             status, source_endpoint, dict_version, at, at),
         )
         conn.commit()
         return "new"
@@ -204,10 +229,11 @@ def upsert_enum(conn: sqlite3.Connection, site: str, axis: str, value: str,
         return _handle_conflict(conn, pol, site, axis, value, cur[1], display, at)
 
     conn.execute(
-        "UPDATE dict_enum SET count_seen=?, last_seen=?, "
+        "UPDATE dict_enum SET count_seen=?, last_seen=?, mapped=?, "
         "status=CASE WHEN status=? THEN ? ELSE status END "
         "WHERE site=? AND axis=? AND value=?",
-        (count_seen, at, STATUS_RETIRED, STATUS_CONFIRMED, site, axis, value),
+        (count_seen, at, mapped_of(axis, value),
+         STATUS_RETIRED, STATUS_CONFIRMED, site, axis, value),
     )
     conn.commit()
     return "seen"

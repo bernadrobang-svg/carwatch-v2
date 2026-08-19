@@ -37,6 +37,9 @@ CREATE TABLE IF NOT EXISTS dict_enum (
   axis            TEXT NOT NULL,
   value           TEXT NOT NULL,
   display         TEXT NOT NULL,
+  -- 사이트가 분류를 포기한 값을 우리 갈래로 옮긴 것 (개정 398).
+  -- NULL 이면 값 그대로다.  ★ 「모름」이 아니다 — 사이트가 준 값이다
+  mapped          TEXT,
   count_seen      INTEGER,
   status          TEXT NOT NULL,
   source_endpoint TEXT NOT NULL,

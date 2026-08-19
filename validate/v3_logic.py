@@ -156,6 +156,12 @@ C = {
                    "97%→+30 · 94%→+24 · 87%→+10 · 85% 이하 0. "
                    "화면에 「배터리 SOH 94.6% (+24)」로 따로 낸다 (개정 380)",
                    KIND_CODE),
+    "V3-78": Check("V3", "V3-78", "「그 밖」으로 옮긴 값이 축을 덮지 않음",
+                   WARN, "run",
+                   "사이트가 분류를 포기한 값을 우리가 「other」로 받는다. "
+                   "★ 그것이 그 축의 대부분이 되면 사전이 게을러진 것이다 — "
+                   "값을 안 나누고 전부 「그 밖」에 담고 있다는 뜻이다 (개정 398)",
+                   KIND_CODE),
     "V3-75": Check("V3", "V3-75", "트림 점수를 신차가로 잼", FATAL, "run",
                    "마스터 지적 — 「트림의 신차 가격이 중요해.  그게 차량의 "
                    "가격 차이야」.  순위(k/n)로 재면 700만 차이가 한 칸이 된다 "
@@ -558,6 +564,33 @@ def _facet_reconcile_check(conn, rid):
     return result(C["V3-38"], rid, "대조 완료",
                   f"facet 과 맞은 값 {added} · 목록에만 있는 값 {left}",
                   not bad, bad[:6])
+
+
+def _mapped_other_check(conn, rid):
+    """V3-78 — 「그 밖」으로 옮긴 값이 그 축을 덮고 있지 않은가 (개정 398).
+
+    ★ 「기타 색상」을 `other` 로 받은 것은 옳다 — 사이트가 준 값이지
+      「모름」이 아니다.  0점 + 「확인 안 됨」으로 두지 않는다
+    ★ 그러나 그것이 그 축의 대부분이 되면 이야기가 다르다.
+      값을 안 나누고 전부 한 칸에 담고 있다는 뜻이다
+    """
+    rows = conn.execute(
+        "SELECT axis, COUNT(*), SUM(CASE WHEN mapped='other' THEN 1 ELSE 0 END)"
+        " FROM dict_enum GROUP BY axis").fetchall()
+    if not rows:
+        return not_applicable(C["V3-78"], rid, "사전이 비어 있다")
+    limit = _cfg("mapped_other_warn_ratio")
+    bad, worst = [], 0.0
+    for axis, total, other in rows:
+        if not total or not other:
+            continue
+        ratio = other / total
+        worst = max(worst, ratio)
+        if ratio > limit:
+            bad.append(f"{axis}: 「그 밖」 {other}/{total} "
+                       f"({ratio:.0%}) — 사전이 게을러졌다")
+    return result(C["V3-78"], rid, f"{limit:.0%} 이하",
+                  f"가장 높은 축 {worst:.0%}", not bad, bad[:4])
 
 
 def _denominator_check(conn, rid):
@@ -1272,6 +1305,7 @@ def run(conn, ctx) -> list:
     out.append(_halt_dict_check(conn, rid))
     out.append(_list_observed_source_check(conn, rid))
     out.append(_facet_reconcile_check(conn, rid))
+    out.append(_mapped_other_check(conn, rid))
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다
