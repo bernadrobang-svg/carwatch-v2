@@ -63,6 +63,11 @@ C = {
                    FATAL, "run",
                    "체크리스트는 사람의 확인이다. 점수에 넣지 않는다",
                    KIND_CONTRACT),
+    "V7-14": Check("V7", "V7-14", "재등록 횟수가 화면에 나옴", FATAL, "run",
+                   "마스터 확정 08-18 — 「묶되 「N번 재등록」을 표시한다」. "
+                   "★ 내렸다 다시 올린 것은 그 자체가 정보다. 묶어서 "
+                   "지우면 그 정보가 사라진다 (개정 355)",
+                   KIND_CODE),
     "V7-15": Check("V7", "V7-15", "진행 메모를 자유롭게 적을 수 있음",
                    FATAL, "run",
                    "이 도구는 엔카와 직거래를 하기 위한 것이다.  폐기된 "
@@ -193,9 +198,35 @@ def _progress_note_check(conn, rid):
                   "된다" if not bad else "안 된다", not bad, bad[:6])
 
 
+def _relist_check(conn, rid):
+    """V7-14 — 재등록 횟수가 화면에 나오는가 (개정 355).
+
+    ★ 「gone 매물을 목록에서 지우지 않는다」와 한 짝이다.
+      묶는 것까지는 됐는데 몇 번인지가 없으면 묶어서 지운 것과 같다
+    """
+    import os as _o
+
+    from store.core import relist_counts
+
+    got = relist_counts(conn)
+    bad = []
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    tpl = _o.path.join(root, "web", "templates", "watch.html")
+    html = open(tpl, encoding="utf-8").read() if _o.path.isfile(tpl) else ""
+    if "재등록" not in html:
+        bad.append("관심 화면에 「N번 재등록」이 없다")
+    if "relist_times" not in html:
+        bad.append("횟수를 값으로 안 낸다 — 글자만 박혀 있다")
+    # ★ 값이 바뀌었으면 함께 낸다 (규격의 「필수」)
+    if "relist_low_won" not in html:
+        bad.append("값이 바뀐 것을 함께 안 낸다")
+    return result(C["V7-14"], rid, "낸다",
+                  f"재등록된 차 {len(got)}대", not bad, bad[:4])
+
+
 def run(conn, ctx) -> list:
     rid = ctx.run_id
-    out = []
+    out = [_relist_check(conn, ctx.run_id)]
 
     # V7-01 — 그 시점을 되살릴 수 있는가
     have = _cols(conn, "watch_track")

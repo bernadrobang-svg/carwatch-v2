@@ -4,8 +4,11 @@
 
 {% if no_account %}
 <div class="notice">
-  <p><strong>계정이 없습니다.</strong> 첫 관리자는 CLI 에서만 만듭니다.
+  <p><strong>계정이 없습니다. 최초 계정은 서버에서 만듭니다.</strong>
+     첫 관리자는 CLI 에서만 만듭니다 —
      웹에서 가입을 열면 누구나 관리자가 될 수 있기 때문입니다.</p>
+  <p class="muted">★ 화면 밖에 두는 것은 이것 하나뿐입니다.
+     계정이 없으면 화면에 들어올 수 없어서입니다 (닭과 달걀).</p>
   <pre>python run.py admin create --name 마스터</pre>
   <p class="muted">만든 뒤 임시 비밀번호로 로그인하면 바로 변경 화면이 나옵니다.</p>
 </div>

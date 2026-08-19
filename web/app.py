@@ -123,6 +123,15 @@ def empty_state(conn: sqlite3.Connection, account) -> Banner | None:
             conn._cw_state = n
         except AttributeError:
             pass
+    return banner_of(n, account)
+
+
+def banner_of(n: dict, account) -> Banner | None:
+    """세어 놓은 것으로 머리말을 정한다.
+
+    ★ 조회에서 떼어 놨다.  「3일 지난 목록에 정말 뜨는가」를 DB 없이
+      재려면 판단만 따로 부를 수 있어야 한다 (V11-103)
+    """
     if n["listings"] == 0:
         act = ("run.py collect --target <차종>" if account.role == ROLE_ADMIN
                else "관리자에게 수집을 요청하십시오")

@@ -47,6 +47,8 @@ from report.screens.views import (
 )
 from report.views import AxisView, ReportMeta, VersionStamp
 from contracts import ROLE_ADMIN, ROLE_USER, Account, require_role
+# ★ 어긋남 조건은 store 에 하나만 둔다 (V3-50).  화면이 SQL 을 짓지 않는다
+from store.core import record_mismatch_sql, relist_counts
 
 NOT_RATED = "NOT_RATED"
 # 분위수는 표시 파라미터다.  config 가 정본이며 여기 값은 호출측 미지정 시 대체다
@@ -552,7 +554,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
-     _site, _sell_type) = rec
+     _site, _sell_type, _mismatch) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -613,6 +615,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     if absolute_fail:
         tags.append(absolute_fail)
     return ListingRow(
+        # ★ 성능부와 보험이력이 어긋난다 (V3-50)
+        record_mismatch=bool(_mismatch),
         listing_id=lid, grade=grade or NOT_RATED,
         # ★ NOT_RATED 에 순위를 매기지 않는다.  비교 대상이 아니다
         rank=None if (grade or NOT_RATED) == NOT_RATED else rank,
@@ -784,6 +788,8 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if flt.target_key:
         where.append("l.target_key = ?")
         args.append(flt.target_key)
+    if getattr(flt, "mismatch", False):
+        where.append(record_mismatch_sql())
     if flt.grade:
         where.append("s.grade = ?")
         args.append(flt.grade)
@@ -874,7 +880,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         #   화면과 등급이 어긋난다 — 실측 08-17: 84.9%(555) 인데 S(505 기준)
         " s.grade_earned, s.grade_base,"
         # 사이트 배지 (50-multisite · V9-06) — 「K카 직영」까지 낸다
-        " l.site, l.sell_type"
+        " l.site, l.sell_type,"
+        # ★ 성능부 ↔ 보험 어긋남 (V3-50).  조건은 store 에 하나만 둔다 —
+        #   화면과 검사가 다른 것을 세면 「857건」이 거짓말이 된다
+        f" {record_mismatch_sql()}"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -1658,15 +1667,30 @@ def view_watch(account: Account, conn, fin_cfg: dict,
     by_id = {r.listing_id: r
              for r in view_listings(account, conn, flt, fin_cfg, root)}
     spark = _bulk_spark(conn, [r[1] for r in rows])
+    # ★ 묶되 「N번 재등록」을 낸다 (V7-14 · 개정 355).
+    #   내렸다 다시 올린 것은 그 자체가 정보다 — 묶어서 지우지 않는다
+    times = relist_counts(conn)
+    vids = dict(conn.execute(
+        "SELECT listing_id, vehicle_id FROM core_listing"
+        " WHERE listing_id IN (%s)" % ",".join(
+            "?" * len(rows)), [r[1] for r in rows])) if rows else {}
     out = []
     for wid, lid, target, added, closed, memo in rows:
         listing = by_id.get(lid)
         if listing is None:
             continue          # 아직 채점 전이다 — 조용히 빼지 않고 다음 회차에
+        got = times.get(vids.get(lid)) or {}
         out.append(WatchRow(watch_id=wid, listing=listing,
                             target_price_won=target, added_at=added,
                             closed_at=closed, memo=memo,
-                            spark=spark.get(lid, ())))
+                            spark=spark.get(lid, ()),
+                            relist_times=got.get("times", 0),
+                            # ★ 값이 안 바뀌었으면 안 낸다 — 같은 값을
+                            #   「3,200만 → 3,200만」이라 내면 읽는 사람이 헷갈린다
+                            relist_low_won=(got.get("low_won")
+                                            if got.get("low_won")
+                                            != got.get("high_won") else None),
+                            relist_high_won=got.get("high_won")))
     return out
 
 

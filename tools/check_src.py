@@ -740,35 +740,11 @@ say("S26", "작업 기록 (6절 · 이름 규칙)", len(_recs) - len(_bad26), []
 # ★ 마스터 진단 — 「CLI 있다고 개무시하니 웹이 개판이 됐다」.
 #   CLI 로 되는 것은 완성이 아니다.  기능마다 화면이 있어야 한다.
 #   V11-45 는 「CLI 로만 되는 기능이 없는가」, S27 은 「기능마다 화면이 있는가」다
-_SCREEN_FOR = {
-    # run.py 가 받는 명령
-    "collect": "/admin/run",
-    "web": "/",
-    "admin create": "/admin/users",
-    "setup": "/admin/users",
-    "dry": "/admin/run",
-    "migrate": "/admin/tools",
-    "export": "/admin/tools",
-    "report": "/admin/tools",
-    # tools/ 의 스크립트
-    "tools/build_dict.py": "/admin/dict",
-    "tools/check_all.py": "/admin/audit",
-    "tools/check_screens.py": "/admin/audit",
-    "tools/check_spec.py": "/admin/audit",
-    "tools/check_src.py": "/admin/audit",
-    "tools/classify_fields.py": "/admin/registry",
-    "tools/export_cli.py": "/admin/tools",
-    "tools/inspect_dict.py": "/admin/dict",
-    "tools/inspect_facet.py": "/admin/api",
-    "tools/inspect_requests.py": "/admin/requests",
-    "tools/menu.py": "/admin",
-    "tools/migrate.py": "/admin/tools",
-    "tools/render_screens.py": "/admin/tools",
-    "tools/report_cli.py": "/admin/tools",
-    "tools/run_tests.py": "/admin/audit",
-    "tools/setup_check.py": "/admin/tools",
-    "tools/sync_registry.py": "/admin/registry",
-}
+# ★ 이름을 공개로 둔다 — V11-45 가 같은 지도를 본다.
+#   두 벌로 적으면 한쪽만 늘어난다
+CLI_SCREEN = json.load(io.open(
+    os.path.join(ROOT, "config", "cli_screens.json"),
+    encoding="utf-8"))["screens"]
 _TOOLS_DIR = os.path.join(ROOT, "tools")
 _have = {"collect", "web", "admin create", "setup", "dry"}
 _have |= {f"tools/{f}" for f in sorted(os.listdir(_TOOLS_DIR))
@@ -786,9 +762,10 @@ try:
     _paths = {r.path for r in _ROUTES}
 except Exception:                                        # noqa: BLE001
     _paths = set()
+CLI_CAPS = set(_have)     # ★ 지금 CLI 가 받는 것 전부 (V11-45 가 본다)
 _bad27, _todo27 = [], []
 for _cap in sorted(_have):
-    _scr = _SCREEN_FOR.get(_cap)
+    _scr = CLI_SCREEN.get(_cap)
     if not _scr:
         _todo27.append(_cap)                 # 화면을 아직 안 정한 기능
     elif _paths and _scr not in _paths:

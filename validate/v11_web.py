@@ -399,6 +399,35 @@ C = {
                     "마지막에 몰아 터지면 어느 조각이 문제인지 알 수 없다. "
                     "「조각 3/9 가 깨졌습니다」라 적는다 (개정 395)",
                     KIND_CODE),
+    "V11-45": Check("V11", "V11-45", "CLI 로만 되는 기능이 없음",
+                   FATAL, "run",
+                   "부트스트랩(최초 계정) 하나만 화면 밖에 둔다. ★ 그것을 "
+                   "핑계로 다른 기능을 CLI 에 남기지 않는다 (60-admin/a-auth)",
+                   KIND_CONTRACT),
+    "V11-103": Check("V11", "V11-103", "목록이 오래되면 화면에 나옴",
+                    FATAL, "run",
+                    "조용히 옛 목록으로 판정하지 않는다. ★ 가격 변동은 "
+                    "목록에서 온다 — 목록이 멈추면 변동이 멈춘다 (STEP 136i)",
+                    KIND_CODE),
+    "V11-85": Check("V11", "V11-85", "트림에 세부등급이 포함됨", FATAL, "run",
+                   "같은 「2.5 터보 AWD」라도 세부등급이 다르면 옵션이 다르고 "
+                   "신차가가 다르다. ★ 못 받았으면 「세부등급 없음」이라 "
+                   "적는다 — 빈 값이면 「못 받았다」와 구분이 안 된다",
+                   KIND_CODE),
+    "V11-100": Check("V11", "V11-100", "목록에 옵션 개수와 합계가 나옴",
+                    FATAL, "run",
+                    "옵션을 「있음/없음」으로만 내지 않는다. ★ 옵션가를 "
+                    "모르면 「가격 미상」이라 적는다 — 0 으로 두지 않는다",
+                    KIND_CODE),
+    "V11-96": Check("V11", "V11-96", "♡ 가 제목 줄에 있음", FATAL, "run",
+                   "목록에서 훑다가 바로 담는다. ★ 카드 끝까지 스크롤하지 "
+                   "않는다 (v1 은 맨 아래에 있었다)",
+                   KIND_CODE),
+    "V11-94": Check("V11", "V11-94", "추천 조건이 화면에 적혀 있음",
+                   FATAL, "run",
+                   "「왜 이 목록인지」가 먼저다. ★ 점수만 내고 이유를 안 내면 "
+                   "무엇을 보고 있는지 알 수 없다 (개정 304)",
+                   KIND_CODE),
     "V11-151": Check("V11", "V11-151", "부족액 문구가 화면에 없음", FATAL, "run",
                     "마스터 확정 — 1,500만은 총액 상한이다. 「380만 부족」은 "
                     "낼 값이 아니다. ★ 화면은 「전액 현금」인가 아닌가 "
@@ -1038,6 +1067,13 @@ def _screen_checks(conn, rid) -> list:
     out.append(_menu_no_path_check(rid))
     # 부족액 · 현금 상한 (개정 400)
     out.append(_shortfall_check(rid))
+    # 검사 1차 10개 (개정 407)
+    out.append(_cli_only_check(rid))
+    out.append(_stale_notice_check(rid))
+    out.append(_trim_detail_check(conn, rid))
+    out.append(_option_sum_check(conn, rid))
+    out.append(_heart_line_check(rid))
+    out.append(_recommend_terms_check(rid))
     out.append(_cash_limit_check(rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
@@ -1407,6 +1443,211 @@ def _menu_paths() -> list:
                         r"\|\s*\*{0,2}`([/\w{}-]+)`\*{0,2}\s*\|\s*([^|]+?)\s*\|",
                         body)]
     return out
+
+
+def _listing_rows(conn) -> list:
+    """목록 화면이 실제로 그리는 행.  ★ 화면과 같은 것을 본다 —
+    직접 SQL 을 짜면 화면이 안 내는 값을 「있다」고 하게 된다."""
+    import json as _j
+
+    from contracts import ANONYMOUS
+    from report.screens.build import view_listings
+    from report.screens.views import ListingFilter
+    from store.core import current_versions
+
+    with open(os.path.join(ROOT, "config", "finance.json"),
+              encoding="utf-8") as f:
+        fin = _j.load(f)
+    ver = current_versions(conn)["calc_version"]
+    return view_listings(ANONYMOUS, conn, ListingFilter(calc_version=ver),
+                         fin, ROOT)
+
+
+def _cli_caps() -> set:
+    """지금 CLI 가 받는 것 전부.  ★ run.py 와 tools/ 에서 읽는다 —
+    손으로 적으면 새 도구를 더할 때마다 빠진다."""
+    out = {"collect", "web", "admin create", "setup", "dry"}
+    tools = os.path.join(ROOT, "tools")
+    out |= {f"tools/{f}" for f in sorted(os.listdir(tools))
+            if f.endswith(".py") and not f.startswith("_")}
+    src = open(os.path.join(ROOT, "run.py"), encoding="utf-8").read()
+    got = re.search(r"DELEGATED\s*=\s*\{(.*?)\}", src, re.S)
+    if got:
+        out |= set(re.findall(r'"([\w-]+)"\s*:', got.group(1)))
+    return out
+
+
+def _cli_only_check(rid):
+    """V11-45 — CLI 로만 되는 기능이 없는가 (부트스트랩 제외).
+
+    ★ 「부트스트랩을 핑계로 다른 기능을 CLI 에 남기는 것」이 금지다.
+      그래서 CLI 명령 하나하나에 대응 화면이 있는지 본다
+    ★ 화면 안내도 함께 본다 — 「최초 계정은 서버에서 만듭니다」
+    """
+    import json as _j
+
+    from web.routes import ROUTES
+
+    with open(os.path.join(ROOT, "config", "cli_screens.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    CLI_SCREEN = cfg["screens"]
+    paths = {r.path for r in ROUTES}
+    bad, pend = [], []
+    for cap in sorted(_cli_caps()):
+        if cap in cfg["bootstrap"]:
+            continue          # ★ 닭과 달걀이다.  이 하나만 예외다
+        where = CLI_SCREEN.get(cap)
+        if not where:
+            # ★ 화면을 아직 안 정한 것은 가이드 판단 대기다 (config.pending).
+            #   개발측이 「이 화면이면 되겠지」로 채우지 않는다 (규칙 2).
+            #   ★ 그래도 늘면 문다 — 목록에 없는 새 것은 그 자리에서 실패다
+            if cap in cfg.get("pending", []):
+                pend.append(cap)
+                continue
+            bad.append(f"{cap} — 대응 화면이 없다 (CLI 로만 된다). "
+                       "화면을 정하거나 config/cli_screens.json 의 "
+                       "pending 에 넣고 가이드에 낸다")
+        elif where not in paths:
+            bad.append(f"{cap} → {where} 가 라우팅 표에 없다")
+    # ★ 부트스트랩은 하나뿐이고, 그것을 화면이 안내해야 한다
+    login = os.path.join(TEMPLATES, "login.html")
+    said = (open(login, encoding="utf-8").read()
+            if os.path.isfile(login) else "")
+    if "최초 계정은 서버에서 만듭니다" not in said:
+        bad.append("로그인 화면이 「최초 계정은 서버에서 만듭니다」를 "
+                   "안내하지 않는다 (60-admin/a-auth 의 「필수」)")
+    return result(C["V11-45"], rid, 0,
+                  f"{len(bad)}건 · ★ 화면 미정 {len(pend)}건 (가이드 판단 대기)",
+                  not bad, bad[:6])
+
+
+def _stale_notice_check(rid):
+    """V11-103 — 목록이 오래되면 화면에 나오는가 (STEP 136i).
+
+    ★ 「나온다」로 끝내지 않는다.  실제로 오래된 시각을 넣어 문구가
+      만들어지는지 본다 — 코드에 문자열이 있는 것과 뜨는 것은 다르다
+    ★ 가격 변동 문구가 함께 나오는지도 본다 (규격의 「필수」다)
+    """
+    import json as _j
+    from datetime import datetime, timedelta, timezone
+
+    from contracts import ANONYMOUS
+    from web.app import _list_stale, banner_of
+
+    bad = []
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        days = float(_j.load(f)["list_stale_days"])
+    old = (datetime.now(timezone.utc)
+           - timedelta(days=days + 2)).isoformat()
+    if _list_stale(old) is None:
+        bad.append(f"{days + 2}일 지난 목록을 「오래됨」으로 안 본다")
+    if _list_stale(datetime.now(timezone.utc).isoformat()) is not None:
+        bad.append("방금 받은 목록을 「오래됨」이라 한다")
+    n = {"listings": 1, "list_at": old, "unclassified": 0, "scores": 1,
+         "not_rated": 0}
+    got = banner_of(n, ANONYMOUS)
+    if got is None or got.kind != "stale":
+        bad.append("오래된 목록인데 머리말이 안 뜬다")
+    else:
+        if "갱신되지 않았습니다" not in got.text:
+            bad.append("무엇이 멈췄는지 안 적는다")
+        # ★ 규격의 「필수」 — 가격 변동이 멈춘다는 것을 함께 적는다
+        if "가격 변동" not in got.text:
+            bad.append("가격 변동이 멈춘다는 것을 안 적는다")
+    return result(C["V11-103"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _trim_detail_check(conn, rid):
+    """V11-85 — 트림에 세부등급(BadgeDetail)이 포함되는가.
+
+    ★ 못 받았으면 「세부등급 없음」이라 적혀야 한다.
+      빈 값으로 두면 「못 받았다」와 구분이 안 된다
+    """
+    rows = _listing_rows(conn)
+    if not rows:
+        return not_applicable(C["V11-85"], rid, "매물이 없다")
+    bad, said = [], 0
+    for r in rows:
+        trim = (r.trim or "").strip()
+        if not trim:
+            bad.append(f"{r.listing_id} — 트림 칸이 비었다")
+        elif "세부등급 없음" in trim:
+            said += 1
+        elif "·" not in trim:
+            bad.append(f"{r.listing_id} — 「{trim}」 에 세부등급이 없다")
+    return result(C["V11-85"], rid, 0,
+                  f"{len(bad)}건 · 「세부등급 없음」 {said}건",
+                  not bad, bad[:6])
+
+
+def _option_sum_check(conn, rid):
+    """V11-100 — 목록에 옵션 개수와 합계가 나오는가.
+
+    ★ 「있음/없음」으로만 내는 것이 금지다.  개수와 값을 함께 낸다
+    ★ 옵션가를 모르면 「가격 미상」이라 적는다 — 0 으로 두지 않는다
+    """
+    rows = _listing_rows(conn)
+    if not rows:
+        return not_applicable(C["V11-100"], rid, "매물이 없다")
+    tpl = os.path.join(TEMPLATES, "listings.html")
+    html = open(tpl, encoding="utf-8").read() if os.path.isfile(tpl) else ""
+    bad = []
+    if "option_count" not in html:
+        bad.append("목록 화면이 옵션 개수를 안 낸다")
+    if "option_price_won" not in html:
+        bad.append("목록 화면이 옵션 합계를 안 낸다")
+    got = [r for r in rows if r.option_count]
+    for r in got:
+        if r.option_price_won is None:
+            bad.append(f"{r.listing_id} — 옵션 {r.option_count}종인데 "
+                       "값이 None 이다 (「가격 미상」이라 적어야 한다)")
+            break
+    return result(C["V11-100"], rid, 0,
+                  f"{len(bad)}건 · 옵션 실린 행 {len(got)}/{len(rows)}",
+                  not bad, bad[:6])
+
+
+def _heart_line_check(rid):
+    """V11-96 — ♡ 가 제목 줄에 있는가.
+
+    ★ v1 은 카드 맨 아래에 있었다.  목록에서 훑다가 바로 담지 못했다
+    ★ 「제목 줄」은 그 행의 첫 칸들이다 — 표 머리말에서 자리를 본다
+    """
+    bad = []
+    tpl = os.path.join(TEMPLATES, "listings.html")
+    if not os.path.isfile(tpl):
+        return not_applicable(C["V11-96"], rid, "목록 화면이 없다")
+    html = open(tpl, encoding="utf-8").read()
+    heads = re.findall(r"<th[^>]*>(.*?)</th>", html, re.S)
+    if "♡" not in html:
+        bad.append("목록에 ♡ 가 없다")
+    else:
+        where = [i for i, h in enumerate(heads) if "♡" in h]
+        if not where:
+            bad.append("♡ 가 표 머리말에 없다 — 자리를 알 수 없다")
+        elif where[0] > len(heads) // 2:
+            bad.append(f"♡ 가 {where[0] + 1}번째 칸이다 — 제목 줄이 아니다")
+    return result(C["V11-96"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _recommend_terms_check(rid):
+    """V11-94 — 추천 조건이 한 줄로 화면에 적혀 있는가.
+
+    ★ 「왜 이 목록인지」가 먼저다.  점수만 내고 이유를 안 내지 않는다
+    """
+    bad = []
+    path = os.path.join(RENDER, "recommend.html")
+    if not os.path.isfile(path):
+        return not_applicable(C["V11-94"], rid, "추천 렌더가 없다")
+    html = open(path, encoding="utf-8").read()
+    head = html.find("<table")
+    top = html[:head] if head > 0 else html
+    if "순위" not in top:
+        bad.append("표 앞에 조건 줄이 없다 — 무엇을 고른 목록인지 모른다")
+    if "왜 이 순위인가" not in html:
+        bad.append("매물마다 「왜 이 순위인가」 칸이 없다")
+    return result(C["V11-94"], rid, 0, len(bad), not bad, bad[:6])
 
 
 def _shortfall_check(rid):

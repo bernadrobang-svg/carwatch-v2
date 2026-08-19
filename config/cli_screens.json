@@ -1,0 +1,51 @@
+{
+  "_ref": "docs/chapters/60-admin/a-auth.md V11-45 · S27",
+  "_note": "★ 마스터 진단 — 「CLI 있다고 개무시하니 웹이 개판이 됐다」. CLI 로 되는 것은 완성이 아니다. 기능마다 화면이 있어야 한다",
+  "_who": "V11-45 는 「CLI 로만 되는 기능이 없는가」, S27 은 「기능마다 화면이 있는가」다. ★ 둘이 같은 지도를 본다 — 두 벌로 적으면 한쪽만 늘어난다",
+  "_bootstrap": "계정이 없으면 화면에 들어갈 수 없다. 닭과 달걀이다 — 이 둘만 화면 밖에 둔다",
+  "bootstrap": [
+    "admin create",
+    "setup"
+  ],
+  "screens": {
+    "collect": "/admin/run",
+    "web": "/",
+    "admin create": "/admin/users",
+    "setup": "/admin/users",
+    "dry": "/admin/run",
+    "migrate": "/admin/tools",
+    "export": "/admin/tools",
+    "report": "/admin/tools",
+    "tools/build_dict.py": "/admin/dict",
+    "tools/check_all.py": "/admin/audit",
+    "tools/check_screens.py": "/admin/audit",
+    "tools/check_spec.py": "/admin/audit",
+    "tools/check_src.py": "/admin/audit",
+    "tools/classify_fields.py": "/admin/registry",
+    "tools/export_cli.py": "/admin/tools",
+    "tools/inspect_dict.py": "/admin/dict",
+    "tools/inspect_facet.py": "/admin/api",
+    "tools/inspect_requests.py": "/admin/requests",
+    "tools/menu.py": "/admin",
+    "tools/migrate.py": "/admin/tools",
+    "tools/render_screens.py": "/admin/tools",
+    "tools/report_cli.py": "/admin/tools",
+    "tools/run_tests.py": "/admin/audit",
+    "tools/setup_check.py": "/admin/tools",
+    "tools/sync_registry.py": "/admin/registry"
+  },
+  "_pending": "★ 화면을 아직 안 정한 것. 가이드 판단 대기다 — 개발측이 「이 화면이면 되겠지」로 채우지 않는다 (규칙 2). V11-45 는 이 목록을 실패로 세지 않되, 여기에도 screens 에도 없는 것이 새로 생기면 문다",
+  "pending": [
+    "tools/build_index.py",
+    "tools/classify_registry.py",
+    "tools/classify_unclassified.py",
+    "tools/daily_check.py",
+    "tools/daily_enqueue.py",
+    "tools/light_check.py",
+    "tools/repair_facet_chunks.py",
+    "tools/trace_fill.py",
+    "tools/trace_verify.py",
+    "tools/verify_axes.py",
+    "tools/weekly_check.py"
+  ]
+}

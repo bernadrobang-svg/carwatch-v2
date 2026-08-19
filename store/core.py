@@ -1304,3 +1304,66 @@ def blocking_rows(conn, used: set, containers: tuple,
         })
     out.sort(key=lambda r: (-r["hits"], r["endpoint"], r["path"]))
     return out
+
+# 성능부와 보험이력이 어긋난 것을 가르는 조건 (30-score/d-history · V3-50).
+# ★ SQL 을 화면·검사에 두지 않는다.  세는 곳과 뽑는 곳이 같은 것을 본다 —
+#   갈라 두면 「836건」과 화면의 수가 어긋난다 (V11-55 와 같은 사고)
+RECORD_MISMATCH = (
+    "EXISTS (SELECT 1 FROM core_inspection ci"
+    " JOIN core_record cr ON cr.listing_id = ci.listing_id"
+    " WHERE ci.listing_id = l.listing_id"
+    "   AND ((ci.inspection_accident_flag = 0"
+    "         AND COALESCE(cr.accident_my_cost, 0) > 0)"
+    "     OR (ci.inspection_accident_flag = 1"
+    "         AND COALESCE(cr.accident_my_cost, 0) = 0"
+    "         AND COALESCE(cr.accident_my_cnt, 0) = 0)))"
+)
+
+
+def record_mismatch_sql() -> str:
+    """목록 질의에 붙일 조건.  ★ 함수로 낸다 —
+    대문자 상수를 계층 밖으로 넘기지 않는다 (S15 · our_fault 와 같은 자리)."""
+    return RECORD_MISMATCH
+
+
+def record_mismatch_count(conn) -> dict:
+    """성능부와 보험이력이 어긋난 건수 (V3-50).
+
+    조사한 것   「성능 기록부에는 흔적이 없는데 보험 이력에는 수리 비용이 있었다」
+    ★ 양쪽을 다 센다 — 성능부가 무사고인데 보험에 있는 것,
+      성능부가 사고인데 보험에 없는 것.  어느 쪽이든 「다르다」다
+    ★ 「둘 다 받은 것」을 분모로 낸다.  못 받은 것을 「맞다」로 세지 않는다
+    """
+    both = conn.execute(
+        "SELECT COUNT(*) FROM core_inspection i"
+        " JOIN core_record r ON r.listing_id = i.listing_id").fetchone()[0]
+    no_acc = conn.execute(
+        "SELECT COUNT(*) FROM core_inspection i"
+        " JOIN core_record r ON r.listing_id = i.listing_id"
+        " WHERE i.inspection_accident_flag = 0"
+        "   AND COALESCE(r.accident_my_cost, 0) > 0").fetchone()[0]
+    no_ins = conn.execute(
+        "SELECT COUNT(*) FROM core_inspection i"
+        " JOIN core_record r ON r.listing_id = i.listing_id"
+        " WHERE i.inspection_accident_flag = 1"
+        "   AND COALESCE(r.accident_my_cost, 0) = 0"
+        "   AND COALESCE(r.accident_my_cnt, 0) = 0").fetchone()[0]
+    return {"both": both, "no_inspection_trace": no_acc,
+            "no_insurance_trace": no_ins, "mismatch": no_acc + no_ins}
+
+
+def relist_counts(conn) -> dict:
+    """같은 `vehicle_id` 가 몇 번 올라왔나 (V7-14 · 개정 355).
+
+    ★ 내렸다 다시 올린 것은 그 자체가 정보다.  묶되 횟수를 낸다
+    돌려줌   {vehicle_id: {"times": n, "first_won": …, "last_won": …}}
+    """
+    out: dict = {}
+    for vid, n, lo, hi in conn.execute(
+        "SELECT vehicle_id, COUNT(*), MIN(price_current_won),"
+        " MAX(price_current_won) FROM core_listing"
+        " WHERE vehicle_id IS NOT NULL AND vehicle_id <> ''"
+        " GROUP BY vehicle_id HAVING COUNT(*) > 1"
+    ):
+        out[vid] = {"times": n, "low_won": lo, "high_won": hi}
+    return out

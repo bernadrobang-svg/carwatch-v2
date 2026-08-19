@@ -156,6 +156,17 @@ C = {
                    "97%→+30 · 94%→+24 · 87%→+10 · 85% 이하 0. "
                    "화면에 「배터리 SOH 94.6% (+24)」로 따로 낸다 (개정 380)",
                    KIND_CODE),
+    "V3-50": Check("V3", "V3-50", "성능부와 보험이력이 어긋난 건을 셈",
+                   WARN, "run",
+                   "조사한 것 — 「성능 기록부에는 흔적이 없는데 보험 이력에는 "
+                   "수리 비용이 있었다」. ★ 어긋난 것을 세고 목록에서 "
+                   "따로 볼 수 있게 한다 (30-score/d-history)",
+                   KIND_EXTERNAL),
+    "V3-66": Check("V3", "V3-66", "각 축의 계산이 f-table 과 같음",
+                   FATAL, "run",
+                   "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
+                   "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
+                   KIND_CODE),
     "V3-78": Check("V3", "V3-78", "「그 밖」으로 옮긴 값이 축을 덮지 않음",
                    WARN, "run",
                    "사이트가 분류를 포기한 값을 우리가 「other」로 받는다. "
@@ -563,6 +574,86 @@ def _facet_reconcile_check(conn, rid):
                        f"안 들어왔다 — {', '.join(missing[:4])}")
     return result(C["V3-38"], rid, "대조 완료",
                   f"facet 과 맞은 값 {added} · 목록에만 있는 값 {left}",
+                  not bad, bad[:6])
+
+
+def _record_mismatch_check(conn, rid):
+    """V3-50 — 성능부와 보험이력이 어긋난 건을 세는가.
+
+    ★ 「세는가」가 검산이다.  둘 다 갖고 있으면서 대조를 안 하면
+      「무사고」라고 쓴 것을 그대로 믿는 것이 된다
+    ★ 화면에서 그것만 따로 볼 수 있는지도 본다 (규격의 「필수」)
+    """
+    import os as _o
+
+    from store.core import record_mismatch_count
+
+    got = record_mismatch_count(conn)
+    if not got["both"]:
+        return not_applicable(C["V3-50"], rid,
+                              "성능부·보험을 둘 다 받은 매물이 없다")
+    bad = []
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    tpl = _o.path.join(root, "web", "templates", "listings.html")
+    html = open(tpl, encoding="utf-8").read() if _o.path.isfile(tpl) else ""
+    if "record_mismatch" not in html:
+        bad.append("목록에 어긋남 표시가 없다")
+    if "mismatch=1" not in html:
+        bad.append("어긋난 것만 따로 볼 수 있는 길이 없다")
+    return result(C["V3-50"], rid, "센다",
+                  f"어긋남 {got['mismatch']}/{got['both']}건 "
+                  f"(성능부에만 없음 {got['no_inspection_trace']} · "
+                  f"보험에만 없음 {got['no_insurance_trace']})",
+                  not bad, bad[:4])
+
+
+def _curve_table_check(rid):
+    """V3-66 — 각 축의 계산이 f-table 과 같은가.
+
+    ★ 곡선을 코드에서 한 칸만 고쳐도 아무도 모른다.  사람이 못 잰다
+    ★ 문서의 표를 읽어 config 의 곡선과 점수 나열을 맞춘다 —
+      맞는 표가 하나도 없으면 그 곡선은 규격 밖이다
+    """
+    import json as _j
+    import os as _o
+    import re as _re
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    doc = _o.path.join(root, "docs", "chapters", "30-score", "f-table.md")
+    if not _o.path.isfile(doc):
+        return not_applicable(C["V3-66"], rid, "f-table 이 없다")
+    tables, cur = [], []
+    for line in open(doc, encoding="utf-8"):
+        # ★ 표는 「+30」처럼 부호를 붙여 적는다 (가점 표)
+        got = _re.match(r"^\|([^|]+)\|\s*([+-]?\d+)\s*\|\s*$", line)
+        if got:
+            cur.append(int(got.group(2).lstrip("+")))
+        elif cur:
+            tables.append(cur)
+            cur = []
+    if cur:
+        tables.append(cur)
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    curves = {}
+    for axis, rules in (cfg.get("axis_rules") or {}).items():
+        for name, val in (rules or {}).items():
+            if (isinstance(val, list) and val
+                    and isinstance(val[0], list) and len(val[0]) == 2):
+                curves[f"{axis}.{name}"] = [int(p) for _e, p in val]
+    # ★ price_curve 는 축 곡선이 아니다 — analyze/axis/price.py 의 것인데
+    #   그 함수는 지금 아무도 안 부른다.  여기서 재면 거짓 실패가 된다.
+    #   ★ 죽은 config 로 보인다 — 작업기록에 따로 적어 가이드에 냈다
+    bad = []
+    for name, pts in sorted(curves.items()):
+        # ★ 표는 마지막에 「그 밖」 한 줄을 더 적는다 (「> 50% | 0」).
+        #   config 는 그 줄을 안 담는다 — 못 찾으면 0 을 준다.  같은 뜻이다
+        if pts in tables or (pts + [0]) in tables:
+            continue
+        bad.append(f"{name} 의 점수 {pts} 와 같은 표가 f-table 에 없다")
+    return result(C["V3-66"], rid, f"{len(curves)}곡선",
+                  f"{len(curves) - len(bad)}곡선이 표와 같다",
                   not bad, bad[:6])
 
 
@@ -1111,7 +1202,36 @@ def _bonus_checks(conn, rid):
     bad58 = []
     if "battery_soh" in (raw.get("components") or {}):
         bad58.append("battery_soh 가 components 에 있다 — 축이 아니다")
-    a = result(C["V3-58"], rid, "가점", f"+{full}", not bad58, bad58)
+    # ★★ config 만 보면 「있는 표본만 보고 통과」한다 (개정 407).
+    #   SOH 가 **없는** 전기차를 실제로 꺼내 본다 —
+    #   축으로 두면 그 745건이 0점을 받는다.  그것이 이 검사의 요점이다
+    evs = [t for t in (raw.get("axis_rules", {}).get("value", {})
+                       .get("ev_targets") or [])] or None
+    where = ("l.target_key IN (%s)" % ",".join("?" * len(evs))) if evs else "1=1"
+    none_soh = conn.execute(
+        "SELECT s.listing_id, s.denominator, s.bonuses_json"
+        " FROM result_score s JOIN core_listing l"
+        " ON l.listing_id = s.listing_id"
+        f" WHERE {where} AND l.ev_battery_soh IS NULL LIMIT 40",
+        evs or []).fetchall()
+    want = float(raw["total_points"])
+    for lid, denom, bonus in none_soh:
+        if float(denom or 0) != want:
+            bad58.append(f"{lid} — SOH 가 없는데 분모가 {denom} 다 "
+                         f"(675 여야 한다)")
+            break
+        if (bonus or "[]") not in ("", "[]"):
+            bad58.append(f"{lid} — SOH 가 없는데 가점이 붙었다: {bonus}")
+            break
+    rows_axis = conn.execute(
+        "SELECT COUNT(*) FROM result_axis WHERE axis LIKE '%soh%'"
+        " OR axis LIKE '%battery%'").fetchone()
+    if rows_axis and rows_axis[0]:
+        bad58.append(f"result_axis 에 SOH 축이 {rows_axis[0]}행 있다 — "
+                     "가점은 축이 아니다")
+    a = result(C["V3-58"], rid, "가점",
+               f"+{full} · SOH 없는 전기차 {len(none_soh)}건 확인",
+               not bad58, bad58[:4])
 
     # V3-59 — 없다고 감점하지 않는가.  분모를 안 늘리는가
     bad59 = []
@@ -1306,6 +1426,9 @@ def run(conn, ctx) -> list:
     out.append(_list_observed_source_check(conn, rid))
     out.append(_facet_reconcile_check(conn, rid))
     out.append(_mapped_other_check(conn, rid))
+    # 검사 1차 10개 (개정 407)
+    out.append(_record_mismatch_check(conn, rid))
+    out.append(_curve_table_check(rid))
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다

@@ -616,6 +616,8 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         km_max=_int_param(q, "km_max", None, minimum=0),
         monthly_max=monthly_max,
         listing_status=q.get("status") or None,
+        # ★ 성능부 ↔ 보험이 어긋난 것만 (V3-50)
+        mismatch=q.get("mismatch") == "1",
         min_grade=q.get("min_grade") or None,
         show_all=q.get("all") == "1",
         page=_int_param(q, "page", 1),

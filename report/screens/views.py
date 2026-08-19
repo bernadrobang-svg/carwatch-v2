@@ -99,6 +99,9 @@ class ListingRow:
     # ★ 부록 G 10·11 — 시세 대비 % · 신차가 대비 % (개정 332)
     market_gap_pct: float | None = None
     origin_gap_pct: float | None = None
+    # ★ 성능부와 보험이력이 어긋난다 (V3-50 · 30-score/d-history).
+    #   「성능 기록부에는 흔적이 없는데 보험 이력에는 수리 비용이 있었다」
+    record_mismatch: bool = False
     # 트림 세부등급 · 옵션 종수 (개정 313)
     trim_detail_known: bool = False
     option_count: int = 0
@@ -193,6 +196,8 @@ class ListingFilter:
     km_max: int | None = None       # 주행 상한 (구간)
     monthly_max: int | None = None  # 월납입 상한 — 가격 상한으로 환산한다
     listing_status: str | None = None
+    # ★ 성능부 ↔ 보험이 어긋난 것만 (V3-50).  「사람이 그것만 따로 볼 수 있게」
+    mismatch: bool = False
     # ★ 「A 이상만」 한 번에 (STEP 149s).  C·D 가 비율 순으로 앞에 섞인다
     min_grade: str | None = None
     order: str = "rank"
@@ -217,6 +222,11 @@ class WatchRow:
     # 가격 추이 막대 (시안 v2_watch .spark).  ★ 「지금 얼마」만으로는
     #   내려가는 중인지 올라가는 중인지 모른다.  각 칸은 {pct, dn, now}
     spark: tuple = ()
+    # ★ 내렸다 다시 올린 것은 그 자체가 정보다 (V7-14 · 개정 355).
+    #   묶되 「N번 재등록」을 낸다.  값이 바뀌었으면 함께 낸다
+    relist_times: int = 0
+    relist_low_won: int | None = None
+    relist_high_won: int | None = None
 
 
 @dataclass(frozen=True)

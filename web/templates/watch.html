@@ -17,7 +17,8 @@
 <td data-label="차종 · 트림">
   <a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><strong>{{ r.listing.target_label }}</strong></a>
   <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.listing.site_badge }}</span>
-  <span class="dim">{{ r.listing.trim }}</span></td>
+  <span class="dim">{{ r.listing.trim }}</span>
+  {% if r.relist_times %}<span class="tag" title="같은 차가 내렸다 다시 올라온 횟수입니다. 값이 바뀌었으면 함께 냅니다">{{ r.relist_times }}번 재등록{% if r.relist_low_won %} · {{ r.relist_high_won | won }} → {{ r.relist_low_won | won }}{% endif %}</span>{% endif %}</td>
 <td class="r num" data-label="연식">{{ r.listing.year_month }}</td>
 <td class="r num" data-label="주행">{{ r.listing.mileage_km | km }}</td>
 <td class="r num" data-label="가격"><a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><b>{{ r.listing.price_won | won }}</b></a></td>
