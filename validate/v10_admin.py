@@ -126,6 +126,12 @@ C = {
                     "화면이 컬럼을 안 보여 주니 마스터가 칠 수밖에 없었다. "
                     "created_at 은 표마다 있고 없다 (개정 391)",
                     KIND_CODE),
+    "V10-37": Check("V10", "V10-37", "결과 표 위에 복사 단추가 있음",
+                    FATAL, "run",
+                    "마스터가 결과를 다른 곳에 옮겨 보신다 (개정 358 "
+                    "「내가 보려고 만든 창」). ★ 붙여넣어 바로 쓸 수 있는 "
+                    "형태여야 한다 — 탭 구분 (개정 401)",
+                    KIND_CODE),
     "V10-26": Check("V10", "V10-26", "목록 저장 후 큐에 작업이 들어감",
                     FATAL, "run",
                     "마스터가 「이어서 해라」를 말하지 않아도 되게 한다 "
@@ -322,7 +328,36 @@ def _query_error_checks(conn, rid):
         html = open(path, encoding="utf-8").read()
         if "컬럼" not in html:
             bad36.append("쿼리 화면에 표별 컬럼이 없다")
+    # V10-37 — 결과 표 위에 「그대로 복사」 (개정 401)
+    import re
+
+    bad37 = []
+    tpl = os.path.join(ROOT, "web", "templates", "admin_query.html")
+    if not os.path.isfile(tpl):
+        bad37.append("쿼리 화면이 없다")
+    else:
+        html = open(tpl, encoding="utf-8").read()
+        head = html.find("<h2>결과</h2>")
+        table = html.find("<table", head) if head >= 0 else -1
+        chunk = html[head:table] if 0 <= head < table else ""
+        # ★ 「복사」라는 글자가 어딘가 있는 것으로는 안 된다.
+        #   실측 — 안내 문구에 「복사」가 있어 단추를 떼도 통과했다.
+        #   ★ 누를 수 있는 것이어야 한다
+        if not re.search(r"<button[^>]*>[^<]*복사", chunk):
+            bad37.append("결과 표 위에 복사 단추가 없다")
+        # ★ 붙여넣어 바로 쓸 수 있는 형태 — 탭 구분이어야 한다
+        if ".tsv" not in html and "tsv" not in chunk:
+            bad37.append("탭 구분 값을 안 낸다 — 붙여넣어 바로 못 쓴다")
+    from store.adminops import QueryResult
+
+    q = QueryResult(["a", "b"], [(1, "x\ty")], 1, False, 0, "q")
+    if q.tsv.splitlines()[0] != "a\tb":
+        bad37.append("tsv 머리말이 탭 구분이 아니다")
+    if "\t" in q.tsv.splitlines()[1].replace("1\t", "", 1):
+        bad37.append("값 안의 탭을 안 치웠다 — 칸이 밀린다")
     return [
+        result(C["V10-37"], rid, "복사 단추",
+               "있다" if not bad37 else "없다", not bad37, bad37[:4]),
         result(C["V10-33"], rid, "갈라 던진다",
                "맞다" if not bad33 else "틀리다", not bad33, bad33[:4]),
         result(C["V10-34"], rid, "고칠 재료",

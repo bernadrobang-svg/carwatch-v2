@@ -71,6 +71,22 @@ class QueryResult:
     row_count: int
     truncated: bool
     elapsed_ms: int
+    query_id: str = ""
+
+    @property
+    def tsv(self) -> str:
+        """붙여넣어 바로 쓸 수 있는 형태 (개정 401).
+
+        ★ 탭 구분이다.  표 프로그램에 그대로 붙는다 —
+          쉼표로 나누면 값 안의 쉼표에서 칸이 밀린다
+        ★ 값 안의 탭·줄바꿈은 빈칸으로 바꾼다.  칸이 밀리는 것보다 낫다
+        """
+        out = ["\t".join(self.columns)]
+        for row in self.rows:
+            out.append("\t".join(
+                str("" if c is None else c).replace("\t", " ")
+                .replace("\r", " ").replace("\n", " ") for c in row))
+        return "\n".join(out)
 
 
 @dataclass(frozen=True)
@@ -587,7 +603,7 @@ def run_query(conn: sqlite3.Connection, account: Account, sql: str,
         "elapsed_ms,executed_at) VALUES (?,?,?,?,?,?)",
         (qid, account.account_id, sql, len(rows), elapsed, at))
     conn.commit()
-    return QueryResult(cols, rows, len(rows), truncated, elapsed)
+    return QueryResult(cols, rows, len(rows), truncated, elapsed, qid)
 
 
 MS_PER_SEC = 1000

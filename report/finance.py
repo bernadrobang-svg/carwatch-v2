@@ -91,32 +91,42 @@ def monthly_payment(principal: int, annual_rate: float, months: int) -> int:
     return int(round(principal * r * f / (f - 1)))
 
 
+def cash_limit(fin: dict) -> int:
+    """현금 상한 (개정 400).  ★ config 를 읽는 자리는 여기 하나다.
+
+    마스터 확정 — 「1500 은 사정을 봐서 일괄로 바꾸는 기준값으로」
+    ★ 여기저기서 읽으면 「일괄로 바꾼다」가 성립하지 않는다 (V11-152)
+    """
+    return int(fin["cash_limit"])
+
+
 def build_finance(price_listed_won: int | None, fin: dict,
                   target_key: str | None,
                   tinting_needed: bool = False) -> FinanceView | None:
     """배분이 먼저다.  초기 현금 부담은 선납금 고정이다.
 
-    전액 현금   표시가 + 부대비용 <= 선납금
-    선납 부족   부대비용 > 선납금  →  차값 선납 0 · 부족액 표시
+    전액 현금   표시가 + 부대비용 <= 현금 상한
     검산       차값 선납 + 할부 원금 == 표시가
+
+    ★ 개정 400 — 부족액을 내지 않는다.  화면은 「전액 현금」인가 아닌가
+      둘뿐이다.  1,500만은 총액 상한이지 「모자란 만큼 더 내는 돈」이 아니다
     """
     if price_listed_won is None:
         return None
     cost, est = acquisition_cost(price_listed_won, fin, target_key,
                                  tinting_needed)
-    down = int(fin["down_payment_won"])
+    down = cash_limit(fin)
     months = int(fin["loan_months"])
 
     if price_listed_won + cost <= down:
         return FinanceView(price_listed_won, cost, down, price_listed_won,
-                           0, 0, 0, True, 0, est)
+                           0, 0, 0, True, est)
 
-    shortfall = max(0, cost - down)
     vehicle_down = max(0, down - cost)
     principal = price_listed_won - vehicle_down
     pay = monthly_payment(principal, float(fin["loan_rate_annual"]), months)
     return FinanceView(price_listed_won, cost, down, vehicle_down, principal,
-                       pay, pay * months - principal, False, shortfall, est)
+                       pay, pay * months - principal, False, est)
 
 
 def price_for_monthly(monthly_cap_won: int, fin: dict,
@@ -132,7 +142,7 @@ def price_for_monthly(monthly_cap_won: int, fin: dict,
     #   원금은 표시가보다 크지 않다 — 그러니 이것이 확실한 상한이다.
     #   선납금만큼 더 얹어 경계를 넘긴다 (V4-13)
     lo = 0
-    hi = monthly_cap_won * int(fin["loan_months"]) + int(fin["down_payment_won"])
+    hi = monthly_cap_won * int(fin["loan_months"]) + cash_limit(fin)
     while hi - lo > 1:                      # 1원까지 좁힌다.  횟수도 안 박는다
         mid = (lo + hi) // 2
         got = build_finance(mid, fin, target_key)

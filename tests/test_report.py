@@ -56,19 +56,19 @@ def test_finance() -> None:
               f"{f.monthly_payment_won:,}")
         check(f"검산 {man}만 — 차값 선납 + 원금 == 표시가",
               f.vehicle_down_won + f.loan_principal_won == listed)
-        check(f"검산 {man}만 — 초기 현금은 선납금 고정",
-              f.down_payment_won == FIN["down_payment_won"])
+        check(f"검산 {man}만 — 초기 현금은 현금 상한 고정",
+              f.down_payment_won == FIN["cash_limit"])
 
     # ★ 배분식과 가산식은 대수적으로 같다 —
     #   표시가 − (선납금 − 부대비용)  ==  (표시가 + 부대비용) − 선납금
-    #   갈리는 곳은 부대비용 > 선납금 인 경계뿐이다 (아래 「선납 부족」)
+    #   갈리는 곳은 부대비용 > 현금 상한 인 경계뿐이다
     f = build_finance(34700000, FIN, "GRANDEUR_LPG")
-    same = 34700000 + f.acquisition_cost_won - FIN["down_payment_won"]
+    same = 34700000 + f.acquisition_cost_won - FIN["cash_limit"]
     check("★ 배분식 == 가산식 (부대비용 ≤ 선납금 구간)",
           f.loan_principal_won == same, f"{f.loan_principal_won:,} / {same:,}")
 
     # ★ 표시가에서 선납금을 그냥 빼면 부대비용만큼 어긋난다
-    naive = monthly_payment(34700000 - FIN["down_payment_won"],
+    naive = monthly_payment(34700000 - FIN["cash_limit"],
                             FIN["loan_rate_annual"], FIN["loan_months"])
     check("★ 표시가 − 선납금 은 틀린다 (부대비용 누락)",
           f.monthly_payment_won - naive > 40000,
@@ -81,11 +81,16 @@ def test_finance() -> None:
     check("표시가 + 부대비용 <= 선납금 → 전액 현금",
           f.cash_only and f.loan_principal_won == 0 and f.monthly_payment_won == 0)
 
-    fin2 = dict(FIN, fee_transfer=20000000)  # 부대비용이 선납금을 넘는 경우
+    # ★ 개정 400 — 부대비용이 현금 상한을 넘어도 「부족액」을 내지 않는다.
+    #   화면은 「전액 현금」인가 아닌가 둘뿐이다 (V11-151)
+    fin2 = dict(FIN, fee_transfer=20000000)
     f = build_finance(30000000, fin2, "G80_25T")
-    check("★ 선납 부족 — 차값 선납 0 · 부족액 표시",
-          f.vehicle_down_won == 0 and f.shortfall_won > 0
-          and f.loan_principal_won == 30000000, f"{f.shortfall_won:,}")
+    check("★ 부대비용 > 현금 상한 — 차값 선납 0 · 전액 현금 아님",
+          f.vehicle_down_won == 0 and not f.cash_only
+          and f.loan_principal_won == 30000000,
+          f"{f.loan_principal_won:,}")
+    check("★ 부족액 칸이 없다 (개정 400)",
+          not hasattr(f, "shortfall_won"))
 
 
 # ── STEP 91 값 표시 대조표 ───────────────────────────────────────────

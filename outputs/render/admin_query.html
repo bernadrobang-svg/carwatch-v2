@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쿼리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=98155465c3">
+<link rel="stylesheet" href="/static/app.css?v=99fbdadb00">
 
 </head>
 <body class="s-admin-query">
@@ -200,8 +200,8 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">dev_request</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">request_id · title · body · origin · context_json · status · direction · step_ref · created_at · exported_at</td></tr>
 
-<tr><td class="runid" data-label="표">dict_enum</td><td class="num" data-label="행">178</td>
-  <td class="muted" data-label="컬럼">site · axis · value · display · count_seen · status · source_endpoint · dict_version · first_seen · last_seen</td></tr>
+<tr><td class="runid" data-label="표">dict_enum</td><td class="num" data-label="행">179</td>
+  <td class="muted" data-label="컬럼">site · axis · value · display · mapped · count_seen · status · source_endpoint · dict_version · first_seen</td></tr>
 
 <tr><td class="runid" data-label="표">dict_model_option</td><td class="num" data-label="행">1,486</td>
   <td class="muted" data-label="컬럼">site · model_catalog_key · option_code · option_name · price_manwon · description · status · dict_version · first_seen · last_seen</td></tr>
@@ -269,6 +269,22 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 </tbody>
 </table>
 
+<script>
+/* 「그대로 복사」 — 붙여넣어 바로 쓸 수 있는 형태로 (개정 401 · V10-37).
+   ★ 클립보드가 막힌 환경에서도 쓸 수 있게 textarea 를 남긴다.
+     단추가 안 먹으면 그 칸을 골라 복사하시면 됩니다 */
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var box = document.getElementById(b.dataset.copy);
+    if (!box) { return; }
+    box.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    b.textContent = ok ? '복사했습니다' : '아래 칸을 복사하십시오';
+  });
+});
+</script>
+
 </main>
 
 <footer class="ver">
@@ -276,7 +292,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260818T215533</span>
-  <span>2026-08-19 10:08</span>
+  <span>2026-08-19 11:12</span>
 </footer>
 
 </body>

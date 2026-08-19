@@ -64,13 +64,12 @@ class FinanceView:
 
     price_listed_won: int
     acquisition_cost_won: int
-    down_payment_won: int  # 초기 현금 부담.  표시가와 무관하게 고정
+    down_payment_won: int  # 현금 상한 (개정 400).  표시가와 무관하게 고정
     vehicle_down_won: int  # 차값 선납 = 선납금 − 부대비용
     loan_principal_won: int
     monthly_payment_won: int
     total_interest_won: int
-    cash_only: bool
-    shortfall_won: int  # 부대비용 > 선납금 일 때 부족액
+    cash_only: bool  # ★ 개정 400 — 화면은 이것 하나로 갈린다
     estimated_items: tuple[str, ...]
 
 

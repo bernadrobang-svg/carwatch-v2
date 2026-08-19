@@ -27,6 +27,10 @@ from validate.base import (
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 TEMPLATES = os.path.join(WEB, "templates")
+# 그려 낸 결과.  ★ 템플릿에서 지워도 코드가 그리면 여기 남는다
+RENDER = os.path.join(ROOT, "outputs", "render")
+# 개정 400 이 금지한 말.  ★ config 가 아니라 규격이 정한 낱말이라 여기 둔다
+SHORTFALL_WORDS = ("부족액", "모자란 금액", "만 부족", "선납 부족")
 
 SQL_WORDS = ("SELECT ", "INSERT ", "UPDATE ", "DELETE ", " FROM ")
 LOCAL_HOSTS = ("127.0.0.1", "localhost", "::1")
@@ -394,6 +398,17 @@ C = {
                     FATAL, "run",
                     "마지막에 몰아 터지면 어느 조각이 문제인지 알 수 없다. "
                     "「조각 3/9 가 깨졌습니다」라 적는다 (개정 395)",
+                    KIND_CODE),
+    "V11-151": Check("V11", "V11-151", "부족액 문구가 화면에 없음", FATAL, "run",
+                    "마스터 확정 — 1,500만은 총액 상한이다. 「380만 부족」은 "
+                    "낼 값이 아니다. ★ 화면은 「전액 현금」인가 아닌가 "
+                    "둘뿐이다 (개정 400)",
+                    KIND_CODE),
+    "V11-152": Check("V11", "V11-152", "cash_limit 을 한 곳에서만 읽음",
+                    FATAL, "run",
+                    "마스터 확정 — 「1500 은 사정을 봐서 일괄로 바꾸는 "
+                    "기준값으로」. ★ 여기저기서 읽으면 「일괄로 바꾼다」가 "
+                    "성립하지 않는다 (개정 400)",
                     KIND_CODE),
     "V11-150": Check("V11", "V11-150", "메뉴 라벨이 경로가 아님", FATAL, "run",
                     "실측 08-19 — 메뉴에 「/reports」가 경로 그대로 떴다. "
@@ -1021,6 +1036,9 @@ def _screen_checks(conn, rid) -> list:
     out.extend(_chunk_boundary_check(rid))
     # 메뉴 라벨 (개정 396)
     out.append(_menu_no_path_check(rid))
+    # 부족액 · 현금 상한 (개정 400)
+    out.append(_shortfall_check(rid))
+    out.append(_cash_limit_check(rid))
     out.append(_cell_squeeze_check(rid))
     out.append(_static_version_check(rid))
     out.append(_axis_state_check(conn, rid))
@@ -1388,6 +1406,70 @@ def _menu_paths() -> list:
                     for p, n in re.findall(
                         r"\|\s*\*{0,2}`([/\w{}-]+)`\*{0,2}\s*\|\s*([^|]+?)\s*\|",
                         body)]
+    return out
+
+
+def _shortfall_check(rid):
+    """V11-151 — 부족액 문구가 화면에 남아 있는가 (개정 400).
+
+    ★ 화면과 렌더 결과를 다 본다.  템플릿에서 지우고 코드가 그리면 그대로다
+    """
+    bad = []
+    for root in (TEMPLATES, RENDER):
+        if not os.path.isdir(root):
+            continue
+        for name in sorted(os.listdir(root)):
+            if not name.endswith(".html"):
+                continue
+            text = open(os.path.join(root, name), encoding="utf-8").read()
+            for word in SHORTFALL_WORDS:
+                if word in text:
+                    bad.append(f"{name} — 「{word}」가 있다")
+    return result(C["V11-151"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _cash_limit_check(rid):
+    """V11-152 — `cash_limit` 을 읽는 자리가 하나인가 (개정 400).
+
+    ★ 「일괄로 바꾸는 기준값」이 되려면 읽는 자리가 하나여야 한다.
+      두 곳이면 한쪽만 바뀌고 화면과 계산이 갈린다
+    ★ config 파일 자신과 시험은 뺀다 — 정의한 자리와 재는 자리다
+    """
+    bad = []
+    for rel in sorted(_py_files()):
+        if rel.startswith(("tests/", "validate/")):
+            continue
+        text = open(os.path.join(ROOT, rel), encoding="utf-8").read()
+        n = text.count('"cash_limit"') + text.count("'cash_limit'")
+        if n:
+            bad.append(f"{rel} — {n}곳")
+    # ★ 규격 두 장이 이름을 달리 쓴다 — 41-view 는 `cash_limit`,
+    #   40-report·00-standard 는 `down_payment_won` 이다 (규격 충돌).
+    #   개발측이 한쪽을 지우지 않으므로(규칙 2) 둘이 갈리지 않는지 잰다
+    import json as _j
+
+    fin = _j.load(open(os.path.join(ROOT, "config", "finance.json"),
+                       encoding="utf-8"))
+    old = fin.get("down_payment_won")
+    if old is not None and old != fin.get("cash_limit"):
+        bad.append(f"config/finance.json — 옛 이름 down_payment_won={old} "
+                   f"이 cash_limit={fin.get('cash_limit')} 과 다르다")
+    ok = len(bad) == 1
+    return result(C["V11-152"], rid, "1곳", f"{len(bad)}곳",
+                  ok, [] if ok else bad[:6])
+
+
+def _py_files() -> list:
+    """검사가 볼 우리 소스 (상대 경로).  ★ ref/ 는 v1 사본이라 뺀다."""
+    out = []
+    for base in ("analyze", "collect", "parse", "report", "score", "store",
+                 "tools", "web"):
+        for dirpath, dirs, files in os.walk(os.path.join(ROOT, base)):
+            dirs[:] = [d for d in dirs if d not in ("__pycache__", "ref")]
+            for f in files:
+                if f.endswith(".py"):
+                    out.append(os.path.relpath(
+                        os.path.join(dirpath, f), ROOT).replace("\\", "/"))
     return out
 
 

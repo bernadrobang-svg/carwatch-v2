@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>설정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=98155465c3">
+<link rel="stylesheet" href="/static/app.css?v=99fbdadb00">
 
 </head>
 <body class="s-admin-config">
@@ -95,7 +95,7 @@
   <span class="muted">근거 STEP 127</span>
 </p>
 
-<p><a class="chip" href="/admin/config?file=admin.json">admin.json</a><a class="chip" href="/admin/config?file=checks.json">checks.json</a><a class="chip" href="/admin/config?file=dealer_trust.json">dealer_trust.json</a><a class="chip" href="/admin/config?file=depreciation.json">depreciation.json</a><a class="chip" href="/admin/config?file=endpoints.json">endpoints.json</a><a class="chip" href="/admin/config?file=field_usage.json">field_usage.json</a><a class="chip" href="/admin/config?file=finance.json">finance.json</a><a class="chip" href="/admin/config?file=known_issues.json">known_issues.json</a><a class="chip" href="/admin/config?file=labels.json">labels.json</a><a class="chip" href="/admin/config?file=scoring.json">scoring.json</a><a class="chip" href="/admin/config?file=sites.json">sites.json</a><a class="chip" href="/admin/config?file=targets.json">targets.json</a><a class="chip" href="/admin/config?file=trace_hints.json">trace_hints.json</a><a class="chip" href="/admin/config?file=warnings.json">warnings.json</a><a class="chip" href="/admin/config?file=web.json">web.json</a></p>
+<p><a class="chip" href="/admin/config?file=admin.json">admin.json</a><a class="chip" href="/admin/config?file=checks.json">checks.json</a><a class="chip" href="/admin/config?file=dealer_trust.json">dealer_trust.json</a><a class="chip" href="/admin/config?file=depreciation.json">depreciation.json</a><a class="chip" href="/admin/config?file=endpoints.json">endpoints.json</a><a class="chip" href="/admin/config?file=field_usage.json">field_usage.json</a><a class="chip" href="/admin/config?file=finance.json">finance.json</a><a class="chip" href="/admin/config?file=known_issues.json">known_issues.json</a><a class="chip" href="/admin/config?file=labels.json">labels.json</a><a class="chip" href="/admin/config?file=scoring.json">scoring.json</a><a class="chip" href="/admin/config?file=sites.json">sites.json</a><a class="chip" href="/admin/config?file=targets.json">targets.json</a><a class="chip" href="/admin/config?file=trace_hints.json">trace_hints.json</a><a class="chip" href="/admin/config?file=trace_layers.json">trace_layers.json</a><a class="chip" href="/admin/config?file=warnings.json">warnings.json</a><a class="chip" href="/admin/config?file=web.json">web.json</a></p>
 
 <h2>scoring.json</h2>
 <table class="rows">
@@ -2381,6 +2381,23 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="키">validation.mapped_other_warn_ratio</td>
+  <td class="num" data-label="현재 값">0.2</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="validation.mapped_other_warn_ratio">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="키">report.top_n</td>
   <td class="num" data-label="현재 값">5</td>
   <td class="muted" data-label="형">int</td>
@@ -2689,7 +2706,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260818T215533</span>
-  <span>2026-08-19 10:08</span>
+  <span>2026-08-19 11:12</span>
 </footer>
 
 </body>

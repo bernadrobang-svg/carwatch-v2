@@ -7,6 +7,12 @@
 </form>
 {% if r %}
 <h2>결과</h2>
+<p class="qtools">
+  <button type="button" class="copy" data-copy="qtsv">그대로 복사</button>
+  <span class="muted">탭 구분 — 표에 그대로 붙습니다</span>
+</p>
+<textarea id="qtsv" class="tsv" readonly rows="2"
+          aria-label="복사할 결과 (탭 구분)">{{ r.tsv }}</textarea>
 <table class="rows">
 <thead><tr>{% for c in r.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
 <tbody>
@@ -46,3 +52,19 @@
 {% endfor %}
 </tbody>
 </table>
+
+<script>
+/* 「그대로 복사」 — 붙여넣어 바로 쓸 수 있는 형태로 (개정 401 · V10-37).
+   ★ 클립보드가 막힌 환경에서도 쓸 수 있게 textarea 를 남긴다.
+     단추가 안 먹으면 그 칸을 골라 복사하시면 됩니다 */
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var box = document.getElementById(b.dataset.copy);
+    if (!box) { return; }
+    box.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    b.textContent = ok ? '복사했습니다' : '아래 칸을 복사하십시오';
+  });
+});
+</script>

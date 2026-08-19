@@ -62,8 +62,6 @@ def listing_md(view: ScoreView, labels: dict) -> str:
                    f"차값 선납 {f.vehicle_down_won:,} · "
                    f"할부 원금 {f.loan_principal_won:,} · "
                    f"총이자 {f.total_interest_won:,}")
-        if f.shortfall_won:
-            out.append(f"★ 선납 부족 {f.shortfall_won:,} — 부대비용이 선납금을 넘는다")
         if f.estimated_items:
             out.append(f"추정 항목  {', '.join(f.estimated_items)}")
     if view.pending_items:

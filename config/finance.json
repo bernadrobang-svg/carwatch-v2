@@ -1,7 +1,16 @@
 {
   "_ref": "지시서 7장 STEP 83 · 마스터 회신 20260809 확정",
-  "_estimated": ["fee_stamp", "fee_transfer", "fee_delivery", "fee_tinting", "bond_table"],
+  "_estimated": [
+    "fee_stamp",
+    "fee_transfer",
+    "fee_delivery",
+    "fee_tinting",
+    "bond_table"
+  ],
   "_note": "_estimated 항목은 실측 전이다. 0 이므로 실구매가에 더해지지 않으며 화면에 「미확정」으로 표시한다 (STEP 83)",
+  "_note_cash_limit": "★ 개정 400 마스터 확정 — 1,500만은 「차값에 더하는 선납」이 아니라 총액 상한이다. 그 안에 취득세·등록비·사이트 수수료가 들어간다. 일괄로 바꾸는 기준값 하나다",
+  "_note_down_payment_won": "★ 옛 이름. 41-view(개정 400)는 cash_limit 이라 하고 40-report·00-standard 는 아직 down_payment_won 이라 한다 — 규격 두 장이 어긋나 있어 개발측이 한쪽을 지우지 않는다 (규칙 2). 코드가 읽는 것은 cash_limit 하나다. 두 값이 갈리면 V11-152 가 잡는다",
+  "cash_limit": 15000000,
   "down_payment_won": 15000000,
   "loan_months": 48,
   "loan_rate_annual": 0.055,
@@ -12,6 +21,11 @@
   "fee_transfer": 0,
   "fee_delivery": 0,
   "fee_tinting": 0,
-  "ev_tax_exempt": ["MODEL_Y", "GV60", "G80_EV", "GV70_EV"],
+  "ev_tax_exempt": [
+    "MODEL_Y",
+    "GV60",
+    "G80_EV",
+    "GV70_EV"
+  ],
   "hold_months": 48
 }

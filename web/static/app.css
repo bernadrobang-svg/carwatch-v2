@@ -1957,3 +1957,12 @@ svg.line circle { fill:var(--amber); }
 /* 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
    ★ 표시가만 보면 부대비용 차이로 순위가 뒤집힌다 */
 .rows td .pay, .rows td .cash { display:block; font-size:11px; line-height:1.3 }
+
+/* 쿼리 결과 「그대로 복사」 (개정 401 · V10-37) */
+.qtools { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+.qtools .muted { font-size: 12px; }
+.copy { cursor: pointer; }
+/* ★ 클립보드가 막혀도 쓸 수 있게 남긴다.  낮게 둬 표를 밀지 않는다 */
+textarea.tsv { width: 100%; height: 44px; font-family: var(--mono);
+               font-size: 11px; color: var(--dim);
+               background: var(--surface2); border: 1px solid var(--line); }
