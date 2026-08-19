@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**87파일 · 26,806줄 · 1,153KB**
+**87파일 · 26,806줄 · 1,154KB**
 
 ★ 800줄을 넘는 파일 5개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -95,7 +95,7 @@
 | `ref/G-screens.md` | 12 | 0 |
 | `trace/00-standard.md` | 276 | 29 |
 | `trace/02-collect.md` | 73 | 7 |
-| `trace/05-score.md` | 112 | 10 |
+| `trace/05-score.md` | 112 | 11 |
 | `trace/11-store.md` | 83 | 6 |
 | `trace/12-dict.md` | 61 | 5 |
 | `trace/13-pipeline.md` | 61 | 5 |

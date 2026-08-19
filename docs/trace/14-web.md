@@ -46,8 +46,8 @@
 | WB-021 | `[운영]` | 옵션 「4종 715만」 | `[마스터]` 313 | `61-web/b-list` | ~ `tools/verify_axes.py::main` | 18열 | V11-100 — 검사 없음(규격에만) | ◐ |
 | WB-022 | `[판정]` | 목록 /listings — 트림에 세부등급 | `[마스터]` 285 | `61-web/b-list` | ✓ `report/screens/build.py::_row` | 7열 | V11-85 — 검사 없음(규격에만) | ◐ |
 | WB-023 | `[판정]` | **축은 상태로** — 있음·없음·? | `[마스터]` 280 | `61-web/b-list` | ~ `analyze/axis/state.py:2` | `/admin/import` | V11-79 | ◐ |
-| WB-024 | `[판정]` | 목록 /listings — 보증은 남은 기간으로 | `[마스터]` 283 | `61-web/b-list` | ~ `config/scoring.json::components.warranty.general` | — | 검사 없음 | ◐ |
-| WB-025 | `[판정]` | 사고는 회수 · 보험은 자차 수리비 | `[마스터]` 283 | `61-web/b-list` | ~ `analyze/absolute.py:19` | — | V3-42 · V3-43 | ◐ |
+| WB-024 | `[판정]` | 목록 /listings — 보증은 남은 기간으로 | `[마스터]` 283 | `61-web/b-list` | ✓ `analyze/axis/site.py::remaining_months` | — | 검사 없음 | ◐ |
+| WB-025 | `[판정]` | 사고는 회수 · 보험은 자차 수리비 | `[마스터]` 283 | `61-web/b-list` | ✓ `analyze/axis/state.py::_repair` | — | V3-42 · V3-43 | ○ |
 | WB-026 | `[운영]` | 목록 /listings — **♡ 를 제목 줄에** | `[마스터]` 305 | `61-web/b-list` | ~ `web/views.py::listings` | `/recommend` | V11-96 — 검사 없음(규격에만) | ◐ |
 | WB-027 | `[저장·화면]` | 링크 — 딜러·연식·주행·가격·월납·상태 | `[마스터]` 276 | `61-web/b-list` | ~ `web/views.py:384` | 화면 없음 | V11-61 | ◐ |
 | WB-028 | `[화면]` | 목록 /listings — 툴팁 — 코드·줄임말 | `[마스터]` 276 | `61-web/b-list` | ~ `web/views.py::listings` | 화면 없음 | V11-62 | ◐ |
@@ -102,7 +102,7 @@
 
 | R | 층 | 요구사항 | 출처 | 규격 | 소스 | 화면 | 검사 | 상태 |
 |---|---|---|---|---|---|---|---|:--:|
-| WB-060 | `[판정]` | **시세를 제조사·차종·트림으로 고른다** | `[마스터]` | `61-web` | ~ `analyze/axis/value.py::_market` | `/market` | V11-83 | ◐ |
+| WB-060 | `[판정]` | **시세를 제조사·차종·트림으로 고른다** | `[마스터]` | `61-web` | ✓ `analyze/peer.py::stage_conditions` | `/market` | V11-83 | ○ |
 | WB-061 | `[판정·화면]` | 시세 · 딜러 · 관심 · 비교 — 트림별로 시세를 낸다 | `[마스터]` 285 | `61-web` | ~ `report/screens/views.py::ListingRow` | `/market` | V11-86 | ◐ |
 | WB-062 | `[판정]` | 시세 · 딜러 · 관심 · 비교 — **딜러 보유 차종** | `[마스터]` 276 | `41-view` | ~ `analyze/peer.py:8` | `/dealers` | 검사 없음 | **!** |
 | WB-063 | `[판정·화면]` | 시세 · 딜러 · 관심 · 비교 — **관심에 사진·차종** | `[마스터]` 284 | `42-watch` | ~ `web/templates/recommend.html` | `/watch` | V7-12 | **!** |

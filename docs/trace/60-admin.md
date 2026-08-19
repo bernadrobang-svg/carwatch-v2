@@ -142,7 +142,7 @@
 | AD-082 | `[수집·화면]` | 갱신 간격과 마지막 갱신 시각을 낸다 | `[마스터]` | `60-admin` | ~ `report/screens/admin.py::_live_progress` | `/admin/collect` | V11-51 · V11-52 | ◐ |
 | AD-083 | `[저장]` | 폴링이 실패해도 진행은 남는다 | `[기술]` | `60-admin` | ~ `store/watch.py::notify` | — | 검사 없음 | ◐ |
 | AD-084 | `[저장]` | 「대기 중」과 「멈춘 것」을 가른다 | `[마스터]` | `60-admin` | ~ `store/adminops.py::ImportPreview` | — | 검사 없음 | ◐ |
-| AD-085 | `[운영]` | **큐만 보지 않는다. 실제로 도는 것을 본다** | `[마스터]` **08-16 실측** | `60-admin` | ~ `web/views.py::admin_run` | `/admin/run` | V11-53 | ◐ |
+| AD-085 | `[운영]` | **큐만 보지 않는다. 실제로 도는 것을 본다** | `[마스터]` **08-16 실측** | `60-admin` | ~ `store/adminops.py::reap_stale_jobs` | `/admin/run` | V11-53 | ◐ |
 | AD-086 | `[판정]` | 판정 근거를 셋 다 본다 | `[마스터]` | `60-admin` | ~ `analyze/verdict.py:10` | `/why/{listing_id}` | 검사 없음 | ◐ |
 | AD-087 | `[저장·화면]` | 「도는 것이 없다」와 「마지막 처리 0분 전」이 같은 화면에 있으면 안 된다 | `[마스터]` | `60-admin` | ~ `web/views.py::_site_query` | 화면 없음 | V11-51 · V11-52 | ◐ |
 | AD-088 | `[저장]` | 진행 모니터 — 읽기 전용 | `[마스터]` | `60-admin` | ~ `store/adminops.py::preview_import` | `/admin/docs` | 검사 없음 | ◐ |

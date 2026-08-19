@@ -138,7 +138,7 @@
 | OP-065 | `[사전]` | 「미확정」 목록 — 몇 주째인지 | `[마스터]` **두 주 넘으면 그것도 결함** | `00-standard` | ✓ `web/templates/admin_registry.html` | — | 검사 없음 | ◐ |
 | OP-066 | `[운영]` | `outputs/weekly/` 에 | `[마스터]` | `00-standard` | ✓ `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 | ◐ |
 | OP-067 | `[운영]` | 전 화면 스크린샷 대조 | `[마스터]` | `00-standard` | ~ `tools/weekly_check.py::main` | — | 검사 없음 | ◐ |
-| OP-068 | `[판정]` | 배점 대조 — 축 수 · 합 · 경계 | `[마스터]` | `00-standard` | ~ `score/grade.py::cutoffs` | 해당 없음 | 검사 없음 | ◐ |
+| OP-068 | `[판정]` | 배점 대조 — 축 수 · 합 · 경계 | `[마스터]` | `00-standard` | ✓ `score/grade.py::cutoffs` | 해당 없음 | 검사 없음 | ◐ |
 | OP-069 | `[운영]` | ③ 주간 일제 점검 — v1 대조 결과 확인 | `[마스터]` | `00-standard` | ~ `tools/weekly_check.py:2` | `/admin/dict` | 검사 없음 | ◐ |
 | OP-070 | `[운영]` | 지난 주 지적 중 안 고쳐진 것 | `[마스터]` | `00-standard` | ~ `tools/weekly_check.py::main` | 해당 없음 | 검사 없음 | ◐ |
 | OP-071 | `[검사]` | 자료 없어 못 도는 검사 목록 | `[마스터]` | `00-standard` | ~ `tools/weekly_check.py::idle_checks` | — | S30-1 · S30-2 | ◐ |
