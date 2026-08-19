@@ -410,6 +410,13 @@ def _decide_material_check(conn, rid):
                not bad28, bad28[:5])
 
     # V4-29 — 기본 화면이 판정 막는 것만 먼저 내는가
+    # ★ 막는 것이 없으면 잴 것이 없다.  「표시하지 않는다」로 잡으면
+    #   다 분류한 DB 에서 늘 실패한다 (실측 08-19 — 시험 DB 가 그랬다)
+    from report.screens.admin import blocking_set
+
+    if not blocking_set(conn):
+        return [a, not_applicable(C["V4-29"], rid,
+                                  "판정을 막는 미분류가 없다 — 잴 것이 없다")]
     bad29 = []
     first = html.find("판정을 막습니다")
     later = html.find("지금 안 쓰입니다")
@@ -436,7 +443,7 @@ def _blocking_list_check(conn, rid):
     _ROOT = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
 
     from store.core import blocking_rows
-    from tools.classify_fields import (
+    from parse.encar.paths import (
         WHOLE_CONTAINERS, parser_lines, parser_paths,
     )
 
@@ -451,6 +458,17 @@ def _blocking_list_check(conn, rid):
                       ["python3.11 tools/classify_unclassified.py "
                        "--blocking --list 로 만든다"])
     body = open(found[-1], encoding="utf-8").read()
+    # ★ 어느 DB 로 만든 목록인가.  씨앗 DB 로 돌린 검사가 운영 목록과
+    #   견주면 늘 어긋난다 — 그것은 목록의 잘못이 아니다 (실측 08-19)
+    stamp = _re.search(r"<!-- unclassified=(\d+) blocking=(\d+) -->", body)
+    mine = conn.execute(
+        "SELECT COUNT(*) FROM meta_field_usage"
+        " WHERE usage='unclassified'").fetchone()[0]
+    if stamp and int(stamp.group(1)) != mine:
+        return not_applicable(
+            C["V4-30"], rid,
+            f"다른 DB 로 만든 목록이다 (목록 {stamp.group(1)}건 · "
+            f"이 DB {mine}건)")
     rows = _re.findall(r"^\| *\d+ \|", body, _re.M)
     bad = []
     if len(rows) != len(want):

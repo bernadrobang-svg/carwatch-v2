@@ -149,6 +149,28 @@ def _seed_unclassified(conn) -> None:
       아예 안 그려져 「분류 화면이 도는가」를 못 본다
     """
     at = "2026-08-10T00:00:00+00:00"
+    # ★★ 씨앗이 만든 경로는 씨앗이 정한다 (S24).
+    #   판정을 막는 미분류는 「마스터가 정할 일」이다 — 운영 DB 의 몫이다.
+    #   씨앗 DB 에 그것이 남아 있으면 test_endtoend 가 사람의 판단을 기다리며
+    #   영영 실패한다.  실측 08-19 — V4-11 16건이 그래서 걸려 있었다
+    #   ★ unused_by_policy 다 — in_use 는 core_column 을 요구한다 (V4-07)
+    from parse.encar.paths import WHOLE_CONTAINERS, parser_paths
+
+    used = parser_paths()
+    rows = conn.execute(
+        "SELECT endpoint, json_path FROM meta_field_usage"
+        " WHERE usage='unclassified'").fetchall()
+    for endpoint, path in rows:
+        bare = path.replace("[]", "")
+        if bare in used or path.split("[]")[0] in WHOLE_CONTAINERS:
+            conn.execute(
+                "UPDATE meta_field_usage SET usage='unused_by_policy',"
+                " reason=?"
+                " WHERE endpoint=? AND json_path=?",
+                ("씨앗 자료다 — 판정에 안 쓰기로 정한다 (S24). "
+                 "★ 운영에서는 마스터가 정한다", endpoint, path))
+    # ★ 판정을 막지 않는 미분류 1건은 남긴다 —
+    #   없으면 /admin/registry 의 분류 폼이 아예 안 그려진다
     conn.execute(
         "INSERT OR IGNORE INTO meta_field_usage"
         "(site,endpoint,json_path,core_column,usage,reason,"

@@ -113,21 +113,21 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>detail:advertisement.verification</code>
+    <code>inspection_summary:inspName</code>
     <span class="tag bad">판정을 막습니다</span>
     
   </div>
   <p class="muted">① 실제 값
-    <code>{reportExists · reportVersion · version …}</code> 200건 · 
+    <code>엔카 일산 풍동 성능장 이정우</code> 7건 · <code>오토즈 안이찬</code> 7건 · <code>아라성능장 엄주용</code> 6건 · <code>가양오토서비스 조범준</code> 6건 · <code>네바퀴자동차 1급 공업사 김재근</code> 6건 · 
     <span class="dim">관측 200/200</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>type</code> <code>price</code> <code>status</code> 
-    <span class="dim">— 사람이 봐야 합니다</span></p>
+    <code>vehicleId</code> <code>outers</code> <code>outerSummarys</code> 
+    <span class="dim">— unused_by_policy — 「inspection:master.detail.inspName」과 같은 것으로 보입니다</span></p>
   <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="advertisement.verification">
+    <input type="hidden" name="endpoint" value="inspection_summary">
+    <input type="hidden" name="json_path" value="inspName">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -144,83 +144,21 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>detail:advertisement.verification.reportExists</code>
+    <code>platform_check:cleaned</code>
     <span class="tag bad">판정을 막습니다</span>
     
   </div>
   <p class="muted">① 실제 값
-    <code>False</code> 200건 · 
+    <code>True</code> 200건 · 
     <span class="dim">관측 200/200</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>version</code> <code>reportVersion</code> 
+    <code>vehicleId</code> 
     <span class="dim">— 사람이 봐야 합니다</span></p>
   <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="advertisement.verification.reportExists">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>detail:view.meetgoCheckupAvailable</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>False</code> 200건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
-    <span class="dim">— 사람이 봐야 합니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="view.meetgoCheckupAvailable">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>detail:view.meetgoVisitAvailable</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값
-    <code>False</code> 200건 · 
-    <span class="dim">관측 200/200</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
-    <span class="dim">— 사람이 봐야 합니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="view.meetgoVisitAvailable">
+    <input type="hidden" name="endpoint" value="platform_check">
+    <input type="hidden" name="json_path" value="cleaned">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -299,21 +237,21 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>record_summary:carKind</code>
+    <code>record_summary:carNo</code>
     <span class="tag bad">판정을 막습니다</span>
     
   </div>
   <p class="muted">① 실제 값
-    <code>1</code> 200건 · 
+    <code>155소4178</code> 1건 · <code>155너1908</code> 1건 · <code>58거2685</code> 1건 · <code>302서9735</code> 1건 · <code>243주9619</code> 1건 · 
     <span class="dim">관측 200/200</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>regDate</code> <code>carNo</code> <code>year</code> 
-    <span class="dim">— blocked — 「record:carKind」과 같은 것으로 보입니다</span></p>
+    <code>regDate</code> <code>year</code> <code>maker</code> 
+    <span class="dim">— blocked — 「record:carInfoChanges[].carNo」과 같은 것으로 보입니다</span></p>
   <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="carKind">
+    <input type="hidden" name="json_path" value="carNo">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -330,21 +268,83 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>record_summary:carNo</code>
+    <code>record_summary:firstDate</code>
     <span class="tag bad">판정을 막습니다</span>
     
   </div>
   <p class="muted">① 실제 값
-    <code>155소4178</code> 1건 · <code>155너1908</code> 1건 · <code>58거2685</code> 1건 · <code>302서9735</code> 1건 · <code>243주9619</code> 1건 · 
+    <code>2021-12-23</code> 2건 · <code>2021-10-19</code> 2건 · <code>2021-12-15</code> 2건 · <code>2023-05-16</code> 2건 · <code>2021-11-15</code> 2건 · 
     <span class="dim">관측 200/200</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>regDate</code> <code>year</code> <code>maker</code> 
-    <span class="dim">— blocked — 「record:carInfoChanges[].carNo」과 같은 것으로 보입니다</span></p>
+    <code>regDate</code> <code>carNo</code> <code>year</code> 
+    <span class="dim">— blocked — 「record:firstDate」과 같은 것으로 보입니다</span></p>
   <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="endpoint" value="record_summary">
-    <input type="hidden" name="json_path" value="carNo">
+    <input type="hidden" name="json_path" value="firstDate">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>record_summary:floodTotalLossCnt</code>
+    <span class="tag bad">판정을 막습니다</span>
+    
+  </div>
+  <p class="muted">① 실제 값
+    <code>0</code> 200건 · 
+    <span class="dim">관측 200/200</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>regDate</code> <code>carNo</code> <code>year</code> 
+    <span class="dim">— blocked — 「record:floodTotalLossCnt」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="record_summary">
+    <input type="hidden" name="json_path" value="floodTotalLossCnt">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>record_summary:fuel</code>
+    <span class="tag bad">판정을 막습니다</span>
+    
+  </div>
+  <p class="muted">① 실제 값
+    <code>가솔린</code> 191건 · <code>전기</code> 9건 · 
+    <span class="dim">관측 200/200</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>regDate</code> <code>carNo</code> <code>year</code> 
+    <span class="dim">— blocked — 「record:fuel」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="endpoint" value="record_summary">
+    <input type="hidden" name="json_path" value="fuel">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <button type="submit" name="usage" value="in_use"
@@ -617,7 +617,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260818T215533</span>
-  <span>2026-08-19 09:17</span>
+  <span>2026-08-19 09:35</span>
 </footer>
 
 </body>

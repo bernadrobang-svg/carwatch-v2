@@ -998,3 +998,15 @@ def validation_runs(conn, limit: int | None = None) -> list:
         out.append({"run_id": rid, "at": at, "passed": row[0] or 0,
                     "fatal": row[1] or 0, "warn": row[2] or 0})
     return out
+
+
+def blocking_set(conn) -> set:
+    """판정을 막는 경로 — V4-11 · 목록과 같은 자리 (개정 390).
+
+    ★ store 는 parse 를 못 부른다 (V4-22).  report 가 이어 준다 —
+      화면과 검사가 다른 것을 세면 「32건」과 화면의 수가 어긋난다
+    """
+    from parse.encar.paths import WHOLE_CONTAINERS, parser_paths
+    from store.core import blocking_keys
+
+    return blocking_keys(conn, parser_paths(), WHOLE_CONTAINERS)

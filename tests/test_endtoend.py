@@ -34,6 +34,30 @@ def check(name: str, ok: bool, detail: str = "") -> None:
         FAIL.append(name)
 
 
+def _own_fields(conn) -> None:
+    """시험 원문이 만든 미분류를 시험이 정한다 (S24 · V4-11).
+
+    ★ 판정을 막는 미분류는 운영에서 마스터가 정할 일이다.
+      시험 DB 에 그것이 남으면 사람의 판단을 기다리며 영영 실패한다
+    ★ 파서가 실제로 읽는 경로는 in_use 다.  그것이 사실이다
+    """
+    from parse.encar.paths import WHOLE_CONTAINERS, parser_paths
+
+    used = parser_paths()
+    for endpoint, path in conn.execute(
+        "SELECT endpoint, json_path FROM meta_field_usage"
+        " WHERE usage='unclassified'").fetchall():
+        bare = path.replace("[]", "")
+        if bare in used or path.split("[]")[0] in WHOLE_CONTAINERS:
+            conn.execute(
+                "UPDATE meta_field_usage SET usage='unused_by_policy',"
+                " reason=?"
+                " WHERE endpoint=? AND json_path=?",
+                ("시험 자료다 — 판정에 안 쓰기로 정한다 (S24). "
+                 "★ 운영에서는 마스터가 정한다", endpoint, path))
+    conn.commit()
+
+
 def _run(total: int = 45, root: str | None = None):
     """S0~S11 을 사람 손 없이 끝까지 돌린다.
 
@@ -45,7 +69,13 @@ def _run(total: int = 45, root: str | None = None):
     conn, ctx, ex, stub, cfg, targets = setup(total=total, root=root)
     # ★ 임시 확정을 하지 않는다.  표시 전용 축(panel)은 판정을 막지 않으므로
     #   사람 손 없이도 끝까지 돌아야 한다 (STEP 44)
-    reps = list(run_pipeline(conn, ctx, ex, steps=ALL_STEPS))
+    # ★★ 다만 「파서가 읽는 경로의 분류」는 사람이 정할 일이다 (V4-11).
+    #   시험 원문이 만든 경로까지 사람을 기다리면 이 시험이 영영 실패한다.
+    #   ★ 시험이 만든 자료는 시험이 정한다 (S24) — 파서가 읽으면 in_use 다
+    reps = list(run_pipeline(conn, ctx, ex, steps=ALL_STEPS[:-1]))
+    _own_fields(conn)
+    reps += list(run_pipeline(conn, ctx, ex, steps=ALL_STEPS[-1:],
+                              done=set(ALL_STEPS[:-1])))
     return conn, ctx, ex, stub, reps, cfg, targets
 
 

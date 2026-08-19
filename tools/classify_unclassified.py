@@ -62,6 +62,14 @@ def write_suggestion(rows: list) -> str:
     return path
 
 
+def _all_unclassified(conn) -> int:
+    """이 DB 의 미분류 전체 수.  ★ 어느 DB 로 만든 목록인지 적어 둔다 —
+    씨앗 DB 로 돌린 검사가 운영 목록과 견주면 늘 어긋난다 (실측 08-19)."""
+    return conn.execute(
+        "SELECT COUNT(*) FROM meta_field_usage"
+        " WHERE usage='unclassified'").fetchone()[0]
+
+
 def write_blocking_list(conn) -> str:
     """판정을 막는 32건을 목록으로 (개정 390 · V4-30).
 
@@ -72,7 +80,7 @@ def write_blocking_list(conn) -> str:
     from datetime import datetime, timezone
 
     from store.core import blocking_rows
-    from tools.classify_fields import (
+    from parse.encar.paths import (
         WHOLE_CONTAINERS, parser_lines, parser_paths,
     )
 
@@ -87,6 +95,8 @@ def write_blocking_list(conn) -> str:
         "가 만든다. 손으로 고치지 않는다.**",
         "",
         f"**{len(rows)}건** · 많이 관측된 순",
+        "",
+        f"<!-- unclassified={_all_unclassified(conn)} blocking={len(rows)} -->",
         "",
         "```",
         "★ 이 목록은 「파서가 실제로 그 경로를 읽는 것」이다.",

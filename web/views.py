@@ -1561,7 +1561,11 @@ def _decide_cards(conn, root: str = ROOT, rows=None) -> list:
 
     # ★ 한 쪽에 다 내지 않는다.  「120건을 한꺼번에 보라 하면 아무도 안 본다」
     #   ★ 장수는 store 가 config 에서 읽는다 — 여기서 또 정하지 않는다
-    got = unclassified_cards(conn, rows=rows)
+    # ★ V4-11 · 목록과 같은 자리를 본다 (개정 390).
+    #   ★ web 은 parse 를 못 부른다 — report 가 이어 준다 (V4-22)
+    from report.screens.admin import blocking_set
+
+    got = unclassified_cards(conn, rows=rows, blocking=blocking_set(conn))
     # ★ 고를 것 셋 — 「쓴다」 「안 쓴다」 「나중에」 (개정 367 ④)
     for one in got:
         one["choices"] = [

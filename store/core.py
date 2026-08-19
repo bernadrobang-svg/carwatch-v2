@@ -976,7 +976,8 @@ _ADMIN: dict | None = None
 
 
 def unclassified_cards(conn, limit: int | None = None,
-                       rows: list | None = None) -> list:
+                       rows: list | None = None,
+                       blocking: set | None = None) -> list:
     """미분류 항목마다 판단할 재료 다섯 (개정 367 · V4-28).
 
     마스터 지적 — 「이걸 보고 내가 무엇을 하라는 말이지?  뭔지도 모르겠는데」
@@ -990,7 +991,13 @@ def unclassified_cards(conn, limit: int | None = None,
       한 쪽에 378쿼리 · 11.8초가 된다 (실측 08-19 · V11-34 가 잡았다)
     """
     limit = _card_limit() if limit is None else limit
-    stops = _blocking_paths(conn)
+    # ★★ 화면과 검사가 같은 것을 세야 한다 (개정 390).
+    #   전에는 화면이 _blocking_paths(103건)를, V4-11 과 목록이
+    #   parser_paths(32건)를 봤다 — 겹치는 것이 22건뿐이었다.
+    #   「32건」과 화면의 수가 어긋나면 마스터가 무엇을 정할지 모른다
+    # ★ 부르는 쪽이 「막는 것」을 준다 — store 는 parse·tools 를 못 부른다 (V4-22).
+    #   안 주면 옛 셈(_blocking_paths)을 쓴다 — 그것은 화면과 검사가 갈린다
+    stops = blocking if blocking is not None else _blocking_paths(conn)
     # ★ 이미 센 것이 있으면 다시 세지 않는다.  같은 쪽에서 두 번 세면
     #   한 쪽 쿼리가 상한(20)을 넘는다 — V11-34 가 30으로 잡았다
     rows = list(rows if rows is not None else classify_unclassified(conn))
@@ -1239,6 +1246,24 @@ def _option_names(conn: sqlite3.Connection) -> tuple:
     except sqlite3.OperationalError:
         pass
     return names, prices
+
+
+def blocking_keys(conn, used: set, containers: tuple) -> set:
+    """판정을 막는 경로의 (엔드포인트, 경로)만 — 관측 수는 안 센다.
+
+    ★ blocking_rows 는 엔드포인트마다 원문을 훑어 관측을 센다.
+      화면이 「막는가」만 알면 될 때 그것을 부르면 한 쪽이 52쿼리가 된다
+      (실측 08-19 · V11-34 상한 20)
+    """
+    out = set()
+    for endpoint, path in conn.execute(
+        "SELECT endpoint, json_path FROM meta_field_usage"
+        " WHERE usage='unclassified'"
+    ):
+        bare = path.replace("[]", "")
+        if bare in used or path.split("[]")[0] in containers:
+            out.add((endpoint, path))
+    return out
 
 
 def blocking_rows(conn, used: set, containers: tuple,

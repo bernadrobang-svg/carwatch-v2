@@ -363,9 +363,15 @@ def test_screens_render() -> None:
     from web.app import _Denied
 
     ok_n = 0
+    # ★ 화면이 아닌 것은 뺀다 — 파일을 준다.  <h1> 도 시안도 없다.
+    #   목록은 web/routes.py 가 갖는다 — 시험이 따로 들면 갈린다 (V11-30)
+    from web.routes import NON_SCREEN_VIEWS
+
     for view in sorted(HANDLERS):
         route = next((r for r in ROUTES if r.view == view), None)
         if route is None or GET not in route.methods:
+            continue
+        if view in NON_SCREEN_VIEWS:
             continue
         # ★ 권한이 있는 역할로 부른다.  없는 역할은 guard 가 막는 것이 정상이다
         who = {ROLE_ADMIN: Account(1, ROLE_ADMIN, "마스터"),
@@ -387,8 +393,10 @@ def test_screens_render() -> None:
         ok_n += 1
     from web.routes import GET as _G
 
+    # ★ 화면이 아닌 것은 빼고 센다 — 위 loop 이 건너뛴 것과 같은 기준이어야 한다.
+    #   기준이 갈리면 「30/31」처럼 영원히 하나 모자란다
     want = len([r for r in ROUTES if _G in r.methods
-                and r.view in HANDLERS])
+                and r.view in HANDLERS and r.view not in NON_SCREEN_VIEWS])
     check("★ 전 GET 화면을 돌았다", ok_n == want, f"{ok_n}/{want}")
 
     # ★ 「준비 중」이 남아 있지 않다 — 전 화면이 구현됐다 (D-3).
