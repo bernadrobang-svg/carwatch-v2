@@ -96,7 +96,12 @@ class Reprocess:
 
 REPROCESS_TABLE: dict[str, Reprocess] = {
     "site_response_shape": Reprocess(None, STEPS[1:], True),
-    "listing_updated": Reprocess(None, ("S5", "S6", "S9", "S10"), True),
+    # ★★ S4(목록 대조)가 빠져 있었다 (실측 08-20).  마스터가 브라우저로 받아 온
+    #   목록 141봉투 · 새 매물 189건이 core 에 안 들어오고, 대신 S5 가
+    #   기존 32,949 매물 전건을 다시 받고 있었다 —
+    #   규격이 「목록 저장이 전건 재수집을 부르지 않는다」로 금지한 것이다.
+    #   ★ 규격 순서 그대로다 — 대조 → 상세 → 새 5종 → 판정 (STEP 136g)
+    "listing_updated": Reprocess(None, ("S4", "S5", "S6", "S9", "S10"), True),
     "raw_missing": Reprocess(None, ("S5", "S6", "S9", "S10"), True),
     "parse_rule": Reprocess("parse_version", ("S6", "S9", "S10"), False),
     "dictionary": Reprocess("dict_version", ("S9", "S10"), False),
@@ -105,6 +110,22 @@ REPROCESS_TABLE: dict[str, Reprocess] = {
     "scoring": Reprocess("calc_version", ("S10",), False),
     "labels": Reprocess(None, (), False),
 }
+
+
+# 전건을 다시 던지는 사유.  ★ 이 하나뿐이다 (c-tools 「그래서 이렇게 한다」).
+#   「전체 재수집」은 사람이 명시할 때만 한다 — 3,470건 × 9종 = 3만 호출이다.
+#   그 밖의 사유는 **아직 답을 못 받은 것만** 던진다 (should_refetch)
+FULL_REFETCH_REASONS: tuple[str, ...] = ("site_response_shape",)
+
+
+def refetch_all(reason: str) -> bool:
+    """그 사유가 전건을 다시 던지는가.
+
+    ★ False 면 `resume` 방식으로 돈다 — ok·empty·not_found 는 이미 답을
+      받은 것이라 안 던지고, error·미요청만 던진다.
+      그것이 규격의 「새로 뜬 것 · 가격이 바뀐 것만」이다
+    """
+    return reason in FULL_REFETCH_REASONS
 
 
 def reprocess_plan(reason: str) -> Reprocess:

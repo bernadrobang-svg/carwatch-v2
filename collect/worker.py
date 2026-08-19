@@ -64,6 +64,17 @@ def finish(conn: sqlite3.Connection, job_id: str, status: str, at: str,
     conn.commit()
 
 
+def _executors(make_executors_fn, reason: str) -> dict:
+    """실행기 공장을 부른다.  ★ 사유를 받는 공장이면 넘긴다.
+
+    옛 공장(인자 없음)도 그대로 돈다 — 시험이 그 꼴로 부른다
+    """
+    try:
+        return make_executors_fn(reason)
+    except TypeError:
+        return make_executors_fn()
+
+
 def run_once(db_path: str, make_ctx, make_executors_fn, root: str = ".",
              clock=None) -> dict | None:
     """큐에 있으면 하나 돌린다.  없으면 None.
@@ -81,7 +92,11 @@ def run_once(db_path: str, make_ctx, make_executors_fn, root: str = ".",
             return None
         ctx = make_ctx()
         try:
-            reports = run_recalc(conn, ctx, make_executors_fn(),
+            # ★ 사유를 실행기에 넘긴다 (실측 08-20).  안 넘기면 공장이
+            #   resume=False 로 만들어 S5 가 전건을 다시 던진다 —
+            #   규격이 금지한 「목록 저장이 전건 재수집」이 그렇게 일어났다
+            reports = run_recalc(conn, ctx, _executors(make_executors_fn,
+                                                       job["reason"]),
                                  job["reason"], job["scope"], origin="web")
             halted = [f"{r.step}: {r.halt_reason}" for r in reports if r.halted]
             # ★ 「돌았다」가 아니라 「무엇이 나왔나」를 남긴다

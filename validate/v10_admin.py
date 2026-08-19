@@ -804,6 +804,25 @@ def _automation_checks(conn, rid):
         " AND from_step IN ('S1','S2','S3')", (LIST_SAVED_REASON,)).fetchone()
     if full and full[0]:
         bad29.append(f"목록 저장이 전건 재수집을 부른 작업 {full[0]}건")
+    # ★★ from_step 만 보면 못 잡는다 (실측 08-20).  실제 전건 재수집은
+    #   from_step='S5' 인 채 **실행기가 resume=False** 로 돌아 일어났다 —
+    #   32,949 매물 × 8엔드포인트가 나가는데 이 검사는 초록이었다.
+    #   ★ 「검사가 초록인데 금지된 일이 벌어진다」가 이 프로젝트의 실패 모드다
+    from collect.pipeline import REPROCESS_TABLE, refetch_all
+
+    if refetch_all(LIST_SAVED_REASON):
+        bad29.append("목록 저장 사유가 전건 재수집으로 잡혀 있다 "
+                     "(FULL_REFETCH_REASONS)")
+    steps = REPROCESS_TABLE[LIST_SAVED_REASON].steps
+    if "S4" not in steps:
+        # ★ 대조가 없으면 받아 온 목록이 CORE 에 안 들어간다.
+        #   그러고도 상세를 받으니 「전건 재수집」만 남는다
+        bad29.append(f"목록 저장에 S4(목록 대조)가 없다 — 지금 {list(steps)}")
+    # 실행기 공장이 사유를 보는가.  ★ 안 보면 늘 전건이다
+    src = open(_o.path.join(root, "run.py"), encoding="utf-8").read()
+    if "refetch_all" not in src:
+        bad29.append("run.py 의 실행기 공장이 사유를 안 본다 — "
+                     "무엇을 다시 받을지 못 좁힌다")
 
     # V10-30 — 재판정이 수집 없이 도는가.
     # ★ 「--only S9」로 판정만 부를 수 있어야 한다.  배점을 고쳤을 때

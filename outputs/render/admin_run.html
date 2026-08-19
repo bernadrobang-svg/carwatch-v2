@@ -80,9 +80,9 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
+<div class="banner banner-stale">
+  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
 </div>
 
 
@@ -92,12 +92,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>running</strong> · 사유 listing_updated · 범위 all
-    </p>
+  <p><strong>done</strong> · 사유 raw_missing · 범위 all
+    <span class="muted">· run 20260819T053535</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-18T21:55:32.384745+00:00</span></p>
-  
+    <span class="muted">· 넣은 시각 2026-08-19T05:35:33.898692+00:00</span></p>
+  <p class="muted">S5 ok 22317 · S6 ok 103546 · S9 ok 87864 · S10 ok 3661</p>
   
   
 
@@ -113,39 +113,39 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">12,348</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">15,723</td></tr>
   
-  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">1,743</td></tr>
+  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">2,200</td></tr>
   
-  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">12,589</td></tr>
+  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">16,251</td></tr>
   
   <tr><td data-label="엔드포인트">extend_warrant</td><td class="num" data-label="원문">8</td></tr>
   
   <tr><td data-label="엔드포인트">facet</td><td class="num" data-label="원문">14</td></tr>
   
-  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">7,095</td></tr>
+  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">8,979</td></tr>
   
-  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">6,613</td></tr>
+  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">8,402</td></tr>
   
   <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">1,326</td></tr>
   
-  <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">12,937</td></tr>
+  <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">16,312</td></tr>
   
-  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">7,980</td></tr>
+  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">10,180</td></tr>
   
-  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">7,824</td></tr>
+  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">10,024</td></tr>
   
-  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">12,111</td></tr>
+  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">15,486</td></tr>
   
   </tbody>
   </table>
-  <p class="muted">매물 8,055건 · 판정 3,555건</p>
+  <p class="muted">매물 8,055건 · 판정 3,661건</p>
 
   <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
     갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
 </div>
 
-<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
+
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -170,7 +170,7 @@
     GRANDEUR_LPG <span class="muted">(251건)</span></label>
   
   <label class="opt"><input type="radio" name="scope" value="KOLEOS_HEV">
-    KOLEOS_HEV <span class="muted">(249건)</span></label>
+    KOLEOS_HEV <span class="muted">(248건)</span></label>
   
   <label class="opt"><input type="radio" name="scope" value="SPORTAGE_LPI">
     SPORTAGE_LPI <span class="muted">(190건)</span></label>
@@ -212,17 +212,15 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-18T21:55:32.384745+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-08-19T05:35:33.898692+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-18T21:55:32.384745+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""><form method="post" action="/admin/run" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="action" value="halt">
-    <input type="hidden" name="job_id" value="c27c0f4d32cf5300ed">
-    <input name="reason" size="12" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
-  </form></td></tr>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-18T19:00:36.597420+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -314,11 +312,6 @@
   <td class="muted" data-label="사유">listing_updated</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-18T08:55:18.189537+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -326,7 +319,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-18T22:30:06.431911+00:00 · 20260818T223006 · 정상 · 0.0초</li><li>2026-08-18T22:13:55.116708+00:00 · 20260818T221355 · 정상 · 30.7초</li><li>2026-08-18T22:03:46.613428+00:00 · 20260818T220346 · 정상 · 97.5초</li><li>2026-08-18T21:55:33.639612+00:00 · 20260818T215533 · 정상 · 430.5초</li><li>2026-08-18T19:00:36.982693+00:00 · 20260818T190036 · 정상 · 1,112.8초</li></ul>
+<ul class="muted"><li>2026-08-19T05:35:35.983114+00:00 · 20260819T053535 · 정상 · 2,136.9초</li><li>2026-08-18T22:30:06.431911+00:00 · 20260818T223006 · 정상 · 0.0초</li><li>2026-08-18T22:13:55.116708+00:00 · 20260818T221355 · 정상 · 30.7초</li><li>2026-08-18T22:03:46.613428+00:00 · 20260818T220346 · 정상 · 97.5초</li><li>2026-08-18T21:55:33.639612+00:00 · 20260818T215533 · 정상 · 430.5초</li></ul>
 
 
 
@@ -336,8 +329,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260818T215533</span>
-  <span>2026-08-19 14:11</span>
+  <span>run 20260819T053535</span>
+  <span>2026-08-20 08:12</span>
 </footer>
 
 </body>

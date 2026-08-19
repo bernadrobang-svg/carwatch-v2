@@ -564,7 +564,13 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             # ★ 조용히 건너뛰지 않는다.  몇 건을 왜 건너뛰었는지 남긴다
             say("S4", f"옛 봉투 {skipped_old}건 건너뜀 — 더 새 관측이 있다",
                 rows, rows)
-        rep = step_report("S4", None, rows, {"ok": ok}, 0, time.time() - t0)
+        # ★★ 건너뛴 옛 봉투는 「미완성」이 아니다 — 이미 더 새 값이 실려 있다.
+        #   expected 에서 뺀다 (S5 의 done_before 와 같은 자리).
+        #   ★ 실측 08-20 — 안 빼면 not_requested 26,865건으로 S4 가 매번
+        #     중단하고, 그 뒤 S5·S6·S9·S10 이 통째로 안 돈다.
+        #     목록을 저장할 때마다 실패한 작업만 쌓였다
+        rep = step_report("S4", None, rows - skipped_old, {"ok": ok}, 0,
+                          time.time() - t0)
         return rep, ok
 
     # ── S5 상세 수집 ─────────────────────────────────────────────────

@@ -293,15 +293,23 @@ def make_worker_ctx():
     return make_context(EncarAdapter(cfg).site_code)
 
 
-def make_worker_executors():
+def make_worker_executors(reason: str = ""):
     """소비기가 쓸 단계 실행기.  ★ CLI 와 같은 것을 쓴다 —
-    화면으로 돌린 것과 터미널로 돌린 것이 다르면 안 된다 (B-6)."""
+    화면으로 돌린 것과 터미널로 돌린 것이 다르면 안 된다 (B-6).
+
+    reason  ★ 사유가 「전건을 다시 던지는가」를 정한다 (실측 08-20).
+            안 보면 목록 저장 하나가 32,949 매물 재수집을 부른다 —
+            규격이 금지한 것이다 (c-tools 「목록 저장이 전건 재수집을 안 부른다」)
+    """
+    from collect.pipeline import refetch_all
+
     cfg = load("endpoints.json")["encar"]
     targets = load_targets(os.path.join(ROOT, "config", "targets.json"))
     adapter = EncarAdapter(cfg)
     ex = make_executors(adapter, UrlFetcher(), SystemClock(), cfg, targets,
                         backup_path=BACKUP_PATH, rng=random.Random(),
-                        root_dir=ROOT, progress=print_progress)
+                        root_dir=ROOT, progress=print_progress,
+                        resume=not refetch_all(reason))
     ex.update(make_score_executors(ROOT, SystemClock(), targets,
                                    load("scoring.json"),
                                    load("depreciation.json")))
