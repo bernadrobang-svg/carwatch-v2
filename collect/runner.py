@@ -940,6 +940,52 @@ def _dicts(conn, root: str) -> DictionarySet:
                          color_default=cg["default"])
 
 
+def _option_medians(conn, prices: dict) -> tuple:
+    """트림별 옵션가 중앙값 · 차종별 신차가 중앙값 (개정 421).
+
+    마스터 — 「옵션의 총합 가격도 트림별 가격 차이도 가격 점수에 넣자」
+
+    ★ 있는 데이터로 낸다.  새로 받을 것은 없다
+    ★ 트림은 Badge + BadgeDetail 이다 (개정 313).  Badge 만으로 묶으면
+      「깡통」과 「풀옵션 최고트림」이 한 무리가 된다 — 보정의 뜻이 없어진다
+    ★ 매물 단위로 풀어 둔다 — 스냅샷에는 트림 칸이 없다.
+      축 함수가 트림을 다시 뒤지게 하지 않는다 (F-1)
+    돌려줌   {listing_id: (트림 옵션가 중앙값, 표본수, 차종 신차가 중앙값)}
+    """
+    import json as _j
+
+    def _mid(rows: list) -> int:
+        rows = sorted(rows)
+        m = len(rows) // 2
+        return int(rows[m] if len(rows) % 2
+                   else (rows[m - 1] + rows[m]) / 2)
+
+    by_trim: dict = {}
+    by_model: dict = {}
+    where: dict = {}
+    for lid, tk, badge, detail, opt_json, origin in conn.execute(
+        "SELECT listing_id, target_key, trim_badge, trim_badge_detail,"
+        " options_choice_json, price_origin_won FROM core_listing"
+        " WHERE status='active' AND target_key IS NOT NULL"
+    ):
+        try:
+            codes = _j.loads(opt_json) if opt_json else []
+        except (ValueError, TypeError):
+            codes = []
+        if not isinstance(codes, list):
+            codes = []
+        won = sum(prices.get(c, 0) for c in codes)
+        key = (tk, badge or "", detail or "")
+        by_trim.setdefault(key, []).append(won)
+        where[lid] = (key, tk)
+        if origin:
+            by_model.setdefault(tk, []).append(int(origin))
+    trim_mid = {k: (_mid(v), len(v)) for k, v in by_trim.items()}
+    model_mid = {k: _mid(v) for k, v in by_model.items()}
+    return {lid: (*trim_mid[key], model_mid.get(tk))
+            for lid, (key, tk) in where.items()}
+
+
 def _market_medians(conn, need: int) -> dict:
     """매물별 「같은 차종·트림·연식」 실매물 중앙값 (개정 292 ①).
 
@@ -1104,6 +1150,14 @@ def _owned_months(snap, as_of: str) -> int | None:
         snap.first_registration_date or snap.year_month, as_of)
 
 
+def _option_of(opts: dict, lid: str) -> dict:
+    """옵션 보정에 쓸 값 (개정 421).  ★ 트림은 Badge + BadgeDetail 이다."""
+    got = opts.get(lid)
+    return {"option_median_by_trim_won": got[0] if got else None,
+            "option_trim_sample_n": got[1] if got else None,
+            "origin_median_by_model_won": got[2] if got else None}
+
+
 def _market_of(market: dict, lid: str) -> dict:
     """매물별 시세 중앙값 → ListingSnapshot (F-1 · V4-24).
 
@@ -1132,6 +1186,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         # ★ 시세·트림 사다리는 전 매물을 한 번만 훑는다 (개정 292)
         market = _market_medians(conn, policy.rule("value")["market_min_sample"])
         ladder = _trim_ladders(conn)
+        # ★ 트림별 옵션가 중앙값 · 차종별 신차가 중앙값 (개정 421).
+        #   한 번만 낸다 — 매물마다 세면 3,843번 훑는다 (V11-34 와 같은 이유)
+        opt_meds = _option_medians(conn, dicts.option_prices)
         opt_base = _option_base(conn, dicts.option_prices,
                                 float(policy.rule("spec")["option_percentile"]),
                                 int(policy.rule("spec")["option_min_sample"]))
@@ -1167,6 +1224,8 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                            **_market_of(market, lid))
             snap = replace(snap, owned_months=_owned_months(snap, at),
                            **_option_money(snap, dicts.option_prices))
+            # ★ 옵션·트림 보정 (개정 421).  깡통과 풀옵션을 같은 값으로 안 본다
+            snap = replace(snap, **_option_of(opt_meds, lid))
             tc = _listing_config(conn, lid, targets, depreciation, at, ladder,
                                  site_rules.get(snap.site, {}), opt_base)
             actx = AxisContext(snap, dicts, policy,
@@ -1209,6 +1268,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         # ★ 시세·트림 사다리는 전 매물을 한 번만 훑는다 (개정 292)
         market = _market_medians(conn, policy.rule("value")["market_min_sample"])
         ladder = _trim_ladders(conn)
+        # ★ 트림별 옵션가 중앙값 · 차종별 신차가 중앙값 (개정 421).
+        #   한 번만 낸다 — 매물마다 세면 3,843번 훑는다 (V11-34 와 같은 이유)
+        opt_meds = _option_medians(conn, dicts.option_prices)
         opt_base = _option_base(conn, dicts.option_prices,
                                 float(policy.rule("spec")["option_percentile"]),
                                 int(policy.rule("spec")["option_min_sample"]))
@@ -1235,6 +1297,8 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                            **_market_of(market, lid))
             snap = replace(snap, owned_months=_owned_months(snap, at),
                            **_option_money(snap, dicts.option_prices))
+            # ★ 옵션·트림 보정 (개정 421).  깡통과 풀옵션을 같은 값으로 안 본다
+            snap = replace(snap, **_option_of(opt_meds, lid))
             tc = _listing_config(conn, lid, targets, depreciation, at, ladder,
                                  site_rules.get(snap.site, {}), opt_base)
             actx = AxisContext(snap, dicts, policy,
