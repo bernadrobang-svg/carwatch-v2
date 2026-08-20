@@ -214,12 +214,6 @@ class ListingSnapshot:
     use_business: int | None = None
     # 선택 옵션가 합 (원).  ★ 카탈로그가 없으면 None — 「0원」이 아니다
     option_total_won: int | None = None
-    # ★ 옵션 보정 (개정 421).  「깡통 4000 · 최고트림 풀옵션 7000」을 가른다
-    #   같은 트림 매물들의 옵션가 중앙값 · 그 표본 수
-    option_median_by_trim_won: int | None = None
-    option_trim_sample_n: int | None = None
-    # 표본이 모자라 차종으로 넓힐 때 쓴다 — 차종 전체의 신차가 중앙값
-    origin_median_by_model_won: int | None = None
 
 
 @dataclass(frozen=True)

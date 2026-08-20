@@ -82,15 +82,5 @@
   ],
   "_chunk_probe_seq_note": "V11-148 되살림에 쓸 조각 번호 [몇 번째, 전체]. ★ 오류 문구에 「3/9」가 나오는지 본다",
   "_note_id_word_span": "V11-74 — 식별자 말(「매물」·「실제 값」…)을 몇 자 앞까지 볼 것인가. ★ 「실제 값 · A · B · C」 한 줄이 이 안에 들어가야 한다. 24자로 자르니 둘째 값부터 거짓 실패였다 (실측 08-19)",
-  "id_word_span": 160,
-  "_note_value_step_max_distinct": "V3-82 — 시세 점수가 이 수 이하로만 나오면 계단값이다. 옛 market_curve 는 10구간이었다.  비례식이면 매물마다 값이 달라진다",
-  "value_step_max_distinct": 12,
-  "_note_origin_probe_percents": "V3-84 — 신차가 점수가 d% 와 1:1 인지 재는 표본 퍼센트. ★ 세 점을 본다 — 한 점만 보면 기울기가 아니라 우연히 맞는 값일 수 있다",
-  "origin_probe_percents": [
-    5,
-    10,
-    30
-  ],
-  "_note_float_tolerance": "부동소수 비교 허용 오차 (V3-84)",
-  "float_tolerance": 0.01
+  "id_word_span": 160
 }

@@ -292,8 +292,87 @@
       "_repair_cost_note": "10% 는 v1 초안이다. 실매물 15.6% 가 걸린다 — E 로는 과하다. 첫 수집 후 「E 로 뺄 비율」을 정하고 그 분위수를 임계로 잡는다 (STEP 82)"
     },
     "value": {
-      "_note": "① 값 250 — F-scoring 1-1·1-2·1-3.  ★ 개정 419 로 계단표를 없앴다",
+      "_note": "① 값 250 — F-scoring 1-1·1-2·1-3",
+      "market_curve": [
+        [
+          0.25,
+          100
+        ],
+        [
+          0.2,
+          90
+        ],
+        [
+          0.15,
+          80
+        ],
+        [
+          0.1,
+          70
+        ],
+        [
+          0.05,
+          60
+        ],
+        [
+          0.0,
+          50
+        ],
+        [
+          -0.05,
+          35
+        ],
+        [
+          -0.1,
+          20
+        ],
+        [
+          -0.15,
+          10
+        ],
+        [
+          -0.2,
+          0
+        ]
+      ],
       "market_min_sample": 5,
+      "depreciation_curve": [
+        [
+          0.15,
+          80
+        ],
+        [
+          0.1,
+          70
+        ],
+        [
+          0.05,
+          58
+        ],
+        [
+          0.0,
+          45
+        ],
+        [
+          -0.05,
+          30
+        ],
+        [
+          -0.1,
+          15
+        ],
+        [
+          -0.15,
+          0
+        ]
+      ],
+      "residual_by_year": {
+        "1": 0.88,
+        "2": 0.78,
+        "3": 0.67
+      },
+      "residual_step": 0.07,
+      "residual_floor": 0.15,
       "mileage_curve": [
         [
           5000,
@@ -367,20 +446,7 @@
       "high_mileage_km": 100000,
       "_high_mileage_note": "이만큼 넘으면 「많이 달렸다」를 싼 이유로 낸다 (개정 299 ⑤)",
       "battery_soh_low": 92,
-      "_battery_soh_note": "이보다 낮으면 「배터리가 닳았다」를 싼 이유로 낸다 (개정 296). 실측 08-17 SOH 91.1~96.8",
-      "_note_419": "마스터 — 「가격을 왜 계단식으로 하지?  감가는 커브로 만들고 가격은 커브로 안 만들지?」 ★ 시세와 같으면 0점이다. 전엔 50/100 을 그냥 줘서 「사고 없다고 A 인데 값은 비싸다」가 나왔다",
-      "_note_asymmetry": "싼 데는 이유가 있고(사고·침수·수출용·급매) 그 이유는 ②상태·③이력이 이미 잡는다 — 후해도 안전하다. 비싼 데는 이유가 없다. 그냥 손해다 — 다른 축이 잡아 주지 않는다",
-      "market_per_percent_cheap": 5,
-      "market_per_percent_over": 8,
-      "market_min": -100,
-      "market_max": 100,
-      "origin_per_percent_cheap": 1,
-      "origin_per_percent_over": 3,
-      "origin_min": -30,
-      "origin_max": 80,
-      "_note_option_adjust": "개정 421 마스터 — 「그랜저도 깡통이 4000이면 최고트림의 풀옵션이 7000이니」. adj_median = market_median + (내 옵션가 − 트림 옵션가 중앙값). ★ 표본이 option_min_sample 미만이면 차종 중앙값 × (내 origin ÷ 차종 origin 중앙값) 으로 넓힌다",
-      "option_adjust": true,
-      "option_min_sample": 5
+      "_battery_soh_note": "이보다 낮으면 「배터리가 닳았다」를 싼 이유로 낸다 (개정 296). 실측 08-17 SOH 91.1~96.8"
     },
     "state": {
       "_note": "② 상태 150 — F-scoring 2-1~2-8",

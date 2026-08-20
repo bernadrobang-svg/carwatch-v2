@@ -167,27 +167,6 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
-    "V3-82": Check("V3", "V3-82", "시세 점수가 계단값만 나오지 않음",
-                   FATAL, "run",
-                   "마스터 — 「가격을 왜 계단식으로 하지?  감가는 커브로 "
-                   "만들고 가격은 커브로 안 만들지?」 ★ 계단표를 없앴다 "
-                   "(개정 419).  되돌아가면 이것이 문다",
-                   KIND_CODE),
-    "V3-83": Check("V3", "V3-83", "시세보다 비싼 매물에 음수 점수가 붙음",
-                   FATAL, "run",
-                   "전엔 −20% 에서 바닥이라 35% 비싸도 0점으로 같았다. "
-                   "★ 무사고면 330/625 가 값을 안 보고 깔려 「사고 없다고 A 인데 "
-                   "값은 비싸다」가 나왔다 (개정 419)",
-                   KIND_CODE),
-    "V3-84": Check("V3", "V3-84", "신차가 점수가 d% 와 1:1 임", FATAL, "run",
-                   "마스터 검산 — 「신차 대비 30% 싸면 30점」. "
-                   "★ 잔가율 표를 안 쓴다 (개정 419)",
-                   KIND_CODE),
-    "V3-85": Check("V3", "V3-85", "옵션 보정 없이 원 중앙값으로 견준 매물",
-                   WARN, "run",
-                   "마스터 — 「그랜저도 깡통이 4000이면 최고트림의 풀옵션이 "
-                   "7000이니」. ★ 넓혀서 낸 것은 화면에 밝힌다 (개정 421)",
-                   KIND_EXTERNAL),
     "V3-76": Check("V3", "V3-76", "⑤ 의 하위 축 합이 갈래 표기와 같음",
                    FATAL, "run",
                    "개정 351 이 ⑤ 를 50 으로 확정했는데 하위 축을 안 지워 "
@@ -687,87 +666,6 @@ def _curve_table_check(rid):
     return result(C["V3-66"], rid, f"{len(curves)}곡선",
                   f"{len(curves) - len(bad)}곡선이 표와 같다",
                   not bad, bad[:6])
-
-
-def _checks_json() -> dict:
-    """검사 상수.  ★ 코드에 숫자를 안 적는다 (S14 · V4-13)."""
-    import json as _j
-    import os as _o
-
-    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
-    with open(_o.path.join(root, "config", "checks.json"),
-              encoding="utf-8") as f:
-        return _j.load(f)
-
-
-def _value_curve_checks(conn, rid):
-    """V3-82 · V3-83 · V3-84 · V3-85 — 값 축 비례식 (개정 419 · 421).
-
-    ★ config 만 보지 않는다.  실제로 매긴 점수를 본다 —
-      「계단표를 지웠다」와 「계단값이 안 나온다」는 다르다
-    """
-    import json as _j
-    import os as _o
-
-    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
-    with open(_o.path.join(root, "config", "scoring.json"),
-              encoding="utf-8") as f:
-        r = _j.load(f)["axis_rules"]["value"]
-
-    # V3-82 — 계단표가 남아 있는가 · 점수가 몇 가지뿐인가
-    bad82 = [f"{k} 가 아직 config 에 있다 — 개정 419 가 폐기했다"
-             for k in ("market_curve", "depreciation_curve",
-                       "residual_by_year", "residual_step", "residual_floor")
-             if k in r]
-    got = [v for (v,) in conn.execute(
-        "SELECT DISTINCT value FROM result_axis WHERE axis='value.market'"
-        " AND value IS NOT NULL")]
-    if got and len(got) <= _checks_json()["value_step_max_distinct"]:
-        bad82.append(f"시세 점수가 {len(got)}가지뿐이다 — 계단값이다")
-
-    # V3-83 — 비싼 매물에 음수가 붙는가
-    bad83 = []
-    neg = conn.execute(
-        "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
-        " AND value < 0").fetchone()[0]
-    over = conn.execute(
-        "SELECT COUNT(*) FROM result_axis a JOIN core_listing l"
-        " ON l.listing_id = a.listing_id"
-        " WHERE a.axis='value.market' AND a.excluded=0"
-        " AND a.source NOT LIKE 'market_sample_short%'").fetchone()[0]
-    if over and not neg:
-        bad83.append(f"시세 축 {over}건 중 음수가 0건이다 — "
-                     "비싼 매물이 0점에서 멈춘다")
-    if float(r["market_min"]) >= 0:
-        bad83.append(f"market_min 이 {r['market_min']} 이다 — 0 에서 멈춘다")
-
-    # V3-84 — 신차가 점수가 d% 와 1:1 인가 (싼 쪽)
-    from analyze.axis.value import by_percent
-
-    bad84 = []
-    probe = _checks_json()
-    for pct in probe["origin_probe_percents"]:
-        want = pct * float(r["origin_per_percent_cheap"])
-        if abs(by_percent(pct, r, "origin")
-               - want) > probe["float_tolerance"]:
-            bad84.append(f"신차가 {pct}% 쌀 때 {by_percent(pct, r, 'origin')} "
-                         f"— {want} 여야 한다")
-
-    # V3-85 — 옵션 보정 없이 원 중앙값으로 견준 매물
-    plain = [f"{lid} — {src}" for lid, src in conn.execute(
-        "SELECT listing_id, source FROM result_axis"
-        " WHERE axis='value.market' AND source LIKE 'market_median%'")]
-    total = conn.execute(
-        "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
-    ).fetchone()[0]
-    return [
-        result(C["V3-82"], rid, 0, len(bad82), not bad82, bad82[:4]),
-        result(C["V3-83"], rid, "음수 있음", f"{neg}건", not bad83, bad83[:4]),
-        result(C["V3-84"], rid, "1:1", "맞다" if not bad84 else "다르다",
-               not bad84, bad84[:4]),
-        result(C["V3-85"], rid, 0, f"{len(plain)}/{total}",
-               not plain, plain[:4]),
-    ]
 
 
 def _group_sum_checks(rid):
@@ -1615,8 +1513,6 @@ def run(conn, ctx) -> list:
     out.append(_curve_table_check(rid))
     # 배점 갈래 합 (개정 392)
     out += _group_sum_checks(rid)
-    # 값 축 비례식 (개정 419 · 421)
-    out += _value_curve_checks(conn, rid)
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다
