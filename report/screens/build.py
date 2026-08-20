@@ -1152,7 +1152,8 @@ def view_compare(account: Account, conn, listing_ids: list[int],
             cells[(v.listing_id, a.axis)] = a
     denoms = {v.denominator for v in views}
     vers = {(v.versions.calc_version, v.versions.dict_version) for v in views}
-    flt = ListingFilter(calc_version=calc_version)
+    # ★ 비교도 사람이 고른 것이다 — 리스라고 빼면 고른 차가 사라진다 (개정 420)
+    flt = ListingFilter(calc_version=calc_version, lease=True)
     rows = [r for r in view_listings(account, conn, flt, fin_cfg, root)
             if r.listing_id in set(listing_ids)]
     # ★ 「이 셋 중에서」 — 축마다 누가 앞서는가.  표를 눈으로 훑게 두지 않는다
@@ -1707,7 +1708,10 @@ def view_watch(account: Account, conn, fin_cfg: dict,
         "ORDER BY w.added_at DESC", (account.account_id,)).fetchall()
     if not rows:
         return []
-    flt = ListingFilter(calc_version=calc_version)
+    # ★★ 리스 제외는 /listings · /recommend 에만이다 (개정 420).
+    #   관심은 사람이 이미 고른 것이다 — 빼면 담아 둔 차가 사라진다.
+    #   실측 08-21 — 안 켰더니 관심 목록이 통째로 비었다 (V11-119 가 잡았다)
+    flt = ListingFilter(calc_version=calc_version, lease=True)
     by_id = {r.listing_id: r
              for r in view_listings(account, conn, flt, fin_cfg, root)}
     spark = _bulk_spark(conn, [r[1] for r in rows])

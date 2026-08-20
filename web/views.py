@@ -1093,8 +1093,10 @@ def _watch_invite(conn, account, listing_id: int, root: str, csrf: str,
     from report.screens.views import ListingFilter
 
     ver = _versions(conn)
+    # ★ 관심에 담으려는 그 매물이다.  리스라고 빼면 담을 수가 없다 (개정 420)
     rows = [r for r in view_listings(
-        account, conn, ListingFilter(calc_version=ver["calc_version"]),
+        account, conn,
+        ListingFilter(calc_version=ver["calc_version"], lease=True),
         _cfg("finance.json", root), root) if r.listing_id == listing_id]
     back = "&".join(f"{k}={v}" for k, v in (query or {}).items())
     return page(conn, account, "관심 등록", "watch_invite.html",

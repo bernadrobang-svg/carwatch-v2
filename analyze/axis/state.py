@@ -88,14 +88,17 @@ def _accident(ctx: AxisContext, v: Verdict) -> None:
     """2-1 사고 이력 40 — 무사고 40 · 1회 22 · 2회 10 · 3회 이상 0."""
     s, r = ctx.snapshot, ctx.policy.rule("state")
     my, other = s.accident_my_cnt, s.accident_other_cnt
-    if my is None and other is None:
+    from_panel = 1 if panel_trace(_panels(s)) else 0
+    if my is None and other is None and not from_panel:
         # ★ 원문이 없으면 「확인 안 됨」이다.  「무사고」가 아니다 (개정 323)
         put(v, ACCIDENT, 0, PRIO_OBSERVED, "missing")
         return
     # ★★ 나쁜 쪽을 믿는다 (개정 414).  회수 = max(보험 회수, 성능부 흔적→1)
     #   ★ 성능부에 교환·용접이 있는데 보험이 0회면 보험이 못 본 것이다
+    #   ★ 보험 원문이 아예 없어도 성능부 흔적이 있으면 「확인 안 됨」이 아니다 —
+    #     손댄 자리를 눈으로 보고도 「모른다」 하는 것이 「나쁜 쪽」에 어긋난다
+    #     (실측 08-21 — 그런 매물이 148건이었다)
     from_record = (my or 0) + (other or 0)
-    from_panel = 1 if panel_trace(_panels(s)) else 0
     n = max(from_record, from_panel)
     why = ("record_accident_count" if from_record >= from_panel
            else "panel_trace_min_one")

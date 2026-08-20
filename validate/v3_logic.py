@@ -868,9 +868,16 @@ def _value_curve_checks(conn, rid):
                          f"— {want} 여야 한다")
 
     # V3-85 — 옵션 보정 없이 원 중앙값으로 견준 매물
+    # ★ 넓혀서 낸 것을 화면이 밝히는가 (규격의 「필수」)
+    import os as _o2
+
+    tpl = _o2.path.join(root, "web", "templates", "why.html")
+    html = open(tpl, encoding="utf-8").read() if _o2.path.isfile(tpl) else ""
     plain = [f"{lid} — {src}" for lid, src in conn.execute(
         "SELECT listing_id, source FROM result_axis"
         " WHERE axis='value.market' AND source LIKE 'market_median%'")]
+    if plain and "차종 전체로 견줬습니다" not in html:
+        plain.insert(0, "화면이 무엇으로 견줬는지 안 밝힌다")
     total = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
     ).fetchone()[0]
@@ -1118,19 +1125,27 @@ def _source_before_value_check(conn, rid):
                       " ORDER BY calculated_at DESC LIMIT 1").fetchone()
     cv = cv[0] if cv else ""
     bad = []
-    for axis, table in (("state.accident", "core_record"),
-                        ("state.repair", "core_record"),
-                        ("state.frame", "core_inspection")):
+    # ★★ 축마다 「근거가 될 수 있는 원문」이 하나가 아니다 (개정 414).
+    #   state.accident 는 보험(core_record)이 없어도 성능부에 교환·용접
+    #   흔적이 있으면 최소 1회로 센다 — 그것도 원문이다.
+    #   ★ 표를 하나로 고정하면 「나쁜 쪽」이 V3-62 에 걸린다 (실측 08-21 · 15건)
+    for axis, tables in (("state.accident", ("core_record",
+                                             "core_inspection")),
+                         ("state.repair", ("core_record",)),
+                         ("state.frame", ("core_inspection",))):
         # ★ 「0점 + 확인 안 됨」은 값을 만든 것이 아니다 (개정 325).
         #   source 가 missing 이면 우리가 「모른다」고 말한 것이다
         n = conn.execute(
             "SELECT COUNT(*) FROM result_axis a WHERE a.axis=?"
             " AND a.calc_version=? AND a.excluded=0 AND a.source <> 'missing'"
-            f" AND NOT EXISTS (SELECT 1 FROM {table} t"
-            "   WHERE t.listing_id = a.listing_id AND t.row_status='ok')",
+            + "".join(
+                f" AND NOT EXISTS (SELECT 1 FROM {t} x"
+                "   WHERE x.listing_id = a.listing_id AND x.row_status='ok')"
+                for t in tables),
             (axis, cv)).fetchone()[0]
         if n:
-            bad.append(f"{axis} — {table} 원문 없이 값 {n}건")
+            bad.append(f"{axis} — {' · '.join(tables)} 어느 원문도 없이 "
+                       f"값 {n}건")
     return result(C["V3-62"], rid, 0, len(bad), not bad, bad)
 
 
