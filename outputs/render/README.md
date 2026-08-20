@@ -22,7 +22,7 @@
 | `/admin` | [admin.html](admin.html) | 200 | 15,266B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,139B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 47,523B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,456B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 15,664B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 9,510B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 48,008B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,529B |
