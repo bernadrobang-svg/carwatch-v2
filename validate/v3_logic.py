@@ -167,6 +167,18 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
+    "V3-79": Check("V3", "V3-79", "어긋난 매물에 ②-2·②-3 만점이 없음",
+                   FATAL, "run",
+                   "★ ②-1 만 고치면 836건이 그대로 새어 나간다 — ②-1 은 이미 "
+                   "보험을 보고 감점하고 있기 때문이다. 「나쁜 쪽」 원칙을 "
+                   "② 상태 전체에 쓴다 (개정 414)",
+                   KIND_CODE),
+    "V3-80": Check("V3", "V3-80", "②-1 회수가 max(보험, 성능부) 임",
+                   FATAL, "run",
+                   "마스터 확정 — 「둘이 어긋나면 나쁜 쪽을 믿는다」. "
+                   "성능부에 교환·용접이 있는데 보험이 0회면 보험이 못 본 것이다 "
+                   "(개정 414)",
+                   KIND_CODE),
     "V3-82": Check("V3", "V3-82", "시세 점수가 계단값만 나오지 않음",
                    FATAL, "run",
                    "마스터 — 「가격을 왜 계단식으로 하지?  감가는 커브로 "
@@ -689,6 +701,68 @@ def _curve_table_check(rid):
                   not bad, bad[:6])
 
 
+def _worse_of_checks(conn, rid):
+    """V3-79 · V3-80 — 「나쁜 쪽」 원칙이 ② 상태 전체에 걸리는가 (개정 414).
+
+    ★ config 만 보지 않는다.  매긴 점수를 본다 —
+      「규칙을 켰다」와 「점수가 그렇게 나왔다」는 다르다
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        st = _j.load(f)["axis_rules"]["state"]
+    if not st.get("worse_of_inspection"):
+        return [result(C["V3-79"], rid, "켜짐", "꺼짐", False,
+                       ["worse_of_inspection 이 꺼져 있다 (개정 414)"]),
+                not_applicable(C["V3-80"], rid, "규칙이 꺼져 있다")]
+
+    # V3-79 — 어긋난 매물(성능부 무사고 · 보험 수리비)에 ②-2·②-3 만점이 있는가
+    full = {"state.frame": st["frame_points"]["none"],
+            "state.outer": st["outer_points"]["none"]}
+    bad79 = []
+    for axis, top in full.items():
+        rows = conn.execute(
+            "SELECT COUNT(*) FROM result_axis a"
+            " JOIN core_inspection i ON i.listing_id = a.listing_id"
+            " JOIN core_record r ON r.listing_id = a.listing_id"
+            " WHERE a.axis = ? AND a.value = ?"
+            "   AND i.inspection_accident_flag = 0"
+            "   AND COALESCE(r.accident_my_cost, 0) > 0", (axis, top)
+        ).fetchone()[0]
+        if rows:
+            bad79.append(f"{axis} — 어긋난 매물 {rows}건이 만점 {top} 을 받았다")
+
+    # V3-80 — ②-1 회수가 max(A, B) 인가.  ★ 성능부 흔적만 있는 것을 본다
+    from analyze.axis.state import panel_trace
+
+    bad80, seen80 = [], 0
+    for lid, val, src, panels, my, other in conn.execute(
+        "SELECT a.listing_id, a.value, a.source, i.inspection_panel_json,"
+        " r.accident_my_cnt, r.accident_other_cnt FROM result_axis a"
+        " JOIN core_inspection i ON i.listing_id = a.listing_id"
+        " LEFT JOIN core_record r ON r.listing_id = a.listing_id"
+        " WHERE a.axis = 'state.accident' LIMIT 400"
+    ):
+        try:
+            got = _j.loads(panels) if panels else []
+        except (ValueError, TypeError):
+            got = []
+        if not panel_trace(got):
+            continue
+        seen80 += 1
+        if ((my or 0) + (other or 0)) == 0 and src != "panel_trace_min_one":
+            bad80.append(f"{lid} — 성능부에 흔적이 있는데 보험 0회로 쟀다 "
+                         f"({src})")
+    return [
+        result(C["V3-79"], rid, 0, len(bad79), not bad79, bad79[:4]),
+        result(C["V3-80"], rid, "max(A,B)", f"성능부 흔적 {seen80}건 확인",
+               not bad80, bad80[:4]),
+    ]
+
+
 def _checks_json() -> dict:
     """검사 상수.  ★ 코드에 숫자를 안 적는다 (S14 · V4-13)."""
     import json as _j
@@ -719,11 +793,17 @@ def _value_curve_checks(conn, rid):
              for k in ("market_curve", "depreciation_curve",
                        "residual_by_year", "residual_step", "residual_floor")
              if k in r]
+    cfg82 = _checks_json()
+    rows82 = conn.execute(
+        "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
+        " AND value IS NOT NULL").fetchone()[0]
     got = [v for (v,) in conn.execute(
         "SELECT DISTINCT value FROM result_axis WHERE axis='value.market'"
         " AND value IS NOT NULL")]
-    if got and len(got) <= _checks_json()["value_step_max_distinct"]:
-        bad82.append(f"시세 점수가 {len(got)}가지뿐이다 — 계단값이다")
+    # ★ 매물이 적으면 종류도 적다.  씨앗 DB 를 계단값이라 하지 않는다
+    if rows82 >= cfg82["value_step_min_rows"] \
+            and len(got) <= cfg82["value_step_max_distinct"]:
+        bad82.append(f"시세 점수가 {rows82}건에 {len(got)}가지뿐이다 — 계단값이다")
 
     # V3-83 — 비싼 매물에 음수가 붙는가
     bad83 = []
@@ -1617,6 +1697,8 @@ def run(conn, ctx) -> list:
     out += _group_sum_checks(rid)
     # 값 축 비례식 (개정 419 · 421)
     out += _value_curve_checks(conn, rid)
+    # 「나쁜 쪽」 원칙 (개정 414)
+    out += _worse_of_checks(conn, rid)
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다

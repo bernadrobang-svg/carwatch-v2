@@ -92,5 +92,7 @@
     30
   ],
   "_note_float_tolerance": "부동소수 비교 허용 오차 (V3-84)",
-  "float_tolerance": 0.01
+  "float_tolerance": 0.01,
+  "_note_value_step_min_rows": "V3-82 — 이만큼 매물이 있어야 「값 종류가 몇 가지인가」를 물을 수 있다. ★ 씨앗 DB 는 매물이 열댓 건이라 비례식이어도 종류가 적다 — 거짓 실패가 된다",
+  "value_step_min_rows": 100
 }

@@ -56,6 +56,34 @@ def _rank_worst(panels, ranks, titles) -> int:
     return n
 
 
+def insurance_trace(snap) -> bool:
+    """보험에 「고친 흔적」이 있는가 (개정 414).
+
+    ★ 회수와 금액 둘 다 본다.  금액만 보면 「1회 · 0원」이 새어 나간다
+    """
+    return bool((snap.accident_my_cost or 0) > 0
+                or (snap.accident_my_cnt or 0) > 0)
+
+
+def panel_trace(panels) -> bool:
+    """성능부에 교환·용접 흔적이 있는가 (개정 414 ②-1 의 B).
+
+    ★ 랭크를 안 가린다.  「어딘가 손댔다」만 본다 — 최소 1회로 세는 용도다
+    """
+    for el in panels or []:
+        got = [t.get("title") for t in (el.get("statusTypes") or [])]
+        if any(t in SWAP_TITLES or t in SHEET_TITLES for t in got):
+            return True
+    return False
+
+
+def worse_step(key: str, order: list) -> str:
+    """한 단계 내린다 (개정 414).  ★ 0점으로 떨어뜨리지 않는다."""
+    if key not in order:
+        return key
+    return order[min(order.index(key) + 1, len(order) - 1)]
+
+
 def _accident(ctx: AxisContext, v: Verdict) -> None:
     """2-1 사고 이력 40 — 무사고 40 · 1회 22 · 2회 10 · 3회 이상 0."""
     s, r = ctx.snapshot, ctx.policy.rule("state")
@@ -64,9 +92,15 @@ def _accident(ctx: AxisContext, v: Verdict) -> None:
         # ★ 원문이 없으면 「확인 안 됨」이다.  「무사고」가 아니다 (개정 323)
         put(v, ACCIDENT, 0, PRIO_OBSERVED, "missing")
         return
-    put(v, ACCIDENT, round(step_down((my or 0) + (other or 0),
-                                     r["accident_curve"])),
-        PRIO_OBSERVED, "record_accident_count")
+    # ★★ 나쁜 쪽을 믿는다 (개정 414).  회수 = max(보험 회수, 성능부 흔적→1)
+    #   ★ 성능부에 교환·용접이 있는데 보험이 0회면 보험이 못 본 것이다
+    from_record = (my or 0) + (other or 0)
+    from_panel = 1 if panel_trace(_panels(s)) else 0
+    n = max(from_record, from_panel)
+    why = ("record_accident_count" if from_record >= from_panel
+           else "panel_trace_min_one")
+    put(v, ACCIDENT, round(step_down(n, r["accident_curve"])),
+        PRIO_OBSERVED, why)
 
 
 def _frame(ctx: AxisContext, v: Verdict) -> None:
@@ -81,7 +115,12 @@ def _frame(ctx: AxisContext, v: Verdict) -> None:
     else:
         n = _rank_worst(_panels(s), ranks, SHEET_TITLES)
         key = "none" if not n else ("sheet1" if n == 1 else "sheet2")
-    put(v, FRAME, r["frame_points"][key], PRIO_OBSERVED, f"frame_{key}")
+    # ★ 성능부가 「이상 없음」인데 보험에 수리비가 있으면 한 단계 내린다 (개정 414)
+    why = f"frame_{key}"
+    if r.get("worse_of_inspection") and key == "none" and insurance_trace(s):
+        key = worse_step(key, r["frame_worse_order"])
+        why = f"frame_{key}_insurance_trace"
+    put(v, FRAME, r["frame_points"][key], PRIO_OBSERVED, why)
 
 
 def _outer(ctx: AxisContext, v: Verdict) -> None:
@@ -97,7 +136,12 @@ def _outer(ctx: AxisContext, v: Verdict) -> None:
     else:
         n = _rank_worst(_panels(snap), ranks, SHEET_TITLES)
         key = "none" if not n else ("paint12" if n <= 2 else "paint3")
-    put(v, OUTER, s["outer_points"][key], PRIO_OBSERVED, f"outer_{key}")
+    why = f"outer_{key}"
+    if s.get("worse_of_inspection") and key == "none" \
+            and insurance_trace(snap):
+        key = worse_step(key, s["outer_worse_order"])
+        why = f"outer_{key}_insurance_trace"
+    put(v, OUTER, s["outer_points"][key], PRIO_OBSERVED, why)
     del r
 
 

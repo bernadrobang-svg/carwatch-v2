@@ -475,7 +475,21 @@
         "cluster": 2,
         "structure": 2,
         "tuning": 1
-      }
+      },
+      "_note_worse_of": "개정 414 마스터 확정 — 「둘이 어긋나면 나쁜 쪽을 믿는다」. 성능부가 「이상 없음」인데 보험에 수리비가 있으면 한 단계 내린다. ★ 한 단계다 — 0점으로 떨어뜨리지 않는다. 성능부가 못 본 것이 있다는 뜻이지 사고가 확정된 것은 아니다",
+      "frame_worse_order": [
+        "none",
+        "sheet1",
+        "sheet2",
+        "swap"
+      ],
+      "outer_worse_order": [
+        "none",
+        "paint12",
+        "paint3",
+        "swap"
+      ],
+      "worse_of_inspection": true
     },
     "taste": {
       "_note": "⑥ 취향 50 — F-scoring ⑥",

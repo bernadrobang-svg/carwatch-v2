@@ -2,14 +2,14 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 48,777줄
+파일 135개 · 총 48,903줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v11_web.py` | 4,191 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 2,206 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,880 | 화면 데이터 생성. |
-| `validate/v3_logic.py` | 1,699 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 1,781 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,537 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `collect/runner.py` | 1,423 | 수집 실행 규칙. |
@@ -51,6 +51,7 @@
 | `validate/v9_multisite.py` | 293 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
 | `tests/test_endtoend.py` | 290 | 종단 시험 — 수집부터 리포트까지 (5장 STEP 47 · 49). |
+| `analyze/axis/state.py` | 289 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tests/test_dict.py` | 286 | 4장 키·코드·사전 시험. |
 | `adapters/encar.py` | 285 | 엔카 어댑터 — URL · 헤더 · 쿼리 조립. |
 | `store/raw.py` | 285 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
@@ -63,7 +64,6 @@
 | `tests/test_store.py` | 254 | 3장 테이블 시험. |
 | `tools/menu.py` | 254 | 실행 메뉴. |
 | `tests/test_report.py` | 249 | 9장 리포트 시험. |
-| `analyze/axis/state.py` | 245 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
 | `validate/v5_value.py` | 242 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
@@ -162,10 +162,10 @@ _rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  l
 site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142  _bulk_axes:146  confirm_ratio:167  _bulk_changes:178  _total_points:205  photo_urls:218  photo_url:250  market_price:281  _days_between:298  _ceil_to:313  _bulk_market:328  _bulk_state:367  not_join_months:400  _left:423  _warranty_state:432  _axis_state:470  _sites_cfg:528  _row:541  _view_cfg:717  order_clause:761  _view_str:767  _listings_where:773  count_listings:840  view_listings:852  _soh_low:928  _view_int:937  _bucket:943  _high_km:950  _option_prices:959  recommend_funnel:971  _bulk_upside:988  view_recommend:1003  recommend_reason:1034  excluded_groups:1077  view_why:1092  view_compare:1098  market_trims:1139  view_market:1161  _web_cfg:1197  _median:1211  _with_height:1216  _price_bins:1231  _group_prices:1252  _by_year:1270  _year_line:1287  _by_trim:1313  _other_targets:1331  count_dealers:1339  _dealer_targets:1345  _dealer_region:1365  view_dealers:1380  view_run:1416  _rank1_of:1422  view_dashboard:1430  _bars:1526  _grade_counts:1541  _e_reasons:1548  _today_changes:1565  _step_rows:1590  _bulk_spark:1607  view_watch:1643  _pending_values:1708  _done_items:1717  view_notready:1743  _unmatched_rows:1778  _report_files:1802  view_reports:1834
 ```
 
-### `validate/v3_logic.py` — 1,699줄
+### `validate/v3_logic.py` — 1,781줄
 
 ```
-_file_output_checks:322  _conflict_checks:375  _diagnosis_count_check:399  _hda_source_check:415  _sort_determinism:426  _warning_contract_checks:443  _list_observed_source_check:538  _facet_reconcile_check:568  _record_mismatch_check:612  _curve_table_check:642  _checks_json:692  _value_curve_checks:703  _group_sum_checks:773  _mapped_other_check:844  _denominator_check:871  _core_axis_check:899  _rental_cross_check:917  _why_cheap_check:955  _source_before_value_check:996  _absolute_cut_check:1023  _spec_files:1053  _confirm_ratio_check:1063  _warranty_checks:1113  _spec_axis_check:1147  _site_axis_checks:1188  _rendered_why:1237  _rendered_listings:1247  _fill_gap_check:1257  _points_sum_check:1290  _market_gap_check:1307  _bonus_checks:1363  _trim_price_check:1467  run:1515  _shuffle_check:1642  _halt_dict_check:1667  _ensure_tmp:1696
+_file_output_checks:334  _conflict_checks:387  _diagnosis_count_check:411  _hda_source_check:427  _sort_determinism:438  _warning_contract_checks:455  _list_observed_source_check:550  _facet_reconcile_check:580  _record_mismatch_check:624  _curve_table_check:654  _worse_of_checks:704  _checks_json:766  _value_curve_checks:777  _group_sum_checks:853  _mapped_other_check:924  _denominator_check:951  _core_axis_check:979  _rental_cross_check:997  _why_cheap_check:1035  _source_before_value_check:1076  _absolute_cut_check:1103  _spec_files:1133  _confirm_ratio_check:1143  _warranty_checks:1193  _spec_axis_check:1227  _site_axis_checks:1268  _rendered_why:1317  _rendered_listings:1327  _fill_gap_check:1337  _points_sum_check:1370  _market_gap_check:1387  _bonus_checks:1443  _trim_price_check:1547  run:1595  _shuffle_check:1724  _halt_dict_check:1749  _ensure_tmp:1778
 ```
 
 ### `store/core.py` — 1,537줄
@@ -414,6 +414,12 @@ CrossSiteMatch:31  ReadinessReport:41  active_sites:51  match_cross_site:56  sit
 check:31  _own_fields:37  _run:61  flow_pipeline:82  flow_validation:135  flow_config_effect:149  flow_report:207  main:273
 ```
 
+### `analyze/axis/state.py` — 289줄
+
+```
+_panels:43  _rank_worst:47  insurance_trace:59  panel_trace:68  worse_step:80  _accident:87  _frame:106  _outer:126  _repair:148  _special:159  leak_state:171  _leak:193  _site_never:203  _sites_table:215  _consumable:233  _integrity:255  analyze_state:281
+```
+
 ### `tests/test_dict.py` — 286줄
 
 ```
@@ -484,12 +490,6 @@ _fix_console:28  run:44  cmd_status:52  cmd_setup:56  cmd_dry:74  cmd_collect:81
 
 ```
 check:33  test_finance:40  test_display:97  _pipeline:113  test_layers:124  test_halt_layer:160  test_export:202
-```
-
-### `analyze/axis/state.py` — 245줄
-
-```
-_panels:43  _rank_worst:47  _accident:59  _frame:72  _outer:87  _repair:104  _special:115  leak_state:127  _leak:149  _site_never:159  _sites_table:171  _consumable:189  _integrity:211  analyze_state:237
 ```
 
 ### `tests/test_registry.py` — 245줄
