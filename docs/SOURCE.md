@@ -2,14 +2,14 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 48,903줄
+파일 135개 · 총 48,938줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v11_web.py` | 4,191 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 2,206 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `report/screens/build.py` | 1,880 | 화면 데이터 생성. |
-| `validate/v3_logic.py` | 1,781 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 1,816 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,537 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `collect/runner.py` | 1,423 | 수집 실행 규칙. |
@@ -162,10 +162,10 @@ _rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  l
 site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142  _bulk_axes:146  confirm_ratio:167  _bulk_changes:178  _total_points:205  photo_urls:218  photo_url:250  market_price:281  _days_between:298  _ceil_to:313  _bulk_market:328  _bulk_state:367  not_join_months:400  _left:423  _warranty_state:432  _axis_state:470  _sites_cfg:528  _row:541  _view_cfg:717  order_clause:761  _view_str:767  _listings_where:773  count_listings:840  view_listings:852  _soh_low:928  _view_int:937  _bucket:943  _high_km:950  _option_prices:959  recommend_funnel:971  _bulk_upside:988  view_recommend:1003  recommend_reason:1034  excluded_groups:1077  view_why:1092  view_compare:1098  market_trims:1139  view_market:1161  _web_cfg:1197  _median:1211  _with_height:1216  _price_bins:1231  _group_prices:1252  _by_year:1270  _year_line:1287  _by_trim:1313  _other_targets:1331  count_dealers:1339  _dealer_targets:1345  _dealer_region:1365  view_dealers:1380  view_run:1416  _rank1_of:1422  view_dashboard:1430  _bars:1526  _grade_counts:1541  _e_reasons:1548  _today_changes:1565  _step_rows:1590  _bulk_spark:1607  view_watch:1643  _pending_values:1708  _done_items:1717  view_notready:1743  _unmatched_rows:1778  _report_files:1802  view_reports:1834
 ```
 
-### `validate/v3_logic.py` — 1,781줄
+### `validate/v3_logic.py` — 1,816줄
 
 ```
-_file_output_checks:334  _conflict_checks:387  _diagnosis_count_check:411  _hda_source_check:427  _sort_determinism:438  _warning_contract_checks:455  _list_observed_source_check:550  _facet_reconcile_check:580  _record_mismatch_check:624  _curve_table_check:654  _worse_of_checks:704  _checks_json:766  _value_curve_checks:777  _group_sum_checks:853  _mapped_other_check:924  _denominator_check:951  _core_axis_check:979  _rental_cross_check:997  _why_cheap_check:1035  _source_before_value_check:1076  _absolute_cut_check:1103  _spec_files:1133  _confirm_ratio_check:1143  _warranty_checks:1193  _spec_axis_check:1227  _site_axis_checks:1268  _rendered_why:1317  _rendered_listings:1327  _fill_gap_check:1337  _points_sum_check:1370  _market_gap_check:1387  _bonus_checks:1443  _trim_price_check:1547  run:1595  _shuffle_check:1724  _halt_dict_check:1749  _ensure_tmp:1778
+_file_output_checks:340  _conflict_checks:393  _diagnosis_count_check:417  _hda_source_check:433  _sort_determinism:444  _warning_contract_checks:461  _list_observed_source_check:556  _facet_reconcile_check:586  _record_mismatch_check:630  _curve_table_check:660  _special_null_check:710  _worse_of_checks:738  _checks_json:800  _value_curve_checks:811  _group_sum_checks:887  _mapped_other_check:958  _denominator_check:985  _core_axis_check:1013  _rental_cross_check:1031  _why_cheap_check:1069  _source_before_value_check:1110  _absolute_cut_check:1137  _spec_files:1167  _confirm_ratio_check:1177  _warranty_checks:1227  _spec_axis_check:1261  _site_axis_checks:1302  _rendered_why:1351  _rendered_listings:1361  _fill_gap_check:1371  _points_sum_check:1404  _market_gap_check:1421  _bonus_checks:1477  _trim_price_check:1581  run:1629  _shuffle_check:1759  _halt_dict_check:1784  _ensure_tmp:1813
 ```
 
 ### `store/core.py` — 1,537줄

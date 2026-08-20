@@ -179,6 +179,12 @@ C = {
                    "성능부에 교환·용접이 있는데 보험이 0회면 보험이 못 본 것이다 "
                    "(개정 414)",
                    KIND_CODE),
+    "V3-81": Check("V3", "V3-81", "셋 중 하나만 null 인데 확인 안 됨이 아님",
+                   FATAL, "run",
+                   "★ 08-20 가이드 정정 — 「flood_part_cnt 가 0/7,980 이니 "
+                   "②-5 15점이 빈다」는 틀렸다. 셋 다 null 일 때만 "
+                   "「확인 안 됨」이다 (개정 415)",
+                   KIND_CODE),
     "V3-82": Check("V3", "V3-82", "시세 점수가 계단값만 나오지 않음",
                    FATAL, "run",
                    "마스터 — 「가격을 왜 계단식으로 하지?  감가는 커브로 "
@@ -699,6 +705,34 @@ def _curve_table_check(rid):
     return result(C["V3-66"], rid, f"{len(curves)}곡선",
                   f"{len(curves) - len(bad)}곡선이 표와 같다",
                   not bad, bad[:6])
+
+
+def _special_null_check(conn, rid):
+    """V3-81 — 셋 중 하나만 null 인데 「확인 안 됨」이 됐는가 (개정 415).
+
+    ★ 엔카가 flood_part_cnt 를 전건 안 준다.  그것은 결함이 아니다.
+      다만 그 하나로 축을 통째로 「확인 안 됨」으로 돌리면 15점이 사라진다
+    ★ 못 보는 것은 화면이 밝힌다 — 「부분 침수 이력은 확인할 수 없습니다」
+    """
+    import os as _o
+
+    bad = [f"{lid} — 전손 {a} · 전부침수 {b} · 부분침수 {c} 인데 "
+           "「확인 안 됨」이다"
+           for lid, a, b, c in conn.execute(
+               "SELECT a.listing_id, r.total_loss_cnt, r.flood_total_cnt,"
+               " r.flood_part_cnt FROM result_axis a"
+               " JOIN core_record r ON r.listing_id = a.listing_id"
+               " WHERE a.axis = 'state.special' AND a.source = 'missing'"
+               "   AND NOT (r.total_loss_cnt IS NULL"
+               "            AND r.flood_total_cnt IS NULL"
+               "            AND r.flood_part_cnt IS NULL)")]
+    # ★ 못 보는 것을 화면이 밝히는가 (규격의 「필수」)
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    tpl = _o.path.join(root, "web", "templates", "why.html")
+    html = open(tpl, encoding="utf-8").read() if _o.path.isfile(tpl) else ""
+    if "부분 침수 이력은 확인할 수 없습니다" not in html:
+        bad.append("화면이 「부분 침수는 엔카 미제공」을 안 밝힌다")
+    return result(C["V3-81"], rid, 0, len(bad), not bad, bad[:4])
 
 
 def _worse_of_checks(conn, rid):
@@ -1699,6 +1733,7 @@ def run(conn, ctx) -> list:
     out += _value_curve_checks(conn, rid)
     # 「나쁜 쪽」 원칙 (개정 414)
     out += _worse_of_checks(conn, rid)
+    out.append(_special_null_check(conn, rid))
     out += _file_output_checks(conn, rid)
 
     # ★ 딜러 없는 매물도 등급이 나온다.  차량 판정과 딜러는 다른 축이다
