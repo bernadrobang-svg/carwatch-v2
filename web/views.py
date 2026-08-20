@@ -121,6 +121,11 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "axis_heads": axis_heads(root),
                  # ★ 조건 단추는 위에.  누르면 켜지고 다시 누르면 꺼진다 (149t)
                  "buttons": _filter_buttons(flt),
+                 # 차종·가격대·리스 (개정 420).  ★ 고른 조건을 문장으로 낸다
+                 "models": _model_menu(conn, flt),
+                 "pick": _pick_state(flt, root),
+                 "carry_pick": _carry_pick(flt),
+                 "lease_hidden": _lease_hidden(conn, flt, root),
                  # 정렬 드롭다운 8종 + 지금 조건을 들고 갈 hidden (개정 277)
                  "orders": _order_menu(flt),
                  "carry": _carry(flt),
@@ -582,6 +587,75 @@ def _filter_buttons(flt, base: str = "/listings") -> list:
     return out
 
 
+def _model_menu(conn, flt) -> list:
+    """차종 드롭다운 — 등록부에 있는 차종만 (개정 420).
+
+    ★ config 의 목록이 아니라 **실제로 매물이 있는 차종**이다.
+      없는 차종을 고르게 하면 「0건」만 나온다
+    ★ SQL 은 store 가 갖는다 (V11-01)
+    """
+    from store.core import listing_models
+
+    now = (flt.model or "")
+    return [{"key": k, "label": f"{k} ({n}건)", "on": k == now}
+            for k, n in listing_models(conn)]
+
+
+def _pick_state(flt, root: str = ROOT) -> dict:
+    """고른 조건을 문장으로 (개정 420) — 「G80 · 2,000~3,500만 · 리스 제외」."""
+    unit = int(_cfg("web.json", root)["price_filter_unit_won"])
+    lo = flt.price_min // unit if flt.price_min else ""
+    hi = flt.price_max // unit if flt.price_max else ""
+    said = []
+    if flt.model:
+        said.append(flt.model)
+    if lo or hi:
+        said.append(f"{lo or 0:,}~{hi or '위'}만")
+    said.append("리스·렌트 포함" if flt.lease else "리스 제외")
+    q = _keep_query(flt, lease="1")
+    return {"price_min": lo, "price_max": hi, "lease": flt.lease,
+            "said": " · ".join(said), "lease_url": f"/listings?{q}"}
+
+
+def _keep_query(flt, **more) -> str:
+    """지금 조건을 그대로 들고 간다 (STEP 149g · V11-156).
+
+    ★ 필터가 그대로 요청 파라미터가 된다 — 관심·비교·알림이 같은 조건을 쓴다
+    ★ 값이 없는 조건은 안 넣는다
+    """
+    from urllib.parse import urlencode
+
+    got = {}
+    if flt.model:
+        got["model"] = flt.model
+    if flt.price_min:
+        got["price_min"] = flt.price_min
+    if flt.price_max:
+        got["price_max"] = flt.price_max
+    if flt.grade:
+        got["grade"] = flt.grade
+    if flt.lease:
+        got["lease"] = "1"
+    got.update(more)
+    return urlencode(got)
+
+
+def _carry_pick(flt) -> list:
+    """거르기 폼이 잃지 말아야 할 것 — 정렬은 필터를 걸어도 안 풀린다."""
+    got = []
+    if flt.order:
+        got.append({"name": "order", "value": flt.order})
+    if flt.grade:
+        got.append({"name": "grade", "value": flt.grade})
+    return got
+
+
+def _lease_hidden(conn, flt, root: str = ROOT) -> int:
+    from report.screens.build import lease_hidden
+
+    return lease_hidden(conn, flt, root)
+
+
 def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
     """URL 파라미터 → 필터.  값 해석은 view_* 가 한다 (STEP 106a).
 
@@ -589,7 +663,15 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
       붙어 「링크는 걸리는데 필터는 안 걸린다」가 된다 (실측 08-15)
     """
     # ★ 월납입 상한은 가격 상한으로 되짚는다 — SQL 로 걸어야 쪽·건수가 맞는다
+    # ★ 가격대는 만원 단위로 받는다 (개정 420).  사람이 「3,500만」이라 말한다 —
+    #   원으로 받으면 0 을 네 번 더 쳐야 한다
+    unit = int(_cfg("web.json", root)["price_filter_unit_won"])
+    price_min = _int_param(q, "price_min", None, minimum=0)
     price_max = _int_param(q, "price_max", None, minimum=0)
+    if price_min is not None:
+        price_min *= unit
+    if price_max is not None:
+        price_max *= unit
     monthly_max = _int_param(q, "monthly_max", None, minimum=0)
     if monthly_max is not None:
         from report.finance import price_for_monthly
@@ -609,7 +691,7 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         order=q.get("order")
         or ListingFilter.__dataclass_fields__["order"].default,
         # ★ 가격은 0 원도 뜻이 있다 — minimum 0 이다
-        price_min=_int_param(q, "price_min", None, minimum=0),
+        price_min=price_min,
         price_max=price_max,
         dealer=q.get("dealer") or None,
         year=q.get("year") or None,
@@ -618,6 +700,9 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         listing_status=q.get("status") or None,
         # ★ 성능부 ↔ 보험이 어긋난 것만 (V3-50)
         mismatch=q.get("mismatch") == "1",
+        # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  켜면 함께 낸다
+        lease=q.get("lease") == "1",
+        model=q.get("model") or None,
         min_grade=q.get("min_grade") or None,
         show_all=q.get("all") == "1",
         page=_int_param(q, "page", 1),

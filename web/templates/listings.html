@@ -2,6 +2,27 @@
   <small>{{ paging.total | num }}건 중 {{ paging.shown | num }}건 ·
     {{ paging.pages }}쪽 중 {{ paging.page }}쪽</small></h1>
 
+<!-- ★ 차를 사는 사람이 제일 먼저 쓰는 조건 (개정 420).
+     ★ 값이 없는 조건은 URL 에 안 넣는다 — 빈 칸은 제출돼도 무시된다 -->
+<form class="bar pick" method="get" action="/listings">
+  {% for h in carry_pick %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
+  <label>차종
+    <select name="model" title="등록부에 있는 차종만 나옵니다">
+      <option value="">전체</option>
+      {% for m in models %}<option value="{{ m.key }}"{% if m.on %} selected{% endif %}>{{ m.label }}</option>{% endfor %}
+    </select></label>
+  <label>가격
+    <input name="price_min" size="5" inputmode="numeric" value="{{ pick.price_min }}" placeholder="2000">
+    ~ <input name="price_max" size="5" inputmode="numeric" value="{{ pick.price_max }}" placeholder="3500">
+    <span class="muted">만원</span></label>
+  <label title="리스·렌트는 기본으로 뺍니다. 켜면 함께 나옵니다">
+    <input type="checkbox" name="lease" value="1"{% if pick.lease %} checked{% endif %}> 리스·렌트 포함</label>
+  <button type="submit" class="mini">거르기</button>
+</form>
+{% if pick.said %}<p class="muted">{{ pick.said }}</p>{% endif %}
+{% if lease_hidden %}<p class="muted">리스·렌트 {{ lease_hidden | num }}건은 뺐습니다 —
+  <a href="{{ pick.lease_url }}">함께 보기</a></p>{% endif %}
+
 <div class="bar">
   <form class="inline" method="get" action="/listings">
     {% for h in carry %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}

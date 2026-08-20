@@ -2,15 +2,15 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 48,938줄
+파일 135개 · 총 49,218줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
-| `validate/v11_web.py` | 4,191 | V11 표현 계층 검증 (14장 STEP 153). |
-| `web/views.py` | 2,206 | 화면 어댑터 (14장 STEP 142 · 152). |
-| `report/screens/build.py` | 1,880 | 화면 데이터 생성. |
+| `validate/v11_web.py` | 4,312 | V11 표현 계층 검증 (14장 STEP 153). |
+| `web/views.py` | 2,291 | 화면 어댑터 (14장 STEP 142 · 152). |
+| `report/screens/build.py` | 1,924 | 화면 데이터 생성. |
 | `validate/v3_logic.py` | 1,816 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `store/core.py` | 1,537 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 1,549 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `collect/runner.py` | 1,423 | 수집 실행 규칙. |
 | `tests/test_integration.py` | 1,218 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -34,7 +34,7 @@
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
 | `tests/test_admin.py` | 554 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tests/test_web.py` | 505 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
-| `report/screens/views.py` | 497 | 화면 전용 DTO. |
+| `report/screens/views.py` | 502 | 화면 전용 DTO. |
 | `store/dictionary.py` | 466 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `contracts.py` | 462 | 계층 간 계약 — Protocol · DTO. |
 | `web/app.py` | 452 | 화면 조립 (14장 STEP 144 · 147 · 149). |
@@ -52,13 +52,13 @@
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
 | `tests/test_endtoend.py` | 290 | 종단 시험 — 수집부터 리포트까지 (5장 STEP 47 · 49). |
 | `analyze/axis/state.py` | 289 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
+| `tests/test_screens.py` | 287 | 10장 화면 시험. |
 | `tests/test_dict.py` | 286 | 4장 키·코드·사전 시험. |
 | `adapters/encar.py` | 285 | 엔카 어댑터 — URL · 헤더 · 쿼리 조립. |
 | `store/raw.py` | 285 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
 | `web/template.py` | 284 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tests/test_crosssite.py` | 275 | 12장 다중 사이트 시험. |
-| `tests/test_screens.py` | 274 | 10장 화면 시험. |
 | `report/exports/export.py` | 269 | 내보내기. |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
 | `tests/test_store.py` | 254 | 3장 테이블 시험. |
@@ -144,22 +144,22 @@
 
 ## 큰 파일 — 무엇이 어디에 (200줄 이상 65개)
 
-### `validate/v11_web.py` — 4,191줄
+### `validate/v11_web.py` — 4,312줄
 
 ```
-_web_sources:565  run:577  _late_checks:687  _templates_with_form:751  _spec_routes:769  _routing_table_check:791  _count:828  ctx_account:835  _view_exists:841  _tpl:862  _all_templates:867  _screen_checks:872  _query_budget_check:1105  _import_origin_check:1176  _import_step4_check:1211  _browser_origin_check:1235  _browser_confirm_check:1253  _browser_chunk_check:1278  _status_screen_checks:1319  _status_liveness_check:1357  _menu_label_check:1398  _menu_paths:1426  _listing_rows:1451  _cli_caps:1469  _cli_only_check:1483  _stale_notice_check:1528  _trim_detail_check:1564  _option_sum_check:1587  _heart_line_check:1614  _recommend_terms_check:1637  _shortfall_check:1656  _cash_limit_check:1675  _py_files:1706  _menu_no_path_check:1720  _listing_paging_checks:1738  _photo_checks:1774  _sian_css_checks:1810  _cell_of:1872  _link_tip_checks:1885  _origin_link_check:1899  _choose_check:1927  _order_filter_checks:1943  _checks_cfg:1986  _photo_size_by_screen_check:1995  _template_leak_check:2019  _em_dash_check:2045  _card_limits:2081  _cells_of:2098  _matches:2126  _place_cards:2145  _card_shape_checks:2267  _why_order_spec:2349  _why_order_check:2366  _width_policy:2401  _width_checks:2408  _chart_check:2496  _row_link_checks:2527  _screen_contradiction_check:2563  _chunk_check:2585  _csrf_reuse_check:2625  _origin_price_check:2669  _v1_parity_checks:2705  _media_blocks:2782  _responsive_checks:2803  _dead_links:2884  _null_link_check:2898  _sian_visual_check:2962  _purchase_cost_checks:3026  _report_popup_check:3113  _detail_photo_check:3187  _raw_shown_checks:3238  _compare_diff_check:3325  _chunk_message_check:3389  _whole_char:3416  _chunk_boundary_check:3429  _cell_squeeze_check:3517  _static_version_check:3572  _axis_state_check:3590  _three_values_check:3628  _photo_size_check:3658  _render_metrics_checks:3684  _browser_scope_checks:3783  _import_opened_steps_check:3804  _import_resume_check:3832  _watch_invite_check:3851  _post_smoke_check:3895  _template_roots:3968  _loop_fields:3978  _context_supplied_check:4000  _first_item:4071  _has_field:4085  _table_counts:4091  _save_button_check:4098  _probe:4155  _scratch:4173
+_web_sources:584  run:596  _late_checks:706  _templates_with_form:770  _spec_routes:788  _routing_table_check:810  _count:847  ctx_account:854  _view_exists:860  _tpl:881  _all_templates:886  _screen_checks:891  _query_budget_check:1127  _import_origin_check:1198  _import_step4_check:1233  _browser_origin_check:1257  _browser_confirm_check:1275  _browser_chunk_check:1300  _status_screen_checks:1341  _status_liveness_check:1379  _menu_label_check:1420  _menu_paths:1448  _listing_rows:1473  _cli_caps:1491  _cli_only_check:1505  _stale_notice_check:1550  _trim_detail_check:1586  _option_sum_check:1609  _heart_line_check:1636  _recommend_terms_check:1659  _lease_checks:1678  _pick_filter_checks:1738  _shortfall_check:1777  _cash_limit_check:1796  _py_files:1827  _menu_no_path_check:1841  _listing_paging_checks:1859  _photo_checks:1895  _sian_css_checks:1931  _cell_of:1993  _link_tip_checks:2006  _origin_link_check:2020  _choose_check:2048  _order_filter_checks:2064  _checks_cfg:2107  _photo_size_by_screen_check:2116  _template_leak_check:2140  _em_dash_check:2166  _card_limits:2202  _cells_of:2219  _matches:2247  _place_cards:2266  _card_shape_checks:2388  _why_order_spec:2470  _why_order_check:2487  _width_policy:2522  _width_checks:2529  _chart_check:2617  _row_link_checks:2648  _screen_contradiction_check:2684  _chunk_check:2706  _csrf_reuse_check:2746  _origin_price_check:2790  _v1_parity_checks:2826  _media_blocks:2903  _responsive_checks:2924  _dead_links:3005  _null_link_check:3019  _sian_visual_check:3083  _purchase_cost_checks:3147  _report_popup_check:3234  _detail_photo_check:3308  _raw_shown_checks:3359  _compare_diff_check:3446  _chunk_message_check:3510  _whole_char:3537  _chunk_boundary_check:3550  _cell_squeeze_check:3638  _static_version_check:3693  _axis_state_check:3711  _three_values_check:3749  _photo_size_check:3779  _render_metrics_checks:3805  _browser_scope_checks:3904  _import_opened_steps_check:3925  _import_resume_check:3953  _watch_invite_check:3972  _post_smoke_check:4016  _template_roots:4089  _loop_fields:4099  _context_supplied_check:4121  _first_item:4192  _has_field:4206  _table_counts:4212  _save_button_check:4219  _probe:4276  _scratch:4294
 ```
 
-### `web/views.py` — 2,206줄
+### `web/views.py` — 2,291줄
 
 ```
-_rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  listings:105  why:138  notready:172  dashboard:182  admin_home:200  _unclassified_split:212  _rows_of:240  _check_reports:250  admin_audit:273  admin_docs:286  _int_param:310  _manwon:349  _site_buttons:354  _filter_chips:385  _order_menu:436  _carry:442  _order_label:452  ORDERS_LABELS_GET:456  _condition_sentence:460  _query_string:478  _page_links:491  _simple_paging:512  _paging:522  _filter_buttons:552  _filter:585  recommend:627  compare:655  market:670  _first_target:690  dealers:696  watch:716  _note_kinds:733  _watch_notes:740  run_view:767  login:779  _login_again:813  _open_session:828  logout:854  _watch_queries:871  watch_query_post:880  _int_or_none:910  watch_add_post:914  _watch_note_post:974  _watch_invite:1000  watch_update_post:1021  _now:1045  _reason_gate:1052  _gate:1073  _first_flag:1112  _all_hours:1117  admin_run:1145  _target_rows:1211  admin_dict:1224  admin_status:1258  admin_collect:1273  _take_chunk:1332  _verify_part:1375  _run_stamp:1415  _int_or_none:1426  admin_import:1431  admin_scoring:1503  _decide_cards:1556  admin_registry:1584  admin_query:1632  admin_requests:1654  _admin_extra:1716  _config_files:1731  _config_rows:1738  admin_config:1770  _typed:1821  admin_api:1837  _site_query:1887  admin_targets:1900  admin_tools:1998  join:2017  password:2048  admin_users:2063  _account_activity:2123  reports:2129  report_download:2145
+_rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  listings:105  why:143  notready:177  dashboard:187  admin_home:205  _unclassified_split:217  _rows_of:245  _check_reports:255  admin_audit:278  admin_docs:291  _int_param:315  _manwon:354  _site_buttons:359  _filter_chips:390  _order_menu:441  _carry:447  _order_label:457  ORDERS_LABELS_GET:461  _condition_sentence:465  _query_string:483  _page_links:496  _simple_paging:517  _paging:527  _filter_buttons:557  _model_menu:590  _pick_state:604  _keep_query:620  _carry_pick:643  _lease_hidden:653  _filter:659  recommend:712  compare:740  market:755  _first_target:775  dealers:781  watch:801  _note_kinds:818  _watch_notes:825  run_view:852  login:864  _login_again:898  _open_session:913  logout:939  _watch_queries:956  watch_query_post:965  _int_or_none:995  watch_add_post:999  _watch_note_post:1059  _watch_invite:1085  watch_update_post:1106  _now:1130  _reason_gate:1137  _gate:1158  _first_flag:1197  _all_hours:1202  admin_run:1230  _target_rows:1296  admin_dict:1309  admin_status:1343  admin_collect:1358  _take_chunk:1417  _verify_part:1460  _run_stamp:1500  _int_or_none:1511  admin_import:1516  admin_scoring:1588  _decide_cards:1641  admin_registry:1669  admin_query:1717  admin_requests:1739  _admin_extra:1801  _config_files:1816  _config_rows:1823  admin_config:1855  _typed:1906  admin_api:1922  _site_query:1972  admin_targets:1985  admin_tools:2083  join:2102  password:2133  admin_users:2148  _account_activity:2208  reports:2214  report_download:2230
 ```
 
-### `report/screens/build.py` — 1,880줄
+### `report/screens/build.py` — 1,924줄
 
 ```
-site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142  _bulk_axes:146  confirm_ratio:167  _bulk_changes:178  _total_points:205  photo_urls:218  photo_url:250  market_price:281  _days_between:298  _ceil_to:313  _bulk_market:328  _bulk_state:367  not_join_months:400  _left:423  _warranty_state:432  _axis_state:470  _sites_cfg:528  _row:541  _view_cfg:717  order_clause:761  _view_str:767  _listings_where:773  count_listings:840  view_listings:852  _soh_low:928  _view_int:937  _bucket:943  _high_km:950  _option_prices:959  recommend_funnel:971  _bulk_upside:988  view_recommend:1003  recommend_reason:1034  excluded_groups:1077  view_why:1092  view_compare:1098  market_trims:1139  view_market:1161  _web_cfg:1197  _median:1211  _with_height:1216  _price_bins:1231  _group_prices:1252  _by_year:1270  _year_line:1287  _by_trim:1313  _other_targets:1331  count_dealers:1339  _dealer_targets:1345  _dealer_region:1365  view_dealers:1380  view_run:1416  _rank1_of:1422  view_dashboard:1430  _bars:1526  _grade_counts:1541  _e_reasons:1548  _today_changes:1565  _step_rows:1590  _bulk_spark:1607  view_watch:1643  _pending_values:1708  _done_items:1717  view_notready:1743  _unmatched_rows:1778  _report_files:1802  view_reports:1834
+site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142  _bulk_axes:146  confirm_ratio:167  _bulk_changes:178  _total_points:205  photo_urls:218  photo_url:250  market_price:281  _days_between:298  _ceil_to:313  _bulk_market:328  _bulk_state:367  not_join_months:400  _left:423  _warranty_state:432  _axis_state:470  _sites_cfg:528  _row:541  _view_cfg:717  order_clause:761  _view_str:767  _lease_kinds:773  lease_hidden:781  _listings_where:803  count_listings:884  view_listings:896  _soh_low:972  _view_int:981  _bucket:987  _high_km:994  _option_prices:1003  recommend_funnel:1015  _bulk_upside:1032  view_recommend:1047  recommend_reason:1078  excluded_groups:1121  view_why:1136  view_compare:1142  market_trims:1183  view_market:1205  _web_cfg:1241  _median:1255  _with_height:1260  _price_bins:1275  _group_prices:1296  _by_year:1314  _year_line:1331  _by_trim:1357  _other_targets:1375  count_dealers:1383  _dealer_targets:1389  _dealer_region:1409  view_dealers:1424  view_run:1460  _rank1_of:1466  view_dashboard:1474  _bars:1570  _grade_counts:1585  _e_reasons:1592  _today_changes:1609  _step_rows:1634  _bulk_spark:1651  view_watch:1687  _pending_values:1752  _done_items:1761  view_notready:1787  _unmatched_rows:1822  _report_files:1846  view_reports:1878
 ```
 
 ### `validate/v3_logic.py` — 1,816줄
@@ -168,10 +168,10 @@ site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142
 _file_output_checks:340  _conflict_checks:393  _diagnosis_count_check:417  _hda_source_check:433  _sort_determinism:444  _warning_contract_checks:461  _list_observed_source_check:556  _facet_reconcile_check:586  _record_mismatch_check:630  _curve_table_check:660  _special_null_check:710  _worse_of_checks:738  _checks_json:800  _value_curve_checks:811  _group_sum_checks:887  _mapped_other_check:958  _denominator_check:985  _core_axis_check:1013  _rental_cross_check:1031  _why_cheap_check:1069  _source_before_value_check:1110  _absolute_cut_check:1137  _spec_files:1167  _confirm_ratio_check:1177  _warranty_checks:1227  _spec_axis_check:1261  _site_axis_checks:1302  _rendered_why:1351  _rendered_listings:1361  _fill_gap_check:1371  _points_sum_check:1404  _market_gap_check:1421  _bonus_checks:1477  _trim_price_check:1581  run:1629  _shuffle_check:1759  _halt_dict_check:1784  _ensure_tmp:1813
 ```
 
-### `store/core.py` — 1,537줄
+### `store/core.py` — 1,549줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:506  resolve_vehicle_id:532  merge_conflict:564  upsert_vehicle:575  upsert_dealer:596  upsert_child:623  _flag:644  _not_join_months:658  state_counts:683  current_versions:713  diagnosis_of:743  target_counts:756  top_target:763  vehicle_of:768  collect_scale:775  our_fault:795  catalog_coverage:804  _walk:848  _sample_bodies:864  hits_of:877  key_seen:896  stored_hits:911  sample_bodies:927  observed:949  known_leaves:987  has_unclassified:1002  classify_unclassified:1009  _card_limit:1052  _value_chars:1057  _admin_cfg:1062  unclassified_cards:1079  _peek:1135  _short:1182  _blocking_paths:1193  _raw_rows_max:1213  used_endpoints:1223  raw_sections:1232  _flatten:1271  option_diff:1295  _option_names:1333  blocking_keys:1349  full_hits:1367  axis_paths_empty:1392  blocking_rows:1429  record_mismatch_sql:1491  record_mismatch_count:1497  relist_counts:1523
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:506  resolve_vehicle_id:532  merge_conflict:564  upsert_vehicle:575  upsert_dealer:596  upsert_child:623  _flag:644  _not_join_months:658  state_counts:683  current_versions:713  diagnosis_of:743  target_counts:756  top_target:763  vehicle_of:768  collect_scale:775  our_fault:795  catalog_coverage:804  _walk:848  _sample_bodies:864  hits_of:877  key_seen:896  stored_hits:911  sample_bodies:927  observed:949  known_leaves:987  has_unclassified:1002  classify_unclassified:1009  _card_limit:1052  _value_chars:1057  _admin_cfg:1062  unclassified_cards:1079  _peek:1135  _short:1182  _blocking_paths:1193  _raw_rows_max:1213  used_endpoints:1223  raw_sections:1232  _flatten:1271  option_diff:1295  _option_names:1333  blocking_keys:1349  full_hits:1367  axis_paths_empty:1392  blocking_rows:1429  record_mismatch_sql:1491  record_mismatch_count:1497  relist_counts:1523  listing_models:1540
 ```
 
 ### `tests/test_spec_ui.py` — 1,457줄
@@ -312,10 +312,10 @@ _spec_menu_paths:31  check:46  setup:52  test_bootstrap:64  test_auth:94  test_a
 check:21  test_routes:28  test_template:77  test_no_logic_in_template:118  test_static_escape:133  test_session_cookie:145  test_error_page:163  test_layout:190  test_filters:219  test_empty_state:242  test_menu_by_role:269  test_guard_and_csrf:286  _call:328  test_screens_render:345  test_sketch_match:436  test_account_policy:451
 ```
 
-### `report/screens/views.py` — 497줄
+### `report/screens/views.py` — 502줄
 
 ```
-AxisChip:30  ListingRow:52  ListingFilter:179  WatchRow:210  TargetStat:233  RelaxRow:242  MarketRow:249  ChangeRow:261  AttentionItem:271  ViewerState:279  DashboardView:293  CompareView:317  MarketView:332  DealerRow:347  NotReadyView:368  TodayChange:386  StepRow:398  _min_sample:410  PendingValue:428  Bucket:441  ExcludedGroup:461  ReportFile:470  ReportsView:482
+AxisChip:30  ListingRow:52  ListingFilter:179  WatchRow:215  TargetStat:238  RelaxRow:247  MarketRow:254  ChangeRow:266  AttentionItem:276  ViewerState:284  DashboardView:298  CompareView:322  MarketView:337  DealerRow:352  NotReadyView:373  TodayChange:391  StepRow:403  _min_sample:415  PendingValue:433  Bucket:446  ExcludedGroup:466  ReportFile:475  ReportsView:487
 ```
 
 ### `store/dictionary.py` — 466줄
@@ -420,6 +420,12 @@ check:31  _own_fields:37  _run:61  flow_pipeline:82  flow_validation:135  flow_c
 _panels:43  _rank_worst:47  insurance_trace:59  panel_trace:68  worse_step:80  _accident:87  _frame:106  _outer:126  _repair:148  _special:159  leak_state:171  _leak:193  _site_never:203  _sites_table:215  _consumable:233  _integrity:255  analyze_state:281
 ```
 
+### `tests/test_screens.py` — 287줄
+
+```
+check:42  _pipeline:48  test_chip:60  test_listings:83  test_compare:144  test_dashboard_notready:161  test_static_rules:201  test_account:233
+```
+
 ### `tests/test_dict.py` — 286줄
 
 ```
@@ -454,12 +460,6 @@ f_won:48  f_km:64  f_pct:68  f_date:72  f_num:83  f_gradecls:90  f_count:96  f_s
 
 ```
 check:34  db:40  add:45  test_vin:63  test_vin_parse:107  test_cross_site:129  test_regression:168  test_readiness:200  v9_04_site_isolation:222
-```
-
-### `tests/test_screens.py` — 274줄
-
-```
-check:42  _pipeline:48  test_chip:60  test_listings:83  test_compare:131  test_dashboard_notready:148  test_static_rules:188  test_account:220
 ```
 
 ### `report/exports/export.py` — 269줄

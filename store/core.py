@@ -1535,3 +1535,15 @@ def relist_counts(conn) -> dict:
     ):
         out[vid] = {"times": n, "low_won": lo, "high_won": hi}
     return out
+
+
+def listing_models(conn) -> list:
+    """매물이 있는 차종 · 건수 (개정 420).
+
+    ★ config 의 목록이 아니라 실제로 있는 것이다.  없는 차종을 고르게 하면
+      「0건」만 나온다 — 그것은 조작이 아니다
+    """
+    return [(k, n) for k, n in conn.execute(
+        "SELECT target_key, COUNT(*) FROM core_listing"
+        " WHERE status='active' AND target_key IS NOT NULL"
+        " GROUP BY target_key ORDER BY COUNT(*) DESC")]

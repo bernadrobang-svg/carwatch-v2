@@ -428,6 +428,25 @@ C = {
                    "「왜 이 목록인지」가 먼저다. ★ 점수만 내고 이유를 안 내면 "
                    "무엇을 보고 있는지 알 수 없다 (개정 304)",
                    KIND_CODE),
+    "V11-153": Check("V11", "V11-153", "기본 목록에 리스·렌트가 없음",
+                    FATAL, "run",
+                    "마스터 확정 — 「리스는 목록에서 아예 뺀다」. ★ 지우지 "
+                    "않는다. 저장은 그대로 하고 화면에서만 뺀다 (개정 420)",
+                    KIND_CODE),
+    "V11-154": Check("V11", "V11-154", "뺀 건수가 화면에 있음", FATAL, "run",
+                    "★ 조용히 빼지 않는다. 건수를 안 내면 매물이 사라진 "
+                    "것으로 보인다 (개정 420)",
+                    KIND_CODE),
+    "V11-155": Check("V11", "V11-155", "차종·가격대 필터가 있음", FATAL, "run",
+                    "마스터 — 「목록에서 어떤 차종만 · 어떤 가격대만 보고 "
+                    "싶은데 왜 없지?」 ★ 차를 사는 사람이 제일 먼저 쓰는 "
+                    "조건이 빠져 있었다 (개정 420)",
+                    KIND_CODE),
+    "V11-156": Check("V11", "V11-156", "필터 조건이 그대로 넘어감",
+                    FATAL, "run",
+                    "★ 필터가 그대로 요청 파라미터가 된다 (STEP 149g). "
+                    "관심 등록 · 비교 · 알림이 그 조건을 그대로 쓴다",
+                    KIND_CODE),
     "V11-151": Check("V11", "V11-151", "부족액 문구가 화면에 없음", FATAL, "run",
                     "마스터 확정 — 1,500만은 총액 상한이다. 「380만 부족」은 "
                     "낼 값이 아니다. ★ 화면은 「전액 현금」인가 아닌가 "
@@ -1067,6 +1086,9 @@ def _screen_checks(conn, rid) -> list:
     out.append(_menu_no_path_check(rid))
     # 부족액 · 현금 상한 (개정 400)
     out.append(_shortfall_check(rid))
+    # 리스 제외 · 차종·가격대 필터 (개정 420)
+    out += _lease_checks(conn, rid)
+    out += _pick_filter_checks(rid)
     # 검사 1차 10개 (개정 407)
     out.append(_cli_only_check(rid))
     out.append(_stale_notice_check(rid))
@@ -1448,7 +1470,7 @@ def _menu_paths() -> list:
     return out
 
 
-def _listing_rows(conn) -> list:
+def _listing_rows(conn, flt=None) -> list:
     """목록 화면이 실제로 그리는 행.  ★ 화면과 같은 것을 본다 —
     직접 SQL 을 짜면 화면이 안 내는 값을 「있다」고 하게 된다."""
     import json as _j
@@ -1462,8 +1484,8 @@ def _listing_rows(conn) -> list:
               encoding="utf-8") as f:
         fin = _j.load(f)
     ver = current_versions(conn)["calc_version"]
-    return view_listings(ANONYMOUS, conn, ListingFilter(calc_version=ver),
-                         fin, ROOT)
+    return view_listings(ANONYMOUS, conn,
+                         flt or ListingFilter(calc_version=ver), fin, ROOT)
 
 
 def _cli_caps() -> set:
@@ -1651,6 +1673,105 @@ def _recommend_terms_check(rid):
     if "왜 이 순위인가" not in html:
         bad.append("매물마다 「왜 이 순위인가」 칸이 없다")
     return result(C["V11-94"], rid, 0, len(bad), not bad, bad[:6])
+
+
+def _lease_checks(conn, rid):
+    """V11-153 · V11-154 — 리스·렌트를 목록에서 뺐는가 (개정 420).
+
+    ★ 「빼는 규칙을 켰다」가 아니라 **실제로 안 나오는가**를 본다
+    """
+    import json as _j
+    from dataclasses import replace as _rep
+
+    from report.screens.build import _listings_where, lease_hidden
+    from report.screens.views import ListingFilter
+
+    with open(os.path.join(ROOT, "config", "web.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    ads = set(cfg["lease_advertisement_types"])
+    sells = set(cfg["lease_sell_types"])
+    # ★ 쪽(50건)으로 재지 않는다.  기본 조건에 걸리는 **전건**을 본다 —
+    #   리스가 뒷쪽에 있으면 앞 50건만 보고 「없다」고 하게 된다 (실측 08-21)
+    from store.core import current_versions
+
+    ver = current_versions(conn)["calc_version"]
+    base = ListingFilter(calc_version=ver)
+    where, args = _listings_where(base)
+    bad = [f"{lid} — {ad or sell} 가 기본 목록에 있다"
+           for lid, ad, sell in conn.execute(
+               "SELECT l.listing_id, l.advertisement_type, l.sell_type"
+               " FROM core_listing l LEFT JOIN result_score s"
+               " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+               " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
+               f" WHERE {' AND '.join(where)}", [ver, *args])
+           if ad in ads or sell in sells]
+    n = lease_hidden(conn, ListingFilter(calc_version=ver), ROOT)
+    bad2 = []
+    path = os.path.join(RENDER, "listings.html")
+    html = open(path, encoding="utf-8").read() if os.path.isfile(path) else ""
+    # ★ 낱말 하나로 재지 않는다.  같은 화면 :164 에 「렌트·리스 승계는
+    #   뺐습니다」(시세 표본 설명)가 있어 「뺐습니다」만 보면 거짓 통과한다
+    #   — V11-134 가 두 번 그랬다 (실측 08-21)
+    if n and not re.search(r"리스·렌트\s*[\d,]+건은 뺐습니다", html):
+        bad2.append(f"리스·렌트 {n}건을 뺐는데 화면이 안 밝힌다")
+    if "lease=1" not in html:
+        bad2.append("함께 볼 길(?lease=1)이 화면에 없다")
+    # ★ 켜면 정말 나오는가 — 「뺐다」와 「볼 수 있다」는 다르다.
+    #   ★ 쪽(50건)으로 재지 않는다.  건수로 잰다 — 리스가 앞쪽에 없을 수 있다
+    off_w, off_a = _listings_where(base)
+    on_w, on_a = _listings_where(_rep(base, lease=True))
+    sql = ("SELECT COUNT(*) FROM core_listing l LEFT JOIN result_score s"
+           " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+           " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id WHERE ")
+    off_n = conn.execute(sql + " AND ".join(off_w),
+                         [ver, *off_a]).fetchone()[0]
+    on_n = conn.execute(sql + " AND ".join(on_w), [ver, *on_a]).fetchone()[0]
+    if n and on_n - off_n != n:
+        bad2.append(f"?lease=1 이 {on_n - off_n}건만 더 낸다 — {n}건이어야 한다")
+    return [
+        result(C["V11-153"], rid, 0, len(bad), not bad, bad[:6]),
+        result(C["V11-154"], rid, "밝힌다", f"{n}건", not bad2, bad2[:4]),
+    ]
+
+
+def _pick_filter_checks(rid):
+    """V11-155 · V11-156 — 차종·가격대 필터와 조건 인계 (개정 420)."""
+    bad, bad2 = [], []
+    path = os.path.join(RENDER, "listings.html")
+    html = open(path, encoding="utf-8").read() if os.path.isfile(path) else ""
+    if not html:
+        return [not_applicable(C["V11-155"], rid, "목록 렌더가 없다"),
+                not_applicable(C["V11-156"], rid, "목록 렌더가 없다")]
+    for name in ("model", "price_min", "price_max"):
+        if f'name="{name}"' not in html:
+            bad.append(f"{name} 필터가 화면에 없다")
+    # ★ 고른 조건을 문장으로 (규격의 「필수」)
+    if "리스 제외" not in html and "리스·렌트 포함" not in html:
+        bad.append("고른 조건을 문장으로 안 낸다")
+    # V11-156 — 조건이 그대로 파라미터가 되는가
+    from web.views import _keep_query
+    from report.screens.views import ListingFilter
+
+    probe = _checks_cfg()
+    lo = int(probe["filter_probe_price_min_won"])
+    hi = int(probe["filter_probe_price_max_won"])
+    flt = ListingFilter(calc_version="c1", model="G80",
+                        price_min=lo, price_max=hi)
+    q = _keep_query(flt)
+    for want in ("model=G80", f"price_min={lo}", f"price_max={hi}"):
+        if want not in q:
+            bad2.append(f"조건 인계에 {want} 가 빠진다 — 「{q}」")
+    # ★ 값이 없는 조건은 안 넣는다
+    if "grade=" in _keep_query(ListingFilter(calc_version="c1")):
+        bad2.append("값이 없는 조건을 URL 에 넣는다")
+    # ★ 필터를 걸면 정렬이 풀리는가 (규격의 「금지」)
+    if 'name="order"' not in html:
+        bad2.append("거르기 폼이 정렬을 안 들고 간다 — 걸면 정렬이 풀린다")
+    return [
+        result(C["V11-155"], rid, 0, len(bad), not bad, bad[:4]),
+        result(C["V11-156"], rid, 0, len(bad2), not bad2, bad2[:4]),
+    ]
 
 
 def _shortfall_check(rid):

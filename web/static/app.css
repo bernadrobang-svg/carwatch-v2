@@ -1966,3 +1966,8 @@ svg.line circle { fill:var(--amber); }
 textarea.tsv { width: 100%; height: 44px; font-family: var(--mono);
                font-size: 11px; color: var(--dim);
                background: var(--surface2); border: 1px solid var(--line); }
+
+/* 차종 · 가격대 · 리스 거르기 (개정 420) */
+.pick { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.pick label { display: flex; gap: 4px; align-items: center; font-size: 13px; }
+.pick input[type="text"], .pick input:not([type]) { width: 5em; }

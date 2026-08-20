@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>매물 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=99fbdadb00">
+<link rel="stylesheet" href="/static/app.css?v=dae65724d3">
 
 </head>
 <body class="s-listings">
@@ -88,8 +88,29 @@
 
 <main>
 <h1>매물
-  <small>3,841건 중 10건 ·
-    385쪽 중 1쪽</small></h1>
+  <small>3,436건 중 10건 ·
+    344쪽 중 1쪽</small></h1>
+
+<!-- ★ 차를 사는 사람이 제일 먼저 쓰는 조건 (개정 420).
+     ★ 값이 없는 조건은 URL 에 안 넣는다 — 빈 칸은 제출돼도 무시된다 -->
+<form class="bar pick" method="get" action="/listings">
+  <input type="hidden" name="order" value="rank">
+  <label>차종
+    <select name="model" title="등록부에 있는 차종만 나옵니다">
+      <option value="">전체</option>
+      <option value="G80_25T">G80_25T (1915건)</option><option value="MODEL_Y">MODEL_Y (580건)</option><option value="G70_20T">G70_20T (265건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (262건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (258건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (193건)</option><option value="GV60">GV60 (129건)</option><option value="G70_25T">G70_25T (96건)</option><option value="GV70_EV">GV70_EV (77건)</option><option value="G80_EV">G80_EV (66건)</option>
+    </select></label>
+  <label>가격
+    <input name="price_min" size="5" inputmode="numeric" value="" placeholder="2000">
+    ~ <input name="price_max" size="5" inputmode="numeric" value="" placeholder="3500">
+    <span class="muted">만원</span></label>
+  <label title="리스·렌트는 기본으로 뺍니다. 켜면 함께 나옵니다">
+    <input type="checkbox" name="lease" value="1"> 리스·렌트 포함</label>
+  <button type="submit" class="mini">거르기</button>
+</form>
+<p class="muted">리스 제외</p>
+<p class="muted">리스·렌트 405건은 뺐습니다 —
+  <a href="/listings?lease=1">함께 보기</a></p>
 
 <div class="bar">
   <form class="inline" method="get" action="/listings">
@@ -105,7 +126,7 @@
     href="/listings?axis=history.damage&amp;bucket=1" title="사고 이력에서 점수를 받은 매물만">사고 양호</a><a class="btn"
     href="/listings?axis=history.rental&amp;bucket=1" title="렌트 이력에서 점수를 받은 매물만">렌트 아님</a><a class="btn"
     href="/listings?year=2024" title="2024년식 이후만">2024년 이후</a>
-  <span class="num dim">3,841건</span>
+  <span class="num dim">3,436건</span>
   <a class="clear" href="/listings">전부 지우기</a>
 </div>
 
@@ -654,8 +675,8 @@
   
   <a href="/listings?page=1" class="on">1</a><a href="/listings?page=2">2</a><a href="/listings?page=3">3</a><a href="/listings?page=4">4</a><a href="/listings?page=5">5</a><a href="/listings?page=6">6</a><a href="/listings?page=7">7</a><a href="/listings?page=8">8</a><a href="/listings?page=9">9</a>
   <a href="/listings?page=2">다음 ›</a>
-  <a href="/listings?page=385">끝 »</a>
-  <span class="dim">한 쪽 10건 · 모두 385쪽</span>
+  <a href="/listings?page=344">끝 »</a>
+  <span class="dim">한 쪽 10건 · 모두 344쪽</span>
 </div>
 <p class="dim">★ 쪽을 넘겨도 지금 조건이 그대로 붙습니다 (V11-58).</p>
 
@@ -819,7 +840,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 01:07</span>
+  <span>2026-08-21 01:22</span>
 </footer>
 
 </body>

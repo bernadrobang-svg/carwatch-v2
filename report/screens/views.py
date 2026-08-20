@@ -198,6 +198,11 @@ class ListingFilter:
     listing_status: str | None = None
     # ★ 성능부 ↔ 보험이 어긋난 것만 (V3-50).  「사람이 그것만 따로 볼 수 있게」
     mismatch: bool = False
+    # ★ 리스·렌트 (개정 420).  기본은 숨김 — 마스터 「리스는 목록에서 아예 뺀다」
+    #   ★ 지우는 것이 아니다.  ?lease=1 로 볼 수 있다
+    lease: bool = False
+    # 차종 · 가격대 (개정 420).  ★ 차를 사는 사람이 제일 먼저 쓰는 조건이다
+    model: str | None = None
     # ★ 「A 이상만」 한 번에 (STEP 149s).  C·D 가 비율 순으로 앞에 섞인다
     min_grade: str | None = None
     order: str = "rank"

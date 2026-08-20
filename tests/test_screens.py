@@ -84,7 +84,16 @@ def test_listings() -> None:
     conn, ctx = _pipeline()
     flt = ListingFilter(calc_version=ctx.calc_version)
     rows = view_listings(ADMIN, conn, flt, FIN, ROOT)
-    check("목록이 나온다", len(rows) == 3, f"{len(rows)}행")
+    # ★★ 리스·렌트는 기본으로 뺀다 (개정 420).  씨앗 3건 중 2건이
+    #   RENT_SUCCESSION · OPERATING_LEASE 다 — 기본은 1건이 맞다
+    check("목록이 나온다 — 리스·렌트를 뺀 1건", len(rows) == 1,
+          f"{len(rows)}행")
+    from dataclasses import replace as _rep
+
+    allrows = view_listings(ADMIN, conn, _rep(flt, lease=True), FIN, ROOT)
+    check("★ ?lease=1 이면 3건 다 나온다 — 지운 것이 아니다",
+          len(allrows) == 3, f"{len(allrows)}행")
+    rows = allrows
 
     r = rows[0]
     check("축 칩 5종", len(r.axis_chips) == len(CHIP_AXES))
@@ -101,10 +110,14 @@ def test_listings() -> None:
         check("★ V6-04 — 등급이 있으면 순위가 있다",
               all(x.rank for x in rows), str([x.rank for x in rows]))
 
+    # ★ 위에서 rows 를 lease=True 로 바꿨다.  같은 조건으로 견줘야 한다 —
+    #   한쪽만 리스를 빼면 「1+0 != 3」이 된다 (실측 08-21)
     hit = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="taste.hud", bucket="1"), FIN, ROOT)
+        calc_version=ctx.calc_version, axis="taste.hud", bucket="1",
+        lease=True), FIN, ROOT)
     miss = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="taste.hud", bucket="0"), FIN, ROOT)
+        calc_version=ctx.calc_version, axis="taste.hud", bucket="0",
+        lease=True), FIN, ROOT)
     check("★ 축·버킷 필터가 실제로 거른다",
           len(hit) + len(miss) == len(rows), f"{len(hit)}+{len(miss)}")
 

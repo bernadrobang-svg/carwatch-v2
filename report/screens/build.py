@@ -770,6 +770,36 @@ def _view_str(key: str, root: str = ".") -> str:
         return str(json.load(f)[key])
 
 
+def _lease_kinds(root: str = ".") -> tuple:
+    """목록에서 뺄 리스·렌트 (개정 420).  ★ 값은 config 가 갖는다 (S14)."""
+    with open(f"{root}/config/web.json", encoding="utf-8") as f:
+        cfg = json.load(f)
+    return (list(cfg["lease_advertisement_types"]),
+            list(cfg["lease_sell_types"]))
+
+
+def lease_hidden(conn, flt: ListingFilter, root: str = ".") -> int:
+    """지금 조건에서 리스·렌트를 몇 건 뺐나 (개정 420).
+
+    ★ 조용히 빼지 않는다.  건수를 안 내면 매물이 사라진 것으로 보인다
+    ★ 「뺀 것만」 센다 — 같은 조건에 리스를 켠 것과 끈 것의 차다
+    """
+    if getattr(flt, "lease", False):
+        return 0
+    from dataclasses import replace as _rep
+
+    on, args_on = _listings_where(_rep(flt, lease=True))
+    off, args_off = _listings_where(flt)
+    sql = ("SELECT COUNT(*) FROM core_listing l LEFT JOIN result_score s"
+           " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+           " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id WHERE ")
+    a = conn.execute(sql + " AND ".join(on),
+                     [flt.calc_version, *args_on]).fetchone()[0]
+    b = conn.execute(sql + " AND ".join(off),
+                     [flt.calc_version, *args_off]).fetchone()[0]
+    return max(0, a - b)
+
+
 def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
     갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
@@ -790,6 +820,20 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         args.append(flt.target_key)
     if getattr(flt, "mismatch", False):
         where.append(record_mismatch_sql())
+    # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  ?lease=1 이면 함께 낸다
+    if not getattr(flt, "lease", False):
+        ads, sells = _lease_kinds()
+        where.append(
+            "(l.advertisement_type IS NULL OR l.advertisement_type NOT IN"
+            f" ({','.join('?' * len(ads))}))")
+        args.extend(ads)
+        where.append("(l.sell_type IS NULL OR l.sell_type NOT IN"
+                     f" ({','.join('?' * len(sells))}))")
+        args.extend(sells)
+    # 차종 (개정 420).  ★ target_key 가 차종이다
+    if getattr(flt, "model", None):
+        where.append("l.target_key LIKE ?")
+        args.append(f"{flt.model}%")
     if flt.grade:
         where.append("s.grade = ?")
         args.append(flt.grade)

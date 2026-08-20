@@ -101,5 +101,18 @@
   "raw_rows_max": 40,
   "_raw_rows_max_note": "「받은 원문」 절에 엔드포인트마다 낼 줄 수 (개정 378). ★ 전부 펴면 한 쪽이 수백 KB 가 된다.  넘으면 「더 있습니다」를 낸다",
   "raw_probe_listings": 30,
-  "_raw_probe_listings_note": "V11-136 이 엔드포인트마다 몇 매물까지 열어 「낼 수 있는가」를 볼 것인가. ★ 전건을 열면 검사가 파이프라인만큼 무거워진다"
+  "_raw_probe_listings_note": "V11-136 이 엔드포인트마다 몇 매물까지 열어 「낼 수 있는가」를 볼 것인가. ★ 전건을 열면 검사가 파이프라인만큼 무거워진다",
+  "_note_lease_hidden": "개정 420 마스터 확정 — 「리스는 목록에서 아예 뺀다」. ★ 지우지 않는다. 저장은 그대로 하고 화면에서만 뺀다 (P3). ★ 건수는 낸다 — 안 내면 매물이 사라진 것으로 보인다. ?lease=1 로 볼 수 있다",
+  "lease_advertisement_types": [
+    "OPERATING_LEASE",
+    "FINANCING_LEASE",
+    "RENT_CAR",
+    "RENT_SUCCESSION"
+  ],
+  "lease_sell_types": [
+    "렌트",
+    "리스"
+  ],
+  "_note_price_filter_unit_won": "가격대 필터의 단위 (개정 420).  ★ 사람은 「3,500만」이라 말한다 — 원으로 받으면 0 을 네 번 더 쳐야 한다",
+  "price_filter_unit_won": 10000
 }
