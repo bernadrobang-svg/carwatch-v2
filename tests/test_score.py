@@ -488,9 +488,8 @@ def test_spec_gate() -> None:
 
 def test_price_real() -> None:
     """① 값 250 — 시세 100 · 신차가 80 · 주행 70 (docs/ref/F-scoring.md)."""
-    from analyze.axis.value import elapsed_years, residual_expected
+    from analyze.axis.value import elapsed_years
 
-    r = POLICY.rule("value")
     org = 70_000_000
 
     def at(price, **kw):
@@ -501,28 +500,43 @@ def test_price_real() -> None:
                                         **kw)))
 
     # ── 1-1 시세 대비 100 ──
+    # ★★ 개정 419 — 계단표를 없앴다.  퍼센트에 비례해 준다
     mid = 50_000_000
     v = at(mid, market_median_won=mid, market_sample_n=12)
-    check("★ 중앙값과 같으면 50점", v.values["value.market"] == 50,
-          str(v.values["value.market"]))
-    check("★ 25% 싸면 100점 만점",
-          at(mid * 0.75, market_median_won=mid,
+    check("★ 중앙값과 같으면 0점 — 전엔 50점을 그냥 줬다 (개정 419)",
+          v.values["value.market"] == 0, str(v.values["value.market"]))
+    check("★ 5% 싸면 5×5 = 25점",
+          at(mid * 0.95, market_median_won=mid,
+             market_sample_n=12).values["value.market"] == 25,
+          str(at(mid * 0.95, market_median_won=mid,
+                 market_sample_n=12).values["value.market"]))
+    check("★ 20% 싸면 100점 만점 (상한)",
+          at(mid * 0.80, market_median_won=mid,
              market_sample_n=12).values["value.market"] == 100)
-    check("★ 20% 비싸면 0점",
+    check("★ 3% 비싸면 −3×8 = −24점.  ★ 0 에서 안 멈춘다",
+          at(mid * 1.03, market_median_won=mid,
+             market_sample_n=12).values["value.market"] == -24,
+          str(at(mid * 1.03, market_median_won=mid,
+                 market_sample_n=12).values["value.market"]))
+    check("★ 20% 비싸도 계속 깎인다 — 하한 −100",
           at(mid * 1.20, market_median_won=mid,
-             market_sample_n=12).values["value.market"] == 0)
+             market_sample_n=12).values["value.market"] == -100)
     check("★ 표본이 모자라면 0점 · 확인 안 됨 — 이론가로 메우지 않는다",
           at(mid).values["value.market"] == 0
           and at(mid).sources["value.market"] == "market_sample_short")
 
     # ── 1-2 신차가 대비 80 ──
     years = elapsed_years(ctx(snap(first_registration_date="2023-05-02")))
-    expected = residual_expected(years, r)
-    v = at(org * expected)
-    check("★ 기준 잔가율과 같으면 45점", v.values["value.depreciation"] == 45,
-          f"{years:.1f}년 · 기준 {expected:.2f} · {v.values['value.depreciation']}")
-    check("★ 기준보다 0.15 더 떨어졌으면 80점 만점",
-          at(org * (expected - 0.15)).values["value.depreciation"] == 80)
+    # ★ 잔가율 표를 안 쓴다 (개정 419) — 「신차 대비 30% 싸면 30점」
+    check("★ 신차가와 같으면 0점", at(org).values["value.depreciation"] == 0,
+          str(at(org).values["value.depreciation"]))
+    check("★ 신차 대비 30% 싸면 30점 — 마스터 검산",
+          at(org * 0.70).values["value.depreciation"] == 30,
+          str(at(org * 0.70).values["value.depreciation"]))
+    check("★ 80점 상한", at(org * 0.10).values["value.depreciation"] == 80)
+    check("★ 신차가보다 비싸면 음수 — 10% 비싸면 −30 (하한)",
+          at(org * 1.10).values["value.depreciation"] == -30,
+          str(at(org * 1.10).values["value.depreciation"]))
     check("★ 신차가가 없으면 0점 · 확인 안 됨",
           analyze_listing(ctx(snap(price_current_won=30_000_000)))
           .sources["value.depreciation"] == "origin_price_missing")
