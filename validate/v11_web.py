@@ -442,6 +442,18 @@ C = {
                     "싶은데 왜 없지?」 ★ 차를 사는 사람이 제일 먼저 쓰는 "
                     "조건이 빠져 있었다 (개정 420)",
                     KIND_CODE),
+    "V11-157": Check("V11", "V11-157", "상단 메뉴가 넷을 넘지 않음",
+                     FATAL, "run",
+                     "개정 427 — 마스터 확정 「상단 메뉴는 셋이다」. "
+                     "★ 「후보」와 「매물」이 둘 다 「조건에 맞는 것을 "
+                     "등급순으로」라 화면이 두 벌이었다",
+                     KIND_CONTRACT),
+    "V11-158": Check("V11", "V11-158", "관리로 내린 화면이 여전히 열림",
+                     FATAL, "run",
+                     "개정 427 — ★ 화면을 지우지 않는다. 들어가는 문만 "
+                     "바꾼다. ★ 메뉴에서 뺀 김에 화면까지 죽이면 "
+                     "쌓아 둔 것을 잃는다",
+                     KIND_CONTRACT),
     "V11-156": Check("V11", "V11-156", "필터 조건이 그대로 넘어감",
                     FATAL, "run",
                     "★ 필터가 그대로 요청 파라미터가 된다 (STEP 149g). "
@@ -1058,6 +1070,7 @@ def _screen_checks(conn, rid) -> list:
     out += _listing_paging_checks(conn, rid)
     out += _photo_checks(conn, rid)
     out += _sian_css_checks(rid)
+    out += _menu_shape_checks(conn, rid)
     # 링크 · 툴팁 · 원문 · 고르기 · 순서 · 필터 (개정 276)
     out += _link_tip_checks(rid)
     out.append(_origin_link_check(rid))
@@ -1926,6 +1939,73 @@ def _photo_checks(conn, rid):
                    not bad56, bad56),
             result(C["V11-57"], rid, "없어도 뜸",
                    "뜸" if not bad57 else "무너짐", not bad57, bad57)]
+
+
+
+def _menu_shape_checks(conn, rid):
+    """V11-157 · V11-158 — 상단 메뉴 셋 · 내린 화면이 열리는가 (개정 427).
+
+    ★ config 만 보지 않는다.  ★ **menu_items() 를 실제로 불러** 본다 (S43-②)
+    ★ V11-158 은 「라우팅 표에 있는가」가 아니라 ★ **정말 200 이 나오는가**다 —
+      표에만 남기고 핸들러를 지우면 문이 닫힌 것이다
+    """
+    import json as _j
+
+    from contracts import Account, ROLE_ADMIN
+    from web.app import menu_items
+    from web.routes import GET, ROUTES
+    from web.server import guard
+    from web.views import HANDLERS
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        cfg = _j.load(f)
+    limit = 4                      # 규격 「넷을 넘는가」
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    got = menu_items(acc)
+    bad157 = []
+    if len(got) > limit:
+        bad157.append(f"상단 메뉴가 {len(got)}개다 — "
+                      + " · ".join(m["label"] for m in got))
+    # ★ 내린 화면이 상단에 도로 올라와 있는가
+    up = [m["path"] for m in got if m["path"] in cfg["demoted_menu"]]
+    bad157 += [f"{p} 는 관리로 내린 화면인데 상단에 있다" for p in up]
+
+    # V11-158 — 내린 화면이 정말 열리는가
+    by_path = {r.path: r for r in ROUTES}
+    probe = _probe(conn)
+    bad158 = []
+    for path in cfg["demoted_menu"]:
+        route = by_path.get(path)
+        if route is None:
+            bad158.append(f"{path} — 라우팅 표에서 사라졌다")
+            continue
+        if GET not in route.methods:
+            bad158.append(f"{path} — GET 이 없다")
+            continue
+        if guard(acc, route) is not None:
+            bad158.append(f"{path} — 관리자도 못 들어간다")
+            continue
+        fn_ = HANDLERS.get(route.view)
+        if fn_ is None:
+            bad158.append(f"{path} — 핸들러가 없다 (화면을 지웠다)")
+            continue
+        try:
+            code, _h, _b = fn_(probe, acc,
+                               {"query": {}, "form": {}, "method": GET},
+                               path_vars={}, csrf="t")
+        except Exception as e:                              # noqa: BLE001
+            bad158.append(f"{path} — 열다가 {type(e).__name__}")
+            continue
+        if int(code) >= 400:
+            bad158.append(f"{path} — {code} 가 난다")
+    return [
+        result(C["V11-157"], rid, f"<= {limit}", f"{len(got)}개",
+               not bad157, bad157[:4]),
+        result(C["V11-158"], rid, f"{len(cfg['demoted_menu'])}화면",
+               f"{len(cfg['demoted_menu']) - len(bad158)}개 열린다",
+               not bad158, bad158[:6]),
+    ]
 
 
 def _sian_css_checks(rid):

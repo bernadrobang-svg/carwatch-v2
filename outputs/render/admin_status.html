@@ -25,55 +25,11 @@
 
 <nav class="nav">
   
-  <a class="nav-item" href="/listings" title="판정한 매물을 표로 봅니다. 값을 누르면 그 조건으로 걸러집니다">매물</a>
+  <a class="nav-item" href="/listings" title="조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다">매물</a>
   
-  <a class="nav-item" href="/recommend" title="E · 미판정을 뺀 후보. 점수순이 아니라 예산·확인 못 한 축을 함께 봅니다">후보</a>
+  <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
   
-  <a class="nav-item" href="/compare" title="고른 매물을 축별로 나란히 놓습니다. 분모가 다르면 총점을 비교하지 않습니다">비교</a>
-  
-  <a class="nav-item" href="/market" title="차종별 시세 — 가격 분포 · 연식별 중앙값 · 감가 계수 이력">시세</a>
-  
-  <a class="nav-item" href="/dealers" title="딜러 정직도와 보유 차종. ★ 차량 판정에는 들어가지 않습니다">딜러</a>
-  
-  <a class="nav-item" href="/notready" title="아직 판정하지 못한 것과 그 이유">미판정</a>
-  
-  <a class="nav-item" href="/reports" title="낸 리포트를 화면에서 읽고 내려받습니다">리포트</a>
-  
-  <a class="nav-item" href="/watch" title="관심으로 담은 매물과 조건 알림">관심</a>
-  
-  <a class="nav-item" href="/admin" title="관리 현황 · 큐 상태 · 미분류 · 대기 요청">관리</a>
-  
-  <a class="nav-item" href="/admin/run" title="수집·재계산 실행 지시와 큐 (STEP 132)">실행 지시 <em>운영</em></a>
-  
-  <a class="nav-item" href="/admin/audit" title="설정 변경 · 쿼리 · 작업 이력 조회 (STEP 138a)">감사 <em>운영</em></a>
-  
-  <a class="nav-item" href="/admin/status" title="지금 도는 것을 지켜봅니다. 읽기 전용입니다 (STEP 136f)">진행 모니터 <em>운영</em></a>
-  
-  <a class="nav-item" href="/admin/import" title="목록을 파일·붙여넣기로 반입합니다 (STEP 136a · 136b)">목록 반입 <em>운영</em></a>
-  
-  <a class="nav-item" href="/admin/collect" title="사용자 회선으로 API 를 부릅니다 (STEP 136c)">브라우저 수집 <em>운영</em></a>
-  
-  <a class="nav-item" href="/admin/users" title="사용자 승인과 역할">사용자 <em>운영</em></a>
-  
-  <a class="nav-item" href="/admin/scoring" title="배점 조정 + 미리보기 (STEP 128 · 129)">배점 <em>조정</em></a>
-  
-  <a class="nav-item" href="/admin/targets" title="차종 추가 · 수정 (STEP 130)">차종 <em>조정</em></a>
-  
-  <a class="nav-item" href="/admin/registry" title="원문 필드 분류 (STEP 131)">등록부 <em>조정</em></a>
-  
-  <a class="nav-item" href="/admin/dict" title="같은 값을 같은 것으로 인정하는 규칙을 확정합니다 (STEP 136e)">사전 확정 <em>조정</em></a>
-  
-  <a class="nav-item" href="/admin/config" title="config 전체 편집과 이력 (STEP 127)">설정 <em>조정</em></a>
-  
-  <a class="nav-item" href="/admin/query" title="조회 쿼리 (STEP 133)">쿼리 <em>탐색</em></a>
-  
-  <a class="nav-item" href="/admin/api" title="API 를 직접 불러 원문을 봅니다 (STEP 134)">API <em>탐색</em></a>
-  
-  <a class="nav-item" href="/admin/tools" title="관리 도구 (STEP 135)">도구 <em>탐색</em></a>
-  
-  <a class="nav-item" href="/admin/docs" title="지시서 문서 뷰어 (STEP 136)">문서 <em>탐색</em></a>
-  
-  <a class="nav-item" href="/admin/requests" title="개발 요청 (STEP 137)">개발 요청 <em>탐색</em></a>
+  <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
 </nav>
 
@@ -98,7 +54,7 @@
 
 <p class="muted">
   <strong>5초</strong>마다 스스로 갱신합니다 ·
-  마지막 확인 <strong>2026-08-21T05:09:39+00:00</strong>.
+  마지막 확인 <strong>2026-08-21T07:43:16+00:00</strong>.
   갱신이 실패해도 <strong>여기 보이는 것은 그대로 남습니다</strong> —
   서버가 만든 화면이라 JS 가 없어도 새로고침하면 지금 상태가 나옵니다.
 </p>
@@ -111,8 +67,8 @@
 
 
 <p>
-  <strong>2026-08-21T01:00:36Z</strong>
-  <span class="muted">249분 전</span>
+  <strong>2026-08-21T05:00:36Z</strong>
+  <span class="muted">162분 전</span>
   
   <span class="chip-bad">어긋난 것이 있습니다</span>
 </p>
@@ -123,12 +79,12 @@
   <th>계산식</th><th>템플릿 문법</th><th>걸린 시간</th></tr></thead>
 <tbody><tr>
   <td class="num" data-label="fatal">4</td>
-  <td class="num" data-label="warn">9</td>
-  <td class="num" data-label="시험 실패">1</td>
+  <td class="num" data-label="warn">10</td>
+  <td class="num" data-label="시험 실패">2</td>
   <td class="num" data-label="「—」">0</td>
-  <td class="num" data-label="계산식">37</td>
+  <td class="num" data-label="계산식">36</td>
   <td class="num" data-label="템플릿 문법">0</td>
-  <td class="num" data-label="걸린 시간">372.8초</td>
+  <td class="num" data-label="걸린 시간">548.4초</td>
 </tr></tbody>
 </table>
 
@@ -137,7 +93,7 @@
 
 
 <p><b>지난 번과 달라진 것</b>
-  <span class="chip-bad">통과 328 → 326  ★ 늘었다</span><span class="chip-bad">fatal 2 → 4  ★ 늘었다</span><span class="chip-bad">시험 실패 0 → 1  ★ 늘었다</span></p>
+  <span class="chip-bad">통과 326 → 330</span><span class="chip-bad">warn 9 → 10  ★ 늘었다</span><span class="chip-bad">시험 실패 1 → 2  ★ 늘었다</span><span class="chip-bad">계산식 37 → 36</span><span class="chip-bad">800줄 넘는 문서 4 → 5  ★ 늘었다</span><span class="chip-bad">검사 373 → 380</span><span class="chip-bad">죽은 검사 119 → 126  ★ 늘었다</span><span class="chip-bad">검사 없는 규격 32 → 39  ★ 늘었다</span></p>
 
 
 
@@ -221,7 +177,7 @@
 <h3>마지막으로 처리한 것</h3>
 
 <p>매물 <strong>42568701</strong> · ev_battery
-  · <strong>1754분 전</strong>
+  · <strong>1908분 전</strong>
   <span class="muted">(2026-08-19T23:55:08.361702+00:00)</span></p>
 
 
@@ -235,31 +191,31 @@
 <tr><td class="runid" data-label="작업">ec9fe8bc93128242</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">65분 전</td>
+  <td class="muted" data-label="언제">219분 전</td>
   <td class="muted" data-label="메모">KeyError: &#x27;market_curve&#x27;</td></tr>
 
 <tr><td class="runid" data-label="작업">15b1aa5346af1e65</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">1505분 전</td>
+  <td class="muted" data-label="언제">1659분 전</td>
   <td class="muted" data-label="메모">KeyError: &#x27;market_curve&#x27;</td></tr>
 
 <tr><td class="runid" data-label="작업">506dc88b19d810785d</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">listing_updated · all</td>
-  <td class="muted" data-label="언제">1751분 전</td>
+  <td class="muted" data-label="언제">1904분 전</td>
   <td class="muted" data-label="메모">S4 ok 0 · S5 ok 1153 · S6 ok 106741 · S9 ok 92184 · S10 ok 3841</td></tr>
 
 <tr><td class="runid" data-label="작업">03cd82accf06896884</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">listing_updated · all</td>
-  <td class="muted" data-label="언제">1766분 전</td>
+  <td class="muted" data-label="언제">1920분 전</td>
   <td class="muted" data-label="메모">S4: ⑥ not_requested 37290건 — 미완성 매물이 남았다</td></tr>
 
 <tr><td class="runid" data-label="작업">f60b1a354bb5de6248</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">listing_updated · all</td>
-  <td class="muted" data-label="언제">1767분 전</td>
+  <td class="muted" data-label="언제">1921분 전</td>
   <td class="muted" data-label="메모">S4: ⑥ not_requested 37230건 — 미완성 매물이 남았다</td></tr>
 
 </tbody>
@@ -339,7 +295,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 14:09</span>
+  <span>2026-08-21 16:43</span>
 </footer>
 
 </body>

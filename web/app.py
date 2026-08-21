@@ -20,23 +20,33 @@ FLASH_KEY = "flash"
 
 
 def menu_items(account) -> list[dict]:
-    """라우팅 표에서 메뉴를 만든다.  ★ 표가 정본이다 (STEP 142)."""
+    """상단 메뉴.  ★★ 개정 427 — 셋이다 (마스터 확정).
+
+    전   라우팅 표를 그대로 폈다 — 매물·후보·비교·시세·딜러·관심·미판정·관리 아홉
+    후   ★ 매물 · 관심 · 현황 셋.  나머지는 관리로 내린다
+    ★ 화면을 지우지 않는다.  들어가는 문만 바꾼다 (V11-158 이 확인한다)
+    ★ 차례와 문구는 config/web.json top_menu 가 정본이다 (S14) —
+      코드에 화면 이름을 박지 않는다
+    """
+    import json as _j
+    import os as _o
+
     from contracts import ROLE_RANK
 
     rank = ROLE_RANK.get(getattr(account, "role", "anonymous"), 0)
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        top = _j.load(f)["top_menu"]
+    need = {r.path: r.role for r in ROUTES}
     out = []
-    for r in ROUTES:
-        # ★ POST 전용 · 경로 변수 · 인증은 메뉴가 아니다
-        if r.var or r.path in ("/", "/login", "/logout", "/join",
-                               "/password"):
+    for one in top:
+        # ★ 권한이 모자라면 안 낸다 — 화면 숨김이 권한이 아니지만(STEP 126)
+        #   못 들어갈 문을 메뉴에 두면 그것도 거짓말이다
+        role = need.get(one["path"])
+        if role is not None and ROLE_RANK[role] > rank:
             continue
-        if "GET" not in r.methods:
-            continue
-        if ROLE_RANK[r.role] > rank:
-            continue
-        out.append({"label": _label(r.path), "path": r.path,
-                    "tip": _tip(r.path),
-                    "group": r.menu, "locked": False})
+        out.append({"label": one["label"], "path": one["path"],
+                    "tip": one["tip"], "group": None, "locked": False})
     return out
 
 
