@@ -1078,11 +1078,33 @@ try:
                             f"{_rid} — 남의 칸을 고쳤다 ({_i}번): "
                             f"「{_prev[_i][:24]}」 → 「{_cells[_i][:24]}」")
         # 지시서 본문은 그대로다 — 한 글자도 개발측이 고치지 않는다 (규칙 2)
-        _rc2, _diff = _git("diff", "--stat", "HEAD~1", "--",
+        # ★★ 실측 08-21 — 이 검사가 **가이드가 push 한 커밋을 제 것으로 셌다.**
+        #   개정 431 을 pull 한 직후 「개발측이 지시서를 고쳤다 —
+        #   docs/guide/00_버전.md」가 떴다.  reflog 상 그 커밋은
+        #   「pull -q: Fast-forward」로 받아온 것이지 이 장비가 만든 것이 아니다.
+        #   ★ HEAD~1 과의 차이만 보면 「누가 고쳤나」를 알 수 없다 (규칙 9 —
+        #     08-16 부터 가이드가 GitHub 에 직접 push 한다).
+        #   ★ 커밋한 사람의 메일로 가른다.  이 장비의 git 설정과 같으면 내 것이다
+        _rc4, _me = _git("config", "user.email")
+        _me = (_me or "").strip()
+        # ① 아직 커밋 안 한 docs 수정 — 이건 언제나 개발측의 것이다
+        _rc2, _diff = _git("diff", "--stat", "HEAD", "--",
                            "docs/guide", "docs/chapters")
         if not _rc2 and _diff.strip():
-            _b351.append("개발측이 지시서를 고쳤다 — "
-                         + " ".join(_diff.split())[:90])
+            _b351.append("개발측이 지시서를 고쳤다 (아직 커밋 안 함) — "
+                         + " ".join(_diff.split())[:80])
+        # ② 커밋된 docs 수정 — 이 장비가 만든 커밋만 잡는다
+        _rc5, _who = _git("log", "HEAD~1..HEAD", "--format=%h %ce",
+                          "--", "docs/guide", "docs/chapters")
+        if not _rc5 and _me:
+            for _ln in (_who or "").splitlines():
+                _sha, _, _ce = _ln.strip().partition(" ")
+                if not _sha or _ce.strip() != _me:
+                    continue          # 가이드가 push 한 것 — 받아온 것이다
+                _rc6, _d1 = _git("show", "--stat", "--format=", _sha,
+                                 "--", "docs/guide", "docs/chapters")
+                _b351.append(f"개발측이 지시서를 고쳤다 — {_sha} "
+                             + " ".join((_d1 or "").split())[:70])
         say("S35-1", "자기 칸만 고침", 0 if _b351 else 1, [], _b351[:8])
 
     # ── S36-1 · S37-1 (개정 359 · 362) ──────────────────────────────
