@@ -1,0 +1,237 @@
+<!-- ══════════ /detail/<id> — 11절 (개정 427 · STEP 97a) ══════════
+     ★ 정본은 ref/screens/v2_시안_목록상세.html
+     ★ 마스터 확정 — 「목록은 간략하게 상세는 최대한 모든 정보」
+     ★ 다만 최종 확인과 실물 사진은 엔카에서 본다 — 상세는 「갈지 말지」까지다
+     금지  실물 사진 30장 · 딜러 자유 서술 · 판매자 지도 · 전화 단추
+     금지  제원 12항목 (제로백·공차중량·타이어 규격)
+     절 차례는 ★ 판단하는 순서다.  바꾸지 않는다 (V11-159) -->
+<h1>{{ row.target_label }} <small>{{ row.trim }} · 매물 {{ v.listing_id }}</small></h1>
+<div class="detail on">
+
+<!-- ① 판정 ──────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-1">
+  <h3>판정</h3>
+  <div class="verdict">
+    <div class="gr {{ v.grade }} {{ v.grade | gradecls }}">{{ v.grade }}
+      {% if row.rank %}<small>{{ row.rank }}위</small>{% endif %}
+      {% if row.provisional %}<span class="prov">잠정</span>{% endif %}</div>
+    <div class="barwrap">
+      <div class="bars" style="width:132px">
+        {% for b in row.bars %}<div class="bar {{ b.css }}" style="height:44px"
+          title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점"><i
+          style="height:{{ b.pct }}%"></i><u>{{ b.pct }}</u></div>{% endfor %}
+      </div>
+      <div class="barlab" style="width:132px">{% for b in row.bars %}<span>{{ b.label }}</span>{% endfor %}</div>
+    </div>
+    <!-- ★ 「왜 그 등급인가」를 문장으로 (V11-160).  점수 나열이 아니다 -->
+    <ul class="why">
+      {% for w in verdict %}<li class="{{ w.tone }}">{{ w.head }}<b>{{ w.strong }}</b>{{ w.tail }}</li>{% endfor %}
+    </ul>
+  </div>
+  <p class="note">{{ v.grade_earned | num }} / {{ v.grade_base | num }} 점입니다 —
+    등급은 비율로 매깁니다. {{ grade_help }}</p>
+</div>
+
+<!-- ② 값 ────────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-2">
+  <h3>값 — 이 가격이 맞나</h3>
+  <div class="kv">
+    <div><u>표시가</u><b>{{ row.price_won | won }}</b></div>
+    <div><u>같은 사양 시세</u>{% if row.market_price_won %}<b>{{ row.market_price_won | won }}</b>{% endif %}{% if !row.market_price_won %}<b class="dim">표본 부족</b>{% endif %}</div>
+    <div><u>시세 대비</u>{% if row.market_gap_pct %}<b class="{{ row.market_gap_pct | signcls }}">{{ row.market_gap_pct }}%</b>{% endif %}{% if !row.market_gap_pct %}<b class="dim">—</b>{% endif %}</div>
+    <div><u>신차가</u>{% if row.origin_total_won %}<b>{{ row.origin_total_won | won }}</b>{% endif %}{% if !row.origin_total_won %}<b class="dim">없음</b>{% endif %}</div>
+    <div><u>신차 대비</u>{% if row.origin_gap_pct %}<b>{{ row.origin_gap_pct }}%</b>{% endif %}{% if !row.origin_gap_pct %}<b class="dim">—</b>{% endif %}</div>
+    <div><u>선택 옵션가</u>{% if row.option_price_won %}<b>{{ row.option_price_won | won }}</b>{% endif %}{% if !row.option_price_won %}<b class="dim">없음</b>{% endif %}</div>
+  </div>
+  <!-- ★ 분포 사분위 + 이 매물 위치 -->
+  {% if v.market_pos.count %}
+  <div class="dist" title="같은 차종·트림·연식 매물 {{ v.market_pos.count }}건의 분포입니다">
+    <div class="q" style="left:25%;right:25%"></div>
+    <div class="t" style="left:25%"></div><div class="t" style="left:50%"></div>
+    <div class="t" style="left:75%"></div>
+    <div class="me" style="left:{{ v.market_pos.mine_pct }}%"></div>
+  </div>
+  <div class="distlab">
+    <span>최저 {{ v.market_pos.low | won }}</span>
+    <span>중앙 {{ v.market_pos.mid | won }}</span>
+    <span>최고 {{ v.market_pos.high | won }}</span>
+  </div>
+  <p class="note">같은 사양 매물 <b>{{ v.market_pos.count }}건</b> 중
+    이 매물보다 싼 것이 <b>{{ v.market_pos.cheaper }}건</b>입니다 —
+    분포에서 <b>{{ v.market_pos.mine_pct }}%</b> 자리입니다.
+    ★ 옵션이 많아 비싼 것과 그냥 비싼 것을 가르려고 옵션가를 더해 견줍니다.</p>
+  {% endif %}
+</div>
+
+<!-- ③ 총 얼마 ──────────────────────────────────────────────────── -->
+<div class="sec" id="sec-3">
+  <h3>총 얼마 드나</h3>
+  {% for p in v.purchase_costs %}
+  <table class="money">
+    {% for i in p.items %}
+    <tr><td>{{ i.label }}{% if i.estimated %} <span class="dim">추정</span>{% endif %}</td>
+      <td>{{ i.won | won }}</td></tr>
+    {% endfor %}
+    <tr><td>총 구매비용 ({{ p.site_label }})</td><td>{{ p.total_won | won }}</td></tr>
+  </table>
+  {% endfor %}
+  {% if !v.purchase_costs %}
+  <table class="money">
+    {% for c in v.costs %}
+    <tr><td>{{ c.label }}</td><td>{{ c.used_won | won }}</td></tr>
+    {% endfor %}
+    <tr><td>총 구매비용</td><td>{{ row.total_cost_won | won }}
+      {% if row.buy_estimated %}<span class="dim">추정</span>{% endif %}</td></tr>
+  </table>
+  {% endif %}
+  <p class="note">
+    {% if row.cash_only %}표시가와 부대비용이 선납금 안입니다 — <b>전액 현금</b>입니다.{% endif %}
+    {% if !row.cash_only %}현금 {{ row.down_payment_won | won }} ·
+      월 <b>{{ row.monthly_won | won }}</b> <b>추정</b>입니다 —
+      할부 원금을 48개월로 나눈 값입니다. 이율·조건이 실제 승인과 다를 수 있습니다.{% endif %}
+  </p>
+</div>
+
+<!-- ④ 관문 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-4">
+  <h3>관문 — 사기 안 당하나</h3>
+  <!-- ★ 관문은 통과/탈락이지 점수가 아니다 (개정 433).
+       ★ 걸린 것은 붉게 — .x 가 그것이다 -->
+  <div class="gate">
+    {% for c in row.axis_chips %}<span class="{% if c.tone == 'bad' %}x{% endif %}"
+      title="{{ c.label }}">{{ c.head }} {{ c.mark }}</span>{% endfor %}
+  </div>
+  {% if v.absolute_fail %}
+  <p class="note"><b class="up">관문에서 떨어졌습니다 — {{ v.absolute_fail }}</b>.
+    ★ 「제외」는 등급이 아닙니다. 점수를 매기지 않습니다 (개정 433).</p>
+  {% endif %}
+</div>
+
+<!-- ⑤ ★ 아직 모르는 것 ───────────────────────────────────────── -->
+<div class="sec" id="sec-5">
+  <h3>★ 아직 모르는 것</h3>
+  <div class="unk">
+    {% for u in unknowns %}
+    <div title="{{ u.why }}"><span>{{ u.label }}</span>
+      <span class="dim">— {{ u.whose }} 몫</span>
+      <b>{{ u.points | num }}점</b></div>
+    {% endfor %}
+    {% if !unknowns %}<div class="ok"><span>확인 안 된 축이 없습니다</span><b>0점</b></div>{% endif %}
+    <!-- ★ 틴팅 리포트 자리 (개정 434).  ★ 주소가 들어오면 여기가 채워진다.
+         ★ 그때까지 주소를 지어내지 않는다 -->
+    <div title="엔카 리포트를 아직 못 받았습니다 (unified_report 401)">
+      <span>틴팅 여부 불명</span><span class="dim">— 우리 몫</span>
+      <b>미시공 시 약 100만원</b></div>
+  </div>
+  <p class="note">★ 「없음」과 「모름」은 다릅니다. 모르는 것은 0점으로 두되
+    <b>분모에서 빼지 않습니다</b> — 빼면 우리 부실이 숨습니다 (개정 289 · 434).</p>
+</div>
+
+<!-- ⑥ 취향 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-6">
+  <h3>취향 — 내가 원한 건가</h3>
+  <div class="kv">
+    <div><u>외장색</u><b>{% if row.color_ext_hex %}<span class="swatch"
+      style="background:{{ row.color_ext_hex }}"></span>{% endif %}{{ row.color_ext }}</b></div>
+    <div><u>내장색</u><b>{{ row.color_int }}</b></div>
+    <div><u>트림</u><b>{{ row.trim }}</b></div>
+    <div><u>선택 옵션</u><b>{{ row.option_count }}종 {{ row.option_price_won | won }}</b></div>
+  </div>
+  {% for g in v.options %}
+  <p class="note"><b>{{ g.group }}</b> {{ g.count }}종</p>
+  <div class="opts">
+    {% for o in g.items %}<div class="opt{% if o.known %} on{% endif %}"
+      title="원문 옵션 코드 {{ o.code }}">{{ o.name }}</div>{% endfor %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ⑦ 상태 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-7">
+  <h3>상태 — 사자마자 돈 나갈 것</h3>
+  <div class="kv">
+    <div><u>타이어</u><b class="dim">확인 못 함</b></div>
+    <div><u>차 키</u><b class="dim">확인 못 함</b></div>
+    <div><u>틴팅</u><b class="dim">확인 못 함</b></div>
+    <div><u>보증 잔여</u><b>{% for a in v.axes %}{% if a.axis == 'warranty.general' %}{{ a.value | num }}/{{ a.max_points | num }}점{% endif %}{% endfor %}</b></div>
+  </div>
+  <p class="note">타이어·차 키·틴팅은 엔카 리포트에 있습니다 —
+    ★ 아직 못 받았습니다 (⑤절 참조). 「없다」가 아니라 「모른다」입니다.</p>
+</div>
+
+<!-- ⑧ ★ 가격 추이 ────────────────────────────────────────────── -->
+<div class="sec" id="sec-8">
+  <h3>★ 가격 추이</h3>
+  {% if history %}
+  <div class="tl">{% for h in history %}<span class="{% if h.down %}d{% endif %}{% if !h.down %}u{% endif %}"></span>{% endfor %}</div>
+  <table class="money">
+    {% for h in history %}
+    <tr><td>{{ h.at }}</td><td class="{% if h.down %}dn{% endif %}{% if !h.down %}up{% endif %}">{{ h.old | won }} → {{ h.new | won }}</td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  {% if !history %}<p class="note">등록 뒤 가격이 바뀐 적이 없습니다.</p>{% endif %}
+  <p class="note">경과 <b>{{ row.days_on_market | num }}일</b> · 변동
+    <b>{{ row.price_change_cnt }}회</b>{% if row.status_label %} · {{ row.status_label }}{% endif %}</p>
+</div>
+
+<!-- ⑨ 딜러 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-9">
+  <h3>★ 딜러 — 누구한테 사나</h3>
+  <div class="kv">
+    <div><u>상호</u><b>{% if row.dealer_shop %}<a href="/dealers?q={{ row.dealer_shop }}">{{ row.dealer_shop }}</a>{% endif %}{% if !row.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</b></div>
+    <div><u>정직도</u>{% if row.dealer_trust %}<b>{{ row.dealer_trust }}</b>{% endif %}{% if !row.dealer_trust %}<b class="dim">표본 부족</b>{% endif %}</div>
+    <div><u>사분면</u><b>{{ row.dealer_quadrant }}</b></div>
+  </div>
+  <p class="note">★ 딜러 자유 서술·지도·전화 단추는 내지 않습니다 —
+    최종 확인은 엔카에서 하십시오.</p>
+</div>
+
+<!-- ⑩ 판정 근거 — 24축 (★ 접힘 · /why 흡수 · 주소는 살린다) ──── -->
+<div class="sec" id="sec-10">
+  <details>
+    <summary>판정 근거 — 24축 전부</summary>
+    <div>
+      <div class="axes">
+        {% for a in v.axes %}<a class="axc{% if a.excluded %} na{% endif %}"
+          href="/listings?axis={{ a.axis }}&bucket=1"
+          title="{{ a.label }} — 근거 {{ a.source }}">{{ a.label }}
+          <b>{{ a.value | num }}/{{ a.max_points | num }}</b></a>{% endfor %}
+      </div>
+      <p class="note">누르면 그 조건으로 걸러집니다.
+        전체 근거는 <a href="/why/{{ v.listing_id }}">/why/{{ v.listing_id }}</a>
+        에도 그대로 있습니다 — ★ 주소는 살립니다.</p>
+    </div>
+  </details>
+</div>
+
+<!-- ⑪ ★ 이 차 대신 볼 것 ───────────────────────────────────── -->
+<div class="sec" id="sec-11">
+  <h3>★ 이 차 대신 볼 것</h3>
+  <div class="alt">
+    {% for a in alts %}
+    <div class="altcard">
+      <div class="gr {{ a.row.grade }} {{ a.row.grade | gradecls }}">{{ a.row.grade }}</div>
+      <div>
+        <div class="an"><a href="/detail/{{ a.row.listing_id }}">{{ a.row.target_label }}</a></div>
+        <div class="ap">{{ a.row.price_won | won }}</div>
+        <!-- ★ 「비슷한 차」 나열이 아니라 왜 나은지를 쓴다 -->
+        <div class="ar">{{ a.why }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    {% if !alts %}<p class="note">같은 차종에서 더 나은 것을 못 찾았습니다.</p>{% endif %}
+  </div>
+</div>
+
+<!-- 바닥 — 값과 「엔카에서 보기」 -->
+<div class="foot">
+  <div class="p">{{ row.price_won | won }}<u>{% if row.cash_only %}전액 현금{% endif %}{% if !row.cash_only %}월 {{ row.monthly_won | won }} 추정{% endif %}</u></div>
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <input type="hidden" name="listing_id" value="{{ v.listing_id }}">
+    <button type="submit" title="관심에 담습니다">♡ 관심</button>
+  </form>
+  {% if row.encar_url %}<a href="{{ row.encar_url }}" target="_blank" rel="noopener">엔카에서 보기 ↗</a>{% endif %}
+</div>
+</div>

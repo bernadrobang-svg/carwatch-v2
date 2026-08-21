@@ -130,7 +130,7 @@
      5 시세차 · 6 신차대비% · 7 옵션가 · 8 경과일+가격+변동 -->
 <main class="rows car-rows">
 {% for r in rows %}
-<div class="row" data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}"
+<div class="row" data-peek="{{ r.photo_url }}" data-href="/detail/{{ r.listing_id }}"
      data-buy="{{ r.total_cost_won | won }}" data-buyest="{{ r.buy_estimated }}">
 
   <!-- 1 등급 + 순위 -->
@@ -156,7 +156,7 @@
 
   <!-- 3 사진 -->
   <div class="desk">
-    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img class="thumb"
+    {% if r.photo_url %}<a href="/detail/{{ r.listing_id }}"><img class="thumb"
       src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
     {% if !r.photo_url %}<span class="thumb thumb-none nophoto"
       title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
@@ -176,7 +176,7 @@
           <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
           <button type="submit" class="heart" title="관심에 담습니다">♡</button>
         </form>
-        <a href="/why/{{ r.listing_id }}"
+        <a href="/detail/{{ r.listing_id }}"
            title="판정 근거와 상세를 봅니다">{{ r.target_label }}</a>
       </div>
       <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">{{ r.trim }}</div>
@@ -205,7 +205,7 @@
           href="{{ c.filter_url }}" title="{{ c.label }} — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >{{ c.head }}<b>{{ c.mark }}</b></a>{% endfor %}
         <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
-        <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
+        <a href="/detail/{{ r.listing_id }}" class="mini">근거</a>
         {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>{% endif %}
       </div>
@@ -229,7 +229,7 @@
         title="판매자가 입력한 것입니다">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %}
         (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}</div>
     <div class="cell mono num"><u>옵션가</u>
-      {% if r.option_count %}<b><a href="/why/{{ r.listing_id }}"
+      {% if r.option_count %}<b><a href="/detail/{{ r.listing_id }}"
         title="선택 옵션 종수와 합계입니다">{{ r.option_count }}종{% if r.option_price_won %}
         {{ r.option_price_won | won }}{% endif %}</a></b>{% endif %}
       {% if !r.option_count %}<b class="dim">없음</b>{% endif %}</div>

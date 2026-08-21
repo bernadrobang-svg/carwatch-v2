@@ -844,16 +844,19 @@ def flow_s1(port: int) -> None:
     rec("S1-1", "/ 를 연다", "1걸음", str(st), st == 200)
 
     # 2  등급 분포에서 값이 있는 등급을 누른다
+    # ★★ 개정 427 — 목록의 매물 링크가 /why 에서 /detail 로 바뀌었다.
+    #   ★ /why 주소는 살아 있다 (규격 「주소는 살린다」) — 둘 다 받는다
+    LINK = r"/(?:detail|why)/(\d+)"
     page, picked = "", ""
     for cand in [x for x in links(home) if "grade=" in x]:
         _s, got, _h2 = c.get(cand)
-        if re.search(r"/why/(\d+)", got):
+        if re.search(LINK, got):
             page, picked = got, cand
             break
     rec("S1-2", "등급 막대 → 목록", "2걸음",
-        f"{picked} · 매물 {page.count('/why/')}건", bool(page))
+        f"{picked} · 매물 {len(re.findall(LINK, page))}건", bool(page))
 
-    lid = re.search(r"/why/(\d+)", page)
+    lid = re.search(LINK, page)
     st, why, _h = c.get(f"/why/{lid.group(1)}") if lid else (0, "", {})
     body = text(why)
     rec("S1-3", "첫 매물의 「근거」", "3걸음", str(st), st == 200)
@@ -880,8 +883,12 @@ def flow_s1(port: int) -> None:
     rec("S1-8", "/market 시세 어디쯤", "8걸음", str(st), st == 200)
 
     bars = [x.replace("&amp;", "&") for x in links(mk) if "price_min=" in x]
-    total = c.get("/listings")[1].count("/why/")
-    got = c.get(bars[0])[1].count("/why/") if bars else total
+    # ★ 개정 427 — 목록 링크가 /detail 로 바뀌었다.  둘 다 센다
+    def _n(html):
+        return len(re.findall(r"/(?:detail|why)/\d+", html))
+
+    total = _n(c.get("/listings")[1])
+    got = _n(c.get(bars[0])[1]) if bars else total
     rec("S1-9", "막대를 눌러 그 구간 매물", "9걸음",
         f"전체 {total}행 → {got}행", bool(bars) and got < total)
 
@@ -944,7 +951,8 @@ def flow_s2(port: int, ad: Client, db: str) -> None:
         u.post("/watch/add", {"csrf": token, "listing_id": str(i)})
     st, wb, _h = u.get("/watch")
     rec("S2-9", "3대를 관심 등록", "9걸음",
-        f"{wb.count('/why/')}건", wb.count("/why/") >= 1)
+        f"{len(re.findall(r'/(?:detail|why)/[0-9]+', wb))}건",
+        len(re.findall(r"/(?:detail|why)/[0-9]+", wb)) >= 1)
 
     # ★ 화면에 실제로 보이는 행의 watch_id 를 쓴다.
     #   DB 에서 아무거나 고르면 다른 행을 눌러 놓고 「안 보인다」고 한다
@@ -1116,7 +1124,7 @@ def flow_s3(port: int, ad: Client, db: str) -> None:
         st2 in (302, 303) and st3 == 200)
 
     # 4  남의 관심이 안 보인다
-    mine = wb.count("/why/")
+    mine = len(re.findall(r"/(?:detail|why)/[0-9]+", wb))
     others = sqlite3.connect(db).execute(
         "SELECT COUNT(*) FROM watch_item WHERE closed_at IS NULL "
         "AND account_id <> (SELECT account_id FROM account "

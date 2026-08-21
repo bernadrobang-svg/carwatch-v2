@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상세 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css?v=0d9f3a1a7d">
+
+</head>
+<body class="s-detail">
+
+<header class="top">
+  <a class="brand" href="/" title="현황으로 갑니다">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings" title="조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다">매물</a>
+  
+  <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
+  
+  <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-stale">
+  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+</div>
+
+
+<main>
+<!-- ══════════ /detail/<id> — 11절 (개정 427 · STEP 97a) ══════════
+     ★ 정본은 ref/screens/v2_시안_목록상세.html
+     ★ 마스터 확정 — 「목록은 간략하게 상세는 최대한 모든 정보」
+     ★ 다만 최종 확인과 실물 사진은 엔카에서 본다 — 상세는 「갈지 말지」까지다
+     금지  실물 사진 30장 · 딜러 자유 서술 · 판매자 지도 · 전화 단추
+     금지  제원 12항목 (제로백·공차중량·타이어 규격)
+     절 차례는 ★ 판단하는 순서다.  바꾸지 않는다 (V11-159) -->
+<h1>GRANDEUR_LPG <small>3.5 LPG 2WD · 익스클루시브 · 매물 3</small></h1>
+<div class="detail on">
+
+<!-- ① 판정 ──────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-1">
+  <h3>판정</h3>
+  <div class="verdict">
+    <div class="gr EXCLUDED grade-excluded">EXCLUDED
+      <small>1위</small>
+      </div>
+    <div class="barwrap">
+      <div class="bars" style="width:132px">
+        <div class="bar b1" style="height:44px"
+          title="차량 0.0 / 150.0점"><i
+          style="height:0%"></i><u>0</u></div><div class="bar b2" style="height:44px"
+          title="값 111.0 / 250.0점"><i
+          style="height:44%"></i><u>44</u></div><div class="bar b3" style="height:44px"
+          title="보증 118.0 / 130.0점"><i
+          style="height:91%"></i><u>91</u></div><div class="bar b4" style="height:44px"
+          title="취향 140.0 / 145.0점"><i
+          style="height:97%"></i><u>97</u></div>
+      </div>
+      <div class="barlab" style="width:132px"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+    </div>
+    <!-- ★ 「왜 그 등급인가」를 문장으로 (V11-160).  점수 나열이 아니다 -->
+    <ul class="why">
+      <li class="g">같은 트림·옵션 기준 시세보다 <b>256만</b> 쌉니다.</li><li class="g">확인율 <b>67%</b> — 675점 중 452점을 원문으로 확인했습니다.</li><li class="o">원하시는 <b>트림 · 색상 · HUD</b> 가 맞습니다.</li><li class="r"><b>압류·저당 0/7</b>.</li><li class="r"><b>자차 미가입 0/16</b>.</li>
+    </ul>
+  </div>
+  <p class="note">319 / 675 점입니다 —
+    등급은 비율로 매깁니다. 등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다</p>
+</div>
+
+<!-- ② 값 ────────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-2">
+  <h3>값 — 이 가격이 맞나</h3>
+  <div class="kv">
+    <div><u>표시가</u><b>3,044만</b></div>
+    <div><u>같은 사양 시세</u><b>3,300만</b></div>
+    <div><u>시세 대비</u><b class="down-v">-7.8%</b></div>
+    <div><u>신차가</u><b>4,406만</b></div>
+    <div><u>신차 대비</u><b>-30.9%</b></div>
+    <div><u>선택 옵션가</u><b class="dim">없음</b></div>
+  </div>
+  <!-- ★ 분포 사분위 + 이 매물 위치 -->
+  
+  <div class="dist" title="같은 차종·트림·연식 매물 14건의 분포입니다">
+    <div class="q" style="left:25%;right:25%"></div>
+    <div class="t" style="left:25%"></div><div class="t" style="left:50%"></div>
+    <div class="t" style="left:75%"></div>
+    <div class="me" style="left:47%"></div>
+  </div>
+  <div class="distlab">
+    <span>최저 2,290만</span>
+    <span>중앙 3,090만</span>
+    <span>최고 3,900만</span>
+  </div>
+  <p class="note">같은 사양 매물 <b>14건</b> 중
+    이 매물보다 싼 것이 <b>7건</b>입니다 —
+    분포에서 <b>47%</b> 자리입니다.
+    ★ 옵션이 많아 비싼 것과 그냥 비싼 것을 가르려고 옵션가를 더해 견줍니다.</p>
+  
+</div>
+
+<!-- ③ 총 얼마 ──────────────────────────────────────────────────── -->
+<div class="sec" id="sec-3">
+  <h3>총 얼마 드나</h3>
+  
+  <table class="money">
+    
+    <tr><td>차량가</td>
+      <td>3,044만</td></tr>
+    
+    <tr><td>이전등록비 <span class="dim">추정</span></td>
+      <td>213만</td></tr>
+    
+    <tr><td>총 구매비용 (엔카)</td><td>3,257만</td></tr>
+  </table>
+  
+  
+  <p class="note">
+    
+    현금 1,500만 ·
+      월 <b>40만</b> <b>추정</b>입니다 —
+      할부 원금을 48개월로 나눈 값입니다. 이율·조건이 실제 승인과 다를 수 있습니다.
+  </p>
+</div>
+
+<!-- ④ 관문 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-4">
+  <h3>관문 — 사기 안 당하나</h3>
+  <!-- ★ 관문은 통과/탈락이지 점수가 아니다 (개정 433).
+       ★ 걸린 것은 붉게 — .x 가 그것이다 -->
+  <div class="gate">
+    <span class="{% if c.tone == 'bad' %}x{% endif %}"
+      title="사고 확인 불가">사고 ?</span><span class="{% if c.tone == 'bad' %}x{% endif %}"
+      title="골격 확인 불가">골격 ?</span><span class="{% if c.tone == 'bad' %}x{% endif %}"
+      title="렌트·영업용">용도 -</span><span class="{% if c.tone == 'bad' %}x{% endif %}"
+      title="보증 있음">보증 O</span>
+  </div>
+  
+  <p class="note"><b class="up">관문에서 떨어졌습니다 — 리스·렌트 상품</b>.
+    ★ 「제외」는 등급이 아닙니다. 점수를 매기지 않습니다 (개정 433).</p>
+  
+</div>
+
+<!-- ⑤ ★ 아직 모르는 것 ───────────────────────────────────────── -->
+<div class="sec" id="sec-5">
+  <h3>★ 아직 모르는 것</h3>
+  <div class="unk">
+    
+    <div title="★ **계산 쪽이 못 만든다** — ★ 우리 잘못. 계산 설계를 고친다"><span>시세 대비</span>
+      <span class="dim">— 우리 몫</span>
+      <b>100점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>사고</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>24점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>골격</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>20점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>자차 미가입</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>16점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>외판</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>13점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>보험 수리비</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>13점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>소유자 변경</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>10점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>특수 사고</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>10점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>압류·저당</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>7점</b></div>
+    
+    <div title="그 **엔드포인트를 안 받는다** — ★ 우리 잘못. 받는다"><span>소모품</span>
+      <span class="dim">— 우리 몫</span>
+      <b>7점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>누유</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>7점</b></div>
+    
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>진정성</span>
+      <span class="dim">— 딜러 몫</span>
+      <b>3점</b></div>
+    
+    
+    <!-- ★ 틴팅 리포트 자리 (개정 434).  ★ 주소가 들어오면 여기가 채워진다.
+         ★ 그때까지 주소를 지어내지 않는다 -->
+    <div title="엔카 리포트를 아직 못 받았습니다 (unified_report 401)">
+      <span>틴팅 여부 불명</span><span class="dim">— 우리 몫</span>
+      <b>미시공 시 약 100만원</b></div>
+  </div>
+  <p class="note">★ 「없음」과 「모름」은 다릅니다. 모르는 것은 0점으로 두되
+    <b>분모에서 빼지 않습니다</b> — 빼면 우리 부실이 숨습니다 (개정 289 · 434).</p>
+</div>
+
+<!-- ⑥ 취향 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-6">
+  <h3>취향 — 내가 원한 건가</h3>
+  <div class="kv">
+    <div><u>외장색</u><b><span class="swatch"
+      style="background:#EDEDED"></span>흰색</b></div>
+    <div><u>내장색</u><b>흰색 계열</b></div>
+    <div><u>트림</u><b>3.5 LPG 2WD · 익스클루시브</b></div>
+    <div><u>선택 옵션</u><b>5종 0</b></div>
+  </div>
+  
+  <p class="note"><b>선택 옵션</b> 5종</p>
+  <div class="opts">
+    <div class="opt on"
+      title="원문 옵션 코드 10004">10004</div><div class="opt on"
+      title="원문 옵션 코드 10001">10001</div><div class="opt on"
+      title="원문 옵션 코드 1057">1057</div><div class="opt on"
+      title="원문 옵션 코드 1056">1056</div><div class="opt on"
+      title="원문 옵션 코드 1060">1060</div>
+  </div>
+  
+  <p class="note"><b>기본 옵션</b> 51종</p>
+  <div class="opts">
+    <div class="opt on"
+      title="원문 옵션 코드 001">001</div><div class="opt on"
+      title="원문 옵션 코드 002">002</div><div class="opt on"
+      title="원문 옵션 코드 004">004</div><div class="opt on"
+      title="원문 옵션 코드 005">005</div><div class="opt on"
+      title="원문 옵션 코드 006">006</div><div class="opt on"
+      title="원문 옵션 코드 007">007</div><div class="opt on"
+      title="원문 옵션 코드 008">008</div><div class="opt on"
+      title="원문 옵션 코드 010">010</div><div class="opt on"
+      title="원문 옵션 코드 014">014</div><div class="opt on"
+      title="원문 옵션 코드 015">015</div><div class="opt on"
+      title="원문 옵션 코드 017">017</div><div class="opt on"
+      title="원문 옵션 코드 019">019</div><div class="opt on"
+      title="원문 옵션 코드 020">020</div><div class="opt on"
+      title="원문 옵션 코드 021">021</div><div class="opt on"
+      title="원문 옵션 코드 022">022</div><div class="opt on"
+      title="원문 옵션 코드 023">023</div><div class="opt on"
+      title="원문 옵션 코드 024">024</div><div class="opt on"
+      title="원문 옵션 코드 026">026</div><div class="opt on"
+      title="원문 옵션 코드 027">027</div><div class="opt on"
+      title="원문 옵션 코드 030">030</div><div class="opt on"
+      title="원문 옵션 코드 031">031</div><div class="opt on"
+      title="원문 옵션 코드 032">032</div><div class="opt on"
+      title="원문 옵션 코드 033">033</div><div class="opt on"
+      title="원문 옵션 코드 034">034</div><div class="opt on"
+      title="원문 옵션 코드 035">035</div><div class="opt on"
+      title="원문 옵션 코드 051">051</div><div class="opt on"
+      title="원문 옵션 코드 055">055</div><div class="opt on"
+      title="원문 옵션 코드 056">056</div><div class="opt on"
+      title="원문 옵션 코드 057">057</div><div class="opt on"
+      title="원문 옵션 코드 058">058</div><div class="opt on"
+      title="원문 옵션 코드 059">059</div><div class="opt on"
+      title="원문 옵션 코드 063">063</div><div class="opt on"
+      title="원문 옵션 코드 072">072</div><div class="opt on"
+      title="원문 옵션 코드 074">074</div><div class="opt on"
+      title="원문 옵션 코드 075">075</div><div class="opt on"
+      title="원문 옵션 코드 077">077</div><div class="opt on"
+      title="원문 옵션 코드 079">079</div><div class="opt on"
+      title="원문 옵션 코드 081">081</div><div class="opt on"
+      title="원문 옵션 코드 082">082</div><div class="opt on"
+      title="원문 옵션 코드 083">083</div><div class="opt on"
+      title="원문 옵션 코드 084">084</div><div class="opt on"
+      title="원문 옵션 코드 085">085</div><div class="opt on"
+      title="원문 옵션 코드 086">086</div><div class="opt on"
+      title="원문 옵션 코드 087">087</div><div class="opt on"
+      title="원문 옵션 코드 088">088</div><div class="opt on"
+      title="원문 옵션 코드 091">091</div><div class="opt on"
+      title="원문 옵션 코드 093">093</div><div class="opt on"
+      title="원문 옵션 코드 094">094</div><div class="opt on"
+      title="원문 옵션 코드 095">095</div><div class="opt on"
+      title="원문 옵션 코드 096">096</div><div class="opt on"
+      title="원문 옵션 코드 097">097</div>
+  </div>
+  
+  <p class="note"><b>기타</b> 3종</p>
+  <div class="opts">
+    <div class="opt"
+      title="원문 옵션 코드 취등록세 0원">취등록세 0원</div><div class="opt"
+      title="원문 옵션 코드  초기비용 0원"> 초기비용 0원</div><div class="opt"
+      title="원문 옵션 코드  장기렌트"> 장기렌트</div>
+  </div>
+  
+  <p class="note"><b>튜닝</b> 2종</p>
+  <div class="opts">
+    <div class="opt on"
+      title="원문 옵션 코드 023">023</div><div class="opt on"
+      title="원문 옵션 코드 024">024</div>
+  </div>
+  
+</div>
+
+<!-- ⑦ 상태 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-7">
+  <h3>상태 — 사자마자 돈 나갈 것</h3>
+  <div class="kv">
+    <div><u>타이어</u><b class="dim">확인 못 함</b></div>
+    <div><u>차 키</u><b class="dim">확인 못 함</b></div>
+    <div><u>틴팅</u><b class="dim">확인 못 함</b></div>
+    <div><u>보증 잔여</u><b>{% if a.axis == 'warranty.general' %}0/7점{% endif %}{% if a.axis == 'warranty.general' %}0/16점{% endif %}{% if a.axis == 'warranty.general' %}0/10점{% endif %}{% if a.axis == 'warranty.general' %}0/20점{% endif %}{% if a.axis == 'warranty.general' %}33/38점{% endif %}{% if a.axis == 'warranty.general' %}52/52점{% endif %}{% if a.axis == 'warranty.general' %}0/24점{% endif %}{% if a.axis == 'warranty.general' %}0/7점{% endif %}{% if a.axis == 'warranty.general' %}0/20점{% endif %}{% if a.axis == 'warranty.general' %}0/3점{% endif %}{% if a.axis == 'warranty.general' %}0/7점{% endif %}{% if a.axis == 'warranty.general' %}0/13점{% endif %}{% if a.axis == 'warranty.general' %}0/13점{% endif %}{% if a.axis == 'warranty.general' %}0/10점{% endif %}{% if a.axis == 'warranty.general' %}13/13점{% endif %}{% if a.axis == 'warranty.general' %}16/16점{% endif %}{% if a.axis == 'warranty.general' %}16/16점{% endif %}{% if a.axis == 'warranty.general' %}10/10점{% endif %}{% if a.axis == 'warranty.general' %}41/80점{% endif %}{% if a.axis == 'warranty.general' %}0/100점{% endif %}{% if a.axis == 'warranty.general' %}70/70점{% endif %}{% if a.axis == 'warranty.general' %}19/31점{% endif %}{% if a.axis == 'warranty.general' %}47/47점{% endif %}{% if a.axis == 'warranty.general' %}52/52점{% endif %}</b></div>
+  </div>
+  <p class="note">타이어·차 키·틴팅은 엔카 리포트에 있습니다 —
+    ★ 아직 못 받았습니다 (⑤절 참조). 「없다」가 아니라 「모른다」입니다.</p>
+</div>
+
+<!-- ⑧ ★ 가격 추이 ────────────────────────────────────────────── -->
+<div class="sec" id="sec-8">
+  <h3>★ 가격 추이</h3>
+  
+  <p class="note">등록 뒤 가격이 바뀐 적이 없습니다.</p>
+  <p class="note">경과 <b>6일</b> · 변동
+    <b>0회</b> · 게시중</p>
+</div>
+
+<!-- ⑨ 딜러 ────────────────────────────────────────────────────── -->
+<div class="sec" id="sec-9">
+  <h3>★ 딜러 — 누구한테 사나</h3>
+  <div class="kv">
+    <div><u>상호</u><b><span class="dim">딜러 정보 없음</span></b></div>
+    <div><u>정직도</u><b class="dim">표본 부족</b></div>
+    <div><u>사분면</u><b></b></div>
+  </div>
+  <p class="note">★ 딜러 자유 서술·지도·전화 단추는 내지 않습니다 —
+    최종 확인은 엔카에서 하십시오.</p>
+</div>
+
+<!-- ⑩ 판정 근거 — 24축 (★ 접힘 · /why 흡수 · 주소는 살린다) ──── -->
+<div class="sec" id="sec-10">
+  <details>
+    <summary>판정 근거 — 24축 전부</summary>
+    <div>
+      <div class="axes">
+        <a class="axc"
+          href="/listings?axis=history.lien&bucket=1"
+          title="압류·저당 — 근거 missing">압류·저당
+          <b>0/7</b></a><a class="axc"
+          href="/listings?axis=history.not_join&bucket=1"
+          title="자차 미가입 — 근거 missing">자차 미가입
+          <b>0/16</b></a><a class="axc"
+          href="/listings?axis=history.owner&bucket=1"
+          title="소유자 변경 — 근거 missing">소유자 변경
+          <b>0/10</b></a><a class="axc"
+          href="/listings?axis=history.usage&bucket=1"
+          title="용도 — 근거 advertisement_type">용도
+          <b>0/20</b></a><a class="axc"
+          href="/listings?axis=spec.options&bucket=1"
+          title="옵션 — 근거 options_choice_price">옵션
+          <b>33/38</b></a><a class="axc"
+          href="/listings?axis=spec.trim&bucket=1"
+          title="트림 — 근거 trim_origin_price">트림
+          <b>52/52</b></a><a class="axc"
+          href="/listings?axis=state.accident&bucket=1"
+          title="사고 — 근거 missing">사고
+          <b>0/24</b></a><a class="axc"
+          href="/listings?axis=state.consumable&bucket=1"
+          title="소모품 — 근거 site_unavailable">소모품
+          <b>0/7</b></a><a class="axc"
+          href="/listings?axis=state.frame&bucket=1"
+          title="골격 — 근거 missing">골격
+          <b>0/20</b></a><a class="axc"
+          href="/listings?axis=state.integrity&bucket=1"
+          title="진정성 — 근거 missing">진정성
+          <b>0/3</b></a><a class="axc"
+          href="/listings?axis=state.leak&bucket=1"
+          title="누유 — 근거 missing">누유
+          <b>0/7</b></a><a class="axc"
+          href="/listings?axis=state.outer&bucket=1"
+          title="외판 — 근거 missing">외판
+          <b>0/13</b></a><a class="axc"
+          href="/listings?axis=state.repair&bucket=1"
+          title="보험 수리비 — 근거 missing">보험 수리비
+          <b>0/13</b></a><a class="axc"
+          href="/listings?axis=state.special&bucket=1"
+          title="특수 사고 — 근거 missing">특수 사고
+          <b>0/10</b></a><a class="axc"
+          href="/listings?axis=taste.color&bucket=1"
+          title="색상 — 근거 detail_color">색상
+          <b>13/13</b></a><a class="axc"
+          href="/listings?axis=taste.hud&bucket=1"
+          title="HUD — 근거 option_codes">HUD
+          <b>16/16</b></a><a class="axc"
+          href="/listings?axis=taste.picked&bucket=1"
+          title="지정 옵션 — 근거 nothing_picked">지정 옵션
+          <b>16/16</b></a><a class="axc"
+          href="/listings?axis=taste.sunroof&bucket=1"
+          title="선루프 — 근거 option_codes">선루프
+          <b>10/10</b></a><a class="axc"
+          href="/listings?axis=value.depreciation&bucket=1"
+          title="신차가 대비 — 근거 origin_price">신차가 대비
+          <b>41/80</b></a><a class="axc"
+          href="/listings?axis=value.market&bucket=1"
+          title="시세 대비 — 근거 market_sample_short">시세 대비
+          <b>0/100</b></a><a class="axc"
+          href="/listings?axis=value.mileage&bucket=1"
+          title="주행 — 근거 mileage_per_year">주행
+          <b>70/70</b></a><a class="axc"
+          href="/listings?axis=warranty.general&bucket=1"
+          title="일반 보증 — 근거 encar_warranty_general">일반 보증
+          <b>19/31</b></a><a class="axc"
+          href="/listings?axis=warranty.power&bucket=1"
+          title="보증 — 근거 encar_warranty_power">보증
+          <b>47/47</b></a><a class="axc"
+          href="/listings?axis=warranty.site&bucket=1"
+          title="사이트 보증 — 근거 엔카진단++">사이트 보증
+          <b>52/52</b></a>
+      </div>
+      <p class="note">누르면 그 조건으로 걸러집니다.
+        전체 근거는 <a href="/why/3">/why/3</a>
+        에도 그대로 있습니다 — ★ 주소는 살립니다.</p>
+    </div>
+  </details>
+</div>
+
+<!-- ⑪ ★ 이 차 대신 볼 것 ───────────────────────────────────── -->
+<div class="sec" id="sec-11">
+  <h3>★ 이 차 대신 볼 것</h3>
+  <div class="alt">
+    
+    <div class="altcard">
+      <div class="gr B grade-b">B</div>
+      <div>
+        <div class="an"><a href="/detail/8221">GRANDEUR_LPG</a></div>
+        <div class="ap">3,600만</div>
+        <!-- ★ 「비슷한 차」 나열이 아니라 왜 나은지를 쓴다 -->
+        <div class="ar">등급이 B 로 높습니다</div>
+      </div>
+    </div>
+    
+    <div class="altcard">
+      <div class="gr B grade-b">B</div>
+      <div>
+        <div class="an"><a href="/detail/3113">GRANDEUR_LPG</a></div>
+        <div class="ap">4,250만</div>
+        <!-- ★ 「비슷한 차」 나열이 아니라 왜 나은지를 쓴다 -->
+        <div class="ar">등급이 B 로 높습니다 · 주행이 적습니다</div>
+      </div>
+    </div>
+    
+    <div class="altcard">
+      <div class="gr C grade-c">C</div>
+      <div>
+        <div class="an"><a href="/detail/3667">GRANDEUR_LPG</a></div>
+        <div class="ap">3,900만</div>
+        <!-- ★ 「비슷한 차」 나열이 아니라 왜 나은지를 쓴다 -->
+        <div class="ar">등급이 C 로 높습니다</div>
+      </div>
+    </div>
+    
+    <div class="altcard">
+      <div class="gr C grade-c">C</div>
+      <div>
+        <div class="an"><a href="/detail/7803">GRANDEUR_LPG</a></div>
+        <div class="ap">1,830만</div>
+        <!-- ★ 「비슷한 차」 나열이 아니라 왜 나은지를 쓴다 -->
+        <div class="ar">등급이 C 로 높습니다 · 1,214만 쌉니다</div>
+      </div>
+    </div>
+    
+    
+  </div>
+</div>
+
+<!-- 바닥 — 값과 「엔카에서 보기」 -->
+<div class="foot">
+  <div class="p">3,044만<u>월 40만 추정</u></div>
+  <form method="post" action="/watch/add" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="listing_id" value="3">
+    <button type="submit" title="관심에 담습니다">♡ 관심</button>
+  </form>
+  <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=38016911" target="_blank" rel="noopener">엔카에서 보기 ↗</a>
+</div>
+</div>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260819T234633</span>
+  <span>2026-08-21 19:40</span>
+</footer>
+
+</body>
+</html>

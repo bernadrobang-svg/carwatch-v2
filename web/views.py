@@ -135,10 +135,7 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "carry_pick": _carry_pick(flt),
                  "lease_hidden": _lease_hidden(conn, flt, root),
                  # ★ 배지 설명도 config 에서 (개정 433).  「여섯 등급」이 박혀 있었다
-                 "grade_help": ("등급 " + str(_points(root)["n_cuts"])
-                                + "단계입니다. 절대 기준 — "
-                                + _points(root)["cuts"]
-                                + ". 「제외」는 등급이 아니라 관문 배제입니다"),
+                 "grade_help": _grade_help(root),
                  # ★ 관문 배제로 뺀 건수 (개정 433).  조용히 빼지 않는다
                  "excluded_hidden": _excluded_hidden(conn, flt, root),
                  # ★ 사유별 — 「몇 건」보다 왜인지가 먼저다
@@ -199,6 +196,47 @@ def why(conn, account, req, path_vars: dict, root: str = ROOT,
     return page(conn, account, "판정 근거", "why.html",
                 {"v": v, "rep_raw": v.raw_sections}, csrf=csrf,
                 root=root, flash_key=flash_key)
+
+
+
+def detail(conn, account, req, path_vars: dict, root: str = ROOT,
+           csrf: str = "", flash_key: str = "-", **_kw) -> tuple:
+    """/detail/<id> — 11절 (개정 427 · STEP 97a).
+
+    ★ 없는 매물이라고 500 을 내지 않는다.  404 와 안내를 낸다 (E-8)
+    """
+    from report.screens.build import view_detail
+
+    ver = _versions(conn)
+    try:
+        raw = str(path_vars.get("listing_id", ""))
+        if not raw.isdigit():
+            raise KeyError(raw)
+        got = view_detail(account, conn, int(raw), ver["calc_version"],
+                          _cfg("finance.json", root),
+                          _cfg("scoring.json", root), root)
+        if got.get("row") is None:
+            raise KeyError(raw)
+    except (KeyError, ValueError):
+        from web.context import HTTP_NOT_FOUND
+
+        miss = {"title": "그 매물의 판정 결과가 없습니다",
+                "reason": "내려갔거나 아직 채점되지 않은 매물입니다.",
+                "action": "매물 목록에서 다시 고른다  (/listings)"}
+        _st, hd, body = page(conn, account, "상세", "_missing.html",
+                             {"miss": miss}, root=root, csrf=csrf,
+                             flash_key=flash_key)
+        return HTTP_NOT_FOUND, hd, body
+    return page(conn, account, "상세", "detail.html",
+                {**got, "grade_help": _grade_help(root)}, csrf=csrf,
+                root=root, flash_key=flash_key)
+
+
+def _grade_help(root: str = ROOT) -> str:
+    """등급 설명 — ★ config 에서 만든다.  화면에 컷을 박지 않는다."""
+    got = _points(root)
+    return (f"등급 {got['n_cuts']}단계입니다. 절대 기준 — {got['cuts']}. "
+            "「제외」는 등급이 아니라 관문 배제입니다")
 
 
 def notready(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
@@ -2393,6 +2431,7 @@ def report_download(conn, account, req, path_vars: dict | None = None,
 HANDLERS = {
     "view_listings": listings,
     "view_why": why,
+    "view_detail": detail,
     "view_notready": notready,
     "view_dashboard": dashboard,
     "view_admin": admin_home,

@@ -442,6 +442,23 @@ C = {
                     "싶은데 왜 없지?」 ★ 차를 사는 사람이 제일 먼저 쓰는 "
                     "조건이 빠져 있었다 (개정 420)",
                     KIND_CODE),
+    "V11-159": Check("V11", "V11-159", "상세 11개 절이 규격 순서로 있음",
+                     FATAL, "run",
+                     "개정 427 STEP 97a — ★ 절 차례는 판단하는 순서다. "
+                     "1 절이 맨 위다 — 등급과 그 까닭이 한 화면에 함께 있다",
+                     KIND_CONTRACT),
+    "V11-160": Check("V11", "V11-160", "1 절에 「왜 그 등급인가」 문장이 있음",
+                     FATAL, "run",
+                     "개정 427 — ★ 점수 나열이 아니다. "
+                     "「같은 트림·옵션 기준 시세보다 410만원 쌉니다」처럼 "
+                     "문장으로 쓴다",
+                     KIND_CONTRACT),
+    "V11-161": Check("V11", "V11-161", "3 절에 총 구매비용 표가 있음",
+                     FATAL, "run",
+                     "개정 427 — ★ 여섯 사이트 전부가 낸다 (실측 08-20). "
+                     "표시가만 내면 부대비용이 차종·가격대마다 달라 "
+                     "순위가 뒤집힌다",
+                     KIND_CONTRACT),
     "V11-164": Check("V11", "V11-164", "점수 필터가 SQL 로 걸림",
                      FATAL, "run",
                      "개정 427 — ★ 화면의 막대를 그대로 조건으로 쓴다. "
@@ -839,8 +856,35 @@ def _spec_routes() -> list | None:
         if rows:
             # ★ 첫 번째로 찾은 것을 쓴다.  「행이 적으면 다음 파일」로 넘어가면
             #   행을 지웠을 때 옛 판이 대신 통과시킨다 (실측)
-            return rows
+            # ★ 10장 화면 목록에는 13장 표와 겹치는 것이 있다 (/listings 등).
+            #   ★ 겹침은 중복이 아니다 — 13장에 없는 것만 더한다
+            more = [p for p in _screen_routes() if p not in set(rows)]
+            return rows + more
     return None
+
+
+def _screen_routes() -> list:
+    """★★ 10장 화면 목록에 있는 경로 (개정 427).
+
+    ★ 이 검사 이름이 「10·13장에 실재함」인데 13장(61-web) 라우팅 표만 읽고
+      있었다.  개정 427 이 신설한 `/detail/<id>` 는 10장(41-view) 화면 목록에
+      있고 13장 표에는 없다 — 그래서 「표에 없다」로 잡혔다 (실측 08-21).
+    ★ 규칙 2 로 개발측이 문서를 못 고친다.  ★ 두 장을 다 읽는다.
+      작업기록에 「13장 표에도 넣어 주십시오」라 적었다
+    ★ 표기가 다르다 — 규격은 `<id>` · 코드는 `{listing_id}`
+    """
+    path = os.path.join(ROOT, "docs", "chapters", "41-view.md")
+    if not os.path.isfile(path):
+        return []
+    body = open(path, encoding="utf-8").read()
+    head = body.split("### 화면 목록", 1)
+    if len(head) < 2:
+        return []
+    block = head[1].split("\n---", 1)[0]
+    out = []
+    for one in re.findall(r"\| *\*{0,2}`([^`]+)`\*{0,2} *\|", block):
+        out.append(one.replace("<id>", "{listing_id}"))
+    return out
 
 
 def _routing_table_check(rid):
@@ -1097,6 +1141,7 @@ def _screen_checks(conn, rid) -> list:
     out += _menu_shape_checks(conn, rid)
     out += _row_shape_checks(conn, rid)
     out += _filter_shape_checks(conn, rid)
+    out += _detail_shape_checks(conn, rid)
     # 링크 · 툴팁 · 원문 · 고르기 · 순서 · 필터 (개정 276)
     out += _link_tip_checks(rid)
     out.append(_origin_link_check(rid))
@@ -1174,7 +1219,11 @@ def _query_budget_check(conn, rid):
 
     with open(os.path.join(ROOT, "config", "web.json"),
               encoding="utf-8") as f:
-        cap = int(_j.load(f)["max_queries_per_request"])
+        _web = _j.load(f)
+    cap = int(_web["max_queries_per_request"])
+    # ★ 경로별로 다른 상한 (개정 427).  ★ 없는 경로는 전 화면 상한을 쓴다
+    by_route = {k: int(v) for k, v in
+                (_web.get("max_queries_by_route") or {}).items()}
     # ★ MAX 는 글자 크기다.  화면이 읽는 것과 같은 것을 읽어야 실측이 된다
     from store.core import current_versions
 
@@ -1229,8 +1278,12 @@ def _query_budget_check(conn, rid):
         except Exception:                                    # noqa: BLE001
             continue          # V11-30 이 잡는다
         worst = max(worst, Counting.n)
-        if Counting.n > cap:
-            bad.append(f"{route.path} 한 쪽에 {Counting.n} 쿼리")
+        # ★ 경로별 상한이 있으면 그것으로 잰다 (개정 427 — /detail).
+        #   ★ 까닭은 config/web.json 에 적혀 있다.  조용히 넘기지 않는다
+        mine = by_route.get(route.path, cap)
+        if Counting.n > mine:
+            bad.append(f"{route.path} 한 쪽에 {Counting.n} 쿼리 "
+                       f"(상한 {mine})")
     return result(C["V11-34"], rid, f"<= {cap}", worst, not bad, bad[:8])
 
 
@@ -1966,6 +2019,85 @@ def _photo_checks(conn, rid):
 
 
 
+
+
+
+def _detail_shape_checks(conn, rid):
+    """V11-159 · V11-160 · V11-161 — 상세 11절 (개정 427 · STEP 97a).
+
+    ★ 템플릿이 아니라 ★ **렌더 결과**를 본다 (S43-②)
+    ★ 금지 항목도 함께 본다 — 사진 30장 · 제원 12항목 · 전화 단추
+    """
+    import json as _j
+
+    from contracts import Account, ROLE_ADMIN
+    from web.views import HANDLERS
+
+    fn_ = HANDLERS.get("view_detail")
+    row = conn.execute(
+        "SELECT listing_id FROM result_score"
+        " WHERE grade NOT IN ('EXCLUDED','NOT_RATED') LIMIT 1").fetchone()
+    if fn_ is None or row is None:
+        return [not_applicable(C[c], rid, "상세 화면이나 판정이 없다")
+                for c in ("V11-159", "V11-160", "V11-161")]
+    try:
+        st, _h, body = fn_(conn, Account(1, ROLE_ADMIN, "마스터"),
+                           {"query": {}, "form": {}, "method": "GET"},
+                           path_vars={"listing_id": str(row[0])}, csrf="t")
+    except Exception as e:                                   # noqa: BLE001
+        return [not_applicable(C[c], rid, f"못 열었다 — {type(e).__name__}")
+                for c in ("V11-159", "V11-160", "V11-161")]
+    html = body.decode("utf-8", "replace")
+    # ★ 주석은 화면이 아니다.  「금지 — 제로백·공차중량」이라 **적어 둔 주석**을
+    #   금지 위반으로 잡으면 안 된다 (실측 08-21 — 제 주석에 제가 걸렸다)
+    html = re.sub(r"<!--.*?-->", " ", html, flags=re.S)
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        want = _j.load(f)["detail_sections"]
+
+    # V11-159 — 열한 절이 그 차례로
+    got = [int(x) for x in re.findall(r'id="sec-(\d+)"', html)]
+    bad159 = []
+    if int(st) != 200:
+        bad159.append(f"상세가 {st} 를 낸다")
+    if got != [w["n"] for w in want]:
+        bad159.append(f"절 차례가 {got} 다 — {[w['n'] for w in want]} 여야 한다")
+    for w in want:
+        if w["name"] not in html:
+            bad159.append(f"{w['n']}절 「{w['name']}」 이름이 안 보인다")
+    # ★ 금지 — 사진 30장 · 제원 12항목 · 전화 단추 · 지도
+    photos = len(re.findall(r"<img[^>]+", html))
+    if photos > 4:
+        bad159.append(f"사진이 {photos}장이다 — 1~4장이다")
+    for word in ("제로백", "공차중량", "전화 걸기", "판매자 지도"):
+        if word in html:
+            bad159.append(f"금지된 것이 있다 — {word}")
+
+    # V11-160 — 1절의 문장.  ★ 「점수 나열」이 아닌지 본다
+    first = html.split('id="sec-2"', 1)[0]
+    lines = re.findall(r'<li class="[gor]">(.*?)</li>', first, re.S)
+    text = [re.sub(r"<[^>]+>", "", x).strip() for x in lines]
+    bad160 = []
+    if not text:
+        bad160.append("1절에 「왜 그 등급인가」 줄이 없다")
+    elif not any(t.endswith(("다.", "습니다.", "니다.")) for t in text):
+        bad160.append(f"문장이 아니라 나열이다 — {text[:2]}")
+
+    # V11-161 — 3절의 총 구매비용
+    third = html.split('id="sec-3"', 1)[-1].split('id="sec-4"', 1)[0]
+    bad161 = []
+    if "<table" not in third:
+        bad161.append("3절에 표가 없다")
+    if "총 구매비용" not in third:
+        bad161.append("총 구매비용 줄이 없다")
+    return [
+        result(C["V11-159"], rid, f"{len(want)}절", f"{len(got)}절",
+               not bad159, bad159[:5]),
+        result(C["V11-160"], rid, "문장", f"{len(text)}줄",
+               not bad160, bad160[:3]),
+        result(C["V11-161"], rid, "표", "있다" if not bad161 else "없다",
+               not bad161, bad161[:3]),
+    ]
 
 
 def _filter_shape_checks(conn, rid):

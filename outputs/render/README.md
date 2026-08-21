@@ -7,8 +7,9 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 18,580B |
-| `/listings` | [listings.html](listings.html) | 200 | 80,592B |
+| `/listings` | [listings.html](listings.html) | 200 | 80,742B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 44,284B |
+| `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 25,141B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 20,374B |
 | `/compare` | [compare.html](compare.html) | 200 | 2,799B |
 | `/market` | [market.html](market.html) | 200 | 11,284B |

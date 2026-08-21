@@ -941,6 +941,10 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         args.append(f"%{FAIL_LEASE}%")
     else:
         where.append("(s.grade IS NULL OR s.grade <> 'EXCLUDED')")
+    # ★ 매물 하나만 (개정 427 상세).  ★ 맨 앞에 둔다 — 가장 좁은 조건이다
+    if getattr(flt, "listing_id", None) is not None:
+        where.append("l.listing_id = ?")
+        args.append(flt.listing_id)
     # ══ 칩 7 · ＋12 (개정 427 · STEP 97) ══
     # ★ 필터가 두꺼워야 목록이 얇아진다.  ★ 전부 SQL 로 건다 (V11-164) —
     #   밖에서 거르면 「7건」과 실제 건수가 어긋난다
@@ -2143,3 +2147,176 @@ def view_reports(account: Account, open_name: str | None = None,
     return ReportsView(files=tuple(files), open_name=one.name,
                        open_ext=one.ext, open_text=body, open_rows=rows,
                        open_head=head, truncated=cut, open_bytes=one.bytes)
+
+
+# ══════════════════════════════════════════════════════════════════════
+# ★★ /detail/<id> — 11절 (개정 427 · STEP 97a)
+#   정본은 ref/screens/v2_시안_목록상세.html
+#   ★ 마스터 확정 — 「목록은 간략하게 상세는 최대한 모든 정보」
+#   ★ 다만 최종 확인과 실물 사진은 엔카에서 본다 — 상세는 「갈지 말지」까지다
+# ══════════════════════════════════════════════════════════════════════
+
+def _verdict_lines(v, row, root: str = ".") -> list:
+    """1절 — ★ 「왜 그 등급인가」를 **문장으로** 쓴다 (V11-160).
+
+    ★ 점수 나열이 아니다.  「같은 트림·옵션 기준 시세보다 410만원 쌉니다」
+    ★ 지어내지 않는다 — 값이 없으면 그 줄을 안 쓴다
+    """
+    # ★ 문장에 HTML 을 담지 않는다.  머리 · 굵게 · 꼬리 셋으로 나눠 준다 —
+    #   화면이 이스케이프를 못 하면 원문 글자가 태그가 될 수 있다 (STEP 152)
+    out = []
+
+    def say(tone, head, strong="", tail=""):
+        out.append({"tone": tone, "head": head, "strong": strong,
+                    "tail": tail})
+
+    # 값 — 시세보다 싼가
+    if row is not None and row.market_gap_won is not None:
+        gap = row.market_gap_won
+        opt = (f" 옵션값 {_manwon_str(row.option_price_won)}을 더해 견줬습니다."
+               if row.option_price_won else "")
+        say("g" if gap < 0 else "r", "같은 트림·옵션 기준 시세보다 ",
+            _manwon_str(abs(gap)),
+            (" 쌉니다." if gap < 0 else " 비쌉니다.") + opt)
+    # 차량 — 사고·골격
+    if row is not None:
+        for chip in row.axis_chips:
+            if chip.axis == "state.accident" and chip.state:
+                say("g" if "무사고" in chip.state else "r", "", chip.state, ".")
+                break
+    # 보증 · 검증 — ★ 얼마나 원문으로 확인했는가
+    if v.site_badge or v.confirm_pct:
+        say("g", "확인율 ", f"{v.confirm_pct:.0f}%",
+            f" — {v.denominator:.0f}점 중 {v.confirmed_points:.0f}점을 "
+            f"원문으로 확인했습니다.")
+    # 취향
+    if v.strengths:
+        say("o", "원하시는 ", " · ".join(v.strengths[:3]), " 가 맞습니다.")
+    # 약점 — ★ 좋은 말만 하지 않는다
+    for w in v.weaknesses[:2]:
+        say("r", "", str(w), ".")
+    return out
+
+
+def _manwon_str(won) -> str:
+    """원 → 「N,NNN만」.  ★ 표기를 한 자리에 모은다 (V4-13)."""
+    if won is None:
+        return ""
+    return f"{int(won) // 10_000:,}만"
+
+
+def _unknown_lines(conn, listing_id: int, calc_version: str,
+                   root: str = ".") -> list:
+    """5절 ★ 아직 모르는 것 — 갈래 ②③④ 가 여기 들어간다 (개정 434 · 435).
+
+    ★ 「확인 안 됨」은 source 에 있다.  value 로 가르지 않는다 (개정 435)
+    ★ 누구 잘못인지 함께 낸다 — ① 딜러 · ②③④ 우리
+    """
+    import json as _j
+
+    with open(os.path.join(root, "config", "unknown_split.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    labels = _labels(root).get("AXIS_LABELS", {})
+    out = []
+    for axis, value, source, cap in conn.execute(
+            "SELECT axis, value, source, max_points FROM result_axis"
+            " WHERE listing_id = ? AND calc_version = ?"
+            " ORDER BY max_points DESC", (listing_id, calc_version)):
+        if not is_unknown(source):
+            continue
+        one = cfg["axes"].get(axis) or {}
+        kind = one.get("kind_override") or ("3" if source == "site_unavailable"
+                                            else "1")
+        out.append({
+            "axis": axis, "label": labels.get(axis, axis),
+            "points": cap or 0, "kind": kind,
+            "whose": "우리" if kind in ("2", "3", "4") else "딜러",
+            "why": cfg["_kinds"].get(kind, ""),
+            "got": value or 0})
+    return out
+
+
+def _price_history(conn, listing_id: int) -> list:
+    """8절 ★ 가격 추이 — 등록가 → 현재가 · 변동 N회 · 최저가."""
+    rows = conn.execute(
+        "SELECT changed_at, old_value, new_value FROM core_listing_change"
+        " WHERE listing_id = ? AND field = 'price_current_won'"
+        " ORDER BY changed_at", (listing_id,)).fetchall()
+    out = []
+    for at, old, new in rows:
+        try:
+            o, n = int(old), int(new)
+        except (TypeError, ValueError):
+            continue
+        out.append({"at": (at or "")[:10], "old": o, "new": n,
+                    "down": n < o, "diff": n - o})
+    return out
+
+
+def _alternatives(account, conn, row, flt, fin_cfg, root: str = ".") -> list:
+    """11절 ★ 이 차 대신 볼 것 — **왜 나은지 한 줄** (V11-161 자매).
+
+    ★ 「비슷한 차」 나열이 아니다.  ★ 사이트는 이것을 못 한다 — 파는 쪽이라서다
+    """
+    if row is None or not row.target_label:
+        return []
+    # ★ 같은 차종만 · 40건만.  ★ 이 화면은 「대신 볼 것 넷」이면 된다
+    # ★ 이 절이 쓰는 것은 등급·가격·주행뿐이다 (본 질의에 이미 들어 있다).
+    #   ★ extras 를 켜면 시세·옵션·상태를 또 받아 한 쪽 쿼리가 곱절이 된다 (V11-34)
+    near = view_listings(account, conn,
+                         _rep_flt(flt, target_key=row.target_label,
+                                  listing_id=None, page=1, model=None),
+                         fin_cfg, root, extras=False, with_state=False,
+                         page_size=40)
+    out = []
+    for other in near:
+        if other.listing_id == row.listing_id:
+            continue
+        why = []
+        if (other.grade or "") < (row.grade or "") and other.grade:
+            why.append(f"등급이 {other.grade} 로 높습니다")
+        if (other.price_won or 0) and (row.price_won or 0) \
+                and other.price_won < row.price_won:
+            why.append(f"{_manwon_str(row.price_won - other.price_won)} 쌉니다")
+        if (other.mileage_km or 0) and (row.mileage_km or 0) \
+                and other.mileage_km < row.mileage_km:
+            why.append("주행이 적습니다")
+        if not why:
+            continue                     # ★ 왜 나은지 못 쓰면 안 낸다
+        out.append({"row": other, "why": " · ".join(why[:2])})
+        if len(out) >= 4:
+            break
+    return out
+
+
+def _rep_flt(flt, **kw):
+    from dataclasses import replace as _r
+
+    return _r(flt, **kw)
+
+
+def view_detail(account: Account, conn, listing_id: int, calc_version: str,
+                fin_cfg: dict, policy: dict, root: str = ".") -> dict:
+    """/detail/<id> — 11절 (STEP 97a).  ★ /why 를 흡수한다.  주소는 살린다."""
+    v = render_listing(conn, listing_id, calc_version, fin_cfg, policy, root)
+    # ★ 그 매물만 집는다.  ★ 전건을 읽고 파이썬에서 고르지 않는다 (V11-34)
+    flt = ListingFilter(calc_version=calc_version, lease=True,
+                        excluded=False, listing_id=listing_id, show_all=True)
+    # ★ with_state 를 끄면 3쿼리가 준다 (실측 08-21 — 8 → 5).
+    #   ★ 옵션가·상태는 render_listing 이 이미 받아 온 v 에 있다 — 두 번 안 받는다
+    rows = view_listings(account, conn, flt, fin_cfg, root, page_size=2,
+                         with_state=False)
+    if not rows:
+        # ★ 제외된 매물도 상세는 열려야 한다 — 왜 제외됐는지가 판단 재료다
+        rows = view_listings(account, conn, _rep_flt(flt, excluded=True),
+                             fin_cfg, root, page_size=2, with_state=False)
+    row = rows[0] if rows else None
+    return {
+        "v": v, "row": row,
+        "verdict": _verdict_lines(v, row, root),
+        "unknowns": _unknown_lines(conn, listing_id, calc_version, root),
+        "history": _price_history(conn, listing_id),
+        "alts": _alternatives(account, conn, row, flt, fin_cfg, root),
+        "rep_raw": v.raw_sections,
+    }

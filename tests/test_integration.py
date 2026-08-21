@@ -898,15 +898,17 @@ def flows(anon: Client, u1: Client, ad: Client, db: str, lid: int) -> None:
     # ★ 건수가 0 인 등급을 고르면 「빈 목록」을 보고 실패로 읽힌다.
     #   사람은 값이 있는 막대를 누른다 — 매물이 있는 등급을 고른다
     st, body, _h = anon.get("/")
+    # ★ 개정 427 — 목록 링크가 /detail 로 바뀌었다.  ★ /why 주소는 살아 있다
+    LINK = r"/(?:detail|why)/(\d+)"
     a_link, lb = "/listings", ""
     for cand in [x for x in links(body) if "grade=" in x]:
         _s, page, _h2 = anon.get(cand)
-        if re.search(r'/why/(\d+)', page):
+        if re.search(LINK, page):
             a_link, lb = cand, page
             break
     if not lb:
         _s, lb, _h2 = anon.get("/listings")
-    first = re.search(r'/why/(\d+)', lb)
+    first = re.search(LINK, lb)
     st, wb, _h = anon.get(f"/why/{first.group(1)}") if first else (0, "", {})
     got = text(wb)
     steps = ("확인 못 한 것" in got, "비용" in got)
@@ -1101,8 +1103,12 @@ def guide7(ad: Client, u1: Client, port: int, db: str, root: str,
     # G-6  시세 막대가 가격 필터를 거는가
     st, mb, _h = ad.get("/market")
     bars = [x.replace("&amp;", "&") for x in links(mb) if "price_min=" in x]
-    total = ad.get("/listings")[1].count("/why/")
-    got = ad.get(bars[0])[1].count("/why/") if bars else total
+    # ★ 개정 427 — 목록 링크가 /detail 로 바뀌었다.  둘 다 센다
+    def _n(html):
+        return len(re.findall(r"/(?:detail|why)/\d+", html))
+
+    total = _n(ad.get("/listings")[1])
+    got = _n(ad.get(bars[0])[1]) if bars else total
     rec("G-6", "/market", "막대 → 그 구간 매물",
         f"전체 {total}행 · 막대 {got}행", bool(bars) and got < total,
         "200 을 내는 것과 필터가 걸리는 것은 다르다")
