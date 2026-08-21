@@ -274,6 +274,10 @@ def parse_inspection(body: dict, site: str, source_id: str) -> dict:
         #   코드는 사이트가 바꿀 수 있다
         "inspection_car_state": _text((d.get("carStateType") or {})
                                       .get("title")),
+        # ★★ 개정 435 — 계기판 상태 (v193 실측).  carStateType 과 같은 모양이다
+        #   ★ mileageStateType 은 전건 null 이다.  boardStateType 이 값을 가진다
+        "inspection_board_state": _text((d.get("boardStateType") or {})
+                                        .get("title")),
         "inspection_recall": d.get("recall"),
         # ★ usageChangeTypes 는 record 가 아니라 점검부 master.detail 에 있다.
         #   v1 은 record 에서 찾다가 「존재하지 않는 필드」로 금지했다 (STEP 21a)

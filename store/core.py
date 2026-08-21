@@ -416,6 +416,7 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         " r.not_join_json,"
         # ★ F-scoring ② 가 쓰는 것 (개정 329)
         " i.inspection_inner_json, i.inspection_tuning, i.inspection_car_state,"
+        " i.inspection_board_state,"
         " r.use_gov, r.use_business"
         " FROM core_listing l"
         " LEFT JOIN core_inspection i ON i.listing_id = l.listing_id"
@@ -458,6 +459,9 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         inspection_tuning=_flag(d.get("inspection_tuning")),
         car_state_ok=(None if d.get("inspection_car_state") is None
                       else d.get("inspection_car_state") == CAR_STATE_OK),
+        # ★ 개정 435 — 계기판 상태.  car_state_ok 와 같은 규칙이다
+        board_state_ok=(None if d.get("inspection_board_state") is None
+                        else d.get("inspection_board_state") == CAR_STATE_OK),
         ev_battery_soh=d.get("ev_battery_soh"),
         use_gov=_flag(d.get("use_gov")), use_business=_flag(d.get("use_business")),
         flood_total_cnt=d.get("flood_total_cnt"),

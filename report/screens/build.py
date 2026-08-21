@@ -139,8 +139,35 @@ def viewer_state(account: Account) -> ViewerState:
         must_change_secret=account.must_change_secret)
 
 
+def _unknown_cfg() -> dict:
+    """「모름」의 정본 — config/unknown_split.json (개정 435).
+
+    ★ 코드에 source 이름을 박지 않는다 (S14)
+    """
+    import json as _j
+    with open(_os_lbl.path.join(_ROOT_LBL, "config", "unknown_split.json"),
+              encoding="utf-8") as _f:
+        return _j.load(_f)
+
+
+def is_unknown(source: str | None) -> bool:
+    """그 source 가 「확인 안 됨」인가 (개정 435).
+
+    ★★ 「없다고 확인한 것」이 먼저다 — no_warranty 는 「보증이 없음을
+      확인한 것」이지 「모르는 것」이 아니다
+    """
+    cfg = _unknown_cfg()
+    src = str(source or "")
+    if src in cfg["confirmed_absent_sources"]:
+        return False
+    if src in cfg["unknown_sources"]:
+        return True
+    # ★ 축이 사유를 이어 붙인 것 — 「integrity_계기판 확인 못 함」
+    return any(w in src for w in cfg["unknown_source_marks"])
+
+
 def chip(axis: str, value: int | None, excluded: bool, labels: dict,
-         base: str = "/listings") -> AxisChip:
+         base: str = "/listings", source: str | None = None) -> AxisChip:
     """전 화면이 같은 문구를 쓴다.  화면마다 다르게 쓰지 않는다 (V6-02)."""
     vl = labels["VALUE_LABELS"]
     al = labels["AXIS_LABELS"]
@@ -149,6 +176,11 @@ def chip(axis: str, value: int | None, excluded: bool, labels: dict,
     elif value == -1 and excluded:
         label, tone, bucket = vl["na"], TONE_MUTED, "na"
     elif value is None:
+        label, tone, bucket = vl["unknown"], TONE_UNKNOWN, "unknown"
+    # ★★ 개정 435 — 「확인 안 됨」은 value 가 아니라 source 에 있다.
+    #   ★ 전에는 여기가 없어서 source='missing' 15,709건이 「· 없음」으로
+    #     나갔다.  바로 아래 :159 에 「v1 사고가 되풀이된다」고 적어 두고서다
+    elif is_unknown(source):
         label, tone, bucket = vl["unknown"], TONE_UNKNOWN, "unknown"
     elif value > 0:
         label, tone, bucket = vl["1"], TONE_GOOD, "1"
@@ -597,7 +629,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     chips = []
     for axis in CHIP_AXES:
         if axis in got:
-            one = chip(axis, got[axis][0], got[axis][1], labels)
+            # ★ source 를 넘긴다 (개정 435).  안 넘기면 「모름」이 「없음」이 된다
+            one = chip(axis, got[axis][0], got[axis][1], labels,
+                       source=got[axis][2])
         else:
             one = chip(axis, None, True, labels)
         # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)

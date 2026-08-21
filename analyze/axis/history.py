@@ -85,10 +85,21 @@ def _not_join(ctx: AxisContext, v: Verdict) -> None:
     ★ 그 기간의 사고는 알 수 없다.  「기간이 있다」가 아니라 비율이다
     """
     s, r = ctx.snapshot, ctx.policy.rule("history")
-    if s.not_join_months is None or not s.owned_months:
+    if s.not_join_months is None:
         put(v, NOT_JOIN, 0, PRIO_OBSERVED, "missing")
         return
-    ratio = min(1.0, s.not_join_months / s.owned_months)
+    # ★★ 개정 435 — 미가입 기간이 0 이면 보유 기간과 무관하게 흠이 없다.
+    #   ★ 전에는 `not s.owned_months` 로 함께 걸러 「확인 안 됨」을 냈다.
+    #     실측 08-21 — 갓 등록된 차 7건이 보유 0개월이라 여기 걸렸다.
+    #     보험이력은 열려 있고(openData=true) 미가입 날짜가 하나도 없다 —
+    #     ★ 「모른다」가 아니라 「미가입 기간이 없다」다
+    if not s.not_join_months:
+        ratio = 0.0
+    elif not s.owned_months:
+        put(v, NOT_JOIN, 0, PRIO_OBSERVED, "missing")
+        return
+    else:
+        ratio = min(1.0, s.not_join_months / s.owned_months)
     put(v, NOT_JOIN, round(ascending(ratio, r["not_join_curve"])),
         PRIO_OBSERVED, f"not_join_{ratio:.0%}")
 

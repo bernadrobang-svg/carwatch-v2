@@ -85,7 +85,7 @@ C = {
                    "마스터 지적 「카탈로그가 왜 없어. 수집하다가 버린 거겠지」 "
                    "(개정 327)",
                    KIND_CODE),
-    "V1-27": Check("V1", "V1-27", "확인 안 됨을 ①②③ 으로 가른 표가 있음",
+    "V1-27": Check("V1", "V1-27", "확인 안 됨을 ①②③④ 로 가른 표가 있음",
                    FATAL, "run",
                    "개정 434 — 「확인 안 됨」이 한 덩어리면 딜러 부실과 "
                    "★ 우리 부실이 섞인다. 섞인 채로는 배점도 컷도 뜻을 "
@@ -169,10 +169,11 @@ LISTING_ENDPOINTS = ("detail", "inspection", "record", "diagnosis")
 
 
 def _unknown_split_checks(conn, rid):
-    """V1-27 · V1-28 — 확인 안 됨을 ①②③ 으로 가른 표 (개정 434).
+    """V1-27 · V1-28 — 확인 안 됨을 ①②③④ 로 가른 표 (개정 434 · 435).
 
     ★ 표가 「있는가」만 보지 않는다.  ★ 합이 맞는가를 본다 —
-      ① + ② + ③ + 모름 = 확인 안 됨.  안 맞으면 어딘가를 안 센 것이다
+      ① + ② + ③ + ④ + 모름 = 확인 안 됨.  안 맞으면 어딘가를 안 센 것이다
+    ★ ④ 는 개정 435 가 새로 가른 것이다 — 계산 쪽이 못 만드는 것
     ★ 표는 tools/unknown_split.py --write 가 만든다.  손으로 안 적는다
     """
     import json as _j
@@ -200,28 +201,45 @@ def _unknown_split_checks(conn, rid):
         mapped = set(_j.load(f)["axes"])
     bad27 = [f"{a} — 갈래표에 없다" for a in sorted(axes - mapped)]
     for axis, one in (now.get("by_axis") or {}).items():
-        got = one["1"] + one["2"] + one["3"] + one["?"]
+        got = (one["1"] + one["2"] + one["3"]
+               + one.get("4", 0) + one["?"])
         if got != one["n"]:
-            bad27.append(f"{axis} — ①②③모름 합 {got} != 확인 안 됨 {one['n']}")
+            bad27.append(f"{axis} — ①②③④모름 합 {got} "
+                         f"!= 확인 안 됨 {one['n']}")
 
     # V1-28 — ② ③ 이 늘었는가.  ★ 준 것은 통과다
     if len(runs) < 2:
         v28 = not_applicable(C["V1-28"], rid,
                              f"1회째다 — 다음 실행부터 견준다 "
-                             f"(② {now['kind2']} · ③ {now['kind3']})")
+                             f"(② {now['kind2']} · ③ {now['kind3']} "
+                             f"· ④ {now.get('kind4', 0)})")
     else:
         was = runs[-2]
+        # ★★ 갈래별로 견주면 **갈래를 새로 나눌 때마다 실패**한다 —
+        #   실측 08-21: 개정 435 가 ④ 를 신설하자 ④ 0 → 450 이 「늘었다」로
+        #   잡혔다.  실제로는 ② 에 있던 450건이 ④ 로 옮겨간 것이다.
+        #   ★ 우리 잘못의 **합**으로 본다.  갈래별 움직임은 곁들여 적는다
+        def ours(one):
+            return (one.get("kind2", 0) + one.get("kind3", 0)
+                    + one.get("kind4", 0))
+
         up = []
-        for k, name in (("kind2", "② 못 읽는다"), ("kind3", "③ 안 받는다")):
-            if now[k] > was[k]:
-                up.append(f"{name} {was[k]} → {now[k]} (늘었다)")
+        if ours(now) > ours(was):
+            up.append(f"★ 우리 잘못이 {ours(was)} → {ours(now)} 로 늘었다")
+        moved = [f"{name} {was.get(k, 0)} → {now.get(k, 0)}"
+                 for k, name in (("kind2", "② 못 읽는다"),
+                                 ("kind3", "③ 안 받는다"),
+                                 ("kind4", "④ 계산이 못 만든다"))
+                 if now.get(k, 0) != was.get(k, 0)]
         v28 = result(C["V1-28"], rid,
-                     f"② {was['kind2']} · ③ {was['kind3']}",
-                     f"② {now['kind2']} · ③ {now['kind3']}", not up, up)
+                     f"합 {ours(was)}",
+                     f"합 {ours(now)} (② {now['kind2']} · ③ {now['kind3']} "
+                     f"· ④ {now.get('kind4', 0)})", not up, up + moved)
     return [
         result(C["V1-27"], rid, f"{len(mapped)}축",
                f"확인 안 됨 {now['unknown']} · ② {now['kind2']} "
-               f"· ③ {now['kind3']}", not bad27, bad27[:6]),
+               f"· ③ {now['kind3']} · ④ {now.get('kind4', 0)}",
+               not bad27, bad27[:6]),
         v28,
     ]
 

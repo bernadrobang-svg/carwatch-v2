@@ -167,6 +167,18 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
+    "V3-95": Check("V3", "V3-95", "화면이 source='missing' 을 「없음」으로 안 냄",
+                   FATAL, "run",
+                   "개정 435 — ★ 「확인 안 됨」은 source 에 있다. 화면이 "
+                   "value 로 가르면 15,709건이 「· 없음」으로 나간다. "
+                   "★ 「없음」과 「모름」을 같은 기호로 내는 것이 v1 사고다",
+                   KIND_CONTRACT),
+    "V3-96": Check("V3", "V3-96", "value IS NULL 과 source 모름 건수 차",
+                   WARN, "run",
+                   "개정 435 — 둘이 크게 다르면 「확인 안 됨」을 어디서 "
+                   "세느냐에 따라 답이 달라진다. ★ 그 차이를 늘 눈에 "
+                   "보이게 둔다",
+                   KIND_EXTERNAL),
     "V3-92": Check("V3", "V3-92", "트림 만점이 개별 취향 축보다 큼",
                    FATAL, "run",
                    "개정 432 — 「깡통에 HUD」가 「최고트림 HUD 없음」을 "
@@ -887,6 +899,69 @@ def _checks_cfg() -> dict:
     with open(_o2.path.join(_r, "config", "checks.json"),
               encoding="utf-8") as _f:
         return _j.load(_f)
+
+
+
+import os as _o
+
+
+def _labels_cfg() -> dict:
+    """화면 문구.  ★ 검사도 화면과 같은 config 를 본다 (두 벌로 안 적는다)."""
+    import json as _j
+    _r = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(_r, "config", "labels.json"), encoding="utf-8") as _f:
+        return _j.load(_f)
+
+
+def _unknown_mark_checks(conn, rid):
+    """V3-95 · V3-96 — 화면이 「모름」을 「없음」으로 내는가 (개정 435).
+
+    ★ 「함수를 고쳤다」가 아니라 ★ **그 함수를 실제로 불러** 확인한다 (S43-②).
+      DB 에 있는 source 종류를 전부 chip() 에 넣어 본다
+    """
+    from report.screens.build import chip
+
+    labels = _labels_cfg()
+    rows = conn.execute(
+        "SELECT source, COUNT(*) FROM result_axis"
+        " WHERE source IS NOT NULL GROUP BY source").fetchall()
+    # ★ 「모름」이어야 하는 source — config 가 정본이다
+    from report.screens.build import is_unknown
+
+    bad95, n_unknown = [], 0
+    for src, n in rows:
+        if not is_unknown(src):
+            continue
+        n_unknown += n
+        # ★ value=0 · excluded=0 이 그 15,709건의 모양이다
+        got = chip("state.frame", 0, False, labels, source=src)
+        if got.mark != labels["VALUE_MARKS"]["unknown"]:
+            bad95.append(f"source='{src}' ({n}건) 이 「{got.mark}」로 나온다 "
+                         f"— 「{labels['VALUE_MARKS']['unknown']}」여야 한다")
+    # ★ 반대쪽 — 「없다고 확인한 것」이 모름으로 새면 그것도 거짓말이다
+    with open(_o.path.join(
+            _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))),
+            "config", "unknown_split.json"), encoding="utf-8") as f:
+        import json as _j
+        conf = _j.load(f)["confirmed_absent_sources"]
+    for src in conf:
+        got = chip("state.frame", 0, False, labels, source=src)
+        if got.mark == labels["VALUE_MARKS"]["unknown"]:
+            bad95.append(f"source='{src}' 는 「없다고 확인한 것」인데 "
+                         f"모름으로 나온다")
+
+    # V3-96 — 두 세는 법의 차
+    n_null = conn.execute(
+        "SELECT COUNT(*) FROM result_axis WHERE value IS NULL").fetchone()[0]
+    gap = n_unknown - n_null
+    return [
+        result(C["V3-95"], rid, 0, len(bad95), not bad95, bad95[:6]),
+        result(C["V3-96"], rid, f"value NULL {n_null}",
+               f"source 모름 {n_unknown} · 차 {gap:+,}",
+               gap == 0,
+               [f"★ value 로 세면 {n_null}건 · source 로 세면 {n_unknown}건이다. "
+                f"{gap:+,}건이 화면에서 갈린다"] if gap else []),
+    ]
 
 
 def _grade_cut_checks(conn, rid):
@@ -2098,6 +2173,7 @@ def run(conn, ctx) -> list:
     # 등급 분모 675 (개정 431)
     out += _grade_base_checks(conn, rid)
     out += _grade_cut_checks(conn, rid)
+    out += _unknown_mark_checks(conn, rid)
     out.append(_special_null_check(conn, rid))
     out += _file_output_checks(conn, rid)
 

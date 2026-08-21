@@ -2,9 +2,10 @@
   "_ref": "개정 434 · inbox/ORDER_unknown_split.md · tools/unknown_split.py 가 읽는다",
   "_note": "★ 「확인 안 됨」이 result_axis 의 어느 값인가를 여기서 정한다. value 나 excluded 로는 못 가른다 — 실측 08-21: value IS NULL 은 108건뿐인데 source='missing' 은 15,817건이다. ★ 확인 안 됨은 source 에 적혀 있다",
   "_kinds": {
-    "1": "원문에 없다 — 딜러 잘못. 0점이 맞다",
-    "2": "원문에 있는데 못 읽는다 — ★ 우리 잘못",
-    "3": "그 엔드포인트를 안 받는다 — ★ 우리 잘못",
+    "1": "원문에 **값이 없다** — 딜러 잘못. 0점이 맞다",
+    "2": "원문에 값이 있는데 **파서가 못 읽는다** — ★ 우리 잘못. 파서를 고친다",
+    "3": "그 **엔드포인트를 안 받는다** — ★ 우리 잘못. 받는다",
+    "4": "★ **계산 쪽이 못 만든다** — ★ 우리 잘못. 계산 설계를 고친다",
     "?": "셋 중 아무것도 아니다 — 모르겠습니다"
   },
   "_confirmed_sources": {
@@ -85,7 +86,8 @@
         "missing"
       ],
       "endpoint": "record",
-      "key": "openData"
+      "key": "notJoinDate1",
+      "_fix_435": "★ v193 은 이 축의 키를 openData 로 두었다. openData 는 「보험이력이 열려 있는가」라 늘 true 여서 7건이 ② 로 잘못 갈렸다. 실제로 축이 쓰는 값은 notJoinDate1~5 다 — 전부 null 이라 ① 이다. ★ 개정 435 실측표의 「② 675 + 7」에서 7 은 빼야 한다"
     },
     "history.lien": {
       "unknown": [
@@ -122,8 +124,8 @@
       ],
       "endpoint": "detail",
       "key": "advertisement.price",
-      "kind_override": "2",
-      "why": "★ 원문 문제가 아니다.  이 매물의 값은 원문에 있다 — 같은 차종·트림·연식 매물이 표본 5건에 못 미쳐 **우리가 중앙값을 못 만든다**. ★ 우리 잘못이지만 「못 읽는다」와는 다르다 — 시세를 세 겹으로 만들면(개정 430) 준다"
+      "kind_override": "4",
+      "why": "★ 갈래 ④ — 이 매물의 원문에는 값이 다 있다 (advertisement.price). 같은 차종·트림·연식 매물이 표본 5건에 못 미쳐 **우리가 중앙값을 못 만든다**. ★ 파서가 아니라 계산 설계다 — 순서 7 「시세를 세 겹으로」(개정 430) 가 푼다"
     },
     "spec.options": {
       "unknown": [
@@ -185,5 +187,21 @@
       "key": "options.choice"
     }
   },
-  "_kind_override_note": "★ 원문 body 로 못 가르는 축이 있다.  그런 축은 여기에 갈래와 까닭을 적는다.  ★ 짐작이 아니라 **왜 그렇게 정했는지**를 남긴다"
+  "_kind_override_note": "★ 원문 body 로 못 가르는 축이 있다.  그런 축은 여기에 갈래와 까닭을 적는다.  ★ 짐작이 아니라 **왜 그렇게 정했는지**를 남긴다",
+  "unknown_sources": [
+    "missing",
+    "site_unavailable",
+    "origin_price_missing",
+    "market_sample_short"
+  ],
+  "unknown_source_marks": [
+    "확인 못 함"
+  ],
+  "confirmed_absent_sources": [
+    "no_choice_option",
+    "no_warranty",
+    "nothing_picked"
+  ],
+  "_note_435": "★★ 개정 435 — 「확인 안 됨」의 정본은 result_axis.source 다. ★ 화면이 value 로 가르면 15,709건이 「없음」으로 나간다 (v193 실측). unknown_sources 는 「모름」 · confirmed_absent_sources 는 「없다고 확인한 것」이다. unknown_source_marks 는 source 안에 이 말이 들어 있으면 모름으로 본다 (integrity_계기판 확인 못 함 처럼 축이 사유를 이어 붙인 것)",
+  "_kind_note_435": "★ ① 과 ② 는 「키가 있다」가 아니라 ★ 「값이 있다」로 가른다 (개정 435). history.lien 482건은 condition.seizing 키는 있는데 값이 null 이라 ① 이다"
 }

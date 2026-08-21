@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-"""「확인 안 됨」을 ①②③ 으로 가른다 (개정 434 · V1-27 · V1-28).
+"""「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28).
 
 지시서   inbox/ORDER_unknown_split.md · 개정 434
 근거     ★ 마스터 — 「왜 빼?  있어야 하는데 너가 못 찾거나 처음부터 부실하게
         올린 거잖아.  ★ 너가 전체를 못 찾은 것을 먼저 정리해야지」
-갈래     ① 원문에 없다        딜러 잘못 → 0점이 맞다
-        ② 원문에 있는데 못 읽는다  ★ 우리 잘못
-        ③ 엔드포인트를 안 받는다   ★ 우리 잘못
-        ?  모르겠습니다 — 셋 중 아무것도 아니다
+갈래     ① 원문에 **값이 없다**      딜러 잘못 → 0점이 맞다
+        ② 원문에 값이 있는데 파서가 못 읽는다   ★ 우리 잘못
+        ③ 엔드포인트를 안 받는다              ★ 우리 잘못
+        ④ ★ 계산 쪽이 못 만든다 (개정 435)     ★ 우리 잘못 — 고치는 법이 다르다
+        ?  모르겠습니다 — 넷 중 아무것도 아니다
+★ ①과 ②는 「키가 있다」가 아니라 ★ 「값이 있다」로 가른다 (개정 435)
 값규칙   ★ 원문 body 를 직접 연다.  파서 결과만 보지 않는다 (S43-②)
 금지     짐작으로 가르는 것.  ★ 갈래를 정하지 않고 코드를 고치는 것
 금지     ★ 확인 안 된 축을 분모에서 빼는 것 — 우리 부실이 숨는다 (개정 289)
@@ -56,12 +58,12 @@ def classify(conn, axis: str, spec: dict) -> dict:
     cv = cv[0] if cv else ""
     marks = ",".join("?" * len(spec["unknown"]))
     if not spec["unknown"]:
-        return {"n": 0, "1": 0, "2": 0, "3": 0, "?": 0, "opened": 0,
+        return {"n": 0, "1": 0, "2": 0, "3": 0, "4": 0, "?": 0, "opened": 0,
                 "estimated": 0, "snippet": ""}
     lids = [r[0] for r in conn.execute(
         f"SELECT listing_id FROM result_axis WHERE axis=? AND calc_version=?"
         f" AND source IN ({marks})", (axis, cv, *spec["unknown"]))]
-    got = {"n": len(lids), "1": 0, "2": 0, "3": 0, "?": 0, "opened": 0,
+    got = {"n": len(lids), "1": 0, "2": 0, "3": 0, "4": 0, "?": 0, "opened": 0,
            "estimated": 0, "snippet": ""}
     ep, key = spec["endpoint"], spec["key"]
     # ★ 원문 body 로 못 가르는 축 — config 가 갈래와 까닭을 준다 (짐작이 아니다)
@@ -112,7 +114,8 @@ def classify(conn, axis: str, spec: dict) -> dict:
             got["2"] += round(rest * got["2"] / seen)
             got["1"] += rest - round(rest * got["2"] / seen) \
                 if False else rest - round(rest * (got["2"] - 0) / seen)
-            got["1"] = got["n"] - got["2"] - got["3"] - got["?"]
+            got["1"] = (got["n"] - got["2"] - got["3"]
+                        - got["4"] - got["?"])
             got["estimated"] = rest
         else:
             got["?"] += rest
@@ -135,34 +138,40 @@ def main() -> int:
                     else (cap or {}).get("points") or 0)
         rows.append((axis, cap, spec, one))
 
-    print("★ 「확인 안 됨」을 ①②③ 으로 가른다 (개정 434)\n")
-    print(f"{'축':<22}{'배점':>5}{'확인안됨':>8}{'①원문없음':>10}"
-          f"{'②못읽음':>9}{'③안받음':>9}{'모름':>6}")
-    tot = {"n": 0, "1": 0, "2": 0, "3": 0, "?": 0}
-    lost = {"2": 0.0, "3": 0.0}
+    print("★ 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435)\n")
+    print(f"{'축':<22}{'배점':>5}{'확인안됨':>8}{'①값없음':>9}"
+          f"{'②못읽음':>9}{'③안받음':>9}{'④계산':>8}{'모름':>6}")
+    tot = {"n": 0, "1": 0, "2": 0, "3": 0, "4": 0, "?": 0}
+    lost = {"2": 0.0, "3": 0.0, "4": 0.0}
     for axis, cap, _spec, one in rows:
         if not one["n"]:
             continue
         note = (f"  ★ {one['estimated']}건은 표본 {one['opened']}건으로 추정"
                 if one.get("estimated") else "")
-        print(f"{axis:<22}{cap:>5.0f}{one['n']:>8}{one['1']:>10}"
-              f"{one['2']:>9}{one['3']:>9}{one['?']:>6}{note}")
+        print(f"{axis:<22}{cap:>5.0f}{one['n']:>8}{one['1']:>9}"
+              f"{one['2']:>9}{one['3']:>9}{one['4']:>8}{one['?']:>6}{note}")
         for k in tot:
             tot[k] += one[k]
-        for k in ("2", "3"):
+        for k in ("2", "3", "4"):
             lost[k] += one[k] * cap
-    print(f"{'합계':<22}{'':>5}{tot['n']:>8}{tot['1']:>10}"
-          f"{tot['2']:>9}{tot['3']:>9}{tot['?']:>6}")
+    print(f"{'합계':<22}{'':>5}{tot['n']:>8}{tot['1']:>9}"
+          f"{tot['2']:>9}{tot['3']:>9}{tot['4']:>8}{tot['?']:>6}")
 
-    print(f"\n★ 우리 잘못 — ② {tot['2']}건 · ③ {tot['3']}건 "
-          f"= {tot['2'] + tot['3']}건")
-    print(f"★ 점수로 {lost['2'] + lost['3']:,.0f}점어치 "
-          f"(② {lost['2']:,.0f} · ③ {lost['3']:,.0f})")
+    ours = tot["2"] + tot["3"] + tot["4"]
+    print(f"\n★ 우리 잘못 — ② {tot['2']} · ③ {tot['3']} · ④ {tot['4']} "
+          f"= {ours}건")
+    print(f"★ 점수로 {lost['2'] + lost['3'] + lost['4']:,.0f}점어치 (상한) "
+          f"— ② {lost['2']:,.0f} · ③ {lost['3']:,.0f} · ④ {lost['4']:,.0f}")
 
     print("\n★ ② 원문에 있는데 못 읽는다 — 원문 조각")
     for axis, cap, spec, one in rows:
         if one["2"]:
             print(f"  {axis} ({cap:.0f}점 · {one['2']}건) — {spec['key']}")
+            print(f"      {one['snippet']}")
+    print("\n★ ④ 계산 쪽이 못 만든다")
+    for axis, cap, spec, one in rows:
+        if one["4"]:
+            print(f"  {axis} ({cap:.0f}점 · {one['4']}건)")
             print(f"      {one['snippet']}")
     print("\n★ ③ 그 엔드포인트를 안 받는다")
     for axis, cap, spec, one in rows:
@@ -181,8 +190,9 @@ def main() -> int:
             "SELECT MAX(calculated_at) FROM result_score").fetchone()[0]
         old.append({"at": stamp, "kind2": tot["2"], "kind3": tot["3"],
                     "unknown": tot["n"],
+                    "kind4": tot["4"],
                     "by_axis": {a: {"n": o["n"], "1": o["1"], "2": o["2"],
-                                    "3": o["3"], "?": o["?"]}
+                                    "3": o["3"], "4": o["4"], "?": o["?"]}
                                 for a, _c, _s, o in rows if o["n"]}})
         with open(hist, "w", encoding="utf-8") as f:
             json.dump({"_note": "★ tools/unknown_split.py --write 가 만든다. "

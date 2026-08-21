@@ -205,6 +205,10 @@ class ListingSnapshot:
     inspection_inner_json: str | None = None
     inspection_tuning: int | None = None
     car_state_ok: bool | None = None
+    # ★★ 개정 435 — 계기판(주행거리 표시) 상태.  「양호」인지만 본다.
+    #   ★ 전에는 mileageStateType 을 봤는데 그것은 800건 전부 null 이다.
+    #     실제 값은 boardStateType 에 있다 (757/800) — 키를 잘못 보고 있었다
+    board_state_ok: bool | None = None
     tire_tread_mm: float | None = None
     # 신차가 = 등급기준 + 선택옵션가 합 (개정 301) — ①-2 가 이것을 쓴다
     origin_total_won: int | None = None

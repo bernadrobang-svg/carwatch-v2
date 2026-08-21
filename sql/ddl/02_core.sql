@@ -271,6 +271,9 @@ CREATE TABLE IF NOT EXISTS core_inspection (
   inspection_tuning         TEXT,
   -- ★ 진정성 축 (F-scoring ②-8).  실측 — 「양호」 382 / 400
   inspection_car_state      TEXT,
+  -- ★ 개정 435 — 계기판(주행거리 표시) 상태.  「양호」인지만 본다.
+  --   ★ mileageStateType 은 전건 null 이다 (실측 800건) — boardStateType 이 정본
+  inspection_board_state    TEXT,
   inspection_recall         TEXT,
   usage_change_types_json   TEXT,
   inspection_panel_json     TEXT,

@@ -276,9 +276,19 @@ def _integrity(ctx: AxisContext, v: Verdict) -> None:
         got += table["structure"]
     elif s.car_state_ok is not None:
         why.append("구조 상태 불량")
-    # ★ 계기판 교환은 원문에 없다 — 그 2점은 확인 못 한 것이다
-    why.append("계기판 확인 못 함")
-    put(v, INTEGRITY, got, PRIO_OBSERVED, "integrity_" + "+".join(why))
+    # ★★ 개정 435 — 계기판 상태는 **원문에 있다**.
+    #   전에는 「원문에 없다」고 적고 조건 없이 「확인 못 함」을 달았다.
+    #   ★ mileageStateType 을 보고 있었는데 그것은 800건 전부 null 이다.
+    #     실제 값은 boardStateType 에 있다 (757/800 · v193 실측)
+    if s.board_state_ok:
+        got += table["cluster"]
+    elif s.board_state_ok is None:
+        why.append("계기판 확인 못 함")     # 점검부가 없거나 그 칸이 빈 것
+    else:
+        why.append("계기판 이상")
+    # ★ 흠이 없으면 「integrity_」로 꼬리만 남는다 — 읽을 수 없다.  ok 라 적는다
+    put(v, INTEGRITY, got, PRIO_OBSERVED,
+        "integrity_" + ("+".join(why) if why else "ok"))
 
 
 def analyze_state(ctx: AxisContext, v: Verdict) -> None:
