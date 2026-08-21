@@ -917,8 +917,15 @@ def compare(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str
     from report.screens.build import view_compare
 
     ver = _versions(conn)
-    raw = (req.get("query", {}).get("ids") or "").strip()
+    q = req.get("query", {})
+    raw = (q.get("ids") or "").strip()
     ids = [int(x) for x in raw.split(",") if x.strip().isdigit()]
+    # ★ 관심 화면의 체크 상자는 id 를 여러 개 보낸다 (개정 427 — 비교 흡수).
+    #   ★ ids= 주소도 그대로 산다 — 링크를 걸어 둔 사람이 있다
+    got = q.get("id")
+    for one in (got if isinstance(got, list) else [got] if got else []):
+        if str(one).isdigit() and int(one) not in ids:
+            ids.append(int(one))
     c = view_compare(account, conn, ids, ver["calc_version"],
                      _cfg("finance.json", root), _cfg("scoring.json", root),
                      root)

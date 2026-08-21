@@ -98,7 +98,7 @@
   <!-- ★ 관문은 통과/탈락이지 점수가 아니다 (개정 433).
        ★ 걸린 것은 붉게 — .x 가 그것이다 -->
   <div class="gate">
-    {% for c in row.axis_chips %}<span class="{% if c.tone == 'bad' %}x{% endif %}"
+    {% for c in row.axis_chips %}<span class="{% if c.blocked %}x{% endif %}"
       title="{{ c.label }}">{{ c.head }} {{ c.mark }}</span>{% endfor %}
   </div>
   {% if v.absolute_fail %}
@@ -153,7 +153,8 @@
     <div><u>타이어</u><b class="dim">확인 못 함</b></div>
     <div><u>차 키</u><b class="dim">확인 못 함</b></div>
     <div><u>틴팅</u><b class="dim">확인 못 함</b></div>
-    <div><u>보증 잔여</u><b>{% for a in v.axes %}{% if a.axis == 'warranty.general' %}{{ a.value | num }}/{{ a.max_points | num }}점{% endif %}{% endfor %}</b></div>
+    <div><u>제조사 보증 (일반)</u><b>{% if warranty_general %}{{ warranty_general.value | num }}/{{ warranty_general.max_points | num }}점{% endif %}{% if !warranty_general %}<span class="dim">확인 못 함</span>{% endif %}</b></div>
+    <div><u>제조사 보증 (동력계)</u><b>{% if warranty_power %}{{ warranty_power.value | num }}/{{ warranty_power.max_points | num }}점{% endif %}{% if !warranty_power %}<span class="dim">확인 못 함</span>{% endif %}</b></div>
   </div>
   <p class="note">타이어·차 키·틴팅은 엔카 리포트에 있습니다 —
     ★ 아직 못 받았습니다 (⑤절 참조). 「없다」가 아니라 「모른다」입니다.</p>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>상세 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0d9f3a1a7d">
+<link rel="stylesheet" href="/static/app.css?v=016c871a57">
 
 </head>
 <body class="s-detail">
@@ -144,10 +144,10 @@
   <!-- ★ 관문은 통과/탈락이지 점수가 아니다 (개정 433).
        ★ 걸린 것은 붉게 — .x 가 그것이다 -->
   <div class="gate">
-    <span class="{% if c.tone == 'bad' %}x{% endif %}"
-      title="사고 확인 불가">사고 ?</span><span class="{% if c.tone == 'bad' %}x{% endif %}"
-      title="골격 확인 불가">골격 ?</span><span class="{% if c.tone == 'bad' %}x{% endif %}"
-      title="렌트·영업용">용도 -</span><span class="{% if c.tone == 'bad' %}x{% endif %}"
+    <span class=""
+      title="사고 확인 불가">사고 ?</span><span class=""
+      title="골격 확인 불가">골격 ?</span><span class="x"
+      title="렌트·영업용">용도 -</span><span class=""
       title="보증 있음">보증 O</span>
   </div>
   
@@ -321,7 +321,8 @@
     <div><u>타이어</u><b class="dim">확인 못 함</b></div>
     <div><u>차 키</u><b class="dim">확인 못 함</b></div>
     <div><u>틴팅</u><b class="dim">확인 못 함</b></div>
-    <div><u>보증 잔여</u><b>{% if a.axis == 'warranty.general' %}0/7점{% endif %}{% if a.axis == 'warranty.general' %}0/16점{% endif %}{% if a.axis == 'warranty.general' %}0/10점{% endif %}{% if a.axis == 'warranty.general' %}0/20점{% endif %}{% if a.axis == 'warranty.general' %}33/38점{% endif %}{% if a.axis == 'warranty.general' %}52/52점{% endif %}{% if a.axis == 'warranty.general' %}0/24점{% endif %}{% if a.axis == 'warranty.general' %}0/7점{% endif %}{% if a.axis == 'warranty.general' %}0/20점{% endif %}{% if a.axis == 'warranty.general' %}0/3점{% endif %}{% if a.axis == 'warranty.general' %}0/7점{% endif %}{% if a.axis == 'warranty.general' %}0/13점{% endif %}{% if a.axis == 'warranty.general' %}0/13점{% endif %}{% if a.axis == 'warranty.general' %}0/10점{% endif %}{% if a.axis == 'warranty.general' %}13/13점{% endif %}{% if a.axis == 'warranty.general' %}16/16점{% endif %}{% if a.axis == 'warranty.general' %}16/16점{% endif %}{% if a.axis == 'warranty.general' %}10/10점{% endif %}{% if a.axis == 'warranty.general' %}41/80점{% endif %}{% if a.axis == 'warranty.general' %}0/100점{% endif %}{% if a.axis == 'warranty.general' %}70/70점{% endif %}{% if a.axis == 'warranty.general' %}19/31점{% endif %}{% if a.axis == 'warranty.general' %}47/47점{% endif %}{% if a.axis == 'warranty.general' %}52/52점{% endif %}</b></div>
+    <div><u>제조사 보증 (일반)</u><b>19/31점</b></div>
+    <div><u>제조사 보증 (동력계)</u><b>47/47점</b></div>
   </div>
   <p class="note">타이어·차 키·틴팅은 엔카 리포트에 있습니다 —
     ★ 아직 못 받았습니다 (⑤절 참조). 「없다」가 아니라 「모른다」입니다.</p>
@@ -503,7 +504,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 19:40</span>
+  <span>2026-08-21 20:22</span>
 </footer>
 
 </body>

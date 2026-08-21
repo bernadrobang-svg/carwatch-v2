@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관심 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0d9f3a1a7d">
+<link rel="stylesheet" href="/static/app.css?v=016c871a57">
 
 </head>
 <body class="s-watch">
@@ -45,32 +45,58 @@
 <main>
 <h1>관심 <small>1건</small></h1>
 
+<!-- ★★ 개정 427 — 비교를 관심이 흡수했다.  ★ 여기서 2~5대를 체크해 부른다
+     근거 [마스터] 「그날 잘 안 쓸 거야.  다만 최종 후보 고를 때 쓰겠지」
+     ★ 화면을 지운 것이 아니다 — 들어가는 문만 바꿨다 (/compare 는 그대로다) -->
+<form method="get" action="/compare" id="cmp">
+<div class="bar">
+  <button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">
+    고른 것 비교</button>
+  <span class="dim">2~5대를 고르십시오 — ★ 막대 넷과 총 구매비용을 나란히 냅니다</span>
+</div>
 <table class="rows">
-<thead><tr><th class="c">사진</th><th class="c">등급</th><th>차종 · 트림</th>
+<thead><tr><th class="c" title="비교할 매물을 고릅니다">비교</th>
+<th class="c">사진</th><th class="c">등급</th><th class="c">★ 막대</th><th>차종 · 트림</th>
 <th class="r">연식</th><th class="r">주행</th>
 <th class="r">가격</th><th class="r">목표가</th><th>상태</th><th>가격 추이</th><th></th></tr></thead>
 <tbody>
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" data-href="/why/1915">
+<tr data-peek="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" data-href="/detail/1915">
+<td class="c" data-label="비교">
+  <input type="checkbox" name="id" value="1915"
+         title="비교에 넣습니다"></td>
 <td class="c photo" data-label="사진">
-  <a href="/why/1915" title="G80_25T 가솔린 2.5 터보 AWD · (세부등급 없음) · 2024-09 · 28,698km · 4,790만 · A등급">
+  <a href="/detail/1915" title="G80_25T 가솔린 2.5 터보 AWD · (세부등급 없음) · 2024-09 · 28,698km · 4,790만 · A등급">
   <img class="thumb" src="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" alt="" width="128" height="86" loading="lazy">
   </a>
 </td>
-<td class="c" data-label="등급"><a href="/why/1915" title="판정 근거를 봅니다"><span class="grade-a">A</span></a></td>
+<td class="c" data-label="등급"><a href="/detail/1915" title="판정 근거를 봅니다"><span class="grade-a">A</span></a></td>
+<!-- ★ 관심도 L1 요약이다 — 막대 넷을 같은 자리에 낸다 (개정 427) -->
+<td class="c" data-label="막대">
+  <div class="bars" style="width:80px">
+    <div class="bar b1" style="height:20px"
+      title="차량 143.0 / 150.0점"><i
+      style="height:95%"></i></div><div class="bar b2" style="height:20px"
+      title="값 134.0 / 250.0점"><i
+      style="height:54%"></i></div><div class="bar b3" style="height:20px"
+      title="보증 130.0 / 130.0점"><i
+      style="height:100%"></i></div><div class="bar b4" style="height:20px"
+      title="취향 107.4 / 145.0점"><i
+      style="height:74%"></i></div>
+  </div></td>
 <td data-label="차종 · 트림">
-  <a href="/why/1915" title="판정 근거를 봅니다"><strong>G80_25T</strong></a>
+  <a href="/detail/1915" title="판정 근거를 봅니다"><strong>G80_25T</strong></a>
   <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span>
   <span class="dim">가솔린 2.5 터보 AWD · (세부등급 없음)</span>
   </td>
 <td class="r num" data-label="연식">2024-09</td>
 <td class="r num" data-label="주행">28,698km</td>
-<td class="r num" data-label="가격"><a href="/why/1915" title="판정 근거를 봅니다"><b>4,790만</b></a></td>
+<td class="r num" data-label="가격"><a href="/detail/1915" title="판정 근거를 봅니다"><b>4,790만</b></a></td>
 <td class="r num" data-label="목표가">없습니다</td>
 <td data-label="상태">게시중</td>
 <td data-label="가격 추이"><span class="spark" title="첫 게시가부터 지금까지의 가격 추이입니다. 초록이 내린 것입니다"><i class="" style="height:100%" title="4,890만"></i><i class="dn now" style="height:98%" title="4,790만"></i></span></td>
 <td class="act" data-label="">
-  <a class="btn mini" href="/why/1915" title="판정 근거">근거</a>
+  <a class="btn mini" href="/detail/1915" title="판정 근거">근거</a>
   <a class="btn mini" href="https://www.encar.com/dc/dc_cardetailview.do?carid=42154234" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>
   <form method="post" action="/watch/4" class="inline">
     <input type="hidden" name="csrf" value="render">
@@ -87,6 +113,7 @@
 
 </tbody>
 </table>
+</form>
 
 <h2>최종 후보</h2>
 <p class="muted">최종 후보로 지정한 매물입니다. 가격 · 상태 변동을 추적합니다.</p>
@@ -259,7 +286,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 19:40</span>
+  <span>2026-08-21 20:23</span>
 </footer>
 
 </body>

@@ -11,6 +11,30 @@
 {% if c.version_mismatch %}
 <p class="warn-block">★ 판정 버전이 다릅니다. 같은 기준으로 매긴 점수가 아닙니다.</p>
 {% endif %}
+<!-- ★★ 개정 427 — 막대 넷을 나란히 · 총 구매비용을 나란히 · 한 줄 결론
+     ★ 「차이만」에 더해 이 셋이 있어야 최종 후보를 고를 수 있다 (V11-166) -->
+{% if c.conclusion %}
+<p class="sentence"><b>{{ c.conclusion }}</b></p>
+{% endif %}
+<table class="cmp-bars">
+<thead><tr><th>★ 네 묶음 막대</th>
+  {% for r in c.rows %}<th>{{ r.target_label }}</th>{% endfor %}</tr></thead>
+<tbody><tr><th>갈래별 점수</th>
+  {% for r in c.rows %}<td>
+    <div class="bars" style="width:104px">
+      {% for b in r.bars %}<div class="bar {{ b.css }}"
+        title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점"><i
+        style="height:{{ b.pct }}%"></i><u>{{ b.pct }}</u></div>{% endfor %}
+    </div>
+    <div class="barlab" style="width:104px">{% for b in r.bars %}<span>{{ b.label }}</span>{% endfor %}</div>
+  </td>{% endfor %}</tr>
+<tr><th>총 구매비용</th>
+  {% for r in c.rows %}<td class="num"><b>{{ r.total_cost_won | won }}</b>
+    {% if r.buy_estimated %}<span class="dim">추정</span>{% endif %}
+    <br><span class="dim">{% if r.cash_only %}전액 현금{% endif %}{% if !r.cash_only %}현금 {{ r.down_payment_won | won }} · 월 {{ r.monthly_won | won }} 추정{% endif %}</span>
+  </td>{% endfor %}</tr>
+</tbody></table>
+
 <table>
 <thead><tr><th>축</th>{% for r in c.rows %}<th>{{ r.trim }}
   <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.site_badge }}</span></th>{% endfor %}</tr></thead>

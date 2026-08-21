@@ -46,6 +46,9 @@ class AxisChip:
     #   「HUD 0 은 있다는 거야 없다는 거야」 — 점수는 툴팁으로 옮긴다
     #   빈 문자면 화면이 mark 를 쓴다 (아직 상태를 못 만든 축)
     state: str = ""
+    # ★ 관문에 걸렸는가.  ★ 템플릿이 == 비교를 못 한다 (V11-104) —
+    #   값으로 정해서 내려준다 (STEP 152 「화면이 문자열을 만들지 않는다」)
+    blocked: bool = False
 
 
 @dataclass(frozen=True)
@@ -236,6 +239,9 @@ class ListingFilter:
     # ★ 매물 하나만 집을 때 (개정 427 상세).  ★ 전건을 읽고 파이썬에서
     #   고르면 쿼리도 메모리도 통째로 든다 (실측 08-21 — V11-34 29쿼리)
     listing_id: int | None = None
+    # ★ 여러 매물을 집을 때 (비교).  ★ 전건을 읽고 파이썬에서 고르면
+    #   **첫 쪽 50건 밖의 매물이 조용히 빠진다** (실측 08-21 — 비교가 빈 표였다)
+    listing_ids: tuple = ()
     color_ext: str | None = None
     color_int: str | None = None
     #   ＋ 12 — 연식·옵션·트림·연료·사이트·정직도·경과일·가격변동
@@ -384,6 +390,9 @@ class CompareView:
     #   같은 트림이면 옵션이 값을 가른다 — 이것이 비교 화면의 핵심이다
     option_same: tuple = ()
     option_only: tuple = ()
+    # ★★ 개정 427 — 한 줄 결론.  「A는 취향이 낫고 B는 값이 낫습니다」
+    #   ★ 표를 눈으로 훑게 두지 않는다.  ★ 무엇이 갈랐는지를 말로 쓴다
+    conclusion: str = ""
 
 
 @dataclass(frozen=True)

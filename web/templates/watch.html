@@ -4,32 +4,52 @@
 <!-- ★ 차트 자리를 비워 두지 않는다 (개정 340 · V11-119).
      담은 것이 없으면 추이도 없다 — 그것을 적는다 -->
 담은 매물이 없어 가격 <b>추이 없음</b>입니다.</p>{% endif %}
+<!-- ★★ 개정 427 — 비교를 관심이 흡수했다.  ★ 여기서 2~5대를 체크해 부른다
+     근거 [마스터] 「그날 잘 안 쓸 거야.  다만 최종 후보 고를 때 쓰겠지」
+     ★ 화면을 지운 것이 아니다 — 들어가는 문만 바꿨다 (/compare 는 그대로다) -->
+<form method="get" action="/compare" id="cmp">
+<div class="bar">
+  <button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">
+    고른 것 비교</button>
+  <span class="dim">2~5대를 고르십시오 — ★ 막대 넷과 총 구매비용을 나란히 냅니다</span>
+</div>
 <table class="rows">
-<thead><tr><th class="c">사진</th><th class="c">등급</th><th>차종 · 트림</th>
+<thead><tr><th class="c" title="비교할 매물을 고릅니다">비교</th>
+<th class="c">사진</th><th class="c">등급</th><th class="c">★ 막대</th><th>차종 · 트림</th>
 <th class="r">연식</th><th class="r">주행</th>
 <th class="r">가격</th><th class="r">목표가</th><th>상태</th><th>가격 추이</th><th></th></tr></thead>
 <tbody>
 {% for r in rows %}
-<tr data-peek="{{ r.listing.photo_url }}" data-href="/why/{{ r.listing.listing_id }}">
+<tr data-peek="{{ r.listing.photo_url }}" data-href="/detail/{{ r.listing.listing_id }}">
+<td class="c" data-label="비교">
+  <input type="checkbox" name="id" value="{{ r.listing.listing_id }}"
+         title="비교에 넣습니다"></td>
 <td class="c photo" data-label="사진">
-  <a href="/why/{{ r.listing.listing_id }}" title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
+  <a href="/detail/{{ r.listing.listing_id }}" title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
   {% if r.listing.photo_url %}<img class="thumb" src="{{ r.listing.photo_url }}" alt="" width="128" height="86" loading="lazy">{% endif %}
   {% if !r.listing.photo_url %}<span class="thumb-none">사진 없음</span>{% endif %}</a>
 </td>
-<td class="c" data-label="등급"><a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><span class="{{ r.listing.grade | gradecls }}">{{ r.listing.grade }}</span></a></td>
+<td class="c" data-label="등급"><a href="/detail/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><span class="{{ r.listing.grade | gradecls }}">{{ r.listing.grade }}</span></a></td>
+<!-- ★ 관심도 L1 요약이다 — 막대 넷을 같은 자리에 낸다 (개정 427) -->
+<td class="c" data-label="막대">
+  <div class="bars" style="width:80px">
+    {% for b in r.listing.bars %}<div class="bar {{ b.css }}" style="height:20px"
+      title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점"><i
+      style="height:{{ b.pct }}%"></i></div>{% endfor %}
+  </div></td>
 <td data-label="차종 · 트림">
-  <a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><strong>{{ r.listing.target_label }}</strong></a>
+  <a href="/detail/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><strong>{{ r.listing.target_label }}</strong></a>
   <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.listing.site_badge }}</span>
   <span class="dim">{{ r.listing.trim }}</span>
   {% if r.relist_times %}<span class="tag" title="같은 차가 내렸다 다시 올라온 횟수입니다. 값이 바뀌었으면 함께 냅니다">{{ r.relist_times }}번 재등록{% if r.relist_low_won %} · {{ r.relist_high_won | won }} → {{ r.relist_low_won | won }}{% endif %}</span>{% endif %}</td>
 <td class="r num" data-label="연식">{{ r.listing.year_month }}</td>
 <td class="r num" data-label="주행">{{ r.listing.mileage_km | km }}</td>
-<td class="r num" data-label="가격"><a href="/why/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><b>{{ r.listing.price_won | won }}</b></a></td>
+<td class="r num" data-label="가격"><a href="/detail/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><b>{{ r.listing.price_won | won }}</b></a></td>
 <td class="r num" data-label="목표가">{{ r.target_price_won | won }}</td>
 <td data-label="상태">{{ r.listing.status_label }}</td>
 <td data-label="가격 추이">{% if r.spark %}<span class="spark" title="첫 게시가부터 지금까지의 가격 추이입니다. 초록이 내린 것입니다">{% for p in r.spark %}<i class="{% if p.dn %}dn{% endif %}{% if p.now %} now{% endif %}" style="height:{{ p.pct }}%" title="{{ p.won | won }}"></i>{% endfor %}</span>{% endif %}{% if !r.spark %}<span class="dim" title="가격이 바뀐 적이 없습니다">추이 없음</span>{% endif %}</td>
 <td class="act" data-label="">
-  <a class="btn mini" href="/why/{{ r.listing.listing_id }}" title="판정 근거">근거</a>
+  <a class="btn mini" href="/detail/{{ r.listing.listing_id }}" title="판정 근거">근거</a>
   {% if r.listing.encar_url %}<a class="btn mini" href="{{ r.listing.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
   <form method="post" action="/watch/{{ r.watch_id }}" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
@@ -46,6 +66,7 @@
 {% endfor %}
 </tbody>
 </table>
+</form>
 
 <h2>최종 후보</h2>
 <p class="muted">최종 후보로 지정한 매물입니다. 가격 · 상태 변동을 추적합니다.</p>

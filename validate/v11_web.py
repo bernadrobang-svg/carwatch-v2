@@ -442,6 +442,12 @@ C = {
                     "싶은데 왜 없지?」 ★ 차를 사는 사람이 제일 먼저 쓰는 "
                     "조건이 빠져 있었다 (개정 420)",
                     KIND_CODE),
+    "V11-166": Check("V11", "V11-166", "비교에 막대 넷·총 구매비용·결론이 있음",
+                     FATAL, "run",
+                     "개정 427 — 비교는 관심에서 부른다. ★ 「차이만」에 더해 "
+                     "네 묶음 막대를 나란히 · 총 구매비용을 나란히 · "
+                     "「A는 취향이 낫고 B는 값이 낫습니다」 한 줄 결론",
+                     KIND_CONTRACT),
     "V11-159": Check("V11", "V11-159", "상세 11개 절이 규격 순서로 있음",
                      FATAL, "run",
                      "개정 427 STEP 97a — ★ 절 차례는 판단하는 순서다. "
@@ -1142,6 +1148,7 @@ def _screen_checks(conn, rid) -> list:
     out += _row_shape_checks(conn, rid)
     out += _filter_shape_checks(conn, rid)
     out += _detail_shape_checks(conn, rid)
+    out.append(_compare_shape_check(conn, rid))
     # 링크 · 툴팁 · 원문 · 고르기 · 순서 · 필터 (개정 276)
     out += _link_tip_checks(rid)
     out.append(_origin_link_check(rid))
@@ -2020,6 +2027,57 @@ def _photo_checks(conn, rid):
 
 
 
+
+
+
+def _compare_shape_check(conn, rid):
+    """V11-166 — 비교에 막대 넷·총 구매비용·한 줄 결론 (개정 427 · STEP 98).
+
+    ★ 매물 셋을 실제로 골라 화면을 연다 (S43-②)
+    ★ 관심 화면에서 부를 수 있는지도 함께 본다 — 상단 메뉴에서 뺐기 때문이다
+    """
+    from contracts import Account, ROLE_ADMIN
+    from web.views import HANDLERS
+
+    fn_ = HANDLERS.get("view_compare")
+    ids = [str(r[0]) for r in conn.execute(
+        "SELECT listing_id FROM result_score"
+        " WHERE grade NOT IN ('EXCLUDED','NOT_RATED') LIMIT 3")]
+    if fn_ is None or len(ids) < 2:
+        return not_applicable(C["V11-166"], rid, "비교 화면이나 매물이 모자라다")
+    try:
+        st, _h, body = fn_(conn, Account(1, ROLE_ADMIN, "마스터"),
+                           {"query": {"id": ids}, "form": {},
+                            "method": "GET"}, csrf="t")
+    except Exception as e:                                   # noqa: BLE001
+        return not_applicable(C["V11-166"], rid,
+                              f"못 열었다 — {type(e).__name__}")
+    html = re.sub(r"<!--.*?-->", " ", body.decode("utf-8", "replace"),
+                  flags=re.S)
+    bad = []
+    if int(st) != 200:
+        bad.append(f"비교가 {st} 를 낸다")
+    bars = len(re.findall(r'<div class="bar b[1-9]"', html))
+    want = 4 * len(ids)
+    if bars < want:
+        bad.append(f"막대가 {bars}개다 — {len(ids)}대 × 4 = {want} 여야 한다")
+    # ★ 「나란히」다.  화면 어딘가에 한 번 나오는 것으로는 안 된다 —
+    #   ★ 막대 표 안에서 매물 수만큼 나와야 한다
+    band = html.split('class="cmp-bars"', 1)[-1].split("</table>", 1)[0]
+    if "총 구매비용" not in band:
+        bad.append("총 구매비용이 막대와 나란히 안 나온다")
+    elif len(re.findall(r'<td class="num">', band)) < len(ids):
+        bad.append(f"총 구매비용이 {len(ids)}대 중 일부만 나온다")
+    got = re.search(r'<p class="sentence"><b>(.*?)</b>', html, re.S)
+    if not got or not got.group(1).strip():
+        bad.append("한 줄 결론이 없다")
+    # ★ 관심에서 부를 수 있는가 — 상단 메뉴에서 뺐으므로 문이 여기뿐이다
+    tpl = os.path.join(TEMPLATES, "watch.html")
+    watch = open(tpl, encoding="utf-8").read() if os.path.isfile(tpl) else ""
+    if 'action="/compare"' not in watch:
+        bad.append("관심 화면에서 비교를 못 부른다 — 들어가는 문이 없다")
+    return result(C["V11-166"], rid, f"{want}막대 · 총액 · 결론",
+                  f"막대 {bars}", not bad, bad[:4])
 
 
 def _detail_shape_checks(conn, rid):

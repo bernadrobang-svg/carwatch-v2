@@ -2155,3 +2155,9 @@ details>div { margin-top:12px }
 /* ★ 제외는 등급이 아니다 — 점수 색을 안 쓴다.  테두리로만 구분한다 */
 .gr.EXCLUDED { background:transparent;color:var(--faint);
   border:1px dashed var(--bad);font-size:12px }
+
+/* ★ 비교 — 막대 넷과 총 구매비용을 나란히 (개정 427 · V11-166) */
+.cmp-bars { width:100%; border-collapse:collapse; margin-bottom:12px }
+.cmp-bars th, .cmp-bars td { padding:9px 10px; border-bottom:1px solid var(--line);
+  vertical-align:top; text-align:left }
+.cmp-bars th:first-child { color:var(--faint); font-weight:600; white-space:nowrap }

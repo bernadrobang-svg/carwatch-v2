@@ -197,7 +197,9 @@ def chip(axis: str, value: int | None, excluded: bool, labels: dict,
     #   축별 문구가 있으면 그것을 쓴다 (config/labels.json)
     over = labels.get("AXIS_VALUE_LABELS", {}).get(axis, {}).get(bucket)
     text = over or f"{al.get(axis, axis)} {label}"
-    return AxisChip(axis, text, tone, url, head=al.get(axis, axis), mark=mark)
+    return AxisChip(axis, text, tone, url, head=al.get(axis, axis), mark=mark,
+                    # ★ 관문에 걸린 것은 붉게 (개정 427 상세 ④절)
+                    blocked=(tone == TONE_BAD))
 
 
 def _stamp(calc_version: str, dict_version: str | None) -> VersionStamp:
@@ -945,6 +947,10 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if getattr(flt, "listing_id", None) is not None:
         where.append("l.listing_id = ?")
         args.append(flt.listing_id)
+    if getattr(flt, "listing_ids", ()):
+        marks = ",".join("?" * len(flt.listing_ids))
+        where.append(f"l.listing_id IN ({marks})")
+        args.extend(flt.listing_ids)
     # ══ 칩 7 · ＋12 (개정 427 · STEP 97) ══
     # ★ 필터가 두꺼워야 목록이 얇아진다.  ★ 전부 SQL 로 건다 (V11-164) —
     #   밖에서 거르면 「7건」과 실제 건수가 어긋난다
@@ -1359,6 +1365,29 @@ def view_why(account: Account, conn, listing_id: int, calc_version: str,
     return render_listing(conn, listing_id, calc_version, fin_cfg, policy, root)
 
 
+def _compare_conclusion(rows: list) -> str:
+    """★ 한 줄 결론 (개정 427) — 「A는 취향이 낫고 B는 값이 낫습니다」.
+
+    ★ 표를 눈으로 훑게 두지 않는다.  ★ 막대 넷 중 **누가 어디서 앞서는가**다
+    ★ 지어내지 않는다 — 막대가 없으면 빈 말을 안 한다
+    """
+    if len(rows) < 2:
+        return ""
+    said = []
+    for i, one in enumerate(rows):
+        best = [b.label for b in one.bars
+                if all(b.pct >= (other.bars[j].pct if j < len(other.bars)
+                                 else 0)
+                       for other in rows if other is not one
+                       for j, x in enumerate(one.bars) if x is b)]
+        if best:
+            said.append(f"{i + 1}번({one.target_label})은 "
+                        f"{' · '.join(best[:2])}이 낫습니다")
+    if not said:
+        return "네 갈래 모두 한쪽이 앞서지 않습니다 — 값과 취향으로 고르십시오."
+    return " · ".join(said) + "."
+
+
 def view_compare(account: Account, conn, listing_ids: list[int],
                  calc_version: str, fin_cfg: dict, policy: dict,
                  root: str = ".") -> CompareView:
@@ -1373,9 +1402,23 @@ def view_compare(account: Account, conn, listing_ids: list[int],
     denoms = {v.denominator for v in views}
     vers = {(v.versions.calc_version, v.versions.dict_version) for v in views}
     # ★ 비교도 사람이 고른 것이다 — 리스라고 빼면 고른 차가 사라진다 (개정 420)
-    flt = ListingFilter(calc_version=calc_version, lease=True)
-    rows = [r for r in view_listings(account, conn, flt, fin_cfg, root)
-            if r.listing_id in set(listing_ids)]
+    #   ★ 제외된 것도 뺀 뒤 고른 것이라면 낸다 (개정 433)
+    # ★★ 전건을 읽고 파이썬에서 고르지 않는다 —
+    #   전에는 첫 쪽 50건 안에서만 찾아 **고른 매물이 조용히 빠졌다** (실측 08-21)
+    flt = ListingFilter(calc_version=calc_version, lease=True,
+                        excluded=False, show_all=True,
+                        listing_ids=tuple(listing_ids))
+    rows = view_listings(account, conn, flt, fin_cfg, root,
+                         page_size=max(1, len(listing_ids)))
+    if len(rows) < len(listing_ids):
+        got = {r.listing_id for r in rows}
+        rows += [r for r in view_listings(
+            account, conn, _rep_flt(flt, excluded=True), fin_cfg, root,
+            page_size=max(1, len(listing_ids)))
+            if r.listing_id not in got]
+    # ★ 사람이 고른 차례를 지킨다 — 표의 열 차례가 뒤바뀌면 못 읽는다
+    order = {int(x): i for i, x in enumerate(listing_ids)}
+    rows.sort(key=lambda r: order.get(int(r.listing_id), 99))
     # ★ 「이 셋 중에서」 — 축마다 누가 앞서는가.  표를 눈으로 훑게 두지 않는다
     winner = {}
     for axis in axes:
@@ -1398,7 +1441,8 @@ def view_compare(account: Account, conn, listing_ids: list[int],
                  for lid, got in sorted(diff["only"].items()) if got)
     return CompareView(rows, axes, cells, len(denoms) > 1, len(vers) > 1,
                        axis_winner=winner,
-                       option_same=tuple(diff["same"]), option_only=only)
+                       option_same=tuple(diff["same"]), option_only=only,
+                       conclusion=_compare_conclusion(rows))
 
 
 def market_trims(conn, target_key: str, root: str = ".",
@@ -2312,8 +2356,12 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
         rows = view_listings(account, conn, _rep_flt(flt, excluded=True),
                              fin_cfg, root, page_size=2, with_state=False)
     row = rows[0] if rows else None
+    # ★ 템플릿은 == 비교를 못 한다 (V11-104).  ★ 고르는 일은 여기서 한다
+    by_axis = {a.axis: a for a in v.axes}
     return {
         "v": v, "row": row,
+        "warranty_general": by_axis.get("warranty.general"),
+        "warranty_power": by_axis.get("warranty.power"),
         "verdict": _verdict_lines(v, row, root),
         "unknowns": _unknown_lines(conn, listing_id, calc_version, root),
         "history": _price_history(conn, listing_id),
