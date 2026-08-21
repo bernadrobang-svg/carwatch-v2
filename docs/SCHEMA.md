@@ -29,7 +29,7 @@
 | `vehicle_identity` | 7 | ★ 해시는 결합 「입력」이지 키가 아니다.  원본은 core_pii — 조인 경로에 PII 가 없다 |
 | `core_dealer` | 21 | 딜러는 매물의 속성이 아니라 독립 개체다 (STEP 35) |
 | `core_dealer_history` | 7 | 행태 지표는 매 실행 덮어쓴다.  이력이 없으면 어제 값을 못 찾는다 |
-| `core_inspection` | 27 | 점검.  outers 는 원문 배열 그대로.  가공하지 않는다 (2장 STEP 21) |
+| `core_inspection` | 28 | 점검.  outers 는 원문 배열 그대로.  가공하지 않는다 (2장 STEP 21) |
 | `core_record` | 37 | 이력.  accidents_json 의 type 해석은 Analyzer 가 한다 (2장 STEP 21a) |
 | `core_diagnosis` | 13 | 진단 items 와 outers 가 전건 일치함을 582건으로 확인했다 (2026-08-14) |
 | `core_diagnosis_item` | 6 | item 으로 두면 「10부위 중 2교환」이 되어 수가 틀린다 |

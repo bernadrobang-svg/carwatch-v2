@@ -2,53 +2,105 @@
   <small>{{ paging.total | num }}건 중 {{ paging.shown | num }}건 ·
     {{ paging.pages }}쪽 중 {{ paging.page }}쪽</small></h1>
 
-<!-- ★ 차를 사는 사람이 제일 먼저 쓰는 조건 (개정 420).
-     ★ 값이 없는 조건은 URL 에 안 넣는다 — 빈 칸은 제출돼도 무시된다 -->
-<form class="bar pick" method="get" action="/listings">
+<!-- ══ 조건줄 — 칩 7 + ＋조건 12 (개정 427 · STEP 97) ══
+     ★ 필터는 반대로 두껍게.  실측 — 보배드림 15종 · KB차차차 16종 · 우리 5개.
+       사이트는 복잡함을 필터에 몰아넣고 목록을 단순히 둔다.  우리는 반대였다
+     ★ 고른 조건을 문장으로 낸다 (V11-165) · ★ 뺀 건수를 밝힌다
+     ★ 점수 필터는 SQL 로 건다 (V11-164) — 밖에서 걸면 건수가 어긋난다 -->
+<div class="cond">
+<form class="chips" method="get" action="/listings">
   {% for h in carry_pick %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
-  <label>차종
+  <span class="chip{% if pick.model %} on{% endif %}">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
       {% for m in models %}<option value="{{ m.key }}"{% if m.on %} selected{% endif %}>{{ m.label }}</option>{% endfor %}
-    </select></label>
-  <label>가격
-    <input name="price_min" size="5" inputmode="numeric" value="{{ pick.price_min }}" placeholder="2000">
-    ~ <input name="price_max" size="5" inputmode="numeric" value="{{ pick.price_max }}" placeholder="3500">
-    <span class="muted">만원</span></label>
-  <label title="리스·렌트는 기본으로 뺍니다. 켜면 함께 나옵니다">
-    <input type="checkbox" name="lease" value="1"{% if pick.lease %} checked{% endif %}> 리스·렌트 포함</label>
-  <button type="submit" class="mini">거르기</button>
+    </select></span>
+  <span class="chip{% if pick.price_min %} on{% endif %}">가격
+    <input name="price_min" size="4" inputmode="numeric" value="{{ pick.price_min }}" placeholder="2000">~<input
+           name="price_max" size="4" inputmode="numeric" value="{{ pick.price_max }}" placeholder="3500">만</span>
+  <span class="chip{% if pick.km_max %} on{% endif %}">주행
+    <select name="km_max" title="이 주행거리 이하만 봅니다">
+      <option value="">전체</option>
+      {% for k in km_options %}<option value="{{ k.key }}"{% if k.on %} selected{% endif %}>{{ k.label }}</option>{% endfor %}
+    </select></span>
+  <span class="chip{% if pick.color_ext %} on{% endif %}">외장
+    <select name="color_ext"><option value="">전체</option>
+      {% for c in color_ext_options %}<option value="{{ c.key }}"{% if c.on %} selected{% endif %}>{{ c.label }}</option>{% endfor %}
+    </select></span>
+  <span class="chip{% if pick.color_int %} on{% endif %}">내장
+    <select name="color_int"><option value="">전체</option>
+      {% for c in color_int_options %}<option value="{{ c.key }}"{% if c.on %} selected{% endif %}>{{ c.label }}</option>{% endfor %}
+    </select></span>
+  <span class="chip{% if pick.min_grade %} on{% endif %}">등급
+    <select name="min_grade" title="이 등급 이상만 봅니다">
+      <option value="">전체</option>
+      {% for g in grade_options %}<option value="{{ g.key }}"{% if g.on %} selected{% endif %}>{{ g.label }}</option>{% endfor %}
+    </select></span>
+  <span class="chip{% if !pick.lease %} on{% endif %}" title="리스·렌트는 기본으로 뺍니다">
+    <label><input type="checkbox" name="lease" value="1"{% if pick.lease %} checked{% endif %}> 리스·렌트 포함</label></span>
+  <button type="submit" class="chip" style="cursor:pointer">거르기</button>
+  <a class="chip clear" href="/listings" title="조건을 전부 지웁니다">전부 지우기</a>
+
+  <!-- ＋ 12 — 접어 둔다.  ★ 늘 보이면 칩 7 이 안 보인다 -->
+  <details class="chip" style="border-style:dashed">
+    <summary>＋ 조건</summary>
+    <div class="chips" style="margin-top:9px">
+      <span class="chip">연식 <input name="year" size="4" inputmode="numeric"
+        value="{{ pick.year }}" placeholder="2024" title="이 연식 이후만"></span>
+      <span class="chip">옵션 <input name="option_min" size="2" inputmode="numeric"
+        value="{{ pick.option_min }}" placeholder="3" title="선택 옵션 종수 이상">종 이상</span>
+      <span class="chip">트림 <input name="trim" size="6" value="{{ pick.trim }}"
+        placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
+      <span class="chip">연료 <select name="fuel"><option value="">전체</option>
+        {% for f in fuel_options %}<option value="{{ f.key }}"{% if f.on %} selected{% endif %}>{{ f.label }}</option>{% endfor %}
+      </select></span>
+      <span class="chip">사이트 <select name="site"><option value="">전체</option>
+        {% for b in site_buttons %}<option value="{{ b.q }}"{% if b.on %} selected{% endif %}>{{ b.label }}</option>{% endfor %}
+      </select></span>
+      <span class="chip">정직도 <input name="honesty_min" size="2" inputmode="numeric"
+        value="{{ pick.honesty_min }}" placeholder="70" title="딜러 정직도 이상"> 이상</span>
+      <span class="chip">경과 <input name="days_max" size="3" inputmode="numeric"
+        value="{{ pick.days_max }}" placeholder="30" title="올라온 지 이 일수 이내"></span>
+      <span class="chip"><label><input type="checkbox" name="price_dropped" value="1"{% if pick.price_dropped %} checked{% endif %}>
+        가격 내린 것만</label></span>
+      <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
+        value="{{ pick.warranty_month_min }}" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
+      <span class="chip">지역 <select name="region"><option value="">전체</option>
+        {% for r in region_options %}<option value="{{ r.key }}"{% if r.on %} selected{% endif %}>{{ r.label }}</option>{% endfor %}
+      </select></span>
+      <!-- ★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164) -->
+      <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
+        값<input name="score_value_min" size="3" inputmode="numeric" value="{{ pick.score_value_min }}" placeholder="150">
+        차량<input name="score_car_min" size="3" inputmode="numeric" value="{{ pick.score_car_min }}" placeholder="100">
+        보증<input name="score_warranty_min" size="3" inputmode="numeric" value="{{ pick.score_warranty_min }}" placeholder="100">
+        취향<input name="score_taste_min" size="3" inputmode="numeric" value="{{ pick.score_taste_min }}" placeholder="90"> 이상</span>
+      <span class="chip">정렬 <select name="order">
+        {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
+      </select></span>
+    </div>
+  </details>
 </form>
-{% if pick.said %}<p class="muted">{{ pick.said }}</p>{% endif %}
-{% if lease_hidden %}<p class="muted">리스·렌트 {{ lease_hidden | num }}건은 뺐습니다 —
-  <a href="{{ pick.lease_url }}">함께 보기</a></p>{% endif %}
 
-<div class="bar">
-  <form class="inline" method="get" action="/listings">
-    {% for h in carry %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
-    <select name="order" onchange="this.form.submit()" title="무엇을 먼저 볼지 고릅니다">
-      {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
-    </select>
-    <noscript><button type="submit" class="mini">정렬</button></noscript>
-  </form>
-  {% for b in buttons %}{% if b.url %}<a class="btn{% if b.on %} on{% endif %}"
-    href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endif %}{% endfor %}
-  <span class="num dim">{{ paging.total | num }}건</span>
-  <a class="clear" href="/listings">전부 지우기</a>
+<!-- ★ 고른 조건을 문장으로 (V11-165) · ★ 뺀 건수를 밝힌다 -->
+<div class="sentence">
+  {{ pick.said }} — <span class="n">{{ paging.total | num }}건</span>
+  {% if lease_hidden %} · <b>리스·렌트 {{ lease_hidden | num }}건은 뺐습니다</b> —
+    <a href="{{ pick.lease_url }}">함께 보기</a>{% endif %}
+  {% if excluded_hidden %} · <b>관문 제외 {{ excluded_hidden | num }}건은 뺐습니다</b> —
+    <a href="{{ pick.excluded_url }}">따로 보기</a>{% endif %}
 </div>
-
 {% if !chips %}
 <div class="chips"><span class="none">필터 없음 —
-  기본: 전체 · 비율 높은 순 · E · 미판정은 뒤로.
-  위 단추를 누르거나 표의 값을 누르면 그 조건으로 걸러집니다</span></div>
+  기본: 전체 · 비율 높은 순 · 제외는 뒤로.
+  위 칩을 고르거나 표의 값을 누르면 그 조건으로 걸러집니다</span></div>
 {% endif %}
 {% if chips %}
 <div class="chips">
-  {% for c in chips %}<span class="chip"><b>{{ c.label }}</b> {{ c.value }}
+  {% for c in chips %}<span class="chip on"><b>{{ c.label }}</b> {{ c.value }}
     {% if c.remove_url %}<a class="x" href="{{ c.remove_url }}" title="이 조건만 뺍니다">×</a>{% endif %}</span>{% endfor %}
-  <a class="clear" href="/listings">✕ 해제</a>
 </div>
 {% endif %}
+</div>
 
 {% if !count %}
 <div class="empty">
@@ -162,13 +214,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       {% if r.market_gap_pct %}<b class="{{ r.market_gap_pct | signcls }}"
         title="같은 차종·트림·연식 실매물 중앙값 {{ r.market_price_won | won }} 대비">{{ r.market_gap_pct }}%</b>{% endif %}
       {% if !r.market_gap_pct %}<b class="dim" title="표본이 모자라 중앙값을 못 만듭니다">표본 부족</b>{% endif %}
       {% if r.market_price_won %}<span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 {{ r.market_price_won | won }}</span>{% endif %}</div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       {% if r.origin_gap_pct %}<b class="{{ r.origin_gap_pct | signcls }}"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >{{ r.origin_gap_pct }}%</b>{% endif %}
@@ -176,15 +228,15 @@
       {% if r.origin_total_won %}<span class="raw"
         title="판매자가 입력한 것입니다">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %}
         (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}</div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       {% if r.option_count %}<b><a href="/why/{{ r.listing_id }}"
         title="선택 옵션 종수와 합계입니다">{{ r.option_count }}종{% if r.option_price_won %}
         {{ r.option_price_won | won }}{% endif %}</a></b>{% endif %}
       {% if !r.option_count %}<b class="dim">없음</b>{% endif %}</div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       {% if r.days_on_market %}<b>{{ r.days_on_market | num }}일</b>{% endif %}
       {% if !r.days_on_market %}<b class="dim">오늘</b>{% endif %}</div>
-    <div class="price">
+    <div class="price mono num">
       {% if r.price_bucket_won %}<b><a href="/listings?price_max={{ r.price_bucket_won }}"
         title="이 가격대 이하만 봅니다">{{ r.price_won | won }}</a></b>{% endif %}
       {% if !r.price_bucket_won %}<b>{{ r.price_won | won }}</b>{% endif %}

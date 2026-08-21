@@ -941,6 +941,52 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         args.append(f"%{FAIL_LEASE}%")
     else:
         where.append("(s.grade IS NULL OR s.grade <> 'EXCLUDED')")
+    # ══ 칩 7 · ＋12 (개정 427 · STEP 97) ══
+    # ★ 필터가 두꺼워야 목록이 얇아진다.  ★ 전부 SQL 로 건다 (V11-164) —
+    #   밖에서 거르면 「7건」과 실제 건수가 어긋난다
+    for field, col in (("color_ext", "l.color_ext_raw"),
+                       ("color_int", "l.color_int_raw"),
+                       ("fuel", "l.fuel_raw"),
+                       ("region", "d.dealer_region")):
+        got = getattr(flt, field, None)
+        if got:
+            where.append(f"{col} = ?")
+            args.append(got)
+    if getattr(flt, "trim", None):
+        where.append("l.trim_badge LIKE ?")
+        args.append(f"%{flt.trim}%")
+    if getattr(flt, "days_max", None) is not None:
+        where.append("julianday('now') - julianday(l.first_seen) <= ?")
+        args.append(flt.days_max)
+    if getattr(flt, "price_dropped", False):
+        # ★ 첫 게시가는 core_listing_change 가 갖고 있다 — l 에는 없다
+        where.append(
+            "EXISTS (SELECT 1 FROM core_listing_change ch"
+            "  WHERE ch.listing_id = l.listing_id AND ch.field = 'price_current_won'"
+            "    AND CAST(ch.new_value AS INTEGER)"
+            "        < CAST(ch.old_value AS INTEGER))")
+    if getattr(flt, "warranty_month_min", None) is not None:
+        where.append("COALESCE(l.warranty_body_month, 0) >= ?")
+        args.append(flt.warranty_month_min)
+    if getattr(flt, "honesty_min", None) is not None:
+        where.append("d.trust_score >= ?")
+        args.append(flt.honesty_min)
+    # ★★ 점수 필터 — 갈래 합이 result_score 에 앉아 있다 (개정 428).
+    #   ★ JOIN 없이 걸린다.  「값 220 이상」 「취향 60 이상」
+    #   ★ COALESCE 를 쓴다.  ★ NULL >= 0 은 참이 아니다 —
+    #     그냥 걸면 판정이 없는 매물이 **조용히 사라진다** (실측 08-21)
+    for field, col in (("score_value_min", "s.group_value"),
+                       ("score_car_min", "s.group_car"),
+                       ("score_taste_min", "s.group_taste")):
+        got = getattr(flt, field, None)
+        if got is not None:
+            where.append(f"COALESCE({col}, 0) >= ?")
+            args.append(got)
+    # ★ 보증 막대는 제조사 보증 + 사이트 검증 둘을 합친 것이다 (config score_bars)
+    if getattr(flt, "score_warranty_min", None) is not None:
+        where.append("COALESCE(s.group_warranty, 0)"
+                     " + COALESCE(s.group_site, 0) >= ?")
+        args.append(flt.score_warranty_min)
     # 차종 (개정 420).  ★ target_key 가 차종이다
     if getattr(flt, "model", None):
         where.append("l.target_key LIKE ?")

@@ -442,6 +442,18 @@ C = {
                     "싶은데 왜 없지?」 ★ 차를 사는 사람이 제일 먼저 쓰는 "
                     "조건이 빠져 있었다 (개정 420)",
                     KIND_CODE),
+    "V11-164": Check("V11", "V11-164", "점수 필터가 SQL 로 걸림",
+                     FATAL, "run",
+                     "개정 427 — ★ 화면의 막대를 그대로 조건으로 쓴다. "
+                     "★ 밖에서 걸면 건수가 어긋난다 — 「7건」이라 적고 "
+                     "실제로는 다른 수가 나온다",
+                     KIND_CONTRACT),
+    "V11-165": Check("V11", "V11-165", "고른 조건이 문장으로 나옴",
+                     FATAL, "run",
+                     "개정 427 — 칩이 열둘이 되면 무엇을 골랐는지 "
+                     "칩만 봐서는 모른다. ★ 한 문장으로 되짚어 준다. "
+                     "★ 뺀 건수도 밝힌다 — 조용히 빼면 매물이 사라진 것으로 보인다",
+                     KIND_CONTRACT),
     "V11-162": Check("V11", "V11-162", "목록 한 행의 칸이 8을 넘지 않음",
                      FATAL, "run",
                      "개정 427 — 우리는 24칸이었다. ★ 훑을 수가 없다. "
@@ -1084,6 +1096,7 @@ def _screen_checks(conn, rid) -> list:
     out += _sian_css_checks(rid)
     out += _menu_shape_checks(conn, rid)
     out += _row_shape_checks(conn, rid)
+    out += _filter_shape_checks(conn, rid)
     # 링크 · 툴팁 · 원문 · 고르기 · 순서 · 필터 (개정 276)
     out += _link_tip_checks(rid)
     out.append(_origin_link_check(rid))
@@ -1954,6 +1967,77 @@ def _photo_checks(conn, rid):
 
 
 
+
+def _filter_shape_checks(conn, rid):
+    """V11-164 · V11-165 — 점수 필터가 SQL 인가 · 조건이 문장인가 (개정 427).
+
+    ★ V11-164 는 「SQL 에 들어 있나」를 글자로 보지 않는다.
+      ★ **걸어 보고 건수가 줄었는가**를 본다 — 밖에서 거르면 페이지 안에서만
+        줄어 총 건수가 그대로다 (그래서 「7건」이 거짓말이 된다)
+    """
+    import json as _j
+
+    from contracts import Account, ROLE_ADMIN
+    from report.screens.build import view_listings
+    from report.screens.views import ListingFilter
+    from web.views import _pick_state
+
+    row = conn.execute(
+        "SELECT calc_version FROM result_score LIMIT 1").fetchone()
+    if row is None:
+        return [not_applicable(C[c], rid, "판정 결과가 없다")
+                for c in ("V11-164", "V11-165")]
+    cv = row[0]
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "finance.json"),
+              encoding="utf-8") as f:
+        fin = _j.load(f)
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    big = 100000
+
+    def n_of(**kw):
+        flt = ListingFilter(calc_version=cv, **kw)
+        return len(view_listings(acc, conn, flt, fin, page_size=big))
+
+    base = n_of()
+    bad164 = []
+    # ★ 갈래 넷 다 건다.  ★ 하나만 재면 나머지가 화면 필터로 남아도 못 본다
+    for field, name in (("score_value_min", "값"), ("score_car_min", "차량"),
+                        ("score_warranty_min", "보증"),
+                        ("score_taste_min", "취향")):
+        got = n_of(**{field: 999999})
+        if got >= base:
+            bad164.append(f"{name} 점수 필터가 안 걸린다 "
+                          f"({base}건 → {got}건)")
+    # ★ 반대쪽 — 아주 낮게 걸면 안 줄어야 한다 (거꾸로 걸리면 그것도 결함이다)
+    #   ★ 0 으로 재면 안 된다.  값 갈래는 **음수가 된다** —
+    #     개정 419 가 「시세보다 비싸면 마이너스」로 정했다 (실측 08-21 — 507건).
+    #     0 으로 걸면 그 507건이 빠져 「거꾸로 걸렸다」로 잘못 잡힌다
+    if n_of(score_value_min=-99999) < base:
+        bad164.append("아주 낮게 걸었는데 건수가 준다 — 조건이 거꾸로 걸렸다")
+
+    # V11-165 — 문장
+    said = _pick_state(ListingFilter(
+        calc_version=cv, model="GRANDEUR", price_min=20000000,
+        min_grade="A", score_value_min=150))["said"]
+    bad165 = []
+    for word in ("GRANDEUR", "A 이상", "값 150 이상"):
+        if word not in said:
+            bad165.append(f"문장에 「{word}」 가 없다 — {said[:60]}")
+    tpl = os.path.join(TEMPLATES, "listings.html")
+    html = open(tpl, encoding="utf-8").read() if os.path.isfile(tpl) else ""
+    if "pick.said" not in html:
+        bad165.append("목록 화면이 그 문장을 안 낸다")
+    if "뺐습니다" not in html:
+        bad165.append("뺀 건수를 안 밝힌다")
+    return [
+        result(C["V11-164"], rid, "SQL", f"{len(bad164)}갈래 샘",
+               not bad164, bad164[:4]),
+        result(C["V11-165"], rid, "문장", f"{len(bad165)}곳 빠짐",
+               not bad165, bad165[:4]),
+    ]
+
+
 def _row_shape_checks(conn, rid):
     """V11-162 · V11-163 — 목록 한 행 8칸 · 막대 넷 (개정 427).
 
@@ -2000,8 +2084,8 @@ def _row_shape_checks(conn, rid):
         #   ★ 값 칸(.cell)의 이름표만 본다.  막대 안의 숫자나 가격 아래
         #     보조 문구도 <u> 라 통째로 세면 거짓 실패가 된다 (실측 08-21)
         extra = sum(
-            1 for u in re.findall(r'<div class="cell"[^>]*>\s*<u>([^<]+)</u>',
-                                  one)
+            1 for u in re.findall(r'<div class="cell[^"]*"[^>]*>\s*'
+                                  r'<u>([^<]+)</u>', one)
             if f"<u>{u}</u>" not in marks)
         if len(got) > limit or extra > 0:
             bad162.append(f"{i + 1}번째 행 — 규격 칸 {len(got)}개 "
@@ -4050,7 +4134,8 @@ def _three_values_check(conn, rid):
         # ★ 칸 이름(<u>시세차</u>)이거나 가격 칸(class="price")이면 있는 것이다
         if f"<u>{w}</u>" in got:
             continue
-        if w == "가격" and 'class="price"' in got:
+        # ★ class 가 여럿 붙는다 (「price mono num」) — 앞자락으로 본다
+        if w == "가격" and 'class="price' in got:
             continue
         bad.append(f"{w} 칸이 없다")
     # ★ 값 자체도 나와야 한다 — 「대비 %」만 내고 원값을 숨기면 안 된다

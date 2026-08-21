@@ -229,6 +229,28 @@ class ListingFilter:
     #   ★ 지우는 것이 아니다.  ?excluded=1 로 볼 수 있다 (리스와 같은 방식)
     #   ★ 배제는 등급이 아니다 — 사유를 함께 낸다 (리스 · 골격 사고 · 침수 · 전손)
     excluded: bool = False
+    # ★★ 개정 427 — 필터는 반대로 두껍게 (STEP 97).
+    #   ★ 실측 — 보배드림 15종(옵션 79) · KB차차차 16종 · K카 7종 · 우리 5개.
+    #     사이트는 복잡함을 필터에 몰아넣고 목록을 단순히 둔다.  우리는 반대였다
+    #   칩 7 — 차종·가격·주행·외장색·내장색·등급·리스제외
+    color_ext: str | None = None
+    color_int: str | None = None
+    #   ＋ 12 — 연식·옵션·트림·연료·사이트·정직도·경과일·가격변동
+    #           ·보증잔여·지역·★점수 필터·정렬
+    fuel: str | None = None
+    trim: str | None = None
+    option_min: int | None = None       # 선택 옵션 종수 하한
+    honesty_min: float | None = None    # 딜러 정직도 하한
+    days_max: int | None = None         # 경과일 상한
+    price_dropped: bool = False         # 가격이 내린 것만
+    warranty_month_min: int | None = None
+    region: str | None = None
+    # ★★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164).
+    #   ★ SQL 로 건다.  밖에서 걸면 건수가 어긋난다 (실측 v189 — 집계 66ms)
+    score_value_min: int | None = None
+    score_car_min: int | None = None
+    score_warranty_min: int | None = None
+    score_taste_min: int | None = None
     # 차종 · 가격대 (개정 420).  ★ 차를 사는 사람이 제일 먼저 쓰는 조건이다
     model: str | None = None
     # ★ 「A 이상만」 한 번에 (STEP 149s).  C·D 가 비율 순으로 앞에 섞인다

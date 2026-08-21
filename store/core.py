@@ -1551,3 +1551,28 @@ def listing_models(conn) -> list:
         "SELECT target_key, COUNT(*) FROM core_listing"
         " WHERE status='active' AND target_key IS NOT NULL"
         " GROUP BY target_key ORDER BY COUNT(*) DESC")]
+
+
+# ★ 목록 필터 선택지 — 그 칸에 실제로 있는 값 (개정 427 · STEP 97).
+#   ★ web/ 은 SQL 을 못 쓴다 (V11-01).  조회는 여기 있다
+#   ★ 목록을 코드에 박지 않는다 — DB 에 없는 선택지를 내면 0건이 나온다
+FILTER_OPTION_COLUMNS: tuple[str, ...] = (
+    "color_ext_raw", "color_int_raw", "fuel_raw", "dealer_region",
+)
+
+
+def filter_options(conn, column: str, limit: int = 14) -> list:
+    """그 칸의 값과 건수를 많은 순으로.
+
+    ★ 칸 이름을 밖에서 그대로 받지 않는다 — 허용 목록으로 가둔다
+    """
+    if column not in FILTER_OPTION_COLUMNS:
+        raise ValidationError(f"목록 필터가 못 쓰는 칸이다 — {column}",
+                              step="STEP 97",
+                              action="config/web.json 의 필터 목록을 보십시오")
+    rows = conn.execute(
+        f"SELECT {column}, COUNT(*) FROM core_listing"
+        f" WHERE {column} IS NOT NULL AND {column} <> ''"
+        f" GROUP BY 1 ORDER BY 2 DESC LIMIT ?", (limit,)).fetchall()
+    return [{"value": v, "count": n} for v, n in rows]
+

@@ -143,6 +143,16 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "excluded_hidden": _excluded_hidden(conn, flt, root),
                  # ★ 사유별 — 「몇 건」보다 왜인지가 먼저다
                  "excluded_why": _excluded_why(conn, flt),
+                 # ★ ＋12 선택지 — DB 에 있는 값만 낸다 (개정 427)
+                 "km_options": _km_options(flt, root),
+                 "grade_options": _grade_options(flt, root),
+                 "color_ext_options": _distinct_options(
+                     conn, "color_ext_raw", flt.color_ext),
+                 "color_int_options": _distinct_options(
+                     conn, "color_int_raw", flt.color_int),
+                 "fuel_options": _distinct_options(conn, "fuel_raw", flt.fuel),
+                 "region_options": _distinct_options(
+                     conn, "dealer_region", flt.region),
                  # 정렬 드롭다운 8종 + 지금 조건을 들고 갈 hidden (개정 277)
                  "orders": _order_menu(flt),
                  "carry": _carry(flt),
@@ -628,6 +638,31 @@ def _pick_state(flt, root: str = ROOT) -> dict:
         said.append(flt.model)
     if lo or hi:
         said.append(f"{lo or 0:,}~{hi or '위'}만")
+    if getattr(flt, "km_max", None):
+        said.append(f"{flt.km_max // 10000}만km 이하")
+    for field, fmt in (("color_ext", "외장 {}"), ("color_int", "내장 {}"),
+                       ("fuel", "{}"), ("trim", "트림 {}"),
+                       ("region", "{}"), ("year", "{}년 이후")):
+        got = getattr(flt, field, None)
+        if got:
+            said.append(fmt.format(got))
+    if getattr(flt, "min_grade", None):
+        said.append(f"{flt.min_grade} 이상")
+    # ★ 점수 필터도 문장에 넣는다 — 「값 220 이상」
+    for field, name in (("score_value_min", "값"), ("score_car_min", "차량"),
+                        ("score_warranty_min", "보증"),
+                        ("score_taste_min", "취향")):
+        got = getattr(flt, field, None)
+        if got is not None:
+            said.append(f"{name} {got} 이상")
+    if getattr(flt, "days_max", None) is not None:
+        said.append(f"경과 {flt.days_max}일 이내")
+    if getattr(flt, "price_dropped", False):
+        said.append("가격 내린 것만")
+    if getattr(flt, "warranty_month_min", None) is not None:
+        said.append(f"보증 잔여 {flt.warranty_month_min}개월 이상")
+    if getattr(flt, "honesty_min", None) is not None:
+        said.append(f"정직도 {flt.honesty_min} 이상")
     said.append("리스·렌트 포함" if flt.lease else "리스 제외")
     # ★ 개정 433 — 제외를 보고 있으면 문장에 적는다.  안 적으면
     #   「왜 이상한 매물만 나오지」가 된다
@@ -635,10 +670,48 @@ def _pick_state(flt, root: str = ROOT) -> dict:
         said.append("관문 제외만")
     q = _keep_query(flt, lease="1")
     qx = _keep_query(flt, excluded="1")
-    return {"price_min": lo, "price_max": hi, "lease": flt.lease,
+    # ★ ＋12 의 값도 폼에 되돌려 넣는다 — 걸러면 사라지면 안 된다
+    more = {k: (getattr(flt, k, None) if getattr(flt, k, None) is not None
+                else "")
+            for k in ("model", "km_max", "color_ext", "color_int", "min_grade",
+                      "year", "option_min", "trim", "honesty_min", "days_max",
+                      "warranty_month_min", "region", "score_value_min",
+                      "score_car_min", "score_warranty_min",
+                      "score_taste_min")}
+    more["price_dropped"] = getattr(flt, "price_dropped", False)
+    return {**more,
+            "price_min": lo, "price_max": hi, "lease": flt.lease,
             "excluded": getattr(flt, "excluded", False),
             "said": " · ".join(said), "lease_url": f"/listings?{q}",
             "excluded_url": f"/listings?{qx}"}
+
+
+
+def _distinct_options(conn, col: str, now) -> list:
+    """그 칸에 실제로 있는 값 (개정 427 필터).
+
+    ★ SQL 은 store 에 있다 — web/ 은 SQL 문자열을 못 쓴다 (V11-01)
+    """
+    from store.core import filter_options
+
+    return [{"key": r["value"], "label": f"{r['value']} ({r['count']:,})",
+             "on": r["value"] == now}
+            for r in filter_options(conn, col)]
+
+
+def _km_options(flt, root: str = ROOT) -> list:
+    """주행 구간.  ★ 구간 값은 config 가 정본이다 (S14)."""
+    unit = int(_cfg("web.json", root)["km_bucket"])
+    now = getattr(flt, "km_max", None)
+    return [{"key": k * unit, "label": f"{k * unit // 10000}만km 이하",
+             "on": now == k * unit} for k in (3, 5, 7, 10, 15)]
+
+
+def _grade_options(flt, root: str = ROOT) -> list:
+    """등급 이상.  ★ 차례는 config/labels.json GRADE_ORDER 가 정본이다."""
+    order = _cfg("labels.json", root)["GRADE_ORDER"]
+    now = getattr(flt, "min_grade", None)
+    return [{"key": g, "label": f"{g} 이상", "on": g == now} for g in order]
 
 
 def _keep_query(flt, **more) -> str:
@@ -747,6 +820,24 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         lease=q.get("lease") == "1",
         # ★★ 관문 배제는 기본으로 뺀다 (개정 433).  ?excluded=1 이면 그것만 낸다
         excluded=q.get("excluded") == "1",
+        # ══ 개정 427 — 칩 7 · ＋12 (STEP 97) ══
+        color_ext=q.get("color_ext") or None,
+        color_int=q.get("color_int") or None,
+        fuel=q.get("fuel") or None,
+        trim=q.get("trim") or None,
+        region=q.get("region") or None,
+        option_min=_int_param(q, "option_min", None, minimum=0),
+        honesty_min=_int_param(q, "honesty_min", None, minimum=0),
+        days_max=_int_param(q, "days_max", None, minimum=0),
+        price_dropped=q.get("price_dropped") == "1",
+        warranty_month_min=_int_param(q, "warranty_month_min", None,
+                                      minimum=0),
+        # ★ 점수 필터 — 화면의 막대를 그대로 조건으로 (V11-164)
+        score_value_min=_int_param(q, "score_value_min", None, minimum=0),
+        score_car_min=_int_param(q, "score_car_min", None, minimum=0),
+        score_warranty_min=_int_param(q, "score_warranty_min", None,
+                                      minimum=0),
+        score_taste_min=_int_param(q, "score_taste_min", None, minimum=0),
         model=q.get("model") or None,
         min_grade=q.get("min_grade") or None,
         show_all=q.get("all") == "1",

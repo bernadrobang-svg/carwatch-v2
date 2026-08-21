@@ -47,51 +47,100 @@
   <small>3,065건 중 10건 ·
     307쪽 중 1쪽</small></h1>
 
-<!-- ★ 차를 사는 사람이 제일 먼저 쓰는 조건 (개정 420).
-     ★ 값이 없는 조건은 URL 에 안 넣는다 — 빈 칸은 제출돼도 무시된다 -->
-<form class="bar pick" method="get" action="/listings">
+<!-- ══ 조건줄 — 칩 7 + ＋조건 12 (개정 427 · STEP 97) ══
+     ★ 필터는 반대로 두껍게.  실측 — 보배드림 15종 · KB차차차 16종 · 우리 5개.
+       사이트는 복잡함을 필터에 몰아넣고 목록을 단순히 둔다.  우리는 반대였다
+     ★ 고른 조건을 문장으로 낸다 (V11-165) · ★ 뺀 건수를 밝힌다
+     ★ 점수 필터는 SQL 로 건다 (V11-164) — 밖에서 걸면 건수가 어긋난다 -->
+<div class="cond">
+<form class="chips" method="get" action="/listings">
   <input type="hidden" name="order" value="rank">
-  <label>차종
+  <span class="chip">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
       <option value="G80_25T">G80_25T (1915건)</option><option value="MODEL_Y">MODEL_Y (580건)</option><option value="G70_20T">G70_20T (265건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (262건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (258건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (193건)</option><option value="GV60">GV60 (129건)</option><option value="G70_25T">G70_25T (96건)</option><option value="GV70_EV">GV70_EV (77건)</option><option value="G80_EV">G80_EV (66건)</option>
-    </select></label>
-  <label>가격
-    <input name="price_min" size="5" inputmode="numeric" value="" placeholder="2000">
-    ~ <input name="price_max" size="5" inputmode="numeric" value="" placeholder="3500">
-    <span class="muted">만원</span></label>
-  <label title="리스·렌트는 기본으로 뺍니다. 켜면 함께 나옵니다">
-    <input type="checkbox" name="lease" value="1"> 리스·렌트 포함</label>
-  <button type="submit" class="mini">거르기</button>
-</form>
-<p class="muted">리스 제외</p>
-<p class="muted">리스·렌트 405건은 뺐습니다 —
-  <a href="/listings?lease=1">함께 보기</a></p>
+    </select></span>
+  <span class="chip">가격
+    <input name="price_min" size="4" inputmode="numeric" value="" placeholder="2000">~<input
+           name="price_max" size="4" inputmode="numeric" value="" placeholder="3500">만</span>
+  <span class="chip">주행
+    <select name="km_max" title="이 주행거리 이하만 봅니다">
+      <option value="">전체</option>
+      <option value="30000">3만km 이하</option><option value="50000">5만km 이하</option><option value="70000">7만km 이하</option><option value="100000">10만km 이하</option><option value="150000">15만km 이하</option>
+    </select></span>
+  <span class="chip">외장
+    <select name="color_ext"><option value="">전체</option>
+      <option value="흰색">흰색 (3,433)</option><option value="검정색">검정색 (2,314)</option><option value="쥐색">쥐색 (1,365)</option><option value="청색">청색 (567)</option><option value="은회색">은회색 (250)</option><option value="은색">은색 (101)</option><option value="빨간색">빨간색 (73)</option><option value="담녹색">담녹색 (54)</option><option value="갈색">갈색 (25)</option><option value="청옥색">청옥색 (24)</option><option value="진주색">진주색 (24)</option><option value="녹색">녹색 (24)</option><option value="하늘색">하늘색 (19)</option><option value="연금색">연금색 (19)</option>
+    </select></span>
+  <span class="chip">내장
+    <select name="color_int"><option value="">전체</option>
+      <option value="검정색 계열">검정색 계열 (3,496)</option><option value="갈색 계열">갈색 계열 (2,699)</option><option value="베이지색 계열">베이지색 계열 (1,088)</option><option value="회색 계열">회색 계열 (318)</option><option value="흰색 계열">흰색 계열 (253)</option><option value="청색 계열">청색 계열 (225)</option><option value="빨간색 계열">빨간색 계열 (184)</option><option value="녹색 계열">녹색 계열 (50)</option><option value="주황색 계열">주황색 계열 (29)</option><option value="노란색 계열">노란색 계열 (1)</option>
+    </select></span>
+  <span class="chip">등급
+    <select name="min_grade" title="이 등급 이상만 봅니다">
+      <option value="">전체</option>
+      <option value="S">S 이상</option><option value="A">A 이상</option><option value="B">B 이상</option><option value="C">C 이상</option><option value="D">D 이상</option><option value="E">E 이상</option><option value="F">F 이상</option><option value="G">G 이상</option>
+    </select></span>
+  <span class="chip on" title="리스·렌트는 기본으로 뺍니다">
+    <label><input type="checkbox" name="lease" value="1"> 리스·렌트 포함</label></span>
+  <button type="submit" class="chip" style="cursor:pointer">거르기</button>
+  <a class="chip clear" href="/listings" title="조건을 전부 지웁니다">전부 지우기</a>
 
-<div class="bar">
-  <form class="inline" method="get" action="/listings">
-    
-    <select name="order" onchange="this.form.submit()" title="무엇을 먼저 볼지 고릅니다">
-      <option value="rank" selected>추천 순위</option><option value="grade">등급순</option><option value="price">가격 낮은순</option><option value="price_desc">가격 높은순</option><option value="mileage">주행거리</option><option value="year">연식 최신</option><option value="new">등록 최신</option><option value="dom">오래된 매물</option>
-    </select>
-    <noscript><button type="submit" class="mini">정렬</button></noscript>
-  </form>
-  <a class="btn"
-    href="/listings?min_grade=A" title="S · A 만 봅니다">A 이상만</a><a class="btn"
-    href="/listings?min_grade=B" title="S · A · B 만 봅니다">B 이상만</a><a class="btn"
-    href="/listings?axis=history.damage&amp;bucket=1" title="사고 이력에서 점수를 받은 매물만">사고 양호</a><a class="btn"
-    href="/listings?axis=history.rental&amp;bucket=1" title="렌트 이력에서 점수를 받은 매물만">렌트 아님</a><a class="btn"
-    href="/listings?year=2024" title="2024년식 이후만">2024년 이후</a>
-  <span class="num dim">3,065건</span>
-  <a class="clear" href="/listings">전부 지우기</a>
+  <!-- ＋ 12 — 접어 둔다.  ★ 늘 보이면 칩 7 이 안 보인다 -->
+  <details class="chip" style="border-style:dashed">
+    <summary>＋ 조건</summary>
+    <div class="chips" style="margin-top:9px">
+      <span class="chip">연식 <input name="year" size="4" inputmode="numeric"
+        value="" placeholder="2024" title="이 연식 이후만"></span>
+      <span class="chip">옵션 <input name="option_min" size="2" inputmode="numeric"
+        value="" placeholder="3" title="선택 옵션 종수 이상">종 이상</span>
+      <span class="chip">트림 <input name="trim" size="6" value=""
+        placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
+      <span class="chip">연료 <select name="fuel"><option value="">전체</option>
+        <option value="가솔린">가솔린 (5,303)</option><option value="가솔린+전기">가솔린+전기 (1,336)</option><option value="전기">전기 (852)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (451)</option><option value="디젤">디젤 (403)</option>
+      </select></span>
+      <span class="chip">사이트 <select name="site"><option value="">전체</option>
+        
+      </select></span>
+      <span class="chip">정직도 <input name="honesty_min" size="2" inputmode="numeric"
+        value="" placeholder="70" title="딜러 정직도 이상"> 이상</span>
+      <span class="chip">경과 <input name="days_max" size="3" inputmode="numeric"
+        value="" placeholder="30" title="올라온 지 이 일수 이내"></span>
+      <span class="chip"><label><input type="checkbox" name="price_dropped" value="1">
+        가격 내린 것만</label></span>
+      <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
+        value="" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
+      <span class="chip">지역 <select name="region"><option value="">전체</option>
+        <option value="경기">경기 (3,805)</option><option value="서울">서울 (1,051)</option><option value="대구">대구 (812)</option><option value="부산">부산 (657)</option><option value="인천">인천 (486)</option><option value="전남광주">전남광주 (424)</option><option value="대전">대전 (277)</option><option value="충남">충남 (196)</option><option value="경남">경남 (190)</option><option value="전북">전북 (159)</option><option value="울산">울산 (104)</option><option value="충북">충북 (82)</option><option value="광주">광주 (47)</option><option value="경북">경북 (31)</option>
+      </select></span>
+      <!-- ★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164) -->
+      <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
+        값<input name="score_value_min" size="3" inputmode="numeric" value="" placeholder="150">
+        차량<input name="score_car_min" size="3" inputmode="numeric" value="" placeholder="100">
+        보증<input name="score_warranty_min" size="3" inputmode="numeric" value="" placeholder="100">
+        취향<input name="score_taste_min" size="3" inputmode="numeric" value="" placeholder="90"> 이상</span>
+      <span class="chip">정렬 <select name="order">
+        <option value="rank" selected>추천 순위</option><option value="grade">등급순</option><option value="price">가격 낮은순</option><option value="price_desc">가격 높은순</option><option value="mileage">주행거리</option><option value="year">연식 최신</option><option value="new">등록 최신</option><option value="dom">오래된 매물</option>
+      </select></span>
+    </div>
+  </details>
+</form>
+
+<!-- ★ 고른 조건을 문장으로 (V11-165) · ★ 뺀 건수를 밝힌다 -->
+<div class="sentence">
+  리스 제외 — <span class="n">3,065건</span>
+   · <b>리스·렌트 405건은 뺐습니다</b> —
+    <a href="/listings?lease=1">함께 보기</a>
+   · <b>관문 제외 371건은 뺐습니다</b> —
+    <a href="/listings?excluded=1">따로 보기</a>
 </div>
 
-
 <div class="chips"><span class="none">필터 없음 —
-  기본: 전체 · 비율 높은 순 · E · 미판정은 뒤로.
-  위 단추를 누르거나 표의 값을 누르면 그 조건으로 걸러집니다</span></div>
+  기본: 전체 · 비율 높은 순 · 제외는 뒤로.
+  위 칩을 고르거나 표의 값을 누르면 그 조건으로 걸러집니다</span></div>
 
 
+</div>
 
 
 
@@ -198,13 +247,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">6.8%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-27.4%</b>
@@ -212,15 +261,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 7,779만
         (등급 6,170만 + 옵션 1,609만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/7781"
         title="선택 옵션 종수와 합계입니다">7종
         1,609만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>3일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=60000000"
         title="이 가격대 이하만 봅니다">5,650만</a></b>
       
@@ -328,13 +377,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">-6.4%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-34.1%</b>
@@ -342,15 +391,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 7,508만
         (등급 6,170만 + 옵션 1,338만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/2593"
         title="선택 옵션 종수와 합계입니다">6종
         1,338만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=50000000"
         title="이 가격대 이하만 봅니다">4,950만</a></b>
       
@@ -459,13 +508,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,450만 대비">9.2%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,450만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-23.7%</b>
@@ -473,15 +522,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 7,800만
         (등급 6,179만 + 옵션 1,621만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/1984"
         title="선택 옵션 종수와 합계입니다">6종
         1,621만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=60000000"
         title="이 가격대 이하만 봅니다">5,950만</a></b>
       
@@ -589,13 +638,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,450만 대비">9.2%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,450만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-23.7%</b>
@@ -603,15 +652,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 7,800만
         (등급 6,179만 + 옵션 1,621만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/8126"
         title="선택 옵션 종수와 합계입니다">6종
         1,621만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>2일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=60000000"
         title="이 가격대 이하만 봅니다">5,950만</a></b>
       
@@ -719,13 +768,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">9.5%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-25.1%</b>
@@ -733,15 +782,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 7,739만
         (등급 6,170만 + 옵션 1,569만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/8167"
         title="선택 옵션 종수와 합계입니다">7종
         1,569만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>2일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=60000000"
         title="이 가격대 이하만 봅니다">5,795만</a></b>
       
@@ -849,13 +898,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,050만 대비">-5.0%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,050만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-29.7%</b>
@@ -863,15 +912,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 6,831만
         (등급 5,890만 + 옵션 941만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/1974"
         title="선택 옵션 종수와 합계입니다">5종
         941만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=50000000"
         title="이 가격대 이하만 봅니다">4,800만</a></b>
       
@@ -978,12 +1027,12 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       
       <b class="dim" title="표본이 모자라 중앙값을 못 만듭니다">표본 부족</b>
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,550만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-23.2%</b>
@@ -991,15 +1040,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 4,621만
         (등급 4,208만 + 옵션 413만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/5749"
         title="선택 옵션 종수와 합계입니다">4종
         413만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=40000000"
         title="이 가격대 이하만 봅니다">3,550만</a></b>
       
@@ -1107,13 +1156,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">6.2%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-23.5%</b>
@@ -1121,15 +1170,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 7,350만
         (등급 6,170만 + 옵션 1,180만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/2414"
         title="선택 옵션 종수와 합계입니다">5종
         1,180만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=60000000"
         title="이 가격대 이하만 봅니다">5,620만</a></b>
       
@@ -1237,13 +1286,13 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
         title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">-9.5%</b>
       
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-30.4%</b>
@@ -1251,15 +1300,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 6,885만
         (등급 6,170만 + 옵션 715만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/1915"
         title="선택 옵션 종수와 합계입니다">4종
         715만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=50000000"
         title="이 가격대 이하만 봅니다">4,790만</a></b>
       
@@ -1368,12 +1417,12 @@
 
   <!-- 5~8 -->
   <div class="cellset">
-    <div class="cell"><u>시세차</u>
+    <div class="cell mono num"><u>시세차</u>
       
       <b class="dim" title="표본이 모자라 중앙값을 못 만듭니다">표본 부족</b>
       <span class="raw"
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
-    <div class="cell"><u>신차대비</u>
+    <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
         title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
         >-24.4%</b>
@@ -1381,15 +1430,15 @@
       <span class="raw"
         title="판매자가 입력한 것입니다">신차가 6,999만
         (등급 6,170만 + 옵션 829만)</span></div>
-    <div class="cell"><u>옵션가</u>
+    <div class="cell mono num"><u>옵션가</u>
       <b><a href="/why/2111"
         title="선택 옵션 종수와 합계입니다">4종
         829만</a></b>
       </div>
-    <div class="cell"><u>경과</u>
+    <div class="cell mono num"><u>경과</u>
       <b>5일</b>
       </div>
-    <div class="price">
+    <div class="price mono num">
       <b><a href="/listings?price_max=55000000"
         title="이 가격대 이하만 봅니다">5,290만</a></b>
       
@@ -1581,7 +1630,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 17:56</span>
+  <span>2026-08-21 18:51</span>
 </footer>
 
 </body>
