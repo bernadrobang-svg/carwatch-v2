@@ -65,13 +65,21 @@ def _points(root: str = ROOT) -> dict:
     """배점.  ★ config 가 정본이다 — 화면에 숫자를 박지 않는다 (V4-13).
 
     total   전체 만점
-    grade   등급을 매기는 기준 점수 (취향을 뺀 것)
-    taste   그 차이 — 「취향 N점을 뺀」에 쓴다
+    grade   등급을 매기는 기준 점수
+    taste   그 차이.  ★ 개정 431 부터 0 이다 — 등급에서 빼는 갈래가 없다
+    cuts    ★ 등급 경계 문장 (개정 433 — 8단계).  화면에 숫자를 박지 않는다
     """
     raw = _cfg("scoring.json", root)
     total = int(raw["total_points"])
     grade = int(raw.get("grade_base_points") or total)
+    # ★★ 개정 433 — 화면에 「S 90 · A 80 …」을 박아 두면 컷이 바뀌어도 그대로다.
+    #   실제로 그랬다 — 개정 431 로 분모가 675 가 된 뒤에도 목록 설명은
+    #   「취향 N점을 뺀」과 「S 90」을 그대로 내고 있었다.  config 에서 만든다
+    cuts = sorted(((g, float(r)) for g, r in raw["grade_cuts"].items()),
+                  key=lambda kv: -kv[1])
     return {"total": total, "grade": grade, "taste": total - grade,
+            "cuts": " · ".join(f"{g} {r * 100:.0f}" for g, r in cuts),
+            "n_cuts": len(cuts),
             "axes": len(raw.get("components") or {})}
 
 
@@ -126,6 +134,15 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "pick": _pick_state(flt, root),
                  "carry_pick": _carry_pick(flt),
                  "lease_hidden": _lease_hidden(conn, flt, root),
+                 # ★ 배지 설명도 config 에서 (개정 433).  「여섯 등급」이 박혀 있었다
+                 "grade_help": ("등급 " + str(_points(root)["n_cuts"])
+                                + "단계입니다. 절대 기준 — "
+                                + _points(root)["cuts"]
+                                + ". 「제외」는 등급이 아니라 관문 배제입니다"),
+                 # ★ 관문 배제로 뺀 건수 (개정 433).  조용히 빼지 않는다
+                 "excluded_hidden": _excluded_hidden(conn, flt, root),
+                 # ★ 사유별 — 「몇 건」보다 왜인지가 먼저다
+                 "excluded_why": _excluded_why(conn, flt),
                  # 정렬 드롭다운 8종 + 지금 조건을 들고 갈 hidden (개정 277)
                  "orders": _order_menu(flt),
                  "carry": _carry(flt),
@@ -612,9 +629,16 @@ def _pick_state(flt, root: str = ROOT) -> dict:
     if lo or hi:
         said.append(f"{lo or 0:,}~{hi or '위'}만")
     said.append("리스·렌트 포함" if flt.lease else "리스 제외")
+    # ★ 개정 433 — 제외를 보고 있으면 문장에 적는다.  안 적으면
+    #   「왜 이상한 매물만 나오지」가 된다
+    if getattr(flt, "excluded", False):
+        said.append("관문 제외만")
     q = _keep_query(flt, lease="1")
+    qx = _keep_query(flt, excluded="1")
     return {"price_min": lo, "price_max": hi, "lease": flt.lease,
-            "said": " · ".join(said), "lease_url": f"/listings?{q}"}
+            "excluded": getattr(flt, "excluded", False),
+            "said": " · ".join(said), "lease_url": f"/listings?{q}",
+            "excluded_url": f"/listings?{qx}"}
 
 
 def _keep_query(flt, **more) -> str:
@@ -636,6 +660,8 @@ def _keep_query(flt, **more) -> str:
         got["grade"] = flt.grade
     if flt.lease:
         got["lease"] = "1"
+    if getattr(flt, "excluded", False):
+        got["excluded"] = "1"
     got.update(more)
     return urlencode(got)
 
@@ -654,6 +680,23 @@ def _lease_hidden(conn, flt, root: str = ROOT) -> int:
     from report.screens.build import lease_hidden
 
     return lease_hidden(conn, flt, root)
+
+
+def _excluded_hidden(conn, flt, root: str = ROOT) -> int:
+    """관문 배제로 뺀 건수 (개정 433).  ★ 리스와 같은 방식이다."""
+    from report.screens.build import excluded_hidden
+
+    return excluded_hidden(conn, flt, root)
+
+
+def _excluded_why(conn, flt) -> list:
+    """★ 왜 뺐는지 (개정 433) — 「리스」 「골격 사고」 「침수」 「전손」.
+
+    ★ 「제외 371건」만 내면 사람이 아무것도 못 한다.  사유가 판단 재료다
+    """
+    from report.screens.build import excluded_groups
+
+    return excluded_groups(conn, flt.calc_version)
 
 
 def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
@@ -702,6 +745,8 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         mismatch=q.get("mismatch") == "1",
         # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  켜면 함께 낸다
         lease=q.get("lease") == "1",
+        # ★★ 관문 배제는 기본으로 뺀다 (개정 433).  ?excluded=1 이면 그것만 낸다
+        excluded=q.get("excluded") == "1",
         model=q.get("model") or None,
         min_grade=q.get("min_grade") or None,
         show_all=q.get("all") == "1",

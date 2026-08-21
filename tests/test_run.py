@@ -502,7 +502,11 @@ def test_score_pipeline() -> None:
         os.path.join(ROOT, "config", "scoring.json"),
         encoding="utf-8"))).raw["total_points"])
     check(f"분모는 늘 {full:g} 다 (개정 298 G)", denom == full, str(denom))
-    check("등급이 매겨진다", g in ("S", "A", "B", "C", "D", "E", "NOT_RATED"),
+    # ★ 개정 433 — 8단계 + 제외 · 등급 없음 · 평가 불가.  차례는 config 가 정본
+    _lb = json.load(open(os.path.join(ROOT, "config", "labels.json"),
+                         encoding="utf-8"))
+    check("등급이 매겨진다",
+          g in tuple(_lb["GRADE_ORDER"]) + tuple(_lb["GRADE_NOT_RANKED"]),
           f"{g} {total}/{denom}")
 
     ex_axes = {a for (a,) in conn.execute(
@@ -518,15 +522,19 @@ def test_score_pipeline() -> None:
         " WHERE source='market_sample_short'")}
     check("★ 표본이 모자란 시세 축은 0점 · 확인 안 됨 — 이론가로 안 메운다",
           "value.market" in short, str(sorted(short)))
-    # ★ 개정 298 — 분모는 늘 555 다.  개정 287 — 핵심 축을 못 보면 NOT_RATED.
-    #   E(절대조건)는 점수와 무관하므로 빼고 본다
-    rated = [r for r in rows if r[0] != "E"]
+    # ★ 개정 287 — 핵심 축을 못 보면 NOT_RATED.
+    #   ★★ 개정 433 — 절대조건은 EXCLUDED 다.  E 는 이제 30~40% 자리라
+    #     r[0] != "E" 로 거르면 **멀쩡한 E 매물까지 빠진다**
+    rated = [r for r in rows if r[0] != "EXCLUDED"]
     check(f"★ 전건 분모가 {full:g} 다 (개정 298 G)",
           all(r[2] == full for r in rows), str({r[2] for r in rows}))
     # ★ 개정 325 로 「확인 안 됨」이 excluded 가 아니게 됐다 —
     #   핵심 축이 0점이면 비율이 낮아 D·E 로 떨어진다.  등급을 막지 않는다
+    # ★ 「낮은 등급」을 문자로 박지 않는다 — 개정 433 이 8단계로 내리면서
+    #   D 아래에 E·F·G·등급 없음이 생겼다.  ★ 컷 차례로 「아래쪽인가」를 본다
+    _low = tuple(_lb["GRADE_ORDER"])[3:] + ("NO_GRADE", "NOT_RATED")
     check("★ 표본이 모자라면 비율이 낮아 낮은 등급이 된다 (막지 않는다)",
-          all(r[0] in ("D", "E", "NOT_RATED") for r in rated) if rated else True,
+          all(r[0] in _low for r in rated) if rated else True,
           str([r[0] for r in rows]))
 
 

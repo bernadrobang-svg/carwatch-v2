@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**88파일 · 27,496줄 · 1,197KB**
+**88파일 · 27,624줄 · 1,206KB**
 
 ★ 800줄을 넘는 파일 6개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -17,7 +17,7 @@
 - chapters/00-standard.md 2,172줄
 - chapters/41-view.md 933줄
 - chapters/61-web.md 2,255줄
-- chapters/30-score/f-table.md 1,107줄
+- chapters/30-score/f-table.md 1,219줄
 - chapters/60-admin/c-tools.md 1,076줄
 
 | 파일 | 줄 | KB |
@@ -51,7 +51,7 @@
 | `chapters/30-score/c-spec.md` | 226 | 9 |
 | `chapters/30-score/d-history.md` | 365 | 12 |
 | `chapters/30-score/e-etc.md` | 225 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 1,107 | 40 |
+| `chapters/30-score/f-table.md`  ★ | 1,219 | 45 |
 | `chapters/30-score/g-absolute.md` | 142 | 5 |
 | `chapters/30-score/h-verdict.md` | 193 | 7 |
 | `chapters/31-registry.md` | 673 | 28 |
@@ -81,12 +81,12 @@
 | `guide/02_결함대장.md` | 270 | 6 |
 | `guide/02_미확정.md` | 76 | 4 |
 | `guide/03_원칙지적.md` | 153 | 3 |
-| `guide/03_이력.md` | 449 | 115 |
+| `guide/03_이력.md` | 452 | 118 |
 | `guide/04_구성.md` | 37 | 2 |
 | `guide/04_질의.md` | 256 | 5 |
 | `guide/05_가이드역할.md` | 344 | 11 |
 | `guide/05_노션.md` | 188 | 5 |
-| `guide/06_오판대장.md` | 131 | 7 |
+| `guide/06_오판대장.md` | 144 | 8 |
 | `ref/00-intro.md` | 25 | 0 |
 | `ref/A-check.md` | 68 | 3 |
 | `ref/B-config.md` | 405 | 12 |

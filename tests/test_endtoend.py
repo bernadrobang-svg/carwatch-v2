@@ -156,7 +156,7 @@ def flow_config_effect():
     import tempfile
 
     from analyze.axes import ScoringPolicy
-    from score.grade import GRADE_E, NOT_RATED, cutoffs
+    from score.grade import EXCLUDED, NOT_RATED, cutoffs
 
     root = tempfile.mkdtemp()
     shutil.copytree(os.path.join(ROOT, "config"),
@@ -183,7 +183,8 @@ def flow_config_effect():
     #     시험이 「config 가 안 먹힌다」로 여덟 달 내내 실패하고 있었다.
     #     ★ 검사는 「움직일 수 있는가」를 봐야 한다 — 「움직인 적이 있는가」가 아니다
     tops = {g for g, _c in cutoffs(ScoringPolicy(raw))[:1]}
-    rated = {g for g in before if g not in (NOT_RATED, GRADE_E)}
+    # ★ 개정 433 — 배제는 EXCLUDED 다.  E 는 30~40% 자리다
+    rated = {g for g in before if g not in (NOT_RATED, EXCLUDED)}
     if rated - tops:
         # 바닥 쪽에 몰려 있다 — 컷을 내리면 등급이 오른다
         raw["grade_cuts"] = {g: round(max(0.01, v - 0.45), 2)

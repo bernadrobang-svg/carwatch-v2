@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS result_score (
   earned         REAL,
   denominator    REAL NOT NULL,
   grade          TEXT NOT NULL,
-  absolute_fail  TEXT,            -- E등급 사유
+  absolute_fail  TEXT,            -- ★ 제외 사유 (개정 433).  전에는 「E등급 사유」
   -- ★ 08-14. NOT_RATED 사유 3종을 구분한다 (V5-12)
   not_rated_reason TEXT,
   -- ★ 08-17 개정 292.  등급은 취향(④ 50점)을 뺀 505 로 매긴다.
@@ -55,7 +55,12 @@ CREATE TABLE IF NOT EXISTS result_score (
   calculated_at  TEXT NOT NULL,
   PRIMARY KEY (listing_id, calc_version),
   FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),
-  CHECK (grade IN ('S','A','B','C','D','E','NOT_RATED'))
+  -- ★ 개정 433 — 8단계 + 제외 + 등급 없음.  셋은 서로 다르다
+  --   EXCLUDED  관문 배제 (리스·골격·침수·전손) — 점수와 무관하다
+  --   NO_GRADE  10% 미만 — 점수는 매겼는데 등급이 없다
+  --   NOT_RATED 분모 미달 — 잴 수가 없었다
+  CHECK (grade IN ('S','A','B','C','D','E','F','G',
+                   'EXCLUDED','NO_GRADE','NOT_RATED'))
 );
 
 CREATE INDEX IF NOT EXISTS ix_score_grade ON result_score(calc_version, grade);

@@ -512,7 +512,8 @@ def _pending_best(pending: list, earned: float, denom: float,
     add = sum(p["points"] for p in pending)
     best_denom = denom + add
     best_ratio = (earned + add) / best_denom if best_denom else 0
-    grade = "E"
+    # ★ 개정 433 — 맨 아래 컷에도 못 미치면 「등급 없음」이다.  E 가 아니다
+    grade = "NO_GRADE"
     for g, cut in cutoffs(policy):
         if best_ratio >= cut:
             grade = g

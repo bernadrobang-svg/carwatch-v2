@@ -39,6 +39,10 @@
     "C": "C",
     "D": "D",
     "E": "E",
+    "F": "F",
+    "G": "G",
+    "EXCLUDED": "제외",
+    "NO_GRADE": "등급 없음",
     "NOT_RATED": "평가 불가"
   },
   "VALUE_LABELS": {
@@ -118,5 +122,22 @@
       "1": "신차가 대비 싸다",
       "0": "신차가 대비 비싸다"
     }
-  }
+  },
+  "_note_433": "★ 개정 433 — 등급 8단계.  EXCLUDED 는 관문 배제(리스·골격·침수·전손), NO_GRADE 는 10% 미만, NOT_RATED 는 분모 미달이다.  ★ 셋은 서로 다른 것이다",
+  "GRADE_ORDER": [
+    "S",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G"
+  ],
+  "GRADE_NOT_RANKED": [
+    "EXCLUDED",
+    "NO_GRADE",
+    "NOT_RATED"
+  ],
+  "_note_grade_order": "★ 개정 433 — 등급 차례의 정본은 여기다. 전에는 report/screens/build.py · store/watch.py · tools/verify_axes.py 셋이 저마다 ('S','A','B','C','D','E') 를 들고 있었다 — 컷이 8단계가 됐을 때 셋을 다 못 찾으면 화면마다 다른 등급이 나온다. GRADE_NOT_RANKED 는 순위를 안 매기는 것들이다 (제외·등급 없음·평가 불가)"
 }

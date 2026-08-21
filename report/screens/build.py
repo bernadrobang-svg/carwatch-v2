@@ -92,7 +92,36 @@ def axis_heads(root: str = ".") -> list[dict]:
     al = _labels(root)["AXIS_LABELS"]
     return [{"axis": a, "label": al.get(a, a)} for a in CHIP_AXES]
 
-RANK_ORDER = ("S", "A", "B", "C", "D", "E")
+import os as _os_lbl
+_ROOT_LBL = _os_lbl.path.dirname(_os_lbl.path.dirname(
+    _os_lbl.path.dirname(_os_lbl.path.abspath(__file__))))
+
+
+def _grade_order() -> tuple:
+    """등급 차례.  ★ 정본은 config/labels.json GRADE_ORDER 다 (개정 433).
+
+    ★ 여기에 ("S","A","B","C","D","E") 를 박지 않는다 — 개정 433 이 8단계로
+      내렸을 때 이 튜플이 세 모듈에 흩어져 있어 전수로 찾아야 했다 (S14)
+    """
+    import json as _j
+    import os as _o
+    _p = _o.path.join(_ROOT_LBL, "config", "labels.json")
+    with open(_p, encoding="utf-8") as _f:
+        return tuple(_j.load(_f)["GRADE_ORDER"])
+
+
+def _not_ranked() -> tuple:
+    """순위를 안 매기는 것 — 제외 · 등급 없음 · 평가 불가 (개정 433)."""
+    import json as _j
+    import os as _o
+    _p = _o.path.join(_ROOT_LBL, "config", "labels.json")
+    with open(_p, encoding="utf-8") as _f:
+        return tuple(_j.load(_f)["GRADE_NOT_RANKED"])
+
+
+RANK_ORDER = _grade_order()
+NOT_RANKED = _not_ranked()
+
 
 
 def _labels(root: str = ".") -> dict:
@@ -720,7 +749,8 @@ def _view_cfg(key: str, root: str = ".") -> int:
         return int(json.load(f)[key])
 
 
-GRADE_ORDER = ("S", "A", "B", "C", "D", "E", "NOT_RATED")
+# ★ 개정 433 — 8단계 + 순위를 안 매기는 것 셋 (제외·등급 없음·평가 불가)
+GRADE_ORDER = RANK_ORDER + NOT_RANKED
 # 가격 분포 칸 수 · 오늘 변동 줄 수.  ★ 표시 정책이라 코드에 박지 않는다
 PRICE_BINS = _view_cfg("price_bins")
 TRIM_ROWS = _view_cfg("trim_rows")
@@ -742,8 +772,12 @@ ORDER_SQL = {
     "dom": "l.first_seen ASC",
 }
 
-# ★ E 와 NOT_RATED 는 뒤로.  비교 대상이 아니다
-ORDER_HEAD = ("(CASE WHEN s.grade IN ('E','NOT_RATED') THEN 1 ELSE 0 END)")
+# ★ 순위를 안 매기는 것은 뒤로.  비교 대상이 아니다
+# ★★ 개정 433 — 전에는 ('E','NOT_RATED') 였다.  E 는 이제 30~40% 자리라
+#   그대로 두면 **멀쩡한 E 매물이 목록 맨 뒤로 밀린다**
+ORDER_HEAD = ("(CASE WHEN s.grade IN ("
+              + ",".join("'%s'" % g for g in NOT_RANKED)
+              + ") THEN 1 ELSE 0 END)")
 # ★★ 같은 점수면 사이트 보증이 높은 쪽이 앞이다 (개정 306 · V9-09).
 #   마스터 — 「최고급 우선이야」.  그 우선이 정렬에도 들어간다.
 #   ★ 사이트 이름으로 올리지 않는다 — ⑤ 사이트 보증 축의 점수로 올린다.
@@ -776,6 +810,22 @@ def _lease_kinds(root: str = ".") -> tuple:
         cfg = json.load(f)
     return (list(cfg["lease_advertisement_types"]),
             list(cfg["lease_sell_types"]))
+
+
+def excluded_hidden(conn, flt: ListingFilter, root: str = ".") -> int:
+    """★ 뺀 건수를 밝힌다 (개정 433).  「몇 건을 안 보여 줬는지」를 안 적으면
+    사람이 목록을 전부로 착각한다 — 리스에서 겪은 것과 같다 (개정 420).
+    """
+    if getattr(flt, "excluded", False):
+        return 0
+    from dataclasses import replace as _rep
+
+    on, args_on = _listings_where(_rep(flt, excluded=True))
+    return conn.execute(
+        "SELECT COUNT(*) FROM core_listing l LEFT JOIN result_score s"
+        " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+        " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id WHERE "
+        + " AND ".join(on), [flt.calc_version, *args_on]).fetchone()[0]
 
 
 def lease_hidden(conn, flt: ListingFilter, root: str = ".") -> int:
@@ -830,6 +880,21 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         where.append("(l.sell_type IS NULL OR l.sell_type NOT IN"
                      f" ({','.join('?' * len(sells))}))")
         args.extend(sells)
+    # ★★ 관문 배제는 기본으로 뺀다 (개정 433).  ?excluded=1 이면 그것만 낸다
+    #   ★ 「기본 목록에 안 나온다」 — 리스와 같은 방식이다.  지우지 않는다
+    if getattr(flt, "excluded", False):
+        where.append("s.grade = 'EXCLUDED'")
+    elif getattr(flt, "lease", False):
+        # ★★ 리스는 관문 배제 사유이기도 하다 (FAIL_LEASE).  그래서 개정 433
+        #   뒤에는 ?lease=1 만으로는 리스가 안 나온다 — 제외로도 숨겨진다.
+        #   ★ 개정 420 「지우는 것이 아니다.  ?lease=1 로 볼 수 있다」를 지킨다
+        from analyze.absolute import FAIL_LEASE
+
+        where.append("(s.grade IS NULL OR s.grade <> 'EXCLUDED'"
+                     " OR s.absolute_fail LIKE ?)")
+        args.append(f"%{FAIL_LEASE}%")
+    else:
+        where.append("(s.grade IS NULL OR s.grade <> 'EXCLUDED')")
     # 차종 (개정 420).  ★ target_key 가 차종이다
     if getattr(flt, "model", None):
         where.append("l.target_key LIKE ?")
@@ -859,8 +924,9 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if flt.listing_status:
         where.append("l.status = ?")
         args.append(flt.listing_status)
-    # ★ 「A 이상만」 (STEP 149s).  NOT_RATED 는 등급이 아니라 뺀다
-    if flt.min_grade:
+    # ★ 「A 이상만」 (STEP 149s).  순위 밖(제외·등급 없음·평가 불가)은 뺀다
+    #   ★ 개정 433 — RANK_ORDER 가 8단계다.  「E 이상」이 이제 뜻이 있다
+    if flt.min_grade and flt.min_grade in RANK_ORDER:
         ok = [g for g in RANK_ORDER
               if RANK_ORDER.index(g) <= RANK_ORDER.index(flt.min_grade)]
         where.append(f"s.grade IN ({','.join('?' * len(ok))})")
@@ -1024,7 +1090,8 @@ def recommend_funnel(conn, calc_version: str, shown: int) -> dict:
         (calc_version,)).fetchone()[0]
     dropped = conn.execute(
         "SELECT COUNT(*) FROM result_score WHERE calc_version=?"
-        " AND grade IN ('E','NOT_RATED')", (calc_version,)).fetchone()[0]
+        " AND grade IN (" + ",".join("'%s'" % g for g in NOT_RANKED)
+        + ")", (calc_version,)).fetchone()[0]
     return {"judged": judged, "dropped": dropped,
             "eligible": judged - dropped, "shown": shown}
 
@@ -1048,10 +1115,14 @@ def view_recommend(account: Account, conn, flt: ListingFilter,
                    fin_cfg: dict, root: str = ".",
                    extras: bool = True,
                    with_state: bool = True) -> list[ListingRow]:
-    """추천 대상만.  E 와 NOT_RATED 는 순위를 매기지 않는다 (7장 STEP 84)."""
+    """추천 대상만.  ★ 제외·등급 없음·평가 불가는 순위를 안 매긴다 (STEP 84).
+
+    ★ 개정 433 — 전에는 「E 와 NOT_RATED」였다.  E 가 관문 배제였기 때문이다.
+      이제 배제는 EXCLUDED 다 — E 를 빼면 30~40% 매물이 추천에서 사라진다
+    """
     rows = [r for r in view_listings(account, conn, flt, fin_cfg, root,
                                      extras=extras, with_state=with_state)
-            if r.grade not in ("E", NOT_RATED)]
+            if r.grade not in NOT_RANKED]
     # ★ 「지금 얼마」와 「채우면 얼마까지」를 함께 낸다 (STEP 105 · 149h).
     #   지금 비율만 보면 이 차가 끝인지 아닌지 알 수 없다
     up = _bulk_upside(conn, [r.listing_id for r in rows], flt.calc_version)
@@ -1122,14 +1193,17 @@ def excluded_groups(conn, calc_version: str) -> list:
     """후보에서 뺀 것.  ★ 몇 건인지보다 왜인지가 먼저다."""
     counts: dict = {}
     for (reason,) in conn.execute(
+        # ★ 개정 433 — 배제는 EXCLUDED 다.  grade='E' 로 세면 0건이 나온다
         "SELECT absolute_fail FROM result_score "
-        "WHERE calc_version=? AND grade='E'", (calc_version,)
+        "WHERE calc_version=? AND grade='EXCLUDED'", (calc_version,)
     ):
         for part in (reason or "사유 없음").split(";"):
             key = part.strip() or "사유 없음"
             counts[key] = counts.get(key, 0) + 1
+    # ★★ 개정 433 — 링크가 ?grade=E 였다.  E 는 이제 30~40% 자리라
+    #   그대로 두면 「골격 사고」를 눌렀는데 멀쩡한 E 매물이 나온다
     return [ExcludedGroup(k, v, EXCLUDED_NOTES.get(k, ""),
-                          f"/listings?grade=E&reason={k}")
+                          f"/listings?excluded=1&reason={k}")
             for k, v in sorted(counts.items(), key=lambda kv: -kv[1])]
 
 
@@ -1593,13 +1667,14 @@ def _grade_counts(conn, calc_version: str) -> dict:
 def _e_reasons(conn, calc_version: str) -> dict:
     """E 사유별 건수.
 
-    ★ 「E 33건」만 내면 사람이 아무것도 못 한다.  왜 E 인지가 판단 재료다.
+    ★ 「제외 33건」만 내면 사람이 아무것도 못 한다.  왜인지가 판단 재료다.
       absolute_fail 은 여러 사유가 「; 」로 붙는다 — 쪼개서 센다
     """
     out: dict = {}
     for (reason,) in conn.execute(
+        # ★ 개정 433 — 배제는 EXCLUDED 다
         "SELECT absolute_fail FROM result_score "
-        "WHERE calc_version=? AND grade='E'", (calc_version,)
+        "WHERE calc_version=? AND grade='EXCLUDED'", (calc_version,)
     ):
         for part in (reason or "사유 없음").split(";"):
             key = part.strip() or "사유 없음"

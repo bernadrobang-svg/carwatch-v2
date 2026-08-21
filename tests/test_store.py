@@ -113,10 +113,11 @@ def test_schema() -> None:
     try:
         conn.execute("INSERT INTO result_score"
                      "(listing_id,calc_version,dict_version,score_total,denominator,"
-                     "grade,calculated_at) VALUES (1,'v1','d1',400,555,'F','a')")
-        check("grade CHECK — NOT_RATED 포함 7값", False)
+                     # ★ 개정 433 — F·G 는 이제 진짜 등급이다.  'Z' 로 잰다
+                     "grade,calculated_at) VALUES (1,'v1','d1',400,555,'Z','a')")
+        check("grade CHECK — 8단계 + 제외·등급없음·평가불가 11값", False)
     except sqlite3.IntegrityError:
-        check("grade CHECK — NOT_RATED 포함 7값", True)
+        check("grade CHECK — 8단계 + 제외·등급없음·평가불가 11값", True)
 
 
 # ── STEP 30 키 ───────────────────────────────────────────────────────

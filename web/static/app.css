@@ -1314,12 +1314,17 @@ td.num, th.num { text-align:right; }
 .warn-info  { color:var(--dim); }
 
 /* 등급 — ★ 색을 쓰지 않는다.  글자와 위치로 구분한다 (STEP 145a) */
+/* ★ 개정 433 — 8단계 + 제외.  같은 자리·같은 모양이어야 눈이 배운다 */
+.grade-f, .grade-g, .grade-excluded,
 .grade-s, .grade-a, .grade-b, .grade-c, .grade-d, .grade-e, .grade-none {
   display:inline-block; min-width:22px; text-align:center; padding:1px 6px;
   border:1px solid var(--line2); border-radius:3px; font-weight:700;
   font-family:var(--mono); }
 .grade-s, .grade-a { border-color:var(--amber); }
-.grade-e { color:var(--dim); }
+.grade-e, .grade-f { color:var(--dim); }
+.grade-g { color:var(--faint); }
+/* ★ 제외는 등급이 아니다.  점수 색을 안 쓴다 — 테두리로만 구분한다 */
+.grade-excluded { color:var(--faint); border-style:dashed; }
 .grade-none { color:var(--faint); }
 
 .ver { display:flex; gap:16px; padding:10px 24px; border-top:1px solid var(--line);

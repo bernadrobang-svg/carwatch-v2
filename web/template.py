@@ -89,8 +89,24 @@ def f_num(v) -> str:
 
 def f_gradecls(v) -> str:
     """등급 → CSS 클래스.  ★ 템플릿에서 문자열을 만들지 않는다 (STEP 152)."""
+    # ★★ 개정 433 — 8단계다.  ("s".."e") 여섯만 알던 시절 그대로 두면
+    #   F·G 가 「grade-none」(회색)으로 떨어져 등급이 없는 것처럼 보인다.
+    #   ★ 차례의 정본은 config/labels.json GRADE_ORDER 다 (S14)
     s = str(v or "").strip().lower()
-    return "grade-" + (s if s in ("s", "a", "b", "c", "d", "e") else "none")
+    if s in _grade_classes():
+        return "grade-" + s
+    if s == "excluded":
+        return "grade-excluded"      # ★ 등급이 아니다 — 관문 배제다
+    return "grade-none"              # 등급 없음 · 평가 불가
+
+
+def _grade_classes() -> tuple:
+    import json as _j
+    import os as _o
+    with open(_o.path.join(
+            _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))),
+            "config", "labels.json"), encoding="utf-8") as _f:
+        return tuple(g.lower() for g in _j.load(_f)["GRADE_ORDER"])
 
 
 def f_count(v) -> str:

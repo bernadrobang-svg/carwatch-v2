@@ -167,6 +167,22 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
+    "V3-92": Check("V3", "V3-92", "트림 만점이 개별 취향 축보다 큼",
+                   FATAL, "run",
+                   "개정 432 — 「깡통에 HUD」가 「최고트림 HUD 없음」을 "
+                   "이기면 안 된다. ★ 트림 3,000만 격차를 옵션 하나가 "
+                   "뒤집는 것을 배점으로 막는다",
+                   KIND_CONTRACT),
+    "V3-93": Check("V3", "V3-93", "제외 매물에 등급 문자가 안 붙음",
+                   FATAL, "run",
+                   "개정 433 — 관문 배제는 통과/탈락이지 점수가 아니다. "
+                   "★ E 는 이제 30~40% 자리다. 배제를 E 로 쓰면 부딪친다",
+                   KIND_CONTRACT),
+    "V3-94": Check("V3", "V3-94", "등급 컷이 8단계 80~10 임",
+                   FATAL, "run",
+                   "개정 433 — S80 A70 B60 C50 D40 E30 F20 G10. "
+                   "★ 컷은 「얼마나 걸러낼까」의 손잡이다. 배점이 아니다",
+                   KIND_CONTRACT),
     "V3-90": Check("V3", "V3-90", "등급 분모가 675 로 고정", FATAL, "run",
                    "개정 431 — 취향 145 는 등급에 들어간다. ★ 빼는 갈래가 "
                    "없다. 개정 292 「취향은 등급에서 뺀다」는 폐기다. "
@@ -807,15 +823,16 @@ def _grade_base_checks(conn, rid):
                          if any(k == p or k.startswith(p) for p in pres)))
 
     doc = _o.path.join(root, "docs", "chapters", "30-score", "f-table.md")
-    said = {}
+    said, said_grade = {}, {}
     if _o.path.isfile(doc):
         for line in open(doc, encoding="utf-8"):
             got = _re.match(r"^\|\s*([^|]+?)\s*\|\s*(\d+)\s*·\s*"
-                            r"([\d.]+)%\s*\|\s*\*{0,2}([SABCDE])\*{0,2}",
+                            r"([\d.]+)%\s*\|\s*\*{0,2}([SABCDEFG])\*{0,2}",
                             line)
             if got:
                 said[got.group(1).strip()] = (int(got.group(2)),
                                               float(got.group(3)))
+                said_grade[got.group(1).strip()] = got.group(4)
     if not said:
         return [result(C["V3-90"], rid, 0, len(bad90), not bad90, bad90[:4]),
                 not_applicable(C["V3-91"], rid, "검산 표를 못 읽었다")]
@@ -828,6 +845,17 @@ def _grade_base_checks(conn, rid):
         "값 0 · 나머지 만점":
             cap("차량") + cap("제조사 보증") + cap("사이트 검증") + cap("취향"),
     }
+    # ★ 표는 「점수 · 비율%」와 「등급」을 함께 적는다.  둘 다 본다 —
+    #   개정 433 이 컷을 8단계로 내렸으므로 **등급 칸도 같이 낡는다**
+    cuts = sorted(((g, float(r)) for g, r in cfg["grade_cuts"].items()),
+                  key=lambda kv: -kv[1])
+
+    def grade_at(pct: float) -> str:
+        for g, cut in cuts:
+            if pct / 100.0 >= cut:
+                return g
+        return "등급 없음"
+
     bad91 = []
     for lab, want in said.items():
         got = mine.get(lab)
@@ -836,11 +864,138 @@ def _grade_base_checks(conn, rid):
         if abs(got - want[0]) > 0.5:
             bad91.append(f"「{lab}」 표는 {want[0]}점인데 config 로는 "
                          f"{got:.0f}점이다 ({got - want[0]:+.0f})")
+        # ★ 표에 적힌 비율로 컷을 되짚는다.  표의 등급 문자와 다르면 낡은 것이다
+        letter = said_grade.get(lab)
+        now = grade_at(want[1])
+        if letter and letter != now:
+            bad91.append(f"「{lab}」 {want[1]}% 는 개정 433 컷으로 {now} 인데 "
+                         f"표에는 {letter} 라 적혀 있다")
     return [
         result(C["V3-90"], rid, total, "고정" if not bad90 else "어긋남",
                not bad90, bad90[:4]),
         result(C["V3-91"], rid, f"{len(mine)}줄", f"{len(bad91)}줄 다름",
                not bad91, bad91[:6]),
+    ]
+
+
+
+def _checks_cfg() -> dict:
+    """검사의 임계값.  ★ 코드에 숫자를 박지 않는다 (S14 · V4-13)."""
+    import json as _j
+    import os as _o2
+    _r = _o2.path.dirname(_o2.path.dirname(_o2.path.abspath(__file__)))
+    with open(_o2.path.join(_r, "config", "checks.json"),
+              encoding="utf-8") as _f:
+        return _j.load(_f)
+
+
+def _grade_cut_checks(conn, rid):
+    """V3-92 · V3-93 · V3-94 — 취향 재배분 · 제외 분리 · 8단계 컷.
+
+    근거   개정 432 (f-table 「개정 432」 절) · 개정 433 (「등급 컷을 내린다」)
+    ★ config 만 보지 않는다.  **DB 에 실제로 매겨진 것**을 본다 —
+      recalc 를 안 돌리면 config 만 새 값이고 화면은 옛 값이다 (개정 428 때 겪음)
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    comp = cfg["components"]
+
+    def cap(name):
+        one = comp.get(name)
+        return float(one if isinstance(one, (int, float))
+                     else (one or {}).get("points") or 0)
+
+    # ── V3-92 — 트림 만점 > 개별 취향 축 최대 ──
+    #   ★ 「취향 갈래 안의 다른 축」과 견준다.  groups 가 갈래의 정본이다
+    others = [k for k in comp
+              if any(k.startswith(p) for p in (cfg.get("groups") or {})
+                     .get("취향", []))
+              and k != "spec.trim"]
+    trim = cap("spec.trim")
+    over = sorted((k for k in others if cap(k) >= trim),
+                  key=lambda k: -cap(k))
+    bad92 = [f"{k} 가 {cap(k):.0f} 인데 트림은 {trim:.0f} 다 — "
+             f"옵션 하나가 트림 사다리를 이긴다" for k in over]
+    # ★ 배점만 보면 반쪽이다.  **매긴 점수**로 되짚는다 (S43-②) —
+    #   트림 사다리 맨 아래↔맨 위 격차가 개별 축 최대보다 커야 한다
+    # ★ 매물이 적으면 사다리 양끝이 안 나온다 — 씨앗 DB 에서 거짓 실패가 된다
+    #   (V3-82 에서 같은 일을 겪었다).  표본이 찰 때만 잰다
+    min_trim = int(_checks_cfg()["trim_span_min_values"])
+    n_trim = conn.execute(
+        "SELECT COUNT(DISTINCT value) FROM result_axis"
+        " WHERE axis='spec.trim' AND value IS NOT NULL").fetchone()[0]
+    row = conn.execute(
+        "SELECT MIN(value), MAX(value) FROM result_axis"
+        " WHERE axis='spec.trim' AND value IS NOT NULL").fetchone()
+    if row and row[0] is not None and n_trim >= min_trim:
+        span = float(row[1]) - float(row[0])
+        top = max((conn.execute(
+            "SELECT MAX(value) FROM result_axis WHERE axis=?",
+            (k,)).fetchone()[0] or 0) for k in others) if others else 0
+        if span < float(top):  # noqa: SIM102
+            bad92.append(f"실측 — 트림 격차 {span:.1f} < 개별 축 최대 "
+                         f"{float(top):.1f} (recalc 를 돌렸는가)")
+
+    # ── V3-94 — 컷이 규격의 8단계와 같은가 ──
+    # ★★ 컷을 여기 박지 않는다.  박으면 config 를 config 로 재는 꼴이라
+    #   「규격과 같은가」를 못 본다 (S7 · V4-13).  ★ f-table 개정 433 표를 읽는다
+    #     | **S** | ≥ 80% | 지금 사라 |
+    import re as _re94
+
+    doc94 = _o.path.join(root, "docs", "chapters", "30-score", "f-table.md")
+    want = {}
+    if _o.path.isfile(doc94):
+        for _ln in open(doc94, encoding="utf-8"):
+            _g = _re94.match(r"^\|\s*\*{0,2}([SABCDEFG])\*{0,2}\s*\|"
+                             r"\s*[≥>=]+\s*(\d+)\s*%", _ln)
+            if _g:
+                want.setdefault(_g.group(1), int(_g.group(2)) / 100.0)
+    got = {k: float(v) for k, v in (cfg.get("grade_cuts") or {}).items()}
+    tol94 = float(_checks_cfg()["ratio_tolerance"])
+    if not want:
+        bad94 = ["f-table 에서 등급 컷 표를 못 읽었다"]
+    else:
+        bad94 = [f"{g} 컷이 {got.get(g)} 다 — 규격은 {r} 다"
+                 for g, r in want.items()
+                 if abs(got.get(g, -1) - r) > tol94]
+        bad94 += [f"규격에 없는 등급 {g} 가 컷에 있다"
+                  for g in got if g not in want]
+
+    # ── V3-93 — 제외 매물에 등급 문자가 붙었는가 ──
+    #   ★ 반대쪽도 본다 — 제외가 아닌데 「제외」로 적힌 것
+    from score.grade import EXCLUDED as _EXC
+    letters = tuple(want)
+    marks = ",".join("?" * len(letters))
+    bad93 = []
+    n_bad = conn.execute(
+        f"SELECT COUNT(*) FROM result_score"
+        f" WHERE absolute_fail IS NOT NULL AND absolute_fail<>''"
+        f"   AND grade IN ({marks})", letters).fetchone()[0]
+    if n_bad:
+        for lid, g, why in conn.execute(
+                f"SELECT listing_id, grade, absolute_fail FROM result_score"
+                f" WHERE absolute_fail IS NOT NULL AND absolute_fail<>''"
+                f"   AND grade IN ({marks}) LIMIT 4", letters):
+            bad93.append(f"매물 {lid} — 관문 탈락({why})인데 등급이 「{g}」다")
+    n_rev = conn.execute(
+        "SELECT COUNT(*) FROM result_score WHERE grade=?"
+        " AND (absolute_fail IS NULL OR absolute_fail='')",
+        (_EXC,)).fetchone()[0]
+    if n_rev:
+        bad93.append(f"관문에 안 걸렸는데 「제외」로 적힌 것 {n_rev}건")
+    # ★ 제외는 점수를 안 매긴다 — 등급 자리를 안 쓴다는 뜻이다.
+    #   grade_earned 는 남긴다 (왜 제외됐는지 화면이 설명해야 한다)
+    return [
+        result(C["V3-92"], rid, f"트림 {trim:.0f}",
+               "크다" if not bad92 else "작다", not bad92, bad92[:4]),
+        result(C["V3-93"], rid, 0, n_bad + n_rev, not bad93, bad93[:4]),
+        result(C["V3-94"], rid, "8단계",
+               f"{len(got)}단계", not bad94, bad94[:6]),
     ]
 
 
@@ -1215,7 +1370,10 @@ def _core_axis_check(conn, rid):
             "SELECT COUNT(*) FROM result_axis a JOIN result_score s"
             " ON s.listing_id=a.listing_id AND s.calc_version=a.calc_version"
             " WHERE a.axis=? AND a.excluded=1"
-            " AND s.grade IS NOT NULL AND s.grade NOT IN ('NOT_RATED','E')",
+            # ★ 개정 433 — 순위를 안 매기는 것은 제외·등급 없음·평가 불가다.
+            #   'E' 를 빼면 30~40% 매물이 통째로 빠진다
+            " AND s.grade IS NOT NULL"
+            " AND s.grade NOT IN ('NOT_RATED','EXCLUDED','NO_GRADE')",
             (axis,)).fetchone()[0]
         if n:
             bad.append(f"{axis} 를 못 봤는데 등급을 매긴 것 {n}건")
@@ -1939,6 +2097,7 @@ def run(conn, ctx) -> list:
     out += _points_cap_checks(conn, rid)
     # 등급 분모 675 (개정 431)
     out += _grade_base_checks(conn, rid)
+    out += _grade_cut_checks(conn, rid)
     out.append(_special_null_check(conn, rid))
     out += _file_output_checks(conn, rid)
 

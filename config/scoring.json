@@ -21,12 +21,12 @@
     "warranty.power": 47,
     "warranty.general": 31,
     "warranty.site": 52,
-    "spec.trim": 38,
-    "spec.options": 31,
-    "taste.hud": 23,
-    "taste.picked": 23,
-    "taste.sunroof": 15,
-    "taste.color": 15
+    "spec.trim": 52,
+    "spec.options": 38,
+    "taste.hud": 16,
+    "taste.picked": 16,
+    "taste.sunroof": 10,
+    "taste.color": 13
   },
   "_groups_note": "★ f-table 5장-2a 의 갈래다 (개정 428). 갈래마다 하위 축 합이 표기와 같아야 한다 — V3-76·V3-77 이 잰다",
   "groups": {
@@ -60,11 +60,14 @@
     "hash_rounds": 200000
   },
   "grade_cuts": {
-    "S": 0.9,
-    "A": 0.8,
-    "B": 0.7,
-    "C": 0.6,
-    "D": 0.5
+    "S": 0.8,
+    "A": 0.7,
+    "B": 0.6,
+    "C": 0.5,
+    "D": 0.4,
+    "E": 0.3,
+    "F": 0.2,
+    "G": 0.1
   },
   "price_curve": [
     {
@@ -490,10 +493,11 @@
     "taste": {
       "_note": "⑥ 취향 50 — F-scoring ⑥",
       "color_points": {
-        "preferred": 10,
-        "neutral": 7,
-        "avoided": 3
-      }
+        "preferred": 13,
+        "neutral": 9,
+        "avoided": 4
+      },
+      "_note_432": "★ 개정 432 — 색상 13.  ★ 실측 08-21: 전에 배점은 15 인데 color_points 최대가 10 이라 이 축은 만점을 받을 수 없었다.  배점의 **세 번째 자리**다 (components · axis_rules.taste.color_points · 죽은 axis_rules.color)"
     },
     "site": {
       "_note": "개정 306 ⑤ — 우수등급 30 · 점검 출처 12 · 플랫폼 보증 잔여 8",
@@ -547,7 +551,7 @@
   ],
   "grade_base_points": 675,
   "_grade_base_note": "①값250 + ②상태150 + ③이력80 + ④사양45 + ⑤보증30 = 555 (docs/ref/F-scoring.md). ⑥취향 50 은 순위에만",
-  "_grade_cuts_note": "★ 절대 기준이다 (개정 324).  백분위로 정하지 않는다 — 전체가 나쁘면 나쁜 차가 S 가 된다. 그 등급이 0건이어도 그대로 둔다 — 「S 가 0건」이 사실이면 그것이 정보다",
+  "_grade_cuts_note": "★ 절대 기준이다 (개정 324·433).  백분위로 정하지 않는다. ★ 개정 433 — 8단계로 내렸다.  전 S90 A80 B70 C60 D50 (5단계) → S80 A70 B60 C50 D40 E30 F20 G10.  10% 미만은 등급 없음. ★ 관문 배제는 등급이 아니라 「제외」다 — 전에 E 가 배제용이라 30~40% 자리와 부딪쳤다",
   "score_core_axes": [
     "value.market",
     "value.depreciation",
@@ -573,5 +577,6 @@
   "_bonus_note": "가점 (개정 380).  ★ 축이 아니다 — components 에 넣지 않는다. 마스터 확정 — 「그게 있는 데 있고 대부분이 없는데.  그건 가점이니 필수는 아닌 듯해」. 실측 전기차 778건 중 SOH 가 있는 것 33건(4%). ★ 없다고 감점하지 않는다 — 엔카가 진단 안 한 죄를 차에 묻는 것이다. ★ 분모를 늘리지 않는다.  675 그대로 — 가점이 크면 100%를 넘고 그대로 낸다. 곡선은 axis_rules.value.soh_curve 를 그대로 쓴다",
   "_note_428": "★ 개정 428 — f-table 5장-2a 가 배점 정본이다. 갈래 값 250 · 차량 150 · 제조사 보증 78 · 사이트 검증 52 · 취향 145 = 675. 총점 675 · 24축 · 컷 S90 A80 B70 은 그대로. 갈래 배점만 옮겼다",
   "_note_axis_rules_428": "★ 개정 428 — axis_rules 의 점수 표를 새 축 배점에 맞춰 비율 그대로 옮겼다. ★ 배점이 components 와 axis_rules 두 곳에 있어 components 만 고치면 축 점수가 안 바뀐다 (실측 08-21 — group_car 가 218/150 이었다)",
-  "_note_grade_base_431": "★ 개정 431 — 등급 분모는 675 다. 빼는 갈래가 없다. 개정 292 「취향은 등급에서 뺀다」는 폐기. ★ 축 온·오프로 끈 축만 뺀다 (개정 426)"
+  "_note_grade_base_431": "★ 개정 431 — 등급 분모는 675 다. 빼는 갈래가 없다. 개정 292 「취향은 등급에서 뺀다」는 폐기. ★ 축 온·오프로 끈 축만 뺀다 (개정 426)",
+  "_note_432": "★ 개정 432 — 취향 145 재배분.  트림 52 · 옵션 38 · HUD 16 · 지정옵션 16 · 색상 13 · 선루프 10.  ★ 트림 사다리 격차가 개별 옵션 하나보다 커야 한다 (V3-92)"
 }

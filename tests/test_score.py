@@ -197,13 +197,19 @@ def test_grade() -> None:
     # ★ 개정 324 — 절대 기준이다.  백분위로 정하지 않는다.
     #   전체가 나쁘면 나쁜 차가 S 가 된다 — 「우리가 가진 것 중 제일 나은 것」은
     #   「좋은 차」가 아니다
-    check("등급컷은 절대 기준 0.90/0.80/0.70/0.60/0.50",
-          [c for _, c in cutoffs(POLICY)] == [0.9, 0.8, 0.7, 0.6, 0.5],
-          str(cutoffs(POLICY)))
-    # ★ 등급컷 점수는 505 기준이다 (개정 292).  555 로 곱하면 어긋난다
+    # ★★ 개정 433 — 8단계로 내렸다.  ★ 숫자를 박지 않는다 (개정 428 에서 배웠다)
+    #   보는 것은 「내림차순인가 · 컷이 8개인가 · config 와 같은가」다
+    _cuts = cutoffs(POLICY)
+    check("등급컷이 8단계이고 내림차순이다 (개정 433)",
+          len(_cuts) == 8
+          and [c for _, c in _cuts] == sorted((c for _, c in _cuts),
+                                              reverse=True)
+          and [g for g, _ in _cuts] == ["S", "A", "B", "C", "D",
+                                        "E", "F", "G"],
+          str(_cuts))
+    # ★ 등급컷 점수 기준은 grade_base_points 다 (개정 431 — 675)
     base = POLICY.raw["grade_base_points"]
-    cuts = [float(POLICY.raw["grade_cuts"][g])
-            for g in ("S", "A", "B", "C", "D")]
+    cuts = [float(POLICY.raw["grade_cuts"][g]) for g, _ in _cuts]
     want = [math.ceil(base * cuts[0])] + [math.floor(base * r)
                                           for r in cuts[1:]]
     check(f"「{base} 기준」 {want} 는 표시용",
@@ -213,21 +219,32 @@ def test_grade() -> None:
     # ★ 분모가 다른 매물이 같은 비율이면 같은 등급이다
     from score.scorer import ScoreResult
 
+    def _at(ratio: float) -> str:
+        """그 비율이면 컷상 어느 등급인가.  ★ 답을 박지 않는다 (개정 433)."""
+        for _g, _c in cutoffs(POLICY):
+            if ratio >= _c:
+                return _g
+        return "NO_GRADE"
+
     def g(earned, den):
         # ★ 등급은 grade_earned / grade_base 다 (개정 292 — 취향 제외 505)
         return grade_of(ScoreResult(0.0, den, [], earned, "B", None, {},
                                     None, earned, den), POLICY)
 
     check("★ 90.9% → S", g(450, 495.0) == "S", f"{450 / 495:.1%}")
-    check("★ 83.4% → A (개정 324 절대 컷 S 90 · A 80)",
-          g(441.91, 530.0) == "A", f"{441.91 / 530:.1%}")
+    # ★ 개정 433 — 83.4% 는 이제 S 다 (컷 80).  ★ config 로 되짚는다
+    check("★ 83.4% → 컷대로", g(441.91, 530.0) == _at(441.91 / 530),
+          f"{441.91 / 530:.1%} → {g(441.91, 530.0)}")
     # ★ E-1 — score_total 로 재면 한 등급 부풀려진다 (실측)
-    check("★ 245/455 = 53.8% → D (컷 D 50)", g(245, 455.0) == "D")
-    check("★ 298.85 를 쓰면 65.7% → C 로 올라간다 (그래서 안 쓴다)",
-          g(298.85, 455.0) == "C")
+    check("★ 245/455 = 53.8%", g(245, 455.0) == _at(245 / 455),
+          f"{245 / 455:.1%} → {g(245, 455.0)}")
+    # ★ E-1 — score_total 로 재면 한 등급 부풀려진다.  ★ 그래서 안 쓴다
+    check("★ 298.85 를 쓰면 65.7% 로 한 등급 올라간다 (그래서 안 쓴다)",
+          g(298.85, 455.0) != g(245, 455.0),
+          f"{g(298.85, 455.0)} vs {g(245, 455.0)}")
     # ★ 표본이 바뀌어도 등급의 뜻이 안 바뀐다 — 비율만 보면 등급이 정해진다
-    check("★ 절대 기준 — 90% 는 S · 49% 는 D 아래다",
-          g(90, 100.0) == "S" and g(49, 100.0) == "D",
+    check("★ 절대 기준 — 표본이 바뀌어도 비율만으로 등급이 정해진다",
+          g(90, 100.0) == _at(0.90) and g(49, 100.0) == _at(0.49),
           f"{g(90, 100.0)} · {g(49, 100.0)}")
     check("분모가 0 이면 NOT_RATED", g(100, 0) == "NOT_RATED")
 
@@ -243,12 +260,20 @@ def test_grade() -> None:
     r = score(v, POLICY)
     check("만점 → S", grade_of(r, POLICY) == "S")
     r2 = score(full_verdict(values=0), POLICY)
-    check("0점 → D", grade_of(r2, POLICY) == "D", str(r2.score_total))
-    check("★ 취향이 만점이어도 등급은 505 로 매긴다 (개정 292 ④)",
-          grade_of(score(full_verdict(values=0, taste_full=True), POLICY),
-                   POLICY) == "D")
+    # ★★ 개정 433 — 맨 아래 컷(G 10%)에도 못 미치면 「등급 없음」이다.  D 가 아니다
+    check("0점 → 등급 없음", grade_of(r2, POLICY) == "NO_GRADE",
+          str(grade_of(r2, POLICY)))
+    # ★★ 개정 431 — 취향도 등급에 들어간다.  개정 292 는 폐기다.
+    #   ★ 등급 **문자**로 재지 않는다 — 취향만 채워도 55/675(8.1%) 라
+    #     10% 컷에 못 미쳐 둘 다 「등급 없음」이 된다.  분자로 잰다
+    _rt = score(full_verdict(values=0, taste_full=True), POLICY)
+    check("★ 취향이 등급 분자에 들어간다 (개정 431 — 292 폐기)",
+          _rt.grade_earned > r2.grade_earned,
+          f"취향 만점 {_rt.grade_earned} > 0점 {r2.grade_earned}")
     r3 = score(full_verdict(), POLICY, absolute=[FAIL_SEIZING])
-    check("절대조건 → E (점수와 무관)", grade_of(r3, POLICY) == "E")
+    # ★★ 개정 433 — 관문 배제는 등급이 아니라 「제외」다.  E 는 30~40% 자리다
+    check("절대조건 → 제외 (점수와 무관 · E 가 아니다)",
+          grade_of(r3, POLICY) == "EXCLUDED", str(grade_of(r3, POLICY)))
 
 
 # ── 순서 무관 (불변식 ①) ─────────────────────────────────────────────
@@ -435,10 +460,11 @@ def test_spec_gate() -> None:
 
     ★ 마스터 지적 — 「깡통에 HUD 만 있어도 만점」.
       개정 292 때는 취향이 등급 밖이라 이 지적이 막혀 있었다.
-    ★★ 개정 431 이 취향을 등급에 넣으면서 그 막이 없어졌다 — 실측 08-21:
-        트림 사다리 맨 아래↔맨 위 격차 16.3점  <  HUD 한 옵션 23점
-        그래서 「깡통에 HUD」가 「풀옵션에 HUD 없음」을 6.7점 이긴다.
-      ★ 배점을 만지지 않는다 (지시).  실측 그대로 적고 작업기록에 여쭌다
+    ★★ 개정 431 이 취향을 등급에 넣으면서 그 막이 잠깐 없어졌다 — 실측 08-21:
+        트림 격차 16.3점  <  HUD 23점  →  「깡통에 HUD」가 6.7점 이겼다
+    ★★ 개정 432 가 배점으로 다시 막았다 (트림 52 · HUD 16) — 실측 08-21:
+        트림 격차 22.3점  >  HUD 16점  →  「풀옵션」이 6.3점 이긴다
+      ★ 근거 「그랜저도 깡통이 4000이면 최고트림의 풀옵션이 7000이니」
     """
     ladder = {"G80_25T": [40000000, 50000000, 60000000, 70000000]}
     # 깡통 — 사다리 맨 아래
@@ -454,14 +480,13 @@ def test_spec_gate() -> None:
     check("★ 깡통은 트림 점수가 낮다",
           low.values["spec.trim"] < high.values["spec.trim"],
           f"{low.values['spec.trim']} < {high.values['spec.trim']}")
-    # ★★ 실측 — 개정 431 뒤에는 「깡통에 HUD」가 이긴다.  뒤집혔다
+    # ★★ 개정 432 — 배점으로 막았다.  트림 사다리가 옵션 하나를 이겨야 한다
     _hi, _lo = score(high, POLICY).grade_earned, score(low, POLICY).grade_earned
-    check("★★ 개정 431 뒤 — HUD 한 옵션이 트림 사다리 전체를 이긴다 "
-          "(마스터 지적이 되살아났다 · 작업기록 여쭐 것 ①)",
-          _lo > _hi,
-          f"깡통+HUD {_lo} > 풀옵션-HUD {_hi} · "
-          f"트림격차 {high.values['spec.trim'] - low.values['spec.trim']:.1f} "
-          f"< HUD {POLICY.comp('taste.hud')}")
+    _span = high.values["spec.trim"] - low.values["spec.trim"]
+    check("★★ 「풀옵션에 HUD 없음」이 「깡통에 HUD」보다 등급이 높다 (개정 432)",
+          _hi > _lo and _span > POLICY.comp("taste.hud"),
+          f"풀옵션 {_hi} > 깡통 {_lo} · "
+          f"트림격차 {_span:.1f} > HUD {POLICY.comp('taste.hud')}")
     check("HUD 095 장착 → 취향 배점 만점",
           low.values["taste.hud"] == POLICY.comp("taste.hud"),
           str(low.values["taste.hud"]))

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쿼리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=dae65724d3">
+<link rel="stylesheet" href="/static/app.css?v=799e77946b">
 
 </head>
 <body class="s-admin-query">
@@ -98,7 +98,7 @@
 
 <h2>예제</h2>
 <p class="muted">처음에는 여기서 고르십시오.</p>
-<ul><li>분모별 매물 수 — <code>SELECT denominator, COUNT(*) FROM result_score GROUP BY 1</code></li><li>축별 제외 건수 — <code>SELECT axis, SUM(excluded) FROM result_axis GROUP BY 1</code></li><li>E등급 사유 — <code>SELECT absolute_fail, COUNT(*) FROM result_score WHERE grade=&#x27;E&#x27; GROUP BY 1</code></li><li>엔드포인트별 응답 코드 — <code>SELECT kind, http_code, COUNT(*) FROM audit_request GROUP BY 1,2</code></li></ul>
+<ul><li>분모별 매물 수 — <code>SELECT denominator, COUNT(*) FROM result_score GROUP BY 1</code></li><li>축별 제외 건수 — <code>SELECT axis, SUM(excluded) FROM result_axis GROUP BY 1</code></li><li>제외 사유 — <code>SELECT absolute_fail, COUNT(*) FROM result_score WHERE grade=&#x27;EXCLUDED&#x27; GROUP BY 1</code></li><li>엔드포인트별 응답 코드 — <code>SELECT kind, http_code, COUNT(*) FROM audit_request GROUP BY 1,2</code></li></ul>
 
 <h2>최근 쿼리 <span class="muted">거부된 것도 남습니다</span></h2>
 
@@ -143,7 +143,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">139,224</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">3,340</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">3,354</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
 <tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">26</td>
@@ -161,7 +161,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">core_dealer</td><td class="num" data-label="행">745</td>
   <td class="muted" data-label="컬럼">dealer_id · site · site_dealer_id · dealer_shop · shop_code · region · career_years · total_sales · recent_year_sales · certified</td></tr>
 
-<tr><td class="runid" data-label="표">core_dealer_history</td><td class="num" data-label="행">6,650</td>
+<tr><td class="runid" data-label="표">core_dealer_history</td><td class="num" data-label="행">7,395</td>
   <td class="muted" data-label="컬럼">dealer_id · run_id · observed_at · listing_count · trust_score · quadrant · sample_sufficient</td></tr>
 
 <tr><td class="runid" data-label="표">core_dealer_pii</td><td class="num" data-label="행">745</td>
@@ -227,7 +227,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">raw_response_reject</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · site · listing_id · endpoint · request_url · http_code · body · reject_reason · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">132</td>
+<tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">133</td>
   <td class="muted" data-label="컬럼">job_id · account_id · trigger · reason · from_step · scope · status · run_id · current_step · step_done</td></tr>
 
 <tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">92,184</td>
@@ -292,7 +292,7 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 10:06</span>
+  <span>2026-08-21 14:09</span>
 </footer>
 
 </body>

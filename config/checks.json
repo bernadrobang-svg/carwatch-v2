@@ -97,5 +97,11 @@
   "value_step_min_rows": 100,
   "_note_filter_probe": "V11-156 — 조건 인계를 재는 표본 값 (원). ★ 값은 아무거나 좋지만 코드에 박으면 S7 이 문다. 여기 둔다",
   "filter_probe_price_min_won": 20000000,
-  "filter_probe_price_max_won": 35000000
+  "filter_probe_price_max_won": 35000000,
+  "_note_trim_span_min_values": "V3-92 — 트림 점수가 이만큼 여러 가지여야 「사다리 양끝」을 잴 수 있다. ★ 씨앗 DB 는 매물이 열댓 건이라 사다리가 한두 칸뿐이다 — 거짓 실패가 된다 (V3-82 와 같은 함정)",
+  "trim_span_min_values": 5,
+  "_note_ratio_tolerance": "배점·비율을 견줄 때 눈감아 줄 오차. ★ 부동소수라 == 로 재면 안 된다",
+  "ratio_tolerance": 0.0001,
+  "points_tolerance": 0.01,
+  "doc_points_tolerance": 0.5
 }

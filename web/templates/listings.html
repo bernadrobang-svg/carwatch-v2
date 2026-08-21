@@ -96,7 +96,7 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="S·A·B·C·D·E 여섯 등급입니다. 절대 기준 — S 90% 이상"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
+  <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="{{ grade_help }}"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
   <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim">순위 없음</span>{% endif %}</td>
   <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
   <td class="r num" data-label="비율" title="{{ r.earned | num }} / {{ r.denominator | num }} 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>{% endif %}{% if !r.ratio_pct %}<span class="dim">판정 전</span>{% endif %}</td>
@@ -153,10 +153,12 @@
 
 <p class="legend dim">
   값을 누르면 그 조건으로 걸러집니다 · <strong>지금 조건</strong>이 그대로 다음 행동의 조건이 됩니다.<br>
-  총점 <strong>{{ points.total }}</strong> 중 등급은 취향 {{ points.taste }}점을 뺀
+  총점 <strong>{{ points.total }}</strong> 중 등급은
   <strong>{{ points.grade }} 기준</strong>입니다 — <strong>비율로 정렬합니다</strong>.
   분모는 늘 만점입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298).
-  등급 경계는 절대 기준입니다 — S 90 · A 80 · B 70 · C 60 · D 50 (개정 324).<br>
+  등급 경계는 절대 기준입니다 — {{ points.cuts }} (개정 433).
+  <strong>제외</strong>는 등급이 아닙니다 — 리스·골격 사고·침수·전손으로
+  관문에서 떨어진 것이라 점수를 매기지 않습니다.<br>
   축 칸 <strong>O</strong> 있음 · <strong>·</strong> 없음 · <strong>?</strong> 확인 못 함 —
   「없음」과 「모름」을 가릅니다.<br>
   <strong>신차가 · 시세 · 가격</strong> 셋을 나란히 냅니다 (개정 283).

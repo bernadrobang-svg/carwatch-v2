@@ -453,9 +453,9 @@ QUERY_EXAMPLES = (
      "sql": "SELECT denominator, COUNT(*) FROM result_score GROUP BY 1"},
     {"label": "축별 제외 건수",
      "sql": "SELECT axis, SUM(excluded) FROM result_axis GROUP BY 1"},
-    {"label": "E등급 사유",
+    {"label": "제외 사유",   # ★ 개정 433 — E등급이 아니라 「제외」다
      "sql": "SELECT absolute_fail, COUNT(*) FROM result_score "
-            "WHERE grade='E' GROUP BY 1"},
+            "WHERE grade='EXCLUDED' GROUP BY 1"},
     {"label": "엔드포인트별 응답 코드",
      "sql": "SELECT kind, http_code, COUNT(*) FROM audit_request GROUP BY 1,2"},
 )

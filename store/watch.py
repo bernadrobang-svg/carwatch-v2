@@ -550,7 +550,35 @@ AXIS_BUCKETS = {
     "unknown": "a.value IS NULL OR a.excluded = 1",
     "na": "a.value = -1",
 }
-GRADE_ORDER = ("S", "A", "B", "C", "D", "E")
+import os as _os_lbl
+_ROOT_LBL = _os_lbl.path.dirname(_os_lbl.path.dirname(_os_lbl.path.abspath(__file__)))
+
+
+def _grade_order() -> tuple:
+    """등급 차례.  ★ 정본은 config/labels.json GRADE_ORDER 다 (개정 433).
+
+    ★ 여기에 ("S","A","B","C","D","E") 를 박지 않는다 — 개정 433 이 8단계로
+      내렸을 때 이 튜플이 세 모듈에 흩어져 있어 전수로 찾아야 했다 (S14)
+    """
+    import json as _j
+    import os as _o
+    _p = _o.path.join(_ROOT_LBL, "config", "labels.json")
+    with open(_p, encoding="utf-8") as _f:
+        return tuple(_j.load(_f)["GRADE_ORDER"])
+
+
+def _not_ranked() -> tuple:
+    """순위를 안 매기는 것 — 제외 · 등급 없음 · 평가 불가 (개정 433)."""
+    import json as _j
+    import os as _o
+    _p = _o.path.join(_ROOT_LBL, "config", "labels.json")
+    with open(_p, encoding="utf-8") as _f:
+        return tuple(_j.load(_f)["GRADE_NOT_RANKED"])
+
+
+GRADE_ORDER = _grade_order()
+NOT_RANKED = _not_ranked()
+
 
 
 def add_watch_query(conn: sqlite3.Connection, account_id: int, name: str,
