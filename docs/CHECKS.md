@@ -2,13 +2,13 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **373개**
+검사 **375개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **119** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **121** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **18** | 가이드가 판단 |
-| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **32** | 개발측 |
+| ⑤ ★ 규격에 있는데 코드에 없는 검사 | **39** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
 
@@ -23,7 +23,7 @@
 | `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:403` | **★ 없음** | 없음 | ref/E-attach.md:59 · chapters/13-pipeline.md:106 · chapters/13-pipeline.md:107 |
 | `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:410` | **★ 없음** | 없음 | ref/E-attach.md:60 · guide/03_이력.md:80 · chapters/13-pipeline.md:107 |
 | `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:426` | **★ 없음** | 없음 | ref/A-check.md:47 · ref/E-attach.md:61 · guide/03_이력.md:191 |
-| `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:432` | **★ 없음** | 없음 | ref/E-attach.md:62 · guide/03_이력.md:256 · chapters/13-pipeline.md:111 |
+| `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:432` | **★ 없음** | 없음 | ref/E-attach.md:62 · guide/03_이력.md:256 · guide/03_이력.md:434 |
 | `S11` | 분석 계층 순수성 (STEP 2) | fatal | `tools/check_src.py:451` | **★ 없음** | 없음 | ref/E-attach.md:63 · guide/01_시작.md:60 · guide/01_시작.md:92 |
 | `S12` | 축 파일 STEP 주석 | fatal | `tools/check_src.py:466` | **★ 없음** | 없음 | ref/E-attach.md:64 · guide/01_시작.md:224 · chapters/13-pipeline.md:113 |
 | `S13` | 본문 config 예시 대조 | fatal | `tools/check_src.py:533` | **★ 없음** | 없음 | ref/B-config.md:290 · ref/D-update.md:23 · ref/E-attach.md:65 |
@@ -53,14 +53,14 @@
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:18 · guide/03_이력.md:337 · guide/03_이력.md:401 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:47 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:69 · guide/03_이력.md:337 · guide/03_이력.md:401 |
-| `V1-01` | expected == requested + not_requested | run | `validate/v1_collect.py:34` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:354 · chapters/13-pipeline.md:607 · chapters/20-verify/b-v1v2.md:5 |
+| `V1-01` | expected == requested + not_requested | run | `validate/v1_collect.py:34` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:354 · chapters/13-pipeline.md:643 · chapters/20-verify/b-v1v2.md:5 |
 | `V1-02` | not_requested == 0 | run | `validate/v1_collect.py:37` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:6 · trace/02-collect.md:32 |
 | `V1-03` | requested == ok+empty+not_found+error | run | `validate/v1_collect.py:40` | 2026-08-17 05:33 | 없음 | chapters/20-verify/00-intro.md:14 · chapters/20-verify/b-v1v2.md:7 · chapters/20-verify/d-v5.md:213 |
 | `V1-04` | 형식 검증 거부 0 | run | `validate/v1_collect.py:43` | 2026-08-17 05:33 | 없음 | chapters/60-admin/b-ops.md:207 · chapters/20-verify/b-v1v2.md:8 · chapters/20-verify/b-v1v2.md:87 |
 | `V1-05` | raw_response 신규 == 응답 합 | run | `validate/v1_collect.py:46` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:47 · chapters/20-verify/b-v1v2.md:9 · trace/02-collect.md:56 |
 | `V1-06` | 차종별 ok > 0 | target | `validate/v1_collect.py:49` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:15 |
 | `V1-07` | 매물별 엔드포인트 4종 상태 존재 | listing | `validate/v1_collect.py:52` | **★ 없음** | 2026-08-17 05:33 | chapters/20-verify/00-intro.md:117 · chapters/20-verify/b-v1v2.md:16 · chapters/10-collect/d-record.md:543 |
-| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:55` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:500 · chapters/20-verify/00-intro.md:118 |
+| `V1-08` | 동일 코드 실패율 100% 인 엔드포인트 없음 | run | `validate/v1_collect.py:55` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:48 · chapters/13-pipeline.md:536 · chapters/20-verify/00-intro.md:118 |
 | `V1-08b` | 엔드포인트별 전량 404 없음 | run | `validate/v1_collect.py:58` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:122 · chapters/20-verify/b-v1v2.md:84 · chapters/10-collect/d-record.md:525 |
 | `V1-09` | 시간대별 실패율 상승 없음 | run | `validate/v1_collect.py:149` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:32 |
 | `V1-10` | site_query 키가 전부 q 에 반영됨 | run | `validate/v1_collect.py:146` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:112 · chapters/20-verify/b-v1v2.md:33 · chapters/10-collect/a-endpoint.md:169 |
@@ -98,7 +98,7 @@
 | `V2-15` | 자연키가 UNIQUE 로 걸려 있음 | run | `validate/v2_load.py:112` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:126 |
 | `V2-16` | PK·FK 컬럼에 개인정보 없음 | run | `validate/v2_load.py:115` | 2026-08-17 05:33 | 없음 | chapters/60-admin/00-intro.md:139 · chapters/20-verify/b-v1v2.md:127 |
 | `V2-17` | PII 고아 행 없음 | run | `validate/v2_load.py:60` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:98 · chapters/11-store/b-core.md:466 · chapters/20-verify/b-v1v2.md:128 |
-| `V2-18` | parse_rule 재처리 후 전 봉투가 현재 parse_version | run | `validate/v2_load.py:105` | **★ 없음** | 2026-08-17 05:33 | guide/03_이력.md:124 · chapters/13-pipeline.md:336 · chapters/20-verify/b-v1v2.md:129 |
+| `V2-18` | parse_rule 재처리 후 전 봉투가 현재 parse_version | run | `validate/v2_load.py:105` | **★ 없음** | 2026-08-17 05:33 | guide/03_이력.md:124 · chapters/13-pipeline.md:372 · chapters/20-verify/b-v1v2.md:129 |
 | `V2-19` | 원문 유래 컬럼에 NOT NULL 없음 | run | `validate/v2_load.py:102` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:750 · guide/01_요구사항.md:759 · guide/03_이력.md:127 |
 | `V2-20` | 파싱 실패 필드가 있는 행도 CORE 에 있음 | run | `validate/v2_load.py:64` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:763 · guide/01_요구사항.md:772 · guide/03_이력.md:128 |
 | `V2-21` | parse_error · type_mismatch 건수 | run | `validate/v2_load.py:68` | 2026-08-17 05:33 | 없음 | chapters/20-verify/b-v1v2.md:107 |
@@ -123,17 +123,17 @@
 | `V3-09` | 축별 excluded 비율 | axis | `validate/v3_logic.py:62` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:45 |
 | `V3-10` | 재판정 결과가 이전과 동일 | run | `validate/v3_logic.py:71` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:130 |
 | `V3-11` | put() 순서 셔플 후에도 동일 | run | `validate/v3_logic.py:65` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:656 · chapters/30-score/a-frame.md:181 · chapters/20-verify/c-v3v4.md:131 |
-| `V3-20` | trust_score 가 555 에 합산되지 않음 | run | `validate/v3_logic.py:314` | 2026-08-17 05:33 | 없음 | chapters/20-verify/00-intro.md:142 · chapters/20-verify/c-v3v4.md:80 · chapters/20-verify/c-v3v4.md:118 |
-| `V3-21` | 경고가 555 에 합산되지 않음 | run | `validate/v3_logic.py:317` | 2026-08-17 05:33 | 없음 | SCHEMA.md:85 · chapters/20-verify/c-v3v4.md:81 |
-| `V3-22` | 경고로 매물이 목록에서 제외되지 않음 | run | `validate/v3_logic.py:320` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:415 · chapters/00-standard.md:1917 · chapters/20-verify/c-v3v4.md:82 |
+| `V3-20` | trust_score 가 555 에 합산되지 않음 | run | `validate/v3_logic.py:325` | 2026-08-17 05:33 | 없음 | chapters/20-verify/00-intro.md:142 · chapters/20-verify/c-v3v4.md:80 · chapters/20-verify/c-v3v4.md:118 |
+| `V3-21` | 경고가 555 에 합산되지 않음 | run | `validate/v3_logic.py:328` | 2026-08-17 05:33 | 없음 | SCHEMA.md:85 · chapters/20-verify/c-v3v4.md:81 |
+| `V3-22` | 경고로 매물이 목록에서 제외되지 않음 | run | `validate/v3_logic.py:331` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:415 · chapters/00-standard.md:1917 · chapters/20-verify/c-v3v4.md:82 |
 | `V3-23` | 경고로 등급·추천 순위가 바뀌지 않음 | run | `validate/v3_logic.py:74` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:83 |
 | `V3-24` | acknowledged 가 신호 감지를 멈추지 않음 | run | `validate/v3_logic.py:78` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:84 |
 | `V3-25` | 소멸한 경고가 삭제되지 않고 남음 | run | `validate/v3_logic.py:81` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:85 |
-| `V3-27` | 모든 경고에 evidence 존재 | run | `validate/v3_logic.py:323` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:87 |
+| `V3-27` | 모든 경고에 evidence 존재 | run | `validate/v3_logic.py:334` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:87 |
 | `V3-28` | PeerGroup 이 확장 단계를 표시 | run | `validate/v3_logic.py:84` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:88 |
 | `V3-29` | 배점 변경 시 calc_version 이 증가 | run | `validate/v3_logic.py:88` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:89 |
 | `V3-30` | halt 축의 사전이 비어 있지 않음 | run | `validate/v3_logic.py:102` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:116 · chapters/00-standard.md:202 · chapters/12-dict.md:226 |
-| `V3-31` | 딜러 NULL 매물에 dealer_untrusted 없음 | run | `validate/v3_logic.py:309` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:789 · guide/01_요구사항.md:798 · guide/03_이력.md:139 |
+| `V3-31` | 딜러 NULL 매물에 dealer_untrusted 없음 | run | `validate/v3_logic.py:320` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:789 · guide/01_요구사항.md:798 · guide/03_이력.md:139 |
 | `V3-32` | seizing null 매물이 「저당 없음」으로 판정되지 않음 | run | `validate/v3_logic.py:129` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:789 · guide/01_요구사항.md:798 · guide/03_이력.md:139 |
 | `V3-33` | HDA 판정이 전건 description 근거 | run | `validate/v3_logic.py:121` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:159 · chapters/30-score/c-spec.md:144 · chapters/20-verify/c-v3v4.md:111 |
 | `V3-34` | 판정 항목 수 == resultCode IS NOT NULL 인 items 수 | run | `validate/v3_logic.py:115` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:172 · chapters/11-store/b-core.md:224 · chapters/20-verify/c-v3v4.md:112 |
@@ -141,52 +141,55 @@
 | `V3-36` | conflicts 건수가 임계 미만 | run | `validate/v3_logic.py:112` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:213 · chapters/00-standard.md:700 · chapters/30-score/a-frame.md:154 |
 | `V3-37` | 목록 관측분의 source 가 'list' 임 | run | `validate/v3_logic.py:135` | 2026-08-17 05:33 | 2026-08-16 07:39 | guide/03_이력.md:273 · guide/03_이력.md:276 · chapters/12-dict.md:151 |
 | `V3-38` | facet 수신 후 목록 관측분과 대조함 | run | `validate/v3_logic.py:140` | 2026-08-16 23:59 | 2026-08-17 05:33 | guide/03_이력.md:273 · guide/03_이력.md:406 · chapters/12-dict.md:152 |
-| `V3-39` | 이론가와 실제 중앙값의 차가 상한 안 | run | `validate/v3_logic.py:247` | **★ 없음** | 2026-08-17 05:33 | guide/01_요구사항.md:31 · guide/01_요구사항.md:41 · guide/03_이력.md:289 |
-| `V3-40` | 핵심 축이 excluded 인데 등급을 매기지 않음 | run | `validate/v3_logic.py:237` | 2026-08-17 05:33 | 2026-08-16 23:01 | guide/02_결함대장.md:46 · guide/02_결함대장.md:56 · guide/03_이력.md:294 |
-| `V3-41` | 전 매물의 분모가 만점과 같음 | run | `validate/v3_logic.py:231` | **★ 없음** | 2026-08-17 05:33 | guide/02_결함대장.md:60 · guide/02_결함대장.md:70 · guide/03_이력.md:296 |
+| `V3-39` | 이론가와 실제 중앙값의 차가 상한 안 | run | `validate/v3_logic.py:258` | **★ 없음** | 2026-08-17 05:33 | guide/01_요구사항.md:31 · guide/01_요구사항.md:41 · guide/03_이력.md:289 |
+| `V3-40` | 핵심 축이 excluded 인데 등급을 매기지 않음 | run | `validate/v3_logic.py:248` | 2026-08-17 05:33 | 2026-08-16 23:01 | guide/02_결함대장.md:46 · guide/02_결함대장.md:56 · guide/03_이력.md:294 |
+| `V3-41` | 전 매물의 분모가 만점과 같음 | run | `validate/v3_logic.py:242` | **★ 없음** | 2026-08-17 05:33 | guide/02_결함대장.md:60 · guide/02_결함대장.md:70 · guide/03_이력.md:296 |
 | `V3-42` | — | — | **★ 코드에 없다** | — | — | guide/01_요구사항.md:73 · guide/01_요구사항.md:83 · guide/03_이력.md:297 |
 | `V3-44` | — | — | **★ 코드에 없다** | — | — | guide/02_결함대장.md:74 · guide/02_결함대장.md:84 · guide/03_이력.md:298 |
-| `V3-45` | 배점 합이 만점과 같음 | run | `validate/v3_logic.py:306` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:299 · chapters/20-verify/c-v3v4.md:97 |
-| `V3-47` | 축별 차종 간 결측률 편차가 상한 안 | run | `validate/v3_logic.py:242` | 2026-08-17 05:33 | 2026-08-17 05:00 | guide/01_요구사항.md:87 · guide/01_요구사항.md:97 · guide/03_이력.md:300 |
+| `V3-45` | 배점 합이 만점과 같음 | run | `validate/v3_logic.py:317` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:299 · chapters/20-verify/c-v3v4.md:97 |
+| `V3-47` | 축별 차종 간 결측률 편차가 상한 안 | run | `validate/v3_logic.py:253` | 2026-08-17 05:33 | 2026-08-17 05:00 | guide/01_요구사항.md:87 · guide/01_요구사항.md:97 · guide/03_이력.md:300 |
 | `V3-49` | — | — | **★ 코드에 없다** | — | — | ENCAR_API.md:167 · guide/01_요구사항.md:101 · guide/01_요구사항.md:111 |
 | `V3-50` | 성능부와 보험이력이 어긋난 건을 셈 | run | `validate/v3_logic.py:159` | **★ 없음** | 없음 | guide/03_이력.md:302 · guide/03_이력.md:422 · chapters/30-score/d-history.md:358 |
-| `V3-52` | 「싸다」에 이유가 붙어 있음 | run | `validate/v3_logic.py:292` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:141 · guide/01_요구사항.md:150 · guide/03_이력.md:306 |
-| `V3-53` | 점검 출처가 판정에 반영됨 | run | `validate/v3_logic.py:297` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:307 · chapters/30-score/a-frame.md:614 · trace/05-score.md:71 |
-| `V3-54` | 렌트 이력을 세 곳에서 대조 | run | `validate/v3_logic.py:301` | 2026-08-17 05:33 | 2026-08-16 23:01 | guide/03_이력.md:309 · chapters/30-score/a-frame.md:658 · trace/05-score.md:51 |
-| `V3-55` | 사이트 보증 축이 config 규칙을 읽는가 | run | `validate/v3_logic.py:265` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · chapters/30-score/f-table.md:635 · trace/05-score.md:70 |
-| `V3-56` | 배점 합이 605 | run | `validate/v3_logic.py:270` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:1322 · chapters/30-score/f-table.md:853 · trace/05-score.md:16 |
-| `V3-57` | 등급이 555 기준 | run | `validate/v3_logic.py:273` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · trace/05-score.md:17 |
+| `V3-52` | 「싸다」에 이유가 붙어 있음 | run | `validate/v3_logic.py:303` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:141 · guide/01_요구사항.md:150 · guide/03_이력.md:306 |
+| `V3-53` | 점검 출처가 판정에 반영됨 | run | `validate/v3_logic.py:308` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:307 · chapters/30-score/a-frame.md:614 · trace/05-score.md:71 |
+| `V3-54` | 렌트 이력을 세 곳에서 대조 | run | `validate/v3_logic.py:312` | 2026-08-17 05:33 | 2026-08-16 23:01 | guide/03_이력.md:309 · chapters/30-score/a-frame.md:658 · trace/05-score.md:51 |
+| `V3-55` | 사이트 보증 축이 config 규칙을 읽는가 | run | `validate/v3_logic.py:276` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · chapters/30-score/f-table.md:786 · trace/05-score.md:70 |
+| `V3-56` | 배점 합이 605 | run | `validate/v3_logic.py:281` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:1322 · chapters/30-score/f-table.md:1004 · trace/05-score.md:16 |
+| `V3-57` | 등급이 555 기준 | run | `validate/v3_logic.py:284` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:313 · trace/05-score.md:17 |
 | `V3-58` | 배터리 SOH 가 축이 아니라 가점임 | run | `validate/v3_logic.py:145` | **★ 없음** | 없음 | guide/03_이력.md:325 · guide/03_이력.md:387 · guide/03_이력.md:418 |
 | `V3-59` | 가점이 분모를 늘리지 않음 | run | `validate/v3_logic.py:151` | **★ 없음** | 없음 | guide/03_이력.md:325 · guide/03_이력.md:387 · guide/03_이력.md:418 |
-| `V3-62` | 원문이 없는데 값을 만든 축이 없음 | run | `validate/v3_logic.py:252` | 2026-08-17 05:00 | 2026-08-17 05:33 | guide/02_결함대장.md:116 · guide/02_결함대장.md:126 · guide/03_이력.md:330 |
-| `V3-64` | 등급 경계가 절대 기준 | run | `validate/v3_logic.py:257` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:195 · guide/01_요구사항.md:205 · guide/03_이력.md:331 |
-| `V3-65` | 확인율이 근거 있는 축만 셈 | run | `validate/v3_logic.py:261` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:332 · chapters/30-score/g-absolute.md:139 · trace/05-score.md:19 |
+| `V3-62` | 원문이 없는데 값을 만든 축이 없음 | run | `validate/v3_logic.py:263` | 2026-08-17 05:00 | 2026-08-17 05:33 | guide/02_결함대장.md:116 · guide/02_결함대장.md:126 · guide/03_이력.md:330 |
+| `V3-64` | 등급 경계가 절대 기준 | run | `validate/v3_logic.py:268` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:195 · guide/01_요구사항.md:205 · guide/03_이력.md:331 |
+| `V3-65` | 확인율이 근거 있는 축만 셈 | run | `validate/v3_logic.py:272` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:332 · chapters/30-score/g-absolute.md:139 · trace/05-score.md:19 |
 | `V3-66` | 각 축의 계산이 f-table 과 같음 | run | `validate/v3_logic.py:165` | **★ 없음** | 없음 | guide/02_결함대장.md:130 · guide/02_결함대장.md:140 · guide/03_이력.md:333 |
 | `V3-67` | — | — | **★ 코드에 없다** | — | — | guide/01_요구사항.md:209 · guide/01_요구사항.md:219 · guide/03_이력.md:335 |
-| `V3-68` | 부록 F 전 24축이 구현돼 있음 | run | `validate/v3_logic.py:286` | **★ 없음** | 없음 | guide/01_요구사항.md:223 · guide/01_요구사항.md:233 · guide/03_이력.md:336 |
+| `V3-68` | 부록 F 전 24축이 구현돼 있음 | run | `validate/v3_logic.py:297` | **★ 없음** | 없음 | guide/01_요구사항.md:223 · guide/01_요구사항.md:233 · guide/03_이력.md:336 |
 | `V3-69` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:338 · chapters/30-score/a-frame.md:755 |
-| `V3-70` | 일반·동력계 보증을 따로 냄 | run | `validate/v3_logic.py:276` | **★ 없음** | 없음 | guide/03_이력.md:372 · chapters/30-score/f-table.md:721 · chapters/20-verify/c-v3v4.md:105 |
-| `V3-71` | 보증 잔여가 기간·거리 중 낮은 쪽임 | run | `validate/v3_logic.py:281` | **★ 없음** | 없음 | guide/03_이력.md:372 · chapters/30-score/f-table.md:722 · chapters/20-verify/c-v3v4.md:106 |
-| `V3-72` | SOH 가점이 곡선대로 붙음 | run | `validate/v3_logic.py:155` | **★ 없음** | 없음 | guide/03_이력.md:387 · chapters/30-score/f-table.md:277 |
-| `V3-73` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:388 · chapters/30-score/f-table.md:893 |
-| `V3-75` | 트림 점수를 신차가로 잼 | run | `validate/v3_logic.py:226` | **★ 없음** | 없음 | guide/03_이력.md:389 · chapters/30-score/f-table.md:560 |
-| `V3-76` | ⑤ 의 하위 축 합이 갈래 표기와 같음 | run | `validate/v3_logic.py:209` | **★ 없음** | 없음 | guide/03_이력.md:400 · chapters/30-score/f-table.md:670 |
-| `V3-77` | 갈래마다 하위 축 합 = 갈래 표기 (전 갈래) | run | `validate/v3_logic.py:215` | **★ 없음** | 없음 | guide/03_이력.md:400 · guide/03_이력.md:419 · chapters/30-score/f-table.md:671 |
-| `V3-78` | 「그 밖」으로 옮긴 값이 축을 덮지 않음 | run | `validate/v3_logic.py:220` | **★ 없음** | 없음 | guide/03_이력.md:406 |
-| `V3-79` | 어긋난 매물에 ②-2·②-3 만점이 없음 | run | `validate/v3_logic.py:170` | **★ 없음** | 없음 | guide/03_이력.md:422 · chapters/30-score/f-table.md:337 |
-| `V3-80` | ②-1 회수가 max(보험, 성능부) 임 | run | `validate/v3_logic.py:176` | **★ 없음** | 없음 | guide/03_이력.md:422 · chapters/30-score/f-table.md:338 |
-| `V3-81` | 셋 중 하나만 null 인데 확인 안 됨이 아님 | run | `validate/v3_logic.py:182` | **★ 없음** | 없음 | guide/03_이력.md:423 · chapters/30-score/f-table.md:408 |
-| `V3-82` | 시세 점수가 계단값만 나오지 않음 | run | `validate/v3_logic.py:188` | **★ 없음** | 없음 | guide/03_이력.md:427 · chapters/30-score/f-table.md:145 |
-| `V3-83` | 시세보다 비싼 매물에 음수 점수가 붙음 | run | `validate/v3_logic.py:194` | **★ 없음** | 없음 | chapters/30-score/f-table.md:146 |
-| `V3-84` | 신차가 점수가 d% 와 1:1 임 | run | `validate/v3_logic.py:200` | **★ 없음** | 없음 | guide/03_이력.md:427 · chapters/30-score/f-table.md:189 |
-| `V3-85` | 옵션 보정 없이 원 중앙값으로 견준 매물 | run | `validate/v3_logic.py:204` | **★ 없음** | 없음 | guide/03_이력.md:429 |
+| `V3-70` | 일반·동력계 보증을 따로 냄 | run | `validate/v3_logic.py:287` | **★ 없음** | 없음 | guide/03_이력.md:372 · chapters/30-score/f-table.md:872 · chapters/20-verify/c-v3v4.md:105 |
+| `V3-71` | 보증 잔여가 기간·거리 중 낮은 쪽임 | run | `validate/v3_logic.py:292` | **★ 없음** | 없음 | guide/03_이력.md:372 · chapters/30-score/f-table.md:873 · chapters/20-verify/c-v3v4.md:106 |
+| `V3-72` | SOH 가점이 곡선대로 붙음 | run | `validate/v3_logic.py:155` | **★ 없음** | 없음 | guide/03_이력.md:387 · chapters/30-score/f-table.md:428 |
+| `V3-73` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:388 · chapters/30-score/f-table.md:1044 |
+| `V3-75` | 트림 점수를 신차가로 잼 | run | `validate/v3_logic.py:237` | **★ 없음** | 없음 | guide/03_이력.md:389 · chapters/30-score/f-table.md:711 |
+| `V3-76` | ⑤ 의 하위 축 합이 갈래 표기와 같음 | run | `validate/v3_logic.py:220` | **★ 없음** | 없음 | guide/03_이력.md:400 · chapters/30-score/f-table.md:821 |
+| `V3-77` | 갈래마다 하위 축 합 = 갈래 표기 (전 갈래) | run | `validate/v3_logic.py:226` | **★ 없음** | 없음 | guide/03_이력.md:400 · guide/03_이력.md:419 · chapters/30-score/f-table.md:822 |
+| `V3-78` | 「그 밖」으로 옮긴 값이 축을 덮지 않음 | run | `validate/v3_logic.py:231` | **★ 없음** | 없음 | guide/03_이력.md:406 |
+| `V3-79` | 어긋난 매물에 ②-2·②-3 만점이 없음 | run | `validate/v3_logic.py:181` | **★ 없음** | 없음 | guide/03_이력.md:422 · chapters/30-score/f-table.md:488 |
+| `V3-80` | ②-1 회수가 max(보험, 성능부) 임 | run | `validate/v3_logic.py:187` | **★ 없음** | 없음 | guide/03_이력.md:422 · chapters/30-score/f-table.md:489 |
+| `V3-81` | 셋 중 하나만 null 인데 확인 안 됨이 아님 | run | `validate/v3_logic.py:193` | **★ 없음** | 없음 | guide/03_이력.md:423 · chapters/30-score/f-table.md:559 |
+| `V3-82` | 시세 점수가 계단값만 나오지 않음 | run | `validate/v3_logic.py:199` | **★ 없음** | 없음 | guide/03_이력.md:427 · chapters/30-score/f-table.md:296 |
+| `V3-83` | 시세보다 비싼 매물에 음수 점수가 붙음 | run | `validate/v3_logic.py:205` | **★ 없음** | 없음 | chapters/30-score/f-table.md:297 |
+| `V3-84` | 신차가 점수가 d% 와 1:1 임 | run | `validate/v3_logic.py:211` | **★ 없음** | 없음 | guide/03_이력.md:427 · chapters/30-score/f-table.md:340 |
+| `V3-85` | 옵션 보정 없이 원 중앙값으로 견준 매물 | run | `validate/v3_logic.py:215` | **★ 없음** | 없음 | guide/03_이력.md:429 |
+| `V3-86` | 축 점수가 배점을 넘지 않음 | run | `validate/v3_logic.py:170` | **★ 없음** | 없음 | guide/03_이력.md:436 · chapters/30-score/f-table.md:87 |
+| `V3-87` | 사이트 검증이 단계임 (더하지 않음) | run | `validate/v3_logic.py:176` | **★ 없음** | 없음 | guide/03_이력.md:436 · chapters/30-score/f-table.md:88 |
+| `V3-88` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:438 · chapters/30-score/f-table.md:239 |
 | `V4-01` | 매핑 일치율 (A 100% · B 99% · C 80%) | run | `validate/v4_mapping.py:28` | 2026-08-17 05:33 | 없음 | chapters/00-standard.md:654 · chapters/60-admin/c-tools.md:144 · chapters/20-verify/c-v3v4.md:169 |
 | `V4-02` | 미매핑 경로 목록 | run | `validate/v4_mapping.py:103` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:170 |
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:171 · chapters/20-verify/c-v3v4.md:287 |
 | `V4-04` | 매핑표에 없는 CORE 컬럼 | run | `validate/v4_mapping.py:106` | 2026-08-17 05:33 | 없음 | chapters/20-verify/c-v3v4.md:172 |
 | `V4-05` | 원문 경로 수 변동 | run | `validate/v4_mapping.py:108` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:295 · chapters/20-verify/c-v3v4.md:173 · chapters/20-verify/c-v3v4.md:300 |
-| `V4-06` | RAW 경로가 등록부에 있는가 | run | `validate/v4_mapping.py:34` | 2026-08-17 05:33 | 2026-08-16 23:59 | chapters/31-registry.md:58 · chapters/31-registry.md:203 · chapters/31-registry.md:211 |
 | `V4-06b` | 등록부에 있는데 RAW 에 없는 유령 경로 | run | `validate/v4_mapping.py:37` | **★ 없음** | 2026-08-17 05:33 | chapters/31-registry.md:227 · chapters/31-registry.md:244 · chapters/40-report.md:142 |
+| `V4-06` | RAW 경로가 등록부에 있는가 | run | `validate/v4_mapping.py:34` | 2026-08-17 05:33 | 2026-08-16 23:59 | chapters/31-registry.md:58 · chapters/31-registry.md:203 · chapters/31-registry.md:211 |
 | `V4-07` | in_use 인데 core_column NULL | run | `validate/v4_mapping.py:40` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:286 · chapters/60-admin/b-ops.md:121 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-08` | blocked 인데 unblock_condition NULL | run | `validate/v4_mapping.py:43` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:287 · chapters/20-verify/c-v3v4.md:177 · trace/RULES.md:200 |
 | `V4-09` | deferred 인데 use_when NULL | run | `validate/v4_mapping.py:46` | 2026-08-17 05:33 | 없음 | chapters/31-registry.md:288 · chapters/20-verify/c-v3v4.md:178 |
@@ -199,7 +202,7 @@
 | `V4-20` | dict_option_code 에 문장(공백·한글)이 없음 | run | `validate/v4_mapping.py:126` | 2026-08-17 05:33 | 2026-08-16 08:34 | guide/03_이력.md:138 · chapters/20-verify/c-v3v4.md:190 · chapters/10-collect/e-catalog.md:174 |
 | `V4-21` | 같은 이름의 공개 함수가 두 모듈에 없음 | run | `validate/v4_mapping.py:122` | 2026-08-16 23:59 | 2026-08-17 05:33 | guide/03_이력.md:144 · chapters/30-score/h-verdict.md:67 · chapters/20-verify/c-v3v4.md:191 |
 | `V4-22` | 역방향 · 순환 import 없음 | run | `validate/v4_mapping.py:114` | 2026-08-17 05:33 | 없음 | MAPPING.md:54 · MAPPING.md:88 · guide/03_이력.md:150 |
-| `V4-23` | 모듈 최상위에 I/O · 부작용 없음 | run | `validate/v4_mapping.py:117` | 2026-08-17 05:33 | 2026-08-17 03:30 | MAPPING.md:89 · guide/03_이력.md:150 · chapters/41-view.md:587 |
+| `V4-23` | 모듈 최상위에 I/O · 부작용 없음 | run | `validate/v4_mapping.py:117` | 2026-08-17 05:33 | 2026-08-17 03:30 | MAPPING.md:89 · guide/03_이력.md:150 · chapters/41-view.md:763 |
 | `V4-24` | 축 함수가 target_config 에서 매물 값을 읽지 않음 | run | `validate/v4_mapping.py:92` | 2026-08-17 05:00 | 2026-08-17 05:33 | guide/03_이력.md:214 · chapters/01-arch.md:215 · chapters/20-verify/c-v3v4.md:194 |
 | `V4-25` | 판정에 쓰는 축의 사전이 비어 있지 않음 | run | `validate/v4_mapping.py:98` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:230 · guide/03_이력.md:267 · chapters/00-standard.md:202 |
 | `V4-26` | 미분류가 원인별로 갈려 있음 | run | `validate/v4_mapping.py:58` | **★ 없음** | 없음 | guide/01_요구사항.md:640 · guide/01_요구사항.md:650 · guide/03_이력.md:348 |
@@ -219,8 +222,8 @@
 | `V5-10` | 같은 비율 · 다른 분모가 같은 등급 | run | `validate/v5_value.py:46` | 2026-08-17 05:33 | 없음 | chapters/20-verify/d-v5.md:16 |
 | `V5-11` | 분모 최대값으로도 S 가 불가능한 매물 없음 | run | `validate/v5_value.py:48` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:135 · chapters/20-verify/d-v5.md:17 |
 | `V5-12` | NOT_RATED 인데 not_rated_reason 이 NULL 인 행 없음 | run | `validate/v5_value.py:37` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:227 · chapters/11-store/c-result.md:115 · chapters/20-verify/d-v5.md:18 |
-| `V6-01` | — | — | **★ 코드에 없다** | — | — | chapters/41-view.md:688 · chapters/61-web.md:359 |
-| `V6-07` | ORDER BY 에 4단이 전부 있음 | run | `validate/v3_logic.py:125` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:152 · guide/03_이력.md:206 · chapters/41-view.md:576 |
+| `V6-01` | — | — | **★ 코드에 없다** | — | — | chapters/41-view.md:864 · chapters/61-web.md:359 |
+| `V6-07` | ORDER BY 에 4단이 전부 있음 | run | `validate/v3_logic.py:125` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:152 · guide/03_이력.md:206 · chapters/41-view.md:752 |
 | `V7-01` | watch_track 에 버전 4종 전건 있음 | run | `validate/v7_watch.py:30` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:147 · chapters/42-watch.md:610 |
 | `V7-02` | cause != 'listing' 인 이벤트가 알림되지 않음 | run | `validate/v7_watch.py:34` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:616 |
 | `V7-04` | 같은 이벤트 중복 발송 0건 | run | `validate/v7_watch.py:38` | 2026-08-17 05:33 | 없음 | chapters/42-watch.md:618 · chapters/50-multisite.md:118 · trace/50-multisite.md:21 |
@@ -234,8 +237,8 @@
 | `V7-12` | 남의 관심 항목을 고치지 못함 | run | `validate/v7_watch.py:54` | 2026-08-17 05:33 | 없음 | guide/01_요구사항.md:393 · guide/01_요구사항.md:403 · guide/03_이력.md:199 |
 | `V7-14` | 재등록 횟수가 화면에 나옴 | run | `validate/v7_watch.py:66` | **★ 없음** | 없음 | guide/03_이력.md:362 · guide/03_이력.md:418 · guide/03_이력.md:424 |
 | `V7-15` | 진행 메모를 자유롭게 적을 수 있음 | run | `validate/v7_watch.py:71` | **★ 없음** | 없음 | guide/03_이력.md:369 · chapters/42-watch.md:596 · trace/42-watch.md:63 |
-| `V8-01` | 같은 파일명이 두 번 생성되지 않음 | run | `validate/v3_logic.py:92` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:151 · chapters/40-report.md:542 · chapters/41-view.md:708 |
-| `V8-02` | 출력 파일에 BOM · CRLF 가 없음 | run | `validate/v3_logic.py:97` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:151 · chapters/40-report.md:571 · chapters/41-view.md:709 |
+| `V8-01` | 같은 파일명이 두 번 생성되지 않음 | run | `validate/v3_logic.py:92` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:151 · chapters/40-report.md:542 · chapters/41-view.md:884 |
+| `V8-02` | 출력 파일에 BOM · CRLF 가 없음 | run | `validate/v3_logic.py:97` | 2026-08-17 05:33 | 없음 | guide/03_이력.md:151 · chapters/40-report.md:571 · chapters/41-view.md:885 |
 | `V9-01` | 축 × 사이트 표가 있음 | run | `validate/v9_multisite.py:45` | **★ 없음** | 없음 | guide/03_이력.md:316 · chapters/00-standard.md:1960 · chapters/50-multisite.md:214 |
 | `V9-02` | site_unavailable 이 화면에 나옴 | run | `validate/v9_multisite.py:49` | **★ 없음** | 없음 | chapters/50-multisite.md:215 · chapters/50-multisite.md:299 · trace/50-multisite.md:34 |
 | `V9-03` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:316 · chapters/50-multisite.md:216 · chapters/50-multisite.md:320 |
@@ -245,7 +248,7 @@
 | `V9-07` | 합친 값에 출처가 붙어 있음 | run | `validate/v9_multisite.py:61` | **★ 없음** | 없음 | guide/01_요구사항.md:449 · guide/01_요구사항.md:459 · guide/03_이력.md:318 |
 | `V9-08` | — | — | **★ 코드에 없다** | — | — | guide/01_요구사항.md:168 · guide/01_요구사항.md:178 · guide/03_이력.md:319 |
 | `V9-09` | 같은 점수에서 사이트 보증이 높은 쪽이 앞 | run | `validate/v9_multisite.py:55` | **★ 없음** | 없음 | guide/01_요구사항.md:168 · guide/01_요구사항.md:178 · guide/03_이력.md:319 |
-| `V9-10` | 사이트 보증 항목의 합이 만점과 같음 | run | `validate/v9_multisite.py:39` | **★ 없음** | 없음 | guide/03_이력.md:358 · chapters/30-score/f-table.md:636 · chapters/20-verify/c-v3v4.md:107 |
+| `V9-10` | 사이트 보증 항목의 합이 만점과 같음 | run | `validate/v9_multisite.py:39` | **★ 없음** | 없음 | guide/03_이력.md:358 · chapters/30-score/f-table.md:787 · chapters/20-verify/c-v3v4.md:107 |
 | `V10-01` | admin 전용을 user 로 호출 시 PolicyError | run | `validate/v10_admin.py:28` | 2026-08-17 05:33 | 없음 | chapters/60-admin/c-tools.md:767 · trace/13-pipeline.md:17 |
 | `V10-02` | 서버 권한 검증 존재 (화면 숨김 아님) | run | `validate/v10_admin.py:31` | 2026-08-17 05:33 | 없음 | chapters/60-admin/c-tools.md:768 |
 | `V10-03` | run_query 가 SELECT 외를 전건 거부 | run | `validate/v10_admin.py:34` | 2026-08-17 05:33 | 없음 | chapters/60-admin/c-tools.md:769 |
@@ -413,12 +416,18 @@
 | `V11-148` | 조각마다 길이·해시를 대조함 | run | `validate/v11_web.py:397` | **★ 없음** | 없음 | guide/03_이력.md:397 |
 | `V11-149` | 조각 실패 문구에 서버 message 가 있음 | run | `validate/v11_web.py:466` | **★ 없음** | 없음 | guide/03_이력.md:402 |
 | `V11-150` | 메뉴 라벨이 경로가 아님 | run | `validate/v11_web.py:461` | **★ 없음** | 없음 | guide/03_이력.md:404 · chapters/61-web.md:255 |
-| `V11-151` | 부족액 문구가 화면에 없음 | run | `validate/v11_web.py:450` | **★ 없음** | 없음 | guide/03_이력.md:408 · chapters/41-view.md:289 |
-| `V11-152` | cash_limit 을 한 곳에서만 읽음 | run | `validate/v11_web.py:455` | **★ 없음** | 없음 | guide/03_이력.md:408 · chapters/41-view.md:290 |
+| `V11-151` | 부족액 문구가 화면에 없음 | run | `validate/v11_web.py:450` | **★ 없음** | 없음 | guide/03_이력.md:408 · chapters/41-view.md:440 |
+| `V11-152` | cash_limit 을 한 곳에서만 읽음 | run | `validate/v11_web.py:455` | **★ 없음** | 없음 | guide/03_이력.md:408 · chapters/41-view.md:441 |
 | `V11-153` | 기본 목록에 리스·렌트가 없음 | run | `validate/v11_web.py:431` | **★ 없음** | 없음 | guide/03_이력.md:428 |
 | `V11-154` | 뺀 건수가 화면에 있음 | run | `validate/v11_web.py:436` | **★ 없음** | 없음 | — |
 | `V11-155` | 차종·가격대 필터가 있음 | run | `validate/v11_web.py:440` | **★ 없음** | 없음 | — |
 | `V11-156` | 필터 조건이 그대로 넘어감 | run | `validate/v11_web.py:445` | **★ 없음** | 없음 | guide/03_이력.md:428 |
+| `V11-157` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:435 · chapters/41-view.md:37 |
+| `V11-159` | — | — | **★ 코드에 없다** | — | — | chapters/41-view.md:83 |
+| `V11-162` | — | — | **★ 코드에 없다** | — | — | chapters/41-view.md:376 |
+| `V11-164` | — | — | **★ 코드에 없다** | — | — | chapters/41-view.md:410 |
+| `V11-166` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:437 · chapters/41-view.md:481 |
+| `V13-08` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:434 · chapters/13-pipeline.md:338 |
 
 ## ② 죽은 검사 — 한 번도 안 돌았다
 
@@ -530,6 +539,8 @@
 - `V3-83` 시세보다 비싼 매물에 음수 점수가 붙음 — `validate/v3_logic.py`
 - `V3-84` 신차가 점수가 d% 와 1:1 임 — `validate/v3_logic.py`
 - `V3-85` 옵션 보정 없이 원 중앙값으로 견준 매물 — `validate/v3_logic.py`
+- `V3-86` 축 점수가 배점을 넘지 않음 — `validate/v3_logic.py`
+- `V3-87` 사이트 검증이 단계임 (더하지 않음) — `validate/v3_logic.py`
 - `V4-26` 미분류가 원인별로 갈려 있음 — `validate/v4_mapping.py`
 - `V4-27` 판정을 막는 것만 막음 — `validate/v4_mapping.py`
 - `V4-28` 미분류 항목에 값 분포와 선택지가 있음 — `validate/v4_mapping.py`
@@ -563,17 +574,24 @@
 - `V11-141` — guide/03_이력.md:392 · chapters/61-web/j-admin-mock2.md:208
 - `V11-143` — guide/03_이력.md:393 · chapters/61-web/i-admin-mock.md:201
 - `V11-144` — guide/03_이력.md:393 · chapters/61-web/i-admin-mock.md:240
+- `V11-157` — guide/03_이력.md:435 · chapters/41-view.md:37
+- `V11-159` — chapters/41-view.md:83
+- `V11-162` — chapters/41-view.md:376
+- `V11-164` — chapters/41-view.md:410
+- `V11-166` — guide/03_이력.md:437 · chapters/41-view.md:481
 - `V11-87` — guide/01_요구사항.md:59 · guide/01_요구사항.md:69 · guide/03_이력.md:293
 - `V11-88` — guide/01_요구사항.md:407 · guide/01_요구사항.md:417 · guide/03_이력.md:295
 - `V11-93` — guide/01_요구사항.md:421 · guide/01_요구사항.md:431 · guide/03_이력.md:310
+- `V13-08` — guide/03_이력.md:434 · chapters/13-pipeline.md:338
 - `V2-03` — chapters/11-store/a-key.md:339 · chapters/20-verify/b-v1v2.md:99 · trace/RULES.md:177
 - `V3-42` — guide/01_요구사항.md:73 · guide/01_요구사항.md:83 · guide/03_이력.md:297
 - `V3-44` — guide/02_결함대장.md:74 · guide/02_결함대장.md:84 · guide/03_이력.md:298
 - `V3-49` — ENCAR_API.md:167 · guide/01_요구사항.md:101 · guide/01_요구사항.md:111
 - `V3-67` — guide/01_요구사항.md:209 · guide/01_요구사항.md:219 · guide/03_이력.md:335
 - `V3-69` — guide/03_이력.md:338 · chapters/30-score/a-frame.md:755
-- `V3-73` — guide/03_이력.md:388 · chapters/30-score/f-table.md:893
-- `V6-01` — chapters/41-view.md:688 · chapters/61-web.md:359
+- `V3-73` — guide/03_이력.md:388 · chapters/30-score/f-table.md:1044
+- `V3-88` — guide/03_이력.md:438 · chapters/30-score/f-table.md:239
+- `V6-01` — chapters/41-view.md:864 · chapters/61-web.md:359
 - `V9-03` — guide/03_이력.md:316 · chapters/50-multisite.md:216 · chapters/50-multisite.md:320
 - `V9-04` — guide/03_이력.md:317 · chapters/50-multisite.md:217 · chapters/50-multisite.md:347
 - `V9-05` — guide/03_이력.md:317 · chapters/50-multisite.md:361 · trace/02-collect.md:68

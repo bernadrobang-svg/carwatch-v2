@@ -6,51 +6,47 @@
     "value.market": 100,
     "value.depreciation": 80,
     "value.mileage": 70,
-    "state.accident": 40,
-    "state.frame": 30,
-    "state.outer": 20,
-    "state.repair": 20,
-    "state.special": 15,
-    "state.leak": 10,
-    "state.consumable": 10,
-    "state.integrity": 5,
-    "history.usage": 30,
-    "history.not_join": 25,
-    "history.owner": 15,
-    "history.lien": 10,
-    "spec.trim": 25,
-    "spec.options": 20,
-    "warranty.general": 20,
-    "warranty.power": 30,
-    "warranty.site": 50,
-    "taste.hud": 15,
-    "taste.picked": 15,
-    "taste.color": 10,
-    "taste.sunroof": 10
+    "state.accident": 24,
+    "state.frame": 20,
+    "history.usage": 20,
+    "history.not_join": 16,
+    "state.outer": 13,
+    "state.repair": 13,
+    "state.special": 10,
+    "history.owner": 10,
+    "state.leak": 7,
+    "state.consumable": 7,
+    "history.lien": 7,
+    "state.integrity": 3,
+    "warranty.power": 47,
+    "warranty.general": 31,
+    "warranty.site": 52,
+    "spec.trim": 38,
+    "spec.options": 31,
+    "taste.hud": 23,
+    "taste.picked": 23,
+    "taste.sunroof": 15,
+    "taste.color": 15
   },
-  "_groups_note": "★ f-table 의 갈래 표기다 (개정 392 · V3-76·V3-77). 갈래마다 하위 축 합이 표기와 같아야 한다 — ⑤ 가 50+10+5=65 로 어긋난 채 남아 있었다. 성분 이름이 어느 갈래인지는 여기 하나에만 적는다",
+  "_groups_note": "★ f-table 5장-2a 의 갈래다 (개정 428). 갈래마다 하위 축 합이 표기와 같아야 한다 — V3-76·V3-77 이 잰다",
   "groups": {
     "값": [
       "value."
     ],
-    "상태": [
-      "state."
-    ],
-    "이력": [
+    "차량": [
+      "state.",
       "history."
-    ],
-    "사양": [
-      "spec."
-    ],
-    "사이트 보증": [
-      "warranty.site"
     ],
     "제조사 보증": [
       "warranty.general",
       "warranty.power"
     ],
+    "사이트 검증": [
+      "warranty.site"
+    ],
     "취향": [
-      "taste."
+      "taste.",
+      "spec."
     ]
   },
   "_component_form": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용 (STEP 128). 파서는 #5 에서 반영한다",
@@ -124,23 +120,23 @@
       "general_curve": [
         [
           24,
-          20
+          31
         ],
         [
           18,
-          16
+          25
         ],
         [
           12,
-          12
+          19
         ],
         [
           6,
-          6
+          9
         ],
         [
           3,
-          3
+          5
         ],
         [
           0,
@@ -150,27 +146,27 @@
       "power_curve": [
         [
           36,
-          30
+          47
         ],
         [
           30,
-          26
+          41
         ],
         [
           24,
-          22
+          34
         ],
         [
           18,
-          17
+          27
         ],
         [
           12,
-          12
+          19
         ],
         [
           6,
-          6
+          9
         ],
         [
           0,
@@ -188,51 +184,51 @@
     "history": {
       "_note": "③ 이력 80 — F-scoring 3-1~3-4",
       "usage_points": {
-        "private": 30,
-        "government": 20,
-        "business": 8,
+        "private": 20,
+        "government": 13,
+        "business": 5,
         "rental": 0,
-        "lease": 10
+        "lease": 7
       },
       "not_join_curve": [
         [
           0.0,
-          25
+          16
         ],
         [
           0.1,
-          20
+          13
         ],
         [
           0.2,
-          14
+          9
         ],
         [
           0.3,
-          8
+          5
         ],
         [
           0.5,
-          3
+          2
         ]
       ],
       "not_join_min": 0,
       "owner_curve": [
         [
           0,
-          15
+          10
         ],
         [
           1,
-          11
-        ],
-        [
-          2,
           7
         ],
         [
+          2,
+          5
+        ],
+        [
           3,
-          3
+          2
         ],
         [
           4,
@@ -240,7 +236,7 @@
         ]
       ],
       "owner_per_year_limit": 1.0,
-      "lien_ok": 10,
+      "lien_ok": 7,
       "lien_bad": 0,
       "commercial_use_codes": [
         "3"
@@ -260,9 +256,9 @@
     },
     "color": {
       "grade_points": {
-        "preferred": 40,
-        "neutral": 25,
-        "avoided": 10
+        "preferred": 15,
+        "neutral": 9,
+        "avoided": 4
       },
       "gate_open": true,
       "_note": "목록은 config/dictionaries/color_grade.json. 기피 10점은 「이 축에서 손해」이지 「가치 없음」이 아니다"
@@ -387,15 +383,15 @@
       "accident_curve": [
         [
           0,
-          40
+          24
         ],
         [
           1,
-          22
+          13
         ],
         [
           2,
-          10
+          6
         ],
         [
           3,
@@ -403,68 +399,68 @@
         ]
       ],
       "frame_points": {
-        "none": 30,
-        "sheet1": 18,
-        "sheet2": 8,
+        "none": 20,
+        "sheet1": 12,
+        "sheet2": 5,
         "swap": 0
       },
       "outer_points": {
-        "none": 20,
-        "paint12": 12,
-        "paint3": 6,
+        "none": 13,
+        "paint12": 8,
+        "paint3": 4,
         "swap": 0
       },
       "repair_curve": [
         [
           0,
-          20
+          13
         ],
         [
           500000,
-          16
+          10
         ],
         [
           1000000,
-          12
-        ],
-        [
-          2000000,
           8
         ],
         [
+          2000000,
+          5
+        ],
+        [
           5000000,
-          4
+          3
         ]
       ],
       "repair_min": 0,
-      "special_ok": 15,
+      "special_ok": 10,
       "special_bad": 0,
       "leak_points": {
-        "none": 10,
-        "minor1": 6,
-        "minor2": 3,
+        "none": 7,
+        "minor1": 4,
+        "minor2": 2,
         "leak": 0
       },
       "tread_curve": [
         [
           7,
-          10
+          7
         ],
         [
           6,
-          8
-        ],
-        [
-          5,
           6
         ],
         [
-          4,
+          5,
           4
         ],
         [
+          4,
+          3
+        ],
+        [
           3,
-          2
+          1
         ],
         [
           2,
@@ -472,8 +468,8 @@
         ]
       ],
       "integrity": {
-        "cluster": 2,
-        "structure": 2,
+        "cluster": 1,
+        "structure": 1,
         "tuning": 1
       },
       "_note_worse_of": "개정 414 마스터 확정 — 「둘이 어긋나면 나쁜 쪽을 믿는다」. 성능부가 「이상 없음」인데 보험에 수리비가 있으면 한 단계 내린다. ★ 한 단계다 — 0점으로 떨어뜨리지 않는다. 성능부가 못 본 것이 있다는 뜻이지 사고가 확정된 것은 아니다",
@@ -574,5 +570,7 @@
   "bonus": {
     "battery_soh": 30
   },
-  "_bonus_note": "가점 (개정 380).  ★ 축이 아니다 — components 에 넣지 않는다. 마스터 확정 — 「그게 있는 데 있고 대부분이 없는데.  그건 가점이니 필수는 아닌 듯해」. 실측 전기차 778건 중 SOH 가 있는 것 33건(4%). ★ 없다고 감점하지 않는다 — 엔카가 진단 안 한 죄를 차에 묻는 것이다. ★ 분모를 늘리지 않는다.  675 그대로 — 가점이 크면 100%를 넘고 그대로 낸다. 곡선은 axis_rules.value.soh_curve 를 그대로 쓴다"
+  "_bonus_note": "가점 (개정 380).  ★ 축이 아니다 — components 에 넣지 않는다. 마스터 확정 — 「그게 있는 데 있고 대부분이 없는데.  그건 가점이니 필수는 아닌 듯해」. 실측 전기차 778건 중 SOH 가 있는 것 33건(4%). ★ 없다고 감점하지 않는다 — 엔카가 진단 안 한 죄를 차에 묻는 것이다. ★ 분모를 늘리지 않는다.  675 그대로 — 가점이 크면 100%를 넘고 그대로 낸다. 곡선은 axis_rules.value.soh_curve 를 그대로 쓴다",
+  "_note_428": "★ 개정 428 — f-table 5장-2a 가 배점 정본이다. 갈래 값 250 · 차량 150 · 제조사 보증 78 · 사이트 검증 52 · 취향 145 = 675. 총점 675 · 24축 · 컷 S90 A80 B70 은 그대로. 갈래 배점만 옮겼다",
+  "_note_axis_rules_428": "★ 개정 428 — axis_rules 의 점수 표를 새 축 배점에 맞춰 비율 그대로 옮겼다. ★ 배점이 components 와 axis_rules 두 곳에 있어 components 만 고치면 축 점수가 안 바뀐다 (실측 08-21 — group_car 가 218/150 이었다)"
 }

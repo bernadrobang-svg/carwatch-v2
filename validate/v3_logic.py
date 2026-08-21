@@ -167,6 +167,17 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
+    "V3-86": Check("V3", "V3-86", "축 점수가 배점을 넘지 않음", FATAL, "run",
+                   "★★ 배점이 components 와 axis_rules 두 곳에 있다. "
+                   "components 만 고치면 max_points 만 바뀌고 축 점수는 옛 "
+                   "배점 그대로다 — 실측 08-21 group_car 가 218/150 이었다 "
+                   "(개정 428)",
+                   KIND_CODE),
+    "V3-87": Check("V3", "V3-87", "사이트 검증이 단계임 (더하지 않음)",
+                   FATAL, "run",
+                   "개정 428 — 엔카진단++ 52 · 엔카진단+ 40 · 엔카진단 26 · "
+                   "없음 0. ★ 전에는 10+10+30 을 더했다 (개정 365)",
+                   KIND_CONTRACT),
     "V3-79": Check("V3", "V3-79", "어긋난 매물에 ②-2·②-3 만점이 없음",
                    FATAL, "run",
                    "★ ②-1 만 고치면 836건이 그대로 새어 나간다 — ②-1 은 이미 "
@@ -733,6 +744,58 @@ def _special_null_check(conn, rid):
     if "부분 침수 이력은 확인할 수 없습니다" not in html:
         bad.append("화면이 「부분 침수는 엔카 미제공」을 안 밝힌다")
     return result(C["V3-81"], rid, 0, len(bad), not bad, bad[:4])
+
+
+def _points_cap_checks(conn, rid):
+    """V3-86 · V3-87 — 배점이 실제로 옮겨졌는가 (개정 428).
+
+    ★ config 만 보지 않는다.  **매긴 점수**를 본다 —
+      「배점을 고쳤다」와 「점수가 그렇게 나왔다」는 다르다
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+
+    # V3-86 — 축 점수가 배점을 넘는가
+    over = [f"{axis} — 최대 {v} 인데 배점은 {int(mx)} 다"
+            for axis, v, mx in conn.execute(
+                "SELECT axis, MAX(value), MAX(max_points) FROM result_axis"
+                " GROUP BY axis HAVING MAX(value) > MAX(max_points)")]
+    # ★ max_points 가 config 와 같은가 — 재계산을 안 돌리면 옛 값이 남는다
+    comp = cfg["components"]
+    for axis, mx in conn.execute(
+            "SELECT axis, MAX(max_points) FROM result_axis GROUP BY axis"):
+        want = comp.get(axis)
+        if want is not None and abs(float(mx) - float(want)) > 0.01:
+            over.append(f"{axis} — DB 배점 {mx} 인데 config 는 {want} 다 "
+                        "(recalc 를 안 돌렸다)")
+
+    # V3-87 — 사이트 검증이 단계인가
+    with open(_o.path.join(root, "config", "sites.json"),
+              encoding="utf-8") as f:
+        sites = _j.load(f)
+    bad87 = []
+    grades = (sites.get("encar") or {}).get("warranty_grades")
+    if not grades:
+        bad87.append("encar.warranty_grades 가 없다 — 아직 합산이다")
+    else:
+        want = sorted({int(g["points"]) for g in grades} | {0})
+        got = sorted({v for (v,) in conn.execute(
+            "SELECT DISTINCT value FROM result_axis"
+            " WHERE axis='warranty.site' AND value IS NOT NULL")})
+        extra = [v for v in got if v not in want]
+        if extra:
+            bad87.append(f"단계 밖의 값이 나온다 {extra} — 더하고 있다 "
+                         f"(단계는 {want})")
+    return [
+        result(C["V3-86"], rid, 0, len(over), not over, over[:6]),
+        result(C["V3-87"], rid, "단계", "맞다" if not bad87 else "더한다",
+               not bad87, bad87[:4]),
+    ]
 
 
 def _worse_of_checks(conn, rid):
@@ -1748,6 +1811,8 @@ def run(conn, ctx) -> list:
     out += _value_curve_checks(conn, rid)
     # 「나쁜 쪽」 원칙 (개정 414)
     out += _worse_of_checks(conn, rid)
+    # 배점 교체 (개정 428)
+    out += _points_cap_checks(conn, rid)
     out.append(_special_null_check(conn, rid))
     out += _file_output_checks(conn, rid)
 

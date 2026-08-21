@@ -54,7 +54,7 @@
 | 표 | 열 | 무엇 |
 |---|--:|---|
 | `result_axis` | 10 | result_* 는 버려도 된다.  버전이 다르면 다른 결과다 — 덮어쓰지 않는다 |
-| `result_score` | 15 |  |
+| `result_score` | 20 |  |
 | `depreciation_curve_history` | 6 | 감가 곡선 산출 이력.  곡선이 어떻게 나왔는지 남지 않으면 재현이 안 된다 |
 | `coefficient_history` | 9 | 계수 보정 이력.  남기지 않으면 점수 변동 원인을 사후에 못 찾는다 |
 | `result_axis_conflict` | 7 | 금지   충돌을 무시하고 넘어가는 것.  v1 의 사고가 전부 그렇게 시작했다 |

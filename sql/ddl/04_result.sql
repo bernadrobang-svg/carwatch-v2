@@ -40,6 +40,14 @@ CREATE TABLE IF NOT EXISTS result_score (
   --   「원문을 안 받아 0점」은 확인한 것이 아니다.  화면이 100% 라 거짓말했다
   confirmed_points REAL,
   -- 뺀 것 [[키, 점수, 문구], …] (개정 322).  ★ 0 아래로도 내려간다
+  -- ★ 갈래 합 (개정 428 · v189 권고).  값·차량·제조사 보증·사이트 검증·취향.
+  -- 점수 필터가 JOIN 없이 걸리고, 목록 막대 넷을 한 번에 읽는다.
+  -- ★ 갈래 이름은 config/scoring.json groups 가 정본이다
+  group_value     REAL,
+  group_car       REAL,
+  group_warranty  REAL,
+  group_site      REAL,
+  group_taste     REAL,
   penalties_json TEXT,
   -- 더한 것 [[키, 점수, 문구], …] (개정 380).  ★ 축이 아니다 — 분모를 안 늘린다.
   --   마스터 확정 — 「그건 가점이니 필수는 아닌 듯해」.  없다고 감점하지 않는다

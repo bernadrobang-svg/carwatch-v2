@@ -46,7 +46,34 @@
     "axes_not_provided": [
       "state.consumable"
     ],
-    "_axes_not_provided_note": "★ 이 사이트가 아예 제공하지 않는 축 (개정 306). missing(우리가 못 받음)과 다르다 — 우리 잘못이 아니다. state.consumable 은 타이어 트레드가 unified-report 에 있고 그 경로가 401 이다 — 로그인 없이는 못 받는다 (실측 08-18). ★ 분모는 안 줄인다 — 사이트별로 분모를 달리하면 사이트끼리 비교가 안 된다"
+    "_axes_not_provided_note": "★ 이 사이트가 아예 제공하지 않는 축 (개정 306). missing(우리가 못 받음)과 다르다 — 우리 잘못이 아니다. state.consumable 은 타이어 트레드가 unified-report 에 있고 그 경로가 401 이다 — 로그인 없이는 못 받는다 (실측 08-18). ★ 분모는 안 줄인다 — 사이트별로 분모를 달리하면 사이트끼리 비교가 안 된다",
+    "_note_428": "★ 개정 428 — 사이트 검증 52 는 **단계**다. 더하지 않는다. 엔카진단++/K카 직영/헤이딜러 eye 52 · 엔카진단+ 40 · 엔카진단 26 · 없음 0. ★ 전에는 10+10+30 을 더했다 (개정 365)",
+    "warranty_grades": [
+      {
+        "key": "엔카진단++",
+        "points": 52,
+        "when": {
+          "warranty_extend": 1
+        },
+        "why": "하부 점검 · 선별된 성능장 (엔카종합보증 ~180일/10,000km · 약 160개 부품)"
+      },
+      {
+        "key": "엔카진단+",
+        "points": 40,
+        "when": {
+          "warranty_deemed": 1
+        },
+        "why": "내외부 상태 · 타이어 (성능보험 30일/2,000km · 약 60개 부품)"
+      },
+      {
+        "key": "엔카진단",
+        "points": 26,
+        "when": {
+          "platform_verified": 1
+        },
+        "why": "프레임 무사고 · 외부 패널 (clean-encar cleaned=true)"
+      }
+    ]
   },
   "kcar": {
     "label": "K카",

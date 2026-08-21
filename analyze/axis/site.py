@@ -66,10 +66,30 @@ def warranty_points(site_flags: dict, items: list, evidence) -> tuple:
     return got, why
 
 
-def _site(ctx: AxisContext, v: Verdict) -> None:
-    """⑤ 사이트 보증 50 — 항목을 더한다 (개정 365).
+def warranty_grade(flags: dict, grades: list) -> tuple:
+    """④ 사이트 검증 52 — **단계**다 (개정 428).  더하지 않는다.
 
-    화면에 무엇으로 받았는지 낸다 — 「엔카검증 10 + 엔카보증 10 = 20 / 50」
+    ★ 전에는 엔카검증 10 + 엔카보증 10 + 보증++ 30 을 더했다 (개정 365).
+      개정 428 이 단계로 바꿨다 — 위 단계 하나만 준다
+    ★ 위에서부터 본다.  먼저 맞는 것이 그 매물의 단계다
+    """
+    for one in grades:
+        ok = True
+        for key, want in (one.get("when") or {}).items():
+            have = flags.get(key)
+            if not (bool(have) if want in (1, True) else str(have) == str(want)):
+                ok = False
+                break
+        if ok:
+            return int(one.get("points") or 0), one.get("key") or "?"
+    return 0, "no_warranty"
+
+
+def _site(ctx: AxisContext, v: Verdict) -> None:
+    """④ 사이트 검증 52 — **단계**다 (개정 428).
+
+    ★ 더하지 않는다.  엔카진단++ 52 · 엔카진단+ 40 · 엔카진단 26 · 없음 0
+    화면에 무엇으로 받았는지 낸다 — 「엔카진단+ 40 / 52」
     """
     s = ctx.snapshot
     cfg = ctx.target_config.get("site_warranty") or {}
@@ -78,6 +98,12 @@ def _site(ctx: AxisContext, v: Verdict) -> None:
     flags = dict(s.site_flags or {}, diagnosis_car=s.diagnosis_car)
     if not items:
         put(v, SITE, 0, PRIO_OBSERVED, "rule_or_source_missing")
+        return
+    grades = cfg.get("warranty_grades")
+    if grades:
+        # ★ 개정 428 — 단계다.  더하지 않는다
+        got, why = warranty_grade(flags, grades)
+        put(v, SITE, got, PRIO_OBSERVED, why)
         return
     got, why = warranty_points(flags, items, flags.get(field))
     if got is None:

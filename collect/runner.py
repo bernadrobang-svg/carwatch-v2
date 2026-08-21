@@ -1066,12 +1066,15 @@ def _site_grade_rules(root: str) -> dict:
     """사이트별 보증 규칙 (개정 365 · V3-55).
 
     ★ config/sites.json 이 정본이다.  코드에 사이트 이름을 박지 않는다
-    ★ 개정 365 로 「우수등급 하나」에서 「항목 여럿의 합」이 됐다 —
-      엔카는 검증 10 + 보증 10 + 보증++ 30 = 50
+    ★★ 개정 428 로 「항목 여럿의 합」에서 **단계**로 돌아갔다 —
+      엔카진단++ 52 · 엔카진단+ 40 · 엔카진단 26 · 없음 0.
+      ★ warranty_grades 를 안 넘기면 축이 옛 합산(10+10+30)을 그대로 쓴다
+      (실측 08-21 — V3-87 이 「단계 밖의 값 10·20」을 잡았다)
     """
     with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
         return {k: {"warranty_items": v.get("warranty_items") or [],
-                    "warranty_evidence": v.get("warranty_evidence")}
+                    "warranty_evidence": v.get("warranty_evidence"),
+                    "warranty_grades": v.get("warranty_grades") or []}
                 for k, v in json.load(f).items() if isinstance(v, dict)}
 
 
@@ -1166,6 +1169,27 @@ def _market_of(market: dict, lid: str) -> dict:
     got = market.get(lid)
     return {"market_median_won": int(got[0]) if got else None,
             "market_sample_n": got[1] if got else None}
+
+
+def _group_sums(policy, verdict) -> tuple:
+    """갈래 합 다섯 (개정 428 · v189 권고).
+
+    ★ 이미 더하고 있는 값이다.  저장만 한다 —
+      점수 필터가 JOIN 없이 걸리고 목록 막대 넷을 한 번에 읽는다
+    ★ 갈래 ↔ 성분 접두어는 config/scoring.json groups 가 정본이다.
+      코드에 두 벌로 적지 않는다 (S14)
+    """
+    groups = policy.raw.get("groups") or {}
+    order = ("값", "차량", "제조사 보증", "사이트 검증", "취향")
+    out = []
+    for name in order:
+        pres = groups.get(name) or []
+        out.append(float(sum(
+            verdict.values.get(k) or 0
+            for k in verdict.values
+            if k not in verdict.excluded
+            and any(k == p or k.startswith(p) for p in pres))))
+    return tuple(out)
 
 
 def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
@@ -1320,13 +1344,16 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                 "INSERT OR REPLACE INTO result_score"
                 "(listing_id,calc_version,dict_version,score_total,earned,"
                 " denominator,grade,absolute_fail,not_rated_reason,"
-                " grade_earned,grade_base,confirmed_points,penalties_json,"
+                " grade_earned,grade_base,confirmed_points,"
+                " group_value,group_car,group_warranty,group_site,"
+                " group_taste,penalties_json,"
                 " bonuses_json, calculated_at)"
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (lid, ctx.calc_version, ctx.dict_version, res.score_total,
                  res.earned, res.denominator, grade_of(res, policy),
                  res.absolute_fail, res.not_rated_reason,
                  res.grade_earned, res.grade_base, res.confirmed,
+                 *_group_sums(policy, v),
                  json.dumps([list(p) for p in res.penalties],
                             ensure_ascii=False),
                  # ★ 가점도 남긴다.  화면이 「배터리 SOH 94.6% (+24)」를 낸다
