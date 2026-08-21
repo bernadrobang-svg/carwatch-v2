@@ -1,0 +1,189 @@
+{
+  "_ref": "개정 434 · inbox/ORDER_unknown_split.md · tools/unknown_split.py 가 읽는다",
+  "_note": "★ 「확인 안 됨」이 result_axis 의 어느 값인가를 여기서 정한다. value 나 excluded 로는 못 가른다 — 실측 08-21: value IS NULL 은 108건뿐인데 source='missing' 은 15,817건이다. ★ 확인 안 됨은 source 에 적혀 있다",
+  "_kinds": {
+    "1": "원문에 없다 — 딜러 잘못. 0점이 맞다",
+    "2": "원문에 있는데 못 읽는다 — ★ 우리 잘못",
+    "3": "그 엔드포인트를 안 받는다 — ★ 우리 잘못",
+    "?": "셋 중 아무것도 아니다 — 모르겠습니다"
+  },
+  "_confirmed_sources": {
+    "_note": "★ 이것들은 「확인 안 됨」이 아니다. 확인해서 「없다」로 안 것이다",
+    "no_choice_option": "선택 옵션이 없음을 확인했다 (trim.py)",
+    "no_warranty": "보증이 없음을 확인했다",
+    "nothing_picked": "지정 옵션을 안 골랐다 — 만점을 준다 (감점 아님)"
+  },
+  "axes": {
+    "state.frame": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "inspection",
+      "key": "master.accdient"
+    },
+    "state.outer": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "inspection",
+      "key": "outers"
+    },
+    "state.leak": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "inspection",
+      "key": "inners"
+    },
+    "state.integrity": {
+      "unknown": [
+        "missing",
+        "integrity_계기판 확인 못 함",
+        "integrity_튜닝+계기판 확인 못 함",
+        "integrity_구조 상태 불량+계기판 확인 못 함"
+      ],
+      "endpoint": "inspection",
+      "key": "master.detail.boardStateType"
+    },
+    "state.accident": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "record",
+      "key": "myAccidentCnt"
+    },
+    "state.repair": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "record",
+      "key": "myAccidentCost"
+    },
+    "state.special": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "record",
+      "key": "use"
+    },
+    "history.owner": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "record",
+      "key": "ownerChangeCnt"
+    },
+    "history.usage": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "record",
+      "key": "use"
+    },
+    "history.not_join": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "record",
+      "key": "openData"
+    },
+    "history.lien": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "condition.seizing.seizingCount"
+    },
+    "state.consumable": {
+      "unknown": [
+        "site_unavailable",
+        "missing"
+      ],
+      "endpoint": "unified_report",
+      "key": "tireTread"
+    },
+    "spec.trim": {
+      "unknown": [
+        "origin_price_missing"
+      ],
+      "endpoint": "detail",
+      "key": "category.originPrice"
+    },
+    "value.depreciation": {
+      "unknown": [
+        "origin_price_missing"
+      ],
+      "endpoint": "detail",
+      "key": "category.originPrice"
+    },
+    "value.market": {
+      "unknown": [
+        "market_sample_short"
+      ],
+      "endpoint": "detail",
+      "key": "advertisement.price",
+      "kind_override": "2",
+      "why": "★ 원문 문제가 아니다.  이 매물의 값은 원문에 있다 — 같은 차종·트림·연식 매물이 표본 5건에 못 미쳐 **우리가 중앙값을 못 만든다**. ★ 우리 잘못이지만 「못 읽는다」와는 다르다 — 시세를 세 겹으로 만들면(개정 430) 준다"
+    },
+    "spec.options": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "options.standard"
+    },
+    "taste.hud": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "options.standard"
+    },
+    "taste.sunroof": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "options.standard"
+    },
+    "taste.color": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "spec.colorName"
+    },
+    "warranty.general": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "warranty.selfWarrantyPeriod"
+    },
+    "warranty.power": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "warranty.selfWarrantyDistance"
+    },
+    "warranty.site": {
+      "unknown": [],
+      "endpoint": "platform_check",
+      "key": "diagnosisType"
+    },
+    "value.mileage": {
+      "unknown": [
+        "missing"
+      ],
+      "endpoint": "detail",
+      "key": "spec.mileage"
+    },
+    "taste.picked": {
+      "unknown": [],
+      "endpoint": "detail",
+      "key": "options.choice"
+    }
+  },
+  "_kind_override_note": "★ 원문 body 로 못 가르는 축이 있다.  그런 축은 여기에 갈래와 까닭을 적는다.  ★ 짐작이 아니라 **왜 그렇게 정했는지**를 남긴다"
+}

@@ -85,6 +85,19 @@ C = {
                    "마스터 지적 「카탈로그가 왜 없어. 수집하다가 버린 거겠지」 "
                    "(개정 327)",
                    KIND_CODE),
+    "V1-27": Check("V1", "V1-27", "확인 안 됨을 ①②③ 으로 가른 표가 있음",
+                   FATAL, "run",
+                   "개정 434 — 「확인 안 됨」이 한 덩어리면 딜러 부실과 "
+                   "★ 우리 부실이 섞인다. 섞인 채로는 배점도 컷도 뜻을 "
+                   "못 갖는다. ★ 마스터 — 「너가 전체를 못 찾은 것을 "
+                   "먼저 정리해야지」",
+                   KIND_CONTRACT),
+    "V1-28": Check("V1", "V1-28", "② ③ 건수가 지난번보다 안 늘었음",
+                   FATAL, "run",
+                   "개정 434 — ★ 우리 잘못이 늘면 실패다. 줄지 않는 것은 "
+                   "봐주되 ★ 느는 것은 못 본다. 이력이 없으면 「줄었다」를 "
+                   "말로만 하게 된다",
+                   KIND_CONTRACT),
     "V1-26": Check("V1", "V1-26", "판정 축이 통째로 비지 않음", FATAL, "run",
                    "★ 개정 289 가 「못 본 축은 0점 + 확인 안 됨」이라 정했다. "
                    "그래서 축이 통째로 비어도 화면은 조용히 「확인 안 됨」을 "
@@ -154,6 +167,65 @@ C = {
 LISTING_ENDPOINTS = ("detail", "inspection", "record", "diagnosis")
 
 
+
+def _unknown_split_checks(conn, rid):
+    """V1-27 · V1-28 — 확인 안 됨을 ①②③ 으로 가른 표 (개정 434).
+
+    ★ 표가 「있는가」만 보지 않는다.  ★ 합이 맞는가를 본다 —
+      ① + ② + ③ + 모름 = 확인 안 됨.  안 맞으면 어딘가를 안 센 것이다
+    ★ 표는 tools/unknown_split.py --write 가 만든다.  손으로 안 적는다
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    hist = _o.path.join(root, "outputs", "unknown_split_history.json")
+    if not _o.path.isfile(hist):
+        return [not_applicable(C["V1-27"], rid,
+                               "아직 안 돌렸다 — tools/unknown_split.py --write"),
+                not_applicable(C["V1-28"], rid, "견줄 지난번이 없다")]
+    with open(hist, encoding="utf-8") as f:
+        runs = (_j.load(f).get("runs") or [])
+    if not runs:
+        return [not_applicable(C["V1-27"], rid, "이력이 비었다"),
+                not_applicable(C["V1-28"], rid, "견줄 지난번이 없다")]
+    now = runs[-1]
+
+    # V1-27 — 24축이 다 있고 갈래 합이 맞는가
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        axes = set(_j.load(f)["components"])
+    with open(_o.path.join(root, "config", "unknown_split.json"),
+              encoding="utf-8") as f:
+        mapped = set(_j.load(f)["axes"])
+    bad27 = [f"{a} — 갈래표에 없다" for a in sorted(axes - mapped)]
+    for axis, one in (now.get("by_axis") or {}).items():
+        got = one["1"] + one["2"] + one["3"] + one["?"]
+        if got != one["n"]:
+            bad27.append(f"{axis} — ①②③모름 합 {got} != 확인 안 됨 {one['n']}")
+
+    # V1-28 — ② ③ 이 늘었는가.  ★ 준 것은 통과다
+    if len(runs) < 2:
+        v28 = not_applicable(C["V1-28"], rid,
+                             f"1회째다 — 다음 실행부터 견준다 "
+                             f"(② {now['kind2']} · ③ {now['kind3']})")
+    else:
+        was = runs[-2]
+        up = []
+        for k, name in (("kind2", "② 못 읽는다"), ("kind3", "③ 안 받는다")):
+            if now[k] > was[k]:
+                up.append(f"{name} {was[k]} → {now[k]} (늘었다)")
+        v28 = result(C["V1-28"], rid,
+                     f"② {was['kind2']} · ③ {was['kind3']}",
+                     f"② {now['kind2']} · ③ {now['kind3']}", not up, up)
+    return [
+        result(C["V1-27"], rid, f"{len(mapped)}축",
+               f"확인 안 됨 {now['unknown']} · ② {now['kind2']} "
+               f"· ③ {now['kind3']}", not bad27, bad27[:6]),
+        v28,
+    ]
+
+
 def _axis_empty_check(conn, rid):
     """V1-26 — 판정 축이 통째로 비지 않는가 (개정 413).
 
@@ -187,6 +259,7 @@ def _axis_empty_check(conn, rid):
 def run(conn, ctx) -> list:
     rid = ctx.run_id
     out = [_axis_empty_check(conn, ctx.run_id)]
+    out += _unknown_split_checks(conn, ctx.run_id)
 
     tally = dict(conn.execute(
         "SELECT status, COUNT(*) FROM audit_request WHERE run_id=? GROUP BY status",

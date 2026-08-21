@@ -45,7 +45,9 @@
     "tools/repair_facet_chunks.py",
     "tools/trace_fill.py",
     "tools/trace_verify.py",
+    "tools/unknown_split.py",
     "tools/verify_axes.py",
     "tools/weekly_check.py"
-  ]
+  ],
+  "_pending_note_434": "★ tools/unknown_split.py — 개정 434 「확인 안 됨」 ①②③ 표. 화면은 순서 6 의 상세 ⑤절 「아직 모르는 것」이 받는다 (STEP 97a)"
 }
