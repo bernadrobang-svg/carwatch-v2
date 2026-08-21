@@ -217,8 +217,22 @@ def test_export() -> None:
     check("버전이 본문에 있다", "calc=" in body)
 
     cs = export([v], "csv", meta=m1).content.decode("utf-8")
+    # ★★ 배점 숫자를 박지 않는다 — 개정 428 에서 전부 바뀌었다.  config 를 본다
+    # ★ COMPONENTS 는 축 **이름 목록**이다 (dict 가 아니다).  배점은 policy 가 준다
+    _cap = m1.policy.comp if hasattr(m1, "policy") else None
+    if _cap is None:
+        import json as _j
+        with open(os.path.join(ROOT, "config", "scoring.json"),
+                  encoding="utf-8") as _f:
+            _c = _j.load(_f)["components"]
+
+            def _cap(name):
+                one = _c[name]
+                return one if isinstance(one, (int, float)) \
+                    else one.get("points", 0)
     check("★ csv 헤더에 배점을 표기한다",
-          "value.market(100)" in cs and "taste.hud(15)" in cs,
+          f"value.market({_cap('value.market'):g})" in cs
+          and f"taste.hud({_cap('taste.hud'):g})" in cs,
           cs.splitlines()[0][:60])
 
     js = json.loads(export(v, "json", meta=m1).content.decode("utf-8"))

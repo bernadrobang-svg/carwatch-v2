@@ -197,9 +197,21 @@ def _warranty_sum_check(rid):
     for name, one in _sites().items():
         if not isinstance(one, dict) or one.get("status") == "planned":
             continue
+        # ★★ 개정 428 — 사이트 검증은 **합산이 아니라 단계**다.
+        #   엔카진단++ 52 · 엔카진단+ 40 · 엔카진단 26 · 없음 0.
+        #   더하면 118 이 되어 만점 52 를 넘는다 — 그래서 「가장 높은 단계」를 본다
+        grades = one.get("warranty_grades")
+        if grades:
+            got = max(int(x.get("points") or 0) for x in grades)
+            if got != full:
+                bad.append(f"{name} — 맨 위 단계 {got} != 만점 {full}")
+            if [int(x.get("points") or 0) for x in grades] != sorted(
+                    (int(x.get("points") or 0) for x in grades), reverse=True):
+                bad.append(f"{name} — 단계가 높은 것부터 놓여 있지 않다")
+            continue
         items = one.get("warranty_items") or []
         if not items:
-            bad.append(f"{name} — warranty_items 가 없다")
+            bad.append(f"{name} — warranty_items 도 warranty_grades 도 없다")
             continue
         got = sum(int(x.get("points") or 0) for x in items)
         if got != full:

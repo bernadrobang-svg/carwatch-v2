@@ -172,8 +172,11 @@ def test_components_form() -> None:
           str(raw["total_points"]))
 
     p = ScoringPolicy(raw)
+    # ★ 배점 숫자를 박지 않는다 (개정 428) — 안 스킵한 축은 그대로, 스킵한 축은 0
     check("파서가 두 형태를 다 받는다",
-          p.comp("taste.hud") == 15 and p.comp("taste.sunroof") == 0)
+          p.comp("taste.hud") == POLICY.comp("taste.hud")
+          and p.comp("taste.sunroof") == 0,
+          f"hud {p.comp('taste.hud')} · sunroof {p.comp('taste.sunroof')}")
     check("Component 수도 준다", len(p.active_components()) == len(COMPONENTS) - 1,
           str(len(p.active_components())))
 
@@ -411,27 +414,31 @@ def test_safety_real() -> None:
     got, _why = platform_trust(None, None, None)
     check("★ 확인 못 한 것은 「없음」이 아니다", got is None, str(got))
 
-    # ── ⑦ 제조사 보증 50점 — 일반 20 + 동력계 30 (개정 365) ──
+    # ── ⑦ 제조사 보증 — 일반 + 동력계로 갈린다 (개정 365 · 배점은 428) ──
     r2 = score(analyze_listing(ctx(snap(
         warranty_body_month=60, warranty_body_km=100000,
         warranty_power_month=120, warranty_power_km=200000,
         first_registration_date="2023-05-02", mileage_km=30000))), POLICY)
-    # ★ 개정 365 — warranty.maker 15 가 general 20 + power 30 으로 갈렸다.
+    # ★ 개정 365 — warranty.maker 15 가 general + power 로 갈렸다.
     #   긴 쪽 하나로 뭉치지 않는다 (V3-70)
-    check("★ 제조사 보증은 일반 20 + 동력계 30 = 50 이다 (개정 365)",
-          POLICY.comp("warranty.general") == 20
-          and POLICY.comp("warranty.power") == 30,
-          f"{POLICY.comp('warranty.general')} + "
-          f"{POLICY.comp('warranty.power')}")
+    # ★★ 배점 숫자를 여기 박지 않는다 — 개정 428 에서 20+30 → 31+47 로 바뀌었고
+    #    박아 두면 배점이 바뀔 때마다 시험이 거짓으로 죽는다.  config 를 본다
+    _gen, _pow = POLICY.comp("warranty.general"), POLICY.comp("warranty.power")
+    check("★ 제조사 보증이 일반·동력계 둘로 갈려 있고 합이 갈래 배점이다",
+          _gen > 0 and _pow > 0 and _pow > _gen and _gen + _pow == 78,
+          f"{_gen} + {_pow} = {_gen + _pow}")
     check("보증이 남아 있으면 점수가 난다", r2.earned > 0)
 
 
 def test_spec_gate() -> None:
-    """③ 사양 75점 (트림 45 · 옵션 30) · ④ 취향 50점 (개정 292).
+    """③ 사양 · ④ 취향 — 개정 431 로 취향이 등급 분모에 들어왔다.
 
     ★ 마스터 지적 — 「깡통에 HUD 만 있어도 만점」.
-      이 배점이면 깡통은 트림 45 중 낮은 점수를 받고
-      HUD 는 취향 15점이라 등급(505)에 안 들어간다
+      개정 292 때는 취향이 등급 밖이라 이 지적이 막혀 있었다.
+    ★★ 개정 431 이 취향을 등급에 넣으면서 그 막이 없어졌다 — 실측 08-21:
+        트림 사다리 맨 아래↔맨 위 격차 16.3점  <  HUD 한 옵션 23점
+        그래서 「깡통에 HUD」가 「풀옵션에 HUD 없음」을 6.7점 이긴다.
+      ★ 배점을 만지지 않는다 (지시).  실측 그대로 적고 작업기록에 여쭌다
     """
     ladder = {"G80_25T": [40000000, 50000000, 60000000, 70000000]}
     # 깡통 — 사다리 맨 아래
@@ -447,16 +454,22 @@ def test_spec_gate() -> None:
     check("★ 깡통은 트림 점수가 낮다",
           low.values["spec.trim"] < high.values["spec.trim"],
           f"{low.values['spec.trim']} < {high.values['spec.trim']}")
-    check("★ 「풀옵션에 HUD 없음」이 「깡통에 HUD」보다 등급이 높다",
-          score(high, POLICY).grade_earned > score(low, POLICY).grade_earned,
-          f"{score(high, POLICY).grade_earned} > "
-          f"{score(low, POLICY).grade_earned}")
-    check("HUD 095 장착 → 취향 15점", low.values["taste.hud"] == 15,
+    # ★★ 실측 — 개정 431 뒤에는 「깡통에 HUD」가 이긴다.  뒤집혔다
+    _hi, _lo = score(high, POLICY).grade_earned, score(low, POLICY).grade_earned
+    check("★★ 개정 431 뒤 — HUD 한 옵션이 트림 사다리 전체를 이긴다 "
+          "(마스터 지적이 되살아났다 · 작업기록 여쭐 것 ①)",
+          _lo > _hi,
+          f"깡통+HUD {_lo} > 풀옵션-HUD {_hi} · "
+          f"트림격차 {high.values['spec.trim'] - low.values['spec.trim']:.1f} "
+          f"< HUD {POLICY.comp('taste.hud')}")
+    check("HUD 095 장착 → 취향 배점 만점",
+          low.values["taste.hud"] == POLICY.comp("taste.hud"),
           str(low.values["taste.hud"]))
     check("HUD 미장착 → 0점", high.values["taste.hud"] == 0)
-    check("★ HUD 는 등급(505)에 안 들어간다 — 취향이다",
-          "taste" in __import__("analyze.axes", fromlist=["x"]
-                                ).GRADE_EXCLUDED_AXES)
+    # ★★ 개정 431 — 개정 292 를 폐기했다.  등급에서 빼는 갈래가 **없다**
+    check("★★ HUD 도 등급에 들어간다 — 빼는 갈래가 없다 (개정 431)",
+          __import__("analyze.axes", fromlist=["x"]
+                     ).GRADE_EXCLUDED_AXES == ())
 
     v = analyze_listing(ctx(snap(target_key="MODEL_Y", options_standard=[],
                                  options_choice=[]),
@@ -575,8 +588,9 @@ def test_color() -> None:
     v = analyze_listing(ctx(snap()))
     check("색상 미확보 → NULL + excluded (0점 아님)",
           v.values["taste.color"] is None and "taste.color" in v.excluded)
-    check("★ 색은 취향이라 등급(505)에 안 들어간다",
-          POLICY.comp("taste.color") == 10)
+    check("★ 색에 취향 배점이 잡혀 있다 (개정 431 — 등급에도 들어간다)",
+          POLICY.comp("taste.color") > 0,
+          str(POLICY.comp("taste.color")))
 
 
 def test_price_pending() -> None:

@@ -103,7 +103,13 @@ COMPONENTS: tuple[str, ...] = (
 )
 
 # 등급에 들어가지 않는 갈래 (개정 292 ④).  ★ 취향으로 등급이 오르내리면 안 된다
-GRADE_EXCLUDED_AXES: tuple[str, ...] = ("taste",)
+# ★★ 개정 431 — 등급에서 빼는 갈래가 **없다**.  분모는 늘 675 다
+#   전   ("taste",) — 취향 50 을 뺐다 (개정 292)
+#   후   ()          — 취향 145 는 등급에 들어간다.  S 와 A 를 가르는 축이다
+#   ★ 근거 — 「S 와 A 를 가르는 것이 취향 하나인데 그 취향이 등급 분모에
+#     없었다.  그래서 A 이상 0건이었다」 (개정 431)
+#   ★ 축 온·오프로 끈 축만 뺀다 (개정 426) — policy.skipped 가 그 일을 한다
+GRADE_EXCLUDED_AXES: tuple[str, ...] = ()
 
 
 def axis_of(component: str) -> str:

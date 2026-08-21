@@ -2,14 +2,14 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 135개 · 총 49,360줄
+파일 135개 · 총 49,450줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v11_web.py` | 4,312 | V11 표현 계층 검증 (14장 STEP 153). |
 | `web/views.py` | 2,293 | 화면 어댑터 (14장 STEP 142 · 152). |
+| `validate/v3_logic.py` | 1,980 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `report/screens/build.py` | 1,928 | 화면 데이터 생성. |
-| `validate/v3_logic.py` | 1,896 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,549 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_spec_ui.py` | 1,457 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `collect/runner.py` | 1,450 | 수집 실행 규칙. |
@@ -96,9 +96,9 @@
 | `analyze/axis/spec.py` | 123 | 사양 90점 — HUD 20 · HDA 20 · 선루프 20 · SVM 10 · SCC 10 · 후측방 5 · 틴팅 5. |
 | `score/penalty.py` | 123 | 마이너스 점수 (개정 322). |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
+| `analyze/axes.py` | 117 | 축 판정 계약. |
 | `errors.py` | 115 | 도메인 예외 5종. |
 | `tools/daily_enqueue.py` | 112 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
-| `analyze/axes.py` | 111 | 축 판정 계약. |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
 | `tools/check_all.py` | 107 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `adapters/kcar.py` | 104 | K카 어댑터 — URL · 헤더 (12장 · STEP 11). |
@@ -156,16 +156,16 @@ _web_sources:584  run:596  _late_checks:706  _templates_with_form:770  _spec_rou
 _rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:78  listings:105  why:143  notready:177  dashboard:187  admin_home:205  _unclassified_split:217  _rows_of:245  _check_reports:255  admin_audit:278  admin_docs:291  _int_param:315  _manwon:354  _site_buttons:359  _filter_chips:390  _order_menu:441  _carry:447  _order_label:457  ORDERS_LABELS_GET:461  _condition_sentence:465  _query_string:483  _page_links:496  _simple_paging:517  _paging:527  _filter_buttons:557  _model_menu:590  _pick_state:604  _keep_query:620  _carry_pick:643  _lease_hidden:653  _filter:659  recommend:712  compare:740  market:755  _first_target:775  dealers:781  watch:801  _note_kinds:818  _watch_notes:825  run_view:852  login:864  _login_again:898  _open_session:913  logout:939  _watch_queries:956  watch_query_post:965  _int_or_none:995  watch_add_post:999  _watch_note_post:1059  _watch_invite:1085  watch_update_post:1108  _now:1132  _reason_gate:1139  _gate:1160  _first_flag:1199  _all_hours:1204  admin_run:1232  _target_rows:1298  admin_dict:1311  admin_status:1345  admin_collect:1360  _take_chunk:1419  _verify_part:1462  _run_stamp:1502  _int_or_none:1513  admin_import:1518  admin_scoring:1590  _decide_cards:1643  admin_registry:1671  admin_query:1719  admin_requests:1741  _admin_extra:1803  _config_files:1818  _config_rows:1825  admin_config:1857  _typed:1908  admin_api:1924  _site_query:1974  admin_targets:1987  admin_tools:2085  join:2104  password:2135  admin_users:2150  _account_activity:2210  reports:2216  report_download:2232
 ```
 
+### `validate/v3_logic.py` — 1,980줄
+
+```
+_file_output_checks:362  _conflict_checks:415  _diagnosis_count_check:439  _hda_source_check:455  _sort_determinism:466  _warning_contract_checks:483  _list_observed_source_check:578  _facet_reconcile_check:608  _record_mismatch_check:652  _curve_table_check:682  _special_null_check:732  _grade_base_checks:760  _points_cap_checks:831  _worse_of_checks:883  _checks_json:945  _value_curve_checks:956  _group_sum_checks:1039  _mapped_other_check:1110  _denominator_check:1137  _core_axis_check:1165  _rental_cross_check:1183  _why_cheap_check:1221  _source_before_value_check:1262  _absolute_cut_check:1297  _spec_files:1327  _confirm_ratio_check:1337  _warranty_checks:1387  _spec_axis_check:1421  _site_axis_checks:1462  _rendered_why:1511  _rendered_listings:1521  _fill_gap_check:1531  _points_sum_check:1564  _market_gap_check:1581  _bonus_checks:1637  _trim_price_check:1741  run:1789  _shuffle_check:1923  _halt_dict_check:1948  _ensure_tmp:1977
+```
+
 ### `report/screens/build.py` — 1,928줄
 
 ```
 site_badge:70  axis_heads:90  _labels:98  viewer_state:103  chip:113  _stamp:142  _bulk_axes:146  confirm_ratio:167  _bulk_changes:178  _total_points:205  photo_urls:218  photo_url:250  market_price:281  _days_between:298  _ceil_to:313  _bulk_market:328  _bulk_state:367  not_join_months:400  _left:423  _warranty_state:432  _axis_state:470  _sites_cfg:528  _row:541  _view_cfg:717  order_clause:761  _view_str:767  _lease_kinds:773  lease_hidden:781  _listings_where:803  count_listings:884  view_listings:896  _soh_low:972  _view_int:981  _bucket:987  _high_km:994  _option_prices:1003  recommend_funnel:1015  _bulk_upside:1032  view_recommend:1047  recommend_reason:1078  excluded_groups:1121  view_why:1136  view_compare:1142  market_trims:1184  view_market:1206  _web_cfg:1242  _median:1256  _with_height:1261  _price_bins:1276  _group_prices:1297  _by_year:1315  _year_line:1332  _by_trim:1358  _other_targets:1376  count_dealers:1384  _dealer_targets:1390  _dealer_region:1410  view_dealers:1425  view_run:1461  _rank1_of:1467  view_dashboard:1475  _bars:1571  _grade_counts:1586  _e_reasons:1593  _today_changes:1610  _step_rows:1635  _bulk_spark:1652  view_watch:1688  _pending_values:1756  _done_items:1765  view_notready:1791  _unmatched_rows:1826  _report_files:1850  view_reports:1882
-```
-
-### `validate/v3_logic.py` — 1,896줄
-
-```
-_file_output_checks:351  _conflict_checks:404  _diagnosis_count_check:428  _hda_source_check:444  _sort_determinism:455  _warning_contract_checks:472  _list_observed_source_check:567  _facet_reconcile_check:597  _record_mismatch_check:641  _curve_table_check:671  _special_null_check:721  _points_cap_checks:749  _worse_of_checks:801  _checks_json:863  _value_curve_checks:874  _group_sum_checks:957  _mapped_other_check:1028  _denominator_check:1055  _core_axis_check:1083  _rental_cross_check:1101  _why_cheap_check:1139  _source_before_value_check:1180  _absolute_cut_check:1215  _spec_files:1245  _confirm_ratio_check:1255  _warranty_checks:1305  _spec_axis_check:1339  _site_axis_checks:1380  _rendered_why:1429  _rendered_listings:1439  _fill_gap_check:1449  _points_sum_check:1482  _market_gap_check:1499  _bonus_checks:1555  _trim_price_check:1659  run:1707  _shuffle_check:1839  _halt_dict_check:1864  _ensure_tmp:1893
 ```
 
 ### `store/core.py` — 1,549줄

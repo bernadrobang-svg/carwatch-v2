@@ -167,6 +167,17 @@ C = {
                    "곡선을 코드에서 한 칸만 고쳐도 아무도 모른다. "
                    "★ 사람이 못 잰다 — 표와 한 줄씩 맞춘다 (f-table 전수 검증)",
                    KIND_CODE),
+    "V3-90": Check("V3", "V3-90", "등급 분모가 675 로 고정", FATAL, "run",
+                   "개정 431 — 취향 145 는 등급에 들어간다. ★ 빼는 갈래가 "
+                   "없다. 개정 292 「취향은 등급에서 뺀다」는 폐기다. "
+                   "★ 끈 축만 뺀다 (개정 426)",
+                   KIND_CONTRACT),
+    "V3-91": Check("V3", "V3-91", "가이드 검산 일곱 줄이 표대로 나옴",
+                   WARN, "run",
+                   "f-table 5장-2a 의 검산 표를 config 로 되짚는다. "
+                   "★ 안 맞으면 표가 틀린 것이다 — 맞추려고 배점을 만지지 "
+                   "않는다 (개정 431 지시)",
+                   KIND_EXTERNAL),
     "V3-86": Check("V3", "V3-86", "축 점수가 배점을 넘지 않음", FATAL, "run",
                    "★★ 배점이 components 와 axis_rules 두 곳에 있다. "
                    "components 만 고치면 max_points 만 바뀌고 축 점수는 옛 "
@@ -281,8 +292,10 @@ C = {
     "V3-56": Check("V3", "V3-56", "배점 합이 605", FATAL, "run",
                    "합이 안 맞으면 비율이 뜻을 잃는다 (개정 306)",
                    KIND_CONTRACT),
-    "V3-57": Check("V3", "V3-57", "등급이 555 기준", FATAL, "run",
-                   "취향 50 은 순위에만 쓴다 — 등급은 ①②③⑤ 555 다 (개정 306)",
+    "V3-57": Check("V3", "V3-57", "등급 기준이 grade_base_points 와 같음",
+                   FATAL, "run",
+                   "★ 개정 431 — 등급 분모는 675 다. 빼는 갈래가 없다. "
+                   "전에는 취향을 뺀 555·625 였다 (개정 292 · 306 — 폐기)",
                    KIND_CONTRACT),
     "V3-70": Check("V3", "V3-70", "일반·동력계 보증을 따로 냄",
                    FATAL, "run",
@@ -703,18 +716,32 @@ def _curve_table_check(rid):
             if (isinstance(val, list) and val
                     and isinstance(val[0], list) and len(val[0]) == 2):
                 curves[f"{axis}.{name}"] = [int(p) for _e, p in val]
-    # ★ price_curve 는 축 곡선이 아니다 — analyze/axis/price.py 의 것인데
-    #   그 함수는 지금 아무도 안 부른다.  여기서 재면 거짓 실패가 된다.
-    #   ★ 죽은 config 로 보인다 — 작업기록에 따로 적어 가이드에 냈다
+    # ★★ 개정 428 — 5장-2a 가 배점 정본이고 「이 절 아래의 옛 배점은 폐기」다.
+    #   그래서 아래 곡선 표와 견주면 거짓 실패가 된다 (실측 08-21 — 9곡선 중 7).
+    #   ★ 곡선의 **최대값이 그 축의 배점과 같은가**를 본다.
+    #     구간 비율은 규격이 새로 안 줬으므로 비율 그대로 옮겼다 (v190)
+    axis_of_curve = {
+        "warranty.general_curve": "warranty.general",
+        "warranty.power_curve": "warranty.power",
+        "history.not_join_curve": "history.not_join",
+        "history.owner_curve": "history.owner",
+        "value.mileage_curve": "value.mileage",
+        "state.accident_curve": "state.accident",
+        "state.repair_curve": "state.repair",
+        "state.tread_curve": "state.consumable",
+    }
+    comp66 = cfg["components"]
     bad = []
     for name, pts in sorted(curves.items()):
-        # ★ 표는 마지막에 「그 밖」 한 줄을 더 적는다 (「> 50% | 0」).
-        #   config 는 그 줄을 안 담는다 — 못 찾으면 0 을 준다.  같은 뜻이다
-        if pts in tables or (pts + [0]) in tables:
-            continue
-        bad.append(f"{name} 의 점수 {pts} 와 같은 표가 f-table 에 없다")
-    return result(C["V3-66"], rid, f"{len(curves)}곡선",
-                  f"{len(curves) - len(bad)}곡선이 표와 같다",
+        axis = axis_of_curve.get(name)
+        if axis is None:
+            continue          # price_curve · soh_curve 는 축 곡선이 아니다
+        want = float(comp66[axis])
+        if abs(max(pts) - want) > 0.01:
+            bad.append(f"{name} 최대 {max(pts)} 인데 축 배점은 {want:.0f} 다")
+    del tables
+    return result(C["V3-66"], rid, f"{len(axis_of_curve)}곡선",
+                  f"{len(axis_of_curve) - len(bad)}곡선이 배점과 같다",
                   not bad, bad[:6])
 
 
@@ -744,6 +771,77 @@ def _special_null_check(conn, rid):
     if "부분 침수 이력은 확인할 수 없습니다" not in html:
         bad.append("화면이 「부분 침수는 엔카 미제공」을 안 밝힌다")
     return result(C["V3-81"], rid, 0, len(bad), not bad, bad[:4])
+
+
+def _grade_base_checks(conn, rid):
+    """V3-90 · V3-91 — 등급 분모 675 · 가이드 검산 (개정 431)."""
+    import json as _j
+    import os as _o
+    import re as _re
+
+    from analyze.axes import GRADE_EXCLUDED_AXES
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cfg = _j.load(f)
+    total = float(cfg["total_points"])
+
+    # V3-90 — 분모가 675 인가.  ★ config 만 보지 않고 DB 도 본다
+    bad90 = []
+    if GRADE_EXCLUDED_AXES:
+        bad90.append(f"GRADE_EXCLUDED_AXES 가 비지 않았다 "
+                     f"{GRADE_EXCLUDED_AXES} — 개정 431 이 폐기했다")
+    for (base,) in conn.execute(
+            "SELECT DISTINCT grade_base FROM result_score"):
+        if base is not None and abs(float(base) - total) > 0.01:
+            bad90.append(f"grade_base 가 {base} 다 — {total:.0f} 여야 한다")
+
+    # V3-91 — 검산 표를 되짚는다
+    comp = cfg["components"]
+    groups = cfg.get("groups") or {}
+
+    def cap(name: str) -> float:
+        pres = groups.get(name) or []
+        return float(sum(v for k, v in comp.items()
+                         if any(k == p or k.startswith(p) for p in pres)))
+
+    doc = _o.path.join(root, "docs", "chapters", "30-score", "f-table.md")
+    said = {}
+    if _o.path.isfile(doc):
+        for line in open(doc, encoding="utf-8"):
+            got = _re.match(r"^\|\s*([^|]+?)\s*\|\s*(\d+)\s*·\s*"
+                            r"([\d.]+)%\s*\|\s*\*{0,2}([SABCDE])\*{0,2}",
+                            line)
+            if got:
+                said[got.group(1).strip()] = (int(got.group(2)),
+                                              float(got.group(3)))
+    if not said:
+        return [result(C["V3-90"], rid, 0, len(bad90), not bad90, bad90[:4]),
+                not_applicable(C["V3-91"], rid, "검산 표를 못 읽었다")]
+    # ★ 표의 상황 이름 → 갈래 조합.  config 의 배점으로 되짚는다
+    mine = {
+        "보증X · 검증X · 값·취향 만점": cap("값") + cap("차량") + cap("취향"),
+        "**검증만** · 값·취향 만점":
+            cap("값") + cap("차량") + cap("사이트 검증") + cap("취향"),
+        "다 갖춤": total,
+        "값 0 · 나머지 만점":
+            cap("차량") + cap("제조사 보증") + cap("사이트 검증") + cap("취향"),
+    }
+    bad91 = []
+    for lab, want in said.items():
+        got = mine.get(lab)
+        if got is None:
+            continue
+        if abs(got - want[0]) > 0.5:
+            bad91.append(f"「{lab}」 표는 {want[0]}점인데 config 로는 "
+                         f"{got:.0f}점이다 ({got - want[0]:+.0f})")
+    return [
+        result(C["V3-90"], rid, total, "고정" if not bad90 else "어긋남",
+               not bad90, bad90[:4]),
+        result(C["V3-91"], rid, f"{len(mine)}줄", f"{len(bad91)}줄 다름",
+               not bad91, bad91[:6]),
+    ]
 
 
 def _points_cap_checks(conn, rid):
@@ -975,17 +1073,43 @@ def _group_sum_checks(rid):
                 not_applicable(C["V3-77"], rid, "f-table 이 없다")]
     text = open(doc, encoding="utf-8").read()
     # ① 갈래 표기 — 「⑤ 사이트 보증 50 = 20+30」 · 「⑤ 사이트 보증 50」
+    # ★★ 개정 428 — 5장-2a 의 갈래 표가 정본이다.  「전 | 후」 두 칸 중 **후**를 본다
+    #   | ① 값 | 250 | **250** | … |  ★ 아래의 옛 요약 줄은 폐기다
     said: dict = {}
-    for name, pts in _re.findall(
-            r"^[①-⑨]\s*([가-힣 ]+?)\s+(\d+)\s*(?:=|$)", text, _re.M):
-        said[name.strip()] = int(pts)
+    head = text.find("5장-2a")
+    body = text[head:text.find("## 24축", head)] if head >= 0 else ""
+    for name, _before, after in _re.findall(
+            r"^\|\s*[①-⑨]\s*\*{0,2}([가-힣 ]+?)\*{0,2}\s*(?:\([^)]*\))?\s*"
+            r"\|\s*(\d+)\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|", body, _re.M):
+        said[name.strip()] = int(after)
+    if not said:
+        for name, pts in _re.findall(
+                r"^[①-⑨]\s*([가-힣 ]+?)\s+(\d+)\s*(?:=|$)", text, _re.M):
+            said[name.strip()] = int(pts)
     # ② 24축 표 — 「| 4 | 상태 | 사고 이력 | 40 | record |」
+    # ★★ 5장-2a 의 24축 표를 읽는다 (개정 428).  아래의 옛 24축 표는 폐기다
+    #   | **① 값 250** | 시세 대비 | **100** |   ← 갈래가 첫 칸에 있고
+    #   |              | 신차가 대비 | **80** |   ← 이어지는 줄은 첫 칸이 빈다
     rows: dict = {}
-    for _no, group, pts in _re.findall(
-            r"^\|\s*\*{0,2}(\d+)\*{0,2}\s*\|\s*\*{0,2}([가-힣 ]+?)\*{0,2}"
-            r"\s*\|\s*\*{0,2}[^|]+?\*{0,2}\s*\|\s*\*{0,2}(\d+)\*{0,2}"
-            r"\s*\|", text, _re.M):
-        rows[group.strip()] = rows.get(group.strip(), 0) + int(pts)
+    axis_head = text.find("## 24축", head if head >= 0 else 0)
+    axis_body = text[axis_head:text.find("```", axis_head)] if axis_head >= 0 \
+        else ""
+    now = None
+    for line in axis_body.splitlines():
+        cells = [x.strip() for x in line.strip().strip("|").split("|")]
+        if len(cells) < 3:
+            continue
+        got = _re.match(r"\*{0,2}[①-⑨]\s*([가-힣 ]+?)\s*\d+\*{0,2}$",
+                        cells[0])
+        if got:
+            now = got.group(1).strip()
+        # ★ 마지막 합계 줄 「| | | **675** |」에서 멈춘다 —
+        #   안 멈추면 아래 절의 표까지 먹어 「취향 820」이 된다 (실측 08-21)
+        if not cells[0] and not cells[1]:
+            break
+        pts = _re.match(r"\*{0,2}(\d+)\*{0,2}$", cells[2])
+        if now and pts:
+            rows[now] = rows.get(now, 0) + int(pts.group(1))
     # ③ config
     with open(_o.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
@@ -1813,6 +1937,8 @@ def run(conn, ctx) -> list:
     out += _worse_of_checks(conn, rid)
     # 배점 교체 (개정 428)
     out += _points_cap_checks(conn, rid)
+    # 등급 분모 675 (개정 431)
+    out += _grade_base_checks(conn, rid)
     out.append(_special_null_check(conn, rid))
     out += _file_output_checks(conn, rid)
 
