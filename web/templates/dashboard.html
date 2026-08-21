@@ -1,11 +1,20 @@
 <h1>현황</h1>
 
+<!-- ══ 확인 필요 (STEP 95 · L3) ══
+     ★ v1 은 사전 pending · 등록부 unclassified · 검증 warn · 미확정이
+       조용히 지나갔습니다.  첫 화면에 띄웁니다 -->
 {% if d.attention %}
-<h2>해야 할 일</h2>
+<!-- ★ 이름은 시안이 정본이다 — 「해야 할 일」 (ref/screens/v2_dashboard_시안.html).
+     STEP 95 의 「확인 필요」는 같은 블록이다.  둘을 함께 적는다 -->
+<h2>해야 할 일 <span class="muted">확인 필요</span></h2>
 <ul>{% for a in d.attention %}
 <li class="warn-warn">{{ a.kind }} <strong>{{ a.count | num }}건</strong>
   <span class="muted">— {{ a.action }}</span></li>
 {% endfor %}</ul>
+{% endif %}
+{% if !d.attention %}
+<h2>해야 할 일 <span class="muted">확인 필요</span></h2>
+<p class="muted">확인이 필요한 것이 없습니다.</p>
 {% endif %}
 
 <h2>등급 분포 {{ d.grade_total | num }}건 · 전 차종</h2>
@@ -35,6 +44,71 @@
 {% if d.e_reasons %}
 <p class="muted">E 사유 — {% for r in d.e_reasons %}<span class="chip">{{ r }} {{ d.e_reasons[r] | num }}</span>{% endfor %}</p>
 {% endif %}
+
+<!-- ══ 조건 완화 시뮬레이션 (STEP 95) ══
+     ★ 「A 이상 0건」만 내면 다음에 무엇을 할지 모릅니다.
+       한 단계 낮추면 몇 건이 되는지가 다음 행동입니다 -->
+{% if d.relax_sim %}
+<h2>조건 완화 <span class="muted">한 단계 낮추면 몇 건이 되나</span></h2>
+<table class="rows">
+<thead><tr><th>지금 조건</th><th class="r">지금</th>
+<th class="r">한 단계 낮추면</th></tr></thead>
+<tbody>
+{% for r in d.relax_sim %}
+<tr><td>{{ r.condition }}</td>
+  <td class="r">{{ r.current | num }}건</td>
+  <td class="r">{{ r.relaxed | num }}건</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<!-- ══ 축별 미달 (STEP 95) ══
+     ★ 「어느 축에서 떨어지는가」가 판단 재료입니다.
+     ★ 「확인 안 됨」을 미달로 셉니다 — value 가 아니라 source 로 가릅니다
+       (개정 435 · V3-96) -->
+{% if d.axis_shortfall %}
+<h2>축별 미달 <span class="muted">확인 안 된 건수 · 그래서 잃은 점수</span></h2>
+<table class="rows">
+<thead><tr><th>축</th><th class="r">확인 안 됨</th><th class="r">잃은 점수</th></tr></thead>
+<tbody>
+{% for a in d.axis_shortfall %}
+<tr><td>{{ a.axis }}</td>
+  <td class="r">{{ a.count | num }}건</td>
+  <td class="r">{{ a.lost_points | num }}점</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<!-- ══ 차종별 시세 — 사분위 (개정 427 · STEP 95) ══
+     ★ /market 이 하던 표가 여기로 왔다.  ★ /market 화면은 안 지웠다 —
+       관리로 내렸다 (들어가는 문만 바꾼다)
+     ★ 중앙값 하나만 내면 넓은지 좁은지를 모른다.  사분위로 낸다 -->
+<h2>차종별 시세 <span class="muted">사분위 — 폭이 넓으면 고를 것이 많습니다</span></h2>
+<table class="rows">
+<thead><tr><th>차종</th><th class="r">매물</th>
+<th class="r">최저</th><th class="r">25%</th><th class="r">중앙</th>
+<th class="r">75%</th><th class="r">최고</th>
+<th class="r" title="사분위 폭 ÷ 중앙값. 넓을수록 값이 흩어져 있습니다">폭</th></tr></thead>
+<tbody>
+{% for m in market_rows %}
+<tr>
+  <td><a href="/listings?target={{ m.target_key }}"
+    title="이 차종 매물만 봅니다">{{ m.target_key }}</a></td>
+  <td class="r num">{{ m.count | num }}</td>
+  <td class="r num">{{ m.min_won | won }}</td>
+  <td class="r num"><a href="/listings?target={{ m.target_key }}&price_max={{ m.p25_won }}"
+    title="이 차종에서 하위 25% 값 이하만 봅니다">{{ m.p25_won | won }}</a></td>
+  <td class="r num"><b>{{ m.median_won | won }}</b></td>
+  <td class="r num">{{ m.p75_won | won }}</td>
+  <td class="r num">{{ m.max_won | won }}</td>
+  <td class="r num">{{ m.spread_pct }}%</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% if !market_rows %}<p class="muted">아직 시세를 낼 매물이 없습니다.</p>{% endif %}
 
 <h2>차종별 <span class="muted">막대는 A / B / C 이하</span></h2>
 <table>
@@ -71,9 +145,58 @@
 </table>
 {% endif %}
 
+<!-- ══ 사라짐 목록 (개정 427 · STEP 95) ══
+     ★ gone 을 「팔렸다」로 적지 않습니다.  목록에서 사라진 것입니다 (V6-06) -->
+<h2>사라짐 <span class="muted">목록에서 내려간 것 · 팔렸다고 단정하지 않습니다</span></h2>
+{% if d.gone_rows %}
+<table class="rows">
+<thead><tr><th>차종</th><th>트림</th><th class="r">마지막 가격</th>
+<th>어떻게</th><th class="r">언제</th></tr></thead>
+<tbody>
+{% for g in d.gone_rows %}
+<tr><td><a href="/detail/{{ g.listing_id }}">{{ g.target_key }}</a></td>
+  <td class="muted">{{ g.trim }}</td>
+  <td class="r">{{ g.price_won | won }}</td>
+  <td>{% if g.from_label %}{{ g.from_label }} → {% endif %}<strong>{{ g.to_label }}</strong></td>
+  <td class="r muted">{{ g.at }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% if !d.gone_rows %}
+<p class="muted">내려간 매물이 없습니다.</p>
+{% endif %}
+
+<!-- ══ 관심매물 요약 (STEP 95 · 11장) ══ -->
+<h2>관심매물</h2>
+{% if d.watch_summary %}
+<table class="rows">
+<thead><tr><th>차종</th><th>트림</th><th class="r">가격</th>
+<th>상태</th><th class="r">담은 날</th></tr></thead>
+<tbody>
+{% for w in d.watch_summary %}
+<tr><td><a href="/detail/{{ w.listing_id }}">{{ w.target_key }}</a></td>
+  <td class="muted">{{ w.trim }}</td>
+  <td class="r">{{ w.price_won | won }}</td>
+  <td>{{ w.status_label }}</td>
+  <td class="r muted">{{ w.at }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+<p class="muted"><a href="/watch">관심 화면에서 전부 봅니다 ↗</a></p>
+{% endif %}
+{% if !d.watch_summary %}
+<p class="muted">담아 둔 매물이 없습니다. 목록에서 ♡ 를 누르면 담깁니다.</p>
+{% endif %}
+
 {% if d.steps %}
-<h2>수집</h2>
-<p class="muted">★ 「없음」은 그 매물에 그 응답이 없는 것입니다. 실패가 아닙니다.</p>
+<h2>수집 <span class="muted">진행률 {{ d.progress.pct }}%
+  — 요청 {{ d.progress.requested | num }} 가운데 {{ d.progress.ok | num }} 성공{% if d.progress.failed %} · 실패 {{ d.progress.failed | num }}{% endif %}</span></h2>
+<div class="card">
+  <div class="pbar"><span class="got" style="width:{{ d.progress.pct }}%"></span></div>
+</div>
+<p class="muted">★ 「없음」은 그 매물에 그 응답이 없는 것입니다. 실패가 아닙니다.
+  ★ 진행률 분모에서 뺍니다.</p>
 <table>
 <thead><tr><th>단계</th><th class="num">요청</th><th class="num">성공</th>
 <th class="num">없음</th><th class="num">실패</th><th class="num">시간</th>
@@ -112,7 +235,7 @@
   <td>{{ r.target_label }} {{ r.trim }}</td>
   <td class="num">{{ r.price_won | won }}</td>
   <td class="num gap">{% if r.market_gap_won %}<span class="{{ r.market_gap_won | signcls }}">{{ r.market_gap_won | signwon }}</span>{% endif %}</td>
-  <td class="act"><a href="/why/{{ r.listing_id }}" class="mini">근거</a>
+  <td class="act"><a href="/detail/{{ r.listing_id }}" class="mini">근거</a>
     {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini">엔카 ↗</a>{% endif %}
     <a href="/compare?ids={{ r.listing_id }}" class="mini">⇄ 비교</a></td></tr>
 {% endfor %}

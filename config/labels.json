@@ -67,7 +67,9 @@
     "partial": "부분",
     "confirmed": "확정",
     "pending": "미검토",
-    "retired": "미관측"
+    "retired": "미관측",
+    "watching": "보는 중",
+    "closed": "닫음"
   },
   "VALUE_MARKS": {
     "1": "O",

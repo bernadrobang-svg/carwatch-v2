@@ -40,6 +40,7 @@
     "tools/classify_registry.py",
     "tools/classify_unclassified.py",
     "tools/daily_check.py",
+    "tools/deploy_check.py",
     "tools/daily_enqueue.py",
     "tools/light_check.py",
     "tools/repair_facet_chunks.py",

@@ -36,9 +36,9 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
 </div>
 
 
@@ -46,7 +46,7 @@
 <h1>아직 판정하지 못했습니다</h1>
 <p class="muted">무엇을 하면 되나 — 아래 조치를 순서대로 하십시오.</p>
 <h2>사유</h2>
-<ul><li>등록부 미분류 318건 — V4-11 이 판정을 막는다</li><li>차종이 안 붙은 매물 4,532건 — 판정 대상이 아니다</li></ul>
+<ul><li>등록부 미분류 318건 — V4-11 이 판정을 막는다</li><li>차종이 안 붙은 매물 4,562건 — 판정 대상이 아니다</li></ul>
 <h2>조치</h2>
 <ul class="action"><li>config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</li><li>아래 모델명·배지를 보고 targets.json 의 fuel_match · trim_include 를 고치거나 그대로 둔다</li></ul>
 
@@ -59,8 +59,8 @@
 
 <h2>차종이 안 붙은 매물</h2>
 <p class="notice">
-  범위 안 <strong>3,841건</strong> ·
-  <strong>차종 미정 4,532건</strong>.
+  범위 안 <strong>3,916건</strong> ·
+  <strong>차종 미정 4,562건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
   차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
   넣지도 않습니다.
@@ -88,27 +88,27 @@
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린</td><td class="muted">가솔린 1.6 터보 2WD</td>
-  <td class="num">550</td></tr>
+  <td class="num">566</td></tr>
 
 <tr><td>제네시스</td><td>G80</td>
   <td>가솔린</td><td class="muted">가솔린 3.5 터보 AWD</td>
-  <td class="num">527</td></tr>
+  <td class="num">531</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린+전기</td><td class="muted">시그니처 4WD</td>
-  <td class="num">446</td></tr>
+  <td class="num">451</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>디젤</td><td class="muted">디젤 2.0 2WD</td>
-  <td class="num">275</td></tr>
-
-<tr><td>제네시스</td><td>G70</td>
-  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
-  <td class="num">58</td></tr>
+  <td class="num">276</td></tr>
 
 <tr><td>제네시스</td><td>G80</td>
   <td>디젤</td><td class="muted">디젤 2.2 2WD</td>
-  <td class="num">58</td></tr>
+  <td class="num">61</td></tr>
+
+<tr><td>제네시스</td><td>G70</td>
+  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
+  <td class="num">59</td></tr>
 
 <tr><td>제네시스</td><td>GV70</td>
   <td>디젤</td><td class="muted">2.2 디젤 2WD</td>
@@ -132,7 +132,7 @@
 
 
 <h2>지금도 볼 수 있는 것</h2>
-<ul><li>수집 — 매물 8,373건 · 응답 106,879건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 8,373건 완료</li><li>채점 — 3,841건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
+<ul><li>수집 — 매물 8,478건 · 응답 107,348건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 8,478건 완료</li><li>채점 — 3,841건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
 
 
@@ -259,8 +259,8 @@
 
 <h2>차종이 안 붙은 매물</h2>
 <p class="notice">
-  범위 안 <strong>3,841건</strong> ·
-  <strong>차종 미정 4,532건</strong>.
+  범위 안 <strong>3,916건</strong> ·
+  <strong>차종 미정 4,562건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
   차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
   넣지도 않습니다.
@@ -288,27 +288,27 @@
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린</td><td class="muted">가솔린 1.6 터보 2WD</td>
-  <td class="num">550</td></tr>
+  <td class="num">566</td></tr>
 
 <tr><td>제네시스</td><td>G80</td>
   <td>가솔린</td><td class="muted">가솔린 3.5 터보 AWD</td>
-  <td class="num">527</td></tr>
+  <td class="num">531</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린+전기</td><td class="muted">시그니처 4WD</td>
-  <td class="num">446</td></tr>
+  <td class="num">451</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>디젤</td><td class="muted">디젤 2.0 2WD</td>
-  <td class="num">275</td></tr>
-
-<tr><td>제네시스</td><td>G70</td>
-  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
-  <td class="num">58</td></tr>
+  <td class="num">276</td></tr>
 
 <tr><td>제네시스</td><td>G80</td>
   <td>디젤</td><td class="muted">디젤 2.2 2WD</td>
-  <td class="num">58</td></tr>
+  <td class="num">61</td></tr>
+
+<tr><td>제네시스</td><td>G70</td>
+  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
+  <td class="num">59</td></tr>
 
 <tr><td>제네시스</td><td>GV70</td>
   <td>디젤</td><td class="muted">2.2 디젤 2WD</td>
@@ -347,8 +347,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260819T234633</span>
-  <span>2026-08-21 20:23</span>
+  <span>run 20260821T130404</span>
+  <span>2026-08-22 01:21</span>
 </footer>
 
 </body>

@@ -180,8 +180,10 @@ def m1(anon: Client, lid: int) -> None:
     tgt = [x for x in links(body) if "target=" in x]
     rec(3, "/", "차종별 표의 차종명", f"링크 {len(tgt)}", bool(tgt))
 
-    why = [x for x in links(body) if x.startswith("/why/")]
-    rec(4, "/", "상위 후보 → /why", f"링크 {len(why)}", bool(why))
+    # ★ 개정 427 — 현황의 매물 링크도 /detail 로 바뀌었다.  /why 는 살아 있다
+    why = [x for x in links(body)
+           if x.startswith("/why/") or x.startswith("/detail/")]
+    rec(4, "/", "상위 후보 → 상세", f"링크 {len(why)}", bool(why))
 
     st, lbody, _h = anon.get("/listings")
     chips = [x for x in links(lbody) if "?" in x and "listings" in x]

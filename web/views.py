@@ -260,8 +260,12 @@ def dashboard(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                 root=root, flash_key=flash_key)
     dv = view_dashboard(account, conn, ver["run_id"], ver["calc_version"],
                         _cfg("finance.json", root), root)
+    # ★★ 개정 427 — 현황이 시세를 흡수한다.  /market 의 차종별 표가 여기로 온다
+    #   ★ /market 화면은 안 지운다.  관리로 내렸다 (V11-158 이 확인한다)
+    #   ★ 표는 view_dashboard 가 같은 쿼리로 만들었다 — 다시 안 받는다 (V11-34)
     return page(conn, account, "현황", "dashboard.html",
-                {"d": dv, "buttons": _filter_buttons(
+                {"d": dv, "market_rows": dv.market_rows,
+                 "buttons": _filter_buttons(
                     ListingFilter(calc_version=ver["calc_version"]),
                     base="/listings")},
                 csrf=csrf, root=root, flash_key=flash_key)

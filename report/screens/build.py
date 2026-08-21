@@ -41,7 +41,7 @@ from report.screens.views import (
     TONE_BAD, TONE_GOOD, TONE_MUTED, TONE_UNKNOWN,
     AttentionItem, AxisChip, ChangeRow, CompareView, DashboardView, DealerRow,
     ListingFilter, ListingRow, MarketRow, MarketView, NotReadyView,
-    ReportFile, ReportsView,
+    RelaxRow, ReportFile, ReportsView,
     WatchRow,
     TargetStat, ViewerState,
 )
@@ -1746,15 +1746,22 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
     by_target: dict = {}
     for tk, grade, n in grade_rows:
         by_target.setdefault(tk, {})[grade] = n
+    # ★★ 개정 427 — 이 한 쿼리로 둘을 만든다.
+    #   ① A등급 중앙가 (차종별 표)  ② ★ 차종별 시세 사분위 (시세 흡수)
+    #   ★ 따로 부르면 현황이 21쿼리가 되어 상한 20 을 넘는다 (실측 08-21)
     price_rows = conn.execute(
-        "SELECT l.target_key, l.price_current_won FROM result_score s "
+        "SELECT l.target_key, l.price_current_won, s.grade FROM result_score s "
         "JOIN core_listing l ON l.listing_id = s.listing_id "
-        "WHERE s.calc_version = ? AND s.grade = 'A' "
+        "WHERE s.calc_version = ? "
         "AND l.price_current_won IS NOT NULL ORDER BY 1, 2",
         (calc_version,)).fetchall()
     prices: dict = {}
-    for tk, p in price_rows:
-        prices.setdefault(tk, []).append(p)
+    all_prices: dict = {}
+    for tk, p, g in price_rows:
+        all_prices.setdefault(tk, []).append(p)
+        if g == "A":
+            prices.setdefault(tk, []).append(p)
+    market_rows = _quartiles_by_target(all_prices)
 
     stats = []
     # ★ 차종이 없는 매물이 있다.  목록 쿼리가 ModelGroup 단위라
@@ -1774,14 +1781,22 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         " changed_at FROM core_listing_change "
         "ORDER BY changed_at DESC LIMIT 20")]
 
-    # ★ 조치가 필요한 것 — 세 물음을 한 번에 센다 (V11-34)
+    # ★ 조치가 필요한 것 — 네 물음을 한 번에 센다 (V11-34 · STEP 95)
     counts = conn.execute(
         "SELECT (SELECT COUNT(*) FROM meta_field_usage "
         "        WHERE usage='unclassified'), "
         "       (SELECT COUNT(*) FROM dict_enum WHERE status='pending'), "
         "       (SELECT COUNT(DISTINCT axis) FROM result_axis "
         "        WHERE excluded=1 AND source IN "
-        "        ('gate_closed','coefficient_out_of_range'))").fetchone()
+        "        ('gate_closed','coefficient_out_of_range')), "
+        # ★ STEP 95 — 「확인 필요」는 넷이다.  검증 warn 이 빠져 있었다.
+        #   ★ 같은 쿼리에 붙인다 — 따로 부르면 상한 20 을 넘는다 (V11-34)
+        # ★ 이 화면이 보여 주는 그 실행의 warn 이다.  다른 실행 것을 섞지
+        #   않는다 — 「어제 통과, 오늘도 통과」로 잘못 읽힌다 (A-7 · V1-16)
+        "       (SELECT COUNT(*) FROM audit_validation "
+        "        WHERE severity='warn' AND passed=0 AND applicable=1 "
+        "          AND run_id=?)", (run_id,)
+        ).fetchone()
     attention = []
     for n, kind, detail, action in (
         (counts[0], "unclassified", "등록부 미분류 경로",
@@ -1791,17 +1806,33 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
          "원문 표본 3건을 확인해 confirmed 로 올린 뒤 S9 를 재실행한다"),
         (counts[2], "undecided", "미확정으로 분모에서 빠진 축",
          "감가 곡선·HDA Gate·색상 목록을 확정한다"),
+        # ★ v1 은 이런 것이 조용히 지나갔다.  첫 화면에 띄운다 (STEP 95)
+        (counts[3], "warn", "검증 warn — 진행은 되지만 확인이 필요하다",
+         "python3.11 tools/check_all.py 로 warn 목록을 본다"),
     ):
         if n:
             attention.append(AttentionItem(kind, detail, n, action))
 
     # ★ 같은 집계를 두 번 돌면 화면 한 쪽이 그만큼 늘어난다 (V11-34 · B-2)
-    grade_counts = _grade_counts(conn, calc_version)
+    # ★ 개정 427 — 등급 분포는 위 by_target 을 접으면 나온다.  다시 묻지 않는다.
+    #   ★ 쿼리 둘(등급 집계 · 전체 건수)을 여기서 없앤다 — 그 자리에
+    #     STEP 95 의 「사라짐 목록」·「축별 미달」을 넣는다
+    grade_counts = _grade_counts(conn, calc_version, by_target)
+    grade_total = sum(grade_counts.values())
+
+    steps = _step_rows(conn, run_id)
+
+    # ★ STEP 95 — 축별 미달.  「어느 축에서 떨어지는가」가 판단 재료다
+    axis_shortfall = _axis_shortfall(conn, calc_version)
+    # ★ 개정 427 — 사라짐 목록 · 관심매물 요약.  ★ 한 쿼리로 둘을 받는다
+    gone_rows, watch_summary = _gone_and_watch(conn, account, root)
 
     return DashboardView(
         meta=ReportMeta(run_id, "L3", "encar", None, calc_version, None),
         viewer=viewer_state(account),
         target_stats=stats, recent_changes=changes,
+        # ★ 차종별 시세 사분위 (개정 427) — 같은 쿼리로 만들었다
+        market_rows=market_rows,
         # ★ 상위 후보 — 점수순이 아니다.  view_recommend 와 같은 순서다
         # ★ 현황판은 등급·가격만 낸다.  상태·시세는 안 받는다 (V11-34)
         # ★ 현황판에서도 「왜 이 순위인가」와 시세차를 봐야 한다 (개정 304).
@@ -1814,12 +1845,19 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         #   첫 화면에 그림이 하나도 없으면 무엇이 있는지 모른다 (개정 340)
         grade_rows=_bars([{"grade": k, "count": v}
                           for k, v in grade_counts.items()], "count", root),
-        grade_total=conn.execute(
-            "SELECT COUNT(*) FROM result_score WHERE calc_version=?",
-            (calc_version,)).fetchone()[0],
+        grade_total=grade_total,
         e_reasons=_e_reasons(conn, calc_version),
         today_changes=_today_changes(conn),
-        steps=_step_rows(conn, run_id),
+        steps=steps,
+        # ★★ STEP 95 — v1 블록 넷이 선언만 되고 비어 있었다 (실측 08-22).
+        #   DashboardView 에 자리는 있는데 view_dashboard 가 안 채웠다 —
+        #   ★ 「선언과 실제의 괴리」다.  채운다
+        relax_sim=_relax_sim(grade_counts, root),
+        axis_shortfall=axis_shortfall,
+        watch_summary=watch_summary,
+        # ★ 개정 427 — 사라짐 목록 · 진행률
+        gone_rows=gone_rows,
+        progress=_progress(steps),
         # 주의 항목은 관리자만 본다 — 조치가 관리자 행동이다
         attention=attention if account.role == ROLE_ADMIN else [])
 
@@ -1847,11 +1885,120 @@ def _bars(rows: list, key: str, root: str = ".") -> list:
     return rows
 
 
-def _grade_counts(conn, calc_version: str) -> dict:
-    got = {r[0]: r[1] for r in conn.execute(
-        "SELECT grade, COUNT(*) FROM result_score WHERE calc_version=? "
-        "GROUP BY grade", (calc_version,))}
+def _grade_counts(conn, calc_version: str, by_target: dict | None = None) -> dict:
+    """등급 분포.
+
+    ★ by_target 을 주면 묻지 않는다 (V11-34).  현황은 이미 차종×등급을
+      받아 왔다 — 접으면 같은 수가 나온다.  두 번 세면 화면이 그만큼 늘어난다
+    """
+    if by_target is not None:
+        got: dict = {}
+        for grades in by_target.values():
+            for g, n in grades.items():
+                got[g] = got.get(g, 0) + n
+    else:
+        got = {r[0]: r[1] for r in conn.execute(
+            "SELECT grade, COUNT(*) FROM result_score WHERE calc_version=? "
+            "GROUP BY grade", (calc_version,))}
     return {g: got.get(g, 0) for g in GRADE_ORDER}
+
+
+def _relax_sim(grade_counts: dict, root: str = ".") -> list:
+    """조건 완화 시뮬레이션 (STEP 95).
+
+    ★ 「A 이상 0건」만 내면 사람이 다음에 무엇을 할지 모른다.
+      ★ 한 단계 낮추면 몇 건이 되는지를 함께 낸다 — 그것이 다음 행동이다
+    ★ 순위를 안 매기는 셋(제외·등급 없음·평가 불가)은 세지 않는다 (STEP 84)
+    """
+    out = []
+    upto = 0
+    for i, grade in enumerate(RANK_ORDER):
+        upto += grade_counts.get(grade, 0)
+        if i + 1 >= len(RANK_ORDER):
+            break
+        nxt = RANK_ORDER[i + 1]
+        out.append(RelaxRow(
+            condition=f"{grade} 이상",
+            current=upto,
+            relaxed=upto + grade_counts.get(nxt, 0)))
+    return out
+
+
+def _axis_shortfall(conn, calc_version: str) -> list:
+    """축별 미달 건수 (STEP 95) — ★ 어느 축에서 떨어지는가.
+
+    ★ 「확인 안 됨」을 미달로 센다.  value 가 아니라 source 로 가른다
+      (개정 435 · V3-96) — value NULL 로 세면 15,709건이 조용히 빠진다
+    ★ 잃은 점수까지 낸다.  건수만으로는 어느 축이 아픈지 모른다
+    """
+    out = []
+    for axis, n, lost in conn.execute(
+        "SELECT axis, COUNT(*), SUM(max_points) FROM result_axis "
+        "WHERE calc_version=? AND source IN "
+        "      ('missing','site_unavailable','nothing_picked') "
+        "GROUP BY axis ORDER BY SUM(max_points) DESC", (calc_version,)
+    ):
+        out.append({"axis": axis, "count": n,
+                    "lost_points": round(lost or 0.0, 1)})
+    return out
+
+
+def _progress(steps: list) -> dict:
+    """수집 진행률 (개정 427).
+
+    ★ 「없음(not_found)」은 실패가 아니다 — 그 매물에 없는 것이다 (V6-06).
+      ★ 분모에서 뺀다.  넣으면 진행률이 까닭 없이 낮게 보인다
+    """
+    req = ok = failed = 0
+    for one in steps:
+        req += (one.requested or 0) - (one.missing or 0)
+        ok += one.ok or 0
+        failed += one.failed or 0
+    return {"requested": req, "ok": ok, "failed": failed,
+            "pct": round(ok * 100 / req, 1) if req else 0.0}
+
+
+def _gone_and_watch(conn, account, root: str = ".") -> tuple:
+    """사라짐 목록 · 관심매물 요약 (STEP 95 · 개정 427).
+
+    ★ 한 쿼리로 둘을 받는다 — 따로 부르면 현황이 상한 20 을 넘는다 (V11-34)
+    ★ gone 을 「팔렸다」로 적지 않는다.  목록에서 사라진 것이다 (V6-06)
+    ★ 사라짐은 두 갈래다 — 우리 status 가 내려간 것과
+      사이트 sales_status 가 CONTRACT(계약) 로 바뀐 것.  둘 다 낸다
+    """
+    labels = _labels(root)["STATUS_LABELS"]
+    gone, watch = [], []
+    for kind, lid, tk, trim, price, old, new, at in conn.execute(
+        "SELECT 'gone', c.listing_id, l.target_key, l.trim_badge, "
+        "       l.price_current_won, c.old_value, c.new_value, c.changed_at "
+        "  FROM core_listing_change c "
+        "  JOIN core_listing l ON l.listing_id = c.listing_id "
+        " WHERE c.change_kind='status' "
+        "   AND ((c.field='status' AND c.new_value IN ('gone','out_of_scope')) "
+        "     OR (c.field='sales_status' AND c.new_value='CONTRACT')) "
+        "UNION ALL "
+        "SELECT 'watch', w.primary_listing_id, l.target_key, l.trim_badge, "
+        "       l.price_current_won, w.status, w.memo, w.added_at "
+        "  FROM watch_item w "
+        "  JOIN core_listing l ON l.listing_id = w.primary_listing_id "
+        " WHERE w.account_id = ? "
+        " ORDER BY 8 DESC", (getattr(account, "account_id", 0) or 0,)
+    ):
+        row = {"listing_id": lid, "target_key": tk or "차종 미정",
+               "trim": trim, "price_won": price, "at": (at or "")[:10]}
+        if kind == "gone":
+            # ★ 원문 값을 그대로 두지 않는다.  뜻을 적는다
+            # ★ 처음 본 값은 「앞」이 없다.  ★ 지어내지 않는다 —
+            #   화면이 화살표를 안 그린다 (앞이 없으면 「지금 무엇인가」만 낸다)
+            row["from_label"] = labels.get(old, old) if old else ""
+            row["to_label"] = labels.get(new, "계약 중" if new == "CONTRACT"
+                                         else new)
+            gone.append(row)
+        else:
+            row["status_label"] = labels.get(old, old)
+            row["memo"] = new
+            watch.append(row)
+    return gone[:TODAY_ROWS], watch[:TODAY_ROWS]
 
 
 def _e_reasons(conn, calc_version: str) -> dict:
@@ -2368,3 +2515,57 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
         "alts": _alternatives(account, conn, row, flt, fin_cfg, root),
         "rep_raw": v.raw_sections,
     }
+
+
+def _quartiles_by_target(by: dict) -> list:
+    """차종별 사분위 (개정 427).  ★ 조회는 부르는 쪽이 한다 —
+    현황이 이미 받아 온 값을 다시 받지 않기 위해서다 (V11-34)."""
+    qs = MARKET_QUANTILES
+    out = []
+    for key, prices in sorted(by.items()):
+        if not prices:
+            continue
+        ps = sorted(prices)
+
+        def at(p, _ps=ps):
+            return _ps[min(len(_ps) - 1, int(len(_ps) * p))]
+
+        mid = at(qs[1])
+        out.append({"target_key": key or "차종 미정", "count": len(ps),
+                    "min_won": ps[0], "p25_won": at(qs[0]),
+                    "median_won": mid, "p75_won": at(qs[2]),
+                    "max_won": ps[-1],
+                    # ★ 넓은지 좁은지 — 사분위 폭을 중앙값으로 나눈다
+                    "spread_pct": round((at(qs[2]) - at(qs[0])) / mid * 100, 1)
+                    if mid else 0.0})
+    return out
+
+
+def market_by_target(conn, root: str = ".") -> list:
+    """★ 차종별 시세표 (개정 427) — /market 이 하던 것이 현황으로 온다.
+
+    ★ 「사분위」다.  중앙값 하나만 내면 넓은지 좁은지를 모른다
+    ★ 한 쿼리로 전 차종을 센다 — 차종마다 부르면 열 쿼리가 된다 (V11-34)
+    """
+    rows = conn.execute(
+        "SELECT target_key, price_current_won FROM core_listing"
+        " WHERE price_current_won IS NOT NULL AND status <> 'out_of_scope'"
+        " ORDER BY target_key, price_current_won").fetchall()
+    by: dict = {}
+    for key, won in rows:
+        by.setdefault(key, []).append(won)
+    qs = MARKET_QUANTILES
+    out = []
+    for key, prices in sorted(by.items()):
+        def at(p, _ps=prices):
+            return _ps[min(len(_ps) - 1, int(len(_ps) * p))]
+
+        out.append({"target_key": key, "count": len(prices),
+                    "min_won": prices[0], "p25_won": at(qs[0]),
+                    "median_won": at(qs[1]), "p75_won": at(qs[2]),
+                    "max_won": prices[-1],
+                    # ★ 넓은지 좁은지 — 사분위 폭을 중앙값으로 나눈다
+                    "spread_pct": round(
+                        (at(qs[2]) - at(qs[0])) / at(qs[1]) * 100, 1)
+                    if at(qs[1]) else 0.0})
+    return out

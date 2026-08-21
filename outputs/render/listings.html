@@ -36,16 +36,16 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다  (/notready)</span>
 </div>
 
 
 <main>
 <h1>매물
-  <small>3,065건 중 10건 ·
-    307쪽 중 1쪽</small></h1>
+  <small>3,137건 중 10건 ·
+    314쪽 중 1쪽</small></h1>
 
 <!-- ══ 조건줄 — 칩 7 + ＋조건 12 (개정 427 · STEP 97) ══
      ★ 필터는 반대로 두껍게.  실측 — 보배드림 15종 · KB차차차 16종 · 우리 5개.
@@ -58,7 +58,7 @@
   <span class="chip">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
-      <option value="G80_25T">G80_25T (1915건)</option><option value="MODEL_Y">MODEL_Y (580건)</option><option value="G70_20T">G70_20T (265건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (262건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (258건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (193건)</option><option value="GV60">GV60 (129건)</option><option value="G70_25T">G70_25T (96건)</option><option value="GV70_EV">GV70_EV (77건)</option><option value="G80_EV">G80_EV (66건)</option>
+      <option value="G80_25T">G80_25T (1962건)</option><option value="MODEL_Y">MODEL_Y (580건)</option><option value="G70_20T">G70_20T (280건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (262건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (258건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (200건)</option><option value="GV60">GV60 (129건)</option><option value="G70_25T">G70_25T (102건)</option><option value="GV70_EV">GV70_EV (77건)</option><option value="G80_EV">G80_EV (66건)</option>
     </select></span>
   <span class="chip">가격
     <input name="price_min" size="4" inputmode="numeric" value="" placeholder="2000">~<input
@@ -70,11 +70,11 @@
     </select></span>
   <span class="chip">외장
     <select name="color_ext"><option value="">전체</option>
-      <option value="흰색">흰색 (3,433)</option><option value="검정색">검정색 (2,314)</option><option value="쥐색">쥐색 (1,365)</option><option value="청색">청색 (567)</option><option value="은회색">은회색 (250)</option><option value="은색">은색 (101)</option><option value="빨간색">빨간색 (73)</option><option value="담녹색">담녹색 (54)</option><option value="갈색">갈색 (25)</option><option value="청옥색">청옥색 (24)</option><option value="진주색">진주색 (24)</option><option value="녹색">녹색 (24)</option><option value="하늘색">하늘색 (19)</option><option value="연금색">연금색 (19)</option>
+      <option value="흰색">흰색 (3,468)</option><option value="검정색">검정색 (2,334)</option><option value="쥐색">쥐색 (1,394)</option><option value="청색">청색 (581)</option><option value="은회색">은회색 (255)</option><option value="은색">은색 (102)</option><option value="빨간색">빨간색 (74)</option><option value="담녹색">담녹색 (54)</option><option value="갈색">갈색 (25)</option><option value="청옥색">청옥색 (24)</option><option value="진주색">진주색 (24)</option><option value="녹색">녹색 (24)</option><option value="하늘색">하늘색 (19)</option><option value="연금색">연금색 (19)</option>
     </select></span>
   <span class="chip">내장
     <select name="color_int"><option value="">전체</option>
-      <option value="검정색 계열">검정색 계열 (3,496)</option><option value="갈색 계열">갈색 계열 (2,699)</option><option value="베이지색 계열">베이지색 계열 (1,088)</option><option value="회색 계열">회색 계열 (318)</option><option value="흰색 계열">흰색 계열 (253)</option><option value="청색 계열">청색 계열 (225)</option><option value="빨간색 계열">빨간색 계열 (184)</option><option value="녹색 계열">녹색 계열 (50)</option><option value="주황색 계열">주황색 계열 (29)</option><option value="노란색 계열">노란색 계열 (1)</option>
+      <option value="검정색 계열">검정색 계열 (3,532)</option><option value="갈색 계열">갈색 계열 (2,743)</option><option value="베이지색 계열">베이지색 계열 (1,100)</option><option value="회색 계열">회색 계열 (323)</option><option value="흰색 계열">흰색 계열 (254)</option><option value="청색 계열">청색 계열 (230)</option><option value="빨간색 계열">빨간색 계열 (186)</option><option value="녹색 계열">녹색 계열 (50)</option><option value="주황색 계열">주황색 계열 (29)</option><option value="노란색 계열">노란색 계열 (1)</option>
     </select></span>
   <span class="chip">등급
     <select name="min_grade" title="이 등급 이상만 봅니다">
@@ -97,7 +97,7 @@
       <span class="chip">트림 <input name="trim" size="6" value=""
         placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
       <span class="chip">연료 <select name="fuel"><option value="">전체</option>
-        <option value="가솔린">가솔린 (5,303)</option><option value="가솔린+전기">가솔린+전기 (1,336)</option><option value="전기">전기 (852)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (451)</option><option value="디젤">디젤 (403)</option>
+        <option value="가솔린">가솔린 (5,392)</option><option value="가솔린+전기">가솔린+전기 (1,341)</option><option value="전기">전기 (852)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (458)</option><option value="디젤">디젤 (407)</option>
       </select></span>
       <span class="chip">사이트 <select name="site"><option value="">전체</option>
         
@@ -111,7 +111,7 @@
       <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
         value="" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
       <span class="chip">지역 <select name="region"><option value="">전체</option>
-        <option value="경기">경기 (3,805)</option><option value="서울">서울 (1,051)</option><option value="대구">대구 (812)</option><option value="부산">부산 (657)</option><option value="인천">인천 (486)</option><option value="전남광주">전남광주 (424)</option><option value="대전">대전 (277)</option><option value="충남">충남 (196)</option><option value="경남">경남 (190)</option><option value="전북">전북 (159)</option><option value="울산">울산 (104)</option><option value="충북">충북 (82)</option><option value="광주">광주 (47)</option><option value="경북">경북 (31)</option>
+        <option value="경기">경기 (3,866)</option><option value="서울">서울 (1,054)</option><option value="대구">대구 (815)</option><option value="부산">부산 (677)</option><option value="인천">인천 (489)</option><option value="전남광주">전남광주 (431)</option><option value="대전">대전 (279)</option><option value="충남">충남 (197)</option><option value="경남">경남 (191)</option><option value="전북">전북 (159)</option><option value="울산">울산 (106)</option><option value="충북">충북 (84)</option><option value="광주">광주 (47)</option><option value="경북">경북 (31)</option>
       </select></span>
       <!-- ★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164) -->
       <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
@@ -128,8 +128,8 @@
 
 <!-- ★ 고른 조건을 문장으로 (V11-165) · ★ 뺀 건수를 밝힌다 -->
 <div class="sentence">
-  리스 제외 — <span class="n">3,065건</span>
-   · <b>리스·렌트 405건은 뺐습니다</b> —
+  리스 제외 — <span class="n">3,137건</span>
+   · <b>리스·렌트 408건은 뺐습니다</b> —
     <a href="/listings?lease=1">함께 보기</a>
    · <b>관문 제외 371건은 뺐습니다</b> —
     <a href="/listings?excluded=1">따로 보기</a>
@@ -1463,8 +1463,8 @@
   
   <a href="/listings?page=1" class="on">1</a><a href="/listings?page=2">2</a><a href="/listings?page=3">3</a><a href="/listings?page=4">4</a><a href="/listings?page=5">5</a><a href="/listings?page=6">6</a><a href="/listings?page=7">7</a><a href="/listings?page=8">8</a><a href="/listings?page=9">9</a>
   <a href="/listings?page=2">다음 ›</a>
-  <a href="/listings?page=307">끝 »</a>
-  <span class="dim">한 쪽 10건 · 모두 307쪽</span>
+  <a href="/listings?page=314">끝 »</a>
+  <span class="dim">한 쪽 10건 · 모두 314쪽</span>
 </div>
 <p class="dim">★ 쪽을 넘겨도 지금 조건이 그대로 붙습니다 (V11-58).</p>
 
@@ -1629,8 +1629,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260819T234633</span>
-  <span>2026-08-21 20:22</span>
+  <span>run 20260821T130404</span>
+  <span>2026-08-22 01:20</span>
 </footer>
 
 </body>

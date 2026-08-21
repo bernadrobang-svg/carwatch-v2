@@ -375,6 +375,13 @@ class DashboardView:
     # 오늘 변동 · 수집 단계.  ★ 사람이 「무엇이 달라졌나」를 먼저 본다
     today_changes: list = field(default_factory=list)
     steps: list = field(default_factory=list)
+    # ★★ 개정 427 — 현황이 시세를 흡수한다.  차종별 사분위표가 여기로 온다
+    #   ★ /market 화면은 안 지웠다 — 관리로 내렸다
+    market_rows: list = field(default_factory=list)
+    # ★★ 개정 427 — 사라짐 목록 · 진행률 (STEP 95)
+    #   ★ gone 을 「팔렸다」로 적지 않는다 — 목록에서 사라진 것이다 (V6-06)
+    gone_rows: list = field(default_factory=list)
+    progress: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
