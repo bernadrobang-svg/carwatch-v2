@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>매물 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=799e77946b">
+<link rel="stylesheet" href="/static/app.css?v=0d9f3a1a7d">
 
 </head>
 <body class="s-listings">
@@ -97,532 +97,1315 @@
 
 
 
-<table class="rows car-rows">
-<thead><tr>
-<th class="c">사진</th><th class="c">♡</th>
-<th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
-<th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
-<th class="r" title="같은 차종·트림·연식 실매물 중앙값 대비. 음수가 싼 것입니다">시세 대비</th>
-<th class="r" title="신차가(등급기준 + 선택옵션) 대비 얼마나 내렸는가">신차가 대비</th>
-<th class="r">가격</th><th class="r">월</th>
-<th class="c" title="기호 O 있음 · - 없음 · ? 확인 못 함">사고</th><th class="c" title="기호 O 있음 · - 없음 · ? 확인 못 함">골격</th><th class="c" title="기호 O 있음 · - 없음 · ? 확인 못 함">용도</th><th class="c" title="기호 O 있음 · - 없음 · ? 확인 못 함">보증</th>
-<th class="r">옵션</th><th>딜러</th><th class="r">경과</th><th class="c">상태</th><th class="c">사이트</th>
-<th class="c">링크</th>
-</tr></thead>
-<tbody>
+<!-- ══ 목록 한 행 — 8칸 (개정 427 · STEP 97) ══
+     ★ 정본은 ref/screens/v2_시안_목록상세.html 이다
+     ★ 전에는 24칸이었다.  「훑을 수가 없다」 (마스터)
+     ★ 목록은 「고르는」 화면이 아니라 「버리는」 화면이다 —
+       가격·연식·주행 셋이면 90%가 걸러진다.  자세한 것은 상세다
+     1 등급+순위 · 2 ★네 묶음 막대 · 3 사진 · 4 차명/트림/연식/주행/색
+     5 시세차 · 6 신차대비% · 7 옵션가 · 8 경과일+가격+변동 -->
+<main class="rows car-rows">
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4255/42559357_001.jpg" data-href="/why/7781"
-    data-buy="6,045만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/7781"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4255/42559357_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="7781">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>1</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="539.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>79.9%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-09" title="이 연식 이후만 봅니다">2024-09</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=20000" title="이 주행거리 이하만 봅니다">14,520km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">6.8%</span>
-    
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-27.4%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 7,779만 (등급 6,170만 + 옵션 1,609만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=60000000" title="이 가격대 이하만 봅니다"><b>5,650만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 105만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=1100000">105만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">3년 1개월 · 85천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/7781">7종 1,609만</a>
-    
-  </td>
-  <td data-label="딜러" title="비엠자동차"><a href="/dealers?q=비엠자동차">비엠자동차</a></td>
-  <td class="r num" data-label="경과">3일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/7781" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42559357" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+<div class="row" data-peek="https://ci.encar.com/carpicture05/pic4255/42559357_001.jpg" data-href="/why/7781"
+     data-buy="6,045만" data-buyest="True">
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4215/42159592_001.jpg" data-href="/why/2593"
-    data-buy="5,296만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/2593"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4215/42159592_001.jpg" alt="" loading="lazy"></a>
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 539.4 / 675 점 (79.9%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>1위</small>
     
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="2593">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>2</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="536.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>79.5%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-06" title="이 연식 이후만 봅니다">2024-06</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=50000" title="이 주행거리 이하만 봅니다">46,206km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-6.4%</span>
     
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-34.1%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 7,508만 (등급 6,170만 + 옵션 1,338만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=50000000" title="이 가격대 이하만 봅니다"><b>4,950만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 88만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=900000">88만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">2년 10개월 · 53천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/2593">6종 1,338만</a>
-    
-  </td>
-  <td data-label="딜러" title="(주)모던카"><a href="/dealers?q=(주)모던카">(주)모던카</a></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/2593" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42159592" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  </div>
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4255/42557944_001.jpg" data-href="/why/1984"
-    data-buy="6,366만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/1984"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4255/42557944_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="1984">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>3</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="529.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>78.4%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2025-02" title="이 연식 이후만 봅니다">2025-02</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=20000" title="이 주행거리 이하만 봅니다">10,900km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">9.2%</span>
-    
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,450만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.7%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 7,800만 (등급 6,179만 + 옵션 1,621만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=60000000" title="이 가격대 이하만 봅니다"><b>5,950만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 113만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=1200000">113만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">3년 6개월 · 89천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/1984">6종 1,621만</a>
-    
-  </td>
-  <td data-label="딜러" title="준모터스"><a href="/dealers?q=준모터스">준모터스</a></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/1984" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42557944" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 139.0 / 150.0점"><i
+        style="height:93%"></i><u>93</u></div><div class="bar b2"
+        title="값 148.0 / 250.0점"><i
+        style="height:59%"></i><u>59</u></div><div class="bar b3"
+        title="보증 130.0 / 130.0점"><i
+        style="height:100%"></i><u>100</u></div><div class="bar b4"
+        title="취향 122.4 / 145.0점"><i
+        style="height:84%"></i><u>84</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
 
-<tr data-peek="https://ci.encar.com/carpicture06/pic4256/42560207_001.jpg" data-href="/why/8126"
-    data-buy="6,366만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/8126"><img class="thumb" src="https://ci.encar.com/carpicture06/pic4256/42560207_001.jpg" alt="" loading="lazy"></a>
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/7781"><img class="thumb"
+      src="https://ci.encar.com/carpicture05/pic4255/42559357_001.jpg" alt="" loading="lazy"></a>
     
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="8126">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>4</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="529.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>78.4%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2025-02" title="이 연식 이후만 봅니다">2025-02</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=20000" title="이 주행거리 이하만 봅니다">10,925km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">9.2%</span>
-    
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,450만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.7%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 7,800만 (등급 6,179만 + 옵션 1,621만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=60000000" title="이 가격대 이하만 봅니다"><b>5,950만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 113만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=1200000">113만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">3년 6개월 · 89천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/8126">6종 1,621만</a>
-    
-  </td>
-  <td data-label="딜러" title="무결점카모터스"><a href="/dealers?q=무결점카모터스">무결점카모터스</a></td>
-  <td class="r num" data-label="경과">2일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/8126" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42560207" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  </div>
 
-<tr data-peek="https://ci.encar.com/carpicture06/pic4256/42561342_001.jpg" data-href="/why/8167"
-    data-buy="6,200만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/8167"><img class="thumb" src="https://ci.encar.com/carpicture06/pic4256/42561342_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="8167">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>5</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="523.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>77.5%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-11" title="이 연식 이후만 봅니다">2024-11</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=30000" title="이 주행거리 이하만 봅니다">20,088km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">9.5%</span>
-    
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-25.1%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 7,739만 (등급 6,170만 + 옵션 1,569만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=60000000" title="이 가격대 이하만 봅니다"><b>5,795만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 109만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=1100000">109만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">3년 3개월 · 79천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/8167">7종 1,569만</a>
-    
-  </td>
-  <td data-label="딜러" title="에이스모터스"><a href="/dealers?q=에이스모터스">에이스모터스</a></td>
-  <td class="r num" data-label="경과">2일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/8167" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42561342" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture05/pic4255/42559357_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="7781">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/7781"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-09"
+           title="이 연식 이후만 봅니다">2024-09</a> ·
+        <a href="/listings?km_max=20000"
+          title="이 주행거리 이하만 봅니다">14,520km</a>
+         ·
+        <span class="swatch"
+          style="background:#EDEDED"></span>흰색
+        / 베이지색 계열 ·
+        <a href="/dealers?q=비엠자동차"
+          title="이 딜러의 매물을 봅니다">비엠자동차</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/7781" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42559357" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" data-href="/why/1974"
-    data-buy="5,136만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/1974"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="1974">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>6</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="522.6 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>77.4%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 2WD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-07" title="이 연식 이후만 봅니다">2024-07</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=30000" title="이 주행거리 이하만 봅니다">29,234km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-5.0%</span>
-    
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,050만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-29.7%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 6,831만 (등급 5,890만 + 옵션 941만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=50000000" title="이 가격대 이하만 봅니다"><b>4,800만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 84만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=900000">84만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">2년 11개월 · 70천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/1974">5종 941만</a>
-    
-  </td>
-  <td data-label="딜러" title="가온오토"><a href="/dealers?q=가온오토">가온오토</a></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/1974" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42356669" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="up-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">6.8%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-27.4%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 7,779만
+        (등급 6,170만 + 옵션 1,609만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/7781"
+        title="선택 옵션 종수와 합계입니다">7종
+        1,609만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>3일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=60000000"
+        title="이 가격대 이하만 봅니다">5,650만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=1100000"
+        title="이 월납입 이하만 봅니다">105만</a> 추정</u>
+    </div>
+  </div>
+</div>
 
-<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/why/5749"
-    data-buy="3,798만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/5749"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="5749">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>7</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="521.6 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>77.3%</strong></td>
-  <td data-label="차종"><a href="/listings?target=KOLEOS_HEV">KOLEOS_HEV</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2026-02" title="이 연식 이후만 봅니다">2026-02</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=10000" title="이 주행거리 이하만 봅니다">2,300km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    
-    <span class="dim">표본 부족</span>
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,550만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.2%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 4,621만 (등급 4,208만 + 옵션 413만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=40000000" title="이 가격대 이하만 봅니다"><b>3,550만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 53만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=600000">53만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">4년 6개월 · 97천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/5749">4종 413만</a>
-    
-  </td>
-  <td data-label="딜러" title=""><span class="dim">딜러 정보 없음</span></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/5749" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42528750" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+<div class="row" data-peek="https://ci.encar.com/carpicture05/pic4215/42159592_001.jpg" data-href="/why/2593"
+     data-buy="5,296만" data-buyest="True">
 
-<tr data-peek="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" data-href="/why/2414"
-    data-buy="6,013만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/2414"><img class="thumb" src="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" alt="" loading="lazy"></a>
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 536.4 / 675 점 (79.5%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>2위</small>
     
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="2414">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>8</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="515.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>76.4%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-06" title="이 연식 이후만 봅니다">2024-06</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=20000" title="이 주행거리 이하만 봅니다">15,615km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">6.2%</span>
     
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.5%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 7,350만 (등급 6,170만 + 옵션 1,180만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=60000000" title="이 가격대 이하만 봅니다"><b>5,620만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 104만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=1100000">104만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">2년 10개월 · 84천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/2414">5종 1,180만</a>
-    
-  </td>
-  <td data-label="딜러" title="조이갤러리"><a href="/dealers?q=조이갤러리">조이갤러리</a></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/2414" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42338636" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  </div>
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" data-href="/why/1915"
-    data-buy="5,125만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/1915"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="1915">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>9</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="514.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>76.2%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-09" title="이 연식 이후만 봅니다">2024-09</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=30000" title="이 주행거리 이하만 봅니다">28,698km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-9.5%</span>
-    
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-30.4%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 6,885만 (등급 6,170만 + 옵션 715만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=50000000" title="이 가격대 이하만 봅니다"><b>4,790만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 84만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=900000">84만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">3년 1개월 · 71천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/1915">4종 715만</a>
-    
-  </td>
-  <td data-label="딜러" title="(주)정든모터스"><a href="/dealers?q=(주)정든모터스">(주)정든모터스</a></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/1915" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42154234" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 138.0 / 150.0점"><i
+        style="height:92%"></i><u>92</u></div><div class="bar b2"
+        title="값 148.0 / 250.0점"><i
+        style="height:59%"></i><u>59</u></div><div class="bar b3"
+        title="보증 128.0 / 130.0점"><i
+        style="height:98%"></i><u>98</u></div><div class="bar b4"
+        title="취향 122.4 / 145.0점"><i
+        style="height:84%"></i><u>84</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
 
-<tr data-peek="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" data-href="/why/2111"
-    data-buy="5,660만" data-buyest="True">
-  <td class="c photo" data-label="사진">
-    <a href="/why/2111"><img class="thumb" src="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" alt="" loading="lazy"></a>
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/2593"><img class="thumb"
+      src="https://ci.encar.com/carpicture05/pic4215/42159592_001.jpg" alt="" loading="lazy"></a>
     
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="2111">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade=A" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다"><span class="grade-a">A</span></a></td>
-  <td class="r num" data-label="순위"><b>10</b></td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="513.4 / 675 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다"><strong>76.1%</strong></td>
-  <td data-label="차종"><a href="/listings?target=G80_25T">G80_25T</a></td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from=2024-04" title="이 연식 이후만 봅니다">2024-04</a></td>
-  <td class="r num" data-label="주행"><a href="/listings?km_max=20000" title="이 주행거리 이하만 봅니다">10,708km</a></td>
-  <td class="r num gap" data-label="시세 대비">
-    
-    <span class="dim">표본 부족</span>
-    <span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-24.4%</span>
-    
-    <span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 6,999만 (등급 6,170만 + 옵션 829만)</span>
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격"><a href="/listings?price_max=55000000" title="이 가격대 이하만 봅니다"><b>5,290만</b></a>
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 1,500만 · 월 96만 추정</span></td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다"><a href="/listings?monthly_max=1000000">96만</a></td>
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.usage&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음">2년 8개월 · 89천km</a></td>
-  <td class="r num" data-label="옵션">
-    <a href="/why/2111">4종 829만</a>
-    
-  </td>
-  <td data-label="딜러" title="(주)에어라인오토"><a href="/dealers?q=(주)에어라인오토">(주)에어라인오토</a></td>
-  <td class="r num" data-label="경과">5일</td>
-  <td class="c" data-label="상태"><a href="/listings?status=active" title="게시중 · 내려감 · 재등록">게시중</a></td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">엔카</span></td>
-  <td class="c act" data-label="링크">
-    <a href="/why/2111" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42284607" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
-  </td>
-</tr>
+  </div>
 
-</tbody>
-</table>
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture05/pic4215/42159592_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="2593">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/2593"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-06"
+           title="이 연식 이후만 봅니다">2024-06</a> ·
+        <a href="/listings?km_max=50000"
+          title="이 주행거리 이하만 봅니다">46,206km</a>
+         ·
+        <span class="swatch"
+          style="background:#111111"></span>검정색
+        / 검정색 계열 ·
+        <a href="/dealers?q=(주)모던카"
+          title="이 딜러의 매물을 봅니다">(주)모던카</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/2593" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42159592" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="down-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">-6.4%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-34.1%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 7,508만
+        (등급 6,170만 + 옵션 1,338만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/2593"
+        title="선택 옵션 종수와 합계입니다">6종
+        1,338만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=50000000"
+        title="이 가격대 이하만 봅니다">4,950만</a></b>
+      
+      <u class="down-v"
+        >-30만 · 1회</u>
+      
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=900000"
+        title="이 월납입 이하만 봅니다">88만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture05/pic4255/42557944_001.jpg" data-href="/why/1984"
+     data-buy="6,366만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 529.4 / 675 점 (78.4%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>3위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 133.0 / 150.0점"><i
+        style="height:89%"></i><u>89</u></div><div class="bar b2"
+        title="값 134.0 / 250.0점"><i
+        style="height:54%"></i><u>54</u></div><div class="bar b3"
+        title="보증 130.0 / 130.0점"><i
+        style="height:100%"></i><u>100</u></div><div class="bar b4"
+        title="취향 132.4 / 145.0점"><i
+        style="height:91%"></i><u>91</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/1984"><img class="thumb"
+      src="https://ci.encar.com/carpicture05/pic4255/42557944_001.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture05/pic4255/42557944_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="1984">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/1984"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2025-02"
+           title="이 연식 이후만 봅니다">2025-02</a> ·
+        <a href="/listings?km_max=20000"
+          title="이 주행거리 이하만 봅니다">10,900km</a>
+         ·
+        <span class="swatch"
+          style="background:#EDEDED"></span>흰색
+        / 갈색 계열 ·
+        <a href="/dealers?q=준모터스"
+          title="이 딜러의 매물을 봅니다">준모터스</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/1984" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42557944" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="up-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,450만 대비">9.2%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,450만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-23.7%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 7,800만
+        (등급 6,179만 + 옵션 1,621만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/1984"
+        title="선택 옵션 종수와 합계입니다">6종
+        1,621만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=60000000"
+        title="이 가격대 이하만 봅니다">5,950만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=1200000"
+        title="이 월납입 이하만 봅니다">113만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture06/pic4256/42560207_001.jpg" data-href="/why/8126"
+     data-buy="6,366만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 529.4 / 675 점 (78.4%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>4위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 133.0 / 150.0점"><i
+        style="height:89%"></i><u>89</u></div><div class="bar b2"
+        title="값 134.0 / 250.0점"><i
+        style="height:54%"></i><u>54</u></div><div class="bar b3"
+        title="보증 130.0 / 130.0점"><i
+        style="height:100%"></i><u>100</u></div><div class="bar b4"
+        title="취향 132.4 / 145.0점"><i
+        style="height:91%"></i><u>91</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/8126"><img class="thumb"
+      src="https://ci.encar.com/carpicture06/pic4256/42560207_001.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture06/pic4256/42560207_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="8126">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/8126"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2025-02"
+           title="이 연식 이후만 봅니다">2025-02</a> ·
+        <a href="/listings?km_max=20000"
+          title="이 주행거리 이하만 봅니다">10,925km</a>
+         ·
+        <span class="swatch"
+          style="background:#EDEDED"></span>흰색
+        / 갈색 계열 ·
+        <a href="/dealers?q=무결점카모터스"
+          title="이 딜러의 매물을 봅니다">무결점카모터스</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/8126" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42560207" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="up-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,450만 대비">9.2%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,450만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-23.7%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 7,800만
+        (등급 6,179만 + 옵션 1,621만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/8126"
+        title="선택 옵션 종수와 합계입니다">6종
+        1,621만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>2일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=60000000"
+        title="이 가격대 이하만 봅니다">5,950만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=1200000"
+        title="이 월납입 이하만 봅니다">113만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture06/pic4256/42561342_001.jpg" data-href="/why/8167"
+     data-buy="6,200만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 523.4 / 675 점 (77.5%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>5위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 143.0 / 150.0점"><i
+        style="height:95%"></i><u>95</u></div><div class="bar b2"
+        title="값 118.0 / 250.0점"><i
+        style="height:47%"></i><u>47</u></div><div class="bar b3"
+        title="보증 130.0 / 130.0점"><i
+        style="height:100%"></i><u>100</u></div><div class="bar b4"
+        title="취향 132.4 / 145.0점"><i
+        style="height:91%"></i><u>91</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/8167"><img class="thumb"
+      src="https://ci.encar.com/carpicture06/pic4256/42561342_001.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture06/pic4256/42561342_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="8167">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/8167"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-11"
+           title="이 연식 이후만 봅니다">2024-11</a> ·
+        <a href="/listings?km_max=30000"
+          title="이 주행거리 이하만 봅니다">20,088km</a>
+         ·
+        <span class="swatch"
+          style="background:#111111"></span>검정색
+        / 검정색 계열 ·
+        <a href="/dealers?q=에이스모터스"
+          title="이 딜러의 매물을 봅니다">에이스모터스</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/8167" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42561342" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="up-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">9.5%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-25.1%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 7,739만
+        (등급 6,170만 + 옵션 1,569만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/8167"
+        title="선택 옵션 종수와 합계입니다">7종
+        1,569만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>2일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=60000000"
+        title="이 가격대 이하만 봅니다">5,795만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=1100000"
+        title="이 월납입 이하만 봅니다">109만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" data-href="/why/1974"
+     data-buy="5,136만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 522.6 / 675 점 (77.4%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>6위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 140.0 / 150.0점"><i
+        style="height:93%"></i><u>93</u></div><div class="bar b2"
+        title="값 146.0 / 250.0점"><i
+        style="height:58%"></i><u>58</u></div><div class="bar b3"
+        title="보증 129.0 / 130.0점"><i
+        style="height:99%"></i><u>99</u></div><div class="bar b4"
+        title="취향 107.6 / 145.0점"><i
+        style="height:74%"></i><u>74</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/1974"><img class="thumb"
+      src="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture05/pic4235/42356669_027.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="1974">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/1974"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 2WD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-07"
+           title="이 연식 이후만 봅니다">2024-07</a> ·
+        <a href="/listings?km_max=30000"
+          title="이 주행거리 이하만 봅니다">29,234km</a>
+         ·
+        <span class="swatch"
+          style="background:#9BA3AC"></span>은회색
+        / 검정색 계열 ·
+        <a href="/dealers?q=가온오토"
+          title="이 딜러의 매물을 봅니다">가온오토</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/1974" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42356669" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="down-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,050만 대비">-5.0%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,050만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-29.7%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 6,831만
+        (등급 5,890만 + 옵션 941만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/1974"
+        title="선택 옵션 종수와 합계입니다">5종
+        941만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=50000000"
+        title="이 가격대 이하만 봅니다">4,800만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=900000"
+        title="이 월납입 이하만 봅니다">84만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/why/5749"
+     data-buy="3,798만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 521.6 / 675 점 (77.3%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>7위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 143.0 / 150.0점"><i
+        style="height:95%"></i><u>95</u></div><div class="bar b2"
+        title="값 117.0 / 250.0점"><i
+        style="height:47%"></i><u>47</u></div><div class="bar b3"
+        title="보증 130.0 / 130.0점"><i
+        style="height:100%"></i><u>100</u></div><div class="bar b4"
+        title="취향 131.6 / 145.0점"><i
+        style="height:91%"></i><u>91</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/5749"><img class="thumb"
+      src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="5749">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/5749"
+           title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2026-02"
+           title="이 연식 이후만 봅니다">2026-02</a> ·
+        <a href="/listings?km_max=10000"
+          title="이 주행거리 이하만 봅니다">2,300km</a>
+         ·
+        <span class="swatch"
+          style="background:#EDEDED"></span>흰색
+        / 검정색 계열 ·
+        
+        <span class="dim">딜러 정보 없음</span>
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/5749" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42528750" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      
+      <b class="dim" title="표본이 모자라 중앙값을 못 만듭니다">표본 부족</b>
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,550만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-23.2%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 4,621만
+        (등급 4,208만 + 옵션 413만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/5749"
+        title="선택 옵션 종수와 합계입니다">4종
+        413만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=40000000"
+        title="이 가격대 이하만 봅니다">3,550만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=600000"
+        title="이 월납입 이하만 봅니다">53만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" data-href="/why/2414"
+     data-buy="6,013만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 515.4 / 675 점 (76.4%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>8위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 143.0 / 150.0점"><i
+        style="height:95%"></i><u>95</u></div><div class="bar b2"
+        title="값 116.0 / 250.0점"><i
+        style="height:46%"></i><u>46</u></div><div class="bar b3"
+        title="보증 128.0 / 130.0점"><i
+        style="height:98%"></i><u>98</u></div><div class="bar b4"
+        title="취향 128.4 / 145.0점"><i
+        style="height:89%"></i><u>89</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/2414"><img class="thumb"
+      src="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="2414">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/2414"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-06"
+           title="이 연식 이후만 봅니다">2024-06</a> ·
+        <a href="/listings?km_max=20000"
+          title="이 주행거리 이하만 봅니다">15,615km</a>
+         ·
+        <span class="swatch"
+          style="background:#9BA3AC"></span>은회색
+        / 청색 계열 ·
+        <a href="/dealers?q=조이갤러리"
+          title="이 딜러의 매물을 봅니다">조이갤러리</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/2414" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42338636" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="up-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">6.2%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-23.5%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 7,350만
+        (등급 6,170만 + 옵션 1,180만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/2414"
+        title="선택 옵션 종수와 합계입니다">5종
+        1,180만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=60000000"
+        title="이 가격대 이하만 봅니다">5,620만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=1100000"
+        title="이 월납입 이하만 봅니다">104만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" data-href="/why/1915"
+     data-buy="5,125만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 514.4 / 675 점 (76.2%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>9위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 143.0 / 150.0점"><i
+        style="height:95%"></i><u>95</u></div><div class="bar b2"
+        title="값 134.0 / 250.0점"><i
+        style="height:54%"></i><u>54</u></div><div class="bar b3"
+        title="보증 130.0 / 130.0점"><i
+        style="height:100%"></i><u>100</u></div><div class="bar b4"
+        title="취향 107.4 / 145.0점"><i
+        style="height:74%"></i><u>74</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/1915"><img class="thumb"
+      src="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture05/pic4215/42154234_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="1915">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/1915"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-09"
+           title="이 연식 이후만 봅니다">2024-09</a> ·
+        <a href="/listings?km_max=30000"
+          title="이 주행거리 이하만 봅니다">28,698km</a>
+         ·
+        <span class="swatch"
+          style="background:#2E5B9A"></span>청색
+        / 베이지색 계열 ·
+        <a href="/dealers?q=(주)정든모터스"
+          title="이 딜러의 매물을 봅니다">(주)정든모터스</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/1915" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42154234" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      <b class="down-v"
+        title="같은 차종·트림·연식 실매물 중앙값 5,290만 대비">-9.5%</b>
+      
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-30.4%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 6,885만
+        (등급 6,170만 + 옵션 715만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/1915"
+        title="선택 옵션 종수와 합계입니다">4종
+        715만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=50000000"
+        title="이 가격대 이하만 봅니다">4,790만</a></b>
+      
+      <u class="down-v"
+        >-100만 · 1회</u>
+      
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=900000"
+        title="이 월납입 이하만 봅니다">84만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+<div class="row" data-peek="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" data-href="/why/2111"
+     data-buy="5,660만" data-buyest="True">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr A grade-a" title="등급 8단계입니다. 절대 기준 — S 80 · A 70 · B 60 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 513.4 / 675 점 (76.1%) 입니다">
+    <a href="/listings?grade=A">A</a>
+    <small>10위</small>
+    
+    
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      <div class="bar b1"
+        title="차량 140.0 / 150.0점"><i
+        style="height:93%"></i><u>93</u></div><div class="bar b2"
+        title="값 122.0 / 250.0점"><i
+        style="height:49%"></i><u>49</u></div><div class="bar b3"
+        title="보증 126.0 / 130.0점"><i
+        style="height:97%"></i><u>97</u></div><div class="bar b4"
+        title="취향 125.4 / 145.0점"><i
+        style="height:86%"></i><u>86</u></div>
+    </div>
+    <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    <a href="/why/2111"><img class="thumb"
+      src="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" alt="" loading="lazy"></a>
+    
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      <img class="thumb" src="https://ci.encar.com/carpicture08/pic4228/42284607_027.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="2111">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/2111"
+           title="판정 근거와 상세를 봅니다">G80_25T</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">가솔린 2.5 터보 AWD · (세부등급 없음)</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from=2024-04"
+           title="이 연식 이후만 봅니다">2024-04</a> ·
+        <a href="/listings?km_max=20000"
+          title="이 주행거리 이하만 봅니다">10,708km</a>
+         ·
+        <span class="swatch"
+          style="background:#111111"></span>검정색
+        / 갈색 계열 ·
+        <a href="/dealers?q=(주)에어라인오토"
+          title="이 딜러의 매물을 봅니다">(주)에어라인오토</a>
+        
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >엔카</span>
+        <a href="/listings?status=active"
+          title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        <a class="chip-good axis-good"
+          href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >사고<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >골격<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=history.usage&amp;bucket=1" title="자가용 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >용도<b>O</b></a><a class="chip-good axis-good"
+          href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >보증<b>O</b></a>
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/2111" class="mini">근거</a>
+        <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42284607" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      
+      <b class="dim" title="표본이 모자라 중앙값을 못 만듭니다">표본 부족</b>
+      <span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 5,290만</span></div>
+    <div class="cell"><u>신차대비</u>
+      <b class="down-v"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >-24.4%</b>
+      
+      <span class="raw"
+        title="판매자가 입력한 것입니다">신차가 6,999만
+        (등급 6,170만 + 옵션 829만)</span></div>
+    <div class="cell"><u>옵션가</u>
+      <b><a href="/why/2111"
+        title="선택 옵션 종수와 합계입니다">4종
+        829만</a></b>
+      </div>
+    <div class="cell"><u>경과</u>
+      <b>5일</b>
+      </div>
+    <div class="price">
+      <b><a href="/listings?price_max=55000000"
+        title="이 가격대 이하만 봅니다">5,290만</a></b>
+      
+      
+      <u class="dim">변동 없음</u>
+      
+      <u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 1,500만 · 월 <a
+        href="/listings?monthly_max=1000000"
+        title="이 월납입 이하만 봅니다">96만</a> 추정</u>
+    </div>
+  </div>
+</div>
+
+</main>
 
 
 
@@ -798,7 +1581,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260819T234633</span>
-  <span>2026-08-21 16:43</span>
+  <span>2026-08-21 17:56</span>
 </footer>
 
 </body>

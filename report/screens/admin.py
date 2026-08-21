@@ -39,16 +39,13 @@ class AdminMenuItem:
 
 
 # ★★ 개정 427 — 상단에서 내린 화면 여섯.  ★ 지우지 않는다.  여기로 들어간다
+#   ★ MENU 에 넣지 않는다 — MENU 는 13장 관리 화면 표에 매여 있고
+#     그 표에는 이 여섯이 없다 (규칙 2 로 개발측이 문서를 못 고친다).
+#     ★ 따로 두고 /admin 현황에서 낸다.  작업기록에 여쭀다
 GROUP_SCREENS = "화면"
 
 MENU: tuple[tuple[str, str, str, str], ...] = (
     ("", "/admin", "현황", "STEP 138"),
-    (GROUP_SCREENS, "/recommend", "후보 — 매물의 등급 필터가 대신한다", "STEP 98"),
-    (GROUP_SCREENS, "/compare", "비교 — 관심에서 골라 부른다", "STEP 99"),
-    (GROUP_SCREENS, "/market", "시세 — 현황이 흡수했다", "STEP 96"),
-    (GROUP_SCREENS, "/dealers", "딜러 — 목록·상세에서 눌러 들어간다", "STEP 100"),
-    (GROUP_SCREENS, "/reports", "리포트", "STEP 101"),
-    (GROUP_SCREENS, "/notready", "미판정", "STEP 102"),
     (GROUP_OPS, "/admin/run", "실행 지시 · 큐", "STEP 132"),
     (GROUP_OPS, "/admin/audit", "감사 조회", "STEP 138a"),
     (GROUP_OPS, "/admin/status", "진행 지켜보기", "STEP 136f"),

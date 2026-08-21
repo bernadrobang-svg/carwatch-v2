@@ -7,7 +7,7 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 18,580B |
-| `/listings` | [listings.html](listings.html) | 200 | 58,875B |
+| `/listings` | [listings.html](listings.html) | 200 | 74,720B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 44,284B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 20,374B |
 | `/compare` | [compare.html](compare.html) | 200 | 2,799B |
@@ -19,7 +19,7 @@
 | `/login` | [login.html](login.html) | 200 | 2,120B |
 | `/join` | [join.html](join.html) | 200 | 1,949B |
 | `/password` | [password.html](password.html) | 200 | 1,940B |
-| `/admin` | [admin.html](admin.html) | 200 | 13,661B |
+| `/admin` | [admin.html](admin.html) | 200 | 12,474B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 13,343B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 44,702B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,076B |

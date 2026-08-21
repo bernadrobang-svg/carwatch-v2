@@ -442,6 +442,18 @@ C = {
                     "싶은데 왜 없지?」 ★ 차를 사는 사람이 제일 먼저 쓰는 "
                     "조건이 빠져 있었다 (개정 420)",
                     KIND_CODE),
+    "V11-162": Check("V11", "V11-162", "목록 한 행의 칸이 8을 넘지 않음",
+                     FATAL, "run",
+                     "개정 427 — 우리는 24칸이었다. ★ 훑을 수가 없다. "
+                     "목록은 「고르는」 화면이 아니라 ★ 「버리는」 화면이다 "
+                     "— 가격·연식·주행 셋이면 90%가 걸러진다",
+                     KIND_CONTRACT),
+    "V11-163": Check("V11", "V11-163", "네 묶음 막대가 목록에 있음",
+                     FATAL, "run",
+                     "개정 427 — ★ 목록의 시그니처다. 「취향만 낮아서 A」가 "
+                     "눈으로 바로 보인다. ★ 사이트는 이것을 못 한다 — "
+                     "자기 매물을 채점할 수 없다. ★ 늘 같은 자리·개수·색",
+                     KIND_CONTRACT),
     "V11-157": Check("V11", "V11-157", "상단 메뉴가 넷을 넘지 않음",
                      FATAL, "run",
                      "개정 427 — 마스터 확정 「상단 메뉴는 셋이다」. "
@@ -1071,6 +1083,7 @@ def _screen_checks(conn, rid) -> list:
     out += _photo_checks(conn, rid)
     out += _sian_css_checks(rid)
     out += _menu_shape_checks(conn, rid)
+    out += _row_shape_checks(conn, rid)
     # 링크 · 툴팁 · 원문 · 고르기 · 순서 · 필터 (개정 276)
     out += _link_tip_checks(rid)
     out.append(_origin_link_check(rid))
@@ -1650,22 +1663,20 @@ def _heart_line_check(rid):
     """V11-96 — ♡ 가 제목 줄에 있는가.
 
     ★ v1 은 카드 맨 아래에 있었다.  목록에서 훑다가 바로 담지 못했다
-    ★ 「제목 줄」은 그 행의 첫 칸들이다 — 표 머리말에서 자리를 본다
+    ★★ 개정 427 — 표가 없어졌다.  ★ 「제목 줄」은 차명 칸(.name)이다 —
+      표 머리말(<th>)로 자리를 재면 8칸 목록에서 늘 실패한다 (실측 08-21)
     """
     bad = []
     tpl = os.path.join(TEMPLATES, "listings.html")
     if not os.path.isfile(tpl):
         return not_applicable(C["V11-96"], rid, "목록 화면이 없다")
     html = open(tpl, encoding="utf-8").read()
-    heads = re.findall(r"<th[^>]*>(.*?)</th>", html, re.S)
     if "♡" not in html:
         bad.append("목록에 ♡ 가 없다")
-    else:
-        where = [i for i, h in enumerate(heads) if "♡" in h]
-        if not where:
-            bad.append("♡ 가 표 머리말에 없다 — 자리를 알 수 없다")
-        elif where[0] > len(heads) // 2:
-            bad.append(f"♡ 가 {where[0] + 1}번째 칸이다 — 제목 줄이 아니다")
+    # ★ 차명 칸 안에 있는가 — 「어딘가에 있다」로는 안 된다
+    name_cell = re.search(r'<div class="name">(.*?)</div>', html, re.S)
+    if "♡" in html and (name_cell is None or "♡" not in name_cell.group(0)):
+        bad.append("♡ 가 제목 줄(.name)에 없다 — 훑다가 바로 못 담는다")
     return result(C["V11-96"], rid, 0, len(bad), not bad, bad[:6])
 
 
@@ -1942,6 +1953,79 @@ def _photo_checks(conn, rid):
 
 
 
+
+def _row_shape_checks(conn, rid):
+    """V11-162 · V11-163 — 목록 한 행 8칸 · 막대 넷 (개정 427).
+
+    ★ 템플릿을 읽지 않는다.  ★ **렌더 결과**를 센다 (S43-②) —
+      템플릿에 있어도 조건이 걸려 안 나오면 화면에는 없는 것이다
+    """
+    from contracts import Account, ROLE_ADMIN
+    from web.views import HANDLERS
+
+    fn_ = HANDLERS.get("view_listings")
+    if fn_ is None:
+        return [not_applicable(C[c], rid, "목록 화면이 없다")
+                for c in ("V11-162", "V11-163")]
+    probe = _probe(conn)
+    acc = Account(1, ROLE_ADMIN, "마스터")
+    try:
+        _s, _h, body = fn_(probe, acc,
+                           {"query": {}, "form": {}, "method": "GET"},
+                           path_vars={}, csrf="t")
+    except Exception as e:                                   # noqa: BLE001
+        return [not_applicable(C[c], rid, f"목록을 못 열었다 — {type(e).__name__}")
+                for c in ("V11-162", "V11-163")]
+    html = body.decode("utf-8", "replace")
+    rows = re.findall(r'<div class="row"(.*?)\n</div>', html, re.S)
+    if not rows:
+        return [not_applicable(C[c], rid, "행이 없다")
+                for c in ("V11-162", "V11-163")]
+
+    # V11-162 — 한 행의 칸.  ★ 규격의 **정보 묶음**으로 센다 (config 가 정본).
+    #   ★ DOM 칸으로 세면 안 된다 — 시안은 경과와 가격을 따로 둬 9칸인데
+    #     규격 표는 칸 8 이 「경과일 · 가격 · 변동」이다 (정본 둘이 어긋난다)
+    import json as _j
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        cols = _j.load(f)["list_columns"]
+    limit = len(cols)
+    bad162 = []
+    for i, one in enumerate(rows[:5]):
+        marks = [m for c in cols for m in c["find"]]
+        got = [c["name"] for c in cols
+               if any(m in one for m in c["find"])]
+        # ★ 규격에 없는 정보 묶음이 붙었는가 — 24칸으로 되돌아가는 것을 막는다
+        #   ★ 값 칸(.cell)의 이름표만 본다.  막대 안의 숫자나 가격 아래
+        #     보조 문구도 <u> 라 통째로 세면 거짓 실패가 된다 (실측 08-21)
+        extra = sum(
+            1 for u in re.findall(r'<div class="cell"[^>]*>\s*<u>([^<]+)</u>',
+                                  one)
+            if f"<u>{u}</u>" not in marks)
+        if len(got) > limit or extra > 0:
+            bad162.append(f"{i + 1}번째 행 — 규격 칸 {len(got)}개 "
+                          f"+ 규격에 없는 칸 {max(0, extra)}개")
+
+    # V11-163 — 막대 넷.  ★ 행마다 **같은 개수**여야 한다
+    want = 4
+    bad163, counts = [], []
+    for i, one in enumerate(rows):
+        n = len(re.findall(r'<div class="bar b[1-9]"', one))
+        counts.append(n)
+        if n != want and len(bad163) < 4:
+            bad163.append(f"{i + 1}번째 행의 막대가 {n}개다 — {want}개여야 한다")
+    if len(set(counts)) > 1:
+        bad163.append(f"행마다 막대 개수가 다르다 — {sorted(set(counts))}")
+    return [
+        result(C["V11-162"], rid, f"<= {limit}칸", f"{len(rows)}행 확인",
+               not bad162, bad162[:4]),
+        result(C["V11-163"], rid, f"{want}개",
+               f"{counts[0] if counts else 0}개 × {len(rows)}행",
+               not bad163, bad163[:5]),
+    ]
+
+
 def _menu_shape_checks(conn, rid):
     """V11-157 · V11-158 — 상단 메뉴 셋 · 내린 화면이 열리는가 (개정 427).
 
@@ -2071,16 +2155,26 @@ ENCAR_DETAIL = "encar.com/dc/dc_cardetailview.do"
 
 
 def _cell_of(html: str, expr: str) -> str:
-    """그 값을 낸 <td> 한 칸을 통째로 잘라 온다.  ★ 링크·title 이
-    그 칸 안에 있는지를 봐야 한다 — 화면 어딘가에 있는 것으로는 안 된다."""
+    """그 값을 낸 한 칸을 통째로 잘라 온다.  ★ 링크·title 이
+    그 칸 안에 있는지를 봐야 한다 — 화면 어딘가에 있는 것으로는 안 된다.
+
+    ★★ 개정 427 — 목록이 표(<td>)에서 그리드(<div class="cell">)로 바뀌었다.
+      ★ <td> 만 찾으면 8칸 목록에서 전건이 「링크 없음」으로 나온다
+        (실측 08-21 — V11-61 0/6 · V11-62 0/5).
+      ★ 검사가 옛 표를 보고 있던 것이지 링크가 없어진 것이 아니다
+    """
     i = html.find("{{ " + expr)
     if i < 0:
         i = html.find(expr)
     if i < 0:
         return ""
-    a = html.rfind("<td", 0, i)
-    b = html.find("</td>", i)
-    return html[a:b] if a >= 0 and b > a else ""
+    # ★ 여는 태그를 뒤로 훑는다 — <td> 든 <div class="…"> 든 가장 가까운 것
+    a = max(html.rfind("<td", 0, i), html.rfind("<div class=", 0, i))
+    if a < 0:
+        return ""
+    b = min([x for x in (html.find("</td>", i), html.find("</div>", i))
+             if x > 0] or [-1])
+    return html[a:b] if b > a else ""
 
 
 def _link_tip_checks(rid):
@@ -2343,6 +2437,76 @@ def _matches(sel: str, klass: str, cls: set, label: str) -> int:
     return score
 
 
+
+def _grid_areas(css: str, at_px: int):
+    """그 폭에서 .row 가 쓰는 grid-template-areas 의 줄 목록 (개정 427).
+
+    ★ 시안이 좁은 폭을 areas 로 짠다.  없으면 None 을 준다 —
+      옛 카드 방식(td[data-label])으로 넘어간다
+    """
+    body = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
+    best = None
+    for m in re.finditer(r"@media\s*\(max-width:\s*(\d+)px\)\s*\{",
+                         body):
+        cap = int(m.group(1))
+        if at_px > cap:
+            continue
+        # ★ 폭이 여럿 걸리면 **좁은 쪽이 이긴다** (나중 규칙이 덮는다)
+        block = _brace_block(body, m.end() - 1)
+        got = re.search(r"\.row\s*\{[^{}]*grid-template-areas:([^;}]*)",
+                        block)
+        if got and (best is None or cap <= best[0]):
+            rows = re.findall(r'"([^"]*)"', got.group(1))
+            best = (cap, rows)
+    if best:
+        return best[1]
+    # ★ 그 폭에 areas 가 없다 = 기본 격자가 그대로 쓰인다.
+    #   ★ 기본 격자는 한 줄이다 (grid-template-columns 만 있다) — 1줄로 센다.
+    #   ★ None 을 주면 「배치를 못 찾았다」가 되어 거짓 실패가 된다 (실측 08-21)
+    if re.search(r"\.row\s*\{[^{}]*grid-template-columns", body):
+        return ["one-row"]
+    return None
+
+
+def _hidden_cells(css: str, at_px: int) -> list:
+    """그 폭에서 display:none 으로 지운 목록 칸 (개정 429 「값을 버리지 마라」)."""
+    body = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
+    gone = []
+    for m in re.finditer(r"@media\s*\(max-width:\s*(\d+)px\)\s*\{", body):
+        if at_px > int(m.group(1)):
+            continue
+        block = _brace_block(body, m.end() - 1)
+        for sel, rule in re.findall(r"([^{}]+)\{([^{}]*)\}", block):
+            if "display:none" not in rule.replace(" ", ""):
+                continue
+            for one in sel.split(","):
+                one = one.strip()
+                # ★ .desk/.mob 은 넓음·좁음 짝이다 — 같은 값을 두 번 두고
+                #   폭에 따라 하나만 보인다.  버린 것이 아니다
+                if one in (".desk", ".mob") or one.endswith(("::-webkit-"
+                                                             "scrollbar",)):
+                    continue
+                # ★ 「.rows thead」 는 옛 표의 머리말이다 — 표 자체가 없어졌다.
+                #   ★ .row 로 부분 일치를 보면 .rows 까지 걸린다 (실측 08-21)
+                if re.search(r"(^|[ >])\.(row|cell|bar|price|gr)\b", one):
+                    gone.append(one)
+    return gone
+
+
+def _brace_block(text: str, start: int) -> str:
+    """`{` 위치에서 짝이 맞는 `}` 까지."""
+    depth, i = 0, start
+    while i < len(text):
+        if text[i] == "{":
+            depth += 1
+        elif text[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1:i]
+        i += 1
+    return text[start + 1:]
+
+
 def _place_cards(css: str, tpl: str, klass: str, narrow_px: int,
                  card_px: int):
     """칸을 격자에 실제로 놓아 본다.
@@ -2503,6 +2667,22 @@ def _card_shape_checks(rid):
             limit = limits.get(key)
             if limit is None:
                 continue                  # 부록 G 에 그 폭의 상한이 없다
+            # ★★ 개정 427 — 목록이 표(td[data-label])에서 grid-template-areas
+            #   로 바뀌었다.  ★ 옛 방식으로 재면 「배치를 못 찾았다」가 된다
+            #   (실측 08-21).  ★ 배치가 없어진 것이 아니라 방식이 바뀐 것이다
+            areas = _grid_areas(css, at)
+            if areas is not None:
+                used = len(areas)
+                if used > limit:
+                    bad109.append(f"{klass} {tier} {used}줄 — "
+                                  f"부록 G 상한 {limit}줄")
+                # ★ 값을 버리지 않았는가 — 좁아졌다고 칸을 지우면 안 된다
+                gone = _hidden_cells(css, at)
+                if gone:
+                    bad109.append(f"{klass} {tier} — 좁은 폭에서 "
+                                  f"{' · '.join(gone[:3])} 를 숨긴다 "
+                                  f"(값을 버리지 마라 · 개정 429)")
+                continue
             got = _place_cards(css, tpl, klass, at, wide_min - 1)
             placed, cols, biggest, spill, hidden, total, _f, _sp = got
             if not placed:
@@ -2925,6 +3105,10 @@ def _v1_parity_checks(rid):
     want = []
     text = canon_text("화면")
     if text:
+        # ★★ 개정 427 — 목록 열의 정본이 「목록 한 행 — 8칸」으로 바뀌었다.
+        #   ★ 부록 G 「넓음(≥1100)」 표는 24칸 시절이다 — 규격이 폐기했다
+        #     (「### ~~컬럼 — v1 유지 (24칸)~~ ★ 폐기 — 개정 427」).
+        #   ★ 그것과 대조하면 8칸 목록이 늘 「열이 빠졌다」로 나온다
         block = text.split("## 넓음 (≥1100)", 1)[-1].split("## 중간", 1)[0]
         # ★ 표에 **굵게** 가 섞여 있다.  이름만 뽑는다
         want = [m.group(1).strip().strip("*").strip()
@@ -2941,7 +3125,16 @@ def _v1_parity_checks(rid):
 
     got = re.sub(r"<[^>]+>", " ", ours) + " " + " ".join(
         a["label"] for a in axis_heads(ROOT))
-    bad68 = [w for w in want if w not in got]
+    # ★★ 개정 427 — 24칸이 8칸이 되면서 「열」이던 것이 「값」으로 옮겨 앉았다.
+    #   사이트 배지는 차명 줄에, 엔카 링크는 그 옆에 있다 —
+    #   ★ 열 이름이 화면 글자로는 안 나오지만 값은 있다.
+    #   ★ 「값을 버리지 마라」(개정 429)는 값을 보는 것이지 이름을 보는 것이 아니다
+    import json as _j
+
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        evid = _j.load(f).get("column_evidence") or {}
+    bad68 = [w for w in want
+             if w not in got and (evid.get(w) or "\x00") not in ours]
 
     # ── V11-69 — 화면마다 조작 ───────────────────────────────────────
     # ★ 화면 하나만 보면 「listings 는 v1 수준인데 recommend 가 없다」를 못 본다
@@ -3823,7 +4016,12 @@ def _axis_state_check(conn, rid):
 
 # ★ 부록 G 로 열 이름이 「시세 대비」 「신차가 대비」가 됐다 (개정 332).
 #   값을 함께 내는 것은 그대로다 — 이름만 바뀌었다
-THREE_VALUES = ("신차가 대비", "시세 대비", "가격")
+# ★★ 개정 427 — 목록이 표에서 8칸 그리드로 바뀌었다.
+#   ★ 이름도 바뀌었다 — 부록 G 는 「신차가 대비」·「시세 대비」인데
+#     화면 정본(시안)은 「신차대비」·「시세차」다.  ★ 정본이 둘인데 어긋난다.
+#     ★ 화면 이름을 정본으로 삼는다 (시안이 화면 정본이라 규격이 못 박았다).
+#     작업기록에 여쭀다
+THREE_VALUES = ("신차대비", "시세차", "가격")
 
 
 def _three_values_check(conn, rid):
@@ -3844,9 +4042,17 @@ def _three_values_check(conn, rid):
     except Exception as e:                                   # noqa: BLE001
         return not_applicable(C["V11-81"], rid, f"못 그렸다: {e}")
     html = body.decode("utf-8", "replace")
-    row = re.search(r"<tr[^>]*>.*?</tr>", html.split("<tbody>", 1)[-1], re.S)
+    # ★ 8칸 그리드의 한 행을 잘라 본다.  ★ <tr> 로 찾으면 전건 「없다」가 된다
+    row = re.search(r'<div class="row".*?\n</div>', html, re.S)
     got = row.group(0) if row else ""
-    bad = [w for w in THREE_VALUES if f'data-label="{w}"' not in got]
+    bad = []
+    for w in THREE_VALUES:
+        # ★ 칸 이름(<u>시세차</u>)이거나 가격 칸(class="price")이면 있는 것이다
+        if f"<u>{w}</u>" in got:
+            continue
+        if w == "가격" and 'class="price"' in got:
+            continue
+        bad.append(f"{w} 칸이 없다")
     # ★ 값 자체도 나와야 한다 — 「대비 %」만 내고 원값을 숨기면 안 된다
     for word in ("시세", "신차가"):
         if word not in got:

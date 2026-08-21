@@ -69,74 +69,139 @@
   {% endfor %}
 </p>
 {% endif %}
-<table class="rows car-rows">
-<thead><tr>
-<th class="c">사진</th><th class="c">♡</th>
-<th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
-<th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
-<th class="r" title="같은 차종·트림·연식 실매물 중앙값 대비. 음수가 싼 것입니다">시세 대비</th>
-<th class="r" title="신차가(등급기준 + 선택옵션) 대비 얼마나 내렸는가">신차가 대비</th>
-<th class="r">가격</th><th class="r">월</th>
-{% for a in axis_heads %}<th class="c" title="기호 O 있음 · - 없음 · ? 확인 못 함">{{ a.label }}</th>{% endfor %}
-<th class="r">옵션</th><th>딜러</th><th class="r">경과</th><th class="c">상태</th><th class="c">사이트</th>
-<th class="c">링크</th>
-</tr></thead>
-<tbody>
+<!-- ══ 목록 한 행 — 8칸 (개정 427 · STEP 97) ══
+     ★ 정본은 ref/screens/v2_시안_목록상세.html 이다
+     ★ 전에는 24칸이었다.  「훑을 수가 없다」 (마스터)
+     ★ 목록은 「고르는」 화면이 아니라 「버리는」 화면이다 —
+       가격·연식·주행 셋이면 90%가 걸러진다.  자세한 것은 상세다
+     1 등급+순위 · 2 ★네 묶음 막대 · 3 사진 · 4 차명/트림/연식/주행/색
+     5 시세차 · 6 신차대비% · 7 옵션가 · 8 경과일+가격+변동 -->
+<main class="rows car-rows">
 {% for r in rows %}
-<tr data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}"
-    data-buy="{{ r.total_cost_won | won }}" data-buyest="{{ r.buy_estimated }}">
-  <td class="c photo" data-label="사진">
-    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
-    {% if !r.photo_url %}<span class="nophoto thumb-none" title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
-  </td>
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
-      <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><a href="/listings?grade={{ r.grade }}" title="{{ grade_help }}"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></a></td>
-  <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}{% if !r.rank %}<span class="dim">순위 없음</span>{% endif %}</td>
-  <!-- 부록 G — 목록에 계산식을 넣지 않는다.  「489/555」는 상세에서 본다 -->
-  <td class="r num" data-label="비율" title="{{ r.earned | num }} / {{ r.denominator | num }} 입니다 — 등급 기준 점수 중 몇 %를 받았는가. 자세한 근거는 상세에서 봅니다">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>{% endif %}{% if !r.ratio_pct %}<span class="dim">판정 전</span>{% endif %}</td>
-  <td data-label="차종">{% if r.target_label %}<a href="/listings?target={{ r.target_label }}">{{ r.target_label }}</a>{% endif %}</td>
-  <td class="trim" data-label="트림" title="Badge + BadgeDetail (개정 313)">{{ r.trim }}</td>
-  <td class="r" data-label="연식"><a href="/listings?year_from={{ r.year_month }}" title="이 연식 이후만 봅니다">{{ r.year_month }}</a></td>
-  <td class="r num" data-label="주행">{% if r.mileage_bucket_km %}<a href="/listings?km_max={{ r.mileage_bucket_km }}" title="이 주행거리 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}{% if !r.mileage_bucket_km %}<span class="dim">주행 없음</span>{% endif %}</td>
-  <td class="r num gap" data-label="시세 대비">
-    {% if r.market_gap_pct %}<span class="{{ r.market_gap_pct | signcls }}">{{ r.market_gap_pct }}%</span>{% endif %}
-    {% if !r.market_gap_pct %}<span class="dim">표본 부족</span>{% endif %}
-    {% if r.market_price_won %}<span class="raw" title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 {{ r.market_price_won | won }}</span>{% endif %}
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    {% if r.origin_gap_pct %}<span class="{{ r.origin_gap_pct | signcls }}">{{ r.origin_gap_pct }}%</span>{% endif %}
-    {% if !r.origin_gap_pct %}<span class="dim">신차가 없음</span>{% endif %}
-    {% if r.origin_total_won %}<span class="raw" title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다 (개정 301)">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %} (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}
-  </td>
-  <!-- ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
-       금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다 -->
-  <td class="r num" data-label="가격">{% if r.price_bucket_won %}<a href="/listings?price_max={{ r.price_bucket_won }}" title="이 가격대 이하만 봅니다"><b>{{ r.price_won | won }}</b></a>{% endif %}{% if !r.price_bucket_won %}<span class="dim">가격 없음</span>{% endif %}{% if r.cash_only %}
-    <span class="dim cash" title="표시가 + 부대비용이 선납금 안입니다">전액 현금</span>{% endif %}{% if !r.cash_only %}{% if r.monthly_won %}
-    <span class="dim pay" title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다">현금 {{ r.down_payment_won | won }} · 월 {{ r.monthly_won | won }} 추정</span>{% endif %}{% endif %}</td>
-  <td class="r num" data-label="월" title="선납금·부대비용을 뺀 원금을 원리금 균등으로 나눈 값입니다">{% if r.monthly_won %}<a href="/listings?monthly_max={{ r.monthly_bucket_won }}">{{ r.monthly_won | won }}</a>{% endif %}</td>
-  {% for c in r.axis_chips %}<td class="c ax" data-label="{{ c.head }}"><a class="chip-{{ c.tone }} axis-{{ c.tone }}" href="{{ c.filter_url }}" title="{{ c.label }}">{% if c.state %}{{ c.state }}{% endif %}{% if !c.state %}<b>{{ c.mark }}</b>{% endif %}</a></td>{% endfor %}
-  <td class="r num" data-label="옵션">
-    {% if r.option_count %}<a href="/why/{{ r.listing_id }}">{{ r.option_count }}종{% if r.option_price_won %} {{ r.option_price_won | won }}{% endif %}</a>{% endif %}
-    {% if !r.option_count %}<span class="dim">없음</span>{% endif %}
-  </td>
-  <td data-label="딜러" title="{{ r.dealer_shop }}">{% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}">{{ r.dealer_shop }}</a>{% endif %}{% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</td>
-  <td class="r num" data-label="경과">{% if r.days_on_market %}{{ r.days_on_market | num }}일{% endif %}{% if !r.days_on_market %}<span class="dim">오늘</span>{% endif %}</td>
-  <td class="c" data-label="상태">{% if r.status_key %}<a href="/listings?status={{ r.status_key }}" title="게시중 · 내려감 · 재등록">{{ r.status_label }}</a>{% endif %}{% if !r.status_key %}<span class="dim">상태 없음</span>{% endif %}</td>
-  <td class="c" data-label="사이트"><span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다">{{ r.site_badge }}</span>{% if r.record_mismatch %}<a class="warn-block" href="/listings?mismatch=1" title="성능기록부와 보험이력이 서로 다릅니다. 어느 쪽이 맞는지는 사람이 봐야 합니다">성능부≠보험</a>{% endif %}</td>
-  <td class="c act" data-label="링크">
-    <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
-    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>{% endif %}
-  </td>
-</tr>
+<div class="row" data-peek="{{ r.photo_url }}" data-href="/why/{{ r.listing_id }}"
+     data-buy="{{ r.total_cost_won | won }}" data-buyest="{{ r.buy_estimated }}">
+
+  <!-- 1 등급 + 순위 -->
+  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
+       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  <div class="gr {{ r.grade }} {{ r.grade | gradecls }}" title="{{ grade_help }} — 이 매물은 {{ r.earned | num }} / {{ r.denominator | num }} 점 ({{ r.ratio_pct }}%) 입니다">
+    <a href="/listings?grade={{ r.grade }}">{{ r.grade_label }}</a>
+    {% if r.rank %}<small>{{ r.rank }}위</small>{% endif %}
+    {% if !r.rank %}<small>순위 없음</small>{% endif %}
+    {% if r.provisional %}<span class="prov"
+      title="상세 조회가 아직 안 끝났습니다. 등급이 바뀔 수 있습니다">잠정</span>{% endif %}
+  </div>
+
+  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  <div class="barwrap">
+    <div class="bars">
+      {% for b in r.bars %}<div class="bar {{ b.css }}"
+        title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점"><i
+        style="height:{{ b.pct }}%"></i><u>{{ b.pct }}</u></div>{% endfor %}
+    </div>
+    <div class="barlab">{% for b in r.bars %}<span>{{ b.label }}</span>{% endfor %}</div>
+  </div>
+
+  <!-- 3 사진 -->
+  <div class="desk">
+    {% if r.photo_url %}<a href="/why/{{ r.listing_id }}"><img class="thumb"
+      src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
+    {% if !r.photo_url %}<span class="thumb thumb-none nophoto"
+      title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
+  </div>
+
+  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  <div class="head">
+    <div class="mob">
+      {% if r.photo_url %}<img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
+      {% if !r.photo_url %}<span class="thumb thumb-none nophoto">사진 없음</span>{% endif %}
+    </div>
+    <div>
+      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      <div class="name">
+        <form method="post" action="/watch/add" class="inline">
+          <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+          <input type="hidden" name="listing_id" value="{{ r.listing_id }}">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <a href="/why/{{ r.listing_id }}"
+           title="판정 근거와 상세를 봅니다">{{ r.target_label }}</a>
+      </div>
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">{{ r.trim }}</div>
+      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
+           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="meta">
+        <a href="/listings?year_from={{ r.year_month }}"
+           title="이 연식 이후만 봅니다">{{ r.year_month }}</a> ·
+        {% if r.mileage_bucket_km %}<a href="/listings?km_max={{ r.mileage_bucket_km }}"
+          title="이 주행거리 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}
+        {% if !r.mileage_bucket_km %}<span class="dim">주행 없음</span>{% endif %} ·
+        {% if r.color_ext_hex %}<span class="swatch"
+          style="background:{{ r.color_ext_hex }}"></span>{% endif %}{{ r.color_ext }}
+        / {{ r.color_int }} ·
+        {% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}"
+          title="이 딜러의 매물을 봅니다">{{ r.dealer_shop }}</a>{% endif %}
+        {% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}
+        <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
+          >{{ r.site_badge }}</span>
+        {% if r.status_key %}<a href="/listings?status={{ r.status_key }}"
+          title="게시중 · 내려감 · 재등록">{{ r.status_label }}</a>{% endif %}
+        {% if r.record_mismatch %}<a class="warn-block" href="/listings?mismatch=1"
+          title="성능기록부와 보험이력이 서로 다릅니다. 어느 쪽이 맞는지는 사람이 봐야 합니다"
+          >성능부≠보험</a>{% endif %}
+        {% for c in r.axis_chips %}<a class="chip-{{ c.tone }} axis-{{ c.tone }}"
+          href="{{ c.filter_url }}" title="{{ c.label }} — 기호 O 있음 · - 없음 · ? 확인 못 함"
+          >{{ c.head }}<b>{{ c.mark }}</b></a>{% endfor %}
+        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
+        {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener"
+          class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- 5~8 -->
+  <div class="cellset">
+    <div class="cell"><u>시세차</u>
+      {% if r.market_gap_pct %}<b class="{{ r.market_gap_pct | signcls }}"
+        title="같은 차종·트림·연식 실매물 중앙값 {{ r.market_price_won | won }} 대비">{{ r.market_gap_pct }}%</b>{% endif %}
+      {% if !r.market_gap_pct %}<b class="dim" title="표본이 모자라 중앙값을 못 만듭니다">표본 부족</b>{% endif %}
+      {% if r.market_price_won %}<span class="raw"
+        title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 {{ r.market_price_won | won }}</span>{% endif %}</div>
+    <div class="cell"><u>신차대비</u>
+      {% if r.origin_gap_pct %}<b class="{{ r.origin_gap_pct | signcls }}"
+        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        >{{ r.origin_gap_pct }}%</b>{% endif %}
+      {% if !r.origin_gap_pct %}<b class="dim">신차가 없음</b>{% endif %}
+      {% if r.origin_total_won %}<span class="raw"
+        title="판매자가 입력한 것입니다">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %}
+        (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}</div>
+    <div class="cell"><u>옵션가</u>
+      {% if r.option_count %}<b><a href="/why/{{ r.listing_id }}"
+        title="선택 옵션 종수와 합계입니다">{{ r.option_count }}종{% if r.option_price_won %}
+        {{ r.option_price_won | won }}{% endif %}</a></b>{% endif %}
+      {% if !r.option_count %}<b class="dim">없음</b>{% endif %}</div>
+    <div class="cell"><u>경과</u>
+      {% if r.days_on_market %}<b>{{ r.days_on_market | num }}일</b>{% endif %}
+      {% if !r.days_on_market %}<b class="dim">오늘</b>{% endif %}</div>
+    <div class="price">
+      {% if r.price_bucket_won %}<b><a href="/listings?price_max={{ r.price_bucket_won }}"
+        title="이 가격대 이하만 봅니다">{{ r.price_won | won }}</a></b>{% endif %}
+      {% if !r.price_bucket_won %}<b>{{ r.price_won | won }}</b>{% endif %}
+      {% if r.price_change_won %}<u class="{{ r.price_change_won | signcls }}"
+        >{{ r.price_change_won | won }} · {{ r.price_change_cnt }}회</u>{% endif %}
+      {% if !r.price_change_won %}<u class="dim">변동 없음</u>{% endif %}
+      {% if r.cash_only %}<u class="dim" title="표시가 + 부대비용이 선납금 안입니다">전액 현금</u>{% endif %}
+      {% if !r.cash_only %}{% if r.monthly_won %}<u class="dim"
+        title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"
+        >현금 {{ r.down_payment_won | won }} · 월 <a
+        href="/listings?monthly_max={{ r.monthly_bucket_won }}"
+        title="이 월납입 이하만 봅니다">{{ r.monthly_won | won }}</a> 추정</u>{% endif %}{% endif %}
+    </div>
+  </div>
+</div>
 {% endfor %}
-</tbody>
-</table>
+</main>
 {% endif %}
 
 {% if paging.many %}

@@ -615,6 +615,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
+     g_value, g_car, g_warranty, g_site, g_taste,
      _site, _sell_type, _mismatch) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
@@ -681,6 +682,17 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 성능부와 보험이력이 어긋난다 (V3-50)
         record_mismatch=bool(_mismatch),
         listing_id=lid, grade=grade or NOT_RATED,
+        # ★★ 네 묶음 막대 (개정 427).  ★ 갈래 이름은 scoring.json groups 가 정본
+        # ★ 등급 문구 — 「제외」는 문자가 아니다 (개정 433).  config 가 정본
+        grade_label=labels.get("GRADE_LABELS", {}).get(
+            grade or NOT_RATED, grade or NOT_RATED),
+        color_ext_hex=_view_dict("color_swatch", root).get(ce),
+        bars=_score_bars({"값": g_value, "차량": g_car,
+                          "제조사 보증": g_warranty, "사이트 검증": g_site,
+                          "취향": g_taste}, root),
+        # ★ 상세 조회가 안 끝났으면 「잠정」이다 (STEP 97).
+        #   ★ 판정을 감추지 않는다 — 등급은 내되 잠정이라 적는다
+        provisional=(g_base is None or not insp_fmt),
         # ★ NOT_RATED 에 순위를 매기지 않는다.  비교 대상이 아니다
         rank=None if (grade or NOT_RATED) == NOT_RATED else rank,
         # ★ 비율이 크게 · 원점수/분모가 작게 (STEP 149f · A-1).
@@ -1023,6 +1035,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★ 등급은 취향을 뺀 505 로 매긴다 (개정 292).  555 로 잰 비율을 내면
         #   화면과 등급이 어긋난다 — 실측 08-17: 84.9%(555) 인데 S(505 기준)
         " s.grade_earned, s.grade_base,"
+        # ★★ 네 묶음 막대 (개정 427 · V11-163).  ★ 목록의 시그니처다.
+        #   행마다 따로 조회하면 200행에 1,000쿼리다 — 같은 조인으로 받는다
+        " s.group_value, s.group_car, s.group_warranty,"
+        " s.group_site, s.group_taste,"
         # 사이트 배지 (50-multisite · V9-06) — 「K카 직영」까지 낸다
         " l.site, l.sell_type,"
         # ★ 성능부 ↔ 보험 어긋남 (V3-50).  조건은 store 에 하나만 둔다 —
@@ -1067,6 +1083,52 @@ def view_listings(account: Account, conn: sqlite3.Connection,
                  opt_prices, axes, changes, base, encar_tpl, km_unit,
                  monthly_unit, dep_cfg, state_by, market_by, high_km, root)
             for i, r in enumerate(recs)]
+
+
+
+def _score_bars(sums: dict, root: str = ".") -> list:
+    """★ 네 묶음 막대 (개정 427 · V11-163) — 목록의 시그니처.
+
+    ★ 늘 넷이다.  값이 없어도 자리를 지운다 — 행마다 개수가 달라지면
+      스캔이 깨진다 (규격 「금지 — 배지를 행마다 다른 개수로 붙이는 것」)
+    ★ 어느 갈래를 어느 막대에 넣는지는 config/web.json score_bars 가 정본이다
+    """
+    from report.screens.views import ScoreBar
+
+    caps = _group_caps(root)
+    out = []
+    for one in _view_list("score_bars", root):
+        cap = sum(caps.get(g, 0.0) for g in one["groups"])
+        got = sum(sums.get(g) or 0.0 for g in one["groups"])
+        pct = int(round(got / cap * 100)) if cap else 0
+        out.append(ScoreBar(one["key"], one["label"], one["css"],
+                            max(0, min(100, pct)), round(got, 1), cap))
+    return out
+
+
+def _group_caps(root: str = ".") -> dict:
+    """갈래별 만점.  ★ config/scoring.json groups 가 정본이다 (S14)."""
+    with open(os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cfg = json.load(f)
+    comp = cfg["components"]
+    out = {}
+    for name, prefixes in (cfg.get("groups") or {}).items():
+        out[name] = float(sum(
+            (v if isinstance(v, (int, float)) else (v or {}).get("points") or 0)
+            for k, v in comp.items()
+            if any(k == p or k.startswith(p) for p in prefixes)))
+    return out
+
+
+def _view_list(key: str, root: str = ".") -> list:
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return json.load(f)[key]
+
+
+def _view_dict(key: str, root: str = ".") -> dict:
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return json.load(f)[key]
 
 
 def _soh_low(root: str) -> float:

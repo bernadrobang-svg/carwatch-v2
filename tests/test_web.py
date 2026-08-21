@@ -273,7 +273,11 @@ def test_menu_by_role() -> None:
     n_anon = len(menu_items(ANONYMOUS))
     n_user = len(menu_items(Account(2, ROLE_USER, "u")))
     n_admin = len(menu_items(Account(1, ROLE_ADMIN, "a")))
-    check("★ 역할이 오를수록 메뉴가 는다", n_anon < n_user < n_admin,
+    # ★★ 개정 427 — 상단 메뉴가 셋으로 고정됐다.  관리자도 셋이다
+    #   (나머지는 관리로 내렸다).  ★ 「늘어난다」가 아니라 「줄지 않는다」다 —
+    #   못 들어갈 문을 메뉴에 두지 않는 것이 규칙이다 (STEP 126)
+    check("★ 역할이 오를수록 메뉴가 줄지 않는다",
+          n_anon <= n_user <= n_admin and n_anon < n_admin,
           f"{n_anon} < {n_user} < {n_admin}")
     check("★ 비로그인 메뉴에 /admin 이 없다",
           not any(m["path"].startswith("/admin")

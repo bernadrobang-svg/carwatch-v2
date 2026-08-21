@@ -49,6 +49,22 @@ class AxisChip:
 
 
 @dataclass(frozen=True)
+class ScoreBar:
+    """★ 목록의 시그니처 — 네 묶음 점수 막대 (개정 427 · STEP 97).
+
+    ★ 사이트는 이것을 못 한다 — 자기 매물을 채점할 수 없다
+    ★ 늘 같은 자리 · 같은 개수 · 같은 색이다.  행마다 달라지면 스캔이 깨진다
+    """
+
+    key: str          # car · value · warranty · taste
+    label: str        # 차량 · 값 · 보증 · 취향
+    css: str          # b1~b4 — ★ 색이다.  늘 같은 갈래가 같은 색이어야 한다
+    pct: int          # 0~100.  ★ 막대 높이다
+    earned: float     # 받은 점수
+    cap: float        # 그 묶음 만점
+
+
+@dataclass(frozen=True)
 class ListingRow:
     listing_id: int
     grade: str
@@ -111,6 +127,14 @@ class ListingRow:
     # 플랫폼 신뢰도 (개정 300) — 높음 · 보통 · 낮음 · 없음
     platform_trust: str | None = None
     platform_trust_why: list = field(default_factory=list)
+    # ★★ 네 묶음 막대 (개정 427 · V11-163).  ★ 목록의 시그니처다
+    bars: list = field(default_factory=list)
+    # ★ 상세 조회가 안 끝난 매물 — 등급 옆에 「잠정」 (STEP 97)
+    provisional: bool = False
+    # ★ 등급 문구 — 「제외」는 등급 문자가 아니다 (개정 433)
+    grade_label: str = ""
+    # ★ 색 점 (시안 .swatch).  원문은 이름만 준다 — 없으면 안 찍는다
+    color_ext_hex: str | None = None
     # 「왜 싼가」 (개정 299 · V3-52).  ★ 못 찾으면 그것도 낸다
     # 순위용 — 취향까지 넣은 555 기준 (개정 292 ④).  등급은 505 다
     rank_earned: float | None = None
