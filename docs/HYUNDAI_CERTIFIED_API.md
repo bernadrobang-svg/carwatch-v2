@@ -1,11 +1,11 @@
 # 현대·제네시스 인증중고차 API — 조사 (★ 미완)
 
-`SPEC-2026.08.22-r479` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
+`SPEC-2026.08.22-r480` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
 
 ```
-★ 마스터가 ★ 매물 주소를 주셨다 — `/m/goods/goodsDetail.do?goodsNo=GJJ260317025652`
-★★ ★ 상세는 ★ 완전히 뚫렸다.  ★ 인증 없이 200 · 204KB · 우리 축이 거의 다 있다
-★ 남은 것은 ★ 목록(매물번호 모으기) 하나다 — ★ 5장
+★★★ ★ 목록·상세 ★ 둘 다 뚫렸다.  ★ 인증·토큰 없다.  ★ 개발측에 넘길 수 있다
+★ 마스터가 주소 둘을 주셔서 풀렸다 — 상세 `goodsDetail.do?goodsNo=…` · 목록 `/m/search/vehicle`
+★ 가이드는 그 전에 ★ 두 번 「목록이 없다」로 멈춰 있었다 (개정 478)
 ```
 
 ---
@@ -136,26 +136,73 @@ GET /m/goods/goodsDetail.do?goodsNo={goodsNo}    → ★ 200 · 204,390B
 
 ---
 
-# 5. ★ 남은 것 — 목록(매물번호 모으기) 하나
+# 5. ★★ 목록 — 뚫렸다
 
 ```
-★ 상세는 ★ 매물번호만 알면 ★ 무제한으로 받을 수 있다 (인증 없음)
-★ 그런데 ★ 매물번호를 ★ 어디서 모으는지가 아직이다
+POST https://certified.hyundai.com/m/search/results/selling      ★ 판매중
+POST https://certified.hyundai.com/m/search/results/coming       입고예정
+GET  https://certified.hyundai.com/api/search/vehicle/count/selling?{조건}   ★ 건수만
 
-시도한 것 — 전부 실패
-  /m/goods/goodsList.do        404      /api/goods/list           404
-  /p/goods/goodsList.do        200 이지만 ★ 홈으로 되돌아간다 (goodsNo 0건)
-  /m/goods/goodsListAjax.do    404      /m/goods/goodsListView.do 404
-  브라우저로 열어 스크롤·「모두 보기」·필터 클릭 → ★ 목록 XHR 이 안 뜬다
-  상세 HTML 안에도 ★ 다른 매물 링크가 없다 (goodsNo 자기 것 1건뿐)
+헤더  모바일 UA · Content-Type: application/json ·
+      Referer: …/m/search/vehicle?srchType=srchFilter · X-Requested-With: XMLHttpRequest
+★ 응답은 ★ HTML 조각이다 (JSON 아님).  ★ 매물번호는 `data-id` 에 있다
+```
 
-★★ 엔카와 ★ 같은 꼴이다 — ★ 상세는 열리는데 ★ 목록만 막힌다
-   ★ 엔카는 「폰으로 매물번호를 모아 서버로 상세를 받는」 방식으로 푼다 (지금 3,916건)
-   ★ 현대도 ★ 같은 방식이면 된다
+## 요청 본문 (브라우저가 보내는 것 그대로)
 
-다음 (가이드 몫)
-  ① ★ 마스터께 ★ 목록 화면 주소를 한 번 더 청한다 —
-     앱·웹에서 ★ 차량을 여러 대 늘어놓은 화면의 주소 (상세 말고 ★ 목록)
-  ② 그것이 오면 ★ 목록 API 를 짚어 규격을 닫는다
-★ 그 전에는 ★ 개발측에 넘기지 않는다
+```json
+{"type":null,"sortType":"popularity","srchType":"srchFilter","recentYn":"N",
+ "tmnlId":"","mbrNo":null,"siteNo":null,"saleCorpCd":null,
+ "rowsPerPage":100,"pageIdx":1,
+ "startNo":null,"listCnt":null,"searchWord":null,
+ "lowPrice":null,"highPrice":null,"lowMileage":null,"highMileage":null,
+ "lowModelYear":2017,"highModelYear":null,"sdStatCd":null}
+```
+
+```
+★ `tmnlId` 는 ★ 빈 문자열이어도 된다 — ★ 토큰이 필요 없다 (실측)
+★ `rowsPerPage` 를 ★ 100 으로 키우면 ★ 한 번에 100건 온다 (기본 20)
+★ `pageIdx` 로 쪽을 넘긴다 — 1·2·3·4 에서 각각 20건, 누적 80건 확인
+★ `sortType` — popularity · 최근 연식순 · 낮은 가격순 · 높은 가격순 · 할인금액 높은순 ·
+              최근 등록순 · 짧은 주행거리순
+★ 조건 — lowPrice/highPrice · lowMileage/highMileage · lowModelYear/highModelYear · searchWord
+```
+
+## 매물번호 뽑기
+
+```
+data-id="GJJ260317025652"          ← ★ 이것이 매물번호다
+data-favContsNo="GJJ260317025652"  ← 같은 값
+꼴  영문 3 + 숫자 12
+정규식  data-id="([A-Z]{3}\d{12})"
+→ ★ 그대로 `goodsDetail.do?goodsNo={번호}` 에 넣으면 상세가 200 이다
+```
+
+## 목록 한 카드에 보이는 것 (실측)
+
+```
+2019 그랜저(IG) 가솔린 2.4 프리미엄 · 19년 02월 · 62,776km · 294저1103 · 군산
+1,710만 (1,850만에서 ★ 140만 할인) · 할부 월 21만 · 찜 157
+★ 차종·트림·연식·주행·지역·가격·할인·월납이 ★ 목록에서 다 온다
+```
+
+## 건수
+
+```
+GET /api/search/vehicle/count/selling?srchType=srchFilter&mdlGrpList=1171
+  → {"code":"0000","body":166,"totalCount":0}      ★ body 가 건수다
+★ 조건 없이 부르면 전체 건수가 나온다 — ★ 끝 쪽까지 받는 기준으로 쓴다
+```
+
+---
+
+# 6. ★ 판정 — 붙일 수 있다
+
+```
+★ 목록  POST /m/search/results/selling  (토큰 없음 · 100건/쪽 · 쪽넘김)
+★ 상세  GET  /m/goods/goodsDetail.do?goodsNo={data-id}  (인증 없음 · 204KB)
+★ 둘 다 ★ 서버에서 브라우저 없이 200 이다
+★ robots 는 ★ 금지 경로가 하나도 없다
+★★ 엔카와 달리 ★ 목록도 열린다.  ★ KB·기아 CPO 와 같은 급으로 붙일 수 있다
+★ 잔여 보증을 ★ 년·월·km 로 주는 것은 ★ 네 사이트 중 현대뿐이다
 ```
