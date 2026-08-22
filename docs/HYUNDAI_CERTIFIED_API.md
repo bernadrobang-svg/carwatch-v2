@@ -94,11 +94,11 @@ GET /m/goods/goodsDetail.do?goodsNo={goodsNo}    → ★ 200 · 204,390B
 | 연료·배기량 | — | 연료 · 배기량 | 가솔린 · 2,497cc |
 | `state.accident` 사고 | 51 | **내차피해이력** | **1건** |
 | `history.owner` 소유자 변경 | 11 | **소유자 변경** | **있음** |
-| `history.seizing` 압류·저당 | 8 | **압류 / 저당** | **없음 / 없음** |
+| `history.lien` 압류·저당 | 8 | **압류 / 저당** | **없음 / 없음** |
 | `warranty.general` 일반 | 22 | ★ **잔여 보증 — 차체·일반·냉난방** | ★ **2년 10개월 남음 · 2029년 7월까지 · 79,435km 남음** |
 | `warranty.power` 동력계 | 32 | ★ **엔진 및 동력전달 부품** | 〃 |
 | `warranty.site` 사이트 검증 | 36 | ★ **정밀점검 287개 항목 · 성능점검기록부 발행완료 · 책임환불 3일 · 커넥티드 1년** | ★ **제조사 인증 = 만점** |
-| `taste.option` 옵션 | 43 | ★ **이름으로** | 내비게이션 · 하이패스 · 열선/통풍/전동시트 · 가죽시트 · 전동트렁크 |
+| `spec.options` 옵션 | 43 | ★ **이름으로** | 내비게이션 · 하이패스 · 열선/통풍/전동시트 · 가죽시트 · 전동트렁크 |
 | `taste.sunroof` 선루프 | 12 | 〃 | **선루프** |
 | `taste.hud` HUD | 18 | 〃 | **헤드업 디스플레이** |
 | 월납 | — | 할부 | 월 63만 (선수금 30% · 금리 2.5% · 60개월) |
@@ -115,11 +115,11 @@ GET /m/goods/goodsDetail.do?goodsNo={goodsNo}    → ★ 200 · 204,390B
 ## 못 채우는 축
 
 ```
-✘ `value.origin` 신차가 — ★ 화면에 없다.  ★ 차종·트림 표에서 보충한다 (f-table 「사이트별 채우기」 ③)
+✘ `value.depreciation` 신차가 — ★ 화면에 없다.  ★ 차종·트림 표에서 보충한다 (f-table 「사이트별 채우기」 ③)
 ✘ `value.market` 시세 — 우리 산출로 채운다 (④)
 ✘ `state.frame` 골격 · `state.outer` 외판 — ★ 「성능점검기록부」 안에 있을 것이다.  ★ 아직 안 열었다
 ✘ `state.consumable` 소모품 — 엔카·KB 도 안 준다
-✘ `history.not_join` 자차 미가입 · `history.use` 용도 — ★ 「통합이력 조회하기」 안일 수 있다
+✘ `history.not_join` 자차 미가입 · `history.usage` 용도 — ★ 「통합이력 조회하기」 안일 수 있다
 ```
 
 ---

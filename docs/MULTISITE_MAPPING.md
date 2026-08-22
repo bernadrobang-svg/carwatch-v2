@@ -270,7 +270,7 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
 
 ```
 ★★★ ★ `factory_price` — ★ 신차가를 주는 ★ 유일한 사이트다
-   ★ 엔카 말고는 아무 데도 안 주던 값이다.  ★ `value.origin` 75점이 여기서 산다
+   ★ 엔카 말고는 아무 데도 안 주던 값이다.  ★ `value.depreciation` 75점이 여기서 산다
    ★ 그리고 ★ 다른 사이트 매물에 ★ 붙여 쓸 수 있다 (f-table 「사이트별 채우기」 ③)
 ★★ `options[].choice` 가 ★ loaded / absent 로 온다 — ★ 「없다」를 ★ 명시한다
    ★ 우리 「없음 0 · 모름 NULL」과 정확히 맞는다.  ★ absent 는 0 이고 NULL 이 아니다
@@ -356,7 +356,7 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
      kia_cpo   code='SUNROOF'       display='선루프'
      kcar      code='선루프'         display='선루프'      ← 이름이 곧 코드다
    ★ status 는 처음에 'pending'.  ★ 사람이 확인하면 'confirmed' (STEP 40~45)
-③ 우리 축(`taste.sunroof` · `taste.hud` · `taste.fitting`)으로 옮기는 것은
+③ 우리 축(`taste.sunroof` · `taste.hud` · `taste.picked`)으로 옮기는 것은
    → ★ `dict_enum(site, axis='option', value=code, mapped='sunroof')` 가 한다
    ★ `mapped` 가 비면 ★ 그 축은 0점 + 「미확인」.  ★ 짐작으로 채우지 마라
 ```
