@@ -200,8 +200,10 @@ def s43_2c_no_hda() -> tuple[bool, str]:
             if not pat.search(line):
                 continue
             # ★ 「HDA 축이 없음」을 지키는 시험은 ★ 살린다 — 되살아나면 그것이 잡는다
+            # ★ 파수 시험과 ★ 「왜 지웠나」 경위 주석은 살린다 — 되살아나면 그것이 잡는다
             if "test_hda_gate" in line or "축은 더 없다" in line or "축이 없어졌다" in line \
-                    or "축은 개정" in line or "not in COMPONENTS" in line:
+                    or "축은 개정" in line or "not in COMPONENTS" in line \
+                    or "를 지우면서" in line or "지웠다" in line:
                 continue
             bad.append(f"{q.relative_to(ROOT)}:{i}")
     if bad:
