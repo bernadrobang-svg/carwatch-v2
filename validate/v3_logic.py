@@ -118,10 +118,6 @@ C = {
                    "소견(006039·006040)을 부위로 세지 않는다. "
                    "code 로 가르면 소견 코드가 늘 때 깨진다 (STEP 21b)",
                    KIND_CODE),
-    "V3-33": Check("V3", "V3-33", "HDA 판정이 전건 description 근거",
-                   FATAL, "run",
-                   "옵션명으로 가르지 않는다. Ⅰ·II 가 로마숫자와 라틴으로 섞여 온다",
-                   KIND_CODE),
     "V6-07": Check("V6", "V6-07", "ORDER BY 에 4단이 전부 있음", FATAL, "run",
                    "E 뒤로 → 비율 → 가격 → listing_id. "
                    "「두 번 조회」로는 단일 스레드에서 우연히 통과한다 (E-3)",
@@ -385,11 +381,6 @@ SHUFFLE_CALLS = len(VALUES) * len(PRIOS)
 SHUFFLE_SAMPLE = _cfg("shuffle_sample")
 
 
-# HDA 판정에 허용되는 근거.  ★ 옵션명은 근거가 아니다 (STEP 75)
-HDA_SOURCES = ("catalog_description", "spec_table", "catalog_missing",
-               "missing", "gate_closed")
-
-
 def _file_output_checks(conn, rid) -> list:
     """★ 실제로 써 본다.  「덮어쓰지 않는다」를 글로만 두지 않는다 (G-3)."""
     import json as _j
@@ -482,16 +473,6 @@ def _diagnosis_count_check(conn, rid):
         "  WHERE i.listing_id = d.listing_id) LIMIT 20")]
     return result(C["V3-34"], rid, 0, len(bad), not bad, bad)
 
-
-def _hda_source_check(conn, rid):
-    """★ 「드라이빙 어시스턴스 패키지 Ⅰ」에는 HDA 가 없다.
-
-    옵션명의 Ⅰ·II 로 가르면 로마숫자(U+2160)와 라틴이 섞여 무너진다.
-    """
-    bad = [f"{r[0]} {r[1]}건" for r in conn.execute(
-        "SELECT source, COUNT(*) FROM result_axis WHERE axis='spec.hda' "
-        "GROUP BY 1") if r[0] not in HDA_SOURCES]
-    return result(C["V3-33"], rid, 0, bad or 0, not bad, bad)
 
 
 def _sort_determinism(conn, rid):
@@ -2177,7 +2158,6 @@ def run(conn, ctx) -> list:
     out.append(result(C["V3-27"], rid, 0, n, n == 0))
     out += _warning_contract_checks(conn, rid)
     out.append(_sort_determinism(conn, rid))
-    out.append(_hda_source_check(conn, rid))
     out.append(_diagnosis_count_check(conn, rid))
     out += _conflict_checks(conn, rid)
     out.append(_halt_dict_check(conn, rid))

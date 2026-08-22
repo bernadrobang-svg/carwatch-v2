@@ -42,9 +42,17 @@ def s43_2_axis_ids() -> tuple[bool, str]:
     bad: list[str] = []
     live = [q for q in GUIDE.glob("*.md") if q.name != "03_이력.md"] + [FTABLE]
     for q in live:
-        for m in re.finditer(r"`((?:state|history|value|spec|taste|warranty)\.[a-z_]+)`", _read(q)):
-            if m.group(1) not in real:
-                bad.append(f"{q.name}:{m.group(1)}")
+        text = _read(q)
+        for m in re.finditer(r"`((?:state|history|value|spec|taste|warranty)\.[a-z_]+)`", text):
+            if m.group(1) in real:
+                continue
+            # ★ 「옛 이름 → 새 이름」 대조표의 왼쪽은 ★ 있어야 맞다 —
+            #   같은 줄에 ★ config 에 있는 이름이 함께 있으면 대조표로 본다
+            head = text.rfind("\n", 0, m.start()) + 1
+            line = text[head:text.find("\n", m.start())]
+            if any(f"`{r}`" in line for r in real):
+                continue
+            bad.append(f"{q.name}:{m.group(1)}")
     if bad:
         return False, "config 에 없는 축 id — " + " · ".join(sorted(set(bad))[:8])
     return True, "축 id 가 config 와 같다"

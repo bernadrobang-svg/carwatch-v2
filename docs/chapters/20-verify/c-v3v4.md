@@ -108,7 +108,6 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 | V3-38 | facet 수신 후 목록 관측분과 대조함 | code | warn |
 | V3-31 | 딜러 NULL 매물에 `dealer_untrusted` 경고가 없음 | fatal |
 | V3-32 | `seizing` null 매물이 「저당 없음」으로 판정되지 않음 | fatal |
-| V3-33 | HDA 판정이 전건 `description` 근거 (`source='catalog_description'`) | fatal |
 | V3-34 | 판정 항목 수 == `resultCode IS NOT NULL` 인 `items` 수 | code | fatal |
 | V3-35 | `conflicts` 가 있는 매물이 기록됨 | code | fatal |
 | V3-36 | `conflicts` 건수가 임계 미만 | external | warn |
