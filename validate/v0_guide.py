@@ -141,6 +141,32 @@ def s44_2_one_order() -> tuple[bool, str]:
     return True, f"명령서가 하나다 — {got[0].parent.name}/{got[0].name}"
 
 
+def s43_2b_axis_renamed() -> tuple[bool, str]:
+    """★ config 의 축 id 가 ★ 규격 이름인가 (개정 504 · 마스터 확정).
+
+    ★ S43-2 는 「규격에 config 에 없는 이름이 있나」를 본다 —
+      ★ 규격이 규격 이름만 쓰면 ★ 통과한다.  ★ 코드가 옛 이름이어도 안 잡힌다
+    ★ 그래서 ★ 반대 방향을 따로 본다 — 「config 에 ★ 옛 이름이 남았나」
+    """
+    RENAME = {
+        "value.depreciation": "value.origin",
+        "state.repair": "state.my_cost",
+        "history.usage": "history.use",
+        "history.lien": "history.seizing",
+        "spec.trim": "taste.trim",
+        "spec.options": "taste.option",
+        "taste.picked": "taste.fitting",
+    }
+    try:
+        cfg = json.loads(_read(SCORING) or "{}")
+    except json.JSONDecodeError:
+        return False, "config/scoring.json 을 읽을 수 없다"
+    left = [f"{k}→{v}" for k, v in RENAME.items() if k in cfg.get("components", {})]
+    if left:
+        return False, f"config 에 옛 축 이름이 {len(left)}개 남았다 — " + " · ".join(left)
+    return True, "config 가 규격 이름을 쓴다"
+
+
 def s43_3_version_matches() -> tuple[bool, str]:
     """★ 00_버전.md 의 지금 버전이 03_이력.md 의 마지막 개정과 같은가 (V0-01)."""
     hist = _read(GUIDE / "03_이력.md")
@@ -155,6 +181,7 @@ def s43_3_version_matches() -> tuple[bool, str]:
 
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
+    ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),
