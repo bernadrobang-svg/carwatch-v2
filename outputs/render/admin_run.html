@@ -48,12 +48,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>failed</strong> · 사유 listing_updated · 범위 all
+  <p><strong>failed</strong> · 사유 raw_missing · 범위 all
     </p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-21T13:04:02.627266+00:00</span></p>
-  <p class="muted">KeyError: &#x27;market_curve&#x27;</p>
+    <span class="muted">· 넣은 시각 2026-08-22T04:00:10.345521+00:00</span></p>
+  <p class="muted">KeyError: &#x27;origin_per_percent_cheap&#x27;</p>
   
   
 
@@ -89,13 +89,13 @@
   
   <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">10,533</td></tr>
   
-  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">10,376</td></tr>
+  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">10,377</td></tr>
   
   <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">16,042</td></tr>
   
   </tbody>
   </table>
-  <p class="muted">매물 8,478건 · 판정 3,841건</p>
+  <p class="muted">매물 8,478건 · 판정 3,916건</p>
 
   <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
     갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
@@ -167,6 +167,11 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-22T04:00:10.345521+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-21T13:04:02.627266+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -263,11 +268,6 @@
   <td class="muted" data-label="사유">listing_updated</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-19T23:40:17.833415+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -275,7 +275,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-21T13:04:07.557014+00:00 · 20260821T130404 · 정상 · 52.0초</li><li>2026-08-21T12:59:26.457527+00:00 · 20260821T125916 · 정상 · 5.8초</li><li>2026-08-19T23:46:36.168190+00:00 · 20260819T234633 · 정상 · 64.7초</li><li>2026-08-19T23:17:30.564759+00:00 · 20260819T231730 · 정상 · 123.5초</li><li>2026-08-19T05:35:35.983114+00:00 · 20260819T053535 · 정상 · 2,136.9초</li></ul>
+<ul class="muted"><li>2026-08-22T04:19:46.150329+00:00 · 20260822T041932 · fatal 1 · 0.3초</li><li>2026-08-22T04:00:40.930068+00:00 · 20260822T040038 · 정상 · 0.8초</li><li>2026-08-21T13:04:07.557014+00:00 · 20260821T130404 · 정상 · 52.0초</li><li>2026-08-21T12:59:26.457527+00:00 · 20260821T125916 · 정상 · 5.8초</li><li>2026-08-19T23:46:36.168190+00:00 · 20260819T234633 · 정상 · 64.7초</li></ul>
 
 
 
@@ -285,8 +285,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260821T130404</span>
-  <span>2026-08-22 10:23</span>
+  <span>run 20260822T041932</span>
+  <span>2026-08-22 14:58</span>
 </footer>
 
 </body>

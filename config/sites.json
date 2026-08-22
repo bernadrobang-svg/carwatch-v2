@@ -51,7 +51,7 @@
     "warranty_grades": [
       {
         "key": "엔카진단++",
-        "points": 52,
+        "points": 36,
         "when": {
           "warranty_extend": 1
         },
@@ -59,7 +59,7 @@
       },
       {
         "key": "엔카진단+",
-        "points": 40,
+        "points": 28,
         "when": {
           "warranty_deemed": 1
         },
@@ -67,13 +67,14 @@
       },
       {
         "key": "엔카진단",
-        "points": 26,
+        "points": 18,
         "when": {
           "platform_verified": 1
         },
         "why": "프레임 무사고 · 외부 패널 (clean-encar cleaned=true)"
       }
-    ]
+    ],
+    "_note_452": "★ 개정 452 — 사이트 검증 52 → 36 (f-table 5장-2a ④). 단계 비율은 그대로다 (52:40:26 → 36:28:18)"
   },
   "kcar": {
     "label": "K카",

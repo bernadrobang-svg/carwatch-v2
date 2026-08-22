@@ -223,9 +223,19 @@ def _unknown_split_checks(conn, rid):
             return (one.get("kind2", 0) + one.get("kind3", 0)
                     + one.get("kind4", 0))
 
+        # ★★ 실측 08-22 — 매물이 3,841 → 3,916 으로 늘자 ③ 도 75건 늘어
+        #   「우리 잘못이 늘었다」로 잡혔다.  ★ 매물이 늘면 건수는 늘 늘어난다 —
+        #   ★ 건수가 아니라 ★ 비율로 견준다.  「확인 안 됨」 대비 몫이다
+        def share(one):
+            base = one.get("unknown") or 0
+            return (ours(one) / base) if base else 0.0
+
         up = []
-        if ours(now) > ours(was):
-            up.append(f"★ 우리 잘못이 {ours(was)} → {ours(now)} 로 늘었다")
+        tol28 = 0.001          # ★ 반올림 흔들림만 눈감는다
+        if share(now) > share(was) + tol28:
+            up.append(f"★ 우리 잘못 몫이 {share(was):.1%} → {share(now):.1%} 로 "
+                      f"늘었다 (건수 {ours(was)} → {ours(now)} · "
+                      f"확인 안 됨 {was.get('unknown')} → {now.get('unknown')})")
         moved = [f"{name} {was.get(k, 0)} → {now.get(k, 0)}"
                  for k, name in (("kind2", "② 못 읽는다"),
                                  ("kind3", "③ 안 받는다"),

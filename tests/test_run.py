@@ -515,13 +515,17 @@ def test_score_pipeline() -> None:
           "value.depreciation" not in ex_axes, str(sorted(ex_axes)))
     check("★ 색상 등급이 확정돼 취향 색상 축이 살아났다",
           "taste.color" not in ex_axes, str(sorted(ex_axes)))
-    # ★ 씨앗은 3건뿐이라 시세 표본(5건)이 안 찬다 — 그것이 정답이다.
-    #   ★ 개정 325 — excluded 가 아니라 「0점 + 확인 안 됨」이다
+    # ★★ 개정 452 — 시세는 점수 축이 아니다.  대신 ★ 예산 축이 생겼다.
+    #   ★ 예산을 못 찾으면 0점 + 「확인 안 됨」이다.  이론가로 안 메운다
     short = {a for (a,) in conn.execute(
-        "SELECT DISTINCT axis FROM result_axis"
-        " WHERE source='market_sample_short'")}
-    check("★ 표본이 모자란 시세 축은 0점 · 확인 안 됨 — 이론가로 안 메운다",
-          "value.market" in short, str(sorted(short)))
+        "SELECT DISTINCT axis FROM result_axis WHERE source='missing'")}
+    axes = {a for (a,) in conn.execute(
+        "SELECT DISTINCT axis FROM result_axis")}
+    check("★ 시세 축이 살아 있다 — 30점 (개정 469)",
+          "value.market" in axes, str(sorted(axes))[:120])
+    check("★ 예산·연식 축이 매겨진다 (개정 469)",
+          {"value.budget", "state.year"} <= axes, str(sorted(axes))[:120])
+    del short
     # ★ 개정 287 — 핵심 축을 못 보면 NOT_RATED.
     #   ★★ 개정 433 — 절대조건은 EXCLUDED 다.  E 는 이제 30~40% 자리라
     #     r[0] != "E" 로 거르면 **멀쩡한 E 매물까지 빠진다**

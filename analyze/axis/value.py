@@ -22,14 +22,18 @@ from __future__ import annotations
 
 from analyze.axes import AxisContext
 from analyze.axis._util import months_between
-from analyze.curve import ascending, descending
+from analyze.curve import ascending
 from analyze.verdict import PRIO_OBSERVED, Verdict, put
 
-MARKET = "value.market"
-DEPRECIATION = "value.depreciation"
+DEPRECIATION = "value.depreciation"   # f-table 은 value.origin 이라 적었다 — id 는 안 바꾼다
 MILEAGE = "value.mileage"
+MARKET = "value.market"          # ★ 개정 469 — 시세 30 (마스터 확정)
+YEAR = "state.year"              # ★ 개정 469 신설 — 연식 80 (차량 갈래)
+BUDGET = "value.budget"          # ★ 개정 452 신설 — 예산 95
+PCT = 100.0
 
 MONTHS_PER_YEAR = 12
+WON_PER_MANWON = 10_000
 
 
 def elapsed_years(ctx: AxisContext) -> float | None:
@@ -43,106 +47,110 @@ def elapsed_years(ctx: AxisContext) -> float | None:
                months / MONTHS_PER_YEAR)
 
 
-def by_percent(pct: float, r: dict, key: str) -> float:
-    """퍼센트에 비례해 준다 (개정 419).  ★ 계단이 아니다.
-
-    pct   싼 쪽이 양수다 (시세보다 5% 싸면 +5.0)
-    key   "market" 또는 "origin"
-    ★ 싼 쪽과 비싼 쪽의 기울기가 다르다.  범위도 config 가 정한다 —
-      계수를 코드에 박지 않는다 (S14 · V4-13)
-    """
-    per = float(r[f"{key}_per_percent_cheap" if pct >= 0
-                  else f"{key}_per_percent_over"])
-    got = pct * per
-    return max(float(r[f"{key}_min"]), min(float(r[f"{key}_max"]), got))
-
-
-def adjusted_median(s, r: dict) -> tuple:
-    """옵션·트림을 반영한 견줄 값 (개정 421).
-
-    마스터 — 「그랜저도 깡통이 4000이면 최고트림의 풀옵션이 7000이니」
-
-    돌려줌   (견줄 값, 어떻게 냈나)
-    ★ 표본이 모자라면 차종으로 넓히고 **그렇게 냈다고 밝힌다** —
-      화면이 「같은 트림 3건뿐 · 차종 전체로 견줬습니다」를 낸다 (V3-85)
-    """
-    median = s.market_median_won
-    if not median or not r.get("option_adjust"):
-        return median, "market_median"
-    need = int(r["option_min_sample"])
-    mine = s.option_total_won
-    trim_med = s.option_median_by_trim_won
-    n = s.option_trim_sample_n or 0
-    if n >= need and mine is not None and trim_med is not None:
-        # ★ 내 옵션이 그 트림 중앙보다 비싸면 견줄 값도 그만큼 올라간다
-        return median + (mine - trim_med), f"option_adjusted_{n}"
-    # 넓힘 — 차종 중앙값 × (내 신차가 ÷ 차종 신차가 중앙값)
-    model_med = s.origin_median_by_model_won
-    mine_origin = s.origin_total_won or s.price_origin_won
-    if model_med and mine_origin:
-        return round(median * (mine_origin / model_med)), f"model_scaled_{n}"
-    return median, f"market_median_{n}"
-
-
-def _market(ctx: AxisContext, v: Verdict) -> None:
-    """1-1 시세 대비 100 — 같은 차종·트림·연식 실매물 중앙값 대비."""
-    s, r = ctx.snapshot, ctx.policy.rule("value")
-    if s.price_current_won is None:
-        put(v, MARKET, 0, PRIO_OBSERVED, "missing")
-        return
-    if not s.market_median_won:
-        # ★ 표본이 모자라면 그렇게 적는다.  이론가로 메우지 않는다
-        put(v, MARKET, 0, PRIO_OBSERVED, "market_sample_short")
-        return
-    median, how = adjusted_median(s, r)
-    if not median:
-        put(v, MARKET, 0, PRIO_OBSERVED, "market_sample_short")
-        return
-    # ★ 싼 쪽이 양수다.  5% 싸면 +5.0 → ×5 = 25점
-    pct = (median - s.price_current_won) / median * 100
-    put(v, MARKET, round(by_percent(pct, r, "market")), PRIO_OBSERVED, how)
-
-
 def _depreciation(ctx: AxisContext, v: Verdict) -> None:
-    """1-2 신차가 대비 80 — 기준 잔가율보다 더 떨어졌으면 그만큼 싸게 산다."""
+    """② 값 — 신차가 대비 75 (개정 452).
+
+    ★ 신차가 = 트림가 + 선택 옵션가 (개정 301).  origin_total_won 이 그것이다
+    ★ 마스터 — 「80% 까지는 점수가 거의 없다가 낮아지면서 로그 곡선처럼 오르는 것」
+      80% 이상 0 · 65% 만점 · 그 아래는 만점 유지 (f-table 5장-2a ①)
+    ★ 자르지 않는다.  비싸면 점수가 낮을 뿐이다 (개정 452)
+    """
     s, r = ctx.snapshot, ctx.policy.rule("value")
     origin = s.origin_total_won or s.price_origin_won
     if not origin or s.price_current_won is None:
         put(v, DEPRECIATION, 0, PRIO_OBSERVED, "origin_price_missing")
         return
-    # ★ 잔가율 표를 안 쓴다 (개정 419).  「신차가 대비 몇 % 싼가」 그대로다 —
-    #   마스터 「신차 대비 30% 싸면 30점」
-    #   ★ origin_price 에 옵션·트림이 이미 들어 있어 여기는 보정하지 않는다
-    pct = (origin - s.price_current_won) / origin * 100
-    put(v, DEPRECIATION, round(by_percent(pct, r, "origin")),
+    ratio = s.price_current_won / origin * PCT
+    put(v, DEPRECIATION, round(ascending(ratio, r["origin_curve"])),
         PRIO_OBSERVED, "origin_price")
 
 
-def _mileage(ctx: AxisContext, v: Verdict) -> None:
-    """1-3 주행 대비 70 — 연평균으로 본다.  총 주행거리가 아니다.
+def _budget(ctx: AxisContext, v: Verdict) -> None:
+    """② 값 — 예산 95 (개정 452 신설).
 
-    ★ 「3년에 6만」과 「1년에 6만」은 다른 차다
-    ★ 전기차는 주행 40 + SOH 30 (개정 318)
+    ★ 차종별 마지노선 대비.  ★ 예산 초과는 점수가 낮아질 뿐이다 —
+      마스터 「예산 초과는 점수가 낮아야겠지.  이것도 로그화해」
+    ★ 등급 상한도 예외추천도 없다 (개정 452 로 폐기)
     """
     s, r = ctx.snapshot, ctx.policy.rule("value")
-    full = float(ctx.policy.comp(MILEAGE))
-    is_ev = s.ev_battery_soh is not None
-    cap = float(r["ev_mileage_points"]) if is_ev else full
-    years = elapsed_years(ctx)
-    if s.mileage_km is None or years is None:
+    cfg = ctx.policy.raw.get("budget_manwon") or {}
+    won = _budget_won(cfg, s.target_key)
+    if not won or s.price_current_won is None:
+        put(v, BUDGET, 0, PRIO_OBSERVED, "missing")
+        return
+    ratio = s.price_current_won / won * PCT
+    put(v, BUDGET, round(ascending(ratio, r["budget_curve"])),
+        PRIO_OBSERVED, "budget_line")
+
+
+def _budget_won(cfg: dict, target_key: str | None) -> int | None:
+    """예산 마지노선(원).  ★ 차종별이 먼저다 (f-table 5장-2a ②).
+
+    ★ 연료별은 차종별이 없을 때다.  지금 스냅숏에 연료가 없어 쓰지 못한다 —
+      차종을 늘릴 때 붙인다 (명령서 §4-②).  ★ 그때까지는 전역 기본이다
+    """
+    man = (cfg.get("by_target") or {}).get(target_key)
+    if man is None:
+        man = cfg.get("default")
+    return int(man) * WON_PER_MANWON if man else None
+
+
+def _year(ctx: AxisContext, v: Verdict) -> None:
+    """① 차량 — 연식 75 (개정 452 신설).
+
+    ★ 차령으로 본다.  절대 연도로 박으면 해마다 규격을 고쳐야 한다
+    ★ 최신 만점 · 차령 6(2026 기준 2020년) 이 마스터 기준선 · 차령 8 에서 0
+    """
+    s, r = ctx.snapshot, ctx.policy.rule("value")
+    age = elapsed_years(ctx)
+    if age is None:
+        put(v, YEAR, 0, PRIO_OBSERVED, "missing")
+        return
+    del s
+    put(v, YEAR, round(ascending(age, r["year_curve"])),
+        PRIO_OBSERVED, "age_years")
+
+
+def _mileage(ctx: AxisContext, v: Verdict) -> None:
+    """① 차량 — 주행 100 (개정 452).  ★ 총 주행거리다.  연평균이 아니다.
+
+    ★ 전에는 연평균이었다.  「3년에 6만」과 「1년에 6만」의 차이는
+      ★ 이제 연식 축이 따로 본다 (f-table 5장-2a ③·④)
+    ★★ 전기차 SOH 를 여기서 더하지 않는다 — SOH 는 가점이다 (개정 380).
+      전에는 축 안에서도 더하고 bonuses_json 에도 넣어 ★ 두 번 셌다 (실측 08-22)
+    ★ 8만 km 가 기준선 · 20만에서 0.  ★ 10만을 넘겨도 자르지 않는다
+    """
+    s, r = ctx.snapshot, ctx.policy.rule("value")
+    if s.mileage_km is None:
         put(v, MILEAGE, 0, PRIO_OBSERVED, "missing")
         return
-    per_year = s.mileage_km / years
-    got = ascending(per_year, r["mileage_curve"]) * cap / full
-    if not is_ev:
-        put(v, MILEAGE, round(got), PRIO_OBSERVED, "mileage_per_year")
+    put(v, MILEAGE, round(ascending(float(s.mileage_km), r["mileage_curve"])),
+        PRIO_OBSERVED, "mileage_total")
+
+
+def _market(ctx: AxisContext, v: Verdict) -> None:
+    """② 값 — 시세 대비 30 (개정 469).
+
+    ★ 마스터 확정 08-22 — 「시세를 반영하되 점수를 30점 정도 주라」
+    ★ 싼 쪽이 양수다.  ★ 비싸면 음수로 계속 깎인다 — 0 에서 멈추지 않는다
+    ★ 표본이 모자라면 0점 + 「확인 안 됨」.  ★ 이론가로 메우지 않는다 (개정 325)
+    """
+    s, r = ctx.snapshot, ctx.policy.rule("value")
+    median = s.market_median_won
+    if not median or (s.market_sample_n or 0) < int(r["market_min_sample"]) \
+            or s.price_current_won is None:
+        put(v, MARKET, 0, PRIO_OBSERVED, "market_sample_short")
         return
-    # ★ 전기차는 배터리가 남은 값을 가른다 (개정 318)
-    got += descending(float(s.ev_battery_soh), r["soh_curve"])
-    put(v, MILEAGE, round(got), PRIO_OBSERVED, "mileage_and_soh")
+    pct = (median - s.price_current_won) / median * PCT
+    per = float(r["market_per_percent_cheap" if pct >= 0
+                  else "market_per_percent_over"])
+    got = max(float(r["market_min"]), min(float(r["market_max"]), pct * per))
+    put(v, MARKET, round(got), PRIO_OBSERVED, "market_median")
 
 
 def analyze_value(ctx: AxisContext, v: Verdict) -> None:
     _market(ctx, v)
     _depreciation(ctx, v)
+    _budget(ctx, v)
     _mileage(ctx, v)
+    _year(ctx, v)

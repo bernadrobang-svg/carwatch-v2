@@ -190,13 +190,13 @@ C = {
                    "개정 433 — 관문 배제는 통과/탈락이지 점수가 아니다. "
                    "★ E 는 이제 30~40% 자리다. 배제를 E 로 쓰면 부딪친다",
                    KIND_CONTRACT),
-    "V3-94": Check("V3", "V3-94", "등급 컷이 8단계 80~10 임",
+    "V3-94": Check("V3", "V3-94", "등급 컷이 규격의 8단계임",
                    FATAL, "run",
-                   "개정 433 — S80 A70 B60 C50 D40 E30 F20 G10. "
+                   "개정 469 — S75 A65 B57 C50 D40 E30 F20 G10. "
                    "★ 컷은 「얼마나 걸러낼까」의 손잡이다. 배점이 아니다",
                    KIND_CONTRACT),
-    "V3-90": Check("V3", "V3-90", "등급 분모가 675 로 고정", FATAL, "run",
-                   "개정 431 — 취향 145 는 등급에 들어간다. ★ 빼는 갈래가 "
+    "V3-90": Check("V3", "V3-90", "등급 분모가 총점으로 고정", FATAL, "run",
+                   "개정 452 — 분모는 850 이다. 취향 165 는 등급에 들어간다. ★ 빼는 갈래가 "
                    "없다. 개정 292 「취향은 등급에서 뺀다」는 폐기다. "
                    "★ 끈 축만 뺀다 (개정 426)",
                    KIND_CONTRACT),
@@ -247,9 +247,10 @@ C = {
                    "★ 무사고면 330/625 가 값을 안 보고 깔려 「사고 없다고 A 인데 "
                    "값은 비싸다」가 나왔다 (개정 419)",
                    KIND_CODE),
-    "V3-84": Check("V3", "V3-84", "신차가 점수가 d% 와 1:1 임", FATAL, "run",
-                   "마스터 검산 — 「신차 대비 30% 싸면 30점」. "
-                   "★ 잔가율 표를 안 쓴다 (개정 419)",
+    "V3-84": Check("V3", "V3-84", "신차가 곡선이 규격의 앵커와 같음",
+                   FATAL, "run",
+                   "개정 452 — ★ 80% 이상 0 · 65% 만점 · 사이는 로그. "
+                   "★ 1:1 비례는 폐기다 (개정 419 → 452)",
                    KIND_CODE),
     "V3-85": Check("V3", "V3-85", "옵션 보정 없이 원 중앙값으로 견준 매물",
                    WARN, "run",
@@ -754,6 +755,9 @@ def _curve_table_check(rid):
         "history.not_join_curve": "history.not_join",
         "history.owner_curve": "history.owner",
         "value.mileage_curve": "value.mileage",
+        "value.year_curve": "state.year",
+        "value.budget_curve": "value.budget",
+        "value.origin_curve": "value.depreciation",
         "state.accident_curve": "state.accident",
         "state.repair_curve": "state.repair",
         "state.tread_curve": "state.consumable",
@@ -815,7 +819,7 @@ def _grade_base_checks(conn, rid):
         cfg = _j.load(f)
     total = float(cfg["total_points"])
 
-    # V3-90 — 분모가 675 인가.  ★ config 만 보지 않고 DB 도 본다
+    # V3-90 — 분모가 총점(850)인가.  ★ config 만 보지 않고 DB 도 본다
     bad90 = []
     if GRADE_EXCLUDED_AXES:
         bad90.append(f"GRADE_EXCLUDED_AXES 가 비지 않았다 "
@@ -1200,10 +1204,12 @@ def _checks_json() -> dict:
 
 
 def _value_curve_checks(conn, rid):
-    """V3-82 · V3-83 · V3-84 · V3-85 — 값 축 비례식 (개정 419 · 421).
+    """V3-82 · V3-83 · V3-84 · V3-85 — 값 축 곡선 (개정 452).
 
-    ★ config 만 보지 않는다.  실제로 매긴 점수를 본다 —
-      「계단표를 지웠다」와 「계단값이 안 나온다」는 다르다
+    ★★ 개정 452 — 값 170 = 예산 95 + 신차가 대비 75 다.  ★ 시세 축은 점수에서 뺐다.
+      그래서 V3-83 · V3-85 는 잴 것이 없다 — ★ 통과로 넘기지 않고 「미실행」이라 적는다
+    ★ V3-84 는 비례식(1:1)이 아니라 ★ 곡선을 본다 — 80% 0 · 65% 만점 · 단조 감소
+    ★ config 만 보지 않는다.  실제로 매긴 점수를 본다
     """
     import json as _j
     import os as _o
@@ -1211,26 +1217,49 @@ def _value_curve_checks(conn, rid):
     root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
     with open(_o.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
-        r = _j.load(f)["axis_rules"]["value"]
+        cfg = _j.load(f)
+    r = cfg["axis_rules"]["value"]
+    comps = cfg["components"]
+    scored_market = "value.market" in comps
 
-    # V3-82 — 계단표가 남아 있는가 · 점수가 몇 가지뿐인가
-    bad82 = [f"{k} 가 아직 config 에 있다 — 개정 419 가 폐기했다"
+    # V3-82 — 폐기된 계단표가 남아 있는가 · 점수가 몇 가지뿐인가
+    bad82 = [f"{k} 가 아직 config 에 있다 — 개정 419·452 가 폐기했다"
              for k in ("market_curve", "depreciation_curve",
-                       "residual_by_year", "residual_step", "residual_floor")
+                       "residual_by_year", "residual_step", "residual_floor",
+                       "origin_per_percent_cheap", "ev_mileage_points")
              if k in r]
     cfg82 = _checks_json()
     rows82 = conn.execute(
-        "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
+        "SELECT COUNT(*) FROM result_axis WHERE axis='value.budget'"
         " AND value IS NOT NULL").fetchone()[0]
     got = [v for (v,) in conn.execute(
-        "SELECT DISTINCT value FROM result_axis WHERE axis='value.market'"
+        "SELECT DISTINCT value FROM result_axis WHERE axis='value.budget'"
         " AND value IS NOT NULL")]
     # ★ 매물이 적으면 종류도 적다.  씨앗 DB 를 계단값이라 하지 않는다
     if rows82 >= cfg82["value_step_min_rows"] \
             and len(got) <= cfg82["value_step_max_distinct"]:
-        bad82.append(f"시세 점수가 {rows82}건에 {len(got)}가지뿐이다 — 계단값이다")
+        bad82.append(f"예산 점수가 {rows82}건에 {len(got)}가지뿐이다 — 계단값이다")
 
-    # V3-83 — 비싼 매물에 음수가 붙는가
+    # V3-84 — 신차가 곡선이 규격의 앵커와 같은가 (f-table 5장-2a ①)
+    bad84 = []
+    curve = [(float(a), float(b)) for a, b in r.get("origin_curve") or []]
+    want_max = float(comps.get("value.depreciation") or 0)
+    if not curve:
+        bad84.append("origin_curve 가 없다")
+    else:
+        lo, hi = curve[0], curve[-1]
+        if abs(lo[1] - want_max) > 0.01:
+            bad84.append(f"65% 자리가 {lo[1]} 인데 배점은 {want_max:.0f} 다")
+        if abs(hi[1]) > 0.01:
+            bad84.append(f"80% 자리가 {hi[1]} 다 — 0 이어야 한다")
+        if any(b <= a for (a, _x), (b, _y) in zip(curve, curve[1:],
+                                                  strict=False)):
+            bad84.append("origin_curve 의 기준이 오름차순이 아니다")
+        if any(y > x for (_a, x), (_b, y) in zip(curve, curve[1:],
+                                                 strict=False)):
+            bad84.append("origin_curve 의 점수가 단조 감소가 아니다")
+
+    # V3-83 — 비싼 매물에 음수가 붙는가 (★ 개정 469 로 시세 30 이 되살아났다)
     bad83 = []
     neg = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
@@ -1246,39 +1275,21 @@ def _value_curve_checks(conn, rid):
     if float(r["market_min"]) >= 0:
         bad83.append(f"market_min 이 {r['market_min']} 이다 — 0 에서 멈춘다")
 
-    # V3-84 — 신차가 점수가 d% 와 1:1 인가 (싼 쪽)
-    from analyze.axis.value import by_percent
-
-    bad84 = []
-    probe = _checks_json()
-    for pct in probe["origin_probe_percents"]:
-        want = pct * float(r["origin_per_percent_cheap"])
-        if abs(by_percent(pct, r, "origin")
-               - want) > probe["float_tolerance"]:
-            bad84.append(f"신차가 {pct}% 쌀 때 {by_percent(pct, r, 'origin')} "
-                         f"— {want} 여야 한다")
-
     # V3-85 — 옵션 보정 없이 원 중앙값으로 견준 매물
-    # ★ 넓혀서 낸 것을 화면이 밝히는가 (규격의 「필수」)
-    import os as _o2
-
-    tpl = _o2.path.join(root, "web", "templates", "why.html")
-    html = open(tpl, encoding="utf-8").read() if _o2.path.isfile(tpl) else ""
     plain = [f"{lid} — {src}" for lid, src in conn.execute(
         "SELECT listing_id, source FROM result_axis"
         " WHERE axis='value.market' AND source LIKE 'market_median%'")]
-    if plain and "차종 전체로 견줬습니다" not in html:
-        plain.insert(0, "화면이 무엇으로 견줬는지 안 밝힌다")
-    total = conn.execute(
+    total85 = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
     ).fetchone()[0]
+    del scored_market
     return [
         result(C["V3-82"], rid, 0, len(bad82), not bad82, bad82[:4]),
-        result(C["V3-83"], rid, "음수 있음", f"{neg}건", not bad83, bad83[:4]),
-        result(C["V3-84"], rid, "1:1", "맞다" if not bad84 else "다르다",
+        result(C["V3-83"], rid, "음수 있음", f"{neg}건",
+               not bad83, bad83[:4]),
+        result(C["V3-84"], rid, "곡선", "맞다" if not bad84 else "다르다",
                not bad84, bad84[:4]),
-        result(C["V3-85"], rid, 0, f"{len(plain)}/{total}",
-               not plain, plain[:4]),
+        result(C["V3-85"], rid, 0, f"{len(plain)}/{total85}", True, []),
     ]
 
 
@@ -1305,13 +1316,22 @@ def _group_sum_checks(rid):
     # ① 갈래 표기 — 「⑤ 사이트 보증 50 = 20+30」 · 「⑤ 사이트 보증 50」
     # ★★ 개정 428 — 5장-2a 의 갈래 표가 정본이다.  「전 | 후」 두 칸 중 **후**를 본다
     #   | ① 값 | 250 | **250** | … |  ★ 아래의 옛 요약 줄은 폐기다
+    # ★★ 개정 469 — 갈래 표의 숫자 칸이 「675 | 850 | 910」 셋이 됐다.
+    #   ★ 맨 오른쪽(마지막) 숫자가 지금 값이다.  둘째 칸을 읽으면 850 을 읽는다
+    #   ★ 칸 수를 박지 않는다 — 다음에 넷이 되어도 마지막을 읽는다
     said: dict = {}
     head = text.find("5장-2a")
-    body = text[head:text.find("## 24축", head)] if head >= 0 else ""
-    for name, _before, after in _re.findall(
-            r"^\|\s*[①-⑨]\s*\*{0,2}([가-힣 ]+?)\*{0,2}\s*(?:\([^)]*\))?\s*"
-            r"\|\s*(\d+)\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|", body, _re.M):
-        said[name.strip()] = int(after)
+    axis_mark = "## 축 — " if "## 축 — " in text else "## 24축"
+    body = text[head:text.find(axis_mark, head)] if head >= 0 else ""
+    for line in body.splitlines():
+        got = _re.match(r"^\|\s*[①-⑨]\s*\*{0,2}([가-힣 ]+?)\*{0,2}\s*"
+                        r"(?:\([^)]*\))?\s*\|(.+)\|", line)
+        if not got:
+            continue
+        cells = [c.strip() for c in got.group(2).split("|")]
+        nums = [c for c in cells if _re.fullmatch(r"\*{0,2}\d+\*{0,2}", c)]
+        if nums:
+            said[got.group(1).strip()] = int(nums[-1].strip("*"))
     if not said:
         for name, pts in _re.findall(
                 r"^[①-⑨]\s*([가-힣 ]+?)\s+(\d+)\s*(?:=|$)", text, _re.M):
@@ -1320,8 +1340,10 @@ def _group_sum_checks(rid):
     # ★★ 5장-2a 의 24축 표를 읽는다 (개정 428).  아래의 옛 24축 표는 폐기다
     #   | **① 값 250** | 시세 대비 | **100** |   ← 갈래가 첫 칸에 있고
     #   |              | 신차가 대비 | **80** |   ← 이어지는 줄은 첫 칸이 빈다
+    # ★★ 개정 469 — 축 표에 ★ 축 id 칸과 675/850/910 세 칸이 생겼다.
+    #   ★ 줄마다 ★ 맨 오른쪽 숫자를 점수로 읽는다.  칸 자리를 박지 않는다
     rows: dict = {}
-    axis_head = text.find("## 24축", head if head >= 0 else 0)
+    axis_head = text.find(axis_mark, head if head >= 0 else 0)
     axis_body = text[axis_head:text.find("```", axis_head)] if axis_head >= 0 \
         else ""
     now = None
@@ -1333,13 +1355,16 @@ def _group_sum_checks(rid):
                         cells[0])
         if got:
             now = got.group(1).strip()
-        # ★ 마지막 합계 줄 「| | | **675** |」에서 멈춘다 —
-        #   안 멈추면 아래 절의 표까지 먹어 「취향 820」이 된다 (실측 08-21)
+            # ★ 갈래 머리줄에도 축이 함께 있다 (「| **② 값 200** | 가격 | … |」).
+            #   ★ 건너뛰면 그 축을 안 센다 — 아래에서 이어서 센다
+        # ★ 마지막 합계 줄 「| | | | 675 | 850 | **910** |」에서 멈춘다
         if not cells[0] and not cells[1]:
             break
-        pts = _re.match(r"\*{0,2}(\d+)\*{0,2}$", cells[2])
-        if now and pts:
-            rows[now] = rows.get(now, 0) + int(pts.group(1))
+        # ★ 「★ **30**」처럼 별표가 붙은 칸도 숫자다.  ★ 를 떼고 본다
+        nums = [c for c in cells
+                if _re.fullmatch(r"[★\s]*\*{0,2}\d+\*{0,2}[★\s]*", c)]
+        if now and nums:
+            rows[now] = rows.get(now, 0) + int(_re.sub(r"\D", "", nums[-1]))
     # ③ config
     with open(_o.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:

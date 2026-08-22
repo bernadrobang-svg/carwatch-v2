@@ -83,29 +83,30 @@ class AxisContext:
 
 
 # Component 목록 — result_axis 는 이 단위로 저장한다 (STEP 68 · 개정 292)
-# ★ 배점의 유일한 정본은 docs/ref/F-scoring.md 다 (개정 330).
-#   갈래별 합  ①값 250 · ②상태 150 · ③이력 80 · ④사양 45 · ⑤보증 30 · ⑥취향 50
-#   등급은 ①~⑤ = 555 로 매긴다.  ⑥ 취향 50 은 순위에만 쓴다
+# ★★ 배점의 정본은 docs/chapters/30-score/f-table.md 5장-2a 다 (개정 469).
+#   갈래 합  ①차량 455 · ②값 200 · ③보증 90 · ④취향 165 = ★ 910 · 26축
+#   ★ 차량 455/910 = 50.0% = C 컷.  「차가 멀쩡하면 C」 (마스터 핵심)
+#   ★ 축 id 는 안 바꾼다 (명령서 r469 1-1) — 그래서 value.mileage 가 차량 갈래다.
+#     f-table 표의 id 칸(value.origin·state.my_cost 등)과 다르다 — 작업기록 v199 참조
 COMPONENTS: tuple[str, ...] = (
-    # ① 값 250
-    "value.market", "value.depreciation", "value.mileage",
-    # ② 상태 150
+    # ① 차량 455 — 상태 268 + 주행 107 + 연식 80
     "state.accident", "state.frame", "state.outer", "state.repair",
-    "state.special", "state.leak", "state.consumable", "state.integrity",
-    # ③ 이력 80
+    "state.special", "state.consumable", "state.leak", "state.integrity",
     "history.usage", "history.not_join", "history.owner", "history.lien",
-    # ④ 사양 45
+    "value.mileage", "state.year",
+    # ② 값 200 — 가격 75 + 예산 95 + 시세 30
+    "value.depreciation", "value.budget", "value.market",
+    # ③ 보증 90 — 제조사 54 (동력계 32 + 일반 22) + 사이트 36
+    "warranty.power", "warranty.general", "warranty.site",
+    # ④ 취향 165
     "spec.trim", "spec.options",
-    # ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (개정 365)
-    "warranty.site", "warranty.general", "warranty.power",
-    # ⑥ 취향 50 — 등급에 안 들어간다
     "taste.hud", "taste.picked", "taste.color", "taste.sunroof",
 )
 
 # 등급에 들어가지 않는 갈래 (개정 292 ④).  ★ 취향으로 등급이 오르내리면 안 된다
-# ★★ 개정 431 — 등급에서 빼는 갈래가 **없다**.  분모는 늘 675 다
+# ★★ 개정 431 — 등급에서 빼는 갈래가 **없다**.  분모는 늘 910 이다 (개정 469)
 #   전   ("taste",) — 취향 50 을 뺐다 (개정 292)
-#   후   ()          — 취향 145 는 등급에 들어간다.  S 와 A 를 가르는 축이다
+#   후   ()          — 취향 165 는 등급에 들어간다.  S 와 A 를 가르는 축이다
 #   ★ 근거 — 「S 와 A 를 가르는 것이 취향 하나인데 그 취향이 등급 분모에
 #     없었다.  그래서 A 이상 0건이었다」 (개정 431)
 #   ★ 축 온·오프로 끈 축만 뺀다 (개정 426) — policy.skipped 가 그 일을 한다

@@ -50,7 +50,7 @@ def grade_cut_points(policy: ScoringPolicy) -> list[tuple[str, int]]:
     ★ display_points 로 부르지 않는다 — report.views 에 같은 이름이 있다.
       역할이 다르다 (여기는 등급컷, 저기는 축 점수 「—/20」 표기)
     """
-    # ★ 등급컷 기준은 grade_base_points 다 (개정 431 — 675)
+    # ★ 등급컷 기준은 grade_base_points 다 (개정 452 — 850)
     total = float(policy.raw.get("grade_base_points")
                   or policy.raw["total_points"])
     out = []
@@ -74,7 +74,7 @@ def grade_of(result: ScoreResult, policy: ScoringPolicy) -> str:
     # ★ earned 와 denominator 는 같은 자 (실배점).  score_total 은 555 환산값이다.
     #   섞으면 분모가 작을수록 부풀려진다 — 245/455=53.8%(D) 가
     #   298.85/455=65.7%(C) 로 한 등급 올라갔다 (실측 · E-1)
-    # ★ 등급은 675 로 매긴다 (개정 431).  취향도 들어간다 — 개정 292 는 폐기다
+    # ★ 등급은 850 으로 매긴다 (개정 452).  취향도 들어간다 — 개정 292 는 폐기다
     if result.grade_base:
         ratio = result.grade_earned / result.grade_base
     else:

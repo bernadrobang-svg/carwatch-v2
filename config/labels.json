@@ -10,6 +10,8 @@
     "value.market": "시세 대비",
     "value.depreciation": "신차가 대비",
     "value.mileage": "주행",
+    "state.year": "연식",
+    "value.budget": "예산",
     "state.accident": "사고",
     "state.frame": "골격",
     "state.outer": "외판",

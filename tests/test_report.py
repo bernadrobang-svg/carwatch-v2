@@ -231,7 +231,7 @@ def test_export() -> None:
                 return one if isinstance(one, (int, float)) \
                     else one.get("points", 0)
     check("★ csv 헤더에 배점을 표기한다",
-          f"value.market({_cap('value.market'):g})" in cs
+          f"value.budget({_cap('value.budget'):g})" in cs
           and f"taste.hud({_cap('taste.hud'):g})" in cs,
           cs.splitlines()[0][:60])
 

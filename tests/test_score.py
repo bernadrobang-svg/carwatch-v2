@@ -449,8 +449,9 @@ def test_safety_real() -> None:
     # ★★ 배점 숫자를 여기 박지 않는다 — 개정 428 에서 20+30 → 31+47 로 바뀌었고
     #    박아 두면 배점이 바뀔 때마다 시험이 거짓으로 죽는다.  config 를 본다
     _gen, _pow = POLICY.comp("warranty.general"), POLICY.comp("warranty.power")
+    _maker = sum(POLICY.comp(a) for a in ("warranty.general", "warranty.power"))
     check("★ 제조사 보증이 일반·동력계 둘로 갈려 있고 합이 갈래 배점이다",
-          _gen > 0 and _pow > 0 and _pow > _gen and _gen + _pow == 78,
+          _gen > 0 and _pow > 0 and _pow > _gen and _gen + _pow == _maker,
           f"{_gen} + {_pow} = {_gen + _pow}")
     check("보증이 남아 있으면 점수가 난다", r2.earned > 0)
 
@@ -525,8 +526,7 @@ def test_spec_gate() -> None:
 
 
 def test_price_real() -> None:
-    """① 값 250 — 시세 100 · 신차가 80 · 주행 70 (docs/ref/F-scoring.md)."""
-    from analyze.axis.value import elapsed_years
+    """① 차량 425 · ② 값 170 — f-table 5장-2a (개정 452)."""
 
     org = 70_000_000
 
@@ -537,63 +537,61 @@ def test_price_real() -> None:
                                         first_registration_date="2023-05-02",
                                         **kw)))
 
-    # ── 1-1 시세 대비 100 ──
-    # ★★ 개정 419 — 계단표를 없앴다.  퍼센트에 비례해 준다
-    mid = 50_000_000
-    v = at(mid, market_median_won=mid, market_sample_n=12)
-    check("★ 중앙값과 같으면 0점 — 전엔 50점을 그냥 줬다 (개정 419)",
-          v.values["value.market"] == 0, str(v.values["value.market"]))
-    check("★ 5% 싸면 5×5 = 25점",
-          at(mid * 0.95, market_median_won=mid,
-             market_sample_n=12).values["value.market"] == 25,
-          str(at(mid * 0.95, market_median_won=mid,
-                 market_sample_n=12).values["value.market"]))
-    check("★ 20% 싸면 100점 만점 (상한)",
-          at(mid * 0.80, market_median_won=mid,
-             market_sample_n=12).values["value.market"] == 100)
-    check("★ 3% 비싸면 −3×8 = −24점.  ★ 0 에서 안 멈춘다",
-          at(mid * 1.03, market_median_won=mid,
-             market_sample_n=12).values["value.market"] == -24,
-          str(at(mid * 1.03, market_median_won=mid,
-                 market_sample_n=12).values["value.market"]))
-    check("★ 20% 비싸도 계속 깎인다 — 하한 −100",
-          at(mid * 1.20, market_median_won=mid,
-             market_sample_n=12).values["value.market"] == -100)
-    check("★ 표본이 모자라면 0점 · 확인 안 됨 — 이론가로 메우지 않는다",
-          at(mid).values["value.market"] == 0
-          and at(mid).sources["value.market"] == "market_sample_short")
+    # ── ② 값 — 예산 95 (개정 452 신설) ──
+    # ★★ 시세 축(value.market)은 ★ 점수 축이 아니다 (개정 452).
+    #   값 170 = 예산 95 + 신차가 대비 75.  화면은 시세를 그대로 낸다
+    # ★ 개정 469 — 시세는 30점으로 되살아났다 (마스터 「30점 정도 주라」)
+    check("★ 시세 축이 30점이다 (개정 469)",
+          POLICY.comp("value.market") == 30,
+          str(POLICY.comp("value.market")))
+    _bud = POLICY.raw["budget_manwon"]["by_target"]["G80_25T"] * 10_000
+    check("★ 예산과 같으면 절반 점수 (50/95)",
+          at(_bud).values["value.budget"] == 50,
+          str(at(_bud).values["value.budget"]))
+    check("★ 예산의 60% 면 만점 95",
+          at(_bud * 0.6).values["value.budget"] == 95)
+    check("★★ 예산을 넘겨도 자르지 않는다 — 점수만 낮아진다 (개정 452)",
+          at(_bud * 1.30).values["value.budget"] == 0
+          and at(_bud * 1.10).values["value.budget"] == 34)
 
-    # ── 1-2 신차가 대비 80 ──
-    years = elapsed_years(ctx(snap(first_registration_date="2023-05-02")))
-    # ★ 잔가율 표를 안 쓴다 (개정 419) — 「신차 대비 30% 싸면 30점」
-    check("★ 신차가와 같으면 0점", at(org).values["value.depreciation"] == 0,
-          str(at(org).values["value.depreciation"]))
-    check("★ 신차 대비 30% 싸면 30점 — 마스터 검산",
-          at(org * 0.70).values["value.depreciation"] == 30,
-          str(at(org * 0.70).values["value.depreciation"]))
-    check("★ 80점 상한", at(org * 0.10).values["value.depreciation"] == 80)
-    check("★ 신차가보다 비싸면 음수 — 10% 비싸면 −30 (하한)",
-          at(org * 1.10).values["value.depreciation"] == -30,
+    # ── ② 값 — 신차가 대비 75 (개정 452 곡선) ──
+    # ★ 80% 이상 0 · 65% 만점 · 사이는 로그 (f-table 5장-2a ①)
+    check("★ 신차가의 80% 면 0점 — 「그러면 신차 계약이 낫다」",
+          at(org * 0.80).values["value.depreciation"] == 0,
+          str(at(org * 0.80).values["value.depreciation"]))
+    check("★ 신차가의 65% 면 만점 75 — 마스터가 말씀하신 최적점",
+          at(org * 0.65).values["value.depreciation"] == 75,
+          str(at(org * 0.65).values["value.depreciation"]))
+    check("★ 65% 밑은 만점을 유지한다.  더 내려도 더 주지 않는다",
+          at(org * 0.40).values["value.depreciation"] == 75)
+    check("★★ 신차가보다 비싸도 자르지 않는다 — 0점일 뿐이다 (개정 452)",
+          at(org * 1.10).values["value.depreciation"] == 0,
           str(at(org * 1.10).values["value.depreciation"]))
     check("★ 신차가가 없으면 0점 · 확인 안 됨",
           analyze_listing(ctx(snap(price_current_won=30_000_000)))
           .sources["value.depreciation"] == "origin_price_missing")
 
-    # ── 1-3 주행 대비 70 ──
-    check("★ 연 5,000km 이하 → 70점 만점",
-          at(org, mileage_km=int(5_000 * years)).values["value.mileage"] == 70,
-          str(at(org, mileage_km=int(5_000 * years)).values["value.mileage"]))
-    check("★ 연 30,000km 이상 → 0점",
-          at(org, mileage_km=int(31_000 * years)).values["value.mileage"] == 0)
-    # ★ 전기차는 주행 40 + SOH 30 (개정 318)
-    ev = at(org, mileage_km=int(5_000 * years), ev_battery_soh=97.0)
-    check("★ 전기차 — 주행 40 만점 + SOH 30 만점 = 70",
-          ev.values["value.mileage"] == 70, str(ev.values["value.mileage"]))
-    low = at(org, mileage_km=int(5_000 * years), ev_battery_soh=85.0)
-    check("★ SOH 85% → 배터리 0점.  주행만 40",
-          low.values["value.mileage"] == 40, str(low.values["value.mileage"]))
-
-
+    # ── ① 차량 — 주행 100 · 연식 75 (개정 452) ──
+    # ★★ 총 주행거리다.  연평균이 아니다.  연식은 따로 본다
+    _mx = POLICY.comp("value.mileage")
+    check("★ 주행 0 → 만점",
+          at(org, mileage_km=0).values["value.mileage"] == _mx,
+          str(at(org, mileage_km=0).values["value.mileage"]))
+    _k8 = at(org, mileage_km=80_000).values["value.mileage"]
+    check("★ 8만 km 는 마스터 기준선 — 만점의 절반쯤이다",
+          0 < _k8 < _mx, str(_k8))
+    check("★★ 10만을 넘겨도 자르지 않는다 — 점수만 낮아진다",
+          0 < at(org, mileage_km=120_000).values["value.mileage"] < _k8)
+    check("★ 20만 km 에서 0 에 수렴",
+          at(org, mileage_km=250_000).values["value.mileage"] == 0)
+    check("★★ 전기차 SOH 를 주행 축에 더하지 않는다 — 가점이다 (개정 380·469)",
+          at(org, mileage_km=0, ev_battery_soh=97.0)
+          .values["value.mileage"] == _mx)
+    # ★ 연식 — 차령으로 본다 (f-table 5장-2a ④)
+    check("★ 연식 축이 있다 — id 는 state.year 다 (개정 469)",
+          "state.year" in POLICY.raw["components"])
+    _y = at(org, mileage_km=0).values["state.year"]
+    check("★ 연식 점수가 0~80 안이다", 0 <= _y <= 80, str(_y))
 
 
 # ── 색상 40점 (STEP 80) ──────────────────────────────────────────────
