@@ -209,18 +209,44 @@
   },
   "hyundai_cert": {
     "label": "현대·제네시스 인증중고차",
-    "status": "planned",
+    "status": "active",
     "order": 5,
     "multi_instance": false,
     "_ref": "docs/HYUNDAI_CERTIFIED_API.md",
     "_note": "★ 잔여 보증을 년·월·km 로 그대로 준다 — 여섯 사이트 중 여기뿐이다",
-    "warranty_evidence": "잔여 보증",
+    "warranty_evidence": "site_pass_grade",
     "site_grade_rule": {
       "all_of": {
         "정밀점검": true
       }
     },
-    "_grade_note": "★ 제조사 인증 36. ★ 정밀점검 항목 수는 272~287 로 다르다 — 「287 고정」이 아니다"
+    "_grade_note": "★ 제조사 인증 36. ★ 정밀점검 항목 수는 272~287 로 다르다 — 「287 고정」이 아니다",
+    "target_map": {
+      "_note": "★ docs/TARGET_KEY_MAP.md 4장 — 그랜저가 세대 둘(IG02·GN01)로 갈려 있다. ★ 목록 제목은 「그랜저(IG)」·「그랜저(GN7)」로 온다 — ★ 차종 이름으로 맞춘다. ★ 연료로 한 번 더 거른다 (GRANDEUR_LPG 는 LPG 만이다)",
+      "그랜저": {
+        "target_key": "GRANDEUR_LPG",
+        "fuel_contains": "LPG"
+      }
+    },
+    "warranty_items": [
+      {
+        "key": "현대 인증 정밀점검",
+        "points": 36,
+        "when": {
+          "site_pass_grade": "CERTIFIED"
+        },
+        "why": "★ 정밀점검 287개 항목 · 성능점검기록부 발행완료 (HYUNDAI_CERTIFIED_API 2a). ★ 단계는 가이드가 정한다 — 지금은 이 한 자리만 둔다"
+      }
+    ],
+    "purchase_cost": {
+      "_note": "★ 현대 인증도 총액을 안 준다.  ★ 우리가 계산하고 「추정」이라 적는다",
+      "total_from_site": false,
+      "transfer_fee_rule": "acquisition",
+      "warranty_fee": 0,
+      "etc_fee": 0,
+      "delivery_fee": 0,
+      "extra_benefit": []
+    }
   },
   "heydealer": {
     "label": "헤이딜러",
