@@ -23,7 +23,7 @@
 | 파일 | 줄 | KB |
 |---|--:|--:|
 | `ENCAR_API.md` | 183 | 7 |
-| `KCAR_API.md` | 140 | 5 |
+| `KCAR_API.md` | 210 | 6 |
 | `README.md` | 57 | 1 |
 | `chapters/00-standard.md`  ★ | 2,172 | 93 |
 | `chapters/01-arch.md` | 227 | 8 |

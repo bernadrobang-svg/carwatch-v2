@@ -90,7 +90,9 @@
 필수  `seizing_cnt` · `pledge_cnt` 는 ★ 건수(INTEGER)다.  ★ 「없음」은 ★ 0 이다
       ★ 「안 받았다」는 ★ NULL 이다.  ★ 둘을 섞지 마라 (STEP 32 · 개정 289)
 필수  기아 `panelOrExchange` · `damaged` · `changeOfUse` 는 ★ 이미 건수다.  ★ 그대로 넣는다
-필수  ★ K카 `acdtHistCd` 는 ★ 코드다 — ★ `dict_enum(site='kcar', axis='accident')` 에 넣고
+필수  ★ K카 사고 판정은 ★ 상세 `acdtHistComnt`(무사고·단순수리·사고) 로 한다 (개정 485)
+      ★ `smplReprYn`·`acdtHistYn` 으로 가르지 마라 — ★ 실측에서 갈리지 않는다
+필수  ★ 목록 `acdtHistCd` 는 ★ 코드다 — ★ `dict_enum(site='kcar', axis='accident')` 에 넣고
       ★ `/bc/sub-codelist` 로 표를 받아 `mapped` 를 채운다.  ★ 뜻을 지어내지 마라
 필수  ★ 기아 `merchandising.items[]` 는 ★ `core_inspection` 에 원문 배열 그대로 (STEP 21)
       ★ category/type/name 을 가공하지 않는다
@@ -250,7 +252,7 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
 | **기아 CPO** | ★ `warranties[]` `{kind, remainingPeriod, remainingDistance}` | ★ **그대로** — `BA`·`AC`·`CM`→body · `EG`·`PT`·`EM`→power |
 | **현대 인증** | ★ 「2년 10개월 남음 · 79,435km 남음」 | ★ 개월로 환산해 그대로 |
 | KB차차차 | 「보증종료」 판정만 | ★ 종료면 **0** · 잔여를 모르면 **NULL** |
-| K카 | ✘ | 연식 + 제조사 보증 기간표로 계산 |
+| K카 | ★ **`nwcaGurnteEngeSurvDt`·`GnrlSurvDt`·`…Milg`** | ★ **원문 그대로 — 계산하지 않는다 (개정 485)** |
 
 ```
 필수  `warranty_body_month` · `warranty_body_km` · `warranty_power_month` · `warranty_power_km`
@@ -258,7 +260,7 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
 필수  기아 `kind` 는 ★ `dict_enum(site='kia_cpo', axis='warranty_kind')` 에 넣는다
       BA 차체 · AC 에어컨 · EG 엔진 · PT 동력전달 · EM 배기 · CM 소모품 (실측)
 필수  ★ KB 「보증종료」는 ★ 0 이지 NULL 이 아니다.  ★ 확인한 것이다
-      ★ K카는 ★ NULL 이다 — ★ 안 받았다
+      ★ K카는 ★ 상세를 받는다 (개정 485) — `tireDtlList` 잔량까지 온다
 ```
 
 ---
@@ -374,7 +376,7 @@ K카       mfgDt "201801"     → 그대로
 
 ```
 필수  `accident_my_cnt` = ★ 내 차 피해 건수 · `accident_other_cnt` = 상대 차
-필수  ★ 기아 `merchandising` 의 판금·도장은 ★ 사고에 넣지 마라 (개정 483)
+필수  ★ 기아 `merchandising` 의 판금·도장은 ★ 사고에 넣지 마라 (개정 485)
 필수  ★ 문구(「무사고」)를 ★ 건수 0 으로 바꾸지 마라 — ★ `inspection_comment` 에 원문으로
 ```
 
