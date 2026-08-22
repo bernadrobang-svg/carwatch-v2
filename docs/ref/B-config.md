@@ -146,7 +146,7 @@
     "_note": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용",
     "price": 200,
     "warranty.general": 50, "warranty.power": 50,
-    "spec.hud": 20, "spec.hda": 20, "spec.sunroof": 20,
+    "spec.hud": 20, "spec.sunroof": 20,
     "spec.svm": 10, "spec.scc": 10, "spec.bsd": 5, "spec.tinting": 5,
     "history.damage": 20, "history.insurance": 15, "history.rental": 20,
     "safety.diagnosis": 20, "safety.warranty_product": 20,

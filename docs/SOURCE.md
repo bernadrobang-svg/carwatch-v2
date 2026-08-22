@@ -94,7 +94,7 @@
 | `tools/classify_fields.py` | 139 | 등록부 분류 초안 — 파서가 쓰는 경로를 근거로 자동 분류한다. |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
-| `analyze/axis/spec.py` | 123 | 사양 90점 — HUD 20 · HDA 20 · 선루프 20 · SVM 10 · SCC 10 · 후측방 5 · 틴팅 5. |
+| `analyze/axis/spec.py` | 123 | 사양 90점 — HUD 20 · 선루프 20 · SVM 10 · SCC 10 · 후측방 5 · 틴팅 5. |
 | `score/penalty.py` | 123 | 마이너스 점수 (개정 322). |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `analyze/axes.py` | 117 | 축 판정 계약. |
@@ -160,7 +160,7 @@ _rows_per_page:27  _cfg:31  _versions:36  page_extras:55  _points:64  page:86  l
 ### `validate/v3_logic.py` — 2,257줄
 
 ```
-_file_output_checks:392  _conflict_checks:445  _diagnosis_count_check:469  _hda_source_check:485  _sort_determinism:496  _warning_contract_checks:513  _list_observed_source_check:608  _facet_reconcile_check:638  _record_mismatch_check:682  _curve_table_check:712  _special_null_check:776  _grade_base_checks:804  _checks_cfg:894  _labels_cfg:908  _unknown_mark_checks:916  _grade_cut_checks:967  _points_cap_checks:1077  _worse_of_checks:1129  _checks_json:1191  _value_curve_checks:1202  _group_sum_checks:1285  _mapped_other_check:1382  _denominator_check:1409  _core_axis_check:1437  _rental_cross_check:1458  _why_cheap_check:1496  _source_before_value_check:1537  _absolute_cut_check:1572  _spec_files:1602  _confirm_ratio_check:1612  _warranty_checks:1662  _spec_axis_check:1696  _site_axis_checks:1737  _rendered_why:1786  _rendered_listings:1796  _fill_gap_check:1806  _points_sum_check:1839  _market_gap_check:1856  _bonus_checks:1912  _trim_price_check:2016  run:2064  _shuffle_check:2200  _halt_dict_check:2225  _ensure_tmp:2254
+_file_output_checks:392  _conflict_checks:445  _diagnosis_count_check:469  _sort_determinism:496  _warning_contract_checks:513  _list_observed_source_check:608  _facet_reconcile_check:638  _record_mismatch_check:682  _curve_table_check:712  _special_null_check:776  _grade_base_checks:804  _checks_cfg:894  _labels_cfg:908  _unknown_mark_checks:916  _grade_cut_checks:967  _points_cap_checks:1077  _worse_of_checks:1129  _checks_json:1191  _value_curve_checks:1202  _group_sum_checks:1285  _mapped_other_check:1382  _denominator_check:1409  _core_axis_check:1437  _rental_cross_check:1458  _why_cheap_check:1496  _source_before_value_check:1537  _absolute_cut_check:1572  _spec_files:1602  _confirm_ratio_check:1612  _warranty_checks:1662  _spec_axis_check:1696  _site_axis_checks:1737  _rendered_why:1786  _rendered_listings:1796  _fill_gap_check:1806  _points_sum_check:1839  _market_gap_check:1856  _bonus_checks:1912  _trim_price_check:2016  run:2064  _shuffle_check:2200  _halt_dict_check:2225  _ensure_tmp:2254
 ```
 
 ### `report/screens/build.py` — 2,143줄
@@ -244,7 +244,7 @@ spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:17
 ### `tests/test_score.py` — 839줄
 
 ```
-check:36  fx:42  snap:46  ctx:66  full_verdict:87  test_denominator:100  test_components_form:144  test_grade:193  test_order_independent:280  panels_of:303  test_history_real:308  test_rental_real:343  test_insurance:385  test_safety_real:410  test_spec_gate:458  test_price_real:527  test_color:600  test_price_pending:621  test_absolute_real:640  test_null_safe:680  test_empty_array_meaning:697  test_peer_group:722  test_damage_by_status:764  test_repair_cost_ratio:790  test_hda_gate:799
+check:36  fx:42  snap:46  ctx:66  full_verdict:87  test_denominator:100  test_components_form:144  test_grade:193  test_order_independent:280  panels_of:303  test_history_real:308  test_rental_real:343  test_insurance:385  test_safety_real:410  test_spec_gate:458  test_price_real:527  test_color:600  test_price_pending:621  test_absolute_real:640  test_null_safe:680  test_empty_array_meaning:697  test_peer_group:722  test_damage_by_status:764  test_repair_cost_ratio:790
 ```
 
 ### `validate/v4_mapping.py` — 770줄

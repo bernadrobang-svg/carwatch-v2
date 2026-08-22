@@ -171,7 +171,7 @@ def test_dashboard_notready() -> None:
     dv2 = view_dashboard(ADMIN, conn, ctx.run_id, ctx.calc_version, FIN, ROOT)
     check("★ 등록부 미분류가 주의로 뜬다",
           any(a.kind == "unclassified" for a in dv2.attention))
-    # ★ hda Gate 가 열려 미확정이 줄었다.  기전을 시험하려면 하나 만든다
+    # ★ 미확정이 줄어 기전을 시험하려면 하나 만든다
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
                  "source='gate_closed' WHERE axis='spec.options'")
     conn.commit()

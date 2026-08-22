@@ -642,7 +642,6 @@ sql/
 | | `peer_year_window` · `peer_mileage_window` · `peer_min_sample` | 유사군 (7장 82e) |
 | | **`axis_rules`** | **축별 임계·상수 (7장)** — 아래 |
 | | ↳ `warranty.full_months` · `expire_penalty` · `km_per_month` | 보증 (STEP 72) |
-| | ↳ `spec.hda_points` · `hda_gate_open` · `hda_level2_phrases` | 사양 (STEP 75) |
 | | ↳ `history.damage_by_swap` · `damage_by_status` · `insurance_cost_curve` · `insurance_cap_by_count` · `rental` | 이력 (STEP 76~78) |
 | | ↳ `safety.warranty_product_na_targets` | 안전 (STEP 79) |
 | | ↳ `color.grade_points` · `gate_open` | 색상 (STEP 80) |

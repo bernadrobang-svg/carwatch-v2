@@ -42,7 +42,7 @@ v1 오류   inners 를 축으로 만들려 했다.  전건 「양호」라 변�
 |---|---:|---:|---|---|
 | `price` | 200 | 36% | — | STEP 70·71 |
 | `warranty` | 100 | 18% | `general` 50 · `power` 50 | STEP 72 |
-| `spec` | 90 | 16% | `hud` 20 · `hda` 20 · `sunroof` 20 · `svm` 10 · `scc` 10 · `bsd` 5 · `tinting` 5 | STEP 73~75 |
+| `spec` | 90 | 16% | `hud` 20 · `sunroof` 20 · `svm` 10 · `scc` 10 · `bsd` 5 · `tinting` 5 | STEP 73~75 |
 | `history` | 55 | 10% | `damage` 20 · `insurance` 15 · `rental` 20 | STEP 76~78 |
 | `safety` | 40 | 7% | `diagnosis` 20 · `warranty_product` 20 | STEP 79 |
 | `color` | 40 | 7% | — | STEP 80 |
@@ -82,7 +82,7 @@ absolute_fail   seizing · pledge          점수 아님.  후보에서 제외
 ```
 가격 36%    구매 결정에서 가장 큰 변수다.  다른 축이 좋아도 예산을 넘으면 못 산다
 보증 18%    잔여 보증은 향후 수리비 리스크를 직접 줄인다.  금액으로 환산 가능한 유일한 축
-사양 16%    마스터 필수 스펙(HUD·HDA)이 여기 있다.  대체 불가 항목
+사양 16%    마스터 필수 스펙(HUD·선루프)이 여기 있다.  대체 불가 항목
 이력 10%    사고는 E등급 절대조건으로도 걸리므로 배점은 보조 역할
 안전 7%     진단·압류.  대부분 정상이라 변별력이 낮다
 색상 7%     재판매성에 영향.  값 종류가 적어 변별력 제한
@@ -172,7 +172,7 @@ put(v,"spec.sunroof",  0,  2, "installed")                   미장착.  제외 
 ```
 prio 1   제조사 사양 · 사이트 코드값     SPEC_DEFAULT_ON · RANK_* · displacement
 prio 2   매물 실측                     options.standard/choice · 점검 결과 · 이력
-prio 3   전용 판정기                   classify_hud · classify_hda
+prio 3   전용 판정기                   classify_hud
 prio 4   키워드 · 문자열                contents.text · 트림명
 ```
 
@@ -385,7 +385,7 @@ BANNED_SOURCES = {
 어떻게 그렇게 됐나
   v1 은 KOLEOS_HEV 하나만 수집했다
   그 차를 보며 축을 만들었다
-    HUD · HDA · 선루프   그 차에서 마스터가 보던 옵션
+    HUD · 선루프   그 차에서 마스터가 보던 옵션
     엔진보증             내연기관·하이브리드 전제
     틴팅                 그 차 점검부에서 봤던 항목
   → 「한 차를 잘 보는 기준」이 되었다

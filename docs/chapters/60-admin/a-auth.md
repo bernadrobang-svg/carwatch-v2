@@ -270,7 +270,7 @@ revert   before 값으로 되쓰고 새 ConfigChange 를 만든다
     general 50 · power 50  →  60 · 60      나누어떨어진다
 
 예   spec 90 → 100
-    hud 20 · hda 20 · sunroof 20 · svm 10 · scc 10 · bsd 5 · tinting 5
+    hud 20 · sunroof 20 · svm 10 · scc 10 · bsd 5 · tinting 5
     × 100/90 = 22.22 · 22.22 · 22.22 · 11.11 · 11.11 · 5.56 · 5.56
 ```
 

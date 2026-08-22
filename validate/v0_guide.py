@@ -167,6 +167,40 @@ def s43_2b_axis_renamed() -> tuple[bool, str]:
     return True, "config 가 규격 이름을 쓴다"
 
 
+def s43_2c_no_hda() -> tuple[bool, str]:
+    """★ HDA 가 저장소 어디에도 없는가 (개정 505 · 마스터 확정 「옵션이잖아. 됐어 버려」).
+
+    ★ 기록(`03_이력` · `06_오판대장` · `outputs/`)은 뺀다 —
+      ★ 지웠다는 사실이 남는 것이 맞다.
+    ★ 08-22 — 「줄 번호로 지운다」가 17곳만 잡아 11곳이 살아남았다.
+      ★ 그래서 ★ 파일 전체를 훑는 검사로 둔다.
+    """
+    SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md",
+                 "00_버전.md")  # ★ 버전표는 기록이다
+    SKIP_DIR = ("outputs", ".git", "__pycache__", "node_modules")
+    pat = re.compile(r"HDA|hda", re.I)
+    bad: list[str] = []
+    for q in ROOT.rglob("*"):
+        if not q.is_file() or q.suffix not in (".md", ".py", ".json", ".html"):
+            continue
+        if any(d in q.parts for d in SKIP_DIR) or q.name in SKIP_NAME:
+            continue
+        # ★ 이 검사 파일 자신은 뺀다 — 낱말을 적어 두어야 잡을 수 있다
+        if q.name == "v0_guide.py":
+            continue
+        for i, line in enumerate(_read(q).split("\n"), 1):
+            if not pat.search(line):
+                continue
+            # ★ 「HDA 축이 없음」을 지키는 시험은 ★ 살린다 — 되살아나면 그것이 잡는다
+            if "test_hda_gate" in line or "축은 더 없다" in line or "축이 없어졌다" in line \
+                    or "축은 개정" in line or "not in COMPONENTS" in line:
+                continue
+            bad.append(f"{q.relative_to(ROOT)}:{i}")
+    if bad:
+        return False, f"HDA 가 {len(bad)}곳 남았다 — " + " · ".join(bad[:6])
+    return True, "HDA 가 저장소에 없다 (기록 제외)"
+
+
 def s43_3_version_matches() -> tuple[bool, str]:
     """★ 00_버전.md 의 지금 버전이 03_이력.md 의 마지막 개정과 같은가 (V0-01)."""
     hist = _read(GUIDE / "03_이력.md")
@@ -182,6 +216,7 @@ def s43_3_version_matches() -> tuple[bool, str]:
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
+    ("S43-2c", "HDA 가 저장소에 없는가", s43_2c_no_hda),
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),

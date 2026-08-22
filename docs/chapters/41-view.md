@@ -458,7 +458,7 @@ L3 실행   /run · / (현황 일부)
 | 항목 | v1 | v2 |
 |---|---|---|
 | `HUD` 칩 | 있음/없음 | **있음 · 없음 · 해당 없음 · 미확인** 4종 |
-| 축 칩 | HUD 만 | **HUD · HDA · 선루프** 3개로 확장 (사양 60점) |
+| 축 칩 | HUD 만 | **HUD · 선루프** 로 확장 |
 | 정렬 `rank` | 등급 우선 | `NOT_RATED` 는 순위 없음 → 하단 |
 | 필터 `axis` | 화면 라벨 | **Component 이름** (`spec.hud`) |
 | 버전 | 없음 | **VersionStamp 표시** |
@@ -617,7 +617,6 @@ StepReport      expected · requested · ok · empty · not_found · error
    값만 보여주면 v1 과 같아진다.  source 와 prio 를 반드시 낸다
 
 예   HUD    20/20   값 1     installed(2)
-    HDA    20/20   값 2     spec_table(1)
     선루프    0/20   값 0     installed(2)    판매글에는 있으나 실장착 없음
     틴팅     —/5    미확인   —(—)           분모 제외
 ```
@@ -921,7 +920,7 @@ page_size config.web.rows_per_page (기본 200)
 |:--:|---|---|
 | 1 | 딜러 정직도 산출식 | v1 코드에 있으나 근거 문서 없음. **재도출 대상** |
 | 2 | 조건 완화 시뮬레이션 규칙 | v1 화면에 있음. 완화 축·폭 미정의 |
-| 3 | `AxisChip` 3개(HUD·HDA·선루프) 외 확장 여부 | 화면 폭 확인 후 |
+| 3 | `AxisChip`(HUD·선루프) 외 확장 여부 | 화면 폭 확인 후 |
 | 4 | 알림 채널 | 11장에서 확정 |
 
 ---

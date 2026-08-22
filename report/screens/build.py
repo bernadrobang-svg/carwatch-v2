@@ -1818,7 +1818,7 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         (counts[1], "pending", "사전 미검토 값",
          "원문 표본 3건을 확인해 confirmed 로 올린 뒤 S9 를 재실행한다"),
         (counts[2], "undecided", "미확정으로 분모에서 빠진 축",
-         "감가 곡선·HDA Gate·색상 목록을 확정한다"),
+         "감가 곡선·색상 목록을 확정한다"),
         # ★ v1 은 이런 것이 조용히 지나갔다.  첫 화면에 띄운다 (STEP 95)
         (counts[3], "warn", "검증 warn — 진행은 되지만 확인이 필요하다",
          "python3.11 tools/check_all.py 로 warn 목록을 본다"),

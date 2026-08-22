@@ -447,7 +447,7 @@ FETCH_LABELS: dict[str, tuple[str, str]] = {
     "detail": ("상세", "가격 · 보증 · 사양 · 색상"),
     "inspection": ("성능점검기록부", "사고 부위 · 상태 · 렌트 이력"),
     "record": ("자동차이력정보", "보험처리액 · 번호판 이력"),
-    "catalog": ("카탈로그", "HDA 등급"),
+    "catalog": ("카탈로그", "옵션 이름 · 옵션가"),
     "diagnosis": ("엔카 자체진단", "외판 부위별 판정"),
 }
 STATUS_LABEL = {"ok": "받음", "not_found": "없음"}

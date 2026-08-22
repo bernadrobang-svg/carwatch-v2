@@ -302,7 +302,6 @@ v1 은 근거를 안 남겨 매번 추측으로 원인을 좁혔다.
 
 ```
 예   HUD  20/20  값 1  근거 installed(prio 2)
-    HDA  20/20  값 2  근거 spec_table(prio 1)
     선루프  0/20  값 0  근거 installed(prio 2)   ← 판매글에는 있으나 실장착 없음
     틴팅   —/5   값 NULL  제외  근거 unknown
 ```

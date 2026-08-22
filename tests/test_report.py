@@ -131,7 +131,7 @@ def test_layers() -> None:
     check("★ 축마다 source · prio 를 낸다",
           all(a.source and a.prio for a in v.axes))
     check("L1 에 비용이 붙는다", v.finance is not None)
-    # ★ hda Gate 가 열려 미확정이 줄었다.  기전을 시험하려면 하나 만든다
+    # ★ 미확정이 줄어 기전을 시험하려면 하나 만든다
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
                  "source='gate_closed' WHERE axis='spec.options'")
     conn.commit()

@@ -477,7 +477,7 @@ def flow_requests(conn, acc, root) -> None:
     from web.views import admin_requests
 
     _post(admin_requests, conn, acc,
-          {"csrf": "t", "action": "create", "title": "HDA 근거",
+          {"csrf": "t", "action": "create", "title": "옵션 근거",
            "body": "catalog 에 description 이 없다", "origin": "screen"},
           root)
     rid = conn.execute("SELECT request_id FROM dev_request "
