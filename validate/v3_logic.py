@@ -145,7 +145,7 @@ C = {
                    "있다 — 축으로 두면 745건이 억울하다 (개정 380)",
                    KIND_CODE),
     "V3-59": Check("V3", "V3-59", "가점이 분모를 늘리지 않음", FATAL, "run",
-                   "분모는 675 그대로다.  가점이 크면 100%를 넘고 그대로 낸다. "
+                   "★ 분모는 총점 그대로다.  가점이 크면 100%를 넘고 그대로 낸다. "
                    "★ 없다고 감점하지도 않는다 (개정 380)",
                    KIND_CONTRACT),
     "V3-72": Check("V3", "V3-72", "SOH 가점이 곡선대로 붙음", FATAL, "run",
@@ -319,8 +319,8 @@ C = {
                    KIND_CONTRACT),
     "V3-57": Check("V3", "V3-57", "등급 기준이 grade_base_points 와 같음",
                    FATAL, "run",
-                   "★ 개정 431 — 등급 분모는 675 다. 빼는 갈래가 없다. "
-                   "전에는 취향을 뺀 555·625 였다 (개정 292 · 306 — 폐기)",
+                   "★ 개정 431 — 등급 분모는 ★ 총점이다. 빼는 갈래가 없다. "
+                   "★ 옛 판에서 취향을 뺀 것은 폐기다 (개정 292 · 306)",
                    KIND_CONTRACT),
     "V3-70": Check("V3", "V3-70", "일반·동력계 보증을 따로 냄",
                    FATAL, "run",
@@ -787,7 +787,10 @@ def _special_null_check(conn, rid):
 
 
 def _grade_base_checks(conn, rid):
-    """V3-90 · V3-91 — 등급 분모 675 · 가이드 검산 (개정 431)."""
+    """V3-90 · V3-91 — 등급 분모 = 총점 · 가이드 검산 (개정 431 · 522).
+
+    ★ 분모 값은 ★ config/scoring.json 이 정한다 — ★ 여기 숫자를 적지 않는다
+    """
     import json as _j
     import os as _o
     import re as _re
@@ -1957,7 +1960,7 @@ def _bonus_checks(conn, rid):
     for lid, denom, bonus in none_soh:
         if float(denom or 0) != want:
             bad58.append(f"{lid} — SOH 가 없는데 분모가 {denom} 다 "
-                         f"(675 여야 한다)")
+                         f"({want:g} 여야 한다)")
             break
         if (bonus or "[]") not in ("", "[]"):
             bad58.append(f"{lid} — SOH 가 없는데 가점이 붙었다: {bonus}")
@@ -2175,7 +2178,7 @@ def run(conn, ctx) -> list:
     out += _worse_of_checks(conn, rid)
     # 배점 교체 (개정 428)
     out += _points_cap_checks(conn, rid)
-    # 등급 분모 675 (개정 431)
+    # 등급 분모 = 총점 (개정 431)
     out += _grade_base_checks(conn, rid)
     out += _grade_cut_checks(conn, rid)
     out += _unknown_mark_checks(conn, rid)
