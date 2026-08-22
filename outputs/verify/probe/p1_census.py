@@ -1,5 +1,10 @@
 import re, json, sys, html
-sys.path.insert(0,'probe'); from p0 import get
+
+
+def _get(path):
+    sys.path.insert(0, 'probe')
+    from p0 import get as g
+    return g(path)
 
 ROW = re.compile(r'<div class="row" data-peek(.*?)\n</div>\n\n', re.S)
 def parse_rows(b):
@@ -51,7 +56,7 @@ def head(b):
 if __name__=="__main__":
     allrows=[]; meta=None
     for pg in range(1,64):
-        s,t,b=get(f"/listings?page={pg}")
+        s,t,b=_get(f"/listings?page={pg}")
         if s!=200: print("FAIL",pg,s); continue
         h=head(b); rows=parse_rows(b)
         if pg==1: meta=h
