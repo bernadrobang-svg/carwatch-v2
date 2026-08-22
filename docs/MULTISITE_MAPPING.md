@@ -1,6 +1,6 @@
 # 사이트 → `core_listing` 칼럼 매핑
 
-`SPEC-2026.08.22-r482` · 2026-08-22
+`SPEC-2026.08.22-r483` · 2026-08-22
 **★ 이 문서가 사이트 확장의 매핑 정본이다. 앞 사이트 규격 문서의 「우리 축」 표는 ★ 축 대응이지 칼럼이 아니다.**
 
 ```
@@ -87,6 +87,84 @@
       ★ `/bc/sub-codelist` 로 표를 받아 `mapped` 를 채운다.  ★ 뜻을 지어내지 마라
 필수  ★ 기아 `merchandising.items[]` 는 ★ `core_inspection` 에 원문 배열 그대로 (STEP 21)
       ★ category/type/name 을 가공하지 않는다
+```
+
+---
+
+# 2a. ★★ 기아 CPO 표본 30건 검증 — ★ 1건일 때 못 본 것 넷
+
+```
+★ 개정 481 은 ★ 표본 1건으로 썼다.  ★ 30건으로 늘려 다시 쟀다 (모양 ④)
+```
+
+## ① ★★ `panelOrExchange` 와 `merchandising` 이 ★ 다른 것을 센다 — 가장 크다
+
+```
+실측  `performanceRecord.panelOrExchange` — 30건 중 ★ 0 이 29건 · 1 이 1건
+      그런데 ★ 같은 매물들의 `merchandising.items` 에
+        ★ 판금 12건 · ★ 도장 44건 이 있다
+      예 — 「외관 및 내장 · ★ 판금 · 조수석 앞 도어」 인데 `panelOrExchange=0`
+
+★★ 뜻 — `panelOrExchange` 는 ★ 「사고로 인한 판금·교환」(성능점검기록부)이고
+        `merchandising` 은 ★ 「기아가 상품화하며 손본 것」이다.  ★ 둘은 다르다
+★ 그러므로 ★ merchandising 의 판금·도장을 ★ 사고로 세면 안 된다
+```
+
+| 우리 축 | 무엇을 쓰나 |
+|---|---|
+| `state.frame` 골격 · `state.outer` 외판 | ★ `performanceRecord.panelOrExchange` **만** |
+| `state.consumable` 소모품 | ★ `merchandising` 중 **`category='기능수리 및 소모품'`** 만 |
+| — 상품화 이력 (점수 아님) | `merchandising` 중 `외관 및 내장` · `휠 타이어` → ★ **화면에만 낸다** |
+
+```
+필수  ★ `merchandising` 을 ★ 통째로 소모품으로 쓰지 마라.  ★ category 로 가른다
+      실측 category — 외관 및 내장 129 · 기능수리 및 소모품 118 · 휠 타이어 16
+      실측 type — 교환 94 · 보충 60 · 도장 44 · 광택 30 · 복원 23 · ★ 판금 12
+필수  ★ 화면에 「기아가 상품화하며 판금·도장한 부위」를 ★ 밝힌다 — 사고는 아니지만 손댄 곳이다
+금지  ★ merchandising 의 판금·도장을 ★ 사고·골격 축에 넣는 것
+```
+
+## ② `warranties` 는 ★ 연료에 따라 개수가 다르다
+
+```
+실측  6개 21건 · 5개 7건 · 4개 2건
+      ★ 5개 — `CM`(소모품 보증)이 빠진다 (가솔린 여럿)
+      ★ 4개 — ★ 전기차다.  `EG`(엔진)·`EM`(배기)이 ★ 없다.  ★ 당연하다
+필수  ★ 없는 kind 를 ★ 0 으로 넣지 마라.  ★ NULL 이다 — ★ 그 차에 없는 보증이다
+      ★ 전기차에 엔진 보증 0점을 주면 ★ 전기차가 통째로 손해를 본다 (개정 289·434)
+필수  `warranty_power_*` — EV 는 `PT`(동력전달)로 잰다.  내연은 `EG`·`PT` 중 긴 것
+```
+
+## ③ `classification` 은 ★ LITE 가 가장 많다
+
+```
+실측  LITE 16 · PREMIUM 13 · EXCLUSIVE 1
+★ f-table 은 PREMIUM·EXCLUSIVE 36 · LITE 32 로 두었다 — ★ 절반이 32점이다.  그대로 둔다
+```
+
+## ④ `discount` 는 ★ 5/30 뿐이다
+
+```
+실측  할인 있는 것 5건 (69만~300만) · ★ 마감 시각이 전부 `2026-08-25T12:00:00` — 기간 행사다
+필수  `price_discount_won` 은 ★ NULL 이 기본이다.  ★ 0 이 아니다
+필수  ★ 할인은 ★ 사라진다.  `price_current_won` 은 ★ 할인 뒤 값으로 갱신한다
+```
+
+## ⑤ 그 밖 — 존재율 30/30
+
+```
+car.price · firstRegisteredOn · drivingDistance · trim · mission ·
+performanceRecord · insuranceRecord · optionPrice · optionCount ·
+classification · ★ performanceReportPdfUrl     ★ 전부 30/30
+car.displacement 만 28/30 — ★ 빠진 둘은 ★ 전기차다.  ★ NULL 이 맞다
+mainOptions 13종 고정 — ADAS · AUTOMATIC_TRUNK · HEATED_SEATS · HIPASS · ★ HUD ·
+  LEATHER_SEATS · NAVIGATION · PARKING_DISTANCE_WARNING · REAR_VIEW_CAMERA ·
+  SMART_KEY · ★ SUNROOF · VENTILATED_SEATS · WIRELESS_CHARGING
+  ★ HUD 13/30 · ★ 우리 taste.hud 18점 · taste.sunroof 12점이 바로 붙는다
+customKeywords — 보험이력없음 17 · 오토할부혜택 9 · 짧은km 4 · 세제혜택 4
+  ★ 「오토할부혜택」·「세제혜택」은 ★ 차 상태가 아니다.  ★ 점수에 넣지 마라
+insuranceRecord.damaged — 0이 22 · 1이 6 · 2가 2   changeOfUse — 0이 19 · ★ 1이 11
+  ★ 용도 이력이 있는 매물이 ★ 3분의 1이다.  ★ 렌트·영업용 감점이 실제로 걸린다
 ```
 
 ---
@@ -192,6 +270,6 @@
    → ★ `dict_enum(axis='target')` 로 잇는다.  ★ facet 을 받아 채운다.  ★ 지어내지 마라
 ② `vehicle_id` — ★ 같은 차가 여러 사이트에 있을 때 묶을 근거가 없다
    ★ 차대번호를 주는 사이트가 없다.  ★ 지금은 ★ 합치지 않는다 (개정 464)
-③ 표본 — ★ 기아 상세 1건 · 현대 1건 · K카 1건 · KB 25건으로 쓴 것이다
-   ★ 각 20건 이상으로 늘려 ★ 이 표를 다시 대조해야 한다 (오판대장 모양 ④)
+③ 표본 — ★ 기아 ★ 30건으로 늘려 검증했다 (2a장).  ★ 현대 1건 · K카 1건은 ★ 아직이다
+   ★ 둘도 20건 이상으로 늘려 다시 대조해야 한다 (오판대장 모양 ④)
 ```
