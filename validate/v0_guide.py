@@ -73,27 +73,55 @@ def s45_1_one_version() -> tuple[bool, str]:
     return True, f"{len(top)}개 절의 제목과 표가 같다"
 
 
+def _order_files() -> list[Path]:
+    """★ 명령서가 놓일 수 있는 곳을 ★ 모두 센다.
+
+    08-22 — `inbox/` 를 안 세서 여섯이 숨어 있었다 (밀린일 0-3).
+    ★ 지금 `inbox/` 는 없다.  ★ 없어도 안 깨지게 glob 만 돈다.
+    """
+    got: list[Path] = []
+    for d in (ROOT / "outputs", ROOT / "inbox"):
+        if d.is_dir():
+            got += d.glob("ORDER_*.md")
+    return sorted(got)
+
+
 def s44_1_order_exists() -> tuple[bool, str]:
-    """★ 가이드가 가리키는 명령서 파일이 실제로 있는가."""
+    """★ 가이드가 가리키는 명령서 파일이 실제로 있는가.
+
+    ★ `ORDER_20260822_r493.md` 꼴만 보지 않는다 —
+      `ORDER_panels.md` 처럼 날짜 없는 이름도 잡는다 (밀린일 0-3 ②).
+    """
     # ★ 03_이력.md 는 기록이다 — 지난 명령서 이름이 남는 것이 맞다
+    here = {q.name for q in _order_files()}
     bad: list[str] = []
     for q in GUIDE.glob("*.md"):
         if q.name == "03_이력.md":
             continue
-        for m in re.finditer(r"`?(ORDER_\d{8}_r\d+\.md)`?", _read(q)):
-            if not (ROOT / "outputs" / m.group(1)).exists():
+        for m in re.finditer(r"`?(ORDER_[A-Za-z0-9_\-]+\.md)`?", _read(q)):
+            # ★ `ORDER_2026MMDD_rNNN.md` 는 ★ 이름 꼴 안내다.  실제 파일이 아니다
+            if "MMDD" in m.group(1) or "NNN" in m.group(1):
+                continue
+            if m.group(1) not in here:
                 bad.append(f"{q.name}→{m.group(1)}")
     if bad:
         return False, "없는 명령서를 가리킨다 — " + " · ".join(sorted(set(bad)))
-    return True, "가리키는 명령서가 모두 있다"
+    return True, f"가리키는 명령서가 모두 있다 (있는 것 {len(here)}개)"
 
 
 def s44_2_one_order() -> tuple[bool, str]:
-    """★ 명령서가 하나뿐인가 (원칙 2)."""
-    got = sorted((ROOT / "outputs").glob("ORDER_*.md"))
+    """★ 명령서가 하나뿐인가 (원칙 2).
+
+    ★ `outputs/` 만 세면 ★ 지키는 척한다 — `inbox/` 에 여섯이 숨어 있었다.
+    ★ 두 곳을 함께 세고 ★ 합쳐 하나여야 한다 (밀린일 0-3 ①).
+    """
+    got = _order_files()
     if len(got) > 1:
-        return False, f"명령서가 {len(got)}개다 — " + " · ".join(p.name for p in got)
-    return True, "명령서가 하나다"
+        return False, (f"명령서가 {len(got)}개다 — "
+                       + " · ".join(f"{p.parent.name}/{p.name}" for p in got))
+    if not got:
+        return False, "명령서가 없다 — outputs/ORDER_2026MMDD_rNNN.md 가 있어야 한다"
+    return True, f"명령서가 하나다 — {got[0].parent.name}/{got[0].name}"
 
 
 def s43_3_version_matches() -> tuple[bool, str]:
