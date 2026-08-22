@@ -1,6 +1,6 @@
 # 사이트 → `core_listing` 칼럼 매핑
 
-`SPEC-2026.08.23-r523` · 2026-08-22
+`SPEC-2026.08.23-r524` · 2026-08-22
 **★ 이 문서가 사이트 확장의 매핑 정본이다. 앞 사이트 규격 문서의 「우리 축」 표는 ★ 축 대응이지 칼럼이 아니다.**
 
 ```
@@ -244,8 +244,8 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
 | 압류·저당 | `master.szrMogeYn` | `data.master.szrMogeYn` | 25/25 (전부 `N`) |
 | 보증 잔여(엔진) | `nwcaGurnteEngeSurvDt` | ★ **`data.rvo.nwcaGurnteEngeSurvDt`** | ★ **14/25** |
 | 보증 잔여(일반) | 〃 | `data.rvo.nwcaGurnteGnrlSurvDt` | ★ **0/25** |
-| 리콜 | `master.recallObjYn` | ★ **`data.masterInfo.recallObjYn`** | ★ **0/25** |
-| 계기판 | `master.dshbExchgYn` | `data.master.dshbExchgYn` | 25/25 (전부 `1`) |
+| 리콜 | `master.recallObjYn` | ★ **`data.carRecallNeedCnt`** (건수) | ★ **25/25** · 0/1/2 |
+| ~~계기판~~ | ~~`master.dshbExchgYn`~~ | ★ **쓰지 않는다** (개정 524) | — |
 | 타이어 | `tireDtlList` | `data.tireDtlList[].tirResQty` | 25/25 |
 | 옵션 | `optList` | `data.optList` | 25/25 |
 | 사고 내역 | `carHistoryAccList` | `data.carHistoryAccList` | ★ **16/25** |
@@ -258,15 +258,20 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
 ## ★★ 개정 484 의 판정 셋을 정정한다
 
 ```
-① ★ 「`dshbExchgYn` = 계기판 교체」 — ★ 25/25 가 전부 `1` 이다
-   ★ 25건이 모두 계기판을 갈았을 리 없다.  ★ 「교체됨」이 아니라 ★ 다른 뜻이다
-   ★ 견줌 — `vinCnfmYn` 도 25/25 가 `1` · `tirInpCmplYn` 은 `Y` · `szrMogeYn` 은 `N`
-     → ★ `1` 은 ★ 「확인함/입력함」 쪽으로 보인다.  ★ 「교체됨」이 아니다
-   ★★ ★ `listing_warning` 에 ★ 넣지 마라.  ★ 뜻을 확인하기 전까지 ★ 쓰지 않는다
+① ★★ 「`dshbExchgYn` = 계기판 교체」 — ★ 틀렸다.  ★ 쓰지 않는다 (개정 524 확정)
+   실측  25/25 가 전부 `1` 인데 ★ 주행거리는 11,665 ~ 92,637 로 제각각이고 정상이다
+         `milgStatCd` · `milgInfoEn` 은 ★ 전부 null 이다 — ★ 이상 표시가 따로 없다
+   견줌  `vinCnfmYn` 도 25/25 가 `1` · `tirInpCmplYn` 은 `Y` · `szrMogeYn` 은 `N`
+         → ★ `1` 은 ★ 「점검항목을 확인했다」는 표시다.  ★ 「교체됨」이 아니다
+   필수  ★ `listing_warning` 에 ★ 넣지 마라.  ★ 이 필드는 ★ 쓰지 않는다
+   ★ 넣었으면 ★ 25건 전부에 「계기판 교체」 경고가 붙었다
 
-② ★ 「`recallObjYn` = 리콜 대상」 — ★ 0/25 다.  ★ `masterInfo` 아래인데 ★ 전부 없다
-   ★ 별도로 `carRecallNeedCnt` 블록이 25/25 로 온다 — ★ 그쪽을 봐야 할 수 있다
-   ★ 확인 전까지 ★ 쓰지 않는다
+② ★★ 「`recallObjYn` = 리콜 대상」 — ★ 틀렸다.  ★ `carRecallNeedCnt` 를 쓴다 (개정 524)
+   실측  `masterInfo.recallObjYn` 은 ★ 25/25 가 ★ null 이다 — ★ 안 쓰는 필드다
+         ★ `data.carRecallNeedCnt` 가 ★ 25/25 로 오고 ★ 0 / 1 / 2 로 갈린다 (20 / 3 / 2)
+   필수  ★ `core_inspection.inspection_recall` ← ★ `data.carRecallNeedCnt` (건수다)
+         ★ 0 이면 ★ 「없음」이다 (확인한 값) · ★ 필드가 없으면 NULL
+   ★ `listing_warning` 에 ★ 1 이상일 때만 넣는다.  ★ 점수에 합산하지 않는다 (V3-21·22·23)
 
 ③ ★ 「제조사 보증 잔여를 K카가 직접 준다」 — ★ 엔진 14/25 · ★ 일반 0/25 다
    ★ 「준다」가 아니라 ★ 「있는 매물만 준다」다
