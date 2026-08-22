@@ -116,7 +116,9 @@
 <p class="sitebar">
   {% for b in site_buttons %}
   {% if b.on %}<span class="btn on" title="지금 이 사이트만 봅니다">{{ b.label }}</span>{% endif %}
-  {% if !b.on %}<a class="btn" href="/listings?site={{ b.q }}&sell_type={{ b.sell }}"
+  <!-- ★ 빈 조건을 주소에 붙이지 않습니다 (V11-72 · V11-75) —
+       sell_type 이 비면 그 칸을 아예 안 씁니다 -->
+  {% if !b.on %}<a class="btn" href="/listings?site={{ b.q }}{% if b.sell %}&sell_type={{ b.sell }}{% endif %}"
     title="이 사이트 매물만 봅니다">{{ b.label }}</a>{% endif %}
   {% endfor %}
 </p>

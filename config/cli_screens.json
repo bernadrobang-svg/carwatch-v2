@@ -42,6 +42,7 @@
     "tools/daily_check.py",
     "tools/deploy_check.py",
     "tools/gen_table.py",
+    "tools/collect_kia_cpo.py",
     "tools/daily_enqueue.py",
     "tools/light_check.py",
     "tools/repair_facet_chunks.py",

@@ -129,16 +129,23 @@ def test_vin_parse() -> None:
 def test_cross_site() -> None:
     conn = db()
     add(conn, "encar_1", "encar", 1, 35000000)
-    check("1차는 active 사이트가 1곳", active_sites(SITES) == ["encar"],
-          str(active_sites(SITES)))
+    # ★★ 실측 08-23 — active 가 늘어난다 (기아 CPO 를 붙였다 · 명령서 3-1).
+    #   ★ 「1곳」을 시험에 박으면 ★ 사이트를 붙일 때마다 거짓 실패가 난다.
+    #   ★ V9-03 이 보는 것은 ★ 「짝이 없을 때 단독이라 쓰지 않는가」다 —
+    #     그것을 재려고 ★ 이 시험 안에서만 한 곳으로 좁힌다
+    one = {k: (dict(v, status="planned")
+               if isinstance(v, dict) and k != "encar" else v)
+           for k, v in SITES.items()}
+    check("★ 이 시험은 active 를 한 곳으로 좁혀 잰다",
+          active_sites(one) == ["encar"], str(active_sites(one)))
 
-    m = match_cross_site(conn, 1, SITES)
+    m = match_cross_site(conn, 1, one)
     check("★ V9-03 — active 1곳이면 「단독 매물」이라 쓰지 않는다",
           m.message == MSG_NO_PEER and "단독" not in m.message, m.message)
     check("★ V9-01 — match_source · confidence 를 함께 낸다",
           m.match_source == "plate" and m.confidence == "confirmed")
 
-    two = dict(SITES)
+    two = dict(one)
     two["kcar"] = dict(SITES["kcar"], status="active")
     add(conn, "kcar_9", "kcar", 1, 34000000)
     m = match_cross_site(conn, 1, two)

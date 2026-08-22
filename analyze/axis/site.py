@@ -178,7 +178,17 @@ def _maker(ctx: AxisContext, v: Verdict) -> None:
               "general_curve", "encar_warranty_general"),
              (POWER, s.warranty_power_month, s.warranty_power_km,
               "power_curve", "encar_warranty_power"))
+    # ★★ 명령서 r515 2-3 — 원문이 보증 개월을 안 주면 ★ 차종 속성으로 채운다.
+    #   ★ 안 채우면 보증 잔여가 0 이 되어 ★ 수입차가 전부 바닥에 깔린다
+    #   ★ 원문이 있으면 ★ 원문이 이긴다.  ★ 표는 대체값일 뿐이다
+    fallback = _maker_default(ctx, r)
     for axis, months, km, curve, src in pairs:
+        if months is None and fallback:
+            key = "general" if axis == GENERAL else "power"
+            months = fallback.get(f"{key}_month")
+            km = km if km is not None else fallback.get(f"{key}_km")
+            if months is not None:
+                src = "maker_default"
         left = remaining_months(months, km, elapsed, s.mileage_km,
                                 r["km_per_month"])
         if left is None:
@@ -186,6 +196,22 @@ def _maker(ctx: AxisContext, v: Verdict) -> None:
             continue
         put(v, axis, round(descending(max(left, 0), r[curve])),
             PRIO_MANUFACTURER, src)
+
+
+def _maker_default(ctx: AxisContext, rules: dict) -> dict:
+    """제조사 보증 기간표 (명령서 r515 2-3).
+
+    ★ 표는 ★ 차종 키로 찾는다.  ★ 코드에 브랜드를 박지 않는다 (V3-55)
+    ★ 표에 없는 차종은 ★ 빈 것이다.  ★ 지어내지 않는다 (금지 6)
+    ★ 브랜드가 아니라 차종으로 적는 까닭 — 축 함수가 target_config 에서
+      매물 값을 읽으면 V4-24 가 문다.  ★ 차종 키는 스냅숏이 준다
+    """
+    table = ((rules.get("maker_default") or {}).get("by_target") or {})
+    if not table:
+        return {}
+    # ★★ V4-24 — target_config 에서 ★ 매물 값을 캐지 않는다.
+    #   ★ 차종 키는 ★ 스냅숏이 준다.  표도 ★ 차종 키로 찾는다
+    return table.get(getattr(ctx.snapshot, "target_key", None) or "") or {}
 
 
 def analyze_site(ctx: AxisContext, v: Verdict) -> None:
