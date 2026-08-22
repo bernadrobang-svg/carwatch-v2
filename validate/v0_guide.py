@@ -91,6 +91,8 @@ def s44_1_order_exists() -> tuple[bool, str]:
 
     ★ `ORDER_20260822_r493.md` 꼴만 보지 않는다 —
       `ORDER_panels.md` 처럼 날짜 없는 이름도 잡는다 (밀린일 0-3 ②).
+    ★ ★ 한글 이름도 잡는다 — `ORDER_00_순서.md` 가 ★ 이번 사태를 낸 이름이다 (개정 502).
+      `[A-Za-z0-9_\-]+` 로는 한글이 빠져 ★ 그 이름을 적어도 통과했다.
     """
     # ★ 03_이력.md 는 기록이다 — 지난 명령서 이름이 남는 것이 맞다
     here = {q.name for q in _order_files()}
@@ -98,9 +100,16 @@ def s44_1_order_exists() -> tuple[bool, str]:
     for q in GUIDE.glob("*.md"):
         if q.name == "03_이력.md":
             continue
-        for m in re.finditer(r"`?(ORDER_[A-Za-z0-9_\-]+\.md)`?", _read(q)):
+        # ★ 한글 이름도 잡는다 — `ORDER_00_순서.md` 가 이번 사태를 냈다 (개정 502)
+        text = _read(q)
+        for m in re.finditer(r"`?(ORDER_[^\s`'\"]+\.md)`?", text):
             # ★ `ORDER_2026MMDD_rNNN.md` 는 ★ 이름 꼴 안내다.  실제 파일이 아니다
             if "MMDD" in m.group(1) or "NNN" in m.group(1):
+                continue
+            # ★ 닫힌 줄(~~취소선~~)은 ★ 기록이다 — 지운 파일 이름이 남는 것이 맞다
+            head = text.rfind("\n", 0, m.start()) + 1
+            line = text[head:text.find("\n", m.start())]
+            if line.count("~~") >= 2:
                 continue
             if m.group(1) not in here:
                 bad.append(f"{q.name}→{m.group(1)}")
