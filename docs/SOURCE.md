@@ -21,7 +21,7 @@
 | `validate/v2_load.py` | 917 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `validate/v10_admin.py` | 895 | V10 관리자 검증. |
 | `validate/v1_collect.py` | 866 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
-| `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
+| `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (옛 지시 · 08-22 삭제). |
 | `tests/test_score.py` | 839 | 7장 판정·채점 시험. |
 | `validate/v4_mapping.py` | 770 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `tests/test_run.py` | 762 | S0~S3 종단 시험 (모의 응답). |
