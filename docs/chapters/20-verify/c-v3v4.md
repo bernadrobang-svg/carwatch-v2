@@ -77,8 +77,8 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 
 | 코드 | 검사 | 등급 |
 |---|---|---|
-| V3-20 | `trust_score` 가 555점에 합산되지 않음 | fatal |
-| V3-21 | 경고(`listing_warning`)가 555점에 합산되지 않음 | fatal |
+| V3-20 | `trust_score` 가 총점에 합산되지 않음 | fatal |
+| V3-21 | 경고(`listing_warning`)가 총점에 합산되지 않음 | fatal |
 | V3-22 | **경고로 매물이 목록에서 제외되지 않음** | fatal |
 | V3-23 | **경고로 등급·추천 순위가 바뀌지 않음** | fatal |
 | V3-24 | `acknowledged` 가 신호 감지 자체를 멈추지 않음 | fatal |
@@ -94,7 +94,7 @@ anomaly 가 0 이 되거나, 남은 것이 전부 설명돼야 통과다.
 | V3-42 | 취향 축만으로 S·A 가 나온 건이 없음 | data | fatal |
 | V3-43 | 트림·옵션이 높은데 점수가 낮은 역전이 없음 | data | fatal |
 | V3-44 | NULL 축에 원인 코드가 붙어 있음 | data | fatal |
-| V3-45 | 배점 합이 555 임 | code | fatal |
+| V3-45 | 배점 합이 총점과 같음 | code | fatal |
 | V3-46 | 등급이 505 기준으로 매겨짐 | code | fatal |
 | V3-47 | 축별 차종 간 결측률 편차가 상한 이내 | data | fatal |
 | V3-48 | 축이 차종 안에서 변별력이 있음 | data | warn |

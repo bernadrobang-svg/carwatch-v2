@@ -206,9 +206,13 @@ def s45_3_spec_totals() -> tuple[bool, str]:
 
     ★ 총점은 605 → 675 → 850 → 910 으로 갔다.  ★ 옛 값이 규격에 남으면
       ★ 개발측이 그것을 읽는다 (개정 475 — 850 사고가 그렇게 났다).
-    ★ 보는 곳은 ★ `docs/chapters/` (규격) 뿐이다 —
-      `guide/` 는 경위를 적는 곳이고 `CHECKS.md`·`trace/` 는 자동 생성이다.
+    ★ 보는 곳 — `docs/` 전체.  ★ 기록만 뺀다 (`03_이력` · `06_오판대장` ·
+      `07_밀린일대장` · `00_버전` · `outputs/`) — 자취가 남는 것이 맞다.
     ★ 건수·비율에 우연히 같은 숫자가 나올 수 있어 ★ 점수 꼴일 때만 잡는다.
+    ★ 예외 — 아래 자리는 ★ 배점이 아니다.  ★ 바꾸면 사실이 틀어진다
+        `f-table` 422·442  675 = `boardStateType` 코드값·건수
+        `f-table` 1005     3,555 = 매물 건수
+      ★ 점수 꼴 정규식이라 지금은 안 걸린다.  ★ 걸리기 시작하면 여기에 적는다
     """
     STALE = ("675", "625", "850", "555", "530", "495")
     SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md", "00_버전.md")
@@ -219,7 +223,7 @@ def s45_3_spec_totals() -> tuple[bool, str]:
     pats += [re.compile(rf"/\s*{n}\b") for n in STALE]
     pats += [re.compile(rf"\b{n}\s*점") for n in STALE]
     bad: list[str] = []
-    for q in (ROOT / "docs" / "chapters").rglob("*.md"):
+    for q in (ROOT / "docs").rglob("*.md"):
         if any(d in q.parts for d in SKIP_DIR) or q.name in SKIP_NAME:
             continue
         for i, line in enumerate(_read(q).split("\n"), 1):

@@ -15,7 +15,7 @@
 |---|---|---|---|---|---|---|---|:--:|
 | SC-001 | `[판정]` | 총점 605 · 등급 기준 555 | `[마스터]` 306 | `f-table` 0 | ✓ `config/scoring.json::total_points` | `/why` 비율 | V3-56 | ○ |
 | SC-002 | `[판정]` | 취향 50은 등급에서 뺀다 | `[마스터]` 292 | `f-table` 0 | ✓ `score/scorer.py::score` | — | V3-57 | ○ |
-| SC-003 | `[판정]` | 분모는 늘 675. 줄이지 않는다 | `[마스터]` 289 | `f-table` 0 | ✓ `score/scorer.py::score_listing` | `/why` | V3-41 | ○ |
+| SC-003 | `[판정]` | ★ 분모는 늘 총점. 줄이지 않는다 | `[마스터]` 289 | `f-table` 0 | ✓ `score/scorer.py::score_listing` | `/why` | V3-41 | ○ |
 | SC-004 | `[판정]` | 못 본 축은 0점 + 「확인 안 됨」 | `[마스터]` 289·325 | `f-table` 0 | ~ `score/scorer.py:8` | `/why` ⑦ | V3-65 | **!** |
 | SC-005 | `[판정]` | 배점 뼈대 — 흠은 마이너스 점수로 | `[마스터]` 322 | `f-table` 마이너스 | ✓ `score/penalty.py::penalties_of` | `/why` ⑥ | 검사 없음 | ◐ |
 | SC-006 | `[판정]` | 등급 경계는 절대 기준 S90 A80 B70 | `[마스터]` 324 | `f-table` 등급 | ✓ `score/grade.py::grade_of` | `/listings` | V3-64 | ○ |

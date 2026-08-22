@@ -141,7 +141,7 @@
 ```json
 {
   "calc_version": "c1",
-  "total_points": 555,
+  "total_points": 910,
   "components": {
     "_note": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용",
     "price": 200,
