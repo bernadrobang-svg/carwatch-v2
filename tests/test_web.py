@@ -304,8 +304,13 @@ def test_guard_and_csrf() -> None:
     watch, _ = match("/watch", GET)
     check("user 가 /watch → 통과",
           guard(Account(2, ROLE_USER, "u"), watch) is None)
+    # ★ 403 인 것은 그대로다.  ★ 다만 「관리자만」이라고 하면 거짓말이다 —
+    #   /watch 는 ROLE_USER 다.  로그인만 하면 된다 (마스터 실측 08-22)
+    _w = guard(ANONYMOUS, watch)
     check("anonymous 가 /watch → 403",
-          guard(ANONYMOUS, watch) is FORBIDDEN)
+          _w is not None and _w.status == FORBIDDEN.status)
+    check("★ /watch 403 은 「관리자만」이 아니라 「로그인하면」이다",
+          _w is not FORBIDDEN and "로그인" in _w.title)
 
     # ★ 임시 비밀번호로는 다른 화면을 못 본다 (STEP 146)
     tmp = Account(1, ROLE_ADMIN, "a", must_change_secret=True)

@@ -223,8 +223,9 @@ def test_no_direct_edit() -> None:
 
     bad = []
     for base, dirs, files in os.walk(ROOT):
+        # ★ outputs/ 는 작업기록이다 (규칙 6) — 소스가 아니다 (실측 08-22)
         dirs[:] = [x for x in dirs if x not in ("__pycache__", ".git",
-                                                "tests", "tools")]
+                                                "tests", "tools", "outputs")]
         for f in files:
             if not f.endswith(".py") or f == "admin.py":
                 continue

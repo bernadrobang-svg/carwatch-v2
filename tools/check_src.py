@@ -637,7 +637,11 @@ for _m in sorted(_glob.glob(os.path.join(ROOT, "validate", "v*_*.py"))):
 #   검증표에 이름만 남고 구현이 빠지는 것을 잡는 게 목적이다.
 #   V6·V7·V9 는 화면·추적 계층이라 근거 주석으로도 인정한다
 for base, dirs, files in os.walk(ROOT):
-    dirs[:] = [d for d in dirs if d not in ("__pycache__", ".git", "ref")]
+    # ★ outputs/ 는 작업기록이다 (규칙 6) — 소스가 아니다.  ref/ 와 같이 뺀다.
+    #   가이드가 outputs/verify/probe/*.py 를 넣으면서 소스 검사가 그것을
+    #   소스로 세어 거짓 실패를 냈다 (실측 08-22 · 개정 442 커밋 f301df4)
+    dirs[:] = [d for d in dirs
+               if d not in ("__pycache__", ".git", "ref", "outputs")]
     for f in files:
         if not f.endswith(".py"):
             continue

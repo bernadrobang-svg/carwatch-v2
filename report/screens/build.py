@@ -1065,8 +1065,14 @@ def view_listings(account: Account, conn: sqlite3.Connection,
                   flt: ListingFilter, fin_cfg: dict, root: str = ".",
                   page_size: int | None = None,
                   extras: bool = True,
-                  with_state: bool = True) -> list[ListingRow]:
-    """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1."""
+                  with_state: bool = True,
+                  opt_money: bool | None = None) -> list[ListingRow]:
+    """축·버킷 필터는 Component 이름을 쓴다 — /listings?axis=spec.hud&bucket=1.
+
+    ★ opt_money — 신차가(등급기준 + 선택옵션가)를 낼지.  ★ 쿼리 하나가 든다.
+      안 주면 with_state 를 따른다 (옛 동작).  ★ 상세는 켜야 한다 —
+      끄면 「신차가 6,170만 · 선택 옵션가 없음」이 나온다 (실측 08-22)
+    """
     where, args = _listings_where(flt)
 
     sql = (
@@ -1133,7 +1139,14 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
     first = 0 if flt.show_all else (flt.page - 1) * page_size
     # ★ 옵션가 사전은 한 번만 읽는다 (개정 301).  행마다 읽으면 쿼리가 는다
-    opt_prices = _option_prices(conn) if (extras and with_state) else {}
+    # ★★ with_state 에 매달지 않는다 (실측 08-22) — 상세는 with_state=False 라
+    #   옵션가 사전이 비어 「신차가 6,170만 · 선택 옵션가 없음」이 나왔다.
+    #   ★ 목록은 7,779만, 채점은 7,730만(트림+옵션)인데 상세만 트림가였다.
+    #   ★ 신차가 = 등급기준 + 선택옵션가 합이다 (f-table 518 · 개정 301)
+    #   ★ 그렇다고 늘 켜면 현황이 21쿼리가 되어 상한 20 을 넘는다 (V11-34).
+    #     ★ 신차가를 내는 화면만 켠다
+    want_opt = with_state if opt_money is None else opt_money
+    opt_prices = _option_prices(conn) if (extras and want_opt) else {}
     high_km = _high_km(root)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
                  opt_prices, axes, changes, base, encar_tpl, km_unit,
@@ -2496,12 +2509,14 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
                         excluded=False, listing_id=listing_id, show_all=True)
     # ★ with_state 를 끄면 3쿼리가 준다 (실측 08-21 — 8 → 5).
     #   ★ 옵션가·상태는 render_listing 이 이미 받아 온 v 에 있다 — 두 번 안 받는다
+    # ★ opt_money=True — 상세 ②절이 신차가·선택 옵션가를 낸다 (개정 301)
     rows = view_listings(account, conn, flt, fin_cfg, root, page_size=2,
-                         with_state=False)
+                         with_state=False, opt_money=True)
     if not rows:
         # ★ 제외된 매물도 상세는 열려야 한다 — 왜 제외됐는지가 판단 재료다
         rows = view_listings(account, conn, _rep_flt(flt, excluded=True),
-                             fin_cfg, root, page_size=2, with_state=False)
+                             fin_cfg, root, page_size=2, with_state=False,
+                             opt_money=True)
     row = rows[0] if rows else None
     # ★ 템플릿은 == 비교를 못 한다 (V11-104).  ★ 고르는 일은 여기서 한다
     by_axis = {a.axis: a for a in v.axes}

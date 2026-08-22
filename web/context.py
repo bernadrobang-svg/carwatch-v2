@@ -106,6 +106,13 @@ PENDING_WAIT = ErrorPage(
 FORBIDDEN = ErrorPage(HTTP_FORBIDDEN, "관리자만 볼 수 있습니다",
                       "이 화면은 관리자 권한이 필요합니다.",
                       "관리자로 로그인한다  (/login)")
+# ★ 로그인만 하면 되는 화면 (role=user).  ★ 「관리자만」이라고 하면 거짓말이다 —
+#   마스터 실측 08-22 「/watch 403 · ♡ 를 눌러도 갈 데가 없다」.
+#   ★ /watch 는 ROLE_USER 다.  관리자 권한이 필요한 것이 아니다
+NEED_LOGIN = ErrorPage(HTTP_FORBIDDEN, "로그인하면 볼 수 있습니다",
+                       "관심 목록은 계정마다 따로 있습니다. "
+                       "로그인하면 담아 둔 매물이 여기 모입니다.",
+                       "로그인한다  (/login)")
 
 
 # 권한 부족을 가리키는 말.  ★ 그 밖의 PolicyError 는 절차 위반이다 (C-2)

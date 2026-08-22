@@ -660,7 +660,9 @@ def _pii_access_check(run_id: str):
     bad = []
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     for base, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in ("__pycache__", ".git", "ref")]
+        # ★ outputs/ 는 작업기록이다 (규칙 6) — 소스가 아니다 (실측 08-22)
+        dirs[:] = [d for d in dirs
+                   if d not in ("__pycache__", ".git", "ref", "outputs")]
         for f in files:
             if not f.endswith(".py"):
                 continue

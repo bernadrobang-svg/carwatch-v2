@@ -16,9 +16,9 @@ import urllib.parse
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from contracts import ANONYMOUS, ROLE_ANONYMOUS, ROLE_PENDING, ROLE_RANK
+from contracts import ANONYMOUS, ROLE_ANONYMOUS, ROLE_PENDING, ROLE_RANK, ROLE_USER
 from web.context import (
-    FORBIDDEN, PENDING_WAIT, HTTP_NOT_FOUND, HTTP_OK, HTTP_SEE_OTHER, NOT_FOUND, ErrorPage,
+    FORBIDDEN, NEED_LOGIN, PENDING_WAIT, HTTP_NOT_FOUND, HTTP_OK, HTTP_SEE_OTHER, NOT_FOUND, ErrorPage,
     error_page,
 )
 from web.routes import GET, POST, match
@@ -61,6 +61,11 @@ def guard(account, route) -> ErrorPage | None:
         #   무엇을 할지 모른다.  기다리는 중임을 알린다 (STEP 126)
         if role == ROLE_PENDING:
             return PENDING_WAIT
+        # ★ 「관리자만」은 route.role 이 admin 일 때만 참이다.
+        #   ROLE_USER 화면에 그 말을 내면 거짓말이다 — 마스터가 로그인해도
+        #   안 될 것처럼 읽힌다 (실측 08-22 · /watch)
+        if ROLE_RANK[route.role] <= ROLE_RANK[ROLE_USER]:
+            return NEED_LOGIN
         return FORBIDDEN
     # ★ must_change_secret 이면 비밀번호 변경 화면 외로 못 간다 (STEP 146)
     # ★ 비밀번호를 바꾸는 화면 자체는 열려야 한다.  아니면 못 바꾼다
