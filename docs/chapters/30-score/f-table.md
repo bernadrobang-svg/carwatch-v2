@@ -103,11 +103,16 @@
 
 | 점수 | 무엇 | 사이트 |
 |--:|---|---|
-| **36** | ★ **제조사 인증** — 현대·제네시스 인증중고차 · 기아 CPO `EXCLUSIVE` | certified.hyundai.com · cpo.kia.com |
+| **36** | ★ **제조사 인증** — 현대·제네시스 인증중고차 · 기아 CPO `PREMIUM`·`EXCLUSIVE` | certified.hyundai.com · cpo.kia.com |
 | **36** | 진단++ | 엔카 |
 | **36** | **KB진단 + KB스타픽케어** | KB차차차 |
 | 36 | K카 **직영** · 헤이딜러eye | K카 · 헤이딜러 |
 | **32** | ★ **기아 CPO `LITE`** | cpo.kia.com |
+
+```
+★ `classification` 은 ★ 셋이다 — `PREMIUM` · `EXCLUSIVE` · `LITE` (개정 481 실측)
+   ★ PREMIUM · EXCLUSIVE 36 · LITE 32.  ★ 셋 다 제조사 인증이라 엔카 진단+ 보다 위다
+```
 | **28** | 진단+ | 엔카 |
 | **28** | **KB진단만** | KB차차차 |
 | **18** | 진단 | 엔카 |
