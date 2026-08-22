@@ -155,7 +155,10 @@ def _penalty_rows(raw) -> tuple:
         got = json.loads(raw)
     except (ValueError, TypeError):
         return ()
-    return tuple({"key": k, "points": p, "label": w} for k, p, w in got)
+    # ★ 「cap:축」 줄은 되돌린 몫이다 (개정 491).  ★ 문구에 이미 「→ 상한 …」이 있어
+    #   숫자를 또 붙이면 두 번 읽힌다 — 화면이 가려 낸다
+    return tuple({"key": k, "points": p, "label": w,
+                  "is_cap": str(k).startswith("cap:")} for k, p, w in got)
 
 
 def _market_pos(conn, listing_id: int, root: str = ".") -> dict:

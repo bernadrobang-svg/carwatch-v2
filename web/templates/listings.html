@@ -157,7 +157,7 @@
          ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
     {% if r.penalty_won %}
     <div class="barlab"><span class="chip-bad"
-      title="{% for p in r.penalty_labels %}{{ p.label }} {{ p.points }} · {% endfor %}★ 막대 합 − 감점 = 등급 점수입니다"
+      title="{% for p in r.penalty_labels %}{{ p.label }}{% if !p.is_cap %} {{ p.points }}{% endif %} · {% endfor %}★ 막대 합 − 감점 = 등급 점수입니다"
       >감점 {{ r.penalty_won }}</span></div>
     {% endif %}
   </div>

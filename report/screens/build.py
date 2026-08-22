@@ -848,7 +848,11 @@ def _pen_sum(raw) -> int:
 
 def _pen_words(raw) -> list:
     """화면 문구.  ★ 「깎인 합 → 상한」 줄을 ★ 감추지 않는다 (개정 491)."""
-    return [{"key": k, "points": p, "label": w} for k, p, w in _pen_rows(raw)]
+    # ★ 「cap:축」 줄은 되돌린 몫이라 ★ 점수를 따로 적지 않는다 —
+    #   문구 자체가 「… → 상한 …」이라 숫자를 또 붙이면 두 번 읽힌다
+    return [{"key": k, "points": p, "label": w,
+             "is_cap": str(k).startswith("cap:")}
+            for k, p, w in _pen_rows(raw)]
 
 
 def _view_cfg(key: str, root: str = ".") -> int:

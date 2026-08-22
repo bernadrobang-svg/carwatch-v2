@@ -1067,11 +1067,13 @@ def login(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str =
         except PolicyError as e:
             # 시도 제한에 걸린 경우 — 사유를 그대로 낸다 (C-5)
             return _login_again(conn, account, str(e).split(" [")[0],
-                                root, csrf, flash_key)
+                                root, csrf, flash_key,
+                                form.get("watch_listing_id") or "")
         if acc.role == ROLE_ANONYMOUS:
             return _login_again(conn, account,
                                 "이름이나 비밀번호가 맞지 않습니다",
-                                root, csrf, flash_key)
+                                root, csrf, flash_key,
+                                form.get("watch_listing_id") or "")
         # ★★ 개정 491 ⓗ — ♡ 를 누르고 로그인한 것이면 ★ 그 자리에서 담는다
         return _open_session(conn, acc, req,
                              watch=form.get("watch_listing_id") or "")
@@ -1087,7 +1089,7 @@ def login(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str =
 
 
 def _login_again(conn, account, why: str, root: str, csrf: str,
-                 flash_key: str) -> tuple:
+                 flash_key: str, watch: str = "") -> tuple:
     """로그인 화면을 다시 낸다.
 
     ★ 무엇이 틀렸는지는 말하지 않는다 — 「이름이 없다」와 「비밀번호가 틀렸다」를
@@ -1095,8 +1097,9 @@ def _login_again(conn, account, why: str, root: str, csrf: str,
     """
     from store.admin import account_count
 
+    # ★ 다시 낼 때도 ★ 담으려던 매물을 들고 간다 (개정 491 ⓗ · V11-38)
     ctx = {"no_account": account_count(conn) == 0,
-           "must_change": False, "error": why}
+           "must_change": False, "error": why, "watch_listing_id": watch}
     return page(conn, account, "로그인", "login.html", ctx, csrf=csrf,
                 root=root, flash_key=flash_key)
 

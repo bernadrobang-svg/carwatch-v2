@@ -66,6 +66,26 @@ def warranty_points(site_flags: dict, items: list, evidence) -> tuple:
     return got, why
 
 
+# ★ 원문이 참인가.  ★ 원문은 문자열 '0' · '1' 로 온다 (실측 08-23)
+FALSE_WORDS = ("", "0", "n", "no", "false", "none", "null")
+
+
+def _truthy(value) -> bool:
+    """★ 원문 값이 참인가 (개정 491 ⓔ).
+
+    ★★ 전에는 bool(value) 였다.  ★ 원문이 문자열 '0' 이라 ★ 참이 됐다 —
+      실측 08-23: `warranty_extend='0'` 인 522건이 ★ 엔카진단++ 만점을 받았다.
+      ★ 「진단 미조회인데 만점」의 진짜 까닭이 이것이다
+    """
+    if value is None:
+        return False
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value != 0
+    return str(value).strip().lower() not in FALSE_WORDS
+
+
 def warranty_grade(flags: dict, grades: list) -> tuple:
     """④ 사이트 검증 52 — **단계**다 (개정 428).  더하지 않는다.
 
@@ -83,7 +103,8 @@ def warranty_grade(flags: dict, grades: list) -> tuple:
             continue
         for key, want in (one.get("when") or {}).items():
             have = flags.get(key)
-            if not (bool(have) if want in (1, True) else str(have) == str(want)):
+            if not (_truthy(have) if want in (1, True)
+                    else str(have) == str(want)):
                 ok = False
                 break
         if ok:

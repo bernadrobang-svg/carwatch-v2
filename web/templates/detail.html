@@ -203,8 +203,8 @@
            ★ 「깎인 합 → 상한」 줄을 감추지 않습니다 -->
       {% if v.penalties %}
       <p class="pen">마이너스
-        {% for p in v.penalties %}<span class="chip-bad">{{ p.label }}
-          {{ p.points }}</span>{% endfor %}
+        {% for p in v.penalties %}<span class="chip-bad">{{ p.label }}{% if !p.is_cap %}
+          {{ p.points }}{% endif %}</span>{% endfor %}
         <span class="muted">합 {{ v.penalty_total }}점 ·
           ★ 막대 합 − 감점 = 등급 점수입니다</span></p>
       {% endif %}
