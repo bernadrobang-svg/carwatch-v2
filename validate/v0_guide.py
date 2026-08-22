@@ -72,6 +72,10 @@ def s44_4_scope_written() -> tuple[bool, str]:
     ★ 마스터 — 「★ 전체 수집이 아니다.  ★ 차종에 해당되는 것만 받는다」
     ★ 08-23 — 사이트 규격 아홉을 쓰면서 ★ 범위를 안 적어 ★ 12만 건 논의가 나왔다.
     ★ 보는 것 — 명령서에 ★ 「전량을 받지 않는다」와 ★ 사이트별 상한 표가 있는가.
+    ★★ 개정 543 — ★ 「적혀 있는가」만 보니 ★ 틀린 범위를 통과시켰다.
+      ★ 기아를 「facet 에 차종 필터가 없다」로 적었는데 ★ `modelCodeNames` 가 먹었다.
+      → ★ 좁힌 건수가 ★ 숫자로 적혀 있는지까지 본다 (「전체 N → 대상 M」).
+      ★ 숫자가 없으면 ★ 실측을 안 한 것이다.
     """
     orders = _order_files()
     if not orders:
@@ -83,7 +87,15 @@ def s44_4_scope_written() -> tuple[bool, str]:
         return False, "명령서에 수집 범위가 없다 — 빠진 말: " + " · ".join(miss)
     if "빈 쪽까지 늘려" in text and "금지" not in text.split("빈 쪽까지 늘려")[0][-60:]:
         return False, "명령서가 아직 「빈 쪽까지」를 시킨다"
-    return True, "명령서에 수집 범위가 적혀 있다"
+    # ★ 좁힌 건수가 ★ 숫자로 적혀 있는가 — ★ 「전체 N → 대상 M」 꼴
+    if not re.search(r"[\d,]{3,}\s*→\s*★?\s*[\d,]+", text):
+        return False, "범위가 적혀 있으나 ★ 좁힌 건수가 숫자로 없다 (실측을 안 했다)"
+    # ★ 「없다」로 단정한 자리가 남았는가 — ★ 못 찾은 것은 「못 찾았다」로 적는다
+    bad_word = [ln.strip()[:44] for ln in text.split("\n")
+                if "좁히" in ln and "★ **없다**" in ln]
+    if bad_word:
+        return False, "「없다」로 단정한 자리가 있다 — " + " · ".join(bad_word[:2])
+    return True, "수집 범위가 건수까지 적혀 있다"
 
 
 def s44_5_site_consistent() -> tuple[bool, str]:
