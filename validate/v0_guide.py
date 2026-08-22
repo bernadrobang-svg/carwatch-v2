@@ -341,6 +341,34 @@ def s45_2_mock_numbers() -> tuple[bool, str]:
     return True, "시안에 옛 배점·분모가 없다"
 
 
+def s44_3_specs_in_order() -> tuple[bool, str]:
+    """★ 가이드가 쓴 규격이 ★ 명령서에서 ★ 가리켜지고 있는가 (개정 540).
+
+    ★ 08-23 — `TARGET_KEY_MAP.md` 를 08-22 에 써 놓고 ★ 명령서에 한 줄도 안 적었다.
+      ★ 개발측은 명령서를 보고 일한다 — ★ 규격만 쓰면 ★ 없는 것과 같다.
+      ★ 그래서 새 사이트 2,134건이 ★ 통째로 「차종 미정」으로 들어갔다.
+    ★ 보는 것 — ★ 사이트 규격(`*_API.md`)과 ★ 다사이트 매핑 · 차종 대응표.
+      ★ 자동 생성(`CHECKS`·`INDEX`·`SOURCE`)과 ★ 스키마·안내(`SCHEMA`·`README`·`MAPPING`)는 뺀다
+      ★ `ENCAR_API` 는 ★ 이미 붙어 있는 사이트라 뺀다
+    """
+    orders = _order_files()
+    if not orders:
+        return False, "명령서가 없다"
+    text = " ".join(_read(q) for q in orders)
+    bad: list[str] = []
+    SKIP = {"CHECKS.md", "INDEX.md", "SOURCE.md", "SCHEMA.md",
+            "README.md", "MAPPING.md", "ENCAR_API.md"}
+    for q in sorted((ROOT / "docs").glob("*.md")):
+        if not re.match(r"^[A-Z][A-Z0-9_]+\.md$", q.name) or q.name in SKIP:
+            continue
+        if q.stem not in text:
+            bad.append(q.name)
+    if bad:
+        return False, ("명령서가 안 가리키는 규격 "
+                       f"{len(bad)}개 — " + " · ".join(bad))
+    return True, "가이드 규격을 명령서가 모두 가리킨다"
+
+
 def s43_3_version_matches() -> tuple[bool, str]:
     """★ 00_버전.md 의 지금 버전이 03_이력.md 의 마지막 개정과 같은가 (V0-01)."""
     hist = _read(GUIDE / "03_이력.md")
@@ -360,6 +388,7 @@ CHECKS = (
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),
+    ("S44-3", "규격을 명령서가 가리키는가", s44_3_specs_in_order),
     ("S45-1", "f-table 절 제목과 표가 같은가", s45_1_one_version),
     ("S45-2", "시안에 옛 배점·분모가 없는가", s45_2_mock_numbers),
     ("S45-3", "규격에 옛 총점이 없는가", s45_3_spec_totals),
