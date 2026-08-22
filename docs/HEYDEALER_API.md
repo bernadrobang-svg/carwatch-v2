@@ -1,6 +1,6 @@
 # 헤이딜러 API · 매핑 규격
 
-`SPEC-2026.08.22-r517` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
+`SPEC-2026.08.22-r518` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
 
 ```
 ★★ 여섯 사이트 중 ★ 가장 풍부하다 — ★ 신차가 · 부위별 사고 · 보험 금액 · 타이어 · 틴팅까지
@@ -117,7 +117,88 @@ warranty_info.manufacturer_warranties[]
 `warranty_power_month`·`_km`  ← 「엔진/주요 부품」    ★ 87,777km / 23개월
 ★ `remaining_rate` 까지 준다 — ★ 우리가 계산할 필요가 없다
 ★ `warranty_info.description` 은 ★ 헤이딜러 자체 보증이다 (「6개월ㆍ1만km까지」) — ★ 사이트 검증 축
-★ `ev_info` 가 있다 — ★ 전기차면 ★ SOH 가점(+30)의 재료일 수 있다.  ★ 표본이 내연이라 null
+★ `ev_info` — ★ SOH 는 ★ 없다.  ★ 가점 재료가 아니다 (3a장 ④)
+```
+
+---
+
+# 3a. ★★ 표본 25건 검증 — ★ 1건일 때 못 본 것 넷 (개정 518)
+
+```
+★ 개정 517 은 ★ 표본 1건으로 썼다.  ★ 25건으로 늘려 다시 쟀다 (모양 ④)
+```
+
+## 필드 존재율
+
+| 필드 | 25건 중 | 뜻 |
+|---|--:|---|
+| `factory_price` · `carhistory` · `condition` · `options` · `warranty_info` · `total_info` · `initial_registration_date` | **25** | ★ 늘 온다 |
+| `inspector_comment` | 19 | 없을 수 있다 |
+| ★ `accident_repairs` | **14** | ★ **무사고면 빈 배열이다** |
+| ★ `heydealer_eye` | **12** | ★ **절반만 붙는다 — 사이트 검증 축이 갈린다** |
+| ★ `ev_info` | **6** | ★ **전기차만** |
+
+## ① ★ `accident_repairs` 가 14/25 인 것은 ★ 결손이 아니다
+
+```
+사고 요약  ★ 「단순교환 무사고」 14 · ★ 「완전무사고」 11   ★ 합 25
+★ 「완전무사고」인 11건은 ★ accident_repairs 가 ★ 빈 배열이다 — ★ 어긋나지 않는다
+★★ 그러므로 ★ 빈 배열을 ★ 「우리가 못 받았다」로 저장하지 마라.  ★ 「없음」(0)이다
+필수  `accident_repairs_summary_display` 를 함께 보고 가른다 —
+      「완전무사고」 + 빈 배열 → ★ 0 (확인한 값)
+      필드 자체가 없음        → ★ NULL (안 받았다)
+```
+
+## ② ★ 부위·수리 종류가 실측으로 드러났다
+
+```
+repair  ★ weld 13 · exchange 5   ★ 판금(용접)이 더 많다
+part    ★ 10가지 — door_rear_passenger · fender_rear_passenger · fender_front_driver ·
+        door_rear_driver · side_sil_panel_passenger · door_front_driver · trunk_lid ·
+        fender_rear_driver · fender_front_passenger · door_front_passenger
+★ 앞뒤·좌우가 이름에 들어 있다 (front/rear · driver/passenger)
+★ `dict_enum(site='heydealer', axis='part')` 에 넣는다.  ★ 우리말로 옮기지 마라 — 원문이 정본
+```
+
+## ③ ★★ `warranty_info` 가 ★ 연료에 따라 갈린다
+
+| 보증 이름 | 25건 중 |
+|---|--:|
+| 차체/일반 부품 | **25** |
+| 엔진/주요 부품 | **24** |
+| ★ 고전압 배터리 | **10** |
+| ★ 전기차 전용 부품 | 5 |
+| ★ 하이브리드 전용 부품 | 4 |
+
+```
+★ 「엔진/주요 부품」이 24 다 — ★ 하나는 ★ 순수 전기차라 엔진 보증이 없다
+★★ 없는 보증을 ★ 0 으로 넣지 마라.  ★ NULL 이다 — ★ 그 차에 없는 보증이다
+   ★ 기아 CPO 에서와 같은 자리다 (개정 483 ②)
+필수  `warranty_power_*` — EV 는 ★ 「고전압 배터리」로 잰다.  내연은 「엔진/주요 부품」
+```
+
+## ④ ★★ `ev_info` — 전기차 여섯 건에 ★ 배터리 정보가 온다
+
+```
+{"battery_manufacturer":"삼성 SDI", "battery_type":…, "range":412, "international_range":538,
+ "wheel_drive":"4WD", "zero_hundred":5.4, "charging_cost_description":"100km 운행에 약 6천원",
+ "factory_name":"🇩🇪 독일 Bayern Dingolfing 공장"}
+
+실측  BYD Blade · LG 에너지솔루션 · 삼성 SDI · SK온+LG · CATL   ★ 제조사가 갈린다
+★★ 다만 ★ SOH(배터리 잔량)는 ★ 없다.  ★ `range` 는 ★ 카탈로그 주행거리다
+   → ★ 우리 SOH 가점(+30)의 재료가 ★ 아니다.  ★ 「배터리 정상」으로 읽지 마라
+   ★ 개정 486 에서 「배터리 정상 → SOH 재료」라 적은 것은 ★ 목록 딱지를 본 것이다.  ★ 정정한다
+★ `battery_manufacturer` 는 ★ 화면에 낼 값이다 — 점수에 넣지 않는다 (마스터 확정 전)
+```
+
+## ⑤ 그 밖
+
+```
+연료      휘발유 12 · ★ 전기 6 · 하이브리드 4 · 경유 3   ★ 전기차가 24% 다
+판매상태   listed 25 — ★ 팔린 매물은 목록에 없다
+listing_type  stock 19 · ★ revolt 6 — ★ 무엇이 다른지 ★ 아직 모른다 (밀린일)
+condition  ★ 늘 셋이다 — 타이어 · 틴팅 · ★ 차 키
+사고 금액   14/25 건에 온다 · 401,840원 ~ ★ 12,259,420원
 ```
 
 ---
@@ -155,5 +236,6 @@ warranty_info.manufacturer_warranties[]
   ★ 목록을 받아 ★ 차명과 짝지어 `dict_enum(axis='target')` 을 채운다 (`TARGET_KEY_MAP.md` 5장)
 · 조건 검색(차종·가격) 파라미터를 ★ 아직 못 봤다 — ★ `order` 만 확인했다
 · `certification` · `heydealer_eye` 의 등급이 갈리는지 ★ 표본 1건으로는 모른다
-★ 표본이 ★ 1건이다.  ★ 20건 이상으로 늘려 다시 대조해야 한다 (오판대장 모양 ④)
+★ ~~표본 1건~~ → ★ 25건으로 검증했다 (3a장 · 개정 518)
+· ★ `listing_type` 의 `stock` 과 `revolt` 가 무엇이 다른지 ★ 모른다
 ```
