@@ -63,7 +63,7 @@ GONE = "gone"
 # ★ 한 칸에 몰아넣으면 「이 차만 사고가 있다」가 세로로 안 보인다
 # ★ 부록 G 의 목록 열 14~17 이다 (개정 332).
 #   35열을 늘어놓으면 「고를 것을 좁힌다」가 안 된다 — 상세로 보낸다
-CHIP_AXES = ("state.accident", "state.frame", "history.usage",
+CHIP_AXES = ("state.accident", "state.frame", "history.use",
              "warranty.power")
 
 
@@ -520,8 +520,8 @@ def _warranty_state(got, as_of) -> tuple:
 # 축 → 상태를 어디서 가져오는가 (STEP 149n).
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
 STATE_AXES = ("warranty.general", "warranty.power", "state.accident",
-              "state.frame", "state.outer", "state.repair", "history.usage",
-              "history.not_join", "spec.trim", "spec.options",
+              "state.frame", "state.outer", "state.my_cost", "history.use",
+              "history.not_join", "taste.trim", "taste.option",
               "warranty.site")
 
 
@@ -551,12 +551,12 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         return "무사고" if not n else f"{n}회"
     if axis in ("state.frame", "state.outer"):
         return "골격 이상" if chip.tone != TONE_GOOD else "골격 이상 없음"
-    if axis == "state.repair" and rec:
+    if axis == "state.my_cost" and rec:
         _mycnt, cost, _o, _t = rec
         if cost is None:
             return ""
         return "0원" if not cost else f"{int(cost) // WON_PER_MANWON:,}만"
-    if axis == "history.usage":
+    if axis == "history.use":
         # ★ 점수를 받았으면 렌트가 아니다 (excluded 가 아니라 값이 있을 때만)
         if chip.tone == TONE_GOOD:
             return "렌트 아님"
@@ -564,7 +564,7 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         got = [RENT_SOURCE_WORDS[k] for k in source.split("+")
                if k in RENT_SOURCE_WORDS]
         return f"렌트 이력 ({'·'.join(got)})" if got else "렌트 이력"
-    if axis == "spec.trim":
+    if axis == "taste.trim":
         # ★ 트림은 그 차종 신차가 사다리의 백분위다.  「있음/없음」이 아니다
         pts, mx = state.get("points", {}).get(axis, (None, None))
         if pts is None or not mx:
@@ -576,7 +576,7 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         got = (chip.source or "").replace("+", " + ")
         return got if got and got not in ("missing", "no_warranty") else (
             "보증 없음" if got == "no_warranty" else "확인 못 함")
-    if axis == "spec.options":
+    if axis == "taste.option":
         # ★ 옵션은 금액이다.  얼마짜리를 달았는지가 사실이다 (개정 301)
         won = state.get("option_won")
         if won is None:
@@ -665,7 +665,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     changes, first_won = (changes_by or {}).get(lid, (0, None))
     # ★ 시세차 — 가격 축이 excluded 면 내지 않는다.  기대가를 못 구한 것이다
     exp = None
-    if dep_cfg is not None and not (got.get("value.depreciation")
+    if dep_cfg is not None and not (got.get("value.origin")
                                     or (None, True))[1]:
         exp = market_price(origin_won, ym, calc_at, tk, dep_cfg)
     gap = (price - exp) if (exp and price is not None) else None
@@ -1395,7 +1395,7 @@ def recommend_reason(row) -> str:
     full = {c.axis: c for c in row.axis_chips}
     if (full.get("state.accident") or _EMPTY).tone == TONE_GOOD:
         parts.append("무사고이며")
-    if (full.get("history.usage") or _EMPTY).tone == TONE_GOOD:
+    if (full.get("history.use") or _EMPTY).tone == TONE_GOOD:
         parts.append("렌트 이력이 없고")
     if (full.get("warranty.site") or _EMPTY).tone == TONE_GOOD:
         parts.append("사이트가 우수등급을 준")

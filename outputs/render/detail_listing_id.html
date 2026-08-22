@@ -76,7 +76,7 @@
     </div>
     <!-- ★ 「왜 그 등급인가」를 문장으로 (V11-160).  점수 나열이 아니다 -->
     <ul class="why">
-      <li class="g">같은 트림·옵션 기준 시세보다 <b>256만</b> 쌉니다. 옵션값 794만을 더해 견줬습니다.</li><li class="g">확인율 <b>71%</b> — 910점 중 649점을 원문으로 확인했습니다.</li><li class="o">원하시는 <b>트림 · 색상 · HUD</b> 가 맞습니다.</li><li class="r"><b>압류·저당 0/8</b>.</li><li class="r"><b>자차 미가입 0/18</b>.</li>
+      <li class="g">같은 트림·옵션 기준 시세보다 <b>256만</b> 쌉니다. 옵션값 794만을 더해 견줬습니다.</li><li class="g">확인율 <b>71%</b> — 910점 중 649점을 원문으로 확인했습니다.</li><li class="o">원하시는 <b>색상 · 지정 옵션 · HUD</b> 가 맞습니다.</li><li class="r"><b>자차 미가입 0/18</b>.</li><li class="r"><b>소유자 변경 0/11</b>.</li>
     </ul>
   </div>
   <p class="note">499 / 910 점입니다 —
@@ -173,11 +173,11 @@
       <span class="dim">— 우리 몫</span>
       <b>30점</b></div>
     
-    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>외판</span>
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>보험 수리비</span>
       <span class="dim">— 딜러 몫</span>
       <b>28점</b></div>
     
-    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>보험 수리비</span>
+    <div title="원문에 **값이 없다** — 딜러 잘못. 0점이 맞다"><span>외판</span>
       <span class="dim">— 딜러 몫</span>
       <b>28점</b></div>
     
@@ -356,24 +356,18 @@
     <div>
       <div class="axes">
         <a class="axc"
-          href="/listings?axis=history.lien&bucket=1"
-          title="압류·저당 — 근거 missing">압류·저당
-          <b>0/8</b></a><a class="axc"
           href="/listings?axis=history.not_join&bucket=1"
           title="자차 미가입 — 근거 missing">자차 미가입
           <b>0/18</b></a><a class="axc"
           href="/listings?axis=history.owner&bucket=1"
           title="소유자 변경 — 근거 missing">소유자 변경
           <b>0/11</b></a><a class="axc"
-          href="/listings?axis=history.usage&bucket=1"
+          href="/listings?axis=history.seizing&bucket=1"
+          title="압류·저당 — 근거 missing">압류·저당
+          <b>0/8</b></a><a class="axc"
+          href="/listings?axis=history.use&bucket=1"
           title="용도 — 근거 advertisement_type">용도
           <b>0/22</b></a><a class="axc"
-          href="/listings?axis=spec.options&bucket=1"
-          title="옵션 — 근거 options_choice_price">옵션
-          <b>37/43</b></a><a class="axc"
-          href="/listings?axis=spec.trim&bucket=1"
-          title="트림 — 근거 trim_origin_price">트림
-          <b>59/59</b></a><a class="axc"
           href="/listings?axis=state.accident&bucket=1"
           title="사고 — 근거 missing">사고
           <b>0/51</b></a><a class="axc"
@@ -389,11 +383,11 @@
           href="/listings?axis=state.leak&bucket=1"
           title="누유 — 근거 missing">누유
           <b>0/15</b></a><a class="axc"
+          href="/listings?axis=state.my_cost&bucket=1"
+          title="보험 수리비 — 근거 missing">보험 수리비
+          <b>0/28</b></a><a class="axc"
           href="/listings?axis=state.outer&bucket=1"
           title="외판 — 근거 missing">외판
-          <b>0/28</b></a><a class="axc"
-          href="/listings?axis=state.repair&bucket=1"
-          title="보험 수리비 — 근거 missing">보험 수리비
           <b>0/28</b></a><a class="axc"
           href="/listings?axis=state.special&bucket=1"
           title="특수 사고 — 근거 missing">특수 사고
@@ -404,27 +398,33 @@
           href="/listings?axis=taste.color&bucket=1"
           title="색상 — 근거 detail_color">색상
           <b>15/15</b></a><a class="axc"
+          href="/listings?axis=taste.fitting&bucket=1"
+          title="지정 옵션 — 근거 nothing_picked">지정 옵션
+          <b>18/18</b></a><a class="axc"
           href="/listings?axis=taste.hud&bucket=1"
           title="HUD — 근거 option_codes">HUD
           <b>18/18</b></a><a class="axc"
-          href="/listings?axis=taste.picked&bucket=1"
-          title="지정 옵션 — 근거 nothing_picked">지정 옵션
-          <b>18/18</b></a><a class="axc"
+          href="/listings?axis=taste.option&bucket=1"
+          title="옵션 — 근거 options_choice_price">옵션
+          <b>37/43</b></a><a class="axc"
           href="/listings?axis=taste.sunroof&bucket=1"
           title="선루프 — 근거 option_codes">선루프
           <b>12/12</b></a><a class="axc"
+          href="/listings?axis=taste.trim&bucket=1"
+          title="트림 — 근거 trim_origin_price">트림
+          <b>59/59</b></a><a class="axc"
           href="/listings?axis=value.budget&bucket=1"
           title="예산 — 근거 budget_line">예산
           <b>48/95</b></a><a class="axc"
-          href="/listings?axis=value.depreciation&bucket=1"
-          title="신차가 대비 — 근거 origin_price">신차가 대비
-          <b>75/75</b></a><a class="axc"
           href="/listings?axis=value.market&bucket=1"
           title="시세 대비 — 근거 market_sample_short">시세 대비
           <b>0/30</b></a><a class="axc"
           href="/listings?axis=value.mileage&bucket=1"
           title="주행 — 근거 mileage_total">주행
           <b>105/107</b></a><a class="axc"
+          href="/listings?axis=value.origin&bucket=1"
+          title="신차가 대비 — 근거 origin_price">신차가 대비
+          <b>75/75</b></a><a class="axc"
           href="/listings?axis=warranty.general&bucket=1"
           title="일반 보증 — 근거 encar_warranty_general">일반 보증
           <b>14/22</b></a><a class="axc"
@@ -520,7 +520,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260822T041932</span>
-  <span>2026-08-23 02:38</span>
+  <span>2026-08-23 03:16</span>
 </footer>
 
 </body>

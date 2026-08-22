@@ -1214,8 +1214,8 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         #   한 번만 낸다 — 매물마다 세면 3,843번 훑는다 (V11-34 와 같은 이유)
         opt_meds = _option_medians(conn, dicts.option_prices)
         opt_base = _option_base(conn, dicts.option_prices,
-                                float(policy.rule("spec")["option_percentile"]),
-                                int(policy.rule("spec")["option_min_sample"]))
+                                float(policy.rule("taste")["option_percentile"]),
+                                int(policy.rule("taste")["option_min_sample"]))
         site_rules = _site_grade_rules(root)
         # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
         #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —
@@ -1296,8 +1296,8 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         #   한 번만 낸다 — 매물마다 세면 3,843번 훑는다 (V11-34 와 같은 이유)
         opt_meds = _option_medians(conn, dicts.option_prices)
         opt_base = _option_base(conn, dicts.option_prices,
-                                float(policy.rule("spec")["option_percentile"]),
-                                int(policy.rule("spec")["option_min_sample"]))
+                                float(policy.rule("taste")["option_percentile"]),
+                                int(policy.rule("taste")["option_min_sample"]))
         site_rules = _site_grade_rules(root)
         # ★ 차종이 안 붙은 매물의 옛 판정을 치운다 (개정 271 · V2-31).
         #   S6 은 target_key 로 범위를 잡아 NULL 행을 아예 못 본다 —

@@ -74,19 +74,6 @@
     </form>
   </td></tr>
 
-<tr><td data-label="축">spec</td><td class="num" data-label="총점">102</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="axis">
-      <input type="hidden" name="target" value="spec">
-      <input name="value" size="5" placeholder="새 총점">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td></tr>
-
 <tr><td data-label="축">state</td><td class="num" data-label="총점">289</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
@@ -100,7 +87,7 @@
     </form>
   </td></tr>
 
-<tr><td data-label="축">taste</td><td class="num" data-label="총점">63</td>
+<tr><td data-label="축">taste</td><td class="num" data-label="총점">165</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
@@ -146,34 +133,6 @@
 <table class="rows">
 <thead><tr><th>성분</th><th class="num">점수</th><th title="지금 어떤 상태인지입니다">상태</th><th title="여기서 값을 고칩니다. 고치면 이력에 남습니다">바꾸기</th><th>스킵</th></tr></thead>
 <tbody>
-
-<tr>
-  <td class="runid" data-label="성분">history.lien</td>
-  <td class="num" data-label="점수">8</td>
-  <td data-label="상태"></td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="history.lien">
-      <input name="value" size="4" placeholder="점수">
-      <input name="reason" size="14" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-  <td data-label="스킵">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="history.lien">
-      <input type="hidden" name="value" value="true">
-      <input name="reason" size="12" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
-    </form>
-  </td>
-</tr>
 
 <tr>
   <td class="runid" data-label="성분">history.not_join</td>
@@ -232,7 +191,35 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="성분">history.usage</td>
+  <td class="runid" data-label="성분">history.seizing</td>
+  <td class="num" data-label="점수">8</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="component">
+      <input type="hidden" name="target" value="history.seizing">
+      <input name="value" size="4" placeholder="점수">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+  <td data-label="스킵">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="skip">
+      <input type="hidden" name="target" value="history.seizing">
+      <input type="hidden" name="value" value="true">
+      <input name="reason" size="12" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="성분">history.use</td>
   <td class="num" data-label="점수">22</td>
   <td data-label="상태"></td>
   <td data-label="바꾸기">
@@ -240,7 +227,7 @@
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="history.usage">
+      <input type="hidden" name="target" value="history.use">
       <input name="value" size="4" placeholder="점수">
       <input name="reason" size="14" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -251,63 +238,7 @@
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="history.usage">
-      <input type="hidden" name="value" value="true">
-      <input name="reason" size="12" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="성분">spec.options</td>
-  <td class="num" data-label="점수">43</td>
-  <td data-label="상태"></td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="spec.options">
-      <input name="value" size="4" placeholder="점수">
-      <input name="reason" size="14" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-  <td data-label="스킵">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="spec.options">
-      <input type="hidden" name="value" value="true">
-      <input name="reason" size="12" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="성분">spec.trim</td>
-  <td class="num" data-label="점수">59</td>
-  <td data-label="상태"></td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="spec.trim">
-      <input name="value" size="4" placeholder="점수">
-      <input name="reason" size="14" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-  <td data-label="스킵">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="spec.trim">
+      <input type="hidden" name="target" value="history.use">
       <input type="hidden" name="value" value="true">
       <input name="reason" size="12" placeholder="사유 (필수)" required>
       <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
@@ -456,6 +387,34 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="성분">state.my_cost</td>
+  <td class="num" data-label="점수">28</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="component">
+      <input type="hidden" name="target" value="state.my_cost">
+      <input name="value" size="4" placeholder="점수">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+  <td data-label="스킵">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="skip">
+      <input type="hidden" name="target" value="state.my_cost">
+      <input type="hidden" name="value" value="true">
+      <input name="reason" size="12" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="성분">state.outer</td>
   <td class="num" data-label="점수">28</td>
   <td data-label="상태"></td>
@@ -476,34 +435,6 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="skip">
       <input type="hidden" name="target" value="state.outer">
-      <input type="hidden" name="value" value="true">
-      <input name="reason" size="12" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="성분">state.repair</td>
-  <td class="num" data-label="점수">28</td>
-  <td data-label="상태"></td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="state.repair">
-      <input name="value" size="4" placeholder="점수">
-      <input name="reason" size="14" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-  <td data-label="스킵">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="state.repair">
       <input type="hidden" name="value" value="true">
       <input name="reason" size="12" placeholder="사유 (필수)" required>
       <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
@@ -596,6 +527,34 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="성분">taste.fitting</td>
+  <td class="num" data-label="점수">18</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="component">
+      <input type="hidden" name="target" value="taste.fitting">
+      <input name="value" size="4" placeholder="점수">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+  <td data-label="스킵">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="skip">
+      <input type="hidden" name="target" value="taste.fitting">
+      <input type="hidden" name="value" value="true">
+      <input name="reason" size="12" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="성분">taste.hud</td>
   <td class="num" data-label="점수">18</td>
   <td data-label="상태"></td>
@@ -624,15 +583,15 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="성분">taste.picked</td>
-  <td class="num" data-label="점수">18</td>
+  <td class="runid" data-label="성분">taste.option</td>
+  <td class="num" data-label="점수">43</td>
   <td data-label="상태"></td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/scoring" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="taste.picked">
+      <input type="hidden" name="target" value="taste.option">
       <input name="value" size="4" placeholder="점수">
       <input name="reason" size="14" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -643,7 +602,7 @@
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="taste.picked">
+      <input type="hidden" name="target" value="taste.option">
       <input type="hidden" name="value" value="true">
       <input name="reason" size="12" placeholder="사유 (필수)" required>
       <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
@@ -680,6 +639,34 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="성분">taste.trim</td>
+  <td class="num" data-label="점수">59</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="component">
+      <input type="hidden" name="target" value="taste.trim">
+      <input name="value" size="4" placeholder="점수">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+  <td data-label="스킵">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="skip">
+      <input type="hidden" name="target" value="taste.trim">
+      <input type="hidden" name="value" value="true">
+      <input name="reason" size="12" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="성분">value.budget</td>
   <td class="num" data-label="점수">95</td>
   <td data-label="상태"></td>
@@ -700,34 +687,6 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="skip">
       <input type="hidden" name="target" value="value.budget">
-      <input type="hidden" name="value" value="true">
-      <input name="reason" size="12" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="성분">value.depreciation</td>
-  <td class="num" data-label="점수">75</td>
-  <td data-label="상태"></td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="component">
-      <input type="hidden" name="target" value="value.depreciation">
-      <input name="value" size="4" placeholder="점수">
-      <input name="reason" size="14" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-  <td data-label="스킵">
-    <form method="post" action="/admin/scoring" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="skip">
-      <input type="hidden" name="target" value="value.depreciation">
       <input type="hidden" name="value" value="true">
       <input name="reason" size="12" placeholder="사유 (필수)" required>
       <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
@@ -784,6 +743,34 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="action" value="skip">
       <input type="hidden" name="target" value="value.mileage">
+      <input type="hidden" name="value" value="true">
+      <input name="reason" size="12" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="성분">value.origin</td>
+  <td class="num" data-label="점수">75</td>
+  <td data-label="상태"></td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="component">
+      <input type="hidden" name="target" value="value.origin">
+      <input name="value" size="4" placeholder="점수">
+      <input name="reason" size="14" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+  <td data-label="스킵">
+    <form method="post" action="/admin/scoring" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="action" value="skip">
+      <input type="hidden" name="target" value="value.origin">
       <input type="hidden" name="value" value="true">
       <input name="reason" size="12" placeholder="사유 (필수)" required>
       <button type="submit" class="mini" data-confirm="전 매물이 다시 채점됩니다">스킵</button>
@@ -913,7 +900,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260822T041932</span>
-  <span>2026-08-23 02:40</span>
+  <span>2026-08-23 03:18</span>
 </footer>
 
 </body>

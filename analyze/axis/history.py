@@ -16,10 +16,10 @@ from analyze.axes import AxisContext
 from analyze.curve import ascending, step_down
 from analyze.verdict import PRIO_OBSERVED, Verdict, put
 
-USAGE = "history.usage"
+USAGE = "history.use"
 NOT_JOIN = "history.not_join"
 OWNER = "history.owner"
-LIEN = "history.lien"
+LIEN = "history.seizing"
 
 RENT_TITLE = "렌트"
 # 광고형태가 이미 렌트·리스라고 말하는 것 (개정 302 ①)

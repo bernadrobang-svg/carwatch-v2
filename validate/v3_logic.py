@@ -738,9 +738,9 @@ def _curve_table_check(rid):
         "value.mileage_curve": "value.mileage",
         "value.year_curve": "state.year",
         "value.budget_curve": "value.budget",
-        "value.origin_curve": "value.depreciation",
+        "value.origin_curve": "value.origin",
         "state.accident_curve": "state.accident",
-        "state.repair_curve": "state.repair",
+        "state.repair_curve": "state.my_cost",
         "state.tread_curve": "state.consumable",
     }
     comp66 = cfg["components"]
@@ -978,8 +978,8 @@ def _grade_cut_checks(conn, rid):
     others = [k for k in comp
               if any(k.startswith(p) for p in (cfg.get("groups") or {})
                      .get("취향", []))
-              and k != "spec.trim"]
-    trim = cap("spec.trim")
+              and k != "taste.trim"]
+    trim = cap("taste.trim")
     over = sorted((k for k in others if cap(k) >= trim),
                   key=lambda k: -cap(k))
     bad92 = [f"{k} 가 {cap(k):.0f} 인데 트림은 {trim:.0f} 다 — "
@@ -991,10 +991,10 @@ def _grade_cut_checks(conn, rid):
     min_trim = int(_checks_cfg()["trim_span_min_values"])
     n_trim = conn.execute(
         "SELECT COUNT(DISTINCT value) FROM result_axis"
-        " WHERE axis='spec.trim' AND value IS NOT NULL").fetchone()[0]
+        " WHERE axis='taste.trim' AND value IS NOT NULL").fetchone()[0]
     row = conn.execute(
         "SELECT MIN(value), MAX(value) FROM result_axis"
-        " WHERE axis='spec.trim' AND value IS NOT NULL").fetchone()
+        " WHERE axis='taste.trim' AND value IS NOT NULL").fetchone()
     if row and row[0] is not None and n_trim >= min_trim:
         span = float(row[1]) - float(row[0])
         top = max((conn.execute(
@@ -1227,7 +1227,7 @@ def _value_curve_checks(conn, rid):
     # V3-84 — 신차가 곡선이 규격의 앵커와 같은가 (f-table 5장-2a ①)
     bad84 = []
     curve = [(float(a), float(b)) for a, b in r.get("origin_curve") or []]
-    want_max = float(comps.get("value.depreciation") or 0)
+    want_max = float(comps.get("value.origin") or 0)
     if not curve:
         bad84.append("origin_curve 가 없다")
     else:
@@ -1440,7 +1440,7 @@ def _denominator_check(conn, rid):
 
 
 # 이것을 못 보고 매긴 등급은 뜻이 없다 (개정 287 · 292 배점 기준)
-CORE_AXES = ("value.market", "value.depreciation", "state.accident")
+CORE_AXES = ("value.market", "value.origin", "state.accident")
 
 
 def _core_axis_check(conn, rid):
@@ -1478,7 +1478,7 @@ def _rental_cross_check(conn, rid):
     private = conn.execute(
         "SELECT COUNT(*) FROM result_axis a JOIN core_listing l"
         " ON l.listing_id = a.listing_id"
-        " WHERE a.axis = 'history.usage' AND a.source = 'checked_three'"
+        " WHERE a.axis = 'history.use' AND a.source = 'checked_three'"
         " AND a.calc_version = ? AND l.advertisement_type IN"
         f" ({','.join('?' * len(RENT_AD_TYPES))})",
         (cv, *sorted(RENT_AD_TYPES))).fetchone()[0]
@@ -1487,7 +1487,7 @@ def _rental_cross_check(conn, rid):
     n = conn.execute(
         "SELECT COUNT(*) FROM result_axis a JOIN core_inspection i"
         " ON i.listing_id = a.listing_id"
-        " WHERE a.axis = 'history.usage' AND a.source = 'checked_three'"
+        " WHERE a.axis = 'history.use' AND a.source = 'checked_three'"
         " AND a.calc_version = ?"
         " AND i.usage_change_types_json LIKE '%\"렌트\"%'", (cv,)).fetchone()[0]
     if n:
@@ -1495,7 +1495,7 @@ def _rental_cross_check(conn, rid):
     # 근거 이름에 세 곳이 다 등장하는가 — 한 곳만 보고 있으면 여기서 걸린다
     seen = {r[0] for r in conn.execute(
         "SELECT DISTINCT source FROM result_axis"
-        " WHERE axis='history.usage' AND calc_version=?", (cv,))}
+        " WHERE axis='history.use' AND calc_version=?", (cv,))}
     for want in ("advertisement_type", "usage_change_types", "record_use"):
         if not any(want in got for got in seen):
             bad.append(f"근거에 {want} 가 한 번도 안 나온다")
@@ -1560,7 +1560,7 @@ def _source_before_value_check(conn, rid):
     #   ★ 표를 하나로 고정하면 「나쁜 쪽」이 V3-62 에 걸린다 (실측 08-21 · 15건)
     for axis, tables in (("state.accident", ("core_record",
                                              "core_inspection")),
-                         ("state.repair", ("core_record",)),
+                         ("state.my_cost", ("core_record",)),
                          ("state.frame", ("core_inspection",))):
         # ★ 「0점 + 확인 안 됨」은 값을 만든 것이 아니다 (개정 325).
         #   source 가 missing 이면 우리가 「모른다」고 말한 것이다
@@ -1649,21 +1649,21 @@ def _confirm_ratio_check(conn, rid):
 
 # 부록 F 축 목록 표의 「축」 이름 ↔ 코드의 축 코드
 SPEC_AXIS_NAMES = {
-    "시세 대비": "value.market", "신차가 대비": "value.depreciation",
+    "시세 대비": "value.market", "신차가 대비": "value.origin",
     "주행 대비": "value.mileage",
     # ★ 부록 F 축 목록에서 배점이 「(30)」 괄호다 — 따로 선 축이 아니라
     #   전기차일 때 주행 70 을 주행 40 + SOH 30 으로 나눈 것이다 (1-3 · 개정 318)
     "배터리 SOH": "value.mileage",
     "사고 이력": "state.accident", "골격": "state.frame",
-    "외판": "state.outer", "자차 수리비": "state.repair",
+    "외판": "state.outer", "자차 수리비": "state.my_cost",
     "특수 사고": "state.special", "누유": "state.leak",
     "소모품": "state.consumable", "진정성": "state.integrity",
-    "용도": "history.usage", "자차 미가입": "history.not_join",
-    "소유자 변경": "history.owner", "압류·저당": "history.lien",
-    "트림": "spec.trim", "옵션": "spec.options",
+    "용도": "history.use", "자차 미가입": "history.not_join",
+    "소유자 변경": "history.owner", "압류·저당": "history.seizing",
+    "트림": "taste.trim", "옵션": "taste.option",
     "사이트 보증": "warranty.site", "일반·차체": "warranty.general",
     "동력계": "warranty.power", "HUD": "taste.hud",
-    "지정 옵션": "taste.picked", "색상": "taste.color",
+    "지정 옵션": "taste.fitting", "색상": "taste.color",
     "선루프": "taste.sunroof",
 }
 
@@ -2055,7 +2055,7 @@ def _trim_price_check(conn, rid):
         "SELECT l.target_key, l.price_origin_won,"
         "       COALESCE(a.score, a.value)"
         " FROM result_axis a JOIN core_listing l ON l.listing_id = a.listing_id"
-        " WHERE a.axis = 'spec.trim' AND a.source = 'trim_origin_price'"
+        " WHERE a.axis = 'taste.trim' AND a.source = 'trim_origin_price'"
         "   AND l.price_origin_won IS NOT NULL"
         " ORDER BY l.target_key, l.price_origin_won").fetchall()
     prev = None

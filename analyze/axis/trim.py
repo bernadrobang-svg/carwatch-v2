@@ -15,8 +15,8 @@ from __future__ import annotations
 from analyze.axes import AxisContext
 from analyze.verdict import PRIO_MANUFACTURER, Verdict, put
 
-TRIM = "spec.trim"
-OPTIONS = "spec.options"
+TRIM = "taste.trim"
+OPTIONS = "taste.option"
 
 
 def price_ratio(value: float, ladder: list) -> float:

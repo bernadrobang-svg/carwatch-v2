@@ -56,7 +56,7 @@ def penalties_of(verdict, policy, snapshot) -> list:
 
     values, excluded = verdict.values, verdict.excluded
     # 렌트·영업용 — 셋 중 하나라도 렌트면 (개정 302)
-    if "history.usage" not in excluded and values.get("history.usage") == 0:
+    if "history.use" not in excluded and values.get("history.use") == 0:
         add(RENTAL)
     # 사이트 우수등급 — ★ 「확인 못 함」과 「없음」을 가른다 (개정 323)
     if "warranty.site" not in excluded and values.get("warranty.site") == 0:
@@ -65,8 +65,8 @@ def penalties_of(verdict, policy, snapshot) -> list:
     #   ★ warranty.site 의 **단계를 낮춘다** (analyze/axis/site.py).
     #   ★ 만점을 주고 같은 사실로 또 깎으면 앞뒤가 안 맞는다 (f-table 「사이트 검증」)
     # ★ 압류·저당 — 있으면 소유권 이전이 막힌다 (F-scoring 마이너스)
-    if verdict.sources.get("history.lien") == "detail_seizing" \
-            and values.get("history.lien") == 0:
+    if verdict.sources.get("history.seizing") == "detail_seizing" \
+            and values.get("history.seizing") == 0:
         add(LIEN)
     # 골격
     frame_src = verdict.sources.get("state.frame") or ""
@@ -159,8 +159,8 @@ def cap_penalties(items: list, policy) -> list:
 # 상한 줄에 쓸 축 이름.  ★ 코드에 배점을 박지 않는다 — 이름만이다
 AXIS_WORDS = {
     "state.frame": "골격",
-    "history.usage": "용도",
+    "history.use": "용도",
     "history.not_join": "자차 미가입",
-    "history.lien": "압류·저당",
+    "history.seizing": "압류·저당",
     "warranty.site": "사이트 검증",
 }

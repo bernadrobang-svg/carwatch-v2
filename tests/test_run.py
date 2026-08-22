@@ -512,7 +512,7 @@ def test_score_pipeline() -> None:
     ex_axes = {a for (a,) in conn.execute(
         "SELECT DISTINCT axis FROM result_axis WHERE excluded=1")}
     check("★ 감가 곡선이 들어와 감가 축이 살아났다",
-          "value.depreciation" not in ex_axes, str(sorted(ex_axes)))
+          "value.origin" not in ex_axes, str(sorted(ex_axes)))
     check("★ 색상 등급이 확정돼 취향 색상 축이 살아났다",
           "taste.color" not in ex_axes, str(sorted(ex_axes)))
     # ★★ 개정 452 — 시세는 점수 축이 아니다.  대신 ★ 예산 축이 생겼다.

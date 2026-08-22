@@ -6,27 +6,27 @@
     "state.accident": 51,
     "state.frame": 43,
     "state.outer": 28,
-    "state.repair": 28,
+    "state.my_cost": 28,
     "state.special": 21,
     "state.consumable": 15,
     "state.leak": 15,
     "state.integrity": 8,
-    "history.usage": 22,
+    "history.use": 22,
     "history.not_join": 18,
     "history.owner": 11,
-    "history.lien": 8,
+    "history.seizing": 8,
     "value.mileage": 107,
     "state.year": 80,
-    "value.depreciation": 75,
+    "value.origin": 75,
     "value.budget": 95,
     "value.market": 30,
     "warranty.power": 32,
     "warranty.general": 22,
     "warranty.site": 36,
-    "spec.trim": 59,
-    "spec.options": 43,
+    "taste.trim": 59,
+    "taste.option": 43,
     "taste.hud": 18,
-    "taste.picked": 18,
+    "taste.fitting": 18,
     "taste.color": 15,
     "taste.sunroof": 12
   },
@@ -38,7 +38,7 @@
       "value.mileage"
     ],
     "값": [
-      "value.depreciation",
+      "value.origin",
       "value.budget",
       "value.market"
     ],
@@ -46,8 +46,7 @@
       "warranty."
     ],
     "취향": [
-      "taste.",
-      "spec."
+      "taste."
     ]
   },
   "_component_form": "값이 배점. {\"points\": N, \"skipped\": true} 형태도 허용 (STEP 128). 파서는 #5 에서 반영한다",
@@ -178,12 +177,6 @@
         ]
       ],
       "_curve_note": "잔여개월 = min(기간 잔여, 잔여km ÷ (연평균 주행 ÷ 12)). ★ 보증은 둘 중 먼저 닿는 쪽에서 끝난다 (개정 365). 전기차는 배터리·모터를 동력계로 (개정 293)"
-    },
-    "spec": {
-      "_note": "④ 사양 45 — F-scoring 4-1·4-2",
-      "trim_single_full": true,
-      "option_percentile": 0.9,
-      "option_min_sample": 5
     },
     "history": {
       "_note": "③ 이력 80 — F-scoring 3-1~3-4",
@@ -596,7 +589,11 @@
         "neutral": 10,
         "avoided": 5
       },
-      "_note_432": "★ 개정 432 — 색상 13.  ★ 실측 08-21: 전에 배점은 15 인데 color_points 최대가 10 이라 이 축은 만점을 받을 수 없었다.  배점의 **세 번째 자리**다 (components · axis_rules.taste.color_points · 죽은 axis_rules.color)"
+      "_note_432": "★ 개정 432 — 색상 13.  ★ 실측 08-21: 전에 배점은 15 인데 color_points 최대가 10 이라 이 축은 만점을 받을 수 없었다.  배점의 **세 번째 자리**다 (components · axis_rules.taste.color_points · 죽은 axis_rules.color)",
+      "trim_single_full": true,
+      "option_percentile": 0.9,
+      "option_min_sample": 5,
+      "_note_504": "★ 개정 504 — spec.* 축이 taste.* 로 이름을 바꿨다. ★ 옛 spec 규칙 묶음을 여기로 합쳤다 — 한쪽만 고치면 배점은 새 이름인데 규칙이 옛 이름을 찾는다 (개정 504 ⓐ)"
     },
     "site": {
       "_note": "개정 306 ⑤ — 우수등급 30 · 점검 출처 12 · 플랫폼 보증 잔여 8",
@@ -653,7 +650,7 @@
   "_grade_cuts_note": "★ 절대 기준이다 (개정 324·433).  백분위로 정하지 않는다. ★ 개정 433 — 8단계로 내렸다.  전 S90 A80 B70 C60 D50 (5단계) → S80 A70 B60 C50 D40 E30 F20 G10.  10% 미만은 등급 없음. ★ 관문 배제는 등급이 아니라 「제외」다 — 전에 E 가 배제용이라 30~40% 자리와 부딪쳤다",
   "score_core_axes": [
     "value.budget",
-    "value.depreciation",
+    "value.origin",
     "state.accident"
   ],
   "_score_core_axes_note": "핵심 축 — 빠지면 NOT_RATED (개정 287 · V3-40). 값을 못 보고 매긴 등급, 사고를 모르고 매긴 등급은 뜻이 없다",
@@ -713,9 +710,9 @@
     "frame_swap": "state.frame",
     "frame_sheet": "state.frame",
     "illegal_structure": "state.frame",
-    "rental_history": "history.usage",
+    "rental_history": "history.use",
     "not_join_ratio": "history.not_join",
-    "lien": "history.lien",
+    "lien": "history.seizing",
     "no_site_grade": "warranty.site",
     "cluster_swap": null
   }

@@ -18,7 +18,7 @@ from analyze.verdict import PRIO_MANUFACTURER, PRIO_OBSERVED, Verdict, put
 HUD = "taste.hud"
 SUNROOF = "taste.sunroof"
 COLOR = "taste.color"
-PICKED = "taste.picked"
+PICKED = "taste.fitting"
 
 NA_VALUE = -1
 

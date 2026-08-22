@@ -245,14 +245,6 @@
 <tbody>
 
 <tr>
-  <td><a href="/listings?axis=history.lien">압류·저당</a></td>
-  <td class="num">0</td>
-  <td class="num">8</td>
-  <td>missing</td>
-  <td>2</td>
-</tr>
-
-<tr>
   <td><a href="/listings?axis=history.not_join">자차 미가입</a></td>
   <td class="num">0</td>
   <td class="num">18</td>
@@ -269,27 +261,19 @@
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=history.usage">용도</a></td>
+  <td><a href="/listings?axis=history.seizing">압류·저당</a></td>
   <td class="num">0</td>
-  <td class="num">22</td>
-  <td>advertisement_type</td>
+  <td class="num">8</td>
+  <td>missing</td>
   <td>2</td>
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=spec.options">옵션</a></td>
-  <td class="num">37</td>
-  <td class="num">43</td>
-  <td>options_choice_price</td>
-  <td>1</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=spec.trim">트림</a></td>
-  <td class="num">59</td>
-  <td class="num">59</td>
-  <td>trim_origin_price</td>
-  <td>1</td>
+  <td><a href="/listings?axis=history.use">용도</a></td>
+  <td class="num">0</td>
+  <td class="num">22</td>
+  <td>advertisement_type</td>
+  <td>2</td>
 </tr>
 
 <tr>
@@ -333,7 +317,7 @@
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=state.outer">외판</a></td>
+  <td><a href="/listings?axis=state.my_cost">보험 수리비</a></td>
   <td class="num">0</td>
   <td class="num">28</td>
   <td>missing</td>
@@ -341,7 +325,7 @@
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=state.repair">보험 수리비</a></td>
+  <td><a href="/listings?axis=state.outer">외판</a></td>
   <td class="num">0</td>
   <td class="num">28</td>
   <td>missing</td>
@@ -373,6 +357,14 @@
 </tr>
 
 <tr>
+  <td><a href="/listings?axis=taste.fitting">지정 옵션</a></td>
+  <td class="num">18</td>
+  <td class="num">18</td>
+  <td>nothing_picked</td>
+  <td>2</td>
+</tr>
+
+<tr>
   <td><a href="/listings?axis=taste.hud">HUD</a></td>
   <td class="num">18</td>
   <td class="num">18</td>
@@ -381,11 +373,11 @@
 </tr>
 
 <tr>
-  <td><a href="/listings?axis=taste.picked">지정 옵션</a></td>
-  <td class="num">18</td>
-  <td class="num">18</td>
-  <td>nothing_picked</td>
-  <td>2</td>
+  <td><a href="/listings?axis=taste.option">옵션</a></td>
+  <td class="num">37</td>
+  <td class="num">43</td>
+  <td>options_choice_price</td>
+  <td>1</td>
 </tr>
 
 <tr>
@@ -397,18 +389,18 @@
 </tr>
 
 <tr>
+  <td><a href="/listings?axis=taste.trim">트림</a></td>
+  <td class="num">59</td>
+  <td class="num">59</td>
+  <td>trim_origin_price</td>
+  <td>1</td>
+</tr>
+
+<tr>
   <td><a href="/listings?axis=value.budget">예산</a></td>
   <td class="num">48</td>
   <td class="num">95</td>
   <td>budget_line</td>
-  <td>2</td>
-</tr>
-
-<tr>
-  <td><a href="/listings?axis=value.depreciation">신차가 대비</a></td>
-  <td class="num">75</td>
-  <td class="num">75</td>
-  <td>origin_price</td>
   <td>2</td>
 </tr>
 
@@ -425,6 +417,14 @@
   <td class="num">105</td>
   <td class="num">107</td>
   <td>mileage_total</td>
+  <td>2</td>
+</tr>
+
+<tr>
+  <td><a href="/listings?axis=value.origin">신차가 대비</a></td>
+  <td class="num">75</td>
+  <td class="num">75</td>
+  <td>origin_price</td>
   <td>2</td>
 </tr>
 
@@ -500,10 +500,10 @@
 
 <h2>왜 이 등급인가</h2>
 
-<p><b>강점</b><span class="chip-good">트림</span><span class="chip-good">색상</span><span class="chip-good">HUD</span><span class="chip-good">지정 옵션</span><span class="chip-good">선루프</span><span class="chip-good">신차가 대비</span><span class="chip-good">보증</span></p>
+<p><b>강점</b><span class="chip-good">색상</span><span class="chip-good">지정 옵션</span><span class="chip-good">HUD</span><span class="chip-good">선루프</span><span class="chip-good">트림</span><span class="chip-good">신차가 대비</span><span class="chip-good">보증</span></p>
 
 
-<p><b>약점</b><span class="chip-bad">압류·저당 0/8</span><span class="chip-bad">자차 미가입 0/18</span><span class="chip-bad">소유자 변경 0/11</span><span class="chip-bad">용도 0/22</span><span class="chip-bad">사고 0/51</span><span class="chip-bad">소모품 0/15</span><span class="chip-bad">골격 0/43</span><span class="chip-bad">진정성 0/8</span><span class="chip-bad">누유 0/15</span><span class="chip-bad">외판 0/28</span><span class="chip-bad">보험 수리비 0/28</span><span class="chip-bad">특수 사고 0/21</span><span class="chip-bad">시세 대비 0/30</span></p>
+<p><b>약점</b><span class="chip-bad">자차 미가입 0/18</span><span class="chip-bad">소유자 변경 0/11</span><span class="chip-bad">압류·저당 0/8</span><span class="chip-bad">용도 0/22</span><span class="chip-bad">사고 0/51</span><span class="chip-bad">소모품 0/15</span><span class="chip-bad">골격 0/43</span><span class="chip-bad">진정성 0/8</span><span class="chip-bad">누유 0/15</span><span class="chip-bad">보험 수리비 0/28</span><span class="chip-bad">외판 0/28</span><span class="chip-bad">특수 사고 0/21</span><span class="chip-bad">시세 대비 0/30</span></p>
 
 
 
@@ -608,7 +608,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260822T041932</span>
-  <span>2026-08-23 02:38</span>
+  <span>2026-08-23 03:16</span>
 </footer>
 
 </body>

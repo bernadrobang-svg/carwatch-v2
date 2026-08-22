@@ -475,23 +475,24 @@ def m3(ad: Client, db: str, root: str) -> None:
 
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
-                        {"csrf": token, "action": "axis", "target": "spec",
+                        # ★ 개정 504 — spec.* 가 taste.* 로 이름을 바꿨다
+                        {"csrf": token, "action": "axis", "target": "taste",
                          "value": "120", "reason": "재배분", "previewed": "1"})
     with open(os.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
         pol = json.load(f)
     spec_sum = sum(v if isinstance(v, int) else v.get("points", 0)
                    for k, v in pol["components"].items()
-                   if k.startswith("spec.")
+                   if k.startswith("taste.")
                    and not (isinstance(v, dict) and v.get("skipped")))
-    rec(42, "/admin/scoring", "축 재배분", f"{st} · spec 합 {spec_sum}",
+    rec(42, "/admin/scoring", "축 재배분", f"{st} · taste 합 {spec_sum}",
         spec_sum == 120)
 
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
-                        # ★ 개정 292 로 spec 은 트림 45 · 옵션 30 둘뿐이다.
-                        #   1 로 줄여야 옵션이 0 이 된다
-                        {"csrf": token, "action": "axis", "target": "spec",
+                        # ★ 개정 504 — spec.* 가 taste.* 로 이름을 바꿨다.
+                        #   ★ 1 로 줄여야 작은 성분이 0 이 된다
+                        {"csrf": token, "action": "axis", "target": "taste",
                          "value": "1", "reason": "0점", "previewed": "1"})
     rec(43, "/admin/scoring", "성분 0점", f"{st}", st == 400)
 

@@ -25,7 +25,7 @@ from analyze.axis._util import months_between
 from analyze.curve import ascending
 from analyze.verdict import PRIO_OBSERVED, Verdict, put
 
-DEPRECIATION = "value.depreciation"   # f-table 은 value.origin 이라 적었다 — id 는 안 바꾼다
+DEPRECIATION = "value.origin"   # f-table 은 value.origin 이라 적었다 — id 는 안 바꾼다
 MILEAGE = "value.mileage"
 MARKET = "value.market"          # ★ 개정 469 — 시세 30 (마스터 확정)
 YEAR = "state.year"              # ★ 개정 469 신설 — 연식 80 (차량 갈래)

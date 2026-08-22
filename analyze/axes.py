@@ -90,17 +90,17 @@ class AxisContext:
 #     f-table 표의 id 칸(value.origin·state.my_cost 등)과 다르다 — 작업기록 v199 참조
 COMPONENTS: tuple[str, ...] = (
     # ① 차량 455 — 상태 268 + 주행 107 + 연식 80
-    "state.accident", "state.frame", "state.outer", "state.repair",
+    "state.accident", "state.frame", "state.outer", "state.my_cost",
     "state.special", "state.consumable", "state.leak", "state.integrity",
-    "history.usage", "history.not_join", "history.owner", "history.lien",
+    "history.use", "history.not_join", "history.owner", "history.seizing",
     "value.mileage", "state.year",
     # ② 값 200 — 가격 75 + 예산 95 + 시세 30
-    "value.depreciation", "value.budget", "value.market",
+    "value.origin", "value.budget", "value.market",
     # ③ 보증 90 — 제조사 54 (동력계 32 + 일반 22) + 사이트 36
     "warranty.power", "warranty.general", "warranty.site",
     # ④ 취향 165
-    "spec.trim", "spec.options",
-    "taste.hud", "taste.picked", "taste.color", "taste.sunroof",
+    "taste.trim", "taste.option",
+    "taste.hud", "taste.fitting", "taste.color", "taste.sunroof",
 )
 
 # 등급에 들어가지 않는 갈래 (개정 292 ④).  ★ 취향으로 등급이 오르내리면 안 된다

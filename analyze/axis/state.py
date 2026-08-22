@@ -20,7 +20,7 @@ from analyze.verdict import PRIO_OBSERVED, Verdict, put
 ACCIDENT = "state.accident"
 FRAME = "state.frame"
 OUTER = "state.outer"
-REPAIR = "state.repair"
+REPAIR = "state.my_cost"
 SPECIAL = "state.special"
 LEAK = "state.leak"
 CONSUMABLE = "state.consumable"

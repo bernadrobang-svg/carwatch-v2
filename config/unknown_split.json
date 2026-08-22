@@ -53,7 +53,7 @@
       "endpoint": "record",
       "key": "myAccidentCnt"
     },
-    "state.repair": {
+    "state.my_cost": {
       "unknown": [
         "missing"
       ],
@@ -74,7 +74,7 @@
       "endpoint": "record",
       "key": "ownerChangeCnt"
     },
-    "history.usage": {
+    "history.use": {
       "unknown": [
         "missing"
       ],
@@ -89,7 +89,7 @@
       "key": "notJoinDate1",
       "_fix_435": "★ v193 은 이 축의 키를 openData 로 두었다. openData 는 「보험이력이 열려 있는가」라 늘 true 여서 7건이 ② 로 잘못 갈렸다. 실제로 축이 쓰는 값은 notJoinDate1~5 다 — 전부 null 이라 ① 이다. ★ 개정 435 실측표의 「② 675 + 7」에서 7 은 빼야 한다"
     },
-    "history.lien": {
+    "history.seizing": {
       "unknown": [
         "missing"
       ],
@@ -104,21 +104,21 @@
       "endpoint": "unified_report",
       "key": "tireTread"
     },
-    "spec.trim": {
+    "taste.trim": {
       "unknown": [
         "origin_price_missing"
       ],
       "endpoint": "detail",
       "key": "category.originPrice"
     },
-    "value.depreciation": {
+    "value.origin": {
       "unknown": [
         "origin_price_missing"
       ],
       "endpoint": "detail",
       "key": "category.originPrice"
     },
-    "spec.options": {
+    "taste.option": {
       "unknown": [
         "missing"
       ],
@@ -188,7 +188,7 @@
       "kind_override": "4",
       "why": "★ 갈래 ④ — 원문에는 값이 다 있다. 그 차종의 ★ 예산 마지노선을 config 에 안 적어 우리가 못 잰다 (f-table 5장-2a ② 예산표). 파서가 아니라 설정이다"
     },
-    "taste.picked": {
+    "taste.fitting": {
       "unknown": [],
       "endpoint": "detail",
       "key": "options.choice"
@@ -219,5 +219,5 @@
     "nothing_picked"
   ],
   "_note_435": "★★ 개정 435 — 「확인 안 됨」의 정본은 result_axis.source 다. ★ 화면이 value 로 가르면 15,709건이 「없음」으로 나간다 (v193 실측). unknown_sources 는 「모름」 · confirmed_absent_sources 는 「없다고 확인한 것」이다. unknown_source_marks 는 source 안에 이 말이 들어 있으면 모름으로 본다 (integrity_계기판 확인 못 함 처럼 축이 사유를 이어 붙인 것)",
-  "_kind_note_435": "★ ① 과 ② 는 「키가 있다」가 아니라 ★ 「값이 있다」로 가른다 (개정 435). history.lien 482건은 condition.seizing 키는 있는데 값이 null 이라 ① 이다"
+  "_kind_note_435": "★ ① 과 ② 는 「키가 있다」가 아니라 ★ 「값이 있다」로 가른다 (개정 435). history.seizing 482건은 condition.seizing 키는 있는데 값이 null 이라 ① 이다"
 }

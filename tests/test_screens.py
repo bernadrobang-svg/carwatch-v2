@@ -173,7 +173,7 @@ def test_dashboard_notready() -> None:
           any(a.kind == "unclassified" for a in dv2.attention))
     # ★ 미확정이 줄어 기전을 시험하려면 하나 만든다
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
-                 "source='gate_closed' WHERE axis='spec.options'")
+                 "source='gate_closed' WHERE axis='taste.option'")
     conn.commit()
     dv3 = view_dashboard(ADMIN, conn, ctx.run_id, ctx.calc_version, FIN, ROOT)
     check("미확정 축도 주의로 뜬다",
@@ -263,7 +263,7 @@ def test_account() -> None:
           view_watch(USER, conn, FIN, ctx.calc_version, ROOT) == [])
 
     conn.execute("UPDATE result_axis SET excluded=1, value=NULL, "
-                 "source='gate_closed' WHERE axis='spec.options'")
+                 "source='gate_closed' WHERE axis='taste.option'")
     conn.commit()
     dv = view_dashboard(ADMIN, conn, ctx.run_id, ctx.calc_version, FIN, ROOT)
     check("★ 화면에 로그인 상태 · 역할이 나온다",

@@ -143,9 +143,9 @@ def flow_scoring(conn, acc, root) -> None:
     try:
         _post(admin_scoring, conn, acc,
               {"csrf": "t", "previewed": "1", "action": "axis",
-               # ★ 개정 292 로 spec 은 트림 45 · 옵션 30 둘뿐이다.
-               #   1 로 줄이면 옵션이 0 이 된다
-               "target": "spec", "value": "1", "reason": "0점 시험"}, root)
+               # ★ 개정 504 로 spec.* 축이 taste.* 로 이름을 바꿨다.
+               #   ★ 1 로 줄이면 작은 성분이 0 이 된다
+               "target": "taste", "value": "1", "reason": "0점 시험"}, root)
         check("배점 — 0 이 되는 성분을 만들지 않는다", False, "만들어졌다")
     except (PolicyError, ValidationError) as e:
         check("배점 — 0 이 되는 성분을 만들지 않는다", "스킵" in str(e),
