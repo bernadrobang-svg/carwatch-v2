@@ -66,6 +66,59 @@ def s43_2_axis_ids() -> tuple[bool, str]:
     return True, "축 id 가 config 와 같다"
 
 
+def s44_4_scope_written() -> tuple[bool, str]:
+    """★ 수집 범위가 ★ 명령서에 적혀 있는가 (개정 542 · 마스터 확정).
+
+    ★ 마스터 — 「★ 전체 수집이 아니다.  ★ 차종에 해당되는 것만 받는다」
+    ★ 08-23 — 사이트 규격 아홉을 쓰면서 ★ 범위를 안 적어 ★ 12만 건 논의가 나왔다.
+    ★ 보는 것 — 명령서에 ★ 「전량을 받지 않는다」와 ★ 사이트별 상한 표가 있는가.
+    """
+    orders = _order_files()
+    if not orders:
+        return False, "명령서가 없다"
+    text = " ".join(_read(q) for q in orders)
+    need = ("전량을 받지 않는다", "targets.json", "상한")
+    miss = [w for w in need if w not in text]
+    if miss:
+        return False, "명령서에 수집 범위가 없다 — 빠진 말: " + " · ".join(miss)
+    if "빈 쪽까지 늘려" in text and "금지" not in text.split("빈 쪽까지 늘려")[0][-60:]:
+        return False, "명령서가 아직 「빈 쪽까지」를 시킨다"
+    return True, "명령서에 수집 범위가 적혀 있다"
+
+
+def s44_5_site_consistent() -> tuple[bool, str]:
+    """★ 명령서 안에서 ★ 같은 사이트가 ★ 두 가지로 적혀 있는가 (개정 542).
+
+    ★ 08-23 — K카가 ★ 세 곳에 다르게 적혀 있었다 —
+      3장 머리 「목록만」 · 3-3 「상세까지」 · 10단계 「상세만」.
+      ★ 개정 485 에서 지적된 것이 ★ 56개 개정 뒤에도 남아 있었다.
+    ★ 보는 것 — ★ 한 사이트에 ★ 서로 어긋나는 말이 함께 있는가.
+    """
+    CONFLICT = {
+        "K카": (("목록만",), ("상세까지",), ("상세만",)),
+    }
+    orders = _order_files()
+    if not orders:
+        return False, "명령서가 없다"
+    text = " ".join(_read(q) for q in orders)
+    bad: list[str] = []
+    for site, groups in CONFLICT.items():
+        hit = []
+        for g in groups:
+            for w in g:
+                # ★ 「폐기」·「되살리지 마라」가 같은 줄에 있으면 ★ 기록이다
+                for line in text.split("\n"):
+                    if site in line and w in line and "폐기" not in line \
+                            and "되살리지" not in line and "아니다" not in line:
+                        hit.append(w)
+                        break
+        if len(set(hit)) > 1:
+            bad.append(f"{site}({'·'.join(sorted(set(hit)))})")
+    if bad:
+        return False, "명령서가 같은 사이트를 두 가지로 적는다 — " + " · ".join(bad)
+    return True, "명령서가 사이트를 한 가지로 적는다"
+
+
 def s45_1_one_version() -> tuple[bool, str]:
     """★ f-table 안에서 절 제목 배점과 그 절 표의 최고점이 같은가.
 
@@ -399,6 +452,8 @@ CHECKS = (
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),
     ("S44-3", "규격을 명령서가 가리키는가", s44_3_specs_in_order),
+    ("S44-4", "명령서에 수집 범위가 있는가", s44_4_scope_written),
+    ("S44-5", "명령서이 사이트를 한 가지로 적는가", s44_5_site_consistent),
     ("S45-1", "f-table 절 제목과 표가 같은가", s45_1_one_version),
     ("S45-2", "시안에 옛 배점·분모가 없는가", s45_2_mock_numbers),
     ("S45-3", "규격에 옛 총점이 없는가", s45_3_spec_totals),
