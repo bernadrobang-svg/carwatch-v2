@@ -38,38 +38,45 @@
 ★ 시세 축은 ★ 30점이다 (마스터 확정 08-22 — 「시세를 반영하되 점수를 30점 정도 주라」)
 ```
 
-## 축 — 27축
+<!-- AUTO:배점표 시작 -->
+
+## 축 — 26축
 
 | 갈래 | 축 | 축 id | **점수** |
 |---|---|---|--:|
 | **① 차량 455** |  |  |  |
-| 상태 268 | 사고 이력 | `state.accident` | **51** |
+|  | 사고 이력 | `state.accident` | **51** |
 |  | 골격 | `state.frame` | **43** |
 |  | 외판 | `state.outer` | **28** |
-|  | 자차 수리비 | `state.repair` | **28** |
+|  | 자차 수리비 | `state.my_cost` | **28** |
 |  | 특수 사고 | `state.special` | **21** |
 |  | 소모품 | `state.consumable` | **15** |
 |  | 누유 | `state.leak` | **15** |
 |  | 진정성 | `state.integrity` | **8** |
-|  | 용도 *(옛 이력)* | `history.usage` | **22** |
-|  | 자차 미가입 *(옛 이력)* | `history.not_join` | **18** |
-|  | 소유자 변경 *(옛 이력)* | `history.owner` | **11** |
-|  | 압류·저당 *(옛 이력)* | `history.lien` | **8** |
-| 주행 107 | 주행 대비 | `value.mileage` | **107** |
-| 연식 80 | **연식** ★ 신설 | **`state.year`** | **80** |
-| **② 값 200** | 가격 (신차가 대비) | `value.depreciation` | **75** |
-|  | **예산** ★ 신설 | **`value.budget`** | **95** |
-|  | **시세 대비** | `value.market` | ★ **30** |
-| **③ 보증 90** | 동력계 | `warranty.power` | **32** |
+|  | 용도 | `history.use` | **22** |
+|  | 자차 미가입 | `history.not_join` | **18** |
+|  | 소유자 변경 | `history.owner` | **11** |
+|  | 압류·저당 | `history.seizing` | **8** |
+|  | 주행 대비 | `value.mileage` | **107** |
+|  | 연식 | `state.year` | **80** |
+| **② 값 200** |  |  |  |
+|  | 가격 (신차가 대비) | `value.origin` | **75** |
+|  | 예산 | `value.budget` | **95** |
+|  | 시세 대비 | `value.market` | **30** |
+| **③ 보증 90** |  |  |  |
+|  | 동력계 | `warranty.power` | **32** |
 |  | 일반·차체 | `warranty.general` | **22** |
 |  | 사이트 검증 | `warranty.site` | **36** |
-| **④ 취향 165** | 트림 | `spec.trim` | **59** |
-|  | 옵션 | `spec.options` | **43** |
+| **④ 취향 165** |  |  |  |
+|  | 트림 | `taste.trim` | **59** |
+|  | 옵션 | `taste.option` | **43** |
 |  | HUD | `taste.hud` | **18** |
-|  | 지정 옵션 | `taste.picked` | **18** |
+|  | 지정 옵션 | `taste.fitting` | **18** |
 |  | 색상 | `taste.color` | **15** |
 |  | 선루프 | `taste.sunroof` | **12** |
-|  |  |  | **910** |
+|  |  | **합 26축** | **910** |
+
+<!-- AUTO:배점표 끝 -->
 
 ```
 ★ 축 id 는 ★ 바꾸지 않는다 — result_axis 마이그레이션과 검사 파손을 피한다

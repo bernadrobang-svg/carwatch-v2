@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -30,8 +31,15 @@ def _read(p: Path) -> str:
 def s43_2_axis_ids() -> tuple[bool, str]:
     """★ 규격의 축 id 가 config/scoring.json 에 있는가.
 
-    08-22 — 가이드가 여섯을 지어냈다 (state.my_cost · history.use …).
+    08-22 — 가이드가 여섯을 지어냈다.
+    ★★ 개정 512 — 마스터가 「규격이 기준」으로 정하셨다 (개정 504).
+      ★ 규격 이름은 ★ 옳은 것이고 ★ config 가 따라와야 한다.
+      ★ 그러므로 ★ 대응표에 있는 규격 이름은 ★ 여기서 잡지 않는다 —
+        ★ `S43-2b` 가 ★ 반대 방향(config 에 옛 이름이 남았나)으로 잡는다.
+      ★ 대응표에 없는 이름을 지어내면 ★ 여전히 여기서 잡힌다.
     """
+    SPEC_NAMES = {"value.origin", "state.my_cost", "history.use", "history.seizing",
+                  "taste.trim", "taste.option", "taste.fitting"}
     try:
         real = set(json.loads(_read(SCORING) or "{}").get("components", {}))
     except json.JSONDecodeError:
@@ -44,7 +52,7 @@ def s43_2_axis_ids() -> tuple[bool, str]:
     for q in live:
         text = _read(q)
         for m in re.finditer(r"`((?:state|history|value|spec|taste|warranty)\.[a-z_]+)`", text):
-            if m.group(1) in real:
+            if m.group(1) in real or m.group(1) in SPEC_NAMES:
                 continue
             # ★ 「옛 이름 → 새 이름」 대조표의 왼쪽은 ★ 있어야 맞다 —
             #   같은 줄에 ★ config 에 있는 이름이 함께 있으면 대조표로 본다
@@ -201,6 +209,21 @@ def s43_2c_no_hda() -> tuple[bool, str]:
     return True, "HDA 가 저장소에 없다 (기록 제외)"
 
 
+def s45_4_table_generated() -> tuple[bool, str]:
+    """★ f-table 배점표가 ★ config 에서 생성한 것과 같은가 (개정 512).
+
+    ★ 사본을 감시하지 않고 ★ 사본을 없앤다 — 표는 `tools/gen_table.py` 가 쓴다.
+    ★ 제목의 「N축」도 생성한다 — ★ 08-22 에 「27축」이 손으로 센 숫자라
+      표가 26 행이 되어도 안 고쳐졌다 (개정 511).
+    ★ 그래서 ★ 개수를 세는 검사가 ★ 따로 필요 없다 — 생성물과 대조하면 다 잡힌다.
+    """
+    import subprocess
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "gen_table.py"), "--check"],
+                       capture_output=True, text=True, cwd=str(ROOT))
+    msg = (r.stdout or r.stderr).strip().split("\n")[-1]
+    return r.returncode == 0, msg or "gen_table.py 를 돌리지 못했다"
+
+
 def s45_3_spec_totals() -> tuple[bool, str]:
     """★ 문서에 ★ 옛 총점이 남아 있는가 (개정 508·510).
 
@@ -220,13 +243,16 @@ def s45_3_spec_totals() -> tuple[bool, str]:
     STALE = ("675", "625", "850", "555", "530", "495")
     SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md", "00_버전.md")
     SKIP_DIR = ("outputs", ".git", "__pycache__")
-    # ★ 배점이 아닌 자리 — 파일:줄 로 못 박는다 (위 주석에 왜인지 적었다)
-    ALLOW = {("docs/SOURCE.md", 32), ("docs/SOURCE.md", 286),
-             ("docs/MULTISITE_MAPPING.md", 218),
-             ("docs/chapters/30-score/f-table.md", 422),
-             ("docs/chapters/30-score/f-table.md", 442),
-             ("docs/chapters/30-score/f-table.md", 1005),
-             ("docs/INDEX.md", 76)}
+    # ★ 배점이 아닌 자리 — ★ 줄 번호가 아니라 ★ 그 줄의 내용으로 가른다
+    #   ★ 줄 번호로 두었더니 ★ AUTO 블록이 들어가며 밀려 어긋났다 (개정 512)
+    ALLOW_TEXT = (
+        "boardStateType",        # f-table — 675 는 코드값·건수
+        "못 읽는다",              # f-table — 675 건 (갈래별 건수)
+        "확인 안 됨 0/3,555",     # f-table — 3,555 는 매물 건수
+        "mapping.py",            # SOURCE — 625 는 줄 수
+        "j-admin-mock2.md`",     # INDEX — 495 는 줄 수 (자동 생성)
+        "K카",                   # MULTISITE_MAPPING — 495 는 경위 서술
+    )
     pats = []
     for n in STALE:
         pats += [
@@ -242,7 +268,7 @@ def s45_3_spec_totals() -> tuple[bool, str]:
             continue
         rel = str(q.relative_to(ROOT))
         for i, line in enumerate(_read(q).split("\n"), 1):
-            if (rel, i) in ALLOW:
+            if any(w in line for w in ALLOW_TEXT):
                 continue
             if any(p.search(line) for p in pats):
                 bad.append(f"{rel}:{i}")
@@ -294,6 +320,7 @@ CHECKS = (
     ("S45-1", "f-table 절 제목과 표가 같은가", s45_1_one_version),
     ("S45-2", "시안에 옛 배점·분모가 없는가", s45_2_mock_numbers),
     ("S45-3", "규격에 옛 총점이 없는가", s45_3_spec_totals),
+    ("S45-4", "배점표가 config 에서 생성한 것과 같은가", s45_4_table_generated),
 )
 
 
