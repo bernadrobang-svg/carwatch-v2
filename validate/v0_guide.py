@@ -202,36 +202,53 @@ def s43_2c_no_hda() -> tuple[bool, str]:
 
 
 def s45_3_spec_totals() -> tuple[bool, str]:
-    """★ 규격 문서에 ★ 옛 총점이 남아 있는가 (개정 508).
+    """★ 문서에 ★ 옛 총점이 남아 있는가 (개정 508·510).
 
-    ★ 총점은 605 → 675 → 850 → 910 으로 갔다.  ★ 옛 값이 규격에 남으면
+    ★ 총점은 605 → 675 → 850 → 910 으로 갔다.  ★ 옛 값이 남으면
       ★ 개발측이 그것을 읽는다 (개정 475 — 850 사고가 그렇게 났다).
-    ★ 보는 곳 — `docs/` 전체.  ★ 기록만 뺀다 (`03_이력` · `06_오판대장` ·
-      `07_밀린일대장` · `00_버전` · `outputs/`) — 자취가 남는 것이 맞다.
-    ★ 건수·비율에 우연히 같은 숫자가 나올 수 있어 ★ 점수 꼴일 때만 잡는다.
-    ★ 예외 — 아래 자리는 ★ 배점이 아니다.  ★ 바꾸면 사실이 틀어진다
-        `f-table` 422·442  675 = `boardStateType` 코드값·건수
-        `f-table` 1005     3,555 = 매물 건수
-      ★ 점수 꼴 정규식이라 지금은 안 걸린다.  ★ 걸리기 시작하면 여기에 적는다
+    ★★ 개정 510 — 「낱말이 옆에 있을 때」만 보니 ★ 표 칸(| 555 |)을 통째로 놓쳤다.
+      ★ 「지키는 척」이었다.  ★ 표 칸과 「555 기준」 「555 를 승계」 꼴도 잡는다.
+    ★ 기록만 뺀다 (`03_이력` · `06_오판대장` · `07_밀린일대장` · `00_버전` · `outputs/`).
+
+    ★ 예외 — 아래는 ★ 배점이 아니다.  ★ 바꾸면 사실이 틀어진다
+        `SOURCE.md` 32·286        625 = `parse/encar/mapping.py` 줄 수
+        `MULTISITE_MAPPING.md` 218  495 = K카 경위 서술
+        `f-table` 422·442          675 = `boardStateType` 코드값·건수
+        `f-table` 1005             3,555 = 매물 건수
+        `INDEX.md` 76              495 = `j-admin-mock2.md` 의 ★ 줄 수 (자동 생성)
     """
     STALE = ("675", "625", "850", "555", "530", "495")
     SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md", "00_버전.md")
-    SKIP_DIR = ("outputs", ".git", "__pycache__", "ref")
-    # ★ 「점수 꼴」 — 총점·분모·배점으로 쓰인 자리만 본다
-    pats = [re.compile(rf"(?:총점|분모|배점|합계|grade_base|total_points)\D{{0,12}}{n}\b")
-            for n in STALE]
-    pats += [re.compile(rf"/\s*{n}\b") for n in STALE]
-    pats += [re.compile(rf"\b{n}\s*점") for n in STALE]
+    SKIP_DIR = ("outputs", ".git", "__pycache__")
+    # ★ 배점이 아닌 자리 — 파일:줄 로 못 박는다 (위 주석에 왜인지 적었다)
+    ALLOW = {("docs/SOURCE.md", 32), ("docs/SOURCE.md", 286),
+             ("docs/MULTISITE_MAPPING.md", 218),
+             ("docs/chapters/30-score/f-table.md", 422),
+             ("docs/chapters/30-score/f-table.md", 442),
+             ("docs/chapters/30-score/f-table.md", 1005),
+             ("docs/INDEX.md", 76)}
+    pats = []
+    for n in STALE:
+        pats += [
+            re.compile(rf"(?:총점|분모|배점|합계|grade_base|total_points)\D{{0,12}}{n}\b"),
+            re.compile(rf"/\s*{n}\b"),
+            re.compile(rf"\b{n}\s*점"),
+            re.compile(rf"\|\s*\*{{0,2}}{n}\*{{0,2}}\s*\|"),      # ★ 표 칸
+            re.compile(rf"\b{n}\s*(?:기준|을 승계|를 승계|판|짜리)"),   # ★ 「555 기준」
+        ]
     bad: list[str] = []
     for q in (ROOT / "docs").rglob("*.md"):
         if any(d in q.parts for d in SKIP_DIR) or q.name in SKIP_NAME:
             continue
+        rel = str(q.relative_to(ROOT))
         for i, line in enumerate(_read(q).split("\n"), 1):
+            if (rel, i) in ALLOW:
+                continue
             if any(p.search(line) for p in pats):
-                bad.append(f"{q.relative_to(ROOT)}:{i}")
+                bad.append(f"{rel}:{i}")
     if bad:
-        return False, f"규격에 옛 총점이 {len(bad)}곳 — " + " · ".join(bad[:6])
-    return True, "규격에 옛 총점이 없다"
+        return False, f"옛 총점이 {len(bad)}곳 — " + " · ".join(bad[:6])
+    return True, "옛 총점이 없다 (기록·예외 제외)"
 
 
 def s45_2_mock_numbers() -> tuple[bool, str]:
