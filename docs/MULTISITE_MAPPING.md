@@ -1,6 +1,6 @@
 # 사이트 → `core_listing` 칼럼 매핑
 
-`SPEC-2026.08.22-r484` · 2026-08-22
+`SPEC-2026.08.22-r485` · 2026-08-22
 **★ 이 문서가 사이트 확장의 매핑 정본이다. 앞 사이트 규격 문서의 「우리 축」 표는 ★ 축 대응이지 칼럼이 아니다.**
 
 ```
@@ -229,17 +229,86 @@ GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 ·
 
 ---
 
-# 2c. 헤이딜러 — 목록만 (토큰 미해결)
-
-| `core_listing` 칼럼 | 헤이딜러 |
-|---|---|
-| `site` | `'heydealer'` |
-| `source_id` | `/market/cars/{code}` 의 code (`2yM82GlW`) |
-| 사고 | 「무사고」 · 「단순교환 무사고」 · 「사고 구분」 · 「보험 내차피해」 |
-| 배터리 | ★ 「배터리 정상」 → SOH 가점(+30) 재료 |
+# 2c. ★★ 헤이딜러 — ★ 뚫렸다. 토큰은 ★ 세션 쿠키다
 
 ```
-★ `authorization: Bearer` 토큰이 필요하다.  ★ 발급 경로 미확정 — ★ 개발측에 넘기지 않는다
+① GET https://www.heydealer.com/          ← ★ 한 번 연다.  ★ 서버가 쿠키를 준다
+   Set-Cookie: ★ customer_web_session=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…
+② GET https://market-api.heydealer.com/v2/customers/web/market/cars/
+      ?order=recommendation&view_type=compact&page=N
+   헤더  ★ authorization: Bearer {그 쿠키 값}  ·  app-os: web
+         Referer: https://www.heydealer.com/  ·  Origin: 같음
+   → ★ 200 · 54,373B · 평문 JSON
+★ 로그인이 아니다.  ★ 손님용 세션을 서버가 스스로 발급한다
+★ 토큰을 훔치거나 흉내 낸 것이 아니다 — ★ 정상 발급 경로를 찾은 것이다
+★ 응답은 ★ 배열(list)이다.  ★ dict 가 아니다 — 파서 주의
+```
+
+## ★ 우리 축과 맞춰 본 것 (표본 BMW 520i · 3,250만)
+
+| `core_*` 칼럼 | 헤이딜러 필드 | 표본 값 |
+|---|---|---|
+| `core_listing.source_id` | `hash_id` | `EQrxmKyg` |
+| `core_listing.price_current_won` | `price` ×10000 | 3,250만 |
+| `core_listing.price_detail_won` | `previous_price` | 3,290만 (내린 값) |
+| **`core_listing.price_origin_won`** | ★★ `factory_price` ×10000 | **6,580만** ← ★ **신차가를 준다** |
+| `core_listing.year_month` | `initial_registration_date` | 2021-04-29 → `202104` |
+| `core_listing.form_year` | `year` | 2021 |
+| `core_listing.mileage_km` | `mileage` | 91,243 |
+| `core_listing.trim_badge` | `grade_name` · `grade_part_name` | 520i M 스포츠 |
+| `core_listing.color_ext_raw`·`_hex` | `exterior_description`·`exterior_color_codes` | 카본 블랙 · `#221772` |
+| `core_listing.color_int_raw`·`_hex` | `interior_description`·`interior_color_codes` | 검정 다코타 가죽 · `#000000` |
+| `core_listing.options_choice_json` | ★ `options[]` `{name, choice, availability}` | 선루프 loaded · 통풍시트 **absent** |
+| `core_listing.model_catalog_key` | `model_hash_id` · `model_group_hash_id` | `23ryQ4` · `aMKrwk` |
+| `core_listing.photo_list_json` | `image_urls` · `inside_image_urls` | S3 |
+| `core_listing.subscribe_cnt` | `stars_count` | 75 |
+| `core_listing.sales_status` | `sale_status` | `listed` |
+| `core_record.accident_total_cnt`·`accident_my_cost` | ★ `rich_view_tags` 「보험 2건 ∙ 452만원」 | 2건 · 452만 |
+| `core_record.owner_change_cnt` | ★ `tags` 「1인 소유」 | 1 |
+| `warranty.site` 사이트 검증 | ★ `tags` 「**eye 인증**」 | 있음 |
+| — 사고 등급 | ★ `tags` 「**완전무사고**」 / 「무사고」 | 두 단계다 |
+
+```
+★★★ ★ `factory_price` — ★ 신차가를 주는 ★ 유일한 사이트다
+   ★ 엔카 말고는 아무 데도 안 주던 값이다.  ★ `value.origin` 75점이 여기서 산다
+   ★ 그리고 ★ 다른 사이트 매물에 ★ 붙여 쓸 수 있다 (f-table 「사이트별 채우기」 ③)
+★★ `options[].choice` 가 ★ loaded / absent 로 온다 — ★ 「없다」를 ★ 명시한다
+   ★ 우리 「없음 0 · 모름 NULL」과 정확히 맞는다.  ★ absent 는 0 이고 NULL 이 아니다
+★ `availability` 도 있다 — default(기본옵션) · available(선택가능) · unavailable(그 차엔 없음)
+   ★ unavailable 은 ★ 그 차종에 없는 옵션이다.  ★ 감점하면 안 된다
+★ 「완전무사고」와 「무사고」가 ★ 다른 딱지다.  ★ dict_enum 으로 갈라 받는다
+★ 「eye 인증」이 ★ 사이트 검증 최고 단계다 (f-table 개정 428)
+```
+
+---
+
+# 2d. ★ 현대 인증 표본 30건 검증 — ★ 1건일 때 못 본 것 셋
+
+```
+★ 매물번호는 ★ `data-favContsNo` 다 — ★ 개정 480 에 `data-id` 라 적은 것은 ★ 틀렸다
+   `data-favContsNo="([A-Z]{3}\d{12})"` 로 뽑는다
+```
+
+| 필드 | 존재율 | 값 분포 |
+|---|--:|---|
+| 최초등록일 · 주행 · 배기량 · 외관컬러 | **30/30** | — |
+| 내차피해이력 | **30/30** | 0건 14 · 1건 12 · 2건 2 · **5건 2** |
+| **소유자 변경** | 30/30 | ★ **전부 「있음」** |
+| 압류·저당 | 30/30 | 전부 「없음/없음」 |
+| 정밀점검 항목 수 | 30/30 | ★ **272개 16 · 287개 12 · 268개 1 · 277개 1** |
+| 성능점검기록부 | 30/30 | 전부 발행완료 |
+| 보증 잔여(년·개월) | ★ **11/30** | — |
+| 보증 잔여(km) | 29/30 | — |
+
+```
+★ ① 「소유자 변경」이 ★ 30/30 전부 「있음」이다 — ★ 건수가 아니라 ★ 유무만 준다
+   ★ `owner_change_cnt` 에 ★ 1 로 넣으면 틀린다.  ★ NULL + 「있음」 플래그가 맞다
+   ★ 인증중고차는 ★ 반드시 현대차가 한 번 소유하므로 ★ 늘 「있음」이다 — ★ 변별력이 없다
+★ ② 정밀점검이 ★ 272 · 287 · 268 · 277 로 ★ 다르다 — ★ 「287개 고정」이 아니다
+   ★ 차종·연식에 따라 항목 수가 다르다.  ★ 숫자를 그대로 저장한다
+★ ③ ★ 보증 잔여가 ★ 11/30 뿐이다 — ★ 19건은 ★ 보증이 끝났다
+   ★ 끝난 것은 ★ 0 이다 (확인한 값) · ★ 안 받은 것은 NULL.  ★ 가른다
+★ 내차피해 ★ 5건짜리도 있다 — ★ 인증중고차라고 무사고가 아니다
 ```
 
 ---

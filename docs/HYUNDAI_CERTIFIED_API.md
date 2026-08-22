@@ -171,10 +171,10 @@ GET  https://certified.hyundai.com/api/search/vehicle/count/selling?{조건}   �
 ## 매물번호 뽑기
 
 ```
-data-id="GJJ260317025652"          ← ★ 이것이 매물번호다
-data-favContsNo="GJJ260317025652"  ← 같은 값
+★ data-favContsNo="GJJ260317025652"   ← ★ 이것이 매물번호다 (개정 485 정정)
+★ ~~data-id~~ 는 ★ 없다 — 개정 480 이 잘못 적었다
 꼴  영문 3 + 숫자 12
-정규식  data-id="([A-Z]{3}\d{12})"
+정규식  data-favContsNo="([A-Z]{3}\d{12})"
 → ★ 그대로 `goodsDetail.do?goodsNo={번호}` 에 넣으면 상세가 200 이다
 ```
 
