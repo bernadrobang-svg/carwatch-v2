@@ -1,8 +1,9 @@
 #!/usr/bin/env python3.11
 """현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11).
 
-    python3.11 tools/collect_hyundai_cert.py --count      건수만 (조건 없이)
-    python3.11 tools/collect_hyundai_cert.py [--dry]      목록을 끝까지 받아 저장
+    python3.11 tools/collect_hyundai_cert.py --count       건수만 (조건 없이)
+    python3.11 tools/collect_hyundai_cert.py [--dry]       목록을 끝까지 받아 저장
+    python3.11 tools/collect_hyundai_cert.py --detail [N]  ★ 상세까지 받는다 (N건만)
 
 지시서   `docs/HYUNDAI_CERTIFIED_API.md`
 근거     ★ robots 가 ★ 금지 경로를 하나도 두지 않았다 (Allow: /)
@@ -25,13 +26,18 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from parse.hyundai_cert.mapping import cards, parse_card  # noqa: E402
+from parse.hyundai_cert.mapping import (  # noqa: E402
+    cards,
+    parse_card,
+    parse_detail_all,
+)
 from store.raw import open_db  # noqa: E402
 
 SITE_CODE = "hyundai_cert"
 BASE = "https://certified.hyundai.com"
 LIST_PATH = "/m/search/results/selling"
 COUNT_PATH = "/api/search/vehicle/count/selling?srchType=srchFilter"
+DETAIL_PATH = "/m/goods/goodsDetail.do?goodsNo={goods_no}"
 ROWS = 100
 MAX_PAGES = 60
 INTERVAL = 1.0
@@ -89,6 +95,26 @@ def _post(url: str, payload: dict) -> str | None:
             return f.read().decode("utf-8", "replace")
     except OSError:
         return None
+
+
+def _get(url: str) -> str | None:
+    try:
+        req = urllib.request.Request(
+            url, headers={"User-Agent": HEADERS["User-Agent"],
+                          "Referer": BASE + "/"})
+        with urllib.request.urlopen(req, timeout=30) as f:    # noqa: S310
+            return f.read().decode("utf-8", "replace")
+    except OSError:
+        return None
+
+
+def fetch_detail(goods_no: str) -> tuple | None:
+    """상세 하나 → (core_listing 몫, core_record 몫).
+
+    ★ 짧으면 ★ 「못 받음」이다 — ★ 「없음」으로 내려가지 않는다
+    """
+    body = _get(BASE + DETAIL_PATH.format(goods_no=goods_no))
+    return parse_detail_all(body or "", SITE_CODE, goods_no)
 
 
 def total_count() -> int | None:
@@ -149,6 +175,13 @@ def main() -> int:
     for k, n in sorted(hit.items(), key=lambda kv: -kv[1])[:6]:
         print(f"  {k:16} {n:>5}건")
 
+    want_detail = "--detail" in args
+    limit = 0
+    if want_detail:
+        i = args.index("--detail")
+        if i + 1 < len(args) and args[i + 1].isdigit():
+            limit = int(args[i + 1])
+
     if "--dry" in args:
         print("★ --dry 라 저장하지 않았다")
         return 0
@@ -166,7 +199,33 @@ def main() -> int:
         upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
     commit(conn)
     print(f"★ 저장 {len(ids):,}건 · site='{SITE_CODE}'")
-    print("★ 상세(27축)는 아직이다 — ★ 목록만으로 차종·연식·주행·값이 찬다")
+
+    if not want_detail:
+        print("★ 상세는 --detail 로 받는다")
+        return 0
+
+    todo = ids[:limit] if limit else ids
+    got = {"정상": 0, "못 받음": 0}
+    from store.core import upsert_child
+
+    for one in todo:
+        pair = fetch_detail(one["source_id"])
+        if pair is None:
+            # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
+            got["못 받음"] += 1
+            time.sleep(INTERVAL)
+            continue
+        deep, record = pair
+        deep["listing_id"] = one["listing_id"]
+        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        # ★ 사고·소유자 이력은 ★ core_record 의 칸이다 (A-2)
+        record["listing_id"] = one["listing_id"]
+        record["collected_at"] = at
+        upsert_child(conn, "core_record", record, "p1", at)
+        got["정상"] += 1
+        time.sleep(INTERVAL)
+    commit(conn)
+    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
     return 0
 
 
