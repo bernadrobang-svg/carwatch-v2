@@ -363,10 +363,20 @@ def s44_3_specs_in_order() -> tuple[bool, str]:
             continue
         if q.stem not in text:
             bad.append(q.name)
-    if bad:
-        return False, ("명령서가 안 가리키는 규격 "
-                       f"{len(bad)}개 — " + " · ".join(bad))
-    return True, "가이드 규격을 명령서가 모두 가리킨다"
+    # ★ 반대 방향도 본다 — ★ 명령서가 ★ 없는 규격을 가리키는가 (개정 541)
+    #   ★ 08-23 — 명령서가 `KCAR_LIST_API.md` 를 가리켰는데 ★ 그 파일이 없었다
+    dead: list[str] = []
+    for m in re.finditer(r"`?docs/([A-Z][A-Z0-9_]+\.md)`?", text):
+        if not (ROOT / "docs" / m.group(1)).exists():
+            dead.append(m.group(1))
+    if bad or dead:
+        msg = []
+        if bad:
+            msg.append(f"명령서가 안 가리키는 규격 {len(bad)}개 — " + " · ".join(bad))
+        if dead:
+            msg.append(f"★ 없는 규격을 가리킨다 {len(set(dead))}개 — " + " · ".join(sorted(set(dead))))
+        return False, " / ".join(msg)
+    return True, "가이드 규격과 명령서가 서로 맞는다"
 
 
 def s43_3_version_matches() -> tuple[bool, str]:
