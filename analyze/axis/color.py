@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""색상 40점.
+"""색상 축.  ★ 배점은 config/scoring.json (f-table 5장-2a).
 
 지시서   7장 STEP 80
 근거     재판매성.  hex 는 표기 흔들림이 없어 색상명 문자열보다 정확하다

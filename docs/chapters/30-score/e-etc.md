@@ -1,4 +1,4 @@
-## STEP 79 — 안전 40점
+## STEP 79 — 안전  ★ 배점은 `f-table` 5장-2a
 
 ### 구성
 
@@ -28,7 +28,7 @@ encarPassCategoryType        「통과했나」
 ```
 ★ 미확정   encarPassCategoryType 의 값 종류가 CLEAR 1건만 관측됐다
           진단 API 원문 0건이라 세분화 불가 (STEP 86)
-현행       diagnosis_car 0/1 로 20점.  세분화는 원문 확보 후
+현행       diagnosis_car 0/1 로 판정.  세분화는 원문 확보 후
 ```
 
 ### 전기차 보증상품 `−1` ★ 2026-08-09 근거 재정의
@@ -92,7 +92,7 @@ seizingCount > 0  or  pledgeCount > 0   →  점수가 아니라 E등급 절대�
 
 ---
 
-## STEP 80 [판정] — 색상 40점
+## STEP 80 [판정] — 색상  ★ 배점은 `f-table` 5장-2a
 
 ```
 목적    재판매성을 본다.  선호 색상은 되팔 때 유리하다
@@ -137,7 +137,7 @@ seizingCount > 0  or  pledgeCount > 0   →  점수가 아니라 E등급 절대�
 
 ```
 ★ 0 점을 주지 않는다.  기피색도 차의 가치를 없애지 않는다
-  10점은 「이 축에서 손해」이지 「가치 없음」이 아니다
+  낮은 점수는 「이 축에서 손해」이지 「가치 없음」이 아니다
 설정   config.scoring.axis_rules.color.grade_points
        마스터가 선호 색을 바꾸면 이 목록만 고친다
 근거   분포는 v1 관측이다.  등급 구성이 정책이고, 분포는 그 근거다
@@ -168,7 +168,7 @@ seizingCount > 0  or  pledgeCount > 0   →  점수가 아니라 E등급 절대�
 
 ---
 
-## STEP 81 [판정] — 주행거리 30점
+## STEP 81 [판정] — 주행거리  ★ 배점은 `f-table` 5장-2a
 
 ```
 목적    주행이 적을수록 남은 수명이 길다.  연식과 함께 차량 소모를 본다

@@ -209,6 +209,44 @@ def s43_2c_no_hda() -> tuple[bool, str]:
     return True, "HDA 가 저장소에 없다 (기록 제외)"
 
 
+def s45_5_no_axis_scores() -> tuple[bool, str]:
+    """★ 규격 문서가 ★ 축 배점을 손으로 적고 있는가 (개정 513).
+
+    ★ 마스터 — 「해당 페이지를 바라보게」.  ★ 배점은 `f-table` 5장-2a 하나가 정한다.
+    ★ 사본을 적으면 ★ 배점이 바뀔 때 낡는다 (개정 495·511 이 그렇게 났다).
+
+    ★ 남기는 것 — ★ 사본이 아니라 ★ 사실인 자리
+      `docs/*_API.md` · `MULTISITE_MAPPING.md`
+        → 「이 사이트가 어느 축 몇 점을 채우나」는 ★ 그 사이트의 사실이다.
+          ★ f-table 을 베낀 것이 아니라 ★ 그 사이트를 잰 결과다
+      `f-table.md` 자신 — ★ 정본이다
+      `guide/00_개요.md` · `01_시작.md` · `00-standard.md` · `40-report.md`
+        → 「가격 200점 전체가 그 위에 얹혀 있었다」처럼 ★ v1 실패의 경위다
+      「0점」 · 「N점이 아니다」 — ★ 배점이 아니라 ★ 규칙이다
+    """
+    AXES = ("사고 이력", "골격", "외판", "자차 수리비", "특수 사고", "소모품", "누유",
+            "진정성", "용도", "자차 미가입", "소유자 변경", "압류·저당", "주행 대비",
+            "연식", "예산", "시세 대비", "동력계", "일반·차체", "사이트 검증",
+            "트림", "옵션", "HUD", "지정 옵션", "색상", "선루프")
+    SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md", "00_버전.md",
+                 "f-table.md", "MULTISITE_MAPPING.md", "00_개요.md", "01_시작.md",
+                 "00-standard.md", "40-report.md")
+    pat = re.compile(rf"({'|'.join(AXES)})\D{{0,4}}\*{{0,2}}(\d{{1,3}})\*{{0,2}}\s*점")
+    bad: list[str] = []
+    for q in (ROOT / "docs").rglob("*.md"):
+        if any(d in q.parts for d in ("outputs", ".git")) or q.name in SKIP_NAME:
+            continue
+        if q.name.endswith("_API.md"):      # ★ 사이트를 잰 결과다.  사본이 아니다
+            continue
+        for i, line in enumerate(_read(q).split("\n"), 1):
+            m = pat.search(line)
+            if m and m.group(2) != "0":     # ★ 「0점」은 규칙이다
+                bad.append(f"{q.relative_to(ROOT)}:{i}({m.group(1)} {m.group(2)}점)")
+    if bad:
+        return False, f"규격이 배점을 손으로 적은 곳 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "규격이 배점을 손으로 적지 않는다"
+
+
 def s45_4_table_generated() -> tuple[bool, str]:
     """★ f-table 배점표가 ★ config 에서 생성한 것과 같은가 (개정 512).
 
@@ -321,6 +359,7 @@ CHECKS = (
     ("S45-2", "시안에 옛 배점·분모가 없는가", s45_2_mock_numbers),
     ("S45-3", "규격에 옛 총점이 없는가", s45_3_spec_totals),
     ("S45-4", "배점표가 config 에서 생성한 것과 같은가", s45_4_table_generated),
+    ("S45-5", "규격이 배점을 손으로 적지 않는가", s45_5_no_axis_scores),
 )
 
 

@@ -126,7 +126,7 @@
 | `adapters/base.py` | 36 | 사이트 어댑터 인터페이스. |
 | `report/peer.py` | 35 | 유사군 조회 (7장 STEP 82e). |
 | `analyze/axis/_util.py` | 33 | 축 공용 도우미. |
-| `analyze/axis/color.py` | 33 | 색상 40점. |
+| `analyze/axis/color.py` | 33 | 색상 축.  ★ 배점은 config/scoring.json (f-table 5장-2a). |
 | `analyze/engine.py` | 32 | 판정 실행 (L6).  축 함수를 순서 무관하게 호출한다. |
 | `analyze/axis/mileage.py` | 31 | 주행거리 30점. |
 | `adapters/__init__.py` | 1 | — |
