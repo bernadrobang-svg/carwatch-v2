@@ -149,7 +149,7 @@ def test_components_form() -> None:
 
     # 지시서 예시 — spec 90 → 100
     # ★ 재배분 산술 시험이다.  ★ 원소를 빼면 기대값이 어긋난다 —
-    #   HDA 를 지우며 이름만 바꾼다 (개정 505)
+    #   옛 축을 지우며 ★ 이름만 바꿨다 (개정 505)
     spec = {"hud": 20, "sunroof": 20, "svm2": 20, "svm": 10, "scc": 10,
             "bsd": 5, "tinting": 5}
     r = redistribute(spec, 100)
