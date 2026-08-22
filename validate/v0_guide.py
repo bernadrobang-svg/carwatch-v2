@@ -201,6 +201,35 @@ def s43_2c_no_hda() -> tuple[bool, str]:
     return True, "HDA 가 저장소에 없다 (기록 제외)"
 
 
+def s45_3_spec_totals() -> tuple[bool, str]:
+    """★ 규격 문서에 ★ 옛 총점이 남아 있는가 (개정 508).
+
+    ★ 총점은 605 → 675 → 850 → 910 으로 갔다.  ★ 옛 값이 규격에 남으면
+      ★ 개발측이 그것을 읽는다 (개정 475 — 850 사고가 그렇게 났다).
+    ★ 보는 곳은 ★ `docs/chapters/` (규격) 뿐이다 —
+      `guide/` 는 경위를 적는 곳이고 `CHECKS.md`·`trace/` 는 자동 생성이다.
+    ★ 건수·비율에 우연히 같은 숫자가 나올 수 있어 ★ 점수 꼴일 때만 잡는다.
+    """
+    STALE = ("675", "625", "850", "555", "530", "495")
+    SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md", "00_버전.md")
+    SKIP_DIR = ("outputs", ".git", "__pycache__", "ref")
+    # ★ 「점수 꼴」 — 총점·분모·배점으로 쓰인 자리만 본다
+    pats = [re.compile(rf"(?:총점|분모|배점|합계|grade_base|total_points)\D{{0,12}}{n}\b")
+            for n in STALE]
+    pats += [re.compile(rf"/\s*{n}\b") for n in STALE]
+    pats += [re.compile(rf"\b{n}\s*점") for n in STALE]
+    bad: list[str] = []
+    for q in (ROOT / "docs" / "chapters").rglob("*.md"):
+        if any(d in q.parts for d in SKIP_DIR) or q.name in SKIP_NAME:
+            continue
+        for i, line in enumerate(_read(q).split("\n"), 1):
+            if any(p.search(line) for p in pats):
+                bad.append(f"{q.relative_to(ROOT)}:{i}")
+    if bad:
+        return False, f"규격에 옛 총점이 {len(bad)}곳 — " + " · ".join(bad[:6])
+    return True, "규격에 옛 총점이 없다"
+
+
 def s45_2_mock_numbers() -> tuple[bool, str]:
     """★ 시안에 ★ 배점·분모 숫자가 남아 있는가 (개정 506).
 
@@ -243,6 +272,7 @@ CHECKS = (
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),
     ("S45-1", "f-table 절 제목과 표가 같은가", s45_1_one_version),
     ("S45-2", "시안에 옛 배점·분모가 없는가", s45_2_mock_numbers),
+    ("S45-3", "규격에 옛 총점이 없는가", s45_3_spec_totals),
 )
 
 
