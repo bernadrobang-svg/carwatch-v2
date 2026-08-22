@@ -1,55 +1,137 @@
 {
-  "_ref": "지시서 2장 STEP 17 (URL) · STEP 24 (요청 정책) · 마스터 회신 20260809",
-  "_pending": "encar.headers.User-Agent 는 v1 에 남아 있지 않다. 일반 모바일 UA 로 1차 시도하고, 전량 401·403 이면 STEP 25a 실측 요청서를 낸다. 일부만 실패하면 UA 문제가 아니다",
-  "encar": {
-    "base_url": "https://api.encar.com",
-    "paths": {
-      "list": "/search/car/list/mobile",
-      "detail": "/v1/readside/vehicle/{source_id}",
-      "inspection": "/v1/readside/inspection/vehicle/{source_id}",
-      "record": "/v1/readside/record/vehicle/{source_id}/open",
-      "diagnosis": "/v1/readside/diagnosis/vehicle/{source_id}",
-      "catalog": "/v1/readside/vehicles/car/{source_id}/options/choice",
-      "facet": "/search/car/list/mobile",
-      "record_summary": "/v1/readside/record/vehicle/{source_id}/summary",
-      "inspection_summary": "/v1/readside/inspection/vehicle/{source_id}/summary",
-      "platform_check": "/v1/readside/clean-encar/vehicle/{source_id}",
-      "sellingpoint": "/v1/readside/diagnosis/vehicle/{source_id}/sellingpoint",
-      "ev_battery": "/v1/readside/vehicle/ev-battery/{source_id}",
-      "extend_warrant": "/v1/readside/extend-warrant/vehicle/{source_id}"
-    },
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-    },
-    "timeout_sec": 15.0,
-    "interval_sec": [
-      0.3,
-      0.3
-    ],
-    "retry_max": 2,
-    "catalog_reps": 3,
-    "_catalog_reps_note": "한 조합에서 몇 매물까지 카탈로그를 물어볼 것인가 (개정 327). ★ 하나가 404 여도 조합이 없는 것이 아니다 — 그 매물만 사라진 것이다. 실측 08-18: 같은 조합 23매물 중 셋은 404, 셋은 200 [] 였다",
-    "fail_streak_limit": 20,
-    "page_size": 20,
-    "detail_refresh_days": 7,
-    "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다"
+ "_ref": "지시서 2장 STEP 17 (URL) · STEP 24 (요청 정책) · 마스터 회신 20260809",
+ "_pending": "encar.headers.User-Agent 는 v1 에 남아 있지 않다. 일반 모바일 UA 로 1차 시도하고, 전량 401·403 이면 STEP 25a 실측 요청서를 낸다. 일부만 실패하면 UA 문제가 아니다",
+ "encar": {
+  "base_url": "https://api.encar.com",
+  "paths": {
+   "list": "/search/car/list/mobile",
+   "detail": "/v1/readside/vehicle/{source_id}",
+   "inspection": "/v1/readside/inspection/vehicle/{source_id}",
+   "record": "/v1/readside/record/vehicle/{source_id}/open",
+   "diagnosis": "/v1/readside/diagnosis/vehicle/{source_id}",
+   "catalog": "/v1/readside/vehicles/car/{source_id}/options/choice",
+   "facet": "/search/car/list/mobile",
+   "record_summary": "/v1/readside/record/vehicle/{source_id}/summary",
+   "inspection_summary": "/v1/readside/inspection/vehicle/{source_id}/summary",
+   "platform_check": "/v1/readside/clean-encar/vehicle/{source_id}",
+   "sellingpoint": "/v1/readside/diagnosis/vehicle/{source_id}/sellingpoint",
+   "ev_battery": "/v1/readside/vehicle/ev-battery/{source_id}",
+   "extend_warrant": "/v1/readside/extend-warrant/vehicle/{source_id}"
   },
-  "kcar": {
-    "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",
-    "_note": "★ 문서에 없던 호스트를 번들에서 뽑았다 — mapi.kcar.com. api.kcar.com · marketm-api.kcar.com 은 전부 404 다. /bc/detail/popup/* 은 API 가 아니라 SPA 껍데기(2.1MB HTML)다",
-    "base_url": "https://mapi.kcar.com",
-    "paths": {
-      "detail": "/bc/car-info-detail-of-ng?i_sCarCd={source_id}",
-      "inspection": "/bc/car-insp/photo/cm?i_sCarCd={source_id}"
-    },
-    "_paths_note": "★ detail 하나가 상세·옵션 42·보증 5·타이어 5·소유이력·보험·진단을 함께 준다. 타이어 트레드(tirResQty)가 여기 있다 — 엔카는 401 이라 못 받는다",
-    "_list_note": "★ 목록 경로는 아직 못 찾았다. mapi 에서 여섯 경로를 눌러 전부 404 였다 (2026-08-18)",
-    "timeout_sec": 20,
-    "interval_sec": 1.5,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile Safari/604.1",
-      "Accept": "application/json, text/plain, */*",
-      "Referer": "https://m.kcar.com/"
-    }
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+  },
+  "timeout_sec": 15.0,
+  "interval_sec": [
+   0.3,
+   0.3
+  ],
+  "retry_max": 2,
+  "catalog_reps": 3,
+  "_catalog_reps_note": "한 조합에서 몇 매물까지 카탈로그를 물어볼 것인가 (개정 327). ★ 하나가 404 여도 조합이 없는 것이 아니다 — 그 매물만 사라진 것이다. 실측 08-18: 같은 조합 23매물 중 셋은 404, 셋은 200 [] 였다",
+  "fail_streak_limit": 20,
+  "page_size": 20,
+  "detail_refresh_days": 7,
+  "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다"
+ },
+ "kcar": {
+  "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",
+  "_note": "★ 문서에 없던 호스트를 번들에서 뽑았다 — mapi.kcar.com. api.kcar.com · marketm-api.kcar.com 은 전부 404 다. /bc/detail/popup/* 은 API 가 아니라 SPA 껍데기(2.1MB HTML)다",
+  "base_url": "https://mapi.kcar.com",
+  "paths": {
+   "detail": "/bc/car-info-detail-of-ng?i_sCarCd={source_id}",
+   "inspection": "/bc/car-insp/photo/cm?i_sCarCd={source_id}",
+   "list": "/bc/search/list/drct"
+  },
+  "_paths_note": "★ detail 하나가 상세·옵션 42·보증 5·타이어 5·소유이력·보험·진단을 함께 준다. 타이어 트레드(tirResQty)가 여기 있다 — 엔카는 401 이라 못 받는다",
+  "_list_note": "★ 개정 467 실측 — POST /bc/search/list/drct (직영) · /acm (제휴). 요청 본문만 enc 암호화 · 응답은 평문 JSON · totalCnt·totalPageCnt 를 준다 · 쪽당 10건. ★ 조건 검색은 사람이 화면에서 고른 뒤 응답을 읽는다. ★ enc 를 풀지 않는다",
+  "timeout_sec": 20,
+  "interval_sec": 1.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile Safari/604.1",
+   "Accept": "application/json, text/plain, */*",
+   "Referer": "https://m.kcar.com/"
   }
+ },
+ "kia_cpo": {
+  "_ref": "docs/KIA_CPO_API.md · 실측 2026-08-22 서버에서 직접 · 표본 30건",
+  "_note": "★ 인증·토큰·암호화 없다 · robots.txt 자체가 404(없다) · 서버에서 그냥 200 이다",
+  "base_url": "https://cpo.kia.com",
+  "paths": {
+   "list": "/api/search/?size=100",
+   "detail": "/api/product/detail/{source_id}/",
+   "facet_conditions": "/api/search/conditions/",
+   "facet_models": "/api/search/category-models/"
+  },
+  "_paths_note": "★ 상세 화면 /products/{id}/ 는 404 다. ★ API 로만 받는다. list 의 id 를 detail 에 그대로 쓴다",
+  "timeout_sec": 20,
+  "interval_sec": 0.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Accept": "application/json",
+   "Referer": "https://cpo.kia.com/products/",
+   "x-referer-pathname": "/products/"
+  }
+ },
+ "hyundai_cert": {
+  "_ref": "docs/HYUNDAI_CERTIFIED_API.md · 실측 2026-08-22 · 표본 30건",
+  "_note": "★ robots 금지 경로 없음 · 인증 없음. ★ 목록 응답이 JSON 이 아니라 HTML 조각이다 — 매물번호는 data-favContsNo 에 있다",
+  "base_url": "https://certified.hyundai.com",
+  "paths": {
+   "list": "/m/search/results/selling",
+   "list_coming": "/m/search/results/coming",
+   "count": "/api/search/vehicle/count/selling",
+   "detail": "/m/goods/goodsDetail.do?goodsNo={source_id}"
+  },
+  "_paths_note": "★ 목록은 POST · Content-Type: application/json. tmnlId 를 빈 문자열로 둬도 200 이다 — 토큰이 필요 없다. rowsPerPage=100 으로 한 번에 100건 · pageIdx 로 쪽넘김. ★ 매물번호 정규식 data-favContsNo=\"([A-Z]{3}\\\\d{12})\"",
+  "timeout_sec": 30,
+  "interval_sec": 0.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Accept": "*/*",
+   "Content-Type": "application/json",
+   "Referer": "https://certified.hyundai.com/m/search/vehicle?srchType=srchFilter",
+   "X-Requested-With": "XMLHttpRequest"
+  }
+ },
+ "heydealer": {
+  "_ref": "docs/HEYDEALER_API.md · 실측 2026-08-22 · 표본 25건",
+  "_note": "★★ 토큰은 세션 쿠키다 — https://www.heydealer.com/ 를 한 번 열면 서버가 customer_web_session 을 준다. 그 값을 authorization: Bearer 로 쓴다. ★ 로그인이 아니라 손님용이다. robots 전면 허용. ★ 응답이 배열(list)이다 — dict 가 아니다",
+  "base_url": "https://market-api.heydealer.com",
+  "token_url": "https://www.heydealer.com/",
+  "paths": {
+   "list": "/v2/customers/web/market/cars/?order=recommendation&page={page}",
+   "detail": "/v2/customers/web/market/cars/{source_id}/"
+  },
+  "_paths_note": "★ 목록은 쪽당 10건이고 필드가 14개뿐이다. ★ 값은 상세에 있다(33개). hash_id 가 매물번호다",
+  "timeout_sec": 40,
+  "interval_sec": 0.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Accept": "application/json",
+   "Referer": "https://www.heydealer.com/",
+   "Origin": "https://www.heydealer.com",
+   "app-os": "web"
+  }
+ },
+ "kbchachacha": {
+  "_ref": "docs/KBCHACHACHA_API.md · 실측 2026-08-22 · 표본 25건",
+  "_note": "★★ 봇 차단 — 상세가 200 인데 본문이 「로봇 여부 확인 중」 2,759B 로 올 때가 있다(25건 중 7건). ★ 10KB 미만이거나 그 문구가 있으면 수집 실패로 적고 최대 3회 재시도. ★ 절대 「없음」으로 저장하지 마라",
+  "base_url": "https://www.kbchachacha.com",
+  "paths": {
+   "list": "/public/search/list.empty?page={page}",
+   "detail": "/public/car/detail.kbc?carSeq={source_id}",
+   "diagnosis": "/public/diag/car/attach/list.json",
+   "facet_maker": "/public/search/carMaker.json?page=1",
+   "facet_option": "/public/search/optionSale.json?page=1"
+  },
+  "_paths_note": "★ 목록은 쪽넘김 · 쪽당 40건. robots 전면 허용",
+  "timeout_sec": 30,
+  "interval_sec": 1.2,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Referer": "https://www.kbchachacha.com/public/search/main.kbc",
+   "X-Requested-With": "XMLHttpRequest"
+  }
+ }
 }
