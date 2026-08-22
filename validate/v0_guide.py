@@ -201,6 +201,27 @@ def s43_2c_no_hda() -> tuple[bool, str]:
     return True, "HDA 가 저장소에 없다 (기록 제외)"
 
 
+def s45_2_mock_numbers() -> tuple[bool, str]:
+    """★ 시안에 ★ 배점·분모 숫자가 남아 있는가 (개정 506).
+
+    ★ 시안은 ★ 모양이 정본이고 ★ 숫자는 `f-table` 5장-2a 가 정본이다 (README).
+    ★ 08-22 — 555/530 이 12개 파일에 살아 있어 ★ 화면이 낡은 분모를 냈다.
+    ★ 이번 차례는 ★ 분모 규칙 문장까지다.  ★ 배점 숫자는 다음 차례라 ★ 실패가 맞다.
+    """
+    STALE = ("555", "530", "495", "625", "675", "850")
+    mocks = ROOT / "ref" / "screens"
+    if not mocks.is_dir():
+        return False, "ref/screens 가 없다"
+    bad: list[str] = []
+    for q in sorted(mocks.glob("*.html")):
+        hit = {n for n in STALE if re.search(rf"(?<!\d){n}(?!\d)", _read(q))}
+        if hit:
+            bad.append(f"{q.name}({'·'.join(sorted(hit))})")
+    if bad:
+        return False, f"시안 {len(bad)}개에 옛 배점·분모가 있다 — " + " · ".join(bad[:5])
+    return True, "시안에 옛 배점·분모가 없다"
+
+
 def s43_3_version_matches() -> tuple[bool, str]:
     """★ 00_버전.md 의 지금 버전이 03_이력.md 의 마지막 개정과 같은가 (V0-01)."""
     hist = _read(GUIDE / "03_이력.md")
@@ -221,6 +242,7 @@ CHECKS = (
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),
     ("S45-1", "f-table 절 제목과 표가 같은가", s45_1_one_version),
+    ("S45-2", "시안에 옛 배점·분모가 없는가", s45_2_mock_numbers),
 )
 
 
