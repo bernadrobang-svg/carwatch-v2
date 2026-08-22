@@ -132,6 +132,10 @@ class ListingRow:
     platform_trust_why: list = field(default_factory=list)
     # ★★ 네 묶음 막대 (개정 427 · V11-163).  ★ 목록의 시그니처다
     bars: list = field(default_factory=list)
+    # ★★ 감점 (개정 491 · 명령서 1-2 ⓑⓒ).  ★ 조용히 깎지 않는다 —
+    #   목록에 딱지로 · 막대 옆에 「막대 합 − 감점 = 등급 점수」로 낸다
+    penalty_won: int = 0          # ★ 상한을 먹인 뒤의 합 (음수)
+    penalty_labels: list = field(default_factory=list)
     # ★ 상세 조회가 안 끝난 매물 — 등급 옆에 「잠정」 (STEP 97)
     provisional: bool = False
     # ★ 등급 문구 — 「제외」는 등급 문자가 아니다 (개정 433)

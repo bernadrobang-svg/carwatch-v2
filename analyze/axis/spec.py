@@ -43,7 +43,9 @@ def _spec_table(ctx: AxisContext, comp: str):
 
 
 def analyze_spec(ctx: AxisContext, v: Verdict) -> None:
-    s, r = ctx.snapshot, ctx.policy.rule("spec")
+    # ★ 개정 505 가 HDA 를 지우면서 rule("spec") 을 쓰는 곳이 없어졌다 —
+    #   ★ 안 쓰는 이름을 남기면 ruff(F841)가 잡는다 (개발측 정리 08-23)
+    s = ctx.snapshot
     codes = _installed(ctx)
     has_codes = s.options_standard is not None or s.options_choice is not None
 

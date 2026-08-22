@@ -372,6 +372,7 @@ def run() -> int:
             bad += 1
     return bad
 
-
-if __name__ == "__main__":
-    raise SystemExit(1 if run() else 0)
+# ★ __main__ 블록을 두지 않는다 (V4-23) — 「import 만으로 아무 일도 안 일어나야
+#   한다.  실행은 run.py · tools/ 에서만」이 규격이다.
+#   ★ 돌리려면  python3.11 -c "from validate.v0_guide import run; \
+#                              raise SystemExit(1 if run() else 0)"

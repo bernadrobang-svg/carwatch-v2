@@ -617,7 +617,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      dealer, dstatus, first_seen, last_seen, dv, photos, sid,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
-     g_value, g_car, g_warranty, g_site, g_taste,
+     g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
      _site, _sell_type, _mismatch) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
@@ -637,13 +637,25 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
                        source=got[axis][2])
         else:
             one = chip(axis, None, True, labels)
+        # ★★ ⓓ (개정 491) — ★ 관문 칩을 감점과 맞춘다.
+        #   ★ 「골격 O」인데 골격 판금 감점이 붙은 매물이 있었다 (실측 08-22).
+        #   ★ 그 축에 감점이 붙었으면 ★ 「있음」이라 하지 않는다
+        if axis in _pen_axes(pen_json, root) and one.tone != TONE_BAD:
+            one = replace(one, tone=TONE_BAD,
+                          mark=labels.get("VALUE_MARKS", {}).get("0", "·"),
+                          label=f"{one.head or one.axis} 감점 있음")
         # ★ 축 칸에는 상태를 낸다.  점수를 내지 않는다 (STEP 149n)
         chips.append(replace(one, state=_axis_state(
             axis, one, dict(st, option_won=_opt_won,
                             inspection_word=_insp_word, points={
                 a: (v[0], v[3]) for a, v in got.items()}),
             calc_at, (got.get(axis) or (0, 0, ""))[2])))
-    _confirm = confirm_ratio(got, float(denom or _total_points()))
+    # ★★ ⓕ — 채점이 저장한 confirmed_points 를 쓴다.  ★ 화면이 다시 세지 않는다.
+    #   ★ 없으면(옛 판) 그때만 다시 센다
+    _den = float(denom or _total_points())
+    _confirm = ((float(conf_pts), float(conf_pts) / _den if _den else 0.0)
+                if conf_pts is not None
+                else confirm_ratio(got, _den))
     _fmt = json.loads(insp_fmt) if insp_fmt else None
     _has_w = bool(w_ext and w_ext != "0") or bool(w_deemed and w_deemed != "0")
     _trust, _why = platform_trust(_fmt, diag_car, _has_w)
@@ -684,6 +696,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 성능부와 보험이력이 어긋난다 (V3-50)
         record_mismatch=bool(_mismatch),
         listing_id=lid, grade=grade or NOT_RATED,
+        # ★★ 감점 (개정 491) — 상한을 먹인 뒤의 합과 문구
+        penalty_won=_pen_sum(pen_json),
+        penalty_labels=_pen_words(pen_json),
         # ★★ 네 묶음 막대 (개정 427).  ★ 갈래 이름은 scoring.json groups 가 정본
         # ★ 등급 문구 — 「제외」는 문자가 아니다 (개정 433).  config 가 정본
         grade_label=labels.get("GRADE_LABELS", {}).get(
@@ -789,6 +804,51 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ gone 은 목록에서 사라진 것이다.  팔렸다고 단정하지 않는다
         status_label=labels["STATUS_LABELS"].get(dstatus) if dstatus else None)
 
+
+
+def _pen_rows(raw) -> list:
+    """감점 원문 → [(키, 점수, 문구)].  ★ 못 읽으면 빈 것이다."""
+    if not raw:
+        return []
+    try:
+        got = json.loads(raw)
+    except (ValueError, TypeError):
+        return []
+    return [tuple(x) for x in got if isinstance(x, list) and len(x) == 3]
+
+
+def _pen_axes(raw, root: str = ".") -> set:
+    """감점이 붙은 축 (개정 491 ⓓ).
+
+    ★ 어느 감점이 어느 축인지는 ★ config/scoring.json penalty_axis 가 정본이다.
+      ★ 코드에 박지 않는다 (S14 · V4-13)
+    ★ 「cap:축」 줄은 되돌린 몫이라 ★ 세지 않는다 — 그 축은 이미 들어 있다
+    """
+    rows = _pen_rows(raw)
+    if not rows:
+        return set()
+    with open(os.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        where = json.load(f).get("penalty_axis") or {}
+    out = set()
+    for key, _p, _w in rows:
+        axis = where.get(key)
+        if axis:
+            out.add(axis)
+    return out
+
+
+def _pen_sum(raw) -> int:
+    """★ 상한을 먹인 뒤의 합 (개정 491).
+
+    ★ 「cap:축」 줄이 되돌려 준 몫까지 더한 값이다 — 그것이 실제로 깎인 값이다
+    """
+    return int(sum(p for _k, p, _w in _pen_rows(raw)))
+
+
+def _pen_words(raw) -> list:
+    """화면 문구.  ★ 「깎인 합 → 상한」 줄을 ★ 감추지 않는다 (개정 491)."""
+    return [{"key": k, "points": p, "label": w} for k, p, w in _pen_rows(raw)]
 
 
 def _view_cfg(key: str, root: str = ".") -> int:
@@ -1101,6 +1161,12 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         #   행마다 따로 조회하면 200행에 1,000쿼리다 — 같은 조인으로 받는다
         " s.group_value, s.group_car, s.group_warranty,"
         " s.group_site, s.group_taste,"
+        # ★★ 감점 (개정 491 · 명령서 1-2 ⓒ).  ★ 목록 한 행에 딱지를 낸다.
+        #   ★ 같은 조인으로 받는다 — 행마다 따로 조회하지 않는다 (V11-34)
+        " s.penalties_json,"
+        # ★★ 확인율은 ★ 채점이 낸 값 하나다 (개정 491 · 명령서 1-2 ⓕ).
+        #   ★ 화면이 다시 세면 /why 와 어긋난다 — 실측 「상세 100% vs /why 99.6%」
+        " s.confirmed_points,"
         # 사이트 배지 (50-multisite · V9-06) — 「K카 직영」까지 낸다
         " l.site, l.sell_type,"
         # ★ 성능부 ↔ 보험 어긋남 (V3-50).  조건은 store 에 하나만 둔다 —

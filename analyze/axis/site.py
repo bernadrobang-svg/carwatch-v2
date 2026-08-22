@@ -75,6 +75,12 @@ def warranty_grade(flags: dict, grades: list) -> tuple:
     """
     for one in grades:
         ok = True
+        # ★★ 개정 491 ⓔ — ★ 그 근거를 정말 받았는가.
+        #   ★ 미조회인데 만점을 주면 「누가 확인했는가」가 거짓이 된다.
+        #   ★ 실측 08-23 — 엔카진단++ 43건이 ★ 전부 진단 미조회였다
+        need_ok = one.get("needs_ok")
+        if need_ok and str(flags.get(need_ok) or "") != "ok":
+            continue
         for key, want in (one.get("when") or {}).items():
             have = flags.get(key)
             if not (bool(have) if want in (1, True) else str(have) == str(want)):
@@ -83,6 +89,27 @@ def warranty_grade(flags: dict, grades: list) -> tuple:
         if ok:
             return int(one.get("points") or 0), one.get("key") or "?"
     return 0, "no_warranty"
+
+
+def _seller_only(snapshot) -> bool:
+    """점검을 ★ 판매자가 올렸는가 (개정 300 · 491).
+
+    ★ 성능점검이 사진(IMAGE)뿐이고 표(TABLE)가 없으면 판매자가 올린 것이다
+    """
+    fmt = str(getattr(snapshot, "inspection_formats", "") or "")
+    return "IMAGE" in fmt and "TABLE" not in fmt
+
+
+def _one_step_down(grades: list, got: int, why: str) -> tuple:
+    """단계를 한 칸 낮춘다.  ★ 맨 아래면 그 아래는 0 이다."""
+    pts = [int(one.get("points") or 0) for one in grades]
+    keys = [one.get("key") or "?" for one in grades]
+    for i, one in enumerate(pts):
+        if one == got:
+            if i + 1 < len(pts):
+                return pts[i + 1], f"{keys[i + 1]}(판매자점검)"
+            return 0, "no_warranty(판매자점검)"
+    return got, why
 
 
 def _site(ctx: AxisContext, v: Verdict) -> None:
@@ -103,6 +130,11 @@ def _site(ctx: AxisContext, v: Verdict) -> None:
     if grades:
         # ★ 개정 428 — 단계다.  더하지 않는다
         got, why = warranty_grade(flags, grades)
+        # ★★ 개정 491 — ★ 판매자가 올린 점검이면 ★ 만점을 주지 않는다.
+        #   ★ 감점이 아니라 ★ 단계를 한 칸 낮춘다 (f-table 「사이트 검증」).
+        #   ★ 「누가 확인했는가」가 이 축의 뜻이다 — 딜러 말뿐이면 그만큼만이다
+        if _seller_only(s) and got:
+            got, why = _one_step_down(grades, got, why)
         put(v, SITE, got, PRIO_OBSERVED, why)
         return
     got, why = warranty_points(flags, items, flags.get(field))

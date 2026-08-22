@@ -199,6 +199,18 @@
           title="{{ a.label }} — 근거 {{ a.source }}">{{ a.label }}
           <b>{{ a.value | num }}/{{ a.max_points | num }}</b></a>{% endfor %}
       </div>
+      <!-- ★★ ⓐ 마이너스 줄과 합계 (개정 491 · 명령서 1-2 ⓐ)
+           ★ 「깎인 합 → 상한」 줄을 감추지 않습니다 -->
+      {% if v.penalties %}
+      <p class="pen">마이너스
+        {% for p in v.penalties %}<span class="chip-bad">{{ p.label }}
+          {{ p.points }}</span>{% endfor %}
+        <span class="muted">합 {{ v.penalty_total }}점 ·
+          ★ 막대 합 − 감점 = 등급 점수입니다</span></p>
+      {% endif %}
+      {% if !v.penalties %}
+      <p class="muted">마이너스 — 뺄 것이 없습니다.</p>
+      {% endif %}
       <p class="note">누르면 그 조건으로 걸러집니다.
         전체 근거는 <a href="/why/{{ v.listing_id }}">/why/{{ v.listing_id }}</a>
         에도 그대로 있습니다 — ★ 주소는 살립니다.</p>

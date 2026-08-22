@@ -92,7 +92,9 @@
   <strong>{{ v.earned | num }}</strong> / {{ v.denominator | num }}
   <span class="muted">분모는 늘 만점입니다.
     못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298) ·
-    등급은 취향을 뺀 {{ v.grade_base | num }} 기준
+    <!-- ★ 개정 431 이 「갈래를 등급에서 빼는 것」을 폐기했습니다.
+         ★ 분모는 늘 총점입니다 — 취향도 등급에 들어갑니다 -->
+    등급도 같은 {{ v.grade_base | num }} 기준
     {{ v.grade_earned | num }}점입니다</span>
 </p>
 <p class="muted">

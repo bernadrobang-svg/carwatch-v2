@@ -1072,10 +1072,16 @@ def login(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str =
             return _login_again(conn, account,
                                 "이름이나 비밀번호가 맞지 않습니다",
                                 root, csrf, flash_key)
-        return _open_session(conn, acc, req)
+        # ★★ 개정 491 ⓗ — ♡ 를 누르고 로그인한 것이면 ★ 그 자리에서 담는다
+        return _open_session(conn, acc, req,
+                             watch=form.get("watch_listing_id") or "")
 
+    # ★★ 개정 491 ⓗ — ♡ 를 누르고 온 것이면 ★ 그 매물을 들고 간다.
+    #   ★ 로그인하면 담겨 있어야 한다.  「로그인하세요」만 내면 누른 것이 사라진다
+    _want = str((req.get("query") or {}).get("listing_id") or "")
     ctx = {"no_account": account_count(conn) == 0,
-           "must_change": getattr(account, "must_change_secret", False)}
+           "must_change": getattr(account, "must_change_secret", False),
+           "watch_listing_id": _want if _want.isdigit() else ""}
     return page(conn, account, "로그인", "login.html", ctx, csrf=csrf,
                 root=root, flash_key=flash_key)
 
@@ -1095,7 +1101,7 @@ def _login_again(conn, account, why: str, root: str, csrf: str,
                 root=root, flash_key=flash_key)
 
 
-def _open_session(conn, acc, req=None):
+def _open_session(conn, acc, req=None, watch: str = ""):
     """세션을 열고 쿠키를 준다.  ★ 쿠키에는 session_id 만 담는다.
 
     ★ req 를 받는 이유는 하나다 — 지금이 HTTPS 인지 알아야
@@ -1111,6 +1117,21 @@ def _open_session(conn, acc, req=None):
     sid = open_session(conn, acc, datetime.now(timezone.utc))
     cfg = load_web_config(ROOT)
     target = "/login" if acc.must_change_secret else "/"
+    # ★★ 개정 491 ⓗ — 담으려던 매물이 있으면 ★ 담고 관심으로 보낸다.
+    #   ★ 실패해도 로그인은 살린다 — 담기다 막혀 로그인이 안 되면 더 나쁘다
+    if watch.isdigit() and not acc.must_change_secret:
+        from errors import AlreadyWatched
+        from store.core import vehicle_of
+        from store.watch import watch_add as _add
+
+        try:
+            vid = vehicle_of(conn, int(watch))
+            if vid is not None:
+                _add(conn, vid, int(watch), _now(),
+                     account_id=acc.account_id)
+        except (AlreadyWatched, ValueError, KeyError):
+            pass
+        target = "/watch"
     return HTTP_SEE_OTHER, {
         "Location": target,
         # ★ HTTPS 로 들어왔으면 Secure 를 붙인다.  평문이면 붙이지 않는다 —

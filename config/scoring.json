@@ -661,14 +661,14 @@
     "_note": "★ 축 합계를 다 더한 뒤에 뺀다 (개정 322). ★ 개정 469 — 총점 910 에 맞춰 675 기준값을 ×1.348 로 키웠다",
     "rental_history": -67,
     "not_join_ratio": -54,
-    "seller_inspection": -27,
     "no_site_grade": -40,
     "frame_swap": -108,
     "frame_sheet": -54,
     "cluster_swap": -81,
     "illegal_structure": -54,
     "lien": -40,
-    "not_join_ratio_limit": 0.3
+    "not_join_ratio_limit": 0.3,
+    "_note_491": "★ 개정 491 — seller_inspection 은 ★ 감점이 아니다. ★ 판매자가 올린 점검이면 warranty.site 의 ★ 단계를 낮춘다 (f-table 「사이트 검증」). ★ 같은 사실을 만점으로 주고 감점으로 또 빼면 앞뒤가 안 맞는다"
   },
   "bonus": {
     "battery_soh": 30
@@ -707,5 +707,16 @@
       }
     },
     "default": 3500
+  },
+  "penalty_axis": {
+    "_note": "★ 개정 491 감점 상한 — 축별로 묶어 합산한 뒤 ★ 그 축 배점에서 자른다. ★ null 은 겹치는 축이 없어 상한을 두지 않는다 (계기판 교체)",
+    "frame_swap": "state.frame",
+    "frame_sheet": "state.frame",
+    "illegal_structure": "state.frame",
+    "rental_history": "history.usage",
+    "not_join_ratio": "history.not_join",
+    "lien": "history.lien",
+    "no_site_grade": "warranty.site",
+    "cluster_swap": null
   }
 }

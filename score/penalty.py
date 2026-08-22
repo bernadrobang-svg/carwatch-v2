@@ -19,20 +19,22 @@ BATTERY_SOH = "battery_soh"
 RENTAL = "rental_history"
 NO_SITE_GRADE = "no_site_grade"
 NOT_JOIN = "not_join_ratio"
-SELLER_INSPECTION = "seller_inspection"
 FRAME_SHEET = "frame_sheet"
 FRAME_SWAP = "frame_swap"
 LIEN = "lien"
+# ★ 상한을 걸어 되돌려 준 몫.  ★ 「깎인 합 → 상한」을 화면이 그대로 낸다 (개정 491)
+CAP_PREFIX = "cap:"
 
 # 화면 문구.  ★ 무엇을 왜 뺐는지가 보여야 한다
 LABELS = {
     RENTAL: "렌트·영업용 이력",
     NO_SITE_GRADE: "사이트 우수등급 없음",
     NOT_JOIN: "자차 미가입 기간이 김",
-    SELLER_INSPECTION: "점검을 판매자가 등록",
     FRAME_SHEET: "골격 판금",
     FRAME_SWAP: "골격 용접·교환",
     LIEN: "압류·저당 있음",
+    "illegal_structure": "불법 구조변경",
+    "cluster_swap": "계기판 교체",
 }
 
 
@@ -59,12 +61,9 @@ def penalties_of(verdict, policy, snapshot) -> list:
     # 사이트 우수등급 — ★ 「확인 못 함」과 「없음」을 가른다 (개정 323)
     if "warranty.site" not in excluded and values.get("warranty.site") == 0:
         add(NO_SITE_GRADE)
-    # 점검을 판매자가 올렸다 (개정 300).
-    # ★ 개정 365 로 warranty.inspection 축이 없어졌다 —
-    #   근거는 원문(inspection_formats)이지 축이 아니다.  스냅샷에서 본다
-    fmt = str(getattr(snapshot, "inspection_formats", "") or "")
-    if "IMAGE" in fmt and "TABLE" not in fmt:
-        add(SELLER_INSPECTION)
+    # ★★ 개정 491 — 「점검을 판매자가 올렸다」는 ★ 감점이 아니다.
+    #   ★ warranty.site 의 **단계를 낮춘다** (analyze/axis/site.py).
+    #   ★ 만점을 주고 같은 사실로 또 깎으면 앞뒤가 안 맞는다 (f-table 「사이트 검증」)
     # ★ 압류·저당 — 있으면 소유권 이전이 막힌다 (F-scoring 마이너스)
     if verdict.sources.get("history.lien") == "detail_seizing" \
             and values.get("history.lien") == 0:
@@ -121,3 +120,47 @@ def bonuses_of(policy, snapshot) -> list:
         return []
     got = min(got, int(full))
     return [(BATTERY_SOH, got, f"배터리 SOH {float(soh):g}%")]
+
+
+def cap_penalties(items: list, policy) -> list:
+    """★ 감점 상한 (개정 491 · 마스터 확정).
+
+    ★ 뜻 — 그 축에 문제가 있으면 ★ 그 축을 통째로 잃되
+           ★ 다른 축에서 번 점수까지 갉아먹지 않는다
+    ★ 축별로 ★ 묶어 합산한 뒤 ★ 그 축 배점에서 자른다.  ★ 하나씩 자르지 않는다
+    ★ 자른 것을 ★ 감추지 않는다 — 되돌린 몫을 「cap:축」 줄로 함께 낸다.
+      그래서 화면이 「골격 −162 → 상한 −43」을 그대로 낼 수 있다
+    ★ 겹치는 축이 없는 감점(계기판 교체)은 ★ 상한을 두지 않는다
+    """
+    where = {k: v for k, v in (policy.raw.get("penalty_axis") or {}).items()
+             if not k.startswith("_")}
+    comps = policy.raw.get("components") or {}
+    by_axis: dict = {}
+    for key, pts, _label in items:
+        axis = where.get(key)
+        if axis:
+            by_axis.setdefault(axis, []).append(pts)
+    out = list(items)
+    for axis, got in sorted(by_axis.items()):
+        raw = sum(got)
+        one = comps.get(axis)
+        full = one if isinstance(one, (int, float)) else (one or {}).get("points")
+        if full is None:
+            continue
+        cap = -abs(int(full))
+        if raw >= cap:                 # ★ 상한 안이면 그대로 둔다
+            continue
+        back = cap - raw               # ★ 되돌려 주는 몫 (양수)
+        out.append((f"{CAP_PREFIX}{axis}", back,
+                    f"{AXIS_WORDS.get(axis, axis)} {raw} → 상한 {cap}"))
+    return out
+
+
+# 상한 줄에 쓸 축 이름.  ★ 코드에 배점을 박지 않는다 — 이름만이다
+AXIS_WORDS = {
+    "state.frame": "골격",
+    "history.usage": "용도",
+    "history.not_join": "자차 미가입",
+    "history.lien": "압류·저당",
+    "warranty.site": "사이트 검증",
+}

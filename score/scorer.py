@@ -152,6 +152,8 @@ def _bonuses(policy: ScoringPolicy, snapshot) -> list:
 def _penalties(v: Verdict, policy: ScoringPolicy, snapshot) -> list:
     if snapshot is None:
         return []
-    from score.penalty import penalties_of
+    # ★ 개정 491 — 축별로 묶어 합산한 뒤 그 축 배점에서 자른다.
+    #   ★ 자른 것을 감추지 않는다 — 되돌린 몫이 「cap:축」 줄로 함께 온다
+    from score.penalty import cap_penalties, penalties_of
 
-    return penalties_of(v, policy, snapshot)
+    return cap_penalties(penalties_of(v, policy, snapshot), policy)

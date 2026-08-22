@@ -499,7 +499,11 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
 # ⑤ 사이트 보증의 근거가 되는 칸 (개정 365).
 # ★ config/sites.json 의 warranty_items 가 이 이름들을 가리킨다
 SITE_WARRANTY_FIELDS = ("platform_verified", "warranty_deemed",
-                        "warranty_extend", "sell_type", "diagnosis_car")
+                        "warranty_extend", "sell_type", "diagnosis_car",
+                        # ★★ 개정 491 — ★ 진단을 정말 받았는가.
+                        #   ★ 미조회인데 만점을 주면 「누가 확인했는가」가 거짓이 된다
+                        #   실측 08-23: warranty_extend=1 인 43건이 ★ 전부 미조회였다
+                        "diagnosis_status")
 
 
 # ── vehicle_id 결합 (STEP 30) ────────────────────────────────────────
