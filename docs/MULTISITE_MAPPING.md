@@ -1,7 +1,14 @@
 # 사이트 → `core_listing` 칼럼 매핑
 
-`SPEC-2026.08.22-r483` · 2026-08-22
+`SPEC-2026.08.22-r484` · 2026-08-22
 **★ 이 문서가 사이트 확장의 매핑 정본이다. 앞 사이트 규격 문서의 「우리 축」 표는 ★ 축 대응이지 칼럼이 아니다.**
+
+```
+★ 다루는 사이트 여섯 — 엔카(지금) · 기아 CPO · KB차차차 · 현대 인증 · K카 · 헤이딜러
+★ K카는 ★ 상세까지 들어왔다 (개정 484 · 마스터가 조사분을 주셨다)
+   ★ 값 API 는 `mapi.kcar.com` 이고 ★ 그 호스트에는 robots 문서가 없다
+   ★ 우리는 ★ 이미 같은 호스트에서 목록을 받고 있다.  ★ 가이드가 목록·상세에 다른 잣대를 댔다
+```
 
 ```
 ★★ 가이드 자백 — 개정 464·473·480·481 에서 ★ 스키마를 안 보고 매핑을 썼다
@@ -38,7 +45,7 @@
 | `source_id` | carid | `id` (12392) | `carSeq` | `data-id` (GJJ260317025652) | `i_sCarCd` (EC61366001) |
 | `price_current_won` | ×10000 | `car.price` **원 단위** | 판매가 ×10000 | 판매가 ×10000 | `prc` ×10000 |
 | `price_detail_won` | 상세가 | `discount.discountedPrice` | — | 할인 뒤 가격 | — |
-| `price_origin_won` | `origin_total_won` | ★ **없다** | ★ **비율만 준다** | ★ **없다** | ★ **없다** |
+| `price_origin_won` | `origin_total_won` | ★ **없다** | ★ **비율만 준다** | ★ **없다** | ★ **없다** (`npriceFullType` 은 ★ 판매가다 — **착각 주의**) |
 | `year_month` | `yearMonth` | `car.firstRegisteredOn`→`YYYYMM` | 「18년11월」 파싱 | 「24년 07월」 파싱 | `mfgDt` (201801) |
 | `form_year` | 년형 | `car.modelYear` | 「18년형」 | 「25년형」 | `prdcnYr` |
 | `mileage_km` | `mileage` | `car.drivingDistance` | 「43,110km」 | 「20,565km」 | `milg` |
@@ -169,6 +176,72 @@ insuranceRecord.damaged — 0이 22 · 1이 6 · 2가 2   changeOfUse — 0이 1
 
 ---
 
+# 2b. ★★ K카 상세 — `mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd=`
+
+**★ 마스터가 조사분을 주셨다 (`outputs/sites/_K카상세_20260822.md`). 개정 468 「직영이라 믿고 준다」가 ★ 실측으로 바뀐다.**
+
+```
+GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={번호}  → 200 · 80KB · 평문 JSON · 51블록 · 1,050필드
+★ 헤더·토큰·쿠키 없다 · 0.5초 · ★ 목록과 달리 암호화도 없다
+★★ 함정 — ★ 없는 매물번호도 ★ 200 에 ★ 3,186B 빈 껍데기를 준다
+   ★ KB 봇페이지 2,759B 와 같은 꼴이다 (오판 #43).  ★ 크기로 갈라라.  ★ 「없음」으로 저장하지 마라
+```
+
+| `core_*` 칼럼 | K카 상세 필드 | 표본 값 |
+|---|---|---|
+| **`core_listing.vin`** | ★ `vin` | `KMTGA41CBSU251014` |
+| `core_listing.plate_hash` | `cno` (해시해서) | 211러2161 |
+| `core_listing.seizing_cnt`·`pledge_cnt` | `master.szrMogeYn` | `N` → 0 |
+| `core_listing.warranty_power_month`·`_km` | ★ `nwcaGurnteEngeSurvDt`·`…Milg` | **2029-06-16 · 10만km** |
+| `core_listing.warranty_body_month`·`_km` | ★ `nwcaGurnteGnrlSurvDt`·`…Milg` | 〃 |
+| `core_listing.options_choice_json` | ★ `optList` (45개 · 이름) | HUD · 360어라운드뷰 · 통풍시트 |
+| `core_listing.model_catalog_key` | ★ `carJatoOptList.vehicleId` (JATO 연번) | ★ 신차가 매칭 열쇠 후보 · **미검증** |
+| **`core_record.owner_change_cnt`** | `carhistory.ownrChngCnt` | 1 |
+| `core_record.owner_change_dates_json` | ★ `carOwnrChngHistList` | 신조→매매업자 · 평택 50대 |
+| `core_record.accident_my_cost` | ★ `carHistoryAccList` 부품·공임·도장 | 85만 (8.2+24.0+52.6) |
+| `core_record.total_loss_cnt` | `carhistory.gnrlTtlsAcdtCnt`·`rbrTtlsAcdtCnt` | 0 |
+| `core_record.flood_total_cnt` | `carhistory.fldgAcdtCnt` | 0 |
+| `core_record.use_business`·`use_gov` | `rentHistYn`·`bizuseHistYn`·`instnHistYn` | N·N·N |
+| `core_record.not_join_json` | `carhistory.rsltCd`·`insrHistIqyEn` | 000 · 1 (조회됨) |
+| `core_inspection.inspection_vin` | `master.vinCnfmYn`·`rvo.vinStatCd` | 확인 |
+| `core_inspection.inspection_recall` | ★ `master.recallObjYn` | **1 — 리콜 대상** |
+| `core_inspection.inspection_car_state` | ★ `master.dshbExchgYn` | **1 — 계기판 교체** |
+| `core_inspection.inspection_comment` | `acdtHistComnt` · `smplReprYn` | 「무사고」 |
+| `core_inspection.inspection_valid_to` | `efctDt` | 20280616 |
+| `core_inspection.inspection_issued_at` | `dgnosDt` | 20260624 |
+| `core_inspection.inspection_image_json` | ★ `/bc/car-insp/photo/cm?i_sCarCd=` | ★ **사진 경로만** |
+| ★ `state.consumable` (소모품) | ★ `tireDtlList` 4짝 잔량·규격·생산주차 | 5.6/5.5/6.2/6.2mm · 24년 |
+
+```
+★★ 얻는 것 — ★ 실측 근거 495 → 755점.  ★ 「믿음으로 준 것」이 220 → 36 (직영 사이트검증만)
+★★ ★ VIN 이 온다 — ★ 교차 사이트 중복 제거가 풀린다 (7장 ② 가 닫힌다)
+★ 제조사 보증 잔여를 ★ K카가 직접 준다.  ★ 연식으로 계산할 필요가 없다
+★ 새 경고 둘 — ★ `recallObjYn`(리콜 대상) · `dshbExchgYn`(계기판 교체)
+   → ★ `listing_warning` 에 넣는다.  ★ 점수에 합산하지 않는다 (V3-21·22·23)
+
+★ 못 채우는 것 155점
+  골격 40 · 외판 26 · 누유 14 = 80  → ★ 성능점검이 ★ 사진뿐이다.  부위별 값이 JSON 에 없다
+  신차가 75                       → ★ 없다.  ★ `npriceFullType` 은 ★ 판매가다.  ★ 착각 주의
+★ 부위별 등급은 ★ 사진 OCR 없이는 못 낸다.  ★ 지어내지 않는다
+```
+
+---
+
+# 2c. 헤이딜러 — 목록만 (토큰 미해결)
+
+| `core_listing` 칼럼 | 헤이딜러 |
+|---|---|
+| `site` | `'heydealer'` |
+| `source_id` | `/market/cars/{code}` 의 code (`2yM82GlW`) |
+| 사고 | 「무사고」 · 「단순교환 무사고」 · 「사고 구분」 · 「보험 내차피해」 |
+| 배터리 | ★ 「배터리 정상」 → SOH 가점(+30) 재료 |
+
+```
+★ `authorization: Bearer` 토큰이 필요하다.  ★ 발급 경로 미확정 — ★ 개발측에 넘기지 않는다
+```
+
+---
+
 # 3. ★ 보증 — 사이트마다 꼴이 다르다
 
 | 사이트 | 원문 | `warranty_*_month` · `_km` 로 넣는 법 |
@@ -245,6 +318,109 @@ insuranceRecord.damaged — 0이 22 · 1이 6 · 2가 2   changeOfUse — 0이 1
 
 ---
 
+# 5a. ★★ 정규화 — 여섯 사이트를 한 표에 담을 때 어긋나는 곳
+
+**★ 매핑은 「어디에 넣나」다. 정규화는 「같은 뜻인가」다. ★ 아래가 정규화가 필요한 자리다.**
+
+## ① 단위 — ★ 저장은 늘 원(WON)
+
+| 사이트 | 원문 | 파서에서 |
+|---|---|---|
+| 엔카 · KB · 현대 · K카 | **만원** | ★ ×10000 |
+| 기아 CPO | ★ **원** | 그대로 |
+
+```
+필수  `price_unit` = 'won' 고정.  ★ 사이트 단위를 칼럼에 남기지 않는다
+검산  ★ 100만 미만 가격이 있으면 ★ 환산을 빠뜨린 것이다
+```
+
+## ② 날짜 — ★ `year_month` 는 YYYYMM 6자리
+
+```
+엔카      "202409"          → 그대로
+기아 CPO  "2024-02-19"      → "202402"   ★ 일(日)은 버린다
+현대      "24년 07월(25년형)" → "202407" + form_year=2025
+KB        "18년11월(18년형)" → "201811" + form_year=2018
+K카       mfgDt "201801"     → 그대로
+금지  ★ 사이트 표기를 그대로 넣는 것.  ★ 「18년11월」은 값이 아니다
+```
+
+## ③ ★ 「없음」 · 「모름」 · 「안 받았다」 — ★ 셋을 가른다
+
+| 뜻 | 저장 | 보기 |
+|---|---|---|
+| **없음** (확인해 보니 0) | ★ **0** | KB 「보증종료」 · 기아 `damaged=0` · K카 `szrMogeYn='N'` |
+| **모름** (사이트가 안 줌) | ★ **NULL** | K카 골격·외판 · 기아 압류저당 |
+| **안 받았다** (수집 실패) | ★ **NULL + `row_status`** | KB 봇페이지 · K카 빈 껍데기 |
+
+```
+★★ 이것이 가장 중요하다 (개정 289·434 · 오판 #43)
+필수  KB 응답 ★ 10KB 미만 또는 「로봇 여부 확인」 → ★ 수집 실패.  ★ 재시도 3회
+필수  K카 상세 ★ 3,186B 빈 껍데기 → ★ 수집 실패.  ★ 「없음」으로 저장 금지
+필수  기아 `warranties` 에 ★ 없는 kind → ★ NULL.  ★ 0 이 아니다 (전기차 EG·EM)
+```
+
+## ④ ★ 사고 — 사이트마다 세는 것이 다르다
+
+| 사이트 | 필드 | 무엇을 세나 |
+|---|---|---|
+| 엔카 | `accidents[]` | 보험 처리 건 |
+| 기아 CPO | `insuranceRecord.damaged` | 보험 내차피해 건수 |
+| 기아 CPO | ★ `performanceRecord.panelOrExchange` | ★ **사고로 인한** 판금·교환 |
+| 기아 CPO | ★ `merchandising` 판금·도장 | ★ **상품화하며 손본 것** — ★ 사고 아님 |
+| KB | 「보험사고정보 사고없음」 | 판정 문구 |
+| 현대 | 「내차피해이력 1건」 | 건수 |
+| K카 | `carHistoryAccList` + `acdtHistComnt` | 금액 분해 + 문구 |
+
+```
+필수  `accident_my_cnt` = ★ 내 차 피해 건수 · `accident_other_cnt` = 상대 차
+필수  ★ 기아 `merchandising` 의 판금·도장은 ★ 사고에 넣지 마라 (개정 483)
+필수  ★ 문구(「무사고」)를 ★ 건수 0 으로 바꾸지 마라 — ★ `inspection_comment` 에 원문으로
+```
+
+## ⑤ 옵션 — ★ 통일하지 않는다. `dict_option_code` 가 받는다
+
+```
+엔카      숫자 "1039"                   기아  영문 "SUNROOF"
+KB·현대   한글 「선루프(일반)」            K카   파이프 "ABS|내비게이션|HUD"  → ★ 쪼개서 각각
+필수  `dict_enum(site, axis='option', value=code, mapped='sunroof')` 로 우리 축에 잇는다
+필수  ★ `mapped` 가 비면 ★ 0점 + 「미확인」.  ★ 짐작으로 채우지 마라
+금지  ★ 문자열 비교로 맞추는 것 (「선루프」 in name) — 「파노라마 선루프」가 섞인다
+```
+
+## ⑥ ★ 보증 — 잔여를 주는 곳과 계산해야 하는 곳
+
+| 사이트 | 원문 | 정규화 |
+|---|---|---|
+| 기아 CPO | `remainingPeriod`·`remainingDistance` | ★ 그대로 |
+| 현대 | 「2년 10개월 · 79,435km 남음」 | ★ 개월로 환산 |
+| K카 | `nwcaGurnte…SurvDt` (종료일) | ★ 오늘과 빼서 개월 |
+| 엔카 | 종료일 | 〃 |
+| KB | 「보증종료」 판정만 | ★ 0 |
+
+```
+필수  `warranty_body_*` · `warranty_power_*` ★ 네 칼럼에 담는다.  ★ 새 칼럼 금지
+필수  ★ EV 는 `PT`(동력전달)로 동력계를 잰다.  ★ 엔진 보증이 없다고 0 을 주지 마라
+```
+
+## ⑦ ★ 교차 사이트 동일차 — ★ VIN 이 있는 쪽만 묶는다
+
+```
+K카      ★ `vin` 을 준다 (개정 484)
+그 밖    ✘ VIN 없음
+필수  `vehicle_identity` 로 잇되 ★ VIN 이 있는 쪽끼리만.  ★ 없으면 ★ 합치지 않는다
+금지  ★ 차종+연식+주행+색으로 「같은 차겠지」 하는 것.  ★ 짐작이다
+```
+
+## ⑧ 경고 — ★ 점수에 합산하지 않는다
+
+```
+K카   ★ `recallObjYn`(리콜 대상) · `dshbExchgYn`(계기판 교체)
+필수  ★ `listing_warning` 에 넣는다.  ★ 점수에 합산하지 않고 목록에서 빼지도 않는다 (V3-21·22·23)
+```
+
+---
+
 # 6. ★ 새로 필요한 칼럼 — ★ 둘뿐이다
 
 ```
@@ -268,8 +444,9 @@ insuranceRecord.damaged — 0이 22 · 1이 6 · 2가 2   changeOfUse — 0이 1
 ① `target_key` — 사이트마다 차종을 뭐라 부르는지 ★ 대응표가 없다
    엔카 `ModelGroup` · 기아 `modelCode`(SU) · 현대 `mdlGrpList`(1171) · K카 `modelGrpNm`
    → ★ `dict_enum(axis='target')` 로 잇는다.  ★ facet 을 받아 채운다.  ★ 지어내지 마라
-② `vehicle_id` — ★ 같은 차가 여러 사이트에 있을 때 묶을 근거가 없다
-   ★ 차대번호를 주는 사이트가 없다.  ★ 지금은 ★ 합치지 않는다 (개정 464)
+② `vehicle_id` — ★ 풀렸다 (개정 484)
+   ★ K카가 ★ `vin` 을 준다 (`KMTGA41CBSU251014`).  ★ `core_listing.vin` · `vehicle_identity` 로 잇는다
+   ★ 다른 사이트는 아직 VIN 이 없다 — ★ VIN 이 있는 쪽끼리만 묶는다.  ★ 없으면 합치지 않는다
 ③ 표본 — ★ 기아 ★ 30건으로 늘려 검증했다 (2a장).  ★ 현대 1건 · K카 1건은 ★ 아직이다
    ★ 둘도 20건 이상으로 늘려 다시 대조해야 한다 (오판대장 모양 ④)
 ```
