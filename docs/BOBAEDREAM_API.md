@@ -3,6 +3,12 @@
 `SPEC-2026.08.23-r531` · 2026-08-23 · **마스터가 주소를 주셨다 (모바일 `m.` 이다)**
 
 ```
+★★★ 호스트 — ★ `https://m.bobaedream.co.kr`
+★ 모바일이다.  `www.` 는 다른 화면이다
+```
+
+
+```
 ★ 가이드가 ★ PC 주소(`www.bobaedream.co.kr/mycar/mycar_view.php`)로 두드려 ★ 81B 를 받고
   ★ 「상세를 못 봤다」로 적었다 (개정 526).  ★ 주소가 틀린 것이었다
 ★★ ★ 모바일 주소 `m.bobaedream.co.kr/mycar/mview/{no}` 는 ★ 200 · 82KB 로 열린다

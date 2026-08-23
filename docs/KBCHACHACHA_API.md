@@ -9,7 +9,7 @@
 
 | 무엇 | 방식 | 경로 | 실측 |
 |---|---|---|---|
-| 목록 | `GET` | `/public/search/list.empty?page=N` | 200 · **쪽당 40건** · 쪽마다 다름 |
+| 목록 | `GET` | `https://www.kbchachacha.com/public/search/list.empty?page=N` | 200 · **쪽당 40건** · 쪽마다 다름 |
 | 상세 | `GET` | `/public/car/detail.kbc?carSeq=N` | 200 · 245~275KB |
 | KB진단 첨부 | `POST` | `/public/diag/car/attach/list.json` | `diagCarSeq=…&carSeq=…` |
 | 제조사 facet | `GET` | `/public/search/carMaker.json?page=1` | 200 |
