@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v3 상세 · 관심 · 비교 시안 — CarWatch</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+--text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;--mono:ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.brand{color:var(--amber);font-weight:600;text-decoration:none}
+.nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
+h2{font-size:14px;font-weight:600;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+.note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+font-size:12px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mono{font-family:var(--mono);font-size:12.5px}
+.j{font-size:11.5px;border-radius:4px;padding:2px 8px;border:1px solid var(--line2);display:inline-block;margin:0 4px 4px 0}
+.j.ok{background:#12331f;border-color:#1f5c33;color:var(--ok)}
+.j.no{background:#331616;border-color:#5c1f1f;color:var(--no)}
+.j.un{background:var(--surface2);color:var(--faint)}
+.exit{display:flex;gap:8px;flex-wrap:wrap}
+.exit .btn{flex:1;text-align:center}
+
+.dhead{display:flex;gap:16px;align-items:flex-start}
+.photo{position:relative;flex:0 0 320px}
+.pimg{width:320px;height:180px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);
+display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:12px;cursor:pointer}
+.pnum{position:absolute;right:8px;bottom:8px;background:rgba(15,17,20,.85);border:1px solid var(--line2);
+border-radius:4px;padding:1px 8px;font-size:11px;color:var(--dim)}
+.site{position:absolute;top:8px;left:8px;background:rgba(15,17,20,.85);border:1px solid var(--line2);
+border-radius:4px;padding:1px 6px;font-size:10.5px;color:var(--dim)}
+.gr{font-size:24px;font-weight:700}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--dim);font-weight:400;width:96px}
+td.win{background:#12331f;color:var(--ok)}
+td.lose{background:#331616;color:var(--no)}
+
+.wcard{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);
+border-radius:10px;padding:10px;margin-bottom:8px;align-items:center}
+.wthumb{width:128px;height:72px;border-radius:6px;background:var(--surface2);border:1px solid var(--line);
+display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint);flex:0 0 128px}
+.pick{width:22px;height:22px;border-radius:4px;border:1px solid var(--line2);background:var(--surface2);
+color:var(--amber);cursor:pointer;flex:0 0 22px;font-size:12px}
+.pick.on{background:var(--amber);color:#111;border-color:var(--amber)}
+.heart{width:26px;height:26px;border-radius:13px;background:var(--surface2);border:1px solid var(--amber);
+color:var(--amber);cursor:pointer;flex:0 0 26px;font-size:13px}
+</style></head><body>
+<div class="wrap">
+
+<div class="top">
+  <a class="brand" href="#">CarWatch</a>
+  <div class="nav"><a href="#">매물</a><a href="#">관심</a><a href="#">현황</a><a href="#">관리</a></div>
+</div>
+
+<h2 style="border:0;padding-top:14px">상세 — 와이드</h2>
+<div class="note">사진 320×180 · 눌러서 다음 장 · 판정이 위로 · 나가는 문 넷이 위아래 둘 다</div>
+
+<div class="sec">
+  <div class="dhead">
+    <div class="photo">
+      <div class="pimg">사진 320 × 180 — 눌러서 다음</div>
+      <div class="site">엔카</div><div class="pnum">1 / 10</div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:15px">KOLEOS_HEV · 1.5 E-TECH 에스프리 알핀</div>
+      <div class="note" style="margin:2px 0 10px">매물 166 · 외장 쥐색 / 내장 검정색 계열</div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span class="gr">S</span><span class="note" style="margin:0">1위 · 742.1 / 910</span>
+      </div>
+      <div class="mono" style="color:var(--dim)">차량 89 · 값 80 · 보증 53 · 취향 76</div>
+      <div style="margin-top:10px"><button class="btn">요약</button> <button class="btn">상세 ▾ 24축</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec exit">
+  <button class="btn">목록으로</button><button class="btn">♥ 관심 담기</button>
+  <button class="btn">⇄ 비교하기</button><button class="btn go">엔카에서 보기 ↗</button>
+</div>
+
+<div class="g2">
+  <div class="sec"><div class="lbl">값</div>
+    현재가 <b>3,260만</b> · 시세대비 −11.8%<br>
+    신차가 4,506만 · 신차대비 −33.6%</div>
+  <div class="sec"><div class="lbl">총 얼마 드나</div>
+    차량가 2,990만 ＋ 이전등록비 209만<br>
+    총 <b>3,199만</b> · 월 39만 추정</div>
+</div>
+
+<div class="sec"><div class="lbl">옵션 — 코드는 내지 않는다</div>
+  파퓰러 패키지 510만 · 드라이빙 어시스턴스 패키지Ⅱ 150만<br>
+  <span class="note" style="margin:0">합 660만 · 신차가의 14.6% · 고속도로 주행보조 있음 · 중간</span></div>
+
+<div class="g2">
+  <div class="sec"><div class="lbl">보증</div>
+    사이트 — 엔카진단 ＋ 엔카보증++<br>
+    제조사 — 일반 2027-08 · 동력계 2029-02</div>
+  <div class="sec"><div class="lbl">상태 — 누르면 팝업</div>
+    <span class="j ok">사고 OK</span><span class="j ok">골격 OK</span><span class="j ok">용도 OK</span>
+    <span class="j un">타이어 —</span><span class="j un">차 키 —</span><span class="j un">틴팅 —</span>
+    <div class="note" style="margin:4px 0 0">보험 내역 · 차량 상세부 판정</div></div>
+</div>
+
+<div class="g2">
+  <div class="sec"><div class="lbl">가격 추이</div>게시 8월 16일 · 7일째 · 3,050 → 2,990만 (1회 내림)</div>
+  <div class="sec"><div class="lbl">딜러</div>점보모터스 · 경남 창원 · 매물 41대 · 정직도 표본 부족</div>
+</div>
+
+<div class="sec exit">
+  <button class="btn">목록으로</button><button class="btn">♥ 관심 담기</button>
+  <button class="btn">⇄ 비교하기</button><button class="btn go">엔카에서 보기 ↗</button>
+</div>
+
+<h2>관심 — 목록과 같은 카드 · 채운 하트만</h2>
+<div class="note">네모로 비교할 것을 고른다 · 필터는 매물과 같은 것이 걸린다</div>
+
+<div class="sec" style="display:flex;justify-content:space-between;align-items:center">
+  <span>관심 10건 · 3대 골랐습니다</span><button class="btn go">고른 3대 비교하기 ▸</button></div>
+
+<div class="wcard">
+  <button class="pick on">✓</button><button class="heart">♥</button>
+  <div class="wthumb">사진</div>
+  <div style="flex:1;min-width:0">
+    <div><b>S</b> · 1위 · 742.1 / 910 <span class="mono" style="color:var(--dim)">89 80 53 76</span></div>
+    <div>3,260만 · <span style="color:var(--ok)">시세보다 400만 싸다</span></div>
+    <div class="note" style="margin:0">KOLEOS_HEV 에스프리 알핀 · 2024-12 · 55,763km · 7일째 · 1회 내림</div>
+  </div>
+  <button class="btn">상세 ▸</button>
+</div>
+
+<div class="wcard">
+  <button class="pick on">✓</button><button class="heart">♥</button>
+  <div class="wthumb">사진</div>
+  <div style="flex:1;min-width:0">
+    <div><b>A</b> · 4위 · 688.0 / 910 <span class="mono" style="color:var(--dim)">84 77 53 70</span></div>
+    <div>3,250만 · <span style="color:var(--ok)">시세보다 140만 싸다</span></div>
+    <div class="note" style="margin:0">KOLEOS_HEV 아이코닉 · 2024-08 · 61,200km · 22일째 · 변동 없음</div>
+  </div>
+  <button class="btn">상세 ▸</button>
+</div>
+
+<div class="wcard">
+  <button class="pick">□</button><button class="heart">♥</button>
+  <div class="wthumb">사진</div>
+  <div style="flex:1;min-width:0">
+    <div><b>B</b> · 12위 · 601.5 / 910 <span class="mono" style="color:var(--dim)">80 61 22 68</span></div>
+    <div>3,330만 · <span style="color:var(--no)">시세보다 110만 비싸다</span></div>
+    <div class="note" style="margin:0">KOLEOS_HEV 에스프리 알핀 · 2023-11 · 41,020km · 113일째 · 변동 없음</div>
+  </div>
+  <button class="btn">상세 ▸</button>
+</div>
+
+<div class="sec"><div class="lbl">아래에 남는 절 셋</div>
+  최종 후보 — 별을 단 매물의 가격과 상태 변동을 따로 좇는다<br>
+  조건 알림 — 매물이 아니라 조건을 지켜본다<br>
+  진행 — 전화했는지 · 보러 갔는지 · 점수에 반영하지 않는다</div>
+
+<h2>비교 — 화면 전환 · 2~5대</h2>
+<div class="note">줄마다 가장 나은 칸에 초록 · 나쁜 칸에 붉은색 · 같으면 색을 안 켠다 · 필터는 두지 않는다</div>
+
+<div class="sec" style="padding:0;overflow:auto">
+<table>
+<tr><th></th>
+  <td>♥ <b>KOLEOS</b> 2024-12<br><span class="note" style="margin:0">사진</span></td>
+  <td>♥ <b>KOLEOS</b> 2024-08<br><span class="note" style="margin:0">사진</span></td>
+  <td>♥ <b>KOLEOS</b> 2023-11<br><span class="note" style="margin:0">사진</span></td></tr>
+<tr><th>트림</th><td>에스프리 알핀</td><td class="win">아이코닉</td><td>에스프리 알핀</td></tr>
+<tr><th>등급 · 총점</th><td class="win">S · 742.1</td><td>A · 688.0</td><td>B · 601.5</td></tr>
+<tr><th>신차가</th><td>4,506만</td><td>4,720만</td><td>4,180만</td></tr>
+<tr><th>현재가 · 시세차</th><td class="win">3,260만 −400</td><td>3,250만 −140</td><td class="lose">3,330만 ＋110</td></tr>
+<tr><th>총 얼마</th><td class="win">3,199만</td><td>3,462만</td><td>3,548만</td></tr>
+<tr><th>옵션</th>
+  <td>파퓰러 510만<br>드라이빙 어시Ⅱ 150만<br><b>합 660만</b> · 14.6%<br>고속도로 주행보조 있음 · 중간</td>
+  <td class="win">파퓰러Ⅰ 510만<br>드라이빙 어시Ⅱ 150만<br>빌트인 캠 150만<br><b>합 810만</b> · 17.2%<br>고속도로 주행보조 있음 · 풀옵션</td>
+  <td class="lose">빌트인 캠 150만<br><b>합 150만</b> · 3.6%<br>고속도로 주행보조 없음 · 깡통</td></tr>
+<tr><th>제조사 보증</th><td>2027-08 · 2029-02</td><td>2027-03 · 2028-09</td><td class="lose">만료 · 2028-01</td></tr>
+<tr><th>사이트 보증</th><td class="win">엔카진단 ＋ 보증++</td><td>엔카진단만</td><td class="lose">없음</td></tr>
+<tr><th>상태 · 주행</th><td>사고 OK · 55,763km</td><td>사고 OK · 61,200km</td><td class="lose">사고 × · 41,020km</td></tr>
+<tr><th>등록 · 변동</th><td class="win">7일째 · 1회 내림</td><td>22일째 · 변동 없음</td><td>113일째 · 변동 없음</td></tr>
+<tr><th>할 일</th>
+  <td>★ 최종 후보 · 순위 1<br><button class="btn">상세</button> <button class="btn go">원문 ↗</button></td>
+  <td>최종 후보로 · 순위 2<br><button class="btn">상세</button> <button class="btn go">원문 ↗</button></td>
+  <td>♥ 눌러 빼기 · 순위 —<br><button class="btn">상세</button> <button class="btn go">원문 ↗</button></td></tr>
+</table>
+</div>
+
+<h2>지켜야 하는 것</h2>
+<div class="note">
+★ 절 차례는 판단하는 순서다.  바꾸지 않는다 (V11-159)<br>
+★ 나가는 문 넷은 ★ 위아래 둘 다 둔다 — 어디서든 나갈 수 있어야 한다<br>
+★ 옵션은 ★ 패키지 이름과 값을 편다.  ★ 코드를 내지 않는다.  ★ 고속도로 주행보조가 든 패키지를 앞에<br>
+★ 보증은 ★ 사이트와 제조사를 가른다.  ★ 제조사는 점수가 아니라 날짜로 낸다<br>
+★ 상태의 「—」는 「없다」가 아니라 「확인 못 했다」다 (개정 325)<br>
+★ 비교에는 ★ 필터를 두지 않는다 — 견줄 것이 사라진다.  ★ 빼기와 더하기로 바꾼다<br>
+★ 등록일과 가격 변동은 ★ 네 화면에 ★ 같은 모양으로 둔다 (마스터 확정 08-24)<br>
+★ 딜러 절은 ★ 상세에 남긴다 (마스터 확정 08-24) — ★ 목록 카드에는 두지 않는다
+</div>
+
+</div></body></html>
