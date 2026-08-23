@@ -376,5 +376,65 @@
       }
     },
     "_grade_note": "★ eye 인증 36. ★ 25건 중 12건뿐이다 — 없으면 주지 않는다 (개정 520)"
+  },
+  "bobaedream": {
+    "label": "보배드림",
+    "status": "pending",
+    "order": 10,
+    "multi_instance": false,
+    "warranty_evidence": null,
+    "warranty_items": [],
+    "_spec": "docs/BOBAEDREAM_API.md",
+    "_warranty_note": "★ 사이트 보증 없음 — 개인·딜러 혼재.  ★ 「무사고」는 판매자 글이라 안 쓴다 (규격 1a)",
+    "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
+    "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
+  },
+  "reborncar": {
+    "label": "리본카",
+    "status": "pending",
+    "order": 11,
+    "multi_instance": false,
+    "warranty_evidence": null,
+    "warranty_items": [],
+    "_spec": "docs/REBORNCAR_API.md",
+    "_warranty_note": "★ 「안심환불 8일」은 ★ 보증이 아니다 (25/25 동일).  ★ `warranty.site` 를 안 채운다",
+    "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
+    "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
+  },
+  "lexus_certified": {
+    "label": "렉서스 인증중고차",
+    "status": "pending",
+    "order": 12,
+    "multi_instance": false,
+    "warranty_evidence": null,
+    "warranty_items": [],
+    "_spec": "docs/LEXUS_CERTIFIED_API.md",
+    "_warranty_note": "★ `car_info.warranty` 가 ★ 만료일＋상한km 를 준다 (22건 · 10가지) — ★ 배점은 f-table 이 정한다",
+    "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
+    "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
+  },
+  "volvo_selekt": {
+    "label": "볼보 셀렉트",
+    "status": "pending",
+    "order": 13,
+    "multi_instance": false,
+    "warranty_evidence": null,
+    "warranty_items": [],
+    "_spec": "docs/VOLVO_SELEKT_API.md",
+    "_warranty_note": "★ 사고·보증이 ★ 딜러 소개글이다 (12건 중 2건) — ★ 축에 안 쓴다.  ★ 차량번호를 안 줘 짝짓지 않는다",
+    "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
+    "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
+  },
+  "bmw_bps": {
+    "label": "BMW 프리미엄 셀렉션",
+    "status": "pending",
+    "order": 14,
+    "multi_instance": false,
+    "warranty_evidence": null,
+    "warranty_items": [],
+    "_spec": "docs/BMW_BPS_API.md",
+    "_warranty_note": "★ 바바리안 딜러 한 곳.  ★ 「사고유무 26/26 무」는 ★ 안 갈려 축에 안 쓴다",
+    "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
+    "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
   }
 }
