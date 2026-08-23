@@ -656,7 +656,9 @@ def _query_key_check(run_id: str):
         if not (isinstance(spec, dict) and "site_query" in spec):
             continue
         for site, sq in spec["site_query"].items():
-            for k in sorted(set(sq) - KNOWN_QUERY_KEYS):
+            # ★ `_` 로 시작하는 키는 ★ 메모다 (`_확인` 등) — ★ 조건이 아니다
+            real = {k for k in sq if not str(k).startswith("_")}
+            for k in sorted(real - KNOWN_QUERY_KEYS):
                 bad.append(f"{key}.{site}.{k}")
     return result(C["V1-10"], run_id, 0, bad or 0, not bad, bad)
 

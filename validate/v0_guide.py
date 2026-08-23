@@ -456,6 +456,138 @@ def s43_3_version_matches() -> tuple[bool, str]:
     return True, f"버전과 이력이 r{max(nums)} 로 같다"
 
 
+
+# ── S46-21 · S46-22 — ★ 시안이 ★ 기계에 걸리게 한다 (명령서 20-5) ────────
+# ★ 뿌리 — ★ 08-20 뒤 ★ 개발 기록 열둘에 ★ `ref/screens` 언급이 ★ 0회다.
+#   ★ 검사가 시안을 안 보니 ★ 가이드가 매번 표로 옮겨야 했고 ★ 빠뜨리면 조용히 사라졌다.
+#   ★ 상세 사진이 ★ 정확히 그 자리였다
+SCREENS = ROOT / "ref" / "screens"
+TEMPLATES = ROOT / "web" / "templates"
+# ★ 시안 ↔ 실제 화면.  ★ 짝이 있는 것만 절 차례를 잰다
+SIAN_PAIRS = (("v3_detail_시안.html", "detail.html"),)
+# ★ 화면이 아니라 ★ 메모인 <h2>.  ★ 세지 않는다 (실측 08-24 — v3 넷에 다 있다)
+SIAN_NOTE_H2 = ("지켜야 하는 것",)
+
+
+def _h_tags(text: str, tag: str) -> list:
+    """`<h2>`·`<h3>` 알맹이를 ★ 나온 차례대로.  ★ 꾸밈은 지운다.
+
+    ★★ 주석을 ★ 먼저 지운다 — ★ 개발 주석 안에 `<h3>` 라는 글자가 있으면
+       ★ 거기서부터 ★ 진짜 `</h3>` 까지 통째로 잡힌다 (실측 08-24 — 내가 그랬다)
+    """
+    text = re.sub(r"<!--.*?-->", "", text or "", flags=re.S)
+    out = []
+    for got in re.findall(rf"<{tag}[^>]*>(.*?)</{tag}>", text, re.S):
+        said = re.sub(r"<[^>]+>", "", got)
+        said = re.sub(r"\s+", " ", said).strip()
+        if said:
+            out.append(said)
+    return out
+
+
+def s46_21_one_screen_per_file() -> tuple[bool, str]:
+    """★ 시안 한 파일에 ★ 화면이 둘 이상이면 실패 (명령서 20-5).
+
+    ★ 한 파일에 셋을 담으니 ★ 어느 표가 어느 화면인지 알 수 없었다 (오판 84)
+    ★ `<h2>` 로 화면을 센다
+    """
+    if not SCREENS.is_dir():
+        return False, "ref/screens 가 없다"
+    bad, old = [], []
+    for q in sorted(SCREENS.glob("*.html")):
+        got = [x for x in _h_tags(_read(q), "h2")
+               if not any(x.startswith(n) for n in SIAN_NOTE_H2)]
+        if len(got) <= 1:
+            continue
+        said = f"{q.name} — 화면 {len(got)}개 ({' · '.join(got)})"
+        # ★ 지금 판(v3)만 ★ 실패다.  ★ 옛 판(v2)은 ★ 세어서 알린다 —
+        #   ★ 가이드가 v3 를 화면마다 갈랐다 (개정 631).  ★ v2 는 손대지 않는다 (규칙 2)
+        (bad if q.name.startswith("v3_") else old).append(said)
+    if bad:
+        return False, f"{len(bad)}개에 화면이 둘 이상 — " + " / ".join(bad[:3])
+    n = len(list(SCREENS.glob("*.html")))
+    tail = f" · ★ 옛 판(v2) {len(old)}개는 여러 화면이다 (가이드 몫)" if old else ""
+    return True, f"지금 판 시안이 한 파일에 한 화면이다 (전체 {n}개){tail}"
+
+
+def s46_22_section_order() -> tuple[bool, str]:
+    """★ 시안의 절 차례와 ★ 실제 화면의 `<h3>` 차례가 같은가 (명령서 20-5).
+
+    ★ V11-159 「절 차례는 바꾸지 마라」는 ★ 실제 상세의 열 절 차례를 뜻한다 —
+      ★ 시안 표의 행 차례가 아니다 (개정 631)
+    ★ 시안은 ★ `<div class="lbl">1 판정</div>` 꼴로 절을 적는다.  ★ 번호를 뗀다
+    """
+    bad, seen = [], 0
+    for sian, page in SIAN_PAIRS:
+        q, t = SCREENS / sian, TEMPLATES / page
+        if not q.is_file() or not t.is_file():
+            bad.append(f"{sian} 또는 {page} 가 없다")
+            continue
+        # ★ 번호와 ★ 별표는 ★ 꾸밈이다 — ★ 양쪽에서 똑같이 뗀다
+        def _bare(x: str) -> str:
+            return re.sub(r"^[★\s\d]+", "", x).split("—")[0].strip()
+
+        want = [_bare(x) for x in
+                re.findall(r'<div class="lbl">([^<]+)</div>', _read(q))]
+        got = [_bare(x) for x in _h_tags(_read(t), "h3")]
+        seen += 1
+        if not want:
+            bad.append(f"{sian} 에 절이 없다 (<div class=\"lbl\">)")
+            continue
+        if len(want) != len(got):
+            bad.append(f"{page} 절 {len(got)}개 · 시안 {len(want)}개")
+            continue
+        for i, (a, b) in enumerate(zip(want, got, strict=True), 1):
+            if a != b:
+                bad.append(f"{page} {i}번째 — 시안 「{a}」 · 화면 「{b}」")
+    if bad:
+        return False, " / ".join(bad[:3])
+    return True, f"시안 {seen}쌍의 절 차례가 화면과 같다"
+
+
+
+# ── S46-23 · S46-24 — ★ 엔카에서도 받는다 (명령서 21장 · 개정 632) ──────
+TARGETS = ROOT / "config" / "targets.json"
+
+
+def _targets() -> dict:
+    got = json.loads(_read(TARGETS) or "{}")
+    return {k: v for k, v in got.items()
+            if isinstance(v, dict) and "collect_group" in v}
+
+
+def s46_23_site_query_filled() -> tuple[bool, str]:
+    """★ `site_query` 가 빈 차종이 있으면 실패 (명령서 21장 ④).
+
+    ★ 비면 ★ `collect_groups` 가 ★ 조용히 건너뛴다 — ★ 그 차종은 영영 안 들어온다
+    ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다.  ★ 브라우저 수집으로 받는다
+    """
+    got = _targets()
+    if not got:
+        return False, "config/targets.json 에 차종이 없다"
+    bad = [k for k, v in got.items() if not (v.get("site_query") or {})]
+    if bad:
+        return False, f"{len(bad)}종이 site_query 가 비었다 — " + " · ".join(bad[:6])
+    return True, f"차종 {len(got)}종이 전부 site_query 를 가졌다"
+
+
+def s46_24_facet_unconfirmed() -> tuple[bool, str]:
+    """★ 「_확인」이 남은 차종 수를 센다.  ★ 0 이 되면 끝이다 (명령서 21장 ④).
+
+    ★ `ModelGroup` 을 ★ 이름으로 넣어 둔 것이라 ★ facet 으로 맞는지 봐야 한다
+    ★ 확인 안 하고 ★ 「_확인」 줄만 지우는 것이 ★ 지어내는 것이다 (금지 6)
+    """
+    left = []
+    for key, spec in _targets().items():
+        for site, sq in (spec.get("site_query") or {}).items():
+            if any(str(k).startswith("_확인") for k in sq):
+                left.append(f"{key}.{site}")
+    if left:
+        return False, (f"★ facet 미확인 {len(left)}종 — " + " · ".join(left[:6])
+                       + "  (「facet 만」으로 확인한 뒤 그 줄을 지운다)")
+    return True, "facet 미확인 차종이 없다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -471,6 +603,10 @@ CHECKS = (
     ("S45-3", "규격에 옛 총점이 없는가", s45_3_spec_totals),
     ("S45-4", "배점표가 config 에서 생성한 것과 같은가", s45_4_table_generated),
     ("S45-5", "규격이 배점을 손으로 적지 않는가", s45_5_no_axis_scores),
+    ("S46-21", "시안 한 파일에 화면이 하나인가", s46_21_one_screen_per_file),
+    ("S46-22", "시안 절 차례가 화면과 같은가", s46_22_section_order),
+    ("S46-23", "빈 site_query 가 없는가", s46_23_site_query_filled),
+    ("S46-24", "facet 미확인 차종이 없는가", s46_24_facet_unconfirmed),
 )
 
 

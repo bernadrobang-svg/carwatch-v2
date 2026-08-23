@@ -267,8 +267,13 @@ def _photo_urls(photos_json, root: str) -> tuple:
         base = _j.load(f)["photo_base_url"]
     # ★ 번호를 여기서 붙인다.  템플릿 엔진에 loop.index 가 없다 —
     #   없는 것을 쓰면 앵커가 전부 id="p" 가 되어 :target 이 안 듣는다
-    return tuple({"n": i, "url": u}
-                 for i, u in enumerate(photo_urls(photos_json, base), 1))
+    # ★★ `next` 와 `total` 도 여기서 낸다 (명령서 13-1 ⑫) —
+    #   ★ 상세는 ★ 눌러서 다음 장으로 넘긴다.  ★ 템플릿이 셈을 못 한다 (V11-04)
+    #   ★ 마지막 장의 다음은 ★ 첫 장이다 — ★ 끝에서 막히지 않게
+    got = list(photo_urls(photos_json, base))
+    n = len(got)
+    return tuple({"n": i, "url": u, "next": (i % n) + 1, "total": n}
+                 for i, u in enumerate(got, 1))
 
 
 def _purchase_costs(conn, listing_id: int, site, price_won, target_key,

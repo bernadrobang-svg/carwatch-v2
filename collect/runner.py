@@ -107,24 +107,36 @@ def collect_groups(targets: dict[str, dict], site: str) -> list[CollectGroup]:
     expected 산출은 target 수가 아니라 이 목록의 길이로 센다 (5장 STEP 53).
     묶지 않으면 같은 매물을 두 번 받고 두 target 에 중복 적재된다.
     """
-    bucket: dict[str, list[str]] = {}
-    query: dict[str, dict] = {}
+    # ★★ 묶는 열쇠는 ★ 이름이 아니라 ★ 쿼리다 (개정 632 · 마스터 「한 사이트 전담으로 묶지 마라」).
+    #   ★ 실측 08-24 — 수입 8종이 ★ `collect_group="multi"` 로 한 이름이 되자
+    #     ★ 먼저 온 BMW X3 쿼리 ★ 하나만 남고 ★ 나머지 일곱이 조용히 사라졌다
+    #   ★ 같은 쿼리끼리만 묶는다 — ★ G80_25T·G80_EV 는 쿼리가 같아 그대로 한 묶음이다
+    bucket: dict[tuple, list[str]] = {}
+    query: dict[tuple, dict] = {}
+    label: dict[tuple, str] = {}
     for key, spec in targets.items():
         if site not in spec["site_query"]:
             continue
-        g = spec["collect_group"]
-        bucket.setdefault(g, []).append(key)
-        merged = dict(spec["site_query"][site])
+        merged = {k: v for k, v in spec["site_query"][site].items()
+                  if not str(k).startswith("_")}
         merged["Hidden"] = "N"
         merged["MultiViewHidden"] = "N"
         if spec.get("year_range"):
             merged["Year_range"] = spec["year_range"]
         if spec.get("price_range"):
             merged["Price_range"] = spec["price_range"]
-        query.setdefault(g, merged)
+        gk = (spec["collect_group"],
+              tuple(sorted((k, str(v)) for k, v in merged.items())))
+        bucket.setdefault(gk, []).append(key)
+        query.setdefault(gk, merged)
+        # ★ 이름이 겹치면 ★ 무엇으로 갈렸는지 이름에 적는다 — ★ 화면이 그것을 낸다
+        said = spec["collect_group"]
+        if said == "multi":
+            said = f"multi:{merged.get('ModelGroup') or key}"
+        label.setdefault(gk, said)
     return [
-        CollectGroup(g, site, query[g], tuple(sorted(keys)))
-        for g, keys in sorted(bucket.items())
+        CollectGroup(label[gk], site, query[gk], tuple(sorted(keys)))
+        for gk, keys in sorted(bucket.items(), key=lambda kv: label[kv[0]])
     ]
 
 

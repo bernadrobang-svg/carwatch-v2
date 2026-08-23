@@ -8,6 +8,37 @@
 <h1>{{ row.target_label }} <small>{{ row.trim }} · 매물 {{ v.listing_id }}</small></h1>
 <div class="detail on">
 
+<!-- ★ 머리 — ★ 절 번호가 없다.  ★ 아래 1절부터 센다 (v3_detail_시안).
+     ★ 사진 320 × 180 · 눌러서 다음 장 · 「1 / N」 (13-1 ⑫)
+     ★ 여기에 <h3> 를 두지 않는다 — ★ 절 차례가 바뀐다 (V11-159) -->
+<div class="sec">
+  <div class="dhead">
+    <div class="photo">
+      {% if v.photos %}
+      <div class="pwrap">
+        {% for p in v.photos %}<a id="dp{{ p.n }}" class="one" href="#dp{{ p.next }}"
+          title="누르면 다음 장입니다"><img
+          src="{{ p.url }}" width="320" height="180" loading="lazy"
+          alt="매물 사진 {{ p.n }}"><span class="pnum">{{ p.n }} / {{ p.total }}</span></a>{% endfor %}
+        <div class="psite">{{ v.site_badge }}</div>
+      </div>
+      {% endif %}
+      {% if !v.photos %}
+      <div class="pimg">사진 없음</div>
+      <div class="psite">{{ v.site_badge }}</div>
+      {% endif %}
+    </div>
+    <div class="dhead-txt">
+      <div class="dhead-name">{{ row.target_label }} · {{ row.trim }}</div>
+      <p class="note">매물 {{ v.listing_id }} · 외장 {{ row.color_ext }}
+        / 내장 {{ row.color_int }}</p>
+      {% if v.photos %}<p class="muted">사진 {{ v.photos | count }}장 —
+        눌러서 다음 장. 사진은 원문을 그대로 참조합니다 —
+        우리가 내려받지 않습니다.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
 <!-- ① 판정 ──────────────────────────────────────────────────────── -->
 <div class="sec" id="sec-1">
   <h3>판정</h3>

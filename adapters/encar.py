@@ -214,6 +214,11 @@ class EncarAdapter:
         # ★ 아는 키만 조립하고, 모르는 키가 있으면 중단한다.
         #   지정한 조건이 조용히 사라지면 안 된다 (V1-10).
         #   실제로 Model 을 넣었다가 조용히 빠져 잘못된 URL 이 나갔다
+        # ★★ `_` 로 시작하는 키는 ★ 메모다 — ★ 조건이 아니다.
+        #   ★ 이 저장소의 config 는 ★ 어디서나 `_note`·`_ref`·`_확인` 으로 메모를 단다
+        #   ★ 실측 08-24 — 가이드가 `site_query.encar._확인` 을 넣어 ★ V1-10 이 8건 걸렸다
+        site_query = {k: v for k, v in site_query.items()
+                      if not str(k).startswith("_")}
         unknown = sorted(set(site_query) - KNOWN_QUERY_KEYS)
         if unknown:
             raise PolicyError(
