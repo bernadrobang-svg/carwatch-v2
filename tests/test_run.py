@@ -709,7 +709,8 @@ def test_wrapper_args() -> None:
           f"직접={('1종' in direct)} 껍데기={('1종' in wrapped)}")
 
     full = run_dry(["tools/menu.py", "dry"])
-    check("범위를 안 주면 전 차종", "차종 10종" in full)
+    # ★ 개정 604 — 수입 여덟 등록으로 10 → 18종 (명령서 2-2)
+    check("범위를 안 주면 전 차종", "차종 18종" in full)
 
     bad = run_dry(["tools/menu.py", "test", "--target", "X"])
     check("★ 인자를 안 받는 명령은 거부", "인자를 받지 않는다" in bad, bad[:60])

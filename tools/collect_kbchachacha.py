@@ -4,6 +4,8 @@
     python3.11 tools/collect_kbchachacha.py --count          총 매물 수·마지막 쪽만 센다
     python3.11 tools/collect_kbchachacha.py --pages N        N쪽까지 받아 저장
     python3.11 tools/collect_kbchachacha.py --probe N        상세 N건을 재 봇차단 비율을 낸다
+    python3.11 tools/collect_kbchachacha.py --narrow [--detail N] [--interval S]
+                                                            좁혀 받아 상세까지 넣는다
 
 지시서   `docs/KBCHACHACHA_API.md` · `docs/TARGET_KEY_MAP.md`
 근거     ★★ 봇 차단 가르기가 ★ 핵심이다 (명령서 3-2)
@@ -267,6 +269,11 @@ def main() -> int:
         if "--dry" in args:
             print("★ --dry 라 저장하지 않았다")
             return 0
+        # ★ 간격 — ★ 오래 이어 부르면 ★ 사이트가 막는다 (실측 08-23 — 100건 뒤 전건 차단).
+        #   ★ 규격 1-1 「한 번에 다 받으려 하지 마라.  여러 회차에 나눠 채운다」
+        gap = opt("--interval", 0)
+        if gap:
+            cfg = dict(cfg, interval_sec=gap)
         return store_details(adapter, cfg, [i for _g, ids in by_group
                                             for i in ids],
                              opt("--detail", 0))

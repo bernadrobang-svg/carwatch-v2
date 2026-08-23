@@ -147,7 +147,12 @@ def test_collect_groups() -> None:
     t = load_targets(os.path.join(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))), "config", "targets.json"))
     g = collect_groups(t, "encar")
-    check("target 10 → collect_group 8", len(t) == 10 and len(g) == 8, f"{len(t)}/{len(g)}")
+    # ★ 개정 604 (명령서 2-2) — ★ 수입 여덟을 등록해 ★ 10 → 18종이 됐다.
+    #   ★ 그런데 ★ 엔카 collect_group 은 ★ 8 그대로다 —
+    #   ★ 새 여덟은 ★ `site_query` 가 비어 ★ 엔카 수집에 안 끼어들기 때문이다.
+    #   ★ 이 줄이 ★ 그것을 지킨다 (엔카 `ModelGroup` 을 facet 으로 못 확인했다)
+    check("target 18 → collect_group 8", len(t) == 18 and len(g) == 8,
+          f"{len(t)}/{len(g)}")
     g80 = [x for x in g if x.group_key == "encar:G80"][0]
     check("G80 두 target 이 한 그룹", g80.target_keys == ("G80_25T", "G80_EV"))
     my = [x for x in g if x.group_key == "encar:MODEL_Y"][0]
