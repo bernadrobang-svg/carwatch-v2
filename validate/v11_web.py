@@ -495,7 +495,7 @@ C = {
                      "★ 「후보」와 「매물」이 둘 다 「조건에 맞는 것을 "
                      "등급순으로」라 화면이 두 벌이었다",
                      KIND_CONTRACT),
-    "V11-158": Check("V11", "V11-158", "관리로 내린 화면이 여전히 열림",
+    "V11-158": Check("V11", "V11-158", "내린 화면이 열리고 ★ 들어가는 문이 있음",
                      FATAL, "run",
                      "개정 427 — ★ 화면을 지우지 않는다. 들어가는 문만 "
                      "바꾼다. ★ 메뉴에서 뺀 김에 화면까지 죽이면 "
@@ -2357,11 +2357,20 @@ def _menu_shape_checks(conn, rid):
             continue
         if int(code) >= 400:
             bad158.append(f"{path} — {code} 가 난다")
+    # ★★ 개정 551 — ★ 「열리는가」만 보면 ★ 들어가는 문이 없어도 통과한다.
+    #   ★ 실측 08-23 — 여섯이 다 200 인데 ★ 어디에서도 안 눌렸다.
+    #     마스터 「관리 페이지들이 모두 어디로 간 거야」
+    #   ★ 그래서 ★ 「관리 메뉴 표에 있는가」를 함께 본다 (명령서 1-2)
+    from report.screens.admin import MENU
+
+    doors = {m[1] for m in MENU}
+    bad158 += [f"{p} — 열리기는 하는데 ★ 관리 메뉴에 없다 (들어가는 문이 없다)"
+               for p in cfg["demoted_menu"] if p not in doors]
     return [
         result(C["V11-157"], rid, f"<= {limit}", f"{len(got)}개",
                not bad157, bad157[:4]),
         result(C["V11-158"], rid, f"{len(cfg['demoted_menu'])}화면",
-               f"{len(cfg['demoted_menu']) - len(bad158)}개 열린다",
+               f"{len(cfg['demoted_menu']) - len(bad158)}개 열리고 문이 있다",
                not bad158, bad158[:6]),
     ]
 

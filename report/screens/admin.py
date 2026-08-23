@@ -39,9 +39,10 @@ class AdminMenuItem:
 
 
 # ★★ 개정 427 — 상단에서 내린 화면 여섯.  ★ 지우지 않는다.  여기로 들어간다
-#   ★ MENU 에 넣지 않는다 — MENU 는 13장 관리 화면 표에 매여 있고
-#     그 표에는 이 여섯이 없다 (규칙 2 로 개발측이 문서를 못 고친다).
-#     ★ 따로 두고 /admin 현황에서 낸다.  작업기록에 여쭀다
+#   ★★ 개정 551 — ★ MENU 에 ★ 넣는다 (명령서 1-1 ⓑ).
+#     전에는 「13장 표에 없다」며 안 넣었는데 ★ 그래서 ★ 들어가는 문이 하나도 없었다.
+#     ★ 마스터 지시 08-23 「관리 페이지들이 모두 어디로 간 거야」
+#   ★ 이름은 web/app.py LABELS 가 정본이다 — ★ 지어내지 않는다
 GROUP_SCREENS = "화면"
 
 MENU: tuple[tuple[str, str, str, str], ...] = (
@@ -61,6 +62,13 @@ MENU: tuple[tuple[str, str, str, str], ...] = (
     (GROUP_EXPLORE, "/admin/tools", "관리 도구", "STEP 135"),
     (GROUP_EXPLORE, "/admin/docs", "문서 뷰어", "STEP 136"),
     (GROUP_EXPLORE, "/admin/requests", "개발 요청", "STEP 137"),
+    # ★★ 상단에서 내린 화면 여섯 (개정 427 · 551).  ★ 여기가 들어가는 문이다
+    (GROUP_SCREENS, "/recommend", "후보", "개정 427"),
+    (GROUP_SCREENS, "/compare", "비교", "개정 427"),
+    (GROUP_SCREENS, "/market", "시세", "개정 427"),
+    (GROUP_SCREENS, "/dealers", "딜러", "개정 427"),
+    (GROUP_SCREENS, "/reports", "리포트", "개정 427"),
+    (GROUP_SCREENS, "/notready", "미판정", "개정 427"),
 )
 
 

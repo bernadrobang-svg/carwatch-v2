@@ -453,13 +453,20 @@ def test_admin_screens() -> None:
     #   적어 두면 규격이 화면을 늘릴 때마다 시험이 먼저 막는다 (실측 08-16)
     want = _spec_menu_paths()
     got = {m.path for m in home.menu}
-    check(f"메뉴가 13장 표와 같다 ({len(want)}개)", got == want,
-          f"코드 {len(got)} · 표 {len(want)}"
-          + (f" · 표에만 {sorted(want - got)}" if want - got else "")
-          + (f" · 코드에만 {sorted(got - want)}" if got - want else ""))
+    # ★★ 개정 551 — ★ 13장 표 열여섯에 ★ 「화면」 묶음 여섯이 더 붙었다.
+    #   ★ 상단에서 내린 화면 여섯(demoted_menu)의 ★ 들어가는 문이다 (명령서 1-1 ⓑ).
+    #   ★ 마스터 「관리 페이지들이 모두 어디로 간 거야」 — ★ 문이 없었다
+    #   ★ 그래서 ★ 「같은가」가 아니라 ★ 「표가 다 있고 · 더 붙은 것이 그 여섯인가」를 본다
+    import json as _j
+    with open(os.path.join(ROOT, "config", "web.json"), encoding="utf-8") as f:
+        demoted = set(_j.load(f)["demoted_menu"])
+    check(f"메뉴에 13장 표 {len(want)}개가 다 있다", want <= got,
+          f"표에만 {sorted(want - got)}" if want - got else "다 있다")
+    check("★ 더 붙은 것은 ★ 내린 화면 여섯뿐이다 (개정 551)",
+          got - want == demoted, str(sorted(got - want)))
     check("★ 전 화면에 근거 STEP 링크", all(m.step_ref for m in home.menu))
-    check("메뉴 3분류", {m.group for m in home.menu}
-          == {"", "운영", "조정", "탐색"})
+    check("메뉴 4분류 — 운영 · 조정 · 탐색 · ★ 화면", {m.group for m in home.menu}
+          == {"", "운영", "조정", "탐색", "화면"})
     check("잠금 없음", not any(m.locked for m in home.menu))
 
     for who in (ANONYMOUS, user):

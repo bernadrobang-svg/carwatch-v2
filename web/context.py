@@ -45,6 +45,10 @@ class Banner:
     kind: str          # unclassified · pending · halted
     text: str
     action: str = ""
+    # ★★ 개정 551 — ★ 「(/admin/collect)」를 ★ 글자로만 적어 두면 못 누른다.
+    #   ★ 마스터가 그것을 누르러 들어오신다 (명령서 1-1 ⓒ)
+    href: str = ""
+    href_label: str = ""
 
 
 @dataclass(frozen=True)

@@ -35,6 +35,8 @@
 <div class="banner banner-{{ b.kind }}">
   <strong>{{ b.text }}</strong>
   {% if b.action %}<span class="banner-action">{{ b.action }}</span>{% endif %}
+  <!-- ★ 주소를 글자로만 적으면 못 누릅니다 (개정 551) -->
+  {% if b.href %}<a class="btn" href="{{ b.href }}">{{ b.href_label }}</a>{% endif %}
 </div>
 {% endfor %}
 

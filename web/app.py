@@ -154,16 +154,19 @@ def banner_of(n: dict, account) -> Banner | None:
             "stale",
             f"엔카 목록이 {stale:.0f}일째 갱신되지 않았습니다 — "
             "그동안의 가격 변동을 알 수 없습니다",
-            "브라우저 수집을 눌러 주십시오  (/admin/collect)")
+            "브라우저 수집을 눌러 주십시오",
+            href="/admin/collect", href_label="브라우저 수집")
     if n["unclassified"]:
         return Banner("unclassified", "등록부에 미분류가 있습니다",
-                      "판정에 쓰는 경로면 멈춥니다  (/notready)")
+                      "판정에 쓰는 경로면 멈춥니다",
+                      href="/notready", href_label="미판정 보기")
     if n["scores"] == 0:
         return Banner("pending", "판정 결과가 아직 없습니다",
                       "S9~S10 을 실행하면 등급이 나옵니다")
     if n["not_rated"] == n["scores"]:
         return Banner("pending", "분모가 부족해 등급을 매기지 않았습니다",
-                      "축별 미확정을 확인하십시오  (/notready)")
+                      "축별 미확정을 확인하십시오",
+                      href="/notready", href_label="미판정 보기")
     return None
 
 
