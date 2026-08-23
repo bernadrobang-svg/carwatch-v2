@@ -31,7 +31,7 @@ from parse.hyundai_cert.mapping import (  # noqa: E402
     parse_card,
     parse_detail_all,
 )
-from store.dictionary import target_key_of  # noqa: E402
+from parse.target_rules import target_by_rules  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 SITE_CODE = "hyundai_cert"
@@ -72,11 +72,14 @@ def target_of(parsed: dict) -> str | None:
     ★★ 개정 540 — ★ 쓰는 자리는 `config/dictionaries/target_map.json` 하나다.
       ★ 전에는 sites.json 에도 같은 표가 있었다 — ★ 두 곳이면 어긋난다
     ★ 표에 없으면 ★ None 이다 — 「차종 미정」이고 ★ 버리지 않는다
-    ★ 차종만으로 안 걸리면 ★ 연료로 한 번 더 거른다 (명령서 2a)
+    ★★ 갈래(2.5T·LPG…)는 ★ `targets.json` 이 고른다 — ★ 새 규칙을 만들지 않는다
+       (HYUNDAI_CERTIFIED_API 2d).  ★ 제목에 차종·연료·배기량이 다 있어
+       ★ 상세가 없어도 갈린다 — ★ 전수 1,113건에 걸어 ★ 170건이 붙는다
     """
-    return target_key_of(
-        SITE_CODE, parsed.get("site_model_group"),
-        f"{parsed.get('fuel_raw') or ''} {parsed.get('site_model') or ''}")
+    got = target_by_rules(
+        SITE_CODE, parsed.get("site_model_group"), parsed.get("fuel_raw"),
+        parsed.get("site_model"), parsed.get("displacement_cc"))
+    return got.target_key if got else None
 
 
 def _now() -> str:
@@ -113,10 +116,21 @@ def fetch_detail(goods_no: str) -> tuple | None:
     return parse_detail_all(body or "", SITE_CODE, goods_no)
 
 
-def total_count() -> int | None:
-    """★ 조건 없이 부르면 전체 건수다 — 끝 쪽까지 받는 기준으로 쓴다."""
+def load_filters(root: str = ROOT) -> list:
+    """★ 좁히는 조건 — ★ config 가 정본이다 (HYUNDAI_CERTIFIED_API 2e).
+
+    ★ 차종군 코드를 ★ 코드에 박지 않는다 (S14 · 금지 6)
+    """
+    with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
+        got = (json.load(f).get(SITE_CODE) or {}).get("collect_filters") or {}
+    return got.get("groups") or []
+
+
+def total_count(params: str = "") -> int | None:
+    """★ 조건을 주면 그 조건의 건수다.  ★ 안 주면 전체다."""
     try:
-        req = urllib.request.Request(BASE + COUNT_PATH,
+        url = BASE + COUNT_PATH + (("&" + params) if params else "")
+        req = urllib.request.Request(url,
                                      headers={"User-Agent": HEADERS["User-Agent"]})
         with urllib.request.urlopen(req, timeout=20) as f:    # noqa: S310
             got = json.loads(f.read().decode("utf-8"))
@@ -125,14 +139,16 @@ def total_count() -> int | None:
         return None
 
 
-def walk() -> tuple[list, int]:
+def walk(extra: dict | None = None, seen: set | None = None) -> tuple[list, int]:
     """목록을 끝까지 받는다.  ★ pageIdx 로 쪽을 넘긴다.
 
     ★ 카드까지 파싱해서 돌려준다 — ★ 매물번호만 넣으면 껍데기가 된다
+    ★ `extra` 가 ★ 차종군 조건이다 (2e).  ★ 없으면 전량이다
     """
-    seen, rows, pages = set(), [], 0
+    seen, rows, pages = (set() if seen is None else seen), [], 0
+    base = dict(BODY, **(extra or {}))
     for page in range(1, MAX_PAGES + 1):
-        body = _post(BASE + LIST_PATH, dict(BODY, pageIdx=page))
+        body = _post(BASE + LIST_PATH, dict(base, pageIdx=page))
         pages = page
         if body is None:
             print(f"  {page}쪽 — ★ 못 받았다.  ★ 저장하지 않는다")
@@ -157,17 +173,43 @@ def main() -> int:
     if "--count" in args:
         return 0
 
-    ids, pages = walk()
-    print(f"목록 {pages}쪽 · 매물 {len(ids):,}건")
-    if said and len(ids) != said:
-        print(f"  ★ 어긋난다 — 사이트 {said} vs 받은 {len(ids)}")
+    groups = load_filters()
+    if "--all" in args or not groups:
+        if not groups:
+            print("★ config 에 collect_filters 가 없다 — ★ 전량을 받는다")
+        ids, pages = walk()
+        print(f"목록 {pages}쪽 · 매물 {len(ids):,}건")
+        if said and len(ids) != said:
+            print(f"  ★ 어긋난다 — 사이트 {said} vs 받은 {len(ids)}")
+    else:
+        # ★★ 차종군마다 ★ 따로 부른다 — ★ 여섯 번이다 (2e).
+        #   ★ 한 번에 부르면 ★ fuelList 가 ★ 전체에 걸려 389건이 온다 (규격 실측)
+        ids, pages, seen = [], 0, set()
+        print(f"★ 좁혀 받는다 — 차종군 {len(groups)}개 (전량 {said} 중)")
+        for g in groups:
+            cond = {k: g[k] for k in ("mdlGrpList", "fuelList") if g.get(k)}
+            q = "&".join(f"{k}={v}" for k in cond for v in cond[k])
+            said_n = total_count(q)
+            got, pg = walk(cond, seen)
+            for one in got:
+                # ★ 제목에 연료 낱말이 없는 것은 ★ 전동화 전용 차종군이다.
+                #   ★ 우리가 그 부름에서 달라고 한 연료를 쓴다 — ★ 짐작이 아니다
+                if not one.get("fuel_raw") and g.get("fuel"):
+                    one["fuel_raw"] = g["fuel"]
+            pages += pg
+            ids.extend(got)
+            mark = "" if said_n == g.get("expect") else "  ★ 규격과 다르다"
+            print(f"  {g['for']:22} {q:32} 사이트 {said_n:>4} · 받은 {len(got):>4}"
+                  f" (규격 {g.get('expect')}){mark}")
+            time.sleep(INTERVAL)
+        print(f"목록 {pages}쪽 · 매물 {len(ids):,}건  ← ★ 전량 {said} 을 받지 않았다")
 
     hit: dict = {}
     for one in ids:
         one["target_key"] = target_of(one)
         k = one["target_key"] or "차종 미정"
         hit[k] = hit.get(k, 0) + 1
-    for k, n in sorted(hit.items(), key=lambda kv: -kv[1])[:6]:
+    for k, n in sorted(hit.items(), key=lambda kv: -kv[1]):
         print(f"  {k:16} {n:>5}건")
 
     want_detail = "--detail" in args

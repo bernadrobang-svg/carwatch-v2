@@ -233,7 +233,76 @@
       "delivery_fee": 0,
       "extra_benefit": []
     },
-    "_target_map_note": "★ 개정 540 — 차종 대응표는 `config/dictionaries/target_map.json` 하나다.  ★ 여기 두지 않는다 — ★ 두 곳이면 어긋난다.  `tools/sync_target_map.py` 가 dict_enum 에 넣는다"
+    "_target_map_note": "★ 개정 540 — 차종 대응표는 `config/dictionaries/target_map.json` 하나다.  ★ 여기 두지 않는다 — ★ 두 곳이면 어긋난다.  `tools/sync_target_map.py` 가 dict_enum 에 넣는다",
+    "collect_filters": {
+      "_ref": "docs/HYUNDAI_CERTIFIED_API.md 2e · 명령서 3-0 「전량을 받지 않는다」",
+      "_rule": "★ 차종군마다 ★ 따로 부른다 — ★ 여섯 번이다.  ★ 한 번에 부르면 fuelList 가 전체에 걸려 389건이 온다 (실측)",
+      "_fuel_code": "001 가솔린 · 002 디젤 · 003 LPG · 004 하이브리드 · 005 전기",
+      "_measured": "★ 08-23 건수 API 로 재서 확인했다 — 165+0+11+2+3+6 = 187 (규격 2e 와 같다)",
+      "groups": [
+        {
+          "for": "G80_25T",
+          "mdlGrpList": [
+            "1171"
+          ],
+          "fuelList": [
+            "001"
+          ],
+          "expect": 165,
+          "fuel": "가솔린"
+        },
+        {
+          "for": "G80_EV",
+          "mdlGrpList": [
+            "1171_V"
+          ],
+          "fuelList": [],
+          "expect": 0,
+          "fuel": "전기"
+        },
+        {
+          "for": "G70_20T·G70_25T",
+          "mdlGrpList": [
+            "1172"
+          ],
+          "fuelList": [
+            "001"
+          ],
+          "expect": 11,
+          "fuel": "가솔린"
+        },
+        {
+          "for": "GV60",
+          "mdlGrpList": [
+            "1469_V"
+          ],
+          "fuelList": [],
+          "expect": 2,
+          "fuel": "전기"
+        },
+        {
+          "for": "GV70_EV",
+          "mdlGrpList": [
+            "1389_V"
+          ],
+          "fuelList": [],
+          "expect": 3,
+          "fuel": "전기"
+        },
+        {
+          "for": "GRANDEUR_LPG",
+          "mdlGrpList": [
+            "96"
+          ],
+          "fuelList": [
+            "003"
+          ],
+          "expect": 6,
+          "fuel": "LPG"
+        }
+      ],
+      "_fuel_why": "★ `fuel` 은 ★ 우리가 그 부름에서 ★ 무엇을 달라고 했는가다 — ★ 짐작이 아니다. ★ `_V` 로 끝나는 차종군은 ★ 전동화 전용이라 `fuelList` 를 안 건다. ★ 제목에 연료 낱말이 있으면 ★ 제목이 먼저다 (실측 1,006건 전건 일치)"
+    }
   },
   "heydealer": {
     "label": "헤이딜러",
