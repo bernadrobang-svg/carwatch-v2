@@ -282,19 +282,46 @@ def render_str(src: str, ctx: dict) -> str:
     return RE_VAR.sub(do_var, out)
 
 
+# ★★ 개발 주석은 ★ 소스에 두고 ★ 응답에서만 뺀다 (UI_REVIEW 3장 · 명령서 9장 ③).
+#   ★ 실측 08-24 — 배포 `/detail/166` 응답에 ★ 「개정 427」·「정본은 ref/screens…」·
+#     「금지 실물 사진 30장」이 ★ 그대로 실려 나갔다 (7군데).
+#   ★ 화면에는 안 보이나 ★ 스크린리더·번역·소스보기·검색엔진에는 ★ 다 간다
+#   ★ 확인함 — 템플릿의 `<script>`·`<style>` 안에는 ★ 주석이 하나도 없다.
+#     ★ 여닫이 수도 파일마다 같다.  ★ 그래서 통째로 빼도 안전하다
+RE_HTML_COMMENT = re.compile(r"<!--.*?-->", re.S)
+
+
+# ★★ 눈에 보이는 글에도 ★ 우리 개정 번호가 섞여 있다 (UI_REVIEW 3장 · 검산 S46-15).
+#   ★ 실측 08-24 — 주석을 뺀 뒤에도 ★ `/listings` 105곳 · `/why` 4곳이 남았다.
+#     예) title="트림 = Badge + BadgeDetail 입니다 ★(개정 313)★"
+#   ★ 「개정 313」은 ★ 사는 사람에게 ★ 아무 뜻이 없다.  ★ 문장은 두고 ★ 인용만 뺀다
+#   ★ 템플릿 소스에는 ★ 그대로 남는다 — ★ 개발측 근거는 없어지지 않는다
+RE_DEV_REF = re.compile(
+    r"\s*[(（]\s*(?:\d+장\s*)?(?:개정|STEP)\s*\d+[^)）]*[)）]"
+    r"|\s*·\s*(?:\d+장\s*)?(?:개정|STEP)\s*\d+(?:\s*·\s*\d+)*")
+
+
+def strip_comments(html: str) -> str:
+    """응답에서 ★ HTML 주석과 ★ 개발 인용을 뺀다.  ★ 템플릿 소스는 그대로 둔다."""
+    return RE_DEV_REF.sub("", RE_HTML_COMMENT.sub("", html))
+
+
 def render(name: str, ctx: dict, root: str | None = None) -> str:
-    """템플릿 파일 → HTML.  상속은 한 단계만 지원한다."""
+    """템플릿 파일 → HTML.  상속은 한 단계만 지원한다.
+
+    ★ 개발 주석은 ★ 여기서 뺀다 — ★ 이 함수가 ★ 응답으로 나가는 문이다
+    """
     base_dir = root or TEMPLATE_DIR
     with open(os.path.join(base_dir, name), encoding="utf-8") as f:
         src = f.read()
 
     m = RE_EXTENDS.search(src)
     if not m:
-        return render_str(src, ctx)
+        return strip_comments(render_str(src, ctx))
 
     blocks = {b: body for b, body in RE_BLOCK.findall(src)}
     with open(os.path.join(base_dir, m.group(1)), encoding="utf-8") as f:
         parent = f.read()
     filled = RE_BLOCK.sub(
         lambda mm: blocks.get(mm.group(1), mm.group(2)), parent)
-    return render_str(filled, ctx)
+    return strip_comments(render_str(filled, ctx))

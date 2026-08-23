@@ -750,5 +750,15 @@
     "lien": "history.seizing",
     "no_site_grade": "warranty.site",
     "cluster_swap": null
+  },
+  "_group_parts_note": "★★ 개정 604 (UI_REVIEW 1장) — ★ 화면 막대가 ★ 「보증」을 ★ 둘로 나눠 낸다. ★ 그것은 ★ f-table 의 ★ 갈래가 아니다 — ★ 갈래는 넷이다 (차량·값·보증·취향). ★ `groups` 는 ★ f-table 정본이라 ★ 건드리지 않는다 (V3-76·V3-77 이 잰다). ★ 화면이 쓰는 ★ 나눔만 ★ 여기 적는다 — ★ 코드에 접두어를 박지 않기 위함이다 (S14). ★ 두 몫의 합은 ★ 반드시 ★ `groups.보증` 과 같아야 한다 (22+32) + 36 = 90",
+  "group_parts": {
+    "제조사 보증": [
+      "warranty.general",
+      "warranty.power"
+    ],
+    "사이트 검증": [
+      "warranty.site"
+    ]
   }
 }

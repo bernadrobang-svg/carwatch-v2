@@ -1179,7 +1179,13 @@ def _group_sums(policy, verdict) -> tuple:
     ★ 갈래 ↔ 성분 접두어는 config/scoring.json groups 가 정본이다.
       코드에 두 벌로 적지 않는다 (S14)
     """
-    groups = policy.raw.get("groups") or {}
+    # ★★ 08-24 실측 — ★ `제조사 보증`·`사이트 검증` 이 ★ `groups` 에 ★ 없다.
+    #   ★ f-table 의 갈래는 ★ 넷이다 (차량·값·보증·취향).  ★ 그 둘은 ★ 갈래가 아니라
+    #   ★ 화면이 「보증」을 나눠 내는 이름이다 — ★ `group_parts` 가 정본이다.
+    #   ★ 그래서 ★ 4,043건 ★ 전건이 ★ group_warranty·group_site = 0 이었다
+    #   ★ 목록 카드의 보증 막대가 ★ 50/50 0 으로 보이던 까닭이다 (UI_REVIEW 1장)
+    groups = dict(policy.raw.get("groups") or {},
+                  **(policy.raw.get("group_parts") or {}))
     order = ("값", "차량", "제조사 보증", "사이트 검증", "취향")
     out = []
     for name in order:

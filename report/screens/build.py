@@ -1252,7 +1252,10 @@ def _group_caps(root: str = ".") -> dict:
         cfg = json.load(f)
     comp = cfg["components"]
     out = {}
-    for name, prefixes in (cfg.get("groups") or {}).items():
+    # ★ 갈래(f-table 넷) ＋ ★ 화면이 나눠 내는 이름(`group_parts`).
+    #   ★ 없으면 ★ 만점이 0 이 되어 ★ 막대가 ★ 늘 0% 로 보인다 (UI_REVIEW 1장)
+    table = dict(cfg.get("groups") or {}, **(cfg.get("group_parts") or {}))
+    for name, prefixes in table.items():
         out[name] = float(sum(
             (v if isinstance(v, (int, float)) else (v or {}).get("points") or 0)
             for k, v in comp.items()
