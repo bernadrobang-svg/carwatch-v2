@@ -155,5 +155,41 @@
     "headers": {
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
     }
+  },
+  "reborncar": {
+    "base_url": "https://www.reborncar.co.kr",
+    "paths": {
+      "sitemap": "/sitemap-ext.xml",
+      "detail": "/product/detail/{source_id}"
+    },
+    "_note": "★ 모바일 UA 필수 — 데스크톱은 「용도변경 없음」으로 거짓이 온다.  ★ 목록은 사이트맵 (1,066건 · 실측 08-23)",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+  },
+  "lexus_certified": {
+    "base_url": "https://certified.lexus.co.kr",
+    "paths": {
+      "list": "/api/json/getList_search.json.php?price_area_min=0&price_area_max=99999",
+      "detail": "/api/json/getData_car_detail.json.php?idx={source_id}"
+    },
+    "_note": "★ 모바일 UA · Referer 필요.  ★ `search_list.car_list` 가 매물이다 — `total_list_num` 은 0 으로 온다.  ★ 전수 36건 (실측 08-23)",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+  },
+  "volvo_selekt": {
+    "base_url": "https://selekt.volvocars.co.kr",
+    "paths": {
+      "list": "/kr/volvo/{model}",
+      "detail": "/kr/vehicles/volvo/{model}/{source_id}"
+    },
+    "_note": "★ 매물번호가 숫자가 아니라 슬러그다.  ★ 503 이 잦아 재시도가 필요하다.  ★ XC60 59 + S60 2 = 61건 (실측 08-23)",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+  },
+  "bmw_bps": {
+    "base_url": "http://www.bavarian-bps.co.kr",
+    "paths": {
+      "list": "/shop/list.php?ca_id={ca_id}",
+      "detail": "/shop/item.php?it_id={source_id}"
+    },
+    "_note": "★ 바바리안 딜러 한 곳.  ★ 가격은 목록 카드에 있다 — 상세에는 없다.  ★ 전수 87건 중 X3 1건 (실측 08-23)",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
   }
 }

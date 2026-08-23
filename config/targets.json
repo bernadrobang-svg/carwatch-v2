@@ -3,7 +3,7 @@
   "_note": "본문 예시(0장 STEP 6)가 정본이다. year_range · price_range 는 target 최상위다. build_q 는 site_query 와 이 둘을 합쳐 조립한다",
   "G80_25T": {
     "label": "G80 2.5T",
-    "collect_group": "encar:G80",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -23,11 +23,12 @@
     "displacement_range": [
       2400,
       2600
-    ]
+    ],
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:G80` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "G80_EV": {
     "label": "G80 전동화",
-    "collect_group": "encar:G80",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -42,11 +43,12 @@
     ],
     "trim_include": [],
     "trim_exclude": [],
-    "displacement_range": null
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:G80` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "G70_25T": {
     "label": "G70 2.5T",
-    "collect_group": "encar:G70",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -66,11 +68,12 @@
     "displacement_range": [
       2400,
       2600
-    ]
+    ],
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:G70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "G70_20T": {
     "label": "G70 2.0T",
-    "collect_group": "encar:G70",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -90,11 +93,12 @@
     "displacement_range": [
       1900,
       2100
-    ]
+    ],
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:G70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "GV70_EV": {
     "label": "GV70 전동화",
-    "collect_group": "encar:GV70",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -109,11 +113,12 @@
     ],
     "trim_include": [],
     "trim_exclude": [],
-    "displacement_range": null
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "GV60": {
     "label": "GV60",
-    "collect_group": "encar:GV60",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -128,11 +133,12 @@
     ],
     "trim_include": [],
     "trim_exclude": [],
-    "displacement_range": null
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV60` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "KOLEOS_HEV": {
     "label": "그랑 콜레오스 1.5 E-TECH",
-    "collect_group": "encar:KOLEOS",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -152,11 +158,12 @@
     "displacement_range": [
       1450,
       1550
-    ]
+    ],
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:KOLEOS` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "SPORTAGE_LPI": {
     "label": "스포티지 LPi",
-    "collect_group": "encar:SPORTAGE",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -171,11 +178,12 @@
     ],
     "trim_include": [],
     "trim_exclude": [],
-    "displacement_range": null
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:SPORTAGE` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "GRANDEUR_LPG": {
     "label": "그랜저 GN7 LPG",
-    "collect_group": "encar:GRANDEUR",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -190,11 +198,12 @@
     ],
     "trim_include": [],
     "trim_exclude": [],
-    "displacement_range": null
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GRANDEUR` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "MODEL_Y": {
     "label": "테슬라 모델Y",
-    "collect_group": "encar:MODEL_Y",
+    "collect_group": "multi",
     "site_query": {
       "encar": {
         "CarType": "N",
@@ -209,7 +218,8 @@
     ],
     "trim_include": [],
     "trim_exclude": [],
-    "displacement_range": null
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:MODEL_Y` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
   },
   "X3_IMPORT": {
     "label": "BMW X3",
