@@ -15,6 +15,65 @@
 
 ---
 
+---
+
+# 0a. ★★★ 08-23 정정 — ★ 통합 포털이 있다.  ★ 딜러마다 찾을 필요가 없다
+
+```
+★★ 개정 535 는 「★ 딜러마다 도메인이 다르다 · `h-suwon.` 하나만 안다(12대) ·
+   ★ 전국 전시장 목록을 찾아야 한다」였다.  ★ 틀렸다
+★ 그리고 `h-suwon.volvocars.co.kr` 은 ★ DNS 가 안 풀린다 —
+  ★ 바른 이름은 ★ `h-suwon.selekt.volvocars.co.kr` 이다.  ★ `selekt.` 한 조각이 빠져 있었다
+```
+
+## ① ★ 통합 포털 — ★ 여기 하나면 된다
+
+```
+GET https://selekt.volvocars.co.kr/kr/vehicle-search    → ★ 200 · 51KB
+robots   `Disallow: /*compare` · `/*notepad` · `/*saved-searches` · `/*vehicle-reservation` ·
+         `/*vehicle-enquiry` · `/*make-an-offer` · `/*reserve` · `/*video`
+         ★ `/kr/vehicle-search` 와 `/kr/volvo/*` 는 ★ 허용이다
+모델별   /kr/volvo/xc60 · /kr/volvo/s60 · /kr/volvo/xc40 · /kr/volvo/xc90 ·
+         /kr/volvo/s90 · /kr/volvo/v60-cross-country · /kr/volvo/v90-cross-country
+그 밖    /kr/vehicles/adv-search · /kr/dealer-search
+```
+
+## ② ★ 모델별 건수 — ★ 서버 HTML 에 그대로 있다 (실측 08-23)
+
+| 모델 | 대수 | 최저가 |
+|---|--:|--:|
+| ★ **XC60** | ★ **59** | 4,200만 |
+| XC90 | 38 | 3,750만 |
+| XC40 | 35 | 3,500만 |
+| V60 Cross Country | 45 | 4,100만 |
+| S90 | 21 | 2,800만 |
+| V90 Cross Country | 14 | 4,600만 |
+| ★ **S60** | ★ **2** | 2,700만 |
+
+```
+★★ ★ 우리 대상은 ★ XC60 59 + S60 2 = ★ 61대다 — ★ 개정 535 의 「12대」의 ★ 다섯 배다
+★ 전체 총계는 ★ 확정 못 했다 — ★ 같은 숫자가 필터 드롭다운에 ★ 여러 번 나온다.
+  ★ 가장 큰 표기가 214 인데 ★ 무엇의 총계인지 ★ 아직 모른다.  ★ 지어내지 않는다
+```
+
+## ③ ★ 전시장별 서브도메인 (참고 — ★ 통합 포털로 충분하다)
+
+```
+{딜러}.selekt.volvocars.co.kr/kr/vehicle-search
+  h-suwon (에이치 수원) · h-daejeon (대전) · iron (아이언 부산) ·
+  kolon-gyeonggi (코오롱 김포) · aju (아주 강서)
+실측  aju ★ 200 · h-suwon ★ 503 · iron ★ 503  — ★ 503 은 ★ 우리 창일 수 있다 (오판 #63)
+```
+
+## ④ ★ 아직 안 잰 것
+
+```
+★ 매물 상세 주소 꼴 · 쪽넘김 · 우리 27축 중 몇 개가 채워지는가
+★ 표본을 20건 이상 받아 ★ 값이 갈리는지 본 뒤에 매핑을 쓴다 (마스터 규칙)
+```
+
+---
+
 # 1. 경로
 
 | 무엇 | 경로 | 실측 |
