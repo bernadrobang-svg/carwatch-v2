@@ -32,6 +32,7 @@ from parse.kia_cpo.mapping import (  # noqa: E402
     parse_list_item,
     unpack_envelope,
 )
+from store.dictionary import target_key_of  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 40          # ★ 1,020건 ÷ 100 = 11쪽.  ★ 넉넉히 두고 새 것이 없으면 멈춘다
@@ -47,28 +48,17 @@ def _fetch(url: str, headers: dict, timeout: float) -> dict:
         return json.loads(f.read().decode("utf-8"))
 
 
-def target_of(parsed: dict, table: dict) -> str | None:
-    """사이트 차종 이름 → 우리 차종 키 (TARGET_KEY_MAP 6장).
+def target_of(parsed: dict) -> str | None:
+    """사이트 차종 → 우리 차종 키.
 
+    ★★ 개정 540 — ★ 쓰는 자리는 `config/dictionaries/target_map.json` 하나다.
+      ★ 전에는 sites.json 에도 같은 표가 있었다 — ★ 두 곳이면 어긋난다
     ★ 표에 없으면 ★ None 이다 — 「차종 미정」이고 ★ 버리지 않는다
-    ★ 연료 조건이 있으면 ★ 그것까지 맞아야 한다 (스포티지는 LPI 만이다)
+    ★ 차종만으로 안 걸리면 ★ 연료로 한 번 더 거른다 (명령서 2a)
     """
-    got = table.get(parsed.get("site_model_group") or "")
-    if not got:
-        return None
-    need = got.get("fuel_contains")
-    if need:
-        fuel = f"{parsed.get('fuel_raw') or ''} {parsed.get('site_model') or ''}"
-        if need.lower() not in fuel.lower():
-            return None
-    return got["target_key"]
-
-
-def load_target_table(root: str = ROOT) -> dict:
-    """차종 대응표.  ★ config 가 정본이다 — 코드에 차종을 박지 않는다."""
-    with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
-        got = (json.load(f).get(SITE_CODE) or {}).get("target_map") or {}
-    return {k: v for k, v in got.items() if not k.startswith("_")}
+    return target_key_of(
+        SITE_CODE, parsed.get("site_model_group"),
+        f"{parsed.get('fuel_raw') or ''} {parsed.get('site_model') or ''}")
 
 
 def walk(adapter: KiaCpoAdapter, cfg: dict) -> tuple[int, list]:
@@ -97,7 +87,6 @@ def main() -> int:
     dry = "--dry" in sys.argv
     cfg = load_config(ROOT)
     adapter = KiaCpoAdapter(cfg)
-    table = load_target_table()
     total, rows = walk(adapter, cfg)
     print(f"목록 — 사이트가 말한 총 {total}건 · 받은 {len(rows)}건")
     if total and len(rows) != total:
@@ -107,7 +96,7 @@ def main() -> int:
     parsed_rows = []
     for one in rows:
         p = parse_list_item(one, SITE_CODE)
-        p["target_key"] = target_of(p, table)
+        p["target_key"] = target_of(p)
         hit[p["target_key"] or "차종 미정"] = hit.get(
             p["target_key"] or "차종 미정", 0) + 1
         parsed_rows.append(p)

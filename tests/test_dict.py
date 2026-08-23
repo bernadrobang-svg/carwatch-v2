@@ -95,7 +95,9 @@ def test_count_zero() -> None:
 
 # ── STEP 41 축별 정책 ────────────────────────────────────────────────
 def test_axis_policy() -> None:
-    check("축 13종 정책 정의", len(AXIS_POLICY) == 13, f"{len(AXIS_POLICY)}종")
+    # ★ 개정 540 — `target` 축이 늘어 13 → 14 다 (docs/TARGET_KEY_MAP.md 6장).
+    #   ★ 이 수는 ★ 몰래 늘지 않았는가를 보는 빗장이다 — ★ 늘리면 까닭을 적는다
+    check("축 14종 정책 정의", len(AXIS_POLICY) == 14, f"{len(AXIS_POLICY)}종")
 
     conn = db()
     # panel_rank — 5값 고정.  새 값은 pending 이 아니라 중단

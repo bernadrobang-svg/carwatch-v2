@@ -1,0 +1,29 @@
+{
+  "_ref": "docs/TARGET_KEY_MAP.md · 명령서 ORDER_20260822_r515.md 2a장 (개정 540)",
+  "_note": "★ 사이트마다 차종을 다르게 부른다.  ★ 여기가 쓰는 자리 하나다 — 여기서 쓰고 tools/sync_target_map.py 가 dict_enum 에 넣는다",
+  "_rule": "★ 표에 없는 사이트값은 ★ 「차종 미정」이다.  ★ 버리지 않는다 (TARGET_KEY_MAP 6장). ★ facet 을 안 받고 이름을 지어내지 않는다 (금지 6)",
+  "_fuel_note": "★ fuel_contains 가 있으면 ★ 차종 이름만으로는 안 걸린다 — 연료로 한 번 더 거른다",
+  "by_site": {
+    "kia_cpo": {
+      "_field": "modelCodeName (GET /api/search/category-models/)",
+      "스포티지": {
+        "target_key": "SPORTAGE_LPI",
+        "fuel_contains": "LPI",
+        "_why": "★ 기아 CPO 는 연료를 안 갈라 놓았다 — car.engine 을 본다 (TARGET_KEY_MAP 2장)"
+      }
+    },
+    "hyundai_cert": {
+      "_field": "목록 카드 제목의 차종 (repnCarCd IG02·GN01 이 같은 「그랜저」다)",
+      "그랜저": {
+        "target_key": "GRANDEUR_LPG",
+        "fuel_contains": "LPG",
+        "_why": "★ 세대 둘(IG·GN7)이 같은 이름으로 온다 — ★ 둘 다 받는다 (TARGET_KEY_MAP 4장)"
+      }
+    }
+  },
+  "_pending": {
+    "kbchachacha": "★ makerCode 는 ★ 제조사 코드다 — 차종이 아니다. 제네시스 189 하나에 우리 차종 다섯이 걸린다. ★ 1:1 이 아니라 dict_enum 에 못 넣는다. ★ 모델 코드를 받은 뒤에 넣는다 (TARGET_KEY_MAP 3장 · 5장)",
+    "kcar": "★ modelGrpNm 이 목록 응답에 온다 — ★ 목록을 못 만들어 아직 못 받았다 (enc 금지)",
+    "encar": "★ 이미 3,916건이 target_key 로 붙어 있다 — ★ 그것이 정본이다 (TARGET_KEY_MAP 5장)"
+  }
+}

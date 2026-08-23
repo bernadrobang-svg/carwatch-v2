@@ -1,0 +1,149 @@
+#!/usr/bin/env python3.11
+"""차종 대응표 → `dict_enum` (명령서 `ORDER_20260822_r515.md` 2a장 · 개정 540).
+
+    python3.11 tools/sync_target_map.py [--dry]     대응표를 dict_enum 에
+    python3.11 tools/sync_target_map.py --reparse   ★ 이미 받은 제목에서 차종을 다시 뽑는다
+    python3.11 tools/sync_target_map.py --apply     ★ 이미 받은 매물에 차종을 붙인다
+
+지시서   `docs/TARGET_KEY_MAP.md`
+값규칙   ★ 쓰는 자리는 `config/dictionaries/target_map.json` 하나다
+        ★ 그것을 `dict_enum(site, axis='target', value, mapped)` 에 넣는다
+        ★ 사이트가 실제로 부르는 이름도 ★ 함께 넣는다 —
+          ★ mapped 가 빈 것은 ★ 「차종 미정」이다.  ★ 지우지 않는다
+금지     ★ facet 을 안 받고 차종 문자열을 지어내는 것 (금지 6)
+"""
+from __future__ import annotations
+
+import os
+import sys
+from datetime import datetime, timezone
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+
+from parse.hyundai_cert.mapping import _model_group  # noqa: E402
+from store.dictionary import target_key_of, target_map  # noqa: E402
+from store.raw import open_db  # noqa: E402
+
+AXIS = "target"
+DICT_VERSION = "d1"
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def observed(conn) -> dict:
+    """사이트가 실제로 부르는 차종 이름 · 건수.  ★ DB 가 정본이다."""
+    out: dict = {}
+    for site, name, n in conn.execute(
+        "SELECT site, site_model_group, COUNT(*) FROM core_listing"
+        " WHERE site_model_group IS NOT NULL GROUP BY 1, 2"
+    ):
+        out.setdefault(site, {})[name] = n
+    return out
+
+
+def reparse_model_group(conn) -> int:
+    """★ 이미 받은 제목에서 ★ 차종을 다시 뽑는다 (개정 540 · 실측 08-23).
+
+    ★ 왜 — ★ 옛 파서가 ★ 「연식 다음 낱말」을 차종으로 삼았다.
+      ★ 「2021 더 뉴 그랜저 (IG) …」 가 ★ 「더」가 되어 ★ 152건이 숨었다.
+      ★ `repnCarCd` `IG02` 가 ★ 규격이 「둘 다 받으라」 한 그 세대다 (TARGET_KEY_MAP 4장)
+    ★ 다시 받지 않는다 — ★ 제목(`site_model`)이 DB 에 있다.  ★ 그것에서 다시 뽑는다
+    """
+    rows = conn.execute(
+        "SELECT listing_id, site_model, site_model_group FROM core_listing"
+        " WHERE site='hyundai_cert' AND site_model IS NOT NULL").fetchall()
+    fixed = 0
+    for lid, name, was in rows:
+        now = _model_group(name)
+        if now and now != was:
+            conn.execute("UPDATE core_listing SET site_model_group=?"
+                         " WHERE listing_id=?", (now, lid))
+            fixed += 1
+    conn.commit()
+    print(f"★ 제목에서 차종을 다시 뽑았다 — {len(rows)}건 중 ★ {fixed}건이 달라졌다")
+    return fixed
+
+
+def main() -> int:
+    dry = "--dry" in sys.argv
+    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    at = _now()
+    if "--reparse" in sys.argv:
+        reparse_model_group(conn)
+    seen = observed(conn)
+    rows, mapped_n = 0, 0
+    for site, names in sorted(seen.items()):
+        table = target_map(site)
+        for name, count in sorted(names.items(), key=lambda kv: -kv[1]):
+            got = (table.get(name) or {}).get("target_key")
+            rows += 1
+            if got:
+                mapped_n += 1
+            if dry:
+                continue
+            # ★ upsert_enum 은 mapped 를 mapped_values.json 에서 찾는다 —
+            #   ★ 차종은 target_map.json 이 정본이라 ★ 여기서 직접 넣는다
+            conn.execute(
+                "INSERT INTO dict_enum(site,axis,value,display,mapped,"
+                " count_seen,status,source_endpoint,dict_version,"
+                " first_seen,last_seen)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+                " ON CONFLICT(site,axis,value) DO UPDATE SET"
+                "  mapped=excluded.mapped, count_seen=excluded.count_seen,"
+                "  status=excluded.status, last_seen=excluded.last_seen",
+                (site, AXIS, name, name, got, count,
+                 "confirmed" if got else "pending",
+                 "list", DICT_VERSION, at, at))
+    if not dry:
+        conn.commit()
+    print(f"차종 이름 {rows}종 · ★ 대응표에 있는 것 {mapped_n}종"
+          + (" (--dry 라 안 넣었다)" if dry else ""))
+    for site, names in sorted(seen.items()):
+        table = target_map(site)
+        hit = sum(n for k, n in names.items()
+                  if (table.get(k) or {}).get("target_key"))
+        print(f"  {site:14} 이름 {len(names):>3}종 · 매물 {sum(names.values()):>6} "
+              f"· ★ 이름이 맞는 것 {hit:>5}건")
+    print("★ 위는 ★ 이름만 본 수다 — ★ 연료까지 맞아야 붙는다 (--apply 가 낸다)")
+
+    if "--apply" not in sys.argv:
+        return 0
+    return apply_targets(conn, at)
+
+
+def apply_targets(conn, at: str) -> int:
+    """★ 이미 받은 매물에 차종을 붙인다 (명령서 2a 검산).
+
+    ★ 차종 이름 ★ 과 ★ 연료 ★ 둘 다 맞아야 붙는다
+    ★ 안 맞는 것은 ★ 「차종 미정」 그대로 둔다.  ★ 버리지 않는다
+    """
+    del at
+    sites = [s for s in target_map()]
+    put, keep = 0, 0
+    for site in sites:
+        for lid, name, fuel, model in conn.execute(
+            "SELECT listing_id, site_model_group, fuel_raw, site_model"
+            " FROM core_listing WHERE site=?", (site,)
+        ):
+            got = target_key_of(site, name, f"{fuel or ''} {model or ''}")
+            if got:
+                conn.execute(
+                    "UPDATE core_listing SET target_key=? WHERE listing_id=?",
+                    (got, lid))
+                put += 1
+            else:
+                keep += 1
+    conn.commit()
+    print(f"★ 차종을 붙였다 {put}건 · ★ 「차종 미정」으로 둔 것 {keep}건")
+    left = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE target_key IS NULL"
+    ).fetchone()[0]
+    print(f"★ 전체 차종 미정 — {left:,}건")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

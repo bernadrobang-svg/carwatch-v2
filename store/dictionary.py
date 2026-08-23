@@ -87,6 +87,10 @@ AXIS_POLICY: dict[str, AxisPolicy] = {
     "accident_type": AxisPolicy(SCOPE_GLOBAL, "halt", "halt"),
     # ★ 5값 고정.  새 값이 뜨면 점검 양식이 바뀐 것이다.  pending 으로 넘기지 않는다
     "panel_rank": AxisPolicy(SCOPE_GLOBAL, "halt", "halt"),
+    # ★★ 개정 540 — 사이트마다 차종을 다르게 부른다 (docs/TARGET_KEY_MAP.md).
+    #   ★ 새 차종 이름은 ★ 늘 새로 뜬다 — ★ 멈추지 않는다.
+    #   ★ 우리 키로 못 옮긴 것은 ★ 「차종 미정」이다.  ★ 버리지 않는다
+    "target": AxisPolicy(SCOPE_GLOBAL, "pending", "pending"),
 }
 
 PANEL_RANK_VALUES: frozenset[str] = frozenset(
@@ -164,6 +168,46 @@ def seed_fixed_enums(conn: sqlite3.Connection, site: str, fixed: dict,
 
 # ── 적재 (STEP 42) ───────────────────────────────────────────────────
 _MAPPED: dict | None = None
+_TARGETS: dict | None = None
+
+
+def target_map(site: str | None = None) -> dict:
+    """사이트 차종 이름 → 우리 차종 키 (개정 540 · TARGET_KEY_MAP).
+
+    ★ 쓰는 자리는 `config/dictionaries/target_map.json` 하나다 —
+      ★ 코드에 차종을 박지 않는다 (S14 · 금지 6)
+    돌려줌   {사이트값: {"target_key": …, "fuel_contains": …}}
+    """
+    global _TARGETS
+
+    if _TARGETS is None:
+        import json as _j
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+        path = _o.path.join(root, "config", "dictionaries", "target_map.json")
+        _TARGETS = ((_j.load(open(path, encoding="utf-8")).get("by_site") or {})
+                    if _o.path.isfile(path) else {})
+    if site is None:
+        return dict(_TARGETS)
+    return {k: v for k, v in (_TARGETS.get(site) or {}).items()
+            if not k.startswith("_")}
+
+
+def target_key_of(site: str, name: str | None,
+                  fuel_text: str = "") -> str | None:
+    """사이트 차종 이름 → 우리 키.  ★ 없으면 None 이다 — 「차종 미정」이고 버리지 않는다.
+
+    ★ 차종만으로 안 걸리는 것은 ★ 연료로 한 번 더 거른다 (명령서 2a) —
+      SPORTAGE_LPI ← 기아 「스포티지」 + LPI · GRANDEUR_LPG ← 현대 「그랜저」 + LPG
+    """
+    got = target_map(site).get(name or "")
+    if not got:
+        return None
+    need = got.get("fuel_contains")
+    if need and need.lower() not in (fuel_text or "").lower():
+        return None
+    return got["target_key"]
 
 
 def mapped_of(axis: str, value: str) -> str | None:

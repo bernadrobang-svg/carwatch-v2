@@ -52,6 +52,31 @@ def cards(html: str) -> list:
     return out
 
 
+# ★ 차명 앞에 붙는 꾸밈말이다.  ★ 이것을 안 걷어내면 차종이 「더」가 된다 —
+#   ★ 실측 08-23 — 「2021 더 뉴 G70 …」 221건이 ★ `site_model_group='더'` 로 들어갔고
+#   ★ 그 안에 ★ 「더 뉴 그랜저」(`IG02`) ★ 152건이 있었다.  ★ 규격이 「IG02·GN01 둘 다」라 한 그것이다
+#   ★ 지어낸 목록이 아니다 — ★ DB 에 실제로 들어온 제목에서 세어 뽑았다
+NAME_PREFIX = ("디 올 뉴", "올 뉴", "더 뉴", "더 올 뉴", "신형", "The new", "Electrified")
+
+
+def _model_group(name: str) -> str | None:
+    """제목 → 차종 이름.  ★ 「2023 더 뉴 그랜저 (IG) LPG …」 → 「그랜저」.
+
+    ★ 연식을 떼고 · ★ 꾸밈말을 떼고 · ★ 그 다음 낱말이 차종이다
+    ★ 괄호 안 코드(`(IG)` · `(NX4)`)는 ★ 뗀다 — ★ 세대라서 이름이 아니다
+    """
+    rest = name.split(maxsplit=1)[1] if len(name.split()) > 1 else ""
+    if not rest:
+        return None
+    low = rest.lower()
+    for pre in sorted(NAME_PREFIX, key=len, reverse=True):
+        if low.startswith(pre.lower()):
+            rest = rest[len(pre):].strip()
+            break
+    got = rest.split(maxsplit=1)[0] if rest.split() else ""
+    return got.split("(")[0].strip() or None
+
+
 def parse_card(chunk: str, site: str) -> dict | None:
     """카드 하나 → core_listing 필드.  ★ 매물번호가 없으면 None 이다."""
     got = RE_GOODS.search(chunk)
@@ -73,8 +98,7 @@ def parse_card(chunk: str, site: str) -> dict | None:
         "site_model": name,
         # ★ 「2023 투싼(NX4) 하이브리드 …」 → 차종은 연식 다음 낱말이다
         # ★ 「2023 투싼(NX4) 하이브리드」 → 투싼 · 「2023 GV70 가솔린 …」 → GV70
-        "site_model_group": (name.split(maxsplit=2)[1].split("(")[0].strip()
-                             if len(name.split()) > 1 else None),
+        "site_model_group": _model_group(name),
         "form_year": _int(name.split(maxsplit=1)[0]),
         "year_month": (f"20{ym.group(1)}-{int(ym.group(2)):02d}"
                        if ym else None),

@@ -31,6 +31,7 @@ from parse.hyundai_cert.mapping import (  # noqa: E402
     parse_card,
     parse_detail_all,
 )
+from store.dictionary import target_key_of  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 SITE_CODE = "hyundai_cert"
@@ -65,22 +66,17 @@ BODY = {
 }
 
 
-def load_target_table(root: str = ROOT) -> dict:
-    """차종 대응표.  ★ config 가 정본이다 — 코드에 차종을 박지 않는다."""
-    with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
-        got = (json.load(f).get(SITE_CODE) or {}).get("target_map") or {}
-    return {k: v for k, v in got.items() if not k.startswith("_")}
+def target_of(parsed: dict) -> str | None:
+    """사이트 차종 → 우리 차종 키.
 
-
-def target_of(parsed: dict, table: dict) -> str | None:
-    """사이트 차종 → 우리 차종 키.  ★ 없으면 「차종 미정」이다 — 버리지 않는다."""
-    got = table.get(parsed.get("site_model_group") or "")
-    if not got:
-        return None
-    need = got.get("fuel_contains")
-    if need and need.lower() not in (parsed.get("site_model") or "").lower():
-        return None
-    return got["target_key"]
+    ★★ 개정 540 — ★ 쓰는 자리는 `config/dictionaries/target_map.json` 하나다.
+      ★ 전에는 sites.json 에도 같은 표가 있었다 — ★ 두 곳이면 어긋난다
+    ★ 표에 없으면 ★ None 이다 — 「차종 미정」이고 ★ 버리지 않는다
+    ★ 차종만으로 안 걸리면 ★ 연료로 한 번 더 거른다 (명령서 2a)
+    """
+    return target_key_of(
+        SITE_CODE, parsed.get("site_model_group"),
+        f"{parsed.get('fuel_raw') or ''} {parsed.get('site_model') or ''}")
 
 
 def _now() -> str:
@@ -166,10 +162,9 @@ def main() -> int:
     if said and len(ids) != said:
         print(f"  ★ 어긋난다 — 사이트 {said} vs 받은 {len(ids)}")
 
-    table = load_target_table()
     hit: dict = {}
     for one in ids:
-        one["target_key"] = target_of(one, table)
+        one["target_key"] = target_of(one)
         k = one["target_key"] or "차종 미정"
         hit[k] = hit.get(k, 0) + 1
     for k, n in sorted(hit.items(), key=lambda kv: -kv[1])[:6]:

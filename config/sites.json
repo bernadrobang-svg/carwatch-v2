@@ -153,14 +153,6 @@
       }
     },
     "_grade_note": "★ PREMIUM·EXCLUSIVE 36 · LITE 32 (f-table 사이트 검증 절). ★ classification 이 와야 준다",
-    "target_map": {
-      "_note": "★ docs/TARGET_KEY_MAP.md 2장 실측 (facet /api/search/category-models/). ★ 표에 없는 차종은 ★ 수집하되 「차종 미정」으로 둔다 — 버리지 않는다",
-      "스포티지": {
-        "target_key": "SPORTAGE_LPI",
-        "fuel_contains": "LPI",
-        "_why": "★ 기아 CPO 는 연료가 안 갈려 있다.  SPORTAGE_LPI 는 LPI 만이다 — ★ 차종만으로는 안 걸린다 (TARGET_KEY_MAP 6장)"
-      }
-    },
     "warranty_grades": [
       {
         "key": "기아 CPO PREMIUM",
@@ -205,7 +197,8 @@
       "etc_fee": 0,
       "delivery_fee": 0,
       "extra_benefit": []
-    }
+    },
+    "_target_map_note": "★ 개정 540 — 차종 대응표는 `config/dictionaries/target_map.json` 하나다.  ★ 여기 두지 않는다 — ★ 두 곳이면 어긋난다.  `tools/sync_target_map.py` 가 dict_enum 에 넣는다"
   },
   "hyundai_cert": {
     "label": "현대·제네시스 인증중고차",
@@ -221,13 +214,6 @@
       }
     },
     "_grade_note": "★ 제조사 인증 36. ★ 정밀점검 항목 수는 272~287 로 다르다 — 「287 고정」이 아니다",
-    "target_map": {
-      "_note": "★ docs/TARGET_KEY_MAP.md 4장 — 그랜저가 세대 둘(IG02·GN01)로 갈려 있다. ★ 목록 제목은 「그랜저(IG)」·「그랜저(GN7)」로 온다 — ★ 차종 이름으로 맞춘다. ★ 연료로 한 번 더 거른다 (GRANDEUR_LPG 는 LPG 만이다)",
-      "그랜저": {
-        "target_key": "GRANDEUR_LPG",
-        "fuel_contains": "LPG"
-      }
-    },
     "warranty_items": [
       {
         "key": "현대 인증 정밀점검",
@@ -246,7 +232,8 @@
       "etc_fee": 0,
       "delivery_fee": 0,
       "extra_benefit": []
-    }
+    },
+    "_target_map_note": "★ 개정 540 — 차종 대응표는 `config/dictionaries/target_map.json` 하나다.  ★ 여기 두지 않는다 — ★ 두 곳이면 어긋난다.  `tools/sync_target_map.py` 가 dict_enum 에 넣는다"
   },
   "heydealer": {
     "label": "헤이딜러",
