@@ -680,7 +680,9 @@ K카   ★ `recallObjYn`(리콜 대상) · `dshbExchgYn`(계기판 교체)
 | 차량번호 | `plate_hash` | ★ 해시 |
 | 전시장 | `dealer_shop` · `dealer_region` | 「BPS 인천전시장」 |
 | 사고유무 · 72가지 점검 | `site_condition_json` | ★ **전건 동일 — 축에 안 쓴다** (2a장) |
-| ★ **가격** | **`price_current_won`** | ★★ **어디서 읽는지 못 찾았다** (2a장) |
+| ★ **가격** | **`price_current_won`** | ★★ **목록 카드 마지막 칸** (2d장).  ★ 만원 단위 → ×10,000 |
+| ★ **「리스승계」** | `sell_type` · `price_current_won` ★ **NULL** | ★ **87건 중 37건(42.5%)** |
+| 「판매완료」 | `sales_status` · `status` | 4건 |
 | 리스 조건 | `lease_rent_info_json` · `sell_type` | 인수비용·월리스료·잔여개월·유예금 |
 
 ```
