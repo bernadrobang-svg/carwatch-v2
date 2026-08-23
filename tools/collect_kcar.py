@@ -29,6 +29,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from adapters.kcar import SITE_CODE, KcarAdapter, load_config  # noqa: E402
+from parse.kcar.mapping import parse_detail  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 # ① ★ 없는 매물도 200 이다.  ★ 크기로 한 번 · carCd 로 한 번 가른다
@@ -136,16 +137,28 @@ def main() -> int:
         print("★ --check 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id
+    from store.core import resolve_listing_id, split_pii, upsert_core
+    from store.pii import load_key
     from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
-    for cd, _body in ok_rows:
-        resolve_listing_id(conn, SITE_CODE, cd, at)
+    key = load_key()
+    stored, empty = 0, 0
+    for cd, body in ok_rows:
+        # ★★ `data` 를 벗긴다 — ★ 안 벗기면 ★ 전건 NULL 이다 (명령서 6단계)
+        deep = parse_detail(body, SITE_CODE, cd)
+        if not deep:
+            empty += 1
+            continue
+        deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, cd, at)
+        deep["detail_status"] = "ok"
+        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        stored += 1
     commit(conn)
-    print(f"★ 매물번호 {len(ok_rows)}건 · site='{SITE_CODE}'")
-    print("★ 27축 매핑은 아직이다 — ★ 성능점검이 사진뿐이라 4-1 표를 붙여야 한다 (④)")
+    print(f"★ 저장 {stored}건 · site='{SITE_CODE}'"
+          + (f" · ★ 매핑이 빈 것 {empty}건" if empty else ""))
+    print("★ 성능점검은 ★ 사진뿐이라 ★ 골격·외판 축은 ★ 안 채웠다 (④ · 규격 4장)")
     return 0
 
 

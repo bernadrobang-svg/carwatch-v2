@@ -31,34 +31,34 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
 <main>
 <h1>매물
-  <small>3,127건 중 10건 ·
-    313쪽 중 1쪽</small></h1>
+  <small>3,230건 중 10건 ·
+    323쪽 중 1쪽</small></h1>
 
-<!-- ══ 조건줄 — 칩 7 + ＋조건 12 (개정 427 · STEP 97) ══
-     ★ 필터는 반대로 두껍게.  실측 — 보배드림 15종 · KB차차차 16종 · 우리 5개.
-       사이트는 복잡함을 필터에 몰아넣고 목록을 단순히 둔다.  우리는 반대였다
-     ★ 고른 조건을 문장으로 낸다 (V11-165) · ★ 뺀 건수를 밝힌다
-     ★ 점수 필터는 SQL 로 건다 (V11-164) — 밖에서 걸면 건수가 어긋난다 -->
+
 <div class="cond">
 <form class="chips" method="get" action="/listings">
   <input type="hidden" name="order" value="rank">
   <span class="chip">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
-      <option value="G80_25T">G80_25T (1962건)</option><option value="MODEL_Y">MODEL_Y (580건)</option><option value="G70_20T">G70_20T (280건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (262건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (258건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (200건)</option><option value="GV60">GV60 (129건)</option><option value="G70_25T">G70_25T (102건)</option><option value="GV70_EV">GV70_EV (77건)</option><option value="G80_EV">G80_EV (66건)</option>
+      <option value="G80_25T">G80_25T (2064건)</option><option value="MODEL_Y">MODEL_Y (580건)</option><option value="G70_20T">G70_20T (280건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (265건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (262건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (200건)</option><option value="GV60">GV60 (139건)</option><option value="G70_25T">G70_25T (102건)</option><option value="GV70_EV">GV70_EV (78건)</option><option value="G80_EV">G80_EV (73건)</option>
     </select></span>
   <span class="chip">가격
     <input name="price_min" size="4" inputmode="numeric" value="" placeholder="2000">~<input
@@ -70,11 +70,11 @@
     </select></span>
   <span class="chip">외장
     <select name="color_ext"><option value="">전체</option>
-      <option value="흰색">흰색 (3,468)</option><option value="검정색">검정색 (2,334)</option><option value="쥐색">쥐색 (1,394)</option><option value="청색">청색 (581)</option><option value="스노우화이트펄">스노우화이트펄 (378)</option><option value="오로라 블랙펄">오로라 블랙펄 (258)</option><option value="은회색">은회색 (255)</option><option value="은색">은색 (102)</option><option value="빨간색">빨간색 (74)</option><option value="인터스텔라그레이">인터스텔라그레이 (64)</option><option value="담녹색">담녹색 (54)</option><option value="순백색">순백색 (34)</option><option value="판테라메탈">판테라메탈 (26)</option><option value="갈색">갈색 (25)</option>
+      <option value="흰색">흰색 (3,605)</option><option value="검정색">검정색 (2,461)</option><option value="쥐색">쥐색 (1,433)</option><option value="청색">청색 (601)</option><option value="스노우화이트펄">스노우화이트펄 (378)</option><option value="은회색">은회색 (264)</option><option value="오로라 블랙펄">오로라 블랙펄 (258)</option><option value="크리미">크리미 (186)</option><option value="어비스블랙펄">어비스블랙펄 (136)</option><option value="은색">은색 (107)</option><option value="비크">비크 (97)</option><option value="녹턴">녹턴 (82)</option><option value="빨간색">빨간색 (74)</option><option value="미드나잇">미드나잇 (70)</option>
     </select></span>
   <span class="chip">내장
     <select name="color_int"><option value="">전체</option>
-      <option value="검정색 계열">검정색 계열 (3,532)</option><option value="갈색 계열">갈색 계열 (2,743)</option><option value="베이지색 계열">베이지색 계열 (1,100)</option><option value="회색 계열">회색 계열 (323)</option><option value="흰색 계열">흰색 계열 (254)</option><option value="블랙">블랙 (248)</option><option value="청색 계열">청색 계열 (230)</option><option value="빨간색 계열">빨간색 계열 (186)</option><option value="새들브라운">새들브라운 (178)</option><option value="올리브브라운">올리브브라운 (112)</option><option value="코튼베이지">코튼베이지 (74)</option><option value="브라운">브라운 (67)</option><option value="토프">토프 (58)</option><option value="녹색 계열">녹색 계열 (50)</option>
+      <option value="검정색 계열">검정색 계열 (3,624)</option><option value="갈색 계열">갈색 계열 (2,870)</option><option value="베이지색 계열">베이지색 계열 (1,133)</option><option value="블랙원톤">블랙원톤 (450)</option><option value="회색 계열">회색 계열 (332)</option><option value="블랙">블랙 (267)</option><option value="흰색 계열">흰색 계열 (254)</option><option value="청색 계열">청색 계열 (237)</option><option value="빨간색 계열">빨간색 계열 (190)</option><option value="새들브라운">새들브라운 (178)</option><option value="브라운">브라운 (136)</option><option value="올리브브라운">올리브브라운 (112)</option><option value="하바나">하바나 (74)</option><option value="코튼베이지">코튼베이지 (74)</option>
     </select></span>
   <span class="chip">등급
     <select name="min_grade" title="이 등급 이상만 봅니다">
@@ -86,7 +86,7 @@
   <button type="submit" class="chip" style="cursor:pointer">거르기</button>
   <a class="chip clear" href="/listings" title="조건을 전부 지웁니다">전부 지우기</a>
 
-  <!-- ＋ 12 — 접어 둔다.  ★ 늘 보이면 칩 7 이 안 보인다 -->
+  
   <details class="chip" style="border-style:dashed">
     <summary>＋ 조건</summary>
     <div class="chips" style="margin-top:9px">
@@ -97,7 +97,7 @@
       <span class="chip">트림 <input name="trim" size="6" value=""
         placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
       <span class="chip">연료 <select name="fuel"><option value="">전체</option>
-        <option value="가솔린">가솔린 (5,392)</option><option value="가솔린+전기">가솔린+전기 (1,341)</option><option value="전기">전기 (852)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (458)</option><option value="디젤">디젤 (407)</option><option value="1.6 가솔린 하이브리드">1.6 가솔린 하이브리드 (298)</option><option value="2.2 디젤">2.2 디젤 (197)</option><option value="EV">EV (84)</option><option value="3.5 가솔린">3.5 가솔린 (78)</option><option value="3.0 디젤">3.0 디젤 (49)</option><option value="2.0 가솔린 하이브리드">2.0 가솔린 하이브리드 (48)</option><option value="1.6 가솔린 터보">1.6 가솔린 터보 (48)</option><option value="2.5 가솔린 터보">2.5 가솔린 터보 (47)</option><option value="1.6 가솔린">1.6 가솔린 (37)</option>
+        <option value="가솔린">가솔린 (6,392)</option><option value="가솔린+전기">가솔린+전기 (1,392)</option><option value="전기">전기 (978)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (465)</option><option value="디젤">디젤 (441)</option><option value="1.6 가솔린 하이브리드">1.6 가솔린 하이브리드 (298)</option><option value="하이브리드">하이브리드 (229)</option><option value="2.2 디젤">2.2 디젤 (197)</option><option value="EV">EV (84)</option><option value="3.5 가솔린">3.5 가솔린 (78)</option><option value="3.0 디젤">3.0 디젤 (49)</option><option value="2.0 가솔린 하이브리드">2.0 가솔린 하이브리드 (48)</option><option value="1.6 가솔린 터보">1.6 가솔린 터보 (48)</option><option value="하이브리드(가솔린)">하이브리드(가솔린) (47)</option>
       </select></span>
       <span class="chip">사이트 <select name="site"><option value="">전체</option>
         <option value="all">전부</option><option value="encar" selected>엔카만</option><option value="hyundai_cert">현대·제네시스 인증중고차만</option><option value="kia_cpo">기아 인증중고차(CPO)만</option>
@@ -111,9 +111,9 @@
       <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
         value="" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
       <span class="chip">지역 <select name="region"><option value="">전체</option>
-        <option value="경기">경기 (3,866)</option><option value="서울">서울 (1,054)</option><option value="대구">대구 (815)</option><option value="부산">부산 (677)</option><option value="인천">인천 (489)</option><option value="전남광주">전남광주 (431)</option><option value="대전">대전 (279)</option><option value="충남">충남 (197)</option><option value="경남">경남 (191)</option><option value="전북">전북 (159)</option><option value="울산">울산 (106)</option><option value="충북">충북 (84)</option><option value="광주">광주 (47)</option><option value="경북">경북 (31)</option>
+        <option value="경기">경기 (4,106)</option><option value="서울">서울 (1,094)</option><option value="대구">대구 (847)</option><option value="부산">부산 (706)</option><option value="인천">인천 (498)</option><option value="전남광주">전남광주 (440)</option><option value="대전">대전 (291)</option><option value="충남">충남 (199)</option><option value="경남">경남 (197)</option><option value="전북">전북 (161)</option><option value="울산">울산 (107)</option><option value="충북">충북 (87)</option><option value="광주">광주 (50)</option><option value="경북">경북 (32)</option>
       </select></span>
-      <!-- ★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164) -->
+      
       <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
         값<input name="score_value_min" size="3" inputmode="numeric" value="" placeholder="150">
         차량<input name="score_car_min" size="3" inputmode="numeric" value="" placeholder="100">
@@ -126,12 +126,12 @@
   </details>
 </form>
 
-<!-- ★ 고른 조건을 문장으로 (V11-165) · ★ 뺀 건수를 밝힌다 -->
+
 <div class="sentence">
-  리스 제외 — <span class="n">3,127건</span>
-   · <b>리스·렌트 408건은 뺐습니다</b> —
+  리스 제외 — <span class="n">3,230건</span>
+   · <b>리스·렌트 422건은 뺐습니다</b> —
     <a href="/listings?lease=1">함께 보기</a>
-   · <b>관문 제외 381건은 뺐습니다</b> —
+   · <b>관문 제외 391건은 뺐습니다</b> —
     <a href="/listings?excluded=1">따로 보기</a>
 </div>
 
@@ -146,49 +146,38 @@
 
 
 
-<!-- 사이트별로 거르기 (개정 306).  ★ 사이트 이름은 config/sites.json 이 정본 -->
+
 <p class="sitebar">
   
   
-  <!-- ★ 빈 조건을 주소에 붙이지 않습니다 (V11-72 · V11-75) —
-       sell_type 이 비면 그 칸을 아예 안 씁니다 -->
+  
   <a class="btn" href="/listings?site=all"
     title="이 사이트 매물만 봅니다">전부</a>
   
   <span class="btn on" title="지금 이 사이트만 봅니다">엔카만</span>
-  <!-- ★ 빈 조건을 주소에 붙이지 않습니다 (V11-72 · V11-75) —
-       sell_type 이 비면 그 칸을 아예 안 씁니다 -->
   
   
   
-  <!-- ★ 빈 조건을 주소에 붙이지 않습니다 (V11-72 · V11-75) —
-       sell_type 이 비면 그 칸을 아예 안 씁니다 -->
+  
+  
   <a class="btn" href="/listings?site=hyundai_cert"
     title="이 사이트 매물만 봅니다">현대·제네시스 인증중고차만</a>
   
   
-  <!-- ★ 빈 조건을 주소에 붙이지 않습니다 (V11-72 · V11-75) —
-       sell_type 이 비면 그 칸을 아예 안 씁니다 -->
+  
   <a class="btn" href="/listings?site=kia_cpo"
     title="이 사이트 매물만 봅니다">기아 인증중고차(CPO)만</a>
   
 </p>
 
-<!-- ══ 목록 한 행 — 8칸 (개정 427 · STEP 97) ══
-     ★ 정본은 ref/screens/v2_시안_목록상세.html 이다
-     ★ 전에는 24칸이었다.  「훑을 수가 없다」 (마스터)
-     ★ 목록은 「고르는」 화면이 아니라 「버리는」 화면이다 —
-       가격·연식·주행 셋이면 90%가 걸러진다.  자세한 것은 상세다
-     1 등급+순위 · 2 ★네 묶음 막대 · 3 사진 · 4 차명/트림/연식/주행/색
-     5 시세차 · 6 신차대비% · 7 옵션가 · 8 경과일+가격+변동 -->
+
 <main class="rows car-rows">
 
 <div class="row" data-peek="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" data-href="/detail/166"
      data-buy="3,199만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 742.1 / 910 점 (81.5%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>1위</small>
@@ -196,7 +185,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -204,33 +193,31 @@
         style="height:89%"></i><u>89</u></div><div class="bar b2"
         title="값 160.0 / 200.0점"><i
         style="height:80%"></i><u>80</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 53.0 / 90.0점"><i
+        style="height:59%"></i><u>59</u></div><div class="bar b4"
         title="취향 125.1 / 165.0점"><i
         style="height:76%"></i><u>76</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/166"><img class="thumb"
       src="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -240,9 +227,8 @@
         <a href="/detail/166"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2024-12"
            title="이 연식 이후만 봅니다">2024-12</a> ·
@@ -269,7 +255,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/166" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42459786" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -277,7 +263,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
@@ -287,7 +273,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,390만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-33.6%</b>
       
       <span class="raw"
@@ -299,7 +285,7 @@
         154만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=30000000"
@@ -321,9 +307,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" data-href="/detail/179"
      data-buy="3,391만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 732.5 / 910 점 (80.5%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>2위</small>
@@ -331,7 +316,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -339,33 +324,31 @@
         style="height:90%"></i><u>90</u></div><div class="bar b2"
         title="값 122.0 / 200.0점"><i
         style="height:61%"></i><u>61</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 67.0 / 90.0점"><i
+        style="height:74%"></i><u>74</u></div><div class="bar b4"
         title="취향 135.5 / 165.0점"><i
         style="height:82%"></i><u>82</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/179"><img class="thumb"
       src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -375,9 +358,8 @@
         <a href="/detail/179"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2025-03"
            title="이 연식 이후만 봅니다">2025-03</a> ·
@@ -404,7 +386,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/179" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42482002" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -412,7 +394,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
@@ -422,7 +404,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,380만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-28.6%</b>
       
       <span class="raw"
@@ -434,7 +416,7 @@
         283만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -455,9 +437,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture07/pic4247/42478572_001.jpg" data-href="/detail/178"
      data-buy="3,488만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 732.1 / 910 점 (80.5%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>3위</small>
@@ -465,7 +446,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -473,33 +454,31 @@
         style="height:91%"></i><u>91</u></div><div class="bar b2"
         title="값 117.0 / 200.0점"><i
         style="height:58%"></i><u>58</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 65.0 / 90.0점"><i
+        style="height:72%"></i><u>72</u></div><div class="bar b4"
         title="취향 134.1 / 165.0점"><i
         style="height:81%"></i><u>81</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/178"><img class="thumb"
       src="https://ci.encar.com/carpicture07/pic4247/42478572_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture07/pic4247/42478572_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -509,9 +488,8 @@
         <a href="/detail/178"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2024-10"
            title="이 연식 이후만 봅니다">2024-10</a> ·
@@ -538,7 +516,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/178" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42478572" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -546,7 +524,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
@@ -556,7 +534,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,390만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-29.1%</b>
       
       <span class="raw"
@@ -568,7 +546,7 @@
         243만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -590,9 +568,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" data-href="/detail/5736"
      data-buy="3,477만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 731.1 / 910 점 (80.3%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>4위</small>
@@ -600,7 +577,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -608,33 +585,31 @@
         style="height:91%"></i><u>91</u></div><div class="bar b2"
         title="값 118.0 / 200.0점"><i
         style="height:59%"></i><u>59</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 66.0 / 90.0점"><i
+        style="height:73%"></i><u>73</u></div><div class="bar b4"
         title="취향 134.1 / 165.0점"><i
         style="height:81%"></i><u>81</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/5736"><img class="thumb"
       src="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -644,9 +619,8 @@
         <a href="/detail/5736"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2024-11"
            title="이 연식 이후만 봅니다">2024-11</a> ·
@@ -673,7 +647,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/5736" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42544688" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -681,7 +655,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
@@ -691,7 +665,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,390만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-29.3%</b>
       
       <span class="raw"
@@ -703,7 +677,7 @@
         243만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -725,9 +699,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" data-href="/detail/202"
      data-buy="3,563만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 728.4 / 910 점 (80.0%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>5위</small>
@@ -735,7 +708,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -743,33 +716,31 @@
         style="height:91%"></i><u>91</u></div><div class="bar b2"
         title="값 90.0 / 200.0점"><i
         style="height:45%"></i><u>45</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 75.0 / 90.0점"><i
+        style="height:83%"></i><u>83</u></div><div class="bar b4"
         title="취향 148.4 / 165.0점"><i
         style="height:90%"></i><u>90</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/202"><img class="thumb"
       src="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -779,9 +750,8 @@
         <a href="/detail/202"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2024-10"
            title="이 연식 이후만 봅니다">2024-10</a> ·
@@ -808,7 +778,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/202" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42520259" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -816,7 +786,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
@@ -826,7 +796,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,220만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-26.9%</b>
       
       <span class="raw"
@@ -838,7 +808,7 @@
         401만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -860,9 +830,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture04/pic4254/42545905_027.jpg" data-href="/detail/5725"
      data-buy="3,627만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 728.1 / 910 점 (80.0%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>6위</small>
@@ -870,7 +839,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -878,33 +847,31 @@
         style="height:92%"></i><u>92</u></div><div class="bar b2"
         title="값 94.0 / 200.0점"><i
         style="height:47%"></i><u>47</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 77.0 / 90.0점"><i
+        style="height:86%"></i><u>86</u></div><div class="bar b4"
         title="취향 137.1 / 165.0점"><i
         style="height:83%"></i><u>83</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/5725"><img class="thumb"
       src="https://ci.encar.com/carpicture04/pic4254/42545905_027.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture04/pic4254/42545905_027.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -914,9 +881,8 @@
         <a href="/detail/5725"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2024-12"
            title="이 연식 이후만 봅니다">2024-12</a> ·
@@ -943,7 +909,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/5725" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42545905" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -951,7 +917,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       
@@ -960,7 +926,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,390만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-26.7%</b>
       
       <span class="raw"
@@ -972,7 +938,7 @@
         273만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -993,9 +959,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/detail/5749"
      data-buy="3,798만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 727.2 / 910 점 (79.9%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>7위</small>
@@ -1003,7 +968,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -1011,33 +976,31 @@
         style="height:96%"></i><u>96</u></div><div class="bar b2"
         title="값 69.0 / 200.0점"><i
         style="height:34%"></i><u>34</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 72.0 / 90.0점"><i
+        style="height:80%"></i><u>80</u></div><div class="bar b4"
         title="취향 149.2 / 165.0점"><i
         style="height:90%"></i><u>90</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/5749"><img class="thumb"
       src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -1047,9 +1010,8 @@
         <a href="/detail/5749"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2026-02"
            title="이 연식 이후만 봅니다">2026-02</a> ·
@@ -1075,7 +1037,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/5749" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42528750" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -1083,7 +1045,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       
@@ -1092,7 +1054,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,550만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-23.2%</b>
       
       <span class="raw"
@@ -1104,7 +1066,7 @@
         413만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=40000000"
@@ -1125,9 +1087,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture10/pic4240/42408679_001.jpg" data-href="/detail/143"
      data-buy="3,156만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 725.4 / 910 점 (79.7%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>8위</small>
@@ -1135,7 +1096,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -1143,33 +1104,31 @@
         style="height:86%"></i><u>86</u></div><div class="bar b2"
         title="값 154.0 / 200.0점"><i
         style="height:77%"></i><u>77</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 49.0 / 90.0점"><i
+        style="height:54%"></i><u>54</u></div><div class="bar b4"
         title="취향 131.4 / 165.0점"><i
         style="height:80%"></i><u>80</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/143"><img class="thumb"
       src="https://ci.encar.com/carpicture10/pic4240/42408679_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture10/pic4240/42408679_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -1179,9 +1138,8 @@
         <a href="/detail/143"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2024-09"
            title="이 연식 이후만 봅니다">2024-09</a> ·
@@ -1208,7 +1166,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/143" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42408679" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -1216,7 +1174,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
@@ -1226,7 +1184,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,220만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-32.9%</b>
       
       <span class="raw"
@@ -1238,7 +1196,7 @@
         243만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=30000000"
@@ -1260,9 +1218,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg" data-href="/detail/121"
      data-buy="3,702만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 725 / 910 점 (79.7%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>9위</small>
@@ -1270,7 +1227,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -1278,33 +1235,31 @@
         style="height:94%"></i><u>94</u></div><div class="bar b2"
         title="값 84.0 / 200.0점"><i
         style="height:42%"></i><u>42</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 81.0 / 90.0점"><i
+        style="height:90%"></i><u>90</u></div><div class="bar b4"
         title="취향 134.0 / 165.0점"><i
         style="height:81%"></i><u>81</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/121"><img class="thumb"
       src="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -1314,9 +1269,8 @@
         <a href="/detail/121"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2025-07"
            title="이 연식 이후만 봅니다">2025-07</a> ·
@@ -1343,7 +1297,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/121" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42337971" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -1351,7 +1305,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="down-v"
@@ -1361,7 +1315,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,530만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-24.7%</b>
       
       <span class="raw"
@@ -1373,7 +1327,7 @@
         243만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1394,9 +1348,8 @@
 <div class="row" data-peek="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg" data-href="/detail/125"
      data-buy="3,627만" data-buyest="True">
 
-  <!-- 1 등급 + 순위 -->
-  <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
-       등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
+  
+  
   <div class="gr S grade-s" title="등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다 — 이 매물은 724.5 / 910 점 (79.6%) 입니다">
     <a href="/listings?grade=S">S</a>
     <small>10위</small>
@@ -1404,7 +1357,7 @@
     
   </div>
 
-  <!-- 2 ★ 네 묶음 막대 — 시그니처.  늘 같은 자리·같은 개수·같은 색 -->
+  
   <div class="barwrap">
     <div class="bars">
       <div class="bar b1"
@@ -1412,33 +1365,31 @@
         style="height:93%"></i><u>93</u></div><div class="bar b2"
         title="값 84.0 / 200.0점"><i
         style="height:42%"></i><u>42</u></div><div class="bar b3"
-        title="보증 0.0 / 0.0점"><i
-        style="height:0%"></i><u>0</u></div><div class="bar b4"
+        title="보증 71.0 / 90.0점"><i
+        style="height:79%"></i><u>79</u></div><div class="bar b4"
         title="취향 144.5 / 165.0점"><i
         style="height:88%"></i><u>88</u></div>
     </div>
     <div class="barlab"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
-    <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
-         ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
-         ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    
     
   </div>
 
-  <!-- 3 사진 -->
+  
   <div class="desk">
     <a href="/detail/125"><img class="thumb"
       src="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg" alt="" loading="lazy"></a>
     
   </div>
 
-  <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
+  
   <div class="head">
     <div class="mob">
       <img class="thumb" src="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg" alt="" loading="lazy">
       
     </div>
     <div>
-      <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
+      
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="render">
@@ -1448,9 +1399,8 @@
         <a href="/detail/125"
            title="판정 근거와 상세를 봅니다">KOLEOS_HEV</a>
       </div>
-      <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
-      <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
-           ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
+      <div class="trim" title="트림 = Badge + BadgeDetail 입니다">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</div>
+      
       <div class="meta">
         <a href="/listings?year_from=2025-07"
            title="이 연식 이후만 봅니다">2025-07</a> ·
@@ -1477,7 +1427,7 @@
           >용도<b>O</b></a><a class="chip-good axis-good"
           href="/listings?axis=warranty.power&amp;bucket=1" title="보증 있음 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >보증<b>O</b></a>
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
+        
         <a href="/detail/125" class="mini">근거</a>
         <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42364232" target="_blank" rel="noopener"
           class="mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>
@@ -1485,7 +1435,7 @@
     </div>
   </div>
 
-  <!-- 5~8 -->
+  
   <div class="cellset">
     <div class="cell mono num"><u>시세차</u>
       <b class="up-v"
@@ -1495,7 +1445,7 @@
         title="같은 차종·트림·연식 매물의 실제 중앙값입니다">시세 3,380만</span></div>
     <div class="cell mono num"><u>신차대비</u>
       <b class="down-v"
-        title="신차가 = 등급 기준 + 선택옵션 (개정 301). 판매자가 입력한 등급·옵션 기준입니다"
+        title="신차가 = 등급 기준 + 선택옵션. 판매자가 입력한 등급·옵션 기준입니다"
         >-24.9%</b>
       
       <span class="raw"
@@ -1507,7 +1457,7 @@
         361만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>6일</b>
+      <b>7일</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1534,8 +1484,8 @@
   
   <a href="/listings?page=1" class="on">1</a><a href="/listings?page=2">2</a><a href="/listings?page=3">3</a><a href="/listings?page=4">4</a><a href="/listings?page=5">5</a><a href="/listings?page=6">6</a><a href="/listings?page=7">7</a><a href="/listings?page=8">8</a><a href="/listings?page=9">9</a>
   <a href="/listings?page=2">다음 ›</a>
-  <a href="/listings?page=313">끝 »</a>
-  <span class="dim">한 쪽 10건 · 모두 313쪽</span>
+  <a href="/listings?page=323">끝 »</a>
+  <span class="dim">한 쪽 10건 · 모두 323쪽</span>
 </div>
 <p class="dim">★ 쪽을 넘겨도 지금 조건이 그대로 붙습니다 (V11-58).</p>
 
@@ -1544,13 +1494,13 @@
   값을 누르면 그 조건으로 걸러집니다 · <strong>지금 조건</strong>이 그대로 다음 행동의 조건이 됩니다.<br>
   총점 <strong>910</strong> 중 등급은
   <strong>910 기준</strong>입니다 — <strong>비율로 정렬합니다</strong>.
-  분모는 늘 만점입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298).
-  등급 경계는 절대 기준입니다 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10 (개정 433).
+  분모는 늘 만점입니다 — 못 본 축은 분모에서 빼지 않고 0점으로 둡니다.
+  등급 경계는 절대 기준입니다 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10.
   <strong>제외</strong>는 등급이 아닙니다 — 리스·골격 사고·침수·전손으로
   관문에서 떨어진 것이라 점수를 매기지 않습니다.<br>
   축 칸 <strong>O</strong> 있음 · <strong>·</strong> 없음 · <strong>?</strong> 확인 못 함 —
   「없음」과 「모름」을 가릅니다.<br>
-  <strong>신차가 · 시세 · 가격</strong> 셋을 나란히 냅니다 (개정 283).
+  <strong>신차가 · 시세 · 가격</strong> 셋을 나란히 냅니다.
   신차가는 원문 그대로이고, <strong>시세는 같은 차종·트림·연식 매물의 실제 중앙값</strong>입니다
   — 감가 곡선의 이론가가 아닙니다. 렌트·리스 승계는 뺐습니다.
   표본이 모자라면 「표본 N건」이라 적고 내지 않습니다.
@@ -1563,15 +1513,14 @@
   <div class="pk">
     <div class="pk-t" id="peek-title"></div>
     <div class="pk-p" id="peek-price"></div>
-    <!-- ⑨ 비용 — 「실제로 내는 돈」 (개정 353).  ★ 표시가가 싼 쪽이
-         실제로 싼 쪽이 아닐 수 있다.  열을 늘리지 않고 여기에 낸다 -->
+    
     <div class="pk-b" id="peek-buy"></div>
     <div class="pk-r" id="peek-tags"></div>
     <div class="pk-d" id="peek-desc"></div>
   </div>
 </div>
 <script>
-/* 매물 미리보기 (STEP 149o · 개정 277).  바닐라 · 한 파일 (개정 248).
+/* 매물 미리보기.  바닐라 · 한 파일.
    ★ 값을 다시 실어 보내지 않는다 — 이미 그 행에 있는 칸을 읽는다.
      서버가 낸 것과 미리보기가 어긋날 수 없다.
    ★ JS 가 꺼져도 표는 그대로다.  이건 더해 주는 것이지 필요한 것이 아니다 */
@@ -1598,7 +1547,7 @@
     document.getElementById('peek-price').textContent =
       cell(tr, '가격') + '   시세차 ' + cell(tr, '시세차');
 
-    /* ★ 「얼마에 파는가」가 아니라 「얼마를 내는가」다 (개정 353) */
+    /* ★ 「얼마에 파는가」가 아니라 「얼마를 내는가」다 */
     var buy = tr.getAttribute('data-buy');
     document.getElementById('peek-buy').textContent =
       buy ? ('실제로 내는 돈 ' + buy +
@@ -1700,8 +1649,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:56</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>

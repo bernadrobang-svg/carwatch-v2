@@ -31,14 +31,18 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -48,55 +52,67 @@
   <strong>웹에서 고치지 않습니다.</strong>
   <span class="muted">근거 STEP 136</span></p>
 
-<h2>문서 106개</h2>
+<h2>문서 111개</h2>
 <table>
 <thead><tr><th>파일</th><th class="num">줄</th></tr></thead>
 <tbody>
 
+<tr><td><a href="/admin/docs?path=docs/BMW_BPS_API.md">BMW_BPS_API.md</a></td>
+  <td class="num">215</td></tr>
+
 <tr><td><a href="/admin/docs?path=docs/BOBAEDREAM_API.md">BOBAEDREAM_API.md</a></td>
-  <td class="num">171</td></tr>
+  <td class="num">217</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/CHECKS.md">CHECKS.md</a></td>
   <td class="num">640</td></tr>
 
+<tr><td><a href="/admin/docs?path=docs/DEDUP_CROSS_SITE.md">DEDUP_CROSS_SITE.md</a></td>
+  <td class="num">138</td></tr>
+
 <tr><td><a href="/admin/docs?path=docs/ENCAR_API.md">ENCAR_API.md</a></td>
   <td class="num">182</td></tr>
 
+<tr><td><a href="/admin/docs?path=docs/ENCAR_ROBOTS.md">ENCAR_ROBOTS.md</a></td>
+  <td class="num">168</td></tr>
+
 <tr><td><a href="/admin/docs?path=docs/HEYDEALER_API.md">HEYDEALER_API.md</a></td>
-  <td class="num">241</td></tr>
+  <td class="num">258</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/HYUNDAI_CERTIFIED_API.md">HYUNDAI_CERTIFIED_API.md</a></td>
-  <td class="num">208</td></tr>
+  <td class="num">416</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/INDEX.md">INDEX.md</a></td>
   <td class="num">114</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/KBCHACHACHA_API.md">KBCHACHACHA_API.md</a></td>
-  <td class="num">152</td></tr>
+  <td class="num">260</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/KCAR_API.md">KCAR_API.md</a></td>
-  <td class="num">199</td></tr>
+  <td class="num">205</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/KIA_CPO_API.md">KIA_CPO_API.md</a></td>
-  <td class="num">162</td></tr>
+  <td class="num">167</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/LEXUS_CERTIFIED_API.md">LEXUS_CERTIFIED_API.md</a></td>
-  <td class="num">134</td></tr>
+  <td class="num">238</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/MAPPING.md">MAPPING.md</a></td>
   <td class="num">95</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/MULTISITE_MAPPING.md">MULTISITE_MAPPING.md</a></td>
-  <td class="num">622</td></tr>
+  <td class="num">798</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/README.md">README.md</a></td>
   <td class="num">56</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/REBORNCAR_API.md">REBORNCAR_API.md</a></td>
-  <td class="num">155</td></tr>
+  <td class="num">263</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/SCHEMA.md">SCHEMA.md</a></td>
   <td class="num">111</td></tr>
+
+<tr><td><a href="/admin/docs?path=docs/SERVER_SURVIVAL.md">SERVER_SURVIVAL.md</a></td>
+  <td class="num">249</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/SOURCE.md">SOURCE.md</a></td>
   <td class="num">543</td></tr>
@@ -104,8 +120,11 @@
 <tr><td><a href="/admin/docs?path=docs/TARGET_KEY_MAP.md">TARGET_KEY_MAP.md</a></td>
   <td class="num">110</td></tr>
 
+<tr><td><a href="/admin/docs?path=docs/UI_REVIEW.md">UI_REVIEW.md</a></td>
+  <td class="num">254</td></tr>
+
 <tr><td><a href="/admin/docs?path=docs/VOLVO_SELEKT_API.md">VOLVO_SELEKT_API.md</a></td>
-  <td class="num">126</td></tr>
+  <td class="num">227</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/chapters/00-standard.md">chapters/00-standard.md</a></td>
   <td class="num">2,206</td></tr>
@@ -276,28 +295,28 @@
   <td class="num">152</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/03_이력.md">guide/03_이력.md</a></td>
-  <td class="num">550</td></tr>
+  <td class="num">623</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/04_구성.md">guide/04_구성.md</a></td>
   <td class="num">36</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/04_질의.md">guide/04_질의.md</a></td>
-  <td class="num">255</td></tr>
+  <td class="num">458</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/05_가이드역할.md">guide/05_가이드역할.md</a></td>
-  <td class="num">388</td></tr>
+  <td class="num">524</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/05_노션.md">guide/05_노션.md</a></td>
   <td class="num">187</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/06_오판대장.md">guide/06_오판대장.md</a></td>
-  <td class="num">365</td></tr>
+  <td class="num">419</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/07_밀린일대장.md">guide/07_밀린일대장.md</a></td>
-  <td class="num">204</td></tr>
+  <td class="num">265</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/08_인수인계.md">guide/08_인수인계.md</a></td>
-  <td class="num">739</td></tr>
+  <td class="num">286</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/ref/00-intro.md">ref/00-intro.md</a></td>
   <td class="num">24</td></tr>
@@ -393,7 +412,7 @@
 
 **89파일 · 27,873줄 · 1,220KB**
 
-★ 800줄을 넘는 파일 6개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 6개 — 폴더로 쪼갭니다
 
 - guide/01_요구사항.md 841줄
 - chapters/00-standard.md 2,172줄
@@ -502,8 +521,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:58</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>

@@ -31,14 +31,18 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -54,12 +58,11 @@
   전 차종에서는 갈릴 수 있습니다 — 그럴 때는 <code>deferred</code> 로 두고 해소 조건을 적습니다.
   미등록이 곧 미분류가 아닙니다. 파서가 이미 쓰는데 표기가 달라 잡힌 것일 수 있습니다.
 </p>
-<!-- 미분류를 원인별로 (개정 341 · V4-26).
-     ★ 「349건」이라고만 내면 아무도 안 봅니다 -->
 
-<h2>미분류 318건 — 원인별</h2>
-<p class="chips"><span class="chip">② 이름만 다름 79</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 106</span></p>
-<p class="big"><strong>사람이 봐야 할 것 106건</strong>
+
+<h2>미분류 319건 — 원인별</h2>
+<p class="chips"><span class="chip">② 이름만 다름 79</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 107</span></p>
+<p class="big"><strong>사람이 봐야 할 것 107건</strong>
   <span class="muted">나머지 212건은 제안이 있습니다</span></p>
 
 
@@ -136,7 +139,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>False</code> 171건 · <code>True</code> 29건 · 
+    <code>False</code> 170건 · <code>True</code> 30건 · 
     <span class="dim">관측 12,348/12,348</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>version</code> <code>reportVersion</code> 
@@ -291,7 +294,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>2497</code> 112건 · <code>1998</code> 18건 · <code>1499</code> 16건 · <code>3470</code> 15건 · <code>1999</code> 11건 · 
+    <code>2497</code> 113건 · <code>1998</code> 18건 · <code>1499</code> 15건 · <code>3470</code> 15건 · <code>1999</code> 11건 · 
     <span class="dim">관측 7,824/7,824</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
@@ -371,17 +374,35 @@
 
 </tbody>
 </table>
-<p class="muted">그 밖 94건이 더 있습니다.</p>
+<p class="muted">그 밖 95건이 더 있습니다.</p>
 
 
 
 <p class="chips">
-<a class="chip" href="/admin/registry?usage=unclassified">unclassified (318)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (222)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (141)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
+<a class="chip" href="/admin/registry?usage=unclassified">unclassified (319)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (222)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (141)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
 </p>
 <table class="rows">
 <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th class="num">미관측</th>
 <th title="갈래입니다">구분</th><th title="우리 DB 의 어느 칸에 담기는지입니다">컬럼</th><th title="그렇게 판단한 까닭입니다">근거</th><th title="이 경로를 판정에 쓰는지 아닌지입니다">분류</th></tr></thead>
 <tbody>
+
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_my_cnt</code></td>
+<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="accident_my_cnt">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
 
 <tr><td data-label="엔드포인트">detail</td><td data-label="경로"><code>advertisement.verification</code></td>
 <td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
@@ -545,24 +566,6 @@
   </form>
 </td></tr>
 
-<tr><td data-label="엔드포인트">ev_battery</td><td data-label="경로"><code>ensolRawInfo.batteryInfo.batteryBasicInfo</code></td>
-<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
-<td data-label="컬럼"></td><td class="muted" data-label="근거">sync_registry 자동 적재. 사람이 분류해야 한다</td>
-<td data-label="분류">
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="ev_battery">
-    <input type="hidden" name="json_path" value="ensolRawInfo.batteryInfo.batteryBasicInfo">
-    <select name="usage">
-      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
-    </select>
-    <input name="core_column" placeholder="컬럼" size="12">
-    <input name="reason" placeholder="근거 (필수)" size="18" required>
-    <button type="submit" class="mini">저장</button>
-  </form>
-</td></tr>
-
 </tbody>
 </table>
 
@@ -572,8 +575,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:58</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>

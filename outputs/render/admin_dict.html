@@ -31,14 +31,18 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -50,18 +54,25 @@
   기계가 정하면 「흰색」과 「화이트」를 다른 것으로 두거나 「진주색」을 흰색에 넣어 버립니다.
   그 판단은 사람이 합니다 — 그래서 <code>pending</code> 이 있습니다.
   <strong>확정 전에는 그 축을 쓰는 판정이 돌지 않습니다.</strong>
-  <span class="muted">근거 STEP 136e · 4장 STEP 45</span>
+  <span class="muted">근거 STEP 136e</span>
 </p>
 
 
+<p class="warn-warn">
+  ★ 아래 값 가운데 출처가 <code>list</code> 인 것은
+  <strong>facet 없이 목록에서 관측한 것입니다. 전체 집합이 아닙니다.</strong>
+  지금 매물이 가진 값만 보인 것이라, 나중에 다른 값이 뜨면 미분류가 됩니다.
+  facet 을 받으면 대조 결과를 여기에 냅니다 (V3-38).
+</p>
 
-<h2>확정 대기 35종</h2>
+
+<h2>확정 대기 43종</h2>
 
 
 <h3>축 단위로 한 번에</h3>
-<p class="muted">35종을 하나씩 누르지 않습니다.
+<p class="muted">43종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.
-  지금 대기 중인 축은 <strong>1가지</strong>입니다 —
+  지금 대기 중인 축은 <strong>2가지</strong>입니다 —
   나머지 축은 이미 확정됐습니다.</p>
 
 <details class="card tight">
@@ -78,6 +89,26 @@
       placeholder="왜 확정하는가 (필수)" required></label>
     <button type="submit" name="action" value="confirm"
       title="이 축의 대기 값을 한 번에 확정합니다">이 축 35종 확정</button>
+    <button type="submit" name="action" value="retire"
+      title="쓰지 않는 값으로 내립니다">폐기</button>
+  </form>
+  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
+</details>
+
+<details class="card tight">
+  <summary><strong>target</strong>
+    <span class="dim">8종 ·
+      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
+      list <span class="dim">전체 집합 아님</span></span></summary>
+  <p class="dim">값 예시 G80 · 그랜저 · 스포티지 · GV70 · 모델 Y  외 3종</p>
+  <form method="post" action="/admin/dict">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="axis" value="target">
+    <input type="hidden" name="previewed" value="1">
+    <label>사유 <input name="reason" size="24"
+      placeholder="왜 확정하는가 (필수)" required></label>
+    <button type="submit" name="action" value="confirm"
+      title="이 축의 대기 값을 한 번에 확정합니다">이 축 8종 확정</button>
     <button type="submit" name="action" value="retire"
       title="쓰지 않는 값으로 내립니다">폐기</button>
   </form>
@@ -409,6 +440,78 @@
   <td class="muted" data-label="처음 본 시각">2026-08-16</td>
 </tr>
 
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>G80</strong></td>
+  <td class="num" data-label="관측">2,752</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>그랜저</strong></td>
+  <td class="num" data-label="관측">1,797</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>스포티지</strong></td>
+  <td class="num" data-label="관측">1,493</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>GV70</strong></td>
+  <td class="num" data-label="관측">1,220</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>모델 Y</strong></td>
+  <td class="num" data-label="관측">580</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>G70</strong></td>
+  <td class="num" data-label="관측">457</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>그랑 콜레오스</strong></td>
+  <td class="num" data-label="관측">285</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="축">target</td>
+  <td data-label="값"><strong>GV60</strong></td>
+  <td class="num" data-label="관측">139</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처"><strong>list</strong></td>
+  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
 </table>
 
 
@@ -438,6 +541,8 @@
 
 <tr><td>sell_type</td><td class="num">3종</td></tr>
 
+<tr><td>target</td><td class="num">10종</td></tr>
+
 <tr><td>trim</td><td class="num">68종</td></tr>
 
 </table>
@@ -453,8 +558,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:58</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>

@@ -31,32 +31,44 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
 <main>
 <h1>관리</h1>
 
-<h2>정기 점검 <span class="muted">S29 · 개정 334 · 335</span></h2>
+
+<p class="bar">
+  <a class="btn on" href="/admin/collect">★ 브라우저 수집</a>
+  <a class="btn" href="/admin/run">실행 지시 · 큐</a>
+  <a class="btn" href="/admin/status">진행 지켜보기</a>
+  <a class="btn" href="/admin/targets">차종 추가 · 수정</a>
+</p>
+
+<h2>정기 점검 <span class="muted">S29</span></h2>
 <table class="rows">
 <thead><tr><th>주기</th><th title="언제 도는지입니다">언제</th><th>마지막</th><th>기록</th></tr></thead>
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-08-23_0200</td>
-  <td data-label="기록" class="muted">outputs/light/ · 30건 ·
+  <td data-label="마지막">2026-08-23_2200</td>
+  <td data-label="기록" class="muted">outputs/light/ · 34건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
-  <td data-label="마지막">2026-08-22</td>
-  <td data-label="기록" class="muted">outputs/daily/ · 6건</td></tr>
+  <td data-label="마지막">2026-08-23</td>
+  <td data-label="기록" class="muted">outputs/daily/ · 7건</td></tr>
 <tr><td data-label="주기">주간 <span class="muted">서로 점검</span></td>
   <td data-label="언제" class="muted">금 02:00</td>
   <td data-label="마지막">2026-08-21_주간점검</td>
@@ -72,11 +84,11 @@
 <thead><tr><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
 <tbody>
 
-<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">35</td>
+<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">83</td>
   <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
   <td data-label=""><a href="/notready">가기</a></td></tr>
 
-<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">318</td>
+<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">319</td>
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
   <td data-label=""><a href="/admin/registry">가기</a></td></tr>
 
@@ -88,7 +100,7 @@
 
 
 <ul class="stat">
-  <li>등록부 미분류 <strong>318</strong></li>
+  <li>등록부 미분류 <strong>319</strong></li>
   <li>개발 요청 <strong>0</strong></li>
   <li>대기 작업 <strong>0</strong></li>
 </ul>
@@ -161,6 +173,30 @@
 <td data-label="근거">STEP 137</td>
 <td data-label="상태"></td></tr>
 
+<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/recommend">후보</a></td>
+<td data-label="근거">개정 427</td>
+<td data-label="상태"></td></tr>
+
+<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/compare">비교</a></td>
+<td data-label="근거">개정 427</td>
+<td data-label="상태"></td></tr>
+
+<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/market">시세</a></td>
+<td data-label="근거">개정 427</td>
+<td data-label="상태"></td></tr>
+
+<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/dealers">딜러</a></td>
+<td data-label="근거">개정 427</td>
+<td data-label="상태"></td></tr>
+
+<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/reports">리포트</a></td>
+<td data-label="근거">개정 427</td>
+<td data-label="상태"></td></tr>
+
+<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/notready">미판정</a></td>
+<td data-label="근거">개정 427</td>
+<td data-label="상태"></td></tr>
+
 </tbody>
 </table>
 
@@ -169,6 +205,14 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-23T01:40:47.045194+00:00</td><td class="muted" data-label="사유">요청 106건</td>
+  <td class="runid" data-label="실행">20260823T014017</td>
+  <td class="num" data-label="소요">7.9초</td><td data-label="판정">정상</td></tr>
+
+<tr><td data-label="시각">2026-08-23T01:23:56.217038+00:00</td><td class="muted" data-label="사유">요청 928건</td>
+  <td class="runid" data-label="실행">20260823T012340</td>
+  <td class="num" data-label="소요">66.9초</td><td data-label="판정">정상</td></tr>
 
 <tr><td data-label="시각">2026-08-22T04:19:46.150329+00:00</td><td class="muted" data-label="사유">요청 8건</td>
   <td class="runid" data-label="실행">20260822T041932</td>
@@ -182,14 +226,6 @@
   <td class="runid" data-label="실행">20260821T130404</td>
   <td class="num" data-label="소요">52.0초</td><td data-label="판정">정상</td></tr>
 
-<tr><td data-label="시각">2026-08-21T12:59:26.457527+00:00</td><td class="muted" data-label="사유">요청 64건</td>
-  <td class="runid" data-label="실행">20260821T125916</td>
-  <td class="num" data-label="소요">5.8초</td><td data-label="판정">정상</td></tr>
-
-<tr><td data-label="시각">2026-08-19T23:46:36.168190+00:00</td><td class="muted" data-label="사유">요청 1,469건</td>
-  <td class="runid" data-label="실행">20260819T234633</td>
-  <td class="num" data-label="소요">64.7초</td><td data-label="판정">정상</td></tr>
-
 </tbody>
 </table>
 
@@ -200,7 +236,7 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td data-label="무엇">color_ext[23] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+<tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td data-label="무엇">color_ext[23] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
@@ -210,7 +246,7 @@
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td data-label="무엇">fuel[5] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+<tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td data-label="무엇">fuel[5] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
@@ -220,7 +256,7 @@
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td data-label="무엇">sell_type[3] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+<tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td data-label="무엇">sell_type[3] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
@@ -230,7 +266,7 @@
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-16T07:28:00.532735+00:00</td><td data-label="무엇">color_int[10] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다 (개정 266)</td>
+<tr><td data-label="시각">2026-08-16T07:28:00.532735+00:00</td><td data-label="무엇">color_int[10] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
@@ -255,8 +291,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:58</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>

@@ -58,10 +58,40 @@
       "EX60": {
         "collect_group": "kb:EX60"
       }
+    },
+    "kcar": {
+      "_field": "상세 data.rvo.modelNm 에서 괄호(세대)를 뗀 것 (KCAR_API 3-1)",
+      "_rule": "★ 목록을 못 부른다 (enc) — ★ 사람이 준 carCd 로 상세만 받는다.  ★ 이름은 받아 본 것만 적는다",
+      "G80": {
+        "collect_group": "encar:G80"
+      },
+      "G70": {
+        "collect_group": "encar:G70"
+      },
+      "GV70": {
+        "collect_group": "encar:GV70"
+      },
+      "GV60": {
+        "collect_group": "encar:GV60"
+      },
+      "그랜저": {
+        "collect_group": "encar:GRANDEUR"
+      },
+      "스포티지": {
+        "collect_group": "encar:SPORTAGE"
+      },
+      "그랑 콜레오스 하이브리드": {
+        "collect_group": "encar:KOLEOS"
+      },
+      "그랑 콜레오스": {
+        "collect_group": "encar:KOLEOS"
+      },
+      "모델 Y": {
+        "collect_group": "encar:MODEL_Y"
+      }
     }
   },
   "_pending": {
-    "kcar": "★ modelGrpNm 이 목록 응답에 온다 — ★ 목록을 못 만들어 아직 못 받았다 (enc 금지)",
     "encar": "★ 이미 3,916건이 target_key 로 붙어 있다 — ★ 그것이 정본이다 (TARGET_KEY_MAP 5장)"
   },
   "fuel_normalize": {
@@ -84,6 +114,13 @@
       "하이브리드(가솔린)": "가솔린+전기",
       "하이브리드(디젤)": "디젤+전기",
       "LPG": "LPG(일반인 구입)"
+    },
+    "kcar": {
+      "_why": "★ K카는 `fuelTypecdNm` 이 ★ 엔카와 같은 말을 쓴다 (실측 — 「가솔린」·「가솔린+전기」). ★ 그대로 둔다.  ★ 표에 없으면 원문이 그대로 간다",
+      "가솔린": "가솔린",
+      "디젤": "디젤",
+      "전기": "전기",
+      "가솔린+전기": "가솔린+전기"
     }
   }
 }

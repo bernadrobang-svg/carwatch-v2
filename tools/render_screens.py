@@ -88,7 +88,17 @@ def main(db: str = "carwatch.db") -> int:
     from web.views import HANDLERS
 
     conn = sqlite3.connect(os.path.join(ROOT, db))
+    # ★★ 표본은 ★ 「그 화면이 무엇을 내는지 보이는 것」이라야 한다 (개정 380 · V3-72).
+    #   ★ 실측 08-24 — 가장 작은 listing_id 가 ★ 가점 없는 비전기차라
+    #     ★ `/why` 스냅숏에 ★ 「가점」 절이 ★ 통째로 안 나왔다.
+    #   ★ 그동안은 ★ 템플릿의 개발 주석에 「가점」이 있어 ★ 검사가 통과하고 있었다 —
+    #     ★ 주석을 응답에서 빼자 ★ 그것이 드러났다 (UI_REVIEW 3장 고침의 곁가지)
+    #   ★ 그래서 ★ 가점이 붙은 매물을 ★ 먼저 고른다.  ★ 없으면 옛날처럼 고른다
     row = conn.execute(
+        "SELECT listing_id FROM result_score"
+        " WHERE bonuses_json NOT IN ('', '[]') AND bonuses_json IS NOT NULL"
+        " ORDER BY listing_id LIMIT 1"
+    ).fetchone() or conn.execute(
         "SELECT listing_id FROM result_score ORDER BY listing_id LIMIT 1"
     ).fetchone()
     SAMPLE["listing_id"] = str(row[0]) if row else "1"

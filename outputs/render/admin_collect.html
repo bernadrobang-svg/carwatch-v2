@@ -31,14 +31,18 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -57,8 +61,8 @@
 <p class="muted">
   한 번에 <strong>20건</strong>씩 부르고, 한 번에
   <strong>65,536바이트</strong>를 넘지 않게
-  <strong>나눠서 보냅니다</strong> — 사람이 나눌 일이 아닙니다 (개정 263).
-  호출 간격은 <strong>0.0초</strong>입니다 (개정 265).
+  <strong>나눠서 보냅니다</strong> — 사람이 나눌 일이 아닙니다.
+  호출 간격은 <strong>0.0초</strong>입니다.
   응답이 <code>407</code>·<code>403</code>·<code>429</code> 면 그대로 냅니다.
 </p>
 
@@ -91,7 +95,7 @@
   
   </div>
 
-  <p class="muted">★ 전 차종은 「높음」입니다 (STEP 149l). 아래에
+  <p class="muted">★ 전 차종은 「높음」입니다. 아래에
     <code>all</code> 을 직접 입력해야 시작합니다. 예상은 ② 에서 먼저 냅니다.</p>
   <label>확인 <input name="confirm" id="f_confirm" size="10" placeholder="all"
     autocomplete="off"> <span class="muted">전 차종일 때만 필요합니다</span></label>
@@ -108,7 +112,7 @@
 
 <h2>② 무엇이 왔는지 눈으로 봅니다</h2>
 <p class="muted">사람이 보고 저장합니다. <strong>자동으로 저장하지 않습니다</strong> —
-  무엇이 들어갔는지 모르게 되기 때문입니다 (STEP 136c).</p>
+  무엇이 들어갔는지 모르게 되기 때문입니다.</p>
 <div id="result" class="notice"><p class="muted">아직 부르지 않았습니다.</p></div>
 
 <h2>진행</h2>
@@ -117,16 +121,16 @@
 <h2>받았다 ↔ 쓰였다</h2>
 <p class="notice">
   <strong>「받았다」와 「쓰였다」는 다릅니다.</strong>
-  목록 원문 <strong>2,227쪽</strong>을 받았고,
+  목록 원문 <strong>2,505쪽</strong>을 받았고,
   그중에서 펼쳐 <code>core_listing</code> 에 앉은 매물이
-  <strong>10,612건</strong>입니다.
-  상세 원문 <strong>16,279건</strong> · 파싱된 매물
-  <strong>8,450건</strong>.
-  <span class="muted">받았는데 안 펼쳐진 것이 있으면 V1-21 이 잡습니다 (개정 268)</span>
+  <strong>11,004건</strong>입니다.
+  상세 원문 <strong>16,400건</strong> · 파싱된 매물
+  <strong>8,723건</strong>.
+  <span class="muted">받았는데 안 펼쳐진 것이 있으면 V1-21 이 잡습니다</span>
 </p>
 
 <h2>지금까지 브라우저로 받은 것 5건</h2>
-<p class="muted">목록 2,226쪽 · facet 91건 저장돼 있습니다.
+<p class="muted">목록 2,504쪽 · facet 97건 저장돼 있습니다.
   중간에 실패해도 <strong>여기까지는 남습니다</strong> — 처음부터 다시 하지 않습니다.</p>
 
 <table class="rows">
@@ -134,25 +138,25 @@
   <th class="num" title="검사·오류 코드입니다">코드</th><th class="num" title="저장된 바이트 수입니다">크기</th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-21T13:07:46.835947+00:00</td><td class="num" data-label="raw_id">142144</td>
+<tr><td data-label="시각">2026-08-23T01:41:11.486724+00:00</td><td class="num" data-label="raw_id">143425</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">23,196</td></tr>
+  <td class="num" data-label="크기">3,110</td></tr>
 
-<tr><td data-label="시각">2026-08-21T13:07:45.885299+00:00</td><td class="num" data-label="raw_id">142142</td>
+<tr><td data-label="시각">2026-08-23T01:41:09.925261+00:00</td><td class="num" data-label="raw_id">143420</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">23,255</td></tr>
+  <td class="num" data-label="크기">20,294</td></tr>
 
-<tr><td data-label="시각">2026-08-21T13:07:44.937973+00:00</td><td class="num" data-label="raw_id">142138</td>
+<tr><td data-label="시각">2026-08-23T01:41:08.283310+00:00</td><td class="num" data-label="raw_id">143415</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">23,661</td></tr>
+  <td class="num" data-label="크기">21,344</td></tr>
 
-<tr><td data-label="시각">2026-08-21T13:07:44.241460+00:00</td><td class="num" data-label="raw_id">142135</td>
-  <td data-label="엔드포인트">facet</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">164,853</td></tr>
-
-<tr><td data-label="시각">2026-08-21T13:07:37.978010+00:00</td><td class="num" data-label="raw_id">142118</td>
+<tr><td data-label="시각">2026-08-23T01:41:06.863391+00:00</td><td class="num" data-label="raw_id">143411</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">13,705</td></tr>
+  <td class="num" data-label="크기">21,682</td></tr>
+
+<tr><td data-label="시각">2026-08-23T01:41:05.368428+00:00</td><td class="num" data-label="raw_id">143406</td>
+  <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
+  <td class="num" data-label="크기">22,809</td></tr>
 
 </tbody>
 </table>
@@ -165,9 +169,9 @@
 <thead><tr><th title="수집 단계입니다 (S0~S11)">단계</th><th>어떻게 확보했나</th><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th></tr></thead>
 <tbody>
 
-<tr><td data-label="단계">STEP53-S1</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-08-21T13:07:46.835947+00:00</td></tr>
+<tr><td data-label="단계">STEP53-S1</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-08-23T01:41:11.486724+00:00</td></tr>
 
-<tr><td data-label="단계">STEP53-S2</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-08-21T13:07:44.241460+00:00</td></tr>
+<tr><td data-label="단계">STEP53-S2</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-08-23T01:40:15.686324+00:00</td></tr>
 
 <tr><td data-label="단계">STEP53-S1</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-08-16T06:55:02.437095+00:00</td></tr>
 
@@ -387,10 +391,10 @@
 </tbody>
 </table>
 <p class="muted">JS 가 꺼져 있으면 새 탭에서 연 뒤 본문을 복사해
-  <a href="/admin/import">목록 반입</a> 화면에 붙여넣으십시오 (STEP 136a).</p>
+  <a href="/admin/import">목록 반입</a> 화면에 붙여넣으십시오.</p>
 
 <script>
-// 13장 STEP 136c · 개정 263 · 264 · 265 · 14장 STEP 145b
+// 13장 STEP 136c장 STEP 145b
 // ★ 바닐라 JS · 한 파일 · CDN 도 npm 도 쓰지 않는다
 // ★ JS 가 하는 일은 「브라우저만 할 수 있는 일」뿐이다 — 엔카를 부르고 나눠 보내는 것
 (function () {
@@ -418,7 +422,7 @@
     return ' — 서버: ' + text;
   }
 
-  /* ★ 왜 실패했는지 밝힌다 (개정 307).
+  /* ★ 왜 실패했는지 밝힌다.
      「저장 403」만 내면 원인을 모른다 — 토큰인지 앞단인지 알아야 한다 */
   function why(code) {
     if (code === 403) {
@@ -434,7 +438,7 @@
     return '';
   }
 
-  /* ★ 응답에 새 토큰이 실려 오면 갈아 끼운다 (개정 307 · AD-096).
+  /* ★ 응답에 새 토큰이 실려 오면 갈아 끼운다.
      한 화면에서 수십 번 POST 한다 — 토큰이 만료되면 통째로 막힌다 */
   function takeToken(res) {
     var got = res && res.headers && res.headers.get('X-CSRF-Token');
@@ -675,7 +679,7 @@
                    '건</strong>으로 줄였습니다. 차종마다 다시 잽니다.');
       }
       if (got.status !== 200) {
-        // ★ 407·403·429 를 삼키지 않는다 (STEP 136c)
+        // ★ 407·403·429 를 삼키지 않는다
         lines.push('<strong>200 이 아닙니다.</strong> 이 상태로 저장하면 ' +
                    '잘못된 것이 들어갑니다.');
       }
@@ -696,7 +700,7 @@
     if (!el('f_reason').value.trim()) {
       show('progress', ['사유를 적어야 저장합니다.']); return;
     }
-    // ★ 전 차종은 확인 문구를 받는다 (STEP 149l · V11-48).
+    // ★ 전 차종은 확인 문구를 받는다.
     //   대소문자를 가리지 않는다 — 확인의 목적은 실수 방지이지 타자 시험이 아니다
     if (mode() === 'all' &&
         el('f_confirm').value.trim().toLowerCase() !== 'all') {
@@ -753,7 +757,7 @@
       if (job.kind === 'facet') {
         return fit(job, 0, ROWS).then(function (got) {
           if (got.status !== 200) { throw new Error('HTTP ' + got.status); }
-          // ★ 크면 바이트로 나눠 보낸다 (개정 307).  상한을 올리지 않는다
+          // ★ 크면 바이트로 나눠 보낸다.  상한을 올리지 않는다
           var send = got.size > ROOM
             ? postChunks(job, got, job.url, function (m) { report(m); })
             : post(job, got, job.url);
@@ -811,8 +815,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:58</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>

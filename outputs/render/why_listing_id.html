@@ -31,55 +31,58 @@
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
 </nav>
 
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오  (/admin/collect)</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
 <main>
-<h1>판정 근거 <span class="grade-excluded">EXCLUDED</span></h1>
-<p class="muted">GRANDEUR_LPG · 매물 3
+<h1>판정 근거 <span class="grade-b">B</span></h1>
+<p class="muted">G80_EV · 매물 887
   · <span class="tag" title="이 매물을 받은 사이트입니다. 값이 어느 사이트 원문에서 왔는지가 값의 뜻을 정합니다">엔카</span>
-  · <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=38016911" target="_blank" rel="noopener"
+  · <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42342421" target="_blank" rel="noopener"
     title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a></p>
-<!-- ① 사진 (개정 375 · V11-132).  ★ 상세인데 사진이 하나도 없었다.
-     ★ JS 없이 갈아 끼운다 — 썸네일은 앵커이고 :target 이 큰 사진을 고른다 -->
+
 
 <div class="shots">
   <div class="shot-big">
   
     <a id="p1" class="big" href="#p1">
-      <img src="https://ci.encar.com/carpicture01/pic3801/38016911_001.jpg" alt="매물 사진 1" loading="lazy"></a>
+      <img src="https://ci.encar.com/carpicture04/pic4234/42342421_001.jpg" alt="매물 사진 1" loading="lazy"></a>
   
     <a id="p2" class="big" href="#p2">
-      <img src="https://ci.encar.com/carpicture01/pic3801/38016911_003.jpg" alt="매물 사진 2" loading="lazy"></a>
+      <img src="https://ci.encar.com/carpicture04/pic4234/42342421_003.jpg" alt="매물 사진 2" loading="lazy"></a>
   
     <a id="p3" class="big" href="#p3">
-      <img src="https://ci.encar.com/carpicture01/pic3801/38016911_004.jpg" alt="매물 사진 3" loading="lazy"></a>
+      <img src="https://ci.encar.com/carpicture04/pic4234/42342421_004.jpg" alt="매물 사진 3" loading="lazy"></a>
   
     <a id="p4" class="big" href="#p4">
-      <img src="https://ci.encar.com/carpicture01/pic3801/38016911_007.jpg" alt="매물 사진 4" loading="lazy"></a>
+      <img src="https://ci.encar.com/carpicture04/pic4234/42342421_007.jpg" alt="매물 사진 4" loading="lazy"></a>
   
   </div>
   <div class="shot-thumbs">
   
     <a href="#p1" title="이 사진을 크게 봅니다"><img class="thumb"
-      src="https://ci.encar.com/carpicture01/pic3801/38016911_001.jpg" alt="" loading="lazy"></a>
+      src="https://ci.encar.com/carpicture04/pic4234/42342421_001.jpg" alt="" loading="lazy"></a>
   
     <a href="#p2" title="이 사진을 크게 봅니다"><img class="thumb"
-      src="https://ci.encar.com/carpicture01/pic3801/38016911_003.jpg" alt="" loading="lazy"></a>
+      src="https://ci.encar.com/carpicture04/pic4234/42342421_003.jpg" alt="" loading="lazy"></a>
   
     <a href="#p3" title="이 사진을 크게 봅니다"><img class="thumb"
-      src="https://ci.encar.com/carpicture01/pic3801/38016911_004.jpg" alt="" loading="lazy"></a>
+      src="https://ci.encar.com/carpicture04/pic4234/42342421_004.jpg" alt="" loading="lazy"></a>
   
     <a href="#p4" title="이 사진을 크게 봅니다"><img class="thumb"
-      src="https://ci.encar.com/carpicture01/pic3801/38016911_007.jpg" alt="" loading="lazy"></a>
+      src="https://ci.encar.com/carpicture04/pic4234/42342421_007.jpg" alt="" loading="lazy"></a>
   
   </div>
   <p class="muted">사진 4장 · 썸네일을 누르면 큰 사진이 바뀝니다.
@@ -89,42 +92,39 @@
 
 
 <p class="act">
-  <!-- ★ 어디서나 같은 자리에 ♡ (개정 305) -->
+  
   <form method="post" action="/watch/add" class="inline">
     <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="listing_id" value="3">
+    <input type="hidden" name="listing_id" value="887">
     <button type="submit" class="heart" title="관심에 담습니다">♡</button>
   </form>
-  <a href="/compare?ids=3" class="mini">⇄ 비교</a>
+  <a href="/compare?ids=887" class="mini">⇄ 비교</a>
 </p>
 <p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
 
 
 
 
-<p class="warn-block">E등급 사유 — 리스·렌트 상품</p>
 
 
-<!-- 시세 위치 (개정 340 · V11-119) — ★ 「−13.0%」만 내면
-     그것이 싼 것인지 감이 안 옵니다.  분포 위의 자리를 보면 눈으로 압니다 -->
 <h2>시세 위치 <span class="more">같은 차종 · 트림 · 연식 안에서</span></h2>
 
 <div class="card tight">
   <div class="pos">
     <span class="line"></span>
-    <span class="mid" style="left:50%"
-      title="중앙값 3,090만"></span>
-    <span class="me" style="left:47%"
-      title="이 차 3,044만">●</span>
+    <span class="mid" style="left:73%"
+      title="중앙값 5,350만"></span>
+    <span class="me" style="left:73%"
+      title="이 차 5,350만">●</span>
   </div>
   <p class="posx">
-    <span class="lo">2,290만</span>
-    <span class="md">중앙 3,090만</span>
-    <span class="hi">3,900만</span>
+    <span class="lo">3,890만</span>
+    <span class="md">중앙 5,350만</span>
+    <span class="hi">5,890만</span>
   </p>
-  <p class="dim">이 차 <strong>3,044만</strong> ·
-    같은 조건 <strong>14건</strong> 중
-    <strong>7건</strong>이 이 차보다 쌉니다.</p>
+  <p class="dim">이 차 <strong>5,350만</strong> ·
+    같은 조건 <strong>28건</strong> 중
+    <strong>14건</strong>이 이 차보다 쌉니다.</p>
 </div>
 
 
@@ -145,8 +145,8 @@
       <span class="l">1년</span>
     </div><div class="c">
       <span class="v">0.788</span>
-      <span class="bar now" style="height:80px"
-        title="2년차 잔가율 0.788 — 이 차입니다"></span>
+      <span class="bar" style="height:80px"
+        title="2년차 잔가율 0.788"></span>
       <span class="l">2년</span>
     </div><div class="c">
       <span class="v">0.71</span>
@@ -155,8 +155,8 @@
       <span class="l">3년</span>
     </div><div class="c">
       <span class="v">0.62</span>
-      <span class="bar" style="height:63px"
-        title="4년차 잔가율 0.62"></span>
+      <span class="bar now" style="height:63px"
+        title="4년차 잔가율 0.62 — 이 차입니다"></span>
       <span class="l">4년</span>
     </div><div class="c">
       <span class="v">0.589</span>
@@ -165,30 +165,29 @@
       <span class="l">5년</span>
     </div>
   </div>
-  <p class="dim">기대가 = 신차가 × 이 잔가율 × 차종 보정계수 (7장 STEP 70).
+  <p class="dim">기대가 = 신차가 × 이 잔가율 × 차종 보정계수.
     노란 막대가 이 차의 연차입니다. 시세차는 그 기대가와의 차이입니다.</p>
 </div>
 
 
 <p class="score">
-  <strong>499</strong> / 910
+  <strong>576.3</strong> / 910
   <span class="muted">분모는 늘 만점입니다.
-    못 본 축은 분모에서 빼지 않고 0점으로 둡니다 (개정 298) ·
-    <!-- ★ 개정 431 이 「갈래를 등급에서 빼는 것」을 폐기했습니다.
-         ★ 분모는 늘 총점입니다 — 취향도 등급에 들어갑니다 -->
+    못 본 축은 분모에서 빼지 않고 0점으로 둡니다 ·
+    
     등급도 같은 910 기준
-    499점입니다</span>
+    576.3점입니다</span>
 </p>
 <p class="muted">
-  ★ 확인율 <strong>71.3%</strong> —
-  근거가 있는 축의 배점 합 649 / 910 입니다.
-  「안 받아서 0점」은 확인한 것이 아닙니다 (개정 325)</p>
+  ★ 확인율 <strong>100.0%</strong> —
+  근거가 있는 축의 배점 합 910 / 910 입니다.
+  「안 받아서 0점」은 확인한 것이 아닙니다</p>
 
 <h2>왜 싼가</h2>
 
-<p class="why"><strong>싼 이유 1가지를 찾았습니다</strong></p>
+<p class="why"><strong>싼 이유 2가지를 찾았습니다</strong></p>
 <ul class="why-list">
-  <li>성능점검이 없습니다</li>
+  <li>엔카보증이 없습니다</li><li>자차 미가입 44개월</li>
 </ul>
 
 
@@ -209,16 +208,16 @@
 
 <tr>
   <td>성능점검기록부</td>
-  <td>없음</td>
+  <td>받음</td>
   <td class="muted">사고 부위 · 상태 · 렌트 이력</td>
-  <td class="muted">→ 사고 · 렌트 판정 불가</td>
+  <td class="muted"></td>
 </tr>
 
 <tr>
   <td>자동차이력정보</td>
-  <td>없음</td>
+  <td>받음</td>
   <td class="muted">보험처리액 · 번호판 이력</td>
-  <td class="muted">→ 보험 판정 불가</td>
+  <td class="muted"></td>
 </tr>
 
 <tr>
@@ -246,25 +245,25 @@
 
 <tr>
   <td><a href="/listings?axis=history.not_join">자차 미가입</a></td>
-  <td class="num">0</td>
+  <td class="num">2</td>
   <td class="num">18</td>
-  <td>missing</td>
+  <td>not_join_92%</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=history.owner">소유자 변경</a></td>
-  <td class="num">0</td>
+  <td class="num">8</td>
   <td class="num">11</td>
-  <td>missing</td>
+  <td>owner_1</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=history.seizing">압류·저당</a></td>
-  <td class="num">0</td>
   <td class="num">8</td>
-  <td>missing</td>
+  <td class="num">8</td>
+  <td>detail_seizing</td>
   <td>2</td>
 </tr>
 
@@ -272,15 +271,15 @@
   <td><a href="/listings?axis=history.use">용도</a></td>
   <td class="num">0</td>
   <td class="num">22</td>
-  <td>advertisement_type</td>
+  <td>usage_change_types+record_use</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.accident">사고</a></td>
-  <td class="num">0</td>
   <td class="num">51</td>
-  <td>missing</td>
+  <td class="num">51</td>
+  <td>record_accident_count</td>
   <td>2</td>
 </tr>
 
@@ -294,55 +293,55 @@
 
 <tr>
   <td><a href="/listings?axis=state.frame">골격</a></td>
-  <td class="num">0</td>
   <td class="num">43</td>
-  <td>missing</td>
+  <td class="num">43</td>
+  <td>frame_none</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.integrity">진정성</a></td>
-  <td class="num">0</td>
   <td class="num">8</td>
-  <td>missing</td>
+  <td class="num">8</td>
+  <td>integrity_ok</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.leak">누유</a></td>
-  <td class="num">0</td>
   <td class="num">15</td>
-  <td>missing</td>
+  <td class="num">15</td>
+  <td>leak_none</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.my_cost">보험 수리비</a></td>
-  <td class="num">0</td>
   <td class="num">28</td>
-  <td>missing</td>
+  <td class="num">28</td>
+  <td>record_my_cost</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.outer">외판</a></td>
-  <td class="num">0</td>
   <td class="num">28</td>
-  <td>missing</td>
+  <td class="num">28</td>
+  <td>outer_none</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.special">특수 사고</a></td>
-  <td class="num">0</td>
   <td class="num">21</td>
-  <td>missing</td>
+  <td class="num">21</td>
+  <td>record_special</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=state.year">연식</a></td>
-  <td class="num">70</td>
+  <td class="num">51</td>
   <td class="num">80</td>
   <td>age_years</td>
   <td>2</td>
@@ -374,7 +373,7 @@
 
 <tr>
   <td><a href="/listings?axis=taste.option">옵션</a></td>
-  <td class="num">37</td>
+  <td class="num">12</td>
   <td class="num">43</td>
   <td>options_choice_price</td>
   <td>1</td>
@@ -382,7 +381,7 @@
 
 <tr>
   <td><a href="/listings?axis=taste.sunroof">선루프</a></td>
-  <td class="num">12</td>
+  <td class="num">0</td>
   <td class="num">12</td>
   <td>option_codes</td>
   <td>2</td>
@@ -390,7 +389,7 @@
 
 <tr>
   <td><a href="/listings?axis=taste.trim">트림</a></td>
-  <td class="num">59</td>
+  <td class="num">58.3</td>
   <td class="num">59</td>
   <td>trim_origin_price</td>
   <td>1</td>
@@ -398,7 +397,7 @@
 
 <tr>
   <td><a href="/listings?axis=value.budget">예산</a></td>
-  <td class="num">48</td>
+  <td class="num">20</td>
   <td class="num">95</td>
   <td>budget_line</td>
   <td>2</td>
@@ -406,15 +405,15 @@
 
 <tr>
   <td><a href="/listings?axis=value.market">시세 대비</a></td>
-  <td class="num">0</td>
+  <td class="num">-1</td>
   <td class="num">30</td>
-  <td>market_sample_short</td>
+  <td>market_median</td>
   <td>2</td>
 </tr>
 
 <tr>
   <td><a href="/listings?axis=value.mileage">주행</a></td>
-  <td class="num">105</td>
+  <td class="num">55</td>
   <td class="num">107</td>
   <td>mileage_total</td>
   <td>2</td>
@@ -430,7 +429,7 @@
 
 <tr>
   <td><a href="/listings?axis=warranty.general">일반 보증</a></td>
-  <td class="num">14</td>
+  <td class="num">9</td>
   <td class="num">22</td>
   <td>encar_warranty_general</td>
   <td>1</td>
@@ -454,32 +453,33 @@
 
 </tbody>
 </table>
-<!-- ★ 무엇으로 견줬는지 밝힌다 (개정 421).
-     ★ 「같은 트림 3건뿐 · 차종 전체로 견줬습니다」를 안 적으면
-       옵션 보정을 받은 것과 못 받은 것이 같아 보인다 -->
+
 <p class="muted">시세 축 근거 —
   <b>option_adjusted_N</b> 같은 트림 N건의 옵션가 중앙값으로 보정했습니다 ·
   <b>model_scaled_N</b> 같은 트림이 N건뿐이라 차종 전체로 견줬습니다 ·
   <b>market_median_N</b> 옵션가를 몰라 보정 없이 견줬습니다 ·
   <b>market_sample_short</b> 표본이 모자라 시세를 내지 않았습니다.</p>
 
-<!-- ★ 못 보는 것을 밝힌다 (개정 415).  「없다」와 「못 본다」는 다르다 —
-     flood_part_cnt 는 7,980건 전부 null 이다.  엔카가 안 주는 값이다.
-     ★ 그것을 안 적으면 「부분 침수 없음」으로 읽힌다 -->
+
 <p class="muted">부분 침수 이력은 확인할 수 없습니다 (엔카 미제공).
   전손 · 전부 침수 · 도난은 확인했습니다.</p>
 
-<!-- 가점 (개정 380).  ★ 축이 아니다 — 분모를 안 늘린다.
-     마스터 확정 — 「그건 가점이니 필수는 아닌 듯해」 -->
+
+
+<h2>가점</h2>
+<ul><li>배터리 SOH 94.6%
+  <strong>+24</strong></li></ul>
+<p class="muted">★ 분모를 늘리지 않습니다 — 가점이 크면 100%를 넘습니다.
+  그대로 냅니다.</p>
 
 
 
-<!-- 부록 G ⑥ 마이너스 — 축별 판정 다음이다.  값 절에 섞지 않는다 -->
+
 <h2>마이너스</h2>
 
 <p class="minus">
-  <span class="chip-bad">렌트·영업용 이력 -67</span><span class="chip-bad">용도 -67 → 상한 -22 45</span>
-  <span class="muted">합 -22점</span></p>
+  <span class="chip-bad">렌트·영업용 이력 -67</span><span class="chip-bad">자차 미가입 기간이 김 92% -54</span><span class="chip-bad">자차 미가입 -54 → 상한 -18 36</span><span class="chip-bad">용도 -67 → 상한 -22 45</span>
+  <span class="muted">합 -40점</span></p>
 
 
 
@@ -494,33 +494,27 @@
 
 
 <p class="muted">분모에서 뺀 축은 없습니다 (26 Component).
-  다만 확인율은 <strong>71.3%</strong> 입니다 —
-  안 받은 원문이 있으면 그 축은 0점이고, 그것은 확인한 것이 아닙니다 (개정 325).</p>
+  다만 확인율은 <strong>100.0%</strong> 입니다 —
+  안 받은 원문이 있으면 그 축은 0점이고, 그것은 확인한 것이 아닙니다.</p>
 
 
 <h2>왜 이 등급인가</h2>
 
-<p><b>강점</b><span class="chip-good">색상</span><span class="chip-good">지정 옵션</span><span class="chip-good">HUD</span><span class="chip-good">선루프</span><span class="chip-good">트림</span><span class="chip-good">신차가 대비</span><span class="chip-good">보증</span></p>
+<p><b>강점</b><span class="chip-good">압류·저당</span><span class="chip-good">사고</span><span class="chip-good">골격</span><span class="chip-good">진정성</span><span class="chip-good">누유</span><span class="chip-good">보험 수리비</span><span class="chip-good">외판</span><span class="chip-good">특수 사고</span><span class="chip-good">색상</span><span class="chip-good">지정 옵션</span><span class="chip-good">HUD</span><span class="chip-good">신차가 대비</span><span class="chip-good">보증</span></p>
 
 
-<p><b>약점</b><span class="chip-bad">자차 미가입 0/18</span><span class="chip-bad">소유자 변경 0/11</span><span class="chip-bad">압류·저당 0/8</span><span class="chip-bad">용도 0/22</span><span class="chip-bad">사고 0/51</span><span class="chip-bad">소모품 0/15</span><span class="chip-bad">골격 0/43</span><span class="chip-bad">진정성 0/8</span><span class="chip-bad">누유 0/15</span><span class="chip-bad">보험 수리비 0/28</span><span class="chip-bad">외판 0/28</span><span class="chip-bad">특수 사고 0/21</span><span class="chip-bad">시세 대비 0/30</span></p>
+<p><b>약점</b><span class="chip-bad">자차 미가입 2/18</span><span class="chip-bad">용도 0/22</span><span class="chip-bad">소모품 0/15</span><span class="chip-bad">옵션 12/43</span><span class="chip-bad">선루프 0/12</span><span class="chip-bad">예산 20/95</span><span class="chip-bad">시세 대비 -1/30</span><span class="chip-bad">일반 보증 9/22</span></p>
 
 
 
 <h2>주요 옵션</h2>
 
 
-<h3>선택 옵션 <small>5개</small></h3>
-<p class="chips"><span class="chip">10004</span><span class="chip">10001</span><span class="chip">1057</span><span class="chip">1056</span><span class="chip">1060</span></p>
+<h3>선택 옵션 <small>2개</small></h3>
+<p class="chips"><span class="chip">1022</span><span class="chip">1023</span></p>
 
-<h3>기본 옵션 <small>51개</small></h3>
-<p class="chips"><span class="chip">001</span><span class="chip">002</span><span class="chip">004</span><span class="chip">005</span><span class="chip">006</span><span class="chip">007</span><span class="chip">008</span><span class="chip">010</span><span class="chip">014</span><span class="chip">015</span><span class="chip">017</span><span class="chip">019</span><span class="chip">020</span><span class="chip">021</span><span class="chip">022</span><span class="chip">023</span><span class="chip">024</span><span class="chip">026</span><span class="chip">027</span><span class="chip">030</span><span class="chip">031</span><span class="chip">032</span><span class="chip">033</span><span class="chip">034</span><span class="chip">035</span><span class="chip">051</span><span class="chip">055</span><span class="chip">056</span><span class="chip">057</span><span class="chip">058</span><span class="chip">059</span><span class="chip">063</span><span class="chip">072</span><span class="chip">074</span><span class="chip">075</span><span class="chip">077</span><span class="chip">079</span><span class="chip">081</span><span class="chip">082</span><span class="chip">083</span><span class="chip">084</span><span class="chip">085</span><span class="chip">086</span><span class="chip">087</span><span class="chip">088</span><span class="chip">091</span><span class="chip">093</span><span class="chip">094</span><span class="chip">095</span><span class="chip">096</span><span class="chip">097</span></p>
-
-<h3>기타 <small>3개</small></h3>
-<p class="chips"><span class="chip muted">취등록세 0원</span><span class="chip muted"> 초기비용 0원</span><span class="chip muted"> 장기렌트</span></p>
-
-<h3>튜닝 <small>2개</small></h3>
-<p class="chips"><span class="chip">023</span><span class="chip">024</span></p>
+<h3>기본 옵션 <small>47개</small></h3>
+<p class="chips"><span class="chip">001</span><span class="chip">004</span><span class="chip">005</span><span class="chip">006</span><span class="chip">007</span><span class="chip">008</span><span class="chip">014</span><span class="chip">015</span><span class="chip">017</span><span class="chip">019</span><span class="chip">020</span><span class="chip">021</span><span class="chip">022</span><span class="chip">023</span><span class="chip">024</span><span class="chip">026</span><span class="chip">027</span><span class="chip">030</span><span class="chip">031</span><span class="chip">032</span><span class="chip">033</span><span class="chip">034</span><span class="chip">035</span><span class="chip">051</span><span class="chip">055</span><span class="chip">056</span><span class="chip">057</span><span class="chip">058</span><span class="chip">059</span><span class="chip">063</span><span class="chip">072</span><span class="chip">074</span><span class="chip">075</span><span class="chip">077</span><span class="chip">079</span><span class="chip">081</span><span class="chip">082</span><span class="chip">083</span><span class="chip">084</span><span class="chip">085</span><span class="chip">086</span><span class="chip">087</span><span class="chip">088</span><span class="chip">094</span><span class="chip">095</span><span class="chip">096</span><span class="chip">097</span></p>
 
 <p class="muted">★ 이름이 흐린 것은 사전에 아직 뜻이 없는 코드입니다 —
   추정해서 이름을 붙이지 않습니다.</p>
@@ -535,18 +529,18 @@
 
 <div class="buy">
   <div class="buy-h">엔카에서 사면</div>
-  <div class="buy-t est">3,257만
+  <div class="buy-t est">5,350만
     <span class="dim">추정</span></div>
   
   <table class="rows buy-rows">
   <tbody>
   
   <tr><td data-label="항목">차량가</td>
-    <td class="num" data-label="금액">3,044만</td></tr>
+    <td class="num" data-label="금액">5,350만</td></tr>
   
   <tr><td data-label="항목">이전등록비<span class="dim" title="공채·증지 요율을 아직 못 받아 취득세만 넣었습니다">
     추정</span></td>
-    <td class="num" data-label="금액">213만</td></tr>
+    <td class="num" data-label="금액">0</td></tr>
   
   </tbody>
   </table>
@@ -568,30 +562,143 @@
 <tbody>
 
 <tr><td>차량가</td>
-  <td class="num">3,044만</td>
+  <td class="num">5,350만</td>
   <td class="num">없습니다</td></tr>
 
 <tr><td>할부 원금</td>
-  <td class="num">1,757만</td>
+  <td class="num">3,850만</td>
   <td class="num">없습니다</td></tr>
 
 <tr><td>총 이자</td>
-  <td class="num">204만</td>
+  <td class="num">447만</td>
   <td class="num">없습니다</td></tr>
 
 </tbody>
 </table>
 
 
-<!-- ★★★ 받은 원문 (개정 378 · V11-134).
-     마스터 지적 — 「내가 보는 게 우선이지 않니?  그런데 네가 판정을
-     못 내려서 받아 놓고 안 보이는데 말이 되니?」
-     ★ 파서가 없어도 원문을 그대로 편다.  일단 보이게 -->
+
 <h2>받은 원문 — 아직 판정에 안 쓰는 것</h2>
 
+<p class="muted">엔카에서 받아 두었지만 아직 점수에 넣지 않는 값입니다.
+  ★ <strong>판정에 쓰이기 시작하면 위쪽 「축별 판정」으로 올라가고
+  여기서 사라집니다.</strong></p>
 
-<p class="muted">받아 두고 안 쓰는 원문이 없습니다 —
-  받은 것을 전부 판정에 쓰고 있습니다.</p>
+<details class="rawbox">
+  <summary>record <span class="dim">· 2026-08-19
+    
+    · 34줄</span></summary>
+  
+  <table class="rows raw-rows">
+  <tbody>
+  
+  <tr><td data-label="키"><code>openData</code></td>
+    <td data-label="값">True</td></tr>
+  
+  <tr><td data-label="키"><code>regDate</code></td>
+    <td data-label="값">2026-07-11T02:32:55.269291</td></tr>
+  
+  <tr><td data-label="키"><code>carNo</code></td>
+    <td data-label="값">21소4408</td></tr>
+  
+  <tr><td data-label="키"><code>year</code></td>
+    <td data-label="값">2022</td></tr>
+  
+  <tr><td data-label="키"><code>maker</code></td>
+    <td data-label="값">현대</td></tr>
+  
+  <tr><td data-label="키"><code>carKind</code></td>
+    <td data-label="값">1</td></tr>
+  
+  <tr><td data-label="키"><code>use</code></td>
+    <td data-label="값">2</td></tr>
+  
+  <tr><td data-label="키"><code>displacement</code></td>
+    <td data-label="값">167</td></tr>
+  
+  <tr><td data-label="키"><code>firstDate</code></td>
+    <td data-label="값">2022-08-11</td></tr>
+  
+  <tr><td data-label="키"><code>fuel</code></td>
+    <td data-label="값">전기</td></tr>
+  
+  <tr><td data-label="키"><code>carShape</code></td>
+    <td data-label="값">세단 4도어</td></tr>
+  
+  <tr><td data-label="키"><code>model</code></td>
+    <td data-label="값">일렉트리파이드 G80 (RG3)</td></tr>
+  
+  <tr><td data-label="키"><code>myAccidentCnt</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>otherAccidentCnt</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>ownerChangeCnt</code></td>
+    <td data-label="값">1</td></tr>
+  
+  <tr><td data-label="키"><code>robberCnt</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>totalLossCnt</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>floodTotalLossCnt</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>government</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>business</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>loan</code></td>
+    <td data-label="값">1</td></tr>
+  
+  <tr><td data-label="키"><code>carNoChangeCnt</code></td>
+    <td data-label="값">1</td></tr>
+  
+  <tr><td data-label="키"><code>myAccidentCost</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>otherAccidentCost</code></td>
+    <td data-label="값">0</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoChanges[0].date</code></td>
+    <td data-label="값">2022-08-11</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoChanges[0].carNo</code></td>
+    <td data-label="값">24호XXXX</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoChanges</code></td>
+    <td data-label="값">그 밖 1개</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoUse1s[0]</code></td>
+    <td data-label="값">3</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoUse1s</code></td>
+    <td data-label="값">그 밖 1개</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoUse2s[0]</code></td>
+    <td data-label="값">1</td></tr>
+  
+  <tr><td data-label="키"><code>carInfoUse2s</code></td>
+    <td data-label="값">그 밖 1개</td></tr>
+  
+  <tr><td data-label="키"><code>ownerChanges[0]</code></td>
+    <td data-label="값">2026-07-09</td></tr>
+  
+  <tr><td data-label="키"><code>notJoinDate1</code></td>
+    <td data-label="값">202208~202604</td></tr>
+  
+  <tr><td data-label="키"><code>accidentCnt</code></td>
+    <td data-label="값">0</td></tr>
+  
+  </tbody>
+  </table>
+</details>
+
+
 
 
 <h2>참고 자료 — 점수에 반영하지 않습니다</h2>
@@ -607,8 +714,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260822T041932</span>
-  <span>2026-08-23 06:56</span>
+  <span>run 20260823T014017</span>
+  <span>2026-08-24 00:34</span>
 </footer>
 
 </body>
