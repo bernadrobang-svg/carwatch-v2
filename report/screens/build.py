@@ -2433,7 +2433,7 @@ def view_reports(account: Account, open_name: str | None = None,
 #   ★ 다만 최종 확인과 실물 사진은 엔카에서 본다 — 상세는 「갈지 말지」까지다
 # ══════════════════════════════════════════════════════════════════════
 
-def _warranty_until(conn, listing_id: int) -> dict:
+def _warranty_until(conn, listing_id: int, root: str = ".") -> dict:
     """보증 잔여 → ★ 「언제까지 · 몇 km 까지」 (명령서 13-2 ⑦).
 
     ★ 우리가 가진 것은 ★ 남은 개월이다.  ★ 오늘에 더해 ★ 끝나는 달을 낸다
@@ -2444,10 +2444,27 @@ def _warranty_until(conn, listing_id: int) -> dict:
 
     row = conn.execute(
         "SELECT warranty_body_month, warranty_body_km,"
-        " warranty_power_month, warranty_power_km"
+        " warranty_power_month, warranty_power_km, target_key"
         " FROM core_listing WHERE listing_id=?", (listing_id,)).fetchone()
     if row is None:
         return {}
+    # ★ 제조사 보증 기간표에 ★ 글로 남긴 것이 있으면 함께 낸다 (명령서 16-2 ⓐ) —
+    #   ★ BMW 는 ★ 「주행거리 무제한」이라 ★ km 칸에 넣을 수가 없다.
+    #   ★ 큰 수를 넣으면 ★ 「무제한」과 「모름」이 섞인다
+    note = ""
+    try:
+        with open(os.path.join(root, "config", "scoring.json"),
+                  encoding="utf-8") as f:
+            said = ((json.load(f).get("axis_rules") or {}).get("warranty") or {})
+        table = ((said.get("maker_default") or {}).get("by_target") or {})
+        got = table.get(row[4] or "")
+        rows = got if isinstance(got, list) else [got or {}]
+        for one in rows:
+            if isinstance(one, dict) and one.get("warranty_note"):
+                note = str(one["warranty_note"])
+                break
+    except (OSError, ValueError, AttributeError):
+        note = ""
     now = datetime.now(timezone.utc)
     out: dict = {}
     for key, month, km in (("general", row[0], row[1]),
@@ -2460,7 +2477,8 @@ def _warranty_until(conn, listing_id: int) -> dict:
         total = (now.year * 12 + now.month - 1) + int(month)
         y, m = divmod(total, 12)
         said = f"{y}년 {m + 1}월까지"
-        out[key] = said + (f" ({int(km):,}km 까지)" if km else "")
+        out[key] = said + (f" ({int(km):,}km 까지)" if km
+                           else (f" ({note})" if note else ""))
     return out
 
 
@@ -2626,7 +2644,7 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
     by_axis = {a.axis: a for a in v.axes}
     # ★ 보증을 ★ 날짜로 낸다 (명령서 13-2 ⑦ · UI_REVIEW 7장).
     #   ★ 렉서스는 「2030년 10월까지 (120,000km)」를 준다 — ★ 점수만 내면 언제까진지 모른다
-    w_until = _warranty_until(conn, listing_id)
+    w_until = _warranty_until(conn, listing_id, root)
     return {
         "v": v, "row": row,
         "warranty_general": by_axis.get("warranty.general"),

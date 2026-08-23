@@ -15,7 +15,7 @@ import json
 import os
 
 from parse.classify import classify
-from store.dictionary import collect_group_of, fuel_normalize
+from store.dictionary import fuel_normalize
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _TARGETS: dict | None = None
@@ -49,8 +49,21 @@ def target_by_rules(site: str, name: str | None, fuel_raw: str | None,
       ★ 전수 1,113건에 걸어 ★ 170건이 붙는다
     돌려줌   `ClassifyResult` · ★ 차종군을 모르면 None (「차종 미정」)
     """
-    grp = collect_group_of(site, name)
+    from store.dictionary import target_map
+
+    spec = target_map(site).get(name or "") or {}
+    grp = spec.get("collect_group")
     if not grp:
         return None
-    return classify(load_targets(), grp, fuel_normalize(site, fuel_raw),
+    targets = load_targets()
+    # ★★ 이름과 차종이 ★ 1:1 이면 ★ 그 차종만 후보로 둔다 (실측 08-24) —
+    #   ★ `collect_group` 이 「multi」면 ★ 수입 여덟이 ★ 한 후보군이 되고
+    #   ★ 연료가 겹쳐 ★ 「후보 여럿」으로 ★ 아무것도 안 붙는다
+    only = spec.get("target_key")
+    if only:
+        targets = {k: v for k, v in targets.items() if k == only}
+        if not targets:
+            return None
+        grp = targets[only]["collect_group"]
+    return classify(targets, grp, fuel_normalize(site, fuel_raw),
                     title, None, displacement_cc)

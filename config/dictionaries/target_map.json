@@ -35,28 +35,36 @@
       "_field": "상세 ld+json 의 name 에서 뽑은 차종 (KB carClass.json 으로 확인 · KBCHACHACHA_API 1a)",
       "_rule": "★ collect_group 만 준다 — ★ 갈래는 ★ targets.json 이 고른다 (classify)",
       "X3": {
-        "collect_group": "kb:X3"
+        "collect_group": "multi",
+        "target_key": "X3_IMPORT"
       },
       "GLC": {
-        "collect_group": "kb:GLC"
+        "collect_group": "multi",
+        "target_key": "GLC_IMPORT"
       },
       "Q5": {
-        "collect_group": "kb:Q5"
+        "collect_group": "multi",
+        "target_key": "Q5_IMPORT"
       },
       "NX": {
-        "collect_group": "kb:NX"
+        "collect_group": "multi",
+        "target_key": "NX_HEV"
       },
       "RX": {
-        "collect_group": "kb:RX"
+        "collect_group": "multi",
+        "target_key": "RX_IMPORT"
       },
       "XC60": {
-        "collect_group": "kb:XC60"
+        "collect_group": "multi",
+        "target_key": "XC60_IMPORT"
       },
       "S60": {
-        "collect_group": "kb:S60"
+        "collect_group": "multi",
+        "target_key": "S60_IMPORT"
       },
       "EX60": {
-        "collect_group": "kb:EX60"
+        "collect_group": "multi",
+        "target_key": "EX60_IMPORT"
       }
     },
     "kcar": {
@@ -90,28 +98,36 @@
         "collect_group": "encar:MODEL_Y"
       },
       "X3": {
-        "collect_group": "kb:X3"
+        "collect_group": "multi",
+        "target_key": "X3_IMPORT"
       },
       "GLC": {
-        "collect_group": "kb:GLC"
+        "collect_group": "multi",
+        "target_key": "GLC_IMPORT"
       },
       "Q5": {
-        "collect_group": "kb:Q5"
+        "collect_group": "multi",
+        "target_key": "Q5_IMPORT"
       },
       "NX": {
-        "collect_group": "kb:NX"
+        "collect_group": "multi",
+        "target_key": "NX_HEV"
       },
       "RX": {
-        "collect_group": "kb:RX"
+        "collect_group": "multi",
+        "target_key": "RX_IMPORT"
       },
       "XC60": {
-        "collect_group": "kb:XC60"
+        "collect_group": "multi",
+        "target_key": "XC60_IMPORT"
       },
       "S60": {
-        "collect_group": "kb:S60"
+        "collect_group": "multi",
+        "target_key": "S60_IMPORT"
       },
       "EX60": {
-        "collect_group": "kb:EX60"
+        "collect_group": "multi",
+        "target_key": "EX60_IMPORT"
       }
     },
     "bobaedream": {
@@ -142,28 +158,36 @@
         "collect_group": "encar:MODEL_Y"
       },
       "X3": {
-        "collect_group": "kb:X3"
+        "collect_group": "multi",
+        "target_key": "X3_IMPORT"
       },
       "GLC": {
-        "collect_group": "kb:GLC"
+        "collect_group": "multi",
+        "target_key": "GLC_IMPORT"
       },
       "Q5": {
-        "collect_group": "kb:Q5"
+        "collect_group": "multi",
+        "target_key": "Q5_IMPORT"
       },
       "NX": {
-        "collect_group": "kb:NX"
+        "collect_group": "multi",
+        "target_key": "NX_HEV"
       },
       "RX": {
-        "collect_group": "kb:RX"
+        "collect_group": "multi",
+        "target_key": "RX_IMPORT"
       },
       "XC60": {
-        "collect_group": "kb:XC60"
+        "collect_group": "multi",
+        "target_key": "XC60_IMPORT"
       },
       "S60": {
-        "collect_group": "kb:S60"
+        "collect_group": "multi",
+        "target_key": "S60_IMPORT"
       },
       "EX60": {
-        "collect_group": "kb:EX60"
+        "collect_group": "multi",
+        "target_key": "EX60_IMPORT"
       }
     }
   },
@@ -206,5 +230,6 @@
       "LPG": "LPG(일반인 구입)",
       "하이브리드": "가솔린+전기"
     }
-  }
+  },
+  "_name2key_note": "★ 수입 여덟은 ★ 이름과 차종이 1:1 이다.  ★ `target_key` 를 적어 ★ 그 차종만 후보로 둔다. ★ 개정 632 로 `collect_group` 이 「multi」가 되어 ★ 여덟이 한 후보군이 됐고 ★ 연료가 겹쳐 아무것도 안 붙었다"
 }

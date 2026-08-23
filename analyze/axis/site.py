@@ -211,7 +211,28 @@ def _maker_default(ctx: AxisContext, rules: dict) -> dict:
         return {}
     # ★★ V4-24 — target_config 에서 ★ 매물 값을 캐지 않는다.
     #   ★ 차종 키는 ★ 스냅숏이 준다.  표도 ★ 차종 키로 찾는다
-    return table.get(getattr(ctx.snapshot, "target_key", None) or "") or {}
+    got = table.get(getattr(ctx.snapshot, "target_key", None) or "") or {}
+    if isinstance(got, dict):
+        return got
+    # ★★ 연식으로 갈리는 브랜드가 있다 (명령서 16-2 ⓑ · 개정 633) —
+    #   ★ 아우디는 ★ 21년식부터 5년/15만km 이고 ★ 그 전은 값이 다르다.
+    #   ★ 그래서 ★ 줄을 여럿 두고 ★ 「연식 이상」으로 고른다
+    #   ★ 맞는 줄이 없으면 ★ 빈 것이다 — ★ 0 이 아니라 ★ 「모름」이다 (개정 325)
+    year = getattr(ctx.snapshot, "form_year", None)
+    if year is None:
+        ym = getattr(ctx.snapshot, "year_month", None)
+        year = int(str(ym)[:4]) if ym and str(ym)[:4].isdigit() else None
+    if year is None:
+        return {}
+    best = {}
+    for row in got:
+        if not isinstance(row, dict):
+            continue
+        floor = row.get("year_from")
+        if floor is None or int(year) >= int(floor):
+            if not best or int(floor or 0) >= int(best.get("year_from") or 0):
+                best = row
+    return {k: v for k, v in best.items() if k != "year_from"}
 
 
 def analyze_site(ctx: AxisContext, v: Verdict) -> None:

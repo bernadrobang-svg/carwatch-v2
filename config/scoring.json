@@ -181,12 +181,9 @@
         "_note": "★ 명령서 r515 2-3 — 제조사 보증 기간표.  ★ 원문(엔카)이 보증 개월을 안 줄 때만 쓰는 ★ 대체값이다.  ★ 원문이 있으면 원문이 이긴다. ★ 안 넣으면 보증 잔여가 0 이 되어 수입차가 전부 바닥에 깔린다",
         "_source": "★ 각 사 한국법인 기준.  ★ 확인한 것만 넣는다 — 지어내지 않는다",
         "_pending": [
-          "렉서스",
-          "BMW",
-          "벤츠",
-          "아우디"
+          "벤츠"
         ],
-        "_pending_note": "★ 명령서 2-3 — 볼보 5년/10만km ★ 넣었다 (마스터가 값을 주셨다). ★ 렉서스·BMW·벤츠·아우디는 ★ 값을 안 주셨다.  ★ 개발측이 웹에서 찾아보니 ★ 출처마다 다르다 — BMW 「2년 무제한」과 「5년/10만km」가 함께 나오고 · 벤츠는 「2년 + 연장하면 5년」 · 아우디 「3년/10만km」 · 렉서스 「4년/10만km · 하이브리드 5년/10만km」. ★ 이 값은 ★ 그대로 점수가 된다 — ★ 틀리면 수입차 등급이 통째로 어긋난다. ★ 그래서 ★ 지어내지 않았다 (금지 6·12 · `_source` 「확인한 것만 넣는다」). ★ 마스터·가이드가 값을 주시면 ★ 그 자리에 줄만 넣으면 된다 — ★ 코드는 이미 읽는다 (analyze/axis/site.py:201 `_maker_default`). ★ 그때까지 ★ X3_IMPORT·GLC_IMPORT·Q5_IMPORT·NX_HEV·RX_IMPORT 는 ★ 보증 잔여가 0 이다",
+        "_pending_note": "★ 명령서 23장 ② — ★ 벤츠는 ★ 비워 둔다.  ★ 0 이 아니라 ★ NULL 이다 (개정 325). ★ 공식 본문에서 기간을 못 읽었다 — ★ 지어내지 않는다. ★ 아우디는 ★ 21년식 미만이 ★ 줄에 없어 ★ 빈 것이 된다 — ★ 그것이 NULL 이다",
         "by_target": {
           "_note": "★ 차종 키로 찾는다 (V4-24 — 축 함수가 target_config 에서 매물 값을 안 읽는다). ★ 명령서 2-3 은 브랜드로 적었다 — ★ 그 브랜드의 차종을 등록할 때 여기 줄을 넣는다",
           "XC60_IMPORT": {
@@ -194,23 +191,56 @@
             "general_km": 100000,
             "power_month": 60,
             "power_km": 100000,
-            "_src": "★ 명령서 2-3 — 「볼보 5년/10만km」.  ★ 마스터가 값을 주셨다"
+            "_src": "★ 명령서 2-3 — 「볼보 5년/10만km」 (마스터 확정) · 공식 확인 volvocars.com/kr/l/warranty-program/"
           },
           "S60_IMPORT": {
             "general_month": 60,
             "general_km": 100000,
             "power_month": 60,
             "power_km": 100000,
-            "_src": "★ 명령서 2-3 — 「볼보 5년/10만km」.  ★ 마스터가 값을 주셨다"
+            "_src": "★ 명령서 2-3 — 「볼보 5년/10만km」 (마스터 확정) · 공식 확인 volvocars.com/kr/l/warranty-program/"
           },
           "EX60_IMPORT": {
             "general_month": 60,
             "general_km": 100000,
             "power_month": 60,
             "power_km": 100000,
-            "_src": "★ 명령서 2-3 — 「볼보 5년/10만km」.  ★ 마스터가 값을 주셨다"
-          }
-        }
+            "_src": "★ 명령서 2-3 — 「볼보 5년/10만km」 (마스터 확정) · 공식 확인 volvocars.com/kr/l/warranty-program/"
+          },
+          "NX_HEV": {
+            "general_month": 48,
+            "general_km": 100000,
+            "power_month": 48,
+            "power_km": 100000,
+            "_src": "★ 명령서 23장 ② — 렉서스 48개월/100,000 (일반·동력 같은 값) · 공식 lexus.co.kr/service/service-program/warranty-program/"
+          },
+          "RX_IMPORT": {
+            "general_month": 48,
+            "general_km": 100000,
+            "power_month": 48,
+            "power_km": 100000,
+            "_src": "★ 명령서 23장 ② — 렉서스 48개월/100,000 (일반·동력 같은 값) · 공식 lexus.co.kr/service/service-program/warranty-program/"
+          },
+          "X3_IMPORT": {
+            "general_month": 24,
+            "general_km": null,
+            "power_month": 24,
+            "power_km": null,
+            "warranty_note": "주행거리 무제한",
+            "_src": "★ 명령서 23장 ② — BMW 24개월 · km 는 ★ NULL (「무제한」과 「모름」을 안 섞는다). ★ 워런티 플러스 5년/30만은 안 넣는다 — 매물마다 다르다"
+          },
+          "Q5_IMPORT": [
+            {
+              "year_from": 2021,
+              "general_month": 60,
+              "general_km": 150000,
+              "power_month": 60,
+              "power_km": 150000,
+              "_src": "★ 명령서 23장 ② — 21년식 이상 60개월/150,000 · audi.co.kr"
+            }
+          ]
+        },
+        "_shape_note": "★ 값이 ★ dict 면 ★ 그 차종 전부에 같은 값이다. ★ list 면 ★ 연식으로 갈린다 — ★ `year_from` 이 ★ 「이 연식 이상」이고 ★ 맞는 줄 중 ★ 가장 높은 것을 쓴다. ★ 맞는 줄이 없으면 ★ 빈 것이다 (NULL · 개정 325)"
       }
     },
     "history": {

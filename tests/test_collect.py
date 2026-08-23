@@ -147,11 +147,13 @@ def test_collect_groups() -> None:
     t = load_targets(os.path.join(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))), "config", "targets.json"))
     g = collect_groups(t, "encar")
-    # ★ 개정 604 (명령서 2-2) — ★ 수입 여덟을 등록해 ★ 10 → 18종이 됐다.
-    #   ★ 그런데 ★ 엔카 collect_group 은 ★ 8 그대로다 —
-    #   ★ 새 여덟은 ★ `site_query` 가 비어 ★ 엔카 수집에 안 끼어들기 때문이다.
-    #   ★ 이 줄이 ★ 그것을 지킨다 (엔카 `ModelGroup` 을 facet 으로 못 확인했다)
-    check("target 18 → collect_group 8", len(t) == 18 and len(g) == 8,
+    # ★ 개정 632 (명령서 21장 · 마스터 확정) — ★ 엔카에서도 받는다.
+    #   ★ 수입 8종에 ★ `site_query.encar` 가 채워져 ★ 8 → 16묶음이 됐다.
+    #   ★★ 묶는 열쇠는 ★ 이름이 아니라 ★ 쿼리다 —
+    #     ★ `collect_group="multi"` 여덟을 ★ 한 이름으로 묶으면
+    #     ★ 먼저 온 쿼리 하나만 남고 ★ 일곱이 조용히 사라진다 (실측 08-24)
+    #   ★ G80_25T·G80_EV 는 ★ 쿼리가 같아 ★ 그대로 한 묶음이다 (그래서 18 이 아니라 16)
+    check("target 18 → collect_group 16", len(t) == 18 and len(g) == 16,
           f"{len(t)}/{len(g)}")
     g80 = [x for x in g if x.group_key == "encar:G80"][0]
     check("G80 두 target 이 한 그룹", g80.target_keys == ("G80_25T", "G80_EV"))

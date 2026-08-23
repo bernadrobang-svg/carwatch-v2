@@ -141,12 +141,23 @@ def apply_targets(conn, at: str) -> int:
                 got = r.target_key if r else None
             else:
                 got = target_key_of(site, name, f"{fuel or ''} {model or ''}")
+            # ★★ `status` 를 함께 정한다 (개정 633 실측) —
+            #   ★ `collect/runner.py:568` 이 ★ 엔카에서 쓰는 그 규칙 그대로다:
+            #     ★ 차종이 붙으면 `active` · 아니면 `out_of_scope`
+            #   ★ 안 정하면 ★ `status='new'` 로 남고 ★ S10 이
+            #     `WHERE status='active'` 라 ★ 통째로 건너뛴다 —
+            #     ★ 저장은 됐는데 ★ 채점이 안 되는 것이 ★ 그 까닭이다
+            #   ★ `out_of_scope` 도 ★ 행은 남는다.  ★ 버리는 것이 아니다
+            said = "active" if got else "out_of_scope"
             if got:
                 conn.execute(
-                    "UPDATE core_listing SET target_key=? WHERE listing_id=?",
-                    (got, lid))
+                    "UPDATE core_listing SET target_key=?, status=?"
+                    " WHERE listing_id=?", (got, said, lid))
                 put += 1
             else:
+                conn.execute(
+                    "UPDATE core_listing SET status=? WHERE listing_id=?"
+                    " AND status='new'", (said, lid))
                 keep += 1
     conn.commit()
     print(f"★ 차종을 붙였다 {put}건 · ★ 「차종 미정」으로 둔 것 {keep}건")
