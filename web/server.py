@@ -14,7 +14,7 @@ import json
 import os
 import urllib.parse
 from http import HTTPStatus
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from contracts import ANONYMOUS, ROLE_ANONYMOUS, ROLE_PENDING, ROLE_RANK, ROLE_USER
 from web.context import (
@@ -34,6 +34,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #   BrokenPipeError 가 났고, 그 뒤 서버가 3시간 16분 아무것도 못 냈다.
 #   ★ 그 연결 하나만 버린다.  서버는 살아 있어야 한다
 DISCONNECTED = (BrokenPipeError, ConnectionResetError)
+# ★ 붙어 놓고 아무것도 안 보내는 연결을 버리는 시간(초).
+#   실측 08-23 — 이런 연결 ★ 하나로 서버 전체가 3시간 16분 멎었다.
+#   `BaseRequestHandler.timeout` 기본값이 None 이라 ★ 영원히 기다렸다
+IDLE_TIMEOUT = 30
 # 폼 본문 상한은 정책이다 → config.web.max_form_bytes
 EXTERNAL_WARN = (
     "★ 외부에 열립니다.  관리자 비밀번호를 확인하십시오.\n"
@@ -103,6 +107,8 @@ def make_handler(app):
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "CarWatch"
+        # ★ 이것이 없으면 rfile.readline() 이 영원히 기다린다 (SERVER_SURVIVAL 1장)
+        timeout = IDLE_TIMEOUT
 
         def log_message(self, fmt, *args):           # noqa: N802
             pass                                      # 접속 로그는 안 남긴다
@@ -195,6 +201,9 @@ def make_handler(app):
             """
             try:
                 super().handle_one_request()
+            except TimeoutError:
+                # ★ IDLE_TIMEOUT 동안 아무것도 안 왔다.  이 연결만 버린다
+                self.close_connection = True
             except DISCONNECTED:
                 self.close_connection = True
 
@@ -215,7 +224,11 @@ def serve(app, host: str | None = None, port: int | None = None,
     if host not in ("127.0.0.1", "localhost", "::1"):
         print(EXTERNAL_WARN)
     print(f"http://{host}:{port}    (Ctrl+C 로 중지)")
-    httpd = HTTPServer((host, port), make_handler(app))
+    # ★ ThreadingHTTPServer 다.  HTTPServer 는 ★ 한 연결이 막히면 전체가 막힌다 —
+    #   08-23 에 그것으로 3시간 16분 멎었다 (docs/SERVER_SURVIVAL.md 1장 · 실측)
+    httpd = ThreadingHTTPServer((host, port), make_handler(app))
+    # ★ 남은 실이 종료를 붙잡지 않게 한다
+    httpd.daemon_threads = True
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
