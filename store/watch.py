@@ -22,6 +22,9 @@ from dataclasses import dataclass
 DUP_SAME_DEALER = "concurrent_same_dealer"
 DUP_CROSS_DEALER = "concurrent_cross_dealer"
 DUP_RELIST = "relist"
+# ★ 사이트 사이다 (docs/DEDUP_CROSS_SITE.md 2-3).  ★ 앞 둘은 「한 사이트 안에서」다 —
+#   ★ 「엔카에도 KB 에도 있다」와 ★ 「한 딜러가 두 번 올렸다」는 ★ 다른 일이다
+DUP_CROSS_SITE = "concurrent_cross_site"
 
 # 이벤트 (STEP 114)
 EV_PRICE_DROP = "price_drop"
@@ -120,6 +123,28 @@ class WatchEvent:
     occurred_at: str
 
 
+# ★ 리스·렌트는 ★ 살 수 있는 것이 아니다 — ★ 대표로 세우지 않는다 (명령서 0 「제외」)
+LEASE_RENT = ("리스", "렌트")
+
+
+def _cross_site_order(active: list) -> list:
+    """대표 고르는 차례 (docs/DEDUP_CROSS_SITE.md 2-1).
+
+    ① 리스·렌트가 아닌 것  ② 채워진 축이 많은 것  ③ 값이 싼 것
+    ④ 먼저 관측된 것       ⑤ listing_id 가 작은 것
+    ★ ①~⑤ 는 ★ 차례일 뿐 ★ 점수가 아니다 (원칙 1-a)
+    ★ ⑤ 가 있어야 ★ 무작위가 없다 — ★ 같은 DB 면 ★ 늘 같은 대표가 나온다
+    ★ ② 「채워진 축 수」는 ★ 이 자리에서 셀 수 없다 (점수는 뒤 단계다) —
+      ★ 지금은 ★ ①③④⑤ 로 가른다.  ★ ② 는 판정이 붙은 뒤에 넣는다 (기록에 적었다)
+    """
+    def key(r):
+        lease = any(w in (r[7] or "") for w in LEASE_RENT)
+        return (1 if lease else 0,
+                r[3] is None, r[3] if r[3] is not None else 0,
+                r[4] or "", r[0])
+    return sorted(active, key=key)
+
+
 # ── STEP 112 중복 3종 ────────────────────────────────────────────────
 def classify_duplicates(conn: sqlite3.Connection, vehicle_id: int) -> list[dict]:
     """같은 vehicle_id 의 매물을 3종으로 가른다.
@@ -130,7 +155,7 @@ def classify_duplicates(conn: sqlite3.Connection, vehicle_id: int) -> list[dict]
     """
     rows = conn.execute(
         "SELECT listing_id, dealer_id, status, price_current_won, first_seen,"
-        " gone_at FROM core_listing WHERE vehicle_id = ? "
+        " gone_at, site, sell_type FROM core_listing WHERE vehicle_id = ? "
         "ORDER BY price_current_won IS NULL, price_current_won, first_seen",
         (vehicle_id,)).fetchall()
     if len(rows) < 2:
@@ -141,14 +166,27 @@ def classify_duplicates(conn: sqlite3.Connection, vehicle_id: int) -> list[dict]
 
     if len(active) >= 2:
         dealers = {r[1] for r in active}
-        kind = DUP_SAME_DEALER if len(dealers) == 1 else DUP_CROSS_DEALER
-        for i, r in enumerate(active):
-            out.append({
-                "listing_id": r[0], "kind": kind,
-                # 딜러 간 중복은 양쪽 다 보여준다.  가격 비교 대상이다
-                "representative": 1 if (kind == DUP_CROSS_DEALER or i == 0) else 0,
-                "peer_count": len(active),
-            })
+        sites = {r[6] for r in active}
+        if len(sites) > 1:
+            # ★★ 사이트를 넘는다 — ★ 화면에는 ★ 한 번만 뜬다 (DEDUP_CROSS_SITE 2).
+            #   ★ 목적 ⑤ 「사이트 안 가고 훑는다」가 ★ 두 번 뜨면 무너진다.
+            #   ★ 대표는 ★ 하나다 — ★ 짝은 지우지 않는다 (축을 합쳐야 하기 때문이다)
+            for i, r in enumerate(_cross_site_order(active)):
+                out.append({
+                    "listing_id": r[0], "kind": DUP_CROSS_SITE,
+                    "representative": 1 if i == 0 else 0,
+                    "peer_count": len(active),
+                })
+        else:
+            kind = DUP_SAME_DEALER if len(dealers) == 1 else DUP_CROSS_DEALER
+            for i, r in enumerate(active):
+                out.append({
+                    "listing_id": r[0], "kind": kind,
+                    # 딜러 간 중복은 양쪽 다 보여준다.  가격 비교 대상이다
+                    "representative": (1 if (kind == DUP_CROSS_DEALER or i == 0)
+                                       else 0),
+                    "peer_count": len(active),
+                })
 
     # 이어지는 것 — gone 이후 새 listing_id 로 등장한 것
     gones = [r for r in rows if r[2] == GONE and r[5]]
@@ -166,7 +204,8 @@ def sync_duplicates(conn: sqlite3.Connection, at: str) -> dict[str, int]:
 
     중복을 그대로 세면 물량이 부풀려지고 딜러 지표가 왜곡된다.
     """
-    stat = {DUP_SAME_DEALER: 0, DUP_CROSS_DEALER: 0, DUP_RELIST: 0}
+    stat = {DUP_SAME_DEALER: 0, DUP_CROSS_DEALER: 0, DUP_RELIST: 0,
+            DUP_CROSS_SITE: 0}
     conn.execute("DELETE FROM vehicle_duplicate")
     for (vk,) in conn.execute(
         "SELECT vehicle_id FROM core_listing WHERE vehicle_id IS NOT NULL "

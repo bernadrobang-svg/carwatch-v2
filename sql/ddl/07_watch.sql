@@ -118,7 +118,11 @@ CREATE TABLE IF NOT EXISTS vehicle_duplicate (
   peer_count          INTEGER NOT NULL,
   detected_at         TEXT NOT NULL,
   PRIMARY KEY (vehicle_id, listing_id),
-  CHECK (kind IN ('concurrent_same_dealer','concurrent_cross_dealer','relist'))
+  -- ★ concurrent_cross_site — ★ 사이트 사이다 (docs/DEDUP_CROSS_SITE.md 2-3).
+  --   ★ 앞 셋은 ★ 「한 사이트 안에서」를 가리킨다 — ★ 사이트 사이가 없었다.
+  --   ★ 그래야 ★ 「엔카에도 KB 에도 있다」와 ★ 「한 딜러가 두 번 올렸다」를 가른다
+  CHECK (kind IN ('concurrent_same_dealer','concurrent_cross_dealer','relist',
+                  'concurrent_cross_site'))
 );
 
 -- 진행 메모 (11장 STEP 118 · 개정 362 · V7-15).
