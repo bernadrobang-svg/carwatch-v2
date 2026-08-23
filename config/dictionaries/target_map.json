@@ -89,6 +89,58 @@
       "모델 Y": {
         "collect_group": "encar:MODEL_Y"
       }
+    },
+    "bobaedream": {
+      "_field": "목록 차명에서 거른 뒤 상세를 받는다 (BOBAEDREAM_API · maker_no facet 은 못 받았다)",
+      "_rule": "★ 상세에 차종 칸이 따로 없다 — ★ 목록 차명으로 고른 이름을 그대로 쓴다",
+      "G80": {
+        "collect_group": "encar:G80"
+      },
+      "G70": {
+        "collect_group": "encar:G70"
+      },
+      "GV70": {
+        "collect_group": "encar:GV70"
+      },
+      "GV60": {
+        "collect_group": "encar:GV60"
+      },
+      "그랜저": {
+        "collect_group": "encar:GRANDEUR"
+      },
+      "스포티지": {
+        "collect_group": "encar:SPORTAGE"
+      },
+      "그랑 콜레오스": {
+        "collect_group": "encar:KOLEOS"
+      },
+      "모델 Y": {
+        "collect_group": "encar:MODEL_Y"
+      },
+      "X3": {
+        "collect_group": "kb:X3"
+      },
+      "GLC": {
+        "collect_group": "kb:GLC"
+      },
+      "Q5": {
+        "collect_group": "kb:Q5"
+      },
+      "NX": {
+        "collect_group": "kb:NX"
+      },
+      "RX": {
+        "collect_group": "kb:RX"
+      },
+      "XC60": {
+        "collect_group": "kb:XC60"
+      },
+      "S60": {
+        "collect_group": "kb:S60"
+      },
+      "EX60": {
+        "collect_group": "kb:EX60"
+      }
     }
   },
   "_pending": {
@@ -121,6 +173,14 @@
       "디젤": "디젤",
       "전기": "전기",
       "가솔린+전기": "가솔린+전기"
+    },
+    "bobaedream": {
+      "_why": "★ 보배드림은 ★ 엔카와 같은 말을 쓴다 (실측 — 「가솔린」·「디젤」).  ★ 표에 없으면 원문이 간다",
+      "가솔린": "가솔린",
+      "디젤": "디젤",
+      "전기": "전기",
+      "LPG": "LPG(일반인 구입)",
+      "하이브리드": "가솔린+전기"
     }
   }
 }

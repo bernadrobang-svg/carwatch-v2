@@ -46,6 +46,8 @@
     "tools/collect_kbchachacha.py",
     "tools/collect_kcar.py",
     "tools/collect_hyundai_cert.py",
+    "tools/collect_bobaedream.py",
+    "tools/sync_target_map.py",
     "tools/daily_enqueue.py",
     "tools/light_check.py",
     "tools/repair_facet_chunks.py",

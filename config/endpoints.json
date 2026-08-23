@@ -137,5 +137,20 @@
     "end_bytes": 3585,
     "end_mark": "차량이 없습니다",
     "bot_bytes": 2759
+  },
+  "bobaedream": {
+    "_ref": "docs/BOBAEDREAM_API.md · 실측 2026-08-24",
+    "_note": "★★ 호스트가 ★ m. (모바일)이다.  ★ www. 는 다른 화면이고 ★ EUC-KR 이다 — ★ 섞지 마라",
+    "base_url": "https://m.bobaedream.co.kr",
+    "paths": {
+      "list": "/mycar/mlist/0/{page}",
+      "detail": "/mycar/mview/{source_id}"
+    },
+    "_paths_note": "★ 목록 쪽당 50건 · 상세 77~90KB · robots 는 www 가 Allow:/ (Amazonbot 만 금지) · m. 은 404",
+    "timeout_sec": 30,
+    "interval_sec": 1.2,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+    }
   }
 }
