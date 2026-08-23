@@ -23,6 +23,11 @@ SITE_CODE = "kbchachacha"
 # ★★ 봇 차단을 가르는 기준 (KBCHACHACHA_API 1-1).  ★ 코드에 박지 않고 config 가 정본이다
 BOT_MARK = "로봇 여부 확인"
 BOT_MIN_BYTES = 10_000
+# ★★ 끝 판정 — ★ 크기로 완전히 갈린다 (KBCHACHACHA_API 1a · 개정 572)
+#   봇 차단  2,759B 「로봇 확인 중」      → ★ 재시도한다
+#   진짜 끝  3,585B 「차량이 없습니다」   → ★ 거기서 멈춘다
+#   ★ 「carSeq 가 0이면 끝」으로 적지 마라 — ★ X3 14·15쪽은 71KB·25KB 인데 0건이다
+END_MARK = "차량이 없습니다"
 
 _SCHEMA: dict[str, EndpointSpec] = {
     "list": EndpointSpec(
@@ -53,6 +58,18 @@ def load_config(root: str = ".") -> dict:
     return got
 
 
+def is_real_end(body: str | None, cfg: dict | None = None) -> bool:
+    """★ 진짜 끝인가 — ★ 봇 차단과 ★ 갈라야 한다 (KBCHACHACHA_API 1a).
+
+    ★ 봇 차단이면 ★ 여기서 False 다 — ★ `is_bot_wall` 이 먼저 잡는다
+    ★ 크기가 커도 ★ 0건인 꼬리 쪽이 있다 (X3 14·15쪽) — ★ 그것도 끝이다
+    """
+    if body is None:
+        return False
+    mark = (cfg or {}).get("end_mark") or END_MARK
+    return mark in body
+
+
 def is_bot_wall(body: str | None, cfg: dict | None = None) -> bool:
     """★★ 봇 차단인가 (KBCHACHACHA_API 1-1).
 
@@ -62,6 +79,11 @@ def is_bot_wall(body: str | None, cfg: dict | None = None) -> bool:
     """
     if body is None:
         return True
+    # ★★ 진짜 끝 쪽은 ★ 3,585B 라 ★ 크기만 보면 ★ 봇 차단으로 읽힌다 —
+    #   ★ 그러면 ★ 끝에서 3회씩 다시 부르고 ★ 멈추지도 못한다.
+    #   ★ 실측 08-23 — X3 16쪽이 정확히 그 꼴이다 (3,585B · 「차량이 없습니다」)
+    if is_real_end(body, cfg):
+        return False
     least = int((cfg or {}).get("bot_min_bytes") or BOT_MIN_BYTES)
     mark = (cfg or {}).get("bot_mark") or BOT_MARK
     return len(body) < least or mark in body
@@ -86,11 +108,20 @@ class KbChaChaChaAdapter:
                 endpoint="*", step="STEP 25a")
         return h
 
-    def list_url(self, target: TargetSpec, page: int = 1) -> Request:
-        """목록.  ★ 쪽넘김이다 — 무한스크롤이 아니다 (실측)."""
+    def list_url(self, target: TargetSpec, page: int = 1,
+                 maker: str | None = None, klass: str | None = None) -> Request:
+        """목록.  ★ 쪽넘김이다 — 무한스크롤이 아니다 (실측).
+
+        ★ `maker`·`klass` 를 주면 ★ 좁혀 부른다 (KBCHACHACHA_API 1a) —
+          ★ 전체 164,490건이 아니라 ★ 우리 대상 2,084건만 받는다 (명령서 3-0)
+        """
         del target
-        url = self._base + self._paths["list"].format(page=int(page))
-        return Request("GET", url, self.headers(), self._timeout)
+        if maker and klass:
+            path = self._paths["list_narrow"].format(
+                page=int(page), maker=maker, klass=klass)
+        else:
+            path = self._paths["list"].format(page=int(page))
+        return Request("GET", self._base + path, self.headers(), self._timeout)
 
     def detail_urls(self, source_id: str) -> list[Request]:
         """매물당 1종.  ★ 한 쪽이 245~275KB 로 전부를 준다."""

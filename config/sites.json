@@ -121,7 +121,64 @@
       "all_of": {}
     },
     "_ref": "docs/KBCHACHACHA_API.md",
-    "_note": "★ 봇 차단을 반드시 가른다 (endpoints.kbchachacha._note)"
+    "_note": "★ 봇 차단을 반드시 가른다 (endpoints.kbchachacha._note)",
+    "collect_filters": {
+      "_ref": "docs/KBCHACHACHA_API.md 1a · 명령서 3-0 「전량을 받지 않는다」",
+      "_rule": "★ makerCode + classCode 로 좁힌다.  ★ 전체 164,490건을 받지 않는다 — ★ 우리 대상 2,084건이다",
+      "_end_rule": "★ 끝 판정은 ★ 크기로 가른다 (규격 1a) — 2,759B 봇차단(재시도) · 3,585B+「차량이 없습니다」 진짜 끝",
+      "_measured": "★ 가이드 실측 08-23 — 합 2,084건 · 53쪽",
+      "groups": [
+        {
+          "for": "벤츠 GLC",
+          "makerCode": "108",
+          "classCode": "2646",
+          "expect": 781,
+          "pages": 19
+        },
+        {
+          "for": "BMW X3",
+          "makerCode": "107",
+          "classCode": "1910",
+          "expect": 533,
+          "pages": 13
+        },
+        {
+          "for": "아우디 Q5",
+          "makerCode": "109",
+          "classCode": "1960",
+          "expect": 261,
+          "pages": 7
+        },
+        {
+          "for": "볼보 XC60",
+          "makerCode": "117",
+          "classCode": "2237",
+          "expect": 235,
+          "pages": 6
+        },
+        {
+          "for": "볼보 S60",
+          "makerCode": "117",
+          "classCode": "2229",
+          "expect": 131,
+          "pages": 3
+        },
+        {
+          "for": "렉서스 NX",
+          "makerCode": "133",
+          "classCode": "2563",
+          "expect": 90,
+          "pages": 3
+        },
+        {
+          "for": "렉서스 RX",
+          "makerCode": "133",
+          "classCode": "2132",
+          "expect": 53,
+          "pages": 2
+        }
+      ]
+    }
   },
   "dealer_site": {
     "label": "딜러 자체",

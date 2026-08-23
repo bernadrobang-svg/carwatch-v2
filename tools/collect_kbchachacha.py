@@ -28,8 +28,10 @@ from adapters.kbchachacha import (  # noqa: E402
     SITE_CODE,
     KbChaChaChaAdapter,
     is_bot_wall,
+    is_real_end,
     load_config,
 )
+from parse.kbchachacha.mapping import parse_detail  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 RETRY = 3               # ★ 봇 차단 재시도 (KBCHACHACHA_API 1-1)
@@ -78,6 +80,56 @@ def page_ids(body: str) -> list:
     return out
 
 
+def load_filters(root: str = ROOT) -> list:
+    """★ 좁히는 조건 — ★ config 가 정본이다 (KBCHACHACHA_API 1a)."""
+    import json as _j
+
+    with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
+        got = (_j.load(f).get(SITE_CODE) or {}).get("collect_filters") or {}
+    return got.get("groups") or []
+
+
+# ★ 꼬리 쪽 — ★ 크기는 큰데 매물이 0인 쪽이 이어진다 (X3 14·15쪽 71KB·25KB).
+#   ★ 「0건이면 끝」으로 멈추면 ★ 까닭이 다르다 (규격 1a 금지).
+#   ★ 그러나 ★ 끝없이 돌 수도 없다 — ★ 0건이 이만큼 이어지면 그만 본다
+TAIL_LIMIT = 4
+
+
+def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
+               seen: set) -> dict:
+    """차종 하나를 ★ 끝까지 받는다.  ★ 끝은 ★ 크기로 가른다 (규격 1a).
+
+    ★ 봇 차단(2,759B)  → ★ 재시도한다.  ★ 「없음」으로 저장하지 않는다
+    ★ 진짜 끝(3,585B + 「차량이 없습니다」) → ★ 거기서 멈춘다
+    """
+    got, pages, walls, tail = [], 0, 0, 0
+    for page in range(1, MAX_PAGES + 1):
+        req = adapter.list_url(None, page=page,
+                               maker=g["makerCode"], klass=g["classCode"])
+        body, _tries, walled = fetch_ok(req.url, req.headers,
+                                        req.timeout_sec, cfg)
+        pages = page
+        if walled:
+            walls += 1
+        if body is None:
+            # ★ 3회 다 막혔다.  ★ 여기서 끝이라고 하지 않는다 — ★ 못 받은 것이다
+            print(f"    {page}쪽 — ★ 3회 다 막혔다.  ★ 저장하지 않는다")
+            break
+        if is_real_end(body, cfg):
+            break                       # ★ 진짜 끝이다
+        ids = [x for x in page_ids(body) if x not in seen]
+        if not page_ids(body):
+            tail += 1
+            if tail >= TAIL_LIMIT:
+                break
+        else:
+            tail = 0
+        seen.update(ids)
+        got.extend(ids)
+        time.sleep(float(cfg.get("interval_sec") or 1.2))
+    return {"ids": got, "pages": pages, "walls": walls}
+
+
 def count_all(adapter: KbChaChaChaAdapter, cfg: dict, limit: int = MAX_PAGES):
     """★ 빈 쪽까지 늘려 가며 센다 (명령서 3-2 「확인해 알려 줄 것」 ③)."""
     seen, pages, empty_at = set(), 0, None
@@ -123,6 +175,55 @@ def probe_detail(adapter: KbChaChaChaAdapter, cfg: dict, ids: list) -> dict:
     return got
 
 
+def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
+                  limit: int = 0) -> int:
+    """★ 상세를 받아 ★ 함께 넣는다.  ★ 껍데기를 안 넣는다 (명령서 5단계).
+
+    ★ 봇 차단(30%)은 ★ 「없음」으로 저장하지 않는다 — ★ 다음 회차에 다시 부른다
+    ★ 이미 받은 것은 ★ 건너뛴다 — ★ 여러 회차에 나눠 채운다 (규격 1-1)
+    """
+    from store.core import resolve_listing_id, split_pii, upsert_core
+    from store.pii import load_key
+    from store.raw import commit
+
+    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    at, key = _now(), load_key()
+    done = {r[0] for r in conn.execute(
+        "SELECT source_id FROM core_listing WHERE site=? "
+        "AND detail_status='ok'", (SITE_CODE,))}
+    todo = [x for x in ids if x not in done]
+    if limit:
+        todo = todo[:limit]
+    print(f"★ 상세 — 받을 것 {len(todo):,}건 "
+          f"(이미 받은 것 {len(done):,}건은 건너뛴다)")
+    got = {"정상": 0, "봇차단 3회": 0, "파싱 실패": 0}
+    for n, one in enumerate(todo, 1):
+        req = adapter.detail_urls(one)[0]
+        body, _tries, _w = fetch_ok(req.url, req.headers, req.timeout_sec, cfg)
+        if body is None:
+            # ★ 못 받았다.  ★ 「없음」으로 저장하지 않는다 (금지 12 · 개정 289)
+            got["봇차단 3회"] += 1
+            continue
+        deep = parse_detail(body, SITE_CODE, one)
+        if not deep:
+            got["파싱 실패"] += 1
+            continue
+        deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
+        deep["detail_status"] = "ok"
+        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        got["정상"] += 1
+        if n % 100 == 0:
+            commit(conn)
+            print(f"    {n:,}/{len(todo):,} … 정상 {got['정상']:,}")
+        time.sleep(float(cfg.get("interval_sec") or 1.2))
+    commit(conn)
+    print("★ 상세 — " + " · ".join(f"{k} {v:,}" for k, v in got.items()))
+    left = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
+                        (SITE_CODE,)).fetchone()[0]
+    print(f"★ 저장된 KB 매물 — {left:,}건")
+    return 0
+
+
 def main() -> int:
     cfg = load_config(ROOT)
     adapter = KbChaChaChaAdapter(cfg)
@@ -148,6 +249,27 @@ def main() -> int:
         got = probe_detail(adapter, cfg, ids)
         print("★ 봇 차단 실측 —", " · ".join(f"{k} {v}" for k, v in got.items()))
         return 0
+
+    if "--narrow" in args:
+        groups = load_filters()
+        seen: set = set()
+        print(f"★ 좁혀 받는다 — 차종 {len(groups)}종 (전체 164,490 중)")
+        by_group = []
+        for g in groups:
+            r = walk_group(adapter, cfg, g, seen)
+            mark = "" if r["ids"] else "  ★ 0건이다"
+            print(f"  {g['for']:12} maker={g['makerCode']} class={g['classCode']}"
+                  f"  {r['pages']:>3}쪽 · 매물 {len(r['ids']):>4}"
+                  f" (규격 {g['expect']})  봇차단 {r['walls']}{mark}")
+            by_group.append((g, r["ids"]))
+        print(f"★ 합 {len(seen):,}건  (규격 2,084 — ★ 그것은 쪽마다의 합이다.  "
+              f"★ 겹친 것을 뺀 수가 이것이다)")
+        if "--dry" in args:
+            print("★ --dry 라 저장하지 않았다")
+            return 0
+        return store_details(adapter, cfg, [i for _g, ids in by_group
+                                            for i in ids],
+                             opt("--detail", 0))
 
     pages = opt("--pages", 1)
     seen: set = set()
