@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 
 from report.finance import build_finance
@@ -333,7 +334,12 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         axes.append(AxisView(axis, lab.get(axis, axis), value,
                              float(score or (value or 0)), int(mx or 0),
                              bool(excluded), source, prio,
-                             why=_axis_why(source, head[15], axis, root)))
+                             why=_axis_why(source, head[15], axis, root),
+                             source_label=source_label(source, root),
+                             mark=axis_mark(value, mx, source,
+                                            bool(excluded))[0],
+                             mark_why=axis_mark(value, mx, source,
+                                                bool(excluded))[1]))
         if excluded and source in ("gate_closed", "coefficient_out_of_range",
                                    "rule_undefined", "catalog_missing",
                                    "not_provided"):
@@ -413,6 +419,87 @@ OPTION_GROUPS = (("options_choice_json", "선택 옵션"),
                  ("options_tuning_json", "튜닝"))
 
 
+# ★★ 「확인 못 했다」로 읽어야 하는 근거 (명령서 13-2 ⑤ · 검산 S46-18).
+#   ★ 이것들이 ★ `×` 로 나가면 ★ 「없다」와 「모른다」를 섞는 것이다 (개정 325)
+UNKNOWN_SOURCES = frozenset({
+    "missing", "site_unavailable", "catalog_missing", "not_provided",
+    "rule_undefined", "gate_closed", "coefficient_out_of_range",
+    "origin_price_missing", "market_sample_short",
+})
+MARK_OK, MARK_BAD, MARK_UNKNOWN = "OK", "×", "—"
+
+_SOURCE_LABELS: dict | None = None
+
+
+def axis_mark(value, max_points, source: str | None, excluded: bool = False):
+    """축 하나 → ★ (기호, 한 줄 까닭) (명령서 13-2 ⑤ · UI_REVIEW 5a).
+
+    ★ 세 얼굴을 가른다 —
+      OK  확인했고 좋다        · ×  확인했고 없다/나쁘다 · —  확인 못 했다
+    ★ 점수는 ★ 그대로 둔다.  ★ 보이는 것만 바꾼다 (910점 체계는 안 건드린다)
+    금지  ★ 확인 못 한 것을 ★ `×` 로 적는 것 — ★ 「없다」와 「모른다」를 섞는 것이다
+    """
+    code = (source or "").split("+")[0]
+    if excluded or code in UNKNOWN_SOURCES:
+        return MARK_UNKNOWN, "확인하지 못했습니다"
+    if value is None:
+        return MARK_UNKNOWN, "확인하지 못했습니다"
+    got, mx = float(value or 0), float(max_points or 0)
+    if got <= 0:
+        return MARK_BAD, "확인했고 해당하지 않습니다"
+    if mx and got >= mx:
+        return MARK_OK, "확인했고 만점입니다"
+    return MARK_OK, f"확인했습니다 ({got:g}/{mx:g}점)"
+
+
+def source_label(code: str | None, root: str = ".") -> str:
+    """근거 코드 → ★ 한국어 (명령서 13-2 ④ · UI_REVIEW 4장).
+
+    ★ 뜻은 ★ `config/dictionaries/source_labels.json` 이 정본이다 (S14) —
+      ★ 코드에 두 벌로 적지 않는다
+    ★ 표에 없으면 ★ 코드를 그대로 돌려준다.  ★ 짐작으로 이름을 붙이지 않는다
+    ★ 합성(`a+b+c`)은 ★ 조각마다 옮겨 「·」로 잇는다
+    """
+    global _SOURCE_LABELS
+
+    if _SOURCE_LABELS is None:
+        path = os.path.join(root, "config", "dictionaries",
+                            "source_labels.json")
+        try:
+            with open(path, encoding="utf-8") as f:
+                _SOURCE_LABELS = json.load(f)
+        except (OSError, ValueError):
+            _SOURCE_LABELS = {}
+    table = _SOURCE_LABELS or {}
+    if not code:
+        return ""
+    # ★ 통째로 아는 코드가 먼저다 — ★ 「엔카진단+」는 ★ 합성이 아니라 ★ 그 자체가 코드다
+    got = (table.get("exact") or {}).get(code)
+    if got:
+        return got
+    if "+" in code:
+        return " · ".join(source_label(p, root) for p in code.split("+") if p)
+    tail = ""
+    for mark, said in (table.get("suffix") or {}).items():
+        if code.endswith(mark):
+            code, tail = code[: -len(mark)], said
+            break
+    got = (table.get("exact") or {}).get(code)
+    if got:
+        return got + tail
+    pres = table.get("prefix") or {}
+    for key in sorted(pres, key=len, reverse=True):
+        if code == key:
+            return pres[key] + tail
+        if code.startswith(key) and len(key) < len(code):
+            rest = code[len(key):]
+            said = pres[key]
+            return (said.replace("{}", rest) if "{}" in said
+                    else f"{said}{rest}") + tail
+    # ★ 모르는 코드는 ★ 그대로 낸다 — ★ 지어내지 않는다
+    return code + tail
+
+
 def _option_rows(conn: sqlite3.Connection, listing_id: int) -> tuple:
     """주요 옵션 — 옵션별 탑재 여부 (STEP 149c 5절).
 
@@ -425,8 +512,13 @@ def _option_rows(conn: sqlite3.Connection, listing_id: int) -> tuple:
         (listing_id,)).fetchone()
     if row is None:
         return ()
+    # ★★ 이름이 ★ 진짜 있는 것만 ★ 이름이다 (명령서 13-2 ② · UI_REVIEW 2장).
+    #   ★ 실측 08-24 — `dict_option_code` 151행이 ★ `display == code` 다.
+    #     ★ 카탈로그를 안 받아 ★ 코드가 자기 이름으로 들어 있다.
+    #     ★ 그것을 「안다」로 세면 ★ 화면에 ★ 「1011 · 001 · 004 …」가 그대로 나간다
     names = {code: display for code, display in conn.execute(
-        "SELECT code, display FROM dict_option_code")}
+        "SELECT code, display FROM dict_option_code")
+        if display and display != code}
     out = []
     for (col, label), blob in zip(OPTION_GROUPS, row, strict=True):
         try:
@@ -435,10 +527,14 @@ def _option_rows(conn: sqlite3.Connection, listing_id: int) -> tuple:
             codes = []
         if not codes:
             continue
+        # ★ 이름을 아는 것만 낸다.  ★ 모르는 것은 ★ 세기만 한다 —
+        #   ★ 「코드 46개 나열은 아무에게도 도움이 안 된다」 (규격 2장)
+        known = [{"code": c, "name": names[c], "known": True}
+                 for c in codes if c in names]
         out.append({
             "group": label, "count": len(codes),
-            "items": [{"code": c, "name": names.get(c) or c,
-                       "known": c in names} for c in codes],
+            "items": known,
+            "unnamed": len(codes) - len(known),
         })
     return tuple(out)
 

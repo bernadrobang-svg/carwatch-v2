@@ -2433,6 +2433,37 @@ def view_reports(account: Account, open_name: str | None = None,
 #   ★ 다만 최종 확인과 실물 사진은 엔카에서 본다 — 상세는 「갈지 말지」까지다
 # ══════════════════════════════════════════════════════════════════════
 
+def _warranty_until(conn, listing_id: int) -> dict:
+    """보증 잔여 → ★ 「언제까지 · 몇 km 까지」 (명령서 13-2 ⑦).
+
+    ★ 우리가 가진 것은 ★ 남은 개월이다.  ★ 오늘에 더해 ★ 끝나는 달을 낸다
+    ★ 0 개월은 ★ 「만료」다 — ★ 확인한 값이라 그렇게 적는다
+    ★ 없으면 ★ 빈 것이다.  ★ 「없다」로 적지 않는다 (개정 325)
+    """
+    from datetime import datetime, timezone
+
+    row = conn.execute(
+        "SELECT warranty_body_month, warranty_body_km,"
+        " warranty_power_month, warranty_power_km"
+        " FROM core_listing WHERE listing_id=?", (listing_id,)).fetchone()
+    if row is None:
+        return {}
+    now = datetime.now(timezone.utc)
+    out: dict = {}
+    for key, month, km in (("general", row[0], row[1]),
+                           ("power", row[2], row[3])):
+        if month is None:
+            continue
+        if int(month) <= 0:
+            out[key] = "만료" + (f" ({int(km):,}km 까지)" if km else "")
+            continue
+        total = (now.year * 12 + now.month - 1) + int(month)
+        y, m = divmod(total, 12)
+        said = f"{y}년 {m + 1}월까지"
+        out[key] = said + (f" ({int(km):,}km 까지)" if km else "")
+    return out
+
+
 def _verdict_lines(v, row, root: str = ".") -> list:
     """1절 — ★ 「왜 그 등급인가」를 **문장으로** 쓴다 (V11-160).
 
@@ -2593,10 +2624,15 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
     row = rows[0] if rows else None
     # ★ 템플릿은 == 비교를 못 한다 (V11-104).  ★ 고르는 일은 여기서 한다
     by_axis = {a.axis: a for a in v.axes}
+    # ★ 보증을 ★ 날짜로 낸다 (명령서 13-2 ⑦ · UI_REVIEW 7장).
+    #   ★ 렉서스는 「2030년 10월까지 (120,000km)」를 준다 — ★ 점수만 내면 언제까진지 모른다
+    w_until = _warranty_until(conn, listing_id)
     return {
         "v": v, "row": row,
         "warranty_general": by_axis.get("warranty.general"),
         "warranty_power": by_axis.get("warranty.power"),
+        "warranty_general_until": w_until.get("general"),
+        "warranty_power_until": w_until.get("power"),
         "verdict": _verdict_lines(v, row, root),
         "unknowns": _unknown_lines(conn, listing_id, calc_version, root),
         "history": _price_history(conn, listing_id),

@@ -184,6 +184,9 @@ tr:last-child td { border-bottom:0 }
 .up-v { color:var(--up) }
 .down-v { color:var(--down) }
 .btn.danger { border-color:#4e2523;color:var(--up) }
+/* ★ 나가는 단추 — 채운 단추다 (명령서 13-2 ⑥ · v3 시안 .btn.go).
+   ★ 「엔카에서 보기」가 화면에서 가장 중요한 단추인데 글자색만 있었다 */
+.btn.go { background:var(--amber);border-color:var(--amber);color:#111;font-weight:600 }
 .btn:disabled,.btn.off { opacity:.4;cursor:not-allowed }
 input[type=checkbox],input[type=radio] { accent-color:var(--amber) }
 .runbox { border:1px solid var(--line2);border-radius:8px;background:var(--surface); padding:16px 18px;margin-bottom:14px }

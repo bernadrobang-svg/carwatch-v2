@@ -1,0 +1,13 @@
+# 재판정이 네 시간 넘게 안 돌았으면 큐에 넣는다 (명령서 14-3).
+# ★ 큐에 넣기만 한다.  꺼내 도는 것은 웹 서버 안의 소비기다 (STEP 132a)
+# ★ 서비스를 재시작하지 않는다 — 마스터의 CSRF 가 끊긴다 (개정 308)
+[Unit]
+Description=CarWatch v2 — 재판정 밀림 확인
+
+[Service]
+Type=oneshot
+User=ec2-user
+WorkingDirectory=/home/ec2-user/v2
+Environment=LANG=ko_KR.UTF-8
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3.11 tools/recalc_catchup.py

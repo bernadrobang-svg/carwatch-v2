@@ -50,7 +50,7 @@
 <td data-label="가격 추이">{% if r.spark %}<span class="spark" title="첫 게시가부터 지금까지의 가격 추이입니다. 초록이 내린 것입니다">{% for p in r.spark %}<i class="{% if p.dn %}dn{% endif %}{% if p.now %} now{% endif %}" style="height:{{ p.pct }}%" title="{{ p.won | won }}"></i>{% endfor %}</span>{% endif %}{% if !r.spark %}<span class="dim" title="가격이 바뀐 적이 없습니다">추이 없음</span>{% endif %}</td>
 <td class="act" data-label="">
   <a class="btn mini" href="/detail/{{ r.listing.listing_id }}" title="판정 근거">근거</a>
-  {% if r.listing.encar_url %}<a class="btn mini" href="{{ r.listing.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
+  {% if r.listing.encar_url %}<a class="btn go mini" href="{{ r.listing.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
   <form method="post" action="/watch/{{ r.watch_id }}" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input name="target_price_won" placeholder="목표가(원)" size="10">

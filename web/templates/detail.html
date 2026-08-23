@@ -140,9 +140,11 @@
   {% for g in v.options %}
   <p class="note"><b>{{ g.group }}</b> {{ g.count }}종</p>
   <div class="opts">
-    {% for o in g.items %}<div class="opt{% if o.known %} on{% endif %}"
+    {% for o in g.items %}<div class="opt on"
       title="원문 옵션 코드 {{ o.code }}">{{ o.name }}</div>{% endfor %}
   </div>
+  {% if g.unnamed %}<p class="note dim">{{ g.unnamed }}종 — 이름 미조회
+    <span class="muted">(카탈로그를 아직 받지 못했습니다)</span></p>{% endif %}
   {% endfor %}
 </div>
 
@@ -153,8 +155,8 @@
     <div><u>타이어</u><b class="dim">확인 못 함</b></div>
     <div><u>차 키</u><b class="dim">확인 못 함</b></div>
     <div><u>틴팅</u><b class="dim">확인 못 함</b></div>
-    <div><u>제조사 보증 (일반)</u><b>{% if warranty_general %}{{ warranty_general.value | num }}/{{ warranty_general.max_points | num }}점{% endif %}{% if !warranty_general %}<span class="dim">확인 못 함</span>{% endif %}</b></div>
-    <div><u>제조사 보증 (동력계)</u><b>{% if warranty_power %}{{ warranty_power.value | num }}/{{ warranty_power.max_points | num }}점{% endif %}{% if !warranty_power %}<span class="dim">확인 못 함</span>{% endif %}</b></div>
+    <div><u>제조사 보증 (일반)</u><b>{% if warranty_general_until %}{{ warranty_general_until }}{% endif %}{% if !warranty_general_until %}{% if warranty_general %}<span class="dim">기간 미조회</span>{% endif %}{% if !warranty_general %}<span class="dim">확인 못 함</span>{% endif %}{% endif %}{% if warranty_general %} <span class="muted">{{ warranty_general.value | num }}/{{ warranty_general.max_points | num }}점</span>{% endif %}</b></div>
+    <div><u>제조사 보증 (동력계)</u><b>{% if warranty_power_until %}{{ warranty_power_until }}{% endif %}{% if !warranty_power_until %}{% if warranty_power %}<span class="dim">기간 미조회</span>{% endif %}{% if !warranty_power %}<span class="dim">확인 못 함</span>{% endif %}{% endif %}{% if warranty_power %} <span class="muted">{{ warranty_power.value | num }}/{{ warranty_power.max_points | num }}점</span>{% endif %}</b></div>
   </div>
   <p class="note">타이어·차 키·틴팅은 엔카 리포트에 있습니다 —
     ★ 아직 못 받았습니다 (⑤절 참조). 「없다」가 아니라 「모른다」입니다.</p>
@@ -196,8 +198,8 @@
       <div class="axes">
         {% for a in v.axes %}<a class="axc{% if a.excluded %} na{% endif %}"
           href="/listings?axis={{ a.axis }}&bucket=1"
-          title="{{ a.label }} — 근거 {{ a.source }}">{{ a.label }}
-          <b>{{ a.value | num }}/{{ a.max_points | num }}</b></a>{% endfor %}
+          title="{{ a.label }} — {{ a.mark_why }} · {{ a.value | num }}/{{ a.max_points | num }}점 · 근거 {{ a.source }}">{{ a.label }}
+          <b>{{ a.mark }}</b></a>{% endfor %}
       </div>
       <!-- ★★ ⓐ 마이너스 줄과 합계 (개정 491 · 명령서 1-2 ⓐ)
            ★ 「깎인 합 → 상한」 줄을 감추지 않습니다 -->
@@ -245,6 +247,7 @@
     <input type="hidden" name="listing_id" value="{{ v.listing_id }}">
     <button type="submit" title="관심에 담습니다">♡ 관심</button>
   </form>
-  {% if row.encar_url %}<a href="{{ row.encar_url }}" target="_blank" rel="noopener">엔카에서 보기 ↗</a>{% endif %}
+  {% if row.encar_url %}<a class="btn go" href="{{ row.encar_url }}" target="_blank" rel="noopener"
+     title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기 ↗</a>{% endif %}
 </div>
 </div>

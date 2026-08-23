@@ -49,6 +49,7 @@
     "tools/collect_bobaedream.py",
     "tools/sync_target_map.py",
     "tools/daily_enqueue.py",
+    "tools/recalc_catchup.py",
     "tools/light_check.py",
     "tools/repair_facet_chunks.py",
     "tools/trace_fill.py",
