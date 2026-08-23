@@ -239,6 +239,23 @@ def collect_group_of(site: str, name: str | None) -> str | None:
     return (target_map(site).get(name or "") or {}).get("collect_group")
 
 
+def match_target_name(site: str, text: str | None) -> str | None:
+    """차명 안에 ★ 우리가 아는 차종 이름이 들어 있으면 ★ 그 이름을 돌려준다.
+
+    ★★ 왜 — ★ 사이트가 ★ 꾸밈말과 세대를 ★ 이름에 붙여 준다 (실측 08-24) —
+      K카   「더 뉴 그랜저」 · 「그랜저 IG」 · 「스포티지 4세대」 · 「GLC-클래스 X253」
+      보배   「제네시스 더 올 뉴 G80 3.5 터보 AWD」
+    ★ 낱낱을 표에 적으면 ★ 새 세대가 나올 때마다 ★ 또 미정이 된다
+    ★ ★ 긴 이름을 ★ 먼저 본다 — ★ 「그랑 콜레오스」가 ★ 「그랑」에 먼저 걸리지 않게
+    ★ 표에 없으면 ★ None 이다.  ★ 지어내지 않는다
+    """
+    got = [k for k in target_map(site) if k and not k.startswith("_")]
+    for key in sorted(got, key=len, reverse=True):
+        if key in (text or ""):
+            return key
+    return None
+
+
 def mapped_of(axis: str, value: str) -> str | None:
     """사이트가 분류를 포기한 값을 우리 갈래로 (개정 398).
 

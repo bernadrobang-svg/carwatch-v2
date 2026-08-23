@@ -39,6 +39,12 @@ from store.raw import open_db  # noqa: E402
 RETRY = 3               # ★ 봇 차단 재시도 (KBCHACHACHA_API 1-1)
 RETRY_WAIT = 3.0
 MAX_PAGES = 400         # ★ 빈 쪽이 나오면 그 전에 멈춘다.  이것은 안전장치다
+# ★★ 한 회차에 부를 상세 수 (명령서 14-1).  ★ 막히는 자리는 ★ 목록이 아니라 ★ 상세다 —
+#   ★ 목록 53쪽은 ★ 봇 차단 0건이다 (실측 08-24 · C 확인).
+#   ★ 목록은 ★ 한 번에 다 받고 · ★ 상세만 ★ 회차를 나눈다
+DETAIL_BATCH = 200
+# ★ 이만큼 이어서 막히면 ★ 그 회차를 끝낸다 (명령서 14-1)
+WALL_GIVE_UP = 8
 RE_CARSEQ = re.compile(r"carSeq=(\d+)")
 
 
@@ -199,13 +205,23 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     print(f"★ 상세 — 받을 것 {len(todo):,}건 "
           f"(이미 받은 것 {len(done):,}건은 건너뛴다)")
     got = {"정상": 0, "봇차단 3회": 0, "파싱 실패": 0}
+    walls_in_row = 0
     for n, one in enumerate(todo, 1):
         req = adapter.detail_urls(one)[0]
         body, _tries, _w = fetch_ok(req.url, req.headers, req.timeout_sec, cfg)
         if body is None:
             # ★ 못 받았다.  ★ 「없음」으로 저장하지 않는다 (금지 12 · 개정 289)
             got["봇차단 3회"] += 1
+            walls_in_row += 1
+            # ★★ 이만큼 이어서 막히면 ★ 사이트가 회차를 닫은 것이다 —
+            #   ★ 그 회차를 끝내고 ★ 다음 회차로 넘긴다 (명령서 14-1).
+            #   ★ 계속 두드리는 것은 ★ 사이트에 부담이고 ★ 소용도 없다
+            if walls_in_row >= WALL_GIVE_UP:
+                print(f"    ★ {walls_in_row}건 이어서 막혔다 — "
+                      "★ 이 회차를 여기서 끝낸다.  ★ 다음 회차에 이어 받는다")
+                break
             continue
+        walls_in_row = 0
         deep = parse_detail(body, SITE_CODE, one)
         if not deep:
             got["파싱 실패"] += 1
@@ -223,6 +239,10 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     left = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                         (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장된 KB 매물 — {left:,}건")
+    conn.close()
+    from tools.daily_enqueue import enqueue_after_store
+    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
+                        got.get("정상", 0))
     return 0
 
 
@@ -274,9 +294,10 @@ def main() -> int:
         gap = opt("--interval", 0)
         if gap:
             cfg = dict(cfg, interval_sec=gap)
+        # ★ 회차 상한 — ★ 안 주면 200 이다 (명령서 14-1).  ★ 0 을 주면 전량이다
+        want = opt("--detail", DETAIL_BATCH)
         return store_details(adapter, cfg, [i for _g, ids in by_group
-                                            for i in ids],
-                             opt("--detail", 0))
+                                            for i in ids], want)
 
     pages = opt("--pages", 1)
     seen: set = set()

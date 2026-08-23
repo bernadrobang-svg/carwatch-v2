@@ -263,6 +263,9 @@ def main() -> int:
         time.sleep(INTERVAL)
     commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
+    from tools.daily_enqueue import enqueue_after_store
+    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
+                        got.get("정상", 0))
     return 0
 
 

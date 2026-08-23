@@ -4,6 +4,7 @@
     python3.11 tools/collect_kcar.py --car EC61393706 [EC61377663 …]
     python3.11 tools/collect_kcar.py --file carcds.txt        한 줄에 하나
     python3.11 tools/collect_kcar.py --check EC61393706       재기만 한다 (저장 없음)
+    python3.11 tools/collect_kcar.py --list [--detail N]     ★ 재고 목록 전량 → 저장
 
 지시서   `docs/KCAR_API.md` · 명령서 3-3
 값규칙   ★ 반드시 지킬 것 넷 (명령서 3-3)
@@ -29,7 +30,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from adapters.kcar import SITE_CODE, KcarAdapter, load_config  # noqa: E402
-from parse.kcar.mapping import parse_detail  # noqa: E402
+from parse.kcar.mapping import parse_detail, parse_list_item  # noqa: E402
+from store.dictionary import collect_group_of, match_target_name  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 # ① ★ 없는 매물도 200 이다.  ★ 크기로 한 번 · carCd 로 한 번 가른다
@@ -80,10 +82,107 @@ def accident_of(body: dict) -> str | None:
     return ((body.get("data") or {}).get("rvo") or {}).get("acdtHistComnt")
 
 
+def fetch_stock(adapter: KcarAdapter) -> list:
+    """재고 목록을 ★ 한 번에 받는다 (명령서 18-1).
+
+    ★ `data.listCount` 가 ★ 총건수다.  ★ 쪽마다 더하지 않는다
+    """
+    req = adapter.stock_list_url()
+    size, body = fetch(req.url, req.headers, req.timeout_sec)
+    if not body:
+        print(f"  ★ 목록을 못 받았다 ({size}B)")
+        return []
+    data = body.get("data") or {}
+    rows = data.get("list") or []
+    said = data.get("listCount")
+    print(f"목록 — 사이트가 말한 총 {said}건 · 받은 {len(rows)}건 · {size:,}B")
+    if said is not None and len(rows) != int(said):
+        print(f"  ★ 어긋난다 — {int(said) - len(rows)}건을 못 받았다")
+    return rows
+
+
+def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
+    """목록 전량 저장 → ★ 우리 대상만 상세 (명령서 18-3)."""
+    rows = fetch_stock(adapter)
+    if not rows:
+        return 1
+    parsed, ours = [], []
+    for one in rows:
+        got = parse_list_item(one, SITE_CODE)
+        if not got:
+            continue
+        # ★ 사이트가 ★ 꾸밈말·세대를 붙여 준다 — ★ 아는 이름이 들어 있으면 그것이다
+        named = match_target_name(SITE_CODE, got.get("site_model_group"))
+        if named:
+            # ★ 우리가 아는 이름으로 ★ 적어 둔다 — ★ dict_enum 이 한 이름으로 모인다
+            got["site_model_group"] = named
+        parsed.append(got)
+        if named and collect_group_of(SITE_CODE, named):
+            ours.append(got)
+    print(f"★ 우리 대상 — {len(ours)}건 / {len(parsed)}건")
+    if "--dry" in args:
+        print("★ --dry 라 저장하지 않았다")
+        return 0
+
+    from store.core import resolve_listing_id, split_pii, upsert_core
+    from store.pii import load_key
+    from store.raw import commit
+
+    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    at, key = _now(), load_key()
+    for one in parsed:
+        one["listing_id"] = resolve_listing_id(conn, SITE_CODE,
+                                               one["source_id"], at)
+        upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
+    commit(conn)
+    print(f"★ 목록 저장 {len(parsed)}건 · site='{SITE_CODE}'")
+
+    # ★ 상세는 ★ 우리 대상만 ★ 뒤에 받는다 (18-3 ③).  ★ 이미 받은 것은 건너뛴다
+    limit = 0
+    if "--detail" in args:
+        i = args.index("--detail")
+        limit = int(args[i + 1]) if i + 1 < len(args) and args[i + 1].isdigit() else 0
+    done = {r[0] for r in conn.execute(
+        "SELECT source_id FROM core_listing WHERE site=? AND detail_status='ok'",
+        (SITE_CODE,))}
+    todo = [o for o in ours if o["source_id"] not in done]
+    if limit:
+        todo = todo[:limit]
+    print(f"★ 상세 — 받을 것 {len(todo)}건 (이미 받은 것 {len(done)}건은 건너뛴다)")
+    got = {"정상": 0, "없는 매물": 0, "못 받음": 0}
+    for one in todo:
+        req = adapter.detail_urls(one["source_id"])[0]
+        size, body = fetch(req.url, req.headers, req.timeout_sec)
+        state = classify(size, body)
+        got[state] = got.get(state, 0) + 1
+        if state != "정상":
+            time.sleep(float(cfg.get("interval_sec") or 1.5))
+            continue
+        deep = parse_detail(body, SITE_CODE, one["source_id"])
+        if deep:
+            deep["listing_id"] = one["listing_id"]
+            deep["detail_status"] = "ok"
+            upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        time.sleep(float(cfg.get("interval_sec") or 1.5))
+    commit(conn)
+    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
+    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
+                     (SITE_CODE,)).fetchone()[0]
+    print(f"★ 저장된 K카 매물 — {n}건")
+    conn.close()
+    # ★ 저장했으면 ★ 재판정을 함께 큐에 넣는다 (명령서 14-3 ④)
+    from tools.daily_enqueue import enqueue_after_store
+    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE, len(parsed))
+    return 0
+
+
 def main() -> int:
     args = sys.argv[1:]
     cfg = load_config(ROOT)
     adapter = KcarAdapter(cfg)
+
+    if "--list" in args:
+        return collect_list(adapter, cfg, args)
 
     cars: list = []
     if "--car" in args:

@@ -41,7 +41,8 @@
     "paths": {
       "detail": "/bc/car-info-detail-of-ng?i_sCarCd={source_id}",
       "inspection": "/bc/car-insp/photo/cm?i_sCarCd={source_id}",
-      "list": "/bc/search/list/drct"
+      "list": "/bc/search/list/drct",
+      "stock_list": "/bc/stockCar/list?pageSize={size}"
     },
     "_paths_note": "★ detail 하나가 상세·옵션 42·보증 5·타이어 5·소유이력·보험·진단을 함께 준다. 타이어 트레드(tirResQty)가 여기 있다 — 엔카는 401 이라 못 받는다",
     "_list_note": "★ 개정 467 실측 — POST /bc/search/list/drct (직영) · /acm (제휴). 요청 본문만 enc 암호화 · 응답은 평문 JSON · totalCnt·totalPageCnt 를 준다 · 쪽당 10건. ★ 조건 검색은 사람이 화면에서 고른 뒤 응답을 읽는다. ★ enc 를 풀지 않는다",
@@ -51,7 +52,9 @@
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile Safari/604.1",
       "Accept": "application/json, text/plain, */*",
       "Referer": "https://m.kcar.com/"
-    }
+    },
+    "_stock_list_note": "★ 개정 626 (마스터가 찾으심) — ★ 목록이 뚫렸다.  ★ enc 없음 · 헤더 불필요. ★ `data.listCount` 가 총건수다 — ★ 쪽마다 더하지 않는다. ★ `pageSize` 만 먹는다 — ★ `mnuftrCd`·`modelGrpCd` 는 안 먹으니 ★ 전량 받아 우리가 거른다",
+    "stock_page_size": 1000
   },
   "kia_cpo": {
     "_ref": "docs/KIA_CPO_API.md · 실측 2026-08-22 서버에서 직접 · 표본 30건",

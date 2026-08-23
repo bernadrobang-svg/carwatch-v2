@@ -61,7 +61,7 @@
     },
     "kcar": {
       "_field": "상세 data.rvo.modelNm 에서 괄호(세대)를 뗀 것 (KCAR_API 3-1)",
-      "_rule": "★ 목록을 못 부른다 (enc) — ★ 사람이 준 carCd 로 상세만 받는다.  ★ 이름은 받아 본 것만 적는다",
+      "_rule": "★ 목록이 뚫렸다 (개정 626) — ★ 전량 527건을 받아 우리가 거른다.  ★ 이름은 `match_target_name` 이 ★ 들어 있는지로 찾는다 (「더 뉴 그랜저」·「스포티지 4세대」)",
       "G80": {
         "collect_group": "encar:G80"
       },
@@ -88,6 +88,30 @@
       },
       "모델 Y": {
         "collect_group": "encar:MODEL_Y"
+      },
+      "X3": {
+        "collect_group": "kb:X3"
+      },
+      "GLC": {
+        "collect_group": "kb:GLC"
+      },
+      "Q5": {
+        "collect_group": "kb:Q5"
+      },
+      "NX": {
+        "collect_group": "kb:NX"
+      },
+      "RX": {
+        "collect_group": "kb:RX"
+      },
+      "XC60": {
+        "collect_group": "kb:XC60"
+      },
+      "S60": {
+        "collect_group": "kb:S60"
+      },
+      "EX60": {
+        "collect_group": "kb:EX60"
       }
     },
     "bobaedream": {

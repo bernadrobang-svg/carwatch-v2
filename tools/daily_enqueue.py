@@ -67,6 +67,28 @@ def enqueue_daily(conn, at: str) -> str | None:
     return jid
 
 
+def enqueue_after_store(db_path: str, site: str, stored: int) -> str | None:
+    """★ 새 사이트를 저장했으면 ★ 재판정을 함께 큐에 넣는다 (명령서 14-3 ④).
+
+    ★ 지금은 ★ 저장하고 ★ 하루를 기다려야 화면에 나온다 —
+      ★ 116건을 넣고도 ★ 등급 분포가 안 바뀌면 ★ 마스터가 「안 들어왔다」로 보신다
+    ★ 넣기만 한다.  ★ 꺼내 도는 것은 ★ 웹 서버 안의 소비기다 (STEP 132a)
+    ★ 저장한 것이 없으면 ★ 아무것도 안 한다
+    """
+    if not stored:
+        return None
+    conn = sqlite3.connect(db_path, timeout=DB_TIMEOUT_SEC)
+    try:
+        got = enqueue_daily(conn, _now())
+    finally:
+        conn.close()
+    if got:
+        print(f"★ 재판정을 큐에 넣었습니다 — {got[:8]} ({site} {stored:,}건 저장)")
+    else:
+        print("★ 이미 도는 작업이 있어 재판정을 건너뜁니다")
+    return got
+
+
 def list_age_days(conn, at: str) -> float | None:
     """엔카 목록이 며칠째 안 들어왔나 (STEP 136i).
 

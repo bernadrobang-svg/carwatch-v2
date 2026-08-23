@@ -154,6 +154,10 @@ def main() -> int:
         time.sleep(gap)
     commit(conn)
     print("★ " + " · ".join(f"{k} {v}" for k, v in kept.items()))
+    conn.close()
+    from tools.daily_enqueue import enqueue_after_store
+    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
+                        kept.get("저장", 0))
     return 0
 
 

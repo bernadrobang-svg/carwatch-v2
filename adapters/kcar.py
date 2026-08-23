@@ -92,6 +92,17 @@ class KcarAdapter:
             "상세는 source_id 를 알면 받을 수 있다",
             endpoint="list", step="STEP 17a")
 
+    def stock_list_url(self, size: int | None = None) -> Request:
+        """재고 목록 — ★ 한 번에 다 준다 (KCAR_API 0a · 명령서 18-1).
+
+        ★ `pageSize` 만 먹는다.  ★ 넉넉히 주면 ★ 사이트가 총건수에서 멈춘다
+        ★ enc 없음 · 헤더·토큰 불필요 — ★ 우회가 아니다 (robots 허용 · sitemap 등재)
+        """
+        n = int(size or self._cfg.get("stock_page_size") or 1000)
+        return Request("GET",
+                       self._base + self._paths["stock_list"].format(size=n),
+                       self.headers(), self._timeout)
+
     def detail_urls(self, source_id: str) -> list[Request]:
         """매물당 2종.  ★ 한 경로가 상세·옵션·보증·타이어를 함께 준다."""
         out = []
