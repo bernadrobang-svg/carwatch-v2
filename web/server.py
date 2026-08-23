@@ -29,6 +29,11 @@ from web.session import (
 from web.template import render
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# ★ 상대가 먼저 끊은 연결에 쓰면 나는 예외다 (docs/SERVER_SURVIVAL.md 1장).
+#   실측 08-23 — `_error` 가 오류 화면을 보내려는데 브라우저가 이미 닫혀
+#   BrokenPipeError 가 났고, 그 뒤 서버가 3시간 16분 아무것도 못 냈다.
+#   ★ 그 연결 하나만 버린다.  서버는 살아 있어야 한다
+DISCONNECTED = (BrokenPipeError, ConnectionResetError)
 # 폼 본문 상한은 정책이다 → config.web.max_form_bytes
 EXTERNAL_WARN = (
     "★ 외부에 열립니다.  관리자 비밀번호를 확인하십시오.\n"
@@ -103,14 +108,20 @@ def make_handler(app):
             pass                                      # 접속 로그는 안 남긴다
 
         def _send(self, status, body: bytes, ctype: str, extra=None):
-            self.send_response(int(status))
-            self.send_header("Content-Type", ctype)
-            self.send_header("Content-Length", str(len(body)))
-            self.send_header("X-Content-Type-Options", "nosniff")
-            for k, v in (extra or {}).items():
-                self.send_header(k, v)
-            self.end_headers()
-            self.wfile.write(body)
+            # ★ end_headers() 도 소켓에 쓴다 — 머리글에서도 끊길 수 있다.
+            #   그래서 write 한 줄이 아니라 보내는 동안 전부를 감싼다
+            try:
+                self.send_response(int(status))
+                self.send_header("Content-Type", ctype)
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("X-Content-Type-Options", "nosniff")
+                for k, v in (extra or {}).items():
+                    self.send_header(k, v)
+                self.end_headers()
+                self.wfile.write(body)
+            except DISCONNECTED:
+                # ★ 보낼 곳이 없다.  조용히 이 연결만 버린다 (SERVER_SURVIVAL 1장)
+                self.close_connection = True
 
         def _handle(self, method: str):
             parsed = urllib.parse.urlparse(self.path)
@@ -165,11 +176,27 @@ def make_handler(app):
         def _error(self, err: ErrorPage):
             # ★ 쿠키를 넘긴다.  안 넘기면 오류 화면마다 「비로그인」이 된다
             req = {"cookie": self.headers.get("Cookie")}
-            html = render("_error.html",
-                          {"page": app["blank_page"](err.title, req),
-                           "err": err})
-            self._send(err.status, html.encode("utf-8"),
-                       "text/html; charset=utf-8")
+            # ★ 오류 화면을 만드는 도중에도 끊길 수 있다.  _send 밖까지 감싼다 —
+            #   08-23 에 죽은 자리가 정확히 여기다 (SERVER_SURVIVAL 1장)
+            try:
+                html = render("_error.html",
+                              {"page": app["blank_page"](err.title, req),
+                               "err": err})
+                self._send(err.status, html.encode("utf-8"),
+                           "text/html; charset=utf-8")
+            except DISCONNECTED:
+                self.close_connection = True
+
+        def handle_one_request(self):                 # noqa: N802
+            """★ 한 겹 더 — 요청 줄을 읽는 중에 끊겨도 서버는 산다.
+
+            `_send` · `_error` 밖(머리글 읽기 · finish 의 flush)에서 나는
+            것까지 여기서 받는다 (SERVER_SURVIVAL 1장 ②).
+            """
+            try:
+                super().handle_one_request()
+            except DISCONNECTED:
+                self.close_connection = True
 
         def do_GET(self):                             # noqa: N802
             self._handle(GET)

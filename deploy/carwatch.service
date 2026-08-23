@@ -1,6 +1,10 @@
 [Unit]
 Description=CarWatch v2
 After=network.target
+# ★ 재시작 횟수 제한을 끈다 (docs/SERVER_SURVIVAL.md 1장 ③).
+#   기본값은 「10초에 5번」이고, 그것에 걸리면 systemd 가 되살리기를 포기한다.
+#   08-16 에 실제로 재시작 1404회까지 갔다.  0 이면 포기하지 않는다
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -10,7 +14,7 @@ Environment=LANG=ko_KR.UTF-8
 Environment=PYTHONIOENCODING=utf-8
 ExecStart=/usr/bin/python3.11 run.py web --host 127.0.0.1 --port 8765
 Restart=always
-RestartSec=5
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target
