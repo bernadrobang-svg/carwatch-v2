@@ -112,3 +112,46 @@
 | `trace/60-admin.md` | 201 | 24 |
 | `trace/RULES.md` | 312 | 21 |
 
+---
+
+# ★★ 사이트 규격과 판정 규격 — ★ 08-24 에 INDEX 에 올렸다
+
+```
+★★ 이 열일곱이 ★ INDEX 밖에 있었다 (마스터 지적 08-24)
+★ ★ 살아 있는 문서인데 ★ 어느 목록에도 없었다 — ★ 새로 오는 사람이 못 찾는다
+```
+
+## 사이트 규격 열둘
+
+| 문서 | 무엇 |
+|---|---|
+| `ENCAR_API.md` | 엔카 — ★ 생성물(`tools/probe_encar.py`).  손으로 쓰지 않는다 |
+| `ENCAR_ROBOTS.md` | 엔카 robots — ★ 마스터 판단 대기 |
+| `KIA_CPO_API.md` | 기아 인증중고차 |
+| `HYUNDAI_CERTIFIED_API.md` | 현대·제네시스 인증중고차 |
+| `KBCHACHACHA_API.md` | KB차차차 |
+| `KCAR_API.md` | K카 |
+| `HEYDEALER_API.md` | 헤이딜러 — ★ 목록 API 500 |
+| `BOBAEDREAM_API.md` | 보배드림 |
+| `REBORNCAR_API.md` | 리본카 — ★ 모바일 UA 필수 |
+| `LEXUS_CERTIFIED_API.md` | 렉서스 인증 |
+| `VOLVO_SELEKT_API.md` | 볼보 셀렉트 |
+| `BMW_BPS_API.md` | BMW 프리미엄 셀렉션 |
+
+## 가로지르는 것 다섯
+
+| 문서 | 무엇 |
+|---|---|
+| ★ `MULTISITE_MAPPING.md` | ★ **원문 칸 → `core_listing` 칼럼.  ★ 매핑의 정본** |
+| ★ `DEDUP_CROSS_SITE.md` | ★ 같은 차가 여러 사이트에 뜰 때 |
+| `TARGET_KEY_MAP.md` | 차종 이름 → 차종 키 |
+| ★ `SERVER_SURVIVAL.md` | ★ 서버가 살아 있는가 · ★ 503 가르는 법 |
+| ★ `UI_REVIEW.md` | ★ 화면 — 마스터가 짚으신 것 |
+| `SOURCE.md` | 원문 갈래 |
+| `guide/08_인수인계.md` | 다음 가이드에게 |
+
+```
+필수  ★ 문서를 새로 만들면 ★ **그 커밋에서 ★ INDEX 에 올린다**
+검산  ★ `S46-30` — ★ `docs/**/*.md` 중 ★ INDEX 가 안 가리키는 것이 있으면 ★ 알린다
+      ★ 일부러 하나를 빼서 ★ 잡히는지 보고 ★ 되돌려라
+```
