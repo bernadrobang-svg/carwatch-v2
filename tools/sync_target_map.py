@@ -22,7 +22,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from parse.hyundai_cert.mapping import _model_group  # noqa: E402
-from store.dictionary import target_key_of, target_map  # noqa: E402
+from parse.target_rules import target_by_rules  # noqa: E402
+from store.dictionary import (  # noqa: E402
+    collect_group_of, target_key_of, target_map)
 from store.raw import open_db  # noqa: E402
 
 AXIS = "target"
@@ -78,7 +80,10 @@ def main() -> int:
     for site, names in sorted(seen.items()):
         table = target_map(site)
         for name, count in sorted(names.items(), key=lambda kv: -kv[1]):
-            got = (table.get(name) or {}).get("target_key")
+            spec = table.get(name) or {}
+            # ★ 우리 값이 ★ 하나면 그 키 · ★ 갈래가 여럿이면 ★ 차종군을 적는다.
+            #   ★ 「그랜저」 하나에 우리 갈래가 여럿 걸리므로 ★ 1:1 이 아니다
+            got = spec.get("target_key") or spec.get("collect_group")
             rows += 1
             if got:
                 mapped_n += 1
@@ -104,7 +109,8 @@ def main() -> int:
     for site, names in sorted(seen.items()):
         table = target_map(site)
         hit = sum(n for k, n in names.items()
-                  if (table.get(k) or {}).get("target_key"))
+                  if (table.get(k) or {}).get("target_key")
+                  or (table.get(k) or {}).get("collect_group"))
         print(f"  {site:14} 이름 {len(names):>3}종 · 매물 {sum(names.values()):>6} "
               f"· ★ 이름이 맞는 것 {hit:>5}건")
     print("★ 위는 ★ 이름만 본 수다 — ★ 연료까지 맞아야 붙는다 (--apply 가 낸다)")
@@ -124,11 +130,17 @@ def apply_targets(conn, at: str) -> int:
     sites = [s for s in target_map()]
     put, keep = 0, 0
     for site in sites:
-        for lid, name, fuel, model in conn.execute(
-            "SELECT listing_id, site_model_group, fuel_raw, site_model"
-            " FROM core_listing WHERE site=?", (site,)
+        for lid, name, fuel, model, cc in conn.execute(
+            "SELECT listing_id, site_model_group, fuel_raw, site_model,"
+            " displacement_cc FROM core_listing WHERE site=?", (site,)
         ):
-            got = target_key_of(site, name, f"{fuel or ''} {model or ''}")
+            # ★ 차종군이 있으면 ★ targets.json 규칙이 갈래를 고른다 (2d).
+            #   ★ 없으면 ★ 이름+연료로 거른다 (TARGET_KEY_MAP 6장)
+            if collect_group_of(site, name):
+                r = target_by_rules(site, name, fuel, model, cc)
+                got = r.target_key if r else None
+            else:
+                got = target_key_of(site, name, f"{fuel or ''} {model or ''}")
             if got:
                 conn.execute(
                     "UPDATE core_listing SET target_key=? WHERE listing_id=?",

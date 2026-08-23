@@ -169,6 +169,7 @@ def seed_fixed_enums(conn: sqlite3.Connection, site: str, fixed: dict,
 # ── 적재 (STEP 42) ───────────────────────────────────────────────────
 _MAPPED: dict | None = None
 _TARGETS: dict | None = None
+_TARGETS_FUEL: dict | None = None
 
 
 def target_map(site: str | None = None) -> dict:
@@ -208,6 +209,34 @@ def target_key_of(site: str, name: str | None,
     if need and need.lower() not in (fuel_text or "").lower():
         return None
     return got["target_key"]
+
+
+def fuel_normalize(site: str, raw: str | None) -> str | None:
+    """사이트 연료 말 → ★ 엔카 말 (`targets.json` 의 `fuel_match` 가 엔카 말이다).
+
+    ★ `parse/classify.py` 의 `_fuel_ok` 는 ★ 완전 일치다 (부분 검색 금지 · STEP 43).
+      ★ 「하이브리드」를 그대로 넣으면 ★ 「가솔린+전기」와 안 맞아 ★ 0건이 된다
+    ★ 표에 없으면 ★ 그대로 돌려준다 — ★ 지어내지 않는다
+    """
+    global _TARGETS_FUEL
+
+    if _TARGETS_FUEL is None:
+        import json as _j
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+        path = _o.path.join(root, "config", "dictionaries", "target_map.json")
+        _TARGETS_FUEL = ((_j.load(open(path, encoding="utf-8"))
+                          .get("fuel_normalize") or {})
+                         if _o.path.isfile(path) else {})
+    table = {k: v for k, v in (_TARGETS_FUEL.get(site) or {}).items()
+             if not k.startswith("_") and isinstance(v, str)}
+    return table.get(raw or "", raw)
+
+
+def collect_group_of(site: str, name: str | None) -> str | None:
+    """사이트 차종 이름 → ★ 우리 `collect_group`.  ★ 없으면 None (「차종 미정」)."""
+    return (target_map(site).get(name or "") or {}).get("collect_group")
 
 
 def mapped_of(axis: str, value: str) -> str | None:

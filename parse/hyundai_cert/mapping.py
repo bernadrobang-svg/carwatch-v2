@@ -56,6 +56,20 @@ def cards(html: str) -> list:
 #   ★ 실측 08-23 — 「2021 더 뉴 G70 …」 221건이 ★ `site_model_group='더'` 로 들어갔고
 #   ★ 그 안에 ★ 「더 뉴 그랜저」(`IG02`) ★ 152건이 있었다.  ★ 규격이 「IG02·GN01 둘 다」라 한 그것이다
 #   ★ 지어낸 목록이 아니다 — ★ DB 에 실제로 들어온 제목에서 세어 뽑았다
+# ★ 제목에 연료가 들어 있다 (HYUNDAI_CERTIFIED_API 2d).
+#   ★ 실측 08-23 — 제목의 낱말과 상세의 `fuel_raw` 가 ★ 1,006건 전건 같았다 (어긋남 0)
+#   ★ 낱말이 없는 108건은 ★ 전동화 전용 차종이다 (Electrified GV70 · GV60 · 아이오닉)
+FUEL_WORDS = ("가솔린", "디젤", "LPG", "하이브리드", "전기")
+
+
+def _fuel_of(name: str) -> str | None:
+    """제목 → 연료.  ★ 없으면 None 이다 — ★ 지어내지 않는다."""
+    for w in FUEL_WORDS:
+        if w in (name or ""):
+            return w
+    return None
+
+
 NAME_PREFIX = ("디 올 뉴", "올 뉴", "더 뉴", "더 올 뉴", "신형", "The new", "Electrified")
 
 
@@ -99,6 +113,7 @@ def parse_card(chunk: str, site: str) -> dict | None:
         # ★ 「2023 투싼(NX4) 하이브리드 …」 → 차종은 연식 다음 낱말이다
         # ★ 「2023 투싼(NX4) 하이브리드」 → 투싼 · 「2023 GV70 가솔린 …」 → GV70
         "site_model_group": _model_group(name),
+        "fuel_raw": _fuel_of(name),
         "form_year": _int(name.split(maxsplit=1)[0]),
         "year_month": (f"20{ym.group(1)}-{int(ym.group(2)):02d}"
                        if ym else None),
@@ -133,9 +148,17 @@ RE_W_HEAD = {
     "warranty_body": re.compile(r"차체\s*·?\s*일반[^가-힣0-9]{0,12}냉난방[^0-9만]{0,12}"),
     "warranty_power": re.compile(r"엔진\s*및\s*동력전달[^0-9만]{0,12}"),
 }
-RE_W_LEFT = re.compile(r"(?:(\d+)\s*년\s*)?(\d+)\s*개월\s*남음")
+# ★ 남은 기간의 꼴이 ★ 셋이다 (실측 08-23 · 배포에서 상세를 받아 봤다) —
+#   「1 년 7 개월 남음」 · ★ 「1 년 남음」(개월이 없다) · 「7 개월 남음」
+#   ★ 옛 정규식은 ★ `개월` 을 반드시 찾아 ★ 「1 년 남음」을 ★ 못 읽었다
+RE_W_YM = re.compile(r"(\d+)\s*년\s*(\d+)\s*개월\s*남음")
+RE_W_Y = re.compile(r"(\d+)\s*년\s*남음")
+RE_W_M = re.compile(r"(\d+)\s*개월\s*남음")
 RE_W_KM_LEFT = re.compile(r"([\d,]+)\s*km\s*남음")
 RE_W_DONE = re.compile(r"만료")
+# ★ 블록이 여기서 끝난다.  ★ 이 뒤는 ★ 「워런티 플러스」 광고다 —
+#   ★ 「최대 12개월 / 20,000 km 구매 가능」이 있어 ★ 창이 넓으면 그것을 읽는다
+W_STOP = ("기간 혹은 주행거리", "워런티 플러스")
 # ★ 사이트 검증의 근거 — 「정밀점검 287개 항목」 · 「성능점검기록부 발행완료」
 MARK_CERTIFIED = "정밀점검"
 
@@ -238,20 +261,37 @@ def _warranty(text: str) -> dict:
     ★ 둘 다 못 읽으면 ★ 넣지 않는다 (None).  ★ 0 으로 지어내지 않는다
     """
     out: dict = {}
-    for key, head in RE_W_HEAD.items():
-        got = head.search(text)
-        if not got:
-            continue
-        near = text[got.end():got.end() + 90]
-        left = RE_W_LEFT.search(near)
+    # ★ 블록의 ★ 시작과 끝을 먼저 잡는다.  ★ 창을 90자로 잘라 쓰면
+    #   ★ 일반 블록이 ★ 동력 블록의 값을 읽는다 —
+    #   ★ 실측 HGN260618029076 : 일반은 「1 년 남음」인데 ★ 16개월로 들어갔다.
+    #     ★ 다음 블록의 「1 년 4 개월 남음」을 ★ 집은 것이다
+    marks = sorted(
+        ((got.end(), got.start(), key)
+         for key, head in RE_W_HEAD.items()
+         for got in [head.search(text)] if got),
+        key=lambda t: t[0])
+    for i, (start, _, key) in enumerate(marks):
+        stop = marks[i + 1][1] if i + 1 < len(marks) else len(text)
+        for word in W_STOP:                       # ★ 광고 앞에서 멈춘다
+            at = text.find(word, start, stop)
+            if at > 0:
+                stop = at
+        near = text[start:stop]
+        ym, yy, mm = (RE_W_YM.search(near), RE_W_Y.search(near),
+                      RE_W_M.search(near))
         km = RE_W_KM_LEFT.search(near)
-        if left:
-            out[f"{key}_month"] = int(left.group(1) or 0) * 12 + int(left.group(2))
-        elif RE_W_DONE.match(near.strip()):
-            out[f"{key}_month"] = 0
+        done = RE_W_DONE.match(near.strip())
+        if ym:
+            out[f"{key}_month"] = int(ym.group(1)) * 12 + int(ym.group(2))
+        elif yy:
+            out[f"{key}_month"] = int(yy.group(1)) * 12
+        elif mm:
+            out[f"{key}_month"] = int(mm.group(1))
+        elif done:
+            out[f"{key}_month"] = 0               # ★ 「만료」는 0 — 확인한 것이다
         if km:
             out[f"{key}_km"] = _num(km.group(1))
-        elif RE_W_DONE.match(near.strip()):
+        elif done:
             out[f"{key}_km"] = 0
     return out
 

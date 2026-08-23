@@ -14,10 +14,21 @@
     },
     "hyundai_cert": {
       "_field": "목록 카드 제목의 차종 (repnCarCd IG02·GN01 이 같은 「그랜저」다)",
+      "_rule": "★ collect_group 만 준다 — ★ 갈래(2.5T·LPG…)는 ★ targets.json 의 fuel_match·trim_include·displacement_range 가 고른다 (HYUNDAI_CERTIFIED_API 2d — 「새 규칙을 만들지 않는다」)",
       "그랜저": {
-        "target_key": "GRANDEUR_LPG",
-        "fuel_contains": "LPG",
-        "_why": "★ 세대 둘(IG·GN7)이 같은 이름으로 온다 — ★ 둘 다 받는다 (TARGET_KEY_MAP 4장)"
+        "collect_group": "encar:GRANDEUR"
+      },
+      "G80": {
+        "collect_group": "encar:G80"
+      },
+      "G70": {
+        "collect_group": "encar:G70"
+      },
+      "GV70": {
+        "collect_group": "encar:GV70"
+      },
+      "GV60": {
+        "collect_group": "encar:GV60"
       }
     }
   },
@@ -25,5 +36,18 @@
     "kbchachacha": "★ makerCode 는 ★ 제조사 코드다 — 차종이 아니다. 제네시스 189 하나에 우리 차종 다섯이 걸린다. ★ 1:1 이 아니라 dict_enum 에 못 넣는다. ★ 모델 코드를 받은 뒤에 넣는다 (TARGET_KEY_MAP 3장 · 5장)",
     "kcar": "★ modelGrpNm 이 목록 응답에 온다 — ★ 목록을 못 만들어 아직 못 받았다 (enc 금지)",
     "encar": "★ 이미 3,916건이 target_key 로 붙어 있다 — ★ 그것이 정본이다 (TARGET_KEY_MAP 5장)"
+  },
+  "fuel_normalize": {
+    "_why": "★ targets.json 의 `fuel_match` 는 ★ 엔카 어휘다 ('LPG(일반인 구입)' · '가솔린+전기').  ★ 사이트 말을 그대로 넣으면 ★ 완전 일치가 안 된다 (parse/classify.py `_fuel_ok` — 부분 검색 금지)",
+    "hyundai_cert": {
+      "가솔린": "가솔린",
+      "디젤": "디젤",
+      "전기": "전기",
+      "하이브리드": "가솔린+전기",
+      "LPG": "LPG(일반인 구입)"
+    },
+    "kia_cpo": {
+      "_note": "★ 기아는 `car.engine` 이 「1.6 가솔린 하이브리드」처럼 ★ 배기량이 섞여 온다 — ★ 아직 안 넣는다"
+    }
   }
 }
