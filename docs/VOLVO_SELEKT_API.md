@@ -183,3 +183,8 @@ robots   `Disallow: /*compare` · `/*notepad` · `/*saved-searches` · `/*vehicl
 할 것  ★ 운영 서버(43.201.16.78)에서 다시 잰다 — ★ 개발측이 확인한다
        ★ 안 되면 ★ 마스터께 화면을 청한다
 ```
+
+```
+★ 칼럼 단위 매핑은 ★ 아직 안 썼다 — ★ 상세를 못 받았다 (`MULTISITE_MAPPING.md` ②)
+★ ★ 건수만 보고 ★ `core_listing` 매핑을 쓰지 않는다 (오판 #44)
+```

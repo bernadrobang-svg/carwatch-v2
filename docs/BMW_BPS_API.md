@@ -151,3 +151,10 @@ KB    `themeList.kbc?themeSeq=57` → 200 · 131KB
 ★ ★ 엔카·KB 의 BMW 관은 ★ 홍보 페이지다 — ★ 매물이 안 들어온다 (2c장 실측)
 ★ ★ 표본 26건으로 늘렸다 (2a장).  ★ 우리 대상 ★ X3 이 있다 (2b장)
 ```
+
+```
+★★ 칼럼 단위 매핑은 ★ `docs/MULTISITE_MAPPING.md` ③ 이 정본이다 —
+   `source_id` · `reg_at` · `mileage_km` · `displacement_cc` · `plate_hash` ·
+   `lease_rent_info_json` · `price_current_won`(★ 못 찾음) 이 ★ `core_listing` 칼럼이다
+★ ★ 그릇(`sql/ddl/02_core.sql` · 117칼럼)을 열고 썼다 (오판 #44)
+```

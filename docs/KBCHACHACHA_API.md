@@ -247,3 +247,8 @@ KB    「신차 출고 가격 대비 차량 가격 — 1,514만 → 990만 · �
   ★ 소모품이 거기 있을 수 있다.  ★ 있으면 14점이 살아난다
 · KB진단 첨부(`diag/car/attach/list.json`)는 표본에서 `totalCount: 0` 이었다 — ★ 사진 목록으로 보인다
 ```
+
+```
+★ 칼럼 단위 매핑은 ★ 이 문서 3장 + `docs/MULTISITE_MAPPING.md` ④ 다 —
+   ★ 수입 일곱도 ★ 같은 `core_listing` 칼럼을 쓴다.  ★ `site_manufacturer` 에 브랜드가 들어간다
+```

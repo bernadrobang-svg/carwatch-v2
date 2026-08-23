@@ -380,3 +380,10 @@ GET /api/search/vehicle/count/selling?srchType=srchFilter&mdlGrpList=1171
 ★★ 엔카와 달리 ★ 목록도 열린다.  ★ KB·기아 CPO 와 같은 급으로 붙일 수 있다
 ★ 잔여 보증을 ★ 년·월·km 로 주는 것은 ★ 네 사이트 중 현대뿐이다
 ```
+
+```
+★★ 잔여 보증은 ★ `core_listing` 의 ★ 네 칼럼으로 나뉘어 있다 —
+   `warranty_body_month` · `warranty_body_km` · `warranty_power_month` · `warranty_power_km`
+★ ★ 그릇이 이미 둘로 갈라 두었다.  ★ 「일반과 동력이 같다」는 그릇과도 어긋났다
+★ 매핑 정본 — `docs/MULTISITE_MAPPING.md` ⑤
+```

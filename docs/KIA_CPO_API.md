@@ -160,3 +160,8 @@ consultationCount · classification · customKeywords · ★ performanceReportPd
 ③ ★ `performanceReportPdfUrl` 을 열어 ★ 골격·외판·압류저당·소유자 변경이 있는지 본다
 ④ 표본을 늘려 ★ `panelOrExchange` · `damaged` 가 0 이 아닌 매물도 확인한다
 ```
+
+```
+★ 칼럼 단위 매핑은 ★ `docs/MULTISITE_MAPPING.md` 가 정본이다 — ★ `core_listing` 칼럼으로 적혀 있다
+★ 좁히는 법 — ★ `modelCodeNames`(★ 복수형 · 한글).  ★ 1,020 → 76 (개정 543)
+```

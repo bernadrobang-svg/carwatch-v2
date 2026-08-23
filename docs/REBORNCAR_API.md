@@ -254,3 +254,10 @@ POST /api/v1/car/leaRatio.rb               month=48&classCode=HA&domestic=1
 · 성능점검 기록부를 ★ 링크로 받을 수 있는지
 ★ 표본이 ★ 1건이다.  ★ 20건 이상으로 늘려 다시 대조해야 한다 (오판대장 모양 ④)
 ```
+
+```
+★★ 칼럼 단위 매핑은 ★ `docs/MULTISITE_MAPPING.md` ① 이 정본이다 —
+   `price_origin_won` · `price_current_won` · `plate_hash` · `year_month` ·
+   `core_record.use_business` 가 ★ `core_listing`·`core_record` 칼럼이다
+★ ★ 그릇(`sql/ddl/02_core.sql`)을 열고 썼다 (오판 #44)
+```

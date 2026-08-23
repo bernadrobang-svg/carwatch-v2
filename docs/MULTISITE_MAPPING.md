@@ -620,3 +620,106 @@ K카   ★ `recallObjYn`(리콜 대상) · `dshbExchgYn`(계기판 교체)
 ③ 표본 — ★ 기아 ★ 30건으로 늘려 검증했다 (2a장).  ★ 현대 1건 · K카 1건은 ★ 아직이다
    ★ 둘도 20건 이상으로 늘려 다시 대조해야 한다 (오판대장 모양 ④)
 ```
+
+---
+
+# ★★★ 08-23 추가 — ★ 다섯 사이트 ★ 칼럼 단위 매핑 (개정 574)
+
+```
+★★ 마스터 지적 08-23 — 「조사한 것 다 규격과 지침에 업데이트 하고 ★ DDL 매핑도 완료한 거지?」
+★ 재 보니 ★ 안 돼 있었다 — ★ 보배·리본카·렉서스·볼보·벤츠·아우디가 ★ 이 문서에 ★ 0회였다
+★ ★ 오판 #44 「받는 그릇을 안 보고 매핑한다」의 ★ 재발이다 (오판 #68)
+★ `sql/ddl/02_core.sql` 을 열었다 — ★ `core_listing` ★ 117칼럼 · `core_record` ★ 37칼럼
+```
+
+## ① 리본카 (`REBORNCAR_API.md`) — ★ 모바일 UA 필수
+
+| 원문 라벨 | `core_listing` 칼럼 | 타입 | 비고 |
+|---|---|---|---|
+| 매물코드 `C26081900017` | `source_id` | TEXT | 사이트맵에서 온다 |
+| — | `site` | TEXT | `'reborncar'` 고정 |
+| 연식 | `year_month` | TEXT | `YYYYMM` 로 정규화 |
+| 주행거리 | `mileage_km` | INTEGER | `,`·`km` 제거 |
+| 배기량 | `displacement_cc` | INTEGER | |
+| 연료 | `fuel_raw` | TEXT | |
+| 색상 | `color_ext_raw` | TEXT | |
+| 차량번호 | `plate_hash` | TEXT | ★ 해시해서 넣는다 |
+| **신차출고가** | **`price_origin_won`** | INTEGER | ★ 「7,110만원」 → 71,100,000 |
+| 차량가격 | `price_current_won` | INTEGER | |
+| **용도변경** | `core_record.use_business` / `use_gov` | INTEGER | ★ **있음 52%** — 갈린다 |
+| 사고여부 | `core_record.accident_total_cnt` | INTEGER | 무사고=0 · 단순수리는 ★ 건수 미상 |
+| 침수여부 | `core_record.flood_total_cnt` | INTEGER | 25/25 「없음」 |
+| 안심환불 8일 | `site_service_marks_json` | TEXT | ★ 사이트 보장(②) |
+| 냄새등급 | `site_condition_json` | TEXT | 양호·보통 |
+
+```
+★ 「신차가격대비 %」는 ★ 칼럼을 만들지 않는다 — ★ `price_origin_won` 과 `price_current_won` 으로 우리가 낸다
+★ 「단순수리」를 ★ `accident_total_cnt` 몇으로 넣을지 ★ 아직 못 정했다 — ★ 원문에 건수가 없다
+```
+
+## ② 볼보 셀렉트 (`VOLVO_SELEKT_API.md`)
+
+```
+★ `site='volvo_selekt'` · `site_pass_grade` ★ 인증(최고) · `warranty.site` 근거는 `config/sites.json`
+★★ ★ 상세 주소 꼴을 ★ 아직 못 찾았다 (0a-④).  ★ 칼럼 매핑은 ★ 상세를 받은 뒤에 쓴다
+★ ★ 지금 아는 것은 ★ 모델별 건수뿐이다 — ★ 그것으로 매핑을 쓰지 않는다 (오판 #44)
+```
+
+## ③ BMW BPS (`BMW_BPS_API.md`)
+
+| 원문 라벨 | 칼럼 | 비고 |
+|---|---|---|
+| 상품번호 | `source_id` | `it_id` |
+| — | `site` | `'bmw_bps'` |
+| 차량 등록일 `2025/04` | `reg_at` | ★ `YYYYMM` |
+| 연식 | `form_year` | |
+| 주행거리 | `mileage_km` | |
+| 배기량 | `displacement_cc` | |
+| 연료 · 변속기 | `fuel_raw` · `transmission` | 변속기 26/26 자동 |
+| 외관색상 | `color_ext_raw` | |
+| 차량번호 | `plate_hash` | ★ 해시 |
+| 전시장 | `dealer_shop` · `dealer_region` | 「BPS 인천전시장」 |
+| 사고유무 · 72가지 점검 | `site_condition_json` | ★ **전건 동일 — 축에 안 쓴다** (2a장) |
+| ★ **가격** | **`price_current_won`** | ★★ **어디서 읽는지 못 찾았다** (2a장) |
+| 리스 조건 | `lease_rent_info_json` · `sell_type` | 인수비용·월리스료·잔여개월·유예금 |
+
+```
+★★ ★ 가격을 못 읽으면 ★ `value.budget`(95)·`value.origin`(75) 이 빈다
+★ ★ 리스 매물은 ★ `sell_type` 으로 갈라 ★ 리스·렌트 제외 규칙에 태운다
+```
+
+## ④ KB차차차 수입 일곱 — ★ 좁히는 코드만 더한다
+
+```
+★ 칼럼 매핑은 ★ `KBCHACHACHA_API.md` 3장이 이미 정한 것을 ★ 그대로 쓴다 —
+  ★ 수입이라고 ★ 다른 칼럼이 필요하지 않다.  ★ `makerCode`·`classCode` 는 ★ 부르는 법이지 칼럼이 아니다
+★ `site_manufacturer` 에 ★ 브랜드가 들어간다 (BMW·벤츠·아우디·볼보·렉서스)
+★ `target_key` 는 ★ `dict_enum(axis='target')` 이 붙인다 — ★ X3·GLC·Q5·XC60·S60·NX·RX
+```
+
+## ⑤ 현대 인증 — ★ 잔여 보증 두 축 (`HYUNDAI_CERTIFIED_API.md` 2b)
+
+| 원문 블록 | 칼럼 |
+|---|---|
+| 차체 및 일반부품 — 잔여 개월 | `warranty_body_month` |
+| 〃 — 잔여 km | `warranty_body_km` |
+| 동력전달 주요부품 — 잔여 개월 | `warranty_power_month` |
+| 〃 — 잔여 km | `warranty_power_km` |
+
+```
+★★★ ★ 칼럼이 ★ 네 개로 이미 나뉘어 있다 — ★ DDL 을 열어 확인했다
+★ ★ 그러므로 ★ 「일반과 동력이 같다」고 적은 개정 480 은 ★ 그릇과도 어긋났다
+★ 「만료」 → ★ 0 · 못 읽음 → ★ NULL (2b-②)
+```
+
+---
+
+# ★ 아직 매핑을 안 쓴 것 — ★ 정직하게 적는다
+
+```
+보배드림 · 렉서스 인증 — ★ 규격은 있는데 ★ 칼럼 매핑이 ★ 이 문서에 없다
+볼보 — ★ 상세를 못 받아 ★ 칼럼을 못 정했다
+★ ★ 「규격 완」이라 부르지 않는다 (오판 #44 · #52 · #59)
+검산  S46-5 ★ 신설 — ★ `docs/*_API.md` 마다 ★ `core_listing` 칼럼명이 ★ 한 번은 나오는가
+      ★ 안 나오면 ★ 「우리 축 대응」만 하고 ★ 그릇을 안 본 것이다
+```
