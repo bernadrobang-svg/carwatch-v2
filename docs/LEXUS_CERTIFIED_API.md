@@ -139,7 +139,11 @@ BMW Premium Selection   ★ `bmw-premiumselection.co.kr` · `premiumselection.bm
 
 ```
 목록  GET /api/json/getList_search.json.php?price_area_min=0&price_area_max=99999  → 200 · 21KB
-      ★ `search_list` 는 ★ 배열이 아니라 ★ 지점별 dict 다 (키 9개) — ★ 안을 훑어야 36건이 나온다
+      ★★ ★ **개정 583 정정 (개정 587)** — ★ `search_list` 는 ★ **지점별 dict 가 아니다**
+      ★ 응답 메타 ＋ `car_list` 다 —
+        `{list_code, title, num_per_page, total_page, cur_page, is_random,
+          total_list_num, ★ car_list[36], filter_data}`
+      ★ ★ 매물은 ★ `search_list.car_list` ★ 하나에 다 있다.  ★ 「키 9개」는 ★ 지점이 아니라 메타였다
 상세  GET /api/json/getData_car_detail.json.php?idx={idx}  → 200 · ★ 칸 59개
 헤더  모바일 UA · `Referer: https://certified.lexus.co.kr/car-list/`
 ★ `robots.txt` 는 ★ 503 이라 못 받았다 — ★ 「없다」가 아니다.  ★ 다시 받아 확인한다
@@ -197,3 +201,38 @@ BMW Premium Selection   ★ `bmw-premiumselection.co.kr` · `premiumselection.bm
 | `payment.isLease` | `sell_type` ★ 리스 제외에 태운다 |
 | `isCertified` · `isCheckComplete` · `check_date` | `site_pass_grade` · `site_condition_json` |
 | `accident_history` | `site_condition_json` ★ **축에 안 쓴다** (전건 동일) |
+
+---
+
+# 1c. ★★ 전수 — ★ **36건**이다 (개정 587)
+
+```
+★ 조건을 다섯 꼴로 바꿔 두드렸다 —
+  기본(0~99999) · 범위 넓힘(0~999999) · group_type=all · page=2   → ★ 넷 다 ★ 36건
+  조건 없음 → ★ JSON 이 아니다 (필수 파라미터다)
+★★ ★ 전수 ★ 36건이다.  ★ 개정 534 의 「84대」는 ★ 지금과 다르다 — ★ 재고가 줄었다
+★ `total_list_num` 이 ★ 0 으로 온다 — ★ 이 값을 총계로 믿지 마라.  ★ `car_list` 를 세라
+```
+
+## 모델 분포 (실측 08-23)
+
+| 모델 | 건수 |
+|---|--:|
+| ES 300h | 18 |
+| ★ **NX 350h** | ★ **7** |
+| UX 300h | 5 |
+| ★ **NX 450h+** | ★ **2** |
+| LM 500h | 2 |
+| UX 250h | 1 |
+| ★ **RX 450h+** | ★ **1** |
+| **합** | **36** |
+
+```
+★★ ★ 우리 등록 대상은 ★ NX ＋ RX = ★ **10건**이다
+   ★ ★ KB 는 ★ NX 90 + RX 53 = ★ **143건** — ★ **14배**다
+★★★ ★ 그런데 ★ 건수만으로 정하지 않는다 —
+   ★ 렉서스 인증만 ★ `warranty` 만료일 ＋ 상한 km 를 준다 (1a장)
+   ★ ★ KB 는 ★ 그 값을 ★ 안 준다.  ★ 채우는 축이 ★ 다르다
+   ★ ★ 그러므로 ★ 「KB 로 건수를 채우고 · 렉서스로 보증 축을 채운다」가 ★ 옳다
+   ★ 같은 차를 ★ 두 사이트가 낼 때 ★ 어느 쪽을 남길지는 ★ 중복 제거 규칙이 정한다
+```
