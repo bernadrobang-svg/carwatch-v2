@@ -178,6 +178,7 @@ def s44_1_order_exists() -> tuple[bool, str]:
     # ★ 03_이력.md 는 기록이다 — 지난 명령서 이름이 남는 것이 맞다
     here = {q.name for q in _order_files()}
     bad: list[str] = []
+    star: list[str] = []
     for q in GUIDE.glob("*.md"):
         if q.name == "03_이력.md":
             continue
@@ -192,8 +193,17 @@ def s44_1_order_exists() -> tuple[bool, str]:
             line = text[head:text.find("\n", m.start())]
             if line.count("~~") >= 2:
                 continue
+            # ★★ 무늬(`*`)로 가리키면 ★ 검사가 못 잡는다 (명령서 26장) —
+            #   ★ `ORDER_*.md` 라 적으면 ★ 「어느 파일인가」가 사라진다.
+            #   ★ 하나를 가리키라고 만든 검사인데 ★ 무늬가 그것을 비껴간다
+            if "*" in m.group(1) or "?" in m.group(1):
+                star.append(f"{q.name}→{m.group(1)}")
+                continue
             if m.group(1) not in here:
                 bad.append(f"{q.name}→{m.group(1)}")
+    if star:
+        return False, ("★ 무늬로 가리킨다 (하나를 콕 집어야 한다) — "
+                       + " · ".join(sorted(set(star))))
     if bad:
         return False, "없는 명령서를 가리킨다 — " + " · ".join(sorted(set(bad)))
     return True, f"가리키는 명령서가 모두 있다 (있는 것 {len(here)}개)"
@@ -588,6 +598,32 @@ def s46_24_facet_unconfirmed() -> tuple[bool, str]:
     return True, "facet 미확인 차종이 없다"
 
 
+def s46_30_index_covers_docs() -> tuple[bool, str]:
+    """★ `docs/**/*.md` 중 ★ INDEX 가 ★ 안 가리키는 것이 있으면 알린다 (명령서 26장).
+
+    ★ 규칙 10 이 ★ 「`docs/INDEX.md` 를 먼저 본다」인데 ★ 거기 없는 문서는
+      ★ 아무도 못 찾는다 — ★ 있어도 없는 것과 같다
+    ★ WARN 이다 — ★ 새 규격이 들어온 그 순간에는 ★ 늘 잠깐 어긋난다
+    """
+    docs = ROOT / "docs"
+    idx = docs / "INDEX.md"
+    if not idx.is_file():
+        return False, "docs/INDEX.md 가 없다"
+    text = _read(idx) + _read(docs / "MAPPING.md")
+    miss = []
+    for q in sorted(docs.rglob("*.md")):
+        rel = q.relative_to(docs).as_posix()
+        if rel in ("INDEX.md", "MAPPING.md", "CHECKS.md", "SOURCE.md"):
+            continue
+        if rel in text or q.name in text:
+            continue
+        miss.append(rel)
+    if miss:
+        return False, (f"★ INDEX 가 안 가리키는 문서 {len(miss)}개 — "
+                       + " · ".join(miss[:6]))
+    return True, "INDEX 가 docs 를 다 가리킨다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -606,17 +642,34 @@ CHECKS = (
     ("S46-21", "시안 한 파일에 화면이 하나인가", s46_21_one_screen_per_file),
     ("S46-22", "시안 절 차례가 화면과 같은가", s46_22_section_order),
     ("S46-23", "빈 site_query 가 없는가", s46_23_site_query_filled),
-    ("S46-24", "facet 미확인 차종이 없는가", s46_24_facet_unconfirmed),
+    # ★ WARN — ★ 「아직 안 한 것」을 세는 검사다.  ★ 마스터 회선이라야 지워진다.
+    #   ★ 이것 하나로 ★ 검사가 늘 빨간불이면 ★ 진짜 실패가 묻힌다 (명령서 26장)
+    ("S46-24", "facet 미확인 차종이 없는가", s46_24_facet_unconfirmed, "warn"),
+    ("S46-30", "INDEX 가 docs 를 다 가리키는가", s46_30_index_covers_docs, "warn"),
 )
 
 
 def run() -> int:
-    bad = 0
-    for code, name, fn in CHECKS:
+    """★ 돌려서 ★ fatal 실패 수를 돌려준다.  ★ warn 은 ★ 세지 않는다.
+
+    ★ 「아직 안 한 것」을 세는 검사가 ★ 늘 빨간불이면 ★ 진짜 실패가 묻힌다
+    """
+    bad = warn = 0
+    for row in CHECKS:
+        code, name, fn = row[0], row[1], row[2]
+        kind = row[3] if len(row) > 3 else "fatal"
         ok, msg = fn()
-        print(f"  {'OK  ' if ok else '★ 실패'} {code} {name} — {msg}")
-        if not ok:
+        if ok:
+            head = "OK  "
+        elif kind == "warn":
+            head = "warn"
+            warn += 1
+        else:
+            head = "★ 실패"
             bad += 1
+        print(f"  {head} {code} {name} — {msg}")
+    if warn:
+        print(f"  ★ warn {warn}건 — 「아직 안 한 것」이다.  ★ 실패로 세지 않는다")
     return bad
 
 # ★ __main__ 블록을 두지 않는다 (V4-23) — 「import 만으로 아무 일도 안 일어나야

@@ -32,9 +32,11 @@ def _pairs() -> tuple:
     """
     out = []
     for f in sorted(os.listdir(SCREENS)):
-        if not (f.startswith("v2_") and f.endswith("_시안.html")):
+        # ★ v2 시안 24개가 지워졌다 (개정 634) — ★ 지금은 v3 넷이다.
+        #   ★ 판(v2·v3)을 가리지 않고 ★ 「{판}_{이름}_시안.html」로 읽는다
+        if not (f.endswith("_시안.html") and "_" in f):
             continue
-        name = f[len("v2_"):-len("_시안.html")]
+        name = f[f.index("_") + 1:-len("_시안.html")]
         for cand in (f"{name}.html", f"{name.removeprefix('admin_')}.html"):
             if os.path.isfile(os.path.join(TEMPLATES, cand)):
                 out.append((f, cand))
@@ -121,6 +123,22 @@ RE_NUM = re.compile(r"[\d,]+")
 HEAD_PREFIX = 4
 
 
+# ★ v3 시안은 ★ 절을 `<div class="lbl">1 판정</div>` 으로 적는다 (개정 631).
+#   ★ `<h2>` 는 ★ 화면 이름과 ★ 「지켜야 하는 것」 메모다 — ★ 절이 아니다
+RE_LBL = re.compile(r'<div class="lbl">([^<]+)</div>')
+SIAN_NOTE = ("지켜야 하는 것",)
+
+
+def _sian_heads(html: str) -> list:
+    """시안의 절.  ★ v3 는 `.lbl` · ★ 옛 판은 `h2`·`h3` 다."""
+    got = [" ".join(RE_NUM.sub(" ", x).split()) for x in RE_LBL.findall(html)]
+    got = [x for x in got if x]
+    if got:
+        return got
+    return [x for x in _heads(html)
+            if not any(x.startswith(n) for n in SIAN_NOTE)]
+
+
 def _heads(html: str, strip_vars: bool = False) -> list:
     """h2 · h3 의 글자만 뽑는다.
 
@@ -153,7 +171,7 @@ def check_sections() -> None:
         if not (os.path.isfile(sp) and os.path.isfile(tp)):
             continue
         mine = _heads(io.open(tp, encoding="utf-8").read(), strip_vars=True)
-        for head in _heads(io.open(sp, encoding="utf-8").read()):
+        for head in _sian_heads(io.open(sp, encoding="utf-8").read()):
             key = head[:HEAD_PREFIX]
             if any(key in m for m in mine):
                 ok += 1
@@ -167,7 +185,11 @@ def check_nav() -> None:
     sys.path.insert(0, ROOT)
     from web.routes import ROUTES
 
-    txt = _text(os.path.join(SCREENS, "v2_dashboard_시안.html"))
+    # ★★ `v2_dashboard_시안.html` 을 박아 두었다가 ★ 그 파일이 지워지자 터졌다
+    #   (개정 634 — 가이드가 v2 24개를 지웠다).  ★ 있는 시안을 다 읽는다
+    txt = " ".join(_text(os.path.join(SCREENS, f))
+                   for f in sorted(os.listdir(SCREENS))
+                   if f.endswith("_시안.html"))
     labels = ("현황", "후보", "매물", "관심", "비교", "시세", "딜러", "관리")
     from web.app import LABELS
 
