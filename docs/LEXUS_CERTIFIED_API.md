@@ -132,3 +132,68 @@ BMW Premium Selection   ★ `bmw-premiumselection.co.kr` · `premiumselection.bm
 ★ ★ 마스터께 청한다 — ★ BMW · 벤츠 · 아우디 · 볼보 인증중고차 ★ 주소를 주십시오
    ★ 오늘 여섯 사이트가 ★ 그렇게 풀렸다
 ```
+
+---
+
+# 1a. ★★★ 상세 — ★ 표본 1 → **22건** (개정 583 · 밀린일 61·87 끝)
+
+```
+목록  GET /api/json/getList_search.json.php?price_area_min=0&price_area_max=99999  → 200 · 21KB
+      ★ `search_list` 는 ★ 배열이 아니라 ★ 지점별 dict 다 (키 9개) — ★ 안을 훑어야 36건이 나온다
+상세  GET /api/json/getData_car_detail.json.php?idx={idx}  → 200 · ★ 칸 59개
+헤더  모바일 UA · `Referer: https://certified.lexus.co.kr/car-list/`
+★ `robots.txt` 는 ★ 503 이라 못 받았다 — ★ 「없다」가 아니다.  ★ 다시 받아 확인한다
+```
+
+## ★ 값이 갈리는가 — 22건 실측
+
+| 칸 | 채움 | 갈리나 | 실측 |
+|---|--:|---|---|
+| `car_info.number_plate` | 22/22 | ★ 22가지 | ★ 해시해서 넣는다 |
+| `mileage` | 22/22 | ★ 22가지 | |
+| `price` | 22/22 | ★ 11가지 | 만원 단위 |
+| ★ **`release_price`** | 22/22 | ★ **8가지** | ★★ **신차가 — `value.origin`(75)** |
+| ★ **`car_info.warranty`** | 22/22 | ★ **10가지** | ★★★ **「2030년 10월까지 (120,000km)」** |
+| `car_info.displacement` | 22/22 | ★ 3가지 | 2,487 · 2,393cc |
+| `car_info.fuel` | 22/22 | ★ 2가지 | 하이브리드 · 플러그인하이브리드 |
+| `car_info.registration_date` | 22/22 | ★ 10가지 | 「2025년 10월」 |
+| `car_info.check_date` | 22/22 | ★ 3가지 | 점검 시점 |
+| `car_info.color` · `innerColor` | 22/22 | ★ 6 · 4가지 | |
+| `branch.title` · `addr` · `tel` · 위경도 | 22/22 | ★ 5가지 | 지점 |
+| `isCertified` | 22/22 | ★ **2가지** | ★ **인증 여부가 갈린다** |
+| `payment.isLease/isInstalment/isCash` | 22/22 | ★ 2가지씩 | ★ 리스 매물을 가른다 |
+| ★ `car_info.accident_history` | 22/22 | ☓ **안 갈린다** | ★ **22/22 「무사고」** |
+| `car_info.transmission` | 22/22 | ☓ 안 갈린다 | E-CVT 22 |
+| `isCheckComplete` | 22/22 | ☓ 안 갈린다 | True 22 |
+
+```
+★★★ ★★ **`warranty` 가 ★ 이 사이트의 값이다** —
+   「2030년 10월까지 (120,000km)」 ★ 만료일 ＋ 상한 km 를 ★ 함께 준다.  ★ 10가지로 갈린다
+   ★ ★ KB·엔카는 ★ 이것을 ★ 안 준다.  ★ `warranty.site`(36) 를 ★ 진짜로 채울 수 있다
+   ★ ★ **밀린일 83 「인증중고차만의 값이 있나」의 ★ 답이다 — ★ 있다**
+★★ ★ `accident_history` 는 ★ 22/22 「무사고」다 → ★ 판정값이 아니다 → ★ 사이트 보장(②)
+   ★ 렉서스 인증 조건이 무사고인 것으로 ★ 보이나 ★ 22건으로 단정하지 않는다
+금지  ★ `state.accident` 에 ★ 만점을 지어 주는 것 (금지 12).  ★ 아직 정하지 않았다
+```
+
+---
+
+# 1b. ★ `core_listing` 칼럼 매핑
+
+| 원문 | 칼럼 |
+|---|---|
+| `idx` | `source_id` |
+| — | `site` = `'lexus_certified'` |
+| `price` (만원) | `price_current_won` ★ ×10,000 |
+| ★ `release_price` | ★ `price_origin_won` |
+| `mileage` | `mileage_km` |
+| `year` · `car_info.registration_date` | `form_year` · `reg_at` |
+| `car_info.displacement` | `displacement_cc` |
+| `car_info.fuel` · `transmission` | `fuel_raw` · `transmission` |
+| `car_info.color` · `innerColor` | `color_ext_raw` · `color_int_raw` |
+| `car_info.number_plate` | `plate_hash` ★ 해시 |
+| `branch.title` · `addr` | `dealer_shop` · `dealer_region` |
+| ★ `car_info.warranty` | ★ `warranty_site_until` · `warranty_site_km` (문장을 갈라 넣는다) |
+| `payment.isLease` | `sell_type` ★ 리스 제외에 태운다 |
+| `isCertified` · `isCheckComplete` · `check_date` | `site_pass_grade` · `site_condition_json` |
+| `accident_history` | `site_condition_json` ★ **축에 안 쓴다** (전건 동일) |

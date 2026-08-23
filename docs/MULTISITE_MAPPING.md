@@ -727,21 +727,28 @@ K카   ★ `recallObjYn`(리콜 대상) · `dshbExchgYn`(계기판 교체)
 ★ 「만료」 → ★ 0 · 못 읽음 → ★ NULL (2b-②)
 ```
 
-## ⑥ 보배드림 (`BOBAEDREAM_API.md`) — ★ 아직 못 씀
+## ⑥ 보배드림 (`BOBAEDREAM_API.md`) — ★ 끝 (개정 584 · 표본 20건)
 
 ```
-★ 규격은 있다 (개정 527·531 · 25건 검증).  ★ 그러나 ★ 칼럼 매핑을 ★ 이 문서에 안 썼다
-★ ★ 그릇을 열고 다시 쓴다.  ★ 「우리 축 대응」만 있는 상태다 (오판 #44)
-★ 아는 것 — 모바일 `m.bobaedream.co.kr/mycar/mview/{no}` 200 · `maker_no`·`model_no` 로 좁혀진다
-★ ★ 「무사고」가 ★ 판매자 글이다 (명령서 13단계) — ★ 볼보와 같은 함정이다
+★ 칼럼 표는 ★ `BOBAEDREAM_API.md` 1a 가 정본이다 — ★ 그릇을 열고 썼다
+★★★ ★ 「무사고」 문구는 ★ 20건 중 ★ 4건뿐인 ★ 판매자 글이다 — ★ 쓰지 않는다
+   ★ ★ 대신 ★ 머리 요약줄의 ★ **「수리이력 N · 보험이력 N」** 이 ★ 구조화된 값이다
+   → `core_record.repair_cnt` · `core_record.insurance_cnt`
+★★ ★ 가격·지역은 ★ 라벨 뒤가 아니라 ★ 머리 요약줄에 있다 — ★ 라벨로만 찾으면 ★ 0/20 이다
+★ ★ `자동 Array단` 은 ★ 사이트가 낸 깨진 값이다 — ★ 그대로 저장하고 정규화에서 거른다
 ```
 
-## ⑦ 렉서스 인증 (`LEXUS_CERTIFIED_API.md`) — ★ 아직 못 씀
+## ⑦ 렉서스 인증 (`LEXUS_CERTIFIED_API.md`) — ★ 끝 (개정 583 · 표본 22건)
 
 ```
-★ 규격은 있다 (개정 534).  ★ 표본이 ★ 1건이다 (밀린일 61)
-★ ★ 표본 20건으로 늘린 뒤 ★ 칼럼 매핑을 쓴다.  ★ 1건으로 쓰지 않는다 (오판 #59)
-★ 아는 것 — 84대뿐이라 전량을 받아도 된다 · 신차가를 준다
+★ 칼럼 표는 ★ `LEXUS_CERTIFIED_API.md` 1b 가 정본이다 — ★ 그릇을 열고 썼다
+★★★ ★ `car_info.warranty` 「2030년 10월까지 (120,000km)」 —
+   ★ 만료일 ＋ 상한 km 를 함께 준다.  ★ 22건에서 ★ 10가지로 갈린다
+   → `warranty_site_until` · `warranty_site_km`
+   ★ ★ KB·엔카가 ★ 안 주는 값이다 — ★ `warranty.site`(36) 를 진짜로 채운다
+★ `release_price` → `price_origin_won` (★ 신차가 · `value.origin` 75)
+★ `accident_history` 는 ★ 22/22 「무사고」다 → ★ 축에 안 쓴다 (사이트 보장 후보)
+★ `payment.isLease` → `sell_type` 으로 리스 제외에 태운다
 ```
 
 ---

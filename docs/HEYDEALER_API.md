@@ -240,3 +240,19 @@ condition  ★ 늘 셋이다 — 타이어 · 틴팅 · ★ 차 키
 ★ ~~표본 1건~~ → ★ 25건으로 검증했다 (3a장 · 개정 518)
 · ★ `listing_type` 의 `stock` 과 `revolt` 가 무엇이 다른지 ★ 모른다
 ```
+
+---
+
+# ★ 08-23 재실측 — ★ 목록 API 가 ★ 500 이다
+
+```
+robots  www.heydealer.com → `User-Agent: * / Allow: /`  ★ 막힌 것이 없다
+홈      https://www.heydealer.com/ → ★ 200
+목록    GET market-api.heydealer.com/v2/customers/web/market/cars/… → ★ **500**
+        본문 — {"code":null,"message":null,"toast":{"message":"서버 오류가 발생했습니다…"}}
+        ★ 세 꼴을 두드렸다 (order+page · 조건 없음 · page 만) — ★ 셋 다 500
+★★ ★ 이것은 ★ 사이트가 낸 ★ 애플리케이션 오류다 (JSON 본문이 한국어다)
+   ★ 우리 창 프록시가 아니다 (오판 #63 의 가르는 법 — `upstream connect error` 가 아니다)
+★ ★ 규격이 적은 ★ Bearer 토큰이 ★ 이제 필요한 것일 수 있다 — ★ 아직 못 가렸다
+★ ★ 「좁히는 파라미터」는 ★ 목록이 살아야 잰다.  ★ 못 쟀다 — ★ 「없다」가 아니다
+```
