@@ -124,7 +124,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
+    from store.core import mark_gone, resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
     from store.raw import commit
 
@@ -138,6 +138,10 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     print(f"★ 목록 저장 {len(parsed)}건 · site='{SITE_CODE}'")
 
     # ★ 상세는 ★ 우리 대상만 ★ 뒤에 받는다 (18-3 ③).  ★ 이미 받은 것은 건너뛴다
+    # ★★ `--all` 이면 ★ **527건 전부** 받는다 (가이드 지시 08-24 · 오판 98).
+    #   ★ ★ 까닭 — ★ `cno`(차량번호)가 ★ **목록에 없고 상세에만 있다.**
+    #     ★ `cno` 가 없으면 ★ `plate_hash` 가 없고 ★ 5a 짝짓기가 안 된다
+    want = parsed if "--all" in args else ours
     limit = 0
     if "--detail" in args:
         i = args.index("--detail")
@@ -145,17 +149,23 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     done = {r[0] for r in conn.execute(
         "SELECT source_id FROM core_listing WHERE site=? AND detail_status='ok'",
         (SITE_CODE,))}
-    todo = [o for o in ours if o["source_id"] not in done]
+    todo = [o for o in want if o["source_id"] not in done]
     if limit:
         todo = todo[:limit]
     print(f"★ 상세 — 받을 것 {len(todo)}건 (이미 받은 것 {len(done)}건은 건너뛴다)")
     got = {"정상": 0, "없는 매물": 0, "못 받음": 0}
+    gone = 0
     for one in todo:
         req = adapter.detail_urls(one["source_id"])[0]
         size, body = fetch(req.url, req.headers, req.timeout_sec)
         state = classify(size, body)
         got[state] = got.get(state, 0) + 1
         if state != "정상":
+            # ★★ 「없는 매물」은 ★ **팔린 것**이다 (가이드 지시 08-24).
+            #   ★ 지우지 않는다 — ★ `gone_at` 이 ★ 「얼마에 팔렸나」의 근거다
+            if state == "없는 매물":
+                mark_gone(conn, one["listing_id"], at)
+                gone += 1
             time.sleep(float(cfg.get("interval_sec") or 1.5))
             continue
         deep = parse_detail(body, SITE_CODE, one["source_id"])
@@ -165,7 +175,8 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         time.sleep(float(cfg.get("interval_sec") or 1.5))
     commit(conn)
-    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
+    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items())
+          + (f"  ★ 팔린 것 {gone}건을 gone 으로" if gone else ""))
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장된 K카 매물 — {n}건")

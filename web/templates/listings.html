@@ -115,11 +115,16 @@
 <!-- 사이트별로 거르기 (개정 306).  ★ 사이트 이름은 config/sites.json 이 정본 -->
 <p class="sitebar">
   {% for b in site_buttons %}
-  {% if b.on %}<span class="btn on" title="지금 이 사이트만 봅니다">{{ b.label }}</span>{% endif %}
+  {% if b.on %}<span class="btn on" title="지금 이 사이트만 봅니다">{{ b.label }}{% if b.out_of_scope %}
+    <span class="dim">· 범위 밖 {{ b.out_of_scope | num }}</span>{% endif %}</span>{% endif %}
   <!-- ★ 빈 조건을 주소에 붙이지 않습니다 (V11-72 · V11-75) —
        sell_type 이 비면 그 칸을 아예 안 씁니다 -->
+  <!-- ★★ 08-24 마스터 지적 — ★ 「기아가 안 받은 것처럼 보인다」.
+       ★ 받았는데 갈래가 달라 뺀 것은 ★ 「범위 밖 N건」으로 말한다.
+       ★ 「0」만 보이면 「못 받았다」로 읽힌다 — ★ 둘은 다른 말이다 -->
   {% if !b.on %}<a class="btn" href="/listings?site={{ b.q }}{% if b.sell %}&sell_type={{ b.sell }}{% endif %}"
-    title="이 사이트 매물만 봅니다">{{ b.label }}</a>{% endif %}
+    title="이 사이트 매물만 봅니다">{{ b.label }}{% if b.out_of_scope %}
+    <span class="dim">· 범위 밖 {{ b.out_of_scope | num }}</span>{% endif %}</a>{% endif %}
   {% endfor %}
 </p>
 {% endif %}

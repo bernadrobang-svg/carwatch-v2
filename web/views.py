@@ -122,7 +122,7 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                 {"rows": rows, "count": len(rows), "filter": flt,
                  # 사이트별로 거르는 단추 (개정 306).
                  # ★ 쓰는 사이트가 하나면 안 낸다 — 늘 켜진 단추는 조작이 아니다
-                 "site_buttons": _site_buttons(flt, root),
+                 "site_buttons": _site_buttons(flt, root, conn),
                  # ★ 「3,471건 중 200건 · 1/18쪽」 (V11-55).
                  #   200건만 보이면서 전체를 안 적으면 3,471건을 못 본다
                  "paging": _paging(conn, flt, len(rows), root),
@@ -425,13 +425,22 @@ def _manwon(won) -> str:
     return f"{(won or 0) // WON_PER_MANWON:,}만"
 
 
-def _site_buttons(flt, root: str = ROOT) -> list:
+def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
     """사이트별로 거르는 단추 (개정 306 — 「엔카만」 「K카 직영만」 「전부」).
 
     ★ 사이트 이름을 코드에 박지 않는다.  config/sites.json 이 정본이다
     ★ 쓰는 사이트가 하나뿐이면 단추를 안 낸다 —
       늘 켜져 있는 단추 하나는 조작이 아니다
+    ★★ 08-24 마스터 지적 — ★ 「기아가 ★ **안 받은 것처럼 보인다**」.
+      ★ ★ 기아 CPO 1,020건은 ★ 다 받았고 ★ 전부 ★ 범위 밖이다 (우리 대상 0건).
+      ★ ★ 그래서 ★ 단추에 ★ 「범위 밖 N건」을 ★ 함께 낸다 — ★ 0 만 보이면
+        ★ 「못 받았다」로 읽힌다.  ★ 받은 것과 못 받은 것은 ★ 다른 말이다
     """
+    scoped: dict = {}
+    if conn is not None:
+        scoped = {r[0]: (r[1], r[2]) for r in conn.execute(
+            "SELECT site, SUM(status='active'), SUM(status='out_of_scope') "
+            "FROM core_listing GROUP BY 1")}
     from store.crosssite import active_sites, load_sites
 
     import os as _o
@@ -447,8 +456,11 @@ def _site_buttons(flt, root: str = ROOT) -> list:
         label = one.get("label") or name
         tails = one.get("sell_type_labels") or {}
         if not tails:
+            live_n, oos_n = scoped.get(name, (None, None))
             out.append({"label": f"{label}만", "q": name, "sell": "",
-                        "on": flt.site == name and not flt.sell_type})
+                        "on": flt.site == name and not flt.sell_type,
+                        # ★ 「0」과 「안 받았다」를 가른다
+                        "live": live_n, "out_of_scope": oos_n})
             continue
         for key, tail in tails.items():
             out.append({"label": f"{label} {tail}만", "q": name, "sell": key,

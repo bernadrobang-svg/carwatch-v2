@@ -152,8 +152,10 @@ def test_collect_groups() -> None:
     #   ★★ 묶는 열쇠는 ★ 이름이 아니라 ★ 쿼리다 —
     #     ★ `collect_group="multi"` 여덟을 ★ 한 이름으로 묶으면
     #     ★ 먼저 온 쿼리 하나만 남고 ★ 일곱이 조용히 사라진다 (실측 08-24)
-    #   ★ G80_25T·G80_EV 는 ★ 쿼리가 같아 ★ 그대로 한 묶음이다 (그래서 18 이 아니라 16)
-    check("target 18 → collect_group 16", len(t) == 18 and len(g) == 16,
+    #   ★ G80_25T·G80_EV 는 ★ 쿼리가 같아 ★ 그대로 한 묶음이다 (그래서 20 이 아니라 18)
+    # ★★ 개정 696 (마스터 확정 · 명령서 38) — ★ 볼보 XC40 · V60 크로스컨트리를 더해
+    #   ★ 차종이 ★ **18 → 20종** 이 됐다.  ★ 묶음도 ★ 16 → 18 이다
+    check("target 20 → collect_group 18", len(t) == 20 and len(g) == 18,
           f"{len(t)}/{len(g)}")
     g80 = [x for x in g if x.group_key == "encar:G80"][0]
     check("G80 두 target 이 한 그룹", g80.target_keys == ("G80_25T", "G80_EV"))

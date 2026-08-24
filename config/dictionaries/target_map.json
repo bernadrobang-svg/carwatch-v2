@@ -189,6 +189,123 @@
         "collect_group": "multi",
         "target_key": "EX60_IMPORT"
       }
+    },
+    "heydealer": {
+      "_field": "상세 detail_info.model_part_name 에서 제조사·세대를 뗀 것 (HEYDEALER_API)",
+      "_rule": "★ collect_group 만 준다 — ★ 갈래(2.5T·LPG…)는 ★ targets.json 의 fuel_match 가 고른다.  ★ 해시로 이미 차종을 좁혀 부른다",
+      "G80": {
+        "collect_group": "encar:G80"
+      },
+      "G70": {
+        "collect_group": "encar:G70"
+      },
+      "GV70": {
+        "collect_group": "encar:GV70"
+      },
+      "GV60": {
+        "collect_group": "encar:GV60"
+      },
+      "그랜저": {
+        "collect_group": "encar:GRANDEUR"
+      },
+      "스포티지": {
+        "collect_group": "encar:SPORTAGE"
+      },
+      "그랑 콜레오스": {
+        "collect_group": "encar:KOLEOS"
+      },
+      "X3": {
+        "collect_group": "multi",
+        "target_key": "X3_IMPORT"
+      },
+      "RX": {
+        "collect_group": "multi",
+        "target_key": "RX_IMPORT"
+      },
+      "XC60": {
+        "collect_group": "multi",
+        "target_key": "XC60_IMPORT"
+      },
+      "S60": {
+        "collect_group": "multi",
+        "target_key": "S60_IMPORT"
+      },
+      "XC40": {
+        "collect_group": "multi",
+        "target_key": "XC40_IMPORT"
+      },
+      "V60 크로스 컨트리": {
+        "collect_group": "multi",
+        "target_key": "V60CC_IMPORT"
+      }
+    },
+    "reborncar": {
+      "_field": "상세 <title> 의 차명에서 아는 이름을 찾은 것 (REBORNCAR_API 1b)",
+      "_rule": "★ 목록 API 를 robots 가 막아 ★ 사이트맵 전량을 받아 ★ 우리가 거른다. ★ 상세에 차종 칸이 따로 없다 — ★ 차명으로 고른다 (보배드림과 같다)",
+      "G80": {
+        "collect_group": "encar:G80"
+      },
+      "G70": {
+        "collect_group": "encar:G70"
+      },
+      "GV70": {
+        "collect_group": "encar:GV70"
+      },
+      "GV60": {
+        "collect_group": "encar:GV60"
+      },
+      "그랜저": {
+        "collect_group": "encar:GRANDEUR"
+      },
+      "스포티지": {
+        "collect_group": "encar:SPORTAGE"
+      },
+      "그랑 콜레오스": {
+        "collect_group": "encar:KOLEOS"
+      },
+      "모델 Y": {
+        "collect_group": "encar:MODEL_Y"
+      },
+      "X3": {
+        "collect_group": "multi",
+        "target_key": "X3_IMPORT"
+      },
+      "GLC": {
+        "collect_group": "multi",
+        "target_key": "GLC_IMPORT"
+      },
+      "Q5": {
+        "collect_group": "multi",
+        "target_key": "Q5_IMPORT"
+      },
+      "NX": {
+        "collect_group": "multi",
+        "target_key": "NX_HEV"
+      },
+      "RX": {
+        "collect_group": "multi",
+        "target_key": "RX_IMPORT"
+      },
+      "XC60": {
+        "collect_group": "multi",
+        "target_key": "XC60_IMPORT"
+      },
+      "S60": {
+        "collect_group": "multi",
+        "target_key": "S60_IMPORT"
+      },
+      "EX60": {
+        "collect_group": "multi",
+        "target_key": "EX60_IMPORT"
+      },
+      "XC40": {
+        "collect_group": "multi",
+        "target_key": "XC40_IMPORT"
+      },
+      "V60 크로스 컨트리": {
+        "collect_group": "multi",
+        "target_key": "V60CC_IMPORT"
+      }
     }
   },
   "_pending": {
@@ -229,6 +346,24 @@
       "전기": "전기",
       "LPG": "LPG(일반인 구입)",
       "하이브리드": "가솔린+전기"
+    },
+    "heydealer": {
+      "_why": "★ 헤이딜러는 ★ 상세 `detail_info.fuel_display` 로 준다 — ★ 실측 08-24 「휘발유」. ★ 목록(compact)에는 연료가 아예 없다. ★ 표에 없는 말이 나오면 ★ 원문이 그대로 간다 — ★ 지어내지 않는다",
+      "휘발유": "가솔린",
+      "경유": "디젤",
+      "전기": "전기",
+      "가솔린": "가솔린",
+      "디젤": "디젤",
+      "하이브리드": "가솔린+전기",
+      "LPG": "LPG(일반인 구입)"
+    },
+    "reborncar": {
+      "_why": "★ 리본카는 ★ 상세 <dt>연료</dt> 로 준다 — ★ 실측 08-24 「가솔린」. ★ 엔카와 같은 말을 쓴다.  ★ 표에 없으면 원문이 그대로 간다",
+      "가솔린": "가솔린",
+      "디젤": "디젤",
+      "전기": "전기",
+      "하이브리드": "가솔린+전기",
+      "LPG": "LPG(일반인 구입)"
     }
   },
   "_name2key_note": "★ 수입 여덟은 ★ 이름과 차종이 1:1 이다.  ★ `target_key` 를 적어 ★ 그 차종만 후보로 둔다. ★ 개정 632 로 `collect_group` 이 「multi」가 되어 ★ 여덟이 한 후보군이 됐고 ★ 연료가 겹쳐 아무것도 안 붙었다"

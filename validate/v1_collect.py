@@ -656,10 +656,20 @@ def _query_key_check(run_id: str):
         if not (isinstance(spec, dict) and "site_query" in spec):
             continue
         for site, sq in spec["site_query"].items():
-            # ★ `_` 로 시작하는 키는 ★ 메모다 (`_확인` 등) — ★ 조건이 아니다
-            real = {k for k in sq if not str(k).startswith("_")}
-            for k in sorted(real - KNOWN_QUERY_KEYS):
-                bad.append(f"{key}.{site}.{k}")
+            # ★★ `KNOWN_QUERY_KEYS` 는 ★ **엔카** 조립 규칙이다 (adapters/encar.py).
+            #   ★ 다른 사이트에 대면 ★ 그 사이트 말이 죄다 「모르는 키」가 된다
+            if site != "encar":
+                continue
+            # ★★ 한 차종에 ★ 질의가 여럿일 수 있다 (명령서 37-3 ③ —
+            #   ★ 헤이딜러 G80 은 ★ 「더 올 뉴 G80 FL」·「더 올 뉴 G80」 둘이다).
+            #   ★ ★ 그때는 ★ 리스트로 온다 — ★ 실측 08-24
+            for one in (sq if isinstance(sq, list) else [sq]):
+                if not isinstance(one, dict):
+                    continue
+                # ★ `_` 로 시작하는 키는 ★ 메모다 (`_확인` 등) — ★ 조건이 아니다
+                real = {k for k in one if not str(k).startswith("_")}
+                for k in sorted(real - KNOWN_QUERY_KEYS):
+                    bad.append(f"{key}.{site}.{k}")
     return result(C["V1-10"], run_id, 0, bad or 0, not bad, bad)
 
 

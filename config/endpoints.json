@@ -98,15 +98,14 @@
     }
   },
   "heydealer": {
-    "_ref": "docs/HEYDEALER_API.md · 실측 2026-08-22 · 표본 25건",
-    "_note": "★★ 토큰은 세션 쿠키다 — https://www.heydealer.com/ 를 한 번 열면 서버가 customer_web_session 을 준다. 그 값을 authorization: Bearer 로 쓴다. ★ 로그인이 아니라 손님용이다. robots 전면 허용. ★ 응답이 배열(list)이다 — dict 가 아니다",
+    "_ref": "docs/HEYDEALER_API.md 0장 · 명령서 37 · 실측 2026-08-24 (개정 694)",
+    "_note": "★★ 두 걸음이다 — ① POST token_api_url 로 손님 토큰(JWT)을 받고 ② Authorization: Bearer 로 목록을 부른다. ★ 토큰이 없으면 목록이 500 이다 — 「고장」이 아니었다 (오판 97). ★ 응답이 배열(list)이다 — dict 가 아니다. ★ 연료는 목록에 없고 상세의 detail_info.fuel_display 에 있다. ★ 상세에 car_number(차량번호)가 있어 5a 짝짓기가 된다. 금지 — 토큰을 저장소에 적는 것",
     "base_url": "https://market-api.heydealer.com",
-    "token_url": "https://www.heydealer.com/",
     "paths": {
-      "list": "/v2/customers/web/market/cars/?order=recommendation&page={page}",
+      "list": "/v2/customers/web/market/cars/?order=recommendation&view_type=compact&page={page}",
       "detail": "/v2/customers/web/market/cars/{source_id}/"
     },
-    "_paths_note": "★ 목록은 쪽당 10건이고 필드가 14개뿐이다. ★ 값은 상세에 있다(33개). hash_id 가 매물번호다",
+    "_paths_note": "★ 목록은 쪽당 10건 · 칸 14개다. ★ 10건이 오면 다음 쪽이 있다. ★ hash_id 가 매물번호다. ★ 값은 상세에 있다(칸 33 · detail_info 51)",
     "timeout_sec": 40,
     "interval_sec": 0.5,
     "headers": {
@@ -115,7 +114,9 @@
       "Referer": "https://www.heydealer.com/",
       "Origin": "https://www.heydealer.com",
       "app-os": "web"
-    }
+    },
+    "token_api_url": "https://api.heydealer.com/v2/customers/web/initialize_app/",
+    "token_referrer": "https://www.heydealer.com/"
   },
   "kbchachacha": {
     "_ref": "docs/KBCHACHACHA_API.md · 실측 2026-08-22 · 표본 25건",
@@ -160,10 +161,16 @@
     "base_url": "https://www.reborncar.co.kr",
     "paths": {
       "sitemap": "/sitemap-ext.xml",
-      "detail": "/product/detail/{source_id}"
+      "detail": "/m/smartbuy/SB1002/{source_id}"
     },
-    "_note": "★ 모바일 UA 필수 — 데스크톱은 「용도변경 없음」으로 거짓이 온다.  ★ 목록은 사이트맵 (1,066건 · 실측 08-23)",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+    "_note": "★ 모바일 UA 필수 — ★ 데스크톱은 「용도변경 없음」으로 거짓이 온다 (2a장). ★ 목록 API 는 robots 가 막았다 — ★ 사이트맵이 목록이다 (1b장 · 개정 697). ★ 실측 08-24 — <loc> 2,658개 중 매물 1,036건 (중복 0). ★ 상세 /smartbuy/SB1002/{코드} 는 robots 가 안 막았다. ★ ?carNo= 는 404 다",
+    "_ref": "docs/REBORNCAR_API.md 1b장 · 명령서 39 · 실측 2026-08-24",
+    "timeout_sec": 60,
+    "interval_sec": 1.0,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+      "Accept": "text/html,application/xhtml+xml"
+    }
   },
   "lexus_certified": {
     "base_url": "https://certified.lexus.co.kr",
