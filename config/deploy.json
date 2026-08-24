@@ -1,0 +1,22 @@
+{
+  "_note": "★★★ 배포 주소의 ★ 원천이다.  ★ 다른 문서는 ★ 이 파일을 가리키기만 한다 (개정 684 · 마스터 지시 08-24)",
+  "_why": "★ 08-24 실측 — 주소가 ★ 69곳에 흩어져 있었다.  ★ 껐다 켜면 다 죽는다",
+  "_rule": "★ 주소가 바뀌면 ★ **이 파일 하나만** 고친다.  ★ 문서에 박지 마라",
+  "region": "ap-northeast-2",
+  "instance_id": "i-0aa4fe11f2d668103",
+  "public_ip": "43.201.16.78",
+  "base_url": "https://43.201.16.78.sslip.io",
+  "_ip_measured": "실측 08-24",
+  "proxy": "Caddy",
+  "app_port": 8765,
+  "os_user": "ec2-user",
+  "work_dir": "/home/ec2-user/v2",
+  "services": [
+    "carwatch.service",
+    "carwatch-daily.timer"
+  ],
+  "daily_at": "13:00",
+  "account": "master",
+  "_check": "curl -sk -o /dev/null -w '%{http_code}' -m 40 {base_url}/",
+  "_on_change": "★ 바뀌면 — ① 콘솔에서 새 IP ② 두드려 200 확인 ③ ★ 이 파일만 고친다 ④ 검사를 돌린다.  ★ outputs/ 작업기록은 안 고친다 — 그때 그 주소가 맞다"
+}

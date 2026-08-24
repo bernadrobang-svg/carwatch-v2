@@ -1,5 +1,9 @@
 # 볼보 셀렉트 인증중고차 API · 매핑 규격
 
+> ★ 배포 주소는 ★ `config/deploy.json` 이 정본이다 (★ 개정 684).  ★ 문서에 박지 않는다
+> ★ `{base_url}` · `{public_ip}` 는 ★ 그 파일의 값이다
+
+
 ```
 version  SPEC-2026.08.24-r670
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
@@ -226,7 +230,7 @@ robots   `Disallow: /*compare` · `/*notepad` · `/*saved-searches` · `/*vehicl
 
 ★ 마스터 쪽에서는 열린다 (주소를 주셨다).  ★ 우리 조사창 IP 가 막힌 것이다
 ★ 다나와와 ★ 같은 자리다 (개정 529)
-할 것  ★ 운영 서버(43.201.16.78)에서 다시 잰다 — ★ 개발측이 확인한다
+할 것  ★ 운영 서버({public_ip})에서 다시 잰다 — ★ 개발측이 확인한다
        ★ 안 되면 ★ 마스터께 화면을 청한다
 ```
 

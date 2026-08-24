@@ -1,5 +1,9 @@
 # CarWatch v2 — 작업 규칙
 
+> ★ 배포 주소는 ★ `config/deploy.json` 이 정본이다 (★ 개정 684).  ★ 문서에 박지 않는다
+> ★ `{base_url}` · `{public_ip}` 는 ★ 그 파일의 값이다
+
+
 이 파일은 세션이 새로 시작돼도 규칙이 유지되도록 남긴 것이다.
 **작업을 시작하기 전에 이 파일을 먼저 읽는다.**
 
@@ -184,7 +188,7 @@ docs/SOURCE.md   소스 112파일 — 줄 수 · 무엇 · 큰 파일의 최상�
 
 ## ★ 8765 를 뺏지 않는다 — 마스터가 보는 화면이다
 
-**2026-08-16 부터 앞단에 Caddy 가 있다.  주소는 `https://43.201.16.78.sslip.io` 다.**
+**2026-08-16 부터 앞단에 Caddy 가 있다.  주소는 `{base_url}` 다.**
 
 ```
 브라우저 ──https──▶ Caddy :443 ──http──▶ CarWatch 127.0.0.1:8765
@@ -220,7 +224,7 @@ docs/SOURCE.md   소스 112파일 — 줄 수 · 무엇 · 큰 파일의 최상�
 ```
 확인   systemctl is-active carwatch caddy    둘 다 active 여야 한다
       ss -tln | grep 8765                   127.0.0.1:8765 여야 한다
-      curl -sI https://43.201.16.78.sslip.io/listings
+      curl -sI {base_url}/listings
 고친 뒤  sudo systemctl restart carwatch   ★ 코드를 고쳤으면 반드시 재시작
 시험용   포트를 따로 쓴다 — run.py web --port 8799
 ```

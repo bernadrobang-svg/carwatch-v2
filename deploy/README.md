@@ -1,5 +1,9 @@
 # 배포 — 앞단 HTTPS (14장 1584줄)
 
+> ★ 배포 주소는 ★ `config/deploy.json` 이 정본이다 (★ 개정 684).  ★ 문서에 박지 않는다
+> ★ `{base_url}` · `{public_ip}` 는 ★ 그 파일의 값이다
+
+
 **2026-08-16 세움.  실제로 도는 것이 여기 있다.**
 
 ```
@@ -8,9 +12,9 @@
 ```
 
 ```
-주소   https://43.201.16.78.sslip.io
+주소   {base_url}
 근거   Let's Encrypt 는 IP 에 인증서를 주지 않는다.
-      sslip.io 는 43.201.16.78.sslip.io → 43.201.16.78 로 해석되는 실제 도메인이다.
+      sslip.io 는 ★ `{public_ip}.sslip.io` → `{public_ip}` 로 해석되는 실제 도메인이다.
       진짜 도메인을 사면 Caddyfile 의 첫 줄만 바꾸면 된다
 ```
 
@@ -37,7 +41,7 @@ sudo useradd --system --home /var/lib/caddy --create-home --shell /usr/sbin/nolo
 ExecStart=/usr/bin/python3.11 run.py web --host 127.0.0.1 --port 8765
 ```
 
-밖에서 `http://43.201.16.78:8765` 는 **연결되지 않는다.**
+밖에서 `http://{public_ip}:8765` 는 **연결되지 않는다.**
 보안 그룹을 건드리지 않고도 닫힌 것과 같다 — 앱이 아예 그 주소로 안 듣는다.
 
 ```
@@ -62,8 +66,8 @@ Caddy 가 붙이는 `X-Forwarded-Proto` 로만 안다 (`web/session.py is_https`
 ```bash
 systemctl is-active carwatch caddy
 ss -tln | grep -E ':(80|443|8765)\b'      # 8765 는 127.0.0.1 이어야 한다
-curl -sI https://43.201.16.78.sslip.io/listings | head -3
-curl -so /dev/null -w '%{http_code}\n' http://43.201.16.78:8765/listings   # 000 이어야 한다
+curl -sI {base_url}/listings | head -3
+curl -so /dev/null -w '%{http_code}\n' http://{public_ip}:8765/listings   # 000 이어야 한다
 ```
 
 ## 인증서
@@ -88,7 +92,7 @@ Caddy 가 자동으로 받고 갱신한다. 손댈 것이 없다.
 ## ★ 지금 위험
 
 ```
-★ 인스턴스를 ★ 껐다 켜면 ★ `43.201.16.78` 이 ★ **바뀐다**
+★ 인스턴스를 ★ 껐다 켜면 ★ `{public_ip}` 이 ★ **바뀐다**
 ★ ★ 그 주소가 ★ 저장소 ★ **69곳**에 박혀 있다 (★ 실측 08-24)
    `deploy/README.md` · `CLAUDE.md` · 작업기록 여럿 · 검사
 ★ ★ 그러면 ★ 배포 확인 · 검사 · 인수인계가 ★ 한꺼번에 죽는다
@@ -102,7 +106,7 @@ Caddy 가 자동으로 받고 갱신한다. 손댈 것이 없다.
 ② ★ 새 주소로 ★ 두드려 본다 — `curl -sk -o /dev/null -w '%{http_code}' https://{새IP}.sslip.io/`
    ★ ★ 200 이 아니면 ★ 서비스가 안 뜬 것이다 — ★ 개발측에 알린다
 ③ ★ 저장소에서 ★ 옛 주소를 ★ **한 번에 바꾼다** —
-   `grep -rl '43.201.16.78' --include='*.md' --include='*.json' --include='*.py' .`
+   `grep -rl '{public_ip}' --include='*.md' --include='*.json' --include='*.py' .`
    ★ ★ **작업기록(`outputs/`)은 ★ 바꾸지 않는다** — ★ 그때 그 주소가 맞다
    ★ ★ 바꾸는 곳 — `deploy/README.md` · `CLAUDE.md` · 검사 · 규격
 ④ ★ `docs/guide/08_인수인계.md` 와 ★ 명령서 0장의 ★ 확인 명령을 고친다
@@ -115,8 +119,8 @@ Caddy 가 자동으로 받고 갱신한다. 손댈 것이 없다.
 |---|---|
 | 지역 | `ap-northeast-2` (서울) |
 | 인스턴스 | `i-0aa4fe11f2d668103` |
-| 지금 주소 | `43.201.16.78` (★ 실측 08-24) |
-| 접속 | `https://43.201.16.78.sslip.io` |
+| 지금 주소 | `{public_ip}` (★ 실측 08-24) |
+| 접속 | `{base_url}` |
 | 앞단 | Caddy → ★ 안쪽 `8765` |
 | 사용자 | `ec2-user` · 작업 폴더 `/home/ec2-user/v2` |
 | 서비스 | `carwatch.service` · `carwatch-daily.timer` (13:00) |
