@@ -175,6 +175,12 @@ CREATE INDEX IF NOT EXISTS ix_listing_vehicle ON core_listing(vehicle_id);
 CREATE INDEX IF NOT EXISTS ix_listing_plate
   ON core_listing(plate_hash, status, price_current_won, listing_id);
 
+-- ★ 「지금 쓰는 parse 판본」을 화면 아래마다 낸다 (base.html 의 ver 줄).
+--   ★ 전에는 ★ 전건을 훑고 ★ 임시 B-트리로 정렬했다 — ★ 실측 08-26 2.4초.
+--   ★ 이 색인을 거꾸로 걸으면 ★ 첫 줄에서 멈춘다
+CREATE INDEX IF NOT EXISTS ix_listing_parsed
+  ON core_listing(parsed_at, parse_version);
+
 -- 변경분만 쌓는다.  전량 스냅샷을 쌓지 않는다 (STEP 29)
 CREATE TABLE IF NOT EXISTS core_listing_change (
   listing_id   INTEGER NOT NULL,

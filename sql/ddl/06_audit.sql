@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS audit_request (
 
 CREATE INDEX IF NOT EXISTS ix_request_run ON audit_request(run_id, kind);
 
+-- ★ 미판정 화면이 「제대로 받은 요청이 몇 건인가」를 묻는다.
+--   ★ 색인이 없어 15만 2천 행을 통째로 셌다 — 실측 08-26 2.2초
+CREATE INDEX IF NOT EXISTS ix_request_status ON audit_request(status);
+
 CREATE TABLE IF NOT EXISTS audit_validation (
   run_id      TEXT NOT NULL,
   phase       TEXT NOT NULL,

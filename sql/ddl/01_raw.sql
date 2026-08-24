@@ -31,6 +31,24 @@ CREATE TABLE IF NOT EXISTS raw_response (
 CREATE INDEX IF NOT EXISTS ix_raw_lookup
   ON raw_response(listing_id, endpoint, fetched_at DESC);
 
+-- ★★ 「마지막으로 목록을 받은 때」를 묻는 자리가 넷이다 (store/core.py 266·709 ·
+--   collect/runner.py 519 · tools/daily_enqueue.py 99).  ★ 매물 번호가 없어
+--   ix_raw_lookup 을 못 탄다 — ★ 14만 7천 행을 통째로 훑고 있었다.
+--   ★★ 실측 08-26 — ★ 페이지 캐시를 비우고 재니 ★ 현황 한 화면에서 ★ **15.2초**였다.
+--     ★ 몸통(body)이 큰 표라 한 번 훑는 값이 크다 (파일 1.1GB 의 대부분이 여기다)
+--   ★ 이 색인이면 ★ 몸통을 안 읽고 색인만 본다
+CREATE INDEX IF NOT EXISTS ix_raw_endpoint
+  ON raw_response(endpoint, status, fetched_at);
+
+-- ★★ 반입 화면(/admin/import)이 「밖에서 받아 넣은 것」만 최근 것부터 본다.
+--   ★ origin 에 색인이 없어 ★ 14만 3천 행을 뒤에서부터 훑으며 ★ **몸통까지 읽었다**.
+--   ★★ 실측 08-26 — ★ 한 쿼리에 ★ **31.7초**.  ★ origin='import' 는 ★ 딱 1건인데도다
+--   ★ 관리 수집 화면(/admin/collect)은 같은 origin 안에서 endpoint 로 센다
+CREATE INDEX IF NOT EXISTS ix_raw_origin
+  ON raw_response(origin, id);
+CREATE INDEX IF NOT EXISTS ix_raw_origin_endpoint
+  ON raw_response(origin, endpoint);
+
 CREATE TABLE IF NOT EXISTS raw_facet (
   site          TEXT NOT NULL,
   target_key    TEXT NOT NULL,
