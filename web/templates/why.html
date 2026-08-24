@@ -201,6 +201,38 @@
 <p class="muted">진단 리포트가 없습니다.</p>
 {% endif %}
 
+<!-- ══ 「내 차만 0 인가」 (가이드 지시 08-25) ══
+     ★★ `state.consumable` 은 ★ 4,792건 ★ 전건 0 이다 — ★ 규격대로다 (f-table ⑤).
+       ★ ★ 그것을 모르면 ★ 「내 차가 나쁘다」로 읽는다.
+     ★ 0(없다)과 ★ 모름을 ★ 갈라서 낸다 -->
+<h2>내 차만 0 인가 — 축마다 남들은 어떤가</h2>
+{% if zero_rates %}
+<table class="rows">
+<thead><tr><th>축</th><th class="num">내 점수</th><th class="num">전체가 0 인 비율</th>
+  <th>무엇을 뜻하나</th></tr></thead>
+<tbody>
+{% for z in zero_rates %}
+<tr>
+  <td data-label="축">{{ z.label }}</td>
+  <td class="num" data-label="내 점수">{{ z.value }} / {{ z.max_points }}</td>
+  <td class="num" data-label="0 인 비율">{{ z.zero_pct }}%
+    <span class="dim">({{ z.zero | num }} / {{ z.total | num }})</span></td>
+  <!-- ★ 빈 칸을 안 낸다 — ★ 셋 가운데 하나는 늘 나온다 (V11 「빈 칸이 과하지 않다」) -->
+  <td data-label="뜻">
+    {% if z.all_zero %}<span class="dim">전 매물이 0 입니다 — <strong>이 차 탓이 아닙니다</strong>.
+      규격이 그렇게 정했습니다 (아무 사이트도 안 줍니다)</span>{% endif %}
+    {% if z.only_me %}<strong class="up">이 차만 0 입니다 — 남들은 받았습니다</strong>{% endif %}
+    {% if !z.all_zero %}{% if !z.only_me %}<span class="dim">점수를 받았습니다 —
+      전체의 {{ z.zero_pct }}%가 0 인 축입니다</span>{% endif %}{% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<p class="muted">★ 「전 매물이 0」인 축은 <strong>이 차의 흠이 아닙니다</strong> —
+  어느 사이트도 그 값을 안 줍니다. ★ 「이 차만 0」인 축이 실제로 갈리는 자리입니다.</p>
+{% endif %}
+
 <h2>확인 못 한 것 — 채우면 오를 수 있습니다</h2>
 {% if v.pending_items %}
 <table>

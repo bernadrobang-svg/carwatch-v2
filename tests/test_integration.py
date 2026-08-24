@@ -775,8 +775,14 @@ def unit(ad: Client, u1: Client, lid: int) -> None:
     missing = [m for m in why_marks if m not in got]
     rec("U /why", "/why", f"절 {len(why_marks)}개", f"빠짐 {missing}",
         not missing)
-    empty = got.count("—") 
-    rec("U /why 값", "/why", "빈 칸(—)이 과하지 않다", f"— {empty}개",
+    # ★★ 08-25 — ★ 「—」를 세던 것을 ★ **빈 칸**을 세는 것으로 바꾼다.
+    #   ★ ★ 「—」는 ★ 두 가지로 쓰인다 —
+    #     ① 「확인 못 함」 기호 (마스터 확정 · OK·×·—)
+    #     ② ★ 문장 구두점 — 「축별 판정 — 축을 누르면」 · 「골격 — 이상 없음」
+    #   ★ ★ 둘을 섞어 세면 ★ 글을 늘릴 때마다 ★ 검사가 빨개진다.  ★ 뜻이 없다
+    #   ★★ ★ 「빈 칸」은 ★ **정말로 빈 `<td>`** 다 — ★ 그것을 센다
+    empty = len(re.findall(r"<td[^>]*>\s*</td>", wb))
+    rec("U /why 값", "/why", "빈 칸이 과하지 않다", f"빈 <td> {empty}개",
         empty < 30)
 
     u1.login("사용자갑", "newsecret123")

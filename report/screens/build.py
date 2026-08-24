@@ -2456,7 +2456,9 @@ def view_notready(account: Account, conn, calc_version: str,
         done=_done_items(conn, calc_version),
         unmatched=rows, unmatched_total=n_null, matched_total=n_ok,
         out_of_scope=oos, out_of_scope_total=n_oos,
-        field_unclassified=n_field)
+        field_unclassified=n_field,
+        # ★★ 세 줄 (UI_REVIEW 14-7) — ★ 「여쭐 것」이 맨 위다
+        **_notready_counts(conn))
 
 
 def _unmatched_rows(conn, limit: int | None = None) -> tuple[list, list]:
@@ -3070,3 +3072,50 @@ def _today_counts(conn) -> dict:
         (since, since, since)).fetchone()
     return {"new_today": one[0] or 0, "dropped_today": one[1] or 0,
             "gone_today": one[2] or 0, "last_recalc_at": one[3]}
+
+
+def _notready_counts(conn) -> dict:
+    """미판정 세 줄 (UI_REVIEW 14-7 · 개정 724).
+
+    ★★ 「미분류」가 ★ 두 뜻으로 읽혔다 (개발측 지적 · 오판 114) —
+      ★ ① 차종 이름을 ★ 모르는 매물 · ★ ② 아직 ★ 아무 처리도 안 된 매물
+    ★ ★ 마스터께서 ★ 정하실 것은 ★ ② 뿐이다 — ★ 그것을 ★ 맨 위에 낸다
+    ★ 나머지 둘은 ★ 쌓인 것이 아니라 ★ **갈무리된 것**이다 — ★ 건수만 낸다
+    """
+    one = conn.execute(
+        "SELECT"
+        "  (SELECT COUNT(*) FROM core_listing"
+        "    WHERE target_key IS NULL AND status = 'new'),"
+        "  (SELECT COUNT(*) FROM core_listing"
+        "    WHERE target_key IS NULL AND status = 'out_of_scope'),"
+        "  (SELECT COUNT(*) FROM core_listing"
+        "    WHERE target_key IS NULL AND status = 'gone')").fetchone()
+    return {"ask_count": one[0] or 0, "folded_count": one[1] or 0,
+            "gone_count": one[2] or 0}
+
+
+def axis_zero_rates(conn, calc_version: str) -> dict:
+    """축마다 ★ 전체 매물 가운데 ★ 0점·모름이 몇 건인가 (가이드 지시 08-25).
+
+    ★★ 왜 — ★ 사는 사람이 ★ 「**내 차만 0 인가**」를 알아야 한다.
+      ★ ★ `state.consumable` 은 ★ 4,784건 ★ 전건 0 이다 — ★ 규격대로다 (f-table ⑤).
+        ★ ★ 그것을 모르면 ★ 「내 차가 나쁘다」로 읽는다
+    ★ 0(없다)과 ★ NULL(모른다)을 ★ 갈라서 센다 — ★ 섞으면 v1 사고가 되풀이된다
+    """
+    out = {}
+    for axis, n, zero, nul in conn.execute(
+        "SELECT a.axis, COUNT(*),"
+        "       SUM(CASE WHEN a.value = 0 THEN 1 ELSE 0 END),"
+        "       SUM(CASE WHEN a.value IS NULL THEN 1 ELSE 0 END)"
+        "  FROM result_axis a JOIN core_listing l"
+        "    ON l.listing_id = a.listing_id"
+        " WHERE l.status = 'active' AND a.calc_version = ?"
+        " GROUP BY 1", (calc_version,)
+    ):
+        if not n:
+            continue
+        out[axis] = {"total": n, "zero": zero or 0, "unknown": nul or 0,
+                     "zero_pct": round((zero or 0) / n * 100, 1),
+                     # ★ 전건 0 이면 ★ 「내 차 탓이 아니다」 — ★ 그것을 말한다
+                     "all_zero": (zero or 0) == n}
+    return out

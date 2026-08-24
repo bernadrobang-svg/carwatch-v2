@@ -20,8 +20,8 @@
 | `S4` | 테이블 DDL (STEP 28) | fatal | `tools/check_src.py:236` | **★ 없음** | 없음 | ref/E-attach.md:64 · guide/03_이력.md:136 · guide/03_이력.md:154 |
 | `S5` | config 키 (V4-15) | fatal | `tools/check_src.py:313` | **★ 없음** | 없음 | ref/E-attach.md:65 · guide/01_시작.md:123 · guide/01_시작.md:200 |
 | `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:348` | **★ 없음** | 없음 | ref/E-attach.md:66 · guide/03_이력.md:289 · chapters/13-pipeline.md:113 |
-| `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:403` | **★ 없음** | 없음 | ref/E-attach.md:67 · chapters/13-pipeline.md:114 · chapters/13-pipeline.md:115 |
-| `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:410` | **★ 없음** | 없음 | ref/E-attach.md:68 · guide/03_이력.md:92 · chapters/13-pipeline.md:115 |
+| `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:403` | **★ 없음** | 없음 | ref/E-attach.md:67 · guide/03_이력.md:734 · chapters/13-pipeline.md:114 |
+| `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:410` | **★ 없음** | 없음 | ref/E-attach.md:68 · guide/03_이력.md:92 · guide/03_이력.md:734 |
 | `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:426` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:240 · CROSS_SITE_COMPARE.md:243 · CROSS_SITE_COMPARE.md:246 |
 | `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:432` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:243 · ref/E-attach.md:70 · guide/03_이력.md:268 |
 | `S11` | 분석 계층 순수성 (STEP 2) | fatal | `tools/check_src.py:451` | **★ 없음** | 없음 | ref/E-attach.md:71 · guide/01_시작.md:71 · guide/01_시작.md:103 |

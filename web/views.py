@@ -204,9 +204,26 @@ def why(conn, account, req, path_vars: dict, root: str = ROOT,
         return HTTP_NOT_FOUND, hd, body
     # ★ 받은 원문은 따로 넘긴다 — 「v.raw_sections」는 이름이 겹쳐
     #   ScoreView 의 다른 절과 헷갈린다 (개정 378)
+    # ★★ 「내 차만 0 인가」 (가이드 지시 08-25) — ★ 축마다 ★ 전체가 몇 %가 0 인지.
+    #   ★ `state.consumable` 은 ★ 전건 0 이다 (f-table ⑤) — ★ 내 차 탓이 아니다
+    from report.screens.build import axis_zero_rates
+
+    rates = axis_zero_rates(conn, _versions(conn)["calc_version"])
+    mine = []
+    for one in v.axes:
+        got = rates.get(one.axis)
+        if not got:
+            continue
+        mine.append({"axis": one.axis, "label": one.label,
+                     "value": one.value, "max_points": one.max_points,
+                     "zero": got["zero"], "total": got["total"],
+                     "zero_pct": got["zero_pct"], "all_zero": got["all_zero"],
+                     # ★ 내 차가 0 인데 ★ 남들은 아닌가 — ★ 그것이 판단 재료다
+                     "only_me": bool((one.value in (0, None))
+                                     and not got["all_zero"])})
     return page(conn, account, "판정 근거", "why.html",
-                {"v": v, "rep_raw": v.raw_sections}, csrf=csrf,
-                root=root, flash_key=flash_key)
+                {"v": v, "rep_raw": v.raw_sections, "zero_rates": mine},
+                csrf=csrf, root=root, flash_key=flash_key)
 
 
 

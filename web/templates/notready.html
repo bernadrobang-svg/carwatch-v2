@@ -23,10 +23,26 @@
 
 {% if n.done %}
 <h2>★ 1 미분류 — ★ 마스터께 묻는 자리</h2>
-<!-- ★★ 08-24 가이드 지적 — ★ 「세 숫자만 있어 나도 헷갈렸다」.
-     ★ ★ 한 줄로 먼저 말한다 — ★ 「물을 것이 몇 건인가」가 답이다 -->
-<p class="sentence"><b>미분류 {{ nr.unmatched_total | num }}건</b> —
-  이것이 <strong>마스터께 여쭐 것</strong>입니다.</p>
+<!-- ══ 세 줄 (UI_REVIEW 14-7 · 개정 724) ══
+     ★★ 「미분류」가 ★ 두 뜻으로 읽혔다 —
+       ★ ① 차종 이름을 모르는 매물 · ★ ② 아직 아무 처리도 안 된 매물
+     ★ ★ 마스터께서 정하실 것은 ★ ② 뿐이다 — ★ 맨 위에 굵게.
+       ★ 나머지 둘은 ★ 쌓인 것이 아니라 ★ **갈무리된 것**이다 — ★ 건수만 · 접어 둔다 -->
+<p class="sentence" style="font-size:1.15em">
+  <b>★ 여쭐 것 {{ nr.ask_count | num }}건</b>
+  {% if !nr.ask_count %}<span class="dim">— 지금 정하실 것이 없습니다</span>{% endif %}
+  {% if nr.ask_count %}<span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>{% endif %}
+</p>
+<details class="card tight">
+  <summary><span class="dim">접어 둔 것 {{ nr.folded_count | num }}건 ·
+    팔린 것 {{ nr.gone_count | num }}건 — 펼치기 ▾</span></summary>
+  <p class="muted">★ <strong>접어 둔 것</strong>은 갈래가 달라 뺀 것입니다 —
+    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.
+    갈래를 넓히시면 되살아납니다.<br>
+    ★ <strong>팔린 것</strong>은 목록에서 사라진 것입니다 —
+    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.<br>
+    ★ 둘 다 <strong>쌓인 것이 아니라 갈무리된 것</strong>입니다. 여쭐 것이 아닙니다.</p>
+</details>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
   <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·
@@ -120,10 +136,26 @@
   나머지 축은 정상으로 판정됩니다.</p>
 
 <h2>★ 1 미분류 — ★ 마스터께 묻는 자리</h2>
-<!-- ★★ 08-24 가이드 지적 — ★ 「세 숫자만 있어 나도 헷갈렸다」.
-     ★ ★ 한 줄로 먼저 말한다 — ★ 「물을 것이 몇 건인가」가 답이다 -->
-<p class="sentence"><b>미분류 {{ nr.unmatched_total | num }}건</b> —
-  이것이 <strong>마스터께 여쭐 것</strong>입니다.</p>
+<!-- ══ 세 줄 (UI_REVIEW 14-7 · 개정 724) ══
+     ★★ 「미분류」가 ★ 두 뜻으로 읽혔다 —
+       ★ ① 차종 이름을 모르는 매물 · ★ ② 아직 아무 처리도 안 된 매물
+     ★ ★ 마스터께서 정하실 것은 ★ ② 뿐이다 — ★ 맨 위에 굵게.
+       ★ 나머지 둘은 ★ 쌓인 것이 아니라 ★ **갈무리된 것**이다 — ★ 건수만 · 접어 둔다 -->
+<p class="sentence" style="font-size:1.15em">
+  <b>★ 여쭐 것 {{ nr.ask_count | num }}건</b>
+  {% if !nr.ask_count %}<span class="dim">— 지금 정하실 것이 없습니다</span>{% endif %}
+  {% if nr.ask_count %}<span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>{% endif %}
+</p>
+<details class="card tight">
+  <summary><span class="dim">접어 둔 것 {{ nr.folded_count | num }}건 ·
+    팔린 것 {{ nr.gone_count | num }}건 — 펼치기 ▾</span></summary>
+  <p class="muted">★ <strong>접어 둔 것</strong>은 갈래가 달라 뺀 것입니다 —
+    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.
+    갈래를 넓히시면 되살아납니다.<br>
+    ★ <strong>팔린 것</strong>은 목록에서 사라진 것입니다 —
+    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.<br>
+    ★ 둘 다 <strong>쌓인 것이 아니라 갈무리된 것</strong>입니다. 여쭐 것이 아닙니다.</p>
+</details>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
   <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·

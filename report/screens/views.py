@@ -547,6 +547,13 @@ class NotReadyView:
     out_of_scope_total: int = 0
     # ★ 3절 — ★ 등록부 미분류.  ★ 이것은 ★ 판정을 막는다 (V4-11)
     field_unclassified: int = 0
+    # ★★ 세 줄 (UI_REVIEW 14-7 · 개정 724) — ★ 「미분류」가 ★ 두 뜻으로 읽혔다.
+    #   ★ ① 여쭐 것 — ★ 마스터께서 정하실 것 (`new`)
+    #   ★ ② 접어 둔 것 (`out_of_scope`) · ★ ③ 팔린 것 (`gone`)
+    #   ★★ ★ 여쭐 것만 맨 위에 굵게 — ★ 나머지 둘은 건수만 · 접어 둔다
+    ask_count: int = 0
+    folded_count: int = 0
+    gone_count: int = 0
 
 
 @dataclass(frozen=True)
