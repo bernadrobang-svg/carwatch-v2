@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>v4 관심 시안 — 반응형 340 · 640 · 1180</title>
+<title>v4pc 관심 시안 — PC 1180</title>
 <style>
 :root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
 --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
@@ -9,29 +9,29 @@
 *{box-sizing:border-box}
 body{margin:0;background:#000;color:var(--text);
 font:15px/1.55 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
-.v4-wrap{width:100%;max-width:1180px;margin:0 auto;background:var(--bg);
-min-height:100vh;padding-bottom:64px;position:relative}
+.v4-wrap{width:1180px;max-width:1180px;margin:0 auto;background:var(--bg);
+min-height:100vh;padding-bottom:0;position:relative}
 .v4-note{font-size:12px;color:var(--faint);line-height:1.6}
 
 .v4-top{position:sticky;top:0;z-index:9;background:var(--bg);
 padding:10px 14px 8px;border-bottom:1px solid var(--line)}
-.v4-title{font-size:17px;font-weight:700}
+.v4-title{font-size:20px;font-weight:700}
 .v4-sub{font-size:12px;color:var(--dim);margin-top:2px}
 
-.v4-tabs{position:fixed;bottom:0;left:0;right:0;max-width:1180px;margin:0 auto;
-display:flex;background:var(--surface);border-top:1px solid var(--line2);z-index:10}
-.v4-tabs a{flex:1;text-align:center;padding:9px 0 11px;font-size:11px;
+.v4-tabs{display:flex;background:transparent;border-bottom:1px solid var(--line);
+justify-content:flex-start;padding:0 20px}
+.v4-tabs a{flex:0 0 auto;padding:10px 14px;font-size:13px;
 color:var(--dim);text-decoration:none}
 .v4-tabs a.on{color:var(--amber)}
-.v4-tabs b{display:block;font-size:17px;line-height:1.2;font-weight:400}
+.v4-tabs b{display:none}
 
-.v4-cards{display:block}
-.v4-card{background:var(--surface);border-bottom:1px solid var(--line);padding:12px 14px}
+.v4-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line)}
+.v4-card{background:var(--surface);padding:14px 18px}
 .v4-chg{font-size:14px;font-weight:700;margin-bottom:6px}
 .v4-chg.dn{color:var(--ok)} .v4-chg.up{color:var(--no)}
 .v4-chg.gone{color:var(--no)} .v4-chg.same{color:var(--faint);font-weight:400;font-size:13px}
 .v4-row{display:flex;gap:10px}
-.v4-thumb{width:104px;height:78px;flex:0 0 104px;border-radius:8px;
+.v4-thumb{width:160px;height:120px;flex:0 0 160px;border-radius:8px;
 background:var(--surface2);border:1px solid var(--line);
 display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)}
 .v4-mid{flex:1;min-width:0}
@@ -46,49 +46,20 @@ border-radius:4px;padding:0 6px;font-size:12px;margin-right:5px}
 .v4-btn{flex:1;min-height:44px;background:var(--surface2);border:1px solid var(--line2);
 border-radius:8px;color:var(--text);font-size:13px;font-family:inherit}
 .v4-btn.go{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
-.v4-seg{display:flex;gap:6px;padding:8px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.v4-seg{display:flex;gap:6px;padding:10px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .v4-seg button{min-height:36px;white-space:nowrap;background:var(--surface2);
 border:1px solid var(--line2);border-radius:18px;color:var(--dim);font-size:12.5px;padding:0 12px}
 .v4-seg button.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
-.v4-box{margin:12px 14px;padding:11px 12px;border:1px solid var(--amber);
+.v4-box{margin:14px 20px;padding:11px 12px;border:1px solid var(--amber);
 border-radius:10px;background:var(--surface)}
 .v4-lbl{font-size:12px;color:var(--dim);margin-bottom:5px}
-h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
+h3{font-size:13px;font-weight:600;margin:20px 20px 6px;color:var(--dim)}
 
 /* ★★★ 세 구간 — 마스터 확정 08-25
    ★ 정보를 빼지 않는다.  ★ 자리만 바꾼다 */
 
-/* ★ 340 아래에서도 안 깨진다 — 사진만 줄인다.  글자는 그대로 */
-@media (max-width:359px){
-  .v4-thumb{width:88px;height:66px;flex:0 0 88px}
-  .v4-price{font-size:15px}
-  .v4-btn{font-size:12px}
-}
 
-/* ★ 태블릿 640 — 카드를 둘씩 · 메뉴를 위로 */
-@media (min-width:640px){
-  .v4-wrap{padding-bottom:0}
-  .v4-top{padding:14px 20px 10px}
-  .v4-title{font-size:20px}
-  .v4-cards{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
-  .v4-card{border-bottom:0;padding:14px 18px}
-  .v4-thumb{width:128px;height:96px;flex:0 0 128px}
-  .v4-box,.v4-seg{padding-left:20px;padding-right:20px}
-  .v4-box{margin-left:20px;margin-right:20px}
-  h3{margin-left:20px}
-  .v4-tabs{position:static;border-top:0;border-bottom:1px solid var(--line);
-    background:transparent;justify-content:flex-start;padding:0 20px}
-  .v4-tabs a{flex:0 0 auto;padding:10px 14px;font-size:13px}
-  .v4-tabs b{display:none}
-}
 
-/* ★ PC 1024~1180 — 카드를 셋씩 · 사진을 키운다 */
-@media (min-width:1024px){
-  .v4-cards{grid-template-columns:1fr 1fr 1fr}
-  .v4-thumb{width:160px;height:120px;flex:0 0 160px}
-  .v4-name{font-size:15px}
-  .v4-price{font-size:18px}
-}
 </style></head><body>
 <div class="v4-wrap">
 
@@ -198,11 +169,10 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
 </div>
 
 <h3>지켜야 하는 것</h3>
-<div class="v4-note" style="margin:0 14px 24px">
-★★★ <b>한 시안이 세 구간을 다 돈다</b> (마스터 확정 08-25) —<br>
-&nbsp;&nbsp;모바일 <b>340~639</b> · 카드 하나씩 · 메뉴 <b>아래</b> · 사진 104×78 (340 아래는 88×66)<br>
-&nbsp;&nbsp;태블릿 <b>640~1023</b> · 카드 <b>둘씩</b> · 메뉴 <b>위</b> · 사진 128×96<br>
-&nbsp;&nbsp;PC <b>1024~1180</b> · 카드 <b>셋씩</b> · 사진 160×120<br>
+<div class="v4-note" style="margin:0 20px 24px">
+★★★ <b>이것은 PC 판이다</b> — 폭 <b>1180 고정</b> · 카드 <b>셋씩</b> · 메뉴 <b>위</b> · 사진 160×120<br>
+&nbsp;&nbsp;★ 모바일은 <b>따로 있다</b> — <code>v4m_watch_시안.html</code> (340~640 가변)<br>
+★★★ <b>두 판이 담는 정보는 똑같다</b> (마스터 확정 08-25) — 자리만 다르다<br>
 ★★★ <b>좁아진다고 정보를 빼지 않는다</b> — <b>자리만 바꾼다.</b>  글자를 줄이거나 감추지 마라<br>
 &nbsp;&nbsp;★ 등급 · 점수 · 판정 · 보증 · 담은 날 — <b>세 구간에서 다 보인다</b><br>
 ★★ <b>한 화면에 한 가지 일만</b> — 여기는 <b>지켜보는 곳</b>이다<br>
