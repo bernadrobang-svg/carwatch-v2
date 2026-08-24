@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**111파일 · 37,080줄 · 2,113KB**
+**111파일 · 37,127줄 · 2,116KB**
 
 ★ 800줄을 넘는 파일 8개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -30,7 +30,7 @@
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 198 | 7 |
 | `ENCAR_ROBOTS.md` | 208 | 10 |
-| `HEYDEALER_API.md` | 268 | 13 |
+| `HEYDEALER_API.md` | 314 | 15 |
 | `HYUNDAI_CERTIFIED_API.md` | 430 | 20 |
 | `KBCHACHACHA_API.md` | 302 | 15 |
 | `KCAR_API.md` | 333 | 16 |
@@ -102,7 +102,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 130 | 7 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md` | 711 | 444 |
+| `guide/03_이력.md` | 712 | 445 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 528 | 20 |
 | `guide/05_가이드역할.md`  ★ | 847 | 38 |

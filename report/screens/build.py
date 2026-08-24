@@ -1477,7 +1477,17 @@ def _compare_conclusion(rows: list) -> str:
 def view_compare(account: Account, conn, listing_ids: list[int],
                  calc_version: str, fin_cfg: dict, policy: dict,
                  root: str = ".") -> CompareView:
-    """분모가 다르면 경고 · 버전이 다르면 비교 불가 (V6-05)."""
+    """분모가 다르면 경고 · 버전이 다르면 비교 불가 (V6-05).
+
+    ★★ 고른 것이 없으면 ★ **아무것도 안 그린다** (UI_REVIEW 11-3 · 마스터 결정 08-24).
+      ★ ★ 실측 08-24 — ★ `ids` 없이 열면 ★ 전건을 그려 ★ **9,008,767B · 35.2초**였다.
+        ★ 고른 둘을 주면 ★ 7,438B · 0.34초다 — ★ 1,211배다
+      ★ ★ 비교는 ★ 「관심에서 고른 것」만 받는다.  ★ 목록 전체를 견주는 화면이 아니다
+    """
+    if not listing_ids:
+        return CompareView([], [], {}, False, False,
+                           conclusion="관심 화면에서 견줄 매물을 고르십시오 — "
+                                      "카드의 네모를 누른 뒤 「고른 N대 비교하기」")
     views = [render_listing(conn, i, calc_version, fin_cfg, policy, root)
              for i in listing_ids]
     axes = [a.axis for a in views[0].axes] if views else []

@@ -214,10 +214,13 @@
         {% for c in r.axis_chips %}<a class="chip-{{ c.tone }} axis-{{ c.tone }}"
           href="{{ c.filter_url }}" title="{{ c.label }} — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >{{ c.head }}<b>{{ c.mark }}</b></a>{% endfor %}
-        <!-- ★ 최종 확인은 엔카에서 한다 (V11-63).  주소는 살린다 -->
-        <a href="/detail/{{ r.listing_id }}" class="mini">근거</a>
+        <!-- ★★ 「상세 ▸」 — ★ /why 로 가는 문이 147개 중 146개가 「후보」에 갇혀 있었다
+             (UI_REVIEW 11-2 · S46-47).  ★ 목록에서 「왜 이 등급인가」를 물을 수 있어야 한다 -->
+        <a href="/detail/{{ r.listing_id }}" class="btn mini"
+          title="판정 근거를 봅니다 — 왜 이 등급인가">상세 ▸</a>
+        <!-- ★ 최종 확인은 원문 사이트에서 한다 (V11-63).  주소는 살린다 -->
         {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener"
-          class="btn go mini" title="엔카 원문 매물로 갑니다">엔카에서 보기 ↗</a>{% endif %}
+          class="btn go mini" title="원문 매물로 갑니다">{{ r.site_badge }}에서 보기 ↗</a>{% endif %}
       </div>
     </div>
   </div>

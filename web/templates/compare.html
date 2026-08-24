@@ -4,7 +4,13 @@
   <a class="btn" href="/recommend" title="추천에서 담습니다">추천에서 담기</a>
   <a class="clear" href="/compare">전부 지우기</a>
 </div>
-{% if !c.rows %}<p class="muted">비교할 매물을 고르십시오. <code>/compare?ids=1,2</code></p>{% endif %}
+{% if !c.rows %}
+<!-- ★★ 비교는 ★ 관심에서 고른 것만 받는다 (UI_REVIEW 11-3 · 마스터 결정 08-24).
+     ★ 전건을 그리면 ★ 9MB · 35초다 (실측 08-24) -->
+<p class="notice">비교할 매물을 <a href="/watch">관심</a>에서 고르십시오 —
+  카드의 네모를 누른 뒤 <strong>「고른 N대 비교하기」</strong>를 누릅니다.</p>
+<p class="muted">걸어 두신 주소도 그대로 삽니다 — <code>/compare?ids=1,2</code></p>
+{% endif %}
 {% if c.denominator_mismatch %}
 <p class="warn-warn">★ 분모가 다릅니다. 총점을 직접 비교하지 마십시오 — 비율로 보십시오.</p>
 {% endif %}
