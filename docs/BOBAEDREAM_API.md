@@ -1,7 +1,7 @@
 # 보배드림 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.25-r728
+version  SPEC-2026.08.25-r730
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 641 · 실측 08-24
 checks   S46-28 · S46-31
@@ -103,6 +103,7 @@ POST https://www.bobaedream.co.kr/mycar/proc/ajax_maker_new.php
 | 벤츠 | **21** | — |
 | 아우디 | **32** | — |
 | 렉서스 | **13** | — |
+| ★ **르노코리아(삼성)** | ★ **26** | ★ **49** |
 | 볼보 | **23** | — |
 | 테슬라 | **1006** | — |
 
@@ -126,10 +127,12 @@ POST https://www.bobaedream.co.kr/mycar/proc/ajax_maker_new.php
 | `XC60_IMPORT` | 23 | **1093** | XC60 |
 | `V60CC_IMPORT` | 23 | **1102** | V60 |
 | `MODEL_Y` | 1006 | **1073** | 모델 Y |
+| ★ `KOLEOS_HEV` | ★ **26** | ★ **1299** | ★ **그랑 콜레오스** |
 
 ```
-★ ★ **18종 중 16종**에 넣었다 (`config/targets.json`)
-★ ★ `KOLEOS_HEV` — ★ 르노코리아가 ★ 제조사 목록에 ★ 다른 이름으로 있다.  ★ 개발측이 재라
+★★ ★ **19종 다 넣었다** (`config/targets.json` · 개정 730)
+★ ★ 르노는 ★ 이름이 ★ **「르노코리아(삼성)」**이다 (`26`) — ★ 「르노」(`61`)는 ★ **다른 것**이다
+   ★ ★ `61` 에는 ★ 모델 아홉뿐이고 ★ 콜레오스가 없다.  ★ **`26` 을 써라**
 ★ ★ 「X3 M」(1025) · 「iX3」(1115) · 「SQ5」(795) 는 ★ **우리 대상이 아니다.  ★ 안 넣었다**
 필수  ★ 목록을 부를 때 ★ `maker_no` ＋ `model_no` 를 ★ 함께 준다 (규격 1a)
 필수  ★ ★ **`car_cnt` 는 ★ 모델 층에서 ★ null 로 온다** — ★ 건수는 목록을 받아 세라

@@ -269,7 +269,13 @@
           "model": "4LrrVo",
           "_차명": "그랑 콜레오스"
         }
-      ]
+      ],
+      "bobaedream": {
+        "maker_no": "26",
+        "model_no": "1299",
+        "_차명": "르노코리아(삼성) 그랑 콜레오스",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      }
     },
     "year_range": "202400..",
     "price_range": "..6000",
