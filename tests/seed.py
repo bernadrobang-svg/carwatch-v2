@@ -61,9 +61,13 @@ def build_seed_db(dest: str, root: str = ROOT,
     cfg = dict(_cfg(root, "endpoints.json")["encar"])
     cfg["interval_sec"] = [0.0, 0.0]      # 시험에서는 대기하지 않는다
     targets = load_targets(os.path.join(root, "config", "targets.json"))
-    # ★ 한 collect_group 만 쓴다.  스텁이 G80 을 낸다
+    # ★ 한 묶음만 쓴다.  ★ 스텁이 G80 을 낸다
+    # ★★ `collect_group` 으로 고르지 않는다 — ★ 개정 632 로 ★ 18종이 전부
+    #   「multi」가 됐다.  ★ 그러면 이 자리가 ★ 빈 목록이 되어 ★ 씨앗이 죽는다
+    #   (실측 08-24 — S5「active 매물 0건」으로 시험 12파일이 무너졌다)
+    # ★ 차종 키로 고른다 — ★ 스텁이 내는 것이 ★ G80 이라는 사실은 안 바뀐다
     targets = {k: v for k, v in targets.items()
-               if v.get("collect_group") == "encar:G80"}
+               if k in ("G80_25T", "G80_EV")}
     _ensure_secrets(root)
     adapter = EncarAdapter(cfg)
     # ★ DDL 은 소스다 — 사본 root 가 아니라 저장소에서 읽는다.

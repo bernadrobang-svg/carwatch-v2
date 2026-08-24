@@ -246,7 +246,7 @@ def setup(total=45, drop_badge=False, one_group=True, root=None):
     targets = load_targets(os.path.join(ROOT, "config", "targets.json"))
     if one_group:
         targets = {k: v for k, v in targets.items()
-                   if v["collect_group"] == "encar:G80"}
+                   if k in ("G80_25T", "G80_EV")}
     adapter = EncarAdapter(cfg)
     stub = StubEncar(total, drop_badge)
     conn = open_db(os.path.join(tempfile.mkdtemp(), "t.db"),

@@ -60,10 +60,22 @@ def _py_files() -> list:
     return sorted(out)
 
 
+# ★ `say(...)` 를 ★ 검사로 세는 자리 (아래 `_checks_in_code`).
+#   ★★ `say` 는 ★ 세 파일에서 ★ 뜻이 다르다 —
+#     `tools/check_src.py` · `tools/check_screens.py` → ★ 검사 한 줄이다
+#     `report/screens/build.py:2495`                  → ★ 화면 문구다 (tone, head, …)
+#   ★ 화면 쪽 `say("", …)` 의 첫 인자는 ★ 빈 문자열이라 ★ 코드로 읽으면 터진다
+#   ★ 실측 08-24 — ★ `build_index.py` 가 ★ 194행 `head[0]` 에서 IndexError 로 죽어
+#     ★ INDEX·CHECKS 가 ★ 낡은 채 굳어 있었다 (줄 수 29곳 어긋남)
+SAY_DIRS = ("tools",)
+
+
 def _checks_in_code() -> dict:
-    """validate/ 의 Check(...) 와 tools/ 의 say(...) 를 뽑는다.
+    """validate/ 의 Check(...) 와 ★ tools/ 의 say(...) 를 뽑는다.
 
     ★ 정규식으로 긁지 않는다.  AST 로 읽어야 인자 위치가 확실하다
+    ★★ `say` 는 ★ `tools/` 것만 본다 — ★ 이 함수의 뜻이 처음부터 그것이었다.
+       ★ `report/screens/` 의 `say` 는 ★ 화면 문구라 ★ 검사가 아니다
     """
     found: dict = {}
     for path in _py_files():
@@ -84,7 +96,8 @@ def _checks_in_code() -> dict:
                     "code": args[1], "phase": args[0], "title": args[2],
                     "severity": args[3] if len(args) > 3 else "",
                     "source": rel, "line": node.lineno}
-            elif name == "say" and len(args) >= 2:
+            elif (name == "say" and len(args) >= 2
+                  and rel.split(os.sep)[0] in SAY_DIRS):
                 found.setdefault(args[0], {
                     "code": args[0], "phase": args[0].split("-")[0],
                     "title": args[1], "severity": "fatal",
@@ -191,7 +204,17 @@ def build_checks() -> tuple:
 
     def key(c: str):
         head, _, tail = c.partition("-")
-        return (head[0], int(head[1:] or 0), int(re.sub(r"\D", "", tail) or 0))
+        if not head:
+            raise ValueError(
+                f"검사 코드가 비어 있다: {c!r} — ★ `say(...)` 를 검사로 잘못 센 것이다. "
+                "★ SAY_DIRS 를 보라 (tools/ 것만 세야 한다)")
+        # ★★ 마지막에 ★ 코드 자체를 둔다 — ★ 키가 동률이면 ★ 차례가 안 정해진다.
+        #   ★ `sorted` 는 안정 정렬이라 ★ 동률은 ★ 들어온 차례를 지키는데,
+        #   ★ 들어오는 것이 ★ `set` 이라 ★ 실행마다 차례가 바뀐다 (해시 시드).
+        #   ★ 실측 08-24 — ★ 같은 입력에 ★ 줄 차례가 달라져
+        #     ★ 「생성물이 낡았다」가 ★ 늘 뜬다 (V1-08 · V2-10b · V4-06 …)
+        return (head[0], int(head[1:] or 0),
+                int(re.sub(r"\D", "", tail) or 0), c)
 
     lines = [
         "# 검사 색인 — 규격 ↔ 코드",
@@ -355,10 +378,19 @@ def build_doc_index() -> tuple:
     for base, dirs, files in os.walk(docs):
         dirs[:] = [d for d in dirs if not d.startswith(".")]
         for name in sorted(files):
-            if not name.endswith(".md") or name in MADE_BY_MACHINE:
+            if not name.endswith(".md"):
                 continue
             path = os.path.join(base, name)
             rel = os.path.relpath(path, docs).replace("\\", "/")
+            # ★★ 이름이 아니라 ★ 경로로 가른다 (실측 08-24) —
+            #   ★ 이름으로 가르면 ★ `trace/INDEX.md` 가 ★ 생성물로 오해돼 빠진다.
+            #   ★ 그것은 ★ 사람이 쓴 지시서다
+            # ★ 생성물 넷(CHECKS·SOURCE·SCHEMA·MAPPING)은 ★ 함께 싣는다 —
+            #   ★ 규칙 11 이 ★ 「개발측이 쓰는 docs 파일」이라 못 박았다
+            # ★ 자기 자신(INDEX.md)만 뺀다 — ★ 실으면 줄 수가 스스로 바뀌어
+            #   ★ 생성기가 ★ 결정적이지 않게 된다 (S46-32 가 늘 빨간불이 된다)
+            if rel == "INDEX.md":
+                continue
             with open(path, encoding="utf-8") as f:
                 body = f.read()
             n = body.count("\n") + 1
@@ -396,7 +428,47 @@ def build_doc_index() -> tuple:
     return len(rows), big
 
 
+# ★★ 생성물 — ★ 손으로 고치지 않는다.  ★ 생성기가 정본이다 (규칙 11)
+GENERATED = ("docs/CHECKS.md", "docs/SOURCE.md", "docs/SCHEMA.md",
+             "docs/INDEX.md")
+
+
+def check_fresh() -> int:
+    """★ 생성물이 ★ 낡았는가 (명령서 29장 ② · 검사 S46-32).
+
+    ★ 생성기를 돌려 ★ 결과가 ★ 파일과 같은지 본다.  ★ 다르면 낡은 것이다
+    ★ 실측 08-24 — ★ 생성기가 죽어 있는 동안 ★ 줄 수가 29곳 어긋나 있었다.
+      ★ 이 검사가 있었으면 ★ 죽은 날 바로 잡혔다
+    ★ 파일을 ★ 고치지 않는다 — ★ 재 보고 되돌린다
+    """
+    before = {}
+    for rel in GENERATED:
+        q = os.path.join(ROOT, rel)
+        before[rel] = open(q, encoding="utf-8").read() if os.path.isfile(q) else None
+    try:
+        build_checks(); build_source(); build_schema(); build_doc_index()
+        stale = []
+        for rel in GENERATED:
+            q = os.path.join(ROOT, rel)
+            now = open(q, encoding="utf-8").read() if os.path.isfile(q) else None
+            if now != before[rel]:
+                stale.append(rel)
+    finally:
+        # ★ 재 보기만 한다.  ★ 있던 그대로 되돌린다
+        for rel, said in before.items():
+            if said is not None:
+                open(os.path.join(ROOT, rel), "w", encoding="utf-8").write(said)
+    if stale:
+        print("★ 생성물이 낡았다 — " + " · ".join(stale))
+        print("  고치는 법 — python3.11 tools/build_index.py")
+        return 1
+    print(f"생성물 {len(GENERATED)}개가 ★ 최신이다")
+    return 0
+
+
 def main() -> int:
+    if "--check" in sys.argv:
+        return check_fresh()
     n, only_spec, only_code, kinds = build_checks()
     files = build_source()
     print(f"검사 {n}개 → docs/CHECKS.md")

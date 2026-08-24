@@ -555,7 +555,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                     skipped_old += 1
                     continue
                 cg = _group_of(parsed, groups)
-                cls = classify(targets, cg, parsed.get("fuel_raw"),
+                cls = classify_in_group(targets, groups, cg,
+                                        parsed.get("fuel_raw"),
                                parsed.get("trim_badge"), None, None)
                 parsed.update(
                     target_key=cls.target_key,
@@ -709,7 +710,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                         conn, adapter.site_code, sdid, at)
                     flush_dealer_pii(conn, parsed["dealer_id"], dealer_pii, at)
                 cg = _group_of({"listing_id": lid}, groups, conn=conn)
-                cls = classify(targets, cg, _fuel_of(conn, lid),
+                cls = classify_in_group(targets, groups, cg,
+                                        _fuel_of(conn, lid),
                                _badge_of(conn, lid), parsed.get("trim_grade_name"),
                                parsed.get("displacement_cc"))
                 vid, src, conf = resolve_vehicle_id(
@@ -873,6 +875,27 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
 
     return {"S0": s0, "S1": s1, "S2": s2, "S3": s3,
             "S4": s4, "S5": s5, "S6": s6, "S7": s7, "S8": s8, "S8.5": s85}
+
+
+def classify_in_group(targets: dict, groups, cg: str, *args):
+    """★ 그 묶음의 차종만 후보로 두고 분류한다.
+
+    ★★ 왜 — ★ `collect_group` 이 ★ 18종 ★ 전부 「multi」가 됐다 (개정 632).
+      ★ 그러면 ★ `classify` 가 ★ 열여덟을 ★ 한 후보군으로 본다 —
+      ★ G80_25T 와 G70_25T 는 ★ 연료·배기량이 같아 ★ 「후보 둘」로 ★ 아무것도 안 붙는다
+      ★ 그리고 ★ 묶음 이름이 ★ 「multi:G80」이라 ★ 「multi」와 안 맞아 ★ 후보가 0 이 된다
+      ★ ★ 실측 08-24 — ★ 그래서 ★ 전건 `out_of_scope` 가 되어 ★ 씨앗이 죽었다
+    ★ `CollectGroup` 은 ★ 제 차종을 안다 (`target_keys`) — ★ 그것으로 좁힌다.
+      ★ 한 묶음은 ★ 쿼리가 같은 것들이라 ★ 좁혀도 잃는 것이 없다
+    """
+    got = next((g for g in groups if g.group_key == cg), None)
+    if got is None:
+        return classify(targets, cg, *args)
+    cands = {k: v for k, v in targets.items() if k in got.target_keys}
+    if not cands:
+        return classify(targets, cg, *args)
+    said = next(iter(cands.values())).get("collect_group") or cg
+    return classify(cands, said, *args)
 
 
 def _group_of(parsed, groups, conn=None) -> str:

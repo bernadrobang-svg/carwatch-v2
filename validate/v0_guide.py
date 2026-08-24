@@ -271,6 +271,13 @@ def s43_2c_no_hda() -> tuple[bool, str]:
         # ★ 이 검사 파일 자신은 뺀다 — 낱말을 적어 두어야 잡을 수 있다
         if q.name == "v0_guide.py":
             continue
+        # ★★ 생성물도 뺀다 (실측 08-24) — ★ `docs/SOURCE.md` 가 ★ 코드의 함수
+        #   이름을 그대로 싣는데 ★ 이 검사의 이름이 ★ `s43_2c_no_hda` 다.
+        #   ★ 생성기가 살아나자 ★ 자기 이름 때문에 ★ 자기가 걸렸다.
+        #   ★ 생성물은 ★ 코드를 비추는 거울이라 ★ 거기서 잡을 것이 아니다 —
+        #   ★ 진짜 HDA 가 코드에 있으면 ★ 그 코드 파일에서 잡힌다
+        if q.name in ("SOURCE.md", "CHECKS.md", "INDEX.md", "SCHEMA.md"):
+            continue
         for i, line in enumerate(_read(q).split("\n"), 1):
             if not pat.search(line):
                 continue
@@ -624,6 +631,61 @@ def s46_30_index_covers_docs() -> tuple[bool, str]:
     return True, "INDEX 가 docs 를 다 가리킨다"
 
 
+
+# ── S46-31 · S46-32 (명령서 29장 ②③) ────────────────────────────────
+ENDPOINTS = ROOT / "config" / "endpoints.json"
+# ★★ 규격 파일 이름과 ★ config 키가 ★ 늘 같지는 않다.  ★ 짝을 여기 적는다 —
+#   ★ 짝 표 없이 만들면 ★ 검사가 늘 빨간불이 되어 ★ 아무도 안 본다 (명령서 29장 ③)
+SITE_NAME_PAIRS = {
+    "hyundai_certified": "hyundai_cert",
+}
+# ★ 사이트가 아닌 규격 — ★ 세지 않는다
+NOT_A_SITE = ("multisite_mapping", "dedup_cross_site", "server_survival",
+              "target_key_map", "ui_review", "encar_robots")
+
+
+def s46_31_spec_sites_in_config() -> tuple[bool, str]:
+    """★ 규격이 있는 사이트가 ★ `config/endpoints.json` 에 있는가 (명령서 29장 ③).
+
+    ★ 규격만 쓰고 ★ 부르는 자리를 안 만들면 ★ 그 사이트는 ★ 영영 안 들어온다
+    """
+    got = json.loads(_read(ENDPOINTS) or "{}")
+    have = {k.lower() for k in got if not k.startswith("_")}
+    miss = []
+    for q in sorted((ROOT / "docs").glob("*_API.md")):
+        name = q.name[:-len("_API.md")].lower()
+        if name in NOT_A_SITE:
+            continue
+        key = SITE_NAME_PAIRS.get(name, name)
+        if key not in have:
+            miss.append(f"{q.name} → {key}")
+    if miss:
+        return False, (f"규격은 있는데 config 에 없다 {len(miss)}개 — "
+                       + " · ".join(miss))
+    return True, f"규격이 있는 사이트 전부가 config 에 있다 (사이트 {len(have)}개)"
+
+
+def s46_32_generated_fresh() -> tuple[bool, str]:
+    """★ 생성물(INDEX · CHECKS · SOURCE · SCHEMA)이 ★ 낡았으면 실패 (명령서 29장 ②).
+
+    ★ 실측 08-24 — ★ `build_index.py` 가 ★ 194행에서 죽어 있는 동안
+      ★ 생성물이 ★ 낡은 채 굳었다 (줄 수 29곳 어긋남).
+      ★★ 이 검사가 있었으면 ★ 죽은 날 바로 잡혔다
+    ★ 생성기를 ★ `--check` 로 돌린다 — ★ 파일을 고치지 않고 ★ 재 보고 되돌린다
+    """
+    import subprocess
+
+    tool = ROOT / "tools" / "build_index.py"
+    if not tool.is_file():
+        return False, "tools/build_index.py 가 없다"
+    got = subprocess.run([sys.executable, str(tool), "--check"],
+                         capture_output=True, text=True, cwd=str(ROOT))
+    said = " ".join(got.stdout.split())[:160]
+    if got.returncode != 0:
+        return False, said or "생성기가 죽었다 — python3.11 tools/build_index.py"
+    return True, said or "생성물이 최신이다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -646,6 +708,8 @@ CHECKS = (
     #   ★ 이것 하나로 ★ 검사가 늘 빨간불이면 ★ 진짜 실패가 묻힌다 (명령서 26장)
     ("S46-24", "facet 미확인 차종이 없는가", s46_24_facet_unconfirmed, "warn"),
     ("S46-30", "INDEX 가 docs 를 다 가리키는가", s46_30_index_covers_docs, "warn"),
+    ("S46-31", "규격이 있는 사이트가 config 에 있는가", s46_31_spec_sites_in_config),
+    ("S46-32", "생성물이 최신인가", s46_32_generated_fresh),
 )
 
 

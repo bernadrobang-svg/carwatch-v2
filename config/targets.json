@@ -3,7 +3,7 @@
   "_note": "본문 예시(0장 STEP 6)가 정본이다. year_range · price_range 는 target 최상위다. build_q 는 site_query 와 이 둘을 합쳐 조립한다",
   "G80_25T": {
     "label": "G80 2.5T",
-    "collect_group": "multi",
+    "collect_group": "encar:G80",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -28,7 +28,7 @@
   },
   "G80_EV": {
     "label": "G80 전동화",
-    "collect_group": "multi",
+    "collect_group": "encar:G80",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -48,7 +48,7 @@
   },
   "G70_25T": {
     "label": "G70 2.5T",
-    "collect_group": "multi",
+    "collect_group": "encar:G70",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -73,7 +73,7 @@
   },
   "G70_20T": {
     "label": "G70 2.0T",
-    "collect_group": "multi",
+    "collect_group": "encar:G70",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -98,7 +98,7 @@
   },
   "GV70_EV": {
     "label": "GV70 전동화",
-    "collect_group": "multi",
+    "collect_group": "encar:GV70",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -118,7 +118,7 @@
   },
   "GV60": {
     "label": "GV60",
-    "collect_group": "multi",
+    "collect_group": "encar:GV60",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -138,7 +138,7 @@
   },
   "KOLEOS_HEV": {
     "label": "그랑 콜레오스 1.5 E-TECH",
-    "collect_group": "multi",
+    "collect_group": "encar:KOLEOS",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -163,7 +163,7 @@
   },
   "SPORTAGE_LPI": {
     "label": "스포티지 LPi",
-    "collect_group": "multi",
+    "collect_group": "encar:SPORTAGE",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -183,7 +183,7 @@
   },
   "GRANDEUR_LPG": {
     "label": "그랜저 GN7 LPG",
-    "collect_group": "multi",
+    "collect_group": "encar:GRANDEUR",
     "site_query": {
       "encar": {
         "CarType": "Y",
@@ -203,7 +203,7 @@
   },
   "MODEL_Y": {
     "label": "테슬라 모델Y",
-    "collect_group": "multi",
+    "collect_group": "encar:MODEL_Y",
     "site_query": {
       "encar": {
         "CarType": "N",
