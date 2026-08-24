@@ -1,7 +1,7 @@
 # 사이트 → `core_listing` 칼럼 매핑
 
 ```
-version  SPEC-2026.08.24-r685
+version  SPEC-2026.08.25-r727
 follows  `docs/INDEX.md`
 sources  실측 08-23
 checks   S46-38 · S46-39

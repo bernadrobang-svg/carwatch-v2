@@ -1,7 +1,7 @@
 # 부록 A. 문서 자체 점검 (`check_spec.py`)
 
 ```
-version  SPEC-2026.08.24-r685
+version  SPEC-2026.08.25-r727
 follows  ★ 참고 — 정본이 아니다
 sources  실측 08-22
 checks   S46-38 · S46-39

@@ -1,7 +1,7 @@
 # 서버가 살아 있는가 — ★ 실측 규격
 
 ```
-version  SPEC-2026.08.24-r685
+version  SPEC-2026.08.25-r727
 follows  `docs/INDEX.md`
 sources  실측 08-23
 checks   S46-38 · S46-39

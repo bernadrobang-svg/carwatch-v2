@@ -1,7 +1,7 @@
 # 보배드림 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.24-r670
+version  SPEC-2026.08.25-r727
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 641 · 실측 08-24
 checks   S46-28 · S46-31

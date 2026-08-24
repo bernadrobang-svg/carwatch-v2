@@ -1,7 +1,7 @@
 # K카 API — 목록 · 상세 정본
 
 ```
-version  SPEC-2026.08.24-r670
+version  SPEC-2026.08.25-r727
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 626 · 실측 08-24
 checks   S46-5 · S46-31

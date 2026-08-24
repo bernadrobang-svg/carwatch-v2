@@ -1,7 +1,7 @@
 ## STEP 19 — `list` 응답 → 필드
 
 ```
-version  SPEC-2026.08.24-r685
+version  SPEC-2026.08.25-r727
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39

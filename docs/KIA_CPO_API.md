@@ -1,7 +1,7 @@
 # 기아 인증중고차(CPO) API — 조사
 
 ```
-version  SPEC-2026.08.24-r670
+version  SPEC-2026.08.25-r727
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 543 · 실측 08-22
 checks   S46-5 · S46-31
