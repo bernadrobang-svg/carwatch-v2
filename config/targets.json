@@ -9,7 +9,21 @@
         "CarType": "Y",
         "Manufacturer": "제네시스",
         "ModelGroup": "G80"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "zMbV3M",
+          "model": "o6eYZ3",
+          "_차명": "더 올 뉴 G80 FL"
+        },
+        {
+          "brand": "vgm7Do",
+          "model-group": "zMbV3M",
+          "model": "23r7Vo",
+          "_차명": "더 올 뉴 G80"
+        }
+      ]
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -34,7 +48,15 @@
         "CarType": "Y",
         "Manufacturer": "제네시스",
         "ModelGroup": "G80"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "zMbV3M",
+          "model": "EpbKE4",
+          "_차명": "e-G80"
+        }
+      ]
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -54,7 +76,15 @@
         "CarType": "Y",
         "Manufacturer": "제네시스",
         "ModelGroup": "G70"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "YyGdqe",
+          "model": "moOK9o",
+          "_차명": "더 뉴 G70"
+        }
+      ]
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -79,7 +109,15 @@
         "CarType": "Y",
         "Manufacturer": "제네시스",
         "ModelGroup": "G70"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "YyGdqe",
+          "model": "moOK9o",
+          "_차명": "더 뉴 G70"
+        }
+      ]
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -104,7 +142,15 @@
         "CarType": "Y",
         "Manufacturer": "제네시스",
         "ModelGroup": "GV70"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "peqqRe",
+          "model": "Mo7j63",
+          "_차명": "e-GV70"
+        }
+      ]
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -124,7 +170,15 @@
         "CarType": "Y",
         "Manufacturer": "제네시스",
         "ModelGroup": "GV60"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "rk0bBy",
+          "model": "d4BOG3",
+          "_차명": "GV60"
+        }
+      ]
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -144,7 +198,15 @@
         "CarType": "Y",
         "Manufacturer": "르노코리아(삼성)",
         "ModelGroup": "그랑 콜레오스"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "xgrX7o",
+          "model-group": "1yRqnM",
+          "model": "4LrrVo",
+          "_차명": "그랑 콜레오스"
+        }
+      ]
     },
     "year_range": "202400..",
     "price_range": "..6000",
@@ -169,7 +231,15 @@
         "CarType": "Y",
         "Manufacturer": "기아",
         "ModelGroup": "스포티지"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "2oV0gK",
+          "model-group": "relJ0M",
+          "model": "4yyym4",
+          "_차명": "더 뉴 스포티지 5세대(NQ5)"
+        }
+      ]
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -189,7 +259,21 @@
         "CarType": "Y",
         "Manufacturer": "현대",
         "ModelGroup": "그랜저"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "xoKegB",
+          "model-group": "rk0Jmy",
+          "model": "5oqNnp",
+          "_차명": "더 뉴 그랜저 IG"
+        },
+        {
+          "brand": "xoKegB",
+          "model-group": "rk0Jmy",
+          "model": "Yp5PJo",
+          "_차명": "그랜저 IG"
+        }
+      ]
     },
     "year_range": "202300..",
     "price_range": "..6000",
@@ -233,7 +317,15 @@
         "Manufacturer": "BMW",
         "ModelGroup": "X3",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "0W5AWm",
+          "model-group": "RyW75y",
+          "model": "ZokDMp",
+          "_차명": "BMW X3 (G01)"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,
@@ -345,7 +437,15 @@
         "Manufacturer": "렉서스",
         "ModelGroup": "RX",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "EW3do3",
+          "model-group": "relm4k",
+          "model": "Eoml03",
+          "_차명": "렉서스 RX450h 4세대"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,
@@ -374,7 +474,15 @@
         "Manufacturer": "볼보",
         "ModelGroup": "XC60",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "Jo6rOo",
+          "model-group": "VMjr8M",
+          "model": "qpRDG3",
+          "_차명": "볼보 XC60 2세대"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,
@@ -403,7 +511,15 @@
         "Manufacturer": "볼보",
         "ModelGroup": "S60",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "Jo6rOo",
+          "model-group": "KM5VJy",
+          "model": "n3Qkxp",
+          "_차명": "볼보 S60 3세대"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,
@@ -446,5 +562,6 @@
     "_collect_group_why": "★ 08-24 마스터 확정 — ★ 한 사이트 전담으로 묶지 않는다.  ★ 엔카·KB·K카·기아·현대에서 ★ 겹쳐 받고 ★ `cno`(차량번호)로 가른다 (`docs/DEDUP_CROSS_SITE.md`).  ★ 목적 ⑤ 「사이트 안 가고 훑는다」가 그것이다"
   },
   "SPEC_DEFAULT_ON": {},
-  "SPEC_DEFAULT_OFF": {}
+  "SPEC_DEFAULT_OFF": {},
+  "_heydealer_hash_note": "[마스터 08-24] ★ 차종 해시는 ★ 마스터가 화면을 눌러 주셔야 나온다.  ★ 지어낼 수 없다.  ★ 갈래(연료)는 섞여 오니 ★ fuel_match 로 우리 쪽에서 거른다"
 }

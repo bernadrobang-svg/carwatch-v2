@@ -17,6 +17,49 @@ checks   S46-5 · S46-31
 ★ ★ 마스터가 ★ 주소를 주셔서 ★ 화면 본문에서 ★ 부르는 꼴을 찾았다
 ```
 
+
+---
+
+# 0a. ★★★ 차종 해시 — ★ 마스터가 열여섯을 주셨다 (개정 695 · 실측 08-24)
+
+```
+★ 부르는 법 — ★ `?brand={해시}&model-group={해시}&model={해시}`
+★ ★ 셋 다 ★ 여섯 자.  ★ 지어낼 수 없다 — ★ 마스터가 눌러 주셔야 나온다
+★ ★ 아래는 ★ 실제로 불러서 ★ 차명과 건수를 ★ 확인한 것이다
+```
+
+| 차종 | `brand` | `model-group` | `model` | 건수 | 우리 등록 |
+|---|---|---|---|--:|---|
+| **더 뉴 그랜저 IG** | `xoKegB` | `rk0Jmy` | `5oqNnp` | 10 | ★ `GRANDEUR_LPG` — ★ **3.0 LPi 있다** |
+| **그랜저 IG** | `xoKegB` | `rk0Jmy` | `Yp5PJo` | 10 | 〃 — ★ 3.0 익스클루시브 |
+| **더 뉴 스포티지 5세대(NQ5)** | `2oV0gK` | `relJ0M` | `4yyym4` | 2 | `SPORTAGE_LPI` |
+| **더 뉴 G70** | `vgm7Do` | `YyGdqe` | `moOK9o` | 5 | `G70_20T` |
+| **더 올 뉴 G80 FL** | `vgm7Do` | `zMbV3M` | `o6eYZ3` | 7 | ★ `G80_25T` — ★ **2.5T 맞다** |
+| **더 올 뉴 G80** | `vgm7Do` | `zMbV3M` | `23r7Vo` | 10 | 〃 |
+| ★ **e-G80** | `vgm7Do` | `zMbV3M` | `EpbKE4` | 2 | ★ `G80_EV` |
+| ★ **GV60** | `vgm7Do` | `rk0bBy` | `d4BOG3` | 6 | ★ `GV60` |
+| ★ **e-GV70** | `vgm7Do` | `peqqRe` | `Mo7j63` | 1 | ★ `GV70_EV` |
+| ★ **그랑 콜레오스** | `xgrX7o` | `1yRqnM` | `4LrrVo` | 10 | ★ `KOLEOS_HEV` — ★ **1.5 E-TECH 있다** |
+| ★ **BMW X3 (G01)** | `0W5AWm` | `RyW75y` | `ZokDMp` | 10 | ★ `X3_IMPORT` |
+| ★ **렉서스 RX450h 4세대** | `EW3do3` | `relm4k` | `Eoml03` | 1 | ★ `RX_IMPORT` |
+| ★ **볼보 XC60 2세대** | `Jo6rOo` | `VMjr8M` | `qpRDG3` | 10 | ★ `XC60_IMPORT` |
+| ★ **볼보 S60 3세대** | `Jo6rOo` | `KM5VJy` | `n3Qkxp` | 5 | ★ `S60_IMPORT` |
+| 볼보 V60 크로스컨트리 2세대 | `Jo6rOo` | `0yNNgy` | `Z40d04` | 2 | ★ **우리 대상 아님** |
+| 볼보 XC40 | `Jo6rOo` | `zyx6mk` | `wo2dG4` | 10 | ★ **우리 대상 아님** |
+
+```
+★★★ ★ **열넷이 ★ 우리 등록 차종이다.**  ★ 둘(V60 CC · XC40)은 ★ 아니다
+★ ★ 브랜드 해시 — 현대 `xoKegB` · 기아 `2oV0gK` · 제네시스 `vgm7Do` ·
+   르노코리아 `xgrX7o` · BMW `0W5AWm` · 렉서스 `EW3do3` · 볼보 `Jo6rOo`
+★ ★ 한 쪽에 ★ **10건**이 상한이다 — ★ 10 이면 ★ 다음 쪽이 있다.  ★ `page` 를 올려라
+★★ ★ **갈래가 섞여 온다** — ★ 그랜저에 ★ 2.5 가솔린과 ★ 3.0 LPi 가 함께 있다
+   ★ ★ `fuel_match` 로 ★ 우리 쪽에서 걸러라 (마스터 「제외해」 · `UI_REVIEW` 9a)
+필수  ★ 이 표를 ★ `config/targets.json` 의 ★ `site_query.heydealer` 에 넣어라
+필수  ★ V60 크로스컨트리 · XC40 은 ★ **넣지 마라** — ★ 우리 차종이 아니다
+```
+
+---
+
 ## 0-1. ★ 여는 법 — ★ 두 걸음
 
 ```
