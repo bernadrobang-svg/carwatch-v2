@@ -8,34 +8,34 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
-.top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.brand{color:var(--amber);font-weight:600;text-decoration:none}
+.v3-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.v3-brand{color:var(--amber);font-weight:600;text-decoration:none}
 .nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
 h2{font-size:14px;font-weight:600;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
-.note{font-size:12px;color:var(--faint);margin:4px 0 14px}
-.btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+.v3-note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.v3-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
 font-size:12px;padding:6px 12px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn.go{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
-.sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
-.lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
-.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.mono{font-family:var(--mono);font-size:12.5px}
+.v3-sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.v3-lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
+.v3-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v3-mono{font-family:var(--mono);font-size:12.5px}
 .j{font-size:11.5px;border-radius:4px;padding:2px 8px;border:1px solid var(--line2);display:inline-block;margin:0 4px 4px 0}
 .j.ok{background:#12331f;border-color:#1f5c33;color:var(--ok)}
 .j.no{background:#331616;border-color:#5c1f1f;color:var(--no)}
 .j.un{background:var(--surface2);color:var(--faint)}
 .exit{display:flex;gap:8px;flex-wrap:wrap}
-.exit .btn{flex:1;text-align:center}
+.exit .v3-btn{flex:1;text-align:center}
 
-.dhead{display:flex;gap:16px;align-items:flex-start}
-.photo{position:relative;flex:0 0 320px}
-.pimg{width:320px;height:180px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);
+.v3-dhead{display:flex;gap:16px;align-items:flex-start}
+.v3-photo{position:relative;flex:0 0 320px}
+.v3-pimg{width:320px;height:180px;border-radius:8px;background:var(--surface2);border:1px solid var(--line);
 display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:12px;cursor:pointer}
-.pnum{position:absolute;right:8px;bottom:8px;background:rgba(15,17,20,.85);border:1px solid var(--line2);
+.v3-pnum{position:absolute;right:8px;bottom:8px;background:rgba(15,17,20,.85);border:1px solid var(--line2);
 border-radius:4px;padding:1px 8px;font-size:11px;color:var(--dim)}
 .site{position:absolute;top:8px;left:8px;background:rgba(15,17,20,.85);border:1px solid var(--line2);
 border-radius:4px;padding:1px 6px;font-size:10.5px;color:var(--dim)}
-.gr{font-size:24px;font-weight:700}
+.v3-gr{font-size:24px;font-weight:700}
 
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
@@ -47,74 +47,74 @@ td.lose{background:#331616;color:var(--no)}
 border-radius:10px;padding:10px;margin-bottom:8px;align-items:center}
 .wthumb{width:128px;height:72px;border-radius:6px;background:var(--surface2);border:1px solid var(--line);
 display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint);flex:0 0 128px}
-.pick{width:22px;height:22px;border-radius:4px;border:1px solid var(--line2);background:var(--surface2);
+.v3-pick{width:22px;height:22px;border-radius:4px;border:1px solid var(--line2);background:var(--surface2);
 color:var(--amber);cursor:pointer;flex:0 0 22px;font-size:12px}
 .pick.on{background:var(--amber);color:#111;border-color:var(--amber)}
-.heart{width:26px;height:26px;border-radius:13px;background:var(--surface2);border:1px solid var(--amber);
+.v3-heart{width:26px;height:26px;border-radius:13px;background:var(--surface2);border:1px solid var(--amber);
 color:var(--amber);cursor:pointer;flex:0 0 26px;font-size:13px}
 </style></head><body>
 <div class="wrap">
-<div class="top">
-  <a class="brand" href="#">CarWatch</a>
+<div class="v3-top">
+  <a class="v3-brand" href="#">CarWatch</a>
   <nav class="nav"><a href="v3_listings_시안.html">매물</a><a href="v3_detail_watch_compare_시안.html">관심</a><a href="v2_dashboard_시안.html">현황</a><a href="v2_admin_시안.html">관리</a></nav>
 </div>
 
 <h3 style="border:0;padding-top:14px">상세 — 와이드</h3>
-<div class="note">사진 320×180 · 눌러서 다음 장 · 판정이 위로 · 나가는 문 넷이 위아래 둘 다</div>
+<div class="v3-note">사진 320×180 · 눌러서 다음 장 · 판정이 위로 · 나가는 문 넷이 위아래 둘 다</div>
 
-<div class="sec">
-  <div class="dhead">
-    <div class="photo">
-      <div class="pimg">사진 320 × 180 — 눌러서 다음</div>
-      <div class="site">엔카</div><div class="pnum">1 / 10</div>
+<div class="v3-sec">
+  <div class="v3-dhead">
+    <div class="v3-photo">
+      <div class="v3-pimg">사진 320 × 180 — 눌러서 다음</div>
+      <div class="site">엔카</div><div class="v3-pnum">1 / 10</div>
     </div>
 <h2>관심 — 목록과 같은 카드 · 채운 하트만</h2>
-<div class="note">네모로 비교할 것을 고른다 · 필터는 매물과 같은 것이 걸린다</div>
+<div class="v3-note">네모로 비교할 것을 고른다 · 필터는 매물과 같은 것이 걸린다</div>
 
-<div class="sec" style="display:flex;justify-content:space-between;align-items:center">
-  <span>관심 10건 · 3대 골랐습니다</span><button class="btn go">고른 3대 비교하기 ▸</button></div>
+<div class="v3-sec" style="display:flex;justify-content:space-between;align-items:center">
+  <span>관심 10건 · 3대 골랐습니다</span><button class="v3-btn go">고른 3대 비교하기 ▸</button></div>
 
 <div class="wcard">
-  <button class="pick on">✓</button><button class="heart">♥</button>
+  <button class="v3-pick on">✓</button><button class="v3-heart">♥</button>
   <div class="wthumb">사진</div>
   <div style="flex:1;min-width:0">
-    <div><b>S</b> · 1위 · 742.1 / 910 <span class="mono" style="color:var(--dim)">89 80 53 76</span></div>
+    <div><b>S</b> · 1위 · 742.1 / 910 <span class="v3-mono" style="color:var(--dim)">89 80 53 76</span></div>
     <div>3,260만 · <span style="color:var(--ok)">시세보다 400만 싸다</span></div>
-    <div class="note" style="margin:0">KOLEOS_HEV 에스프리 알핀 · 2024-12 · 55,763km · 7일째 · 1회 내림</div>
+    <div class="v3-note" style="margin:0">KOLEOS_HEV 에스프리 알핀 · 2024-12 · 55,763km · 7일째 · 1회 내림</div>
   </div>
-  <button class="btn">상세 ▸</button>
+  <button class="v3-btn">상세 ▸</button>
 </div>
 
 <div class="wcard">
-  <button class="pick on">✓</button><button class="heart">♥</button>
+  <button class="v3-pick on">✓</button><button class="v3-heart">♥</button>
   <div class="wthumb">사진</div>
   <div style="flex:1;min-width:0">
-    <div><b>A</b> · 4위 · 688.0 / 910 <span class="mono" style="color:var(--dim)">84 77 53 70</span></div>
+    <div><b>A</b> · 4위 · 688.0 / 910 <span class="v3-mono" style="color:var(--dim)">84 77 53 70</span></div>
     <div>3,250만 · <span style="color:var(--ok)">시세보다 140만 싸다</span></div>
-    <div class="note" style="margin:0">KOLEOS_HEV 아이코닉 · 2024-08 · 61,200km · 22일째 · 변동 없음</div>
+    <div class="v3-note" style="margin:0">KOLEOS_HEV 아이코닉 · 2024-08 · 61,200km · 22일째 · 변동 없음</div>
   </div>
-  <button class="btn">상세 ▸</button>
+  <button class="v3-btn">상세 ▸</button>
 </div>
 
 <div class="wcard">
-  <button class="pick">□</button><button class="heart">♥</button>
+  <button class="v3-pick">□</button><button class="v3-heart">♥</button>
   <div class="wthumb">사진</div>
   <div style="flex:1;min-width:0">
-    <div><b>B</b> · 12위 · 601.5 / 910 <span class="mono" style="color:var(--dim)">80 61 22 68</span></div>
+    <div><b>B</b> · 12위 · 601.5 / 910 <span class="v3-mono" style="color:var(--dim)">80 61 22 68</span></div>
     <div>3,330만 · <span style="color:var(--no)">시세보다 110만 비싸다</span></div>
-    <div class="note" style="margin:0">KOLEOS_HEV 에스프리 알핀 · 2023-11 · 41,020km · 113일째 · 변동 없음</div>
+    <div class="v3-note" style="margin:0">KOLEOS_HEV 에스프리 알핀 · 2023-11 · 41,020km · 113일째 · 변동 없음</div>
   </div>
-  <button class="btn">상세 ▸</button>
+  <button class="v3-btn">상세 ▸</button>
 </div>
 
-<div class="sec"><div class="lbl">아래에 남는 절 셋</div>
+<div class="v3-sec"><div class="v3-lbl">아래에 남는 절 셋</div>
   최종 후보 — 별을 단 매물의 가격과 상태 변동을 따로 좇는다<br>
   조건 알림 — 매물이 아니라 조건을 지켜본다<br>
   진행 — 전화했는지 · 보러 갔는지 · 점수에 반영하지 않는다</div>
 
 
 <h3>지켜야 하는 것</h3>
-<div class="note">
+<div class="v3-note">
 ★ 절 차례는 판단하는 순서다.  바꾸지 않는다 (V11-159)<br>
 ★ 나가는 문 넷은 ★ 위아래 둘 다 둔다 — 어디서든 나갈 수 있어야 한다<br>
 ★ 옵션은 ★ 패키지 이름과 값을 편다.  ★ 코드를 내지 않는다.  ★ 고속도로 주행보조가 든 패키지를 앞에<br>

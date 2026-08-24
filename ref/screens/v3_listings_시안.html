@@ -8,58 +8,58 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
-.top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.brand{color:var(--amber);font-weight:600;text-decoration:none}
+.v3-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.v3-brand{color:var(--amber);font-weight:600;text-decoration:none}
 .nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
 .nav a.on{color:var(--text);background:var(--surface2)}
 h2{font-size:14px;font-weight:600;margin:22px 0 8px}
-.note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.v3-note{font-size:12px;color:var(--faint);margin:4px 0 14px}
 
 .filter{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .frow{display:flex;gap:6px;margin-bottom:6px;align-items:center}
 .frow:last-child{margin-bottom:0}
 select,input[type=text]{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;
 color:var(--text);height:30px;font-size:12px;padding:0 8px;font-family:inherit;min-width:0;flex:1}
-.btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+.v3-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
 font-size:12px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .btn.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
 .btn.go{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
-.grade .btn{flex:1;padding:3px 0;text-align:center}
+.grade .v3-btn{flex:1;padding:3px 0;text-align:center}
 .tilde{color:var(--faint);font-size:12px}
 .unit{color:var(--faint);font-size:11px;white-space:nowrap}
-.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.cnt{font-size:14px;font-weight:600}
-.chips{margin-top:6px;padding:6px 10px;background:var(--surface);border:1px solid var(--line);
+.v3-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.v3-cnt{font-size:14px;font-weight:600}
+.v3-chips{margin-top:6px;padding:6px 10px;background:var(--surface);border:1px solid var(--line);
 border-radius:6px;font-size:11px;color:var(--dim)}
 
 details.more{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
 details.more>summary{cursor:pointer;padding:12px 14px;font-size:13px;font-weight:600;list-style:none}
 details.more>summary::-webkit-details-marker{display:none}
 .mbody{padding:0 14px 14px}
-.lbl{font-size:12px;color:var(--dim);margin:12px 0 6px}
-.lbl:first-child{margin-top:0}
+.v3-lbl{font-size:12px;color:var(--dim);margin:12px 0 6px}
+.v3-lbl:first-child{margin-top:0}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
-.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v3-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pill-ok{background:#12331f;border-color:#1f5c33;color:var(--ok)}
 
 .cards{margin-top:14px;display:grid;gap:10px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+.v3-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
 .ctop{display:flex;gap:12px}
 .thumbwrap{position:relative;flex:0 0 160px}
-.thumb{width:160px;height:90px;border-radius:6px;background:var(--surface2);border:1px solid var(--line);
+.v3-thumb{width:160px;height:90px;border-radius:6px;background:var(--surface2);border:1px solid var(--line);
 display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)}
 .site{position:absolute;top:6px;left:6px;background:rgba(15,17,20,.85);border:1px solid var(--line2);
 border-radius:4px;padding:1px 6px;font-size:10.5px;color:var(--dim)}
-.heart{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:14px;
+.v3-heart{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:14px;
 background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cursor:pointer;font-size:14px}
 .heart.on{color:var(--amber);border-color:var(--amber)}
 .grade-line{display:flex;align-items:baseline;gap:8px}
-.gr{font-size:18px;font-weight:700}
-.bars{font-size:11.5px;color:var(--dim);font-family:var(--mono);margin-top:2px}
-.price{font-size:20px;font-weight:700;margin-top:8px}
+.v3-gr{font-size:18px;font-weight:700}
+.v3-bars{font-size:11.5px;color:var(--dim);font-family:var(--mono);margin-top:2px}
+.v3-price{font-size:20px;font-weight:700;margin-top:8px}
 .cheap{font-size:12.5px;color:var(--ok)}
 .dear{font-size:12.5px;color:var(--no)}
-.name{margin-top:10px;font-size:13px}
+.v3-name{margin-top:10px;font-size:13px}
 .spec{font-size:12.5px;color:var(--dim)}
 .judge{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
 .j{font-size:11.5px;border-radius:4px;padding:2px 8px;border:1px solid var(--line2);cursor:pointer}
@@ -68,20 +68,20 @@ background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cur
 .j.un{background:var(--surface2);color:var(--faint)}
 .when{margin-top:8px;font-size:11.5px;color:var(--faint)}
 .acts{margin-top:10px;display:flex;gap:8px}
-.acts .btn{flex:1;text-align:center;padding:7px 0}
+.acts .v3-btn{flex:1;text-align:center;padding:7px 0}
 </style></head><body>
 <div class="wrap">
 
-<div class="top">
-  <a class="brand" href="#">CarWatch</a>
+<div class="v3-top">
+  <a class="v3-brand" href="#">CarWatch</a>
   <nav class="nav"><a href="v3_listings_시안.html">매물</a><a href="v3_detail_watch_compare_시안.html">관심</a><a href="v2_dashboard_시안.html">현황</a><a href="v2_admin_시안.html">관리</a></nav>
 </div>
 
 <h2>기본 필터 — 조밀하게</h2>
-<div class="note">마스터 확정 08-24 · 차종 · 가격대 · 등급 · 정렬만 기본. 나머지는 접는다</div>
+<div class="v3-note">마스터 확정 08-24 · 차종 · 가격대 · 등급 · 정렬만 기본. 나머지는 접는다</div>
 
 <div class="filter">
-  <div class="head"><span class="cnt">3,230건</span><button class="btn" style="font-size:11px;padding:2px 8px">지우기</button></div>
+  <div class="v3-head"><span class="v3-cnt">3,230건</span><button class="v3-btn" style="font-size:11px;padding:2px 8px">지우기</button></div>
   <div class="frow">
     <select><option>KOLEOS_HEV</option><option>전체</option></select>
     <select><option>트림 전체</option><option>에스프리 알핀</option><option>아이코닉</option></select>
@@ -92,105 +92,105 @@ background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cur
     <input type="text" placeholder="월 45">
   </div>
   <div class="frow grade">
-    <button class="btn on">S</button><button class="btn on">A</button><button class="btn">B</button>
-    <button class="btn">C</button><button class="btn">D</button><button class="btn">E</button>
-    <button class="btn">F</button><button class="btn">G</button>
+    <button class="v3-btn on">S</button><button class="v3-btn on">A</button><button class="v3-btn">B</button>
+    <button class="v3-btn">C</button><button class="v3-btn">D</button><button class="v3-btn">E</button>
+    <button class="v3-btn">F</button><button class="v3-btn">G</button>
   </div>
   <div class="frow">
     <select><option>추천 순위</option><option>가격 낮은순</option><option>등급순</option>
       <option>주행 적은순</option><option>올라온 지 오래된 순</option></select>
-    <button class="btn" style="flex:1">자세한 조건 (2) ▾</button>
+    <button class="v3-btn" style="flex:1">자세한 조건 (2) ▾</button>
   </div>
 </div>
-<div class="chips">2,500~3,500만 · S · A · 사고 OK · 골격 OK
-  <button class="btn" style="font-size:10px;padding:1px 6px;margin-left:4px">지우기</button></div>
+<div class="v3-chips">2,500~3,500만 · S · A · 사고 OK · 골격 OK
+  <button class="v3-btn" style="font-size:10px;padding:1px 6px;margin-left:4px">지우기</button></div>
 
 <details class="more" open>
   <summary>자세한 조건</summary>
   <div class="mbody">
-    <div class="lbl">판정 — 누르면 그 조건만 남는다</div>
+    <div class="v3-lbl">판정 — 누르면 그 조건만 남는다</div>
     <div class="pills">
-      <button class="btn pill-ok">사고 OK</button><button class="btn pill-ok">골격 OK</button>
-      <button class="btn">용도 OK</button><button class="btn">제조사 보증</button><button class="btn">사이트 보증</button>
+      <button class="v3-btn pill-ok">사고 OK</button><button class="v3-btn pill-ok">골격 OK</button>
+      <button class="v3-btn">용도 OK</button><button class="v3-btn">제조사 보증</button><button class="v3-btn">사이트 보증</button>
     </div>
-    <div class="note" style="margin:6px 0 0">확인 못 한 것도 함께 보기 <input type="checkbox"></div>
+    <div class="v3-note" style="margin:6px 0 0">확인 못 한 것도 함께 보기 <input type="checkbox"></div>
 
-    <div class="lbl">사이트</div>
+    <div class="v3-lbl">사이트</div>
     <div class="pills">
-      <button class="btn on">전부</button><button class="btn">엔카 3,230</button>
-      <button class="btn">현대인증 1,114</button><button class="btn">기아인증 1,020</button><button class="btn">KB 116</button>
-    </div>
-
-    <div class="lbl">주행 · 연식</div>
-    <div class="g2"><input type="text" placeholder="주행 이하 60000"><input type="text" placeholder="연식 이후 2023"></div>
-
-    <div class="lbl">옵션</div>
-    <div class="pills">
-      <button class="btn">깡통 빼기</button><button class="btn">고속도로 주행보조 있는 것만</button><button class="btn">선루프</button>
+      <button class="v3-btn on">전부</button><button class="v3-btn">엔카 3,230</button>
+      <button class="v3-btn">현대인증 1,114</button><button class="v3-btn">기아인증 1,020</button><button class="v3-btn">KB 116</button>
     </div>
 
-    <div class="lbl">뺀 것</div>
+    <div class="v3-lbl">주행 · 연식</div>
+    <div class="v3-g2"><input type="text" placeholder="주행 이하 60000"><input type="text" placeholder="연식 이후 2023"></div>
+
+    <div class="v3-lbl">옵션</div>
+    <div class="pills">
+      <button class="v3-btn">깡통 빼기</button><button class="v3-btn">고속도로 주행보조 있는 것만</button><button class="v3-btn">선루프</button>
+    </div>
+
+    <div class="v3-lbl">뺀 것</div>
     <select style="width:100%"><option>리스 422건 빼는 중</option><option>리스 함께 보기</option></select>
   </div>
 </details>
 
 <h3>카드</h3>
-<div class="note">사진 160×90 · 출처는 사진 배지와 단추 · 판정 다섯 · 등록일과 가격변동 한 줄 · 총비용은 상세에서만</div>
+<div class="v3-note">사진 160×90 · 출처는 사진 배지와 단추 · 판정 다섯 · 등록일과 가격변동 한 줄 · 총비용은 상세에서만</div>
 
 <div class="cards">
 
-  <div class="card">
+  <div class="v3-card">
     <div class="ctop">
       <div class="thumbwrap">
-        <div class="thumb">사진 160 × 90</div>
+        <div class="v3-thumb">사진 160 × 90</div>
         <div class="site">엔카</div>
-        <button class="heart on" title="관심에서 뺍니다">♥</button>
+        <button class="v3-heart on" title="관심에서 뺍니다">♥</button>
       </div>
       <div style="flex:1;min-width:0">
-        <div class="grade-line"><span class="gr">S</span><span class="spec">1위 · 742.1 / 910</span></div>
-        <div class="bars">차량 89 · 값 80 · 보증 53 · 취향 76</div>
-        <div class="price">3,260만</div>
+        <div class="grade-line"><span class="v3-gr">S</span><span class="spec">1위 · 742.1 / 910</span></div>
+        <div class="v3-bars">차량 89 · 값 80 · 보증 53 · 취향 76</div>
+        <div class="v3-price">3,260만</div>
         <div class="cheap">시세보다 400만 싸다 · 신차 4,506만 대비 −33.6%</div>
       </div>
     </div>
-    <div class="name">KOLEOS_HEV · 1.5 E-TECH 에스프리 알핀</div>
+    <div class="v3-name">KOLEOS_HEV · 1.5 E-TECH 에스프리 알핀</div>
     <div class="spec">2024-12 · 55,763km · 쥐색 / 검정 · 옵션 660만 · 드라이빙 어시스턴스Ⅱ</div>
     <div class="judge">
       <span class="j ok">사고 OK</span><span class="j ok">골격 OK</span><span class="j ok">용도 OK</span>
       <span class="j ok">제조사 보증 OK</span><span class="j ok">사이트 보증 OK</span>
     </div>
     <div class="when">게시 8월 16일 · 7일째 · 3,050 → 2,990만 (1회 내림)</div>
-    <div class="acts"><button class="btn">상세 ▸</button><button class="btn go">엔카에서 보기 ↗</button></div>
+    <div class="acts"><button class="v3-btn">상세 ▸</button><button class="v3-btn go">엔카에서 보기 ↗</button></div>
   </div>
 
-  <div class="card">
+  <div class="v3-card">
     <div class="ctop">
       <div class="thumbwrap">
-        <div class="thumb">사진 없음</div>
+        <div class="v3-thumb">사진 없음</div>
         <div class="site">기아인증</div>
-        <button class="heart" title="관심에 담습니다">♡</button>
+        <button class="v3-heart" title="관심에 담습니다">♡</button>
       </div>
       <div style="flex:1;min-width:0">
-        <div class="grade-line"><span class="gr">C</span><span class="spec">88위 · 512.0 / 910</span></div>
-        <div class="bars">차량 71 · 값 44 · 보증 61 · 취향 38</div>
-        <div class="price">4,180만</div>
+        <div class="grade-line"><span class="v3-gr">C</span><span class="spec">88위 · 512.0 / 910</span></div>
+        <div class="v3-bars">차량 71 · 값 44 · 보증 61 · 취향 38</div>
+        <div class="v3-price">4,180만</div>
         <div class="dear">시세보다 110만 비싸다 · 신차 5,020만 대비 −16.7%</div>
       </div>
     </div>
-    <div class="name">SPORTAGE_LPI · 1.6 T-GDI 프레스티지</div>
+    <div class="v3-name">SPORTAGE_LPI · 1.6 T-GDI 프레스티지</div>
     <div class="spec">2023-04 · 41,020km · 흰색 / 검정 · 옵션 없음 · 깡통</div>
     <div class="judge">
       <span class="j no">사고 ×</span><span class="j ok">골격 OK</span><span class="j un">용도 —</span>
       <span class="j ok">제조사 보증 OK</span><span class="j un">사이트 보증 —</span>
     </div>
     <div class="when">게시 5월 2일 · 113일째 · 변동 없음</div>
-    <div class="acts"><button class="btn">상세 ▸</button><button class="btn go">기아인증에서 보기 ↗</button></div>
+    <div class="acts"><button class="v3-btn">상세 ▸</button><button class="v3-btn go">기아인증에서 보기 ↗</button></div>
   </div>
 
 </div>
 
 <h3>지켜야 하는 것</h3>
-<div class="note">
+<div class="v3-note">
 ★ 판정 다섯은 OK · × · — 셋으로 가른다.  ★ — 는 「없다」가 아니라 「확인 못 했다」다 (개정 325)<br>
 ★ 카드의 등급 · 판정 배지 · 트림은 ★ 누르면 그 조건으로 걸러진다 — 필터와 같은 것을 가리킨다<br>
 ★ 사진은 16:9.  ★ 원본이 640×360 이라 160×90 은 정확히 4분의 1이다<br>
