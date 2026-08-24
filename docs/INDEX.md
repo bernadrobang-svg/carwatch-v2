@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 39,628줄 · 2,360KB**
+**113파일 · 39,640줄 · 2,361KB**
 
 ★ 800줄을 넘는 파일 10개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - CHECKS.md 899줄
 - MULTISITE_MAPPING.md 849줄
-- UI_REVIEW.md 1,009줄
-- guide/01_요구사항.md 991줄
+- UI_REVIEW.md 1,035줄
+- guide/01_요구사항.md 992줄
 - guide/05_가이드역할.md 1,115줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -47,7 +47,7 @@
 | `SERVER_SURVIVAL.md` | 258 | 12 |
 | `SOURCE.md` | 629 | 45 |
 | `TARGET_KEY_MAP.md` | 119 | 5 |
-| `UI_REVIEW.md`  ★ | 1,009 | 52 |
+| `UI_REVIEW.md`  ★ | 1,035 | 53 |
 | `VOLVO_SELEKT_API.md` | 352 | 14 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -102,13 +102,13 @@
 | `guide/00_개요.md` | 149 | 6 |
 | `guide/00_버전.md` | 177 | 11 |
 | `guide/01_시작.md` | 291 | 10 |
-| `guide/01_요구사항.md`  ★ | 991 | 43 |
+| `guide/01_요구사항.md`  ★ | 992 | 43 |
 | `guide/02_결함대장.md` | 281 | 6 |
-| `guide/02_미확정.md` | 138 | 7 |
+| `guide/02_미확정.md` | 141 | 7 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md` | 771 | 520 |
+| `guide/03_이력.md` | 772 | 521 |
 | `guide/04_구성.md` | 48 | 2 |
-| `guide/04_질의.md` | 632 | 25 |
+| `guide/04_질의.md` | 613 | 24 |
 | `guide/05_가이드역할.md`  ★ | 1,115 | 56 |
 | `guide/05_노션.md` | 199 | 6 |
 | `guide/06_오판대장.md` | 522 | 122 |
