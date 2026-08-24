@@ -1,5 +1,14 @@
 # 엔카 API — 전수 조사
 
+```
+version  SPEC-2026.08.24-r670
+follows  ★ 생성물 — `tools/probe_encar.py`
+sources  개정 560 · 실측 08-23
+checks   S46-31
+```
+★ 이 문서는 ★ **그 사이트가 무엇을 주는가**만 적는다.  ★ 판정은 ★ `f-table` 이 한다 (가이드역할 ㉺)
+
+
 **`tools/probe_encar.py` 가 만든다. 손으로 적지 않는다.**
 
 ```

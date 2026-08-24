@@ -226,13 +226,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=107 classCode=1910",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "BMW",
         "ModelGroup": "X3",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -255,13 +255,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=108 classCode=2646",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "벤츠",
         "ModelGroup": "GLC",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -284,13 +284,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=109 classCode=1960",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "아우디",
         "ModelGroup": "Q5",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -313,13 +313,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=133 classCode=2563",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "렉서스",
         "ModelGroup": "NX",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -338,13 +338,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=133 classCode=2132",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "렉서스",
         "ModelGroup": "RX",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -367,13 +367,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=117 classCode=2237",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "XC60",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -396,13 +396,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=117 classCode=2229",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "S60",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,
@@ -425,13 +425,13 @@
     "collect_group": "multi",
     "_ref": "명령서 2-2 (마스터 확정) · docs/KBCHACHACHA_API.md 1a",
     "_facet": "★ KB carClass.json 으로 확인했다 — ★ 볼보 차종 목록에 ★ EX60 이 없다 (EX30 만 있다) — ★ 국내 출시 미정.  ★ 0건이 정상이다",
-    "_site_query_why": "★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
+    "_site_query_why": "[마스터 08-24] ★ 08-24 마스터 확정 — 「★ 엔카에서도 받는다.  ★ 모든 사이트에서 받는다」.  ★ 407 은 ★ 수입차 제약이 아니라 ★ 서버 회선 제약이다 — ★ 국산 10종도 똑같이 407 이고 ★ 마스터 회선(`/admin/collect` 브라우저 수집)으로 받아 왔다.  ★ 수입 8종도 ★ 같은 길로 받는다.  ★ `ModelGroup` 값은 ★ facet 으로 확인한 뒤 채운다 (명령서 21장)",
     "site_query": {
       "encar": {
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "EX60",
-        "_확인": "★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
       }
     },
     "year_range": null,

@@ -1,5 +1,14 @@
 # KB차차차 API · 매핑 규격
 
+```
+version  SPEC-2026.08.24-r670
+follows  `f-table.md` · `MULTISITE_MAPPING.md`
+sources  개정 619 · 실측 08-24
+checks   S46-5 · S46-28 · S46-31
+```
+★ 이 문서는 ★ **그 사이트가 무엇을 주는가**만 적는다.  ★ 판정은 ★ `f-table` 이 한다 (가이드역할 ㉺)
+
+
 `SPEC-2026.08.22-r464` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
 표본 25건 (`carSeq` 28385906 외 24건) · `docs/ENCAR_API.md` 와 같은 형식
 
