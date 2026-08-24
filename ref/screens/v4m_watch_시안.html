@@ -56,6 +56,13 @@ border-radius:10px;background:var(--surface)}
 .v4-ax{font-size:11px;color:var(--faint);font-family:var(--mono);margin-bottom:3px}
 .v4-ax b{color:var(--dim);font-weight:600}
 .v4-heart{color:var(--amber);float:right}
+.v4-thumbwrap{position:relative;flex:0 0 auto}
+.v4-pick{position:absolute;top:5px;left:5px;width:26px;height:26px;border-radius:6px;
+background:rgba(0,0,0,.55);border:1px solid var(--line2);color:var(--dim);font-size:14px;z-index:2}
+.v4-pick.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:700}
+.v4-cmp{position:sticky;bottom:64px;margin:0;padding:10px 14px;background:var(--surface2);
+border-top:1px solid var(--amber);display:flex;gap:10px;align-items:center;z-index:8}
+.v4-cmp b{color:var(--amber)}
 .v4-trim{font-size:12px;color:var(--dim);margin-top:1px}
 .v4-j{display:flex;flex-wrap:wrap;gap:3px 8px;margin-top:5px;font-size:11px;color:var(--faint)}
 .v4-j b.ok{color:var(--ok)} .v4-j b.no{color:var(--no)}
@@ -152,7 +159,7 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
   <div class="v4-chg dn">↓ 60만 내렸다</div>
   <div class="v4-cardline">
     <div class="v4-row">
-      <div class="v4-thumb">사진</div>
+      <div class="v4-thumbwrap"><div class="v4-thumb">사진</div><button class="v4-pick">✓</button></div>
       <div class="v4-mid">
       <div class="v4-ax"><b>89</b> 차량 <b>80</b> 값 <b>59</b> 보증 <b>73</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">S</span>KOLEOS_HEV<span class="v4-heart">♥</span></div>
@@ -175,7 +182,7 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
   <div class="v4-chg gone">✕ 팔렸다 · 8월 23일</div>
   <div class="v4-cardline">
     <div class="v4-row">
-      <div class="v4-thumb">사진 없음</div>
+      <div class="v4-thumbwrap"><div class="v4-thumb">사진 없음</div><button class="v4-pick">✓</button></div>
       <div class="v4-mid">
       <div class="v4-ax"><b>61</b> 차량 <b>44</b> 값 <b>—</b> 보증 <b>52</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">B</span>G80_25T<span class="v4-heart">♥</span></div>
@@ -198,7 +205,7 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
   <div class="v4-chg same">— 담을 때와 같다</div>
   <div class="v4-cardline">
     <div class="v4-row">
-      <div class="v4-thumb">사진</div>
+      <div class="v4-thumbwrap"><div class="v4-thumb">사진</div><button class="v4-pick">✓</button></div>
       <div class="v4-mid">
       <div class="v4-ax"><b>84</b> 차량 <b>71</b> 값 <b>78</b> 보증 <b>66</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">A</span>XC60_IMPORT<span class="v4-heart">♥</span></div>
@@ -221,7 +228,7 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
   <div class="v4-chg up">↑ 61만 올랐다</div>
   <div class="v4-cardline">
     <div class="v4-row">
-      <div class="v4-thumb">사진</div>
+      <div class="v4-thumbwrap"><div class="v4-thumb">사진</div><button class="v4-pick">✓</button></div>
       <div class="v4-mid">
       <div class="v4-ax"><b>52</b> 차량 <b>58</b> 값 <b>70</b> 보증 <b>61</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">C</span>GV60<span class="v4-heart">♥</span></div>
@@ -240,6 +247,11 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
   </div>
 </div>
 
+<div class="v4-cmp">
+  <span class="v4-note" style="flex:1"><b>2대</b> 골랐다 — 견주려면 두 대 넘게</span>
+  <button class="v4-btn go" style="flex:0 0 130px">비교하기 ▸</button>
+</div>
+
 <h3>지켜야 하는 것</h3>
 <div class="v4-note" style="margin:0 14px 24px">
 ★★★ <b>모바일이 기준이다.  넓어지면 카드가 「옆으로 펴진다」</b> (마스터 확정 08-25)<br>
@@ -251,7 +263,8 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
 ★★★ <b>좁아진다고 정보를 빼지 않는다</b> — <b>자리만 바꾼다.</b>  글자를 줄이거나 감추지 마라<br>
 &nbsp;&nbsp;★ 등급 · 점수 · 판정 · 보증 · 담은 날 — <b>세 구간에서 다 보인다</b><br>
 ★★ <b>한 화면에 한 가지 일만</b> — 여기는 <b>지켜보는 곳</b>이다<br>
-★ <b>비교 고르기를 두지 않는다</b> (비교 화면이 따로 있다)<br>
+★★ <b>사진 왼쪽 위 네모로 비교할 것을 고른다</b> — 고르면 아래에 띠가 뜬다<br>
+&nbsp;&nbsp;★ 마스터 확정 17 「비교→관심」 — <b>비교로 들어가는 문이 여기다</b><br>
 ★ <b>거르개를 두지 않는다</b> (담은 차는 많아야 스무 대다)<br>
 ★ 카드 맨 앞에 <b>담은 뒤 무엇이 바뀌었나</b> — 그것이 이 화면의 이유다<br>
 ★★★ <b>나머지는 목록 카드와 똑같이 담는다</b> (마스터 지적 08-25) —<br>
