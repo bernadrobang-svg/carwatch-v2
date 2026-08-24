@@ -18,6 +18,8 @@ from __future__ import annotations
 import json
 import os
 
+from urllib.parse import quote
+
 from contracts import EndpointSpec, Request, TargetSpec
 from errors import PolicyError
 
@@ -80,14 +82,20 @@ class KiaCpoAdapter:
         return h
 
     def list_url(self, target: TargetSpec, page: int = 1,
-                 cursors: list | None = None) -> Request:
+                 cursors: list | None = None,
+                 names: list | None = None) -> Request:
         """목록.  ★ 커서 방식이다 — page 는 안 쓴다.
 
-        ★ 차종 질의를 안 붙인다.  ★ 이 사이트는 기아뿐이고 질의가 없다
+        ★★ 08-25 — ★ **좁혀 받는다** (명령서 3-1).  ★ `modelCodeNames`(복수형 · 한글).
+          ★ ★ 규격 실측 ★ 1,020 → **76** (`KIA_CPO_API` · 개정 543)
+          ★ ★ 이름은 ★ `targets.json` 의 `site_query.kia_cpo` 가 정본이다 (S14) —
+            ★ 코드에 차종을 박지 않는다 (금지 6)
         ★ cursors 는 앞 쪽 ★ 마지막 줄의 `cursors` 를 그대로 넘긴다
         """
         del target, page
         url = self._base + self._paths["list"]
+        for one in names or ():
+            url += f"&modelCodeNames={quote(str(one))}"
         if cursors:
             url += "".join(f"&cursors={c}" for c in cursors)
         return Request("GET", url, self.headers(), self._timeout)

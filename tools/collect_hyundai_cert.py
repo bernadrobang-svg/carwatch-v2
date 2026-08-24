@@ -121,9 +121,31 @@ def load_filters(root: str = ROOT) -> list:
 
     ★ 차종군 코드를 ★ 코드에 박지 않는다 (S14 · 금지 6)
     """
+    # ★★ 08-25 — ★ 좁히는 코드는 ★ `targets.json` 의 `site_query` **하나**가 정본이다
+    #   (명령서 3-1 · 「코드는 각 사이트 규격에 있다.  targets.json 으로 옮겨라」).
+    #   ★ ★ 전에는 ★ `sites.json` 의 `collect_filters` 에 따로 있어 ★ 두 곳이 갈렸다
+    with open(os.path.join(root, "config", "targets.json"), encoding="utf-8") as f:
+        rows = json.load(f)
+    got, seen = [], set()
+    for key, one in rows.items():
+        if key.startswith("_") or not isinstance(one, dict):
+            continue
+        q = (one.get("site_query") or {}).get(SITE_CODE)
+        if not isinstance(q, dict):
+            continue
+        # ★ 같은 부름을 두 번 하지 않는다 (G70_20T · G70_25T 가 같다)
+        pick = {k: q[k] for k in ("mdlGrpList", "fuelList") if q.get(k)}
+        mark = tuple(sorted(pick.items()))
+        if not pick or mark in seen:
+            continue
+        seen.add(mark)
+        got.append({**{k: [v] for k, v in pick.items()}, "for": key})
+    if got:
+        return got
+    # ★ 옛 자리 — ★ targets.json 이 비면 그때만 본다
     with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
-        got = (json.load(f).get(SITE_CODE) or {}).get("collect_filters") or {}
-    return got.get("groups") or []
+        old = (json.load(f).get(SITE_CODE) or {}).get("collect_filters") or {}
+    return old.get("groups") or []
 
 
 def total_count(params: str = "") -> int | None:

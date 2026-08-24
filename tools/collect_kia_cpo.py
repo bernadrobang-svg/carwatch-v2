@@ -61,11 +61,30 @@ def target_of(parsed: dict) -> str | None:
         f"{parsed.get('fuel_raw') or ''} {parsed.get('site_model') or ''}")
 
 
-def walk(adapter: KiaCpoAdapter, cfg: dict) -> tuple[int, list]:
+def wanted_names(root: str = ROOT) -> list:
+    """좁혀 받을 차종 이름 — ★ `targets.json` 이 정본이다 (명령서 3-1).
+
+    ★ 코드에 차종을 박지 않는다 (S14 · 금지 6)
+    """
+    with open(os.path.join(root, "config", "targets.json"), encoding="utf-8") as f:
+        rows = json.load(f)
+    got = []
+    for key, one in rows.items():
+        if key.startswith("_") or not isinstance(one, dict):
+            continue
+        q = (one.get("site_query") or {}).get(SITE_CODE)
+        name = (q or {}).get("modelCodeNames") if isinstance(q, dict) else None
+        if name and name not in got:
+            got.append(name)
+    return got
+
+
+def walk(adapter: KiaCpoAdapter, cfg: dict,
+         names: list | None = None) -> tuple[int, list]:
     """목록을 끝까지 받는다.  ★ 커서 방식이다 (adapters/kia_cpo.py)."""
     rows, seen, cursors, total = [], set(), None, 0
     for _page in range(MAX_PAGES):
-        req = adapter.list_url(None, cursors=cursors)
+        req = adapter.list_url(None, cursors=cursors, names=names)
         body = _fetch(req.url, req.headers, req.timeout_sec)
         total, got = unpack_envelope(body)
         if not got:
@@ -87,7 +106,10 @@ def main() -> int:
     dry = "--dry" in sys.argv
     cfg = load_config(ROOT)
     adapter = KiaCpoAdapter(cfg)
-    total, rows = walk(adapter, cfg)
+    names = [] if "--all" in sys.argv else wanted_names()
+    if names:
+        print(f"★ 좁혀 받는다 — modelCodeNames={' · '.join(names)}")
+    total, rows = walk(adapter, cfg, names)
     print(f"목록 — 사이트가 말한 총 {total}건 · 받은 {len(rows)}건")
     if total and len(rows) != total:
         print(f"  ★ 어긋난다 — {total - len(rows)}건을 못 받았다")

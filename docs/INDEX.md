@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 38,610줄 · 2,252KB**
+**113파일 · 38,611줄 · 2,252KB**
 
 ★ 800줄을 넘는 파일 9개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -44,7 +44,7 @@
 | `REBORNCAR_API.md` | 377 | 19 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 621 | 44 |
+| `SOURCE.md` | 622 | 44 |
 | `TARGET_KEY_MAP.md` | 119 | 5 |
 | `UI_REVIEW.md`  ★ | 857 | 44 |
 | `VOLVO_SELEKT_API.md` | 344 | 14 |

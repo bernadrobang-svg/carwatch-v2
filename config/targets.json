@@ -23,7 +23,12 @@
           "model": "23r7Vo",
           "_차명": "더 올 뉴 G80"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1171",
+        "fuelList": "001",
+        "_실측": 165
+      }
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -56,7 +61,11 @@
           "model": "EpbKE4",
           "_차명": "e-G80"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1171_V",
+        "_실측": 0
+      }
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -84,7 +93,12 @@
           "model": "moOK9o",
           "_차명": "더 뉴 G70"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1172",
+        "fuelList": "001",
+        "_실측": 11
+      }
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -117,7 +131,12 @@
           "model": "moOK9o",
           "_차명": "더 뉴 G70"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1172",
+        "fuelList": "001",
+        "_실측": 11
+      }
     },
     "year_range": "202100..",
     "price_range": "..6000",
@@ -150,7 +169,11 @@
           "model": "Mo7j63",
           "_차명": "e-GV70"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1389_V",
+        "_실측": 3
+      }
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -178,7 +201,11 @@
           "model": "d4BOG3",
           "_차명": "GV60"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1469_V",
+        "_실측": 2
+      }
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -239,7 +266,11 @@
           "model": "4yyym4",
           "_차명": "더 뉴 스포티지 5세대(NQ5)"
         }
-      ]
+      ],
+      "kia_cpo": {
+        "modelCodeNames": "스포티지",
+        "_실측": 76
+      }
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -273,7 +304,12 @@
           "model": "Yp5PJo",
           "_차명": "그랜저 IG"
         }
-      ]
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "96",
+        "fuelList": "003",
+        "_실측": 6
+      }
     },
     "year_range": "202300..",
     "price_range": "..6000",
@@ -325,7 +361,11 @@
           "model": "ZokDMp",
           "_차명": "BMW X3 (G01)"
         }
-      ]
+      ],
+      "kbchachacha": {
+        "makerCode": "107",
+        "classCode": "1910"
+      }
     },
     "year_range": null,
     "price_range": null,
@@ -354,6 +394,10 @@
         "Manufacturer": "벤츠",
         "ModelGroup": "GLC",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+      },
+      "kbchachacha": {
+        "makerCode": "108",
+        "classCode": "2646"
       }
     },
     "year_range": null,
@@ -383,6 +427,10 @@
         "Manufacturer": "아우디",
         "ModelGroup": "Q5",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+      },
+      "kbchachacha": {
+        "makerCode": "109",
+        "classCode": "1960"
       }
     },
     "year_range": null,
@@ -412,6 +460,10 @@
         "Manufacturer": "렉서스",
         "ModelGroup": "NX",
         "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+      },
+      "kbchachacha": {
+        "makerCode": "133",
+        "classCode": "2563"
       }
     },
     "year_range": null,
@@ -445,7 +497,11 @@
           "model": "Eoml03",
           "_차명": "렉서스 RX450h 4세대"
         }
-      ]
+      ],
+      "kbchachacha": {
+        "makerCode": "133",
+        "classCode": "2132"
+      }
     },
     "year_range": null,
     "price_range": null,
@@ -488,6 +544,10 @@
           "xc60"
         ],
         "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "117",
+        "classCode": "2237"
       }
     },
     "year_range": null,
@@ -531,6 +591,10 @@
           "s60"
         ],
         "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "117",
+        "classCode": "2229"
       }
     },
     "year_range": null,
@@ -591,8 +655,7 @@
       },
       "kbchachacha": {
         "makerCode": "117",
-        "classCode": "2708",
-        "_확인": "[실측 08-24] ★ carClass.json 으로 확인했다"
+        "classCode": "2708"
       },
       "heydealer": [
         {
@@ -635,8 +698,7 @@
       },
       "kbchachacha": {
         "makerCode": "117",
-        "classCode": "2235",
-        "_확인": "[실측 08-24] ★ carClass.json 으로 확인했다"
+        "classCode": "2235"
       },
       "heydealer": [
         {
@@ -664,5 +726,6 @@
       "전기"
     ],
     "_fuel_why": "★ 명령서 2-2 「fuel_match 는 비워 먼저 다 받고, 무엇이 오는지 본 뒤에 좁힌다」"
-  }
+  },
+  "_site_query_note": "★★ 3-1 좁혀 받기 (명령서 08-25) — ★ 코드는 ★ **각 사이트 규격이 정본**이다. ★ 여기로 옮겨 적었다 (S14 — 코드에 안 박는다). ★ 현대 `HYUNDAI_CERTIFIED_API` 2d · 기아 `KIA_CPO_API` · KB `KBCHACHACHA_API` 1a. ★ ★ 보배드림 `maker_no`·`model_no` 와 ★ BMW 차종별 `ca_id` 는 ★ **아직 못 얻었다** — ★ 규격이 「facet 을 받아야 안다.  지어내지 마라」고 적었다"
 }
