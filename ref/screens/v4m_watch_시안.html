@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>v4m 관심 시안 — 모바일 340~640 가변</title>
+<title>v4 관심 시안 — 모바일 기준 · 넓어지면 카드가 펴진다</title>
 <style>
 :root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
 --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
@@ -9,7 +9,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:#000;color:var(--text);
 font:15px/1.55 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
-.v4-wrap{width:100%;max-width:640px;margin:0 auto;background:var(--bg);
+.v4-wrap{width:100%;max-width:1180px;margin:0 auto;background:var(--bg);
 min-height:100vh;padding-bottom:64px;position:relative}
 .v4-note{font-size:12px;color:var(--faint);line-height:1.6}
 
@@ -18,7 +18,7 @@ padding:10px 14px 8px;border-bottom:1px solid var(--line)}
 .v4-title{font-size:17px;font-weight:700}
 .v4-sub{font-size:12px;color:var(--dim);margin-top:2px}
 
-.v4-tabs{position:fixed;bottom:0;left:0;right:0;max-width:640px;margin:0 auto;
+.v4-tabs{position:fixed;bottom:0;left:0;right:0;max-width:1180px;margin:0 auto;
 display:flex;background:var(--surface);border-top:1px solid var(--line2);z-index:10}
 .v4-tabs a{flex:1;text-align:center;padding:9px 0 11px;font-size:11px;
 color:var(--dim);text-decoration:none}
@@ -59,6 +59,49 @@ border-radius:10px;background:var(--surface)}
 .v4-trim{font-size:12px;color:var(--dim);margin-top:1px}
 .v4-j{display:flex;flex-wrap:wrap;gap:3px 8px;margin-top:5px;font-size:11px;color:var(--faint)}
 .v4-j b.ok{color:var(--ok)} .v4-j b.no{color:var(--no)}
+
+/* ★★★ 모바일이 기준이다.  ★ 넓어지면 ★ 카드가 「옆으로 펴진다」
+   ★ 카드를 옆으로 붙이지 않는다 — ★ 한 줄에 늘 하나 (마스터 확정 08-25) */
+
+/* ★ 640 이상 — 사진을 키우고 · 판정을 한 줄로 · 메뉴를 위로 */
+@media (min-width:640px){
+  .v4-wrap{padding-bottom:0}
+  .v4-top{padding:14px 22px 10px}
+  .v4-title{font-size:20px}
+  .v4-card{padding:16px 22px}
+  .v4-thumb{width:180px;height:135px;flex:0 0 180px}
+  .v4-name{font-size:16px}
+  .v4-price{font-size:19px}
+  .v4-j{flex-wrap:nowrap}
+  .v4-box,.v4-seg{padding-left:22px;padding-right:22px}
+  .v4-box{margin-left:22px;margin-right:22px}
+  h3{margin-left:22px}
+  /* ★ 단추를 오른쪽으로 — 카드가 가로로 펴진다 */
+  .v4-acts{margin-top:0;flex:0 0 200px;flex-direction:column;justify-content:center}
+  .v4-card>.v4-row{align-items:flex-start}
+  .v4-cardline{display:flex;gap:18px;align-items:stretch}
+  .v4-tabs{position:static;border-top:0;border-bottom:1px solid var(--line);
+    background:transparent;justify-content:flex-start;padding:0 22px}
+  .v4-tabs a{flex:0 0 auto;padding:11px 15px;font-size:13.5px}
+  .v4-tabs b{display:none}
+}
+
+/* ★ 1024 이상 — 사진을 더 키우고 · 곁말을 옆에 편다 */
+@media (min-width:1024px){
+  .v4-card{padding:18px 26px}
+  .v4-thumb{width:240px;height:180px;flex:0 0 240px}
+  .v4-name{font-size:17px}
+  .v4-trim,.v4-spec{font-size:13px}
+  .v4-price{font-size:21px}
+  .v4-j{gap:4px 14px;font-size:12px}
+  .v4-ax{font-size:12px}
+  .v4-acts{flex:0 0 240px}
+  .v4-box,.v4-seg{padding-left:26px;padding-right:26px}
+  .v4-box{margin-left:26px;margin-right:26px}
+  h3{margin-left:26px}
+  .v4-tabs{padding:0 26px}
+}
+
 h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
 
 /* ★★★ 세 구간 — 마스터 확정 08-25
@@ -104,13 +147,13 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
   <button>등급 순</button>
 </div>
 
-<div class="v4-cards">
 
 <div class="v4-card">
   <div class="v4-chg dn">↓ 60만 내렸다</div>
-  <div class="v4-row">
-    <div class="v4-thumb">사진</div>
-    <div class="v4-mid">
+  <div class="v4-cardline">
+    <div class="v4-row">
+      <div class="v4-thumb">사진</div>
+      <div class="v4-mid">
       <div class="v4-ax"><b>89</b> 차량 <b>80</b> 값 <b>59</b> 보증 <b>73</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">S</span>KOLEOS_HEV<span class="v4-heart">♥</span></div>
       <div class="v4-trim">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
@@ -119,20 +162,21 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
       <div class="v4-price">2,990만 <span class="v4-was">3,050만</span></div>
       <div class="v4-spec" style="color:var(--ok)">시세보다 400만 싸다</div>
       <div class="v4-j"><span>사고 <b class="ok">OK</b></span><span>골격 <b class="ok">OK</b></span><span>용도 <b class="ok">OK</b></span><span>제조사보증 <b class="ok">OK</b></span><span>사이트보증 <b class="ok">OK</b></span></div>
-      <div class="v4-since">1위 · 742.1 / 910 · 8월 17일부터 · 7일째</div>
+      <div class="v4-since">1위 · 742.1 / 910 · 8월 17일부터 · 7일째</div></div>
     </div>
-  </div>
-  <div class="v4-acts">
+    <div class="v4-acts">
     <button class="v4-btn go">상세 ▸</button>
     <button class="v4-btn">관심 빼기</button>
+  </div>
   </div>
 </div>
 
 <div class="v4-card">
   <div class="v4-chg gone">✕ 팔렸다 · 8월 23일</div>
-  <div class="v4-row">
-    <div class="v4-thumb">사진 없음</div>
-    <div class="v4-mid">
+  <div class="v4-cardline">
+    <div class="v4-row">
+      <div class="v4-thumb">사진 없음</div>
+      <div class="v4-mid">
       <div class="v4-ax"><b>61</b> 차량 <b>44</b> 값 <b>—</b> 보증 <b>52</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">B</span>G80_25T<span class="v4-heart">♥</span></div>
       <div class="v4-trim">2.5T AWD 프리미엄 · 세부등급 없음</div>
@@ -141,20 +185,21 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
       <div class="v4-price" style="color:var(--faint)">4,180만에 팔림</div>
       <div class="v4-spec">시세보다 90만 비쌌다</div>
       <div class="v4-j"><span>사고 <b class="ok">OK</b></span><span>골격 <b class="ok">OK</b></span><span>용도 <b class="ok">OK</b></span><span>제조사보증 <b>—</b></span><span>사이트보증 <b>—</b></span></div>
-      <div class="v4-since">498 / 910 · 8월 15일부터 · 8일 지켜봄</div>
+      <div class="v4-since">498 / 910 · 8월 15일부터 · 8일 지켜봄</div></div>
     </div>
-  </div>
-  <div class="v4-acts">
+    <div class="v4-acts">
     <button class="v4-btn">비슷한 차 보기</button>
     <button class="v4-btn">지우기</button>
+  </div>
   </div>
 </div>
 
 <div class="v4-card">
   <div class="v4-chg same">— 담을 때와 같다</div>
-  <div class="v4-row">
-    <div class="v4-thumb">사진</div>
-    <div class="v4-mid">
+  <div class="v4-cardline">
+    <div class="v4-row">
+      <div class="v4-thumb">사진</div>
+      <div class="v4-mid">
       <div class="v4-ax"><b>84</b> 차량 <b>71</b> 값 <b>78</b> 보증 <b>66</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">A</span>XC60_IMPORT<span class="v4-heart">♥</span></div>
       <div class="v4-trim">B5 AWD 울트라 브라이트 · 세부등급 없음</div>
@@ -163,20 +208,21 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
       <div class="v4-price">4,250만</div>
       <div class="v4-spec">시세와 같다</div>
       <div class="v4-j"><span>사고 <b class="ok">OK</b></span><span>골격 <b class="ok">OK</b></span><span>용도 <b class="ok">OK</b></span><span>제조사보증 <b class="ok">2027-08</b></span><span>사이트보증 <b class="ok">OK</b></span></div>
-      <div class="v4-since">3위 · 681 / 910 · 8월 20일부터 · 4일째</div>
+      <div class="v4-since">3위 · 681 / 910 · 8월 20일부터 · 4일째</div></div>
     </div>
-  </div>
-  <div class="v4-acts">
+    <div class="v4-acts">
     <button class="v4-btn go">상세 ▸</button>
     <button class="v4-btn">관심 빼기</button>
+  </div>
   </div>
 </div>
 
 <div class="v4-card">
   <div class="v4-chg up">↑ 61만 올랐다</div>
-  <div class="v4-row">
-    <div class="v4-thumb">사진</div>
-    <div class="v4-mid">
+  <div class="v4-cardline">
+    <div class="v4-row">
+      <div class="v4-thumb">사진</div>
+      <div class="v4-mid">
       <div class="v4-ax"><b>52</b> 차량 <b>58</b> 값 <b>70</b> 보증 <b>61</b> 취향</div>
       <div class="v4-name"><span class="v4-gr">C</span>GV60<span class="v4-heart">♥</span></div>
       <div class="v4-trim">스탠다드 AWD · 세부등급 없음</div>
@@ -185,24 +231,23 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
       <div class="v4-price">2,860만 <span class="v4-was">2,799만</span></div>
       <div class="v4-spec" style="color:var(--no)">시세보다 120만 비싸다</div>
       <div class="v4-j"><span>사고 <b class="no">×</b></span><span>골격 <b class="ok">OK</b></span><span>용도 <b class="ok">OK</b></span><span>제조사보증 <b class="ok">2028-06</b></span><span>사이트보증 <b>—</b></span></div>
-      <div class="v4-since">12위 · 553 / 910 · 8월 19일부터 · 5일째</div>
+      <div class="v4-since">12위 · 553 / 910 · 8월 19일부터 · 5일째</div></div>
     </div>
-  </div>
-  <div class="v4-acts">
+    <div class="v4-acts">
     <button class="v4-btn go">상세 ▸</button>
     <button class="v4-btn">관심 빼기</button>
   </div>
-</div>
-
+  </div>
 </div>
 
 <h3>지켜야 하는 것</h3>
 <div class="v4-note" style="margin:0 14px 24px">
-★★★ <b>이것은 모바일 판이다</b> — 폭 <b>340~640 가변</b> · 카드 <b>하나씩</b> · 메뉴 <b>아래 탭</b><br>
-&nbsp;&nbsp;★ 사진 104×78 · <b>340 아래는 88×66</b> (사진만 줄인다.  글자는 그대로)<br>
-&nbsp;&nbsp;★ <b>640 까지 늘어난다</b> — 태블릿 세로도 이 판으로 본다<br>
-&nbsp;&nbsp;★ PC는 <b>따로 있다</b> — <code>v4pc_watch_시안.html</code> (1180 고정)<br>
-★★★ <b>두 판이 담는 정보는 똑같다</b> (마스터 확정 08-25) — 자리만 다르다<br>
+★★★ <b>모바일이 기준이다.  넓어지면 카드가 「옆으로 펴진다」</b> (마스터 확정 08-25)<br>
+&nbsp;&nbsp;★★ <b>카드를 옆으로 붙이지 않는다</b> — 한 줄에 늘 <b>하나</b>.  넓어진 만큼 <b>카드가 넓어진다</b><br>
+&nbsp;&nbsp;<b>340~639</b> 사진 104×78 (340 아래 88×66) · 메뉴 <b>아래 탭</b> · 단추 아래<br>
+&nbsp;&nbsp;<b>640~1023</b> 사진 <b>180×135</b> · 메뉴 <b>위</b> · <b>단추가 오른쪽으로</b> · 판정 한 줄<br>
+&nbsp;&nbsp;<b>1024~1180</b> 사진 <b>240×180</b> · 글씨 키움 · 곁말을 옆에 편다<br>
+★★★ <b>세 폭이 담는 정보는 똑같다</b> — 자리만 바뀐다<br>
 ★★★ <b>좁아진다고 정보를 빼지 않는다</b> — <b>자리만 바꾼다.</b>  글자를 줄이거나 감추지 마라<br>
 &nbsp;&nbsp;★ 등급 · 점수 · 판정 · 보증 · 담은 날 — <b>세 구간에서 다 보인다</b><br>
 ★★ <b>한 화면에 한 가지 일만</b> — 여기는 <b>지켜보는 곳</b>이다<br>
