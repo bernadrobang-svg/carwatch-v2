@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v3 관리 시안 — CarWatch</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+--text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;--mono:ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
+.v3-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.v3-brand{color:var(--amber);font-weight:600;text-decoration:none}
+.v3-nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
+.v3-nav a.on{color:var(--text);background:var(--surface2)}
+h2,h3{font-size:14px;font-weight:600;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+.v3-note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.v3-sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.v3-lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
+.v3-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v3-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.v3-mono{font-family:var(--mono);font-size:12.5px}
+.v3-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+font-size:12px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.v3-btn.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+th{color:var(--dim);font-weight:400}
+th:first-child,td:first-child{text-align:left}
+td.num{font-family:var(--mono)}
+.v3-big{font-size:22px;font-weight:700}
+.v3-bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;margin-top:4px}
+.v3-bar i{display:block;height:100%;background:var(--amber)}
+</style></head><body>
+<div class="v3-wrap">
+
+<div class="v3-top">
+  <a class="v3-brand" href="v3_dashboard_시안.html">CarWatch</a>
+  <nav class="v3-nav"><a href="v3_listings_시안.html">매물</a><a href="v3_watch_시안.html">관심</a><a href="v3_dashboard_시안.html">현황</a><a href="v3_admin_시안.html">관리</a></nav>
+</div>
+
+<h2 style="border:0;padding-top:14px">관리 — 운영자 도구만</h2>
+<div class="v3-note">★ 마스터 확정 08-24 — ★ 내린 화면 여섯 중 ★ **리포트·미판정만 남는다**.  ★ 비교·시세·딜러·후보는 제자리로 갔다</div>
+
+<div class="v3-g2">
+  <div class="v3-sec"><div class="v3-lbl">★ 운영</div>
+    <button class="v3-btn on">브라우저 수집</button>
+    <button class="v3-btn">실행 지시·큐</button>
+    <button class="v3-btn">진행 지켜보기</button>
+    <button class="v3-btn">목록 반입</button>
+    <button class="v3-btn">감사 조회</button>
+    <div class="v3-note" style="margin:6px 0 0">★ 「브라우저 수집」이 맨 위 — ★ 엔카는 마스터 회선으로만 받는다</div></div>
+
+  <div class="v3-sec"><div class="v3-lbl">조정</div>
+    <button class="v3-btn">차종 추가·수정</button>
+    <button class="v3-btn">사전 확정</button>
+    <button class="v3-btn">배점 조정</button>
+    <button class="v3-btn">등록부 분류</button>
+    <button class="v3-btn">config 편집·이력</button>
+    <div class="v3-note" style="margin:6px 0 0">★★ 「사전 확정」에 ★ 기아 1,020건이 걸려 있다</div></div>
+
+  <div class="v3-sec"><div class="v3-lbl">탐색</div>
+    <button class="v3-btn">조회 쿼리</button>
+    <button class="v3-btn">API 조회·저장</button>
+    <button class="v3-btn">관리 도구</button>
+    <button class="v3-btn">문서 뷰어</button>
+    <button class="v3-btn">개발 요청</button></div>
+
+  <div class="v3-sec"><div class="v3-lbl">화면 — ★ 둘만 남는다</div>
+    <button class="v3-btn">리포트</button>
+    <button class="v3-btn">미판정</button>
+    <div class="v3-note" style="margin:6px 0 0">
+      ★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서<br>
+      ★ 라우트는 살려 둔다 — ★ 화면을 지우지 않는다 (개정 427)
+    </div></div>
+</div>
+
+<div class="v3-sec">
+  <div class="v3-lbl">★ 계정</div>
+  <button class="v3-btn">사용자</button>
+  <div class="v3-note" style="margin:4px 0 0">★ 지금 ★ 문이 없다 — ★ 주소를 직접 쳐야 들어간다 (`V11-158` 이 잡을 자리)</div>
+</div>
+
+<h3>지켜야 하는 것</h3>
+<div class="v3-note">
+★ ★ **관리는 운영자 도구다.**  ★ 사는 사람이 보는 화면을 ★ 여기 두지 않는다<br>
+★ 「브라우저 수집」이 ★ 맨 위 — ★ 엔카는 서버에서 못 받는다 (407)<br>
+★ 관리자에게만 보인다 — ★ 비로그인은 ★ 상단에 ★ 매물·현황 둘만<br>
+★ `config` 를 바꾸는 것은 ★ 다 감사에 남긴다<br>
+★ 라우트는 지우지 않는다 — ★ 문만 옮긴다 (개정 427)
+</div>
+
+</div></body></html>

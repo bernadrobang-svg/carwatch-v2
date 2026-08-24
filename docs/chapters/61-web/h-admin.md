@@ -1,5 +1,13 @@
 # 14장-8. 관리 화면
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **마스터 지적 08-18 — 「제대로된 설계나 가이드 줬니?」**
 
 ```

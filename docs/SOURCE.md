@@ -1,5 +1,13 @@
 # 소스 색인
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/INDEX.md`
+sources  실측 08-24
+checks   S46-38 · S46-39
+```
+
+
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
 파일 160개 · 총 56,622줄

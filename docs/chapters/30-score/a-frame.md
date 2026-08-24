@@ -1,5 +1,13 @@
 ## STEP 67 — 축 설계 원칙
 
+```
+version  SPEC-2026.08.24-r685
+follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ### 축이 되는 조건
 
 ```

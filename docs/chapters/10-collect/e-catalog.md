@@ -1,5 +1,13 @@
 ## STEP 22 — `catalog` 응답 → 사전
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **루트가 배열이다. 매물이 아니라 모델(`jatoVehicleId`) 단위다.**
 
 ```json

@@ -1,5 +1,13 @@
 ## STEP 63 — V5 수치 검증
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **점수가 「계산은 됐는데 의미가 틀린」 상태를 잡는다.**
 
 | 코드 | 검사 | 기대 | 등급 |

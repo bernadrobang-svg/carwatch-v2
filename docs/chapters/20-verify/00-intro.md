@@ -1,5 +1,13 @@
 # 6장. 검증 5차 (STEP 54–66)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 6장 정의서
 
 **검증은 「맞는지 보는 것」이 아니라 「틀렸을 때 멈추는 것」이다.**

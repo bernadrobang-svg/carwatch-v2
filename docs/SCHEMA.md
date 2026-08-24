@@ -1,5 +1,13 @@
 # SCHEMA — DB 색인
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/INDEX.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
 ```

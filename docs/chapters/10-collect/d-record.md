@@ -1,5 +1,13 @@
 ## STEP 21 — `inspection` 응답 → 필드
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 | 원문 | 변환 | CORE 필드 |
 |---|---|---|
 | `master.detail.vin` | — | `inspection_vin` |

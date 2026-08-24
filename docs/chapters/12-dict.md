@@ -1,5 +1,13 @@
 # 4장. 키 · 코드 · 사전 (STEP 40–46)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 4장 정의서
 
 **본 장은 「같은 값을 같은 것으로 인정하는 규칙」을 확정한다.**

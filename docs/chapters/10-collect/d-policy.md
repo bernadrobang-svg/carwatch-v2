@@ -1,6 +1,14 @@
 ## STEP 24 — 요청 정책
 
 ```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 타임아웃   15초
 재시도    404 는 재시도하지 않는다.  404 는 실패가 아니라 not_found 결과다
 차종      한 차종 완주 후 다음.  끝나면 즉시 검증·리포트

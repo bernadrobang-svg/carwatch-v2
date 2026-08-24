@@ -1,6 +1,14 @@
 ## STEP 16 — 수집 계층 원칙
 
 ```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 수집은 받아서 저장만 한다.  해석하지 않는다.
 ```
 

@@ -1,5 +1,13 @@
 # 9장. 출력 · 리포트 (STEP 90–92)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 9장 정의서
 
 **출력은 판정 결과를 그대로 보여주는 것이지, 여기서 새로 계산하지 않는다.**

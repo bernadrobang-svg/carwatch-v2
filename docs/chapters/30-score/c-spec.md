@@ -1,6 +1,14 @@
 ## STEP 73 [판정] — 사양 · 축 구성  ★ 배점은 `f-table` 5장-2a
 
 ```
+version  SPEC-2026.08.24-r685
+follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 목적    마스터가 필요로 하는 사양이 달려 있는가를 본다
 원천    options.standard(3자리) · options.choice(4~5자리) · contents.text · 제조사 사양표
 값규칙  Component 단위로 1/0/NULL/-1.  excluded 는 분모에서 뺀다 (STEP 83)

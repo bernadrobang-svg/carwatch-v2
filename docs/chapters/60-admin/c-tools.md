@@ -1,6 +1,14 @@
 ## STEP 133 [규격] — 조회 전용 쿼리
 
 ```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 목적    관리자가 DB 를 직접 조회한다
 원천    사용자 입력 SQL
 입력    SQL 문자열

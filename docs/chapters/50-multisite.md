@@ -1,5 +1,13 @@
 # 12장. 후속 — 다중 사이트 확장 (STEP 121–125)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 12장 정의서
 
 **1차는 엔카 단독이다. 이 장은 2차 사이트를 붙일 때 하는 일이다.**

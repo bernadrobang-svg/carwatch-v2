@@ -1,5 +1,13 @@
 # 10장. 활용 — 화면 (STEP 93–110)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 10장 정의서
 
 **v1 웹앱(Flask · 화면 10 + `/notready` = 11개)을 준용한다. 화면 구성은 유지하고 데이터 계약만 v2 규격으로 바꾼다.**

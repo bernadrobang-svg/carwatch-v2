@@ -1,5 +1,13 @@
 # 3장. 테이블 설계 (STEP 28–39)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 3장 정의서
 
 **본 장에서 확정하는 테이블군 · 공통 규칙 · DTO. DDL 은 `sql/ddl/` 에 둔다.**

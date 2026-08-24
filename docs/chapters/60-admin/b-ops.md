@@ -1,6 +1,14 @@
 ## STEP 130 [규격] — 차종 추가
 
 ```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 목적    관리자가 새 차종을 추가한다
 원천    facet 응답 (Badge · FuelType · Options)
 입력    제조사 · 모델그룹 · 연식 범위 · 가격 범위

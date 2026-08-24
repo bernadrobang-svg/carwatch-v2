@@ -1,5 +1,13 @@
 ## STEP 36 — `dict_*` 설계
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **사전은 손으로 적지 않는다. `tools/build_dict.py` 가 RAW 에서 생성한다.**
 
 | 테이블 | 원천 | 키 | 내용 |

@@ -1,6 +1,14 @@
 ## STEP 84 [판정] — 등급
 
 ```
+version  SPEC-2026.08.24-r685
+follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 목적    총점을 등급으로 바꿔 비교 가능하게 한다
 원천    result_score.score_total · denominator · absolute_fail
 값규칙  분모 미달은 NOT_RATED.  D 나 E 가 아니다.  순위도 매기지 않는다

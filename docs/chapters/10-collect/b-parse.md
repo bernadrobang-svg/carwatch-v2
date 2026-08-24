@@ -1,5 +1,13 @@
 ## STEP 19 — `list` 응답 → 필드
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **아래는 `SearchResults[]` 요소의 경로다.** 봉투(`Count`)는 STEP 18a 참조.
 **원문 29경로. 배열 요소는 `[]` 로 한 경로로 센다.**
 

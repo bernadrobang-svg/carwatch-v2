@@ -1,5 +1,15 @@
 # 추적표 색인
 
+> ★ 공통 머리(층·상태 기호·표 칸)는 ★ `docs/trace/00_공통머리.md` 가 정본이다 (개정 685)
+
+
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
 **`python3.11 tools/trace_fill.py --write` 가 만든다. 손으로 고치지 않는다.**
 
 요구 **630건** · 금지·규칙 227건은 [RULES.md](RULES.md) 로 뺐다 — 소스가 없는 게 맞다

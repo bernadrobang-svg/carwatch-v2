@@ -1,5 +1,13 @@
 ## STEP 20 — `detail` 응답 → 필드
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **원문 123~144경로. 아래는 판정에 쓰는 것만. 나머지는 8장에서 다룬다.**
 
 | 원문 | 변환 | CORE 필드 |

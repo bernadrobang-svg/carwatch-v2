@@ -1,5 +1,13 @@
 # 14장-2. 목록
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 # 1. 목록 `/listings`
 
 ## 넓음 (≥1100) — 표 · 한 행 1줄

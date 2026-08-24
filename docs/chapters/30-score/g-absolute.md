@@ -1,5 +1,13 @@
 
 
+```
+version  SPEC-2026.08.24-r685
+follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ---
 
 # ★★★ 원문이 없는데 「무사고」로 판정했다 — 08-17

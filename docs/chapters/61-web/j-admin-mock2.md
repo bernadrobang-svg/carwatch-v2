@@ -1,5 +1,13 @@
 # 관리 화면 시안 2 — 나머지 11개
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **★ `i-admin-mock.md` 의 이어짐. 좁은 폭 360 기준.**
 **★ 이 시안은 `[마스터]` 층이다 (S32). 마스터가 고치면 그것이 정본이다.**
 

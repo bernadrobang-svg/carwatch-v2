@@ -1,6 +1,14 @@
 ## STEP 126 [규격] — 권한 3단
 
 ```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
+```
 목적    조회는 열고, 변경은 막는다
 원천    Account.role
 입력    요청 · 세션

@@ -1,5 +1,13 @@
 ## STEP 58 — V2 GAP 보정
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **`anomaly` 는 자동으로 덮어쓰지 않는다. 원인을 분류한 뒤 조치한다.**
 
 | 원인 | 판별 | 보정 |

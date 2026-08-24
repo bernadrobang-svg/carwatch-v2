@@ -1,5 +1,13 @@
 # 부록 B. `config` 파일 예시
 
+```
+version  SPEC-2026.08.24-r685
+follows  ★ 참고 — 정본이 아니다
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **본문 STEP 6 의 「config 키 전량」 표가 정본이다. 아래는 형태를 보이는 발췌다.**
 
 ### config 파일 예시 — 형태를 본문에 둔다

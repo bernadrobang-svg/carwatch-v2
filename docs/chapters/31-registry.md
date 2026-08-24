@@ -1,5 +1,13 @@
 # 8장. 미사용 · 확장 (STEP 87–89)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 8장 정의서
 
 **「지금 안 쓰는 것」을 「없는 것」으로 만들지 않는다.**

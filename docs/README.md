@@ -1,5 +1,13 @@
 # CarWatch 개발 문서
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/INDEX.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **작업 단위로 쪼갠 지시서. 필요한 파일만 연다.**
 
 ```

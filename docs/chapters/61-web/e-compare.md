@@ -1,5 +1,13 @@
 # 14장-5. 비교 · 이동 · 금지
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 # 4. 비교 `/compare`
 
 ```

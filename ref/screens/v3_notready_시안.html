@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v3 미판정 시안 — CarWatch</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+--text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;--mono:ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
+.v3-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.v3-brand{color:var(--amber);font-weight:600;text-decoration:none}
+.v3-nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
+.v3-nav a.on{color:var(--text);background:var(--surface2)}
+h2,h3{font-size:14px;font-weight:600;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+.v3-note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.v3-sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.v3-lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
+.v3-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v3-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.v3-mono{font-family:var(--mono);font-size:12.5px}
+.v3-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+font-size:12px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.v3-btn.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+th{color:var(--dim);font-weight:400}
+th:first-child,td:first-child{text-align:left}
+td.num{font-family:var(--mono)}
+.v3-big{font-size:22px;font-weight:700}
+.v3-bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;margin-top:4px}
+.v3-bar i{display:block;height:100%;background:var(--amber)}
+</style></head><body>
+<div class="v3-wrap">
+
+<div class="v3-top">
+  <a class="v3-brand" href="v3_dashboard_시안.html">CarWatch</a>
+  <nav class="v3-nav"><a href="v3_listings_시안.html">매물</a><a href="v3_watch_시안.html">관심</a><a href="v3_dashboard_시안.html">현황</a><a href="v3_admin_시안.html">관리</a></nav>
+</div>
+
+<h2 style="border:0;padding-top:14px">미판정 — ★ 두 절로 가른다</h2>
+<div class="v3-note">★ 마스터 확정 08-24 — 「★ 미분류는 ★ 판단하기 어려운 것을 ★ 나에게 묻는 용도」 (`UI_REVIEW` 9장)</div>
+
+<div class="v3-sec" style="border-color:var(--amber)">
+  <div class="v3-lbl">★ 1 미분류 — ★ 마스터께 묻는 자리</div>
+  <span class="v3-big">—건</span>
+  <div class="v3-note" style="margin:4px 0 10px">★ 무엇인지 모르겠습니다.  ★ 정해 주십시오</div>
+  <table>
+    <tr><th>모델명(원문)</th><th>연료</th><th>배지</th><th>사이트</th><th>건수</th><th>정하기</th></tr>
+    <tr><td>스포티지 하이브리드</td><td>가솔린+전기</td><td>1.6T</td><td>기아인증</td><td class="num">12</td>
+        <td><button class="v3-btn on">대상</button> <button class="v3-btn">범위 밖</button></td></tr>
+    <tr><td>더 뉴 그랜저</td><td>—</td><td>2.5</td><td>현대인증</td><td class="num">7</td>
+        <td><button class="v3-btn">대상</button> <button class="v3-btn">범위 밖</button></td></tr>
+    <tr><td>KOLEOS E-TECH</td><td>—</td><td>—</td><td>보배드림</td><td class="num">3</td>
+        <td><button class="v3-btn">대상</button> <button class="v3-btn">범위 밖</button></td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">
+    ★ 「대상」을 누르면 ★ `targets.json` 의 `fuel_match`·`trim_include` 에 더한다<br>
+    ★ 「범위 밖」을 누르면 ★ 아래 절로 내린다 — ★ 지우지 않는다
+  </div>
+</div>
+
+<div class="v3-sec">
+  <div class="v3-lbl">2 범위 밖 — 갈래가 달라 뺀 것</div>
+  <span class="v3-mono">—건</span> <button class="v3-btn" style="margin-left:8px">펼치기 ▾</button>
+  <div class="v3-note" style="margin:4px 0 0">
+    ★ 스포티지 가솔린 · 그랜저 가솔린 처럼 ★ 우리 갈래가 아닌 것<br>
+    ★ `status='out_of_scope'` 로 남긴다 — ★ 마스터가 갈래를 넓히시면 ★ 되살아난다<br>
+    ★ 평소에는 ★ 접어 둔다.  ★ 물을 것이 아니다
+  </div>
+</div>
+
+<div class="v3-sec">
+  <div class="v3-lbl">3 등록부 미분류 — 판정을 막는 것</div>
+  <span class="v3-mono">319건</span>
+  <div class="v3-note" style="margin:4px 0 0">
+    ★ `dict_enum` 에 ★ `pending` 인 낱말 — ★ 판정에 쓰는 축이면 ★ 그 축이 멈춘다 (V4-11)<br>
+    ★★ ★ 기아 1,020건이 ★ 여기 걸려 있다 (명령서 33-2)<br>
+    ★ 「사전 확정」 화면에서 정한다 — ★ `status` 를 손으로 바꾸지 않는다
+  </div>
+</div>
+
+<h3>지켜야 하는 것</h3>
+<div class="v3-note">
+★ ★ **1절만 마스터께 묻는 자리다.**  ★ 2·3절은 ★ 건수만<br>
+★ 미분류에 ★ `fuel_match` 로 걸러지는 것이 있으면 ★ 검사가 잡는다 (`S46-42`)<br>
+★ 「대상」·「범위 밖」을 누르면 ★ config 가 바뀐다 — ★ 무엇이 바뀌었는지 ★ 감사에 남긴다<br>
+★ 범위 밖은 ★ 지우지 않는다 — ★ 갈래를 넓히면 되살아나야 한다<br>
+★ 숫자는 고정폭 · 색은 넷만
+</div>
+
+</div></body></html>

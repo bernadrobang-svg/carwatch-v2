@@ -1,5 +1,13 @@
 # 2장. 수집 정의 (STEP 16–27)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 2장 정의서
 
 **본 장에서 확정하는 구조체·함수·상수. 로직보다 먼저 고정한다.**

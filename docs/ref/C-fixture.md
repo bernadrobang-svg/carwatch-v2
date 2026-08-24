@@ -1,5 +1,13 @@
 # 부록 C. 실물 표본 (fixtures)
 
+```
+version  SPEC-2026.08.24-r685
+follows  ★ 참고 — 정본이 아니다
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 **동봉 `BJY_v2_실물표본.tar.gz` 를 `tests/fixtures/` 에 푼다.**
 **본문 STEP 6a 가 사용 규칙을, 아래가 표본 내용을 담는다.**
 

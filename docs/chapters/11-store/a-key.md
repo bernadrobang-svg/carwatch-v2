@@ -1,5 +1,13 @@
 ## STEP 28 — 테이블 목록
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 | 테이블 | 군 | 키 | 행 단위 | 보존 |
 |---|---|---|---|---|
 | `raw_response` | raw | `(listing_id, endpoint, fetched_at)` | 응답 1건 | 영구 |

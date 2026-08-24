@@ -1,5 +1,13 @@
 # 14장. 표현 계층 (STEP 141–155)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 14장 정의서
 
 **10장은 「화면에 무엇을 내는가」다. 14장은 「그것을 어떻게 띄우는가」다.**

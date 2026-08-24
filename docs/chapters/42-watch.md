@@ -1,5 +1,13 @@
 # 11장. 활용 — 후보 추적 (STEP 111–120)
 
+```
+version  SPEC-2026.08.24-r685
+follows  `docs/chapters/30-score/f-table.md`
+sources  실측 08-22
+checks   S46-38 · S46-39
+```
+
+
 ## 11장 정의서
 
 **「지금 좋은 매물」을 고르는 것과 「관심 매물이 어떻게 되는지 지켜보는 것」은 다른 일이다.**

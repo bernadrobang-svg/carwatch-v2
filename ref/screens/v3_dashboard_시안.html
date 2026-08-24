@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v3 현황 시안 — CarWatch</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+--text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;--mono:ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
+.v3-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.v3-brand{color:var(--amber);font-weight:600;text-decoration:none}
+.v3-nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
+.v3-nav a.on{color:var(--text);background:var(--surface2)}
+h2,h3{font-size:14px;font-weight:600;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+.v3-note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.v3-sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.v3-lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
+.v3-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v3-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.v3-mono{font-family:var(--mono);font-size:12.5px}
+.v3-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+font-size:12px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.v3-btn.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+th{color:var(--dim);font-weight:400}
+th:first-child,td:first-child{text-align:left}
+td.num{font-family:var(--mono)}
+.v3-big{font-size:22px;font-weight:700}
+.v3-bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;margin-top:4px}
+.v3-bar i{display:block;height:100%;background:var(--amber)}
+</style></head><body>
+<div class="v3-wrap">
+
+<div class="v3-top">
+  <a class="v3-brand" href="v3_dashboard_시안.html">CarWatch</a>
+  <nav class="v3-nav"><a href="v3_listings_시안.html">매물</a><a href="v3_watch_시안.html">관심</a><a class="on" href="v3_dashboard_시안.html">현황</a><a href="v3_admin_시안.html">관리</a></nav>
+</div>
+
+<h2 style="border:0;padding-top:14px">현황 — 오늘 무엇이 바뀌었나</h2>
+<div class="v3-note">★ 필터가 걸리면 아래가 모두 그 조건 안에서 다시 그려진다 (마스터 확정 08-24)</div>
+
+<div class="v3-sec">
+  <div class="v3-lbl">필터 — 매물과 같은 것이 걸린다</div>
+  <span class="v3-mono">KOLEOS_HEV · 2,500~3,500만 · S · A · 사고 OK</span>
+  <button class="v3-btn" style="margin-left:8px">지우기</button>
+</div>
+
+<h3>1 오늘</h3>
+<div class="v3-g4">
+  <div class="v3-sec"><div class="v3-lbl">새로 뜬 것</div><span class="v3-big">＋37</span></div>
+  <div class="v3-sec"><div class="v3-lbl">값 내린 것</div><span class="v3-big" style="color:var(--ok)">14</span></div>
+  <div class="v3-sec"><div class="v3-lbl">사라진 것</div><span class="v3-big">8</span></div>
+  <div class="v3-sec"><div class="v3-lbl">마지막 재판정</div><span class="v3-mono">08-24 13:00</span>
+    <div class="v3-note" style="margin:2px 0 0">네 시간마다 확인한다</div></div>
+</div>
+
+<h3>2 등급 분포</h3>
+<div class="v3-sec">
+  <table>
+    <tr><th>등급</th><th>건수</th><th>비율</th><th></th></tr>
+    <tr><td>S</td><td class="num">48</td><td class="num">1.1%</td><td style="width:50%"><div class="v3-bar"><i style="width:2%"></i></div></td></tr>
+    <tr><td>A</td><td class="num">384</td><td class="num">8.7%</td><td><div class="v3-bar"><i style="width:17%"></i></div></td></tr>
+    <tr><td>B</td><td class="num">459</td><td class="num">10.4%</td><td><div class="v3-bar"><i style="width:20%"></i></div></td></tr>
+    <tr><td>C</td><td class="num">556</td><td class="num">12.6%</td><td><div class="v3-bar"><i style="width:25%"></i></div></td></tr>
+    <tr><td>D 이하</td><td class="num">2,956</td><td class="num">67.2%</td><td><div class="v3-bar"><i style="width:100%"></i></div></td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">등급을 누르면 매물로 간다 — 그 등급만 걸린 채로</div>
+</div>
+
+<h3>3 시세 — 차종별</h3>
+<div class="v3-note">★ 옛 「시세」 화면이 여기로 들어왔다 (마스터 확정 08-24 · 개정 427 주석대로)</div>
+<div class="v3-sec">
+  <table>
+    <tr><th>차종</th><th>매물</th><th>최저</th><th>중앙</th><th>최고</th><th>한 달 전</th></tr>
+    <tr><td>KOLEOS_HEV</td><td class="num">63</td><td class="num">2,390</td><td class="num">3,390</td><td class="num">3,900</td><td class="num" style="color:var(--ok)">−120</td></tr>
+    <tr><td>G80_25T</td><td class="num">34</td><td class="num">3,180</td><td class="num">4,250</td><td class="num">5,600</td><td class="num" style="color:var(--no)">＋80</td></tr>
+    <tr><td>GRANDEUR_LPG</td><td class="num">47</td><td class="num">1,890</td><td class="num">2,540</td><td class="num">3,100</td><td class="num">—</td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">차종을 누르면 매물로 간다 · 값은 만원 · 「한 달 전」은 중앙값 변화</div>
+</div>
+
+<h3>4 사이트</h3>
+<div class="v3-sec">
+  <table>
+    <tr><th>사이트</th><th>들어온 것</th><th>대상</th><th>마지막</th></tr>
+    <tr><td>엔카</td><td class="num">3,256</td><td class="num">—</td><td class="v3-mono">08-24 13:00</td></tr>
+    <tr><td>현대인증</td><td class="num">173</td><td class="num">173</td><td class="v3-mono">08-24 11:20</td></tr>
+    <tr><td>기아인증</td><td class="num">0</td><td class="num">1,020</td><td class="v3-mono" style="color:var(--no)">사전 확정 필요</td></tr>
+    <tr><td>K카</td><td class="num">14</td><td class="num">527</td><td class="v3-mono">08-24 09:40</td></tr>
+    <tr><td>KB차차차</td><td class="num">89</td><td class="num">1,726</td><td class="v3-mono">08-24 08:10</td></tr>
+    <tr><td>보배드림</td><td class="num">11</td><td class="num">3,233</td><td class="v3-mono">08-24 08:00</td></tr>
+    <tr><td>리본카 · 렉서스 · 볼보 · BMW</td><td class="num">0</td><td class="num">—</td><td class="v3-mono">아직</td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">「대상」은 그 사이트에 있는 우리 차종 수 · 잰 날을 함께 적는다</div>
+</div>
+
+<h3>5 확인 못 한 것</h3>
+<div class="v3-sec">
+  <span class="v3-mono">미분류 —건</span> · <span class="v3-mono">범위 밖 —건</span>
+  <div class="v3-note" style="margin:4px 0 0">
+    ★ 미분류만 마스터께 묻는 자리다 — 누르면 미판정 화면으로<br>
+    ★ 범위 밖은 갈래가 달라 뺀 것이라 건수만 낸다 (`UI_REVIEW` 9장)
+  </div>
+</div>
+
+<h3>지켜야 하는 것</h3>
+<div class="v3-note">
+★ 필터가 걸리면 ★ 1~3절이 ★ 그 조건 안에서 다시 그려진다 — ★ 전체 분포가 아니다<br>
+★ 표의 값은 ★ 누르면 ★ 매물로 간다 — ★ 그 조건이 걸린 채로<br>
+★ 숫자는 ★ 고정폭 (`v1-ui/화면_승계문서.md` 4.1 — ★ 자릿수 비교가 안 되면 표가 무의미)<br>
+★ 색은 ★ 넷만 — ★ 주황(강조) · 초록(좋다) · 빨강(나쁘다) · 회색(모른다)<br>
+★ 시세는 ★ 옛 「시세」 화면이 ★ 여기로 들어온 것이다 — ★ 화면을 지우지 않는다<br>
+★ 「대상」 숫자에는 ★ 잰 날을 붙인다 (가이드역할 ㉿)
+</div>
+
+</div></body></html>
