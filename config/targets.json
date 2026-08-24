@@ -449,7 +449,21 @@
         "classCode": "2774",
         "_차명": "테슬라 Model Y",
         "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "xozX5g",
+          "model-group": "8enPWM",
+          "model": "4NQQ7p",
+          "_차명": "테슬라 모델 Y 주니퍼"
+        },
+        {
+          "brand": "xozX5g",
+          "model-group": "8enPWM",
+          "model": "N49KGo",
+          "_차명": "테슬라 모델 Y"
+        }
+      ]
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -535,7 +549,21 @@
         "model_no": "876",
         "_차명": "벤츠 GLC클래스",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "lgBNgw",
+          "model-group": "Vy2JKy",
+          "model": "4LrBOo",
+          "_차명": "벤츠 GLC클래스 (X254)"
+        },
+        {
+          "brand": "lgBNgw",
+          "model-group": "Vy2JKy",
+          "model": "ep8gKo",
+          "_차명": "벤츠 GLC클래스 (X253)"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,
@@ -574,7 +602,15 @@
         "model_no": "181",
         "_차명": "아우디 Q5",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "RgMAjg",
+          "model-group": "aMKvYk",
+          "model": "5oqano",
+          "_차명": "아우디 Q5 (FY)"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,
@@ -618,7 +654,14 @@
         "_전수": "true",
         "_차명": "렉서스 NX",
         "_확인": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다.  ★ 전량 받아 우리 쪽에서 거른다"
-      }
+      },
+      "heydealer": [
+        {
+          "brand": "EW3do3",
+          "model-group": "1yOzZM",
+          "_차명": "렉서스 NX300h"
+        }
+      ]
     },
     "year_range": null,
     "price_range": null,

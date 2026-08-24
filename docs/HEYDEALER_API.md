@@ -1,7 +1,7 @@
 # 헤이딜러 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.25-r727
+version  SPEC-2026.08.25-r733
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 694 · 실측 08-24
 checks   S46-5 · S46-31
@@ -44,19 +44,28 @@ checks   S46-5 · S46-31
 | ★ **렉서스 RX450h 4세대** | `EW3do3` | `relm4k` | `Eoml03` | 1 | ★ `RX_IMPORT` |
 | ★ **볼보 XC60 2세대** | `Jo6rOo` | `VMjr8M` | `qpRDG3` | 10 | ★ `XC60_IMPORT` |
 | ★ **볼보 S60 3세대** | `Jo6rOo` | `KM5VJy` | `n3Qkxp` | 5 | ★ `S60_IMPORT` |
+| ★ **테슬라 모델 Y 주니퍼** | `xozX5g` | `8enPWM` | `4NQQ7p` | 10 | ★ `MODEL_Y` |
+| ★ **테슬라 모델 Y** | `xozX5g` | `8enPWM` | `N49KGo` | 10 | 〃 |
+| ★ **벤츠 GLC (X254)** | `lgBNgw` | `Vy2JKy` | `4LrBOo` | 2 | ★ `GLC_IMPORT` |
+| ★ **벤츠 GLC (X253)** | `lgBNgw` | `Vy2JKy` | `ep8gKo` | 10 | 〃 |
+| ★ **아우디 Q5 (FY)** | `RgMAjg` | `aMKvYk` | `5oqano` | 3 | ★ `Q5_IMPORT` |
+| ★ **렉서스 NX300h** | `EW3do3` | `1yOzZM` | ★ **없음** | 10 | ★ `NX_HEV` |
 | ★ **볼보 V60 크로스컨트리 2세대** | `Jo6rOo` | `0yNNgy` | `Z40d04` | 2 | ★★ **`V60CC_IMPORT`** — 마스터 확정 08-24 |
 | ★ **볼보 XC40** | `Jo6rOo` | `zyx6mk` | `wo2dG4` | 10 | ★★ **`XC40_IMPORT`** — 마스터 확정 08-24 |
 
 ```
 ★★★ ★ **열여섯이 ★ 다 우리 등록 차종이다** — ★ 마스터가 ★ 「★ 둘 다 대상으로 추가해.  ★ 전 사이트 대상이야」 하셨다
    ★ ★ 차종이 ★ **18 → 20종**이 됐다 (`XC40_IMPORT` · `V60CC_IMPORT`)
-★ ★ 브랜드 해시 — 현대 `xoKegB` · 기아 `2oV0gK` · 제네시스 `vgm7Do` ·
+★ ★ 브랜드 해시 — 현대 `xoKegB` · 기아 `2oV0gK` · 제네시스 `vgm7Do` · ★ 테슬라 `xozX5g` · ★ 벤츠 `lgBNgw` · ★ 아우디 `RgMAjg` ·
    르노코리아 `xgrX7o` · BMW `0W5AWm` · 렉서스 `EW3do3` · 볼보 `Jo6rOo`
 ★ ★ 한 쪽에 ★ **10건**이 상한이다 — ★ 10 이면 ★ 다음 쪽이 있다.  ★ `page` 를 올려라
 ★★ ★ **갈래가 섞여 온다** — ★ 그랜저에 ★ 2.5 가솔린과 ★ 3.0 LPi 가 함께 있다
    ★ ★ `fuel_match` 로 ★ 우리 쪽에서 걸러라 (마스터 「제외해」 · `UI_REVIEW` 9a)
 필수  ★ 이 표를 ★ `config/targets.json` 의 ★ `site_query.heydealer` 에 넣어라
 필수  ★ V60 크로스컨트리 · XC40 도 ★ **받는다** — ★ 마스터 확정 08-24.  ★ `targets.json` 에 넣었다
+★★ ★ **08-25 — ★ 여섯을 더 받아 ★ 19/20 종이 됐다** (★ `EX60` 만 빠졌다 — ★ 아직 매물이 없다)
+   ★ ★ **`model` 이 없는 것도 있다** — ★ 렉서스 NX 는 ★ `brand`＋`model-group` 만으로 걸린다
+   ★ ★ **한 차종에 ★ 해시가 여럿일 수 있다** — ★ 세대가 다르면 (GLC X253·X254 · 모델Y 주니퍼)
 ```
 
 ---
