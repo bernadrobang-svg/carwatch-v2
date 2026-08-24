@@ -1,7 +1,7 @@
 # 화면을 사람 눈으로 본다 — ★ 개선점
 
 ```
-version  SPEC-2026.08.24-r704
+version  SPEC-2026.08.24-r705
 follows  `docs/INDEX.md`
 sources  실측 08-24
 checks   S46-38 · S46-39
