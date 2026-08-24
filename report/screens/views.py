@@ -332,6 +332,15 @@ class WatchRow:
     gone_at: str | None = None
     # ★ 담은 뒤 값이 바뀌었거나 팔렸는가 — ★ 이것이 위로 간다
     changed: bool = False
+    # ★★ v4m 관심 시안 (마스터 확정 08-25) — ★ 카드 맨 앞 줄과 ★ 시세차 줄.
+    #   ★★ 화면이 계산하지 않는다 — ★ 틀은 `>` 비교를 못 한다 (V11-104).
+    #     ★ 실측 08-24 — ★ 그것을 잊어 ★ 「1곳」이 전건 나왔다
+    #   ★ chg_cls  dn 내렸다 · up 올랐다 · gone 팔렸다 · same 그대로
+    chg_cls: str = "same"
+    chg_text: str = ""
+    # ★ 시세차 한 줄 — ★ 「시세보다 400만 싸다」.  ★ 표본이 없으면 그것을 적는다
+    gap_cls: str = "dim"
+    gap_text: str = ""
 
 
 @dataclass(frozen=True)
@@ -487,6 +496,10 @@ class TrackView:
     big_gap: int = 0      # 값이 30% 넘게 갈린 것
     two_step: int = 0     # 등급이 두 칸 갈린 것
     order: str = "gap"
+    # ★★ 틀은 `==` 비교를 못 한다 (V11-104) — ★ 「지금 눌린 것」을 여기서 정한다.
+    #   ★ 실측 08-25 — ★ `{% if t.order == 'gap' %}` 이 ★ 화면에 글자로 샜다
+    #   ★ 각 칸은 {key · label · on}
+    orders: list = field(default_factory=list)
 
 
 @dataclass(frozen=True)

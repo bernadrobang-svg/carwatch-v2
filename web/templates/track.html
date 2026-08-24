@@ -24,9 +24,9 @@
   <a href="/listings">매물</a>에서 고른 차종·가격대·등급 안에서 다시 그립니다.</p>
 
 <p class="sitebar">정렬
-  <a class="btn{% if t.order == 'gap' %} on{% endif %}" href="/track?order=gap">차액 큰 순</a>
-  <a class="btn{% if t.order == 'grade' %} on{% endif %}" href="/track?order=grade">등급 차 큰 순</a>
-  <a class="btn{% if t.order == 'sites' %} on{% endif %}" href="/track?order=sites">사이트 많은 순</a>
+  <!-- ★ 틀은 `==` 를 못 한다 (V11-104) — ★ 「지금 눌린 것」은 build 가 정한다 -->
+  {% for o in t.orders %}<a class="btn{% if o.on %} on{% endif %}"
+    href="/track?order={{ o.key | url }}">{{ o.label }}</a>{% endfor %}
 </p>
 
 {% if !t.pairs %}
@@ -72,7 +72,7 @@
   <td data-label="등급"><span class="{{ s.3 | gradecls }}">{{ s.3 }}</span></td>
   <!-- ★★ 분모는 910 으로 같다 (마스터 정정 08-24) — 갈리는 것은 earned 다 -->
   <td class="num mono" data-label="earned">{{ s.4 }} / 910</td>
-  <td class="muted" data-label="빠진 축">{% if s.5 %}{% for m in s.5 %}{{ m }} {% endfor %}{% endif %}{% if !s.5 %}—{% endif %}</td>
+  <td class="muted" data-label="빠진 축">{% if s.5 %}{% for m in s.5 %}{{ m }} {% endfor %}{% endif %}{% if !s.5 %}빠진 축 없음{% endif %}</td>
   <td><a class="btn mini" href="/detail/{{ s.1 }}">상세 ▸</a></td>
 </tr>
 {% endfor %}

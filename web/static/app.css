@@ -2239,3 +2239,111 @@ details>div { margin-top:12px }
 .filter-body { padding:0 14px 14px }
 .filter-body h3 { font-size:12px; color:var(--dim); margin:12px 0 6px }
 .filter-body h3:first-child { margin-top:0 }
+
+/* ── v4m 관심 — ★★★ 모바일이 기준이다 (ref/screens/v4m_watch_시안.html · 마스터 확정 08-25)
+   ★ 「넓어지면 카드가 「옆으로 펴진다」」.  ★ 카드를 옆으로 붙이지 않는다 —
+     한 줄에 늘 하나.  넓어진 만큼 카드가 넓어진다
+   ★★ 세 폭(≤639 · 640~1023 · 1024~)이 담는 정보는 똑같다 — 자리만 바뀐다.
+     ★ 금지 — 좁다고 글자를 줄이거나 감추는 것 (display:none 을 쓰지 않는다)
+   ★ 값은 :root 토큰만 쓴다 (L-3) — 시안의 --ok/--no 는 우리 --down/--up 이다 */
+.kcards { display:block; }
+.kcard { background:var(--surface); border-bottom:1px solid var(--line);
+         padding:12px 14px; margin:0 -12px; }
+.kchg { font-size:14px; font-weight:700; margin-bottom:6px; }
+.kchg.dn { color:var(--down); }
+.kchg.up { color:var(--up); }
+.kchg.gone { color:var(--up); }
+.kchg.same { color:var(--faint); font-weight:400; font-size:13px; }
+.kcardline { display:block; }
+.kline { display:flex; gap:10px; }
+.kthumb { width:104px; height:78px; flex:0 0 104px; border-radius:8px;
+          background:var(--surface2); border:1px solid var(--line);
+          display:flex; align-items:center; justify-content:center;
+          overflow:hidden; font-size:11px; color:var(--faint);
+          text-decoration:none; }
+.kthumb img { width:100%; height:100%; object-fit:cover; }
+.kmid { flex:1; min-width:0; }
+.kname { font-size:14px; font-weight:600; margin-top:2px; }
+.kname a { color:var(--text); text-decoration:none; }
+.ktrim { font-size:12px; color:var(--dim); margin-top:1px; }
+.kspec { font-size:12px; color:var(--dim); margin-top:2px; }
+.kspec.dn { color:var(--down); }
+.kspec.up { color:var(--up); }
+.kprice { font-size:16px; font-weight:700; margin-top:4px;
+          font-family:var(--mono); }
+.kwas { font-size:12px; color:var(--faint); text-decoration:line-through;
+        font-weight:400; }
+.ksince { font-size:11px; color:var(--faint); margin-top:6px; }
+.kgr { display:inline-block; background:var(--amber); color:var(--ink4);
+       font-weight:700; border-radius:4px; padding:0 6px; font-size:12px;
+       margin-right:5px; }
+.kax { font-size:11px; color:var(--faint); font-family:var(--mono);
+       margin-bottom:3px; }
+.kax b { color:var(--dim); font-weight:600; }
+.kheart { color:var(--amber); float:right; }
+.kj { display:flex; flex-wrap:wrap; gap:3px 8px; margin-top:5px;
+      font-size:11px; color:var(--faint); }
+.kj a { color:var(--faint); text-decoration:none; }
+.kacts { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+/* ★ 단추는 44px 이상 · 한 줄에 둘까지 (시안 「지켜야 하는 것」) */
+.kbtn { flex:1 1 calc(50% - 4px); min-height:44px; background:var(--surface2);
+        border:1px solid var(--line2); border-radius:8px; color:var(--text);
+        font-size:13px; font-family:inherit; display:flex;
+        align-items:center; justify-content:center; text-decoration:none; }
+.kbtn.go { background:var(--amber); border-color:var(--amber);
+           color:var(--ink4); font-weight:600; }
+.kform { flex:1 1 calc(50% - 4px); display:flex; gap:4px; }
+.kform input[name=target_price_won] { flex:1; min-width:0; width:auto;
+        min-height:44px; }
+.kform .kbtn { flex:0 0 auto; padding:0 12px; }
+.kpick { display:inline-flex; align-items:center; gap:5px; min-height:44px;
+         padding:0 10px; border:1px solid var(--line2); border-radius:8px;
+         font-size:12.5px; }
+
+/* ★ 640 이상 — 사진을 키우고 · 판정을 한 줄로 · 단추를 오른쪽으로 */
+@media (min-width:640px) {
+  .kcard { padding:16px 0; margin:0; }
+  .kthumb { width:180px; height:135px; flex:0 0 180px; }
+  .kname { font-size:16px; }
+  .kprice { font-size:19px; }
+  .kj { flex-wrap:nowrap; }
+  .kcardline { display:flex; gap:18px; align-items:stretch; }
+  .kcardline .kline { flex:1; min-width:0; }
+  .kacts { margin-top:0; flex:0 0 200px; flex-direction:column;
+           justify-content:center; }
+  .kbtn, .kform { flex:0 0 auto; }
+}
+
+/* ★ 1024 이상 — 사진을 더 키우고 · 곁말을 옆에 편다 */
+@media (min-width:1024px) {
+  .kcard { padding:18px 0; }
+  .kthumb { width:240px; height:180px; flex:0 0 240px; }
+  .kname { font-size:17px; }
+  .ktrim, .kspec { font-size:13px; }
+  .kprice { font-size:21px; }
+  .kj { gap:4px 14px; font-size:12px; }
+  .kax { font-size:12px; }
+  .kacts { flex:0 0 240px; }
+}
+
+/* ★ 340 아래에서도 안 깨진다 — 사진만 줄인다.  ★ 글자는 그대로다 */
+@media (max-width:359px) {
+  .kthumb { width:88px; height:66px; flex:0 0 88px; }
+  .kprice { font-size:15px; }
+  .kbtn { font-size:12px; }
+}
+
+/* ── 상단 메뉴를 ★ 손가락 폭에서는 ★ 아래 탭으로 (v4m 시안 · 마스터 확정 08-25).
+   ★ 「모바일이 기준이다」 — ★ 엄지는 화면 위쪽에 안 닿는다.
+   ★★ 메뉴 글자를 안 지운다 — ★ 자리만 아래로 옮긴다 (「정보를 빼지 않는다」).
+   ★ 다섯 칸이 폭을 나눠 갖는다 — ★ 상단 메뉴 다섯이 규격이다 (config/web.json) */
+@media (max-width:639px) {
+  .nav { position:fixed; bottom:0; left:0; right:0; z-index:10;
+         background:var(--surface); border-top:1px solid var(--line2);
+         border-bottom:0; gap:0; padding:0; flex-wrap:nowrap; }
+  .nav-item { flex:1; text-align:center; padding:11px 2px 13px;
+              font-size:11.5px; min-height:44px; }
+  .nav-item em { display:block; font-size:10px; }
+  /* ★ 탭이 마지막 카드를 가리지 않게 — 그만큼 아래를 비운다 */
+  main { padding-bottom:72px; }
+}

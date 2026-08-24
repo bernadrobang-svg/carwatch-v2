@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>미판정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=81c9d2f98f">
+<link rel="stylesheet" href="/static/app.css?v=3785d716b5">
 
 </head>
 <body class="s-notready">
@@ -59,7 +59,7 @@
 
 <p class="muted">무엇을 하면 되나 — 아래 조치를 순서대로 하십시오.</p>
 <h2>사유</h2>
-<ul><li>등록부 미분류 319건 — V4-11 이 판정을 막는다</li><li>모르는 차 2,930건 — 판정 대상이 아니다</li><li>범위 밖 5,648건 — 아는 차인데 갈래가 다르다 (마스터 결정 「제외해」)</li></ul>
+<ul><li>등록부 미분류 319건 — V4-11 이 판정을 막는다</li><li>모르는 차 2,930건 — 판정 대상이 아니다</li><li>범위 밖 5,688건 — 아는 차인데 갈래가 다르다 (마스터 결정 「제외해」)</li></ul>
 <h2>조치</h2>
 <ul class="action"><li>config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</li><li>아래 모델명·배지를 보고 targets.json 의 fuel_match · trim_include 를 고치거나 그대로 둔다</li></ul>
 
@@ -73,7 +73,7 @@
 <h3>★ 1 미분류 — ★ 마스터께 묻는 자리</h3>
 
 <p class="sentence" style="font-size:1.15em">
-  <b>★ 여쭐 것 30건</b>
+  <b>★ 여쭐 것 70건</b>
   
   <span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>
 </p>
@@ -90,7 +90,7 @@
 <p class="notice">
   범위 안 <strong>4,838건</strong> ·
   <strong>미분류 2,930건</strong> ·
-  <strong>범위 밖 5,648건</strong>.
+  <strong>범위 밖 5,688건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다.
   <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
   <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
@@ -416,7 +416,7 @@
 
 <h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
 <details class="card tight">
-  <summary><strong>5,648건</strong>
+  <summary><strong>5,688건</strong>
     <span class="dim">· 펼치기 ▾ —
       스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
       평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
@@ -454,6 +454,9 @@
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>하이브리드</td><td class="num">131</td></tr>
   
+  <tr><td><strong>G80</strong></td><td>G80</td>
+    <td>가솔린</td><td class="num">79</td></tr>
+  
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>가솔린</td><td class="num">69</td></tr>
   
@@ -480,9 +483,6 @@
   
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>가솔린</td><td class="num">42</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">40</td></tr>
   
   <tr><td><strong>그랜저</strong></td><td>더 뉴 그랜저 IG</td>
     <td>휘발유</td><td class="num">35</td></tr>
@@ -592,7 +592,7 @@
 
 
 <h2>지금도 볼 수 있는 것</h2>
-<ul><li>수집 — 매물 13,416건 · 응답 108,864건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 13,035건 완료</li><li>채점 — 4,794건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
+<ul><li>수집 — 매물 13,456건 · 응답 108,864건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 13,075건 완료</li><li>채점 — 4,794건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
 
 
@@ -607,7 +607,7 @@
 <h3>★ 1 미분류 — ★ 마스터께 묻는 자리</h3>
 
 <p class="sentence" style="font-size:1.15em">
-  <b>★ 여쭐 것 30건</b>
+  <b>★ 여쭐 것 70건</b>
   
   <span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>
 </p>
@@ -624,7 +624,7 @@
 <p class="notice">
   범위 안 <strong>4,838건</strong> ·
   <strong>미분류 2,930건</strong> ·
-  <strong>범위 밖 5,648건</strong>.
+  <strong>범위 밖 5,688건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다.
   <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
   <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
@@ -950,7 +950,7 @@
 
 <h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
 <details class="card tight">
-  <summary><strong>5,648건</strong>
+  <summary><strong>5,688건</strong>
     <span class="dim">· 펼치기 ▾ —
       스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
       평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
@@ -988,6 +988,9 @@
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>하이브리드</td><td class="num">131</td></tr>
   
+  <tr><td><strong>G80</strong></td><td>G80</td>
+    <td>가솔린</td><td class="num">79</td></tr>
+  
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>가솔린</td><td class="num">69</td></tr>
   
@@ -1014,9 +1017,6 @@
   
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>가솔린</td><td class="num">42</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">40</td></tr>
   
   <tr><td><strong>그랜저</strong></td><td>더 뉴 그랜저 IG</td>
     <td>휘발유</td><td class="num">35</td></tr>
@@ -1141,8 +1141,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260824T200021</span>
-  <span>2026-08-25 06:14</span>
+  <span>run 20260824T224825</span>
+  <span>2026-08-25 07:52</span>
 </footer>
 
 </body>

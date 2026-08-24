@@ -1011,6 +1011,15 @@ def s46_65_verdict_fresh() -> tuple[bool, str]:
 
 
 
+def _sian_files(sian: Path) -> list:
+    """시안 파일 전부.  ★ `v3_` 뿐 아니라 ★ `v4m_` 도 본다 (08-25).
+
+    ★★ 08-25 에 ★ `v4m_watch_시안.html` 이 들어왔다 — ★ 모바일 기준 판이다.
+      ★ ★ `v3_` 만 훑으면 ★ 새 시안이 ★ **검사 밖에 있게 된다**
+    """
+    return sorted(sian.glob("v3_*.html")) + sorted(sian.glob("v4m_*.html"))
+
+
 def s46_67_sian_names_dont_clash() -> tuple[bool, str]:
     """★ 시안이 정한 이름이 ★ `app.css` 와 ★ 안 겹치는가 (마스터 확정 ㉮ · 08-24).
 
@@ -1030,7 +1039,7 @@ def s46_67_sian_names_dont_clash() -> tuple[bool, str]:
     body = re.sub(r"/\*.*?\*/", " ", _read(css), flags=re.S)
     have = set(re.findall(r"\.([a-zA-Z][\w-]*)", body))
     bad = []
-    for q in sorted(sian.glob("v3_*.html")):
+    for q in _sian_files(sian):
         for sel in re.findall(r"\n\.([\w-]+)\s*\{", _read(q)):
             if sel in have:
                 bad.append(f"{q.name} — .{sel}")
@@ -1039,8 +1048,88 @@ def s46_67_sian_names_dont_clash() -> tuple[bool, str]:
                        "★ 시안 쪽에 `.v3-` 을 붙여라 (마스터 확정 ㉮) — "
                        + " · ".join(sorted(set(bad))[:5]))
     n = sum(len(re.findall(r"\n\.([\w-]+)\s*\{", _read(q)))
-            for q in sorted(sian.glob("v3_*.html")))
+            for q in _sian_files(sian))
     return True, f"시안 이름 {n}개가 app.css 와 안 겹친다 (충돌 0)"
+
+
+
+# ★★ v4m 「지켜야 하는 것」에 적힌 항목 (ref/screens/v4m_watch_시안.html).
+#   ★ 「나머지는 목록 카드와 똑같이 담는다」 — ★ 열일곱 가지를 그대로 옮겼다
+V4M_WATCH_ITEMS = (
+    ("축 넷", "r.listing.bars"),
+    ("등급", "grade_label"),
+    ("차종", "target_label"),
+    ("트림 전체", "r.listing.trim"),
+    ("연식", "year_month"),
+    ("주행", "mileage_km"),
+    ("외장색", "color_ext"),
+    ("내장색", "color_int"),
+    ("딜러", "dealer_shop"),
+    ("사이트", "site_badge"),
+    ("게시 상태", "status_label"),
+    ("값", "price_won"),
+    ("전 값", "price_at_add_won"),
+    ("시세차", "gap_text"),
+    ("판정 다섯", "axis_chips"),
+    ("순위", "r.listing.rank"),
+    ("점수", "denominator"),
+    ("원문 문", "encar_url"),
+    ("담은 날", "added_at"),
+    ("담은 뒤 바뀐 것", "chg_text"),
+)
+
+
+def s46_68_watch_is_mobile_first() -> tuple[bool, str]:
+    """★★★ 관심이 ★ v4m 시안대로 ★ 모바일 기준 카드인가 (마스터 확정 08-25).
+
+    ★★ 마스터 — 「★ 화면 ★ **모바일 기준으로 다시** (v4m 시안)」
+    ★★ ★ 시안 「지켜야 하는 것」이 ★ 잴 수 있게 적혀 있다 — ★ 그대로 잰다
+      ★ ① 표가 아니라 ★ 카드다 — ★ 표를 좁히면 ★ 값이 이름표를 잃는다
+      ★ ② 카드 맨 앞이 ★ 「담은 뒤 무엇이 바뀌었나」다 — ★ 그것이 이 화면의 이유다
+      ★ ③ 폭 세 구간이 ★ app.css 에 있다 (≤359 · ≥640 · ≥1024)
+      ★ ④ ★★ **좁다고 정보를 빼지 않는다** — ★ 좁은 폭에서 ★ `display:none` 이 없다
+      ★ ⑤ 열일곱 가지를 ★ 다 담는다 — ★ 「목록 카드와 똑같이」
+    ★ 금지 — ★ 카드를 옆으로 붙이는 것 (한 줄에 늘 하나)
+    """
+    sian = SCREENS / "v4m_watch_시안.html"
+    tpl = TEMPLATES / "watch.html"
+    css = ROOT / "web" / "static" / "app.css"
+    if not sian.is_file():
+        return True, "v4m 관심 시안이 아직 없다 — 잴 것이 없다"
+    if not tpl.is_file() or not css.is_file():
+        return False, "watch.html 이나 app.css 가 없다"
+    body, style = _read(tpl), _read(css)
+    bad = []
+    # ① 카드다 — ★ 매물 표가 아니다
+    if re.search(r'<table class="rows"', body):
+        bad.append("아직 표다 — 카드가 아니다")
+    if "kcard" not in body:
+        bad.append("카드가 없다 (kcard)")
+    # ② 카드 맨 앞 줄
+    first = body.split("kcard\">", 1)[-1][:400]
+    if "kchg" not in first:
+        bad.append("카드 맨 앞이 「담은 뒤 바뀐 것」이 아니다")
+    # ③ 폭 세 구간
+    for want in ("max-width:359px", "min-width:640px", "min-width:1024px"):
+        if want not in style.replace(" ", ""):
+            bad.append(f"폭 구간이 없다 — {want}")
+    # ④ ★ 좁다고 감추지 않는다
+    for blk in re.findall(r"@media[^{]*max-width:\s*(?:359|639)px[^{]*\{(.*?)\n\}",
+                          style, re.S):
+        for rule in re.findall(r"\.w[\w-]*[^{}]*\{([^{}]*)\}", blk):
+            if "display:none" in rule.replace(" ", ""):
+                bad.append("좁은 폭에서 정보를 감춘다 (display:none)")
+    # ⑤ 열일곱 가지
+    miss = [n for n, tok in V4M_WATCH_ITEMS if tok not in body]
+    if miss:
+        bad.append("빠진 것 " + " · ".join(miss))
+    # ⑥ 단추 44px 이상
+    if "min-height:44px" not in style.replace(" ", ""):
+        bad.append("단추가 44px 이상이 아니다")
+    if bad:
+        return False, ("★ 관심이 v4m 시안과 다르다 — " + " · ".join(bad[:5]))
+    return True, (f"카드 · 폭 세 구간 · {len(V4M_WATCH_ITEMS)}가지를 다 담는다 "
+                  "· 좁아도 안 감춘다")
 
 
 CHECKS = (
@@ -1076,6 +1165,7 @@ CHECKS = (
     ("S46-65", "판본이 하루 넘게 오래되지 않았는가", s46_65_verdict_fresh),
     ("S46-66", "화면이 낸 링크가 인코딩돼 있는가", s46_66_links_encoded),
     ("S46-67", "시안 이름이 app.css 와 안 겹치는가", s46_67_sian_names_dont_clash),
+    ("S46-68", "관심이 모바일 기준 카드인가", s46_68_watch_is_mobile_first),
 )
 
 

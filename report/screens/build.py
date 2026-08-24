@@ -2383,12 +2383,75 @@ def view_watch(account: Account, conn, fin_cfg: dict,
                             relist_low_won=(got.get("low_won")
                                             if got.get("low_won")
                                             != got.get("high_won") else None),
-                            relist_high_won=got.get("high_won")))
+                            relist_high_won=got.get("high_won"),
+                            chg_cls=_chg(delta, gone_at)[0],
+                            chg_text=_chg(delta, gone_at)[1],
+                            gap_cls=_gap(listing.market_gap_won)[0],
+                            gap_text=_gap(listing.market_gap_won)[1]))
     # ★★ ② 바뀐 것이 위로 (명령서 1-7) — ★ 값 내린 것 · 팔린 것이 먼저.
     #   ★ 그 안에서는 ★ 많이 내린 것부터.  ★ 나머지는 ★ 담은 날 새 것부터
     out.sort(key=lambda w: (not w.changed, w.price_delta_won or 0,
                             w.added_at or ""))
     return out
+
+
+# ★★ v4m 관심 시안 (마스터 확정 08-25) — ★ 카드 맨 앞 줄.
+#   ★ 「담은 뒤 무엇이 바뀌었나」가 ★ 이 화면의 이유다 (시안 「지켜야 하는 것」)
+def _man(won: int | None) -> str:
+    """원 → 「400만」 · 「1억 200만」.  ★ 부호는 안 붙인다 — ★ 말로 적는다."""
+    if won in (None, ""):
+        return "—"
+    n = abs(int(won))
+    if n >= 100_000_000:
+        eok, rest = divmod(n, 100_000_000)
+        man = rest // 10_000
+        return f"{eok}억" + (f" {man:,}만" if man else "")
+    if n >= 10_000:
+        return f"{n // 10_000:,}만"
+    return f"{n:,}원"
+
+
+def _mmdd(at: str | None) -> str:
+    """ISO → 「8월 23일」.  ★ 못 읽으면 빈 글자다 — ★ 지어내지 않는다."""
+    if not at:
+        return ""
+    got = str(at)[:10].split("-")
+    if len(got) != 3:
+        return ""
+    try:
+        return f"{int(got[1])}월 {int(got[2])}일"
+    except ValueError:
+        return ""
+
+
+def _chg(delta: int | None, gone_at: str | None) -> tuple:
+    """★ 담은 뒤 무엇이 바뀌었나 — (css, 글).
+
+    ★ 팔린 것이 먼저다.  ★ 팔렸으면 값이 얼마나 움직였는지는 이제 뜻이 없다
+    """
+    if gone_at:
+        day = _mmdd(gone_at)
+        return "gone", "✕ 팔렸다" + (f" · {day}" if day else "")
+    if delta and delta < 0:
+        return "dn", f"↓ {_man(delta)} 내렸다"
+    if delta and delta > 0:
+        return "up", f"↑ {_man(delta)} 올랐다"
+    return "same", "— 담을 때와 같다"
+
+
+def _gap(gap_won: int | None) -> tuple:
+    """★ 시세차 한 줄 — (css, 글).
+
+    ★★ 표본이 모자라 중앙값을 못 만들면 ★ **그것을 적는다**.
+      ★ 금지 — ★ 0 으로 내는 것 (「시세와 같다」로 보인다)
+    """
+    if gap_won is None:
+        return "dim", "표본이 모자라 시세를 못 만든다"
+    if gap_won < 0:
+        return "dn", f"시세보다 {_man(gap_won)} 싸다"
+    if gap_won > 0:
+        return "up", f"시세보다 {_man(gap_won)} 비싸다"
+    return "dim", "시세와 같다"
 
 
 def _days_since(at: str | None) -> int:
@@ -3039,7 +3102,11 @@ def view_track(account: Account, conn, calc_version: str,
         pairs=pairs,
         grade_split=[p for p in pairs if p.grade_split],
         accident_split=[p for p in pairs if p.accident_split],
-        total_pairs=len(pairs), big_gap=big, two_step=two, order=order)
+        total_pairs=len(pairs), big_gap=big, two_step=two, order=order,
+        # ★ 「지금 눌린 것」을 여기서 정한다 — ★ 틀은 `==` 를 못 한다 (V11-104)
+        orders=[{"key": k, "label": v, "on": k == order}
+                for k, v in (("gap", "차액 큰 순"), ("grade", "등급 차 큰 순"),
+                             ("sites", "사이트 많은 순"))])
 
 
 def _accident_bulk(conn, listing_ids: list, calc_version: str) -> dict:
@@ -3099,7 +3166,12 @@ def duplicate_listings(conn, listing_id: int, calc_version: str,
         out.append({"listing_id": lid,
                     "site_badge": site_badge(site, sell, root),
                     "price_won": price, "grade": grade,
-                    "accident_mark": acc.mark, "accident_tone": acc.tone,
+                    # ★ 줄표만 있는 칸을 두지 않는다 (V11-106 · 부록 G-4) —
+                    #   ★ 「못 받은 것」인지 「없는 것」인지를 감춘다.
+                    #   ★ 기호는 남기되 ★ 모를 때는 ★ **말로 적는다**
+                    "accident_mark": ("확인 못 함"
+                                      if acc.tone == TONE_UNKNOWN else acc.mark),
+                    "accident_tone": acc.tone,
                     "mileage_km": km, "warranty_month": w_month})
     return tuple(out)
 

@@ -18,82 +18,127 @@
 <!-- ★★ 개정 427 — 비교를 관심이 흡수했다.  ★ 여기서 2~5대를 체크해 부른다
      근거 [마스터] 「그날 잘 안 쓸 거야.  다만 최종 후보 고를 때 쓰겠지」
      ★ 화면을 지운 것이 아니다 — 들어가는 문만 바꿨다 (/compare 는 그대로다) -->
-<form method="get" action="/compare" id="cmp">
-<div class="bar">
-  <button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">
-    고른 것 비교</button>
-  <span class="dim">2~5대를 고르십시오 — ★ 막대 넷과 총 구매비용을 나란히 냅니다</span>
-</div>
-<table class="rows">
-<thead><tr><th class="c" title="비교할 매물을 고릅니다">비교</th>
-<!-- ★★ 「지켜보는 곳」의 핵심 (명령서 1-7 ① · UI_REVIEW 14-4) —
-     ★ 담은 뒤 무엇이 바뀌었나를 ★ **맨 앞**에 낸다.
-     ★ 이것이 없으면 ★ 목록과 다를 것이 없어 보인다 -->
-<th title="담은 뒤 값이 어떻게 바뀌었는지입니다">★ 담은 뒤</th>
-<th class="c">사진</th><th class="c">등급</th><th class="c">★ 막대</th><th>차종 · 트림</th>
-<th class="r">연식</th><th class="r">주행</th>
-<th class="r">가격</th><th class="r">목표가</th><th>상태</th><th>가격 추이</th><th></th></tr></thead>
-<tbody>
+<!-- ★★★ v4m 관심 시안 (ref/screens/v4m_watch_시안.html · 마스터 확정 08-25) —
+     ★ 「모바일이 기준이다.  넓어지면 카드가 「옆으로 펴진다」」
+     ★ 카드를 옆으로 붙이지 않는다 — 한 줄에 늘 하나.  넓어진 만큼 카드가 넓어진다
+     ★ 세 폭(≤639 · 640~1023 · 1024~)이 담는 정보는 똑같다 — 자리만 바뀐다
+     ★ 좁아진다고 정보를 빼지 않는다.  글자를 줄이거나 감추지 않는다
+     ★ 표를 쓰지 않는다 — 표를 좁히면 값이 이름표를 잃는다 -->
+<div class="kcards">
 {% for r in rows %}
-<tr data-peek="{{ r.listing.photo_url }}" data-href="/detail/{{ r.listing.listing_id }}">
-<td class="c" data-label="비교">
-  <input type="checkbox" name="id" value="{{ r.listing.listing_id }}"
-         title="비교에 넣습니다"></td>
-<td data-label="담은 뒤">
-  <!-- ★★ 팔린 차도 지우지 않는다 — ★ 「팔렸다」로 남긴다 (명령서 1-7) -->
-  {% if r.gone %}<b class="up">✕ 팔렸다</b>
-    <span class="dim">{{ r.gone_at | date }}에 사라짐</span><br>{% endif %}
-  {% if r.price_delta_won %}<b class="{{ r.price_delta_won | signcls }}">
-    {% if r.price_at_add_won %}담을 때 {{ r.price_at_add_won | won }} →
-    지금 {{ r.listing.price_won | won }}{% endif %}</b><br>{% endif %}
-  {% if !r.price_delta_won %}<span class="dim">— 담을 때와 같다</span><br>{% endif %}
-  <span class="dim" title="담은 날부터 며칠째인지입니다">{{ r.added_at | date }}부터 지켜봄 ·
-    {{ r.days_watched }}일째</span>
-</td>
-<td class="c photo" data-label="사진">
-  <a href="/detail/{{ r.listing.listing_id }}" title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
-  {% if r.listing.photo_url %}<img class="thumb" src="{{ r.listing.photo_url }}" alt="" width="128" height="86" loading="lazy">{% endif %}
-  {% if !r.listing.photo_url %}<span class="thumb-none">사진 없음</span>{% endif %}</a>
-</td>
-<td class="c" data-label="등급"><a href="/detail/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><span class="{{ r.listing.grade | gradecls }}">{{ r.listing.grade }}</span></a></td>
-<!-- ★ 관심도 L1 요약이다 — 막대 넷을 같은 자리에 낸다 (개정 427) -->
-<td class="c" data-label="막대">
-  <div class="bars" style="width:80px">
-    {% for b in r.listing.bars %}<div class="bar {{ b.css }}" style="height:20px"
-      title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점"><i
-      style="height:{{ b.pct }}%"></i></div>{% endfor %}
-  </div></td>
-<td data-label="차종 · 트림">
-  <a href="/detail/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><strong>{{ r.listing.target_label }}</strong></a>
-  <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.listing.site_badge }}</span>
-  <span class="dim">{{ r.listing.trim }}</span>
-  {% if r.relist_times %}<span class="tag" title="같은 차가 내렸다 다시 올라온 횟수입니다. 값이 바뀌었으면 함께 냅니다">{{ r.relist_times }}번 재등록{% if r.relist_low_won %} · {{ r.relist_high_won | won }} → {{ r.relist_low_won | won }}{% endif %}</span>{% endif %}</td>
-<td class="r num" data-label="연식">{{ r.listing.year_month }}</td>
-<td class="r num" data-label="주행">{{ r.listing.mileage_km | km }}</td>
-<td class="r num" data-label="가격"><a href="/detail/{{ r.listing.listing_id }}" title="판정 근거를 봅니다"><b>{{ r.listing.price_won | won }}</b></a></td>
-<td class="r num" data-label="목표가">{{ r.target_price_won | won }}</td>
-<td data-label="상태">{{ r.listing.status_label }}</td>
-<td data-label="가격 추이">{% if r.spark %}<span class="spark" title="첫 게시가부터 지금까지의 가격 추이입니다. 초록이 내린 것입니다">{% for p in r.spark %}<i class="{% if p.dn %}dn{% endif %}{% if p.now %} now{% endif %}" style="height:{{ p.pct }}%" title="{{ p.won | won }}"></i>{% endfor %}</span>{% endif %}{% if !r.spark %}<span class="dim" title="가격이 바뀐 적이 없습니다">추이 없음</span>{% endif %}</td>
-<td class="act" data-label="">
-  <!-- ★★ 「상세 ▸」 — ★ 관심 카드에도 둔다 (UI_REVIEW 11-2 · S46-47) -->
-  <a class="btn mini" href="/detail/{{ r.listing.listing_id }}"
-    title="판정 근거를 봅니다 — 왜 이 등급인가">상세 ▸</a>
-  {% if r.listing.encar_url %}<a class="btn go mini" href="{{ r.listing.encar_url }}" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>{% endif %}
-  <form method="post" action="/watch/{{ r.watch_id }}" class="inline">
-    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
-    <input name="target_price_won" placeholder="목표가(원)" size="10">
-    <button type="submit" class="mini">저장</button>
-  </form>
-  <form method="post" action="/watch/{{ r.watch_id }}" class="inline">
-    <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
-    <input type="hidden" name="action" value="remove">
-    <button type="submit" class="mini" data-confirm="관심에서 뺍니다. 가격 추이 기록도 멈춥니다">빼기</button>
-  </form>
-</td>
-</tr>
+<div class="kcard">
+  <!-- ★★ 카드 맨 앞 — ★ 「담은 뒤 무엇이 바뀌었나」.  ★ 그것이 이 화면의 이유다.
+       ★ 팔린 차도 지우지 않는다 — ★ 얼마에 팔렸는지가 다음 판단에 쓰인다 -->
+  <div class="kchg {{ r.chg_cls }}"
+    title="담은 날부터 지금까지 값이 어떻게 움직였는지입니다">{{ r.chg_text }}</div>
+  <div class="kcardline">
+    <div class="kline">
+      <a class="kthumb" href="/detail/{{ r.listing.listing_id }}"
+        title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
+        {% if r.listing.photo_url %}<img src="{{ r.listing.photo_url }}" alt=""
+          loading="lazy">{% endif %}
+        {% if !r.listing.photo_url %}<span class="thumb-none"
+          title="원문에 사진이 없습니다">사진 없음</span>{% endif %}</a>
+      <div class="kmid">
+        <!-- ★ 축 넷 — ★ 목록과 같은 차례·같은 이름.  ★ 막대도 함께 낸다 (V11-163) -->
+        <div class="kax">{% for b in r.listing.bars %}<b
+          title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점">{{ b.pct }}</b> {{ b.label }}
+          {% endfor %}</div>
+        <div class="bars" style="width:76px">
+          {% for b in r.listing.bars %}<div class="bar {{ b.css }}" style="height:18px"
+            title="{{ b.label }} {{ b.earned }} / {{ b.cap }}점"><i
+            style="height:{{ b.pct }}%"></i></div>{% endfor %}
+        </div>
+        <div class="kname">
+          <span class="kgr {{ r.listing.grade | gradecls }}"
+            title="{{ r.listing.earned | num }} / {{ r.listing.denominator | num }}점 ({{ r.listing.ratio_pct }}%)"
+            >{{ r.listing.grade_label }}</span><a
+            href="/detail/{{ r.listing.listing_id }}"
+            title="판정 근거를 봅니다 — 왜 이 등급인가">{{ r.listing.target_label }}</a>
+          <!-- ★ 하트는 「담겨 있다」는 표시다.  빼기는 아래 단추다 -->
+          <span class="kheart" title="관심에 담은 차입니다">♥</span>
+        </div>
+        <div class="ktrim"
+          title="트림 = Badge + BadgeDetail 입니다 (개정 313)">{{ r.listing.trim }}</div>
+        <div class="kspec">{{ r.listing.year_month }} ·
+          {{ r.listing.mileage_km | km }} ·
+          {% if r.listing.color_ext_hex %}<span class="swatch"
+            style="background:{{ r.listing.color_ext_hex }}"></span>{% endif %}{{ r.listing.color_ext }}
+          / {{ r.listing.color_int }}</div>
+        <div class="kspec">
+          {% if r.listing.dealer_shop %}<a href="/dealers?q={{ r.listing.dealer_shop | url }}"
+            title="이 딜러의 매물을 봅니다">{{ r.listing.dealer_shop }}</a>{% endif %}
+          {% if !r.listing.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}
+          · <b title="이 매물을 받은 사이트입니다">{{ r.listing.site_badge }}</b>
+          · {{ r.listing.status_label }}
+          {% if r.relist_times %}<span class="tag"
+            title="같은 차가 내렸다 다시 올라온 횟수입니다">{{ r.relist_times }}번 재등록{% if r.relist_low_won %}
+            · {{ r.relist_high_won | won }} → {{ r.relist_low_won | won }}{% endif %}</span>{% endif %}</div>
+        <!-- ★ 값 · 전 값 · 시세차 — ★ 셋을 다 낸다.  ★ 「지금 얼마」만으로는 못 고른다 -->
+        <div class="kprice">{{ r.listing.price_won | won }}{% if r.gone %}에 팔림{% endif %}
+          {% if r.price_at_add_won %}<span class="kwas"
+            title="담을 때의 값입니다">{{ r.price_at_add_won | won }}</span>{% endif %}</div>
+        <div class="kspec {{ r.gap_cls }}"
+          title="같은 차종·트림·연식 실매물 중앙값 {{ r.listing.market_price_won | won }} 대비 (표본 {{ r.listing.market_sample }}건)"
+          >{{ r.gap_text }}</div>
+        <!-- ★ 판정 다섯 — ★ 기호 OK 있음 · × 없음 · — 확인 못 함 -->
+        <div class="kj">{% for c in r.listing.axis_chips %}<span><a
+          href="{{ c.filter_url }}"
+          title="{{ c.label }} — 이 값으로 걸러 봅니다">{{ c.head }}</a>
+          <b class="axis-{{ c.tone }}">{{ c.mark }}</b></span>{% endfor %}</div>
+        <div class="ksince">
+          {% if r.listing.rank %}{{ r.listing.rank }}위 · {% endif %}{{ r.listing.earned | num }} / {{ r.listing.denominator | num }} ·
+          {{ r.added_at | date }}부터 · {{ r.days_watched }}일째
+          {% if r.target_price_won %}· 목표가 {{ r.target_price_won | won }}{% endif %}</div>
+        <!-- ★ 가격 추이 (시안 v2_watch .spark · V11-77).
+             ★ 「지금 얼마」만으로는 내려가는 중인지 올라가는 중인지 모른다 -->
+        <div class="ksince">{% if r.spark %}<span class="spark"
+          title="첫 게시가부터 지금까지의 가격 추이입니다. 초록이 내린 것입니다">{% for p in r.spark %}<i
+          class="{% if p.dn %}dn{% endif %}{% if p.now %} now{% endif %}"
+          style="height:{{ p.pct }}%" title="{{ p.won | won }}"></i>{% endfor %}</span>{% endif %}
+          {% if !r.spark %}<span class="dim"
+            title="가격이 바뀐 적이 없습니다">추이 없음</span>{% endif %}</div>
+      </div>
+    </div>
+    <!-- ★ 단추는 44px 이상 · 한 줄에 둘까지 (시안 「지켜야 하는 것」) -->
+    <div class="kacts">
+      <a class="kbtn go" href="/detail/{{ r.listing.listing_id }}"
+        title="판정 근거를 봅니다 — 왜 이 등급인가">상세 ▸</a>
+      <!-- ★ 최종 확인은 원문 사이트에서 한다 (V11-63).  ★ 사이트 이름을 그대로 낸다 -->
+      {% if r.listing.encar_url %}<a class="kbtn" href="{{ r.listing.encar_url }}"
+        target="_blank" rel="noopener"
+        title="원문 매물로 갑니다">{{ r.listing.site_badge }} ↗</a>{% endif %}
+      {% if r.gone %}<a class="kbtn" href="/listings?target_key={{ r.listing.target_label | url }}"
+        title="같은 차종의 지금 매물을 봅니다">비슷한 차 보기</a>{% endif %}
+      <form method="post" action="/watch/{{ r.watch_id }}" class="kform">
+        <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+        <input name="target_price_won" placeholder="목표가(원)" inputmode="numeric"
+          title="이 값 아래로 떨어지면 알려 드립니다">
+        <button type="submit" class="kbtn">목표가</button>
+      </form>
+      <form method="post" action="/watch/{{ r.watch_id }}" class="kform">
+        <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+        <input type="hidden" name="action" value="remove">
+        <button type="submit" class="kbtn"
+          data-confirm="관심에서 뺍니다. 가격 추이 기록도 멈춥니다">관심 빼기</button>
+      </form>
+    </div>
+  </div>
+</div>
 {% endfor %}
-</tbody>
-</table>
+</div>
+
+<h2>견주기</h2>
+<!-- ★★ 시안은 「카드에 비교 고르기를 두지 않는다」고 적었다 (v4m 「지켜야 하는 것」).
+     ★ 그러나 비교로 들어가는 문은 관심뿐이다 (개정 427 · V11-166 · /compare 안내문).
+     ★ ★ 그래서 ★ 고르기를 ★ 카드에서 빼고 ★ 여기 한 절로 모았다 — 카드는 시안대로다.
+     ★ 어긋남은 가이드에 보고했다 (규칙 2 — 개발측이 규격을 안 고친다) -->
+<form method="get" action="/compare" id="cmp">
+<p class="muted">2~5대를 고르십시오 — ★ 막대 넷과 총 구매비용을 나란히 냅니다.</p>
+<p class="chips">{% for r in rows %}<label class="kpick"><input type="checkbox"
+  name="id" value="{{ r.listing.listing_id }}"> {{ r.listing.target_label }}
+  <span class="dim">{{ r.listing.trim }}</span></label>{% endfor %}</p>
+<button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">고른 것 비교</button>
 </form>
 
 <h2>최종 후보</h2>
