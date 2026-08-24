@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>차종 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=1232849098">
+<link rel="stylesheet" href="/static/app.css?v=81c9d2f98f">
 
 </head>
 <body class="s-admin-targets">
@@ -28,6 +28,8 @@
   <a class="nav-item" href="/listings" title="조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다">매물</a>
   
   <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
+  
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
@@ -68,25 +70,25 @@
   <label>제조사
     <select name="maker" title="원문에서 관측한 제조사입니다">
       <option value="">— 고르십시오 —</option>
-      <option value="제네시스">제네시스 (4,568건)</option><option value="현대">현대 (1,797건)</option><option value="기아">기아 (1,493건)</option><option value="테슬라">테슬라 (619건)</option><option value="르노코리아(삼성)">르노코리아(삼성) (285건)</option>
+      <option value="제네시스">제네시스 (4,628건)</option><option value="현대">현대 (1,804건)</option><option value="기아">기아 (1,493건)</option><option value="테슬라">테슬라 (619건)</option><option value="르노코리아(삼성)">르노코리아(삼성) (285건)</option>
     </select>
   </label>
   <label>모델군
     <select name="model_group" title="같은 이름으로 묶이는 모델 무리입니다 — 수집 묶음이 됩니다">
       <option value="">— 고르십시오 —</option>
-      <option value="G80">G80 (2,752건)</option><option value="그랜저">그랜저 (1,797건)</option><option value="스포티지">스포티지 (1,493건)</option><option value="GV70">GV70 (1,220건)</option><option value="모델 Y">모델 Y (619건)</option><option value="G70">G70 (457건)</option><option value="그랑 콜레오스">그랑 콜레오스 (285건)</option><option value="GV60">GV60 (139건)</option>
+      <option value="G80">G80 (2,806건)</option><option value="그랜저">그랜저 (1,804건)</option><option value="스포티지">스포티지 (1,493건)</option><option value="GV70">GV70 (1,220건)</option><option value="모델 Y">모델 Y (619건)</option><option value="G70">G70 (463건)</option><option value="그랑 콜레오스">그랑 콜레오스 (285건)</option><option value="GV60">GV60 (139건)</option>
     </select>
   </label>
   <label>모델
     <select name="model" title="세대까지 구분한 이름입니다">
       <option value="">— 고르십시오 —</option>
-      <option value="G80 (RG3)">G80 (RG3) (2,679건)</option><option value="GV70">GV70 (1,142건)</option><option value="그랜저 (GN7)">그랜저 (GN7) (1,079건)</option><option value="스포티지 5세대">스포티지 5세대 (862건)</option><option value="그랜저 하이브리드 (GN7)">그랜저 하이브리드 (GN7) (691건)</option><option value="모델 Y">모델 Y (619건)</option><option value="더 뉴 G70">더 뉴 G70 (408건)</option><option value="스포티지 5세대 하이브리드">스포티지 5세대 하이브리드 (365건)</option><option value="그랑 콜레오스">그랑 콜레오스 (285건)</option><option value="더 뉴 스포티지 5세대">더 뉴 스포티지 5세대 (180건)</option><option value="GV60">GV60 (139건)</option><option value="더 뉴 스포티지 5세대 하이브리드">더 뉴 스포티지 5세대 하이브리드 (86건)</option><option value="일렉트리파이드 GV70">일렉트리파이드 GV70 (78건)</option><option value="일렉트리파이드 G80 (RG3)">일렉트리파이드 G80 (RG3) (73건)</option><option value="더 뉴 G70 슈팅브레이크">더 뉴 G70 슈팅브레이크 (49건)</option><option value="더 뉴 그랜저 (GN7)">더 뉴 그랜저 (GN7) (16건)</option><option value="더 뉴 그랜저 하이브리드 (GN7)">더 뉴 그랜저 하이브리드 (GN7) (11건)</option>
+      <option value="G80 (RG3)">G80 (RG3) (2,730건)</option><option value="GV70">GV70 (1,142건)</option><option value="그랜저 (GN7)">그랜저 (GN7) (1,084건)</option><option value="스포티지 5세대">스포티지 5세대 (862건)</option><option value="그랜저 하이브리드 (GN7)">그랜저 하이브리드 (GN7) (693건)</option><option value="모델 Y">모델 Y (619건)</option><option value="더 뉴 G70">더 뉴 G70 (413건)</option><option value="스포티지 5세대 하이브리드">스포티지 5세대 하이브리드 (365건)</option><option value="그랑 콜레오스">그랑 콜레오스 (285건)</option><option value="더 뉴 스포티지 5세대">더 뉴 스포티지 5세대 (180건)</option><option value="GV60">GV60 (139건)</option><option value="더 뉴 스포티지 5세대 하이브리드">더 뉴 스포티지 5세대 하이브리드 (86건)</option><option value="일렉트리파이드 GV70">일렉트리파이드 GV70 (78건)</option><option value="일렉트리파이드 G80 (RG3)">일렉트리파이드 G80 (RG3) (76건)</option><option value="더 뉴 G70 슈팅브레이크">더 뉴 G70 슈팅브레이크 (50건)</option><option value="더 뉴 그랜저 (GN7)">더 뉴 그랜저 (GN7) (16건)</option><option value="더 뉴 그랜저 하이브리드 (GN7)">더 뉴 그랜저 하이브리드 (GN7) (11건)</option>
     </select>
   </label>
   <label>연료
     <select name="fuel" title="차종 키 뒤에 붙습니다 — 예 _HEV · _EV">
       <option value="">— 고르십시오 —</option>
-      <option value="가솔린">가솔린 (5,587건)</option><option value="가솔린+전기">가솔린+전기 (1,391건)</option><option value="전기">전기 (909건)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (465건)</option><option value="디젤">디젤 (410건)</option>
+      <option value="가솔린">가솔린 (5,648건)</option><option value="가솔린+전기">가솔린+전기 (1,393건)</option><option value="전기">전기 (912건)</option><option value="LPG(일반인 구입)">LPG(일반인 구입) (465건)</option><option value="디젤">디젤 (411건)</option>
     </select>
   </label>
   <label>차종 키 <input name="target_key" size="20" placeholder="비워 두면 고른 값에서 만듭니다"
@@ -109,7 +111,7 @@
   <button type="submit">확인 대기로 등록</button>
 </form>
 
-<h2>등록된 차종 18종</h2>
+<h2>등록된 차종 20종</h2>
 <table class="rows">
 <thead><tr><th title="설정 파일의 키 이름입니다">키</th><th title="사람이 읽는 이름입니다">이름</th><th title="갈래입니다">구분</th><th class="num" title="매물 건수입니다">매물</th><th title="지금 어떤 상태인지입니다">상태</th><th>수집</th><th></th></tr></thead>
 <tbody>
@@ -118,7 +120,7 @@
   <td class="runid" data-label="키">G80_25T</td>
   <td data-label="이름">G80 2.5T</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">2,232</td>
+  <td class="num" data-label="매물">2,377</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -130,7 +132,7 @@
   <td class="runid" data-label="키">G80_EV</td>
   <td data-label="이름">G80 전동화</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">73</td>
+  <td class="num" data-label="매물">80</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -142,7 +144,7 @@
   <td class="runid" data-label="키">G70_25T</td>
   <td data-label="이름">G70 2.5T</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">103</td>
+  <td class="num" data-label="매물">107</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -154,7 +156,7 @@
   <td class="runid" data-label="키">G70_20T</td>
   <td data-label="이름">G70 2.0T</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">299</td>
+  <td class="num" data-label="매물">321</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -178,7 +180,7 @@
   <td class="runid" data-label="키">GV60</td>
   <td data-label="이름">GV60</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">141</td>
+  <td class="num" data-label="매물">146</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -190,7 +192,7 @@
   <td class="runid" data-label="키">KOLEOS_HEV</td>
   <td data-label="이름">그랑 콜레오스 1.5 E-TECH</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">263</td>
+  <td class="num" data-label="매물">274</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -214,7 +216,7 @@
   <td class="runid" data-label="키">GRANDEUR_LPG</td>
   <td data-label="이름">그랜저 GN7 LPG</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">271</td>
+  <td class="num" data-label="매물">288</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -238,7 +240,7 @@
   <td class="runid" data-label="키">X3_IMPORT</td>
   <td data-label="이름">BMW X3</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">35</td>
+  <td class="num" data-label="매물">54</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -250,7 +252,7 @@
   <td class="runid" data-label="키">GLC_IMPORT</td>
   <td data-label="이름">벤츠 GLC</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">84</td>
+  <td class="num" data-label="매물">99</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -262,7 +264,7 @@
   <td class="runid" data-label="키">Q5_IMPORT</td>
   <td data-label="이름">아우디 Q5</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">1</td>
+  <td class="num" data-label="매물">2</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -274,9 +276,9 @@
   <td class="runid" data-label="키">NX_HEV</td>
   <td data-label="이름">렉서스 NX 하이브리드</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">0</td>
+  <td class="num" data-label="매물">9</td>
   <td data-label="상태">확정</td>
-  <td data-label="수집"><span class="muted">미수집</span></td>
+  <td data-label="수집">됨</td>
   <td data-label="">
     
   </td>
@@ -286,7 +288,7 @@
   <td class="runid" data-label="키">RX_IMPORT</td>
   <td data-label="이름">렉서스 RX</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">1</td>
+  <td class="num" data-label="매물">3</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -298,9 +300,9 @@
   <td class="runid" data-label="키">XC60_IMPORT</td>
   <td data-label="이름">볼보 XC60</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">0</td>
+  <td class="num" data-label="매물">74</td>
   <td data-label="상태">확정</td>
-  <td data-label="수집"><span class="muted">미수집</span></td>
+  <td data-label="수집">됨</td>
   <td data-label="">
     
   </td>
@@ -310,9 +312,9 @@
   <td class="runid" data-label="키">S60_IMPORT</td>
   <td data-label="이름">볼보 S60</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">0</td>
+  <td class="num" data-label="매물">8</td>
   <td data-label="상태">확정</td>
-  <td data-label="수집"><span class="muted">미수집</span></td>
+  <td data-label="수집">됨</td>
   <td data-label="">
     
   </td>
@@ -330,6 +332,30 @@
   </td>
 </tr>
 
+<tr>
+  <td class="runid" data-label="키">XC40_IMPORT</td>
+  <td data-label="이름">볼보 XC40</td>
+  <td data-label="구분"><span class="muted">없습니다</span></td>
+  <td class="num" data-label="매물">50</td>
+  <td data-label="상태">확정</td>
+  <td data-label="수집">됨</td>
+  <td data-label="">
+    
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">V60CC_IMPORT</td>
+  <td data-label="이름">볼보 V60 크로스컨트리</td>
+  <td data-label="구분"><span class="muted">없습니다</span></td>
+  <td class="num" data-label="매물">46</td>
+  <td data-label="상태">확정</td>
+  <td data-label="수집">됨</td>
+  <td data-label="">
+    
+  </td>
+</tr>
+
 </tbody>
 </table>
 
@@ -339,8 +365,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260823T224203</span>
-  <span>2026-08-24 10:41</span>
+  <span>run 20260824T200021</span>
+  <span>2026-08-25 06:14</span>
 </footer>
 
 </body>

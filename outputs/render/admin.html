@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=1232849098">
+<link rel="stylesheet" href="/static/app.css?v=81c9d2f98f">
 
 </head>
 <body class="s-admin">
@@ -29,6 +29,8 @@
   
   <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
   
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -50,6 +52,13 @@
 <h1>관리</h1>
 
 
+
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p>수집 · 사전 확정 · 배점 조정 · 차종 등록 · 리포트. 사는 사람이 보는 화면은 여기 없다</p>
+</div>
+
+
 <p class="bar">
   <a class="btn on" href="/admin/collect">★ 브라우저 수집</a>
   <a class="btn" href="/admin/run">실행 지시 · 큐</a>
@@ -63,12 +72,12 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-08-24_0600</td>
-  <td data-label="기록" class="muted">outputs/light/ · 36건 ·
+  <td data-label="마지막">2026-08-25_0200</td>
+  <td data-label="기록" class="muted">outputs/light/ · 38건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
-  <td data-label="마지막">2026-08-23</td>
-  <td data-label="기록" class="muted">outputs/daily/ · 7건</td></tr>
+  <td data-label="마지막">2026-08-24</td>
+  <td data-label="기록" class="muted">outputs/daily/ · 8건</td></tr>
 <tr><td data-label="주기">주간 <span class="muted">서로 점검</span></td>
   <td data-label="언제" class="muted">금 02:00</td>
   <td data-label="마지막">2026-08-21_주간점검</td>
@@ -83,10 +92,6 @@
 <table class="rows">
 <thead><tr><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
 <tbody>
-
-<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">232</td>
-  <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
-  <td data-label=""><a href="/notready">가기</a></td></tr>
 
 <tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">319</td>
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
@@ -104,97 +109,123 @@
   <li>개발 요청 <strong>0</strong></li>
   <li>대기 작업 <strong>0</strong></li>
 </ul>
-<h2>메뉴</h2>
+
+<h3>★ 운영</h3>
+<p class="muted">★ 「브라우저 수집」이 맨 위 — 엔카는 마스터 회선으로만 받습니다.</p>
 <table class="rows">
-<thead><tr><th title="이 경로를 판정에 쓰는지 아닌지입니다">분류</th><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th><th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
 <tbody>
 
-<tr><td data-label="분류"></td><td data-label="화면"><a href="/admin">현황</a></td>
-<td data-label="근거">STEP 138</td>
-<td data-label="상태"></td></tr>
-
-<tr><td data-label="분류">운영</td><td data-label="화면"><a href="/admin/run">실행 지시 · 큐</a></td>
+<tr><td data-label="화면"><a href="/admin/run">실행 지시 · 큐</a></td>
 <td data-label="근거">STEP 132</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">운영</td><td data-label="화면"><a href="/admin/audit">감사 조회</a></td>
+<tr><td data-label="화면"><a href="/admin/audit">감사 조회</a></td>
 <td data-label="근거">STEP 138a</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">운영</td><td data-label="화면"><a href="/admin/status">진행 지켜보기</a></td>
+<tr><td data-label="화면"><a href="/admin/status">진행 지켜보기</a></td>
 <td data-label="근거">STEP 136f</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">운영</td><td data-label="화면"><a href="/admin/import">목록 반입</a></td>
+<tr><td data-label="화면"><a href="/admin/import">목록 반입</a></td>
 <td data-label="근거">STEP 136a · 136b</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">운영</td><td data-label="화면"><a href="/admin/collect">브라우저 수집</a></td>
+<tr><td data-label="화면"><a href="/admin/collect">브라우저 수집</a></td>
 <td data-label="근거">STEP 136c</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">조정</td><td data-label="화면"><a href="/admin/scoring">배점 조정</a></td>
+</tbody>
+</table>
+
+<h3>조정</h3>
+<p class="muted">★★ 「사전 확정」에 기아 1,020건이 걸려 있습니다.</p>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+
+<tr><td data-label="화면"><a href="/admin/scoring">배점 조정</a></td>
 <td data-label="근거">STEP 128 · 129</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">조정</td><td data-label="화면"><a href="/admin/targets">차종 추가 · 수정</a></td>
+<tr><td data-label="화면"><a href="/admin/targets">차종 추가 · 수정</a></td>
 <td data-label="근거">STEP 130</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">조정</td><td data-label="화면"><a href="/admin/registry">등록부 분류</a></td>
+<tr><td data-label="화면"><a href="/admin/registry">등록부 분류</a></td>
 <td data-label="근거">STEP 131</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">조정</td><td data-label="화면"><a href="/admin/dict">사전 확정</a></td>
+<tr><td data-label="화면"><a href="/admin/dict">사전 확정</a></td>
 <td data-label="근거">STEP 136e</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">조정</td><td data-label="화면"><a href="/admin/config">config 편집 · 이력</a></td>
+<tr><td data-label="화면"><a href="/admin/config">config 편집 · 이력</a></td>
 <td data-label="근거">STEP 127</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">탐색</td><td data-label="화면"><a href="/admin/query">조회 쿼리</a></td>
+</tbody>
+</table>
+
+<h3>탐색</h3>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+
+<tr><td data-label="화면"><a href="/admin/query">조회 쿼리</a></td>
 <td data-label="근거">STEP 133</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">탐색</td><td data-label="화면"><a href="/admin/api">API 조회 · 저장</a></td>
+<tr><td data-label="화면"><a href="/admin/api">API 조회 · 저장</a></td>
 <td data-label="근거">STEP 134</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">탐색</td><td data-label="화면"><a href="/admin/tools">관리 도구</a></td>
+<tr><td data-label="화면"><a href="/admin/tools">관리 도구</a></td>
 <td data-label="근거">STEP 135</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">탐색</td><td data-label="화면"><a href="/admin/docs">문서 뷰어</a></td>
+<tr><td data-label="화면"><a href="/admin/docs">문서 뷰어</a></td>
 <td data-label="근거">STEP 136</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">탐색</td><td data-label="화면"><a href="/admin/requests">개발 요청</a></td>
+<tr><td data-label="화면"><a href="/admin/requests">개발 요청</a></td>
 <td data-label="근거">STEP 137</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/recommend">후보</a></td>
+</tbody>
+</table>
+
+<h3>화면 — ★ 둘만 남는다</h3>
+<p class="muted">★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서.
+  ★ 라우트는 살려 둡니다 — 화면을 지우지 않습니다.</p>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+
+<tr><td data-label="화면"><a href="/reports">리포트</a></td>
 <td data-label="근거">개정 427</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/compare">비교</a></td>
+<tr><td data-label="화면"><a href="/notready">미판정</a></td>
 <td data-label="근거">개정 427</td>
 <td data-label="상태"></td></tr>
 
-<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/market">시세</a></td>
-<td data-label="근거">개정 427</td>
-<td data-label="상태"></td></tr>
+</tbody>
+</table>
 
-<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/dealers">딜러</a></td>
-<td data-label="근거">개정 427</td>
-<td data-label="상태"></td></tr>
+<h3>★ 계정</h3>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
 
-<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/reports">리포트</a></td>
-<td data-label="근거">개정 427</td>
-<td data-label="상태"></td></tr>
-
-<tr><td data-label="분류">화면</td><td data-label="화면"><a href="/notready">미판정</a></td>
-<td data-label="근거">개정 427</td>
+<tr><td data-label="화면"><a href="/admin/users">사용자</a></td>
+<td data-label="근거">STEP 126</td>
 <td data-label="상태"></td></tr>
 
 </tbody>
@@ -206,25 +237,25 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-23T22:42:11.806978+00:00</td><td class="muted" data-label="사유">요청 318건</td>
-  <td class="runid" data-label="실행">20260823T224203</td>
-  <td class="num" data-label="소요">15.3초</td><td data-label="판정">정상</td></tr>
+<tr><td data-label="시각">2026-08-24T20:00:21.357027+00:00</td><td class="muted" data-label="사유">요청 524건</td>
+  <td class="runid" data-label="실행">20260824T200021</td>
+  <td class="num" data-label="소요">13.5초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-08-23T01:40:47.045194+00:00</td><td class="muted" data-label="사유">요청 106건</td>
-  <td class="runid" data-label="실행">20260823T014017</td>
-  <td class="num" data-label="소요">7.9초</td><td data-label="판정">정상</td></tr>
+<tr><td data-label="시각">2026-08-24T18:24:52.434020+00:00</td><td class="muted" data-label="사유">요청 524건</td>
+  <td class="runid" data-label="실행">20260824T182451</td>
+  <td class="num" data-label="소요">14.3초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-08-23T01:23:56.217038+00:00</td><td class="muted" data-label="사유">요청 928건</td>
-  <td class="runid" data-label="실행">20260823T012340</td>
-  <td class="num" data-label="소요">66.9초</td><td data-label="판정">정상</td></tr>
+<tr><td data-label="시각">2026-08-24T16:44:22.395511+00:00</td><td class="muted" data-label="사유">요청 524건</td>
+  <td class="runid" data-label="실행">20260824T164422</td>
+  <td class="num" data-label="소요">14.7초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-08-22T04:19:46.150329+00:00</td><td class="muted" data-label="사유">요청 8건</td>
-  <td class="runid" data-label="실행">20260822T041932</td>
-  <td class="num" data-label="소요">0.3초</td><td data-label="판정">fatal 1</td></tr>
+<tr><td data-label="시각">2026-08-24T16:39:08.110795+00:00</td><td class="muted" data-label="사유">요청 524건</td>
+  <td class="runid" data-label="실행">20260824T163907</td>
+  <td class="num" data-label="소요">14.4초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-08-22T04:00:40.930068+00:00</td><td class="muted" data-label="사유">요청 1건</td>
-  <td class="runid" data-label="실행">20260822T040038</td>
-  <td class="num" data-label="소요">0.8초</td><td data-label="판정">정상</td></tr>
+<tr><td data-label="시각">2026-08-24T16:33:51.890999+00:00</td><td class="muted" data-label="사유">요청 896건</td>
+  <td class="runid" data-label="실행">20260824T163351</td>
+  <td class="num" data-label="소요">25.6초</td><td data-label="판정">fatal 1</td></tr>
 
 </tbody>
 </table>
@@ -236,6 +267,26 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-24T03:36:11.219068+00:00</td><td data-label="무엇">target[23] pending → confirm</td><td class="muted" data-label="사유">기아 CPO 목록이 낸 차종 이름이다. 원문과 대조해 확정한다 (명령서 0장 2)</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="e4fe1bcf95e43bcba5">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+<tr><td data-label="시각">2026-08-24T03:37:41.708093+00:00</td><td data-label="무엇">target[149] pending → confirm</td><td class="muted" data-label="사유">K카 목록 mapi 가 낸 차종 이름 149종. 전부 매물이 붙어 있다 (매물 0인 것 0종)</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="d22cae1e5b8b582cdd">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
 <tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td data-label="무엇">color_ext[23] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
@@ -246,31 +297,21 @@
   </form></td></tr>
 
 
+<tr><td data-label="시각">2026-08-24T03:37:42.158168+00:00</td><td data-label="무엇">target[8] pending → confirm</td><td class="muted" data-label="사유">엔카 차종 8종. G80 2,752 · 그랜저 1,797 등 전부 매물이 붙어 있다</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="c4452df2c05f480b1f">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
 <tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td data-label="무엇">fuel[5] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
     <input type="hidden" name="change_id" value="6b6be2dec4911dc629">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
-<tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td data-label="무엇">sell_type[3] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="640b0ac71bc7c87866">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
-<tr><td data-label="시각">2026-08-16T07:28:00.532735+00:00</td><td data-label="무엇">color_int[10] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="0e1501a03e5452a36b">
     <input name="reason" size="10" placeholder="사유 (필수)" required>
     <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
   </form></td></tr>
@@ -291,8 +332,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260823T224203</span>
-  <span>2026-08-24 10:41</span>
+  <span>run 20260824T200021</span>
+  <span>2026-08-25 06:14</span>
 </footer>
 
 </body>

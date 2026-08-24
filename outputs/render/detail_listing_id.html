@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>상세 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=1232849098">
+<link rel="stylesheet" href="/static/app.css?v=81c9d2f98f">
 
 </head>
 <body class="s-detail">
@@ -29,6 +29,8 @@
   
   <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
   
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -49,6 +51,14 @@
 <main>
 
 <h1>G80_EV <small>e-AWD · 세부등급 없음 · 매물 887</small></h1>
+
+
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p>열 절로 판정 → 값 → 총액 → 관문 → 모르는 것 → 취향 → 상태 → 추이 → 딜러 → 대신 볼 것</p>
+  <p>11절 「중복매물」 — 이 차가 다른 사이트에도 있으면 거기 값·등급을 나란히 낸다</p>
+</div>
+
 <div class="detail on">
 
 
@@ -98,12 +108,12 @@
         <div class="bar b1" style="height:44px"
           title="차량 318.0 / 455.0점"><i
           style="height:70%"></i><u>70</u></div><div class="bar b2" style="height:44px"
-          title="값 94.0 / 200.0점"><i
-          style="height:47%"></i><u>47</u></div><div class="bar b3" style="height:44px"
+          title="값 92.0 / 200.0점"><i
+          style="height:46%"></i><u>46</u></div><div class="bar b3" style="height:44px"
           title="보증 59.0 / 90.0점"><i
           style="height:66%"></i><u>66</u></div><div class="bar b4" style="height:44px"
-          title="취향 121.3 / 165.0점"><i
-          style="height:74%"></i><u>74</u></div>
+          title="취향 114.8 / 165.0점"><i
+          style="height:70%"></i><u>70</u></div>
       </div>
       <div class="barlab" style="width:132px"><span>차량</span><span>값</span><span>보증</span><span>취향</span></div>
     </div>
@@ -112,7 +122,7 @@
       <li class="r">같은 트림·옵션 기준 시세보다 <b>60만</b> 비쌉니다. 옵션값 219만을 더해 견줬습니다.</li><li class="g">확인율 <b>100%</b> — 910점 중 910점을 원문으로 확인했습니다.</li><li class="o">원하시는 <b>압류·저당 · 사고 · 골격</b> 가 맞습니다.</li><li class="r"><b>자차 미가입 2/18</b>.</li><li class="r"><b>용도 0/22</b>.</li>
     </ul>
   </div>
-  <p class="note">576.3 / 910 점입니다 —
+  <p class="note">567.8 / 910 점입니다 —
     등급은 비율로 매깁니다. 등급 8단계입니다. 절대 기준 — S 75 · A 65 · B 57 · C 50 · D 40 · E 30 · F 20 · G 10. 「제외」는 등급이 아니라 관문 배제입니다</p>
 </div>
 
@@ -129,20 +139,20 @@
   </div>
   
   
-  <div class="dist" title="같은 차종·트림·연식 매물 28건의 분포입니다">
+  <div class="dist" title="같은 차종·트림·연식 매물 32건의 분포입니다">
     <div class="q" style="left:25%;right:25%"></div>
     <div class="t" style="left:25%"></div><div class="t" style="left:50%"></div>
     <div class="t" style="left:75%"></div>
-    <div class="me" style="left:73%"></div>
+    <div class="me" style="left:77%"></div>
   </div>
   <div class="distlab">
     <span>최저 3,890만</span>
-    <span>중앙 5,350만</span>
-    <span>최고 5,890만</span>
+    <span>중앙 5,290만</span>
+    <span>최고 5,790만</span>
   </div>
-  <p class="note">같은 사양 매물 <b>28건</b> 중
-    이 매물보다 싼 것이 <b>14건</b>입니다 —
-    분포에서 <b>73%</b> 자리입니다.
+  <p class="note">같은 사양 매물 <b>32건</b> 중
+    이 매물보다 싼 것이 <b>17건</b>입니다 —
+    분포에서 <b>77%</b> 자리입니다.
     ★ 옵션이 많아 비싼 것과 그냥 비싼 것을 가르려고 옵션가를 더해 견줍니다.</p>
   
 </div>
@@ -177,12 +187,18 @@
   
   <div class="gate">
     <span class=""
-      title="사고 이력 양호">사고 O</span><span class=""
-      title="골격 이상 없음">골격 O</span><span class="x"
-      title="렌트·영업용">용도 -</span><span class=""
-      title="보증 있음">보증 O</span>
+      title="사고 이력 양호">사고 OK</span><span class=""
+      title="골격 이상 없음">골격 OK</span><span class="x"
+      title="렌트·영업용">용도 ×</span><span class=""
+      title="제조사 보증 있음">제조사 보증 OK</span><span class=""
+      title="사이트 보증 있음">사이트 보증 OK</span>
   </div>
   
+  
+  <p class="note" title="살지 말지에 쓰이는 둘만 냅니다. 판정에는 안 들어갑니다">
+    복합연비 <b class="dim">—</b>
+    · <b class="dim">— 인승</b>
+  </p>
 </div>
 
 
@@ -250,7 +266,7 @@
   <h3>★ 가격 추이</h3>
   
   <p class="note">등록 뒤 가격이 바뀐 적이 없습니다.</p>
-  <p class="note">경과 <b>7일</b> · 변동
+  <p class="note">경과 <b>8일</b> · 변동
     <b>0회</b> · 게시중</p>
 </div>
 
@@ -258,7 +274,7 @@
 <div class="sec" id="sec-9">
   <h3>★ 딜러 — 누구한테 사나</h3>
   <div class="kv">
-    <div><u>상호</u><b><a href="/dealers?q=하이카">하이카</a></b></div>
+    <div><u>상호</u><b><a href="/dealers?q=%ED%95%98%EC%9D%B4%EC%B9%B4">하이카</a></b></div>
     <div><u>정직도</u><b class="dim">표본 부족</b></div>
     <div><u>사분면</u><b></b></div>
   </div>
@@ -328,13 +344,13 @@
           title="선루프 — 확인했고 해당하지 않습니다 · 0/12점 · 근거 option_codes">선루프
           <b>×</b></a><a class="axc"
           href="/listings?axis=taste.trim&bucket=1"
-          title="트림 — 확인했습니다 (58.3/59점) · 58.3/59점 · 근거 trim_origin_price">트림
+          title="트림 — 확인했습니다 (51.8/59점) · 51.8/59점 · 근거 trim_origin_price">트림
           <b>OK</b></a><a class="axc"
           href="/listings?axis=value.budget&bucket=1"
           title="예산 — 확인했습니다 (20/95점) · 20/95점 · 근거 budget_line">예산
           <b>OK</b></a><a class="axc"
           href="/listings?axis=value.market&bucket=1"
-          title="시세 대비 — 확인했고 해당하지 않습니다 · -1/30점 · 근거 market_median">시세 대비
+          title="시세 대비 — 확인했고 해당하지 않습니다 · -3/30점 · 근거 market_median">시세 대비
           <b>×</b></a><a class="axc"
           href="/listings?axis=value.mileage&bucket=1"
           title="주행 — 확인했습니다 (55/107점) · 55/107점 · 근거 mileage_total">주행
@@ -346,7 +362,7 @@
           title="일반 보증 — 확인했습니다 (9/22점) · 9/22점 · 근거 encar_warranty_general">일반 보증
           <b>OK</b></a><a class="axc"
           href="/listings?axis=warranty.power&bucket=1"
-          title="보증 — 확인했고 만점입니다 · 32/32점 · 근거 encar_warranty_power">보증
+          title="제조사 보증 — 확인했고 만점입니다 · 32/32점 · 근거 encar_warranty_power">제조사 보증
           <b>OK</b></a><a class="axc"
           href="/listings?axis=warranty.site&bucket=1"
           title="사이트 보증 — 확인했습니다 (18/36점) · 18/36점 · 근거 엔카진단">사이트 보증
@@ -375,29 +391,29 @@
   <div class="alt">
     
     <div class="altcard">
-      <div class="gr A grade-a">A</div>
+      <div class="gr B grade-b">B</div>
       <div>
-        <div class="an"><a href="/detail/1164">G80_EV</a></div>
-        <div class="ap">4,750만</div>
+        <div class="an"><a href="/detail/1011">G80_EV</a></div>
+        <div class="ap">4,990만</div>
         
-        <div class="ar">등급이 A 로 높습니다 · 600만 쌉니다</div>
-      </div>
-    </div>
-    
-    <div class="altcard">
-      <div class="gr A grade-a">A</div>
-      <div>
-        <div class="an"><a href="/detail/1111">G80_EV</a></div>
-        <div class="ap">5,900만</div>
-        
-        <div class="ar">등급이 A 로 높습니다 · 주행이 적습니다</div>
+        <div class="ar">360만 쌉니다</div>
       </div>
     </div>
     
     <div class="altcard">
       <div class="gr B grade-b">B</div>
       <div>
-        <div class="an"><a href="/detail/1352">G80_EV</a></div>
+        <div class="an"><a href="/detail/10727">G80_EV</a></div>
+        <div class="ap">4,930만</div>
+        
+        <div class="ar">420만 쌉니다</div>
+      </div>
+    </div>
+    
+    <div class="altcard">
+      <div class="gr C grade-c">C</div>
+      <div>
+        <div class="an"><a href="/detail/2785">G80_EV</a></div>
         <div class="ap">5,990만</div>
         
         <div class="ar">주행이 적습니다</div>
@@ -405,12 +421,12 @@
     </div>
     
     <div class="altcard">
-      <div class="gr B grade-b">B</div>
+      <div class="gr C grade-c">C</div>
       <div>
-        <div class="an"><a href="/detail/1011">G80_EV</a></div>
-        <div class="ap">4,990만</div>
+        <div class="an"><a href="/detail/1486">G80_EV</a></div>
+        <div class="ap">5,590만</div>
         
-        <div class="ar">360만 쌉니다</div>
+        <div class="ar">주행이 적습니다</div>
       </div>
     </div>
     
@@ -431,14 +447,40 @@
 </div>
 </div>
 
+
+
+<div class="sec" id="sec-11">
+  <h3>11 ★ 중복매물 — 이 차가 다른 곳에도 있다</h3>
+  <table class="rows">
+  <thead><tr><th>사이트</th><th class="num">값</th><th>등급</th><th>사고</th>
+    <th class="num">주행</th><th class="num">보증</th><th></th></tr></thead>
+  <tbody>
+  
+  <tr>
+    <td data-label="사이트"><strong>엔카</strong></td>
+    <td class="num mono" data-label="값">5,350만</td>
+    <td data-label="등급"><span class="grade-e">E</span></td>
+    <td data-label="사고"><span class="axis-unknown">—</span></td>
+    <td class="num mono" data-label="주행">89,748km</td>
+    <td class="num mono" data-label="보증">60개월</td>
+    <td><a class="btn mini" href="/detail/855">상세 ▸</a></td>
+  </tr>
+  
+  </tbody>
+  </table>
+  <p class="muted">★ 같은 차입니다 (차량번호가 같습니다). 값·등급이 갈린 채로 냅니다 —
+    우리가 어느 쪽으로 정하지 않습니다. <a href="/track">추적</a>에서 전체를 봅니다.</p>
+</div>
+
+
 </main>
 
 <footer class="ver">
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260823T224203</span>
-  <span>2026-08-24 10:40</span>
+  <span>run 20260824T200021</span>
+  <span>2026-08-25 06:14</span>
 </footer>
 
 </body>

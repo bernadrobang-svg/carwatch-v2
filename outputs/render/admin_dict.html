@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>사전 확정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=1232849098">
+<link rel="stylesheet" href="/static/app.css?v=81c9d2f98f">
 
 </head>
 <body class="s-admin-dict">
@@ -28,6 +28,8 @@
   <a class="nav-item" href="/listings" title="조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다">매물</a>
   
   <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
+  
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
@@ -58,463 +60,13 @@
 </p>
 
 
-<p class="warn-warn">
-  ★ 아래 값 가운데 출처가 <code>list</code> 인 것은
-  <strong>facet 없이 목록에서 관측한 것입니다. 전체 집합이 아닙니다.</strong>
-  지금 매물이 가진 값만 보인 것이라, 나중에 다른 값이 뜨면 미분류가 됩니다.
-  facet 을 받으면 대조 결과를 여기에 냅니다 (V3-38).
-</p>
+
+<h2>확정 대기 0종</h2>
 
 
-<h2>확정 대기 43종</h2>
 
 
-<h3>축 단위로 한 번에</h3>
-<p class="muted">43종을 하나씩 누르지 않습니다.
-  다만 <strong>몇 종인지 먼저 봅니다</strong>.
-  지금 대기 중인 축은 <strong>2가지</strong>입니다 —
-  나머지 축은 이미 확정됐습니다.</p>
-
-<details class="card tight">
-  <summary><strong>panel</strong>
-    <span class="dim">35종 ·
-      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
-      facet</span></summary>
-  <p class="dim">값 예시 프론트 휀더(좌) · 프론트 휀더(우) · 리어 도어(우) · 후드 · 쿼터 패널(우)  외 30종</p>
-  <form method="post" action="/admin/dict">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="axis" value="panel">
-    <input type="hidden" name="previewed" value="1">
-    <label>사유 <input name="reason" size="24"
-      placeholder="왜 확정하는가 (필수)" required></label>
-    <button type="submit" name="action" value="confirm"
-      title="이 축의 대기 값을 한 번에 확정합니다">이 축 35종 확정</button>
-    <button type="submit" name="action" value="retire"
-      title="쓰지 않는 값으로 내립니다">폐기</button>
-  </form>
-  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
-</details>
-
-<details class="card tight">
-  <summary><strong>target</strong>
-    <span class="dim">8종 ·
-      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
-      list <span class="dim">전체 집합 아님</span></span></summary>
-  <p class="dim">값 예시 G80 · 그랜저 · 스포티지 · GV70 · 모델 Y  외 3종</p>
-  <form method="post" action="/admin/dict">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="axis" value="target">
-    <input type="hidden" name="previewed" value="1">
-    <label>사유 <input name="reason" size="24"
-      placeholder="왜 확정하는가 (필수)" required></label>
-    <button type="submit" name="action" value="confirm"
-      title="이 축의 대기 값을 한 번에 확정합니다">이 축 8종 확정</button>
-    <button type="submit" name="action" value="retire"
-      title="쓰지 않는 값으로 내립니다">폐기</button>
-  </form>
-  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
-</details>
-
-
-<h3>값 하나씩</h3>
-<p class="dim">★ 축별로 접어 둔 위쪽에서 한 번에 확정하는 것이 빠릅니다.
-  여기는 어떤 값이 몇 번 관측됐는지 확인할 때 봅니다.
-  좁은 폭에서는 표가 옆으로 넘어갑니다 — 표 안에서만 넘어갑니다.</p>
-<table class="rows">
-<thead><tr><th title="판정 24축 가운데 어느 축인지입니다">축</th><th title="지금 들어 있는 값입니다">값</th><th class="num" title="원문에서 몇 번 보였는지입니다">관측</th><th class="num" title="매물 건수입니다">매물</th>
-  <th title="어디서 온 값인지입니다">출처</th><th>처음 본 시각</th></tr></thead>
-<tbody>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 휀더(좌)</strong></td>
-  <td class="num" data-label="관측">668</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 휀더(우)</strong></td>
-  <td class="num" data-label="관측">630</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 도어(우)</strong></td>
-  <td class="num" data-label="관측">471</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>후드</strong></td>
-  <td class="num" data-label="관측">378</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>쿼터 패널(우)</strong></td>
-  <td class="num" data-label="관측">373</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>쿼터 패널(좌)</strong></td>
-  <td class="num" data-label="관측">339</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>트렁크 리드</strong></td>
-  <td class="num" data-label="관측">312</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 패널</strong></td>
-  <td class="num" data-label="관측">276</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>라디에이터 서포트(볼트체결부품)</strong></td>
-  <td class="num" data-label="관측">269</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 도어(우)</strong></td>
-  <td class="num" data-label="관측">260</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 도어(좌)</strong></td>
-  <td class="num" data-label="관측">246</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 도어(좌)</strong></td>
-  <td class="num" data-label="관측">228</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>트렁크 플로어</strong></td>
-  <td class="num" data-label="관측">114</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 사이드 멤버(우)</strong></td>
-  <td class="num" data-label="관측">74</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>인사이드 패널(우)</strong></td>
-  <td class="num" data-label="관측">66</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>인사이드 패널(좌)</strong></td>
-  <td class="num" data-label="관측">63</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 사이드 멤버(좌)</strong></td>
-  <td class="num" data-label="관측">57</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 패널</strong></td>
-  <td class="num" data-label="관측">40</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 휠하우스(좌)</strong></td>
-  <td class="num" data-label="관측">29</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 사이드 멤버(좌)</strong></td>
-  <td class="num" data-label="관측">25</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>사이드실 패널(좌)</strong></td>
-  <td class="num" data-label="관측">23</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>필러 패널(앞)(우)</strong></td>
-  <td class="num" data-label="관측">20</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>필러 패널(중간)(우)</strong></td>
-  <td class="num" data-label="관측">15</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 사이드 멤버(우)</strong></td>
-  <td class="num" data-label="관측">14</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 휠하우스(우)</strong></td>
-  <td class="num" data-label="관측">13</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>프론트 휠하우스(우)</strong></td>
-  <td class="num" data-label="관측">13</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>루프 패널</strong></td>
-  <td class="num" data-label="관측">12</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>사이드실 패널(우)</strong></td>
-  <td class="num" data-label="관측">11</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>필러 패널(앞)(좌)</strong></td>
-  <td class="num" data-label="관측">11</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>리어 휠하우스(좌)</strong></td>
-  <td class="num" data-label="관측">8</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>크로스 멤버</strong></td>
-  <td class="num" data-label="관측">5</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>필러 패널(뒤)(좌)</strong></td>
-  <td class="num" data-label="관측">5</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>패키지 트레이</strong></td>
-  <td class="num" data-label="관측">4</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>플로어 패널</strong></td>
-  <td class="num" data-label="관측">4</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">panel</td>
-  <td data-label="값"><strong>필러 패널(뒤)(우)</strong></td>
-  <td class="num" data-label="관측">4</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처">facet</td>
-  <td class="muted" data-label="처음 본 시각">2026-08-16</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>G80</strong></td>
-  <td class="num" data-label="관측">2,752</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>그랜저</strong></td>
-  <td class="num" data-label="관측">1,797</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>스포티지</strong></td>
-  <td class="num" data-label="관측">1,493</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>GV70</strong></td>
-  <td class="num" data-label="관측">1,220</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>모델 Y</strong></td>
-  <td class="num" data-label="관측">619</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>G70</strong></td>
-  <td class="num" data-label="관측">457</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>그랑 콜레오스</strong></td>
-  <td class="num" data-label="관측">285</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>GV60</strong></td>
-  <td class="num" data-label="관측">139</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-</table>
-
-
+<p class="muted">확정 대기가 없습니다. 사전이 모두 확정돼 있습니다.</p>
 
 
 <h2>확정된 사전</h2>
@@ -535,13 +87,15 @@
 
 <tr><td>lease_type</td><td class="num">4종</td></tr>
 
+<tr><td>panel</td><td class="num">35종</td></tr>
+
 <tr><td>panel_rank</td><td class="num">5종</td></tr>
 
 <tr><td>panel_status</td><td class="num">4종</td></tr>
 
 <tr><td>sell_type</td><td class="num">3종</td></tr>
 
-<tr><td>target</td><td class="num">22종</td></tr>
+<tr><td>target</td><td class="num">219종</td></tr>
 
 <tr><td>trim</td><td class="num">68종</td></tr>
 
@@ -558,8 +112,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260823T224203</span>
-  <span>2026-08-24 10:41</span>
+  <span>run 20260824T200021</span>
+  <span>2026-08-25 06:14</span>
 </footer>
 
 </body>

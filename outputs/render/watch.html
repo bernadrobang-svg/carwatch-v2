@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관심 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=1232849098">
+<link rel="stylesheet" href="/static/app.css?v=81c9d2f98f">
 
 </head>
 <body class="s-watch">
@@ -29,6 +29,8 @@
   
   <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
   
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -50,6 +52,16 @@
 <h1>관심 <small>2건</small></h1>
 
 
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p>하트를 누른 차를 지켜본다. 담아 두기만 하는 곳이 아니다</p>
+  <p>값이 내리면 여기서 알려 준다 — 이 도구의 이름(CarWatch)이 그 뜻이다</p>
+  <p>매물은 날마다 바뀌지만 담은 차는 남는다. 다시 3,000건을 뒤질 일이 없다</p>
+  <p>추적과 다르다 — 추적은 「같은 차가 여러 곳에」 · 여기는 「내가 지켜보는 차」</p>
+</div>
+
+
+
 <form method="get" action="/compare" id="cmp">
 <div class="bar">
   <button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">
@@ -58,65 +70,27 @@
 </div>
 <table class="rows">
 <thead><tr><th class="c" title="비교할 매물을 고릅니다">비교</th>
+
+<th title="담은 뒤 값이 어떻게 바뀌었는지입니다">★ 담은 뒤</th>
 <th class="c">사진</th><th class="c">등급</th><th class="c">★ 막대</th><th>차종 · 트림</th>
 <th class="r">연식</th><th class="r">주행</th>
 <th class="r">가격</th><th class="r">목표가</th><th>상태</th><th>가격 추이</th><th></th></tr></thead>
 <tbody>
 
-<tr data-peek="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" data-href="/detail/179">
-<td class="c" data-label="비교">
-  <input type="checkbox" name="id" value="179"
-         title="비교에 넣습니다"></td>
-<td class="c photo" data-label="사진">
-  <a href="/detail/179" title="KOLEOS_HEV 1.5 E-TECH 아이코닉 2WD · 세부등급 없음 · 2025-03 · 51,151km · 3,170만 · S등급">
-  <img class="thumb" src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt="" width="128" height="86" loading="lazy">
-  </a>
-</td>
-<td class="c" data-label="등급"><a href="/detail/179" title="판정 근거를 봅니다"><span class="grade-s">S</span></a></td>
-
-<td class="c" data-label="막대">
-  <div class="bars" style="width:80px">
-    <div class="bar b1" style="height:20px"
-      title="차량 408.0 / 455.0점"><i
-      style="height:90%"></i></div><div class="bar b2" style="height:20px"
-      title="값 122.0 / 200.0점"><i
-      style="height:61%"></i></div><div class="bar b3" style="height:20px"
-      title="보증 67.0 / 90.0점"><i
-      style="height:74%"></i></div><div class="bar b4" style="height:20px"
-      title="취향 135.5 / 165.0점"><i
-      style="height:82%"></i></div>
-  </div></td>
-<td data-label="차종 · 트림">
-  <a href="/detail/179" title="판정 근거를 봅니다"><strong>KOLEOS_HEV</strong></a>
-  <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span>
-  <span class="dim">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</span>
-  <span class="tag" title="같은 차가 내렸다 다시 올라온 횟수입니다. 값이 바뀌었으면 함께 냅니다">2번 재등록</span></td>
-<td class="r num" data-label="연식">2025-03</td>
-<td class="r num" data-label="주행">51,151km</td>
-<td class="r num" data-label="가격"><a href="/detail/179" title="판정 근거를 봅니다"><b>3,170만</b></a></td>
-<td class="r num" data-label="목표가">없습니다</td>
-<td data-label="상태">게시중</td>
-<td data-label="가격 추이"><span class="dim" title="가격이 바뀐 적이 없습니다">추이 없음</span></td>
-<td class="act" data-label="">
-  <a class="btn mini" href="/detail/179" title="판정 근거">근거</a>
-  <a class="btn go mini" href="https://www.encar.com/dc/dc_cardetailview.do?carid=42482002" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>
-  <form method="post" action="/watch/8" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input name="target_price_won" placeholder="목표가(원)" size="10">
-    <button type="submit" class="mini">저장</button>
-  </form>
-  <form method="post" action="/watch/8" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="remove">
-    <button type="submit" class="mini" data-confirm="관심에서 뺍니다. 가격 추이 기록도 멈춥니다">빼기</button>
-  </form>
-</td>
-</tr>
-
 <tr data-peek="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" data-href="/detail/166">
 <td class="c" data-label="비교">
   <input type="checkbox" name="id" value="166"
          title="비교에 넣습니다"></td>
+<td data-label="담은 뒤">
+  
+  
+  <b class="down-v">
+    담을 때 3,050만 →
+    지금 2,990만</b><br>
+  
+  <span class="dim" title="담은 날부터 며칠째인지입니다">2026-08-23부터 지켜봄 ·
+    1일째</span>
+</td>
 <td class="c photo" data-label="사진">
   <a href="/detail/166" title="KOLEOS_HEV 1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음 · 2024-12 · 55,763km · 2,990만 · S등급">
   <img class="thumb" src="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" alt="" width="128" height="86" loading="lazy">
@@ -133,8 +107,8 @@
       style="height:80%"></i></div><div class="bar b3" style="height:20px"
       title="보증 53.0 / 90.0점"><i
       style="height:59%"></i></div><div class="bar b4" style="height:20px"
-      title="취향 125.1 / 165.0점"><i
-      style="height:76%"></i></div>
+      title="취향 120.9 / 165.0점"><i
+      style="height:73%"></i></div>
   </div></td>
 <td data-label="차종 · 트림">
   <a href="/detail/166" title="판정 근거를 봅니다"><strong>KOLEOS_HEV</strong></a>
@@ -148,7 +122,9 @@
 <td data-label="상태">게시중</td>
 <td data-label="가격 추이"><span class="spark" title="첫 게시가부터 지금까지의 가격 추이입니다. 초록이 내린 것입니다"><i class="" style="height:100%" title="3,050만"></i><i class="dn now" style="height:98%" title="2,990만"></i></span></td>
 <td class="act" data-label="">
-  <a class="btn mini" href="/detail/166" title="판정 근거">근거</a>
+  
+  <a class="btn mini" href="/detail/166"
+    title="판정 근거를 봅니다 — 왜 이 등급인가">상세 ▸</a>
   <a class="btn go mini" href="https://www.encar.com/dc/dc_cardetailview.do?carid=42459786" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>
   <form method="post" action="/watch/7" class="inline">
     <input type="hidden" name="csrf" value="render">
@@ -156,6 +132,66 @@
     <button type="submit" class="mini">저장</button>
   </form>
   <form method="post" action="/watch/7" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="remove">
+    <button type="submit" class="mini" data-confirm="관심에서 뺍니다. 가격 추이 기록도 멈춥니다">빼기</button>
+  </form>
+</td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" data-href="/detail/179">
+<td class="c" data-label="비교">
+  <input type="checkbox" name="id" value="179"
+         title="비교에 넣습니다"></td>
+<td data-label="담은 뒤">
+  
+  
+  
+  <span class="dim">— 담을 때와 같다</span><br>
+  <span class="dim" title="담은 날부터 며칠째인지입니다">2026-08-23부터 지켜봄 ·
+    1일째</span>
+</td>
+<td class="c photo" data-label="사진">
+  <a href="/detail/179" title="KOLEOS_HEV 1.5 E-TECH 아이코닉 2WD · 세부등급 없음 · 2025-03 · 51,151km · 3,170만 · S등급">
+  <img class="thumb" src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt="" width="128" height="86" loading="lazy">
+  </a>
+</td>
+<td class="c" data-label="등급"><a href="/detail/179" title="판정 근거를 봅니다"><span class="grade-s">S</span></a></td>
+
+<td class="c" data-label="막대">
+  <div class="bars" style="width:80px">
+    <div class="bar b1" style="height:20px"
+      title="차량 408.0 / 455.0점"><i
+      style="height:90%"></i></div><div class="bar b2" style="height:20px"
+      title="값 122.0 / 200.0점"><i
+      style="height:61%"></i></div><div class="bar b3" style="height:20px"
+      title="보증 67.0 / 90.0점"><i
+      style="height:74%"></i></div><div class="bar b4" style="height:20px"
+      title="취향 131.5 / 165.0점"><i
+      style="height:80%"></i></div>
+  </div></td>
+<td data-label="차종 · 트림">
+  <a href="/detail/179" title="판정 근거를 봅니다"><strong>KOLEOS_HEV</strong></a>
+  <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span>
+  <span class="dim">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</span>
+  <span class="tag" title="같은 차가 내렸다 다시 올라온 횟수입니다. 값이 바뀌었으면 함께 냅니다">2번 재등록</span></td>
+<td class="r num" data-label="연식">2025-03</td>
+<td class="r num" data-label="주행">51,151km</td>
+<td class="r num" data-label="가격"><a href="/detail/179" title="판정 근거를 봅니다"><b>3,170만</b></a></td>
+<td class="r num" data-label="목표가">없습니다</td>
+<td data-label="상태">게시중</td>
+<td data-label="가격 추이"><span class="dim" title="가격이 바뀐 적이 없습니다">추이 없음</span></td>
+<td class="act" data-label="">
+  
+  <a class="btn mini" href="/detail/179"
+    title="판정 근거를 봅니다 — 왜 이 등급인가">상세 ▸</a>
+  <a class="btn go mini" href="https://www.encar.com/dc/dc_cardetailview.do?carid=42482002" target="_blank" rel="noopener" title="엔카 원문 매물로 갑니다">엔카에서 보기</a>
+  <form method="post" action="/watch/8" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input name="target_price_won" placeholder="목표가(원)" size="10">
+    <button type="submit" class="mini">저장</button>
+  </form>
+  <form method="post" action="/watch/8" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="remove">
     <button type="submit" class="mini" data-confirm="관심에서 뺍니다. 가격 추이 기록도 멈춥니다">빼기</button>
@@ -183,13 +219,13 @@
 
 
 <div class="prog">
-  <div class="prog-h"><a href="/why/179">KOLEOS_HEV 1.5 E-TECH 아이코닉 2WD · 세부등급 없음</a></div>
+  <div class="prog-h"><a href="/why/166">KOLEOS_HEV 1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</a></div>
   
   <p class="muted">아직 적은 것이 없습니다.</p>
   <form method="post" action="/watch/add" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="kind" value="note">
-    <input type="hidden" name="listing_id" value="179">
+    <input type="hidden" name="listing_id" value="166">
     <label>무엇을 <select name="note_kind">
       <option value="contacted">연락함</option><option value="visited">보러 감</option><option value="done">끝</option>
     </select></label>
@@ -200,13 +236,13 @@
 </div>
 
 <div class="prog">
-  <div class="prog-h"><a href="/why/166">KOLEOS_HEV 1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</a></div>
+  <div class="prog-h"><a href="/why/179">KOLEOS_HEV 1.5 E-TECH 아이코닉 2WD · 세부등급 없음</a></div>
   
   <p class="muted">아직 적은 것이 없습니다.</p>
   <form method="post" action="/watch/add" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="kind" value="note">
-    <input type="hidden" name="listing_id" value="166">
+    <input type="hidden" name="listing_id" value="179">
     <label>무엇을 <select name="note_kind">
       <option value="contacted">연락함</option><option value="visited">보러 감</option><option value="done">끝</option>
     </select></label>
@@ -354,8 +390,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260823T224203</span>
-  <span>2026-08-24 10:41</span>
+  <span>run 20260824T200021</span>
+  <span>2026-08-25 06:14</span>
 </footer>
 
 </body>
