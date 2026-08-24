@@ -123,17 +123,26 @@ RE_NUM = re.compile(r"[\d,]+")
 HEAD_PREFIX = 4
 
 
-# ★ v3 시안은 ★ 절을 `<div class="lbl">1 판정</div>` 으로 적는다 (개정 631).
+# ★ v3 시안은 ★ 절을 `<div class="v3-lbl">1 판정</div>` 으로 적는다 (개정 631).
+#   ★ 마스터 ㉮ (r672) — ★ 시안 쪽에만 `.v3-` 을 붙였다.  ★ 옛 `lbl` 도 받는다
 #   ★ `<h2>` 는 ★ 화면 이름과 ★ 「지켜야 하는 것」 메모다 — ★ 절이 아니다
-RE_LBL = re.compile(r'<div class="lbl">([^<]+)</div>')
+RE_LBL = re.compile(r'<div class="(?:v3-)?lbl">([^<]+)</div>')
 SIAN_NOTE = ("지켜야 하는 것",)
 
 
-def _sian_heads(html: str) -> list:
-    """시안의 절.  ★ v3 는 `.lbl` · ★ 옛 판은 `h2`·`h3` 다."""
+def _sian_heads(html: str, v3: bool = False) -> list:
+    """시안의 절.  ★ v3 는 `.v3-lbl` · ★ 옛 판은 `h2`·`h3` 다.
+
+    ★★ v3 시안에서 ★ `h2`·`h3` 로 물러서지 않는다 — ★ 위 주석대로
+      ★ v3 의 `h2` 는 ★ 화면 이름·틀 설명이지 ★ 절이 아니다.
+      ★ 실측 08-24 — ★ 물러선 탓에 ★ `compare.html` 에 ★ 「상세 — 와이드」
+      절이 없다고 ★ 헛잡았다.  ★ 그것은 ★ 시안이 곁에 그려 둔 ★ 상세 화면의
+      ★ 이름표다.  ★ v3 시안이 `.v3-lbl` 을 안 쓰면 ★ 절을 안 밝힌 것이다
+    ★ 옛 판 시안은 ★ 전부 지워졌다 (요구 73 — v2 24개) — ★ 물러섬은 남겨 둔다
+    """
     got = [" ".join(RE_NUM.sub(" ", x).split()) for x in RE_LBL.findall(html)]
     got = [x for x in got if x]
-    if got:
+    if got or v3:
         return got
     return [x for x in _heads(html)
             if not any(x.startswith(n) for n in SIAN_NOTE)]
@@ -171,7 +180,8 @@ def check_sections() -> None:
         if not (os.path.isfile(sp) and os.path.isfile(tp)):
             continue
         mine = _heads(io.open(tp, encoding="utf-8").read(), strip_vars=True)
-        for head in _sian_heads(io.open(sp, encoding="utf-8").read()):
+        for head in _sian_heads(io.open(sp, encoding="utf-8").read(),
+                                v3=sketch.startswith("v3_")):
             key = head[:HEAD_PREFIX]
             if any(key in m for m in mine):
                 ok += 1

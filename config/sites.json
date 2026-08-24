@@ -379,7 +379,7 @@
   },
   "bobaedream": {
     "label": "보배드림",
-    "status": "pending",
+    "status": "planned",
     "order": 10,
     "multi_instance": false,
     "warranty_evidence": null,
@@ -391,7 +391,7 @@
   },
   "reborncar": {
     "label": "리본카",
-    "status": "pending",
+    "status": "planned",
     "order": 11,
     "multi_instance": false,
     "warranty_evidence": null,
@@ -403,7 +403,7 @@
   },
   "lexus_certified": {
     "label": "렉서스 인증중고차",
-    "status": "pending",
+    "status": "planned",
     "order": 12,
     "multi_instance": false,
     "warranty_evidence": null,
@@ -415,7 +415,7 @@
   },
   "volvo_selekt": {
     "label": "볼보 셀렉트",
-    "status": "pending",
+    "status": "planned",
     "order": 13,
     "multi_instance": false,
     "warranty_evidence": null,
@@ -427,7 +427,7 @@
   },
   "bmw_bps": {
     "label": "BMW 프리미엄 셀렉션",
-    "status": "pending",
+    "status": "planned",
     "order": 14,
     "multi_instance": false,
     "warranty_evidence": null,

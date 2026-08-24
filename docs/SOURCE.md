@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 160개 · 총 56,542줄
+파일 160개 · 총 56,585줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -19,9 +19,9 @@
 | `store/adminops.py` | 1,037 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `report/screens/admin.py` | 1,026 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `validate/v2_load.py` | 919 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
+| `validate/v0_guide.py` | 900 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `validate/v10_admin.py` | 895 | V10 관리자 검증. |
 | `validate/v1_collect.py` | 878 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
-| `validate/v0_guide.py` | 867 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `tests/test_score.py` | 839 | 7장 판정·채점 시험. |
 | `report/render.py` | 828 | 리포트 생성 (L9). |
@@ -65,10 +65,10 @@
 | `tools/collect_hyundai_cert.py` | 273 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `report/exports/export.py` | 269 | 내보내기. |
 | `tools/collect_kcar.py` | 265 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
+| `tools/check_screens.py` | 264 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
 | `tests/test_store.py` | 255 | 3장 테이블 시험. |
-| `tools/check_screens.py` | 254 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `tools/menu.py` | 254 | 실행 메뉴. |
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
 | `web/server.py` | 244 | HTTP 서버 (14장 STEP 141 · 150). |
@@ -247,6 +247,12 @@ AdminMenuItem:32  AdminHome:76  SaveGate:92  AuditTab:106  AuditView:114  DocVie
 DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:347  _not_null_check:432  _chained_subscript_check:449  _Boom:497  _salvage_check:505  _table_exists:546  _exception_shape_checks:552  _schema_sync_check:618  _pii_access_check:655  gap_alerts:694  diff_prev_day:710  explain_gap:732  _pii_column_check:764  _secret_key_check:782  _parser_common_fields_check:820  _null_target_not_judged_check:871  _null_target_visible_check:896
 ```
 
+### `validate/v0_guide.py` — 900줄
+
+```
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:299  s45_4_table_generated:337  s45_3_spec_totals:352  s45_2_mock_numbers:408  s44_3_specs_in_order:429  s43_3_version_matches:467  _h_tags:492  s46_21_one_screen_per_file:508  s46_22_section_order:533  _targets:574  s46_23_site_query_filled:580  s46_24_facet_unconfirmed:595  s46_30_index_covers_docs:612  s46_31_spec_sites_in_config:651  s46_32_generated_fresh:672  _req_rows:714  _tokens:726  _named_docs:741  s46_36_dropped_not_alive:753  s46_40_progress_docs_changed:781  s46_41_site_status_known:812  run:874
+```
+
 ### `validate/v10_admin.py` — 895줄
 
 ```
@@ -257,12 +263,6 @@ _sources:212  _admin_guard_checks:233  _sql_strings:278  _schedule_checks:290  _
 
 ```
 _unknown_split_checks:171  _axis_empty_check:257  run:287  _endpoint_order_check:421  _empty_db_check:433  _sql_groups:460  _cumulative_codes:496  _run_scope_check:506  _ctx_started:544  _has_run_id:552  _expected_scope_check:557  _diagnosis_scope_check:578  _diagnosis_none_count:616  _query_key_check:639  _entrypoint_parity_check:666  _enclosing_def:695  _run_id_filled_check:704  _catalog_key_check:724  _whole_probe:746  _whole_body_check:757  _catalog_checks:788  _unparsed_envelope_check:835  _ensure_tmp:875
-```
-
-### `validate/v0_guide.py` — 867줄
-
-```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:299  s45_4_table_generated:337  s45_3_spec_totals:352  s45_2_mock_numbers:408  s44_3_specs_in_order:429  s43_3_version_matches:467  _h_tags:492  s46_21_one_screen_per_file:508  s46_22_section_order:533  _targets:574  s46_23_site_query_filled:580  s46_24_facet_unconfirmed:595  s46_30_index_covers_docs:612  s46_31_spec_sites_in_config:651  s46_32_generated_fresh:672  _req_rows:714  _tokens:726  _named_docs:741  s46_36_dropped_not_alive:753  s46_40_progress_docs_changed:781  run:841
 ```
 
 ### `tools/trace_fill.py` — 840줄
@@ -523,6 +523,12 @@ filename:26  _stamp_lines:32  listing_md:38  listing_csv:76  halt_md:93  target_
 _now:43  fetch:47  classify:61  accident_of:76  fetch_stock:85  collect_list:104  main:179
 ```
 
+### `tools/check_screens.py` — 264줄
+
+```
+_pairs:23  say:72  _text:81  check_pairs:88  check_phrases:101  _sian_heads:133  _heads:151  check_sections:170  check_nav:193  check_render:213  main:247
+```
+
 ### `tests/test_report.py` — 263줄
 
 ```
@@ -539,12 +545,6 @@ check:30  db:36  add:41  watch:64  test_same_dealer:78  test_cross_dealer:97  te
 
 ```
 check:40  seed:46  base:52  db:70  test_schema:76  test_key:124  test_null_three:135  test_change_history:142  test_invariant_violation:163  test_snapshot:181  test_dictionary:206
-```
-
-### `tools/check_screens.py` — 254줄
-
-```
-_pairs:23  say:72  _text:81  check_pairs:88  check_phrases:101  _sian_heads:132  _heads:142  check_sections:161  check_nav:183  check_render:203  main:237
 ```
 
 ### `tools/menu.py` — 254줄

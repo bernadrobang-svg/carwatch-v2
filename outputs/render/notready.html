@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>미판정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=be6bd1f71c">
+<link rel="stylesheet" href="/static/app.css?v=1232849098">
 
 </head>
 <body class="s-notready">
@@ -50,7 +50,7 @@
 <h1>아직 판정하지 못했습니다</h1>
 <p class="muted">무엇을 하면 되나 — 아래 조치를 순서대로 하십시오.</p>
 <h2>사유</h2>
-<ul><li>등록부 미분류 319건 — V4-11 이 판정을 막는다</li><li>차종이 안 붙은 매물 6,681건 — 판정 대상이 아니다</li></ul>
+<ul><li>등록부 미분류 319건 — V4-11 이 판정을 막는다</li><li>차종이 안 붙은 매물 7,190건 — 판정 대상이 아니다</li></ul>
 <h2>조치</h2>
 <ul class="action"><li>config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</li><li>아래 모델명·배지를 보고 targets.json 의 fuel_match · trim_include 를 고치거나 그대로 둔다</li></ul>
 
@@ -63,8 +63,8 @@
 
 <h2>차종이 안 붙은 매물</h2>
 <p class="notice">
-  범위 안 <strong>4,345건</strong> ·
-  <strong>차종 미정 6,681건</strong>.
+  범위 안 <strong>4,403건</strong> ·
+  <strong>차종 미정 7,190건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다.
   차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
   넣지도 않습니다.
@@ -80,31 +80,31 @@
 
 <tr><td>제네시스</td><td>GV70</td>
   <td>가솔린</td><td class="muted">2.5T 가솔린 AWD</td>
-  <td class="num">1,088</td></tr>
+  <td class="num">1,094</td></tr>
 
 <tr><td>현대</td><td>그랜저</td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="num">1,037</td></tr>
+  <td>가솔린</td><td class="muted">2.5 가솔린 2WD</td>
+  <td class="num">1,068</td></tr>
 
 <tr><td>현대</td><td>그랜저</td>
   <td>가솔린+전기</td><td class="muted">캘리그래피</td>
-  <td class="num">702</td></tr>
+  <td class="num">705</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린</td><td class="muted">가솔린 1.6 터보 2WD</td>
   <td class="num">566</td></tr>
 
 <tr><td>제네시스</td><td>G80</td>
-  <td>가솔린</td><td class="muted">3.3 GDI AWD</td>
-  <td class="num">552</td></tr>
+  <td>가솔린</td><td class="muted">가솔린 3.5 터보 AWD</td>
+  <td class="num">562</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린+전기</td><td class="muted">시그니처 4WD</td>
-  <td class="num">451</td></tr>
+  <td class="num">452</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>디젤</td><td class="muted">디젤 2.0 2WD</td>
-  <td class="num">276</td></tr>
+  <td class="num">280</td></tr>
 
 <tr><td>기아</td><td>쏘렌토</td>
   <td>1.6 가솔린 하이브리드</td><td class="muted">프레스티지</td>
@@ -114,17 +114,21 @@
   <td>2.2 디젤</td><td class="muted">노블레스</td>
   <td class="num">154</td></tr>
 
+<tr><td>현대</td><td>팰리세이드</td>
+  <td>가솔린</td><td class="muted"></td>
+  <td class="num">137</td></tr>
+
 <tr><td>현대</td><td>그랜저</td>
   <td>하이브리드</td><td class="muted"></td>
   <td class="num">131</td></tr>
 
-<tr><td>현대</td><td>팰리세이드</td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="num">130</td></tr>
-
 <tr><td>현대</td><td>아이오닉5</td>
   <td>전기</td><td class="muted"></td>
   <td class="num">68</td></tr>
+
+<tr><td>제네시스</td><td>G70</td>
+  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
+  <td class="num">67</td></tr>
 
 <tr><td>현대</td><td>GV70</td>
   <td>가솔린</td><td class="muted"></td>
@@ -132,19 +136,15 @@
 
 <tr><td>제네시스</td><td>G80</td>
   <td>디젤</td><td class="muted">디젤 2.2 2WD</td>
-  <td class="num">64</td></tr>
+  <td class="num">65</td></tr>
 
 <tr><td>기아</td><td>카니발</td>
   <td>3.5 가솔린</td><td class="muted">노블레스</td>
   <td class="num">63</td></tr>
 
-<tr><td>제네시스</td><td>G70</td>
-  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
-  <td class="num">59</td></tr>
-
 <tr><td>제네시스</td><td>GV70</td>
   <td>디젤</td><td class="muted">2.2 디젤 2WD</td>
-  <td class="num">54</td></tr>
+  <td class="num">56</td></tr>
 
 <tr><td>기아</td><td>모하비</td>
   <td>3.0 디젤</td><td class="muted">마스터즈 그래비티</td>
@@ -182,12 +182,12 @@
   <td>가솔린</td><td class="muted"></td>
   <td class="num">37</td></tr>
 
-<tr><td>기아</td><td>K8</td>
-  <td>2.5 가솔린</td><td class="muted">노블레스 라이트</td>
-  <td class="num">26</td></tr>
-
 <tr><td>현대</td><td>투싼</td>
   <td>가솔린</td><td class="muted"></td>
+  <td class="num">32</td></tr>
+
+<tr><td>기아</td><td>K8</td>
+  <td>2.5 가솔린</td><td class="muted">노블레스 라이트</td>
   <td class="num">26</td></tr>
 
 <tr><td>기아</td><td>쏘렌토</td>
@@ -242,6 +242,10 @@
   <td>1.6 가솔린 하이브리드</td><td class="muted">시그니처</td>
   <td class="num">19</td></tr>
 
+<tr><td>현대</td><td>코나</td>
+  <td>가솔린</td><td class="muted"></td>
+  <td class="num">18</td></tr>
+
 <tr><td>기아</td><td>PV5</td>
   <td>EV</td><td class="muted">플러스</td>
   <td class="num">17</td></tr>
@@ -274,17 +278,13 @@
   <td>EV</td><td class="muted">에어</td>
   <td class="num">14</td></tr>
 
-<tr><td>현대</td><td>G80</td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="num">14</td></tr>
-
 </tbody>
 </table>
 
 
 
 <h2>지금도 볼 수 있는 것</h2>
-<ul><li>수집 — 매물 11,026건 · 응답 108,128건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 11,025건 완료</li><li>채점 — 4,043건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
+<ul><li>수집 — 매물 11,593건 · 응답 108,369건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 11,592건 완료</li><li>채점 — 4,403건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
 
 
@@ -313,7 +313,7 @@
   <td class="num">630</td><td class="muted">판정에 쓰지 않습니다</td></tr>
 
 <tr><td>target</td><td>모델 Y</td>
-  <td class="num">580</td><td class="muted">판정에 쓰지 않습니다</td></tr>
+  <td class="num">619</td><td class="muted">판정에 쓰지 않습니다</td></tr>
 
 <tr><td>panel</td><td>리어 도어(우)</td>
   <td class="num">471</td><td class="muted">판정에 쓰지 않습니다</td></tr>
@@ -426,8 +426,8 @@
 
 <h2>차종이 안 붙은 매물</h2>
 <p class="notice">
-  범위 안 <strong>4,345건</strong> ·
-  <strong>차종 미정 6,681건</strong>.
+  범위 안 <strong>4,403건</strong> ·
+  <strong>차종 미정 7,190건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다.
   차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
   넣지도 않습니다.
@@ -443,31 +443,31 @@
 
 <tr><td>제네시스</td><td>GV70</td>
   <td>가솔린</td><td class="muted">2.5T 가솔린 AWD</td>
-  <td class="num">1,088</td></tr>
+  <td class="num">1,094</td></tr>
 
 <tr><td>현대</td><td>그랜저</td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="num">1,037</td></tr>
+  <td>가솔린</td><td class="muted">2.5 가솔린 2WD</td>
+  <td class="num">1,068</td></tr>
 
 <tr><td>현대</td><td>그랜저</td>
   <td>가솔린+전기</td><td class="muted">캘리그래피</td>
-  <td class="num">702</td></tr>
+  <td class="num">705</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린</td><td class="muted">가솔린 1.6 터보 2WD</td>
   <td class="num">566</td></tr>
 
 <tr><td>제네시스</td><td>G80</td>
-  <td>가솔린</td><td class="muted">3.3 GDI AWD</td>
-  <td class="num">552</td></tr>
+  <td>가솔린</td><td class="muted">가솔린 3.5 터보 AWD</td>
+  <td class="num">562</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>가솔린+전기</td><td class="muted">시그니처 4WD</td>
-  <td class="num">451</td></tr>
+  <td class="num">452</td></tr>
 
 <tr><td>기아</td><td>스포티지</td>
   <td>디젤</td><td class="muted">디젤 2.0 2WD</td>
-  <td class="num">276</td></tr>
+  <td class="num">280</td></tr>
 
 <tr><td>기아</td><td>쏘렌토</td>
   <td>1.6 가솔린 하이브리드</td><td class="muted">프레스티지</td>
@@ -477,17 +477,21 @@
   <td>2.2 디젤</td><td class="muted">노블레스</td>
   <td class="num">154</td></tr>
 
+<tr><td>현대</td><td>팰리세이드</td>
+  <td>가솔린</td><td class="muted"></td>
+  <td class="num">137</td></tr>
+
 <tr><td>현대</td><td>그랜저</td>
   <td>하이브리드</td><td class="muted"></td>
   <td class="num">131</td></tr>
 
-<tr><td>현대</td><td>팰리세이드</td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="num">130</td></tr>
-
 <tr><td>현대</td><td>아이오닉5</td>
   <td>전기</td><td class="muted"></td>
   <td class="num">68</td></tr>
+
+<tr><td>제네시스</td><td>G70</td>
+  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
+  <td class="num">67</td></tr>
 
 <tr><td>현대</td><td>GV70</td>
   <td>가솔린</td><td class="muted"></td>
@@ -495,19 +499,15 @@
 
 <tr><td>제네시스</td><td>G80</td>
   <td>디젤</td><td class="muted">디젤 2.2 2WD</td>
-  <td class="num">64</td></tr>
+  <td class="num">65</td></tr>
 
 <tr><td>기아</td><td>카니발</td>
   <td>3.5 가솔린</td><td class="muted">노블레스</td>
   <td class="num">63</td></tr>
 
-<tr><td>제네시스</td><td>G70</td>
-  <td>가솔린</td><td class="muted">가솔린 3.3T 4WD</td>
-  <td class="num">59</td></tr>
-
 <tr><td>제네시스</td><td>GV70</td>
   <td>디젤</td><td class="muted">2.2 디젤 2WD</td>
-  <td class="num">54</td></tr>
+  <td class="num">56</td></tr>
 
 <tr><td>기아</td><td>모하비</td>
   <td>3.0 디젤</td><td class="muted">마스터즈 그래비티</td>
@@ -545,12 +545,12 @@
   <td>가솔린</td><td class="muted"></td>
   <td class="num">37</td></tr>
 
-<tr><td>기아</td><td>K8</td>
-  <td>2.5 가솔린</td><td class="muted">노블레스 라이트</td>
-  <td class="num">26</td></tr>
-
 <tr><td>현대</td><td>투싼</td>
   <td>가솔린</td><td class="muted"></td>
+  <td class="num">32</td></tr>
+
+<tr><td>기아</td><td>K8</td>
+  <td>2.5 가솔린</td><td class="muted">노블레스 라이트</td>
   <td class="num">26</td></tr>
 
 <tr><td>기아</td><td>쏘렌토</td>
@@ -605,6 +605,10 @@
   <td>1.6 가솔린 하이브리드</td><td class="muted">시그니처</td>
   <td class="num">19</td></tr>
 
+<tr><td>현대</td><td>코나</td>
+  <td>가솔린</td><td class="muted"></td>
+  <td class="num">18</td></tr>
+
 <tr><td>기아</td><td>PV5</td>
   <td>EV</td><td class="muted">플러스</td>
   <td class="num">17</td></tr>
@@ -637,10 +641,6 @@
   <td>EV</td><td class="muted">에어</td>
   <td class="num">14</td></tr>
 
-<tr><td>현대</td><td>G80</td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="num">14</td></tr>
-
 </tbody>
 </table>
 
@@ -662,8 +662,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260823T014017</span>
-  <span>2026-08-24 06:26</span>
+  <span>run 20260823T224203</span>
+  <span>2026-08-24 10:41</span>
 </footer>
 
 </body>

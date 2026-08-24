@@ -808,6 +808,38 @@ def s46_40_progress_docs_changed() -> tuple[bool, str]:
     return True, f"「진행」 {len(rows)}건의 바뀐 문서 {seen}개가 다 최신이다"
 
 
+
+def s46_41_site_status_known() -> tuple[bool, str]:
+    """★ `sites.json` 의 status 가 ★ 규격이 정한 셋 안인가.
+
+    ★ 규격 — `docs/chapters/00-standard.md:616`
+      「sites.json  사이트 목록 · status (active · planned · paused)」
+    ★★ 실측 08-24 — ★ 내가 r654 에서 ★ 사이트 다섯을 ★ `pending` 으로 넣었다.
+      ★ 규격에 없는 말이라 ★ `V9-10` 이 그 다섯을 ★ 「active 인데 배점이 없다」로
+      읽어 ★ fatal 이 났다.  ★ 값 하나가 ★ 조용히 새 뜻을 만들었다
+    """
+    import json as _j
+    known = set()
+    for line in _read(ROOT / "docs" / "chapters" / "00-standard.md").split("\n"):
+        if "sites.json" in line and "status" in line:
+            got = re.search(r"status\s*\(([^)]+)\)", line)
+            if got:
+                known = {w.strip() for w in got.group(1).split("·") if w.strip()}
+            break
+    if not known:
+        return False, "규격에서 사이트 status 목록을 못 읽었다 (00-standard.md)"
+    with open(ROOT / "config" / "sites.json", encoding="utf-8") as fp:
+        raw = _j.load(fp)
+    sites = raw.get("sites", raw)
+    bad = [f"{n} — status={o.get('status')!r}"
+           for n, o in sites.items()
+           if isinstance(o, dict) and o.get("status") not in known]
+    if bad:
+        return False, (f"★ 규격에 없는 status — 허용 {'·'.join(sorted(known))} — "
+                       + " · ".join(bad[:5]))
+    return True, f"사이트 {len(sites)}개의 status 가 다 규격 안이다 ({'·'.join(sorted(known))})"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -835,6 +867,7 @@ CHECKS = (
     # ★ 마스터가 가장 원하시는 것 — ★ 처음부터 실패로 둔다 (명령서 31-3)
     ("S46-36", "폐기된 요구가 규격에 안 살아 있는가", s46_36_dropped_not_alive),
     ("S46-40", "「진행」인 요구의 문서가 바뀌었는가", s46_40_progress_docs_changed, "warn"),
+    ("S46-41", "사이트 status 가 규격의 셋 안인가", s46_41_site_status_known),
 )
 
 
