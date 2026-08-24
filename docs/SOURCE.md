@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 172개 · 총 59,069줄
+파일 173개 · 총 59,177줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -77,7 +77,7 @@
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
-| `tools/collect_bobaedream.py` | 208 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
+| `tools/collect_bobaedream.py` | 210 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `tools/unknown_split.py` | 208 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
 | `parse/kcar/mapping.py` | 190 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
@@ -126,6 +126,7 @@
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
 | `tools/check_all.py` | 107 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `tools/collect_lexus.py` | 107 | 렉서스 인증중고 수집 (명령서 1a). |
+| `tools/probe_kb_wall.py` | 106 | KB 봇 차단을 ★ 재는 도구 (명령서 08-25 · 마스터 「가려 받지 마라」). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
 | `analyze/axis/taste.py` | 94 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
@@ -607,10 +608,10 @@ MenuItem:31  Banner:42  PageContext:55  ErrorPage:92  _is_permission:135  _is_co
 _cfg:24  Check:55  CheckResult:93  _short:118  result:131  not_applicable:140  save_results:145  gate:162  run_phase:171  canon_files:193  canon_text:206
 ```
 
-### `tools/collect_bobaedream.py` — 208줄
+### `tools/collect_bobaedream.py` — 210줄
 
 ```
-_now:37  _get:41  target_names:51  wanted:60  _elapsed:68  load_filters:75  _walk_plan:100  main:111
+_now:37  _get:41  target_names:51  wanted:60  _elapsed:68  load_filters:75  _walk_plan:102  main:113
 ```
 
 ### `tools/unknown_split.py` — 208줄

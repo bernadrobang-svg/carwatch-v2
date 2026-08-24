@@ -88,12 +88,14 @@ def load_filters(root: str = ROOT) -> list:
         q = (one.get("site_query") or {}).get(SITE_CODE)
         if not isinstance(q, dict) or not q.get("maker_no"):
             continue
-        mark = (q["maker_no"], q.get("model_no"))
+        # ★★ 실측 08-25 — ★ `model_no` 를 함께 주면 ★ **목록이 빈다** (매물 0).
+        #   ★ ★ `maker_no` 만 주면 ★ 먹는다 — ★ 제네시스 1010 → 매물 50 · 차명 확인
+        #   ★ ★ 그러므로 ★ 제조사로 좁히고 ★ 차종은 ★ 우리가 이름으로 거른다
+        mark = q["maker_no"]
         if mark in seen:
             continue
         seen.add(mark)
-        got.append({"for": key, "maker_no": q["maker_no"],
-                    "model_no": q.get("model_no")})
+        got.append({"for": key, "maker_no": q["maker_no"], "model_no": None})
     return got
 
 
