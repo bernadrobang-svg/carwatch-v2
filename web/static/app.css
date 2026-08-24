@@ -2230,11 +2230,12 @@ details>div { margin-top:12px }
 
 /* ★★ 08-25 — ★ 새 화면이 쓰는 이름 둘 (V11-59).
    ★ `.what`  — ★ 「이 화면은 무엇을 하는 곳인가」 상자 (명령서 1-5 · 시안 주황 상자)
-   ★ `.mbody` — ★ 접은 거르개의 속 (v3_listings_시안 다섯 절)
+   ★ `.filter-body` — ★ 접은 거르개의 속 (v3_listings_시안 다섯 절).
+     ★★ ★ 시안이 `.mbody` 를 먼저 쓰고 있었다 — ★ 이름이 겹쳐 ★ 내 쪽을 바꿨다 (S46-67)
    ★ 값은 ★ 이미 있는 토큰만 쓴다 — ★ 새 색을 안 만든다 (V11-13) */
 .cond.what { border-color:var(--amber); margin-bottom:14px }
 .cond.what h2 { font-size:13px; color:var(--dim); margin:0 0 6px }
 .cond.what p { margin:4px 0; font-size:12.5px; line-height:1.7 }
-.mbody { padding:0 14px 14px }
-.mbody h3 { font-size:12px; color:var(--dim); margin:12px 0 6px }
-.mbody h3:first-child { margin-top:0 }
+.filter-body { padding:0 14px 14px }
+.filter-body h3 { font-size:12px; color:var(--dim); margin:12px 0 6px }
+.filter-body h3:first-child { margin-top:0 }

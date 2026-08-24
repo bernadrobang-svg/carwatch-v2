@@ -1655,7 +1655,7 @@ def market_trims(conn, target_key: str, root: str = ".",
         out.append({"trim": trim, "count": n, "enough": n >= need,
                     # ★ 템플릿은 비교를 모른다.  켜짐을 여기서 정한다 (V11-104)
                     "on": trim == picked,
-                    "url": f"/market?target={target_key}"
+                    "url": f"/market?target={quote(str(target_key), safe='')}"
                            f"&trim={quote(trim, safe='')}"})
     return out
 
@@ -1831,7 +1831,8 @@ def _by_trim(conn, target_key: str, top: int = TRIM_ROWS) -> list:
 
 
 def _other_targets(conn, target_key: str) -> list:
-    return [Bucket(tk, None, None, cnt, None, f"/market?target={tk}")
+    return [Bucket(tk, None, None, cnt, None,
+                   f"/market?target={quote(str(tk), safe='')}")
             for tk, cnt in conn.execute(
                 "SELECT target_key, COUNT(*) FROM core_listing "
                 "WHERE target_key IS NOT NULL AND target_key<>? "

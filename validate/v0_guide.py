@@ -286,9 +286,17 @@ def s43_2c_no_hda() -> tuple[bool, str]:
                 continue
             # ★ 「HDA 축이 없음」을 지키는 시험은 ★ 살린다 — 되살아나면 그것이 잡는다
             # ★ 파수 시험과 ★ 「왜 지웠나」 경위 주석은 살린다 — 되살아나면 그것이 잡는다
+            # ★★ 08-25 — ★ 「HDA 를 **축으로 안 쓴다**」고 적어 둔 줄도 ★ 경위다.
+            #   ★ ★ 마스터 확정 08-25 — 「고속도로 주행보조」를 ★ 거르개 묶음으로 두되
+            #     ★ ★ **약자(HDA)로 걸지 않는다 · 축이 아니라 거르개다**.
+            #     ★ ★ 그 까닭을 적은 줄이 ★ 일곱 곳이다 — ★ 지우면 ★ 왜 그런지가 사라진다
+            #   ★ ★ 「축이 아니라」·「축 폐기」가 든 줄은 ★ 살린다
             if "test_hda_gate" in line or "축은 더 없다" in line or "축이 없어졌다" in line \
                     or "축은 개정" in line or "not in COMPONENTS" in line \
-                    or "를 지우면서" in line or "지웠다" in line:
+                    or "를 지우면서" in line or "지웠다" in line \
+                    or "축이 아니라" in line or "축 폐기" in line \
+                    or "약자" in line \
+                    or "고속도로 주행 보조(HDA)" in line:
                 continue
             bad.append(f"{q.relative_to(ROOT)}:{i}")
     if bad:
@@ -547,9 +555,13 @@ def s46_22_section_order() -> tuple[bool, str]:
         def _bare(x: str) -> str:
             return re.sub(r"^[★\s\d]+", "", x).split("—")[0].strip()
 
+        # ★★ 「이 화면은 무엇을 하는 곳인가」는 ★ **절이 아니다** — ★ 머리 상자다
+        #   (명령서 1-5 · 시안 주황 상자).  ★ 시안이 그것도 `v3-lbl` 로 적는다.
+        #   ★ ★ 화면은 그것을 `h2` 로 낸다 — ★ 절(`h3`)로 세면 ★ 수가 하나 어긋난다
         want = [_bare(x) for x in
                 # ★ 마스터 ㉮ (r672) — ★ 시안 쪽에 `.v3-` 을 붙였다.  ★ 둘 다 받는다
-                re.findall(r'<div class="(?:v3-)?lbl">([^<]+)</div>', _read(q))]
+                re.findall(r'<div class="(?:v3-)?lbl">([^<]+)</div>', _read(q))
+                if "무엇을 하는 곳인가" not in x]
         got = [_bare(x) for x in _h_tags(_read(t), "h3")]
         seen += 1
         if not want:
@@ -909,16 +921,31 @@ def s46_66_links_encoded() -> tuple[bool, str]:
       ★ ★ 실측 — `/listings?color_int=검정색 계열` → ★ **000 (응답 없음)**.
         ★ ★ 색 단추 ★ 21가지가 ★ 하나도 안 먹었다
     ★ ★ 템플릿 글자를 본다 — ★ `href="...?키={{ 값 }}"` 에 ★ `| url` 이 있는가
+    ★★ ★ **파이썬 소스도 본다** (마스터 지적 08-25 · 오판 119) —
+      ★ ★ 템플릿만 보면 ★ `f"/listings?option_group={key}"` 를 ★ 못 잡는다.
+        ★ ★ 실측 — ★ 그 한 줄 때문에 ★ 배포에서 ★ 400 이 났다
     ★ ★ 값이 한글일 수 있는 키만 본다 — ★ 숫자 키(page·price_max)는 안 본다
     """
     keys = ("color_ext", "color_int", "target", "trim", "site", "q", "fuel",
             "region", "option_name", "option_group", "sell_type", "dealer")
-    pat = re.compile(r'([?&](?:' + "|".join(keys) + r')=)\{\{ ([^}|]+?) \}\}')
+    names = "|".join(keys)
+    pat = re.compile(r'([?&](?:' + names + r')=)\{\{ ([^}|]+?) \}\}')
+    # ★ 파이썬 f-string — ★ `?키={값}` 에 ★ `quote(` 가 안 붙은 것
+    py = re.compile(r'([?&](?:' + names + r')=)\{([^{}]+?)\}')
     bad = []
     got = ROOT / "web" / "templates"
     for q in sorted(got.glob("*.html")) if got.is_dir() else ():
         for one in pat.finditer(_read(q)):
             bad.append(f"{q.name} — {one.group(1)}{{{{ {one.group(2).strip()} }}}}")
+    for folder in ("web", "report"):
+        base = ROOT / folder
+        if not base.is_dir():
+            continue
+        for q in sorted(base.rglob("*.py")):
+            for one in py.finditer(_read(q)):
+                if "quote(" in one.group(2):
+                    continue          # ★ 이미 인코딩한다
+                bad.append(f"{q.name} — {one.group(1)}{{{one.group(2).strip()}}}")
     if bad:
         return False, (f"★ 인코딩 안 한 링크 {len(bad)}곳 — ★ `| url` 을 붙여라 — "
                        + " · ".join(sorted(set(bad))[:5]))
@@ -963,6 +990,39 @@ def s46_65_verdict_fresh() -> tuple[bool, str]:
     return True, f"판본이 {hours:.1f}시간 전 것이다 ({got[0][:16]})"
 
 
+
+def s46_67_sian_names_dont_clash() -> tuple[bool, str]:
+    """★ 시안이 정한 이름이 ★ `app.css` 와 ★ 안 겹치는가 (마스터 확정 ㉮ · 08-24).
+
+    ★★ 마스터 — 「★ ㉮ 로 간다.  ★ **시안 쪽에 `.v3-` 을 붙인다**.
+      ★ 실제 `app.css` 는 안 건드린다」
+    ★★ ★ 왜 검사가 필요한가 — ★ 08-25 에 ★ `.chg` 하나가 ★ 접두사를 안 달고 들어와
+      ★ ★ `app.css` 의 `.chg`(다른 뜻)와 ★ 이름이 겹쳤다.
+      ★ ★ `V11-60` 이 ★ 「값이 다르다」로 잡았으나 ★ **까닭이 이름 충돌임을 안 말했다**
+    ★ ★ 이 검사는 ★ 「겹쳤다」를 ★ 곧장 말한다 — ★ 고칠 곳이 바로 보인다
+    ★ `.v3-` 로 시작하면 ★ 겹칠 수 없다 — ★ 그것이 ㉮ 의 뜻이다
+    """
+    css = ROOT / "web" / "static" / "app.css"
+    sian = ROOT / "ref" / "screens"
+    if not css.is_file() or not sian.is_dir():
+        return True, "app.css 나 시안이 없다 — 잴 것이 없다"
+    # ★ 주석(/* … */)은 안 센다 — ★ 「이름을 바꿨다」고 적어 둔 줄이 잡히면 안 된다
+    body = re.sub(r"/\*.*?\*/", " ", _read(css), flags=re.S)
+    have = set(re.findall(r"\.([a-zA-Z][\w-]*)", body))
+    bad = []
+    for q in sorted(sian.glob("v3_*.html")):
+        for sel in re.findall(r"\n\.([\w-]+)\s*\{", _read(q)):
+            if sel in have:
+                bad.append(f"{q.name} — .{sel}")
+    if bad:
+        return False, (f"★ 시안 이름이 app.css 와 겹친다 {len(bad)}곳 — "
+                       "★ 시안 쪽에 `.v3-` 을 붙여라 (마스터 확정 ㉮) — "
+                       + " · ".join(sorted(set(bad))[:5]))
+    n = sum(len(re.findall(r"\n\.([\w-]+)\s*\{", _read(q)))
+            for q in sorted(sian.glob("v3_*.html")))
+    return True, f"시안 이름 {n}개가 app.css 와 안 겹친다 (충돌 0)"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -995,6 +1055,7 @@ CHECKS = (
     ("S46-46", "금지 제원 열 항목이 화면에 없는가", s46_46_spec_forbidden_ten),
     ("S46-65", "판본이 하루 넘게 오래되지 않았는가", s46_65_verdict_fresh),
     ("S46-66", "화면이 낸 링크가 인코딩돼 있는가", s46_66_links_encoded),
+    ("S46-67", "시안 이름이 app.css 와 안 겹치는가", s46_67_sian_names_dont_clash),
 )
 
 

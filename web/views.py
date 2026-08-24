@@ -11,6 +11,9 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+# ★★ 주소에 넣는 값은 ★ 다 인코딩한다 (마스터 지적 08-25 · 오판 119).
+#   ★ `| url` 필터는 ★ 템플릿에만 닿는다 — ★ 파이썬이 만드는 주소는 여기서 한다
+from urllib.parse import quote
 
 from contracts import ROLE_ANONYMOUS, ROLE_PENDING, ROLE_USER
 from errors import PolicyError, ValidationError, WiringError
@@ -808,7 +811,10 @@ def _option_name_buttons(flt, root: str = ROOT) -> list:
             continue                    # ★ 드는 이름이 없으면 단추를 안 낸다
         on = now == key
         out.append({"label": one.get("label") or key, "on": on,
-                    "url": "/listings" if on else f"/listings?option_group={key}",
+                    # ★★ 파이썬이 만드는 주소도 ★ 인코딩한다 (마스터 지적 08-25 · 오판 119).
+                    #   ★ ★ `| url` 필터는 ★ 템플릿에만 닿는다 — ★ 여기는 안 닿는다
+                    "url": ("/listings" if on else
+                            f"/listings?option_group={quote(str(key), safe='')}"),
                     "tip": f"「{key}」 묶음 — {len(hit)}가지 이름이 여기 듭니다"})
     for want in _o.environ.get("_", "") and () or OPTION_FILTER_NAMES:
         # ★ 사전에 있는 이름만 낸다 — ★ 부분 일치로 찾는다 (사이트마다 괄호가 다르다)
@@ -1106,7 +1112,7 @@ def market(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str 
     trims = market_trims(conn, target, root, picked=trim)
     return page(conn, account, "시세", "market.html",
                 {"m": m, "trims": trims, "trim": trim,
-                 "all_url": f"/market?target={target}"},
+                 "all_url": f"/market?target={quote(str(target), safe='')}"},
                 csrf=csrf, root=root, flash_key=flash_key)
 
 
