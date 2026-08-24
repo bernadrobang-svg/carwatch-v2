@@ -1,7 +1,7 @@
 # KB차차차 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.25-r727
+version  SPEC-2026.08.25-r731
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 619 · 실측 08-24
 checks   S46-5 · S46-28 · S46-31
@@ -180,6 +180,52 @@ checks   S46-5 · S46-28 · S46-31
 ```
 
 ---
+
+# 1c. ★★★ 차종 코드 — ★ 전 차종 (개정 731 · 실측 08-25)
+
+```
+★ 부르는 법 —
+   제조사  `GET /public/search/carMaker.json`
+   차종    `GET /public/search/carClass.json?makerCode={제조사}`
+★ ★ 헤더에 ★ `Referer: https://www.kbchachacha.com/` 를 붙인다
+```
+
+## ★ 제조사 코드
+
+| 제조사 | `makerCode` |
+|---|--:|
+| 현대 | **101** |
+| 기아 | **102** |
+| ★ 제네시스 | ★ **189** |
+| 르노코리아 | **105** |
+| ★ 테슬라 | ★ **190** |
+| 볼보 | **117** |
+
+## ★★★ 우리 대상 차종 (실측 08-25)
+
+| 차종 | `makerCode` | `classCode` | KB 이름 |
+|---|--:|--:|---|
+| `GRANDEUR_LPG` | 101 | **1101** | 그랜저 |
+| `SPORTAGE_LPI` | 102 | **1151** | 스포티지 |
+| `G80_25T` · `G80_EV` | 189 | **2684** | G80 |
+| `G70_20T` · `G70_25T` | 189 | **2698** | G70 |
+| `GV70_EV` | 189 | **2771** | GV70 |
+| `GV60` | 189 | **2805** | GV60 |
+| ★ `KOLEOS_HEV` | 105 | ★ **2862** | ★ 그랑 콜레오스 |
+| ★ `MODEL_Y` | 190 | ★ **2774** | ★ Model Y |
+| `XC60_IMPORT` | 117 | **2237** | XC60 |
+| `XC40_IMPORT` | 117 | **2708** | XC40 |
+| `S60_IMPORT` | 117 | **2229** | S60 |
+| `V60CC_IMPORT` | 117 | **2235** | V60 |
+
+```
+★★ ★ **19종에 들어갔다** (`config/targets.json` · ★ `EX60_IMPORT` 만 빠졌다)
+★ ★ `EX60` 은 ★ **KB 에 아직 없다** — ★ 신형이라 중고가 안 나왔다 (볼보 셀렉트도 같다)
+필수  ★ 목록을 부를 때 ★ `makerCode` ＋ `classCode` 를 ★ 함께 준다
+```
+
+---
+
 
 # 2. 목록 한 행 — GA4 데이터로 온다
 

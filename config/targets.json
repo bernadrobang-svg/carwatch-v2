@@ -34,6 +34,12 @@
         "model_no": "893",
         "_차명": "제네시스 G80",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2684",
+        "_차명": "제네시스 G80",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -77,6 +83,12 @@
         "model_no": "893",
         "_차명": "제네시스 G80",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2684",
+        "_차명": "제네시스 G80",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -116,6 +128,12 @@
         "model_no": "935",
         "_차명": "제네시스 G70",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2698",
+        "_차명": "제네시스 G70",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -160,6 +178,12 @@
         "model_no": "935",
         "_차명": "제네시스 G70",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2698",
+        "_차명": "제네시스 G70",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -203,6 +227,12 @@
         "model_no": "1070",
         "_차명": "제네시스 GV70",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2771",
+        "_차명": "제네시스 GV70",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -241,6 +271,12 @@
         "model_no": "1108",
         "_차명": "제네시스 GV60",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2805",
+        "_차명": "제네시스 GV60",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -275,6 +311,12 @@
         "model_no": "1299",
         "_차명": "르노코리아(삼성) 그랑 콜레오스",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "105",
+        "classCode": "2862",
+        "_차명": "르노코리아 그랑 콜레오스",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202400..",
@@ -318,6 +360,12 @@
         "model_no": "67",
         "_차명": "기아 스포티지",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "102",
+        "classCode": "1151",
+        "_차명": "기아 스포티지",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -363,6 +411,12 @@
         "model_no": "5",
         "_차명": "현대 그랜저",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "101",
+        "classCode": "1101",
+        "_차명": "현대 그랜저",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202300..",
@@ -389,6 +443,12 @@
         "model_no": "1073",
         "_차명": "테슬라 모델 Y",
         "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "190",
+        "classCode": "2774",
+        "_차명": "테슬라 Model Y",
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202200..",
