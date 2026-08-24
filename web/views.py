@@ -144,6 +144,7 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "km_options": _km_options(flt, root),
                  "grade_options": _grade_options(flt, root),
                  "judge_buttons": _judge_buttons(flt, root),
+                 "option_buttons": _option_name_buttons(flt, root),
                  # ★★ 색은 옵션 절에 (마스터 확정 08-25) — ★ 다섯씩 · 나머지는 접는다
                  "color_ext_top": _split_top(_distinct_options(
                      conn, "color_ext_raw", flt.color_ext))[0],
@@ -751,6 +752,48 @@ def _pick_state(flt, root: str = ROOT) -> dict:
 
 
 
+def _option_name_buttons(flt, root: str = ROOT) -> list:
+    """옵션 거르개 — ★ **이름으로** 건다 (마스터 확정 08-25 · B).
+
+    ★★ 이름은 ★ `config/dictionaries/option_names.json` 이 정본이다 (S14) —
+      ★ 사이트 원문에서 뽑은 것이다.  ★ 지어내지 않는다
+    ★ ★ 약자(HDA)로 걸지 않는다 — ★ 이름으로 건다 (가이드 지시)
+    ★ ★ 축이 아니라 ★ **거르개**다 — ★ HDA 축 폐기(요구 61)와 어긋나지 않는다
+    ★ 사전에 없는 이름은 ★ 단추를 안 낸다 — ★ 눌러도 0건이면 거짓말이다
+    """
+    import json as _j
+    import os as _o
+    import urllib.parse as _u
+
+    path = _o.path.join(root, "config", "dictionaries", "option_names.json")
+    if not _o.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        got = _j.load(f)
+    have = set()
+    for one in (got.get("by_site") or {}).values():
+        have |= set(one.get("names") or ())
+    now = getattr(flt, "option_name", None)
+    out = []
+    for want in _o.environ.get("_", "") and () or OPTION_FILTER_NAMES:
+        # ★ 사전에 있는 이름만 낸다 — ★ 부분 일치로 찾는다 (사이트마다 괄호가 다르다)
+        hit = next((n for n in sorted(have) if want in n), None)
+        if not hit:
+            continue
+        on = now == hit
+        q = {} if on else {"option_name": hit}
+        out.append({"label": hit, "on": on,
+                    "url": f"/listings?{_u.urlencode(q)}" if q else "/listings",
+                    "tip": f"「{hit}」가 있는 매물만 봅니다 (이름을 준 사이트만)"})
+    return out
+
+
+# ★ 거르개로 낼 옵션 — ★ 시안 옵션 절이 요구한 것 ＋ 마스터가 늘 보시는 것
+#   ★ 사전에 그 이름이 없으면 ★ 단추가 안 나온다 (지어내지 않는다)
+OPTION_FILTER_NAMES = ("고속도로 주행", "차로 유지", "스마트 크루즈",
+                       "헤드업 디스플레이", "선루프", "통풍시트")
+
+
 def _judge_buttons(flt, root: str = ROOT) -> list:
     """판정 다섯 — ★ 목록 카드의 배지와 ★ **같은 다섯**이다 (v3_listings_시안).
 
@@ -899,6 +942,7 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
               else q.get("site")),
         sell_type=q.get("sell_type") or None,
         target_key=q.get("target") or None,
+        option_name=q.get("option_name") or None,
         grade=q.get("grade") or None,
         axis=q.get("axis") or None,
         bucket=q.get("bucket") or None,

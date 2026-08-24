@@ -998,6 +998,13 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if flt.target_key:
         where.append("l.target_key = ?")
         args.append(flt.target_key)
+    # ★★ 옵션 이름 (마스터 확정 08-25 · B) — ★ 이름을 주는 사이트에서만 걸린다.
+    #   ★ 엔카는 ★ 숫자 코드만 준다 — ★ 그 매물은 ★ 안 걸린다 (거짓 양성이 없다)
+    if getattr(flt, "option_name", None):
+        where.append("(l.options_standard_json LIKE ?"
+                     " OR l.options_choice_json LIKE ?)")
+        like = f'%{flt.option_name}%'
+        args.extend([like, like])
     if getattr(flt, "mismatch", False):
         where.append(record_mismatch_sql())
     # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  ?lease=1 이면 함께 낸다

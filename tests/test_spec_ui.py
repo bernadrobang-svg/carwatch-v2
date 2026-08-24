@@ -740,19 +740,15 @@ def spec_l(ad: Client) -> None:
     st, cb, _h = ad.get("/static/app.css")
     literals = re.findall(r"#[0-9a-fA-F]{3,6}\b", cb)
     tokens = re.findall(r"--[\w-]+:\s*(#[0-9a-fA-F]{3,6})", cb)
-    # ★ 시안이 쓴 색은 「늘린 색」이 아니다 — 시안이 정본이다 (개정 275).
-    #   토큰 밖이면서 시안에도 없는 것만 결함이다
-    sian = set()
-    _sd = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                       "ref", "screens")
-    if os.path.isdir(_sd):
-        for _f in os.listdir(_sd):
-            if _f.endswith(".html"):
-                sian |= {c.lower() for c in re.findall(
-                    r"#[0-9a-fA-F]{3,6}\b",
-                    open(os.path.join(_sd, _f), encoding="utf-8").read())}
-    outside = [x for x in literals
-               if x not in tokens and x.lower() not in sian]
+    # ★★ 08-25 가이드 정정 — ★ 원천은 ★ **`app.css` 의 `:root` 토큰**이다.
+    #   ★ ★ 전에는 ★ 시안(`ref/screens/*.html`)의 색을 ★ 허용 목록으로 썼다.
+    #     ★ ★ 그러면 ★ 시안이 색을 늘릴 때마다 ★ `app.css` 의 색이 ★ 조용히 늘어난다 —
+    #       ★ ★ 「토큰 밖 색값 없음」이 ★ 아무것도 안 막는 검사가 된다
+    #   ★ ★ 시안은 ★ 그림이고 ★ 화면 체계는 ★ `app.css` 다 (마스터 확정 33-1)
+    #   ★ `rgba(...)` · 그림자 같은 것은 ★ 토큰이 아니라 ★ 값 자체다 — ★ 여기서 안 본다
+    #   ★ `#0B0D10` 과 `#0b0d10` 은 ★ **같은 색**이다 — ★ 대소문자로 가르지 않는다
+    _tok = {t.lower() for t in tokens}
+    outside = [x for x in literals if x.lower() not in _tok]
     rec("L-3", "토큰 밖 색값 없음", "CSS 를 훑는다",
         f"리터럴 {len(literals)} · 토큰 밖 {len(outside)}",
         not outside)

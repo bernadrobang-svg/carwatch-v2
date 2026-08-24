@@ -87,8 +87,12 @@
       <p class="chips">
         <span class="chip">깡통 빼기 <input name="option_min" size="2" inputmode="numeric"
           value="{{ pick.option_min }}" placeholder="1" title="선택 옵션 종수 이상">종 이상</span>
-        <a class="btn" href="/listings?axis=taste.sunroof&bucket=1" title="선루프가 있는 매물만">선루프</a>
-        <a class="btn" href="/listings?axis=taste.hud&bucket=1" title="헤드업 디스플레이가 있는 매물만">헤드업 디스플레이</a>
+        <!-- ★★ 옵션은 ★ **이름으로** 건다 (마스터 확정 08-25 · B).
+             ★ 이름은 `config/dictionaries/option_names.json` 이 정본이다 —
+               ★ 사이트 원문에서 뽑은 것이다.  ★ 지어내지 않는다
+             ★ ★ 약자(HDA)로 걸지 않는다.  ★ 축이 아니라 거르개다 -->
+        {% for b in option_buttons %}<a class="btn{% if b.on %} on{% endif %}"
+          href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endfor %}
       </p>
       <!-- ★★ 색은 ★ 옵션 절에 (마스터 확정 08-25 · B).
            ★ 많은 것부터 다섯 · 나머지는 「더 보기 ▾」로 접는다 -->

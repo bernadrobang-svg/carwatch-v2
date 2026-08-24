@@ -22,7 +22,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from adapters.heydealer import PAGE_SIZE, SITE_CODE, HeydealerAdapter  # noqa: E402
-from parse.heydealer.mapping import parse_detail, parse_list_item      # noqa: E402
+from parse.heydealer.mapping import (parse_detail, parse_list_item,   # noqa: E402
+                                     options_of)
 from store.raw import open_db                                          # noqa: E402
 
 MAX_PAGES = 40          # ★ 안전장치.  ★ 10건 미만이 오면 그 전에 멈춘다
@@ -132,6 +133,16 @@ def main() -> int:
             continue
         deep = parse_detail(body, SITE_CODE, one["source_id"])
         if deep:
+            # ★★ 옵션을 ★ **한글 이름으로** 저장한다 (명령서 B · 08-25).
+            #   ★ 엔카는 ★ 숫자 코드만 준다 — ★ 헤이딜러가 ★ 이름을 준다.
+            #   ★ ★ 이것이 ★ `option_names.json` 의 밑감이다
+            got = options_of(body)
+            if got:
+                deep["options_standard_json"] = json.dumps(
+                    [x["name"] for x in got if x["loaded"]], ensure_ascii=False)
+                deep["options_etc_json"] = json.dumps(
+                    [x["name"] for x in got if not x["loaded"]],
+                    ensure_ascii=False)
             deep["listing_id"] = one["listing_id"]
             deep["detail_status"] = "ok"
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)

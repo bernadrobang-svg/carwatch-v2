@@ -234,6 +234,10 @@ class ListingFilter:
     sell_type: str | None = None
     target_key: str | None = None
     grade: str | None = None
+    # ★★ 옵션 이름으로 거른다 (마스터 확정 08-25 · B).
+    #   ★ 엔카는 숫자 코드만 준다 — ★ 이름을 주는 사이트에서만 걸린다.
+    #   ★ ★ 축이 아니라 거르개다 (HDA 축 폐기와 어긋나지 않는다)
+    option_name: str | None = None
     axis: str | None = None  # Component 이름 'spec.hud'
     bucket: str | None = None
     # ★ 시세 막대를 누르면 그 구간 매물로 간다 (STEP 97).
