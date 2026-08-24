@@ -35,7 +35,7 @@
 {% if d.grade_rows %}
 <div class="card">
   <div class="hist">
-    {% for r in d.grade_rows %}<a class="b grade-b" href="/listings?grade={{ r.grade }}"
+    {% for r in d.grade_rows %}<a class="b grade-b" href="/listings?grade={{ r.grade | url }}"
       style="height:{{ r.pct }}%"
       title="{{ r.grade }} 등급 {{ r.count | num }}건"><span class="n">{{ r.count | num }}</span></a>{% endfor %}
   </div>
@@ -51,7 +51,7 @@
 {% endif %}
 <table>
 <thead><tr>{% for r in d.grade_rows %}<th class="num">{{ r.grade }}</th>{% endfor %}</tr></thead>
-<tbody><tr>{% for r in d.grade_rows %}<td class="num"><a href="/listings?grade={{ r.grade }}">{{ r.count | num }}</a></td>{% endfor %}</tr></tbody>
+<tbody><tr>{% for r in d.grade_rows %}<td class="num"><a href="/listings?grade={{ r.grade | url }}">{{ r.count | num }}</a></td>{% endfor %}</tr></tbody>
 </table>
 {% if d.e_reasons %}
 <p class="muted">E 사유 — {% for r in d.e_reasons %}<span class="chip">{{ r }} {{ d.e_reasons[r] | num }}</span>{% endfor %}</p>
@@ -106,11 +106,11 @@
 <tbody>
 {% for m in market_rows %}
 <tr>
-  <td><a href="/listings?target={{ m.target_key }}"
+  <td><a href="/listings?target={{ m.target_key | url }}"
     title="이 차종 매물만 봅니다">{{ m.target_key }}</a></td>
   <td class="r num">{{ m.count | num }}</td>
   <td class="r num">{{ m.min_won | won }}</td>
-  <td class="r num"><a href="/listings?target={{ m.target_key }}&price_max={{ m.p25_won }}"
+  <td class="r num"><a href="/listings?target={{ m.target_key | url }}&price_max={{ m.p25_won }}"
     title="이 차종에서 하위 25% 값 이하만 봅니다">{{ m.p25_won | won }}</a></td>
   <td class="r num"><b>{{ m.median_won | won }}</b></td>
   <td class="r num">{{ m.p75_won | won }}</td>
@@ -128,7 +128,7 @@
 <th class="num">A등급 중앙가</th><th>등급 분포</th></tr></thead>
 <tbody>
 {% for t in d.target_stats %}
-<tr><td><a href="/listings?target={{ t.target_key }}">{{ t.target_key }}</a></td><td class="num">{{ t.total | num }}</td>
+<tr><td><a href="/listings?target={{ t.target_key | url }}">{{ t.target_key }}</a></td><td class="num">{{ t.total | num }}</td>
 <td class="num">{{ t.rank1 }}</td>
 <td class="num">{{ t.median_price_a_won | won }}</td>
 <td class="muted">{{ t.grades }}</td></tr>

@@ -135,9 +135,26 @@ def f_signwon(v) -> str:
     return f"{n:+,}만"
 
 
+def f_url(v) -> str:
+    """★★ 주소에 넣을 값 — ★ **한 곳에서** 인코딩한다 (마스터 지적 08-25 · 57장).
+
+    ★★ 왜 — ★ 마스터께서 ★ 「링크가 작동 안 한다」 하셨다.
+      ★ ★ 실측 — `/listings?color_int=검정색 계열` → ★ **000 (응답 없음)**.
+        ★ ★ 인코딩하면 ★ 200.  ★ 색 단추 21가지가 ★ 하나도 안 먹었다
+      ★ ★ 딜러 상호 · 차종 · 트림 · 사이트 이름도 ★ 같은 꼴이다
+    ★★ ★ 템플릿마다 손으로 이으면 ★ **또 빠뜨린다** — ★ 그래서 필터 하나로 모은다
+    ★ 받는 쪽은 ★ 서버가 디코드해 준다 (`urllib.parse.parse_qs`)
+    """
+    from urllib.parse import quote
+
+    return quote(str(v), safe="") if v is not None else ""
+
+
 FILTERS = {"won": f_won, "km": f_km, "pct": f_pct, "date": f_date,
            "num": f_num, "gradecls": f_gradecls, "count": f_count,
-           "signcls": f_signcls, "signwon": f_signwon}
+           "signcls": f_signcls, "signwon": f_signwon,
+           # ★ 주소에 넣는 값은 ★ 반드시 이것을 거친다 (S46-66)
+           "url": f_url}
 
 # ★ 원문 삽입을 허용하는 자리.  쓰는 곳을 센다 (V11-05)
 RAW_ALLOW: frozenset[str] = frozenset({

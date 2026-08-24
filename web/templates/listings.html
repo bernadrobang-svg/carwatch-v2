@@ -68,7 +68,7 @@
       <h3>사이트</h3>
       <p class="chips">
         {% for b in site_buttons %}<a class="btn{% if b.on %} on{% endif %}"
-          href="/listings?site={{ b.q }}{% if b.sell %}&sell_type={{ b.sell }}{% endif %}"
+          href="/listings?site={{ b.q | url }}{% if b.sell %}&sell_type={{ b.sell | url }}{% endif %}"
           title="이 사이트 매물만 봅니다">{{ b.label }}{% if b.live %}
           <span class="dim">{{ b.live | num }}</span>{% endif %}</a>{% endfor %}
       </p>
@@ -99,23 +99,23 @@
       <p class="dim">★ 외장색 {{ color_ext_top | count }}＋{{ color_ext_rest | count }}가지</p>
       <p class="chips">
         {% for c in color_ext_top %}<a class="btn{% if c.on %} on{% endif %}"
-          href="/listings?color_ext={{ c.key }}">{{ c.label }}</a>{% endfor %}
+          href="/listings?color_ext={{ c.key | url }}">{{ c.label }}</a>{% endfor %}
       </p>
       {% if color_ext_rest %}
       <details class="chip"><summary>더 보기 ▾</summary>
         <p class="chips">{% for c in color_ext_rest %}<a class="btn{% if c.on %} on{% endif %}"
-          href="/listings?color_ext={{ c.key }}">{{ c.label }}</a>{% endfor %}</p>
+          href="/listings?color_ext={{ c.key | url }}">{{ c.label }}</a>{% endfor %}</p>
       </details>
       {% endif %}
       <p class="dim">★ 내장색 {{ color_int_top | count }}＋{{ color_int_rest | count }}가지</p>
       <p class="chips">
         {% for c in color_int_top %}<a class="btn{% if c.on %} on{% endif %}"
-          href="/listings?color_int={{ c.key }}">{{ c.label }}</a>{% endfor %}
+          href="/listings?color_int={{ c.key | url }}">{{ c.label }}</a>{% endfor %}
       </p>
       {% if color_int_rest %}
       <details class="chip"><summary>더 보기 ▾</summary>
         <p class="chips">{% for c in color_int_rest %}<a class="btn{% if c.on %} on{% endif %}"
-          href="/listings?color_int={{ c.key }}">{{ c.label }}</a>{% endfor %}</p>
+          href="/listings?color_int={{ c.key | url }}">{{ c.label }}</a>{% endfor %}</p>
       </details>
       {% endif %}
 
@@ -199,7 +199,7 @@
   <!-- ★★ 08-24 마스터 지적 — ★ 「기아가 안 받은 것처럼 보인다」.
        ★ 받았는데 갈래가 달라 뺀 것은 ★ 「범위 밖 N건」으로 말한다.
        ★ 「0」만 보이면 「못 받았다」로 읽힌다 — ★ 둘은 다른 말이다 -->
-  {% if !b.on %}<a class="btn" href="/listings?site={{ b.q }}{% if b.sell %}&sell_type={{ b.sell }}{% endif %}"
+  {% if !b.on %}<a class="btn" href="/listings?site={{ b.q | url }}{% if b.sell %}&sell_type={{ b.sell | url }}{% endif %}"
     title="이 사이트 매물만 봅니다">{{ b.label }}{% if b.out_of_scope %}
     <span class="dim">· 범위 밖 {{ b.out_of_scope | num }}</span>{% endif %}</a>{% endif %}
   {% endfor %}
@@ -221,7 +221,7 @@
   <!-- ★ 비율은 칸을 안 쓴다 (개정 427 — 8칸에 없다).  ★ 그래도 버리지 않는다 —
        등급 배지의 툴팁으로 낸다.  「489/675 = 72%」를 물어볼 사람이 있다 -->
   <div class="gr {{ r.grade }} {{ r.grade | gradecls }}" title="{{ grade_help }} — 이 매물은 {{ r.earned | num }} / {{ r.denominator | num }} 점 ({{ r.ratio_pct }}%) 입니다">
-    <a href="/listings?grade={{ r.grade }}">{{ r.grade_label }}</a>
+    <a href="/listings?grade={{ r.grade | url }}">{{ r.grade_label }}</a>
     {% if r.rank %}<small>{{ r.rank }}위</small>{% endif %}
     {% if !r.rank %}<small>순위 없음</small>{% endif %}
     {% if r.provisional %}<span class="prov"
@@ -288,7 +288,7 @@
         {% if r.color_ext_hex %}<span class="swatch"
           style="background:{{ r.color_ext_hex }}"></span>{% endif %}{{ r.color_ext }}
         / {{ r.color_int }} ·
-        {% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop }}"
+        {% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop | url }}"
           title="이 딜러의 매물을 봅니다">{{ r.dealer_shop }}</a>{% endif %}
         {% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}
         <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"

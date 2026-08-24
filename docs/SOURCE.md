@@ -1,16 +1,8 @@
 # 소스 색인
 
-```
-version  SPEC-2026.08.25-r726
-follows  ★ 생성물 — `tools/build_index.py` 가 만든다
-sources  개정 726 · 실측 08-25
-checks   S46-38 · S46-39
-```
-
-
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 172개 · 총 58,766줄
+파일 172개 · 총 58,856줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -26,7 +18,7 @@ checks   S46-38 · S46-39
 | `report/screens/admin.py` | 1,086 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `tools/verify_axes.py` | 1,079 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `store/adminops.py` | 1,054 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
-| `validate/v0_guide.py` | 963 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `validate/v0_guide.py` | 1,027 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `validate/v2_load.py` | 919 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `validate/v10_admin.py` | 895 | V10 관리자 검증. |
 | `validate/v1_collect.py` | 888 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
@@ -53,9 +45,9 @@ checks   S46-38 · S46-39
 | `tools/sync_registry.py` | 390 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `tests/test_collect.py` | 377 | 2장 수집 시험. |
+| `web/template.py` | 344 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/collect_kbchachacha.py` | 330 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
-| `web/template.py` | 327 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `parse/hyundai_cert/mapping.py` | 322 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
@@ -110,6 +102,7 @@ checks   S46-38 · S46-39
 | `tools/repair_facet_chunks.py` | 144 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `web/routes.py` | 144 | 라우팅 표 (14장 STEP 142). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
+| `tools/daily_enqueue.py` | 143 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `tools/classify_registry.py` | 142 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `tools/run_tests.py` | 142 | 시험 전체 실행. |
 | `adapters/kbchachacha.py` | 141 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
@@ -118,7 +111,6 @@ checks   S46-38 · S46-39
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
 | `tools/collect_reborncar.py` | 134 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
-| `tools/daily_enqueue.py` | 134 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/heydealer.py` | 120 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
 | `adapters/kia_cpo.py` | 118 | 기아 인증중고차(CPO) 어댑터 — URL · 헤더 (1장 STEP 11). |
@@ -261,10 +253,10 @@ _spec_text:26  _grade_order:59  _not_ranked:72  spec_tables:86  _num:109  pick:1
 QueryLog:55  QueryResult:68  ApiSnapshot:93  DevRequest:104  RecalcJob:119  ScoringPreview:130  ImportPreview:142  ImportResult:159  preview_import:168  import_listings:194  _import_facet:260  BrowserCatch:295  save_browser_catch:303  mark_step_imported:353  pending_enums:384  pending_axis_summary:421  apply_dict_decision:449  _strip_sql:494  sql_reject_reason:501  _opened_tables:535  reject_kind_of:550  columns_hint:560  reap_stale_jobs:583  run_query:618  fetch_api:665  create_dev_request:699  update_dev_status:721  export_dev_requests:735  enqueue_recalc:765  enqueue_after_list_save:791  job_progress:816  db_progress:830  preview_scoring:840  _pt:883  registry_rows:887  registry_counts:898  write_dev_requests:904  dev_request_rows:924  save_api_snapshot:942  get_api_snapshot:965  path_table:984  halt_job:1020
 ```
 
-### `validate/v0_guide.py` — 963줄
+### `validate/v0_guide.py` — 1,027줄
 
 ```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:299  s45_4_table_generated:337  s45_3_spec_totals:352  s45_2_mock_numbers:408  s44_3_specs_in_order:429  s43_3_version_matches:467  _h_tags:492  s46_21_one_screen_per_file:508  s46_22_section_order:533  _targets:574  s46_23_site_query_filled:580  s46_24_facet_unconfirmed:595  s46_30_index_covers_docs:612  s46_31_spec_sites_in_config:651  s46_32_generated_fresh:672  _req_rows:714  _tokens:726  _named_docs:741  s46_36_dropped_not_alive:753  s46_40_progress_docs_changed:781  s46_41_site_status_known:812  _templates:854  s46_45_spec_not_in_list:859  s46_46_spec_forbidden_ten:879  run:937
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:299  s45_4_table_generated:337  s45_3_spec_totals:352  s45_2_mock_numbers:408  s44_3_specs_in_order:429  s43_3_version_matches:467  _h_tags:492  s46_21_one_screen_per_file:508  s46_22_section_order:533  _targets:574  s46_23_site_query_filled:580  s46_24_facet_unconfirmed:595  s46_30_index_covers_docs:612  s46_31_spec_sites_in_config:651  s46_32_generated_fresh:672  _req_rows:714  _tokens:726  _named_docs:741  s46_36_dropped_not_alive:753  s46_40_progress_docs_changed:781  s46_41_site_status_known:812  _templates:854  s46_45_spec_not_in_list:859  s46_46_spec_forbidden_ten:879  s46_66_links_encoded:905  s46_65_verdict_fresh:929  run:1001
 ```
 
 ### `validate/v2_load.py` — 919줄
@@ -423,6 +415,12 @@ check:37  db:43  test_expected:49  test_halt:61  test_reprocess:82  test_refetch
 check:34  R:40  test_verify_shape:45  _Stub:80  _Clock:88  test_fetch_status:93  test_interpret_failure:106  test_facet_axes:118  test_collect_groups:146  test_build_q:167  test_collect_check:217  test_save_raw:232  test_fail_streak:261  test_all_fail_sample:303  test_diagnosis_scope:347
 ```
 
+### `web/template.py` — 344줄
+
+```
+f_won:48  f_km:64  f_pct:68  f_date:72  f_num:83  f_gradecls:90  _grade_classes:103  f_count:112  f_signcls:120  f_signwon:130  f_url:138  _index_key:174  _step:189  _lookup:201  _truthy:210  render_str:214  strip_comments:321  render:326
+```
+
 ### `tools/render_screens.py` — 331줄
 
 ```
@@ -433,12 +431,6 @@ _shot_widths:32  _tmp_root:57  main:81  shot_paths:172  _localize_images:197  sh
 
 ```
 _now:53  _get:57  fetch_ok:66  page_ids:83  load_filters:93  walk_group:108  count_all:143  probe_detail:169  store_details:188  main:251
-```
-
-### `web/template.py` — 327줄
-
-```
-f_won:48  f_km:64  f_pct:68  f_date:72  f_num:83  f_gradecls:90  _grade_classes:103  f_count:112  f_signcls:120  f_signwon:130  _index_key:157  _step:172  _lookup:184  _truthy:193  render_str:197  strip_comments:304  render:309
 ```
 
 ### `tools/light_check.py` — 325줄

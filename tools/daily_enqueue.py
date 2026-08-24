@@ -125,9 +125,18 @@ def main() -> int:
         got = enqueue_daily(conn, at)
     finally:
         conn.close()
-    print(f"하루치를 큐에 넣었습니다 — {got[:8]}" if got
-          else "이미 도는 작업이 있어 건너뜁니다")
-    return 0
+    if got:
+        print(f"하루치를 큐에 넣었습니다 — {got[:8]}")
+        return 0
+    # ★★ 건너뛰었으면 ★ **실패로 끝낸다** (명령서 56장 · 마스터 확정 08-25).
+    #   ★ ★ 전에는 ★ exit 0 으로 끝나 ★ 아무도 몰랐다 —
+    #     ★ ★ 실측 08-24 — ★ 07:40 에 죽은 작업 하나가 ★ 13:00 을 막았는데
+    #       ★ ★ `job_stale_hours=6` 에 ★ 5.33시간이라 ★ 안 걸렸고 ★ exit 0 이었다.
+    #       ★ ★ 그래서 ★ 판본이 ★ 하루 넘게 멈췄다
+    #   ★ ★ 이제 ★ systemd 가 ★ 네 시간 뒤 ★ 한 번 더 부른다 (Restart=on-failure).
+    #     ★ ★ 그때는 ★ 9시간이 넘어 ★ 되찾기에 걸린다.  ★ 성공하면 ★ 그날은 더 안 돈다
+    print("★ 이미 도는 작업이 있어 건너뜁니다 — ★ 네 시간 뒤 다시 부릅니다")
+    return 1
 
 
 if __name__ == "__main__":

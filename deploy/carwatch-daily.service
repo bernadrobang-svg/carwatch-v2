@@ -5,9 +5,20 @@
 #   서비스를 재시작하지 않는다 (개정 308)
 [Unit]
 Description=CarWatch v2 — 하루 한 번 재수집·재판정
+# ★★ 재시도를 몇 번 하든 ★ 막지 않는다 — ★ 기본 5회/10초에 걸리면
+#   ★ ★ 네 시간 간격 재시도가 ★ 아예 안 돈다
+StartLimitIntervalSec=0
 
 [Service]
-Type=oneshot
+# ★★ `oneshot` 은 ★ `Restart=` 를 못 쓴다 — ★ `exec` 로 바꾼다 (명령서 56장).
+#   ★ 하는 일은 그대로다 — ★ 큐에 넣고 끝나는 짧은 스크립트다
+Type=exec
+# ★★ 마스터 확정 08-25 — 「★ 13시에 ★ **못할 경우** ★ 4시간 단위로 다시」.
+#   ★ ★ 「네 시간마다」가 ★ 아니다 — ★ **못 돌았을 때만** 네 시간 뒤다.
+#   ★ ★ 성공하면 ★ 그날은 더 안 돈다 (`on-failure` 라 ★ exit 0 이면 안 부른다)
+#   ★ ★ `daily_enqueue.py` 가 ★ 건너뛰면 ★ exit 1 을 낸다
+Restart=on-failure
+RestartSec=4h
 User=ec2-user
 WorkingDirectory=/home/ec2-user/v2
 Environment=LANG=ko_KR.UTF-8

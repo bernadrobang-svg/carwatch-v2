@@ -901,6 +901,68 @@ def s46_46_spec_forbidden_ten() -> tuple[bool, str]:
     return True, f"금지 제원 열 항목이 화면에 없다 ({len(SPEC_FORBIDDEN)}개 확인)"
 
 
+
+def s46_66_links_encoded() -> tuple[bool, str]:
+    """★ 화면이 낸 링크에 ★ 공백·한글이 그대로 있으면 ★ 실패 (마스터 지적 08-25 · 57장).
+
+    ★★ 왜 — ★ 마스터께서 ★ 「링크가 작동 안 한다」 하셨다.
+      ★ ★ 실측 — `/listings?color_int=검정색 계열` → ★ **000 (응답 없음)**.
+        ★ ★ 색 단추 ★ 21가지가 ★ 하나도 안 먹었다
+    ★ ★ 템플릿 글자를 본다 — ★ `href="...?키={{ 값 }}"` 에 ★ `| url` 이 있는가
+    ★ ★ 값이 한글일 수 있는 키만 본다 — ★ 숫자 키(page·price_max)는 안 본다
+    """
+    keys = ("color_ext", "color_int", "target", "trim", "site", "q", "fuel",
+            "region", "option_name", "option_group", "sell_type", "dealer")
+    pat = re.compile(r'([?&](?:' + "|".join(keys) + r')=)\{\{ ([^}|]+?) \}\}')
+    bad = []
+    got = ROOT / "web" / "templates"
+    for q in sorted(got.glob("*.html")) if got.is_dir() else ():
+        for one in pat.finditer(_read(q)):
+            bad.append(f"{q.name} — {one.group(1)}{{{{ {one.group(2).strip()} }}}}")
+    if bad:
+        return False, (f"★ 인코딩 안 한 링크 {len(bad)}곳 — ★ `| url` 을 붙여라 — "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, "화면이 낸 링크가 다 인코딩돼 있다 (| url)"
+
+
+
+def s46_65_verdict_fresh() -> tuple[bool, str]:
+    """★ 판본이 ★ **하루 넘게** 오래됐으면 알린다 (마스터 확정 08-25 · 56장).
+
+    ★★ 「네 시간」이 아니다 — ★ 재판정은 ★ **하루 한 번**이다.
+      ★ ★ 못 돌았을 때만 ★ 네 시간 뒤 ★ 한 번 더 부른다 (`Restart=on-failure`)
+    ★★ ★ 실측 08-24 — ★ 07:40 에 죽은 작업 하나가 ★ 13:00 을 막아
+      ★ ★ 판본이 ★ `20260824T074027` 에서 ★ 하루 넘게 멈췄다.
+      ★ ★ 그런데 ★ 아무 검사도 ★ 그것을 안 봤다 — ★ 이것이 그 자리다
+    """
+    import sqlite3 as _s
+    from datetime import datetime, timezone
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = _s.connect(str(db))
+    try:
+        got = conn.execute(
+            "SELECT MAX(calculated_at) FROM result_score").fetchone()
+    finally:
+        conn.close()
+    if not got or not got[0]:
+        return False, "★ 판본이 하나도 없다 — 재판정이 한 번도 안 돌았다"
+    try:
+        seen = datetime.fromisoformat(str(got[0]))
+    except ValueError:
+        return False, f"판본 시각을 못 읽었다 — {got[0]!r}"
+    if seen.tzinfo is None:
+        seen = seen.replace(tzinfo=timezone.utc)
+    hours = (datetime.now(timezone.utc) - seen).total_seconds() / 3600
+    if hours >= 24:
+        return False, (f"★ 판본이 ★ {hours / 24:.1f}일째 오래됐다 "
+                       f"({got[0][:16]}) — ★ 재판정이 안 돌고 있다. "
+                       "★ `recalc_job` 에 ★ 숨 끊긴 running 이 있는지 보라")
+    return True, f"판본이 {hours:.1f}시간 전 것이다 ({got[0][:16]})"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -931,6 +993,8 @@ CHECKS = (
     ("S46-41", "사이트 status 가 규격의 셋 안인가", s46_41_site_status_known),
     ("S46-45", "제원이 목록에 안 나오는가", s46_45_spec_not_in_list),
     ("S46-46", "금지 제원 열 항목이 화면에 없는가", s46_46_spec_forbidden_ten),
+    ("S46-65", "판본이 하루 넘게 오래되지 않았는가", s46_65_verdict_fresh),
+    ("S46-66", "화면이 낸 링크가 인코딩돼 있는가", s46_66_links_encoded),
 )
 
 

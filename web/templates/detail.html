@@ -230,7 +230,7 @@
 <div class="sec" id="sec-9">
   <h3>★ 딜러 — 누구한테 사나</h3>
   <div class="kv">
-    <div><u>상호</u><b>{% if row.dealer_shop %}<a href="/dealers?q={{ row.dealer_shop }}">{{ row.dealer_shop }}</a>{% endif %}{% if !row.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</b></div>
+    <div><u>상호</u><b>{% if row.dealer_shop %}<a href="/dealers?q={{ row.dealer_shop | url }}">{{ row.dealer_shop }}</a>{% endif %}{% if !row.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}</b></div>
     <div><u>정직도</u>{% if row.dealer_trust %}<b>{{ row.dealer_trust }}</b>{% endif %}{% if !row.dealer_trust %}<b class="dim">표본 부족</b>{% endif %}</div>
     <div><u>사분면</u><b>{{ row.dealer_quadrant }}</b></div>
   </div>
@@ -245,7 +245,7 @@
     <div>
       <div class="axes">
         {% for a in v.axes %}<a class="axc{% if a.excluded %} na{% endif %}"
-          href="/listings?axis={{ a.axis }}&bucket=1"
+          href="/listings?axis={{ a.axis | url }}&bucket=1"
           title="{{ a.label }} — {{ a.mark_why }} · {{ a.value | num }}/{{ a.max_points | num }}점 · 근거 {{ a.source }}">{{ a.label }}
           <b>{{ a.mark }}</b></a>{% endfor %}
       </div>

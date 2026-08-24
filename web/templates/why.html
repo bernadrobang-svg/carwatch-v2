@@ -137,7 +137,7 @@
 <tbody>
 {% for a in v.axes %}
 <tr>
-  <td><a href="/listings?axis={{ a.axis }}">{{ a.label }}</a></td>
+  <td><a href="/listings?axis={{ a.axis | url }}">{{ a.label }}</a></td>
   <td class="num">{% if a.excluded %}<span class="excluded">해당 없음</span>{% endif %}{% if !a.excluded %}{{ a.points | num }}{% endif %}</td>
   <td class="num">{{ a.max_points | num }}</td>
   <td title="원문 근거 코드 {{ a.source }}">{{ a.source_label }}{% if a.why %}<br><span class="muted">{{ a.why }}</span>{% endif %}</td>

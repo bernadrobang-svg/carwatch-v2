@@ -1538,7 +1538,7 @@ def excluded_groups(conn, calc_version: str) -> list:
     # ★★ 개정 433 — 링크가 ?grade=E 였다.  E 는 이제 30~40% 자리라
     #   그대로 두면 「골격 사고」를 눌렀는데 멀쩡한 E 매물이 나온다
     return [ExcludedGroup(k, v, EXCLUDED_NOTES.get(k, ""),
-                          f"/listings?excluded=1&reason={k}")
+                          f"/listings?excluded=1&reason={quote(str(k), safe='')}")
             for k, v in sorted(counts.items(), key=lambda kv: -kv[1])]
 
 
@@ -1738,7 +1738,7 @@ def _price_bins(prices: list, target_key: str,
     lo, hi = prices[0], prices[-1]
     if hi <= lo:
         return [Bucket("", lo, hi, len(prices), lo,
-                       f"/listings?target={target_key}")]
+                       f"/listings?target={quote(str(target_key), safe='')}")]
     width = (hi - lo) / bins
     out = []
     for i in range(bins):
@@ -1746,7 +1746,7 @@ def _price_bins(prices: list, target_key: str,
         b = int(lo + width * (i + 1)) if i < bins - 1 else hi
         got = [p for p in prices if a <= p <= b]
         out.append(Bucket("", a, b, len(got), _median(got),
-                          f"/listings?target={target_key}"
+                          f"/listings?target={quote(str(target_key), safe='')}"
                           f"&price_min={a}&price_max={b}"))
     return _with_height(out, root)
 
@@ -1782,7 +1782,7 @@ def _by_year(conn, target_key: str) -> list:
         enough = len(prices) >= MIN_SAMPLE
         out.append(Bucket(f"{ym}년", None, None, counts[ym],
                           _median(prices) if enough else None,
-                          f"/listings?target={target_key}&year={ym}", enough))
+                          f"/listings?target={quote(str(target_key), safe='')}&year={ym}", enough))
     return out
 
 
@@ -1825,7 +1825,7 @@ def _by_trim(conn, target_key: str, top: int = TRIM_ROWS) -> list:
         enough = len(prices) >= MIN_SAMPLE
         out.append(Bucket(trim, None, None, cnt,
                           _median(prices) if enough else None,
-                          f"/listings?target={target_key}"
+                          f"/listings?target={quote(str(target_key), safe='')}"
                           f"&trim={quote(trim, safe='')}", enough))
     return out
 

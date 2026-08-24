@@ -1,13 +1,5 @@
 # INDEX — 지시서 색인
 
-```
-version  SPEC-2026.08.25-r726
-follows  ★ 생성물 — `tools/build_index.py` 가 만든다
-sources  개정 726 · 실측 08-25
-checks   S46-38 · S46-39
-```
-
-
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
 ```
@@ -17,14 +9,14 @@ checks   S46-38 · S46-39
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 38,650줄 · 2,263KB**
+**113파일 · 38,985줄 · 2,291KB**
 
 ★ 800줄을 넘는 파일 9개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 849줄
-- UI_REVIEW.md 881줄
-- guide/01_요구사항.md 983줄
-- guide/05_가이드역할.md 1,049줄
+- UI_REVIEW.md 895줄
+- guide/01_요구사항.md 986줄
+- guide/05_가이드역할.md 1,079줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
 - chapters/61-web.md 2,262줄
@@ -34,15 +26,15 @@ checks   S46-38 · S46-39
 | 파일 | 줄 | KB |
 |---|--:|--:|
 | `BMW_BPS_API.md` | 225 | 10 |
-| `BOBAEDREAM_API.md` | 259 | 11 |
+| `BOBAEDREAM_API.md` | 331 | 14 |
 | `CHECKS.md` | 543 | 84 |
 | `CROSS_SITE_COMPARE.md` | 272 | 13 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 198 | 7 |
 | `ENCAR_ROBOTS.md` | 208 | 10 |
-| `HEYDEALER_API.md` | 598 | 29 |
+| `HEYDEALER_API.md` | 607 | 30 |
 | `HYUNDAI_CERTIFIED_API.md` | 430 | 20 |
-| `KBCHACHACHA_API.md` | 302 | 15 |
+| `KBCHACHACHA_API.md` | 348 | 16 |
 | `KCAR_API.md` | 392 | 18 |
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 248 | 12 |
@@ -54,12 +46,12 @@ checks   S46-38 · S46-39
 | `SERVER_SURVIVAL.md` | 258 | 12 |
 | `SOURCE.md` | 622 | 45 |
 | `TARGET_KEY_MAP.md` | 119 | 5 |
-| `UI_REVIEW.md`  ★ | 881 | 46 |
-| `VOLVO_SELEKT_API.md` | 344 | 14 |
+| `UI_REVIEW.md`  ★ | 895 | 46 |
+| `VOLVO_SELEKT_API.md` | 352 | 14 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
 | `chapters/10-collect/00-intro.md` | 376 | 14 |
-| `chapters/10-collect/COLLECT_STRATEGY.md` | 70 | 3 |
+| `chapters/10-collect/COLLECT_STRATEGY.md` | 115 | 5 |
 | `chapters/10-collect/a-endpoint.md` | 309 | 11 |
 | `chapters/10-collect/b-parse.md` | 104 | 4 |
 | `chapters/10-collect/c-mapping.md` | 56 | 3 |
@@ -71,7 +63,7 @@ checks   S46-38 · S46-39
 | `chapters/11-store/b-core.md` | 716 | 25 |
 | `chapters/11-store/c-result.md` | 225 | 7 |
 | `chapters/12-dict.md` | 600 | 24 |
-| `chapters/13-pipeline.md` | 685 | 26 |
+| `chapters/13-pipeline.md` | 735 | 28 |
 | `chapters/20-verify/00-intro.md` | 202 | 8 |
 | `chapters/20-verify/a-frame.md` | 27 | 0 |
 | `chapters/20-verify/b-v1v2.md` | 210 | 9 |
@@ -109,17 +101,17 @@ checks   S46-38 · S46-39
 | `guide/00_개요.md` | 149 | 6 |
 | `guide/00_버전.md` | 177 | 11 |
 | `guide/01_시작.md` | 291 | 10 |
-| `guide/01_요구사항.md`  ★ | 983 | 40 |
+| `guide/01_요구사항.md`  ★ | 986 | 41 |
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 138 | 7 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md` | 746 | 491 |
+| `guide/03_이력.md` | 758 | 504 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 573 | 22 |
-| `guide/05_가이드역할.md`  ★ | 1,049 | 51 |
+| `guide/05_가이드역할.md`  ★ | 1,079 | 53 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 465 | 106 |
-| `guide/07_밀린일대장.md` | 296 | 26 |
+| `guide/06_오판대장.md` | 511 | 110 |
+| `guide/07_밀린일대장.md` | 296 | 25 |
 | `guide/08_인수인계.md` | 298 | 14 |
 | `ref/00-intro.md` | 33 | 0 |
 | `ref/A-check.md` | 76 | 3 |
