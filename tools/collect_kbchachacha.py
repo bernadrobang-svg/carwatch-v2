@@ -91,12 +91,37 @@ def page_ids(body: str) -> list:
 
 
 def load_filters(root: str = ROOT) -> list:
-    """★ 좁히는 조건 — ★ config 가 정본이다 (KBCHACHACHA_API 1a)."""
+    """★ 좁히는 조건 — ★ `targets.json` 의 `site_query` 가 정본이다 (명령서 3-1).
+
+    ★★ 08-25 — ★ 코드를 ★ **한 곳으로** 모았다.
+      ★ ★ 전에는 ★ `sites.json` 의 `collect_filters` 에 따로 있어 ★ 두 곳이 갈렸다
+    ★ 같은 부름을 두 번 하지 않는다 — ★ 차종 둘이 같은 코드를 쓸 수 있다
+    """
     import json as _j
 
+    with open(os.path.join(root, "config", "targets.json"), encoding="utf-8") as f:
+        rows = _j.load(f)
+    got, seen = [], set()
+    for key, one in rows.items():
+        if key.startswith("_") or not isinstance(one, dict):
+            continue
+        q = (one.get("site_query") or {}).get(SITE_CODE)
+        if not isinstance(q, dict) or not q.get("makerCode"):
+            continue
+        mark = (q["makerCode"], q.get("classCode"))
+        if mark in seen:
+            continue
+        seen.add(mark)
+        got.append({"for": key, "makerCode": q["makerCode"],
+                    "classCode": q.get("classCode", ""),
+                    # ★ 규격이 적어 둔 예상 건수 — ★ 없으면 「—」다.  ★ 지어내지 않는다
+                    "expect": q.get("_expect", "—")})
+    if got:
+        return got
+    # ★ 옛 자리 — ★ targets.json 이 비면 그때만 본다
     with open(os.path.join(root, "config", "sites.json"), encoding="utf-8") as f:
-        got = (_j.load(f).get(SITE_CODE) or {}).get("collect_filters") or {}
-    return got.get("groups") or []
+        old = (_j.load(f).get(SITE_CODE) or {}).get("collect_filters") or {}
+    return old.get("groups") or []
 
 
 # ★ 꼬리 쪽 — ★ 크기는 큰데 매물이 0인 쪽이 이어진다 (X3 14·15쪽 71KB·25KB).
@@ -284,7 +309,7 @@ def main() -> int:
             mark = "" if r["ids"] else "  ★ 0건이다"
             print(f"  {g['for']:12} maker={g['makerCode']} class={g['classCode']}"
                   f"  {r['pages']:>3}쪽 · 매물 {len(r['ids']):>4}"
-                  f" (규격 {g['expect']})  봇차단 {r['walls']}{mark}")
+                  f" (규격 {g.get('expect', '—')})  봇차단 {r['walls']}{mark}")
             by_group.append((g, r["ids"]))
         print(f"★ 합 {len(seen):,}건  (규격 2,084 — ★ 그것은 쪽마다의 합이다.  "
               f"★ 겹친 것을 뺀 수가 이것이다)")

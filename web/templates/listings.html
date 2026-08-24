@@ -19,34 +19,29 @@
 <div class="cond">
 <form class="chips" method="get" action="/listings">
   {% for h in carry_pick %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
+  <!-- ══ 기본 다섯 — ★ 시안 차례 그대로 (마스터 확정 08-24 · 58장) ══
+       ★ **차종 · 트림 · 가격대 · 등급 · 정렬**만 기본이다.  ★ 나머지는 접는다
+       ★ ★ 주행·외장·내장은 ★ 기본이 아니다 — ★ 「주행 · 연식」·「옵션」 절 안이다 -->
   <span class="chip{% if pick.model %} on{% endif %}">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
       {% for m in models %}<option value="{{ m.key }}"{% if m.on %} selected{% endif %}>{{ m.label }}</option>{% endfor %}
     </select></span>
-  <span class="chip{% if pick.price_min %} on{% endif %}">가격
+  <span class="chip{% if pick.trim %} on{% endif %}">트림
+    <input name="trim" size="8" value="{{ pick.trim }}"
+      placeholder="전체" title="트림 이름에 이 말이 든 것"></span>
+  <span class="chip{% if pick.price_min %} on{% endif %}">가격대
     <input name="price_min" size="4" inputmode="numeric" value="{{ pick.price_min }}" placeholder="2000">~<input
            name="price_max" size="4" inputmode="numeric" value="{{ pick.price_max }}" placeholder="3500">만</span>
-  <span class="chip{% if pick.km_max %} on{% endif %}">주행
-    <select name="km_max" title="이 주행거리 이하만 봅니다">
-      <option value="">전체</option>
-      {% for k in km_options %}<option value="{{ k.key }}"{% if k.on %} selected{% endif %}>{{ k.label }}</option>{% endfor %}
-    </select></span>
-  <span class="chip{% if pick.color_ext %} on{% endif %}">외장
-    <select name="color_ext"><option value="">전체</option>
-      {% for c in color_ext_options %}<option value="{{ c.key }}"{% if c.on %} selected{% endif %}>{{ c.label }}</option>{% endfor %}
-    </select></span>
-  <span class="chip{% if pick.color_int %} on{% endif %}">내장
-    <select name="color_int"><option value="">전체</option>
-      {% for c in color_int_options %}<option value="{{ c.key }}"{% if c.on %} selected{% endif %}>{{ c.label }}</option>{% endfor %}
-    </select></span>
   <span class="chip{% if pick.min_grade %} on{% endif %}">등급
     <select name="min_grade" title="이 등급 이상만 봅니다">
       <option value="">전체</option>
       {% for g in grade_options %}<option value="{{ g.key }}"{% if g.on %} selected{% endif %}>{{ g.label }}</option>{% endfor %}
     </select></span>
-  <span class="chip{% if !pick.lease %} on{% endif %}" title="리스·렌트는 기본으로 뺍니다">
-    <label><input type="checkbox" name="lease" value="1"{% if pick.lease %} checked{% endif %}> 리스·렌트 포함</label></span>
+  <span class="chip">정렬
+    <select name="order">
+      {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
+    </select></span>
   <button type="submit" class="chip" style="cursor:pointer">거르기</button>
   <a class="chip clear" href="/listings" title="조건을 전부 지웁니다">전부 지우기</a>
 
@@ -54,7 +49,8 @@
        ★ 판정 · 사이트 · 주행 · 연식 · 옵션 · 뺀 것
        ★ 기본 절(차종·트림·가격대·등급·정렬)은 그대로다 -->
   <details class="chip" style="border-style:dashed">
-    <summary>＋ 조건</summary>
+    <!-- ★★ 시안 그대로 — ★ 「자세한 조건 (N) ▾」.  ★ N 은 ★ 지금 걸린 수다 -->
+    <summary>자세한 조건{% if chips %} ({{ chips | count }}){% endif %} ▾</summary>
     <div class="filter-body" style="margin-top:9px">
 
       <h3>판정 — 누르면 그 조건만 남는다</h3>
@@ -128,8 +124,6 @@
 
       <!-- ★ 나머지 조건 — ★ 다섯 절에 안 드는 것 -->
       <div class="chips" style="margin-top:9px">
-        <span class="chip">트림 <input name="trim" size="6" value="{{ pick.trim }}"
-          placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
         <span class="chip">연료 <select name="fuel"><option value="">전체</option>
           {% for f in fuel_options %}<option value="{{ f.key }}"{% if f.on %} selected{% endif %}>{{ f.label }}</option>{% endfor %}
         </select></span>
@@ -150,9 +144,6 @@
           차량<input name="score_car_min" size="3" inputmode="numeric" value="{{ pick.score_car_min }}" placeholder="100">
           보증<input name="score_warranty_min" size="3" inputmode="numeric" value="{{ pick.score_warranty_min }}" placeholder="100">
           취향<input name="score_taste_min" size="3" inputmode="numeric" value="{{ pick.score_taste_min }}" placeholder="90"> 이상</span>
-        <span class="chip">정렬 <select name="order">
-          {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
-        </select></span>
       </div>
     </div>
   </details>
@@ -181,7 +172,7 @@
 
 {% if !count %}
 <div class="empty">
-  <h3>조건에 맞는 매물이 없습니다</h3>
+  <p class="notice"><b>조건에 맞는 매물이 없습니다</b></p>
   <p class="dim">필터를 하나 지워 보십시오 — 위 칩의 <code>×</code> 를 누르면
     그 조건만 빠집니다</p>
 </div>

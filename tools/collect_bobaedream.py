@@ -72,6 +72,42 @@ def _elapsed(year_month: str | None, at: datetime) -> int | None:
     return max(0, (at.year - y) * 12 + (at.month - m))
 
 
+def load_filters(root: str = ROOT) -> list:
+    """좁히는 코드 — ★ `targets.json` 의 `site_query` 가 정본이다 (명령서 3-1).
+
+    ★ 같은 부름을 두 번 하지 않는다 — ★ 차종 둘이 같은 코드를 쓸 수 있다
+    """
+    import json as _j
+
+    with open(os.path.join(root, "config", "targets.json"), encoding="utf-8") as f:
+        rows = _j.load(f)
+    got, seen = [], set()
+    for key, one in rows.items():
+        if key.startswith("_") or not isinstance(one, dict):
+            continue
+        q = (one.get("site_query") or {}).get(SITE_CODE)
+        if not isinstance(q, dict) or not q.get("maker_no"):
+            continue
+        mark = (q["maker_no"], q.get("model_no"))
+        if mark in seen:
+            continue
+        seen.add(mark)
+        got.append({"for": key, "maker_no": q["maker_no"],
+                    "model_no": q.get("model_no")})
+    return got
+
+
+def _walk_plan(groups: list, pages: int):
+    """★ 어느 조건으로 ★ 몇 쪽까지 도는가.  ★ 조건이 없으면 ★ 전량이다."""
+    if not groups:
+        for page in range(1, pages + 1):
+            yield None, page
+        return
+    for g in groups:
+        for page in range(1, pages + 1):
+            yield g, page
+
+
 def main() -> int:
     args = sys.argv[1:]
 
@@ -87,11 +123,18 @@ def main() -> int:
     adapter = BobaedreamAdapter(cfg)
     names = target_names()
     pages = opt("--pages", 5)
-    print(f"★ 우리 차종 이름 {len(names)}가지로 목록에서 미리 거른다")
+    groups = load_filters()
+    if groups:
+        print(f"★ 좁혀 받는다 — 차종 {len(groups)}종 "
+              f"(maker_no ＋ model_no · 가이드 확인 08-25)")
+    else:
+        print(f"★ 우리 차종 이름 {len(names)}가지로 목록에서 미리 거른다")
 
     hits, seen, scanned = [], set(), 0
-    for page in range(1, min(pages, MAX_PAGES) + 1):
-        req = adapter.list_url(None, page=page)
+    for g, page in _walk_plan(groups, min(pages, MAX_PAGES)):
+        req = adapter.list_url(None, page=page,
+                              maker=g.get("maker_no") if g else None,
+                              model=g.get("model_no") if g else None)
         body = _get(req.url, req.headers, req.timeout_sec)
         if body is None:
             print(f"  {page}쪽 — ★ 못 받았다.  ★ 저장하지 않는다")

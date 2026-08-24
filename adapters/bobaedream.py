@@ -56,12 +56,24 @@ class BobaedreamAdapter:
         return h
 
     def list_url(self, target: TargetSpec, page: int = 1,
-                 maker: str | None = None) -> Request:
-        """목록.  ★ 쪽당 50건 (실측).  ★ `maker_no` 로 좁힐 수 있다."""
+                 maker: str | None = None,
+                 model: str | None = None) -> Request:
+        """목록.  ★ 쪽당 50건 (실측).  ★ `maker_no` ＋ `model_no` 로 좁힌다.
+
+        ★★ 08-25 — ★ 코드를 ★ 가이드가 `ajax_maker_new.php` 로 확인해 주셨다
+          (`targets.json` 의 `site_query.bobaedream`).
+          ★ ★ 전에는 ★ 「facet 을 못 받았다」라 ★ 전량을 훑어 ★ 차명으로 걸렀다
+        ★ 코드가 없으면 ★ 예전처럼 ★ 전량이다 — ★ 지어내지 않는다
+        """
         del target
         path = self._paths["list"].format(page=int(page))
+        q = []
         if maker:
-            path += f"?maker_no={maker}"
+            q.append(f"maker_no={maker}")
+        if model:
+            q.append(f"model_no={model}")
+        if q:
+            path += ("&" if "?" in path else "?") + "&".join(q)
         return Request("GET", self._base + path, self.headers(), self._timeout)
 
     def detail_urls(self, source_id: str) -> list[Request]:

@@ -32,9 +32,49 @@ RE_LINK = re.compile(r'href="(/kr/vehicles/volvo/([a-z0-9-]+)/([^"/]+))"')
 #   ★ ★ 실측 08-24 — ★ 「총 180」이라 적혀 있으나 ★ 매물번호는 ★ 221개였다.
 #     ★ ★ 180 을 믿었으면 ★ 41건을 조용히 버릴 뻔했다
 RE_TOTAL = re.compile(r'data-found="(\d+)"')
-# ★ 우리 차종의 슬러그 — ★ `targets.json` 이 정본이 아니라 ★ 사이트 말이다
-OURS = {"xc60": "XC60", "s60": "S60", "xc40": "XC40",
-        "v60-cross-country": "V60 크로스 컨트리", "v60cc": "V60 크로스 컨트리"}
+def _known_name(target_key: str) -> str | None:
+    """`target_key` → ★ 등록부가 아는 차종 이름 (`target_map.json`).
+
+    ★ 사이트 이름과 우리 키를 잇는 표가 정본이다 — ★ 코드에 안 박는다
+    """
+    from store.dictionary import target_map
+
+    for site in target_map():
+        for name, one in target_map(site).items():
+            if name.startswith("_") or not isinstance(one, dict):
+                continue
+            if one.get("target_key") == target_key:
+                return name
+    return None
+
+
+def load_slugs(root: str = ROOT) -> dict:
+    """우리 차종의 슬러그 — ★ `targets.json` 의 `site_query` 가 정본이다 (명령서 3-1).
+
+    ★ 코드에 차종을 안 박는다 (S14 · 금지 6).  ★ 슬러그 → 우리가 쓰는 이름
+    """
+    import json as _j
+
+    with open(os.path.join(root, "config", "targets.json"), encoding="utf-8") as f:
+        rows = _j.load(f)
+    out: dict = {}
+    for key, one in rows.items():
+        if key.startswith("_") or not isinstance(one, dict):
+            continue
+        q = (one.get("site_query") or {}).get(SITE_CODE)
+        if not isinstance(q, dict):
+            continue
+        # ★ 우리가 쓰는 차종 이름은 ★ `target_map.json` 이 정본이다 (S14) —
+        #   ★ `classify_stored` 가 그 이름으로 갈래를 찾는다
+        for slug in q.get("slug") or ():
+            out[str(slug)] = key
+    return out
+
+
+# ★ 옛 자리 — ★ `targets.json` 이 비면 그때만 쓴다
+OURS_FALLBACK = {"xc60": "XC60", "s60": "S60", "xc40": "XC40",
+                 "v60-cross-country": "V60 크로스 컨트리",
+                 "v60cc": "V60 크로스 컨트리"}
 
 
 def _now() -> str:
@@ -80,12 +120,15 @@ def main() -> int:
         if len(links) < PAGE_LINKS:
             break
         time.sleep(interval)
-    ours = {k: v for k, v in seen.items() if v[0] in OURS}
+    ours_map = load_slugs() or OURS_FALLBACK
+    ours = {k: v for k, v in seen.items() if v[0] in ours_map}
     print(f"★ data-found {said if said is not None else '없다'} · "
           f"받은 매물번호 {len(seen)}건 · 쪽 {page}")
     if said is not None and said != len(seen):
         print(f"  ★ 어긋난다 — {said - len(seen):+d}건")
-    print(f"★ 우리 대상 — {len(ours)}건 (슬러그 {sorted({v[0] for v in ours.values()})})")
+    print(f"★ 우리 대상 — {len(ours)}건 "
+          f"(슬러그 {sorted({v[0] for v in ours.values()})} · "
+          f"targets.json {len(ours_map)}가지)")
     if "--dry" in args or not ours:
         print("★ --dry 라 저장하지 않았다" if "--dry" in args else "★ 우리 대상이 없다")
         return 0
@@ -96,7 +139,9 @@ def main() -> int:
     at = _now()
     for sid, (slug, url) in ours.items():
         row = {"site": SITE_CODE, "source_id": sid, "price_unit": "won",
-               "site_model_group": OURS[slug], "site_model": slug,
+               # ★ 사전이 아는 이름으로 적는다 — ★ 없으면 target_key 를 그대로
+               "site_model_group": _known_name(ours_map[slug]) or ours_map[slug],
+               "site_model": slug,
                "detail_status": "not_requested"}
         row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
         upsert_core(conn, row, at)

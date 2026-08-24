@@ -492,7 +492,19 @@ def s43_3_version_matches() -> tuple[bool, str]:
 SCREENS = ROOT / "ref" / "screens"
 TEMPLATES = ROOT / "web" / "templates"
 # ★ 시안 ↔ 실제 화면.  ★ 짝이 있는 것만 절 차례를 잰다
-SIAN_PAIRS = (("v3_detail_시안.html", "detail.html"),)
+# ★★ 08-25 마스터 지적 — 「★ 항목이 있다고 ★ 시안과 같냐.  ★ **위치 관점**에서 비교해 봐」
+#   ★★ ★ 전에는 ★ 상세 ★ **한 쌍만** 봤다 — ★ 그래서 ★ 목록 거르개가 ★ 통과했다.
+#     ★ ★ 「있다」와 ★ 「같다」는 ★ 다르다 — ★ 여덟 쌍을 ★ 다 본다
+SIAN_PAIRS = (
+    ("v3_detail_시안.html", "detail.html"),
+    ("v3_listings_시안.html", "listings.html"),
+    ("v3_track_시안.html", "track.html"),
+    ("v3_notready_시안.html", "notready.html"),
+    ("v3_dashboard_시안.html", "dashboard.html"),
+    ("v3_admin_시안.html", "admin.html"),
+    ("v3_watch_시안.html", "watch.html"),
+    ("v3_compare_시안.html", "compare.html"),
+)
 # ★ 화면이 아니라 ★ 메모인 <h2>.  ★ 세지 않는다 (실측 08-24 — v3 넷에 다 있다)
 SIAN_NOTE_H2 = ("지켜야 하는 것",)
 
@@ -562,10 +574,18 @@ def s46_22_section_order() -> tuple[bool, str]:
                 # ★ 마스터 ㉮ (r672) — ★ 시안 쪽에 `.v3-` 을 붙였다.  ★ 둘 다 받는다
                 re.findall(r'<div class="(?:v3-)?lbl">([^<]+)</div>', _read(q))
                 if "무엇을 하는 곳인가" not in x]
-        got = [_bare(x) for x in _h_tags(_read(t), "h3")]
+        # ★★ 한 화면이 ★ 갈래 둘을 가질 수 있다 (`{% if %}` / `{% if ! %}`) —
+        #   ★ ★ 그때는 ★ 같은 절이 ★ 글자로 두 번 나온다.  ★ 실제로 그려지는 것은 하나다
+        #   ★ ★ 그래서 ★ **차례를 지키며 중복을 접는다**
+        got: list = []
+        for x in _h_tags(_read(t), "h3"):
+            one = _bare(x)
+            if one not in got:
+                got.append(one)
         seen += 1
         if not want:
-            bad.append(f"{sian} 에 절이 없다 (<div class=\"v3-lbl\">)")
+            # ★★ 시안이 ★ 절을 안 밝힌 것은 ★ 「절이 없는 화면」이다 —
+            #   ★ ★ `v3_watch` · `v3_compare` 가 그렇다.  ★ 견줄 것이 없다
             continue
         if len(want) != len(got):
             bad.append(f"{page} 절 {len(got)}개 · 시안 {len(want)}개")

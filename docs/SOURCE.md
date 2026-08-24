@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 172개 · 총 58,924줄
+파일 172개 · 총 59,069줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -15,7 +15,7 @@
 | `tests/test_spec_ui.py` | 1,461 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,156 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
-| `validate/v0_guide.py` | 1,088 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `validate/v0_guide.py` | 1,108 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `report/screens/admin.py` | 1,086 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
 | `tools/verify_axes.py` | 1,079 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `store/adminops.py` | 1,054 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
@@ -45,9 +45,9 @@
 | `tools/sync_registry.py` | 390 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `tests/test_collect.py` | 377 | 2장 수집 시험. |
+| `tools/collect_kbchachacha.py` | 355 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `web/template.py` | 344 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
-| `tools/collect_kbchachacha.py` | 330 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `parse/hyundai_cert/mapping.py` | 322 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
@@ -77,6 +77,7 @@
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
+| `tools/collect_bobaedream.py` | 208 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `tools/unknown_split.py` | 208 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
 | `parse/kcar/mapping.py` | 190 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
@@ -89,11 +90,11 @@
 | `tools/sync_target_map.py` | 172 | 차종 대응표 → `dict_enum` (명령서 `ORDER_20260822_r515.md` 2a장 · 개정 540). |
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
 | `score/penalty.py` | 166 | 마이너스 점수 (개정 322). |
-| `tools/collect_bobaedream.py` | 165 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
 | `tools/collect_heydealer.py` | 160 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `score/scorer.py` | 159 | 채점 · 분모 (L7). |
 | `analyze/axis/value.py` | 156 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
+| `tools/collect_volvo.py` | 156 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `report/finance.py` | 153 | 금융 — 점수가 아니라 비용이다. |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
 | `tools/collect_kia_cpo.py` | 152 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
@@ -120,7 +121,6 @@
 | `errors.py` | 115 | 도메인 예외 5종. |
 | `parse/reborncar/mapping.py` | 115 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
 | `tools/gen_table.py` | 114 | 배점표를 config 에서 생성한다 (개정 512). |
-| `tools/collect_volvo.py` | 111 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `tools/classify_stored.py` | 110 | 저장된 매물을 ★ 갈래에 넣는다 — ★ 사이트 도구가 쓴 줄용 (명령서 37·39). |
 | `tools/collect_bmw.py` | 110 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
@@ -135,13 +135,13 @@
 | `analyze/axis/price.py` | 90 | 가격 200점. |
 | `analyze/absolute.py` | 88 | E등급 절대조건 10종. |
 | `score/grade.py` | 88 | 등급 (L7). |
+| `adapters/bobaedream.py` | 87 | 보배드림 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `analyze/axis/spec.py` | 87 | 사양 90점 — HUD 20 · 선루프 20 · SVM 10 · SCC 10 · 후측방 5 · 틴팅 5. |
 | `analyze/axis/trim.py` | 83 | ④ 사양 45 — 트림 25 · 옵션 20 (docs/ref/F-scoring.md ④). |
 | `tools/deploy_check.py` | 81 | 배포 확인 — ★ 「소스가 맞다」와 「마스터 화면이 맞다」는 다른 말이다. |
 | `analyze/peer.py` | 80 | 유사군 — 「이런 차가 보통 얼마인가」 (7장 STEP 82e). |
 | `report/why_cheap.py` | 80 | 「왜 싼가」 — 싼 이유를 순서대로 찾아 낸다 (개정 299 · V3-52). |
 | `store/chunk.py` | 77 | 조각 전송 — 바이트를 나누고 서버가 이어붙인다 (개정 307). |
-| `adapters/bobaedream.py` | 75 | 보배드림 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `tools/fold_out_of_scope.py` | 75 | 이미 들어온 것을 ★ 되돌린다 — ★ 우리 대상이 아닌 것은 ★ 접는다 (명령서 3-3). |
 | `tools/inspect_dict.py` | 75 | 사전 검토 — pending 값과 원문 표본을 본다. |
 | `tools/inspect_facet.py` | 74 | facet 원문에 실제로 어떤 축이 왔는지 본다. |
@@ -179,7 +179,7 @@
 | `parse/kcar/__init__.py` | 0 | — |
 | `parse/reborncar/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 73개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 74개)
 
 ### `validate/v11_web.py` — 4,895줄
 
@@ -235,10 +235,10 @@ rec:31  Client:41  text:96  links:101  start_server:105  seed_admin:149  m1:165 
 _spec_files:44  _read_spec:62  say:73  py_files:87  chapter_of:127  _declared_chapters:137  split_done:157  _illustration:176  _retired_config_keys:240  _git:701
 ```
 
-### `validate/v0_guide.py` — 1,088줄
+### `validate/v0_guide.py` — 1,108줄
 
 ```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:500  s46_21_one_screen_per_file:516  s46_22_section_order:541  _targets:586  s46_23_site_query_filled:592  s46_24_facet_unconfirmed:607  s46_30_index_covers_docs:624  s46_31_spec_sites_in_config:663  s46_32_generated_fresh:684  _req_rows:726  _tokens:738  _named_docs:753  s46_36_dropped_not_alive:765  s46_40_progress_docs_changed:793  s46_41_site_status_known:824  _templates:866  s46_45_spec_not_in_list:871  s46_46_spec_forbidden_ten:891  s46_66_links_encoded:917  s46_65_verdict_fresh:956  s46_67_sian_names_dont_clash:994  run:1062
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:512  s46_21_one_screen_per_file:528  s46_22_section_order:553  _targets:606  s46_23_site_query_filled:612  s46_24_facet_unconfirmed:627  s46_30_index_covers_docs:644  s46_31_spec_sites_in_config:683  s46_32_generated_fresh:704  _req_rows:746  _tokens:758  _named_docs:773  s46_36_dropped_not_alive:785  s46_40_progress_docs_changed:813  s46_41_site_status_known:844  _templates:886  s46_45_spec_not_in_list:891  s46_46_spec_forbidden_ten:911  s46_66_links_encoded:937  s46_65_verdict_fresh:976  s46_67_sian_names_dont_clash:1014  run:1082
 ```
 
 ### `report/screens/admin.py` — 1,086줄
@@ -415,6 +415,12 @@ check:37  db:43  test_expected:49  test_halt:61  test_reprocess:82  test_refetch
 check:34  R:40  test_verify_shape:45  _Stub:80  _Clock:88  test_fetch_status:93  test_interpret_failure:106  test_facet_axes:118  test_collect_groups:146  test_build_q:167  test_collect_check:217  test_save_raw:232  test_fail_streak:261  test_all_fail_sample:303  test_diagnosis_scope:347
 ```
 
+### `tools/collect_kbchachacha.py` — 355줄
+
+```
+_now:53  _get:57  fetch_ok:66  page_ids:83  load_filters:93  walk_group:133  count_all:168  probe_detail:194  store_details:213  main:276
+```
+
 ### `web/template.py` — 344줄
 
 ```
@@ -425,12 +431,6 @@ f_won:48  f_km:64  f_pct:68  f_date:72  f_num:83  f_gradecls:90  _grade_classes:
 
 ```
 _shot_widths:32  _tmp_root:57  main:81  shot_paths:172  _localize_images:197  shoot:234
-```
-
-### `tools/collect_kbchachacha.py` — 330줄
-
-```
-_now:53  _get:57  fetch_ok:66  page_ids:83  load_filters:93  walk_group:108  count_all:143  probe_detail:169  store_details:188  main:251
 ```
 
 ### `tools/light_check.py` — 325줄
@@ -605,6 +605,12 @@ MenuItem:31  Banner:42  PageContext:55  ErrorPage:92  _is_permission:135  _is_co
 
 ```
 _cfg:24  Check:55  CheckResult:93  _short:118  result:131  not_applicable:140  save_results:145  gate:162  run_phase:171  canon_files:193  canon_text:206
+```
+
+### `tools/collect_bobaedream.py` — 208줄
+
+```
+_now:37  _get:41  target_names:51  wanted:60  _elapsed:68  load_filters:75  _walk_plan:100  main:111
 ```
 
 ### `tools/unknown_split.py` — 208줄
