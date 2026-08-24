@@ -1,7 +1,7 @@
 # 보배드림 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.25-r727
+version  SPEC-2026.08.25-r728
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 641 · 실측 08-24
 checks   S46-28 · S46-31
@@ -68,6 +68,75 @@ robots  `www` 는 `Allow: /` — 금지 경로가 없다 (Amazonbot 만 막는�
 ```
 
 ---
+
+# 1c. ★★★ 차종 코드 — ★ 뚫었다 (개정 728 · 실측 08-25)
+
+```
+★★ ★ 규격이 ★ **「facet 을 받아야 안다.  ★ 지어내지 마라」**로 ★ 멈춰 있었다 (207행)
+★ ★ 가이드가 ★ **화면 스크립트에서 찾았다** — `mycar/common/js/common_list.js`
+```
+
+## ★ 부르는 법
+
+```
+POST https://www.bobaedream.co.kr/mycar/proc/ajax_maker_new.php
+헤더  Content-Type: application/x-www-form-urlencoded
+      Referer: https://www.bobaedream.co.kr/mycar/mycar_list.php
+      X-Requested-With: XMLHttpRequest
+
+★ 제조사 — `dummy=1&getSel=maker&tb=mycar&no=&dep=0`   → ★ **89개 · 리스트**
+★ 모델   — `dummy=1&getSel=maker&tb=mycar&no={제조사}&dep=1`  → ★ **객체** (키가 「0」·「1」…)
+
+★★ ★ **`dep` 이 함정이다** — ★ `dep=1` 로 부르면 ★ null 이 온다 (제조사 목록일 때)
+   ★ ★ `getSel` 은 ★ **둘 다 `maker`** 다.  ★ `getSel=model` 은 ★ 늘 null
+★ ★ 응답 꼴이 ★ **층마다 다르다** — 제조사는 ★ 리스트 · 모델은 ★ 객체.  ★ 둘 다 받아라
+```
+
+## ★★ 제조사 코드 (실측 08-25)
+
+| 제조사 | `maker_no` | 매물 |
+|---|--:|--:|
+| 현대 | **49** | 437 |
+| 기아 | **3** | 416 |
+| 제네시스 | **1010** | 160 |
+| BMW | **1** | — |
+| 벤츠 | **21** | — |
+| 아우디 | **32** | — |
+| 렉서스 | **13** | — |
+| 볼보 | **23** | — |
+| 테슬라 | **1006** | — |
+
+## ★★★ 우리 대상 모델 코드 (실측 08-25)
+
+| 차종 | `maker_no` | `model_no` | 보배 이름 |
+|---|--:|--:|---|
+| `GRANDEUR_LPG` | 49 | **5** | 그랜저 |
+| `SPORTAGE_LPI` | 3 | **67** | 스포티지 |
+| `G70_20T`·`G70_25T` | 1010 | **935** | G70 |
+| `G80_25T`·`G80_EV` | 1010 | **893** | G80 |
+| `GV70_EV` | 1010 | **1070** | GV70 |
+| `GV60` | 1010 | **1108** | GV60 |
+| `X3_IMPORT` | 1 | **1013** | X3 |
+| `GLC_IMPORT` | 21 | **876** | GLC클래스 |
+| `Q5_IMPORT` | 32 | **181** | Q5 |
+| `RX_IMPORT` | 13 | **205** | RX |
+| `NX_HEV` | 13 | **819** | NX |
+| `S60_IMPORT` | 23 | **1097** | S60 |
+| `XC40_IMPORT` | 23 | **1092** | XC40 |
+| `XC60_IMPORT` | 23 | **1093** | XC60 |
+| `V60CC_IMPORT` | 23 | **1102** | V60 |
+| `MODEL_Y` | 1006 | **1073** | 모델 Y |
+
+```
+★ ★ **18종 중 16종**에 넣었다 (`config/targets.json`)
+★ ★ `KOLEOS_HEV` — ★ 르노코리아가 ★ 제조사 목록에 ★ 다른 이름으로 있다.  ★ 개발측이 재라
+★ ★ 「X3 M」(1025) · 「iX3」(1115) · 「SQ5」(795) 는 ★ **우리 대상이 아니다.  ★ 안 넣었다**
+필수  ★ 목록을 부를 때 ★ `maker_no` ＋ `model_no` 를 ★ 함께 준다 (규격 1a)
+필수  ★ ★ **`car_cnt` 는 ★ 모델 층에서 ★ null 로 온다** — ★ 건수는 목록을 받아 세라
+```
+
+---
+
 
 # 2. ★ 상세가 주는 것 (표본 `2254832` · 벤츠 마이바흐 GLS 600)
 
@@ -204,7 +273,7 @@ robots  `www` 는 `Allow: /` — 금지 경로가 없다 (Amazonbot 만 막는�
 
 ```
 · 총 매물 수 — PC 목록 화면에 ★ 3,307대 로 나왔다.  ★ 모바일에서는 못 봤다
-· `maker_no` · `model_no` 코드표 — ★ facet 을 받아야 한다.  ★ 지어내지 마라
+· ~~`maker_no`·`model_no` 코드표~~ ★ **끝 — 1c장에 실측으로 넣었다** (개정 728)
 · ~~보험이력이 공개인 매물이 있는지~~ ★ 25건 중 1건뿐이다 (3a장)
 · ~~「실차확인」이 몇 %에 붙는지~~ ★ 9/25 = 36% (3a장)
 · 개인/딜러 구분이 ★ 어느 필드에 오는지

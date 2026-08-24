@@ -28,6 +28,12 @@
         "mdlGrpList": "1171",
         "fuelList": "001",
         "_실측": 165
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "893",
+        "_차명": "제네시스 G80",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -65,6 +71,12 @@
       "hyundai_cert": {
         "mdlGrpList": "1171_V",
         "_실측": 0
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "893",
+        "_차명": "제네시스 G80",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -98,6 +110,12 @@
         "mdlGrpList": "1172",
         "fuelList": "001",
         "_실측": 11
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "935",
+        "_차명": "제네시스 G70",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -136,6 +154,12 @@
         "mdlGrpList": "1172",
         "fuelList": "001",
         "_실측": 11
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "935",
+        "_차명": "제네시스 G70",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202100..",
@@ -173,6 +197,12 @@
       "hyundai_cert": {
         "mdlGrpList": "1389_V",
         "_실측": 3
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "1070",
+        "_차명": "제네시스 GV70",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -205,6 +235,12 @@
       "hyundai_cert": {
         "mdlGrpList": "1469_V",
         "_실측": 2
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "1108",
+        "_차명": "제네시스 GV60",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -270,6 +306,12 @@
       "kia_cpo": {
         "modelCodeNames": "스포티지",
         "_실측": 76
+      },
+      "bobaedream": {
+        "maker_no": "3",
+        "model_no": "67",
+        "_차명": "기아 스포티지",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -309,6 +351,12 @@
         "mdlGrpList": "96",
         "fuelList": "003",
         "_실측": 6
+      },
+      "bobaedream": {
+        "maker_no": "49",
+        "model_no": "5",
+        "_차명": "현대 그랜저",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202300..",
@@ -329,6 +377,12 @@
         "CarType": "N",
         "Manufacturer": "테슬라",
         "ModelGroup": "모델 Y"
+      },
+      "bobaedream": {
+        "maker_no": "1006",
+        "model_no": "1073",
+        "_차명": "테슬라 모델 Y",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -365,6 +419,12 @@
       "kbchachacha": {
         "makerCode": "107",
         "classCode": "1910"
+      },
+      "bobaedream": {
+        "maker_no": "1",
+        "model_no": "1013",
+        "_차명": "BMW X3",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -398,6 +458,12 @@
       "kbchachacha": {
         "makerCode": "108",
         "classCode": "2646"
+      },
+      "bobaedream": {
+        "maker_no": "21",
+        "model_no": "876",
+        "_차명": "벤츠 GLC클래스",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -431,6 +497,12 @@
       "kbchachacha": {
         "makerCode": "109",
         "classCode": "1960"
+      },
+      "bobaedream": {
+        "maker_no": "32",
+        "model_no": "181",
+        "_차명": "아우디 Q5",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -464,6 +536,12 @@
       "kbchachacha": {
         "makerCode": "133",
         "classCode": "2563"
+      },
+      "bobaedream": {
+        "maker_no": "13",
+        "model_no": "819",
+        "_차명": "렉서스 NX",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -501,6 +579,12 @@
       "kbchachacha": {
         "makerCode": "133",
         "classCode": "2132"
+      },
+      "bobaedream": {
+        "maker_no": "13",
+        "model_no": "205",
+        "_차명": "렉서스 RX",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -548,6 +632,12 @@
       "kbchachacha": {
         "makerCode": "117",
         "classCode": "2237"
+      },
+      "bobaedream": {
+        "maker_no": "23",
+        "model_no": "1093",
+        "_차명": "볼보 XC60",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -595,6 +685,12 @@
       "kbchachacha": {
         "makerCode": "117",
         "classCode": "2229"
+      },
+      "bobaedream": {
+        "maker_no": "23",
+        "model_no": "1097",
+        "_차명": "볼보 S60",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -670,6 +766,12 @@
           "xc40"
         ],
         "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      },
+      "bobaedream": {
+        "maker_no": "23",
+        "model_no": "1092",
+        "_차명": "볼보 XC40",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
@@ -714,6 +816,12 @@
           "v60cc"
         ],
         "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      },
+      "bobaedream": {
+        "maker_no": "23",
+        "model_no": "1102",
+        "_차명": "볼보 V60",
+        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": null,
