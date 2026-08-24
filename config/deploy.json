@@ -13,12 +13,13 @@
   "work_dir": "/home/ec2-user/v2",
   "services": [
     "carwatch.service",
-    "carwatch-daily.timer",
-    "carwatch-fill.timer"
+    "carwatch-daily.timer"
   ],
-  "daily_at": "13:00",
+  "daily_at": "13:00 — ★ 수집 ＋ 재판정",
   "account": "master",
   "_check": "curl -sk -o /dev/null -w '%{http_code}' -m 40 {base_url}/",
   "_on_change": "★ 바뀌면 — ① 콘솔에서 새 IP ② 두드려 200 확인 ③ ★ 이 파일만 고친다 ④ 검사를 돌린다.  ★ outputs/ 작업기록은 안 고친다 — 그때 그 주소가 맞다",
-  "fill_every": "4시간 (00·04·08·12·16·20) — ★ 판정이 안 붙은 것만 (마스터 확정 08-25)"
+  "fill_every": "4시간 (00·04·08·12·16·20) — ★ 판정이 안 붙은 것만 (마스터 확정 08-25)",
+  "retry": "★ 13:00 에 못 돌았을 때만 ★ 네 시간 뒤 다시 (마스터 확정 08-25).  ★ 「네 시간마다」가 아니다",
+  "collect_every": "★ 하루 한 번 — ★ 엔카만 다르다 (마스터 회선)"
 }
