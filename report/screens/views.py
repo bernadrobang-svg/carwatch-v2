@@ -458,6 +458,12 @@ class NotReadyView:
     unmatched: list = field(default_factory=list)
     unmatched_total: int = 0
     matched_total: int = 0
+    # ★★ 「범위 밖」 — ★ 아는 차인데 ★ 갈래(연료·트림)가 다른 것 (마스터 결정 「제외해」).
+    #   ★ 묻는 자리가 아니다 — ★ 건수만 내고 ★ 접어 둔다 (`UI_REVIEW` 9a)
+    out_of_scope: list = field(default_factory=list)
+    out_of_scope_total: int = 0
+    # ★ 3절 — ★ 등록부 미분류.  ★ 이것은 ★ 판정을 막는다 (V4-11)
+    field_unclassified: int = 0
 
 
 @dataclass(frozen=True)

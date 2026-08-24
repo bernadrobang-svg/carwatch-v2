@@ -2295,46 +2295,67 @@ def view_notready(account: Account, conn, calc_version: str,
     if not n:
         reasons.append("채점 결과가 없다 (S10 미실행 또는 중단)")
         actions.append("python3 run.py collect 를 실행한다")
-    n = conn.execute(
+    n_field = conn.execute(
         "SELECT COUNT(*) FROM meta_field_usage WHERE usage='unclassified'"
     ).fetchone()[0]
+    n = n_field
     if n:
         reasons.append(f"등록부 미분류 {n}건 — V4-11 이 판정을 막는다")
         actions.append("config/field_usage.suggested.json 을 확인·수정해 "
                        "config/field_usage.json 으로 옮긴 뒤 재실행한다")
-    rows = _unmatched_rows(conn)
-    n_null = conn.execute(
-        "SELECT COUNT(*) FROM core_listing WHERE target_key IS NULL"
-    ).fetchone()[0]
+    rows, oos, n_null, n_oos = _unmatched_rows(conn)
     n_ok = conn.execute(
         "SELECT COUNT(*) FROM core_listing WHERE target_key IS NOT NULL"
     ).fetchone()[0]
     if n_null:
-        reasons.append(f"차종이 안 붙은 매물 {n_null:,}건 — 판정 대상이 아니다")
+        reasons.append(f"모르는 차 {n_null:,}건 — 판정 대상이 아니다")
         actions.append("아래 모델명·배지를 보고 targets.json 의 "
                        "fuel_match · trim_include 를 고치거나 그대로 둔다")
+    if n_oos:
+        # ★ 묻는 자리가 아니다 — ★ 마스터가 「제외해」로 정하셨다 (`UI_REVIEW` 9a)
+        reasons.append(f"범위 밖 {n_oos:,}건 — 아는 차인데 갈래가 다르다 "
+                       f"(마스터 결정 「제외해」)")
     return NotReadyView(
         ReportMeta(run_id, "L3", "encar", None, calc_version, None),
         reasons, actions,
         pending_values=_pending_values(conn),
         done=_done_items(conn, calc_version),
-        unmatched=rows, unmatched_total=n_null, matched_total=n_ok)
+        unmatched=rows, unmatched_total=n_null, matched_total=n_ok,
+        out_of_scope=oos, out_of_scope_total=n_oos,
+        field_unclassified=n_field)
 
 
-def _unmatched_rows(conn, limit: int | None = None) -> list:
-    """차종이 안 붙은 매물을 모델·연료·배지로 묶어 낸다 (개정 271 · V2-32).
+def _unmatched_rows(conn, limit: int | None = None) -> tuple[list, list]:
+    """차종이 안 붙은 매물을 ★ **두 갈래로** 묶어 낸다 (개정 271 · V2-32 · `UI_REVIEW` 9a).
 
     ★ 「4,188건」만 내면 사람이 아무것도 못 한다.
       「그랜저 가솔린 706건」이라야 targets.json 을 고칠지 정한다
+    ★★ 08-24 마스터 결정 「제외해」 — ★ 둘은 ★ 뜻이 다르다
+       ★ 미분류   ★ 모르는 차다.  ★ **묻는 자리**다
+       ★ 범위 밖  ★ 아는 차인데 ★ 갈래(연료·트림)가 다르다.  ★ **건수만** 낸다
+       ★ ★ GV70 가솔린 1,161건은 ★ 「모르는 차」가 아니다 — ★ 우리가 전기만 등록했다
+    돌려줌  (미분류 줄, 범위 밖 줄, 미분류 합, 범위 밖 합)
+    ★ 줄은 화면 몫만 자르되 ★ **합은 전건을 센다** — ★ 자른 것을 합으로 내면
+      ★ 「이게 전부」로 읽힌다 (검토 17)
     """
     limit = _view_cfg("rows_per_page") if limit is None else limit
-    return [{"manufacturer": mf, "model_group": mg, "fuel": fuel,
-             "trim": trim, "count": n}
-            for mf, mg, fuel, trim, n in conn.execute(
-                "SELECT site_manufacturer, site_model_group, fuel_raw, "
-                "       trim_badge, COUNT(*) "
-                "FROM core_listing WHERE target_key IS NULL "
-                "GROUP BY 1, 2, 3 ORDER BY 5 DESC LIMIT ?", (limit,))]
+    from store.dictionary import known_model_of
+
+    mine, oos, n_mine, n_oos = [], [], 0, 0
+    for site, mf, mg, fuel, trim, n in conn.execute(
+            "SELECT site, site_manufacturer, site_model_group, fuel_raw, "
+            "       trim_badge, COUNT(*) "
+            "FROM core_listing WHERE target_key IS NULL "
+            "GROUP BY 1, 2, 3, 4 ORDER BY 6 DESC"):
+        # ★ 시안이 ★ 사이트를 낸다 — ★ 「어느 사이트가 준 말인가」가 있어야 정한다
+        row = {"site": site, "manufacturer": mf, "model_group": mg,
+               "fuel": fuel, "trim": trim, "count": n}
+        known = known_model_of(mg)
+        if known:
+            oos.append(dict(row, known=known)); n_oos += n
+        else:
+            mine.append(row); n_mine += n
+    return mine[:limit], oos[:limit], n_mine, n_oos
 
 
 # 리포트 파일 이름 — {run_id}_{layer}_{target|ALL}_{calc_version}.{ext}

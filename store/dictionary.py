@@ -256,6 +256,28 @@ def match_target_name(site: str, text: str | None) -> str | None:
     return None
 
 
+def known_model_names() -> list:
+    """★ 등록부가 아는 ★ 차종 이름 전부 (사이트를 가리지 않는다).
+
+    ★★ 왜 — ★ `/notready` 가 ★ 「모르는 차」와 ★ 「아는 차인데 갈래가 다른 것」을
+      ★ 갈라 내야 한다 (`UI_REVIEW` 9장 · 마스터 결정 「제외해」).
+      ★ ★ GV70 가솔린은 ★ 「모르는 차」가 아니다 — ★ 우리가 전기만 등록한 것이다
+    ★ 긴 이름을 먼저 본다 — ★ 「그랑 콜레오스」가 ★ 「그랑」에 먼저 걸리지 않게
+    ★ 표에 없으면 없는 것이다.  ★ 코드에 차종을 박지 않는다 (S14 · 금지 6)
+    """
+    got: set = set()
+    for site in target_map():
+        for key in target_map(site):
+            if key and not key.startswith("_"):
+                got.add(key)
+    return sorted(got, key=len, reverse=True)
+
+
+def known_model_of(text: str | None) -> str | None:
+    """★ 그 차명이 ★ 우리가 아는 차종인가.  ★ 아니면 None."""
+    return next((k for k in known_model_names() if k in (text or "")), None)
+
+
 def mapped_of(axis: str, value: str) -> str | None:
     """사이트가 분류를 포기한 값을 우리 갈래로 (개정 398).
 

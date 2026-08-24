@@ -14,32 +14,70 @@
 {% endif %}
 
 {% if n.done %}
-<h2>차종이 안 붙은 매물</h2>
+<h2>★ 1 미분류 — ★ 마스터께 묻는 자리</h2>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
-  <strong>차종 미정 {{ nr.unmatched_total | num }}건</strong>.
+  <strong>모르는 차 {{ nr.unmatched_total | num }}건</strong> ·
+  <strong>범위 밖 {{ nr.out_of_scope_total | num }}건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
-  차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
-  넣지도 않습니다.
+  판정 대상이 아닙니다 — 버리지도, 임의의 차종에 넣지도 않습니다.
 </p>
 {% if nr.unmatched %}
-<p class="muted">왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
+<p class="muted">여기가 <strong>묻는 자리</strong>입니다.
+  왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
   이것으로 <code>targets.json</code> 의 <code>fuel_match</code> ·
   <code>trim_include</code> 를 고칠지, 그대로 둘지 정합니다.</p>
 <table id="unmatched">
-<thead><tr><th>제조사</th><th>모델군</th><th>연료</th><th>배지</th>
+<thead><tr><th>모델명(원문)</th><th>연료</th><th>배지</th><th>사이트</th>
   <th class="num">건수</th></tr></thead>
 <tbody>
 {% for u in nr.unmatched %}
-<tr><td>{{ u.manufacturer }}</td><td>{{ u.model_group }}</td>
+<tr><td><strong>{{ u.model_group }}</strong>
+    <span class="dim">{{ u.manufacturer }}</span></td>
   <td>{{ u.fuel }}</td><td class="muted">{{ u.trim }}</td>
+  <td class="muted">{{ u.site }}</td>
   <td class="num">{{ u.count | num }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
 {% endif %}
 {% if !nr.unmatched %}
-<p class="muted">차종이 안 붙은 매물이 없습니다.</p>
+<p class="muted">모르는 차가 없습니다.</p>
+{% endif %}
+
+<!-- ★★ 범위 밖 — ★ 아는 차인데 갈래가 다르다.  ★ 마스터 결정 「제외해」 (UI_REVIEW 9a)
+     ★ 묻는 자리가 아니므로 ★ 건수만 내고 ★ 접어 둔다 -->
+{% if nr.out_of_scope %}
+<h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
+<details class="card tight">
+  <summary><strong>{{ nr.out_of_scope_total | num }}건</strong>
+    <span class="dim">· 펼치기 ▾ —
+      스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
+      평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
+  <p class="muted">갈래를 넓히시면 되살아납니다 —
+    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.</p>
+  <table>
+  <thead><tr><th>아는 차종</th><th>모델군</th><th>연료</th>
+    <th class="num">건수</th></tr></thead>
+  <tbody>
+  {% for u in nr.out_of_scope %}
+  <tr><td><strong>{{ u.known }}</strong></td><td>{{ u.model_group }}</td>
+    <td>{{ u.fuel }}</td><td class="num">{{ u.count | num }}</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+</details>
+{% endif %}
+
+<h3>3 등록부 미분류 — 판정을 막는 것</h3>
+{% if nr.field_unclassified %}
+<p class="notice">등록부 미분류 <strong>{{ nr.field_unclassified | num }}건</strong> —
+  <strong>V4-11 이 판정을 막습니다.</strong>
+  <code>config/field_usage.suggested.json</code> 을 확인·수정해
+  <code>config/field_usage.json</code> 으로 옮긴 뒤 재실행합니다.</p>
+{% endif %}
+{% if !nr.field_unclassified %}
+<p class="muted">등록부 미분류가 없습니다 — 판정을 막는 것이 없습니다.</p>
 {% endif %}
 
 <h2>지금도 볼 수 있는 것</h2>
@@ -66,32 +104,70 @@
   그래서 사람이 볼 때까지 <strong>그 축만</strong> 멈춥니다.
   나머지 축은 정상으로 판정됩니다.</p>
 
-<h2>차종이 안 붙은 매물</h2>
+<h2>★ 1 미분류 — ★ 마스터께 묻는 자리</h2>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
-  <strong>차종 미정 {{ nr.unmatched_total | num }}건</strong>.
+  <strong>모르는 차 {{ nr.unmatched_total | num }}건</strong> ·
+  <strong>범위 밖 {{ nr.out_of_scope_total | num }}건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
-  차종 미정은 <strong>판정 대상이 아닙니다</strong> — 버리지도, 임의의 차종에
-  넣지도 않습니다.
+  판정 대상이 아닙니다 — 버리지도, 임의의 차종에 넣지도 않습니다.
 </p>
 {% if nr.unmatched %}
-<p class="muted">왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
+<p class="muted">여기가 <strong>묻는 자리</strong>입니다.
+  왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
   이것으로 <code>targets.json</code> 의 <code>fuel_match</code> ·
   <code>trim_include</code> 를 고칠지, 그대로 둘지 정합니다.</p>
 <table id="unmatched">
-<thead><tr><th>제조사</th><th>모델군</th><th>연료</th><th>배지</th>
+<thead><tr><th>모델명(원문)</th><th>연료</th><th>배지</th><th>사이트</th>
   <th class="num">건수</th></tr></thead>
 <tbody>
 {% for u in nr.unmatched %}
-<tr><td>{{ u.manufacturer }}</td><td>{{ u.model_group }}</td>
+<tr><td><strong>{{ u.model_group }}</strong>
+    <span class="dim">{{ u.manufacturer }}</span></td>
   <td>{{ u.fuel }}</td><td class="muted">{{ u.trim }}</td>
+  <td class="muted">{{ u.site }}</td>
   <td class="num">{{ u.count | num }}</td></tr>
 {% endfor %}
 </tbody>
 </table>
 {% endif %}
 {% if !nr.unmatched %}
-<p class="muted">차종이 안 붙은 매물이 없습니다.</p>
+<p class="muted">모르는 차가 없습니다.</p>
+{% endif %}
+
+<!-- ★★ 범위 밖 — ★ 아는 차인데 갈래가 다르다.  ★ 마스터 결정 「제외해」 (UI_REVIEW 9a)
+     ★ 묻는 자리가 아니므로 ★ 건수만 내고 ★ 접어 둔다 -->
+{% if nr.out_of_scope %}
+<h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
+<details class="card tight">
+  <summary><strong>{{ nr.out_of_scope_total | num }}건</strong>
+    <span class="dim">· 펼치기 ▾ —
+      스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
+      평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
+  <p class="muted">갈래를 넓히시면 되살아납니다 —
+    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.</p>
+  <table>
+  <thead><tr><th>아는 차종</th><th>모델군</th><th>연료</th>
+    <th class="num">건수</th></tr></thead>
+  <tbody>
+  {% for u in nr.out_of_scope %}
+  <tr><td><strong>{{ u.known }}</strong></td><td>{{ u.model_group }}</td>
+    <td>{{ u.fuel }}</td><td class="num">{{ u.count | num }}</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+</details>
+{% endif %}
+
+<h3>3 등록부 미분류 — 판정을 막는 것</h3>
+{% if nr.field_unclassified %}
+<p class="notice">등록부 미분류 <strong>{{ nr.field_unclassified | num }}건</strong> —
+  <strong>V4-11 이 판정을 막습니다.</strong>
+  <code>config/field_usage.suggested.json</code> 을 확인·수정해
+  <code>config/field_usage.json</code> 으로 옮긴 뒤 재실행합니다.</p>
+{% endif %}
+{% if !nr.field_unclassified %}
+<p class="muted">등록부 미분류가 없습니다 — 판정을 막는 것이 없습니다.</p>
 {% endif %}
 
 <h2>지금도 볼 수 있는 것</h2>

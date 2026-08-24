@@ -36,7 +36,7 @@
 | `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:713` | **★ 없음** | 없음 | ref/E-attach.md:85 · guide/01_요구사항.md:949 · guide/01_요구사항.md:958 |
 | `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:741` | **★ 없음** | 없음 | ref/E-attach.md:86 · guide/01_요구사항.md:949 · guide/01_요구사항.md:958 |
 | `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:777` | **★ 없음** | 없음 | ref/E-attach.md:87 · guide/02_결함대장.md:174 · guide/02_결함대장.md:184 |
-| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:800` | **★ 없음** | 없음 | INDEX.md:22 · SCHEMA.md:15 · ref/E-attach.md:88 |
+| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:800` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · ref/E-attach.md:88 |
 | `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:831` | **★ 없음** | 없음 | guide/03_원칙지적.md:95 · guide/03_원칙지적.md:105 · guide/03_이력.md:354 |
 | `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:854` | **★ 없음** | 없음 | guide/03_원칙지적.md:109 · guide/03_원칙지적.md:119 · guide/03_이력.md:358 |
 | `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:936` | **★ 없음** | 없음 | guide/03_이력.md:368 · guide/03_이력.md:511 · chapters/00-standard.md:1538 |
@@ -90,7 +90,7 @@
 | `V2-06` | 빈 컨테이너가 NULL 로 저장되지 않았는가 | run | `validate/v2_load.py:38` | 2026-08-22 17:45 | 없음 | chapters/20-verify/b-v1v2.md:110 · chapters/20-verify/b-v1v2.md:148 · chapters/20-verify/b-v1v2.md:151 |
 | `V2-07` | 전건 NULL 컬럼 | run | `validate/v2_load.py:41` | 2026-08-22 17:45 | 없음 | chapters/20-verify/b-v1v2.md:111 · chapters/20-verify/b-v1v2.md:148 · chapters/20-verify/b-v1v2.md:152 |
 | `V2-08` | 값 종류 1인 컬럼 | run | `validate/v2_load.py:121` | 2026-08-22 17:45 | 없음 | chapters/20-verify/b-v1v2.md:112 · chapters/20-verify/b-v1v2.md:148 · chapters/20-verify/b-v1v2.md:153 |
-| `V2-09` | core_pii 를 직접 조회하는 코드 없음 | run | `validate/v2_load.py:44` | 2026-08-22 17:45 | 없음 | SCHEMA.md:45 · guide/03_이력.md:96 · chapters/11-store/b-core.md:488 |
+| `V2-09` | core_pii 를 직접 조회하는 코드 없음 | run | `validate/v2_load.py:44` | 2026-08-22 17:45 | 없음 | SCHEMA.md:37 · guide/03_이력.md:96 · chapters/11-store/b-core.md:488 |
 | `V2-10` | core_listing 에 plate_no · dealer_name · phone · address 없음 | run | `validate/v2_load.py:47` | 2026-08-22 17:45 | 없음 | guide/03_이력.md:96 · chapters/20-verify/b-v1v2.md:128 |
 | `V2-10b` | core_* 에 마스킹 컬럼 없음 | run | `validate/v2_load.py:57` | 2026-08-22 17:45 | 없음 | chapters/20-verify/b-v1v2.md:129 |
 | `V2-11` | plate_hash 가 전건 16자 hex | run | `validate/v2_load.py:118` | 2026-08-22 17:45 | 없음 | DEDUP_CROSS_SITE.md:26 · chapters/11-store/b-core.md:446 · chapters/20-verify/b-v1v2.md:130 |
