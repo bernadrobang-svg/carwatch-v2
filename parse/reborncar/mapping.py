@@ -82,12 +82,30 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     # ★ 차량번호 — ★ `split_pii` 가 해시로 바꾼다.  ★ 원문을 안 남긴다
     if f.get("차량번호"):
         out["_pii_plate_no"] = f["차량번호"]
+    # ★★ 제원 둘 (마스터 확정 08-24) — ★ 없으면 안 넣는다 (NULL = 모름)
+    n = seats_of(f)
+    if n is not None:
+        out["spec_seats"] = n
+    kmpl = kmpl_of(f)
+    if kmpl is not None:
+        out["spec_fuel_economy_kmpl"] = kmpl
     return out
 
 
+def seats_of(f: dict) -> int | None:
+    """승차정원 — ★ 「5인승」.  ★ 리본카는 ★ `승차인원` 이라 적는다."""
+    return _int(f.get("승차인원") or f.get("승차정원"))
+
+
+def kmpl_of(f: dict) -> float | None:
+    """복합연비 — ★ 「12.3km/L」.  ★ 단위 글자는 사이트마다 다르다."""
+    got = re.search(r"([\d.]+)\s*km", f.get("복합연비") or f.get("연비") or "")
+    return float(got.group(1)) if got else None
+
+
 def seats(html: str) -> int | None:
-    """승차인원 — ★ 「5인승」.  ★ 낼 곳은 규격이 아직 안 정했다 (UI_REVIEW 10)."""
-    return _int(fields(html).get("승차인원"))
+    """승차인원 — ★ 「5인승」 (UI_REVIEW 10 · `spec_seats`)."""
+    return seats_of(fields(html))
 
 
 def marks(html: str) -> dict:

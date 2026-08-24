@@ -225,6 +225,13 @@ class ScoreView:
     curve: tuple = ()
     # ★ 확인 못 한 축을 채웠을 때의 비율·등급 (STEP 149h · D-2)
     pending_best: dict | None = None
+    # ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10 · 가이드 답 08-24).
+    #   ★ 「살지 말지」에 쓰인다 — ★ 기름값이 총비용이고 ★ 식구 수가 차를 정한다
+    #   ★ 원문에 없으면 None 이다 — ★ 0 이 아니다.  ★ 화면에는 「—」
+    #   ★ 상세와 비교에만 낸다.  ★ 목록에는 안 낸다 (S46-45)
+    #   ★★ 축이 아니다 — ★ 판정에 안 들어간다.  ★ 보여 주기만 한다
+    spec_fuel_economy_kmpl: float | None = None
+    spec_seats: int | None = None
 
 
 

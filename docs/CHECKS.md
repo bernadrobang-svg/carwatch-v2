@@ -189,8 +189,8 @@
 | `V3-92` | 트림 만점이 개별 취향 축보다 큼 | run | `validate/v3_logic.py:178` | 2026-08-22 17:45 | 없음 | guide/03_이력.md:452 · chapters/30-score/f-table.md:375 |
 | `V3-93` | 제외 매물에 등급 문자가 안 붙음 | run | `validate/v3_logic.py:184` | 2026-08-22 17:45 | 없음 | guide/03_이력.md:453 · chapters/30-score/f-table.md:336 |
 | `V3-94` | 등급 컷이 규격의 8단계임 | run | `validate/v3_logic.py:189` | 2026-08-22 17:45 | 2026-08-22 06:22 | guide/03_이력.md:453 · chapters/30-score/f-table.md:322 · chapters/30-score/f-table.md:337 |
-| `V3-95` | 화면이 source='missing' 을 「없음」으로 안 냄 | run | `validate/v3_logic.py:166` | 2026-08-22 17:45 | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:154 · chapters/30-score/f-table.md:424 |
-| `V3-96` | value IS NULL 과 source 모름 건수 차 | run | `validate/v3_logic.py:172` | **★ 없음** | 2026-08-22 17:45 | guide/03_이력.md:455 · guide/07_밀린일대장.md:154 · chapters/30-score/f-table.md:425 |
+| `V3-95` | 화면이 source='missing' 을 「없음」으로 안 냄 | run | `validate/v3_logic.py:166` | 2026-08-22 17:45 | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:160 · chapters/30-score/f-table.md:424 |
+| `V3-96` | value IS NULL 과 source 모름 건수 차 | run | `validate/v3_logic.py:172` | **★ 없음** | 2026-08-22 17:45 | guide/03_이력.md:455 · guide/07_밀린일대장.md:160 · chapters/30-score/f-table.md:425 |
 | `V4-01` | 매핑 일치율 (A 100% · B 99% · C 80%) | run | `validate/v4_mapping.py:28` | 2026-08-22 17:45 | 없음 | chapters/00-standard.md:661 · chapters/60-admin/c-tools.md:152 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-02` | 미매핑 경로 목록 | run | `validate/v4_mapping.py:103` | 2026-08-22 17:45 | 없음 | chapters/20-verify/c-v3v4.md:177 |
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | 2026-08-22 17:45 | 없음 | chapters/20-verify/c-v3v4.md:178 · chapters/20-verify/c-v3v4.md:294 |

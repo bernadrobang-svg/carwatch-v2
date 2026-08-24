@@ -157,6 +157,11 @@ class ListingRow:
     # 엔카 원문 (STEP 149q).  ★ 우리 판정은 참고다.  실제 매물은 엔카에 있다
     source_id: str | None = None
     encar_url: str | None = None
+    # ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10) — ★ **비교 화면에만** 쓴다.
+    #   ★ 목록 카드에는 안 낸다 (S46-45).  ★ 축이 아니다 — 판정에 안 들어간다
+    #   ★ 원문에 없으면 None — ★ 0 이 아니다.  ★ 화면에는 「—」
+    spec_fuel_economy_kmpl: float | None = None
+    spec_seats: int | None = None
     # 「이 값으로 걸러 보기」에 쓰는 파생 (STEP 149p).
     # ★ 화면이 계산하지 않는다.  여기서 만들어 내려준다
     year: str | None = None           # 연식 4자리
@@ -209,7 +214,12 @@ class ListingRow:
 @dataclass(frozen=True)
 class ListingFilter:
     # ★ 비면 「전부」다 (개정 306).  「엔카만」 「K카 직영만」 「전부」
-    site: str | None = "encar"
+    # ★★ 실측 08-24 — ★ 기본값이 `"encar"` 라 ★ **주석과 정반대**였다.
+    #   ★ ★ 그래서 ★ `/listings` 가 ★ 엔카 3,259건만 냈다 (전부는 5,319건).
+    #     ★ ★ 매물 2,060건이 ★ 받아 놓고도 ★ 화면에 안 나왔다
+    #   ★ ★ `/detail/{id}` 가 ★ 엔카 아닌 매물에서 ★ 404 이던 것도 ★ 같은 뿌리다 —
+    #     ★ 상세가 이 거르개를 그대로 쓴다 (`view_detail`)
+    site: str | None = None
     # 판매 유형 — 「K카 직영만」 (sites.json sell_type_labels)
     sell_type: str | None = None
     target_key: str | None = None

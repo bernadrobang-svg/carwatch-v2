@@ -39,6 +39,14 @@
     {% if r.buy_estimated %}<span class="dim">추정</span>{% endif %}
     <br><span class="dim">{% if r.cash_only %}전액 현금{% endif %}{% if !r.cash_only %}현금 {{ r.down_payment_won | won }} · 월 {{ r.monthly_won | won }} 추정{% endif %}</span>
   </td>{% endfor %}</tr>
+<!-- ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10) — ★ 비교는 견주는 자리라 갈리는 값이다.
+     ★ 목록에는 안 낸다 (S46-45) · ★ 축이 아니다 — 판정에 안 들어간다
+     ★ 원문에 없으면 「—」 — ★ 카탈로그에서 지어내지 않는다 (개정 325) -->
+<tr><th title="살지 말지에 쓰이는 둘만 냅니다. 판정에는 안 들어갑니다">제원</th>
+  {% for r in c.rows %}<td>
+    복합연비 {% if r.spec_fuel_economy_kmpl %}<b>{{ r.spec_fuel_economy_kmpl }}km/L</b>{% endif %}{% if !r.spec_fuel_economy_kmpl %}<b class="dim">—</b>{% endif %}
+    <br>{% if r.spec_seats %}<b>{{ r.spec_seats }}인승</b>{% endif %}{% if !r.spec_seats %}<b class="dim">— 인승</b>{% endif %}
+  </td>{% endfor %}</tr>
 </tbody></table>
 
 <table>

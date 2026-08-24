@@ -850,9 +850,10 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
                                 q.get("target") or None)
         price_max = cap if price_max is None else min(price_max, cap)
     return ListingFilter(
-        # ★ site=all 이면 전부 (개정 306).  없으면 기본 사이트다
-        site=(None if (q.get("site") or "") == "all"
-              else (q.get("site") or "encar")),
+        # ★ site=all 이면 전부 (개정 306).  ★ 안 주면 ★ **전부**다 —
+        #   ★ ★ 전에는 `or "encar"` 라 ★ 엔카만 나왔다 (실측 08-24 · 3,259 / 5,319)
+        site=(None if (q.get("site") or "") in ("", "all")
+              else q.get("site")),
         sell_type=q.get("sell_type") or None,
         target_key=q.get("target") or None,
         grade=q.get("grade") or None,

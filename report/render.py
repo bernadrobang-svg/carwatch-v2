@@ -322,7 +322,10 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         # 상세 사진 (개정 375).  ★ 대표 하나가 아니라 전부다
         " l.photo_list_json,"
         # 가점 (개정 380) · 전기차인가 — 「배터리 진단 없음」을 낼지 정한다
-        " s.bonuses_json, l.ev_battery_known"
+        " s.bonuses_json, l.ev_battery_known,"
+        # ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10) — ★ 상세·비교에만 낸다.
+        #   ★ 축이 아니다 — ★ 판정에 안 들어간다.  ★ 보여 주기만 한다
+        " l.spec_fuel_economy_kmpl, l.spec_seats"
         " FROM core_listing l "
         "LEFT JOIN result_score s ON s.listing_id=l.listing_id "
         "AND s.calc_version=? WHERE l.listing_id=?",
@@ -403,7 +406,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         photos=_photo_urls(head[17], root),
         curve=_curve_points(head[9], head[10], root),
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
-        encar_url=(_encar_url(head[8], root) if head[8] else None))
+        encar_url=(_encar_url(head[8], root) if head[8] else None),
+        # ★ 원문에 없으면 None 이다 — ★ 0 이 아니다.  ★ 화면이 「—」를 낸다
+        spec_fuel_economy_kmpl=head[20], spec_seats=head[21])
 
 
 # 왜 분모에서 빠졌는가.  ★ 코드가 아니라 사람 말로 낸다 (STEP 149h)

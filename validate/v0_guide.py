@@ -840,6 +840,67 @@ def s46_41_site_status_known() -> tuple[bool, str]:
     return True, f"사이트 {len(sites)}개의 status 가 다 규격 안이다 ({'·'.join(sorted(known))})"
 
 
+
+# ★★ 제원 — ★ 상세·비교에만 (UI_REVIEW 10 · 마스터 확정 08-24)
+SPEC_SCREENS_OK = ("detail.html", "compare.html")
+# ★ 제원이 화면에 나왔음을 알리는 글자 — ★ 칸 이름과 단위 둘 다 본다
+SPEC_WORDS = ("spec_fuel_economy_kmpl", "spec_seats", "km/L", "인승")
+# ★★ 마스터 확정 금지 — ★ 「살지 말지가 안 갈리는 것」 (UI_REVIEW 10-2).
+#   ★ 금지가 ★ 열둘에서 ★ 열로 줄었다 — ★ 풀린 것이 아니다
+SPEC_FORBIDDEN = ("제로백", "공차중량", "타이어 규격", "전장", "전폭", "전고",
+                  "배기량", "출력", "토크", "축거")
+
+
+def _templates() -> list:
+    got = ROOT / "web" / "templates"
+    return sorted(p for p in got.glob("*.html")) if got.is_dir() else []
+
+
+def s46_45_spec_not_in_list() -> tuple[bool, str]:
+    """★ 제원이 ★ 목록 카드에 ★ 안 나오는가 (UI_REVIEW 10-3 · 마스터 결정).
+
+    ★ 마스터가 ★ 「B — 상세에만」으로 정하셨다.  ★ 비교에도 낸다 (견주는 자리다)
+    ★ ★ 목록에 내면 ★ 카드가 카탈로그가 된다 — ★ 「살지 말지」를 못 고른다
+    """
+    bad = []
+    for q in _templates():
+        if q.name in SPEC_SCREENS_OK:
+            continue
+        text = _read(q)
+        for w in SPEC_WORDS:
+            if w in text:
+                bad.append(f"{q.name} — 「{w}」")
+    if bad:
+        return False, ("★ 제원이 상세·비교 밖에 나왔다 — "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, f"제원은 {'·'.join(SPEC_SCREENS_OK)} 에만 있다"
+
+
+def s46_46_spec_forbidden_ten() -> tuple[bool, str]:
+    """★ 금지 열 항목이 ★ 화면에 안 나오는가 (UI_REVIEW 10-2 · 마스터 확정).
+
+    ★ 제로백 · 공차중량 · 타이어 규격 · 전장·전폭·전고 · 배기량 · 출력 · 토크 · 축거
+    ★★ 까닭 — ★ 그것으로 ★ 「살지 말지」가 ★ 안 갈린다.  ★ 카탈로그를 보러 온 것이 아니다
+    ★ 주석은 안 센다 — ★ 「내지 마라」라고 적어 둔 줄이 잡히면 안 된다
+    ★★ 관리 화면(`admin_*`)은 뺀다 — ★ 거기 「배기량」은 ★ **갈래를 고르는 규칙**이다
+      (`targets.json` 의 `displacement_range`).  ★ 제원을 보여 주는 것이 아니다.
+      ★ ★ 금지의 까닭은 ★ 「사는 사람이 살지 말지를 못 고른다」이므로
+        ★ ★ 사는 사람이 보는 화면만 본다
+    """
+    bad = []
+    for q in _templates():
+        if q.name.startswith("admin"):
+            continue
+        for line in re.sub(r"<!--.*?-->", " ", _read(q), flags=re.S).split("\n"):
+            for w in SPEC_FORBIDDEN:
+                if w in line:
+                    bad.append(f"{q.name} — 「{w}」")
+    if bad:
+        return False, (f"★ 금지 제원이 화면에 있다 {len(set(bad))}곳 — "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, f"금지 제원 열 항목이 화면에 없다 ({len(SPEC_FORBIDDEN)}개 확인)"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -868,6 +929,8 @@ CHECKS = (
     ("S46-36", "폐기된 요구가 규격에 안 살아 있는가", s46_36_dropped_not_alive),
     ("S46-40", "「진행」인 요구의 문서가 바뀌었는가", s46_40_progress_docs_changed, "warn"),
     ("S46-41", "사이트 status 가 규격의 셋 안인가", s46_41_site_status_known),
+    ("S46-45", "제원이 목록에 안 나오는가", s46_45_spec_not_in_list),
+    ("S46-46", "금지 제원 열 항목이 화면에 없는가", s46_46_spec_forbidden_ten),
 )
 
 

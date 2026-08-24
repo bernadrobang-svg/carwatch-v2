@@ -15,11 +15,18 @@
 
 {% if n.done %}
 <h2>★ 1 미분류 — ★ 마스터께 묻는 자리</h2>
+<!-- ★★ 08-24 가이드 지적 — ★ 「세 숫자만 있어 나도 헷갈렸다」.
+     ★ ★ 한 줄로 먼저 말한다 — ★ 「물을 것이 몇 건인가」가 답이다 -->
+<p class="sentence"><b>미분류 {{ nr.unmatched_total | num }}건</b> —
+  이것이 <strong>마스터께 여쭐 것</strong>입니다.</p>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
-  <strong>모르는 차 {{ nr.unmatched_total | num }}건</strong> ·
+  <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·
   <strong>범위 밖 {{ nr.out_of_scope_total | num }}건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
+  <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
+  <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
+  <strong>이미 정해진 것</strong>입니다 — 물을 것이 아닙니다.
   판정 대상이 아닙니다 — 버리지도, 임의의 차종에 넣지도 않습니다.
 </p>
 {% if nr.unmatched %}
@@ -105,11 +112,18 @@
   나머지 축은 정상으로 판정됩니다.</p>
 
 <h2>★ 1 미분류 — ★ 마스터께 묻는 자리</h2>
+<!-- ★★ 08-24 가이드 지적 — ★ 「세 숫자만 있어 나도 헷갈렸다」.
+     ★ ★ 한 줄로 먼저 말한다 — ★ 「물을 것이 몇 건인가」가 답이다 -->
+<p class="sentence"><b>미분류 {{ nr.unmatched_total | num }}건</b> —
+  이것이 <strong>마스터께 여쭐 것</strong>입니다.</p>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
-  <strong>모르는 차 {{ nr.unmatched_total | num }}건</strong> ·
+  <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·
   <strong>범위 밖 {{ nr.out_of_scope_total | num }}건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
+  <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
+  <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
+  <strong>이미 정해진 것</strong>입니다 — 물을 것이 아닙니다.
   판정 대상이 아닙니다 — 버리지도, 임의의 차종에 넣지도 않습니다.
 </p>
 {% if nr.unmatched %}

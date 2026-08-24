@@ -24,6 +24,14 @@ CREATE TABLE IF NOT EXISTS core_listing (
   mileage_km             INTEGER,
   mileage_detail_km      INTEGER,
   displacement_cc        INTEGER,
+  -- ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10 · 가이드 답 08-24).
+  --   ★ 「살지 말지」에 쓰이는 것만 둘 — ★ 기름값이 총비용이고 ★ 식구 수가 차를 정한다
+  --   ★ 원문에 없으면 NULL 이다 — ★ 0 이 아니다.  ★ 화면에는 「—」
+  --   ★ 상세와 비교에만 낸다.  ★ 목록에는 안 낸다 (S46-45)
+  --   ★★ 축으로 쓰지 않는다 — ★ 판정에 안 들어간다.  ★ 보여 주기만 한다
+  --   ★ 금지 열 항목(제로백·공차중량·타이어 규격 …)은 그대로다 (S46-46)
+  spec_fuel_economy_kmpl REAL,       -- 복합연비 (km/L) — 헤이딜러·리본카가 준다
+  spec_seats             INTEGER,    -- 승차정원 — 리본카가 준다
   trim_badge             TEXT,
   trim_grade_name        TEXT,
   -- ★ 세부등급 (개정 313).  목록 원문 BadgeDetail — 「트렌디」 · 「시그니처」

@@ -136,6 +136,14 @@
   <p class="note"><b class="up">관문에서 떨어졌습니다 — {{ v.absolute_fail }}</b>.
     ★ 「제외」는 등급이 아닙니다. 점수를 매기지 않습니다 (개정 433).</p>
   {% endif %}
+  <!-- ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10) — ★ 4절 아래 ★ 한 줄.
+       ★ 새 절을 만들지 않는다 — ★ 절 차례는 안 바꾼다 (V11-159)
+       ★ 원문에 없으면 「—」 — ★ 카탈로그에서 지어내지 않는다 (개정 325)
+       ★★ 축이 아니다 — ★ 판정에 안 들어간다.  ★ 보여 주기만 한다 -->
+  <p class="note" title="살지 말지에 쓰이는 둘만 냅니다. 판정에는 안 들어갑니다">
+    복합연비 {% if v.spec_fuel_economy_kmpl %}<b>{{ v.spec_fuel_economy_kmpl }}km/L</b>{% endif %}{% if !v.spec_fuel_economy_kmpl %}<b class="dim">—</b>{% endif %}
+    · {% if v.spec_seats %}<b>{{ v.spec_seats }}인승</b>{% endif %}{% if !v.spec_seats %}<b class="dim">— 인승</b>{% endif %}
+  </p>
 </div>
 
 <!-- ⑤ ★ 아직 모르는 것 ───────────────────────────────────────── -->

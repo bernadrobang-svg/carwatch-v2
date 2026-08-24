@@ -628,7 +628,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
      g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
-     _site, _sell_type, _mismatch) = rec
+     _site, _sell_type, _mismatch, _kmpl, _seats) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -705,6 +705,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     return ListingRow(
         # ★ 성능부와 보험이력이 어긋난다 (V3-50)
         record_mismatch=bool(_mismatch),
+        # ★ 비교 화면에만 쓴다 (S46-45).  ★ 없으면 None — ★ 0 이 아니다
+        spec_fuel_economy_kmpl=_kmpl, spec_seats=_seats,
         listing_id=lid, grade=grade or NOT_RATED,
         # ★★ 감점 (개정 491) — 상한을 먹인 뒤의 합과 문구
         penalty_won=_pen_sum(pen_json),
@@ -1185,7 +1187,11 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         " l.site, l.sell_type,"
         # ★ 성능부 ↔ 보험 어긋남 (V3-50).  조건은 store 에 하나만 둔다 —
         #   화면과 검사가 다른 것을 세면 「857건」이 거짓말이 된다
-        f" {record_mismatch_sql()}"
+        f" {record_mismatch_sql()},"
+        # ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10) — ★ **비교 화면용**이다.
+        #   ★ 목록 카드에는 안 낸다 (S46-45) — ★ 비교는 견주는 자리라 갈리는 값이다
+        #   ★★ 축이 아니다 — ★ 판정에 안 들어간다
+        " l.spec_fuel_economy_kmpl, l.spec_seats"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -2363,7 +2369,11 @@ def _unmatched_rows(conn, limit: int | None = None) -> tuple[list, list]:
 
     mine, oos, n_mine, n_oos = [], [], 0, 0
     for site, mf, mg, fuel, trim, n in conn.execute(
-            "SELECT site, site_manufacturer, site_model_group, fuel_raw, "
+            # ★★ 모델명이 없으면 ★ 마스터가 정하실 수가 없다 (가이드 지시 08-24).
+            #   ★ 새 사이트는 ★ 아는 차만 `site_model_group` 을 채운다 —
+            #   ★ ★ 모르는 차는 ★ 차명이 `site_model` 에 있다.  ★ 그것을 낸다
+            "SELECT site, site_manufacturer, "
+            "       COALESCE(site_model_group, site_model), fuel_raw, "
             "       trim_badge, COUNT(*) "
             "FROM core_listing WHERE target_key IS NULL "
             "GROUP BY 1, 2, 3, 4 ORDER BY 6 DESC"):

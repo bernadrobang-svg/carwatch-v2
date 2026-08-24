@@ -105,11 +105,16 @@ def parse_detail(body: dict, site: str, source_id: str) -> dict | None:
         "transmission": d.get("transmission_display") or d.get("transmission"),
         "sales_status": body.get("sale_status"),
     })
+    # ★★ 제원 (마스터 확정 08-24) — ★ 헤이딜러는 ★ 복합연비를 준다.
+    #   ★ 승차정원은 ★ 안 준다 — ★ NULL 로 둔다 (0 이 아니다)
+    kmpl = fuel_efficiency_kmpl(body)
+    if kmpl is not None:
+        out["spec_fuel_economy_kmpl"] = kmpl
     return {k: v for k, v in out.items() if v is not None}
 
 
 def fuel_efficiency_kmpl(body: dict) -> float | None:
-    """복합연비 — ★ 「9.1km/ℓ」 에서 수만.  ★ 낼 곳은 규격이 아직 안 정했다."""
+    """복합연비 — ★ 「9.1km/ℓ」 에서 수만 (UI_REVIEW 10 · `spec_fuel_economy_kmpl`)."""
     got = RE_KMPL.search(str((body.get("detail_info") or {})
                              .get("fuel_efficiency") or ""))
     return float(got.group(1)) if got else None
