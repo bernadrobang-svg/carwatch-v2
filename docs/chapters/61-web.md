@@ -1,7 +1,7 @@
 # 14장. 표현 계층 (STEP 141–155)
 
 ```
-version  SPEC-2026.08.24-r685
+version  SPEC-2026.08.25-r723
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -188,6 +188,7 @@ python3 run.py web --port N
 | `/listings` | GET | `view_listings` | anonymous | — | 구현 |
 | `/why/{listing_id}` | GET | `view_why` | anonymous | — | 구현 |
 | `/notready` | GET | `view_notready` | anonymous | — | 구현 |
+| ★ `/track` | GET | `view_track` | anonymous | — | 구현 |
 | `/static/{path}` | GET | — | anonymous | — | 구현 |
 | `/admin` | GET | `view_admin` | **admin** | — | 구현 |
 | `/admin/audit` | GET | `view_admin_audit` | **admin** | 운영 | 구현 |
