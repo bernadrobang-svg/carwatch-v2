@@ -482,7 +482,13 @@
           "model": "qpRDG3",
           "_차명": "볼보 XC60 2세대"
         }
-      ]
+      ],
+      "volvo_selekt": {
+        "slug": [
+          "xc60"
+        ],
+        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      }
     },
     "year_range": null,
     "price_range": null,
@@ -519,7 +525,13 @@
           "model": "n3Qkxp",
           "_차명": "볼보 S60 3세대"
         }
-      ]
+      ],
+      "volvo_selekt": {
+        "slug": [
+          "s60"
+        ],
+        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      }
     },
     "year_range": null,
     "price_range": null,
@@ -589,7 +601,13 @@
           "model": "wo2dG4",
           "_차명": "볼보 XC40"
         }
-      ]
+      ],
+      "volvo_selekt": {
+        "slug": [
+          "xc40"
+        ],
+        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      }
     },
     "year_range": null,
     "price_range": null,
@@ -627,7 +645,14 @@
           "model": "Z40d04",
           "_차명": "볼보 V60 크로스 컨트리 2세대"
         }
-      ]
+      ],
+      "volvo_selekt": {
+        "slug": [
+          "v60-cross-country",
+          "v60cc"
+        ],
+        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+      }
     },
     "year_range": null,
     "price_range": null,
