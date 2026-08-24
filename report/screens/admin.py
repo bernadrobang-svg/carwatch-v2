@@ -934,7 +934,7 @@ def dict_state(conn) -> dict:
                     if len(a["sample"]) > n else ""))
             for a in pending_axis_summary(conn)]
     # ★ 자주 나온 순.  대기가 많은 축부터 봐야 한 번에 많이 열린다 (검토 15)
-    axes.sort(key=lambda a: (-a["values"], a["axis"]))
+    axes.sort(key=lambda a: (-a["values"], a["site"], a["axis"]))
     confirmed = conn.execute(
         "SELECT axis, COUNT(*) FROM dict_enum WHERE status='confirmed' "
         "GROUP BY 1 ORDER BY 1").fetchall()

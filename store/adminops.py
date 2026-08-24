@@ -381,16 +381,23 @@ DICT_AXIS_COLUMN: dict[str, str] = {
 }
 
 
-def pending_enums(conn: sqlite3.Connection, site: str = "encar") -> list:
+def pending_enums(conn: sqlite3.Connection, site: str | None = None) -> list:
     """확정 대기 목록 (13장 STEP 136e ①).
 
     ★ 출처를 함께 낸다.  'list' 는 「전체 집합을 본 게 아니다」라는 뜻이다
+    ★★ `site=None` 이면 ★ **사이트 전부**다 (실측 08-24).
+      ★ 전에는 ★ `site="encar"` 가 기본이라 ★ 화면이 ★ 232종 가운데 ★ 43종만 냈다.
+      ★ 안 보이는 189종은 ★ 사람이 누를 수가 없어 ★ 새 사이트 다섯의
+      ★ `result_axis` 가 ★ 통째로 비어 있었다 — ★ 매물 2,803건
     """
     out = []
-    for axis, value, cnt, src, first in conn.execute(
-        "SELECT axis, value, count_seen, source_endpoint, first_seen "
-        "FROM dict_enum WHERE site=? AND status='pending' "
-        "ORDER BY axis, count_seen DESC, value", (site,)
+    where, args = "status='pending'", []
+    if site:
+        where, args = "site=? AND status='pending'", [site]
+    for site_, axis, value, cnt, src, first in conn.execute(
+        "SELECT site, axis, value, count_seen, source_endpoint, first_seen "
+        f"FROM dict_enum WHERE {where} "
+        "ORDER BY site, axis, count_seen DESC, value", args
     ):
         col = DICT_AXIS_COLUMN.get(axis)
         # ★ 셀 수 없는 축은 0 이 아니라 None 이다.  0 으로 내면
@@ -398,10 +405,12 @@ def pending_enums(conn: sqlite3.Connection, site: str = "encar") -> list:
         #   점검 원문(core_inspection)에 있다 (실측 08-16 검토 18)
         listings = None
         if col:
+            # ★ 그 사이트의 매물만 센다 — ★ 값이 사이트마다 같은 글자일 수 있다
             listings = conn.execute(
-                f"SELECT COUNT(*) FROM core_listing WHERE {col}=?",
-                (value,)).fetchone()[0]
-        out.append({"axis": axis, "value": value, "count_seen": cnt or 0,
+                f"SELECT COUNT(*) FROM core_listing WHERE site=? AND {col}=?",
+                (site_, value)).fetchone()[0]
+        out.append({"site": site_, "axis": axis,
+                    "value": value, "count_seen": cnt or 0,
                     "source": src, "first_seen": first,
                     "listings": listings,
                     # ★ facet 을 못 봐서 목록으로 대신한 것이면 그렇게 말한다
@@ -409,13 +418,20 @@ def pending_enums(conn: sqlite3.Connection, site: str = "encar") -> list:
     return out
 
 
-def pending_axis_summary(conn: sqlite3.Connection, site: str = "encar") -> list:
-    """축 단위 묶음 (STEP 136e ③).  ★ 41종을 하나씩 누르지 않게 한다."""
+def pending_axis_summary(conn: sqlite3.Connection,
+                         site: str | None = None) -> list:
+    """축 단위 묶음 (STEP 136e ③).  ★ 41종을 하나씩 누르지 않게 한다.
+
+    ★★ 묶음의 단위는 ★ **(사이트 · 축)** 이다 — ★ 사이트가 다르면 ★ 다른 값이다.
+      ★ 기아의 「카니발」과 ★ K카의 「카니발」을 ★ 한 단추로 확정하면
+      ★ 어느 쪽을 확정한 것인지 ★ 알 수 없다
+    """
     rows: dict = {}
     for r in pending_enums(conn, site):
-        a = rows.setdefault(r["axis"], {"axis": r["axis"], "values": 0,
-                                        "listings": 0, "countable": True,
-                                        "from_list": False, "sample": []})
+        a = rows.setdefault((r["site"], r["axis"]),
+                            {"site": r["site"], "axis": r["axis"], "values": 0,
+                             "listings": 0, "countable": True,
+                             "from_list": False, "sample": []})
         a["values"] += 1
         if r["listings"] is None:
             a["countable"] = False
@@ -433,6 +449,7 @@ DICT_ACTIONS = ("confirm", "hold", "retire")
 def apply_dict_decision(conn: sqlite3.Connection, account: Account, *,
                         axis: str, values: list, action: str, reason: str,
                         at: str, site: str = "encar") -> dict:
+    # ★ site 는 ★ 부르는 쪽이 ★ 반드시 준다 — ★ 화면이 사이트별로 낸다 (08-24)
     """사전 값을 확정·보류·폐기한다 (STEP 136e ②③).
 
     ★ 자동으로 확정하지 않는다.  사람이 눌러야 여기 온다 —

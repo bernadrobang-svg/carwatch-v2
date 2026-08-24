@@ -23,11 +23,11 @@
 <h3>축 단위로 한 번에</h3>
 <p class="muted">{{ pending_total | num }}종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.
-  지금 대기 중인 축은 <strong>{{ pending_axes | count }}가지</strong>입니다 —
-  나머지 축은 이미 확정됐습니다.</p>
+  지금 대기 중인 묶음은 <strong>{{ pending_axes | count }}가지</strong>입니다 —
+  <strong>사이트마다 따로</strong> 셉니다. 나머지는 이미 확정됐습니다.</p>
 {% for a in pending_axes %}
 <details class="card tight">
-  <summary><strong>{{ a.axis }}</strong>
+  <summary><strong>{{ a.site }}</strong> · <strong>{{ a.axis }}</strong>
     <span class="dim">{{ a.values | num }}종 ·
       {% if a.countable %}매물 {{ a.listings | num }}건{% endif %}{% if !a.countable %}<span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span>{% endif %} ·
       {% if a.from_list %}list <span class="dim">전체 집합 아님</span>{% endif %}{% if !a.from_list %}facet{% endif %}</span></summary>
@@ -35,11 +35,13 @@
   <form method="post" action="/admin/dict">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="axis" value="{{ a.axis }}">
+    <!-- ★ 사이트를 함께 보낸다 — ★ 값이 사이트마다 같은 글자일 수 있다 (08-24) -->
+    <input type="hidden" name="site" value="{{ a.site }}">
     <input type="hidden" name="previewed" value="1">
     <label>사유 <input name="reason" size="24"
       placeholder="왜 확정하는가 (필수)" required></label>
     <button type="submit" name="action" value="confirm"
-      title="이 축의 대기 값을 한 번에 확정합니다">이 축 {{ a.values }}종 확정</button>
+      title="이 사이트·축의 대기 값을 한 번에 확정합니다">{{ a.site }} {{ a.axis }} {{ a.values }}종 확정</button>
     <button type="submit" name="action" value="retire"
       title="쓰지 않는 값으로 내립니다">폐기</button>
   </form>
@@ -53,11 +55,12 @@
   여기는 어떤 값이 몇 번 관측됐는지 확인할 때 봅니다.
   좁은 폭에서는 표가 옆으로 넘어갑니다 — 표 안에서만 넘어갑니다.</p>
 <table class="rows">
-<thead><tr><th title="판정 24축 가운데 어느 축인지입니다">축</th><th title="지금 들어 있는 값입니다">값</th><th class="num" title="원문에서 몇 번 보였는지입니다">관측</th><th class="num" title="매물 건수입니다">매물</th>
+<thead><tr><th title="어느 사이트에서 온 값인지입니다">사이트</th><th title="판정 24축 가운데 어느 축인지입니다">축</th><th title="지금 들어 있는 값입니다">값</th><th class="num" title="원문에서 몇 번 보였는지입니다">관측</th><th class="num" title="매물 건수입니다">매물</th>
   <th title="어디서 온 값인지입니다">출처</th><th>처음 본 시각</th></tr></thead>
 <tbody>
 {% for r in pending_rows %}
 <tr>
+  <td data-label="사이트">{{ r.site }}</td>
   <td data-label="축">{{ r.axis }}</td>
   <td data-label="값"><strong>{{ r.value }}</strong></td>
   <td class="num" data-label="관측">{{ r.count_seen | num }}</td>

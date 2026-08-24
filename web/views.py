@@ -1532,19 +1532,22 @@ def admin_dict(conn, account, req, root: str = ROOT, csrf: str = "",
         form = _gate(conn, account, req, csrf)
         axis = (form.get("axis") or "").strip()
         action = (form.get("action") or "").strip()
+        # ★ 사이트를 화면이 준다 — ★ 값이 사이트마다 같은 글자일 수 있다 (08-24).
+        #   ★ 안 주면 예전처럼 encar 다 — ★ 옛 화면과 옛 시험이 그대로 돈다
+        site = (form.get("site") or "encar").strip()
         picked = [v for k, v in form.items()
                   if k.startswith("v_") and v]
         if not picked:
-            # 축 단위 묶음 확정 — 그 축의 대기 전부다 (STEP 136e ③)
+            # 축 단위 묶음 확정 — 그 사이트·축의 대기 전부다 (STEP 136e ③)
             from store.adminops import pending_enums
 
-            picked = [r["value"] for r in pending_enums(conn)
+            picked = [r["value"] for r in pending_enums(conn, site)
                       if r["axis"] == axis]
         got = apply_dict_decision(conn, account, axis=axis, values=picked,
                                   action=action, reason=form.get("reason", ""),
-                                  at=_now())
+                                  at=_now(), site=site)
         return redirect("/admin/dict",
-                        f"{got['axis']} — {got['action']} {got['done']}/"
+                        f"{site} {got['axis']} — {got['action']} {got['done']}/"
                         f"{got['asked']}종 처리했습니다", flash_key)
 
     return page(conn, account, "사전 확정", "admin_dict.html",
