@@ -42,11 +42,21 @@ MAX_PAGES = 400         # ★ 빈 쪽이 나오면 그 전에 멈춘다.  이것
 # ★★ 한 회차에 부를 상세 수 (명령서 14-1).  ★ 막히는 자리는 ★ 목록이 아니라 ★ 상세다 —
 #   ★ 목록 53쪽은 ★ 봇 차단 0건이다 (실측 08-24 · C 확인).
 #   ★ 목록은 ★ 한 번에 다 받고 · ★ 상세만 ★ 회차를 나눈다
-DETAIL_BATCH = 50
+# ★★ 08-25 실측 — ★ **한 묶음 10건 · 사이 5분**이 ★ 사이트가 주는 몫이다.
+#   ★ 10건씩이면 ★ 5분 쉬고 ★ 10/10 이 다 통과했다 (두 번 확인).
+#   ★ ★ 30건씩 부르면 ★ 첫 회차 10 · ★ 다음 두 회차 ★ **0 · 0** — ★ 몫이 마른다.
+#     ★ ★ 많이 부를수록 ★ 적게 받는다.  ★ 욕심내지 않는다
+#   ★ 간격을 5초로 벌려도 ★ 안 낫다 — ★ **건수**가 몫이지 ★ 속도가 아니다
+#   ★ 헤더·UA 를 사람 꼴로 바꿔도 ★ 안 낫다 (데스크톱 ＋ 사람 머리 전부 → 정상 3)
+DETAIL_BATCH = 10
+# ★ 묶음 사이에 이만큼 쉰다 — ★ 실측으로 몫이 돌아오는 참이다
+BURST_REST_SEC = 300
 # ★ 이만큼 이어서 막히면 ★ 그 회차를 끝낸다 (명령서 14-1)
 # ★★ 가이드 지시 08-24 — 「★ 회차 50건 · ★ 2,759B 세 번이면 끝」.
 #   ★ 200/8 로는 ★ 막힌 뒤에도 ★ 오래 두드려 ★ 다음 회차까지 막혔다 (실측 08-24)
 WALL_GIVE_UP = 3
+# ★ 한 번 불러 ★ 묶음을 몇 번 도는가 — ★ `--bursts N`.  ★ 안 주면 하나다
+DEFAULT_BURSTS = 1
 RE_CARSEQ = re.compile(r"carSeq=(\d+)")
 
 
@@ -321,10 +331,20 @@ def main() -> int:
         gap = opt("--interval", 0)
         if gap:
             cfg = dict(cfg, interval_sec=gap)
-        # ★ 회차 상한 — ★ 안 주면 200 이다 (명령서 14-1).  ★ 0 을 주면 전량이다
+        # ★ 한 묶음 크기 — ★ 안 주면 ★ 실측값 10 이다 (08-25)
         want = opt("--detail", DETAIL_BATCH)
-        return store_details(adapter, cfg, [i for _g, ids in by_group
-                                            for i in ids], want)
+        # ★★ 묶음을 ★ 몇 번 도는가 — ★ 사이에 ★ 5분씩 쉰다 (실측).
+        #   ★ ★ 「가려 받지 마라」 (마스터 확정 08-25) — ★ 전량을 ★ 박자에 맞춰 받는다
+        bursts = opt("--bursts", DEFAULT_BURSTS)
+        ids = [i for _g, gids in by_group for i in gids]
+        rc = 0
+        for turn in range(1, max(1, bursts) + 1):
+            if turn > 1:
+                print(f"★ {BURST_REST_SEC}초 쉰다 — ★ 몫이 돌아오는 참이다 "
+                      f"({turn}/{bursts} 묶음)")
+                time.sleep(BURST_REST_SEC)
+            rc = store_details(adapter, cfg, ids, want) or rc
+        return rc
 
     pages = opt("--pages", 1)
     seen: set = set()

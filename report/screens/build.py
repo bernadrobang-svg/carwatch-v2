@@ -1265,17 +1265,23 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         " l.spec_fuel_economy_kmpl, l.spec_seats,"
         # ★★ 「3곳」 배지 — ★ 같은 차가 올라간 사이트의 수 (v3_listings_시안).
         #   ★ 누르면 ★ `/track` 으로 간다.  ★ 1 이면 안 낸다
-        "  (SELECT COUNT(DISTINCT l3.site) FROM core_listing l3"
-        "    WHERE l3.plate_hash = l.plate_hash AND l3.status = 'active'),"
         # ★★ 값 폭 (가이드 지시 08-24) — ★ 「3곳 · 2,890~3,260만」.
         #   ★ 곳 수만 내면 ★ **얼마나 벌어졌는지 모른다**
-        "  (SELECT MIN(l4.price_current_won) FROM core_listing l4"
-        "    WHERE l4.plate_hash = l.plate_hash AND l4.status = 'active'),"
-        "  (SELECT MAX(l5.price_current_won) FROM core_listing l5"
-        "    WHERE l5.plate_hash = l.plate_hash AND l5.status = 'active')"
+        # ★★ 08-25 — ★ 서브쿼리 ★ **셋을 조인 하나로** 묶었다 (V11-34).
+        #   ★ ★ 셋을 따로 두면 ★ 한 쪽에 ★ 쿼리가 셋씩 는다 —
+        #     ★ ★ 실측 ★ 상한을 넘었다 (28).  ★ 값은 그대로다
+        "  dup.sites, dup.low_won, dup.high_won"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
+        # ★ 같은 차 묶음 — ★ 곳 수·값 폭을 ★ 한 번에 받는다 (색인 ix_listing_plate)
+        " LEFT JOIN (SELECT plate_hash,"
+        "                   COUNT(DISTINCT site) sites,"
+        "                   MIN(price_current_won) low_won,"
+        "                   MAX(price_current_won) high_won"
+        "              FROM core_listing WHERE status = 'active'"
+        "             GROUP BY plate_hash) dup"
+        "   ON dup.plate_hash = l.plate_hash"
         f" WHERE {' AND '.join(where)}"
         f" ORDER BY {order_clause(flt.order)}"
         " LIMIT ? OFFSET ?")
