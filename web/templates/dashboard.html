@@ -141,8 +141,30 @@
 <ul>{% for a in d.attention %}<li class="warn-warn">{{ a.kind }} {{ a.count | num }}건 — {{ a.detail }}</li>{% endfor %}</ul>
 {% endif %}
 
+<!-- ══ 1절 「오늘」 (v3_dashboard_시안) — ★ 넷을 한 줄로 ══
+     ★ 필터가 걸리면 아래가 모두 그 조건 안에서 다시 그려진다 (마스터 확정 08-24) -->
+<h3>필터 — 매물과 같은 것이 걸린다</h3>
+<p class="muted">필터가 걸리면 아래가 모두 그 조건 안에서 다시 그려집니다
+  (마스터 확정 08-24). <a href="/listings">매물</a>의 조건이 그대로 걸립니다.</p>
+
+<h3>마지막 재판정</h3>
+<p class="sentence"><b>{{ d.last_recalc_at | date }}</b> — 네 시간마다 확인합니다.</p>
+
+<h2>1 오늘</h2>
+<div class="cellset">
+  <div class="cell num"><u>새로 뜬 것</u><b class="up">＋{{ d.new_today | num }}</b></div>
+  <div class="cell num"><u>값 내린 것</u><b>{{ d.dropped_today | num }}</b></div>
+  <div class="cell num"><u>사라진 것</u><b>{{ d.gone_today | num }}</b></div>
+  <div class="cell num"><u>마지막 재판정</u><b>{{ d.last_recalc_at | date }}</b></div>
+</div>
+<p class="muted">★ 「오늘」은 마지막 하루입니다. 재판정은 네 시간마다 확인합니다.</p>
+
+<h3>새로 뜬 것</h3>
+<p class="sentence">지난 하루에 <b>{{ d.new_today | num }}건</b>이 새로 들어왔습니다.</p>
+
+<h3>값 내린 것</h3>
 {% if d.today_changes %}
-<h2>오늘 변동</h2>
+<h3>값 내린 것 — 자세히</h3>
 <table>
 <thead><tr><th>구분</th><th>차종</th><th>항목</th><th class="num">변화</th>
 <th class="num">현재가</th></tr></thead>
@@ -159,6 +181,7 @@
 
 <!-- ══ 사라짐 목록 (개정 427 · STEP 95) ══
      ★ gone 을 「팔렸다」로 적지 않습니다.  목록에서 사라진 것입니다 (V6-06) -->
+<h3>사라진 것</h3>
 <h2>사라짐 <span class="muted">목록에서 내려간 것 · 팔렸다고 단정하지 않습니다</span></h2>
 {% if d.gone_rows %}
 <table class="rows">

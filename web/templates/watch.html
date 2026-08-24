@@ -26,6 +26,10 @@
 </div>
 <table class="rows">
 <thead><tr><th class="c" title="비교할 매물을 고릅니다">비교</th>
+<!-- ★★ 「지켜보는 곳」의 핵심 (명령서 1-7 ① · UI_REVIEW 14-4) —
+     ★ 담은 뒤 무엇이 바뀌었나를 ★ **맨 앞**에 낸다.
+     ★ 이것이 없으면 ★ 목록과 다를 것이 없어 보인다 -->
+<th title="담은 뒤 값이 어떻게 바뀌었는지입니다">★ 담은 뒤</th>
 <th class="c">사진</th><th class="c">등급</th><th class="c">★ 막대</th><th>차종 · 트림</th>
 <th class="r">연식</th><th class="r">주행</th>
 <th class="r">가격</th><th class="r">목표가</th><th>상태</th><th>가격 추이</th><th></th></tr></thead>
@@ -35,6 +39,17 @@
 <td class="c" data-label="비교">
   <input type="checkbox" name="id" value="{{ r.listing.listing_id }}"
          title="비교에 넣습니다"></td>
+<td data-label="담은 뒤">
+  <!-- ★★ 팔린 차도 지우지 않는다 — ★ 「팔렸다」로 남긴다 (명령서 1-7) -->
+  {% if r.gone %}<b class="up">✕ 팔렸다</b>
+    <span class="dim">{{ r.gone_at | date }}에 사라짐</span><br>{% endif %}
+  {% if r.price_delta_won %}<b class="{{ r.price_delta_won | signcls }}">
+    {% if r.price_at_add_won %}담을 때 {{ r.price_at_add_won | won }} →
+    지금 {{ r.listing.price_won | won }}{% endif %}</b><br>{% endif %}
+  {% if !r.price_delta_won %}<span class="dim">— 담을 때와 같다</span><br>{% endif %}
+  <span class="dim" title="담은 날부터 며칠째인지입니다">{{ r.added_at | date }}부터 지켜봄 ·
+    {{ r.days_watched }}일째</span>
+</td>
 <td class="c photo" data-label="사진">
   <a href="/detail/{{ r.listing.listing_id }}" title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
   {% if r.listing.photo_url %}<img class="thumb" src="{{ r.listing.photo_url }}" alt="" width="128" height="86" loading="lazy">{% endif %}

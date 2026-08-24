@@ -168,6 +168,10 @@ class ListingRow:
     # ★★ 템플릿은 ★ `>` 비교를 못 한다 (V11-104) — ★ 판단은 여기서 한다.
     #   ★ 실측 08-24 — ★ `{% if r.site_count > 1 %}` 가 ★ 늘 참이라 ★ 「1곳」이 다 나왔다
     multi_site: bool = False
+    # ★★ 값 폭 (가이드 지시 08-24) — ★ 「3곳 · 2,890~3,260만」.
+    #   ★ 곳 수만 내면 ★ 얼마나 벌어졌는지 모른다
+    dupe_low_won: int | None = None
+    dupe_high_won: int | None = None
     # 「이 값으로 걸러 보기」에 쓰는 파생 (STEP 149p).
     # ★ 화면이 계산하지 않는다.  여기서 만들어 내려준다
     year: str | None = None           # 연식 4자리
@@ -311,6 +315,17 @@ class WatchRow:
     relist_times: int = 0
     relist_low_won: int | None = None
     relist_high_won: int | None = None
+    # ★★ 「지켜보는 곳」 셋 (명령서 1-7 · UI_REVIEW 14-4 · v3_watch_시안).
+    #   ★ ① 담은 뒤 무엇이 바뀌었나 — ★ 「담을 때 3,260만 → 지금 2,990만」
+    #   ★ ② 바뀐 것이 위로 · ★ ③ 담은 날 — 「8월 17일부터 지켜봄 · 7일째」
+    #   ★★ 팔린 차도 ★ 지우지 않는다 — ★ 「팔렸다」로 남긴다
+    price_at_add_won: int | None = None
+    price_delta_won: int | None = None      # ★ 음수면 내렸다
+    days_watched: int = 0
+    gone: bool = False
+    gone_at: str | None = None
+    # ★ 담은 뒤 값이 바뀌었거나 팔렸는가 — ★ 이것이 위로 간다
+    changed: bool = False
 
 
 @dataclass(frozen=True)
@@ -394,6 +409,12 @@ class DashboardView:
     e_reasons: dict = field(default_factory=dict)
     # 오늘 변동 · 수집 단계.  ★ 사람이 「무엇이 달라졌나」를 먼저 본다
     today_changes: list = field(default_factory=list)
+    # ★★ 1절 「오늘」 (v3_dashboard_시안) — ★ 넷을 한 줄로 낸다.
+    #   ★ 새로 뜬 것 · 값 내린 것 · 사라진 것 · 마지막 재판정
+    new_today: int = 0
+    dropped_today: int = 0
+    gone_today: int = 0
+    last_recalc_at: str | None = None
     steps: list = field(default_factory=list)
     # ★★ 개정 427 — 현황이 시세를 흡수한다.  차종별 사분위표가 여기로 온다
     #   ★ /market 화면은 안 지웠다 — 관리로 내렸다

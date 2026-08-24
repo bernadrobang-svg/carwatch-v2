@@ -629,7 +629,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
      g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
-     _site, _sell_type, _mismatch, _kmpl, _seats, _sites_n) = rec
+     _site, _sell_type, _mismatch, _kmpl, _seats,
+     _sites_n, _dupe_low, _dupe_high) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -710,6 +711,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         spec_fuel_economy_kmpl=_kmpl, spec_seats=_seats,
         # ★ 「N곳」 배지 — ★ 1 이면 안 낸다 (겹친 것이 없다)
         site_count=int(_sites_n or 1), multi_site=int(_sites_n or 1) > 1,
+        # ★ 값 폭 — ★ 배지에 「2,890~3,260만」으로 낸다
+        dupe_low_won=_dupe_low, dupe_high_won=_dupe_high,
         listing_id=lid, grade=grade or NOT_RATED,
         # ★★ 감점 (개정 491) — 상한을 먹인 뒤의 합과 문구
         penalty_won=_pen_sum(pen_json),
@@ -1209,7 +1212,13 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★★ 「3곳」 배지 — ★ 같은 차가 올라간 사이트의 수 (v3_listings_시안).
         #   ★ 누르면 ★ `/track` 으로 간다.  ★ 1 이면 안 낸다
         "  (SELECT COUNT(DISTINCT l3.site) FROM core_listing l3"
-        "    WHERE l3.plate_hash = l.plate_hash AND l3.status = 'active')"
+        "    WHERE l3.plate_hash = l.plate_hash AND l3.status = 'active'),"
+        # ★★ 값 폭 (가이드 지시 08-24) — ★ 「3곳 · 2,890~3,260만」.
+        #   ★ 곳 수만 내면 ★ **얼마나 벌어졌는지 모른다**
+        "  (SELECT MIN(l4.price_current_won) FROM core_listing l4"
+        "    WHERE l4.plate_hash = l.plate_hash AND l4.status = 'active'),"
+        "  (SELECT MAX(l5.price_current_won) FROM core_listing l5"
+        "    WHERE l5.plate_hash = l.plate_hash AND l5.status = 'active')"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -1978,6 +1987,8 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         grade_total=grade_total,
         e_reasons=_e_reasons(conn, calc_version),
         today_changes=_today_changes(conn),
+        # ★★ 1절 「오늘」 (v3_dashboard_시안) — ★ 오늘 하루의 넷
+        **_today_counts(conn),
         steps=steps,
         # ★★ STEP 95 — v1 블록 넷이 선언만 되고 비어 있었다 (실측 08-22).
         #   DashboardView 에 자리는 있는데 view_dashboard 가 안 채웠다 —
@@ -2248,6 +2259,12 @@ def view_watch(account: Account, conn, fin_cfg: dict,
         "WHERE w.account_id = ? AND w.closed_at IS NULL "
         "GROUP BY w.watch_id "
         "ORDER BY w.added_at DESC", (account.account_id,)).fetchall()
+    # ★★ 팔린 차도 ★ 지우지 않는다 — ★ 「팔렸다」로 남긴다 (명령서 1-7).
+    #   ★ `view_listings` 는 ★ active 만 낸다 — ★ 사라진 것을 따로 받는다
+    gone_by = dict(conn.execute(
+        "SELECT listing_id, gone_at FROM core_listing"
+        " WHERE status = 'gone' AND listing_id IN (%s)"
+        % ",".join("?" * len(rows)), [r[1] for r in rows])) if rows else {}
     if not rows:
         return []
     # ★★ 리스 제외는 /listings · /recommend 에만이다 (개정 420).
@@ -2264,15 +2281,39 @@ def view_watch(account: Account, conn, fin_cfg: dict,
         "SELECT listing_id, vehicle_id FROM core_listing"
         " WHERE listing_id IN (%s)" % ",".join(
             "?" * len(rows)), [r[1] for r in rows])) if rows else {}
+    # ★★ 담을 때의 값 — ★ 변경 이력에서 ★ 담은 날 뒤 ★ 첫 변경의 `old_value` 다.
+    #   ★ 변경이 없으면 ★ 지금 값이 담을 때 값이다 (안 바뀌었다는 뜻)
+    at_add = dict(conn.execute(
+        "SELECT listing_id, old_value FROM ("
+        "  SELECT listing_id, old_value, changed_at,"
+        "         ROW_NUMBER() OVER (PARTITION BY listing_id"
+        "                            ORDER BY changed_at) rn"
+        "    FROM core_listing_change"
+        "   WHERE change_kind = 'price' AND listing_id IN (%s))"
+        " WHERE rn = 1" % ",".join("?" * len(rows)),
+        [r[1] for r in rows])) if rows else {}
     out = []
     for wid, lid, target, added, closed, memo in rows:
         listing = by_id.get(lid)
         if listing is None:
             continue          # 아직 채점 전이다 — 조용히 빼지 않고 다음 회차에
         got = times.get(vids.get(lid)) or {}
+        was = at_add.get(lid)
+        try:
+            was = int(was) if was is not None else None
+        except (TypeError, ValueError):
+            was = None
+        now = listing.price_won
+        delta = (now - was) if (was is not None and now is not None) else None
+        gone_at = gone_by.get(lid)
         out.append(WatchRow(watch_id=wid, listing=listing,
                             target_price_won=target, added_at=added,
                             closed_at=closed, memo=memo,
+                            price_at_add_won=was, price_delta_won=delta,
+                            days_watched=_days_since(added),
+                            gone=bool(gone_at), gone_at=gone_at,
+                            # ★ 값이 바뀌었거나 팔렸으면 ★ 위로 간다
+                            changed=bool(gone_at) or bool(delta),
                             spark=spark.get(lid, ()),
                             relist_times=got.get("times", 0),
                             # ★ 값이 안 바뀌었으면 안 낸다 — 같은 값을
@@ -2281,7 +2322,25 @@ def view_watch(account: Account, conn, fin_cfg: dict,
                                             if got.get("low_won")
                                             != got.get("high_won") else None),
                             relist_high_won=got.get("high_won")))
+    # ★★ ② 바뀐 것이 위로 (명령서 1-7) — ★ 값 내린 것 · 팔린 것이 먼저.
+    #   ★ 그 안에서는 ★ 많이 내린 것부터.  ★ 나머지는 ★ 담은 날 새 것부터
+    out.sort(key=lambda w: (not w.changed, w.price_delta_won or 0,
+                            w.added_at or ""))
     return out
+
+
+def _days_since(at: str | None) -> int:
+    """담은 날부터 며칠째인가 (명령서 1-7 ③).  ★ 못 읽으면 0 이다."""
+    if not at:
+        return 0
+    from datetime import datetime, timezone
+    try:
+        got = datetime.fromisoformat(str(at).replace("Z", "+00:00"))
+    except ValueError:
+        return 0
+    if got.tzinfo is None:
+        got = got.replace(tzinfo=timezone.utc)
+    return max(0, (datetime.now(timezone.utc) - got).days)
 
 
 # 사전 미검토 값이 막는 축.  ★ 「무엇을 막고 있나」가 판단 재료다
@@ -2956,3 +3015,27 @@ def duplicate_listings(conn, listing_id: int, calc_version: str,
                     "accident_mark": acc.mark, "accident_tone": acc.tone,
                     "mileage_km": km, "warranty_month": w_month})
     return tuple(out)
+
+
+def _today_counts(conn) -> dict:
+    """1절 「오늘」 — ★ 새로 뜬 것 · 값 내린 것 · 사라진 것 · 마지막 재판정.
+
+    ★ v3_dashboard_시안 1절.  ★ 「오늘」은 ★ 마지막 하루다 (UTC 자정 기준이 아니다) —
+      ★ 수집이 하루 한 번이라 ★ 자정으로 자르면 ★ 갓 받은 것이 안 보인다
+    ★ 못 세면 0 이다 — ★ 지어내지 않는다
+    """
+    from datetime import datetime, timedelta, timezone
+
+    since = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+    one = conn.execute(
+        "SELECT"
+        "  (SELECT COUNT(*) FROM core_listing WHERE first_seen >= ?),"
+        "  (SELECT COUNT(*) FROM core_listing_change"
+        "    WHERE change_kind = 'price' AND changed_at >= ?"
+        "      AND CAST(new_value AS INTEGER) < CAST(old_value AS INTEGER)),"
+        "  (SELECT COUNT(*) FROM core_listing"
+        "    WHERE status = 'gone' AND gone_at >= ?),"
+        "  (SELECT MAX(calculated_at) FROM result_score)",
+        (since, since, since)).fetchone()
+    return {"new_today": one[0] or 0, "dropped_today": one[1] or 0,
+            "gone_today": one[2] or 0, "last_recalc_at": one[3]}

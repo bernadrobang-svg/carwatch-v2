@@ -462,11 +462,15 @@ def test_admin_screens() -> None:
         demoted = set(_j.load(f)["demoted_menu"])
     check(f"메뉴에 13장 표 {len(want)}개가 다 있다", want <= got,
           f"표에만 {sorted(want - got)}" if want - got else "다 있다")
-    check("★ 더 붙은 것은 ★ 내린 화면 여섯뿐이다 (개정 551)",
+    # ★★ 마스터 확정 08-24 — ★ 관리에 남는 화면은 ★ **둘뿐**이다 (v3_admin_시안).
+    #   ★ 넷은 ★ 제자리로 갔다 — ★ 라우트는 살아 있고 ★ 문만 옮겼다 (개정 427)
+    check("★ 더 붙은 것은 ★ 내린 화면 둘뿐이다 (마스터 확정 08-24)",
           got - want == demoted, str(sorted(got - want)))
     check("★ 전 화면에 근거 STEP 링크", all(m.step_ref for m in home.menu))
-    check("메뉴 4분류 — 운영 · 조정 · 탐색 · ★ 화면", {m.group for m in home.menu}
-          == {"", "운영", "조정", "탐색", "화면"})
+    # ★ 시안이 정한 다섯 — ★ 운영 · 조정 · 탐색 · 화면 · ★ 계정 (v3_admin_시안)
+    check("메뉴 5분류 — 운영 · 조정 · 탐색 · 화면 · ★ 계정",
+          {m.group for m in home.menu}
+          == {"", "운영", "조정", "탐색", "화면", "계정"})
     check("잠금 없음", not any(m.locked for m in home.menu))
 
     for who in (ANONYMOUS, user):

@@ -184,7 +184,7 @@
          ★ 누르면 ★ 추적으로 간다.  ★ 1 곳이면 안 낸다 -->
     {% if r.multi_site %}<a class="chip on" href="/track"
       title="이 차가 {{ r.site_count }}곳에 올라와 있습니다. 추적에서 값·등급을 나란히 봅니다"
-      >{{ r.site_count }}곳</a>{% endif %}
+      >{{ r.site_count }}곳 · {{ r.dupe_low_won | won }}~{{ r.dupe_high_won | won }}</a>{% endif %}
     {% if r.photo_url %}<a href="/detail/{{ r.listing_id }}"><img class="thumb"
       src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
     {% if !r.photo_url %}<span class="thumb thumb-none nophoto"

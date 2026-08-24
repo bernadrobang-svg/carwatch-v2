@@ -44,6 +44,9 @@ class AdminMenuItem:
 #     ★ 마스터 지시 08-23 「관리 페이지들이 모두 어디로 간 거야」
 #   ★ 이름은 web/app.py LABELS 가 정본이다 — ★ 지어내지 않는다
 GROUP_SCREENS = "화면"
+# ★★ 계정 (v3_admin_시안) — ★ 시안이 「지금 문이 없다.  주소를 직접 쳐야 들어간다」고
+#   ★ 적어 두었다 (`V11-158` 이 잡을 자리).  ★ 문을 낸다
+GROUP_ACCOUNT = "계정"
 
 MENU: tuple[tuple[str, str, str, str], ...] = (
     ("", "/admin", "현황", "STEP 138"),
@@ -62,13 +65,14 @@ MENU: tuple[tuple[str, str, str, str], ...] = (
     (GROUP_EXPLORE, "/admin/tools", "관리 도구", "STEP 135"),
     (GROUP_EXPLORE, "/admin/docs", "문서 뷰어", "STEP 136"),
     (GROUP_EXPLORE, "/admin/requests", "개발 요청", "STEP 137"),
-    # ★★ 상단에서 내린 화면 여섯 (개정 427 · 551).  ★ 여기가 들어가는 문이다
-    (GROUP_SCREENS, "/recommend", "후보", "개정 427"),
-    (GROUP_SCREENS, "/compare", "비교", "개정 427"),
-    (GROUP_SCREENS, "/market", "시세", "개정 427"),
-    (GROUP_SCREENS, "/dealers", "딜러", "개정 427"),
+    # ★★ 화면 — ★ **둘만 남는다** (마스터 확정 08-24 · v3_admin_시안).
+    #   ★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서 누른다
+    #   ★★ 라우트는 ★ **살려 둔다** — ★ 화면을 지우지 않는다 (개정 427).
+    #     ★ ★ 관리 메뉴에서만 뺀다 — ★ 위 표의 문으로 들어간다
     (GROUP_SCREENS, "/reports", "리포트", "개정 427"),
     (GROUP_SCREENS, "/notready", "미판정", "개정 427"),
+    # ★ 계정 — ★ 시안이 「지금 문이 없다」고 짚은 자리다
+    (GROUP_ACCOUNT, "/admin/users", "사용자", "STEP 126"),
 )
 
 
@@ -86,6 +90,16 @@ class AdminHome:
     todos: list = field(default_factory=list)
     recent_runs: list = field(default_factory=list)
     recent_changes: list = field(default_factory=list)
+    # ★★ 묶음별 메뉴 (v3_admin_시안) — ★ 운영 · 조정 · 탐색 · 화면 · 계정.
+    #   ★ 템플릿은 묶지 못한다 (V11-104) — ★ 묶는 일은 여기서 한다
+    menu_groups: list = field(default_factory=list)
+    # ★ 묶음별 줄 — ★ 시안이 정한 다섯은 ★ 고정이다.  ★ 머리말은 템플릿이 글자로 적는다
+    #   ★ ★ 변수로 내면 ★ 「시안 절 대조」가 ★ 그 글자를 못 본다 (실측 08-24)
+    menu_ops: list = field(default_factory=list)
+    menu_tune: list = field(default_factory=list)
+    menu_explore: list = field(default_factory=list)
+    menu_screens: list = field(default_factory=list)
+    menu_account: list = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -148,6 +162,8 @@ def view_admin_home(account: Account, conn) -> AdminHome:
     return AdminHome(
         viewer=viewer_state(account),
         menu=menu_for(conn, account),
+        menu_groups=_menu_groups(menu_for(conn, account)),
+        **_menu_by_group(menu_for(conn, account)),
         running=running_job(conn),
         progress=conn.execute(
             "SELECT current_step, step_done, step_total, detail "
@@ -1024,3 +1040,47 @@ def blocking_set(conn) -> set:
     from store.core import blocking_keys
 
     return blocking_keys(conn, parser_paths(), WHOLE_CONTAINERS)
+
+
+# ★★ 묶음 머리말 — ★ 시안 글자 그대로 (v3_admin_시안).  ★ 개발측이 새로 쓰지 않는다
+GROUP_HEADS = {
+    GROUP_OPS: ("★ 운영", "★ 「브라우저 수집」이 맨 위 — 엔카는 마스터 회선으로만 받습니다"),
+    GROUP_TUNE: ("조정", "★★ 「사전 확정」에 기아 1,020건이 걸려 있습니다"),
+    GROUP_EXPLORE: ("탐색", ""),
+    GROUP_SCREENS: ("화면 — ★ 둘만 남는다",
+                    "★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · "
+                    "딜러 → 카드에서. ★ 라우트는 살려 둡니다 (개정 427)"),
+    GROUP_ACCOUNT: ("★ 계정", ""),
+}
+
+
+def _menu_groups(menu: list) -> list:
+    """메뉴를 묶음으로 (v3_admin_시안).  ★ 시안 차례를 지킨다.
+
+    ★ 템플릿은 ★ 묶지 못한다 (V11-104) — ★ 여기서 묶어 내려준다
+    """
+    order = (GROUP_OPS, GROUP_TUNE, GROUP_EXPLORE, GROUP_SCREENS, GROUP_ACCOUNT)
+    by: dict = {}
+    for one in menu:
+        by.setdefault(getattr(one, "group", "") or "", []).append(one)
+    out = []
+    for key in order:
+        rows = by.get(key)
+        if not rows:
+            continue
+        head, note = GROUP_HEADS.get(key, (key, ""))
+        out.append({"head": head, "note": note, "rows": rows})
+    return out
+
+
+def _menu_by_group(menu: list) -> dict:
+    """묶음별 줄 — ★ 템플릿이 머리말을 글자로 적을 수 있게 나눠 준다."""
+    key = {GROUP_OPS: "menu_ops", GROUP_TUNE: "menu_tune",
+           GROUP_EXPLORE: "menu_explore", GROUP_SCREENS: "menu_screens",
+           GROUP_ACCOUNT: "menu_account"}
+    out: dict = {v: [] for v in key.values()}
+    for one in menu:
+        name = key.get(getattr(one, "group", "") or "")
+        if name:
+            out[name].append(one)
+    return out

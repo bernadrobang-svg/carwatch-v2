@@ -63,12 +63,72 @@
   <li>개발 요청 <strong>{{ h.pending_requests | num }}</strong></li>
   <li>대기 작업 <strong>{{ h.queued_jobs | num }}</strong></li>
 </ul>
-<h2>메뉴</h2>
+<!-- ══ 메뉴 — ★ 묶음 다섯 (v3_admin_시안) ══
+     ★ 머리말은 ★ 시안 글자를 ★ **그대로 적는다** — ★ 변수로 내면
+       ★ 「시안 절 대조」가 그 글자를 못 본다 (실측 08-24) -->
+<h3>★ 운영</h3>
+<p class="muted">★ 「브라우저 수집」이 맨 위 — 엔카는 마스터 회선으로만 받습니다.</p>
 <table class="rows">
-<thead><tr><th title="이 경로를 판정에 쓰는지 아닌지입니다">분류</th><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th><th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
 <tbody>
-{% for m in h.menu %}
-<tr><td data-label="분류">{{ m.group }}</td><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+{% for m in h.menu_ops %}
+<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+<td data-label="근거">{{ m.step_ref }}</td>
+<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3>조정</h3>
+<p class="muted">★★ 「사전 확정」에 기아 1,020건이 걸려 있습니다.</p>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+{% for m in h.menu_tune %}
+<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+<td data-label="근거">{{ m.step_ref }}</td>
+<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3>탐색</h3>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+{% for m in h.menu_explore %}
+<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+<td data-label="근거">{{ m.step_ref }}</td>
+<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3>화면 — ★ 둘만 남는다</h3>
+<p class="muted">★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서.
+  ★ 라우트는 살려 둡니다 — 화면을 지우지 않습니다 (개정 427).</p>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+{% for m in h.menu_screens %}
+<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+<td data-label="근거">{{ m.step_ref }}</td>
+<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+<h3>★ 계정</h3>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+{% for m in h.menu_account %}
+<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
 <td data-label="근거">{{ m.step_ref }}</td>
 <td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
 {% endfor %}
