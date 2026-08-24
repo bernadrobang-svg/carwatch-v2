@@ -1,7 +1,7 @@
 # INDEX — 지시서 색인
 
 ```
-version  SPEC-2026.08.24-r685
+version  SPEC-2026.08.24-r686
 follows  `docs/INDEX.md`
 sources  실측 08-24
 checks   S46-38 · S46-39
