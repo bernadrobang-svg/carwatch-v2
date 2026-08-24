@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 160개 · 총 56,607줄
+파일 160개 · 총 56,622줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -68,10 +68,10 @@
 | `tools/check_screens.py` | 264 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
+| `web/server.py` | 259 | HTTP 서버 (14장 STEP 141 · 150). |
 | `tests/test_store.py` | 255 | 3장 테이블 시험. |
 | `tools/menu.py` | 254 | 실행 메뉴. |
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
-| `web/server.py` | 244 | HTTP 서버 (14장 STEP 141 · 150). |
 | `validate/v5_value.py` | 242 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
@@ -541,6 +541,12 @@ check:33  test_finance:40  test_display:97  _pipeline:113  test_layers:124  test
 check:30  db:36  add:41  watch:64  test_same_dealer:78  test_cross_dealer:97  test_relist:112  tp:124  test_cause:133  _two_runs:145  test_snapshot:162  test_events:177  test_cause_gate:198  test_message:212
 ```
 
+### `web/server.py` — 259줄
+
+```
+load_web_config:47  guard:60  _drain_chunk:92  TOO_LARGE:96  make_handler:105  serve:234
+```
+
 ### `tests/test_store.py` — 255줄
 
 ```
@@ -557,12 +563,6 @@ _fix_console:28  run:44  cmd_status:52  cmd_setup:56  cmd_dry:74  cmd_collect:81
 
 ```
 check:33  fx:39  db:43  put_raw:48  test_paths:57  test_contamination:69  test_seed:95  test_ghost:140  test_v4_06:168  test_seed_reapply:180  test_unclassified_severity:202
-```
-
-### `web/server.py` — 244줄
-
-```
-load_web_config:47  guard:60  _drain_chunk:92  TOO_LARGE:96  make_handler:105  serve:219
 ```
 
 ### `validate/v5_value.py` — 242줄

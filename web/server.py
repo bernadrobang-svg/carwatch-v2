@@ -124,7 +124,9 @@ def make_handler(app):
                 for k, v in (extra or {}).items():
                     self.send_header(k, v)
                 self.end_headers()
-                self.wfile.write(body)
+                # ★ HEAD 는 ★ 머리글만 낸다 — ★ 몸통을 쓰지 않는다 (RFC 9110 9.3.2)
+                if not getattr(self, "head_only", False):
+                    self.wfile.write(body)
             except DISCONNECTED:
                 # ★ 보낼 곳이 없다.  조용히 이 연결만 버린다 (SERVER_SURVIVAL 1장)
                 self.close_connection = True
@@ -212,6 +214,19 @@ def make_handler(app):
 
         def do_POST(self):                            # noqa: N802
             self._handle(POST)
+
+        def do_HEAD(self):                            # noqa: N802
+            """HEAD — ★ GET 과 같은 머리글 · ★ 몸통은 안 보낸다.
+
+            ★★ 실측 08-24 — ★ 이것이 없어 ★ `curl -I` 가 ★ 501 을 받았다.
+              ★ `CLAUDE.md` 가 ★ 건강 확인으로 ★ 바로 그 명령을 적어 두어
+              ★ 사이트가 멀쩡한데 ★ 「501」로 보였다 (GET 은 200 이었다)
+            """
+            self.head_only = True
+            try:
+                self._handle(GET)
+            finally:
+                self.head_only = False
 
     return Handler
 
