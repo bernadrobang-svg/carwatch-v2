@@ -563,5 +563,81 @@
   },
   "SPEC_DEFAULT_ON": {},
   "SPEC_DEFAULT_OFF": {},
-  "_heydealer_hash_note": "[마스터 08-24] ★ 차종 해시는 ★ 마스터가 화면을 눌러 주셔야 나온다.  ★ 지어낼 수 없다.  ★ 갈래(연료)는 섞여 오니 ★ fuel_match 로 우리 쪽에서 거른다"
+  "_heydealer_hash_note": "[마스터 08-24] ★ 차종 해시는 ★ 마스터가 화면을 눌러 주셔야 나온다.  ★ 지어낼 수 없다.  ★ 갈래(연료)는 섞여 오니 ★ fuel_match 로 우리 쪽에서 거른다",
+  "XC40_IMPORT": {
+    "label": "볼보 XC40",
+    "collect_group": "multi",
+    "_ref": "★ 마스터 확정 08-24 — 요구 추적표 99번",
+    "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=117 classCode=2708 (실측 08-24)",
+    "_site_query_why": "[마스터 08-24] ★ 마스터 확정 — 「★ **둘 다 대상으로 추가해.  ★ 전 사이트 대상이야**」.  ★ 헤이딜러 해시를 재다 나온 차종이다.  ★ `ModelGroup` 은 facet 으로 확인한 뒤 채운다",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "볼보",
+        "ModelGroup": "XC40",
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다 (S46-37)"
+      },
+      "kbchachacha": {
+        "makerCode": "117",
+        "classCode": "2708",
+        "_확인": "[실측 08-24] ★ carClass.json 으로 확인했다"
+      },
+      "heydealer": [
+        {
+          "brand": "Jo6rOo",
+          "model-group": "zyx6mk",
+          "model": "wo2dG4",
+          "_차명": "볼보 XC40"
+        }
+      ]
+    },
+    "year_range": null,
+    "price_range": null,
+    "fuel_match": [
+      "가솔린",
+      "디젤",
+      "가솔린+전기",
+      "디젤+전기",
+      "전기"
+    ],
+    "_fuel_why": "★ 명령서 2-2 「fuel_match 는 비워 먼저 다 받고, 무엇이 오는지 본 뒤에 좁힌다」"
+  },
+  "V60CC_IMPORT": {
+    "label": "볼보 V60 크로스컨트리",
+    "collect_group": "multi",
+    "_ref": "★ 마스터 확정 08-24 — 요구 추적표 99번",
+    "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=117 classCode=2235 (실측 08-24)",
+    "_site_query_why": "[마스터 08-24] ★ 마스터 확정 — 「★ **둘 다 대상으로 추가해.  ★ 전 사이트 대상이야**」.  ★ 헤이딜러 해시를 재다 나온 차종이다.  ★ `ModelGroup` 은 facet 으로 확인한 뒤 채운다",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "볼보",
+        "ModelGroup": "V60",
+        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다 (S46-37)"
+      },
+      "kbchachacha": {
+        "makerCode": "117",
+        "classCode": "2235",
+        "_확인": "[실측 08-24] ★ carClass.json 으로 확인했다"
+      },
+      "heydealer": [
+        {
+          "brand": "Jo6rOo",
+          "model-group": "0yNNgy",
+          "model": "Z40d04",
+          "_차명": "볼보 V60 크로스 컨트리 2세대"
+        }
+      ]
+    },
+    "year_range": null,
+    "price_range": null,
+    "fuel_match": [
+      "가솔린",
+      "디젤",
+      "가솔린+전기",
+      "디젤+전기",
+      "전기"
+    ],
+    "_fuel_why": "★ 명령서 2-2 「fuel_match 는 비워 먼저 다 받고, 무엇이 오는지 본 뒤에 좁힌다」"
+  }
 }
