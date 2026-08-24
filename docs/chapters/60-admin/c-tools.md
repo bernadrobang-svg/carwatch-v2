@@ -1,7 +1,7 @@
 ## STEP 133 [규격] — 조회 전용 쿼리
 
 ```
-version  SPEC-2026.08.25-r724
+version  SPEC-2026.08.25-r725
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -722,6 +722,7 @@ reopened     applied 였으나 다시 문제.  재개
 | **조정** | `/admin/targets` | 차종 추가 · 수정 | 130 |
 | **조정** | `/admin/registry` | 등록부 분류 | 131 |
 | **조정** | `/admin/config` | `config` 전체 편집 + 이력 | 127 |
+| ★ **계정** | ★ `/admin/users` | ★ 계정을 만들고 · 권한을 주고 · 잠근다 | ★ **136z** |
 | **탐색** | `/admin/query` | 조회 쿼리 | 133 |
 | **탐색** | `/admin/api` | API 조회 · 저장 | 134 |
 | **운영** | `/admin/import` | 목록 반입 — JSON · ID 목록 · CSV | 136a · 136b |
