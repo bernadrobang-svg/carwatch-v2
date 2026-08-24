@@ -2048,7 +2048,8 @@ def view_dashboard(account: Account, conn, run_id: str, calc_version: str,
         grade_total=grade_total,
         e_reasons=_e_reasons(conn, calc_version),
         today_changes=_today_changes(conn),
-        # ★★ 1절 「오늘」 (v3_dashboard_시안) — ★ 오늘 하루의 넷
+        # ★★ 1절 「오늘」 (v3_dashboard_시안) — ★ 오늘 하루의 넷.
+        #   ★ ★ 한 쿼리다 — ★ 넷을 ★ 서브쿼리로 묶어 받는다 (V11-34)
         **_today_counts(conn),
         steps=steps,
         # ★★ STEP 95 — v1 블록 넷이 선언만 되고 비어 있었다 (실측 08-22).
@@ -2937,24 +2938,34 @@ def _grade_step(grades, order: tuple) -> int:
     return (max(got) - min(got)) if len(got) > 1 else 0
 
 
-def _miss_axes(conn, listing_id, calc_version: str, labels: dict) -> tuple:
-    """빠진 축 — ★ 갈래(①~⑤)를 함께 낸다 (명령서 1-2).
+def _miss_axes_bulk(conn, listing_ids: list, calc_version: str,
+                    labels: dict) -> dict:
+    """빠진 축 — ★ **한 번에** 받는다 (명령서 1-2 · V11-34).
 
     ★★ 갈래는 ★ `config/labels.json` 의 `MISS_KIND` 가 정본이다 —
       ★ f-table 434·476행에서 옮겼다.  ★ 표에 없는 축은 ★ **갈래를 안 붙인다**
       ★ ★ 지어내지 않는다 (금지 6)
+    ★★ ★ 08-25 — ★ 전에는 ★ **매물마다 한 번씩** 불렀다 —
+      ★ ★ 짝 44대 × 사이트 셋이면 ★ 쿼리가 ★ **253** 이 됐다 (상한 20).
+      ★ ★ 행마다 따로 조회하지 않는다 (V11-34)
     """
+    if not listing_ids:
+        return {}
     kind = labels.get("MISS_KIND", {})
     al = labels.get("AXIS_LABELS", {})
-    out = []
-    for axis, in conn.execute(
-        "SELECT axis FROM result_axis WHERE listing_id=? AND calc_version=? "
-        "AND (value IS NULL OR excluded=1) ORDER BY max_points DESC, axis",
-        (listing_id, calc_version)
+    marks = ",".join("?" * len(listing_ids))
+    out: dict = {}
+    for lid, axis in conn.execute(
+        f"SELECT listing_id, axis FROM result_axis"
+        f" WHERE listing_id IN ({marks}) AND calc_version = ?"
+        f"   AND (value IS NULL OR excluded = 1)"
+        f" ORDER BY listing_id, max_points DESC, axis",
+        (*listing_ids, calc_version)
     ):
-        mark = kind.get(axis, "")
-        out.append(f"{al.get(axis, axis)} {mark}".strip())
-    return tuple(out[:4])
+        got = out.setdefault(lid, [])
+        if len(got) < 4:
+            got.append(f"{al.get(axis, axis)} {kind.get(axis, '')}".strip())
+    return {k: tuple(v) for k, v in out.items()}
 
 
 def view_track(account: Account, conn, calc_version: str,
@@ -2985,6 +2996,11 @@ def view_track(account: Account, conn, calc_version: str,
     by_plate: dict = {}
     for r in rows:
         by_plate.setdefault(r[0], []).append(r)
+    # ★★ 빠진 축 · 사고 갈림을 ★ **한 번에** 받는다 (V11-34) —
+    #   ★ 매물마다 부르면 ★ 짝 44대에 ★ 쿼리가 253 이 된다
+    all_ids = [x[1] for r in rows for x in (r,)]
+    miss_by = _miss_axes_bulk(conn, all_ids, calc_version, labels)
+    acc_by = _accident_bulk(conn, all_ids, calc_version)
 
     pairs, big, two = [], 0, 0
     for plate, got in by_plate.items():
@@ -2997,7 +3013,7 @@ def view_track(account: Account, conn, calc_version: str,
         grades = tuple(x[7] for x in got if x[7])
         sites = tuple(
             (site_badge(x[2], x[3], root), x[1], x[6], x[7], x[8],
-             _miss_axes(conn, x[1], calc_version, labels))
+             miss_by.get(x[1], ()))
             for x in got)
         step = _grade_step(grades, order_of)
         if pct >= TRACK_BIG_GAP_PCT:
@@ -3012,8 +3028,8 @@ def view_track(account: Account, conn, calc_version: str,
             low_won=low, high_won=high, gap_won=gap, gap_pct=pct,
             grades=grades, grade_split=step > 0,
             # ★ 사고 판정이 갈렸는가 — ★ 축 하나를 사이트끼리 견준다
-            accident_split=_accident_split(conn, [x[1] for x in got],
-                                           calc_version)))
+            accident_split=len({acc_by[x[1]] for x in got
+                                if x[1] in acc_by}) > 1))
 
     keys = {"gap": lambda p: -p.gap_won,
             "grade": lambda p: -_grade_step(p.grades, order_of),
@@ -3026,17 +3042,19 @@ def view_track(account: Account, conn, calc_version: str,
         total_pairs=len(pairs), big_gap=big, two_step=two, order=order)
 
 
-def _accident_split(conn, listing_ids: list, calc_version: str) -> bool:
-    """사고 판정이 사이트마다 갈렸는가.  ★ 갈린 채로 보여 주려면 먼저 찾아야 한다."""
-    if len(listing_ids) < 2:
-        return False
+def _accident_bulk(conn, listing_ids: list, calc_version: str) -> dict:
+    """사고 판정 — ★ **한 번에** 받는다 (V11-34).
+
+    ★ 갈린 채로 보여 주려면 ★ 먼저 찾아야 한다 — ★ 매물마다 부르지 않는다
+    """
+    if not listing_ids:
+        return {}
     marks = ",".join("?" * len(listing_ids))
-    got = conn.execute(
-        f"SELECT DISTINCT (value > 0) FROM result_axis"
+    return {lid: bool(v and v > 0) for lid, v in conn.execute(
+        f"SELECT listing_id, value FROM result_axis"
         f" WHERE listing_id IN ({marks}) AND calc_version = ?"
         f"   AND axis = 'state.accident' AND value IS NOT NULL",
-        (*listing_ids, calc_version)).fetchall()
-    return len(got) > 1
+        (*listing_ids, calc_version))}
 
 
 def duplicate_listings(conn, listing_id: int, calc_version: str,
@@ -3048,27 +3066,33 @@ def duplicate_listings(conn, listing_id: int, calc_version: str,
     ★★ 합치지 않는다 — ★ 갈린 채로 낸다 (마스터 확정 08-24)
     ★ 짝이 없으면 ★ 빈 것이다 — ★ 절을 안 낸다
     """
-    plate = conn.execute(
-        "SELECT plate_hash FROM core_listing WHERE listing_id=?",
-        (listing_id,)).fetchone()
-    if not plate or not plate[0]:
-        return ()
+    # ★★ 08-25 (V11-34) — ★ 번호판을 따로 안 묻는다.  ★ 조인 한 번으로 가른다.
+    #   ★ ★ 짝이 없는 매물이 ★ 대부분인데 ★ 그때도 두 쿼리를 썼다
     labels = _labels(root)
     out = []
-    for lid, site, sell, price, grade, km, w_month in conn.execute(
+    rows = conn.execute(
         "SELECT l.listing_id, l.site, l.sell_type, l.price_current_won,"
         "       s.grade, l.mileage_km, l.warranty_body_month"
         "  FROM core_listing l"
         "  LEFT JOIN result_score s ON s.listing_id=l.listing_id"
         "   AND s.calc_version=?"
-        " WHERE l.plate_hash=? AND l.status='active' AND l.listing_id<>?"
+        "  JOIN core_listing me ON me.listing_id = ?"
+        "   AND me.plate_hash IS NOT NULL AND l.plate_hash = me.plate_hash"
+        " WHERE l.status='active' AND l.listing_id<>?"
         " ORDER BY l.price_current_won",
-        (calc_version, plate[0], listing_id)
-    ):
-        got = conn.execute(
-            "SELECT value, excluded, source, max_points FROM result_axis"
-            " WHERE listing_id=? AND calc_version=? AND axis='state.accident'",
-            (lid, calc_version)).fetchone()
+        (calc_version, listing_id, listing_id)).fetchall()
+    # ★★ 사고 축을 ★ **한 번에** 받는다 (V11-34) — ★ 매물마다 부르면
+    #   ★ ★ 짝이 셋이면 ★ 쿼리가 셋 는다.  ★ `/detail` 이 상한(26)을 넘었다 (28)
+    ids = [r[0] for r in rows]
+    acc_by: dict = {}
+    if ids:
+        marks = ",".join("?" * len(ids))
+        acc_by = {r[0]: (r[1], r[2], r[3]) for r in conn.execute(
+            f"SELECT listing_id, value, excluded, source FROM result_axis"
+            f" WHERE listing_id IN ({marks}) AND calc_version = ?"
+            f"   AND axis = 'state.accident'", (*ids, calc_version))}
+    for lid, site, sell, price, grade, km, w_month in rows:
+        got = acc_by.get(lid)
         acc = chip("state.accident", got[0] if got else None,
                    bool(got[1]) if got else True, labels,
                    source=got[2] if got else None)

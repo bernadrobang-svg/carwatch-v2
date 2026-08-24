@@ -149,18 +149,9 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "judge_buttons": _judge_buttons(flt, root),
                  "option_buttons": _option_name_buttons(flt, root),
                  # ★★ 색은 옵션 절에 (마스터 확정 08-25) — ★ 다섯씩 · 나머지는 접는다
-                 "color_ext_top": _split_top(_distinct_options(
-                     conn, "color_ext_raw", flt.color_ext))[0],
-                 "color_ext_rest": _split_top(_distinct_options(
-                     conn, "color_ext_raw", flt.color_ext))[1],
-                 "color_int_top": _split_top(_distinct_options(
-                     conn, "color_int_raw", flt.color_int))[0],
-                 "color_int_rest": _split_top(_distinct_options(
-                     conn, "color_int_raw", flt.color_int))[1],
-                 "color_ext_options": _distinct_options(
-                     conn, "color_ext_raw", flt.color_ext),
-                 "color_int_options": _distinct_options(
-                     conn, "color_int_raw", flt.color_int),
+                 #   ★★ 08-25 — ★ 한 번만 조회한다.  ★ 전에는 ★ `_split_top` 을
+                 #     ★ ★ 두 번씩 불러 ★ 색 조회가 ★ **여섯 번**이었다 (V11-34)
+                 **_color_menus(conn, flt),
                  "fuel_options": _distinct_options(conn, "fuel_raw", flt.fuel),
                  "region_options": _distinct_options(
                      conn, "dealer_region", flt.region),
@@ -833,6 +824,21 @@ def _option_name_buttons(flt, root: str = ROOT) -> list:
 #   ★ 사전에 그 이름이 없으면 ★ 단추가 안 나온다 (지어내지 않는다)
 OPTION_FILTER_NAMES = ("고속도로 주행", "차로 유지", "스마트 크루즈",
                        "헤드업 디스플레이", "선루프", "통풍시트")
+
+
+def _color_menus(conn, flt) -> dict:
+    """색 거르개 — ★ 외장·내장을 ★ **한 번씩만** 조회한다 (V11-34).
+
+    ★ 많은 것부터 다섯 · 나머지는 「더 보기 ▾」로 접는다 (마스터 확정 08-25)
+    """
+    ext = _distinct_options(conn, "color_ext_raw", flt.color_ext)
+    ins = _distinct_options(conn, "color_int_raw", flt.color_int)
+    ext_top, ext_rest = _split_top(ext)
+    int_top, int_rest = _split_top(ins)
+    return {"color_ext_top": ext_top, "color_ext_rest": ext_rest,
+            "color_int_top": int_top, "color_int_rest": int_rest,
+            # ★ 기본 줄의 「전체」 목록도 ★ 같은 조회를 쓴다 — ★ 또 안 부른다
+            "color_ext_options": ext, "color_int_options": ins}
 
 
 def _judge_buttons(flt, root: str = ROOT) -> list:

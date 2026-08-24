@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 39,007줄 · 2,301KB**
+**113파일 · 39,056줄 · 2,309KB**
 
 ★ 800줄을 넘는 파일 9개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 898줄
-- guide/01_요구사항.md 986줄
-- guide/05_가이드역할.md 1,083줄
+- guide/01_요구사항.md 988줄
+- guide/05_가이드역할.md 1,088줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
 - chapters/61-web.md 2,262줄
@@ -34,7 +34,7 @@
 | `ENCAR_ROBOTS.md` | 208 | 10 |
 | `HEYDEALER_API.md` | 607 | 30 |
 | `HYUNDAI_CERTIFIED_API.md` | 430 | 20 |
-| `KBCHACHACHA_API.md` | 348 | 16 |
+| `KBCHACHACHA_API.md` | 387 | 18 |
 | `KCAR_API.md` | 392 | 18 |
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 248 | 12 |
@@ -101,16 +101,16 @@
 | `guide/00_개요.md` | 149 | 6 |
 | `guide/00_버전.md` | 177 | 11 |
 | `guide/01_시작.md` | 291 | 10 |
-| `guide/01_요구사항.md`  ★ | 986 | 41 |
+| `guide/01_요구사항.md`  ★ | 988 | 42 |
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 138 | 7 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md` | 762 | 509 |
+| `guide/03_이력.md` | 764 | 512 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 573 | 22 |
-| `guide/05_가이드역할.md`  ★ | 1,083 | 53 |
+| `guide/05_가이드역할.md`  ★ | 1,088 | 54 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 515 | 114 |
+| `guide/06_오판대장.md` | 516 | 115 |
 | `guide/07_밀린일대장.md` | 296 | 25 |
 | `guide/08_인수인계.md` | 298 | 14 |
 | `ref/00-intro.md` | 33 | 0 |

@@ -2390,7 +2390,10 @@ def _sian_css_checks(rid):
     ★ 화면이 쓰는 이름이 CSS 에 있는가 · 시안의 값과 같은가
     """
     css = open(APP_CSS, encoding="utf-8").read() if os.path.isfile(APP_CSS) else ""
-    have = set(re.findall(r"\.([a-zA-Z][\w-]*)", css))
+    # ★★ 08-25 — ★ 주석(/* … */)은 안 본다.  ★ 「이름을 바꿨다」고 적어 둔 줄이
+    #   ★ ★ 스스로 잡히고 있었다 (`S46-67` 때와 ★ 같은 자리다)
+    css_body = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
+    have = set(re.findall(r"\.([a-zA-Z][\w-]*)", css_body))
     used: set = set()
     for name in os.listdir(TEMPLATES):
         if not name.endswith(".html"):
