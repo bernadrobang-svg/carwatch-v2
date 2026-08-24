@@ -1,6 +1,83 @@
 # 헤이딜러 API · 매핑 규격
 
 ```
+version  SPEC-2026.08.24-r694
+follows  `f-table.md` · `MULTISITE_MAPPING.md`
+sources  개정 694 · 실측 08-24
+checks   S46-5 · S46-31
+```
+
+---
+
+# ★★★ 0. 열렸다 — ★ **토큰이 필요했다** (개정 694 · 08-24)
+
+```
+★★★ ★ 500 은 ★ **「고장」이 아니라 ★ 「토큰 없이 불렀다」**였다
+   ★ ★ 서버가 ★ 인증 실패를 ★ **500 으로** 돌려주어 ★ 가이드가 ★ 두 번 오판했다 (#97)
+★ ★ 마스터가 ★ 주소를 주셔서 ★ 화면 본문에서 ★ 부르는 꼴을 찾았다
+```
+
+## 0-1. ★ 여는 법 — ★ 두 걸음
+
+```
+① 토큰 받기
+   POST  https://api.heydealer.com/v2/customers/web/initialize_app/
+   헤더   Content-Type: application/json · App-Os: web
+   본문   {"referrer_url": "https://www.heydealer.com/"}     ★ ← 없으면 400
+   →     {"token": "eyJhbGciOi…"}                          ★ JWT
+
+② 목록 받기
+   GET   https://market-api.heydealer.com/v2/customers/web/market/cars/
+         ?order=recommendation&view_type=compact&page=1
+   헤더   App-Os: web
+         Authorization: Bearer {token}                      ★ ← 없으면 500
+   →     200 · 평문 JSON · ★ **리스트로 온다** (감싸는 객체가 없다)
+```
+
+```
+★ `view_type` 은 ★ **`image` · `rich` · `compact`** 셋뿐이다 (★ 서버가 오류로 알려 준다)
+★ ★ `compact` 가 ★ 가장 가볍다.  ★ 표본 ★ 55,336B
+★ 좁히기 — ★ `?brand={해시}&model={해시}&model-group={해시}` (★ 여섯 자 해시 · 세 층)
+★ `filters/` 는 ★ 토큰 없이도 200 — ★ 연료·차형·가격·주행·연식 목록을 준다
+```
+
+## 0-2. ★★ 한 건에 ★ 상세가 통째로 온다 — ★ 상세를 따로 안 불러도 된다
+
+| 무엇 | 칸 |
+|---|---|
+| 열쇠 | `hash_id` |
+| 차종·트림 | `model_part_name` · `grade_part_name` · `grade_name` · `detail_name` |
+| ★ **값** | `price` · ★ **`previous_price`**(전 가격) · ★ **`factory_price`**(신차가) · `savings_total` |
+| 제원 | `year` · `mileage` · `initial_registration_date` |
+| 색 | `exterior_description` · `interior_description` ＋ 색상 코드 |
+| ★★ **옵션** | ★ 이름(한글) ＋ `choice`(`loaded`·`absent`·`loaded_aftermarket`) ＋ `availability`(`default`·`available`·`unavailable`) |
+| 사고 | `tags` — 「완전무사고」·「무사고」·★ 「보험 1건 ∙ 595만원」 |
+| 사진 | `image_urls` · `inside_image_urls`(실내) |
+| 상태 | `sale_status` = `listed` · `offered_at` |
+
+```
+★★★ ★ **옵션이 ★ 우리가 가장 못 채우던 축이다**
+   ★ 엔카는 ★ 코드만 준다.  ★ 헤이딜러는 ★ **한글 이름 ＋ 장착 여부**를 준다
+   ★ ★ 실측에 ★ 「고속도로 주행 보조2(HDA2)」·「헤드업 디스플레이(HUD)」가 ★ 이름으로 왔다
+★★ ★ **`previous_price` 가 있다** — ★ 가격 변동을 ★ 원문에서 바로 읽는다
+   ★ ★ 다른 사이트는 ★ 우리가 두 번 받아 견줘야 안다
+★ ★ `factory_price` 는 ★ 신차가다 — ★ `value.depreciation` 이 바로 채워진다
+```
+
+## 0-3. ★ 지킬 것
+
+```
+필수  ★ 토큰은 ★ **바퀴마다 새로 받는다** — ★ JWT 라 ★ 만료가 있다
+필수  ★ `App-Os: web` 헤더를 ★ 빠뜨리지 마라
+필수  ★ 응답이 ★ **리스트**다.  ★ `results`·`data` 로 감싸여 있지 않다 — ★ 벗기지 마라
+필수  ★ `choice=absent` 는 ★ **「없다」**다.  ★ `availability=unavailable` 은 ★ 「그 트림에 없는 옵션」이다
+      ★ ★ 둘을 섞지 마라 — ★ 「없다」와 「해당 없음」은 다르다 (개정 325)
+금지  ★ 토큰을 ★ 저장소에 적는 것 — ★ 매번 받는다
+★ 아래 옛 판정(★ 「고장났다」)은 ★ **틀렸다.  ★ 기록으로만 남긴다**
+```
+
+
+```
 version  SPEC-2026.08.24-r670
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 585 · 실측 08-23
