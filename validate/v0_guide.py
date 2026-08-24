@@ -259,7 +259,10 @@ def s43_2c_no_hda() -> tuple[bool, str]:
       ★ 그래서 ★ 파일 전체를 훑는 검사로 둔다.
     """
     SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md",
-                 "00_버전.md")  # ★ 버전표는 기록이다
+                 "00_버전.md",        # ★ 버전표는 기록이다
+                 # ★ 요구 추적표는 ★ 「폐기된 것을 지우지 않는다」 (01_요구사항.md:31)
+                 # ★ 05_가이드역할 ㉻ 은 ★ HDA 사고를 ★ 본보기로 든다 — 둘 다 기록이다
+                 "01_요구사항.md", "05_가이드역할.md")
     SKIP_DIR = ("outputs", ".git", "__pycache__", "node_modules")
     pat = re.compile(r"HDA|hda", re.I)
     bad: list[str] = []
@@ -532,7 +535,7 @@ def s46_22_section_order() -> tuple[bool, str]:
 
     ★ V11-159 「절 차례는 바꾸지 마라」는 ★ 실제 상세의 열 절 차례를 뜻한다 —
       ★ 시안 표의 행 차례가 아니다 (개정 631)
-    ★ 시안은 ★ `<div class="lbl">1 판정</div>` 꼴로 절을 적는다.  ★ 번호를 뗀다
+    ★ 시안은 ★ `<div class="v3-lbl">1 판정</div>` 꼴로 절을 적는다.  ★ 번호를 뗀다
     """
     bad, seen = [], 0
     for sian, page in SIAN_PAIRS:
@@ -545,11 +548,12 @@ def s46_22_section_order() -> tuple[bool, str]:
             return re.sub(r"^[★\s\d]+", "", x).split("—")[0].strip()
 
         want = [_bare(x) for x in
-                re.findall(r'<div class="lbl">([^<]+)</div>', _read(q))]
+                # ★ 마스터 ㉮ (r672) — ★ 시안 쪽에 `.v3-` 을 붙였다.  ★ 둘 다 받는다
+                re.findall(r'<div class="(?:v3-)?lbl">([^<]+)</div>', _read(q))]
         got = [_bare(x) for x in _h_tags(_read(t), "h3")]
         seen += 1
         if not want:
-            bad.append(f"{sian} 에 절이 없다 (<div class=\"lbl\">)")
+            bad.append(f"{sian} 에 절이 없다 (<div class=\"v3-lbl\">)")
             continue
         if len(want) != len(got):
             bad.append(f"{page} 절 {len(got)}개 · 시안 {len(want)}개")
@@ -678,12 +682,130 @@ def s46_32_generated_fresh() -> tuple[bool, str]:
     tool = ROOT / "tools" / "build_index.py"
     if not tool.is_file():
         return False, "tools/build_index.py 가 없다"
-    got = subprocess.run([sys.executable, str(tool), "--check"],
-                         capture_output=True, text=True, cwd=str(ROOT))
-    said = " ".join(got.stdout.split())[:160]
-    if got.returncode != 0:
-        return False, said or "생성기가 죽었다 — python3.11 tools/build_index.py"
-    return True, said or "생성물이 최신이다"
+    # ★★ 생성물은 ★ 다섯이다 (명령서 29-4 · 31-3) —
+    #   ★ INDEX · CHECKS · SOURCE · SCHEMA (build_index) ＋ ★ f-table 배점표 (gen_table)
+    #   ★ 검사 하나로 ★ 다섯을 다 잡는다
+    bad, said = [], []
+    for tool, what in ((tool, "INDEX·CHECKS·SOURCE·SCHEMA"),
+                       (ROOT / "tools" / "gen_table.py", "f-table 배점표")):
+        if not tool.is_file():
+            bad.append(f"{tool.name} 이 없다")
+            continue
+        got = subprocess.run([sys.executable, str(tool), "--check"],
+                             capture_output=True, text=True, cwd=str(ROOT))
+        if got.returncode != 0:
+            bad.append(f"{what} — " + (" ".join(got.stdout.split())[:90]
+                                       or f"{tool.name} 가 죽었다"))
+        else:
+            said.append(what)
+    if bad:
+        return False, "★ 생성물이 낡았다 — " + " / ".join(bad)
+    return True, "생성물 다섯이 ★ 최신이다 (" + " · ".join(said) + ")"
+
+
+
+# ── S46-36 · S46-40 — ★ 요구 추적표를 기계가 읽는다 (명령서 31-3 · 32-4) ──
+REQS = GUIDE / "01_요구사항.md"
+# ★ 추적표 한 줄 — | # | 날짜 | 원문 | 상태 | 바뀐 문서 | 검사 | 폐기 사유 |
+RE_REQ_ROW = re.compile(r"^\|\s*\*{0,2}(\d+)\*{0,2}\s*\|\s*([\d-]+)\s*\|"
+                        r"(.+?)\|(.+?)\|(.+?)\|(.+?)\|(.*?)\|\s*$", re.M)
+
+
+def _req_rows() -> list:
+    """요구 추적표를 ★ 줄로 읽는다.  ★ 꾸밈(★·굵게)은 뗀다."""
+    out = []
+    for got in RE_REQ_ROW.finditer(_read(REQS)):
+        n, day, said, state, docs_, checks, why = got.groups()
+        clean = lambda x: re.sub(r"[★*`]", "", x).strip()      # noqa: E731
+        out.append({"n": int(n), "day": clean(day), "said": clean(said),
+                    "state": clean(state), "docs": clean(docs_),
+                    "checks": clean(checks), "why": clean(why)})
+    return out
+
+
+def _tokens(said: str) -> list:
+    """★ 마스터 원문에서 ★ 말조각을 뽑는다 (두 글자 이상).
+
+    ★ 이름표 하나(`carCd`)만으로는 안 센다 — ★ 그것은 ★ 그냥 밭 이름이라
+      ★ 규격 곳곳에 ★ 정상으로 나온다.  ★ 실측 08-24 — ★ 헛잡이 넷
+    ★ 그러므로 ★ 한 줄에 ★ 말조각 ★ 둘부터 ★ 「살아 있다」로 본다
+    """
+    drop = ("것을", "것이", "하지", "말고", "그리고", "가이드가")
+    return [w for w in re.findall(r"[\w가-힣]{2,}", said) if w not in drop]
+
+
+# ★ 「이 말은 이제 죽었다」고 적어 둔 줄은 ★ 살아 있는 것이 아니다
+DEAD_MARK = ("틀렸다", "폐기", "취소", "물렸다", "아니다", "안 준다", "✘", "정정")
+
+
+def _named_docs(cell: str) -> list:
+    """★ 「바뀐 문서」 칸이 가리키는 ★ 실제 파일을 찾는다."""
+    out = []
+    for name in re.findall(r"[\w/.-]{3,}", cell):
+        if name in ("명령서", "이", "표"):
+            continue
+        for q in (ROOT / "docs").rglob("*.md"):
+            if name in q.stem or name in q.as_posix():
+                out.append(q)
+    return sorted(set(out))
+
+
+def s46_36_dropped_not_alive() -> tuple[bool, str]:
+    """★ 폐기된 요구가 ★ 규격에 ★ 아직 살아 있는가 (명령서 31-3).
+
+    ★ 재는 법 — ★ 추적표에서 상태가 「폐기」인 줄을 뽑아
+      ★ 그 줄의 ★ 「바뀐 문서」를 열고
+      ★ 마스터 원문의 ★ 말조각이 ★ 아직 ★ 지시하는 줄에 남아 있으면 ★ 실패
+    ★ 말조각 ★ 둘이 ★ 한 줄에 같이 있으면 ★ 그 요구가 살아 있는 것이다
+    ★ 「틀렸다 · 정정 · 폐기」라 적어 둔 줄은 ★ 죽은 것으로 본다
+    ★ 머리글(#)은 ★ 지시가 아니므로 ★ 안 본다
+    """
+    rows = [r for r in _req_rows() if r["state"].startswith("폐기")]
+    if not rows:
+        return False, "요구 추적표에서 「폐기」 줄을 못 읽었다"
+    bad = []
+    for r in rows:
+        toks = _tokens(r["said"])
+        for q in _named_docs(r["docs"]):
+            for i, line in enumerate(_read(q).split("\n"), 1):
+                if line.lstrip().startswith("#") or any(d in line for d in DEAD_MARK):
+                    continue
+                if sum(1 for t in toks if t in line) >= 2:
+                    bad.append(f"요구 {r['n']} → {q.name}:{i}")
+    if bad:
+        return False, (f"★ 폐기된 요구가 규격에 살아 있다 {len(bad)}곳 — "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, f"폐기된 요구 {len(rows)}건이 규격에 안 남아 있다"
+
+
+def s46_40_progress_docs_changed() -> tuple[bool, str]:
+    """★ 「진행」인 요구의 ★ 「바뀐 문서」가 ★ 실제로 바뀌었는가 (명령서 32-4).
+
+    ★★ 마스터 — 「지적받은 것이 다 고쳐졌는지 ★ 사람이 세지 않게 하라」 (요구 80)
+    ★ 재는 법 — ★ 그 문서의 `version` 날짜가 ★ 요구 날짜보다 오래면 ★ 실패
+    ★ 가리키는 문서를 ★ 하나도 못 찾은 줄도 ★ 실패다 — ★ 빈 칸은 안 센 것이다
+    """
+    rows = [r for r in _req_rows() if r["state"].startswith("진행")]
+    if not rows:
+        return True, "「진행」인 요구가 없다"
+    bad, seen = [], 0
+    for r in rows:
+        docs = _named_docs(r["docs"])
+        if not docs:
+            continue                      # ★ 「이 표」처럼 ★ 파일이 아닌 것은 넘긴다
+        for q in docs:
+            seen += 1
+            got = re.search(r"SPEC-\d{4}\.(\d{2})\.(\d{2})", _read(q))
+            if not got:
+                bad.append(f"요구 {r['n']} → {q.name} (version 이 없다)")
+                continue
+            ver = f"{got.group(1)}-{got.group(2)}"
+            if r["day"] and ver < r["day"]:
+                bad.append(f"요구 {r['n']} → {q.name} (문서 {ver} · 요구 {r['day']})")
+    if bad:
+        return False, ("★ 「진행」인데 문서가 안 바뀌었다 — "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, f"「진행」 {len(rows)}건의 바뀐 문서 {seen}개가 다 최신이다"
 
 
 CHECKS = (
@@ -710,6 +832,9 @@ CHECKS = (
     ("S46-30", "INDEX 가 docs 를 다 가리키는가", s46_30_index_covers_docs, "warn"),
     ("S46-31", "규격이 있는 사이트가 config 에 있는가", s46_31_spec_sites_in_config),
     ("S46-32", "생성물이 최신인가", s46_32_generated_fresh),
+    # ★ 마스터가 가장 원하시는 것 — ★ 처음부터 실패로 둔다 (명령서 31-3)
+    ("S46-36", "폐기된 요구가 규격에 안 살아 있는가", s46_36_dropped_not_alive),
+    ("S46-40", "「진행」인 요구의 문서가 바뀌었는가", s46_40_progress_docs_changed, "warn"),
 )
 
 

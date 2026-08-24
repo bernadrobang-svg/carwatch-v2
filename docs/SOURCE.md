@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 160개 · 총 56,417줄
+파일 160개 · 총 56,542줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -21,13 +21,13 @@
 | `validate/v2_load.py` | 919 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `validate/v10_admin.py` | 895 | V10 관리자 검증. |
 | `validate/v1_collect.py` | 878 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
+| `validate/v0_guide.py` | 867 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `tests/test_score.py` | 839 | 7장 판정·채점 시험. |
 | `report/render.py` | 828 | 리포트 생성 (L9). |
 | `validate/v4_mapping.py` | 772 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `tests/test_run.py` | 767 | S0~S3 종단 시험 (모의 응답). |
 | `store/watch.py` | 746 | 후보 추적 (11장). |
-| `validate/v0_guide.py` | 742 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `collect/pipeline.py` | 730 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `store/admin.py` | 665 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
 | `parse/encar/mapping.py` | 625 | 엔카 원문 → CORE 필드 (L3). |
@@ -259,6 +259,12 @@ _sources:212  _admin_guard_checks:233  _sql_strings:278  _schedule_checks:290  _
 _unknown_split_checks:171  _axis_empty_check:257  run:287  _endpoint_order_check:421  _empty_db_check:433  _sql_groups:460  _cumulative_codes:496  _run_scope_check:506  _ctx_started:544  _has_run_id:552  _expected_scope_check:557  _diagnosis_scope_check:578  _diagnosis_none_count:616  _query_key_check:639  _entrypoint_parity_check:666  _enclosing_def:695  _run_id_filled_check:704  _catalog_key_check:724  _whole_probe:746  _whole_body_check:757  _catalog_checks:788  _unparsed_envelope_check:835  _ensure_tmp:875
 ```
 
+### `validate/v0_guide.py` — 867줄
+
+```
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:299  s45_4_table_generated:337  s45_3_spec_totals:352  s45_2_mock_numbers:408  s44_3_specs_in_order:429  s43_3_version_matches:467  _h_tags:492  s46_21_one_screen_per_file:508  s46_22_section_order:533  _targets:574  s46_23_site_query_filled:580  s46_24_facet_unconfirmed:595  s46_30_index_covers_docs:612  s46_31_spec_sites_in_config:651  s46_32_generated_fresh:672  _req_rows:714  _tokens:726  _named_docs:741  s46_36_dropped_not_alive:753  s46_40_progress_docs_changed:781  run:841
+```
+
 ### `tools/trace_fill.py` — 840줄
 
 ```
@@ -293,12 +299,6 @@ check:36  StubEncar:92  Clock:236  setup:241  test_envelope:279  test_last_page_
 
 ```
 AlertConfig:58  WatchItem:71  TrackPoint:86  TrackEvent:101  WatchEvent:115  _cross_site_order:130  classify_duplicates:149  sync_duplicates:202  deduped_count:226  watch_add:236  assert_owner:275  watch_update:290  watch_close:310  note_add:331  notes_of:356  note_delete:374  track_snapshot:389  track_points:418  classify_cause:427  detect_events:439  message:497  notify:525  _grade_order:596  _not_ranked:609  add_watch_query:623  run_watch_queries:658  watch_query_rows:714  close_watch_query:728
-```
-
-### `validate/v0_guide.py` — 742줄
-
-```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:296  s45_4_table_generated:334  s45_3_spec_totals:349  s45_2_mock_numbers:405  s44_3_specs_in_order:426  s43_3_version_matches:464  _h_tags:489  s46_21_one_screen_per_file:505  s46_22_section_order:530  _targets:570  s46_23_site_query_filled:576  s46_24_facet_unconfirmed:591  s46_30_index_covers_docs:608  s46_31_spec_sites_in_config:647  s46_32_generated_fresh:668  run:716
 ```
 
 ### `collect/pipeline.py` — 730줄

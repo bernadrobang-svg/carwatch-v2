@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>판정 근거 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=e894a947b8">
+<link rel="stylesheet" href="/static/app.css?v=be6bd1f71c">
 
 </head>
 <body class="s-why">
@@ -50,8 +50,8 @@
 <h1>판정 근거 <span class="grade-b">B</span></h1>
 <p class="muted">G80_EV · 매물 887
   · <span class="tag" title="이 매물을 받은 사이트입니다. 값이 어느 사이트 원문에서 왔는지가 값의 뜻을 정합니다">엔카</span>
-  · <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42342421" target="_blank" rel="noopener"
-    title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기</a></p>
+  · <a class="btn go mini" href="https://www.encar.com/dc/dc_cardetailview.do?carid=42342421" target="_blank" rel="noopener"
+    title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기 ↗</a></p>
 
 
 <div class="shots">
@@ -247,7 +247,7 @@
   <td><a href="/listings?axis=history.not_join">자차 미가입</a></td>
   <td class="num">2</td>
   <td class="num">18</td>
-  <td>not_join_92%</td>
+  <td title="원문 근거 코드 not_join_92%">자차 미가입 92%</td>
   <td>2</td>
 </tr>
 
@@ -255,7 +255,7 @@
   <td><a href="/listings?axis=history.owner">소유자 변경</a></td>
   <td class="num">8</td>
   <td class="num">11</td>
-  <td>owner_1</td>
+  <td title="원문 근거 코드 owner_1">소유자 변경 1회</td>
   <td>2</td>
 </tr>
 
@@ -263,7 +263,7 @@
   <td><a href="/listings?axis=history.seizing">압류·저당</a></td>
   <td class="num">8</td>
   <td class="num">8</td>
-  <td>detail_seizing</td>
+  <td title="원문 근거 코드 detail_seizing">압류 · 저당을 상세에서 확인했습니다</td>
   <td>2</td>
 </tr>
 
@@ -271,7 +271,7 @@
   <td><a href="/listings?axis=history.use">용도</a></td>
   <td class="num">0</td>
   <td class="num">22</td>
-  <td>usage_change_types+record_use</td>
+  <td title="원문 근거 코드 usage_change_types+record_use">용도 변경 이력으로 봤습니다 · 자동차이력의 용도 이력으로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -279,7 +279,7 @@
   <td><a href="/listings?axis=state.accident">사고</a></td>
   <td class="num">51</td>
   <td class="num">51</td>
-  <td>record_accident_count</td>
+  <td title="원문 근거 코드 record_accident_count">보험 사고 횟수로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -287,7 +287,7 @@
   <td><a href="/listings?axis=state.consumable">소모품</a></td>
   <td class="num">0</td>
   <td class="num">15</td>
-  <td>site_unavailable<br><span class="muted">엔카는 이 값을 제공하지 않습니다.  기아 인증중고차(CPO) · 현대·제네시스 인증중고차 매물은 확인할 수 있습니다.</span></td>
+  <td title="원문 근거 코드 site_unavailable">이 사이트가 주지 않는 값입니다<br><span class="muted">엔카는 이 값을 제공하지 않습니다.  기아 인증중고차(CPO) · 현대·제네시스 인증중고차 매물은 확인할 수 있습니다.</span></td>
   <td>2</td>
 </tr>
 
@@ -295,7 +295,7 @@
   <td><a href="/listings?axis=state.frame">골격</a></td>
   <td class="num">43</td>
   <td class="num">43</td>
-  <td>frame_none</td>
+  <td title="원문 근거 코드 frame_none">골격 — 이상 없음</td>
   <td>2</td>
 </tr>
 
@@ -303,7 +303,7 @@
   <td><a href="/listings?axis=state.integrity">진정성</a></td>
   <td class="num">8</td>
   <td class="num">8</td>
-  <td>integrity_ok</td>
+  <td title="원문 근거 코드 integrity_ok">계기판 · 구조변경에 이상이 없습니다</td>
   <td>2</td>
 </tr>
 
@@ -311,7 +311,7 @@
   <td><a href="/listings?axis=state.leak">누유</a></td>
   <td class="num">15</td>
   <td class="num">15</td>
-  <td>leak_none</td>
+  <td title="원문 근거 코드 leak_none">누유 — 없음</td>
   <td>2</td>
 </tr>
 
@@ -319,7 +319,7 @@
   <td><a href="/listings?axis=state.my_cost">보험 수리비</a></td>
   <td class="num">28</td>
   <td class="num">28</td>
-  <td>record_my_cost</td>
+  <td title="원문 근거 코드 record_my_cost">보험 내차 수리비로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -327,7 +327,7 @@
   <td><a href="/listings?axis=state.outer">외판</a></td>
   <td class="num">28</td>
   <td class="num">28</td>
-  <td>outer_none</td>
+  <td title="원문 근거 코드 outer_none">외판 — 이상 없음</td>
   <td>2</td>
 </tr>
 
@@ -335,7 +335,7 @@
   <td><a href="/listings?axis=state.special">특수 사고</a></td>
   <td class="num">21</td>
   <td class="num">21</td>
-  <td>record_special</td>
+  <td title="원문 근거 코드 record_special">전손 · 침수 · 도난 이력으로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -343,7 +343,7 @@
   <td><a href="/listings?axis=state.year">연식</a></td>
   <td class="num">51</td>
   <td class="num">80</td>
-  <td>age_years</td>
+  <td title="원문 근거 코드 age_years">연식으로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -351,7 +351,7 @@
   <td><a href="/listings?axis=taste.color">색상</a></td>
   <td class="num">15</td>
   <td class="num">15</td>
-  <td>detail_color</td>
+  <td title="원문 근거 코드 detail_color">상세의 색상으로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -359,7 +359,7 @@
   <td><a href="/listings?axis=taste.fitting">지정 옵션</a></td>
   <td class="num">18</td>
   <td class="num">18</td>
-  <td>nothing_picked</td>
+  <td title="원문 근거 코드 nothing_picked">지정하신 옵션이 없습니다</td>
   <td>2</td>
 </tr>
 
@@ -367,7 +367,7 @@
   <td><a href="/listings?axis=taste.hud">HUD</a></td>
   <td class="num">18</td>
   <td class="num">18</td>
-  <td>option_codes</td>
+  <td title="원문 근거 코드 option_codes">옵션 코드로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -375,7 +375,7 @@
   <td><a href="/listings?axis=taste.option">옵션</a></td>
   <td class="num">12</td>
   <td class="num">43</td>
-  <td>options_choice_price</td>
+  <td title="원문 근거 코드 options_choice_price">선택 옵션가로 봤습니다</td>
   <td>1</td>
 </tr>
 
@@ -383,7 +383,7 @@
   <td><a href="/listings?axis=taste.sunroof">선루프</a></td>
   <td class="num">0</td>
   <td class="num">12</td>
-  <td>option_codes</td>
+  <td title="원문 근거 코드 option_codes">옵션 코드로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -391,7 +391,7 @@
   <td><a href="/listings?axis=taste.trim">트림</a></td>
   <td class="num">58.3</td>
   <td class="num">59</td>
-  <td>trim_origin_price</td>
+  <td title="원문 근거 코드 trim_origin_price">트림의 신차가로 봤습니다</td>
   <td>1</td>
 </tr>
 
@@ -399,7 +399,7 @@
   <td><a href="/listings?axis=value.budget">예산</a></td>
   <td class="num">20</td>
   <td class="num">95</td>
-  <td>budget_line</td>
+  <td title="원문 근거 코드 budget_line">가격대와 견줬습니다</td>
   <td>2</td>
 </tr>
 
@@ -407,7 +407,7 @@
   <td><a href="/listings?axis=value.market">시세 대비</a></td>
   <td class="num">-1</td>
   <td class="num">30</td>
-  <td>market_median</td>
+  <td title="원문 근거 코드 market_median">같은 사양 매물의 중앙값과 견줬습니다</td>
   <td>2</td>
 </tr>
 
@@ -415,7 +415,7 @@
   <td><a href="/listings?axis=value.mileage">주행</a></td>
   <td class="num">55</td>
   <td class="num">107</td>
-  <td>mileage_total</td>
+  <td title="원문 근거 코드 mileage_total">총 주행거리로 봤습니다</td>
   <td>2</td>
 </tr>
 
@@ -423,7 +423,7 @@
   <td><a href="/listings?axis=value.origin">신차가 대비</a></td>
   <td class="num">75</td>
   <td class="num">75</td>
-  <td>origin_price</td>
+  <td title="원문 근거 코드 origin_price">신차가와 견줬습니다</td>
   <td>2</td>
 </tr>
 
@@ -431,7 +431,7 @@
   <td><a href="/listings?axis=warranty.general">일반 보증</a></td>
   <td class="num">9</td>
   <td class="num">22</td>
-  <td>encar_warranty_general</td>
+  <td title="원문 근거 코드 encar_warranty_general">일반 · 차체 보증 잔여로 봤습니다</td>
   <td>1</td>
 </tr>
 
@@ -439,7 +439,7 @@
   <td><a href="/listings?axis=warranty.power">보증</a></td>
   <td class="num">32</td>
   <td class="num">32</td>
-  <td>encar_warranty_power</td>
+  <td title="원문 근거 코드 encar_warranty_power">동력계 보증 잔여로 봤습니다</td>
   <td>1</td>
 </tr>
 
@@ -447,7 +447,7 @@
   <td><a href="/listings?axis=warranty.site">사이트 보증</a></td>
   <td class="num">18</td>
   <td class="num">36</td>
-  <td>엔카진단</td>
+  <td title="원문 근거 코드 엔카진단">엔카 자체진단</td>
   <td>2</td>
 </tr>
 
@@ -455,10 +455,10 @@
 </table>
 
 <p class="muted">시세 축 근거 —
-  <b>option_adjusted_N</b> 같은 트림 N건의 옵션가 중앙값으로 보정했습니다 ·
-  <b>model_scaled_N</b> 같은 트림이 N건뿐이라 차종 전체로 견줬습니다 ·
-  <b>market_median_N</b> 옵션가를 몰라 보정 없이 견줬습니다 ·
-  <b>market_sample_short</b> 표본이 모자라 시세를 내지 않았습니다.</p>
+  <b title="원문 근거 코드 option_adjusted_N">같은 트림 N건의 옵션가 중앙값으로 보정했습니다</b> ·
+  <b title="원문 근거 코드 model_scaled_N">같은 트림이 N건뿐이라 차종 전체로 견줬습니다</b> ·
+  <b title="원문 근거 코드 market_median_N">옵션가를 몰라 보정 없이 견줬습니다</b> ·
+  <b title="원문 근거 코드 market_sample_short">표본이 모자라 시세를 내지 않았습니다</b>.</p>
 
 
 <p class="muted">부분 침수 이력은 확인할 수 없습니다 (엔카 미제공).
@@ -511,12 +511,16 @@
 
 
 <h3>선택 옵션 <small>2개</small></h3>
-<p class="chips"><span class="chip">1022</span><span class="chip">1023</span></p>
+<p class="chips"></p>
+<p class="muted">2종은 <b>이름 미조회</b>입니다 —
+  카탈로그를 아직 받지 못해 코드만 있습니다.</p>
 
 <h3>기본 옵션 <small>47개</small></h3>
-<p class="chips"><span class="chip">001</span><span class="chip">004</span><span class="chip">005</span><span class="chip">006</span><span class="chip">007</span><span class="chip">008</span><span class="chip">014</span><span class="chip">015</span><span class="chip">017</span><span class="chip">019</span><span class="chip">020</span><span class="chip">021</span><span class="chip">022</span><span class="chip">023</span><span class="chip">024</span><span class="chip">026</span><span class="chip">027</span><span class="chip">030</span><span class="chip">031</span><span class="chip">032</span><span class="chip">033</span><span class="chip">034</span><span class="chip">035</span><span class="chip">051</span><span class="chip">055</span><span class="chip">056</span><span class="chip">057</span><span class="chip">058</span><span class="chip">059</span><span class="chip">063</span><span class="chip">072</span><span class="chip">074</span><span class="chip">075</span><span class="chip">077</span><span class="chip">079</span><span class="chip">081</span><span class="chip">082</span><span class="chip">083</span><span class="chip">084</span><span class="chip">085</span><span class="chip">086</span><span class="chip">087</span><span class="chip">088</span><span class="chip">094</span><span class="chip">095</span><span class="chip">096</span><span class="chip">097</span></p>
+<p class="chips"></p>
+<p class="muted">47종은 <b>이름 미조회</b>입니다 —
+  카탈로그를 아직 받지 못해 코드만 있습니다.</p>
 
-<p class="muted">★ 이름이 흐린 것은 사전에 아직 뜻이 없는 코드입니다 —
+<p class="muted">★ 이름을 모르는 코드는 그대로 내지 않습니다 —
   추정해서 이름을 붙이지 않습니다.</p>
 
 
@@ -715,7 +719,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260823T014017</span>
-  <span>2026-08-24 00:34</span>
+  <span>2026-08-24 06:26</span>
 </footer>
 
 </body>
