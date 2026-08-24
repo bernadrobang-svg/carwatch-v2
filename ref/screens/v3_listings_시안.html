@@ -84,7 +84,7 @@ background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cur
 <div class="filter">
   <div class="v3-head"><span class="v3-cnt">3,230건</span><button class="v3-btn" style="font-size:11px;padding:2px 8px">지우기</button></div>
   <div class="frow">
-    <select><option>KOLEOS_HEV</option><option>전체</option></select>
+    <select><option>KOLEOS_HEV (274건)</option><option>전체</option></select>
     <select><option>트림 전체</option><option>에스프리 알핀</option><option>아이코닉</option></select>
   </div>
   <div class="frow">
@@ -123,11 +123,22 @@ background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cur
     </div>
 
     <div class="v3-lbl">주행 · 연식</div>
-    <div class="v3-g2"><input type="text" placeholder="주행 이하 60000"><input type="text" placeholder="연식 이후 2023"></div>
+    <div class="pills">
+      <button class="v3-btn">3만km 이하</button><button class="v3-btn">5만km 이하</button><button class="v3-btn">7만km 이하</button><button class="v3-btn">10만km 이하</button><button class="v3-btn">15만km 이하</button>
+    </div>
+    <div class="v3-g2" style="margin-top:6px"><input type="text" placeholder="주행 이하 60000"><input type="text" placeholder="연식 이후 2023"></div>
 
     <div class="v3-lbl">옵션</div>
     <div class="pills">
       <button class="v3-btn">깡통 빼기</button><button class="v3-btn">고속도로 주행보조 있는 것만</button><button class="v3-btn">선루프</button>
+    </div>
+    <div class="v3-note" style="margin:8px 0 4px">★ 외장색 <span class="v3-mono">14가지</span></div>
+    <div class="pills">
+      <button class="v3-btn">흰색 4,220</button><button class="v3-btn">검정색 2,924</button><button class="v3-btn">쥐색 1,575</button><button class="v3-btn">청색 719</button><button class="v3-btn">스노우화이트펄 378</button><button class="v3-btn">더 보기 ▾</button>
+    </div>
+    <div class="v3-note" style="margin:8px 0 4px">★ 내장색 <span class="v3-mono">7가지</span></div>
+    <div class="pills">
+      <button class="v3-btn">검정 계열 3,685</button><button class="v3-btn">갈색 계열 2,892</button><button class="v3-btn">베이지 계열 1,139</button><button class="v3-btn">더 보기 ▾</button>
     </div>
 
     <div class="v3-lbl">뺀 것</div>
@@ -194,6 +205,8 @@ background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cur
 <h3>지켜야 하는 것</h3>
 <div class="v3-note">
 ★ 판정 다섯은 OK · × · — 셋으로 가른다.  ★ — 는 「없다」가 아니라 「확인 못 했다」다 (개정 325)<br>
+★★ ★ <b>색은 「옵션」 절에 둔다</b> (마스터 확정 08-25) — ★ 외장 14 · 내장 7 · ★ 많은 것부터 다섯씩 · 나머지는 「더 보기」<br>
+★ ★ 주행은 <b>칸으로도 · 숫자로도</b> — ★ 화면이 그렇게 돈다<br>
 ★ 카드의 등급 · 판정 배지 · 트림은 ★ 누르면 그 조건으로 걸러진다 — 필터와 같은 것을 가리킨다<br>
 ★★ ★ <b>「3곳」 배지</b> — ★ 같은 차가 다른 사이트에도 있다.  ★ 누르면 <b>추적</b>으로 간다<br>
 ★ ★ 목록에는 ★ <b>낮은 값 하나만</b> 낸다 (★ 싼 쪽을 남긴다) — ★ 두 번 나오면 안 된다 (마스터 확정 08-24 · S46-57)<br>
