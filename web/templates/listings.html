@@ -50,42 +50,106 @@
   <button type="submit" class="chip" style="cursor:pointer">거르기</button>
   <a class="chip clear" href="/listings" title="조건을 전부 지웁니다">전부 지우기</a>
 
-  <!-- ＋ 12 — 접어 둔다.  ★ 늘 보이면 칩 7 이 안 보인다 -->
+  <!-- ══ ＋조건 — ★ **다섯 절로 묶는다** (마스터 확정 08-25 · v3_listings_시안) ══
+       ★ 판정 · 사이트 · 주행 · 연식 · 옵션 · 뺀 것
+       ★ 기본 절(차종·트림·가격대·등급·정렬)은 그대로다 -->
   <details class="chip" style="border-style:dashed">
     <summary>＋ 조건</summary>
-    <div class="chips" style="margin-top:9px">
+    <div class="mbody" style="margin-top:9px">
+
+      <h3>판정 — 누르면 그 조건만 남는다</h3>
+      <p class="chips">
+        {% for b in judge_buttons %}<a class="btn{% if b.on %} on{% endif %}"
+          href="{{ b.url }}" title="{{ b.tip }}">{{ b.label }}</a>{% endfor %}
+      </p>
+      <label class="dim"><input type="checkbox" name="unknown_too" value="1"{% if pick.unknown_too %} checked{% endif %}>
+        확인 못 한 것도 함께 보기</label>
+
+      <h3>사이트</h3>
+      <p class="chips">
+        {% for b in site_buttons %}<a class="btn{% if b.on %} on{% endif %}"
+          href="/listings?site={{ b.q }}{% if b.sell %}&sell_type={{ b.sell }}{% endif %}"
+          title="이 사이트 매물만 봅니다">{{ b.label }}{% if b.live %}
+          <span class="dim">{{ b.live | num }}</span>{% endif %}</a>{% endfor %}
+      </p>
+
+      <h3>주행 · 연식</h3>
+      <p class="chips">
+        {% for k in km_options %}<a class="btn{% if k.on %} on{% endif %}"
+          href="/listings?km_max={{ k.key }}" title="이 주행거리 이하만 봅니다">{{ k.label }}</a>{% endfor %}
+      </p>
+      <span class="chip">주행 <input name="km_max" size="6" inputmode="numeric"
+        value="{{ pick.km_max }}" placeholder="60000" title="숫자로도 넣을 수 있습니다"></span>
       <span class="chip">연식 <input name="year" size="4" inputmode="numeric"
         value="{{ pick.year }}" placeholder="2024" title="이 연식 이후만"></span>
-      <span class="chip">옵션 <input name="option_min" size="2" inputmode="numeric"
-        value="{{ pick.option_min }}" placeholder="3" title="선택 옵션 종수 이상">종 이상</span>
-      <span class="chip">트림 <input name="trim" size="6" value="{{ pick.trim }}"
-        placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
-      <span class="chip">연료 <select name="fuel"><option value="">전체</option>
-        {% for f in fuel_options %}<option value="{{ f.key }}"{% if f.on %} selected{% endif %}>{{ f.label }}</option>{% endfor %}
-      </select></span>
-      <span class="chip">사이트 <select name="site"><option value="">전체</option>
-        {% for b in site_buttons %}<option value="{{ b.q }}"{% if b.on %} selected{% endif %}>{{ b.label }}</option>{% endfor %}
-      </select></span>
-      <span class="chip">정직도 <input name="honesty_min" size="2" inputmode="numeric"
-        value="{{ pick.honesty_min }}" placeholder="70" title="딜러 정직도 이상"> 이상</span>
-      <span class="chip">경과 <input name="days_max" size="3" inputmode="numeric"
-        value="{{ pick.days_max }}" placeholder="30" title="올라온 지 이 일수 이내"></span>
-      <span class="chip"><label><input type="checkbox" name="price_dropped" value="1"{% if pick.price_dropped %} checked{% endif %}>
-        가격 내린 것만</label></span>
-      <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
-        value="{{ pick.warranty_month_min }}" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
-      <span class="chip">지역 <select name="region"><option value="">전체</option>
-        {% for r in region_options %}<option value="{{ r.key }}"{% if r.on %} selected{% endif %}>{{ r.label }}</option>{% endfor %}
-      </select></span>
-      <!-- ★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164) -->
-      <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
-        값<input name="score_value_min" size="3" inputmode="numeric" value="{{ pick.score_value_min }}" placeholder="150">
-        차량<input name="score_car_min" size="3" inputmode="numeric" value="{{ pick.score_car_min }}" placeholder="100">
-        보증<input name="score_warranty_min" size="3" inputmode="numeric" value="{{ pick.score_warranty_min }}" placeholder="100">
-        취향<input name="score_taste_min" size="3" inputmode="numeric" value="{{ pick.score_taste_min }}" placeholder="90"> 이상</span>
-      <span class="chip">정렬 <select name="order">
-        {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
-      </select></span>
+
+      <h3>옵션</h3>
+      <p class="chips">
+        <span class="chip">깡통 빼기 <input name="option_min" size="2" inputmode="numeric"
+          value="{{ pick.option_min }}" placeholder="1" title="선택 옵션 종수 이상">종 이상</span>
+        <a class="btn" href="/listings?axis=taste.sunroof&bucket=1" title="선루프가 있는 매물만">선루프</a>
+        <a class="btn" href="/listings?axis=taste.hud&bucket=1" title="헤드업 디스플레이가 있는 매물만">헤드업 디스플레이</a>
+      </p>
+      <!-- ★★ 색은 ★ 옵션 절에 (마스터 확정 08-25 · B).
+           ★ 많은 것부터 다섯 · 나머지는 「더 보기 ▾」로 접는다 -->
+      <p class="dim">★ 외장색 {{ color_ext_top | count }}＋{{ color_ext_rest | count }}가지</p>
+      <p class="chips">
+        {% for c in color_ext_top %}<a class="btn{% if c.on %} on{% endif %}"
+          href="/listings?color_ext={{ c.key }}">{{ c.label }}</a>{% endfor %}
+      </p>
+      {% if color_ext_rest %}
+      <details class="chip"><summary>더 보기 ▾</summary>
+        <p class="chips">{% for c in color_ext_rest %}<a class="btn{% if c.on %} on{% endif %}"
+          href="/listings?color_ext={{ c.key }}">{{ c.label }}</a>{% endfor %}</p>
+      </details>
+      {% endif %}
+      <p class="dim">★ 내장색 {{ color_int_top | count }}＋{{ color_int_rest | count }}가지</p>
+      <p class="chips">
+        {% for c in color_int_top %}<a class="btn{% if c.on %} on{% endif %}"
+          href="/listings?color_int={{ c.key }}">{{ c.label }}</a>{% endfor %}
+      </p>
+      {% if color_int_rest %}
+      <details class="chip"><summary>더 보기 ▾</summary>
+        <p class="chips">{% for c in color_int_rest %}<a class="btn{% if c.on %} on{% endif %}"
+          href="/listings?color_int={{ c.key }}">{{ c.label }}</a>{% endfor %}</p>
+      </details>
+      {% endif %}
+
+      <h3>뺀 것</h3>
+      <p class="chips">
+        {% if lease_hidden %}<span class="chip">리스 {{ lease_hidden | num }}건 빼는 중</span>
+          <a class="btn" href="{{ pick.lease_url }}">리스 함께 보기</a>{% endif %}
+        {% if !lease_hidden %}<span class="chip dim">리스·렌트를 기본으로 뺍니다</span>{% endif %}
+      </p>
+
+      <!-- ★ 나머지 조건 — ★ 다섯 절에 안 드는 것 -->
+      <div class="chips" style="margin-top:9px">
+        <span class="chip">트림 <input name="trim" size="6" value="{{ pick.trim }}"
+          placeholder="캘리그래피" title="트림 이름에 이 말이 든 것"></span>
+        <span class="chip">연료 <select name="fuel"><option value="">전체</option>
+          {% for f in fuel_options %}<option value="{{ f.key }}"{% if f.on %} selected{% endif %}>{{ f.label }}</option>{% endfor %}
+        </select></span>
+        <span class="chip">정직도 <input name="honesty_min" size="2" inputmode="numeric"
+          value="{{ pick.honesty_min }}" placeholder="70" title="딜러 정직도 이상"> 이상</span>
+        <span class="chip">경과 <input name="days_max" size="3" inputmode="numeric"
+          value="{{ pick.days_max }}" placeholder="30" title="올라온 지 이 일수 이내"></span>
+        <span class="chip"><label><input type="checkbox" name="price_dropped" value="1"{% if pick.price_dropped %} checked{% endif %}>
+          가격 내린 것만</label></span>
+        <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
+          value="{{ pick.warranty_month_min }}" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
+        <span class="chip">지역 <select name="region"><option value="">전체</option>
+          {% for r in region_options %}<option value="{{ r.key }}"{% if r.on %} selected{% endif %}>{{ r.label }}</option>{% endfor %}
+        </select></span>
+        <!-- ★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164) -->
+        <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
+          값<input name="score_value_min" size="3" inputmode="numeric" value="{{ pick.score_value_min }}" placeholder="150">
+          차량<input name="score_car_min" size="3" inputmode="numeric" value="{{ pick.score_car_min }}" placeholder="100">
+          보증<input name="score_warranty_min" size="3" inputmode="numeric" value="{{ pick.score_warranty_min }}" placeholder="100">
+          취향<input name="score_taste_min" size="3" inputmode="numeric" value="{{ pick.score_taste_min }}" placeholder="90"> 이상</span>
+        <span class="chip">정렬 <select name="order">
+          {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
+        </select></span>
+      </div>
     </div>
   </details>
 </form>

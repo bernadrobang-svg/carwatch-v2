@@ -143,6 +143,16 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  # ★ ＋12 선택지 — DB 에 있는 값만 낸다 (개정 427)
                  "km_options": _km_options(flt, root),
                  "grade_options": _grade_options(flt, root),
+                 "judge_buttons": _judge_buttons(flt, root),
+                 # ★★ 색은 옵션 절에 (마스터 확정 08-25) — ★ 다섯씩 · 나머지는 접는다
+                 "color_ext_top": _split_top(_distinct_options(
+                     conn, "color_ext_raw", flt.color_ext))[0],
+                 "color_ext_rest": _split_top(_distinct_options(
+                     conn, "color_ext_raw", flt.color_ext))[1],
+                 "color_int_top": _split_top(_distinct_options(
+                     conn, "color_int_raw", flt.color_int))[0],
+                 "color_int_rest": _split_top(_distinct_options(
+                     conn, "color_int_raw", flt.color_int))[1],
                  "color_ext_options": _distinct_options(
                      conn, "color_ext_raw", flt.color_ext),
                  "color_int_options": _distinct_options(
@@ -739,6 +749,39 @@ def _pick_state(flt, root: str = ROOT) -> dict:
             "said": " · ".join(said), "lease_url": f"/listings?{q}",
             "excluded_url": f"/listings?{qx}"}
 
+
+
+def _judge_buttons(flt, root: str = ROOT) -> list:
+    """판정 다섯 — ★ 목록 카드의 배지와 ★ **같은 다섯**이다 (v3_listings_시안).
+
+    ★ 축 목록은 ★ `CHIP_AXES` 하나가 정본이다 — ★ 여기서 다시 적지 않는다.
+      ★ ★ 갈리면 ★ 카드에는 다섯인데 ★ 거르개는 넷이 된다
+    ★ 이름은 `config/labels.json` 이 정본이다 (S14)
+    """
+    import urllib.parse as _u
+
+    from report.screens.build import CHIP_AXES, _labels
+
+    al = _labels(root)["AXIS_LABELS"]
+    out = []
+    for axis in CHIP_AXES:
+        on = getattr(flt, "axis", None) == axis
+        q = {} if on else {"axis": axis, "bucket": AXIS_BUTTON_BUCKET}
+        out.append({"label": f"{al.get(axis, axis)} OK", "on": on,
+                    "url": f"/listings?{_u.urlencode(q)}" if q else "/listings",
+                    "tip": f"{al.get(axis, axis)} 에서 점수를 받은 매물만 봅니다"})
+    return out
+
+
+# ★★ 색은 ★ **옵션 절**에 넣는다 (마스터 확정 08-25 · B).
+#   ★ 많은 것부터 다섯씩 내고 ★ 나머지는 「더 보기 ▾」로 접는다 —
+#   ★ ★ 스물한 가지를 다 펴면 ★ 옵션 절이 못 읽힌다 (가이드 지시)
+COLOR_TOP = 5
+
+
+def _split_top(rows: list, top: int = COLOR_TOP) -> tuple:
+    """많은 것부터 `top` 개 · 나머지.  ★ 자른 것을 말한다 (검토 17)."""
+    return rows[:top], rows[top:]
 
 
 def _distinct_options(conn, col: str, now) -> list:
