@@ -63,8 +63,12 @@ GONE = "gone"
 # ★ 한 칸에 몰아넣으면 「이 차만 사고가 있다」가 세로로 안 보인다
 # ★ 부록 G 의 목록 열 14~17 이다 (개정 332).
 #   35열을 늘어놓으면 「고를 것을 좁힌다」가 안 된다 — 상세로 보낸다
+# ★★ 목록 카드의 ★ **판정 다섯** (v3_listings_시안 · 마스터 확정 열셋 · 명령서 1b).
+#   ★ 사고 · 골격 · 용도 · 제조사 보증 · **사이트 보증**
+#   ★★ 실측 08-24 — ★ 넷뿐이라 ★ 「사이트 보증」이 빠져 있었다.
+#     ★ ★ 그래서 ★ 마스터가 ★ 목록에서 ★ 무엇이 좋은 매물인지 못 보셨다 (오판 100)
 CHIP_AXES = ("state.accident", "state.frame", "history.use",
-             "warranty.power")
+             "warranty.power", "warranty.site")
 
 
 def site_badge(site: str | None, sell_type: str | None,
@@ -537,7 +541,10 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
     ★ 「0」 하나로 일곱 축을 다 말할 수 없다.  축마다 말이 다르다
     ★ 원문에 없으면 빈 문자다 — 화면이 기호로 되돌아간다
     """
-    if chip.mark == "?":
+    # ★★ 기호를 코드에 박지 않는다 — ★ `config/labels.json` 이 정본이다.
+    #   ★ ★ 실측 08-24 — ★ 「?」로 박아 두어서 ★ 기호를 「—」로 바꾸자 ★ 조용히 어긋났다.
+    #     ★ ★ 톤은 기호가 바뀌어도 안 변한다 (V6-02)
+    if chip.tone == TONE_UNKNOWN:
         return ""            # 확인 못 한 것은 기호가 정확하다
     w = state.get("warranty")
     rec = state.get("record")
@@ -573,7 +580,10 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
     if axis == "warranty.site":
         # ★ 개정 365 — 무엇으로 받았는지 낸다.
         #   「엔카검증 10 + 엔카보증 10 = 20 / 50」
-        got = (chip.source or "").replace("+", " + ")
+        # ★★ 출처는 ★ 인자로 온다 — ★ `AxisChip` 에는 그 칸이 없다.
+        #   ★ ★ 실측 08-24 — ★ `warranty.site` 가 ★ 목록 칩에 처음 들어오자
+        #     ★ `AttributeError` 로 ★ /listings 가 500 이 됐다 (명령서 1b)
+        got = (source or "").replace("+", " + ")
         return got if got and got not in ("missing", "no_warranty") else (
             "보증 없음" if got == "no_warranty" else "확인 못 함")
     if axis == "taste.option":

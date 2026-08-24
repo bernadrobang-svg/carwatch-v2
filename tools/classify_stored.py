@@ -24,7 +24,7 @@ sys.path.insert(0, ROOT)
 
 from parse.classify import classify                                # noqa: E402
 from store.dictionary import (collect_group_of, fuel_normalize,    # noqa: E402
-                              match_target_name)
+                              match_target_name, target_map)
 from store.raw import commit, open_db                              # noqa: E402
 
 
@@ -67,6 +67,21 @@ def main() -> int:
         cg = collect_group_of(st, named)
         if not cg:
             got["이름 모름"] += 1
+            continue
+        # ★★ 사전이 ★ `target_key` 를 못 박아 둔 사이트가 있다 (KB · 볼보 · 렉서스 · BMW).
+        #   ★ ★ 그 사이트는 ★ **차종을 골라서 부른다** — ★ 슬러그·해시가 곧 차종이다.
+        #     ★ ★ 그때는 ★ 연료를 몰라도 ★ 차종이 정해진다.
+        #     ★ ★ 실측 08-24 — ★ 목록만 받은 159건이 ★ 연료가 없어 ★ 전건 떨어졌다
+        fixed = (target_map(st).get(named) or {}).get("target_key")
+        if fixed and fixed in targets:
+            got["붙음"] += 1
+            per[st] = per.get(st, 0) + 1
+            if "--dry" not in args:
+                conn.execute(
+                    "UPDATE core_listing SET target_key=?, classify_stage=?, "
+                    "classify_source=?, status='active', last_seen=? "
+                    "WHERE listing_id=?",
+                    (fixed, "provisional", "list", at, lid))
             continue
         res = classify(targets, cg, fuel_normalize(st, fuel), badge, grade, cc)
         if not res.target_key:

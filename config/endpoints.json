@@ -178,17 +178,30 @@
       "list": "/api/json/getList_search.json.php?price_area_min=0&price_area_max=99999",
       "detail": "/api/json/getData_car_detail.json.php?idx={source_id}"
     },
-    "_note": "★ 모바일 UA · Referer 필요.  ★ `search_list.car_list` 가 매물이다 — `total_list_num` 은 0 으로 온다.  ★ 전수 36건 (실측 08-23)",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+    "_note": "★ 모바일 UA ＋ Referer 필요.  ★ `search_list.car_list` 가 매물이다. ★ ★ `total_list_num` 을 믿지 마라 — ★ 실측 08-24 car_list 36 · total_list_num 84 로 서로 다르다 (규격은 0 이라 적었다).  ★ 전수 36건",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
+    "timeout_sec": 40,
+    "interval_sec": 1.0,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+      "Referer": "https://certified.lexus.co.kr/",
+      "Accept": "application/json"
+    }
   },
   "volvo_selekt": {
     "base_url": "https://selekt.volvocars.co.kr",
     "paths": {
-      "list": "/kr/volvo/{model}",
+      "list": "/kr/vehicles/xhr-results/{page}",
       "detail": "/kr/vehicles/volvo/{model}/{source_id}"
     },
-    "_note": "★ 매물번호가 숫자가 아니라 슬러그다.  ★ 503 이 잦아 재시도가 필요하다.  ★ XC60 59 + S60 2 = 61건 (실측 08-23)",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+    "_note": "★ 목록은 xhr-results 쪽넘김이다 (명령서 1a · 실측 08-24). ★ 한 쪽에 링크 12개가 상한 — ★ 12 면 다음 쪽이 있다. ★ 총건수는 화면 글자 「총 N」에서 읽는다 — ★ 실측 08-24 ★ 180건 (규격의 221 은 08-23 값). ★ 매물번호가 숫자가 아니라 슬러그다. ★ 503 이 잦아 재시도가 필요하다",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
+    "timeout_sec": 40,
+    "interval_sec": 1.0,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+      "Referer": "https://selekt.volvocars.co.kr/"
+    }
   },
   "bmw_bps": {
     "base_url": "http://www.bavarian-bps.co.kr",
@@ -196,7 +209,12 @@
       "list": "/shop/list.php?ca_id={ca_id}",
       "detail": "/shop/item.php?it_id={source_id}"
     },
-    "_note": "★ 바바리안 딜러 한 곳.  ★ 가격은 목록 카드에 있다 — 상세에는 없다.  ★ 전수 87건 중 X3 1건 (실측 08-23)",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)"
+    "_note": "★ 바바리안 딜러 한 곳.  ★ 가격은 목록 카드에 있다 — 상세에는 없다. ★★ 503 은 고장이 아니다 — ★ 「503·200·200」이다 (가이드 정정 08-24). ★ 재시도 세 번이면 산다.  ★ 쪽넘김이 있다 — ★ 매물번호가 안 늘면 끝이다",
+    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
+    "timeout_sec": 40,
+    "interval_sec": 1.0,
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
+    }
   }
 }

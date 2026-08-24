@@ -306,6 +306,50 @@
         "collect_group": "multi",
         "target_key": "V60CC_IMPORT"
       }
+    },
+    "volvo_selekt": {
+      "_field": "★ 목록 링크의 슬러그로 고른다 (xc60 · s60 · xc40 · v60-cross-country · v60cc)",
+      "_rule": "★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
+      "XC60": {
+        "collect_group": "multi",
+        "target_key": "XC60_IMPORT"
+      },
+      "S60": {
+        "collect_group": "multi",
+        "target_key": "S60_IMPORT"
+      },
+      "XC40": {
+        "collect_group": "multi",
+        "target_key": "XC40_IMPORT"
+      },
+      "V60 크로스 컨트리": {
+        "collect_group": "multi",
+        "target_key": "V60CC_IMPORT"
+      },
+      "EX60": {
+        "collect_group": "multi",
+        "target_key": "EX60_IMPORT"
+      }
+    },
+    "lexus_certified": {
+      "_field": "★ car_list 의 model_name 첫 낱말 (「NX 350h」 → NX)",
+      "_rule": "★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
+      "NX": {
+        "collect_group": "multi",
+        "target_key": "NX_HEV"
+      },
+      "RX": {
+        "collect_group": "multi",
+        "target_key": "RX_IMPORT"
+      }
+    },
+    "bmw_bps": {
+      "_field": "★ 목록 카드 글자에 아는 이름이 들어 있는지로 고른다 (딜러 한 곳)",
+      "_rule": "★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
+      "X3": {
+        "collect_group": "multi",
+        "target_key": "X3_IMPORT"
+      }
     }
   },
   "_pending": {
@@ -364,6 +408,33 @@
       "전기": "전기",
       "하이브리드": "가솔린+전기",
       "LPG": "LPG(일반인 구입)"
+    },
+    "volvo_selekt": {
+      "_why": "★ 아직 연료를 안 받았다 — ★ 목록에 없다.  ★ 표에 없으면 원문이 그대로 간다",
+      "휘발유": "가솔린",
+      "가솔린": "가솔린",
+      "경유": "디젤",
+      "디젤": "디젤",
+      "전기": "전기",
+      "하이브리드": "가솔린+전기"
+    },
+    "lexus_certified": {
+      "_why": "★ 아직 연료를 안 받았다 — ★ 목록에 없다.  ★ 표에 없으면 원문이 그대로 간다",
+      "휘발유": "가솔린",
+      "가솔린": "가솔린",
+      "경유": "디젤",
+      "디젤": "디젤",
+      "전기": "전기",
+      "하이브리드": "가솔린+전기"
+    },
+    "bmw_bps": {
+      "_why": "★ 아직 연료를 안 받았다 — ★ 목록에 없다.  ★ 표에 없으면 원문이 그대로 간다",
+      "휘발유": "가솔린",
+      "가솔린": "가솔린",
+      "경유": "디젤",
+      "디젤": "디젤",
+      "전기": "전기",
+      "하이브리드": "가솔린+전기"
     }
   },
   "_name2key_note": "★ 수입 여덟은 ★ 이름과 차종이 1:1 이다.  ★ `target_key` 를 적어 ★ 그 차종만 후보로 둔다. ★ 개정 632 로 `collect_group` 이 「multi」가 되어 ★ 여덟이 한 후보군이 됐고 ★ 연료가 겹쳐 아무것도 안 붙었다"

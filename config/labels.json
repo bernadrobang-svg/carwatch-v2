@@ -27,7 +27,7 @@
     "taste.trim": "트림",
     "taste.option": "옵션",
     "warranty.general": "일반 보증",
-    "warranty.power": "보증",
+    "warranty.power": "제조사 보증",
     "warranty.site": "사이트 보증",
     "taste.hud": "HUD",
     "taste.fitting": "지정 옵션",
@@ -74,12 +74,12 @@
     "closed": "닫음"
   },
   "VALUE_MARKS": {
-    "1": "O",
-    "0": "-",
-    "-1": "-",
-    "na": "-",
-    "unknown": "?",
-    "null": "?"
+    "1": "OK",
+    "0": "×",
+    "-1": "·",
+    "na": "·",
+    "unknown": "—",
+    "null": "—"
   },
   "AXIS_VALUE_LABELS": {
     "state.accident": {
@@ -143,5 +143,6 @@
     "NO_GRADE",
     "NOT_RATED"
   ],
-  "_note_grade_order": "★ 개정 433 — 등급 차례의 정본은 여기다. 전에는 report/screens/build.py · store/watch.py · tools/verify_axes.py 셋이 저마다 ('S','A','B','C','D','E') 를 들고 있었다 — 컷이 8단계가 됐을 때 셋을 다 못 찾으면 화면마다 다른 등급이 나온다. GRADE_NOT_RANKED 는 순위를 안 매기는 것들이다 (제외·등급 없음·평가 불가)"
+  "_note_grade_order": "★ 개정 433 — 등급 차례의 정본은 여기다. 전에는 report/screens/build.py · store/watch.py · tools/verify_axes.py 셋이 저마다 ('S','A','B','C','D','E') 를 들고 있었다 — 컷이 8단계가 됐을 때 셋을 다 못 찾으면 화면마다 다른 등급이 나온다. GRADE_NOT_RANKED 는 순위를 안 매기는 것들이다 (제외·등급 없음·평가 불가)",
+  "_VALUE_MARKS_why": "★ v3 시안 그대로 — OK · × · —.  ★ 마스터 확정 (13장 ⑤). ★ 넷이 서로 다르다 — 있음 OK · 없음 × · 해당없음 · · 모름 —. ★ 「없음」과 「모름」을 같은 기호로 내면 v1 사고가 되풀이된다"
 }
