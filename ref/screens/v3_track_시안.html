@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v3 추적 시안 — CarWatch</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+--text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;--mono:ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1180px;margin:0 auto;padding:0 16px 60px}
+.v3-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.v3-brand{color:var(--amber);font-weight:600;text-decoration:none}
+.v3-nav a{color:var(--dim);text-decoration:none;padding:4px 10px;border-radius:4px;font-size:13px}
+.v3-nav a.on{color:var(--text);background:var(--surface2)}
+h2,h3{font-size:14px;font-weight:600;margin:26px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+.v3-note{font-size:12px;color:var(--faint);margin:4px 0 14px}
+.v3-sec{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.v3-lbl{font-size:12px;color:var(--dim);margin-bottom:6px}
+.v3-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.v3-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.v3-mono{font-family:var(--mono);font-size:12.5px}
+.v3-btn{background:var(--surface2);border:1px solid var(--line2);border-radius:5px;color:var(--text);
+font-size:12px;padding:5px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.v3-btn.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+th{color:var(--dim);font-weight:400}
+th:first-child,td:first-child{text-align:left}
+td.num{font-family:var(--mono)}
+.v3-big{font-size:22px;font-weight:700}
+.v3-bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;margin-top:4px}
+.v3-bar i{display:block;height:100%;background:var(--amber)}
+</style></head><body>
+<div class="v3-wrap">
+
+<div class="v3-top">
+  <a class="v3-brand" href="v3_dashboard_시안.html">CarWatch</a>
+  <nav class="v3-nav"><a href="v3_listings_시안.html">매물</a><a href="v3_watch_시안.html">관심</a><a class="on" href="v3_track_시안.html">추적</a><a href="v3_dashboard_시안.html">현황</a><a href="v3_admin_시안.html">관리</a></nav>
+</div>
+
+<h2 style="border:0;padding-top:14px">추적 — ★ 같은 차가 여러 곳에 있다</h2>
+<div class="v3-note">★ 마스터 확정 08-24 — 「★ 다 보여 줘야지.  ★ 이러한 것만 모아서 보여 주는 화면이 하나」</div>
+
+<div class="v3-sec">
+  <div class="v3-lbl">필터 — 매물과 같은 것이 걸린다</div>
+  <span class="v3-mono">전 차종 · 전 가격대 · 전 등급</span>
+  <button class="v3-btn" style="margin-left:8px">자세한 조건</button>
+  <span style="margin-left:14px;font-size:12px;color:var(--dim)">정렬</span>
+  <button class="v3-btn on">차액 큰 순</button>
+  <button class="v3-btn">등급 차 큰 순</button>
+  <button class="v3-btn">사이트 많은 순</button>
+</div>
+
+<div class="v3-sec">
+  <span class="v3-mono">짝지어진 차 <b>128</b>대</span> ·
+  <span class="v3-mono" style="color:var(--no)">값이 30% 넘게 갈린 것 <b>4</b></span> ·
+  <span class="v3-mono" style="color:var(--amber)">등급이 두 칸 갈린 것 <b>11</b></span> ·
+  <span class="v3-mono">사고 판정이 갈린 것 <b>2</b></span>
+  <div class="v3-note" style="margin:4px 0 0">★ 30% 넘게 갈린 것은 ★ 짝짓기가 틀렸을 자리다 — ★ 먼저 본다</div>
+</div>
+
+<h3>1 값이 크게 갈린 것</h3>
+<div class="v3-sec">
+  <table>
+    <tr><th>차</th><th>사이트</th><th>최저</th><th>최고</th><th>차액</th><th>차액률</th><th>등급</th><th></th></tr>
+    <tr><td>KOLEOS_HEV 1.5 E-TECH</td><td class="num">3</td><td class="num">2,890</td><td class="num">3,260</td>
+        <td class="num">370</td><td class="num" style="color:var(--no)">12.8%</td><td>A · B · B</td><td><button class="v3-btn">상세 ▸</button></td></tr>
+    <tr><td>G80 2.5T AWD</td><td class="num">2</td><td class="num">4,180</td><td class="num">4,390</td>
+        <td class="num">210</td><td class="num">5.0%</td><td>S · A</td><td><button class="v3-btn">상세 ▸</button></td></tr>
+    <tr><td>X3 xDrive20d</td><td class="num">2</td><td class="num">3,900</td><td class="num">5,800</td>
+        <td class="num">1,900</td><td class="num" style="color:var(--no)">48.7%</td><td>B · C</td><td><button class="v3-btn">상세 ▸</button></td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">
+    ★ 48.7% 는 ★ <b>짝짓기가 틀렸을 자리다</b> — ★ 연식·트림이 다른 차를 묶었을 수 있다<br>
+    ★ 값은 만원 · ★ 「사이트」는 그 차가 올라간 곳의 수
+  </div>
+</div>
+
+<h3>2 등급이 갈린 것</h3>
+<div class="v3-sec">
+  <table>
+    <tr><th>차</th><th>사이트</th><th>등급</th><th>earned / 분모</th><th>빠진 축</th><th></th></tr>
+    <tr><td>GRANDEUR_LPG 3.0</td><td>엔카</td><td><span class="v3-mono">S</span></td><td class="num">742 / 910</td><td class="v3-mono">—</td><td rowspan="2"><button class="v3-btn">상세 ▸</button></td></tr>
+    <tr><td></td><td>헤이딜러</td><td><span class="v3-mono">B</span></td><td class="num">498 / 780</td><td class="v3-mono">소모품 · 사이트보증</td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">
+    ★★ <b>분모가 다르다</b> — ★ 사이트가 주는 칸이 달라서다.  ★ 합치지 않는다<br>
+    ★ 「빠진 축」이 ★ 왜 등급이 낮은지를 말해 준다 — ★ 차가 나쁜 것이 아니다
+  </div>
+</div>
+
+<h3>3 사고 판정이 갈린 것</h3>
+<div class="v3-sec">
+  <table>
+    <tr><th>차</th><th>엔카</th><th>K카</th><th>헤이딜러</th><th></th></tr>
+    <tr><td>XC60 B5 AWD</td><td><span class="v3-mono" style="color:var(--ok)">OK</span></td>
+        <td><span class="v3-mono" style="color:var(--no)">×</span></td>
+        <td><span class="v3-mono">보험 1건 595만</span></td><td><button class="v3-btn">상세 ▸</button></td></tr>
+  </table>
+  <div class="v3-note" style="margin:8px 0 0">
+    ★★ <b>갈린 채로 보여 준다</b> (마스터 확정) — ★ 우리가 어느 쪽으로 정하지 않는다<br>
+    ★ 사는 사람이 ★ 원문 셋을 열어 보고 정한다
+  </div>
+</div>
+
+<h2>지켜야 하는 것</h2>
+<div class="v3-note">
+★★ ★ <b>합치지 않는다.</b>  ★ 갈린 것을 ★ 갈린 채로 보여 준다 (마스터 확정 08-24)<br>
+★ 짝이 없는 매물은 ★ 여기 안 낸다 — ★ 견주는 자리다<br>
+★ 줄을 누르면 ★ <b>상세</b>로 간다 — ★ 거기 「중복매물」 절이 있다<br>
+★ 정렬 기본은 ★ <b>차액 큰 순</b> — ★ 짝짓기가 틀린 것이 먼저 보인다<br>
+★ 목록에는 ★ <b>낮은 점수</b>를 낸다.  ★ 여기서만 ★ 다 편다<br>
+★ 숫자는 고정폭 · 색은 넷만 (주황·초록·빨강·회색)
+</div>
+
+</div></body></html>
