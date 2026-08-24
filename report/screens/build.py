@@ -980,6 +980,24 @@ def lease_hidden(conn, flt: ListingFilter, root: str = ".") -> int:
     return max(0, a - b)
 
 
+def _option_blind_sites(root: str = ".") -> list:
+    """옵션이 ★ 매물을 못 가르는 사이트 (마스터 확정 08-25).
+
+    ★★ 현대인증 16가지는 ★ **인증 조건**이다 — ★ 없는 차는 인증을 못 받는다.
+      ★ ★ 1,114건 ★ 전건이 같다 — ★ 거르개로 쓰면 ★ 통째로 걸린다
+    ★ 점수·표시에는 ★ 그대로 쓴다 — ★ **거르개에서만** 뺀다
+    ★ 사전 `discriminative: false` 가 정본이다 (S14)
+    """
+    import os as _o
+    path = _o.path.join(root, "config", "dictionaries", "option_names.json")
+    if not _o.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        got = json.load(f)
+    return [k for k, v in (got.get("by_site") or {}).items()
+            if v.get("discriminative") is False]
+
+
 def _option_group_match(key: str, root: str = ".") -> list:
     """옵션 묶음의 말조각 (마스터 확정 08-25).
 
@@ -1017,13 +1035,18 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     #   ★ 엔카는 ★ 숫자 코드만 준다 — ★ 그 매물은 ★ 안 걸린다 (거짓 양성이 없다)
     # ★★ 옵션 묶음 (마스터 확정 08-25) — ★ 말조각 어느 하나라도 들면 걸린다
     if getattr(flt, "option_group", None):
-        for one in _option_group_match(flt.option_group):
-            pass
         got = _option_group_match(flt.option_group)
         if got:
             where.append("(" + " OR ".join(
                 "l.options_standard_json LIKE ?" for _ in got) + ")")
             args.extend(f"%{m}%" for m in got)
+    # ★★ 옵션으로 거를 때는 ★ 「전건이 같은」 사이트를 뺀다 (마스터 확정 08-25).
+    #   ★ 안 빼면 ★ 현대인증 1,114건이 ★ 어느 옵션에나 걸린다
+    if getattr(flt, "option_group", None) or getattr(flt, "option_name", None):
+        blind = _option_blind_sites()
+        if blind:
+            where.append("l.site NOT IN (%s)" % ",".join("?" * len(blind)))
+            args.extend(blind)
     if getattr(flt, "option_name", None):
         where.append("(l.options_standard_json LIKE ?"
                      " OR l.options_choice_json LIKE ?)")

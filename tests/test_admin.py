@@ -36,7 +36,8 @@ def _spec_menu_paths() -> set:
     with open(path, encoding="utf-8") as f:
         body = f.read()
     # | 분류 | `/admin/...` | 내용 | STEP |
-    return set(_re.findall(r"^\|[^|\n]*\|\s*`(/admin[^`]*)`\s*\|", body,
+    # ★★ 08-25 — ★ 꾸밈(★ · **)이 ★ 백틱 앞에 온다.  ★ 그것을 받는다 (오판 115)
+    return set(_re.findall(r"^\|[^|\n]*\|[\s★*]*`(/admin[^`]*)`[\s*]*\|", body,
                            _re.M))
 NOW = datetime(2026, 8, 10, tzinfo=timezone.utc)
 T1 = NOW.isoformat()

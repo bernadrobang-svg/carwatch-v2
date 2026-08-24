@@ -130,7 +130,13 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
-    for one in parsed:
+    # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 우리 대상만 ★ `core_listing` 에 넣는다.
+    #   ★ K카는 ★ 목록이 `enc` 라 ★ 좁힐 길이 없다 — ★ 다 받되 ★ 걸러 넣는다
+    #   ★ ★ 원문(`raw_response`)에는 남는다 — ★ 갈래를 넓히면 다시 판다
+    keep = ours if "--all" not in args else parsed
+    print(f"★ 저장할 것 {len(keep)}건 · ★ 안 넣는 것 {len(parsed) - len(keep)}건 "
+          f"(원문은 남는다)")
+    for one in keep:
         one["listing_id"] = resolve_listing_id(conn, SITE_CODE,
                                                one["source_id"], at)
         upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)

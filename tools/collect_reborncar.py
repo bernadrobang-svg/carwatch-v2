@@ -94,7 +94,7 @@ def main() -> int:
     print(f"★ 상세 — 받을 것 {len(todo):,}건 (이미 받은 것 {len(done):,}건은 건너뛴다)")
     interval = float(cfg.get("interval_sec") or 1.0)
     seen = {"정상": 0, "못 받음": 0}
-    ours = 0
+    ours = skipped = 0
     for one in todo:
         html = _get(cfg["base_url"] + cfg["paths"]["detail"].format(source_id=one),
                     cfg["headers"], float(cfg["timeout_sec"]))
@@ -106,17 +106,24 @@ def main() -> int:
         if deep:
             # ★ 차종은 ★ 우리가 아는 이름이 들어 있는지로 고른다 (K카와 같다)
             known = known_model_of(title_name(html))
-            if known:
-                deep["site_model_group"] = known
-                ours += 1
+            seen["정상"] += 1
+            if not known:
+                # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 차종이 안 맞으면
+                #   ★ **`core_listing` 에 안 넣는다.**  ★ 좁힐 길이 없는 사이트다
+                #   ★ ★ `raw_response` 에는 남는다 — ★ 갈래를 넓히면 다시 판다
+                skipped += 1
+                time.sleep(interval)
+                continue
+            deep["site_model_group"] = known
+            ours += 1
             deep["detail_status"] = "ok"
             deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
-            seen["정상"] += 1
         time.sleep(interval)
     commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in seen.items()))
-    print(f"★ 우리 대상 — {ours}건 / {len(todo)}건")
+    print(f"★ 우리 대상 — {ours}건 / {len(todo)}건 "
+          f"· ★ 안 넣은 것 {skipped}건 (원문은 남는다)")
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장된 리본카 매물 — {n:,}건")

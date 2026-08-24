@@ -1580,3 +1580,16 @@ def filter_options(conn, column: str, limit: int = 14) -> list:
         f" GROUP BY 1 ORDER BY 2 DESC LIMIT ?", (limit,)).fetchall()
     return [{"value": v, "count": n} for v, n in rows]
 
+
+
+def site_counts(conn) -> dict:
+    """사이트별 ★ active · out_of_scope 건수 (개정 306 · 08-24).
+
+    ★★ `web/` 은 ★ SQL 문자열을 못 쓴다 (V11-01) — ★ 질의는 여기 있다
+    ★ 「0」과 「안 받았다」를 가르려면 ★ 둘을 함께 내야 한다
+    """
+    return {r[0]: (r[1] or 0, r[2] or 0) for r in conn.execute(
+        "SELECT site,"
+        "       SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END),"
+        "       SUM(CASE WHEN status = 'out_of_scope' THEN 1 ELSE 0 END)"
+        "  FROM core_listing GROUP BY site")}

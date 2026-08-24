@@ -489,7 +489,7 @@ C = {
                      "눈으로 바로 보인다. ★ 사이트는 이것을 못 한다 — "
                      "자기 매물을 채점할 수 없다. ★ 늘 같은 자리·개수·색",
                      KIND_CONTRACT),
-    "V11-157": Check("V11", "V11-157", "상단 메뉴가 넷을 넘지 않음",
+    "V11-157": Check("V11", "V11-157", "상단 메뉴가 다섯을 넘지 않음",
                      FATAL, "run",
                      "개정 427 — 마스터 확정 「상단 메뉴는 셋이다」. "
                      "★ 「후보」와 「매물」이 둘 다 「조건에 맞는 것을 "
@@ -840,8 +840,11 @@ from web.routes import NON_SCREEN_VIEWS  # noqa: E402
 
 
 # 라우팅 표 행.  ★ 표가 여러 개로 나뉘어도 합쳐 센다 (실측: 26 + 3)
-RE_ROUTE_ROW = re.compile(r"^\| \*?\*?`([^`]+)`\*?\*? \| *(?:GET|POST)",
-                          re.M)
+# ★★ 08-25 — ★ 이 저장소의 표는 ★ 거의 다 ★ `★` 를 앞에 단다.
+#   ★ ★ 전에는 ★ 「`|` 다음 ★ 바로 백틱」만 받아 ★ 새 줄을 ★ 세 번 놓쳤다 (오판 115).
+#     ★ ★ 가이드가 ★ 제 자리에 넣고도 ★ 검사가 ★ 못 봤다 — ★ 검사가 좁았다
+#   ★ ★ 꾸밈(★ · ** · 공백)을 ★ 앞에 허락한다.  ★ 뜻은 그대로다
+RE_ROUTE_ROW = re.compile(r"^\|[\s★*]*`([^`]+)`[\s*]*\| *(?:GET|POST)", re.M)
 
 
 def _spec_routes() -> list | None:
@@ -987,16 +990,19 @@ def _screen_checks(conn, rid) -> list:
     tpls = _all_templates()
 
     # V11-13 — 토큰 밖 색값
-    # ★ 시안이 쓴 색은 「늘린 색」이 아니다 — 시안이 정본이다 (개정 275).
-    #   토큰 밖이면서 시안에도 없는 것만 결함이다.  손으로 고른 색을 막는다
-    sian: set = set()
-    if os.path.isdir(SIAN):
-        for f in os.listdir(SIAN):
-            if f.endswith(".html"):
-                sian |= {c.lower() for c in RE_COLOR.findall(
-                    open(os.path.join(SIAN, f), encoding="utf-8").read())}
+    # ★★ 08-25 (가이드 정정 ⓐ) — ★ 원천은 ★ **`app.css` 의 `:root` 토큰**이다.
+    #   ★ ★ 전에는 ★ 시안(`ref/screens/*.html`)의 색을 ★ 허용 목록으로 썼다.
+    #     ★ ★ 그러면 ★ 시안이 색을 늘릴 때마다 ★ app.css 의 색이 ★ 조용히 늘어난다 —
+    #       ★ ★ 「토큰 밖 색값 없음」이 ★ **아무것도 안 막는 검사**가 된다
+    #   ★ ★ 시안은 그림이고 ★ 화면 체계는 `app.css` 다 (마스터 확정 33-1)
+    #   ★ `#0B0D10` 과 `#0b0d10` 은 ★ 같은 색이다 — ★ 대소문자로 안 가른다
+    tok = {c.lower() for c in RE_COLOR.findall(
+        " ".join(RE_ROOT.findall(css)) if RE_ROOT.findall(css) else "")}
+    if not tok:
+        tok = {c.lower() for c in re.findall(
+            r"--[\w-]+:\s*(#[0-9a-fA-F]{3,6})", css)}
     bad = sorted({c for c in RE_COLOR.findall(RE_ROOT.sub("", css))
-                  if c.lower() not in sian})
+                  if c.lower() not in tok})
     out.append(result(C["V11-13"], rid, 0, bad or 0, not bad, bad))
 
     # V11-14 — 숫자 셀에 mono
@@ -2318,7 +2324,10 @@ def _menu_shape_checks(conn, rid):
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
         cfg = _j.load(f)
-    limit = 4                      # 규격 「넷을 넘는가」
+    # ★★ 08-24 마스터 허락 — ★ 「추적」을 더해 ★ **다섯**이다 (명령서 1-1).
+    #   ★ 매물 · 관심 · 추적 · 현황 · 관리.  ★ 「이번만 허락한다」
+    #   ★ ★ 메뉴는 ★ 마스터 몫이다 — ★ 개발측이 스스로 늘리지 않는다
+    limit = 5                      # 규격 「다섯을 넘는가」
     acc = Account(1, ROLE_ADMIN, "마스터")
     got = menu_items(acc)
     bad157 = []
@@ -2496,8 +2505,12 @@ def _origin_link_check(rid):
             continue
         if 'target="_blank"' not in html or 'rel="noopener"' not in html:
             bad.append(f"{name} 새 탭으로 안 연다")
-        if "엔카에서 보기" not in html:
-            bad.append(f"{name} 「엔카에서 보기」라고 안 적었다")
+        # ★★ 08-24 — ★ 사이트가 ★ **일곱**이다.  ★ 「엔카에서 보기」로 박으면
+        #   ★ ★ 기아 매물에도 ★ 「엔카에서 보기」가 나온다 — ★ 거짓말이다.
+        #   ★ ★ 이제 ★ `{{ r.site_badge }}에서 보기` 다 (가이드 「옳다」 08-24).
+        #     ★ ★ 그러므로 ★ **「…에서 보기」**가 있는지를 본다
+        if "에서 보기" not in html:
+            bad.append(f"{name} 「…에서 보기」라고 안 적었다")
     return result(C["V11-63"], rid, "원문 링크",
                   "있음" if not bad else "없음", not bad, bad)
 

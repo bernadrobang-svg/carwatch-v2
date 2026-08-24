@@ -464,11 +464,10 @@ def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
       ★ ★ 그래서 ★ 단추에 ★ 「범위 밖 N건」을 ★ 함께 낸다 — ★ 0 만 보이면
         ★ 「못 받았다」로 읽힌다.  ★ 받은 것과 못 받은 것은 ★ 다른 말이다
     """
-    scoped: dict = {}
-    if conn is not None:
-        scoped = {r[0]: (r[1], r[2]) for r in conn.execute(
-            "SELECT site, SUM(status='active'), SUM(status='out_of_scope') "
-            "FROM core_listing GROUP BY 1")}
+    # ★ SQL 은 store 에 있다 — ★ web/ 은 문자열을 못 쓴다 (V11-01)
+    from store.core import site_counts
+
+    scoped = site_counts(conn) if conn is not None else {}
     from store.crosssite import active_sites, load_sites
 
     import os as _o
@@ -477,8 +476,9 @@ def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
     live = active_sites(sites)
     if len(live) < 2:
         return []
+    # ★ 「전부」 줄에도 ★ 같은 칸을 둔다 — ★ 없으면 템플릿이 빈 이름을 읽는다 (V11-38)
     out = [{"label": "전부", "q": "all", "sell": "",
-            "on": not flt.site}]
+            "on": not flt.site, "live": None, "out_of_scope": None}]
     for name in live:
         one = sites.get(name) or {}
         label = one.get("label") or name
@@ -491,8 +491,10 @@ def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
                         "live": live_n, "out_of_scope": oos_n})
             continue
         for key, tail in tails.items():
+            live_n, oos_n = scoped.get(name, (None, None))
             out.append({"label": f"{label} {tail}만", "q": name, "sell": key,
-                        "on": flt.site == name and flt.sell_type == key})
+                        "on": flt.site == name and flt.sell_type == key,
+                        "live": live_n, "out_of_scope": oos_n})
     return out
 
 
@@ -789,6 +791,11 @@ def _option_name_buttons(flt, root: str = ROOT) -> list:
         got = _j.load(f)
     have = set()
     for one in (got.get("by_site") or {}).values():
+        # ★★ 마스터 확정 08-25 — ★ `discriminative: false` 인 사이트는 ★ 거르개에 안 낸다.
+        #   ★ ★ 현대인증 16가지는 ★ **인증 조건**이라 ★ 전건이 같다 — ★ 매물을 못 가른다.
+        #     ★ ★ 점수는 그대로 준다 — ★ 거르개에만 안 낸다
+        if one.get("discriminative") is False:
+            continue
         have |= set(one.get("names") or ())
     now = getattr(flt, "option_name", None)
     out = []

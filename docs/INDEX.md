@@ -17,19 +17,19 @@ checks   S46-38 · S46-39
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 38,639줄 · 2,260KB**
+**113파일 · 38,650줄 · 2,263KB**
 
 ★ 800줄을 넘는 파일 9개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 881줄
 - guide/01_요구사항.md 983줄
-- guide/05_가이드역할.md 1,047줄
+- guide/05_가이드역할.md 1,049줄
 - chapters/00-standard.md 2,215줄
-- chapters/41-view.md 940줄
+- chapters/41-view.md 946줄
 - chapters/61-web.md 2,262줄
 - chapters/30-score/f-table.md 1,606줄
-- chapters/60-admin/c-tools.md 1,106줄
+- chapters/60-admin/c-tools.md 1,107줄
 
 | 파일 | 줄 | KB |
 |---|--:|--:|
@@ -88,13 +88,13 @@ checks   S46-38 · S46-39
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
 | `chapters/40-report.md` | 764 | 26 |
-| `chapters/41-view.md`  ★ | 940 | 34 |
+| `chapters/41-view.md`  ★ | 946 | 35 |
 | `chapters/42-watch.md` | 722 | 26 |
 | `chapters/50-multisite.md` | 453 | 15 |
 | `chapters/60-admin/00-intro.md` | 227 | 9 |
 | `chapters/60-admin/a-auth.md` | 396 | 14 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
-| `chapters/60-admin/c-tools.md`  ★ | 1,106 | 44 |
+| `chapters/60-admin/c-tools.md`  ★ | 1,107 | 44 |
 | `chapters/61-web.md`  ★ | 2,262 | 85 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
@@ -113,12 +113,12 @@ checks   S46-38 · S46-39
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 138 | 7 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md` | 745 | 490 |
+| `guide/03_이력.md` | 746 | 491 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 573 | 22 |
-| `guide/05_가이드역할.md`  ★ | 1,047 | 51 |
+| `guide/05_가이드역할.md`  ★ | 1,049 | 51 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 464 | 105 |
+| `guide/06_오판대장.md` | 465 | 106 |
 | `guide/07_밀린일대장.md` | 296 | 26 |
 | `guide/08_인수인계.md` | 298 | 14 |
 | `ref/00-intro.md` | 33 | 0 |

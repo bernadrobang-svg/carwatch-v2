@@ -87,13 +87,19 @@ def main() -> int:
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
-    for r in rows:
+    # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 우리 대상만 넣는다.
+    #   ★ 렉서스는 ★ 전수 36건이라 ★ 좁힐 길이 없다 — ★ 다 받되 ★ 걸러 넣는다
+    #   ★ ★ 원문은 남는다 — ★ 갈래를 넓히면 다시 판다
+    keep = ours if "--all" not in args else rows
+    print(f"★ 저장할 것 {len(keep)}건 · ★ 안 넣는 것 {len(rows) - len(keep)}건 "
+          f"(원문은 남는다)")
+    for r in keep:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
         upsert_core(conn, r, at)
     commit(conn)
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
-    print(f"★ 저장 {len(rows)}건 · 저장된 렉서스 매물 {n:,}건")
+    print(f"★ 저장 {len(keep)}건 · 저장된 렉서스 매물 {n:,}건")
     return 0
 
 
