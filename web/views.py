@@ -775,6 +775,17 @@ def _option_name_buttons(flt, root: str = ROOT) -> list:
         have |= set(one.get("names") or ())
     now = getattr(flt, "option_name", None)
     out = []
+    # ★★ 묶음 먼저 (마스터 확정 08-25) — ★ 이름이 사이트마다 다르니 ★ 묶어서 건다.
+    #   ★ ★ 「고속도로 주행 보조(HDA)」도 ★ 현대·기아 매물이 들어오면 ★ 이 묶음에 든다
+    for key, one in (got.get("groups") or {}).items():
+        hit = [n for n in sorted(have)
+               if any(m in n for m in one.get("match") or ())]
+        if not hit:
+            continue                    # ★ 드는 이름이 없으면 단추를 안 낸다
+        on = now == key
+        out.append({"label": one.get("label") or key, "on": on,
+                    "url": "/listings" if on else f"/listings?option_group={key}",
+                    "tip": f"「{key}」 묶음 — {len(hit)}가지 이름이 여기 듭니다"})
     for want in _o.environ.get("_", "") and () or OPTION_FILTER_NAMES:
         # ★ 사전에 있는 이름만 낸다 — ★ 부분 일치로 찾는다 (사이트마다 괄호가 다르다)
         hit = next((n for n in sorted(have) if want in n), None)
@@ -943,6 +954,7 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         sell_type=q.get("sell_type") or None,
         target_key=q.get("target") or None,
         option_name=q.get("option_name") or None,
+        option_group=q.get("option_group") or None,
         grade=q.get("grade") or None,
         axis=q.get("axis") or None,
         bucket=q.get("bucket") or None,

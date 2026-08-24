@@ -980,6 +980,21 @@ def lease_hidden(conn, flt: ListingFilter, root: str = ".") -> int:
     return max(0, a - b)
 
 
+def _option_group_match(key: str, root: str = ".") -> list:
+    """옵션 묶음의 말조각 (마스터 확정 08-25).
+
+    ★ `config/dictionaries/option_names.json` 이 정본이다 (S14) —
+      ★ 코드에 옵션 이름을 박지 않는다
+    """
+    import os as _o
+    path = _o.path.join(root, "config", "dictionaries", "option_names.json")
+    if not _o.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        got = json.load(f)
+    return list(((got.get("groups") or {}).get(key) or {}).get("match") or ())
+
+
 def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
     갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
@@ -1000,6 +1015,15 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         args.append(flt.target_key)
     # ★★ 옵션 이름 (마스터 확정 08-25 · B) — ★ 이름을 주는 사이트에서만 걸린다.
     #   ★ 엔카는 ★ 숫자 코드만 준다 — ★ 그 매물은 ★ 안 걸린다 (거짓 양성이 없다)
+    # ★★ 옵션 묶음 (마스터 확정 08-25) — ★ 말조각 어느 하나라도 들면 걸린다
+    if getattr(flt, "option_group", None):
+        for one in _option_group_match(flt.option_group):
+            pass
+        got = _option_group_match(flt.option_group)
+        if got:
+            where.append("(" + " OR ".join(
+                "l.options_standard_json LIKE ?" for _ in got) + ")")
+            args.extend(f"%{m}%" for m in got)
     if getattr(flt, "option_name", None):
         where.append("(l.options_standard_json LIKE ?"
                      " OR l.options_choice_json LIKE ?)")
