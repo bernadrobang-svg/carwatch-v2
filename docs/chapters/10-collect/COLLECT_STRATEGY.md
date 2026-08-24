@@ -1,5 +1,13 @@
 
 
+```
+version  SPEC-2026.08.25-r726
+follows  `config/targets.json`
+sources  개정 726 · 실측 08-25
+checks   S46-38 · S46-39
+```
+
+
 ---
 
 # 6. ★★★ K카 · 리본카 — ★ 골라 받는 길을 찾았나 (마스터 지시 08-24 · 개정 712)

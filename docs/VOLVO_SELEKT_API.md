@@ -1,5 +1,13 @@
 # 볼보 셀렉트 인증중고차 API · 매핑 규격
 
+```
+version  SPEC-2026.08.25-r726
+follows  `f-table.md` · `MULTISITE_MAPPING.md`
+sources  개정 726 · 실측 08-25
+checks   S46-38 · S46-39
+```
+
+
 ---
 
 # 0. ★★★ 뚫렸다 — ★ 마스터가 찾으시고 ★ 가이드가 쪽넘김을 열었다 (개정 699 · 실측 08-24)
