@@ -40,6 +40,7 @@ from report.screens.views import (
     TodayChange,
     TONE_BAD, TONE_GOOD, TONE_MUTED, TONE_UNKNOWN,
     AttentionItem, AxisChip, ChangeRow, CompareView, DashboardView, DealerRow,
+    TrackPair, TrackView,
     ListingFilter, ListingRow, MarketRow, MarketView, NotReadyView,
     RelaxRow, ReportFile, ReportsView,
     WatchRow,
@@ -628,7 +629,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      origin_won, calc_at, absolute_fail, trust, quadrant, enough,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
      g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
-     _site, _sell_type, _mismatch, _kmpl, _seats) = rec
+     _site, _sell_type, _mismatch, _kmpl, _seats, _sites_n) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -707,6 +708,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         record_mismatch=bool(_mismatch),
         # ★ 비교 화면에만 쓴다 (S46-45).  ★ 없으면 None — ★ 0 이 아니다
         spec_fuel_economy_kmpl=_kmpl, spec_seats=_seats,
+        # ★ 「N곳」 배지 — ★ 1 이면 안 낸다 (겹친 것이 없다)
+        site_count=int(_sites_n or 1), multi_site=int(_sites_n or 1) > 1,
         listing_id=lid, grade=grade or NOT_RATED,
         # ★★ 감점 (개정 491) — 상한을 먹인 뒤의 합과 문구
         penalty_won=_pen_sum(pen_json),
@@ -1019,6 +1022,17 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         args.append(f"%{FAIL_LEASE}%")
     else:
         where.append("(s.grade IS NULL OR s.grade <> 'EXCLUDED')")
+    # ★★ 같은 차가 여러 곳에 있으면 ★ **낮은 값 하나만** 낸다
+    #   (마스터 확정 08-24 · v3_listings_시안 · S46-57).
+    #   ★ ★ 두 번 나오면 안 된다 — ★ 다 펴는 자리는 ★ `/track` 이다
+    #   ★ 매물 하나만 집을 때(상세·비교)는 ★ 접지 않는다 — ★ 그 줄을 못 찾는다
+    if (getattr(flt, "listing_id", None) is None
+            and not getattr(flt, "listing_ids", ())):
+        where.append(
+            "(l.plate_hash IS NULL OR l.listing_id = ("
+            "  SELECT l2.listing_id FROM core_listing l2"
+            "   WHERE l2.plate_hash = l.plate_hash AND l2.status = 'active'"
+            "   ORDER BY l2.price_current_won, l2.listing_id LIMIT 1))")
     # ★ 매물 하나만 (개정 427 상세).  ★ 맨 앞에 둔다 — 가장 좁은 조건이다
     if getattr(flt, "listing_id", None) is not None:
         where.append("l.listing_id = ?")
@@ -1191,7 +1205,11 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★★ 제원 둘 (마스터 확정 08-24 · UI_REVIEW 10) — ★ **비교 화면용**이다.
         #   ★ 목록 카드에는 안 낸다 (S46-45) — ★ 비교는 견주는 자리라 갈리는 값이다
         #   ★★ 축이 아니다 — ★ 판정에 안 들어간다
-        " l.spec_fuel_economy_kmpl, l.spec_seats"
+        " l.spec_fuel_economy_kmpl, l.spec_seats,"
+        # ★★ 「3곳」 배지 — ★ 같은 차가 올라간 사이트의 수 (v3_listings_시안).
+        #   ★ 누르면 ★ `/track` 으로 간다.  ★ 1 이면 안 낸다
+        "  (SELECT COUNT(DISTINCT l3.site) FROM core_listing l3"
+        "    WHERE l3.plate_hash = l.plate_hash AND l3.status = 'active')"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -2691,6 +2709,9 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
                              fin_cfg, root, page_size=2, with_state=False,
                              opt_money=True)
     row = rows[0] if rows else None
+    # ★★ 11절 「중복매물」 (명령서 1-3) — ★ 10절 뒤에 붙인다.
+    #   ★ 열 절 차례는 안 바꾼다 (V11-159)
+    dupes = duplicate_listings(conn, listing_id, calc_version, root)
     # ★ 템플릿은 == 비교를 못 한다 (V11-104).  ★ 고르는 일은 여기서 한다
     by_axis = {a.axis: a for a in v.axes}
     # ★ 보증을 ★ 날짜로 낸다 (명령서 13-2 ⑦ · UI_REVIEW 7장).
@@ -2707,6 +2728,8 @@ def view_detail(account: Account, conn, listing_id: int, calc_version: str,
         "history": _price_history(conn, listing_id),
         "alts": _alternatives(account, conn, row, flt, fin_cfg, root),
         "rep_raw": v.raw_sections,
+        # ★★ 11절 「중복매물」 (명령서 1-3) — ★ 빈 것이면 절을 안 낸다
+        "dupes": dupes,
     }
 
 
@@ -2762,3 +2785,174 @@ def market_by_target(conn, root: str = ".") -> list:
                         (at(qs[2]) - at(qs[0])) / at(qs[1]) * 100, 1)
                     if at(qs[1]) else 0.0})
     return out
+
+
+# ═══ 추적 — 같은 차가 여러 사이트에 (명령서 1-2 · v3_track_시안) ═══
+# ★★ 마스터 확정 08-24 — ★ **합치지 않는다.  ★ 갈린 것을 갈린 채로 보여 준다**
+#   ★ 우리가 어느 쪽으로 정하지 않는다 — ★ 사는 사람이 원문 셋을 열어 보고 정한다
+# ★ 짝이 없는 매물은 ★ 여기 안 낸다 — ★ 견주는 자리다
+TRACK_BIG_GAP_PCT = 30.0        # ★ 이만큼 갈리면 ★ 짝짓기가 틀렸을 자리다
+
+
+def _grade_order(root: str = ".") -> tuple:
+    """등급 차례.  ★ 코드에 박지 않는다 — ★ `config/scoring.json` 이 정본이다 (S14).
+
+    ★ 실측 08-24 — ★ `grade_cuts` 가 ★ S·A·B·C·D·E·F·G 여덟이다 (개정 433).
+      ★ ★ 여섯으로 박아 두면 ★ F·G 가 ★ 「모르는 등급」이 되어 ★ 갈린 것을 못 센다
+    ★ 자른 값이 큰 것이 ★ 좋은 등급이다 — ★ 그 차례로 늘어놓는다
+    """
+    import json as _j
+    import os as _o
+    with open(_o.path.join(root, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        cuts = _j.load(f).get("grade_cuts") or {}
+    return tuple(k for k, _v in sorted(cuts.items(), key=lambda x: -x[1]))
+
+
+def _grade_step(grades, order: tuple) -> int:
+    """등급이 몇 칸 갈렸는가.  ★ 차례에 없는 값(EXCLUDED 등)은 안 센다."""
+    got = [order.index(g) for g in grades if g in order]
+    return (max(got) - min(got)) if len(got) > 1 else 0
+
+
+def _miss_axes(conn, listing_id, calc_version: str, labels: dict) -> tuple:
+    """빠진 축 — ★ 갈래(①~⑤)를 함께 낸다 (명령서 1-2).
+
+    ★★ 갈래는 ★ `config/labels.json` 의 `MISS_KIND` 가 정본이다 —
+      ★ f-table 434·476행에서 옮겼다.  ★ 표에 없는 축은 ★ **갈래를 안 붙인다**
+      ★ ★ 지어내지 않는다 (금지 6)
+    """
+    kind = labels.get("MISS_KIND", {})
+    al = labels.get("AXIS_LABELS", {})
+    out = []
+    for axis, in conn.execute(
+        "SELECT axis FROM result_axis WHERE listing_id=? AND calc_version=? "
+        "AND (value IS NULL OR excluded=1) ORDER BY max_points DESC, axis",
+        (listing_id, calc_version)
+    ):
+        mark = kind.get(axis, "")
+        out.append(f"{al.get(axis, axis)} {mark}".strip())
+    return tuple(out[:4])
+
+
+def view_track(account: Account, conn, calc_version: str,
+               order: str = "gap", root: str = ".") -> "TrackView":
+    """추적 (명령서 1-2 · v3_track_시안).
+
+    ★★ 분모는 ★ **910 으로 같다** (마스터 정정 08-24) — ★ 갈리는 것은 `earned` 다
+    ★ 정렬 기본은 ★ 「차액 큰 순」 — ★ 짝짓기가 틀린 것이 먼저 보인다
+    """
+    del account
+    labels = _labels(root)
+    order_of = _grade_order(root)
+    rows = conn.execute(
+        "SELECT l.plate_hash, l.listing_id, l.site, l.sell_type,"
+        "       l.target_key, l.trim_badge, l.price_current_won,"
+        "       s.grade, s.earned, s.denominator"
+        "  FROM core_listing l"
+        "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        "   AND s.calc_version = ?"
+        " WHERE l.plate_hash IS NOT NULL AND l.status = 'active'"
+        "   AND l.plate_hash IN ("
+        "       SELECT plate_hash FROM core_listing"
+        "        WHERE plate_hash IS NOT NULL AND status = 'active'"
+        "        GROUP BY plate_hash HAVING COUNT(DISTINCT site) > 1)"
+        " ORDER BY l.plate_hash, l.price_current_won",
+        (calc_version,)).fetchall()
+
+    by_plate: dict = {}
+    for r in rows:
+        by_plate.setdefault(r[0], []).append(r)
+
+    pairs, big, two = [], 0, 0
+    for plate, got in by_plate.items():
+        prices = [x[6] for x in got if x[6]]
+        if not prices:
+            continue
+        low, high = min(prices), max(prices)
+        gap = high - low
+        pct = round(gap / low * 100, 1) if low else 0.0
+        grades = tuple(x[7] for x in got if x[7])
+        sites = tuple(
+            (site_badge(x[2], x[3], root), x[1], x[6], x[7], x[8],
+             _miss_axes(conn, x[1], calc_version, labels))
+            for x in got)
+        step = _grade_step(grades, order_of)
+        if pct >= TRACK_BIG_GAP_PCT:
+            big += 1
+        if step >= 2:
+            two += 1
+        pairs.append(TrackPair(
+            plate_hash=plate,
+            target_label=str(got[0][4] or "차종 미정"),
+            trim=str(got[0][5] or ""),
+            sites=sites, site_count=len({x[2] for x in got}),
+            low_won=low, high_won=high, gap_won=gap, gap_pct=pct,
+            grades=grades, grade_split=step > 0,
+            # ★ 사고 판정이 갈렸는가 — ★ 축 하나를 사이트끼리 견준다
+            accident_split=_accident_split(conn, [x[1] for x in got],
+                                           calc_version)))
+
+    keys = {"gap": lambda p: -p.gap_won,
+            "grade": lambda p: -_grade_step(p.grades, order_of),
+            "sites": lambda p: -p.site_count}
+    pairs.sort(key=keys.get(order, keys["gap"]))
+    return TrackView(
+        pairs=pairs,
+        grade_split=[p for p in pairs if p.grade_split],
+        accident_split=[p for p in pairs if p.accident_split],
+        total_pairs=len(pairs), big_gap=big, two_step=two, order=order)
+
+
+def _accident_split(conn, listing_ids: list, calc_version: str) -> bool:
+    """사고 판정이 사이트마다 갈렸는가.  ★ 갈린 채로 보여 주려면 먼저 찾아야 한다."""
+    if len(listing_ids) < 2:
+        return False
+    marks = ",".join("?" * len(listing_ids))
+    got = conn.execute(
+        f"SELECT DISTINCT (value > 0) FROM result_axis"
+        f" WHERE listing_id IN ({marks}) AND calc_version = ?"
+        f"   AND axis = 'state.accident' AND value IS NOT NULL",
+        (*listing_ids, calc_version)).fetchall()
+    return len(got) > 1
+
+
+def duplicate_listings(conn, listing_id: int, calc_version: str,
+                       root: str = ".") -> tuple:
+    """상세 11절 「중복매물」 — ★ 이 차가 다른 곳에도 있으면 나란히 낸다.
+
+    ★ 명령서 1-3 · `v3_detail_시안` 맨 아래.  ★ 10절 뒤에 붙인다 —
+      ★ **열 절 차례는 안 바꾼다** (V11-159 는 그 열 절을 뜻한다)
+    ★★ 합치지 않는다 — ★ 갈린 채로 낸다 (마스터 확정 08-24)
+    ★ 짝이 없으면 ★ 빈 것이다 — ★ 절을 안 낸다
+    """
+    plate = conn.execute(
+        "SELECT plate_hash FROM core_listing WHERE listing_id=?",
+        (listing_id,)).fetchone()
+    if not plate or not plate[0]:
+        return ()
+    labels = _labels(root)
+    out = []
+    for lid, site, sell, price, grade, km, w_month in conn.execute(
+        "SELECT l.listing_id, l.site, l.sell_type, l.price_current_won,"
+        "       s.grade, l.mileage_km, l.warranty_body_month"
+        "  FROM core_listing l"
+        "  LEFT JOIN result_score s ON s.listing_id=l.listing_id"
+        "   AND s.calc_version=?"
+        " WHERE l.plate_hash=? AND l.status='active' AND l.listing_id<>?"
+        " ORDER BY l.price_current_won",
+        (calc_version, plate[0], listing_id)
+    ):
+        got = conn.execute(
+            "SELECT value, excluded, source, max_points FROM result_axis"
+            " WHERE listing_id=? AND calc_version=? AND axis='state.accident'",
+            (lid, calc_version)).fetchone()
+        acc = chip("state.accident", got[0] if got else None,
+                   bool(got[1]) if got else True, labels,
+                   source=got[2] if got else None)
+        out.append({"listing_id": lid,
+                    "site_badge": site_badge(site, sell, root),
+                    "price_won": price, "grade": grade,
+                    "accident_mark": acc.mark, "accident_tone": acc.tone,
+                    "mileage_km": km, "warranty_month": w_month})
+    return tuple(out)

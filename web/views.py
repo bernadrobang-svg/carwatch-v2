@@ -928,6 +928,23 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                 root=root, csrf=csrf, flash_key=flash_key)
 
 
+def track(conn, account, req, root: str = ROOT, csrf: str = "",
+          flash_key: str = "-", **_kw) -> tuple:
+    """/track — ★ 같은 차가 여러 사이트에 (명령서 1-2 · v3_track_시안).
+
+    ★★ 합치지 않는다.  ★ 갈린 것을 갈린 채로 낸다 (마스터 확정 08-24)
+    ★ 정렬 기본은 ★ 「차액 큰 순」 — ★ 짝짓기가 틀린 것이 먼저 보인다
+    """
+    from report.screens.build import view_track
+
+    ver = _versions(conn)
+    q = req.get("query", {})
+    got = view_track(account, conn, ver["calc_version"],
+                     order=(q.get("order") or "gap"), root=root)
+    return page(conn, account, "추적", "track.html", {"t": got}, csrf=csrf,
+                root=root, flash_key=flash_key)
+
+
 def compare(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
     """★ 분모가 다르면 총점을 비교하지 않는다 (STEP 107)."""
@@ -2492,6 +2509,7 @@ HANDLERS = {
     "view_admin_docs": admin_docs,
     "view_recommend": recommend,
     "view_compare": compare,
+    "view_track": track,
     "view_market": market,
     "view_dealers": dealers,
     "view_watch": watch,

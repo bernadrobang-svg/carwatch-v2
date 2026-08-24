@@ -162,6 +162,12 @@ class ListingRow:
     #   ★ 원문에 없으면 None — ★ 0 이 아니다.  ★ 화면에는 「—」
     spec_fuel_economy_kmpl: float | None = None
     spec_seats: int | None = None
+    # ★★ 「3곳」 배지 — ★ 같은 차가 올라간 사이트의 수 (v3_listings_시안).
+    #   ★ 1 이면 겹친 것이 없다 — ★ 배지를 안 낸다
+    site_count: int = 1
+    # ★★ 템플릿은 ★ `>` 비교를 못 한다 (V11-104) — ★ 판단은 여기서 한다.
+    #   ★ 실측 08-24 — ★ `{% if r.site_count > 1 %}` 가 ★ 늘 참이라 ★ 「1곳」이 다 나왔다
+    multi_site: bool = False
     # 「이 값으로 걸러 보기」에 쓰는 파생 (STEP 149p).
     # ★ 화면이 계산하지 않는다.  여기서 만들어 내려준다
     year: str | None = None           # 연식 4자리
@@ -414,6 +420,46 @@ class CompareView:
     # ★★ 개정 427 — 한 줄 결론.  「A는 취향이 낫고 B는 값이 낫습니다」
     #   ★ 표를 눈으로 훑게 두지 않는다.  ★ 무엇이 갈랐는지를 말로 쓴다
     conclusion: str = ""
+
+
+@dataclass(frozen=True)
+class TrackPair:
+    """★ 한 대의 차가 ★ 여러 사이트에 올라간 것 (명령서 1-2 · v3_track_시안).
+
+    ★★ 합치지 않는다.  ★ 갈린 것을 ★ 갈린 채로 보여 준다 (마스터 확정 08-24)
+    ★ 짝이 없는 매물은 ★ 여기 안 낸다 — ★ 견주는 자리다
+    """
+
+    plate_hash: str
+    target_label: str
+    trim: str
+    sites: tuple          # (site_badge, listing_id, price_won, grade, earned, misses)
+    site_count: int
+    low_won: int
+    high_won: int
+    gap_won: int
+    gap_pct: float
+    grades: tuple
+    # ★ 등급이 갈렸는가 · 사고 판정이 갈렸는가
+    grade_split: bool = False
+    accident_split: bool = False
+
+
+@dataclass(frozen=True)
+class TrackView:
+    """추적 — ★ 절 셋 (v3_track_시안).
+
+    ★ 1 값이 크게 갈린 것 · 2 등급이 갈린 것 · 3 사고 판정이 갈린 것
+    ★★ 분모는 ★ 910 으로 같다 (마스터 정정 08-24) — ★ 갈리는 것은 earned 다
+    """
+
+    pairs: list           # 값 갈림 (차액 큰 순)
+    grade_split: list     # 등급 갈림
+    accident_split: list  # 사고 판정 갈림
+    total_pairs: int = 0
+    big_gap: int = 0      # 값이 30% 넘게 갈린 것
+    two_step: int = 0     # 등급이 두 칸 갈린 것
+    order: str = "gap"
 
 
 @dataclass(frozen=True)

@@ -2,6 +2,15 @@
   <small>{{ paging.total | num }}건 중 {{ paging.shown | num }}건 ·
     {{ paging.pages }}쪽 중 {{ paging.page }}쪽</small></h1>
 
+
+<!-- ★★ 화면 맨 위 「무엇을 하는 곳인가」 (명령서 1-5 · v3_listings_시안.html 주황 상자).
+     ★ 시안 글자를 그대로 옮긴다 — ★ 개발측이 새로 쓰지 않는다 -->
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p>모든 사이트의 매물을 한 자리에서 본다. 등급순으로 서 있다</p>
+  <p>같은 차가 여러 곳에 있으면 낮은 값 하나만 낸다 (「3곳」 배지를 누르면 추적으로)</p>
+</div>
+
 <!-- ══ 조건줄 — 칩 7 + ＋조건 12 (개정 427 · STEP 97) ══
      ★ 필터는 반대로 두껍게.  실측 — 보배드림 15종 · KB차차차 16종 · 우리 5개.
        사이트는 복잡함을 필터에 몰아넣고 목록을 단순히 둔다.  우리는 반대였다
@@ -171,6 +180,11 @@
 
   <!-- 3 사진 -->
   <div class="desk">
+    <!-- ★★ 「N곳」 배지 (명령서 1-4 · v3_listings_시안) — ★ 같은 차가 다른 사이트에도 있다.
+         ★ 누르면 ★ 추적으로 간다.  ★ 1 곳이면 안 낸다 -->
+    {% if r.multi_site %}<a class="chip on" href="/track"
+      title="이 차가 {{ r.site_count }}곳에 올라와 있습니다. 추적에서 값·등급을 나란히 봅니다"
+      >{{ r.site_count }}곳</a>{% endif %}
     {% if r.photo_url %}<a href="/detail/{{ r.listing_id }}"><img class="thumb"
       src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
     {% if !r.photo_url %}<span class="thumb thumb-none nophoto"

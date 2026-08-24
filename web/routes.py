@@ -56,6 +56,8 @@ ROUTES: tuple[Route, ...] = (
     Route("/detail/{listing_id}", (GET,), "view_detail", ROLE_ANONYMOUS),
     Route("/why/{listing_id}", (GET,), "view_why", ROLE_ANONYMOUS),
     Route("/compare", (GET,), "view_compare", ROLE_ANONYMOUS),
+    # ★★ 추적 — ★ 같은 차가 여러 사이트에 (마스터 허락 08-24 · 명령서 1-2)
+    Route("/track", (GET,), "view_track", ROLE_ANONYMOUS),
     Route("/market", (GET,), "view_market", ROLE_ANONYMOUS),
     Route("/dealers", (GET,), "view_dealers", ROLE_ANONYMOUS),
     Route("/notready", (GET,), "view_notready", ROLE_ANONYMOUS),

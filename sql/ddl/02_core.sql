@@ -169,6 +169,11 @@ CREATE TABLE IF NOT EXISTS core_listing (
 
 CREATE INDEX IF NOT EXISTS ix_listing_target ON core_listing(target_key, status);
 CREATE INDEX IF NOT EXISTS ix_listing_vehicle ON core_listing(vehicle_id);
+-- ★★ 같은 차 짝짓기 — ★ 목록이 「낮은 값 하나만」을 고를 때 · ★ 추적 · ★ 상세 11절이 쓴다.
+--   ★★ 실측 08-24 — ★ 색인이 없어 ★ 목록 한 쪽이 ★ **127.9초** 였다 (매물 4,791건).
+--   ★ 값까지 넣는다 — ★ 「가장 싼 것」을 색인만으로 고른다
+CREATE INDEX IF NOT EXISTS ix_listing_plate
+  ON core_listing(plate_hash, status, price_current_won, listing_id);
 
 -- 변경분만 쌓는다.  전량 스냅샷을 쌓지 않는다 (STEP 29)
 CREATE TABLE IF NOT EXISTS core_listing_change (
