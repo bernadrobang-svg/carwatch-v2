@@ -1366,6 +1366,75 @@ def s46_78_encar_only_paths_are_scoped() -> tuple[bool, str]:
     return True, f"엔카 전용 경로 {len(want)}곳이 사이트로 좁혀 있다"
 
 
+
+def s46_87_request_site_matches_listing(db_path=None) -> tuple[bool, str]:
+    """★★★ 부른 주소의 사이트와 ★ 매물의 사이트가 ★ 같은가 (마스터 지시 08-27 ③).
+
+    ★★ 가이드 — 「★ 이것부터 만들어라.  ★ **있었으면 첫 회차에 잡혔다**」
+    ★★★ ★ 08-27 실측 — ★ 엔카 상세 API 에 ★ 현대인증·K카·헤이딜러 매물번호를
+      ★ ★ 넣어 ★ **사흘 동안 전량 400** 이었다.
+      ★ ★ `V1-08`(동일 코드 실패율 100%)은 ★ 「실패했다」만 말했다 —
+        ★ ★ **「왜」를 안 말했다.**  ★ 이 검사는 ★ 그 자리를 곧장 짚는다
+    ★ 재는 법 — ★ `audit_request.url` 의 ★ 주인(호스트)을 ★ `endpoints.json` 으로 찾고
+      ★ ★ 그 `source_id` 를 가진 매물의 ★ `site` 와 견준다
+    ★ ★ 같은 `source_id` 가 ★ 그 사이트에도 있으면 ★ 맞는 것이다 —
+      ★ ★ 사이트가 겹칠 수 있으므로 ★ **없을 때만** 실패로 센다
+    ★ 옛 회차까지 다 세지 않는다 — ★ 마지막 회차만 본다 (`V1-16` 과 같은 뜻)
+    """
+    import sqlite3
+
+    # ★ `db_path` 는 ★ 「일부러 깨서 봤다」(㉲)를 하려고 연 자리다 —
+    #   ★ 검사표는 인자 없이 부른다.  ★ 시험만 다른 DB 를 준다
+    db = Path(db_path) if db_path else ROOT / "carwatch.db"
+    ep = ROOT / "config" / "endpoints.json"
+    if not db.is_file() or not ep.is_file():
+        return True, "DB 나 endpoints.json 이 없다 — 잴 것이 없다"
+    from urllib.parse import urlparse
+    host_of = {}
+    for site, one in json.loads(_read(ep)).items():
+        if isinstance(one, dict) and one.get("base_url"):
+            host_of[urlparse(one["base_url"]).netloc.lower()] = site
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        row = conn.execute(
+            "SELECT run_id FROM audit_request ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        if row is None:
+            return True, "요청 기록이 없다 — 잴 것이 없다"
+        rid = row[0]
+        rows = conn.execute(
+            "SELECT url, source_id, COUNT(*) FROM audit_request"
+            " WHERE run_id=? AND source_id IS NOT NULL AND url IS NOT NULL"
+            " GROUP BY 1, 2", (rid,)).fetchall()
+        bad, seen = {}, 0
+        for url, sid, n in rows:
+            site = host_of.get(urlparse(url).netloc.lower())
+            if site is None:
+                continue          # ★ 모르는 주인 — ★ 지어내지 않는다
+            seen += n
+            ok = conn.execute(
+                "SELECT 1 FROM core_listing WHERE site=? AND source_id=?"
+                " LIMIT 1", (site, str(sid))).fetchone()
+            if ok:
+                continue
+            who = conn.execute(
+                "SELECT site FROM core_listing WHERE source_id=? LIMIT 1",
+                (str(sid),)).fetchone()
+            key = f"{site} ← {who[0] if who else '모르는 매물'}"
+            bad[key] = bad.get(key, 0) + n
+    finally:
+        conn.close()
+    if bad:
+        got = " · ".join(f"{k} {v}건" for k, v in
+                         sorted(bad.items(), key=lambda kv: -kv[1])[:4])
+        return False, (f"★ 남의 사이트 매물번호를 넣었다 (run {rid}) — {got}")
+    if not seen:
+        # ★ 매물번호를 단 요청이 없는 회차다 (목록만 던진 회차) — ★ 잴 것이 없다.
+        #   ★ 「통과」로 읽히지 않게 ★ 그렇게 적는다
+        return True, f"run {rid} 에 매물번호를 단 요청이 없다 — 잴 것이 없다"
+    return True, f"run {rid} 의 요청 {seen:,}건이 다 제 사이트를 부른다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1405,6 +1474,8 @@ CHECKS = (
     ("S46-76", "수집기가 원문을 남기는가", s46_76_collectors_keep_raw),
     ("S46-77", "KB 는 우리 20종만 받는가", s46_77_kb_is_our_targets_only),
     ("S46-78", "엔카 전용 경로가 좁혀 있는가", s46_78_encar_only_paths_are_scoped),
+    ("S46-87", "부른 주소가 그 매물의 사이트인가",
+     s46_87_request_site_matches_listing),
 )
 
 
