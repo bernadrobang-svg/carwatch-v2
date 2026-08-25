@@ -1710,6 +1710,73 @@ def s46_91_raw_vs_stored() -> tuple[bool, str]:
     return True, " · ".join(said[:4])
 
 
+
+def s46_92_browser_zero_count() -> tuple[bool, str]:
+    """★★★ 브라우저 수집이 ★ `Count 0` 을 받으면 ★ 알린다 (마스터 지시 08-28).
+
+    ★★ 마스터 — 「★ 「200 이라 성공」으로 세지 마라.  ★ **0건은 성공이 아니다**」
+    ★★★ ★ 실측 08-28 — ★ 마스터께서 ★ 수입 여덟을 다 눌러 주셨는데
+      ★ ★ **벤츠 GLC 만 ★ `Count 0`** 이었다 (다른 일곱은 다 왔다).
+      ★ ★ 그런데 ★ 어디에도 ★ 그 말이 안 나왔다 — ★ `status='ok'` 라 ★ 성공으로 셌다.
+      ★ ★ 「우리가 흘렸나 · 엔카가 0을 줬나」를 ★ 사흘 동안 못 갈랐다
+    ★ 재는 법 — ★ 봉투의 `Count` 가 0 이고 ★ 항목도 0 이면 ★ 그 쿼리를 적는다
+    ★ ★ 쿼리는 ★ `iNav.BreadCrumbs` 의 `RemoveAction` 에 ★ 그대로 들어 있다
+    ★ 알림이다 — ★ 막지 않는다.  ★ 사이트에 정말 0건일 수 있다 (신차 등)
+    """
+    import re as _re
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        row = conn.execute(
+            "SELECT MAX(fetched_at) FROM raw_response"
+            " WHERE origin='browser' AND status='ok'").fetchone()
+        if not row or not row[0]:
+            return True, "브라우저 봉투가 없다 — 잴 것이 없다"
+        from datetime import datetime, timedelta
+        try:
+            last = datetime.fromisoformat(str(row[0]))
+        except ValueError:
+            return True, "봉투 시각을 못 읽었다 — 잴 것이 없다"
+        since = (last - timedelta(days=1)).isoformat()
+        mf = _re.compile(r"Manufacturer\.([^._)]+)")
+        mg = _re.compile(r"ModelGroup\.([^._)]+)")
+        zero, seen = {}, 0
+        for body in conn.execute(
+            "SELECT body FROM raw_response WHERE origin='browser'"
+            " AND status='ok' AND fetched_at >= ? AND body IS NOT NULL",
+            (since,)
+        ):
+            try:
+                doc = json.loads(body[0])
+            except (ValueError, TypeError):
+                continue
+            if not isinstance(doc, dict) or "Count" not in doc:
+                continue
+            seen += 1
+            if int(doc.get("Count") or 0) or (doc.get("SearchResults") or []):
+                continue
+            crumbs = json.dumps(
+                (doc.get("iNav") or {}).get("BreadCrumbs") or [],
+                ensure_ascii=False)
+            a, b = mf.search(crumbs), mg.search(crumbs)
+            key = f"{a.group(1) if a else '?'} {b.group(1) if b else '?'}"
+            zero[key] = zero.get(key, 0) + 1
+    finally:
+        conn.close()
+    if not seen:
+        return True, "센 봉투가 없다 — 잴 것이 없다"
+    if zero:
+        got = " · ".join(f"{k} {v}봉투"
+                         for k, v in sorted(zero.items(), key=lambda kv: -kv[1]))
+        return False, (f"★ 0건으로 온 쿼리 {len(zero)}가지 — {got[:160]} "
+                       "(★ 이름이 틀렸나 · 정말 없나 — ★ 사람이 봐야 한다)")
+    return True, f"브라우저 봉투 {seen:,}건이 다 0건이 아니다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1754,6 +1821,9 @@ CHECKS = (
     ("S46-88", "엔카가 막히면 화면이 까닭을 말하는가",
      s46_88_encar_blocked_banner),
     ("S46-91", "받은 원문이 저장까지 갔는가", s46_91_raw_vs_stored),
+    # ★ 알림이다 — ★ 사이트에 정말 0건일 수 있다 (신차 등).  ★ 막지 않는다
+    ("S46-92", "브라우저 수집이 0건을 받았는가",
+     s46_92_browser_zero_count, "warn"),
     # ★ 셋은 ★ **숫자를 내는 검사**다 — ★ 판정을 바꾸지 않는다 (명령서 45-3)
     ("S46-54", "짝 중 등급이 두 칸 갈린 것", s46_54_grade_two_step, "warn"),
     ("S46-55", "짝 중 값이 30% 갈린 것", s46_55_price_gap_30, "warn"),
