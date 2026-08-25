@@ -500,6 +500,11 @@ class TrackView:
     #   ★ 실측 08-25 — ★ `{% if t.order == 'gap' %}` 이 ★ 화면에 글자로 샜다
     #   ★ 각 칸은 {key · label · on}
     orders: list = field(default_factory=list)
+    # ★★ 한 쪽에 30장 (마스터 확정 08-26 · `UI_REVIEW` 16장 · S46-74).
+    #   ★ 「화면마다 다르면 헷갈린다」 — ★ 목록·관심·추적·미판정이 같은 수다
+    #   ★★ 자른 것을 ★ 합으로 내지 않는다 — ★ 「이게 전부」로 읽힌다 (검토 17)
+    page_rows: int = 30
+    cut: bool = False       # ★ 30장을 넘어 잘렸는가
 
 
 @dataclass(frozen=True)

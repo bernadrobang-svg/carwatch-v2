@@ -56,6 +56,11 @@
 </tbody>
 </table>
 <p class="muted">★ 값은 만원 · 「사이트」는 그 차가 올라간 곳의 수입니다.</p>
+<!-- ★★ 자른 것을 합으로 내지 않는다 — 「이게 전부」로 읽힌다 (검토 17).
+     ★ 한 쪽에 30장 (마스터 확정 08-26 · UI_REVIEW 16장 · S46-74) -->
+{% if t.cut %}<p class="muted">★ 짝지어진 차 <strong>{{ t.total_pairs | num }}쌍</strong> 가운데
+  <strong>{{ t.page_rows }}쌍</strong>만 냅니다 — 한 쪽에 {{ t.page_rows }}장입니다.
+  차례를 바꾸면 다른 쌍이 앞으로 옵니다.</p>{% endif %}
 {% endif %}
 
 {% if t.grade_split %}

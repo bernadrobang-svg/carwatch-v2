@@ -2296,9 +2296,25 @@ details>div { margin-top:12px }
 .kform input[name=target_price_won] { flex:1; min-width:0; width:auto;
         min-height:44px; }
 .kform .kbtn { flex:0 0 auto; padding:0 12px; }
-.kpick { display:inline-flex; align-items:center; gap:5px; min-height:44px;
-         padding:0 10px; border:1px solid var(--line2); border-radius:8px;
-         font-size:12.5px; }
+/* ★★ 비교 네모 — ★ 사진 왼쪽 위에 얹는다 (마스터 확정 17 「비교→관심」 ·
+   v4m 시안 08-26 `.v4-pick`).  ★ 하트와 마주 본다.
+   ★ 짚는 자리는 44px 이다 — ★ 보이는 네모는 26px 이고 ★ 둘레가 손가락 몫이다 */
+.kthumbwrap { position:relative; flex:0 0 auto; }
+.kpick { position:absolute; top:0; left:0; width:44px; height:44px; z-index:2;
+         display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.kpick input { position:absolute; opacity:0; width:44px; height:44px; margin:0;
+               cursor:pointer; }
+.kpick span { width:26px; height:26px; border-radius:6px; background:var(--ink);
+              border:1px solid var(--line2); color:var(--faint); font-size:14px;
+              display:flex; align-items:center; justify-content:center; }
+.kpick input:checked + span { background:var(--amber); border-color:var(--amber);
+              color:var(--ink4); font-weight:700; }
+/* ★ 고른 것을 들고 나가는 띠.  ★ 아래 탭 위에 붙는다 */
+.kcmp { position:sticky; bottom:64px; z-index:8; display:flex; gap:10px;
+        align-items:center; padding:10px 14px; margin:0 -12px;
+        background:var(--surface2); border-top:1px solid var(--amber); }
+.kcmp .dim { flex:1; font-size:12px; }
+.kcmp .kbtn { flex:0 0 130px; }
 
 /* ★ 640 이상 — 사진을 키우고 · 판정을 한 줄로 · 단추를 오른쪽으로 */
 @media (min-width:640px) {
@@ -2324,6 +2340,11 @@ details>div { margin-top:12px }
   .kj { gap:4px 14px; font-size:12px; }
   .kax { font-size:12px; }
   .kacts { flex:0 0 240px; }
+}
+
+/* ★ 640 이상 — ★ 아래 탭이 없으므로 ★ 띠도 바닥에 붙는다 */
+@media (min-width:640px) {
+  .kcmp { bottom:0; margin:0; }
 }
 
 /* ★ 340 아래에서도 안 깨진다 — 사진만 줄인다.  ★ 글자는 그대로다 */

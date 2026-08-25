@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관심 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=3785d716b5">
+<link rel="stylesheet" href="/static/app.css?v=4bbe6104f8">
 
 </head>
 <body class="s-watch">
@@ -63,6 +63,8 @@
 
 
 
+
+<form method="get" action="/compare" id="cmp">
 <div class="kcards">
 
 <div class="kcard">
@@ -71,11 +73,17 @@
     title="담은 날부터 지금까지 값이 어떻게 움직였는지입니다">↓ 60만 내렸다</div>
   <div class="kcardline">
     <div class="kline">
-      <a class="kthumb" href="/detail/166"
-        title="KOLEOS_HEV 1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음 · 2024-12 · 55,763km · 2,990만 · S등급">
-        <img src="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" alt=""
-          loading="lazy">
-        </a>
+      <div class="kthumbwrap">
+        
+        <label class="kpick" title="견줄 차로 고릅니다 — 두 대 넘게 고르십시오">
+          <input type="checkbox" name="id" value="166"
+            data-cmp="1"><span>✓</span></label>
+        <a class="kthumb" href="/detail/166"
+          title="KOLEOS_HEV 1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음 · 2024-12 · 55,763km · 2,990만 · S등급">
+          <img src="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" alt=""
+            loading="lazy">
+          </a>
+      </div>
       <div class="kmid">
         
         <div class="kax"><b
@@ -190,11 +198,17 @@
     title="담은 날부터 지금까지 값이 어떻게 움직였는지입니다">— 담을 때와 같다</div>
   <div class="kcardline">
     <div class="kline">
-      <a class="kthumb" href="/detail/179"
-        title="KOLEOS_HEV 1.5 E-TECH 아이코닉 2WD · 세부등급 없음 · 2025-03 · 51,151km · 3,170만 · S등급">
-        <img src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt=""
-          loading="lazy">
-        </a>
+      <div class="kthumbwrap">
+        
+        <label class="kpick" title="견줄 차로 고릅니다 — 두 대 넘게 고르십시오">
+          <input type="checkbox" name="id" value="179"
+            data-cmp="1"><span>✓</span></label>
+        <a class="kthumb" href="/detail/179"
+          title="KOLEOS_HEV 1.5 E-TECH 아이코닉 2WD · 세부등급 없음 · 2025-03 · 51,151km · 3,170만 · S등급">
+          <img src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt=""
+            loading="lazy">
+          </a>
+      </div>
       <div class="kmid">
         
         <div class="kax"><b
@@ -301,16 +315,12 @@
 
 </div>
 
-<h2>견주기</h2>
-
-<form method="get" action="/compare" id="cmp">
-<p class="muted">2~5대를 고르십시오 — ★ 막대 넷과 총 구매비용을 나란히 냅니다.</p>
-<p class="chips"><label class="kpick"><input type="checkbox"
-  name="id" value="166"> KOLEOS_HEV
-  <span class="dim">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</span></label><label class="kpick"><input type="checkbox"
-  name="id" value="179"> KOLEOS_HEV
-  <span class="dim">1.5 E-TECH 아이코닉 2WD · 세부등급 없음</span></label></p>
-<button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">고른 것 비교</button>
+<div class="kcmp" id="cmpbar">
+  <span class="dim" id="cmpn">견줄 차를 사진 왼쪽 위 네모로 고르십시오 —
+    ★ 막대 넷과 총 구매비용을 나란히 냅니다</span>
+  <button type="submit" class="kbtn go" id="cmpgo"
+    title="고른 매물을 나란히 놓고 봅니다">비교하기 ▸</button>
+</div>
 </form>
 
 <h2>최종 후보</h2>
@@ -492,6 +502,34 @@
     show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
   }, {passive: false});
 })();
+
+/* ★★ 비교 네모를 몇 개 골랐나 (v4m 시안 08-26 · 마스터 확정 17).
+   ★ 값을 다시 실어 보내지 않는다 — ★ 이미 그 폼에 있는 네모를 센다.
+   ★ ★ JS 가 없으면 ★ 띠 글이 그대로 남고 ★ 단추도 살아 있다 —
+     ★ 못 쓰게 되지 않는다 */
+(function () {
+  var bar = document.getElementById('cmpn');
+  var go = document.getElementById('cmpgo');
+  if (!bar || !go) { return; }
+  var boxes = document.querySelectorAll('input[data-cmp]');
+  function count() {
+    var n = 0, i;
+    for (i = 0; i < boxes.length; i += 1) { if (boxes[i].checked) { n += 1; } }
+    if (n === 0) {
+      bar.textContent = '견줄 차를 사진 왼쪽 위 네모로 고르십시오 —'
+        + ' ★ 막대 넷과 총 구매비용을 나란히 냅니다';
+    } else if (n === 1) {
+      bar.textContent = '1대 골랐다 — 견주려면 두 대 넘게 고르십시오';
+    } else {
+      bar.textContent = n + '대 골랐다';
+    }
+    go.disabled = n < 2;
+  }
+  for (var i = 0; i < boxes.length; i += 1) {
+    boxes[i].addEventListener('change', count);
+  }
+  count();
+})();
 </script>
 
 </main>
@@ -500,8 +538,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260824T224825</span>
-  <span>2026-08-25 07:52</span>
+  <span>run 20260825T000022</span>
+  <span>2026-08-25 09:03</span>
 </footer>
 
 </body>

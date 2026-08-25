@@ -1076,6 +1076,10 @@ V4M_WATCH_ITEMS = (
     ("원문 문", "encar_url"),
     ("담은 날", "added_at"),
     ("담은 뒤 바뀐 것", "chg_text"),
+    # ★★ 08-26 — ★ 가이드가 시안을 고쳤다 (개정 751 · 마스터 확정 17 「비교→관심」).
+    #   ★ 「비교 고르기를 두지 않는다」는 ★ 물렸다 — ★ 사진 왼쪽 위에 네모를 둔다
+    ("비교 네모", "data-cmp"),
+    ("비교로 가는 문", 'action="/compare"'),
 )
 
 
@@ -1132,6 +1136,52 @@ def s46_68_watch_is_mobile_first() -> tuple[bool, str]:
                   "· 좁아도 안 감춘다")
 
 
+
+def s46_74_rows_per_page() -> tuple[bool, str]:
+    """★★★ 한 쪽에 ★ **30장**인가 (마스터 확정 08-26 · `UI_REVIEW` 16장).
+
+    ★★ 마스터 — 「★ **30개 해**」.  ★ 가이드 안(50장 그대로)은 ★ 물렸다
+    ★★ ★ 수를 ★ **규격에서 읽는다** — ★ 코드에 박지 않는다 (규칙 1).
+      ★ ★ 여기에 `30` 을 적어 두면 ★ 마스터가 수를 바꾸실 때
+        ★ ★ 검사가 ★ **옛 수를 지키는 쪽**이 된다
+    ★★ ★ 네 화면이 ★ 같은 수를 쓰는가도 본다 —
+      ★ 「★ 관심·추적·미판정도 같이 30장.  ★ 화면마다 다르면 헷갈린다」
+    ★ 금지 — ★ 카드에서 무엇을 빼서 크기를 줄이는 것.
+      ★ 마스터 「보여지는 정보는 빼지 마라」.  ★ 줄인 것은 ★ **장 수**다
+    """
+    doc = ROOT / "docs" / "UI_REVIEW.md"
+    cfg = ROOT / "config" / "web.json"
+    if not doc.is_file() or not cfg.is_file():
+        return False, "UI_REVIEW.md 나 config/web.json 이 없다"
+    body = _read(doc)
+    want = re.search(r"목록은\s*★?\s*\**한 쪽에\**\s*★?\s*\**(\d+)장", body)
+    if not want:
+        # ★ 규격이 안 적었으면 ★ 우리가 정하지 않는다 — ★ 보고한다 (규칙 2)
+        return True, "UI_REVIEW 에 한 쪽 장 수가 없다 — 잴 것이 없다"
+    n = int(want.group(1))
+    try:
+        got = int(json.loads(_read(cfg))["rows_per_page"])
+    except (ValueError, KeyError):
+        return False, "config/web.json 에 rows_per_page 가 없다"
+    bad = []
+    if got != n:
+        bad.append(f"config rows_per_page {got} ≠ 규격 {n}")
+    # ★ 네 화면이 ★ 같은 자리에서 읽는가 — ★ 따로 박아 두면 ★ 갈린다
+    build = _read(ROOT / "report" / "screens" / "build.py")
+    for fn, mark in (("view_watch", "관심"), ("view_track", "추적"),
+                     ("_unmatched_rows", "미판정")):
+        i = build.find(f"def {fn}(")
+        if i < 0:
+            bad.append(f"{mark} — {fn} 이 없다")
+            continue
+        j = build.find("\ndef ", i + 1)
+        if 'rows_per_page' not in build[i:j if j > 0 else len(build)]:
+            bad.append(f"{mark} — 한 쪽 장 수를 config 에서 안 읽는다")
+    if bad:
+        return False, "★ 한 쪽 장 수가 어긋난다 — " + " · ".join(bad)
+    return True, f"목록·관심·추적·미판정이 다 한 쪽 {n}장 (규격에서 읽는다)"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1166,6 +1216,7 @@ CHECKS = (
     ("S46-66", "화면이 낸 링크가 인코딩돼 있는가", s46_66_links_encoded),
     ("S46-67", "시안 이름이 app.css 와 안 겹치는가", s46_67_sian_names_dont_clash),
     ("S46-68", "관심이 모바일 기준 카드인가", s46_68_watch_is_mobile_first),
+    ("S46-74", "한 쪽 장 수가 규격과 같은가", s46_74_rows_per_page),
 )
 
 

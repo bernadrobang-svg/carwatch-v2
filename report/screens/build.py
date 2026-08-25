@@ -2392,7 +2392,10 @@ def view_watch(account: Account, conn, fin_cfg: dict,
     #   ★ 그 안에서는 ★ 많이 내린 것부터.  ★ 나머지는 ★ 담은 날 새 것부터
     out.sort(key=lambda w: (not w.changed, w.price_delta_won or 0,
                             w.added_at or ""))
-    return out
+    # ★★ 한 쪽에 30장 (마스터 확정 08-26 · `UI_REVIEW` 16장 · S46-74).
+    #   ★ 가이드 — 「관심은 담은 차가 스무 대라 쪽이 안 생긴다」.
+    #   ★ ★ 그래도 ★ 수를 맞춰 둔다 — ★ 「화면마다 다르면 헷갈린다」
+    return out[:_view_cfg("rows_per_page", root)]
 
 
 # ★★ v4m 관심 시안 (마스터 확정 08-25) — ★ 카드 맨 앞 줄.
@@ -3098,11 +3101,17 @@ def view_track(account: Account, conn, calc_version: str,
             "grade": lambda p: -_grade_step(p.grades, order_of),
             "sites": lambda p: -p.site_count}
     pairs.sort(key=keys.get(order, keys["gap"]))
+    # ★★ 한 쪽에 30장 (마스터 확정 08-26 · `UI_REVIEW` 16장 · S46-74).
+    #   ★ 「관심·추적·미판정도 같이 30장 — 화면마다 다르면 헷갈린다」
+    #   ★★ 자르되 ★ 합(`total_pairs`)은 ★ 전건을 센다 — ★ 자른 것을 합으로
+    #     내면 ★ 「이게 전부」로 읽힌다 (검토 17 · `_unmatched_rows` 와 같은 규칙)
+    per = _view_cfg("rows_per_page", root)
     return TrackView(
-        pairs=pairs,
-        grade_split=[p for p in pairs if p.grade_split],
-        accident_split=[p for p in pairs if p.accident_split],
+        pairs=pairs[:per],
+        grade_split=[p for p in pairs if p.grade_split][:per],
+        accident_split=[p for p in pairs if p.accident_split][:per],
         total_pairs=len(pairs), big_gap=big, two_step=two, order=order,
+        page_rows=per, cut=len(pairs) > per,
         # ★ 「지금 눌린 것」을 여기서 정한다 — ★ 틀은 `==` 를 못 한다 (V11-104)
         orders=[{"key": k, "label": v, "on": k == order}
                 for k, v in (("gap", "차액 큰 순"), ("grade", "등급 차 큰 순"),

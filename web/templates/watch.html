@@ -24,6 +24,11 @@
      ★ 세 폭(≤639 · 640~1023 · 1024~)이 담는 정보는 똑같다 — 자리만 바뀐다
      ★ 좁아진다고 정보를 빼지 않는다.  글자를 줄이거나 감추지 않는다
      ★ 표를 쓰지 않는다 — 표를 좁히면 값이 이름표를 잃는다 -->
+<!-- ★★★ 비교 네모 (마스터 확정 17 「비교→관심」 · 개정 751 · v4m 시안 08-26).
+     ★ 가이드 시안의 「비교 고르기를 두지 않는다」는 ★ 물렸다 — 시안이 틀렸었다
+     ★ ★ 카드 무리 전체가 한 폼이다 — ★ 사진 왼쪽 위 네모로 고르고
+       ★ 아래 띠의 「비교하기 ▸」로 나간다.  ★ 거르개는 두지 않는다 -->
+<form method="get" action="/compare" id="cmp">
 <div class="kcards">
 {% for r in rows %}
 <div class="kcard">
@@ -33,12 +38,18 @@
     title="담은 날부터 지금까지 값이 어떻게 움직였는지입니다">{{ r.chg_text }}</div>
   <div class="kcardline">
     <div class="kline">
-      <a class="kthumb" href="/detail/{{ r.listing.listing_id }}"
-        title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
-        {% if r.listing.photo_url %}<img src="{{ r.listing.photo_url }}" alt=""
-          loading="lazy">{% endif %}
-        {% if !r.listing.photo_url %}<span class="thumb-none"
-          title="원문에 사진이 없습니다">사진 없음</span>{% endif %}</a>
+      <div class="kthumbwrap">
+        <!-- ★ 사진 왼쪽 위 — ★ 하트와 마주 본다 (v4m 시안).  ★ 44px 로 짚는다 -->
+        <label class="kpick" title="견줄 차로 고릅니다 — 두 대 넘게 고르십시오">
+          <input type="checkbox" name="id" value="{{ r.listing.listing_id }}"
+            data-cmp="1"><span>✓</span></label>
+        <a class="kthumb" href="/detail/{{ r.listing.listing_id }}"
+          title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
+          {% if r.listing.photo_url %}<img src="{{ r.listing.photo_url }}" alt=""
+            loading="lazy">{% endif %}
+          {% if !r.listing.photo_url %}<span class="thumb-none"
+            title="원문에 사진이 없습니다">사진 없음</span>{% endif %}</a>
+      </div>
       <div class="kmid">
         <!-- ★ 축 넷 — ★ 목록과 같은 차례·같은 이름.  ★ 막대도 함께 낸다 (V11-163) -->
         <div class="kax">{% for b in r.listing.bars %}<b
@@ -127,18 +138,15 @@
 </div>
 {% endfor %}
 </div>
-
-<h2>견주기</h2>
-<!-- ★★ 시안은 「카드에 비교 고르기를 두지 않는다」고 적었다 (v4m 「지켜야 하는 것」).
-     ★ 그러나 비교로 들어가는 문은 관심뿐이다 (개정 427 · V11-166 · /compare 안내문).
-     ★ ★ 그래서 ★ 고르기를 ★ 카드에서 빼고 ★ 여기 한 절로 모았다 — 카드는 시안대로다.
-     ★ 어긋남은 가이드에 보고했다 (규칙 2 — 개발측이 규격을 안 고친다) -->
-<form method="get" action="/compare" id="cmp">
-<p class="muted">2~5대를 고르십시오 — ★ 막대 넷과 총 구매비용을 나란히 냅니다.</p>
-<p class="chips">{% for r in rows %}<label class="kpick"><input type="checkbox"
-  name="id" value="{{ r.listing.listing_id }}"> {{ r.listing.target_label }}
-  <span class="dim">{{ r.listing.trim }}</span></label>{% endfor %}</p>
-<button type="submit" class="btn" title="체크한 매물을 나란히 놓고 봅니다">고른 것 비교</button>
+<!-- ★★ 고르면 뜨는 띠 (v4m 시안 `.v4-cmp`).  ★ 아래 탭 바로 위에 붙는다.
+     ★ 몇 대를 골랐는지는 ★ 브라우저만 셀 수 있다 — ★ 값을 다시 실어 보내지 않는다
+     ★ ★ JS 가 없으면 띠가 늘 보이고 단추가 살아 있다 — ★ 못 쓰게 되지 않는다 -->
+<div class="kcmp" id="cmpbar">
+  <span class="dim" id="cmpn">견줄 차를 사진 왼쪽 위 네모로 고르십시오 —
+    ★ 막대 넷과 총 구매비용을 나란히 냅니다</span>
+  <button type="submit" class="kbtn go" id="cmpgo"
+    title="고른 매물을 나란히 놓고 봅니다">비교하기 ▸</button>
+</div>
 </form>
 
 <h2>최종 후보</h2>
@@ -338,5 +346,33 @@
     var t = e.touches && e.touches[0];
     show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
   }, {passive: false});
+})();
+
+/* ★★ 비교 네모를 몇 개 골랐나 (v4m 시안 08-26 · 마스터 확정 17).
+   ★ 값을 다시 실어 보내지 않는다 — ★ 이미 그 폼에 있는 네모를 센다.
+   ★ ★ JS 가 없으면 ★ 띠 글이 그대로 남고 ★ 단추도 살아 있다 —
+     ★ 못 쓰게 되지 않는다 (개정 248 — 바닐라 · 한 파일) */
+(function () {
+  var bar = document.getElementById('cmpn');
+  var go = document.getElementById('cmpgo');
+  if (!bar || !go) { return; }
+  var boxes = document.querySelectorAll('input[data-cmp]');
+  function count() {
+    var n = 0, i;
+    for (i = 0; i < boxes.length; i += 1) { if (boxes[i].checked) { n += 1; } }
+    if (n === 0) {
+      bar.textContent = '견줄 차를 사진 왼쪽 위 네모로 고르십시오 —'
+        + ' ★ 막대 넷과 총 구매비용을 나란히 냅니다';
+    } else if (n === 1) {
+      bar.textContent = '1대 골랐다 — 견주려면 두 대 넘게 고르십시오';
+    } else {
+      bar.textContent = n + '대 골랐다';
+    }
+    go.disabled = n < 2;
+  }
+  for (var i = 0; i < boxes.length; i += 1) {
+    boxes[i].addEventListener('change', count);
+  }
+  count();
 })();
 </script>

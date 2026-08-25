@@ -8,7 +8,7 @@
   "flash_max": 5,
   "max_form_bytes": 65536,
   "session_max_age_sec": 43200,
-  "rows_per_page": 50,
+  "rows_per_page": 30,
   "signup_policy": "closed",
   "max_queries_per_request": 20,
   "price_bins": 8,
