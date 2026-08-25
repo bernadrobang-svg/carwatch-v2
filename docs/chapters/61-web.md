@@ -1,7 +1,7 @@
 # 14장. 표현 계층 (STEP 141–155)
 
 ```
-version  SPEC-2026.08.25-r725
+version  SPEC-2026.08.27-r765
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -193,6 +193,7 @@ python3 run.py web --port N
 | `/admin` | GET | `view_admin` | **admin** | — | 구현 |
 | `/admin/audit` | GET | `view_admin_audit` | **admin** | 운영 | 구현 |
 | `/admin/docs` | GET | `view_admin_docs` | **admin** | 탐색 | 구현 |
+| ★ `/admin/users` | GET · POST | `view_admin_users` | **admin** | ★ **계정** | ★ STEP 136z |
 | `/recommend` | GET | `view_recommend` | anonymous | — | 시안 |
 | `/compare` | GET·POST | `view_compare` | anonymous | — | 시안 |
 | `/market` | GET | `view_market` | anonymous | — | 시안 |
@@ -1874,9 +1875,12 @@ POST /watch  ?target=KOLEOS_HEV&axis=hud&bucket=1&sort=price
 원천    13장 STEP 138
 입력    없음
 출력    2단 메뉴
-값규칙  운영 · 조정 · 탐색 셋.  잠금 단위와 일치한다
+값규칙  ★ **운영 · 조정 · 탐색 · 계정 넷** (개정 765 · 08-27)
+        ★ ★ 「계정」은 ★ **08-25 마스터 확정**으로 늘었다 (`/admin/users` · STEP 136z)
 근거   실행 중에 잠기는 것이 「조정」이다.  묶어야 한 번에 잠근다
-금지   화면 수가 늘 때 4번째 분류를 만드는 것
+       ★ ★ 「계정」은 ★ **잠금 단위가 다르다** — ★ 실행 중에도 ★ 계정은 만질 수 있다
+금지   ★ **다섯째 분류를 만드는 것** — ★ 넷이 끝이다
+       ★ ★ 화면이 늘면 ★ **넷 중 하나에 넣는다**
 검산   V11-24  메뉴 분류가 잠금 단위와 일치하는가
 ```
 
