@@ -128,7 +128,9 @@
       "diagnosis": "/public/diag/car/attach/list.json",
       "facet_maker": "/public/search/carMaker.json?page=1",
       "facet_option": "/public/search/optionSale.json?page=1",
-      "list_narrow": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}"
+      "list_narrow": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}",
+      "list_gen": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}&carCode={car}",
+      "car_name": "/public/search/carName.json?makerCode={maker}&classCode={klass}"
     },
     "_paths_note": "★ 목록은 쪽넘김 · 쪽당 40건. robots 전면 허용",
     "timeout_sec": 30,

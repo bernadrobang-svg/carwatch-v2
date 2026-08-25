@@ -118,14 +118,23 @@ def load_filters(root: str = ROOT) -> list:
         q = (one.get("site_query") or {}).get(SITE_CODE)
         if not isinstance(q, dict) or not q.get("makerCode"):
             continue
-        mark = (q["makerCode"], q.get("classCode"))
-        if mark in seen:
-            continue
-        seen.add(mark)
-        got.append({"for": key, "makerCode": q["makerCode"],
-                    "classCode": q.get("classCode", ""),
-                    # ★ 규격이 적어 둔 예상 건수 — ★ 없으면 「—」다.  ★ 지어내지 않는다
-                    "expect": q.get("_expect", "—")})
+        # ★★ 세대(`carCode`) — ★ 있으면 ★ 그것까지 넣어 좁힌다 (마스터 확정 08-26 ⓐ).
+        #   ★ 한 차종에 ★ 세대가 여럿일 수 있다 — ★ 목록으로도 받는다
+        #   ★ 없으면 ★ 차종 단위 그대로다 — ★ 세대 코드를 ★ 지어내지 않는다
+        cars = q.get("carCode")
+        cars = ([str(x) for x in cars] if isinstance(cars, list)
+                else [str(cars)] if cars else [None])
+        for car in cars:
+            mark = (q["makerCode"], q.get("classCode"), car)
+            if mark in seen:
+                continue
+            seen.add(mark)
+            got.append({"for": key, "makerCode": q["makerCode"],
+                        "classCode": q.get("classCode", ""),
+                        "carCode": car,
+                        # ★ 규격이 적어 둔 예상 건수 — ★ 없으면 「—」다.
+                        #   ★ 지어내지 않는다
+                        "expect": q.get("_expect", "—")})
     if got:
         return got
     # ★ 옛 자리 — ★ targets.json 이 비면 그때만 본다
@@ -150,7 +159,8 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
     got, pages, walls, tail = [], 0, 0, 0
     for page in range(1, MAX_PAGES + 1):
         req = adapter.list_url(None, page=page,
-                               maker=g["makerCode"], klass=g["classCode"])
+                               maker=g["makerCode"], klass=g["classCode"],
+                               car=g.get("carCode"))
         body, _tries, walled = fetch_ok(req.url, req.headers,
                                         req.timeout_sec, cfg)
         pages = page
@@ -332,6 +342,7 @@ def main() -> int:
             r = walk_group(adapter, cfg, g, seen)
             mark = "" if r["ids"] else "  ★ 0건이다"
             print(f"  {g['for']:12} maker={g['makerCode']} class={g['classCode']}"
+                  f" car={g.get('carCode') or '—':>5}"
                   f"  {r['pages']:>3}쪽 · 매물 {len(r['ids']):>4}"
                   f" (규격 {g.get('expect', '—')})  봇차단 {r['walls']}{mark}")
             by_group.append((g, r["ids"]))

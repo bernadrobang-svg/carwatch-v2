@@ -1306,10 +1306,22 @@ def s46_77_kb_is_our_targets_only() -> tuple[bool, str]:
             and (v.get("site_query") or {}).get("kbchachacha")]
     if not have:
         bad.append("targets.json 에 kbchachacha 코드가 한 종도 없다")
+    # ⑤ ★★ 세대(`carCode`)를 적었으면 ★ **근거를 함께 적었는가** (금지 6 「지어내지 마라」).
+    #   ★★ 08-26 마스터 ⓐ — ★ 세대로 좁힌다.  ★ 그런데 ★ 세대 코드는 ★ 사이트가 준 것이라
+    #     ★ ★ 「어디서 봤는가」가 없으면 ★ 지어낸 것과 ★ 구별이 안 된다.
+    #   ★ ★ `_세대` 칸에 ★ 실측 근거를 적는다 — ★ 그것이 있어야 통과다
+    gen = 0
+    for k in have:
+        q = rows[k]["site_query"]["kbchachacha"]
+        if not q.get("carCode"):
+            continue
+        gen += 1
+        if not str(q.get("_세대") or "").strip():
+            bad.append(f"{k} — 세대 코드에 근거(_세대)가 없다")
     if bad:
         return False, "★ KB 가 20종 밖을 받는다 — " + " · ".join(bad[:4])
     return True, (f"targets.json 의 {len(have)}종으로만 받는다 "
-                  "(명령서 60장 · 59장은 폐기)")
+                  f"(세대로 좁힌 것 {gen}종 · 명령서 60장 · 59장은 폐기)")
 
 
 

@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 173개 · 총 60,008줄
+파일 173개 · 총 60,051줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,8 +12,8 @@
 | `validate/v3_logic.py` | 2,265 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,595 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,495 | 수집 실행 규칙. |
+| `validate/v0_guide.py` | 1,488 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `tests/test_spec_ui.py` | 1,479 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `validate/v0_guide.py` | 1,476 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,156 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `report/screens/admin.py` | 1,086 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
@@ -41,8 +41,8 @@
 | `contracts.py` | 466 | 계층 간 계약 — Protocol · DTO. |
 | `web/app.py` | 465 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `run.py` | 412 | CarWatch v2 진입점. |
+| `tools/collect_kbchachacha.py` | 401 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `report/views.py` | 391 | 리포트 DTO (L9). |
-| `tools/collect_kbchachacha.py` | 390 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `tools/sync_registry.py` | 390 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `tests/test_collect.py` | 377 | 2장 수집 시험. |
@@ -94,6 +94,7 @@
 | `tools/collect_heydealer.py` | 164 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
 | `tools/collect_kia_cpo.py` | 162 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
+| `adapters/kbchachacha.py` | 161 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `score/scorer.py` | 159 | 채점 · 분모 (L7). |
 | `analyze/axis/value.py` | 156 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `report/finance.py` | 153 | 금융 — 점수가 아니라 비용이다. |
@@ -106,7 +107,6 @@
 | `tools/daily_enqueue.py` | 143 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `tools/classify_registry.py` | 142 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `tools/run_tests.py` | 142 | 시험 전체 실행. |
-| `adapters/kbchachacha.py` | 141 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `parse/heydealer/mapping.py` | 139 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `tools/classify_fields.py` | 139 | 등록부 분류 초안 — 파서가 쓰는 경로를 근거로 자동 분류한다. |
 | `tools/collect_reborncar.py` | 139 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
@@ -218,16 +218,16 @@ resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_chan
 CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:144  aspect_names:165  check_facet_axes:169  interpret_failure:183  collect_check:212  FailStreak:279  _sleep:313  _log_request:319  _save_issues:330  make_executors:341  classify_in_group:884  _group_of:905  _fuel_of:920  _badge_of:926  _pages_for:932  _dicts:946  _option_medians:982  _market_medians:1028  _trim_ladders:1057  _option_base:1074  _site_grade_rules:1104  _listing_config:1120  _listing_values:1145  _option_money:1164  _owned_months:1183  _option_of:1195  _market_of:1203  _group_sums:1213  make_score_executors:1240  make_validate_executor:1424  make_registry_executor:1466
 ```
 
+### `validate/v0_guide.py` — 1,488줄
+
+```
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  s46_77_kb_is_our_targets_only:1273  s46_78_encar_only_paths_are_scoped:1328  _as_check:1415  results:1429  save:1454  run:1465
+```
+
 ### `tests/test_spec_ui.py` — 1,479줄
 
 ```
 rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:281  spec_g:316  spec_h:364  spec_j:397  spec_m:440  spec_e:508  spec_i:551  spec_k:664  spec_csrf:719  spec_l:746  spec_monkey:781  flow_s1:853  flow_s2:922  flow_s5:1006  flow_s3:1119  flow_s4:1194  flow_s6:1265  guide_v132:1321  main:1413  _write:1457
-```
-
-### `validate/v0_guide.py` — 1,476줄
-
-```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  s46_77_kb_is_our_targets_only:1273  s46_78_encar_only_paths_are_scoped:1316  _as_check:1403  results:1417  save:1442  run:1453
 ```
 
 ### `tests/test_integration.py` — 1,236줄
@@ -392,16 +392,16 @@ menu_items:22  _tip:104  _label:109  empty_state:120  banner_of:139  _list_stale
 load:51  make_context:56  _filter_targets:70  _steps_from:89  cmd_collect:103  _grade_summary:171  cmd_admin_create:186  _collect_urls:203  _page_url:240  cmd_web:259  make_worker_ctx:290  make_worker_executors:296  cmd_delegate:334  _api_fetch:345  cmd_setup:355
 ```
 
+### `tools/collect_kbchachacha.py` — 401줄
+
+```
+_now:63  _get:67  fetch_ok:76  page_ids:93  load_filters:103  walk_group:152  count_all:188  probe_detail:214  store_details:233  main:301
+```
+
 ### `report/views.py` — 391줄
 
 ```
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:239  ClassifySummary:246  PriceSummary:253  AxisStat:262  CoefficientChange:272  DictChangeSummary:282  TargetReport:290  RunStep:302  RunReport:317  HaltReport:328  FixAction:345  NotifyResult:355  ExportResult:368  display_value:377  display_points:387
-```
-
-### `tools/collect_kbchachacha.py` — 390줄
-
-```
-_now:63  _get:67  fetch_ok:76  page_ids:93  load_filters:103  walk_group:143  count_all:178  probe_detail:204  store_details:223  main:291
 ```
 
 ### `tools/sync_registry.py` — 390줄

@@ -109,19 +109,39 @@ class KbChaChaChaAdapter:
         return h
 
     def list_url(self, target: TargetSpec, page: int = 1,
-                 maker: str | None = None, klass: str | None = None) -> Request:
+                 maker: str | None = None, klass: str | None = None,
+                 car: str | None = None) -> Request:
         """목록.  ★ 쪽넘김이다 — 무한스크롤이 아니다 (실측).
 
-        ★ `maker`·`klass` 를 주면 ★ 좁혀 부른다 (KBCHACHACHA_API 1a) —
-          ★ 전체 164,490건이 아니라 ★ 우리 대상 2,084건만 받는다 (명령서 3-0)
+        ★ `maker`·`klass` 를 주면 ★ 차종으로 좁힌다 (KBCHACHACHA_API 1a)
+        ★★ `car`(`carCode`)를 주면 ★ **세대로 더 좁힌다** (마스터 확정 08-26 ⓐ).
+          ★★ ★ 실측 08-26 — ★ `classCode` 는 ★ **차종(모델) 단위**라
+            ★ ★ 그랜저 6,917건에 ★ 가솔린·하이브리드·IG·HG 가 ★ 다 들어 있었다.
+            ★ ★ 우리 것은 ★ `GRANDEUR_LPG` 뿐인데도다 — ★ 「보지도 않을 것」이
+              ★ ★ **차종 밖이 아니라 차종 안에** 있었다
+          ★ ★ 모르는 코드를 주면 ★ 0건이 온다 (실측) — ★ 흉내가 아니라 진짜 걸린다
         """
         del target
-        if maker and klass:
+        if maker and klass and car:
+            path = self._paths["list_gen"].format(
+                page=int(page), maker=maker, klass=klass, car=car)
+        elif maker and klass:
             path = self._paths["list_narrow"].format(
                 page=int(page), maker=maker, klass=klass)
         else:
             path = self._paths["list"].format(page=int(page))
         return Request("GET", self._base + path, self.headers(), self._timeout)
+
+    def car_name_url(self, maker: str, klass: str) -> Request:
+        """★ 세대(`carCode`) 표.  ★ 세대 이름과 ★ 연식 구간을 준다 (실측 08-26).
+
+        ★ 이것이 ★ 「어느 세대가 우리 차인가」를 정하는 근거다 —
+          ★ 코드를 ★ 지어내지 않는다 (금지 6)
+        """
+        return Request("GET",
+                       self._base + self._paths["car_name"].format(
+                           maker=maker, klass=klass),
+                       self.headers(), self._timeout)
 
     def detail_urls(self, source_id: str) -> list[Request]:
         """매물당 1종.  ★ 한 쪽이 245~275KB 로 전부를 준다."""
