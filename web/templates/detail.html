@@ -78,9 +78,9 @@
   <div class="kv">
     <div><u>표시가</u><b>{{ row.price_won | won }}</b></div>
     <div><u>같은 사양 시세</u>{% if row.market_price_won %}<b>{{ row.market_price_won | won }}</b>{% endif %}{% if !row.market_price_won %}<b class="dim">표본 부족</b>{% endif %}</div>
-    <div><u>시세 대비</u>{% if row.market_gap_pct %}<b class="{{ row.market_gap_pct | signcls }}">{{ row.market_gap_pct }}%</b>{% endif %}{% if !row.market_gap_pct %}<b class="dim">—</b>{% endif %}</div>
+    <div><u>시세 대비</u>{% if row.market_gap_pct %}<b class="{{ row.market_gap_pct | signcls }}">{{ row.market_gap_pct }}%</b>{% endif %}{% if !row.market_gap_pct %}<b class="dim">표본 부족</b>{% endif %}</div>
     <div><u>신차가</u>{% if row.origin_total_won %}<b>{{ row.origin_total_won | won }}</b>{% endif %}{% if !row.origin_total_won %}<b class="dim">없음</b>{% endif %}</div>
-    <div><u>신차 대비</u>{% if row.origin_gap_pct %}<b>{{ row.origin_gap_pct }}%</b>{% endif %}{% if !row.origin_gap_pct %}<b class="dim">—</b>{% endif %}</div>
+    <div><u>신차 대비</u>{% if row.origin_gap_pct %}<b>{{ row.origin_gap_pct }}%</b>{% endif %}{% if !row.origin_gap_pct %}<b class="dim">신차가 없음</b>{% endif %}</div>
     <div><u>선택 옵션가</u>{% if row.option_price_won %}<b>{{ row.option_price_won | won }}</b>{% endif %}{% if !row.option_price_won %}<b class="dim">없음</b>{% endif %}</div>
   </div>
   <!-- ★ 분포 사분위 + 이 매물 위치 -->

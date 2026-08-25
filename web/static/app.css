@@ -2378,6 +2378,10 @@ details>div { margin-top:12px }
 .vline { display:flex; gap:10px; align-items:baseline; justify-content:space-between;
          background:var(--surface2); padding:10px 12px; font-size:13px; }
 .vline > span { min-width:0; }
+/* ★ 줄이 통째로 문일 수 있다 (관리 메뉴) — ★ 손가락으로 짚는 자리가 넓어야 한다 */
+a.vline { text-decoration:none; color:var(--text); min-height:44px; }
+a.vline:hover { background:var(--surface); }
+a.vline b { color:var(--amber); }
 .vline b { font-family:var(--mono); white-space:nowrap; }
 @media (min-width:640px) {
   /* ★ 넓어지면 칸으로 — ★ 견주는 것끼리 나란히 선다 */

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>미판정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=e6c59905c2">
+<link rel="stylesheet" href="/static/app.css?v=d7df72d6eb">
 
 </head>
 <body class="s-notready">
@@ -59,7 +59,7 @@
 
 <p class="muted">무엇을 하면 되나 — 아래 조치를 순서대로 하십시오.</p>
 <h2>사유</h2>
-<ul><li>등록부 미분류 319건 — V4-11 이 판정을 막는다</li><li>모르는 차 2,930건 — 판정 대상이 아니다</li><li>범위 밖 5,708건 — 아는 차인데 갈래가 다르다 (마스터 결정 「제외해」)</li></ul>
+<ul><li>등록부 미분류 319건 — V4-11 이 판정을 막는다</li><li>모르는 차 2,930건 — 판정 대상이 아니다</li><li>범위 밖 5,738건 — 아는 차인데 갈래가 다르다 (마스터 결정 「제외해」)</li></ul>
 <h2>조치</h2>
 <ul class="action"><li>config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</li><li>아래 모델명·배지를 보고 targets.json 의 fuel_match · trim_include 를 고치거나 그대로 둔다</li></ul>
 
@@ -74,7 +74,7 @@
 <h3>★★ 여쭐 것</h3>
 
 <div class="ask">
-<p class="big">90건</p>
+<p class="big">159건</p>
 <p class="sentence">
   <b>차종을 모르는데 아직 아무 처리도 안 된 매물입니다</b>
   
@@ -85,7 +85,7 @@
 <p class="notice">
   범위 안 <strong>4,838건</strong> ·
   <strong>미분류 2,930건</strong> ·
-  <strong>범위 밖 5,708건</strong>.
+  <strong>범위 밖 5,738건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다.
   <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
   <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
@@ -290,8 +290,13 @@
 
 
 <h3>접어 둔 것 (갈래가 달라 뺐다)</h3>
+
+<div class="vlist">
+  <div class="vline"><span><code>out_of_scope</code></span>
+    <b>5,738건</b></div>
+</div>
 <details class="card tight">
-  <summary><strong>5,708건</strong>
+  <summary><strong>5,738건</strong>
     <span class="dim">· 펼치기 ▾ —
       스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
       평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
@@ -330,7 +335,7 @@
     <td>하이브리드</td><td class="num">131</td></tr>
   
   <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">99</td></tr>
+    <td>가솔린</td><td class="num">128</td></tr>
   
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>가솔린</td><td class="num">69</td></tr>
@@ -398,12 +403,21 @@
 
 
 <h3>팔린 것</h3>
-<p class="sentence"><b>133건</b>
-  <span class="dim">— 목록에서 사라진 것입니다.
-    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.
-    ★ 팔렸다고 단정하지 않습니다 (V6-06)</span></p>
+
+<div class="vlist">
+  <div class="vline"><span><code>gone</code></span>
+    <b>133건</b></div>
+</div>
+<p class="muted">★ 목록에서 사라진 것입니다.
+  <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.
+  ★ 팔렸다고 단정하지 않습니다 (V6-06).</p>
 
 <h3>등록부 미분류 (사전이 막는 것)</h3>
+
+<div class="vlist">
+  <div class="vline"><span><code>dict_enum</code> 대기</span>
+    <b>319건</b></div>
+</div>
 
 <p class="notice">등록부 미분류 <strong>319건</strong> —
   <strong>V4-11 이 판정을 막습니다.</strong>
@@ -414,7 +428,7 @@
 
 
 <h2>지금도 볼 수 있는 것</h2>
-<ul><li>수집 — 매물 13,476건 · 응답 108,864건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 13,095건 완료</li><li>채점 — 4,794건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
+<ul><li>수집 — 매물 13,506건 · 응답 108,864건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 13,125건 완료</li><li>채점 — 4,794건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
 
 
@@ -442,8 +456,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260825T000022</span>
-  <span>2026-08-25 10:32</span>
+  <span>run 20260825T040044</span>
+  <span>2026-08-25 13:04</span>
 </footer>
 
 </body>

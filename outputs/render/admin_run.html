@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=e6c59905c2">
+<link rel="stylesheet" href="/static/app.css?v=d7df72d6eb">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-run">
@@ -55,10 +55,10 @@
   <h2>진행</h2>
   
   <p><strong>failed</strong> · 사유 raw_missing · 범위 all
-    <span class="muted">· run 20260825T000022</span></p>
+    <span class="muted">· run 20260825T040044</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-25T00:00:20.803894+00:00</span></p>
+    <span class="muted">· 넣은 시각 2026-08-25T04:00:20.815383+00:00</span></p>
   <p class="muted">S5: ④ ok 0건 — 수집 0건은 성공이 아니다 / ⑤ raw_response 신규 19 != 응답 합 524 / ⑥ not_requested 3857건 — 미완성 매물이 남았다</p>
   
   
@@ -75,7 +75,7 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">16,483</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">16,513</td></tr>
   
   <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">2,310</td></tr>
   
@@ -101,7 +101,7 @@
   
   </tbody>
   </table>
-  <p class="muted">매물 13,476건 · 판정 4,794건</p>
+  <p class="muted">매물 13,506건 · 판정 4,794건</p>
 
   <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
     갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
@@ -178,7 +178,7 @@
   
   <label class="opt"><input type="radio" name="scope" value="all">
     <strong>전 차종</strong>
-    <span class="warn-block">19차종 · 약 6.1시간</span></label>
+    <span class="warn-block">19차종 · 약 6.2시간</span></label>
   <p class="muted">★ 전 차종은 되돌릴 수 없이 오래 돕니다.
     잘못 눌러 3.8시간이 그냥 도는 일을 막으려고
     <strong>아래에 <code>all</code> 을 직접 입력</strong>해야 시작합니다.</p>
@@ -200,6 +200,31 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-25T04:00:20.815383+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-25T04:00:20.814314+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-25T02:15:14.547994+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-25T02:09:58.729655+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-25T02:04:43.356543+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-25T00:00:20.803894+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -276,31 +301,6 @@
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-24T07:40:27.368689+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-08-24T07:38:22.216481+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-08-24T07:37:31.041251+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-08-24T07:36:00.089411+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-08-24T04:56:07.022474+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -308,7 +308,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-25T00:00:22.775126+00:00 · 20260825T000022 · fatal 9 · 16.8초</li><li>2026-08-24T23:37:11.597740+00:00 · 20260824T233711 · fatal 1 · 14.5초</li><li>2026-08-24T22:53:44.525213+00:00 · 20260824T225341 · fatal 1 · 15.9초</li><li>2026-08-24T22:48:28.695360+00:00 · 20260824T224825 · fatal 1 · 14.5초</li><li>2026-08-24T22:43:09.530944+00:00 · 20260824T224309 · fatal 1 · 14.2초</li></ul>
+<ul class="muted"><li>2026-08-25T04:00:44.927390+00:00 · 20260825T040044 · fatal 1 · 15.6초</li><li>2026-08-25T04:00:22.309751+00:00 · 20260825T040021 · fatal 1 · 15.2초</li><li>2026-08-25T02:15:16.321051+00:00 · 20260825T021516 · fatal 8 · 15.8초</li><li>2026-08-25T02:10:00.504637+00:00 · 20260825T021000 · fatal 1 · 16.2초</li><li>2026-08-25T02:04:44.799797+00:00 · 20260825T020444 · fatal 1 · 26.0초</li></ul>
 
 
 
@@ -318,8 +318,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260825T000022</span>
-  <span>2026-08-25 10:32</span>
+  <span>run 20260825T040044</span>
+  <span>2026-08-25 13:04</span>
 </footer>
 
 </body>

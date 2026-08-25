@@ -23,11 +23,13 @@
   (마스터 확정 08-24). <a href="/listings">매물</a>의 조건이 그대로 걸립니다.</p>
 
 <h2>1 오늘</h2>
-<div class="cellset">
-  <div class="cell num"><u>새로 뜬 것</u><b class="up">＋{{ d.new_today | num }}</b></div>
-  <div class="cell num"><u>값 내린 것</u><b>{{ d.dropped_today | num }}</b></div>
-  <div class="cell num"><u>사라진 것</u><b>{{ d.gone_today | num }}</b></div>
-  <div class="cell num"><u>마지막 재판정</u><b>{{ d.last_recalc_at | date }}</b></div>
+<!-- ★ v4m 시안은 ★ 줄 하나에 ★ 「이름 · 값」이다 (`.v4-kv`).
+     ★ 좁으면 줄로 · 넓어지면 칸으로 편다 — ★ 담는 것은 같다 -->
+<div class="vlist">
+  <div class="vline"><span>새로 뜬 것</span><b class="up">＋{{ d.new_today | num }}</b></div>
+  <div class="vline"><span>값 내린 것</span><b>{{ d.dropped_today | num }}</b></div>
+  <div class="vline"><span>사라진 것</span><b>{{ d.gone_today | num }}</b></div>
+  <div class="vline"><span>마지막 재판정</span><b>{{ d.last_recalc_at | date }}</b></div>
 </div>
 <p class="muted">★ 「오늘」은 마지막 하루입니다. 재판정은 <strong>날마다 13:00 에 전량</strong>이고, 못 돌았을 때만 네 시간 뒤 다시 겁니다.</p>
 

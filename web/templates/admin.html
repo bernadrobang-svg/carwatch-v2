@@ -75,65 +75,67 @@
        ★ ★ 절을 없애고 ★ **운영 표 안에 이어서** 낸다.  ★ 머리말이 하나다 -->
 <h3>★ 운영</h3>
 <p class="muted">★ 「브라우저 수집」이 맨 위 — 엔카는 마스터 회선으로만 받습니다.</p>
-<table class="rows">
-<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
-  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
-<tbody>
+<!-- ★ v4m 시안은 ★ 줄 하나에 ★ 「이름 ▸」다 (`.v4-kv`).
+     ★ 근거·상태를 ★ 빼지 않는다 — ★ 같은 줄에 곁말로 낸다 -->
+<div class="vlist">
 {% for m in h.menu_ops %}
-<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td data-label="근거">{{ m.step_ref }}</td>
-<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+<a class="vline" href="{{ m.path }}"
+  title="{{ m.step_ref }} — 그렇게 판단한 까닭입니다"><span>{{ m.title }}
+  <span class="dim">{{ m.step_ref }}</span>
+  {% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</span>
+  <b>▸</b></a>
 {% endfor %}
 {% for m in h.menu_explore %}
-<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td data-label="근거">{{ m.step_ref }}</td>
-<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+<a class="vline" href="{{ m.path }}"
+  title="{{ m.step_ref }} — 그렇게 판단한 까닭입니다"><span>{{ m.title }}
+  <span class="dim">{{ m.step_ref }}</span>
+  {% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</span>
+  <b>▸</b></a>
 {% endfor %}
-</tbody>
-</table>
+</div>
 
 <h3>조정</h3>
 <p class="muted">★★ 「사전 확정」에 기아 1,020건이 걸려 있습니다.</p>
-<table class="rows">
-<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
-  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
-<tbody>
+<!-- ★ v4m 시안은 ★ 줄 하나에 ★ 「이름 ▸」다 (`.v4-kv`).
+     ★ 근거·상태를 ★ 빼지 않는다 — ★ 같은 줄에 곁말로 낸다 -->
+<div class="vlist">
 {% for m in h.menu_tune %}
-<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td data-label="근거">{{ m.step_ref }}</td>
-<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+<a class="vline" href="{{ m.path }}"
+  title="{{ m.step_ref }} — 그렇게 판단한 까닭입니다"><span>{{ m.title }}
+  <span class="dim">{{ m.step_ref }}</span>
+  {% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</span>
+  <b>▸</b></a>
 {% endfor %}
-</tbody>
-</table>
+</div>
 
 <h3>★ 계정</h3>
-<table class="rows">
-<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
-  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
-<tbody>
+<!-- ★ v4m 시안은 ★ 줄 하나에 ★ 「이름 ▸」다 (`.v4-kv`).
+     ★ 근거·상태를 ★ 빼지 않는다 — ★ 같은 줄에 곁말로 낸다 -->
+<div class="vlist">
 {% for m in h.menu_account %}
-<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td data-label="근거">{{ m.step_ref }}</td>
-<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+<a class="vline" href="{{ m.path }}"
+  title="{{ m.step_ref }} — 그렇게 판단한 까닭입니다"><span>{{ m.title }}
+  <span class="dim">{{ m.step_ref }}</span>
+  {% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</span>
+  <b>▸</b></a>
 {% endfor %}
-</tbody>
-</table>
+</div>
 
 {% if h.recent_runs %}
 <h3>내려온 것 둘</h3>
 <p class="muted">★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서.
   ★ 라우트는 살려 둡니다 — 화면을 지우지 않습니다 (개정 427).</p>
-<table class="rows">
-<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
-  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
-<tbody>
+<!-- ★ v4m 시안은 ★ 줄 하나에 ★ 「이름 ▸」다 (`.v4-kv`).
+     ★ 근거·상태를 ★ 빼지 않는다 — ★ 같은 줄에 곁말로 낸다 -->
+<div class="vlist">
 {% for m in h.menu_screens %}
-<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td data-label="근거">{{ m.step_ref }}</td>
-<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+<a class="vline" href="{{ m.path }}"
+  title="{{ m.step_ref }} — 그렇게 판단한 까닭입니다"><span>{{ m.title }}
+  <span class="dim">{{ m.step_ref }}</span>
+  {% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</span>
+  <b>▸</b></a>
 {% endfor %}
-</tbody>
-</table>
+</div>
 
 <h2>최근 실행 {{ h.recent_runs | count }}건</h2>
 <table class="rows">

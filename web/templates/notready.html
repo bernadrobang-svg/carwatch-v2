@@ -78,6 +78,12 @@
      ★ 묻는 자리가 아니므로 ★ 건수만 내고 ★ 접어 둔다 -->
 {% if nr.out_of_scope %}
 <h3>접어 둔 것 (갈래가 달라 뺐다)</h3>
+<!-- ★ v4m 시안은 ★ 「out_of_scope · N건」 줄 하나다 (`.v4-kv`).
+     ★ 자세한 것은 그 아래에 접어 둔다 — ★ 지우는 것이 아니다 -->
+<div class="vlist">
+  <div class="vline"><span><code>out_of_scope</code></span>
+    <b>{{ nr.out_of_scope_total | num }}건</b></div>
+</div>
 <details class="card tight">
   <summary><strong>{{ nr.out_of_scope_total | num }}건</strong>
     <span class="dim">· 펼치기 ▾ —
@@ -99,12 +105,21 @@
 {% endif %}
 
 <h3>팔린 것</h3>
-<p class="sentence"><b>{{ nr.gone_count | num }}건</b>
-  <span class="dim">— 목록에서 사라진 것입니다.
-    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.
-    ★ 팔렸다고 단정하지 않습니다 (V6-06)</span></p>
+<!-- ★ v4m 시안은 ★ 「gone · N건」 줄 하나다 (`.v4-kv`) -->
+<div class="vlist">
+  <div class="vline"><span><code>gone</code></span>
+    <b>{{ nr.gone_count | num }}건</b></div>
+</div>
+<p class="muted">★ 목록에서 사라진 것입니다.
+  <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.
+  ★ 팔렸다고 단정하지 않습니다 (V6-06).</p>
 
 <h3>등록부 미분류 (사전이 막는 것)</h3>
+<!-- ★ v4m 시안은 ★ 「dict_enum 대기 · N건」 줄 하나다 (`.v4-kv`) -->
+<div class="vlist">
+  <div class="vline"><span><code>dict_enum</code> 대기</span>
+    <b>{{ nr.field_unclassified | num }}건</b></div>
+</div>
 {% if nr.field_unclassified %}
 <p class="notice">등록부 미분류 <strong>{{ nr.field_unclassified | num }}건</strong> —
   <strong>V4-11 이 판정을 막습니다.</strong>
