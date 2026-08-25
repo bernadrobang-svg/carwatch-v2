@@ -53,6 +53,7 @@
     "tools/daily_check.py",
     "tools/daily_enqueue.py",
     "tools/deploy_check.py",
+    "tools/fill_raw_run_id.py",
     "tools/fold_out_of_scope.py",
     "tools/gen_table.py",
     "tools/light_check.py",

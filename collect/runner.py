@@ -378,8 +378,23 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
     scope = tuple(sorted(targets))
 
     def _scope(sql: str, alias: str = "") -> tuple[str, tuple]:
+        """★ 차종 범위 ＋ ★ **사이트**로 좁힌다.
+
+        ★★★ 08-27 실측 — ★ 사이트를 안 좁혀 ★ 엔카 상세 API 에
+          ★ ★ **현대인증 162 · K카 4 · 헤이딜러 1** 의 매물번호를 넣고 있었다.
+          ★ ★ `https://api.encar.com/v1/readside/vehicle/GJU260527028268` → ★ **400**
+          ★ ★ 그 회차의 ★ `detail` · `inspection` 이 ★ **전량 실패**였다.
+            ★ 마지막으로 성공한 상세가 ★ 08-24T07:41 이다
+        ★★ ★ `V1-08`(동일 코드 실패율 100%)이 ★ 여러 회차 이것을 말하고 있었다 —
+          ★ 나는 ★ 「수집이 도는 중이라 그렇다」로 ★ 넘겼다.  ★ 내 잘못이다
+        ★ ★ 뿌리는 ★ 하나다 — ★ `core_listing` 에 ★ 여러 사이트가 들어왔는데
+          ★ ★ **엔카 전용 경로가 사이트로 안 좁혀 있었다** (`S46-78` 과 같은 자리다)
+        """
         col = f"{alias}.target_key" if alias else "target_key"
-        return (f"{sql} AND {col} IN ({','.join('?' * len(scope))})", scope)
+        site_col = f"{alias}.site" if alias else "site"
+        return (f"{sql} AND {site_col} = ?"
+                f" AND {col} IN ({','.join('?' * len(scope))})",
+                (adapter.site_code, *scope))
 
     def s1(conn, ctx):
         """봉투 1건 = raw_response 1행.  매물 단위로 쪼개지 않는다 (STEP 18a)."""

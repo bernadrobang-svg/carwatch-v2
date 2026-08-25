@@ -1342,6 +1342,10 @@ def s46_78_encar_only_paths_are_scoped() -> tuple[bool, str]:
          "site='encar'"),
         ("collect/runner.py", "FROM raw_response r JOIN core_listing l",
          "r.site=?"),
+        # ★★★ 08-27 — ★ 수집 차수가 ★ 매물을 고르는 자리다.
+        #   ★ 여기를 안 좁혀 ★ 엔카 상세 API 에 ★ 현대인증·K카·헤이딜러
+        #     ★ 매물번호를 넣어 ★ **전량 400** 이었다 (마지막 성공 08-24T07:41)
+        ("collect/runner.py", "def _scope(sql: str, alias", "site_col"),
     )
     bad = []
     for name, near, need in want:

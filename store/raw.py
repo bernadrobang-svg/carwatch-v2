@@ -138,6 +138,25 @@ def save_raw(
     return "stored"
 
 
+# ★★★ 사이트 도구 한 번의 실행에 ★ 이름을 준다 (`V1-19` · A-10).
+#   ★★ 08-27 실측 — ★ `save_site_raw` 가 ★ `run_id` 를 ★ NULL 로 넣고 있었다.
+#     ★ ★ `V1-19` 가 ★ 159건으로 잡았다 — 「★ run_id 가 없으면 ★ 어느 실행이
+#       ★ 넣은 원문인지 ★ 못 되짚는다」.  ★ 내 결함이다
+#   ★ 꼴은 ★ `run.py:59` 와 같다 (`%Y%m%dT%H%M%S`) — ★ 두 꼴을 만들지 않는다
+#   ★ 한 프로세스에 하나다 — ★ 한 번 부른 것이 ★ 한 실행이다
+_PROC_RUN_ID: str | None = None
+
+
+def proc_run_id() -> str:
+    """★ 이 프로세스의 실행 이름.  ★ 처음 부를 때 정해 ★ 끝까지 같다."""
+    global _PROC_RUN_ID
+
+    if _PROC_RUN_ID is None:
+        from datetime import datetime, timezone
+        _PROC_RUN_ID = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+    return _PROC_RUN_ID
+
+
 def save_site_raw(
     conn: sqlite3.Connection,
     site: str,
@@ -175,7 +194,7 @@ def save_site_raw(
         "(run_id,site,listing_id,source_id,endpoint,request_url,request_meta,"
         " http_code,response_meta,status,body,origin,fetched_at)"
         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        (run_id, site, listing_id,
+        (run_id or proc_run_id(), site, listing_id,
          None if source_id is None else str(source_id), endpoint,
          request_url, None, http_code, None, "ok", body,
          ORIGIN_COLLECTOR, fetched_at),
