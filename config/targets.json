@@ -248,7 +248,11 @@
         "makerCode": "189",
         "classCode": "2771",
         "_차명": "제네시스 GV70",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "carCode": [
+          "3253"
+        ],
+        "_세대": "[가이드 08-27] ★ ELECTRIFIED GV70 만 — ★ 3154(GV70 내연 728건)는 뺐다.  ★ fuel_match=전기"
       }
     },
     "year_range": "202200..",
@@ -332,7 +336,11 @@
         "makerCode": "105",
         "classCode": "2862",
         "_차명": "르노코리아 그랑 콜레오스",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "carCode": [
+          "3417"
+        ],
+        "_세대": "[가이드 08-27] ★ 그랑 콜레오스 2024~ — ★ year_range 202400.. 와 같다"
       }
     },
     "year_range": "202400..",
@@ -471,7 +479,11 @@
         "makerCode": "190",
         "classCode": "2774",
         "_차명": "테슬라 Model Y",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
+        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "carCode": [
+          "3161"
+        ],
+        "_세대": "[가이드 08-27] ★ Model Y 2021~ — ★ 한 세대뿐이다"
       },
       "heydealer": [
         {
