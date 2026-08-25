@@ -106,8 +106,12 @@ def main() -> int:
     base = cfg["base_url"]
 
     said, seen = None, {}
+    # ★★ 목록 쪽 원문을 들고 간다 (명령서 3-2 필수) —
+    #   ★ 볼보는 ★ 상세가 없다.  ★ 목록 쪽이 ★ 원문의 전부다
+    pages: list = []
     for page in range(1, MAX_PAGES + 1):
         raw = _get(f"{base}/kr/vehicles/xhr-results/{page}", head, timeout)
+        pages.append((f"{base}/kr/vehicles/xhr-results/{page}", raw))
         if not raw:
             print(f"  {page}쪽 — ★ 못 받았다.  멈춘다")
             break
@@ -134,9 +138,14 @@ def main() -> int:
         return 0
 
     from store.core import resolve_listing_id, upsert_core
+    from store.raw import save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
+    # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
+    #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
+    for _u, _b in pages:
+        save_site_raw(conn, SITE_CODE, "list", None, _u, _b, at)
     for sid, (slug, url) in ours.items():
         row = {"site": SITE_CODE, "source_id": sid, "price_unit": "won",
                # ★ 사전이 아는 이름으로 적는다 — ★ 없으면 target_key 를 그대로

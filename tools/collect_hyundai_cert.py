@@ -108,12 +108,16 @@ def _get(url: str) -> str | None:
 
 
 def fetch_detail(goods_no: str) -> tuple | None:
-    """상세 하나 → (core_listing 몫, core_record 몫).
+    """상세 하나 → (core_listing 몫, core_record 몫, 원문).
 
     ★ 짧으면 ★ 「못 받음」이다 — ★ 「없음」으로 내려가지 않는다
+    돌려줌  (core_listing 몫, core_record 몫, ★ 원문 글자) 또는 None
     """
     body = _get(BASE + DETAIL_PATH.format(goods_no=goods_no))
-    return parse_detail_all(body or "", SITE_CODE, goods_no)
+    got = parse_detail_all(body or "", SITE_CODE, goods_no)
+    # ★★ 원문도 함께 돌려준다 — ★ 부르는 쪽이 `raw_response` 에 남긴다
+    #   (명령서 3-2 필수 「갈래를 넓히시면 다시 판다」)
+    return None if got is None else (got[0], got[1], body)
 
 
 def load_filters(root: str = ROOT) -> list:
@@ -247,7 +251,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit
+    from store.raw import commit, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
@@ -274,7 +278,11 @@ def main() -> int:
             got["못 받음"] += 1
             time.sleep(INTERVAL)
             continue
-        deep, record = pair
+        deep, record, body = pair
+        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수)
+        save_site_raw(conn, SITE_CODE, "detail", one["source_id"],
+                      BASE + DETAIL_PATH.format(goods_no=one["source_id"]),
+                      body, at)
         deep["listing_id"] = one["listing_id"]
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         # ★ 사고·소유자 이력은 ★ core_record 의 칸이다 (A-2)

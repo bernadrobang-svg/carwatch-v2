@@ -1241,6 +1241,34 @@ def s46_75_v4m_common() -> tuple[bool, str]:
     return True, (f"여덟 장이 머리 상자 · 「~와 다르다」 · 아래 탭 · 44px 를 지킨다")
 
 
+
+def s46_76_collectors_keep_raw() -> tuple[bool, str]:
+    """★★★ 사이트 수집기가 ★ 원문을 ★ `raw_response` 에 남기는가 (명령서 3-2 필수).
+
+    ★★ 명령서 — 「★ ★ **`raw_response` 에는 남긴다** — ★ 갈래를 넓히시면 ★ 다시 판다.
+      ★ ★ 다시 받을 일이 없다.  ★ 그것이 ★ 「보관만 한다」는 뜻이다」
+    ★★★ ★ 실측 08-26 — ★ 열 도구 가운데 ★ **하나도 안 남기고 있었다.**
+      ★ ★ `SELECT site, COUNT(*) FROM raw_response GROUP BY site` 가
+        ★ ★ `encar` ★ 하나뿐이었다.  ★ 셋은 ★ 주석에 「남는다」고 ★ **적어만** 두었다
+      ★ ★ 그래서 ★ 파싱이 틀리면 ★ 다시 받는 수밖에 없었다 — ★ KB 는 ★ 그것이 엿새다
+    ★ 이 검사는 ★ 「부르는가」만 본다 — ★ 「실제로 들어갔는가」는 ★ `V2-01` 이 센다
+    """
+    tools = ROOT / "tools"
+    if not tools.is_dir():
+        return False, "tools/ 가 없다"
+    bad, seen = [], 0
+    for q in sorted(tools.glob("collect_*.py")):
+        # ★ 엔카는 ★ `collect/runner.py` 가 ★ `save_raw` 로 남긴다 — ★ 결이 다르다
+        body = _read(q)
+        if "save_site_raw" not in body and "save_raw" not in body:
+            bad.append(q.name)
+        seen += 1
+    if bad:
+        return False, ("★ 원문을 안 남기는 수집기 — " + " · ".join(bad)
+                       + " (명령서 3-2 필수)")
+    return True, f"수집기 {seen}개가 다 원문을 남긴다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1277,6 +1305,7 @@ CHECKS = (
     ("S46-68", "관심이 모바일 기준 카드인가", s46_68_watch_is_mobile_first),
     ("S46-74", "한 쪽 장 수가 규격과 같은가", s46_74_rows_per_page),
     ("S46-75", "v4m 여덟 장 공통 규칙", s46_75_v4m_common),
+    ("S46-76", "수집기가 원문을 남기는가", s46_76_collectors_keep_raw),
 )
 
 

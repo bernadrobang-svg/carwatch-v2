@@ -48,6 +48,9 @@ def main() -> int:
           f"(★ 서로 다르다 — car_list 가 매물이다)")
 
     rows = []
+    # ★★ 원문 항목을 ★ 파싱 결과와 ★ 짝지어 둔다 (명령서 3-2 필수) —
+    #   ★ 렉서스는 ★ 상세가 없다.  ★ 목록 항목이 ★ 원문의 전부다
+    raw_of: dict = {}
     for one in cars:
         if not one.get("idx"):
             continue
@@ -75,6 +78,7 @@ def main() -> int:
             row["form_year"] = int(str(one.get("year"))[:4])
         except (TypeError, ValueError):
             pass
+        raw_of[row["source_id"]] = one
         rows.append(row)
     ours = [r for r in rows if r.get("site_model_group")]
     print(f"★ 우리 대상 — {len(ours)}건 / {len(rows)}건 "
@@ -84,6 +88,7 @@ def main() -> int:
         return 0
 
     from store.core import resolve_listing_id, upsert_core
+    from store.raw import save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
@@ -93,6 +98,11 @@ def main() -> int:
     keep = ours if "--all" not in args else rows
     print(f"★ 저장할 것 {len(keep)}건 · ★ 안 넣는 것 {len(rows) - len(keep)}건 "
           f"(원문은 남는다)")
+    # ★★ 원문은 ★ **다 남긴다** — ★ 안 넣는 것도 남긴다 (「갈래를 넓히면 다시 판다」)
+    for r in rows:
+        save_site_raw(conn, SITE_CODE, "list", r["source_id"], cfg["base_url"],
+                      json.dumps(raw_of.get(r["source_id"]),
+                                 ensure_ascii=False), at)
     for r in keep:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
         upsert_core(conn, r, at)

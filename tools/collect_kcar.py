@@ -126,7 +126,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
 
     from store.core import mark_gone, resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit
+    from store.raw import commit, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
@@ -174,6 +174,10 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
                 gone += 1
             time.sleep(float(cfg.get("interval_sec") or 1.5))
             continue
+        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
+        #   ★ K카 상세는 ★ JSON 이다 — ★ 글자로 되돌려 넣는다
+        save_site_raw(conn, SITE_CODE, "detail", one["source_id"], req.url,
+                      json.dumps(body, ensure_ascii=False), at)
         deep = parse_detail(body, SITE_CODE, one["source_id"])
         if deep:
             deep["listing_id"] = one["listing_id"]

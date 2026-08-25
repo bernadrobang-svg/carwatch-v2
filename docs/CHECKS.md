@@ -2,12 +2,12 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **393개**
+검사 **426개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **36** | 개발측 |
-| ④ 규격에 근거가 없는 검사 | **17** | 가이드가 판단 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **69** | 개발측 |
+| ④ 규격에 근거가 없는 검사 | **19** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **34** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
@@ -50,6 +50,39 @@
 | `S38-5` | 「!」·「?」 가 도구 실행 뒤에도 남음 | fatal | `tools/check_src.py:974` | **★ 없음** | 없음 | guide/03_이력.md:425 · chapters/00-standard.md:1818 |
 | `S39-1` | R 마다 층이 적혀 있음 | fatal | `tools/check_src.py:1014` | **★ 없음** | 없음 | guide/03_이력.md:389 · guide/03_이력.md:417 · chapters/00-standard.md:2107 |
 | `S39-2` | 화면 층이 아닌데 「화면 없음」이 아님 | fatal | `tools/check_src.py:1016` | **★ 없음** | 없음 | guide/03_이력.md:389 · chapters/00-standard.md:2108 |
+| `S43-2` | 규격의 축 id 가 config 에 있는가 | fatal | `validate/v0_guide.py:31` | **★ 없음** | 없음 | guide/03_이력.md:510 · guide/03_이력.md:512 · guide/03_이력.md:517 |
+| `S43-2b` | config 축 id 가 규격 이름인가 | fatal | `validate/v0_guide.py:227` | **★ 없음** | 없음 | guide/00_버전.md:116 · guide/03_이력.md:519 · guide/03_이력.md:522 |
+| `S43-2c` | HDA 가 저장소에 없는가 | fatal | `validate/v0_guide.py:253` | **★ 없음** | 없음 | guide/00_버전.md:115 · guide/01_요구사항.md:48 · guide/03_이력.md:520 |
+| `S43-3` | 버전이 이력 마지막과 같은가 | fatal | `validate/v0_guide.py:475` | **★ 없음** | 없음 | guide/03_이력.md:510 · guide/03_이력.md:518 · guide/03_이력.md:553 |
+| `S44-1` | 가리키는 명령서가 실제로 있는가 | fatal | `validate/v0_guide.py:170` | **★ 없음** | 없음 | guide/00_버전.md:118 · guide/03_이력.md:456 · guide/03_이력.md:463 |
+| `S44-2` | 명령서가 하나뿐인가 | fatal | `validate/v0_guide.py:212` | **★ 없음** | 없음 | guide/03_이력.md:456 · guide/03_이력.md:463 · guide/03_이력.md:510 |
+| `S44-3` | 규격을 명령서가 가리키는가 | fatal | `validate/v0_guide.py:437` | **★ 없음** | 없음 | guide/03_이력.md:555 · guide/03_이력.md:556 · guide/03_이력.md:566 |
+| `S44-4` | 명령서에 수집 범위가 있는가 | fatal | `validate/v0_guide.py:69` | **★ 없음** | 없음 | guide/03_이력.md:557 · guide/03_이력.md:558 · guide/06_오판대장.md:126 |
+| `S44-5` | 명령서이 사이트를 한 가지로 적는가 | fatal | `validate/v0_guide.py:101` | **★ 없음** | 없음 | guide/03_이력.md:557 · guide/06_오판대장.md:127 |
+| `S45-1` | f-table 절 제목과 표가 같은가 | fatal | `validate/v0_guide.py:134` | **★ 없음** | 없음 | guide/03_이력.md:460 · guide/03_이력.md:501 · guide/03_이력.md:510 |
+| `S45-2` | 시안에 옛 배점·분모가 없는가 | fatal | `validate/v0_guide.py:416` | **★ 없음** | 없음 | guide/00_버전.md:113 · guide/00_버전.md:114 · guide/03_이력.md:521 |
+| `S45-3` | 규격에 옛 총점이 없는가 | fatal | `validate/v0_guide.py:360` | **★ 없음** | 없음 | guide/00_버전.md:110 · guide/00_버전.md:112 · guide/03_이력.md:523 |
+| `S45-4` | 배점표가 config 에서 생성한 것과 같은가 | fatal | `validate/v0_guide.py:345` | **★ 없음** | 없음 | guide/00_버전.md:108 · guide/03_이력.md:527 |
+| `S45-5` | 규격이 배점을 손으로 적지 않는가 | fatal | `validate/v0_guide.py:307` | **★ 없음** | 없음 | guide/00_버전.md:107 · guide/03_이력.md:528 · guide/03_이력.md:553 |
+| `S46-21` | 시안 한 파일에 화면이 하나인가 | fatal | `validate/v0_guide.py:531` | **★ 없음** | 없음 | UI_REVIEW.md:421 · guide/01_요구사항.md:59 · guide/03_이력.md:644 |
+| `S46-22` | 시안 절 차례가 화면과 같은가 | fatal | `validate/v0_guide.py:556` | **★ 없음** | 없음 | UI_REVIEW.md:423 · UI_REVIEW.md:731 · UI_REVIEW.md:836 |
+| `S46-23` | 빈 site_query 가 없는가 | fatal | `validate/v0_guide.py:631` | **★ 없음** | 없음 | guide/01_요구사항.md:56 · guide/01_요구사항.md:86 · guide/03_이력.md:647 |
+| `S46-24` | facet 미확인 차종이 없는가 | warn | `validate/v0_guide.py:646` | **★ 없음** | 없음 | guide/03_이력.md:647 · guide/03_이력.md:669 · guide/03_이력.md:678 |
+| `S46-30` | INDEX 가 docs 를 다 가리키는가 | warn | `validate/v0_guide.py:663` | **★ 없음** | 없음 | guide/03_이력.md:661 |
+| `S46-31` | 규격이 있는 사이트가 config 에 있는가 | fatal | `validate/v0_guide.py:702` | **★ 없음** | 없음 | BMW_BPS_API.md:7 · BOBAEDREAM_API.md:7 · ENCAR_API.md:7 |
+| `S46-32` | 생성물이 최신인가 | fatal | `validate/v0_guide.py:723` | **★ 없음** | 없음 | guide/01_요구사항.md:63 · guide/03_이력.md:672 · guide/03_이력.md:677 |
+| `S46-36` | 폐기된 요구가 규격에 안 살아 있는가 | fatal | `validate/v0_guide.py:804` | **★ 없음** | 없음 | HYUNDAI_CERTIFIED_API.md:209 · guide/01_요구사항.md:25 · guide/01_요구사항.md:39 |
+| `S46-40` | 「진행」인 요구의 문서가 바뀌었는가 | warn | `validate/v0_guide.py:832` | **★ 없음** | 없음 | guide/01_요구사항.md:67 · guide/03_이력.md:682 · guide/06_오판대장.md:163 |
+| `S46-41` | 사이트 status 가 규격의 셋 안인가 | fatal | `validate/v0_guide.py:863` | **★ 없음** | 없음 | guide/06_오판대장.md:164 |
+| `S46-45` | 제원이 목록에 안 나오는가 | fatal | `validate/v0_guide.py:910` | **★ 없음** | 없음 | UI_REVIEW.md:517 · guide/01_요구사항.md:75 · guide/03_이력.md:691 |
+| `S46-46` | 금지 제원 열 항목이 화면에 없는가 | fatal | `validate/v0_guide.py:930` | **★ 없음** | 없음 | UI_REVIEW.md:518 · guide/01_요구사항.md:75 · guide/03_이력.md:691 |
+| `S46-65` | 판본이 하루 넘게 오래되지 않았는가 | fatal | `validate/v0_guide.py:995` | **★ 없음** | 없음 | guide/01_요구사항.md:105 · guide/03_이력.md:745 · guide/03_이력.md:746 |
+| `S46-66` | 화면이 낸 링크가 인코딩돼 있는가 | fatal | `validate/v0_guide.py:956` | **★ 없음** | 없음 | UI_REVIEW.md:896 · guide/01_요구사항.md:106 · guide/03_이력.md:747 |
+| `S46-67` | 시안 이름이 app.css 와 안 겹치는가 | fatal | `validate/v0_guide.py:1042` | **★ 없음** | 없음 | guide/03_이력.md:749 · guide/06_오판대장.md:189 |
+| `S46-68` | 관심이 모바일 기준 카드인가 | fatal | `validate/v0_guide.py:1105` | **★ 없음** | 없음 | UI_REVIEW.md:999 · guide/01_요구사항.md:109 · guide/03_이력.md:754 |
+| `S46-74` | 한 쪽 장 수가 규격과 같은가 | fatal | `validate/v0_guide.py:1159` | **★ 없음** | 없음 | UI_REVIEW.md:1033 · guide/01_요구사항.md:112 · guide/03_이력.md:761 |
+| `S46-75` | v4m 여덟 장 공통 규칙 | fatal | `validate/v0_guide.py:1205` | **★ 없음** | 없음 | — |
+| `S46-76` | 수집기가 원문을 남기는가 | fatal | `validate/v0_guide.py:1245` | **★ 없음** | 없음 | — |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -477,6 +510,39 @@
 - `S39-1` R 마다 층이 적혀 있음 — `tools/check_src.py`
 - `S39-2` 화면 층이 아닌데 「화면 없음」이 아님 — `tools/check_src.py`
 - `S4` 테이블 DDL (STEP 28) — `tools/check_src.py`
+- `S43-2` 규격의 축 id 가 config 에 있는가 — `validate/v0_guide.py`
+- `S43-2b` config 축 id 가 규격 이름인가 — `validate/v0_guide.py`
+- `S43-2c` HDA 가 저장소에 없는가 — `validate/v0_guide.py`
+- `S43-3` 버전이 이력 마지막과 같은가 — `validate/v0_guide.py`
+- `S44-1` 가리키는 명령서가 실제로 있는가 — `validate/v0_guide.py`
+- `S44-2` 명령서가 하나뿐인가 — `validate/v0_guide.py`
+- `S44-3` 규격을 명령서가 가리키는가 — `validate/v0_guide.py`
+- `S44-4` 명령서에 수집 범위가 있는가 — `validate/v0_guide.py`
+- `S44-5` 명령서이 사이트를 한 가지로 적는가 — `validate/v0_guide.py`
+- `S45-1` f-table 절 제목과 표가 같은가 — `validate/v0_guide.py`
+- `S45-2` 시안에 옛 배점·분모가 없는가 — `validate/v0_guide.py`
+- `S45-3` 규격에 옛 총점이 없는가 — `validate/v0_guide.py`
+- `S45-4` 배점표가 config 에서 생성한 것과 같은가 — `validate/v0_guide.py`
+- `S45-5` 규격이 배점을 손으로 적지 않는가 — `validate/v0_guide.py`
+- `S46-21` 시안 한 파일에 화면이 하나인가 — `validate/v0_guide.py`
+- `S46-22` 시안 절 차례가 화면과 같은가 — `validate/v0_guide.py`
+- `S46-23` 빈 site_query 가 없는가 — `validate/v0_guide.py`
+- `S46-24` facet 미확인 차종이 없는가 — `validate/v0_guide.py`
+- `S46-30` INDEX 가 docs 를 다 가리키는가 — `validate/v0_guide.py`
+- `S46-31` 규격이 있는 사이트가 config 에 있는가 — `validate/v0_guide.py`
+- `S46-32` 생성물이 최신인가 — `validate/v0_guide.py`
+- `S46-36` 폐기된 요구가 규격에 안 살아 있는가 — `validate/v0_guide.py`
+- `S46-40` 「진행」인 요구의 문서가 바뀌었는가 — `validate/v0_guide.py`
+- `S46-41` 사이트 status 가 규격의 셋 안인가 — `validate/v0_guide.py`
+- `S46-45` 제원이 목록에 안 나오는가 — `validate/v0_guide.py`
+- `S46-46` 금지 제원 열 항목이 화면에 없는가 — `validate/v0_guide.py`
+- `S46-65` 판본이 하루 넘게 오래되지 않았는가 — `validate/v0_guide.py`
+- `S46-66` 화면이 낸 링크가 인코딩돼 있는가 — `validate/v0_guide.py`
+- `S46-67` 시안 이름이 app.css 와 안 겹치는가 — `validate/v0_guide.py`
+- `S46-68` 관심이 모바일 기준 카드인가 — `validate/v0_guide.py`
+- `S46-74` 한 쪽 장 수가 규격과 같은가 — `validate/v0_guide.py`
+- `S46-75` v4m 여덟 장 공통 규칙 — `validate/v0_guide.py`
+- `S46-76` 수집기가 원문을 남기는가 — `validate/v0_guide.py`
 - `S5` config 키 (V4-15) — `tools/check_src.py`
 - `S6` 배점 검산 (불변식 ⑤) — `tools/check_src.py`
 - `S7` 매직 넘버 (V4-13) — `tools/check_src.py`
@@ -523,6 +589,8 @@
 ## ④ 코드에 있는데 규격에 안 적힌 검사
 
 - `S14-1` 화면에 배점을 박지 않음 (V4-17) — `tools/check_src.py`
+- `S46-75` v4m 여덟 장 공통 규칙 — `validate/v0_guide.py`
+- `S46-76` 수집기가 원문을 남기는가 — `validate/v0_guide.py`
 - `V1-19` 이번 실행이 저장한 원문에 run_id 가 있음 — `validate/v1_collect.py`
 - `V1-20` 카탈로그를 모델당 1회만 받음 — `validate/v1_collect.py`
 - `V1-25` ok 로 저장된 원문이 온전한가 — `validate/v1_collect.py`

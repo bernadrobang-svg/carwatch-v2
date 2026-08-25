@@ -83,7 +83,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit
+    from store.raw import commit, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, pii_key = _now(), load_key()
@@ -102,6 +102,11 @@ def main() -> int:
             seen["못 받음"] += 1
             time.sleep(interval)
             continue
+        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
+        #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
+        save_site_raw(conn, SITE_CODE, "detail", one,
+                      cfg["base_url"] + cfg["paths"]["detail"].format(
+                          source_id=one), html, at)
         deep = parse_detail(html, SITE_CODE, one)
         if deep:
             # ★ 차종은 ★ 우리가 아는 이름이 들어 있는지로 고른다 (K카와 같다)

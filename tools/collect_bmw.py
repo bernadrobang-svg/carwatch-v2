@@ -60,9 +60,13 @@ def main() -> int:
     base = cfg["base_url"]
 
     seen: dict = {}
+    # ★★ 목록 쪽 원문을 들고 간다 (명령서 3-2 필수) —
+    #   ★ BMW·볼보는 ★ 상세가 없다.  ★ 목록 쪽이 ★ 원문의 전부다
+    pages: list = []
     walls = 0
     for page in range(1, MAX_PAGES + 1):
         raw = _get(f"{base}/shop/list.php?ca_id=10&page={page}", head, timeout)
+        pages.append((f"{base}/shop/list.php?ca_id=10&page={page}", raw))
         if raw is None:
             walls += 1
             print(f"  {page}쪽 — ★ 못 받았다 (재시도 {RETRY}회)")
@@ -93,9 +97,14 @@ def main() -> int:
         return 0
 
     from store.core import resolve_listing_id, upsert_core
+    from store.raw import save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
+    # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
+    #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
+    for _u, _b in pages:
+        save_site_raw(conn, SITE_CODE, "list", None, _u, _b, at)
     for r in rows:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
         upsert_core(conn, r, at)

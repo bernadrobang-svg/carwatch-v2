@@ -116,8 +116,12 @@ def main() -> int:
 
     hit: dict = {}
     parsed_rows = []
+    # ★★ 원문 항목을 ★ 파싱 결과와 ★ 짝지어 들고 간다 (명령서 3-2 필수) —
+    #   ★ 기아는 ★ 상세가 없다.  ★ 목록 항목이 ★ 원문의 전부다
+    raw_of: dict = {}
     for one in rows:
         p = parse_list_item(one, SITE_CODE)
+        raw_of[p["source_id"]] = one
         p["target_key"] = target_of(p)
         hit[p["target_key"] or "차종 미정"] = hit.get(
             p["target_key"] or "차종 미정", 0) + 1
@@ -131,7 +135,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit
+    from store.raw import commit, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
@@ -141,6 +145,12 @@ def main() -> int:
         # ★★ 번호판은 ★ PII 다 (STEP 35) — ★ 원본을 core 에 넣지 않는다.
         #   ★ 순서를 지킨다 — split_pii → resolve_id → upsert
         p["listing_id"] = resolve_listing_id(conn, SITE_CODE, p["source_id"], at)
+        # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
+        save_site_raw(conn, SITE_CODE, "list", p["source_id"],
+                      adapter.list_url(None).url,
+                      json.dumps(raw_of.get(p["source_id"]),
+                                 ensure_ascii=False), at,
+                      listing_id=p["listing_id"])
         upsert_core(conn, split_pii(conn, p, SITE_CODE, key, at), at)
         stored += 1
     commit(conn)

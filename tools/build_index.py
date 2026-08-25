@@ -102,7 +102,51 @@ def _checks_in_code() -> dict:
                     "code": args[0], "phase": args[0].split("-")[0],
                     "title": args[1], "severity": "fatal",
                     "source": rel, "line": node.lineno})
+        found.update(_guide_checks(tree, rel))
     return found
+
+
+# ★★★ `validate/v0_guide.py` 는 ★ `Check(...)` 를 안 쓴다 —
+#   ★ `CHECKS = (("S46-75", "제목", 함수, "warn"), …)` 꼴의 ★ **튜플 표**다.
+#   ★★ 그래서 ★ 이 색인이 ★ S43~S46 ★ 예순 몇 개를 ★ **한 번도 못 봤다**
+#     (실측 08-26 — ★ `docs/CHECKS.md` 에 ★ `S46-` 이 ★ 0건이다).
+#   ★ ★ 규칙 11 은 ★ 「검사를 더하거나 고치면 다시 돌린다」인데
+#     ★ ★ 다시 돌려도 ★ 안 들어오니 ★ 색인이 ★ **거짓말을 하고 있었다**
+#   ★ 손으로 적지 않는다 — ★ 기계가 읽게 한다 (규칙 11 「손으로 고치는 것 금지」)
+GUIDE_CHECK_FILE = os.path.join("validate", "v0_guide.py")
+
+
+def _guide_checks(tree, rel: str) -> dict:
+    """`CHECKS = ((코드, 제목, 함수[, 등급]), …)` 표를 읽는다.
+
+    ★ 함수 이름으로 ★ 그 함수가 정의된 줄을 찾아 ★ 소스 자리를 적는다 —
+      ★ 표가 있는 줄이 아니라 ★ **검사가 사는 줄**이 쓸모 있다
+    """
+    if rel != GUIDE_CHECK_FILE:
+        return {}
+    at = {n.name: n.lineno for n in ast.walk(tree)
+          if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+    out: dict = {}
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Assign)
+                and any(getattr(t, "id", "") == "CHECKS" for t in node.targets)
+                and isinstance(node.value, ast.Tuple)):
+            continue
+        for row in node.value.elts:
+            if not (isinstance(row, ast.Tuple) and len(row.elts) >= 3):
+                continue
+            code = getattr(row.elts[0], "value", None)
+            title = getattr(row.elts[1], "value", None)
+            fn = getattr(row.elts[2], "id", "")
+            if not (isinstance(code, str) and isinstance(title, str)):
+                continue
+            kind = (getattr(row.elts[3], "value", "fatal")
+                    if len(row.elts) > 3 else "fatal")
+            out[code] = {"code": code, "phase": code.split("-")[0],
+                         "title": title,
+                         "severity": kind if isinstance(kind, str) else "fatal",
+                         "source": rel, "line": at.get(fn, row.lineno)}
+    return out
 
 
 def _checks_in_docs(known: set | None = None) -> dict:
