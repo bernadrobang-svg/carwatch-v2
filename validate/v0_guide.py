@@ -1492,6 +1492,157 @@ def s46_88_encar_blocked_banner() -> tuple[bool, str]:
                   "목록이 들어오면 사라진다 · 할 일을 적는다")
 
 
+
+# ── S46-54 · S46-55 · S46-56 — ★ 사이트 간 견주기 (명령서 45-3 ·
+#   `docs/CROSS_SITE_COMPARE.md` 254~256행) ──────────────────────────────
+# ★★ 규격 — 「★ 셋 다 ★ **숫자**다」.  ★ 그리고 ★ 「★ **판정을 바꾸지 마라** —
+#   ★ 지금은 ★ 보여 주기만 한다」.  ★ 그래서 ★ 등급을 ★ `warn` 으로 둔다 —
+#   ★ ★ 숫자가 0 이 아니라고 ★ 파이프라인을 막지 않는다
+TRACK_BIG_GAP_PCT = 30.0
+
+
+def _paired_rows():
+    """★ 짝지어진 매물 — ★ 같은 차(`plate_hash`)가 ★ 두 사이트 넘게 올라온 것.
+
+    ★ `report/screens/build.py:view_track` 과 ★ **같은 자리를 본다** —
+      ★ 화면과 검사가 ★ 다른 수를 내면 ★ 어느 쪽도 못 믿는다
+    돌려줌  {plate_hash: [(listing_id, site, price, grade)]} · calc_version
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return {}, ""
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        row = conn.execute(
+            "SELECT calc_version FROM result_score"
+            " ORDER BY calculated_at DESC, rowid DESC LIMIT 1").fetchone()
+        if row is None:
+            return {}, ""
+        calc = row[0]
+        by: dict = {}
+        for plate, lid, site, price, grade in conn.execute(
+            "SELECT l.plate_hash, l.listing_id, l.site, l.price_current_won,"
+            "       s.grade"
+            "  FROM core_listing l"
+            "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+            "   AND s.calc_version = ?"
+            " WHERE l.plate_hash IS NOT NULL AND l.status = 'active'"
+            "   AND l.plate_hash IN ("
+            "       SELECT plate_hash FROM core_listing"
+            "        WHERE plate_hash IS NOT NULL AND status = 'active'"
+            "        GROUP BY plate_hash HAVING COUNT(DISTINCT site) > 1)",
+            (calc,)
+        ):
+            by.setdefault(plate, []).append((lid, site, price, grade))
+        return by, calc
+    finally:
+        conn.close()
+
+
+def _grade_order_list() -> tuple:
+    """등급 차례 — ★ `config/labels.json` 의 `GRADE_ORDER` 가 정본이다 (개정 433).
+
+    ★ 여기에 ("S","A","B",…) 를 ★ 박지 않는다 (S14 · 금지 6) —
+      ★ 개정 433 이 8단계로 내렸을 때 ★ 그 튜플이 세 모듈에 흩어져 있었다
+    """
+    cfg = ROOT / "config" / "labels.json"
+    if not cfg.is_file():
+        return ()
+    return tuple(json.loads(_read(cfg)).get("GRADE_ORDER") or ())
+
+
+def s46_54_grade_two_step() -> tuple[bool, str]:
+    """★ 짝지어진 매물 중 ★ 등급이 ★ **두 칸 이상** 벌어진 것이 몇인가 (숫자).
+
+    ★★ 「S 와 B 가 ★ 같은 차면 ★ 큰 일이다」 (명령서 45-3 ①)
+    ★ 판정을 바꾸지 않는다 — ★ 세어서 낸다
+    """
+    by, calc = _paired_rows()
+    if not by:
+        return True, "짝지어진 차가 없다 — 잴 것이 없다"
+    order = _grade_order_list()
+    if not order:
+        return True, "등급 차례를 못 읽었다 (config/web.json grade_cuts)"
+    two, sample = 0, []
+    for plate, rows in by.items():
+        got = [order.index(g) for _l, _s, _p, g in rows if g in order]
+        if len(got) > 1 and max(got) - min(got) >= 2:
+            two += 1
+            if len(sample) < 3:
+                sites = " vs ".join(
+                    f"{s}:{g}" for _l, s, _p, g in rows if g in order)
+                sample.append(f"{plate[:8]} {sites}")
+    return True, (f"짝 {len(by)}대 중 ★ 등급 두 칸 이상 {two}대 (calc {calc})"
+                  + (" — " + " · ".join(sample) if sample else ""))
+
+
+def s46_55_price_gap_30() -> tuple[bool, str]:
+    """★ 짝지어진 매물 중 ★ 값이 ★ **30% 넘게** 벌어진 것 (숫자).
+
+    ★★ 「★ 30% 넘게 벌어지면 ★ **짝짓기가 틀렸을 자리다**」 (명령서 45-3 ②)
+    """
+    by, calc = _paired_rows()
+    if not by:
+        return True, "짝지어진 차가 없다 — 잴 것이 없다"
+    big, sample = 0, []
+    for plate, rows in by.items():
+        prices = [p for _l, _s, p, _g in rows if p]
+        if len(prices) < 2:
+            continue
+        low, high = min(prices), max(prices)
+        if not low:
+            continue
+        pct = (high - low) / low * 100
+        if pct >= TRACK_BIG_GAP_PCT:
+            big += 1
+            if len(sample) < 3:
+                sample.append(f"{plate[:8]} {pct:.0f}%")
+    return True, (f"짝 {len(by)}대 중 ★ 값 {TRACK_BIG_GAP_PCT:.0f}% 넘게 갈린 것 "
+                  f"{big}대 (calc {calc})"
+                  + (" — " + " · ".join(sample) if sample else ""))
+
+
+def s46_56_accident_split() -> tuple[bool, str]:
+    """★ 짝지어진 매물 중 ★ **사고 판정이 갈린 것** (숫자).
+
+    ★★ 「★ 갈린다고 ★ 화면에 낸다」 — ★ 우리가 어느 쪽으로 정하지 않는다
+    """
+    import sqlite3
+
+    by, calc = _paired_rows()
+    if not by:
+        return True, "짝지어진 차가 없다 — 잴 것이 없다"
+    ids = [lid for rows in by.values() for lid, _s, _p, _g in rows]
+    db = ROOT / "carwatch.db"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        acc = {}
+        step = 500
+        for i in range(0, len(ids), step):
+            chunk = ids[i:i + step]
+            marks = ",".join("?" * len(chunk))
+            for lid, value in conn.execute(
+                f"SELECT listing_id, COALESCE(value,'(모름)') FROM result_axis"
+                f" WHERE axis='state.accident' AND calc_version=?"
+                f"   AND listing_id IN ({marks})", (calc, *chunk)
+            ):
+                acc[lid] = value
+    finally:
+        conn.close()
+    split, sample = 0, []
+    for plate, rows in by.items():
+        got = {acc[lid] for lid, _s, _p, _g in rows if lid in acc}
+        if len(got) > 1:
+            split += 1
+            if len(sample) < 3:
+                sample.append(f"{plate[:8]} "
+                              + " vs ".join(sorted(str(x) for x in got)))
+    return True, (f"짝 {len(by)}대 중 ★ 사고 판정이 갈린 것 {split}대 (calc {calc})"
+                  + (" — " + " · ".join(sample) if sample else ""))
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1535,6 +1686,10 @@ CHECKS = (
      s46_87_request_site_matches_listing),
     ("S46-88", "엔카가 막히면 화면이 까닭을 말하는가",
      s46_88_encar_blocked_banner),
+    # ★ 셋은 ★ **숫자를 내는 검사**다 — ★ 판정을 바꾸지 않는다 (명령서 45-3)
+    ("S46-54", "짝 중 등급이 두 칸 갈린 것", s46_54_grade_two_step, "warn"),
+    ("S46-55", "짝 중 값이 30% 갈린 것", s46_55_price_gap_30, "warn"),
+    ("S46-56", "짝 중 사고 판정이 갈린 것", s46_56_accident_split, "warn"),
 )
 
 
