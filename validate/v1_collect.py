@@ -776,9 +776,11 @@ def _whole_body_check(conn, rid):
 
     bad = []
     for kind in ("facet", "list"):
+        # ★★ 08-26 — ★ 엔카 원문만 본다.  ★ 다른 사이트의 목록은 ★ HTML 이라
+        #   ★ 「JSON 이 아니다」로 잡히면 ★ 거짓 실패가 된다 (명령서 3-2)
         for raw_id, body in conn.execute(
             "SELECT id, body FROM raw_response"
-            " WHERE endpoint=? AND status='ok'"
+            " WHERE endpoint=? AND status='ok' AND site='encar'"
             " ORDER BY id DESC LIMIT ?", (kind, _whole_probe())
         ):
             try:
@@ -853,8 +855,10 @@ def _unparsed_envelope_check(conn, rid):
     import json as _j
 
     rows = conn.execute(
+        # ★ 엔카 봉투(`SearchResults`)를 펼친 것인지 본다 — ★ 엔카만이다
         "SELECT id, origin, body FROM raw_response "
         "WHERE endpoint='list' AND status='ok' AND origin <> 'import'"
+        "  AND site='encar'"
     ).fetchall()
     if not rows:
         return not_applicable(C["V1-21"], rid, "목록 원문이 없다")

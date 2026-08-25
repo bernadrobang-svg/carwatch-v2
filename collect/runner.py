@@ -688,8 +688,12 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             #   platform_verified 가 전건 NULL 이었다 (실측 08-18)
             "WHERE r.endpoint IN ('detail','inspection','record',"
             f"'diagnosis',{','.join(repr(k) for k in EXTRA_PARSERS)}) "
-            f"AND r.status='ok' AND l.target_key IN "
-            f"({','.join('?' * len(scope))})", scope
+            # ★★★ 08-26 — ★ 이 파서는 ★ 엔카 원문(JSON) 전용이다.
+            #   ★ `raw_response` 에 ★ 다른 사이트도 들어온다 (명령서 3-2) —
+            #   ★ ★ 좁히지 않으면 ★ KB 의 HTML 을 ★ `json.loads` 로 읽어 죽는다.
+            #   ★ ★ 지금은 ★ 그 매물에 `target_key` 가 없어 ★ 우연히 안 걸릴 뿐이다
+            f"AND r.status='ok' AND r.site=? AND l.target_key IN "
+            f"({','.join('?' * len(scope))})", (adapter.site_code, *scope)
         ).fetchall():
             doc = json.loads(body)
             if n % PROGRESS_EVERY == 0:

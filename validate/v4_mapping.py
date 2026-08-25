@@ -493,9 +493,13 @@ def run(conn, ctx) -> list:
 
     # 값 대조 — A등급 필드는 100% 여야 한다
     mism = []
+    # ★★★ 08-26 — ★ `raw_response` 에 ★ **엔카 말고도 들어온다** (명령서 3-2).
+    #   ★ 이 대조는 ★ 엔카 원문(JSON)의 키를 짚는다 — ★ 다른 사이트는 HTML 이다.
+    #   ★ ★ 좁히지 않으면 ★ `json.loads` 가 죽어 ★ V4 차수가 통째로 안 돈다
+    #     (실측 08-26 — ★ 내가 원문 보관을 켜자마자 그랬다)
     for lid, sid, body in conn.execute(
         "SELECT r.listing_id, r.source_id, r.body FROM raw_response r "
-        "WHERE r.endpoint='detail' AND r.status='ok'"
+        "WHERE r.endpoint='detail' AND r.status='ok' AND r.site='encar'"
     ).fetchall():
         doc = json.loads(body)
         row = conn.execute(

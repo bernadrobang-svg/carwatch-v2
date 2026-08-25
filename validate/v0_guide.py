@@ -1269,6 +1269,87 @@ def s46_76_collectors_keep_raw() -> tuple[bool, str]:
     return True, f"수집기 {seen}개가 다 원문을 남긴다"
 
 
+
+def s46_77_kb_is_our_targets_only() -> tuple[bool, str]:
+    """★★★ KB 는 ★ **우리 20종만** 받는가 (마스터 정정 08-26 · 명령서 60장).
+
+    ★★ 마스터 — 「★ 야 내가 ★ **20종을 받으라고 했지**.
+      ★ 쏘렌토 같이 ★ 보지도 않을 것을 ★ 받으라고 했니?」
+    ★★ ★ 「전체」는 ★ **우리 20종의 전체**다 — ★ 국산까지 스무 종이다.
+      ★ ★ 「KB 가 파는 15,836건 전부」가 ★ **아니다**.  ★ 명령서 59장은 ★ 폐기다
+    ★★ ★ 재는 것 둘 —
+      ★ ① 저장하는 길이 ★ `targets.json` 의 `site_query` 를 거치는가
+        ★ ★ `--pages` · `--count` 는 ★ KB 가 파는 전부를 훑는다 — ★ 조사용이다
+      ★ ② 코드에 ★ maker/class 를 ★ 박아 두지 않았는가 (금지 6)
+    ★ 「이미 들어온 것」은 ★ `tools/fold_out_of_scope.py` 가 접는다 — ★ 여기서 안 센다
+    """
+    tool = ROOT / "tools" / "collect_kbchachacha.py"
+    tg = ROOT / "config" / "targets.json"
+    if not tool.is_file() or not tg.is_file():
+        return False, "수집기나 targets.json 이 없다"
+    body = _read(tool)
+    bad = []
+    # ① 좁히는 조건을 targets.json 에서 읽는가
+    if "targets.json" not in body or "site_query" not in body:
+        bad.append("좁히는 조건을 targets.json 에서 안 읽는다")
+    # ② 저장하는 길(`--narrow`)이 그 조건을 쓰는가
+    seg = body.split('if "--narrow" in args:', 1)
+    if len(seg) < 2 or "load_filters()" not in seg[1][:400]:
+        bad.append("저장하는 길이 좁히는 조건을 안 쓴다")
+    # ③ 차종 코드를 코드에 박지 않았는가 (금지 6)
+    for hit in re.findall(r'"(?:makerCode|classCode)"\s*:\s*"(\d+)"', body):
+        bad.append(f"차종 코드를 코드에 박았다 — {hit}")
+    # ④ targets.json 에 KB 코드가 몇 종에 있는가 — ★ 0 이면 좁힐 수가 없다
+    rows = json.loads(_read(tg))
+    have = [k for k, v in rows.items()
+            if isinstance(v, dict) and not k.startswith("_")
+            and (v.get("site_query") or {}).get("kbchachacha")]
+    if not have:
+        bad.append("targets.json 에 kbchachacha 코드가 한 종도 없다")
+    if bad:
+        return False, "★ KB 가 20종 밖을 받는다 — " + " · ".join(bad[:4])
+    return True, (f"targets.json 의 {len(have)}종으로만 받는다 "
+                  "(명령서 60장 · 59장은 폐기)")
+
+
+
+def s46_78_encar_only_paths_are_scoped() -> tuple[bool, str]:
+    """★★★ 엔카 전용 경로가 ★ 사이트로 좁혀 있는가 (명령서 3-2 뒤끝).
+
+    ★★ 08-26 — ★ 원문 보관을 켜자 ★ `raw_response` 에 ★ **엔카 말고도** 들어왔다.
+      ★ ★ 그런데 ★ 엔카 원문(JSON)의 키를 짚는 자리 넷이 ★ 좁혀 있지 않았다 —
+        ★ ★ `V4` 차수가 ★ `json.loads` 에서 죽어 ★ **스물일곱 검사가 통째로 안 돌았다**
+      ★ ★ `collect/runner.py` 의 `S6` 도 같은 자리다 — ★ 지금은 ★ 그 매물에
+        ★ `target_key` 가 없어 ★ **우연히** 안 걸릴 뿐이다
+    ★ 「원문을 한 표에 모은다」는 규격이다 (`kia_cpo` 도구 8행 「엔카와 같은 표에 넣는다」) —
+      ★ 그러면 ★ **읽는 쪽이 좁혀야 한다**
+    """
+    want = (
+        ("validate/v4_mapping.py", "r.endpoint='detail'", "r.site='encar'"),
+        ("validate/v1_collect.py", "SELECT id, body FROM raw_response",
+         "site='encar'"),
+        ("collect/runner.py", "FROM raw_response r JOIN core_listing l",
+         "r.site=?"),
+    )
+    bad = []
+    for name, near, need in want:
+        q = ROOT / name
+        if not q.is_file():
+            bad.append(f"{name} 가 없다")
+            continue
+        body = _read(q)
+        i = body.find(near)
+        if i < 0:
+            # ★ 글이 바뀌었으면 ★ 검사가 헛돈다 — ★ 그것도 알린다
+            bad.append(f"{name} — 「{near[:24]}」 자리를 못 찾았다")
+        # ★ 창을 넉넉히 본다 — ★ 주석이 길면 ★ 좁힌 줄이 창 밖으로 나간다
+        elif need not in body[i:i + 1400]:
+            bad.append(f"{name} — 사이트로 안 좁혔다 ({need})")
+    if bad:
+        return False, "★ 엔카 전용 경로가 안 좁혀 있다 — " + " · ".join(bad[:3])
+    return True, f"엔카 전용 경로 {len(want)}곳이 사이트로 좁혀 있다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1306,6 +1387,8 @@ CHECKS = (
     ("S46-74", "한 쪽 장 수가 규격과 같은가", s46_74_rows_per_page),
     ("S46-75", "v4m 여덟 장 공통 규칙", s46_75_v4m_common),
     ("S46-76", "수집기가 원문을 남기는가", s46_76_collectors_keep_raw),
+    ("S46-77", "KB 는 우리 20종만 받는가", s46_77_kb_is_our_targets_only),
+    ("S46-78", "엔카 전용 경로가 좁혀 있는가", s46_78_encar_only_paths_are_scoped),
 )
 
 

@@ -315,9 +315,18 @@ def main() -> int:
         return 0
 
     if "--narrow" in args:
+        # ★★ 우리 차종만 받는 유일한 길이다 (명령서 60-2 「목록도 · 상세도」).
+        #   ★ `--pages` · `--count` 는 ★ **KB 가 파는 전부**를 훑는다 — ★ 조사용이다
         groups = load_filters()
         seen: set = set()
-        print(f"★ 좁혀 받는다 — 차종 {len(groups)}종 (전체 164,490 중)")
+        # ★★★ 08-26 마스터 정정 (명령서 60장 · 오판 130) —
+        #   ★ 「★ 야 내가 ★ **20종을 받으라고 했지**.
+        #     ★ 쏘렌토 같이 ★ 보지도 않을 것을 ★ 받으라고 했니?」
+        #   ★★ ★ 「전체」는 ★ **우리 20종의 전체**다 — ★ 국산까지 스무 종이다.
+        #     ★ ★ 「KB 가 파는 15,836건 전부」가 ★ **아니다**
+        #   ★ 명령서 59장(전량)은 ★ 폐기다
+        print(f"★ 우리 차종만 받는다 — {len(groups)}묶음 "
+              f"(targets.json site_query.kbchachacha · 명령서 60장)")
         by_group = []
         for g in groups:
             r = walk_group(adapter, cfg, g, seen)
@@ -339,7 +348,8 @@ def main() -> int:
         # ★ 한 묶음 크기 — ★ 안 주면 ★ 실측값 10 이다 (08-25)
         want = opt("--detail", DETAIL_BATCH)
         # ★★ 묶음을 ★ 몇 번 도는가 — ★ 사이에 ★ 5분씩 쉰다 (실측).
-        #   ★ ★ 「가려 받지 마라」 (마스터 확정 08-25) — ★ 전량을 ★ 박자에 맞춰 받는다
+        #   ★★ ★ 08-26 정정 — ★ 「가려 받지 마라」는 ★ **「우리 20종을 다 받아라」**다.
+        #     ★ ★ 수입 일곱만 받지 말라는 뜻이지 ★ 「KB 가 파는 전부」가 아니다 (60장)
         bursts = opt("--bursts", DEFAULT_BURSTS)
         ids = [i for _g, gids in by_group for i in gids]
         rc = 0
