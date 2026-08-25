@@ -32,6 +32,30 @@
 {% if c.conclusion %}
 <p class="sentence"><b>{{ c.conclusion }}</b></p>
 {% endif %}
+<!-- ★★★ v4m 시안의 절 넷 (마스터 확정 08-26) — ★ 고른 셋 · 점수 ·
+     사고 · 골격 · 주행 · 연식.  ★ 차례를 바꾸지 않는다 (S46-22).
+     ★★ 「★ 좁으면 줄 · 넓어지면 칸으로 편다.  ★ 담는 것은 같다」 —
+       ★ 한 줄이 매물 하나다.  ★ 넓어지면 `.kvs` 가 칸으로 갈라진다 -->
+<h3>고른 셋</h3>
+<div class="vlist">
+{% for r in c.rows %}
+<div class="vline"><span><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span>
+  <a href="/detail/{{ r.listing_id }}">{{ r.target_label }}</a>
+  <span class="dim">{{ r.trim }}</span>
+  <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.site_badge }}</span></span>
+  <b>{{ r.price_won | won }}</b></div>
+{% endfor %}
+</div>
+
+<h3>점수</h3>
+<div class="vlist">
+{% for r in c.rows %}
+<div class="vline"><span>{{ r.target_label }}</span>
+  <b>{{ r.earned | num }} / {{ r.denominator | num }}
+    <span class="dim">{{ r.ratio_pct }}%</span></b></div>
+{% endfor %}
+</div>
+<p class="muted">★★ 분모는 <strong>910 으로 같습니다</strong> — 갈리는 것은 earned 입니다.</p>
 <table class="cmp-bars">
 <thead><tr><th>★ 네 묶음 막대</th>
   {% for r in c.rows %}<th>{{ r.target_label }}</th>{% endfor %}</tr></thead>
@@ -58,6 +82,25 @@
     <br>{% if r.spec_seats %}<b>{{ r.spec_seats }}인승</b>{% endif %}{% if !r.spec_seats %}<b class="dim">— 인승</b>{% endif %}
   </td>{% endfor %}</tr>
 </tbody></table>
+
+<h3>사고 · 골격</h3>
+<div class="vlist">
+{% for r in c.rows %}
+<div class="vline"><span>{{ r.target_label }}</span>
+  <b>{% for a in r.axis_chips %}<span class="axis-{{ a.tone }}"
+    title="{{ a.label }} — 기호 OK 있음 · × 없음 · — 확인 못 함"
+    >{{ a.head }} {{ a.mark }}</span> {% endfor %}</b></div>
+{% endfor %}
+</div>
+
+<h3>주행 · 연식</h3>
+<div class="vlist">
+{% for r in c.rows %}
+<div class="vline"><span>{{ r.target_label }}</span>
+  <b>{{ r.mileage_km | km }} · {{ r.year_month }}</b></div>
+{% endfor %}
+</div>
+<p class="muted">★ 두 대 넘게 골라야 들어옵니다 · <strong>다섯까지</strong>입니다.</p>
 
 <table>
 <thead><tr><th>축</th>{% for r in c.rows %}<th>{{ r.trim }}

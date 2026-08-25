@@ -2368,3 +2368,24 @@ details>div { margin-top:12px }
   /* ★ 탭이 마지막 카드를 가리지 않게 — 그만큼 아래를 비운다 */
   main { padding-bottom:72px; }
 }
+
+/* ── v4m 비교 · 미판정 (마스터 확정 08-26 · ref/screens/v4m_compare · v4m_notready)
+   ★★ 「★ 좁으면 **줄로** · 넓어지면 **칸으로** 편다.  ★ 담는 것은 같다」
+   ★ 한 줄이 매물 하나다 — ★ 좁으면 세로로 쌓이고 ★ 넓으면 나란히 선다 */
+.vlist { display:grid; grid-template-columns:1fr; gap:1px; background:var(--line);
+         border:1px solid var(--line); border-radius:7px; overflow:hidden;
+         margin-bottom:10px; }
+.vline { display:flex; gap:10px; align-items:baseline; justify-content:space-between;
+         background:var(--surface2); padding:10px 12px; font-size:13px; }
+.vline > span { min-width:0; }
+.vline b { font-family:var(--mono); white-space:nowrap; }
+@media (min-width:640px) {
+  /* ★ 넓어지면 칸으로 — ★ 견주는 것끼리 나란히 선다 */
+  .vlist { grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+  .vline { display:block; }
+  .vline b { display:block; margin-top:4px; font-size:16px; font-weight:700; }
+}
+/* ★ 미판정 「여쭐 것」 — ★ 맨 위에 크게 (v4m 시안의 주황 테두리 상자) */
+.ask { border:1px solid var(--amber); border-radius:10px; padding:12px 14px;
+       margin-bottom:12px; background:var(--surface); }
+.ask .big { text-align:left; color:var(--amber); margin-bottom:6px; }

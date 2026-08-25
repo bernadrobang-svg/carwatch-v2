@@ -3077,9 +3077,16 @@ def view_track(account: Account, conn, calc_version: str,
         gap = high - low
         pct = round(gap / low * 100, 1) if low else 0.0
         grades = tuple(x[7] for x in got if x[7])
+        # ★★ 08-26 — ★ 튜플이 아니라 ★ **이름 있는 칸**으로 낸다.
+        #   ★★ 실측 — ★ 틀은 ★ `{{ s.0 }}` 꼴로 ★ 튜플을 못 짚는다
+        #     (`web/template.py` `_step` — ★ 점 뒤는 ★ 늘 글자다).
+        #   ★ ★ 그래서 ★ 추적 2절의 ★ 사이트·등급·점수 칸이 ★ **전건 비어 있었다**.
+        #     ★ ★ 상세 링크도 ★ `/detail/` 로 나갔다 — ★ 눌러도 아무 데도 안 간다
+        #   ★ 이름으로 짚으면 ★ 그런 일이 안 생긴다
         sites = tuple(
-            (site_badge(x[2], x[3], root), x[1], x[6], x[7], x[8],
-             miss_by.get(x[1], ()))
+            {"badge": site_badge(x[2], x[3], root), "listing_id": x[1],
+             "price_won": x[6], "grade": x[7], "earned": x[8],
+             "misses": miss_by.get(x[1], ())}
             for x in got)
         step = _grade_step(grades, order_of)
         if pct >= TRACK_BIG_GAP_PCT:
@@ -3093,6 +3100,10 @@ def view_track(account: Account, conn, calc_version: str,
             sites=sites, site_count=len({x[2] for x in got}),
             low_won=low, high_won=high, gap_won=gap, gap_pct=pct,
             grades=grades, grade_split=step > 0,
+            # ★ 틀은 `>=` 를 못 한다 (V11-104) — ★ 여기서 정한다.
+            #   ★ 30% 넘으면 ★ 짝짓기가 틀렸을 자리다 (v4m 추적 시안)
+            big_gap=pct >= TRACK_BIG_GAP_PCT,
+            gap_cls=("up" if pct >= TRACK_BIG_GAP_PCT else "dim"),
             # ★ 사고 판정이 갈렸는가 — ★ 축 하나를 사이트끼리 견준다
             accident_split=len({acc_by[x[1]] for x in got
                                 if x[1] in acc_by}) > 1))

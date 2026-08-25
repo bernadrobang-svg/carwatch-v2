@@ -21,28 +21,26 @@
 <p class="muted">지금 할 일은 없습니다. 수집을 돌리면 됩니다.</p>
 {% endif %}
 
-{% if n.done %}
-<h3>★ 1 미분류 — ★ 마스터께 묻는 자리</h3>
+<!-- ★★★ v4m 시안 (마스터 확정 08-26) — ★ 절 넷을 ★ 늘 낸다.
+     ★ 전에는 이 덩이가 ★ 「n.done 이 있으면」 안에 있고 ★ 아래에 ★ **똑같은 것이 한 벌 더**
+       있어 ★ 화면에 ★ 절이 ★ 두 번 나왔다 (실측 08-26).  ★ 한 벌만 둔다 -->
+<!-- ★★★ v4m 시안 (마스터 확정 08-26) — ★ 「여쭐 것」을 ★ **맨 위에 크게**.
+     ★ 나머지 셋은 ★ 건수만 낸다 — ★ 「이미 정해진 것」이라 물을 것이 아니다 -->
+<h3>★★ 여쭐 것</h3>
 <!-- ══ 세 줄 (UI_REVIEW 14-7 · 개정 724) ══
      ★★ 「미분류」가 ★ 두 뜻으로 읽혔다 —
        ★ ① 차종 이름을 모르는 매물 · ★ ② 아직 아무 처리도 안 된 매물
      ★ ★ 마스터께서 정하실 것은 ★ ② 뿐이다 — ★ 맨 위에 굵게.
        ★ 나머지 둘은 ★ 쌓인 것이 아니라 ★ **갈무리된 것**이다 — ★ 건수만 · 접어 둔다 -->
-<p class="sentence" style="font-size:1.15em">
-  <b>★ 여쭐 것 {{ nr.ask_count | num }}건</b>
+<div class="ask">
+<p class="big">{{ nr.ask_count | num }}건</p>
+<p class="sentence">
+  <b>차종을 모르는데 아직 아무 처리도 안 된 매물입니다</b>
   {% if !nr.ask_count %}<span class="dim">— 지금 정하실 것이 없습니다</span>{% endif %}
   {% if nr.ask_count %}<span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>{% endif %}
 </p>
-<details class="card tight">
-  <summary><span class="dim">접어 둔 것 {{ nr.folded_count | num }}건 ·
-    팔린 것 {{ nr.gone_count | num }}건 — 펼치기 ▾</span></summary>
-  <p class="muted">★ <strong>접어 둔 것</strong>은 갈래가 달라 뺀 것입니다 —
-    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.
-    갈래를 넓히시면 되살아납니다.<br>
-    ★ <strong>팔린 것</strong>은 목록에서 사라진 것입니다 —
-    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.<br>
-    ★ 둘 다 <strong>쌓인 것이 아니라 갈무리된 것</strong>입니다. 여쭐 것이 아닙니다.</p>
-</details>
+<p class="muted">★ 있으면 <strong>마스터께서 「받을까 말까」를 정하십니다.</strong></p>
+</div>
 <p class="notice">
   범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
   <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·
@@ -79,7 +77,7 @@
 <!-- ★★ 범위 밖 — ★ 아는 차인데 갈래가 다르다.  ★ 마스터 결정 「제외해」 (UI_REVIEW 9a)
      ★ 묻는 자리가 아니므로 ★ 건수만 내고 ★ 접어 둔다 -->
 {% if nr.out_of_scope %}
-<h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
+<h3>접어 둔 것 (갈래가 달라 뺐다)</h3>
 <details class="card tight">
   <summary><strong>{{ nr.out_of_scope_total | num }}건</strong>
     <span class="dim">· 펼치기 ▾ —
@@ -100,7 +98,13 @@
 </details>
 {% endif %}
 
-<h3>3 등록부 미분류 — 판정을 막는 것</h3>
+<h3>팔린 것</h3>
+<p class="sentence"><b>{{ nr.gone_count | num }}건</b>
+  <span class="dim">— 목록에서 사라진 것입니다.
+    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.
+    ★ 팔렸다고 단정하지 않습니다 (V6-06)</span></p>
+
+<h3>등록부 미분류 (사전이 막는 것)</h3>
 {% if nr.field_unclassified %}
 <p class="notice">등록부 미분류 <strong>{{ nr.field_unclassified | num }}건</strong> —
   <strong>V4-11 이 판정을 막습니다.</strong>
@@ -111,6 +115,7 @@
 <p class="muted">등록부 미분류가 없습니다 — 판정을 막는 것이 없습니다.</p>
 {% endif %}
 
+{% if n.done %}
 <h2>지금도 볼 수 있는 것</h2>
 <ul>{% for d in n.done %}<li>{{ d }}</li>{% endfor %}</ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
@@ -134,95 +139,6 @@
   반대로 무시하고 넘기면 감점해야 할 것을 놓칩니다.
   그래서 사람이 볼 때까지 <strong>그 축만</strong> 멈춥니다.
   나머지 축은 정상으로 판정됩니다.</p>
-
-<h3>★ 1 미분류 — ★ 마스터께 묻는 자리</h3>
-<!-- ══ 세 줄 (UI_REVIEW 14-7 · 개정 724) ══
-     ★★ 「미분류」가 ★ 두 뜻으로 읽혔다 —
-       ★ ① 차종 이름을 모르는 매물 · ★ ② 아직 아무 처리도 안 된 매물
-     ★ ★ 마스터께서 정하실 것은 ★ ② 뿐이다 — ★ 맨 위에 굵게.
-       ★ 나머지 둘은 ★ 쌓인 것이 아니라 ★ **갈무리된 것**이다 — ★ 건수만 · 접어 둔다 -->
-<p class="sentence" style="font-size:1.15em">
-  <b>★ 여쭐 것 {{ nr.ask_count | num }}건</b>
-  {% if !nr.ask_count %}<span class="dim">— 지금 정하실 것이 없습니다</span>{% endif %}
-  {% if nr.ask_count %}<span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>{% endif %}
-</p>
-<details class="card tight">
-  <summary><span class="dim">접어 둔 것 {{ nr.folded_count | num }}건 ·
-    팔린 것 {{ nr.gone_count | num }}건 — 펼치기 ▾</span></summary>
-  <p class="muted">★ <strong>접어 둔 것</strong>은 갈래가 달라 뺀 것입니다 —
-    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.
-    갈래를 넓히시면 되살아납니다.<br>
-    ★ <strong>팔린 것</strong>은 목록에서 사라진 것입니다 —
-    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.<br>
-    ★ 둘 다 <strong>쌓인 것이 아니라 갈무리된 것</strong>입니다. 여쭐 것이 아닙니다.</p>
-</details>
-<p class="notice">
-  범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
-  <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·
-  <strong>범위 밖 {{ nr.out_of_scope_total | num }}건</strong>.
-  섞어서 「매물 N건」으로 내지 않습니다 (개정 271).
-  <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
-  <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
-  <strong>이미 정해진 것</strong>입니다 — 물을 것이 아닙니다.
-  판정 대상이 아닙니다 — 버리지도, 임의의 차종에 넣지도 않습니다.
-</p>
-{% if nr.unmatched %}
-<p class="muted">여기가 <strong>묻는 자리</strong>입니다.
-  왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
-  이것으로 <code>targets.json</code> 의 <code>fuel_match</code> ·
-  <code>trim_include</code> 를 고칠지, 그대로 둘지 정합니다.</p>
-<table id="unmatched">
-<thead><tr><th>모델명(원문)</th><th>연료</th><th>배지</th><th>사이트</th>
-  <th class="num">건수</th></tr></thead>
-<tbody>
-{% for u in nr.unmatched %}
-<tr><td><strong>{{ u.model_group }}</strong>
-    <span class="dim">{{ u.manufacturer }}</span></td>
-  <td>{{ u.fuel }}</td><td class="muted">{{ u.trim }}</td>
-  <td class="muted">{{ u.site }}</td>
-  <td class="num">{{ u.count | num }}</td></tr>
-{% endfor %}
-</tbody>
-</table>
-{% endif %}
-{% if !nr.unmatched %}
-<p class="muted">모르는 차가 없습니다.</p>
-{% endif %}
-
-<!-- ★★ 범위 밖 — ★ 아는 차인데 갈래가 다르다.  ★ 마스터 결정 「제외해」 (UI_REVIEW 9a)
-     ★ 묻는 자리가 아니므로 ★ 건수만 내고 ★ 접어 둔다 -->
-{% if nr.out_of_scope %}
-<h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
-<details class="card tight">
-  <summary><strong>{{ nr.out_of_scope_total | num }}건</strong>
-    <span class="dim">· 펼치기 ▾ —
-      스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
-      평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
-  <p class="muted">갈래를 넓히시면 되살아납니다 —
-    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.</p>
-  <table>
-  <thead><tr><th>아는 차종</th><th>모델군</th><th>연료</th>
-    <th class="num">건수</th></tr></thead>
-  <tbody>
-  {% for u in nr.out_of_scope %}
-  <tr><td><strong>{{ u.known }}</strong></td><td>{{ u.model_group }}</td>
-    <td>{{ u.fuel }}</td><td class="num">{{ u.count | num }}</td></tr>
-  {% endfor %}
-  </tbody>
-  </table>
-</details>
-{% endif %}
-
-<h3>3 등록부 미분류 — 판정을 막는 것</h3>
-{% if nr.field_unclassified %}
-<p class="notice">등록부 미분류 <strong>{{ nr.field_unclassified | num }}건</strong> —
-  <strong>V4-11 이 판정을 막습니다.</strong>
-  <code>config/field_usage.suggested.json</code> 을 확인·수정해
-  <code>config/field_usage.json</code> 으로 옮긴 뒤 재실행합니다.</p>
-{% endif %}
-{% if !nr.field_unclassified %}
-<p class="muted">등록부 미분류가 없습니다 — 판정을 막는 것이 없습니다.</p>
-{% endif %}
 
 <h2>지금도 볼 수 있는 것</h2>
 <p class="muted">판정이 멈춰 있어도 아래는 지금 볼 수 있습니다 —

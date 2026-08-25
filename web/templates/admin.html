@@ -5,7 +5,10 @@
      ★ 시안 글자를 그대로 옮긴다 — ★ 개발측이 새로 쓰지 않는다 -->
 <div class="cond what">
   <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
-  <p>수집 · 사전 확정 · 배점 조정 · 차종 등록 · 리포트. 사는 사람이 보는 화면은 여기 없다</p>
+  <p><strong>운영자 도구</strong>입니다.
+    수집 · 사전 확정 · 배점 조정 · 차종 등록 · 리포트.</p>
+  <p><strong>사는 사람이 보는 화면과 다릅니다</strong> —
+    <strong>사는 사람이 보는 화면은 여기 없습니다.</strong></p>
 </div>
 
 <!-- ★★★ 브라우저 수집 — ★ 맨 위다 (개정 551 · 명령서 1-1 ⓒ)
@@ -80,21 +83,8 @@
 </tbody>
 </table>
 
-<h3>조정</h3>
-<p class="muted">★★ 「사전 확정」에 기아 1,020건이 걸려 있습니다.</p>
-<table class="rows">
-<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
-  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
-<tbody>
-{% for m in h.menu_tune %}
-<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
-<td data-label="근거">{{ m.step_ref }}</td>
-<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
-{% endfor %}
-</tbody>
-</table>
-
-<h3>탐색</h3>
+<h4>탐색</h4>
+<p class="muted">★ v4m 시안에는 이 묶음이 없습니다. 문 다섯을 지우지 않으려고 ★ 운영 안에 두었습니다 (개정 427 · 규칙 2로 여쭙습니다).</p>
 <table class="rows">
 <thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
   <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
@@ -107,14 +97,13 @@
 </tbody>
 </table>
 
-<h3>화면 — ★ 둘만 남는다</h3>
-<p class="muted">★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서.
-  ★ 라우트는 살려 둡니다 — 화면을 지우지 않습니다 (개정 427).</p>
+<h3>조정</h3>
+<p class="muted">★★ 「사전 확정」에 기아 1,020건이 걸려 있습니다.</p>
 <table class="rows">
 <thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
   <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
 <tbody>
-{% for m in h.menu_screens %}
+{% for m in h.menu_tune %}
 <tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
 <td data-label="근거">{{ m.step_ref }}</td>
 <td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
@@ -136,6 +125,21 @@
 </table>
 
 {% if h.recent_runs %}
+<h3>내려온 것 둘</h3>
+<p class="muted">★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서.
+  ★ 라우트는 살려 둡니다 — 화면을 지우지 않습니다 (개정 427).</p>
+<table class="rows">
+<thead><tr><th>화면</th><th title="그렇게 판단한 까닭입니다">근거</th>
+  <th title="지금 어떤 상태인지입니다">상태</th></tr></thead>
+<tbody>
+{% for m in h.menu_screens %}
+<tr><td data-label="화면"><a href="{{ m.path }}">{{ m.title }}</a></td>
+<td data-label="근거">{{ m.step_ref }}</td>
+<td data-label="상태">{% if m.locked %}<span class="warn-warn">{{ m.lock_reason }}</span>{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
 <h2>최근 실행 {{ h.recent_runs | count }}건</h2>
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>

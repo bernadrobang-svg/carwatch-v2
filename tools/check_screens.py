@@ -31,11 +31,20 @@ def _pairs() -> tuple:
            없으면 admin_ 접두를 뗀 이름으로 한 번 더 본다 (admin_run → run)
     """
     out = []
+    # ★★★ 08-26 — ★ 마스터께서 ★ v4m 을 확정하셨다 (「★ 그래 관심 이걸로 가자」).
+    #   ★ ★ **같은 이름의 옛 판(v3)은 안 본다.**  ★ 새 판이 정본이다
+    #   ★ ★ 안 그러면 ★ 새 시안대로 고칠 때마다 ★ 옛 시안이 ★ 빨간불을 낸다 —
+    #     ★ 실측 08-26 — ★ `admin` · `dashboard` · `notready` 아홉 곳이 그랬다
+    newest: dict = {}
     for f in sorted(os.listdir(SCREENS)):
-        # ★ v2 시안 24개가 지워졌다 (개정 634) — ★ 지금은 v3 넷이다.
-        #   ★ 판(v2·v3)을 가리지 않고 ★ 「{판}_{이름}_시안.html」로 읽는다
         if not (f.endswith("_시안.html") and "_" in f):
             continue
+        nm = f[f.index("_") + 1:-len("_시안.html")]
+        ver = f[:f.index("_")]
+        # ★ 판 이름은 ★ 글자로 견준다 — ★ v4m > v3 > v2
+        if nm not in newest or ver > newest[nm][0]:
+            newest[nm] = (ver, f)
+    for f in sorted(x[1] for x in newest.values()):
         name = f[f.index("_") + 1:-len("_시안.html")]
         for cand in (f"{name}.html", f"{name.removeprefix('admin_')}.html"):
             if os.path.isfile(os.path.join(TEMPLATES, cand)):
@@ -126,7 +135,7 @@ HEAD_PREFIX = 4
 # ★ v3 시안은 ★ 절을 `<div class="v3-lbl">1 판정</div>` 으로 적는다 (개정 631).
 #   ★ 마스터 ㉮ (r672) — ★ 시안 쪽에만 `.v3-` 을 붙였다.  ★ 옛 `lbl` 도 받는다
 #   ★ `<h2>` 는 ★ 화면 이름과 ★ 「지켜야 하는 것」 메모다 — ★ 절이 아니다
-RE_LBL = re.compile(r'<div class="(?:v3-)?lbl">([^<]+)</div>')
+RE_LBL = re.compile(r'<div class="(?:v3-|v4-|v4m-)?lbl">([^<]+)</div>')
 SIAN_NOTE = ("지켜야 하는 것",)
 
 
@@ -181,7 +190,11 @@ def check_sections() -> None:
             continue
         mine = _heads(io.open(tp, encoding="utf-8").read(), strip_vars=True)
         for head in _sian_heads(io.open(sp, encoding="utf-8").read(),
-                                v3=sketch.startswith("v3_")):
+                                v3=sketch.startswith(("v3_", "v4"))):
+            # ★★ v4m 시안이 ★ 가운데 절을 ★ 「… 4~10절 (…)」로 ★ 줄여 적는다.
+            #   ★ ★ 그것은 ★ 절 이름이 아니라 ★ 「여기 적기를 줄였다」는 표시다
+            if head.startswith(("…", "...")):
+                continue
             key = head[:HEAD_PREFIX]
             if any(key in m for m in mine):
                 ok += 1

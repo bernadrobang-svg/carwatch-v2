@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>미판정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=4bbe6104f8">
+<link rel="stylesheet" href="/static/app.css?v=ef82db73d4">
 
 </head>
 <body class="s-notready">
@@ -70,23 +70,18 @@
 
 
 
-<h3>★ 1 미분류 — ★ 마스터께 묻는 자리</h3>
 
-<p class="sentence" style="font-size:1.15em">
-  <b>★ 여쭐 것 90건</b>
+<h3>★★ 여쭐 것</h3>
+
+<div class="ask">
+<p class="big">90건</p>
+<p class="sentence">
+  <b>차종을 모르는데 아직 아무 처리도 안 된 매물입니다</b>
   
   <span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>
 </p>
-<details class="card tight">
-  <summary><span class="dim">접어 둔 것 8,415건 ·
-    팔린 것 133건 — 펼치기 ▾</span></summary>
-  <p class="muted">★ <strong>접어 둔 것</strong>은 갈래가 달라 뺀 것입니다 —
-    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.
-    갈래를 넓히시면 되살아납니다.<br>
-    ★ <strong>팔린 것</strong>은 목록에서 사라진 것입니다 —
-    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.<br>
-    ★ 둘 다 <strong>쌓인 것이 아니라 갈무리된 것</strong>입니다. 여쭐 것이 아닙니다.</p>
-</details>
+<p class="muted">★ 있으면 <strong>마스터께서 「받을까 말까」를 정하십니다.</strong></p>
+</div>
 <p class="notice">
   범위 안 <strong>4,838건</strong> ·
   <strong>미분류 2,930건</strong> ·
@@ -294,7 +289,7 @@
 
 
 
-<h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
+<h3>접어 둔 것 (갈래가 달라 뺐다)</h3>
 <details class="card tight">
   <summary><strong>5,708건</strong>
     <span class="dim">· 펼치기 ▾ —
@@ -402,12 +397,19 @@
 </details>
 
 
-<h3>3 등록부 미분류 — 판정을 막는 것</h3>
+<h3>팔린 것</h3>
+<p class="sentence"><b>133건</b>
+  <span class="dim">— 목록에서 사라진 것입니다.
+    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.
+    ★ 팔렸다고 단정하지 않습니다 (V6-06)</span></p>
+
+<h3>등록부 미분류 (사전이 막는 것)</h3>
 
 <p class="notice">등록부 미분류 <strong>319건</strong> —
   <strong>V4-11 이 판정을 막습니다.</strong>
   <code>config/field_usage.suggested.json</code> 을 확인·수정해
   <code>config/field_usage.json</code> 으로 옮긴 뒤 재실행합니다.</p>
+
 
 
 
@@ -423,347 +425,6 @@
   반대로 무시하고 넘기면 감점해야 할 것을 놓칩니다.
   그래서 사람이 볼 때까지 <strong>그 축만</strong> 멈춥니다.
   나머지 축은 정상으로 판정됩니다.</p>
-
-<h3>★ 1 미분류 — ★ 마스터께 묻는 자리</h3>
-
-<p class="sentence" style="font-size:1.15em">
-  <b>★ 여쭐 것 90건</b>
-  
-  <span class="dim">— 차종을 정해 주시면 판정이 열립니다</span>
-</p>
-<details class="card tight">
-  <summary><span class="dim">접어 둔 것 8,415건 ·
-    팔린 것 133건 — 펼치기 ▾</span></summary>
-  <p class="muted">★ <strong>접어 둔 것</strong>은 갈래가 달라 뺀 것입니다 —
-    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.
-    갈래를 넓히시면 되살아납니다.<br>
-    ★ <strong>팔린 것</strong>은 목록에서 사라진 것입니다 —
-    <code>gone_at</code> 이 「얼마에 팔렸나」의 근거입니다.<br>
-    ★ 둘 다 <strong>쌓인 것이 아니라 갈무리된 것</strong>입니다. 여쭐 것이 아닙니다.</p>
-</details>
-<p class="notice">
-  범위 안 <strong>4,838건</strong> ·
-  <strong>미분류 2,930건</strong> ·
-  <strong>범위 밖 5,708건</strong>.
-  섞어서 「매물 N건」으로 내지 않습니다.
-  <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
-  <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
-  <strong>이미 정해진 것</strong>입니다 — 물을 것이 아닙니다.
-  판정 대상이 아닙니다 — 버리지도, 임의의 차종에 넣지도 않습니다.
-</p>
-
-<p class="muted">여기가 <strong>묻는 자리</strong>입니다.
-  왜 안 붙었는지 보이도록 <strong>모델명 · 연료 · 배지</strong>를 냅니다.
-  이것으로 <code>targets.json</code> 의 <code>fuel_match</code> ·
-  <code>trim_include</code> 를 고칠지, 그대로 둘지 정합니다.</p>
-<table id="unmatched">
-<thead><tr><th>모델명(원문)</th><th>연료</th><th>배지</th><th>사이트</th>
-  <th class="num">건수</th></tr></thead>
-<tbody>
-
-<tr><td><strong>쏘렌토</strong>
-    <span class="dim">기아</span></td>
-  <td>1.6 가솔린 하이브리드</td><td class="muted">프레스티지</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">159</td></tr>
-
-<tr><td><strong>카니발</strong>
-    <span class="dim">기아</span></td>
-  <td>2.2 디젤</td><td class="muted">노블레스</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">154</td></tr>
-
-<tr><td><strong>팰리세이드</strong>
-    <span class="dim">현대</span></td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">130</td></tr>
-
-<tr><td><strong>아이오닉5</strong>
-    <span class="dim">현대</span></td>
-  <td>전기</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">68</td></tr>
-
-<tr><td><strong>카니발</strong>
-    <span class="dim">기아</span></td>
-  <td>3.5 가솔린</td><td class="muted">노블레스</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">63</td></tr>
-
-<tr><td><strong>모하비</strong>
-    <span class="dim">기아</span></td>
-  <td>3.0 디젤</td><td class="muted">마스터즈 그래비티</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">49</td></tr>
-
-<tr><td><strong>K5</strong>
-    <span class="dim">기아</span></td>
-  <td>2.0 가솔린 하이브리드</td><td class="muted">프레스티지</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">48</td></tr>
-
-<tr><td><strong>K8</strong>
-    <span class="dim">기아</span></td>
-  <td>1.6 가솔린 하이브리드</td><td class="muted">노블레스</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">48</td></tr>
-
-<tr><td><strong>싼타페</strong>
-    <span class="dim">현대</span></td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">45</td></tr>
-
-<tr><td><strong>싼타페</strong>
-    <span class="dim">현대</span></td>
-  <td>하이브리드</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">41</td></tr>
-
-<tr><td><strong></strong>
-    <span class="dim"></span></td>
-  <td></td><td class="muted"></td>
-  <td class="muted">kbchachacha</td>
-  <td class="num">39</td></tr>
-
-<tr><td><strong>쏘렌토</strong>
-    <span class="dim">기아</span></td>
-  <td>2.2 디젤</td><td class="muted">프레스티지</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">38</td></tr>
-
-<tr><td><strong>쏘나타</strong>
-    <span class="dim">현대</span></td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">37</td></tr>
-
-<tr><td><strong>투싼</strong>
-    <span class="dim">현대</span></td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">26</td></tr>
-
-<tr><td><strong>K8</strong>
-    <span class="dim">기아</span></td>
-  <td>2.5 가솔린</td><td class="muted">노블레스 라이트</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">26</td></tr>
-
-<tr><td><strong>쏘렌토</strong>
-    <span class="dim">기아</span></td>
-  <td>2.5 가솔린 터보</td><td class="muted">시그니처 그래비티</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">25</td></tr>
-
-<tr><td><strong>G90</strong>
-    <span class="dim">현대</span></td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">23</td></tr>
-
-<tr><td><strong>쏘나타</strong>
-    <span class="dim">현대</span></td>
-  <td>하이브리드</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">22</td></tr>
-
-<tr><td><strong>투싼</strong>
-    <span class="dim">현대</span></td>
-  <td>하이브리드</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">22</td></tr>
-
-<tr><td><strong>K5</strong>
-    <span class="dim">기아</span></td>
-  <td>1.6 가솔린 터보</td><td class="muted">시그니처</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">22</td></tr>
-
-<tr><td><strong>모닝</strong>
-    <span class="dim">기아</span></td>
-  <td>1.0 가솔린</td><td class="muted">프레스티지</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">22</td></tr>
-
-<tr><td><strong>셀토스</strong>
-    <span class="dim">기아</span></td>
-  <td>1.6 가솔린 터보</td><td class="muted">시그니처</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">22</td></tr>
-
-<tr><td><strong>타스만</strong>
-    <span class="dim">기아</span></td>
-  <td>2.5 가솔린 터보</td><td class="muted">어드벤처</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">21</td></tr>
-
-<tr><td><strong>아이오닉6</strong>
-    <span class="dim">현대</span></td>
-  <td>전기</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">20</td></tr>
-
-<tr><td><strong>K9</strong>
-    <span class="dim">기아</span></td>
-  <td>3.8 가솔린</td><td class="muted">플래티넘 베스트셀렉션1</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">20</td></tr>
-
-<tr><td><strong>셀토스</strong>
-    <span class="dim">기아</span></td>
-  <td>1.6 가솔린</td><td class="muted">시그니처 그래비티</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">20</td></tr>
-
-<tr><td><strong>ES 300h</strong>
-    <span class="dim"></span></td>
-  <td></td><td class="muted">EXECUTIVE</td>
-  <td class="muted">lexus_certified</td>
-  <td class="num">20</td></tr>
-
-<tr><td><strong>카니발</strong>
-    <span class="dim">기아</span></td>
-  <td>1.6 가솔린 하이브리드</td><td class="muted">시그니처</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">19</td></tr>
-
-<tr><td><strong>GV80</strong>
-    <span class="dim">현대</span></td>
-  <td>가솔린</td><td class="muted"></td>
-  <td class="muted">hyundai_cert</td>
-  <td class="num">17</td></tr>
-
-<tr><td><strong>PV5</strong>
-    <span class="dim">기아</span></td>
-  <td>EV</td><td class="muted">플러스</td>
-  <td class="muted">kia_cpo</td>
-  <td class="num">17</td></tr>
-
-</tbody>
-</table>
-
-
-
-
-
-<h3>2 범위 밖 — 갈래가 달라 뺀 것</h3>
-<details class="card tight">
-  <summary><strong>5,708건</strong>
-    <span class="dim">· 펼치기 ▾ —
-      스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
-      평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
-  <p class="muted">갈래를 넓히시면 되살아납니다 —
-    <code>status='out_of_scope'</code> 로 남겨 두었고 지우지 않았습니다.</p>
-  <table>
-  <thead><tr><th>아는 차종</th><th>모델군</th><th>연료</th>
-    <th class="num">건수</th></tr></thead>
-  <tbody>
-  
-  <tr><td><strong>GV70</strong></td><td>GV70</td>
-    <td>가솔린</td><td class="num">1,088</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>가솔린</td><td class="num">835</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>가솔린+전기</td><td class="num">704</td></tr>
-  
-  <tr><td><strong>스포티지</strong></td><td>스포티지</td>
-    <td>가솔린</td><td class="num">566</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">561</td></tr>
-  
-  <tr><td><strong>스포티지</strong></td><td>스포티지</td>
-    <td>가솔린+전기</td><td class="num">451</td></tr>
-  
-  <tr><td><strong>스포티지</strong></td><td>스포티지</td>
-    <td>디젤</td><td class="num">276</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>가솔린</td><td class="num">207</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>하이브리드</td><td class="num">131</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">99</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>가솔린</td><td class="num">69</td></tr>
-  
-  <tr><td><strong>GV70</strong></td><td>GV70</td>
-    <td>가솔린</td><td class="num">66</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>디젤</td><td class="num">65</td></tr>
-  
-  <tr><td><strong>G70</strong></td><td>G70</td>
-    <td>가솔린</td><td class="num">61</td></tr>
-  
-  <tr><td><strong>GV70</strong></td><td>GV70</td>
-    <td>디젤</td><td class="num">54</td></tr>
-  
-  <tr><td><strong>GV70</strong></td><td>GV70</td>
-    <td>가솔린</td><td class="num">49</td></tr>
-  
-  <tr><td><strong>그랑 콜레오스</strong></td><td>그랑 콜레오스</td>
-    <td>가솔린</td><td class="num">47</td></tr>
-  
-  <tr><td><strong>스포티지</strong></td><td>스포티지</td>
-    <td>1.6 가솔린 하이브리드</td><td class="num">43</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>가솔린</td><td class="num">42</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>더 뉴 그랜저 IG</td>
-    <td>휘발유</td><td class="num">35</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저 IG</td>
-    <td>휘발유</td><td class="num">32</td></tr>
-  
-  <tr><td><strong>그랜저</strong></td><td>그랜저</td>
-    <td>가솔린+전기</td><td class="num">28</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">21</td></tr>
-  
-  <tr><td><strong>스포티지</strong></td><td>스포티지</td>
-    <td>2.0 디젤</td><td class="num">21</td></tr>
-  
-  <tr><td><strong>G70</strong></td><td>G70</td>
-    <td>디젤</td><td class="num">16</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">15</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">14</td></tr>
-  
-  <tr><td><strong>GV70</strong></td><td>GV70</td>
-    <td>가솔린</td><td class="num">11</td></tr>
-  
-  <tr><td><strong>스포티지</strong></td><td>스포티지</td>
-    <td>디젤</td><td class="num">11</td></tr>
-  
-  <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">10</td></tr>
-  
-  </tbody>
-  </table>
-</details>
-
-
-<h3>3 등록부 미분류 — 판정을 막는 것</h3>
-
-<p class="notice">등록부 미분류 <strong>319건</strong> —
-  <strong>V4-11 이 판정을 막습니다.</strong>
-  <code>config/field_usage.suggested.json</code> 을 확인·수정해
-  <code>config/field_usage.json</code> 으로 옮긴 뒤 재실행합니다.</p>
-
-
 
 <h2>지금도 볼 수 있는 것</h2>
 <p class="muted">판정이 멈춰 있어도 아래는 지금 볼 수 있습니다 —
@@ -782,7 +443,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260825T000022</span>
-  <span>2026-08-25 09:03</span>
+  <span>2026-08-25 09:29</span>
 </footer>
 
 </body>

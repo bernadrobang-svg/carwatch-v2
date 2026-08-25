@@ -229,7 +229,7 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     """
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit
+    from store.raw import commit, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
@@ -259,6 +259,11 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
                 break
             continue
         walls_in_row = 0
+        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
+        #   ★★ 실측 08-26 — ★ 여태 ★ 엔카 말고는 ★ 원문이 ★ 한 건도 없었다.
+        #     ★ ★ 파싱이 틀렸을 때 ★ 다시 받는 수밖에 없었다 — ★ 그것이 엿새다
+        #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
+        save_site_raw(conn, SITE_CODE, "detail", one, req.url, body, _now())
         deep = parse_detail(body, SITE_CODE, one)
         if not deep:
             got["파싱 실패"] += 1

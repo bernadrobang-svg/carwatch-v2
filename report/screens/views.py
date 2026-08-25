@@ -469,7 +469,10 @@ class TrackPair:
     plate_hash: str
     target_label: str
     trim: str
-    sites: tuple          # (site_badge, listing_id, price_won, grade, earned, misses)
+    # ★ 칸마다 이름이 있다 — badge · listing_id · price_won · grade · earned · misses
+    #   ★★ 08-26 — ★ 전에는 튜플이었다.  ★ 틀이 `{{ s.0 }}` 를 못 읽어
+    #     ★ ★ 화면이 ★ **빈 칸으로 나갔다**.  ★ 이름으로 짚는다
+    sites: tuple
     site_count: int
     low_won: int
     high_won: int
@@ -479,6 +482,10 @@ class TrackPair:
     # ★ 등급이 갈렸는가 · 사고 판정이 갈렸는가
     grade_split: bool = False
     accident_split: bool = False
+    # ★★ 틀은 `>=` 비교를 못 한다 (V11-104) — ★ 판단은 build 가 한다.
+    #   ★ 30% 넘으면 ★ 짝짓기가 틀렸을 자리다 (v4m 추적 시안)
+    big_gap: bool = False
+    gap_cls: str = "dim"
 
 
 @dataclass(frozen=True)

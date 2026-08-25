@@ -138,6 +138,51 @@ def save_raw(
     return "stored"
 
 
+def save_site_raw(
+    conn: sqlite3.Connection,
+    site: str,
+    endpoint: str,
+    source_id: str | None,
+    request_url: str,
+    body: str | None,
+    fetched_at: str,
+    http_code: int = 200,
+    listing_id: int | None = None,
+    run_id: str | None = None,
+) -> str:
+    """★★ 사이트 수집기가 ★ 받은 원문을 ★ 그대로 남긴다 (명령서 3-2 필수).
+
+    ★★ 명령서 — 「★ `raw_response` 에는 남긴다 — ★ 갈래를 넓히시면 ★ 다시 판다.
+      ★ ★ 다시 받을 일이 없다.  ★ 그것이 ★ 「보관만 한다」는 뜻이다」
+    ★★ ★ 왜 `save_raw` 를 안 쓰나 — ★ 그것은 ★ 엔카의 수집 계약(`EndpointSpec` ·
+      `FetchResult` · `verify`)에 맞춰 있다.  ★ 사이트 도구는 ★ 몸통 글자만 든다.
+      ★ ★ 껍데기를 지어 맞추면 ★ 「검증했다」는 거짓말이 된다 — ★ 여기서는 ★ 안 한다
+    ★★ ★ 못 받은 것은 ★ 부르지 않는다 — ★ `body` 가 없으면 ★ 아무것도 안 넣는다.
+      ★ ★ 「없음」으로 저장하지 않는다 (금지 12 · 개정 289)
+    ★ 같은 원문을 두 번 넣지 않는다 — ★ 같은 자리(site·endpoint·source_id)에
+      ★ 이미 있으면 ★ 건너뛴다.  ★ 회차를 나눠 받으므로 ★ 다시 부를 수 있다
+    돌려줌  'stored' · 'skipped'(몸통이 없다) · 'dup'(이미 있다)
+    """
+    if body is None or body == "":
+        return "skipped"
+    if source_id is not None and conn.execute(
+        "SELECT 1 FROM raw_response WHERE site=? AND endpoint=? AND source_id=?"
+        " LIMIT 1", (site, endpoint, str(source_id))
+    ).fetchone():
+        return "dup"
+    conn.execute(
+        "INSERT INTO raw_response"
+        "(run_id,site,listing_id,source_id,endpoint,request_url,request_meta,"
+        " http_code,response_meta,status,body,origin,fetched_at)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        (run_id, site, listing_id,
+         None if source_id is None else str(source_id), endpoint,
+         request_url, None, http_code, None, "ok", body,
+         ORIGIN_COLLECTOR, fetched_at),
+    )
+    return "stored"
+
+
 def save_import_raw(
     conn: sqlite3.Connection,
     site: str,

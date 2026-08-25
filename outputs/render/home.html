@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>현황 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=4bbe6104f8">
+<link rel="stylesheet" href="/static/app.css?v=ef82db73d4">
 
 </head>
 <body class="s-dashboard">
@@ -55,19 +55,197 @@
 
 <div class="cond what">
   <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p><strong>오늘 무엇이 바뀌었나</strong>를 봅니다.</p>
   <p>새로 뜬 것 · 값 내린 것 · 사라진 것 · 등급 분포 · 차종별 시세 · 사이트별 수집 상태</p>
+  <p><strong>매물과 다릅니다</strong> — 매물은 「고르는 곳」 ·
+    여기는 <strong>「무엇이 바뀌었나 보는 곳」</strong>입니다.</p>
 </div>
 
 
+<div class="sec">
+<h3>1 오늘 바뀐 것</h3>
 
 
-<h2>해야 할 일 <span class="muted">확인 필요</span></h2>
-<ul>
-<li class="warn-warn">unclassified <strong>319건</strong>
-  <span class="muted">— config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</span></li>
-</ul>
+<h4>필터 — 매물과 같은 것이 걸린다</h4>
+<p class="muted">필터가 걸리면 아래가 모두 그 조건 안에서 다시 그려집니다
+  (마스터 확정 08-24). <a href="/listings">매물</a>의 조건이 그대로 걸립니다.</p>
+
+<h2>1 오늘</h2>
+<div class="cellset">
+  <div class="cell num"><u>새로 뜬 것</u><b class="up">＋1,883</b></div>
+  <div class="cell num"><u>값 내린 것</u><b>375</b></div>
+  <div class="cell num"><u>사라진 것</u><b>135</b></div>
+  <div class="cell num"><u>마지막 재판정</u><b>2026-08-24</b></div>
+</div>
+<p class="muted">★ 「오늘」은 마지막 하루입니다. 재판정은 <strong>날마다 13:00 에 전량</strong>이고, 못 돌았을 때만 네 시간 뒤 다시 겁니다.</p>
+
+<h4>새로 뜬 것</h4>
+<p class="sentence">지난 하루에 <b>1,883건</b>이 새로 들어왔습니다.</p>
+
+<h4>값 내린 것</h4>
+
+<p class="muted">값 내린 것 — 자세히</p>
+<table>
+<thead><tr><th>구분</th><th>차종</th><th>항목</th><th class="num">변화</th>
+<th class="num">현재가</th></tr></thead>
+<tbody>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+<tr><td>new</td><td>-</td>
+  <td class="muted">status</td>
+  <td class="num">없습니다</td>
+  <td class="num">없습니다</td></tr>
+
+</tbody>
+</table>
 
 
+
+<h4>사라진 것</h4>
+<h4>마지막 재판정</h4>
+<p class="sentence"><b>2026-08-24</b> — 날마다 13:00 에 전량입니다. 못 돌면 네 시간 뒤 다시 겁니다.</p>
+<h2>사라짐 <span class="muted">목록에서 내려간 것 · 팔렸다고 단정하지 않습니다</span></h2>
+
+<table class="rows">
+<thead><tr><th>차종</th><th>트림</th><th class="r">마지막 가격</th>
+<th>어떻게</th><th class="r">언제</th></tr></thead>
+<tbody>
+
+<tr><td><a href="/detail/2996">차종 미정</a></td>
+  <td class="muted">2.5 가솔린 2WD</td>
+  <td class="r">3,180만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2979">차종 미정</a></td>
+  <td class="muted">2.5 가솔린 2WD</td>
+  <td class="r">3,180만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/8179">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">2,760만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2593">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">5,049만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2591">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">5,049만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2255">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">4,999만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2251">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">4,999만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/881">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">3,150만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/854">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">3,150만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/8163">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 AWD</td>
+  <td class="r">3,350만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2362">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 2WD</td>
+  <td class="r">5,300만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+<tr><td><a href="/detail/2361">G80_25T</a></td>
+  <td class="muted">가솔린 2.5 터보 2WD</td>
+  <td class="r">5,300만</td>
+  <td><strong>계약 중</strong></td>
+  <td class="r muted">2026-08-24</td></tr>
+
+</tbody>
+</table>
+
+
+</div>
+
+
+<div class="sec">
+<h3>2 등급 분포</h3>
 
 <h2>등급 분포 4,794건 · 전 차종</h2>
 
@@ -256,6 +434,11 @@
 </tbody>
 </table>
 
+</div>
+
+
+<div class="sec">
+<h3>3 차종별 시세</h3>
 
 
 <h2>차종별 시세 <span class="muted">사분위 — 폭이 넓으면 고를 것이 많습니다</span></h2>
@@ -620,187 +803,88 @@
 
 </tbody>
 </table>
+</div>
+
+
+<div class="sec">
+<h3>4 사이트별 수집</h3>
+
+
+<h2>수집 <span class="muted">진행률 0.0%
+  — 요청 524 가운데 0 성공 · 실패 524</span></h2>
+<div class="card">
+  <div class="pbar"><span class="got" style="width:0.0%"></span></div>
+</div>
+<p class="muted">★ 「없음」은 그 매물에 그 응답이 없는 것입니다. 실패가 아닙니다.
+  ★ 진행률 분모에서 뺍니다.</p>
+<table>
+<thead><tr><th>단계</th><th class="num">요청</th><th class="num">성공</th>
+<th class="num">없음</th><th class="num">실패</th><th class="num">시간</th>
+<th>판정</th></tr></thead>
+<tbody>
+
+<tr><td>S5 상세</td><td class="num">328</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">328</td>
+  <td class="num">10.6초</td><td>실패 328</td></tr>
+
+<tr><td>S5 성능점검</td><td class="num">182</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">182</td>
+  <td class="num">5.7초</td><td>실패 182</td></tr>
+
+<tr><td>S5 이력</td><td class="num">3</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">3</td>
+  <td class="num">0.1초</td><td>실패 3</td></tr>
+
+<tr><td>record_summary</td><td class="num">3</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">3</td>
+  <td class="num">0.1초</td><td>실패 3</td></tr>
+
+<tr><td>inspection_summary</td><td class="num">2</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">2</td>
+  <td class="num">0.1초</td><td>실패 2</td></tr>
+
+<tr><td>platform_check</td><td class="num">2</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">2</td>
+  <td class="num">0.1초</td><td>실패 2</td></tr>
+
+<tr><td>sellingpoint</td><td class="num">2</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">2</td>
+  <td class="num">0.1초</td><td>실패 2</td></tr>
+
+<tr><td>ev_battery</td><td class="num">2</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">2</td>
+  <td class="num">0.1초</td><td>실패 2</td></tr>
+
+</tbody>
+</table>
+
+</div>
+
+
+<div class="sec">
+<h3>5 해야 할 일</h3>
+
+
+
+<h2>해야 할 일 <span class="muted">확인 필요</span></h2>
+<ul>
+<li class="warn-warn">unclassified <strong>319건</strong>
+  <span class="muted">— config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</span></li>
+</ul>
+
+
 
 
 <h2>주의</h2>
 <ul><li class="warn-warn">unclassified 319건 — 등록부 미분류 경로</li></ul>
-
-
-
-<h3>필터 — 매물과 같은 것이 걸린다</h3>
-<p class="muted">필터가 걸리면 아래가 모두 그 조건 안에서 다시 그려집니다
-  (마스터 확정 08-24). <a href="/listings">매물</a>의 조건이 그대로 걸립니다.</p>
-
-<h2>1 오늘</h2>
-<div class="cellset">
-  <div class="cell num"><u>새로 뜬 것</u><b class="up">＋1,883</b></div>
-  <div class="cell num"><u>값 내린 것</u><b>375</b></div>
-  <div class="cell num"><u>사라진 것</u><b>135</b></div>
-  <div class="cell num"><u>마지막 재판정</u><b>2026-08-24</b></div>
-</div>
-<p class="muted">★ 「오늘」은 마지막 하루입니다. 재판정은 네 시간마다 확인합니다.</p>
-
-<h3>새로 뜬 것</h3>
-<p class="sentence">지난 하루에 <b>1,883건</b>이 새로 들어왔습니다.</p>
-
-<h3>값 내린 것</h3>
-
-<p class="muted">값 내린 것 — 자세히</p>
-<table>
-<thead><tr><th>구분</th><th>차종</th><th>항목</th><th class="num">변화</th>
-<th class="num">현재가</th></tr></thead>
-<tbody>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-<tr><td>new</td><td>-</td>
-  <td class="muted">status</td>
-  <td class="num">없습니다</td>
-  <td class="num">없습니다</td></tr>
-
-</tbody>
-</table>
-
-
-
-<h3>사라진 것</h3>
-<h3>마지막 재판정</h3>
-<p class="sentence"><b>2026-08-24</b> — 네 시간마다 확인합니다.</p>
-<h2>사라짐 <span class="muted">목록에서 내려간 것 · 팔렸다고 단정하지 않습니다</span></h2>
-
-<table class="rows">
-<thead><tr><th>차종</th><th>트림</th><th class="r">마지막 가격</th>
-<th>어떻게</th><th class="r">언제</th></tr></thead>
-<tbody>
-
-<tr><td><a href="/detail/2996">차종 미정</a></td>
-  <td class="muted">2.5 가솔린 2WD</td>
-  <td class="r">3,180만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2979">차종 미정</a></td>
-  <td class="muted">2.5 가솔린 2WD</td>
-  <td class="r">3,180만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/8179">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">2,760만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2593">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">5,049만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2591">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">5,049만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2255">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">4,999만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2251">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">4,999만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/881">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">3,150만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/854">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">3,150만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/8163">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 AWD</td>
-  <td class="r">3,350만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2362">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 2WD</td>
-  <td class="r">5,300만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-<tr><td><a href="/detail/2361">G80_25T</a></td>
-  <td class="muted">가솔린 2.5 터보 2WD</td>
-  <td class="r">5,300만</td>
-  <td><strong>계약 중</strong></td>
-  <td class="r muted">2026-08-24</td></tr>
-
-</tbody>
-</table>
-
 
 
 
@@ -863,64 +947,6 @@
 </table>
 <p class="muted"><a href="/watch">관심 화면에서 전부 봅니다 ↗</a></p>
 
-
-
-
-<h2>수집 <span class="muted">진행률 0.0%
-  — 요청 524 가운데 0 성공 · 실패 524</span></h2>
-<div class="card">
-  <div class="pbar"><span class="got" style="width:0.0%"></span></div>
-</div>
-<p class="muted">★ 「없음」은 그 매물에 그 응답이 없는 것입니다. 실패가 아닙니다.
-  ★ 진행률 분모에서 뺍니다.</p>
-<table>
-<thead><tr><th>단계</th><th class="num">요청</th><th class="num">성공</th>
-<th class="num">없음</th><th class="num">실패</th><th class="num">시간</th>
-<th>판정</th></tr></thead>
-<tbody>
-
-<tr><td>S5 상세</td><td class="num">328</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">328</td>
-  <td class="num">10.6초</td><td>실패 328</td></tr>
-
-<tr><td>S5 성능점검</td><td class="num">182</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">182</td>
-  <td class="num">5.7초</td><td>실패 182</td></tr>
-
-<tr><td>S5 이력</td><td class="num">3</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">3</td>
-  <td class="num">0.1초</td><td>실패 3</td></tr>
-
-<tr><td>record_summary</td><td class="num">3</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">3</td>
-  <td class="num">0.1초</td><td>실패 3</td></tr>
-
-<tr><td>inspection_summary</td><td class="num">2</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">2</td>
-  <td class="num">0.1초</td><td>실패 2</td></tr>
-
-<tr><td>platform_check</td><td class="num">2</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">2</td>
-  <td class="num">0.1초</td><td>실패 2</td></tr>
-
-<tr><td>sellingpoint</td><td class="num">2</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">2</td>
-  <td class="num">0.1초</td><td>실패 2</td></tr>
-
-<tr><td>ev_battery</td><td class="num">2</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">2</td>
-  <td class="num">0.1초</td><td>실패 2</td></tr>
-
-</tbody>
-</table>
 
 
 
@@ -1022,6 +1048,7 @@
 </table>
 <p class="muted">★ 점수순이 아닙니다. 예산 · 월납입 · 제외 축을 함께 봅니다.</p>
 
+</div>
 
 </main>
 
@@ -1030,7 +1057,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260825T000022</span>
-  <span>2026-08-25 09:03</span>
+  <span>2026-08-25 09:29</span>
 </footer>
 
 </body>

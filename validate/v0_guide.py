@@ -495,15 +495,18 @@ TEMPLATES = ROOT / "web" / "templates"
 # ★★ 08-25 마스터 지적 — 「★ 항목이 있다고 ★ 시안과 같냐.  ★ **위치 관점**에서 비교해 봐」
 #   ★★ ★ 전에는 ★ 상세 ★ **한 쌍만** 봤다 — ★ 그래서 ★ 목록 거르개가 ★ 통과했다.
 #     ★ ★ 「있다」와 ★ 「같다」는 ★ 다르다 — ★ 여덟 쌍을 ★ 다 본다
+# ★★★ 08-26 — ★ 마스터께서 ★ v4m 을 확정하셨다 (「★ 그래 관심 이걸로 가자」).
+#   ★ ★ **`ref/screens/v4m_*` 여덟 장이 정본이다.**  ★ `v3_*` 는 ★ 옛 판이다
+#   ★ ★ 옛 판을 대조하면 ★ 「새 시안대로 고쳤는데 검사가 빨개진다」가 된다
 SIAN_PAIRS = (
-    ("v3_detail_시안.html", "detail.html"),
-    ("v3_listings_시안.html", "listings.html"),
-    ("v3_track_시안.html", "track.html"),
-    ("v3_notready_시안.html", "notready.html"),
-    ("v3_dashboard_시안.html", "dashboard.html"),
-    ("v3_admin_시안.html", "admin.html"),
-    ("v3_watch_시안.html", "watch.html"),
-    ("v3_compare_시안.html", "compare.html"),
+    ("v4m_detail_시안.html", "detail.html"),
+    ("v4m_listings_시안.html", "listings.html"),
+    ("v4m_track_시안.html", "track.html"),
+    ("v4m_notready_시안.html", "notready.html"),
+    ("v4m_dashboard_시안.html", "dashboard.html"),
+    ("v4m_admin_시안.html", "admin.html"),
+    ("v4m_watch_시안.html", "watch.html"),
+    ("v4m_compare_시안.html", "compare.html"),
 )
 # ★ 화면이 아니라 ★ 메모인 <h2>.  ★ 세지 않는다 (실측 08-24 — v3 넷에 다 있다)
 SIAN_NOTE_H2 = ("지켜야 하는 것",)
@@ -572,7 +575,8 @@ def s46_22_section_order() -> tuple[bool, str]:
         #   ★ ★ 화면은 그것을 `h2` 로 낸다 — ★ 절(`h3`)로 세면 ★ 수가 하나 어긋난다
         want = [_bare(x) for x in
                 # ★ 마스터 ㉮ (r672) — ★ 시안 쪽에 `.v3-` 을 붙였다.  ★ 둘 다 받는다
-                re.findall(r'<div class="(?:v3-)?lbl">([^<]+)</div>', _read(q))
+                re.findall(r'<div class="(?:v3-|v4-|v4m-)?lbl">([^<]+)</div>',
+                           _read(q))
                 if "무엇을 하는 곳인가" not in x]
         # ★★ 한 화면이 ★ 갈래 둘을 가질 수 있다 (`{% if %}` / `{% if ! %}`) —
         #   ★ ★ 그때는 ★ 같은 절이 ★ 글자로 두 번 나온다.  ★ 실제로 그려지는 것은 하나다
@@ -586,6 +590,21 @@ def s46_22_section_order() -> tuple[bool, str]:
         if not want:
             # ★★ 시안이 ★ 절을 안 밝힌 것은 ★ 「절이 없는 화면」이다 —
             #   ★ ★ `v3_watch` · `v3_compare` 가 그렇다.  ★ 견줄 것이 없다
+            continue
+        # ★★ 08-26 — ★ v4m 시안이 ★ 가운데 절을 ★ 「… 4~10절 (…)」로 ★ 줄여 적는다.
+        #   ★ ★ 그것은 ★ 「절이 없다」가 아니라 ★ 「여기 적기를 줄였다」는 표시다.
+        #   ★ ★ 그때는 ★ **차례만** 본다 — ★ 시안이 적은 절이 ★ 그 차례대로 나오는가.
+        #     ★ 줄이지 않은 시안은 ★ 여전히 ★ **개수까지** 같아야 한다
+        folded = [x for x in want if x.startswith("…") or x.startswith("...")]
+        want = [x for x in want if x not in folded]
+        if folded:
+            at = 0
+            for a in want:
+                if a in got[at:]:
+                    at = got.index(a, at) + 1
+                else:
+                    bad.append(f"{page} 「{a}」가 차례에 없다 (시안이 줄여 적었다)")
+                    break
             continue
         if len(want) != len(got):
             bad.append(f"{page} 절 {len(got)}개 · 시안 {len(want)}개")
@@ -1182,6 +1201,46 @@ def s46_74_rows_per_page() -> tuple[bool, str]:
     return True, f"목록·관심·추적·미판정이 다 한 쪽 {n}장 (규격에서 읽는다)"
 
 
+
+def s46_75_v4m_common() -> tuple[bool, str]:
+    """★★★ v4m 여덟 장 ★ 공통 규칙 (마스터 확정 08-26 — 「그래 관심 이걸로 가자」).
+
+    ★★ 가이드가 적은 ★ 「지킬 것 (여덟 장 공통)」을 ★ 그대로 잰다 —
+      ★ ① 맨 위에 ★ 「이 화면은 무엇은 하는 곳인가」 ＋ ★ 「~와 다르다」
+      ★ ② 아래 탭 — ★ 640 아래에서 ★ 상단 메뉴가 ★ 바닥에 붙는다
+      ★ ③ 단추 ★ 44px 이상
+      ★ ④ 카드를 ★ 옆으로 붙이지 않는다 — ★ 한 줄에 늘 하나
+    ★★ ★ 「~와 다르다」가 왜 필요한가 — ★ 관심·추적·비교가 ★ 서로 닮았다.
+      ★ ★ 「여기는 무엇이 다른가」를 안 적으면 ★ 같은 화면이 셋으로 보인다
+    ★ 링크의 한글 인코딩은 ★ `S46-66` 이 따로 잰다 — ★ 여기서 두 번 안 센다
+    """
+    css = ROOT / "web" / "static" / "app.css"
+    if not css.is_file():
+        return False, "app.css 가 없다"
+    # ★ 빈칸·줄바꿈을 다 지운다 — ★ `.replace(" ", "")` 만으로는 ★ 줄바꿈이 남는다
+    style = re.sub(r"\s+", "", _read(css))
+    bad = []
+    for _sian, page in SIAN_PAIRS:
+        t = TEMPLATES / page
+        if not t.is_file():
+            bad.append(f"{page} 가 없다")
+            continue
+        body = _read(t)
+        if "무엇을 하는 곳인가" not in body:
+            bad.append(f"{page} — 머리 상자가 없다")
+        # ★ 「다르다」·「다릅니다」 어느 쪽이든 받는다 — ★ 글투는 화면 몫이다
+        if "다르다" not in body and "다릅니다" not in body:
+            bad.append(f"{page} — 「~와 다르다」가 없다")
+    # ★ 아래 탭 — ★ 640 아래에서 ★ `.nav` 가 바닥에 붙는가
+    if "@media(max-width:639px){.nav{position:fixed;bottom:0" not in style:
+        bad.append("640 아래에서 상단 메뉴가 아래 탭이 아니다")
+    if "min-height:44px" not in style:
+        bad.append("단추가 44px 이상이 아니다")
+    if bad:
+        return False, "★ v4m 공통 규칙이 어긋난다 — " + " · ".join(bad[:5])
+    return True, (f"여덟 장이 머리 상자 · 「~와 다르다」 · 아래 탭 · 44px 를 지킨다")
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1217,6 +1276,7 @@ CHECKS = (
     ("S46-67", "시안 이름이 app.css 와 안 겹치는가", s46_67_sian_names_dont_clash),
     ("S46-68", "관심이 모바일 기준 카드인가", s46_68_watch_is_mobile_first),
     ("S46-74", "한 쪽 장 수가 규격과 같은가", s46_74_rows_per_page),
+    ("S46-75", "v4m 여덟 장 공통 규칙", s46_75_v4m_common),
 )
 
 
