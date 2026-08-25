@@ -2389,3 +2389,17 @@ details>div { margin-top:12px }
 .ask { border:1px solid var(--amber); border-radius:10px; padding:12px 14px;
        margin-bottom:12px; background:var(--surface); }
 .ask .big { text-align:left; color:var(--amber); margin-bottom:6px; }
+
+/* ── 매물 카드의 비교 네모 (마스터 확정 08-26 · v4m_listings_시안)
+   ★ 가이드 — 「★ 매물 카드에도 비교 네모를 둬라」
+   ★ `.desk` 가 `display:contents` 라 ★ 자리를 잡을 상자가 하나 있어야 한다 —
+     그것이 `.kthumbwrap` 이다.  ★ 「N곳」 배지도 그 안에 든다
+   ★★ 사진을 시안 크기(104×78)로 키운다 — ★ 72×54 에 44px 네모를 얹으면
+     ★ 사진이 거의 안 보인다 (짚는 자리는 44px 여야 한다 · 마스터 확정) */
+.car-rows .kthumbwrap .thumb { width:104px; height:78px; }
+.car-rows .kthumbwrap .nsite { position:absolute; top:2px; right:2px; z-index:3;
+                               font-size:10px; padding:1px 5px; }
+@media (min-width:1081px) {
+  /* ★ 넓은 폭은 그리드 칸이 104px 다 — 그대로 맞는다 */
+  .car-rows .kthumbwrap { width:104px; }
+}

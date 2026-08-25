@@ -268,13 +268,31 @@ def spec_d(ad: Client, db: str) -> None:
         rec("D-4", "없을 때도 「없습니다」", "해당 매물 없음", "건너뜀", True)
 
 
-# ── F  관리자 메뉴 3분류 (STEP 149j) ────────────────────────────────
+# ── F  관리자 메뉴 묶음 (STEP 149j · v4m_admin_시안) ────────────────
+# ★★★ 08-26 — ★ 규격 둘이 어긋난다.  ★ 가이드에 보고했다 (규칙 2)
+#   `61-web.md` STEP 149j  「★ 운영 · 조정 · ★ **탐색** 셋 …
+#                            ★ 금지 — 화면 수가 늘 때 ★ 4번째 분류를 만드는 것」
+#   `v4m_admin_시안` ＋ 가이드 08-26  「★ 운영 · 조정 · 계정 · 내려온 것 둘」(넷) ·
+#                                     「★ 관리 「탐색」 절은 ★ **안 만든다**」
+# ★★ ★ 시안이 화면의 정본이다 (`ref/screens/README.md`) — ★ 시안을 따랐다.
+#   ★ ★ 그러나 ★ STEP 149j 의 ★ **목적**은 지켜진다 —
+#     ★ 「잠금 단위와 일치한다 · 조정이 잠긴다」.  ★ 그것을 여기서 잰다
+#   ★ ★ 라우팅 표의 3분류는 ★ 그대로다 — ★ `V11-24` 가 그것을 본다
 def spec_f(ad: Client, db: str) -> None:
-    print("\n[F] 관리자 메뉴 (STEP 149j)")
+    print("\n[F] 관리자 메뉴 (STEP 149j · v4m_admin_시안)")
     st, ab, _h = ad.get("/admin")
-    groups = {g for g in ("운영", "조정", "탐색") if g in text(ab)}
-    rec("F-1", "메뉴 3분류", "머리말을 본다", f"{sorted(groups)}",
-        len(groups) == 3)
+    # ★ 시안이 정한 절 넷 — ★ 「탐색」은 절이 아니다 (문은 운영 안에 그대로 있다)
+    groups = {g for g in ("운영", "조정", "계정", "내려온 것 둘")
+              if g in text(ab)}
+    rec("F-1", "메뉴 묶음 넷 (v4m 시안)", "머리말을 본다", f"{sorted(groups)}",
+        len(groups) == 4)
+    # ★ 탐색의 문 다섯이 ★ 살아 있는가 — ★ 절을 없앴다고 ★ 문을 지우지 않는다
+    # ★ 주소는 ★ 태그 안에 있다 — ★ `text()` 로 지우면 안 보인다
+    raw = ab.decode("utf-8", "replace") if isinstance(ab, bytes) else str(ab)
+    doors = [p for p in ("/admin/query", "/admin/api", "/admin/tools",
+                         "/admin/docs", "/admin/requests") if p in raw]
+    rec("F-1b", "★ 탐색 문 다섯이 남아 있다", "5개", f"{len(doors)}개",
+        len(doors) == 5, "절은 없앴으나 화면을 지우지 않는다 (개정 427)")
 
     conn = sqlite3.connect(db)
     conn.execute("INSERT INTO recalc_job(job_id,account_id,trigger,reason,"

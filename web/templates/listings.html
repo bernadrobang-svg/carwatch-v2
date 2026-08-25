@@ -203,6 +203,10 @@
        가격·연식·주행 셋이면 90%가 걸러진다.  자세한 것은 상세다
      1 등급+순위 · 2 ★네 묶음 막대 · 3 사진 · 4 차명/트림/연식/주행/색
      5 시세차 · 6 신차대비% · 7 옵션가 · 8 경과일+가격+변동 -->
+<!-- ★★★ 비교 네모 (마스터 확정 08-26 · v4m_listings_시안 `v4-pick`).
+     ★ 가이드 — 「★ 매물 카드에도 비교 네모를 둬라」
+     ★ ★ 사진 왼쪽 위 · 고르면 아래에 「N대 비교하기」 띠 — ★ 관심과 같은 꼴이다 -->
+<form method="get" action="/compare" id="cmp">
 <main class="rows car-rows">
 {% for r in rows %}
 <div class="row" data-peek="{{ r.photo_url }}" data-href="/detail/{{ r.listing_id }}"
@@ -239,15 +243,24 @@
 
   <!-- 3 사진 -->
   <div class="desk">
-    <!-- ★★ 「N곳」 배지 (명령서 1-4 · v3_listings_시안) — ★ 같은 차가 다른 사이트에도 있다.
-         ★ 누르면 ★ 추적으로 간다.  ★ 1 곳이면 안 낸다 -->
-    {% if r.multi_site %}<a class="chip on" href="/track"
-      title="이 차가 {{ r.site_count }}곳에 올라와 있습니다. 추적에서 값·등급을 나란히 봅니다"
-      >{{ r.site_count }}곳 · {{ r.dupe_low_won | won }}~{{ r.dupe_high_won | won }}</a>{% endif %}
-    {% if r.photo_url %}<a href="/detail/{{ r.listing_id }}"><img class="thumb"
-      src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
-    {% if !r.photo_url %}<span class="thumb thumb-none nophoto"
-      title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
+    <!-- ★★ 상자 하나로 묶는다 — ★ `.desk` 가 `display:contents` 라
+         ★ 안의 것이 ★ 그대로 그리드 칸이 된다.  ★ 「N곳」 배지가 있고 없고에 따라
+         ★ ★ 칸 수가 달라지면 ★ 줄이 통째로 밀린다 -->
+    <div class="kthumbwrap">
+      <!-- ★ 사진 왼쪽 위 — ★ 짚는 자리는 44px 다 (v4m 시안) -->
+      <label class="kpick" title="견줄 차로 고릅니다 — 두 대 넘게 고르십시오">
+        <input type="checkbox" name="id" value="{{ r.listing_id }}"
+          data-cmp="1"><span>✓</span></label>
+      <!-- ★★ 「N곳」 배지 (명령서 1-4 · v4m_listings_시안) — ★ 같은 차가 다른 사이트에도 있다.
+           ★ 누르면 ★ 추적으로 간다.  ★ 1 곳이면 안 낸다 -->
+      {% if r.multi_site %}<a class="chip on nsite" href="/track"
+        title="이 차가 {{ r.site_count }}곳에 올라와 있습니다. 추적에서 값·등급을 나란히 봅니다"
+        >{{ r.site_count }}곳 · {{ r.dupe_low_won | won }}~{{ r.dupe_high_won | won }}</a>{% endif %}
+      {% if r.photo_url %}<a href="/detail/{{ r.listing_id }}"><img class="thumb"
+        src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
+      {% if !r.photo_url %}<span class="thumb thumb-none nophoto"
+        title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
+    </div>
   </div>
 
   <!-- 4 차명 · 트림 · 연식 · 주행 · 외장/내장색 -->
@@ -345,6 +358,15 @@
 </div>
 {% endfor %}
 </main>
+<!-- ★ 고르면 뜨는 띠.  ★ 몇 대인지는 브라우저만 셀 수 있다 —
+     ★ 값을 다시 실어 보내지 않는다.  ★ JS 가 없어도 단추가 산다 -->
+<div class="kcmp" id="cmpbar">
+  <span class="dim" id="cmpn">견줄 차를 사진 왼쪽 위 네모로 고르십시오 —
+    ★ 두 대 넘게 · 다섯까지입니다</span>
+  <button type="submit" class="kbtn go" id="cmpgo"
+    title="고른 매물을 나란히 놓고 봅니다">비교하기 ▸</button>
+</div>
+</form>
 {% endif %}
 
 {% if paging.many %}
@@ -494,6 +516,34 @@
     var t = e.touches && e.touches[0];
     show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
   }, {passive: false});
+})();
+/* ★★ 비교 네모를 몇 개 골랐나 (v4m_listings_시안 · 마스터 확정 08-26).
+   ★ 값을 다시 실어 보내지 않는다 — ★ 이미 그 폼에 있는 네모를 센다.
+   ★ ★ JS 가 없으면 ★ 띠 글이 그대로 남고 ★ 단추도 살아 있다 */
+(function () {
+  var bar = document.getElementById('cmpn');
+  var go = document.getElementById('cmpgo');
+  if (!bar || !go) { return; }
+  var boxes = document.querySelectorAll('input[data-cmp]');
+  function count() {
+    var n = 0, i;
+    for (i = 0; i < boxes.length; i += 1) { if (boxes[i].checked) { n += 1; } }
+    if (n === 0) {
+      bar.textContent = '견줄 차를 사진 왼쪽 위 네모로 고르십시오 —'
+        + ' ★ 두 대 넘게 · 다섯까지입니다';
+    } else if (n === 1) {
+      bar.textContent = '1대 골랐다 — 견주려면 두 대 넘게 고르십시오';
+    } else if (n > 5) {
+      bar.textContent = n + '대 골랐다 — ★ 다섯까지입니다';
+    } else {
+      bar.textContent = n + '대 골랐다';
+    }
+    go.disabled = n < 2 || n > 5;
+  }
+  for (var i = 0; i < boxes.length; i += 1) {
+    boxes[i].addEventListener('change', count);
+  }
+  count();
 })();
 </script>
 

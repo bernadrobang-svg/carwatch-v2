@@ -1309,25 +1309,80 @@ CHECKS = (
 )
 
 
-def run() -> int:
+# ★★★ 이 차수의 이름 (마스터 지시 08-26 · `11-store/a-key.md` · `c-result.md:149`).
+#   ★★ 규격 — 「★ **검증 결과를 테이블에 남긴다.**  ★ 화면 출력만 하면
+#     ★ ★ 어제와 비교할 수 없다.  ★ 6장의 「전일 대비 GAP」이 이 표 위에서 돈다」
+#   ★ `V*` 가 아니다 — ★ 지시서(guide)를 지키는가를 보는 검사다.
+#     ★ `report/render.py` 의 V 리포트가 ★ `phase LIKE 'V%'` 로 거른다
+PHASE = "guide"
+
+
+def _as_check(code: str, title: str, kind: str):
+    """`CHECKS` 표 한 줄 → ★ `validate.base.Check`.
+
+    ★★ 이 파일은 ★ `Check(...)` 를 안 쓰고 ★ 튜플 표로 적어 왔다 —
+      ★ 표가 읽기 쉬워서다.  ★ 남길 때만 ★ 규격의 자료 구조로 바꾼다
+    ★ 등급은 ★ 성격이 정한다 (`Check.__post_init__`) —
+      ★ fatal → `code` · ★ warn → `external`
+    """
+    from validate.base import KIND_CODE, KIND_EXTERNAL, Check
+    return Check(PHASE, code, title,
+                 "warn" if kind == "warn" else "fatal", "run",
+                 kind=KIND_EXTERNAL if kind == "warn" else KIND_CODE)
+
+
+def results(run_id: str) -> list:
+    """★ 전부 돌려서 ★ `CheckResult` 목록으로 낸다.
+
+    ★★ 08-26 마스터 지시 — 「★ 검사 결과를 ★ `audit_validation` 에 남겨라.
+      ★ ★ **안 남긴 것이 결함이다**」
+    ★★ ★ 실측 08-26 — ★ 이 마흔 개는 ★ **어느 도구도 안 부르고 있었다.**
+      ★ ★ `tools/check_all.py` 도 ★ `tools/run_tests.py` 도 ★ 안 불렀다 —
+        ★ 손으로 `python3.11 -c "…"` 를 쳐야 돌았다.
+      ★ ★ 그래서 ★ 색인의 ★ 「마지막 통과」가 ★ 늘 「없음」이었다
+    """
+    from validate.base import result
+    out = []
+    for row in CHECKS:
+        code, name, fn = row[0], row[1], row[2]
+        kind = row[3] if len(row) > 3 else "fatal"
+        chk = _as_check(code, name, kind)
+        try:
+            ok, msg = fn()
+        except Exception as e:                      # noqa: BLE001
+            # ★ 검사가 죽어도 ★ 나머지를 다 돌린다 — ★ 죽은 것도 실패로 남긴다
+            ok, msg = False, f"검사가 예외로 죽었다: {type(e).__name__}: {e}"
+        out.append(result(chk, run_id, "지시서대로", msg, ok))
+    return out
+
+
+def save(conn, run_id: str, at: str) -> list:
+    """돌린 뒤 ★ `audit_validation` 에 남긴다 (규격 `c-result.md:149`).
+
+    ★ `phase='guide'` · `code` · `passed` · `actual`(한 줄) · ★ `run_id`
+    """
+    from validate.base import save_results
+    got = results(run_id)
+    save_results(conn, got, at)
+    return got
+
+
+def run(run_id: str = "-") -> int:
     """★ 돌려서 ★ fatal 실패 수를 돌려준다.  ★ warn 은 ★ 세지 않는다.
 
     ★ 「아직 안 한 것」을 세는 검사가 ★ 늘 빨간불이면 ★ 진짜 실패가 묻힌다
     """
     bad = warn = 0
-    for row in CHECKS:
-        code, name, fn = row[0], row[1], row[2]
-        kind = row[3] if len(row) > 3 else "fatal"
-        ok, msg = fn()
-        if ok:
+    for r in results(run_id):
+        if r.passed:
             head = "OK  "
-        elif kind == "warn":
+        elif r.check.severity == "warn":
             head = "warn"
             warn += 1
         else:
             head = "★ 실패"
             bad += 1
-        print(f"  {head} {code} {name} — {msg}")
+        print(f"  {head} {r.check.code} {r.check.title} — {r.actual}")
     if warn:
         print(f"  ★ warn {warn}건 — 「아직 안 한 것」이다.  ★ 실패로 세지 않는다")
     return bad

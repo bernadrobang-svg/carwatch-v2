@@ -19,7 +19,9 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from validate.base import PHASE_ORDER, run_phase  # noqa: E402
+from validate.base import PHASE_ORDER, run_phase, save_results  # noqa: E402
+from validate.v0_guide import PHASE as PHASE_GUIDE  # noqa: E402
+from validate.v0_guide import results as guide_results  # noqa: E402
 
 # ★ 환경에 따라 갈리는 검사.  결함이 아니라 차이다 (개선요청 4-2)
 ENV_DEPENDENT = {
@@ -38,6 +40,11 @@ def _first_fetch(conn) -> datetime:
         except ValueError:
             pass
     return datetime.now(timezone.utc)
+
+
+def _now() -> str:
+    """★ 남기는 시각.  ★ UTC 로 적는다 (DTZ005 — naive 를 안 쓴다)."""
+    return datetime.now(timezone.utc).isoformat()
 
 
 def main() -> int:
@@ -67,9 +74,18 @@ def main() -> int:
         started_at = _first_fetch(conn)
 
     fatal, warn, env, skip, ok = [], [], [], [], 0
-    for phase in PHASE_ORDER:
+    # ★★★ 08-26 마스터 지시 — 「★ 검사 결과를 ★ `audit_validation` 에 남겨라.
+    #   ★ ★ **안 남긴 것이 결함이다**」 (`11-store/c-result.md:149`)
+    #   ★★ ★ 실측 08-26 — ★ `validate/v0_guide.py` 의 ★ S43~S46 은
+    #     ★ ★ **어느 도구도 안 부르고 있었다** — ★ 손으로 쳐야 돌았다.
+    #     ★ ★ 그래서 ★ 색인의 「마지막 통과」가 ★ 늘 「없음」이었다
+    #   ★ 여기서 함께 돌린다 — ★ 규칙 3 의 두 도구 안에 들어와야 뜻이 있다
+    phases = (PHASE_GUIDE, *PHASE_ORDER)
+    for phase in phases:
         try:
-            results = run_phase(conn, Ctx(), phase)
+            results = (guide_results(Ctx.run_id) if phase == PHASE_GUIDE
+                       else run_phase(conn, Ctx(), phase))
+            save_results(conn, results, _now())
         except Exception as e:                      # noqa: BLE001
             fatal.append((phase, f"검사가 예외로 죽었다: {type(e).__name__}: {e}"))
             continue

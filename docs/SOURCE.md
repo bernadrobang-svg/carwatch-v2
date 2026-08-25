@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 173개 · 총 59,752줄
+파일 173개 · 총 59,841줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,8 +12,8 @@
 | `validate/v3_logic.py` | 2,265 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,595 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,491 | 수집 실행 규칙. |
-| `tests/test_spec_ui.py` | 1,461 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
-| `validate/v0_guide.py` | 1,338 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `tests/test_spec_ui.py` | 1,479 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
+| `validate/v0_guide.py` | 1,393 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,156 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
 | `report/screens/admin.py` | 1,086 | 관리자 화면 — 표현 계층 (13장 STEP 138 · 138a). |
@@ -112,6 +112,7 @@
 | `tools/collect_reborncar.py` | 139 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
+| `tools/check_all.py` | 123 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/heydealer.py` | 120 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
 | `tools/collect_bmw.py` | 119 | BMW 바바리안(BPS) 수집 (명령서 1a). |
@@ -125,7 +126,6 @@
 | `tools/gen_table.py` | 114 | 배점표를 config 에서 생성한다 (개정 512). |
 | `tools/classify_stored.py` | 110 | 저장된 매물을 ★ 갈래에 넣는다 — ★ 사이트 도구가 쓴 줄용 (명령서 37·39). |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
-| `tools/check_all.py` | 107 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `tools/probe_kb_wall.py` | 106 | KB 봇 차단을 ★ 재는 도구 (명령서 08-25 · 마스터 「가려 받지 마라」). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
 | `analyze/axis/taste.py` | 94 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
@@ -218,16 +218,16 @@ resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_chan
 CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:144  aspect_names:165  check_facet_axes:169  interpret_failure:183  collect_check:212  FailStreak:279  _sleep:313  _log_request:319  _save_issues:330  make_executors:341  classify_in_group:880  _group_of:901  _fuel_of:916  _badge_of:922  _pages_for:928  _dicts:942  _option_medians:978  _market_medians:1024  _trim_ladders:1053  _option_base:1070  _site_grade_rules:1100  _listing_config:1116  _listing_values:1141  _option_money:1160  _owned_months:1179  _option_of:1191  _market_of:1199  _group_sums:1209  make_score_executors:1236  make_validate_executor:1420  make_registry_executor:1462
 ```
 
-### `tests/test_spec_ui.py` — 1,461줄
+### `tests/test_spec_ui.py` — 1,479줄
 
 ```
-rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:272  spec_g:298  spec_h:346  spec_j:379  spec_m:422  spec_e:490  spec_i:533  spec_k:646  spec_csrf:701  spec_l:728  spec_monkey:763  flow_s1:835  flow_s2:904  flow_s5:988  flow_s3:1101  flow_s4:1176  flow_s6:1247  guide_v132:1303  main:1395  _write:1439
+rec:33  spec_a:43  spec_b:121  spec_c:195  spec_d:239  spec_f:281  spec_g:316  spec_h:364  spec_j:397  spec_m:440  spec_e:508  spec_i:551  spec_k:664  spec_csrf:719  spec_l:746  spec_monkey:781  flow_s1:853  flow_s2:922  flow_s5:1006  flow_s3:1119  flow_s4:1194  flow_s6:1265  guide_v132:1321  main:1413  _write:1457
 ```
 
-### `validate/v0_guide.py` — 1,338줄
+### `validate/v0_guide.py` — 1,393줄
 
 ```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  run:1312
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  _as_check:1320  results:1334  save:1359  run:1370
 ```
 
 ### `tests/test_integration.py` — 1,236줄
