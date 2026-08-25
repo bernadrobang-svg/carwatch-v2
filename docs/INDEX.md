@@ -9,14 +9,15 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 39,354줄 · 2,348KB**
+**113파일 · 39,748줄 · 2,378KB**
 
-★ 800줄을 넘는 파일 9개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 10개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
+- CHECKS.md 967줄
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 1,064줄
 - guide/01_요구사항.md 993줄
-- guide/05_가이드역할.md 1,115줄
+- guide/05_가이드역할.md 1,117줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
 - chapters/61-web.md 2,262줄
@@ -27,7 +28,7 @@
 |---|--:|--:|
 | `BMW_BPS_API.md` | 225 | 10 |
 | `BOBAEDREAM_API.md` | 334 | 14 |
-| `CHECKS.md` | 577 | 90 |
+| `CHECKS.md`  ★ | 967 | 118 |
 | `CROSS_SITE_COMPARE.md` | 272 | 13 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 198 | 7 |
@@ -105,12 +106,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 144 | 8 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md` | 775 | 524 |
+| `guide/03_이력.md` | 776 | 525 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 613 | 24 |
-| `guide/05_가이드역할.md`  ★ | 1,115 | 56 |
+| `guide/05_가이드역할.md`  ★ | 1,117 | 56 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 522 | 122 |
+| `guide/06_오판대장.md` | 523 | 123 |
 | `guide/07_밀린일대장.md` | 296 | 25 |
 | `guide/08_인수인계.md` | 298 | 14 |
 | `ref/00-intro.md` | 33 | 0 |
