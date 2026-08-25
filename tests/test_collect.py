@@ -31,6 +31,23 @@ AT = datetime(2026, 8, 10, tzinfo=timezone.utc)
 FAIL: list[str] = []
 
 
+
+def _target_count() -> int:
+    """`targets.json` 의 차종 수 — ★ 시험이 수를 손으로 안 적는다 (S14).
+
+    ★ `collect_group` 이 있는 것만 센다 — ★ `SPEC_DEFAULT_*` 는 차종이 아니다
+    """
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    with open(_o.path.join(root, "config", "targets.json"),
+              encoding="utf-8") as f:
+        raw = _j.load(f)
+    return sum(1 for k, v in raw.items()
+               if isinstance(v, dict) and "collect_group" in v
+               and not k.startswith("_"))
+
 def check(name: str, ok: bool, detail: str = "") -> None:
     print(f"  {'PASS' if ok else 'FAIL'}  {name}{'  ' + detail if detail else ''}")
     if not ok:
@@ -155,8 +172,15 @@ def test_collect_groups() -> None:
     #   ★ G80_25T·G80_EV 는 ★ 쿼리가 같아 ★ 그대로 한 묶음이다 (그래서 20 이 아니라 18)
     # ★★ 개정 696 (마스터 확정 · 명령서 38) — ★ 볼보 XC40 · V60 크로스컨트리를 더해
     #   ★ 차종이 ★ **18 → 20종** 이 됐다.  ★ 묶음도 ★ 16 → 18 이다
-    check("target 20 → collect_group 18", len(t) == 20 and len(g) == 18,
-          f"{len(t)}/{len(g)}")
+    # ★★★ 08-28 — ★ **수를 손으로 적지 않는다** (S14 · 금지 6).
+    #   ★ 마스터께서 ★ `ES_HEV` 를 넣으시자 (21종) ★ 이 줄이 빨개졌다 —
+    #   ★ ★ 차종이 는 것은 ★ **결함이 아니다.**  ★ 시험이 옛 수를 붙들고 있었다
+    #   ★ ★ `targets.json` 이 정본이다 — ★ 거기서 읽는다
+    check("target 수 == targets.json", len(t) == _target_count(),
+          f"{len(t)}종 · targets.json {_target_count()}종")
+    # ★ 묶음은 ★ 쿼리로 묶인다 — ★ 차종보다 적거나 같다 (G80 둘이 한 묶음이다)
+    check("collect_group 은 차종보다 많지 않다", 0 < len(g) <= len(t),
+          f"{len(t)}종 → {len(g)}묶음")
     g80 = [x for x in g if x.group_key == "encar:G80"][0]
     check("G80 두 target 이 한 그룹", g80.target_keys == ("G80_25T", "G80_EV"))
     my = [x for x in g if x.group_key == "encar:MODEL_Y"][0]

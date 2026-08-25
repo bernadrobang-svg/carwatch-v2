@@ -43,7 +43,11 @@
       {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
     </select></span>
   <button type="submit" class="chip" style="cursor:pointer">거르기</button>
-  <a class="chip clear" href="/listings" title="조건을 전부 지웁니다">전부 지우기</a>
+  <!-- ★★ 마스터 지적 08-28 — 「★ 「전체」와 「전부」가 ★ 왜 둘로 나뉘어 있나」.
+       ★ 낱말은 ★ 규격이 박아 두었다 (61-web.md:1276 「필수 「전부 지우기」」) —
+       ★ ★ 그래서 ★ **뜻을 곁말에 적는다.**  ★ 낱말을 내가 안 바꾼다 (규칙 1) -->
+  <a class="chip clear" href="/listings"
+    title="걸어 둔 조건을 모두 지웁니다 (동작입니다) — ★ 거르개의 「전체」는 「거르지 않는다」는 뜻입니다">전부 지우기</a>
 
   <!-- ══ ＋조건 — ★ **다섯 절로 묶는다** (마스터 확정 08-25 · v3_listings_시안) ══
        ★ 판정 · 사이트 · 주행 · 연식 · 옵션 · 뺀 것

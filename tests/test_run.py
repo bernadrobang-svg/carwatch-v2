@@ -716,7 +716,15 @@ def test_wrapper_args() -> None:
     full = run_dry(["tools/menu.py", "dry"])
     # ★ 개정 604 — 수입 여덟 등록으로 10 → 18종 (명령서 2-2)
     # ★★ 개정 696 (마스터 확정 · 명령서 38) — ★ 볼보 XC40 · V60 크로스컨트리로 ★ 20종
-    check("범위를 안 주면 전 차종", "차종 20종" in full)
+    # ★★★ 08-28 — ★ **수를 손으로 적지 않는다** (S14).  ★ `targets.json` 이 정본이다
+    import json as _j
+    with open(os.path.join(ROOT, "config", "targets.json"),
+              encoding="utf-8") as _f:
+        _n = sum(1 for k, v in _j.load(_f).items()
+                 if isinstance(v, dict) and "collect_group" in v
+                 and not k.startswith("_"))
+    check("범위를 안 주면 전 차종", f"차종 {_n}종" in full,
+          f"targets.json {_n}종")
 
     bad = run_dry(["tools/menu.py", "test", "--target", "X"])
     check("★ 인자를 안 받는 명령은 거부", "인자를 받지 않는다" in bad, bad[:60])

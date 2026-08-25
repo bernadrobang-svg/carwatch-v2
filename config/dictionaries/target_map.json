@@ -65,6 +65,35 @@
       "EX60": {
         "collect_group": "multi",
         "target_key": "EX60_IMPORT"
+      },
+      "G80": {
+        "collect_group": "encar:G80"
+      },
+      "G70": {
+        "collect_group": "encar:G70"
+      },
+      "GV70": {
+        "collect_group": "encar:GV70"
+      },
+      "GV60": {
+        "collect_group": "encar:GV60"
+      },
+      "그랜저": {
+        "collect_group": "encar:GRANDEUR"
+      },
+      "스포티지": {
+        "collect_group": "encar:SPORTAGE"
+      },
+      "모델 Y": {
+        "collect_group": "encar:MODEL_Y"
+      },
+      "그랑 콜레오스": {
+        "collect_group": "encar:KOLEOS"
+      },
+      "_added_08_28": "★ 국산·ES 를 더했다 — ★ 08-26 「20종만」 때 site_query 만 넣고 이 표를 안 넣어 ★ 갈래가 안 붙고 있었다 (여쭐 것 381건의 뿌리). ★ 이름은 K카 칸을 그대로 옮겼다 — 지어내지 않았다",
+      "ES": {
+        "collect_group": "multi",
+        "target_key": "ES_HEV"
       }
     },
     "kcar": {
@@ -128,6 +157,10 @@
       "EX60": {
         "collect_group": "multi",
         "target_key": "EX60_IMPORT"
+      },
+      "ES": {
+        "collect_group": "multi",
+        "target_key": "ES_HEV"
       }
     },
     "bobaedream": {
@@ -188,6 +221,10 @@
       "EX60": {
         "collect_group": "multi",
         "target_key": "EX60_IMPORT"
+      },
+      "ES": {
+        "collect_group": "multi",
+        "target_key": "ES_HEV"
       }
     },
     "heydealer": {
@@ -305,6 +342,10 @@
       "V60 크로스 컨트리": {
         "collect_group": "multi",
         "target_key": "V60CC_IMPORT"
+      },
+      "ES": {
+        "collect_group": "multi",
+        "target_key": "ES_HEV"
       }
     },
     "volvo_selekt": {
@@ -341,6 +382,10 @@
       "RX": {
         "collect_group": "multi",
         "target_key": "RX_IMPORT"
+      },
+      "ES": {
+        "collect_group": "multi",
+        "target_key": "ES_HEV"
       }
     },
     "bmw_bps": {

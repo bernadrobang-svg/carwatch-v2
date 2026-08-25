@@ -448,7 +448,7 @@ def _manwon(won) -> str:
 
 
 def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
-    """사이트별로 거르는 단추 (개정 306 — 「엔카만」 「K카 직영만」 「전부」).
+    """사이트별로 거르는 단추 (개정 306 — 「엔카만」 「K카 직영만」 「전체」).
 
     ★ 사이트 이름을 코드에 박지 않는다.  config/sites.json 이 정본이다
     ★ 쓰는 사이트가 하나뿐이면 단추를 안 낸다 —
@@ -470,8 +470,13 @@ def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
     live = active_sites(sites)
     if len(live) < 2:
         return []
-    # ★ 「전부」 줄에도 ★ 같은 칸을 둔다 — ★ 없으면 템플릿이 빈 이름을 읽는다 (V11-38)
-    out = [{"label": "전부", "q": "all", "sell": "",
+    # ★ 「전체」 줄에도 ★ 같은 칸을 둔다 — ★ 없으면 템플릿이 빈 이름을 읽는다 (V11-38)
+    # ★★★ 08-28 마스터 지적 — 「★ 목록 ★ 「전체」와 ★ 「전부」가 ★ 둘 다 2,856 이다.
+    #   ★ ★ **왜 둘로 나뉘어 있나**」 (오판 #130 「전체의 테두리」와 같은 자리다)
+    #   ★★ ★ 「거르지 않음」은 ★ **「전체」 한 낱말**로 한다 —
+    #     ★ ★ 차종 전체 · 등급 전체 · 사이트 전체.  ★ 같은 뜻에 같은 말이다
+    #   ★ ★ 「전부 지우기」는 ★ **동작**이라 ★ 「조건 지우기」로 갈랐다
+    out = [{"label": "전체", "q": "all", "sell": "",
             "on": not flt.site, "live": None, "out_of_scope": None}]
     for name in live:
         one = sites.get(name) or {}
