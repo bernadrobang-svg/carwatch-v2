@@ -57,8 +57,16 @@ def test_routes() -> None:
     from validate.v11_web import _spec_routes
 
     spec = _spec_routes() or []
-    check("★ Route 수 == 지시서 표 행 수",
-          len(ROUTES) == len(spec), f"소스 {len(ROUTES)} · 표 {len(spec)}")
+    # ★★ 08-27 — ★ **중복 행은 ★ `V11-12` 가 잡는다** (「★ 표에 중복 행 N개 —
+    #   ★ 한 행에 한 경로다」).  ★ 여기서 또 세면 ★ 한 흠이 ★ 두 번 빨개진다.
+    #   ★ ★ 실측 — ★ `61-web.md` 에 ★ `/admin/users` 가 ★ 두 줄이라
+    #     ★ ★ 「소스 37 · 표 38」로 ★ 여기까지 빨개졌다.  ★ 그것은 ★ 같은 흠 하나다
+    #   ★ ★ 여기는 ★ 「빠진 경로 · 남는 경로」만 본다
+    check("★ Route 수 == 지시서 표 행 수 (중복은 V11-12 몫)",
+          len(ROUTES) == len(set(spec)),
+          f"소스 {len(ROUTES)} · 표 {len(set(spec))}"
+          + (f" (표에 중복 {len(spec) - len(set(spec))}줄)"
+             if len(spec) != len(set(spec)) else ""))
     check("★ 전 Route 가 구현됐다 (2026-08-14)",
           len(built) == len(ROUTES), f"{len(built)}/{len(ROUTES)}")
     # ★ 준비 중이 생기면 표에 남는다.  빼면 계획이 사라진다 (STEP 142)

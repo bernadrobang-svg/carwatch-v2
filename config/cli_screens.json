@@ -22,7 +22,7 @@
     "tools/check_src.py": "/admin/audit",
     "tools/classify_fields.py": "/admin/registry",
     "tools/export_cli.py": "/admin/tools",
-    "tools/fill_raw_run_id.py": "/admin/tools",
+    "tools/fill_raw_run_id.py": "/admin/audit",
     "tools/inspect_dict.py": "/admin/dict",
     "tools/inspect_facet.py": "/admin/api",
     "tools/inspect_requests.py": "/admin/requests",

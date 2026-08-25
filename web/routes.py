@@ -13,7 +13,12 @@ from dataclasses import dataclass
 from contracts import ROLE_ADMIN, ROLE_ANONYMOUS, ROLE_USER
 
 GET, POST = "GET", "POST"
+# ★★★ 08-27 — ★ 분류가 ★ **넷**이 됐다 (`61-web.md` STEP 149j · 개정 765).
+#   ★ 「계정」은 ★ **잠금 단위가 다르다** — ★ 실행 중에도 ★ 계정은 만질 수 있다.
+#   ★ ★ 그래서 ★ 운영에 두면 ★ 잠금 단위와 메뉴가 어긋난다 (V11-24 가 그것을 본다)
+#   ★ 금지 — ★ **다섯째 분류를 만드는 것**.  ★ 화면이 늘면 ★ 넷 중 하나에 넣는다
 GROUP_OPS, GROUP_TUNE, GROUP_EXPLORE = "운영", "조정", "탐색"
+GROUP_ACCOUNT = "계정"
 
 
 # 구현 상태 (STEP 142).  ★ 준비 중을 표에서 빼면 계획이 사라진다
@@ -85,7 +90,7 @@ ROUTES: tuple[Route, ...] = (
     Route("/admin/collect", (GET, POST), "view_admin_collect", ROLE_ADMIN,
           GROUP_OPS),
     Route("/admin/users", (GET, POST), "view_admin_users", ROLE_ADMIN,
-          GROUP_OPS),
+          GROUP_ACCOUNT),
     Route("/admin/scoring", (GET, POST), "view_admin_scoring", ROLE_ADMIN,
           GROUP_TUNE),
     Route("/admin/targets", (GET, POST), "view_admin_targets", ROLE_ADMIN,

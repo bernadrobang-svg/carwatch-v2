@@ -124,7 +124,8 @@ C = {
                     "403 이 아니라 로그인을 유도한다",
                     KIND_CODE),
     "V11-24": Check("V11", "V11-24", "메뉴 분류가 잠금 단위와 일치", FATAL, "run",
-                    "운영·조정·탐색 3분류",
+                    "★ 운영·조정·탐색·계정 4분류 (STEP 149j · 개정 765). "
+                    "★ 다섯째를 만들지 않는다",
                     KIND_CONTRACT),
     "V11-25": Check("V11", "V11-25", "사유 없이 설정이 저장되지 않음", FATAL, "run",
                     "왜 바꿨는지가 남아야 한다",
@@ -1066,9 +1067,12 @@ def _screen_checks(conn, rid) -> list:
     out.append(_watch_invite_check(conn, rid))
 
     # V11-24 — 메뉴 분류 == 잠금 단위
+    # ★★★ 08-27 — ★ 넷이다 (`61-web.md` STEP 149j · 개정 765).
+    #   ★ 「계정」이 늘었다 — ★ 잠금 단위가 다르다 (실행 중에도 만질 수 있다)
+    #   ★ 금지는 ★ 「다섯째를 만드는 것」이다 — ★ 그것을 이 `<=` 가 잡는다
     groups = {r.menu for r in ROUTES if r.menu}
-    ok24 = groups <= {"운영", "조정", "탐색"}
-    out.append(result(C["V11-24"], rid, "3분류", sorted(groups), ok24))
+    ok24 = groups <= {"운영", "조정", "탐색", "계정"}
+    out.append(result(C["V11-24"], rid, "4분류", sorted(groups), ok24))
 
     # V11-25 · V11-26 — 사유 · 확인
     forms = {f: b for f, b in tpls.items() if "<form" in b}

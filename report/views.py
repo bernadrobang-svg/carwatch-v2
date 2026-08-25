@@ -164,6 +164,9 @@ class ScoreView:
     # ★ {axis · label · points · reason · source} 사전이다.
     #   축 이름만 내면 채우면 얼마나 오르는지 알 수 없다 (STEP 149h)
     pending_items: tuple[dict, ...] = ()
+    # ★★ 이 사이트가 ★ 한 매물도 못 채운 축 (마스터 지시 08-27).
+    #   ★ 각 칸은 {axis · label · seen} — ★ `seen` 은 그 사이트에서 잰 매물 수다
+    site_blind: tuple[dict, ...] = ()
     # ★ 「17 Component」를 화면에 박지 않는다 — 배점이 바뀌면 거짓말이 된다
     component_count: int = 0
     # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 (50-multisite · V9-06)

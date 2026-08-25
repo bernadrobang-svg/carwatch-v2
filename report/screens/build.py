@@ -1550,8 +1550,12 @@ def excluded_groups(conn, calc_version: str) -> list:
 
 def view_why(account: Account, conn, listing_id: int, calc_version: str,
              fin_cfg: dict, policy: dict, root: str = "."):
-    """L1 — 9장 STEP 90 L1 항목 전건."""
-    return render_listing(conn, listing_id, calc_version, fin_cfg, policy, root)
+    """L1 — 9장 STEP 90 L1 항목 전건.
+
+    ★ 「이 사이트가 안 주는 축」은 ★ 여기서만 켠다 — ★ 그 절이 여기 있다
+    """
+    return render_listing(conn, listing_id, calc_version, fin_cfg, policy, root,
+                          site_blind=True)
 
 
 def _compare_conclusion(rows: list) -> str:

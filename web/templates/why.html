@@ -258,6 +258,26 @@
   안 받은 원문이 있으면 그 축은 0점이고, 그것은 확인한 것이 아닙니다 (개정 325).</p>
 {% endif %}
 
+<!-- ★★★ 「이 축은 이 사이트에서 ★ 아무도 안 준다」 (마스터 지시 08-27).
+     ★ f-table ⑤ 다 — ★ 결함이 아니라 ★ 규격이 그렇게 정해 놨다.
+     ★★ 「우리가 안 받는다」와 ★ 「사이트가 안 준다」는 ★ 화면에서 같아 보인다 —
+       ★ ★ 그래서 ★ **한 매물도 없다**는 것을 ★ 재서 말한다 (지어내지 않는다) -->
+{% if v.site_blind %}
+<h2>이 사이트가 안 주는 축</h2>
+<p class="notice">아래 축은 <strong>{{ v.site_badge }}</strong>에서
+  <strong>한 매물도 채워지지 않았습니다</strong> —
+  이 차만 그런 것이 아니라 <strong>그 사이트가 안 주는 것</strong>입니다.
+  <span class="muted">★ 0점이지만 분모에는 남습니다 (f-table 채우기 갈래 ⑤ ·
+    개정 289·434). ★ 못 받았다고 만점을 지어 주지 않습니다.</span></p>
+<div class="vlist">
+{% for b in v.site_blind %}
+<div class="vline"><span>{{ b.label }}
+  <span class="dim">{{ b.axis }}</span></span>
+  <b class="dim">{{ b.seen | num }}건 중 0건</b></div>
+{% endfor %}
+</div>
+{% endif %}
+
 <h2>왜 {% if v.rank %}{{ v.rank }}순위{% endif %}{% if !v.rank %}이 등급인가{% endif %}</h2>
 {% if v.strengths %}
 <p><b>강점</b>{% for s in v.strengths %}<span class="chip-good">{{ s }}</span>{% endfor %}</p>

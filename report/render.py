@@ -32,6 +32,47 @@ def _labels(root: str = ".") -> dict:
         return json.load(f)
 
 
+def _site_blind_axes(conn, site, calc_version: str, lab: dict) -> tuple:
+    """★ 이 사이트가 ★ **한 매물도 못 채운 축**을 낸다 (마스터 지시 08-27).
+
+    ★★ 마스터 — 「★ 렉서스 보증 두 축 0% — ★ `/why` 에
+      ★ ★ 「이 축은 렉서스에서 ★ **아무도 안 준다**」로 내라」
+    ★★ ★ 「우리가 안 받는다」와 ★ 「사이트가 안 준다」는 ★ 화면에서 같아 보인다 —
+      ★ ★ 그래서 ★ **한 매물도 없다**는 것을 ★ 재서 말한다.  ★ 지어내지 않는다
+    ★★ ★ 「확인 안 됨」은 ★ `value` 가 아니라 ★ `source` 에 있다
+      (`config/unknown_split.json` — ★ 실측 08-21).  ★ 그래서 source 로 센다
+    ★ 쿼리 ★ 하나다 — ★ 매물마다 부르지 않는다 (V11-34)
+    """
+    if not site:
+        return ()
+    import json as _j
+    import os as _o
+
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    path = _o.path.join(root, "config", "unknown_split.json")
+    unk = {}
+    if _o.path.isfile(path):
+        with open(path, encoding="utf-8") as f:
+            unk = {a: set(v.get("unknown") or [])
+                   for a, v in (_j.load(f).get("axes") or {}).items()}
+    # ★ 어느 축에나 ★ 「그 사이트가 안 준다」는 뜻인 것
+    common = {"missing", "site_unavailable"}
+    got: dict = {}
+    for axis, source, n in conn.execute(
+        "SELECT a.axis, COALESCE(a.source,''), COUNT(*)"
+        "  FROM result_axis a JOIN core_listing l ON l.listing_id=a.listing_id"
+        " WHERE l.site=? AND a.calc_version=? GROUP BY 1, 2",
+        (site, calc_version)
+    ):
+        cell = got.setdefault(axis, [0, 0])
+        cell[0] += n
+        if source not in (unk.get(axis, set()) | common):
+            cell[1] += n
+    return tuple(
+        {"axis": a, "label": lab.get(a, a), "seen": n}
+        for a, (n, filled) in sorted(got.items()) if n and not filled)
+
+
 def _stamp(conn, lid: str, calc_version: str) -> VersionStamp:
     row = conn.execute(
         "SELECT l.parse_version, s.dict_version, s.calc_version, s.calculated_at "
@@ -306,8 +347,14 @@ def _purchase_costs(conn, listing_id: int, site, price_won, target_key,
 
 def render_listing(conn: sqlite3.Connection, listing_id: int,
                    calc_version: str, fin_cfg: dict, policy: dict,
-                   root: str = ".") -> ScoreView:
-    """L1 — 왜 이 점수인가.  축별 source · prio 를 반드시 낸다."""
+                   root: str = ".", site_blind: bool = False) -> ScoreView:
+    """L1 — 왜 이 점수인가.  축별 source · prio 를 반드시 낸다.
+
+    ★★ `site_blind` — ★ 「이 사이트가 안 주는 축」을 함께 잰다 (마스터 지시 08-27).
+      ★ ★ 쿼리가 ★ **하나 는다** — ★ 그것을 내는 화면(`/why`)만 켠다.
+        ★ ★ `/detail` 은 ★ 그 절이 없다 — ★ 켜면 ★ `V11-34` 상한(27)을 넘는다
+        (실측 08-27 — ★ 28 이 됐다)
+    """
     lab = _labels(root)["AXIS_LABELS"]
     _why = _why_cheap_of(conn, listing_id, root)
     head = conn.execute(
@@ -372,6 +419,11 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         market_pos=_market_pos(conn, listing_id, root),
         finance=build_finance(head[1], fin_cfg, head[0]),
         pending_items=tuple(pending), component_count=len(axes),
+        # ★★★ 「이 축은 이 사이트에서 ★ 아무도 안 준다」 (마스터 지시 08-27).
+        #   ★ f-table ⑤ 다 — ★ 결함이 아니라 ★ 규격이 그렇게 정해 놨다.
+        #   ★ ★ 지어내지 않는다 — ★ **재서** 낸다 (`_site_blind_axes`)
+        site_blind=(_site_blind_axes(conn, head[15], calc_version, lab)
+                    if site_blind else ()),
         grade_earned=float(head[11] or 0), grade_base=float(head[12] or 0),
         # ★ 「안 받아서 0점」은 확인한 것이 아니다 (개정 325)
         confirmed_points=float(head[13] or 0),
