@@ -212,10 +212,20 @@ def classify_invariant_change(conn, lid: str, field: str, old, new,
         if a and b and a != b:
             return CAUSE_REPLACED
     # ④ 같은 필드가 이번 실행에 여럿 바뀌었는가
+    # ★★★ 08-28 — ★ 규격은 「★ **동시** 발생 건수를 본다」다 (STEP 29 판별 ②).
+    #   ★★ ★ `_today(parsed)` 는 ★ `parsed` 에 `last_seen`·`first_seen` 이 없으면
+    #     ★ ★ **빈 글자**를 돌려준다.  ★ `S4` 가 넘기는 `parsed` 가 그렇다 —
+    #     ★ ★ 그러면 ★ `changed_at >= ''` 이라 ★ **역사 전체를 센다.**
+    #   ★★ ★ 실측 08-28 — ★ 엔카 봉투 전 기간에 ★ 색이 바뀐 매물은 ★ **2건뿐**인데
+    #     ★ ★ 누적 4건에 ★ 이번 둘이 더해져 ★ 문턱 5를 넘어 ★ `site_schema_change`
+    #       ★ ★ 로 잘못 갈렸고 ★ `S4` 가 통째로 멈췄다.
+    #     ★ ★ 시간이 갈수록 ★ **반드시** 넘는다 — ★ 누적은 「동시」가 아니다
+    #   ★ 관측 시각이 있으면 그것을 쓴다 — ★ 이 함수가 이미 받고 있다
+    since = _today(parsed) or str(observed_at)[:10]
     n = conn.execute(
         "SELECT COUNT(DISTINCT listing_id) FROM core_listing_change"
         " WHERE field = ? AND change_kind = 'invariant_violation'"
-        " AND changed_at >= ?", (field, _today(parsed))).fetchone()[0]
+        " AND changed_at >= ?", (field, since)).fetchone()[0]
     if n >= _schema_change_min():
         return CAUSE_SCHEMA
     # ① 이전 원문을 실제로 읽어 본다.  ★ 못 읽으면 분류하지 않는다 —
@@ -262,8 +272,11 @@ def _source_history(conn, source_id, key: str) -> list:
         return []
     out: dict = {}
     for at, body in conn.execute(
+        # ★★ 08-28 — ★ `site` 를 가린다.  ★ `raw_response` 에 ★ 엔카 말고도
+        #   ★ 목록 봉투가 들어온다 (명령서 3-2) — ★ 남의 봉투를 읽으면
+        #   ★ ★ 「이전 원문」이 ★ 엉뚱한 것이 된다 (`S46-78` 과 같은 자리다)
         "SELECT fetched_at, body FROM raw_response"
-        " WHERE endpoint='list' AND status='ok'"
+        " WHERE endpoint='list' AND status='ok' AND site='encar'"
         " ORDER BY id DESC LIMIT ?", (_lookback(),)
     ):
         try:
@@ -359,6 +372,21 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
                 # ★ 원문이 실제로 바뀌었다 (딜러 오기입 정정).
                 #   조치는 「변경 수용 · 이력 기록」이다 (STEP 29 ②)
                 continue
+            if cause in (CAUSE_PARSE, CAUSE_REPLACED):
+                # ★★★ 08-28 — ★ 규격 STEP 29 의 ★ **조치 표**를 따른다.
+                #   ★ ① 파싱 오류  → 「파서 수정 · 재파싱」
+                #   ★ ③ 매물 교체  → 「별도 매물로 분리」
+                #   ★ ④ 스키마 변경 → 「★ **수집 중단**」
+                #   ★★ ★ 「수집 중단」은 ★ **④ 하나뿐**이다.
+                #     ★ ★ 그런데 코드는 ★ ①③ 에도 ★ 통째로 멈추고 있었다 —
+                #     ★ ★ 실측 08-28 — ★ 매물 하나(5980)의 색 하나 때문에
+                #       ★ ★ `S4` 가 멈춰 ★ **08-24T07:40 뒤로 아무것도 안 실렸다.**
+                #       ★ ★ 마스터께서 브라우저로 넣어 주신 봉투 931건이
+                #         ★ ★ 그대로 쌓여만 있었다 (수입 3,013건이 0건이었다)
+                #   ★★ ★ 그 매물만 ★ **건너뛴다** — ★ 값을 덮어쓰지 않는다
+                #     (금지 「원인 분류 없이 새 값으로 덮어쓰는 것」).
+                #     ★ ★ 이력은 위에서 이미 남겼다 — ★ 사람이 볼 수 있다
+                return 0
             raise ValidationError(
                 f"불변 필드 변경: {field} {old[field]!r} → {parsed[field]!r} "
                 f"— 원인 {cause or '분류 못 함'}. 이 원인은 사람이 봐야 한다",

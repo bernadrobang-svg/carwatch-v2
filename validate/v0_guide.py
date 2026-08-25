@@ -1643,6 +1643,73 @@ def s46_56_accident_split() -> tuple[bool, str]:
                   + (" — " + " · ".join(sample) if sample else ""))
 
 
+
+def s46_91_raw_vs_stored() -> tuple[bool, str]:
+    """★★★ 받은 원문 수와 ★ 저장 수가 ★ 열 배 넘게 벌어지면 실패 (마스터 지시 08-28).
+
+    ★★ 마스터 — 「★ 난 이미 엔카 수입차 목록을 ★ 어제부터 쭉 다 받아 줬어.
+      ★ ★ **수집 반영 안 하는 것은 너희들 문제야**」
+    ★★★ ★ 실측 08-28 — ★ 브라우저가 넣어 준 봉투 931건에 ★ 수입 3,013건이 있었는데
+      ★ ★ `core_listing` 에 ★ **0건**이었다.  ★ `S4` 가 매물 하나의 불변 가드에
+        ★ ★ 걸려 ★ **08-24T07:40 뒤로 통째로 멈춰** 있었다.
+      ★ ★ 어떤 검사도 ★ 그것을 안 말했다 — ★ 이 검사가 그 자리다
+    ★ 재는 법 — ★ 최근 목록 봉투를 펼쳐 ★ 매물번호를 모으고 ★ `core_listing` 과 견준다
+    ★ ★ 봉투가 없는 사이트는 ★ 안 센다 (★ 「잴 것이 없다」와 ★ 「0건」은 다르다)
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        row = conn.execute(
+            "SELECT MAX(fetched_at) FROM raw_response WHERE endpoint='list'"
+            " AND status='ok'").fetchone()
+        if not row or not row[0]:
+            return True, "목록 봉투가 없다 — 잴 것이 없다"
+        # ★ 마지막 봉투가 온 날부터 이틀치를 본다 — ★ 옛 봉투는 이미 실렸다
+        from datetime import datetime, timedelta
+        try:
+            last = datetime.fromisoformat(str(row[0]))
+        except ValueError:
+            return True, "봉투 시각을 못 읽었다 — 잴 것이 없다"
+        since = (last - timedelta(days=1)).isoformat()
+        seen: dict = {}
+        for site, body in conn.execute(
+            "SELECT site, body FROM raw_response WHERE endpoint='list'"
+            " AND status='ok' AND fetched_at >= ? AND body IS NOT NULL",
+            (since,)
+        ):
+            try:
+                doc = json.loads(body)
+            except (ValueError, TypeError):
+                continue          # ★ JSON 이 아닌 목록(HTML)은 안 센다
+            items = doc.get("SearchResults") if isinstance(doc, dict) else None
+            for one in (items or []):
+                if isinstance(one, dict) and one.get("Id"):
+                    seen.setdefault(site, set()).add(str(one["Id"]))
+        if not seen:
+            return True, "펼칠 봉투가 없다 — 잴 것이 없다"
+        bad, said = [], []
+        for site, ids in sorted(seen.items()):
+            marks = ",".join("?" * len(ids))
+            got = conn.execute(
+                f"SELECT COUNT(DISTINCT source_id) FROM core_listing"
+                f" WHERE site=? AND source_id IN ({marks})",
+                (site, *ids)).fetchone()[0]
+            said.append(f"{site} 봉투 {len(ids):,} → 저장 {got:,}")
+            # ★ 열 배 — ★ 마스터가 정하신 문턱이다
+            if got * 10 < len(ids):
+                bad.append(f"{site} — 봉투 {len(ids):,}건인데 저장 {got:,}건")
+    finally:
+        conn.close()
+    if bad:
+        return False, ("★ 받았는데 안 실렸다 — " + " · ".join(bad[:3])
+                       + " (★ S4 가 멈춰 있는지 본다)")
+    return True, " · ".join(said[:4])
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1686,6 +1753,7 @@ CHECKS = (
      s46_87_request_site_matches_listing),
     ("S46-88", "엔카가 막히면 화면이 까닭을 말하는가",
      s46_88_encar_blocked_banner),
+    ("S46-91", "받은 원문이 저장까지 갔는가", s46_91_raw_vs_stored),
     # ★ 셋은 ★ **숫자를 내는 검사**다 — ★ 판정을 바꾸지 않는다 (명령서 45-3)
     ("S46-54", "짝 중 등급이 두 칸 갈린 것", s46_54_grade_two_step, "warn"),
     ("S46-55", "짝 중 값이 30% 갈린 것", s46_55_price_gap_30, "warn"),
