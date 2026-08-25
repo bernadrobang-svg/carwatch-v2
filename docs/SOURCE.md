@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 174개 · 총 60,225줄
+파일 174개 · 총 60,337줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -10,8 +10,8 @@
 | `report/screens/build.py` | 3,267 | 화면 데이터 생성. |
 | `web/views.py` | 2,672 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,265 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `store/core.py` | 1,595 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
-| `validate/v0_guide.py` | 1,563 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `validate/v0_guide.py` | 1,622 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `store/core.py` | 1,605 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,510 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,479 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -38,8 +38,8 @@
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 514 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
+| `web/app.py` | 508 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `contracts.py` | 466 | 계층 간 계약 — Protocol · DTO. |
-| `web/app.py` | 465 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `run.py` | 412 | CarWatch v2 진입점. |
 | `tools/collect_kbchachacha.py` | 401 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `report/views.py` | 391 | 리포트 DTO (L9). |
@@ -207,16 +207,16 @@ _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  l
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:495  _list_observed_source_check:590  _facet_reconcile_check:620  _record_mismatch_check:664  _curve_table_check:694  _special_null_check:761  _grade_base_checks:789  _checks_cfg:882  _labels_cfg:896  _unknown_mark_checks:904  _grade_cut_checks:955  _points_cap_checks:1065  _worse_of_checks:1117  _checks_json:1179  _value_curve_checks:1190  _group_sum_checks:1280  _mapped_other_check:1391  _denominator_check:1418  _core_axis_check:1446  _rental_cross_check:1467  _why_cheap_check:1505  _source_before_value_check:1546  _absolute_cut_check:1581  _spec_files:1611  _confirm_ratio_check:1621  _warranty_checks:1671  _spec_axis_check:1705  _site_axis_checks:1746  _rendered_why:1795  _rendered_listings:1805  _fill_gap_check:1815  _points_sum_check:1848  _market_gap_check:1865  _bonus_checks:1921  _trim_price_check:2025  run:2073  _shuffle_check:2208  _halt_dict_check:2233  _ensure_tmp:2262
 ```
 
-### `store/core.py` — 1,595줄
+### `validate/v0_guide.py` — 1,622줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:514  resolve_vehicle_id:540  merge_conflict:572  upsert_vehicle:583  upsert_dealer:604  upsert_child:631  _flag:652  _not_join_months:666  state_counts:691  current_versions:721  diagnosis_of:751  target_counts:764  top_target:771  vehicle_of:776  collect_scale:783  our_fault:803  catalog_coverage:812  _walk:856  _sample_bodies:872  hits_of:885  key_seen:904  stored_hits:919  sample_bodies:935  observed:957  known_leaves:995  has_unclassified:1010  classify_unclassified:1017  _card_limit:1060  _value_chars:1065  _admin_cfg:1070  unclassified_cards:1087  _peek:1143  _short:1190  _blocking_paths:1201  _raw_rows_max:1221  used_endpoints:1231  raw_sections:1240  _flatten:1279  option_diff:1303  _option_names:1341  blocking_keys:1357  full_hits:1375  axis_paths_empty:1400  blocking_rows:1437  record_mismatch_sql:1499  record_mismatch_count:1505  relist_counts:1531  listing_models:1548  filter_options:1568  site_counts:1585
+_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  s46_77_kb_is_our_targets_only:1273  s46_78_encar_only_paths_are_scoped:1328  s46_87_request_site_matches_listing:1370  s46_88_encar_blocked_banner:1439  _as_check:1549  results:1563  save:1588  run:1599
 ```
 
-### `validate/v0_guide.py` — 1,563줄
+### `store/core.py` — 1,605줄
 
 ```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  s46_77_kb_is_our_targets_only:1273  s46_78_encar_only_paths_are_scoped:1328  s46_87_request_site_matches_listing:1370  _as_check:1490  results:1504  save:1529  run:1540
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:239  _source_history:253  _schema_change_min:279  _current:293  _today:299  upsert_core:303  mark_gone:388  load_snapshot:405  build_identities:514  resolve_vehicle_id:540  merge_conflict:572  upsert_vehicle:583  upsert_dealer:604  upsert_child:631  _flag:652  _not_join_months:666  state_counts:691  current_versions:731  diagnosis_of:761  target_counts:774  top_target:781  vehicle_of:786  collect_scale:793  our_fault:813  catalog_coverage:822  _walk:866  _sample_bodies:882  hits_of:895  key_seen:914  stored_hits:929  sample_bodies:945  observed:967  known_leaves:1005  has_unclassified:1020  classify_unclassified:1027  _card_limit:1070  _value_chars:1075  _admin_cfg:1080  unclassified_cards:1097  _peek:1153  _short:1200  _blocking_paths:1211  _raw_rows_max:1231  used_endpoints:1241  raw_sections:1250  _flatten:1289  option_diff:1313  _option_names:1351  blocking_keys:1367  full_hits:1385  axis_paths_empty:1410  blocking_rows:1447  record_mismatch_sql:1509  record_mismatch_count:1515  relist_counts:1541  listing_models:1558  filter_options:1578  site_counts:1595
 ```
 
 ### `collect/runner.py` — 1,510줄
@@ -375,16 +375,16 @@ _py_files:48  _checks_in_code:73  _guide_checks:119  _checks_in_docs:152  last_r
 check:21  test_routes:28  test_template:77  test_no_logic_in_template:118  test_static_escape:133  test_session_cookie:145  test_error_page:163  test_layout:190  test_filters:219  test_empty_state:242  test_menu_by_role:269  test_guard_and_csrf:290  _call:337  test_screens_render:354  test_sketch_match:445  test_account_policy:460
 ```
 
+### `web/app.py` — 508줄
+
+```
+menu_items:22  _tip:104  _label:109  empty_state:120  banner_of:139  _encar_blocked:185  _list_stale:216  static_version:242  build_page:270  check_post:291  redirect:313  take_flashes:333  _display_now:346  make_app:372  _Denied:484  build_context:492  _title_of:507
+```
+
 ### `contracts.py` — 466줄
 
 ```
 Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:230  Account:249  require_role:266  RunContext:283  StepReport:303  ResumePoint:327  clean_vin:348  total_of:359  RegressionReport:372  json_paths:383  shape_ok:431  shape_violations:464
-```
-
-### `web/app.py` — 465줄
-
-```
-menu_items:22  _tip:104  _label:109  empty_state:120  banner_of:139  _list_stale:173  static_version:199  build_page:227  check_post:248  redirect:270  take_flashes:290  _display_now:303  make_app:329  _Denied:441  build_context:449  _title_of:464
 ```
 
 ### `run.py` — 412줄

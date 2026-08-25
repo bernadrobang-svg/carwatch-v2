@@ -705,8 +705,18 @@ def state_counts(conn: sqlite3.Connection) -> dict:
                      "WHERE grade='NOT_RATED'",
         # ★ 목록이 언제 들어왔나 (STEP 136i · 개정 316).
         #   가격 변동은 목록에서 온다 — 목록이 멈추면 변동이 멈춘다
+        # ★★★ 08-27 — ★ **사이트를 가린다.**  ★ 배너 글이 「엔카 목록」이다.
+        #   ★★ 실측 — ★ 원문 보관을 켠 뒤 ★ 렉서스 목록(04:28)이 들어와
+        #     ★ ★ 엔카 목록(전날 07:54)이 ★ **신선한 것처럼 보였다** —
+        #     ★ ★ 그래서 ★ 「갱신되지 않았습니다」 배너가 ★ 안 떴다
         "list_at": "SELECT COALESCE(MAX(fetched_at),'') FROM raw_response "
-                   "WHERE endpoint='list' AND status='ok'",
+                   "WHERE endpoint='list' AND status='ok' AND site='encar'",
+        # ★★★ 엔카가 ★ 우리 회선을 막은 마지막 때 (마스터 지시 08-27 ⓑ).
+        #   ★ `407` 은 ★ 고장이 아니다 — ★ 규격이다 (`ENCAR_API.md:48`
+        #     「서울 IP 407 · 브라우저 수집」).  ★ 그러나 ★ 화면이 ★ 까닭을 말해야 한다
+        "encar_407_at": "SELECT COALESCE(MAX(requested_at),'') "
+                        "FROM audit_request WHERE site='encar' "
+                        "AND kind='list' AND http_code=407",
     }
     # ★ 넷을 한 번에 센다 — 화면 한 쪽의 쿼리 수를 줄인다 (V11-34 · B-2)
     try:

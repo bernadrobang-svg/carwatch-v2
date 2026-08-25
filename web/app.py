@@ -148,6 +148,18 @@ def banner_of(n: dict, account) -> Banner | None:
         return Banner("pending", "아직 수집하지 않았습니다", act)
     # ★ 조용히 옛 목록으로 판정하지 않는다 (STEP 136i · 개정 316).
     #   미분류보다 먼저 낸다 — 목록이 멈추면 그 뒤 숫자가 다 옛것이다
+    # ★★★ 엔카가 막혀 있으면 ★ **까닭을 말한다** (마스터 지시 08-27 ⓑ · S46-88).
+    #   ★ 「갱신되지 않았습니다」만으로는 ★ 무엇을 하면 되는지 모른다.
+    #   ★★ `407` 은 ★ 고장이 아니다 — ★ 규격이다 (`ENCAR_API.md:48`).
+    #     ★ ★ 우회하지 않는다 (금지 13) — ★ 마스터가 브라우저로 눌러 주셔야 한다
+    #   ★ 이틀을 넘겨야 낸다 — ★ 하루짜리 흔들림에 ★ 배너를 띄우지 않는다
+    blocked = _encar_blocked(n.get("encar_407_at"), n.get("list_at"))
+    if blocked is not None:
+        return Banner(
+            "stale",
+            f"엔카가 막혀 있습니다 — {blocked:.0f}일째입니다",
+            "관리 ▸ 수집에서 「브라우저 수집」을 눌러 주십시오",
+            href="/admin/collect", href_label="브라우저 수집")
     stale = _list_stale(n.get("list_at"))
     if stale is not None:
         return Banner(
@@ -168,6 +180,37 @@ def banner_of(n: dict, account) -> Banner | None:
                       "축별 미확정을 확인하십시오",
                       href="/notready", href_label="미판정 보기")
     return None
+
+
+def _encar_blocked(at407: str | None, list_at: str | None) -> float | None:
+    """엔카가 ★ 우리 회선을 막은 지 며칠인가 (마스터 지시 08-27 ⓑ).
+
+    ★★ 재는 법 — ★ `407` 을 마지막으로 받은 때가 ★ 목록을 마지막으로 받은 때보다
+      ★ ★ **뒤**여야 한다.  ★ 그래야 「지금도 막혀 있다」다.
+      ★ ★ 그 뒤로 목록이 들어왔으면 ★ 마스터가 눌러 주신 것이다 — ★ 안 낸다
+    ★ 며칠은 ★ **목록이 마지막으로 들어온 때**부터 센다 —
+      ★ 「막힌 지 며칠」이 아니라 ★ 「목록이 며칠째 없나」가 사람이 겪는 것이다
+    ★ 문턱은 ★ `config/web.json` 의 `encar_blocked_days` 다.  ★ 코드에 안 박는다
+    """
+    import json as _json
+    from datetime import datetime as _dt
+
+    if not at407:
+        return None
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "web.json"),
+              encoding="utf-8") as f:
+        limit = float(_json.load(f)["encar_blocked_days"])
+    try:
+        blocked_at = _dt.fromisoformat(at407)
+        since = _dt.fromisoformat(list_at) if list_at else blocked_at
+    except ValueError:
+        return None
+    # ★ 막힌 뒤에 목록이 들어왔으면 ★ 이제 안 막힌 것이다
+    if since > blocked_at:
+        return None
+    days = (_dt.now(since.tzinfo) - since).total_seconds() / SECONDS_PER_DAY
+    return days if days > limit else None
 
 
 def _list_stale(at: str | None) -> float | None:

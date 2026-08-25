@@ -8,14 +8,13 @@
     "setup"
   ],
   "screens": {
-    "collect": "/admin/run",
-    "web": "/",
     "admin create": "/admin/users",
-    "setup": "/admin/users",
+    "collect": "/admin/run",
     "dry": "/admin/run",
-    "migrate": "/admin/tools",
     "export": "/admin/tools",
+    "migrate": "/admin/tools",
     "report": "/admin/tools",
+    "setup": "/admin/users",
     "tools/build_dict.py": "/admin/dict",
     "tools/check_all.py": "/admin/audit",
     "tools/check_screens.py": "/admin/audit",
@@ -23,6 +22,7 @@
     "tools/check_src.py": "/admin/audit",
     "tools/classify_fields.py": "/admin/registry",
     "tools/export_cli.py": "/admin/tools",
+    "tools/fill_raw_run_id.py": "/admin/tools",
     "tools/inspect_dict.py": "/admin/dict",
     "tools/inspect_facet.py": "/admin/api",
     "tools/inspect_requests.py": "/admin/requests",
@@ -32,7 +32,8 @@
     "tools/report_cli.py": "/admin/tools",
     "tools/run_tests.py": "/admin/audit",
     "tools/setup_check.py": "/admin/tools",
-    "tools/sync_registry.py": "/admin/registry"
+    "tools/sync_registry.py": "/admin/registry",
+    "web": "/"
   },
   "_pending": "★ 화면을 아직 안 정한 것. 가이드 판단 대기다 — 개발측이 「이 화면이면 되겠지」로 채우지 않는다 (규칙 2). V11-45 는 이 목록을 실패로 세지 않되, 여기에도 screens 에도 없는 것이 새로 생기면 문다",
   "pending": [
@@ -53,7 +54,6 @@
     "tools/daily_check.py",
     "tools/daily_enqueue.py",
     "tools/deploy_check.py",
-    "tools/fill_raw_run_id.py",
     "tools/fold_out_of_scope.py",
     "tools/gen_table.py",
     "tools/light_check.py",

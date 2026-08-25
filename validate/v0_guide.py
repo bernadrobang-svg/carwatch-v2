@@ -1435,6 +1435,63 @@ def s46_87_request_site_matches_listing(db_path=None) -> tuple[bool, str]:
     return True, f"run {rid} 의 요청 {seen:,}건이 다 제 사이트를 부른다"
 
 
+
+def s46_88_encar_blocked_banner() -> tuple[bool, str]:
+    """★★★ 엔카가 막히면 ★ 화면이 ★ **까닭과 할 일**을 말하는가 (마스터 지시 08-27 ⓑ).
+
+    ★★ 마스터 — 「★ 407 이 이틀 넘으면 ★ 현황 맨 위에
+      ★ ★ 「엔카가 막혀 있습니다 — 관리 ▸ 수집에서 「브라우저 수집」을 눌러 주십시오」.
+      ★ ★ **무엇을 하면 되는지까지 적어라**」
+    ★★ `407` 은 ★ 고장이 아니다 — ★ 규격이다 (`ENCAR_API.md:48`
+      「서울 IP 407 · 브라우저 수집」).  ★ 우회하지 않는다 (금지 13)
+    ★★ ★ 글자가 코드에 있는 것과 ★ 뜨는 것은 ★ 다르다 —
+      ★ ★ **판단 함수를 불러** ★ 이틀 넘으면 뜨고 ★ 하루면 안 뜨는지 본다
+    ★ 문턱은 ★ `config/web.json` `encar_blocked_days` 다 — ★ 코드에 안 박는다
+    """
+    import importlib
+
+    cfg = ROOT / "config" / "web.json"
+    if not cfg.is_file():
+        return False, "config/web.json 이 없다"
+    conf = json.loads(_read(cfg))
+    if "encar_blocked_days" not in conf:
+        return False, "config/web.json 에 encar_blocked_days 가 없다"
+    limit = float(conf["encar_blocked_days"])
+    try:
+        app = importlib.import_module("web.app")
+        judge = app._encar_blocked          # noqa: SLF001
+    except (ImportError, AttributeError):
+        return False, "web.app._encar_blocked 가 없다"
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
+
+    def iso(days):
+        return (now - timedelta(days=days)).isoformat()
+
+    bad = []
+    # ★ ① 문턱을 넘으면 ★ 떠야 한다
+    if judge(iso(0.1), iso(limit + 1)) is None:
+        bad.append(f"{limit + 1}일 막혔는데 안 뜬다")
+    # ★ ② 문턱 안이면 ★ 안 떠야 한다
+    if judge(iso(0.1), iso(limit - 0.5)) is not None:
+        bad.append(f"{limit - 0.5}일인데 뜬다 (문턱 {limit}일)")
+    # ★ ③ 막힌 뒤에 목록이 들어왔으면 ★ 안 떠야 한다
+    if judge(iso(limit + 1), iso(0.1)) is not None:
+        bad.append("목록이 그 뒤에 들어왔는데도 뜬다")
+    # ★ ④ 407 이 없으면 ★ 안 떠야 한다
+    if judge(None, iso(limit + 1)) is not None:
+        bad.append("407 이 없는데 뜬다")
+    # ★ ⑤ 글에 ★ 「무엇을 하면 되는지」가 있는가
+    said = _read(ROOT / "web" / "app.py")
+    for word in ("엔카가 막혀 있습니다", "브라우저 수집", "/admin/collect"):
+        if word not in said:
+            bad.append(f"배너 글에 「{word}」가 없다")
+    if bad:
+        return False, "★ 막힘 배너가 어긋난다 — " + " · ".join(bad[:4])
+    return True, (f"{limit}일 넘으면 뜨고 · 안이면 안 뜨고 · "
+                  "목록이 들어오면 사라진다 · 할 일을 적는다")
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -1476,6 +1533,8 @@ CHECKS = (
     ("S46-78", "엔카 전용 경로가 좁혀 있는가", s46_78_encar_only_paths_are_scoped),
     ("S46-87", "부른 주소가 그 매물의 사이트인가",
      s46_87_request_site_matches_listing),
+    ("S46-88", "엔카가 막히면 화면이 까닭을 말하는가",
+     s46_88_encar_blocked_banner),
 )
 
 
