@@ -1,7 +1,7 @@
 # K카 API — 목록 · 상세 정본
 
 ```
-version  SPEC-2026.08.25-r727
+version  SPEC-2026.08.27-r763
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 626 · 실측 08-24
 checks   S46-5 · S46-31
@@ -9,7 +9,7 @@ checks   S46-5 · S46-31
 ★ 이 문서는 ★ **그 사이트가 무엇을 주는가**만 적는다.  ★ 판정은 ★ `f-table` 이 한다 (가이드역할 ㉺)
 
 
-`SPEC-2026.08.22-r485` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
+`SPEC-2026.08.27-r763` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
 **★ 개정 485 — 마스터 확정 「상세를 받는다」. 개정 467·468(목록만)을 갈아엎는다**
 **★ 옛 `docs/KCAR_LIST_API.md` 는 이 파일에 합치고 지웠다 (원칙 1 — 고쳐라, 덧붙이지 마라)**
 
@@ -65,7 +65,7 @@ checks   S46-5 · S46-31
 ## ★ 그러므로 — ★ **전량 526건을 받아 거른다**
 
 ```
-★ ★ 다행히 ★ `mapi/bc/stockCar/list?pageSize=527` 이 ★ **전량을 준다**
+★ ★ 다행히 ★ `mapi/bc/stockCar/list?pageSize=1000` 이 ★ **전량을 준다**
 ★ ★ 526건이면 ★ 1초다.  ★ 좁힐 까닭이 ★ 크지 않다
 필수  ★ ★ **저장할 때 거른다** (`COLLECT_STRATEGY` 6장 ⓒ)
       ★ ★ 상세를 열어 ★ 차종이 안 맞으면 ★ `core_listing` 에 안 넣는다
@@ -87,7 +87,7 @@ checks   S46-5 · S46-31
 ## ★ 부르는 법
 
 ```
-GET  https://mapi.kcar.com/bc/stockCar/list?pageSize=527
+GET  https://mapi.kcar.com/bc/stockCar/list?pageSize=1000
      → 200 · ★ 961,752B · ★ 평문 JSON · ★ enc 없음 · ★ 헤더·토큰 불필요 · 1초
      → `data.listCount` = ★ 527   ★ 이것이 총건수다
      → ★ `carCd` ★ 527개 · ★ 중복 0
@@ -100,7 +100,7 @@ GET  https://mapi.kcar.com/bc/stockCar/list?pageSize=527
 | ★ 527 이상은 ★ 527 에서 멈춘다 | ★ `mnuftrCd` · `modelGrpCd` — ★ **차종 좁히기가 안 된다** |
 
 ```
-필수  ★ 527건을 ★ 다 받아 ★ 우리 쪽에서 거른다.  ★ 527이면 부담이 없다
+필수  ★ 472건 (★ 실측 08-27 · ★ 매물은 날마다 바뀐다)을 ★ 다 받아 ★ 우리 쪽에서 거른다.  ★ 527이면 부담이 없다
 필수  ★ `listCount` 를 ★ 총건수로 읽는다 — ★ 쪽마다 더하지 마라
 ```
 
@@ -385,7 +385,7 @@ EC61398174 · EC61385373 · EC61391672
 
 ```
 ★★★ ★ **08-24 — ★ 이 절은 ★ 끝났다.  ★ 0a장이 답이다**
-   ★ ★ `mapi.kcar.com/bc/stockCar/list?pageSize=527` 로 ★ **527건이 열린다**
+   ★ ★ `mapi.kcar.com/bc/stockCar/list?pageSize=1000` 로 ★ **527건이 열린다**
    ★ ★ 「마스터가 `carCd` 를 주신다」는 ★ **폐기다** (요구 추적표 79번)
 금지  ★ `enc` 를 푸는 것 · ★ 우회를 만드는 것 (그대로다)
 ```
