@@ -32,7 +32,9 @@
     "fail_streak_limit": 20,
     "page_size": 20,
     "detail_refresh_days": 7,
-    "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다"
+    "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다",
+    "brand_scope": "all",
+    "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 9종 — 종합"
   },
   "kcar": {
     "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",
@@ -54,7 +56,9 @@
       "Referer": "https://m.kcar.com/"
     },
     "_stock_list_note": "★ 개정 626 (마스터가 찾으심) — ★ 목록이 뚫렸다.  ★ enc 없음 · 헤더 불필요. ★ `data.listCount` 가 총건수다 — ★ 쪽마다 더하지 않는다. ★ `pageSize` 만 먹는다 — ★ `mnuftrCd`·`modelGrpCd` 는 안 먹으니 ★ 전량 받아 우리가 거른다",
-    "stock_page_size": 1000
+    "stock_page_size": 1000,
+    "brand_scope": "all",
+    "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 20종 — 종합"
   },
   "kia_cpo": {
     "_ref": "docs/KIA_CPO_API.md · 실측 2026-08-22 서버에서 직접 · 표본 30건",
@@ -74,7 +78,11 @@
       "Accept": "application/json",
       "Referer": "https://cpo.kia.com/products/",
       "x-referer-pathname": "/products/"
-    }
+    },
+    "brand_scope": [
+      "기아"
+    ],
+    "_brand_scope_why": "[실측 08-26] site_manufacturer 기아 하나 · 기아 인증중고"
   },
   "hyundai_cert": {
     "_ref": "docs/HYUNDAI_CERTIFIED_API.md · 실측 2026-08-22 · 표본 30건",
@@ -95,7 +103,12 @@
       "Content-Type": "application/json",
       "Referer": "https://certified.hyundai.com/m/search/vehicle?srchType=srchFilter",
       "X-Requested-With": "XMLHttpRequest"
-    }
+    },
+    "brand_scope": [
+      "현대",
+      "제네시스"
+    ],
+    "_brand_scope_why": "[실측 08-26] 제네시스 G80 174건이 들어와 있다 — 제네시스도 준다"
   },
   "heydealer": {
     "_ref": "docs/HEYDEALER_API.md 0장 · 명령서 37 · 실측 2026-08-24 (개정 694)",
@@ -116,7 +129,9 @@
       "app-os": "web"
     },
     "token_api_url": "https://api.heydealer.com/v2/customers/web/initialize_app/",
-    "token_referrer": "https://www.heydealer.com/"
+    "token_referrer": "https://www.heydealer.com/",
+    "brand_scope": "all",
+    "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합"
   },
   "kbchachacha": {
     "_ref": "docs/KBCHACHACHA_API.md · 실측 2026-08-22 · 표본 25건",
@@ -142,7 +157,9 @@
     },
     "end_bytes": 3585,
     "end_mark": "차량이 없습니다",
-    "bot_bytes": 2759
+    "bot_bytes": 2759,
+    "brand_scope": "all",
+    "_brand_scope_why": "[실측 08-26] site_manufacturer 3종 · 종합 사이트다"
   },
   "bobaedream": {
     "_ref": "docs/BOBAEDREAM_API.md · 실측 2026-08-24",
@@ -157,7 +174,9 @@
     "interval_sec": 1.2,
     "headers": {
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-    }
+    },
+    "brand_scope": "all",
+    "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합"
   },
   "reborncar": {
     "base_url": "https://www.reborncar.co.kr",
@@ -172,7 +191,9 @@
     "headers": {
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
       "Accept": "text/html,application/xhtml+xml"
-    }
+    },
+    "brand_scope": "all",
+    "_brand_scope_why": "★ [미확인 08-26] 종합으로 두었다 — 가이드 확인 청함 (S46-96)"
   },
   "lexus_certified": {
     "base_url": "https://certified.lexus.co.kr",
@@ -188,7 +209,11 @@
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
       "Referer": "https://certified.lexus.co.kr/",
       "Accept": "application/json"
-    }
+    },
+    "brand_scope": [
+      "렉서스"
+    ],
+    "_brand_scope_why": "★ [미확인 08-26] 렉서스 인증중고 — 가이드 확인 청함"
   },
   "volvo_selekt": {
     "base_url": "https://selekt.volvocars.co.kr",
@@ -203,7 +228,11 @@
     "headers": {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
       "Referer": "https://selekt.volvocars.co.kr/"
-    }
+    },
+    "brand_scope": [
+      "볼보"
+    ],
+    "_brand_scope_why": "★ [미확인 08-26] 볼보 셀렉트 — 가이드 확인 청함"
   },
   "bmw_bps": {
     "base_url": "http://www.bavarian-bps.co.kr",
@@ -217,6 +246,11 @@
     "interval_sec": 1.0,
     "headers": {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-    }
-  }
+    },
+    "brand_scope": [
+      "BMW"
+    ],
+    "_brand_scope_why": "★ [미확인 08-26] BMW BPS — 미니가 섞이는지 가이드 확인 청함"
+  },
+  "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2"
 }

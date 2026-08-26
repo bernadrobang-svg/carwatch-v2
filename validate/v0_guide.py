@@ -1644,6 +1644,113 @@ def s46_56_accident_split() -> tuple[bool, str]:
 
 
 
+def s46_90_pending_not_graded() -> tuple[bool, str]:
+    """★★★ 근거가 절반도 없는데 ★ 등급을 매기면 실패 (명령서 67장 · UI_REVIEW 18장).
+
+    ★★ 마스터 — 「★ 왜 수입차의 등급이 낮은 이유가 뭐야.  ★ 거의 D등급 이하인데」
+    ★★★ ★ 까닭은 ★ 차가 나빠서가 아니라 ★ **상세를 못 받아서**다 —
+      ★ ★ 실측 08-27 — ★ X3 264/910 · F · ★ G80 670/910 · A.
+        ★ ★ 사고 0/51 · 용도 0/22 · 자차 0/18 · 소유자 0/11 — ★ 넷 다 상세다
+    ★ 「근거 있는 축의 합」이 ★ 분모의 절반 아래면 ★ 등급 자리는 ★ 「판정 중」이다.
+      ★ ★ **F·G 로 내리지 않는다** — ★ 「모르는 것을 모른다고 낸다」(개정 325)
+    ★★ 분모는 ★ **910 그대로**다 (가이드 확정 08-25 · UI_REVIEW 18장
+      「근거 있는 축 N / 910」).  ★ 소모품처럼 채워질 수 없는 축을 분모에서 빼면
+      절반선이 447.5 로 내려가 ★ 근거 450 짜리 상세 없는 매물이 G 에 남는다
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    with open(ROOT / "config" / "scoring.json", encoding="utf-8") as f:
+        cut = float(json.load(f).get("pending_confirmed_ratio", 0.5))
+    with open(ROOT / "config" / "labels.json", encoding="utf-8") as f:
+        not_ranked = tuple(json.load(f)["GRADE_NOT_RANKED"])
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        ver = conn.execute(
+            "SELECT MAX(calc_version) FROM result_score").fetchone()
+        if not ver or not ver[0]:
+            return True, "판정본이 없다 — 잴 것이 없다"
+        marks = ",".join("'%s'" % g for g in not_ranked)
+        bad, worst = 0, None
+        for lid, conf, den, grade in conn.execute(
+            "SELECT s.listing_id, s.confirmed_points, s.denominator, s.grade"
+            " FROM result_score s WHERE s.calc_version=?"
+            f" AND s.grade NOT IN ({marks})",
+            (ver[0],)
+        ):
+            base = float(den or 0)
+            if base > 0 and float(conf or 0) < base * cut:
+                bad += 1
+                if worst is None:
+                    worst = f"{lid} {grade} {conf:.0f}/{base:.0f}"
+        if bad:
+            return False, (f"근거가 절반도 없는데 등급을 매긴 것 {bad:,}건 "
+                           f"(예: {worst}) — 「판정 중」으로 내라")
+        return True, f"등급을 낸 것은 모두 근거가 절반을 넘는다 (기준 {cut:.0%})"
+    finally:
+        conn.close()
+
+
+def _registrable(host: str) -> str:
+    """도메인의 뿌리.  ★ `api.encar.com` 과 `www.encar.com` 은 같은 곳이다.
+
+    ★ `co.kr` · `or.kr` 처럼 두 칸짜리 접미사는 세 칸을 뿌리로 본다
+    """
+    parts = [p for p in (host or "").lower().split(".") if p]
+    if len(parts) < 2:
+        return host or ""
+    two = {"co", "or", "ne", "go", "re", "pe", "com", "net", "org"}
+    if len(parts) >= 3 and parts[-2] in two and len(parts[-1]) <= 3:
+        return ".".join(parts[-3:])
+    return ".".join(parts[-2:])
+
+
+def s46_94_source_url_site_matches() -> tuple[bool, str]:
+    """★★★ 매물의 site 와 ★ 원문 주소의 도메인이 다르면 실패 (명령서 72장).
+
+    ★★ 마스터 실측 08-28 — ★ 「★ 원문으로 가는 문이 ★ **다 엔카로 간다**」
+      ★ ★ K카 매물 → `encar.com/dc/dc_cardetailview.do?carid=EC61384014`
+      ★ ★ 헤이딜러 매물 → `encar.com/…?carid=KlGjM5QO`  ← ★ 헤이딜러 코드다
+    ★★★ ★ **200 이 뜬다고 되는 게 아니다** — ★ 엔카는 ★ 모르는 carid 에도 200 을 준다.
+      ★ ★ `S46-87`(부른 주소가 그 매물의 사이트인가)과 ★ **같은 잣대**다
+    ★ 재는 법 — ★ `config/web.json` `site_detail_url` 의 꼴로 주소를 만들어
+      ★ ★ 그 도메인이 ★ `config/endpoints.json` 의 그 사이트 도메인과 같은가를 본다
+    ★ 못 잰 사이트(None)는 ★ **실패가 아니다** — ★ 「모른다」다.  ★ 링크를 안 낸다
+    """
+    from urllib.parse import urlparse
+
+    with open(ROOT / "config" / "web.json", encoding="utf-8") as f:
+        tpl = (json.load(f).get("site_detail_url") or {})
+    with open(ROOT / "config" / "endpoints.json", encoding="utf-8") as f:
+        eps = json.load(f)
+    if not tpl:
+        return False, "config/web.json 에 site_detail_url 이 없다 (명령서 72장)"
+    bad, unknown = [], []
+    for site, one in sorted(tpl.items()):
+        if not one:
+            unknown.append(site)
+            continue
+        want = _registrable(urlparse(
+            str((eps.get(site) or {}).get("base_url") or "")).hostname or "")
+        got = _registrable(urlparse(one.format(source_id="X")).hostname or "")
+        if not want:
+            bad.append(f"{site}: endpoints.json 에 base_url 이 없다")
+        elif got != want:
+            bad.append(f"{site}: 원문은 {got} 인데 사이트는 {want} 다")
+    # ★ 사이트를 안 가리고 옛 칸 하나로 만드는 자리가 남아 있는가
+    for rel in ("report/screens/build.py", "report/render.py"):
+        body = (ROOT / rel).read_text(encoding="utf-8")
+        if "encar_detail_url" in body:
+            bad.append(f"{rel} 이 아직 encar_detail_url 로 만든다 — site 를 안 가린다")
+    if bad:
+        return False, "원문 문이 사이트와 어긋난다 — " + " · ".join(bad[:4])
+    return True, (f"원문 주소 {len(tpl) - len(unknown)}곳이 제 사이트로 간다"
+                  + (f" · 못 잰 곳 {len(unknown)}: {', '.join(unknown)}"
+                     " (링크를 안 낸다)" if unknown else ""))
+
+
 def s46_91_raw_vs_stored() -> tuple[bool, str]:
     """★★★ 받은 원문 수와 ★ 저장 수가 ★ 열 배 넘게 벌어지면 실패 (마스터 지시 08-28).
 
@@ -1710,6 +1817,47 @@ def s46_91_raw_vs_stored() -> tuple[bool, str]:
     return True, " · ".join(said[:4])
 
 
+
+
+def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
+    """★★ 사이트가 파는 차종인데 ★ `site_query` 에 코드가 없으면 알린다.
+
+    ★★★ 마스터 08-26 — 「★ 21개 차종을 안 받나?」 ★ 짚으신 그대로였다.
+    ★ 실측 08-26 — ★ `kcar` 와 ★ `reborncar` 는 ★ **21종 전부 코드가 0개**다.
+      ★ 그 둘은 ★ 종합 사이트라 ★ 21종을 다 판다.  ★ 코드가 없으니 안 받고,
+      ★ 안 받으니 ★ 짝이 안 잡히고 ★ 상세도 없다 — ★ 「등급이 낮다」의 뿌리다.
+    ★ 재는 법 — ★ 그 차종의 제조사(`site_query.encar.Manufacturer`)가
+      ★ 그 사이트의 `brand_scope` 안이면 ★ 파는 것이다.  ★ `all` 은 종합이다.
+    ★ 알림이다 — ★ 막지 않는다.  ★ 코드는 ★ 마스터께 청한다 (개발측이 안 넣는다)
+    """
+    got = _targets()
+    if not got:
+        return False, "config/targets.json 에 차종이 없다"
+    eps = json.loads(_read(ENDPOINTS) or "{}")
+    sites = [s for s, v in eps.items()
+             if isinstance(v, dict) and not s.startswith("_")]
+    no_scope = [s for s in sites if "brand_scope" not in eps[s]]
+    if no_scope:
+        return False, ("brand_scope 가 없는 사이트 "
+                       f"{len(no_scope)} — " + " · ".join(no_scope[:6]))
+    miss: dict[str, list[str]] = {}
+    for key, spec in got.items():
+        maker = ((spec.get("site_query") or {}).get("encar") or {}).get(
+            "Manufacturer")
+        if not maker:
+            return False, f"{key} 에 제조사가 없다 — site_query.encar.Manufacturer"
+        for site in sites:
+            scope = eps[site]["brand_scope"]
+            sells = scope == "all" or maker in scope
+            if sells and site not in (spec.get("site_query") or {}):
+                miss.setdefault(site, []).append(key)
+    if miss:
+        n = sum(len(v) for v in miss.values())
+        head = " · ".join(f"{s} {len(v)}종" for s, v in
+                          sorted(miss.items(), key=lambda kv: -len(kv[1])))
+        return False, (f"★ 파는데 코드가 없다 {n}칸 — {head}"
+                       "  (코드는 마스터께 청한다)")
+    return True, f"차종 {len(got)}종 × 사이트 {len(sites)} — 파는 칸은 코드가 다 있다"
 
 def s46_92_browser_zero_count() -> tuple[bool, str]:
     """★★★ 브라우저 수집이 ★ `Count 0` 을 받으면 ★ 알린다 (마스터 지시 08-28).
@@ -1820,10 +1968,17 @@ CHECKS = (
      s46_87_request_site_matches_listing),
     ("S46-88", "엔카가 막히면 화면이 까닭을 말하는가",
      s46_88_encar_blocked_banner),
+    ("S46-90", "근거가 절반도 없는데 등급을 매기지 않는가",
+     s46_90_pending_not_graded),
     ("S46-91", "받은 원문이 저장까지 갔는가", s46_91_raw_vs_stored),
+    ("S46-94", "원문 문이 그 매물의 사이트로 가는가",
+     s46_94_source_url_site_matches),
     # ★ 알림이다 — ★ 사이트에 정말 0건일 수 있다 (신차 등).  ★ 막지 않는다
     ("S46-92", "브라우저 수집이 0건을 받았는가",
      s46_92_browser_zero_count, "warn"),
+    # ★ 알림이다 — ★ 코드는 ★ 마스터께 청한다.  ★ 개발측이 지어 넣지 않는다
+    ("S46-96", "사이트가 파는 차종인데 코드가 없는가",
+     s46_96_site_sells_but_no_code, "warn"),
     # ★ 셋은 ★ **숫자를 내는 검사**다 — ★ 판정을 바꾸지 않는다 (명령서 45-3)
     ("S46-54", "짝 중 등급이 두 칸 갈린 것", s46_54_grade_two_step, "warn"),
     ("S46-55", "짝 중 값이 30% 갈린 것", s46_55_price_gap_30, "warn"),
