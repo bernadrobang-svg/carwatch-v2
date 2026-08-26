@@ -2027,14 +2027,25 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
 
     han = re.compile(r"[가-힣]{2,}")
     drop = re.compile(r"<(script|style|title)[^>]*>.*?</\1>", re.S | re.I)
+    # ★ 화면 쪽은 `<title>` 을 남긴다 — ★ 그것이 그 화면의 이름이다
+    keep_drop = re.compile(r"<(script|style)[^>]*>.*?</\1>", re.S | re.I)
     note = re.compile(
         r'<([a-z]+)[^>]*class="[^"]*note[^"]*"[^>]*>.*?</\1>', re.S | re.I)
 
-    def visible(html: str) -> str:
+    def visible(html: str, keep_title: bool = False) -> str:
+        """보이는 글.
+
+        ★★ `keep_title` — ★ **화면 쪽만** 참이다 (08-26).
+          ★ 시안의 `<title>` 은 ★ 「v4m 미판정 시안 — 모바일 기준」이라 ★ 비계다.
+          ★ ★ 그런데 ★ **화면의 `<title>`** 은 ★ 「미판정 · CarWatch」로
+            ★ ★ 그 화면의 ★ **이름 그 자체**다 — ★ 지우면 ★ 있는 것을 없다고 한다.
+          ★ ★ 실측 08-26 — ★ 그래서 ★ `/notready` 에 ★ 「미판정」이 없다고 나왔다
+        """
         cut = html.find("지켜야 하는 것")
         if cut > 0:
             html = html[:cut]
-        return re.sub(r"<[^>]+>", " ", note.sub(" ", drop.sub(" ", html)))
+        killer = keep_drop if keep_title else drop
+        return re.sub(r"<[^>]+>", " ", note.sub(" ", killer.sub(" ", html)))
 
     def squeeze(text: str) -> str:
         """★ 띄어쓰기를 지운 꼴.  ★ 시안은 「제조사보증」 · 화면은 「제조사 보증」이다.
@@ -2060,7 +2071,7 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
         try:
             with urllib.request.urlopen(base + path, timeout=25,
                                         context=ctx) as res:
-                page = visible(res.read().decode("utf-8", "replace"))
+                page = visible(res.read().decode("utf-8", "replace"), True)
         except urllib.error.HTTPError as exc:
             bad.append(f"{path} {exc.code}")
             continue

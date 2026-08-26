@@ -5,7 +5,8 @@
      금지  실물 사진 30장 · 딜러 자유 서술 · 판매자 지도 · 전화 단추
      금지  제원 12항목 (제로백·공차중량·타이어 규격)
      절 차례는 ★ 판단하는 순서다.  바꾸지 않는다 (V11-159) -->
-<h1>{{ row.target_label }} <small>{{ row.trim }} · 매물 {{ v.listing_id }}</small></h1>
+<!-- ★ 시안 머리줄은 「상세 | 차명 · 등급 · 점수」다 (v4m_detail_시안 · S46-98) -->
+<h1><span class="scr">상세</span> {{ row.target_label }} <small>{{ row.trim }} · 매물 {{ v.listing_id }}</small></h1>
 
 <!-- ★★ 화면 맨 위 「무엇을 하는 곳인가」 (명령서 1-5 · v3_detail_시안.html 주황 상자).
      ★ 시안 글자를 그대로 옮긴다 — ★ 개발측이 새로 쓰지 않는다 -->
@@ -115,7 +116,9 @@
     <tr><td>{{ i.label }}{% if i.estimated %} <span class="dim">추정</span>{% endif %}</td>
       <td>{{ i.won | won }}</td></tr>
     {% endfor %}
-    <tr><td>총 구매비용 ({{ p.site_label }})</td><td>{{ p.total_won | won }}</td></tr>
+    <!-- ★ 시안은 「합」이나 ★ 규격 41-view.md:99 · V11-161 이 「총 구매비용」을 요구한다.
+         ★ 어긋난다 — ★ 규칙 1 대로 규격을 따른다.  ★ 가이드 판단을 청한다 -->
+    <tr><td title="차량가 + 부대비용의 합입니다">총 구매비용 ({{ p.site_label }})</td><td>{{ p.total_won | won }}</td></tr>
   </table>
   {% endfor %}
   {% if !v.purchase_costs %}
@@ -123,7 +126,7 @@
     {% for c in v.costs %}
     <tr><td>{{ c.label }}</td><td>{{ c.used_won | won }}</td></tr>
     {% endfor %}
-    <tr><td>총 구매비용</td><td>{{ row.total_cost_won | won }}
+    <tr><td title="차량가 + 부대비용의 합입니다">총 구매비용</td><td>{{ row.total_cost_won | won }}
       {% if row.buy_estimated %}<span class="dim">추정</span>{% endif %}</td></tr>
   </table>
   {% endif %}
@@ -296,8 +299,12 @@
   <form method="post" action="/watch/add" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="listing_id" value="{{ v.listing_id }}">
-    <button type="submit" title="관심에 담습니다">♡ 관심</button>
+    <button type="submit" title="관심에 담습니다">관심에 담기 ♥</button>
   </form>
+  <!-- ★ 시안의 「추적에서 보기 ▸」 (S46-98 · 마스터 08-26).
+       ★ 이 차의 값이 어떻게 움직였는지는 추적이 낸다 -->
+  <a class="btn" href="/track?listing_id={{ v.listing_id }}"
+     title="이 매물의 값 움직임을 추적에서 봅니다">추적에서 보기 ▸</a>
   <!-- ★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장).  ★ 이름도 그 사이트다 -->
   {% if row.encar_url %}<a class="btn go" href="{{ row.encar_url }}" target="_blank" rel="noopener"
      title="원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">{{ row.site_badge }}에서 보기 ↗</a>{% endif %}

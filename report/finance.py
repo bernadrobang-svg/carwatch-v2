@@ -53,6 +53,8 @@ def purchase_cost(site: str, price_won: int | None, fin: dict, sites: dict,
     if price_won is None or not rule:
         return None
     label = (one or {}).get("label") or site
+    # ★★ 08-26 — ★ 시안은 「차값」이고 ★ 규격은 「차량가」다 (41-view.md:74).
+    #   ★ ★ 어긋난다.  ★ 규칙 1 대로 ★ **규격을 따른다** — ★ 가이드께 여쭈었다
     items = [PurchaseCostItem("차량가", int(price_won), False)]
 
     # 사이트가 총액을 줬으면 내역을 우리가 지어내지 않는다
@@ -68,6 +70,7 @@ def purchase_cost(site: str, price_won: int | None, fin: dict, sites: dict,
     #   finance.json 의 bond_table 이 비어 있어 못 넣는다 — 그래서 「추정」이다
     if rule.get("transfer_fee_rule") == "acquisition":
         got, est = acquisition_cost(int(price_won), fin, target_key)
+        # ★ 시안은 「이전비」 · 규격은 「이전등록비」다 (40-report.md:668).  ★ 규격을 따른다
         items.append(PurchaseCostItem("이전등록비", got, bool(est)))
     for key, name in (("warranty_fee", "보증 가입비"),
                       ("etc_fee", "기타"),

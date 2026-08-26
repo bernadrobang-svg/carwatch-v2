@@ -342,7 +342,7 @@
         {{ r.option_price_won | won }}{% endif %}</a></b>{% endif %}
       {% if !r.option_count %}<b class="dim">없음</b>{% endif %}</div>
     <div class="cell mono num"><u>경과</u>
-      {% if r.days_on_market %}<b>{{ r.days_on_market | num }}일</b>{% endif %}
+      {% if r.days_on_market %}<b>{{ r.days_on_market | num }}일째</b>{% endif %}
       {% if !r.days_on_market %}<b class="dim">오늘</b>{% endif %}</div>
     <div class="price mono num">
       {% if r.price_bucket_won %}<b><a href="/listings?price_max={{ r.price_bucket_won }}"
@@ -351,6 +351,12 @@
       {% if r.price_change_won %}<u class="{{ r.price_change_won | signcls }}"
         >{{ r.price_change_won | won }} · {{ r.price_change_cnt }}회</u>{% endif %}
       {% if !r.price_change_won %}<u class="dim">변동 없음</u>{% endif %}
+      <!-- ★★ 08-26 마스터 지시 — ★ 시안에 있는데 화면에 없던 줄이다 (S46-98).
+           ★ 「시세차 −11.3%」로만 내고 있었다 — ★ 뜻은 같으나 시안의 말이 아니다.
+           ★ 시세를 모르면 아무 말도 안 한다 (개정 325) -->
+      {% if r.market_gap_label %}<u class="{{ r.market_gap_won | signcls }}"
+        title="같은 차종·트림·연식 실매물 중앙값 {{ r.market_price_won | won }} 대비"
+        >{{ r.market_gap_label }}</u>{% endif %}
       {% if r.cash_only %}<u class="dim" title="표시가 + 부대비용이 선납금 안입니다">전액 현금</u>{% endif %}
       {% if !r.cash_only %}{% if r.monthly_won %}<u class="dim"
         title="현금은 초기 부담(취득 부대비용 포함) · 월은 할부 원금을 48개월로 나눈 추정값입니다"

@@ -187,6 +187,10 @@ class ListingRow:
     market_price_won: int | None = None   # 실제 매물 중앙값
     market_sample: int = 0                # 그 중앙값의 표본 수
     market_gap_won: int | None = None     # 가격 − 시세
+    # ★★ 08-26 — ★ 시안의 「시세보다 400만 싸다」다 (`v4m_listings_시안` · S46-98).
+    #   ★ 값이 아니라 ★ **말**이다 — ★ 「−400만」은 사람이 한 번 더 읽어야 한다.
+    #   ★ 판단을 템플릿에 두지 않는다 — ★ 여기서 만들어 넘긴다
+    market_gap_label: str | None = None
     # 첫 게시가 대비 증감 (음수 = 내렸다).  변동이 없으면 None
     price_change_won: int | None = None
     # 딜러 정직도.  ★ 표본이 모자라면 None 이다 — 0 으로 내지 않는다

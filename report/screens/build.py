@@ -798,6 +798,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         #   금액이 아니라 %다.  「−13.0%」가 사람에게 읽힌다
         market_gap_pct=(round(_gap_won / mkt * 100, 1)
                         if (_gap_won is not None and mkt) else None),
+        # ★ 시안의 「시세보다 400만 싸다」 (S46-98 · 마스터 08-26).
+        #   ★ 표본이 모자라면 안 낸다 — ★ 「모르는 것을 모른다고 낸다」(개정 325)
+        market_gap_label=_market_gap_label(_gap_won, mkt),
         origin_gap_pct=(round((price - _origin_total) / _origin_total * 100, 1)
                         if (_origin_total and price is not None) else None),
         # ★ 「싸다」를 말할 때 「왜 싼가」를 함께 낸다 (개정 299 · V3-52).
@@ -1368,6 +1371,22 @@ def view_listings(account: Account, conn: sqlite3.Connection,
                  monthly_unit, dep_cfg, state_by, market_by, high_km, root)
             for i, r in enumerate(recs)]
 
+
+
+def _market_gap_label(gap_won, market_won) -> str | None:
+    """「시세보다 400만 싸다」.  ★ 시세를 모르면 ★ 아무 말도 안 한다.
+
+    ★★ 08-26 마스터 지시 — ★ 시안에 있는데 ★ 화면에 없던 줄이다 (`S46-98`).
+    ★ 화면은 「시세차 −11.3% · 시세 3,370만」으로 내고 있었다 —
+      ★ ★ 뜻은 같으나 ★ **시안의 말이 아니다.**  ★ 시안이 정본이다
+    ★ 같으면 「시세와 같다」다 — ★ 0원을 「싸다」라고 하지 않는다
+    """
+    if gap_won is None or not market_won:
+        return None
+    man = abs(int(gap_won)) // WON_PER_MANWON
+    if not man:
+        return "시세와 같다"
+    return f"시세보다 {man:,}만 " + ("싸다" if gap_won < 0 else "비싸다")
 
 
 def _score_bars(sums: dict, root: str = ".") -> list:
