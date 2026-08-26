@@ -29,22 +29,6 @@ from parse.reborncar.mapping import parse_detail as reborn_detail  # noqa: E402
 DB = os.path.join(ROOT, "carwatch.db")
 
 
-def _sid_from_url(site: str, url: str) -> str | None:
-    """원문 주소에서 매물번호를 되뽑는다.
-
-    ★★ `raw_response.listing_id` 는 ★ **우리 내부 번호**다 (실측 08-26 —
-      엔카 상세 16,483건이 '4'·'25'·'1772…' 처럼 들어 있다).
-      ★ 그러므로 ★ **주소**에서 뽑는다 — ★ 주소는 우리가 부른 그대로다
-    """
-    if not url:
-        return None
-    if site in ("kbchachacha", "kcar"):
-        return url.rsplit("=", 1)[-1] or None
-    if site == "reborncar":
-        return url.rstrip("/").rsplit("/", 1)[-1] or None
-    return None
-
-
 def _photos_of(site: str, sid: str, body: str) -> list:
     """그 사이트 파서가 읽어 낸 사진.  ★ 파서를 두 벌 만들지 않는다."""
     if site == "kbchachacha":
@@ -79,14 +63,15 @@ def main() -> int:
         by_sid[(site, str(sid))] = (lid, main_photo)
 
     total = {s: [0, 0, 0] for s in SITES}      # 원문 · 사진찾음 · 채움
-    for site, url, body in conn.execute(
-        "SELECT site, request_url, body FROM raw_response"
+    # ★★ 정본은 `source_id` 다 (마스터 지시 08-26 · S46-97).
+    #   ★ 주소에서 되뽑지 않는다 — 그것은 임시였고 규격이 아니었다
+    for site, sid, body in conn.execute(
+        "SELECT site, source_id, body FROM raw_response"
         " WHERE endpoint='detail' AND status='ok' AND body IS NOT NULL"
+        " AND source_id IS NOT NULL AND source_id <> ''"
         f" AND site IN ({','.join('?' * len(SITES))})", SITES
     ):
-        sid = _sid_from_url(site, url)
-        if not sid:
-            continue
+        sid = str(sid)
         total[site][0] += 1
         photos = _photos_of(site, sid, body)
         if not photos:

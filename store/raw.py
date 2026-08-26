@@ -189,6 +189,16 @@ def save_site_raw(
         " LIMIT 1", (site, endpoint, str(source_id))
     ).fetchone():
         return "dup"
+    # ★★ 둘 다 둔다 (마스터 지시 08-26 · 검사 `S46-97`).
+    #   ★ 잇는 정본은 `source_id`(사이트 매물번호)다.  ★ `listing_id`(우리 번호)는
+    #   ★ 지우지 않고 ★ 아는 자리에서 함께 채운다 — ★ 주소에서 되뽑지 않는다.
+    #   ★ 아직 매물이 안 만들어졌으면 NULL 이 맞다 (뒤에 S46-97 이 메운다)
+    if listing_id is None and source_id is not None:
+        row = conn.execute(
+            "SELECT listing_id FROM core_listing WHERE site=? AND source_id=?",
+            (site, str(source_id))).fetchone()
+        if row:
+            listing_id = row[0]
     conn.execute(
         "INSERT INTO raw_response"
         "(run_id,site,listing_id,source_id,endpoint,request_url,request_meta,"

@@ -368,6 +368,25 @@ def save_step_report(conn: sqlite3.Connection, run_id: str,
 # ── STEP 49 실행 순서 ────────────────────────────────────────────────
 # 한 차종을 끝내고 다음으로 간다.  8차종을 동시에 돌리면 실패 원인이 섞인다.
 # 실행 본체는 주입한다 — 이 모듈은 순서 · 조건 · 중단만 책임진다 (0장 STEP 2).
+def rss_mb() -> float:
+    """★ 지금 이 프로세스가 쥐고 있는 메모리 (MB).
+
+    ★★ 08-26 — ★ 장비가 통째로 멈췄는데 ★ **메모리 탓인지 못 갈랐다**
+      (명령서 75장).  ★ 저널이 끊겨 마지막 순간이 안 남았고,
+      ★ 그 전까지 ★ **메모리를 아무도 안 재고 있었다**.
+    ★ 그래서 ★ 단계마다 찍는다 — ★ 다음에는 ★ 잰 것으로 말할 수 있어야 한다.
+    ★ 파이프라인은 ★ 웹 서버와 ★ 같은 프로세스에서 돈다 (`collect/worker.py`).
+      ★ 이 숫자가 곧 ★ 마스터 화면이 쥔 메모리다
+    ★ /proc 이 없으면 0.0 — 잴 수 없는 것을 지어내지 않는다
+    """
+    try:
+        with open("/proc/self/statm", encoding="utf-8") as f:
+            pages = int(f.read().split()[1])
+    except (OSError, ValueError, IndexError):
+        return 0.0
+    return pages * (os.sysconf("SC_PAGE_SIZE") / (1024 * 1024))
+
+
 def run_step(conn: sqlite3.Connection, ctx, step: str, done: set[str],
              executors: dict, progress=None) -> StepReport:
     """단계 1회.
@@ -375,7 +394,7 @@ def run_step(conn: sqlite3.Connection, ctx, step: str, done: set[str],
     조건 미충족은 건너뛰기가 아니라 중단이다 (STEP 48).
     """
     progress = progress or silent_progress
-    progress(step, "시작")
+    progress(step, f"시작 · 메모리 {rss_mb():,.0f}MB")
     ok, why = precheck(conn, step, done)
     if not ok:
         rep = step_report(step, None, 0, {}, 0, 0.0)
@@ -419,7 +438,9 @@ def _execute(conn, ctx, step, run, progress) -> StepReport:
         rep, raw_rows = run(conn, ctx)
     rep = halt_if(rep, raw_rows)
     save_step_report(conn, ctx.run_id, rep)
-    progress(step, f"완료 · {time.time() - t0:.1f}초", rep.ok, rep.expected)
+    # ★ 메모리를 함께 찍는다 — ★ 어느 단계에서 부푸는지 봐야 한다 (명령서 75장)
+    progress(step, f"완료 · {time.time() - t0:.1f}초 · 메모리 {rss_mb():,.0f}MB",
+             rep.ok, rep.expected)
     return rep
 
 

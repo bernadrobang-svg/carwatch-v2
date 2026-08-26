@@ -1821,6 +1821,73 @@ def s46_91_raw_vs_stored() -> tuple[bool, str]:
 
 
 
+
+def s46_97_raw_linked_by_source_id() -> tuple[bool, str]:
+    """★★ 원문을 매물에 잇는 정본은 ★ `raw_response.source_id` 다 (마스터 08-26).
+
+    ★★★ 마스터 — 「★ **정본은 사이트 매물번호(`source_id`)다.**
+      ★ `request_url` 에서 되뽑는 건 ★ **임시다.  규격이 아니다.**
+      ★ `listing_id` 도 ★ 지우지 말고 ★ **둘 다 둬라**」
+    ★ 세 가지를 본다
+      ① 매물별 원문에 `source_id` 가 비었나 (`list`·`facet` 은 매물 봉투가 아니라 뺀다)
+      ② `source_id` 로 `core_listing` 에 이어지는데 ★ `listing_id` 가 비었나
+      ③ 코드가 아직 ★ 주소에서 매물번호를 되뽑고 있나
+    ★ ③ 이 뿌리다 — ★ 되뽑는 자리가 남아 있으면 ★ 언젠가 또 그리로 샌다
+    """
+    import sqlite3
+
+    NOT_LISTING = ("list", "facet", "catalog", "sitemap",
+                   "facet_maker", "facet_option", "facet_models",
+                   "facet_conditions", "list_narrow", "list_gen",
+                   "list_coming", "stock_list", "count", "car_name")
+    bad = []
+
+    # ③ 코드에 되뽑는 자리가 남아 있나 — DB 가 없어도 잰다
+    import re as _re
+    pat = _re.compile(r"(rsplit\(['\"]=['\"]|_sid_from_url\s*\()")
+    for path in sorted((ROOT / "tools").glob("*.py")) + \
+            sorted((ROOT / "store").glob("*.py")):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        for i, line in enumerate(text.splitlines(), 1):
+            if "S46-97" in line or line.lstrip().startswith("#"):
+                continue
+            if "raise NotImplementedError" in line:
+                continue
+            if pat.search(line) and "source_id" not in line:
+                bad.append(f"{path.name}:{i} 주소에서 되뽑는다")
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        if bad:
+            return False, " · ".join(bad[:4])
+        return True, "DB 가 없다 — 코드만 봤고 되뽑는 자리가 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        marks = ",".join("?" * len(NOT_LISTING))
+        empty = conn.execute(
+            "SELECT COUNT(*) FROM raw_response"
+            " WHERE (source_id IS NULL OR source_id='')"
+            f" AND endpoint NOT IN ({marks})", NOT_LISTING).fetchone()[0]
+        if empty:
+            bad.append(f"매물별 원문 {empty}건이 source_id 가 비었다")
+        orphan = conn.execute(
+            "SELECT COUNT(*) FROM raw_response r JOIN core_listing l"
+            "   ON l.site=r.site AND l.source_id=r.source_id"
+            " WHERE r.listing_id IS NULL").fetchone()[0]
+        if orphan:
+            bad.append(f"이어지는데 listing_id 가 빈 원문 {orphan}건")
+        linked = conn.execute(
+            "SELECT COUNT(*) FROM raw_response r JOIN core_listing l"
+            "   ON l.site=r.site AND l.source_id=r.source_id").fetchone()[0]
+    finally:
+        conn.close()
+    if bad:
+        return False, "★ " + " · ".join(bad[:4])
+    return True, f"source_id 로 이어진 원문 {linked:,}건 · 되뽑는 자리 없다"
+
 def s46_95_screens_alive() -> tuple[bool, str]:
     """★★ 배포된 화면 여덟을 두드려 ★ 하나라도 제 코드가 아니면 실패.
 
@@ -2037,6 +2104,9 @@ CHECKS = (
     # ★ 알림이다 — ★ 코드는 ★ 마스터께 청한다.  ★ 개발측이 지어 넣지 않는다
     # ★★ 명령서 75장 — ★ 화면이 사는지를 ★ 아무도 안 보고 있었다 (오판 141)
     ("S46-95", "배포된 화면이 다 열리는가", s46_95_screens_alive),
+    # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다
+    ("S46-97", "원문이 source_id 로 매물에 이어지는가",
+     s46_97_raw_linked_by_source_id),
     ("S46-96", "사이트가 파는 차종인데 코드가 없는가",
      s46_96_site_sells_but_no_code, "warn"),
     # ★ 셋은 ★ **숫자를 내는 검사**다 — ★ 판정을 바꾸지 않는다 (명령서 45-3)

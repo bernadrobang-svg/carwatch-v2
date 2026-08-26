@@ -3736,6 +3736,23 @@
   </td>
 </tr>
 
+<tr>
+  <td class="runid" data-label="키">pending_confirmed_ratio</td>
+  <td class="num" data-label="현재 값">0.5</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="pending_confirmed_ratio">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
 </tbody>
 </table>
 
@@ -3792,8 +3809,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260825T040044</span>
-  <span>2026-08-25 13:04</span>
+  <span>run 20260825T200022</span>
+  <span>2026-08-26 10:17</span>
 </footer>
 
 </body>
