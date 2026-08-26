@@ -158,8 +158,10 @@ def _grade_ratio_checks(conn, run_id, policy_raw: dict) -> list:
 
     def g(earned, den):
         # ★ score_total 은 555 환산값이라 등급 판정에 쓰지 않는다
+        # ★ 등급컷 비율만 재는 표본이다.  ★ confirmed=den 으로 둔다 —
+        #   0 이면 「판정 중」이 되어 컷을 못 잰다 (명령서 67장)
         return grade_of(ScoreResult(0.0, den, [], earned, "B", None, {},
-                                    None), policy)
+                                    None, confirmed=den), policy)
 
     # ★ 표본을 비율에서 만든다.  점수를 손으로 적으면 컷이 바뀔 때 어긋난다
     cuts = policy_raw["grade_cuts"]

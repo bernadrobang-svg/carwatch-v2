@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import json
 import re
 
 WON_PER_MANWON = 10_000
@@ -89,6 +90,29 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     kmpl = kmpl_of(f)
     if kmpl is not None:
         out["spec_fuel_economy_kmpl"] = kmpl
+
+    # ★★★ 사진 (명령서 73장 · 실측 08-26).  ★ 리본카는 ★ **상세**에만 사진이 있다.
+    #   ★ 그 매물의 사진은 ★ `cdn.autoplus.co.kr/PRODUCT/{source_id}/…` 아래 있다 —
+    #     ★ 같은 쪽의 `manage/`(딜러 얼굴) · `CONVENIENCE/`(옵션 아이콘)는 뺀다
+    photos = _photos(html, str(source_id))
+    if photos:
+        out["photo_main"] = photos[0]
+        out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+    return out
+
+
+def _photos(html: str, source_id: str) -> list:
+    """그 매물의 사진 (명령서 73장).  ★ 없으면 빈 목록 — ★ 지어내지 않는다."""
+    want = re.compile(
+        r"https?://cdn\.autoplus\.co\.kr/PRODUCT/"
+        + re.escape(source_id)
+        + r"/[^\"'\s<>]+?\.(?:jpg|jpeg|png|webp)", re.I)
+    seen, out = set(), []
+    for url in want.findall(html or ""):
+        if url in seen:
+            continue
+        seen.add(url)
+        out.append(url)
     return out
 
 

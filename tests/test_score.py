@@ -230,8 +230,10 @@ def test_grade() -> None:
 
     def g(earned, den):
         # ★ 등급은 grade_earned / grade_base 다 (개정 292 — 취향 제외 505)
+        # ★ confirmed=den — ★ 등급컷 비율만 재는 표본이다.  0 이면 근거가
+        #   하나도 없다는 뜻이라 「판정 중」이 된다 (명령서 67장)
         return grade_of(ScoreResult(0.0, den, [], earned, "B", None, {},
-                                    None, earned, den), POLICY)
+                                    None, earned, den, confirmed=den), POLICY)
 
     check("★ 90.9% → S", g(450, 495.0) == "S", f"{450 / 495:.1%}")
     # ★ 개정 433 — 83.4% 는 이제 S 다 (컷 80).  ★ config 로 되짚는다

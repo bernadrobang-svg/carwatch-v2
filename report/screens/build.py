@@ -126,6 +126,8 @@ def _not_ranked() -> tuple:
 
 RANK_ORDER = _grade_order()
 NOT_RANKED = _not_ranked()
+# ★★ 명령서 67장 — 상세를 못 받아 근거가 절반도 없는 매물.  등급이 아니다
+PENDING = "PENDING"
 
 
 
@@ -615,7 +617,7 @@ def _sites_cfg(root: str) -> dict:
 def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          opt_prices: dict | None = None,   # noqa: ARG001 — 아래에서 쓴다
          axes: dict | None = None, changes_by: dict | None = None,
-         photo_base: str = "", encar_tpl: str = "",
+         photo_base: str = "", site_tpl: dict | None = None,
          km_unit: int = 0, monthly_unit: int = 0,
          dep_cfg: dict | None = None, state_by: dict | None = None,
          market_by: dict | None = None, high_km: int = 0,
@@ -729,7 +731,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         #   ★ 판정을 감추지 않는다 — 등급은 내되 잠정이라 적는다
         provisional=(g_base is None or not insp_fmt),
         # ★ NOT_RATED 에 순위를 매기지 않는다.  비교 대상이 아니다
-        rank=None if (grade or NOT_RATED) == NOT_RATED else rank,
+        # ★★ 「판정 중」도 마찬가지다 (명령서 67장).  근거가 절반도 없다
+        rank=None if (grade or NOT_RATED) in (NOT_RATED, PENDING) else rank,
         # ★ 비율이 크게 · 원점수/분모가 작게 (STEP 149f · A-1).
         #   분모가 다른 매물을 눈으로 갈라야 한다
         # ★ 비율은 등급과 같은 자로 낸다 — 505 기준 (개정 292)
@@ -812,8 +815,12 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         photo_url=photo_url(photos, photo_base),
         source_id=sid,
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
-        encar_url=(encar_tpl.format(source_id=sid)
-                   if sid and encar_tpl else None),
+        # ★★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장 · 실측 08-26).
+        #   ★ 전에는 엔카 주소 하나로 다 만들어 ★ K카 매물이
+        #     `encar.com/…?carid=EC61384014` 로 갔다.  ★ 엔카는 모르는 carid 에도
+        #     200 을 준다 — 「200 이면 됐다」로 세지 않는다 (S46-87 과 같은 잣대)
+        #   ★ 못 잰 사이트는 ★ **안 낸다.**  ★ 지어내지 않는다 (검산 S46-94)
+        encar_url=_source_url(_site, sid, site_tpl),
         # ★ 'YYYY-MM' 의 앞 4자가 연식이다 — 판정값이 아니다
         year=(ym or "")[:4] or None,
         km_bucket=_ceil_to(km, km_unit),
@@ -926,6 +933,23 @@ def order_clause(order: str) -> str:
     """4단 정렬.  ★ 축을 바꿔도 뒤 3단은 남는다."""
     first = ORDER_SQL.get(order, ORDER_SQL["rank"])
     return f"{ORDER_HEAD}, {first}, {ORDER_TAIL}"
+
+
+def _site_detail_urls(root: str = ".") -> dict:
+    """★★★ 사이트별 원문 주소 꼴 (명령서 72장).  ★ 코드에 박지 않는다.
+
+    ★ 못 잰 사이트는 값이 None 이다 — ★ 「모른다」다.  ★ 링크를 안 낸다
+    """
+    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
+        return dict(json.load(f).get("site_detail_url") or {})
+
+
+def _source_url(site: str, source_id: str, tpl: dict | None) -> str | None:
+    """그 매물의 사이트로 가는 원문 주소.  ★ 없으면 None (명령서 72장)."""
+    if not site or not source_id or not tpl:
+        return None
+    one = tpl.get(site)
+    return str(one).format(source_id=source_id) if one else None
 
 
 def _view_str(key: str, root: str = ".") -> str:
@@ -1303,7 +1327,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     state_by = _bulk_state(conn, lids) if (extras and with_state) else {}
     market_by = _bulk_market(conn, lids, root) if extras else {}
     base = _view_str("photo_base_url", root)
-    encar_tpl = _view_str("encar_detail_url", root)
+    site_tpl = _site_detail_urls(root)
     km_unit = _view_cfg("km_bucket", root)
     monthly_unit = _view_cfg("monthly_bucket_won", root)
     with open(os.path.join(root, "config", "depreciation.json"),
@@ -1322,7 +1346,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     opt_prices = _option_prices(conn) if (extras and want_opt) else {}
     high_km = _high_km(root)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
-                 opt_prices, axes, changes, base, encar_tpl, km_unit,
+                 opt_prices, axes, changes, base, site_tpl, km_unit,
                  monthly_unit, dep_cfg, state_by, market_by, high_km, root)
             for i, r in enumerate(recs)]
 

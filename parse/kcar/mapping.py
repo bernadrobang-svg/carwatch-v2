@@ -11,6 +11,7 @@
 """
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 
 WON_PER_MANWON = 10_000
@@ -137,6 +138,32 @@ def parse_detail(body: dict, site: str, source_id: str,
         out["business_flag"] = 1
     out["business_flag"] = yn(hist.get("bizuseHistYn"))
     out["government_flag"] = yn(hist.get("instnHistYn"))
+
+    # ★★★ 사진 (명령서 73장 · 실측 08-26).  ★ K카는 ★ **상세**에만 사진이 있다.
+    #   ★ `photoList` 가 겉·속·옵션을 다 담는다 — ★ 그것을 그대로 쓴다
+    photos = _photos(data)
+    if photos:
+        out["photo_main"] = photos[0]
+        out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+    return out
+
+
+# ★ 사진이 담긴 자리 넷 (실측 08-26).  ★ `photoList` 가 전부를 담고
+#   나머지 셋은 갈래별로 겹친다 — ★ 겹치는 것은 한 번만 넣는다
+PHOTO_KEYS = ("photoList", "outerPhotoList", "innerPhotoList",
+              "optionPhotoList")
+
+
+def _photos(data: dict) -> list:
+    """그 매물의 사진 (명령서 73장).  ★ 없으면 빈 목록 — ★ 지어내지 않는다."""
+    seen, out = set(), []
+    for key in PHOTO_KEYS:
+        for one in (data.get(key) or []):
+            url = (one or {}).get("elanPath") if isinstance(one, dict) else None
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            out.append(url)
     return out
 
 

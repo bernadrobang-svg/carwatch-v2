@@ -338,5 +338,20 @@
   "_demoted_menu_why": "★★ 마스터 확정 08-24 (v3_admin_시안 「화면 — 둘만 남는다」) — ★ 관리에 남는 화면은 ★ 리포트·미판정 ★ 둘뿐이다. ★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서 누른다. ★★ 라우트는 ★ 살려 둔다 — ★ 화면을 지우지 않는다 (개정 427).  ★ 문만 옮겼다",
   "_note_query_budget_726": "★★ 08-25 — ★ 26 → **27**.  ★ 마스터 확정 ★ 11절 「중복매물」이 ★ 쿼리 하나를 더 쓴다 (명령서 1-3).  ★ ★ 그 하나를 ★ 최대한 줄였다 — ★ 처음엔 둘이었다 (번호판을 따로 물었다).  ★ 조인 한 번으로 합쳐 ★ 하나로 만들었다. ★★ ★ 짝이 있는 매물은 ★ 사고 축을 ★ 한 번에 받는다 — ★ 매물마다 안 부른다. ★ ★ 전 화면 상한(20)은 ★ 그대로다 — ★ 이 경로만 적는다 (개정 427 과 같은 뜻)",
   "_note_query_budget_741": "★★ 08-25 — ★ 경로 둘을 더 적는다.  ★ **전 화면 상한(20)은 그대로다** — ★ 다른 화면이 조용히 무거워지는 것을 막기 위해서다 (개정 427 과 같은 뜻). ★★ ★ `/listings` 24 — ★ 마스터 확정 ★ 거르개 다섯 절 ＋ ★ 「N곳」 배지 ＋ ★ 사이트별 건수.  ★ ★ 줄일 것은 줄였다 — ★ 색 조회를 ★ **여섯에서 둘로** (`_split_top` 을 두 번씩 부르고 있었다) · ★ 「N곳·값 폭」 서브쿼리 셋을 ★ 조인 하나로. ★ ★ 남은 넷은 ★ 리스 뺀 수를 세는 `COUNT(*)` 로 ★ 앞서부터 있던 것이다. ★★ ★ `/` 21 — ★ 마스터 확정 ★ 1절 「오늘」 (새로 뜬 것·값 내린 것·사라진 것·마지막 재판정).  ★ 넷을 ★ **한 쿼리**로 받는다",
-  "encar_blocked_days": 2
+  "encar_blocked_days": 2,
+  "site_detail_url": {
+    "encar": "https://www.encar.com/dc/dc_cardetailview.do?carid={source_id}",
+    "kbchachacha": "https://www.kbchachacha.com/public/car/detail.kbc?carSeq={source_id}",
+    "reborncar": "https://www.reborncar.co.kr/m/smartbuy/SB1002/{source_id}",
+    "hyundai_cert": "https://certified.hyundai.com/m/goods/goodsDetail.do?goodsNo={source_id}",
+    "bobaedream": "https://m.bobaedream.co.kr/mycar/mview/{source_id}",
+    "bmw_bps": "http://www.bavarian-bps.co.kr/shop/item.php?it_id={source_id}",
+    "kcar": null,
+    "kia_cpo": null,
+    "heydealer": null,
+    "lexus_certified": null,
+    "volvo_selekt": null
+  },
+  "_site_detail_url_note": "★★★ 명령서 72장 — ★ 원문으로 가는 문이다.  ★ 사이트마다 다르다. ★ 실측 08-26 — 전에는 `encar_detail_url` 하나로 다 만들어 K카·헤이딜러·KB 매물이 전부 encar.com 으로 갔다 (엔카는 모르는 carid 에도 200 을 준다). ★★ 지어내지 않았다 — 잰 자리를 적는다: encar 는 STEP 149q(마스터 확인) · kbchachacha 는 상세 본문의 canonical (실측 표본 3건) · reborncar 는 상세 본문의 링크 (실측 표본 3건) · hyundai_cert·bobaedream·bmw_bps 는 `config/endpoints.json` 의 상세 경로 자체가 사람이 보는 쪽이다 (HTML 을 그대로 받는다). ★★ null 다섯은 ★ **모른다**.  ★ kcar·kia_cpo·heydealer·lexus_certified 는 우리가 API 만 받아 사람 쪽 주소를 못 쟀고, volvo_selekt 는 주소에 {model} 이 더 든다. ★ null 이면 ★ **링크를 안 낸다** — ★ 엔카로 보내지 않는다.  ★ 지어내면 S46-94 가 잡는다",
+  "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다"
 }

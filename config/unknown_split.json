@@ -219,5 +219,9 @@
     "nothing_picked"
   ],
   "_note_435": "★★ 개정 435 — 「확인 안 됨」의 정본은 result_axis.source 다. ★ 화면이 value 로 가르면 15,709건이 「없음」으로 나간다 (v193 실측). unknown_sources 는 「모름」 · confirmed_absent_sources 는 「없다고 확인한 것」이다. unknown_source_marks 는 source 안에 이 말이 들어 있으면 모름으로 본다 (integrity_계기판 확인 못 함 처럼 축이 사유를 이어 붙인 것)",
-  "_kind_note_435": "★ ① 과 ② 는 「키가 있다」가 아니라 ★ 「값이 있다」로 가른다 (개정 435). history.seizing 482건은 condition.seizing 키는 있는데 값이 null 이라 ① 이다"
+  "_kind_note_435": "★ ① 과 ② 는 「키가 있다」가 아니라 ★ 「값이 있다」로 가른다 (개정 435). history.seizing 482건은 condition.seizing 키는 있는데 값이 null 이라 ① 이다",
+  "unfillable_sources": [
+    "site_unavailable"
+  ],
+  "_unfillable_note": "★★ 명령서 67장-4 · f-table ⑤ — ★ 채워질 수 없는 축이다. 사이트가 그 값을 아예 안 준다(소모품 tireTread — 08-25 실측 4,129건이 site_unavailable). ★ 쓰는 자리는 ★ 「무엇이 비었나」 목록 하나뿐이다 (report/render.py `waiting_axes`) — ★ 영영 안 올 것을 「상세를 기다립니다」에 적으면 거짓말이 된다. ★★ 「판정 중」의 ★ 분모에서는 빼지 않는다 — ★ 분모는 910 그대로다 (가이드 확정 08-25 · UI_REVIEW 18장 「근거 있는 축 N / 910」). ★ 빼면 절반선이 447.5 가 되어 근거 450 짜리 상세 없는 매물 1,288건이 G 에 남는다"
 }

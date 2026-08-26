@@ -131,13 +131,25 @@ def _curve_points(year_month: str | None, as_of: str | None,
 MONTHS_PER_YEAR = 12
 
 
-def _encar_url(source_id: str, root: str = ".") -> str:
-    """엔카 원문 주소 (STEP 149q).  ★ 주소를 코드에 박지 않는다 (config/web.json)."""
+def source_detail_url(site: str, source_id: str, root: str = ".") -> str | None:
+    """★★★ 원문으로 가는 문 (명령서 72장).  ★ 사이트마다 다르다.
+
+    ★★ 실측 08-26 — 전에는 엔카 주소 하나로 다 만들어
+      K카 매물이 `encar.com/…?carid=EC61384014` 로 갔다.
+      ★ 엔카는 ★ **모르는 carid 에도 200 을 준다** — 「200 이면 됐다」로 세지 않는다
+      (`S46-87` 「부른 주소가 그 매물의 사이트인가」와 같은 잣대다)
+    ★ 주소를 코드에 박지 않는다 (`config/web.json` `site_detail_url`)
+    ★★ 못 잰 사이트는 ★ **None 이다.  ★ 링크를 안 낸다** — ★ 지어내지 않는다
+    검산  `S46-94`
+    """
     import json as _j
     import os as _o
 
+    if not site or not source_id:
+        return None
     with open(_o.path.join(root, "config", "web.json"), encoding="utf-8") as f:
-        return str(_j.load(f)["encar_detail_url"]).format(source_id=source_id)
+        tpl = (_j.load(f).get("site_detail_url") or {}).get(site)
+    return str(tpl).format(source_id=source_id) if tpl else None
 
 
 def _why_cheap_of(conn, listing_id: int, root: str) -> tuple:
@@ -345,6 +357,29 @@ def _purchase_costs(conn, listing_id: int, site, price_won, target_key,
     return tuple(out)
 
 
+def _unknown_axis_cfg(root: str) -> tuple[dict, frozenset]:
+    """축별 「모름」 사유와 ★ 채워질 수 없는 사유 (config/unknown_split.json).
+
+    ★ 코드에 박지 않는다.  ★ 「모름」은 value 가 아니라 source 다 (개정 435)
+    """
+    import json as _j
+    import os as _o
+
+    path = _o.path.join(root, "config", "unknown_split.json")
+    if not _o.path.isfile(path):
+        return {}, frozenset()
+    with open(path, encoding="utf-8") as f:
+        cfg = _j.load(f)
+    axes = {a: set(v.get("unknown") or [])
+            for a, v in (cfg.get("axes") or {}).items()}
+    # ★ 어느 축에나 「모름」인 것 — 축별 목록에 없어도 모름이다
+    axes["*"] = set(cfg.get("unknown_sources") or ())
+    for a in list(axes):
+        if a != "*":
+            axes[a] |= axes["*"]
+    return axes, frozenset(cfg.get("unfillable_sources") or ())
+
+
 def render_listing(conn: sqlite3.Connection, listing_id: int,
                    calc_version: str, fin_cfg: dict, policy: dict,
                    root: str = ".", site_blind: bool = False) -> ScoreView:
@@ -380,7 +415,10 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
     if head is None:
         raise KeyError(listing_id)
 
-    axes, pending = [], []
+    axes, pending, waiting = [], [], []
+    # ★★ 명령서 67장 — 「무엇이 비었나」.  ★ 채워질 수 없는 축은 빼고,
+    #   ★ 「상세를 기다리는」 축만 모은다.  ★ 쿼리를 더 쓰지 않는다 (V11-34)
+    _unk, _unfill = _unknown_axis_cfg(root)
     for axis, value, source, prio, excluded, mx, score in conn.execute(
         "SELECT axis, value, source, prio, excluded, max_points, score "
         "FROM result_axis WHERE listing_id=? AND calc_version=? ORDER BY axis",
@@ -395,6 +433,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
                                             bool(excluded))[0],
                              mark_why=axis_mark(value, mx, source,
                                                 bool(excluded))[1]))
+        if (source and source not in _unfill
+                and source in (_unk.get(axis) or _unk.get("*") or ())):
+            waiting.append((int(mx or 0), lab.get(axis, axis)))
         if excluded and source in ("gate_closed", "coefficient_out_of_range",
                                    "rule_undefined", "catalog_missing",
                                    "not_provided"):
@@ -437,6 +478,11 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         ev=bool(head[19]),
         # ★ 「싸다」를 말할 때 「왜 싼가」를 함께 낸다 (개정 299 · 부록 G ③)
         why_cheap=_why[0], why_cheap_reasons=tuple(_why[1]),
+        # ★★ 「사고 · 용도 · 자차 · 소유자 — 상세를 기다립니다」 (명령서 67장).
+        #   ★ 배점이 큰 것부터다 — 무엇을 채우면 등급이 나는지가 먼저다
+        waiting_axes=tuple(n for _p, n in sorted(waiting, key=lambda r: -r[0])),
+        waiting_text=" · ".join(
+            n for _p, n in sorted(waiting, key=lambda r: -r[0])),
         # ★ 채웠을 때 어디까지 오르는지 낸다 (STEP 149h · D-2).
         #   「점수는 낮은데 확실한 것」과 「높은데 불확실한 것」을 가른다
         pending_best=_pending_best(pending, float(head[4] or 0),
@@ -458,7 +504,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         photos=_photo_urls(head[17], root),
         curve=_curve_points(head[9], head[10], root),
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
-        encar_url=(_encar_url(head[8], root) if head[8] else None),
+        # ★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장).  head[15] 가 site 다
+        encar_url=source_detail_url(head[15], head[8], root),
         # ★ 원문에 없으면 None 이다 — ★ 0 이 아니다.  ★ 화면이 「—」를 낸다
         spec_fuel_economy_kmpl=head[20], spec_seats=head[21])
 

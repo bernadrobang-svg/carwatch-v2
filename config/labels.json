@@ -45,7 +45,8 @@
     "G": "G",
     "EXCLUDED": "제외",
     "NO_GRADE": "등급 없음",
-    "NOT_RATED": "평가 불가"
+    "NOT_RATED": "평가 불가",
+    "PENDING": "판정 중"
   },
   "VALUE_LABELS": {
     "1": "있음",
@@ -141,7 +142,8 @@
   "GRADE_NOT_RANKED": [
     "EXCLUDED",
     "NO_GRADE",
-    "NOT_RATED"
+    "NOT_RATED",
+    "PENDING"
   ],
   "_note_grade_order": "★ 개정 433 — 등급 차례의 정본은 여기다. 전에는 report/screens/build.py · store/watch.py · tools/verify_axes.py 셋이 저마다 ('S','A','B','C','D','E') 를 들고 있었다 — 컷이 8단계가 됐을 때 셋을 다 못 찾으면 화면마다 다른 등급이 나온다. GRADE_NOT_RANKED 는 순위를 안 매기는 것들이다 (제외·등급 없음·평가 불가)",
   "_VALUE_MARKS_why": "★ v3 시안 그대로 — OK · × · —.  ★ 마스터 확정 (13장 ⑤). ★ 넷이 서로 다르다 — 있음 OK · 없음 × · 해당없음 · · 모름 —. ★ 「없음」과 「모름」을 같은 기호로 내면 v1 사고가 되풀이된다",
@@ -159,5 +161,6 @@
     "③": "엔드포인트를 안 받는다 (우리)",
     "④": "계산이 못 만든다 (우리)",
     "⑤": "아무 데도 없다"
-  }
+  },
+  "_GRADE_PENDING_note": "★★ 개정 771 · 명령서 67장 — 근거 있는 축의 합이 분모의 절반 아래면 등급 자리에 「판정 중」을 낸다. ★ F·G 로 내리지 않는다 (「모르는 것을 모른다고 낸다」 개정 325). ★ 순위를 안 매기므로 GRADE_NOT_RANKED 에 넣는다 — 등급순 맨 뒤다. 검산 S46-90"
 }

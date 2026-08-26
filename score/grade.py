@@ -4,6 +4,8 @@
 지시서   7장 STEP 84
 근거     비율 기준이라 총점이 바뀌어도 등급 의미가 유지된다
 값규칙   분모 미달은 NOT_RATED.  D 나 E 가 아니다.  순위도 매기지 않는다
+         ★★ 근거 있는 축의 합이 분모의 절반 아래면 PENDING(「판정 중」)이다.
+            ★ F·G 로 내리지 않는다 (명령서 67장 · 검산 S46-90)
 금지     NOT_RATED 를 D 나 E 로 대체하는 것.  낮은 등급이 아니다
          버전이 다른 결과를 한 목록에 섞어 정렬하는 것
 
@@ -28,6 +30,11 @@ NOT_RATED = "NOT_RATED"
 EXCLUDED = "EXCLUDED"
 # ★ 개정 433 — 10% 미만.  「등급 없음」이다.  NOT_RATED(분모 미달)와 다르다
 NO_GRADE = "NO_GRADE"
+# ★★ 개정 771 · 명령서 67장 — 「판정 중」.  ★ 근거가 절반도 없다.
+#   ★ 낮은 등급이 아니다.  상세가 들어오면 그때 등급이 난다
+PENDING = "PENDING"
+# 「근거 있는 축의 합」이 분모의 이 비율 아래면 판정 중.  ★ config 가 정본
+PENDING_RATIO_KEY = "pending_confirmed_ratio"
 GRADE_E = "E"
 GRADE_D = "D"
 GRADE_S = "S"
@@ -71,6 +78,20 @@ def grade_of(result: ScoreResult, policy: ScoringPolicy) -> str:
         return NOT_RATED
     if not result.denominator:
         return NOT_RATED
+    # ★★ 개정 771 · 명령서 67장 · UI_REVIEW 18장 — ★ 근거 있는 축의 합이
+    #   분모의 절반 아래면 「판정 중」이다.  ★ F·G 로 내리지 않는다.
+    #   실측 08-27 — X3 264/910 F · G80 670/910 A.  까닭은 차가 나빠서가
+    #   아니라 ★ 상세를 못 받아서다 (사고 0/51 · 용도 0/22 · 자차 0/18 ·
+    #   소유자 0/11).  「모르는 것을 모른다고 낸다」(개정 325)
+    # ★★ 분모는 ★ 910 그대로다 (가이드 확정 08-25).  ★ 「근거 있는 축 N / 910」
+    #   이라 UI_REVIEW 18장이 못 박았다.  ★ 채워질 수 없는 축(소모품)을 분모에서
+    #   빼면 절반선이 447.5 로 내려가 ★ 근거 450 짜리가 0.3%p 차로 G 에 남는다 —
+    #   실측 08-25: 판정 중 3,590 → 1,670 으로 줄고 ★ 상세 없는 G 1,288 이 남았다.
+    #   ★ 소모품은 「무엇이 비었나」 목록에서만 뺀다 (67장-4 · report/render.py)
+    base = float(result.denominator)
+    cut = float(policy.raw.get(PENDING_RATIO_KEY, 0.5))
+    if base > 0 and float(result.confirmed or 0.0) < base * cut:
+        return PENDING
     # ★ earned 와 denominator 는 같은 자 (실배점).  score_total 은 555 환산값이다.
     #   섞으면 분모가 작을수록 부풀려진다 — 245/455=53.8%(D) 가
     #   298.85/455=65.7%(C) 로 한 등급 올라갔다 (실측 · E-1)

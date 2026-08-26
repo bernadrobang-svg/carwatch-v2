@@ -52,7 +52,7 @@
 <div class="sec" id="sec-1">
   <h3>판정</h3>
   <div class="verdict">
-    <div class="gr {{ v.grade }} {{ v.grade | gradecls }}">{{ v.grade }}
+    <div class="gr {{ v.grade }} {{ v.grade | gradecls }}">{{ v.grade | gradelabel }}
       {% if row.rank %}<small>{{ row.rank }}위</small>{% endif %}
       {% if row.provisional %}<span class="prov">잠정</span>{% endif %}</div>
     <div class="barwrap">
@@ -70,6 +70,9 @@
   </div>
   <p class="note">{{ v.grade_earned | num }} / {{ v.grade_base | num }} 점입니다 —
     등급은 비율로 매깁니다. {{ grade_help }}</p>
+  {% if v.waiting_text %}<p class="note ask">무엇이 비었나 —
+    <b>{{ v.waiting_text }}</b> · 상세를 기다립니다.
+    근거 있는 축 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 점입니다.</p>{% endif %}
 </div>
 
 <!-- ② 값 ────────────────────────────────────────────────────────── -->
@@ -274,7 +277,7 @@
   <div class="alt">
     {% for a in alts %}
     <div class="altcard">
-      <div class="gr {{ a.row.grade }} {{ a.row.grade | gradecls }}">{{ a.row.grade }}</div>
+      <div class="gr {{ a.row.grade }} {{ a.row.grade | gradecls }}">{{ a.row.grade_label }}</div>
       <div>
         <div class="an"><a href="/detail/{{ a.row.listing_id }}">{{ a.row.target_label }}</a></div>
         <div class="ap">{{ a.row.price_won | won }}</div>
@@ -295,8 +298,12 @@
     <input type="hidden" name="listing_id" value="{{ v.listing_id }}">
     <button type="submit" title="관심에 담습니다">♡ 관심</button>
   </form>
+  <!-- ★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장).  ★ 이름도 그 사이트다 -->
   {% if row.encar_url %}<a class="btn go" href="{{ row.encar_url }}" target="_blank" rel="noopener"
-     title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기 ↗</a>{% endif %}
+     title="원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">{{ row.site_badge }}에서 보기 ↗</a>{% endif %}
+  {% if !row.encar_url %}<span class="dim"
+     title="이 사이트의 원문 주소를 아직 재지 못했습니다. 지어내지 않습니다 (명령서 72장)"
+     >원문 주소 미조회</span>{% endif %}
 </div>
 </div>
 
@@ -316,7 +323,7 @@
   <tr>
     <td data-label="사이트"><strong>{{ d.site_badge }}</strong></td>
     <td class="num mono" data-label="값">{{ d.price_won | won }}</td>
-    <td data-label="등급"><span class="{{ d.grade | gradecls }}">{{ d.grade }}</span></td>
+    <td data-label="등급"><span class="{{ d.grade | gradecls }}">{{ d.grade | gradelabel }}</span></td>
     <td data-label="사고"><span class="axis-{{ d.accident_tone }}">{{ d.accident_mark }}</span></td>
     <td class="num mono" data-label="주행">{{ d.mileage_km | km }}</td>
     <td class="num mono" data-label="보증">{% if d.warranty_month %}{{ d.warranty_month }}개월{% endif %}{% if !d.warranty_month %}<span class="dim">확인 못 함</span>{% endif %}</td>

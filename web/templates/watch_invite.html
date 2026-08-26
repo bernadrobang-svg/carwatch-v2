@@ -4,7 +4,7 @@
 {% if row %}
 <div class="cand">
   <header>
-    <span class="{{ row.grade | gradecls }}">{{ row.grade }}</span>
+    <span class="{{ row.grade | gradecls }}">{{ row.grade | gradelabel }}</span>
     <strong>{{ row.target_label }}</strong>
     <span class="muted">{{ row.trim }}</span>
     <span class="price">{{ row.price_won | won }}</span>

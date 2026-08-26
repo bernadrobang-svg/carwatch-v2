@@ -790,5 +790,7 @@
     "사이트 검증": [
       "warranty.site"
     ]
-  }
+  },
+  "pending_confirmed_ratio": 0.5,
+  "_pending_confirmed_ratio_note": "★★ 명령서 67장 · UI_REVIEW 18장 — 「근거 있는 축의 합」이 분모의 이 비율 아래면 등급 대신 「판정 중」이다. ★ 코드에 박지 않는다"
 }

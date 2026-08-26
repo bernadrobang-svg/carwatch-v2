@@ -100,6 +100,21 @@ def f_gradecls(v) -> str:
     return "grade-none"              # 등급 없음 · 평가 불가
 
 
+def f_gradelabel(v) -> str:
+    """등급 → 화면 문구.  ★ 「PENDING」을 그대로 내지 않는다 (명령서 67장).
+
+    ★ 정본은 config/labels.json GRADE_LABELS 다 — 코드에 박지 않는다
+    """
+    import json as _j
+    import os as _o
+
+    g = str(v or "").strip()
+    _p = _o.path.join(_o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))),
+                      "config", "labels.json")
+    with open(_p, encoding="utf-8") as _f:
+        return (_j.load(_f).get("GRADE_LABELS") or {}).get(g, g)
+
+
 def _grade_classes() -> tuple:
     import json as _j
     import os as _o
@@ -152,6 +167,8 @@ def f_url(v) -> str:
 
 FILTERS = {"won": f_won, "km": f_km, "pct": f_pct, "date": f_date,
            "num": f_num, "gradecls": f_gradecls, "count": f_count,
+           # ★ 등급 문구 — 「판정 중」·「제외」·「평가 불가」 (명령서 67장)
+           "gradelabel": f_gradelabel,
            "signcls": f_signcls, "signwon": f_signwon,
            # ★ 주소에 넣는 값은 ★ 반드시 이것을 거친다 (S46-66)
            "url": f_url}

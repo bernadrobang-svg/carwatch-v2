@@ -59,8 +59,14 @@ CREATE TABLE IF NOT EXISTS result_score (
   --   EXCLUDED  관문 배제 (리스·골격·침수·전손) — 점수와 무관하다
   --   NO_GRADE  10% 미만 — 점수는 매겼는데 등급이 없다
   --   NOT_RATED 분모 미달 — 잴 수가 없었다
+  -- ★★ 명령서 67장 · UI_REVIEW 18장 — PENDING「판정 중」을 더한다.
+  --   ★ 근거 있는 축의 합이 분모의 절반 아래다.  ★ 낮은 등급이 아니다 —
+  --     상세가 들어오면 그때 등급이 난다.  ★ F·G 로 내리지 않는다 (개정 325)
+  --   ★ 지적 — docs/chapters/11-store/c-result.md:179 은
+  --     ('S','A','B','C','D','E','NOT_RATED') 일곱이라 개정 433 부터 이미 낡았다.
+  --     ★ 개발측은 docs 를 안 고친다 (규칙 2) — 가이드에 보고한다
   CHECK (grade IN ('S','A','B','C','D','E','F','G',
-                   'EXCLUDED','NO_GRADE','NOT_RATED'))
+                   'EXCLUDED','NO_GRADE','NOT_RATED','PENDING'))
 );
 
 CREATE INDEX IF NOT EXISTS ix_score_grade ON result_score(calc_version, grade);

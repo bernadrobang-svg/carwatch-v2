@@ -57,7 +57,7 @@
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
-  <td class="c" data-label="등급"><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></td>
+  <td class="c" data-label="등급"><span class="{{ r.grade | gradecls }}">{{ r.grade | gradelabel }}</span></td>
   <td class="r num" data-label="순위">{% if r.rank %}<b>{{ r.rank }}</b>{% endif %}</td>
   <!-- 부록 G 2절 — 계산식을 카드에 넣지 않는다.  그건 상세에서 본다 -->
   <td class="r num" data-label="비율">{% if r.ratio_pct %}<strong>{{ r.ratio_pct }}%</strong>
@@ -89,7 +89,8 @@
   <td data-label="왜 이 순위인가"><span class="reason">{{ r.recommend_reason }}</span></td>
   <td class="c act" data-label="보기">
     <a href="/why/{{ r.listing_id }}" class="mini">근거</a>
-    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini">엔카 ↗</a>{% endif %}
+    {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener" class="mini"
+      title="원문 매물로 갑니다">{{ r.site_badge }} ↗</a>{% endif %}
     <a href="/compare?ids={{ r.listing_id }}" class="mini">⇄ 비교</a>
   </td>
 </tr>

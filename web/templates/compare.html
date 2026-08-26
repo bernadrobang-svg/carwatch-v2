@@ -39,7 +39,7 @@
 <h3>고른 셋</h3>
 <div class="vlist">
 {% for r in c.rows %}
-<div class="vline"><span><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span>
+<div class="vline"><span><span class="{{ r.grade | gradecls }}">{{ r.grade | gradelabel }}</span>
   <a href="/detail/{{ r.listing_id }}">{{ r.target_label }}</a>
   <span class="dim">{{ r.trim }}</span>
   <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.site_badge }}</span></span>
@@ -107,7 +107,7 @@
   <span class="tag" title="이 매물을 받은 사이트입니다">{{ r.site_badge }}</span></th>{% endfor %}</tr></thead>
 <tbody>
 <tr class="cmp-head"><th>등급</th>
-  {% for r in c.rows %}<td><span class="{{ r.grade | gradecls }}">{{ r.grade }}</span></td>{% endfor %}</tr>
+  {% for r in c.rows %}<td><span class="{{ r.grade | gradecls }}">{{ r.grade | gradelabel }}</span></td>{% endfor %}</tr>
 <tr class="cmp-head"><th>비율</th>
   {% for r in c.rows %}<td class="num">
     {% if r.ratio_pct %}<strong class="ratio">{{ r.ratio_pct }}%</strong>

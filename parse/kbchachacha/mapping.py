@@ -179,4 +179,32 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
             out["price_origin_won"] = round(out["price_current_won"] * 100 / pct)
 
     out["diagnosis_car"] = 1 if "KB진단" in text else 0
+
+    # ★★★ 사진 (명령서 73장 · 실측 08-26).  ★ KB 는 ★ **상세**에만 사진이 있다 —
+    #   ★ 목록 봉투에는 없다.  ★ 그래서 상세를 돌 때 함께 채운다
+    # ★ 파일 이름이 ★ `{carSeq}_…` 로 시작하는 것만 담는다 —
+    #   ★ 같은 쪽에 ★ 매거진(`/IMG/board/`) · 딜러(`/IMG/memberimg/`) 사진이 섞여 있다
+    photos = _photos(html, str(source_id))
+    if photos:
+        out["photo_main"] = photos[0]
+        out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+    return out
+
+
+RE_CARIMG = re.compile(
+    r'https?://img\.kbchachacha\.com/IMG/carimg/[^"\'\s<>]+?\.(?:jpg|jpeg|png|webp)',
+    re.I)
+
+
+def _photos(html: str, source_id: str) -> list:
+    """그 매물의 사진만 (명령서 73장).  ★ 없으면 빈 목록 — ★ 지어내지 않는다."""
+    seen, out = set(), []
+    for url in RE_CARIMG.findall(html or ""):
+        name = url.rsplit("/", 1)[-1]
+        if not name.startswith(f"{source_id}_"):
+            continue          # ★ 이 매물의 사진이 아니다
+        if url in seen:
+            continue
+        seen.add(url)
+        out.append(url)
     return out

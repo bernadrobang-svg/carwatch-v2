@@ -1,8 +1,15 @@
-<h1>판정 근거 <span class="{{ v.grade | gradecls }}">{{ v.grade }}</span></h1>
+<h1>판정 근거 <span class="{{ v.grade | gradecls }}">{{ v.grade | gradelabel }}</span></h1>
+{% if v.waiting_text %}<p class="note ask">무엇이 비었나 —
+  <b>{{ v.waiting_text }}</b> · 상세를 기다립니다.
+  근거 있는 축 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 점이라
+  등급을 매기지 않습니다.</p>{% endif %}
 <p class="muted">{{ v.target_key }} · 매물 {{ v.listing_id }}
   · <span class="tag" title="이 매물을 받은 사이트입니다. 값이 어느 사이트 원문에서 왔는지가 값의 뜻을 정합니다">{{ v.site_badge }}</span>
   {% if v.encar_url %}· <a class="btn go mini" href="{{ v.encar_url }}" target="_blank" rel="noopener"
-    title="엔카 원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">엔카에서 보기 ↗</a>{% endif %}</p>
+    title="원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">{{ v.site_badge }}에서 보기 ↗</a>{% endif %}
+  {% if !v.encar_url %}· <span class="dim"
+    title="이 사이트의 원문 주소를 아직 재지 못했습니다. 지어내지 않습니다 (명령서 72장)"
+    >원문 주소 미조회</span>{% endif %}</p>
 <!-- ① 사진 (개정 375 · V11-132).  ★ 상세인데 사진이 하나도 없었다.
      ★ JS 없이 갈아 끼운다 — 썸네일은 앵커이고 :target 이 큰 사진을 고른다 -->
 {% if v.photos %}
