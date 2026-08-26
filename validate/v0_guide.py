@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import json
+import ssl
 import re
 import sys
 from pathlib import Path
@@ -1819,6 +1820,63 @@ def s46_91_raw_vs_stored() -> tuple[bool, str]:
 
 
 
+
+def s46_95_screens_alive() -> tuple[bool, str]:
+    """★★ 배포된 화면 여덟을 두드려 ★ 하나라도 제 코드가 아니면 실패.
+
+    ★★★ 명령서 74·75장 — ★ 08-28 에 ★ `/` · `/track` · `/detail` 이 ★ **500** 이었고
+      ★ 그 다음 바퀴에는 ★ **전 화면이 503**(앱이 아예 없다)이었다.
+    ★★ ★ 왜 몰랐나 — ★ **검사가 없었다.**  ★ 개발측은 ★ 매물 건수만 세고 있었고
+      ★ 화면이 열리는지는 ★ 아무도 안 봤다 (오판 141).
+    ★ 재는 법 — ★ 주소도 화면 목록도 ★ `config/deploy.json` 이 정본이다 (S14).
+      ★ `/watch` · `/admin` 은 ★ 로그인 앞이라 ★ 403 이 정상이다 (74장 실측)
+    ★ 못 두드리면 ★ **실패다** — ★ 그것이 바로 ★ 503 일 때의 모습이다
+    """
+    import urllib.error
+    import urllib.request
+
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    screens = dep.get("health_screens") or {}
+    if not base or not screens:
+        return False, "config/deploy.json 에 base_url · health_screens 가 없다"
+    lid = ""
+    db = ROOT / "carwatch.db"
+    if db.is_file():
+        import sqlite3
+        conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+        try:
+            row = conn.execute(
+                "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+            lid = str(row[0]) if row else ""
+        except sqlite3.Error:
+            lid = ""
+        finally:
+            conn.close()
+    ctx = ssl._create_unverified_context()
+    bad, ok = [], 0
+    for path, want in screens.items():
+        if "{listing_id}" in path:
+            if not lid:
+                continue
+            path = path.replace("{listing_id}", lid)
+        try:
+            with urllib.request.urlopen(base + path, timeout=20,
+                                        context=ctx) as res:
+                got = res.status
+        except urllib.error.HTTPError as exc:
+            got = exc.code
+        except (urllib.error.URLError, OSError) as exc:
+            bad.append(f"{path} 못 두드림({type(exc).__name__})")
+            continue
+        if int(got) == int(want):
+            ok += 1
+        else:
+            bad.append(f"{path} {got}(→{want})")
+    if bad:
+        return False, f"★ 화면 {len(bad)}개가 제 코드가 아니다 — " + " · ".join(bad)
+    return True, f"화면 {ok}개가 다 제 코드다 ({base})"
+
 def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
     """★★ 사이트가 파는 차종인데 ★ `site_query` 에 코드가 없으면 알린다.
 
@@ -1977,6 +2035,8 @@ CHECKS = (
     ("S46-92", "브라우저 수집이 0건을 받았는가",
      s46_92_browser_zero_count, "warn"),
     # ★ 알림이다 — ★ 코드는 ★ 마스터께 청한다.  ★ 개발측이 지어 넣지 않는다
+    # ★★ 명령서 75장 — ★ 화면이 사는지를 ★ 아무도 안 보고 있었다 (오판 141)
+    ("S46-95", "배포된 화면이 다 열리는가", s46_95_screens_alive),
     ("S46-96", "사이트가 파는 차종인데 코드가 없는가",
      s46_96_site_sells_but_no_code, "warn"),
     # ★ 셋은 ★ **숫자를 내는 검사**다 — ★ 판정을 바꾸지 않는다 (명령서 45-3)

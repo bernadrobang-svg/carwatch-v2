@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 175개 · 총 61,244줄
+파일 175개 · 총 61,304줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -10,7 +10,7 @@
 | `report/screens/build.py` | 3,295 | 화면 데이터 생성. |
 | `web/views.py` | 2,677 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,265 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `validate/v0_guide.py` | 2,070 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `validate/v0_guide.py` | 2,130 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `store/core.py` | 1,633 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,510 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,479 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
@@ -208,10 +208,10 @@ _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  l
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:495  _list_observed_source_check:590  _facet_reconcile_check:620  _record_mismatch_check:664  _curve_table_check:694  _special_null_check:761  _grade_base_checks:789  _checks_cfg:882  _labels_cfg:896  _unknown_mark_checks:904  _grade_cut_checks:955  _points_cap_checks:1065  _worse_of_checks:1117  _checks_json:1179  _value_curve_checks:1190  _group_sum_checks:1280  _mapped_other_check:1391  _denominator_check:1418  _core_axis_check:1446  _rental_cross_check:1467  _why_cheap_check:1505  _source_before_value_check:1546  _absolute_cut_check:1581  _spec_files:1611  _confirm_ratio_check:1621  _warranty_checks:1671  _spec_axis_check:1705  _site_axis_checks:1746  _rendered_why:1795  _rendered_listings:1805  _fill_gap_check:1815  _points_sum_check:1848  _market_gap_check:1865  _bonus_checks:1921  _trim_price_check:2025  run:2073  _shuffle_check:2208  _halt_dict_check:2233  _ensure_tmp:2262
 ```
 
-### `validate/v0_guide.py` — 2,070줄
+### `validate/v0_guide.py` — 2,130줄
 
 ```
-_read:24  s43_2_axis_ids:31  s44_4_scope_written:69  s44_5_site_consistent:101  s45_1_one_version:134  _order_files:157  s44_1_order_exists:170  s44_2_one_order:212  s43_2b_axis_renamed:227  s43_2c_no_hda:253  s45_5_no_axis_scores:307  s45_4_table_generated:345  s45_3_spec_totals:360  s45_2_mock_numbers:416  s44_3_specs_in_order:437  s43_3_version_matches:475  _h_tags:515  s46_21_one_screen_per_file:531  s46_22_section_order:556  _targets:625  s46_23_site_query_filled:631  s46_24_facet_unconfirmed:646  s46_30_index_covers_docs:663  s46_31_spec_sites_in_config:702  s46_32_generated_fresh:723  _req_rows:765  _tokens:777  _named_docs:792  s46_36_dropped_not_alive:804  s46_40_progress_docs_changed:832  s46_41_site_status_known:863  _templates:905  s46_45_spec_not_in_list:910  s46_46_spec_forbidden_ten:930  s46_66_links_encoded:956  s46_65_verdict_fresh:995  _sian_files:1033  s46_67_sian_names_dont_clash:1042  s46_68_watch_is_mobile_first:1105  s46_74_rows_per_page:1159  s46_75_v4m_common:1205  s46_76_collectors_keep_raw:1245  s46_77_kb_is_our_targets_only:1273  s46_78_encar_only_paths_are_scoped:1328  s46_87_request_site_matches_listing:1370  s46_88_encar_blocked_banner:1439  _paired_rows:1504  _grade_order_list:1544  s46_54_grade_two_step:1556  s46_55_price_gap_30:1581  s46_56_accident_split:1607  s46_90_pending_not_graded:1647  _registrable:1696  s46_94_source_url_site_matches:1710  s46_91_raw_vs_stored:1754  s46_96_site_sells_but_no_code:1822  s46_92_browser_zero_count:1862  _as_check:1997  results:2011  save:2036  run:2047
+_read:25  s43_2_axis_ids:32  s44_4_scope_written:70  s44_5_site_consistent:102  s45_1_one_version:135  _order_files:158  s44_1_order_exists:171  s44_2_one_order:213  s43_2b_axis_renamed:228  s43_2c_no_hda:254  s45_5_no_axis_scores:308  s45_4_table_generated:346  s45_3_spec_totals:361  s45_2_mock_numbers:417  s44_3_specs_in_order:438  s43_3_version_matches:476  _h_tags:516  s46_21_one_screen_per_file:532  s46_22_section_order:557  _targets:626  s46_23_site_query_filled:632  s46_24_facet_unconfirmed:647  s46_30_index_covers_docs:664  s46_31_spec_sites_in_config:703  s46_32_generated_fresh:724  _req_rows:766  _tokens:778  _named_docs:793  s46_36_dropped_not_alive:805  s46_40_progress_docs_changed:833  s46_41_site_status_known:864  _templates:906  s46_45_spec_not_in_list:911  s46_46_spec_forbidden_ten:931  s46_66_links_encoded:957  s46_65_verdict_fresh:996  _sian_files:1034  s46_67_sian_names_dont_clash:1043  s46_68_watch_is_mobile_first:1106  s46_74_rows_per_page:1160  s46_75_v4m_common:1206  s46_76_collectors_keep_raw:1246  s46_77_kb_is_our_targets_only:1274  s46_78_encar_only_paths_are_scoped:1329  s46_87_request_site_matches_listing:1371  s46_88_encar_blocked_banner:1440  _paired_rows:1505  _grade_order_list:1545  s46_54_grade_two_step:1557  s46_55_price_gap_30:1582  s46_56_accident_split:1608  s46_90_pending_not_graded:1648  _registrable:1697  s46_94_source_url_site_matches:1711  s46_91_raw_vs_stored:1755  s46_95_screens_alive:1824  s46_96_site_sells_but_no_code:1880  s46_92_browser_zero_count:1920  _as_check:2057  results:2071  save:2096  run:2107
 ```
 
 ### `store/core.py` — 1,633줄
