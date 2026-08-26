@@ -270,6 +270,8 @@ from store.core import (  # noqa: E402
 from store.pii import load_key  # noqa: E402
 from collect.fetcher import reject_reason, verify_shape  # noqa: E402
 from store.raw import save_facet, save_raw  # noqa: E402
+# ★ 배치 단계가 쓰기 잠금을 오래 쥐지 않게 끊는다 (08-26)
+from store.raw import tick as raw_tick  # noqa: E402
 
 
 # 단위 환산.  임계값이 아니다 (V4-13 은 임계·경계·비율·표본 수를 막는다)
@@ -550,6 +552,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 rows += 1
                 if rows % PROGRESS_EVERY == 0:
                     say("S4", "매물 적재", rows, 0)
+                    # ★ 잠금 창을 끊는다 (08-26) — ★ 화면의 쓰기가 죽지 않게
+                    raw_tick(conn, rows)
                 parsed = parse_list_item(item, adapter.site_code)
                 parsed["listing_id"] = resolve_listing_id(
                     conn, adapter.site_code, parsed["source_id"], at)
@@ -713,6 +717,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             doc = json.loads(body)
             if n % PROGRESS_EVERY == 0:
                 say("S6", f"{kind} 파싱", n, 0)
+                # ★ 잠금 창을 끊는다 (08-26).  ★ S6 은 13만 행이다
+                raw_tick(conn, n)
             lid = resolve_listing_id(conn, adapter.site_code, sid, at)
             if kind == "detail":
                 # ★ 필드 하나가 실패해도 나머지는 저장한다 (STEP 19a)

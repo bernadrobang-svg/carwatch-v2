@@ -4,6 +4,7 @@
 쓰기   python3.11 tools/collect_reborncar.py --count     몇 건인지만
       python3.11 tools/collect_reborncar.py             전량 (1,036건)
       python3.11 tools/collect_reborncar.py --limit 50  앞에서 N건만
+      python3.11 tools/collect_reborncar.py --missing-raw  ★ 원문이 없는 우리 차종만 (P3)
 ★ 목록 API 는 robots 가 막았다 — ★ 사이트맵이 목록이다 (1b장)
 ★ 차종 좁히기가 없다 — ★ K카와 같이 ★ **전량을 받아 우리가 거른다**
 ★ 모바일 UA 로 받는다 — ★ 데스크톱은 값이 거짓이다 (2a장)
@@ -90,8 +91,26 @@ def main() -> int:
     done = {r[0] for r in conn.execute(
         "SELECT source_id FROM core_listing WHERE site=? AND detail_status='ok'",
         (SITE_CODE,))}
-    todo = [c for c in got if c not in done]
-    print(f"★ 상세 — 받을 것 {len(todo):,}건 (이미 받은 것 {len(done):,}건은 건너뛴다)")
+    # ★★★ 08-26 — ★ `--missing-raw` : ★ **원문이 없는 것만** 다시 받는다 (P3).
+    #   ★ 실측 08-26 — ★ `detail_status='ok'` 가 ★ 1,045건인데
+    #     ★ ★ `raw_response` 는 ★ **23건**뿐이었다.  ★ 우리 21종 72건은 ★ **0건**이다.
+    #   ★ ★ 원문이 없으면 ★ **다시 캘 수가 없다** — ★ 사진도 축도 못 뽑는다.
+    #     ★ ★ 「원문은 남긴다.  갈래를 넓히시면 다시 판다」(명령서 3-2)가 안 지켜졌다.
+    #   ★ 전량을 다시 받지 않는다 — ★ **원문이 빈 것만**이다
+    if "--missing-raw" in args:
+        have = {r[0] for r in conn.execute(
+            "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
+            (SITE_CODE,))}
+        ours_keys = {r[0] for r in conn.execute(
+            "SELECT source_id FROM core_listing"
+            " WHERE site=? AND target_key IS NOT NULL", (SITE_CODE,))}
+        todo = [c for c in got if c in ours_keys and c not in have]
+        print(f"★ 원문이 없는 우리 차종 {len(todo):,}건만 다시 받는다"
+              f" (원문 있는 것 {len(have):,}건 · 우리 차종 {len(ours_keys):,}건)")
+    else:
+        todo = [c for c in got if c not in done]
+        print(f"★ 상세 — 받을 것 {len(todo):,}건"
+              f" (이미 받은 것 {len(done):,}건은 건너뛴다)")
     interval = float(cfg.get("interval_sec") or 1.0)
     seen = {"정상": 0, "못 받음": 0}
     ours = skipped = 0

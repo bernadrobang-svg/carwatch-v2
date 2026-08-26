@@ -33,6 +33,8 @@ ORIGIN_BROWSER = "browser"
 _IN_BATCH: set[int] = set()
 # ★ batch 안에서 ★ 몇 줄 썼나 — ★ 잠금 창을 자르는 셈이다 (08-26)
 _BATCH_ROWS: dict[int, int] = {}
+# ★ tick 이 마지막으로 끊은 행 번호 (08-26)
+_BATCH_TICK: dict[int, int] = {}
 
 
 def batch(conn: sqlite3.Connection):
@@ -50,6 +52,7 @@ def batch(conn: sqlite3.Connection):
     def _ctx():
         _IN_BATCH.add(id(conn))
         _BATCH_ROWS[id(conn)] = 0
+        _BATCH_TICK[id(conn)] = 0
         try:
             yield conn
             conn.commit()
@@ -59,8 +62,37 @@ def batch(conn: sqlite3.Connection):
         finally:
             _IN_BATCH.discard(id(conn))
             _BATCH_ROWS.pop(id(conn), None)
+            _BATCH_TICK.pop(id(conn), None)
 
     return _ctx()
+
+
+def tick(conn: sqlite3.Connection, rows: int) -> None:
+    """★★ batch 안에서 ★ **처리한 행 수**로 ★ 잠금 창을 끊는다 (08-26).
+
+    ★★★ `commit()` 만으로는 모자랐다.  ★ 그것은 ★ **쓴 행**에서만 불린다 —
+      ★ ★ 다시 파싱해 ★ 바뀐 것이 없으면 ★ `upsert_core` 가 ★ 일찍 돌아가고
+      ★ ★ `commit()` 이 ★ 안 불린다.  ★ 그런데 ★ 앞서 쓴 것 때문에
+      ★ ★ **트랜잭션은 열려 있고** ★ 쓰기 잠금은 ★ 그대로 잡혀 있다.
+    ★ 실측 08-26 — ★ 볼보 137건을 받은 뒤 S6 이 도는 동안
+      ★ ★ 쓰기가 ★ **0/6** 이었다 (8초씩 기다리고 다 실패).
+      ★ ★ 그 바람에 ★ 리본카 수집기가 ★ 「database is locked」로 죽었다.
+    ★ 그래서 ★ 진행 표시 자리에서 ★ 이것을 부른다 — ★ 몇 행을 처리했든 끊긴다.
+    ★ ★ `commit()` 과 ★ 같은 셈을 쓴다 — ★ 쓴 행이든 지나간 행이든 ★ 한 칸이다.
+    ★ batch 밖이면 ★ 아무것도 안 한다 (이미 건별 커밋이다)
+    """
+    if id(conn) not in _IN_BATCH:
+        return
+    every = _batch_commit_rows()
+    if not every:
+        return
+    # ★ `rows` 는 ★ 「지금 몇 행째인가」다.  ★ 그 행수마다 한 번 끊는다.
+    #   ★ 진행 표시가 20행마다 부르므로 ★ 셈으로 세면 200이 4,000행이 된다 —
+    #   ★ ★ 그러면 ★ 창이 10초에 한 번밖에 안 열린다 (실측 08-26: 8초 대기가 다 실패)
+    last = _BATCH_TICK.get(id(conn), 0)
+    if int(rows) - last >= every:
+        _BATCH_TICK[id(conn)] = int(rows)
+        conn.commit()
 
 
 def commit(conn: sqlite3.Connection) -> None:

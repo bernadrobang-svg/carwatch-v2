@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 178개 · 총 61,918줄
+파일 178개 · 총 62,004줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,7 +12,7 @@
 | `validate/v0_guide.py` | 2,406 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `validate/v3_logic.py` | 2,270 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,633 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
-| `collect/runner.py` | 1,510 | 수집 실행 규칙. |
+| `collect/runner.py` | 1,516 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,479 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,156 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
@@ -40,8 +40,8 @@
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `web/app.py` | 508 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `contracts.py` | 466 | 계층 간 계약 — Protocol · DTO. |
+| `store/raw.py` | 444 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `run.py` | 412 | CarWatch v2 진입점. |
-| `store/raw.py` | 412 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
 | `tools/collect_kbchachacha.py` | 401 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `report/views.py` | 399 | 리포트 DTO (L9). |
@@ -84,6 +84,7 @@
 | `tools/unknown_split.py` | 208 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
 | `parse/importer.py` | 182 | 반입 입력 해석 (13장 STEP 136a · 136b). |
+| `collect/worker.py` | 176 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `tools/classify_unclassified.py` | 175 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `tools/migrate.py` | 174 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
@@ -96,11 +97,11 @@
 | `tools/collect_kia_cpo.py` | 162 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
 | `adapters/kbchachacha.py` | 161 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `score/scorer.py` | 159 | 채점 · 분모 (L7). |
+| `tools/collect_reborncar.py` | 158 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `analyze/axis/value.py` | 156 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
 | `web/routes.py` | 149 | 라우팅 표 (14장 STEP 142). |
-| `collect/worker.py` | 147 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `score/adjust.py` | 145 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `tools/repair_facet_chunks.py` | 144 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
@@ -110,7 +111,6 @@
 | `parse/heydealer/mapping.py` | 139 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `parse/reborncar/mapping.py` | 139 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
 | `tools/classify_fields.py` | 139 | 등록부 분류 초안 — 파서가 쓰는 경로를 근거로 자동 분류한다. |
-| `tools/collect_reborncar.py` | 139 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `tools/fold_out_of_scope.py` | 137 | 이미 들어온 것을 ★ 되돌린다 — ★ 우리 대상이 아닌 것은 ★ 접는다 (명령서 3-3). |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
@@ -223,10 +223,10 @@ _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort
 resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  upsert_core:316  mark_gone:416  load_snapshot:433  build_identities:542  resolve_vehicle_id:568  merge_conflict:600  upsert_vehicle:611  upsert_dealer:632  upsert_child:659  _flag:680  _not_join_months:694  state_counts:719  current_versions:759  diagnosis_of:789  target_counts:802  top_target:809  vehicle_of:814  collect_scale:821  our_fault:841  catalog_coverage:850  _walk:894  _sample_bodies:910  hits_of:923  key_seen:942  stored_hits:957  sample_bodies:973  observed:995  known_leaves:1033  has_unclassified:1048  classify_unclassified:1055  _card_limit:1098  _value_chars:1103  _admin_cfg:1108  unclassified_cards:1125  _peek:1181  _short:1228  _blocking_paths:1239  _raw_rows_max:1259  used_endpoints:1269  raw_sections:1278  _flatten:1317  option_diff:1341  _option_names:1379  blocking_keys:1395  full_hits:1413  axis_paths_empty:1438  blocking_rows:1475  record_mismatch_sql:1537  record_mismatch_count:1543  relist_counts:1569  listing_models:1586  filter_options:1606  site_counts:1623
 ```
 
-### `collect/runner.py` — 1,510줄
+### `collect/runner.py` — 1,516줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:144  aspect_names:165  check_facet_axes:169  interpret_failure:183  collect_check:212  FailStreak:279  _sleep:313  _log_request:319  _save_issues:330  make_executors:341  classify_in_group:899  _group_of:920  _fuel_of:935  _badge_of:941  _pages_for:947  _dicts:961  _option_medians:997  _market_medians:1043  _trim_ladders:1072  _option_base:1089  _site_grade_rules:1119  _listing_config:1135  _listing_values:1160  _option_money:1179  _owned_months:1198  _option_of:1210  _market_of:1218  _group_sums:1228  make_score_executors:1255  make_validate_executor:1439  make_registry_executor:1481
+CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:144  aspect_names:165  check_facet_axes:169  interpret_failure:183  collect_check:212  FailStreak:281  _sleep:315  _log_request:321  _save_issues:332  make_executors:343  classify_in_group:905  _group_of:926  _fuel_of:941  _badge_of:947  _pages_for:953  _dicts:967  _option_medians:1003  _market_medians:1049  _trim_ladders:1078  _option_base:1095  _site_grade_rules:1125  _listing_config:1141  _listing_values:1166  _option_money:1185  _owned_months:1204  _option_of:1216  _market_of:1224  _group_sums:1234  make_score_executors:1261  make_validate_executor:1445  make_registry_executor:1487
 ```
 
 ### `tests/test_spec_ui.py` — 1,479줄
@@ -391,16 +391,16 @@ menu_items:22  _tip:104  _label:109  empty_state:120  banner_of:139  _encar_bloc
 Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:230  Account:249  require_role:266  RunContext:283  StepReport:303  ResumePoint:327  clean_vin:348  total_of:359  RegressionReport:372  json_paths:383  shape_ok:431  shape_violations:464
 ```
 
+### `store/raw.py` — 444줄
+
+```
+batch:40  tick:70  commit:98  _batch_commit_rows:125  _busy_timeout_ms:135  open_db:146  _safe_headers:170  save_raw:177  proc_run_id:235  save_site_raw:245  save_import_raw:300  save_browser_raw:333  save_browser_facet:368  save_import_facet:394  save_facet:424
+```
+
 ### `run.py` — 412줄
 
 ```
 load:51  make_context:56  _filter_targets:70  _steps_from:89  cmd_collect:103  _grade_summary:171  cmd_admin_create:186  _collect_urls:203  _page_url:240  cmd_web:259  make_worker_ctx:290  make_worker_executors:296  cmd_delegate:334  _api_fetch:345  cmd_setup:355
-```
-
-### `store/raw.py` — 412줄
-
-```
-batch:38  commit:66  _batch_commit_rows:93  _busy_timeout_ms:103  open_db:114  _safe_headers:138  save_raw:145  proc_run_id:203  save_site_raw:213  save_import_raw:268  save_browser_raw:301  save_browser_facet:336  save_import_facet:362  save_facet:392
 ```
 
 ### `tests/test_collect.py` — 401줄

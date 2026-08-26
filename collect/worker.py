@@ -31,6 +31,25 @@ def poll_seconds(root: str = ".") -> float:
         return float(json.load(f)["worker_poll_sec"])
 
 
+
+def reclaim_stale(conn: sqlite3.Connection, at: str) -> int:
+    """★★ 재시작에 버려진 `running` 을 ★ 다시 `queued` 로 돌린다 (08-26).
+
+    ★★★ 실측 08-26 — ★ 소비기는 ★ **데몬 스레드**다.  ★ 서버를 재시작하면
+      ★ ★ 돌던 작업이 ★ 그 자리에서 죽는데 ★ 줄의 `status` 는 ★ `running` 그대로다.
+      ★ ★ `take_next` 는 ★ `queued` 만 집으므로 ★ **그 작업은 영영 안 돈다.**
+      ★ ★ 이번에 ★ 볼보 137건 재판정이 ★ 그렇게 멈춰 있었다.
+    ★ 프로세스가 죽으면 ★ 아무도 그것을 쥐고 있지 않다 — ★ 뜰 때 한 번만 돌린다.
+      ★ ★ 한 프로세스에 하나만 도는 규칙(위 `take_next`)이라 ★ 남의 것을 뺏지 않는다
+    ★ 잃는 것은 없다 — ★ 원문(RAW)이 남아 있어 ★ 처음부터 다시 파싱하면 된다
+    """
+    got = conn.execute(
+        "UPDATE recalc_job SET status = ?, updated_at = ? WHERE status = ?",
+        (STATUS_QUEUED, at, STATUS_RUNNING))
+    conn.commit()
+    return got.rowcount
+
+
 def take_next(conn: sqlite3.Connection, at: str) -> dict | None:
     """가장 오래된 queued 하나를 running 으로 바꿔 가져온다.
 
@@ -132,6 +151,16 @@ def start(db_path: str, make_ctx, make_executors_fn, root: str = ".",
     """
     gap = poll_seconds(root)
     flag = stop or threading.Event()
+    # ★★ 뜨자마자 ★ 재시작에 버려진 작업을 ★ 되살린다 (08-26).  ★ 한 번만 한다
+    _c = sqlite3.connect(db_path)
+    try:
+        _n = reclaim_stale(_c, _utc_now()())
+        if _n:
+            print(f"★ 재시작에 버려진 재판정 {_n}건을 다시 줄에 넣었다")
+    except sqlite3.Error as exc:                              # noqa: BLE001
+        print(f"★ 버려진 작업을 못 되살렸다 — {exc}")
+    finally:
+        _c.close()
 
     def loop():
         while not flag.is_set():

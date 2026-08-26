@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect">브라우저 수집</a>
 </div>
 
 
@@ -75,8 +75,8 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-08-26_1400</td>
-  <td data-label="기록" class="muted">outputs/light/ · 42건 ·
+  <td data-label="마지막">2026-08-26_1800</td>
+  <td data-label="기록" class="muted">outputs/light/ · 43건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
   <td data-label="마지막">2026-08-25</td>
@@ -110,11 +110,11 @@
 
 
 
-
+<p class="warn-warn">재계산 7c2706f3bff98a20 실행 중 — 조정 메뉴가 잠깁니다</p>
 <ul class="stat">
   <li>등록부 미분류 <strong>319</strong></li>
   <li>개발 요청 <strong>0</strong></li>
-  <li>대기 작업 <strong>0</strong></li>
+  <li>대기 작업 <strong>1</strong></li>
 </ul>
 
 <h3>★ 운영</h3>
@@ -193,31 +193,31 @@
 <a class="vline" href="/admin/scoring"
   title="STEP 128 · 129 — 그렇게 판단한 까닭입니다"><span>배점 조정
   <span class="dim">STEP 128 · 129</span>
-  </span>
+  <span class="warn-warn">재계산 7c2706f3bff98a20 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/targets"
   title="STEP 130 — 그렇게 판단한 까닭입니다"><span>차종 추가 · 수정
   <span class="dim">STEP 130</span>
-  </span>
+  <span class="warn-warn">재계산 7c2706f3bff98a20 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/registry"
   title="STEP 131 — 그렇게 판단한 까닭입니다"><span>등록부 분류
   <span class="dim">STEP 131</span>
-  </span>
+  <span class="warn-warn">재계산 7c2706f3bff98a20 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/dict"
   title="STEP 136e — 그렇게 판단한 까닭입니다"><span>사전 확정
   <span class="dim">STEP 136e</span>
-  </span>
+  <span class="warn-warn">재계산 7c2706f3bff98a20 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/config"
   title="STEP 127 — 그렇게 판단한 까닭입니다"><span>config 편집 · 이력
   <span class="dim">STEP 127</span>
-  </span>
+  <span class="warn-warn">재계산 7c2706f3bff98a20 실행 중</span></span>
   <b>▸</b></a>
 
 </div>
@@ -262,7 +262,7 @@
 
 <tr><td data-label="시각">2026-08-26T03:17:25.238847+00:00</td><td class="muted" data-label="사유">요청 4건</td>
   <td class="runid" data-label="실행">20260826T031724</td>
-  <td class="num" data-label="소요">0.5초</td><td data-label="판정">fatal 8</td></tr>
+  <td class="num" data-label="소요">0.5초</td><td data-label="판정">fatal 7</td></tr>
 
 <tr><td data-label="시각">2026-08-25T20:00:22.739105+00:00</td><td class="muted" data-label="사유">요청 26,871건</td>
   <td class="runid" data-label="실행">20260825T200022</td>
@@ -355,7 +355,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260826T031724</span>
-  <span>2026-08-26 18:18</span>
+  <span>2026-08-26 22:23</span>
 </footer>
 
 </body>
