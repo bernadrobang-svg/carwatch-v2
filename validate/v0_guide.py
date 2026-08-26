@@ -1888,6 +1888,90 @@ def s46_97_raw_linked_by_source_id() -> tuple[bool, str]:
         return False, "★ " + " · ".join(bad[:4])
     return True, f"source_id 로 이어진 원문 {linked:,}건 · 되뽑는 자리 없다"
 
+
+def s46_98_sian_words_on_screen() -> tuple[bool, str]:
+    """★★ 시안에 있는 낱말이 ★ 화면에 없으면 실패 (마스터 지시 08-26).
+
+    ★★★ 마스터 — 「★ `S46-22` 는 ★ 절 이름·차례만 본다.  ★ **카드 속을 안 본다**」
+    ★★ ★ 실측 08-26 — ★ 목록 카드에 ★ `제조사보증` · `사이트보증` 이 ★ 없었다.
+      ★ ★ 「판정 다섯을 다섯 다 내라」 하셨는데 ★ 셋만 나오고 있었다.
+      ★ ★ 그 밖에 ★ `시세보다 … 싸다` · `N일째` 도 ★ 빠져 있었다 — ★ 검사가 없어서 몰랐다
+    ★ 재는 법 — ★ 시안의 ★ **보이는 글**에서 ★ 한글 낱말을 뽑아
+      ★ 그 화면을 ★ 실제로 두드려 ★ 그 낱말이 있는지 본다.
+    ★ 안 세는 것 — ★ `<style>·<script>·<title>` · ★ `class` 에 `note` 가 든 메모 ·
+      ★ 「지켜야 하는 것」 아래 · ★ `config/web.json` 의 `sian_word_skip`
+    ★ 짝과 건너뛸 낱말의 정본은 ★ `config/web.json` 이다 (S14)
+    """
+    import ssl as _ssl
+    import urllib.error
+    import urllib.request
+
+    cfg = json.loads(_read(ROOT / "config" / "web.json") or "{}")
+    pairs = cfg.get("sian_screens") or {}
+    skip = set(cfg.get("sian_word_skip") or [])
+    if not pairs:
+        return False, "config/web.json 에 sian_screens 가 없다"
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    if not base:
+        return False, "config/deploy.json 에 base_url 이 없다"
+
+    lid = ""
+    db = ROOT / "carwatch.db"
+    if db.is_file():
+        import sqlite3
+        conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+        try:
+            row = conn.execute(
+                "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+            lid = str(row[0]) if row else ""
+        except sqlite3.Error:
+            lid = ""
+        finally:
+            conn.close()
+
+    han = re.compile(r"[가-힣]{2,}")
+    drop = re.compile(r"<(script|style|title)[^>]*>.*?</\1>", re.S | re.I)
+    note = re.compile(
+        r'<([a-z]+)[^>]*class="[^"]*note[^"]*"[^>]*>.*?</\1>', re.S | re.I)
+
+    def visible(html: str) -> str:
+        cut = html.find("지켜야 하는 것")
+        if cut > 0:
+            html = html[:cut]
+        return re.sub(r"<[^>]+>", " ", note.sub(" ", drop.sub(" ", html)))
+
+    ctx = _ssl._create_unverified_context()
+    bad, seen = [], 0
+    for sian, path in pairs.items():
+        src = SCREENS / sian
+        if not src.is_file():
+            bad.append(f"{sian} 가 없다")
+            continue
+        if "{listing_id}" in path:
+            if not lid:
+                continue
+            path = path.replace("{listing_id}", lid)
+        try:
+            with urllib.request.urlopen(base + path, timeout=25,
+                                        context=ctx) as res:
+                page = visible(res.read().decode("utf-8", "replace"))
+        except urllib.error.HTTPError as exc:
+            bad.append(f"{path} {exc.code}")
+            continue
+        except (urllib.error.URLError, OSError) as exc:
+            bad.append(f"{path} 못 두드림({type(exc).__name__})")
+            continue
+        want = sorted(set(han.findall(
+            visible(src.read_text(encoding="utf-8")))) - skip)
+        seen += len(want)
+        miss = [w for w in want if w not in page]
+        if miss:
+            bad.append(f"{path} 에 없다 {len(miss)} — " + " · ".join(miss[:8]))
+    if bad:
+        return False, "★ " + " / ".join(bad[:4])
+    return True, f"시안 {len(pairs)}장의 낱말 {seen}개가 다 화면에 있다"
+
 def s46_95_screens_alive() -> tuple[bool, str]:
     """★★ 배포된 화면 여덟을 두드려 ★ 하나라도 제 코드가 아니면 실패.
 
@@ -2104,6 +2188,8 @@ CHECKS = (
     # ★ 알림이다 — ★ 코드는 ★ 마스터께 청한다.  ★ 개발측이 지어 넣지 않는다
     # ★★ 명령서 75장 — ★ 화면이 사는지를 ★ 아무도 안 보고 있었다 (오판 141)
     ("S46-95", "배포된 화면이 다 열리는가", s46_95_screens_alive),
+    # ★★ 마스터 08-26 — ★ S46-22 는 절 이름만 본다.  ★ 카드 속을 안 본다
+    ("S46-98", "시안의 낱말이 화면에 있는가", s46_98_sian_words_on_screen),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다
     ("S46-97", "원문이 source_id 로 매물에 이어지는가",
      s46_97_raw_linked_by_source_id),

@@ -5,6 +5,13 @@
 ★ 총건수는 ★ 화면 글자 「총 N」에서 읽는다 — ★ 링크를 세면 늘 12 다
 ★ 슬러그로 거른다 — ★ 우리 차종만 (xc60 · s60 · xc40 · v60-cross-country)
 ★ 503 이 잦다 — ★ 재시도 (규격 _note)
+
+★★ 08-26 — ★ `--detail` 을 붙였다 (마스터 지시 ② · 볼보 차례).
+  ★ 전에는 「볼보는 상세가 없다」고 적혀 있었으나 ★ 규격 0b 가 「★ 뚫렸다」다.
+  ★ 실측 08-26 — `/kr/vehicles/volvo/{모델}/{source_id}` → 200 · 70,924B
+
+사용   python3.11 tools/collect_volvo.py             목록만
+      python3.11 tools/collect_volvo.py --detail [N]  ★ 상세까지 (N건만)
 """
 from __future__ import annotations
 
@@ -158,6 +165,43 @@ def main() -> int:
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(ours)}건 · 저장된 볼보 매물 {n:,}건")
+
+    if "--detail" not in args:
+        print("★ 상세는 --detail 로 받는다")
+        return 0
+
+    # ★★ 상세 (마스터 지시 08-26 ② · 규격 0b).  ★ 원문을 먼저 남긴다 (P3)
+    from parse.volvo_selekt.mapping import parse_detail, photos
+
+    i = args.index("--detail")
+    limit = int(args[i + 1]) if i + 1 < len(args) and args[i + 1].isdigit() else 0
+    todo = list(ours.items())[:limit] if limit else list(ours.items())
+    got = {"정상": 0, "못 받음": 0}
+    for sid, (_slug, url) in todo:
+        body = _get(url, head, timeout)
+        if not body:
+            # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
+            got["못 받음"] += 1
+            time.sleep(interval)
+            continue
+        save_site_raw(conn, SITE_CODE, "detail", sid, url, body, at)
+        row = parse_detail(body, SITE_CODE, sid)
+        if row:
+            row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
+            pics = photos(body, sid)
+            if pics:
+                # ★ 상대경로다 — ★ 주소의 정본은 endpoints.json 의 base_url 이다
+                pics = [base + one if one.startswith("/") else one for one in pics]
+                row["photo_main"] = pics[0]
+                row["photo_list_json"] = json.dumps(pics, ensure_ascii=False)
+            upsert_core(conn, row, at)
+            got["정상"] += 1
+        time.sleep(interval)
+    commit(conn)
+    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
+    from tools.daily_enqueue import enqueue_after_store
+    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
+                        got.get("정상", 0))
     return 0
 
 

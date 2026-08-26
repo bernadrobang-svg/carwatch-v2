@@ -31,6 +31,8 @@ ORIGIN_BROWSER = "browser"
 
 # 단계 트랜잭션 중인 연결.  sqlite3.Connection 은 임의 속성을 받지 않는다
 _IN_BATCH: set[int] = set()
+# ★ batch 안에서 ★ 몇 줄 썼나 — ★ 잠금 창을 자르는 셈이다 (08-26)
+_BATCH_ROWS: dict[int, int] = {}
 
 
 def batch(conn: sqlite3.Connection):
@@ -47,6 +49,7 @@ def batch(conn: sqlite3.Connection):
     @contextmanager
     def _ctx():
         _IN_BATCH.add(id(conn))
+        _BATCH_ROWS[id(conn)] = 0
         try:
             yield conn
             conn.commit()
@@ -55,20 +58,70 @@ def batch(conn: sqlite3.Connection):
             raise
         finally:
             _IN_BATCH.discard(id(conn))
+            _BATCH_ROWS.pop(id(conn), None)
 
     return _ctx()
 
 
 def commit(conn: sqlite3.Connection) -> None:
-    """batch 안이면 커밋하지 않는다.  밖이면 즉시 커밋한다."""
+    """batch 밖이면 즉시 커밋한다.  ★ 안이면 ★ 정해진 행수마다 한 번 커밋한다.
+
+    ★★★ 08-26 — ★ 전에는 ★ batch 안에서 ★ **아무것도 안 했다.**  ★ 그래서
+      ★ S6(130,040행) 같은 단계가 ★ 쓰기 잠금을 ★ 몇 분씩 쥐었고
+      ★ ★ 그동안 ★ `POST /login` 이 ★ 500 이었다 — ★ 마스터께서 담아 두신 차를
+      ★ 못 보셨다 (명령서 74장 ② · 08-26 지시 ②).
+    ★★ ★ `busy_timeout` 만으로는 ★ 안 됐다 — ★ 30초를 기다려도 ★ 여전히 잠겨 있었다.
+      ★ ★ 떼어내도(③) 안 낫는다 — ★ SQLite 는 ★ **파일**을 잠근다.
+    ★ 그래서 ★ 잠금 창을 ★ 잘라 낸다.  ★ 행마다 커밋하던 옛 결함으로는 안 돌아간다
+      (★ 커밋은 fsync 라 행 수만큼 느려진다 — ★ 그것이 batch 를 만든 까닭이다).
+    ★ 안전 — ★ 원문(RAW)이 이미 있어 ★ 중간에 죽어도 ★ 재파싱으로 복구된다.
+      ★ ★ 다만 ★ 되돌리기(rollback)가 ★ 마지막 커밋까지만 간다 — ★ 가이드께 알린다
+    ★ 행수의 정본은 `config/web.json` 의 `db_batch_commit_rows` 다 (S14).  ★ 0 이면 안 자른다
+    """
     if id(conn) not in _IN_BATCH:
         conn.commit()
+        return
+    every = _batch_commit_rows()
+    if not every:
+        return
+    _BATCH_ROWS[id(conn)] = _BATCH_ROWS.get(id(conn), 0) + 1
+    if _BATCH_ROWS[id(conn)] >= every:
+        _BATCH_ROWS[id(conn)] = 0
+        conn.commit()
+
+
+def _batch_commit_rows() -> int:
+    """batch 안에서 ★ 몇 줄마다 커밋하나.  ★ 정본은 `config/web.json` 이다 (S14)."""
+    try:
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(here, "config", "web.json"), encoding="utf-8") as f:
+            return int(json.load(f)["db_batch_commit_rows"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return 2000
+
+
+def _busy_timeout_ms() -> int:
+    """잠금을 기다리는 시간 (ms).  ★ 정본은 `config/web.json` 이다 (S14)."""
+    try:
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(here, "config", "web.json"), encoding="utf-8") as f:
+            return int(json.load(f)["db_busy_timeout_ms"])
+    except (OSError, ValueError, KeyError, TypeError):
+        # ★ config 를 못 읽어도 ★ 0 으로 두지 않는다 — ★ 0 이 이번 결함의 값이었다
+        return 30000
 
 
 def open_db(path: str, ddl_dir: str = "sql/ddl") -> sqlite3.Connection:
     """DDL 은 sql/ddl/*.sql 이 정본이다.  코드가 문서를 파싱하지 않는다 (STEP 32a)."""
     conn = sqlite3.connect(path)
     conn.execute("PRAGMA foreign_keys = ON")
+    # ★★★ 잠금을 만나면 ★ 곧바로 죽지 않고 ★ 기다린다 (08-26).
+    #   ★ SQLite 기본값은 ★ 0 이다 — ★ 한 번 부딪히면 ★ 그 자리에서 실패한다.
+    #   ★ 실측 08-26 — ★ 파이프라인이 웹과 같은 프로세스에서 돌며 쓰기를 쥐자
+    #     ★ `POST /login` 이 ★ 500 이 됐다 (auth_login_attempt INSERT 가 막혔다).
+    #     ★ 읽기는 WAL 이라 200 이었다 — ★ 쓰기만 골라 죽었다.
+    #   ★ 값의 정본은 `config/web.json` 의 `db_busy_timeout_ms` 다 (S14)
+    conn.execute(f"PRAGMA busy_timeout = {_busy_timeout_ms()}")
     # ★ 쓰기 성능.  RAW 무손실(P3)은 그대로다 — WAL 도 커밋되면 디스크에 있다.
     #   synchronous=NORMAL 은 OS 크래시에만 마지막 커밋을 잃는다.
     #   프로세스가 죽는 경우는 잃지 않는다 (SQLite 문서)

@@ -353,5 +353,32 @@
     "volvo_selekt": null
   },
   "_site_detail_url_note": "★★★ 명령서 72장 — ★ 원문으로 가는 문이다.  ★ 사이트마다 다르다. ★ 실측 08-26 — 전에는 `encar_detail_url` 하나로 다 만들어 K카·헤이딜러·KB 매물이 전부 encar.com 으로 갔다 (엔카는 모르는 carid 에도 200 을 준다). ★★ 지어내지 않았다 — 잰 자리를 적는다: encar 는 STEP 149q(마스터 확인) · kbchachacha 는 상세 본문의 canonical (실측 표본 3건) · reborncar 는 상세 본문의 링크 (실측 표본 3건) · hyundai_cert·bobaedream·bmw_bps 는 `config/endpoints.json` 의 상세 경로 자체가 사람이 보는 쪽이다 (HTML 을 그대로 받는다). ★★ null 다섯은 ★ **모른다**.  ★ kcar·kia_cpo·heydealer·lexus_certified 는 우리가 API 만 받아 사람 쪽 주소를 못 쟀고, volvo_selekt 는 주소에 {model} 이 더 든다. ★ null 이면 ★ **링크를 안 낸다** — ★ 엔카로 보내지 않는다.  ★ 지어내면 S46-94 가 잡는다",
-  "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다"
+  "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다",
+  "db_busy_timeout_ms": 30000,
+  "_db_busy_timeout_why": "★★★ 08-26 실측 — ★ 로그인이 500 이었다.  ★ 마스터께서 담아 두신 차를 못 보셨다 (명령서 74장 ② · 08-26 지시 ②).  ★ 까닭 — ★ 파이프라인이 ★ 웹과 같은 프로세스에서 돌며 ★ 쓰기 잠금을 쥐고, ★ SQLite 의 busy_timeout 기본값이 ★ 0 이라 ★ `POST /login` 의 auth_login_attempt INSERT 가 ★ 곧바로 「database is locked」로 죽었다.  ★ 읽기는 WAL 이라 200 이었다 — ★ 그래서 ★ 쓰기만 골라 죽었다.  ★ 이 값만큼 ★ 기다렸다가 쓴다.  ★ 근본은 ③(웹에서 떼어내기)이다 — ★ 이것은 버팀목이다",
+  "db_batch_commit_rows": 200,
+  "_db_batch_commit_rows_why": "★★★ 08-26 실측 — ★ busy_timeout 30초를 걸어도 ★ 로그인이 여전히 500 이었다.  ★ 까닭 — ★ S4·S6·S6a·S8·S9·S10 이 ★ **한 단계를 통째로 한 트랜잭션**으로 묶는다 (`BATCH_STEPS`).  ★ S6 은 130,040행이라 ★ 쓰기 잠금을 ★ 몇 분씩 쥔다.  ★ 그동안 ★ 웹의 쓰기가 ★ 전부 죽는다 — ★ 로그인·관심 담기·관리.  ★★ ★ 떼어내도(③) 안 낫는다 — ★ SQLite 는 ★ 프로세스가 아니라 ★ **파일**을 잠근다.  ★ 그래서 ★ 이 행수마다 한 번 커밋해 ★ 잠금 창을 잘라 낸다.  ★ 안전 — ★ 원문(RAW)이 이미 있어 ★ 중간에 죽어도 ★ 재파싱으로 복구된다 (`store/raw.batch` 가 처음부터 그렇게 적어 두었다).  ★ 0 이면 안 자른다",
+  "sian_screens": {
+    "v4m_listings_시안.html": "/listings",
+    "v4m_track_시안.html": "/track",
+    "v4m_notready_시안.html": "/notready",
+    "v4m_dashboard_시안.html": "/",
+    "v4m_detail_시안.html": "/detail/{listing_id}"
+  },
+  "sian_word_skip": [
+    "관리",
+    "헤이딜러",
+    "리본카",
+    "차차차",
+    "케이카",
+    "도는",
+    "여쭐",
+    "접어",
+    "관심",
+    "알핀",
+    "에스프리",
+    "곳에도",
+    "있다"
+  ],
+  "_sian_word_skip_why": "★★ 검사 `S46-98` 이 ★ 안 세는 낱말 (마스터 지시 08-26).  ★ 까닭을 적는다 — ★ 「관리」는 ★ 시안의 아래 탭에 있으나 ★ 로그인 전에는 안 보인다 (403 자리다).  ★ 「관심」도 ★ notready 시안의 탭이다.  ★ 「헤이딜러·리본카·차차차·케이카」는 ★ 시안의 ★ **보기 값**이다 — ★ 그 화면에 그 사이트 매물이 없을 수 있다.  ★ 「도는·여쭐·접어」는 ★ dashboard 시안에 남은 ★ 설명 글이다.  ★★ ★ 이 목록이 길어지면 ★ 검사가 헐거워진다 — ★ 늘릴 때 까닭을 반드시 적는다  ★ 08-26 덧 — 「알핀·에스프리」는 ★ 상세 시안의 ★ 보기 트림 이름이다.  ★ 「곳에도·있다」는 ★ 「이 차가 다른 곳에도 있다」 절인데 ★ 중복 매물이 있는 매물에만 나온다 — ★ 표본 매물에 따라 갈린다 (템플릿에는 있다)"
 }
