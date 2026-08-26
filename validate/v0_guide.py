@@ -1889,6 +1889,101 @@ def s46_97_raw_linked_by_source_id() -> tuple[bool, str]:
     return True, f"source_id 로 이어진 원문 {linked:,}건 · 되뽑는 자리 없다"
 
 
+
+def s46_99_login_then_watch() -> tuple[bool, str]:
+    """★★ 로그인한 뒤 ★ `/watch` 가 200 이 아니면 실패 (마스터 지시 08-26).
+
+    ★★★ 마스터 — 「★ `S46-95` 는 ★ 로그인 앞만 봐서 ★ 못 잡았다」.  ★ 옳다.
+      ★ ★ `/watch` · `/admin` 은 ★ 로그인 앞에서 ★ **403 이 정상**이라
+      ★ ★ `S46-95` 는 ★ 그 둘이 ★ 403 이면 ★ 통과로 센다.
+      ★ ★ 그래서 ★ 「자리를 안 내준다」를 ★ 아무도 못 보고 있었다.
+    ★ 재는 법 — ★ 실제로 ★ 로그인 폼을 받아 ★ csrf 를 들고 ★ POST 한다.
+      ★ ★ **303 과 `Set-Cookie` 를 본다** — ★ 200 이면 ★ 자리를 안 내준 것이다
+      ★ ★ 그 쿠키로 ★ `login_screens` 를 ★ 다 두드린다
+    ★ 자격은 ★ `secrets/check_login.json` 이다 — ★ `.gitignore` 에 있다.
+      ★ ★ 비밀번호를 ★ 저장소·문서·기록에 ★ 적지 않는다.
+      ★ ★ 자격이 없으면 ★ **실패로 낸다** — ★ 못 잰 것을 ★ 통과로 세지 않는다
+    """
+    import http.cookiejar
+    import ssl as _ssl
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    cred_path = ROOT / "secrets" / "check_login.json"
+    raw = _read(cred_path)
+    if not raw:
+        return False, ("secrets/check_login.json 이 없다 — 못 쟀다"
+                       " (name·secret 을 넣는다.  git 에 안 올라간다)")
+    try:
+        cred = json.loads(raw)
+        name, secret = str(cred["name"]), str(cred["secret"])
+    except (ValueError, KeyError, TypeError):
+        return False, "secrets/check_login.json 을 못 읽었다 — name·secret 이 있어야 한다"
+
+    cfg = json.loads(_read(ROOT / "config" / "web.json") or "{}")
+    screens = cfg.get("login_screens") or {}
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    if not base or not screens:
+        return False, "config 에 base_url · login_screens 가 없다"
+
+    ctx = _ssl._create_unverified_context()
+    jar = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=ctx),
+        urllib.request.HTTPCookieProcessor(jar))
+
+    class _NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *_a, **_k):
+            return None
+
+    try:
+        with opener.open(base + "/login", timeout=25) as res:
+            form = res.read().decode("utf-8", "replace")
+    except (urllib.error.URLError, OSError) as exc:
+        return False, f"/login 을 못 두드렸다 ({type(exc).__name__})"
+    got = re.search(r'name="csrf" value="([^"]+)"', form)
+    if not got:
+        return False, "/login 에 csrf 가 없다"
+
+    body = urllib.parse.urlencode(
+        {"csrf": got.group(1), "name": name, "secret": secret}).encode()
+    poster = urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=ctx),
+        urllib.request.HTTPCookieProcessor(jar), _NoRedirect)
+    try:
+        with poster.open(base + "/login", data=body, timeout=25) as res:
+            code, headers = res.status, res.headers
+    except urllib.error.HTTPError as exc:
+        code, headers = exc.code, exc.headers
+    except (urllib.error.URLError, OSError) as exc:
+        return False, f"POST /login 을 못 했다 ({type(exc).__name__})"
+
+    if int(code) != 303:
+        return False, (f"★ POST /login 이 {code} 다 — 303 이어야 한다"
+                       "  (200 이면 자리를 안 내준 것이다)")
+    if not headers.get("Set-Cookie"):
+        return False, "★ POST /login 이 303 인데 Set-Cookie 가 없다"
+
+    bad, ok = [], 0
+    for path, want in screens.items():
+        try:
+            with opener.open(base + path, timeout=25) as res:
+                code = res.status
+        except urllib.error.HTTPError as exc:
+            code = exc.code
+        except (urllib.error.URLError, OSError) as exc:
+            bad.append(f"{path} 못 두드림({type(exc).__name__})")
+            continue
+        if int(code) == int(want):
+            ok += 1
+        else:
+            bad.append(f"{path} {code}(→{want})")
+    if bad:
+        return False, "★ 로그인했는데 " + " · ".join(bad)
+    return True, f"로그인 뒤 화면 {ok}개가 다 열린다 (303 · Set-Cookie 확인)"
+
 def s46_98_sian_words_on_screen() -> tuple[bool, str]:
     """★★ 시안에 있는 낱말이 ★ 화면에 없으면 실패 (마스터 지시 08-26).
 
@@ -1941,6 +2036,16 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
             html = html[:cut]
         return re.sub(r"<[^>]+>", " ", note.sub(" ", drop.sub(" ", html)))
 
+    def squeeze(text: str) -> str:
+        """★ 띄어쓰기를 지운 꼴.  ★ 시안은 「제조사보증」 · 화면은 「제조사 보증」이다.
+
+        ★★ 08-26 실측 — ★ 그 한 칸 때문에 ★ 검사가 ★ **거짓 실패**를 냈다.
+          ★ ★ 마스터께서 「제조사·사이트 보증은 붙었다」 하셨고 ★ 옳으셨다 —
+          ★ ★ 카드에 다섯이 다 있는데 ★ 내 검사가 ★ 못 찾은 것이었다.
+          ★ ★ 검사가 틀리면 ★ 고친 것을 ★ 안 고쳤다고 말한다 — ★ 가장 나쁜 쪽이다
+        """
+        return re.sub(r"\s+", "", text)
+
     ctx = _ssl._create_unverified_context()
     bad, seen = [], 0
     for sian, path in pairs.items():
@@ -1965,7 +2070,9 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
         want = sorted(set(han.findall(
             visible(src.read_text(encoding="utf-8")))) - skip)
         seen += len(want)
-        miss = [w for w in want if w not in page]
+        # ★ 띄어쓰기 차이는 ★ 다름이 아니다 (위 squeeze 참고)
+        flat = squeeze(page)
+        miss = [w for w in want if w not in page and squeeze(w) not in flat]
         if miss:
             bad.append(f"{path} 에 없다 {len(miss)} — " + " · ".join(miss[:8]))
     if bad:
@@ -2190,6 +2297,8 @@ CHECKS = (
     ("S46-95", "배포된 화면이 다 열리는가", s46_95_screens_alive),
     # ★★ 마스터 08-26 — ★ S46-22 는 절 이름만 본다.  ★ 카드 속을 안 본다
     ("S46-98", "시안의 낱말이 화면에 있는가", s46_98_sian_words_on_screen),
+    # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다
+    ("S46-99", "로그인하면 관심·관리가 열리는가", s46_99_login_then_watch),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다
     ("S46-97", "원문이 source_id 로 매물에 이어지는가",
      s46_97_raw_linked_by_source_id),

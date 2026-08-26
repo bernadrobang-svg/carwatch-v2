@@ -483,7 +483,12 @@ def _sort_determinism(conn, rid):
     """
     from report.screens.build import ORDER_SQL, order_clause
 
-    need = ("CASE WHEN s.grade IN", "denominator", "price_current_won",
+    # ★★ 08-26 — ★ 전에는 ★ 「CASE WHEN s.grade IN」을 ★ 글자 그대로 찾았다.
+    #   ★ ★ `s.grade IS NULL` 을 ★ 그 CASE 에 더하자 ★ 이 검사가 ★ 8건으로 터졌다 —
+    #     ★ ★ 고친 것이 ★ 옳은데도 ★ 빨간불이 됐다 (실측 08-26).
+    #   ★ 이 검사의 뜻은 ★ 「4단이 다 있는가」다 — ★ 머리 단의 꼴이 아니다.
+    #     ★ ★ 그래서 ★ 「CASE WHEN s.grade」까지만 본다
+    need = ("CASE WHEN s.grade", "denominator", "price_current_won",
             "l.listing_id")
     bad = []
     for order in sorted(ORDER_SQL):

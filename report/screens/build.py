@@ -895,12 +895,24 @@ TODAY_ROWS = _view_cfg("today_rows")
 MS_PER_SEC = 1000.0
 
 
+def _grade_rank_sql() -> str:
+    """등급 차례대로 세우는 SQL.  ★ 정본은 `config/labels.json` 이다 (S14).
+
+    ★ 알파벳순이 아니다 — ★ S · A · B · C · D · E · F · G 차례다
+    """
+    whens = " ".join(f"WHEN '{g}' THEN {i}" for i, g in enumerate(RANK_ORDER))
+    return f"(CASE s.grade {whens} ELSE {len(RANK_ORDER)} END) ASC"
+
+
 # 정렬 1단.  ★ 뒤 3단은 어느 축을 골라도 그대로 붙는다 (STEP 106a · E-3)
 ORDER_SQL = {
     # ★ earned/denominator 다.  score_total 은 555 환산이라 분모가 다른
     #   매물이 잘못 섞인다 (E-1 · E-3)
     "rank": "(s.earned * 1.0 / NULLIF(s.denominator, 0)) DESC",
-    "grade": "s.grade ASC",
+    # ★★★ 08-26 — ★ 전에는 ★ `s.grade ASC` 였다.  ★ **알파벳순**이라
+    #   ★ ★ 'S'(최고)가 ★ 'A'~'G' 뒤로 갔다 — ★ 등급순인데 ★ 등급 차례가 아니었다.
+    #   ★ 차례의 정본은 ★ `config/labels.json` 의 `GRADE_ORDER` 다 (개정 433 · S14)
+    "grade": _grade_rank_sql(),
     "price": "l.price_current_won ASC",
     "price_desc": "l.price_current_won DESC",
     "mileage": "l.mileage_km ASC",
@@ -912,7 +924,13 @@ ORDER_SQL = {
 # ★ 순위를 안 매기는 것은 뒤로.  비교 대상이 아니다
 # ★★ 개정 433 — 전에는 ('E','NOT_RATED') 였다.  E 는 이제 30~40% 자리라
 #   그대로 두면 **멀쩡한 E 매물이 목록 맨 뒤로 밀린다**
-ORDER_HEAD = ("(CASE WHEN s.grade IN ("
+# ★★★ 08-26 — ★ `s.grade IS NULL` 을 ★ 빠뜨리고 있었다.
+#   ★ ★ 실측 — ★ 판정 행이 아예 없는 매물이 ★ **9,097건**이다 (`LEFT JOIN`).
+#   ★ ★ SQL 에서 ★ `NULL IN (…)` 은 ★ NULL 이라 ★ `CASE` 가 ★ ELSE 0 을 준다 —
+#     ★ ★ 곧 ★ 「순위를 매기는 것」으로 세어졌고, ★ `ASC` 에서 ★ NULL 이 맨 앞이라
+#     ★ ★ **등급순 첫 쪽이 「평가 불가」 30장**이었다 (마스터 08-26 지적 ②).
+#     ★ ★ 그것들은 ★ 순위가 없으므로 ★ 「N위」 자리에 ★ 「순위 없음」이 떴다
+ORDER_HEAD = ("(CASE WHEN s.grade IS NULL OR s.grade IN ("
               + ",".join("'%s'" % g for g in NOT_RANKED)
               + ") THEN 1 ELSE 0 END)")
 # ★★ 같은 점수면 사이트 보증이 높은 쪽이 앞이다 (개정 306 · V9-09).
