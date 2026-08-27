@@ -327,8 +327,9 @@
     },
     "mileage": {
       "full_km": 40000,
-      "zero_km": 100000,
-      "unknown_points": 0
+      "zero_km": 80000,
+      "unknown_points": 0,
+      "_why": "[마스터 08-28] ★ 「내가 8만킬로를 기준으로 거의 0점으로 하라고 했다」 — ★ zero_km 을 100000 → 80000 으로.  ★ 가이드가 마스터 확정을 안 넣고 있었다 (오판 144)"
     },
     "absolute_fail": {
       "repair_cost_ratio": 0.139,
@@ -792,5 +793,9 @@
     ]
   },
   "pending_confirmed_ratio": 0.5,
-  "_pending_confirmed_ratio_note": "★★ 명령서 67장 · UI_REVIEW 18장 — 「근거 있는 축의 합」이 분모의 이 비율 아래면 등급 대신 「판정 중」이다. ★ 코드에 박지 않는다"
+  "_pending_confirmed_ratio_note": "★★ 명령서 67장 · UI_REVIEW 18장 — 「근거 있는 축의 합」이 분모의 이 비율 아래면 등급 대신 「판정 중」이다. ★ 코드에 박지 않는다",
+  "grade_gates": {
+    "warranty_required_above": "A",
+    "_why": "[마스터 08-28] ★ 「S급이 보증이 끝난 것도 포함되거나」 — ★ 제조사·사이트 보증이 둘 다 끝난 차는 ★ B 아래로 내린다.  ★ 실측 — A 266건 중 32건이 보증 ×"
+  }
 }

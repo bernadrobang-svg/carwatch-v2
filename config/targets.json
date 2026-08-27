@@ -1088,5 +1088,35 @@
       "가솔린+전기"
     ],
     "_fuel_why": "★ ES300h 는 ★ 하이브리드다 — ★ ES250·ES350(가솔린)은 ★ 안 받는다 (마스터 확정 08-27)"
+  },
+  "C40_EV": {
+    "label": "볼보 C40 리차지 (전기)",
+    "collect_group": "multi",
+    "_ref": "★ 마스터 확정 08-28 — 「그랑 콜레오스보다 좋은 볼보 전기차를 고르겠다」",
+    "_facet": "[실측 08-28] ★ KB carClass.json — makerCode=117 classCode=2808 (C40)",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "볼보",
+        "ModelGroup": "C40",
+        "_확인": "[추론 08-28] ★ facet 미확인 — 브라우저 수집으로 확인한 뒤 이 줄을 지운다"
+      },
+      "kbchachacha": {
+        "makerCode": "117",
+        "classCode": "2808",
+        "_차명": "볼보 C40",
+        "_확인": "[실측 08-28] ★ carClass.json 으로 확인했다"
+      },
+      "volvo_selekt": {
+        "_전수": "true",
+        "_차명": "볼보 C40"
+      }
+    },
+    "year_range": "201900..",
+    "price_range": null,
+    "fuel_match": [
+      "전기"
+    ],
+    "_fuel_why": "★ C40 은 ★ 전기 전용이다"
   }
 }
