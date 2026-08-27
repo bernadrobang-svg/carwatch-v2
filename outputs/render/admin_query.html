@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect">브라우저 수집</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -102,16 +102,16 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">admin_api_snapshot</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">snapshot_id · account_id · url · http_code · content_type · body · note · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">183,827</td>
+<tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">194,160</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">9,740</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">10,201</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
-<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">92</td>
+<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">107</td>
   <td class="muted" data-label="컬럼">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
 
-<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">69</td>
+<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">84</td>
   <td class="muted" data-label="컬럼">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
 
 <tr><td class="runid" data-label="표">coefficient_history</td><td class="num" data-label="행">0</td>
@@ -120,40 +120,40 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">config_change</td><td class="num" data-label="행">9</td>
   <td class="muted" data-label="컬럼">change_id · account_id · file · key_path · before_value · after_value · reason · applied_at · reverted_at · recalc_job_id</td></tr>
 
-<tr><td class="runid" data-label="표">core_dealer</td><td class="num" data-label="행">1,114</td>
+<tr><td class="runid" data-label="표">core_dealer</td><td class="num" data-label="행">1,181</td>
   <td class="muted" data-label="컬럼">dealer_id · site · site_dealer_id · dealer_shop · shop_code · region · career_years · total_sales · recent_year_sales · certified</td></tr>
 
-<tr><td class="runid" data-label="표">core_dealer_history</td><td class="num" data-label="행">21,648</td>
+<tr><td class="runid" data-label="표">core_dealer_history</td><td class="num" data-label="행">30,898</td>
   <td class="muted" data-label="컬럼">dealer_id · run_id · observed_at · listing_count · trust_score · quadrant · sample_sufficient</td></tr>
 
-<tr><td class="runid" data-label="표">core_dealer_pii</td><td class="num" data-label="행">1,114</td>
+<tr><td class="runid" data-label="표">core_dealer_pii</td><td class="num" data-label="행">1,181</td>
   <td class="muted" data-label="컬럼">dealer_id · dealer_name · phone · address · created_at</td></tr>
 
-<tr><td class="runid" data-label="표">core_diagnosis</td><td class="num" data-label="행">1,111</td>
+<tr><td class="runid" data-label="표">core_diagnosis</td><td class="num" data-label="행">1,265</td>
   <td class="muted" data-label="컬럼">listing_id · diagnosis_no · diagnosed_at · center_code · center_name · item_count · replacement_count · normal_count · checker_comment · outer_panel_comment</td></tr>
 
-<tr><td class="runid" data-label="표">core_diagnosis_item</td><td class="num" data-label="행">8,888</td>
+<tr><td class="runid" data-label="표">core_diagnosis_item</td><td class="num" data-label="행">10,120</td>
   <td class="muted" data-label="컬럼">diagnosis_item_id · listing_id · item_code · part_name · result_code · result_text</td></tr>
 
-<tr><td class="runid" data-label="표">core_inspection</td><td class="num" data-label="행">4,268</td>
+<tr><td class="runid" data-label="표">core_inspection</td><td class="num" data-label="행">4,993</td>
   <td class="muted" data-label="컬럼">listing_id · site · inspection_vin · inspection_mileage_km · first_registration_date · inspection_valid_from · inspection_valid_to · inspection_issued_at · check_engine · check_transmission</td></tr>
 
-<tr><td class="runid" data-label="표">core_listing</td><td class="num" data-label="행">17,385</td>
+<tr><td class="runid" data-label="표">core_listing</td><td class="num" data-label="행">18,755</td>
   <td class="muted" data-label="컬럼">listing_id · site · source_id · target_key · vehicle_id · classify_stage · classify_source · classify_conflict · price_current_won · price_detail_won</td></tr>
 
-<tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">21,619</td>
+<tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">23,537</td>
   <td class="muted" data-label="컬럼">listing_id · changed_at · field · old_value · new_value · change_kind · cause</td></tr>
 
 <tr><td class="runid" data-label="표">core_parse_issue</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · listing_id · endpoint · json_path · reason · raw_sample · parse_version · detected_at</td></tr>
 
-<tr><td class="runid" data-label="표">core_pii</td><td class="num" data-label="행">10,617</td>
+<tr><td class="runid" data-label="표">core_pii</td><td class="num" data-label="행">11,887</td>
   <td class="muted" data-label="컬럼">listing_id · plate_no · plate_history_json · record_plate_no · created_at</td></tr>
 
-<tr><td class="runid" data-label="표">core_record</td><td class="num" data-label="행">5,910</td>
+<tr><td class="runid" data-label="표">core_record</td><td class="num" data-label="행">6,726</td>
   <td class="muted" data-label="컬럼">listing_id · site · record_plate_hash · plate_use_char · record_first_date · record_reg_date · record_open · accident_my_cnt · accident_my_cost · accident_other_cnt</td></tr>
 
-<tr><td class="runid" data-label="표">core_vehicle</td><td class="num" data-label="행">4,852</td>
+<tr><td class="runid" data-label="표">core_vehicle</td><td class="num" data-label="행">5,677</td>
   <td class="muted" data-label="컬럼">vehicle_id · site_count · listing_count · min_price_won · max_price_won · price_spread_won · first_seen · last_seen · updated_at</td></tr>
 
 <tr><td class="runid" data-label="표">depreciation_curve_history</td><td class="num" data-label="행">0</td>
@@ -171,7 +171,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">dict_option_code</td><td class="num" data-label="행">151</td>
   <td class="muted" data-label="컬럼">site · target_key · code · display · count_seen · status · dict_version · first_seen · last_seen</td></tr>
 
-<tr><td class="runid" data-label="표">listing_warning</td><td class="num" data-label="행">4,351</td>
+<tr><td class="runid" data-label="표">listing_warning</td><td class="num" data-label="행">4,455</td>
   <td class="muted" data-label="컬럼">listing_id · warning_code · severity · evidence · detected_at · acknowledged · resolved_at</td></tr>
 
 <tr><td class="runid" data-label="표">meta_field_usage</td><td class="num" data-label="행">840</td>
@@ -180,31 +180,31 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">4</td>
   <td class="muted" data-label="컬럼">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · reject_kind · executed_at</td></tr>
 
-<tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">85</td>
+<tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">104</td>
   <td class="muted" data-label="컬럼">site · target_key · request_kind · request_url · axis_count · body · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">raw_response</td><td class="num" data-label="행">175,348</td>
+<tr><td class="runid" data-label="표">raw_response</td><td class="num" data-label="행">186,194</td>
   <td class="muted" data-label="컬럼">id · run_id · site · listing_id · source_id · endpoint · request_url · request_meta · http_code · response_meta</td></tr>
 
 <tr><td class="runid" data-label="표">raw_response_reject</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · site · listing_id · endpoint · request_url · http_code · body · reject_reason · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">179</td>
+<tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">186</td>
   <td class="muted" data-label="컬럼">job_id · account_id · trigger · reason · from_step · scope · status · run_id · current_step · step_done</td></tr>
 
-<tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">215,488</td>
+<tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">248,508</td>
   <td class="muted" data-label="컬럼">listing_id · calc_version · dict_version · axis · value · source · prio · excluded · max_points · score</td></tr>
 
 <tr><td class="runid" data-label="표">result_axis_conflict</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">conflict_id · listing_id · calc_version · axis · prio · value · source</td></tr>
 
-<tr><td class="runid" data-label="표">result_score</td><td class="num" data-label="행">8,288</td>
+<tr><td class="runid" data-label="표">result_score</td><td class="num" data-label="행">9,558</td>
   <td class="muted" data-label="컬럼">listing_id · calc_version · dict_version · score_total · earned · denominator · grade · absolute_fail · not_rated_reason · grade_earned</td></tr>
 
 <tr><td class="runid" data-label="표">vehicle_duplicate</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">vehicle_id · listing_id · kind · representative · peer_count · detected_at</td></tr>
 
-<tr><td class="runid" data-label="표">vehicle_identity</td><td class="num" data-label="행">8,413</td>
+<tr><td class="runid" data-label="표">vehicle_identity</td><td class="num" data-label="행">9,804</td>
   <td class="muted" data-label="컬럼">id · vehicle_id · kind · value_hash · confidence · first_seen · last_seen</td></tr>
 
 <tr><td class="runid" data-label="표">watch_candidate</td><td class="num" data-label="행">0</td>
@@ -253,8 +253,8 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260826T031724</span>
-  <span>2026-08-26 22:24</span>
+  <span>run 20260826T164607</span>
+  <span>2026-08-27 22:20</span>
 </footer>
 
 </body>
