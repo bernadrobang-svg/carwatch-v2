@@ -937,7 +937,9 @@
     "trim_exclude": [],
     "displacement_range": null,
     "_collect_group_why": "★ 08-24 마스터 확정 — ★ 한 사이트 전담으로 묶지 않는다.  ★ 엔카·KB·K카·기아·현대에서 ★ 겹쳐 받고 ★ `cno`(차량번호)로 가른다 (`docs/DEDUP_CROSS_SITE.md`).  ★ 목적 ⑤ 「사이트 안 가고 훑는다」가 그것이다",
-    "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통"
+    "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통",
+    "_no_stock_ok": true,
+    "_no_stock_why": "[가이드 08-28] ★ 2025년 신차라 ★ 중고 매물이 없는 것이 정상이다.  ★ S46-92(Count 0 알림)가 이것을 보고 안 운다"
   },
   "SPEC_DEFAULT_ON": {},
   "SPEC_DEFAULT_OFF": {},

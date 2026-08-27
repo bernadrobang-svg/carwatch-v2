@@ -9,15 +9,15 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 40,120줄 · 2,454KB**
+**113파일 · 40,146줄 · 2,458KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - CHECKS.md 998줄
 - MULTISITE_MAPPING.md 849줄
-- UI_REVIEW.md 1,084줄
+- UI_REVIEW.md 1,097줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 808줄
+- guide/03_이력.md 809줄
 - guide/05_가이드역할.md 1,263줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -48,7 +48,7 @@
 | `SERVER_SURVIVAL.md` | 258 | 12 |
 | `SOURCE.md` | 652 | 47 |
 | `TARGET_KEY_MAP.md` | 119 | 5 |
-| `UI_REVIEW.md`  ★ | 1,084 | 56 |
+| `UI_REVIEW.md`  ★ | 1,097 | 57 |
 | `VOLVO_SELEKT_API.md` | 352 | 14 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -63,7 +63,7 @@
 | `chapters/11-store/00-intro.md` | 103 | 3 |
 | `chapters/11-store/a-key.md` | 539 | 22 |
 | `chapters/11-store/b-core.md` | 716 | 25 |
-| `chapters/11-store/c-result.md` | 225 | 7 |
+| `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 600 | 24 |
 | `chapters/13-pipeline.md` | 735 | 28 |
 | `chapters/20-verify/00-intro.md` | 202 | 8 |
@@ -107,12 +107,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 153 | 8 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 808 | 566 |
+| `guide/03_이력.md`  ★ | 809 | 567 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 636 | 24 |
 | `guide/05_가이드역할.md`  ★ | 1,263 | 64 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 549 | 139 |
+| `guide/06_오판대장.md` | 550 | 140 |
 | `guide/07_밀린일대장.md` | 296 | 25 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `ref/00-intro.md` | 33 | 0 |

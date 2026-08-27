@@ -222,3 +222,14 @@ CREATE INDEX idx_conflict_listing ON result_axis_conflict(listing_id, calc_versi
 
 ---
 
+---
+
+## ★★★ 불변식 바뀜은 ★ **동시 발생**을 센다 (개정 789 · 08-28)
+
+```
+★★ ★ **한 회차에 ★ 함께 바뀐 것**을 센다 — ★ **누적이 아니다**
+★ ★ 08-28 실측 — ★ `classify_invariant_change` 가 ★ `_today(parsed)` 가 빈 글자일 때
+   ★ ★ `changed_at >= ''` 이라 ★ **역사 전체를 세어** ★ 누적 4＋2 로 문턱 5를 넘어 ★ **S4 가 멈췄다**
+★★★ ★ **누적으로 세면 ★ 시간이 갈수록 반드시 넘는다** — ★ 언젠가 꼭 멈춘다
+필수  ★ ★ `since = _today(parsed) or str(observed_at)[:10]` — ★ 날이 없으면 ★ **오늘로 본다**
+```
