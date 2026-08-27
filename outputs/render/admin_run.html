@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect">브라우저 수집</a>
 </div>
 
 
@@ -55,10 +55,10 @@
   <h2>진행</h2>
   
   <p><strong>done</strong> · 사유 raw_missing · 범위 all
-    <span class="muted">· run 20260827T120028</span></p>
+    <span class="muted">· run 20260827T173256</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-27T12:00:26.567545+00:00</span></p>
+    <span class="muted">· 넣은 시각 2026-08-27T17:32:54.883240+00:00</span></p>
   <p class="muted">S5 ok 0 · S6 ok 138244 · S9 ok 248508 · S10 ok 9558</p>
   
   
@@ -75,7 +75,7 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">21,590</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">21,592</td></tr>
   
   <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,022</td></tr>
   
@@ -99,9 +99,11 @@
   
   <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">20,703</td></tr>
   
+  <tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="원문">2</td></tr>
+  
   </tbody>
   </table>
-  <p class="muted">매물 18,755건 · 판정 9,558건</p>
+  <p class="muted">매물 18,757건 · 판정 9,558건</p>
 
   <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
     갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
@@ -178,7 +180,7 @@
   
   <label class="opt"><input type="radio" name="scope" value="all">
     <strong>전 차종</strong>
-    <span class="warn-block">19차종 · 약 8.9시간</span></label>
+    <span class="warn-block">19차종 · 약 9.2시간</span></label>
   <p class="muted">★ 전 차종은 되돌릴 수 없이 오래 돕니다.
     잘못 눌러 3.8시간이 그냥 도는 일을 막으려고
     <strong>아래에 <code>all</code> 을 직접 입력</strong>해야 시작합니다.</p>
@@ -200,6 +202,16 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-27T17:32:54.883240+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-27T17:21:58.351357+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-27T12:00:26.567545+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -291,16 +303,6 @@
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-25T02:15:14.547994+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-08-25T02:09:58.729655+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -308,7 +310,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 6 · 3.0초</li><li>2026-08-26T15:40:12.356590+00:00 · 20260826T153953 · 정상 · 496.5초</li><li>2026-08-26T15:18:52.581870+00:00 · 20260826T151840 · 정상 · 31.2초</li><li>2026-08-26T15:07:19.340774+00:00 · 20260826T150704 · 정상 · 1.7초</li><li>2026-08-26T03:17:25.238847+00:00 · 20260826T031724 · fatal 7 · 0.5초</li></ul>
+<ul class="muted"><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li><li>2026-08-26T15:40:12.356590+00:00 · 20260826T153953 · 정상 · 496.5초</li><li>2026-08-26T15:18:52.581870+00:00 · 20260826T151840 · 정상 · 31.2초</li><li>2026-08-26T15:07:19.340774+00:00 · 20260826T150704 · 정상 · 1.7초</li><li>2026-08-26T03:17:25.238847+00:00 · 20260826T031724 · fatal 7 · 0.5초</li></ul>
 
 
 
@@ -319,7 +321,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260826T164607</span>
-  <span>2026-08-27 22:20</span>
+  <span>2026-08-28 06:19</span>
 </footer>
 
 </body>

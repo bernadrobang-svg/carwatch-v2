@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect">브라우저 수집</a>
 </div>
 
 
@@ -1715,7 +1715,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.mileage.zero_km</td>
-  <td class="num" data-label="현재 값">100000</td>
+  <td class="num" data-label="현재 값">80000</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3753,6 +3753,74 @@
   </td>
 </tr>
 
+<tr>
+  <td class="runid" data-label="키">grade_gates.warranty_required_above</td>
+  <td class="num" data-label="현재 값">A</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="grade_gates.warranty_required_above">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">pending_rule.evidence_ratio_below</td>
+  <td class="num" data-label="현재 값">0.6</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="pending_rule.evidence_ratio_below">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">pending_rule.label</td>
+  <td class="num" data-label="현재 값">판정 중</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="pending_rule.label">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">pending_rule.sort_last</td>
+  <td class="num" data-label="현재 값">True</td>
+  <td class="muted" data-label="형">bool</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="pending_rule.sort_last">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
 </tbody>
 </table>
 
@@ -3810,7 +3878,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260826T164607</span>
-  <span>2026-08-27 22:20</span>
+  <span>2026-08-28 06:19</span>
 </footer>
 
 </body>
