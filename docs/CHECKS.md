@@ -97,7 +97,7 @@
 | `S46-95` | 배포된 화면이 다 열리는가 | fatal | `validate/v0_guide.py:2093` | **★ 없음** | 없음 | guide/03_이력.md:788 · guide/03_이력.md:789 · guide/03_이력.md:792 |
 | `S46-96` | 사이트가 파는 차종인데 코드가 없는가 | warn | `validate/v0_guide.py:2149` | **★ 없음** | 없음 | guide/03_이력.md:791 |
 | `S46-97` | 원문이 source_id 로 매물에 이어지는가 | fatal | `validate/v0_guide.py:1825` | **★ 없음** | 없음 | guide/03_이력.md:792 |
-| `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:1987` | **★ 없음** | 없음 | guide/03_이력.md:793 · guide/03_이력.md:794 |
+| `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:1987` | **★ 없음** | 없음 | guide/03_이력.md:793 · guide/03_이력.md:794 · guide/03_이력.md:796 |
 | `S46-99` | 로그인하면 관심·관리가 열리는가 | fatal | `validate/v0_guide.py:1893` | **★ 없음** | 없음 | guide/03_이력.md:794 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
