@@ -34,7 +34,25 @@ NO_GRADE = "NO_GRADE"
 #   ★ 낮은 등급이 아니다.  상세가 들어오면 그때 등급이 난다
 PENDING = "PENDING"
 # 「근거 있는 축의 합」이 분모의 이 비율 아래면 판정 중.  ★ config 가 정본
+# ★★★ 08-28 — ★ 가이드가 ★ `pending_rule.evidence_ratio_below` 로 ★ 새로 넣었다
+#   (`config/scoring.json` · r788).  ★ 값은 ★ **0.60** 이다.
+#   ★ 까닭 — ★ 「절반(455)으로는 ★ 볼보 399 · 현대인증 481 이 갈리지 않는다」.
+#   ★ ★ 등급은 ★ 「차의 좋고 나쁨」이지 ★ 「우리가 아는 정도」가 아니다.
+#   ★ 옛 열쇠(`pending_confirmed_ratio`)는 ★ 뒤에 둔다 — ★ 새 것이 있으면 그것이 정본이다
+PENDING_RULE_KEY = "pending_rule"
 PENDING_RATIO_KEY = "pending_confirmed_ratio"
+
+
+def pending_ratio(policy) -> float:
+    """「판정 중」 문턱.  ★ 정본은 `config/scoring.json` 이다 (S14).
+
+    ★ `pending_rule.evidence_ratio_below` 가 있으면 ★ 그것이다.
+    ★ 없으면 옛 열쇠 `pending_confirmed_ratio` 를 쓴다.  ★ 둘 다 없으면 0.5
+    """
+    rule = policy.raw.get(PENDING_RULE_KEY)
+    if isinstance(rule, dict) and rule.get("evidence_ratio_below") is not None:
+        return float(rule["evidence_ratio_below"])
+    return float(policy.raw.get(PENDING_RATIO_KEY, 0.5))
 GRADE_E = "E"
 GRADE_D = "D"
 GRADE_S = "S"
@@ -89,7 +107,7 @@ def grade_of(result: ScoreResult, policy: ScoringPolicy) -> str:
     #   실측 08-25: 판정 중 3,590 → 1,670 으로 줄고 ★ 상세 없는 G 1,288 이 남았다.
     #   ★ 소모품은 「무엇이 비었나」 목록에서만 뺀다 (67장-4 · report/render.py)
     base = float(result.denominator)
-    cut = float(policy.raw.get(PENDING_RATIO_KEY, 0.5))
+    cut = pending_ratio(policy)
     if base > 0 and float(result.confirmed or 0.0) < base * cut:
         return PENDING
     # ★ earned 와 denominator 는 같은 자 (실배점).  score_total 은 555 환산값이다.

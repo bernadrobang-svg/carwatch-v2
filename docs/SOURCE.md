@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 178개 · 총 62,004줄
+파일 178개 · 총 62,039줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -55,13 +55,13 @@
 | `tools/build_dict.py` | 317 | RAW → 사전 생성. |
 | `validate/v9_multisite.py` | 305 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `tools/collect_hyundai_cert.py` | 303 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
+| `tools/collect_kcar.py` | 303 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `analyze/axis/state.py` | 302 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
 | `tests/test_endtoend.py` | 291 | 종단 시험 — 수집부터 리포트까지 (5장 STEP 47 · 49). |
 | `adapters/encar.py` | 290 | 엔카 어댑터 — URL · 헤더 · 쿼리 조립. |
 | `tests/test_dict.py` | 288 | 4장 키·코드·사전 시험. |
 | `tests/test_screens.py` | 287 | 10장 화면 시험. |
-| `tools/collect_kcar.py` | 286 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
 | `tests/test_crosssite.py` | 282 | 12장 다중 사이트 시험. |
 | `tools/check_screens.py` | 277 | 화면 ↔ 시안 대조 (10장 · 14장). |
@@ -114,6 +114,7 @@
 | `tools/fold_out_of_scope.py` | 137 | 이미 들어온 것을 ★ 되돌린다 — ★ 우리 대상이 아닌 것은 ★ 접는다 (명령서 3-3). |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
+| `score/grade.py` | 127 | 등급 (L7). |
 | `tools/check_all.py` | 123 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/heydealer.py` | 120 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
@@ -127,7 +128,6 @@
 | `tools/gen_table.py` | 114 | 배점표를 config 에서 생성한다 (개정 512). |
 | `parse/volvo_selekt/mapping.py` | 112 | 볼보 셀렉트 상세 → `core_listing` 칸 (규격 `VOLVO_SELEKT_API.md` 2장). |
 | `tools/classify_stored.py` | 110 | 저장된 매물을 ★ 갈래에 넣는다 — ★ 사이트 도구가 쓴 줄용 (명령서 37·39). |
-| `score/grade.py` | 109 | 등급 (L7). |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
 | `tools/fill_photos.py` | 106 | ★★★ 이미 받아 둔 원문에서 ★ 사진을 채운다 (명령서 73장). |
 | `tools/probe_kb_wall.py` | 106 | KB 봇 차단을 ★ 재는 도구 (명령서 08-25 · 마스터 「가려 받지 마라」). |
@@ -481,6 +481,12 @@ _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _o
 target_of:69  _now:85  _post:89  _get:99  fetch_detail:110  load_filters:123  total_count:155  walk:168  main:195
 ```
 
+### `tools/collect_kcar.py` — 303줄
+
+```
+_now:43  fetch:47  classify:69  accident_of:84  fetch_stock:93  collect_list:114  main:217
+```
+
 ### `analyze/axis/state.py` — 302줄
 
 ```
@@ -515,12 +521,6 @@ check:39  db:45  test_scope_key:51  test_count_zero:73  test_axis_policy:97  tes
 
 ```
 check:42  _pipeline:48  test_chip:60  test_listings:83  test_compare:144  test_dashboard_notready:161  test_static_rules:201  test_account:233
-```
-
-### `tools/collect_kcar.py` — 286줄
-
-```
-_now:43  fetch:47  classify:61  accident_of:76  fetch_stock:85  collect_list:104  main:200
 ```
 
 ### `tests/test_fixtures.py` — 284줄

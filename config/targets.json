@@ -1101,7 +1101,7 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "C40",
-        "_확인": "[추론 08-28] ★ facet 미확인 — 브라우저 수집으로 확인한 뒤 이 줄을 지운다"
+        "_확인됨": "[실측 08-28] ★ 엔카 facet 봉투에서 ★ `Manufacturer.볼보` 밑에 ★ `ModelGroup.C40` 이 ★ 실제로 있는 것을 ★ 눈으로 봤다 (`raw_response` site='encar' endpoint in (facet,list)).  ★ 볼보는 맨 이름을 쓴다 — ★ XC60·XC40·V60·S60 과 같은 꼴이다.  ★ 지어내지 않았다"
       },
       "kbchachacha": {
         "makerCode": "117",

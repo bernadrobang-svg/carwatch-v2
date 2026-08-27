@@ -44,18 +44,26 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def fetch(url: str, headers: dict, timeout: float) -> tuple:
-    """반환 (본문 bytes 길이, JSON 또는 None)."""
+def fetch(url: str, headers: dict, timeout: float,
+          want_text: bool = False) -> tuple:
+    """반환 (본문 bytes 길이, JSON 또는 None[, 원문 글자]).
+
+    ★★ 08-28 — ★ `want_text` 를 붙였다.  ★ 재고 목록 봉투(887KB)를
+      ★ ★ **그냥 버리고 있었다** — ★ P3(원문 무손실) 어긋남이다.
+      ★ ★ 다시 만들지 않는다.  ★ 받은 글자를 ★ 그대로 남긴다
+    """
     try:
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as f:   # noqa: S310
             raw = f.read()
     except OSError:
-        return 0, None
+        return (0, None, None) if want_text else (0, None)
     try:
-        return len(raw), json.loads(raw.decode("utf-8"))
+        text = raw.decode("utf-8")
+        doc = json.loads(text)
     except (ValueError, UnicodeDecodeError):
-        return len(raw), None
+        text, doc = None, None
+    return (len(raw), doc, text) if want_text else (len(raw), doc)
 
 
 def classify(size: int, body: dict | None) -> str:
@@ -82,28 +90,30 @@ def accident_of(body: dict) -> str | None:
     return ((body.get("data") or {}).get("rvo") or {}).get("acdtHistComnt")
 
 
-def fetch_stock(adapter: KcarAdapter) -> list:
+def fetch_stock(adapter: KcarAdapter) -> tuple:
     """재고 목록을 ★ 한 번에 받는다 (명령서 18-1).
 
     ★ `data.listCount` 가 ★ 총건수다.  ★ 쪽마다 더하지 않는다
+    ★ 반환 (줄 목록, 원문 글자, 부른 주소) — ★ 원문을 남기려면 글자가 있어야 한다
     """
     req = adapter.stock_list_url()
-    size, body = fetch(req.url, req.headers, req.timeout_sec)
+    size, body, text = fetch(req.url, req.headers, req.timeout_sec,
+                             want_text=True)
     if not body:
         print(f"  ★ 목록을 못 받았다 ({size}B)")
-        return []
+        return [], None, req.url
     data = body.get("data") or {}
     rows = data.get("list") or []
     said = data.get("listCount")
     print(f"목록 — 사이트가 말한 총 {said}건 · 받은 {len(rows)}건 · {size:,}B")
     if said is not None and len(rows) != int(said):
         print(f"  ★ 어긋난다 — {int(said) - len(rows)}건을 못 받았다")
-    return rows
+    return rows, text, req.url
 
 
 def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     """목록 전량 저장 → ★ 우리 대상만 상세 (명령서 18-3)."""
-    rows = fetch_stock(adapter)
+    rows, stock_body, stock_url = fetch_stock(adapter)
     if not rows:
         return 1
     parsed, ours = [], []
@@ -130,6 +140,13 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
+    # ★★ 08-28 — ★ 받은 목록 봉투를 ★ **먼저 남긴다** (명령서 3-2 · P3).
+    #   ★ 전에는 ★ 887KB 를 ★ 그냥 버렸다 — ★ `raw_response` 에 `stock_list` 가 0건이었다.
+    #   ★ ★ 갈래를 넓히시면 ★ 이 봉투로 ★ 다시 판다.  ★ 다시 받을 일이 없다
+    if stock_body:
+        got = save_site_raw(conn, SITE_CODE, "stock_list", None,
+                            stock_url, stock_body, at)
+        print(f"★ 목록 원문을 남겼다 ({len(stock_body):,}자 · {got})")
     # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 우리 대상만 ★ `core_listing` 에 넣는다.
     #   ★ K카는 ★ 목록이 `enc` 라 ★ 좁힐 길이 없다 — ★ 다 받되 ★ 걸러 넣는다
     #   ★ ★ 원문(`raw_response`)에는 남는다 — ★ 갈래를 넓히면 다시 판다
