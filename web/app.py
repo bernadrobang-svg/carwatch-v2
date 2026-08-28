@@ -388,6 +388,27 @@ def make_app(db_path: str, root: str = ".", plan=None,
     from web.views import HANDLERS
 
     cfg = load_web_config(root)
+
+    # ★★★ 요청마다 연결을 새로 연다 (위 설명).  ★ 그런데 그 연결에는
+    #   pragma 가 ★ 하나도 안 걸려 있었다 (실측 08-28).
+    # ★ 규격이 08-26 에 넣은 `db_busy_timeout_ms`(30초)는
+    #   `store/raw.open_db` 에만 붙어 있어 ★ 파이프라인만 지켜졌다.
+    #   ★ 화면 쪽은 파이썬 sqlite3 기본값 ★ 5초로 돌고 있었다 —
+    #   ★ 파이프라인이 쓰기 잠금을 쥔 동안 `POST /login` 이 500 이 되던
+    #   그 결함(개정 · config `_db_busy_timeout_why`)이 ★ 화면에는
+    #   막혀 있지 않았다는 뜻이다
+    # ★ `temp_store` — 현황은 GROUP BY · ORDER BY 에 TEMP B-TREE 를 쓴다
+    #   (EXPLAIN QUERY PLAN 실측).  ★ 기본값은 그것을 디스크에 쓴다.
+    #   ★ 램에 두면 EBS 를 안 건드린다 — 이 장비는 t4g.small 이다
+    def _open_db():
+        ms = int(cfg["db_busy_timeout_ms"])
+        conn = _sq.connect(db_path, timeout=ms / 1000)
+        conn.execute(f"PRAGMA busy_timeout = {ms}")
+        # ★ 값이 없으면 MEMORY 다 — store/raw._busy_timeout_ms 와 같은 꼴로
+        #   둔다.  config 를 못 읽었다고 느린 쪽으로 떨어뜨리지 않는다
+        conn.execute(f"PRAGMA temp_store = {cfg.get('db_temp_store', 'MEMORY')}")
+        return conn
+
     csrf_by_session: dict[str, str] = {}
     # ★ 토큰을 세션 키에서 만든다 (개정 308).  재시작·워커 증설에 견딘다
     try:
@@ -403,7 +424,7 @@ def make_app(db_path: str, root: str = ".", plan=None,
         sid = read_cookie(req.get("cookie"), cfg["session_cookie"])
         if not sid:
             return ANONYMOUS
-        conn = _sq.connect(db_path)
+        conn = _open_db()
         try:
             from store.admin import session_account
 
@@ -419,7 +440,7 @@ def make_app(db_path: str, root: str = ".", plan=None,
           로그아웃된 줄 알고 다시 로그인하게 된다 (실측 08-16 · 마스터 보고)
         """
         account = account_of(req) if req is not None else ANONYMOUS
-        conn = _sq.connect(db_path)
+        conn = _open_db()
         try:
             return build_page(conn, account, title, "")
         finally:
@@ -464,7 +485,7 @@ def make_app(db_path: str, root: str = ".", plan=None,
             raise _Denied(ErrorPage(NOT_FOUND.status, "준비 중입니다",
                                     f"{route.path} 화면은 아직 없습니다.",
                                     "매물 목록으로 돌아간다  (/listings)"))
-        conn = _sq.connect(db_path)
+        conn = _open_db()
         try:
             key = read_cookie(req.get("cookie"),
                               cfg["session_cookie"]) or "-"
