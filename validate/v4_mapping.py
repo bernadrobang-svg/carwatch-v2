@@ -501,7 +501,9 @@ def run(conn, ctx) -> list:
         "SELECT r.listing_id, r.source_id, r.body FROM raw_response r "
         "WHERE r.endpoint='detail' AND r.status='ok' AND r.site='encar'"
     ).fetchall():
-        doc = json.loads(body)
+        from store.raw import raw_body
+
+        doc = json.loads(raw_body(body))
         row = conn.execute(
             "SELECT vin, plate_hash, price_origin_won, displacement_cc "
             "FROM core_listing WHERE listing_id=?", (lid,)).fetchone()
@@ -539,8 +541,10 @@ def run(conn, ctx) -> list:
         " FROM raw_response WHERE status='ok') WHERE rn <= ?",
         (SAMPLE_PER_ENDPOINT,)
     ).fetchall():
+        from store.raw import raw_body
+
         try:
-            doc = json.loads(body)
+            doc = json.loads(raw_body(body))
         except ValueError:
             continue
         # ★ 오염된 원문을 등록부 기준으로 삼지 않는다 (STEP 87 · sync_registry 와 같은 규칙)

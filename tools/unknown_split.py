@@ -92,8 +92,10 @@ def classify(conn, axis: str, spec: dict) -> dict:
             " AND status='ok' ORDER BY fetched_at DESC LIMIT 1",
             (lid, ep)).fetchone()
         got["opened"] += 1
+        from store.raw import raw_body
+
         try:
-            b = json.loads(body[0])
+            b = json.loads(raw_body(body[0]))
         except (TypeError, ValueError):
             got["?"] += 1
             continue

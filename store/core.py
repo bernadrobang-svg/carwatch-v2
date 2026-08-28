@@ -15,7 +15,7 @@ import sqlite3
 
 from contracts import ListingSnapshot
 from errors import ValidationError
-from store.raw import commit
+from store.raw import commit, raw_body
 
 # 변하는 것만 추적한다 (STEP 29).  좁게 잡는다.
 TRACKED_FIELDS: tuple[str, ...] = ("price_current_won", "sales_status", "status")
@@ -280,7 +280,7 @@ def _source_history(conn, source_id, key: str) -> list:
         " ORDER BY id DESC LIMIT ?", (_lookback(),)
     ):
         try:
-            doc = _json.loads(body)
+            doc = _json.loads(raw_body(body))
         except (ValueError, TypeError):
             continue
         for item in doc.get("SearchResults") or []:
@@ -1003,7 +1003,7 @@ def sample_bodies(conn, endpoint: str) -> list:
         except AttributeError:
             pass
     if endpoint not in cache:
-        cache[endpoint] = [b for (b,) in conn.execute(
+        cache[endpoint] = [raw_body(b) for (b,) in conn.execute(
             "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
             " AND body IS NOT NULL"
             " ORDER BY (id * 2654435761) % 1000003 LIMIT ?",
@@ -1321,7 +1321,7 @@ def raw_sections(conn: sqlite3.Connection, listing_id: int,
         if endpoint in used:
             continue
         try:
-            doc = _j.loads(body)
+            doc = _j.loads(raw_body(body))
         except (ValueError, TypeError):
             continue
         rows = _flatten(doc, cap)
@@ -1443,7 +1443,7 @@ def full_hits(conn, endpoint: str, path: str) -> tuple:
         " AND body IS NOT NULL", (endpoint,)
     ):
         try:
-            got = json.loads(body)
+            got = json.loads(raw_body(body))
         except (ValueError, TypeError):
             continue
         total += 1

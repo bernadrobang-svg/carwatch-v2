@@ -29,6 +29,81 @@ ORIGIN_IMPORT = "import"
 ORIGIN_BROWSER = "browser"
 
 
+# ★★★ 원문을 압축해 둔다 (마스터 지시 08-28).
+#
+#   ★ 왜 — ★ 이 장비는 t4g.small · 램 1,841MB 인데 ★ DB 가 1.00GB 다.
+#     ★ 페이지 캐시에 안 들어가서 ★ 화면이 차가울 때 10초, 더울 때 0.7초였다
+#     (14배 · outputs v285).  ★ `raw_response` 가 ★ 그 DB 의 77% 다.
+#   ★ 실측 08-28 — ★ 표본 400건에 ★ zlib 로 ★ 3.6배 줄었다
+#
+#   ★★ 규격을 어기지 않는다 — 「원문 무손실 · 삭제 금지 · 추가만」
+#     (chapters/01-arch.md:17 · 13-pipeline.md:401).
+#     ★ 압축은 ★ 무손실이다.  ★ 글자 하나 안 바뀐다 — ★ 되돌리면 그대로다.
+#     ★ `tools/compress_raw.py` 가 ★ 옮길 때 ★ 전건을 되돌려 대조한다
+#
+#   ★ 어떻게 — ★ `body` 칸에 ★ 압축 바이트(BLOB)를 그대로 넣는다.
+#     ★ 칸을 새로 만들지 않는다 — ★ 그래야 ★ `body IS NOT NULL` 을 쓰는
+#       여섯 자리가 ★ 그대로 산다 (`store/core.py` · `validate/v0_guide.py` ·
+#       `tools/fill_photos.py` · `sql/ddl/01_raw.sql` 의 부분 색인)
+#     ★ 가른다 — ★ 글자(str)면 옛 꼴, ★ 바이트(BLOB)면 압축된 것이다.
+#       ★ 앞에 표식을 둔다 — ★ 남의 BLOB 을 잘못 풀지 않기 위해서다
+#     ★ 섞여 있어도 된다 — ★ 옮기는 중에도 읽는 쪽이 안 깨진다
+#
+#   ★ 읽는 자리는 ★ 전부 `raw_body()` 를 거친다.  ★ 안 거치면 bytes 가 그대로
+#     나와 ★ `json.loads` 가 죽는다 — ★ 조용히 틀리지 않고 ★ 곧바로 터진다.
+#     ★ 그것이 낫다 (선언과 실제의 괴리를 막는 것이 이 프로젝트의 목표다)
+BODY_MAGIC = b"CWZ1"
+
+
+def _compress_cfg(key: str, fallback):
+    """압축 설정.  ★ 정본은 `config/web.json` 이다 (S14)."""
+    try:
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(here, "config", "web.json"),
+                  encoding="utf-8") as f:
+            return json.load(f)[key]
+    except (OSError, ValueError, KeyError, TypeError):
+        return fallback
+
+
+def pack_body(text):
+    """저장할 꼴로 만든다.  ★ None 은 None 이다.
+
+    ★ 작은 것은 안 줄인다 — ★ 압축 머리글이 도리어 커진다.
+      ★ 경계는 `config/web.json` 의 `raw_body_compress_min_bytes` 다
+    """
+    if text is None:
+        return None
+    if not isinstance(text, str):
+        return text                       # 이미 바이트다.  손대지 않는다
+    data = text.encode("utf-8")
+    if not _compress_cfg("raw_body_compress", True):
+        return text
+    if len(data) < int(_compress_cfg("raw_body_compress_min_bytes", 1024)):
+        return text
+    import zlib
+
+    return BODY_MAGIC + zlib.compress(
+        data, int(_compress_cfg("raw_body_compress_level", 6)))
+
+
+def raw_body(value):
+    """저장된 body 를 ★ 원문 글자로 되돌린다.
+
+    ★★ `raw_response.body` 를 읽는 자리는 ★ 전부 이것을 거친다.
+    ★ 옛 행(글자)은 그대로 돌려준다 — ★ 섞여 있어도 된다
+    """
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        raw = bytes(value)
+        if raw.startswith(BODY_MAGIC):
+            import zlib
+
+            return zlib.decompress(raw[len(BODY_MAGIC):]).decode("utf-8")
+        # ★ 우리가 압축한 것이 아니다.  ★ 지어내지 않고 글자로만 돌린다
+        return raw.decode("utf-8")
+    return value
+
+
 # 단계 트랜잭션 중인 연결.  sqlite3.Connection 은 임의 속성을 받지 않는다
 _IN_BATCH: set[int] = set()
 # ★ batch 안에서 ★ 몇 줄 썼나 — ★ 잠금 창을 자르는 셈이다 (08-26)
@@ -217,7 +292,7 @@ def save_raw(
         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (run_id, site, listing_id, res.source_id, res.kind, request_url,
          _safe_headers(request_headers), res.http_code, None, res.status,
-         body, origin, at),
+         pack_body(body), origin, at),
     )
     conn.commit()
     return "stored"
@@ -291,7 +366,7 @@ def save_site_raw(
         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (run_id or proc_run_id(), site, listing_id,
          None if source_id is None else str(source_id), endpoint,
-         request_url, None, http_code, None, "ok", body,
+         request_url, None, http_code, None, "ok", pack_body(body),
          ORIGIN_COLLECTOR, fetched_at),
     )
     return "stored"
@@ -324,7 +399,7 @@ def save_import_raw(
         " http_code,response_meta,status,body,origin,fetched_at)"
         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (run_id, site, None, None, endpoint, None, None,
-         None, meta, "ok", text, ORIGIN_IMPORT, at),
+         None, meta, "ok", pack_body(text), ORIGIN_IMPORT, at),
     )
     conn.commit()
     return cur.lastrowid
@@ -350,8 +425,14 @@ def save_browser_raw(
     금지   origin 을 'collector' 로 넣는 것 — 서버가 받은 것이 아니다
     반환   raw_response.id
     """
+    # ★★ `bytes` — ★ 브라우저가 ★ 한 번에 보낸 ★ 원문 바이트 수 (V11-47).
+    #   ★ 전에는 검사가 `LENGTH(body)` 로 쟀는데 ★ body 를 압축하면서
+    #     ★ 그것이 ★ 「압축된 크기」가 되어 ★ 상한 검사가 조용히 통과하게 된다.
+    #   ★ 그래서 ★ 잰 값을 ★ 여기 남긴다 — ★ 이쪽이 뜻도 더 곧다
+    #     (「보낸 크기」이지 「저장된 크기」가 아니다)
     meta = json.dumps({"fetched_by": "browser", "http_code": http_code,
-                       "transfer": "chunked" if chunked else "single"},
+                       "transfer": "chunked" if chunked else "single",
+                       "bytes": len(text.encode("utf-8"))},
                       ensure_ascii=False)
     cur = conn.execute(
         "INSERT INTO raw_response"
@@ -359,7 +440,7 @@ def save_browser_raw(
         " http_code,response_meta,status,body,origin,fetched_at)"
         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (run_id, site, None, None, endpoint, request_url, None,
-         http_code, meta, "ok", text, ORIGIN_BROWSER, at),
+         http_code, meta, "ok", pack_body(text), ORIGIN_BROWSER, at),
     )
     conn.commit()
     return cur.lastrowid

@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 from report.screens.views import ViewerState
 from contracts import ROLE_ADMIN, Account, require_role
 from store.admin import running_job
+from store.raw import raw_body as _raw_body
 
 # 메뉴 3분류.  잠금 단위와 일치시킨다 (STEP 138)
 GROUP_OPS, GROUP_TUNE, GROUP_EXPLORE = "운영", "조정", "탐색"
@@ -874,7 +875,10 @@ def collect_state(conn, collect_urls=None, root: str = ".",
     if os.path.isfile(path):
         with open(path, encoding="utf-8") as f:
             web = _j.load(f)
-    rows = [{"raw_id": rid, "at": at, "endpoint": ep, "bytes": len(body or ""),
+    # ★ `bytes` — ★ 받은 원문의 크기다.  ★ 저장분은 눌려 있으므로
+    #   ★ `raw_body` 로 되돌려 잰다 — ★ 안 그러면 「압축된 크기」가 보인다
+    rows = [{"raw_id": rid, "at": at, "endpoint": ep,
+             "bytes": len(_raw_body(body) or ""),
              "url": url or "", "code": code}
             for rid, at, ep, body, url, code in conn.execute(
                 "SELECT id, fetched_at, endpoint, body, request_url, http_code "
@@ -970,7 +974,8 @@ def import_state(conn, limit: int | None = None) -> dict:
     limit = _cfg_rows("recent_rows") if limit is None else limit
     from contracts import IMPORT_SOURCE, S4_CODE
 
-    rows = [{"raw_id": rid, "at": at, "bytes": len(body or ""),
+    # ★ 위와 같은 까닭 — ★ 되돌려 잰다
+    rows = [{"raw_id": rid, "at": at, "bytes": len(_raw_body(body) or ""),
              "meta": meta or "", "site": site}
             for rid, at, body, meta, site in conn.execute(
                 "SELECT id, fetched_at, body, response_meta, site "

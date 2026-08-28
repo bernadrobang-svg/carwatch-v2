@@ -110,8 +110,10 @@ def collect_values(conn: sqlite3.Connection
     for endpoint, body in conn.execute(
         "SELECT endpoint, body FROM raw_response WHERE status='ok'"
     ):
+        from store.raw import raw_body
+
         try:
-            doc = json.loads(body)
+            doc = json.loads(raw_body(body))
         except (ValueError, TypeError):
             continue
         if not shape_ok(endpoint, doc):
@@ -141,8 +143,10 @@ def collect_paths(conn: sqlite3.Connection,
     for endpoint, body in conn.execute(
         "SELECT endpoint, body FROM raw_response WHERE status='ok'"
     ):
+        from store.raw import raw_body
+
         try:
-            doc = json.loads(body)
+            doc = json.loads(raw_body(body))
         except (ValueError, TypeError):
             continue
         if not shape_ok(endpoint, doc):

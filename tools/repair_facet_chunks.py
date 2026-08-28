@@ -39,7 +39,10 @@ def groups(conn) -> dict:
         " WHERE endpoint='facet' AND status='ok' AND fetched_at >= ?"
         " ORDER BY id", (SINCE,)
     ):
-        got.setdefault(url, []).append((rid, body))
+        from store.raw import raw_body
+
+        got.setdefault(url, []).append((rid, raw_body(body)))
+
     return got
 
 
@@ -87,12 +90,14 @@ def main() -> int:
         meta = (row[6] or "{}").rstrip("}")
         meta = (meta + (", " if len(meta) > 1 else "")
                 + '"transfer": "chunked"}')
+        from store.raw import pack_body
+
         conn.execute(
             "INSERT INTO raw_response(run_id, site, endpoint, request_url,"
             " request_meta, http_code, response_meta, status, body, origin,"
             " fetched_at) VALUES (?,?,?,?,?,?,?,'ok',?,?,?)",
-            (row[0], row[1], row[2], row[3], row[4], row[5], meta, body,
-             row[7], row[8]))
+            (row[0], row[1], row[2], row[3], row[4], row[5], meta,
+             pack_body(body), row[7], row[8]))
         # ★ 조각을 지우지 않는다.  「원문이 아니다」로만 표시한다 (P3)
         conn.execute(
             "UPDATE raw_response SET status='error',"

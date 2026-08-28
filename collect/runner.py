@@ -269,7 +269,7 @@ from store.core import (  # noqa: E402
 )
 from store.pii import load_key  # noqa: E402
 from collect.fetcher import reject_reason, verify_shape  # noqa: E402
-from store.raw import save_facet, save_raw  # noqa: E402
+from store.raw import raw_body, save_facet, save_raw  # noqa: E402
 # ★ 배치 단계가 쓰기 잠금을 오래 쥐지 않게 끊는다 (08-26)
 from store.raw import tick as raw_tick  # noqa: E402
 
@@ -546,7 +546,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             args = (ctx.started_at.isoformat(),)
         sql += " ORDER BY fetched_at, id"
         skipped_old = 0
-        for body, seen_at in conn.execute(sql, args).fetchall():
+        for _b, seen_at in conn.execute(sql, args).fetchall():
+            body = raw_body(_b)
             _count, items = unpack_envelope(json.loads(body))
             for item in items:
                 rows += 1
@@ -714,7 +715,7 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             f"AND r.status='ok' AND r.site=? AND l.target_key IN "
             f"({','.join('?' * len(scope))})", (adapter.site_code, *scope)
         ).fetchall():
-            doc = json.loads(body)
+            doc = json.loads(raw_body(body))
             if n % PROGRESS_EVERY == 0:
                 say("S6", f"{kind} 파싱", n, 0)
                 # ★ 잠금 창을 끊는다 (08-26).  ★ S6 은 13만 행이다

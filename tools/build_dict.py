@@ -97,8 +97,10 @@ def extract_distinct(conn: sqlite3.Connection, endpoint: str,
             "AND status = 'ok' AND origin <> 'import'",
             (endpoint,),
         )
+        from store.raw import raw_body
+
         for (body,) in rows:
-            for value in _walk_path(json.loads(body), json_path):
+            for value in _walk_path(json.loads(raw_body(body)), json_path):
                 counts[value] = counts.get(value, 0) + 1
     return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
 
@@ -255,12 +257,14 @@ def build_catalog_dict(conn: sqlite3.Connection, site: str, dict_version: str,
     같은 코드가 모델마다 다른 옵션이다.  scope=model 이므로 충돌이 아니다.
     금지   이 목록을 그 매물의 장착으로 취급하는 것 (1장 STEP 14.1)
     """
+    from store.raw import raw_body as _raw_body
+
     n = 0
     for (mck, body) in conn.execute(
         "SELECT source_id, body FROM raw_response "
         "WHERE endpoint='catalog' AND status='ok'"
     ):
-        for item in json.loads(body) or []:
+        for item in json.loads(_raw_body(body)) or []:
             conn.execute(
                 "INSERT OR REPLACE INTO dict_model_option"
                 "(site,model_catalog_key,option_code,option_name,price_manwon,"

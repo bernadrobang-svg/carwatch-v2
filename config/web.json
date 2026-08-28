@@ -360,6 +360,10 @@
   "_db_batch_commit_rows_why": "★★★ 08-26 실측 — ★ busy_timeout 30초를 걸어도 ★ 로그인이 여전히 500 이었다.  ★ 까닭 — ★ S4·S6·S6a·S8·S9·S10 이 ★ **한 단계를 통째로 한 트랜잭션**으로 묶는다 (`BATCH_STEPS`).  ★ S6 은 130,040행이라 ★ 쓰기 잠금을 ★ 몇 분씩 쥔다.  ★ 그동안 ★ 웹의 쓰기가 ★ 전부 죽는다 — ★ 로그인·관심 담기·관리.  ★★ ★ 떼어내도(③) 안 낫는다 — ★ SQLite 는 ★ 프로세스가 아니라 ★ **파일**을 잠근다.  ★ 그래서 ★ 이 행수마다 한 번 커밋해 ★ 잠금 창을 잘라 낸다.  ★ 안전 — ★ 원문(RAW)이 이미 있어 ★ 중간에 죽어도 ★ 재파싱으로 복구된다 (`store/raw.batch` 가 처음부터 그렇게 적어 두었다).  ★ 0 이면 안 자른다  ★ 08-28 — ★ 200 에서도 ★ 30초를 넘는 창이 남아 ★ K카 수집기가 한 번 죽었다 (쓰기 5/6 성공 · 한 번 10초 넘김).  ★ 100 으로 내렸다",
   "db_temp_store": "MEMORY",
   "_db_temp_store_why": "★★ 08-28 실측 — ★ 현황(/)의 두 조회가 ★ GROUP BY · ORDER BY 에 ★ TEMP B-TREE 를 쓴다 (EXPLAIN QUERY PLAN).  ★ SQLite 기본값은 ★ 그 임시 표를 ★ 디스크에 쓴다.  ★ 이 장비는 t4g.small · EBS 다 — ★ 램에 두어 디스크를 안 건드린다.  ★ 표본이 9,543행이라 ★ 램에 부담이 없다.  ★ 쓰는 곳은 `web/app.py` 의 `_open_db`",
+  "raw_body_compress": true,
+  "raw_body_compress_min_bytes": 1024,
+  "raw_body_compress_level": 6,
+  "_raw_body_compress_why": "★★★ 08-28 마스터 지시 — 원문(raw_response.body)을 zlib 로 눌러 둔다.  ★ 까닭 — 이 장비는 t4g.small · 램 1,841MB 인데 DB 가 1.00GB 라 페이지 캐시에 안 들어간다.  화면이 차가울 때 10초 · 더울 때 0.7초로 14배 갈렸다 (outputs v285).  ★ raw_response 가 그 DB 의 77%(774MB)다.  ★★ 규격의 「원문 무손실 · 삭제 금지 · 추가만」을 어기지 않는다 — 압축은 무손실이고 글자 하나 안 바뀐다.  tools/compress_raw.py 가 옮길 때 전건을 되돌려 대조한다.  ★ min_bytes — 이보다 작으면 안 누른다.  머리글이 도리어 커진다.  실측 08-28 — body 가 있는 143,970건 중 86,969건이 1KB 미만인데 그 몫은 전체 바이트의 일부다.  ★ level 6 은 zlib 기본값이다 — 표본 400건에 3.6배 줄었다.  9 로 올려도 크게 안 달라지고 CPU 만 쓴다 (vCPU 2 · 버스터블이다).  ★ false 로 두면 새로 넣는 것만 안 누른다 — 이미 눌린 것은 raw_body() 가 그대로 읽는다",
   "sian_screens": {
     "v4m_listings_시안.html": "/listings",
     "v4m_track_시안.html": "/track",

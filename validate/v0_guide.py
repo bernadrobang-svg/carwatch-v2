@@ -1789,8 +1789,10 @@ def s46_91_raw_vs_stored() -> tuple[bool, str]:
             " AND status='ok' AND fetched_at >= ? AND body IS NOT NULL",
             (since,)
         ):
+            from store.raw import raw_body
+
             try:
-                doc = json.loads(body)
+                doc = json.loads(raw_body(body))
             except (ValueError, TypeError):
                 continue          # ★ JSON 이 아닌 목록(HTML)은 안 센다
             items = doc.get("SearchResults") if isinstance(doc, dict) else None
@@ -2528,8 +2530,10 @@ def s46_92_browser_zero_count() -> tuple[bool, str]:
             " AND status='ok' AND fetched_at >= ? AND body IS NOT NULL",
             (since,)
         ):
+            from store.raw import raw_body
+
             try:
-                doc = json.loads(body[0])
+                doc = json.loads(raw_body(body[0]))
             except (ValueError, TypeError):
                 continue
             if not isinstance(doc, dict) or "Count" not in doc:

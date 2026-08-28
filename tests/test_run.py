@@ -296,7 +296,9 @@ def test_envelope() -> None:
     check("★ 봉투 1건 = 1행.  매물 수가 아니다 (STEP 18a)", rows == 3,
           f"{rows}행 / 매물 45건")
 
-    bodies = [json.loads(r[0]) for r in conn.execute(
+    from store.raw import raw_body
+
+    bodies = [json.loads(raw_body(r[0])) for r in conn.execute(
         "SELECT body FROM raw_response WHERE endpoint='list'")]
     check("Count 가 원문에 남는다", all(b["Count"] == 45 for b in bodies))
     check("Σ len(SearchResults) == Count",

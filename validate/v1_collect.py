@@ -603,8 +603,10 @@ def _diagnosis_scope_check(conn, run_id: str):
         " AND g.endpoint = 'diagnosis' AND g.source_id = d.source_id)",
         (run_id,)
     ).fetchall():
+        from store.raw import raw_body
+
         try:
-            view = json.loads(body).get("view")
+            view = json.loads(raw_body(body)).get("view")
         except (TypeError, ValueError):
             continue
         g = view.get("encarDiagnosis") if isinstance(view, dict) else None
@@ -627,8 +629,10 @@ def _diagnosis_none_count(conn, run_id: str) -> int:
         "WHERE r.endpoint='detail' AND r.status='ok' AND a.run_id = ?",
         (run_id,)
     ).fetchall():
+        from store.raw import raw_body
+
         try:
-            view = json.loads(body).get("view")
+            view = json.loads(raw_body(body)).get("view")
         except (TypeError, ValueError):
             continue
         if isinstance(view, dict) and view.get("encarDiagnosis") == DIAG_NONE:
@@ -783,6 +787,9 @@ def _whole_body_check(conn, rid):
             " WHERE endpoint=? AND status='ok' AND site='encar'"
             " ORDER BY id DESC LIMIT ?", (kind, _whole_probe())
         ):
+            from store.raw import raw_body
+
+            body = raw_body(body)
             try:
                 _json.loads(body)
             except (ValueError, TypeError):
@@ -863,9 +870,11 @@ def _unparsed_envelope_check(conn, rid):
     if not rows:
         return not_applicable(C["V1-21"], rid, "목록 원문이 없다")
     bad, checked = [], 0
+    from store.raw import raw_body
+
     for rid_, origin, body in rows:
         try:
-            doc = _j.loads(body)
+            doc = _j.loads(raw_body(body))
         except ValueError:
             continue
         items = doc.get("SearchResults") if isinstance(doc, dict) else None

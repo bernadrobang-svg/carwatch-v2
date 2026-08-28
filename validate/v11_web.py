@@ -1437,8 +1437,25 @@ def _browser_chunk_check(conn, rid):
     #   저장된 크기로 재면 조각 전송을 넣은 것이 도리어 실패로 나온다
     if "chunk_seq" not in html or "chunk_hash" not in html:
         bad.append("큰 원문을 조각으로 안 보낸다 (개정 307)")
+    # ★★ 08-28 — ★ `LENGTH(body)` 로 재지 않는다.  ★ 원문을 눌러 두면서
+    #   ★ 그것이 ★ 「압축된 크기」가 되어 ★ 상한 검사가 ★ 조용히 통과한다.
+    #   ★ `response_meta.bytes` 가 ★ 브라우저가 ★ 한 번에 보낸 바이트다
+    #   (`store/raw.save_browser_raw`).  ★ 뜻도 이쪽이 곧다 —
+    #   ★ 「보낸 크기」이지 ★ 「저장된 크기」가 아니다.
+    #   ★ 그 값이 없는 옛 행은 ★ LENGTH 로 물러선다 — ★ 옛 행은 안 눌려 있다
+    #   ★ `response_meta` 가 ★ 늘 JSON 인 것은 아니다 — ★ `repair_facet_chunks`
+    #     가 ★ JSON 뒤에 ★ 메모를 이어붙인 행이 ★ 55건 있다 (실측 08-28).
+    #     ★ 그대로 `json_extract` 하면 ★ 「malformed JSON」으로 죽는다
+    #   ★ 물러설 때도 ★ 눌린 body 의 길이는 ★ 절대 안 쓴다 (typeof 로 가른다) —
+    #     ★ 그것을 쓰면 ★ 상한을 넘겼는데도 ★ 통과한다.
+    #     ★ 그래서 ★ 이관(`tools/compress_raw.py`)이 ★ meta 가 JSON 이 아닌
+    #       브라우저 행은 ★ 안 누른다 — ★ 잴 길이 하나는 늘 남는다
     row = conn.execute(
-        "SELECT MAX(LENGTH(body)) FROM raw_response WHERE origin=?"
+        "SELECT MAX(COALESCE("
+        "  CASE WHEN json_valid(response_meta)"
+        "       THEN json_extract(response_meta,'$.bytes') END,"
+        "  CASE WHEN typeof(body)='text' THEN LENGTH(body) END))"
+        " FROM raw_response WHERE origin=?"
         " AND COALESCE(response_meta,'') NOT LIKE '%chunked%'",
         (ORIGIN_BROWSER,)).fetchone()
     worst = row[0] or 0

@@ -46,8 +46,10 @@ def sample_values(conn, endpoint: str, path: str) -> tuple:
         "SELECT body FROM raw_response WHERE endpoint=? AND status='ok'"
         " ORDER BY id DESC LIMIT ?", (endpoint, NULL_MIN_SAMPLE)
     ):
+        from store.raw import raw_body
+
         try:
-            node = json.loads(body)
+            node = json.loads(raw_body(body))
         except (ValueError, TypeError):
             continue
         seen += 1

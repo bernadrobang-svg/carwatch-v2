@@ -71,9 +71,11 @@ def main() -> int:
         " AND source_id IS NOT NULL AND source_id <> ''"
         f" AND site IN ({','.join('?' * len(SITES))})", SITES
     ):
+        from store.raw import raw_body
+
         sid = str(sid)
         total[site][0] += 1
-        photos = _photos_of(site, sid, body)
+        photos = _photos_of(site, sid, raw_body(body))
         if not photos:
             continue
         total[site][1] += 1
