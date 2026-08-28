@@ -1,7 +1,7 @@
 # 엔카 API — 전수 조사
 
 ```
-version  SPEC-2026.08.28-r807
+version  SPEC-2026.08.28-r810
 follows  ★ 생성물 — `tools/probe_encar.py`
 sources  개정 560 · 실측 08-23
 checks   S46-31
@@ -46,6 +46,8 @@ fem.encar.com 의 세 화면이 같은 번들 하나를 쓴다
 | 경로 | 크기 | 무엇이 오나 | 우리가 쓰나 |
 |---|--:|---|:--:|
 | `/search/car/list/mobile` | — | 목록 | **쓴다** (서울 IP 407 · 브라우저 수집) |
+| ★ **`fem.encar.com/cars/detail/{id}`** | — | ★ **원문 문** | ★★ **이것이 참이다** (마스터 실측 08-28) |
+| ~~`www.encar.com/dc/dc_cardetailview.do?carid=`~~ | — | 옛 문 | ★ **2,515B 빈 껍데기** — ★ 200 이라 속는다 |
 | `/v1/readside/vehicle/{id}` | ~20KB | 상세 — 보증·신차가·옵션코드·사진 | **쓴다** |
 | `/v1/readside/inspection/vehicle/{id}` | 10,184 | 성능점검부 — 항목 103종 | **쓴다** |
 | `/v1/readside/record/vehicle/{id}/open` | — | 보험이력 | **쓴다** |
