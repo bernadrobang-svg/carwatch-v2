@@ -1984,6 +1984,186 @@ def s46_99_login_then_watch() -> tuple[bool, str]:
         return False, "★ 로그인했는데 " + " · ".join(bad)
     return True, f"로그인 뒤 화면 {ok}개가 다 열린다 (303 · Set-Cookie 확인)"
 
+
+
+def _logged_opener():
+    """★ 로그인한 열개.  ★ 자격은 `secrets/check_login.json` 이다 (S46-99 와 같다).
+
+    ★ 자격이 없거나 로그인이 안 되면 ★ None 을 돌려준다 — ★ 부르는 쪽이 적는다
+    """
+    import http.cookiejar
+    import ssl as _ssl
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    raw = _read(ROOT / "secrets" / "check_login.json")
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    if not raw or not base:
+        return None, base
+    try:
+        cred = json.loads(raw)
+        name, secret = str(cred["name"]), str(cred["secret"])
+    except (ValueError, KeyError, TypeError):
+        return None, base
+    ctx = _ssl._create_unverified_context()
+    jar = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=ctx),
+        urllib.request.HTTPCookieProcessor(jar))
+    try:
+        with opener.open(base + "/login", timeout=25) as res:
+            form = res.read().decode("utf-8", "replace")
+        got = re.search(r'name="csrf" value="([^"]+)"', form)
+        if not got:
+            return None, base
+        body = urllib.parse.urlencode(
+            {"csrf": got.group(1), "name": name, "secret": secret}).encode()
+        opener.open(base + "/login", data=body, timeout=25).read()
+    except (urllib.error.URLError, OSError):
+        return None, base
+    return opener, base
+
+def _sian_seq(html: str, keep_title: bool = False) -> list:
+    """보이는 글의 ★ 차례.  ★ 낱말이 아니라 ★ 자리를 잰다 (명령서 82장).
+
+    ★ 고정 메뉴(탭·nav)는 ★ 뺀다 — ★ 소스에서는 위에 있고 ★ 화면에서는 아래다.
+      ★ ★ `position:fixed;bottom:0` 이라 ★ 소스 차례와 보이는 차례가 다르다
+    """
+    cut = html.find("지켜야 하는 것")
+    if cut > 0:
+        html = html[:cut]
+    drop = r"<(script|style)[^>]*>.*?</\1>"
+    if not keep_title:
+        drop = r"<(script|style|title)[^>]*>.*?</\1>"
+    html = re.sub(drop, " ", html, flags=re.S | re.I)
+    # ★ 메모(note)와 고정 메뉴를 뺀다
+    html = re.sub(r'<([a-z]+)[^>]*class="[^"]*(note|tabs)[^"]*"[^>]*>.*?</\1>',
+                  " ", html, flags=re.S | re.I)
+    html = re.sub(r"<nav[^>]*>.*?</nav>", " ", html, flags=re.S | re.I)
+    out = []
+    for line in re.sub(r"<[^>]+>", "\n", html).split("\n"):
+        got = re.sub(r"[★\s]+", " ", line).strip()
+        if not (2 <= len(got) <= 30) or not re.search(r"[가-힣]", got):
+            continue
+        # ★ 숫자가 절반을 넘으면 ★ **보기 값**이다 — ★ 자리가 아니라 데이터다.
+        #   ★ 「2,990만」·「5,242건 중 30건」 같은 것을 견주면 ★ 검사가 흔들린다
+        digits = sum(ch.isdigit() for ch in got)
+        if digits * 2 >= len(re.sub(r"\s", "", got)):
+            continue
+        if not out or out[-1] != got:
+            out.append(got)
+    return out
+
+
+def s46_100_sian_word_order() -> tuple[bool, str]:
+    """★★ 시안과 화면의 ★ **낱말 차례**가 다르면 실패 (마스터 지시 08-28 · 82장).
+
+    ★★★ 마스터 — 「★ 내가 시안대로 ★ 디자인 위치를 모두 보정하라고 한 거잖아.
+      ★ ★ 내용만 있으면 시안을 왜 만들어.  ★ 메뉴가 위에 있다가 밑으로 가버리고」
+    ★★ ★ `S46-98` 은 ★ 「낱말이 있나」만 본다 — ★ **「어디에 있나」를 안 본다.**
+      ★ ★ 그래서 ★ 가격이 등급 앞으로 튀어도 ★ 통과했다 (실측 08-28).
+    ★ 재는 법 — ★ 양쪽의 보이는 글을 차례대로 늘어놓고
+      ★ ★ **둘 다에 있는 낱말만** 남겨 ★ 그 차례가 같은지 본다.
+      ★ ★ 한쪽에만 있는 것은 ★ `S46-98` 이 본다 — ★ 여기서는 안 센다.
+    ★ 고정 메뉴는 뺀다 — ★ 소스에서는 위 · 화면에서는 아래다 (`position:fixed`)
+    """
+    import ssl as _ssl
+    import urllib.error
+    import urllib.request
+
+    cfg = json.loads(_read(ROOT / "config" / "web.json") or "{}")
+    pairs = cfg.get("sian_screens") or {}
+    skip = set(cfg.get("sian_word_skip") or [])
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    if not pairs or not base:
+        return False, "config 에 sian_screens · base_url 이 없다"
+
+    lid = ""
+    db = ROOT / "carwatch.db"
+    if db.is_file():
+        import sqlite3
+        conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+        try:
+            row = conn.execute(
+                "SELECT listing_id FROM result_score LIMIT 1").fetchone()
+            lid = str(row[0]) if row else ""
+        except sqlite3.Error:
+            lid = ""
+        finally:
+            conn.close()
+
+    ctx = _ssl._create_unverified_context()
+    # ★★ 명령서 82장 「여덟 화면 다」 — ★ 셋은 로그인 뒤에만 열린다
+    login_pairs = cfg.get("sian_screens_login") or {}
+    opener = None
+    if login_pairs:
+        opener, _b = _logged_opener()
+        if opener is None:
+            return False, ("secrets/check_login.json 이 없어"
+                           " 로그인 화면 셋을 못 쟀다")
+    bad, ok = [], 0
+    for sian, path in {**pairs, **login_pairs}.items():
+        need_login = sian in login_pairs
+        src = SCREENS / sian
+        if not src.is_file():
+            bad.append(f"{sian} 가 없다")
+            continue
+        if "{listing_id}" in path:
+            if not lid:
+                continue
+            path = path.replace("{listing_id}", lid)
+        try:
+            if need_login:
+                res = opener.open(base + path, timeout=25)
+            else:
+                res = urllib.request.urlopen(base + path, timeout=25,
+                                             context=ctx)
+            with res:
+                page = _sian_seq(res.read().decode("utf-8", "replace"), True)
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError) as exc:
+            bad.append(f"{path} 못 두드림({type(exc).__name__})")
+            continue
+        want = _sian_seq(src.read_text(encoding="utf-8"))
+        # ★ 둘 다에 있는 낱말만 남긴다 — ★ 없는 것은 S46-98 이 본다
+        # ★★ 양쪽에서 ★ **한 번만** 나오는 낱말로만 견준다.
+        #   ★ 두 번 나오는 낱말은 ★ 어느 쪽이 그 자리인지 알 수 없다 —
+        #   ★ ★ 실측 08-28 — ★ `/track` 의 「짝지어진 차」가 ★ 머리와 본문에 둘 다 있어
+        #     ★ ★ 자리가 맞는데도 ★ 어긋났다고 나왔다.  ★ 검사가 틀리면 안 된다
+        from collections import Counter as _C
+        cw, cp = _C(want), _C(page)
+        both = {w for w in set(want) & set(page)
+                if cw[w] == 1 and cp[w] == 1} - skip
+
+        def _first(seq):
+            """★ **처음 나온 차례**만 남긴다 — ★ 그것이 「자리」다.
+
+            ★ 카드·줄이 되풀이되면 ★ 같은 낱말이 여러 번 나온다.
+              ★ ★ 되풀이까지 견주면 ★ 자리가 맞아도 어긋난 것으로 나온다
+            """
+            got, out = set(), []
+            for w in seq:
+                if w in both and w not in got:
+                    got.add(w)
+                    out.append(w)
+            return out
+
+        a, b = _first(want), _first(page)
+        if a == b:
+            ok += 1
+            continue
+        # ★ 처음 어긋난 자리를 그대로 낸다
+        n = min(len(a), len(b))
+        at = next((i for i in range(n) if a[i] != b[i]), n)
+        bad.append(f"{path} {at + 1}번째부터 다르다 —"
+                   f" 시안 「{a[at] if at < len(a) else '(끝)'}」"
+                   f" ↔ 화면 「{b[at] if at < len(b) else '(끝)'}」")
+    if bad:
+        return False, "★ " + " / ".join(bad[:3])
+    return True, f"시안 {ok}장의 낱말 차례가 화면과 같다"
+
 def s46_98_sian_words_on_screen() -> tuple[bool, str]:
     """★★ 시안에 있는 낱말이 ★ 화면에 없으면 실패 (마스터 지시 08-26).
 
@@ -2308,6 +2488,8 @@ CHECKS = (
     ("S46-95", "배포된 화면이 다 열리는가", s46_95_screens_alive),
     # ★★ 마스터 08-26 — ★ S46-22 는 절 이름만 본다.  ★ 카드 속을 안 본다
     ("S46-98", "시안의 낱말이 화면에 있는가", s46_98_sian_words_on_screen),
+    # ★★ 마스터 08-28 — ★ 시안은 낱말이 아니라 자리다.  ★ S46-98 로는 못 잡는다
+    ("S46-100", "시안의 낱말 차례가 화면과 같은가", s46_100_sian_word_order),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다
     ("S46-99", "로그인하면 관심·관리가 열리는가", s46_99_login_then_watch),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다

@@ -296,15 +296,15 @@
 <!-- 바닥 — 값과 「엔카에서 보기」 -->
 <div class="foot">
   <div class="p">{{ row.price_won | won }}<u>{% if row.cash_only %}전액 현금{% endif %}{% if !row.cash_only %}월 {{ row.monthly_won | won }} 추정{% endif %}</u></div>
+  <!-- ★ 시안의 「추적에서 보기 ▸」 (S46-98).  ★ 08-28 — 시안 차례대로 관심보다 앞에 둔다 (S46-100)
+       ★ 이 차의 값이 어떻게 움직였는지는 추적이 낸다 -->
+  <a class="btn" href="/track?listing_id={{ v.listing_id }}"
+     title="이 매물의 값 움직임을 추적에서 봅니다">추적에서 보기 ▸</a>
   <form method="post" action="/watch/add" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
     <input type="hidden" name="listing_id" value="{{ v.listing_id }}">
     <button type="submit" title="관심에 담습니다">관심에 담기 ♥</button>
   </form>
-  <!-- ★ 시안의 「추적에서 보기 ▸」 (S46-98 · 마스터 08-26).
-       ★ 이 차의 값이 어떻게 움직였는지는 추적이 낸다 -->
-  <a class="btn" href="/track?listing_id={{ v.listing_id }}"
-     title="이 매물의 값 움직임을 추적에서 봅니다">추적에서 보기 ▸</a>
   <!-- ★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장).  ★ 이름도 그 사이트다 -->
   {% if row.encar_url %}<a class="btn go" href="{{ row.encar_url }}" target="_blank" rel="noopener"
      title="원문 매물로 갑니다 — 사진과 연락처는 거기 있습니다">{{ row.site_badge }}에서 보기 ↗</a>{% endif %}

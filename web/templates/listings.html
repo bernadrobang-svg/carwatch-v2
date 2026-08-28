@@ -19,9 +19,13 @@
 <div class="cond">
 <form class="chips" method="get" action="/listings">
   {% for h in carry_pick %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
-  <!-- ══ 기본 다섯 — ★ 시안 차례 그대로 (마스터 확정 08-24 · 58장) ══
-       ★ **차종 · 트림 · 가격대 · 등급 · 정렬**만 기본이다.  ★ 나머지는 접는다
-       ★ ★ 주행·외장·내장은 ★ 기본이 아니다 — ★ 「주행 · 연식」·「옵션」 절 안이다 -->
+  <!-- ══ 기본 넷 — ★ 시안 차례 그대로 (명령서 82장 · 마스터 08-28) ══
+       ★★★ 마스터 — 「★ 가격이 지금 맨 위로 튀어 있다」.  ★ 옳다.
+       ★ ★ 시안(`v4m_listings_시안.html`)을 열어 재니 차례가 이렇다 —
+         ★ ★ 이 화면은 → ★ 차종 → ★ 트림 → ★ 등급 → ★ 정렬 → ★ 자세한 조건
+       ★ ★ ★ **가격대는 기본에 없다** — ★ 「자세한 조건」 안이고
+         ★ ★ 고른 뒤에 ★ 「2,500~3,500만」 칩으로 보인다.  ★ 그리로 옮겼다
+       ★ ★ 주행·외장·내장도 기본이 아니다 — ★ 「주행 · 연식」·「옵션」 절 안이다 -->
   <span class="chip{% if pick.model %} on{% endif %}">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
@@ -30,9 +34,6 @@
   <span class="chip{% if pick.trim %} on{% endif %}">트림
     <input name="trim" size="8" value="{{ pick.trim }}"
       placeholder="전체" title="트림 이름에 이 말이 든 것"></span>
-  <span class="chip{% if pick.price_min %} on{% endif %}">가격대
-    <input name="price_min" size="4" inputmode="numeric" value="{{ pick.price_min }}" placeholder="2000">~<input
-           name="price_max" size="4" inputmode="numeric" value="{{ pick.price_max }}" placeholder="3500">만</span>
   <span class="chip{% if pick.min_grade %} on{% endif %}">등급
     <select name="min_grade" title="이 등급 이상만 봅니다">
       <option value="">전체</option>
@@ -56,6 +57,14 @@
     <!-- ★★ 시안 그대로 — ★ 「자세한 조건 (N) ▾」.  ★ N 은 ★ 지금 걸린 수다 -->
     <summary>자세한 조건{% if chips %} ({{ chips | count }}){% endif %} ▾</summary>
     <div class="filter-body" style="margin-top:9px">
+
+      <!-- ★★ 08-28 — ★ 가격대는 ★ 시안에서 ★ 여기 안이다 (기본 칩이 아니다) -->
+      <h3>가격대</h3>
+      <p class="chips"><span class="chip{% if pick.price_min %} on{% endif %}">가격대
+        <input name="price_min" size="4" inputmode="numeric" value="{{ pick.price_min }}"
+               placeholder="2000">~<input
+               name="price_max" size="4" inputmode="numeric" value="{{ pick.price_max }}"
+               placeholder="3500">만</span></p>
 
       <h3>판정 — 누르면 그 조건만 남는다</h3>
       <p class="chips">

@@ -65,6 +65,23 @@ a { color:var(--amber); }
 .nav { display:flex; flex-wrap:wrap; gap:14px; padding:8px 24px;
        border-bottom:1px solid var(--line); font-size:14px; }
 .nav-item { color:var(--dim); text-decoration:none; }
+
+/* ★★★★ 08-28 마스터 — 「메뉴가 위에 있다가 밑으로 가버리고」 (명령서 82장 · 오판 149).
+   ★ 시안(`ref/screens/v4m_*_시안.html` `.v4-tabs`)은 ★ position:fixed ＋ bottom:0 이다.
+   ★ ★ 모바일에서 메뉴가 위면 ★ 한 손으로 못 누른다 (UI_REVIEW 15장).
+   ★ 640 이상에서만 ★ 위로 올린다 — ★ 그때는 마우스라 위가 낫다.
+   ★ 시안 값을 그대로 옮겼다 — ★ 지어내지 않았다 */
+@media (min-width:340px) and (max-width:639px) {
+  .nav { position:fixed; bottom:0; left:0; right:0; z-index:30;
+         max-width:1180px; margin:0 auto;
+         flex-wrap:nowrap; gap:0; padding:0;
+         background:var(--surface); border-top:1px solid var(--line2);
+         border-bottom:0; }
+  .nav-item { flex:1; text-align:center; padding:9px 0 11px; font-size:11px; }
+  .nav-item em, .nav-item .locked { display:none; }
+  /* ★ 아래 고정 메뉴가 마지막 줄을 가린다 — ★ 그만큼 바닥을 띄운다 */
+  body { padding-bottom:64px; }
+}
 .nav-item em { color:var(--faint); font-style:normal; font-size:12px; }
 .locked { color:var(--up); font-size:12px; }
 
