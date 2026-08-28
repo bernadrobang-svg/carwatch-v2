@@ -24,7 +24,7 @@
   "status_poll_sec": 5,
   "live_window_sec": 60,
   "photo_base_url": "https://ci.encar.com",
-  "encar_detail_url": "https://www.encar.com/dc/dc_cardetailview.do?carid={source_id}",
+  "encar_detail_url": "https://fem.encar.com/cars/detail/{source_id}",
   "km_bucket": 10000,
   "monthly_bucket_won": 100000,
   "page_links": 9,
@@ -340,7 +340,7 @@
   "_note_query_budget_741": "★★ 08-25 — ★ 경로 둘을 더 적는다.  ★ **전 화면 상한(20)은 그대로다** — ★ 다른 화면이 조용히 무거워지는 것을 막기 위해서다 (개정 427 과 같은 뜻). ★★ ★ `/listings` 24 — ★ 마스터 확정 ★ 거르개 다섯 절 ＋ ★ 「N곳」 배지 ＋ ★ 사이트별 건수.  ★ ★ 줄일 것은 줄였다 — ★ 색 조회를 ★ **여섯에서 둘로** (`_split_top` 을 두 번씩 부르고 있었다) · ★ 「N곳·값 폭」 서브쿼리 셋을 ★ 조인 하나로. ★ ★ 남은 넷은 ★ 리스 뺀 수를 세는 `COUNT(*)` 로 ★ 앞서부터 있던 것이다. ★★ ★ `/` 21 — ★ 마스터 확정 ★ 1절 「오늘」 (새로 뜬 것·값 내린 것·사라진 것·마지막 재판정).  ★ 넷을 ★ **한 쿼리**로 받는다",
   "encar_blocked_days": 2,
   "site_detail_url": {
-    "encar": "https://www.encar.com/dc/dc_cardetailview.do?carid={source_id}",
+    "encar": "https://fem.encar.com/cars/detail/{source_id}",
     "kbchachacha": "https://www.kbchachacha.com/public/car/detail.kbc?carSeq={source_id}",
     "reborncar": "https://www.reborncar.co.kr/m/smartbuy/SB1002/{source_id}",
     "hyundai_cert": "https://certified.hyundai.com/m/goods/goodsDetail.do?goodsNo={source_id}",
@@ -352,8 +352,8 @@
     "lexus_certified": null,
     "volvo_selekt": null
   },
-  "_site_detail_url_note": "★★★ 명령서 72장 — ★ 원문으로 가는 문이다.  ★ 사이트마다 다르다. ★ 실측 08-26 — 전에는 `encar_detail_url` 하나로 다 만들어 K카·헤이딜러·KB 매물이 전부 encar.com 으로 갔다 (엔카는 모르는 carid 에도 200 을 준다). ★★ 지어내지 않았다 — 잰 자리를 적는다: encar 는 STEP 149q(마스터 확인) · kbchachacha 는 상세 본문의 canonical (실측 표본 3건) · reborncar 는 상세 본문의 링크 (실측 표본 3건) · hyundai_cert·bobaedream·bmw_bps 는 `config/endpoints.json` 의 상세 경로 자체가 사람이 보는 쪽이다 (HTML 을 그대로 받는다). ★★ null 다섯은 ★ **모른다**.  ★ kcar·kia_cpo·heydealer·lexus_certified 는 우리가 API 만 받아 사람 쪽 주소를 못 쟀고, volvo_selekt 는 주소에 {model} 이 더 든다. ★ null 이면 ★ **링크를 안 낸다** — ★ 엔카로 보내지 않는다.  ★ 지어내면 S46-94 가 잡는다",
-  "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다",
+  "_site_detail_url_note": "★★★ 명령서 72장 — ★ 원문으로 가는 문이다.  ★ 사이트마다 다르다. ★ 실측 08-26 — 전에는 `encar_detail_url` 하나로 다 만들어 K카·헤이딜러·KB 매물이 전부 encar.com 으로 갔다 (엔카는 모르는 carid 에도 200 을 준다). ★★ 지어내지 않았다 — 잰 자리를 적는다: encar 는 STEP 149q(마스터 확인) · kbchachacha 는 상세 본문의 canonical (실측 표본 3건) · reborncar 는 상세 본문의 링크 (실측 표본 3건) · hyundai_cert·bobaedream·bmw_bps 는 `config/endpoints.json` 의 상세 경로 자체가 사람이 보는 쪽이다 (HTML 을 그대로 받는다). ★★ null 다섯은 ★ **모른다**.  ★ kcar·kia_cpo·heydealer·lexus_certified 는 우리가 API 만 받아 사람 쪽 주소를 못 쟀고, volvo_selekt 는 주소에 {model} 이 더 든다. ★ null 이면 ★ **링크를 안 낸다** — ★ 엔카로 보내지 않는다.  ★ 지어내면 S46-94 가 잡는다  ★★★★ 08-29 (명령서 89장 · 마스터) — ★ 엔카를 `www.encar.com/dc/dc_cardetailview.do?carid=` 에서 `fem.encar.com/cars/detail/{source_id}` 로 바꿨다.  ★ 까닭을 실측으로 적는다 — ★ 옛 주소는 ★ **없는 매물번호(`abcdef`)에도 ★ 똑같이 200 · 2,547바이트**를 준다 (제목도 없다).  ★ 곧 ★ 그 200 은 ★ 「차가 있다」를 ★ 하나도 증명하지 않는다 — ★ 빈 껍데기다.  ★★ ★ 새 주소는 ★ **우리 서버 IP 에서 확인할 수 없다** — ★ 302 로 `/client-verification/blocked` 에 보낸다 (수집이 407 인 것과 같은 차단).  ★ ★ 그래서 ★ 「차 이름이 나오는지」는 ★ **마스터 휴대폰에서만** 확인된다 — ★ 개발측이 200 으로 세지 않는다 (마스터 지시 08-29)",
+  "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다  ★★ 08-29 — ★ 이 칸도 새 주소로 바꿨다.  ★ 옛 꼴이 남아 있으면 ★ 이것을 읽는 자리가 ★ 죽은 문을 만든다 (`ENCAR_API.md:50`)",
   "db_busy_timeout_ms": 30000,
   "_db_busy_timeout_why": "★★★ 08-26 실측 — ★ 로그인이 500 이었다.  ★ 마스터께서 담아 두신 차를 못 보셨다 (명령서 74장 ② · 08-26 지시 ②).  ★ 까닭 — ★ 파이프라인이 ★ 웹과 같은 프로세스에서 돌며 ★ 쓰기 잠금을 쥐고, ★ SQLite 의 busy_timeout 기본값이 ★ 0 이라 ★ `POST /login` 의 auth_login_attempt INSERT 가 ★ 곧바로 「database is locked」로 죽었다.  ★ 읽기는 WAL 이라 200 이었다 — ★ 그래서 ★ 쓰기만 골라 죽었다.  ★ 이 값만큼 ★ 기다렸다가 쓴다.  ★ 근본은 ③(웹에서 떼어내기)이다 — ★ 이것은 버팀목이다",
   "db_batch_commit_rows": 100,

@@ -2474,7 +2474,17 @@ LINKED_FIELDS = {
 }
 # 툴팁이 필요한 것 — 사람이 「이게 뭔가」를 물어볼 것 (STEP 149p)
 TIPPED = ("r.grade", "r.ratio_pct", "r.denominator", "c.mark", "r.monthly_won")
-ENCAR_DETAIL = "encar.com/dc/dc_cardetailview.do"
+# ★★★★ 08-29 — ★ 규격이 바뀌었다 (`docs/ENCAR_API.md:49`).
+#   ★ 참 주소는 ★ `fem.encar.com/cars/detail/{id}` 다 (마스터 실측 08-28).
+#   ★ 옛 `www.../dc_cardetailview.do` 는 ★ **빈 껍데기**다 —
+#     ★ 실측 08-29 — ★ 없는 매물번호(`abcdef`)에도 ★ 똑같이 200 · 2,547바이트다.
+#     ★ ★ 그 200 은 ★ 「차가 있다」를 ★ 하나도 증명하지 않는다 (오판 153)
+ENCAR_DETAIL = "fem.encar.com/cars/detail/"
+# ★ 원문 문을 열어 볼 때 쓰는 값.  ★ 표본 하나 · 짧은 시간 · 앞부분만 읽는다
+ORIGIN_UA = ("Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36"
+             " (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36")
+ORIGIN_TIMEOUT_SEC = 8
+ORIGIN_READ_BYTES = 400_000
 
 
 def _cell_of(html: str, expr: str) -> str:
@@ -2542,8 +2552,70 @@ def _origin_link_check(rid):
         #     ★ ★ 그러므로 ★ **「…에서 보기」**가 있는지를 본다
         if "에서 보기" not in html:
             bad.append(f"{name} 「…에서 보기」라고 안 적었다")
+    # ★★★★ 08-29 (마스터 지시 · 오판 153) — ★ **200 으로 세지 마라.**
+    #   ★ 옛 주소는 ★ 없는 매물번호에도 ★ 200 을 준다 —
+    #     ★ 실측 08-29 ★ `carid=abcdef` 도 ★ 200 · 2,547바이트 (제목 없음).
+    #   ★ 그래서 ★ **열어서 차 이름이 나오는지**를 본다.
+    #   ★★ ★ 다만 ★ 우리 서버 IP 는 ★ 엔카가 막는다 (수집이 407 인 것과 같다) —
+    #     ★ ★ `fem.encar.com` 이 ★ `/client-verification/blocked` 로 보낸다.
+    #     ★ ★ 그때는 ★ **「못 잰다」**고 낸다 — ★ 「틀리다」가 아니다.
+    #       ★ 없는 것과 틀린 것을 가른다 (마스터 판정 08-29 · `V11-113` 과 같다)
+    bad.extend(_origin_opens_bad(tpl))
     return result(C["V11-63"], rid, "원문 링크",
                   "있음" if not bad else "없음", not bad, bad)
+
+
+# ★ 막혔을 때 엔카가 보내는 자리.  ★ 이것이 보이면 ★ 우리가 못 재는 것이다
+ENCAR_BLOCKED = "client-verification/blocked"
+
+
+def _origin_opens_bad(tpl: str) -> list:
+    """원문 주소를 ★ 실제로 열어 ★ 차 이름이 나오는지 본다.
+
+    ★ 돌려주는 것 — ★ 어긋난 것들.  ★ 막혀서 못 재면 ★ 빈 목록이다
+      (★ 「못 잼」을 ★ 실패로 세지 않는다).
+    ★ 표본 하나만 연다 — ★ 검사가 사이트를 두들기지 않는다
+    """
+    import sqlite3 as _sq
+    import urllib.error as _ue
+    import urllib.request as _ur
+
+    if "{source_id}" not in tpl:
+        return []
+    db = os.path.join(ROOT, "carwatch.db")
+    if not os.path.isfile(db):
+        return []
+    conn = _sq.connect(db)
+    try:
+        row = conn.execute(
+            "SELECT source_id, target_key FROM core_listing"
+            " WHERE site='encar' AND status='active'"
+            "   AND source_id IS NOT NULL AND target_key IS NOT NULL"
+            " LIMIT 1").fetchone()
+    except _sq.Error:
+        return []
+    finally:
+        conn.close()
+    if row is None:
+        return []
+    sid, tk = str(row[0]), str(row[1])
+    url = tpl.replace("{source_id}", sid)
+    req = _ur.Request(url, headers={"User-Agent": ORIGIN_UA})
+    try:
+        with _ur.urlopen(req, timeout=ORIGIN_TIMEOUT_SEC) as res:
+            final = res.geturl()
+            body = res.read(ORIGIN_READ_BYTES).decode("utf-8", "replace")
+    except (_ue.URLError, OSError, ValueError):
+        return []                      # ★ 못 열었다 — ★ 「틀리다」로 안 센다
+    if ENCAR_BLOCKED in final:
+        return []                      # ★ 우리 IP 가 막혔다 — ★ 못 잰다
+    # ★ 차 이름 — ★ 차종 키의 앞 낱말이 ★ 본문에 있는가.
+    #   ★ 없으면 ★ 「빈 껍데기」다 (옛 주소가 바로 그랬다)
+    head = tk.split("_")[0]
+    if head and head.lower() not in body.lower():
+        return [f"원문 주소를 열었는데 차 이름이 없다 — {url} "
+                f"({len(body):,}바이트 · 「{head}」 없음)"]
+    return []
 
 
 def _choose_check(rid):
