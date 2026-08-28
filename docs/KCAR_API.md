@@ -1,7 +1,7 @@
 # K카 API — 목록 · 상세 정본
 
 ```
-version  SPEC-2026.08.28-r791
+version  SPEC-2026.08.28-r792
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 626 · 실측 08-24
 checks   S46-5 · S46-31
@@ -9,7 +9,7 @@ checks   S46-5 · S46-31
 ★ 이 문서는 ★ **그 사이트가 무엇을 주는가**만 적는다.  ★ 판정은 ★ `f-table` 이 한다 (가이드역할 ㉺)
 
 
-`SPEC-2026.08.28-r791` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
+`SPEC-2026.08.28-r792` · 2026-08-22 · **가이드가 직접 실측했다 (원칙 4)**
 **★ 개정 485 — 마스터 확정 「상세를 받는다」. 개정 467·468(목록만)을 갈아엎는다**
 **★ 옛 `docs/KCAR_LIST_API.md` 는 이 파일에 합치고 지웠다 (원칙 1 — 고쳐라, 덧붙이지 마라)**
 
@@ -467,12 +467,40 @@ GET https://m.kcar.com/bc/search/CarList?searchCond={JSON}
 ★ ★ 그러면 ★ `stockCar/list?pageSize=1000`(전량 472) 보다 ★ **좁게 받는다**
 ```
 
-## ★★ 상세는 ★ 아직 못 찾았다
+## ★★★ 4. 상세 — ★ **`carInfoDtl` 이다** (마스터 08-28 · 개정 792)
 
 ```
-★ ★ `m.kcar.com/bc/detail/CarDetail?i_sCarCd=` · `?carCd=` · `search/CarDetail` …
-   ★ ★ **다섯이 다 404**
-★ ★ 목록 화면(2.1MB)이 ★ **스크립트로 그려져** ★ 서버 HTML 에 링크가 없다
-필수  ★ ★ **마스터께 ★ 「차 하나를 눌렀을 때의 주소」를 ★ 다시 청한다**
-      ★ ★ 목록 주소가 아니라 ★ **차 한 대를 누른 뒤**의 주소다
+★★★ ★ **GET `https://m.kcar.com/bc/detail/carInfoDtl?i_sCarCd={carCd}`**
+   ★ ★ 보기 — `?i_sCarCd=EC61366120`
+   ★ ★ 실측 ★ **200 · 2.2MB** · ★ 사고 ○ · 보증 ○ · 성능 ○ · 주행 ○ · 옵션 ○
+★ ★ 가이드는 ★ `CarDetail`·`carDetail`·`detail`·`view`·`info` 를 두드렸다 — ★ **다 404**
+   ★ ★ 참 이름은 ★ **`carInfoDtl`** 이다.  ★ 짐작으로 못 맞힐 이름이었다
+
+★★ ★ **JSON API 는 없다** — ★ `mapi` 쪽 셋이 다 404 다
+   ★ ★ **HTML 이 정본**이다.  ★ 거기서 뽑아야 한다
+```
+
+```
+필수  ★ ★ **매물번호는 ★ `carCd`** — ★ `stockCar/list` 와 ★ 목록이 준다
+필수  ★ ★ **`Referer: https://m.kcar.com/bc/search/CarList`** 를 붙인다
+필수  ★ ★ 2.2MB 다 — ★ **필요한 자리만 뽑고 ★ 원문은 `raw_response` 에 남긴다**
+필수  ★ ★ **뽑을 것** — 사고 · 보증 · 성능(정비) · 주행 · 옵션
+      ★ ★ **없는 것** — 소유자 변경 · 용도 · 압류·저당 · 색상 (★ 화면 글에 없다)
+      ★ ★ 그 넷은 ★ `f-table` ⑤(아무 데도 없다)로 둔다
+```
+
+---
+
+# ★★ 5. 볼보 전량 — ★ 1층으로 받는다 (마스터 08-28)
+
+```
+GET https://m.kcar.com/bc/search/CarList?searchCond={
+  "wr_eq_sell_dcd":"ALL",
+  "wr_in_multi_mnuftr":"017",        ← ★ 1층 · 제조사만
+  "carType_mnuftr":"IMP" }
+
+★★ ★ **1층 열쇠는 ★ `wr_in_multi_mnuftr`** 다 — ★ 볼보 전량이 온다
+★ ★ 층마다 이름이 다르다 —
+   1층 `wr_in_multi_mnuftr` · 2층 `_modelGrp` · 3층 `_model` · 4층 `_model_grd`
+★ ★ `carType_` 도 ★ 층마다 짝맞춘다 (`carType_mnuftr` · `carType_modelGrp` …)
 ```
