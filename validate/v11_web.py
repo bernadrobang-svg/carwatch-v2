@@ -3182,6 +3182,17 @@ def _width_checks(rid):
                         f"{font:.0f}px = {chars:.1f}자")
     del _j
     return [
+        # ★★★ 08-29 마스터 판정 — ★ **없는 것과 틀린 것을 가른다.**
+        #   ★ 사진을 ★ **한 장도 안 찍었으면** ★ 「아직 안 찍었다」다 —
+        #     ★ ★ fatal 이 아니다.  ★ `tools/render_screens.py --shot` 을
+        #       ★ 안 돌린 것뿐이다 (검사가 사진보다 먼저 돌면 늘 그렇게 된다).
+        #   ★ ★ 실측 08-29 — ★ 그것 때문에 ★ 396/11 로 보였다가
+        #     ★ 사진을 찍고 다시 재니 ★ 397/10 이었다.
+        #   ★ ★ 몇 장이라도 찍혀 있는데 ★ 어느 폭이 빠졌으면 ★ 그때는 실패다 —
+        #     ★ 그것이 ★ 「가운데 폭이 통째로 깨진 채 지나갔다」는 그 사고다
+        not_applicable(C["V11-113"], rid, "아직 안 찍었다 — "
+                       "tools/render_screens.py --shot 을 돌린다")
+        if len(bad113) == len(widths) and widths else
         result(C["V11-113"], rid, f"{len(widths)}폭",
                f"{len(widths) - len(bad113)}폭", not bad113, bad113[:6]),
         result(C["V11-114"], rid, 0, len(bad114), not bad114, bad114[:6]),
