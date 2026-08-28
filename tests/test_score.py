@@ -584,8 +584,15 @@ def test_price_real() -> None:
     _k8 = at(org, mileage_km=80_000).values["value.mileage"]
     check("★ 8만 km 는 마스터 기준선 — 만점의 절반쯤이다",
           0 < _k8 < _mx, str(_k8))
-    check("★★ 10만을 넘겨도 자르지 않는다 — 점수만 낮아진다",
-          0 < at(org, mileage_km=120_000).values["value.mileage"] < _k8)
+    # ★★★ 08-28 마스터 확정 — 「8만킬로를 기준으로 거의 0점」 (오판 148 · r794).
+    #   ★ `axis_rules.value.mileage_curve` 가 ★ 8만 5점 · ★ **10만 0점**이다.
+    #   ★ 전에는 「10만을 넘겨도 자르지 않는다」였다 — ★ 그것이 옛 정책이다.
+    #   ★ 규칙 1 — ★ config 가 정본이다.  ★ 시험을 새 정책에 맞춘다
+    check("★★ 8만 km 는 거의 0 이다 (마스터 확정 08-28)",
+          0 < _k8 <= _mx * 0.1, str(_k8))
+    check("★★ 10만 km 부터 0 이다 (마스터 확정 08-28)",
+          at(org, mileage_km=100_000).values["value.mileage"] == 0
+          and at(org, mileage_km=120_000).values["value.mileage"] == 0)
     check("★ 20만 km 에서 0 에 수렴",
           at(org, mileage_km=250_000).values["value.mileage"] == 0)
     check("★★ 전기차 SOH 를 주행 축에 더하지 않는다 — 가점이다 (개정 380·469)",

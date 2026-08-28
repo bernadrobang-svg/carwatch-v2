@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 178개 · 총 62,104줄
+파일 178개 · 총 62,111줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -23,7 +23,7 @@
 | `validate/v2_load.py` | 919 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `validate/v10_admin.py` | 895 | V10 관리자 검증. |
 | `validate/v1_collect.py` | 892 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
-| `tests/test_score.py` | 841 | 7장 판정·채점 시험. |
+| `tests/test_score.py` | 848 | 7장 판정·채점 시험. |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `tests/test_run.py` | 781 | S0~S3 종단 시험 (모의 응답). |
 | `validate/v4_mapping.py` | 776 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
@@ -289,10 +289,10 @@ _sources:212  _admin_guard_checks:233  _sql_strings:278  _schedule_checks:290  _
 _unknown_split_checks:171  _axis_empty_check:257  run:287  _endpoint_order_check:421  _empty_db_check:433  _sql_groups:460  _cumulative_codes:496  _run_scope_check:506  _ctx_started:544  _has_run_id:552  _expected_scope_check:557  _diagnosis_scope_check:578  _diagnosis_none_count:616  _query_key_check:639  _entrypoint_parity_check:676  _enclosing_def:705  _run_id_filled_check:714  _catalog_key_check:734  _whole_probe:756  _whole_body_check:767  _catalog_checks:800  _unparsed_envelope_check:847  _ensure_tmp:889
 ```
 
-### `tests/test_score.py` — 841줄
+### `tests/test_score.py` — 848줄
 
 ```
-check:36  fx:42  snap:46  ctx:66  full_verdict:87  test_denominator:100  test_components_form:144  test_grade:195  test_order_independent:284  panels_of:307  test_history_real:312  test_rental_real:347  test_insurance:389  test_safety_real:414  test_spec_gate:463  test_price_real:532  test_color:602  test_price_pending:623  test_absolute_real:642  test_null_safe:682  test_empty_array_meaning:699  test_peer_group:724  test_damage_by_status:766  test_repair_cost_ratio:792  test_hda_gate:801
+check:36  fx:42  snap:46  ctx:66  full_verdict:87  test_denominator:100  test_components_form:144  test_grade:195  test_order_independent:284  panels_of:307  test_history_real:312  test_rental_real:347  test_insurance:389  test_safety_real:414  test_spec_gate:463  test_price_real:532  test_color:609  test_price_pending:630  test_absolute_real:649  test_null_safe:689  test_empty_array_meaning:706  test_peer_group:731  test_damage_by_status:773  test_repair_cost_ratio:799  test_hda_gate:808
 ```
 
 ### `tools/trace_fill.py` — 840줄
