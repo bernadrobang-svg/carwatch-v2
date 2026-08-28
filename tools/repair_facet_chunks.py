@@ -30,6 +30,58 @@ SINCE = "2026-08-17T01:40"
 WHOLE_MIN_BYTES = 60_000
 # 이어붙인 뒤 있어야 할 최소 노드 수 (iNav.Nodes).  실측 55
 MIN_NODES = 20
+# ★ 조각에 남기는 표시.  ★ 글자는 앞판과 같게 둔다 — 사람이 찾던 말이다
+FRAGMENT_NOTE = "조각이다 — 이어붙인 것이 따로 있다 (개정 307 복구)"
+
+
+def meta_of(text) -> dict:
+    """`response_meta` 를 dict 로 읽는다.  ★ JSON 이 아니면 되살린다.
+
+    ★★ 08-28 — ★ 이 도구의 앞판이 ★ JSON 뒤에 ` | 조각이다 …` 를
+      ★ 글자로 이어붙여 ★ `response_meta` 가 ★ JSON 이 아니게 됐다 (55건).
+      ★ 그러면 ★ `json_extract` 가 ★ 「malformed JSON」으로 죽고,
+      ★ `V11-47` 이 ★ 그 행의 「보낸 바이트」를 ★ 못 잰다
+      (★ 원문 압축 v287 을 하다 드러났다).
+    ★ 앞의 JSON 만 떼어 읽고 ★ 뒤 글은 `note` 로 옮긴다 — ★ 버리지 않는다
+    """
+    if not text:
+        return {}
+    try:
+        got = json.loads(text)
+        return got if isinstance(got, dict) else {"note": str(text)}
+    except ValueError:
+        pass
+    head, sep, tail = str(text).partition(" | ")
+    try:
+        got = json.loads(head)
+    except ValueError:
+        return {"note": str(text)}
+    if not isinstance(got, dict):
+        return {"note": str(text)}
+    if sep:
+        got["note"] = tail
+    return got
+
+
+def fix_meta(conn, apply: bool) -> int:
+    """★ JSON 이 아닌 `response_meta` 를 ★ JSON 으로 되돌린다.
+
+    ★ 뜻은 그대로다 — ★ 이어붙였던 글이 ★ `note` 칸으로 들어갈 뿐이다
+    """
+    bad = []
+    for rid, meta in conn.execute(
+        "SELECT id, response_meta FROM raw_response"
+        " WHERE response_meta IS NOT NULL AND NOT json_valid(response_meta)"
+    ).fetchall():
+        bad.append((rid, meta))
+    for rid, meta in bad:
+        if apply:
+            conn.execute(
+                "UPDATE raw_response SET response_meta = ? WHERE id = ?",
+                (json.dumps(meta_of(meta), ensure_ascii=False), rid))
+    if apply and bad:
+        conn.commit()
+    return len(bad)
 
 
 def groups(conn) -> dict:
@@ -61,7 +113,19 @@ def join(parts: list) -> tuple:
 
 def main() -> int:
     apply = "--apply" in sys.argv
-    conn = sqlite3.connect(os.path.join(ROOT, "carwatch.db"))
+    conn = sqlite3.connect(os.path.join(ROOT, "carwatch.db"), timeout=30)
+    conn.execute("PRAGMA busy_timeout = 30000")
+    # ★★ `--fix-meta` — ★ 이 도구의 앞판이 망가뜨린 `response_meta` 만 되돌린다.
+    #   ★ 조각을 다시 이어붙이지 않는다 — ★ 그 일은 이미 끝났다 (개정 307)
+    if "--fix-meta" in sys.argv:
+        n = fix_meta(conn, apply)
+        print(f"JSON 이 아닌 response_meta {n}건"
+              + ("  → 되돌렸다" if apply else "  (--apply 를 붙여야 쓴다)"))
+        left = conn.execute(
+            "SELECT COUNT(*) FROM raw_response WHERE response_meta IS NOT NULL"
+            " AND NOT json_valid(response_meta)").fetchone()[0]
+        print(f"남은 것 {left}건")
+        return 1 if (apply and left) else 0
     fixed = skipped = 0
     for url, parts in groups(conn).items():
         if len(parts) == 1 and len(parts[0][1]) >= WHOLE_MIN_BYTES:
@@ -87,9 +151,11 @@ def main() -> int:
             " FROM raw_response WHERE id = ?", (first,)).fetchone()
         # ★ 「여러 POST 를 이어붙였다」를 남긴다 (개정 307).
         #   한 번에 보낸 것이 아니라는 사실이다 — V11-47 이 그것으로 가른다
-        meta = (row[6] or "{}").rstrip("}")
-        meta = (meta + (", " if len(meta) > 1 else "")
-                + '"transfer": "chunked"}')
+        # ★★ 08-28 — ★ 글자를 손질해 만들지 않는다.  ★ JSON 으로 만든다.
+        #   ★ 앞판은 `rstrip("}")` 로 잘라 붙였는데 ★ meta 가 이미
+        #     JSON 이 아니면 ★ 더 망가진 것을 만든다
+        meta = json.dumps({**meta_of(row[6]), "transfer": "chunked"},
+                          ensure_ascii=False)
         from store.raw import pack_body
 
         conn.execute(
@@ -99,12 +165,19 @@ def main() -> int:
             (row[0], row[1], row[2], row[3], row[4], row[5], meta,
              pack_body(body), row[7], row[8]))
         # ★ 조각을 지우지 않는다.  「원문이 아니다」로만 표시한다 (P3)
-        conn.execute(
-            "UPDATE raw_response SET status='error',"
-            " response_meta = COALESCE(response_meta,'')"
-            " || ' | 조각이다 — 이어붙인 것이 따로 있다 (개정 307 복구)'"
-            f" WHERE id IN ({','.join('?' * len(parts))})",
-            tuple(rid for rid, _b in parts))
+        # ★★ 08-28 — ★ JSON 뒤에 글을 이어붙이지 않는다.  ★ 칸에 담는다.
+        #   ★ 앞판의 `|| ' | 조각이다 …'` 가 ★ response_meta 를
+        #     ★ JSON 이 아니게 만들었다 (55건 · `meta_of` 설명 참고)
+        for _rid, _b in parts:
+            _cur = conn.execute(
+                "SELECT response_meta FROM raw_response WHERE id = ?",
+                (_rid,)).fetchone()
+            conn.execute(
+                "UPDATE raw_response SET status='error', response_meta = ?"
+                " WHERE id = ?",
+                (json.dumps({**meta_of(_cur[0] if _cur else None),
+                             "note": FRAGMENT_NOTE}, ensure_ascii=False),
+                 _rid))
     # ★ raw_facet 에도 같은 조각이 들어가 있다 (store/raw.py 가 둘 다 넣는다).
     #   S3 는 이쪽을 읽는다 — 여기를 안 고치면 파이프라인이 JSON 에서 죽는다
     fixed2 = 0

@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 180개 · 총 62,982줄
+파일 180개 · 총 63,055줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -76,6 +76,7 @@
 | `validate/v5_value.py` | 244 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
+| `tools/repair_facet_chunks.py` | 222 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `tools/collect_bobaedream.py` | 213 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
@@ -102,7 +103,6 @@
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
-| `tools/repair_facet_chunks.py` | 149 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `web/routes.py` | 149 | 라우팅 표 (14장 STEP 142). |
 | `score/adjust.py` | 145 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
@@ -187,7 +187,7 @@
 | `parse/reborncar/__init__.py` | 0 | — |
 | `parse/volvo_selekt/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 77개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 78개)
 
 ### `validate/v11_web.py` — 4,926줄
 
@@ -607,6 +607,12 @@ remaining_months:26  warranty_points:39  _truthy:73  warranty_grade:89  _seller_
 
 ```
 check:35  inv1_order_independent:42  inv1_shuffle_100:72  inv2_banned:95  inv5_points:113  put_contract:126  excluded_contract:143  inv3_source_not_null:169  inv4_label_shape:188  inv6_no_unclassified:204
+```
+
+### `tools/repair_facet_chunks.py` — 222줄
+
+```
+meta_of:37  fix_meta:66  groups:87  join:101  main:114
 ```
 
 ### `tools/collect_bobaedream.py` — 213줄
