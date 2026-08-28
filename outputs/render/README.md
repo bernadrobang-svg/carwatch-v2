@@ -7,14 +7,14 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 42,063B |
-| `/listings` | [listings.html](listings.html) | 200 | 89,083B |
+| `/listings` | [listings.html](listings.html) | 200 | 89,122B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 42,477B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,159B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 34,203B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,493B |
 | `/track` | [track.html](track.html) | 200 | 42,750B |
 | `/market` | [market.html](market.html) | 200 | 13,901B |
-| `/dealers` | [dealers.html](dealers.html) | 200 | 18,430B |
+| `/dealers` | [dealers.html](dealers.html) | 200 | 18,588B |
 | `/notready` | [notready.html](notready.html) | 200 | 21,932B |
 | `/reports` | [reports.html](reports.html) | 200 | 2,247B |
 | `/watch` | [watch.html](watch.html) | 200 | 23,816B |
@@ -27,7 +27,7 @@
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,173B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 7,664B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 45,382B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 7,908B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 7,909B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 43,730B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 19,536B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,676B |

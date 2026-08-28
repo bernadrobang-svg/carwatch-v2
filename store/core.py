@@ -675,6 +675,118 @@ def upsert_dealer(conn: sqlite3.Connection, site: str, dealer_id: int,
     commit(conn)
 
 
+def dealer_trust(conn: sqlite3.Connection, at: str) -> dict:
+    """★★★ 딜러 정직도를 잰다 (7장 STEP 82c · 개정 822 · 08-29).
+
+    ★ 규격이 08-29 에 왔다 — `docs/chapters/11-store/b-core.md`.
+      ★ 그 전에는 셈 규칙이 한 줄도 없어 ★ 1,182곳이 다 NULL 이었고
+        ★ 「정직도」 거르개가 ★ 늘 0건이었다 (시험자 #9).
+    ★ 넷을 25점씩 더한다.  ★ 값이 없는 것은 ★ 분모에서 뺀다 (규격 그대로).
+    ★ 매물 10건 미만이면 ★ 재지 않는다 — ★ `trust_score` 는 NULL 그대로다.
+      ★ 세 건 파는 딜러의 「팔림 비율」은 뜻이 없다 (규격).
+    ★ 추정으로 채우지 않는다.
+    """
+    rows = conn.execute(
+        "SELECT l.dealer_id,"
+        "       COUNT(*),"
+        # ★ 올렸다 내린 것 — status 가 gone 이 된 매물
+        "       SUM(CASE WHEN l.status = 'gone' THEN 1 ELSE 0 END),"
+        # ★ 얼마나 적어 주나 — 사진 · 사고 · 보증 · 옵션 넷 중 채운 칸
+        "       SUM(CASE WHEN COALESCE(l.photo_list_json,'') NOT IN ('','[]')"
+        "                THEN 1 ELSE 0 END),"
+        "       SUM(CASE WHEN r.listing_id IS NOT NULL THEN 1 ELSE 0 END),"
+        "       SUM(CASE WHEN l.warranty_body_month IS NOT NULL"
+        "                THEN 1 ELSE 0 END),"
+        "       SUM(CASE WHEN COALESCE(l.options_choice_json,'')"
+        "                NOT IN ('','[]') THEN 1 ELSE 0 END)"
+        "  FROM core_listing l"
+        "  LEFT JOIN core_record r ON r.listing_id = l.listing_id"
+        " WHERE l.dealer_id IS NOT NULL"
+        " GROUP BY l.dealer_id").fetchall()
+    # ★ 값 바뀜 수 — `core_listing_change` 의 값(price) 변경 (규격의 「값을 얼마나 자주 바꾸나」)
+    vol = {r[0]: r[1] for r in conn.execute(
+        "SELECT l.dealer_id, COUNT(*) FROM core_listing_change c"
+        "  JOIN core_listing l ON l.listing_id = c.listing_id"
+        " WHERE c.field = 'price_current_won' AND l.dealer_id IS NOT NULL"
+        " GROUP BY l.dealer_id")}
+    # ★ 며칠 만에 팔리나 — first_seen ~ gone_at.  ★ 가운데값이다
+    doms: dict = {}
+    for did, days in conn.execute(
+        "SELECT dealer_id, julianday(gone_at) - julianday(first_seen)"
+        "  FROM core_listing"
+        " WHERE dealer_id IS NOT NULL AND status = 'gone'"
+        "   AND gone_at IS NOT NULL AND first_seen IS NOT NULL"):
+        if days is not None and days >= 0:
+            doms.setdefault(did, []).append(float(days))
+
+    least = _trust_min_listings()
+    lo_d, hi_d = _trust_dom_days()
+    # ★ 가름의 중앙값은 ★ **재는 딜러들**의 매물 수로 낸다 (규격의 표).
+    #   ★ 못 재는 딜러(매물 10건 미만 968곳)까지 넣으면 ★ 중앙값이 1~2 로 내려가
+    #     ★ 재는 딜러가 ★ 전부 「매물이 많다」가 된다 — ★ 실측 Q1 213 · Q3 1
+    counts = sorted(r[1] for r in rows if r[1] >= least)
+    mid_n = counts[len(counts) // 2] if counts else 0
+    done = skipped = 0
+    for (did, n, gone, ph, rec, war, opt) in rows:
+        if n < least:
+            # ★ 표본이 모자라면 ★ 재지 않는다.  ★ 0 으로 채우지 않는다
+            conn.execute(
+                "UPDATE core_dealer SET sample_sufficient = 0,"
+                " trust_score = NULL, quadrant = NULL, listing_count = ?,"
+                " calculated_at = ? WHERE dealer_id = ?", (n, at, did))
+            skipped += 1
+            continue
+        parts = []
+        parts.append(1.0 - (gone / n))                       # 올렸다 내린 비율
+        parts.append(1.0 - min(vol.get(did, 0) / n, 1.0))    # 값 바꿈
+        got = doms.get(did)
+        if got:                                              # ★ 없으면 분모에서 뺀다
+            got = sorted(got)
+            med = got[len(got) // 2]
+            parts.append(max(0.0, min(1.0, (hi_d - med) / (hi_d - lo_d))))
+        parts.append((ph + rec + war + opt) / (4.0 * n))     # 얼마나 적어 주나
+        score = round(100.0 * sum(parts) / len(parts), 1)
+        # ★ 넷으로 나눈다 — 매물 수 중앙값 · 점수 60 (규격의 표)
+        big, high = n >= mid_n, score >= _trust_quadrant_score()
+        quad = "Q1" if (big and high) else ("Q2" if high else
+                                            ("Q3" if big else "Q4"))
+        conn.execute(
+            "UPDATE core_dealer SET trust_score = ?, quadrant = ?,"
+            " sample_sufficient = 1, listing_count = ?, calculated_at = ?"
+            " WHERE dealer_id = ?", (score, quad, n, at, did))
+        done += 1
+    commit(conn)
+    return {"scored": done, "too_few": skipped, "dealers": len(rows),
+            "min_listings": least}
+
+
+def _trust_cfg(key: str, fallback):
+    """정직도 셈의 상수.  ★ 코드에 박지 않는다 (S14 · config/scoring.json)."""
+    import json as _tj
+    import os as _to
+
+    try:
+        here = _to.path.dirname(_to.path.dirname(_to.path.abspath(__file__)))
+        with open(_to.path.join(here, "config", "scoring.json"),
+                  encoding="utf-8") as f:
+            return _tj.load(f)["dealer_trust"][key]
+    except (OSError, ValueError, KeyError, TypeError):
+        return fallback
+
+
+def _trust_min_listings() -> int:
+    return int(_trust_cfg("min_listings", 10))
+
+
+def _trust_dom_days() -> tuple:
+    return (float(_trust_cfg("dom_full_days", 30)),
+            float(_trust_cfg("dom_zero_days", 120)))
+
+
+def _trust_quadrant_score() -> float:
+    return float(_trust_cfg("quadrant_score", 60))
+
+
 def upsert_child(conn: sqlite3.Connection, table: str, parsed: dict,
                  parse_version: str, at: str) -> None:
     """core_inspection · core_record 적재.  매물당 1행."""

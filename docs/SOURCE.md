@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 180개 · 총 63,142줄
+파일 180개 · 총 63,254줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -11,7 +11,7 @@
 | `validate/v0_guide.py` | 2,720 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `web/views.py` | 2,705 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,270 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `store/core.py` | 1,652 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 1,764 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,523 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,479 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -219,10 +219,10 @@ _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  l
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:766  _grade_base_checks:794  _checks_cfg:887  _labels_cfg:901  _unknown_mark_checks:909  _grade_cut_checks:960  _points_cap_checks:1070  _worse_of_checks:1122  _checks_json:1184  _value_curve_checks:1195  _group_sum_checks:1285  _mapped_other_check:1396  _denominator_check:1423  _core_axis_check:1451  _rental_cross_check:1472  _why_cheap_check:1510  _source_before_value_check:1551  _absolute_cut_check:1586  _spec_files:1616  _confirm_ratio_check:1626  _warranty_checks:1676  _spec_axis_check:1710  _site_axis_checks:1751  _rendered_why:1800  _rendered_listings:1810  _fill_gap_check:1820  _points_sum_check:1853  _market_gap_check:1870  _bonus_checks:1926  _trim_price_check:2030  run:2078  _shuffle_check:2213  _halt_dict_check:2238  _ensure_tmp:2267
 ```
 
-### `store/core.py` — 1,652줄
+### `store/core.py` — 1,764줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  upsert_core:334  mark_gone:435  load_snapshot:452  build_identities:561  resolve_vehicle_id:587  merge_conflict:619  upsert_vehicle:630  upsert_dealer:651  upsert_child:678  _flag:699  _not_join_months:713  state_counts:738  current_versions:778  diagnosis_of:808  target_counts:821  top_target:828  vehicle_of:833  collect_scale:840  our_fault:860  catalog_coverage:869  _walk:913  _sample_bodies:929  hits_of:942  key_seen:961  stored_hits:976  sample_bodies:992  observed:1014  known_leaves:1052  has_unclassified:1067  classify_unclassified:1074  _card_limit:1117  _value_chars:1122  _admin_cfg:1127  unclassified_cards:1144  _peek:1200  _short:1247  _blocking_paths:1258  _raw_rows_max:1278  used_endpoints:1288  raw_sections:1297  _flatten:1336  option_diff:1360  _option_names:1398  blocking_keys:1414  full_hits:1432  axis_paths_empty:1457  blocking_rows:1494  record_mismatch_sql:1556  record_mismatch_count:1562  relist_counts:1588  listing_models:1605  filter_options:1625  site_counts:1642
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  upsert_core:334  mark_gone:435  load_snapshot:452  build_identities:561  resolve_vehicle_id:587  merge_conflict:619  upsert_vehicle:630  upsert_dealer:651  dealer_trust:678  _trust_cfg:763  _trust_min_listings:777  _trust_dom_days:781  _trust_quadrant_score:786  upsert_child:790  _flag:811  _not_join_months:825  state_counts:850  current_versions:890  diagnosis_of:920  target_counts:933  top_target:940  vehicle_of:945  collect_scale:952  our_fault:972  catalog_coverage:981  _walk:1025  _sample_bodies:1041  hits_of:1054  key_seen:1073  stored_hits:1088  sample_bodies:1104  observed:1126  known_leaves:1164  has_unclassified:1179  classify_unclassified:1186  _card_limit:1229  _value_chars:1234  _admin_cfg:1239  unclassified_cards:1256  _peek:1312  _short:1359  _blocking_paths:1370  _raw_rows_max:1390  used_endpoints:1400  raw_sections:1409  _flatten:1448  option_diff:1472  _option_names:1510  blocking_keys:1526  full_hits:1544  axis_paths_empty:1569  blocking_rows:1606  record_mismatch_sql:1668  record_mismatch_count:1674  relist_counts:1700  listing_models:1717  filter_options:1737  site_counts:1754
 ```
 
 ### `collect/runner.py` — 1,523줄
