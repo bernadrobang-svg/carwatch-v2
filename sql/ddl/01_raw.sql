@@ -49,6 +49,22 @@ CREATE INDEX IF NOT EXISTS ix_raw_origin
 CREATE INDEX IF NOT EXISTS ix_raw_origin_endpoint
   ON raw_response(origin, endpoint);
 
+-- ★★★ 등록부 화면(/admin/registry)이 엔드포인트마다 원문 표본 200건을 뽑는다
+--   (store/core.py `sample_bodies`).  ★ 차례가 `(id * 2654435761) % 1000003` 이라
+--   ★ 어느 색인도 그 차례를 못 준다 — ★ SQLite 가 ★ 맞는 행을 ★ 전부 읽어
+--   ★ 임시 B-TREE 로 정렬한 뒤 ★ 200건만 남겼다.
+--   ★★ 실측 08-28 — ★ `ev_battery` 는 21,828건이다.  ★ 페이지 캐시를 비우고 재니
+--     ★ 이 쿼리 하나가 ★ **10.00초**, ★ 화면 전체가 ★ **17.55초**였다 (V11-76 실패).
+--   ★★ ★ 차례를 ★ 색인에 미리 담는다 (표현식 색인) — ★ 그러면 ★ 정렬이 사라지고
+--     ★ LIMIT 200 이 ★ 200개만 읽고 멈춘다.  ★ 몸통(body)을 안 건드린다
+--   ★ 부분 색인이다 (`status='ok' AND body IS NOT NULL`) — ★ 쿼리의 조건과 같아
+--     ★ 크기가 3.2MB 로 작다.  ★ 이것이 있으면 플래너가 스스로 고른다 —
+--     ★ 쿼리는 한 글자도 안 고쳤다
+--   ★★ 실측 결과 — ★ 10.00초 → ★ **0.19초** (53배)
+CREATE INDEX IF NOT EXISTS ix_raw_sample
+  ON raw_response(endpoint, (id * 2654435761) % 1000003)
+  WHERE status = 'ok' AND body IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS raw_facet (
   site          TEXT NOT NULL,
   target_key    TEXT NOT NULL,
