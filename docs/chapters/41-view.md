@@ -254,7 +254,7 @@ class DealerRow:
 | `-1` + `excluded` | **해당 없음** | muted |
 | `NULL` + `excluded` | **미확인** | unknown |
 | `NOT_RATED` | **평가 불가** | muted |
-| `gone` | **목록에서 사라짐** | muted |
+| `gone` | **★ **내려감** (개정 808 — ★ 사는 사람이 알아듣는 말이다)** | muted |
 
 ```
 금지   목록에서는 「—」, 상세에서는 「없음」처럼 화면마다 다르게 쓰는 것
