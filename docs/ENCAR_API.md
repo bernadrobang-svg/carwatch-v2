@@ -1,7 +1,7 @@
 # 엔카 API — 전수 조사
 
 ```
-version  SPEC-2026.08.28-r803
+version  SPEC-2026.08.28-r804
 follows  ★ 생성물 — `tools/probe_encar.py`
 sources  개정 560 · 실측 08-23
 checks   S46-31
@@ -223,4 +223,18 @@ core_inspection.vin     1,587 / 1,914   성능점검부 vin
 필수  ★ ★ **`C40` 은 ★ 코드가 맞았다** — ★ 0건인 까닭은 ★ **마스터께서 목록을 안 받아 주셔서**다
       ★ ★ 엔카 수입은 ★ **브라우저 수집으로만** 온다 (407)
 필수  ★ ★ `XC40_IMPORT` 180건 중 ★ **전기를 세어 적어라** — ★ 그것이 EX40 이다
+
+## ★★ 마스터께서 주신 C40 목록 주소 (08-28)
+
+```
+action=(And.Hidden.N._.(C.CarType.N._.(C.Manufacturer.볼보._.(C.ModelGroup.C40._.Model.C40 리차지.))))
+title = 볼보 C40 리차지(22년~현재)
+```
+
+```
+★★ ★ **`ModelGroup=C40` 이 맞다** — ★ 가이드 코드가 옳았다
+★ ★ 그 아래 ★ **`Model=C40 리차지`** 층이 하나 더 있다
+★ ★ 우리는 ★ **`ModelGroup` 까지만 쓴다** — ★ 세대를 안 가른다 (개정 776 그대로)
+★ ★ `toggle.modelGroup=1` 은 ★ **화면 접힘 상태**다 — ★ 안 보낸다
+```
 ```
