@@ -39,6 +39,12 @@ _SITES_CACHE: dict = {}
 _JSON_CACHE: dict = {}
 
 
+# ★★★ 08-29 — ★ 「되묻는 창」(1초)을 ★ 넣었다가 ★ **되돌렸다.**
+#   ★ `os.stat` 27,393회를 없애 ★ 0.077초를 벌었지만,
+#   ★ ★ 관리 화면에서 ★ 저장하고 되돌아온 화면이 ★ **옛 값을 낼 수 있었다** —
+#     ★ 되돌림(redirect)이 ★ 그 창 안에 들어간다.
+#   ★ ★ 그것이 ★ 이 프로젝트가 막으려는 ★ 「선언과 실제의 괴리」다.
+#     ★ 7.7% 를 벌자고 ★ 감수할 것이 아니다.  ★ mtime 을 늘 본다
 def load_config(path: str) -> dict:
     """설정을 읽는다.  ★ 파일이 그대로면 지난번 것을 그대로 준다."""
     st = os.stat(path)
@@ -1561,9 +1567,23 @@ def _score_bars(sums: dict, root: str = ".") -> list:
     return out
 
 
+# ★★★ 갈래별 만점은 ★ config 가 그대로면 ★ 늘 같은 값이다.
+#   ★★ 실측 08-29 (cProfile · `/detail`) — ★ `_score_bars` 가 ★ **행마다**
+#     ★ 이것을 불러 ★ 성분 × 접두사를 ★ 전수로 훑고 있었다.
+#     ★ ★ 한 화면(1,551줄)에 ★ 제너레이터 ★ **645,216회** ·
+#       ★ `startswith` ★ 486,421회 · ★ `os.stat` ★ 27,393회.
+#   ★ `load_config` 는 ★ 파일이 그대로면 ★ **같은 객체**를 준다 —
+#     ★ 그것을 `is` 로 견준다.  ★ mtime 을 또 보지 않는다.
+#   ★ 파일이 바뀌면 ★ 객체가 새로 생기므로 ★ 다음 요청이 다시 센다
+_GROUP_CAPS_CACHE: dict = {}
+
+
 def _group_caps(root: str = ".") -> dict:
     """갈래별 만점.  ★ config/scoring.json groups 가 정본이다 (S14)."""
     cfg = load_config(os.path.join(root, "config", "scoring.json"))
+    hit = _GROUP_CAPS_CACHE.get(root)
+    if hit is not None and hit[0] is cfg:
+        return hit[1]
     comp = cfg["components"]
     out = {}
     # ★ 갈래(f-table 넷) ＋ ★ 화면이 나눠 내는 이름(`group_parts`).
@@ -1574,6 +1594,8 @@ def _group_caps(root: str = ".") -> dict:
             (v if isinstance(v, (int, float)) else (v or {}).get("points") or 0)
             for k, v in comp.items()
             if any(k == p or k.startswith(p) for p in prefixes)))
+    # ★ 돌려준 것을 고치지 않는다 — 같은 객체를 나눠 쓴다 (`load_config` 와 같다)
+    _GROUP_CAPS_CACHE[root] = (cfg, out)
     return out
 
 
