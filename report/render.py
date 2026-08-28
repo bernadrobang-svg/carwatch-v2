@@ -448,8 +448,15 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
                 "source": source,
             })
 
+    # ★★ 08-28 (#106) — ★ 등급이 실제로 매겨졌는지 여기서 정한다.
+    #   ★ 정본은 `config/labels.json` 의 GRADE_NOT_RANKED 다 (S14) —
+    #     ★ 코드에 ("EXCLUDED","NO_GRADE",…) 를 박지 않는다 (개정 433 이
+    #       8단계로 내렸을 때 흩어진 튜플을 전수로 찾아야 했다)
+    _grade = head[6] or "NOT_RATED"
+    _not_ranked = tuple(_labels(root).get("GRADE_NOT_RANKED") or ())
     return ScoreView(
-        listing_id=listing_id, target_key=head[0], grade=head[6] or "NOT_RATED",
+        listing_id=listing_id, target_key=head[0], grade=_grade,
+        graded=_grade not in _not_ranked,
         score_total=float(head[2] or 0), earned=float(head[4] or 0),
         denominator=float(head[3] or 0),
         absolute_fail=head[7], not_rated_reason=head[5], axes=axes,

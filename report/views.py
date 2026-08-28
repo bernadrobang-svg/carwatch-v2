@@ -193,6 +193,12 @@ class ScoreView:
     why_cheap_reasons: tuple = ()
     # ★ NOT_RATED 사유 3종을 구분한다 (V5-12).  등급만 내지 않는다
     not_rated_reason: str | None = None
+    # ★★ 08-28 (#106) — ★ 등급이 실제로 매겨졌는가.
+    #   ★ 화면이 「등급을 매기지 않습니다」라 적으면서 ★ 배지에 A 를 냈다.
+    #   ★ 템플릿은 == 비교를 못 한다 (V11-104) — ★ 여기서 갈라 준다.
+    #   ★ 참 = GRADE_ORDER 의 등급 · 거짓 = GRADE_NOT_RANKED
+    #     (EXCLUDED · NO_GRADE · NOT_RATED · PENDING)
+    graded: bool = True
     # ★ 표시용이다.  점수에 반영하지 않는다 (STEP 21b).
     #   진단 items 는 outers 와 같은 사실이라 판정에 쓰면 중복 감점이다
     diagnosis: DiagnosisView | None = None

@@ -23,7 +23,7 @@
 | `/password` | [password.html](password.html) | 200 | 2,295B |
 | `/admin` | [admin.html](admin.html) | 200 | 15,429B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 14,951B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 54,751B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 54,907B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,172B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 7,664B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 45,382B |
@@ -36,7 +36,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,210B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 2,972B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,329B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,123B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,154B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 4,832B |
 
 ## 못 낸 화면

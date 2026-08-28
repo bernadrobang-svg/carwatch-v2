@@ -1,8 +1,13 @@
 <h1>판정 근거 <span class="{{ v.grade | gradecls }}">{{ v.grade | gradelabel }}</span></h1>
 {% if v.waiting_text %}<p class="note ask">무엇이 비었나 —
   <b>{{ v.waiting_text }}</b> · 상세를 기다립니다.
-  근거 있는 축 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 점이라
-  등급을 매기지 않습니다.</p>{% endif %}
+  근거 있는 축 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 점입니다.
+  <!-- ★★ 08-28 (#106) — 「등급을 매기지 않습니다」를 늘 적고 있었다.
+       ★ 그런데 위 배지에는 A 가 나온다.  ★ 113번은 880/910 이라
+         ★ 등급이 정당하게 매겨진 매물이다 — ★ 화면이 자기 배지를 부정했다.
+       ★ 등급이 실제로 안 매겨진 때만 그렇게 적는다 (v.graded) -->
+  {% if v.graded %}채워지면 등급이 달라질 수 있습니다.{% endif %}
+  {% if !v.graded %}그래서 <b>등급을 매기지 않습니다.</b>{% endif %}</p>{% endif %}
 <p class="muted">{{ v.target_key }} · 매물 {{ v.listing_id }}
   · <span class="tag" title="이 매물을 받은 사이트입니다. 값이 어느 사이트 원문에서 왔는지가 값의 뜻을 정합니다">{{ v.site_badge }}</span>
   {% if v.encar_url %}· <a class="btn go mini" href="{{ v.encar_url }}" target="_blank" rel="noopener"
