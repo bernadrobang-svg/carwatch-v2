@@ -36,7 +36,7 @@
 | `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:713` | **★ 없음** | 없음 | trace/RULES.md:87 · trace/RULES.md:88 · trace/RULES.md:89 |
 | `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:741` | **★ 없음** | 없음 | trace/00-standard.md:53 · trace/00-standard.md:54 · trace/00-standard.md:55 |
 | `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:777` | **★ 없음** | 없음 | trace/00-standard.md:34 · trace/00-standard.md:38 · trace/RULES.md:85 |
-| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:800` | **★ 없음** | 없음 | INDEX.md:18 · SCHEMA.md:7 · trace/00-standard.md:78 |
+| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:800` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · trace/00-standard.md:78 |
 | `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:831` | **★ 없음** | 없음 | trace/00-standard.md:110 · trace/00-standard.md:111 · trace/00-standard.md:112 |
 | `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:854` | **★ 없음** | 없음 | trace/00-standard.md:109 · trace/00-standard.md:110 · trace/00-standard.md:111 |
 | `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:936` | **★ 없음** | 없음 | trace/00-standard.md:231 · trace/00-standard.md:232 · trace/00-standard.md:234 |
