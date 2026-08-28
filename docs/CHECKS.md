@@ -134,9 +134,9 @@
 | `V1-26` | 판정 축이 통째로 비지 않음 | run | `validate/v1_collect.py:101` | **★ 없음** | 없음 | guide/03_이력.md:437 |
 | `V1-27` | 확인 안 됨을 ①②③④ 로 가른 표가 있음 | run | `validate/v1_collect.py:88` | **★ 없음** | 없음 | guide/03_이력.md:454 · chapters/30-score/f-table.md:498 |
 | `V1-28` | ② ③ 건수가 지난번보다 안 늘었음 | run | `validate/v1_collect.py:95` | **★ 없음** | 없음 | guide/03_이력.md:454 · chapters/30-score/f-table.md:499 |
-| `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | **★ 없음** | 없음 | trace/11-store.md:80 · chapters/00-standard.md:362 · chapters/11-store/a-key.md:306 |
+| `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | **★ 없음** | 없음 | trace/11-store.md:80 · chapters/00-standard.md:362 · chapters/11-store/a-key.md:336 |
 | `V2-02` | 필수 컬럼 NOT NULL 위반 없음 | run | `validate/v2_load.py:29` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:106 |
-| `V2-03` | — | — | **★ 코드에 없다** | — | — | trace/RULES.md:186 · chapters/11-store/a-key.md:347 · chapters/20-verify/b-v1v2.md:107 |
+| `V2-03` | — | — | **★ 코드에 없다** | — | — | trace/RULES.md:186 · chapters/11-store/a-key.md:377 · chapters/20-verify/b-v1v2.md:107 |
 | `V2-04` | status 열거값 위반 없음 | run | `validate/v2_load.py:32` | **★ 없음** | 없음 | trace/RULES.md:189 · chapters/20-verify/b-v1v2.md:108 |
 | `V2-05` | 단위 — 가격이 만원 단위로 남아 있지 않은가 | run | `validate/v2_load.py:35` | **★ 없음** | 없음 | trace/60-admin.md:52 · trace/RULES.md:149 · trace/RULES.md:190 |
 | `V2-06` | 빈 컨테이너가 NULL 로 저장되지 않았는가 | run | `validate/v2_load.py:38` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:110 · chapters/20-verify/b-v1v2.md:148 · chapters/20-verify/b-v1v2.md:151 |
@@ -148,7 +148,7 @@
 | `V2-11` | plate_hash 가 전건 16자 hex | run | `validate/v2_load.py:118` | **★ 없음** | 없음 | DEDUP_CROSS_SITE.md:26 · trace/11-store.md:50 · chapters/11-store/b-core.md:446 |
 | `V2-12` | secrets/plate_hmac.key 가 버전 관리 밖 | run | `validate/v2_load.py:53` | **★ 없음** | 없음 | chapters/60-admin/00-intro.md:181 · chapters/20-verify/b-v1v2.md:131 |
 | `V2-13` | core_record 에 record_plate_no 원본 없음 | run | `validate/v2_load.py:80` | **★ 없음** | 없음 | chapters/11-store/b-core.md:643 · chapters/20-verify/b-v1v2.md:132 |
-| `V2-14` | 참조되는 5종 PK 가 단일 INTEGER | run | `validate/v2_load.py:109` | **★ 없음** | 없음 | chapters/11-store/a-key.md:159 · chapters/11-store/a-key.md:499 · chapters/60-admin/00-intro.md:147 |
+| `V2-14` | 참조되는 5종 PK 가 단일 INTEGER | run | `validate/v2_load.py:109` | **★ 없음** | 없음 | chapters/11-store/a-key.md:189 · chapters/11-store/a-key.md:529 · chapters/60-admin/00-intro.md:147 |
 | `V2-15` | 자연키가 UNIQUE 로 걸려 있음 | run | `validate/v2_load.py:112` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:134 |
 | `V2-16` | PK·FK 컬럼에 개인정보 없음 | run | `validate/v2_load.py:115` | **★ 없음** | 없음 | chapters/60-admin/00-intro.md:147 · chapters/20-verify/b-v1v2.md:135 |
 | `V2-17` | PII 고아 행 없음 | run | `validate/v2_load.py:60` | **★ 없음** | 없음 | guide/03_이력.md:110 · chapters/11-store/b-core.md:474 · chapters/20-verify/b-v1v2.md:136 |
@@ -967,7 +967,7 @@
 - `V11-88` — guide/01_요구사항.md:159 · guide/01_요구사항.md:565 · guide/01_요구사항.md:575
 - `V11-93` — trace/14-web.md:47 · guide/01_요구사항.md:160 · guide/01_요구사항.md:579
 - `V13-08` — guide/03_이력.md:446 · chapters/13-pipeline.md:346
-- `V2-03` — trace/RULES.md:186 · chapters/11-store/a-key.md:347 · chapters/20-verify/b-v1v2.md:107
+- `V2-03` — trace/RULES.md:186 · chapters/11-store/a-key.md:377 · chapters/20-verify/b-v1v2.md:107
 - `V3-42` — trace/14-web.md:55 · guide/01_요구사항.md:155 · guide/01_요구사항.md:231
 - `V3-44` — guide/02_결함대장.md:85 · guide/02_결함대장.md:95 · guide/03_이력.md:310
 - `V3-49` — ENCAR_API.md:184 · trace/05-score.md:57 · guide/01_요구사항.md:156
