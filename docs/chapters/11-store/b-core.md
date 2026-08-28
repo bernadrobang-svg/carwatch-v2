@@ -1,7 +1,7 @@
 ## STEP 33 — `raw_*` 스키마
 
 ```
-version  SPEC-2026.08.29-r824
+version  SPEC-2026.08.29-r825
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -741,7 +741,8 @@ core_pii      record_plate_no    원본
 ## ★★★ `sample_sufficient` — ★ **몇 건부터 재나**
 
 ```
-★ ★ **매물 10건 이상**이면 ★ `sample_sufficient = 1`
+★ ★ **매물 `dealer_trust.min_listings`(★ 10)건 이상**이면 ★ `sample_sufficient = 1`
+   ★ ★ **상수는 ★ `config/scoring.json` `dealer_trust` 에 있다** (개정 825)
    ★ ★ 그 아래는 ★ **0** 이고 ★ `trust_score` 는 ★ **`NULL` 그대로**
 ★ ★ 까닭 — ★ 세 건 파는 딜러의 ★ 「팔림 비율」은 ★ **뜻이 없다**
 ★ ★ **추정으로 채우지 않는다** — ★ 개발측이 지킨 그대로다 (`f-table` ⑤)
@@ -752,7 +753,7 @@ core_pii      record_plate_no    원본
 ```
 trust_score = ★ 25×(1 − drop_event_rate)
             ＋ ★ 25×(1 − min(price_volatility, 1))
-            ＋ ★ 25×dom_점수      ← ★ 30일 이하 만점 · 120일 이상 0 · 그 사이는 곧게
+            ＋ ★ 25×dom_점수      ← ★ `dom_full_days`(30) 이하 만점 · `dom_zero_days`(120) 이상 0
             ＋ ★ 25×info_score
 
 ★ ★ **넷이 똑같이 25씩**이다 — ★ 어느 하나가 세지 않다
@@ -767,7 +768,7 @@ trust_score = ★ 25×(1 − drop_event_rate)
 | ★ 점수 낮다 | ★ **Q3** (큰 곳 · 조심) | ★ **Q4** (작은 곳 · 조심) |
 
 ```
-★ ★ 가름 — ★ 매물 수 ★ **중앙값** · 점수 ★ **60점**
+★ ★ 가름 — ★ 매물 수 ★ **중앙값** · 점수 ★ **`quadrant_score_cut`(60)**
 ```
 
 ## ★★★★ `trust_score` 는 ★ **910 에 안 들어간다** (마스터 확정 08-29)
