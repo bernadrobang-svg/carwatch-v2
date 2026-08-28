@@ -1335,6 +1335,33 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     return where, args
 
 
+def model_counts(conn: sqlite3.Connection, flt: ListingFilter) -> list:
+    """차종 드롭다운의 건수 — ★ 목록과 ★ 같은 조건으로 센다.
+
+    ★★★ 08-28 (#14 · #16) — ★ 드롭다운이 `KOLEOS_HEV (336건)` 이라 해 놓고
+      ★ 고르면 ★ **183건**이 나왔다.  ★ 19종을 다 더하면 9,563 인데
+      ★ 화면이 낼 수 있는 최대는 6,182 였다 (차 3,381).
+    ★ 까닭 — ★ 옛 `store.core.listing_models` 는 ★ `status='active'` ★ 하나만 보고
+      ★ 세었다.  ★ 목록은 ★ 리스 · 관문 제외 · 같은 차 접기 · 팔린 것 ·
+      ★ 계약·예약중 · 범위 밖을 ★ 전부 뺀다 — ★ **두 수가 다른 것을 세고 있었다.**
+    ★ 이제 ★ `_listings_where` 를 ★ 그대로 쓴다 —
+      ★ 세는 것과 뽑는 것이 ★ 같은 조건이어야 한다 (V11-55 와 같은 뜻).
+    ★ 차종 조건만 뺀다 — ★ 하나를 고르면 ★ 나머지가 0 이 되어 ★ 바꿔 고를 수 없다
+    """
+    from dataclasses import replace
+
+    base = replace(flt, model=None, target_key=None)
+    where, args = _listings_where(base)
+    return [(k, n) for k, n in conn.execute(
+        "SELECT l.target_key, COUNT(*) FROM core_listing l"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        "  AND s.calc_version = ?"
+        " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
+        f" WHERE {' AND '.join(where)} AND l.target_key IS NOT NULL"
+        " GROUP BY l.target_key ORDER BY COUNT(*) DESC",
+        [base.calc_version, *args])]
+
+
 def count_listings(conn: sqlite3.Connection, flt: ListingFilter) -> int:
     """조건에 맞는 전체 건수 (V11-55).  ★ 쪽을 나누려면 전체를 알아야 한다.
 

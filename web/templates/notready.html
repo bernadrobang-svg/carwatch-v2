@@ -42,7 +42,11 @@
 <p class="muted">★ 있으면 <strong>마스터께서 「받을까 말까」를 정하십니다.</strong></p>
 </div>
 <p class="notice">
-  범위 안 <strong>{{ nr.matched_total | num }}건</strong> ·
+  <!-- ★★ 08-29 (#52) — ★ 이 수는 `target_key IS NOT NULL` 전부다.
+       ★ 내려간 것(gone)도 센다 — ★ 그래서 현황·드롭다운의 9,563 보다 크다.
+       ★ 숫자를 맞추지 않고 ★ **무엇을 센 수인지 적는다** (마스터 지시 ③) -->
+  범위 안 <strong>{{ nr.matched_total | num }}건</strong>
+  <span class="dim">(차종이 잡힌 전부 · 내려간 것 포함)</span> ·
   <strong>미분류 {{ nr.unmatched_total | num }}건</strong> ·
   <strong>범위 밖 {{ nr.out_of_scope_total | num }}건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다 (개정 271).

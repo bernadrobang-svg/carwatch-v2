@@ -107,8 +107,16 @@
 
 {% if r.excluded_groups %}
 <h2>후보에서 뺀 것 {{ r.excluded_total | num }}건</h2>
+<!-- ★★ 08-29 (#43) — ★ 아래 「건수」를 다 더하면 ★ 위 총계보다 크다.
+     ★ 한 매물에 ★ 사유가 여럿일 수 있기 때문이다 (실측 — 1,697건 가운데
+       ★ 112건이 사유 둘 이상 · 사유를 세면 1,817 · 차 120).
+     ★ 숫자를 맞추지 않고 ★ **무엇을 센 수인지 적는다** (마스터 지시 ③) -->
+<p class="muted">★ 아래 <strong>건수는 사유별</strong>입니다 —
+  한 매물에 사유가 여럿이면 여러 줄에 셉니다.
+  그래서 <strong>더한 값이 위 총계보다 큽니다</strong>
+  (매물 {{ r.excluded_total | num }}건 · 사유를 세면 더 많습니다).</p>
 <table>
-<thead><tr><th>사유</th><th class="num">건수</th><th>무엇을 뜻하나</th><th></th></tr></thead>
+<thead><tr><th>사유</th><th class="num" title="매물 수가 아니라 사유 수입니다">건수 <span class="dim">사유별</span></th><th>무엇을 뜻하나</th><th></th></tr></thead>
 <tbody>
 {% for g in r.excluded_groups %}
 <tr><td>{{ g.reason }}</td><td class="num">{{ g.count | num }}</td>

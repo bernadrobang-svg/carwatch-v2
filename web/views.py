@@ -708,11 +708,14 @@ def _model_menu(conn, flt) -> list:
       없는 차종을 고르게 하면 「0건」만 나온다
     ★ SQL 은 store 가 갖는다 (V11-01)
     """
-    from store.core import listing_models
+    # ★★ 08-28 (#14 · #16) — ★ `listing_models` 는 `status='active'` 하나만
+    #   보고 세어 ★ 드롭다운 336 · 목록 183 으로 갈렸다.
+    #   ★ 목록과 같은 조건으로 센다 (`model_counts`)
+    from report.screens.build import model_counts
 
     now = (flt.model or "")
     return [{"key": k, "label": f"{k} ({n}건)", "on": k == now}
-            for k, n in listing_models(conn)]
+            for k, n in model_counts(conn, flt)]
 
 
 def _pick_state(flt, root: str = ROOT) -> dict:

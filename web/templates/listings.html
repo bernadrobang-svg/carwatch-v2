@@ -82,7 +82,7 @@
       <p class="chips">
         {% for b in site_buttons %}<a class="btn{% if b.on %} on{% endif %}"
           href="/listings?site={{ b.q | url }}{% if b.sell %}&sell_type={{ b.sell | url }}{% endif %}"
-          title="이 사이트 매물만 봅니다">{{ b.label }}{% if b.live %}
+          title="이 사이트 매물만 봅니다 — 옆 숫자는 「우리 대상(active)」 건수입니다. 목록은 여기서 리스·관문 제외·같은 차 접기·팔린 것을 더 빼므로 더 적습니다 (#18)">{{ b.label }}{% if b.live %}
           <span class="dim">{{ b.live | num }}</span>{% endif %}</a>{% endfor %}
       </p>
 

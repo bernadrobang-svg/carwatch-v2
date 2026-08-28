@@ -62,7 +62,7 @@
 
 <h2>등록된 차종 {{ target_rows | count }}종</h2>
 <table class="rows">
-<thead><tr><th title="설정 파일의 키 이름입니다">키</th><th title="사람이 읽는 이름입니다">이름</th><th title="갈래입니다">구분</th><th class="num" title="매물 건수입니다">매물</th><th title="지금 어떤 상태인지입니다">상태</th><th>수집</th><th></th></tr></thead>
+<thead><tr><th title="설정 파일의 키 이름입니다">키</th><th title="사람이 읽는 이름입니다">이름</th><th title="갈래입니다">구분</th><th class="num" title="★ 이 표의 매물 수는 「그 차종으로 잡힌 전부」입니다 — 내려간 것(gone)도 셉니다. 그래서 합 9,567 이 현황·목록의 9,563 보다 4 큽니다 (#40 · #52). 목록에 나오는 수는 /listings 의 차종 드롭다운이 냅니다">매물 <span class="dim">전부·내려간 것 포함</span></th><th title="지금 어떤 상태인지입니다">상태</th><th>수집</th><th></th></tr></thead>
 <tbody>
 {% for t in target_rows %}
 <tr>
