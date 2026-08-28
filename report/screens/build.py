@@ -1175,6 +1175,19 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
             "   WHERE l2.plate_hash = l.plate_hash AND l2.status = 'active'"
             "   ORDER BY l2.price_current_won, l2.listing_id LIMIT 1))")
     # ★ 매물 하나만 (개정 427 상세).  ★ 맨 앞에 둔다 — 가장 좁은 조건이다
+    # ★★★★ 08-28 — ★ 팔린 것 · 내려간 것 · 계약·예약중은 ★ **목록에 안 낸다**.
+    #   ★★★ 가이드 — 「★ 팔리거나 취소된 매물이 ★ 왜 목록에 계속 보이나」 (두 번 물으셨다).
+    #   ★ 시안이 정본이다 (마스터 08-28 ④) — ★ `v4m_listings_시안` 은
+    #     ★ ★ 카드마다 ★ **「게시중」만** 낸다.  ★ 팔린 것도 예약중도 없다.
+    #   ★ 실측 08-28 — ★ 목록 5,244건 안에 ★ 내려간 것 136 · 예약중 17 = ★ 153건이 섞여 있었다.
+    #   ★ 지우지는 않는다 — ★ `gone_at` 이 「얼마에 팔렸나」의 근거다 (`store/core.mark_gone`).
+    #     ★ ★ **목록에만 안 낸다.**  ★ 상세·추적으로는 그대로 볼 수 있다
+    #   ★ 매물 하나만 집을 때는 접지 않는다 — ★ 그 줄을 못 찾는다
+    if (getattr(flt, "listing_id", None) is None
+            and not getattr(flt, "listing_ids", ())):
+        where.append("l.status <> 'gone'")
+        where.append("(l.sales_status IS NULL"
+                     " OR UPPER(l.sales_status) NOT IN ('CONTRACT','RESERVED'))")
     if getattr(flt, "listing_id", None) is not None:
         where.append("l.listing_id = ?")
         args.append(flt.listing_id)

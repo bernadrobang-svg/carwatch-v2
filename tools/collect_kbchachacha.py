@@ -5,6 +5,7 @@
     python3.11 tools/collect_kbchachacha.py --pages N        N쪽까지 받아 저장
     python3.11 tools/collect_kbchachacha.py --probe N        상세 N건을 재 봇차단 비율을 낸다
     python3.11 tools/collect_kbchachacha.py --narrow [--detail N] [--interval S]
+    python3.11 tools/collect_kbchachacha.py --narrow --missing-raw  ★ 원문 없는 것만 (P3)
                                                             좁혀 받아 상세까지 넣는다
 
 지시서   `docs/KBCHACHACHA_API.md` · `docs/TARGET_KEY_MAP.md`
@@ -124,6 +125,17 @@ def load_filters(root: str = ROOT) -> list:
         cars = q.get("carCode")
         cars = ([str(x) for x in cars] if isinstance(cars, list)
                 else [str(cars)] if cars else [None])
+        # ★★★ 08-28 — ★ `classCode` 가 없으면 ★ **건너뛴다.**
+        #   ★ 실측 08-28 — ★ `POLESTAR3_EV` 는 ★ 제조사만 있고 차종 코드가 없다
+        #     (규격이 「★ KB `carClass.json` 에 폴스타 3 은 아직 없다」고 적어 두었다).
+        #   ★ ★ 그런데 코드가 ★ 빈 값을 ★ 「거르지 않는다」로 보내 —
+        #     ★ ★ **251쪽 · 9,378건**을 끌어왔다 (합 14,616 의 대부분이 그것이다).
+        #   ★ ★ 오판 130 「KB 전량 수집을 멈춰라」와 ★ 같은 자리다.
+        #   ★ 코드가 없으면 ★ **안 받는다** — ★ 지어내지도 않고 ★ 전량으로 넓히지도 않는다
+        if not str(q.get("classCode") or "").strip():
+            print(f"  {key:12} ★ 건너뛴다 — classCode 가 없다"
+                  " (있는 코드만 받는다.  전량으로 넓히지 않는다)")
+            continue
         for car in cars:
             mark = (q["makerCode"], q.get("classCode"), car)
             if mark in seen:
@@ -246,7 +258,22 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     done = {r[0] for r in conn.execute(
         "SELECT source_id FROM core_listing WHERE site=? "
         "AND detail_status='ok'", (SITE_CODE,))}
-    todo = [x for x in ids if x not in done]
+    # ★★★ 08-28 — ★ `--missing-raw` : ★ **원문이 없는 것만** 다시 받는다 (P3).
+    #   ★ 실측 08-28 — ★ `detail_status='ok'` 가 ★ 406건인데
+    #     ★ ★ `raw_response` 는 ★ **180건**뿐이다.  ★ 226건이 원문 없이 「받았다」다.
+    #   ★ ★ 원문이 없으면 ★ **다시 캘 수가 없다** — ★ 사진도 축도 못 뽑는다
+    #     ★ ★ 「원문은 남긴다.  갈래를 넓히시면 다시 판다」(명령서 3-2)가 안 지켜졌다.
+    #   ★ 전량을 다시 받지 않는다 — ★ **원문이 빈 것만**이다.
+    #     ★ ★ KB 는 봇 차단이 있으므로 ★ 더더욱 좁혀 받는다
+    if "--missing-raw" in sys.argv[1:]:
+        have = {r[0] for r in conn.execute(
+            "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
+            (SITE_CODE,))}
+        todo = [x for x in ids if x not in have]
+        print(f"★ 원문이 없는 것 {len(todo):,}건만 다시 받는다"
+              f" (원문 있는 것 {len(have):,}건)")
+    else:
+        todo = [x for x in ids if x not in done]
     if limit:
         todo = todo[:limit]
     print(f"★ 상세 — 받을 것 {len(todo):,}건 "

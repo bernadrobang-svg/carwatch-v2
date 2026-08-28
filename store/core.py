@@ -313,6 +313,24 @@ def _today(parsed: dict) -> str:
     return (parsed.get("last_seen") or parsed.get("first_seen") or "")[:10]
 
 
+# ★★★ 08-28 — ★ 「값이 아닌 0」을 ★ 안 넣는다 (금지 12 · 개정 325).
+#   ★ 실측 08-28 — ★ `displacement_cc = 0` 이 ★ **256건** 있었다
+#     (엔카 179 · 리본카 55 · KB 22).  ★ 0cc 짜리 차는 없다 — ★ 「모름」이다.
+#   ★ ★ 그것 때문에 ★ KB 상세 받기가 ★ 멈췄다 —
+#     ★ ★ 「불변 필드 변경: displacement_cc 0 → 3470 — 원인 분류 못 함」 (STEP 29).
+#   ★ ★ 0 을 값으로 두면 ★ 진짜 값이 왔을 때 ★ 「값이 바뀌었다」로 잡힌다.
+#   ★ 「모르는 것을 모른다고 낸다」 — ★ NULL 이 맞다
+NOT_A_VALUE = {"displacement_cc": (0,)}
+
+
+def _drop_non_values(parsed: dict) -> dict:
+    """★ 값이 아닌 것을 ★ 넣기 전에 뺀다.  ★ 위 `NOT_A_VALUE` 참고."""
+    for key, bad in NOT_A_VALUE.items():
+        if key in parsed and parsed[key] in bad:
+            parsed = {k: v for k, v in parsed.items() if k != key}
+    return parsed
+
+
 def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int:
     """파싱 결과를 core_listing 에 적재한다.
 
@@ -324,6 +342,7 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
     금지   라벨과 내용 형식이 어긋난 값을 저장하는 것 (0장 불변식 ④).
            「주행거리」 자리에 날짜가 오면 그것은 파싱이 아니라 우연이다
     """
+    parsed = _drop_non_values(parsed)
     from contracts import shape_violations
 
     bad = shape_violations(parsed)

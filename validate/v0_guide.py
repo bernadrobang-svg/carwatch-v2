@@ -2107,6 +2107,7 @@ def s46_100_sian_word_order() -> tuple[bool, str]:
     bad, ok = [], 0
     for sian, path in {**pairs, **login_pairs}.items():
         need_login = sian in login_pairs
+        orig_path = path
         src = SCREENS / sian
         if not src.is_file():
             bad.append(f"{sian} 가 없다")
@@ -2122,7 +2123,16 @@ def s46_100_sian_word_order() -> tuple[bool, str]:
                 res = urllib.request.urlopen(base + path, timeout=25,
                                              context=ctx)
             with res:
-                page = _sian_seq(res.read().decode("utf-8", "replace"), True)
+                body = res.read().decode("utf-8", "replace")
+            # ★★ 시안에 없는 절은 ★ 견주기 전에 잘라 낸다 (마스터 08-28 ④).
+            #   ★ 자리는 `config/web.json` 의 `sian_cut_regions` 가 정본이다
+            for a, b in (cfg.get("sian_cut_regions") or {}).items():
+                if a not in (path, orig_path) or len(b) != 2:
+                    continue
+                i, j = body.find(b[0]), body.find(b[1])
+                if 0 <= i < j:
+                    body = body[:i] + body[j:]
+            page = _sian_seq(body, True)
         except (urllib.error.HTTPError, urllib.error.URLError, OSError) as exc:
             bad.append(f"{path} 못 두드림({type(exc).__name__})")
             continue
