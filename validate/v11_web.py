@@ -997,6 +997,13 @@ def _screen_checks(conn, rid) -> list:
     #       ★ ★ 「토큰 밖 색값 없음」이 ★ **아무것도 안 막는 검사**가 된다
     #   ★ ★ 시안은 그림이고 ★ 화면 체계는 `app.css` 다 (마스터 확정 33-1)
     #   ★ `#0B0D10` 과 `#0b0d10` 은 ★ 같은 색이다 — ★ 대소문자로 안 가른다
+    # ★★★ 08-29 마스터 판정 — ★ **주석을 걸러라.**  ★ 이 검사는
+    #   ★ **화면에 나가는 색**을 잡는 것이다.  ★ 주석은 화면에 안 나간다.
+    #   ★★ 실측 — ★ 주석에 적은 시험자 항목 번호 「#122 · #123」이
+    #     ★ `#[0-9a-fA-F]{3,6}` 에 걸려 ★ 색값으로 잡혔다.
+    #   ★ 번호를 적는 것이 옳다 (마스터) — ★ 검사가 주석을 뺀다.
+    #   ★ `tests/test_spec_ui.py` 의 `L-3` 과 ★ 같은 고침이다 (12회차 만에 닫았다)
+    css = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
     tok = {c.lower() for c in RE_COLOR.findall(
         " ".join(RE_ROOT.findall(css)) if RE_ROOT.findall(css) else "")}
     if not tok:

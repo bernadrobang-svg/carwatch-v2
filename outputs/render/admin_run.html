@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2ddd92bf75">
+<link rel="stylesheet" href="/static/app.css?v=5cf5f0c58e">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-run">
@@ -54,12 +54,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>failed</strong> · 사유 raw_missing · 범위 all
-    </p>
+  <p><strong>done</strong> · 사유 raw_missing · 범위 all
+    <span class="muted">· run 20260828T160027</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-28T12:00:25.797567+00:00</span></p>
-  <p class="muted">OperationalError: database is locked</p>
+    <span class="muted">· 넣은 시각 2026-08-28T16:00:25.794272+00:00</span></p>
+  <p class="muted">S5 ok 0 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</p>
   
   
 
@@ -203,6 +203,11 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-28T16:00:25.794272+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
+
 <tr><td data-label="시각">2026-08-28T12:00:25.797567+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
@@ -298,11 +303,6 @@
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-26T03:17:23.090688+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -321,7 +321,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-29 00:51</span>
+  <span>2026-08-29 01:49</span>
 </footer>
 
 </body>

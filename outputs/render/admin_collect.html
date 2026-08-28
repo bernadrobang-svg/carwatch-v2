@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>브라우저 수집 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2ddd92bf75">
+<link rel="stylesheet" href="/static/app.css?v=5cf5f0c58e">
 
 </head>
 <body class="s-admin-collect">
@@ -68,7 +68,7 @@
   응답이 <code>407</code>·<code>403</code>·<code>429</code> 면 그대로 냅니다.
 </p>
 
-<h2>① 무엇을 받을까 — 범위</h2>
+<h2 class="auto-hide">① 무엇을 받을까 — 범위</h2>
 <form method="post" action="/admin/collect" id="saveform">
   <input type="hidden" name="csrf" value="render">
   <input type="hidden" name="site" value="encar">
@@ -112,7 +112,7 @@
   </p>
 </form>
 
-<h2>② 무엇이 왔는지 눈으로 봅니다</h2>
+<h2 class="auto-hide">② 무엇이 왔는지 눈으로 봅니다</h2>
 <p class="muted">사람이 보고 저장합니다. <strong>자동으로 저장하지 않습니다</strong> —
   무엇이 들어갔는지 모르게 되기 때문입니다.</p>
 <div id="result" class="notice"><p class="muted">아직 부르지 않았습니다.</p></div>
@@ -802,8 +802,44 @@
     runJob(0);
   }
 
+  var AUTO_TICK_MS = 400;      /* ★ ① 이 끝났는지 보는 주기 */
+  var AUTO_WAIT_TICKS = 150;   /* ★ 60초까지 기다린다 — 그 뒤엔 안 잇는다 */
   el('btn_probe').addEventListener('click', probe);
   el('btn_save').addEventListener('click', save);
+
+  /* ★★★★★ 22-1 — ★ 「엔카 받기」 한 번으로 끝난다.
+     ★ 마스터는 휴대폰뿐이고 ★ 엔카는 마스터 회선으로만 뚫린다.
+     ★ ★ 여섯 단계를 ★ 한 번으로 줄인다 — ★ 고르라고 안 묻는다.
+     ★ ★ 조회식·확인·저장을 ★ 안 보인다 (`body.auto` 가 감춘다) —
+       ★ ★ 안 없앤다.  ★ 주소에서 `auto=1` 을 빼면 ★ 그대로 다 보인다.
+     ★★ ★ `STEP 136c` 는 ★ 「사람이 보고 저장한다」고 적혀 있다 —
+       ★ ★ 22-1 이 그것을 갈음한다 (마스터 확정 37 · 08-29).
+       ★ ★ 그래도 ★ **받은 것을 안 감춘다** — ★ 진행과 결과를 그대로 낸다 */
+  function auto() {
+    if (location.search.indexOf('auto=1') < 0) { return; }
+    document.body.className += ' auto';
+    var all = document.querySelector('input[name="scope_mode"][value="all"]');
+    if (all) { all.checked = true; }
+    el('f_confirm').value = 'all';
+    el('f_reason').value = '엔카 받기 — 홈 단추 (UI_REVIEW 22-1)';
+    show('progress', ['<strong>엔카에서 받는 중입니다.</strong> ' +
+                      '이 화면을 닫지 마십시오.']);
+    probe();
+    /* ★ ① 이 끝나면 ★ 곧바로 ③ 을 잇는다.  ★ 안 끝나면 안 잇는다 —
+       ★ 실패했는데 저장하면 ★ 잘못된 것이 들어간다 */
+    var tries = 0;
+    var t = window.setInterval(function () {
+      tries += 1;
+      if (!el('btn_save').disabled) { window.clearInterval(t); save(); return; }
+      if (tries > AUTO_WAIT_TICKS) {           /* ★ 못 부른 것이다 */
+        window.clearInterval(t);
+        show('progress', ['<strong>엔카를 부르지 못했습니다.</strong> ' +
+                          '아래 ① 조회를 눌러 무엇이 안 됐는지 보십시오.']);
+        document.body.className = document.body.className.replace(' auto', '');
+      }
+    }, AUTO_TICK_MS);
+  }
+  auto();
   el('btn_stop').addEventListener('click', function () {
     stopped = true;                       // ★ 중단하면 어디까지 됐는지 남는다
     el('btn_stop').disabled = true;
@@ -818,7 +854,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-29 00:51</span>
+  <span>2026-08-29 01:49</span>
 </footer>
 
 </body>

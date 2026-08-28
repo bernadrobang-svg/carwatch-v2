@@ -153,21 +153,31 @@ def banner_of(n: dict, account) -> Banner | None:
     #   ★★ `407` 은 ★ 고장이 아니다 — ★ 규격이다 (`ENCAR_API.md:48`).
     #     ★ ★ 우회하지 않는다 (금지 13) — ★ 마스터가 브라우저로 눌러 주셔야 한다
     #   ★ 이틀을 넘겨야 낸다 — ★ 하루짜리 흔들림에 ★ 배너를 띄우지 않는다
+    # ★★★★ 08-29 (UI_REVIEW 22-2 · 개정 826) — ★ 문구와 단추를 바꾼다.
+    #   ★ 마스터는 ★ **휴대폰뿐**이고 ★ 엔카가 ★ 우리 매물의 88% 다.
+    #   ★ ★ 「관리 ▸ 수집에서 눌러 주십시오」는 ★ **네 번 누르라는 말**이었다 —
+    #     ★ 배너에서 ★ **바로 받아지게** 한다 (22-1 의 한 번 누르기).
+    #   ★ 검산 `S46-111` — ★ 하루 넘었는데 배너가 없으면 실패
     blocked = _encar_blocked(n.get("encar_407_at"), n.get("list_at"))
     if blocked is not None:
+        # ★ 「엔카가 막혀 있습니다」는 ★ `S46-88` 이 요구하는 말이다 —
+        #   ★ 22-2 의 「N일째 멈췄습니다」와 ★ 함께 담는다.  ★ 둘 다 참이다
         return Banner(
             "stale",
-            f"엔카가 막혀 있습니다 — {blocked:.0f}일째입니다",
-            "관리 ▸ 수집에서 「브라우저 수집」을 눌러 주십시오",
-            href="/admin/collect", href_label="브라우저 수집")
+            f"엔카가 막혀 있습니다 — {blocked:.0f}일째 멈췄습니다",
+            "우리 회선은 407 입니다. 「엔카 받기」가 브라우저 수집을 "
+            "대신 눌러 줍니다 — 마스터 휴대폰으로만 받아집니다",
+            href=ENCAR_GET_URL, href_label="엔카 받기")
     stale = _list_stale(n.get("list_at"))
     if stale is not None:
+        # ★ 「갱신되지 않았습니다」·「가격 변동」은 ★ `V11-103` 이 ★ 글에서 찾는다 —
+        #   ★ 규격의 「필수」다 (STEP 136i).  ★ 22-2 문구와 함께 담는다
         return Banner(
             "stale",
-            f"엔카 목록이 {stale:.0f}일째 갱신되지 않았습니다 — "
+            f"엔카가 {stale:.0f}일째 멈췄습니다 — 목록이 갱신되지 않았습니다. "
             "그동안의 가격 변동을 알 수 없습니다",
-            "브라우저 수집을 눌러 주십시오",
-            href="/admin/collect", href_label="브라우저 수집")
+            "「엔카 받기」를 눌러 주십시오",
+            href=ENCAR_GET_URL, href_label="엔카 받기")
     if n["unclassified"]:
         return Banner("unclassified", "등록부에 미분류가 있습니다",
                       "판정에 쓰는 경로면 멈춥니다",
@@ -180,6 +190,11 @@ def banner_of(n: dict, account) -> Banner | None:
                       "축별 미확정을 확인하십시오",
                       href="/notready", href_label="미판정 보기")
     return None
+
+
+# ★★★★ 「엔카 받기」 — ★ 한 번 눌러 끝난다 (UI_REVIEW 22-1 · 개정 826).
+#   ★ `auto=1` 이면 ★ 수집 화면이 ★ 스스로 26종을 돈다 — ★ 고르라고 안 묻는다
+ENCAR_GET_URL = "/admin/collect?auto=1"
 
 
 def _encar_blocked(at407: str | None, list_at: str | None) -> float | None:
