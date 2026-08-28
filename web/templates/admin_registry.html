@@ -37,9 +37,19 @@
   <p class="muted">⑤ 안 정하면 — <strong>{{ c.if_left }}</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
+    <!-- ★★ 08-28 (#82) — 이 칸이 없어 3단추 30개가 늘 400 이었다.
+         ★ 이 카드 자체가 미리보기다 (① 실제 값 · ③ 옆에 있던 것 · ⑤ 안 정하면).
+           눈으로 보고 누르는 자리이므로 여기서 채운다 -->
+    <input type="hidden" name="previewed" value="1">
     <input type="hidden" name="endpoint" value="{{ c.endpoint }}">
     <input type="hidden" name="json_path" value="{{ c.path }}">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    <!-- ★★ 08-28 (#84 · #83) — 분류마다 반드시 있어야 하는 칸이다
+         (store/admin.py USAGE_REQUIRES).  없으면 그 단추가 안 먹는다 -->
+    <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
+      <input name="core_column" size="14" placeholder="예) core_listing.fuel"></label>
+    <label title="「나중에」에 필요합니다 — 언제 다시 볼지">언제
+      <input name="use_when" size="16" placeholder="예) 상세를 받으면"></label>
     {% for ch in c.choices %}
     <button type="submit" name="usage" value="{{ ch.usage }}"
       title="{{ ch.why }}">{{ ch.label }}</button>
@@ -84,6 +94,10 @@
       {% for u in usages %}<option value="{{ u }}">{{ u }}</option>{% endfor %}
     </select>
     <input name="core_column" placeholder="컬럼" size="12">
+    <!-- ★★ 08-28 (#83) — deferred 는 use_when · blocked 는 unblock_condition
+         을 요구한다 (USAGE_REQUIRES).  칸이 없어 그 둘을 고르면 400 이었다 -->
+    <input name="use_when" placeholder="언제 (나중에)" size="12">
+    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
     <input name="reason" placeholder="근거 (필수)" size="18" required>
     <button type="submit" class="mini">저장</button>
   </form>

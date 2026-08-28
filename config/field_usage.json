@@ -1694,6 +1694,10 @@
       "usage": "in_use",
       "reason": "파서가 읽는다 — parse/encar/mapping.py:311 · 관측 0/200. 〃 (core_record.accident_other_cost 2,305/2,305)",
       "core_column": "accident_other_cost"
+    },
+    "core:accident_my_cnt": {
+      "usage": "not_provided",
+      "reason": "4회차 재측정"
     }
   },
   "not_provided": {

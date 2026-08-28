@@ -2076,11 +2076,16 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
 
         form = _gate(conn, account, req, csrf)
         # ★ 실제로 저장한다.  「저장했습니다」만 내면 사람이 바뀐 줄 안다 (V11-33)
+        # ★★ 08-28 (#83) — ★ `use_when` 을 ★ 안 넘기고 있었다.
+        #   ★ `deferred` 는 ★ `USAGE_REQUIRES` 가 ★ 그것을 요구하는데
+        #     ★ 폼에도 없고 ★ 여기서도 안 넘겨 ★ 「나중에」 단추가
+        #     ★ 무엇을 채워도 ★ 400 이었다 (store/admin.py:508)
         classify_field(conn, account, form.get("endpoint", ""),
                        form.get("json_path", ""), form.get("usage", ""),
                        form.get("reason", ""),
                        core_column=form.get("core_column") or None,
                        unblock_condition=form.get("unblock_condition") or None,
+                       use_when=form.get("use_when") or None,
                        root=root, at=_now())
         return redirect("/admin/registry", "분류를 저장했습니다", flash_key)
 
