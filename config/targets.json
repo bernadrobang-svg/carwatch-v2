@@ -1144,5 +1144,58 @@
     "fuel_match": [
       "전기"
     ]
+  },
+  "POLESTAR2_EV": {
+    "label": "폴스타 2 (전기)",
+    "collect_group": "multi",
+    "_ref": "★ 마스터 08-28 — 「폴스타 추가하고 싶어」",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "폴스타",
+        "ModelGroup": "폴스타 2",
+        "_확인": "[추론 08-28] ★ facet 미확인 — ★ 마스터께서 엔카에서 걸어 주시면 참 이름을 안다.  ★ 볼보 C40 처럼 ★ 「폴스타 2」일 수도 「Polestar 2」일 수도 있다"
+      },
+      "kbchachacha": {
+        "makerCode": "158",
+        "classCode": "2796",
+        "_차명": "폴스타 2 (전기)",
+        "_확인": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
+      },
+      "kcar": {
+        "wr_in_multi_mnuftr_modelGrp_model_grd": "091,001,001,001",
+        "carType_modelGrp_model_grd": "IMP",
+        "_확인": "[실측 08-28] ★ 마스터께서 주신 K카 주소에 들어 있었다 (KCAR_API 3장)"
+      }
+    },
+    "year_range": "201900..",
+    "price_range": null,
+    "fuel_match": [
+      "전기"
+    ]
+  },
+  "POLESTAR4_EV": {
+    "label": "폴스타 4 (전기)",
+    "collect_group": "multi",
+    "_ref": "★ 마스터 08-28 — 「폴스타 추가하고 싶어」",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "폴스타",
+        "ModelGroup": "폴스타 4",
+        "_확인": "[추론 08-28] ★ facet 미확인 — ★ 마스터께서 엔카에서 걸어 주시면 참 이름을 안다.  ★ 볼보 C40 처럼 ★ 「폴스타 2」일 수도 「Polestar 2」일 수도 있다"
+      },
+      "kbchachacha": {
+        "makerCode": "158",
+        "classCode": "2855",
+        "_차명": "폴스타 4 (전기)",
+        "_확인": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
+      }
+    },
+    "year_range": "201900..",
+    "price_range": null,
+    "fuel_match": [
+      "전기"
+    ]
   }
 }

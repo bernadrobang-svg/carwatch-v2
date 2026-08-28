@@ -883,7 +883,10 @@
       "XC60_IMPORT": 4000,
       "XC40_IMPORT": 3500,
       "S60_IMPORT": 3000,
-      "V60CC_IMPORT": 4000
+      "V60CC_IMPORT": 4000,
+      "POLESTAR2_EV": 4000,
+      "POLESTAR4_EV": 5500,
+      "EX30_EV": 3500
     },
     "by_fuel": {
       "전기": {
