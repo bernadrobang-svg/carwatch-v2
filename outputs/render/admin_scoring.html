@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>배점 조정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
+<link rel="stylesheet" href="/static/app.css?v=e635668d5b">
 
 </head>
 <body class="s-admin-scoring">
@@ -52,10 +52,13 @@
 <h1>배점 조정</h1>
 <p class="notice">
   축의 배점을 바꾸면 <strong>전 매물이 다시 채점됩니다.</strong>
-  합계가 <code>total_points</code> 와 맞지 않으면 저장할 수 없습니다.
   <span class="muted">근거 STEP 128</span><br>
-  ★ <code>total_points</code> 는 직접 입력하지 않습니다 — 성분 합으로만 정해집니다.<br>
-  ★ 성분을 빼려면 <strong>스킵</strong>을 씁니다. 「0점」과 「스킵」은 다릅니다.
+  ★ <code>total_points</code> 는 직접 입력하지 않습니다 — 성분 합으로만 정해집니다.
+  그래서 여기서 성분을 바꾸면 <strong>총점이 그 합으로 다시 더해집니다</strong> —
+  총점 자체가 달라집니다.<br>
+  ★ 성분을 빼려면 <strong>스킵</strong>을 씁니다. 「0점」과 「스킵」은 다릅니다.<br>
+  ★ 바꾼 값은 <strong>재판정하기 전까지 판정 화면(상세 · 판정 근거)에 안 나옵니다.</strong>
+  두 화면의 총점이 다르면 아직 재판정을 안 한 것입니다.
 </p>
 
 <p>합계 <strong class="num">910</strong> / 910
@@ -891,8 +894,14 @@
 <tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td class="runid" data-label="무엇">color_ext[23]</td>
   <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
 
+<tr><td data-label="시각">2026-08-28T10:40:29.441582+00:00</td><td class="runid" data-label="무엇">TESTER_V90</td>
+  <td class="muted" data-label="사유">시험자 2회차</td></tr>
+
 <tr><td data-label="시각">2026-08-24T03:37:42.158168+00:00</td><td class="runid" data-label="무엇">target[8]</td>
   <td class="muted" data-label="사유">엔카 차종 8종. G80 2,752 · 그랜저 1,797 등 전부 매물이 붙어 있다</td></tr>
+
+<tr><td data-label="시각">2026-08-28T10:42:20.126710+00:00</td><td class="runid" data-label="무엇">target[23]</td>
+  <td class="muted" data-label="사유">시험자 2회차 검사</td></tr>
 
 <tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td class="runid" data-label="무엇">fuel[5]</td>
   <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
@@ -900,11 +909,17 @@
 <tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td class="runid" data-label="무엇">sell_type[3]</td>
   <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
 
+<tr><td data-label="시각">2026-08-28T10:39:56.212658+00:00</td><td class="runid" data-label="무엇">components</td>
+  <td class="muted" data-label="사유">시험자 2회차 — 원상복구</td></tr>
+
 <tr><td data-label="시각">2026-08-24T03:37:42.298781+00:00</td><td class="runid" data-label="무엇">panel[35]</td>
   <td class="muted" data-label="사유">엔카 점검 원문 inspection_panel_json 의 외판 부위 이름. 원문에서 후드·프론트 휀더(좌)·프론트 패널을 눈으로 대조했다</td></tr>
 
 <tr><td data-label="시각">2026-08-24T03:36:18.256485+00:00</td><td class="runid" data-label="무엇">target[17]</td>
   <td class="muted" data-label="사유">현대 인증중고 목록이 낸 차종 이름이다. 원문과 대조해 확정한다 (명령서 0장 2)</td></tr>
+
+<tr><td data-label="시각">2026-08-28T10:39:17.654563+00:00</td><td class="runid" data-label="무엇">components</td>
+  <td class="muted" data-label="사유">시험자 2회차 검사 — 합계 검증</td></tr>
 
 <tr><td data-label="시각">2026-08-16T07:28:00.532735+00:00</td><td class="runid" data-label="무엇">color_int[10]</td>
   <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
@@ -921,7 +936,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-28 14:23</span>
+  <span>2026-08-28 22:15</span>
 </footer>
 
 </body>

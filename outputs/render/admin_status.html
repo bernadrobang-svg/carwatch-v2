@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>진행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
+<link rel="stylesheet" href="/static/app.css?v=e635668d5b">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-status">
@@ -60,7 +60,7 @@
 
 <p class="muted">
   <strong>5초</strong>마다 스스로 갱신합니다 ·
-  마지막 확인 <strong>2026-08-28T05:23:18+00:00</strong>.
+  마지막 확인 <strong>2026-08-28T13:15:38+00:00</strong>.
   갱신이 실패해도 <strong>여기 보이는 것은 그대로 남습니다</strong> —
   서버가 만든 화면이라 JS 가 없어도 새로고침하면 지금 상태가 나옵니다.
 </p>
@@ -72,8 +72,8 @@
 
 
 <p>
-  <strong>2026-08-27T21:00:26Z</strong>
-  <span class="muted">502분 전</span>
+  <strong>2026-08-28T13:00:25Z</strong>
+  <span class="muted">15분 전</span>
   
   <span class="chip-bad">어긋난 것이 있습니다</span>
 </p>
@@ -82,13 +82,13 @@
 <thead><tr><th>fatal</th><th>warn</th><th>시험 실패</th><th>「—」</th>
   <th>계산식</th><th>템플릿 문법</th><th>걸린 시간</th></tr></thead>
 <tbody><tr>
-  <td class="num" data-label="fatal">8</td>
-  <td class="num" data-label="warn">13</td>
+  <td class="num" data-label="fatal">9</td>
+  <td class="num" data-label="warn">12</td>
   <td class="num" data-label="시험 실패">1</td>
-  <td class="num" data-label="「—」">0</td>
-  <td class="num" data-label="계산식">152</td>
+  <td class="num" data-label="「—」">2</td>
+  <td class="num" data-label="계산식">154</td>
   <td class="num" data-label="템플릿 문법">0</td>
-  <td class="num" data-label="걸린 시간">1,133.9초</td>
+  <td class="num" data-label="걸린 시간">477초</td>
 </tr></tbody>
 </table>
 
@@ -97,7 +97,7 @@
 
 
 <p><b>지난 번과 달라진 것</b>
-  <span class="chip-bad">통과 398 → 395  ★ 늘었다</span><span class="chip-bad">fatal 5 → 8  ★ 늘었다</span><span class="chip-bad">계산식 151 → 152  ★ 늘었다</span><span class="chip-bad">raw_response 186194 → 186198</span><span class="chip-bad">core_listing 18755 → 18757</span></p>
+  <span class="chip-bad">fatal 8 → 9  ★ 늘었다</span><span class="chip-bad">— 0 → 2  ★ 늘었다</span><span class="chip-bad">계산식 153 → 154  ★ 늘었다</span><span class="chip-bad">검사 444 → 445</span><span class="chip-bad">raw_response 186532 → 186547</span><span class="chip-bad">core_listing 18762 → 18768</span></p>
 
 
 
@@ -179,9 +179,9 @@
 
 <h3>마지막으로 처리한 것</h3>
 
-<p>매물 <strong></strong> · list
-  · <strong>71분 전</strong>
-  <span class="muted">(2026-08-28T04:11:55.897571+00:00)</span></p>
+<p>매물 <strong>28681325</strong> · detail
+  · <strong>352분 전</strong>
+  <span class="muted">(2026-08-28T07:23:09.578723+00:00)</span></p>
 
 
 
@@ -191,34 +191,34 @@
 <thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="지금 어떤 상태인지입니다">상태</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th title="언제 도는지입니다">언제</th><th title="사람이 적어 둔 말입니다">메모</th></tr></thead>
 <tbody>
 
+<tr><td class="runid" data-label="작업">f3e0aee81d1615f8</td>
+  <td data-label="상태"><strong>failed</strong></td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td class="muted" data-label="언제">67분 전</td>
+  <td class="muted" data-label="메모">OperationalError: database is locked</td></tr>
+
+<tr><td class="runid" data-label="작업">61e86fae43e8ca5e</td>
+  <td data-label="상태"><strong>done</strong></td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td class="muted" data-label="언제">358분 전</td>
+  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</td></tr>
+
+<tr><td class="runid" data-label="작업">e05dc625bba9d482</td>
+  <td data-label="상태"><strong>done</strong></td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td class="muted" data-label="언제">369분 전</td>
+  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</td></tr>
+
 <tr><td class="runid" data-label="작업">33f42b77d0fdd9627e</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">listing_updated · all</td>
-  <td class="muted" data-label="언제">62분 전</td>
+  <td class="muted" data-label="언제">534분 전</td>
   <td class="muted" data-label="메모">S4 ok 40 · S5 ok 33 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</td></tr>
 
 <tr><td class="runid" data-label="작업">96f68d67572fe688</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">73분 전</td>
-  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138244 · S9 ok 248508 · S10 ok 9558</td></tr>
-
-<tr><td class="runid" data-label="작업">8329e15c66c50b54</td>
-  <td data-label="상태"><strong>done</strong></td>
-  <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">701분 전</td>
-  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138244 · S9 ok 248508 · S10 ok 9558</td></tr>
-
-<tr><td class="runid" data-label="작업">f731ead8c43688eb</td>
-  <td data-label="상태"><strong>done</strong></td>
-  <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">711분 전</td>
-  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138244 · S9 ok 248508 · S10 ok 9558</td></tr>
-
-<tr><td class="runid" data-label="작업">bea1f5251aba435f</td>
-  <td data-label="상태"><strong>done</strong></td>
-  <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">1033분 전</td>
+  <td class="muted" data-label="언제">545분 전</td>
   <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138244 · S9 ok 248508 · S10 ok 9558</td></tr>
 
 </tbody>
@@ -234,7 +234,7 @@
 
 <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="받은 원문">127</td></tr>
 
-<tr><td data-label="엔드포인트">detail</td><td class="num" data-label="받은 원문">21,597</td></tr>
+<tr><td data-label="엔드포인트">detail</td><td class="num" data-label="받은 원문">21,610</td></tr>
 
 <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="받은 원문">3,023</td></tr>
 
@@ -258,17 +258,27 @@
 
 <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="받은 원문">20,708</td></tr>
 
-<tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="받은 원문">2</td></tr>
+<tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="받은 원문">4</td></tr>
 
 </tbody>
 </table>
-<p>펼쳐 앉은 매물 <strong>18,762건</strong> ·
+<p>펼쳐 앉은 매물 <strong>18,768건</strong> ·
   판정 <strong>9,563건</strong></p>
 
 <h2>④ 실패</h2>
 
+<table class="rows">
+<thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th>무엇이 왜</th></tr></thead>
+<tbody>
 
-<p class="muted">실패한 작업이 없습니다.</p>
+<tr><td class="runid" data-label="작업">f3e0aee81d1615f8</td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td data-label="무엇이 왜">OperationalError: database is locked</td></tr>
+
+</tbody>
+</table>
+<p class="muted">★ 「로그를 보십시오」라고 하지 않습니다. 무엇이 왜 실패했는지 여기 적습니다.</p>
+
 
 
 </main>
@@ -278,7 +288,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-28 14:23</span>
+  <span>2026-08-28 22:15</span>
 </footer>
 
 </body>

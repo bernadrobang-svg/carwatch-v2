@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>사전 확정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
+<link rel="stylesheet" href="/static/app.css?v=e635668d5b">
 
 </head>
 <body class="s-admin-dict">
@@ -68,13 +68,13 @@
 </p>
 
 
-<h2>확정 대기 207종</h2>
+<h2>확정 대기 184종</h2>
 
 
 <h3>축 단위로 한 번에</h3>
-<p class="muted">207종을 하나씩 누르지 않습니다.
+<p class="muted">184종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.
-  지금 대기 중인 묶음은 <strong>6가지</strong>입니다 —
+  지금 대기 중인 묶음은 <strong>5가지</strong>입니다 —
   <strong>사이트마다 따로</strong> 셉니다. 나머지는 이미 확정됐습니다.</p>
 
 <details class="card tight">
@@ -93,28 +93,6 @@
       placeholder="왜 확정하는가 (필수)" required></label>
     <button type="submit" name="action" value="confirm"
       title="이 사이트·축의 대기 값을 한 번에 확정합니다">kcar target 151종 확정</button>
-    <button type="submit" name="action" value="retire"
-      title="쓰지 않는 값으로 내립니다">폐기</button>
-  </form>
-  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
-</details>
-
-<details class="card tight">
-  <summary><strong>kia_cpo</strong> · <strong>target</strong>
-    <span class="dim">23종 ·
-      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
-      list <span class="dim">전체 집합 아님</span></span></summary>
-  <p class="dim">값 예시 카니발 · 쏘렌토 · K8 · K5 · 셀토스  외 18종</p>
-  <form method="post" action="/admin/dict">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="axis" value="target">
-    
-    <input type="hidden" name="site" value="kia_cpo">
-    <input type="hidden" name="previewed" value="1">
-    <label>사유 <input name="reason" size="24"
-      placeholder="왜 확정하는가 (필수)" required></label>
-    <button type="submit" name="action" value="confirm"
-      title="이 사이트·축의 대기 값을 한 번에 확정합니다">kia_cpo target 23종 확정</button>
     <button type="submit" name="action" value="retire"
       title="쓰지 않는 값으로 내립니다">폐기</button>
   </form>
@@ -2050,236 +2028,6 @@
 </tr>
 
 <tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>카니발</strong></td>
-  <td class="num" data-label="관측">244</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>쏘렌토</strong></td>
-  <td class="num" data-label="관측">222</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>K8</strong></td>
-  <td class="num" data-label="관측">88</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>K5</strong></td>
-  <td class="num" data-label="관측">78</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>셀토스</strong></td>
-  <td class="num" data-label="관측">54</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>모하비</strong></td>
-  <td class="num" data-label="관측">49</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>레이</strong></td>
-  <td class="num" data-label="관측">29</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>K9</strong></td>
-  <td class="num" data-label="관측">24</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>니로</strong></td>
-  <td class="num" data-label="관측">22</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>모닝</strong></td>
-  <td class="num" data-label="관측">22</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>타스만</strong></td>
-  <td class="num" data-label="관측">21</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>PV5</strong></td>
-  <td class="num" data-label="관측">17</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>EV6</strong></td>
-  <td class="num" data-label="관측">16</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>카니발 하이리무진</strong></td>
-  <td class="num" data-label="관측">15</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>EV3</strong></td>
-  <td class="num" data-label="관측">10</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>EV5</strong></td>
-  <td class="num" data-label="관측">9</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>K3</strong></td>
-  <td class="num" data-label="관측">9</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>EV9</strong></td>
-  <td class="num" data-label="관측">8</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>EV4</strong></td>
-  <td class="num" data-label="관측">2</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>스팅어</strong></td>
-  <td class="num" data-label="관측">2</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>K7</strong></td>
-  <td class="num" data-label="관측">1</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>쏘울</strong></td>
-  <td class="num" data-label="관측">1</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
-  <td data-label="사이트">kia_cpo</td>
-  <td data-label="축">target</td>
-  <td data-label="값"><strong>카니발 아웃도어</strong></td>
-  <td class="num" data-label="관측">1</td>
-  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
-  <td data-label="출처"><strong>list</strong></td>
-  <td class="muted" data-label="처음 본 시각">2026-08-23</td>
-</tr>
-
-<tr>
   <td data-label="사이트">reborncar</td>
   <td data-label="축">target</td>
   <td data-label="값"><strong>그랑 콜레오스 하이브리드</strong></td>
@@ -2320,7 +2068,7 @@
 
 <tr><td>sell_type</td><td class="num">3종</td></tr>
 
-<tr><td>target</td><td class="num">52종</td></tr>
+<tr><td>target</td><td class="num">75종</td></tr>
 
 <tr><td>trim</td><td class="num">68종</td></tr>
 
@@ -2338,7 +2086,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-28 14:23</span>
+  <span>2026-08-28 22:15</span>
 </footer>
 
 </body>

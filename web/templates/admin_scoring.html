@@ -1,14 +1,18 @@
 <h1>배점 조정</h1>
 <p class="notice">
   축의 배점을 바꾸면 <strong>전 매물이 다시 채점됩니다.</strong>
-  합계가 <code>total_points</code> 와 맞지 않으면 저장할 수 없습니다.
   <span class="muted">근거 STEP 128</span><br>
-  ★ <code>total_points</code> 는 직접 입력하지 않습니다 — 성분 합으로만 정해집니다.<br>
-  ★ 성분을 빼려면 <strong>스킵</strong>을 씁니다. 「0점」과 「스킵」은 다릅니다.
+  ★ <code>total_points</code> 는 직접 입력하지 않습니다 — 성분 합으로만 정해집니다.
+  그래서 여기서 성분을 바꾸면 <strong>총점이 그 합으로 다시 더해집니다</strong> —
+  총점 자체가 달라집니다.<br>
+  ★ 성분을 빼려면 <strong>스킵</strong>을 씁니다. 「0점」과 「스킵」은 다릅니다.<br>
+  ★ 바꾼 값은 <strong>재판정하기 전까지 판정 화면(상세 · 판정 근거)에 안 나옵니다.</strong>
+  두 화면의 총점이 다르면 아직 재판정을 안 한 것입니다.
 </p>
 
 <p>합계 <strong class="num">{{ sum | num }}</strong> / {{ total_points | num }}
-  {% if gap %}<span class="warn-block">차이 {{ gap | num }} — 저장할 수 없습니다</span>{% endif %}
+  {% if gap %}<span class="warn-block">차이 {{ gap | num }} —
+    파일이 어긋나 있습니다. config 를 손으로 고친 자국입니다</span>{% endif %}
 </p>
 
 <h2>축 총점 <span class="muted">바꾸면 성분이 비율로 재배분됩니다</span></h2>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>개발 요청 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
+<link rel="stylesheet" href="/static/app.css?v=e635668d5b">
 
 </head>
 <body class="s-admin-requests">
@@ -49,7 +49,7 @@
 
 
 <main>
-<h1>개발 요청 <small>0건</small></h1>
+<h1>개발 요청 <small>1건</small></h1>
 <p class="notice">
   없는 기능 · 막힌 것을 기록해 세션에 전달합니다.
   <strong>요청은 삭제하지 않습니다</strong> — 상태 전이로만 관리합니다.<br>
@@ -74,8 +74,35 @@
 
 <h2>요청 목록</h2>
 
+<table class="rows">
+<thead><tr><th>제목</th><th title="어디서 온 값인지입니다">출처</th><th title="지금 어떤 상태인지입니다">상태</th><th>반영 STEP</th>
+<th title="왜 그렇게 됐는지입니다">사유</th><th>상태 바꾸기</th></tr></thead>
+<tbody>
 
-<p class="muted">아직 요청이 없습니다.</p>
+<tr>
+  <td data-label="제목">시험자 2회차 — 지역 거르개 500</td>
+  <td class="muted" data-label="출처">screen</td>
+  <td data-label="상태">draft</td>
+  <td class="runid" data-label="반영 STEP">—</td>
+  <td class="muted" data-label="사유">—</td>
+  <td data-label="상태 바꾸기">
+    <form method="post" action="/admin/requests" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="action" value="status">
+      <input type="hidden" name="request_id" value="0ae031e2e5f3f3f87a">
+      <select name="status">
+        <option value="draft">draft</option><option value="requested">requested</option><option value="in_progress">in_progress</option><option value="applied">applied</option><option value="not_applied">not_applied</option><option value="misapplied">misapplied</option><option value="reopened">reopened</option>
+      </select>
+      <input name="step_ref" size="8" placeholder="STEP">
+      <input name="direction" size="16" placeholder="사유">
+      <button type="submit" class="mini">바꾸기</button>
+    </form>
+  </td>
+</tr>
+
+</tbody>
+</table>
+
 
 
 <h2>내보내기</h2>
@@ -94,7 +121,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-28 14:23</span>
+  <span>2026-08-28 22:15</span>
 </footer>
 
 </body>

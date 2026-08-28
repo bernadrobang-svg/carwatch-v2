@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
+<link rel="stylesheet" href="/static/app.css?v=e635668d5b">
 
 </head>
 <body class="s-admin">
@@ -75,8 +75,8 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-08-28_0600</td>
-  <td data-label="기록" class="muted">outputs/light/ · 51건 ·
+  <td data-label="마지막">2026-08-28_2200</td>
+  <td data-label="기록" class="muted">outputs/light/ · 53건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
   <td data-label="마지막">2026-08-27</td>
@@ -96,13 +96,17 @@
 <thead><tr><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
 <tbody>
 
-<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">207</td>
+<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">184</td>
   <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
   <td data-label=""><a href="/notready">가기</a></td></tr>
 
 <tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">319</td>
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
   <td data-label=""><a href="/admin/registry">가기</a></td></tr>
+
+<tr><td class="warn-warn" data-label="무엇">처리 중인 요청</td><td class="num" data-label="건수">1</td>
+  <td class="muted" data-label="왜">개발 요청이 열려 있습니다</td><td class="muted" data-label="하면 되는 것">요청 화면에서 상태를 봅니다</td>
+  <td data-label=""><a href="/admin/requests">가기</a></td></tr>
 
 </tbody>
 </table>
@@ -113,7 +117,7 @@
 
 <ul class="stat">
   <li>등록부 미분류 <strong>319</strong></li>
-  <li>개발 요청 <strong>0</strong></li>
+  <li>개발 요청 <strong>1</strong></li>
   <li>대기 작업 <strong>0</strong></li>
 </ul>
 
@@ -262,7 +266,7 @@
 
 <tr><td data-label="시각">2026-08-28T04:10:33.023650+00:00</td><td class="muted" data-label="사유">요청 41건</td>
   <td class="runid" data-label="실행">20260828T041017</td>
-  <td class="num" data-label="소요">1.9초</td><td data-label="판정">fatal 9</td></tr>
+  <td class="num" data-label="소요">1.9초</td><td data-label="판정">fatal 11</td></tr>
 
 <tr><td data-label="시각">2026-08-26T16:46:19.413360+00:00</td><td class="muted" data-label="사유">요청 58건</td>
   <td class="runid" data-label="실행">20260826T164607</td>
@@ -320,21 +324,21 @@
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-24T03:37:42.158168+00:00</td><td data-label="무엇">target[8] pending → confirm</td><td class="muted" data-label="사유">엔카 차종 8종. G80 2,752 · 그랜저 1,797 등 전부 매물이 붙어 있다</td>
+<tr><td data-label="시각">2026-08-28T10:40:29.441582+00:00</td><td data-label="무엇">TESTER_V90 null → {&quot;label&quot;: &quot;시험자 V90&quot;, &quot;origin_type&quot;: &quot;N&quot;, &quot;collect_group&quot;: &quot;import&quot;, &quot;site_query&quot;: &quot;(And.Hidden.N._.CarType.N._.(C.Manufacturer.볼보._.ModelGroup.V90.))&quot;, &quot;status&quot;: &quot;pending_review&quot;}</td><td class="muted" data-label="사유">시험자 2회차</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="c4452df2c05f480b1f">
+    <input type="hidden" name="change_id" value="c48747ca3b14470afb">
     <input name="reason" size="10" placeholder="사유 (필수)" required>
     <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td data-label="무엇">fuel[5] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
+<tr><td data-label="시각">2026-08-24T03:37:42.158168+00:00</td><td data-label="무엇">target[8] pending → confirm</td><td class="muted" data-label="사유">엔카 차종 8종. G80 2,752 · 그랜저 1,797 등 전부 매물이 붙어 있다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="6b6be2dec4911dc629">
+    <input type="hidden" name="change_id" value="c4452df2c05f480b1f">
     <input name="reason" size="10" placeholder="사유 (필수)" required>
     <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
   </form></td></tr>
@@ -355,7 +359,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-28 14:23</span>
+  <span>2026-08-28 22:15</span>
 </footer>
 
 </body>
