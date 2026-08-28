@@ -55,7 +55,9 @@
     <span class="dim">{{ r.ratio_pct }}%</span></b></div>
 {% endfor %}
 </div>
-<p class="muted">★★ 분모는 <strong>910 으로 같습니다</strong> — 갈리는 것은 earned 입니다.</p>
+<!-- ★★ 08-29 — ★ 「910」을 글에 박아 두었었다.  ★ `total_points` 는
+     ★ 성분 합으로 바뀔 수 있다 (STEP 128) — ★ 숫자를 글에 안 적는다 -->
+<p class="muted">★★ 분모는 <strong>모두 같습니다</strong> — 갈리는 것은 earned 입니다.</p>
 <table class="cmp-bars">
 <thead><tr><th>★ 네 묶음 막대</th>
   {% for r in c.rows %}<th>{{ r.target_label }}</th>{% endfor %}</tr></thead>

@@ -719,8 +719,11 @@ def dealer_trust(conn: sqlite3.Connection, at: str) -> dict:
         if days is not None and days >= 0:
             doms.setdefault(did, []).append(float(days))
 
-    least = _trust_min_listings()
-    lo_d, hi_d = _trust_dom_days()
+    cfg = _trust_cfg()
+    least = int(cfg["min_listings"])
+    lo_d = float(cfg["dom_full_days"])
+    hi_d = float(cfg["dom_zero_days"])
+    w = cfg["weights"]
     # ★ 가름의 중앙값은 ★ **재는 딜러들**의 매물 수로 낸다 (규격의 표).
     #   ★ 못 재는 딜러(매물 10건 미만 968곳)까지 넣으면 ★ 중앙값이 1~2 로 내려가
     #     ★ 재는 딜러가 ★ 전부 「매물이 많다」가 된다 — ★ 실측 Q1 213 · Q3 1
@@ -736,18 +739,23 @@ def dealer_trust(conn: sqlite3.Connection, at: str) -> dict:
                 " calculated_at = ? WHERE dealer_id = ?", (n, at, did))
             skipped += 1
             continue
-        parts = []
-        parts.append(1.0 - (gone / n))                       # 올렸다 내린 비율
-        parts.append(1.0 - min(vol.get(did, 0) / n, 1.0))    # 값 바꿈
+        # ★ (무게, 값) 넷.  ★ 무게도 config 가 정본이다 (dealer_trust.weights)
+        parts = [
+            (float(w["drop_event"]), 1.0 - (gone / n)),
+            (float(w["price_volatility"]),
+             1.0 - min(vol.get(did, 0) / n, 1.0)),
+        ]
         got = doms.get(did)
         if got:                                              # ★ 없으면 분모에서 뺀다
             got = sorted(got)
             med = got[len(got) // 2]
-            parts.append(max(0.0, min(1.0, (hi_d - med) / (hi_d - lo_d))))
-        parts.append((ph + rec + war + opt) / (4.0 * n))     # 얼마나 적어 주나
-        score = round(100.0 * sum(parts) / len(parts), 1)
-        # ★ 넷으로 나눈다 — 매물 수 중앙값 · 점수 60 (규격의 표)
-        big, high = n >= mid_n, score >= _trust_quadrant_score()
+            parts.append((float(w["dom"]),
+                          max(0.0, min(1.0, (hi_d - med) / (hi_d - lo_d)))))
+        parts.append((float(w["info"]), (ph + rec + war + opt) / (4.0 * n)))
+        tot_w = sum(x for x, _v in parts)
+        score = round(100.0 * sum(x * v for x, v in parts) / tot_w, 1)
+        # ★ 넷으로 나눈다 — 매물 수 중앙값 · 점수 가름 (규격의 표)
+        big, high = n >= mid_n, score >= float(cfg["quadrant_score_cut"])
         quad = "Q1" if (big and high) else ("Q2" if high else
                                             ("Q3" if big else "Q4"))
         conn.execute(
@@ -760,31 +768,21 @@ def dealer_trust(conn: sqlite3.Connection, at: str) -> dict:
             "min_listings": least}
 
 
-def _trust_cfg(key: str, fallback):
-    """정직도 셈의 상수.  ★ 코드에 박지 않는다 (S14 · config/scoring.json)."""
+def _trust_cfg() -> dict:
+    """정직도 셈의 상수.  ★ 정본은 `config/scoring.json` 의 `dealer_trust` 다.
+
+    ★★ 08-29 마스터 — 「★ 거기서 읽어라.  ★ 코드 기본값을 지워라」.
+      ★ 그래서 ★ 기본값을 두지 않는다 — ★ 없으면 ★ 조용히 딴 값으로 재지 않고
+        ★ **곧바로 터진다.**  ★ 「선언과 실제의 괴리」를 막는 것이 이 프로젝트다
+    """
     import json as _tj
     import os as _to
 
-    try:
-        here = _to.path.dirname(_to.path.dirname(_to.path.abspath(__file__)))
-        with open(_to.path.join(here, "config", "scoring.json"),
-                  encoding="utf-8") as f:
-            return _tj.load(f)["dealer_trust"][key]
-    except (OSError, ValueError, KeyError, TypeError):
-        return fallback
-
-
-def _trust_min_listings() -> int:
-    return int(_trust_cfg("min_listings", 10))
-
-
-def _trust_dom_days() -> tuple:
-    return (float(_trust_cfg("dom_full_days", 30)),
-            float(_trust_cfg("dom_zero_days", 120)))
-
-
-def _trust_quadrant_score() -> float:
-    return float(_trust_cfg("quadrant_score", 60))
+    here = _to.path.dirname(_to.path.dirname(_to.path.abspath(__file__)))
+    with open(_to.path.join(here, "config", "scoring.json"),
+              encoding="utf-8") as f:
+        got = _tj.load(f)["dealer_trust"]
+    return got
 
 
 def upsert_child(conn: sqlite3.Connection, table: str, parsed: dict,

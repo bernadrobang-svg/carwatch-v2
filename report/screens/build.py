@@ -3270,8 +3270,12 @@ def view_track(account: Account, conn, calc_version: str,
         #     ★ ★ 상세 링크도 ★ `/detail/` 로 나갔다 — ★ 눌러도 아무 데도 안 간다
         #   ★ 이름으로 짚으면 ★ 그런 일이 안 생긴다
         sites = tuple(
+            # ★★ 08-29 (#75 뒤) — ★ 분모를 함께 낸다.
+            #   ★ 화면이 `/910` 을 박아 두고 있었다 — ★ `total_points` 가
+            #     바뀌면 ★ 읽는 쪽이 거짓말을 한다 (마스터 08-29 ①)
             {"badge": site_badge(x[2], x[3], root), "listing_id": x[1],
              "price_won": x[6], "grade": x[7], "earned": x[8],
+             "denominator": x[9],
              "misses": miss_by.get(x[1], ())}
             for x in got)
         step = _grade_step(grades, order_of)

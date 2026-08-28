@@ -55,8 +55,9 @@
         연식·트림이 다른 차를 묶었을 수 있습니다</div>{% endif %}
       <div class="kj">{% for s in p.sites %}<span>{{ s.badge }}
         <b class="{{ s.grade | gradecls }}">{{ s.grade | gradelabel }}</b>
-        <!-- ★ 점수가 없으면 「없습니다/910」이 된다 — ★ 그것을 안 낸다 -->
-        {% if s.earned %}{{ s.earned | num }}/910{% endif %}
+        <!-- ★ 점수가 없으면 「없습니다/…」이 된다 — ★ 그것을 안 낸다
+             ★★ 08-29 — ★ `/910` 을 박아 두었었다.  ★ 분모는 판정이 낸 값이다 -->
+        {% if s.earned %}{{ s.earned | num }}/{{ s.denominator | num }}{% endif %}
         {% if !s.earned %}<span class="dim">점수 없음</span>{% endif %}</span>{% endfor %}</div>
     </div></div>
     <div class="kacts">
@@ -87,7 +88,7 @@
       {% for s in p.sites %}
       <div class="kspec"><b>{{ s.badge }}</b>
         <span class="{{ s.grade | gradecls }}">{{ s.grade | gradelabel }}</span>
-        {% if s.earned %}<span class="mono">{{ s.earned | num }} / 910</span>{% endif %}
+        {% if s.earned %}<span class="mono">{{ s.earned | num }} / {{ s.denominator | num }}</span>{% endif %}
         {% if !s.earned %}<span class="dim">점수 없음</span>{% endif %}
         <!-- ★★ 빠진 축에 ★ 갈래(①~⑤)를 함께 낸다 (v4m 시안 · f-table 476행).
              ★ 갈래는 config/labels.json MISS_KIND 가 정본이다 —
@@ -96,7 +97,7 @@
           {% for m in s.misses %}{{ m }} {% endfor %}</span>{% endif %}
         {% if !s.misses %}<span class="dim">빠진 축 없음</span>{% endif %}</div>
       {% endfor %}
-      <div class="kspec">★★ <strong>분모는 910 으로 같습니다</strong> —
+      <div class="kspec">★★ <strong>분모는 모두 같습니다</strong> —
         갈리는 것은 earned 입니다.  갈래 가운데
         <strong>⑤ 면 어디서도 못 채우고 ③ 이면 우리가 고칠 수 있습니다</strong>.
         ★ <strong>차가 나쁜 것이 아니라 그 사이트가 안 준 것입니다</strong></div>

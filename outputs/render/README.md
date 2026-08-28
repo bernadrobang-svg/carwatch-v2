@@ -11,8 +11,8 @@
 | `/recommend` | [recommend.html](recommend.html) | 200 | 42,477B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,159B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 34,203B |
-| `/compare` | [compare.html](compare.html) | 200 | 4,493B |
-| `/track` | [track.html](track.html) | 200 | 42,750B |
+| `/compare` | [compare.html](compare.html) | 200 | 4,490B |
+| `/track` | [track.html](track.html) | 200 | 42,710B |
 | `/market` | [market.html](market.html) | 200 | 13,901B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 18,588B |
 | `/notready` | [notready.html](notready.html) | 200 | 21,932B |
@@ -32,11 +32,11 @@
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 19,536B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,676B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 98,859B |
-| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 194,221B |
+| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 200,120B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,210B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 2,972B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,329B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,123B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,196B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 4,832B |
 
 ## 못 낸 화면
