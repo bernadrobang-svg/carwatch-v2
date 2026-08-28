@@ -1154,7 +1154,7 @@
         "CarType": "N",
         "Manufacturer": "폴스타",
         "ModelGroup": "폴스타 2",
-        "_확인": "[추론 08-28] ★ facet 미확인 — ★ 마스터께서 엔카에서 걸어 주시면 참 이름을 안다.  ★ 볼보 C40 처럼 ★ 「폴스타 2」일 수도 「Polestar 2」일 수도 있다"
+        "_확인": "[마스터 실측 08-28] ★ 주신 주소로 확인했다 — `C.Manufacturer.폴스타._.(C.ModelGroup.폴스타 2._.Model.폴스타 2.)`.  ★ 제조사·차종군이 다 한글이고 ★ 사이 띄움이 있다"
       },
       "kbchachacha": {
         "makerCode": "158",
@@ -1183,13 +1183,35 @@
         "CarType": "N",
         "Manufacturer": "폴스타",
         "ModelGroup": "폴스타 4",
-        "_확인": "[추론 08-28] ★ facet 미확인 — ★ 마스터께서 엔카에서 걸어 주시면 참 이름을 안다.  ★ 볼보 C40 처럼 ★ 「폴스타 2」일 수도 「Polestar 2」일 수도 있다"
+        "_확인": "[마스터 실측 08-28] ★ 주신 주소로 확인했다 — `C.Manufacturer.폴스타._.(C.ModelGroup.폴스타 4._.Model.폴스타 4.)`.  ★ 제조사·차종군이 다 한글이고 ★ 사이 띄움이 있다"
       },
       "kbchachacha": {
         "makerCode": "158",
         "classCode": "2855",
         "_차명": "폴스타 4 (전기)",
         "_확인": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
+      }
+    },
+    "year_range": "201900..",
+    "price_range": null,
+    "fuel_match": [
+      "전기"
+    ]
+  },
+  "POLESTAR3_EV": {
+    "label": "폴스타 3 (전기)",
+    "collect_group": "multi",
+    "_ref": "★ 마스터 실측 08-28 — 주신 주소에 ★ 「폴스타 3(26년~현재)」가 있었다.  ★ 우리에게 없던 차종이다",
+    "site_query": {
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "폴스타",
+        "ModelGroup": "폴스타 3",
+        "_확인": "[마스터 실측 08-28] ★ 주소에 있었다"
+      },
+      "kbchachacha": {
+        "makerCode": "158",
+        "_확인": "[미실측] ★ KB `carClass.json` 에 ★ 폴스타2·4 만 있었다 — ★ 3 은 아직 없다(26년식이라 중고가 없다)"
       }
     },
     "year_range": "201900..",

@@ -886,7 +886,8 @@
       "V60CC_IMPORT": 4000,
       "POLESTAR2_EV": 4000,
       "POLESTAR4_EV": 5500,
-      "EX30_EV": 3500
+      "EX30_EV": 3500,
+      "POLESTAR3_EV": 6500
     },
     "by_fuel": {
       "전기": {
