@@ -2127,6 +2127,25 @@ def s46_100_sian_word_order() -> tuple[bool, str]:
             bad.append(f"{path} 못 두드림({type(exc).__name__})")
             continue
         want = _sian_seq(src.read_text(encoding="utf-8"))
+        # ★★ 마스터께서 차례를 따로 말씀하신 화면은 ★ 그것으로 견준다 (82장 ②).
+        #   ★ 시안과 어긋나는 자리를 ★ config 에 적어 두었다 — ★ 숨기지 않는다
+        fixed = (cfg.get("sian_order_override") or {}).get(path)
+        if fixed:
+            got = [w for w in page
+                   if any(w.startswith(x) for x in fixed)]
+            seen, seq = set(), []
+            for w in got:
+                key = next(x for x in fixed if w.startswith(x))
+                if key not in seen:
+                    seen.add(key)
+                    seq.append(key)
+            if seq != [x for x in fixed if x in seq]:
+                bad.append(f"{path} 마스터 차례와 다르다 —"
+                           f" 말씀 「{' → '.join(fixed)}」"
+                           f" ↔ 화면 「{' → '.join(seq)}」")
+            else:
+                ok += 1
+            continue
         # ★ 둘 다에 있는 낱말만 남긴다 — ★ 없는 것은 S46-98 이 본다
         # ★★ 양쪽에서 ★ **한 번만** 나오는 낱말로만 견준다.
         #   ★ 두 번 나오는 낱말은 ★ 어느 쪽이 그 자리인지 알 수 없다 —
@@ -2163,6 +2182,58 @@ def s46_100_sian_word_order() -> tuple[bool, str]:
     if bad:
         return False, "★ " + " / ".join(bad[:3])
     return True, f"시안 {ok}장의 낱말 차례가 화면과 같다"
+
+
+def s46_102_electric_only_is_electric() -> tuple[bool, str]:
+    """★★ 「전기만」에 ★ 전기 아닌 것이 나오면 실패 (마스터 지시 08-28 · 87장 ⑤).
+
+    ★★★ 마스터 — 「★ 나는 내 목록에서 ★ 전기차만 보고 싶은 거야」.
+    ★ 매물의 ★ **연료 칸**으로 거른다 — ★ 차종이 아니다.
+      ★ ★ 그래야 ★ XC40 안의 EX40(전기)이 갈린다.
+    ★ 「전기만」은 ★ 정확히 `전기`·`EV` 다 —
+      ★ ★ `가솔린+전기`(하이브리드)와 ★ `수소+전기`(연료전지)는 ★ 안 든다.
+    ★ 화면이 쓰는 그 조건 그대로 세어 본다 — ★ 밖에서 따로 세지 않는다
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    try:
+        from report.screens.build import _listings_where
+        from report.screens.views import ListingFilter
+    except ImportError as exc:
+        return False, f"화면 조건을 못 읽었다 — {exc}"
+
+    cfg = json.loads(_read(ROOT / "config" / "web.json") or "{}")
+    groups = {g.get("key"): g for g in (cfg.get("fuel_groups") or [])}
+    want = groups.get("electric") or {}
+    ok_values = set(want.get("values") or ())
+    if not ok_values:
+        return False, "config/web.json 에 fuel_groups.electric 이 없다"
+
+    where, args = _listings_where(ListingFilter(fuel="electric"))
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        rows = conn.execute(
+            "SELECT l.fuel_raw, COUNT(*) FROM core_listing l"
+            " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+            "   AND s.calc_version = ?"
+            f" WHERE {' AND '.join(where)} GROUP BY 1",
+            ["c1", *args]).fetchall()
+    except sqlite3.Error as exc:
+        return False, f"세지 못했다 — {exc}"
+    finally:
+        conn.close()
+
+    bad = [(f, n) for f, n in rows if f not in ok_values]
+    total = sum(n for _f, n in rows)
+    if bad:
+        got = " · ".join(f"{f}({n})" for f, n in bad[:5])
+        return False, f"★ 「전기만」에 전기 아닌 것 {sum(n for _f, n in bad)}건 — {got}"
+    if not total:
+        return False, "★ 「전기만」이 0건이다 — 거르개가 안 먹는다"
+    return True, f"「전기만」 {total:,}건이 다 전기다 ({' · '.join(sorted(ok_values))})"
 
 def s46_98_sian_words_on_screen() -> tuple[bool, str]:
     """★★ 시안에 있는 낱말이 ★ 화면에 없으면 실패 (마스터 지시 08-26).
@@ -2490,6 +2561,9 @@ CHECKS = (
     ("S46-98", "시안의 낱말이 화면에 있는가", s46_98_sian_words_on_screen),
     # ★★ 마스터 08-28 — ★ 시안은 낱말이 아니라 자리다.  ★ S46-98 로는 못 잡는다
     ("S46-100", "시안의 낱말 차례가 화면과 같은가", s46_100_sian_word_order),
+    # ★★ 마스터 08-28(87장) — ★ 「전기차만 보고 싶은 거야」
+    ("S46-102", "「전기만」에 전기 아닌 것이 없는가",
+     s46_102_electric_only_is_electric),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다
     ("S46-99", "로그인하면 관심·관리가 열리는가", s46_99_login_then_watch),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다

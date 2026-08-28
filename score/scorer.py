@@ -60,6 +60,26 @@ UNCONFIRMED_SOURCES: frozenset[str] = frozenset({
 })
 
 
+
+def _certified_credit(policy: ScoringPolicy, snapshot) -> tuple:
+    """★★ 인증중고차 몫 — ★ 근거 없는 축에 ★ 배점의 일부를 준다.
+
+    ★★★ 마스터 08-28 — 「★ 볼보는 그 점수들을 안 받아도 돼.  ★ 80% 수준에 맞춰
+      ★ 일괄로」 · 「★ K카는 줘도 돼」 · 「★ C 로 하자」(헤이딜러·리본카도).
+    ★ 까닭 — ★ 인증중고차는 ★ 제조사(또는 직영)가 ★ 검사를 마친 차다.
+      ★ ★ **종이를 안 줄 뿐이지 ★ 안 본 것이 아니다.**
+    ★ 정본은 ★ `config/scoring.json` 의 `certified_credit` 이다 (S14) —
+      ★ ★ 사이트 목록도 ★ 축 목록도 ★ 비율도 ★ 거기 있다.  ★ 코드에 안 박는다
+    ★ 분모(910)는 ★ 그대로 둔다 — ★ 다른 차와 견줄 수 있어야 한다
+    ★ 돌려줌 (그 축 집합, 비율) — ★ 해당 없으면 (빈 집합, 0.0)
+    """
+    rule = policy.raw.get("certified_credit") or {}
+    site = getattr(snapshot, "site", None) if snapshot is not None else None
+    if not rule or not site or site not in (rule.get("sites") or ()):
+        return frozenset(), 0.0
+    return frozenset(rule.get("axes") or ()), float(rule.get("ratio") or 0.0)
+
+
 def score(v: Verdict, policy: ScoringPolicy,
           absolute: list[str] | None = None,
           snapshot=None) -> ScoreResult:
@@ -72,6 +92,9 @@ def score(v: Verdict, policy: ScoringPolicy,
     #   분모를 줄여 비율을 높이는 것이 등급 인플레다 —
     #   실측 08-17: 사고를 모르는데 등급이 난 것 1,131건
     core = tuple(policy.raw.get("score_core_axes") or ())
+    # ★★ 인증중고차 몫 (마스터 08-28) — ★ 위 `_certified_credit` 참고
+    credit_axes, credit_ratio = _certified_credit(policy, snapshot)
+    credit_given = 0.0
     excluded_points = 0.0
     earned = 0.0
     grade_earned = 0.0
@@ -96,14 +119,26 @@ def score(v: Verdict, policy: ScoringPolicy,
             # excluded 없이 NULL 이 오면 판정기가 계약을 어긴 것이다
             excluded_points += weight
             continue
-        earned += float(value)
+        value = float(value)
+        confirmed_here = v.sources.get(comp) not in UNCONFIRMED_SOURCES
+        # ★★ 인증중고차 몫 — ★ 그 사이트의 ★ 그 축이 ★ **근거 없이 0** 일 때만 준다.
+        #   ★ 근거가 있으면 ★ 그 값이 옳다 — ★ 덧붙이지 않는다.
+        #   ★ 0 이 아니면 ★ 이미 점수가 났다 — ★ 역시 덧붙이지 않는다
+        if (comp in credit_axes and not confirmed_here and value == 0.0
+                and credit_ratio):
+            value = weight * credit_ratio
+            credit_given += value
+            # ★ 받은 몫은 ★ 「근거 있는 축의 합」에도 넣는다 (규격 `_pending_note`) —
+            #   ★ ★ 그래야 ★ 「판정 중」에서 풀린다
+            confirmed_here = True
+        earned += value
         # ★ 확인율은 「근거가 있는 축」만 센다 (개정 325).
         #   「카탈로그를 안 받아 0점」을 확인했다고 하면 화면이 거짓말을 한다
-        if v.sources.get(comp) not in UNCONFIRMED_SOURCES:
+        if confirmed_here:
             confirmed += weight
         if for_grade:
-            grade_earned += float(value)
-        by_axis[axis_of(comp)] = by_axis.get(axis_of(comp), 0.0) + float(value)
+            grade_earned += value
+        by_axis[axis_of(comp)] = by_axis.get(axis_of(comp), 0.0) + value
 
     # ★ applicable 은 「확인한 축의 배점 합」이다.  분모가 아니다.
     #   화면이 「555점 중 330점 · 205점은 확인하지 못했습니다」를 내는 데 쓴다

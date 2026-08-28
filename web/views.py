@@ -152,7 +152,8 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  #   ★★ 08-25 — ★ 한 번만 조회한다.  ★ 전에는 ★ `_split_top` 을
                  #     ★ ★ 두 번씩 불러 ★ 색 조회가 ★ **여섯 번**이었다 (V11-34)
                  **_color_menus(conn, flt),
-                 "fuel_options": _distinct_options(conn, "fuel_raw", flt.fuel),
+                 # ★★ 명령서 87장 — ★ 연료는 ★ **갈래**로 고른다 (33가지 원값이 아니다)
+                 "fuel_options": _fuel_options(flt.fuel, root),
                  "region_options": _distinct_options(
                      conn, "dealer_region", flt.region),
                  # 정렬 드롭다운 8종 + 지금 조건을 들고 갈 hidden (개정 277)
@@ -880,6 +881,18 @@ COLOR_TOP = 5
 def _split_top(rows: list, top: int = COLOR_TOP) -> tuple:
     """많은 것부터 `top` 개 · 나머지.  ★ 자른 것을 말한다 (검토 17)."""
     return rows[:top], rows[top:]
+
+
+
+def _fuel_options(picked, root: str = ROOT) -> list:
+    """연료 고르개 — ★ 전체 · 전기만 · 하이브리드만 · 가솔린 · 디젤 (명령서 87장 ④).
+
+    ★ 정본은 `config/web.json` 의 `fuel_groups` 다 (S14).  ★ 코드에 안 박는다
+    """
+    from report.screens.build import fuel_groups
+
+    return [{"key": g["key"], "label": g["label"],
+             "on": picked == g["key"]} for g in fuel_groups(root)]
 
 
 def _distinct_options(conn, col: str, now) -> list:

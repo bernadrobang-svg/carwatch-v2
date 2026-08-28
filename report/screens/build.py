@@ -1058,6 +1058,45 @@ def _option_group_match(key: str, root: str = ".") -> list:
     return list(((got.get("groups") or {}).get(key) or {}).get("match") or ())
 
 
+def fuel_groups(root: str = ".") -> list:
+    """연료 갈래.  ★ 정본은 `config/web.json` 의 `fuel_groups` 다 (S14)."""
+    import json as _j
+    import os as _o
+
+    try:
+        with open(_o.path.join(root, "config", "web.json"),
+                  encoding="utf-8") as f:
+            return list(_j.load(f).get("fuel_groups") or ())
+    except (OSError, ValueError):
+        return []
+
+
+def _fuel_where(key: str, root: str = ".") -> tuple:
+    """★★ 연료 갈래 → (SQL, 값).  ★ 명령서 87장 (마스터 08-28).
+
+    ★ 「전기만」은 ★ **정확히 `전기`·`EV`** 다 — ★ `가솔린+전기`(하이브리드)와
+      ★ `수소+전기`(연료전지)는 ★ 안 든다.  ★ 검사 `S46-102` 가 지킨다
+    ★ 갈래가 아니면 ★ 옛대로 ★ 값 하나로 견준다 (칩에서 눌러 온 것)
+    """
+    for one in fuel_groups(root):
+        if one.get("key") != key:
+            continue
+        vals = one.get("values") or []
+        if vals:
+            marks = ",".join("?" * len(vals))
+            return f"l.fuel_raw IN ({marks})", list(vals)
+        sql, args = [], []
+        ors = " OR ".join("l.fuel_raw LIKE ?" for _ in one.get("match") or [])
+        if ors:
+            sql.append("(" + ors + ")")
+            args += [f"%{m}%" for m in one["match"]]
+        for no in one.get("not") or []:
+            sql.append("l.fuel_raw NOT LIKE ?")
+            args.append(f"%{no}%")
+        return " AND ".join(sql) or "1=1", args
+    return "l.fuel_raw = ?", [key]
+
+
 def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
     갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
@@ -1148,12 +1187,16 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     #   밖에서 거르면 「7건」과 실제 건수가 어긋난다
     for field, col in (("color_ext", "l.color_ext_raw"),
                        ("color_int", "l.color_int_raw"),
-                       ("fuel", "l.fuel_raw"),
                        ("region", "d.dealer_region")):
         got = getattr(flt, field, None)
         if got:
             where.append(f"{col} = ?")
             args.append(got)
+    # ★★ 연료는 ★ 갈래로 건다 (명령서 87장) — ★ 위 `_fuel_where` 참고
+    if getattr(flt, "fuel", None):
+        sql, vals = _fuel_where(flt.fuel)
+        where.append("(" + sql + ")")
+        args.extend(vals)
     if getattr(flt, "trim", None):
         where.append("l.trim_badge LIKE ?")
         args.append(f"%{flt.trim}%")

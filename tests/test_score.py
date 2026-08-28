@@ -549,25 +549,34 @@ def test_price_real() -> None:
           POLICY.comp("value.market") == 30,
           str(POLICY.comp("value.market")))
     _bud = POLICY.raw["budget_manwon"]["by_target"]["G80_25T"] * 10_000
-    check("★ 예산과 같으면 절반 점수 (50/95)",
-          at(_bud).values["value.budget"] == 50,
-          str(at(_bud).values["value.budget"]))
-    check("★ 예산의 60% 면 만점 95",
+    # ★★★ 08-28 마스터 확정 (r798) — 「★ 기준점에 맞으면 ★ 60% 수준 ·
+    #   ★ 1,000만 이상 싸면 거의 만점 · ★ 계단이 아니라 로그로」.
+    #   ★ 정본은 `axis_rules.value.budget_curve` 다 — ★ 규칙 1 대로 시험을 맞춘다.
+    #   ★ 옛 시험은 「예산과 같으면 절반(50)」이었다 — ★ 그것이 옛 정책이다
+    _b100 = at(_bud).values["value.budget"]
+    check("★★ 예산과 같으면 60% 수준이다 (마스터 확정 08-28)",
+          50 < _b100 <= 95 * 0.62, str(_b100))
+    check("★ 예산보다 싸면 더 준다 — 60% 면 만점 95",
           at(_bud * 0.6).values["value.budget"] == 95)
-    check("★★ 예산을 넘겨도 자르지 않는다 — 점수만 낮아진다 (개정 452)",
-          at(_bud * 1.30).values["value.budget"] == 0
-          and at(_bud * 1.10).values["value.budget"] == 34)
+    check("★ 비쌀수록 더 떨어진다",
+          at(_bud * 1.10).values["value.budget"]
+          < at(_bud).values["value.budget"])
+    check("★★ 아주 비싸면 0 이다 (140% 위)",
+          at(_bud * 1.50).values["value.budget"] == 0)
 
     # ── ② 값 — 신차가 대비 75 (개정 452 곡선) ──
     # ★ 80% 이상 0 · 65% 만점 · 사이는 로그 (f-table 5장-2a ①)
-    check("★ 신차가의 80% 면 0점 — 「그러면 신차 계약이 낫다」",
-          at(org * 0.80).values["value.origin"] == 0,
+    # ★★★ 08-28 마스터 확정 (r798) — 「★ 40% 만점으로 ★ 로그 곡선 ·
+    #   ★ 80%에 거의 0에 수렴」.  ★ 옛 시험은 「65% 만점 · 80% 0」이었다
+    check("★★ 신차가의 80% 면 거의 0 이다 (마스터 확정 08-28)",
+          at(org * 0.80).values["value.origin"] <= 1,
           str(at(org * 0.80).values["value.origin"]))
-    check("★ 신차가의 65% 면 만점 75 — 마스터가 말씀하신 최적점",
-          at(org * 0.65).values["value.origin"] == 75,
-          str(at(org * 0.65).values["value.origin"]))
-    check("★ 65% 밑은 만점을 유지한다.  더 내려도 더 주지 않는다",
-          at(org * 0.40).values["value.origin"] == 75)
+    check("★★ 신차가의 40% 면 만점 75 (마스터 확정 08-28)",
+          at(org * 0.40).values["value.origin"] == 75,
+          str(at(org * 0.40).values["value.origin"]))
+    check("★ 감가가 클수록 점수가 높다 — 65% 는 40% 보다 낮다",
+          at(org * 0.65).values["value.origin"]
+          < at(org * 0.40).values["value.origin"])
     check("★★ 신차가보다 비싸도 자르지 않는다 — 0점일 뿐이다 (개정 452)",
           at(org * 1.10).values["value.origin"] == 0,
           str(at(org * 1.10).values["value.origin"]))

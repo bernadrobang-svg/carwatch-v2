@@ -1308,7 +1308,11 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                          f"({','.join('?' * len(gone))})", tuple(gone))
             conn.commit()
         rows = 0
-        for lid in lids:
+        for _i9, lid in enumerate(lids):
+            # ★★ 08-28 — ★ 잠금 창을 끊는다.  ★ 전에는 S4·S6 에만 넣어
+            #   ★ ★ S9 이 도는 동안 ★ `POST /login` 이 ★ 500 이었다
+            #   ★ ★ (Caddy 접근 로그 실측 — 500 두 건이 다 /login 이다)
+            raw_tick(conn, _i9)
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
@@ -1381,7 +1385,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
                     "WHERE status='active'"))]
-        for lid in lids:
+        for _i10, lid in enumerate(lids):
+            # ★ 잠금 창을 끊는다 (08-28) — ★ S9 과 같은 까닭이다
+            raw_tick(conn, _i10)
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))

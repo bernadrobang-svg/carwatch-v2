@@ -19,13 +19,15 @@
 <div class="cond">
 <form class="chips" method="get" action="/listings">
   {% for h in carry_pick %}<input type="hidden" name="{{ h.name }}" value="{{ h.value }}">{% endfor %}
-  <!-- ══ 기본 넷 — ★ 시안 차례 그대로 (명령서 82장 · 마스터 08-28) ══
-       ★★★ 마스터 — 「★ 가격이 지금 맨 위로 튀어 있다」.  ★ 옳다.
-       ★ ★ 시안(`v4m_listings_시안.html`)을 열어 재니 차례가 이렇다 —
-         ★ ★ 이 화면은 → ★ 차종 → ★ 트림 → ★ 등급 → ★ 정렬 → ★ 자세한 조건
-       ★ ★ ★ **가격대는 기본에 없다** — ★ 「자세한 조건」 안이고
-         ★ ★ 고른 뒤에 ★ 「2,500~3,500만」 칩으로 보인다.  ★ 그리로 옮겼다
-       ★ ★ 주행·외장·내장도 기본이 아니다 — ★ 「주행 · 연식」·「옵션」 절 안이다 -->
+  <!-- ══ 기본 넷 ＋ 정렬 — ★ **마스터께서 말씀하신 차례**다 (명령서 82장 ②) ══
+       ★★★ 마스터 08-28(87장) — 「★ 차종 · 트림 · 가격대 · ★ 연료 · 등급 · 정렬」
+         ★ ★ 「자리는 ★ 가격대 다음 · 등급 앞」이라 하셨다.  ★ 그대로 옮겼다.
+         ★ ★ 앞선 82장의 「등급 → 차종 → 트림 → 가격」은 ★ 이것으로 갈음한다.
+       ★★ ★ 시안 파일(`v4m_listings_시안.html`)은 ★ **다른 차례**다 —
+         ★ ★ 「차종 → 트림 → 등급 → 정렬 → 자세한 조건(가격은 그 안)」.
+         ★ ★ 둘이 어긋난다.  ★ **마스터 말씀을 따랐다** — ★ 시안은 가이드께 청했다.
+       ★ ★ 그래서 ★ `S46-100` 이 이 화면만 ★ `config/web.json` 의
+         ★ ★ `sian_order_override` 를 본다 — ★ 숨긴 것이 아니라 ★ 적어 둔 것이다 -->
   <span class="chip{% if pick.model %} on{% endif %}">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
@@ -34,14 +36,24 @@
   <span class="chip{% if pick.trim %} on{% endif %}">트림
     <input name="trim" size="8" value="{{ pick.trim }}"
       placeholder="전체" title="트림 이름에 이 말이 든 것"></span>
+  <span class="chip{% if pick.price_min %} on{% endif %}">가격대
+    <input name="price_min" size="4" inputmode="numeric" value="{{ pick.price_min }}"
+           placeholder="2000">~<input
+           name="price_max" size="4" inputmode="numeric" value="{{ pick.price_max }}"
+           placeholder="3500">만</span>
+  <!-- ★★★ 명령서 87장 (마스터 08-28) — 「★ 나는 내 목록에서 ★ 전기차만 보고 싶은 거야」.
+       ★ 자리는 ★ **가격대 다음 · 등급 앞**이다 (마스터 지시 ①).
+       ★ 「자세한 조건」에 접지 않는다 — ★ 마스터께서 늘 쓰신다 (②).
+       ★ 매물의 ★ 연료 칸(`fuel_raw`)으로 거른다 — ★ 차종이 아니다 (③) -->
+  <span class="chip{% if pick.fuel %} on{% endif %}">연료
+    <select name="fuel" title="매물의 연료 칸으로 거릅니다 — 차종이 아닙니다">
+      <option value="">전체</option>
+      {% for f in fuel_options %}<option value="{{ f.key }}"{% if f.on %} selected{% endif %}>{{ f.label }}</option>{% endfor %}
+    </select></span>
   <span class="chip{% if pick.min_grade %} on{% endif %}">등급
     <select name="min_grade" title="이 등급 이상만 봅니다">
       <option value="">전체</option>
       {% for g in grade_options %}<option value="{{ g.key }}"{% if g.on %} selected{% endif %}>{{ g.label }}</option>{% endfor %}
-    </select></span>
-  <span class="chip">정렬
-    <select name="order">
-      {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
     </select></span>
   <button type="submit" class="chip" style="cursor:pointer">거르기</button>
   <!-- ★★ 마스터 지적 08-28 — 「★ 「전체」와 「전부」가 ★ 왜 둘로 나뉘어 있나」.
@@ -57,14 +69,6 @@
     <!-- ★★ 시안 그대로 — ★ 「자세한 조건 (N) ▾」.  ★ N 은 ★ 지금 걸린 수다 -->
     <summary>자세한 조건{% if chips %} ({{ chips | count }}){% endif %} ▾</summary>
     <div class="filter-body" style="margin-top:9px">
-
-      <!-- ★★ 08-28 — ★ 가격대는 ★ 시안에서 ★ 여기 안이다 (기본 칩이 아니다) -->
-      <h3>가격대</h3>
-      <p class="chips"><span class="chip{% if pick.price_min %} on{% endif %}">가격대
-        <input name="price_min" size="4" inputmode="numeric" value="{{ pick.price_min }}"
-               placeholder="2000">~<input
-               name="price_max" size="4" inputmode="numeric" value="{{ pick.price_max }}"
-               placeholder="3500">만</span></p>
 
       <h3>판정 — 누르면 그 조건만 남는다</h3>
       <p class="chips">
@@ -115,6 +119,10 @@
         <p class="chips">{% for c in color_ext_rest %}<a class="btn{% if c.on %} on{% endif %}"
           href="/listings?color_ext={{ c.key | url }}">{{ c.label }}</a>{% endfor %}</p>
       </details>
+  <span class="chip">정렬
+    <select name="order">
+      {% for o in orders %}<option value="{{ o.key }}"{% if o.on %} selected{% endif %}>{{ o.label }}</option>{% endfor %}
+    </select></span>
       {% endif %}
       <p class="dim">★ 내장색 {{ color_int_top | count }}＋{{ color_int_rest | count }}가지</p>
       <p class="chips">
@@ -137,9 +145,6 @@
 
       <!-- ★ 나머지 조건 — ★ 다섯 절에 안 드는 것 -->
       <div class="chips" style="margin-top:9px">
-        <span class="chip">연료 <select name="fuel"><option value="">전체</option>
-          {% for f in fuel_options %}<option value="{{ f.key }}"{% if f.on %} selected{% endif %}>{{ f.label }}</option>{% endfor %}
-        </select></span>
         <span class="chip">정직도 <input name="honesty_min" size="2" inputmode="numeric"
           value="{{ pick.honesty_min }}" placeholder="70" title="딜러 정직도 이상"> 이상</span>
         <span class="chip">경과 <input name="days_max" size="3" inputmode="numeric"
