@@ -1211,9 +1211,13 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     # ══ 칩 7 · ＋12 (개정 427 · STEP 97) ══
     # ★ 필터가 두꺼워야 목록이 얇아진다.  ★ 전부 SQL 로 건다 (V11-164) —
     #   밖에서 거르면 「7건」과 실제 건수가 어긋난다
+    # ★★ 08-28 (#8) — ★ `d.dealer_region` 은 ★ **없는 칸**이라 500 이었다.
+    #   ★ `core_dealer` 에 있는 것은 `region` 이고, ★ 지역이 실제로 채워져 있는
+    #     곳은 ★ `core_listing.dealer_region` 이다 (14,260건 · 실측 08-28).
+    #   ★ `l` 을 쓰면 ★ 세는 쿼리에도 딜러 조인이 필요 없다
     for field, col in (("color_ext", "l.color_ext_raw"),
                        ("color_int", "l.color_int_raw"),
-                       ("region", "d.dealer_region")):
+                       ("region", "l.dealer_region")):
         got = getattr(flt, field, None)
         if got:
             where.append(f"{col} = ?")
@@ -1239,6 +1243,16 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if getattr(flt, "warranty_month_min", None) is not None:
         where.append("COALESCE(l.warranty_body_month, 0) >= ?")
         args.append(flt.warranty_month_min)
+    # ★★ 08-28 (#10) — ★ `option_min` 이 ★ **어디에도 안 걸려 있었다.**
+    #   ★ 화면에 칸이 있고 (`listings.html` 「깡통 빼기 N종 이상」)
+    #     ★ `web/views.py` 가 받아서 필터에 담기까지 하는데
+    #     ★ ★ WHERE 를 만드는 여기서 ★ 쓰지 않아 ★ 건수가 안 변했다.
+    #   ★ 선택 옵션은 JSON 배열이다 — `["1050","1046",…]` (실측).
+    #     ★ `json_valid` 로 감싼다 — ★ 배열이 아닌 행에서 죽지 않게
+    if getattr(flt, "option_min", None) is not None:
+        where.append("(json_valid(l.options_choice_json)"
+                     " AND json_array_length(l.options_choice_json) >= ?)")
+        args.append(flt.option_min)
     if getattr(flt, "honesty_min", None) is not None:
         where.append("d.trust_score >= ?")
         args.append(flt.honesty_min)
@@ -1292,8 +1306,19 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if flt.min_grade and flt.min_grade in RANK_ORDER:
         ok = [g for g in RANK_ORDER
               if RANK_ORDER.index(g) <= RANK_ORDER.index(flt.min_grade)]
-        where.append(f"s.grade IN ({','.join('?' * len(ok))})")
+        cond = f"s.grade IN ({','.join('?' * len(ok))})"
         args += ok
+        # ★★ 08-28 (#11) — ★ 「확인 못 한 것도 함께 보기」가 ★ **아무 일도 안 했다.**
+        #   ★ 화면에 체크상자가 있는데 (`listings.html` 78행)
+        #     ★ ★ 필터에 칸조차 없어 ★ 눌러도 건수가 그대로였다.
+        #   ★ 뜻 — ★ 등급 거르개를 걸면 ★ 아직 등급이 안 매겨진 매물이 함께 빠진다.
+        #     ★ 그것까지 보겠다는 것이다.  ★ 등급 목록은 config 가 정본이다 (S14)
+        if getattr(flt, "unknown_too", False):
+            und = [g for g in NOT_RANKED if g not in ok]
+            cond = (f"({cond} OR s.grade IS NULL"
+                    f" OR s.grade IN ({','.join('?' * len(und))}))")
+            args += und
+        where.append(cond)
     if not flt.show_all:
         where.append("l.status <> 'out_of_scope'")
     if flt.axis and flt.bucket:
@@ -1316,9 +1341,14 @@ def count_listings(conn: sqlite3.Connection, flt: ListingFilter) -> int:
     쿼리 1개를 더 쓴다 — 「몇 건 중 몇 건」을 못 내는 것보다 낫다 (V11-34 여유 안)
     """
     where, args = _listings_where(flt)
+    # ★★ 08-28 (#9) — ★ 정직도(`d.trust_score`)로 거르면 ★ 여기서 500 이었다.
+    #   ★ 뽑는 쿼리(`view_listings`)에는 ★ `core_dealer d` 조인이 있는데
+    #     ★ ★ 세는 쿼리에는 없어 ★ 「없는 칸」이 됐다.
+    #   ★ 조건을 만드는 곳이 하나면 ★ 조인도 같아야 한다 (이 함수 설명의 V11-55)
     return conn.execute(
         "SELECT COUNT(*) FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
+        " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
         f" WHERE {' AND '.join(where)}", [flt.calc_version, *args]).fetchone()[0]
 
 

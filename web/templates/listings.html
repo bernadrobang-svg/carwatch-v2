@@ -145,8 +145,17 @@
 
       <!-- ★ 나머지 조건 — ★ 다섯 절에 안 드는 것 -->
       <div class="chips" style="margin-top:9px">
+        <!-- ★★ 08-28 (#9) — ★ 이 칸으로 거르면 ★ **늘 0건**이다.
+             ★ `core_dealer.trust_score` 가 ★ 딜러 1,182곳 ★ 전부 NULL 이다 (실측).
+             ★ ★ 규격이 그렇게 두고 있다 — ★ `30-score/h-verdict.md:159`
+               「trust_score 가중치 — v1 산출식 근거 없음 · 지표 정의 후 재도출(STEP 82c)」
+               「금지 — 빈칸을 추정으로 채우는 것」.
+             ★ 그러니 ★ 값을 지어내지 않고 ★ **아직 없다고 화면이 말한다.**
+               ★ 「걸었는데 0건」이 ★ 「그런 매물이 없다」로 읽히면 거짓말이다 -->
         <span class="chip">정직도 <input name="honesty_min" size="2" inputmode="numeric"
-          value="{{ pick.honesty_min }}" placeholder="70" title="딜러 정직도 이상"> 이상</span>
+          value="{{ pick.honesty_min }}" placeholder="70"
+          title="딜러 정직도 이상 — 아직 산출식이 확정되지 않아 값이 비어 있습니다"> 이상
+          <span class="dim">아직 안 매겨졌습니다 (STEP 82c)</span></span>
         <span class="chip">경과 <input name="days_max" size="3" inputmode="numeric"
           value="{{ pick.days_max }}" placeholder="30" title="올라온 지 이 일수 이내"></span>
         <span class="chip"><label><input type="checkbox" name="price_dropped" value="1"{% if pick.price_dropped %} checked{% endif %}>

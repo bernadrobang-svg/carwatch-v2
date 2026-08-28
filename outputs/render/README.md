@@ -7,7 +7,7 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 42,063B |
-| `/listings` | [listings.html](listings.html) | 200 | 88,229B |
+| `/listings` | [listings.html](listings.html) | 200 | 88,384B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 42,115B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,159B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 34,203B |
@@ -36,7 +36,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,210B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 2,972B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,329B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,154B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,123B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 4,832B |
 
 ## 못 낸 화면

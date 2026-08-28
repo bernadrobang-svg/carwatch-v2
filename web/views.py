@@ -766,6 +766,8 @@ def _pick_state(flt, root: str = ROOT) -> dict:
                       "score_car_min", "score_warranty_min",
                       "score_taste_min")}
     more["price_dropped"] = getattr(flt, "price_dropped", False)
+    # ★ 체크상자도 되돌려 넣는다 — 거르면 체크가 풀리면 안 된다 (#11)
+    more["unknown_too"] = getattr(flt, "unknown_too", False)
     return {**more,
             "price_min": lo, "price_max": hi, "lease": flt.lease,
             "excluded": getattr(flt, "excluded", False),
@@ -1041,6 +1043,8 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         honesty_min=_int_param(q, "honesty_min", None, minimum=0),
         days_max=_int_param(q, "days_max", None, minimum=0),
         price_dropped=q.get("price_dropped") == "1",
+        # ★★ 08-28 (#11) — 「확인 못 한 것도 함께 보기」를 받는다
+        unknown_too=q.get("unknown_too") == "1",
         warranty_month_min=_int_param(q, "warranty_month_min", None,
                                       minimum=0),
         # ★ 점수 필터 — 화면의 막대를 그대로 조건으로 (V11-164)

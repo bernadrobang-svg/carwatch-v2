@@ -286,6 +286,11 @@ class ListingFilter:
     honesty_min: float | None = None    # 딜러 정직도 하한
     days_max: int | None = None         # 경과일 상한
     price_dropped: bool = False         # 가격이 내린 것만
+    # ★★ 08-28 (#11) — 「확인 못 한 것도 함께 보기」.  ★ 화면에 체크상자는
+    #   있는데 ★ 이 칸이 없어 ★ 눌러도 아무 일이 없었다 (listings.html 78행).
+    #   ★ 등급 거르개를 걸면 아직 등급이 안 매겨진 매물이 함께 빠진다 —
+    #     ★ 그것까지 보겠다는 뜻이다
+    unknown_too: bool = False
     warranty_month_min: int | None = None
     region: str | None = None
     # ★★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164).
