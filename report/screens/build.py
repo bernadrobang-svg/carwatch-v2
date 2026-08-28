@@ -653,7 +653,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
      g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
      _site, _sell_type, _mismatch, _kmpl, _seats,
-     _sites_n, _dupe_low, _dupe_high) = rec
+     _sites_n, _dupe_low, _dupe_high, _sales_status) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -773,6 +773,18 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         price_bucket_won=_bucket(price, _view_int("price_bucket_won", root)),
         mileage_bucket_km=_bucket(km, _view_int("mileage_bucket_km", root)),
         status_key=dstatus or None,
+        # ★★★ 08-29 (마스터 3번) — ★ 「팔린 것을 목록에서 뺐다」를 되돌린다.
+        #   ★ 마스터 — 「두고 딱지만 · 흐리게 · 맨 뒤」.
+        #   ★ ★ 얼마에 팔렸는지가 ★ 다음 판단에 쓰인다 (v281 답)
+        sold=bool(dstatus == "gone"
+                  or str(_sales_status or "").upper()
+                  in ("CONTRACT", "RESERVED")),
+        # ★ `gone` 은 ★ 옆의 상태 링크가 ★ 이미 「내려감」이라 적는다 —
+        #   ★ 딱지까지 달면 ★ 같은 말이 두 번이다.  ★ 그때는 안 단다.
+        #   ★ 흐리게·맨 뒤는 ★ 그대로 걸린다 (`sold` 는 참이다)
+        sold_label=("팔림" if str(_sales_status or "").upper() == "CONTRACT"
+                    else "예약중" if str(_sales_status or "").upper()
+                    == "RESERVED" else None),
         target_label=tk or "",
         # ★ 세부등급을 못 받았으면 그렇게 적는다.  빈 값으로 두지 않는다 (개정 285)
         trim=(trim if trim and " · " in trim
@@ -969,10 +981,18 @@ ORDER_TAIL = ("(s.earned * 1.0 / NULLIF(s.denominator, 0)) DESC,"
               " l.price_current_won ASC, l.listing_id ASC")
 
 
+# ★★★ 08-29 (마스터 3번) — ★ 팔린 것은 ★ **맨 뒤**다.
+#   ★ 빼지 않는다 — ★ 두되 ★ 뒤로 보낸다.  ★ `ORDER_HEAD`(순위 없음)보다
+#     ★ **앞에** 둔다 — ★ 그래야 ★ 무엇보다도 뒤로 간다
+ORDER_SOLD = ("(CASE WHEN l.status = 'gone'"
+              " OR UPPER(COALESCE(l.sales_status,'')) IN ('CONTRACT','RESERVED')"
+              " THEN 1 ELSE 0 END)")
+
+
 def order_clause(order: str) -> str:
-    """4단 정렬.  ★ 축을 바꿔도 뒤 3단은 남는다."""
+    """5단 정렬.  ★ 축을 바꿔도 뒤 3단은 남는다.  ★ 팔린 것은 늘 맨 뒤다."""
     first = ORDER_SQL.get(order, ORDER_SQL["rank"])
-    return f"{ORDER_HEAD}, {first}, {ORDER_TAIL}"
+    return f"{ORDER_SOLD}, {ORDER_HEAD}, {first}, {ORDER_TAIL}"
 
 
 def _site_detail_urls(root: str = ".") -> dict:
@@ -1196,7 +1216,12 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     #   ★ 지우지는 않는다 — ★ `gone_at` 이 「얼마에 팔렸나」의 근거다 (`store/core.mark_gone`).
     #     ★ ★ **목록에만 안 낸다.**  ★ 상세·추적으로는 그대로 볼 수 있다
     #   ★ 매물 하나만 집을 때는 접지 않는다 — ★ 그 줄을 못 찾는다
-    if (getattr(flt, "listing_id", None) is None
+    # ★★★ 08-29 (마스터 3번) — ★ 되돌린다.  ★ 08-28 에 ★ 목록에서 뺐던 것을
+    #   ★ ★ **다시 낸다** — ★ 「두고 딱지만 · 흐리게 · 맨 뒤」.
+    #   ★ 까닭 — ★ 「얼마에 팔렸나」가 ★ 다음 판단의 재료다 (마스터 v281 답).
+    #   ★ 숨기고 싶으면 ★ 거르개 「팔린 것 숨기기」를 누른다 (`hide_sold`)
+    if (getattr(flt, "hide_sold", False)
+            and getattr(flt, "listing_id", None) is None
             and not getattr(flt, "listing_ids", ())):
         where.append("l.status <> 'gone'")
         where.append("(l.sales_status IS NULL"
@@ -1441,7 +1466,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★★ 08-25 — ★ 서브쿼리 ★ **셋을 조인 하나로** 묶었다 (V11-34).
         #   ★ ★ 셋을 따로 두면 ★ 한 쪽에 ★ 쿼리가 셋씩 는다 —
         #     ★ ★ 실측 ★ 상한을 넘었다 (28).  ★ 값은 그대로다
-        "  dup.sites, dup.low_won, dup.high_won"
+        "  dup.sites, dup.low_won, dup.high_won,"
+        # ★★★ 08-29 (마스터 3번) — ★ 팔린 것을 ★ 목록에 되돌린다.
+        #   ★ 딱지를 달려면 ★ 「팔렸는지」를 ★ 행이 알아야 한다
+        " l.sales_status"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"

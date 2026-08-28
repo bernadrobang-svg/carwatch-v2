@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>매물 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=5cf5f0c58e">
+<link rel="stylesheet" href="/static/app.css?v=7338d351ae">
 
 </head>
 <body class="s-listings">
@@ -50,8 +50,8 @@
 
 <main>
 <h1>매물
-  <small>5,091건 중 10건 ·
-    510쪽 중 1쪽</small></h1>
+  <small>5,244건 중 10건 ·
+    525쪽 중 1쪽</small></h1>
 
 
 
@@ -69,7 +69,7 @@
   <span class="chip">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
-      <option value="G80_25T">G80_25T (1378건)</option><option value="GLC_IMPORT">GLC_IMPORT (665건)</option><option value="X3_IMPORT">X3_IMPORT (582건)</option><option value="XC60_IMPORT">XC60_IMPORT (326건)</option><option value="Q5_IMPORT">Q5_IMPORT (282건)</option><option value="MODEL_Y">MODEL_Y (259건)</option><option value="XC40_IMPORT">XC40_IMPORT (229건)</option><option value="G70_20T">G70_20T (186건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (184건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (183건)</option><option value="V60CC_IMPORT">V60CC_IMPORT (156건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (138건)</option><option value="S60_IMPORT">S60_IMPORT (127건)</option><option value="NX_HEV">NX_HEV (113건)</option><option value="GV60">GV60 (81건)</option><option value="RX_IMPORT">RX_IMPORT (67건)</option><option value="G70_25T">G70_25T (49건)</option><option value="GV70_EV">GV70_EV (42건)</option><option value="G80_EV">G80_EV (41건)</option>
+      <option value="G80_25T">G80_25T (1383건)</option><option value="GLC_IMPORT">GLC_IMPORT (665건)</option><option value="X3_IMPORT">X3_IMPORT (583건)</option><option value="XC60_IMPORT">XC60_IMPORT (327건)</option><option value="Q5_IMPORT">Q5_IMPORT (282건)</option><option value="MODEL_Y">MODEL_Y (259건)</option><option value="XC40_IMPORT">XC40_IMPORT (230건)</option><option value="G70_20T">G70_20T (187건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (187건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (184건)</option><option value="V60CC_IMPORT">V60CC_IMPORT (156건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (138건)</option><option value="S60_IMPORT">S60_IMPORT (128건)</option><option value="NX_HEV">NX_HEV (113건)</option><option value="GV60">GV60 (83건)</option><option value="RX_IMPORT">RX_IMPORT (67건)</option><option value="G70_25T">G70_25T (49건)</option><option value="G80_EV">G80_EV (42건)</option><option value="GV70_EV">GV70_EV (42건)</option>
     </select></span>
   <span class="chip">트림
     <input name="trim" size="8" value=""
@@ -209,10 +209,13 @@
 
       <h3>뺀 것</h3>
       <p class="chips">
-        <span class="chip">리스 688건 빼는 중</span>
+        <span class="chip">리스 693건 빼는 중</span>
           <a class="btn" href="/listings?lease=1">리스 함께 보기</a>
         
       </p>
+      
+      <label class="dim"><input type="checkbox" name="hide_sold" value="1">
+        팔린 것 숨기기 <span class="muted">— 기본은 두고 딱지만 답니다</span></label>
 
       
       <div class="chips" style="margin-top:9px">
@@ -243,10 +246,10 @@
 
 
 <div class="sentence">
-  리스 제외 — <span class="n">5,091건</span>
-   · <b>리스·렌트 688건은 뺐습니다</b> —
+  리스 제외 — <span class="n">5,244건</span>
+   · <b>리스·렌트 693건은 뺐습니다</b> —
     <a href="/listings?lease=1">함께 보기</a>
-   · <b>관문 제외 403건은 뺐습니다</b> —
+   · <b>관문 제외 635건은 뺐습니다</b> —
     <a href="/listings?excluded=1">따로 보기</a>
 </div>
 
@@ -297,7 +300,9 @@
 <form method="get" action="/compare" id="cmp">
 <main class="rows car-rows">
 
-<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" data-href="/detail/202"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg"
+     data-href="/detail/202"
      data-buy="3,531만" data-buyest="True">
 
   
@@ -379,6 +384,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -445,7 +452,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture04/pic4204/42047175_027.jpg" data-href="/detail/69"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture04/pic4204/42047175_027.jpg"
+     data-href="/detail/69"
      data-buy="3,595만" data-buyest="True">
 
   
@@ -527,6 +536,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -593,7 +604,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture07/pic4247/42478572_001.jpg" data-href="/detail/178"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture07/pic4247/42478572_001.jpg"
+     data-href="/detail/178"
      data-buy="3,456만" data-buyest="True">
 
   
@@ -675,6 +688,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -741,7 +756,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture07/pic4247/42473896_027.jpg" data-href="/detail/176"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture07/pic4247/42473896_027.jpg"
+     data-href="/detail/176"
      data-buy="3,477만" data-buyest="True">
 
   
@@ -823,6 +840,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -889,7 +908,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42520647_001.jpg" data-href="/detail/204"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42520647_001.jpg"
+     data-href="/detail/204"
      data-buy="3,520만" data-buyest="True">
 
   
@@ -971,6 +992,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -1037,7 +1060,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" data-href="/detail/5736"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg"
+     data-href="/detail/5736"
      data-buy="3,477만" data-buyest="True">
 
   
@@ -1119,6 +1144,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -1185,7 +1212,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg" data-href="/detail/125"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg"
+     data-href="/detail/125"
      data-buy="3,627만" data-buyest="True">
 
   
@@ -1267,6 +1296,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -1332,7 +1363,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg" data-href="/detail/121"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg"
+     data-href="/detail/121"
      data-buy="3,702만" data-buyest="True">
 
   
@@ -1414,6 +1447,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -1479,7 +1514,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/detail/5749"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg"
+     data-href="/detail/5749"
      data-buy="3,798만" data-buyest="True">
 
   
@@ -1560,6 +1597,8 @@
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
         
+        
+        
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
           >사고<b>OK</b></a><a class="chip-good axis-good"
@@ -1625,7 +1664,9 @@
   </div>
 </div>
 
-<div class="row" data-peek="https://ci.encar.com/carpicture03/pic4173/41730197_001.jpg" data-href="/detail/27"
+
+<div class="row" data-peek="https://ci.encar.com/carpicture03/pic4173/41730197_001.jpg"
+     data-href="/detail/27"
      data-buy="3,659만" data-buyest="True">
 
   
@@ -1706,6 +1747,8 @@
           >엔카</span>
         <a href="/listings?status=active"
           title="게시중 · 내려감 · 재등록">게시중</a>
+        
+        
         
         <a class="chip-good axis-good"
           href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호 — 기호 O 있음 · - 없음 · ? 확인 못 함"
@@ -1790,8 +1833,8 @@
   
   <a href="/listings?page=1" class="on">1</a><a href="/listings?page=2">2</a><a href="/listings?page=3">3</a><a href="/listings?page=4">4</a><a href="/listings?page=5">5</a><a href="/listings?page=6">6</a><a href="/listings?page=7">7</a><a href="/listings?page=8">8</a><a href="/listings?page=9">9</a>
   <a href="/listings?page=2">다음 ›</a>
-  <a href="/listings?page=510">끝 »</a>
-  <span class="dim">한 쪽 10건 · 모두 510쪽</span>
+  <a href="/listings?page=525">끝 »</a>
+  <span class="dim">한 쪽 10건 · 모두 525쪽</span>
 </div>
 <p class="dim">★ 쪽을 넘겨도 지금 조건이 그대로 붙습니다 (V11-58).</p>
 
@@ -1984,7 +2027,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260828T041017</span>
-  <span>2026-08-29 01:49</span>
+  <span>2026-08-29 02:13</span>
 </footer>
 
 </body>

@@ -209,6 +209,9 @@ class ListingRow:
     price_bucket_won: int | None = None
     mileage_bucket_km: int | None = None
     status_key: str | None = None
+    # ★★★ 08-29 (마스터 3번) — ★ 팔린 것을 목록에 두고 ★ 딱지만 단다
+    sold: bool = False
+    sold_label: str | None = None
 
     # ★ tone 으로 나눈다.  화면이 판정하지 않는다 (STEP 152)
     @property
@@ -291,6 +294,9 @@ class ListingFilter:
     #   ★ 등급 거르개를 걸면 아직 등급이 안 매겨진 매물이 함께 빠진다 —
     #     ★ 그것까지 보겠다는 뜻이다
     unknown_too: bool = False
+    # ★★★ 08-29 (마스터 3번) — ★ 거르개 「뺀 것」의 ★ 「팔린 것 숨기기」.
+    #   ★ 기본은 ★ **안 숨긴다** — ★ 두고 딱지만 다는 것이 정본이다
+    hide_sold: bool = False
     warranty_month_min: int | None = None
     region: str | None = None
     # ★★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164).
