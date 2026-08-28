@@ -24,7 +24,7 @@
 | `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:410` | **★ 없음** | 없음 | ref/E-attach.md:68 · guide/03_이력.md:92 · guide/03_이력.md:734 |
 | `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:426` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:240 · CROSS_SITE_COMPARE.md:243 · CROSS_SITE_COMPARE.md:246 |
 | `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:432` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:243 · trace/02-collect.md:22 · trace/02-collect.md:64 |
-| `S11` | 분석 계층 순수성 (STEP 2) | fatal | `tools/check_src.py:451` | **★ 없음** | 없음 | ref/E-attach.md:71 · guide/01_시작.md:71 · guide/01_시작.md:103 |
+| `S11` | 분석 계층 순수성 (STEP 2) | fatal | `tools/check_src.py:451` | **★ 없음** | 없음 | UI_REVIEW.md:1272 · ref/E-attach.md:71 · guide/01_시작.md:71 |
 | `S12` | 축 파일 STEP 주석 | fatal | `tools/check_src.py:466` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:244 · ref/E-attach.md:72 · guide/01_시작.md:235 |
 | `S13` | 본문 config 예시 대조 | fatal | `tools/check_src.py:533` | **★ 없음** | 없음 | ref/B-config.md:298 · ref/D-update.md:31 · ref/E-attach.md:73 |
 | `S14` | 상수 등록·성격 (V4-17) | fatal | `tools/check_src.py:582` | **★ 없음** | 없음 | ref/E-attach.md:74 · chapters/20-verify/c-v3v4.md:208 · chapters/20-verify/c-v3v4.md:214 |
