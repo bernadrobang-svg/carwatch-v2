@@ -58,7 +58,7 @@
 | `S44-2` | 명령서가 하나뿐인가 | fatal | `validate/v0_guide.py:213` | **★ 없음** | 없음 | guide/03_이력.md:456 · guide/03_이력.md:463 · guide/03_이력.md:510 |
 | `S44-3` | 규격을 명령서가 가리키는가 | fatal | `validate/v0_guide.py:438` | **★ 없음** | 없음 | guide/03_이력.md:555 · guide/03_이력.md:556 · guide/03_이력.md:566 |
 | `S44-4` | 명령서에 수집 범위가 있는가 | fatal | `validate/v0_guide.py:70` | **★ 없음** | 없음 | guide/03_이력.md:557 · guide/03_이력.md:558 · guide/06_오판대장.md:137 |
-| `S44-5` | 명령서이 사이트를 한 가지로 적는가 | fatal | `validate/v0_guide.py:102` | **★ 없음** | 없음 | guide/03_이력.md:557 · guide/06_오판대장.md:138 |
+| `S44-5` | 명령서이 사이트를 한 가지로 적는가 | fatal | `validate/v0_guide.py:102` | **★ 없음** | 없음 | guide/03_이력.md:557 · guide/03_이력.md:803 · guide/06_오판대장.md:138 |
 | `S45-1` | f-table 절 제목과 표가 같은가 | fatal | `validate/v0_guide.py:135` | **★ 없음** | 없음 | guide/03_이력.md:460 · guide/03_이력.md:501 · guide/03_이력.md:510 |
 | `S45-2` | 시안에 옛 배점·분모가 없는가 | fatal | `validate/v0_guide.py:417` | **★ 없음** | 없음 | guide/00_버전.md:113 · guide/00_버전.md:114 · guide/03_이력.md:521 |
 | `S45-3` | 규격에 옛 총점이 없는가 | fatal | `validate/v0_guide.py:361` | **★ 없음** | 없음 | guide/00_버전.md:110 · guide/00_버전.md:112 · guide/03_이력.md:523 |
