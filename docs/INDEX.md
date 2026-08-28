@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**113파일 · 41,005줄 · 2,576KB**
+**113파일 · 41,017줄 · 2,580KB**
 
 ★ 800줄을 넘는 파일 12개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -17,7 +17,7 @@
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 1,312줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 859줄
+- guide/03_이력.md 860줄
 - guide/05_가이드역할.md 1,372줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -33,7 +33,7 @@
 | `CHECKS.md`  ★ | 1,004 | 123 |
 | `CROSS_SITE_COMPARE.md` | 272 | 13 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
-| `ENCAR_API.md` | 314 | 13 |
+| `ENCAR_API.md` | 324 | 14 |
 | `ENCAR_ROBOTS.md` | 208 | 10 |
 | `HEYDEALER_API.md` | 607 | 30 |
 | `HYUNDAI_CERTIFIED_API.md` | 430 | 20 |
@@ -108,12 +108,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 168 | 9 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 859 | 627 |
+| `guide/03_이력.md`  ★ | 860 | 629 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 713 | 27 |
 | `guide/05_가이드역할.md`  ★ | 1,372 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 565 | 157 |
+| `guide/06_오판대장.md` | 566 | 158 |
 | `guide/07_밀린일대장.md` | 296 | 25 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `ref/00-intro.md` | 33 | 0 |
