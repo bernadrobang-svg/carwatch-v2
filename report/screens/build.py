@@ -26,6 +26,32 @@ from report.finance import build_finance, purchase_cost
 # sites.json 은 한 요청 안에서 안 바뀐다.  root 별로 한 번만 읽는다
 _SITES_CACHE: dict = {}
 
+# ★★★ 설정 캐시 — ★ 실측 08-28.  `/detail` 한 장이 ★ config 를 27,336번 열었다
+#   (scoring 11,795 · unknown_split 7,761 · web 6,206 · sites 1,552).
+#   ★ 31KB 짜리를 만 번 파싱해 ★ 한 장에 8.6초를 썼다 — ★ 규격 상한은 2.0초다
+#   (`config/web.json` screen_max_sec).  ★ DB 쿼리는 1ms 대였다 —
+#   ★ 느린 것은 ★ 쿼리가 아니라 ★ 이쪽이었다
+# ★ 파일이 바뀌면 다시 읽는다 (mtime · 크기).  ★ 관리 화면이 config 를 고쳐도
+#   ★ 다음 요청이 새 값을 받는다 — ★ 서버를 껐다 켜지 않아도 된다
+# ★ 돌려준 것을 ★ 고치지 않는다.  ★ 같은 객체를 나눠 쓴다
+#   (전 사용처가 읽기만 하는 것을 확인했다 · 08-28).  ★ 안쪽을 내주는
+#   `_view_list` · `_view_dict` 는 ★ 베껴서 낸다 — ★ 캐시가 더럽혀지지 않게
+_JSON_CACHE: dict = {}
+
+
+def load_config(path: str) -> dict:
+    """설정을 읽는다.  ★ 파일이 그대로면 지난번 것을 그대로 준다."""
+    st = os.stat(path)
+    stamp = (st.st_mtime_ns, st.st_size)
+    key = os.path.abspath(path)
+    hit = _JSON_CACHE.get(key)
+    if hit is not None and hit[0] == stamp:
+        return hit[1]
+    with open(path, encoding="utf-8") as fp:
+        data = json.load(fp)
+    _JSON_CACHE[key] = (stamp, data)
+    return data
+
 # 리포트 계층 이름 (STEP 91).  ★ 코드가 아니라 사람 말로 낸다
 REPORT_LAYERS = {"L1": "매물 리포트", "L2": "차종 리포트", "L3": "실행 리포트"}
 from report.render import render_listing, render_run
@@ -81,8 +107,7 @@ def site_badge(site: str | None, sell_type: str | None,
       「일반·렌트·리스」로 용도지 판매 유형이 아니다 —
       그것을 붙이면 「엔카 렌트」가 배지가 된다
     """
-    with open(f"{root}/config/sites.json", encoding="utf-8") as f:
-        sites = json.load(f)
+    sites = load_config(f"{root}/config/sites.json")
     one = sites.get(site or "")
     if not isinstance(one, dict):
         return str(site or "")
@@ -132,8 +157,7 @@ PENDING = "PENDING"
 
 
 def _labels(root: str = ".") -> dict:
-    with open(f"{root}/config/labels.json", encoding="utf-8") as f:
-        return json.load(f)
+    return load_config(f"{root}/config/labels.json")
 
 
 def viewer_state(account: Account) -> ViewerState:
@@ -151,10 +175,8 @@ def _unknown_cfg() -> dict:
 
     ★ 코드에 source 이름을 박지 않는다 (S14)
     """
-    import json as _j
-    with open(_os_lbl.path.join(_ROOT_LBL, "config", "unknown_split.json"),
-              encoding="utf-8") as _f:
-        return _j.load(_f)
+    return load_config(
+        _os_lbl.path.join(_ROOT_LBL, "config", "unknown_split.json"))
 
 
 def is_unknown(source: str | None) -> bool:
@@ -274,14 +296,13 @@ def _bulk_changes(conn, lids: list) -> dict:
 
 def _total_points() -> float:
     """만점.  ★ 분모가 이보다 짧으면 색으로 가른다 (STEP 149f · A-2)."""
-    import json as _j
     import os as _o
 
     here = _o.path.dirname(_o.path.dirname(_o.path.dirname(
         _o.path.abspath(__file__))))
-    with open(_o.path.join(here, "config", "scoring.json"),
-              encoding="utf-8") as f:
-        return float(_j.load(f)["total_points"])
+    return float(
+        load_config(_o.path.join(here, "config", "scoring.json"))
+        ["total_points"])
 
 
 
@@ -855,9 +876,8 @@ def _pen_axes(raw, root: str = ".") -> set:
     rows = _pen_rows(raw)
     if not rows:
         return set()
-    with open(os.path.join(root, "config", "scoring.json"),
-              encoding="utf-8") as f:
-        where = json.load(f).get("penalty_axis") or {}
+    where = load_config(
+        os.path.join(root, "config", "scoring.json")).get("penalty_axis") or {}
     out = set()
     for key, _p, _w in rows:
         axis = where.get(key)
@@ -885,8 +905,7 @@ def _pen_words(raw) -> list:
 
 def _view_cfg(key: str, root: str = ".") -> int:
     """화면 표시 정책.  ★ 코드에 박지 않는다 (config/web.json)."""
-    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
-        return int(json.load(f)[key])
+    return int(load_config(os.path.join(root, "config", "web.json"))[key])
 
 
 # ★ 개정 433 — 8단계 + 순위를 안 매기는 것 셋 (제외·등급 없음·평가 불가)
@@ -961,8 +980,8 @@ def _site_detail_urls(root: str = ".") -> dict:
 
     ★ 못 잰 사이트는 값이 None 이다 — ★ 「모른다」다.  ★ 링크를 안 낸다
     """
-    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
-        return dict(json.load(f).get("site_detail_url") or {})
+    return dict(load_config(
+        os.path.join(root, "config", "web.json")).get("site_detail_url") or {})
 
 
 def _source_url(site: str, source_id: str, tpl: dict | None) -> str | None:
@@ -975,14 +994,12 @@ def _source_url(site: str, source_id: str, tpl: dict | None) -> str | None:
 
 def _view_str(key: str, root: str = ".") -> str:
     """화면 표시 정책 중 문자열.  ★ 코드에 박지 않는다 (config/web.json)."""
-    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
-        return str(json.load(f)[key])
+    return str(load_config(os.path.join(root, "config", "web.json"))[key])
 
 
 def _lease_kinds(root: str = ".") -> tuple:
     """목록에서 뺄 리스·렌트 (개정 420).  ★ 값은 config 가 갖는다 (S14)."""
-    with open(f"{root}/config/web.json", encoding="utf-8") as f:
-        cfg = json.load(f)
+    cfg = load_config(f"{root}/config/web.json")
     return (list(cfg["lease_advertisement_types"]),
             list(cfg["lease_sell_types"]))
 
@@ -1037,8 +1054,7 @@ def _option_blind_sites(root: str = ".") -> list:
     path = _o.path.join(root, "config", "dictionaries", "option_names.json")
     if not _o.path.isfile(path):
         return []
-    with open(path, encoding="utf-8") as f:
-        got = json.load(f)
+    got = load_config(path)
     return [k for k, v in (got.get("by_site") or {}).items()
             if v.get("discriminative") is False]
 
@@ -1053,20 +1069,17 @@ def _option_group_match(key: str, root: str = ".") -> list:
     path = _o.path.join(root, "config", "dictionaries", "option_names.json")
     if not _o.path.isfile(path):
         return []
-    with open(path, encoding="utf-8") as f:
-        got = json.load(f)
+    got = load_config(path)
     return list(((got.get("groups") or {}).get(key) or {}).get("match") or ())
 
 
 def fuel_groups(root: str = ".") -> list:
     """연료 갈래.  ★ 정본은 `config/web.json` 의 `fuel_groups` 다 (S14)."""
-    import json as _j
     import os as _o
 
     try:
-        with open(_o.path.join(root, "config", "web.json"),
-                  encoding="utf-8") as f:
-            return list(_j.load(f).get("fuel_groups") or ())
+        return list(load_config(
+            _o.path.join(root, "config", "web.json")).get("fuel_groups") or ())
     except (OSError, ValueError):
         return []
 
@@ -1391,8 +1404,8 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     if page_size is None:
         # ★ 출처는 web.rows_per_page 하나다 (E-5).
         #   옛 판은 scoring 쪽에도 같은 값이 있어 화면마다 갈렸다
-        with open(f"{root}/config/web.json", encoding="utf-8") as f:
-            page_size = int(json.load(f)["rows_per_page"])
+        page_size = int(
+            load_config(f"{root}/config/web.json")["rows_per_page"])
     limit = -1 if flt.show_all else page_size
     recs = conn.execute(
         sql, [flt.calc_version, *args, limit, (flt.page - 1) * limit]).fetchall()
@@ -1407,9 +1420,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     site_tpl = _site_detail_urls(root)
     km_unit = _view_cfg("km_bucket", root)
     monthly_unit = _view_cfg("monthly_bucket_won", root)
-    with open(os.path.join(root, "config", "depreciation.json"),
-              encoding="utf-8") as f:
-        dep_cfg = json.load(f)
+    dep_cfg = load_config(os.path.join(root, "config", "depreciation.json"))
     # ★ 순위는 쪽을 넘어가도 이어진다 — 2쪽 첫 줄이 다시 1위가 되면 거짓말이다
     first = 0 if flt.show_all else (flt.page - 1) * page_size
     # ★ 옵션가 사전은 한 번만 읽는다 (개정 301).  행마다 읽으면 쿼리가 는다
@@ -1467,9 +1478,7 @@ def _score_bars(sums: dict, root: str = ".") -> list:
 
 def _group_caps(root: str = ".") -> dict:
     """갈래별 만점.  ★ config/scoring.json groups 가 정본이다 (S14)."""
-    with open(os.path.join(root, "config", "scoring.json"),
-              encoding="utf-8") as f:
-        cfg = json.load(f)
+    cfg = load_config(os.path.join(root, "config", "scoring.json"))
     comp = cfg["components"]
     out = {}
     # ★ 갈래(f-table 넷) ＋ ★ 화면이 나눠 내는 이름(`group_parts`).
@@ -1484,13 +1493,13 @@ def _group_caps(root: str = ".") -> dict:
 
 
 def _view_list(key: str, root: str = ".") -> list:
-    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
-        return json.load(f)[key]
+    # ★ 베껴서 낸다 — 받은 쪽이 고쳐도 캐시가 안 더럽혀지게 (load_config 설명)
+    return list(load_config(os.path.join(root, "config", "web.json"))[key])
 
 
 def _view_dict(key: str, root: str = ".") -> dict:
-    with open(os.path.join(root, "config", "web.json"), encoding="utf-8") as f:
-        return json.load(f)[key]
+    # ★ 베껴서 낸다 (위와 같은 까닭)
+    return dict(load_config(os.path.join(root, "config", "web.json"))[key])
 
 
 def _soh_low(root: str) -> float:
@@ -1498,14 +1507,13 @@ def _soh_low(root: str) -> float:
 
     ★ 실측 08-17 — 30건의 SOH 가 91.1~96.8, 중앙 94.4 다
     """
-    with open(f"{root}/config/scoring.json", encoding="utf-8") as f:
-        return float(json.load(f)["axis_rules"]["value"]["battery_soh_low"])
+    return float(load_config(f"{root}/config/scoring.json")
+                 ["axis_rules"]["value"]["battery_soh_low"])
 
 
 def _view_int(key: str, root: str) -> int:
     """화면 임계값은 config 다 (V4-13 · V4-17)."""
-    with open(f"{root}/config/web.json", encoding="utf-8") as f:
-        return int(json.load(f)[key])
+    return int(load_config(f"{root}/config/web.json")[key])
 
 
 def _bucket(value, step: int):
@@ -1520,8 +1528,8 @@ def _high_km(root: str) -> int:
 
     ★ 정책값이라 config 에 둔다 — 코드에 박지 않는다 (V4-13)
     """
-    with open(f"{root}/config/scoring.json", encoding="utf-8") as f:
-        return int(json.load(f)["axis_rules"]["value"]["high_mileage_km"])
+    return int(load_config(f"{root}/config/scoring.json")
+               ["axis_rules"]["value"]["high_mileage_km"])
 
 
 def _option_prices(conn) -> dict:
