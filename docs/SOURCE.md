@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 178개 · 총 62,039줄
+파일 178개 · 총 62,104줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -53,9 +53,9 @@
 | `parse/hyundai_cert/mapping.py` | 322 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
 | `tools/build_dict.py` | 317 | RAW → 사전 생성. |
+| `tools/collect_kcar.py` | 316 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `validate/v9_multisite.py` | 305 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `tools/collect_hyundai_cert.py` | 303 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
-| `tools/collect_kcar.py` | 303 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `analyze/axis/state.py` | 302 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
 | `tests/test_endtoend.py` | 291 | 종단 시험 — 수집부터 리포트까지 (5장 STEP 47 · 49). |
@@ -65,6 +65,7 @@
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
 | `tests/test_crosssite.py` | 282 | 12장 다중 사이트 시험. |
 | `tools/check_screens.py` | 277 | 화면 ↔ 시안 대조 (10장 · 14장). |
+| `parse/kcar/mapping.py` | 269 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `report/exports/export.py` | 269 | 내보내기. |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
@@ -75,7 +76,6 @@
 | `validate/v5_value.py` | 244 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
-| `parse/kcar/mapping.py` | 217 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `tools/collect_bobaedream.py` | 213 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
@@ -469,6 +469,12 @@ _cols:85  _reads:89  _progress_note_check:117  _relist_check:201  run:227
 DictBuildReport:63  extract_distinct:78  _facet_values:106  facet_value_set:122  _walk_path:141  load_fixed_enums:168  build_dict:176  _mark_facet_substituted:227  build_catalog_dict:251  build_late_dict:289
 ```
 
+### `tools/collect_kcar.py` — 316줄
+
+```
+_now:44  fetch:48  classify:70  accident_of:85  fetch_stock:94  collect_list:115  main:218
+```
+
 ### `validate/v9_multisite.py` — 305줄
 
 ```
@@ -479,12 +485,6 @@ _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _o
 
 ```
 target_of:69  _now:85  _post:89  _get:99  fetch_detail:110  load_filters:123  total_count:155  walk:168  main:195
-```
-
-### `tools/collect_kcar.py` — 303줄
-
-```
-_now:43  fetch:47  classify:69  accident_of:84  fetch_stock:93  collect_list:114  main:217
 ```
 
 ### `analyze/axis/state.py` — 302줄
@@ -539,6 +539,12 @@ check:34  db:40  add:45  test_vin:63  test_vin_parse:107  test_cross_site:129  t
 
 ```
 _pairs:23  say:81  _text:90  check_pairs:97  check_phrases:110  _sian_heads:142  _heads:160  check_sections:179  check_nav:206  check_render:226  main:260
+```
+
+### `parse/kcar/mapping.py` — 269줄
+
+```
+_int:24  yn:32  _months_until:45  _model_group:59  parse_detail:69  _photos:157  parse_list_item:170  accident_of:211  record_of:219
 ```
 
 ### `report/exports/export.py` — 269줄
@@ -599,12 +605,6 @@ remaining_months:26  warranty_points:39  _truthy:73  warranty_grade:89  _seller_
 
 ```
 check:35  inv1_order_independent:42  inv1_shuffle_100:72  inv2_banned:95  inv5_points:113  put_contract:126  excluded_contract:143  inv3_source_not_null:169  inv4_label_shape:188  inv6_no_unclassified:204
-```
-
-### `parse/kcar/mapping.py` — 217줄
-
-```
-_int:24  yn:32  _months_until:45  _model_group:59  parse_detail:69  _photos:157  parse_list_item:170  accident_of:211
 ```
 
 ### `tools/collect_bobaedream.py` — 213줄

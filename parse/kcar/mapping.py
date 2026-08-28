@@ -215,3 +215,55 @@ def accident_of(body: dict) -> str | None:
     ★ `acdtHistYn` 으로 가르지 않는다 — ★ 표본 12건 ★ 전부 1 이다
     """
     return ((body.get("data") or {}).get("rvo") or {}).get("acdtHistComnt")
+
+def record_of(body: dict, site: str) -> dict | None:
+    """상세 → ★ `core_record` 한 줄 (규격 3-2 · 3-3).
+
+    ★★★ 08-28 — ★ K카는 ★ `core_listing` 만 쓰고 ★ **`core_record` 를 안 썼다.**
+      ★ ★ 실측 — ★ 엔카는 5,603행인데 ★ K카는 ★ **0행**이었다.
+      ★ ★ 그래서 ★ 상세를 받아도 ★ `state.accident` 51점이 ★ 0/34 로 비어 있었다 —
+        ★ ★ 사고 축은 ★ `core_record` 에서 온다.  ★ 「상세가 전부다」인데 ★ 그 자리가 비었다
+    ★ 칸은 ★ 표본으로 ★ 눈으로 확인한 것만 담는다 (`EC61306360` · 08-28)
+      carhistory.rsltCd '000' · owncarDmgeAcdtCnt 1 · owncarDmgeInsrAmtSum 3,222,770
+      othrcarWrdgAcdtCnt 1 · gnrlTtlsAcdtCnt 0 · fldgAcdtCnt 0 · rbrTtlsAcdtCnt 0
+      carOwnrChngHistList[].title '신규등록(수입차)' · '명의이전등록'
+    ★ 없는 것은 안 담는다 — ★ 「없음 0」으로 지어내지 않는다 (개정 325)
+    """
+    data = body.get("data") or {}
+    hist = data.get("carhistory") or {}
+    if not hist:
+        return None
+
+    def _i(key):
+        got = hist.get(key)
+        return int(got) if isinstance(got, (int, float)) or (
+            isinstance(got, str) and got.strip().isdigit()) else None
+
+    # ★ 소유자 변경 — ★ 「명의이전등록」 줄만 센다.  ★ 신규등록은 소유자 변경이 아니다
+    owners = data.get("carOwnrChngHistList") or []
+    chng = sum(1 for o in owners
+               if "명의이전" in str((o or {}).get("title") or ""))
+    biz = str(hist.get("bizuseHistYn") or "").upper()
+
+    out = {
+        "listing_id": None,           # ★ 부르는 쪽이 대리키를 넣는다
+        "site": site,
+        "row_status": "ok",
+        "collected_at": None,         # ★ 부르는 쪽이 넣는다
+        # ★ 이력 조회가 됐나 — ★ `000` 이 성공이다 (규격 3-3)
+        "record_open": 1 if str(hist.get("rsltCd") or "") == "000" else 0,
+        "accident_my_cnt": _i("owncarDmgeAcdtCnt"),
+        "accident_my_cost": _i("owncarDmgeInsrAmtSum"),
+        "accident_other_cnt": _i("othrcarWrdgAcdtCnt"),
+        "accident_other_cost": _i("othrcarWrdgInsrAmtSum"),
+        "accident_total_cnt": _i("acdtCnt"),
+        "total_loss_cnt": _i("gnrlTtlsAcdtCnt"),
+        "flood_total_cnt": _i("fldgAcdtCnt"),
+        "robber_cnt": _i("rbrTtlsAcdtCnt"),
+    }
+    if owners:
+        out["owner_change_cnt"] = chng
+    if biz in ("Y", "N"):
+        out["use_business"] = 1 if biz == "Y" else 0
+    return {k: v for k, v in out.items() if v is not None or k in
+            ("listing_id", "collected_at")}

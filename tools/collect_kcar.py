@@ -30,7 +30,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from adapters.kcar import SITE_CODE, KcarAdapter, load_config  # noqa: E402
-from parse.kcar.mapping import parse_detail, parse_list_item  # noqa: E402
+from parse.kcar.mapping import (parse_detail, parse_list_item,  # noqa: E402
+                                record_of)
 from store.dictionary import collect_group_of, match_target_name  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
@@ -274,26 +275,38 @@ def main() -> int:
         print("★ --check 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
+    from store.core import (resolve_listing_id, split_pii, upsert_child,
+                            upsert_core)
     from store.pii import load_key
     from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
     key = load_key()
-    stored, empty = 0, 0
+    stored, empty, records = 0, 0, 0
     for cd, body in ok_rows:
         # ★★ `data` 를 벗긴다 — ★ 안 벗기면 ★ 전건 NULL 이다 (명령서 6단계)
         deep = parse_detail(body, SITE_CODE, cd)
         if not deep:
             empty += 1
             continue
-        deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, cd, at)
+        lid = resolve_listing_id(conn, SITE_CODE, cd, at)
+        deep["listing_id"] = lid
         deep["detail_status"] = "ok"
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        # ★★★ 08-28 — ★ 이력은 ★ `core_record` 의 칸이다 (규격 3-2·3-3).
+        #   ★ 전에는 ★ `core_listing` 만 썼다 — ★ 그래서 상세를 받아도
+        #     ★ ★ `state.accident` 51점이 ★ 0/34 로 비어 있었다 (실측 08-28).
+        #   ★ 엔카는 5,603행인데 ★ K카는 0행이었다
+        rec = record_of(body, SITE_CODE)
+        if rec:
+            rec["listing_id"] = lid
+            rec["collected_at"] = at
+            upsert_child(conn, "core_record", rec, "p1", at)
+            records += 1
         stored += 1
     commit(conn)
-    print(f"★ 저장 {stored}건 · site='{SITE_CODE}'"
+    print(f"★ 저장 {stored}건 · ★ 이력(core_record) {records}건 · site='{SITE_CODE}'"
           + (f" · ★ 매핑이 빈 것 {empty}건" if empty else ""))
     print("★ 성능점검은 ★ 사진뿐이라 ★ 골격·외판 축은 ★ 안 채웠다 (④ · 규격 4장)")
     return 0
