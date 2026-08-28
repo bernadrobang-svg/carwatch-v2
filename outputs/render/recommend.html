@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추천 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=d7df72d6eb">
+<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
 
 </head>
 <body class="s-recommend">
@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect">브라우저 수집</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -53,17 +53,17 @@
 
 
 <p class="cond"><span class="q"><strong>10건</strong> —
-  E · 미판정을 뺀 후보 6,931건 중
+  E · 미판정을 뺀 후보 7,430건 중
   <strong>이유를 댈 수 있는 것</strong>만 · 비율 높은 순</span>
-  <span class="n">판정 9,558건 →
-    E · 미판정 2,627건 뺌</span></p>
+  <span class="n">판정 9,563건 →
+    E · 미판정 2,133건 뺌</span></p>
 
 
 <div class="bar">
   <form class="inline" method="get" action="/recommend">
     
     <select name="order" onchange="this.form.submit()" title="무엇을 먼저 볼지 고릅니다">
-      <option value="rank" selected>추천 순위</option><option value="grade">등급순</option><option value="price">가격 낮은순</option><option value="price_desc">가격 높은순</option><option value="mileage">주행거리</option><option value="year">연식 최신</option><option value="new">등록 최신</option><option value="dom">오래된 매물</option>
+      <option value="rank" selected>추천 순위</option><option value="price">가격 낮은순</option><option value="grade">등급순</option><option value="price_desc">가격 높은순</option><option value="mileage">주행거리</option><option value="year">연식 최신</option><option value="new">등록 최신</option><option value="dom">오래된 매물</option>
     </select>
     <noscript><button type="submit" class="mini">정렬</button></noscript>
   </form>
@@ -93,53 +93,103 @@
 </tr></thead>
 <tbody>
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" data-href="/why/166">
+<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" data-href="/why/202">
   <td class="c photo" data-label="사진">
-    <a href="/why/166"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4245/42459786_001.jpg" alt="" loading="lazy"></a>
+    <a href="/why/202"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" alt="" loading="lazy"></a>
     
   </td>
   
   <td class="c" data-label="관심">
     <form method="post" action="/watch/add" class="inline">
       <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="166">
+      <input type="hidden" name="listing_id" value="202">
       <button type="submit" class="heart" title="관심에 담습니다">♡</button>
     </form>
   </td>
   <td class="c" data-label="등급"><span class="grade-s">S</span></td>
   <td class="r num" data-label="순위"><b>1</b></td>
   
-  <td class="r num" data-label="비율"><strong>81.0%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:81.0%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td class="r num" data-label="비율"><strong>76.7%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:76.7%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
+  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
     <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-12</td>
-  <td class="r num" data-label="주행">55,763km</td>
+  <td class="r" data-label="연식">2024-10</td>
+  <td class="r num" data-label="주행">34,145km</td>
   <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-11.3%</span>
+    <span class="up-v">3.4%</span>
     
   </td>
   <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-33.6%</span>
+    <span class="down-v">-27.5%</span>
     
   </td>
-  <td class="r num" data-label="가격"><b>2,990만</b></td>
+  <td class="r num" data-label="가격"><b>3,300만</b></td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 4개월 · 44천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 2개월 · 65천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
   
   <td class="r num" data-label="옵션">
-    <a href="/why/166">2종 154만</a>
+    <a href="/why/202">4종 401만</a>
     
   </td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 380만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
   <td class="c act" data-label="보기">
-    <a href="/why/166" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42459786" target="_blank" rel="noopener" class="mini"
+    <a href="/why/202" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42520259" target="_blank" rel="noopener" class="mini"
       title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=166" class="mini">⇄ 비교</a>
+    <a href="/compare?ids=202" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture04/pic4204/42047175_027.jpg" data-href="/why/69">
+  <td class="c photo" data-label="사진">
+    <a href="/why/69"><img class="thumb" src="https://ci.encar.com/carpicture04/pic4204/42047175_027.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="69">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
+  <td class="r num" data-label="순위"><b>2</b></td>
+  
+  <td class="r num" data-label="비율"><strong>76.7%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:76.7%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">KOLEOS_HEV</td>
+  
+  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
+    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="r" data-label="연식">2024-09</td>
+  <td class="r num" data-label="주행">18,877km</td>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">5.3%</span>
+    
+  </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-26.2%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,360만</b></td>
+  
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 1개월 · 81천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  
+  <td class="r num" data-label="옵션">
+    <a href="/why/69">4종 401만</a>
+    
+  </td>
+  
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/69" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42047175" target="_blank" rel="noopener" class="mini"
+      title="원문 매물로 갑니다">엔카 ↗</a>
+    <a href="/compare?ids=69" class="mini">⇄ 비교</a>
   </td>
 </tr>
 
@@ -157,10 +207,10 @@
     </form>
   </td>
   <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>2</b></td>
+  <td class="r num" data-label="순위"><b>3</b></td>
   
-  <td class="r num" data-label="비율"><strong>80.4%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.4%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td class="r num" data-label="비율"><strong>76.4%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:76.4%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   
   <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
@@ -207,10 +257,10 @@
     </form>
   </td>
   <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>3</b></td>
+  <td class="r num" data-label="순위"><b>4</b></td>
   
-  <td class="r num" data-label="비율"><strong>80.2%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.2%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td class="r num" data-label="비율"><strong>76.2%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:76.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   
   <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
@@ -243,256 +293,6 @@
   </td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" data-href="/why/179">
-  <td class="c photo" data-label="사진">
-    <a href="/why/179"><img class="thumb" src="https://ci.encar.com/carpicture08/pic4248/42482002_027.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="179">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>4</b></td>
-  
-  <td class="r num" data-label="비율"><strong>80.1%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.1%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
-  
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2025-03</td>
-  <td class="r num" data-label="주행">51,151km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-6.2%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-28.6%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,170만</b></td>
-  
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 7개월 · 48천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
-  
-  <td class="r num" data-label="옵션">
-    <a href="/why/179">3종 283만</a>
-    
-  </td>
-  
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 209만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/179" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42482002" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=179" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
-<tr data-peek="https://ci.encar.com/carpicture10/pic4240/42408679_001.jpg" data-href="/why/143">
-  <td class="c photo" data-label="사진">
-    <a href="/why/143"><img class="thumb" src="https://ci.encar.com/carpicture10/pic4240/42408679_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="143">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>5</b></td>
-  
-  <td class="r num" data-label="비율"><strong>80.0%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.0%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
-  
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-09</td>
-  <td class="r num" data-label="주행">72,859km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-9.1%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-34.0%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>2,899만</b></td>
-  
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 1개월 · 27천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
-  
-  <td class="r num" data-label="옵션">
-    <a href="/why/143">2종 243만</a>
-    
-  </td>
-  
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 291만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/143" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42408679" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=143" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
-<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" data-href="/why/202">
-  <td class="c photo" data-label="사진">
-    <a href="/why/202"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="202">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>6</b></td>
-  
-  <td class="r num" data-label="비율"><strong>80.0%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.0%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
-  
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-10</td>
-  <td class="r num" data-label="주행">34,145km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">3.4%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-27.5%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,300만</b></td>
-  
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 2개월 · 65천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
-  
-  <td class="r num" data-label="옵션">
-    <a href="/why/202">4종 401만</a>
-    
-  </td>
-  
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/202" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42520259" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=202" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
-<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/why/5749">
-  <td class="c photo" data-label="사진">
-    <a href="/why/5749"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="5749">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>7</b></td>
-  
-  <td class="r num" data-label="비율"><strong>80.0%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:80.0%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
-  
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2026-02</td>
-  <td class="r num" data-label="주행">2,300km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-3.3%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.2%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,550만</b></td>
-  
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">4년 6개월 · 97천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
-  
-  <td class="r num" data-label="옵션">
-    <a href="/why/5749">4종 413만</a>
-    
-  </td>
-  
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/5749" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42528750" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=5749" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
-<tr data-peek="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" data-href="/why/5736">
-  <td class="c photo" data-label="사진">
-    <a href="/why/5736"><img class="thumb" src="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
-  
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="5736">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>8</b></td>
-  
-  <td class="r num" data-label="비율"><strong>79.8%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:79.8%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
-  
-  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-11</td>
-  <td class="r num" data-label="주행">22,960km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-3.6%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-29.3%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,250만</b></td>
-  
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 3개월 · 77천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
-  
-  <td class="r num" data-label="옵션">
-    <a href="/why/5736">2종 243만</a>
-    
-  </td>
-  
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/5736" class="mini">근거</a>
-    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42544688" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=5736" class="mini">⇄ 비교</a>
-  </td>
-</tr>
-
 <tr data-peek="https://ci.encar.com/carpicture02/pic4252/42520647_001.jpg" data-href="/why/204">
   <td class="c photo" data-label="사진">
     <a href="/why/204"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42520647_001.jpg" alt="" loading="lazy"></a>
@@ -507,10 +307,10 @@
     </form>
   </td>
   <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>9</b></td>
+  <td class="r num" data-label="순위"><b>5</b></td>
   
-  <td class="r num" data-label="비율"><strong>79.3%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:79.3%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td class="r num" data-label="비율"><strong>75.9%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:75.9%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   
   <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
@@ -543,6 +343,106 @@
   </td>
 </tr>
 
+<tr data-peek="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" data-href="/why/5736">
+  <td class="c photo" data-label="사진">
+    <a href="/why/5736"><img class="thumb" src="https://ci.encar.com/carpicture04/pic4254/42544688_001.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="5736">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
+  <td class="r num" data-label="순위"><b>6</b></td>
+  
+  <td class="r num" data-label="비율"><strong>75.6%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:75.6%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">KOLEOS_HEV</td>
+  
+  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
+    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="r" data-label="연식">2024-11</td>
+  <td class="r num" data-label="주행">22,960km</td>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-3.6%</span>
+    
+  </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-29.3%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,250만</b></td>
+  
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 3개월 · 77천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  
+  <td class="r num" data-label="옵션">
+    <a href="/why/5736">2종 243만</a>
+    
+  </td>
+  
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/5736" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42544688" target="_blank" rel="noopener" class="mini"
+      title="원문 매물로 갑니다">엔카 ↗</a>
+    <a href="/compare?ids=5736" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg" data-href="/why/125">
+  <td class="c photo" data-label="사진">
+    <a href="/why/125"><img class="thumb" src="https://ci.encar.com/carpicture06/pic4236/42364232_001.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="125">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-s">S</span></td>
+  <td class="r num" data-label="순위"><b>7</b></td>
+  
+  <td class="r num" data-label="비율"><strong>75.3%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:75.3%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">KOLEOS_HEV</td>
+  
+  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
+    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="r" data-label="연식">2025-07</td>
+  <td class="r num" data-label="주행">23,513km</td>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="up-v">0.3%</span>
+    
+  </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-24.9%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,390만</b></td>
+  
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 11개월 · 76천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  
+  <td class="r num" data-label="옵션">
+    <a href="/why/125">3종 361만</a>
+    
+  </td>
+  
+  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/125" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42364232" target="_blank" rel="noopener" class="mini"
+      title="원문 매물로 갑니다">엔카 ↗</a>
+    <a href="/compare?ids=125" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
 <tr data-peek="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg" data-href="/why/121">
   <td class="c photo" data-label="사진">
     <a href="/why/121"><img class="thumb" src="https://ci.encar.com/carpicture03/pic4233/42337971_001.jpg" alt="" loading="lazy"></a>
@@ -557,10 +457,10 @@
     </form>
   </td>
   <td class="c" data-label="등급"><span class="grade-s">S</span></td>
-  <td class="r num" data-label="순위"><b>10</b></td>
+  <td class="r num" data-label="순위"><b>8</b></td>
   
-  <td class="r num" data-label="비율"><strong>79.2%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:79.2%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td class="r num" data-label="비율"><strong>75.2%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:75.2%"></i><i class="may" style="width:0.0%"></i></span></td>
   <td data-label="차종">KOLEOS_HEV</td>
   
   <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
@@ -593,6 +493,106 @@
   </td>
 </tr>
 
+<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/why/5749">
+  <td class="c photo" data-label="사진">
+    <a href="/why/5749"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="5749">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
+  <td class="r num" data-label="순위"><b>9</b></td>
+  
+  <td class="r num" data-label="비율"><strong>75.0%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:75.0%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">KOLEOS_HEV</td>
+  
+  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
+    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="r" data-label="연식">2026-02</td>
+  <td class="r num" data-label="주행">2,300km</td>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-3.3%</span>
+    
+  </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-23.2%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,550만</b></td>
+  
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">4년 6개월 · 97천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  
+  <td class="r num" data-label="옵션">
+    <a href="/why/5749">4종 413만</a>
+    
+  </td>
+  
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/5749" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=42528750" target="_blank" rel="noopener" class="mini"
+      title="원문 매물로 갑니다">엔카 ↗</a>
+    <a href="/compare?ids=5749" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
+<tr data-peek="https://ci.encar.com/carpicture03/pic4173/41730197_001.jpg" data-href="/why/27">
+  <td class="c photo" data-label="사진">
+    <a href="/why/27"><img class="thumb" src="https://ci.encar.com/carpicture03/pic4173/41730197_001.jpg" alt="" loading="lazy"></a>
+    
+  </td>
+  
+  <td class="c" data-label="관심">
+    <form method="post" action="/watch/add" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="listing_id" value="27">
+      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+    </form>
+  </td>
+  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
+  <td class="r num" data-label="순위"><b>10</b></td>
+  
+  <td class="r num" data-label="비율"><strong>74.9%</strong>
+    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:74.9%"></i><i class="may" style="width:0.0%"></i></span></td>
+  <td data-label="차종">KOLEOS_HEV</td>
+  
+  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
+    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
+  <td class="r" data-label="연식">2025-01</td>
+  <td class="r num" data-label="주행">13,849km</td>
+  <td class="r num gap" data-label="시세 대비">
+    <span class="down-v">-3.4%</span>
+    
+  </td>
+  <td class="r num gap" data-label="신차가 대비">
+    <span class="down-v">-23.4%</span>
+    
+  </td>
+  <td class="r num" data-label="가격"><b>3,420만</b></td>
+  
+  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 5개월 · 86천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  
+  <td class="r num" data-label="옵션">
+    <a href="/why/27">1종 114만</a>
+    
+  </td>
+  
+  <td data-label="왜 이 순위인가"><span class="reason">시세보다 120만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
+  <td class="c act" data-label="보기">
+    <a href="/why/27" class="mini">근거</a>
+    <a href="https://www.encar.com/dc/dc_cardetailview.do?carid=41730197" target="_blank" rel="noopener" class="mini"
+      title="원문 매물로 갑니다">엔카 ↗</a>
+    <a href="/compare?ids=27" class="mini">⇄ 비교</a>
+  </td>
+</tr>
+
 </tbody>
 </table>
 
@@ -604,7 +604,7 @@
   자세한 근거는 <strong>매물을 눌러 상세</strong>에서 봅니다.</p>
 
 
-<h2>후보에서 뺀 것 1,816건</h2>
+<h2>후보에서 뺀 것 1,817건</h2>
 <table>
 <thead><tr><th>사유</th><th class="num">건수</th><th>무엇을 뜻하나</th><th></th></tr></thead>
 <tbody>
@@ -613,7 +613,7 @@
   <td class="muted">표시가가 승계 인수금입니다. 월 사용료가 따로 듭니다</td>
   <td><a href="/listings?excluded=1&amp;reason=%EB%A6%AC%EC%8A%A4%C2%B7%EB%A0%8C%ED%8A%B8%20%EC%83%81%ED%92%88">보기</a></td></tr>
 
-<tr><td>수리비 10% 초과</td><td class="num">383</td>
+<tr><td>수리비 10% 초과</td><td class="num">384</td>
   <td class="muted">수리비가 차값의 10% 를 넘었습니다</td>
   <td><a href="/listings?excluded=1&amp;reason=%EC%88%98%EB%A6%AC%EB%B9%84%2010%25%20%EC%B4%88%EA%B3%BC">보기</a></td></tr>
 
@@ -763,8 +763,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260826T164607</span>
-  <span>2026-08-28 06:19</span>
+  <span>run 20260828T041017</span>
+  <span>2026-08-28 14:23</span>
 </footer>
 
 </body>

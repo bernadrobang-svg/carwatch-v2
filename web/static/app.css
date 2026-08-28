@@ -66,22 +66,10 @@ a { color:var(--amber); }
        border-bottom:1px solid var(--line); font-size:14px; }
 .nav-item { color:var(--dim); text-decoration:none; }
 
-/* ★★★★ 08-28 마스터 — 「메뉴가 위에 있다가 밑으로 가버리고」 (명령서 82장 · 오판 149).
-   ★ 시안(`ref/screens/v4m_*_시안.html` `.v4-tabs`)은 ★ position:fixed ＋ bottom:0 이다.
-   ★ ★ 모바일에서 메뉴가 위면 ★ 한 손으로 못 누른다 (UI_REVIEW 15장).
-   ★ 640 이상에서만 ★ 위로 올린다 — ★ 그때는 마우스라 위가 낫다.
-   ★ 시안 값을 그대로 옮겼다 — ★ 지어내지 않았다 */
-@media (min-width:340px) and (max-width:639px) {
-  .nav { position:fixed; bottom:0; left:0; right:0; z-index:30;
-         max-width:1180px; margin:0 auto;
-         flex-wrap:nowrap; gap:0; padding:0;
-         background:var(--surface); border-top:1px solid var(--line2);
-         border-bottom:0; }
-  .nav-item { flex:1; text-align:center; padding:9px 0 11px; font-size:11px; }
-  .nav-item em, .nav-item .locked { display:none; }
-  /* ★ 아래 고정 메뉴가 마지막 줄을 가린다 — ★ 그만큼 바닥을 띄운다 */
-  body { padding-bottom:64px; }
-}
+/* ★★ 08-28 — ★ 여기 메뉴 블록을 뺐다.  ★ 이미 아래에 ★ 같은 규칙이 있다
+   (「상단 메뉴를 손가락 폭에서는 아래 탭으로」 · 마스터 확정 08-25).
+   ★ 실측 — ★ 내가 모르고 하나를 더 넣어 ★ 같은 규칙이 두 벌이 됐다.
+   ★ ★ 마스터께서 「메뉴가 위에 있다가 밑으로」 하신 것은 ★ **이미 고쳐져 있었다** */
 .nav-item em { color:var(--faint); font-style:normal; font-size:12px; }
 .locked { color:var(--up); font-size:12px; }
 
@@ -2424,3 +2412,59 @@ a.vline b { color:var(--amber); }
   /* ★ 넓은 폭은 그리드 칸이 104px 다 — 그대로 맞는다 */
   .car-rows .kthumbwrap { width:104px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   ★★★★ v4m 시안 값 — ★ 명령서 82장 (마스터 08-28)
+   ★★★ 마스터 — 「★ 내가 시안대로 ★ 디자인 위치를 모두 보정하라고 한 거잖아.
+     ★ ★ 내용만 있으면 시안을 왜 만들어.  ★ UX 관점도 없고
+     ★ ★ 메뉴가 위에 있다가 밑으로 가버리고」
+   ★★★★ ★ 이름은 ★ **우리 것 그대로** 쓴다 — ★ 마스터 확정 ㉮(08-24)가
+     ★ ★ 「시안 쪽에 `.v3-` 을 붙인다.  ★ 실제 `app.css` 는 안 건드린다」이고
+     ★ ★ 검사 `S46-67` 이 ★ 시안 이름이 여기 들어오는 것을 막는다.
+     ★ ★ 08-28 실측 — ★ 시안 CSS 를 그대로 들였더니 ★ 289곳이 겹쳐
+       ★ ★ `S46-67`·`S46-68`·`S46-75` 가 터지고 시험 셋이 깨졌다.  ★ 되돌렸다.
+   ★ 그래서 ★ **값만** 옮긴다 — ★ 크기·여백·색·자리를 시안에서 재서 적었다
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ★ 목록 카드 — 시안 `.v4-card` (모바일: 좌우 14px · 위아래 12px) */
+@media (max-width:639px) {
+  .row { display:block; padding:12px 14px; margin-bottom:0;
+         border-radius:0; border:0; border-bottom:1px solid var(--line); }
+  /* ★ 사진 — 시안 `.v4-thumb` 104×78 (아주 좁으면 88×66) */
+  .row .desk img, .row .desk .pimg { width:104px; height:78px; border-radius:8px; }
+  /* ★ 등급 배지 — 시안 `.v4-gr` 는 작은 알약이다 (19px 큰 글씨가 아니다) */
+  .gr { font-size:12px; font-weight:700; border-radius:4px; padding:0 6px;
+        line-height:1.6; text-align:left; display:inline-block; }
+  /* ★ 값 — 시안 `.v4-price` 16px/700 */
+  .row .price b { font-size:16px; font-weight:700; }
+  /* ★ 칸 글씨 — 시안 `.v4-spec` 12px */
+  .row .cell { font-size:12px; }
+  /* ★ 단추 — 시안 `.v4-btn` 은 ★ 손가락이 닿게 44px 다 */
+  .row .btn, .cellset .btn { min-height:44px; border-radius:8px; font-size:13px; }
+}
+@media (min-width:340px) and (max-width:479px) {
+  .row .desk img, .row .desk .pimg { width:88px; height:66px; }
+  .row .price b { font-size:15px; }
+  .row .btn { font-size:12px; }
+}
+/* ★ 넓은 폭 — 시안은 사진이 180 → 240 으로 커진다 */
+@media (min-width:640px) and (max-width:1023px) {
+  .row .desk img, .row .desk .pimg { width:180px; height:135px; }
+}
+@media (min-width:1024px) {
+  .row .desk img, .row .desk .pimg { width:240px; height:180px; }
+}
+
+/* ★ 거르개 상자 — 시안 `.v4-fil` : 아래 줄 하나 · 고르개는 40px 에 8px 둥글게 */
+.chips { padding:8px 0; border-bottom:1px solid var(--line); }
+@media (max-width:639px) {
+  .chips select, .chips input { min-height:40px; border-radius:8px;
+                                font-size:13px; padding:0 10px; }
+}
+
+/* ★ 절 상자 — 시안 `.v4-sec` · `.v4-kv` · `.v4-box` */
+.vline { display:flex; justify-content:space-between; padding:5px 0;
+         font-size:13px; border-bottom:1px solid var(--line); }
+.vline:last-child { border-bottom:0; }
+.cond.what { border:1px solid var(--amber); border-radius:10px;
+             background:var(--surface); padding:11px 12px; }

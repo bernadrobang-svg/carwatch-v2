@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>설정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=d7df72d6eb">
+<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
 
 </head>
 <body class="s-admin-config">
@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect">브라우저 수집</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -1868,7 +1868,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.value.mileage_curve</td>
-  <td class="num" data-label="현재 값">[[0, 107], [20000, 98], [40000, 88], [60000, 76], [80000, 62], [100000, 48], [12</td>
+  <td class="num" data-label="현재 값">[[0, 107], [20000, 98], [40000, 85], [60000, 55], [70000, 30], [80000, 5], [1000</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2055,7 +2055,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.value.year_curve</td>
-  <td class="num" data-label="현재 값">[[0, 80], [1, 77], [2, 70], [3, 62], [4, 51], [5, 38], [6, 23], [7, 11], [8, 0]]</td>
+  <td class="num" data-label="현재 값">[[0, 40], [1, 55], [2, 70], [3, 80], [4, 72], [5, 45], [6, 0], [8, 0]]</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2072,7 +2072,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.value.budget_curve</td>
-  <td class="num" data-label="현재 값">[[60, 95], [70, 90], [80, 80], [90, 66], [100, 50], [110, 34], [120, 18], [130, </td>
+  <td class="num" data-label="현재 값">[[60, 95.0], [64, 93.4], [68, 91.7], [72, 89.8], [76, 87.6], [80, 85.1], [84, 82</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2089,7 +2089,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.value.origin_curve</td>
-  <td class="num" data-label="현재 값">[[65, 75], [68, 64], [71, 50], [74, 36], [77, 20], [80, 0]]</td>
+  <td class="num" data-label="현재 값">[[40, 75.0], [42, 63.1], [44, 54.5], [46, 47.6], [48, 42.0], [50, 37.2], [52, 33</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3448,6 +3448,91 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.C40_EV</td>
+  <td class="num" data-label="현재 값">4500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.C40_EV">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.XC60_IMPORT</td>
+  <td class="num" data-label="현재 값">4000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.XC60_IMPORT">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.XC40_IMPORT</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.XC40_IMPORT">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.S60_IMPORT</td>
+  <td class="num" data-label="현재 값">3000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.S60_IMPORT">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.V60CC_IMPORT</td>
+  <td class="num" data-label="현재 값">4000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.V60CC_IMPORT">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="키">budget_manwon.by_fuel.전기.국산</td>
   <td class="num" data-label="현재 값">4500</td>
   <td class="muted" data-label="형">int</td>
@@ -3771,6 +3856,40 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="키">grade_gates.mileage_gate.over_km</td>
+  <td class="num" data-label="현재 값">100000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="grade_gates.mileage_gate.over_km">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">grade_gates.mileage_gate.max_grade</td>
+  <td class="num" data-label="현재 값">C</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="grade_gates.mileage_gate.max_grade">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="키">pending_rule.evidence_ratio_below</td>
   <td class="num" data-label="현재 값">0.6</td>
   <td class="muted" data-label="형">float</td>
@@ -3814,6 +3933,57 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="pending_rule.sort_last">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">certified_credit.ratio</td>
+  <td class="num" data-label="현재 값">0.8</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="certified_credit.ratio">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">certified_credit.sites</td>
+  <td class="num" data-label="현재 값">[&quot;volvo_selekt&quot;, &quot;lexus_certified&quot;, &quot;hyundai_cert&quot;, &quot;kia_cpo&quot;, &quot;bmw_premium&quot;, &quot;k</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="certified_credit.sites">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">certified_credit.axes</td>
+  <td class="num" data-label="현재 값">[&quot;state.accident&quot;, &quot;state.frame&quot;, &quot;state.outer&quot;, &quot;state.leak&quot;, &quot;state.integrity&quot;</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="certified_credit.axes">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -3877,8 +4047,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260826T164607</span>
-  <span>2026-08-28 06:19</span>
+  <span>run 20260828T041017</span>
+  <span>2026-08-28 14:23</span>
 </footer>
 
 </body>

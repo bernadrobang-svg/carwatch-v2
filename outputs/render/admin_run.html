@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=d7df72d6eb">
+<link rel="stylesheet" href="/static/app.css?v=0691dbee30">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-run">
@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카 목록이 1일째 갱신되지 않았습니다 — 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">브라우저 수집을 눌러 주십시오</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect">브라우저 수집</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -54,12 +54,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>done</strong> · 사유 raw_missing · 범위 all
-    <span class="muted">· run 20260827T173256</span></p>
+  <p><strong>done</strong> · 사유 listing_updated · 범위 all
+    <span class="muted">· run 20260828T041017</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-27T17:32:54.883240+00:00</span></p>
-  <p class="muted">S5 ok 0 · S6 ok 138244 · S9 ok 248508 · S10 ok 9558</p>
+    <span class="muted">· 넣은 시각 2026-08-28T04:10:16.757825+00:00</span></p>
+  <p class="muted">S4 ok 40 · S5 ok 33 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</p>
   
   
 
@@ -75,35 +75,35 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">21,592</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">21,597</td></tr>
   
-  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,022</td></tr>
+  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,023</td></tr>
   
-  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">21,823</td></tr>
+  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">21,828</td></tr>
   
   <tr><td data-label="엔드포인트">extend_warrant</td><td class="num" data-label="원문">8</td></tr>
   
-  <tr><td data-label="엔드포인트">facet</td><td class="num" data-label="원문">104</td></tr>
+  <tr><td data-label="엔드포인트">facet</td><td class="num" data-label="원문">110</td></tr>
   
-  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">12,123</td></tr>
+  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">12,126</td></tr>
   
-  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">11,281</td></tr>
+  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">11,284</td></tr>
   
-  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">4,189</td></tr>
+  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">4,476</td></tr>
   
-  <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">21,529</td></tr>
+  <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">21,534</td></tr>
   
-  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">13,603</td></tr>
+  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">13,606</td></tr>
   
-  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">13,447</td></tr>
+  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">13,450</td></tr>
   
-  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">20,703</td></tr>
+  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">20,708</td></tr>
   
   <tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="원문">2</td></tr>
   
   </tbody>
   </table>
-  <p class="muted">매물 18,757건 · 판정 9,558건</p>
+  <p class="muted">매물 18,762건 · 판정 9,563건</p>
 
   <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
     갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
@@ -142,11 +142,11 @@
   <label class="opt"><input type="radio" name="scope" value="XC40_IMPORT">
     XC40_IMPORT <span class="muted">(404건)</span></label>
   
+  <label class="opt"><input type="radio" name="scope" value="G70_20T">
+    G70_20T <span class="muted">(338건)</span></label>
+  
   <label class="opt"><input type="radio" name="scope" value="KOLEOS_HEV">
     KOLEOS_HEV <span class="muted">(336건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="G70_20T">
-    G70_20T <span class="muted">(335건)</span></label>
   
   <label class="opt"><input type="radio" name="scope" value="GRANDEUR_LPG">
     GRANDEUR_LPG <span class="muted">(305건)</span></label>
@@ -167,7 +167,7 @@
     GV60 <span class="muted">(157건)</span></label>
   
   <label class="opt"><input type="radio" name="scope" value="G70_25T">
-    G70_25T <span class="muted">(110건)</span></label>
+    G70_25T <span class="muted">(112건)</span></label>
   
   <label class="opt"><input type="radio" name="scope" value="RX_IMPORT">
     RX_IMPORT <span class="muted">(108건)</span></label>
@@ -180,7 +180,7 @@
   
   <label class="opt"><input type="radio" name="scope" value="all">
     <strong>전 차종</strong>
-    <span class="warn-block">19차종 · 약 9.2시간</span></label>
+    <span class="warn-block">19차종 · 약 9.5시간</span></label>
   <p class="muted">★ 전 차종은 되돌릴 수 없이 오래 돕니다.
     잘못 눌러 3.8시간이 그냥 도는 일을 막으려고
     <strong>아래에 <code>all</code> 을 직접 입력</strong>해야 시작합니다.</p>
@@ -202,6 +202,16 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-28T04:10:16.757825+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">listing_updated</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-28T04:00:23.810759+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-27T17:32:54.883240+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -293,16 +303,6 @@
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-25T04:00:20.815383+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-08-25T04:00:20.814314+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -310,7 +310,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li><li>2026-08-26T15:40:12.356590+00:00 · 20260826T153953 · 정상 · 496.5초</li><li>2026-08-26T15:18:52.581870+00:00 · 20260826T151840 · 정상 · 31.2초</li><li>2026-08-26T15:07:19.340774+00:00 · 20260826T150704 · 정상 · 1.7초</li><li>2026-08-26T03:17:25.238847+00:00 · 20260826T031724 · fatal 7 · 0.5초</li></ul>
+<ul class="muted"><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 9 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li><li>2026-08-26T15:40:12.356590+00:00 · 20260826T153953 · 정상 · 496.5초</li><li>2026-08-26T15:18:52.581870+00:00 · 20260826T151840 · 정상 · 31.2초</li><li>2026-08-26T15:07:19.340774+00:00 · 20260826T150704 · 정상 · 1.7초</li></ul>
 
 
 
@@ -320,8 +320,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260826T164607</span>
-  <span>2026-08-28 06:19</span>
+  <span>run 20260828T041017</span>
+  <span>2026-08-28 14:23</span>
 </footer>
 
 </body>

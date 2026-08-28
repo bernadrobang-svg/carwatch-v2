@@ -2235,6 +2235,48 @@ def s46_102_electric_only_is_electric() -> tuple[bool, str]:
         return False, "★ 「전기만」이 0건이다 — 거르개가 안 먹는다"
     return True, f"「전기만」 {total:,}건이 다 전기다 ({' · '.join(sorted(ok_values))})"
 
+
+def s46_103_sian_values_carried() -> tuple[bool, str]:
+    """★★ 시안의 ★ **크기·자리 값**을 ★ `app.css` 가 담았는가 (명령서 82장).
+
+    ★★★ 마스터 — 「★ 내가 시안대로 ★ 디자인 위치를 모두 보정하라고 한 거잖아.
+      ★ ★ 내용만 있으면 시안을 왜 만들어.  ★ UX 관점도 없고」
+    ★★ ★ `S46-98`(낱말) · `S46-100`(차례)로는 ★ **꼴을 못 본다** — ★ 글자만 본다.
+    ★★★ ★ 그런데 ★ 시안 **이름**을 `app.css` 에 들이면 안 된다 —
+      ★ ★ 마스터 확정 ㉮(08-24) 「★ 시안 쪽에 `.v3-` 을 붙인다.
+        ★ ★ 실제 `app.css` 는 안 건드린다」 · 검사 `S46-67` 이 그것을 지킨다.
+      ★ ★ 실측 08-28 — ★ 시안 CSS 를 그대로 들였더니 ★ 289곳이 겹쳐
+        ★ ★ `S46-67`·`S46-68`·`S46-75` 가 터지고 ★ 시험 셋이 깨졌다.  ★ 되돌렸다.
+    ★ 그래서 ★ **이름이 아니라 값**을 본다 — ★ 시안에서 재서 적은 수가
+      ★ ★ `app.css` 안에 ★ 실제로 있는지 센다.  ★ 어느 이름에 붙었는지는 안 따진다
+    """
+    css_path = ROOT / "web" / "static" / "app.css"
+    sian = SCREENS / "v4m_listings_시안.html"
+    if not css_path.is_file() or not sian.is_file():
+        return True, "app.css 나 시안이 없다 — 잴 것이 없다"
+    css = re.sub(r"/\*.*?\*/", " ", _read(css_path), flags=re.S)
+    flat = re.sub(r"\s+", "", css)
+
+    # ★ 시안에서 잰 값이다 (08-28) — ★ 지어내지 않았다
+    WANT = [
+        ("사진 104×78 (모바일)", ("width:104px", "height:78px")),
+        ("사진 88×66 (아주 좁을 때)", ("width:88px", "height:66px")),
+        ("사진 180×135 (넓을 때)", ("width:180px", "height:135px")),
+        ("사진 240×180 (더 넓을 때)", ("width:240px", "height:180px")),
+        ("손가락 단추 44px", ("min-height:44px",)),
+        ("아래 탭 고정", ("position:fixed", "bottom:0")),
+        ("고르개 40px", ("min-height:40px",)),
+        ("둥근 모서리 8px", ("border-radius:8px",)),
+    ]
+    bad = [name for name, vals in WANT
+           if not all(v.replace(" ", "") in flat for v in vals)]
+    if bad:
+        return False, ("★ 시안 값이 app.css 에 없다 " + str(len(bad)) + " — "
+                       + " · ".join(bad))
+    return True, (f"시안에서 잰 값 {len(WANT)}가지가 다 app.css 에 있다"
+                  " (이름은 우리 것 그대로 — 마스터 확정 ㉮)")
+
+
 def s46_98_sian_words_on_screen() -> tuple[bool, str]:
     """★★ 시안에 있는 낱말이 ★ 화면에 없으면 실패 (마스터 지시 08-26).
 
@@ -2564,6 +2606,8 @@ CHECKS = (
     # ★★ 마스터 08-28(87장) — ★ 「전기차만 보고 싶은 거야」
     ("S46-102", "「전기만」에 전기 아닌 것이 없는가",
      s46_102_electric_only_is_electric),
+    # ★★ 마스터 08-28 — ★ 낱말·차례로는 디자인을 못 본다.  ★ class 를 본다
+    ("S46-103", "시안의 크기·자리 값을 담았는가", s46_103_sian_values_carried),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다
     ("S46-99", "로그인하면 관심·관리가 열리는가", s46_99_login_then_watch),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다
