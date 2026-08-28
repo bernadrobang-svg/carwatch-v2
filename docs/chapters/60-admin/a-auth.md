@@ -1,7 +1,7 @@
 ## STEP 126 [규격] — 권한 3단
 
 ```
-version  SPEC-2026.08.25-r727
+version  SPEC-2026.08.29-r816
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -260,7 +260,12 @@ revert   before 값으로 되쓰고 새 ConfigChange 를 만든다
 값규칙  전부 정수다.  소수점을 두지 않는다
 근거    점수는 사람이 읽는 값이다.  47.5점은 비교를 어렵게 한다
 금지    total_points 를 직접 입력하는 것.  성분 합으로만 정해진다
-검산    Σ components == total_points
+★★★ 값규칙 추가 (개정 816 · 마스터 뜻) — ★ **총점은 910 에 못 박는다**
+      ★ ★ 성분을 바꿔 합이 910 이 아니면 ★ **저장을 막는다**
+      ★ ★ 까닭 — ★ 910 은 ★ **f-table·scoring·why·detail 넷에 다 박혀 있다**
+         ★ ★ 배점 화면만 자유롭게 두면 ★ **두 화면이 갈린다** (#75 실측 — 911 저장 · `/why` 는 910)
+      ★ ★ 총점을 바꾸시려면 ★ **네 자리를 함께 바꾼다** — ★ 화면 하나로는 안 된다
+검산    Σ components == total_points ＝ ★ **910**
 ```
 
 ### 조정 3종
