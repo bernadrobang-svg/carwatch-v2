@@ -3079,11 +3079,43 @@ def s46_161_no_unproven_absence():
                        f"{len(bad)}곳 — " + " · ".join(bad[:6]))
     return True, "「안 준다」가 모두 표본 수를 달고 있다"
 
+
+def s46_162_promised_checks_exist():
+    """S46-162 — ★ 오판이 약속한 검사가 ★ 실제로 있는가 (감독 지시 08-29 ③).
+
+    ★ 감독 — 「★ 오늘 여섯 무늬가 ★ **전부 글로만 적힌 것**이다.  ★ **글은 또 어긴다**」
+    ★ 잣대 — ★ 오판대장의 「검산 `S46-NNN`」 이 ★ CHECKS 에 없으면 ★ 실패.
+      ★ ★ 「글로만 적었다」라고 그 줄에 적어 두면 ★ 봐준다 — ★ 다만 그것도 세어 낸다
+    """
+    import re as _re
+
+    body = _read(ROOT / "docs" / "guide" / "06_오판대장.md")
+    have = set(_re.findall(r'\("(S\d+-[\w.]+)"', _read(ROOT / "validate" / "v0_guide.py")))
+    missing, excused = [], 0
+    for ln in body.splitlines():
+        m = _re.search(r"검산 `(S46-\d+)`", ln)
+        if not m:
+            continue
+        if m.group(1) in have:
+            continue
+        if "글로만 적었다" in ln:
+            excused += 1
+            continue
+        missing.append(m.group(1))
+    if missing:
+        return False, (f"★ 오판이 약속한 검사 {len(missing)}개가 없다 — "
+                       + " · ".join(sorted(set(missing))[:8])
+                       + (f"  (「글로만 적었다」로 적어 둔 것 {excused}개)"
+                          if excused else ""))
+    return True, f"약속한 검사가 모두 있다 (「글로만」 {excused}개)"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
     ("S43-2c", "HDA 가 저장소에 없는가", s43_2c_no_hda),
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
+    ("S46-162", "오판이 약속한 검사가 실제로 있는가",
+     s46_162_promised_checks_exist),
     ("S46-161", "「사이트가 안 준다」에 증거가 있는가",
      s46_161_no_unproven_absence),
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
