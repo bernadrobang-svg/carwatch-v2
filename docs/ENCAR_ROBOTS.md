@@ -205,3 +205,37 @@ S46-4 ★ 신설 — ★ `config/endpoints.json` 의 ★ 모든 `base_url` 에 �
 금지  ★ 우회를 만드는 것 — ★ 프록시 · UA 위장 · 토큰 흉내
 ★ ★ 이 결정은 ★ 요구 추적표 ★ **85번**이다.  ★ 바뀌면 ★ 거기서 바꾼다
 ```
+
+---
+
+# ★★★★★ 08-29 — ★ 호스트 **다섯**을 다시 받았다 · ★ `fem.` 이 규격에 없었다
+
+```
+★ 기준서 3-3 「robots.txt 를 ★ 호스트마다 받는다」대로 다섯을 받았다 [실측 08-29]
+★★ ★ 이 문서에 ★ `fem.encar.com` 이 ★ **0회**였다 — ★ 우리 원문 문이 그 호스트다
+```
+
+| 호스트 | robots |
+|---|---|
+| `api.encar.com` | ★ `Disallow: /` — **전면 금지** (그대로다) |
+| `www.encar.com` | `Allow: /` · 금지 `/ac/ /my/ /cm/ /board/ /db/ /dc/dc_carsearchpop.do` |
+| `car.encar.com` | `Allow: /` · 금지 ★ **`/api`** · `/history` · `/v1/readside/` · `/carpicture0{1,2,3}/` |
+| `m.encar.com` | `Allow: /` · 금지 `/co/ /my/` |
+| ★ **`fem.encar.com`** | `Allow: /` · 금지 `/my` · `/account` · `/client-verification/blocked` · ★ **`/v1/readside/`** · ★ **`/cars/detail/`** · `/cars/report/` |
+
+## ★★★★ 그래서 무엇이 달라지나
+
+```
+★★ ★ **`fem.encar.com/cars/detail/{id}` 는 ★ robots 가 막은 경로다**
+   ★ ★ 그것이 ★ `config/web.json` 의 ★ `encar_detail_url` 이다 (명령서 89장 · 마스터 08-29)
+
+★ 가르는 법 — ★ **둘은 다르다**
+   ○ ★ **화면에 링크로 내는 것** — ★ 사람이 누른다.  ★ robots 는 ★ 크롤러 규칙이다.  ★ 그대로 둔다
+   ✘ ★ **우리가 그 주소를 두드려 확인하는 것** — ★ 크롤러다.  ★ **하면 안 된다**
+
+★★ ★ 그러므로 ★ 「원문 문이 사는지」를 ★ **우리가 두드려 세지 않는다**.
+   ★ ★ 마침 ★ `config/web.json` 이 ★ 이미 그렇게 적어 두었다 —
+     ★ 「차 이름이 나오는지는 ★ **마스터 휴대폰에서만** 확인된다 · ★ 개발측이 200 으로 세지 않는다」
+   ★ ★ 그 줄의 까닭이 ★ 「우리 IP 가 302 로 막힌다」였는데 ★ **까닭이 하나 더 있다 — robots 다**
+★ ★ `car.encar.com` 의 ★ `/api` 금지도 ★ 이 문서에 없었다.  ★ 함께 적는다
+```
