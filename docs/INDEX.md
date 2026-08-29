@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**114파일 · 43,014줄 · 2,785KB**
+**116파일 · 43,697줄 · 2,840KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 1,030줄
 - UI_REVIEW.md 1,730줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 946줄
+- guide/03_이력.md 960줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -27,9 +27,10 @@
 
 | 파일 | 줄 | KB |
 |---|--:|--:|
+| `ARCHITECTURE_20260829.md` | 358 | 20 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
-| `CHECKS.md` | 607 | 96 |
+| `CHECKS.md` | 609 | 96 |
 | `CROSS_SITE_COMPARE.md` | 470 | 27 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -52,7 +53,7 @@
 | `VOLVO_SELEKT_API.md` | 515 | 21 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
-| `chapters/10-collect/00-intro.md` | 376 | 14 |
+| `chapters/10-collect/00-intro.md` | 451 | 19 |
 | `chapters/10-collect/COLLECT_STRATEGY.md` | 115 | 5 |
 | `chapters/10-collect/a-endpoint.md` | 309 | 11 |
 | `chapters/10-collect/b-parse.md` | 104 | 4 |
@@ -61,7 +62,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md` | 687 | 29 |
+| `chapters/11-store/a-key.md` | 748 | 33 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 600 | 24 |
@@ -105,16 +106,17 @@
 | `guide/01_시작.md` | 291 | 10 |
 | `guide/01_요구사항.md`  ★ | 999 | 45 |
 | `guide/02_결함대장.md` | 281 | 6 |
-| `guide/02_미확정.md` | 212 | 12 |
+| `guide/02_미확정.md` | 248 | 14 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 946 | 702 |
+| `guide/03_이력.md`  ★ | 960 | 713 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 597 | 201 |
-| `guide/07_밀린일대장.md` | 447 | 34 |
+| `guide/06_오판대장.md` | 598 | 203 |
+| `guide/07_밀린일대장.md` | 458 | 34 |
 | `guide/08_인수인계.md` | 310 | 14 |
+| `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
 | `guide/09_인계_20260829.md` | 186 | 7 |
 | `ref/00-intro.md` | 33 | 0 |
 | `ref/A-check.md` | 76 | 3 |

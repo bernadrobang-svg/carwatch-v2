@@ -1466,6 +1466,48 @@ def s46_120_registry_key_matches() -> tuple[bool, str]:
                   "그대로 두고 되돌리기도 받는다)")
 
 
+def s46_123_toss_palette_only() -> tuple[bool, str]:
+    """★★★★ 토스 표에 ★ **없는 색**이 `app.css` 에 있는가 (UI_REVIEW 29장 · 개정 851).
+
+    ★★ 마스터 — 「이제 디자인 스타일을 토스 스타일로 바꾸어」
+      ★ 08-29 정정 — 「색과 버튼을 토스 스타일로 하고 ★ 폰트 크기와 여백은 현 스타일로」
+    ★ 규격 「지킬 것」 — 「색은 위 표 여덟뿐이다.  ★ 새 색을 만들지 않는다」
+    ★★ 그래서 두 가지를 본다 —
+      ① `:root` 가 쓰는 색이 ★ 규격 표 안에 있는가
+      ② `:root` **밖**에 ★ 색이 박혀 있지 않은가 (그림자만 뺀다)
+    ★ ② 가 중요하다 — ★ 08-30 실측 — ★ `:root` 밖에 ★ 색이 **152곳** 박혀 있었다.
+      ★ ★ 규격은 ★ 「색은 app.css 맨 위 :root 한 곳에만 있다」고 적었지만
+      ★ ★ 실제로는 ★ 그렇지 않았다.  ★ 122곳은 이미 있는 토큰과 같은 값이라
+      ★ ★ `var()` 로 바꿨고 · ★ 30곳(rgba)은 토큰으로 옮겼다.
+    ★ 그림자는 ★ 색이 아니라 ★ 깊이다 — ★ 검정 반투명만 남긴다 (토스 「테두리 대신 그림자」)
+    """
+    OK = {"#ffffff", "#f9fafb", "#e5e8eb", "#d1d6db", "#191f28",
+          "#8b95a1", "#b0b8c1", "#3182f6", "#00c471", "#f04452"}
+    css = _read(ROOT / "web" / "static" / "app.css")
+    # ★ 주석은 규칙이 아니다 — ★ 먼저 걷어낸다 (L-3 · 개정 849)
+    css = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
+    m = re.search(r"(?m)^:root\s*\{[^}]*\}", css)
+    if not m:
+        return False, "★ :root 를 못 찾았다"
+    root, rest = m.group(0), css.replace(m.group(0), "")
+    bad = []
+    off = sorted({c.lower() for c in re.findall(r"#[0-9a-fA-F]{3,8}\b", root)} - OK)
+    if off:
+        bad.append(f":root 에 표 밖의 색 {len(off)}가지 — {' · '.join(off[:5])}")
+    stray = sorted(set(re.findall(r"#[0-9a-fA-F]{3,8}\b", rest)))
+    if stray:
+        bad.append(f":root 밖에 박힌 색 {len(stray)}가지 — {' · '.join(stray[:5])}")
+    # ★ 그림자만 남는다 — ★ 검정 반투명이 아닌 rgba 는 색이다
+    rgba = [x for x in re.findall(r"rgba?\([^)]*\)", rest)
+            if not re.match(r"rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,", x)]
+    if rgba:
+        bad.append(f":root 밖에 rgba 색 {len(set(rgba))}가지 — "
+                   f"{' · '.join(sorted(set(rgba))[:3])}")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"색은 :root 의 토스 {len(OK)}색뿐이다 (그림자 제외)"
+
+
 def s46_122_shared_fragments() -> tuple[bool, str]:
     """★★★★ 머리·발이 ★ **한 곳에만** 있는가 (UI_REVIEW 28장 · 개정 851).
 
@@ -3071,6 +3113,8 @@ CHECKS = (
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
     # ★★ 마스터 08-29(0b) — ★ 일꾼이 맨 connect 라 busy_timeout 이 없었다
+    # ★★ 마스터 08-29 — ★ 「디자인 스타일을 토스 스타일로」 (UI_REVIEW 29장)
+    ("S46-123", "토스 표에 없는 색이 없는가", s46_123_toss_palette_only),
     # ★★ 마스터 08-29 — ★ 「공통으로 쓸 것들을 공통 모듈로」 (UI_REVIEW 28장)
     ("S46-122", "머리·발이 한 곳에만 있는가", s46_122_shared_fragments),
     # ★★ ORDER r879 0 — ★ 재판정이 도는 동안 수집기 넷이 죽었다

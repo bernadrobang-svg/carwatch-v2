@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=c89e731b9b">
+<link rel="stylesheet" href="/static/app.css?v=f10a934f2f">
 
 </head>
 <body class="s-admin-run">
@@ -54,12 +54,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>running</strong> · 사유 raw_missing · 범위 all
-    </p>
+  <p><strong>done</strong> · 사유 raw_missing · 범위 all
+    <span class="muted">· run 20260829T132546</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-29T13:10:57.178308+00:00</span></p>
-  
+    <span class="muted">· 넣은 시각 2026-08-29T13:25:45.616262+00:00</span></p>
+  <p class="muted">S5 ok 0 · S6 ok 142332 · S9 ok 262418 · S10 ok 10093</p>
   
   
 
@@ -75,7 +75,7 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">23,612</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">23,642</td></tr>
   
   <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,076</td></tr>
   
@@ -103,7 +103,7 @@
   
   </tbody>
   </table>
-  <p class="muted">매물 20,380건 · 판정 10,201건</p>
+  <p class="muted">매물 20,407건 · 판정 10,201건</p>
 
   
   <p class="muted">이 화면은 <strong>스스로 갱신되지 않습니다</strong> —
@@ -111,7 +111,7 @@
     도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
-<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
+
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -125,7 +125,7 @@
   
   <label class="opt"><input type="radio" name="scope" value="all" checked>
     <strong>전 차종</strong> — 23차종
-    <strong class="run-hours">약 9.7시간</strong> 걸립니다</label>
+    <strong class="run-hours">약 9.8시간</strong> 걸립니다</label>
   <p class="muted">시작하면 중간에 세우기 어렵습니다. 받은 것은 남습니다.</p>
 
   <details class="opt">
@@ -217,17 +217,15 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-29T13:10:57.178308+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-08-29T13:25:45.616262+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""><form method="post" action="/admin/run" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="action" value="halt">
-    <input type="hidden" name="job_id" value="31dd4b4825c5d264">
-    <input name="reason" size="12" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
-  </form></td></tr>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-08-29T13:10:57.178308+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-29T12:15:44.796731+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -319,11 +317,6 @@
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-27T04:00:26.569323+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -331,7 +324,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 5 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
+<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 6 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
 
 
 
@@ -342,7 +335,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 22:11</span>
+  <span>2026-08-29 22:59</span>
 </footer>
 
 </body>
