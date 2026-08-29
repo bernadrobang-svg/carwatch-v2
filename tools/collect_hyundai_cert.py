@@ -165,7 +165,7 @@ def total_count(params: str = "") -> int | None:
         return None
 
 
-def walk(extra: dict | None = None, seen: set | None = None) -> tuple[list, int]:
+def walk(extra: dict | None = None, seen: set | None = None) -> tuple:
     """목록을 끝까지 받는다.  ★ pageIdx 로 쪽을 넘긴다.
 
     ★ 카드까지 파싱해서 돌려준다 — ★ 매물번호만 넣으면 껍데기가 된다
@@ -173,6 +173,10 @@ def walk(extra: dict | None = None, seen: set | None = None) -> tuple[list, int]
     """
     seen, rows, pages = (set() if seen is None else seen), [], 0
     base = dict(BODY, **(extra or {}))
+    # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」를 함께 돌려준다.
+    #   ★ 새 카드가 없어 멈췄을 때만 참이다 — ★ 못 받았거나(body None) ·
+    #     ★ MAX_PAGES 를 다 쓴 것은 ★ 끝이 아니다
+    done = False
     for page in range(1, MAX_PAGES + 1):
         body = _post(BASE + LIST_PATH, dict(base, pageIdx=page))
         pages = page
@@ -187,9 +191,10 @@ def walk(extra: dict | None = None, seen: set | None = None) -> tuple[list, int]
                 rows.append(got)
                 fresh += 1
         if not fresh:
+            done = True                 # ★ 새 카드가 없다 — ★ 끝까지 받았다
             break
         time.sleep(INTERVAL)
-    return rows, pages
+    return rows, pages, done
 
 
 def main() -> int:
@@ -203,7 +208,8 @@ def main() -> int:
     if "--all" in args or not groups:
         if not groups:
             print("★ config 에 collect_filters 가 없다 — ★ 전량을 받는다")
-        ids, pages = walk()
+        ids, pages, _d = walk()
+        done_groups = [(_d, {o["source_id"] for o in ids})]
         print(f"목록 {pages}쪽 · 매물 {len(ids):,}건")
         if said and len(ids) != said:
             print(f"  ★ 어긋난다 — 사이트 {said} vs 받은 {len(ids)}")
@@ -211,12 +217,15 @@ def main() -> int:
         # ★★ 차종군마다 ★ 따로 부른다 — ★ 여섯 번이다 (2e).
         #   ★ 한 번에 부르면 ★ fuelList 가 ★ 전체에 걸려 389건이 온다 (규격 실측)
         ids, pages, seen = [], 0, set()
+        # ★★★ 08-29 (개정 838) — ★ 차종군마다 ★ 「끝까지 받았나」를 들고 간다
+        done_groups: list = []
         print(f"★ 좁혀 받는다 — 차종군 {len(groups)}개 (전량 {said} 중)")
         for g in groups:
             cond = {k: g[k] for k in ("mdlGrpList", "fuelList") if g.get(k)}
             q = "&".join(f"{k}={v}" for k in cond for v in cond[k])
             said_n = total_count(q)
-            got, pg = walk(cond, seen)
+            got, pg, _d = walk(cond, seen)
+            done_groups.append((_d, {o["source_id"] for o in got}))
             for one in got:
                 # ★ 제목에 연료 낱말이 없는 것은 ★ 전동화 전용 차종군이다.
                 #   ★ 우리가 그 부름에서 달라고 한 연료를 쓴다 — ★ 짐작이 아니다
@@ -261,6 +270,16 @@ def main() -> int:
                                                one["source_id"], at)
         upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
+    #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, done_groups, at)
+    _dn = sum(1 for d, _i in done_groups if d)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종 · 끝까지 받은 묶음 {_dn}/{len(done_groups)})")
+    if len(done_groups) - _dn:
+        print("  ★ 끝까지 못 받은 묶음이 건드린 차종은 안 매겼다")
     print(f"★ 저장 {len(ids):,}건 · site='{SITE_CODE}'")
 
     if not want_detail:

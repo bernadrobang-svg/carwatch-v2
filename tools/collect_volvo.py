@@ -162,6 +162,19 @@ def main() -> int:
         row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
         upsert_core(conn, row, at)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
+    #   ★ 「끝까지 받았나」 — ★ 사이트가 적어 준 `data-found`(said)와
+    #     ★ 받은 매물번호 수가 ★ **같아야** 참이다.
+    #   ★ 못 받은 쪽이 있거나 · 수가 어긋나면 ★ 안 매긴다 —
+    #     ★ 반만 받고 매기면 ★ 산 차를 죽인다
+    _done = said is not None and said == len(seen)
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, set(ours))], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
+    if not _done:
+        print("  ★ 수가 어긋나 안 매겼다 — 반만 보고 매기면 산 차를 죽인다")
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(ours)}건 · 저장된 볼보 매물 {n:,}건")

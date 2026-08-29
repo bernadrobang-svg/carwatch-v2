@@ -77,10 +77,16 @@ def main() -> int:
         return 1
     if "--count" in args:
         return 0
+    # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」.
+    #   ★ 리본카는 ★ **사이트맵 한 번**으로 전부를 준다 — ★ 쪽넘김이 없다.
+    #   ★ 그러나 ★ `--limit` 으로 자르면 ★ 전부가 아니다 — ★ 그때는 안 매긴다
+    _done = bool(got)
+    _all_ids = set(got)
     if "--limit" in args:
         i = args.index("--limit")
         if i + 1 < len(args) and args[i + 1].isdigit():
             got = got[:int(args[i + 1])]
+            _done = False
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
@@ -145,6 +151,12 @@ def main() -> int:
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
         time.sleep(interval)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, _all_ids)], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in seen.items()))
     print(f"★ 우리 대상 — {ours}건 / {len(todo)}건 "
           f"· ★ 안 넣은 것 {skipped}건 (원문은 남는다)")

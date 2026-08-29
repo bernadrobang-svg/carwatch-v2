@@ -201,6 +201,18 @@ def main() -> int:
         kept["저장"] += 1
         time.sleep(gap)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
+    #   ★★★ 보배드림은 ★ **끝까지 받는 구조가 아직 없다** —
+    #     ★ `--pages N` 으로 ★ **한정해 훑는다** (기본 5쪽 · `_walk_plan`).
+    #     ★ ★ 그러니 ★ 「이번 목록에 없다」가 ★ 「팔렸다」를 뜻하지 않는다.
+    #   ★ ★ 그래서 ★ 부르되 ★ **안 매긴다** (`done=False`) — ★ 지어내지 않는다.
+    #     ★ 반만 보고 매기면 ★ 산 차를 죽인다 (규격 「필수」).
+    #   ★ ★ 끝 신호(마지막 쪽·총계)를 얻으면 ★ 그때 참으로 바꾼다 — ★ 가이드에 올렸다
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, [(False, set(seen))], at)
+    print(f"★ gone 매김 — {sum(_got.values())}건 "
+          "(★ 보배는 한정해 훑는 구조라 아직 안 매긴다)")
     print("★ " + " · ".join(f"{k} {v}" for k, v in kept.items()))
     conn.close()
     from tools.daily_enqueue import enqueue_after_store

@@ -63,15 +63,23 @@ def _targets(args: list) -> list:
     return out
 
 
-def walk(adapter, key: str, queries: list, interval: float) -> list:
-    """한 차종의 매물 전부.  ★ 해시가 둘이면 둘 다 돈다 (G80·그랜저)."""
+def walk(adapter, key: str, queries: list, interval: float) -> tuple:
+    """한 차종의 매물 전부.  ★ 해시가 둘이면 둘 다 돈다 (G80·그랜저).
+
+    ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」를 함께 돌려준다.
+      ★ 마지막 쪽(`len(body) < PAGE_SIZE`)까지 갔을 때만 참이다 —
+      ★ 200 이 아니거나 · MAX_PAGES 를 다 쓴 것은 ★ 끝이 아니다.
+      ★ 질의가 여럿이면 ★ **다 끝까지** 가야 참이다
+    """
     seen, rows = set(), []
+    done = True
     for q in queries:
         pick = {k: q[k] for k in ("brand", "model-group", "model") if q.get(k)}
         for page in range(1, MAX_PAGES + 1):
             code, body = _get(adapter.list_url(None, page, pick))
             if code != 200 or not isinstance(body, list):
                 print(f"    {key} {q.get('_차명', '')} {page}쪽 — ★ {code} · 멈춘다")
+                done = False            # ★ 못 받았다 — ★ 끝이 아니다
                 break
             for one in body:
                 got = parse_list_item(one, SITE_CODE)
@@ -79,9 +87,11 @@ def walk(adapter, key: str, queries: list, interval: float) -> list:
                     seen.add(got["source_id"])
                     rows.append(got)
             if len(body) < PAGE_SIZE:
-                break
+                break                   # ★ 마지막 쪽이다 — ★ 끝까지 받았다
             time.sleep(interval)
-    return rows
+        else:
+            done = False                # ★ MAX_PAGES 를 다 썼다 — ★ 더 있을 수 있다
+    return rows, done
 
 
 def main() -> int:
@@ -95,8 +105,11 @@ def main() -> int:
     targets = _targets(args)
     print(f"★ 헤이딜러 — 차종 {len(targets)}종")
     got_all: dict = {}
+    # ★★★ 08-29 (개정 838) — ★ 차종마다 ★ 「끝까지 받았나」를 들고 간다
+    done_groups: list = []
     for key, queries in targets:
-        rows = walk(adapter, key, queries, interval)
+        rows, _d = walk(adapter, key, queries, interval)
+        done_groups.append((_d, {r["source_id"] for r in rows}))
         for r in rows:
             got_all[r["source_id"]] = r
         print(f"  {key:<16} 매물 {len(rows):>4}")
@@ -116,6 +129,13 @@ def main() -> int:
                                                one["source_id"], at)
         upsert_core(conn, split_pii(conn, one, SITE_CODE, pii_key, at), at)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, done_groups, at)
+    _dn = sum(1 for d, _i in done_groups if d)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종 · 끝까지 받은 차종 {_dn}/{len(done_groups)})")
     print(f"★ 목록 저장 {len(got_all):,}건 · site='{SITE_CODE}'")
 
     # ★ 상세 — ★ 연료·차량번호가 여기에만 있다.  ★ 전건 받는다

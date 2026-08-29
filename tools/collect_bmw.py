@@ -64,6 +64,8 @@ def main() -> int:
     #   ★ BMW·볼보는 ★ 상세가 없다.  ★ 목록 쪽이 ★ 원문의 전부다
     pages: list = []
     walls = 0
+    # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」.  ★ 안 늘어 멈췄을 때만 참이다
+    done = False
     for page in range(1, MAX_PAGES + 1):
         raw = _get(f"{base}/shop/list.php?ca_id=10&page={page}", head, timeout)
         pages.append((f"{base}/shop/list.php?ca_id=10&page={page}", raw))
@@ -77,7 +79,8 @@ def main() -> int:
             if text and sid not in seen:
                 seen[sid] = text
         if len(seen) == before:
-            break                       # ★ 안 늘면 끝이다
+            done = True                 # ★ 안 늘면 끝이다 — ★ 끝까지 받았다
+            break
         time.sleep(interval)
     print(f"★ 매물번호 {len(seen)}건 · 쪽 {page} · 못 받은 쪽 {walls}")
 
@@ -109,6 +112,14 @@ def main() -> int:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
         upsert_core(conn, r, at)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
+    #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다.
+    #   ★ 「끝까지 받았나」가 거짓이면 ★ 안 매긴다 — 반만 보고 매기면 산 차를 죽인다
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(seen))], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}")
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(rows)}건 · 저장된 BMW 매물 {n:,}건")

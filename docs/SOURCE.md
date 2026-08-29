@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 180개 · 총 63,634줄
+파일 180개 · 총 63,747줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -51,11 +51,11 @@
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `parse/hyundai_cert/mapping.py` | 322 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
+| `tools/collect_hyundai_cert.py` | 322 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `tools/build_dict.py` | 321 | RAW → 사전 생성. |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
 | `tools/collect_kcar.py` | 316 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `validate/v9_multisite.py` | 305 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
-| `tools/collect_hyundai_cert.py` | 303 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `analyze/axis/state.py` | 302 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
 | `tests/test_endtoend.py` | 291 | 종단 시험 — 수집부터 리포트까지 (5장 STEP 47 · 49). |
@@ -76,29 +76,29 @@
 | `validate/v5_value.py` | 244 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
+| `tools/collect_bobaedream.py` | 225 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
+| `tools/collect_volvo.py` | 222 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `tools/repair_facet_chunks.py` | 222 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
-| `tools/collect_bobaedream.py` | 213 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
 | `parse/kbchachacha/mapping.py` | 210 | KB차차차 상세 → `core_listing` (`docs/KBCHACHACHA_API.md` 3장). |
 | `tools/unknown_split.py` | 210 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
-| `tools/collect_volvo.py` | 209 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
 | `score/scorer.py` | 194 | 채점 · 분모 (L7). |
+| `tools/collect_heydealer.py` | 184 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `parse/importer.py` | 182 | 반입 입력 해석 (13장 STEP 136a · 136b). |
+| `tools/collect_kia_cpo.py` | 177 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
 | `collect/worker.py` | 176 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `tools/classify_unclassified.py` | 175 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `tools/migrate.py` | 174 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
 | `parse/bobaedream/mapping.py` | 172 | 보배드림 상세 → `core_listing` (`docs/BOBAEDREAM_API.md` 2·3·1a장). |
 | `tools/sync_target_map.py` | 172 | 차종 대응표 → `dict_enum` (명령서 `ORDER_20260822_r515.md` 2a장 · 개정 540). |
+| `tools/collect_reborncar.py` | 170 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
 | `score/penalty.py` | 166 | 마이너스 점수 (개정 322). |
-| `tools/collect_heydealer.py` | 164 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
-| `tools/collect_kia_cpo.py` | 162 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
 | `adapters/kbchachacha.py` | 161 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
-| `tools/collect_reborncar.py` | 158 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `analyze/axis/value.py` | 156 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
@@ -115,15 +115,15 @@
 | `tools/fold_out_of_scope.py` | 137 | 이미 들어온 것을 ★ 되돌린다 — ★ 우리 대상이 아닌 것은 ★ 접는다 (명령서 3-3). |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
+| `tools/collect_bmw.py` | 130 | BMW 바바리안(BPS) 수집 (명령서 1a). |
+| `tools/collect_lexus.py` | 128 | 렉서스 인증중고 수집 (명령서 1a). |
 | `score/grade.py` | 127 | 등급 (L7). |
 | `tools/check_all.py` | 123 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/heydealer.py` | 120 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
-| `tools/collect_bmw.py` | 119 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `adapters/kia_cpo.py` | 118 | 기아 인증중고차(CPO) 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `analyze/axes.py` | 118 | 축 판정 계약. |
 | `parse/kia_cpo/mapping.py` | 118 | 기아 인증중고차(CPO) 원문 → CORE 필드 (L3). |
-| `tools/collect_lexus.py` | 117 | 렉서스 인증중고 수집 (명령서 1a). |
 | `adapters/kcar.py` | 115 | K카 어댑터 — URL · 헤더 (12장 · STEP 11). |
 | `errors.py` | 115 | 도메인 예외 5종. |
 | `tools/gen_table.py` | 114 | 배점표를 config 에서 생성한다 (개정 512). |
@@ -459,6 +459,12 @@ _repair_max:45  _cfg:63  _run:68  collecting:74  screen_counts:95  db_counts:121
 _int:31  cards:40  _fuel_of:65  _model_group:76  parse_card:94  _json:166  detail_text:173  _one:180  parse_detail:185  parse_detail_all:191  _num:249  _warranty:256  _months_left:299  _options:316
 ```
 
+### `tools/collect_hyundai_cert.py` — 322줄
+
+```
+target_of:69  _now:85  _post:89  _get:99  fetch_detail:110  load_filters:123  total_count:155  walk:168  main:200
+```
+
 ### `tools/build_dict.py` — 321줄
 
 ```
@@ -481,12 +487,6 @@ _now:44  fetch:48  classify:70  accident_of:85  fetch_stock:94  collect_list:115
 
 ```
 _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _origin_check:156  _warranty_sum_check:186  _tie_break_check:223  _axis_site_check:261  run:301
-```
-
-### `tools/collect_hyundai_cert.py` — 303줄
-
-```
-target_of:69  _now:85  _post:89  _get:99  fetch_detail:110  load_filters:123  total_count:155  walk:168  main:195
 ```
 
 ### `analyze/axis/state.py` — 302줄
@@ -609,16 +609,22 @@ remaining_months:26  warranty_points:39  _truthy:73  warranty_grade:89  _seller_
 check:35  inv1_order_independent:42  inv1_shuffle_100:72  inv2_banned:95  inv5_points:113  put_contract:126  excluded_contract:143  inv3_source_not_null:169  inv4_label_shape:188  inv6_no_unclassified:204
 ```
 
+### `tools/collect_bobaedream.py` — 225줄
+
+```
+_now:37  _get:41  target_names:51  wanted:60  _elapsed:68  load_filters:75  _walk_plan:102  main:113
+```
+
+### `tools/collect_volvo.py` — 222줄
+
+```
+_known_name:42  load_slugs:58  _now:87  _get:91  main:106
+```
+
 ### `tools/repair_facet_chunks.py` — 222줄
 
 ```
 meta_of:37  fix_meta:66  groups:87  join:101  main:114
-```
-
-### `tools/collect_bobaedream.py` — 213줄
-
-```
-_now:37  _get:41  target_names:51  wanted:60  _elapsed:68  load_filters:75  _walk_plan:102  main:113
 ```
 
 ### `web/context.py` — 213줄
@@ -643,12 +649,6 @@ _text:43  _int:48  ld_json:55  _yes_no:67  _model_of:97  parse_detail:117  _phot
 
 ```
 _cfg:35  _walk:41  classify:51  main:127
-```
-
-### `tools/collect_volvo.py` — 209줄
-
-```
-_known_name:42  load_slugs:58  _now:87  _get:91  main:106
 ```
 
 ### `tests/seed.py` — 204줄

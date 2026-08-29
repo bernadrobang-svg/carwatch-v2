@@ -107,6 +107,17 @@ def main() -> int:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
         upsert_core(conn, r, at)
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
+    #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다.
+    #   ★ 「끝까지 받았나」가 거짓이면 ★ 안 매긴다 — 반만 보고 매기면 산 차를 죽인다
+    from store.core import sweep_gone_groups
+
+    # ★ 렉서스는 ★ 한 번에 ★ `car_list` 전부를 준다 — ★ 쪽넘김이 없다.
+    #   ★ 그것이 비지 않았으면 ★ 끝까지 받은 것이다
+    _done = bool(cars)
+    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in rows})], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(keep)}건 · 저장된 렉서스 매물 {n:,}건")

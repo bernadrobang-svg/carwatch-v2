@@ -80,26 +80,35 @@ def wanted_names(root: str = ROOT) -> list:
 
 
 def walk(adapter: KiaCpoAdapter, cfg: dict,
-         names: list | None = None) -> tuple[int, list]:
-    """목록을 끝까지 받는다.  ★ 커서 방식이다 (adapters/kia_cpo.py)."""
+         names: list | None = None) -> tuple:
+    """목록을 끝까지 받는다.  ★ 커서 방식이다 (adapters/kia_cpo.py).
+
+    ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」를 함께 돌려준다.
+      ★ 커서가 다 떨어지거나 · 더 올 것이 없을 때만 참이다 —
+      ★ `MAX_PAGES` 를 다 쓴 것은 ★ 끝이 아니다
+    """
     rows, seen, cursors, total = [], set(), None, 0
+    done = False
     for _page in range(MAX_PAGES):
         req = adapter.list_url(None, cursors=cursors, names=names)
         body = _fetch(req.url, req.headers, req.timeout_sec)
         total, got = unpack_envelope(body)
         if not got:
+            done = True                # ★ 더 올 것이 없다
             break
         fresh = [x for x in got if x.get("id") not in seen]
         if not fresh:
-            break                      # ★ 커서가 안 넘어가면 멈춘다.  무한히 돌지 않는다
+            done = True                # ★ 커서가 안 넘어간다 — ★ 끝이다
+            break
         for one in fresh:
             seen.add(one["id"])
         rows.extend(fresh)
         cursors = next_cursors(got)
         if not cursors:
+            done = True                # ★ 커서가 다 떨어졌다 — ★ 끝이다
             break
         time.sleep(float(cfg.get("interval_sec") or 0.5))
-    return total, rows
+    return total, rows, done
 
 
 def main() -> int:
@@ -109,7 +118,7 @@ def main() -> int:
     names = [] if "--all" in sys.argv else wanted_names()
     if names:
         print(f"★ 좁혀 받는다 — modelCodeNames={' · '.join(names)}")
-    total, rows = walk(adapter, cfg, names)
+    total, rows, _done = walk(adapter, cfg, names)
     print(f"목록 — 사이트가 말한 총 {total}건 · 받은 {len(rows)}건")
     if total and len(rows) != total:
         print(f"  ★ 어긋난다 — {total - len(rows)}건을 못 받았다")
@@ -154,6 +163,12 @@ def main() -> int:
         upsert_core(conn, split_pii(conn, p, SITE_CODE, key, at), at)
         stored += 1
     commit(conn)
+    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
+    from store.core import sweep_gone_groups
+
+    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in rows})], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
     print(f"저장 {stored}건 · site='{SITE_CODE}'")
     return 0
 
