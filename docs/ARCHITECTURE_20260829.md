@@ -1,7 +1,7 @@
 # 아키텍처 설계도 — 파일 수집 · 적재 · 판정 (마스터 확인용)
 
 ```
-version  SPEC-2026.08.29-r931
+version  SPEC-2026.08.29-r932
 follows  docs/chapters/10-collect/00-intro.md · docs/chapters/11-store/a-key.md
 sources  마스터 확정 08-29 · 실측 08-29
 checks   S46-151 (신설 예정)
