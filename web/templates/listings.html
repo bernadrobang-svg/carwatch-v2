@@ -303,7 +303,10 @@
       {% if r.photo_url %}<img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
       {% if !r.photo_url %}<span class="thumb thumb-none nophoto">사진 없음</span>{% endif %}
     </div>
-    <div>
+    <!-- ★★★★★ 08-29 (UI_REVIEW 26-1 · 시험자 119~121) — ★ `.cardbody` 다.
+         ★ 하트가 `position:absolute` 인데 ★ 기준 상자가 없어 ★ 카드 밖으로 나갔다.
+         ★ 이 div 가 ★ `position:relative` 를 갖는다 (app.css `.cardbody`) -->
+    <div class="cardbody">
       <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
       <div class="name">
         <form method="post" action="/watch/add" class="inline">

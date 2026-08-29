@@ -6,8 +6,8 @@
 
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
-| `/` | [home.html](home.html) | 200 | 42,417B |
-| `/listings` | [listings.html](listings.html) | 200 | 89,739B |
+| `/` | [home.html](home.html) | 200 | 42,191B |
+| `/listings` | [listings.html](listings.html) | 200 | 89,959B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 42,276B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,141B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 34,186B |
@@ -21,22 +21,22 @@
 | `/login` | [login.html](login.html) | 200 | 2,481B |
 | `/join` | [join.html](join.html) | 200 | 2,304B |
 | `/password` | [password.html](password.html) | 200 | 2,295B |
-| `/admin` | [admin.html](admin.html) | 200 | 15,438B |
-| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 15,507B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 56,427B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,432B |
+| `/admin` | [admin.html](admin.html) | 200 | 15,883B |
+| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,036B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 56,389B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,100B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 7,931B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,577B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,173B |
-| `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,478B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,041B |
+| `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,476B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 19,953B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,676B |
-| `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 98,859B |
+| `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 98,855B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 201,710B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,212B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 2,972B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,329B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,165B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 22,196B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 4,832B |
 
 ## 못 낸 화면

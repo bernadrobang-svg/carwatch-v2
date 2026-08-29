@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>진행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=7338d351ae">
+<link rel="stylesheet" href="/static/app.css?v=ba2a475333">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-status">
@@ -60,7 +60,7 @@
 
 <p class="muted">
   <strong>5초</strong>마다 스스로 갱신합니다 ·
-  마지막 확인 <strong>2026-08-29T01:48:59+00:00</strong>.
+  마지막 확인 <strong>2026-08-29T02:45:02+00:00</strong>.
   갱신이 실패해도 <strong>여기 보이는 것은 그대로 남습니다</strong> —
   서버가 만든 화면이라 JS 가 없어도 새로고침하면 지금 상태가 나옵니다.
 </p>
@@ -73,7 +73,7 @@
 
 <p>
   <strong>2026-08-29T01:00:25Z</strong>
-  <span class="muted">48분 전</span>
+  <span class="muted">104분 전</span>
   
   <span class="chip-bad">어긋난 것이 있습니다</span>
 </p>
@@ -163,25 +163,43 @@
 <h2>① 지금 도는 것</h2>
 
 
+<div class="notice">
+  <p class="big"><strong>S5 · 535 / 40,712</strong>
+    <span class="muted">요청</span></p>
+  <p><strong>2.8 요청/초</strong> ·
+    남은 <strong>40,177</strong> →
+    약 <strong>242분</strong></p>
+  <p class="muted">최근 60초에 166건 ·
+    원문 <strong>191,548</strong>행 ·
+    run 20260829T024133</p>
+  <p class="muted">★ 전체는 상한입니다 — 진단은 <code>encarDiagnosis == 0</code> 인
+    매물만 부르므로 실제 요청은 이보다 적게 끝납니다.</p>
+</div>
 
-<p class="muted">최근 60초 동안 새 요청이 없습니다.</p>
 
 
 
+<table>
+<tbody>
+<tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><td>2d8877eb3a5d137c61
+  </td></tr>
+<tr><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><td>listing_updated · all</td></tr>
+<tr><th title="수집 단계입니다 (S0~S11)">단계</th><td><strong>-</strong>
+  </td></tr>
+<tr><th>경과</th><td>3분</td></tr>
+
+</tbody>
+</table>
 
 
-
-
-<p class="muted"><strong>도는 것이 없습니다.</strong>
-  대기 중인 작업도 없습니다 — 「멈춘 것」이 아니라 「할 일이 없는 것」입니다.</p>
 
 
 
 <h3>마지막으로 처리한 것</h3>
 
-<p>매물 <strong>42620991</strong> · ev_battery
-  · <strong>95분 전</strong>
-  <span class="muted">(2026-08-29T00:13:57.231280+00:00)</span></p>
+<p>매물 <strong>42625208</strong> · ev_battery
+  · <strong>0분 전</strong>
+  <span class="muted">(2026-08-29T02:45:02.664862+00:00)</span></p>
 
 
 
@@ -191,35 +209,35 @@
 <thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="지금 어떤 상태인지입니다">상태</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th title="언제 도는지입니다">언제</th><th title="사람이 적어 둔 말입니다">메모</th></tr></thead>
 <tbody>
 
+<tr><td class="runid" data-label="작업">2d8877eb3a5d137c61</td>
+  <td data-label="상태"><strong>running</strong></td>
+  <td data-label="사유 · 범위">listing_updated · all</td>
+  <td class="muted" data-label="언제">3분 전</td>
+  <td class="muted" data-label="메모"></td></tr>
+
 <tr><td class="runid" data-label="작업">2d554da5005cc5620b</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">listing_updated · G80_25T</td>
-  <td class="muted" data-label="언제">94분 전</td>
+  <td class="muted" data-label="언제">151분 전</td>
   <td class="muted" data-label="메모">OperationalError: database is locked</td></tr>
 
 <tr><td class="runid" data-label="작업">b4d9a1ff6477eaa364</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">listing_updated · all</td>
-  <td class="muted" data-label="언제">108분 전</td>
+  <td class="muted" data-label="언제">164분 전</td>
   <td class="muted" data-label="메모">S4 ok 3159 · S5 ok 887 · S6 ok 139188 · S9 ok 252252 · S10 ok 9702</td></tr>
 
 <tr><td class="runid" data-label="작업">98ab36b52e2d2854</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">578분 전</td>
+  <td class="muted" data-label="언제">634분 전</td>
   <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</td></tr>
 
 <tr><td class="runid" data-label="작업">f3e0aee81d1615f8</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">820분 전</td>
+  <td class="muted" data-label="언제">876분 전</td>
   <td class="muted" data-label="메모">OperationalError: database is locked</td></tr>
-
-<tr><td class="runid" data-label="작업">61e86fae43e8ca5e</td>
-  <td data-label="상태"><strong>done</strong></td>
-  <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">1112분 전</td>
-  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 138277 · S9 ok 248638 · S10 ok 9563</td></tr>
 
 </tbody>
 </table>
@@ -234,35 +252,35 @@
 
 <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="받은 원문">127</td></tr>
 
-<tr><td data-label="엔드포인트">detail</td><td class="num" data-label="받은 원문">22,004</td></tr>
+<tr><td data-label="엔드포인트">detail</td><td class="num" data-label="받은 원문">22,070</td></tr>
 
-<tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="받은 원문">3,061</td></tr>
+<tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="받은 원문">3,068</td></tr>
 
-<tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="받은 원문">22,226</td></tr>
+<tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="받은 원문">22,292</td></tr>
 
 <tr><td data-label="엔드포인트">extend_warrant</td><td class="num" data-label="받은 원문">8</td></tr>
 
-<tr><td data-label="엔드포인트">facet</td><td class="num" data-label="받은 원문">134</td></tr>
+<tr><td data-label="엔드포인트">facet</td><td class="num" data-label="받은 원문">158</td></tr>
 
-<tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="받은 원문">12,353</td></tr>
+<tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="받은 원문">12,385</td></tr>
 
-<tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="받은 원문">11,497</td></tr>
+<tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="받은 원문">11,526</td></tr>
 
-<tr><td data-label="엔드포인트">list</td><td class="num" data-label="받은 원문">5,062</td></tr>
+<tr><td data-label="엔드포인트">list</td><td class="num" data-label="받은 원문">5,667</td></tr>
 
-<tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="받은 원문">21,928</td></tr>
+<tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="받은 원문">21,994</td></tr>
 
-<tr><td data-label="엔드포인트">record</td><td class="num" data-label="받은 원문">13,866</td></tr>
+<tr><td data-label="엔드포인트">record</td><td class="num" data-label="받은 원문">13,907</td></tr>
 
-<tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="받은 원문">13,710</td></tr>
+<tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="받은 원문">13,751</td></tr>
 
-<tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="받은 원문">21,102</td></tr>
+<tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="받은 원문">21,168</td></tr>
 
 <tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="받은 원문">4</td></tr>
 
 </tbody>
 </table>
-<p>펼쳐 앉은 매물 <strong>19,734건</strong> ·
+<p>펼쳐 앉은 매물 <strong>19,775건</strong> ·
   판정 <strong>9,702건</strong></p>
 
 <h2>④ 실패</h2>
@@ -291,8 +309,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260829T000005</span>
-  <span>2026-08-29 10:48</span>
+  <span>run 20260829T024133</span>
+  <span>2026-08-29 11:45</span>
 </footer>
 
 </body>

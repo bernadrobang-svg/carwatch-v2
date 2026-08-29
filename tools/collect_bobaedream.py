@@ -124,7 +124,13 @@ def main() -> int:
     gap = opt("--interval", 0.0) or float(cfg.get("interval_sec") or 1.2)
     adapter = BobaedreamAdapter(cfg)
     names = target_names()
-    pages = opt("--pages", 5)
+    # ★★★★ 08-29 (규격 `docs/BOBAEDREAM_API.md` · 마스터가 정했다) —
+    #   ★ **빈 쪽이 오면 끝이다.**  ★ 우리가 쪽 수를 정하지 않는다.
+    #   ★ 보배가 33건뿐이라 ★ 다섯 쪽 한정은 뜻이 없었다.
+    #   ★ 기본값에서 `--pages` 를 없앤다 — ★ 빈 쪽까지 간다 (MAX_PAGES 가 울타리다).
+    #   ★ 사람이 `--pages` 를 준 때는 ★ 시험용이라 ★ `done=False` 다
+    pages = opt("--pages", MAX_PAGES)
+    pages_given = "--pages" in args
     groups = load_filters()
     if groups:
         print(f"★ 좁혀 받는다 — 차종 {len(groups)}종 "
@@ -133,17 +139,26 @@ def main() -> int:
         print(f"★ 우리 차종 이름 {len(names)}가지로 목록에서 미리 거른다")
 
     hits, seen, scanned = [], set(), 0
+    # ★ 조건마다 ★ 「빈 쪽을 만났나」를 센다 — ★ 그것이 끝의 근거다
+    ended: set = set()
+    walked: set = set()
     for g, page in _walk_plan(groups, min(pages, MAX_PAGES)):
+        gk = (g or {}).get("model_no") or (g or {}).get("maker_no") or "*"
+        if gk in ended:
+            continue                    # ★ 이 조건은 이미 끝났다
+        walked.add(gk)
         req = adapter.list_url(None, page=page,
                               maker=g.get("maker_no") if g else None,
                               model=g.get("model_no") if g else None)
         body = _get(req.url, req.headers, req.timeout_sec)
         if body is None:
             print(f"  {page}쪽 — ★ 못 받았다.  ★ 저장하지 않는다")
-            break
+            break                       # ★ 못 받았다 — ★ `ended` 에 안 넣는다
         got = list_items(body)
         if not got:
-            break
+            # ★★ 빈 쪽 — ★ 사이트가 「더 없다」고 말한 것이다.  ★ 이 조건은 끝났다
+            ended.add(gk)
+            continue
         for no, title in got:
             if no in seen:
                 continue
@@ -210,9 +225,13 @@ def main() -> int:
     #   ★ ★ 끝 신호(마지막 쪽·총계)를 얻으면 ★ 그때 참으로 바꾼다 — ★ 가이드에 올렸다
     from store.core import sweep_gone_groups
 
-    _got = sweep_gone_groups(conn, SITE_CODE, [(False, set(seen))], at)
-    print(f"★ gone 매김 — {sum(_got.values())}건 "
-          "(★ 보배는 한정해 훑는 구조라 아직 안 매긴다)")
+    # ★★★★ 08-29 (규격 확정) — ★ 빈 쪽까지 갔을 때만 참이다.
+    #   ★ 사람이 `--pages` 를 준 때 · ★ MAX_PAGES 에 닿은 때는 ★ 거짓이다
+    _done = bool(walked) and walked <= ended and not pages_given
+    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, set(seen))], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 빈 쪽까지 간 조건 {len(ended)}/{len(walked)}"
+          f"{' · --pages 를 주셨으므로 안 매긴다' if pages_given else ''}")
     print("★ " + " · ".join(f"{k} {v}" for k, v in kept.items()))
     conn.close()
     from tools.daily_enqueue import enqueue_after_store
