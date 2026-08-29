@@ -54,12 +54,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>running</strong> · 사유 raw_missing · 범위 all
-    </p>
+  <p><strong>done</strong> · 사유 raw_missing · 범위 all
+    <span class="muted">· run 20260829T143754</span></p>
   <p>단계 <strong>-</strong>
     
     <span class="muted">· 넣은 시각 2026-08-29T14:36:31.107651+00:00</span></p>
-  
+  <p class="muted">S5 ok 0 · S6 ok 142332 · S9 ok 262314 · S10 ok 10089</p>
   
   
 
@@ -75,7 +75,7 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">23,645</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">23,668</td></tr>
   
   <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,076</td></tr>
   
@@ -89,7 +89,7 @@
   
   <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">11,597</td></tr>
   
-  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">5,958</td></tr>
+  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">6,072</td></tr>
   
   <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">22,168</td></tr>
   
@@ -111,7 +111,7 @@
     도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
-<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
+
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -138,7 +138,7 @@
       GLC_IMPORT <span class="muted">(1,296건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="X3_IMPORT">
-      X3_IMPORT <span class="muted">(1,142건)</span></label>
+      X3_IMPORT <span class="muted">(1,156건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="MODEL_Y">
       MODEL_Y <span class="muted">(750건)</span></label>
@@ -217,17 +217,10 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-29T14:36:31.107651+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-08-29T14:36:31.107651+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""><form method="post" action="/admin/run" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="action" value="halt">
-    <input type="hidden" name="job_id" value="4125a4ff494943dc">
-    <input name="reason" size="12" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
-  </form></td></tr>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-29T13:25:45.616262+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -331,7 +324,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 6 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
+<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 8 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
 
 
 
@@ -342,7 +335,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 23:37</span>
+  <span>2026-08-30 02:05</span>
 </footer>
 
 </body>
