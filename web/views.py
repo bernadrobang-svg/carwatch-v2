@@ -113,6 +113,25 @@ def page(conn, account, title: str, template: str, ctx: dict, *,
 
 
 # ── 화면별 어댑터 ────────────────────────────────────────────────────
+def sold(conn, account, req, root: str = ROOT, csrf: str = "",
+         flash_key: str = "-", **_kw) -> tuple:
+    """팔린 차 (`/sold` · UI_REVIEW 30장 · 마스터 확정 08-29 요구 134).
+
+    ★ 마스터 — 「★ 별도의 화면 메뉴를 만들어서 ★ 판매 완료된 차에 대해서는
+      ★ 목록 아래에서 정리했으면 좋겠어.  ★ 그래서 ★ 어떠한 가격일 때
+      ★ 잘 팔렸는지 통계를 내놨으면」
+    ★ 목록(`/listings`)에서는 안 보인다 — ★ 여기와 통계에만 나온다 (30-2)
+    """
+    from report.screens.build import view_sold
+
+    q = req.get("query", {})
+    tk = (q.get("target") or "").strip() or None
+    v = view_sold(account, conn, root, target_key=tk)
+    return page(conn, account, "팔린 차", "sold.html",
+                {"v": v, "sold": v, "target": tk}, csrf=csrf, root=root,
+                flash_key=flash_key)
+
+
 def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
     from report.screens.build import axis_heads, view_listings
@@ -771,7 +790,7 @@ def _pick_state(flt, root: str = ROOT) -> dict:
     more["price_dropped"] = getattr(flt, "price_dropped", False)
     # ★ 체크상자도 되돌려 넣는다 — 거르면 체크가 풀리면 안 된다 (#11)
     more["unknown_too"] = getattr(flt, "unknown_too", False)
-    more["hide_sold"] = getattr(flt, "hide_sold", False)
+    more["with_sold"] = getattr(flt, "with_sold", False)
     return {**more,
             "price_min": lo, "price_max": hi, "lease": flt.lease,
             "excluded": getattr(flt, "excluded", False),
@@ -1050,7 +1069,7 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         # ★★ 08-28 (#11) — 「확인 못 한 것도 함께 보기」를 받는다
         unknown_too=q.get("unknown_too") == "1",
         # ★★★ 08-29 (마스터 3번) — 「팔린 것 숨기기」
-        hide_sold=q.get("hide_sold") == "1",
+        with_sold=q.get("with_sold") == "1",
         warranty_month_min=_int_param(q, "warranty_month_min", None,
                                       minimum=0),
         # ★ 점수 필터 — 화면의 막대를 그대로 조건으로 (V11-164)
@@ -2671,6 +2690,7 @@ def report_download(conn, account, req, path_vars: dict | None = None,
 
 HANDLERS = {
     "view_listings": listings,
+    "view_sold": sold,
     "view_why": why,
     "view_detail": detail,
     "view_notready": notready,

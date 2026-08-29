@@ -56,6 +56,9 @@ class Route:
 ROUTES: tuple[Route, ...] = (
     Route("/", (GET,), "view_dashboard", ROLE_ANONYMOUS),
     Route("/listings", (GET,), "view_listings", ROLE_ANONYMOUS),
+    # ★★ 08-30 (`61-web.md:193` · `UI_REVIEW` 30장) — ★ 팔린 차.
+    #   ★ 목록에서 뺀 것을 ★ 여기서 따로 본다 (마스터 확정 08-29 요구 134)
+    Route("/sold", (GET,), "view_sold", ROLE_ANONYMOUS),
     Route("/recommend", (GET,), "view_recommend", ROLE_ANONYMOUS),
     # ★★ 개정 427 — 상세 신설.  /why 를 흡수한다.  ★ /why 주소는 살린다
     Route("/detail/{listing_id}", (GET,), "view_detail", ROLE_ANONYMOUS),

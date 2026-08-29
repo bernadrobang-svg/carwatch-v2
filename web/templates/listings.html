@@ -142,10 +142,14 @@
           <a class="btn" href="{{ pick.lease_url }}">리스 함께 보기</a>{% endif %}
         {% if !lease_hidden %}<span class="chip dim">리스·렌트를 기본으로 뺍니다</span>{% endif %}
       </p>
-      <!-- ★★★ 08-29 (마스터 3번) — ★ 팔린 것은 ★ 기본으로 ★ **안 숨긴다.**
-           ★ 두고 딱지만 단다.  ★ 숨기고 싶을 때만 여기서 누른다 -->
-      <label class="dim"><input type="checkbox" name="hide_sold" value="1"{% if pick.hide_sold %} checked{% endif %}>
-        팔린 것 숨기기 <span class="muted">— 기본은 두고 딱지만 답니다</span></label>
+      <!-- ★★★★★ 08-30 (`UI_REVIEW` 30-2 · 마스터 확정 #31·#35) — ★ 뜻이 뒤집혔다.
+           ★ 마스터 — 「목록에는 있으나 ★ 화면 조회 목록에는 안 보여야 돼.
+             ★ 다만 판매완료 목록과 통계에는 나와야 되고」
+           ★ 그래서 ★ **기본이 「안 보임」**이고 ★ 켜면 함께 본다.
+           ★ 거르개를 지우지 않는다 — ★ 정보를 빼지 않는다 (마스터 08-25) -->
+      <label class="dim"><input type="checkbox" name="with_sold" value="1"{% if pick.with_sold %} checked{% endif %}>
+        팔린 것·계약 중도 함께 보기
+        <span class="muted">— 기본은 안 보입니다 · <a href="/sold">팔린 차</a> 에서 따로 봅니다</span></label>
 
       <!-- ★ 나머지 조건 — ★ 다섯 절에 안 드는 것 -->
       <div class="chips" style="margin-top:9px">

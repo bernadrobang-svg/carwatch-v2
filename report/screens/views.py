@@ -296,7 +296,9 @@ class ListingFilter:
     unknown_too: bool = False
     # ★★★ 08-29 (마스터 3번) — ★ 거르개 「뺀 것」의 ★ 「팔린 것 숨기기」.
     #   ★ 기본은 ★ **안 숨긴다** — ★ 두고 딱지만 다는 것이 정본이다
-    hide_sold: bool = False
+    # ★ 08-30 (30-2) — ★ 뜻이 뒤집혔다.  ★ 기본이 「안 보임」이고
+    #   ★ 이것을 켜면 ★ 팔린 것·계약 중을 ★ **함께** 본다
+    with_sold: bool = False
     warranty_month_min: int | None = None
     region: str | None = None
     # ★★ 점수 필터 — 화면의 막대를 그대로 조건으로 쓴다 (V11-164).
@@ -563,6 +565,65 @@ class DealerRow:
     # 이 딜러가 가진 차종 분포 — 「G80 12 · GV70 8」 (마스터 지적 ⑤).
     # ★ 건수만 보면 「무엇을 파는 딜러인가」를 모른다
     targets: tuple = ()
+
+
+@dataclass(frozen=True)
+class SoldBin:
+    """시세 대비 한 칸 — ★ 「어떤 가격일 때 잘 팔렸나」 (UI_REVIEW 30-3)."""
+
+    label: str          # 「−10% 아래 (싸다)」
+    sold_n: int         # 그 칸에서 팔린 수
+    days_avg: float | None   # 평균 며칠.  ★ 표본이 모자라면 None
+    enough: bool        # ★ 표본 다섯 이상인가 (f-table 과 같은 잣대)
+    # ★★★★ 08-30 — ★ `sold_n` 과 ★ 「평균 며칠」의 표본이 **다르다.**
+    #   ★ 며칠은 ★ `first_seen` 과 `gone_at` 이 ★ **둘 다 있어야** 센다.
+    #   ★ 실측 08-30 — ★ 칸에 드는 것 499건 중 ★ **107건만** 셀 수 있다.
+    #   ★ ★ 그것을 안 적으면 ★ 「136건이 평균 5일」로 읽힌다 — ★ 거짓이다.
+    #   ★ ★ 이 프로젝트가 막는 「선언과 실제의 괴리」가 ★ 바로 그것이다
+    days_n: int = 0     # ★ 평균을 낸 표본 수
+
+
+@dataclass(frozen=True)
+class SoldRow:
+    """팔린 차 한 대."""
+
+    listing_id: int
+    target_key: str | None
+    site: str
+    site_badge: str
+    title: str
+    spec: str                    # 「2022-06 · 48,210km · 흰색 · 가솔린」
+    price_won: int | None        # 마지막에 본 값
+    price_first_won: int | None  # 처음 본 값 — ★ price_history 가 있어야 낸다
+    photo_url: str | None
+    first_seen: str | None
+    gone_at: str | None
+    days: int | None             # gone_at − first_seen
+    gap_pct: float | None        # 시세 대비 몇 %
+    # ★★ 「사이트가 판매완료라 말한 것」과 ★ 「그냥 사라진 것」을 가른다 (30-3 금지)
+    said_sold: bool
+    said_label: str | None       # 「판매완료」 · 「예약중」 · None
+    detail_url: str | None
+
+
+@dataclass(frozen=True)
+class SoldView:
+    """팔린 차 (`/sold` · UI_REVIEW 30장 · 마스터 확정 08-29 요구 134).
+
+    ★ 마스터 — 「★ 별도의 화면 메뉴를 만들어서 ★ 판매 완료된 차에 대해서는
+      ★ 목록 아래에서 정리했으면 좋겠어.  ★ 그래서 ★ **어떠한 가격일 때
+      ★ 잘 팔렸는지 통계**를 내놨으면」
+    ★ 목록에서 사라진 것이 ★ **다 팔린 것은 아니다** — ★ `said_sold` 로 가른다
+    """
+
+    rows: list
+    total: int                   # 팔린 것 전체
+    shown: int                   # 이번 쪽에 낸 것
+    bins: list                   # SoldBin — 시세 대비 네 칸
+    bins_for: str | None         # 「G80_25T · 2022년식」 — 무엇에 대한 통계인가
+    bins_note: str | None        # 표본이 모자랄 때 적는 말
+    # ★ 아직 못 내는 것 — ★ 화면에 적는다 (지어내지 않는다)
+    missing: list = field(default_factory=list)
 
 
 @dataclass(frozen=True)

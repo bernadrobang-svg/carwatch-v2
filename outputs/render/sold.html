@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>팔린 차 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css?v=f10a934f2f">
+
+</head>
+<body class="s-sold">
+
+<header class="top">
+  <a class="brand" href="/" title="현황으로 갑니다">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  <a class="nav-item" href="/listings" title="조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다">매물</a>
+  
+  <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다">관심</a>
+  
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
+  
+  <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
+  
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+  
+  <a class="btn" href="/notready">미판정 보기</a>
+</div>
+
+
+<main>
+
+<h1>팔린 차 <span class="muted">1,226건 중 30건</span></h1>
+
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p><strong>이미 팔린 차</strong>다. <strong>얼마에 팔렸는지</strong> 본다</p>
+  <p>★ <strong>매물과 다르다</strong> — 매물은 「고르는 곳」 · 여기는 「값을 아는 곳」</p>
+  <p>★★ <strong>목록에서 사라진 것이 다 팔린 것은 아니다</strong> —
+    사이트가 「판매완료」라 말한 것과 그냥 사라진 것을 아래 배지로 가른다</p>
+</div>
+
+
+<div class="cond">
+  <h2>★ 어떤 가격일 때 잘 팔렸나 <span class="muted">— 전체 차종</span></h2>
+  <table>
+    <thead><tr><th>시세 대비</th><th class="num">팔린 수</th><th class="num">평균 며칠</th></tr></thead>
+    <tbody>
+    
+    <tr>
+      <td data-label="시세 대비">−10% 아래 (싸다)</td>
+      <td class="num" data-label="팔린 수">70</td>
+      
+      <td class="num" data-label="평균 며칠"><span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것이 다섯 건이 안 됩니다">아직 못 셉니다 (0건)</span></td>
+    </tr>
+    
+    <tr>
+      <td data-label="시세 대비">−10% ~ 시세</td>
+      <td class="num" data-label="팔린 수">81</td>
+      
+      <td class="num" data-label="평균 며칠">5.0일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(5건으로 셈)</span></td>
+    </tr>
+    
+    <tr>
+      <td data-label="시세 대비">시세 ~ +10%</td>
+      <td class="num" data-label="팔린 수">136</td>
+      
+      <td class="num" data-label="평균 며칠">5.0일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(10건으로 셈)</span></td>
+    </tr>
+    
+    <tr>
+      <td data-label="시세 대비">+10% 위 (비싸다)</td>
+      <td class="num" data-label="팔린 수">110</td>
+      
+      <td class="num" data-label="평균 며칠"><span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것이 다섯 건이 안 됩니다">아직 못 셉니다 (4건)</span></td>
+    </tr>
+    
+    </tbody>
+  </table>
+  <p class="muted">★ 표본 5건 미만인 칸은 내지 않는다 — 「표본 부족」이라 적는다</p>
+  <p class="muted">★ 시세는 <strong>지금</strong> 그 차종·트림·연식의 중앙값이다.
+    <span class="dim" title="규격은 「그때 그 차종·연식의 중앙값」이라 적었습니다. 우리는 그때 값을 안 갖고 있어 지금 값으로 냅니다 — 지어내지 않습니다">그때 시세가 아니다</span></p>
+</div>
+
+
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC 아방가르드 쿠페</strong>
+    </div>
+    <p class="muted">2024-11 · 4,993km · 흰색 · 가솔린</p>
+    <p class="price">9,999만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-29
+      
+      
+       · 시세 대비 <strong>43.0%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42461899" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>EX30 크로스 컨트리 퍼포먼스 울트라</strong>
+    </div>
+    <p class="muted">2025-09 · 4,992km · 하늘색 · 전기</p>
+    <p class="price">4,200만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-29
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=EX30_EV">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42385894" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>C40 리차지 트윈 얼티메이트</strong>
+    </div>
+    <p class="muted">2024-11 · 14,900km · 흰색 · 전기</p>
+    <p class="price">4,400만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-29
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=C40_EV">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42519649" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2023-12 · 33,289km · 쥐색 · 가솔린</p>
+    <p class="price">7,290만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>37.5%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/41300479" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2023-08 · 30,000km · 흰색 · 디젤</p>
+    <p class="price">5,910만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>5.9%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42143749" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2026-06 · 10km · 흰색 · 가솔린</p>
+    <p class="price">1억 500만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>8.8%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42273468" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC AMG Line</strong>
+    </div>
+    <p class="muted">2026-06 · 214km · 검정색 · 가솔린</p>
+    <p class="price">9,990만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>25.0%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42446251" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC AMG Line</strong>
+    </div>
+    <p class="muted">2026-06 · 214km · 검정색 · 가솔린</p>
+    <p class="price">9,990만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>25.0%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42447027" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2025-11 · 8,165km · 흰색 · 디젤</p>
+    <p class="price">9,999만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>12.6%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42586774" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2025-11 · 8,165km · 흰색 · 디젤</p>
+    <p class="price">9,999만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>12.6%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42588423" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300 4MATIC 프리미엄 쿠페</strong>
+    </div>
+    <p class="muted">2020-04 · 25,974km · 흰색 · 가솔린</p>
+    <p class="price">4,800만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>28.0%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42257075" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 AMG GLC43 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2022-07 · 26,368km · 흰색 · 가솔린</p>
+    <p class="price">5,150만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42161912" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300 4MATIC 프리미엄 쿠페</strong>
+    </div>
+    <p class="muted">2020-04 · 37,885km · 검정색 · 가솔린</p>
+    <p class="price">4,250만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>13.3%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42561922" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 AMG GLC43 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2022-07 · 26,368km · 흰색 · 가솔린</p>
+    <p class="price">5,150만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42164237" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300 4MATIC 프리미엄 쿠페</strong>
+    </div>
+    <p class="muted">2020-04 · 37,885km · 검정색 · 가솔린</p>
+    <p class="price">4,250만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>13.3%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42565482" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC AMG Line</strong>
+    </div>
+    <p class="muted">2023-08 · 28,217km · 검정색 · 가솔린</p>
+    <p class="price">6,350만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>3.6%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42425551" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC300 4MATIC AMG Line</strong>
+    </div>
+    <p class="muted">2023-08 · 28,217km · 검정색 · 가솔린</p>
+    <p class="price">6,350만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>3.6%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42425558" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2022-06 · 49,284km · 쥐색 · 디젤</p>
+    <p class="price">4,089만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-2.2%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/41565579" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2022-06 · 49,284km · 쥐색 · 디젤</p>
+    <p class="price">4,089만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-2.2%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/41569109" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC220 d 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2021-04 · 136,747km · 쥐색 · 디젤</p>
+    <p class="price">3,190만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-17.1%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42512141" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2025-02 · 9,664km · 흰색 · 디젤</p>
+    <p class="price">8,881만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42412519" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X254 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2025-02 · 9,664km · 흰색 · 디젤</p>
+    <p class="price">8,881만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42413420" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 AMG GLC43 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2019-12 · 114,127km · 검정색 · 가솔린</p>
+    <p class="price">2,730만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-11.4%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42466952" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 AMG GLC43 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2019-12 · 114,127km · 검정색 · 가솔린</p>
+    <p class="price">2,730만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-11.4%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42493832" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2023-05 · 39,009km · 은색 · 가솔린</p>
+    <p class="price">9,292만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>75.3%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/41767714" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2022-09 · 31,856km · 쥐색 · 디젤</p>
+    <p class="price">4,180만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42264689" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300 4MATIC 쿠페</strong>
+    </div>
+    <p class="muted">2023-05 · 39,009km · 은색 · 가솔린</p>
+    <p class="price">9,292만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>75.3%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42553665" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC220 d 4MATIC</strong>
+    </div>
+    <p class="muted">2022-09 · 31,856km · 쥐색 · 디젤</p>
+    <p class="price">4,180만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+      
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/42269605" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300e 4MATIC</strong>
+    </div>
+    <p class="muted">2022-06 · 55,800km · 쥐색 · 가솔린+전기</p>
+    <p class="price">3,750만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-6.2%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/41357002" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">팔림</span>
+      <span class="tag">엔카</span>
+      <strong>GLC-클래스 X253 GLC300e 4MATIC</strong>
+    </div>
+    <p class="muted">2022-10 · 36,964km · 쥐색 · 가솔린+전기</p>
+    <p class="price">3,900만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-26
+      
+      
+       · 시세 대비 <strong>-2.5%</strong>
+    </p>
+    
+    <p>
+      <a class="btn" href="/listings?target=GLC_IMPORT">같은 차 보기</a>
+      <a class="btn go" href="https://fem.encar.com/cars/detail/40991756" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+
+
+
+
+
+<div class="cond">
+  <h2>★ 아직 못 내는 것</h2>
+  <p class="muted">처음 값 → 마지막 값 — 값이 바뀐 자취(`core_listing_change`)가 있는 매물만 낼 수 있습니다.  지어내지 않습니다</p>
+</div>
+
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260829T024133</span>
+  <span>2026-08-30 07:07</span>
+</footer>
+
+</body>
+</html>

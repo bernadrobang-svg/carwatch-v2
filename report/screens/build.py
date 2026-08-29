@@ -75,6 +75,7 @@ from report.screens.views import (
     TrackPair, TrackView,
     ListingFilter, ListingRow, MarketRow, MarketView, NotReadyView,
     RelaxRow, ReportFile, ReportsView,
+    SoldBin, SoldRow, SoldView,
     WatchRow,
     TargetStat, ViewerState,
 )
@@ -1259,13 +1260,27 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     # ★★★ 08-29 (마스터 3번) — ★ 되돌린다.  ★ 08-28 에 ★ 목록에서 뺐던 것을
     #   ★ ★ **다시 낸다** — ★ 「두고 딱지만 · 흐리게 · 맨 뒤」.
     #   ★ 까닭 — ★ 「얼마에 팔렸나」가 ★ 다음 판단의 재료다 (마스터 v281 답).
-    #   ★ 숨기고 싶으면 ★ 거르개 「팔린 것 숨기기」를 누른다 (`hide_sold`)
-    if (getattr(flt, "hide_sold", False)
+    #   ★ ★ 그 확정은 ★ 08-30 에 ★ 다시 뒤집혔다 — ★ 아래를 보라 (30-2)
+    # ★★★★★ 08-30 (`UI_REVIEW` 30-2 · 마스터 확정 물음 #31·#35) —
+    #   ★ 마스터 — 「★ **목록에는 있으나 ★ 화면 조회 목록에는 안 보여야 돼.
+    #     ★ 다만 판매완료 목록과 통계에는 나와야 되고**」
+    #   ★ 그래서 ★ **뜻이 뒤집힌다** — ★ 08-25 「두고 딱지만」을 ★ 이 확정이 대신한다.
+    #   ★ ★ 기본이 ★ **안 보임**이고 · ★ `with_sold=1` 이면 ★ 함께 본다
+    #     ★ ★ (거르개 「함께 보기」는 남긴다 — ★ 정보를 빼지 않는다 · 마스터 08-25)
+    #   ★ 지우지 않는다 — ★ `core_listing` 에 남고 ★ `/sold` 와 통계에 나온다 (P3)
+    #   ★ 매물 하나만 집을 때는 안 접는다 — ★ 그 줄을 못 찾는다
+    if (not getattr(flt, "with_sold", False)
             and getattr(flt, "listing_id", None) is None
             and not getattr(flt, "listing_ids", ())):
+        # ★ 낱말의 정본은 `config/labels.json` 이다 (S14).
+        #   ★ 이 함수는 `root` 를 안 받는다 — ★ 기본 자리에서 읽는다
+        words = sorted(_sold_words())
         where.append("l.status <> 'gone'")
-        where.append("(l.sales_status IS NULL"
-                     " OR UPPER(l.sales_status) NOT IN ('CONTRACT','RESERVED'))")
+        if words:
+            marks = ",".join("?" * len(words))
+            where.append("(l.sales_status IS NULL"
+                         f" OR UPPER(l.sales_status) NOT IN ({marks}))")
+            args.extend(words)
     if getattr(flt, "listing_id", None) is not None:
         where.append("l.listing_id = ?")
         args.append(flt.listing_id)
@@ -3302,6 +3317,189 @@ def _miss_axes_bulk(conn, listing_ids: list, calc_version: str,
         if len(got) < 4:
             got.append(f"{al.get(axis, axis)} {kind.get(axis, '')}".strip())
     return {k: tuple(v) for k, v in out.items()}
+
+
+# ── 팔린 차 (`/sold` · UI_REVIEW 30장 · 마스터 확정 08-29 요구 134) ──────
+# ★★★ 마스터 — 「★ 별도의 화면 메뉴를 만들어서 ★ 판매 완료된 차에 대해서는
+#   ★ 목록 아래에서 정리했으면 좋겠어.  ★ 그래서 ★ **어떠한 가격일 때
+#   ★ 잘 팔렸는지 통계**를 내놨으면」
+# ★ 「목록에서 사라진 것이 ★ 다 팔린 것은 아니다」 — ★ 그것을 화면에 적고
+#   ★ ★ 카드마다 ★ `said_sold` 로 가른다 (30-3 금지)
+
+# ★ 시세 대비 네 칸.  ★ 시안 그대로다 — ★ 개발측이 경계를 새로 정하지 않는다
+SOLD_BINS: tuple = (
+    ("−10% 아래 (싸다)", None, -10.0),
+    ("−10% ~ 시세", -10.0, 0.0),
+    ("시세 ~ +10%", 0.0, 10.0),
+    ("+10% 위 (비싸다)", 10.0, None),
+)
+# ★ 표본이 이보다 적으면 ★ 분포를 내지 않는다 — ★ `f-table` 과 같은 잣대 (30-3 필수)
+SOLD_MIN_SAMPLE = 5
+
+
+def _sold_int(v):
+    """★ 자취(`core_listing_change.old_value`)는 글자다 — ★ 수로 만든다."""
+    try:
+        return int(str(v).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _sold_where(root: str = ".") -> tuple[str, list]:
+    """팔린 것·계약 중을 고르는 조건.  ★ 낱말은 `config/labels.json` 이 정본이다."""
+    words = sorted(_sold_words(root))
+    if not words:
+        return "l.status = 'gone'", []
+    marks = ",".join("?" * len(words))
+    return (f"(l.status = 'gone'"
+            f" OR UPPER(COALESCE(l.sales_status,'')) IN ({marks}))"), list(words)
+
+
+def _days_between(a: str | None, b: str | None) -> int | None:
+    """★ 며칠 만에 팔렸나.  ★ 둘 중 하나가 없으면 ★ 안 낸다 (지어내지 않는다)."""
+    from datetime import datetime
+
+    if not a or not b:
+        return None
+    try:
+        d0 = datetime.fromisoformat(str(a).replace("Z", "+00:00"))
+        d1 = datetime.fromisoformat(str(b).replace("Z", "+00:00"))
+    except (TypeError, ValueError):
+        return None
+    n = (d1 - d0).days
+    return n if n >= 0 else None
+
+
+def view_sold(account: Account, conn, root: str = ".", limit: int = 30,
+              target_key: str | None = None) -> SoldView:
+    """팔린 차 화면 (STEP · UI_REVIEW 30장).
+
+    ★ 지어내지 않는다 — ★ 우리가 가진 것만 낸다 (`first_seen`·`gone_at`·
+      `price_current_won`·`core_listing_change`).
+    ★ 표본 다섯 미만인 칸은 ★ 「표본 부족」으로 낸다 (30-3 필수)
+    """
+    del account
+    where, args = _sold_where(root)
+    total = conn.execute(
+        f"SELECT COUNT(*) FROM core_listing l WHERE {where}", args).fetchone()[0]
+
+    pick, pick_args = where, list(args)
+    if target_key:
+        pick += " AND l.target_key = ?"
+        pick_args.append(target_key)
+    rows = conn.execute(
+        "SELECT l.listing_id, l.target_key, l.site, l.site_model, l.trim_badge,"
+        "       l.year_month, l.mileage_km, l.color_ext_raw, l.fuel_raw,"
+        "       l.price_current_won, l.photo_main, l.first_seen, l.gone_at,"
+        "       l.sales_status, l.status, l.source_id"
+        f"  FROM core_listing l WHERE {pick}"
+        "  ORDER BY COALESCE(l.gone_at, l.last_seen) DESC, l.listing_id DESC"
+        "  LIMIT ?", (*pick_args, int(limit))).fetchall()
+
+    lids = [r[0] for r in rows]
+    market = _bulk_market(conn, lids, root) if lids else {}
+    # ★ 처음 값 — ★ `core_listing_change` 에 자취가 있을 때만 낸다.
+    #   ★ 없으면 ★ 그 줄을 뺀다 (시안 「아직 못 내는 것」)
+    first_won: dict = {}
+    if lids:
+        marks = ",".join("?" * len(lids))
+        for lid, old in conn.execute(
+            "SELECT listing_id, old_value FROM core_listing_change"
+            f" WHERE field='price_current_won' AND listing_id IN ({marks})"
+            "  ORDER BY changed_at ASC", tuple(lids)):
+            first_won.setdefault(lid, _sold_int(old))
+
+    words = _sold_words(root)
+    detail_urls = _site_detail_urls(root)
+    out = []
+    for (lid, tk, site, model, trim, ym, km, color, fuel, price, photo,
+         seen, gone, ss, st, sid) in rows:
+        mkt, mkt_n = market.get(lid, (None, 0))
+        gap = (round((price - mkt) / mkt * 100, 1)
+               if (mkt and price and mkt_n >= _view_cfg("market_min_sample", root))
+               else None)
+        said = str(ss or "").upper() in words
+        spec = " · ".join(str(x) for x in (
+            ym, f"{km:,}km" if km else None, color, fuel) if x)
+        tpl = detail_urls.get(site)
+        out.append(SoldRow(
+            listing_id=lid, target_key=tk, site=site,
+            site_badge=site_badge(site, None, root),
+            title=" ".join(str(x) for x in (model, trim) if x) or str(tk or ""),
+            spec=spec, price_won=price, price_first_won=first_won.get(lid),
+            photo_url=photo, first_seen=seen, gone_at=gone,
+            days=_days_between(seen, gone), gap_pct=gap,
+            said_sold=said,
+            said_label=words.get(str(ss or "").upper()),
+            detail_url=(tpl.format(source_id=sid) if tpl and sid else None)))
+
+    bins, bins_for, note = _sold_bins(conn, root, target_key)
+    missing = []
+    if not first_won:
+        missing.append("처음 값 → 마지막 값 — 값이 바뀐 자취(`core_listing_change`)가 "
+                       "있는 매물만 낼 수 있습니다.  지어내지 않습니다")
+    if note:
+        missing.append(note)
+    return SoldView(rows=out, total=total, shown=len(out), bins=bins,
+                    bins_for=bins_for, bins_note=note, missing=missing)
+
+
+def _sold_bins(conn, root: str = ".", target_key: str | None = None):
+    """★ 「어떤 가격일 때 잘 팔렸나」 — ★ 시세 대비 네 칸 (30-3).
+
+    ★ 표본 다섯 미만인 칸은 ★ 수를 안 낸다 — ★ 「표본 부족」이라 적는다
+    ★ 시세는 ★ **그때 그 차종·연식의 중앙값**이 정본이지만, ★ 우리가 가진 것은
+      ★ **지금** 중앙값뿐이다 — ★ 그것을 화면에 적는다 (지어내지 않는다)
+    """
+    where, args = _sold_where(root)
+    pick, pick_args = where, list(args)
+    if target_key:
+        pick += " AND l.target_key = ?"
+        pick_args.append(target_key)
+    rows = conn.execute(
+        "SELECT l.listing_id, l.first_seen, l.gone_at"
+        f"  FROM core_listing l WHERE {pick}"
+        "   AND l.price_current_won IS NOT NULL"
+        "   AND l.target_key IS NOT NULL", pick_args).fetchall()
+    lids = [r[0] for r in rows]
+    market = _bulk_market(conn, lids, root) if lids else {}
+    need = _view_cfg("market_min_sample", root)
+    prices = {r[0]: r[1] for r in conn.execute(
+        "SELECT listing_id, price_current_won FROM core_listing"
+        " WHERE price_current_won IS NOT NULL")} if lids else {}
+
+    buckets: dict = {label: [] for label, _lo, _hi in SOLD_BINS}
+    for lid, seen, gone in rows:
+        mkt, mkt_n = market.get(lid, (None, 0))
+        price = prices.get(lid)
+        if not (mkt and price and mkt_n >= need):
+            continue
+        pct = (price - mkt) / mkt * 100
+        for label, lo, hi in SOLD_BINS:
+            if (lo is None or pct >= lo) and (hi is None or pct < hi):
+                buckets[label].append(_days_between(seen, gone))
+                break
+
+    out, any_enough = [], False
+    for label, _lo, _hi in SOLD_BINS:
+        got = buckets[label]
+        days = [d for d in got if d is not None]
+        enough = len(got) >= SOLD_MIN_SAMPLE
+        any_enough = any_enough or enough
+        # ★★★★ 08-30 — ★ 「평균 며칠」의 표본은 ★ `sold_n` 이 **아니다.**
+        #   ★ `first_seen` 과 `gone_at` 이 ★ 둘 다 있어야 센다 —
+        #   ★ ★ 실측 499건 중 107건뿐이다.  ★ 그 수로 다시 잰다.
+        #   ★ ★ 안 그러면 ★ 「136건이 평균 5일」로 읽혀 ★ 거짓이 된다
+        out.append(SoldBin(
+            label=label, sold_n=len(got),
+            days_avg=(round(sum(days) / len(days), 1)
+                      if len(days) >= SOLD_MIN_SAMPLE else None),
+            enough=enough, days_n=len(days)))
+    note = None
+    if not any_enough:
+        note = (f"표본이 모자랍니다 — 어느 칸도 {SOLD_MIN_SAMPLE}건이 안 됩니다. "
+                "수집이 쌓이면 냅니다")
+    return out, (target_key or "전체 차종"), note
 
 
 def view_track(account: Account, conn, calc_version: str,

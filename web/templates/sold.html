@@ -1,0 +1,77 @@
+<!-- ★★★★★ 팔린 차 (`/sold`) — UI_REVIEW 30장 · 마스터 확정 08-29 요구 134.
+     ★ 시안 — `ref/screens/v4m_sold_시안.html`.  ★ 글자를 그대로 옮긴다 —
+       ★ 개발측이 새로 쓰지 않는다.
+     ★ 클래스는 `listings.html` 것을 물려받는다 — ★ 새 이름을 안 만든다 (S46-67) -->
+<h1>팔린 차 <span class="muted">{{ v.total | num }}건 중 {{ v.shown }}건</span></h1>
+
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p><strong>이미 팔린 차</strong>다. <strong>얼마에 팔렸는지</strong> 본다</p>
+  <p>★ <strong>매물과 다르다</strong> — 매물은 「고르는 곳」 · 여기는 「값을 아는 곳」</p>
+  <p>★★ <strong>목록에서 사라진 것이 다 팔린 것은 아니다</strong> —
+    사이트가 「판매완료」라 말한 것과 그냥 사라진 것을 아래 배지로 가른다</p>
+</div>
+
+<!-- ★★ 「어떤 가격일 때 잘 팔렸나」 (30-3).  ★ 표본 다섯 미만인 칸은 수를 안 낸다 -->
+<div class="cond">
+  <h2>★ 어떤 가격일 때 잘 팔렸나 <span class="muted">— {{ v.bins_for }}</span></h2>
+  <table>
+    <thead><tr><th>시세 대비</th><th class="num">팔린 수</th><th class="num">평균 며칠</th></tr></thead>
+    <tbody>
+    {% for b in v.bins %}
+    <tr>
+      <td data-label="시세 대비">{{ b.label }}</td>
+      <td class="num" data-label="팔린 수">{% if b.enough %}{{ b.sold_n | num }}{% endif %}{% if !b.enough %}<span class="dim" title="표본이 다섯 건이 안 됩니다. f-table 과 같은 잣대입니다">표본 부족 ({{ b.sold_n }}건)</span>{% endif %}</td>
+      <!-- ★★ 08-30 — ★ 「팔린 수」와 ★ 「평균 며칠」의 표본이 **다르다.**
+           ★ 며칠은 처음 본 날과 사라진 날이 둘 다 있어야 센다 —
+           ★ ★ 그 수를 함께 적는다.  ★ 안 적으면 「136건이 평균 5일」로 읽힌다 -->
+      <td class="num" data-label="평균 며칠">{% if b.days_avg %}{{ b.days_avg }}일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">({{ b.days_n }}건으로 셈)</span>{% endif %}{% if !b.days_avg %}<span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것이 다섯 건이 안 됩니다">아직 못 셉니다 ({{ b.days_n }}건)</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p class="muted">★ 표본 5건 미만인 칸은 내지 않는다 — 「표본 부족」이라 적는다</p>
+  <p class="muted">★ 시세는 <strong>지금</strong> 그 차종·트림·연식의 중앙값이다.
+    <span class="dim" title="규격은 「그때 그 차종·연식의 중앙값」이라 적었습니다. 우리는 그때 값을 안 갖고 있어 지금 값으로 냅니다 — 지어내지 않습니다">그때 시세가 아니다</span></p>
+</div>
+
+<!-- ★ 카드 — ★ 「판매완료」라 말한 것과 아닌 것을 나란히 둔다 (시안 그대로) -->
+{% for r in v.rows %}
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      {% if r.said_sold %}<span class="tag" title="사이트가 그렇게 말했습니다">{{ r.said_label }}</span>{% endif %}
+      <span class="tag">{{ r.site_badge }}</span>
+      <strong>{{ r.title }}</strong>
+    </div>
+    <p class="muted">{{ r.spec }}</p>
+    <p class="price">{% if r.price_won %}{{ r.price_won | won }}{% endif %}{% if !r.price_won %}<span class="dim" title="사이트가 값을 안 줬습니다. 지어내지 않습니다">값 없음</span>{% endif %}
+      {% if r.price_first_won %}<span class="kwas" title="처음 본 값입니다">{{ r.price_first_won | won }}</span>{% endif %}</p>
+    <p class="muted">
+      {% if r.first_seen %}★ 처음 본 날 {{ r.first_seen | date }}{% endif %}
+      {% if r.gone_at %} → 사라진 날 {{ r.gone_at | date }}{% endif %}
+      {% if r.days %} · <strong>{{ r.days }}일</strong>{% endif %}
+      {% if r.gap_pct %} · 시세 대비 <strong>{{ r.gap_pct }}%</strong>{% endif %}
+    </p>
+    {% if !r.said_sold %}
+    <p class="warn-warn">사이트가 「판매완료」라 말하지 않았다 — 내린 것일 수 있다</p>
+    {% endif %}
+    <p>
+      {% if r.target_key %}<a class="btn" href="/listings?target={{ r.target_key | url }}">같은 차 보기</a>{% endif %}
+      {% if r.detail_url %}<a class="btn go" href="{{ r.detail_url }}" target="_blank" rel="noopener">원문 ↗</a>{% endif %}
+    </p>
+  </div>
+</div>
+{% endfor %}
+
+{% if !v.rows %}
+<p class="muted">아직 팔린 차가 없습니다.</p>
+{% endif %}
+
+<!-- ★ 아직 못 내는 것 — ★ 화면에 적는다.  ★ 지어내지 않는다 (시안 꼬리) -->
+{% if v.missing %}
+<div class="cond">
+  <h2>★ 아직 못 내는 것</h2>
+  {% for m in v.missing %}<p class="muted">{{ m }}</p>{% endfor %}
+</div>
+{% endif %}
