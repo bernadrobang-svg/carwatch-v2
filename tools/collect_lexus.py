@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 import urllib.request
 from datetime import datetime, timezone
 
@@ -21,6 +22,9 @@ from store.raw import commit, open_db              # noqa: E402
 
 SITE_CODE = "lexus_certified"
 WON_PER_MANWON = 10_000
+# ★ 쪽넘김 상한.  ★ 실측 3쪽이다 — ★ 사이트가 끝을 안 알려도 여기서 멈춘다
+MAX_PAGES = 20
+SLEEP_SEC = 1.0
 
 
 def _now() -> str:
@@ -38,14 +42,43 @@ def main() -> int:
     args = sys.argv[1:]
     with open(os.path.join(ROOT, "config", "endpoints.json"), encoding="utf-8") as f:
         cfg = json.load(f)[SITE_CODE]
-    req = urllib.request.Request(cfg["base_url"] + cfg["paths"]["list"],
-                                 headers=cfg.get("headers") or {})
-    d = json.loads(urllib.request.urlopen(
-        req, timeout=float(cfg.get("timeout_sec") or 40)).read())
-    sl = d.get("search_list") or {}
-    cars = sl.get("car_list") or []
-    print(f"★ car_list {len(cars)}건 · total_list_num {sl.get('total_list_num')} "
-          f"(★ 서로 다르다 — car_list 가 매물이다)")
+    # ★★★★★ 08-29 (`LEXUS_CERTIFIED_API.md` 1c) — ★ **쪽넘김이 있다**.
+    #   ★ 열쇠는 ★ `cur_page` 다 — ★ `page` · `pageNo` 는 ★ **조용히 1쪽을 준다**.
+    #   ★ 개정 587 이 그것에 속아 ★ 「전수 36」으로 적었다.
+    #   ★ 실측 08-29 — ★ cur_page 1→36 · 2→36 · 3→2 · 4→0 · 전수 74.
+    #   ★★ 1쪽만 받고 `sweep_gone` 을 부르면 ★ 2·3쪽 38건이
+    #     ★ ★ **안 팔렸는데 gone 이 된다** — ★ 그것이 이 고침의 까닭이다
+    base = cfg["base_url"] + cfg["paths"]["list"]
+    sep = "&" if "?" in base else "?"
+    timeout = float(cfg.get("timeout_sec") or 40)
+    cars: list = []
+    pages, done = 0, False
+    for page in range(1, MAX_PAGES + 1):
+        req = urllib.request.Request(f"{base}{sep}cur_page={page}",
+                                     headers=cfg.get("headers") or {})
+        d = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
+        sl = d.get("search_list") or {}
+        got = sl.get("car_list") or []
+        # ★ 돌려준 `cur_page` 가 ★ 부른 쪽과 다르면 ★ 쪽넘김이 안 먹은 것이다.
+        #   ★ 그 응답은 1쪽의 되풀이다 — ★ 넣으면 안 되고 ★ 「끝까지」도 아니다
+        if got and str(sl.get("cur_page") or page) != str(page):
+            print(f"★ cur_page={page} 인데 응답이 {sl.get('cur_page')} 다 — "
+                  "쪽넘김이 안 먹었다.  ★ 끝까지 받은 것으로 치지 않는다")
+            break
+        pages += 1
+        cars.extend(got)
+        print(f"  cur_page={page} → {len(got)}건 (누계 {len(cars)})")
+        if not got:
+            done = True                # ★ 빈 쪽을 봤다 = 끝을 봤다
+            break
+        total_page = sl.get("total_page")
+        if total_page and page >= int(total_page):
+            done = True                # ★ 사이트가 말한 마지막 쪽까지 왔다
+            break
+        time.sleep(SLEEP_SEC)
+    print(f"★ car_list 합계 {len(cars)}건 · {pages}쪽 · "
+          f"total_list_num {sl.get('total_list_num')} "
+          f"· 끝까지 받았나 {'예' if done else '아니오'}")
 
     rows = []
     # ★★ 원문 항목을 ★ 파싱 결과와 ★ 짝지어 둔다 (명령서 3-2 필수) —
@@ -112,9 +145,10 @@ def main() -> int:
     #   ★ 「끝까지 받았나」가 거짓이면 ★ 안 매긴다 — 반만 보고 매기면 산 차를 죽인다
     from store.core import sweep_gone_groups
 
-    # ★ 렉서스는 ★ 한 번에 ★ `car_list` 전부를 준다 — ★ 쪽넘김이 없다.
-    #   ★ 그것이 비지 않았으면 ★ 끝까지 받은 것이다
-    _done = bool(cars)
+    # ★★ 「끝까지 받았나」는 ★ **마지막 쪽을 봤는가**다 (08-29).
+    #   ★ 앞서는 `bool(cars)` 였다 — ★ 1쪽만 받고도 참이었다.
+    #   ★ ★ 그래서 ★ 2·3쪽 38건이 ★ 안 팔렸는데 gone 이 됐다
+    _done = done and bool(cars)
     _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in rows})], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")

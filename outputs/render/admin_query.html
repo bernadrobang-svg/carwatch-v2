@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쿼리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=f82d67983a">
+<link rel="stylesheet" href="/static/app.css?v=a76b3fa0d9">
 
 </head>
 <body class="s-admin-query">
@@ -105,13 +105,13 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">199,367</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">13,830</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">13,832</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
-<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">346</td>
+<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">358</td>
   <td class="muted" data-label="컬럼">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
 
-<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">297</td>
+<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">309</td>
   <td class="muted" data-label="컬럼">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
 
 <tr><td class="runid" data-label="표">coefficient_history</td><td class="num" data-label="행">0</td>
@@ -138,10 +138,10 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">core_inspection</td><td class="num" data-label="행">5,341</td>
   <td class="muted" data-label="컬럼">listing_id · site · inspection_vin · inspection_mileage_km · first_registration_date · inspection_valid_from · inspection_valid_to · inspection_issued_at · check_engine · check_transmission</td></tr>
 
-<tr><td class="runid" data-label="표">core_listing</td><td class="num" data-label="행">19,816</td>
+<tr><td class="runid" data-label="표">core_listing</td><td class="num" data-label="행">19,844</td>
   <td class="muted" data-label="컬럼">listing_id · site · source_id · target_key · vehicle_id · classify_stage · classify_source · classify_conflict · price_current_won · price_detail_won</td></tr>
 
-<tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">25,396</td>
+<tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">25,427</td>
   <td class="muted" data-label="컬럼">listing_id · changed_at · field · old_value · new_value · change_kind · cause</td></tr>
 
 <tr><td class="runid" data-label="표">core_parse_issue</td><td class="num" data-label="행">0</td>
@@ -183,7 +183,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">158</td>
   <td class="muted" data-label="컬럼">site · target_key · request_kind · request_url · axis_count · body · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">raw_response</td><td class="num" data-label="행">192,995</td>
+<tr><td class="runid" data-label="표">raw_response</td><td class="num" data-label="행">193,038</td>
   <td class="muted" data-label="컬럼">id · run_id · site · listing_id · source_id · endpoint · request_url · request_meta · http_code · response_meta</td></tr>
 
 <tr><td class="runid" data-label="표">raw_response_reject</td><td class="num" data-label="행">0</td>
@@ -254,7 +254,7 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 17:18</span>
+  <span>2026-08-29 18:04</span>
 </footer>
 
 </body>

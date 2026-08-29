@@ -201,7 +201,7 @@
       "list": "/api/json/getList_search.json.php?price_area_min=0&price_area_max=99999",
       "detail": "/api/json/getData_car_detail.json.php?idx={source_id}"
     },
-    "_note": "★ 모바일 UA ＋ Referer 필요.  ★ `search_list.car_list` 가 매물이다. ★ ★ `total_list_num` 을 믿지 마라 — ★ 실측 08-24 car_list 36 · total_list_num 84 로 서로 다르다 (규격은 0 이라 적었다).  ★ 전수 36건",
+    "_note": "★ 모바일 UA ＋ Referer 필요.  ★ `search_list.car_list` 가 매물이다. ★ ★ `total_list_num` 을 믿지 마라 — ★ 실측 08-24 car_list 36 · total_list_num 84 로 서로 다르다 (규격은 0 이라 적었다).  ★ 전수 74건 · 3쪽 [실측 08-29 · 눌러 봤다].  ★ 쪽넘김 열쇠는 `cur_page` 다 — `page`·`pageNo` 는 조용히 1쪽을 돌려준다.  ★ cur_page 1→36 · 2→36 · 3→2 · 4→0.  ★ 「전수 36」은 1쪽만 센 것이었다 (개정 587 · `LEXUS_CERTIFIED_API.md` 1c)",
     "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
     "timeout_sec": 40,
     "interval_sec": 1.0,

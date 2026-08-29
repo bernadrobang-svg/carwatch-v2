@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 181개 · 총 64,246줄
+파일 181개 · 총 64,280줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -98,6 +98,7 @@
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
 | `score/penalty.py` | 166 | 마이너스 점수 (개정 322). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
+| `tools/collect_lexus.py` | 162 | 렉서스 인증중고 수집 (명령서 1a). |
 | `adapters/kbchachacha.py` | 161 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `analyze/axis/value.py` | 156 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
@@ -116,7 +117,6 @@
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
 | `tools/collect_bmw.py` | 130 | BMW 바바리안(BPS) 수집 (명령서 1a). |
-| `tools/collect_lexus.py` | 128 | 렉서스 인증중고 수집 (명령서 1a). |
 | `score/grade.py` | 127 | 등급 (L7). |
 | `tools/check_all.py` | 123 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
