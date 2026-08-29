@@ -26,6 +26,13 @@ RE_YM = re.compile(r"(\d{2})년\s*(\d{1,2})월")
 RE_KM = re.compile(r"([\d,]+)\s*km")
 RE_PLATE = re.compile(r"(\d{2,3}[가-힣]\d{4})")
 RE_MANWON = re.compile(r"([\d,]+)\s*만원")
+# ★★★★★ 08-30 (`HYUNDAI_CERTIFIED_API.md` 08-29 절 · 마스터 지시 3) —
+#   ★ **신차가를 준다.**  ★ 앞서 여러 규격이 「안 준다」고 적었는데 ★ 틀렸다.
+#   ★ 실측 08-29 — ★ 상세에 ★ 「신차 가격 대비 {값}」이 ★ **8/8** 있고
+#   ★ ★ 값이 **매물마다 다르다** (19,200,000 · 31,000,000 · 16,800,000 …).
+#   ★ ★ 안내문이 아니다 — ★ 오판 192 의 잣대(값이 다 같으면 안내문)를 통과했다.
+#   ★ 낱말은 규격이 준 것을 그대로 쓴다 — ★ 개발측이 새로 짓지 않는다
+RE_ORIGIN = re.compile(r"(?:신차\s*가격|신차\s*가|출고\s*가)[^0-9]{0,12}([\d,]{4,})")
 
 
 def _int(text: str | None) -> int | None:
@@ -212,6 +219,8 @@ def parse_detail_all(html: str, site: str, source_id: str) -> tuple | None:
                    if reg else None),
         "year_month": f"{reg.group(1)}-{reg.group(2)}" if reg else None,
         "displacement_cc": _num(_one(RE_CC, text)),
+        # ★ 신차가 (08-30).  ★ 원 단위 그대로 온다 — ★ 만원 환산을 안 한다
+        "price_origin_won": _num(_one(RE_ORIGIN, text)),
         "fuel_raw": _one(RE_FUEL, text),
         "color_ext_raw": _one(RE_COLOR_EXT, text),
         "color_int_raw": _one(RE_COLOR_INT, text),

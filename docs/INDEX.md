@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**123파일 · 44,872줄 · 2,971KB**
+**124파일 · 44,944줄 · 2,973KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -104,6 +104,7 @@
 | `evidence/README.md` | 37 | 1 |
 | `evidence/absence_20260829.md` | 41 | 1 |
 | `evidence/kbchachacha_inspection_20260829.md` | 50 | 1 |
+| `evidence/volvo_selekt_신차가_20260830.md` | 72 | 2 |
 | `guide/00_개요.md` | 149 | 6 |
 | `guide/00_버전.md` | 177 | 11 |
 | `guide/01_시작.md` | 291 | 10 |

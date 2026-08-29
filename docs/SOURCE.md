@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 183개 · 총 66,475줄
+파일 183개 · 총 66,520줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -11,7 +11,7 @@
 | `report/screens/build.py` | 3,739 | 화면 데이터 생성. |
 | `web/views.py` | 2,730 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,270 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `store/core.py` | 1,833 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 1,848 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,594 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -50,9 +50,9 @@
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `tools/collect_hyundai_cert.py` | 371 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `tools/collect_kcar.py` | 352 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
+| `parse/hyundai_cert/mapping.py` | 331 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
-| `parse/hyundai_cert/mapping.py` | 322 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/build_dict.py` | 321 | RAW → 사전 생성. |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
 | `validate/v9_multisite.py` | 305 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
@@ -64,13 +64,13 @@
 | `tests/test_screens.py` | 287 | 10장 화면 시험. |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
 | `tests/test_crosssite.py` | 282 | 12장 다중 사이트 시험. |
+| `tools/collect_volvo.py` | 279 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `parse/kcar/mapping.py` | 278 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `tools/check_screens.py` | 277 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `report/exports/export.py` | 269 | 내보내기. |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
 | `web/server.py` | 259 | HTTP 서버 (14장 STEP 141 · 150). |
-| `tools/collect_volvo.py` | 258 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `tools/collect_bobaedream.py` | 256 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `tests/test_store.py` | 255 | 3장 테이블 시험. |
 | `tools/menu.py` | 254 | 실행 메뉴. |
@@ -222,10 +222,10 @@ _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  s
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:766  _grade_base_checks:794  _checks_cfg:887  _labels_cfg:901  _unknown_mark_checks:909  _grade_cut_checks:960  _points_cap_checks:1070  _worse_of_checks:1122  _checks_json:1184  _value_curve_checks:1195  _group_sum_checks:1285  _mapped_other_check:1396  _denominator_check:1423  _core_axis_check:1451  _rental_cross_check:1472  _why_cheap_check:1510  _source_before_value_check:1551  _absolute_cut_check:1586  _spec_files:1616  _confirm_ratio_check:1626  _warranty_checks:1676  _spec_axis_check:1710  _site_axis_checks:1751  _rendered_why:1800  _rendered_listings:1810  _fill_gap_check:1820  _points_sum_check:1853  _market_gap_check:1870  _bonus_checks:1926  _trim_price_check:2030  run:2078  _shuffle_check:2213  _halt_dict_check:2238  _ensure_tmp:2267
 ```
 
-### `store/core.py` — 1,833줄
+### `store/core.py` — 1,848줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  upsert_core:334  mark_gone:435  sweep_gone:452  sweep_gone_groups:484  load_snapshot:523  build_identities:632  resolve_vehicle_id:658  merge_conflict:690  upsert_vehicle:701  upsert_dealer:722  dealer_trust:749  _trust_cfg:842  upsert_child:859  _flag:880  _not_join_months:894  state_counts:919  current_versions:959  diagnosis_of:989  target_counts:1002  top_target:1009  vehicle_of:1014  collect_scale:1021  our_fault:1041  catalog_coverage:1050  _walk:1094  _sample_bodies:1110  hits_of:1123  key_seen:1142  stored_hits:1157  sample_bodies:1173  observed:1195  known_leaves:1233  has_unclassified:1248  classify_unclassified:1255  _card_limit:1298  _value_chars:1303  _admin_cfg:1308  unclassified_cards:1325  _peek:1381  _short:1428  _blocking_paths:1439  _raw_rows_max:1459  used_endpoints:1469  raw_sections:1478  _flatten:1517  option_diff:1541  _option_names:1579  blocking_keys:1595  full_hits:1613  axis_paths_empty:1638  blocking_rows:1675  record_mismatch_sql:1737  record_mismatch_count:1743  relist_counts:1769  listing_models:1786  filter_options:1806  site_counts:1823
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  upsert_core:334  mark_gone:435  sweep_gone:452  sweep_gone_groups:496  load_snapshot:538  build_identities:647  resolve_vehicle_id:673  merge_conflict:705  upsert_vehicle:716  upsert_dealer:737  dealer_trust:764  _trust_cfg:857  upsert_child:874  _flag:895  _not_join_months:909  state_counts:934  current_versions:974  diagnosis_of:1004  target_counts:1017  top_target:1024  vehicle_of:1029  collect_scale:1036  our_fault:1056  catalog_coverage:1065  _walk:1109  _sample_bodies:1125  hits_of:1138  key_seen:1157  stored_hits:1172  sample_bodies:1188  observed:1210  known_leaves:1248  has_unclassified:1263  classify_unclassified:1270  _card_limit:1313  _value_chars:1318  _admin_cfg:1323  unclassified_cards:1340  _peek:1396  _short:1443  _blocking_paths:1454  _raw_rows_max:1474  used_endpoints:1484  raw_sections:1493  _flatten:1532  option_diff:1556  _option_names:1594  blocking_keys:1610  full_hits:1628  axis_paths_empty:1653  blocking_rows:1690  record_mismatch_sql:1752  record_mismatch_count:1758  relist_counts:1784  listing_models:1801  filter_options:1821  site_counts:1838
 ```
 
 ### `collect/runner.py` — 1,594줄
@@ -456,6 +456,12 @@ target_of:73  _now:89  _post:93  _get:103  fetch_detail:114  load_filters:127  t
 _now:45  fetch:49  classify:71  accident_of:86  fetch_stock:95  collect_list:120  main:252
 ```
 
+### `parse/hyundai_cert/mapping.py` — 331줄
+
+```
+_int:38  cards:47  _fuel_of:72  _model_group:83  parse_card:101  _json:173  detail_text:180  _one:187  parse_detail:192  parse_detail_all:198  _num:258  _warranty:265  _months_left:308  _options:325
+```
+
 ### `tools/render_screens.py` — 331줄
 
 ```
@@ -466,12 +472,6 @@ _shot_widths:32  _tmp_root:57  main:81  shot_paths:172  _localize_images:197  sh
 
 ```
 _repair_max:45  _cfg:63  _run:68  collecting:74  screen_counts:95  db_counts:121  measure:139  index_counts:161  changed:185  _worse:203  failing:207  repair:220  main:253
-```
-
-### `parse/hyundai_cert/mapping.py` — 322줄
-
-```
-_int:31  cards:40  _fuel_of:65  _model_group:76  parse_card:94  _json:166  detail_text:173  _one:180  parse_detail:185  parse_detail_all:191  _num:249  _warranty:256  _months_left:299  _options:316
 ```
 
 ### `tools/build_dict.py` — 321줄
@@ -540,6 +540,12 @@ check:33  fx:39  test_inspection:53  test_frame_vs_outer:84  test_record:123  te
 check:34  db:40  add:45  test_vin:63  test_vin_parse:107  test_cross_site:129  test_regression:175  test_readiness:207  v9_04_site_isolation:229
 ```
 
+### `tools/collect_volvo.py` — 279줄
+
+```
+_known_name:44  load_slugs:60  _now:89  _get:93  main:108
+```
+
 ### `parse/kcar/mapping.py` — 278줄
 
 ```
@@ -574,12 +580,6 @@ check:30  db:36  add:41  watch:64  test_same_dealer:78  test_cross_dealer:97  te
 
 ```
 load_web_config:47  guard:60  _drain_chunk:92  TOO_LARGE:96  make_handler:105  serve:234
-```
-
-### `tools/collect_volvo.py` — 258줄
-
-```
-_known_name:44  load_slugs:60  _now:89  _get:93  main:108
 ```
 
 ### `tools/collect_bobaedream.py` — 256줄

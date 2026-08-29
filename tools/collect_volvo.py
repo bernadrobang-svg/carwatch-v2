@@ -197,7 +197,13 @@ def main() -> int:
         f"{k} {v}" for k, v in sorted(by_slug.items(), key=lambda x: -x[1])))
     # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
     raw_link_raws(conn, SITE_CODE)
-    _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(ours))], at)
+    # ★★★★★ 08-30 (마스터 지시 4) — ★ 「본 것」에 ★ **목록 전체**를 넘긴다.
+    #   ★ 앞서는 `ours`(우리 대상)만 넘겼다.  ★ 그러면 ★ 우리 대상이 아닌 행은
+    #   ★ ★ 「목록에 없다」로 보여 ★ 죽거나 · 반대로 ★ 훑는 갈래에 안 들어
+    #   ★ ★ **영영 안 죽는다.**  ★ 실측 08-30 — ★ 값이 다 빈 15건이 그 꼴이었다
+    #   ★ ★ (`last_seen` 이 08-29 22:37 에 멈춘 채 `status='new'`).
+    #   ★ 「본 것」은 ★ **이번 목록에서 본 매물번호 전부**다 — ★ `seen` 이 그것이다
+    _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(seen))], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}"
           f" (빈 쪽까지 갔나)")
@@ -207,16 +213,31 @@ def main() -> int:
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(ours)}건 · 저장된 볼보 매물 {n:,}건")
 
-    if "--detail" not in args:
-        print("★ 상세는 --detail 로 받는다")
-        return 0
-
-    # ★★ 상세 (마스터 지시 08-26 ② · 규격 0b).  ★ 원문을 먼저 남긴다 (P3)
+    # ★★★★★ 08-30 (마스터 지시 4·5 · 규격 0b · 개정 887) —
+    #   ★ 앞서는 ★ `--detail` 을 줘야만 상세를 받았다.  ★ 그래서
+    #   ★ ★ 값·주행·연식이 ★ **목록에는 없고** ★ 상세에만 있는데
+    #   ★ ★ **15건이 값이 빈 채로 남아 있었다** (`status='new'` · `target_key` 없음).
+    #   ★ ★ 그 15건은 ★ 오늘 목록에 ★ **다 있다** — ★ 죽을 것이 아니라
+    #   ★ ★ **상세를 못 받은 것**이었다 (눌러서 확인 08-30).
+    #   ★ 이제 ★ **원문이 없는 것만** 스스로 받는다 — ★ 전건을 다시 안 받는다.
+    #   ★ ★ `--detail` 을 주면 ★ 옛 꼴대로 ★ 전건을 받는다
     from parse.volvo_selekt.mapping import parse_detail, photos
 
-    i = args.index("--detail")
-    limit = int(args[i + 1]) if i + 1 < len(args) and args[i + 1].isdigit() else 0
-    todo = list(ours.items())[:limit] if limit else list(ours.items())
+    limit = 0
+    if "--detail" in args:
+        i = args.index("--detail")
+        limit = int(args[i + 1]) if i + 1 < len(args) and args[i + 1].isdigit() else 0
+        todo = list(ours.items())[:limit] if limit else list(ours.items())
+    else:
+        have = {r[0] for r in conn.execute(
+            "SELECT source_id FROM raw_response"
+            " WHERE site=? AND endpoint='detail'", (SITE_CODE,))}
+        todo = [(sid, v) for sid, v in ours.items() if sid not in have]
+        print(f"★ 상세 — 받을 것 {len(todo)}건 "
+              f"(우리 대상 {len(ours)}건 중 · 원문이 있는 것 "
+              f"{len(ours) - len(todo)}건은 안 받는다)")
+        if not todo:
+            return 0
     got = {"정상": 0, "못 받음": 0}
     for sid, (_slug, url) in todo:
         body = _get(url, head, timeout)

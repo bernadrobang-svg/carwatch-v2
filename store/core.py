@@ -465,13 +465,25 @@ def sweep_gone(conn: sqlite3.Connection, site: str, target_key: str,
     금지     ★ 지우는 것 (마스터 확정 08-24).  ★ `gone_at` 과 그때 값을 남긴다
     반환     ★ 이번에 gone 으로 매긴 건수
     """
-    if not target_key or not seen_source_ids:
+    if not seen_source_ids:
         # ★ 빈 목록으로는 ★ 아무것도 안 매긴다 — ★ 전멸시키지 않는다
         return 0
-    rows = conn.execute(
-        "SELECT listing_id, source_id FROM core_listing"
-        " WHERE site = ? AND target_key = ? AND status = 'active'",
-        (site, target_key)).fetchall()
+    # ★★★★★ 08-30 (마스터 지시 4) — ★ `target_key` 가 **없는** 행도 훑는다.
+    #   ★ 실측 08-30 — ★ 볼보에 ★ 값·주행·연식이 다 빈 행 **15건**이 있었다.
+    #   ★ ★ 차종이 안 붙어 ★ 이 함수가 ★ **한 번도 안 본 행**이다 —
+    #   ★ ★ 목록에서 사라져도 ★ **영영 `gone` 이 안 된다.**  ★ 결함이다.
+    #   ★ `target_key=None` 으로 부르면 ★ 그 사이트의 ★ 차종 없는 행을 훑는다.
+    #   ★★ 안전 — ★ 부르는 쪽이 ★ **끝까지 받았을 때만** 부른다.  ★ 그 조건은 그대로다
+    if target_key is None:
+        rows = conn.execute(
+            "SELECT listing_id, source_id FROM core_listing"
+            " WHERE site = ? AND target_key IS NULL AND status = 'active'",
+            (site,)).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT listing_id, source_id FROM core_listing"
+            " WHERE site = ? AND target_key = ? AND status = 'active'",
+            (site, target_key)).fetchall()
     n = 0
     for lid, sid in rows:
         if str(sid) in seen_source_ids:
@@ -503,20 +515,23 @@ def sweep_gone_groups(conn: sqlite3.Connection, site: str, groups: list,
         if not ids:
             continue
         marks = ",".join("?" * len(ids))
+        # ★★★★ 08-30 (마스터 지시 4) — ★ `target_key IS NOT NULL` 을 뺐다.
+        #   ★ 차종이 안 붙은 행도 ★ 한 갈래(None)로 훑는다 —
+        #   ★ ★ 안 그러면 ★ 값이 빈 행이 ★ **영영 안 죽는다** (볼보 15건)
         rows = conn.execute(
             f"SELECT DISTINCT target_key FROM core_listing"
-            f" WHERE site = ? AND source_id IN ({marks})"
-            f"   AND target_key IS NOT NULL", (site, *ids)).fetchall()
+            f" WHERE site = ? AND source_id IN ({marks})", (site, *ids)).fetchall()
         for (tk,) in rows:
             if done:
                 seen_by_t.setdefault(tk, set()).update(ids)
             else:
                 blocked.add(tk)
     out: dict = {}
-    for tk in sorted(set(seen_by_t) - blocked):
+    # ★ `None`(차종 미정)이 섞이므로 ★ 정렬 열쇠를 글자로 만든다
+    for tk in sorted(set(seen_by_t) - blocked, key=lambda x: (x is None, x or "")):
         n = sweep_gone(conn, site, tk, seen_by_t[tk], at)
         if n:
-            out[tk] = n
+            out[tk if tk is not None else "차종 미정"] = n
     return out
 
 
