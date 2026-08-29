@@ -17,7 +17,7 @@
 
 <h2>축 총점 <span class="muted">바꾸면 성분이 비율로 재배분됩니다</span></h2>
 <table class="rows">
-<thead><tr><th title="판정 24축 가운데 어느 축인지입니다">축</th><th class="num">총점</th><th title="여기서 값을 고칩니다. 고치면 이력에 남습니다">바꾸기</th></tr></thead>
+<thead><tr><th title="판정 축 가운데 어느 축인지입니다">축</th><th class="num">총점</th><th title="여기서 값을 고칩니다. 고치면 이력에 남습니다">바꾸기</th></tr></thead>
 <tbody>
 {% for a in axis_rows %}
 <tr><td data-label="축">{{ a.axis }}</td><td class="num" data-label="총점">{{ a.points | num }}</td>

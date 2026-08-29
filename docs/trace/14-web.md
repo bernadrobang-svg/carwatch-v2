@@ -85,7 +85,7 @@ checks   S46-38 · S46-39
 | WB-045 | `[화면]` | 상세 /why — **② 값이 가장 크다** | `[마스터]` 332 | `61-web/d-detail` | ~ `report/screens/build.py:59` | 화면 없음 | 검사 없음 | ◐ |
 | WB-046 | `[화면]` | 상세 /why — **왜 싼가 절** | `[마스터]` 299 | `61-web/d-detail` | ~ `report/views.py::ScoreView` | 화면 없음 | V3-52 | ◐ |
 | WB-047 | `[수집]` | 조회 표 — 안 부른 것 ↔ 못 받은 것 | `[마스터]` | `61-web/d-detail` | ✓ `store/core.py::raw_sections` | `/admin/collect` | 검사 없음 | ◐ |
-| WB-048 | `[판정]` | 상세 /why — 축별 24축 | `[마스터]` 329 | `61-web/d-detail` | ✓ `report/render.py::render_listing` | — | 검사 없음 | ◐ |
+| WB-048 | `[판정]` | 상세 /why — 축별 26축 | `[마스터]` 329 | `61-web/d-detail` | ✓ `report/render.py::render_listing` | — | 검사 없음 | ◐ |
 | WB-049 | `[판정]` | 확인율은 근거 있는 축만 | `[마스터]` 325 | `61-web/d-detail` | ~ `score/scorer.py::score` | — | V3-65 | **!** |
 | WB-050 | `[판정]` | 상세 /why — 옵션 전체 · 가격 | `[마스터]` 313 | `61-web/d-detail` | ~ `analyze/axis/trim.py:10` | — | V11-101 | ◐ |
 | WB-051 | `[판정·화면]` | 상세 /why — **시세 위치 차트** | `[마스터]` 340 | `61-web/g-chart` | ~ `report/render.py::render_listing` | 화면 없음 | V11-119 | **!** |
