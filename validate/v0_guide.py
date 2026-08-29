@@ -3544,6 +3544,8 @@ def s46_143_master_items_are_master():
 
     bad = []
     for q in _guide_docs():
+        if q.name in ("CHECKS.md", "INDEX.md", "SOURCE.md", "SCHEMA.md"):
+            continue                      # ★ 생성물이다 — 손으로 못 고친다
         for i, ln in enumerate(_read(q).splitlines(), 1):
             if not _re.search(r"마스터께 (올린다|올릴|여쭙|묻는다)", ln):
                 continue
@@ -3887,6 +3889,44 @@ def s46_164_dev_pending_answered():
     return False, (f"★ 개발 회차에 「마스터 몫」 {n}건이 있는데 "
                    "명령서가 「회차 표에서 지워라」를 안 적었다")
 
+
+def s46_165_fixable_not_called_unmeasurable():
+    """S46-165 — ★ 「고치는 법」이 있는 실패를 ★ 「못 잰다」로 적지 않는가 (오판 207).
+
+    ★ 08-29 — ★ `S46-32` 는 ★ `python3.11 tools/build_index.py` 한 줄이면 닫혔는데
+      ★ 이틀 동안 ★ 「이 창에 DB 가 없어 못 잰다」로 적어 두었다
+    ★ 잣대 — ★ 규격·인계문이 ★ 「못 잰다」로 적은 검사 이름이
+      ★ 지금 ★ **통과**하면 ★ 실패 (거짓말이 남아 있다)
+    """
+    import re as _re
+
+    ok = set()
+    for row in CHECKS:
+        name, fn2 = row[0], row[-1]
+        if name == "S46-165" or not callable(fn2):
+            continue
+        try:
+            got = fn2()
+            good = got[0] if isinstance(got, tuple) else bool(got)
+        except Exception:                                # noqa: BLE001
+            continue
+        if good:
+            ok.add(name)
+    bad = []
+    for q in list(_guide_docs()) + [ROOT / "docs" / "guide" / "09_인계_20260829.md"]:
+        if not q.is_file():
+            continue
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if "못 잰다" not in ln and "못 쟀다" not in ln:
+                continue
+            for m in _re.finditer(r"`?(S46-\d+)`?", ln):
+                if m.group(1) in ok:
+                    bad.append(f"{q.name}:{i} {m.group(1)}")
+    if bad:
+        return False, ("★ 통과하는데 「못 잰다」로 적힌 것 "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, "「못 잰다」가 다 진짜다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -3918,6 +3958,7 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-165", "「못 잰다」가 진짜인가", s46_165_fixable_not_called_unmeasurable),
     ("S46-164", "개발 회차의 「마스터 몫」에 답을 냈는가",
      s46_164_dev_pending_answered),
     ("S46-129", "표의 합이 맞는가", s46_129_table_sum_counted),
