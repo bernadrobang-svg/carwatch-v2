@@ -1,7 +1,7 @@
 ## STEP 28 — 테이블 목록
 
 ```
-version  SPEC-2026.08.29-r857
+version  SPEC-2026.08.29-r860
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -592,12 +592,30 @@ journal_mode 는 까닭이 아니다
 가이드는 밖에서 못 잰다.  개발측이 KB 를 돌리며 재야 나온다
 ```
 
-## 개발측이 재서 찾았다 (08-29)
+## 08-29 재측 — ①은 고쳤는데 ②가 그대로다 (개정 860)
 
 ```
-「둘 다 있어야 30초를 넘습니다.  하나만으로는 안 죽습니다」
-  ① 수집기가 통신·sleep 을 트랜잭션 안에서 한다 (KB 는 건당 1.2초를 잔다)
-  ② 재판정이 4시간마다 타이머로 돈다 — 수집과 서로 모른다
+개발측이 r857 을 넣고도 다시 났다 —
+  KB  store/pii.py:107 save_listing_pii  →  sqlite3.OperationalError: database is locked
+
+가이드가 코드에서 짚은 자리 둘 [실측 코드 08-29 · DB 는 못 봤다]
+
+  ① collect/pipeline.py:365   커밋이 단계 끝에 한 번뿐이다
+     이 파일에 conn.commit() 이 하나다 (save_step_report 안)
+     run_pipeline 은 for step in steps 로 돌 뿐 단계 안에서 안 끊는다
+     그래서 S9 같은 한 단계가 수천 행을 한 트랜잭션으로 쓴다
+     그동안 쓰기 잠금을 쥔다.  이것이 ② 「재판정」의 몸통이다
+
+  ② collect/worker.py:107 · :155   sqlite3.connect 를 맨으로 부른다
+     open_db 를 안 써서 PRAGMA busy_timeout = 30000 이 안 붙는다
+     파이썬 기본 5초로 돈다.  web/app.py:405 주석이 같은 것을 이미 적어 두었다
+     (「그 연결에는 pragma 가 하나도 안 걸려 있었다」)
+
+★ 못 잰 것 — 단계 하나가 실제로 몇 초를 쥐는지는 재야 안다
+  가이드는 DB 를 못 연다.  개발측이 KB 를 돌리며 단계 시작·끝 시각을 찍는다
+  30 초를 안 넘으면 ①이 까닭이 아니다 — 그때 다시 정한다
+
+★ 지어내지 않는다 — 「①을 고치면 낫는다」는 아직 안 잰 말이다
 ```
 
 # 받기와 넣기를 가른다 (마스터 확정 08-29 · 개정 857)
