@@ -193,7 +193,7 @@
       "Accept": "text/html,application/xhtml+xml"
     },
     "brand_scope": "all",
-    "_brand_scope_why": "★ [미확인 08-26] 종합으로 두었다 — 가이드 확인 청함 (S46-96)"
+    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 종합이 맞다 — 상세 표본 12건이 기아 8 · 현대 2 · 제네시스 1 · 쉐보레 1 로 ★ 제조사가 섞인다.  ★ `brand_scope` 를 좁히지 않는다 — ★ 우리 26종은 목록이 아니라 ★ 상세를 받아 이름으로 거른다.  ★ 닫혔다"
   },
   "lexus_certified": {
     "base_url": "https://certified.lexus.co.kr",
@@ -213,7 +213,7 @@
     "brand_scope": [
       "렉서스"
     ],
-    "_brand_scope_why": "★ [미확인 08-26] 렉서스 인증중고 — 가이드 확인 청함"
+    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 렉서스만 판다 — 목록 1쪽 36건의 `model_name` 이 ES 21 · NX 9 · UX 5 · RX 1 로 ★ 전부 렉서스다.  ★ 토요타도 섞이지 않는다.  ★ 닫혔다"
   },
   "volvo_selekt": {
     "base_url": "https://selekt.volvocars.co.kr",
@@ -232,7 +232,7 @@
     "brand_scope": [
       "볼보"
     ],
-    "_brand_scope_why": "★ [미확인 08-26] 볼보 셀렉트 — 가이드 확인 청함"
+    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 볼보만 판다 — 목록 1쪽 카드가 S60·S90·XC40·XC60·V60·EX30 이고 ★ `Polestar` 가 ★ 0회다.  ★ 폴스타는 여기 없다(별도 브랜드).  ★ 닫혔다"
   },
   "bmw_bps": {
     "base_url": "http://www.bavarian-bps.co.kr",
