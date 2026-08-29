@@ -1,7 +1,7 @@
 # 현대·제네시스 인증중고차 API — 규격
 
 ```
-version  SPEC-2026.08.29-r920
+version  SPEC-2026.08.29-r921
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 865 · 실측 08-29
 checks   S46-5 · S46-27 · S46-31
@@ -275,7 +275,7 @@ follows  `f-table.md` 192행 — ★ 판정은 그쪽이 한다
 2023 더 뉴 그랜저 (IG) ★ LPG 3.0 익스클루시브                        → GRANDEUR_LPG ○
 ```
 
-## ② 전수 1,113건에 우리 조건을 걸어 센 것
+## ② 전수 1,113건에 우리 조건을 걸어 센 것 ★ [실측 08-29 재측 — **1,138건** · `walk({})` 을 빈 쪽까지 · 세는 법은 `source_id` 집합]
 
 | 우리 차종 | 조건 (제목 + `targets.json`) | ★ 건수 |
 |---|---|--:|

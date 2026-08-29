@@ -3398,9 +3398,13 @@ def s46_138_all_claim_needs_source():
     bad = []
     for q in _guide_docs():
         for i, ln in enumerate(_read(q).splitlines(), 1):
-            if not _re.search(r"(전량|전수)\s*[\d,]+", ln):
+            # ★ 「전량 404」·「전량 401」은 ★ 응답 코드다 — ★ 건수가 아니다
+            if not _re.search(r"(전량|전수)\s*([\d,]{2,})\s*건", ln):
                 continue
             if _re.search(r"실측|표본|빈 쪽|끝까지|집합|고유|세는 법|쪽", ln):
+                continue
+            # ★ 물린 줄·정정 줄·마스터 인용은 ★ 주장이 아니다
+            if _re.search(r"~~|정정|폐기|오판|고친다|「", ln):
                 continue
             bad.append(f"{q.name}:{i}")
     if bad:
