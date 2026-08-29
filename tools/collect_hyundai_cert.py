@@ -42,6 +42,9 @@ COUNT_PATH = "/api/search/vehicle/count/selling?srchType=srchFilter"
 DETAIL_PATH = "/m/goods/goodsDetail.do?goodsNo={goods_no}"
 ROWS = 100
 MAX_PAGES = 60
+# ★ 목록에 연료가 없어 ★ 상세로 채울 최대 건수 (2d-1).  ★ 실측 08-29 는 5건이다.
+#   ★ 이보다 많으면 ★ 목록 파싱이 바뀐 것이다 — ★ 조용히 수백 번 부르지 않는다
+FUEL_FILL_MAX = 40
 INTERVAL = 1.0
 
 # ★ 매물번호 — 영문 3 + 숫자 12 (개정 485 정정)
@@ -239,6 +242,33 @@ def main() -> int:
                   f" (규격 {g.get('expect')}){mark}")
             time.sleep(INTERVAL)
         print(f"목록 {pages}쪽 · 매물 {len(ids):,}건  ← ★ 전량 {said} 을 받지 않았다")
+
+    # ★★★★★ 08-29 (ORDER r879 1c · `HYUNDAI_CERTIFIED_API.md` 2d-1) —
+    #   ★ **전동화(`_V`) 묶음은 ★ 목록 제목에 연료가 없다.**
+    #   ★ 실측 — `mdlGrpList=1389_V` 카드 4건의 제목에 「전기」·「가솔린」이 0회다.
+    #   ★ ★ 그래서 `fuel_match: ["전기"]` 인 차종 셋(`GV70_EV`·`GV60`·`G80_EV`)이
+    #   ★ ★ 다 ★ **「차종 미정」**으로 저장됐다 — ★ 화면에서 안 잡힌다.
+    #   ★ 상세에는 있다 — `fetch_detail(…)` → `fuel_raw: "전기"` (실측 08-29).
+    #   ★★ 그래서 ★ **연료가 빈 것만** ★ 상세를 받아 채운다.  ★ `--detail` 을
+    #   ★ ★ 안 줘도 한다 — ★ 안 하면 ★ 그 다섯 대가 ★ **영영 차종 미정**이다.
+    #   ★ 짐작하지 않는다 — ★ 사이트가 상세에 적어 준 값을 그대로 쓴다
+    need = [o for o in ids if not o.get("fuel_raw")]
+    if need and "--dry" not in args:
+        if len(need) > FUEL_FILL_MAX:
+            print(f"★ 연료가 빈 것이 {len(need):,}건이다 — {FUEL_FILL_MAX}건을 넘는다."
+                  "  ★ 목록 파싱이 바뀐 것일 수 있어 멈춘다 (상세를 안 받는다)")
+            need = []
+        else:
+            print(f"★ 연료가 빈 것 {len(need)}건 — 상세로 채운다 (2d-1)")
+        filled = 0
+        for one in need:
+            pair = fetch_detail(one["source_id"])
+            if pair is not None and pair[0].get("fuel_raw"):
+                one["fuel_raw"] = pair[0]["fuel_raw"]
+                filled += 1
+            time.sleep(INTERVAL)
+        if need:
+            print(f"  ★ 채운 것 {filled}/{len(need)}건")
 
     hit: dict = {}
     for one in ids:
