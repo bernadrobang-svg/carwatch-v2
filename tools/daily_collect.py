@@ -26,6 +26,11 @@ SITES: tuple[str, ...] = (
     "kia_cpo", "reborncar", "hyundai_cert", "kcar", "kbchachacha",
 )
 
+# ★★★★ 08-29 — ★ 맨으로 부르면 안 되는 것.  ★ K카는 ★ `--list` 가 없으면
+#   ★ 「carCd 를 주어야 한다」로 끝난다 — ★ 목록을 한 건도 안 받는다.
+#   ★ 실측 08-29 — ★ 하루치 한 바퀴에서 ★ K카가 늘 0건이었던 까닭이 이것이다
+ARGS: dict[str, tuple[str, ...]] = {"kcar": ("--list",)}
+
 # ★ 한 사이트에 주는 시간.  ★ 넘으면 끊고 다음으로 간다 —
 #   ★ 하나가 매달려 있으면 ★ 나머지가 하루를 통째로 못 돈다
 TIMEOUT_SEC = 40 * 60
@@ -44,7 +49,8 @@ def run_one(site: str) -> tuple[str, int, str]:
     #   ★ 재판정은 ★ 다 받은 뒤 ★ `daily_enqueue.py` 가 한 번만 넣는다
     env = dict(os.environ, CARWATCH_DEFER_RECALC="1")
     try:
-        p = subprocess.run([sys.executable, path], cwd=ROOT, env=env,
+        p = subprocess.run([sys.executable, path, *ARGS.get(site, ())],
+                           cwd=ROOT, env=env,
                            capture_output=True, text=True,
                            timeout=TIMEOUT_SEC, check=False)
     except subprocess.TimeoutExpired:

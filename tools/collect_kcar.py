@@ -102,25 +102,33 @@ def fetch_stock(adapter: KcarAdapter) -> tuple:
                              want_text=True)
     if not body:
         print(f"  ★ 목록을 못 받았다 ({size}B)")
-        return [], None, req.url
+        return [], None, req.url, False
     data = body.get("data") or {}
     rows = data.get("list") or []
     said = data.get("listCount")
     print(f"목록 — 사이트가 말한 총 {said}건 · 받은 {len(rows)}건 · {size:,}B")
+    # ★★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」.
+    #   ★ 사이트가 말한 총계와 ★ 받은 수가 ★ 같을 때만 참이다.
+    #   ★ 총계를 안 주면 ★ 끝을 모른다 — ★ 거짓이다 (반만 보고 gone 을 매기지 않는다)
+    done = said is not None and len(rows) == int(said)
     if said is not None and len(rows) != int(said):
         print(f"  ★ 어긋난다 — {int(said) - len(rows)}건을 못 받았다")
-    return rows, text, req.url
+    return rows, text, req.url, done
 
 
 def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     """목록 전량 저장 → ★ 우리 대상만 상세 (명령서 18-3)."""
-    rows, stock_body, stock_url = fetch_stock(adapter)
+    rows, stock_body, stock_url, list_done = fetch_stock(adapter)
     if not rows:
         return 1
     parsed, ours = [], []
+    unparsed = 0
     for one in rows:
         got = parse_list_item(one, SITE_CODE)
         if not got:
+            # ★ 못 읽은 것은 ★ 「본 것」에 못 넣는다 — ★ 그 매물번호를 모른다.
+            #   ★ 그러면 ★ 살아 있는데 목록에 없는 꼴이 되어 ★ gone 이 된다
+            unparsed += 1
             continue
         # ★ 사이트가 ★ 꾸밈말·세대를 붙여 준다 — ★ 아는 이름이 들어 있으면 그것이다
         named = match_target_name(SITE_CODE, got.get("site_model_group"))
@@ -160,6 +168,21 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
         upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
     commit(conn)
     print(f"★ 목록 저장 {len(parsed)}건 · site='{SITE_CODE}'")
+    # ★★★★★ 08-29 (ORDER r879 1b · `S46-117`) — ★ 팔린 것을 가른다.
+    #   ★ 앞서는 ★ 상세를 다시 받아 「없는 매물」이 나올 때만 gone 이었다.
+    #   ★ ★ 그런데 ★ `todo` 가 `detail_status='ok'` 를 빼므로
+    #   ★ ★ **한 번 받은 매물은 다시 안 본다** — ★ 영영 gone 에 안 닿았다.
+    #   ★ 목록에 없으면 팔린 것이다 — ★ 보배(`collect_bobaedream.py`) 꼴로 한다
+    from store.core import sweep_gone_groups
+    from store.raw import link_raws as raw_link_raws
+
+    raw_link_raws(conn, SITE_CODE)
+    _done = list_done and unparsed == 0
+    _got = sweep_gone_groups(
+        conn, SITE_CODE, [(_done, {p["source_id"] for p in parsed})], at)
+    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}"
+          + (f" · ★ 못 읽은 항목 {unparsed}건" if unparsed else ""))
 
     # ★ 상세는 ★ 우리 대상만 ★ 뒤에 받는다 (18-3 ③).  ★ 이미 받은 것은 건너뛴다
     # ★★ `--all` 이면 ★ **527건 전부** 받는다 (가이드 지시 08-24 · 오판 98).
