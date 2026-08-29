@@ -3196,11 +3196,661 @@ def s46_163_mockup_has_route():
                        f"{len(bad)} — " + " · ".join(bad[:6]))
     return True, "시안마다 라우팅 표에 주소가 있다"
 
+
+def _guide_docs():
+    """★ 가이드가 쓴 문서 — ★ 오판·이력은 그때의 기록이라 뺀다."""
+    for q in sorted((ROOT / "docs").rglob("*.md")):
+        a = q.as_posix()
+        if "/guide/06_" in a or "/guide/03_" in a or "/evidence/" in a:
+            continue
+        yield q
+
+
+def s46_129_table_sum_counted():
+    """S46-129 — ★ 표에 「합」을 적으면 ★ 그 합이 맞는가 (오판 171).
+
+    ★ 08-29 — ★ 명령서 범위표 합이 9,554 인데 머리에 5,756 이라 적었다
+    ★ 잣대 — ★ 「합 N」 과 ★ 같은 표의 수를 더한 것이 ★ 다르면 실패
+    """
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        rows, total = [], None
+        for ln in _read(q).splitlines():
+            if not ln.startswith("|"):
+                rows, total = [], None
+                continue
+            m = _re.search(r"\|\s*\**합[^|]*\**\s*\|(.*)$", ln)
+            cells = [c.strip() for c in ln.strip("|").split("|")]
+            nums = [int(c.replace(",", "").strip("* ★"))
+                    for c in cells
+                    if _re.fullmatch(r"[\d,]+", c.replace("*", "").strip("* ★"))]
+            if m and nums:
+                total = nums[-1]
+                if rows and total != sum(rows):
+                    bad.append(f"{q.name}: 합 {total:,} ≠ 더한 것 {sum(rows):,}")
+                rows, total = [], None
+            elif nums:
+                rows.append(nums[-1])
+    if bad:
+        return False, f"★ 합이 안 맞는 표 {len(bad)} — " + " · ".join(bad[:4])
+    return True, "표의 합이 다 맞는다"
+
+
+def s46_132_handover_says_remeasure():
+    """S46-132 — ★ 인계문이 ★ 「이 수를 믿지 마라 — 재라」를 적는가 (오판 174)."""
+    import glob as _g
+
+    files = _g.glob(str(ROOT / "docs" / "guide" / "*인계*.md"))
+    if not files:
+        return True, "인계문이 아직 없다"
+    bad = [f.split("/")[-1] for f in files
+           if "재라" not in _read(ROOT / f[len(str(ROOT)) + 1:])]
+    if bad:
+        return False, "★ 「이 수를 믿지 마라 — 재라」가 없다 — " + " · ".join(bad)
+    return True, "인계문이 다시 재라고 적는다"
+
+
+def s46_140_new_host_has_robots():
+    """S46-140 — ★ 규격·config 에 쓴 호스트가 ★ robots 문서에 있는가 (오판 182).
+
+    ★ 08-29 — ★ `fem.encar.com` 을 원문 문으로 쓰면서 ★ 그 호스트 robots 를 안 받았다
+    """
+    import json as _j
+    import re as _re
+
+    robots = _read(ROOT / "docs" / "ENCAR_ROBOTS.md")
+    web = _j.loads(_read(ROOT / "config" / "web.json"))
+    hosts = set(_re.findall(r"https?://([a-z0-9.-]*encar\.com)",
+                            _j.dumps(web, ensure_ascii=False)))
+    bad = [h for h in sorted(hosts) if h not in robots]
+    if bad:
+        return False, ("★ config 가 쓰는데 robots 문서에 없는 호스트 — "
+                       + " · ".join(bad))
+    return True, f"엔카 호스트 {len(hosts)}개가 robots 문서에 있다"
+
+
+def s46_142_site_count_matches():
+    """S46-142 — ★ 「N 사이트」가 ★ config/sites.json 의 수와 같은가 (오판 184).
+
+    ★ 08-29 — ★ 「열 사이트를 다 쟀다」고 여러 회차 보고했는데 ★ 사이트는 열하나였다
+    """
+    import json as _j
+    import re as _re
+
+    sites = _j.loads(_read(ROOT / "config" / "sites.json"))
+    n = len([k for k in sites if not k.startswith("_")])
+    words = {"열": 10, "열하나": 11, "열둘": 12, "아홉": 9, "여덟": 8}
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            m = _re.search(r"(열하나|열둘|열|아홉|여덟)\s*사이트", ln)
+            if not m:
+                continue
+            said = words[m.group(1)]
+            # ★ 「아홉」은 엔카를 뺀 수다 — ★ 그것도 맞다
+            if said in (n, n - 1):
+                continue
+            bad.append(f"{q.name}:{i} 「{m.group(1)} 사이트」 (실제 {n})")
+    if bad:
+        return False, f"★ 사이트 수가 다른 곳 {len(bad)} — " + " · ".join(bad[:4])
+    return True, f"「N 사이트」가 config 의 {n}과 맞는다"
+
+
+def s46_146_absence_needs_parser_check():
+    """S46-146 — ★ 「사이트가 안 준다」 절에 ★ 파서를 열어 봤다는 말이 있는가 (오판 188·190).
+
+    ★ 08-29 — ★ 셋이 다 ★ 사이트가 아니라 ★ 우리 파서 결함이었다
+    ★ 잣대 — ★ 그 문장이 있는 문서에 ★ `parse/` 나 「파서」가 ★ 한 번도 없으면 실패
+    """
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        body = _read(q)
+        if not _re.search(r"(사이트가|이 사이트는).{0,20}안 준다", body):
+            continue
+        if "파서" in body or "parse/" in body:
+            continue
+        bad.append(q.name)
+    if bad:
+        return False, ("★ 「안 준다」를 쓰면서 파서를 안 본 문서 "
+                       f"{len(bad)} — " + " · ".join(bad[:5]))
+    return True, "「안 준다」를 쓴 문서가 파서도 본다"
+
+
+def s46_154_master_wish_in_registry():
+    """S46-154 — ★ 마스터 말씀의 「~했으면 좋겠어」가 ★ 요구 추적표에 있는가 (오판 196).
+
+    ★ 08-29 — ★ 「가격 통계를 내놨으면」이 ★ 추적표 391행에 ★ 한 줄도 없었다
+    ★ 잣대 — ★ 규격에 인용된 「…했으면 좋겠…」이 ★ 추적표에 없으면 실패
+    """
+    import re as _re
+
+    reg = _read(ROOT / "docs" / "guide" / "01_요구사항.md")
+    bad = []
+    for q in _guide_docs():
+        for m in _re.finditer(r"「([^」]{6,60}했으면[^」]{0,20})」", _read(q)):
+            key = m.group(1)[:12]
+            if key in reg:
+                continue
+            bad.append(f"{q.name}: 「{m.group(1)[:24]}…」")
+    if bad:
+        return False, ("★ 추적표에 없는 마스터 말씀 "
+                       f"{len(bad)} — " + " · ".join(bad[:3]))
+    return True, "마스터 말씀이 추적표에 있다"
+
+
+def s46_131_paging_claim_measured():
+    """S46-131 — ★ 「쪽넘김이 없다」를 ★ 실측 없이 적지 않는가 (오판 173).
+
+    ★ 08-29 — ★ 렉서스가 ★ `cur_page` 로 3쪽을 주는데 ★ 「1쪽뿐」이라 적어
+      ★ 안 팔린 38건을 ★ gone 으로 죽였다
+    """
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"쪽넘김이 (없다|없음)|한 쪽뿐|1쪽뿐", ln):
+                continue
+            if _re.search(r"실측|표본|\d+\s*쪽|눌러 ?봤|재 ?봤", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 「쪽넘김이 없다」에 실측이 없는 곳 "
+                       f"{len(bad)} — " + " · ".join(bad[:5]))
+    return True, "「쪽넘김이 없다」가 다 실측을 달고 있다"
+
+
+def s46_135_generalisation_has_sample():
+    """S46-135 — ★ 「~만으로 갈린다」 같은 일반화에 ★ 표본이 있는가 (오판 177)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"만으로 (갈린다|가른다|된다|충분하다)", ln):
+                continue
+            if _re.search(r"표본|\d+\s*건|\d+\s*/\s*\d+|실측", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 표본 없는 일반화 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "일반화가 다 표본을 달고 있다"
+
+
+def s46_138_all_claim_needs_source():
+    """S46-138 — ★ 「전량」·「전수」에 ★ 세는 법이 붙어 있는가 (오판 180).
+
+    ★ 08-29 — ★ K카 「전량 487」이 ★ 실은 ★ 한 창구가 주는 487 이었다
+    """
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"(전량|전수)\s*[\d,]+", ln):
+                continue
+            if _re.search(r"실측|표본|빈 쪽|끝까지|집합|고유|세는 법|쪽", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 세는 법 없는 「전량」 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "「전량」이 다 세는 법을 달고 있다"
+
+
+def s46_149_confession_is_closed():
+    """S46-149 — ★ 규격에 적은 자백이 ★ 닫혔거나 밀린일에 있는가 (오판 191).
+
+    ★ 08-22 자백(「스키마를 안 보고 매핑을 썼다」)이 ★ 이레 동안 열린 채였다
+    """
+    import re as _re
+
+    pend = _read(ROOT / "docs" / "guide" / "07_밀린일대장.md")
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if "가이드 자백" not in ln:
+                continue
+            m = _re.search(r"개정 ([\d·]+)", ln)
+            key = m.group(1)[:3] if m else None
+            if "닫는다" in ln or "끝" in ln or (key and key in pend):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 안 닫힌 자백 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "자백이 다 닫혔거나 밀린일에 있다"
+
+
+def s46_156_answer_touches_spec():
+    """S46-156 — ★ 개발측 물음의 답이 ★ 규격에 있는가 (오판 198).
+
+    ★ 08-29 — ★ 답을 명령서에만 적어 ★ 같은 물음이 네 회차 되풀이됐다
+    ★ 잣대 — ★ 명령서가 「답한다」고 적은 낱말이 ★ docs/ 어딘가에 있어야 한다
+    """
+    import glob as _g
+    import re as _re
+
+    orders = _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    if not orders:
+        return True, "명령서가 없다"
+    body = _read(ROOT / orders[0][len(str(ROOT)) + 1:])
+    specs = " ".join(_read(q) for q in _guide_docs())
+    bad = []
+    for m in _re.finditer(r"`([a-z_]+\.(?:py|json))[`:]", body):
+        pass
+    for m in _re.finditer(r"→ ?\*\*`?([A-Z_]{4,})", body):
+        if m.group(1) not in specs:
+            bad.append(m.group(1))
+    if bad:
+        return False, ("★ 명령서가 가리키는데 규격에 없는 것 "
+                       + " · ".join(sorted(set(bad))[:5]))
+    return True, "명령서의 답이 규격에 있다"
+
+
+def s46_130_one_tally_per_register():
+    """S46-130 — ★ 한 문서에 ★ 합계표가 둘이 아닌가 (오판 172).
+
+    ★ 08-29 — ★ 오판대장에 합계표가 둘이고 ★ 둘 다 틀렸다
+    """
+    import re as _re
+
+    bad = []
+    for q in list(_guide_docs()) + [ROOT / "docs" / "guide" / "06_오판대장.md"]:
+        n = len(_re.findall(r"세 수의 합|합계표|누가 잡았나", _read(q)))
+        if n > 1:
+            bad.append(f"{q.name} ({n}개)")
+    if bad:
+        return False, f"★ 합계표가 둘 이상 — " + " · ".join(bad[:4])
+    return True, "합계표가 문서마다 하나다"
+
+
+def s46_134_target_site_pair():
+    """S46-134 — ★ `targets.json` 에 그 사이트 질의가 있는데 ★ 규격이 ✘ 라 적지 않는가 (오판 176)."""
+    import json as _j
+    import re as _re
+
+    t = _j.loads(_read(ROOT / "config" / "targets.json"))
+    pairs = set()
+    for k, v in t.items():
+        if k.startswith("_") or not isinstance(v, dict):
+            continue
+        for site in (v.get("site_query") or {}):
+            pairs.add((k, site))
+    bad = []
+    for key, site in sorted(pairs):
+        doc = ROOT / "docs" / (site.upper() + "_API.md")
+        if not doc.is_file():
+            continue
+        body = _read(doc)
+        if _re.search(r"\|\s*`?" + _re.escape(key) + r"`?\s*\|[^|]*\|\s*✘", body):
+            bad.append(f"{key}@{site}")
+    if bad:
+        return False, ("★ 질의는 있는데 규격이 ✘ 라 적은 것 "
+                       + " · ".join(bad[:5]))
+    return True, "질의와 규격이 어긋나지 않는다"
+
+
+def s46_141_filter_claim_measured():
+    """S46-141 — ★ 「거르개가 안 먹는다」를 ★ 두 값 이상 걸어 봤는가 (오판 183)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"거르개가 (안 먹|죽었|안 걸)", ln):
+                continue
+            if _re.search(r"두 값|\d+\s*값|표본|\d+\s*종|실측", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 실측 없는 거르개 판정 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "거르개 판정이 다 실측을 달고 있다"
+
+
+def s46_143_master_items_are_master():
+    """S46-143 — ★ 「마스터께 올릴 것」이 ★ 정말 마스터 몫인가 (오판 185).
+
+    ★ 08-29 — ★ 「612건 차종을 정해 주십시오」를 올렸는데 ★ 우리 26종이 0건이었다
+    ★ 잣대 — ★ 그 줄에 ★ 건수나 표본이 없으면 ★ 세지 않고 올린 것이다
+    """
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"마스터께 (올린다|올릴|여쭙|묻는다)", ln):
+                continue
+            if _re.search(r"\d+\s*건|\d+\s*종|표본|실측|없다|0건", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 세지 않고 마스터께 올리는 곳 "
+                       f"{len(bad)} — " + " · ".join(bad[:5]))
+    return True, "마스터께 올릴 것이 다 세어져 있다"
+
+
+def s46_147_absence_needs_ten():
+    """S46-147 — ★ 「안 준다」에 ★ 표본이 열 건 이상인가 (오판 189)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"(사이트가|이 사이트는|만).{0,20}안 준다", ln):
+                continue
+            m = _re.search(r"표본\s*(\d+)|(\d+)\s*/\s*(\d+)\s*건", ln)
+            if not m:
+                continue                  # ★ 표본이 아예 없는 것은 S46-161 이 센다
+            n = int(m.group(1) or m.group(3) or 0)
+            if n >= 10:
+                continue
+            bad.append(f"{q.name}:{i} (표본 {n})")
+    if bad:
+        return False, ("★ 표본 열 건이 안 되는 「안 준다」 "
+                       f"{len(bad)} — " + " · ".join(bad[:5]))
+    return True, "「안 준다」가 다 표본 열 건 이상이다"
+
+
+def s46_150_column_from_ddl():
+    """S46-150 — ★ 규격이 말하는 칼럼이 ★ DDL 에 있는가 (오판 192).
+
+    ★ 08-29 — ★ 스냅샷 이름(`inspection_panels`)으로 `grep` 해 ★ 「없다」로 읽었다
+    """
+    import re as _re
+
+    ddl = " ".join(_read(q) for q in (ROOT / "sql" / "ddl").glob("*.sql"))
+    code = " ".join(_read(q) for q in ROOT.rglob("contracts.py"))
+    bad = []
+    for q in _guide_docs():
+        for m in _re.finditer(r"`([a-z][a-z0-9_]{6,})`\s*(?:칼럼|칸)", _read(q)):
+            col = m.group(1)
+            if col in ddl or col in code:
+                continue
+            bad.append(f"{q.name}: {col}")
+    if bad:
+        return False, ("★ DDL 에 없는 칼럼을 규격이 말한다 "
+                       f"{len(bad)} — " + " · ".join(sorted(set(bad))[:5]))
+    return True, "규격의 칼럼이 다 DDL 에 있다"
+
+
+def s46_133_check_gap_in_pending():
+    """S46-133 — ★ 「검사가 부른다만 본다」를 적었으면 ★ 밀린일에 있는가 (오판 175)."""
+    import re as _re
+
+    pend = _read(ROOT / "docs" / "guide" / "07_밀린일대장.md")
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"「?부른다」?만 (본다|센다)|사람이 셀 것", ln):
+                continue
+            if "사람이 셀 것" in pend or "부른다" in pend:
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 밀린일에 없는 검사 구멍 {len(bad)}"
+    return True, "검사 구멍이 밀린일에 있다"
+
+
+def s46_136_warn_number_moves():
+    """S46-136 — ★ 규격이 적은 warn 건수가 ★ 지금 값과 같은가 (오판 178).
+
+    ★ 08-29 — ★ `_확인` warn 이 늘 60 이었는데 ★ 「무엇을 세나」를 안 물었다
+    """
+    import json as _j
+    import re as _re
+
+    t = _j.dumps(_j.loads(_read(ROOT / "config" / "targets.json")),
+                 ensure_ascii=False)
+    now = len(_re.findall(r'"_확인', t))
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            m = _re.search(r"`?_확인`?\s*(\d+)\s*종", ln)
+            if m and int(m.group(1)) != now:
+                bad.append(f"{q.name}:{i} 「{m.group(1)}종」 (지금 {now})")
+    if bad:
+        return False, "★ 낡은 warn 수 — " + " · ".join(bad[:5])
+    return True, f"`_확인` 수가 규격과 맞는다 (지금 {now})"
+
+
+def s46_137_config_key_has_reader():
+    """S46-137 — ★ `targets.json` 질의 열쇠를 ★ 읽는 코드가 있는가 (오판 179).
+
+    ★ 08-29 — ★ `fuel` 을 넣었는데 ★ `pick` 이 안 읽어 ★ 전량 1,330건이 왔다
+    """
+    import json as _j
+
+    t = _j.loads(_read(ROOT / "config" / "targets.json"))
+    code = " ".join(_read(q) for q in (ROOT / "tools").glob("collect_*.py"))
+    code += " ".join(_read(q) for q in (ROOT / "adapters").glob("*.py"))
+    bad = []
+    for k, v in t.items():
+        if k.startswith("_") or not isinstance(v, dict):
+            continue
+        for site, q in (v.get("site_query") or {}).items():
+            for key in (q if isinstance(q, dict) else {}):
+                if key.startswith("_"):
+                    continue
+                if f'"{key}"' in code or f"'{key}'" in code:
+                    continue
+                bad.append(f"{k}@{site}.{key}")
+    if bad:
+        return False, ("★ 읽는 코드가 없는 질의 열쇠 "
+                       f"{len(bad)} — " + " · ".join(sorted(set(bad))[:5]))
+    return True, "질의 열쇠를 다 읽는 코드가 있다"
+
+
+def s46_139_field_claim_counted():
+    """S46-139 — ★ 「그 칸이 없다/비었다」에 ★ 전수 수가 있는가 (오판 181)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"`[a-z_]+`\s*(가|는|이)\s*(전부|다)\s*`?(None|null|빈)", ln):
+                continue
+            if _re.search(r"\d+\s*건|표본|실측", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 전수 없이 「칸이 비었다」 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "「칸이 비었다」가 다 전수를 달고 있다"
+
+
+def s46_148_axis_gap_traced():
+    """S46-148 — ★ 「축이 빈다」를 적으면 ★ 그 칼럼과 파서를 짚었는가 (오판 190)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        body = _read(q)
+        if not _re.search(r"축이 (빈다|비어|0점)", body):
+            continue
+        if _re.search(r"`[a-z_]+_json`|`analyze/|parse/|칼럼", body):
+            continue
+        bad.append(q.name)
+    if bad:
+        return False, ("★ 칼럼·파서를 안 짚은 「축이 빈다」 "
+                       f"{len(bad)} — " + " · ".join(bad[:5]))
+    return True, "「축이 빈다」가 칼럼·파서를 짚는다"
+
+
+def s46_152_dev_rounds_read():
+    """S46-152 — ★ 가이드 마지막 이력이 ★ 개발 회차보다 뒤인가 (오판 194).
+
+    ★ 08-29 — ★ 설계도만 여섯 회차 쓰는 동안 ★ 개발 회차 셋을 안 읽었다
+    ★ 잣대 — ★ `outputs/` 의 마지막 개발 기록 날짜가 ★ 이력에 언급됐는가
+    """
+    import glob as _g
+    import os as _os
+    import re as _re
+
+    recs = sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")),
+                  key=_os.path.getmtime)
+    if not recs:
+        return True, "개발 기록이 없다"
+    last = _os.path.basename(recs[-1])
+    m = _re.search(r"_v(\d+)_", last)
+    if not m:
+        return True, "회차 번호를 못 읽는다"
+    hist = _read(ROOT / "docs" / "guide" / "03_이력.md")
+    tail = hist[:6000]                     # ★ 최근 회차만 본다
+    if m.group(1) in tail or last[:13] in tail:
+        return True, f"마지막 개발 회차 v{m.group(1)} 를 읽었다"
+    return False, (f"★ 마지막 개발 회차 v{m.group(1)}({last}) 가 "
+                   "최근 이력에 없다 — 안 읽었을 수 있다")
+
+
+def s46_159_design_is_doable():
+    """S46-159 — ★ 설계도가 ★ 「가이드가 할 수 없는 것」을 시키지 않는가 (오판 201).
+
+    ★ 08-29 — ★ 「가이드가 임시표로 검증한다」인데 ★ 같은 문서에 「DB 를 못 연다」가 있었다
+    """
+    import glob as _g
+    import re as _re
+
+    for f in _g.glob(str(ROOT / "docs" / "ARCHITECTURE_*.md")):
+        body = _read(ROOT / f[len(str(ROOT)) + 1:])
+        cant = "DB 를 못 연다" in body or "DB를 못 연다" in body
+        does = _re.search(r"가이드가.{0,12}(임시표|DB).{0,10}(검증|연다|본다)", body)
+        if cant and does:
+            return False, ("★ 설계도가 「가이드가 DB 를 못 연다」면서 "
+                           "「가이드가 임시표를 본다」고 적었다")
+    return True, "설계도가 할 수 있는 것만 시킨다"
+
+
+def s46_144_empty_is_split():
+    """S46-144 — ★ 「비었다」가 ★ 「못 받았다」와 「원래 없다」로 갈려 있는가 (오판 186)."""
+    import re as _re
+
+    ft = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
+    need = ("⑤", "⑥", "⑦")
+    miss = [g for g in need if f"{g} " not in ft and f"갈래 {g}" not in ft]
+    if miss:
+        return False, "★ f-table 에 갈래가 없다 — " + " · ".join(miss)
+    if "그 차에 원래 없다" not in ft:
+        return False, "★ 갈래 ⑦ 「그 차에 원래 없다」가 f-table 에 없다"
+    return True, "「비었다」가 ⑤·⑥·⑦ 로 갈려 있다"
+
+
+def s46_153_owner_is_judged():
+    """S46-153 — ★ 개발 기록의 「마스터 몫」이 ★ 규격에 이미 답이 있지 않은가 (오판 195).
+
+    ★ 08-29 — ★ `target_key` 를 「마스터 몫」으로 적어 ★ 이틀을 기다렸는데
+      ★ `target_by_rules` 가 ★ 이미 있었다
+    ★ 잣대 — ★ 「마스터」로 적힌 물음의 낱말이 ★ 규격에 있으면 ★ 가이드가 갈랐어야 한다
+    """
+    import glob as _g
+    import re as _re
+
+    specs = " ".join(_read(q) for q in _guide_docs())
+    bad = []
+    for f in sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")))[-6:]:
+        body = _read(ROOT / f[len(str(ROOT)) + 1:])
+        for ln in body.splitlines():
+            if "**마스터**" not in ln or not ln.startswith("|"):
+                continue
+            m = _re.search(r"`([a-z_]{6,})`", ln)
+            if m and m.group(1) in specs:
+                bad.append(f"{f.split('/')[-1][:22]}: {m.group(1)}")
+    if bad:
+        return False, ("★ 「마스터 몫」인데 규격에 답이 있는 것 "
+                       + " · ".join(sorted(set(bad))[:4]))
+    return True, "「마스터 몫」이 다 진짜 마스터 몫이다"
+
+
+def s46_157_perf_claim_is_timed():
+    """S46-157 — ★ 잠금·성능을 ★ 시간 없이 말하지 않는가 (오판 199)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"(트랜잭션|잠금|locked).{0,24}"
+                              r"(안 끊|길다|쥔다|오래)", ln):
+                continue
+            if _re.search(r"\d+\s*(초|ms|s)\b|\d+%|실측", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 시간 없는 성능 판정 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "성능 판정이 다 시간을 달고 있다"
+
+
+def s46_158_size_claim_is_measured():
+    """S46-158 — ★ 「몇 MB 인가」를 ★ 짐작으로 적지 않는가 (오판 200)."""
+    import re as _re
+
+    bad = []
+    for q in _guide_docs():
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"(쌓인다|커진다|늘어난다).{0,20}(용량|MB|GB|공간)"
+                              r"|(용량|공간).{0,20}(쌓인다|커진다)", ln):
+                continue
+            if _re.search(r"\d+\s*(MB|GB|B)\b|실측|잰다|du ", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, f"★ 수 없는 용량 판정 {len(bad)} — " + " · ".join(bad[:5])
+    return True, "용량 판정이 다 수를 달고 있다"
+
+
+def s46_160_ev_leak_full_mark():
+    """S46-160 — ★ 전기차 누유가 ★ 만점이고 ★ 분모가 910 그대로인가 (오판 202·203)."""
+    ft = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
+    if "그 차에 원래 없다" not in ft:
+        return False, "★ 갈래 ⑦ 이 f-table 에 없다"
+    seg = ft[ft.find("갈래 ⑦"):][:2000]
+    if "만점" not in seg:
+        return False, "★ 갈래 ⑦ 이 「만점」이라 적지 않았다"
+    if "분모에서 뺀다" in seg and "월권" not in seg:
+        return False, "★ 갈래 ⑦ 이 아직 「분모에서 뺀다」라고 적혀 있다"
+    if "910" not in seg:
+        return False, "★ 「분모 910 그대로」가 적혀 있지 않다"
+    return True, "전기차 누유가 만점이고 분모가 910 그대로다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
     ("S43-2c", "HDA 가 저장소에 없는가", s43_2c_no_hda),
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
+    ("S46-144", "「비었다」가 ⑤·⑥·⑦ 로 갈렸는가", s46_144_empty_is_split),
+    ("S46-153", "「마스터 몫」이 진짜 마스터 몫인가", s46_153_owner_is_judged),
+    ("S46-157", "성능 판정에 시간이 있는가", s46_157_perf_claim_is_timed),
+    ("S46-158", "용량 판정에 수가 있는가", s46_158_size_claim_is_measured),
+    ("S46-160", "전기차 누유가 만점·분모 910 인가", s46_160_ev_leak_full_mark),
+    ("S46-133", "검사 구멍이 밀린일에 있는가", s46_133_check_gap_in_pending),
+    ("S46-136", "규격의 warn 수가 지금 값과 같은가", s46_136_warn_number_moves),
+    ("S46-137", "질의 열쇠를 읽는 코드가 있는가",
+     s46_137_config_key_has_reader),
+    ("S46-139", "「칸이 비었다」에 전수가 있는가", s46_139_field_claim_counted),
+    ("S46-148", "「축이 빈다」가 칼럼·파서를 짚는가", s46_148_axis_gap_traced),
+    ("S46-152", "마지막 개발 회차를 읽었는가", s46_152_dev_rounds_read),
+    ("S46-159", "설계도가 할 수 있는 것만 시키는가", s46_159_design_is_doable),
+    ("S46-130", "합계표가 문서마다 하나인가", s46_130_one_tally_per_register),
+    ("S46-134", "질의와 규격이 어긋나지 않는가", s46_134_target_site_pair),
+    ("S46-141", "거르개 판정에 실측이 있는가", s46_141_filter_claim_measured),
+    ("S46-143", "마스터께 올릴 것이 세어졌는가", s46_143_master_items_are_master),
+    ("S46-147", "「안 준다」의 표본이 열 건인가", s46_147_absence_needs_ten),
+    ("S46-150", "규격의 칼럼이 DDL 에 있는가", s46_150_column_from_ddl),
+    ("S46-131", "「쪽넘김이 없다」에 실측이 있는가",
+     s46_131_paging_claim_measured),
+    ("S46-135", "일반화에 표본이 있는가", s46_135_generalisation_has_sample),
+    ("S46-138", "「전량」에 세는 법이 있는가", s46_138_all_claim_needs_source),
+    ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
+    ("S46-156", "개발측 물음의 답이 규격에 있는가",
+     s46_156_answer_touches_spec),
+    ("S46-129", "표의 합이 맞는가", s46_129_table_sum_counted),
+    ("S46-132", "인계문이 다시 재라고 적는가", s46_132_handover_says_remeasure),
+    ("S46-140", "쓰는 호스트가 robots 문서에 있는가", s46_140_new_host_has_robots),
+    ("S46-142", "「N 사이트」가 config 와 같은가", s46_142_site_count_matches),
+    ("S46-146", "「안 준다」를 쓰며 파서를 봤는가",
+     s46_146_absence_needs_parser_check),
+    ("S46-154", "마스터 말씀이 요구 추적표에 있는가",
+     s46_154_master_wish_in_registry),
     ("S46-145", "마스터께 드리는 표에 수의 뜻이 있는가",
      s46_145_numbers_have_meaning),
     ("S46-155", "화면 규격마다 시안이 있는가", s46_155_screen_spec_has_mockup),
