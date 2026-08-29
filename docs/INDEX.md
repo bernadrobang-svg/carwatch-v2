@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**124파일 · 44,944줄 · 2,973KB**
+**125파일 · 45,024줄 · 2,976KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -103,6 +103,7 @@
 | `chapters/61-web/j-admin-mock2.md` | 502 | 22 |
 | `evidence/README.md` | 37 | 1 |
 | `evidence/absence_20260829.md` | 41 | 1 |
+| `evidence/kb_kcar_성능점검_20260830.md` | 80 | 3 |
 | `evidence/kbchachacha_inspection_20260829.md` | 50 | 1 |
 | `evidence/volvo_selekt_신차가_20260830.md` | 72 | 2 |
 | `guide/00_개요.md` | 149 | 6 |
