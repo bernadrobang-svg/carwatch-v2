@@ -81,7 +81,7 @@
 | `S46-56` | 짝 중 사고 판정이 갈린 것 | warn | `validate/v0_guide.py:1642` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:7 · CROSS_SITE_COMPARE.md:256 |
 | `S46-65` | 판본이 하루 넘게 오래되지 않았는가 | fatal | `validate/v0_guide.py:996` | **★ 없음** | 없음 | guide/01_요구사항.md:105 · guide/03_이력.md:745 · guide/03_이력.md:746 |
 | `S46-66` | 화면이 낸 링크가 인코딩돼 있는가 | fatal | `validate/v0_guide.py:957` | **★ 없음** | 없음 | UI_REVIEW.md:896 · guide/01_요구사항.md:106 · guide/03_이력.md:747 |
-| `S46-67` | 시안 이름이 app.css 와 안 겹치는가 | fatal | `validate/v0_guide.py:1043` | **★ 없음** | 없음 | UI_REVIEW.md:1307 · UI_REVIEW.md:1594 · guide/03_이력.md:749 |
+| `S46-67` | 시안 이름이 app.css 와 안 겹치는가 | fatal | `validate/v0_guide.py:1043` | **★ 없음** | 없음 | UI_REVIEW.md:1307 · UI_REVIEW.md:1605 · guide/03_이력.md:749 |
 | `S46-68` | 관심이 모바일 기준 카드인가 | fatal | `validate/v0_guide.py:1106` | **★ 없음** | 없음 | UI_REVIEW.md:999 · guide/01_요구사항.md:109 · guide/03_이력.md:754 |
 | `S46-74` | 한 쪽 장 수가 규격과 같은가 | fatal | `validate/v0_guide.py:1160` | **★ 없음** | 없음 | UI_REVIEW.md:1033 · guide/01_요구사항.md:112 · guide/03_이력.md:761 |
 | `S46-75` | v4m 여덟 장 공통 규칙 | fatal | `validate/v0_guide.py:1206` | **★ 없음** | 없음 | guide/01_요구사항.md:114 · guide/03_이력.md:766 · guide/06_오판대장.md:211 |
