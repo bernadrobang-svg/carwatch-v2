@@ -25,7 +25,14 @@ from store.raw import commit, open_db              # noqa: E402
 
 SITE_CODE = "bmw_bps"
 RETRY, RETRY_WAIT = 3, 3.0
-MAX_PAGES = 20
+# ★★★★★ 08-29 실측 — ★ 20 은 ★ **상한에 걸리는 값**이었다.
+#   ★ BMW 전수는 ★ 364건 · 37쪽이다 (쪽당 10건).  ★ 20쪽에서 끊어
+#   ★ ★ **164건이 통째로 빠져 있었다**.  ★ 그러면서 「끝까지 받았나」가
+#   ★ ★ 거짓이라 ★ gone 도 영영 못 매겼다.
+#   ★ 눌러 봤다 — page 21·22·25·30 이 다 새 매물 10건씩을 준다.
+#   ★ ★ page 38 이 0건이다 — ★ 거기가 끝이다.
+#   ★ 넉넉히 둔다 — ★ 끝은 「빈 쪽」과 「안 늘어남」으로 안다.  상한은 안전판이다
+MAX_PAGES = 120
 RE_ITEM = re.compile(r'it_id=([A-Za-z0-9_-]+)[^>]*>(.{0,400}?)</a>', re.S)
 RE_TAG = re.compile(r"<[^>]+>")
 
@@ -72,6 +79,11 @@ def main() -> int:
         if raw is None:
             walls += 1
             print(f"  {page}쪽 — ★ 못 받았다 (재시도 {RETRY}회)")
+            break
+        # ★★ 빈 쪽도 ★ 끝이다 (08-29) — ★ 앞서는 이것을 안 봐서
+        #   ★ ★ 상한에 걸려도 ★ 「안 늘어남」이 안 오면 ★ done 이 거짓이었다
+        if not RE_ITEM.search(raw):
+            done = True
             break
         before = len(seen)
         for sid, block in RE_ITEM.findall(raw):
