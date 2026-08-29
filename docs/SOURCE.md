@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 180개 · 총 63,766줄
+파일 180개 · 총 63,788줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -74,10 +74,10 @@
 | `tools/menu.py` | 254 | 실행 메뉴. |
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
 | `tools/collect_bobaedream.py` | 244 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
+| `tools/collect_volvo.py` | 244 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `validate/v5_value.py` | 244 | V5 수치 검증 — 기준값이 맞는가 · 보정이 타당한가. |
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
-| `tools/collect_volvo.py` | 222 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `tools/repair_facet_chunks.py` | 222 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
@@ -597,6 +597,12 @@ check:33  fx:39  db:43  put_raw:48  test_paths:57  test_contamination:69  test_s
 _now:37  _get:41  target_names:51  wanted:60  _elapsed:68  load_filters:75  _walk_plan:102  main:113
 ```
 
+### `tools/collect_volvo.py` — 244줄
+
+```
+_known_name:42  load_slugs:58  _now:87  _get:91  main:106
+```
+
 ### `validate/v5_value.py` — 244줄
 
 ```
@@ -613,12 +619,6 @@ remaining_months:26  warranty_points:39  _truthy:73  warranty_grade:89  _seller_
 
 ```
 check:35  inv1_order_independent:42  inv1_shuffle_100:72  inv2_banned:95  inv5_points:113  put_contract:126  excluded_contract:143  inv3_source_not_null:169  inv4_label_shape:188  inv6_no_unclassified:204
-```
-
-### `tools/collect_volvo.py` — 222줄
-
-```
-_known_name:42  load_slugs:58  _now:87  _get:91  main:106
 ```
 
 ### `tools/repair_facet_chunks.py` — 222줄

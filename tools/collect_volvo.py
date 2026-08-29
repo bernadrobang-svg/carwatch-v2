@@ -116,6 +116,7 @@ def main() -> int:
     # ★★ 목록 쪽 원문을 들고 간다 (명령서 3-2 필수) —
     #   ★ 볼보는 ★ 상세가 없다.  ★ 목록 쪽이 ★ 원문의 전부다
     pages: list = []
+    done = False
     for page in range(1, MAX_PAGES + 1):
         raw = _get(f"{base}/kr/vehicles/xhr-results/{page}", head, timeout)
         pages.append((f"{base}/kr/vehicles/xhr-results/{page}", raw))
@@ -128,9 +129,23 @@ def main() -> int:
         links = RE_LINK.findall(raw)
         for path, slug, sid in links:
             seen[sid] = (slug, base + path)
-        if len(links) < PAGE_LINKS:
+        # ★★★★ 08-29 (규격 `VOLVO_SELEKT_API.md` 개정 854 · 마스터가 재 주셨다) —
+        #   ★ 「끝까지 받았나」의 근거는 ★ **빈 쪽**이다.
+        #   ★★ 실측 08-29 (저장된 원문 20쪽) —
+        #     ★ `data-found` 가 ★ **우리 창구에 아예 없다** (20쪽 전부 「없음」).
+        #       ★ 마스터께서 보신 것은 ★ 모델 화면(`/kr/vehicles/volvo/s90?...`)이고
+        #       ★ 우리는 ★ `xhr-results` 를 쓴다 — ★ 창구가 다르다.
+        #     ★ ★ 그래서 ★ `said` 가 ★ **늘 None** 이었고 ★ 늘 안 매겼다.
+        #   ★ 쪽마다 매물 12건이 고르게 오고 ★ 19쪽에 8건 · ★ 20쪽에 **0건**이다.
+        #     ★ ★ 빈 쪽이 ★ 사이트가 「더 없다」고 말한 것이다 (보배와 같은 잣대).
+        #   ★ 맞춤 확인 — ★ 우리가 센 `s90` 이 ★ **21건**이고
+        #     ★ 마스터께서 브라우저에서 보신 `data-found` 도 ★ **21** 이다
+        if not links:
+            done = True                 # ★ 빈 쪽 — ★ 끝까지 받았다
             break
         time.sleep(interval)
+    else:
+        done = False                    # ★ MAX_PAGES 를 다 썼다 — ★ 끝이 아니다
     ours_map = load_slugs() or OURS_FALLBACK
     ours = {k: v for k, v in seen.items() if v[0] in ours_map}
     print(f"★ data-found {said if said is not None else '없다'} · "
@@ -167,14 +182,21 @@ def main() -> int:
     #     ★ 받은 매물번호 수가 ★ **같아야** 참이다.
     #   ★ 못 받은 쪽이 있거나 · 수가 어긋나면 ★ 안 매긴다 —
     #     ★ 반만 받고 매기면 ★ 산 차를 죽인다
-    _done = said is not None and said == len(seen)
     from store.core import sweep_gone_groups
 
-    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, set(ours))], at)
+    # ★ 슬러그(차종)별로 몇 건을 받았는지 낸다 — ★ 마스터께서 차종별로 견주라 하셨다.
+    #   ★ `data-found` 가 우리 창구에 없으므로 ★ 이 수를 모델 화면과 견주면 된다
+    by_slug: dict = {}
+    for _sid, (_slug, _u) in seen.items():
+        by_slug[_slug] = by_slug.get(_slug, 0) + 1
+    print("★ 슬러그별 받은 수 — " + " · ".join(
+        f"{k} {v}" for k, v in sorted(by_slug.items(), key=lambda x: -x[1])))
+    _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(ours))], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
-    if not _done:
-        print("  ★ 수가 어긋나 안 매겼다 — 반만 보고 매기면 산 차를 죽인다")
+          f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}"
+          f" (빈 쪽까지 갔나)")
+    if not done:
+        print("  ★ 빈 쪽까지 못 갔다 — 안 매겼다.  반만 보고 매기면 산 차를 죽인다")
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(ours)}건 · 저장된 볼보 매물 {n:,}건")

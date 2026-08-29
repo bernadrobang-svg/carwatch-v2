@@ -54,12 +54,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>running</strong> · 사유 listing_updated · 범위 all
-    </p>
+  <p><strong>done</strong> · 사유 listing_updated · 범위 all
+    <span class="muted">· run 20260829T024133</span></p>
   <p>단계 <strong>-</strong>
     
     <span class="muted">· 넣은 시각 2026-08-29T02:41:32.897271+00:00</span></p>
-  
+  <p class="muted">S4 ok 60 · S5 ok 1477 · S6 ok 142332 · S9 ok 264628 · S10 ok 10178</p>
   
   
 
@@ -75,41 +75,41 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">22,070</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">22,248</td></tr>
   
-  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,068</td></tr>
+  <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,076</td></tr>
   
-  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">22,291</td></tr>
+  <tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="원문">22,466</td></tr>
   
   <tr><td data-label="엔드포인트">extend_warrant</td><td class="num" data-label="원문">8</td></tr>
   
   <tr><td data-label="엔드포인트">facet</td><td class="num" data-label="원문">158</td></tr>
   
-  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">12,385</td></tr>
+  <tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="원문">12,471</td></tr>
   
-  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">11,526</td></tr>
+  <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">11,597</td></tr>
   
   <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">5,667</td></tr>
   
-  <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">21,994</td></tr>
+  <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">22,168</td></tr>
   
-  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">13,907</td></tr>
+  <tr><td data-label="엔드포인트">record</td><td class="num" data-label="원문">14,008</td></tr>
   
-  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">13,751</td></tr>
+  <tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="원문">13,852</td></tr>
   
-  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">21,168</td></tr>
+  <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">21,342</td></tr>
   
   <tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="원문">4</td></tr>
   
   </tbody>
   </table>
-  <p class="muted">매물 19,775건 · 판정 9,702건</p>
+  <p class="muted">매물 19,799건 · 판정 10,201건</p>
 
   <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
     갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
 </div>
 
-<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
+
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -215,17 +215,10 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-29T02:41:32.897271+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-08-29T02:41:32.897271+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""><form method="post" action="/admin/run" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="action" value="halt">
-    <input type="hidden" name="job_id" value="2d8877eb3a5d137c61">
-    <input name="reason" size="12" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
-  </form></td></tr>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-28T23:49:38.823546+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -329,7 +322,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · 정상 · 30.5초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
+<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 9 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
 
 
 
@@ -340,7 +333,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 11:45</span>
+  <span>2026-08-29 12:33</span>
 </footer>
 
 </body>
