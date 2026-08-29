@@ -270,6 +270,7 @@ from store.core import (  # noqa: E402
 from store.pii import load_key  # noqa: E402
 from collect.fetcher import reject_reason, verify_shape  # noqa: E402
 from store.raw import raw_body, save_facet, save_raw  # noqa: E402
+from store.core import sweep_gone  # noqa: E402
 # ★ 배치 단계가 쓰기 잠금을 오래 쥐지 않게 끊는다 (08-26)
 from store.raw import tick as raw_tick  # noqa: E402
 
@@ -532,9 +533,19 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         #   (13장 STEP 136a 「출력 S4 결과와 같은 형태로 core_listing 에 반영」)
         # ★ 봉투 시각을 함께 가져와 오래된 것부터 적용한다 (STEP 29).
         #   그래야 마지막에 적용되는 것이 가장 새 관측이다
-        sql = ("SELECT body, fetched_at FROM raw_response "
-               "WHERE endpoint='list' AND status='ok' AND origin <> 'import'")
-        args: tuple = ()
+        # ★★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」를 알아야 ★ gone 을 매긴다.
+        #   ★ 그러려면 ★ `request_url` 이 있어야 한다 — ★ 같은 질의의 쪽들을 묶는다
+        # ★★★★ 08-29 — ★ **사이트를 좁힌다.**  ★ 없던 조건이다.
+        #   ★ `endpoint='list'` 에는 ★ 엔카만 있는 것이 아니다 —
+        #     ★ 실측 08-29 ★ `volvo_selekt` 40쪽 · `lexus_certified` 36쪽이 섞여 있다.
+        #   ★ 이 파서는 ★ **엔카 봉투 전용**이다 (`parse.encar.unpack_envelope`).
+        #   ★★ ★ 더 나쁜 것 — ★ 아래 gone 쓸기가 ★ 남의 사이트 목록을 보고
+        #     ★ ★ **엔카 차종을 판정할 뻔했다**.  ★ 그것이 산 차를 죽인다.
+        #   ★ S6 은 08-26 에 같은 까닭으로 이미 좁혔다 — ★ S4 만 남아 있었다
+        sql = ("SELECT body, fetched_at, request_url FROM raw_response "
+               "WHERE endpoint='list' AND status='ok' AND origin <> 'import'"
+               "  AND site = ?")
+        args: tuple = (adapter.site_code,)
         if scope_kind != ENVELOPE_ALL:
             # 실행 시작 시각으로 이번 실행분을 가른다.
             # ★ 밖에서 받아 온 봉투(browser)는 시각으로 못 가른다 —
@@ -543,12 +554,21 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             #   다시 펼쳐도 upsert 라 결과가 같다 (STEP 50a 의 뜻은
             #   「옛 수집분을 매번 훑지 않는다」이지 「밖에서 온 것을 버린다」가 아니다)
             sql += " AND (fetched_at >= ? OR origin = 'browser')"
-            args = (ctx.started_at.isoformat(),)
+            args = (adapter.site_code, ctx.started_at.isoformat())
         sql += " ORDER BY fetched_at, id"
         skipped_old = 0
-        for _b, seen_at in conn.execute(sql, args).fetchall():
+        # ★★★ 질의별로 ★ 「몇 건이라 했나(Count)」와 ★ 「몇 건을 봤나」를 센다.
+        #   ★ 쪽넘김은 `sr=|…|offset|rows` 로 나뉜다 — ★ 그 자리를 지운 것이 질의다
+        q_declared: dict = {}
+        q_seen: dict = {}
+        q_targets: dict = {}
+        for _b, seen_at, _url in conn.execute(sql, args).fetchall():
             body = raw_body(_b)
             _count, items = unpack_envelope(json.loads(body))
+            qkey = _query_key(_url)
+            q_declared[qkey] = max(q_declared.get(qkey, 0), int(_count or 0))
+            q_seen.setdefault(qkey, set())
+            q_targets.setdefault(qkey, set())
             for item in items:
                 rows += 1
                 if rows % PROGRESS_EVERY == 0:
@@ -593,6 +613,10 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 )
                 upsert_core(conn, parsed, at)
                 ok += 1
+                # ★ 이 질의가 ★ 무엇을 봤나 · ★ 어느 차종에 닿았나
+                q_seen[qkey].add(str(parsed["source_id"]))
+                if cls.target_key:
+                    q_targets[qkey].add(cls.target_key)
         if skipped_old:
             # ★ 조용히 건너뛰지 않는다.  몇 건을 왜 건너뛰었는지 남긴다
             say("S4", f"옛 봉투 {skipped_old}건 건너뜀 — 더 새 관측이 있다",
@@ -602,6 +626,37 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         #   ★ 실측 08-20 — 안 빼면 not_requested 26,865건으로 S4 가 매번
         #     중단하고, 그 뒤 S5·S6·S9·S10 이 통째로 안 돈다.
         #     목록을 저장할 때마다 실패한 작업만 쌓였다
+        # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ **팔린 차를 거른다.**
+        #   ★ `mark_gone` 을 ★ `tools/collect_kcar.py` 하나만 불러
+        #     ★ 일곱 사이트가 ★ 안 걸렀다.  ★ 엔카가 88% 다 —
+        #     ★ ★ 마스터께서 ★ 두 달째 팔린 차를 보셨다.
+        #   ★★ ★ **끝까지 받은 질의만** 쓴다 — ★ 「몇 건이라 했나(Count)」에
+        #     ★ ★ 「몇 건을 봤나」가 닿아야 한다.
+        #   ★★ ★ 안 끝난 질의가 ★ 건드린 차종은 ★ **통째로 뺀다** —
+        #     ★ ★ 한 차종을 ★ 두 질의가 나눠 받았는데 ★ 하나만 끝났으면
+        #       ★ ★ 반만 본 것이다.  ★ 반만 보고 매기면 ★ **산 차를 죽인다**
+        swept = 0
+        seen_by_target: dict = {}
+        blocked_targets: set = set()
+        for qkey, seen in q_seen.items():
+            declared = q_declared.get(qkey, 0)
+            done = declared > 0 and len(seen) >= declared
+            for tk in q_targets.get(qkey, ()):
+                if done:
+                    seen_by_target.setdefault(tk, set()).update(seen)
+                else:
+                    blocked_targets.add(tk)
+        for tk in sorted(set(seen_by_target) - blocked_targets):
+            swept += sweep_gone(conn, adapter.site_code, tk,
+                                seen_by_target[tk], at)
+        if blocked_targets:
+            # ★ 조용히 건너뛰지 않는다.  무엇을 왜 안 매겼는지 남긴다
+            say("S4", f"끝까지 못 받은 차종 {len(blocked_targets)}종은 "
+                      "gone 을 안 매겼다", rows, rows)
+        if swept:
+            say("S4", f"목록에 없어 gone 으로 매긴 것 {swept}건 "
+                      f"({len(seen_by_target) - len(blocked_targets)}종)",
+                rows, rows)
         rep = step_report("S4", None, rows - skipped_old, {"ok": ok}, 0,
                           time.time() - t0)
         return rep, ok
@@ -922,6 +977,22 @@ def classify_in_group(targets: dict, groups, cg: str, *args):
         return classify(targets, cg, *args)
     said = next(iter(cands.values())).get("collect_group") or cg
     return classify(cands, said, *args)
+
+
+# ★★★ 08-29 (개정 838) — ★ 쪽넘김을 지운 ★ 「질의」.
+#   ★ 엔카 목록 주소는 ★ `sr=%7CMobileModifiedDate%7C{offset}%7C{rows}` 로 쪽을 나눈다.
+#     ★ 그 자리만 지우면 ★ 같은 질의의 쪽들이 ★ 한 묶음이 된다.
+#   ★★ 숫자를 통째로 지우지 않는다 — ★ 그러면 ★ 연식 범위·차종 코드까지 뭉개져
+#     ★ ★ **다른 차종의 질의가 한 묶음이 된다**.  ★ 그것이 산 차를 죽인다.
+#   ★ ★ 쪽넘김 칸(`sr`)만 지운다.  ★ 정렬 기준은 결과 집합을 안 바꾼다
+#   ★ 못 묶으면 ★ 그 질의는 ★ 「안 끝났다」가 되어 ★ **안 매긴다** —
+#     ★ 틀리는 쪽이 아니라 ★ 안 하는 쪽으로 기운다
+def _query_key(url) -> str:
+    import re as _re
+
+    if not url:
+        return ""
+    return _re.sub(r"(?i)([?&]sr=)[^&]*", r"\1*", str(url))
 
 
 def _group_of(parsed, groups, conn=None) -> str:

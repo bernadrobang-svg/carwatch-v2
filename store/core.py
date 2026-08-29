@@ -449,6 +449,38 @@ def mark_gone(conn: sqlite3.Connection, listing_id: str, at: str) -> None:
     commit(conn)
 
 
+def sweep_gone(conn: sqlite3.Connection, site: str, target_key: str,
+               seen_source_ids: set, at: str) -> int:
+    """★★★★★ 차종 하나를 ★ **끝까지 받았을 때** ★ 이번 목록에 없는 것을 gone.
+
+    지시서   11장 STEP 「언제 gone 으로 매기나」 (개정 838 · 마스터 08-29)
+    사고     ★ `mark_gone` 을 ★ `tools/collect_kcar.py` ★ 하나만 불렀다.
+             ★ 엔카·KB·볼보·현대·헤이딜러·리본카·보배 ★ 일곱이 안 불러
+             ★ ★ 마스터께서 ★ **두 달째 팔린 차를 보셨다** (오판 161).
+             ★ 실측 08-29 — ★ gone 을 매긴 사이트가 ★ `kcar` 하나였다
+    ★★      ★ **그 차종만 건드린다.**  ★ 안 받은 차종은 그대로 둔다 —
+             ★ 마스터께서 ★ 차종별로 나눠 받아 주시기 때문이다.
+    ★★      ★ 부르는 쪽이 ★ **끝까지 받았을 때만** 부른다.
+             ★ 반만 받고 부르면 ★ **산 차를 죽인다** — ★ 그 판단은 부르는 쪽에 있다
+    금지     ★ 지우는 것 (마스터 확정 08-24).  ★ `gone_at` 과 그때 값을 남긴다
+    반환     ★ 이번에 gone 으로 매긴 건수
+    """
+    if not target_key or not seen_source_ids:
+        # ★ 빈 목록으로는 ★ 아무것도 안 매긴다 — ★ 전멸시키지 않는다
+        return 0
+    rows = conn.execute(
+        "SELECT listing_id, source_id FROM core_listing"
+        " WHERE site = ? AND target_key = ? AND status = 'active'",
+        (site, target_key)).fetchall()
+    n = 0
+    for lid, sid in rows:
+        if str(sid) in seen_source_ids:
+            continue
+        mark_gone(conn, lid, at)
+        n += 1
+    return n
+
+
 def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
     """core_* 조인 → DTO.  Row 를 상위 계층으로 넘기지 않는다 (0장 STEP 1).
 
