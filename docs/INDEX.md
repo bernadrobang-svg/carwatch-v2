@@ -9,18 +9,18 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**116파일 · 43,697줄 · 2,840KB**
+**117파일 · 44,045줄 · 2,875KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- MULTISITE_MAPPING.md 1,030줄
-- UI_REVIEW.md 1,730줄
-- guide/01_요구사항.md 999줄
-- guide/03_이력.md 960줄
+- MULTISITE_MAPPING.md 1,097줄
+- UI_REVIEW.md 1,843줄
+- guide/01_요구사항.md 1,000줄
+- guide/03_이력.md 974줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
-- chapters/61-web.md 2,267줄
+- chapters/61-web.md 2,266줄
 - chapters/30-score/f-table.md 1,703줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
@@ -30,7 +30,7 @@
 | `ARCHITECTURE_20260829.md` | 358 | 20 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
-| `CHECKS.md` | 609 | 96 |
+| `CHECKS.md` | 608 | 96 |
 | `CROSS_SITE_COMPARE.md` | 470 | 27 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -42,14 +42,14 @@
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 275 | 14 |
 | `MAPPING.md` | 104 | 3 |
-| `MULTISITE_MAPPING.md`  ★ | 1,030 | 57 |
+| `MULTISITE_MAPPING.md`  ★ | 1,097 | 60 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 411 | 21 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
 | `SOURCE.md` | 668 | 49 |
-| `TARGET_KEY_MAP.md` | 119 | 5 |
-| `UI_REVIEW.md`  ★ | 1,730 | 84 |
+| `TARGET_KEY_MAP.md` | 152 | 7 |
+| `UI_REVIEW.md`  ★ | 1,843 | 90 |
 | `VOLVO_SELEKT_API.md` | 515 | 21 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -62,7 +62,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md` | 748 | 33 |
+| `chapters/11-store/a-key.md` | 779 | 36 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 600 | 24 |
@@ -90,7 +90,7 @@
 | `chapters/60-admin/a-auth.md` | 405 | 15 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,121 | 45 |
-| `chapters/61-web.md`  ★ | 2,267 | 85 |
+| `chapters/61-web.md`  ★ | 2,266 | 85 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
 | `chapters/61-web/c-recommend.md` | 50 | 1 |
@@ -104,20 +104,21 @@
 | `guide/00_개요.md` | 149 | 6 |
 | `guide/00_버전.md` | 177 | 11 |
 | `guide/01_시작.md` | 291 | 10 |
-| `guide/01_요구사항.md`  ★ | 999 | 45 |
+| `guide/01_요구사항.md`  ★ | 1,000 | 46 |
 | `guide/02_결함대장.md` | 281 | 6 |
-| `guide/02_미확정.md` | 248 | 14 |
+| `guide/02_미확정.md` | 248 | 15 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 960 | 713 |
+| `guide/03_이력.md`  ★ | 974 | 722 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 598 | 203 |
-| `guide/07_밀린일대장.md` | 458 | 34 |
+| `guide/06_오판대장.md` | 603 | 209 |
+| `guide/07_밀린일대장.md` | 469 | 35 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
 | `guide/09_인계_20260829.md` | 186 | 7 |
+| `guide/10_최종정리_20260829.md` | 75 | 3 |
 | `ref/00-intro.md` | 33 | 0 |
 | `ref/A-check.md` | 76 | 3 |
 | `ref/B-config.md` | 413 | 12 |

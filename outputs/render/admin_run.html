@@ -54,12 +54,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>done</strong> · 사유 raw_missing · 범위 all
-    <span class="muted">· run 20260829T132546</span></p>
+  <p><strong>running</strong> · 사유 raw_missing · 범위 all
+    </p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-08-29T13:25:45.616262+00:00</span></p>
-  <p class="muted">S5 ok 0 · S6 ok 142332 · S9 ok 262418 · S10 ok 10093</p>
+    <span class="muted">· 넣은 시각 2026-08-29T14:36:31.107651+00:00</span></p>
+  
   
   
 
@@ -75,7 +75,7 @@
   
   <tr><td data-label="엔드포인트">catalog</td><td class="num" data-label="원문">127</td></tr>
   
-  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">23,642</td></tr>
+  <tr><td data-label="엔드포인트">detail</td><td class="num" data-label="원문">23,645</td></tr>
   
   <tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="원문">3,076</td></tr>
   
@@ -89,7 +89,7 @@
   
   <tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="원문">11,597</td></tr>
   
-  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">5,900</td></tr>
+  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">5,958</td></tr>
   
   <tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="원문">22,168</td></tr>
   
@@ -99,11 +99,11 @@
   
   <tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="원문">21,342</td></tr>
   
-  <tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="원문">5</td></tr>
+  <tr><td data-label="엔드포인트">stock_list</td><td class="num" data-label="원문">7</td></tr>
   
   </tbody>
   </table>
-  <p class="muted">매물 20,407건 · 판정 10,201건</p>
+  <p class="muted">매물 20,410건 · 판정 10,201건</p>
 
   
   <p class="muted">이 화면은 <strong>스스로 갱신되지 않습니다</strong> —
@@ -111,7 +111,7 @@
     도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
-
+<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -132,22 +132,22 @@
     <summary>차종 하나만 돌리기 <span class="muted">(개발측이 씁니다)</span></summary>
     
     <label class="opt"><input type="radio" name="scope" value="G80_25T">
-      G80_25T <span class="muted">(2,863건)</span></label>
+      G80_25T <span class="muted">(2,868건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="GLC_IMPORT">
-      GLC_IMPORT <span class="muted">(1,281건)</span></label>
+      GLC_IMPORT <span class="muted">(1,296건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="X3_IMPORT">
-      X3_IMPORT <span class="muted">(1,136건)</span></label>
+      X3_IMPORT <span class="muted">(1,142건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="MODEL_Y">
-      MODEL_Y <span class="muted">(746건)</span></label>
+      MODEL_Y <span class="muted">(750건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="XC60_IMPORT">
-      XC60_IMPORT <span class="muted">(566건)</span></label>
+      XC60_IMPORT <span class="muted">(569건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="Q5_IMPORT">
-      Q5_IMPORT <span class="muted">(462건)</span></label>
+      Q5_IMPORT <span class="muted">(466건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="XC40_IMPORT">
       XC40_IMPORT <span class="muted">(412건)</span></label>
@@ -159,7 +159,7 @@
       KOLEOS_HEV <span class="muted">(350건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="GRANDEUR_LPG">
-      GRANDEUR_LPG <span class="muted">(319건)</span></label>
+      GRANDEUR_LPG <span class="muted">(325건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="V60CC_IMPORT">
       V60CC_IMPORT <span class="muted">(290건)</span></label>
@@ -168,7 +168,7 @@
       SPORTAGE_LPI <span class="muted">(258건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="S60_IMPORT">
-      S60_IMPORT <span class="muted">(229건)</span></label>
+      S60_IMPORT <span class="muted">(230건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="NX_HEV">
       NX_HEV <span class="muted">(194건)</span></label>
@@ -183,7 +183,7 @@
       G70_25T <span class="muted">(116건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="RX_IMPORT">
-      RX_IMPORT <span class="muted">(114건)</span></label>
+      RX_IMPORT <span class="muted">(115건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="G80_EV">
       G80_EV <span class="muted">(105건)</span></label>
@@ -216,6 +216,18 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-29T14:36:31.107651+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">raw_missing</td>
+  <td data-label=""><form method="post" action="/admin/run" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="action" value="halt">
+    <input type="hidden" name="job_id" value="4125a4ff494943dc">
+    <input name="reason" size="12" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
+  </form></td></tr>
 
 <tr><td data-label="시각">2026-08-29T13:25:45.616262+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -312,11 +324,6 @@
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-08-27T12:00:26.567545+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
 </tbody>
 </table>
 
@@ -335,7 +342,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 22:59</span>
+  <span>2026-08-29 23:37</span>
 </footer>
 
 </body>

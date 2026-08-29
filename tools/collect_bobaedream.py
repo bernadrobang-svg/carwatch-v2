@@ -28,6 +28,7 @@ from adapters.bobaedream import (  # noqa: E402
     load_config,
 )
 from parse.bobaedream.mapping import list_items, parse_detail  # noqa: E402
+from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import target_map  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db  # noqa: E402
@@ -217,6 +218,8 @@ def main() -> int:
         deep.pop("_repair_cnt", None)
         deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, no, at)
         deep["detail_status"] = "ok"
+        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+        fill_target_key(SITE_CODE, deep)
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         kept["저장"] += 1
         # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)

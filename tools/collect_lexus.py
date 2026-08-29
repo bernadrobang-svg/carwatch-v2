@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of        # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import commit, open_db              # noqa: E402
@@ -139,6 +140,8 @@ def main() -> int:
                                  ensure_ascii=False), at)
     for r in keep:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
+        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+        fill_target_key(SITE_CODE, r)
         upsert_core(conn, r, at)
     commit(conn)
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).

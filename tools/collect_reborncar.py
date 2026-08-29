@@ -25,6 +25,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from parse.reborncar.mapping import parse_detail, title_name   # noqa: E402
+from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of                    # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db                                  # noqa: E402
@@ -167,6 +168,8 @@ def main() -> int:
             ours += 1
             deep["detail_status"] = "ok"
             deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
+            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+            fill_target_key(SITE_CODE, deep)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
         # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
         commit(conn)

@@ -201,6 +201,15 @@ def parse_list_item(item: dict, site: str) -> dict | None:
     cut = _int(item.get("dcPrc"))
     if cut is not None:
         out["price_detail_won"] = cut * WON_PER_MANWON
+    # ★★★★★ 08-30 (`11-store/a-key.md` 08-29 절 · 미확정 20) —
+    #   ★ K카가 ★ **`resvYn`** 을 준다 — ★ `Y` 118 / `N` 369 (487건 중 · 가이드 실측).
+    #   ★ ★ 지금까지 ★ **이 칸을 안 읽어** ★ 계약 중인 차 118대가
+    #   ★ ★ 「판매 중」으로 화면에 서 있었다.
+    #   ★★ 사이트가 준 값을 ★ **그대로** 적는다 — ★ 「reserved」로 옮기지 않는다.
+    #   ★ ★ 우리 말로 옮기는 것은 ★ `dict_enum(site,'sales_status',…)` 이 한다.
+    #   ★ ★ `status`(우리 판정)와 ★ 섞지 않는다
+    if item.get("resvYn") is not None:
+        out["sales_status"] = f"resvYn={item['resvYn']}"
     # ★ 위탁이면 직영이 아니다 — ★ 사이트 검증 단계가 다르다 (f-table)
     out["copy_car"] = None
     if item.get("csgmtYn") is not None:

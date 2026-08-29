@@ -24,6 +24,7 @@ sys.path.insert(0, ROOT)
 from adapters.heydealer import PAGE_SIZE, SITE_CODE, HeydealerAdapter  # noqa: E402
 from parse.heydealer.mapping import (parse_detail, parse_list_item,   # noqa: E402
                                      options_of)
+from parse.target_rules import fill_target_key  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db                                          # noqa: E402
 
@@ -142,6 +143,8 @@ def main() -> int:
     for one in got_all.values():
         one["listing_id"] = resolve_listing_id(conn, SITE_CODE,
                                                one["source_id"], at)
+        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+        fill_target_key(SITE_CODE, one)
         upsert_core(conn, split_pii(conn, one, SITE_CODE, pii_key, at), at)
     commit(conn)
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
@@ -186,6 +189,8 @@ def main() -> int:
                     ensure_ascii=False)
             deep["listing_id"] = one["listing_id"]
             deep["detail_status"] = "ok"
+            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+            fill_target_key(SITE_CODE, deep)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
             seen["정상"] += 1
         time.sleep(interval)

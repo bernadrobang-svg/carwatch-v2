@@ -783,14 +783,11 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         #   ★ 마스터 — 「두고 딱지만 · 흐리게 · 맨 뒤」.
         #   ★ ★ 얼마에 팔렸는지가 ★ 다음 판단에 쓰인다 (v281 답)
         sold=bool(dstatus == "gone"
-                  or str(_sales_status or "").upper()
-                  in ("CONTRACT", "RESERVED")),
+                  or str(_sales_status or "").upper() in _sold_words(root)),
         # ★ `gone` 은 ★ 옆의 상태 링크가 ★ 이미 「내려감」이라 적는다 —
         #   ★ 딱지까지 달면 ★ 같은 말이 두 번이다.  ★ 그때는 안 단다.
         #   ★ 흐리게·맨 뒤는 ★ 그대로 걸린다 (`sold` 는 참이다)
-        sold_label=("팔림" if str(_sales_status or "").upper() == "CONTRACT"
-                    else "예약중" if str(_sales_status or "").upper()
-                    == "RESERVED" else None),
+        sold_label=_sold_words(root).get(str(_sales_status or "").upper()),
         target_label=tk or "",
         # ★ 세부등급을 못 받았으면 그렇게 적는다.  빈 값으로 두지 않는다 (개정 285)
         trim=(trim if trim and " · " in trim
@@ -990,9 +987,37 @@ ORDER_TAIL = ("(s.earned * 1.0 / NULLIF(s.denominator, 0)) DESC,"
 # ★★★ 08-29 (마스터 3번) — ★ 팔린 것은 ★ **맨 뒤**다.
 #   ★ 빼지 않는다 — ★ 두되 ★ 뒤로 보낸다.  ★ `ORDER_HEAD`(순위 없음)보다
 #     ★ **앞에** 둔다 — ★ 그래야 ★ 무엇보다도 뒤로 간다
-ORDER_SOLD = ("(CASE WHEN l.status = 'gone'"
-              " OR UPPER(COALESCE(l.sales_status,'')) IN ('CONTRACT','RESERVED')"
-              " THEN 1 ELSE 0 END)")
+def _sold_words(root: str = ".") -> dict:
+    """★★★★ 「사이트가 준 낱말」 → 「우리 말」.  ★ 정본은 `config/labels.json` 이다 (S14).
+
+    ★★★ 08-30 — ★ 전에는 ★ `('CONTRACT','RESERVED')` 를 ★ **코드에 박고** 있었다.
+      ★ ★ 그래서 ★ K카가 주는 ★ `resvYn=Y` **118건**(우리 대상 22건)이
+      ★ ★ 화면에 ★ **「판매 중」으로 서 있었다** (마스터 지시 08-30 · 3번).
+    ★ 낱말의 근거는 ★ `docs/chapters/11-store/a-key.md` 08-29 절이다 —
+      ★ ★ 개발측이 지어 넣지 않는다 (규칙 2)
+    """
+    try:
+        with open(os.path.join(root, "config", "labels.json"),
+                  encoding="utf-8") as fp:
+            got = json.load(fp).get("SALES_STATUS_SOLD") or {}
+    except (OSError, ValueError):
+        got = {}
+    return {str(k).upper(): v for k, v in got.items()}
+
+
+def _order_sold(root: str = ".") -> str:
+    """팔린 것을 ★ 맨 뒤로 미는 정렬 조각.  ★ 낱말은 설정에서 온다."""
+    words = sorted(_sold_words(root))
+    if not words:
+        return "(CASE WHEN l.status = 'gone' THEN 1 ELSE 0 END)"
+    # ★ 낱말에 따옴표가 들어갈 일이 없지만 ★ 그래도 막는다
+    lst = ",".join("'" + w.replace("'", "''") + "'" for w in words)
+    return ("(CASE WHEN l.status = 'gone'"
+            f" OR UPPER(COALESCE(l.sales_status,'')) IN ({lst})"
+            " THEN 1 ELSE 0 END)")
+
+
+ORDER_SOLD = _order_sold()
 
 
 def order_clause(order: str) -> str:

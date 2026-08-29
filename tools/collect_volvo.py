@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from parse.target_rules import fill_target_key  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import commit, open_db                       # noqa: E402
 
@@ -176,6 +177,8 @@ def main() -> int:
                "site_model": slug,
                "detail_status": "not_requested"}
         row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
+        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+        fill_target_key(SITE_CODE, row)
         upsert_core(conn, row, at)
     commit(conn)
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
@@ -236,6 +239,8 @@ def main() -> int:
                 pics = [base + one if one.startswith("/") else one for one in pics]
                 row["photo_main"] = pics[0]
                 row["photo_list_json"] = json.dumps(pics, ensure_ascii=False)
+            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+            fill_target_key(SITE_CODE, row)
             upsert_core(conn, row, at)
             got["정상"] += 1
         # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)

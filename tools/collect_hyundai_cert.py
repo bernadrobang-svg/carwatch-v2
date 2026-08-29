@@ -237,9 +237,19 @@ def main() -> int:
                     one["fuel_raw"] = g["fuel"]
             pages += pg
             ids.extend(got)
-            mark = "" if said_n == g.get("expect") else "  ★ 규격과 다르다"
+            # ★★★★ 08-30 — ★ `expect` 가 **없을 때**도 「규격과 다르다」를 냈다.
+            #   ★ 묶음은 ★ `targets.json` 의 `site_query` 에서 온다 (`load_filters`) —
+            #   ★ ★ 거기에는 `expect` 가 없다.  ★ 옛 자리(`config/sites.json`)에만 있었다.
+            #   ★ ★ 그래서 ★ **견줄 근거가 없는데 「다르다」**를 여섯 줄 다 냈다.
+            #   ★ 없으면 ★ 다르다고 말하지 않는다 — ★ 「모른다」와 「틀리다」를 가른다
+            exp = g.get("expect")
+            if exp is None:
+                mark, tail = "", ""
+            else:
+                mark = "" if said_n == exp else "  ★ 규격과 다르다"
+                tail = f" (규격 {exp})"
             print(f"  {g['for']:22} {q:32} 사이트 {said_n:>4} · 받은 {len(got):>4}"
-                  f" (규격 {g.get('expect')}){mark}")
+                  f"{tail}{mark}")
             time.sleep(INTERVAL)
         print(f"목록 {pages}쪽 · 매물 {len(ids):,}건  ← ★ 전량 {said} 을 받지 않았다")
 

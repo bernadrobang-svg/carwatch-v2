@@ -67,3 +67,27 @@ def target_by_rules(site: str, name: str | None, fuel_raw: str | None,
         grp = targets[only]["collect_group"]
     return classify(targets, grp, fuel_normalize(site, fuel_raw),
                     title, None, displacement_cc)
+
+
+def fill_target_key(site: str, row: dict) -> str | None:
+    """★★★★ 넣기 직전에 ★ **차종을 붙인다** (마스터 지시 08-30).
+
+    ★★★ 실측 08-30 — ★ 열 수집기 중 ★ `target_key` 를 붙이는 것은
+      ★ ★ `hyundai_cert` · `kia_cpo` ★ **둘뿐**이었다.  ★ 나머지 여덟은
+      ★ ★ `site_model_group` 만 넣고 갔다 — ★ 그러면 ★ 판정에 안 들어간다.
+    ★ ★ 규칙으로 실제로 붙는 것을 세어 보니 ★ **92건**이었다
+      (보배 45 · KB 20 · 리본카 20 · 볼보 3 · 헤이딜러 3 · K카 1).
+    ★ 새 규칙을 만들지 않는다 — ★ 두 수집기가 이미 쓰던 `target_by_rules` 를
+      ★ ★ **같이 쓴다**.  ★ 정본은 `config/dictionaries/target_map.json` 이다 (개정 540)
+    ★ 이미 붙어 있으면 ★ 건드리지 않는다.  ★ 못 붙이면 ★ None 이다 — ★ 버리지 않는다
+    돌려줌  붙인 `target_key` · 또는 None
+    """
+    if row.get("target_key"):
+        return row["target_key"]
+    got = target_by_rules(site, row.get("site_model_group"),
+                          row.get("fuel_raw"), row.get("site_model"),
+                          row.get("displacement_cc"))
+    if got is not None and got.target_key:
+        row["target_key"] = got.target_key
+        return got.target_key
+    return None

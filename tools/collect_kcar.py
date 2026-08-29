@@ -32,6 +32,7 @@ sys.path.insert(0, ROOT)
 from adapters.kcar import SITE_CODE, KcarAdapter, load_config  # noqa: E402
 from parse.kcar.mapping import (parse_detail, parse_list_item,  # noqa: E402
                                 record_of)
+from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import collect_group_of, match_target_name  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
@@ -165,6 +166,8 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     for one in keep:
         one["listing_id"] = resolve_listing_id(conn, SITE_CODE,
                                                one["source_id"], at)
+        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+        fill_target_key(SITE_CODE, one)
         upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
     commit(conn)
     print(f"★ 목록 저장 {len(parsed)}건 · site='{SITE_CODE}'")
@@ -227,6 +230,8 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
         if deep:
             deep["listing_id"] = one["listing_id"]
             deep["detail_status"] = "ok"
+            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+            fill_target_key(SITE_CODE, deep)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
         commit(conn)
@@ -322,6 +327,8 @@ def main() -> int:
         lid = resolve_listing_id(conn, SITE_CODE, cd, at)
         deep["listing_id"] = lid
         deep["detail_status"] = "ok"
+        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
+        fill_target_key(SITE_CODE, deep)
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         # ★★★ 08-28 — ★ 이력은 ★ `core_record` 의 칸이다 (규격 3-2·3-3).
         #   ★ 전에는 ★ `core_listing` 만 썼다 — ★ 그래서 상세를 받아도
