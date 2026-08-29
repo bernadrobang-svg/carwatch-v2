@@ -1,5 +1,6 @@
 {
   "_ref": "지시서 2장 STEP 17a (q 문법 · 차종별 실측 조건) · STEP 23 (collect_group) · 4장 STEP 46",
+  "_확인_규약": "★ 낱말 규약 (개정 868) — ★ `_확인` 은 ★ **아직 안 봤다**는 뜻이다.  ★ `S46-24` 가 그것을 센다.  ★ 확인한 것은 ★ `_실측` 으로 적는다 — ★ 기록은 지우지 않는다.  ★ 08-29 실측 — 61건 중 ★ 50건이 「확인했다」는 기록인데 `_확인` 으로 적혀 있어 ★ 검사가 늘 61종을 세었다",
   "_note": "본문 예시(0장 STEP 6)가 정본이다. year_range · price_range 는 target 최상위다. build_q 는 site_query 와 이 둘을 합쳐 조립한다",
   "G80_25T": {
     "label": "G80 2.5T",
@@ -33,13 +34,13 @@
         "maker_no": "1010",
         "model_no": "893",
         "_차명": "제네시스 G80",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "189",
         "classCode": "2684",
         "_차명": "제네시스 G80",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": "3077",
         "_세대": "[마스터 확정 08-26 ⓐ] RG3 · ★ 실측 08-26 carName.json — 3077 「G80(RG3)」(2020~현재) · ★ 2850·2849 옛 세대는 안 넣는다"
       }
@@ -84,13 +85,13 @@
         "maker_no": "1010",
         "model_no": "893",
         "_차명": "제네시스 G80",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "189",
         "classCode": "2684",
         "_차명": "제네시스 G80",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": "3235",
         "_세대": "[마스터 확정 08-26 ⓐ] RG3 · ★ 실측 08-26 carName.json — 3235 「ELECTRIFIED G80」(2022~현재) = RG3 의 전기판 · ★★ 표에 「RG3」이라 적혀 있는 것은 3077 뿐이다 — ★ 3235 를 고른 것은 ★ 개발측 판단이다.  ★ 3077 만 넣으면 ★ 전기 G80 을 한 건도 못 받는다.  ★ 확인 바란다"
       }
@@ -131,13 +132,13 @@
         "maker_no": "1010",
         "model_no": "935",
         "_차명": "제네시스 G70",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "189",
         "classCode": "2698",
         "_차명": "제네시스 G70",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": [
           "3138",
           "3279",
@@ -187,13 +188,13 @@
         "maker_no": "1010",
         "model_no": "935",
         "_차명": "제네시스 G70",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "189",
         "classCode": "2698",
         "_차명": "제네시스 G70",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": [
           "3138",
           "3279",
@@ -242,13 +243,13 @@
         "maker_no": "1010",
         "model_no": "1070",
         "_차명": "제네시스 GV70",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "189",
         "classCode": "2771",
         "_차명": "제네시스 GV70",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": [
           "3253"
         ],
@@ -290,13 +291,13 @@
         "maker_no": "1010",
         "model_no": "1108",
         "_차명": "제네시스 GV60",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "189",
         "classCode": "2805",
         "_차명": "제네시스 GV60",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "202200..",
@@ -330,13 +331,13 @@
         "maker_no": "26",
         "model_no": "1299",
         "_차명": "르노코리아(삼성) 그랑 콜레오스",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "105",
         "classCode": "2862",
         "_차명": "르노코리아 그랑 콜레오스",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": [
           "3417"
         ],
@@ -383,13 +384,13 @@
         "maker_no": "3",
         "model_no": "67",
         "_차명": "기아 스포티지",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "102",
         "classCode": "1151",
         "_차명": "기아 스포티지",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": [
           "3194",
           "3436"
@@ -439,13 +440,13 @@
         "maker_no": "49",
         "model_no": "5",
         "_차명": "현대 그랜저",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "101",
         "classCode": "1101",
         "_차명": "현대 그랜저",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": "3301",
         "_세대": "[마스터 확정 08-26 ⓐ] GN7 = 디 올 뉴 그랜저 (2022~현재) · ★ 3302 하이브리드는 안 넣는다 — 우리는 LPG 다 · ★ 3048·3049·2852·1411 등 옛 세대도 안 넣는다 (year_range 202300..)"
       }
@@ -473,13 +474,13 @@
         "maker_no": "1006",
         "model_no": "1073",
         "_차명": "테슬라 모델 Y",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "kbchachacha": {
         "makerCode": "190",
         "classCode": "2774",
         "_차명": "테슬라 Model Y",
-        "_확인": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
         "carCode": [
           "3161"
         ],
@@ -544,12 +545,12 @@
         "maker_no": "1",
         "model_no": "1013",
         "_차명": "BMW X3",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "bmw_bps": {
         "ca_id": "1090",
         "_차명": "BMW X 시리즈",
-        "_확인": "[실측 08-23] ★ 규격 BMW_BPS_API 50행 · ★ X 시리즈 전체다.  ★ X3 만 우리 쪽에서 거른다"
+        "_실측": "[실측 08-23] ★ 규격 BMW_BPS_API 50행 · ★ X 시리즈 전체다.  ★ X3 만 우리 쪽에서 거른다"
       }
     },
     "year_range": "201900..",
@@ -579,7 +580,7 @@
         "CarType": "N",
         "Manufacturer": "벤츠",
         "ModelGroup": "GLC-클래스",
-        "_확인": "[마스터 실측 08-28] ★ 마스터께서 엔카 주소를 주셨다 — ★ Manufacturer 는 「벤츠」가 맞고 ★ ModelGroup 이 「GLC」가 아니라 ★ 「GLC-클래스」다"
+        "_실측": "[마스터 실측 08-28] ★ 마스터께서 엔카 주소를 주셨다 — ★ Manufacturer 는 「벤츠」가 맞고 ★ ModelGroup 이 「GLC」가 아니라 ★ 「GLC-클래스」다"
       },
       "kbchachacha": {
         "makerCode": "108",
@@ -594,7 +595,7 @@
         "maker_no": "21",
         "model_no": "876",
         "_차명": "벤츠 GLC클래스",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "heydealer": [
         {
@@ -653,7 +654,7 @@
         "maker_no": "32",
         "model_no": "181",
         "_차명": "아우디 Q5",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "heydealer": [
         {
@@ -706,12 +707,12 @@
         "maker_no": "13",
         "model_no": "819",
         "_차명": "렉서스 NX",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "lexus_certified": {
         "_전수": "true",
         "_차명": "렉서스 NX",
-        "_확인": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다.  ★ 전량 받아 우리 쪽에서 거른다"
+        "_실측": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다.  ★ 전량 받아 우리 쪽에서 거른다"
       },
       "heydealer": [
         {
@@ -767,12 +768,12 @@
         "maker_no": "13",
         "model_no": "205",
         "_차명": "렉서스 RX",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       },
       "lexus_certified": {
         "_전수": "true",
         "_차명": "렉서스 RX",
-        "_확인": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다.  ★ 전량 받아 우리 쪽에서 거른다"
+        "_실측": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다.  ★ 전량 받아 우리 쪽에서 거른다"
       }
     },
     "year_range": "201900..",
@@ -816,7 +817,7 @@
         "slug": [
           "xc60"
         ],
-        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+        "_실측": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
       },
       "kbchachacha": {
         "makerCode": "117",
@@ -830,7 +831,7 @@
         "maker_no": "23",
         "model_no": "1093",
         "_차명": "볼보 XC60",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "201900..",
@@ -874,7 +875,7 @@
         "slug": [
           "s60"
         ],
-        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+        "_실측": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
       },
       "kbchachacha": {
         "makerCode": "117",
@@ -888,7 +889,7 @@
         "maker_no": "23",
         "model_no": "1097",
         "_차명": "볼보 S60",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "201900..",
@@ -924,7 +925,7 @@
         "slug": [
           "ex60"
         ],
-        "_확인": "[실측 08-24] ★ 볼보 셀렉트 221건에 ★ EX60 이 아직 없다 (EX30 만).  ★ 나오면 잡힌다"
+        "_실측": "[실측 08-24] ★ 볼보 셀렉트 221건에 ★ EX60 이 아직 없다 (EX30 만).  ★ 나오면 잡힌다"
       }
     },
     "year_range": "201900..",
@@ -978,13 +979,13 @@
         "slug": [
           "xc40"
         ],
-        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+        "_실측": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
       },
       "bobaedream": {
         "maker_no": "23",
         "model_no": "1092",
         "_차명": "볼보 XC40",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "201900..",
@@ -1034,13 +1035,13 @@
           "v60-cross-country",
           "v60cc"
         ],
-        "_확인": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
+        "_실측": "[실측 08-24] ★ 전량 221건을 훑어 확인했다"
       },
       "bobaedream": {
         "maker_no": "23",
         "model_no": "1102",
         "_차명": "볼보 V60",
-        "_확인": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
       }
     },
     "year_range": "201900..",
@@ -1076,12 +1077,12 @@
         ],
         "_차명": "렉서스 ES",
         "_세대": "[가이드 08-27] ★ 2951 뉴 제너레이션 ES 만 — ★ 2018~ 세대다.  ★ 2058(뉴 ES)·1854(ES)는 그 앞이라 뺐다.  ★★ 개발측이 세 세대의 연식·건수를 재서 확인해 달라",
-        "_확인": "[실측 08-27] ★ carClass.json · carName.json 으로 확인했다"
+        "_실측": "[실측 08-27] ★ carClass.json · carName.json 으로 확인했다"
       },
       "lexus_certified": {
         "_전수": "true",
         "_차명": "렉서스 ES",
-        "_확인": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다"
+        "_실측": "[실측 08-23] ★ 전수 36건이라 좁힐 것이 없다"
       }
     },
     "year_range": "201900..",
@@ -1102,14 +1103,14 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "C40",
-        "_확인됨": "[실측 08-28] ★ 엔카 facet 봉투에서 ★ `Manufacturer.볼보` 밑에 ★ `ModelGroup.C40` 이 ★ 실제로 있는 것을 ★ 눈으로 봤다 (`raw_response` site='encar' endpoint in (facet,list)).  ★ 볼보는 맨 이름을 쓴다 — ★ XC60·XC40·V60·S60 과 같은 꼴이다.  ★ 지어내지 않았다",
-        "_확인": "[실측 08-28] ★ 마스터께서 주신 매물 42395759·41758618 로 ★ ModelGroup=C40 이 맞음을 확인했다.  ★ 0건인 까닭은 ★ 마스터께서 C40 목록을 아직 안 받아 주셔서다"
+        "_실측됨": "[실측 08-28] ★ 엔카 facet 봉투에서 ★ `Manufacturer.볼보` 밑에 ★ `ModelGroup.C40` 이 ★ 실제로 있는 것을 ★ 눈으로 봤다 (`raw_response` site='encar' endpoint in (facet,list)).  ★ 볼보는 맨 이름을 쓴다 — ★ XC60·XC40·V60·S60 과 같은 꼴이다.  ★ 지어내지 않았다",
+        "_실측": "[실측 08-28] ★ 마스터께서 주신 매물 42395759·41758618 로 ★ ModelGroup=C40 이 맞음을 확인했다.  ★ 0건인 까닭은 ★ 마스터께서 C40 목록을 아직 안 받아 주셔서다"
       },
       "kbchachacha": {
         "makerCode": "117",
         "classCode": "2808",
         "_차명": "볼보 C40",
-        "_확인": "[실측 08-28] ★ carClass.json 으로 확인했다"
+        "_실측": "[실측 08-28] ★ carClass.json 으로 확인했다"
       },
       "volvo_selekt": {
         "_전수": "true",
@@ -1132,10 +1133,13 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "EX30",
-        "_확인": "[실측 08-28] ★ 마스터께서 주신 매물로 확인했다"
+        "_실측": "[실측 08-28] ★ 마스터께서 주신 매물로 확인했다"
       },
       "volvo_selekt": {
-        "slug": ["ex30", "ex30-cross-country"],
+        "slug": [
+          "ex30",
+          "ex30-cross-country"
+        ],
         "_전수": "true",
         "_차명": "볼보 EX30",
         "_why": "[마스터 확정 08-29] ★ 「넣어」 — 명령서 A안(둘 다).  ★ [실측 08-29] 셀렉트 223건에 ex30 3 · ex30-cross-country 2 · 수집기 --dry 로 149건 확인.  ★ `_확인` 을 안 쓴다 — S46-24 가 그 낱말을 「아직 안 봤다」로 센다"
@@ -1156,18 +1160,18 @@
         "CarType": "N",
         "Manufacturer": "폴스타",
         "ModelGroup": "폴스타 2",
-        "_확인": "[마스터 실측 08-28] ★ 주신 주소로 확인했다 — `C.Manufacturer.폴스타._.(C.ModelGroup.폴스타 2._.Model.폴스타 2.)`.  ★ 제조사·차종군이 다 한글이고 ★ 사이 띄움이 있다"
+        "_실측": "[마스터 실측 08-28] ★ 주신 주소로 확인했다 — `C.Manufacturer.폴스타._.(C.ModelGroup.폴스타 2._.Model.폴스타 2.)`.  ★ 제조사·차종군이 다 한글이고 ★ 사이 띄움이 있다"
       },
       "kbchachacha": {
         "makerCode": "158",
         "classCode": "2796",
         "_차명": "폴스타 2 (전기)",
-        "_확인": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
+        "_실측": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
       },
       "kcar": {
         "wr_in_multi_mnuftr_modelGrp_model_grd": "091,001,001,001",
         "carType_modelGrp_model_grd": "IMP",
-        "_확인": "[실측 08-28] ★ 마스터께서 주신 K카 주소에 들어 있었다 (KCAR_API 3장)"
+        "_실측": "[실측 08-28] ★ 마스터께서 주신 K카 주소에 들어 있었다 (KCAR_API 3장)"
       }
     },
     "year_range": "201900..",
@@ -1185,13 +1189,13 @@
         "CarType": "N",
         "Manufacturer": "폴스타",
         "ModelGroup": "폴스타 4",
-        "_확인": "[마스터 실측 08-28] ★ 주신 주소로 확인했다 — `C.Manufacturer.폴스타._.(C.ModelGroup.폴스타 4._.Model.폴스타 4.)`.  ★ 제조사·차종군이 다 한글이고 ★ 사이 띄움이 있다"
+        "_실측": "[마스터 실측 08-28] ★ 주신 주소로 확인했다 — `C.Manufacturer.폴스타._.(C.ModelGroup.폴스타 4._.Model.폴스타 4.)`.  ★ 제조사·차종군이 다 한글이고 ★ 사이 띄움이 있다"
       },
       "kbchachacha": {
         "makerCode": "158",
         "classCode": "2855",
         "_차명": "폴스타 4 (전기)",
-        "_확인": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
+        "_실측": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
       }
     },
     "year_range": "201900..",
@@ -1209,7 +1213,7 @@
         "CarType": "N",
         "Manufacturer": "폴스타",
         "ModelGroup": "폴스타 3",
-        "_확인": "[마스터 실측 08-28] ★ 주소에 있었다"
+        "_실측": "[마스터 실측 08-28] ★ 주소에 있었다"
       },
       "kbchachacha": {
         "makerCode": "158",
