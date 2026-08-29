@@ -19,7 +19,7 @@
 | `S3` | 함수 정의 | fatal | `tools/check_src.py:214` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:11 · HEYDEALER_API.md:203 · MULTISITE_MAPPING.md:334 |
 | `S4` | 테이블 DDL (STEP 28) | fatal | `tools/check_src.py:236` | **★ 없음** | 없음 | trace/13-pipeline.md:57 · trace/60-admin.md:91 · trace/60-admin.md:92 |
 | `S5` | config 키 (V4-15) | fatal | `tools/check_src.py:313` | **★ 없음** | 없음 | trace/02-collect.md:22 · trace/02-collect.md:64 · trace/60-admin.md:35 |
-| `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:348` | **★ 없음** | 없음 | ref/E-attach.md:66 · guide/03_이력.md:289 · chapters/13-pipeline.md:113 |
+| `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:348` | **★ 없음** | 없음 | ref/E-attach.md:66 · guide/03_이력.md:289 · guide/03_이력.md:855 |
 | `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:403` | **★ 없음** | 없음 | ref/E-attach.md:67 · guide/03_이력.md:734 · chapters/13-pipeline.md:114 |
 | `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:410` | **★ 없음** | 없음 | ref/E-attach.md:68 · guide/03_이력.md:92 · guide/03_이력.md:734 |
 | `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:426` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:240 · CROSS_SITE_COMPARE.md:243 · CROSS_SITE_COMPARE.md:246 |
@@ -88,7 +88,7 @@
 | `S46-76` | 수집기가 원문을 남기는가 | fatal | `validate/v0_guide.py:1246` | **★ 없음** | 없음 | guide/01_요구사항.md:116 · guide/03_이력.md:770 · guide/03_이력.md:771 |
 | `S46-77` | KB 는 우리 20종만 받는가 | fatal | `validate/v0_guide.py:1274` | **★ 없음** | 없음 | — |
 | `S46-78` | 엔카 전용 경로가 좁혀 있는가 | fatal | `validate/v0_guide.py:1329` | **★ 없음** | 없음 | guide/03_이력.md:771 |
-| `S46-87` | 부른 주소가 그 매물의 사이트인가 | fatal | `validate/v0_guide.py:1371` | **★ 없음** | 없음 | guide/03_이력.md:772 · guide/03_이력.md:773 · guide/06_오판대장.md:215 |
+| `S46-87` | 부른 주소가 그 매물의 사이트인가 | fatal | `validate/v0_guide.py:1371` | **★ 없음** | 없음 | guide/03_이력.md:772 · guide/03_이력.md:773 · guide/03_이력.md:855 |
 | `S46-88` | 엔카가 막히면 화면이 까닭을 말하는가 | fatal | `validate/v0_guide.py:1440` | **★ 없음** | 없음 | guide/03_이력.md:773 |
 | `S46-90` | 근거가 절반도 없는데 등급을 매기지 않는가 | fatal | `validate/v0_guide.py:1648` | **★ 없음** | 없음 | UI_REVIEW.md:1082 · guide/03_이력.md:780 |
 | `S46-91` | 받은 원문이 저장까지 갔는가 | fatal | `validate/v0_guide.py:1755` | **★ 없음** | 없음 | guide/03_이력.md:781 · guide/06_오판대장.md:218 |
