@@ -414,7 +414,7 @@ EC61398174 · EC61385373 · EC61391672
 ## ★ 알아낸 것 (실측)
 
 ```
-★ 매물번호는 ★ **`carCd`** 다 — ★ 목록이 준다 (보기 `EC61388152`)
+매물번호 칸은 `carCd` 다.
 ```
 
 ## ★ 두드려 본 것 — ★ **열이 다 404**
@@ -492,7 +492,7 @@ GET https://m.kcar.com/bc/search/CarList?searchCond={JSON}
 ```
 
 ```
-필수  ★ ★ **매물번호는 ★ `carCd`** — ★ 목록이 준다
+매물번호 칸은 `carCd` 다.
 필수  ★ ★ **`Referer: https://m.kcar.com/bc/search/CarList`** 를 붙인다
 필수  ★ ★ 2.2MB 다 — ★ **필요한 자리만 뽑고 ★ 원문은 `raw_response` 에 남긴다**
 필수  ★ ★ **뽑을 것** — 사고 · 보증 · 성능(정비) · 주행 · 옵션
