@@ -206,7 +206,6 @@ python3 run.py web --port N
 | **`/join`** | GET·POST | `view_join` | anonymous | — | 시안 |
 | **`/password`** | GET·POST | `view_password` | user | — | 시안 |
 | `/admin/run` | GET·POST | `view_admin_run` | **admin** | 운영 | 시안 |
-| **`/admin/users`** | GET·POST | `view_admin_users` | **admin** | 운영 | 시안 |
 | `/admin/scoring` | GET·POST | `view_admin_scoring` | **admin** | 조정 | 시안 |
 | `/admin/targets` | GET·POST | `view_admin_targets` | **admin** | 조정 | 시안 |
 | `/admin/registry` | GET·POST | `view_admin_registry` | **admin** | 조정 | 시안 |
