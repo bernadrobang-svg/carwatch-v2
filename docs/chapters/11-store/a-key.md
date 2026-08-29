@@ -1,7 +1,7 @@
 ## STEP 28 — 테이블 목록
 
 ```
-version  SPEC-2026.08.25-r727
+version  SPEC-2026.08.29-r855
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -566,3 +566,36 @@ V2-19     실측 DB 에서 이것을 잡았다
 
 ---
 
+---
+
+# 잠금 — 연결은 한 자리에서만 연다 (개정 855 · 08-29)
+
+개발측이 적은 까닭 — 「`store/raw.open_db` 는 `busy_timeout` 30초를 거는데
+`store/pii.py` 쪽 연결에는 안 걸린 듯합니다」
+
+## 가이드가 잰 것
+
+```
+store/pii.py 는 연결을 안 연다.  받아 쓸 뿐이다
+sqlite3.connect 를 직접 부르는 곳 — collect/worker.py:107 · 155
+  거기서 연 연결에는 busy_timeout 이 안 걸린다
+  그 연결이 save_listing_pii 까지 내려가 pii.py:107 에서 터진다
+```
+
+## 정한다
+
+```
+연결은 store/raw.open_db 하나로만 연다
+collect/worker.py:107·155 의 sqlite3.connect 를 open_db 로 바꾼다
+새 코드에서 sqlite3.connect 를 직접 부르지 않는다
+  읽기 전용(validate)은 예외 — 쓰지 않으니 잠그지 않는다
+검산  S46-125 — store/raw.py 밖에서 sqlite3.connect 를 쓰면 알림
+       (validate/*.py 의 mode=ro 는 뺀다)
+```
+
+## 언제 고치나
+
+```
+KB 수집이 끝난 뒤에 고친다.  도는 중에 손대면 더 잠근다
+개발측이 「KB 가 끝나면 짚어 고치겠습니다」 한 것이 옳다
+```
