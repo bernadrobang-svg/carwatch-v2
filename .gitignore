@@ -19,3 +19,6 @@ tools/tmp_*.py
 # ★ 계측용 DB 사본 — 커밋하지 않는다 (589MB)
 measure.db
 lock*.txt
+contend_*.txt
+measure.db-shm
+measure.db-wal

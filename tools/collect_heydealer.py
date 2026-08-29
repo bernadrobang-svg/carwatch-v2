@@ -75,7 +75,21 @@ def walk(adapter, key: str, queries: list, interval: float) -> tuple:
     seen, rows = set(), []
     done = True
     for q in queries:
-        pick = {k: q[k] for k in ("brand", "model-group", "model") if q.get(k)}
+        # ★★★★★ 08-29 (`HEYDEALER_API.md` 「전기 200건에 무엇이 있나」) —
+        #   ★ `fuel` 을 더한다.  ★ 앞서는 셋뿐이라 ★ 연료로만 좁힌 질의가
+        #   ★ ★ **빈 dict** 가 되어 ★ 조건 없는 **전량 1,330건**을 끌어왔다
+        #   ★ ★ (평소 207).  ★ 마스터 확정 「전량을 받지 않는다」에 어긋난다.
+        #   ★ 이제 `fuel=electric` 이 주소에 실려 ★ 200건만 온다 (실측 08-29).
+        #   ★★ 그래도 ★ **빈 pick 은 안 부른다** — ★ 아래에서 막는다
+        pick = {k: q[k] for k in ("brand", "model-group", "model", "fuel")
+                if q.get(k)}
+        if not pick:
+            # ★ 좁힐 것이 하나도 없으면 ★ 전량이 온다 — ★ 부르지 않는다.
+            #   ★ 「받은 것이 없다」가 아니라 ★ 「질의가 비었다」를 말한다
+            print(f"    {key} {q.get('_차명', '')} — ★ 좁힐 값이 없다 "
+                  "(brand·model-group·model·fuel 이 다 비었다).  ★ 안 부른다")
+            done = False
+            continue
         for page in range(1, MAX_PAGES + 1):
             code, body = _get(adapter.list_url(None, page, pick))
             if code != 200 or not isinstance(body, list):

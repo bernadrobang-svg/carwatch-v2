@@ -100,13 +100,20 @@ class HeydealerAdapter:
 
     def list_url(self, target: TargetSpec | None, page: int,
                  query: dict | None = None) -> Request:
-        """② 목록.  ★ 해시 셋(brand · model-group · model)으로 좁힌다.
+        """② 목록.  ★ 해시 셋(brand · model-group · model)과 ★ `fuel` 로 좁힌다.
 
         ★ 해시는 `targets.json` 의 `site_query.heydealer` 가 정본이다 (S14)
+        ★★★★ 08-29 (`HEYDEALER_API.md`) — ★ `fuel` 을 더했다.
+          ★ 사이트가 `filters/` 로 ★ 연료를 준다 —
+            휘발유 gasoline · 경유 diesel · LPG lpg · 바이퓨얼 bifuel ·
+            전기 electric · 수소 hydrogen · 하이브리드 hybrid
+          ★ ★ `&fuel=electric` → ★ **200건** (빈 쪽까지 · 실측 08-29).
+          ★ ★ 앞서는 이 셋뿐이라 ★ 연료로만 좁힌 질의가 ★ 주소에 아무것도 못 실어
+          ★ ★ **조건 없는 전량 1,330건**을 끌어왔다 (평소 207)
         """
         del target
         path = self._paths["list"].format(page=page)
-        for key in ("brand", "model-group", "model"):
+        for key in ("brand", "model-group", "model", "fuel"):
             val = (query or {}).get(key)
             if val:
                 path += f"&{key}={val}"
