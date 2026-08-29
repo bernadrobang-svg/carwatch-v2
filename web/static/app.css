@@ -1631,7 +1631,7 @@ body.s-listings main { max-width:1560px; }
    ★ 고칠 줄 셋 (마스터가 짚어 주셨다) —
      ① 여기에 `z-index:5`  ② 카드 겉 div 를 `.cardbody` 로  ③ 그 div 에 relative
    ★ `body` · `header` 는 안 건드린다 */
-.heart { position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:14px; background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cursor:pointer;font-size:14px; z-index:5 }
+.heart { position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:14px; background:rgba(15,17,20,.85);border:1px solid var(--line2);color:var(--dim);cursor:pointer;font-size:14px; display:flex;align-items:center;justify-content:center; z-index:5 }
 /* ★ 하트가 기댈 ★ **기준 상자**다.  ★ 이것이 없으면 하트가 화면 꼭대기로 간다 */
 .cardbody { position:relative; }
 .heart:hover { color:var(--amber); }
@@ -2247,11 +2247,12 @@ details>div { margin-top:12px }
    ★ 그래서 ⓐ 로 시안 값을 그대로 넣는다.  ★ 화면이 바뀌지 않는다 (없던 것이다) */
 .head { display:flex; justify-content:space-between; align-items:center;
         margin-bottom:8px }
-.heart { position:absolute; top:4px; right:4px; width:28px; height:28px;
-         border-radius:14px; background:rgba(15,17,20,.85);
-         border:1px solid var(--line2); display:flex; align-items:center;
-         justify-content:center; font-size:14px; color:var(--dim);
-         cursor:pointer }
+/* ★★★★ 08-29 — ★ 위 주석의 「같은 이름이 없어 부딪히지 않는다」는 ★ 틀렸다.
+   ★ `.heart` 는 ★ 이미 위에 있었다 (하트 자리 고침 · UI_REVIEW 26-1).
+   ★ 두 벌로 두면 ★ 머리띠가 21곳으로 갈라진 것과 ★ 같은 일이 난다 (S46-121).
+   ★ 시안이 더한 것은 ★ `display:flex` 세 줄뿐이다 — ★ 위 규칙에 합쳤다.
+   ★ ★ `z-index:5` 를 잃지 않는 것이 ★ 중요하다 — ★ 그것이 없으면
+   ★ ★ 하트가 ★ 카드 뒤로 들어가 ★ 안 눌린다 (검사 `S46-118`) */
 
 /* ★★ 08-25 — ★ 새 화면이 쓰는 이름 둘 (V11-59).
    ★ `.what`  — ★ 「이 화면은 무엇을 하는 곳인가」 상자 (명령서 1-5 · 시안 주황 상자)

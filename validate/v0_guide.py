@@ -1300,6 +1300,46 @@ def s46_115_run_screen_still() -> tuple[bool, str]:
     return True, "시키는 화면은 안 바뀌고 · 보는 화면만 갱신한다"
 
 
+def s46_118_heart_has_anchor() -> tuple[bool, str]:
+    """★★★★ 하트가 ★ **자기 카드 안**에 앉는가 (UI_REVIEW 26-1 · 시험자 119~121).
+
+    ★★ 시험자 — 「★ 하트 30개가 ★ 다 `y=4` 에 쌓여 있다」
+    ★ 까닭 — ★ `.heart` 가 `position:absolute` 인데 ★ 조상이 전부 `static` 이라
+      ★ ★ 기준이 ★ **화면 전체**가 됐다.  ★ 그래서 카드마다가 아니라
+      ★ ★ 한 자리에 ★ 서른 개가 겹쳤다.
+    ★ 세 가지가 다 있어야 한다 —
+      ① `.heart` 에 `position:absolute`   ② 기준 상자 `.cardbody { position:relative }`
+      ③ `.heart` 에 `z-index` (없으면 ★ 카드 뒤로 들어가 ★ 안 눌린다)
+    ★ ★ 그리고 ★ 목록 틀이 ★ 그 `.cardbody` 를 ★ 실제로 써야 한다
+    """
+    css = re.sub(r"/\*.*?\*/", " ", _read(ROOT / "web" / "static" / "app.css"),
+                 flags=re.S)
+    bad = []
+    hearts = re.findall(r"(?m)^\.heart\s*\{([^}]*)\}", css)
+    if not hearts:
+        bad.append("`.heart` 규칙이 없다")
+    elif len(hearts) > 1:
+        # ★ 두 벌이면 ★ 뒤엣것이 앞엣것의 값을 덮어 ★ 조용히 갈라진다 (S46-121)
+        bad.append(f"`.heart` 규칙이 {len(hearts)}곳이다 — 하나여야 한다")
+    else:
+        body = hearts[0]
+        if "position:absolute" not in body.replace(" ", ""):
+            bad.append("`.heart` 에 position:absolute 가 없다")
+        if "z-index" not in body:
+            bad.append("`.heart` 에 z-index 가 없다 — 카드 뒤로 들어가 안 눌린다")
+    anchor = re.findall(r"(?m)^\.cardbody\s*\{([^}]*)\}", css)
+    if not anchor:
+        bad.append("기준 상자 `.cardbody` 규칙이 없다")
+    elif not any("position:relative" in a.replace(" ", "") for a in anchor):
+        bad.append("`.cardbody` 에 position:relative 가 없다")
+    tpl = _read(ROOT / "web" / "templates" / "listings.html")
+    if "cardbody" not in tpl:
+        bad.append("목록 틀이 `.cardbody` 를 안 쓴다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "하트는 카드(.cardbody)를 기준으로 앉고 z-index 를 갖는다"
+
+
 def s46_121_header_rule_in_one_place() -> tuple[bool, str]:
     """★★★★ 머리띠 규칙이 ★ **한 곳에만** 있는가 (UI_REVIEW 27장 · 개정 851).
 
@@ -2892,6 +2932,8 @@ CHECKS = (
      s46_117_collectors_sweep_gone),
     ("S46-115", "시키는 화면이 스스로 안 바뀌는가", s46_115_run_screen_still),
     ("S46-116", "사유에 쉬운 말이 있는가", s46_116_reasons_in_plain_words),
+    # ★★ 시험자 119~121 — ★ 하트 30개가 한 자리에 쌓였다 (UI_REVIEW 26-1)
+    ("S46-118", "하트가 자기 카드 안에 앉는가", s46_118_heart_has_anchor),
     # ★★ 마스터 08-29 — ★ 「화면마다 위·아래가 바뀐다」 (UI_REVIEW 27장)
     ("S46-121", "머리띠 규칙이 한 곳에만 있는가",
      s46_121_header_rule_in_one_place),
