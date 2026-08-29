@@ -3812,6 +3812,34 @@ def s46_160_ev_leak_full_mark():
         return False, "★ 「분모 910 그대로」가 적혀 있지 않다"
     return True, "전기차 누유가 만점이고 분모가 910 그대로다"
 
+
+def s46_164_dev_pending_answered():
+    """S46-164 — ★ 개발 회차의 「마스터 몫」이 ★ 명령서에 답이 있는가 (오판 206).
+
+    ★ 08-29 — ★ 넷을 내가 이미 답했는데 ★ 개발측 표에 「마스터 · 이틀째」로 서 있었다
+    ★ 잣대 — ★ 마지막 개발 회차의 「안 한 것」 표에 「마스터」가 있으면
+      ★ 명령서가 ★ 「회차 표에서 지워라」를 적어야 한다
+    """
+    import glob as _g
+    import os as _os
+    import re as _re
+
+    recs = sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")),
+                  key=_os.path.getmtime)
+    if not recs:
+        return True, "개발 기록이 없다"
+    body = _read(ROOT / recs[-1][len(str(ROOT)) + 1:])
+    head = body[:body.find("## 1")] if "## 1" in body else body[:2000]
+    n = len(_re.findall(r"\*\*마스터\*\*", head))
+    if not n:
+        return True, "개발 회차에 「마스터 몫」이 없다"
+    orders = _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    order = _read(ROOT / orders[0][len(str(ROOT)) + 1:]) if orders else ""
+    if "회차 표에서 지워" in order or "회차 표에서 지우" in order:
+        return True, f"「마스터 몫」 {n}건에 답을 냈다"
+    return False, (f"★ 개발 회차에 「마스터 몫」 {n}건이 있는데 "
+                   "명령서가 「회차 표에서 지워라」를 안 적었다")
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -3843,6 +3871,8 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-164", "개발 회차의 「마스터 몫」에 답을 냈는가",
+     s46_164_dev_pending_answered),
     ("S46-129", "표의 합이 맞는가", s46_129_table_sum_counted),
     ("S46-132", "인계문이 다시 재라고 적는가", s46_132_handover_says_remeasure),
     ("S46-140", "쓰는 호스트가 robots 문서에 있는가", s46_140_new_host_has_robots),
