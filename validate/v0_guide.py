@@ -1271,6 +1271,62 @@ def s46_76_collectors_keep_raw() -> tuple[bool, str]:
 
 
 
+def s46_115_run_screen_still() -> tuple[bool, str]:
+    """★★★★ 시키는 화면이 ★ **스스로 안 바뀌는가** (UI_REVIEW 25-1 · 개정 837).
+
+    ★★ 마스터 — 「★ 관리에 실행 지시 큐는 ★ 5초마다 리로드 되니
+      ★ 내가 작업 지시를 못 하잖아.  ★ 작업 지시와 모니터링을 분리해」
+    ★ `/admin/run` 은 ★ 시키는 자리다 — ★ 고르는 동안 가만히 있어야 한다.
+    ★ 도는 것을 보는 자리는 ★ `/admin/status` 다 — ★ 거기만 갱신한다
+    """
+    src = _read(ROOT / "web" / "views.py")
+    bad = []
+    if "admin_run.html" in src:
+        # ★ `admin_run.html` 을 내는 자리가 ★ 갱신 초를 넘기면 실패다
+        i = src.find('"admin_run.html"')
+        tail = src[i:i + 500]
+        if "refresh_sec=0" not in tail:
+            bad.append("/admin/run 이 스스로 갱신한다 (refresh_sec 가 0 이 아니다)")
+    tpl = _read(ROOT / "web" / "templates" / "admin_run.html")
+    if "초</strong>마다 스스로 갱신" in tpl:
+        bad.append("admin_run.html 이 아직 「스스로 갱신됩니다」라 적는다")
+    if "/admin/status" not in tpl:
+        bad.append("시키는 화면에 「진행 보기」가 없다")
+    st = _read(ROOT / "web" / "templates" / "admin_status.html")
+    if "/admin/run" not in st:
+        bad.append("보는 화면에 「지시하러 가기」가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "시키는 화면은 안 바뀌고 · 보는 화면만 갱신한다"
+
+
+def s46_116_reasons_in_plain_words() -> tuple[bool, str]:
+    """★★★★ 사유에 ★ **쉬운 말**이 있는가 (UI_REVIEW 25-3 · 개정 837).
+
+    ★★ 마스터 — 「★ 사유에 대한 설명이 없어서 ★ 내가 이해를 못 하겠어」
+    ★ 「`raw_missing`」이 무슨 뜻인지 ★ 아실 까닭이 없다.
+    ★ 단계 이름(S9…)을 ★ 앞에 내지 않는다 — ★ 뒤에 작게
+    """
+    import sys as _sys
+
+    if str(ROOT) not in _sys.path:
+        _sys.path.insert(0, str(ROOT))
+    try:
+        from collect.pipeline import REASON_PLAIN, web_reasons
+    except ImportError:
+        return False, "★ REASON_PLAIN 이 없다 (collect/pipeline.py)"
+    miss = [r for r in web_reasons() if not (REASON_PLAIN.get(r) or ("", ""))[1]]
+    if miss:
+        return False, "★ 쉬운 말이 없는 사유 — " + " · ".join(miss[:6])
+    tpl = _read(ROOT / "web" / "templates" / "admin_run.html")
+    if "r.plain" not in tpl:
+        return False, "★ 화면이 쉬운 말을 안 낸다 (admin_run.html)"
+    # ★ 단계 이름이 앞에 나오면 실패 — ★ 뒤에 작게(`dim`) 있어야 한다
+    if "from_step" in tpl and 'class="dim">— {{ r.from_step }}' not in tpl:
+        return False, "★ 단계 이름이 앞에 나온다 — 뒤에 작게 두어야 한다"
+    return True, f"사유 {len(web_reasons())}가지에 다 쉬운 말이 있다"
+
+
 def s46_120_registry_key_matches() -> tuple[bool, str]:
     """★★★★★ 등록부의 ★ **감사 열쇠**가 ★ 목록 열쇠와 같은가 (개정 841 · #82).
 
@@ -2728,6 +2784,8 @@ CHECKS = (
     ("S46-103", "시안의 크기·자리 값을 담았는가", s46_103_sian_values_carried),
     ("S46-117", "목록을 받는 수집기가 팔린 차를 거르는가",
      s46_117_collectors_sweep_gone),
+    ("S46-115", "시키는 화면이 스스로 안 바뀌는가", s46_115_run_screen_still),
+    ("S46-116", "사유에 쉬운 말이 있는가", s46_116_reasons_in_plain_words),
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
     ("S46-126", "수집기가 통신·sleep 을 트랜잭션 밖에서 하는가",

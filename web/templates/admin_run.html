@@ -34,8 +34,14 @@
   </table>
   <p class="muted">매물 {{ listings | num }}건 · 판정 {{ judged | num }}건</p>
 
-  <p class="muted">이 화면은 <strong>{{ refresh_sec }}초</strong>마다 스스로 갱신됩니다.
-    갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
+  <!-- ★★★★ 08-29 (UI_REVIEW 25-1 · 마스터 확정 837) — ★ 이 화면은 ★ **안 바뀐다.**
+       ★★ 마스터 — 「★ 관리에 실행 지시 큐는 ★ 5초마다 리로드 되니
+         ★ 내가 작업 지시를 못 하잖아.  ★ 작업 지시와 모니터링을 분리해」
+       ★ ★ 고르시는 동안 ★ 화면이 새로 그려지면 안 된다.
+       ★ ★ 도는 것을 보는 자리는 ★ `/admin/status` 다 — ★ 거기서만 5초마다 돈다 -->
+  <p class="muted">이 화면은 <strong>스스로 갱신되지 않습니다</strong> —
+    고르시는 동안 가만히 있습니다.
+    도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
 {% if running %}<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>{% endif %}
@@ -44,29 +50,37 @@
   <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
   <input type="hidden" name="previewed" value="1">
 
-  <h2>무엇을 돌릴까 — 사유</h2>
-  <p class="muted">단계를 직접 고르지 않습니다. 사유가 시작 단계를 정합니다.</p>
+  <h2>무엇을 돌릴까</h2>
+  <!-- ★★★★ 08-29 (UI_REVIEW 25-3) — ★ 사유마다 ★ **쉬운 말 한 줄**.
+       ★★ 마스터 — 「★ 사유에 대한 설명이 없어서 ★ 내가 이해를 못 하겠어」
+       ★ 「→ S9 부터」 같은 ★ 단계 이름을 ★ **앞에 내지 않는다** — ★ 뒤에 작게.
+         ★ 마스터께서 ★ S9 가 무엇인지 아실 까닭이 없다 -->
   {% for r in reasons %}
   <label class="opt">
     <input type="radio" name="reason" value="{{ r.key }}">
-    {{ r.label }} <span class="muted">→ {{ r.from_step }} 부터</span>
+    <strong>{{ r.plain_title }}</strong>
+    <span class="muted">{{ r.plain }}</span>
+    <span class="dim">— {{ r.from_step }} 부터</span>
   </label>
   {% endfor %}
 
   <h2>범위</h2>
-  {% for t in targets %}
-  <label class="opt"><input type="radio" name="scope" value="{{ t.target_key }}"{% if t.first %} checked{% endif %}>
-    {{ t.target_key }} <span class="muted">({{ t.count | num }}건)</span></label>
-  {% endfor %}
-  <label class="opt"><input type="radio" name="scope" value="all">
-    <strong>전 차종</strong>
-    <span class="warn-block">{{ targets | count }}차종 · 약 {{ all_hours }}시간</span></label>
-  <p class="muted">★ 전 차종은 되돌릴 수 없이 오래 돕니다.
-    잘못 눌러 3.8시간이 그냥 도는 일을 막으려고
-    <strong>아래에 <code>all</code> 을 직접 입력</strong>해야 시작합니다.</p>
-  <label>확인 <input name="confirm" size="10" placeholder="all"
-    autocomplete="off">
-    <span class="muted">전 차종일 때만 필요합니다</span></label>
+  <!-- ★★★★ 08-29 (UI_REVIEW 25-2) — ★ **전 차종이 기본**이다.
+       ★ 마스터께서는 ★ 늘 전체를 돌리신다 — ★ 26종이 다 마스터 것이다.
+       ★ `all` 적기를 없앤다 — ★ 막는 것이 아니라 ★ **알리는 것**이다.
+       ★ 차종 하나만 돌리는 것은 ★ 아래에 접어 둔다 (개발측이 쓴다) -->
+  <label class="opt"><input type="radio" name="scope" value="all" checked>
+    <strong>전 차종</strong> — {{ targets | count }}차종
+    <strong class="run-hours">약 {{ all_hours }}시간</strong> 걸립니다</label>
+  <p class="muted">시작하면 중간에 세우기 어렵습니다. 받은 것은 남습니다.</p>
+
+  <details class="opt">
+    <summary>차종 하나만 돌리기 <span class="muted">(개발측이 씁니다)</span></summary>
+    {% for t in targets %}
+    <label class="opt"><input type="radio" name="scope" value="{{ t.target_key }}">
+      {{ t.target_key }} <span class="muted">({{ t.count | num }}건)</span></label>
+    {% endfor %}
+  </details>
 
   <h2>사유 기록</h2>
   <label>왜 돌리는가 <input name="reason_note" required></label>

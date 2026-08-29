@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수집 실행 · CarWatch</title>
 <link rel="stylesheet" href="/static/app.css?v=ba2a475333">
-<meta http-equiv="refresh" content="5">
+
 </head>
 <body class="s-admin-run">
 
@@ -105,8 +105,10 @@
   </table>
   <p class="muted">매물 19,816건 · 판정 10,201건</p>
 
-  <p class="muted">이 화면은 <strong>5초</strong>마다 스스로 갱신됩니다.
-    갱신이 실패해도 위 진행은 그대로 남습니다 — 서버가 만든 화면이라 JS 가 없어도 돕니다.</p>
+  
+  <p class="muted">이 화면은 <strong>스스로 갱신되지 않습니다</strong> —
+    고르시는 동안 가만히 있습니다.
+    도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
 
@@ -115,90 +117,90 @@
   <input type="hidden" name="csrf" value="render">
   <input type="hidden" name="previewed" value="1">
 
-  <h2>무엇을 돌릴까 — 사유</h2>
-  <p class="muted">단계를 직접 고르지 않습니다. 사유가 시작 단계를 정합니다.</p>
+  <h2>무엇을 돌릴까</h2>
+  
   
 
   <h2>범위</h2>
   
-  <label class="opt"><input type="radio" name="scope" value="G80_25T" checked>
-    G80_25T <span class="muted">(2,863건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="GLC_IMPORT">
-    GLC_IMPORT <span class="muted">(1,281건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="X3_IMPORT">
-    X3_IMPORT <span class="muted">(1,136건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="MODEL_Y">
-    MODEL_Y <span class="muted">(746건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="XC60_IMPORT">
-    XC60_IMPORT <span class="muted">(566건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="Q5_IMPORT">
-    Q5_IMPORT <span class="muted">(462건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="XC40_IMPORT">
-    XC40_IMPORT <span class="muted">(412건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="G70_20T">
-    G70_20T <span class="muted">(350건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="KOLEOS_HEV">
-    KOLEOS_HEV <span class="muted">(350건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="GRANDEUR_LPG">
-    GRANDEUR_LPG <span class="muted">(319건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="V60CC_IMPORT">
-    V60CC_IMPORT <span class="muted">(290건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="SPORTAGE_LPI">
-    SPORTAGE_LPI <span class="muted">(258건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="S60_IMPORT">
-    S60_IMPORT <span class="muted">(229건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="NX_HEV">
-    NX_HEV <span class="muted">(194건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="GV60">
-    GV60 <span class="muted">(161건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="POLESTAR2_EV">
-    POLESTAR2_EV <span class="muted">(123건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="G70_25T">
-    G70_25T <span class="muted">(116건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="RX_IMPORT">
-    RX_IMPORT <span class="muted">(114건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="G80_EV">
-    G80_EV <span class="muted">(105건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="GV70_EV">
-    GV70_EV <span class="muted">(89건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="POLESTAR4_EV">
-    POLESTAR4_EV <span class="muted">(44건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="C40_EV">
-    C40_EV <span class="muted">(14건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="EX30_EV">
-    EX30_EV <span class="muted">(8건)</span></label>
-  
-  <label class="opt"><input type="radio" name="scope" value="all">
-    <strong>전 차종</strong>
-    <span class="warn-block">23차종 · 약 9.2시간</span></label>
-  <p class="muted">★ 전 차종은 되돌릴 수 없이 오래 돕니다.
-    잘못 눌러 3.8시간이 그냥 도는 일을 막으려고
-    <strong>아래에 <code>all</code> 을 직접 입력</strong>해야 시작합니다.</p>
-  <label>확인 <input name="confirm" size="10" placeholder="all"
-    autocomplete="off">
-    <span class="muted">전 차종일 때만 필요합니다</span></label>
+  <label class="opt"><input type="radio" name="scope" value="all" checked>
+    <strong>전 차종</strong> — 23차종
+    <strong class="run-hours">약 9.2시간</strong> 걸립니다</label>
+  <p class="muted">시작하면 중간에 세우기 어렵습니다. 받은 것은 남습니다.</p>
+
+  <details class="opt">
+    <summary>차종 하나만 돌리기 <span class="muted">(개발측이 씁니다)</span></summary>
+    
+    <label class="opt"><input type="radio" name="scope" value="G80_25T">
+      G80_25T <span class="muted">(2,863건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="GLC_IMPORT">
+      GLC_IMPORT <span class="muted">(1,281건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="X3_IMPORT">
+      X3_IMPORT <span class="muted">(1,136건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="MODEL_Y">
+      MODEL_Y <span class="muted">(746건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="XC60_IMPORT">
+      XC60_IMPORT <span class="muted">(566건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="Q5_IMPORT">
+      Q5_IMPORT <span class="muted">(462건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="XC40_IMPORT">
+      XC40_IMPORT <span class="muted">(412건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="G70_20T">
+      G70_20T <span class="muted">(350건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="KOLEOS_HEV">
+      KOLEOS_HEV <span class="muted">(350건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="GRANDEUR_LPG">
+      GRANDEUR_LPG <span class="muted">(319건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="V60CC_IMPORT">
+      V60CC_IMPORT <span class="muted">(290건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="SPORTAGE_LPI">
+      SPORTAGE_LPI <span class="muted">(258건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="S60_IMPORT">
+      S60_IMPORT <span class="muted">(229건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="NX_HEV">
+      NX_HEV <span class="muted">(194건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="GV60">
+      GV60 <span class="muted">(161건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="POLESTAR2_EV">
+      POLESTAR2_EV <span class="muted">(123건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="G70_25T">
+      G70_25T <span class="muted">(116건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="RX_IMPORT">
+      RX_IMPORT <span class="muted">(114건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="G80_EV">
+      G80_EV <span class="muted">(105건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="GV70_EV">
+      GV70_EV <span class="muted">(89건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="POLESTAR4_EV">
+      POLESTAR4_EV <span class="muted">(44건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="C40_EV">
+      C40_EV <span class="muted">(14건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="EX30_EV">
+      EX30_EV <span class="muted">(8건)</span></label>
+    
+  </details>
 
   <h2>사유 기록</h2>
   <label>왜 돌리는가 <input name="reason_note" required></label>
@@ -322,7 +324,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 7 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
+<ul class="muted"><li>2026-08-29T02:41:47.513604+00:00 · 20260829T024133 · fatal 8 · 105.4초</li><li>2026-08-29T00:00:23.005613+00:00 · 20260829T000005 · fatal 12 · 124.3초</li><li>2026-08-28T23:43:34.252799+00:00 · 20260828T234317 · 정상 · 57.8초</li><li>2026-08-28T04:10:33.023650+00:00 · 20260828T041017 · fatal 11 · 1.9초</li><li>2026-08-26T16:46:19.413360+00:00 · 20260826T164607 · fatal 9 · 3.0초</li></ul>
 
 
 
@@ -333,7 +335,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 16:01</span>
+  <span>2026-08-29 16:24</span>
 </footer>
 
 </body>

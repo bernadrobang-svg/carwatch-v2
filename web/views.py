@@ -1667,12 +1667,11 @@ def admin_run(conn, account, req, root: str = ROOT, csrf: str = "",
                             flash_key)
         # ★ 위험이 높은 행동은 문구를 직접 입력받는다 (STEP 149l).
         #   라디오 하나로 3.8시간이 도는 것을 막는다 (실측 08-15)
-        if (form.get("scope") or "") == "all" \
-                and (form.get("confirm") or "").strip() != "all":
-            raise ValidationError(
-                "전 차종 수집은 확인 칸에 all 을 입력해야 시작합니다. "
-                "전 차종은 되돌릴 수 없이 오래 돕니다",
-                step="STEP 149l")
+        # ★★★★ 08-29 (UI_REVIEW 25-2 · 개정 837) — ★ `all` 적기를 ★ **없앴다.**
+        #   ★★ 마스터 — 「★ 전체가 기본이고 ★ all 사유 같은 것 생략하고」
+        #   ★ 「잘못 눌러 3.8시간이 그냥 도는 일을 막으려고」 — ★ 그 걱정은 옳았다.
+        #     ★ 그러나 ★ 마스터께서는 ★ 늘 전체를 돌리신다 (26종이 다 마스터 것이다).
+        #   ★ ★ **막는 것이 아니라 ★ 알린다** — ★ 화면이 「약 N시간」을 크게 낸다
         if plan is None:
             # ★ 배선 누락이다.  TypeError 로 500 을 내면 원인이 안 보인다
             raise WiringError(
@@ -1680,7 +1679,8 @@ def admin_run(conn, account, req, root: str = ROOT, csrf: str = "",
                 step="STEP 132")
         enqueue_recalc(conn, account, form.get("reason", ""),
                        form.get("scope") or "all", "web", plan=plan)
-        return redirect("/admin/run", "실행을 큐에 넣었습니다", flash_key)
+        # ★ 시킨 뒤 ★ **보는 화면으로 넘긴다** (25-1 필수)
+        return redirect("/admin/status", "실행을 큐에 넣었습니다", flash_key)
 
     from report.screens.admin import job_log, run_progress, _recent_runs
 
@@ -1694,10 +1694,12 @@ def admin_run(conn, account, req, root: str = ROOT, csrf: str = "",
            # ★ 절만 만들고 값을 안 넘기면 화면이 빈 채로 뜬다 (실측 08-15)
            "job_log": job_log(conn),
            "recent_runs": _recent_runs(conn)}
-    # ★ 1시간짜리 수집을 손으로 새로고침하며 볼 수는 없다 (개정 261 지시)
+    # ★★★★ 08-29 (UI_REVIEW 25-1 · 개정 837) — ★ **시키는 화면은 안 바뀐다.**
+    #   ★★ 마스터 — 「★ 5초마다 리로드 되니 ★ 내가 작업 지시를 못 하잖아」
+    #   ★ 도는 것을 보는 자리는 ★ `/admin/status` 다 — ★ 거기서만 5초마다 돈다.
+    #   ★ 검산 `S46-115`
     return page(conn, account, "수집 실행", "admin_run.html", ctx, csrf=csrf,
-                root=root, flash_key=flash_key,
-                refresh_sec=ctx.get("refresh_sec", 0))
+                root=root, flash_key=flash_key, refresh_sec=0)
 
 
 def _target_rows(conn) -> list:

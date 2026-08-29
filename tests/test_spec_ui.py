@@ -1331,10 +1331,15 @@ def guide_v132(port: int, ad: Client, db: str, root: str, lid: int) -> None:
     # ① 전 차종 수집에 확인 절차 (M-2 · H-3 · STEP 149l)
     st, rb, _h = ad.get("/admin/run")
     body = text(rb)
-    rec("가이드-2a", "전 차종이 기본 선택이 아니다", "라디오를 본다",
-        "기본 아님" if 'value="all" checked' not in rb else "기본 선택",
-        'value="all" checked' not in rb,
-        "잘못 누르면 몇 시간이 그냥 돈다")
+    # ★★★★ 08-29 (UI_REVIEW 25-2 · 개정 837) — ★ **뒤집혔다.**
+    #   ★ 옛 시험은 ★ 「전 차종이 기본이 아니어야 한다」였다 (잘못 누를까 봐).
+    #   ★★ 마스터 — 「★ 전체가 기본이고 ★ all 사유 같은 것 생략하고」.
+    #     ★ ★ 마스터께서는 ★ 늘 전체를 돌리신다 — ★ 26종이 다 마스터 것이다.
+    #   ★ ★ 막는 것이 아니라 ★ **알린다** — ★ 「약 N시간」을 크게 낸다 (2b 가 본다)
+    rec("가이드-2a", "전 차종이 기본 선택이다", "라디오를 본다",
+        "기본 선택" if 'value="all" checked' in rb else "기본 아님",
+        'value="all" checked' in rb,
+        "마스터께서 늘 전체를 돌리신다 (25-2)")
     rec("가이드-2b", "영향을 수치로 명시", "안내를 읽는다",
         "시간 표시" if re.search(r"약\s*[\d.]+\s*시간", body) else "없음",
         bool(re.search(r"약\s*[\d.]+\s*시간", body)))
@@ -1345,14 +1350,17 @@ def guide_v132(port: int, ad: Client, db: str, root: str, lid: int) -> None:
     st, b, _l = ad.post("/admin/run",
                         {"csrf": token, "previewed": "1", "scope": "all",
                          "reason": reason})
-    rec("가이드-2c", "확인 문구 없이 전 차종 → 거부", "confirm 없이",
-        f"{st} · {text(b).split('(/notready)')[-1][:26]}", st == 400)
+    # ★ 08-29 — ★ `all` 적기를 없앴다 (25-2).  ★ 이제 그냥 시작한다
+    rec("가이드-2c", "확인 문구 없이도 전 차종이 시작한다", "confirm 없이",
+        str(st), st in (302, 303),
+        "막는 것이 아니라 알린다 (25-2)")
 
     token = ad.csrf("/admin/run")
     st, b, _l = ad.post("/admin/run",
                         {"csrf": token, "previewed": "1", "scope": "all",
                          "confirm": "all", "reason": reason})
-    rec("가이드-2d", "all 을 입력하면 시작한다", "confirm=all",
+    # ★ 옛 화면에서 온 요청이 `confirm` 을 보내도 그대로 받는다
+    rec("가이드-2d", "옛 confirm 을 보내도 시작한다", "confirm=all",
         str(st), st in (302, 303))
     conn = sqlite3.connect(db)
     conn.execute("UPDATE recalc_job SET status='done'")

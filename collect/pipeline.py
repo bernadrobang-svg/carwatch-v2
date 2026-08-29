@@ -544,6 +544,30 @@ def from_step_for(reason: str) -> str | None:
     return plan.steps[0] if plan.steps else None
 
 
+# ★★★★ 08-29 (UI_REVIEW 25-3 · 개정 837) — ★ 사유의 ★ **쉬운 말**.
+#   ★★ 마스터 — 「★ `raw_missing` 이 무슨 뜻인가.  ★ 내가 이해를 못 하겠어」
+#   ★ (이름, 무엇을 하나 · 무엇이 바뀌나) 다.
+#   ★ 단계 이름(S9…)은 ★ 여기 안 적는다 — ★ 화면이 뒤에 작게 낸다
+REASON_PLAIN = {
+    "listing_updated": ("처음부터",
+                        "목록부터 다시 받는다 · 가장 오래 걸린다"),
+    "raw_missing": ("원문이 없다",
+                    "받다 만 것만 다시 받는다 · 이미 받은 것은 그대로"),
+    "scoring": ("다시 판정",
+                "받은 것은 그대로 · 점수만 다시 낸다 (배점을 고친 뒤)"),
+    "parse_rule": ("상세만",
+                   "목록은 그대로 · 상세만 다시 펼친다"),
+    "verdict_rule": ("판정 규칙이 바뀌었다",
+                     "받은 것은 그대로 · 등급을 다시 매긴다"),
+    "coefficient": ("계수가 바뀌었다",
+                    "받은 것은 그대로 · 값 계산을 다시 한다"),
+    "dictionary": ("사전이 바뀌었다",
+                   "받은 것은 그대로 · 이름·코드를 다시 붙인다"),
+    "labels": ("이름표만 바뀌었다",
+               "점수도 매물도 그대로 · 화면 글자만 다시 만든다"),
+}
+
+
 def web_reasons() -> list[str]:
     """웹에서 고를 수 있는 사유.  전면 재수집은 빠진다."""
     return sorted(r for r in REPROCESS_TABLE if r not in CLI_ONLY_REASONS)

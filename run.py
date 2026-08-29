@@ -270,7 +270,16 @@ def cmd_web(host: str | None, port: str | None) -> int:
         check_recalc_origin(reason, origin)
         return from_step_for(reason)
 
-    rows = [{"key": r, "label": r,
+    # ★★★★ 08-29 (UI_REVIEW 25-3 · 개정 837) — ★ 사유에 ★ **쉬운 말**을 붙인다.
+    #   ★★ 마스터 — 「★ 사유에 대한 설명이 없어서 ★ 내가 이해를 못 하겠어」
+    #   ★ 「무엇이 바뀌나」를 함께 낸다 — ★ 「매물은 그대로」·「점수만 새로」
+    #   ★ 검산 `S46-116`
+    from collect.pipeline import REASON_PLAIN
+
+    rows = [{"key": r,
+             "label": REASON_PLAIN.get(r, (r, ""))[0],
+             "plain_title": REASON_PLAIN.get(r, (r, ""))[0],
+             "plain": REASON_PLAIN.get(r, (r, ""))[1],
              "from_step": REPROCESS_TABLE[r].steps[0]
              if REPROCESS_TABLE[r].steps else "—"} for r in web_reasons()]
     from collect.pipeline import resume_point
