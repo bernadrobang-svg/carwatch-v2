@@ -32,8 +32,11 @@
   <td data-label="제목">{{ r.title }}</td>
   <td class="muted" data-label="출처">{{ r.origin }}</td>
   <td data-label="상태">{{ r.status }}</td>
-  <td class="runid" data-label="반영 STEP">{{ r.step_ref }}</td>
-  <td class="muted" data-label="사유">{{ r.direction }}</td>
+  <!-- ★★ 08-29 (V11-106 · 부록 G-4) — ★ 줄표를 내지 않는다.
+       ★ 「—」는 ★ 못 받은 것인지 · 0 인지 · 안 봐도 되는 것인지를 감춘다.
+       ★ 여기 둘은 ★ **아직 안 정해진 것**이다 — ★ 그렇게 말로 낸다 -->
+  <td class="runid" data-label="반영 STEP">{% if r.step_ref %}{{ r.step_ref }}{% endif %}{% if !r.step_ref %}<span class="dim" title="규격의 어느 STEP 으로 반영했는지입니다. 아직 안 정했습니다">아직 안 정했습니다</span>{% endif %}</td>
+  <td class="muted" data-label="사유">{% if r.direction %}{{ r.direction }}{% endif %}{% if !r.direction %}<span class="dim" title="not_applied · misapplied 로 바꿀 때 적습니다">적힌 사유가 없습니다</span>{% endif %}</td>
   <td data-label="상태 바꾸기">
     <form method="post" action="/admin/requests" class="inline">
       <input type="hidden" name="csrf" value="{{ page.csrf_token }}">

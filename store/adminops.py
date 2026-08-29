@@ -926,7 +926,10 @@ def dev_request_rows(conn: sqlite3.Connection, limit: int) -> list:
     반영 STEP 과 사유를 함께 낸다 (STEP 137)."""
     return [{"request_id": r[0], "id": r[0], "title": r[1], "status": r[2],
              "created_at": r[3], "origin": r[4],
-             "step_ref": r[5] or "—", "direction": r[6] or "—",
+             # ★★ 08-29 (V11-106 · 부록 G-4) — ★ 여기서 「—」로 바꾸고 있었다.
+             #   ★ 줄표는 ★ 못 받은 것인지 · 0 인지 · 안 봐도 되는 것인지를 감춘다.
+             #   ★ 빈 채로 넘기고 ★ 틀이 말로 낸다 (`admin_requests.html`)
+             "step_ref": r[5] or "", "direction": r[6] or "",
              "exported_at": r[7]}
             for r in conn.execute(
                 "SELECT request_id, title, status, created_at, origin, "

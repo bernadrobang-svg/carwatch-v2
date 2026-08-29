@@ -15,3 +15,7 @@ outputs/check-tmp/
 
 # ★ 개발측 임시 스크립트 — 커밋하지 않는다 (CLAUDE.md)
 tools/tmp_*.py
+
+# ★ 계측용 DB 사본 — 커밋하지 않는다 (589MB)
+measure.db
+lock*.txt
