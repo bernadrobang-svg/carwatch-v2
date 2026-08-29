@@ -78,13 +78,36 @@ def _stale_hours() -> float:
         return float(_j.load(f)["temp_stale_hours"])
 
 
+def _ours_grace_sec() -> float:
+    """★ 우리 자리(`outputs/check-tmp`)에서 ★ 이만큼 지난 것은 치운다 (08-30).
+
+    ★ 정본은 `config/checks.json` 의 `temp_ours_grace_min` 이다 (S14)
+    """
+    import json as _j
+
+    try:
+        with open(os.path.join(ROOT, "config", "checks.json"),
+                  encoding="utf-8") as f:
+            return float(_j.load(f)["temp_ours_grace_min"]) * 60.0
+    except (OSError, ValueError, KeyError, TypeError):
+        return 1800.0
+
+
 def _sweep_temp() -> int:
     """시험이 남긴 임시 DB 를 치운다.  ★ 남의 것은 건드리지 않는다."""
     import shutil
     import tempfile
     import time
 
-    root = tempfile.gettempdir()
+    # ★★★★★ 08-30 (마스터 0순위) — ★ 앞서는 ★ `/tmp` **한 곳만** 봤다.
+    #   ★ 그런데 ★ 검사기 넷은 ★ `outputs/check-tmp` 에 쓴다 —
+    #     `v1_collect:16` · `v3_logic:17` · `v10_admin:17` · `v11_web:5034`
+    #   ★ ★ **아무도 안 치웠다.**  ★ 실측 08-30 — ★ **9,039개 · 12GB** 가 쌓여
+    #     ★ ★ 디스크 30G 중 ★ 7.2G 만 남아 있었다 (77%).
+    #   ★ 두 곳을 다 본다.  ★ 이름은 두 꼴이다 —
+    #     ★ `tempfile.mkdtemp(dir=…)` → `tmp*` · ★ `v11_web` → `cw-check-*`
+    roots = [tempfile.gettempdir(),
+             os.path.join(ROOT, "outputs", "check-tmp")]
     now = time.time()
     cutoff = now - SWEEP_WINDOW_SEC
     # ★★ 죽은 실행이 남긴 것도 치운다 (개정 395 실측).
@@ -94,20 +117,35 @@ def _sweep_temp() -> int:
     #     지켜지려면 남의 잔해도 치워야 한다
     stale = now - _stale_hours() * SEC_PER_HOUR
     n = 0
-    for name in os.listdir(root):
-        path = os.path.join(root, name)
-        if not name.startswith("tmp") or not os.path.isdir(path):
+    for root in roots:
+        if not os.path.isdir(root):
             continue
-        try:
-            made = os.path.getmtime(path)
-            if made < cutoff and made > stale:
-                continue          # 남의 것이고 아직 쓸 수 있다
-            if not any(f.endswith(".db") for f in os.listdir(path)):
+        # ★ 우리 자리(`outputs/check-tmp`)는 ★ 검사 임시물만 있는 곳이다 —
+        #   ★ 거기서는 ★ `.db` 가 없어도 치운다 (빈 껍데기도 쌓인다).
+        #   ★ `/tmp` 는 ★ 남의 것이 섞이므로 ★ 옛 규칙을 그대로 지킨다
+        ours = root != tempfile.gettempdir()
+        for name in os.listdir(root):
+            path = os.path.join(root, name)
+            if not name.startswith(("tmp", "cw-check-")):
                 continue
-            shutil.rmtree(path, ignore_errors=True)
-            n += 1
-        except OSError:
-            pass
+            if not os.path.isdir(path):
+                continue
+            try:
+                made = os.path.getmtime(path)
+                if ours:
+                    # ★★ 우리 자리다 — ★ 남의 것이 없다.  ★ 유예만 지키면 된다.
+                    #   ★ `/tmp` 규칙을 그대로 쓰면 ★ 60초~6시간 것이 영영 남는다
+                    if made > now - _ours_grace_sec():
+                        continue  # ★ 함께 도는 검사의 것일 수 있다
+                elif made < cutoff and made > stale:
+                    continue      # 남의 것이고 아직 쓸 수 있다
+                if not ours and not any(f.endswith(".db")
+                                        for f in os.listdir(path)):
+                    continue
+                shutil.rmtree(path, ignore_errors=True)
+                n += 1
+            except OSError:
+                pass
     return n
 
 

@@ -103,5 +103,7 @@
   "_note_ratio_tolerance": "배점·비율을 견줄 때 눈감아 줄 오차. ★ 부동소수라 == 로 재면 안 된다",
   "ratio_tolerance": 0.0001,
   "points_tolerance": 0.01,
-  "doc_points_tolerance": 0.5
+  "doc_points_tolerance": 0.5,
+  "temp_ours_grace_min": 30,
+  "_temp_ours_grace_min_why": "★★★★ 08-30 — ★ `outputs/check-tmp` 는 ★ **검사기만 쓰는 자리**다 (`v1_collect`·`v3_logic`·`v10_admin`·`v11_web`).  ★ `/tmp` 의 규칙(「60초보다 오래됐고 `temp_stale_hours` 보다 새것이면 남의 것이라 안 건드린다」)을 ★ ★ 그대로 쓰면 ★ 60초~6시간 사이의 것이 ★ **영영 안 치워진다**.  ★ ★ `check_all` 한 판이 몇 분이라 ★ 그 사이에 생긴 것이 다 거기 든다 — ★ ★ 그래서 ★ 9,039개 · 12GB 가 쌓였다 (디스크 30G 중 7.2G 만 남았었다).  ★ 우리 자리에서는 ★ 이 분(minute)보다 오래된 것을 다 치운다.  ★ 30분을 둔 까닭 — ★ 검사 한 판이 5분쯤이라 ★ **함께 도는 검사**의 것을 안 건드린다"
 }

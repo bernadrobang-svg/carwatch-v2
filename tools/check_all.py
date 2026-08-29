@@ -116,6 +116,20 @@ def main() -> int:
         for code, detail in rows:
             print(f"  {code:9} {detail[:WIDTH * 2]}")
         print()
+    # ★★★★★ 08-30 (마스터 0순위) — ★ **여기가 12GB 가 쌓인 자리다.**
+    #   ★ `run_tests` 는 끝에 치웠는데 ★ `check_all` 은 ★ **한 번도 안 치웠다.**
+    #   ★ ★ 검사기 넷이 `outputs/check-tmp` 에 쓰고 ★ 내가 하루에 수십 번 돌려
+    #   ★ ★ 9,039개 · 12GB 가 됐다 (디스크 30G 중 7.2G 만 남았었다).
+    #   ★ 두 도구가 ★ **같은 청소기**를 쓴다 — ★ 한쪽만 고치면 또 샌다
+    try:
+        from tools.run_tests import _sweep_temp
+
+        swept = _sweep_temp()
+        if swept:
+            print(f"  임시 DB {swept}개 치움 (검사가 디스크를 채우지 않는다)")
+    except Exception as exc:                                   # noqa: BLE001
+        # ★ 치우기가 실패해도 ★ 검사 결과를 못 내면 안 된다 — ★ 말하고 넘어간다
+        print(f"  ★ 임시 DB 치우기가 실패했다 — {exc}")
     return 1 if fatal else 0
 
 
