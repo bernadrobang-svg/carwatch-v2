@@ -150,7 +150,7 @@
 | `S46-162` | 오판이 약속한 검사가 실제로 있는가 | fatal | `validate/v0_guide.py:3089` | **★ 없음** | 없음 | guide/03_이력.md:977 · guide/03_이력.md:979 · guide/03_이력.md:985 |
 | `S46-163` | 시안마다 라우팅 표에 주소가 있는가 | fatal | `validate/v0_guide.py:3181` | **★ 없음** | 없음 | guide/03_이력.md:985 · guide/03_이력.md:1003 · guide/06_오판대장.md:294 |
 | `S46-164` | 개발 회차의 「마스터 몫」에 답을 냈는가 | fatal | `validate/v0_guide.py:3865` | **★ 없음** | 없음 | guide/03_이력.md:991 · guide/06_오판대장.md:295 |
-| `S46-165` | 「못 잰다」가 진짜인가 | fatal | `validate/v0_guide.py:3893` | **★ 없음** | 없음 | guide/03_이력.md:1011 · guide/06_오판대장.md:296 |
+| `S46-165` | 「못 잰다」가 진짜인가 | fatal | `validate/v0_guide.py:3893` | **★ 없음** | 없음 | guide/03_이력.md:1011 · guide/06_오판대장.md:296 · guide/06_오판대장.md:297 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
