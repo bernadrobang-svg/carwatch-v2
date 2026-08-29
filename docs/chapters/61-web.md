@@ -186,6 +186,7 @@ python3 run.py web --port N
 |---|---|---|---|---|---|
 | `/` | GET | `view_dashboard` | anonymous | — | 구현 |
 | `/listings` | GET | `view_listings` | anonymous | — | 구현 |
+| ★ `/detail/{listing_id}` | GET | `view_detail` | anonymous | — | 구현 (★ 08-29 — 표에 빠져 있었다) |
 | `/why/{listing_id}` | GET | `view_why` | anonymous | — | 구현 |
 | `/notready` | GET | `view_notready` | anonymous | — | 구현 |
 | ★ `/track` | GET | `view_track` | anonymous | — | 구현 |

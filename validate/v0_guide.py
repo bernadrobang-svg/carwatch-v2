@@ -3168,6 +3168,9 @@ def s46_155_screen_spec_has_mockup():
         # ★ 라우팅 표에 있는 화면만 본다 — ★ 규격 본문의 예시 주소는 뺀다
         if not _re.search(r"\| ?★? ?`?/" + key + r"[`/{]", table):
             continue
+        # ★ 아직 「시안」 단계인 화면은 ★ 시안이 없어도 된다 — ★ 만들 때 그린다
+        if _re.search(r"\|\s*`?/" + key + r"[`/{][^\n]*\|\s*시안\s*\|", table):
+            continue
         bad.append("/" + key)
     if bad:
         return False, ("★ 규격에 있는데 시안이 없는 화면 "
@@ -3195,6 +3198,9 @@ def s46_163_mockup_has_route():
             continue
         key = "/" + m.group(1)
         if any(p == key or p.startswith(key + "/") for p in paths):
+            continue
+        # ★ 화면 이름이 ★ view 로 있으면 ★ 주소가 달라도 그 화면이다 (`/` → view_dashboard)
+        if "view_" + m.group(1) in table:
             continue
         bad.append(f"{p.name} → {key}")
     if bad:
