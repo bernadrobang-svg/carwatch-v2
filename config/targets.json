@@ -522,7 +522,7 @@
         "CarType": "N",
         "Manufacturer": "BMW",
         "ModelGroup": "X3",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 568건 들어와 있다 (`/listings?site=encar&model=X3_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "heydealer": [
         {
@@ -639,7 +639,7 @@
         "CarType": "N",
         "Manufacturer": "아우디",
         "ModelGroup": "Q5",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 285건 들어와 있다 (`/listings?site=encar&model=Q5_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "kbchachacha": {
         "makerCode": "109",
@@ -692,7 +692,7 @@
         "CarType": "N",
         "Manufacturer": "렉서스",
         "ModelGroup": "NX",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 106건 들어와 있다 (`/listings?site=encar&model=NX_HEV`).  ★ facet 을 다시 청하지 않는다"
       },
       "kbchachacha": {
         "makerCode": "133",
@@ -745,7 +745,7 @@
         "CarType": "N",
         "Manufacturer": "렉서스",
         "ModelGroup": "RX",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 68건 들어와 있다 (`/listings?site=encar&model=RX_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "heydealer": [
         {
@@ -803,7 +803,7 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "XC60",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 260건 들어와 있다 (`/listings?site=encar&model=XC60_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "heydealer": [
         {
@@ -861,7 +861,7 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "S60",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 123건 들어와 있다 (`/listings?site=encar&model=S60_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "heydealer": [
         {
@@ -956,7 +956,7 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "XC40",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 184건 들어와 있다 (`/listings?site=encar&model=XC40_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "kbchachacha": {
         "makerCode": "117",
@@ -1012,7 +1012,7 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "V60",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다 (S46-37)"
+        "_실측": "[실측 08-29 · 배포] ★ 마스터께서 이미 받아 주셨다 — ★ 화면에 114건 들어와 있다 (`/listings?site=encar&model=V60CC_IMPORT`).  ★ facet 을 다시 청하지 않는다"
       },
       "kbchachacha": {
         "makerCode": "117",
