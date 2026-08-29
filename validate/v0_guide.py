@@ -1300,6 +1300,28 @@ def s46_115_run_screen_still() -> tuple[bool, str]:
     return True, "시키는 화면은 안 바뀌고 · 보는 화면만 갱신한다"
 
 
+def s46_121_header_rule_in_one_place() -> tuple[bool, str]:
+    """★★★★ 머리띠 규칙이 ★ **한 곳에만** 있는가 (UI_REVIEW 27장 · 개정 851).
+
+    ★★ 마스터 — 「★ 화면마다 위·아래가 바뀐다」
+    ★ 까닭은 ★ `body.s-… header { … }` 가 ★ 화면 수만큼 적혀 있던 것이다 —
+    ★ 08-29 실측 21곳 · 글자는 같고 ★ `z-index` 만 30/20 으로 갈렸다.
+    ★ 화면별로 다시 적지 않는다 — ★ 공통 `header` 하나로 둔다.
+    ★ 정말 그 화면만 달라야 하면 ★ 규격에 적고 나서 넣는다
+    """
+    css = _read(ROOT / "web" / "static" / "app.css")
+    # ★ 주석은 규칙이 아니다 — ★ 먼저 걷어낸다 (L-3 · 개정 849)
+    css = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
+    per = re.findall(r"body\.s-[\w-]+[^{}]*\bheader\b[^{}]*\{", css)
+    common = re.findall(r"(?m)^\s*header\s*\{", css)
+    if per:
+        return False, (f"★ 화면별 header 규칙이 {len(per)}곳 남았다 — "
+                       f"{' · '.join(sorted({x.strip() for x in per})[:3])}")
+    if len(common) != 1:
+        return False, f"★ 공통 header 규칙이 {len(common)}개다 — 하나여야 한다"
+    return True, "머리띠는 공통 header 하나뿐이다 (화면별 0곳)"
+
+
 def s46_116_reasons_in_plain_words() -> tuple[bool, str]:
     """★★★★ 사유에 ★ **쉬운 말**이 있는가 (UI_REVIEW 25-3 · 개정 837).
 
@@ -2786,6 +2808,9 @@ CHECKS = (
      s46_117_collectors_sweep_gone),
     ("S46-115", "시키는 화면이 스스로 안 바뀌는가", s46_115_run_screen_still),
     ("S46-116", "사유에 쉬운 말이 있는가", s46_116_reasons_in_plain_words),
+    # ★★ 마스터 08-29 — ★ 「화면마다 위·아래가 바뀐다」 (UI_REVIEW 27장)
+    ("S46-121", "머리띠 규칙이 한 곳에만 있는가",
+     s46_121_header_rule_in_one_place),
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
     ("S46-126", "수집기가 통신·sleep 을 트랜잭션 밖에서 하는가",

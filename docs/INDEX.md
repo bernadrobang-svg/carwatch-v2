@@ -9,15 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**114파일 · 41,912줄 · 2,654KB**
+**114파일 · 41,585줄 · 2,639KB**
 
-★ 800줄을 넘는 파일 12개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,014줄
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 1,638줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 884줄
+- guide/03_이력.md 890줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -30,7 +29,7 @@
 |---|--:|--:|
 | `BMW_BPS_API.md` | 225 | 10 |
 | `BOBAEDREAM_API.md` | 387 | 16 |
-| `CHECKS.md`  ★ | 1,014 | 124 |
+| `CHECKS.md` | 602 | 95 |
 | `CROSS_SITE_COMPARE.md` | 272 | 13 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 324 | 14 |
@@ -40,7 +39,7 @@
 | `KBCHACHACHA_API.md` | 444 | 22 |
 | `KCAR_API.md` | 518 | 24 |
 | `KIA_CPO_API.md` | 177 | 9 |
-| `LEXUS_CERTIFIED_API.md` | 248 | 12 |
+| `LEXUS_CERTIFIED_API.md` | 275 | 14 |
 | `MAPPING.md` | 104 | 3 |
 | `MULTISITE_MAPPING.md`  ★ | 849 | 47 |
 | `README.md` | 65 | 1 |
@@ -62,7 +61,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md` | 642 | 26 |
+| `chapters/11-store/a-key.md` | 660 | 27 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 600 | 24 |
@@ -108,15 +107,15 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 168 | 9 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 884 | 658 |
+| `guide/03_이력.md`  ★ | 890 | 662 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 575 | 169 |
-| `guide/07_밀린일대장.md` | 350 | 27 |
+| `guide/06_오판대장.md` | 578 | 173 |
+| `guide/07_밀린일대장.md` | 353 | 28 |
 | `guide/08_인수인계.md` | 310 | 14 |
-| `guide/09_인계_20260829.md` | 158 | 5 |
+| `guide/09_인계_20260829.md` | 186 | 7 |
 | `ref/00-intro.md` | 33 | 0 |
 | `ref/A-check.md` | 76 | 3 |
 | `ref/B-config.md` | 413 | 12 |
