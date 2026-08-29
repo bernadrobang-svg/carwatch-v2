@@ -3300,6 +3300,9 @@ def s46_142_site_count_matches():
             m = _re.search(r"(열하나|열둘|열|아홉|여덟)\s*사이트", ln)
             if not m:
                 continue
+            # ★ 「그 밖 N」·「나머지 N」은 ★ 이미 뺀 수다 — 걸지 않는다
+            if _re.search(r"(그 밖|나머지|빼면|제외)\s*★?\s*" + m.group(1), ln):
+                continue
             said = words[m.group(1)]
             # ★ 「아홉」은 엔카를 뺀 수다 — ★ 그것도 맞다
             # ★ 「아홉」은 엔카를 뺀 수 · 「열」은 마스터 회선 것까지 뺀 수다
@@ -3344,7 +3347,7 @@ def s46_154_master_wish_in_registry():
     reg = _read(ROOT / "docs" / "guide" / "01_요구사항.md")
     bad = []
     for q in _guide_docs():
-        for m in _re.finditer(r"「([^」]{6,60}했으면[^」]{0,20})」", _read(q)):
+        for m in _re.finditer(r"「([^」|]{6,60}했으면[^」|]{0,20})」", _read(q)):
             key = m.group(1)[:12]
             if key in reg:
                 continue
@@ -3548,6 +3551,14 @@ def s46_143_master_items_are_master():
                 continue
             # ★ 규칙·차례를 적은 줄은 ★ 올리는 것이 아니다
             if _re.search(r"필수|금지|★ 차례|한다$|않는다|마라|규칙|몫이다", ln):
+                continue
+            # ★ 표 칸·차례 설명은 ★ 「올리는 행위」가 아니다
+            if ln.lstrip().startswith("|") or "예외" in ln or "정할 일이 아니다" in ln:
+                continue
+            if "→" in ln:
+                continue          # ★ 차례를 적은 줄이다
+            # ★ 「무엇을」이 없는 줄 — ★ 셀 대상이 없다
+            if not _re.search(r"[0-9]|것|축|종|건", ln.split("마스터께")[0]):
                 continue
             bad.append(f"{q.name}:{i}")
     if bad:
