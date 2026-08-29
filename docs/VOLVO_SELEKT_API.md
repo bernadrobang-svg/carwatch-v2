@@ -1,7 +1,7 @@
 # 볼보 셀렉트 인증중고차 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.29-r853
+version  SPEC-2026.08.29-r854
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 726 · 실측 08-25
 checks   S46-38 · S46-39
@@ -116,7 +116,7 @@ GET  /kr/vehicles/xhr-results/{쪽}?model={코드}   ★ 좁혀서도 된다
 
 
 ```
-version  SPEC-2026.08.29-r853
+version  SPEC-2026.08.29-r854
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 580 · 실측 08-23
 checks   S46-5 · S46-31
@@ -124,7 +124,7 @@ checks   S46-5 · S46-31
 ★ 이 문서는 ★ **그 사이트가 무엇을 주는가**만 적는다.  ★ 판정은 ★ `f-table` 이 한다 (가이드역할 ㉺)
 
 
-`SPEC-2026.08.29-r853` · 2026-08-23 · **마스터가 주소를 주셨다**
+`SPEC-2026.08.29-r854` · 2026-08-23 · **마스터가 주소를 주셨다**
 ★ **딜러별 도메인이다 — 표본은 「에이치모터스 수원」 (`h-suwon.`)**
 
 ---
@@ -357,12 +357,54 @@ robots   `Disallow: /*compare` · `/*notepad` · `/*saved-searches` · `/*vehicl
 개발측 물음 — 「`data-found` 가 받은 수와 늘 어긋난다.
 총계를 끝 신호로 쓸지, 「링크가 `PAGE_LINKS` 보다 적은 쪽 = 마지막 쪽」을 쓸지 정해 달라」
 
-## 정한다 — 쪽 링크를 쓴다
+## 08-29 정정 — 브라우저로 재보고 뒤집는다 (개정 854)
+
+앞서 「쪽 링크를 쓴다」로 정했는데 **틀렸다**.
+가이드가 서버에서만 재고 껍데기를 보고 정했다.  브라우저로 그려 보니 다르다.
+
+### 브라우저 실측 (Chromium · 08-29)
 
 ```
-링크가 PAGE_LINKS 보다 적은 쪽이 마지막 쪽이다
-그 쪽까지 받았으면 done=True
-data-found 총계는 끝 신호로 쓰지 않는다
+차종 목록  /kr/vehicles/volvo/{이름}?manufacturer=64&model={코드}
+           보기 — /kr/vehicles/volvo/s90?manufacturer=64&model=1323
+
+S90 화면에 「21 차량 검색됨」이 세 번 · data-found="21"
+매물 21건이 한 화면에 다 뿌려진다 — 값·연식·주행·연료·장비·딜러까지
+쪽 링크는 「page=reset」 하나뿐 — 쪽넘김이 없다
+
+상세 주소  /kr/vehicles/volvo/{모델}/{트림-슬러그}
+           보기 — .../s90/inscription-b6-awd-300-hp-aut-p7bbg3v
+           끝에 붙은 p7bbg3v 가 매물번호다
+           <a href> 가 아니다 — 「전체 상세 정보」를 눌러야 주소가 생긴다
+```
+
+## 정한다 — data-found 를 쓴다.  다만 차종별로
+
+```
+그 차종 화면의 data-found 와 그 차종에서 받은 매물 수를 견준다
+같으면 done=True
+
+쪽넘김이 없으니 「쪽 링크가 줄면 마지막」은 쓸 수 없다
+data-found 가 유일한 총계다
+```
+
+## 왜 어긋났나
+
+```
+data-found 는 그 차종의 대수다.  사이트 전체가 아니다
+전체와 견주면 늘 어긋난다 — 개발측이 그렇게 견주고 있었을 것이다
+차종별로 견주면 맞는다
+
+「전체 상세 정보」가 24개인데 data-found 는 21이다
+접힌 것이나 광고가 섞였을 수 있다 — data-found 를 믿는다
+```
+
+## 매물번호
+
+```
+슬러그 끝 토막이 매물번호다 (p7bbg3v)
+<a href> 로 안 나오니 눌러야 얻는다
+그래서 목록에서 매물번호를 못 세고 있을 수 있다 — 개발측이 재라
 ```
 
 ## 왜 총계를 안 쓰나
