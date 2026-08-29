@@ -1271,6 +1271,42 @@ def s46_76_collectors_keep_raw() -> tuple[bool, str]:
 
 
 
+def s46_120_registry_key_matches() -> tuple[bool, str]:
+    """★★★★★ 등록부의 ★ **감사 열쇠**가 ★ 목록 열쇠와 같은가 (개정 841 · #82).
+
+    ★★ 시험자 실측 — 「셋 다 303 인데 ★ 미분류 319 → 319 ·
+      ★ 키 꼴이 다르다 — ★ 목록은 `detail:…` 인데 ★ 감사는 `seed.detail:…` 다」
+      ★ ★ 저장은 되는데 ★ **다른 열쇠로 저장돼** ★ 사람이 둘을 못 맞췄다.
+    ★ 마스터 판정 — ★ 「`seed.` 를 떼라.  ★ 감사 세 줄은 그대로」.
+    ★ 그래서 ★ **새로 쓰는 것**만 본다 — ★ 옛 이력은 안 센다
+    """
+    src = _read(ROOT / "store" / "admin.py")
+    bad = []
+    if 'f"seed.{key}"' in src:
+        bad.append("classify_field 가 아직 seed. 를 붙인다 (store/admin.py)")
+    if "_under_seed" not in src:
+        bad.append("맨 열쇠를 담긴 자리로 푸는 곳이 없다 (_under_seed)")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    # ★ 옛 이력이 안 깨지는지 — ★ 되돌리기가 옛 열쇠를 그대로 받아야 한다
+    import sqlite3 as _sq
+
+    db = ROOT / "carwatch.db"
+    old = 0
+    if db.is_file():
+        try:
+            conn = _sq.connect(str(db))
+            old = conn.execute(
+                "SELECT COUNT(*) FROM config_change"
+                " WHERE file='field_usage.json' AND key_path LIKE 'seed.%'"
+            ).fetchone()[0]
+            conn.close()
+        except _sq.Error:
+            old = 0
+    return True, (f"감사 열쇠가 목록과 같다 (옛 `seed.` 이력 {old}줄은 "
+                  "그대로 두고 되돌리기도 받는다)")
+
+
 def s46_126_fetch_outside_transaction() -> tuple[bool, str]:
     """★★★★★ 수집기가 ★ **통신·`sleep` 을 트랜잭션 안에서** 하는가 (개정 857).
 
@@ -2692,6 +2728,8 @@ CHECKS = (
     ("S46-103", "시안의 크기·자리 값을 담았는가", s46_103_sian_values_carried),
     ("S46-117", "목록을 받는 수집기가 팔린 차를 거르는가",
      s46_117_collectors_sweep_gone),
+    ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
+     s46_120_registry_key_matches),
     ("S46-126", "수집기가 통신·sleep 을 트랜잭션 밖에서 하는가",
      s46_126_fetch_outside_transaction),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다

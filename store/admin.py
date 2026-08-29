@@ -338,6 +338,26 @@ def revoke_sessions(conn: sqlite3.Connection, account_id: int,
 
 
 # ── STEP 127 config 변경 ─────────────────────────────────────────────
+# ★★★★★ 08-29 (마스터 판정 · 개정 841 · 시험자 #82) — ★ `seed.` 를 뗀다.
+#   ★★ 시험자 실측 — 「셋 다 303 인데 ★ 미분류 319 → 319 ·
+#     ★ **키 꼴이 다르다** — ★ 목록은 `detail:…` 인데 ★ 감사는 `seed.detail:…` 다.
+#     ★ ★ 목록에 `seed.` 붙은 것이 하나도 없고 ★ 감사에 없는 것이 하나도 없다」
+#   ★ ★ 곧 ★ **저장은 되는데 ★ 다른 열쇠로 저장된다** — ★ 사람이 둘을 못 맞춘다.
+#   ★ 그래서 ★ 등록부는 ★ **맨 열쇠**(`detail:…`)로 적고 ★ 여기서 `seed` 아래로 푼다.
+#   ★ 파일 꼴은 안 바꾼다 — ★ `field_usage.json` 은 그대로 `seed` 를 갖는다.
+#   ★ 감사 세 줄(옛 `seed.…`)은 그대로 둔다 (마스터) — ★ 이력을 고쳐 쓰지 않는다.
+#     ★ 옛 열쇠로 들어와도 그대로 풀린다 — ★ 되돌리기가 안 깨진다
+_SEED_FILES = {"field_usage.json": "seed"}
+
+
+def _under_seed(file: str, key_path: str) -> str:
+    """등록부의 맨 열쇠를 ★ 담긴 자리로 푼다.  ★ 다른 파일은 그대로다."""
+    box = _SEED_FILES.get(file)
+    if not box or key_path.startswith(box + "."):
+        return key_path              # ★ 옛 꼴이면 그대로 (되돌리기용)
+    return f"{box}.{key_path}"
+
+
 def _walk(blob: dict, key_path: str):
     """★ 키 자체에 점이 들어 있다 — components 의 'spec.hud' (STEP 68).
 
@@ -411,24 +431,26 @@ def apply_config(conn: sqlite3.Connection, account: Account, file: str,
     with open(path, encoding="utf-8") as f:
         blob = json.load(f)
 
+    # ★ 등록부는 맨 열쇠로 들어온다 — ★ 담긴 자리로 푼다 (개정 841)
+    where = _under_seed(file, key_path)
     # ★ 없는 키는 만들지 않는다.  STEP 6 표에 없는 키가 생긴다
-    parent, _k = _walk(blob, key_path)
+    parent, _k = _walk(blob, where)
     if parent is None:
         raise ValidationError(f"없는 경로: {key_path}", step="STEP 127")
-    before = get_path(blob, key_path)
+    before = get_path(blob, where)
 
     # ★ 값이 그대로면 이력을 만들지 않는다.  브라우저 뒤로 → 재전송으로
     #   같은 변경이 두 번 쌓이면 「누가 언제 바꿨나」가 흐려진다 (시나리오 70)
-    before_now = get_path(blob, key_path)
+    before_now = get_path(blob, where)
     if before_now == value and not also:
         raise ValidationError(
             f"{key_path} 는 이미 그 값입니다: {value!r}", step="STEP 127")
     after_blob = json.loads(json.dumps(blob))
-    set_path(after_blob, key_path, value)
+    set_path(after_blob, where, value)
     # ★ 함께 바뀌어야 하는 키 (STEP 128 의 total_points).
     #   따로 쓰면 중간 상태가 규칙을 깨서 검증이 막는다
     for k, v in (also or {}).items():
-        set_path(after_blob, k, v)
+        set_path(after_blob, _under_seed(file, k), v)
     _validate_blob(file, after_blob)
 
     change = ConfigChange(
@@ -554,7 +576,10 @@ def classify_field(conn: sqlite3.Connection, account: Account, endpoint: str,
         blob["seed"][key] = {"usage": "unclassified", "reason": "신규"}
         _atomic_write(path, blob)
 
-    return apply_config(conn, account, "field_usage.json", f"seed.{key}",
+    # ★★ 08-29 (마스터 판정) — ★ `seed.` 를 안 붙인다.
+    #   ★ 감사(`config_change.key_path`)에 ★ 목록과 **같은 열쇠**가 남아야
+    #     ★ 사람이 둘을 맞춰 볼 수 있다 (시험자 #82)
+    return apply_config(conn, account, "field_usage.json", key,
                         entry, f"등록부 분류: {reason}", root=root, at=at)
 
 
