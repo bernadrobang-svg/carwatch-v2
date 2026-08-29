@@ -3109,11 +3109,102 @@ def s46_162_promised_checks_exist():
                           if excused else ""))
     return True, f"약속한 검사가 모두 있다 (「글로만」 {excused}개)"
 
+
+def s46_145_numbers_have_meaning():
+    """S46-145 — ★ 마스터께 드리는 표에 ★ 수만 있고 뜻이 없지 않은가 (오판 187).
+
+    ★ 마스터 — 「★ 빈 축이 17, 12, 24, 20 이렇게 적어놓으면 ★ 내가 어떻게 알아서
+      담을 수가 있니?  ★ 뭐라고 설명을 달아야 되는 게 아니니?」
+    ★ 잣대 — ★ 「빈 축」·「미확인」·「못 받은 것」 뒤에 ★ 수만 있고
+      ★ 같은 줄에 ★ 낱말(무엇이 비었나)이 없으면 ★ 실패
+    """
+    import re as _re
+
+    bad = []
+    for q in sorted((ROOT / "docs").rglob("*.md")):
+        if "/guide/06_" in q.as_posix() or "/guide/03_" in q.as_posix():
+            continue
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            m = _re.search(r"(빈 축|미확인|못 받은 것)\s*\|?\s*\**(\d+)\**\s*\|", ln)
+            if not m:
+                continue
+            # ★ 같은 줄에 ★ 축 이름이 하나라도 있으면 ★ 뜻이 달린 것이다
+            if _re.search(r"골격|외판|누유|사고|용도|신차가|트림|옵션|시세"
+                          r"|보증|소모품|진정성|연식|주행|색상|선루프|HUD", ln):
+                continue
+            bad.append(f"{q.relative_to(ROOT)}:{i}")
+    if bad:
+        return False, ("★ 수만 있고 뜻이 없는 곳 "
+                       f"{len(bad)} — " + " · ".join(bad[:6]))
+    return True, "수에 뜻이 달려 있다"
+
+
+def s46_155_screen_spec_has_mockup():
+    """S46-155 — ★ 화면 규격을 쓰면 ★ 시안이 있는가 (오판 197 · 104).
+
+    ★ ⓞ 「화면을 시키면 ★ 그 바퀴에 시안도 그린다」
+    ★ 잣대 — ★ `UI_REVIEW` 의 장 제목에 ★ 주소(`/foo`)가 있으면
+      ★ `ref/screens/` 에 그 이름이 든 시안이 있어야 한다
+    """
+    import re as _re
+
+    body = _read(ROOT / "docs" / "UI_REVIEW.md")
+    screens = ROOT / "ref" / "screens"
+    if not screens.is_dir():
+        return False, "ref/screens 가 없다"
+    names = " ".join(p.name for p in screens.glob("*.html"))
+    table = _read(ROOT / "docs" / "chapters" / "61-web.md")
+    bad = []
+    for m in _re.finditer(r"^#+ .*?`/([a-z_]+)`", body, _re.M):
+        key = m.group(1)
+        if key in names:
+            continue
+        # ★ 라우팅 표에 있는 화면만 본다 — ★ 규격 본문의 예시 주소는 뺀다
+        if not _re.search(r"\| ?★? ?`?/" + key + r"[`/{]", table):
+            continue
+        bad.append("/" + key)
+    if bad:
+        return False, ("★ 규격에 있는데 시안이 없는 화면 "
+                       f"{len(bad)} — " + " · ".join(sorted(set(bad))[:6]))
+    return True, "화면 규격마다 시안이 있다"
+
+
+def s46_163_mockup_has_route():
+    """S46-163 — ★ 시안이 있으면 ★ 라우팅 표에 그 주소가 있는가 (오판 205).
+
+    ★ 08-29 — ★ 「팔린 차」 시안을 올리고 ★ 라우팅 표에 안 넣어
+      ★ `test_web` 이 깨졌다.  ★ 개발측이 그 화면을 못 만들었다
+    """
+    import re as _re
+
+    screens = ROOT / "ref" / "screens"
+    if not screens.is_dir():
+        return False, "ref/screens 가 없다"
+    table = _read(ROOT / "docs" / "chapters" / "61-web.md")
+    paths = set(_re.findall(r"`(/[a-z_{}]+)`", table))
+    bad = []
+    for p in sorted(screens.glob("*.html")):
+        m = _re.match(r"v\d+m?_([a-z_]+)_", p.name)
+        if not m:
+            continue
+        key = "/" + m.group(1)
+        if any(p == key or p.startswith(key + "/") for p in paths):
+            continue
+        bad.append(f"{p.name} → {key}")
+    if bad:
+        return False, ("★ 시안이 있는데 라우팅 표에 없는 것 "
+                       f"{len(bad)} — " + " · ".join(bad[:6]))
+    return True, "시안마다 라우팅 표에 주소가 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
     ("S43-2c", "HDA 가 저장소에 없는가", s43_2c_no_hda),
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
+    ("S46-145", "마스터께 드리는 표에 수의 뜻이 있는가",
+     s46_145_numbers_have_meaning),
+    ("S46-155", "화면 규격마다 시안이 있는가", s46_155_screen_spec_has_mockup),
+    ("S46-163", "시안마다 라우팅 표에 주소가 있는가", s46_163_mockup_has_route),
     ("S46-162", "오판이 약속한 검사가 실제로 있는가",
      s46_162_promised_checks_exist),
     ("S46-161", "「사이트가 안 준다」에 증거가 있는가",
