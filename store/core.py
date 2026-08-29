@@ -481,6 +481,45 @@ def sweep_gone(conn: sqlite3.Connection, site: str, target_key: str,
     return n
 
 
+def sweep_gone_groups(conn: sqlite3.Connection, site: str, groups: list,
+                      at: str) -> dict:
+    """★★★★★ 여러 묶음을 받은 뒤 ★ **끝까지 받은 것만** 골라 gone 을 매긴다.
+
+    지시서   11장 STEP 「언제 gone 으로 매기나」 (개정 838 · 마스터 08-29)
+    ★★      ★ 아홉 수집기가 ★ **다 이것을 부른다** — ★ 같은 잣대를 쓰기 위해서다.
+             ★ 수집기마다 따로 적으면 ★ 한 군데만 고치는 일이 생긴다 (검사 `S46-117`)
+    groups   ★ `[(끝까지_받았나: bool, 본_source_id 집합), …]`
+             ★ 「끝까지」의 판단은 ★ 수집기가 한다 — ★ 사이트마다 끝이 다르다
+    ★★      ★ 안 끝난 묶음이 건드린 차종은 ★ **통째로 뺀다** —
+             ★ 한 차종을 두 묶음이 나눠 받았는데 하나만 끝났으면 ★ 반만 본 것이다.
+             ★ ★ 반만 보고 매기면 ★ **산 차를 죽인다**
+    ★        ★ 본 것이 하나도 없으면 ★ 아무것도 안 매긴다 (전멸 방지)
+    반환     ★ `{target_key: 매긴 건수}`
+    """
+    seen_by_t: dict = {}
+    blocked: set = set()
+    for done, ids in groups:
+        ids = {str(x) for x in (ids or ()) if x is not None}
+        if not ids:
+            continue
+        marks = ",".join("?" * len(ids))
+        rows = conn.execute(
+            f"SELECT DISTINCT target_key FROM core_listing"
+            f" WHERE site = ? AND source_id IN ({marks})"
+            f"   AND target_key IS NOT NULL", (site, *ids)).fetchall()
+        for (tk,) in rows:
+            if done:
+                seen_by_t.setdefault(tk, set()).update(ids)
+            else:
+                blocked.add(tk)
+    out: dict = {}
+    for tk in sorted(set(seen_by_t) - blocked):
+        n = sweep_gone(conn, site, tk, seen_by_t[tk], at)
+        if n:
+            out[tk] = n
+    return out
+
+
 def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
     """core_* 조인 → DTO.  Row 를 상위 계층으로 넘기지 않는다 (0장 STEP 1).
 

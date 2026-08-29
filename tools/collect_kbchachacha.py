@@ -168,7 +168,12 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
     ★ 봇 차단(2,759B)  → ★ 재시도한다.  ★ 「없음」으로 저장하지 않는다
     ★ 진짜 끝(3,585B + 「차량이 없습니다」) → ★ 거기서 멈춘다
     """
+    # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」를 돌려준다.
+    #   ★ `is_real_end` 를 만났을 때만 참이다 — ★ 막히거나(3회 실패) ·
+    #     ★ 빈 쪽이 이어지거나 · ★ MAX_PAGES 를 다 쓴 것은 ★ **못 받은 것**이다.
+    #   ★ 그것으로 ★ gone 을 매길지 말지를 가른다 — ★ 반만 받고 매기면 산 차를 죽인다
     got, pages, walls, tail = [], 0, 0, 0
+    done = False
     for page in range(1, MAX_PAGES + 1):
         req = adapter.list_url(None, page=page,
                                maker=g["makerCode"], klass=g["classCode"],
@@ -183,7 +188,8 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
             print(f"    {page}쪽 — ★ 3회 다 막혔다.  ★ 저장하지 않는다")
             break
         if is_real_end(body, cfg):
-            break                       # ★ 진짜 끝이다
+            done = True                 # ★ 진짜 끝이다 — ★ 끝까지 받았다
+            break
         ids = [x for x in page_ids(body) if x not in seen]
         if not page_ids(body):
             tail += 1
@@ -194,7 +200,7 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
         seen.update(ids)
         got.extend(ids)
         time.sleep(float(cfg.get("interval_sec") or 1.2))
-    return {"ids": got, "pages": pages, "walls": walls}
+    return {"ids": got, "pages": pages, "walls": walls, "done": done}
 
 
 def count_all(adapter: KbChaChaChaAdapter, cfg: dict, limit: int = MAX_PAGES):
@@ -365,6 +371,10 @@ def main() -> int:
         print(f"★ 우리 차종만 받는다 — {len(groups)}묶음 "
               f"(targets.json site_query.kbchachacha · 명령서 60장)")
         by_group = []
+        # ★★★★ 08-29 (개정 838) — ★ 묶음마다 ★ 「끝까지 받았나」를 들고 간다.
+        #   ★ 상세를 저장한 **뒤에** ★ `sweep_gone_groups` 에 넘긴다 —
+        #     ★ 그래야 ★ 이번에 새로 들어온 매물이 ★ 차종을 갖고 있다
+        done_groups: list = []
         for g in groups:
             r = walk_group(adapter, cfg, g, seen)
             mark = "" if r["ids"] else "  ★ 0건이다"
@@ -373,6 +383,7 @@ def main() -> int:
                   f"  {r['pages']:>3}쪽 · 매물 {len(r['ids']):>4}"
                   f" (규격 {g.get('expect', '—')})  봇차단 {r['walls']}{mark}")
             by_group.append((g, r["ids"]))
+            done_groups.append((r["done"], set(r["ids"])))
         print(f"★ 합 {len(seen):,}건  (규격 2,084 — ★ 그것은 쪽마다의 합이다.  "
               f"★ 겹친 것을 뺀 수가 이것이다)")
         if "--dry" in args:
@@ -397,6 +408,24 @@ def main() -> int:
                       f"({turn}/{bursts} 묶음)")
                 time.sleep(BURST_REST_SEC)
             rc = store_details(adapter, cfg, ids, want) or rc
+        # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ **팔린 차를 거른다.**
+        #   ★ 끝까지 받은 묶음만 쓴다 · 본 것이 없으면 안 매긴다 ·
+        #     그 사이트 · 그 차종만 넘긴다 (마스터 지시 셋)
+        from store.core import sweep_gone_groups
+        from store.raw import open_db as _open
+
+        _c = _open(os.path.join(ROOT, "carwatch.db"))
+        try:
+            got = sweep_gone_groups(_c, SITE_CODE, done_groups, _now())
+        finally:
+            _c.close()
+        n = sum(got.values())
+        done_n = sum(1 for d, _i in done_groups if d)
+        print(f"★ 목록에 없어 gone 으로 매긴 것 {n}건 "
+              f"({len(got)}차종 · 끝까지 받은 묶음 {done_n}/{len(done_groups)})")
+        if len(done_groups) - done_n:
+            print(f"  ★ 끝까지 못 받은 묶음 {len(done_groups) - done_n}개가 건드린 "
+                  "차종은 안 매겼다 — 반만 보고 매기면 산 차를 죽인다")
         return rc
 
     pages = opt("--pages", 1)

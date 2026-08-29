@@ -1271,6 +1271,40 @@ def s46_76_collectors_keep_raw() -> tuple[bool, str]:
 
 
 
+def s46_117_collectors_sweep_gone() -> tuple[bool, str]:
+    """★★★★★ 목록을 받는 수집기가 ★ **팔린 차를 거르는가** (개정 838 · 오판 161).
+
+    ★★ 사고 — ★ `mark_gone` 을 ★ `tools/collect_kcar.py` ★ 하나만 불렀다.
+      ★ ★ 엔카·KB·볼보·현대·헤이딜러·리본카·보배 ★ 일곱이 안 불러
+      ★ ★ 마스터께서 ★ **두 달째 팔린 차를 보셨다**.  ★ 엔카가 88% 다.
+    ★★ ★ 이 검사를 ★ **첫 사이트를 붙일 때 만든다** (마스터 지시 08-29) —
+      ★ ★ 마지막에 만들면 ★ 나머지 여덟이 ★ 안 빠진다.
+    ★ 「부르는가」만 본다 — ★ 「제대로 매겼는가」는 ★ 사람이 숫자로 본다
+    ★ 엔카는 ★ `collect/runner.py` 의 ★ S4 가 부른다 — ★ 결이 다르다
+    """
+    tools = ROOT / "tools"
+    if not tools.is_dir():
+        return False, "tools/ 가 없다"
+    want = ("sweep_gone", "mark_gone")
+    done, todo = [], []
+    for q in sorted(tools.glob("collect_*.py")):
+        # ★ `collect_<사이트>.py` 는 ★ 다 목록을 받는 수집기다 —
+        #   ★ 「목록을 받는가」를 낱말로 세지 않는다.  ★ 사이트마다 꼴이 다르다
+        #     (`list_url` 없이 주소를 직접 만드는 것이 다섯이다 — 실측 08-29)
+        body = _read(q)
+        (done if any(w in body for w in want) else todo).append(q.name)
+    runner = _read(ROOT / "collect" / "runner.py")
+    if not any(w in runner for w in want):
+        todo.append("collect/runner.py (엔카 S4)")
+    else:
+        done.append("collect/runner.py (엔카 S4)")
+    if todo:
+        return False, (f"★ 팔린 차를 안 거르는 수집기 {len(todo)}개 — "
+                       + " · ".join(todo[:8])
+                       + f"  (거르는 것 {len(done)}개)")
+    return True, f"목록을 받는 {len(done)}곳이 다 거른다"
+
+
 def s46_77_kb_is_our_targets_only() -> tuple[bool, str]:
     """★★★ KB 는 ★ **우리 20종만** 받는가 (마스터 정정 08-26 · 명령서 60장).
 
@@ -2622,6 +2656,8 @@ CHECKS = (
      s46_102_electric_only_is_electric),
     # ★★ 마스터 08-28 — ★ 낱말·차례로는 디자인을 못 본다.  ★ class 를 본다
     ("S46-103", "시안의 크기·자리 값을 담았는가", s46_103_sian_values_carried),
+    ("S46-117", "목록을 받는 수집기가 팔린 차를 거르는가",
+     s46_117_collectors_sweep_gone),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다
     ("S46-99", "로그인하면 관심·관리가 열리는가", s46_99_login_then_watch),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다
