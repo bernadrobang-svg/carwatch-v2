@@ -1,7 +1,7 @@
 # 현대·제네시스 인증중고차 API — 규격
 
 ```
-version  SPEC-2026.08.29-r919
+version  SPEC-2026.08.29-r920
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 865 · 실측 08-29
 checks   S46-5 · S46-27 · S46-31
@@ -488,3 +488,5 @@ GET /api/search/vehicle/count/selling?srchType=srchFilter&mdlGrpList=1171
 ★ 낱말 — `(신차\s*가격|신차\s*가|출고\s*가)[^0-9]{0,12}([\d,]{4,})`
 ★ ★ **안내문이 아니다** — ★ 값이 서로 다른 것을 확인했다 (오판 192 잣대)
 ```
+
+★ 파서 — `parse/hyundai_cert/mapping.py` 가 ★ 이 값을 넣는다 (`price_origin_won` · 08-29 신설분)

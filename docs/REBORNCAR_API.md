@@ -408,3 +408,5 @@ POST /api/v1/car/leaRatio.rb               month=48&classCode=HA&domestic=1
 
 ★ 전기차가 몇 대인지 ★ **가이드는 못 잰다** — ★ 상세를 다 받는 것은 개발측 몫이다 (ⓜ)
 ```
+
+★ 파서 — `parse/reborncar/mapping.py` · ★ 상세 표본 10건에서 ★ `price_origin_won` 10/10 (개정 885)

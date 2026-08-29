@@ -321,7 +321,7 @@ V4-11  usage='unclassified' 가 존재                    →  fatal
 | inspection | `master.detail.comments` | `inspection_comment` | `display_only` | 점검 소견 텍스트 |
 | inspection | `master.detail.motorType` | `motor_type_code` | `in_use` | **차종 검증 전용.** 점수 축이 아니다 |
 | inspection | `etcs[]` | `inspection_etc_json` | `deferred` | `use_when`: 8차종 수집 완료 후 경로 전수 · `priority` 3 |
-| — | 판매가 · 판매일 | — | `not_provided` | **엔카는 판매 결과를 주지 않는다** (아래) |
+| — | 판매가 · 판매일 | — | `not_provided` | **엔카는 판매 결과를 주지 않는다** ★ [추론 — 엔카는 robots `Disallow: /` 라 **우리 창에서 못 두드린다**] (아래) |
 | — | 실거래가 | — | `not_provided` | 호가만 제공. 감가 곡선의 한계로 명시 (STEP 70) |
 | — | 틴팅 시공 여부 | — | `not_provided` | `contents.text` 키워드로 대체 (STEP 75) |
 
@@ -354,7 +354,7 @@ V4-11  usage='unclassified' 가 존재                    →  fatal
 v1 가정   gone = 팔렸다  →  마지막 가격 = 판매가
 사실      gone 은 「목록에서 사라졌다」일 뿐이다 (3장 STEP 29)
          광고 만료 · 딜러 철회 · 재등록 준비도 gone 이 된다
-         엔카는 판매 여부·판매가를 주지 않는다
+         엔카는 판매 여부·판매가를 주지 않는다 ★ [추론 — 엔카는 robots `Disallow: /` 라 **우리 창에서 못 두드린다**]
 ```
 
 | 항목 | 처리 |
