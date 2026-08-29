@@ -1,7 +1,7 @@
 # 볼보 셀렉트 인증중고차 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.29-r863
+version  SPEC-2026.08.29-r864
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 863 · 실측 08-29
 checks   S46-38 · S46-39
@@ -69,22 +69,34 @@ xhr-results 를 1쪽부터 빈 쪽까지 걸었다
 | `s90` | 21 | ✘ 대상 아님 |
 | `v90-cross-country` | 17 | ✘ 대상 아님 |
 | `s60` | 3 | ○ `S60_IMPORT` |
-| ★ **`ex30`** | ★ **3** | ★ **✘ — 안 받는다** |
-| ★ **`ex30-cross-country`** | ★ **2** | ★ **✘ — 안 받는다** |
+| ★ **`ex30`** | ★ **3** | ★ ○ `EX30_EV` [마스터 확정 08-29] |
+| ★ **`ex30-cross-country`** | ★ **2** | ★ ○ `EX30_EV` [마스터 확정 08-29] |
 | `v60cc` | 1 | ○ `V60CC_IMPORT` |
 
 ```
-★ 우리 대상 144건 (지금 슬러그 여섯으로 걸렀을 때)
+★ 우리 대상 ★ **149건** — ★ EX30 을 넣고 수집기로 다시 돌려 확인했다 (`--dry` · 08-29)
 ★ ★ `ex60` 슬러그는 ★ 사이트에 ★ 0건이다 — ★ 아직 안 나왔다 (규격이 적어 둔 그대로)
 ```
 
-## ★★★★★ 볼보 전기차 EX30 다섯 대가 ★ 안 들어온다 [실측 08-29]
+## ★★★★★ 볼보 전기차 EX30 — ★ **넣었다** [마스터 확정 08-29 「넣어」]
 
 ```
 마스터께서 ★ 「볼보 전기차를 고르겠다」 하셨다.  ★ 셀렉트에 ★ EX30 이 ★ 다섯 대 있다
-그런데 ★ 우리 화면에 ★ 한 대도 없다
+★ 08-29 까지 ★ 우리 화면에 ★ 한 대도 없었다
 
-까닭 — `config/targets.json` 의 `EX30_EV.site_query.volvo_selekt` 가
+★★ 고친 것 ★ 둘 (같은 커밋 · 가이드역할 ㉻)
+   ① `config/targets.json` `EX30_EV.site_query.volvo_selekt.slug`
+      = `["ex30", "ex30-cross-country"]`
+   ② `config/dictionaries/target_map.json` `by_site.volvo_selekt.EX30`
+      = `{collect_group: multi, target_key: EX30_EV}`
+      ★ ①만 넣으면 ★ `_known_name` 이 None 이라 ★ 화면에 「EX30_EV」로 뜬다
+      ★ ★ 등록부에 ★ `EX60` 은 있고 ★ `EX30` 이 없었다 — ★ 정확히 거꾸로였다
+
+★ 확인 — `python3 tools/collect_volvo.py --dry` [실측 08-29]
+   「우리 대상 149건 (슬러그 ex30 · ex30-cross-country · s60 · v60-cross-country
+     · v60cc · xc40 · xc60)」 → ★ 144 → ★ **149** · ★ EX30 다섯 대가 잡힌다
+
+★ 옛 까닭 (남긴다) — `config/targets.json` 의 `EX30_EV.site_query.volvo_selekt` 가
        {"_전수":"true","_차명":"볼보 EX30"} 뿐이고 ★ `slug` 키가 없다
        `tools/collect_volvo.py:78` 이 `q.get("slug")` 만 읽는다 → ★ 안 걸린다
        `C40_EV` 도 같다 (`slug` 없음 · 사이트에 c40 은 0건이라 지금은 손해가 없다)
@@ -105,7 +117,7 @@ xhr-results 를 1쪽부터 빈 쪽까지 걸었다
 | ★ **XC40** | `xc40` | ★ `XC40_IMPORT` |
 | ★ **S60** | `s60` | ★ `S60_IMPORT` |
 | XC90 · S90 · V90 CC | — | ✘ |
-| ★ EX30 · EX30 CC | `ex30` · `ex30-cross-country` | ★ **08-29 정정 — 마스터 판단 대기** |
+| ★ EX30 · EX30 CC | `ex30` · `ex30-cross-country` | ★ ○ `EX30_EV` [마스터 확정 08-29] |
 
 ```
 ★★ ★ **우리 대상 넷이 ★ 다 있다** — ★ 마스터가 XC40·V60CC 를 더하신 것이 ★ 맞았다

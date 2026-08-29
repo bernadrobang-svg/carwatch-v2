@@ -62,6 +62,10 @@
         "collect_group": "multi",
         "target_key": "S60_IMPORT"
       },
+      "EX30": {
+        "collect_group": "multi",
+        "target_key": "EX30_EV"
+      },
       "EX60": {
         "collect_group": "multi",
         "target_key": "EX60_IMPORT"
@@ -349,7 +353,7 @@
       }
     },
     "volvo_selekt": {
-      "_field": "★ 목록 링크의 슬러그로 고른다 (xc60 · s60 · xc40 · v60-cross-country · v60cc)",
+      "_field": "★ 목록 링크의 슬러그로 고른다 (xc60 · s60 · xc40 · v60-cross-country · v60cc · ★ ex30 · ex30-cross-country — 마스터 확정 08-29)",
       "_rule": "★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
       "XC60": {
         "collect_group": "multi",
