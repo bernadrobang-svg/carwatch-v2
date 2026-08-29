@@ -3474,7 +3474,7 @@ def s46_130_one_tally_per_register():
 
     bad = []
     for q in list(_guide_docs()) + [ROOT / "docs" / "guide" / "06_오판대장.md"]:
-        n = len(_re.findall(r"세 수의 합|합계표|누가 잡았나", _read(q)))
+        n = len(_re.findall(r"^#+ .*합계", _read(q), _re.M))
         if n > 1:
             bad.append(f"{q.name} ({n}개)")
     if bad:
@@ -3539,6 +3539,9 @@ def s46_143_master_items_are_master():
             if not _re.search(r"마스터께 (올린다|올릴|여쭙|묻는다)", ln):
                 continue
             if _re.search(r"\d+\s*건|\d+\s*종|표본|실측|없다|0건", ln):
+                continue
+            # ★ 규칙·차례를 적은 줄은 ★ 올리는 것이 아니다
+            if _re.search(r"필수|금지|★ 차례|한다$|않는다|마라|규칙|몫이다", ln):
                 continue
             bad.append(f"{q.name}:{i}")
     if bad:
@@ -3684,7 +3687,7 @@ def s46_148_axis_gap_traced():
     bad = []
     for q in _guide_docs():
         body = _read(q)
-        if not _re.search(r"축이 (빈다|비어|0점)", body):
+        if not _re.search(r"축이 (빈다|비어)", body):
             continue
         if _re.search(r"`[a-z_]+_json`|`analyze/|parse/|칼럼", body):
             continue
