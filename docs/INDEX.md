@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**114파일 · 41,818줄 · 2,666KB**
+**114파일 · 41,928줄 · 2,674KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 1,638줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 904줄
+- guide/03_이력.md 908줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -29,14 +29,14 @@
 |---|--:|--:|
 | `BMW_BPS_API.md` | 225 | 10 |
 | `BOBAEDREAM_API.md` | 387 | 16 |
-| `CHECKS.md` | 605 | 96 |
+| `CHECKS.md` | 606 | 96 |
 | `CROSS_SITE_COMPARE.md` | 272 | 13 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 324 | 14 |
 | `ENCAR_ROBOTS.md` | 208 | 10 |
-| `HEYDEALER_API.md` | 630 | 31 |
+| `HEYDEALER_API.md` | 673 | 34 |
 | `HYUNDAI_CERTIFIED_API.md` | 478 | 22 |
-| `KBCHACHACHA_API.md` | 444 | 22 |
+| `KBCHACHACHA_API.md` | 500 | 24 |
 | `KCAR_API.md` | 559 | 26 |
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 275 | 14 |
@@ -107,13 +107,13 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 168 | 9 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 904 | 671 |
+| `guide/03_이력.md`  ★ | 908 | 673 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 582 | 179 |
-| `guide/07_밀린일대장.md` | 377 | 30 |
+| `guide/06_오판대장.md` | 583 | 180 |
+| `guide/07_밀린일대장.md` | 382 | 30 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_인계_20260829.md` | 186 | 7 |
 | `ref/00-intro.md` | 33 | 0 |

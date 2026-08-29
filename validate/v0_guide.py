@@ -1300,6 +1300,37 @@ def s46_115_run_screen_still() -> tuple[bool, str]:
     return True, "시키는 화면은 안 바뀌고 · 보는 화면만 갱신한다"
 
 
+def s46_125_sort_axes_really_sort() -> tuple[bool, str]:
+    """★★★★ 고른 정렬 축이 ★ **정말 먹는가** (시험자 #101 · 마스터 지시 4).
+
+    ★★ 시험자 — 「★ `grade`·`dom` 이 ★ `rank` 와 ★ 같은 순서다」
+    ★ 까닭이었던 것 — ★ `ORDER_HEAD`(순위 없음을 뒤로)가 ★ 고른 축보다 앞서서
+      ★ ★ 고른 축이 ★ 그 안에서만 갈렸다.  ★ 08-29 에 `first` 를 앞으로 옮겼다.
+    ★★ 이 검사가 막는 것은 ★ **두 가지**다 —
+      ① 화면이 내놓는 열쇠가 ★ `ORDER_SQL` 에 없어 ★ 조용히 `rank` 로 떨어지는 것.
+         ★ ★ 화면은 단추를 보여 주는데 ★ 눌러도 아무 일이 없다
+      ② 5단을 다시 섞어 ★ 고른 축이 ★ 또 안 보이게 되는 것
+    ★ 실제 DB 로 재지 않는다 — ★ 여기서는 ★ **뼈대**만 본다 (검사는 DB 없이도 돈다)
+    """
+    from web.views import ORDER_MENU
+
+    from report.screens.build import ORDER_HEAD, ORDER_SQL, order_clause
+
+    bad = []
+    for key, label in ORDER_MENU:
+        if key not in ORDER_SQL:
+            bad.append(f"「{label}」({key}) 가 ORDER_SQL 에 없다 — 눌러도 rank 다")
+            continue
+        clause = order_clause(key)
+        first = ORDER_SQL[key]
+        # ★ 고른 축이 ★ `ORDER_HEAD` 보다 ★ **앞**에 있어야 한다
+        if clause.find(first) > clause.find(ORDER_HEAD):
+            bad.append(f"「{label}」({key}) 가 ORDER_HEAD 뒤에 있다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"정렬 축 {len(ORDER_MENU)}개가 다 ORDER_HEAD 앞에 온다"
+
+
 def s46_118_heart_has_anchor() -> tuple[bool, str]:
     """★★★★ 하트가 ★ **자기 카드 안**에 앉는가 (UI_REVIEW 26-1 · 시험자 119~121).
 
@@ -2932,6 +2963,8 @@ CHECKS = (
      s46_117_collectors_sweep_gone),
     ("S46-115", "시키는 화면이 스스로 안 바뀌는가", s46_115_run_screen_still),
     ("S46-116", "사유에 쉬운 말이 있는가", s46_116_reasons_in_plain_words),
+    # ★★ 시험자 #101 — ★ 정렬을 바꿔도 순서가 안 바뀌었다
+    ("S46-125", "고른 정렬 축이 정말 먹는가", s46_125_sort_axes_really_sort),
     # ★★ 시험자 119~121 — ★ 하트 30개가 한 자리에 쌓였다 (UI_REVIEW 26-1)
     ("S46-118", "하트가 자기 카드 안에 앉는가", s46_118_heart_has_anchor),
     # ★★ 마스터 08-29 — ★ 「화면마다 위·아래가 바뀐다」 (UI_REVIEW 27장)
