@@ -1,0 +1,186 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>매물 — 토스 시안 (SPEC-2026.08.29-r852)</title>
+<!--
+  이름은 v3 시안 그대로다.  값만 토스로 바꿨다 (UI_REVIEW 29장)
+  클래스 이름을 바꾸면 시안 대조 검사(S46-67)가 다 깨진다
+-->
+<style>
+:root{
+  --bg:#f2f4f6; --surface:#ffffff; --surface2:#f9fafb;
+  --line:#e5e8eb; --line2:#d1d6db;
+  --text:#191f28; --dim:#8b95a1; --faint:#b0b8c1;
+  --blue:#3182f6; --down:#00c471; --up:#f04452;
+  --gone:#b0b8c1;
+  --mono:ui-monospace,'JetBrains Mono','D2Coding',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Pretendard','Malgun Gothic',sans-serif;
+  --r:12px; --rc:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 var(--sans);
+     -webkit-font-smoothing:antialiased}
+
+/* 머리 — 늘 위에 고정 (UI_REVIEW 27장) */
+header{position:sticky;top:0;z-index:30;background:var(--surface);
+       border-bottom:1px solid var(--line);padding:14px 20px}
+.v3-brand{font-weight:700;font-size:17px;letter-spacing:-.3px}
+.v3-nav{display:flex;gap:22px;margin-top:12px;font-size:15px}
+.v3-nav a{color:var(--dim);text-decoration:none;padding-bottom:8px}
+.v3-nav a.on{color:var(--text);font-weight:600;box-shadow:inset 0 -2px 0 var(--blue)}
+
+.wrap{padding:20px;max-width:1180px;margin:0 auto}
+
+/* 이 화면은 무엇을 하는 곳인가 */
+.v3-intro{background:var(--surface);border-radius:var(--r);padding:18px 20px;
+          margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.v3-intro b{display:block;margin-bottom:6px;font-size:15px}
+.v3-intro p{margin:0;color:var(--dim);font-size:14px}
+
+/* 거르개 여섯 (UI_REVIEW 20장) */
+.v3-filter{background:var(--surface);border-radius:var(--r);padding:16px;
+           margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);
+           display:flex;flex-wrap:wrap;gap:8px}
+.v3-filter select{appearance:none;background:var(--surface2);border:1px solid var(--line);
+  border-radius:10px;padding:11px 34px 11px 14px;font:15px var(--sans);color:var(--text);
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b95a1' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center}
+.v3-more{width:100%;color:var(--blue);font-size:14px;font-weight:600;cursor:pointer;
+         padding:6px 2px}
+
+/* 카드 — 테두리 대신 그림자 */
+.v3-card{background:var(--surface);border-radius:var(--rc);padding:18px;
+         margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);
+         position:relative;display:flex;gap:16px}
+.v3-heart{position:absolute;top:14px;right:14px;z-index:5;width:36px;height:36px;
+  border-radius:18px;background:var(--surface2);border:0;color:var(--faint);
+  font-size:17px;cursor:pointer;line-height:36px;text-align:center}
+.v3-heart.on{color:var(--up)}
+.v3-thumb{width:104px;height:78px;border-radius:10px;background:var(--surface2);
+  flex:none;display:flex;align-items:center;justify-content:center;
+  color:var(--faint);font-size:12px;overflow:hidden}
+.v3-body{flex:1;min-width:0}
+.v3-head{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:2px}
+.v3-trim{color:var(--dim);font-size:14px;margin-bottom:10px}
+.v3-price{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.v3-price .d{font-size:14px;font-weight:600;color:var(--down);margin-left:8px}
+.v3-meta{color:var(--dim);font-size:14px;margin-top:2px}
+
+/* 등급 배지 */
+.v3-grade{display:inline-block;min-width:30px;height:30px;line-height:30px;
+  border-radius:9px;background:var(--blue);color:#fff;font-weight:700;
+  text-align:center;font-size:15px;padding:0 9px}
+.v3-grade.pending{background:var(--surface2);color:var(--dim);font-size:13px;font-weight:600}
+.v3-rank{color:var(--faint);font-size:13px;margin-left:8px}
+
+/* 판정 다섯 */
+.v3-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.v3-chip{font-size:13px;padding:6px 11px;border-radius:8px;background:var(--surface2);
+  color:var(--dim);white-space:nowrap}
+.v3-chip.ok{background:#e8f7f0;color:#00a55f}
+.v3-chip.bad{background:#feeced;color:#e0313c}
+
+.v3-btns{display:flex;gap:8px;margin-top:14px}
+.v3-btn{flex:1;text-align:center;padding:12px;border-radius:10px;background:var(--surface2);
+  color:var(--text);font-size:15px;font-weight:600;text-decoration:none;
+  border:0;cursor:pointer;white-space:nowrap}
+.v3-btn.go{background:var(--blue);color:#fff}
+
+.v3-cnt{color:var(--dim);font-size:14px;margin:4px 0 14px}
+.v3-badge{display:inline-block;background:#eef3ff;color:var(--blue);font-size:12px;
+  font-weight:600;padding:4px 9px;border-radius:7px;margin-left:6px}
+
+@media (min-width:640px){ .v3-thumb{width:180px;height:135px} }
+@media (min-width:1024px){ .v3-thumb{width:240px;height:180px} }
+</style>
+
+<header>
+  <div class="v3-brand">CarWatch</div>
+  <nav class="v3-nav">
+    <a class="on">매물</a><a>관심</a><a>추적</a><a>현황</a><a>관리</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <div class="v3-intro">
+    <b>이 화면은 무엇을 하는 곳인가</b>
+    <p>모든 사이트의 매물을 한 자리에서 본다.  등급순으로 서 있다.<br>
+       같은 차가 여러 곳에 있으면 낮은 값 하나만 낸다.</p>
+  </div>
+
+  <div class="v3-filter">
+    <select><option>차종 — 전체</option></select>
+    <select><option>트림 — 전체</option></select>
+    <select><option>가격 — 전체</option></select>
+    <select><option>연료 — 전체</option><option>전기만</option></select>
+    <select><option>등급 — 전체</option></select>
+    <select><option>추천 순위</option><option>가격 낮은순</option></select>
+    <div class="v3-more">자세한 조건 ▾</div>
+  </div>
+
+  <div class="v3-cnt">5,756건 중 30건 · 1쪽 중 192쪽</div>
+
+  <div class="v3-card">
+    <button class="v3-heart on">♥</button>
+    <div class="v3-thumb">사진</div>
+    <div class="v3-body">
+      <div class="v3-head">볼보 C40 <span class="v3-badge">3곳</span></div>
+      <div class="v3-trim">트윈 얼티메이트 · 전기 · 2022년 · 4.2만km</div>
+      <div class="v3-price">2,990만 <span class="d">시세보다 550만 싸다</span></div>
+      <div class="v3-meta">
+        <span class="v3-grade">A</span>
+        <span class="v3-rank">3위 · 근거 652 / 910</span>
+      </div>
+      <div class="v3-chips">
+        <span class="v3-chip ok">사고 없음</span>
+        <span class="v3-chip ok">골격 없음</span>
+        <span class="v3-chip ok">용도 정상</span>
+        <span class="v3-chip ok">제조사 보증</span>
+        <span class="v3-chip">사이트 보증 —</span>
+      </div>
+      <div class="v3-btns">
+        <a class="v3-btn go">상세 ▸</a>
+        <a class="v3-btn">엔카에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="v3-card">
+    <button class="v3-heart">♡</button>
+    <div class="v3-thumb">볼보 EX30<br>울트라</div>
+    <div class="v3-body">
+      <div class="v3-head">볼보 EX30</div>
+      <div class="v3-trim">울트라 · 전기 · 2025년 · 1.6만km</div>
+      <div class="v3-price">4,180만 <span class="d" style="color:var(--up)">시세보다 120만 비싸다</span></div>
+      <div class="v3-meta">
+        <span class="v3-grade pending">판정 중</span>
+        <span class="v3-rank">근거 399 / 910 · 상세를 기다립니다</span>
+      </div>
+      <div class="v3-chips">
+        <span class="v3-chip">사고 —</span>
+        <span class="v3-chip">골격 —</span>
+        <span class="v3-chip">용도 —</span>
+        <span class="v3-chip ok">제조사 보증</span>
+        <span class="v3-chip ok">사이트 보증</span>
+      </div>
+      <div class="v3-btns">
+        <a class="v3-btn go">상세 ▸</a>
+        <a class="v3-btn">볼보에서 보기 ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="v3-card" style="opacity:.55">
+    <button class="v3-heart">♡</button>
+    <div class="v3-thumb">사진</div>
+    <div class="v3-body">
+      <div class="v3-head">폴스타 2</div>
+      <div class="v3-trim">롱레인지 싱글모터 · 전기 · 2023년 · 3.1만km</div>
+      <div class="v3-price">3,450만 <span class="d" style="color:var(--dim)">✕ 내려감 · 8월 23일</span></div>
+      <div class="v3-meta"><span class="v3-grade pending">내려감</span></div>
+      <div class="v3-btns"><a class="v3-btn">마지막 값 보기</a></div>
+    </div>
+  </div>
+
+</div>
