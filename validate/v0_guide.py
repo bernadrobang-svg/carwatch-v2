@@ -1466,6 +1466,50 @@ def s46_120_registry_key_matches() -> tuple[bool, str]:
                   "그대로 두고 되돌리기도 받는다)")
 
 
+def s46_128_batch_gives_a_window() -> tuple[bool, str]:
+    """★★★★ 묶어 쓰는 단계가 ★ **다른 쓰기에 창을 주는가** (ORDER r879 0 · 08-29).
+
+    ★★ 마스터 — 「★ 보배가 재판정을 큐에 넣었고 ★ 09:16:20 → 09:25:25 도는 동안
+      ★ ★ 뒤의 넷이 죽었다」.  ★ 개발측 실측 — ★ 한 번에 쥐는 시간은 ★ 이미 짧다
+      (S6 최대 **2.50초** · 1,503번 끊긴다).  ★ 그런데도 죽었다.
+    ★★★ 까닭은 ★ 틈의 **길이**가 아니라 ★ **비율**이었다 —
+      ★ S6 은 588초 중 559초(95%)를 쥐고 ★ 틈이 평균 19ms 다.
+      ★ ★ SQLite 는 ★ 점점 늘어나는 간격으로 다시 두드리므로 ★ 그 창을 계속 빗나가
+      ★ ★ `busy_timeout` 30초를 다 쓰고 죽는다.
+    ★ 사본 실측 — ★ pause 0ms 에서 `locked` **5** · 20ms 에서 **0**.
+    ★ 그래서 셋을 함께 본다 —
+      ① 행수마다 커밋한다 (`db_batch_commit_rows` > 0)
+      ② 커밋 뒤 창을 준다 (`db_batch_commit_pause_ms` > 0)
+      ③ `tick` 이 그 둘을 실제로 쓴다
+    """
+    try:
+        with open(ROOT / "config" / "web.json", encoding="utf-8") as fp:
+            cfg = json.load(fp)
+    except (OSError, ValueError) as exc:
+        return False, f"★ config/web.json 을 못 읽었다 — {exc}"
+    bad = []
+    rows = cfg.get("db_batch_commit_rows")
+    pause = cfg.get("db_batch_commit_pause_ms")
+    if not rows:
+        bad.append("db_batch_commit_rows 가 0 이다 — 단계를 통째로 쥔다")
+    if not pause:
+        bad.append("db_batch_commit_pause_ms 가 0 이다 — 틈이 19ms 라 빗나간다")
+    src = _read(ROOT / "store" / "raw.py")
+    if "_batch_commit_pause_ms" not in src:
+        bad.append("store/raw.py 에 창을 주는 자리가 없다")
+    else:
+        # ★ 커밋한 **뒤에** 쉬어야 한다 — ★ 앞에서 쉬면 창이 안 열린다
+        i = src.find("def tick(")
+        body = src[i:i + 1400] if i >= 0 else ""
+        c, w = body.find("conn.commit()"), body.find("_batch_commit_pause_ms()")
+        if c < 0 or w < 0 or w < c:
+            bad.append("tick 이 커밋한 뒤에 안 쉰다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, (f"{rows}행마다 커밋하고 ★ {pause:g}ms 창을 준다 "
+                  "(실측 locked 5 → 0)")
+
+
 def s46_127_collector_has_screen_or_timer() -> tuple[bool, str]:
     """★★★★ 수집기마다 ★ **화면이나 타이머**가 있는가 (오판 169 · 08-29).
 
@@ -2983,6 +3027,9 @@ CHECKS = (
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
     # ★★ 마스터 08-29(0b) — ★ 일꾼이 맨 connect 라 busy_timeout 이 없었다
+    # ★★ ORDER r879 0 — ★ 재판정이 도는 동안 수집기 넷이 죽었다
+    ("S46-128", "묶어 쓰는 단계가 다른 쓰기에 창을 주는가",
+     s46_128_batch_gives_a_window),
     # ★★ 오판 169 — ★ 손으로만 도는 수집기는 ★ 「안 돈다」가 안 보인다
     ("S46-127", "수집기마다 화면이나 타이머가 있는가",
      s46_127_collector_has_screen_or_timer),

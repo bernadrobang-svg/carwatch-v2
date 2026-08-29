@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+import time
 
 from contracts import FORMAT_FACET, FORMAT_JSON, EndpointSpec, FetchResult
 # ★ 형식 검증은 수집 계약이다.  store 는 「저장」만 한다 (STEP 15a).
@@ -168,6 +169,13 @@ def tick(conn: sqlite3.Connection, rows: int) -> None:
     if int(rows) - last >= every:
         _BATCH_TICK[id(conn)] = int(rows)
         conn.commit()
+        # ★★★★ 08-29 — ★ 커밋만으로는 모자랐다.  ★ 곧바로 다시 잡으면
+        #   ★ 틈이 ★ 평균 19ms 뿐이라 ★ 기다리던 쓰기가 ★ 계속 빗나간다.
+        #   ★ ★ 실측 — ★ 여기서 20ms 쉬니 ★ `locked` 가 ★ **5 → 0** 이 됐다
+        #   ★ ★ (`_batch_commit_pause_ms` 주석에 수를 적었다)
+        pause = _batch_commit_pause_ms()
+        if pause > 0:
+            time.sleep(pause / 1000.0)
 
 
 def commit(conn: sqlite3.Connection) -> None:
@@ -205,6 +213,31 @@ def _batch_commit_rows() -> int:
             return int(json.load(f)["db_batch_commit_rows"])
     except (OSError, ValueError, KeyError, TypeError):
         return 2000
+
+
+def _batch_commit_pause_ms() -> float:
+    """★★★★ 커밋한 뒤 ★ **다른 쓰기에 창을 주는** 시간 (ms · 08-29).
+
+    ★★★ 실측 08-29 — ★ 사본에서 ★ 재판정을 돌리며 ★ 수집기 꼴의 쓰기
+      (한 트랜잭션 200행)를 ★ 0.5초마다 던져 셌다 —
+
+        pause=0ms   재판정 543.8s · 쓰기 성공 170 · ★ locked **5** · 최대 대기 30.17초
+        pause=20ms  재판정 630.1s · 쓰기 성공 350 · ★ locked **0** · 최대 대기 28.83초
+
+    ★ 한 번에 쥐는 시간은 ★ 이미 짧다 (S6 최대 **2.50초** · 1,503번 끊긴다).
+      ★ ★ 그런데도 죽었다 — ★ 까닭은 ★ **틈이 아니라 비율**이다.
+      ★ ★ S6 은 588초 도는 동안 ★ 559초(95%)를 쥐고 있고 ★ 틈은 평균 19ms 다.
+      ★ ★ SQLite 의 기다림은 ★ 점점 늘어나는 간격으로 다시 두드린다 —
+      ★ ★ 19ms 창을 ★ 계속 빗나가면 ★ 30초를 다 쓰고 죽는다.
+    ★ 그래서 ★ 커밋 뒤 ★ 창을 넓혀 준다.  ★ 값은 `config/web.json` 이 정본이다 (S14).
+    ★ 값이 0 이면 ★ 안 쉰다 (옛 꼴)
+    """
+    try:
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(here, "config", "web.json"), encoding="utf-8") as f:
+            return float(json.load(f)["db_batch_commit_pause_ms"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return 20.0
 
 
 def _busy_timeout_ms() -> int:

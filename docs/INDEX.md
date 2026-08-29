@@ -9,28 +9,28 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**114파일 · 42,311줄 · 2,713KB**
+**114파일 · 42,854줄 · 2,766KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- MULTISITE_MAPPING.md 849줄
+- MULTISITE_MAPPING.md 906줄
 - UI_REVIEW.md 1,730줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 926줄
+- guide/03_이력.md 940줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
 - chapters/61-web.md 2,267줄
-- chapters/30-score/f-table.md 1,606줄
+- chapters/30-score/f-table.md 1,703줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
 
 | 파일 | 줄 | KB |
 |---|--:|--:|
-| `BMW_BPS_API.md` | 256 | 12 |
-| `BOBAEDREAM_API.md` | 421 | 18 |
-| `CHECKS.md` | 605 | 96 |
-| `CROSS_SITE_COMPARE.md` | 272 | 13 |
+| `BMW_BPS_API.md` | 306 | 15 |
+| `BOBAEDREAM_API.md` | 462 | 20 |
+| `CHECKS.md` | 607 | 96 |
+| `CROSS_SITE_COMPARE.md` | 470 | 27 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 360 | 15 |
 | `ENCAR_ROBOTS.md` | 242 | 12 |
@@ -41,12 +41,12 @@
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 275 | 14 |
 | `MAPPING.md` | 104 | 3 |
-| `MULTISITE_MAPPING.md`  ★ | 849 | 47 |
+| `MULTISITE_MAPPING.md`  ★ | 906 | 50 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 411 | 21 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 661 | 48 |
+| `SOURCE.md` | 668 | 49 |
 | `TARGET_KEY_MAP.md` | 119 | 5 |
 | `UI_REVIEW.md`  ★ | 1,730 | 84 |
 | `VOLVO_SELEKT_API.md` | 515 | 21 |
@@ -77,7 +77,7 @@
 | `chapters/30-score/c-spec.md` | 140 | 4 |
 | `chapters/30-score/d-history.md` | 373 | 12 |
 | `chapters/30-score/e-etc.md` | 233 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 1,606 | 67 |
+| `chapters/30-score/f-table.md`  ★ | 1,703 | 73 |
 | `chapters/30-score/g-absolute.md` | 150 | 5 |
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
@@ -105,15 +105,15 @@
 | `guide/01_시작.md` | 291 | 10 |
 | `guide/01_요구사항.md`  ★ | 999 | 45 |
 | `guide/02_결함대장.md` | 281 | 6 |
-| `guide/02_미확정.md` | 168 | 9 |
+| `guide/02_미확정.md` | 212 | 12 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 926 | 685 |
+| `guide/03_이력.md`  ★ | 940 | 697 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 589 | 189 |
-| `guide/07_밀린일대장.md` | 419 | 32 |
+| `guide/06_오판대장.md` | 594 | 196 |
+| `guide/07_밀린일대장.md` | 447 | 34 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_인계_20260829.md` | 186 | 7 |
 | `ref/00-intro.md` | 33 | 0 |

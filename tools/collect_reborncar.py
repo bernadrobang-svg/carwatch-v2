@@ -115,9 +115,23 @@ def main() -> int:
         print(f"★ 원문이 없는 우리 차종 {len(todo):,}건만 다시 받는다"
               f" (원문 있는 것 {len(have):,}건 · 우리 차종 {len(ours_keys):,}건)")
     else:
-        todo = [c for c in got if c not in done]
+        # ★★★★★ 08-29 (ORDER r879 1d) — ★ 「이미 받았나」를 ★ **원문으로** 가른다.
+        #   ★ 앞서는 `detail_status='ok'` 로 갈랐다.  ★ 그런데 실측 08-29 —
+        #   ★ ★ `detail_status='ok'` **1,106건** vs ★ 상세 원문 **301건**.
+        #   ★ ★ **805건이 「받았다」고 서 있는데 원문이 없다** — ★ 다시 캘 수가 없고
+        #   ★ ★ 그래서 ★ `target_key` 가 ★ 1,107 중 **72건**뿐이다 (차종 미정 1,035).
+        #   ★ 원문이 정본이다 (명령서 3-2 「원문은 남긴다.  갈래를 넓히시면 다시 판다」).
+        #   ★ ★ KB 도 08-29 에 같은 까닭으로 고쳤다 (개정 857)
+        have = {r[0] for r in conn.execute(
+            "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
+            (SITE_CODE,))}
+        todo = [c for c in got if c not in have]
         print(f"★ 상세 — 받을 것 {len(todo):,}건"
-              f" (이미 받은 것 {len(done):,}건은 건너뛴다)")
+              f" (원문이 있는 것 {len(have):,}건은 건너뛴다)")
+        if len(done) > len(have):
+            print(f"  ★ `detail_status='ok'` 는 {len(done):,}건인데 "
+                  f"원문은 {len(have):,}건이다 — {len(done) - len(have):,}건이 "
+                  "「받았다」고 서 있으나 원문이 없다 (그래서 다시 받는다)")
     interval = float(cfg.get("interval_sec") or 1.0)
     seen = {"정상": 0, "못 받음": 0}
     ours = skipped = 0
