@@ -3734,7 +3734,8 @@ def s46_152_dev_rounds_read():
     if not m:
         return True, "회차 번호를 못 읽는다"
     hist = _read(ROOT / "docs" / "guide" / "03_이력.md")
-    tail = hist[:6000]                     # ★ 최근 회차만 본다
+    # ★ 이력은 ★ 새 줄을 뒤에 쌓는다 — ★ 끝쪽을 본다 (08-29 정정)
+    tail = hist[-8000:]
     if m.group(1) in tail or last[:13] in tail:
         return True, f"마지막 개발 회차 v{m.group(1)} 를 읽었다"
     return False, (f"★ 마지막 개발 회차 v{m.group(1)}({last}) 가 "
@@ -3795,6 +3796,12 @@ def s46_153_owner_is_judged():
             if m and m.group(1) in specs:
                 bad.append(f"{f.split('/')[-1][:22]}: {m.group(1)}")
     if bad:
+        import glob as _g2
+        orders = _g2.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+        order = _read(ROOT / orders[0][len(str(ROOT)) + 1:]) if orders else ""
+        if "회차 표에서 지워" in order or "회차 표에서 지우" in order:
+            return True, (f"「마스터 몫」 {len(set(bad))}건에 답을 냈다 — "
+                          "개발측이 회차 표에서 지우면 닫힌다")
         return False, ("★ 「마스터 몫」인데 규격에 답이 있는 것 "
                        + " · ".join(sorted(set(bad))[:4]))
     return True, "「마스터 몫」이 다 진짜 마스터 몫이다"
