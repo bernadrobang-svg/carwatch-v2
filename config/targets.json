@@ -1172,6 +1172,11 @@
         "wr_in_multi_mnuftr_modelGrp_model_grd": "091,001,001,001",
         "carType_modelGrp_model_grd": "IMP",
         "_실측": "[실측 08-28] ★ 마스터께서 주신 K카 주소에 들어 있었다 (KCAR_API 3장)"
+      },
+      "bobaedream": {
+        "maker_no": "1019",
+        "_차명": "폴스타 2",
+        "_실측": "[실측 08-29] ★ ajax_maker_new.php dep=0 으로 받았다 — ★ 폴스타 no=1019 · car_cnt 1.  ★ dep=1 에 폴스타 2·4 뿐이다"
       }
     },
     "year_range": "201900..",
@@ -1196,6 +1201,11 @@
         "classCode": "2855",
         "_차명": "폴스타 4 (전기)",
         "_실측": "[실측 08-28] ★ carMaker.json · carClass.json 으로 확인했다"
+      },
+      "bobaedream": {
+        "maker_no": "1019",
+        "_차명": "폴스타 4",
+        "_실측": "[실측 08-29] ★ ajax_maker_new.php dep=0 으로 받았다 — ★ 폴스타 no=1019 · car_cnt 1.  ★ dep=1 에 폴스타 2·4 뿐이다"
       }
     },
     "year_range": "201900..",

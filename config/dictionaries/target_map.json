@@ -42,6 +42,20 @@
         "collect_group": "multi",
         "target_key": "POLESTAR4_EV"
       },
+      "폴스타 2": {
+        "collect_group": "multi",
+        "target_key": "POLESTAR2_EV",
+        "_why": "[실측 08-29] ★ 보배 제목이 「폴스타 폴스타 2 롱레인지 싱글모터」다 — ★ 사이 공백이 있어 「폴스타2」로는 안 걸린다"
+      },
+      "폴스타 4": {
+        "collect_group": "multi",
+        "target_key": "POLESTAR4_EV"
+      },
+      "C40": {
+        "collect_group": "multi",
+        "target_key": "C40_EV",
+        "_why": "[실측 08-29] ★ 보배 볼보 코드표에 C40·EX30·EX40·EX90 이 있다 — ★ 매물은 08-29 에 0대다"
+      },
       "X3": {
         "collect_group": "multi",
         "target_key": "X3_IMPORT"
