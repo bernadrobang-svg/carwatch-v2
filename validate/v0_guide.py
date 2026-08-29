@@ -3768,8 +3768,11 @@ def s46_159_design_is_doable():
 
 
 def s46_144_empty_is_split():
-    """S46-144 — ★ 「비었다」가 ★ 「못 받았다」와 「원래 없다」로 갈려 있는가 (오판 186)."""
-    import re as _re
+    """S46-144 — ★ 「비었다」가 ★ 「못 받았다」와 「원래 없다」로 갈려 있는가 (오판 186).
+
+    ★ 08-30 — ★ 안 쓰는 `import re as _re` 한 줄을 뺐다 (ruff F401).
+      ★ 이 함수는 ★ 낱말을 `in` 으로만 본다 — ★ 정규식을 안 쓴다
+    """
 
     ft = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
     need = ("⑤", "⑥", "⑦")

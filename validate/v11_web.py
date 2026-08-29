@@ -3493,6 +3493,28 @@ V1_SCREENS = (("listings", "listings"), ("recommend", "recommend"),
               ("compare", "compare"), ("watch", "watch"))
 
 
+def _with_includes(path: str) -> str:
+    """★★★★ 틀을 읽되 ★ **조각을 펼쳐서** 읽는다 (08-30).
+
+    ★★★ 08-30 실측 — ★ `listings`·`recommend`·`watch` 셋이 나눠 갖던 101줄을
+      ★ ★ `_rowjs.html` 한 조각으로 모았다 (UI_REVIEW 28장 · `S46-122`).
+      ★ ★ 그랬더니 ★ `V11-69` 가 ★ 「watch — 미리보기」를 ★ **없다**고 했다 —
+      ★ ★ `data-peek` 이 ★ 조각으로 옮겨 갔기 때문이다.
+    ★ 화면이 실제로 무엇을 내는가는 ★ **조각까지 합친 것**이다.
+      ★ ★ 조각을 안 펼치면 ★ 「공통으로 묶을수록 검사가 실패」하는 꼴이 된다
+    ★ 한 겹만 펼친다 — ★ 조각 안에서 조각을 안 부른다 (규격 「한 겹만」)
+    """
+    try:
+        src = open(path, encoding="utf-8").read()
+    except OSError:
+        return ""
+    try:
+        from web.template import expand_includes
+    except ImportError:
+        return src
+    return expand_includes(src, TEMPLATES)
+
+
 def _v1_parity_checks(rid):
     """V11-68 · V11-69 — v1 전 화면과 대조한다 (개정 277 · 303~305).
 
@@ -3555,7 +3577,7 @@ def _v1_parity_checks(rid):
         if not (os.path.isfile(a) and os.path.isfile(b)):
             continue
         src_a = open(a, encoding="utf-8").read()
-        src_b = open(b, encoding="utf-8").read()
+        src_b = _with_includes(b)
         for op, (in_v1, in_v2) in V1_OPS.items():
             if not any(x in src_a for x in in_v1):
                 continue          # v1 에 없던 것은 요구하지 않는다

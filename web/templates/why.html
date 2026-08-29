@@ -1,4 +1,13 @@
 <h1>판정 근거 <span class="{{ v.grade | gradecls }}">{{ v.grade | gradelabel }}</span></h1>
+<!-- ★★★★ 08-30 (`ref/screens/v4m_why_시안.html` · 가이드 8d3b0c9e) —
+     ★ 시안이 이 절을 새로 그렸다.  ★ 다른 화면 여덟과 같은 꼴이다.
+     ★ 시안 글자를 그대로 옮긴다 — ★ 개발측이 새로 쓰지 않는다 -->
+<div class="cond what">
+  <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
+  <p>★ 이 차가 왜 이 등급인지 축마다 보여 준다</p>
+  <p>★ 상세와 다르다 — 상세는 「무슨 차인가」 · 여기는 「왜 이 점수인가」</p>
+  <p>★★ 비어 있는 축을 먼저 낸다 — 무엇을 못 받아서 점수가 낮은지가 가장 중요하다</p>
+</div>
 {% if v.waiting_text %}<p class="note ask">무엇이 비었나 —
   <b>{{ v.waiting_text }}</b> · 상세를 기다립니다.
   근거 있는 축 {{ v.confirmed_points | num }} / {{ v.denominator | num }} 점입니다.
@@ -48,7 +57,11 @@
   </form>
   <a href="/compare?ids={{ v.listing_id }}" class="mini">⇄ 비교</a>
 </p>
-<p class="dim">★ 우리 판정은 참고입니다.  실제 매물과 연락처는 엔카에 있습니다.</p>
+<!-- ★★ 08-30 — ★ 시안이 이것을 ★ **절**로 그렸다 (`v4-lbl`).
+     ★ 앞서는 <p> 한 줄이라 ★ 절로 안 세어졌다 -->
+<h2>★ 우리 판정은 참고입니다</h2>
+<p class="dim">실제 매물과 연락처는 원문 사이트에 있습니다.</p>
+<p class="dim">★ 사진은 원문을 그대로 참조합니다 — 우리가 내려받지 않습니다</p>
 
 {% if v.not_rated_reason %}
 <p class="warn-warn">판정하지 못했습니다 — {{ v.not_rated_reason }}</p>

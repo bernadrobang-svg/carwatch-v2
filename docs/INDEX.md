@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**122파일 · 44,804줄 · 2,967KB**
+**122파일 · 44,768줄 · 2,964KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -30,7 +30,7 @@
 | `ARCHITECTURE_20260829.md` | 363 | 21 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
-| `CHECKS.md` | 680 | 106 |
+| `CHECKS.md` | 645 | 103 |
 | `CROSS_SITE_COMPARE.md` | 470 | 27 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -47,7 +47,7 @@
 | `REBORNCAR_API.md` | 413 | 21 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 676 | 50 |
+| `SOURCE.md` | 675 | 50 |
 | `TARGET_KEY_MAP.md` | 152 | 7 |
 | `UI_REVIEW.md`  ★ | 1,894 | 93 |
 | `VOLVO_SELEKT_API.md` | 515 | 22 |

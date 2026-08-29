@@ -10,7 +10,7 @@
 | `/listings` | [listings.html](listings.html) | 200 | 90,242B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 42,850B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,317B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 34,213B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 34,729B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,490B |
 | `/track` | [track.html](track.html) | 200 | 42,506B |
 | `/market` | [market.html](market.html) | 200 | 14,210B |
@@ -24,10 +24,10 @@
 | `/admin` | [admin.html](admin.html) | 200 | 15,439B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 15,417B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 56,351B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 11,615B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 11,623B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 7,931B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,577B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 7,903B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 7,909B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,476B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 19,953B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,372B |
@@ -36,7 +36,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,214B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 2,972B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,329B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 23,530B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 23,909B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 5,086B |
 
 ## 못 낸 화면
