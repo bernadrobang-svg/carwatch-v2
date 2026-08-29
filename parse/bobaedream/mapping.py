@@ -44,6 +44,15 @@ RE_ITEM = re.compile(
     r'href="/mycar/mview/(\d+)".*?<span class="title">\s*(.*?)\s*</span>', re.S)
 # 「24/02/13(23년형)」 · 「25/01/20」
 RE_YMD = re.compile(r"(\d{2})/(\d{2})/(\d{2})(?:\s*\((\d{2})년형\))?")
+# ★★★★★ 08-30 (`BOBAEDREAM_API.md` 08-29 재조사 · 마스터 지시 4) —
+#   ★ 「연식」 칸의 꼴이 ★ **둘**인데 ★ 위 하나만 읽고 있었다.
+#   ★ ★ `11/10/24(12년형)` ← 읽는다   ★ `2024/10` ← ★ **못 읽었다**
+#   ★ ★ 표본 10건 중 2건이 이 꼴이고 ★ 둘 다 `year_month` 가 None 이었다.
+#   ★ ★ 그래서 화면에서 보배 연식이 빈다 — ★ 「사이트가 안 준다」가 **아니었다**
+RE_YM4 = re.compile(r"(?<!\d)(\d{4})/(\d{1,2})(?!\d)")
+# ★★ 신차가 — ★ 구조화된 칸이 온다 (표본 10건 중 1건 · 매물 2240550 `신차가격: 15,953 만원`).
+#   ★ 나머지 아홉은 ★ 딜러가 손으로 쓴 글에만 있다 — ★ **안 읽는다** (지어내지 않는다)
+RE_NEWPRICE = re.compile(r"([\d,]+)\s*만\s*원?")
 RE_WARRANTY = re.compile(r"(\d+)\s*개월\s*/\s*([\d.]+)\s*만\s*km")
 
 MARK_VERIFIED = "보배드림 직접촬영"   # ★ 이것만 사이트 검증이다 (9/25 = 36%)
@@ -124,10 +133,25 @@ def parse_detail(html: str, site: str, source_id: str,
     if got:
         out["price_current_won"] = _int(got.group(1)) * WON_PER_MANWON
 
-    ymd = RE_YMD.search(f.get("연식") or "")
+    raw_year = f.get("연식") or ""
+    ymd = RE_YMD.search(raw_year)
     if ymd:
         out["year_month"] = f"20{ymd.group(1)}{ymd.group(2)}"
         out["form_year"] = 2000 + int(ymd.group(4) or ymd.group(1))
+    else:
+        # ★ 둘째 꼴 `2024/10` (08-30) — ★ 위가 안 걸릴 때만 본다
+        ym4 = RE_YM4.search(raw_year)
+        if ym4:
+            out["year_month"] = f"{ym4.group(1)}-{int(ym4.group(2)):02d}"
+            out["form_year"] = int(ym4.group(1))
+
+    # ★ 신차가 — ★ 구조화된 칸이 있을 때만 읽는다 (08-30)
+    newp = f.get("신차가격") or f.get("신차가") or ""
+    got_new = RE_NEWPRICE.search(newp)
+    if got_new:
+        won = _int(got_new.group(1))
+        if won:
+            out["price_origin_won"] = won * WON_PER_MANWON
 
     for key, col in (("주행거리", "mileage_km"), ("배기량", "displacement_cc"),
                      ("승차정원", None)):

@@ -9,25 +9,25 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**117파일 · 44,045줄 · 2,875KB**
+**117파일 · 44,178줄 · 2,895KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 1,097줄
-- UI_REVIEW.md 1,843줄
+- UI_REVIEW.md 1,894줄
 - guide/01_요구사항.md 1,000줄
-- guide/03_이력.md 974줄
+- guide/03_이력.md 982줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
 - chapters/61-web.md 2,266줄
-- chapters/30-score/f-table.md 1,703줄
+- chapters/30-score/f-table.md 1,743줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
 
 | 파일 | 줄 | KB |
 |---|--:|--:|
-| `ARCHITECTURE_20260829.md` | 358 | 20 |
+| `ARCHITECTURE_20260829.md` | 361 | 21 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
 | `CHECKS.md` | 608 | 96 |
@@ -47,9 +47,9 @@
 | `REBORNCAR_API.md` | 411 | 21 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 668 | 49 |
+| `SOURCE.md` | 676 | 49 |
 | `TARGET_KEY_MAP.md` | 152 | 7 |
-| `UI_REVIEW.md`  ★ | 1,843 | 90 |
+| `UI_REVIEW.md`  ★ | 1,894 | 93 |
 | `VOLVO_SELEKT_API.md` | 515 | 21 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -78,7 +78,7 @@
 | `chapters/30-score/c-spec.md` | 140 | 4 |
 | `chapters/30-score/d-history.md` | 373 | 12 |
 | `chapters/30-score/e-etc.md` | 233 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 1,703 | 73 |
+| `chapters/30-score/f-table.md`  ★ | 1,743 | 76 |
 | `chapters/30-score/g-absolute.md` | 150 | 5 |
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
@@ -106,14 +106,14 @@
 | `guide/01_시작.md` | 291 | 10 |
 | `guide/01_요구사항.md`  ★ | 1,000 | 46 |
 | `guide/02_결함대장.md` | 281 | 6 |
-| `guide/02_미확정.md` | 248 | 15 |
+| `guide/02_미확정.md` | 267 | 16 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 974 | 722 |
+| `guide/03_이력.md`  ★ | 982 | 728 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 603 | 209 |
+| `guide/06_오판대장.md` | 607 | 215 |
 | `guide/07_밀린일대장.md` | 469 | 35 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |

@@ -59,6 +59,20 @@ def _get(url: str, headers: dict, timeout: float) -> str | None:
     return None
 
 
+
+def _have_detail(conn) -> set:
+    """★ 이미 상세 원문이 있는 매물번호.  ★ `detail_status` 가 아니라 **원문**으로 가른다.
+
+    ★ 08-29 리본카에서 ★ `detail_status='ok'` 1,106건인데 ★ 원문이 301건이었다 —
+      ★ ★ 「받았다」고 서 있는데 ★ 다시 캘 수가 없었다.  ★ 같은 실수를 안 한다
+    """
+    if not hasattr(_have_detail, "_cache"):
+        _have_detail._cache = {r[0] for r in conn.execute(
+            "SELECT source_id FROM raw_response"
+            " WHERE site=? AND endpoint='detail'", (SITE_CODE,))}
+    return _have_detail._cache
+
+
 def main() -> int:
     args = sys.argv[1:]
     with open(os.path.join(ROOT, "config", "endpoints.json"), encoding="utf-8") as f:
@@ -114,7 +128,7 @@ def main() -> int:
         return 0
 
     from store.core import resolve_listing_id, upsert_core
-    from store.raw import save_site_raw
+    from store.raw import raw_body, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
@@ -138,6 +152,62 @@ def main() -> int:
     _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(seen))], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}")
+
+    # ★★★★★ 08-30 (마스터 지시 4 · `BMW_BPS_API.md` 08-29 절) —
+    #   ★ **값·주행·연식이 다 상세에 있다.**  ★ 목록 카드에는 없다.
+    #   ★ ★ 그래서 화면 BMW 가 ★ 376건 전부 ★ 값·주행·연식이 비어 있었다.
+    #   ★ 우리 대상만 받는다 — ★ 전량 364건을 다 받지 않는다 (마스터 확정 3-0)
+    from parse.bmw_bps.mapping import inspect_of, parse_detail
+
+    have = _have_detail(conn)
+    todo = [r for r in ours if r["source_id"] not in have]
+    print(f"★ 상세 — 받을 것 {len(todo)}건 "
+          f"(우리 대상 {len(ours)}건 중 · 원문이 있는 것 {len(ours) - len(todo)}건은 안 받는다)")
+    got = {"받음": 0, "못 받음": 0, "원문에서 다시 넣음": 0}
+    for one in ours:
+        sid = one["source_id"]
+        if sid in have:
+            # ★★ 안 받는다.  ★ 그러나 ★ **넣기는 한다** — ★ 파서가 늘면
+            #   ★ ★ 이미 받은 원문에서 ★ 새 칸이 나온다 (리본카 08-29 에서 배운 것)
+            row = conn.execute(
+                "SELECT body FROM raw_response WHERE site=? AND endpoint='detail'"
+                "   AND source_id=? LIMIT 1", (SITE_CODE, sid)).fetchone()
+            html = raw_body(row[0]) if row else None
+            if html is None:
+                continue
+            got["원문에서 다시 넣음"] += 1
+        else:
+            html = _get(f"{base}/shop/item.php?it_id={sid}", head, timeout)
+            if not html:
+                # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
+                got["못 받음"] += 1
+                time.sleep(interval)
+                continue
+            save_site_raw(conn, SITE_CODE, "detail", sid,
+                          f"{base}/shop/item.php?it_id={sid}", html, at,
+                          listing_id=one.get("listing_id"))
+            # ★ 통신·sleep 이 트랜잭션 안에 들지 않게 곧바로 커밋한다 (개정 857)
+            commit(conn)
+            got["받음"] += 1
+        one = dict(one)
+        deep = parse_detail(html, sid)
+        deep["listing_id"] = one.get("listing_id")
+        deep["detail_status"] = "ok"
+        # ★★ 차종 이름은 ★ **목록**이 준다 (상세에는 없다) — ★ 이어 준다.
+        #   ★ 안 이으면 ★ `fill_target_key` 가 ★ 이름이 없어 못 붙인다
+        for k in ("site_model_group", "site_model"):
+            if one.get(k) and not deep.get(k):
+                deep[k] = one[k]
+        n_chk, chk = inspect_of(html)
+        if n_chk:
+            deep["inspection_status"] = "ok"
+        fill_target_key(SITE_CODE, deep)
+        upsert_core(conn, deep, at)
+        commit(conn)
+        if sid not in have:
+            time.sleep(interval)
+    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
+    raw_link_raws(conn, SITE_CODE)
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(rows)}건 · 저장된 BMW 매물 {n:,}건")

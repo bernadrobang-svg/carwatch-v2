@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 182개 · 총 65,017줄
+파일 184개 · 총 65,224줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -79,12 +79,14 @@
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `tools/repair_facet_chunks.py` | 222 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
+| `tools/collect_bmw.py` | 218 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
 | `parse/kbchachacha/mapping.py` | 210 | KB차차차 상세 → `core_listing` (`docs/KBCHACHACHA_API.md` 3장). |
 | `tools/unknown_split.py` | 210 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
 | `tools/collect_heydealer.py` | 206 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
+| `parse/bobaedream/mapping.py` | 196 | 보배드림 상세 → `core_listing` (`docs/BOBAEDREAM_API.md` 2·3·1a장). |
 | `tools/collect_reborncar.py` | 196 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `score/scorer.py` | 194 | 채점 · 분모 (L7). |
 | `parse/importer.py` | 182 | 반입 입력 해석 (13장 STEP 136a · 136b). |
@@ -93,7 +95,6 @@
 | `tools/classify_unclassified.py` | 175 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `tools/migrate.py` | 174 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
-| `parse/bobaedream/mapping.py` | 172 | 보배드림 상세 → `core_listing` (`docs/BOBAEDREAM_API.md` 2·3·1a장). |
 | `tools/sync_target_map.py` | 172 | 차종 대응표 → `dict_enum` (명령서 `ORDER_20260822_r515.md` 2a장 · 개정 540). |
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
 | `tools/collect_lexus.py` | 168 | 렉서스 인증중고 수집 (명령서 1a). |
@@ -106,7 +107,6 @@
 | `tools/daily_enqueue.py` | 153 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
 | `web/routes.py` | 149 | 라우팅 표 (14장 STEP 142). |
-| `tools/collect_bmw.py` | 148 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `score/adjust.py` | 145 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
@@ -127,6 +127,7 @@
 | `adapters/kcar.py` | 115 | K카 어댑터 — URL · 헤더 (12장 · STEP 11). |
 | `errors.py` | 115 | 도메인 예외 5종. |
 | `tools/gen_table.py` | 114 | 배점표를 config 에서 생성한다 (개정 512). |
+| `parse/bmw_bps/mapping.py` | 113 | BMW BPS 상세 파서 (`docs/BMW_BPS_API.md` 08-29 절). |
 | `parse/volvo_selekt/mapping.py` | 112 | 볼보 셀렉트 상세 → `core_listing` 칸 (규격 `VOLVO_SELEKT_API.md` 2장). |
 | `tools/classify_stored.py` | 110 | 저장된 매물을 ★ 갈래에 넣는다 — ★ 사이트 도구가 쓴 줄용 (명령서 37·39). |
 | `tools/report_cli.py` | 109 | 리포트 재생성 (9장 STEP 90 · 91a · B-6). |
@@ -182,6 +183,7 @@
 | `store/__init__.py` | 1 | — |
 | `tests/__init__.py` | 1 | — |
 | `validate/__init__.py` | 1 | — |
+| `parse/bmw_bps/__init__.py` | 0 | — |
 | `parse/bobaedream/__init__.py` | 0 | — |
 | `parse/heydealer/__init__.py` | 0 | — |
 | `parse/kbchachacha/__init__.py` | 0 | — |
@@ -189,7 +191,7 @@
 | `parse/reborncar/__init__.py` | 0 | — |
 | `parse/volvo_selekt/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 79개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 80개)
 
 ### `validate/v11_web.py` — 5,016줄
 
@@ -627,6 +629,12 @@ check:35  inv1_order_independent:42  inv1_shuffle_100:72  inv2_banned:95  inv5_p
 
 ```
 meta_of:37  fix_meta:66  groups:87  join:101  main:114
+```
+
+### `tools/collect_bmw.py` — 218줄
+
+```
+_now:42  _get:46  _have_detail:63  main:76
 ```
 
 ### `web/context.py` — 213줄
