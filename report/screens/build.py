@@ -996,9 +996,18 @@ ORDER_SOLD = ("(CASE WHEN l.status = 'gone'"
 
 
 def order_clause(order: str) -> str:
-    """5단 정렬.  ★ 축을 바꿔도 뒤 3단은 남는다.  ★ 팔린 것은 늘 맨 뒤다."""
+    """5단 정렬.  ★ 축을 바꿔도 뒤 3단은 남는다.  ★ 팔린 것은 늘 맨 뒤다.
+
+    ★★★★ 08-29 (마스터 지시 4 · 시험자 #101) — ★ `first` 를 ★ `ORDER_HEAD` **앞**으로.
+      ★ 시험자 실측 — ★ 「`grade`·`dom` 이 ★ `rank` 와 같은 순서」.
+      ★ 재 봤다 (08-29) — ★ `grade` 는 ★ `rank` 와 ★ **여덟 줄이 똑같았다**.
+      ★★ 까닭 — ★ 고른 축보다 ★ `ORDER_HEAD`(순위 없음을 뒤로)가 ★ **앞서 있었다**.
+        ★ ★ 그러면 ★ 고른 축은 ★ 그 안에서만 갈리고 ★ 뒤 3단(`ORDER_TAIL`)이
+          ★ ★ 다시 `rank` 로 끝내 ★ 고른 축이 ★ 안 보인다.
+    ★ `ORDER_SOLD` 는 ★ **맨 앞 그대로**다 — ★ 팔린 것은 무엇으로 고르든 뒤다
+    """
     first = ORDER_SQL.get(order, ORDER_SQL["rank"])
-    return f"{ORDER_SOLD}, {ORDER_HEAD}, {first}, {ORDER_TAIL}"
+    return f"{ORDER_SOLD}, {first}, {ORDER_HEAD}, {ORDER_TAIL}"
 
 
 def _site_detail_urls(root: str = ".") -> dict:
