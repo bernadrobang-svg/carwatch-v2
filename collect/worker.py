@@ -16,6 +16,8 @@ import os
 import sqlite3
 import threading
 
+from store.raw import connect_db
+
 import traceback
 
 STATUS_QUEUED = "queued"
@@ -104,7 +106,9 @@ def run_once(db_path: str, make_ctx, make_executors_fn, root: str = ".",
     from collect.pipeline import run_recalc
 
     now = (clock or _utc_now)()
-    conn = sqlite3.connect(db_path)
+    # ★ 맨 connect 를 쓰지 않는다 — ★ busy_timeout 이 안 붙어 곧바로 죽는다
+    #   ★ (0b · 08-29 · `store/raw.connect_db` · S46-124)
+    conn = connect_db(db_path)
     try:
         job = take_next(conn, now())
         if job is None:
@@ -152,7 +156,7 @@ def start(db_path: str, make_ctx, make_executors_fn, root: str = ".",
     gap = poll_seconds(root)
     flag = stop or threading.Event()
     # ★★ 뜨자마자 ★ 재시작에 버려진 작업을 ★ 되살린다 (08-26).  ★ 한 번만 한다
-    _c = sqlite3.connect(db_path)
+    _c = connect_db(db_path)
     try:
         _n = reclaim_stale(_c, _utc_now()())
         if _n:

@@ -1385,6 +1385,42 @@ def s46_120_registry_key_matches() -> tuple[bool, str]:
                   "그대로 두고 되돌리기도 받는다)")
 
 
+def s46_124_db_opened_with_pragmas() -> tuple[bool, str]:
+    """★★★★ DB 를 ★ **PRAGMA 없이** 열지 않는가 (0b · 08-29).
+
+    ★★ 마스터 — 「★ `collect/worker.py:107` `:155` 가 ★ `sqlite3.connect` 를
+      ★ ★ 맨으로 부른다 — ★ `open_db` 를 안 써서 ★ `busy_timeout=30000` 이 안 붙는다」
+    ★ 붙지 않으면 ★ 기본값 0 이다 — ★ 잠금을 만나면 ★ 기다리지 않고 그 자리에서 죽는다.
+    ★ 여는 자리는 셋뿐이다 — ★ `store/raw.connect_db` · `open_db` · `web/app._open_db`.
+    ★ 그 밖에서 맨으로 열면 ★ 같은 결함이 되살아난다.
+    ★ 시험은 뺀다 — ★ 씨앗 DB 는 저 혼자 쓰고 ★ 잠금을 다투지 않는다 (S24).
+    ★ ★ 보기만 하는 `tools/` 일회성 것도 뺀다 — ★ 개발측이 손으로 돌리고
+      ★ ★ 죽으면 그 자리에서 보인다.  ★ **사이트가 떠 있는 동안 쓰는 것**만 본다
+    """
+    ok_files = {"store/raw.py", "web/app.py"}
+    watched = ("collect/", "store/", "web/", "score/", "report/",
+               "tools/collect_", "tools/daily_", "tools/recalc_")
+    bad = []
+    for path in sorted(ROOT.rglob("*.py")):
+        rel = path.relative_to(ROOT).as_posix()
+        if rel in ok_files or rel == "run.py":
+            continue
+        if not rel.startswith(watched):
+            continue
+        for i, line in enumerate(_read(path).splitlines(), 1):
+            if "sqlite3.connect(" not in line or line.lstrip().startswith("#"):
+                continue
+            # ★ 파이썬의 `timeout=` 이 ★ 곧 `busy_timeout` 이다 — ★ 그것도 옳다
+            # ★ 읽기 전용(`mode=ro`)은 ★ 쓰기 잠금을 다투지 않는다 (WAL)
+            if "timeout=" in line or "mode=ro" in line:
+                continue
+            bad.append(f"{rel}:{i}")
+    if bad:
+        return False, ("★ PRAGMA 없이 DB 를 여는 자리 "
+                       f"{len(bad)}곳 — {' · '.join(bad[:5])}")
+    return True, "DB 는 connect_db · open_db · _open_db 로만 연다"
+
+
 def s46_126_fetch_outside_transaction() -> tuple[bool, str]:
     """★★★★★ 수집기가 ★ **통신·`sleep` 을 트랜잭션 안에서** 하는가 (개정 857).
 
@@ -2813,6 +2849,9 @@ CHECKS = (
      s46_121_header_rule_in_one_place),
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
+    # ★★ 마스터 08-29(0b) — ★ 일꾼이 맨 connect 라 busy_timeout 이 없었다
+    ("S46-124", "DB 를 PRAGMA 없이 열지 않는가",
+     s46_124_db_opened_with_pragmas),
     ("S46-126", "수집기가 통신·sleep 을 트랜잭션 밖에서 하는가",
      s46_126_fetch_outside_transaction),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다

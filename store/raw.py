@@ -218,8 +218,17 @@ def _busy_timeout_ms() -> int:
         return 30000
 
 
-def open_db(path: str, ddl_dir: str = "sql/ddl") -> sqlite3.Connection:
-    """DDL 은 sql/ddl/*.sql 이 정본이다.  코드가 문서를 파싱하지 않는다 (STEP 32a)."""
+def connect_db(path: str) -> sqlite3.Connection:
+    """DB 를 연다 — ★ **PRAGMA 까지 붙여서**.  DDL 은 안 돌린다.
+
+    ★★★ 08-29 — ★ `collect/worker.py` 가 ★ `sqlite3.connect` 를 맨으로 불렀다.
+      ★ 그래서 ★ `busy_timeout` 이 ★ 기본 0 이었다 — ★ 잠금을 만나면
+      ★ ★ 기다리지 않고 ★ 그 자리에서 죽는다.  ★ `open_db` 를 쓰면 되지만
+      ★ ★ 그것은 ★ 부를 때마다 ★ `sql/ddl/*.sql` 을 ★ 전부 다시 돌린다 —
+      ★ ★ 몇 초마다 도는 폴링 자리에는 ★ 무겁다.
+    ★ 그래서 ★ 여는 규칙만 여기 모은다 — ★ `open_db` 도 이것을 쓴다.
+    금지   `sqlite3.connect` 를 맨으로 부르는 것 (S46-124)
+    """
     conn = sqlite3.connect(path)
     conn.execute("PRAGMA foreign_keys = ON")
     # ★★★ 잠금을 만나면 ★ 곧바로 죽지 않고 ★ 기다린다 (08-26).
@@ -234,6 +243,12 @@ def open_db(path: str, ddl_dir: str = "sql/ddl") -> sqlite3.Connection:
     #   프로세스가 죽는 경우는 잃지 않는다 (SQLite 문서)
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA synchronous = NORMAL")
+    return conn
+
+
+def open_db(path: str, ddl_dir: str = "sql/ddl") -> sqlite3.Connection:
+    """DDL 은 sql/ddl/*.sql 이 정본이다.  코드가 문서를 파싱하지 않는다 (STEP 32a)."""
+    conn = connect_db(path)
     for name in sorted(os.listdir(ddl_dir)):
         if name.endswith(".sql"):
             with open(os.path.join(ddl_dir, name), encoding="utf-8") as f:

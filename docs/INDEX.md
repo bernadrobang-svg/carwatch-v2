@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**114파일 · 41,585줄 · 2,639KB**
+**114파일 · 41,683줄 · 2,649KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - MULTISITE_MAPPING.md 849줄
 - UI_REVIEW.md 1,638줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 890줄
+- guide/03_이력.md 894줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -29,7 +29,7 @@
 |---|--:|--:|
 | `BMW_BPS_API.md` | 225 | 10 |
 | `BOBAEDREAM_API.md` | 387 | 16 |
-| `CHECKS.md` | 602 | 95 |
+| `CHECKS.md` | 603 | 95 |
 | `CROSS_SITE_COMPARE.md` | 272 | 13 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 324 | 14 |
@@ -37,7 +37,7 @@
 | `HEYDEALER_API.md` | 607 | 30 |
 | `HYUNDAI_CERTIFIED_API.md` | 430 | 20 |
 | `KBCHACHACHA_API.md` | 444 | 22 |
-| `KCAR_API.md` | 518 | 24 |
+| `KCAR_API.md` | 559 | 26 |
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 275 | 14 |
 | `MAPPING.md` | 104 | 3 |
@@ -46,10 +46,10 @@
 | `REBORNCAR_API.md` | 377 | 19 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 660 | 48 |
+| `SOURCE.md` | 661 | 48 |
 | `TARGET_KEY_MAP.md` | 119 | 5 |
 | `UI_REVIEW.md`  ★ | 1,638 | 80 |
-| `VOLVO_SELEKT_API.md` | 458 | 18 |
+| `VOLVO_SELEKT_API.md` | 503 | 21 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
 | `chapters/10-collect/00-intro.md` | 376 | 14 |
@@ -107,13 +107,13 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 168 | 9 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 890 | 662 |
+| `guide/03_이력.md`  ★ | 894 | 664 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 578 | 173 |
-| `guide/07_밀린일대장.md` | 353 | 28 |
+| `guide/06_오판대장.md` | 580 | 176 |
+| `guide/07_밀린일대장.md` | 357 | 28 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_인계_20260829.md` | 186 | 7 |
 | `ref/00-intro.md` | 33 | 0 |
