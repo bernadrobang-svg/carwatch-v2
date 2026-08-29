@@ -3036,11 +3036,56 @@ def s46_92_browser_zero_count() -> tuple[bool, str]:
     return True, f"브라우저 봉투 {seen:,}건이 다 0건이 아니다"
 
 
+
+def s46_161_no_unproven_absence():
+    """S46-161 — ★ 「사이트가 안 준다」를 증거 없이 쓰지 않는가 (감독 지시 08-29 ⑥).
+
+    ★ 08-29 에 ★ 이 문장이 ★ **하루에 네 번 뒤집혔다** (오판 188·189·190·192).
+      ★ 셋은 우리 파서 결함이었고 ★ 하나는 안내문을 값으로 센 것이었다.
+    ★ 잣대 — ★ 「안 준다」·「주지 않는다」가 있는 줄에 ★ **표본 수**가 함께 없으면 실패.
+      ★ 표본 열 건 전건이 비어야 그 문장을 쓴다 (오판 189 가 세운 것)
+    ★ 「못 찾았다」·「아직 못 쟀다」는 ★ 걸지 않는다 — ★ 그것은 정직한 말이다
+    """
+    import re as _re
+
+    bad = []
+    for q in sorted((ROOT / "docs").rglob("*.md")):
+        if "guide/06_" in q.as_posix() or "guide/03_" in q.as_posix():
+            continue                      # ★ 오판·이력은 그때의 기록이다
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            # ★ 주장문만 잡는다 — ★ 「{사이트}는/가 … 안 준다」
+            #   ★ 인용·규칙·물린 문장은 ★ 아래 거르개가 뺀다
+            if not _re.search(r"(엔카|K카|KB차차차|KB|보배|헤이딜러|리본카|볼보"
+                              r"|BMW|렉서스|기아|현대)[가는은이]?\s*[^。\n]{0,24}"
+                              r"(안 준다|주지 않는다)", ln):
+                continue
+            # ★ 「아니다」·「틀렸다」는 ★ 그 문장을 물리는 줄이다 — 걸지 않는다
+            if _re.search(r"못 찾았|아직 못 쟀|못 쟀다|아니었다|아니다|틀렸다"
+                          r"|오판|물린다|정정", ln):
+                continue
+            # ★ 「…처럼 안 준다」는 ★ 다른 사이트를 견주는 말이다 — 걸지 않는다
+            if _re.search(r"처럼|같은 꼴|와 달리", ln):
+                continue
+            # ★ 마스터·개발측 말을 옮긴 줄과 ★ 규칙을 적은 줄은 ★ 주장이 아니다
+            if _re.search(r"「.*(안 준다|주지 않는다).*」|필수|금지|가이드 안"
+                          r"|후보|말씀|물음|여쭌|확인해|원문 —|마스터 —|「야,|「보배에", ln):
+                continue
+            # ★ 증거 — 표본 수가 같은 줄에 있는가
+            if _re.search(r"표본\s*\d+|\d+\s*/\s*\d+|\d+건", ln):
+                continue
+            bad.append(f"{q.relative_to(ROOT)}:{i}")
+    if bad:
+        return False, ("★ 「안 준다」에 표본 수가 없다 "
+                       f"{len(bad)}곳 — " + " · ".join(bad[:6]))
+    return True, "「안 준다」가 모두 표본 수를 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
     ("S43-2c", "HDA 가 저장소에 없는가", s43_2c_no_hda),
     ("S43-3", "버전이 이력 마지막과 같은가", s43_3_version_matches),
+    ("S46-161", "「사이트가 안 준다」에 증거가 있는가",
+     s46_161_no_unproven_absence),
     ("S44-1", "가리키는 명령서가 실제로 있는가", s44_1_order_exists),
     ("S44-2", "명령서가 하나뿐인가", s44_2_one_order),
     ("S44-3", "규격을 명령서가 가리키는가", s44_3_specs_in_order),
