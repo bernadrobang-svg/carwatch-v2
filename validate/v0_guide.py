@@ -1466,6 +1466,50 @@ def s46_120_registry_key_matches() -> tuple[bool, str]:
                   "그대로 두고 되돌리기도 받는다)")
 
 
+def s46_122_shared_fragments() -> tuple[bool, str]:
+    """★★★★ 머리·발이 ★ **한 곳에만** 있는가 (UI_REVIEW 28장 · 개정 851).
+
+    ★★ 마스터 — 「HTML 중에 공통으로 쓸 것들을 표준화하고 공통 모듈로 만들어 쓰게 해」
+    ★★★ 규격은 ★ 「`_head.html`·`_foot.html` 을 ★ include 로 쓰라」고 적었다.
+      ★ 그런데 ★ 실측 08-29 — ★ 머리·발은 ★ **이미 한 곳**이다.
+      ★ ★ `base.html` 이 머리·발을 갖고 · ★ `_page.html` 이 그것을 `extends` 하며
+      ★ ★ `web/views.page()` 가 ★ **모든 화면**을 그것으로 감싼다.
+      ★ ★ 틀 39개 중 ★ `<header>`·`<!DOCTYPE>` 를 가진 것은 ★ `base.html` 뿐이다
+      ★ ★ (`watch_invite.html` 의 `<header>` 는 ★ 카드 속 머리지 ★ 쪽 머리가 아니다).
+    ★ 그러므로 ★ 이 검사는 ★ **뜻**을 지킨다 — ★ 「머리·발이 한 곳인가」.
+      ★ ★ 낱말대로 「include 를 쓰는가」로 재면 ★ 39곳이 다 실패하는데
+      ★ ★ 그것은 ★ 고칠 것이 없는 실패다.  ★ 가이드께 이 어긋남을 올렸다.
+    ★ 함께 본다 — ★ 조각(`_*.html`)이 ★ 조각을 부르지 않는가 (규격 「한 겹만」)
+    """
+    tpl = ROOT / "web" / "templates"
+    if not tpl.is_dir():
+        return False, "web/templates 가 없다"
+    bad = []
+    # ① 쪽 머리·발은 ★ base.html 하나만 갖는다
+    for q in sorted(tpl.glob("*.html")):
+        if q.name in ("base.html", "watch_invite.html"):
+            continue
+        body = _read(q)
+        for mark in ("<!DOCTYPE", "<html", "<header", "<footer"):
+            if mark.lower() in body.lower():
+                bad.append(f"{q.name} 이 {mark} 를 스스로 갖는다")
+    # ② 모든 화면이 그 하나를 거친다
+    views = _read(ROOT / "web" / "views.py")
+    if "_page.html" not in views:
+        bad.append("web/views.py 가 _page.html 을 안 쓴다")
+    if "extends" not in _read(tpl / "_page.html"):
+        bad.append("_page.html 이 base.html 을 안 물려받는다")
+    # ③ 조각은 ★ 한 겹만이다
+    for q in sorted(tpl.glob("_*.html")):
+        if "{% include" in _read(q):
+            bad.append(f"{q.name} 이 조각 안에서 조각을 부른다 (한 겹만)")
+    if bad:
+        return False, "★ " + " · ".join(bad[:4])
+    n = len(list(tpl.glob("*.html")))
+    frag = len(list(tpl.glob("_*.html")))
+    return True, (f"틀 {n}개가 머리·발 한 곳(base.html)을 거친다 · 조각 {frag}개")
+
+
 def s46_128_batch_gives_a_window() -> tuple[bool, str]:
     """★★★★ 묶어 쓰는 단계가 ★ **다른 쓰기에 창을 주는가** (ORDER r879 0 · 08-29).
 
@@ -3027,6 +3071,8 @@ CHECKS = (
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
     # ★★ 마스터 08-29(0b) — ★ 일꾼이 맨 connect 라 busy_timeout 이 없었다
+    # ★★ 마스터 08-29 — ★ 「공통으로 쓸 것들을 공통 모듈로」 (UI_REVIEW 28장)
+    ("S46-122", "머리·발이 한 곳에만 있는가", s46_122_shared_fragments),
     # ★★ ORDER r879 0 — ★ 재판정이 도는 동안 수집기 넷이 죽었다
     ("S46-128", "묶어 쓰는 단계가 다른 쓰기에 창을 주는가",
      s46_128_batch_gives_a_window),

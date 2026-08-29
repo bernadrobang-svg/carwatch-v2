@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**114파일 · 42,854줄 · 2,766KB**
+**114파일 · 43,014줄 · 2,785KB**
 
 ★ 800줄을 넘는 파일 11개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- MULTISITE_MAPPING.md 906줄
+- MULTISITE_MAPPING.md 1,030줄
 - UI_REVIEW.md 1,730줄
 - guide/01_요구사항.md 999줄
-- guide/03_이력.md 940줄
+- guide/03_이력.md 946줄
 - guide/05_가이드역할.md 1,382줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 946줄
@@ -41,7 +41,7 @@
 | `KIA_CPO_API.md` | 177 | 9 |
 | `LEXUS_CERTIFIED_API.md` | 275 | 14 |
 | `MAPPING.md` | 104 | 3 |
-| `MULTISITE_MAPPING.md`  ★ | 906 | 50 |
+| `MULTISITE_MAPPING.md`  ★ | 1,030 | 57 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 411 | 21 |
 | `SCHEMA.md` | 112 | 5 |
@@ -61,7 +61,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md` | 660 | 27 |
+| `chapters/11-store/a-key.md` | 687 | 29 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 600 | 24 |
@@ -107,12 +107,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 212 | 12 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 940 | 697 |
+| `guide/03_이력.md`  ★ | 946 | 702 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,382 | 70 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 594 | 196 |
+| `guide/06_오판대장.md` | 597 | 201 |
 | `guide/07_밀린일대장.md` | 447 | 34 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_인계_20260829.md` | 186 | 7 |

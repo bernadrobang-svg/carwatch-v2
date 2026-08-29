@@ -22,3 +22,6 @@ lock*.txt
 contend_*.txt
 measure.db-shm
 measure.db-wal
+core.js.txt
+before/
+kb_b4.txt

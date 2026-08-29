@@ -287,6 +287,7 @@
     <div class="pk-d" id="peek-desc"></div>
   </div>
 </div>
+
 <script>
 /* 매물 미리보기.  바닐라 · 한 파일.
    ★ 값을 다시 실어 보내지 않는다 — 이미 그 행에 있는 칸을 읽는다.
@@ -314,6 +315,17 @@
       cell(tr, '차종') + ' ' + cell(tr, '트림');
     document.getElementById('peek-price').textContent =
       cell(tr, '가격') + '   시세차 ' + cell(tr, '시세차');
+
+    /* ★ 「얼마에 파는가」가 아니라 「얼마를 내는가」다.
+       ★★ 08-29 — ★ 이 칸은 ★ 매물 화면에만 있다.  ★ 없으면 아무 일도 안 한다 —
+         ★ 그래야 세 화면이 ★ 이 조각 하나를 같이 쓴다 (UI_REVIEW 28장) */
+    var pkBuy = document.getElementById('peek-buy');
+    if (pkBuy) {
+      var buy = tr.getAttribute('data-buy');
+      pkBuy.textContent =
+        buy ? ('실제로 내는 돈 ' + buy +
+               (tr.getAttribute('data-buyest') === 'True' ? ' (추정)' : '')) : '';
+    }
 
     /* ★ 강점만 모은다 — 「이 차의 무엇이 좋은가」가 미리보기의 뜻이다 */
     var tags = [];
@@ -387,7 +399,8 @@
     show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
   }, {passive: false});
 })();
-
+</script>
+<script>
 /* ★★ 비교 네모를 몇 개 골랐나 (v4m 시안 08-26 · 마스터 확정 17).
    ★ 값을 다시 실어 보내지 않는다 — ★ 이미 그 폼에 있는 네모를 센다.
    ★ ★ JS 가 없으면 ★ 띠 글이 그대로 남고 ★ 단추도 살아 있다 —
@@ -424,7 +437,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-29 22:05</span>
+  <span>2026-08-29 22:11</span>
 </footer>
 
 </body>

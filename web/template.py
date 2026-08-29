@@ -20,6 +20,13 @@ TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 RE_EXTENDS = re.compile(r"\{%\s*extends\s+([\w.]+)\s*%\}")
 RE_BLOCK = re.compile(r"\{%\s*block\s+(\w+)\s*%\}(.*?)\{%\s*endblock\s*%\}",
                       re.S)
+# ★★★★ 08-29 (UI_REVIEW 28장 · 마스터 확정 개정 851) — ★ 공통 조각.
+#   ★ 「HTML 중에 공통으로 쓸 것들을 표준화하고 공통 모듈로 만들어 쓰게 해」
+#   ★ 꼴 — {% include "_card.html" %} · {% include "_card.html" with r=row %}
+#   ★ `with` 는 ★ **이름 바꾸기**다 — ★ 조각 안의 `r` 이 ★ 부르는 쪽의 `row` 다.
+#   ★ ★ 값을 새로 짓지 않는다 — ★ 이미 있는 이름만 가리킨다 (짐작 금지)
+RE_INCLUDE = re.compile(
+    r"\{%\s*include\s+\"?([\w./-]+)\"?\s*(?:with\s+([^%]+?))?\s*%\}")
 # 이름 경로.  ★ 대괄호 첨자를 여기서 받아야 _lookup 까지 간다.
 #   안 받으면 {{ d.gc[g] }} 가 「값 없음」이 아니라 글자 그대로 찍힌다 (N-1)
 PATH = r"[\w.\[\]'\"-]+"
@@ -340,6 +347,43 @@ def strip_comments(html: str) -> str:
     return RE_DEV_REF.sub("", RE_HTML_COMMENT.sub("", html))
 
 
+def expand_includes(src: str, base_dir: str) -> str:
+    """★★★★ `{% include %}` 를 펼친다 (UI_REVIEW 28장).
+
+    ★ **한 겹만**이다 — ★ 조각 안에서 조각을 부르지 않는다 (규격 「금지」).
+      ★ ★ 그래서 ★ 펼친 결과를 ★ 다시 펼치지 않는다.  ★ 무한 되돌이가 없다.
+    ★ `with a=b` 는 ★ 조각 안의 `a` 를 ★ 부르는 쪽의 `b` 로 ★ **이름만 바꾼다** —
+      ★ ★ 값을 여기서 만들지 않는다.  ★ 조각이 무엇을 받는지는
+      ★ ★ 조각 맨 위 주석에 적는다 (규격 「필수」)
+    ★ 조각이 없으면 ★ **소리 내어 죽는다** — ★ 조용히 비우지 않는다.
+      ★ ★ 주석으로 남기면 ★ `strip_comments` 가 지워 ★ 아무도 못 본다.
+      ★ ★ v1 사고(「저장했다」고 하고 전건 NULL)와 같은 무늬를 막는다
+    """
+    def one(m: re.Match) -> str:
+        frag, rename = m.group(1), (m.group(2) or "").strip()
+        path = os.path.join(base_dir, frag)
+        if not os.path.isfile(path):
+            # ★★ 조용히 비우지 않는다 — ★ 그러면 ★ 화면 한 칸이 ★ 소리 없이 사라진다.
+            #   ★ v1 사고(「저장했다」고 하고 전건 NULL)와 ★ 같은 무늬다 (0장 개요).
+            #   ★ 주석으로 남기면 ★ `strip_comments` 가 지워 ★ 아무도 못 본다
+            raise ValueError(f"{{% include %}} 가 가리키는 조각이 없다: {frag}")
+        with open(path, encoding="utf-8") as f:
+            body = f.read()
+        for pair in rename.split():
+            if "=" not in pair:
+                continue
+            inner, outer = pair.split("=", 1)
+            inner, outer = inner.strip(), outer.strip()
+            if not inner or not outer:
+                continue
+            # ★ 조각 안의 이름을 ★ 부르는 쪽 이름으로 바꾼다.
+            #   ★ 낱말 경계를 지킨다 — ★ `r` 이 `row` 안의 r 을 안 건드리게
+            body = re.sub(rf"(?<![\w.]){re.escape(inner)}(?![\w])",
+                          outer, body)
+        return body
+    return RE_INCLUDE.sub(one, src)
+
+
 def render(name: str, ctx: dict, root: str | None = None) -> str:
     """템플릿 파일 → HTML.  상속은 한 단계만 지원한다.
 
@@ -349,13 +393,14 @@ def render(name: str, ctx: dict, root: str | None = None) -> str:
     with open(os.path.join(base_dir, name), encoding="utf-8") as f:
         src = f.read()
 
+    src = expand_includes(src, base_dir)
     m = RE_EXTENDS.search(src)
     if not m:
         return strip_comments(render_str(src, ctx))
 
     blocks = {b: body for b, body in RE_BLOCK.findall(src)}
     with open(os.path.join(base_dir, m.group(1)), encoding="utf-8") as f:
-        parent = f.read()
+        parent = expand_includes(f.read(), base_dir)
     filled = RE_BLOCK.sub(
         lambda mm: blocks.get(mm.group(1), mm.group(2)), parent)
     return strip_comments(render_str(filled, ctx))
