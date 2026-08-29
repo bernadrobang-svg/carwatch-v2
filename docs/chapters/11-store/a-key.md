@@ -1,7 +1,7 @@
 ## STEP 28 — 테이블 목록
 
 ```
-version  SPEC-2026.08.29-r855
+version  SPEC-2026.08.29-r856
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -568,34 +568,34 @@ V2-19     실측 DB 에서 이것을 잡았다
 
 ---
 
-# 잠금 — 연결은 한 자리에서만 연다 (개정 855 · 08-29)
+# 잠금 — 아직 정하지 않았다 (개정 856 · 08-29)
 
-개발측이 적은 까닭 — 「`store/raw.open_db` 는 `busy_timeout` 30초를 거는데
-`store/pii.py` 쪽 연결에는 안 걸린 듯합니다」
+개정 855 에서 「`collect/worker.py:107·155` 의 `sqlite3.connect` 를 `open_db` 로 바꾼다」로
+정했는데 **물린다.  가이드가 재보지 않고 정했다.**
 
-## 가이드가 잰 것
-
-```
-store/pii.py 는 연결을 안 연다.  받아 쓸 뿐이다
-sqlite3.connect 를 직접 부르는 곳 — collect/worker.py:107 · 155
-  거기서 연 연결에는 busy_timeout 이 안 걸린다
-  그 연결이 save_listing_pii 까지 내려가 pii.py:107 에서 터진다
-```
-
-## 정한다
+## 가이드가 실제로 아는 것 하나
 
 ```
-연결은 store/raw.open_db 하나로만 연다
-collect/worker.py:107·155 의 sqlite3.connect 를 open_db 로 바꾼다
-새 코드에서 sqlite3.connect 를 직접 부르지 않는다
-  읽기 전용(validate)은 예외 — 쓰지 않으니 잠그지 않는다
-검산  S46-125 — store/raw.py 밖에서 sqlite3.connect 를 쓰면 알림
-       (validate/*.py 의 mode=ro 는 뺀다)
+journal_mode 는 까닭이 아니다
+  WAL 은 DB 에 붙는다.  맨 sqlite3.connect 도 WAL 을 물려받는다
+  사본으로 확인했다 (08-29)
 ```
 
-## 언제 고치나
+## 모르는 것
 
 ```
-KB 수집이 끝난 뒤에 고친다.  도는 중에 손대면 더 잠근다
-개발측이 「KB 가 끝나면 짚어 고치겠습니다」 한 것이 옳다
+왜 5초를 넘게 잠기는지 모른다
+  파이썬 sqlite3 는 기본 5초를 기다린다
+  「database is locked」가 났다는 것은 그보다 오래 쥐고 있었다는 뜻이다
+  무엇이 쥐고 있는지는 재야 안다
+
+가이드는 밖에서 못 잰다.  개발측이 KB 를 돌리며 재야 나온다
+```
+
+## 개발측이 잰 뒤에 정한다
+
+```
+오류 자리 — store/pii.py:107 save_listing_pii (개발측이 준 것)
+어디서 잠기는지 찍어 오면 그때 규격을 정한다
+그전에는 아무것도 시키지 않는다
 ```
