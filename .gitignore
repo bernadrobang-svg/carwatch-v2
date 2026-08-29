@@ -12,3 +12,6 @@ secrets/
 inbox/
 *.log
 outputs/check-tmp/
+
+# ★ 개발측 임시 스크립트 — 커밋하지 않는다 (CLAUDE.md)
+tools/tmp_*.py

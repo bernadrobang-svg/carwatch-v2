@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import commit, open_db                       # noqa: E402
 
 SITE_CODE = "volvo_selekt"
@@ -191,6 +192,8 @@ def main() -> int:
         by_slug[_slug] = by_slug.get(_slug, 0) + 1
     print("★ 슬러그별 받은 수 — " + " · ".join(
         f"{k} {v}" for k, v in sorted(by_slug.items(), key=lambda x: -x[1])))
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(ours))], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}"

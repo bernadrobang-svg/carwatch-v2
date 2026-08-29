@@ -35,6 +35,7 @@ from adapters.kbchachacha import (  # noqa: E402
     load_config,
 )
 from parse.kbchachacha.mapping import parse_detail  # noqa: E402
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 RETRY = 3               # ★ 봇 차단 재시도 (KBCHACHACHA_API 1-1)
@@ -403,6 +404,8 @@ def load_details(cfg: dict, groups: list | None = None) -> dict:
     # ★★ gone 을 ★ **넣기 걸음에서** 매긴다 (규격 개정 857) —
     #   ★ 옛 꼴은 받으면서 매겼다.  ★ 받기가 반만 끝났으면 안 매긴다
     if groups:
+        # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+        raw_link_raws(conn, SITE_CODE)
         got = sweep_gone_groups(conn, SITE_CODE, groups, at)
         put["gone"] = sum(got.values())
         dn = sum(1 for d, _i in groups if d)

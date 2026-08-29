@@ -21,6 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from store.dictionary import known_model_of        # noqa: E402
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import commit, open_db              # noqa: E402
 
 SITE_CODE = "bmw_bps"
@@ -129,6 +130,8 @@ def main() -> int:
     #   ★ 「끝까지 받았나」가 거짓이면 ★ 안 매긴다 — 반만 보고 매기면 산 차를 죽인다
     from store.core import sweep_gone_groups
 
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(seen))], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}")

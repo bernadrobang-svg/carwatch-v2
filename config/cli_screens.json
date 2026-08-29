@@ -41,6 +41,7 @@
     "tools/classify_registry.py",
     "tools/classify_stored.py",
     "tools/classify_unclassified.py",
+    "tools/clear_zero_values.py",
     "tools/collect_bmw.py",
     "tools/collect_bobaedream.py",
     "tools/collect_heydealer.py",
@@ -51,12 +52,16 @@
     "tools/collect_lexus.py",
     "tools/collect_reborncar.py",
     "tools/collect_volvo.py",
+    "tools/compress_raw.py",
     "tools/daily_check.py",
+    "tools/daily_collect.py",
     "tools/daily_enqueue.py",
     "tools/deploy_check.py",
+    "tools/fill_photos.py",
     "tools/fold_out_of_scope.py",
     "tools/gen_table.py",
     "tools/light_check.py",
+    "tools/link_raw_ids.py",
     "tools/probe_kb_wall.py",
     "tools/recalc_catchup.py",
     "tools/repair_facet_chunks.py",
@@ -68,5 +73,6 @@
     "tools/weekly_check.py"
   ],
   "_pending_note_434": "★ tools/unknown_split.py — 개정 434 「확인 안 됨」 ①②③ 표. 화면은 순서 6 의 상세 ⑤절 「아직 모르는 것」이 받는다 (STEP 97a)",
-  "_pending_08_25": "★ 08-25 에 더한 일곱 — ★ 사이트 수집기 다섯 · 갈래 넣기 · 접기. ★★ ★ 규격이 ★ 이 일곱의 ★ **대응 화면을 아직 안 정했다** — ★ 가이드 판단 대기다. ★ ★ `/admin/collect` (브라우저 수집)에 붙일 수 있으나 ★ 개발측이 스스로 정하지 않는다"
+  "_pending_08_25": "★ 08-25 에 더한 일곱 — ★ 사이트 수집기 다섯 · 갈래 넣기 · 접기. ★★ ★ 규격이 ★ 이 일곱의 ★ **대응 화면을 아직 안 정했다** — ★ 가이드 판단 대기다. ★ ★ `/admin/collect` (브라우저 수집)에 붙일 수 있으나 ★ 개발측이 스스로 정하지 않는다",
+  "_pending_note_20260829": "★ 08-29 개발측 — ★ 다섯을 새로 넣었다.  ★ 화면을 지어 채우지 않는다 (규칙 2).  ★ `daily_collect.py` 는 ★ 화면은 없지만 ★ **타이머**가 부른다 (`carwatch-daily.service` ExecStartPre · S46-127).  ★ `link_raw_ids.py` · `compress_raw.py` 는 ★ 한 번 돌리면 끝나는 손질이다.  ★ `clear_zero_values.py` · `fill_photos.py` 는 ★ 관리 화면에 붙을 만하다 — ★ ★ 어디에 붙일지 ★ 가이드께서 정해 주십시오"
 }

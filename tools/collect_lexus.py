@@ -18,6 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from store.dictionary import known_model_of        # noqa: E402
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import commit, open_db              # noqa: E402
 
 SITE_CODE = "lexus_certified"
@@ -149,6 +150,8 @@ def main() -> int:
     #   ★ 앞서는 `bool(cars)` 였다 — ★ 1쪽만 받고도 참이었다.
     #   ★ ★ 그래서 ★ 2·3쪽 38건이 ★ 안 팔렸는데 gone 이 됐다
     _done = done and bool(cars)
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in rows})], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")

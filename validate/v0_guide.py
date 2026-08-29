@@ -373,6 +373,11 @@ def s45_3_spec_totals() -> tuple[bool, str]:
         `f-table` 422·442          675 = `boardStateType` 코드값·건수
         `f-table` 1005             3,555 = 매물 건수
         `INDEX.md` 76              495 = `j-admin-mock2.md` 의 ★ 줄 수 (자동 생성)
+        `INDEX.md` 파일표            ★ **줄 수 · 개정 수**다 (자동 생성 · 08-29).
+                                   ★ 「| `guide/03_이력.md` ★ | 910 | 675 |」에서
+                                   ★ ★ 910 은 줄 수 · 675 는 개정 수다 — 배점이 아니다.
+                                   ★ 문서가 자랄 때마다 ★ 이 칸이 우연히 옛 총점과
+                                   ★ ★ 같아진다.  ★ 표의 꼴로 가른다
     """
     STALE = ("675", "625", "850", "555", "530", "495")
     SKIP_NAME = ("03_이력.md", "06_오판대장.md", "07_밀린일대장.md", "00_버전.md")
@@ -404,8 +409,13 @@ def s45_3_spec_totals() -> tuple[bool, str]:
         if any(d in q.parts for d in SKIP_DIR) or q.name in SKIP_NAME:
             continue
         rel = str(q.relative_to(ROOT))
+        # ★ `INDEX.md` 의 자동 생성 파일표 — ★ 「| `경로.md` … | 줄수 | 개정수 |」.
+        #   ★ 그 두 칸은 ★ 세어서 적은 수다 — ★ 배점이 아니다 (08-29)
+        idx_row = re.compile(r"^\|\s*`[^`]+\.md`[^|]*\|\s*\d+\s*\|\s*\d+\s*\|\s*$")
         for i, line in enumerate(_read(q).split("\n"), 1):
             if any(w in line for w in ALLOW_TEXT):
+                continue
+            if q.name == "INDEX.md" and idx_row.match(line.strip()):
                 continue
             if any(p.search(line) for p in pats):
                 bad.append(f"{rel}:{i}")

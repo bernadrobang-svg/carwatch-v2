@@ -32,6 +32,7 @@ from parse.hyundai_cert.mapping import (  # noqa: E402
     parse_detail_all,
 )
 from parse.target_rules import target_by_rules  # noqa: E402
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 SITE_CODE = "hyundai_cert"
@@ -274,6 +275,8 @@ def main() -> int:
     #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다
     from store.core import sweep_gone_groups
 
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, done_groups, at)
     _dn = sum(1 for d, _i in done_groups if d)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "

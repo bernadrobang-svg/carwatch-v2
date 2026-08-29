@@ -24,6 +24,7 @@ sys.path.insert(0, ROOT)
 from adapters.heydealer import PAGE_SIZE, SITE_CODE, HeydealerAdapter  # noqa: E402
 from parse.heydealer.mapping import (parse_detail, parse_list_item,   # noqa: E402
                                      options_of)
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db                                          # noqa: E402
 
 MAX_PAGES = 40          # ★ 안전장치.  ★ 10건 미만이 오면 그 전에 멈춘다
@@ -132,6 +133,8 @@ def main() -> int:
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
     from store.core import sweep_gone_groups
 
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, done_groups, at)
     _dn = sum(1 for d, _i in done_groups if d)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "

@@ -257,6 +257,32 @@ def open_db(path: str, ddl_dir: str = "sql/ddl") -> sqlite3.Connection:
     return conn
 
 
+def link_raws(conn: sqlite3.Connection, site: str) -> int:
+    """★★★★ 넣기가 끝난 뒤 ★ 원문을 매물에 잇는다 (`S46-97` · 08-29).
+
+    ★★ `save_site_raw` 는 ★ 넣을 때 이미 찾아 채운다.  ★ 그런데 ★ **받기와 넣기를
+      가른 뒤로**(개정 857) ★ 받을 때는 ★ 매물이 아직 없다 — ★ 그래서 NULL 로 들어가고
+      ★ ★ 그 뒤 ★ 아무도 안 메웠다.  ★ 08-29 실측 — ★ 보배 140 · 리본카 61 · KB 21.
+    ★ 그래서 ★ 넣기가 끝난 자리에서 ★ 한 번 잇는다 — ★ 그 사이트 것만.
+    ★ 잇는 정본은 ★ `source_id` 다 (마스터 08-26).  ★ 주소에서 되뽑지 않는다.
+    ★ 매물이 아직 없는 것은 ★ 그대로 둔다 — ★ 다음 회차에 이어진다
+    돌려줌  이은 건수
+    """
+    cur = conn.execute(
+        "UPDATE raw_response SET listing_id = ("
+        "  SELECT l.listing_id FROM core_listing l"
+        "   WHERE l.site = raw_response.site"
+        "     AND l.source_id = raw_response.source_id)"
+        " WHERE site = ? AND listing_id IS NULL AND source_id IS NOT NULL"
+        "   AND EXISTS (SELECT 1 FROM core_listing l2"
+        "                WHERE l2.site = raw_response.site"
+        "                  AND l2.source_id = raw_response.source_id)", (site,))
+    n = cur.rowcount or 0
+    if n:
+        conn.commit()
+    return n
+
+
 def _safe_headers(headers: dict[str, str]) -> str:
     return json.dumps(
         {k: v for k, v in headers.items() if k in SAFE_REQUEST_HEADERS},

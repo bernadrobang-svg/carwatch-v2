@@ -33,6 +33,7 @@ from parse.kia_cpo.mapping import (  # noqa: E402
     unpack_envelope,
 )
 from store.dictionary import target_key_of  # noqa: E402
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 40          # ★ 1,020건 ÷ 100 = 11쪽.  ★ 넉넉히 두고 새 것이 없으면 멈춘다
@@ -166,6 +167,8 @@ def main() -> int:
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
     from store.core import sweep_gone_groups
 
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in parsed_rows})], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")

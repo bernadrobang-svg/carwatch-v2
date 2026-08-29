@@ -29,6 +29,7 @@ from adapters.bobaedream import (  # noqa: E402
 )
 from parse.bobaedream.mapping import list_items, parse_detail  # noqa: E402
 from store.dictionary import target_map  # noqa: E402
+from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 80
@@ -234,6 +235,8 @@ def main() -> int:
     # ★★★★ 08-29 (규격 확정) — ★ 빈 쪽까지 갔을 때만 참이다.
     #   ★ 사람이 `--pages` 를 준 때 · ★ MAX_PAGES 에 닿은 때는 ★ 거짓이다
     _done = bool(walked) and walked <= ended and not pages_given
+    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
+    raw_link_raws(conn, SITE_CODE)
     _got = sweep_gone_groups(conn, SITE_CODE, [(_done, set(seen))], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 빈 쪽까지 간 조건 {len(ended)}/{len(walked)}"
