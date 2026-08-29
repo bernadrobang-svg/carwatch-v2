@@ -81,7 +81,7 @@
 | `S46-56` | 짝 중 사고 판정이 갈린 것 | warn | `validate/v0_guide.py:1642` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:7 · CROSS_SITE_COMPARE.md:256 |
 | `S46-65` | 판본이 하루 넘게 오래되지 않았는가 | fatal | `validate/v0_guide.py:996` | **★ 없음** | 없음 | guide/01_요구사항.md:105 · guide/03_이력.md:745 · guide/03_이력.md:746 |
 | `S46-66` | 화면이 낸 링크가 인코딩돼 있는가 | fatal | `validate/v0_guide.py:957` | **★ 없음** | 없음 | UI_REVIEW.md:896 · guide/01_요구사항.md:106 · guide/03_이력.md:747 |
-| `S46-67` | 시안 이름이 app.css 와 안 겹치는가 | fatal | `validate/v0_guide.py:1043` | **★ 없음** | 없음 | UI_REVIEW.md:1307 · guide/03_이력.md:749 · guide/03_이력.md:846 |
+| `S46-67` | 시안 이름이 app.css 와 안 겹치는가 | fatal | `validate/v0_guide.py:1043` | **★ 없음** | 없음 | UI_REVIEW.md:1307 · UI_REVIEW.md:1594 · guide/03_이력.md:749 |
 | `S46-68` | 관심이 모바일 기준 카드인가 | fatal | `validate/v0_guide.py:1106` | **★ 없음** | 없음 | UI_REVIEW.md:999 · guide/01_요구사항.md:109 · guide/03_이력.md:754 |
 | `S46-74` | 한 쪽 장 수가 규격과 같은가 | fatal | `validate/v0_guide.py:1160` | **★ 없음** | 없음 | UI_REVIEW.md:1033 · guide/01_요구사항.md:112 · guide/03_이력.md:761 |
 | `S46-75` | v4m 여덟 장 공통 규칙 | fatal | `validate/v0_guide.py:1206` | **★ 없음** | 없음 | guide/01_요구사항.md:114 · guide/03_이력.md:766 · guide/06_오판대장.md:211 |
@@ -242,8 +242,8 @@
 | `V3-92` | 트림 만점이 개별 취향 축보다 큼 | run | `validate/v3_logic.py:178` | **★ 없음** | 없음 | guide/03_이력.md:452 · chapters/30-score/f-table.md:375 |
 | `V3-93` | 제외 매물에 등급 문자가 안 붙음 | run | `validate/v3_logic.py:184` | **★ 없음** | 없음 | guide/03_이력.md:453 · chapters/30-score/f-table.md:336 |
 | `V3-94` | 등급 컷이 규격의 8단계임 | run | `validate/v3_logic.py:189` | **★ 없음** | 없음 | guide/03_이력.md:453 · chapters/30-score/f-table.md:322 · chapters/30-score/f-table.md:337 |
-| `V3-95` | 화면이 source='missing' 을 「없음」으로 안 냄 | run | `validate/v3_logic.py:166` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:206 · chapters/30-score/f-table.md:424 |
-| `V3-96` | value IS NULL 과 source 모름 건수 차 | run | `validate/v3_logic.py:172` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:206 · chapters/30-score/f-table.md:425 |
+| `V3-95` | 화면이 source='missing' 을 「없음」으로 안 냄 | run | `validate/v3_logic.py:166` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:208 · chapters/30-score/f-table.md:424 |
+| `V3-96` | value IS NULL 과 source 모름 건수 차 | run | `validate/v3_logic.py:172` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:208 · chapters/30-score/f-table.md:425 |
 | `V4-01` | 매핑 일치율 (A 100% · B 99% · C 80%) | run | `validate/v4_mapping.py:28` | **★ 없음** | 없음 | chapters/00-standard.md:661 · chapters/60-admin/c-tools.md:152 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-02` | 미매핑 경로 목록 | run | `validate/v4_mapping.py:103` | **★ 없음** | 없음 | chapters/20-verify/c-v3v4.md:177 |
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | **★ 없음** | 없음 | chapters/20-verify/c-v3v4.md:178 · chapters/20-verify/c-v3v4.md:294 |
