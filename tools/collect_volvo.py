@@ -220,6 +220,10 @@ def main() -> int:
             time.sleep(interval)
             continue
         save_site_raw(conn, SITE_CODE, "detail", sid, url, body, at)
+        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
+        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
+        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
+        commit(conn)
         row = parse_detail(body, SITE_CODE, sid)
         if row:
             row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
@@ -231,6 +235,8 @@ def main() -> int:
                 row["photo_list_json"] = json.dumps(pics, ensure_ascii=False)
             upsert_core(conn, row, at)
             got["정상"] += 1
+        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
+        commit(conn)
         time.sleep(interval)
     commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))

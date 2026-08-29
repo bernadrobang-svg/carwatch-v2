@@ -1271,6 +1271,40 @@ def s46_76_collectors_keep_raw() -> tuple[bool, str]:
 
 
 
+def s46_126_fetch_outside_transaction() -> tuple[bool, str]:
+    """★★★★★ 수집기가 ★ **통신·`sleep` 을 트랜잭션 안에서** 하는가 (개정 857).
+
+    ★★ 마스터 — 「★ 왜 수집과 적재를 같이 하지」.  ★ 받기와 넣기를 가른다.
+    ★★ 실측 08-29 — ★ KB 가 ★ 트랜잭션을 연 채 100건을 돌았다.
+      ★ 건마다 `time.sleep(1.2)` 와 통신이 ★ 트랜잭션 안이라 ★ 한 창이 120초였다.
+      ★ ★ 잠금이 ★ 38.4초까지 갔고 ★ 30초 `busy_timeout` 을 넘겨 죽었다.
+    ★ 잣대 — ★ `save_*` 뒤 `commit` 없이 ★ `time.sleep` 이 오면 ★ 실패다.
+      ★ ★ 낱말로 센다.  ★ 「트랜잭션이 열려 있나」는 ★ 글로 못 읽는다 —
+        ★ 그래서 ★ **커밋이 자는 것보다 앞에 있는가**만 본다
+    """
+    import re as _re
+
+    tools = ROOT / "tools"
+    if not tools.is_dir():
+        return False, "tools/ 가 없다"
+    bad = []
+    for q in sorted(tools.glob("collect_*.py")):
+        body = _read(q)
+        # ★ 저장한 뒤 ★ 커밋 없이 ★ 자는 자리를 찾는다
+        for m in _re.finditer(r"save_(?:site_)?raw\s*\(", body):
+            tail = body[m.end():m.end() + 900]
+            nap = tail.find("time.sleep")
+            fix = tail.find("commit(")
+            if nap >= 0 and (fix < 0 or nap < fix):
+                line = body[:m.start()].count("\n") + 1
+                bad.append(f"{q.name}:{line}")
+                break
+    if bad:
+        return False, ("★ 커밋 전에 자는 수집기 — " + " · ".join(bad[:8])
+                       + "  (통신·sleep 은 트랜잭션 밖이어야 한다)")
+    return True, f"수집기 {len(list(tools.glob('collect_*.py')))}개가 다 커밋 뒤에 잔다"
+
+
 def s46_117_collectors_sweep_gone() -> tuple[bool, str]:
     """★★★★★ 목록을 받는 수집기가 ★ **팔린 차를 거르는가** (개정 838 · 오판 161).
 
@@ -2658,6 +2692,8 @@ CHECKS = (
     ("S46-103", "시안의 크기·자리 값을 담았는가", s46_103_sian_values_carried),
     ("S46-117", "목록을 받는 수집기가 팔린 차를 거르는가",
      s46_117_collectors_sweep_gone),
+    ("S46-126", "수집기가 통신·sleep 을 트랜잭션 밖에서 하는가",
+     s46_126_fetch_outside_transaction),
     # ★★ 마스터 08-26 — ★ S46-95 는 로그인 앞만 본다.  ★ 뒤를 봐야 한다
     ("S46-99", "로그인하면 관심·관리가 열리는가", s46_99_login_then_watch),
     # ★★ 마스터 08-26 — ★ 잇는 정본은 source_id 다.  ★ 주소에서 되뽑지 않는다

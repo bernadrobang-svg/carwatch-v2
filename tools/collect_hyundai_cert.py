@@ -302,6 +302,10 @@ def main() -> int:
         save_site_raw(conn, SITE_CODE, "detail", one["source_id"],
                       BASE + DETAIL_PATH.format(goods_no=one["source_id"]),
                       body, at)
+        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
+        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
+        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
+        commit(conn)
         deep["listing_id"] = one["listing_id"]
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         # ★ 사고·소유자 이력은 ★ core_record 의 칸이다 (A-2)
@@ -309,6 +313,8 @@ def main() -> int:
         record["collected_at"] = at
         upsert_child(conn, "core_record", record, "p1", at)
         got["정상"] += 1
+        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
+        commit(conn)
         time.sleep(INTERVAL)
     commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))

@@ -132,6 +132,10 @@ def main() -> int:
         save_site_raw(conn, SITE_CODE, "detail", one,
                       cfg["base_url"] + cfg["paths"]["detail"].format(
                           source_id=one), html, at)
+        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
+        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
+        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
+        commit(conn)
         deep = parse_detail(html, SITE_CODE, one)
         if deep:
             # ★ 차종은 ★ 우리가 아는 이름이 들어 있는지로 고른다 (K카와 같다)
@@ -149,6 +153,8 @@ def main() -> int:
             deep["detail_status"] = "ok"
             deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
+        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
+        commit(conn)
         time.sleep(interval)
     commit(conn)
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)

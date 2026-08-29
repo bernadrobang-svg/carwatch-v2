@@ -196,11 +196,17 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
         #   ★ K카 상세는 ★ JSON 이다 — ★ 글자로 되돌려 넣는다
         save_site_raw(conn, SITE_CODE, "detail", one["source_id"], req.url,
                       json.dumps(body, ensure_ascii=False), at)
+        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
+        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
+        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
+        commit(conn)
         deep = parse_detail(body, SITE_CODE, one["source_id"])
         if deep:
             deep["listing_id"] = one["listing_id"]
             deep["detail_status"] = "ok"
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
+        commit(conn)
         time.sleep(float(cfg.get("interval_sec") or 1.5))
     commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items())

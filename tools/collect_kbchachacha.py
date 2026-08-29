@@ -39,6 +39,11 @@ from store.raw import open_db  # noqa: E402
 
 RETRY = 3               # ★ 봇 차단 재시도 (KBCHACHACHA_API 1-1)
 RETRY_WAIT = 3.0
+# ★★★ 08-29 (개정 857) — ★ 「끝까지 받았나」.  ★ 받기가 적고 ★ 넣기가 본다.
+#   ★ 한 명령으로 이어 돌 때는 여기로 넘긴다.  ★ 따로 돌 때는
+#     ★ `raw_response` 의 목록 원문을 보고 정한다 (아래 `scan_done_from_raw`)
+_SCAN_DONE: dict = {"done": False}
+
 MAX_PAGES = 400         # ★ 빈 쪽이 나오면 그 전에 멈춘다.  이것은 안전장치다
 # ★★ 한 회차에 부를 상세 수 (명령서 14-1).  ★ 막히는 자리는 ★ 목록이 아니라 ★ 상세다 —
 #   ★ 목록 53쪽은 ★ 봇 차단 0건이다 (실측 08-24 · C 확인).
@@ -250,20 +255,51 @@ def probe_detail(adapter: KbChaChaChaAdapter, cfg: dict, ids: list) -> dict:
 
 def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
                   limit: int = 0) -> int:
-    """★ 상세를 받아 ★ 함께 넣는다.  ★ 껍데기를 안 넣는다 (명령서 5단계).
+    """★★★★★ 받기와 넣기를 ★ **가른다** (규격 11-store/a-key · 개정 857).
+
+    ★★★ 마스터 — 「★ 수집해서 파일로 저장 후 DB 에 넣으면서 ★ 신규·변경사항만
+      ★ 적재하면 되잖아.  ★ 왜 수집과 적재를 같이 하지」
+    ★★ 실측 08-29 — ★ 옛 꼴은 ★ **트랜잭션을 연 채 100건을 돌았다.**
+      ★ ★ 건마다 `time.sleep(1.2)` 와 통신이 ★ **트랜잭션 안**이라
+        ★ ★ 한 창이 ★ **최소 120초**였다.
+      ★ ★ 그래서 ★ 잠금이 ★ **38.4초**까지 갔고 (계측) ★ 30초 `busy_timeout` 을
+        ★ 넘겨 ★ `database is locked` 로 죽었다.
+    ★ 1걸음 `fetch_details` — ★ 사이트를 두드려 ★ `raw_response` 에만 넣는다.
+      ★ ★ 한 건 받고 ★ **곧바로 커밋**한다.  ★ 자는 것·통신은 ★ 트랜잭션 밖이다
+    ★ 2걸음 `load_details` — ★ `raw_response` 를 읽어 ★ `core_listing` 에 넣는다.
+      ★ ★ 통신이 없다.  ★ 자지 않는다.  ★ 신규·변경만 넣는다.
+      ★ ★ 이번 목록에 없는 것은 ★ 그 자리에서 `gone` 이다
+    ★ 검산 `S46-126`
+    """
+    got = fetch_details(adapter, cfg, ids, limit)
+    put = load_details(cfg, _SCAN_DONE.get("groups") or [])
+    print("★ 상세(받기) — " + " · ".join(f"{k} {v:,}" for k, v in got.items()))
+    print("★ 상세(넣기) — " + " · ".join(f"{k} {v:,}" for k, v in put.items()))
+    from tools.daily_enqueue import enqueue_after_store
+
+    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
+                        put.get("넣음", 0))
+    return 0
+
+
+def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
+                  limit: int = 0) -> dict:
+    """★ 1걸음 — 받는다.  ★ `raw_response` 에만 넣는다 (개정 857).
 
     ★ 봇 차단(30%)은 ★ 「없음」으로 저장하지 않는다 — ★ 다음 회차에 다시 부른다
     ★ 이미 받은 것은 ★ 건너뛴다 — ★ 여러 회차에 나눠 채운다 (규격 1-1)
+    ★★ ★ 통신과 ★ `time.sleep` 은 ★ **트랜잭션 밖**이다.
+      ★ 한 건 넣고 ★ 곧바로 커밋해 ★ 잠금 창을 ★ 한 INSERT 로 줄인다
     """
-    from store.core import resolve_listing_id, split_pii, upsert_core
-    from store.pii import load_key
     from store.raw import commit, save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
-    at, key = _now(), load_key()
+    # ★ 「이미 받았나」는 ★ **원문이 있나**로 본다 (받기 걸음이므로).
+    #   ★ 옛 꼴은 `detail_status='ok'` 로 봤는데 ★ 원문 없이 「받았다」인 것이
+    #     ★ 226건 있었다 (08-28 실측) — ★ 그것들을 영영 안 받게 된다
     done = {r[0] for r in conn.execute(
-        "SELECT source_id FROM core_listing WHERE site=? "
-        "AND detail_status='ok'", (SITE_CODE,))}
+        "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
+        (SITE_CODE,))}
     # ★★★ 08-28 — ★ `--missing-raw` : ★ **원문이 없는 것만** 다시 받는다 (P3).
     #   ★ 실측 08-28 — ★ `detail_status='ok'` 가 ★ 406건인데
     #     ★ ★ `raw_response` 는 ★ **180건**뿐이다.  ★ 226건이 원문 없이 「받았다」다.
@@ -284,7 +320,8 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
         todo = todo[:limit]
     print(f"★ 상세 — 받을 것 {len(todo):,}건 "
           f"(이미 받은 것 {len(done):,}건은 건너뛴다)")
-    got = {"정상": 0, "봇차단 3회": 0, "파싱 실패": 0}
+    # ★ 받기 걸음의 셈 — ★ 파싱은 넣기 걸음이 한다
+    got = {"받음": 0, "봇차단 3회": 0}
     walls_in_row = 0
     for n, one in enumerate(todo, 1):
         req = adapter.detail_urls(one)[0]
@@ -306,29 +343,78 @@ def store_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
         #   ★★ 실측 08-26 — ★ 여태 ★ 엔카 말고는 ★ 원문이 ★ 한 건도 없었다.
         #     ★ ★ 파싱이 틀렸을 때 ★ 다시 받는 수밖에 없었다 — ★ 그것이 엿새다
         #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
+        # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
+        #   ★★ 곧바로 커밋한다 — ★ 잠금 창이 ★ INSERT 하나로 끝난다
         save_site_raw(conn, SITE_CODE, "detail", one, req.url, body, _now())
-        deep = parse_detail(body, SITE_CODE, one)
-        if not deep:
-            got["파싱 실패"] += 1
+        commit(conn)
+        got["받음"] += 1
+        if n % 100 == 0:
+            print(f"    {n:,}/{len(todo):,} … 받음 {got['받음']:,}")
+        # ★★ 자는 것은 ★ **커밋 뒤**다 — ★ 트랜잭션 안에서 자지 않는다
+        time.sleep(float(cfg.get("interval_sec") or 1.2))
+    conn.close()
+    return got
+
+
+def load_details(cfg: dict, groups: list | None = None) -> dict:
+    """★ 2걸음 — 넣는다.  ★ `raw_response` 를 읽어 `core_listing` 으로 (개정 857).
+
+    ★ 통신이 없다.  ★ 자지 않는다.  ★ 한 트랜잭션이 짧다
+    ★★ ★ **신규·변경만 넣는다** — ★ 원문이 그 매물의 `parsed_at` 보다
+      ★ 새것일 때만 다시 넣는다.  ★ 같은 것을 다시 안 쓴다
+    ★★ ★ 이번 목록에 없는 것은 ★ **그 자리에서 `gone`** 이다.
+      ★ 받기가 반만 끝났으면(`done=False`) ★ 안 매긴다
+    """
+    from store.core import (resolve_listing_id, split_pii, sweep_gone_groups,
+                            upsert_core)
+    from store.pii import load_key
+    from store.raw import commit, raw_body, save_site_raw  # noqa: F401
+
+    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    at, key = _now(), load_key()
+    put = {"본 원문": 0, "넣음": 0, "그대로라 건너뜀": 0, "파싱 실패": 0,
+           "gone": 0}
+    rows = conn.execute(
+        "SELECT r.source_id, r.body, r.fetched_at,"
+        "       (SELECT l.parsed_at FROM core_listing l"
+        "         WHERE l.site = r.site AND l.source_id = r.source_id)"
+        "  FROM raw_response r"
+        " WHERE r.site = ? AND r.endpoint = 'detail' AND r.status = 'ok'"
+        "   AND r.body IS NOT NULL", (SITE_CODE,)).fetchall()
+    n = 0
+    for sid, body, fetched_at, parsed_at in rows:
+        put["본 원문"] += 1
+        # ★ 값이 그대로면 건너뛴다 — ★ 이미 그 원문으로 넣었다
+        if parsed_at and fetched_at and str(parsed_at) >= str(fetched_at):
+            put["그대로라 건너뜀"] += 1
             continue
-        deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
+        deep = parse_detail(raw_body(body), SITE_CODE, str(sid))
+        if not deep:
+            put["파싱 실패"] += 1
+            continue
+        deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, str(sid), at)
         deep["detail_status"] = "ok"
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
-        got["정상"] += 1
-        if n % 100 == 0:
-            commit(conn)
-            print(f"    {n:,}/{len(todo):,} … 정상 {got['정상']:,}")
-        time.sleep(float(cfg.get("interval_sec") or 1.2))
+        put["넣음"] += 1
+        n += 1
+        if n % 200 == 0:
+            commit(conn)                # ★ 통신이 없어 창이 짧다
     commit(conn)
-    print("★ 상세 — " + " · ".join(f"{k} {v:,}" for k, v in got.items()))
+    # ★★ gone 을 ★ **넣기 걸음에서** 매긴다 (규격 개정 857) —
+    #   ★ 옛 꼴은 받으면서 매겼다.  ★ 받기가 반만 끝났으면 안 매긴다
+    if groups:
+        got = sweep_gone_groups(conn, SITE_CODE, groups, at)
+        put["gone"] = sum(got.values())
+        dn = sum(1 for d, _i in groups if d)
+        print(f"★ 목록에 없어 gone 으로 매긴 것 {put['gone']}건 "
+              f"({len(got)}차종 · 끝까지 받은 묶음 {dn}/{len(groups)})")
+        if len(groups) - dn:
+            print("  ★ 끝까지 못 받은 묶음이 건드린 차종은 안 매겼다")
     left = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                         (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장된 KB 매물 — {left:,}건")
     conn.close()
-    from tools.daily_enqueue import enqueue_after_store
-    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
-                        got.get("정상", 0))
-    return 0
+    return put
 
 
 def main() -> int:
@@ -384,6 +470,7 @@ def main() -> int:
                   f" (규격 {g.get('expect', '—')})  봇차단 {r['walls']}{mark}")
             by_group.append((g, r["ids"]))
             done_groups.append((r["done"], set(r["ids"])))
+            _SCAN_DONE["groups"] = done_groups
         print(f"★ 합 {len(seen):,}건  (규격 2,084 — ★ 그것은 쪽마다의 합이다.  "
               f"★ 겹친 것을 뺀 수가 이것이다)")
         if "--dry" in args:
@@ -408,24 +495,8 @@ def main() -> int:
                       f"({turn}/{bursts} 묶음)")
                 time.sleep(BURST_REST_SEC)
             rc = store_details(adapter, cfg, ids, want) or rc
-        # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ **팔린 차를 거른다.**
-        #   ★ 끝까지 받은 묶음만 쓴다 · 본 것이 없으면 안 매긴다 ·
-        #     그 사이트 · 그 차종만 넘긴다 (마스터 지시 셋)
-        from store.core import sweep_gone_groups
-        from store.raw import open_db as _open
-
-        _c = _open(os.path.join(ROOT, "carwatch.db"))
-        try:
-            got = sweep_gone_groups(_c, SITE_CODE, done_groups, _now())
-        finally:
-            _c.close()
-        n = sum(got.values())
-        done_n = sum(1 for d, _i in done_groups if d)
-        print(f"★ 목록에 없어 gone 으로 매긴 것 {n}건 "
-              f"({len(got)}차종 · 끝까지 받은 묶음 {done_n}/{len(done_groups)})")
-        if len(done_groups) - done_n:
-            print(f"  ★ 끝까지 못 받은 묶음 {len(done_groups) - done_n}개가 건드린 "
-                  "차종은 안 매겼다 — 반만 보고 매기면 산 차를 죽인다")
+        # ★★ gone 은 ★ `load_details`(넣기 걸음)가 매긴다 (규격 개정 857).
+        #   ★ 받으면서 매기지 않는다 — ★ 받기가 반만 끝났을 수 있다
         return rc
 
     pages = opt("--pages", 1)

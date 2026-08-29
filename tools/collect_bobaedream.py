@@ -195,6 +195,10 @@ def main() -> int:
         # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
         #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
         save_site_raw(conn, SITE_CODE, "detail", no, d.url, html, at)
+        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
+        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
+        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
+        commit(conn)
         deep = parse_detail(html, SITE_CODE, no)
         if not deep:
             kept["못 받음"] += 1
@@ -214,6 +218,8 @@ def main() -> int:
         deep["detail_status"] = "ok"
         upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
         kept["저장"] += 1
+        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
+        commit(conn)
         time.sleep(gap)
     commit(conn)
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
