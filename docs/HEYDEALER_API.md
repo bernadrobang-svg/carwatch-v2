@@ -1,7 +1,7 @@
 # 헤이딜러 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.29-r868
+version  SPEC-2026.08.29-r869
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 866 · 실측 08-29
 checks   S46-5 · S46-31
@@ -626,4 +626,47 @@ robots  www.heydealer.com → `User-Agent: * / Allow: /`  ★ 막힌 것이 없�
    ★ ★ `targets.json` 에 ★ `EX30_EV`·`C40_EV` 의 `heydealer` 질의가 없는 것은
      ★ ★ 지금은 손해가 아니다.  ★ 나오면 그때 해시를 넣는다
 ★ 폴스타 2·3·4 — ★ 브랜드 해시를 ★ 아직 못 찾았다.  ★ 「없다」로 적지 않는다
+```
+
+---
+
+# ★★★★ 폴스타를 찾았다 — ★ `fuel=electric` [실측 08-29 · 가이드]
+
+```
+★ 브랜드 해시를 ★ 못 찾았다 — ★ 다섯을 두드린 기록 —
+  `/v2/customers/web/market/brands/`        → ★ 404
+  `/v2/customers/web/market/cars/filters/`  → ★ 404
+  `/v2/customers/web/market/car_filters/`   → ★ 404
+  `/v2/customers/web/market/filters/`       → ★ 200 · 1,269B — ★ **브랜드 칸이 없다**
+  ★ 목록 항목 키 14개에도 · ★ 상세에도 ★ 브랜드 해시가 ★ 없다
+★ ★ 그러므로 ★ **「해시를 못 찾았다」**로 적는다 — ★ 「없다」가 아니다
+
+★★ ★ 대신 ★ `filters/` 가 ★ **`fuel` 을 준다** —
+   `[휘발유 gasoline · 경유 diesel · LPG lpg · 바이퓨얼 bifuel
+     · ★ 전기 electric · 수소 hydrogen · 하이브리드 hybrid]`
+★ ★ `…/cars/?…&fuel=electric` → ★ **200건** (빈 쪽까지 · 실측 08-29)
+```
+
+## ★ 전기 200건에 무엇이 있나 [실측 08-29]
+
+```
+레이EV 23 · 모델Y 15＋12 · e-트론 10 · 모델3 8 · 토레스EVX 8 · 아이오닉5 7
+SEALION7 7 · EV6 7 · EV9 6 · … · ★ **폴스타4 3 · 폴스타2 3** · e-G80 2 · e-GV70 1
+★★ ★ **EX30 · C40 · 폴스타3 은 ★ 0건이다** — ★ 「없다」가 아니라 ★ 지금 재고가 0이다
+```
+
+## ★★ 그런데 ★ 지금 넣으면 ★ 전량을 끌어온다 — ★ 안 넣었다
+
+```
+`tools/collect_heydealer.py:77`
+  pick = {k: q[k] for k in ("brand", "model-group", "model") if q.get(k)}
+★ ★ `fuel` 이 ★ 그 셋에 없다 → ★ `pick` 이 **빈 dict** → ★ **조건 없는 전량**이 온다
+★ 실측 08-29 — ★ `targets.json` 에 넣고 `--dry` 를 돌리니
+  ★ ★ 다섯 차종이 ★ **각각 374~381건**을 끌어와 ★ 합이 **1,330건**이 됐다 (평소 207)
+  ★ ★ 마스터 확정 「전량을 받지 않는다」에 ★ 정면으로 어긋난다 — ★ **그 자리에서 되돌렸다**
+
+★★ 차례 — ★ ① 개발측이 `pick` 에 `fuel` 을 더한다 ② ★ 그다음 `targets.json` 에 넣는다
+   ★ ★ 순서를 바꾸면 ★ 전량 수집이 한 번 돈다
+★ 등록부에는 ★ 먼저 넣어 두었다 — `target_map.json` `by_site.heydealer` 의
+  ★ `폴스타2` → `POLESTAR2_EV` · `폴스타4` → `POLESTAR4_EV` (★ 이것만으로는 안 돈다)
 ```

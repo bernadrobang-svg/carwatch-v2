@@ -34,6 +34,14 @@
     "kbchachacha": {
       "_field": "상세 ld+json 의 name 에서 뽑은 차종 (KB carClass.json 으로 확인 · KBCHACHACHA_API 1a)",
       "_rule": "★ collect_group 만 준다 — ★ 갈래는 ★ targets.json 이 고른다 (classify)",
+      "폴스타2": {
+        "collect_group": "multi",
+        "target_key": "POLESTAR2_EV"
+      },
+      "폴스타4": {
+        "collect_group": "multi",
+        "target_key": "POLESTAR4_EV"
+      },
       "X3": {
         "collect_group": "multi",
         "target_key": "X3_IMPORT"
