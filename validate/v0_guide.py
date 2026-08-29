@@ -417,6 +417,10 @@ def s45_3_spec_totals() -> tuple[bool, str]:
                 continue
             if q.name == "INDEX.md" and idx_row.match(line.strip()):
                 continue
+            # ★ `CHECKS.md` 도 ★ 자동 생성이다 — ★ 표 칸은 ★ **검사 건수**지
+            #   ★ 배점이 아니다 (08-29 · `| ② 죽은 검사 … | 495 | 개발측 |`)
+            if q.name == "CHECKS.md" and line.strip().startswith("|"):
+                continue
             if any(p.search(line) for p in pats):
                 bad.append(f"{rel}:{i}")
     if bad:
@@ -3927,6 +3931,36 @@ def s46_165_fixable_not_called_unmeasurable():
                        + " · ".join(sorted(set(bad))[:5]))
     return True, "「못 잰다」가 다 진짜다"
 
+
+def s46_166_decision_reached_chapters():
+    """S46-166 — ★ 마스터 확정이 ★ 그 장에 닿았는가 (오판 209).
+
+    ★ 08-29 — ★ 「팔린 차를 목록에서 뺀다」를 ★ `UI_REVIEW` 에만 적고
+      ★ 목록 규격(`41-view.md`)에는 ★ 한 줄도 안 넣었다.
+      ★ ★ 개발측은 ★ 장 규격을 보고 만든다 — ★ 안 닿으면 ★ 안 만들어진다
+    ★ 잣대 — ★ 오늘 확정의 낱말이 ★ 그 낱말을 쓰는 장에 ★ 있어야 한다
+    """
+    need = {
+        "docs/chapters/41-view.md": ["sales_status", "/sold"],
+        "docs/chapters/61-web.md": ["/sold", "/detail"],
+        "docs/chapters/11-store/a-key.md": ["sales_status"],
+        "docs/chapters/30-score/f-table.md": ["갈래 ⑦", "만점"],
+    }
+    bad = []
+    for rel, words in need.items():
+        q = ROOT / rel
+        if not q.is_file():
+            bad.append(f"{rel} 없다")
+            continue
+        body = _read(q)
+        for w in words:
+            if w not in body:
+                bad.append(f"{q.name}: {w}")
+    if bad:
+        return False, ("★ 확정이 안 닿은 장 "
+                       f"{len(bad)} — " + " · ".join(bad[:6]))
+    return True, "마스터 확정이 장 규격에 다 닿았다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -3958,6 +3992,8 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-166", "마스터 확정이 장 규격에 닿았는가",
+     s46_166_decision_reached_chapters),
     ("S46-165", "「못 잰다」가 진짜인가", s46_165_fixable_not_called_unmeasurable),
     ("S46-164", "개발 회차의 「마스터 몫」에 답을 냈는가",
      s46_164_dev_pending_answered),

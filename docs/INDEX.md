@@ -9,18 +9,18 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**122파일 · 45,190줄 · 2,992KB**
+**122파일 · 45,227줄 · 2,997KB**
 
 ★ 800줄을 넘는 파일 12개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,102줄
+- CHECKS.md 1,104줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,894줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,026줄
+- guide/03_이력.md 1,028줄
 - guide/05_가이드역할.md 1,520줄
 - chapters/00-standard.md 2,215줄
-- chapters/41-view.md 946줄
+- chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
 - chapters/30-score/f-table.md 1,756줄
 - chapters/11-store/b-core.md 815줄
@@ -31,7 +31,7 @@
 | `ARCHITECTURE_20260829.md` | 363 | 21 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
-| `CHECKS.md`  ★ | 1,102 | 135 |
+| `CHECKS.md`  ★ | 1,104 | 136 |
 | `CROSS_SITE_COMPARE.md` | 470 | 27 |
 | `DEDUP_CROSS_SITE.md` | 182 | 8 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -84,7 +84,7 @@
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
 | `chapters/40-report.md` | 764 | 26 |
-| `chapters/41-view.md`  ★ | 946 | 35 |
+| `chapters/41-view.md`  ★ | 978 | 37 |
 | `chapters/42-watch.md` | 722 | 26 |
 | `chapters/50-multisite.md` | 453 | 15 |
 | `chapters/60-admin/00-intro.md` | 227 | 9 |
@@ -112,12 +112,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 16 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,026 | 754 |
+| `guide/03_이력.md`  ★ | 1,028 | 755 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,520 | 78 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 612 | 223 |
+| `guide/06_오판대장.md` | 613 | 224 |
 | `guide/07_밀린일대장.md` | 488 | 37 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
