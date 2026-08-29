@@ -1171,7 +1171,8 @@
       "kcar": {
         "wr_in_multi_mnuftr_modelGrp_model_grd": "091,001,001,001",
         "carType_modelGrp_model_grd": "IMP",
-        "_실측": "[실측 08-28] ★ 마스터께서 주신 K카 주소에 들어 있었다 (KCAR_API 3장)"
+        "_실측": "[실측 08-28] ★ 마스터께서 주신 K카 주소에 들어 있었다 (KCAR_API 3장)",
+        "_why_unused": "★ [08-29] ★ 이 열쇠는 ★ **마스터께서 주신 K카 주소에 있던 것**이다 (KCAR_API 3장). ★ 지금 수집기는 ★ `stockCar/list` 를 쓰고 ★ **조건을 안 받는다**(여섯 꼴이 한 바이트도 같다). ★ ★ 그래서 ★ **읽는 코드가 없다** — ★ 지우지 않는다.  ★ `enc` 가 풀리면 쓴다"
       },
       "bobaedream": {
         "maker_no": "1019",

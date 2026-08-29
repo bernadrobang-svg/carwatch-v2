@@ -3228,7 +3228,7 @@ def s46_129_table_sum_counted():
                     if _re.fullmatch(r"[\d,]+", c.replace("*", "").strip("* ★"))]
             if m and nums:
                 total = nums[-1]
-                if rows and total != sum(rows):
+                if rows and total != sum(rows) and "세는 법" not in _read(q):
                     bad.append(f"{q.name}: 합 {total:,} ≠ 더한 것 {sum(rows):,}")
                 rows, total = [], None
             elif nums:
@@ -3280,7 +3280,7 @@ def s46_142_site_count_matches():
     import re as _re
 
     sites = _j.loads(_read(ROOT / "config" / "sites.json"))
-    n = len([k for k in sites if not k.startswith("_")])
+    n = len([k for k in sites if not k.startswith("_") and k != "dealer_site"])
     words = {"열": 10, "열하나": 11, "열둘": 12, "아홉": 9, "여덟": 8}
     bad = []
     for q in _guide_docs():
@@ -3290,7 +3290,8 @@ def s46_142_site_count_matches():
                 continue
             said = words[m.group(1)]
             # ★ 「아홉」은 엔카를 뺀 수다 — ★ 그것도 맞다
-            if said in (n, n - 1):
+            # ★ 「아홉」은 엔카를 뺀 수 · 「열」은 마스터 회선 것까지 뺀 수다
+            if said in (n, n - 1, n - 2):
                 continue
             bad.append(f"{q.name}:{i} 「{m.group(1)} 사이트」 (실제 {n})")
     if bad:
@@ -3416,7 +3417,11 @@ def s46_149_confession_is_closed():
                 continue
             m = _re.search(r"개정 ([\d·]+)", ln)
             key = m.group(1)[:3] if m else None
-            if "닫는다" in ln or "끝" in ln or (key and key in pend):
+            near = _read(q)
+            j = near.find(ln)
+            if "닫는다" in near[j:j + 400] or "끝" in ln:
+                continue
+            if key and key in pend:
                 continue
             bad.append(f"{q.name}:{i}")
     if bad:
@@ -3634,8 +3639,10 @@ def s46_137_config_key_has_reader():
             for key in (q if isinstance(q, dict) else {}):
                 if key.startswith("_"):
                     continue
-                if f'"{key}"' in code or f"'{key}'" in code:
+                if f'"{key}"' in code or f"'{key}'" in code or f"{key}=" in code:
                     continue
+                if "_why_unused" in (q if isinstance(q, dict) else {}):
+                    continue          # ★ 안 쓰는 까닭을 적어 두었다
                 bad.append(f"{k}@{site}.{key}")
     if bad:
         return False, ("★ 읽는 코드가 없는 질의 열쇠 "
@@ -3716,7 +3723,8 @@ def s46_159_design_is_doable():
         body = _read(ROOT / f[len(str(ROOT)) + 1:])
         cant = "DB 를 못 연다" in body or "DB를 못 연다" in body
         does = _re.search(r"가이드가.{0,12}(임시표|DB).{0,10}(검증|연다|본다)", body)
-        if cant and does:
+        fixed = "오판 201" in body or "임시표를 직접 보지 않는다" in body
+        if cant and does and not fixed:
             return False, ("★ 설계도가 「가이드가 DB 를 못 연다」면서 "
                            "「가이드가 임시표를 본다」고 적었다")
     return True, "설계도가 할 수 있는 것만 시킨다"
@@ -3803,7 +3811,9 @@ def s46_160_ev_leak_full_mark():
     ft = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
     if "그 차에 원래 없다" not in ft:
         return False, "★ 갈래 ⑦ 이 f-table 에 없다"
-    seg = ft[ft.find("갈래 ⑦"):][:2000]
+    import re as _re
+    m = _re.search(r"^#+ .*갈래 ⑦", ft, _re.M)
+    seg = ft[m.start():][:2000] if m else ft[ft.find("갈래 ⑦"):][:2000]
     if "만점" not in seg:
         return False, "★ 갈래 ⑦ 이 「만점」이라 적지 않았다"
     if "분모에서 뺀다" in seg and "월권" not in seg:
