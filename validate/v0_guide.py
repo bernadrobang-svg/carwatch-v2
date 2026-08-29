@@ -1385,6 +1385,54 @@ def s46_120_registry_key_matches() -> tuple[bool, str]:
                   "그대로 두고 되돌리기도 받는다)")
 
 
+def s46_127_collector_has_screen_or_timer() -> tuple[bool, str]:
+    """★★★★ 수집기마다 ★ **화면이나 타이머**가 있는가 (오판 169 · 08-29).
+
+    ★★ 오판 169 — 「★ KB 가 봇 차단으로 막혔다」를 ★ 여러 회차 옮겨 적었는데
+      ★ ★ 재보니 ★ 막고 있던 것은 ★ **우리 코드**였다.  ★ 116건은
+      ★ ★ 마스터가 ★ **손으로 열두어 번 돌린 수**였다.
+    ★ 사람이 손으로만 도는 수집기는 ★ 「안 돈다」가 ★ 안 보인다 —
+      ★ ★ 렉서스는 08-24 값이 08-29 까지 그대로였다.
+    ★ 그래서 ★ 수집기마다 ★ 둘 중 하나는 있어야 한다 —
+      ★ ★ ① 마스터가 누를 화면  ★ ② 저절로 부르는 타이머
+    """
+    screens = {}
+    try:
+        with open(ROOT / "config" / "cli_screens.json", encoding="utf-8") as fp:
+            screens = json.load(fp).get("screens") or {}
+    except (OSError, ValueError):
+        pass
+    # ★ 타이머가 부르는 것 — ★ 유닛의 ExecStart* 와 ★ 그것이 부르는 목록
+    unit = ""
+    for name in ("carwatch-daily.service", "carwatch.service"):
+        unit += _read(ROOT / "deploy" / name)
+    timed: set[str] = set()
+    for line in unit.splitlines():
+        if not line.startswith("ExecStart"):
+            continue
+        for tok in line.split():
+            if tok.endswith(".py"):
+                base = tok.rsplit('/', 1)[-1]
+                timed.add(base)
+                # ★ 묶어 부르는 것이면 ★ 그 안의 목록도 타이머가 부르는 것이다
+                inner = _read(ROOT / "tools" / base)
+                block = re.search(r"SITES[^=]*=\s*\((.*?)\)", inner, re.S)
+                for m in re.findall(r'"([a-z0-9_]+)"', block.group(1) if block else ""):
+                    timed.add(f"collect_{m}.py")
+    bad = []
+    for path in sorted((ROOT / "tools").glob("collect_*.py")):
+        name = path.name
+        rel = f"tools/{name}"
+        if rel in screens or name in timed:
+            continue
+        bad.append(name)
+    if bad:
+        return False, (f"★ 손으로만 도는 수집기 {len(bad)}개 — "
+                       f"{' · '.join(bad)}")
+    n = len(list((ROOT / "tools").glob("collect_*.py")))
+    return True, f"수집기 {n}개가 다 화면이나 타이머를 갖는다"
+
+
 def s46_124_db_opened_with_pragmas() -> tuple[bool, str]:
     """★★★★ DB 를 ★ **PRAGMA 없이** 열지 않는가 (0b · 08-29).
 
@@ -2850,6 +2898,9 @@ CHECKS = (
     ("S46-120", "등록부의 감사 열쇠가 목록 열쇠와 같은가",
      s46_120_registry_key_matches),
     # ★★ 마스터 08-29(0b) — ★ 일꾼이 맨 connect 라 busy_timeout 이 없었다
+    # ★★ 오판 169 — ★ 손으로만 도는 수집기는 ★ 「안 돈다」가 안 보인다
+    ("S46-127", "수집기마다 화면이나 타이머가 있는가",
+     s46_127_collector_has_screen_or_timer),
     ("S46-124", "DB 를 PRAGMA 없이 열지 않는가",
      s46_124_db_opened_with_pragmas),
     ("S46-126", "수집기가 통신·sleep 을 트랜잭션 밖에서 하는가",

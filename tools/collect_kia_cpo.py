@@ -166,7 +166,7 @@ def main() -> int:
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
     from store.core import sweep_gone_groups
 
-    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in rows})], at)
+    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in parsed_rows})], at)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
     print(f"저장 {stored}건 · site='{SITE_CODE}'")

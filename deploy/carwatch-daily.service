@@ -13,6 +13,13 @@ StartLimitIntervalSec=0
 # ★★ `oneshot` 은 ★ `Restart=` 를 못 쓴다 — ★ `exec` 로 바꾼다 (명령서 56장).
 #   ★ 하는 일은 그대로다 — ★ 큐에 넣고 끝나는 짧은 스크립트다
 Type=exec
+# ★★★★ `ExecStartPre` 도 ★ `TimeoutStartSec` 을 먹는다 — ★ 기본 90초다.
+#   ★ 그대로 두면 ★ 수집기가 ★ **90초에 잘린다**.
+#   ★ 실측 08-29 — ★ 열 사이트 한 바퀴 ★ **14분 6초** (가장 긴 보배 382초).
+#   ★ 사이트가 느려질 것을 보아 ★ 넉넉히 2시간을 준다 —
+#   ★ ★ `daily_collect.py` 자신이 ★ 사이트마다 40분에서 끊으므로
+#   ★ ★ 하나가 매달려도 ★ 여기까지 오지 않는다
+TimeoutStartSec=2h
 # ★★ 마스터 확정 08-25 — 「★ 13시에 ★ **못할 경우** ★ 4시간 단위로 다시」.
 #   ★ ★ 「네 시간마다」가 ★ 아니다 — ★ **못 돌았을 때만** 네 시간 뒤다.
 #   ★ ★ 성공하면 ★ 그날은 더 안 돈다 (`on-failure` 라 ★ exit 0 이면 안 부른다)
@@ -23,4 +30,11 @@ User=ec2-user
 WorkingDirectory=/home/ec2-user/v2
 Environment=LANG=ko_KR.UTF-8
 Environment=PYTHONIOENCODING=utf-8
+# ★★★★★ 08-29 (ORDER 1순위 2) — ★ 여기가 ★ `daily_enqueue.py` **뿐이었다**.
+#   ★ 그래서 ★ 재판정만 큐에 들어가고 ★ **수집기 열 개가 저절로 안 돌았다** —
+#   ★ ★ 마스터가 손으로 터미널에서 돌리셔야 했다.  ★ 렉서스는 08-24 값이 그대로였다.
+#   ★★ 받기를 ★ **먼저** 한다 — ★ 받은 뒤에 판정해야 오늘 것을 판정한다.
+#   ★ `daily_collect.py` 는 ★ 한 사이트가 죽어도 ★ 0 을 낸다 (하나 때문에
+#     ★ ★ 재판정을 통째로 잃지 않는다).  ★ 전부 죽었을 때만 1 이다
+ExecStartPre=/usr/bin/python3.11 tools/daily_collect.py
 ExecStart=/usr/bin/python3.11 tools/daily_enqueue.py

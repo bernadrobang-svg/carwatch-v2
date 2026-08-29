@@ -77,6 +77,16 @@ def enqueue_after_store(db_path: str, site: str, stored: int) -> str | None:
     """
     if not stored:
         return None
+    # ★★★★★ 08-29 실측 — ★ 하루치를 이어 돌릴 때 ★ **여기가 뒤를 죽인다**.
+    #   ★ 보배가 221건을 저장하고 재판정을 큐에 넣었다 (09:16:20).
+    #   ★ ★ 소비기가 그것을 9분 5초 동안 돌았고 (09:16:20 → 09:25:25)
+    #   ★ ★ 그 창 안에서 돈 ★ **네 수집기가 다 `database is locked` 로 죽었다** —
+    #   ★ ★ heydealer · bmw · kia_cpo · reborncar.  ★ 그 앞의 셋은 다 성공했다.
+    #   ★★ 묶어 돌 때는 ★ 각자 큐에 넣지 않는다 — ★ 다 받은 뒤에
+    #   ★ ★ `daily_enqueue.py` 가 ★ **한 번만** 넣는다 (유닛의 ExecStart 가 그것이다)
+    if os.environ.get("CARWATCH_DEFER_RECALC") == "1":
+        print(f"★ 재판정은 다 받은 뒤에 한 번만 넣습니다 ({site} {stored:,}건 저장)")
+        return None
     conn = sqlite3.connect(db_path, timeout=DB_TIMEOUT_SEC)
     try:
         got = enqueue_daily(conn, _now())

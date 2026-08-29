@@ -23,7 +23,7 @@
 | `/password` | [password.html](password.html) | 200 | 2,295B |
 | `/admin` | [admin.html](admin.html) | 200 | 15,439B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 15,429B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 56,201B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 56,399B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,166B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 7,931B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,577B |
