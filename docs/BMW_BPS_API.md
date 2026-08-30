@@ -1,7 +1,7 @@
 # BMW 프리미엄 셀렉션 (BPS) — 조사 규격
 
 ```
-version  SPEC-2026.08.29-r966
+version  SPEC-2026.08.29-r967
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 579 · 실측 08-23
 checks   S46-5 · S46-31

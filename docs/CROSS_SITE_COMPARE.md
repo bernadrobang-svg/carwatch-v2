@@ -1,7 +1,7 @@
 # 사이트간 견주기 — ★ 등급 차이 · 값 차이
 
 ```
-version  SPEC-2026.08.29-r966
+version  SPEC-2026.08.29-r967
 follows  `docs/chapters/30-score/f-table.md` · `docs/DEDUP_CROSS_SITE.md`
 sources  개정 703 · 마스터 지시 08-24
 checks   S46-54 · S46-55 · S46-56
@@ -685,4 +685,65 @@ S46-56  ★ 짝지어진 매물 중 ★ **사고 판정이 갈린 것**
 ★★ ★ **여섯 중 셋(K카·현대인증·기아)은 ★ 이미 받는 응답 안에 있다**
    ★ ★ ★ **창구를 부를 필요가 없다.  ★ 파서가 안 읽었을 뿐이다**
 ★ ★ 남은 것 — ★ 보배(404) · 렉서스(못 갈랐다) · 헤이딜러(토큰).  ★ **셋만 다시 잰다**
+```
+
+---
+
+# ★★★★★ 08-29 — ★ **남은 셋도 다 열었다** (마스터 지시 「뭘 미뤄」)
+
+## ★★★ 헤이딜러 — ★ **성능점검 부위별까지 다 있다**
+
+```
+창구  ad.detail_urls(hash_id)[0]  → ★ 200 · 29,952B  (★ 이미 받고 있는 것이다)
+```
+
+| 우리 축 | 점 | ★ 칸 | 값 (표본) |
+|---|--:|---|---|
+| `history.owner` | 11 | `detail_info.carhistory.owner_changed_count` | **1** |
+| `history.use` | 22 | `has_business_use_record` · `has_rent_use_record` · `has_public_use_record` | false·false·false |
+| `state.my_cost` | 28 | `my_car_current_owner_accident_list` · `my_car_former_owner_accident_list` | [] · [] |
+| ★ `state.accident` | 51 | `accident_repairs_summary` | ★ `complete_no_accident` |
+| ★★ `state.frame`·`outer` | 71 | ★ **`inspection_records.accident_repairs`** | ★ `[{"part":"trunk_lid","repair":"exchange"}]` |
+| — | — | `inspection_records.images` · `date` | 사진 2장 · 2026-08-11 |
+
+```
+★★★ ★ **부위별 판정이 그대로 온다** — ★ `part`＋`repair` 짝이다
+   ★ ★ 「단순교환 무사고」(`simple_exchange_no_accident`)까지 ★ 이름으로 온다
+★ ★ **창구를 부를 필요가 없다.  ★ 이미 받는 응답 안에 있다** — ★ K카·현대인증과 같다
+```
+
+## ★ 보배드림 — ★ **팝업은 열린다.  ★ 안은 JS 가 그린다**
+
+```
+★ 팝업 있는 매물 ★ **5/6** [실측 08-29 · 표본 6건]
+★ 창구  `popup_0305_history.php?car_number={번호}&tbl=mycar&cno={매물}`
+   ★ ★ `www` 는 ★ **404** · ★ **`m.bobaedream.co.kr` 은 200 · 2,126B** ← ★ 호스트가 달랐다
+   ★ ★ 인코딩은 ★ **UTF-8** 이다 (euc-kr 로 보내면 글자가 깨진다)
+★★ ★ 다만 ★ 그 2KB 는 ★ **껍데기**다 — ★ 내용은 `bobae.content.js` 가 그린다
+   ★ ★ ★ **여기까지가 내가 잰 것**이다.  ★ 그 js 안의 창구는 ★ 아직 못 찾았다
+```
+
+## ★ 렉서스 인증 — ★ **`isCheckComplete` 하나뿐**
+
+```
+★ `getData_car_detail.json.php?idx=` 의 `car_detail` 에 ★ 걸리는 칸이 ★ **그것 하나**다
+★ ★ 「점검을 마쳤나」만 알 수 있고 ★ **부위·사고·보험은 없다**
+★ ★ 그래서 ★ 렉서스 천장이 ★ **30.1%** 로 가장 낮다 — ★ 까닭이 맞았다
+```
+
+---
+
+# ★★★★★ 그래서 — ★ **넷이 이미 받고 있다**
+
+| 사이트 | ★ 이미 받는 응답 안에 | 점 |
+|---|---|--:|
+| ★ **K카** | `data.carhistory` | **79** |
+| ★ **헤이딜러** | `detail_info.carhistory` ＋ `inspection_records` | ★ **183** |
+| ★ **현대인증** | 상세 본문 「내차피해 N건·소유자 변경·압류」 | **70** |
+| ★ 기아 CPO | `insuranceRecord`·`performanceRecord`·PDF | 143 (대상 0건) |
+
+```
+★★★★ ★ **파서가 읽기만 하면 된다.  ★ 사이트를 더 두드릴 필요가 없다**
+★ ★ 헤이딜러가 가장 크다 — ★ **183점** · 천장 58.6% → ★ **78% 대**
+★ 남은 것 — ★ 보배(js 안) · 렉서스(정말 없다) · BMW·볼보(창구 0) · 리본카(보험료 계산)
 ```
