@@ -1,7 +1,7 @@
 # 10장. 활용 — 화면 (STEP 93–110)
 
 ```
-version  SPEC-2026.08.29-r981
+version  SPEC-2026.08.29-r982
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
