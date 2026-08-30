@@ -1,7 +1,7 @@
 # 5장-2a. ★★★ 배점 정본 — 개정 454
 
 ```
-version  SPEC-2026.08.30-r1001
+version  SPEC-2026.08.30-r1002
 follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
 sources  실측 08-22
 checks   S46-38 · S46-39
