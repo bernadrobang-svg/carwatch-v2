@@ -4535,6 +4535,31 @@ def s46_191_budget_follows_fuel_rule():
         return False, ("★ 원칙과 다른 차종 예산 " + " · ".join(bad[:5]))
     return True, "차종별 예산이 다 원칙대로다"
 
+
+def s46_192_pref_brands_registered():
+    """S46-192 — ★ 선호차종이 ★ 등록부에 다 있는가 (마스터 확정 08-30).
+
+    ★ 마스터 — 「★ 선호차종은 볼보 · BMW · 폭스바겐 · 벤츠 · 르노 · 제네시스」
+      ＋ 「★ 폴스타 넣고.  ★ iX3 · ID.4 넣어 줘」
+    ★ 잣대 — ★ `web.json.pref_brands` 의 차종이 ★ `targets.json` 에 다 있는가
+    """
+    import json as _j
+
+    web = _j.loads(_read(ROOT / "config" / "web.json"))
+    tgt = _j.loads(_read(ROOT / "config" / "targets.json"))
+    pref = web.get("pref_brands") or {}
+    if not pref:
+        return False, "pref_brands 가 없다"
+    bad = []
+    for brand, keys in pref.items():
+        for k in keys:
+            if k not in tgt:
+                bad.append(f"{brand}:{k}")
+    if bad:
+        return False, ("★ 등록부에 없는 선호차종 " + " · ".join(bad[:5]))
+    n = sum(len(v) for v in pref.values())
+    return True, f"선호차종 {n}종이 다 등록돼 있다 ({len(pref)}개 제조사)"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4570,6 +4595,8 @@ CHECKS = (
      s46_177_catalog_not_site_locked),
     ("S46-188", "「화면에 없다」를 열어 보고 적었는가",
      s46_188_screen_before_claiming_missing),
+    ("S46-192", "선호차종이 등록부에 다 있는가",
+     s46_192_pref_brands_registered),
     ("S46-191", "차종별 예산이 원칙대로인가",
      s46_191_budget_follows_fuel_rule),
     ("S46-187", "값 곡선이 쌀수록 높은가",

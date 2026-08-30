@@ -1,7 +1,7 @@
 # 같은 차가 여러 사이트에 뜰 때 — ★ 중복 규격
 
 ```
-version  SPEC-2026.08.30-r1012
+version  SPEC-2026.08.30-r1013
 follows  `docs/INDEX.md`
 sources  실측 08-24
 checks   S46-38 · S46-39
