@@ -4314,6 +4314,34 @@ def s46_181_read_stored_before_probing():
                        "★ 사이트를 두드리기 전에 그것부터 연다")
     return True, f"받아 둔 조사 {n}파일을 규격이 가리킨다"
 
+
+def s46_182_all_sites_before_claiming_all():
+    """S46-182 — ★ 「전 사이트」를 ★ 사이트 수만큼 열고 말했는가 (오판 220).
+
+    ★ 08-29 — ★ 헤이딜러 하나를 열고 ★ 「전 사이트 0」·「다시 받을 것 없다」고 했다.
+      ★ ★ 재 보니 ★ K카 167점이 없고 ★ 렉서스는 열두 축이 없고 ★ 리본카는 다 준다
+    ★ 잣대 — ★ 규격에 ★ 「전 사이트」·「아홉 사이트 전건」을 쓴 줄에
+      ★ **사이트 이름이 셋 이상** 함께 있어야 한다
+    """
+    import re as _re
+
+    bad = []
+    for q in sorted((ROOT / "docs").glob("CROSS_SITE_COMPARE.md")):
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"전 사이트|아홉 사이트 전건", ln):
+                continue
+            if _re.search(r"~~|물린다|오판|마스터 —|틀렸다", ln):
+                continue
+            names = len(_re.findall(
+                r"엔카|K카|KB|보배|헤이딜러|리본카|볼보|BMW|렉서스|현대|기아", ln))
+            if names >= 3:
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 한 곳만 보고 「전 사이트」라 적은 곳 "
+                       + " · ".join(bad[:4]))
+    return True, "「전 사이트」가 다 사이트별 근거를 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4347,6 +4375,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-182", "「전 사이트」를 사이트별로 열고 말했는가",
+     s46_182_all_sites_before_claiming_all),
     ("S46-181", "받아 둔 조사를 먼저 보는가",
      s46_181_read_stored_before_probing),
     ("S46-180", "코드 표가 사이트마다 있는가", s46_180_code_table_per_site),
