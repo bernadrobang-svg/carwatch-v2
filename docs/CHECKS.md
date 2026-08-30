@@ -99,7 +99,7 @@
 | `S46-97` | 원문이 source_id 로 매물에 이어지는가 | fatal | `validate/v0_guide.py:2325` | **★ 없음** | 없음 | guide/03_이력.md:792 · guide/03_이력.md:879 · guide/06_오판대장.md:263 |
 | `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:2790` | **★ 없음** | 없음 | UI_REVIEW.md:1880 · guide/03_이력.md:793 · guide/03_이력.md:794 |
 | `S46-99` | 로그인하면 관심·관리가 열리는가 | fatal | `validate/v0_guide.py:2393` | **★ 없음** | 없음 | guide/03_이력.md:794 · guide/03_이력.md:879 · guide/03_이력.md:1009 |
-| `S46-100` | 시안의 낱말 차례가 화면과 같은가 | fatal | `validate/v0_guide.py:2560` | **★ 없음** | 없음 | guide/03_이력.md:804 · guide/03_이력.md:879 · guide/03_이력.md:1009 |
+| `S46-100` | 시안의 낱말 차례가 화면과 같은가 | fatal | `validate/v0_guide.py:2560` | **★ 없음** | 없음 | ROADMAP_20260830.md:104 · guide/03_이력.md:804 · guide/03_이력.md:879 |
 | `S46-102` | 「전기만」에 전기 아닌 것이 없는가 | fatal | `validate/v0_guide.py:2697` | **★ 없음** | 없음 | UI_REVIEW.md:1133 · guide/03_이력.md:814 · guide/06_오판대장.md:239 |
 | `S46-103` | 시안의 크기·자리 값을 담았는가 | fatal | `validate/v0_guide.py:2749` | **★ 없음** | 없음 | guide/03_이력.md:819 · guide/03_이력.md:847 · guide/06_오판대장.md:241 |
 | `S46-115` | 시키는 화면이 스스로 안 바뀌는가 | fatal | `validate/v0_guide.py:1290` | **★ 없음** | 없음 | UI_REVIEW.md:1338 · guide/03_이력.md:850 |
@@ -199,7 +199,7 @@
 | `V1-20` | 카탈로그를 모델당 1회만 받음 | run | `validate/v1_collect.py:123` | **★ 없음** | 없음 | — |
 | `V1-21` | 받아 두고 안 펼쳐진 원문이 없음 | run | `validate/v1_collect.py:113` | **★ 없음** | 없음 | trace/02-collect.md:62 · trace/13-pipeline.md:40 · trace/13-pipeline.md:41 |
 | `V1-22` | — | — | **★ 코드에 없다** | — | — | trace/05-score.md:47 · guide/01_요구사항.md:159 · guide/01_요구사항.md:275 |
-| `V1-23` | 필요한 조합 대비 받은 카탈로그 비율 | run | `validate/v1_collect.py:81` | **★ 없음** | 없음 | trace/02-collect.md:44 · guide/02_결함대장.md:235 · guide/02_결함대장.md:245 |
+| `V1-23` | 필요한 조합 대비 받은 카탈로그 비율 | run | `validate/v1_collect.py:81` | **★ 없음** | 없음 | ROADMAP_20260830.md:104 · trace/02-collect.md:44 · guide/02_결함대장.md:235 |
 | `V1-24` | 받은 카탈로그가 매물과 이어짐 | run | `validate/v1_collect.py:108` | **★ 없음** | 없음 | guide/02_결함대장.md:235 · guide/02_결함대장.md:245 · guide/03_이력.md:346 |
 | `V1-25` | ok 로 저장된 원문이 온전한가 | run | `validate/v1_collect.py:72` | **★ 없음** | 없음 | — |
 | `V1-26` | 판정 축이 통째로 비지 않음 | run | `validate/v1_collect.py:101` | **★ 없음** | 없음 | guide/03_이력.md:437 |
