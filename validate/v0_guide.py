@@ -491,7 +491,8 @@ def s44_3_specs_in_order() -> tuple[bool, str]:
 def s43_3_version_matches() -> tuple[bool, str]:
     """★ 00_버전.md 의 지금 버전이 03_이력.md 의 마지막 개정과 같은가 (V0-01)."""
     hist = _read(GUIDE / "03_이력.md")
-    nums = [int(x) for x in re.findall(r"^\| (\d{3}) \|", hist, re.M)]
+    # ★ 개정이 1,000 을 넘었다 (08-30) — ★ 세 자리로 묶어 두면 영영 999 로 읽는다
+    nums = [int(x) for x in re.findall(r"^\| (\d{3,}) \|", hist, re.M)]
     ver = re.search(r"## 지금 버전\s*\n```\s*\n(SPEC-[\d.]+-r(\d+))", _read(GUIDE / "00_버전.md"))
     if not nums or not ver:
         return False, "버전 또는 이력을 읽을 수 없다"
