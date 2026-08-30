@@ -394,6 +394,7 @@ def s45_3_spec_totals() -> tuple[bool, str]:
         "mapping.py",            # SOURCE — 625 는 줄 수
         "j-admin-mock2.md`",     # INDEX — 495 는 줄 수 (자동 생성)
         "K카",                   # MULTISITE_MAPPING — 495 는 경위 서술
+        "guide/03_이력.md`",      # INDEX — 850 은 줄 수 (자동 생성 · 08-30)
     )
     pats = []
     for n in STALE:
