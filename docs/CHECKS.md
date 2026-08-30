@@ -149,7 +149,7 @@
 | `S46-161` | 「사이트가 안 준다」에 증거가 있는가 | fatal | `validate/v0_guide.py:3044` | **★ 없음** | 없음 | guide/03_이력.md:975 · guide/03_이력.md:977 · guide/03_이력.md:979 |
 | `S46-162` | 오판이 약속한 검사가 실제로 있는가 | fatal | `validate/v0_guide.py:3093` | **★ 없음** | 없음 | guide/03_이력.md:977 · guide/03_이력.md:979 · guide/03_이력.md:985 |
 | `S46-163` | 시안마다 라우팅 표에 주소가 있는가 | fatal | `validate/v0_guide.py:3185` | **★ 없음** | 없음 | guide/03_이력.md:985 · guide/03_이력.md:1003 · guide/06_오판대장.md:294 |
-| `S46-164` | 개발 회차의 「마스터 몫」에 답을 냈는가 | fatal | `validate/v0_guide.py:3872` | **★ 없음** | 없음 | guide/03_이력.md:991 · guide/06_오판대장.md:295 |
+| `S46-164` | 개발 회차의 「마스터 몫」에 답을 냈는가 | fatal | `validate/v0_guide.py:3872` | **★ 없음** | 없음 | guide/03_이력.md:991 · guide/06_오판대장.md:295 · guide/14_누가할것_20260829.md:39 |
 | `S46-165` | 「못 잰다」가 진짜인가 | fatal | `validate/v0_guide.py:3900` | **★ 없음** | 없음 | guide/03_이력.md:1011 · guide/06_오판대장.md:296 · guide/06_오판대장.md:297 |
 | `S46-166` | 마스터 확정이 장 규격에 닿았는가 | fatal | `validate/v0_guide.py:3938` | **★ 없음** | 없음 | guide/03_이력.md:1017 · guide/06_오판대장.md:298 · chapters/41-view.md:974 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -184,7 +184,7 @@
 | `V1-26` | 판정 축이 통째로 비지 않음 | run | `validate/v1_collect.py:101` | **★ 없음** | 없음 | guide/03_이력.md:437 |
 | `V1-27` | 확인 안 됨을 ①②③④ 로 가른 표가 있음 | run | `validate/v1_collect.py:88` | **★ 없음** | 없음 | guide/03_이력.md:454 · chapters/30-score/f-table.md:504 |
 | `V1-28` | ② ③ 건수가 지난번보다 안 늘었음 | run | `validate/v1_collect.py:95` | **★ 없음** | 없음 | guide/03_이력.md:454 · chapters/30-score/f-table.md:505 |
-| `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | **★ 없음** | 없음 | trace/11-store.md:80 · chapters/00-standard.md:362 · chapters/11-store/a-key.md:336 |
+| `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | **★ 없음** | 없음 | trace/11-store.md:80 · guide/03_이력.md:1029 · guide/14_누가할것_20260829.md:29 |
 | `V2-02` | 필수 컬럼 NOT NULL 위반 없음 | run | `validate/v2_load.py:29` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:106 |
 | `V2-03` | — | — | **★ 코드에 없다** | — | — | trace/RULES.md:186 · chapters/11-store/a-key.md:377 · chapters/20-verify/b-v1v2.md:107 |
 | `V2-04` | status 열거값 위반 없음 | run | `validate/v2_load.py:32` | **★ 없음** | 없음 | trace/RULES.md:189 · chapters/20-verify/b-v1v2.md:108 |
