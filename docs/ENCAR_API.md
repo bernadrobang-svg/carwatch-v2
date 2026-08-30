@@ -1,7 +1,7 @@
 # 엔카 API — 전수 조사
 
 ```
-version  SPEC-2026.08.30-r1004
+version  SPEC-2026.08.30-r1005
 follows  ★ 생성물 — `tools/probe_encar.py`
 sources  개정 560 · 실측 08-23
 checks   S46-31
