@@ -102,7 +102,81 @@ def heydealer(conn, write: bool) -> Counter:
     return got
 
 
-SITES = {"heydealer": heydealer}
+def kbchachacha(conn, write: bool) -> Counter:
+    """★★ KB 부위별 (밀린일 4일째) — ★ 상세에서 ★ 성능점검부 주소를 뽑아 ★ 받는다.
+
+    ★ 저장한 상세 원문은 ★ 다시 쓴다 (통신 없음).
+      ★ ★ 성능점검부는 ★ **딴 집(autocafe·carmodoo…)** 이라 ★ 한 번은 두드려야 한다 —
+      ★ ★ 받은 것은 ★ 원문으로 남긴다 (P3)
+    """
+    import time
+    import urllib.error
+    import urllib.request
+
+    from parse.kbchachacha.inspection import panels, report_url
+    from store.core import upsert_child
+    from store.raw import save_site_raw
+
+    at = _now()
+    got: Counter = Counter()
+    todo = []
+    for lid, sid, blob in latest_details(conn, "kbchachacha"):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        url = report_url(html or "")
+        if not url:
+            got["성능점검 주소가 없다"] += 1
+            continue
+        todo.append((lid, sid, url))
+    got["성능점검 주소가 있다"] = len(todo)
+    for lid, sid, url in todo:
+        try:
+            body = urllib.request.urlopen(urllib.request.Request(
+                url, headers={"User-Agent": UA}), timeout=30).read()
+        except (urllib.error.URLError, OSError, TimeoutError) as e:
+            got[f"못 받음 ({type(e).__name__})"] += 1
+            continue
+        text = None
+        for enc in ("utf-8", "euc-kr", "cp949"):
+            try:
+                text = body.decode(enc)
+                break
+            except UnicodeDecodeError:
+                continue
+        if text is None:
+            got["글자를 못 푼다"] += 1
+            continue
+        pan = panels(text)
+        if pan is None:
+            # ★ 우리가 아는 꼴이 아니다 — ★ 「이상 없음」으로 치지 않는다 (금지 12)
+            got[f"★ 모르는 꼴 ({url.split('/')[2]})"] += 1
+            if write:
+                save_site_raw(conn, "kbchachacha", "inspection", sid, url,
+                              body, at, listing_id=lid)
+            continue
+        got["★ 읽었다"] += 1
+        got["  판이 있다" if pan else "  이상 없음(확인)"] += 1
+        got["  판 수"] += len(pan)
+        if not write:
+            continue
+        save_site_raw(conn, "kbchachacha", "inspection", sid, url, body, at,
+                      listing_id=lid)
+        upsert_child(conn, "core_inspection", {
+            "listing_id": lid, "site": "kbchachacha", "row_status": "ok",
+            "inspection_panel_json": json.dumps(pan, ensure_ascii=False),
+            "collected_at": at}, "p1", at)
+        conn.commit()
+        time.sleep(0.4)
+    if write:
+        conn.commit()
+    return got
+
+
+UA = ("Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 "
+      "Chrome/120 Mobile Safari/537.36")
+
+SITES = {"heydealer": heydealer, "kbchachacha": kbchachacha}
 
 
 def main() -> int:

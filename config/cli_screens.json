@@ -64,6 +64,7 @@
     "tools/gen_table.py",
     "tools/light_check.py",
     "tools/link_raw_ids.py",
+    "tools/measure_0k.py",
     "tools/measure_axis_gap.py",
     "tools/probe_kb_wall.py",
     "tools/recalc_catchup.py",
