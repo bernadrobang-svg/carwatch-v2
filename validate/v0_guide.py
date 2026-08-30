@@ -1732,7 +1732,9 @@ def s46_117_collectors_sweep_gone() -> tuple[bool, str]:
     tools = ROOT / "tools"
     if not tools.is_dir():
         return False, "tools/ 가 없다"
-    want = ("sweep_gone", "mark_gone")
+    # ★★ 08-29 — ★ sweep 이 ★ 살아 있는 차를 죽여 ★ 다섯 곳을 껐다 (61건 되살림).
+    #   ★ 끈 곳은 ★ 「왜 껐나」가 적혀 있어야 한다 — ★ 조용히 끄는 것은 막는다
+    want = ("sweep_gone", "mark_gone", "SWEEP_OFF")
     done, todo = [], []
     for q in sorted(tools.glob("collect_*.py")):
         # ★ `collect_<사이트>.py` 는 ★ 다 목록을 받는 수집기다 —

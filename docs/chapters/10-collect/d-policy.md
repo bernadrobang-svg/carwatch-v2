@@ -1,7 +1,7 @@
 ## STEP 24 — 요청 정책
 
 ```
-version  SPEC-2026.08.29-r938
+version  SPEC-2026.08.29-r939
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
