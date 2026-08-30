@@ -4091,6 +4091,31 @@ def s46_172_absence_read_as_human():
                        + " · ".join(bad[:5]))
     return True, "「없다」가 다 본문 낱말로 재어져 있다"
 
+
+def s46_173_endpoint_not_wordcount():
+    """S46-173 — ★ 사이트 규격이 ★ **창구**를 적었는가 (오판 213).
+
+    ★ 08-29 — ★ KB진단을 ★ HTML 낱말 수로 세고 ★ 「5/10」이라 적었다.
+      ★ ★ 마스터 — 「★ 글자를 찾지 말고 ★ **거기 달린 함수를 찾아야**」
+    ★ 잣대 — ★ 「진단」·「보험이력」을 말하는 사이트 규격에
+      ★ **주소나 함수 이름**이 함께 적혀 있어야 한다
+    """
+    import re as _re
+
+    bad = []
+    for q in sorted((ROOT / "docs").glob("*_API.md")):
+        body = _read(q)
+        if not _re.search(r"진단|보험이력", body):
+            continue
+        # ★ 창구를 적었는가 — ★ 주소·함수 꼴
+        if _re.search(r"/public/|\.json|\.kbc|POST |onclick|data-link-url|api/|/v1/|readside|.php|.asp", body):
+            continue
+        bad.append(q.name)
+    if bad:
+        return False, ("★ 창구 없이 「진단·보험이력」을 말한 문서 "
+                       + " · ".join(bad[:5]))
+    return True, "진단·보험이력 규격이 다 창구를 적었다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4122,6 +4147,7 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-173", "규격이 창구를 적었는가", s46_173_endpoint_not_wordcount),
     ("S46-172", "「없다」를 본문 낱말로 쟀는가",
      s46_172_absence_read_as_human),
     ("S46-171", "잣대가 화면을 적었는가", s46_171_yardstick_names_screen),

@@ -1,7 +1,7 @@
 # KB차차차 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.29-r960
+version  SPEC-2026.08.29-r961
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 858 · 실측 08-29
 checks   S46-5 · S46-28 · S46-31
@@ -549,3 +549,43 @@ GET /public/search/list.empty?…&carCode={세대}
 ★★ ★ **스타픽케어가 매물마다 갈리는지는 ★ 아직 못 쟀다** — ★ 10/10 이라 안내문일 수 있다
    ★ ★ 「36점인가 28점인가」는 ★ 그것을 가른 뒤에 정한다
 ```
+
+---
+
+# ★★★★★ 08-29 — ★ **버튼 뒤의 창구를 찾았다** (마스터 지적)
+
+```
+★★★ 마스터 — 「★ **아니야 HTML 글자를 찾지 말고 ★ 거기 달린 함수를 찾아야.
+   ★ 글자 파싱은 분석 때 하는 거야.  ★ 또한 성능기록·보험이력도 다 있어 ★ 사진 밑에 버튼으로 있잖아**」
+
+★ ★ **옳다.  ★ 나는 낱말을 세고 있었다** — ★ 그것은 ★ **분석 때 할 일**이다
+   ★ ★ 받을 때는 ★ **함수와 주소**를 찾아야 한다
+```
+
+## ★ 상세 안에 ★ **별도 열쇠 둘**이 박혀 있다 [실측 08-29 · 표본 3건 전건]
+
+```
+var carSeq        = "28680695"   ← 매물번호 (우리가 이미 쓴다)
+var diagCarSeq    = "11098791"   ★ 진단 열쇠 — ★ 우리가 안 뽑고 있었다
+var carHistorySeq = "55762017"   ★ 보험 열쇠 — ★ 〃
+```
+
+## ★★ 창구 셋 [실측 08-29]
+
+| 버튼 | 창구 | 어떻게 | 결과 |
+|---|---|---|---|
+| ★ **진단 결과 자세히 보기** | `POST /public//layer/car/detail/premium/check/diag/view.kbc` | `carSeq` | ★ **200 · 8,795B** |
+| ★ 진단 사진 | `POST /public/diag/car/attach/list.json` | `diagCarSeq`＋`carSeq` | ★ **200 · 395B** · `totalCount` 2 |
+| ★ **보험이력 상세보기** | `POST /public/layer/car/history/info/check.json` | `carHistorySeq` | ★ 200 — ★ **「정회원에게만」** |
+| 성능점검 | `data-link-url` (autocafe·carinfo·carmodoo) | — | 200 · 58,016B (개정 909) |
+
+```
+필수  ★ 셋 다 ★ **POST** 다.  ★ `X-Requested-With: XMLHttpRequest` ＋ `Referer` 를 붙인다
+필수  ★ `diagCarSeq`·`carHistorySeq` 를 ★ **상세에서 먼저 뽑는다** — ★ `carSeq` 로는 안 된다
+      ★ ★ 그래서 앞서 ★ `?carSeq=` 로 두드렸을 때 ★ **0B** 였다
+★★ ★ **보험이력은 로그인이 필요하다** — 「보험사고이력조회는 정회원에게만 제공되는 서비스입니다」
+   ★ ★ 이것은 ★ **「안 준다」가 아니다** — ★ **「로그인하면 준다」**다.  ★ 마스터께 여쭐 자리다
+```
+
+★ **채워질 것** — `warranty.site`(KB진단 28~36점) · `state.frame`·`state.outer` ·
+  `core_record.insurance_cnt`(사진의 「보험이력 2건」).  ★ **KB 천장 53.5% 가 오른다**
