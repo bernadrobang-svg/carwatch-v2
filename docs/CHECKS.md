@@ -185,7 +185,7 @@
 | `V1-26` | 판정 축이 통째로 비지 않음 | run | `validate/v1_collect.py:101` | **★ 없음** | 없음 | guide/03_이력.md:437 |
 | `V1-27` | 확인 안 됨을 ①②③④ 로 가른 표가 있음 | run | `validate/v1_collect.py:88` | **★ 없음** | 없음 | guide/03_이력.md:454 · chapters/30-score/f-table.md:504 |
 | `V1-28` | ② ③ 건수가 지난번보다 안 늘었음 | run | `validate/v1_collect.py:95` | **★ 없음** | 없음 | guide/03_이력.md:454 · chapters/30-score/f-table.md:505 |
-| `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | **★ 없음** | 없음 | trace/11-store.md:80 · guide/03_이력.md:1029 · guide/14_누가할것_20260829.md:29 |
+| `V2-01` | ok 원문 수 == CORE 행 수 | run | `validate/v2_load.py:26` | **★ 없음** | 없음 | trace/11-store.md:80 · guide/03_이력.md:1029 · guide/03_이력.md:1039 |
 | `V2-02` | 필수 컬럼 NOT NULL 위반 없음 | run | `validate/v2_load.py:29` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:106 |
 | `V2-03` | — | — | **★ 코드에 없다** | — | — | trace/RULES.md:186 · chapters/11-store/a-key.md:377 · chapters/20-verify/b-v1v2.md:107 |
 | `V2-04` | status 열거값 위반 없음 | run | `validate/v2_load.py:32` | **★ 없음** | 없음 | trace/RULES.md:189 · chapters/20-verify/b-v1v2.md:108 |
