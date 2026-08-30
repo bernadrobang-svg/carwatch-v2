@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 183개 · 총 66,690줄
+파일 184개 · 총 66,796줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -43,9 +43,9 @@
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `contracts.py` | 471 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 421 | CarWatch v2 진입점. |
+| `tools/collect_kcar.py` | 411 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `report/views.py` | 405 | 리포트 DTO (L9). |
-| `tools/collect_kcar.py` | 402 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
 | `tools/sync_registry.py` | 394 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
@@ -134,6 +134,7 @@
 | `tools/fill_photos.py` | 108 | ★★★ 이미 받아 둔 원문에서 ★ 사진을 채운다 (명령서 73장). |
 | `tools/probe_kb_wall.py` | 106 | KB 봇 차단을 ★ 재는 도구 (명령서 08-25 · 마스터 「가려 받지 마라」). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
+| `tools/kcar_undo_gone.py` | 97 | ★★★★★ 잘못 매긴 K카 `gone` 을 되돌린다 (마스터 0a · 08-30). |
 | `analyze/axis/taste.py` | 94 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
 | `tools/recalc_catchup.py` | 94 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
@@ -414,6 +415,12 @@ Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchRes
 load:51  make_context:56  _filter_targets:70  _steps_from:89  cmd_collect:103  _grade_summary:171  cmd_admin_create:186  _collect_urls:203  _page_url:240  cmd_web:259  make_worker_ctx:299  make_worker_executors:305  cmd_delegate:343  _api_fetch:354  cmd_setup:364
 ```
 
+### `tools/collect_kcar.py` — 411줄
+
+```
+_now:50  fetch:54  classify:76  accident_of:91  fetch_stock:100  collect_list:125  main:311
+```
+
 ### `web/template.py` — 406줄
 
 ```
@@ -424,12 +431,6 @@ f_won:55  f_km:71  f_pct:75  f_date:79  f_num:90  f_gradecls:97  f_gradelabel:11
 
 ```
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:253  ClassifySummary:260  PriceSummary:267  AxisStat:276  CoefficientChange:286  DictChangeSummary:296  TargetReport:304  RunStep:316  RunReport:331  HaltReport:342  FixAction:359  NotifyResult:369  ExportResult:382  display_value:391  display_points:401
-```
-
-### `tools/collect_kcar.py` — 402줄
-
-```
-_now:50  fetch:54  classify:76  accident_of:91  fetch_stock:100  collect_list:125  main:302
 ```
 
 ### `tests/test_collect.py` — 401줄

@@ -181,16 +181,25 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     #   ★ ★ 그런데 ★ `todo` 가 `detail_status='ok'` 를 빼므로
     #   ★ ★ **한 번 받은 매물은 다시 안 본다** — ★ 영영 gone 에 안 닿았다.
     #   ★ 목록에 없으면 팔린 것이다 — ★ 보배(`collect_bobaedream.py`) 꼴로 한다
-    from store.core import sweep_gone_groups
     from store.raw import link_raws as raw_link_raws
 
     raw_link_raws(conn, SITE_CODE)
-    _done = list_done and unparsed == 0
-    _got = sweep_gone_groups(
-        conn, SITE_CODE, [(_done, {p["source_id"] for p in parsed})], at)
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}"
-          + (f" · ★ 못 읽은 항목 {unparsed}건" if unparsed else ""))
+    # ★★★★★ 08-30 정정 — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
+    #   ★ 08-29 에 켰다가 ★ **살아 있는 차 12대를 죽였다** (마스터 0a 지적).
+    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 19건을 ★ **하나씩 눌러 봤다** —
+    #     ★ ★ **12건이 아직 살아 있었다** (`statCdNm` 「판매중」) · 7건만 정말 팔렸다.
+    #   ★★★ 까닭 — ★ `stock_list` 는 ★ **전량이 아니다.**
+    #     ★ `pageSize=1000` 으로 불러도 ★ 487건이고 ★ 사이트가 말한 총계도 487 이다 —
+    #     ★ ★ **잘린 것이 아니라 ★ 이 창구가 담는 범위가 그것뿐이다.**
+    #     ★ ★ 살아 있는 12건은 ★ `statCd`·`sellDcd` 어느 갈래로도 ★ 이 목록에 안 온다.
+    #   ★ 「끝까지 받았나」가 참이어도 ★ **「목록이 전량인가」가 거짓**이면
+    #     ★ ★ gone 을 매기면 안 된다 — ★ 반만 보고 매기면 산 차를 죽인다 (오판 161).
+    #   ★ K카의 gone 은 ★ **상세를 눌러 「없는 매물」이 나올 때만** 매긴다 (아래).
+    #     ★ ★ 그것은 사이트가 직접 「없다」고 답한 것이라 ★ 근거가 있다
+    _got = {}
+    del list_done, unparsed
+    print("★ 목록으로는 gone 을 안 매긴다 — 이 창구가 전량이 아니다 "
+          "(실측 08-30 · 살아 있는 12대를 죽였다).  상세가 「없는 매물」이라 할 때만 매긴다")
 
     # ★ 상세는 ★ 우리 대상만 ★ 뒤에 받는다 (18-3 ③).  ★ 이미 받은 것은 건너뛴다
     # ★★ `--all` 이면 ★ **527건 전부** 받는다 (가이드 지시 08-24 · 오판 98).
