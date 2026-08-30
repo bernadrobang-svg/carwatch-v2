@@ -1,7 +1,7 @@
 # 현대·제네시스 인증중고차 API — 규격
 
 ```
-version  SPEC-2026.08.29-r948
+version  SPEC-2026.08.29-r949
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 865 · 실측 08-29
 checks   S46-5 · S46-27 · S46-31

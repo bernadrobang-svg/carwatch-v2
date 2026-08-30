@@ -1,7 +1,7 @@
 # 14장-1. 화면 공통 — 폭 · 크기 · 줄 수
 
 ```
-version  SPEC-2026.08.29-r948
+version  SPEC-2026.08.29-r949
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
