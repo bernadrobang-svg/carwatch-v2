@@ -1,7 +1,7 @@
 # 14장. 표현 계층 (STEP 141–155)
 
 ```
-version  SPEC-2026.08.29-r953
+version  SPEC-2026.08.29-r954
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
