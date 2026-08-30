@@ -1,7 +1,7 @@
 # 차종·트림 옵션 목록 — 사이트별 코드 표
 
 ```
-version  SPEC-2026.08.30-r1013
+version  SPEC-2026.08.31-r1014
 follows  ★ 정본 — 가이드 문서
 sources  실측 08-30
 checks   S46-189
@@ -160,7 +160,7 @@ checks   S46-189
 
 ---
 
-# 6. ★★★ 리본카 — ★ **토큰까지 찾았다.  ★ 그런데 999 로 막힌다** [실측 08-30]
+# 6. ★★★★ 리본카 — ★ **열렸다.  ★ 개발측이 뚫었다** [08-31]
 
 ```
 ★ 호출부 — `drawLayerCarOption(productId)` →
@@ -184,8 +184,14 @@ function deferredAjaxToken(url, param, _beforeSend) {
    `RB_TOKEN` = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9…` (★ JWT 다)
    `_csrf`    = `ITDMsFUa7NhhvYlx8iOmm-zmGXjCiet1…`
 ★ ★ 헤더를 다 맞춰 POST 했다 (`X-Ajax-call`·`Authorization`·`X-CSRF-TOKEN`·`Origin`·`Referer`)
-★ ★ ★ ★ **999 로 막힌다** — `Bearer` 를 붙여도 같다
-★ ★ ★ ★ **999 는 봇 차단이다** — ★ 토큰이 틀린 것이 아니다
+★ ★ ★ ★ **내 창에서는 999 로 막혔다** — ★ **개발측 서버에서는 200 · 16,032B** 다
+★★★★ ★ **가른 것 둘** (개발측 실측 08-31) —
+   ① ★ **쿠키다** — ★ 상세 쪽을 받은 ★ **그 세션(`JSESSIONID`)**으로 두드려야 한다
+      ★ ★ `RB_TOKEN` 은 ★ **30분짜리 JWT** 라 ★ 저장된 원문의 토큰은 이미 죽어 있다
+      ★ ★ ★ **내가 토큰만 옮긴 것이 잘못이었다**
+   ② ★ **`Accept: application/json`** — ★ 상세용 `text/html` 을 그대로 쓰면 ★ **표본 5건 전건 안 온다**
+★ ★ **옵션 75종** (CE 15 · IE 26 · SE 16 · TE 18) · ★ 달린 것 `carApply="1"` **39종**
+   ★ ★ **HUD · 썬루프 둘 다 있다** · ★ **리본카 옵션 0 → 125/125건 전건**
 
 ★★ ★ **여기까지가 내가 잰 것이다** — ★ 「없다」가 아니라 ★ **차단됐다**
    ★ ★ 상세 HTML 의 `#layer-total-option` 도 뜯었다 — ★ **껍데기다**
@@ -197,7 +203,7 @@ function deferredAjaxToken(url, param, _beforeSend) {
       ★ ★ 나는 이 창에서 막혔다.  ★ **개발측이 같은 헤더로 한 번 두드려 보면 갈린다**
 ```
 
-★ **남은 것 — 보배 79가지 갈래 다섯.** 다음에 뽑는다.
+★ ~~남은 것~~ ★ **다 뽑았다** (보배 7장 · 리본카 6장 · 08-31).
 
 ---
 

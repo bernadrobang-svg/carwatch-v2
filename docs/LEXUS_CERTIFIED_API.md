@@ -1,7 +1,7 @@
 # 렉서스 인증중고차 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.30-r1013
+version  SPEC-2026.08.31-r1014
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 859 · 실측 08-29
 checks   S46-5 · S46-31
