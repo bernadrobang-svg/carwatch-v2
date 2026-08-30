@@ -113,7 +113,7 @@
 | `S46-124` | DB 를 PRAGMA 없이 열지 않는가 | fatal | `validate/v0_guide.py:1651` | **★ 없음** | 없음 | VOLVO_SELEKT_API.md:513 · guide/03_이력.md:866 |
 | `S46-125` | 고른 정렬 축이 정말 먹는가 | fatal | `validate/v0_guide.py:1317` | **★ 없음** | 없음 | guide/03_이력.md:868 |
 | `S46-126` | 수집기가 통신·sleep 을 트랜잭션 밖에서 하는가 | fatal | `validate/v0_guide.py:1687` | **★ 없음** | 없음 | guide/03_이력.md:870 · guide/03_이력.md:935 · guide/06_오판대장.md:282 |
-| `S46-127` | 수집기마다 화면이나 타이머가 있는가 | fatal | `validate/v0_guide.py:1603` | **★ 없음** | 없음 | guide/03_이력.md:1067 · guide/06_오판대장.md:258 · guide/07_밀린일대장.md:76 |
+| `S46-127` | 수집기마다 화면이나 타이머가 있는가 | fatal | `validate/v0_guide.py:1603` | **★ 없음** | 없음 | guide/03_이력.md:1067 · guide/06_오판대장.md:258 · guide/07_밀린일대장.md:77 |
 | `S46-128` | 묶어 쓰는 단계가 다른 쓰기에 창을 주는가 | fatal | `validate/v0_guide.py:1559` | **★ 없음** | 없음 | guide/06_오판대장.md:259 |
 | `S46-129` | 표의 합이 맞는가 | fatal | `validate/v0_guide.py:3240` | **★ 없음** | 없음 | guide/03_이력.md:977 · guide/03_이력.md:987 · guide/06_오판대장.md:260 |
 | `S46-130` | 합계표가 문서마다 하나인가 | fatal | `validate/v0_guide.py:3496` | **★ 없음** | 없음 | guide/03_이력.md:1001 · guide/06_오판대장.md:261 |
@@ -312,8 +312,8 @@
 | `V3-92` | 트림 만점이 개별 취향 축보다 큼 | run | `validate/v3_logic.py:178` | **★ 없음** | 없음 | guide/03_이력.md:452 · chapters/30-score/f-table.md:375 |
 | `V3-93` | 제외 매물에 등급 문자가 안 붙음 | run | `validate/v3_logic.py:184` | **★ 없음** | 없음 | guide/03_이력.md:453 · chapters/30-score/f-table.md:336 |
 | `V3-94` | 등급 컷이 규격의 8단계임 | run | `validate/v3_logic.py:189` | **★ 없음** | 없음 | guide/03_이력.md:453 · chapters/30-score/f-table.md:322 · chapters/30-score/f-table.md:337 |
-| `V3-95` | 화면이 source='missing' 을 「없음」으로 안 냄 | run | `validate/v3_logic.py:166` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:354 · chapters/30-score/f-table.md:424 |
-| `V3-96` | value IS NULL 과 source 모름 건수 차 | run | `validate/v3_logic.py:172` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:354 · chapters/30-score/f-table.md:425 |
+| `V3-95` | 화면이 source='missing' 을 「없음」으로 안 냄 | run | `validate/v3_logic.py:166` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:355 · chapters/30-score/f-table.md:424 |
+| `V3-96` | value IS NULL 과 source 모름 건수 차 | run | `validate/v3_logic.py:172` | **★ 없음** | 없음 | guide/03_이력.md:455 · guide/07_밀린일대장.md:355 · chapters/30-score/f-table.md:425 |
 | `V4-01` | 매핑 일치율 (A 100% · B 99% · C 80%) | run | `validate/v4_mapping.py:28` | **★ 없음** | 없음 | chapters/00-standard.md:661 · chapters/60-admin/c-tools.md:152 · chapters/20-verify/c-v3v4.md:176 |
 | `V4-02` | 미매핑 경로 목록 | run | `validate/v4_mapping.py:103` | **★ 없음** | 없음 | chapters/20-verify/c-v3v4.md:177 |
 | `V4-03` | 오매핑 탐지 — 다른 경로와 더 높은 일치율 | run | `validate/v4_mapping.py:31` | **★ 없음** | 없음 | chapters/20-verify/c-v3v4.md:178 · chapters/20-verify/c-v3v4.md:294 |
