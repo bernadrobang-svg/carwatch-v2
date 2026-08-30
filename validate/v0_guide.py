@@ -3941,6 +3941,9 @@ def s46_165_fixable_not_called_unmeasurable():
         for i, ln in enumerate(_read(q).splitlines(), 1):
             if "못 잰다" not in ln and "못 쟀다" not in ln:
                 continue
+            # ★ 오판 표·물린 줄은 ★ 「그때 그랬다」는 기록이다
+            if ln.lstrip().startswith("|") or "~~" in ln:
+                continue
             for m in _re.finditer(r"`?(S46-\d+)`?", ln):
                 if m.group(1) in ok:
                     bad.append(f"{q.name}:{i} {m.group(1)}")
@@ -4254,6 +4257,20 @@ def s46_178_list_field_not_empty_axis():
                        + "  ★ 목록이 주는 칸(연식 80점)조차 못 넣는다")
     return True, f"사이트 {len(have)}곳에 파서가 다 있다"
 
+
+def s46_179_no_penalty_without_source():
+    """S46-179 — ★ 「원문을 못 받았다」면서 ★ 감점하지 않는가 (08-29).
+
+    ★ 현대인증 1위 — ★ 용도 축이 ★ 0점 「원문을 받지 못했습니다」인데
+      ★ ★ 마이너스에 ★ 「렌트·영업용 이력 **-67**」이 붙어 있다
+    ★ ★ **못 받았으면 감점도 못 한다** — ★ 둘 중 하나가 거짓이다
+    ★ 잣대 — ★ 규격이 ★ 이 금지를 적었는가
+    """
+    body = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
+    if "못 받았으면 감점도 못 한다" not in body:
+        return False, ("★ 「원문을 못 받았는데 감점」 금지가 규격에 없다")
+    return True, "「못 받았으면 감점도 못 한다」가 규격에 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4287,6 +4304,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-179", "못 받은 축에 감점이 없는가",
+     s46_179_no_penalty_without_source),
     ("S46-178", "목록이 주는 칸이 파서에 있는가",
      s46_178_list_field_not_empty_axis),
     ("S46-176", "사이트 두드리기를 넘기지 않는가",
