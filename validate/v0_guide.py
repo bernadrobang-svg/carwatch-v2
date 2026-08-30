@@ -1735,13 +1735,21 @@ def s46_117_collectors_sweep_gone() -> tuple[bool, str]:
     # ★★ 08-29 — ★ sweep 이 ★ 살아 있는 차를 죽여 ★ 다섯 곳을 껐다 (61건 되살림).
     #   ★ 끈 곳은 ★ 「왜 껐나」가 적혀 있어야 한다 — ★ 조용히 끄는 것은 막는다
     want = ("sweep_gone", "mark_gone", "SWEEP_OFF")
-    done, todo = [], []
+    done, todo, off = [], [], []
     for q in sorted(tools.glob("collect_*.py")):
         # ★ `collect_<사이트>.py` 는 ★ 다 목록을 받는 수집기다 —
         #   ★ 「목록을 받는가」를 낱말로 세지 않는다.  ★ 사이트마다 꼴이 다르다
         #     (`list_url` 없이 주소를 직접 만드는 것이 다섯이다 — 실측 08-29)
         body = _read(q)
-        (done if any(w in body for w in want) else todo).append(q.name)
+        # ★★★★ 08-30 — ★ 「거른다」와 「일부러 껐다」를 ★ **갈라서** 센다.
+        #   ★ 앞서는 둘을 한 자루에 넣어 ★ 「11곳이 다 거른다」로 말했다 —
+        #   ★ ★ 다섯 곳이 ★ 껐는데도 ★ 그렇게 나왔다.  ★ 그것은 거짓이다
+        if "SWEEP_OFF" in body:
+            off.append(q.name)
+        elif any(w in body for w in ("sweep_gone", "mark_gone")):
+            done.append(q.name)
+        else:
+            todo.append(q.name)
     runner = _read(ROOT / "collect" / "runner.py")
     if not any(w in runner for w in want):
         todo.append("collect/runner.py (엔카 S4)")
@@ -1750,8 +1758,13 @@ def s46_117_collectors_sweep_gone() -> tuple[bool, str]:
     if todo:
         return False, (f"★ 팔린 차를 안 거르는 수집기 {len(todo)}개 — "
                        + " · ".join(todo[:8])
-                       + f"  (거르는 것 {len(done)}개)")
-    return True, f"목록을 받는 {len(done)}곳이 다 거른다"
+                       + f"  (거르는 것 {len(done)}개 · 일부러 끈 것 {len(off)}개)")
+    tail = ""
+    if off:
+        # ★ 껐다고 통과라 말하지 않는다 — ★ 몇 곳이 왜 껐는지 함께 낸다
+        tail = (f" · ★ 일부러 끈 것 {len(off)}곳 (SWEEP_OFF) — "
+                + " · ".join(sorted(off)[:6]))
+    return True, f"거르는 곳 {len(done)}곳{tail}"
 
 
 def s46_77_kb_is_our_targets_only() -> tuple[bool, str]:

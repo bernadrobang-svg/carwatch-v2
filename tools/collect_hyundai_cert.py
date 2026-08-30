@@ -35,6 +35,12 @@ from parse.target_rules import target_by_rules  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
+# ★★★★★ 이 수집기는 ★ **팔린 차를 목록으로 안 거른다** (마스터 지시 08-30 · S46-117).
+#   ★ 낱말 `SWEEP_OFF` 를 ★ 검사가 본다 — ★ 「안 거른다」와 「못 거른다」를 가른다
+SWEEP_OFF = (
+    "08-29 — 목록에 없다고 죽이면 살아 있는 차를 죽인다"
+    " (11-store/a-key 08-29 절).  상세로 확인한 뒤 죽이는 꼴로 바꾼 뒤 다시 켠다")
+
 SITE_CODE = "hyundai_cert"
 BASE = "https://certified.hyundai.com"
 LIST_PATH = "/m/search/results/selling"
@@ -325,6 +331,7 @@ def main() -> int:
     #     ★ ★ 좁힌 목록에 없다고 ★ 사이트에서 사라진 것이 아니다.
     #   ★ 되돌리는 길은 ★ `tools/undo_wrong_gone.py` 다 (눌러서 살아 있는 것만 되돌린다)
     _got = {}
+    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
     _dn = sum(1 for d, _i in done_groups if d)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종 · 끝까지 받은 묶음 {_dn}/{len(done_groups)})")

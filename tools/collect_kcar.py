@@ -34,6 +34,13 @@ from adapters.kcar import SITE_CODE, KcarAdapter, load_config  # noqa: E402
 # ★★ 점검 경로 (`MULTISITE_MAPPING.md` 08-29 절 · 실측 08-30).
 #   ★ `config/endpoints.json` 의 `kcar.paths` 에 아직 없다 — ★ 규격이 넣으면 그때 옮긴다.
 #   ★ 개발측이 `docs/` 를 안 고친다 (규칙 2) — ★ 여기에 근거를 적어 둔다
+# ★★★★★ 이 수집기는 ★ **팔린 차를 목록으로 안 거른다** (마스터 지시 08-30 · S46-117).
+#   ★ 낱말 `SWEEP_OFF` 를 ★ 검사가 본다 — ★ 「안 거른다」와 「못 거른다」를 가른다
+SWEEP_OFF = (
+    "08-30 — `stock_list` 는 전량이 아니다 (487건뿐 · 총계도 487)."
+    "  목록에 없다고 죽여 살아 있는 차 12대를 죽였다.  상세가"
+    " 「없는 매물」이라 답할 때만 죽인다")
+
 INSP_PATH = "/bc/car-insp/photo/cm?i_sCarCd={source_id}"
 from parse.kcar.mapping import (parse_detail, parse_list_item,  # noqa: E402
                                 record_of)
@@ -197,6 +204,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     #   ★ K카의 gone 은 ★ **상세를 눌러 「없는 매물」이 나올 때만** 매긴다 (아래).
     #     ★ ★ 그것은 사이트가 직접 「없다」고 답한 것이라 ★ 근거가 있다
     _got = {}
+    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
     del list_done, unparsed
     print("★ 목록으로는 gone 을 안 매긴다 — 이 창구가 전량이 아니다 "
           "(실측 08-30 · 살아 있는 12대를 죽였다).  상세가 「없는 매물」이라 할 때만 매긴다")

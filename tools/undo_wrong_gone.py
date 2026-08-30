@@ -50,7 +50,12 @@ def _get(url, head, timeout=35):
                                    timeout=timeout)
         return r.getcode(), r.read()
     except urllib.error.HTTPError as e:
-        return e.code, b""
+        # ★★ 08-30 — ★ 몸통을 **읽는다.**  ★ 앞서는 버려서 ★ 헤이딜러의
+        #   ★ 403 「판매중인 차량이 아닙니다」를 ★ 「못 받음」으로 셌다
+        try:
+            return e.code, e.read()
+        except OSError:
+            return e.code, b""
     except Exception:                                          # noqa: BLE001
         return None, b""
 
@@ -107,6 +112,13 @@ def probe(site, sid):
                 return bool(json.loads(b).get("hash_id"))
             except ValueError:
                 return None
+        # ★★★★ 08-30 (마스터 지시 3) — ★ 토큰이 만료된 것이 **아니었다.**
+        #   ★ 토큰을 새로 받고 다시 눌러도 ★ **403** 이 오고, ★ 그 몸통에
+        #   ★ ★ 「**판매중인 차량이 아닙니다**」가 들어 있다 (실측 08-30 · 4건 전부 · 120B).
+        #   ★ 곧 ★ 403 은 ★ 「못 받음」이 아니라 ★ **사이트가 「없다」고 답한 것**이다.
+        #   ★ 낱말을 그 자리에서 본다 — ★ 코드만으로 안 정한다
+        if code == 403 and b and "판매중인 차량이 아닙" in b.decode("utf-8", "replace"):
+            return False
         return False if code in (404, 410) else None
     if site == "volvo_selekt":
         from parse.volvo_selekt.mapping import parse_detail
@@ -120,10 +132,20 @@ def probe(site, sid):
         d = parse_detail(b.decode("utf-8", "replace"), site, sid)
         return bool(d and d.get("price_current_won"))
     if site == "lexus_certified":
-        # ★ 렉서스는 ★ **상세가 없다** — ★ 목록이 매물의 전부다 (규격 1c).
-        #   ★ 그래서 ★ 「살아 있나」를 ★ 이 자리에서 못 가른다.
-        #   ★ ★ 짐작으로 되돌리지 않는다 — ★ None(모름) 을 낸다
-        return None
+        # ★★★★★ 08-30 — ★ **상세가 있다.  ★ 마스터께서 찾아 주셨다** (지시 1).
+        #   ★ 규격 1c 「목록이 매물의 전부다」는 ★ **물린다** (마스터 지시).
+        #   ★★ `GET /api/json/getData_car_detail.json.php?idx={idx}`
+        #     ★ 살아 있다 → `car_detail` 이 있다 (실측 6394 · 12,772B)
+        #     ★ 없다     → `car_detail` 이 없다 (실측 6385·6386 · 117B)
+        #   ★★★ **200 으로 가르지 않는다** — ★ 없는 것도 200 을 준다 (마스터 지시)
+        code, b = _get(f"{sc['base_url']}/api/json/getData_car_detail.json.php?idx={sid}",
+                       sc.get("headers"))
+        if not b:
+            return None
+        try:
+            return bool((json.loads(b) or {}).get("car_detail"))
+        except ValueError:
+            return None
     return None
 
 
