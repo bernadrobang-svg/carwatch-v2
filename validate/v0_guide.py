@@ -4143,6 +4143,36 @@ def s46_174_no_endpoint_only_if_probed():
                        + " · ".join(bad[:5]))
     return True, "「창구가 없다」가 다 열어 본 자취를 달고 있다"
 
+
+def s46_175_no_lumped_axes():
+    """S46-175 — ★ 점수를 ★ 「나머지 N」으로 뭉개지 않는가 (오판 215).
+
+    ★ 08-29 — ★ 438점을 ★ 「나머지 100」으로 적어 마스터께 올렸다.
+      ★ ★ 마스터 — 「★ 나머지 100.  ★ 뭐야 이건」
+    ★ 잣대 — ★ 규격·명령서에 ★ 「나머지 {수}」·「기타 {수}」가 있으면 실패
+    """
+    import re as _re
+    import glob as _g
+
+    bad = []
+    files = list(_guide_docs()) + [
+        ROOT / f[len(str(ROOT)) + 1:] for f in _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    ]
+    for q in files:
+        if not q.is_file():
+            continue
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"(나머지|기타)\s*\**\d{2,}\**\s*점", ln):
+                continue
+            if "%" in ln or ln.lstrip().startswith("|"):
+                continue
+            if _re.search(r"~~|물린다|오판|마스터 —|「", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 점수를 뭉갠 곳 " + " · ".join(bad[:5]))
+    return True, "점수를 뭉갠 곳이 없다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4174,6 +4204,8 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-175", "점수를 「나머지 N」으로 뭉개지 않는가",
+     s46_175_no_lumped_axes),
     ("S46-174", "「창구가 없다」를 열어 보고 적었는가",
      s46_174_no_endpoint_only_if_probed),
     ("S46-173", "규격이 창구를 적었는가", s46_173_endpoint_not_wordcount),

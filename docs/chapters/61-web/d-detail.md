@@ -1,7 +1,7 @@
 # 14장-4. 상세
 
 ```
-version  SPEC-2026.08.29-r963
+version  SPEC-2026.08.29-r964
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
