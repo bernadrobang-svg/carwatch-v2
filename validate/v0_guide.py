@@ -4067,6 +4067,30 @@ def s46_171_yardstick_names_screen():
         return False, ("★ 잣대에 화면이 안 적힌 것 — " + " · ".join(miss))
     return True, "잣대 셋이 다 화면 주소를 달고 있다"
 
+
+def s46_172_absence_read_as_human():
+    """S46-172 — ★ 「없다」를 ★ 사람이 보는 대로 읽고 적었는가 (오판 212).
+
+    ★ 08-29 — ★ KB진단을 ★ `class`·`alt`·`title` 로만 뒤져 ★ 「매물 딱지 0/8」이라 적었다.
+      ★ ★ 마스터께서 ★ **화면 사진**을 보내셨다 — ★ 「무사고 진단」이 ★ **본문 글자**로 있었다
+    ★ 잣대 — ★ 사이트 규격이 ★ 「없다」·「못 가른다」를 적으면
+      ★ 그 문서에 ★ **본문 낱말로 잰 자취**(「낱말」·「본문」·「글자」)가 있어야 한다
+    """
+    import re as _re
+
+    bad = []
+    for q in sorted((ROOT / "docs").glob("*_API.md")):
+        body = _read(q)
+        if not _re.search(r"매물 딱지|딱지가 (없다|0)", body):
+            continue
+        if _re.search(r"낱말|본문|글자|화면", body):
+            continue
+        bad.append(q.name)
+    if bad:
+        return False, ("★ 태그만 뒤지고 「없다」라 적은 문서 "
+                       + " · ".join(bad[:5]))
+    return True, "「없다」가 다 본문 낱말로 재어져 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4098,6 +4122,8 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-172", "「없다」를 본문 낱말로 쟀는가",
+     s46_172_absence_read_as_human),
     ("S46-171", "잣대가 화면을 적었는가", s46_171_yardstick_names_screen),
     ("S46-170", "설계도가 하나인가", s46_170_one_architecture),
     ("S46-169", "「왜 죽었는지」가 규격에 있는가", s46_169_gone_has_reason),
