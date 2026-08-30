@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**127파일 · 47,360줄 · 3,210KB**
+**128파일 · 47,563줄 · 3,221KB**
 
 ★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -17,7 +17,7 @@
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,894줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,164줄
+- guide/03_이력.md 1,168줄
 - guide/05_가이드역할.md 1,660줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -45,6 +45,7 @@
 | `LEXUS_CERTIFIED_API.md` | 340 | 18 |
 | `MAPPING.md` | 104 | 3 |
 | `MULTISITE_MAPPING.md`  ★ | 1,098 | 60 |
+| `OPTION_CATALOG.md` | 199 | 8 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
 | `SCHEMA.md` | 112 | 5 |
@@ -115,7 +116,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,164 | 844 |
+| `guide/03_이력.md`  ★ | 1,168 | 847 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,660 | 86 |
