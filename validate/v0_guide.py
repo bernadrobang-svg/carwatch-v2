@@ -4271,6 +4271,29 @@ def s46_179_no_penalty_without_source():
         return False, ("★ 「원문을 못 받았는데 감점」 금지가 규격에 없다")
     return True, "「못 받았으면 감점도 못 한다」가 규격에 있다"
 
+
+def s46_180_code_table_per_site():
+    """S46-180 — ★ 코드 표가 ★ 사이트마다 있는가 (오판 218).
+
+    ★ 08-29 — ★ 낱말 표를 ★ 헤이딜러 하나만 적고 ★ 「K카도 같은 꼴로」라 썼다.
+      ★ ★ 실측하니 ★ 헤이딜러는 불리언 · K카는 숫자 코드다 — ★ 아예 다르다
+    ★ 잣대 — ★ `f-table` 의 코드 표 절에 ★ 「같은 꼴로」가 있으면 실패
+    """
+    import re as _re
+
+    body = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
+    bad = []
+    for i, ln in enumerate(body.splitlines(), 1):
+        if not _re.search(r"같은 꼴로|같은 방식으로", ln):
+            continue
+        if _re.search(r"~~|물린다|오판|마스터 —", ln):
+            continue
+        bad.append(str(i))
+    if bad:
+        return False, ("★ 「같은 꼴로」로 퉁친 곳 " + " · ".join(bad[:4])
+                       + "  ★ 사이트마다 표를 따로 둔다")
+    return True, "코드 표가 사이트마다 따로 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4304,6 +4327,7 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-180", "코드 표가 사이트마다 있는가", s46_180_code_table_per_site),
     ("S46-179", "못 받은 축에 감점이 없는가",
      s46_179_no_penalty_without_source),
     ("S46-178", "목록이 주는 칸이 파서에 있는가",
