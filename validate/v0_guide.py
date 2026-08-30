@@ -4013,6 +4013,22 @@ def s46_168_check_counts_exceptions():
     return True, "예외를 세는 검사가 그 수를 함께 낸다"
 
 
+
+def s46_169_gone_has_reason():
+    """S46-169 — ★ 「왜 죽었는지」를 규격이 적었는가 (마스터 물음 08-29).
+
+    ★ `gone` 인데 `sales_status` 가 비면 ★ **왜 죽었는지 모르는 행**이다.
+    ★ ★ 08-29 에 ★ 그런 행 74대가 ★ 살아 있는 차였다.
+    ★ 잣대 — ★ 규격이 ★ 세 갈래(사이트가 말함·상세 없어짐·목록에서만)와
+      ★ **못 받을 때 어떻게 하나**를 적었는가
+    """
+    body = _read(ROOT / "docs" / "chapters" / "11-store" / "a-key.md")
+    need = ("detail_gone", "unreachable", "세 번 잇달아", "last_seen")
+    miss = [w for w in need if w not in body]
+    if miss:
+        return False, ("★ 「판매 완료」 규칙에 없는 것 — " + " · ".join(miss))
+    return True, "「왜 죽었는지」가 세 갈래로 적혀 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4044,6 +4060,7 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-169", "「왜 죽었는지」가 규격에 있는가", s46_169_gone_has_reason),
     ("S46-168", "검사가 예외를 수로 내는가", s46_168_check_counts_exceptions),
     ("S46-166", "마스터 확정이 장 규격에 닿았는가",
      s46_166_decision_reached_chapters),
