@@ -4019,11 +4019,12 @@ def s46_169_gone_has_reason():
 
     ★ `gone` 인데 `sales_status` 가 비면 ★ **왜 죽었는지 모르는 행**이다.
     ★ ★ 08-29 에 ★ 그런 행 74대가 ★ 살아 있는 차였다.
-    ★ 잣대 — ★ 규격이 ★ 세 갈래(사이트가 말함·상세 없어짐·목록에서만)와
-      ★ **못 받을 때 어떻게 하나**를 적었는가
+    ★ 잣대 — ★ 규격이 ★ 「목록에서 빠지면 **그 회차에 바로** 누른다」와
+      ★ **못 받을 때 어떻게 하나**(사흘 → `unreachable`)를 적었는가
+      ★ ★ 08-29 마스터 확정 — 「바로 확인하는 게 낫지 않아?  사흘로」
     """
     body = _read(ROOT / "docs" / "chapters" / "11-store" / "a-key.md")
-    need = ("detail_gone", "unreachable", "세 번 잇달아", "last_seen")
+    need = ("detail_gone", "unreachable", "그 회차에 바로", "last_seen")
     miss = [w for w in need if w not in body]
     if miss:
         return False, ("★ 「판매 완료」 규칙에 없는 것 — " + " · ".join(miss))
