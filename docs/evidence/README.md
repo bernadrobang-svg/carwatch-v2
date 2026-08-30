@@ -1,7 +1,7 @@
 # 증거 — 「사이트가 안 준다」를 쓰려면 여기 남긴다
 
 ```
-version  SPEC-2026.08.29-r979
+version  SPEC-2026.08.29-r980
 follows  docs/guide/05_가이드역할.md 08-29 감독 지시 ⑥
 checks   S46-161
 ```

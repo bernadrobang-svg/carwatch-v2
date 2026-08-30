@@ -4294,6 +4294,26 @@ def s46_180_code_table_per_site():
                        + "  ★ 사이트마다 표를 따로 둔다")
     return True, "코드 표가 사이트마다 따로 있다"
 
+
+def s46_181_read_stored_before_probing():
+    """S46-181 — ★ 사이트를 두드리기 전에 ★ 받아 둔 것을 봤는가 (오판 219).
+
+    ★ 08-29 — ★ `outputs/sites/` 에 ★ 08-21~23 조사 **28파일 2,561줄**이 있는데
+      ★ ★ 그것을 안 열고 ★ 사이트를 하루 종일 다시 두드렸다
+    ★ 잣대 — ★ 사이트 규격의 08-29 절이 ★ `outputs/sites/` 를 가리키는가
+    """
+    import re as _re
+
+    store = ROOT / "outputs" / "sites"
+    if not store.is_dir():
+        return False, "outputs/sites 가 없다"
+    n = len(list(store.glob("*.md")))
+    body = _read(ROOT / "docs" / "CROSS_SITE_COMPARE.md")
+    if "outputs/sites" not in body:
+        return False, (f"★ 받아 둔 조사 {n}파일을 규격이 안 가리킨다 — "
+                       "★ 사이트를 두드리기 전에 그것부터 연다")
+    return True, f"받아 둔 조사 {n}파일을 규격이 가리킨다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4327,6 +4347,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-181", "받아 둔 조사를 먼저 보는가",
+     s46_181_read_stored_before_probing),
     ("S46-180", "코드 표가 사이트마다 있는가", s46_180_code_table_per_site),
     ("S46-179", "못 받은 축에 감점이 없는가",
      s46_179_no_penalty_without_source),

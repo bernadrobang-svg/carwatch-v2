@@ -9,15 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**127파일 · 46,442줄 · 3,120KB**
+**127파일 · 46,944줄 · 3,157KB**
 
-★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CROSS_SITE_COMPARE.md 1,009줄
+- CHECKS.md 1,132줄
+- CROSS_SITE_COMPARE.md 1,044줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,894줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,124줄
+- guide/03_이력.md 1,126줄
 - guide/05_가이드역할.md 1,660줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -32,8 +33,8 @@
 | `ARCHITECTURE_20260830.md` | 353 | 18 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
-| `CHECKS.md` | 660 | 106 |
-| `CROSS_SITE_COMPARE.md`  ★ | 1,009 | 59 |
+| `CHECKS.md`  ★ | 1,132 | 139 |
+| `CROSS_SITE_COMPARE.md`  ★ | 1,044 | 61 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
 | `ENCAR_API.md` | 360 | 15 |
 | `ENCAR_ROBOTS.md` | 253 | 12 |
@@ -49,7 +50,7 @@
 | `REBORNCAR_API.md` | 445 | 23 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 715 | 53 |
+| `SOURCE.md` | 707 | 52 |
 | `TARGET_KEY_MAP.md` | 152 | 7 |
 | `UI_REVIEW.md`  ★ | 1,894 | 93 |
 | `VOLVO_SELEKT_API.md` | 515 | 22 |
@@ -115,12 +116,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 16 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,124 | 816 |
+| `guide/03_이력.md`  ★ | 1,126 | 818 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,660 | 86 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 622 | 237 |
+| `guide/06_오판대장.md` | 623 | 238 |
 | `guide/07_밀린일대장.md` | 489 | 37 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
