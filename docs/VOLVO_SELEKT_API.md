@@ -1,7 +1,7 @@
 # 볼보 셀렉트 인증중고차 API · 매핑 규격
 
 ```
-version  SPEC-2026.08.29-r942
+version  SPEC-2026.08.29-r943
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 863 · 실측 08-29
 checks   S46-38 · S46-39
@@ -173,7 +173,7 @@ xhr-results 를 1쪽부터 빈 쪽까지 걸었다
 
 
 ```
-version  SPEC-2026.08.29-r942
+version  SPEC-2026.08.29-r943
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 580 · 실측 08-23
 checks   S46-5 · S46-31
@@ -181,7 +181,7 @@ checks   S46-5 · S46-31
 ★ 이 문서는 ★ **그 사이트가 무엇을 주는가**만 적는다.  ★ 판정은 ★ `f-table` 이 한다 (가이드역할 ㉺)
 
 
-`SPEC-2026.08.29-r942` · 2026-08-23 · **마스터가 주소를 주셨다**
+`SPEC-2026.08.29-r943` · 2026-08-23 · **마스터가 주소를 주셨다**
 ★ **딜러별 도메인이다 — 표본은 「에이치모터스 수원」 (`h-suwon.`)**
 
 ---
