@@ -1,7 +1,7 @@
 # 아키텍처 2판 — 파일 수집 · 적재 · 판정
 
 ```
-version  SPEC-2026.08.29-r954
+version  SPEC-2026.08.29-r955
 follows  docs/chapters/10-collect/00-intro.md · docs/chapters/11-store/a-key.md
 sources  마스터 확정 08-29 · 개발측 물음 58개(`outputs/QUESTIONS_ARCH_20260829.md`)
          가이드 답(`outputs/ANSWERS_ARCH_20260829.md`) · 실측 08-29
@@ -237,7 +237,7 @@ PII   ★ 안 들어간다 — split_pii 를 2걸음에서 먼저 부르고 plat
 | 무엇 | 어떻게 아나 | 그러면 |
 |---|---|---|
 | ★ **살아 있다** | K카 상세 **71,282B** · `data.photoList` 가 있다 | ★ **채운다** — `detail_status='ok'` |
-| ★ **없어졌다** | K카 상세 ★ **3,186B** · `data` 에 `returnUrl`·`message` 만 | ★ **`gone` ＋ `sales_status='detail_gone'`** (4-2 장 그대로) |
+| ★ **없어졌다** | K카 상세 ★ **3,186B** · `data` 에 `returnUrl`·`message` 만 | ★ **`gone` ＋ `sales_status='detail_gone'` (★ `detail_status` 가 아니다 — 그 칸은 다섯으로 묶여 있다)** (4-2 장 그대로) |
 | ★ **못 받는다** | 403 · 503 · 토큰 만료 | ★ **그대로 두고 다음 바퀴** |
 
 ```
