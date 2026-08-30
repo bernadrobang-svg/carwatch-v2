@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 191개 · 총 68,450줄
+파일 193개 · 총 68,794줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -90,6 +90,7 @@
 | `tools/collect_reborncar.py` | 210 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `tools/unknown_split.py` | 210 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
+| `tools/backfill_from_raw.py` | 201 | ★★★★★ 08-30 (명령서 r974 · 0j 4) — ★ Ⓐ 「이미 오는 것을 읽는다」. |
 | `parse/bobaedream/mapping.py` | 196 | 보배드림 상세 → `core_listing` (`docs/BOBAEDREAM_API.md` 2·3·1a장). |
 | `parse/lexus_certified/mapping.py` | 195 | 렉서스 인증중고 목록·상세 → `core_listing` 칸 (규격 `LEXUS_CERTIFIED_API.md` 2장). |
 | `score/scorer.py` | 194 | 채점 · 분모 (L7). |
@@ -116,15 +117,16 @@
 | `score/adjust.py` | 145 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
+| `parse/kbchachacha/inspection.py` | 141 | KB차차차 성능점검부 → ★ **부위별** (규격 `KBCHACHACHA_API.md` 3장 · 268~269줄). |
 | `parse/reborncar/mapping.py` | 139 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
 | `tools/classify_fields.py` | 139 | 등록부 분류 초안 — 파서가 쓰는 경로를 근거로 자동 분류한다. |
 | `tools/check_all.py` | 137 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `tools/fold_out_of_scope.py` | 137 | 이미 들어온 것을 ★ 되돌린다 — ★ 우리 대상이 아닌 것은 ★ 접는다 (명령서 3-3). |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
+| `tools/measure_0k.py` | 129 | ★ 0k (명령서 r974 뒤) — ★ **잰다.  안 고친다.** |
 | `adapters/heydealer.py` | 127 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
 | `score/grade.py` | 127 | 등급 (L7). |
-| `tools/backfill_from_raw.py` | 127 | ★★★★★ 08-30 (명령서 r974 · 0j 4) — ★ Ⓐ 「이미 오는 것을 읽는다」. |
 | `tools/recalc_catchup.py` | 126 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/kia_cpo.py` | 118 | 기아 인증중고차(CPO) 어댑터 — URL · 헤더 (1장 STEP 11). |
@@ -198,7 +200,7 @@
 | `parse/reborncar/__init__.py` | 0 | — |
 | `parse/volvo_selekt/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 84개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 85개)
 
 ### `validate/v11_web.py` — 5,038줄
 
@@ -702,5 +704,11 @@ _cfg:35  _walk:41  classify:51  main:127
 
 ```
 _cfg:46  build_seed_db:51  _confirm_dict:103  seed_db_path:119  _ensure_secrets:132  _seed_unclassified:148
+```
+
+### `tools/backfill_from_raw.py` — 201줄
+
+```
+_now:28  latest_details:32  heydealer:44  kbchachacha:105  main:182
 ```
 
