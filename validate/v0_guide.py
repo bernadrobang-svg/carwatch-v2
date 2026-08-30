@@ -4375,6 +4375,31 @@ def s46_183_master_only_after_probing():
         return False, ("★ 안 열고 「마스터 몫」이라 한 줄 " + " · ".join(bad[:4]))
     return True, "「마스터 몫」이 다 실측을 달고 있다"
 
+
+def s46_184_unfetched_is_not_absent():
+    """S46-184 — ★ 「미조회」를 ★ 「사이트가 안 준다」로 옮겨 적지 않는가 (오판 222).
+
+    ★ 08-29 — ★ `/why` 의 「미조회」를 보고 ★ 「성능점검부가 오는 곳은 엔카·KB 둘뿐」이라 했다.
+      ★ ★ 다시 열어 보니 ★ 아홉 곳 중 여덟에 있었다
+    ★ 잣대 — ★ 규격에 ★ 「미조회」와 「안 준다/없다」가 ★ 한 줄에 함께 있으면 실패
+    """
+    import re as _re
+
+    bad = []
+    for q in sorted((ROOT / "docs").glob("*.md")):
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if "미조회" not in ln:
+                continue
+            if not _re.search(r"안 준다|없다", ln):
+                continue
+            if _re.search(r"~~|물린다|오판|마스터 —|다르다|아니다", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 「미조회」를 「없다」로 옮긴 곳 " + " · ".join(bad[:4])
+                       + "  ★ 미조회는 우리 상태다")
+    return True, "「미조회」를 사이트 상태로 옮긴 곳이 없다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4408,6 +4433,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-184", "「미조회」를 「없다」로 옮기지 않는가",
+     s46_184_unfetched_is_not_absent),
     ("S46-183", "「마스터 몫」 전에 내가 열었는가",
      s46_183_master_only_after_probing),
     ("S46-182", "「전 사이트」를 사이트별로 열고 말했는가",
