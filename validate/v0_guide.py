@@ -4474,6 +4474,30 @@ def s46_187_cheaper_scores_higher():
         return False, ("★ " + " · ".join(bad) + "  ★ 쌀수록 높아야 한다")
     return True, "값 곡선이 쌀수록 높다"
 
+
+def s46_188_screen_before_claiming_missing():
+    """S46-188 — ★ 「화면에 없다」를 ★ 거르개 이름을 뽑아 보고 적었는가 (오판 225).
+
+    ★ 08-29 — ★ 「`/listings` 에 색 거르개가 없다」고 적었는데
+      ★ ★ `color_ext`·`color_int` 가 ★ 이미 있었다
+    ★ 잣대 — ★ 규격에 ★ 「화면에 …가 없다」를 쓴 줄에
+      ★ **거르개 이름**(`name=` 꼴)이나 물린 표시가 있어야 한다
+    """
+    import re as _re
+
+    bad = []
+    for q in list(_guide_docs()):
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"화면에 [^가-힣]{0,3}[가-힣]{2,10}(가|이) 없다", ln):
+                continue
+            if _re.search(r"~~|물린다|오판|마스터 —|`\w+`|실측", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 거르개 이름을 안 보고 「화면에 없다」라 한 곳 "
+                       + " · ".join(bad[:4]))
+    return True, "「화면에 없다」가 다 근거를 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4507,6 +4531,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-188", "「화면에 없다」를 열어 보고 적었는가",
+     s46_188_screen_before_claiming_missing),
     ("S46-187", "값 곡선이 쌀수록 높은가",
      s46_187_cheaper_scores_higher),
     ("S46-186", "등급 분포를 보고 있는가",
