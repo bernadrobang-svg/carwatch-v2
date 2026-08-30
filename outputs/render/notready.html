@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -59,7 +59,7 @@
 
 <p class="muted">무엇을 하면 되나 — 아래 조치를 순서대로 하십시오.</p>
 <h2>사유</h2>
-<ul><li>등록부 미분류 323건 — V4-11 이 판정을 막는다</li><li>모르는 차 3,130건 — 판정 대상이 아니다</li><li>범위 밖 6,986건 — 아는 차인데 갈래가 다르다 (마스터 결정 「제외해」)</li></ul>
+<ul><li>등록부 미분류 323건 — V4-11 이 판정을 막는다</li><li>모르는 차 3,130건 — 판정 대상이 아니다</li><li>범위 밖 6,951건 — 아는 차인데 갈래가 다르다 (마스터 결정 「제외해」)</li></ul>
 <h2>조치</h2>
 <ul class="action"><li>config/field_usage.suggested.json 을 확인·수정해 config/field_usage.json 으로 옮긴 뒤 재실행한다</li><li>아래 모델명·배지를 보고 targets.json 의 fuel_match · trim_include 를 고치거나 그대로 둔다</li></ul>
 
@@ -74,7 +74,7 @@
 <h3>★★ 여쭐 것</h3>
 
 <div class="ask">
-<p class="big">602건</p>
+<p class="big">567건</p>
 <p class="sentence">
   <b>차종을 모르는데 아직 아무 처리도 안 된 매물입니다</b>
   
@@ -84,10 +84,10 @@
 </div>
 <p class="notice">
   
-  범위 안 <strong>10,294건</strong>
+  범위 안 <strong>10,339건</strong>
   <span class="dim">(차종이 잡힌 전부 · 내려간 것 포함)</span> ·
   <strong>미분류 3,130건</strong> ·
-  <strong>범위 밖 6,986건</strong>.
+  <strong>범위 밖 6,951건</strong>.
   섞어서 「매물 N건」으로 내지 않습니다.
   <strong>미분류</strong>는 모르는 차라 <strong>여쭙는 것</strong>이고,
   <strong>범위 밖</strong>은 아는 차인데 갈래가 달라
@@ -295,10 +295,10 @@
 
 <div class="vlist">
   <div class="vline"><span><code>out_of_scope</code></span>
-    <b>6,986건</b></div>
+    <b>6,951건</b></div>
 </div>
 <details class="card tight">
-  <summary><strong>6,986건</strong>
+  <summary><strong>6,951건</strong>
     <span class="dim">· 펼치기 ▾ —
       스포티지 가솔린 · 그랜저 가솔린처럼 우리 갈래가 아닌 것.
       평소에는 접어 둡니다. 물을 것이 아닙니다</span></summary>
@@ -334,7 +334,7 @@
     <td>가솔린</td><td class="num">207</td></tr>
   
   <tr><td><strong>G80</strong></td><td>G80</td>
-    <td>가솔린</td><td class="num">172</td></tr>
+    <td>가솔린</td><td class="num">137</td></tr>
   
   <tr><td><strong>그랜저</strong></td><td>그랜저</td>
     <td>하이브리드</td><td class="num">131</td></tr>
@@ -430,7 +430,7 @@
 
 
 <h2>지금도 볼 수 있는 것</h2>
-<ul><li>수집 — 매물 20,410건 · 응답 142,695건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 19,919건 완료</li><li>채점 — 10,201건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
+<ul><li>수집 — 매물 20,420건 · 응답 142,695건 저장</li><li>파싱 — 가격 · 연식 · 주행 · 사양 19,929건 완료</li><li>채점 — 10,201건 (등급은 아래 사유로 일부가 멈춰 있습니다)</li></ul>
 <p class="muted">등급만 아직 없습니다. 가격 · 연식 · 주행 · 사양은 이미 파싱됐습니다.</p>
 
 
@@ -587,7 +587,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-30 10:13</span>
+  <span>2026-08-30 12:05</span>
 </footer>
 
 </body>

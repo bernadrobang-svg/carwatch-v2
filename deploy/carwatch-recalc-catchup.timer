@@ -6,7 +6,10 @@
 Description=CarWatch v2 — 재판정 밀림 확인 (네 시간)
 
 [Timer]
-OnCalendar=*-*-* 01,05,09,13,17,21:00:00
+# ★★★★ 08-30 (마스터 0b ①) — ★ 13 을 빼고 ★ 15·19·23 으로 옮겼다.
+#   ★ `carwatch-daily` 도 13:00 이라 ★ 재판정이 수집기와 부딪혔다.
+#   ★ 정본은 `config/admin.json` 의 `recalc_catchup_at` 이다 (V10-31)
+OnCalendar=*-*-* 01,05,09,15,19,23:00:00
 # ★ 서버가 멎었다 살아나면 ★ 놓친 것을 한 번 돈다 (14-3 ③)
 Persistent=true
 Unit=carwatch-recalc-catchup.service

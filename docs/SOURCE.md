@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 184개 · 총 66,912줄
+파일 185개 · 총 67,041줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -11,7 +11,7 @@
 | `report/screens/build.py` | 3,739 | 화면 데이터 생성. |
 | `web/views.py` | 2,730 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,279 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `store/core.py` | 1,848 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 1,887 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,686 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -121,6 +121,7 @@
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
 | `adapters/heydealer.py` | 127 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
 | `score/grade.py` | 127 | 등급 (L7). |
+| `tools/recalc_catchup.py` | 126 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/kia_cpo.py` | 118 | 기아 인증중고차(CPO) 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `analyze/axes.py` | 118 | 축 판정 계약. |
@@ -137,7 +138,6 @@
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
 | `analyze/axis/taste.py` | 94 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
-| `tools/recalc_catchup.py` | 94 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
 | `parse/target_rules.py` | 93 | 차종군 + `targets.json` 규칙으로 ★ 갈래를 고른다. |
 | `tools/export_cli.py` | 93 | 데이터 내보내기 (9장 STEP 91a · B-6). |
 | `tools/setup_check.py` | 92 | 착수 점검 — 실행 전에 무엇이 준비됐는지 한 번에 본다. |
@@ -158,6 +158,7 @@
 | `tools/link_raw_ids.py` | 64 | ★★ 이미 쌓인 원문의 `listing_id` 를 ★ `source_id` 로 이어 채운다. |
 | `analyze/curve.py` | 61 | 구간별 점수표 (docs/ref/F-scoring.md). |
 | `tools/clear_zero_values.py` | 60 | ★★ 「값이 아닌 0」을 ★ 모름(NULL)으로 되돌린다. |
+| `tools/clear_bad_origin.py` | 58 | ★★★★ 「신차가 < 현재값」인 신차가를 지운다 (마스터 지시 2 · 08-30). |
 | `analyze/axis/warranty.py` | 56 | 보증 100점 — 일반 50 + 파워트레인 50. |
 | `parse/encar/paths.py` | 56 | 파서가 읽는 원문 경로 — 코드에서 뽑는다 (2장 STEP 20). |
 | `tools/inspect_requests.py` | 52 | 요청 기록을 본다 — 무엇을 던졌고 무엇이 돌아왔는가. |
@@ -223,10 +224,10 @@ _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  s
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:766  _grade_base_checks:794  _checks_cfg:887  _labels_cfg:901  _unknown_mark_checks:909  _grade_cut_checks:960  _points_cap_checks:1070  _worse_of_checks:1122  _checks_json:1184  _value_curve_checks:1195  _group_sum_checks:1285  _mapped_other_check:1396  _denominator_check:1423  _core_axis_check:1451  _rental_cross_check:1472  _why_cheap_check:1510  _source_before_value_check:1551  _absolute_cut_check:1586  _spec_files:1616  _confirm_ratio_check:1626  _warranty_checks:1676  _spec_axis_check:1710  _site_axis_checks:1751  _rendered_why:1800  _rendered_listings:1810  _fill_gap_check:1820  _points_sum_check:1853  _market_gap_check:1870  _bonus_checks:1926  _trim_price_check:2030  run:2087  _shuffle_check:2222  _halt_dict_check:2247  _ensure_tmp:2276
 ```
 
-### `store/core.py` — 1,848줄
+### `store/core.py` — 1,887줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  upsert_core:334  mark_gone:435  sweep_gone:452  sweep_gone_groups:496  load_snapshot:538  build_identities:647  resolve_vehicle_id:673  merge_conflict:705  upsert_vehicle:716  upsert_dealer:737  dealer_trust:764  _trust_cfg:857  upsert_child:874  _flag:895  _not_join_months:909  state_counts:934  current_versions:974  diagnosis_of:1004  target_counts:1017  top_target:1024  vehicle_of:1029  collect_scale:1036  our_fault:1056  catalog_coverage:1065  _walk:1109  _sample_bodies:1125  hits_of:1138  key_seen:1157  stored_hits:1172  sample_bodies:1188  observed:1210  known_leaves:1248  has_unclassified:1263  classify_unclassified:1270  _card_limit:1313  _value_chars:1318  _admin_cfg:1323  unclassified_cards:1340  _peek:1396  _short:1443  _blocking_paths:1454  _raw_rows_max:1474  used_endpoints:1484  raw_sections:1493  _flatten:1532  option_diff:1556  _option_names:1594  blocking_keys:1610  full_hits:1628  axis_paths_empty:1653  blocking_rows:1690  record_mismatch_sql:1752  record_mismatch_count:1758  relist_counts:1784  listing_models:1801  filter_options:1821  site_counts:1838
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  origin_dropped:338  _drop_impossible_origin:343  upsert_core:372  mark_gone:474  sweep_gone:491  sweep_gone_groups:535  load_snapshot:577  build_identities:686  resolve_vehicle_id:712  merge_conflict:744  upsert_vehicle:755  upsert_dealer:776  dealer_trust:803  _trust_cfg:896  upsert_child:913  _flag:934  _not_join_months:948  state_counts:973  current_versions:1013  diagnosis_of:1043  target_counts:1056  top_target:1063  vehicle_of:1068  collect_scale:1075  our_fault:1095  catalog_coverage:1104  _walk:1148  _sample_bodies:1164  hits_of:1177  key_seen:1196  stored_hits:1211  sample_bodies:1227  observed:1249  known_leaves:1287  has_unclassified:1302  classify_unclassified:1309  _card_limit:1352  _value_chars:1357  _admin_cfg:1362  unclassified_cards:1379  _peek:1435  _short:1482  _blocking_paths:1493  _raw_rows_max:1513  used_endpoints:1523  raw_sections:1532  _flatten:1571  option_diff:1595  _option_names:1633  blocking_keys:1649  full_hits:1667  axis_paths_empty:1692  blocking_rows:1729  record_mismatch_sql:1791  record_mismatch_count:1797  relist_counts:1823  listing_models:1840  filter_options:1860  site_counts:1877
 ```
 
 ### `collect/runner.py` — 1,686줄

@@ -54,6 +54,30 @@ def last_recalc_hours(conn, at: str) -> float | None:
     return (now - then).total_seconds() / SECONDS_PER_HOUR
 
 
+
+def collector_running(conn, at: str) -> tuple[bool, str]:
+    """★★★★ 수집기가 지금 도는가 (마스터 0b ② · 08-30).
+
+    ★★★ 마스터 — 「★ `CARWATCH_DEFER_RECALC` 를 타이머에도 준다.
+      ★ `recalc_catchup.py` 가 ★ **수집기가 도는지 보고 돌면 미룬다**.
+      ★ 「도는지」는 ★ **시각 짐작 말고** ★ 표로 본다」
+
+    ★★ `collect_run` 표는 ★ **없다** (표 44개를 다 셌다 · 실측 08-30).
+      ★ 그래서 ★ **`raw_response.fetched_at`** 으로 본다 —
+      ★ ★ 수집기가 원문을 넣는 그 순간이 ★ 「도는 중」의 정본이다.
+      ★ ★ 짐작이 아니라 ★ **그 사이트가 방금 무엇을 받았다는 사실**이다.
+    ★ 창은 `config/admin.json` 이 정본이다 (V10-31) — ★ 코드에 안 박는다
+    """
+    win = float(_admin_cfg().get("collect_busy_minutes") or 10)
+    row = conn.execute(
+        "SELECT site, COUNT(*), MAX(fetched_at) FROM raw_response"
+        " WHERE fetched_at > datetime(?, ?) GROUP BY site"
+        " ORDER BY 3 DESC LIMIT 1", (at, f"-{win:g} minutes")).fetchone()
+    if not row:
+        return False, ""
+    return True, f"{row[0]} 가 {win:g}분 안에 원문 {row[1]}건을 넣었다 (마지막 {row[2][11:19]})"
+
+
 def main() -> int:
     at = _now()
     dry = "--dry" in sys.argv
@@ -61,6 +85,14 @@ def main() -> int:
     stale = float(cfg.get("recalc_stale_hours") or 4)
     conn = sqlite3.connect(DB, timeout=DB_TIMEOUT_SEC)
     try:
+        # ★★★★★ 08-30 (마스터 0b ②) — ★ 수집기가 돌면 ★ **미룬다.**
+        #   ★ 까닭 — ★ 재판정 한 판이 12~13분이고 ★ KB 한 회차가 297초다.
+        #   ★ ★ 겹치면 ★ 수집기가 `database is locked` 로 죽는다 (08-29 실측).
+        #   ★ 다음 타이머(네 시간 뒤)가 다시 본다 — ★ 밀린 것은 안 잃는다
+        busy, why = collector_running(conn, at)
+        if busy:
+            print(f"★ 수집기가 도는 중이라 미룬다 — {why}")
+            return 0
         age = last_recalc_hours(conn, at)
         if age is None:
             print("★ 재판정 기록이 없다 — 채운다")

@@ -331,6 +331,44 @@ def _drop_non_values(parsed: dict) -> dict:
     return parsed
 
 
+# ★ 이 회차에 버린 신차가 — ★ 수집기가 끝에 세어 낸다 (조용히 안 버린다)
+_ORIGIN_DROPPED: list = []
+
+
+def origin_dropped() -> list:
+    """★ 이 회차에 ★ 「신차가 < 현재값」이라 버린 것.  ★ 부르는 쪽이 센다."""
+    return list(_ORIGIN_DROPPED)
+
+
+def _drop_impossible_origin(parsed: dict) -> dict:
+    """★★★★ 신차가가 ★ **현재값보다 작으면** ★ 신차가가 아니다 (마스터 지시 08-30).
+
+    ★★★ 08-30 실측 — ★ 「신차가 < 현재값」이 ★ **477건**이었다
+      (엔카 418 · 리본카 36 · KB 13 · 헤이딜러 9 · 렉서스 1).
+      ★ ★ 리본카는 ★ 신차가가 ★ **10,000원**인 것이 있었다 — ★ 값은 9,420만이다.
+    ★★ 까닭은 사이트마다 다르다 —
+      ★ 현대인증은 ★ 「신차 가격 대비 9,100,000원 **절약**」의 절약액을 잡았고 (08-30 정정),
+      ★ 리본카·헤이딜러·KB·엔카는 ★ 각자 다른 자리에서 뽑는다.
+    ★ 그래서 ★ **파서마다 고치지 않고** ★ 넣는 문 하나에서 막는다 —
+      ★ ★ 낱말이 무엇이든 ★ 「신차가 < 현재값」은 ★ 신차가일 수 없다.
+    ★ 지어내지 않는다 — ★ **버린다** (`None` 이 되어 「모름」이다).
+      ★ ★ 0 으로 채우면 ★ 감가율이 거짓이 된다 (개정 289·434)
+    ★ 둘 중 하나가 없으면 ★ 못 견주므로 ★ 안 건드린다
+    """
+    own = parsed.get("price_origin_won")
+    now = parsed.get("price_current_won")
+    try:
+        if own is not None and now is not None and int(own) < int(now):
+            parsed = dict(parsed)
+            parsed.pop("price_origin_won", None)
+            # ★ 조용히 버리지 않는다 — ★ 세어서 남긴다.
+            #   ★ `_` 로 시작하는 키는 ★ 칸이 아니라 ★ 「센 것」이다 —
+            #   ★ ★ `_pii_plate_no` 와 같은 꼴이다 (A-2 가 무는 것은 ★ 칸인 척하는 키다)
+            _ORIGIN_DROPPED.append((parsed.get("site"), parsed.get("source_id"), int(own)))
+    except (TypeError, ValueError):
+        pass
+    return parsed
+
 def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int:
     """파싱 결과를 core_listing 에 적재한다.
 
@@ -343,6 +381,7 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
            「주행거리」 자리에 날짜가 오면 그것은 파싱이 아니라 우연이다
     """
     parsed = _drop_non_values(parsed)
+    parsed = _drop_impossible_origin(parsed)
     from contracts import shape_violations
 
     bad = shape_violations(parsed)
