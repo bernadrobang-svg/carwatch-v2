@@ -37,7 +37,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,309B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,067B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,424B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 25,099B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 25,273B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 5,181B |
 
 ## 못 낸 화면
