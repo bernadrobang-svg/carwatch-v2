@@ -4433,6 +4433,20 @@ def s46_185_file_is_the_原本():
                        + "  ★ 파일이 원본이다 (마스터 확정 08-29)")
     return True, "「파일이 원본」이 지켜지고 있다"
 
+
+def s46_186_grade_distribution_watched():
+    """S46-186 — ★ 등급 분포를 ★ 보고 있는가 (오판 223).
+
+    ★ 08-29 — ★ 「무엇을 못 받았나」만 세고 ★ 「받은 것을 어떻게 매기나」를 안 봤다.
+      ★ ★ 엔카는 다 받는데도 ★ A 이상이 3.4% 이고 ★ E 가 42% 였다
+    ★ 잣대 — ★ 규격에 ★ 등급 분포(S~G)를 잰 자취가 있는가
+    """
+    body = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
+    if "E 2,046" not in body and "등급 분포" not in body:
+        return False, ("★ 등급 분포를 잰 자취가 없다 — "
+                       "★ 「받은 것」만 세고 「매긴 것」을 안 본다")
+    return True, "등급 분포를 재고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4466,6 +4480,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-186", "등급 분포를 보고 있는가",
+     s46_186_grade_distribution_watched),
     ("S46-185", "원문 파일을 지우지 않는가", s46_185_file_is_the_原本),
     ("S46-184", "「미조회」를 「없다」로 옮기지 않는가",
      s46_184_unfetched_is_not_absent),
