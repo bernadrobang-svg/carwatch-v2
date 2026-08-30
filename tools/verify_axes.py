@@ -682,7 +682,7 @@ def _has_option(conn, lid, words) -> bool | None:
 
     row = conn.execute(
         "SELECT options_choice_json, options_standard_json,"
-        " options_etc_json, model_catalog_key, site FROM core_listing"
+        " options_etc_json, model_catalog_key FROM core_listing"
         " WHERE listing_id=?", (lid,)).fetchone()
     if not row or not row[3]:
         return None
@@ -697,10 +697,15 @@ def _has_option(conn, lid, words) -> bool | None:
     if not codes:
         return False
     marks = ",".join("?" * len(codes))
+    # ★★★★★ 08-30 (r974 · 0j 2) — ★ `site=?` 를 뺐다.
+    #   ★ 옵션은 ★ **차의 속성**이지 사이트의 속성이 아니다 (갈래 ③).
+    #   ★ ★ 가둬 두면 ★ 엔카로 받은 카탈로그를 ★ K카 매물에 못 쓴다.
+    #   ★ ★ 같은 코드가 카탈로그마다 있으므로 ★ 이름은 겹쳐도 같은 이름이다
+    #   ★ 검산 `S46-177`
     names = [r[0] for r in conn.execute(
-        "SELECT option_name FROM dict_model_option"
-        f" WHERE site=? AND model_catalog_key=? AND option_code IN ({marks})",
-        (row[4], row[3], *codes))]
+        "SELECT DISTINCT option_name FROM dict_model_option"
+        f" WHERE model_catalog_key=? AND option_code IN ({marks})",
+        (row[3], *codes))]
     if not names:
         return None                       # 사전이 없어 이름을 못 본다
     body = " ".join(names)

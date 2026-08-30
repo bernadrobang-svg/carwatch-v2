@@ -11,12 +11,16 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from parse.lexus_certified.mapping import (  # noqa: E402
+    parse_detail, parse_list_item,
+)
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of        # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
@@ -89,30 +93,17 @@ def main() -> int:
     for one in cars:
         if not one.get("idx"):
             continue
-        name = one.get("model_name") or ""
+        # ★★★★★ 08-30 (r974 · 0j 1) — ★ 칸 짓기를 ★ `parse/lexus_certified` 로 옮겼다.
+        #   ★ 열 곳 중 ★ 여기만 파서가 없어 ★ 검사가 못 보는 자리였다 (`S46-178`)
+        row = parse_list_item(one)
+        if row is None:
+            continue
+        row["detail_status"] = "not_requested"
+        name = row.get("site_model") or ""
         # ★ 「NX 350h」 → NX · 「RX 450h+」 → RX.  ★ 등록부가 아는 이름만
         known = known_model_of(name.split()[0] if name else None)
-        row = {"site": SITE_CODE, "source_id": str(one["idx"]),
-               "price_unit": "won", "site_model": name,
-               "trim_badge": one.get("class_name"),
-               # ★★ `color` · `branch` 는 ★ **dict 로 온다** (실측 08-24) —
-               #   ★ 그대로 넣으면 sqlite 가 거부한다.  ★ `title` 이 사람 말이다
-               "color_ext_raw": _title(one.get("color")),
-               "dealer_shop": _title(one.get("branch")),
-               "detail_status": "not_requested"}
         if known:
             row["site_model_group"] = known
-        for src, col, mul in (("price", "price_current_won", WON_PER_MANWON),
-                              ("release_price", "price_origin_won", WON_PER_MANWON),
-                              ("mileage", "mileage_km", 1)):
-            try:
-                row[col] = int(str(one.get(src)).replace(",", "")) * mul
-            except (TypeError, ValueError):
-                pass
-        try:
-            row["form_year"] = int(str(one.get("year"))[:4])
-        except (TypeError, ValueError):
-            pass
         raw_of[row["source_id"]] = one
         rows.append(row)
     ours = [r for r in rows if r.get("site_model_group")]
@@ -161,6 +152,65 @@ def main() -> int:
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장 {len(keep)}건 · 저장된 렉서스 매물 {n:,}건")
+
+    if "--detail" not in args:
+        print("★ 상세는 --detail 로 받는다 — ★ 연식(`year_month`)은 상세에만 있다")
+        return 0
+    return _detail(conn, cfg, keep, at)
+
+
+DETAIL_PATH = "/api/json/getData_car_detail.json.php?idx={idx}"
+
+
+def _detail(conn, cfg, rows, at) -> int:
+    """★★★ 08-30 (r974 · 0j 1) — ★ 상세를 받아 ★ **연식**을 채운다.
+
+    ★ 목록의 `year` 는 ★ 모델연도다.  ★ 연식은 ★ `car_info.registration_date` 다
+      (규격 `LEXUS_CERTIFIED_API.md` 3장 ③).  ★ 그래서 ★ 상세를 열어야 한다
+    ★★ ★ 「없는 차」도 ★ 200 을 준다 — ★ `car_detail` 이 있나로 가른다.
+      ★ ★ 200 으로 가르지 않는다 (마스터 08-29)
+    """
+    from store.core import split_pii, upsert_core
+    from store.pii import load_key
+    from store.raw import save_site_raw
+
+    key = load_key()
+    base = cfg["base_url"]
+    timeout = float(cfg.get("timeout_sec") or 40)
+    got = {"정상": 0, "없는 차": 0, "못 받음": 0}
+    for r in rows:
+        sid = r["source_id"]
+        url = base + DETAIL_PATH.format(idx=sid)
+        try:
+            req = urllib.request.Request(url, headers=cfg.get("headers") or {})
+            body = urllib.request.urlopen(req, timeout=timeout).read()
+        except (urllib.error.URLError, OSError, TimeoutError) as e:
+            # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
+            print(f"  idx={sid} ★ 못 받음 — {e}")
+            got["못 받음"] += 1
+            time.sleep(SLEEP_SEC)
+            continue
+        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수).  ★ 곧바로 커밋한다 (개정 857)
+        save_site_raw(conn, SITE_CODE, "detail", sid, url, body, at,
+                      listing_id=r.get("listing_id"))
+        commit(conn)
+        deep = parse_detail(body, SITE_CODE, sid)
+        if deep is None:
+            got["없는 차"] += 1
+            time.sleep(SLEEP_SEC)
+            continue
+        deep["listing_id"] = r.get("listing_id")
+        fill_target_key(SITE_CODE, deep)
+        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        got["정상"] += 1
+        commit(conn)
+        time.sleep(SLEEP_SEC)
+    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
+    ym = conn.execute(
+        "SELECT COUNT(*), SUM(year_month IS NOT NULL), SUM(plate_hash IS NOT NULL)"
+        " FROM core_listing WHERE site=? AND status IN ('active','new')",
+        (SITE_CODE,)).fetchone()
+    print(f"★ 연식이 찬 매물 {ym[1] or 0}/{ym[0]}건 · 번호판 해시 {ym[2] or 0}건")
     return 0
 
 

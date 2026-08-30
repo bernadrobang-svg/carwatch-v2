@@ -4237,7 +4237,6 @@ def s46_178_list_field_not_empty_axis():
       ★ ★ 열어 보니 ★ **`parse/` 에 렉서스 폴더가 아예 없다** — ★ 열 곳 중 하나만 없다
     ★ 잣대 — ★ `config/sites.json` 의 사이트마다 ★ `parse/{site}/` 가 있어야 한다
     """
-    import re as _re
 
     import json as _j
 

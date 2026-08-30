@@ -37,6 +37,7 @@
   },
   "_pending": "★ 화면을 아직 안 정한 것. 가이드 판단 대기다 — 개발측이 「이 화면이면 되겠지」로 채우지 않는다 (규칙 2). V11-45 는 이 목록을 실패로 세지 않되, 여기에도 screens 에도 없는 것이 새로 생기면 문다",
   "pending": [
+    "tools/backfill_from_raw.py",
     "tools/build_index.py",
     "tools/classify_registry.py",
     "tools/classify_stored.py",

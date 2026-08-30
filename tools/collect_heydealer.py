@@ -28,8 +28,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from adapters.heydealer import PAGE_SIZE, SITE_CODE, HeydealerAdapter  # noqa: E402
-from parse.heydealer.mapping import (parse_detail, parse_list_item,   # noqa: E402
-                                     options_of)
+from parse.heydealer.mapping import (  # noqa: E402
+    options_of, parse_detail, parse_list_item, part_enums, record_of,
+    warranty_of,
+)
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
 from store.raw import open_db                                          # noqa: E402
@@ -140,7 +142,11 @@ def main() -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
+    from store.core import (
+        resolve_listing_id, split_pii, upsert_child, upsert_core,
+    )
+    from errors import ValidationError
+    from store.dictionary import upsert_enum
     from store.pii import load_key
     from store.raw import commit, save_site_raw
 
@@ -203,9 +209,37 @@ def main() -> int:
                     ensure_ascii=False)
             deep["listing_id"] = one["listing_id"]
             deep["detail_status"] = "ok"
+            # ★★★★★ 08-30 (r974 · 0j 4) — ★ 보증은 ★ 원문에 ★ 이미 와 있다.
+            #   ★ 「남은 양」을 ★ 총량으로 바꿔 넣는다 (규격 3-4 · `warranty_of`)
+            deep.update(warranty_of(body))
             # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
             fill_target_key(SITE_CODE, deep)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
+            # ★★★★★ 08-30 (r974 · 0j 4) — ★ 이력이 ★ 통째로 온다 (규격 3-2).
+            #   ★ 사고 51 · 자차 28 · 소유자 11 · 용도 22 · 특수 21 이 ★ 여기서 산다.
+            #   ★ ★ 남의 표 칸이므로 ★ `core_record` 에 넣는다 — ★ core 에 넣으면
+            #     ★ ★ `upsert_core` 가 ★ 조용히 버린다 (A-2)
+            rec = record_of(body, SITE_CODE)
+            if rec:
+                rec["listing_id"] = one["listing_id"]
+                rec["collected_at"] = at
+                upsert_child(conn, "core_record", rec, "p1", at)
+                seen["이력"] = seen.get("이력", 0) + 1
+            # ★ 부위(`part`)는 ★ 원문 그대로 사전에 남긴다 — ★ 우리말로 안 옮긴다 (3a ②)
+            for one_p in part_enums(body):
+                # ★ `display` 에 ★ 원문을 그대로 둔다 — ★ 우리말로 안 옮긴다 (3a ②).
+                #   ★ 등급(RANK) 표가 오면 ★ 그때 골격·외판이 열린다
+                # ★★★ `part` 축은 ★ STEP 41 정책 표에 ★ 행이 없다 (실측 08-30).
+                #   ★ 내가 표를 안 늘린다 (규칙 2) — ★ 마스터께 올렸다.
+                #   ★ ★ 값은 ★ 원문에 그대로 남는다 (P3)
+                try:
+                    upsert_enum(conn, SITE_CODE, "part", one_p["part"],
+                                one_p["part"], 1, "detail", "d1", at,
+                                force_pending=True)
+                    seen["부위"] = seen.get("부위", 0) + 1
+                except ValidationError:
+                    seen["부위(축 정책 없음)"] = seen.get("부위(축 정책 없음)", 0) + 1
+                    break
             seen["정상"] += 1
         time.sleep(interval)
     commit(conn)
