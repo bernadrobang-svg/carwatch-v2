@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 183개 · 총 66,671줄
+파일 183개 · 총 66,690줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -10,7 +10,7 @@
 | `validate/v0_guide.py` | 4,200 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `report/screens/build.py` | 3,739 | 화면 데이터 생성. |
 | `web/views.py` | 2,730 | 화면 어댑터 (14장 STEP 142 · 152). |
-| `validate/v3_logic.py` | 2,270 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
+| `validate/v3_logic.py` | 2,279 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,848 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,686 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
@@ -50,7 +50,7 @@
 | `tools/sync_registry.py` | 394 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `tools/collect_hyundai_cert.py` | 371 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
-| `parse/hyundai_cert/mapping.py` | 331 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
+| `parse/hyundai_cert/mapping.py` | 341 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `tools/build_dict.py` | 321 | RAW → 사전 생성. |
@@ -216,10 +216,10 @@ load_config:48  site_badge:108  axis_heads:127  _grade_order:137  _not_ranked:15
 _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  sold:116  listings:135  why:192  detail:244  _grade_help:277  notready:284  dashboard:294  admin_home:316  _unclassified_split:328  _rows_of:356  _check_reports:366  admin_audit:389  admin_docs:402  _int_param:426  _manwon:465  _site_buttons:470  _filter_chips:520  _order_menu:574  _carry:580  _order_label:590  ORDERS_LABELS_GET:594  _condition_sentence:598  _query_string:616  _page_links:629  _simple_paging:650  _paging:660  _filter_buttons:690  _model_menu:723  _pick_state:740  _option_name_buttons:802  _color_menus:863  _judge_buttons:878  _split_top:906  _fuel_options:912  _distinct_options:923  _km_options:935  _grade_options:943  _keep_query:950  _carry_pick:975  _lease_hidden:985  _excluded_hidden:991  _excluded_why:998  _filter:1008  recommend:1088  track:1116  compare:1133  market:1155  _first_target:1175  dealers:1181  watch:1201  _note_kinds:1218  _watch_notes:1225  run_view:1252  login:1264  _login_again:1306  _open_session:1322  logout:1363  _watch_queries:1380  watch_query_post:1389  _int_or_none:1419  watch_add_post:1423  _watch_note_post:1483  _watch_invite:1509  watch_update_post:1532  _now:1556  _reason_gate:1563  _gate:1584  _first_flag:1623  _all_hours:1628  admin_run:1656  _target_rows:1724  admin_dict:1737  admin_status:1774  admin_collect:1789  _take_chunk:1848  _verify_part:1891  _run_stamp:1931  _int_or_none:1942  admin_import:1947  admin_scoring:2019  _decide_cards:2072  admin_registry:2100  admin_query:2153  admin_requests:2175  _admin_extra:2237  _config_files:2252  _config_rows:2259  admin_config:2291  _typed:2342  admin_api:2358  _site_query:2408  admin_targets:2421  admin_tools:2519  join:2538  password:2569  admin_users:2584  _account_activity:2644  reports:2650  report_download:2666
 ```
 
-### `validate/v3_logic.py` — 2,270줄
+### `validate/v3_logic.py` — 2,279줄
 
 ```
-_file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:766  _grade_base_checks:794  _checks_cfg:887  _labels_cfg:901  _unknown_mark_checks:909  _grade_cut_checks:960  _points_cap_checks:1070  _worse_of_checks:1122  _checks_json:1184  _value_curve_checks:1195  _group_sum_checks:1285  _mapped_other_check:1396  _denominator_check:1423  _core_axis_check:1451  _rental_cross_check:1472  _why_cheap_check:1510  _source_before_value_check:1551  _absolute_cut_check:1586  _spec_files:1616  _confirm_ratio_check:1626  _warranty_checks:1676  _spec_axis_check:1710  _site_axis_checks:1751  _rendered_why:1800  _rendered_listings:1810  _fill_gap_check:1820  _points_sum_check:1853  _market_gap_check:1870  _bonus_checks:1926  _trim_price_check:2030  run:2078  _shuffle_check:2213  _halt_dict_check:2238  _ensure_tmp:2267
+_file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:766  _grade_base_checks:794  _checks_cfg:887  _labels_cfg:901  _unknown_mark_checks:909  _grade_cut_checks:960  _points_cap_checks:1070  _worse_of_checks:1122  _checks_json:1184  _value_curve_checks:1195  _group_sum_checks:1285  _mapped_other_check:1396  _denominator_check:1423  _core_axis_check:1451  _rental_cross_check:1472  _why_cheap_check:1510  _source_before_value_check:1551  _absolute_cut_check:1586  _spec_files:1616  _confirm_ratio_check:1626  _warranty_checks:1676  _spec_axis_check:1710  _site_axis_checks:1751  _rendered_why:1800  _rendered_listings:1810  _fill_gap_check:1820  _points_sum_check:1853  _market_gap_check:1870  _bonus_checks:1926  _trim_price_check:2030  run:2087  _shuffle_check:2222  _halt_dict_check:2247  _ensure_tmp:2276
 ```
 
 ### `store/core.py` — 1,848줄
@@ -456,10 +456,10 @@ check:37  db:43  test_expected:49  test_halt:61  test_reprocess:82  test_refetch
 target_of:73  _now:89  _post:93  _get:103  fetch_detail:114  load_filters:127  total_count:159  walk:172  main:204
 ```
 
-### `parse/hyundai_cert/mapping.py` — 331줄
+### `parse/hyundai_cert/mapping.py` — 341줄
 
 ```
-_int:38  cards:47  _fuel_of:72  _model_group:83  parse_card:101  _json:173  detail_text:180  _one:187  parse_detail:192  parse_detail_all:198  _num:258  _warranty:265  _months_left:308  _options:325
+_int:48  cards:57  _fuel_of:82  _model_group:93  parse_card:111  _json:183  detail_text:190  _one:197  parse_detail:202  parse_detail_all:208  _num:268  _warranty:275  _months_left:318  _options:335
 ```
 
 ### `tools/render_screens.py` — 331줄

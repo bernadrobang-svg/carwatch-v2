@@ -2062,6 +2062,15 @@ def _trim_price_check(conn, rid):
         " FROM result_axis a JOIN core_listing l ON l.listing_id = a.listing_id"
         " WHERE a.axis = 'taste.trim' AND a.source = 'trim_origin_price'"
         "   AND l.price_origin_won IS NOT NULL"
+        # ★★★★ 08-30 — ★ **살아 있는 매물만** 견준다.
+        #   ★ 까닭 — ★ 사다리(`trim_ladder`)는 ★ 신차가가 늘면 ★ 최고값이 오른다.
+        #   ★ ★ 그래서 ★ **판정 시각이 다른 두 매물**은 ★ 다른 사다리로 재어져
+        #   ★ ★ 「신차가가 높은데 점수가 낮다」가 ★ 나올 수 있다 — ★ 논리 결함이 아니다.
+        #   ★ 실측 08-30 — ★ 08-29 09:25 판정(47.2)과 ★ 08-30 00:39 판정(47.0)이
+        #   ★ ★ 그렇게 부딪혔다.  ★ 낡은 판정 112건은 ★ **다 `active` 가 아니다** —
+        #   ★ ★ 화면에 안 나오는 것을 견주어 ★ 헛잡았다.
+        #   ★ 살아 있는 것만 보면 ★ 한 회차에 같은 사다리로 재어진 것끼리 견준다
+        "   AND l.status = 'active'"
         " ORDER BY l.target_key, l.price_origin_won").fetchall()
     prev = None
     for tk, price, score in rows:
