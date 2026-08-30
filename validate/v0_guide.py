@@ -4447,6 +4447,33 @@ def s46_186_grade_distribution_watched():
                        "★ 「받은 것」만 세고 「매긴 것」을 안 본다")
     return True, "등급 분포를 재고 있다"
 
+
+def s46_187_cheaper_scores_higher():
+    """S46-187 — ★ 값 곡선이 ★ 쌀수록 높은가 (오판 224).
+
+    ★ 08-29 — ★ 신차가 곡선을 ★ 「60% 가 꼭대기」로 만들고 그 아래를 도로 낮췄다.
+      ★ ★ 마스터 — 「★ 값이 더 줄면 점수가 높게 되는데 왜 낮아?」
+    ★ 잣대 — ★ `origin_curve`·`budget_curve` 가 ★ 단조 감소인가
+      (★ 값이 쌀수록 점수가 높아야 한다)
+    """
+    import json as _j
+
+    cfg = _j.loads(_read(ROOT / "config" / "scoring.json"))
+    rules = cfg.get("axis_rules", {}).get("value", {})
+    bad = []
+    for name in ("origin_curve", "budget_curve"):
+        cur = rules.get(name)
+        if not isinstance(cur, list) or len(cur) < 3:
+            continue
+        pts = [p[1] for p in cur]
+        for a, b in zip(pts, pts[1:]):
+            if b > a + 0.01:
+                bad.append(f"{name} — 값이 비싸지는데 점수가 오른다")
+                break
+    if bad:
+        return False, ("★ " + " · ".join(bad) + "  ★ 쌀수록 높아야 한다")
+    return True, "값 곡선이 쌀수록 높다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4480,6 +4507,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-187", "값 곡선이 쌀수록 높은가",
+     s46_187_cheaper_scores_higher),
     ("S46-186", "등급 분포를 보고 있는가",
      s46_186_grade_distribution_watched),
     ("S46-185", "원문 파일을 지우지 않는가", s46_185_file_is_the_原本),
