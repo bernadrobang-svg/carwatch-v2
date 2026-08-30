@@ -113,7 +113,7 @@
 | `S46-124` | DB 를 PRAGMA 없이 열지 않는가 | fatal | `validate/v0_guide.py:1651` | **★ 없음** | 없음 | VOLVO_SELEKT_API.md:513 · guide/03_이력.md:866 |
 | `S46-125` | 고른 정렬 축이 정말 먹는가 | fatal | `validate/v0_guide.py:1317` | **★ 없음** | 없음 | guide/03_이력.md:868 |
 | `S46-126` | 수집기가 통신·sleep 을 트랜잭션 밖에서 하는가 | fatal | `validate/v0_guide.py:1687` | **★ 없음** | 없음 | guide/03_이력.md:870 · guide/03_이력.md:935 · guide/06_오판대장.md:282 |
-| `S46-127` | 수집기마다 화면이나 타이머가 있는가 | fatal | `validate/v0_guide.py:1603` | **★ 없음** | 없음 | guide/06_오판대장.md:258 · guide/07_밀린일대장.md:74 |
+| `S46-127` | 수집기마다 화면이나 타이머가 있는가 | fatal | `validate/v0_guide.py:1603` | **★ 없음** | 없음 | guide/03_이력.md:1067 · guide/06_오판대장.md:258 · guide/07_밀린일대장.md:74 |
 | `S46-128` | 묶어 쓰는 단계가 다른 쓰기에 창을 주는가 | fatal | `validate/v0_guide.py:1559` | **★ 없음** | 없음 | guide/06_오판대장.md:259 |
 | `S46-129` | 표의 합이 맞는가 | fatal | `validate/v0_guide.py:3240` | **★ 없음** | 없음 | guide/03_이력.md:977 · guide/03_이력.md:987 · guide/06_오판대장.md:260 |
 | `S46-130` | 합계표가 문서마다 하나인가 | fatal | `validate/v0_guide.py:3496` | **★ 없음** | 없음 | guide/03_이력.md:1001 · guide/06_오판대장.md:261 |
@@ -152,7 +152,7 @@
 | `S46-164` | 개발 회차의 「마스터 몫」에 답을 냈는가 | fatal | `validate/v0_guide.py:3887` | **★ 없음** | 없음 | guide/03_이력.md:991 · guide/06_오판대장.md:295 · guide/14_누가할것_20260829.md:39 |
 | `S46-165` | 「못 잰다」가 진짜인가 | fatal | `validate/v0_guide.py:3915` | **★ 없음** | 없음 | guide/03_이력.md:1011 · guide/06_오판대장.md:296 · guide/06_오판대장.md:297 |
 | `S46-166` | 마스터 확정이 장 규격에 닿았는가 | fatal | `validate/v0_guide.py:3953` | **★ 없음** | 없음 | ARCHITECTURE_20260830.md:8 · guide/03_이력.md:1017 · guide/06_오판대장.md:298 |
-| `S46-168` | 검사가 예외를 수로 내는가 | fatal | `validate/v0_guide.py:3983` | **★ 없음** | 없음 | guide/03_이력.md:1037 · guide/06_오판대장.md:299 |
+| `S46-168` | 검사가 예외를 수로 내는가 | fatal | `validate/v0_guide.py:3983` | **★ 없음** | 없음 | guide/03_이력.md:1037 · guide/03_이력.md:1067 · guide/06_오판대장.md:299 |
 | `S46-169` | 「왜 죽었는지」가 규격에 있는가 | fatal | `validate/v0_guide.py:4017` | **★ 없음** | 없음 | ARCHITECTURE_20260830.md:8 · ARCHITECTURE_20260830.md:148 · guide/03_이력.md:1045 |
 | `S46-170` | 설계도가 하나인가 | fatal | `validate/v0_guide.py:4034` | **★ 없음** | 없음 | ARCHITECTURE_20260830.md:301 · guide/03_이력.md:1057 |
 | `S46-171` | 잣대가 화면을 적었는가 | fatal | `validate/v0_guide.py:4052` | **★ 없음** | 없음 | guide/03_이력.md:1061 · guide/06_오판대장.md:300 |
