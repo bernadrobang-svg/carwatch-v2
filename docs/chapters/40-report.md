@@ -1,7 +1,7 @@
 # 9장. 출력 · 리포트 (STEP 90–92)
 
 ```
-version  SPEC-2026.08.29-r974
+version  SPEC-2026.08.29-r975
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
