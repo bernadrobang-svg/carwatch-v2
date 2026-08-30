@@ -4499,6 +4499,42 @@ def s46_188_screen_before_claiming_missing():
                        + " · ".join(bad[:4]))
     return True, "「화면에 없다」가 다 근거를 달고 있다"
 
+
+def s46_191_budget_follows_fuel_rule():
+    """S46-191 — ★ 차종별 예산이 ★ 「연료 × 국산/수입」 원칙과 같은가 (마스터 재확정 08-30).
+
+    ★ 마스터 — 「★ 전기 국산 3,500 · 수입 4,000 / 하이브리드 국산 3,000 · 수입 3,500 /
+      ★ 가솔린 국산 2,000 · 수입 3,000.  ★ 이걸 원칙으로 다시 정리하자」
+    ★ 잣대 — ★ `by_target` 의 값이 ★ 그 차종의 연료·출신이 가리키는 `by_fuel` 값과 같은가
+    """
+    import json as _j
+
+    cfg = _j.loads(_read(ROOT / "config" / "scoring.json"))
+    tgt = _j.loads(_read(ROOT / "config" / "targets.json"))
+    b = cfg.get("budget_manwon") or {}
+    by_fuel = b.get("by_fuel") or {}
+    if not by_fuel:
+        return False, "by_fuel 표가 없다"
+    imported = ("볼보", "폴스타", "테슬라", "BMW", "렉서스", "폭스바겐", "벤츠", "아우디")
+    bad = []
+    for k, v in (b.get("by_target") or {}).items():
+        one = tgt.get(k) or {}
+        fm = one.get("fuel_match") or []
+        if fm == ["전기"]:
+            fuel = "전기"
+        elif any("+전기" in x for x in fm):
+            fuel = "하이브리드"
+        else:
+            fuel = "가솔린"
+        lab = one.get("label") or ""
+        dom = "수입" if any(x in lab for x in imported) else "국산"
+        want = (by_fuel.get(fuel) or {}).get(dom)
+        if want is not None and v != want:
+            bad.append(f"{k} {v}≠{want}")
+    if bad:
+        return False, ("★ 원칙과 다른 차종 예산 " + " · ".join(bad[:5]))
+    return True, "차종별 예산이 다 원칙대로다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4534,6 +4570,8 @@ CHECKS = (
      s46_177_catalog_not_site_locked),
     ("S46-188", "「화면에 없다」를 열어 보고 적었는가",
      s46_188_screen_before_claiming_missing),
+    ("S46-191", "차종별 예산이 원칙대로인가",
+     s46_191_budget_follows_fuel_rule),
     ("S46-187", "값 곡선이 쌀수록 높은가",
      s46_187_cheaper_scores_higher),
     ("S46-186", "등급 분포를 보고 있는가",
