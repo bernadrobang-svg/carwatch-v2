@@ -4387,6 +4387,9 @@ def s46_184_unfetched_is_not_absent():
 
     bad = []
     for q in sorted((ROOT / "docs").glob("*.md")):
+        # ★ 생성물은 규격이 아니다 — ★ 검사 글이 되비친다
+        if q.name in ("CHECKS.md", "INDEX.md", "SOURCE.md", "SCHEMA.md"):
+            continue
         for i, ln in enumerate(_read(q).splitlines(), 1):
             if "미조회" not in ln:
                 continue
