@@ -4048,6 +4048,27 @@ def s46_170_one_architecture():
         return False, "설계도가 없다"
     return True, f"설계도가 하나다 — {got[0].name}"
 
+
+def s46_171_yardstick_names_screen():
+    """S46-171 — ★ 잣대가 ★ **그 수가 나오는 화면**을 적었는가 (오판 211).
+
+    ★ 08-29 — ★ 짝 수를 ★ `/track` 이 아니라 ★ `/listings` 배지로 세어
+      ★ 「0건」이라 보고했다.  ★ 실제는 ★ 275대였다
+    ★ 잣대 — ★ 가이드역할의 잣대 셋에 ★ 화면 주소가 붙어 있는가
+    """
+    import re as _re
+
+    body = _read(ROOT / "docs" / "guide" / "05_가이드역할.md")
+    i = body.find("정본 — ★ 마스터께서 보시는 화면 그대로 센다")
+    if i < 0:
+        return False, "잣대 정본 절이 없다"
+    seg = body[i:i + 1200]
+    need = ("/listings?fuel=electric", "site=", "/track")
+    miss = [w for w in need if w not in seg]
+    if miss:
+        return False, ("★ 잣대에 화면이 안 적힌 것 — " + " · ".join(miss))
+    return True, "잣대 셋이 다 화면 주소를 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4079,6 +4100,7 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-171", "잣대가 화면을 적었는가", s46_171_yardstick_names_screen),
     ("S46-170", "설계도가 하나인가", s46_170_one_architecture),
     ("S46-169", "「왜 죽었는지」가 규격에 있는가", s46_169_gone_has_reason),
     ("S46-168", "검사가 예외를 수로 내는가", s46_168_check_counts_exceptions),
