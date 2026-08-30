@@ -4173,6 +4173,34 @@ def s46_175_no_lumped_axes():
         return False, ("★ 점수를 뭉갠 곳 " + " · ".join(bad[:5]))
     return True, "점수를 뭉갠 곳이 없다"
 
+
+def s46_176_guide_probes_sites():
+    """S46-176 — ★ 사이트 두드리기를 ★ 개발측에 넘기지 않는가 (오판 216).
+
+    ★ 08-29 — ★ 「사이트마다 창구를 열어 재라」를 명령서로 넘겼다.
+      ★ ★ 마스터 — 「★ 그건 네가 챙겨야지.  ★ 개발애들은 브라우저로 못 들어간다면서」
+    ★ 잣대 — ★ 명령서가 ★ 「열어 재라」·「두드려 재라」를 시키면
+      ★ 그 줄에 ★ **가이드가 먼저 잰 자취**(실측·표본)가 있어야 한다
+    """
+    import glob as _g
+    import re as _re
+
+    orders = _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    if not orders:
+        return True, "명령서가 없다"
+    body = _read(ROOT / orders[0][len(str(ROOT)) + 1:])
+    bad = []
+    for i, ln in enumerate(body.splitlines(), 1):
+        if not _re.search(r"(열어|두드려)\s*재", ln):
+            continue
+        if _re.search(r"실측|표본|내가 (쟀|잰)|가이드가", ln):
+            continue
+        bad.append(f"{i}")
+    if bad:
+        return False, ("★ 가이드가 안 재고 넘긴 줄 " + " · ".join(bad[:5])
+                       + "  ★ 사이트를 두드리는 것은 가이드 몫이다")
+    return True, "「열어 재라」가 다 가이드 실측을 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4204,6 +4232,8 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-176", "사이트 두드리기를 넘기지 않는가",
+     s46_176_guide_probes_sites),
     ("S46-175", "점수를 「나머지 N」으로 뭉개지 않는가",
      s46_175_no_lumped_axes),
     ("S46-174", "「창구가 없다」를 열어 보고 적었는가",
