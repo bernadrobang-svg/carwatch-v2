@@ -1,7 +1,7 @@
 # 사이트간 견주기 — ★ 등급 차이 · 값 차이
 
 ```
-version  SPEC-2026.08.29-r982
+version  SPEC-2026.08.29-r983
 follows  `docs/chapters/30-score/f-table.md` · `docs/DEDUP_CROSS_SITE.md`
 sources  개정 703 · 마스터 지시 08-24
 checks   S46-54 · S46-55 · S46-56
@@ -1177,4 +1177,51 @@ BMW [표본 4건] — ★ 상세 본문에 있다
 ★ 다나와가 ★ **자차·소유자·압류·소모품을 다 준다** [08-21 조사]
 ★ ★ 그런데 ★ **우리 사이트 열하나에 없다**
 ★ ★ ★ **넣을지는 마스터께서 정하신다** — ★ 나는 무엇을 주는지만 적는다
+```
+
+---
+
+# ★★★★★ 08-29 — ★ **셋 중 무엇인가** (마스터 물음에 하나로 답한다)
+
+```
+★★★ 마스터 — 「★ **육십일 개만 더 받으면 수집할 게 없는 거야?
+   ★ 아니면 이미 수집한 항목을 다시 재수집해야 되는 거야?
+   ★ 전체 다 재수집인 거야?  ★ 상세 목록을 추가로 수집하러 가는 거야?**」
+```
+
+## ★★★★ 답 — ★ **셋 다 아니다.  ★ 「다시 받기」가 아니라 「지금 오는 것을 안 읽는 것」이다**
+
+★ 헤이딜러 상세 하나를 열어 ★ **이미 받고 있는 응답 안**을 다 세었다 [실측 08-29] —
+
+| 우리 축 | 점 | ★ 이미 오는 칸 | 값 |
+|---|--:|---|---|
+| `state.my_cost` 자차 | 28 | `my_car_accident_cost` · `my_car_accident_count` | 0 · 0 |
+| `history.owner` 소유자 | 11 | `owner_changed_count` | 1 |
+| `history.use` 용도 | 22 | `has_rent/business/public_use_record` | false 셋 |
+| ★ `state.special` 특수 | **21** | ★ **`flooded_count`·`stolen_count`·`total_loss_count`** | 0·0·0 |
+| ★ `value.origin` 신차가 | **75** | ★ **`factory_price`** | ★ **3639** |
+| ★ `state.consumable` 소모품 | **15** | ★ **`condition.items`** (타이어 …) | 있다 |
+| `state.frame`·`outer` | 71 | `inspection_records.accident_repairs` (`part`＋`repair`) | 빈 배열 = 무사고 |
+| `taste.option` 옵션 | 43 | ★ `car_spec.option_packages` (이름·값) | 「컨비니언스 플러스 (60만원)」 |
+| `taste.color` 색상 | 15 | `color_and_trim.exterior_description` | 「버터크림 옐로우」 |
+| ★ `history.not_join` 미가입 | 18 | ★ **없다** | ★ **이것 하나만 없다** |
+| `state.leak` 누유 | 15 | 없다 (전기차는 갈래 ⑦ 만점) | — |
+
+```
+★★★★ ★ **앞서 내가 「어느 조사에도 없다」고 한 셋 중**
+   ★ `state.outer` 외판 28 — ★ **있다** (`accident_repairs` 의 `part` 가 외판 부위다)
+   ★ `state.consumable` 소모품 15 — ★ **있다** (`condition.items`)
+   ★ ★ `history.not_join` 미가입 18 — ★ **정말 없다.  ★ 이것 하나뿐이다**
+★★ ★ 그리고 ★ **`factory_price` 3639 가 이미 온다** — ★ 신차가 75점이다
+   ★ ★ 내가 「신차가는 현대인증만 준다」고 한 것은 ★ **또 틀렸다**
+```
+
+## ★★★ 그래서 — ★ **한 줄로**
+
+```
+① ★ **다시 받을 것 — 없다**.  ★ 지금 받는 응답에 ★ 거의 다 있다
+② ★ **더 받을 것 — `history.not_join`(미가입 18점) 하나뿐**이고
+   ★ ★ 그것은 ★ **보험이력 원문**에만 있다 (KB `history/info/check.json` 등)
+③ ★ **할 일은 「파서가 읽게 하는 것」**이다 — ★ 통신이 아니라 ★ **코드다**
+★★★★ ★ 곧 ★ **수집은 끝났다.  ★ 안 읽고 있었을 뿐이다**
 ```

@@ -1,7 +1,7 @@
 # 5장. 수집 순서 · 방법 (STEP 47–53)
 
 ```
-version  SPEC-2026.08.29-r982
+version  SPEC-2026.08.29-r983
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
