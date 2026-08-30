@@ -140,6 +140,18 @@ def _market(ctx: AxisContext, v: Verdict) -> None:
     ★ 표본이 모자라면 0점 + 「확인 안 됨」.  ★ 이론가로 메우지 않는다 (개정 325)
     """
     s, r = ctx.snapshot, ctx.policy.rule("value")
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①) — ★ **이 축이 꺼졌다.**
+    #   ★ 마스터 — 「★ 시세 음수를 뺀다.  ★ 분모는 910 그대로 (모수를 안 바꾼다).
+    #     ★ ★ 음수를 다시 넣는 것은 다음에 정한다」
+    #   ★★ 배점이 0 이면 ★ **값도 0 이어야 한다.**
+    #     ★ ★ 채점은 배점을 곱하므로 ★ 점수에는 영향이 없었다 —
+    #     ★ ★ 그러나 ★ `result_axis.value` 에 ★ 30·−30 이 그대로 남아
+    #     ★ ★ ★ 화면과 `/why` 가 ★ **꺼진 축의 점수를 보인다.**
+    #     ★ ★ 실측 08-31 — ★ `V3-86` 이 잡았다 (배점 0 인데 값 30 인 행 3,893건)
+    #   ★ 셈은 그대로 둔다 — ★ 되살릴 때 이 줄만 뺀다
+    if not ctx.policy.comp(MARKET):
+        put(v, MARKET, 0, PRIO_OBSERVED, "site_unavailable")
+        return
     median = s.market_median_won
     if not median or (s.market_sample_n or 0) < int(r["market_min_sample"]) \
             or s.price_current_won is None:

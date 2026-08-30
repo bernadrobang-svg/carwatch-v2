@@ -755,6 +755,12 @@ def _curve_table_check(rid):
         if axis is None:
             continue          # price_curve · soh_curve 는 축 곡선이 아니다
         want = float(comp66[axis])
+        if not want:
+            # ★★ 08-30 (마스터 확정 r992 ①②) — ★ **꺼진 축**이다.
+            #   ★ 배점이 0 이면 ★ 곡선은 곱해져도 0 이다 — ★ 어긋날 것이 없다.
+            #   ★ ★ 곡선을 지우지 않는 것은 ★ 옳다 — ★ 「음수를 다시 넣는 것은
+            #     ★ ★ 다음에 정한다」 하셨다.  ★ 되살릴 때 그대로 쓴다
+            continue
         if abs(max(pts) - want) > 0.01:
             bad.append(f"{name} 최대 {max(pts)} 인데 축 배점은 {want:.0f} 다")
     del tables
@@ -1249,6 +1255,21 @@ def _value_curve_checks(conn, rid):
             bad84.append("origin_curve 의 점수가 단조 감소가 아니다")
 
     # V3-83 — 비싼 매물에 음수가 붙는가 (★ 개정 469 로 시세 30 이 되살아났다)
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①) — ★ **시세 축이 다시 꺼졌다.**
+    #   ★ 마스터 — 「★ 시세 음수를 뺀다.  ★ 음수를 다시 넣는 것은 다음에 정한다」
+    #   ★ ★ 곧 ★ 「음수가 0건」이 ★ **지금은 맞는 것**이다 — ★ 이 검사가 물을 자리가 아니다.
+    #   ★ 축을 되살리면 ★ 배점이 0 이 아니게 되어 ★ 이 검사도 저절로 되살아난다
+    if not float(cfg["components"].get("value.market") or 0):
+        bad83 = []
+        neg = 0
+        return [
+            result(C["V3-82"], rid, 0, len(bad82), not bad82, bad82[:4]),
+            result(C["V3-83"], rid, "축이 꺼져 있다",
+                   "시세 축 배점이 0 이다 (마스터 확정 08-29 밤)", True, []),
+            result(C["V3-84"], rid, "곡선", "맞다" if not bad84 else "다르다",
+                   not bad84, bad84[:4]),
+            result(C["V3-85"], rid, 0, "축이 꺼져 있다", True, []),
+        ]
     bad83 = []
     neg = conn.execute(
         "SELECT COUNT(*) FROM result_axis WHERE axis='value.market'"
@@ -1790,10 +1811,18 @@ def _site_axis_checks(conn, rid):
                if axis_of(k) not in GRADE_EXCLUDED_AXES
                and not (isinstance(v, dict) and v.get("skipped")))
     want_base = int(pol.get("grade_base_points") or 0)
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ 「분모는 910 그대로」.
+    #   ★ `value.market`·`state.consumable` 이 ★ 0 이라 ★ 합이 ★ **모수보다 작다**.
+    #   ★ ★ **작은 것은 통과** (닿을 수 없는 자리로 남는다) · ★ **큰 것은 실패**
+    def _said(got, want_):
+        gap = want_ - got
+        return f"{got}" if gap <= 0 else f"{got} · 닿을 수 없는 자리 {gap}점"
+
     return [
         result(C["V3-55"], rid, 0, len(bad55), not bad55, bad55[:6]),
-        result(C["V3-56"], rid, want, total, total == want),
-        result(C["V3-57"], rid, want_base, base, base == want_base),
+        result(C["V3-56"], rid, want, _said(total, want), total <= want),
+        result(C["V3-57"], rid, want_base, _said(base, want_base),
+               base <= want_base),
     ]
 
 
@@ -1862,9 +1891,17 @@ def _points_sum_check(rid):
     total = float(pol["total_points"])
     comps = pol.get("components") or {}
     got = sum(float(v) for v in comps.values())
-    bad = ([] if got == total
-           else [f"배점 합 {got:g} != 만점 {total:g}"])
-    return result(C["V3-45"], rid, f"{total:g}", f"{got:g}", not bad, bad)
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ 「분모는 910 그대로」.
+    #   ★ `value.market`·`state.consumable` 을 ★ 0 으로 껐으므로 ★ 합이 865 다.
+    #   ★ ★ **작은 것은 통과** (닿을 수 없는 자리로 남는다) · ★ **큰 것은 실패**
+    #   ★ 그래도 ★ **말없이 넘기지 않는다** — ★ 남는 자리를 수로 낸다
+    bad = ([] if got <= total
+           else [f"배점 합 {got:g} > 만점 {total:g} — 100%를 넘길 수 있다"])
+    gap = total - got
+    said = (f"{got:g}" if not gap
+            else f"{got:g} · ★ 닿을 수 없는 자리 {gap:g}점 "
+                 f"({' · '.join(k for k, v in comps.items() if not float(v))})")
+    return result(C["V3-45"], rid, f"{total:g}", said, not bad, bad)
 
 
 def _market_gap_check(conn, rid):

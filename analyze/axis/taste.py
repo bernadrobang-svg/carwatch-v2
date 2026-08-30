@@ -52,8 +52,30 @@ def _fitting(ctx: AxisContext, v: Verdict, comp: str) -> None:
     put(v, comp, full if has else 0, PRIO_OBSERVED, "option_codes")
 
 
+def color_grade_of(name: str, groups: dict) -> str:
+    """색 이름 → 갈래.  ★ 표에 없으면 ★ `default` 다 (마스터 확정 08-29).
+
+    ★★★★★ 08-31 (r1000 ②) — ★ 마스터 —
+      「★ 붉은색하고 갈색류는 빵점이고 ★ 흰색하고 검정색 쪽은 디폴트로 7점이고
+       ★ 진주색이랑 푸른색 계열은 모두 15점」
+    ★★ 사이트마다 색 이름이 다르다 (「크리스탈 화이트펄」·「스노우화이트」…) —
+      ★ 그래서 ★ **표의 이름이 들어 있으면 그 갈래**로 본다.
+      ★ ★ 긴 이름부터 본다 — ★ 「화이트펄」이 ★ 「화이트」보다 먼저다.
+      ★ ★ 안 그러면 ★ 「크리스탈 화이트펄」이 ★ 보통(7)으로 떨어진다
+    ★★ 표에 없으면 ★ **`default`(7점)** 다 — ★ 「모른다」가 아니다 (마스터 확정).
+      ★ ★ 새 이름은 ★ 가이드에게 올린다.  ★ 짐작으로 갈래를 지어 넣지 않는다
+    """
+    got = str(name or "")
+    hit = None
+    for grade, names in groups.items():
+        for one in names or ():
+            if one and one in got and (hit is None or len(one) > len(hit[1])):
+                hit = (grade, one)
+    return hit[0] if hit else "default"
+
+
 def _color(ctx: AxisContext, v: Verdict) -> None:
-    """색상 10 — 흰·검정 10 · 회색·은색 7 · 유색 3 (시장 선호 순서)."""
+    """색상 15/7/0 — ★ 좋아함 15 · 보통 7 · 싫어함 0 (마스터 확정 08-29 · r1000 ②)."""
     r = ctx.policy.rule("taste")
     if _off(ctx, COLOR):
         put(v, COLOR, ctx.policy.comp(COLOR), PRIO_OBSERVED, "taste_off")
@@ -62,7 +84,13 @@ def _color(ctx: AxisContext, v: Verdict) -> None:
     if not name:
         put(v, COLOR, None, PRIO_OBSERVED, "missing", excluded=True)
         return
-    grade = ctx.dicts.color_grade.get(name, ctx.dicts.color_default)
+    groups = r.get("color_groups")
+    if groups:
+        # ★ 08-31 — ★ 갈래 표가 ★ `scoring.json` 으로 옮겨졌다 (가이드가 정본을 쥔다).
+        #   ★ 옛 `color_grade.json` 은 ★ 「흔한가」로 재던 표라 ★ 뜻이 다르다
+        grade = color_grade_of(name, groups)
+    else:
+        grade = ctx.dicts.color_grade.get(name, ctx.dicts.color_default)
     if grade is None:
         put(v, COLOR, None, PRIO_OBSERVED, "unclassified", excluded=True)
         return

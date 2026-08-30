@@ -240,6 +240,12 @@ def _consumable(ctx: AxisContext, v: Verdict) -> None:
       그러면 「확인 안 됨 · 0점」이다.  0mm 로 두면 없는 것을 있다고 하는 것이다
     """
     s, r = ctx.snapshot, ctx.policy.rule("state")
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ②) — ★ **이 축이 꺼졌다.**
+    #   ★ 마스터 — 「소모품을 뺀다.  ★ 있으면 나중에 가점으로」
+    #   ★ 배점이 0 이면 ★ 값도 0 이어야 한다 (`analyze/axis/value.py:_market` 과 같다)
+    if not ctx.policy.comp(CONSUMABLE):
+        put(v, CONSUMABLE, 0, PRIO_OBSERVED, "site_unavailable")
+        return
     tread = getattr(s, "tire_tread_mm", None)
     if tread is None:
         # ★ 「우리가 못 받았다」와 「그 사이트가 아예 안 준다」는 다르다 (개정 306).

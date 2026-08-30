@@ -99,10 +99,16 @@ def full_verdict(excluded_comps=(), values=None, taste_full=False) -> Verdict:
 
 def test_denominator() -> None:
     total = POLICY.raw["total_points"]
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ `value.market` 30 → 0 ·
+    #   ★ `state.consumable` 15 → 0.  ★ 그런데 ★ **분모는 910 그대로**다.
+    #   ★ ★ 그래서 ★ 「전 축 만점」이 ★ 분모와 같지 않다 — ★ **닿을 수 있는 합**이다.
+    #   ★ 시험이 배점 숫자를 박지 않는다 (개정 428) — ★ config 에서 읽는다
+    reach = float(POLICY.points_sum())
 
     r = score(full_verdict(), POLICY)
-    check("A 전 축 정상 → 만점", r.score_total == total and r.denominator == total,
-          f"{r.score_total}/{r.denominator}")
+    check("A 전 축 정상 → 닿을 수 있는 만점 · 분모는 그대로",
+          r.score_total == reach and r.denominator == total,
+          f"{r.score_total}/{r.denominator} (닿을 수 있는 합 {reach:g})")
 
     # ★ B · C 는 폐기됐다 (개정 298).  한 축을 못 봐도 분모는 555 다
     # ★ 성분 이름을 박지 않는다 — 배점이 바뀌면 시험이 먼저 죽는다 (개정 292)
@@ -110,10 +116,11 @@ def test_denominator() -> None:
     r = score(full_verdict(excluded_comps=(probe,)), POLICY)
     check("G 한 축 제외 → 분모는 그대로 · 그 축이 0점",
           r.denominator == total
-          and r.score_total == total - POLICY.comp(probe),
+          and r.score_total == reach - POLICY.comp(probe),
           f"{r.denominator} · {r.score_total}")
+    # ★ 08-30 — ★ `applicable` 은 ★ **닿을 수 있는 합**에서 뺀다 (분모가 아니다)
     check("I 확인율을 낼 수 있다 (applicable = 확인한 배점 합)",
-          r.applicable == total - POLICY.comp(probe), f"{r.applicable}")
+          r.applicable == reach - POLICY.comp(probe), f"{r.applicable}")
 
     r = score(full_verdict(excluded_comps=COMPONENTS), POLICY)
     check("D 전 축 실패 → 점수 생성 금지 (NOT_RATED)",
@@ -127,8 +134,8 @@ def test_denominator() -> None:
                           if c not in core), key=lambda c: -POLICY.comp(c))[:4])
     r = score(full_verdict(excluded_comps=heavy), POLICY)
     heavy_pts = sum(POLICY.comp(c) for c in heavy)
-    check("H 많이 못 봐도 분모는 555 · 못 본 만큼 점수가 빠진다",
-          r.denominator == total and r.score_total == total - heavy_pts,
+    check("H 많이 못 봐도 분모는 그대로 · 못 본 만큼 점수가 빠진다",
+          r.denominator == total and r.score_total == reach - heavy_pts,
           f"{r.score_total}/{r.denominator}")
     check("★ 핵심 축(값·사고)이 빠지면 NOT_RATED (개정 287)",
           score(full_verdict(excluded_comps=tuple(core)), POLICY).grade
@@ -169,7 +176,7 @@ def test_components_form() -> None:
           isinstance(raw["components"]["taste.sunroof"], dict))
     raw["total_points"] = total_of(raw["components"])
     check("스킵한 만큼 총점이 준다",
-          raw["total_points"] == POLICY.raw["total_points"]
+          raw["total_points"] == POLICY.points_sum()
           - POLICY.comp("taste.sunroof"),
           str(raw["total_points"]))
 
@@ -186,7 +193,7 @@ def test_components_form() -> None:
     for c in COMPONENTS:
         put(v, c, p.comp(c), PRIO_OBSERVED, "test")
     r2 = score(v, p)
-    want = POLICY.raw["total_points"] - POLICY.comp("taste.sunroof")
+    want = POLICY.points_sum() - POLICY.comp("taste.sunroof")
     check("★ 스킵은 총점에도 분모에도 없다 (excluded 와 다르다)",
           r2.denominator == want and r2.score_total == want,
           f"{r2.score_total}/{r2.denominator}")
@@ -545,8 +552,12 @@ def test_price_real() -> None:
     # ★★ 시세 축(value.market)은 ★ 점수 축이 아니다 (개정 452).
     #   값 170 = 예산 95 + 신차가 대비 75.  화면은 시세를 그대로 낸다
     # ★ 개정 469 — 시세는 30점으로 되살아났다 (마스터 「30점 정도 주라」)
-    check("★ 시세 축이 30점이다 (개정 469)",
-          POLICY.comp("value.market") == 30,
+    # ★★★★★ 08-30 마스터 재확정 (r992 ①) — ★ **다시 0 이다.**
+    #   ★ 「시세 음수를 뺀다.  ★ 분모는 910 그대로 (모수를 안 바꾼다).
+    #     ★ 음수를 다시 넣는 것은 다음에 정한다」
+    #   ★ 실측이 까닭이다 — ★ 아홉 사이트 558건 중 ★ **248건(44%)이 음수**였다
+    check("★ 시세 축이 0점이다 — 음수를 뺐다 (마스터 확정 08-29 밤)",
+          POLICY.comp("value.market") == 0,
           str(POLICY.comp("value.market")))
     _bud = POLICY.raw["budget_manwon"]["by_target"]["G80_25T"] * 10_000
     # ★★★ 08-28 마스터 확정 (r798) — 「★ 기준점에 맞으면 ★ 60% 수준 ·
@@ -565,27 +576,31 @@ def test_price_real() -> None:
           at(_bud * 1.50).values["value.budget"] == 0)
 
     # ── ② 값 — 신차가 대비 75 (개정 452 곡선) ──
-    # ★★★★★ 08-30 마스터 확정 (r990 ①) — ★ **만점을 40% → 60% 로 옮겼다.**
-    #   ★ 「60%=75점 · 75%=37 · 90%=20 · 120%=0.7 · 꼴은 그대로」
-    #   ★ 까닭 — ★ 아홉 사이트 매물의 ★ 현재가÷신차가 ★ **중앙값이 60.1%** 다.
-    #     ★ ★ 40% 만점이면 ★ 거의 모든 중고차가 ★ 곡선 바닥에 앉는다 (실측 08-30 ·
-    #     ★ ★ `value.origin` 이 430건에 31.9% 였다)
-    #   ★★ 옛 시험은 ★ 「40% 만점 · 80% 거의 0」이었다 — ★ 그것은 ★ **옛 곡선**이다
-    check("★★ 신차가의 60% 면 만점 75 (마스터 확정 08-30)",
-          at(org * 0.60).values["value.origin"] == 75,
+    # ★★★★★ 08-30 마스터 재정정 (r993 · 오판 224) — ★ **쌀수록 높다.**
+    #   ★ 「60% 는 ★ 꼭대기가 아니라 ★ **기준점**이다」 — ★ 앞 회차의 「60% 만점」을 물린다.
+    #   ★ 마스터 — 「내 예산도 값이 더 줄면 점수가 높게 되는데 왜 낮아?
+    #     ★ 신차 대비 60·70·80·90% 일수록 점수가 낮아야 되고
+    #     ★ 60·50·40% 일수록 더 후해져야지」
+    #   ★ 곡선 (config 정본) — 25%↓=75(만점) · 40%=58 · 50%≈51 · ★ 60%≈43.5(기준점)
+    #     · 70%≈32 · 80%≈21 · 90%≈13 · 112%↑=0
+    #   ★★ 여기 값을 ★ **코드에 다시 적지 않는다** — ★ 「단조 감소」와 ★ 양 끝만 본다.
+    #     ★ 곡선 수는 ★ `config/scoring.json` 이 정본이다 (V4-13)
+    check("★★ 쌀수록 높다 — 25% 면 만점 75 (마스터 재정정 08-30)",
+          at(org * 0.25).values["value.origin"] == 75,
+          str(at(org * 0.25).values["value.origin"]))
+    check("★★ 값이 오를수록 낮아진다 — 40% > 60% > 80% (재정정 08-30)",
+          at(org * 0.40).values["value.origin"]
+          > at(org * 0.60).values["value.origin"]
+          > at(org * 0.80).values["value.origin"],
+          f"{at(org * 0.40).values['value.origin']} / "
+          f"{at(org * 0.60).values['value.origin']} / "
+          f"{at(org * 0.80).values['value.origin']}")
+    check("★★ 기준점 60% 는 만점의 절반 언저리다 (재정정 08-30)",
+          40 <= at(org * 0.60).values["value.origin"] <= 47,
           str(at(org * 0.60).values["value.origin"]))
-    check("★★ 신차가의 75% 면 37 근처다 (마스터 확정 08-30)",
-          35 <= at(org * 0.75).values["value.origin"] <= 39,
-          str(at(org * 0.75).values["value.origin"]))
-    check("★★ 신차가의 90% 면 20 근처다 (마스터 확정 08-30)",
-          18 <= at(org * 0.90).values["value.origin"] <= 22,
-          str(at(org * 0.90).values["value.origin"]))
-    check("★ 감가가 클수록 점수가 높다 — 90% 는 60% 보다 낮다",
-          at(org * 0.90).values["value.origin"]
-          < at(org * 0.60).values["value.origin"])
-    check("★★ 신차가보다 비싸도 자르지 않는다 — 0 으로 수렴할 뿐이다 (개정 452)",
-          at(org * 1.30).values["value.origin"] == 0,
-          str(at(org * 1.30).values["value.origin"]))
+    check("★★ 신차가보다 비싸면 0 이다 — 자르는 것이 아니라 곡선의 끝이다",
+          at(org * 1.20).values["value.origin"] == 0,
+          str(at(org * 1.20).values["value.origin"]))
     check("★ 신차가가 없으면 0점 · 확인 안 됨",
           analyze_listing(ctx(snap(price_current_won=30_000_000)))
           .sources["value.origin"] == "origin_price_missing")
@@ -599,12 +614,13 @@ def test_price_real() -> None:
     _k8 = at(org, mileage_km=80_000).values["value.mileage"]
     check("★ 8만 km 는 마스터 기준선 — 만점의 절반쯤이다",
           0 < _k8 < _mx, str(_k8))
-    # ★★★ 08-28 마스터 확정 — 「8만킬로를 기준으로 거의 0점」 (오판 148 · r794).
-    #   ★ `axis_rules.value.mileage_curve` 가 ★ 8만 5점 · ★ **10만 0점**이다.
-    #   ★ 전에는 「10만을 넘겨도 자르지 않는다」였다 — ★ 그것이 옛 정책이다.
-    #   ★ 규칙 1 — ★ config 가 정본이다.  ★ 시험을 새 정책에 맞춘다
-    check("★★ 8만 km 는 거의 0 이다 (마스터 확정 08-28)",
-          0 < _k8 <= _mx * 0.1, str(_k8))
+    # ★★★★★ 08-31 마스터 확정 (r1000 ①) — ★ 「★ 10만=0 · ★ **8만=10.7(만점의 10%)**
+    #   ★ 5만=36.8 · 2만=72.6 · 0=107」.
+    #   ★ 마스터 — 「★ 8만까지 있나 하겠다고 한 거지 ★ **무조건 A를 S로 바꾸자는 게 아니야**」
+    #   ★ 곧 ★ 8만은 ★ 「거의 0」이 아니라 ★ **만점의 10% 언저리**다.
+    #   ★ 반올림이 있으므로 ★ 딱 떨어지는 값으로 재지 않는다 (개정 428 — 숫자를 안 박는다)
+    check("★★ 8만 km 는 만점의 10% 언저리다 (마스터 확정 08-31)",
+          _mx * 0.08 <= _k8 <= _mx * 0.12, f"{_k8} / 만점 {_mx}")
     check("★★ 10만 km 부터 0 이다 (마스터 확정 08-28)",
           at(org, mileage_km=100_000).values["value.mileage"] == 0
           and at(org, mileage_km=120_000).values["value.mileage"] == 0)
@@ -622,16 +638,35 @@ def test_price_real() -> None:
 
 # ── 색상 40점 (STEP 80) ──────────────────────────────────────────────
 def test_color() -> None:
-    """④ 취향 — 색상 10점.  흰·검정 10 · 회색·은색 7 · 유색 3 (개정 292)."""
+    """④ 취향 — 색상.
+
+    ★★★★★ 08-31 마스터 확정 (r1000 ②) — ★ **뜻이 뒤집혔다.**
+      ★ 좋아함 15 (청색·블루·진주·펄) · ★ 보통 7 (흰색·검정·은색)
+      ★ 싫어함 0 (빨간색·갈색·베이지)
+      ★ ★ 마스터 — 「★ 붉은색하고 갈색류는 빵점이고 ★ 흰색하고 검정색 쪽은
+        ★ 디폴트로 7점이고 ★ 진주색이랑 푸른색 계열은 모두 15점」
+    ★ 옛 시험은 ★ 「흔한가」로 재던 판이었다 (흰색이 선호 · 유색이 기피).
+      ★ ★ 갈래 이름도 ★ `neutral` → `default` 로 바뀌었다
+    """
     r = POLICY.rule("taste")["color_points"]
-    for name, want in (("흰색", r["preferred"]), ("청색", r["neutral"]),
-                       ("노란색", r["avoided"])):
+    for name, want in (("청색", r["preferred"]), ("흰색", r["default"]),
+                       ("빨간색", r["avoided"])):
         v = analyze_listing(ctx(snap(color_ext_raw=name)))
         check(f"색상 {name} → {want}점", v.values["taste.color"] == want,
               str(v.values["taste.color"]))
-    check("★ 기피색도 0 점이 아니다 — 가치 없음이 아니라 이 축에서 손해",
-          r["avoided"] > 0)
-    check("★ 여집합 규칙 — 열거 밖은 기피 (미분류가 아니다)",
+    check("★★ 사이트마다 이름이 다르다 — 「크리스탈 화이트펄」은 좋아함이다",
+          analyze_listing(ctx(snap(color_ext_raw="크리스탈 화이트펄")))
+          .values["taste.color"] == r["preferred"],
+          str(analyze_listing(ctx(snap(color_ext_raw="크리스탈 화이트펄")))
+              .values["taste.color"]))
+    check("★★ 표에 없는 이름은 보통 7점이다 (마스터 확정 — 「모른다」가 아니다)",
+          analyze_listing(ctx(snap(color_ext_raw="분홍")))
+          .values["taste.color"] == r["default"],
+          str(analyze_listing(ctx(snap(color_ext_raw="분홍")))
+              .values["taste.color"]))
+    check("★ 싫어하는 색은 0 점이다 (마스터 확정 08-29 — 「빵점」)",
+          r["avoided"] == 0)
+    check("★ 표에 없는 이름도 미분류가 아니다 — 점수가 난다",
           "taste.color" not in
           analyze_listing(ctx(snap(color_ext_raw="분홍"))).excluded)
     v = analyze_listing(ctx(snap()))

@@ -471,15 +471,24 @@ def apply_config(conn: sqlite3.Connection, account: Account, file: str,
 
 
 def _validate_blob(file: str, blob: dict) -> None:
-    """값 검증.  배점이면 Σ(skipped 아닌) == total_points (STEP 128)."""
+    """값 검증.  배점이면 Σ(skipped 아닌) ≤ total_points (STEP 128).
+
+    ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ `value.market` 30 → 0 ·
+      ★ `state.consumable` 15 → 0 인데 ★ 「★ **분모는 910 그대로** (모수를 안 바꾼다)」.
+      ★ ★ 그래서 ★ 합이 ★ 865 다 — ★ 45점은 ★ **닿을 수 없는 자리**로 남는다.
+    ★★ 「같아야 한다」를 ★ 「넘으면 안 된다」로 바꾼다.
+      ★ 이 관문이 막던 것은 ★ **분모를 줄여 비율을 높이는 등급 인플레**다 (STEP 128).
+      ★ ★ 합이 ★ 작은 것은 ★ 그 반대라 ★ 후하게 매겨질 길이 없다.
+      ★ ★ 합이 ★ 큰 것은 ★ 여전히 막는다 — ★ 100%를 넘길 수 있다
+    """
     if file != "scoring.json":
         return
     from contracts import total_of
 
     s = total_of(blob["components"])
-    if s != blob["total_points"]:
+    if s > blob["total_points"]:
         raise ValidationError(
-            f"배점 합 {s} != total_points {blob['total_points']}",
+            f"배점 합 {s} > total_points {blob['total_points']}",
             step="STEP 128")
 
 

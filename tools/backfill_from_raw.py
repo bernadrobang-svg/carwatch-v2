@@ -266,8 +266,45 @@ def reborncar(conn, write: bool) -> Counter:
     return got
 
 
+def out_of_scope(conn, write: bool) -> Counter:
+    """★★★★★ 08-30 (마스터 확정 r990 ④) — ★ `out_of_scope` 의 ★ **판정만 지운다.**
+
+    ★★ `core_listing` 행은 ★ **안 지운다** (금지).  ★ 원문도 ★ 안 지운다 (P3).
+    ★ 지우는 것은 ★ `result_axis` · `result_score` 뿐이다 — ★ 다시 만들 수 있는 것이다.
+    ★★ 까닭 — ★ 재판정은 우리 차종만 다시 매긴다.  ★ 화면 밖 매물의 판정은
+      ★ ★ **낡은 채로 남아** ★ 배점이 바뀌어도 옛 값이 그대로다.
+      ★ ★ 실측 08-31 — ★ `V3-86` 이 잡았다 — ★ `value.market` 이 ★ 배점 0 인데
+      ★ ★ ★ 값 30 인 행이 남아 있었다 (마스터께서 그 축을 끄셨는데도)
+    """
+    got: Counter = Counter()
+    ids = [r[0] for r in conn.execute(
+        "SELECT listing_id FROM core_listing WHERE status='out_of_scope'")]
+    got["화면 밖 매물"] = len(ids)
+    if not ids:
+        return got
+    marks = ",".join("?" * len(ids))
+    for table in ("result_axis", "result_score"):
+        got[f"{table} 지울 행"] = conn.execute(
+            f"SELECT COUNT(*) FROM {table} WHERE listing_id IN ({marks})",
+            ids).fetchone()[0]
+    if write:
+        for table in ("result_axis", "result_score"):
+            conn.execute(
+                f"DELETE FROM {table} WHERE listing_id IN ({marks})", ids)
+        conn.commit()
+        got["★ 지웠다"] = 1
+        # ★ 행은 그대로인지 ★ 곧바로 대본다 (선언과 실제의 괴리를 막는다)
+        got["core_listing 행 (그대로여야 한다)"] = conn.execute(
+            "SELECT COUNT(*) FROM core_listing WHERE status='out_of_scope'"
+        ).fetchone()[0]
+        got["원문 봉투 (그대로여야 한다)"] = conn.execute(
+            "SELECT COUNT(*) FROM raw_response").fetchone()[0]
+    return got
+
+
 SITES = {"heydealer": heydealer, "kbchachacha": kbchachacha,
-         "hyundai_cert": hyundai_cert, "reborncar": reborncar}
+         "hyundai_cert": hyundai_cert, "reborncar": reborncar,
+         "out_of_scope": out_of_scope}
 
 
 def main() -> int:

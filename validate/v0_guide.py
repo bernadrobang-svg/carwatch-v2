@@ -4465,7 +4465,7 @@ def s46_187_cheaper_scores_higher():
         if not isinstance(cur, list) or len(cur) < 3:
             continue
         pts = [p[1] for p in cur]
-        for a, b in zip(pts, pts[1:]):
+        for a, b in zip(pts, pts[1:], strict=False):
             if b > a + 0.01:
                 bad.append(f"{name} — 값이 비싸지는데 점수가 오른다")
                 break

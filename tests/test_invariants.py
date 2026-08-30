@@ -113,10 +113,17 @@ def inv2_banned() -> None:
 def inv5_points() -> None:
     sc = json.load(io.open(os.path.join(ROOT, "config", "scoring.json"), encoding="utf-8"))
     comp = sc["components"]
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ `value.market` 30 → 0 ·
+    #   ★ `state.consumable` 15 → 0 인데 ★ 「★ **분모는 910 그대로** (모수를 안 바꾼다)」.
+    #   ★ ★ 그래서 ★ **합 ≤ 총점**이다.  ★ 45점은 ★ 닿을 수 없는 자리로 남는다.
+    #   ★★ **넘는 것은 여전히 막는다** — ★ 합이 총점보다 크면 ★ 100%를 넘길 수 있다
+    got = sum(comp.values())
     check(
-        "불변식⑤ 배점 합 == total_points",
-        sum(comp.values()) == sc["total_points"],
-        f"{sum(comp.values())} / {sc['total_points']}",
+        "불변식⑤ 배점 합 <= total_points (닿을 수 없는 자리는 남긴다)",
+        got <= sc["total_points"],
+        f"{got} / {sc['total_points']} · 닿을 수 없는 자리 "
+        f"{sc['total_points'] - got}점 "
+        f"({' · '.join(k for k, v in comp.items() if not v) or '없다'})",
     )
     check("V5-02 등급컷 내림차순", list(sc["grade_cuts"].values()) == sorted(
         sc["grade_cuts"].values(), reverse=True))

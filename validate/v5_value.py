@@ -67,7 +67,12 @@ def run(conn, ctx) -> list:
     from score.adjust import total_of
 
     s = total_of(policy["components"])
-    out.append(result(C["V5-01"], rid, total, s, s == total))
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ 「분모는 910 그대로」.
+    #   ★ 꺼진 축(`value.market`·`state.consumable`) 만큼 ★ 합이 모수보다 작다.
+    #   ★ ★ **작은 것은 통과** · ★ **큰 것은 실패** (100%를 넘길 수 있다)
+    out.append(result(C["V5-01"], rid, total,
+                      f"{s}" if s >= total else f"{s} · 닿을 수 없는 자리 {total - s}점",
+                      s <= total))
 
     from score.grade import cutoffs
     from analyze.axes import ScoringPolicy
@@ -238,7 +243,12 @@ def _denominator_suite(run_id: str, policy: dict):
         fails.append("H 못 본 축이 0점으로 안 남았다")
 
     # I — 확인율을 낼 수 있다.  applicable 이 「확인한 배점 합」이다
-    if r_one.applicable != total - p.comp(probe):
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ `value.market` 30 → 0 ·
+    #   ★ `state.consumable` 15 → 0 인데 ★ 「분모는 910 그대로」다.
+    #   ★ ★ 그러므로 ★ 「확인할 수 있었던 점」은 ★ **닿을 수 있는 합**(865)이지
+    #     ★ ★ 분모(910)가 아니다.  ★ 분모로 재면 ★ 45점이 늘 「확인했다」로 남는다
+    #   ★ 분모 자체는 ★ 위 G 가 ★ 910 인지 그대로 본다 — ★ 둘은 다른 값이다
+    if r_one.applicable != float(p.points_sum()) - p.comp(probe):
         fails.append("I 확인율을 낼 수 없다")
     return result(C["V5-03"], run_id, "A·D·E·G·H·I 전건",
                   fails or "통과", not fails, fails)

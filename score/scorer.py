@@ -84,9 +84,18 @@ def score(v: Verdict, policy: ScoringPolicy,
           absolute: list[str] | None = None,
           snapshot=None) -> ScoreResult:
     total = float(policy.raw["total_points"])
-    if policy.points_sum() != policy.raw["total_points"]:
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) —
+    #   ★ `value.market` 30 → **0** · `state.consumable` 15 → **0**.
+    #   ★ ★ 마스터 — 「★ **분모는 910 그대로** (모수를 안 바꾼다)」
+    #   ★ ★ 그래서 ★ 배점 합이 ★ **865** 다 — ★ 45점은 ★ **닿을 수 없는 자리**로 남는다.
+    #   ★★ 관문이 「같아야 한다」였다 — ★ 「넘으면 안 된다」로 바꾼다.
+    #     ★ ★ 이 관문이 막던 것은 ★ **분모를 줄여 비율을 높이는 등급 인플레**다
+    #       (개정 128 · 실측 08-17 — 사고를 모르는데 등급이 난 것 1,131건).
+    #     ★ ★ 합이 ★ **작은** 것은 ★ 그 반대다 — ★ 후하게 매겨질 길이 없다.
+    #     ★ ★ 합이 ★ **큰** 것은 ★ 여전히 막는다 (100%를 넘는 축 합은 앞뒤가 안 맞는다)
+    if policy.points_sum() > policy.raw["total_points"]:
         raise PolicyError(
-            f"배점 합 {policy.points_sum()} != total_points "
+            f"배점 합 {policy.points_sum()} > total_points "
             f"{policy.raw['total_points']} (STEP 128)", step="STEP 128")
     # ★ 핵심 축이 빠지면 등급을 매기지 않는다 (개정 287).
     #   분모를 줄여 비율을 높이는 것이 등급 인플레다 —
@@ -98,7 +107,8 @@ def score(v: Verdict, policy: ScoringPolicy,
     excluded_points = 0.0
     earned = 0.0
     grade_earned = 0.0
-    grade_base = 0.0
+    # ★ 등급 분모는 ★ 만점에서 시작해 ★ 「등급에서 뺀 축」만 덜어낸다 (아래 참고)
+    grade_base = total
     confirmed = 0.0
     by_axis: dict[str, float] = {}
 
@@ -109,8 +119,15 @@ def score(v: Verdict, policy: ScoringPolicy,
         weight = float(policy.comp(comp))
         # ★ 등급은 취향을 뺀 505 로 매긴다.  분모는 못 봐도 505 그대로다
         for_grade = axis_of(comp) not in GRADE_EXCLUDED_AXES
-        if for_grade:
-            grade_base += weight
+        if not for_grade:
+            # ★★★★★ 08-30 (마스터 확정 r992 ①②) — ★ 등급 분모는 ★ **모수 그대로**다.
+            #   ★ 마스터 — 「★ 분모는 910 그대로 (모수를 안 바꾼다)」
+            #   ★ ★ 전에는 ★ 「본 축의 배점을 더해」 만들었다 — ★ 그러면
+            #     ★ ★ `value.market`·`state.consumable` 을 끄자 ★ 865 로 내려가
+            #     ★ ★ 등급이 저절로 후해진다 (65%가 591.5 → 562).
+            #   ★ ★ 그래서 ★ 만점에서 ★ **등급에서 뺀 축만** 덜어낸다.
+            #     ★ 지금 `GRADE_EXCLUDED_AXES` 는 비어 있으므로 ★ 곧 910 이다
+            grade_base -= weight
         if comp in v.excluded or comp not in v.values:
             excluded_points += weight
             continue
@@ -142,7 +159,14 @@ def score(v: Verdict, policy: ScoringPolicy,
 
     # ★ applicable 은 「확인한 축의 배점 합」이다.  분모가 아니다.
     #   화면이 「555점 중 330점 · 205점은 확인하지 못했습니다」를 내는 데 쓴다
-    applicable = total - excluded_points
+    # ★★★★★ 08-30 (마스터 확정 r992 ①②) — ★ **닿을 수 있는 합**에서 뺀다.
+    #   ★ 전에는 ★ `total`(910) 에서 뺐다.  ★ 그런데 ★ `value.market`·
+    #     `state.consumable` 이 ★ 0 이 되어 ★ 배점 합이 ★ 865 다.
+    #   ★ ★ 그러면 ★ **전 축을 다 못 봐도** ★ `applicable` 이 ★ 45 로 남아
+    #     ★ ★ 「전 축 수집 실패」 갈래가 ★ **닿지 않는 길**이 된다 (실측 08-30 · 시험 D).
+    #   ★ ★ 「확인할 수 있었던 점」이 ★ 애초에 865 이므로 ★ 그것이 옳다.
+    #     ★ ★ 분모(`denominator`)는 ★ 910 그대로다 — ★ 이것과 다른 값이다
+    applicable = float(policy.points_sum()) - excluded_points
     fail = "; ".join(absolute) if absolute else None
 
     if applicable <= 0:

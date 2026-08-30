@@ -501,9 +501,28 @@ def run(conn, ctx) -> list:
     out.append(result(C["V10-11"], rid, "잠금 존재", has, has))
 
     # V10-12 — 0점 성분
-    zeros = [k for k, v in ctx.policy_raw["components"].items()
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ **뜻이 셋이 됐다.**
+    #   ⓐ ★ 스킵            — ★ 총점에서도 분모에서도 뺀다 (`{"skipped": true}`)
+    #   ⓑ ★ **축을 끄되 분모는 둔다** — ★ 배점만 0 · ★ `total_points` 는 그대로.
+    #        ★ ★ 마스터 — 「시세 음수를 뺀다.  ★ **분모는 910 그대로** (모수를 안 바꾼다)」
+    #        ★ ★ 스킵을 쓰면 ★ 분모가 865 로 내려가 ★ 마스터 지시와 어긋난다
+    #   ⓒ ★ 실수로 0 이 된 것 — ★ ★ **이것만 물어야 한다**
+    #   ★★ ⓑ 와 ⓒ 를 가르는 자국 — ★ 분모(`total_points`)를 ★ **함께 안 내렸는가**.
+    #     ★ ★ ⓑ 면 ★ `total_points` > Σ배점 이고 ★ 그 차가 ★ 꺼진 축들의 몫이다.
+    #     ★ ★ ⓒ 면 ★ 둘이 같다 — ★ 축 하나가 조용히 사라져도 아무도 모른다
+    #   ★ ★ 그래서 ★ 「분모를 안 내렸으면 ★ 뜻이 있는 것」으로 본다.  ★ 수는 그대로 낸다
+    #   ★★ 마스터께 올린다 — ★ 이 갈래를 규격에 적을지 (규칙 2 · 내가 안 적는다)
+    from contracts import total_of
+
+    raw = ctx.policy_raw
+    zeros = [k for k, v in raw["components"].items()
              if (v["points"] if isinstance(v, dict) else v) == 0]
-    out.append(result(C["V10-12"], rid, 0, zeros or 0, not zeros, zeros))
+    kept = float(raw["total_points"]) - float(total_of(raw["components"]))
+    said = (zeros or 0) if not zeros else (
+        f"{' · '.join(zeros)} — ★ 분모를 안 내렸다 (닿을 수 없는 자리 {kept:g}점)"
+        if kept > 0 else zeros)
+    out.append(result(C["V10-12"], rid, 0, said,
+                      not zeros or kept > 0, [] if kept > 0 else zeros))
 
     # V10-13 — 웹 전면 재수집
     from collect.pipeline import CLI_ONLY_REASONS, check_recalc_origin

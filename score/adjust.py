@@ -26,7 +26,13 @@ def redistribute(components: dict[str, int], new_total: int) -> dict[str, int]:
         raise PolicyError("기존 총점이 0 이다", step="STEP 128")
     out = {k: round(v * new_total / old_total) for k, v in components.items()}
 
-    zero = sorted(k for k, v in out.items() if v == 0)
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ **이미 0 인 축은 뺀다.**
+    #   ★ `value.market`·`state.consumable` 은 ★ 마스터께서 ★ 일부러 끄신 축이다
+    #     (「시세 음수를 뺀다」·「소모품을 뺀다」 · ★ 분모는 910 그대로).
+    #   ★ ★ 이 관문이 막던 것은 ★ **비율을 다시 나누다 축이 조용히 사라지는 것**이다 —
+    #     ★ ★ 곧 ★ 「있던 축이 0 이 됐다」다.  ★ 「애초에 0 이던 축」이 아니다
+    zero = sorted(k for k, v in out.items()
+                  if v == 0 and components.get(k))
     if zero:
         raise PolicyError(
             f"0 이 되는 성분: {zero}. 「점수 0」과 「스킵」은 다르다. "
@@ -92,7 +98,13 @@ def redistribute_axis(components: dict, axis: str, new_total: int) -> dict:
         raise ValidationError(f"축에 성분이 없다: {axis}", step="STEP 128")
     scaled = redistribute(members, int(new_total))
 
-    zeroed = sorted(k for k, v in scaled.items() if v <= 0)
+    # ★★★★★ 08-30 (마스터 확정 08-29 밤 · r992 ①②) — ★ **이미 0 인 축은 뺀다.**
+    #   ★ `state.consumable` 은 ★ 마스터께서 ★ 일부러 끄신 축이다
+    #     (「소모품을 뺀다 · 있으면 나중에 가점으로」 · ★ 분모는 910 그대로).
+    #   ★ 이 관문이 막는 것은 ★ 「있던 축이 재배분에 눌려 사라지는 것」이다 —
+    #     ★ ★ 「애초에 0 이던 축」이 아니다 (위 `redistribute` 와 같은 까닭)
+    zeroed = sorted(k for k, v in scaled.items()
+                    if v <= 0 and members.get(k))
     if zeroed:
         raise ValidationError(
             f"0 점이 되는 성분이 있다: {', '.join(zeroed)}. "
