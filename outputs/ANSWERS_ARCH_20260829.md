@@ -1,7 +1,7 @@
-# 물음지 58개에 답한다 (SPEC-2026.08.29-r933)
+# 물음지 58개에 답한다 (SPEC-2026.08.29-r934)
 
 ```
-version  SPEC-2026.08.29-r933
+version  SPEC-2026.08.29-r934
 follows  docs/ARCHITECTURE_20260829.md · outputs/QUESTIONS_ARCH_20260829.md
 sources  개발측 물음지 7b5c7f4 · 가이드 실측 08-29
 ```
