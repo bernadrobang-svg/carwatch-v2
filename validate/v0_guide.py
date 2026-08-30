@@ -4204,6 +4204,57 @@ def s46_176_guide_probes_sites():
                        + "  ★ 사이트를 두드리는 것은 가이드 몫이다")
     return True, "「열어 재라」가 다 가이드 실측을 달고 있다"
 
+
+def s46_177_catalog_not_site_locked():
+    """S46-177 — ★ 카탈로그를 ★ `site` 로 가두지 않는가 (08-29).
+
+    ★ `verify_axes.py:702` 가 ★ `WHERE site=? AND model_catalog_key=?` 라
+      ★ ★ 엔카로 받은 카탈로그를 ★ K카 매물에 못 쓴다.
+      ★ ★ 옵션은 ★ **차의 속성**이지 사이트의 속성이 아니다 (갈래 ③)
+    ★ 잣대 — ★ `dict_model_option` 을 찾는 질의에 ★ `site=?` 가 남아 있으면 실패
+    """
+    import re as _re
+
+    q = ROOT / "tools" / "verify_axes.py"
+    if not q.is_file():
+        return False, "verify_axes.py 가 없다"
+    body = _read(q)
+    bad = []
+    for m in _re.finditer(r"dict_model_option", body):
+        seg = body[max(0, m.start() - 200):m.start() + 260]
+        if _re.search(r"site\s*=\s*\?", seg):
+            bad.append(str(body[:m.start()].count("\n") + 1))
+    if bad:
+        return False, ("★ 카탈로그를 site 로 가둔 곳 " + " · ".join(bad[:4])
+                       + "  ★ 옵션은 차의 속성이다 (갈래 ③)")
+    return True, "카탈로그가 사이트에 안 갇혀 있다"
+
+
+def s46_178_list_field_not_empty_axis():
+    """S46-178 — ★ 목록이 주는 칸이 ★ 축에서 비어 있지 않은가 (08-29).
+
+    ★ 렉서스 1위 매물의 ★ 「연식 80」이 비어 있다.
+      ★ ★ 열어 보니 ★ **`parse/` 에 렉서스 폴더가 아예 없다** — ★ 열 곳 중 하나만 없다
+    ★ 잣대 — ★ `config/sites.json` 의 사이트마다 ★ `parse/{site}/` 가 있어야 한다
+    """
+    import re as _re
+
+    import json as _j
+
+    sites = _j.loads(_read(ROOT / "config" / "sites.json"))
+    have = {p.name for p in (ROOT / "parse").iterdir() if p.is_dir()}
+    bad = []
+    for k in sites:
+        if k.startswith("_") or k == "dealer_site":
+            continue
+        if k in have:
+            continue
+        bad.append(k)
+    if bad:
+        return False, ("★ 파서가 없는 사이트 " + " · ".join(bad)
+                       + "  ★ 목록이 주는 칸(연식 80점)조차 못 넣는다")
+    return True, f"사이트 {len(have)}곳에 파서가 다 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4235,6 +4286,10 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-177", "카탈로그를 site 로 가두지 않는가",
+     s46_177_catalog_not_site_locked),
+    ("S46-178", "목록이 주는 칸이 파서에 있는가",
+     s46_178_list_field_not_empty_axis),
     ("S46-176", "사이트 두드리기를 넘기지 않는가",
      s46_176_guide_probes_sites),
     ("S46-175", "점수를 「나머지 N」으로 뭉개지 않는가",

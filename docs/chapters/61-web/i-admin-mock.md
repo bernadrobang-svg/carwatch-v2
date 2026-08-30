@@ -1,7 +1,7 @@
 # 관리 화면 시안 — 좁은 폭 360 기준
 
 ```
-version  SPEC-2026.08.29-r972
+version  SPEC-2026.08.29-r973
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39

@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **504개**
+검사 **506개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **504** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **506** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **18** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **34** | 개발측 |
 
@@ -161,6 +161,8 @@
 | `S46-174` | 「창구가 없다」를 열어 보고 적었는가 | fatal | `validate/v0_guide.py:4120` | **★ 없음** | 없음 | guide/03_이력.md:1081 · guide/06_오판대장.md:303 |
 | `S46-175` | 점수를 「나머지 N」으로 뭉개지 않는가 | fatal | `validate/v0_guide.py:4147` | **★ 없음** | 없음 | guide/03_이력.md:1083 · guide/06_오판대장.md:304 |
 | `S46-176` | 사이트 두드리기를 넘기지 않는가 | fatal | `validate/v0_guide.py:4180` | **★ 없음** | 없음 | guide/03_이력.md:1085 · guide/06_오판대장.md:305 |
+| `S46-177` | 카탈로그를 site 로 가두지 않는가 | fatal | `validate/v0_guide.py:4208` | **★ 없음** | 없음 | guide/03_이력.md:1101 · chapters/30-score/f-table.md:1779 |
+| `S46-178` | 목록이 주는 칸이 파서에 있는가 | fatal | `validate/v0_guide.py:4233` | **★ 없음** | 없음 | guide/03_이력.md:1101 · chapters/30-score/f-table.md:1803 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -664,6 +666,8 @@
 - `S46-174` 「창구가 없다」를 열어 보고 적었는가 — `validate/v0_guide.py`
 - `S46-175` 점수를 「나머지 N」으로 뭉개지 않는가 — `validate/v0_guide.py`
 - `S46-176` 사이트 두드리기를 넘기지 않는가 — `validate/v0_guide.py`
+- `S46-177` 카탈로그를 site 로 가두지 않는가 — `validate/v0_guide.py`
+- `S46-178` 목록이 주는 칸이 파서에 있는가 — `validate/v0_guide.py`
 - `S46-21` 시안 한 파일에 화면이 하나인가 — `validate/v0_guide.py`
 - `S46-22` 시안 절 차례가 화면과 같은가 — `validate/v0_guide.py`
 - `S46-23` 빈 site_query 가 없는가 — `validate/v0_guide.py`
