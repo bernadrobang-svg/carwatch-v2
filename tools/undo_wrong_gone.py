@@ -151,6 +151,50 @@ def probe(site, sid):
 
 
 
+
+def probe_body(site, sid):
+    """★★★★ 살아 있나 ＋ ★ **받은 몸통**을 함께 돌려준다 (08-30).
+
+    ★ `probe()` 는 ★ 살아 있는지만 본다 — ★ 몸통을 버린다.
+      ★ ★ 「다시 받는다」(마스터 0e ③)는 ★ **원문을 남기는 것**이다 (명령서 3-2 · P3).
+      ★ ★ 안 남기면 ★ 「받았다」고 하고 ★ 근거가 없는 꼴이 된다 — ★ 이번에 155건이 그랬다.
+    ★ `probe()` 를 고치지 않는다 — ★ 그것을 쓰는 자리가 둘이다.  ★ 여기서 감싼다
+    돌려줌  (살아 있나, 몸통글자, 부른 주소)
+    """
+    sc = CFG.get(site) or {}
+    paths = sc.get("paths") or {}
+    url = None
+    if site == "lexus_certified":
+        url = f"{sc['base_url']}/api/json/getData_car_detail.json.php?idx={sid}"
+    elif site == "kcar":
+        from adapters.kcar import KcarAdapter, load_config
+
+        url = KcarAdapter(load_config(ROOT)).detail_urls(sid)[0].url
+    elif site == "heydealer":
+        from adapters.heydealer import HeydealerAdapter
+
+        a = HeydealerAdapter(sc); a.token()
+        url = a.detail_urls(sid)[0].url
+    elif site == "volvo_selekt":
+        import sqlite3 as _sq
+
+        c2 = _sq.connect("file:carwatch.db?mode=ro", uri=True)
+        row = c2.execute("select site_model from core_listing"
+                         " where site=? and source_id=?", (site, sid)).fetchone()
+        if row and row[0]:
+            url = f"{sc['base_url']}/kr/vehicles/volvo/{row[0]}/{sid}"
+    elif paths.get("detail"):
+        tmpl = paths["detail"]
+        key = "goods_no" if "{goods_no}" in tmpl else "source_id"
+        url = sc["base_url"] + tmpl.format(**{key: sid})
+    ok = probe(site, sid)
+    body = None
+    if url and ok is not None:
+        _code, raw = _get(url, sc.get("headers"))
+        if raw:
+            body = raw.decode("utf-8", "replace")
+    return ok, body, url
+
 def main() -> int:
     write = "--write" in sys.argv
     want = [a for a in sys.argv[1:] if not a.startswith("-")]

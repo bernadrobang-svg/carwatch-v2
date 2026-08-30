@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from report.screens.build import _listings_where  # noqa: E402
+from report.screens.build import _listings_where, view_track  # noqa: E402
 from report.screens.views import ListingFilter  # noqa: E402
 
 JOIN = ("FROM core_listing l"
@@ -49,14 +49,12 @@ def main() -> int:
     one = sum(screen(conn, site=s, min_grade="A") for s in NINE)
     three = screen(conn, fuel="electric", min_grade="A")
 
-    # ★ ② 같은 차 짝 — ★ 화면에 보이는 것 중 ★ 「N곳」이 2 이상인 매물
-    parts, args = _listings_where(ListingFilter())
-    two = conn.execute(
-        f"SELECT COUNT(*) {JOIN}{' AND '.join(parts)}"
-        "   AND l.plate_hash IN ("
-        "     SELECT plate_hash FROM core_listing WHERE plate_hash IS NOT NULL"
-        "       AND status='active' GROUP BY plate_hash"
-        "       HAVING COUNT(DISTINCT site) > 1)", args).fetchone()[0]
+    # ★★ ② 같은 차 짝 — ★ 08-30 (마스터 r956) — ★ `/track` 의
+    #   ★ 「짝지어진 차 N대」 ★ **그 수**다.  ★ **대**이지 매물이 아니다.
+    #   ★ 전에 나는 ★ 「짝에 든 매물」을 세어 ★ 두 배 가까이 냈다.
+    #   ★ 손으로 SQL 을 짜지 않는다 — ★ 화면을 그대로 부른다
+    cv = conn.execute("SELECT MAX(calc_version) FROM result_score").fetchone()[0]
+    two = view_track(None, conn, cv).total_pairs
 
     print("★ 회차마다 낼 세 수 (화면 기준)")
     print(f"  ① 아홉 사이트 A 이상   {one:6,d}건")

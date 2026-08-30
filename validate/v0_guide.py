@@ -4054,9 +4054,7 @@ def s46_171_yardstick_names_screen():
 
     ★ 08-29 — ★ 짝 수를 ★ `/track` 이 아니라 ★ `/listings` 배지로 세어
       ★ 「0건」이라 보고했다.  ★ 실제는 ★ 275대였다
-    ★ 잣대 — ★ 가이드역할의 잣대 셋에 ★ 화면 주소가 붙어 있는가
     """
-    import re as _re
 
     body = _read(ROOT / "docs" / "guide" / "05_가이드역할.md")
     i = body.find("정본 — ★ 마스터께서 보시는 화면 그대로 센다")

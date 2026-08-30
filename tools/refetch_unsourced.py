@@ -34,7 +34,8 @@ sys.path.insert(0, ROOT)
 
 from store.core import record_change  # noqa: E402
 from store.raw import commit, connect_db  # noqa: E402
-from tools.undo_wrong_gone import probe  # noqa: E402
+from store.raw import save_site_raw  # noqa: E402
+from tools.undo_wrong_gone import probe_body  # noqa: E402
 
 SLEEP_SEC = 0.85
 # ★ 잇달아 이만큼 못 받으면 ★ `unreachable` 이다 (마스터 확정)
@@ -108,28 +109,39 @@ def main() -> int:
         return 0
 
     print(f"③ 다시 받는다 — {len(rows):,}건 · 사이트마다 끊어서")
-    got = {"살아 있다": 0, "detail_gone(not_found)": 0, "unreachable": 0}
+    got = {"살아 있다": 0, "detail_gone": 0, "unreachable": 0}
     per: dict = {}
     for lid, site, sid, _st in rows:
-        ok = probe(site, sid)
+        # ★★★★ 08-30 — ★ 「다시 받는다」는 ★ **원문을 남기는 것**이다 (명령서 3-2 · P3).
+        #   ★ 앞 판은 ★ 살아 있는지만 보고 ★ 몸통을 버렸다 —
+        #   ★ ★ 그래서 155건이 ★ 「ok 인데 원문이 없는」 꼴로 남았다.  ★ 고쳤다
+        ok, body, url = probe_body(site, sid)
+        if body and url:
+            save_site_raw(conn, site, "detail", sid, url, body, at,
+                          listing_id=lid)
         per.setdefault(site,
-                       {"살아 있다": 0, "detail_gone(not_found)": 0,
+                       {"살아 있다": 0, "detail_gone": 0,
                         "unreachable": 0})
         if ok is True:
             key = "살아 있다"
             conn.execute("UPDATE core_listing SET detail_status='ok'"
                          " WHERE listing_id=?", (lid,))
         elif ok is False:
-            # ★★★★ 08-30 — ★ `detail_status` 는 ★ 정해진 다섯만 받는다 (DDL CHECK) —
-            #   ★ `ok` · `empty` · `not_found` · `error` · `not_requested`.
-            #   ★ 마스터께서 말씀하신 「detail_gone」이 ★ 그 다섯에 없다.
-            #   ★★ **새 이름을 만들지 않는다** (규칙 2) — ★ 뜻이 같은 `not_found` 를 쓴다.
-            #   ★ ★ 사이트가 「없다」고 답한 것이 ★ 곧 `not_found` 다
-            key = "detail_gone(not_found)"
-            conn.execute("UPDATE core_listing SET detail_status='not_found'"
-                         " WHERE listing_id=?", (lid,))
-            record_change(conn, lid, "detail_status", "ok", "not_found", at,
-                          "status")
+            # ★★★★★ 08-30 (마스터 정정) — ★ **칸이 둘이다.**
+            #   ★ `detail_status` 는 ★ CHECK 로 다섯에 묶여 있다
+            #     (`ok`·`empty`·`not_found`·`error`·`not_requested`) — ★ `not_found` 다.
+            #   ★ `sales_status` 는 ★ TEXT 이고 묶임이 없다 (`02_core.sql:65`) —
+            #     ★ ★ 거기에 ★ **`detail_gone`** 을 적는다.  ★ DDL 을 안 고친다.
+            #   ★ `status` 는 ★ `gone` 이다 — ★ 사이트가 직접 「없다」고 답했으므로
+            #     ★ ★ 근거가 있다 (목록에 없다고 죽이는 것과 다르다 · 0c)
+            #   ★★ 셋을 ★ **함께** 적는다 (마스터 지시)
+            key = "detail_gone"
+            conn.execute(
+                "UPDATE core_listing SET detail_status='not_found',"
+                " sales_status='detail_gone', status='gone', gone_at=?,"
+                " last_price_won=COALESCE(last_price_won, price_current_won)"
+                " WHERE listing_id=?", (at, lid))
+            record_change(conn, lid, "status", _st, "gone", at, "gone")
         else:
             # ★ 못 받았다 — ★ 「없다」로 안 적는다.  ★ 다음 바퀴가 다시 본다.
             #   ★ 잇달아 사흘이면 ★ `unreachable` 이다 (마스터 확정)
