@@ -272,7 +272,7 @@
 | `V3-71` | 보증 잔여가 기간·거리 중 낮은 쪽임 | run | `validate/v3_logic.py:330` | **★ 없음** | 없음 | trace/05-score.md:113 · trace/05-score.md:115 · guide/03_이력.md:384 |
 | `V3-72` | SOH 가점이 곡선대로 붙음 | run | `validate/v3_logic.py:151` | **★ 없음** | 없음 | guide/03_이력.md:399 · chapters/30-score/f-table.md:933 |
 | `V3-73` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:400 · chapters/30-score/f-table.md:1607 |
-| `V3-75` | 트림 점수를 신차가로 잼 | run | `validate/v3_logic.py:273` | **★ 없음** | 없음 | guide/03_이력.md:401 · guide/03_이력.md:1025 · chapters/30-score/f-table.md:1216 |
+| `V3-75` | 트림 점수를 신차가로 잼 | run | `validate/v3_logic.py:273` | **★ 없음** | 없음 | guide/03_이력.md:401 · guide/03_이력.md:1025 · guide/03_이력.md:1027 |
 | `V3-76` | ⑤ 의 하위 축 합이 갈래 표기와 같음 | run | `validate/v3_logic.py:256` | **★ 없음** | 없음 | guide/03_이력.md:412 · chapters/30-score/f-table.md:1326 |
 | `V3-77` | 갈래마다 하위 축 합 = 갈래 표기 (전 갈래) | run | `validate/v3_logic.py:262` | **★ 없음** | 없음 | guide/03_이력.md:412 · guide/03_이력.md:431 · guide/03_이력.md:452 |
 | `V3-78` | 「그 밖」으로 옮긴 값이 축을 덮지 않음 | run | `validate/v3_logic.py:267` | **★ 없음** | 없음 | guide/03_이력.md:418 |
