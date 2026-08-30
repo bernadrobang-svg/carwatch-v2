@@ -4116,6 +4116,33 @@ def s46_173_endpoint_not_wordcount():
                        + " · ".join(bad[:5]))
     return True, "진단·보험이력 규격이 다 창구를 적었다"
 
+
+def s46_174_no_endpoint_only_if_probed():
+    """S46-174 — ★ 「창구가 없다」를 ★ 열어 보고 적었는가 (오판 214).
+
+    ★ 08-29 — ★ 「아홉 사이트는 상세 하나만 받고 있었다」고 적었는데
+      ★ ★ 보배에는 ★ 보험이력 팝업이 있었다.  ★ 안 찾아서 한 말이었다
+    ★ 잣대 — ★ 「상세 하나만」·「창구가 없다」를 쓴 곳에
+      ★ **무엇을 세었는지**(`onclick`·`data-`·ajax)가 함께 있어야 한다
+    """
+    import re as _re
+
+    bad = []
+    for q in list(_guide_docs()):
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"상세 하나만|창구가 (없다|하나)", ln):
+                continue
+            if _re.search(r"onclick|data-|ajax|열어|아직 안", ln):
+                continue
+            # ★ 마스터 인용·내 자백·물린 줄은 ★ 주장이 아니다
+            if _re.search(r"마스터 —|★ 마스터|「|성겼다|물린다|~~|안 찾아서|적었다", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 열어 보지 않고 「창구가 없다」라 적은 곳 "
+                       + " · ".join(bad[:5]))
+    return True, "「창구가 없다」가 다 열어 본 자취를 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4147,6 +4174,8 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-174", "「창구가 없다」를 열어 보고 적었는가",
+     s46_174_no_endpoint_only_if_probed),
     ("S46-173", "규격이 창구를 적었는가", s46_173_endpoint_not_wordcount),
     ("S46-172", "「없다」를 본문 낱말로 쟀는가",
      s46_172_absence_read_as_human),
