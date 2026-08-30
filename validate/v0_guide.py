@@ -4166,6 +4166,9 @@ def s46_175_no_lumped_axes():
                 continue
             if "%" in ln or ln.lstrip().startswith("|"):
                 continue
+            # ★ 축 이름이 함께 적혀 있으면 ★ 뭉갠 것이 아니다
+            if ln.count("·") >= 2:
+                continue
             if _re.search(r"~~|물린다|오판|마스터 —|「", ln):
                 continue
             bad.append(f"{q.name}:{i}")
