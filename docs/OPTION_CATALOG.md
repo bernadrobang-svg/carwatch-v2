@@ -1,7 +1,7 @@
 # 차종·트림 옵션 목록 — 사이트별 코드 표
 
 ```
-version  SPEC-2026.08.30-r1003
+version  SPEC-2026.08.30-r1004
 follows  ★ 정본 — 가이드 문서
 sources  실측 08-30
 checks   S46-189
@@ -160,14 +160,41 @@ checks   S46-189
 
 ---
 
-# 6. ★ 리본카 — ★ **창구는 찾았으나 토큰이 막는다** [실측 08-30]
+# 6. ★★★ 리본카 — ★ **토큰까지 찾았다.  ★ 그런데 999 로 막힌다** [실측 08-30]
 
 ```
 ★ 호출부 — `drawLayerCarOption(productId)` →
    `deferredAjaxToken('/api/v1/car/carOption.rb', {productId: productId})`
-★ 두드려 봤다 — ★ POST **200 인데 본문이 0B** · GET 은 **404**
-★ ★ ★ `deferredAjaxToken` 이 ★ **토큰을 앞세운다** — ★ 그 토큰을 아직 못 얻었다
-★ ★ **「없다」가 아니다.  ★ 내가 아직 못 연 것이다**
+★ ★ 정의를 ★ **`/js/app.cust.js` 에서 찾았다** (23,543B) —
+```
+
+```javascript
+function deferredAjaxToken(url, param, _beforeSend) {
+  $.ajax({ url: url, type: 'POST',
+    headers: { 'X-Ajax-call': true,
+               Authorization: RB_TOKEN,
+               'X-CSRF-TOKEN': $('#logout-form input[name="_csrf"]').val() },
+    data: param, ... })
+  // resultCode 1020 이면 RB_TOKEN 을 새로 받아 다시 부른다
+}
+```
+
+```
+★ ★ **둘 다 상세에서 꺼냈다** —
+   `RB_TOKEN` = `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9…` (★ JWT 다)
+   `_csrf`    = `ITDMsFUa7NhhvYlx8iOmm-zmGXjCiet1…`
+★ ★ 헤더를 다 맞춰 POST 했다 (`X-Ajax-call`·`Authorization`·`X-CSRF-TOKEN`·`Origin`·`Referer`)
+★ ★ ★ ★ **999 로 막힌다** — `Bearer` 를 붙여도 같다
+★ ★ ★ ★ **999 는 봇 차단이다** — ★ 토큰이 틀린 것이 아니다
+
+★★ ★ **여기까지가 내가 잰 것이다** — ★ 「없다」가 아니라 ★ **차단됐다**
+   ★ ★ 상세 HTML 의 `#layer-total-option` 도 뜯었다 — ★ **껍데기다**
+      「외관/내장 **7 /15**」·「편의/멀티미디어 7 /15」·「안전 7 /15」·「시트 7 /15」가
+      ★ ★ **표본 4건 전건 같다** — ★ 틀이고 ★ 값은 API 가 채운다
+      ★ 안의 이름은 보인다 — 하이패스 · 전동접이식 사이드미러 · 파노라마 썬루프 · 열선핸들 ·
+        알루미늄 휠 · 크롬 휠 · 오토라이트 · HID 헤드램프 · LED 헤드램프 · LED 주간전조등 …
+   ★ ★ ★ 그러므로 ★ **리본카는 999 를 뚫어야 값이 온다** — ★ 개발측 서버에서는 될 수 있다
+      ★ ★ 나는 이 창에서 막혔다.  ★ **개발측이 같은 헤더로 한 번 두드려 보면 갈린다**
 ```
 
 ★ **남은 것 — 보배 79가지 갈래 다섯.** 다음에 뽑는다.
