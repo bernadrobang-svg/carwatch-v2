@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 
 WON_PER_MANWON = 10_000
@@ -274,5 +275,59 @@ def record_of(body: dict, site: str) -> dict | None:
         out["owner_change_cnt"] = chng
     if biz in ("Y", "N"):
         out["use_business"] = 1 if biz == "Y" else 0
+
+    # ★★★★★ 08-31 (명령서 r1007 · 1-9) — ★ 남은 칸을 채운다.
+    #   ★ 코드 표는 ★ `f-table` **3c** 다 — ★ 내가 뜻을 지어내지 않는다
+    gov = str(hist.get("instnHistYn") or "").upper()
+    if gov in ("Y", "N"):
+        # ★ 3c — ★ 관용 이력.  ★ `"N"` 은 ★ 「아니다」이지 「모른다」가 아니다
+        out["use_gov"] = 1 if gov == "Y" else 0
+    rent = str(hist.get("rentHistYn") or "").upper()
+    if rent == "Y":
+        # ★★ 3c — ★ 렌트다.  ★ 그런데 ★ `history.use` 축이 렌트를 가리는 길은 넷이고
+        #   ★ ★ K카의 Y/N 은 ★ 그 넷 어디에도 안 맞는다 (헤이딜러 불리언과 같은 자리).
+        #   ★ ★ 그래서 ★ 사실만 남기고 ★ **용도 축을 안 연다** — ★ 열면 렌트 차가
+        #   ★ ★ ★ 「자가용 22점」을 받는다.  ★ 마스터께 올려 둔 물음이다
+        out["use_cd"] = "kcar:rentHistYn=Y"
+    elif rent == "N" and gov in ("Y", "N") and biz in ("Y", "N"):
+        # ★ 셋을 다 봤다 — ★ 그때만 ★ 「봤다」고 말할 수 있다 (`history.use` 관문).
+        #   ★ 번호판 변경 이력이 ★ 관문의 셋째다 — ★ 원문 그대로 담는다
+        out["plate_history_hash_json"] = json.dumps(
+            [hist.get("fstCarInfo")] if hist.get("fstCarInfo") else [],
+            ensure_ascii=False)
+    if _i("carInfoChngCnt") is not None:
+        out["plate_change_cnt"] = _i("carInfoChngCnt")
+    # ★ 소유자 변경 — ★ 이력 목록이 없으면 ★ `ownrChngCnt` 를 쓴다 (3-2)
+    if "owner_change_cnt" not in out and _i("ownrChngCnt") is not None:
+        out["owner_change_cnt"] = _i("ownrChngCnt")
+    # ★★ 자차 미가입 — ★ 「2026년03월~2026년05월」로 온다.
+    #   ★ 축은 ★ `["202603~202605"]` 꼴을 읽는다 (`store/core.py:_not_join_months`)
+    spans = _not_join_spans(hist.get("unnsPerd"))
+    if spans is not None:
+        out["not_join_json"] = json.dumps(spans, ensure_ascii=False)
+    if hist.get("useCd"):
+        # ★ 3c — ★ `useCd` 는 ★ **숫자다.  2·3 이 무엇인지 아직 모른다.**
+        #   ★ ★ 모르는 채로 `private` 로 매기지 않는다 — ★ 원문만 남긴다
+        out["use1_json"] = json.dumps(
+            {"useCd": hist.get("useCd"), "fstUseCd": hist.get("fstUseCd"),
+             "useChngCnt": hist.get("useChngCnt")}, ensure_ascii=False)
     return {k: v for k, v in out.items() if v is not None or k in
             ("listing_id", "collected_at")}
+
+
+RE_UNNS = re.compile(r"(\d{4})\s*년\s*(\d{1,2})\s*월\s*~\s*"
+                     r"(\d{4})\s*년\s*(\d{1,2})\s*월")
+
+
+def _not_join_spans(text) -> list | None:
+    """「2026년03월~2026년05월」 → `["202603~202605"]`.
+
+    ★ 칸이 아예 없으면 ★ `None` (모른다) · ★ 빈 값이면 ★ `[]` (미가입 기간이 없다).
+      ★ ★ 둘은 다르다 (개정 435 — 「기간이 0」과 「모른다」)
+    """
+    if text is None:
+        return None
+    got = RE_UNNS.findall(str(text))
+    if not got:
+        return [] if not str(text).strip() else None
+    return [f"{a}{int(b):02d}~{c}{int(d):02d}" for a, b, c, d in got]

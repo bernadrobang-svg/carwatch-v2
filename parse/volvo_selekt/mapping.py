@@ -110,3 +110,46 @@ def photos(html: str, source_id: str) -> list:
 def photos_json(html: str, source_id: str) -> str | None:
     got = photos(html, source_id)
     return json.dumps(got, ensure_ascii=False) if got else None
+
+
+# ★★★★★ 08-31 (명령서 r1007 · 1-6 · 로드맵 차례 1) — ★ 딜러 글에서 ★ **사고만** 읽는다.
+#   ★ 실측 08-31 — ★ 딜러 소개글에 ★ **라벨 꼴**로 온다 —
+#       「- 사고이력: 무사고 / 침수 및 용도이력 없는 신차 컨디션」
+#   ★★ **라벨이 있을 때만 읽는다.**  ★ 낱말을 글 속에서 주워 담지 않는다 —
+#     ★ ★ 보배 「판매완료 573」이 ★ 딜러 실적이었던 것과 ★ 같은 함정이다 (0c)
+#   ★★★ ★ **부위·판금·교환은 안 읽는다** — ★ `f-table` **3d** 가
+#     ★ ★ 「볼보는 아직 안 쟀다 · ★ 내가 재서 3e·3f 로 붙인다 ·
+#        ★ 개발측은 표가 있는 것만 연다」라 한다 (규칙 2)
+#   ★ 규격 0b·3장이 못 박은 ★ 「딜러 자유 문장으로 만점을 지어 주지 마라」는
+#     ★ ★ 여전히 지킨다 — ★ **라벨이 없으면 NULL** 이다 (「무사고」가 아니다)
+RE_ACC_LABEL = re.compile(r"사고\s*이력\s*[:：]\s*([^/·\n<]{1,20})")
+RE_FLOOD_LABEL = re.compile(r"침수\s*(?:및\s*용도이력\s*)?(없는|없음|있음)")
+ACC_NONE = ("무사고",)
+
+
+def record_of(html: str, site: str) -> dict | None:
+    """딜러 글 → `core_record`.  ★ 라벨이 없으면 ★ `None` 이다."""
+    t = re.sub(r"\s+", " ", RE_TAG.sub(" ", html or ""))
+    acc = RE_ACC_LABEL.search(t)
+    if not acc:
+        return None
+    word = acc.group(1).strip()
+    out = {"listing_id": None, "site": site, "row_status": "ok",
+           "collected_at": None, "record_open": 1}
+    if word in ACC_NONE:
+        # ★ 「무사고」라 적혀 있다 — ★ 사이트가 그렇게 말한 사실이다
+        out["accident_my_cnt"] = 0
+        out["accident_other_cnt"] = 0
+        out["accident_total_cnt"] = 0
+    else:
+        # ★ 「무사고」가 아닌 낱말 — ★ 몇 건인지는 ★ 모른다.  ★ 수를 지어내지 않는다
+        out["use_cd"] = f"volvo:사고이력={word}"
+        return out
+    flood = RE_FLOOD_LABEL.search(t)
+    if flood and flood.group(1).startswith("없"):
+        # ★ 「침수 및 용도이력 없는」 — ★ 둘을 함께 말한 문장이다
+        out["flood_total_cnt"] = 0
+        out["use_gov"] = 0
+        out["use_business"] = 0
+        out["plate_history_hash_json"] = "[]"
+    return out

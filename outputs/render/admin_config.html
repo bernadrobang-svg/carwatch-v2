@@ -41,7 +41,7 @@
 
 
 <div class="banner banner-stale">
-  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <strong>엔카가 2일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
   <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
   <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
@@ -185,7 +185,7 @@
 
 <tr>
   <td class="runid" data-label="키">components.state.consumable</td>
-  <td class="num" data-label="현재 값">15</td>
+  <td class="num" data-label="현재 값">0</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -372,7 +372,7 @@
 
 <tr>
   <td class="runid" data-label="키">components.value.market</td>
-  <td class="num" data-label="현재 값">30</td>
+  <td class="num" data-label="현재 값">0</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -1868,7 +1868,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.value.mileage_curve</td>
-  <td class="num" data-label="현재 값">[[0, 107], [20000, 98], [40000, 85], [60000, 55], [70000, 30], [80000, 5], [1000</td>
+  <td class="num" data-label="현재 값">[[0, 107], [5000, 97.2], [10000, 88.3], [15000, 80.1], [20000, 72.6], [25000, 65</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2089,7 +2089,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.value.origin_curve</td>
-  <td class="num" data-label="현재 값">[[40, 75.0], [42, 63.1], [44, 54.5], [46, 47.6], [48, 42.0], [50, 37.2], [52, 33</td>
+  <td class="num" data-label="현재 값">[[25.0, 75.0], [28.0, 70.9], [31.0, 67.3], [34.0, 64.0], [37.0, 61.1], [40.0, 58</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2530,15 +2530,15 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="키">axis_rules.taste.color_points.neutral</td>
-  <td class="num" data-label="현재 값">10</td>
+  <td class="runid" data-label="키">axis_rules.taste.color_points.default</td>
+  <td class="num" data-label="현재 값">7</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
       <input type="hidden" name="csrf" value="render">
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="axis_rules.taste.color_points.neutral">
+      <input type="hidden" name="key_path" value="axis_rules.taste.color_points.default">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -2548,7 +2548,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.taste.color_points.avoided</td>
-  <td class="num" data-label="현재 값">5</td>
+  <td class="num" data-label="현재 값">0</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2607,6 +2607,57 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="axis_rules.taste.option_min_sample">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">axis_rules.taste.color_groups.preferred</td>
+  <td class="num" data-label="현재 값">[&quot;청색&quot;, &quot;파란색&quot;, &quot;블루&quot;, &quot;네이비&quot;, &quot;진주&quot;, &quot;펄&quot;, &quot;화이트펄&quot;, &quot;크리스탈 화이트펄&quot;, &quot;스노우화이트펄&quot;, &quot;오로라 블랙펄&quot;,</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.taste.color_groups.preferred">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">axis_rules.taste.color_groups.default</td>
+  <td class="num" data-label="현재 값">[&quot;흰색&quot;, &quot;백색&quot;, &quot;화이트&quot;, &quot;검정색&quot;, &quot;블랙&quot;, &quot;은색&quot;, &quot;은회색&quot;, &quot;쥐색&quot;, &quot;회색&quot;, &quot;진회색&quot;, &quot;실버&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.taste.color_groups.default">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">axis_rules.taste.color_groups.avoided</td>
+  <td class="num" data-label="현재 값">[&quot;빨간색&quot;, &quot;붉은색&quot;, &quot;레드&quot;, &quot;갈색&quot;, &quot;브라운&quot;, &quot;새들브라운&quot;, &quot;올리브브라운&quot;, &quot;하바나&quot;, &quot;베이지&quot;, &quot;크리미&quot;, &quot;연금색&quot;]</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.taste.color_groups.avoided">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -4292,7 +4343,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260829T024133</span>
-  <span>2026-08-30 22:12</span>
+  <span>2026-08-31 06:12</span>
 </footer>
 
 </body>

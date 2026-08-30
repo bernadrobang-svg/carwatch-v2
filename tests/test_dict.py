@@ -97,7 +97,12 @@ def test_count_zero() -> None:
 def test_axis_policy() -> None:
     # ★ 개정 540 — `target` 축이 늘어 13 → 14 다 (docs/TARGET_KEY_MAP.md 6장).
     #   ★ 이 수는 ★ 몰래 늘지 않았는가를 보는 빗장이다 — ★ 늘리면 까닭을 적는다
-    check("축 14종 정책 정의", len(AXIS_POLICY) == 14, f"{len(AXIS_POLICY)}종")
+    # ★★★★★ 08-31 — ★ 14 → **16**.  ★ `part`·`repair` 를 더했다.
+    #   ★ 까닭 — ★ 가이드가 ★ 08-30 에 ★ **STEP 41 표에 두 행을 넣었다**
+    #     (`docs/chapters/12-dict.md:137` — ★ `part` site · `repair` site).
+    #   ★ ★ 그 전에는 ★ 표에 없어서 ★ `ValidationError: 축 정책 미정의: part` 로
+    #     ★ ★ 헤이딜러 부위 코드가 ★ 사흘 막혀 있었다
+    check("축 16종 정책 정의", len(AXIS_POLICY) == 16, f"{len(AXIS_POLICY)}종")
 
     conn = db()
     # panel_rank — 5값 고정.  새 값은 pending 이 아니라 중단

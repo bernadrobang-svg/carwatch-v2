@@ -94,16 +94,61 @@ def parse_detail(html: str, source_id: str) -> dict:
     m = RE_CC.search(t)
     if m and _int(m.group(1)):
         out["displacement_cc"] = _int(m.group(1))
+    # ★★★★★ 08-31 (명령서 r1007 · 1-8) — ★ **칸 이름이 틀려 있었다.**
+    #   ★ `transmission_raw`·`accident_raw`·`seizure_count`·`mortgage_count` 는
+    #     ★ ★ `core_listing` 에 ★ **없는 칸**이다 — ★ `upsert_core` 가 ★ 조용히 버렸다.
+    #   ★ ★ 실측 08-31 — ★ BMW 188건에 ★ `core_record` 가 ★ **0행**이었고
+    #     ★ ★ 압류·저당·사고가 ★ 하나도 안 들어가 있었다.  ★ 그것이 91점이다
     m = RE_TRANS.search(t)
     if m:
-        out["transmission_raw"] = m.group(1)
-    m = RE_ACCIDENT.search(t)
-    if m:
-        out["accident_raw"] = m.group(1)
+        out["transmission"] = m.group(1)
     m = RE_SEIZE.search(t)
     if m:
-        out["seizure_count"] = _int(m.group(1))
-        out["mortgage_count"] = _int(m.group(2))
+        # ★ 「압류 0건, 저당 0건」 — ★ **0 은 확인한 사실**이다 (「모른다」가 아니다)
+        out["seizing_cnt"] = _int(m.group(1))
+        out["pledge_cnt"] = _int(m.group(2))
+    # ★ 차량번호 — ★ 원문을 CORE 에 안 넣는다.  ★ `split_pii` 가 해시한다 (STEP 35)
+    m = RE_PLATE.search(t)
+    if m:
+        out["_pii_plate_no"] = m.group(1)
+    # ★ 사이트 검증 — ★ 「72가지 점검」이 ★ BMW 프리미엄셀렉션의 사실이다
+    n, _r = inspect_of(html)
+    if n:
+        out["site_home_verify"] = 1
+    return out
+
+
+# ★ 「차량번호 324수6142」 (실측 08-31)
+RE_PLATE = re.compile(r"차량번호\s*(\d{2,3}\s*[가-힣]\s*\d{4})")
+# ★ 「사고유무 무」 — ★ 무/유 두 가지다 [실측 08-31 · 표본 1건].
+#   ★★ 표를 아직 못 만들었다 — ★ `f-table` **3d** 가 ★ 「BMW 는 아직 안 쟀다 ·
+#     ★ 내가 재서 3e·3f 로 붙인다 · ★ 개발측은 표가 있는 것만 연다」라 한다.
+#   ★ ★ 그래서 ★ **사고 축은 안 연다** — ★ 사실만 `site_condition_json` 에 남긴다
+ACCIDENT_WORDS = {"무": 0, "유": 1}
+
+
+def record_of(html: str, site: str) -> dict | None:
+    """상세 → `core_record` (r1007 1-8).
+
+    ★★ 담는 것 — ★ **셀 수 있는 것만**이다.
+      ★ 「압류 0건 · 저당 0건」은 ★ 수다 — ★ 표가 없어도 뜻이 하나다.
+    ★★ 안 담는 것 — ★ 「사고유무 무」의 **부위·판금·교환**.
+      ★ ★ `f-table` 3d 가 ★ 「BMW 는 아직 안 쟀다」다 — ★ 표가 오면 연다 (규칙 2)
+    """
+    t = _text(html)
+    m = RE_SEIZE.search(t)
+    acc = RE_ACCIDENT.search(t)
+    if not m and not acc:
+        return None
+    out = {"listing_id": None, "site": site, "row_status": "ok",
+           "collected_at": None, "record_open": 1}
+    if acc and acc.group(1) in ACCIDENT_WORDS:
+        # ★ 「무」면 ★ 사고 0건이다 — ★ 사이트가 그렇게 적었다.
+        #   ★ ★ 「유」면 ★ **몇 건인지는 모른다** — ★ 수를 지어내지 않는다
+        if acc.group(1) == "무":
+            out["accident_my_cnt"] = 0
+            out["accident_other_cnt"] = 0
+            out["accident_total_cnt"] = 0
     return out
 
 

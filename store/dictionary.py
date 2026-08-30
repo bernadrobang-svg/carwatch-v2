@@ -87,6 +87,19 @@ AXIS_POLICY: dict[str, AxisPolicy] = {
     "accident_type": AxisPolicy(SCOPE_GLOBAL, "halt", "halt"),
     # ★ 5값 고정.  새 값이 뜨면 점검 양식이 바뀐 것이다.  pending 으로 넘기지 않는다
     "panel_rank": AxisPolicy(SCOPE_GLOBAL, "halt", "halt"),
+    # ★★★★★ 08-31 — ★ `part`·`repair` (STEP 41 · `docs/chapters/12-dict.md:137`).
+    #   ★ 가이드가 ★ 08-30 에 ★ 표에 두 행을 더했다 — ★ 그 전에는 ★ 여기 없어서
+    #     ★ ★ `ValidationError: 축 정책 미정의: part` 로 ★ 사흘 막혀 있었다.
+    #   ★★ `scope` 는 ★ **사이트별**이다 — ★ `SCOPE_GLOBAL` 의 `scope_key` 가
+    #     ★ ★ 곧 ★ `site` 다 (`scope_key()` 첫 줄).  ★ 사이트끼리 섞지 않는다 (오판 218)
+    #     ★ ★ 헤이딜러 `radiator_support` · KB `ucAccBoneCheck` · 리본카 `x03` —
+    #     ★ ★ ★ 섞으면 ★ 골격을 외판으로 매긴다
+    #   ★★ `on_new` 는 ★ **pending** — ★ 「표에 없는 코드는 pending 으로 넣고
+    #     ★ ★ 축은 미확인 0점」 (규격 STEP 41 절).  ★ `confirmed` 로 바로 안 올린다
+    #   ★ `on_conflict` 는 ★ **halt** — ★ 같은 부위 코드가 ★ 두 뜻을 가지면
+    #     ★ ★ 골격·외판 갈래가 갈린다.  ★ 조용히 넘기면 판정이 통째로 틀린다
+    "part": AxisPolicy(SCOPE_GLOBAL, "pending", "halt"),
+    "repair": AxisPolicy(SCOPE_GLOBAL, "pending", "halt"),
     # ★★ 개정 540 — 사이트마다 차종을 다르게 부른다 (docs/TARGET_KEY_MAP.md).
     #   ★ 새 차종 이름은 ★ 늘 새로 뜬다 — ★ 멈추지 않는다.
     #   ★ 우리 키로 못 옮긴 것은 ★ 「차종 미정」이다.  ★ 버리지 않는다

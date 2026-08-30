@@ -302,9 +302,125 @@ def out_of_scope(conn, write: bool) -> Counter:
     return got
 
 
+def bmw_bps(conn, write: bool) -> Counter:
+    """★★ 08-31 (r1007 · 1-8) — ★ BMW.  ★ 통신 없음.
+
+    ★ 칸 이름이 틀려 ★ 압류·저당·차량번호가 ★ 통째로 버려지고 있었다
+    """
+    from parse.bmw_bps.mapping import parse_detail, record_of
+    from store.core import split_pii, upsert_child, upsert_core
+    from store.pii import load_key
+
+    at = _now()
+    key = load_key()
+    got: Counter = Counter()
+    for lid, sid, blob in latest_details(conn, "bmw_bps"):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        deep = parse_detail(html or "", sid)
+        rec = record_of(html or "", "bmw_bps")
+        for k in ("seizing_cnt", "pledge_cnt", "_pii_plate_no",
+                  "site_home_verify"):
+            if deep.get(k) is not None:
+                got[f"  {k}"] += 1
+        got["★ 상세를 다시 읽었다"] += 1
+        if rec:
+            got["★ 이력"] += 1
+        if not write:
+            continue
+        deep["listing_id"] = lid
+        upsert_core(conn, split_pii(conn, deep, "bmw_bps", key, at), at)
+        if rec:
+            rec["listing_id"] = lid
+            rec["collected_at"] = at
+            upsert_child(conn, "core_record", rec, "p1", at)
+    if write:
+        conn.commit()
+    return got
+
+
+def kcar(conn, write: bool) -> Counter:
+    """★★ 08-31 (r1007 · 1-9) — ★ K카 이력 (`f-table` 3c 용도 코드)."""
+    from parse.kcar.mapping import record_of
+    from store.core import upsert_child
+
+    at = _now()
+    got: Counter = Counter()
+    for lid, _sid, blob in latest_details(conn, "kcar"):
+        try:
+            body = json.loads(raw_body(blob))
+        except (ValueError, TypeError):
+            got["못 읽음"] += 1
+            continue
+        rec = record_of(body, "kcar")
+        if not rec:
+            got["이력이 없다"] += 1
+            continue
+        got["★ 이력"] += 1
+        for k in ("use_gov", "not_join_json", "plate_change_cnt",
+                  "owner_change_cnt", "use_cd"):
+            if rec.get(k) is not None:
+                got[f"  {k}"] += 1
+        if write:
+            rec["listing_id"] = lid
+            rec["collected_at"] = at
+            upsert_child(conn, "core_record", rec, "p1", at)
+    if write:
+        conn.commit()
+    return got
+
+
+def _record_site(conn, write, site, fn, keys):
+    """★ 상세 원문 → `core_record` 를 ★ 사이트마다 같은 꼴로 넣는다 (r1007 차례 1)."""
+    from store.core import upsert_child
+
+    at = _now()
+    got: Counter = Counter()
+    for lid, _sid, blob in latest_details(conn, site):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        rec = fn(html or "", site)
+        if not rec:
+            got["★ 근거를 못 찾았다 (NULL 로 둔다)"] += 1
+            continue
+        got["★ 이력"] += 1
+        for k in keys:
+            if rec.get(k) is not None:
+                got[f"  {k}"] += 1
+        if write:
+            rec["listing_id"] = lid
+            rec["collected_at"] = at
+            upsert_child(conn, "core_record", rec, "p1", at)
+    if write:
+        conn.commit()
+    return got
+
+
+def kb_record(conn, write: bool) -> Counter:
+    """★ 08-31 (r1007 1-5) — ★ KB 보험사고정보 덩이."""
+    from parse.kbchachacha.record import record_of
+
+    return _record_site(conn, write, "kbchachacha", record_of,
+                        ("accident_my_cnt", "total_loss_cnt",
+                         "flood_total_cnt", "owner_change_cnt",
+                         "use_gov", "use_cd"))
+
+
+def volvo(conn, write: bool) -> Counter:
+    """★ 08-31 (r1007 1-6) — ★ 볼보 딜러 글의 ★ **라벨만**."""
+    from parse.volvo_selekt.mapping import record_of
+
+    return _record_site(conn, write, "volvo_selekt", record_of,
+                        ("accident_my_cnt", "flood_total_cnt",
+                         "use_gov", "use_cd"))
+
+
 SITES = {"heydealer": heydealer, "kbchachacha": kbchachacha,
          "hyundai_cert": hyundai_cert, "reborncar": reborncar,
-         "out_of_scope": out_of_scope}
+         "bmw_bps": bmw_bps, "kcar": kcar, "kb_record": kb_record,
+         "volvo": volvo, "out_of_scope": out_of_scope}
 
 
 def main() -> int:

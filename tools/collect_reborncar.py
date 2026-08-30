@@ -17,14 +17,18 @@ import os
 import re
 import sys
 import time
+import http.cookiejar
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from parse.reborncar.mapping import parse_detail, title_name   # noqa: E402
+from parse.reborncar.mapping import (  # noqa: E402
+    option_keys, options_of, parse_detail, title_name,
+)
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of                    # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
@@ -46,11 +50,62 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+OPTION_PATH = "/api/v1/car/carOption.rb"
+
+
+def _options(conn, cfg, source_id: str, html: str, at: str, lid):
+    """★ 옵션 창구 (r1007 1b).  ★ 못 받으면 ★ None — ★ 「없다」로 안 적는다.
+
+    ★ 원문은 ★ 남긴다 (P3) — ★ 받은 것도 못 받은 것도
+    """
+    from store.raw import save_site_raw
+
+    tok, csrf = option_keys(html)
+    if not tok or not csrf:
+        return None
+    base = cfg["base_url"]
+    url = base + OPTION_PATH
+    head = dict(cfg.get("headers") or {})
+    # ★★ 창구는 ★ JSON 을 준다 — ★ 상세 쪽의 `Accept: text/html` 을 그대로 쓰면
+    #   ★ ★ 안 준다 (실측 08-31 — 표본 5건 전건 「창구가 안 줌」)
+    head["Accept"] = "application/json, text/javascript, */*; q=0.01"
+    head.update({"X-Ajax-call": "true", "Authorization": tok,
+                 "X-CSRF-TOKEN": csrf, "X-Requested-With": "XMLHttpRequest",
+                 "Referer": base + cfg["paths"]["detail"].format(
+                     source_id=source_id),
+                 "Origin": base,
+                 "Content-Type":
+                     "application/x-www-form-urlencoded; charset=UTF-8"})
+    data = urllib.parse.urlencode({"productId": source_id}).encode()
+    try:
+        with _OPENER.open(urllib.request.Request(url, data=data, headers=head),
+                          timeout=float(cfg["timeout_sec"])) as res:
+            body = res.read()
+    except (urllib.error.URLError, OSError, TimeoutError):
+        return None
+    save_site_raw(conn, SITE_CODE, "option", source_id, url, body, at,
+                  listing_id=lid)
+    # ★★★ 08-31 (`S46-126`) — ★ 원문을 남겼으면 ★ **곧바로 커밋한다.**
+    #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다 (개정 857)
+    from store.raw import commit as _commit
+    _commit(conn)
+    return options_of(body)
+
+
+# ★★★★★ 08-31 (r1007 · 1b) — ★ **쿠키를 잇는다.**
+#   ★ 옵션 창구(`/api/v1/car/carOption.rb`)는 ★ 상세 쪽을 받은 ★ **그 세션**이라야 준다.
+#   ★ ★ 가이드 창에서 ★ 999(봇 차단)가 난 까닭이 ★ 이것으로 보인다 —
+#     ★ ★ 토큰만 옮기고 ★ `JSESSIONID` 를 안 이으면 ★ 막힌다 (실측 08-31)
+_JAR = http.cookiejar.CookieJar()
+_OPENER = urllib.request.build_opener(
+    urllib.request.HTTPCookieProcessor(_JAR))
+
+
 def _get(url: str, headers: dict, timeout: float) -> str | None:
     for _ in range(RETRY):
         try:
             req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=timeout) as res:
+            with _OPENER.open(req, timeout=timeout) as res:
                 return res.read().decode("utf-8", "replace")
         except urllib.error.HTTPError as e:
             if e.code != 503:
@@ -85,6 +140,13 @@ def main() -> int:
         return 1
     if "--count" in args:
         return 0
+    if "--options" in args:
+        # ★★★★★ 08-31 (r1007 · 1b) — ★ **옵션만 받는다.**
+        #   ★ 이미 받아 둔 상세로는 안 된다 — ★ `RB_TOKEN` 이 ★ 30분짜리라
+        #     ★ ★ 저장된 원문의 토큰은 ★ 이미 죽어 있다.
+        #   ★ 그래서 ★ 상세 쪽을 ★ 다시 한 번 받아 ★ 그 세션으로 창구를 두드린다.
+        #   ★ ★ 상세 원문도 ★ 함께 새로 남긴다 (P3 — 잃는 것이 없다)
+        return _options_only(cfg, args)
     # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」.
     #   ★ 리본카는 ★ **사이트맵 한 번**으로 전부를 준다 — ★ 쪽넘김이 없다.
     #   ★ 그러나 ★ `--limit` 으로 자르면 ★ 전부가 아니다 — ★ 그때는 안 매긴다
@@ -174,6 +236,17 @@ def main() -> int:
             ours += 1
             deep["detail_status"] = "ok"
             deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
+            # ★★★★★ 08-31 (r1007 · 1b) — ★ 옵션 창구를 두드린다.
+            #   ★ 열쇠 둘이 ★ 상세 쪽 안에 있다 (`RB_TOKEN` · `_csrf`)
+            got_opt = _options(conn, cfg, one, html, at, deep["listing_id"])
+            if got_opt:
+                seen["옵션"] = seen.get("옵션", 0) + 1
+                deep["options_standard_json"] = json.dumps(
+                    [x["name"] for x in got_opt["on"] if x["name"]],
+                    ensure_ascii=False)
+                deep["options_etc_json"] = json.dumps(
+                    [x["name"] for x in got_opt["off"] if x["name"]],
+                    ensure_ascii=False)
             # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
             fill_target_key(SITE_CODE, deep)
             upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
@@ -203,6 +276,56 @@ def main() -> int:
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장된 리본카 매물 — {n:,}건")
+    return 0
+
+
+def _options_only(cfg, args) -> int:
+    """★ 옵션만 받는 바퀴 (r1007 1b).  ★ 이미 넣은 매물에만 붙인다."""
+    from store.core import upsert_core
+    from store.raw import commit, open_db
+
+    limit = 0
+    if "--limit" in args:
+        i = args.index("--limit")
+        if i + 1 < len(args) and args[i + 1].isdigit():
+            limit = int(args[i + 1])
+    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    at = _now()
+    rows = list(conn.execute(
+        "SELECT listing_id, source_id FROM core_listing"
+        " WHERE site=? AND status IN ('active','new')"
+        "   AND options_standard_json IS NULL", (SITE_CODE,)))
+    if limit:
+        rows = rows[:limit]
+    print(f"★ 옵션이 빈 매물 {len(rows)}건")
+    seen = {"옵션 받음": 0, "상세를 못 받음": 0, "창구가 안 줌": 0}
+    for lid, sid in rows:
+        url = cfg["base_url"] + cfg["paths"]["detail"].format(source_id=sid)
+        html = _get(url, cfg["headers"], float(cfg["timeout_sec"]))
+        if not html:
+            seen["상세를 못 받음"] += 1
+            time.sleep(float(cfg.get("interval_sec") or 1.0))
+            continue
+        got = _options(conn, cfg, sid, html, at, lid)
+        if not got:
+            seen["창구가 안 줌"] += 1
+        else:
+            seen["옵션 받음"] += 1
+            upsert_core(conn, {
+                "site": SITE_CODE, "source_id": sid, "listing_id": lid,
+                "options_standard_json": json.dumps(
+                    [x["name"] for x in got["on"] if x["name"]],
+                    ensure_ascii=False),
+                "options_etc_json": json.dumps(
+                    [x["name"] for x in got["off"] if x["name"]],
+                    ensure_ascii=False)}, at)
+        commit(conn)
+        time.sleep(float(cfg.get("interval_sec") or 1.0))
+    print("★ " + " · ".join(f"{k} {v}" for k, v in seen.items()))
+    n = conn.execute(
+        "SELECT COUNT(*) FROM core_listing WHERE site=?"
+        "  AND options_standard_json IS NOT NULL", (SITE_CODE,)).fetchone()[0]
+    print(f"★ 옵션이 찬 리본카 매물 {n:,}건")
     return 0
 
 

@@ -210,3 +210,50 @@ def counts_of(html: str) -> dict:
         tail = "1" if one["statusTypes"][0]["code"] == "W" else "2"
         got[head + "Cnt" + tail] += 1
     return got
+
+
+# ★★★★★ 08-31 (명령서 r1007 · 1b) — ★ **옵션 창구가 열린다.**
+#   ★ 가이드 창에서는 ★ 999(봇 차단)였다.  ★ 우리 서버에서 ★ **200 · 16,032B** 다.
+#   ★ 가른 것 하나 — ★ **쿠키를 이어야 한다** (`JSESSIONID`).
+#     ★ ★ 상세 쪽을 받은 ★ 그 세션으로 ★ 창구를 두드려야 한다.
+#     ★ ★ 토큰만 옮겨서는 안 된다 — ★ `RB_TOKEN` 은 ★ 30분짜리 JWT 다
+#   ★ 열쇠 셋 — ★ `Authorization: {RB_TOKEN}` · `X-CSRF-TOKEN: {_csrf}` · `X-Ajax-call: true`
+#   ★ 실측 08-31 [표본 C26082400119] — ★ 75종 · ★ 달린 것 39종 ·
+#     ★ ★ 갈래 CE 15 · IE 26 · SE 16 · TE 18 · ★ HUD·썬루프가 다 있다
+RE_RB_TOKEN = re.compile(r'RB_TOKEN\s*=\s*"([^"]+)"')
+RE_RB_CSRF = re.compile(r'name="_csrf"[^>]*value="([^"]+)"')
+
+
+def option_keys(html: str) -> tuple:
+    """상세 쪽에서 ★ 창구 열쇠 둘을 뽑는다.  ★ 없으면 ★ (None, None)."""
+    tok = RE_RB_TOKEN.search(html or "")
+    csrf = RE_RB_CSRF.search(html or "")
+    return (tok.group(1) if tok else None, csrf.group(1) if csrf else None)
+
+
+def options_of(payload) -> dict | None:
+    """`carOption.rb` 응답 → ★ 달린 것 · 안 달린 것.
+
+    ★ `carApply` 가 ★ `"1"` 이면 달렸다 · `"0"` 이면 안 달렸다 —
+      ★ ★ 둘은 다르다.  ★ 「안 달렸다」는 ★ **확인한 사실**이지 「모른다」가 아니다
+    ★ 못 받았으면 ★ `None` 이다 (금지 12)
+    """
+    if isinstance(payload, (bytes, str)):
+        try:
+            payload = json.loads(payload)
+        except ValueError:
+            return None
+    if not isinstance(payload, dict):
+        return None
+    if not ((payload.get("header") or {}).get("isSuccessful")):
+        return None
+    rows = payload.get("data")
+    if not isinstance(rows, list):
+        return None
+    on, off = [], []
+    for one in rows:
+        if not isinstance(one, dict) or not one.get("optCode"):
+            continue
+        (on if str(one.get("carApply")) == "1" else off).append(
+            {"code": one["optCode"], "name": one.get("codeNm")})
+    return {"on": on, "off": off}
