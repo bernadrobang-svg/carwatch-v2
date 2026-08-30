@@ -4403,6 +4403,36 @@ def s46_184_unfetched_is_not_absent():
                        + "  ★ 미조회는 우리 상태다")
     return True, "「미조회」를 사이트 상태로 옮긴 곳이 없다"
 
+
+def s46_185_file_is_the_原本():
+    """S46-185 — ★ 「원문 파일을 지운다」로 적혀 있지 않은가 (마스터 확정 08-29).
+
+    ★ 마스터 — 「★ 파일이 원본이니까.  ★ 파일 압축이 가능하니까」
+      ★ ★ 지우는 것은 ★ `raw_response` 행이고 ★ 남기는 것은 ★ 파일이다
+    ★ 잣대 — ★ 규격·명령서에 ★ 「원문 파일을 지운다」가 있으면 실패
+    """
+    import glob as _g
+    import re as _re
+
+    files = list(_guide_docs()) + [
+        ROOT / f[len(str(ROOT)) + 1:]
+        for f in _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    ]
+    bad = []
+    for q in files:
+        if not q.is_file():
+            continue
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"(원문 )?파일(을|은)[^가-힣]{0,4}(7일 뒤 )?지운다", ln):
+                continue
+            if _re.search(r"~~|물린다|오판|마스터 —|안 지운다|금지", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ 「파일을 지운다」라 적힌 곳 " + " · ".join(bad[:4])
+                       + "  ★ 파일이 원본이다 (마스터 확정 08-29)")
+    return True, "「파일이 원본」이 지켜지고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4436,6 +4466,7 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-185", "원문 파일을 지우지 않는가", s46_185_file_is_the_原本),
     ("S46-184", "「미조회」를 「없다」로 옮기지 않는가",
      s46_184_unfetched_is_not_absent),
     ("S46-183", "「마스터 몫」 전에 내가 열었는가",

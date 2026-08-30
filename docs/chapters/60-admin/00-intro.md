@@ -1,7 +1,7 @@
 # 13장. 관리자 (STEP 126–140)
 
 ```
-version  SPEC-2026.08.29-r988
+version  SPEC-2026.08.29-r989
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
