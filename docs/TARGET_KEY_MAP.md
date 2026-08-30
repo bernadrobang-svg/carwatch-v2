@@ -1,7 +1,7 @@
 # 차종 대응표 — 사이트마다 뭐라 부르나
 
 ```
-version  SPEC-2026.08.30-r1007
+version  SPEC-2026.08.30-r1008
 follows  `docs/INDEX.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
