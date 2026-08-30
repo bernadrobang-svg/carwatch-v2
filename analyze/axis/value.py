@@ -61,8 +61,12 @@ def _depreciation(ctx: AxisContext, v: Verdict) -> None:
         put(v, DEPRECIATION, 0, PRIO_OBSERVED, "origin_price_missing")
         return
     ratio = s.price_current_won / origin * PCT
+    # ★★★★ 08-30 (마스터 지시 3 · `f-table` 5장 갈래 ③) —
+    #   ★ 끌어온 신차가는 ★ **원문과 같아 보이게 하지 않는다** (규격 필수).
+    #   ★ 근거 코드를 갈라 두면 ★ `/why`·축 칩·확인율이 ★ 저절로 따라온다
     put(v, DEPRECIATION, round(ascending(ratio, r["origin_curve"])),
-        PRIO_OBSERVED, "origin_price")
+        PRIO_OBSERVED,
+        getattr(s, "origin_lent_from", None) or "origin_price")
 
 
 def _budget(ctx: AxisContext, v: Verdict) -> None:

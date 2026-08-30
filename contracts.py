@@ -212,6 +212,11 @@ class ListingSnapshot:
     tire_tread_mm: float | None = None
     # 신차가 = 등급기준 + 선택옵션가 합 (개정 301) — ①-2 가 이것을 쓴다
     origin_total_won: int | None = None
+    # ★★★★ 08-30 (마스터 지시 3 · `f-table` 5장 갈래 ③) —
+    #   ★ 신차가를 ★ **다른 사이트 표에서 끌어왔나.**  ★ 원문이면 None 이다.
+    #   ★ 화면이 「어디서 왔는지」를 적어야 하므로 (마스터 지시) ★ 여기 싣는다.
+    #   ★ ★ 원문으로 확인한 것과 ★ 같아 보이게 하지 않는다 (`f-table` 필수)
+    origin_lent_from: str | None = None
     ev_battery_soh: float | None = None
     # ★ 용도 축 (F-scoring ③-1).  관용 · 영업용은 보험이력에 있다
     use_gov: int | None = None

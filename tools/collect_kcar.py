@@ -30,6 +30,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from adapters.kcar import SITE_CODE, KcarAdapter, load_config  # noqa: E402
+
+# ★★ 점검 경로 (`MULTISITE_MAPPING.md` 08-29 절 · 실측 08-30).
+#   ★ `config/endpoints.json` 의 `kcar.paths` 에 아직 없다 — ★ 규격이 넣으면 그때 옮긴다.
+#   ★ 개발측이 `docs/` 를 안 고친다 (규칙 2) — ★ 여기에 근거를 적어 둔다
+INSP_PATH = "/bc/car-insp/photo/cm?i_sCarCd={source_id}"
 from parse.kcar.mapping import (parse_detail, parse_list_item,  # noqa: E402
                                 record_of)
 from parse.target_rules import fill_target_key  # noqa: E402
@@ -239,6 +244,51 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items())
           + (f"  ★ 팔린 것 {gone}건을 gone 으로" if gone else ""))
+
+    # ★★★★★ 08-30 (마스터 지시 1 · `DEDUP_CROSS_SITE` 1장) — ★ 점검 경로로 `cno` 를 얻는다.
+    #   ★★ 마스터 — 「★ 여섯 축은 못 채워도 ★ **`cno` 가 짝짓기 열쇠**다.
+    #     ★ ★ 지금 같은 차 짝이 0건이고 ★ 그것이 이 도구의 심장이다」
+    #   ★ 실측 08-30 — ★ `GET /bc/car-insp/photo/cm?i_sCarCd={id}` → 200 · 462B ·
+    #     ★ ★ `inspDetail.cno` 에 번호판이 있다.  ★ 부위별 값은 없다 (사진뿐)
+    #   ★★ **번호판 원문을 `core_listing` 에 안 넣는다** (마스터 지시 · STEP 35) —
+    #     ★ `_pii_plate_no` 로 넘기면 ★ `split_pii` 가 ★ `plate_hash` 만 남기고
+    #     ★ ★ 원문은 `core_pii` 로 간다
+    need_plate = [o for o in ours
+                  if not conn.execute(
+                      "SELECT plate_hash FROM core_listing"
+                      " WHERE site=? AND source_id=?",
+                      (SITE_CODE, o["source_id"])).fetchone()[0]]
+    print(f"★ 점검 경로로 번호판 — 받을 것 {len(need_plate)}건 "
+          f"(우리 대상 {len(ours)}건 중 · 이미 있는 것은 안 받는다)")
+    ins = {"받음": 0, "번호판 없음": 0, "못 받음": 0}
+    for one in need_plate:
+        url = (cfg["base_url"] + INSP_PATH.format(source_id=one["source_id"]))
+        size, body = fetch(url, adapter.headers(), float(cfg.get("timeout_sec") or 30))
+        del size
+        if not isinstance(body, dict):
+            ins["못 받음"] += 1
+            time.sleep(float(cfg.get("interval_sec") or 1.5))
+            continue
+        save_site_raw(conn, SITE_CODE, "inspection", one["source_id"], url,
+                      json.dumps(body, ensure_ascii=False), at,
+                      listing_id=one.get("listing_id"))
+        commit(conn)
+        det = ((body.get("data") or {}).get("inspDetail") or {})
+        plate = (det.get("cno") or "").strip()
+        if not plate:
+            ins["번호판 없음"] += 1
+            time.sleep(float(cfg.get("interval_sec") or 1.5))
+            continue
+        # ★ 이 매물의 다른 칸을 안 건드린다 — ★ 번호판만 얹는다
+        row = {"site": SITE_CODE, "source_id": one["source_id"],
+               "listing_id": one.get("listing_id"),
+               "_pii_plate_no": plate,
+               "inspection_status": "ok"}
+        upsert_core(conn, split_pii(conn, row, SITE_CODE, key, at), at)
+        commit(conn)
+        ins["받음"] += 1
+        time.sleep(float(cfg.get("interval_sec") or 1.5))
+    print("★ 점검 경로 — " + " · ".join(f"{k} {v}" for k, v in ins.items()))
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (SITE_CODE,)).fetchone()[0]
     print(f"★ 저장된 K카 매물 — {n}건")

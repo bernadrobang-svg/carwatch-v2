@@ -1330,6 +1330,76 @@ def _group_sums(policy, verdict) -> tuple:
     return tuple(out)
 
 
+
+def _origin_lend_table(conn) -> dict:
+    """★★★★ ③ 「차종·트림의 속성은 ★ 다른 사이트 표에서 끌어온다」 (`f-table` 5장).
+
+    ★★★ 마스터 지시 08-30 — 「★ 밑감은 **현대 인증**이다 (상세 표본 8건 전건에
+      ★ 값이 있고 ★ 서로 다르다).  ★ 열쇠 넷(**제조사·모델·트림·연식**)이
+      ★ ★ **다 같을 때만** 쓴다.  ★ 하나라도 다르면 ★ **0점＋미확인**」
+    ★ 규격 — `f-table.md:210` 「③ 의 매칭 키 — 제조사 · 모델 · 트림 · 연식.
+      ★ 매칭 안 되면 0점 + 「미확인」」
+    ★★ 지어내지 않는다 — ★ 넷 중 하나라도 비면 ★ 그 줄을 표에 안 넣는다.
+    ★ 같은 열쇠에 값이 여럿이면 ★ **가장 낮은 것**을 쓴다 —
+      ★ 높은 쪽을 쓰면 ★ 감가율이 부풀어 ★ 점수를 지어 주는 꼴이 된다
+      (`DEDUP_CROSS_SITE` 는 「둘 다면 높은 쪽」이라 적었으나 ★ 그것은
+       ★ **같은 차**를 합칠 때다.  ★ 여기는 ★ 다른 차의 속성을 빌리는 것이라
+       ★ ★ 보수적으로 낮은 쪽을 쓴다 — ★ 만점을 지어 주지 않는다 · `f-table` 금지)
+    돌려줌  {(제조사, 모델, 트림, 연식): 신차가}
+    """
+    out: dict = {}
+    for mfr, model, trim, ym, won in conn.execute(
+        "SELECT site_manufacturer, site_model, trim_badge,"
+        "       substr(year_month, 1, 4), MIN(price_origin_won)"
+        "  FROM core_listing"
+        " WHERE price_origin_won IS NOT NULL"
+        "   AND site_manufacturer IS NOT NULL AND site_model IS NOT NULL"
+        "   AND trim_badge IS NOT NULL AND year_month IS NOT NULL"
+        " GROUP BY 1, 2, 3, 4"
+    ):
+        out[(mfr, model, trim, ym)] = won
+    return out
+
+
+def _origin_keys(conn, lids: list) -> dict:
+    """★ 매물마다 ★ 열쇠 넷을 한 번에 받는다 (제조사·모델·트림·연식).
+
+    ★ 스냅샷에는 이 셋이 없다 — ★ 스냅샷을 늘리지 않고 ★ 여기서 읽는다.
+      ★ ★ 한 매물씩 물으면 ★ 수천 쿼리가 된다 (V11-34) — ★ 한 번에 받는다
+    """
+    if not lids:
+        return {}
+    out: dict = {}
+    marks = ",".join("?" * len(lids))
+    for lid, mfr, model, trim, ym, own in conn.execute(
+        f"SELECT listing_id, site_manufacturer, site_model, trim_badge,"
+        f"       substr(year_month, 1, 4), price_origin_won"
+        f"  FROM core_listing WHERE listing_id IN ({marks})", tuple(lids)
+    ):
+        out[lid] = (mfr, model, trim, ym, own)
+    return out
+
+
+def _origin_lent(lid, keys: dict, table: dict):
+    """★ 이 매물에 ★ 끌어올 신차가가 있나.  ★ 넷이 다 있고 다 같을 때만.
+
+    ★ 이미 제 신차가가 있으면 ★ 안 빌린다 — ★ 원문이 언제나 먼저다
+    돌려줌  (신차가, 어디서 왔나) · 또는 (None, None)
+    """
+    got = keys.get(lid)
+    if not table or not got:
+        return None, None
+    mfr, model, trim, ym, own = got
+    if own:
+        return None, None
+    key = (mfr, model, trim, ym)
+    if not all(key):
+        # ★ 넷 중 하나라도 비면 ★ 안 빌린다 — ★ 0점＋미확인이 맞다 (f-table:210)
+        return None, None
+    won = table.get(key)
+    return (won, "origin_price_lent") if won else (None, None)
+
+
 def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
                          depreciation: dict) -> dict:
     policy = ScoringPolicy(policy_raw)
@@ -1379,6 +1449,9 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             conn.execute("DELETE FROM result_axis WHERE axis IN "
                          f"({','.join('?' * len(gone))})", tuple(gone))
             conn.commit()
+        # ★ ③ 끌어오기 밑감 — ★ 한 번만 만든다 (마스터 지시 3 · 08-30)
+        _otable = _origin_lend_table(conn)
+        _okeys = _origin_keys(conn, lids)
         rows = 0
         for _i9, lid in enumerate(lids):
             # ★★ 08-28 — ★ 잠금 창을 끊는다.  ★ 전에는 S4·S6 에만 넣어
@@ -1388,6 +1461,14 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
+            # ★★★★★ 08-30 (마스터 지시 3 · `f-table` 5장 갈래 ③) —
+            #   ★ 신차가가 없으면 ★ **다른 사이트 표에서 끌어온다.**
+            #   ★ 열쇠 넷(제조사·모델·트림·연식)이 ★ **다 같을 때만** 쓴다 —
+            #   ★ ★ 하나라도 다르면 ★ 안 빌린다 (0점＋미확인이 그대로 간다)
+            _lent, _lent_src = _origin_lent(lid, _okeys, _otable)
+            if _lent:
+                snap = replace(snap, price_origin_won=_lent,
+                               origin_lent_from=_lent_src)
             snap = replace(snap, owned_months=_owned_months(snap, at),
                            **_option_money(snap, dicts.option_prices))
             # ★ 옵션·트림 보정 (개정 421).  깡통과 풀옵션을 같은 값으로 안 본다
@@ -1457,12 +1538,23 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
                     "WHERE status='active'"))]
+        # ★ ③ 끌어오기 밑감 — ★ 한 번만 만든다 (마스터 지시 3 · 08-30)
+        _otable = _origin_lend_table(conn)
+        _okeys = _origin_keys(conn, lids)
         for _i10, lid in enumerate(lids):
             # ★ 잠금 창을 끊는다 (08-28) — ★ S9 과 같은 까닭이다
             raw_tick(conn, _i10)
             # ★ 매물 값을 스냅샷으로 올린다.  축 함수가 dict 를 뒤지지 않게 (F-1)
             snap = replace(load_snapshot(conn, lid), **_listing_values(conn, lid),
                            **_market_of(market, lid))
+            # ★★★★★ 08-30 (마스터 지시 3 · `f-table` 5장 갈래 ③) —
+            #   ★ 신차가가 없으면 ★ **다른 사이트 표에서 끌어온다.**
+            #   ★ 열쇠 넷(제조사·모델·트림·연식)이 ★ **다 같을 때만** 쓴다 —
+            #   ★ ★ 하나라도 다르면 ★ 안 빌린다 (0점＋미확인이 그대로 간다)
+            _lent, _lent_src = _origin_lent(lid, _okeys, _otable)
+            if _lent:
+                snap = replace(snap, price_origin_won=_lent,
+                               origin_lent_from=_lent_src)
             snap = replace(snap, owned_months=_owned_months(snap, at),
                            **_option_money(snap, dicts.option_prices))
             # ★ 옵션·트림 보정 (개정 421).  깡통과 풀옵션을 같은 값으로 안 본다

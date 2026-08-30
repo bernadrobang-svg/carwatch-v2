@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 183개 · 총 66,520줄
+파일 183개 · 총 66,671줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,7 +12,7 @@
 | `web/views.py` | 2,730 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,270 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 1,848 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
-| `collect/runner.py` | 1,594 | 수집 실행 규칙. |
+| `collect/runner.py` | 1,686 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,236 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,156 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
@@ -41,15 +41,15 @@
 | `web/app.py` | 544 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
-| `contracts.py` | 466 | 계층 간 계약 — Protocol · DTO. |
+| `contracts.py` | 471 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 421 | CarWatch v2 진입점. |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `report/views.py` | 405 | 리포트 DTO (L9). |
+| `tools/collect_kcar.py` | 402 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
 | `tools/sync_registry.py` | 394 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `tools/collect_hyundai_cert.py` | 371 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
-| `tools/collect_kcar.py` | 352 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `parse/hyundai_cert/mapping.py` | 331 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
@@ -102,7 +102,7 @@
 | `score/penalty.py` | 166 | 마이너스 점수 (개정 322). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
 | `adapters/kbchachacha.py` | 161 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
-| `analyze/axis/value.py` | 156 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
+| `analyze/axis/value.py` | 160 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
 | `tools/daily_enqueue.py` | 153 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
@@ -228,10 +228,10 @@ _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort
 resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:105  flush_dealer_pii:152  _record_dropped:164  classify_invariant_change:199  _lookback:249  _source_history:263  _schema_change_min:292  _current:306  _today:312  _drop_non_values:326  upsert_core:334  mark_gone:435  sweep_gone:452  sweep_gone_groups:496  load_snapshot:538  build_identities:647  resolve_vehicle_id:673  merge_conflict:705  upsert_vehicle:716  upsert_dealer:737  dealer_trust:764  _trust_cfg:857  upsert_child:874  _flag:895  _not_join_months:909  state_counts:934  current_versions:974  diagnosis_of:1004  target_counts:1017  top_target:1024  vehicle_of:1029  collect_scale:1036  our_fault:1056  catalog_coverage:1065  _walk:1109  _sample_bodies:1125  hits_of:1138  key_seen:1157  stored_hits:1172  sample_bodies:1188  observed:1210  known_leaves:1248  has_unclassified:1263  classify_unclassified:1270  _card_limit:1313  _value_chars:1318  _admin_cfg:1323  unclassified_cards:1340  _peek:1396  _short:1443  _blocking_paths:1454  _raw_rows_max:1474  used_endpoints:1484  raw_sections:1493  _flatten:1532  option_diff:1556  _option_names:1594  blocking_keys:1610  full_hits:1628  axis_paths_empty:1653  blocking_rows:1690  record_mismatch_sql:1752  record_mismatch_count:1758  relist_counts:1784  listing_models:1801  filter_options:1821  site_counts:1838
 ```
 
-### `collect/runner.py` — 1,594줄
+### `collect/runner.py` — 1,686줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:144  aspect_names:165  check_facet_axes:169  interpret_failure:183  collect_check:212  FailStreak:282  _sleep:316  _log_request:322  _save_issues:333  make_executors:344  classify_in_group:961  _query_key:990  _group_of:998  _fuel_of:1013  _badge_of:1019  _pages_for:1025  _dicts:1039  _option_medians:1075  _market_medians:1121  _trim_ladders:1150  _option_base:1167  _site_grade_rules:1197  _listing_config:1213  _listing_values:1238  _option_money:1257  _owned_months:1276  _option_of:1288  _market_of:1296  _group_sums:1306  make_score_executors:1333  make_validate_executor:1523  make_registry_executor:1565
+CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:144  aspect_names:165  check_facet_axes:169  interpret_failure:183  collect_check:212  FailStreak:282  _sleep:316  _log_request:322  _save_issues:333  make_executors:344  classify_in_group:961  _query_key:990  _group_of:998  _fuel_of:1013  _badge_of:1019  _pages_for:1025  _dicts:1039  _option_medians:1075  _market_medians:1121  _trim_ladders:1150  _option_base:1167  _site_grade_rules:1197  _listing_config:1213  _listing_values:1238  _option_money:1257  _owned_months:1276  _option_of:1288  _market_of:1296  _group_sums:1306  _origin_lend_table:1334  _origin_keys:1364  _origin_lent:1383  make_score_executors:1403  make_validate_executor:1615  make_registry_executor:1657
 ```
 
 ### `tests/test_spec_ui.py` — 1,494줄
@@ -402,10 +402,10 @@ _py_files:48  _checks_in_code:73  _guide_checks:119  _checks_in_docs:152  last_r
 check:21  test_routes:28  test_template:85  test_no_logic_in_template:126  test_static_escape:141  test_session_cookie:153  test_error_page:171  test_layout:198  test_filters:227  test_empty_state:250  test_menu_by_role:277  test_guard_and_csrf:298  _call:345  test_screens_render:362  test_sketch_match:453  test_account_policy:468
 ```
 
-### `contracts.py` — 466줄
+### `contracts.py` — 471줄
 
 ```
-Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:230  Account:249  require_role:266  RunContext:283  StepReport:303  ResumePoint:327  clean_vin:348  total_of:359  RegressionReport:372  json_paths:383  shape_ok:431  shape_violations:464
+Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:235  Account:254  require_role:271  RunContext:288  StepReport:308  ResumePoint:332  clean_vin:353  total_of:364  RegressionReport:377  json_paths:388  shape_ok:436  shape_violations:469
 ```
 
 ### `run.py` — 421줄
@@ -424,6 +424,12 @@ f_won:55  f_km:71  f_pct:75  f_date:79  f_num:90  f_gradecls:97  f_gradelabel:11
 
 ```
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:253  ClassifySummary:260  PriceSummary:267  AxisStat:276  CoefficientChange:286  DictChangeSummary:296  TargetReport:304  RunStep:316  RunReport:331  HaltReport:342  FixAction:359  NotifyResult:369  ExportResult:382  display_value:391  display_points:401
+```
+
+### `tools/collect_kcar.py` — 402줄
+
+```
+_now:50  fetch:54  classify:76  accident_of:91  fetch_stock:100  collect_list:125  main:302
 ```
 
 ### `tests/test_collect.py` — 401줄
@@ -448,12 +454,6 @@ check:37  db:43  test_expected:49  test_halt:61  test_reprocess:82  test_refetch
 
 ```
 target_of:73  _now:89  _post:93  _get:103  fetch_detail:114  load_filters:127  total_count:159  walk:172  main:204
-```
-
-### `tools/collect_kcar.py` — 352줄
-
-```
-_now:45  fetch:49  classify:71  accident_of:86  fetch_stock:95  collect_list:120  main:252
 ```
 
 ### `parse/hyundai_cert/mapping.py` — 331줄
