@@ -4286,6 +4286,10 @@ def s46_180_code_table_per_site():
     for i, ln in enumerate(body.splitlines(), 1):
         if not _re.search(r"같은 꼴로|같은 방식으로", ln):
             continue
+        # ★ 사이트를 두고 한 말일 때만 본다 — ★ 셈법을 되풀이하는 말은 아니다
+        if not _re.search(
+                r"엔카|K카|KB|보배|헤이딜러|리본카|볼보|BMW|렉서스|현대|기아|사이트", ln):
+            continue
         if _re.search(r"~~|물린다|오판|마스터 —", ln):
             continue
         bad.append(str(i))
@@ -4362,6 +4366,9 @@ def s46_183_master_only_after_probing():
         if "마스터 몫" not in ln and "마스터께서 정하" not in ln:
             continue
         if _re.search(r"실측|표본|열어|쟀다|물린다|~~", ln):
+            continue
+        # ★ 「마스터 몫이 아니다」·「다 답했다」는 ★ 넘기는 것이 아니다
+        if _re.search(r"마스터 몫이 아니다|다 답했다|지워라", ln):
             continue
         bad.append(str(i))
     if bad:

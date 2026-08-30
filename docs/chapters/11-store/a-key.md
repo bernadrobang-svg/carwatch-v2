@@ -1,7 +1,7 @@
 ## STEP 28 — 테이블 목록
 
 ```
-version  SPEC-2026.08.29-r985
+version  SPEC-2026.08.29-r986
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39

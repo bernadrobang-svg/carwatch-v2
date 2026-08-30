@@ -159,15 +159,15 @@
 | `S46-172` | 「없다」를 본문 낱말로 쟀는가 | fatal | `validate/v0_guide.py:4074` | **★ 없음** | 없음 | guide/03_이력.md:1075 · guide/06_오판대장.md:301 |
 | `S46-173` | 규격이 창구를 적었는가 | fatal | `validate/v0_guide.py:4098` | **★ 없음** | 없음 | guide/03_이력.md:1077 · guide/06_오판대장.md:302 |
 | `S46-174` | 「창구가 없다」를 열어 보고 적었는가 | fatal | `validate/v0_guide.py:4123` | **★ 없음** | 없음 | guide/03_이력.md:1081 · guide/06_오판대장.md:303 |
-| `S46-175` | 점수를 「나머지 N」으로 뭉개지 않는가 | fatal | `validate/v0_guide.py:4150` | **★ 없음** | 없음 | guide/03_이력.md:1083 · guide/06_오판대장.md:304 |
+| `S46-175` | 점수를 「나머지 N」으로 뭉개지 않는가 | fatal | `validate/v0_guide.py:4150` | **★ 없음** | 없음 | guide/03_이력.md:1083 · guide/03_이력.md:1127 · guide/06_오판대장.md:304 |
 | `S46-176` | 사이트 두드리기를 넘기지 않는가 | fatal | `validate/v0_guide.py:4183` | **★ 없음** | 없음 | guide/03_이력.md:1085 · guide/06_오판대장.md:305 |
 | `S46-177` | 카탈로그를 site 로 가두지 않는가 | fatal | `validate/v0_guide.py:4211` | **★ 없음** | 없음 | guide/03_이력.md:1101 · chapters/30-score/f-table.md:1779 |
 | `S46-178` | 목록이 주는 칸이 파서에 있는가 | fatal | `validate/v0_guide.py:4236` | **★ 없음** | 없음 | guide/03_이력.md:1101 · chapters/30-score/f-table.md:1803 |
 | `S46-179` | 못 받은 축에 감점이 없는가 | fatal | `validate/v0_guide.py:4261` | **★ 없음** | 없음 | guide/03_이력.md:1111 · chapters/30-score/f-table.md:1926 |
-| `S46-180` | 코드 표가 사이트마다 있는가 | fatal | `validate/v0_guide.py:4275` | **★ 없음** | 없음 | guide/03_이력.md:1113 · guide/06_오판대장.md:307 |
-| `S46-181` | 받아 둔 조사를 먼저 보는가 | fatal | `validate/v0_guide.py:4298` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:1042 · guide/03_이력.md:1115 · guide/06_오판대장.md:308 |
-| `S46-182` | 「전 사이트」를 사이트별로 열고 말했는가 | fatal | `validate/v0_guide.py:4318` | **★ 없음** | 없음 | guide/03_이력.md:1123 · guide/06_오판대장.md:309 |
-| `S46-183` | 「마스터 몫」 전에 내가 열었는가 | fatal | `validate/v0_guide.py:4346` | **★ 없음** | 없음 | guide/06_오판대장.md:310 |
+| `S46-180` | 코드 표가 사이트마다 있는가 | fatal | `validate/v0_guide.py:4275` | **★ 없음** | 없음 | guide/03_이력.md:1113 · guide/03_이력.md:1127 · guide/06_오판대장.md:307 |
+| `S46-181` | 받아 둔 조사를 먼저 보는가 | fatal | `validate/v0_guide.py:4302` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:1042 · guide/03_이력.md:1115 · guide/06_오판대장.md:308 |
+| `S46-182` | 「전 사이트」를 사이트별로 열고 말했는가 | fatal | `validate/v0_guide.py:4322` | **★ 없음** | 없음 | guide/03_이력.md:1123 · guide/06_오판대장.md:309 |
+| `S46-183` | 「마스터 몫」 전에 내가 열었는가 | fatal | `validate/v0_guide.py:4350` | **★ 없음** | 없음 | guide/03_이력.md:1127 · guide/06_오판대장.md:310 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
