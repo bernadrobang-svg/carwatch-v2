@@ -1,7 +1,7 @@
 # 사이트간 견주기 — ★ 등급 차이 · 값 차이
 
 ```
-version  SPEC-2026.08.29-r997
+version  SPEC-2026.08.29-r998
 follows  `docs/chapters/30-score/f-table.md` · `docs/DEDUP_CROSS_SITE.md`
 sources  개정 703 · 마스터 지시 08-24
 checks   S46-54 · S46-55 · S46-56
