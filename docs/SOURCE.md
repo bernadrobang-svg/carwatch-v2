@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 184개 · 총 66,796줄
+파일 184개 · 총 66,912줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -37,7 +37,7 @@
 | `tests/test_admin.py` | 567 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tests/test_admin_flow.py` | 566 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
-| `tools/collect_kbchachacha.py` | 548 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
+| `tools/collect_kbchachacha.py` | 556 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `web/app.py` | 544 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
@@ -49,7 +49,7 @@
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
 | `tools/sync_registry.py` | 394 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
-| `tools/collect_hyundai_cert.py` | 371 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
+| `tools/collect_hyundai_cert.py` | 378 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `parse/hyundai_cert/mapping.py` | 341 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `tools/light_check.py` | 325 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
@@ -69,9 +69,9 @@
 | `tools/check_screens.py` | 277 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `report/exports/export.py` | 269 | 내보내기. |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
+| `tools/collect_bobaedream.py` | 263 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
 | `web/server.py` | 259 | HTTP 서버 (14장 STEP 141 · 150). |
-| `tools/collect_bobaedream.py` | 256 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `tests/test_store.py` | 255 | 3장 테이블 시험. |
 | `tools/menu.py` | 254 | 실행 메뉴. |
 | `tests/test_registry.py` | 245 | 8장 등록부 시험. |
@@ -80,19 +80,20 @@
 | `tests/test_invariants.py` | 232 | 불변식 시험. |
 | `tools/repair_facet_chunks.py` | 222 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `tools/collect_bmw.py` | 218 | BMW 바바리안(BPS) 수집 (명령서 1a). |
+| `tools/collect_heydealer.py` | 213 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
 | `parse/kbchachacha/mapping.py` | 210 | KB차차차 상세 → `core_listing` (`docs/KBCHACHACHA_API.md` 3장). |
 | `tools/unknown_split.py` | 210 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
-| `tools/collect_heydealer.py` | 206 | 헤이딜러 수집 — 토큰 → 차종별 목록 → 상세 (명령서 37). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
+| `tools/collect_reborncar.py` | 203 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `parse/bobaedream/mapping.py` | 196 | 보배드림 상세 → `core_listing` (`docs/BOBAEDREAM_API.md` 2·3·1a장). |
-| `tools/collect_reborncar.py` | 196 | 리본카 수집 — 사이트맵 전량 → 우리 쪽에서 거른다 (명령서 39). |
 | `score/scorer.py` | 194 | 채점 · 분모 (L7). |
 | `parse/importer.py` | 182 | 반입 입력 해석 (13장 STEP 136a · 136b). |
 | `collect/worker.py` | 180 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `tools/collect_kia_cpo.py` | 180 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
 | `tools/run_tests.py` | 180 | 시험 전체 실행. |
+| `tools/undo_wrong_gone.py` | 177 | ★★★★★ 잘못 매긴 `gone` 을 되돌린다 (마스터 0a·0c · 08-30). |
 | `tools/classify_unclassified.py` | 175 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `tools/migrate.py` | 174 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
@@ -134,7 +135,6 @@
 | `tools/fill_photos.py` | 108 | ★★★ 이미 받아 둔 원문에서 ★ 사진을 채운다 (명령서 73장). |
 | `tools/probe_kb_wall.py` | 106 | KB 봇 차단을 ★ 재는 도구 (명령서 08-25 · 마스터 「가려 받지 마라」). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
-| `tools/kcar_undo_gone.py` | 97 | ★★★★★ 잘못 매긴 K카 `gone` 을 되돌린다 (마스터 0a · 08-30). |
 | `analyze/axis/taste.py` | 94 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
 | `tools/recalc_catchup.py` | 94 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
@@ -191,7 +191,7 @@
 | `parse/reborncar/__init__.py` | 0 | — |
 | `parse/volvo_selekt/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 80개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 81개)
 
 ### `validate/v11_web.py` — 5,038줄
 
@@ -379,10 +379,10 @@ check:32  _env:38  _cfg:55  _post:60  _get:65  flow_config:71  flow_scoring:107 
 _read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373  _md:468
 ```
 
-### `tools/collect_kbchachacha.py` — 548줄
+### `tools/collect_kbchachacha.py` — 556줄
 
 ```
-_now:85  _get:89  fetch_ok:98  page_ids:115  load_filters:125  walk_group:185  count_all:227  probe_detail:253  store_details:272  fetch_details:301  load_details:375  main:440
+_now:85  _get:89  fetch_ok:98  page_ids:115  load_filters:125  walk_group:185  count_all:227  probe_detail:253  store_details:272  fetch_details:301  load_details:375  main:448
 ```
 
 ### `web/app.py` — 544줄
@@ -451,7 +451,7 @@ FieldUsage:31  RegistrySyncReport:48  facet_path:66  scan_paths:74  shape_ok:79 
 check:37  db:43  test_expected:49  test_halt:61  test_reprocess:82  test_refetch:107  test_precheck:115  test_resume_and_version:167  test_run_pipeline:195  test_recalc:230  test_pii_orphan:265  test_exception_becomes_halt:298  test_fixed_enum_bootstrap:319  test_envelope_scope:349
 ```
 
-### `tools/collect_hyundai_cert.py` — 371줄
+### `tools/collect_hyundai_cert.py` — 378줄
 
 ```
 target_of:73  _now:89  _post:93  _get:103  fetch_detail:114  load_filters:127  total_count:159  walk:172  main:204
@@ -571,6 +571,12 @@ filename:26  _stamp_lines:32  listing_md:38  listing_csv:76  halt_md:93  target_
 check:33  test_finance:40  test_display:97  _pipeline:113  test_layers:124  test_halt_layer:160  test_export:202
 ```
 
+### `tools/collect_bobaedream.py` — 263줄
+
+```
+_now:39  _get:43  target_names:53  wanted:62  _elapsed:70  load_filters:77  _walk_plan:104  main:115
+```
+
 ### `tests/test_watch.py` — 259줄
 
 ```
@@ -581,12 +587,6 @@ check:30  db:36  add:41  watch:64  test_same_dealer:78  test_cross_dealer:97  te
 
 ```
 load_web_config:47  guard:60  _drain_chunk:92  TOO_LARGE:96  make_handler:105  serve:234
-```
-
-### `tools/collect_bobaedream.py` — 256줄
-
-```
-_now:39  _get:43  target_names:53  wanted:62  _elapsed:70  load_filters:77  _walk_plan:104  main:115
 ```
 
 ### `tests/test_store.py` — 255줄
@@ -637,6 +637,12 @@ meta_of:37  fix_meta:66  groups:87  join:101  main:114
 _now:42  _get:46  _have_detail:63  main:76
 ```
 
+### `tools/collect_heydealer.py` — 213줄
+
+```
+_now:34  _get:38  _targets:50  walk:68  main:113
+```
+
 ### `web/context.py` — 213줄
 
 ```
@@ -661,15 +667,15 @@ _text:43  _int:48  ld_json:55  _yes_no:67  _model_of:97  parse_detail:117  _phot
 _cfg:35  _walk:41  classify:51  main:127
 ```
 
-### `tools/collect_heydealer.py` — 206줄
-
-```
-_now:34  _get:38  _targets:50  walk:68  main:113
-```
-
 ### `tests/seed.py` — 204줄
 
 ```
 _cfg:46  build_seed_db:51  _confirm_dict:103  seed_db_path:119  _ensure_secrets:132  _seed_unclassified:148
+```
+
+### `tools/collect_reborncar.py` — 203줄
+
+```
+_now:39  _get:43  codes:58  main:73
 ```
 

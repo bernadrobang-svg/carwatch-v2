@@ -233,14 +233,21 @@ def main() -> int:
     #   ★ ★ 그래서 ★ 부르되 ★ **안 매긴다** (`done=False`) — ★ 지어내지 않는다.
     #     ★ 반만 보고 매기면 ★ 산 차를 죽인다 (규격 「필수」).
     #   ★ ★ 끝 신호(마지막 쪽·총계)를 얻으면 ★ 그때 참으로 바꾼다 — ★ 가이드에 올렸다
-    from store.core import sweep_gone_groups
 
     # ★★★★ 08-29 (규격 확정) — ★ 빈 쪽까지 갔을 때만 참이다.
     #   ★ 사람이 `--pages` 를 준 때 · ★ MAX_PAGES 에 닿은 때는 ★ 거짓이다
     _done = bool(walked) and walked <= ended and not pages_given
     # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
     raw_link_raws(conn, SITE_CODE)
-    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, set(seen))], at)
+    # ★★★★★ 08-30 정정 (마스터 0c) — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
+    #   ★ K카가 살아 있는 12대를 죽인 것과 ★ **같은 함정**이다 (0a).
+    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 것을 ★ **표본으로 눌러 봤다** —
+    #   ★ ★ 표본 10건 중 ★ **2건이 살아 있었다** (파서가 값을 뽑았다)
+    #   ★★★ 까닭 — ★ 「끝까지 받았나」 가드는 ★ 「이 창구를 끝까지 받았나」를 재지
+    #     ★ ★ **「이 창구가 전량인가」를 안 잰다.**  ★ 우리는 ★ 차종으로 좁혀 받는다 —
+    #     ★ ★ 좁힌 목록에 없다고 ★ 사이트에서 사라진 것이 아니다.
+    #   ★ 되돌리는 길은 ★ `tools/undo_wrong_gone.py` 다 (눌러서 살아 있는 것만 되돌린다)
+    _got = {}
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종) · 빈 쪽까지 간 조건 {len(ended)}/{len(walked)}"
           f"{' · --pages 를 주셨으므로 안 매긴다' if pages_given else ''}")

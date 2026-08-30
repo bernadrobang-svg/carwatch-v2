@@ -313,11 +313,18 @@ def main() -> int:
     commit(conn)
     # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
     #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다
-    from store.core import sweep_gone_groups
 
     # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
     raw_link_raws(conn, SITE_CODE)
-    _got = sweep_gone_groups(conn, SITE_CODE, done_groups, at)
+    # ★★★★★ 08-30 정정 (마스터 0c) — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
+    #   ★ K카가 살아 있는 12대를 죽인 것과 ★ **같은 함정**이다 (0a).
+    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 것을 ★ **표본으로 눌러 봤다** —
+    #   ★ ★ 표본 10건 중 ★ **10건이 다 살아 있었다**
+    #   ★★★ 까닭 — ★ 「끝까지 받았나」 가드는 ★ 「이 창구를 끝까지 받았나」를 재지
+    #     ★ ★ **「이 창구가 전량인가」를 안 잰다.**  ★ 우리는 ★ 차종으로 좁혀 받는다 —
+    #     ★ ★ 좁힌 목록에 없다고 ★ 사이트에서 사라진 것이 아니다.
+    #   ★ 되돌리는 길은 ★ `tools/undo_wrong_gone.py` 다 (눌러서 살아 있는 것만 되돌린다)
+    _got = {}
     _dn = sum(1 for d, _i in done_groups if d)
     print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
           f"({len(_got)}차종 · 끝까지 받은 묶음 {_dn}/{len(done_groups)})")
