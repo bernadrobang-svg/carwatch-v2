@@ -137,3 +137,76 @@ def marks(html: str) -> dict:
     f = fields(html)
     return {k: f[k] for k in ("사고여부", "침수여부", "용도변경",
                               "외부 패널", "프레임") if f.get(k)}
+
+
+# ★★★★★ 08-30 (명령서 r990 · 1-4) — ★ 리본카 골격·외판.
+#   ★★ **가르는 규칙을 내가 지어내지 않았다** — ★ 사이트 제 스크립트가 적어 준다
+#     (상세 원문 안 · 실측 08-30 · 표본 60건 중 31건에 값이 있다) —
+#
+#       $('.frame-map').find('i').each(function() {
+#         var str = $(this).data('value');            // ★ 「w03」·「x18」
+#         var cssType     = str.substring(0, 1);      // ★ 앞 한 글자
+#         var cssPosition = parseInt(str.substring(1, 3));
+#         if (cssPosition <= 8) {                     // ★ 1~8  = 패널(외판)
+#             if (cssType == 'w') data.panelCnt1 += 1;   // ★ 판금
+#             else if (cssType == 'x') data.panelCnt2 += 1;  // ★ 교환
+#         } else {                                    // ★ 9 이상 = 프레임(골격)
+#             if (cssType == 'w') data.frameCnt1 += 1;
+#             else if (cssType == 'x') data.frameCnt2 += 1;
+#         }
+#       })
+#
+#   ★★ 사이트도 ★ `w`·`x` 만 센다 — ★ 실측에 나온 `t02`·`u02`·`u08` 은
+#     ★ ★ 사이트 자신이 ★ **안 센다.**  ★ 우리도 ★ **미확인으로 두고 안 낸다** (금지 6)
+RE_FRAME_MAP = re.compile(
+    r'class="[^"]*frame-map[^"]*"(.*?)</(?:div|ul|section)>', re.S)
+RE_MAP_VALUE = re.compile(r'<i[^>]*data-value="([a-z])(\d{2})[^"]*"')
+# ★ 축이 보는 낱말 (`analyze/axis/state.py` SWAP_TITLES · SHEET_TITLES)
+RB_TYPE = {"w": ("W", "판금/용접"), "x": ("X", "교환(교체)")}
+# ★ 무리 — ★ 축은 ★ 「어느 무리에 드는가」로만 본다 (`_rank_worst`).
+#   ★ 리본카는 ★ A·B·C 나 1·2 를 안 준다 — ★ 무리의 첫 값이 곧 무리 이름이다
+RB_OUTER, RB_BONE = "RANK_ONE", "RANK_A"
+RB_OUTER_MAX = 8            # ★ 1~8 이 패널이다 (위 스크립트)
+
+RB_UNKNOWN: list = []
+
+
+def panels_of(html: str) -> list | None:
+    """`.frame-map` → 엔카 `inspection_panel_json` 과 같은 꼴.
+
+    돌려줌  판 목록.  ★ 빈 배열이면 ★ 「진단표는 있는데 손댄 자리가 없다」다.
+           ★ `.frame-map` 자체가 없으면 ★ `None` — ★ 「못 봤다」다 (0 이 아니다)
+    """
+    if not html:
+        return None
+    got = RE_FRAME_MAP.search(html)
+    if not got:
+        return None                     # ★ 진단표가 없다 — ★ 「이상 없음」으로 치지 않는다
+    out = []
+    for kind, pos in RE_MAP_VALUE.findall(got.group(1)):
+        pair = RB_TYPE.get(kind)
+        if not pair:
+            RB_UNKNOWN.append(kind + pos)
+            continue                    # ★ 사이트도 안 세는 부호 — ★ 미확인
+        code, title = pair
+        rank = RB_OUTER if int(pos) <= RB_OUTER_MAX else RB_BONE
+        out.append({"type": {"code": kind + pos, "title": kind + pos},
+                    "statusTypes": [{"code": code, "title": title}],
+                    "attributes": [rank]})
+    return out
+
+
+def counts_of(html: str) -> dict:
+    """★ 사이트가 세는 것과 ★ 같은 셈 — ★ 판금·교환을 패널/프레임으로 나눠 센다.
+
+    ★ 우리 셈이 사이트 화면과 어긋나지 않는지 ★ 대볼 때 쓴다
+    """
+    pan = panels_of(html)
+    if pan is None:
+        return {}
+    got = {"panelCnt1": 0, "panelCnt2": 0, "frameCnt1": 0, "frameCnt2": 0}
+    for one in pan:
+        head = "panel" if one["attributes"][0] == RB_OUTER else "frame"
+        tail = "1" if one["statusTypes"][0]["code"] == "W" else "2"
+        got[head + "Cnt" + tail] += 1
+    return got

@@ -25,6 +25,32 @@ LIEN = "lien"
 # ★ 상한을 걸어 되돌려 준 몫.  ★ 「깎인 합 → 상한」을 화면이 그대로 낸다 (개정 491)
 CAP_PREFIX = "cap:"
 
+# ★★★★★ 08-30 (명령서 r990 · 1-1 · `f-table` 3z · 검산 `S46-179`) —
+#   ★ **「못 받았으면 감점도 못 한다.」**
+#   ★ 축이 ★ 0점을 낼 때 ★ 까닭이 둘이다 —
+#       ⓐ ★ 「그 차에 흠이 있다」  → ★ 벌한다
+#       ⓑ ★ 「우리가 원문을 못 받았다」 → ★ ★ **벌하지 않는다**
+#   ★ ★ 값만 보면 ★ 둘이 똑같이 `0` 이다.  ★ 갈라 주는 것은 ★ **근거 글**뿐이다.
+#   ★★ 실측 08-30 — ★ `rental_history(-67)` 이 ★ 화면 매물 5,549건 중 ★ **5,503건**에
+#     ★ ★ 붙어 있었고 ★ 그중 ★ **3,813건(69%)** 이 ★ `history.use` 근거가 `missing` 이었다.
+#     ★ ★ 아홉 사이트는 ★ **전건**이 여기 걸렸다 — ★ 이력 원문을 아직 못 받아서다.
+#     ★ ★ `no_site_grade(-40)` 도 ★ 1,110건 중 ★ **491건**이 같았다
+#   ★ 아래 낱말은 ★ **지어낸 것이 아니다** — ★ 그 축이 「못 받았다」로 낼 때 쓰는 글이다
+#     `missing`                — `analyze/axis/history.py:71` · `axis/site.py`
+#     `rule_or_source_missing` — `analyze/axis/site.py` (사이트 규칙이 없다)
+#     `site_unavailable`       — `config/dictionaries/source_labels.json`
+#                                「이 사이트가 주지 않는 값입니다」
+NOT_RECEIVED = frozenset({"missing", "rule_or_source_missing",
+                          "site_unavailable"})
+
+
+def received(verdict, comp: str) -> bool:
+    """★ 그 축을 ★ **실제로 보고** 0점을 낸 것인가.
+
+    ★ 근거 글이 ★ 「못 받았다」 쪽이면 ★ False — ★ 그러면 벌하지 않는다 (3z)
+    """
+    return verdict.sources.get(comp) not in NOT_RECEIVED
+
 # 화면 문구.  ★ 무엇을 왜 뺐는지가 보여야 한다
 LABELS = {
     RENTAL: "렌트·영업용 이력",
@@ -56,10 +82,14 @@ def penalties_of(verdict, policy, snapshot) -> list:
 
     values, excluded = verdict.values, verdict.excluded
     # 렌트·영업용 — 셋 중 하나라도 렌트면 (개정 302)
-    if "history.use" not in excluded and values.get("history.use") == 0:
+    # ★★ 08-30 (r990 1-1 · 3z) — ★ `received()` 를 함께 본다.
+    #   ★ 「원문을 받지 못했습니다」인 축은 ★ **벌하지 않는다**
+    if ("history.use" not in excluded and values.get("history.use") == 0
+            and received(verdict, "history.use")):
         add(RENTAL)
-    # 사이트 우수등급 — ★ 「확인 못 함」과 「없음」을 가른다 (개정 323)
-    if "warranty.site" not in excluded and values.get("warranty.site") == 0:
+    # 사이트 우수등급 — ★ 「확인 못 함」과 「없음」을 가른다 (개정 323 · 3z)
+    if ("warranty.site" not in excluded and values.get("warranty.site") == 0
+            and received(verdict, "warranty.site")):
         add(NO_SITE_GRADE)
     # ★★ 개정 491 — 「점검을 판매자가 올렸다」는 ★ 감점이 아니다.
     #   ★ warranty.site 의 **단계를 낮춘다** (analyze/axis/site.py).

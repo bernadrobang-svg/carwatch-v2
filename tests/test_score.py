@@ -565,21 +565,27 @@ def test_price_real() -> None:
           at(_bud * 1.50).values["value.budget"] == 0)
 
     # ── ② 값 — 신차가 대비 75 (개정 452 곡선) ──
-    # ★ 80% 이상 0 · 65% 만점 · 사이는 로그 (f-table 5장-2a ①)
-    # ★★★ 08-28 마스터 확정 (r798) — 「★ 40% 만점으로 ★ 로그 곡선 ·
-    #   ★ 80%에 거의 0에 수렴」.  ★ 옛 시험은 「65% 만점 · 80% 0」이었다
-    check("★★ 신차가의 80% 면 거의 0 이다 (마스터 확정 08-28)",
-          at(org * 0.80).values["value.origin"] <= 1,
-          str(at(org * 0.80).values["value.origin"]))
-    check("★★ 신차가의 40% 면 만점 75 (마스터 확정 08-28)",
-          at(org * 0.40).values["value.origin"] == 75,
-          str(at(org * 0.40).values["value.origin"]))
-    check("★ 감가가 클수록 점수가 높다 — 65% 는 40% 보다 낮다",
-          at(org * 0.65).values["value.origin"]
-          < at(org * 0.40).values["value.origin"])
-    check("★★ 신차가보다 비싸도 자르지 않는다 — 0점일 뿐이다 (개정 452)",
-          at(org * 1.10).values["value.origin"] == 0,
-          str(at(org * 1.10).values["value.origin"]))
+    # ★★★★★ 08-30 마스터 확정 (r990 ①) — ★ **만점을 40% → 60% 로 옮겼다.**
+    #   ★ 「60%=75점 · 75%=37 · 90%=20 · 120%=0.7 · 꼴은 그대로」
+    #   ★ 까닭 — ★ 아홉 사이트 매물의 ★ 현재가÷신차가 ★ **중앙값이 60.1%** 다.
+    #     ★ ★ 40% 만점이면 ★ 거의 모든 중고차가 ★ 곡선 바닥에 앉는다 (실측 08-30 ·
+    #     ★ ★ `value.origin` 이 430건에 31.9% 였다)
+    #   ★★ 옛 시험은 ★ 「40% 만점 · 80% 거의 0」이었다 — ★ 그것은 ★ **옛 곡선**이다
+    check("★★ 신차가의 60% 면 만점 75 (마스터 확정 08-30)",
+          at(org * 0.60).values["value.origin"] == 75,
+          str(at(org * 0.60).values["value.origin"]))
+    check("★★ 신차가의 75% 면 37 근처다 (마스터 확정 08-30)",
+          35 <= at(org * 0.75).values["value.origin"] <= 39,
+          str(at(org * 0.75).values["value.origin"]))
+    check("★★ 신차가의 90% 면 20 근처다 (마스터 확정 08-30)",
+          18 <= at(org * 0.90).values["value.origin"] <= 22,
+          str(at(org * 0.90).values["value.origin"]))
+    check("★ 감가가 클수록 점수가 높다 — 90% 는 60% 보다 낮다",
+          at(org * 0.90).values["value.origin"]
+          < at(org * 0.60).values["value.origin"])
+    check("★★ 신차가보다 비싸도 자르지 않는다 — 0 으로 수렴할 뿐이다 (개정 452)",
+          at(org * 1.30).values["value.origin"] == 0,
+          str(at(org * 1.30).values["value.origin"]))
     check("★ 신차가가 없으면 0점 · 확인 안 됨",
           analyze_listing(ctx(snap(price_current_won=30_000_000)))
           .sources["value.origin"] == "origin_price_missing")

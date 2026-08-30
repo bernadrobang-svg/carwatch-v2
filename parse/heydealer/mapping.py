@@ -264,3 +264,78 @@ def part_enums(body: dict) -> list:
         if isinstance(one, dict) and one.get("part"):
             out.append({"part": one["part"], "repair": one.get("repair")})
     return out
+
+
+# ★★★★★ 08-30 (명령서 r990 · 1-3) — ★ 골격 43 · 외판 28 을 연다.
+#   ★ 지난 회차에 ★ 「`part` → 등급 표가 규격에 없다」고 올렸더니
+#   ★ ★ 마스터께서 ★ `f-table` **3a · 3b** 에 ★ 표를 내려 주셨다.
+#   ★★ 아래는 ★ **그 표를 그대로 옮긴 것이다** — ★ 내가 지어낸 것이 없다.
+#     ★ ★ 표에 없는 코드는 ★ **미확인 0점**이다 (3a·3b 의 마지막 줄)
+
+# ★ 3a. 부위 코드 — ★ 헤이딜러
+#   ★★ 헤이딜러는 ★ 「골격이냐 외판이냐」까지만 준다 — ★ A·B·C 나 1·2 를 안 준다.
+#   ★ ★ 축은 ★ 등급을 ★ **어느 무리에 드는가**로만 본다
+#     (`analyze/axis/state.py:_rank_worst` — ★ `attributes` 가 그 목록에 드는지).
+#   ★ ★ 그러므로 ★ 무리의 첫 값을 쓰는 것이 ★ 점수에 아무 영향이 없다.
+#   ★ ★ 곧 ★ `RANK_A` 는 ★ 「A랭크다」가 아니라 ★ 「골격 무리다」라는 뜻이다
+HD_BONE, HD_OUTER = "RANK_A", "RANK_ONE"
+HD_PART = {
+    "radiator_support": HD_BONE,          # ★ 라디에이터서포트는 뼈대다 (3a)
+    "door_front_driver": HD_OUTER,
+    "door_front_passenger": HD_OUTER,
+    "door_rear_driver": HD_OUTER,
+    "door_rear_passenger": HD_OUTER,
+    "fender_front_driver": HD_OUTER,
+    "fender_front_passenger": HD_OUTER,
+    "fender_rear_driver": HD_OUTER,
+    "fender_rear_passenger": HD_OUTER,
+    "trunk_lid": HD_OUTER,                # ★ 트렁크리드 — 트렁크플로어(골격)와 다르다
+}
+# ★ 3b. 수리 코드 — ★ 축이 보는 낱말로 옮긴다
+#   `analyze/axis/state.py` — SWAP_TITLES=("교환(교체)","용접,절단") · SHEET_TITLES=("판금/용접",)
+HD_REPAIR = {
+    "weld": ("W", "용접,절단"),            # ★ 3b — swap · 골격 0 · 외판 0
+    "exchange": ("X", "교환(교체)"),        # ★ 3b — swap · 골격 0 · 외판 0
+    "sheet_metal": ("S", "판금/용접"),      # ★ 3b — sheet1 26 · paint12 17
+}
+
+
+def panels_of(body: dict) -> list | None:
+    """`accident_repairs[]` → 엔카 `inspection_panel_json` 과 같은 꼴 (3a·3b).
+
+    돌려줌  판 목록.  ★ 빈 배열이면 ★ **「무사고로 확인했다」**다 (3a 실측 — 완전무사고
+           11건이 빈 배열이었다).  ★ 칸 자체가 없으면 ★ `None` (「못 봤다」)
+    ★★ 표에 없는 부위·수리 코드는 ★ **안 낸다** — ★ 미확인 0점이 맞다 (금지 6)
+    """
+    if not isinstance(body, dict):
+        return None
+    d = body.get("detail_info") or {}
+    if "accident_repairs" not in d and "accident_repairs" not in body:
+        return None                     # ★ 칸이 없다 — ★ 「이상 없음」으로 치지 않는다
+    got = d.get("accident_repairs")
+    if got is None:
+        got = body.get("accident_repairs")
+    if not isinstance(got, list):
+        return None
+    out, unknown = [], []
+    for one in got:
+        if not isinstance(one, dict):
+            continue
+        rank = HD_PART.get(str(one.get("part") or ""))
+        pair = HD_REPAIR.get(str(one.get("repair") or ""))
+        if not rank or not pair:
+            unknown.append((one.get("part"), one.get("repair")))
+            continue                    # ★ 표에 없다 — ★ 미확인.  ★ 짐작으로 안 옮긴다
+        code, title = pair
+        out.append({"type": {"code": str(one.get("part")),
+                             "title": str(one.get("part"))},
+                    "statusTypes": [{"code": code, "title": title}],
+                    "attributes": [rank]})
+    if unknown:
+        # ★ 새 코드가 나오면 ★ **미확인으로 두고 마스터께 올린다** (3a 의 「필수」)
+        UNKNOWN_CODES.extend(unknown)
+    return out
+
+
+# ★ 이번 바퀴에 본 ★ 「표에 없는 코드」.  ★ 부르는 쪽이 읽어 보고한다
+UNKNOWN_CODES: list = []

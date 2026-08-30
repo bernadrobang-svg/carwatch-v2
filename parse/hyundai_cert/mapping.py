@@ -248,7 +248,17 @@ def parse_detail_all(html: str, site: str, source_id: str) -> tuple | None:
         "site_pass_grade": ("CERTIFIED" if MARK_CERTIFIED in text else None),
         "diagnosis_status": "ok" if MARK_CERTIFIED in text else None,
     }
-    out.update(_warranty(text))
+    # ★★★★★ 08-30 (r990 1-2) — ★ **두 번 빼던 것을 고쳤다.**
+    #   ★ 현대인증은 ★ 「1년 4개월 남음」처럼 ★ **남은 양**을 준다.
+    #   ★ 그런데 ★ `warranty.general`·`.power` 축은 ★ 그 칸을
+    #     ★ ★ 「등록부터 몇 달」(총량)로 읽고 ★ 스스로 경과분을 뺀다
+    #     (`analyze/axis/warranty.py:_remaining_months` — `months - elapsed`).
+    #   ★ ★ 그래서 ★ 남은 값을 그대로 넣으면 ★ **경과분이 두 번 빠졌다.**
+    #   ★★ 실측 08-30 — ★ 167건이 ★ `1.1/22` 였다 (엔카는 평균 48.9개월인데
+    #     ★ ★ 현대인증만 16.5개월이었다 — ★ 그것이 「남은 양」이라는 자국이다).
+    #   ★ 고침 — ★ 최초등록일부터 오늘까지를 ★ **도로 더해** 총량으로 넣는다.
+    #     ★ ★ 셈이지 짐작이 아니다.  ★ 등록일을 못 읽으면 ★ 넣지 않는다 (None)
+    out.update(_warranty(text, out.get("reg_at")))
     out["options_standard_json"] = _json(_options(text))
     # ★★ 사고 건수는 ★ core_listing 이 아니라 ★ core_record 의 칸이다.
     #   ★ 남의 표 칸을 core 에 넣으면 upsert 가 조용히 버린다 (A-2)
@@ -272,7 +282,7 @@ def _num(text) -> int | None:
     return int(got) if got else None
 
 
-def _warranty(text: str) -> dict:
+def _warranty(text: str, reg_at: str | None = None) -> dict:
     """★ 잔여 보증 — ★ 현대만 년·월·km 로 남은 양을 그대로 준다 (2a).
 
     ★ 「N 년 M 개월 남음」이면 ★ 그 값을 쓴다.  ★ 우리가 날짜에서 재지 않는다
@@ -284,6 +294,7 @@ def _warranty(text: str) -> dict:
     #   ★ 일반 블록이 ★ 동력 블록의 값을 읽는다 —
     #   ★ 실측 HGN260618029076 : 일반은 「1 년 남음」인데 ★ 16개월로 들어갔다.
     #     ★ 다음 블록의 「1 년 4 개월 남음」을 ★ 집은 것이다
+    elapsed = _months_since(reg_at)
     marks = sorted(
         ((got.end(), got.start(), key)
          for key, head in RE_W_HEAD.items()
@@ -300,19 +311,41 @@ def _warranty(text: str) -> dict:
                       RE_W_M.search(near))
         km = RE_W_KM_LEFT.search(near)
         done = RE_W_DONE.match(near.strip())
+        left = None
         if ym:
-            out[f"{key}_month"] = int(ym.group(1)) * 12 + int(ym.group(2))
+            left = int(ym.group(1)) * 12 + int(ym.group(2))
         elif yy:
-            out[f"{key}_month"] = int(yy.group(1)) * 12
+            left = int(yy.group(1)) * 12
         elif mm:
-            out[f"{key}_month"] = int(mm.group(1))
+            left = int(mm.group(1))
+        if left is not None:
+            # ★★ 남은 달 → ★ **총량**.  ★ 축이 경과분을 다시 뺀다 (r990 1-2)
+            if elapsed is None:
+                continue                          # ★ 등록일을 모른다 — 안 넣는다
+            out[f"{key}_month"] = left + elapsed
         elif done:
             out[f"{key}_month"] = 0               # ★ 「만료」는 0 — 확인한 것이다
         if km:
-            out[f"{key}_km"] = _num(km.group(1))
+            # ★ 「남은 km」이므로 ★ 총 한도 = 남은 것 ＋ 이미 달린 것.
+            #   ★ 주행거리를 여기서 못 본다 — ★ 남은 값만으로는 총량을 못 낸다.
+            #   ★ ★ 그래서 ★ **km 은 안 넣는다** (None).  ★ 축은 달로만 잰다.
+            #   ★ 0 이나 남은 값을 넣으면 ★ 「보증 끝났다」로 잘못 읽힌다 (금지 12)
+            pass
         elif done:
             out[f"{key}_km"] = 0
     return out
+
+
+def _months_since(reg_at: str | None) -> int | None:
+    """최초등록부터 오늘까지 몇 달.  ★ 못 읽으면 ★ None 이다 (0 이 아니다)."""
+    from datetime import datetime, timezone
+
+    got = re.match(r"(\d{4})-(\d{2})", str(reg_at or ""))
+    if not got:
+        return None
+    now = datetime.now(timezone.utc)
+    return max(0, (now.year - int(got.group(1))) * 12
+               + (now.month - int(got.group(2))))
 
 
 def _months_left(year: int, month: int) -> int:

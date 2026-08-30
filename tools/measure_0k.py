@@ -57,8 +57,8 @@ def main() -> int:
     VALUE_ZERO = {"rental_history": "history.use",
                   "no_site_grade": "warranty.site"}
     marks = ",".join("?" * len(NOT_RECEIVED))
-    print(f"   {'감점':<18}{'점':>6}{'매물':>8}{'★ 못 받아서':>12}"
-          f"{'그 차에 흠이':>13}   ★ 붙는 조건")
+    print(f"   {'감점':<18}{'점':>6}{'붙은 매물':>10}"
+          f"{'★ 못 받아 안 붙인 것':>20}   ★ 붙는 조건")
     for key, sites in sorted(pen.items(), key=lambda t: -sum(t[1].values())):
         n = sum(sites.values())
         ax = VALUE_ZERO.get(key)
@@ -74,8 +74,10 @@ def main() -> int:
         else:
             miss = 0
             why = "근거 글이 있을 때만 붙는다"
-        print(f"   {str(key):<18}{table.get(key, 0):>6}{n:>8,}{miss:>12,}"
-              f"{n - miss:>13,}   {why}")
+        # ★★ 08-30 (r990 1-1 뒤) — ★ `miss` 는 ★ **안 붙인 것**이다.
+        #   ★ 고치기 전에는 ★ 이것들이 ★ 다 붙어 있었다
+        print(f"   {str(key):<18}{table.get(key, 0):>6}{n:>10,}{miss:>20,}"
+              f"   {why}")
 
     # ── ② 근거는 있는데 점수가 안 나오는 축
     print("\n★ ② 근거 글은 있는데 점수가 거의 안 나오는 축 (아홉 사이트)")
@@ -122,7 +124,52 @@ def main() -> int:
         big = sorted(axes, key=lambda a: -axes[a])[:4]
         print(f"   {site:<17}{len(ids):>6,}{len(axes):>13}{pts / n:>11,.0f}   "
               + " · ".join(big))
+    per_site(conn, cv)
     return 0
+
+
+def per_site(conn, cv) -> None:
+    """★★ 08-30 (r990 「회차마다 낼 것」) — ★ 사이트마다 한 표로.
+
+        「원문 못 받음 N점 · 근거 있는데 0점 M점 · 감점 K점」
+    """
+    import json as _j
+    from collections import defaultdict as _dd
+
+    got = _dd(lambda: {"ids": set(), "miss": 0.0, "zero": 0.0, "pen": 0.0})
+    for r in conn.execute(
+        "SELECT l.site, a.axis, a.source, a.value, a.max_points, a.excluded,"
+        "       a.listing_id FROM result_axis a JOIN core_listing l"
+        " USING(listing_id) WHERE a.calc_version=?"
+        "   AND l.status IN ('active','new')", (cv,)
+    ):
+        cell = got[r["site"]]
+        cell["ids"].add(r["listing_id"])
+        mx = float(r["max_points"] or 0)
+        if r["excluded"] or r["value"] is None or r["source"] in NOT_RECEIVED:
+            cell["miss"] += mx
+        elif not float(r["value"]):
+            cell["zero"] += mx
+    for r in conn.execute(
+        "SELECT l.site, s.penalties_json FROM result_score s"
+        " JOIN core_listing l USING(listing_id)"
+        " WHERE s.calc_version=? AND l.status IN ('active','new')", (cv,)
+    ):
+        try:
+            pen = _j.loads(r["penalties_json"] or "[]")
+        except ValueError:
+            continue
+        got[r["site"]]["pen"] += sum(
+            float(one[1] if isinstance(one, list) else one.get("points", 0))
+            for one in pen)
+    print("\n★ 사이트마다 — 한 대당 점 (음수가 감점이다)")
+    print(f"   {'사이트':<17}{'매물':>6}{'원문 못 받음':>12}"
+          f"{'근거 있는데 0':>13}{'감점':>9}")
+    for site in sorted(got, key=lambda s: -len(got[s]["ids"])):
+        c = got[site]
+        n = max(len(c["ids"]), 1)
+        print(f"   {site:<17}{len(c['ids']):>6,}{c['miss'] / n:>12,.0f}"
+              f"{c['zero'] / n:>13,.0f}{c['pen'] / n:>9,.0f}")
 
 
 if __name__ == "__main__":

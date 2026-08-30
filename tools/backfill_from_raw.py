@@ -42,7 +42,9 @@ def latest_details(conn, site: str) -> list:
 
 
 def heydealer(conn, write: bool) -> Counter:
-    from parse.heydealer.mapping import part_enums, record_of, warranty_of
+    from parse.heydealer.mapping import (
+        UNKNOWN_CODES, panels_of, part_enums, record_of, warranty_of,
+    )
     from store.core import upsert_child
     from store.dictionary import upsert_enum
 
@@ -71,12 +73,27 @@ def heydealer(conn, write: bool) -> Counter:
         if war:
             got["보증"] += 1
         got["부위"] += len(parts)
+        # ★★★ 08-30 (r990 1-3) — ★ 골격·외판 (`f-table` 3a·3b 표가 왔다)
+        pan = panels_of(body)
+        if pan is None:
+            got["★ 부위 칸이 없다"] += 1
+        elif pan:
+            got["★ 판이 있다"] += 1
+            got["  판 수"] += len(pan)
+        else:
+            got["★ 무사고 (확인)"] += 1
         if not write:
             continue
         if rec:
             rec["listing_id"] = lid
             rec["collected_at"] = at
             upsert_child(conn, "core_record", rec, "p1", at)
+        if pan is not None:
+            # ★ 빈 배열도 넣는다 — ★ 「무사고로 확인했다」는 ★ 사실이다 (3a)
+            upsert_child(conn, "core_inspection", {
+                "listing_id": lid, "site": "heydealer", "row_status": "ok",
+                "inspection_panel_json": json.dumps(pan, ensure_ascii=False),
+                "collected_at": at}, "p1", at)
         if war:
             keys = list(war)
             conn.execute(
@@ -97,6 +114,8 @@ def heydealer(conn, write: bool) -> Counter:
             except ValidationError:
                 got["  ★ part 축 정책이 없다 (STEP 41)"] += 1
                 break
+    if UNKNOWN_CODES:
+        got[f"★ 표에 없는 코드 {UNKNOWN_CODES[:3]}"] += len(UNKNOWN_CODES)
     if write:
         conn.commit()
     return got
@@ -176,7 +195,79 @@ def kbchachacha(conn, write: bool) -> Counter:
 UA = ("Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 "
       "Chrome/120 Mobile Safari/537.36")
 
-SITES = {"heydealer": heydealer, "kbchachacha": kbchachacha}
+def hyundai_cert(conn, write: bool) -> Counter:
+    """★★ 08-30 (r990 1-2) — ★ 보증 「두 번 빼기」를 ★ 저장된 원문으로 다시 넣는다.
+
+    ★ 통신 없음.  ★ 셈만 바뀌었다 — ★ 남은 달 → 총량
+    """
+    from parse.hyundai_cert.mapping import parse_detail_all
+
+    got: Counter = Counter()
+    for lid, sid, blob in latest_details(conn, "hyundai_cert"):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        try:
+            pair = parse_detail_all(html, "hyundai_cert", sid)
+        except (ValueError, TypeError, AttributeError):
+            got["못 읽음"] += 1
+            continue
+        deep = pair[0] if isinstance(pair, tuple) else pair
+        if not deep:
+            got["알맹이 없음"] += 1
+            continue
+        keys = [k for k in ("warranty_body_month", "warranty_power_month")
+                if deep.get(k) is not None]
+        if not keys:
+            got["보증 글이 없다"] += 1
+            continue
+        got["★ 보증을 다시 넣었다"] += 1
+        got["  총량 (달)"] += sum(int(deep[k]) for k in keys) // len(keys)
+        if write:
+            conn.execute(
+                "UPDATE core_listing SET "
+                + ", ".join(f"{k}=?" for k in keys)
+                + " WHERE listing_id=?", [deep[k] for k in keys] + [lid])
+    if write:
+        conn.commit()
+    return got
+
+
+def reborncar(conn, write: bool) -> Counter:
+    """★★ 08-30 (r990 1-4) — ★ 리본카 골격·외판.  ★ 통신 없음.
+
+    ★ 가르는 규칙은 ★ **사이트 제 스크립트**가 적어 준다 (`parse/reborncar/mapping.py`)
+    """
+    from parse.reborncar.mapping import RB_UNKNOWN, panels_of
+    from store.core import upsert_child
+
+    at = _now()
+    got: Counter = Counter()
+    for lid, _sid, blob in latest_details(conn, "reborncar"):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        pan = panels_of(html or "")
+        if pan is None:
+            got["진단표가 없다"] += 1
+            continue
+        got["★ 판이 있다" if pan else "★ 손댄 자리 없음 (확인)"] += 1
+        got["  판 수"] += len(pan)
+        if not write:
+            continue
+        upsert_child(conn, "core_inspection", {
+            "listing_id": lid, "site": "reborncar", "row_status": "ok",
+            "inspection_panel_json": json.dumps(pan, ensure_ascii=False),
+            "collected_at": at}, "p1", at)
+    if RB_UNKNOWN:
+        got[f"★ 사이트도 안 세는 부호 {sorted(set(RB_UNKNOWN))[:3]}"] += len(RB_UNKNOWN)
+    if write:
+        conn.commit()
+    return got
+
+
+SITES = {"heydealer": heydealer, "kbchachacha": kbchachacha,
+         "hyundai_cert": hyundai_cert, "reborncar": reborncar}
 
 
 def main() -> int:

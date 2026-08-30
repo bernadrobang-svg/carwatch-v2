@@ -4306,7 +4306,6 @@ def s46_181_read_stored_before_probing():
       ★ ★ 그것을 안 열고 ★ 사이트를 하루 종일 다시 두드렸다
     ★ 잣대 — ★ 사이트 규격의 08-29 절이 ★ `outputs/sites/` 를 가리키는가
     """
-    import re as _re
 
     store = ROOT / "outputs" / "sites"
     if not store.is_dir():

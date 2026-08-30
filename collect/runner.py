@@ -1438,9 +1438,16 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             "UPDATE core_listing SET status='out_of_scope' "
             "WHERE target_key IS NULL AND status='active'")
         conn.commit()
+        # ★★★★★ 08-30 (r990 · `V3-80` 이 잡았다) — ★ `active` 만 다시 매기면
+        #   ★ ★ **근거가 새로 들어온 매물의 판정이 낡은 채로 남는다.**
+        #   ★ 실측 08-30 — ★ 리본카 성능점검 판을 넣었더니 ★ `gone` 매물 하나가
+        #     ★ ★ 「성능부에 손댄 자리가 있는데 사고 회수를 0 으로 쟀다」로 걸렸다.
+        #   ★ ★ 판정은 지웠다 다시 만드는 것이라 ★ 넓혀도 잃는 것이 없다 —
+        #     ★ ★ 화면은 어차피 `_listings_where` 로 다시 거른다
+        #   ★ `out_of_scope` 는 ★ 뺀다 — ★ 우리 차종이 아니다 (마스터 확정 ④ 참고)
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
-                    "WHERE status='active'"))]
+                    "WHERE status IN ('active','new','gone')"))]
         # ★ 배점이 바뀌면 옛 성분 행이 남는다 (개정 292 실측 — 17 → 14 성분).
         #   그대로 두면 화면과 검사가 없어진 축을 계속 읽는다
         gone = [r[0] for r in conn.execute(
@@ -1535,9 +1542,10 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             "UPDATE core_listing SET status='out_of_scope' "
             "WHERE target_key IS NULL AND status='active'")
         conn.commit()
+        # ★ 위 s9 와 ★ 같은 까닭으로 넓힌다 (r990 · `V3-80`)
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
-                    "WHERE status='active'"))]
+                    "WHERE status IN ('active','new','gone')"))]
         # ★ ③ 끌어오기 밑감 — ★ 한 번만 만든다 (마스터 지시 3 · 08-30)
         _otable = _origin_lend_table(conn)
         _okeys = _origin_keys(conn, lids)
