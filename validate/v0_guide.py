@@ -4342,6 +4342,32 @@ def s46_182_all_sites_before_claiming_all():
                        + " · ".join(bad[:4]))
     return True, "「전 사이트」가 다 사이트별 근거를 달고 있다"
 
+
+def s46_183_master_only_after_probing():
+    """S46-183 — ★ 「마스터 몫」으로 올리기 전에 ★ 내가 열었는가 (오판 221).
+
+    ★ 08-29 — ★ 렉서스를 ★ 「열두 축이 다 없다 · 마스터 몫」으로 올렸는데
+      ★ ★ 열어 보니 ★ 신차가 75 · 보증 54 · 옵션 43 = **172점이 이미 왔다**
+    ★ 잣대 — ★ 명령서의 「마스터 몫」 줄에 ★ 실측 자취가 있어야 한다
+    """
+    import glob as _g
+    import re as _re
+
+    orders = _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    if not orders:
+        return True, "명령서가 없다"
+    body = _read(ROOT / orders[0][len(str(ROOT)) + 1:])
+    bad = []
+    for i, ln in enumerate(body.splitlines(), 1):
+        if "마스터 몫" not in ln and "마스터께서 정하" not in ln:
+            continue
+        if _re.search(r"실측|표본|열어|쟀다|물린다|~~", ln):
+            continue
+        bad.append(str(i))
+    if bad:
+        return False, ("★ 안 열고 「마스터 몫」이라 한 줄 " + " · ".join(bad[:4]))
+    return True, "「마스터 몫」이 다 실측을 달고 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4375,6 +4401,8 @@ CHECKS = (
      s46_156_answer_touches_spec),
     ("S46-177", "카탈로그를 site 로 가두지 않는가",
      s46_177_catalog_not_site_locked),
+    ("S46-183", "「마스터 몫」 전에 내가 열었는가",
+     s46_183_master_only_after_probing),
     ("S46-182", "「전 사이트」를 사이트별로 열고 말했는가",
      s46_182_all_sites_before_claiming_all),
     ("S46-181", "받아 둔 조사를 먼저 보는가",

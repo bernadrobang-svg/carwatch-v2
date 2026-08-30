@@ -9,16 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**127파일 · 47,202줄 · 3,180KB**
+**127파일 · 47,242줄 · 3,184KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,134줄
+- CHECKS.md 1,136줄
 - CROSS_SITE_COMPARE.md 1,283줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,894줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,134줄
+- guide/03_이력.md 1,136줄
 - guide/05_가이드역할.md 1,660줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -33,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 353 | 18 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 462 | 20 |
-| `CHECKS.md`  ★ | 1,134 | 140 |
+| `CHECKS.md`  ★ | 1,136 | 140 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,283 | 75 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -43,7 +43,7 @@
 | `KBCHACHACHA_API.md` | 592 | 29 |
 | `KCAR_API.md` | 671 | 32 |
 | `KIA_CPO_API.md` | 177 | 9 |
-| `LEXUS_CERTIFIED_API.md` | 305 | 16 |
+| `LEXUS_CERTIFIED_API.md` | 340 | 18 |
 | `MAPPING.md` | 104 | 3 |
 | `MULTISITE_MAPPING.md`  ★ | 1,098 | 60 |
 | `README.md` | 65 | 1 |
@@ -116,12 +116,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 16 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,134 | 824 |
+| `guide/03_이력.md`  ★ | 1,136 | 825 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,660 | 86 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 624 | 239 |
+| `guide/06_오판대장.md` | 625 | 240 |
 | `guide/07_밀린일대장.md` | 489 | 37 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
