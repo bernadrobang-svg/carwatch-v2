@@ -3979,6 +3979,40 @@ def s46_166_decision_reached_chapters():
                        f"{len(bad)} — " + " · ".join(bad[:6]))
     return True, "마스터 확정이 장 규격에 다 닿았다"
 
+
+def s46_168_check_counts_exceptions():
+    """S46-168 — ★ 검사가 ★ 예외를 「다」로 뭉개지 않는가 (오판 210).
+
+    ★ 08-29 — ★ `S46-117` 에 `SWEEP_OFF` 를 더했더니
+      ★ 여섯 곳을 껐는데 ★ 「11곳이 **다** 거른다」로 통과를 냈다
+    ★ 잣대 — ★ **예외 낱말**(`_OFF`·`SKIP`)을 세는 검사는
+      ★ 그 함수 안에서 ★ **예외 수를 따로 만들어야 한다**
+      ★ ★ 다른 검사를 돌리지 않는다 — ★ 글만 읽는다 (빠르다)
+    """
+    import re as _re
+
+    src = _read(ROOT / "validate" / "v0_guide.py")
+    bad = []
+    for m in _re.finditer(r"\ndef (s\d+_[\w]+)\(", src):
+        fname = m.group(1)
+        body = src[m.start():m.start() + 3000]
+        # ★ 「끄기 표시」를 세는 검사만 본다 — ★ `_OFF` 낱말을 실제로 찾는 것
+        if not _re.search(r'"[A-Z_]+_OFF"|\'[A-Z_]+_OFF\'', body):
+            continue
+        # ★ 예외를 세는 검사라면 ★ 통과 글에 ★ 그 수가 있어야 한다
+        ok_line = _re.search(r'return True, \(?["f]', body)
+        if not ok_line:
+            continue
+        tail = body[ok_line.start():ok_line.start() + 400]
+        if _re.search(r"\{len\(|\{n_|\d+\s*곳|끈 것|예외", tail):
+            continue
+        bad.append(fname)
+    if bad:
+        return False, ("★ 예외를 세면서 수를 안 내는 검사 "
+                       + " · ".join(bad[:4]))
+    return True, "예외를 세는 검사가 그 수를 함께 낸다"
+
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4010,6 +4044,7 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-168", "검사가 예외를 수로 내는가", s46_168_check_counts_exceptions),
     ("S46-166", "마스터 확정이 장 규격에 닿았는가",
      s46_166_decision_reached_chapters),
     ("S46-165", "「못 잰다」가 진짜인가", s46_165_fixable_not_called_unmeasurable),
