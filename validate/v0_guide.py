@@ -4030,6 +4030,24 @@ def s46_169_gone_has_reason():
         return False, ("★ 「판매 완료」 규칙에 없는 것 — " + " · ".join(miss))
     return True, "「왜 죽었는지」가 세 갈래로 적혀 있다"
 
+
+def s46_170_one_architecture():
+    """S46-170 — ★ 설계도가 ★ 하나뿐인가 (감독 지적 08-29 ③).
+
+    ★ 감독 — 「★ 설계 문서를 ★ 판을 갈아 가며 다시 쓰고 있다 …
+      ★ 문서 11,075줄이다.  ★ 그중 ★ 새로 잰 것이 몇 줄인가」
+    ★ 08-29 — ★ 1판 362줄 · 2판 306줄을 ★ 함께 두었다 = ★ **같은 것을 두 번 썼다**
+    ★ 잣대 — ★ `docs/ARCHITECTURE_*.md` 가 ★ 둘 이상이면 실패
+    """
+    got = sorted((ROOT / "docs").glob("ARCHITECTURE_*.md"))
+    if len(got) > 1:
+        return False, ("★ 설계도가 둘 이상이다 — "
+                       + " · ".join(p.name for p in got)
+                       + "  ★ 새 판을 만들면 옛 판을 그 커밋에 지운다")
+    if not got:
+        return False, "설계도가 없다"
+    return True, f"설계도가 하나다 — {got[0].name}"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4061,6 +4079,7 @@ CHECKS = (
     ("S46-149", "자백이 닫혔는가", s46_149_confession_is_closed),
     ("S46-156", "개발측 물음의 답이 규격에 있는가",
      s46_156_answer_touches_spec),
+    ("S46-170", "설계도가 하나인가", s46_170_one_architecture),
     ("S46-169", "「왜 죽었는지」가 규격에 있는가", s46_169_gone_has_reason),
     ("S46-168", "검사가 예외를 수로 내는가", s46_168_check_counts_exceptions),
     ("S46-166", "마스터 확정이 장 규격에 닿았는가",

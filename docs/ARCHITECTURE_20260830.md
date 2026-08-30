@@ -1,14 +1,14 @@
 # 아키텍처 2판 — 파일 수집 · 적재 · 판정
 
 ```
-version  SPEC-2026.08.29-r949
+version  SPEC-2026.08.29-r951
 follows  docs/chapters/10-collect/00-intro.md · docs/chapters/11-store/a-key.md
 sources  마스터 확정 08-29 · 개발측 물음 58개(`outputs/QUESTIONS_ARCH_20260829.md`)
          가이드 답(`outputs/ANSWERS_ARCH_20260829.md`) · 실측 08-29
 checks   S46-151 · S46-166 · S46-169 · V2-01(★ 08-29 에 받았다 · 6장)
 ```
 
-★ **1판(`ARCHITECTURE_20260829.md`)을 대신한다.** ★ 1판은 남긴다 — 무엇이 바뀌었는지 보려고.
+★ **1판을 대신한다.** ★ 1판은 ★ **08-29 에 지웠다** — ★ 판을 둘 두지 않는다 (감독 지적 ③).
 ★★ ★ **3걸음을 채웠다** — ★ `V2-01` 을 받았다 (6장).  ★ 열쇠는 `(site, source_id)` 다.
 
 ---
