@@ -1,7 +1,7 @@
 # 4장. 키 · 코드 · 사전 (STEP 40–46)
 
 ```
-version  SPEC-2026.08.30-r1006
+version  SPEC-2026.08.30-r1007
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -134,6 +134,24 @@ unknown      →  이 상태는 없다.  v1 은 미분류를 unknown 으로 삼�
 | `option3` | global | facet `Options` | 3자리 코드 → 옵션명 |
 | `option_model` | model | catalog API | 4~5자리 → 이름·가격 |
 | `fuel` | global | facet `FuelType` | 연료 완전일치 |
+| ★ **`part`** | ★ **site** | ★ 상세 원문 (성능점검·진단) | ★ **부위 코드 → 골격·외판 갈래** |
+| ★ **`repair`** | ★ **site** | 〃 | ★ **수리 코드 → `none`·`sheet`·`swap`** |
+
+```
+★★★★ 08-30 — ★ **`part`·`repair` 를 더한다** (개발측이 3일째 막혀 있었다)
+★ 개발측 — 「★ STEP 41 축 정책 표에 `part` 행이 없다 — `ValidationError: 축 정책 미정의: part`.
+   ★ 규격 3a② 는 넣으라 한다 (규격끼리 어긋난다)」  ★ **옳게 멈췄다**
+
+★ ★ ★ **`scope` 가 `site` 다** — ★ `global` 이 아니다
+   ★ ★ 사이트마다 코드 체계가 다르다 — ★ 헤이딜러 `radiator_support` · KB `ucAccBoneCheck` ·
+      리본카 `data-value="x03"`.  ★ **섞으면 골격을 외판으로 매긴다**
+★ ★ 값의 정본은 ★ **`f-table` 3a(부위) · 3b(수리)** 다.  ★ 거기 실측한 것만 있다
+★ ★ ★ **표에 없는 코드는 ★ `pending` 으로 넣고 ★ 축은 미확인 0점**이다
+   ★ ★ ★ `confirmed` 로 바로 올리지 않는다 (위 규칙 그대로)
+금지  ★ 사이트끼리 `part` 코드를 섞는 것 (오판 218)
+금지  ★ 표에 없는 코드를 ★ 짐작으로 갈래에 넣는 것
+검산  ★ `V3-37` — 목록 관측이 confirmed 를 자동으로 만들지 않는가 (그대로 걸린다)
+```
 
 ```
 ★ 08-16 — 목록 원문에도 같은 값이 있다
