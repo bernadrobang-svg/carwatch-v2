@@ -1,7 +1,7 @@
 ## STEP 73 [판정] — 사양 · 축 구성  ★ 배점은 `f-table` 5장-2a
 
 ```
-version  SPEC-2026.09.01-r1023
+version  SPEC-2026.09.01-r1024
 follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
 sources  실측 08-22
 checks   S46-38 · S46-39
