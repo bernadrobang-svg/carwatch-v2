@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 50,127줄 · 3,440KB**
+**131파일 · 50,172줄 · 3,443KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -18,7 +18,7 @@
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,992줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,270줄
+- guide/03_이력.md 1,272줄
 - guide/05_가이드역할.md 1,817줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -31,7 +31,7 @@
 | 파일 | 줄 | KB |
 |---|--:|--:|
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
-| `BMW_BPS_API.md` | 306 | 15 |
+| `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
 | `CHECKS.md`  ★ | 1,163 | 144 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
@@ -120,7 +120,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,270 | 913 |
+| `guide/03_이력.md`  ★ | 1,272 | 914 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,817 | 95 |

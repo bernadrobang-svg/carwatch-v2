@@ -238,7 +238,8 @@
     "base_url": "http://www.bavarian-bps.co.kr",
     "paths": {
       "list": "/shop/list.php?ca_id={ca_id}",
-      "detail": "/shop/item.php?it_id={source_id}"
+      "detail": "/shop/item.php?it_id={source_id}",
+      "inspection_pdf": "/bbs/it_download.php?it_id={source_id}"
     },
     "_note": "★ 바바리안 딜러 한 곳.  ★ ★ 08-29 정정 — 값·주행·연식은 ★ 상세에 있다 (목록 카드에는 없다).  ★ 값은 딜러가 손으로 써 꼴이 셋이다 — BMW_BPS_API 08-29 절. ★★ 503 은 고장이 아니다 — ★ 「503·200·200」이다 (가이드 정정 08-24). ★ 재시도 세 번이면 산다.  ★ 쪽넘김이 있다 — ★ 매물번호가 안 늘거나 ★ 빈 쪽이 오면 끝이다.  ★ 전수 364건 · 37쪽 · 쪽당 10건 [실측 08-29 · 눌러 봤다 — page 38 이 0건].  ★ 우리 대상 23건 (X3).  ★ 앞서 MAX_PAGES=20 이라 200건에서 잘렸고 164건이 통째로 빠져 있었다",
     "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
@@ -250,7 +251,8 @@
     "brand_scope": [
       "BMW"
     ],
-    "_brand_scope_why": "★ [확인 완료 08-29 · 가이드 실측] BMW BPS — ★ 미니가 섞인다 (364건 중 2건 — 「MINI Cooper SE Gen Z-E」·「MINI 5DOOR C」).  ★ 그래도 `brand_scope` 를 넓히지 않는다 — ★ 그 2건은 우리 26종에 없어 어차피 「범위 밖」으로 접히고, 넓히면 안 볼 차를 받는 것이 되어 수집 범위 확정에 어긋난다.  ★ 「BMW 만 판다」는 말은 틀렸다 — 그래서 그 낱말을 안 쓴다 (`docs/BMW_BPS_API.md` 「개발측 청에 답한다」)"
+    "_brand_scope_why": "★ [확인 완료 08-29 · 가이드 실측] BMW BPS — ★ 미니가 섞인다 (364건 중 2건 — 「MINI Cooper SE Gen Z-E」·「MINI 5DOOR C」).  ★ 그래도 `brand_scope` 를 넓히지 않는다 — ★ 그 2건은 우리 26종에 없어 어차피 「범위 밖」으로 접히고, 넓히면 안 볼 차를 받는 것이 되어 수집 범위 확정에 어긋난다.  ★ 「BMW 만 판다」는 말은 틀렸다 — 그래서 그 낱말을 안 쓴다 (`docs/BMW_BPS_API.md` 「개발측 청에 답한다」)",
+    "_inspection_why": "★★ [실측 09-01] ★ 상세의 「72가지 점검 [다운로드]」 링크다.  ★ 200 · 274KB · %PDF-1.7 · 2쪽 · ★ **글자 5,822자가 뽑힌다**(사진이 아니다).  ★ 안에 ★ 성능점검기록부 전문 — ★ 외판부위 1/2/A/B랭크 · 타이어(양호/불량) · 누유 · ★ 가격조사·산정 금액.  ★ 축 넷이 열린다 — 골격·외판·소모품·시세.  ★ Referer 를 붙여라"
   },
   "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2",
   "revolt": {
