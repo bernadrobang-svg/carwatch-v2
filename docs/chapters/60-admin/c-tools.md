@@ -1,7 +1,7 @@
 ## STEP 133 [규격] — 조회 전용 쿼리
 
 ```
-version  SPEC-2026.09.01-r1040
+version  SPEC-2026.09.01-r1041
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39

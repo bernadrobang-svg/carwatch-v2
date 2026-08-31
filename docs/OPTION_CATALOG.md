@@ -1,7 +1,7 @@
 # 차종·트림 옵션 목록 — 사이트별 코드 표
 
 ```
-version  SPEC-2026.09.01-r1040
+version  SPEC-2026.09.01-r1041
 follows  ★ 정본 — 가이드 문서
 sources  실측 08-30
 checks   S46-189

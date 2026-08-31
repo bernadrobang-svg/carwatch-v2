@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **523개**
+검사 **524개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **523** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **524** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **17** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **34** | 개발측 |
 
@@ -180,6 +180,7 @@
 | `S46-204` | 받기가 파일에 쓰는가 | fatal | `validate/v0_guide.py:4619` | **★ 없음** | 없음 | guide/03_이력.md:1227 |
 | `S46-205` | raw_response 에 넣으라 하지 않는가 | fatal | `validate/v0_guide.py:4646` | **★ 없음** | 없음 | guide/03_이력.md:1229 · guide/06_오판대장.md:318 |
 | `S46-206` | PDF 를 받아 두라 하지 않는가 | fatal | `validate/v0_guide.py:4678` | **★ 없음** | 없음 | guide/03_이력.md:1231 · guide/06_오판대장.md:319 · chapters/10-collect/d-policy.md:186 |
+| `S46-207` | 커밋 제목이 사실을 말하는가 | fatal | `validate/v0_guide.py:4710` | **★ 없음** | 없음 | guide/03_이력.md:1235 · guide/05_가이드역할.md:1685 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -702,6 +703,7 @@
 - `S46-204` 받기가 파일에 쓰는가 — `validate/v0_guide.py`
 - `S46-205` raw_response 에 넣으라 하지 않는가 — `validate/v0_guide.py`
 - `S46-206` PDF 를 받아 두라 하지 않는가 — `validate/v0_guide.py`
+- `S46-207` 커밋 제목이 사실을 말하는가 — `validate/v0_guide.py`
 - `S46-21` 시안 한 파일에 화면이 하나인가 — `validate/v0_guide.py`
 - `S46-22` 시안 절 차례가 화면과 같은가 — `validate/v0_guide.py`
 - `S46-23` 빈 site_query 가 없는가 — `validate/v0_guide.py`
