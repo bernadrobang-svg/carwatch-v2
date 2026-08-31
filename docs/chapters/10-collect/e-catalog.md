@@ -1,7 +1,7 @@
 ## STEP 22 — `catalog` 응답 → 사전
 
 ```
-version  SPEC-2026.09.01-r1048
+version  SPEC-2026.09.01-r1049
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
