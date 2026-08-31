@@ -28,7 +28,7 @@
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,036B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,339B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,872B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,199B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,195B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,936B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,390B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,636B |

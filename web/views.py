@@ -1026,7 +1026,8 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         from report.finance import price_for_monthly
 
         cap = price_for_monthly(monthly_max, _cfg("finance.json", root),
-                                q.get("target") or None)
+                                q.get("target") or q.get("target_key")
+                                or None)
         price_max = cap if price_max is None else min(price_max, cap)
     return ListingFilter(
         # ★ site=all 이면 전부 (개정 306).  ★ 안 주면 ★ **전부**다 —
@@ -1034,7 +1035,13 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         site=(None if (q.get("site") or "") in ("", "all")
               else q.get("site")),
         sell_type=q.get("sell_type") or None,
-        target_key=q.get("target") or None,
+        # ★★★★★ 09-02 — ★ 가이드 지적 ③ 「★ 화면 거르개 `?target_key=` 가
+        #   ★ **안 걸린다** — ★ 다른 차종이 섞여 나온다 (표본 3건 전건)」.
+        #   ★ 실측 09-02 — ★ 옳다.  ★ 우리는 ★ `?target=` 만 읽었고
+        #   ★ ★ `?target_key=` 는 ★ **조용히 버렸다** — ★ 걸린 줄 알고 보시게 된다.
+        #   ★★ 이것이 이 프로젝트가 막으려는 ★ 「선언과 실제의 괴리」다.
+        #     ★ ★ 둘 다 받는다 — ★ 어느 이름으로 부르셔도 걸린다
+        target_key=q.get("target") or q.get("target_key") or None,
         option_name=q.get("option_name") or None,
         option_group=q.get("option_group") or None,
         grade=q.get("grade") or None,
