@@ -1,7 +1,7 @@
 {
   "calc_version": "c1",
   "_ref": "★ 배점의 유일한 정본은 docs/chapters/30-score/f-table.md 다 (개정 342 로 옮김 · 개정 365 로 675). 본문 배점표는 전부 폐기",
-  "total_points": 895,
+  "total_points": 910,
   "components": {
     "state.accident": 51,
     "state.frame": 43,
@@ -994,8 +994,8 @@
     0.5,
     0.75
   ],
-  "grade_base_points": 895,
-  "_grade_base_note": "①값250 + ②상태150 + ③이력80 + ④사양45 + ⑤보증30 = 555 (docs/ref/F-scoring.md). ⑥취향 50 은 순위에만",
+  "grade_base_points": 910,
+  "_grade_base_note": "★★★★★ 09-01 — ★ **등급 분모는 총점과 같다** (개정 431 「빼는 갈래가 없다」 · 개정 298 「분모는 늘 만점이다」).  ★ `analyze.axes.GRADE_EXCLUDED_AXES` 가 ★ **비어 있다** — ★ 취향도 등급에 들어간다.  ★★ 가이드가 09-01 에 ★ 소모품 15 를 되살려 ★ 총점을 895 → 910 으로 올렸는데 ★ ★ 이 칸이 ★ 895 로 남아 ★ `V3-57` 이 「닿을 수 없는 자리 15점」으로 걸렸다.  ★ ★ ★ 총점을 따라간다 — ★ 두 벌로 적지 않는다",
   "_grade_cuts_note": "★ 절대 기준이다 (개정 324·433).  백분위로 정하지 않는다. ★ 개정 433 — 8단계로 내렸다.  전 S90 A80 B70 C60 D50 (5단계) → S80 A70 B60 C50 D40 E30 F20 G10.  10% 미만은 등급 없음. ★ 관문 배제는 등급이 아니라 「제외」다 — 전에 E 가 배제용이라 30~40% 자리와 부딪쳤다",
   "score_core_axes": [
     "value.budget",

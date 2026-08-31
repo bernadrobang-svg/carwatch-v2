@@ -6,14 +6,14 @@
 
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
-| `/` | [home.html](home.html) | 200 | 44,375B |
-| `/listings` | [listings.html](listings.html) | 200 | 90,008B |
+| `/` | [home.html](home.html) | 200 | 44,314B |
+| `/listings` | [listings.html](listings.html) | 200 | 90,291B |
 | `/sold` | [sold.html](sold.html) | 200 | 26,649B |
-| `/recommend` | [recommend.html](recommend.html) | 200 | 119,860B |
-| `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,534B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 35,018B |
+| `/recommend` | [recommend.html](recommend.html) | 200 | 120,709B |
+| `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,536B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 35,064B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,702B |
-| `/track` | [track.html](track.html) | 200 | 40,950B |
+| `/track` | [track.html](track.html) | 200 | 41,309B |
 | `/market` | [market.html](market.html) | 200 | 14,490B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 19,327B |
 | `/notready` | [notready.html](notready.html) | 200 | 22,174B |
@@ -24,16 +24,16 @@
 | `/password` | [password.html](password.html) | 200 | 2,507B |
 | `/admin` | [admin.html](admin.html) | 200 | 15,820B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 15,987B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 61,562B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 61,308B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 11,956B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,261B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,794B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,113B |
-| `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,857B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,115B |
+| `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,858B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,312B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,558B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 104,503B |
-| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 204,678B |
+| `/admin/config` | [admin_config.html](admin_config.html) | 200 | 201,673B |
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,430B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,184B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,541B |
