@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 195개 · 총 70,293줄
+파일 195개 · 총 70,333줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -41,8 +41,8 @@
 | `web/app.py` | 544 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
+| `tools/backfill_from_raw.py` | 485 | ★★★★★ 08-30 (명령서 r974 · 0j 4) — ★ Ⓐ 「이미 오는 것을 읽는다」. |
 | `contracts.py` | 471 | 계층 간 계약 — Protocol · DTO. |
-| `tools/backfill_from_raw.py` | 445 | ★★★★★ 08-30 (명령서 r974 · 0j 4) — ★ Ⓐ 「이미 오는 것을 읽는다」. |
 | `run.py` | 421 | CarWatch v2 진입점. |
 | `tools/collect_kcar.py` | 419 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
@@ -414,16 +414,16 @@ _py_files:48  _checks_in_code:73  _guide_checks:119  _checks_in_docs:152  last_r
 check:21  test_routes:28  test_template:85  test_no_logic_in_template:126  test_static_escape:141  test_session_cookie:153  test_error_page:171  test_layout:198  test_filters:227  test_empty_state:250  test_menu_by_role:277  test_guard_and_csrf:298  _call:345  test_screens_render:362  test_sketch_match:453  test_account_policy:468
 ```
 
+### `tools/backfill_from_raw.py` — 485줄
+
+```
+_now:28  latest_details:32  heydealer:44  kbchachacha:124  hyundai_cert:198  reborncar:247  out_of_scope:280  bmw_bps:316  kcar:354  _record_site:385  kb_record:412  volvo:422  volvo_detail:431  main:466
+```
+
 ### `contracts.py` — 471줄
 
 ```
 Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:235  Account:254  require_role:271  RunContext:288  StepReport:308  ResumePoint:332  clean_vin:353  total_of:364  RegressionReport:377  json_paths:388  shape_ok:436  shape_violations:469
-```
-
-### `tools/backfill_from_raw.py` — 445줄
-
-```
-_now:28  latest_details:32  heydealer:44  kbchachacha:124  hyundai_cert:198  reborncar:236  out_of_scope:269  bmw_bps:305  kcar:343  _record_site:374  kb_record:401  volvo:411  main:426
 ```
 
 ### `run.py` — 421줄

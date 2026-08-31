@@ -218,16 +218,27 @@ def hyundai_cert(conn, write: bool) -> Counter:
             continue
         keys = [k for k in ("warranty_body_month", "warranty_power_month")
                 if deep.get(k) is not None]
-        if not keys:
+        if keys:
+            got["★ 보증을 다시 넣었다"] += 1
+            got["  총량 (달)"] += sum(int(deep[k]) for k in keys) // len(keys)
+            if write:
+                conn.execute(
+                    "UPDATE core_listing SET "
+                    + ", ".join(f"{k}=?" for k in keys)
+                    + " WHERE listing_id=?", [deep[k] for k in keys] + [lid])
+        else:
             got["보증 글이 없다"] += 1
-            continue
-        got["★ 보증을 다시 넣었다"] += 1
-        got["  총량 (달)"] += sum(int(deep[k]) for k in keys) // len(keys)
+        # ★★★★★ 08-31 (로드맵 차례 3 · `V2-01`) — ★ **`detail_status` 를 적는다.**
+        #   ★ 실측 — ★ 「마지막 원문이 `ok` 인데 ★ CORE 는 `detail_status` 가 NULL」인
+        #     ★ ★ 현대인증 매물이 ★ **210건** 있었다.  ★ 원문은 받아 두고 ★ 펼친 자국을 안 남겼다.
+        #   ★ ★ 여기서 ★ **파싱이 실제로 줄을 냈을 때만** 적는다 — ★ 「받았다」가 아니라
+        #     ★ ★ 「펼쳤다」가 근거다 (선언과 실제의 괴리를 막는 것이 이 프로젝트의 목표다)
+        got["★ 펼쳤다 (detail_status=ok)"] += 1
         if write:
             conn.execute(
-                "UPDATE core_listing SET "
-                + ", ".join(f"{k}=?" for k in keys)
-                + " WHERE listing_id=?", [deep[k] for k in keys] + [lid])
+                "UPDATE core_listing SET detail_status='ok'"
+                " WHERE listing_id=? AND (detail_status IS NULL"
+                "   OR detail_status IN ('error','not_requested'))", (lid,))
     if write:
         conn.commit()
     return got
@@ -417,7 +428,36 @@ def volvo(conn, write: bool) -> Counter:
                          "use_gov", "use_cd"))
 
 
-SITES = {"heydealer": heydealer, "kbchachacha": kbchachacha,
+def volvo_detail(conn, write: bool) -> Counter:
+    """★★ 08-31 (차례 3 · `V2-01`) — ★ 볼보 상세를 ★ 다시 펼친다.
+
+    ★ 실측 — ★ 마지막 원문이 `ok` 인데 ★ `detail_status` 가 `not_requested` 인 것이 149건.
+      ★ ★ 원문은 있는데 ★ **CORE 에 안 펼쳐져 있었다**
+    """
+    from parse.volvo_selekt.mapping import parse_detail
+    from store.core import upsert_core
+
+    at = _now()
+    got: Counter = Counter()
+    for lid, sid, blob in latest_details(conn, "volvo_selekt"):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        deep = parse_detail(html or "", "volvo_selekt", sid)
+        if not deep:
+            got["★ 못 펼쳤다 (칸이 안 나온다)"] += 1
+            continue
+        got["★ 펼쳤다 (detail_status=ok)"] += 1
+        if write:
+            deep["listing_id"] = lid
+            upsert_core(conn, deep, at)
+    if write:
+        conn.commit()
+    return got
+
+
+SITES = {"volvo_detail": volvo_detail,
+         "heydealer": heydealer, "kbchachacha": kbchachacha,
          "hyundai_cert": hyundai_cert, "reborncar": reborncar,
          "bmw_bps": bmw_bps, "kcar": kcar, "kb_record": kb_record,
          "volvo": volvo, "out_of_scope": out_of_scope}
