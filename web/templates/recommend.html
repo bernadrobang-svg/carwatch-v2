@@ -11,6 +11,19 @@
     href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
 </p>
 
+<!-- ★★★★★ 09-02 — ★ 시안 `.rc-models` — ★ **차종 고르개**.
+     ★ 마스터 — 「★ 시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해」
+     ★ 이름 ＋ 건수.  ★ 0 건인 차종도 ★ **흐리게 남긴다** — ★ 지우지 않는다 -->
+{% if v.models %}
+<p class="sitebar pickmodels">
+  <a class="btn mb{% if !v.model %} on{% endif %}"
+     href="/recommend?tab={{ v.tab | url }}">전체 <b>{{ v.total | num }}</b></a>
+  {% for m in v.models %}<a class="btn mb{% if m.on %} on{% endif %}{% if m.off %} off{% endif %}"
+    href="/recommend?tab={{ v.tab | url }}&model={{ m.key | url }}"
+    >{{ m.label }} <b>{{ m.n | num }}</b></a>{% endfor %}
+</p>
+{% endif %}
+
 {% if v.empty_note %}
 <!-- ★ 시안 `v4m_recommend_tab23_시안.html` — ★ 빈 탭 -->
 <div class="cond what pickempty">

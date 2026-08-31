@@ -63,17 +63,42 @@ def look(pg, url: str) -> dict:
         for (const e of document.querySelectorAll('*')) {
             if (!vis(e)) continue;
             const r = e.getBoundingClientRect();
-            if (r.width > w + 2 && e.children.length < 3)
+            // ★★★★★ 09-02 — ★ **미는 상자 안은 넘친 것이 아니다.**
+            //   ★ 실측 09-02 — ★ 관심 화면의 표를 ★ `overflow-x:auto` 로 감쌌는데
+            //   ★ ★ 그 안의 `THEAD`·`TBODY` 가 ★ 여전히 「넘친다」로 잡혔다.
+            //   ★ ★ ★ 「좁으니 그 표만 옆으로 민다」가 ★ 규격이 시킨 것이다
+            //     ★ ★ (`V11-70`·`V11-71` — ★ **몸통**이 밀리면 안 된다는 뜻이다).
+            //   ★★ 그러므로 ★ 조상 중에 ★ 미는 상자가 있으면 ★ 세지 않는다.
+            //     ★ ★ 쪽 전체가 넘치는 것은 ★ `docw` 가 따로 잡는다
+            const scrollable = (el) => {
+                for (let a = el.parentElement; a; a = a.parentElement) {
+                    const ox = getComputedStyle(a).overflowX;
+                    if (ox === 'auto' || ox === 'scroll') return true;
+                }
+                return false;
+            };
+            if (r.width > w + 2 && e.children.length < 3 && !scrollable(e))
                 over.push(e.tagName + '.' + (e.className || '').toString().slice(0, 24));
             if (e.matches('a,button,input[type=submit]') && r.height > 0
                 && r.height < 44 && r.width > 0)
                 small.push(Math.round(r.height) + 'px ' + (e.innerText || '').slice(0, 14));
         }
         return {
-            text: (document.body.innerText || '').replace(/\\s+/g, ' ').trim(),
+            // ★★★★★ 09-02 — ★ `innerText` 는 ★ **접힌 `<details>` 속 글을 안 준다**.
+            //   ★ 실측 09-02 — ★ 「거르개」·「낮은순」이 ★ 화면에 **있는데**
+            //   ★ ★ 「시안에만 있는 말」로 나왔다.  ★ 거짓 어긋남이다.
+            //   ★★ 낱말을 견줄 때는 ★ `textContent` 다 — ★ 접힌 것도 센다.
+            //     ★ ★ 자리·크기는 ★ 어차피 ★ `getBoundingClientRect` 로 잰다
+            // ★ `textContent` 는 ★ 칸 사이를 안 띄운다 —
+            //   ★ 「관리」＋「리포트」가 ★ 「관리리포트」로 붙는다 [실측 09-02].
+            //   ★ 그래서 ★ **덩이 칸마다 사이를 넣어** 잇는다
+            text: Array.from(document.body.querySelectorAll(
+                    'p,li,td,th,h1,h2,h3,div,span,a,button,option,summary'))
+                  .map(e => e.textContent || '').join(' ')
+                  .replace(/\\s+/g, ' ').trim(),
             docw: document.documentElement.scrollWidth,
             over: over.slice(0, 4),
-            small: small.slice(0, 4),
+            small: small.slice(0, 12),
         };
     }""")
 
@@ -110,10 +135,19 @@ def main() -> int:
                     note.append(f"★ 넘치는 칸 {o['over'][:2]}")
                 if o["small"]:
                     note.append(f"★ 44px 미만 {len(o['small'])}개")
-                if miss[:6]:
-                    note.append(f"★ 시안에만 있는 말 {miss[:6]}")
+                    if "--detail" in sys.argv:
+                        note.append("  " + " | ".join(o["small"][:8]))
+                # ★★★★★ 09-02 — ★ **자리 결함과 낱말을 갈라 센다.**
+                #   ★ 시안의 글에는 ★ **표본 값**이 섞여 있다 —
+                #   ★ ★ 「폴스타」·「진주색」·「롱레인지」는 ★ 시안이 지어 넣은 차다.
+                #   ★ ★ ★ 우리 DB 에 그 차가 없는 것은 ★ **결함이 아니다.**
+                #   ★★ 그래서 ★ 「어긋난 자리」는 ★ **가로 넘침 · 넘치는 칸 ·
+                #     ★ 44px 미만**만 센다.  ★ 낱말은 ★ 곁에 적어 ★ 사람이 본다 —
+                #     ★ ★ **숨기지 않는다.**  ★ 세는 자리만 다르다
                 if note:
                     bad += 1
+                if miss[:6]:
+                    note.append(f"살펴볼 말 {miss[:6]}")
                 print(f"   {name:<14} " + ("  ·  ".join(note) if note else "맞다"))
             pg.close()
         b.close()

@@ -46,7 +46,10 @@ def menu_items(account) -> list[dict]:
         if role is not None and ROLE_RANK[role] > rank:
             continue
         out.append({"label": one["label"], "path": one["path"],
-                    "tip": one["tip"], "group": None, "locked": False})
+                    "tip": one["tip"], "group": None, "locked": False,
+                    # ★★★★★ 09-02 — ★ 시안 `.v4-tabs` 의 기호 (`web.json` 이 정본).
+                    #   ★ 없으면 빈 글자다 — ★ 코드가 기호를 지어내지 않는다
+                    "icon": one.get("icon") or ""})
     return out
 
 

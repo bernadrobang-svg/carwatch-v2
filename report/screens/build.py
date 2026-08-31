@@ -3778,6 +3778,29 @@ RECOMMEND_AXES: tuple = ("value.budget", "value.mileage", "state.year",
 RECOMMEND_TABS: tuple = ("1", "2", "3")
 
 
+def _recommend_models(conn, where: list, args: list, picked: list,
+                      names: dict, now: str | None = None) -> tuple:
+    """★★★★★ 09-02 — ★ 시안 `.rc-models` — ★ **차종 고르개**.
+
+    ★ 마스터 — 「★ **시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해**」
+    ★ 시안이 보이는 것 — 「테슬라 모델Y **286**」처럼 ★ 이름 ＋ **건수**.
+      ★ ★ 건수가 0 인 차종은 ★ **`off`(흐리게)** 로 ★ **남겨 둔다** —
+      ★ ★ ★ **지우지 않는다.**  ★ 「없다」가 아니라 ★ 「지금 재고가 없다」다
+    ★ 차례는 ★ 건수 많은 것부터 (시안이 그렇다) · ★ 0 은 뒤로
+    """
+    got = dict(conn.execute(
+        "SELECT l.target_key, COUNT(*) FROM core_listing l"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        " WHERE " + " AND ".join(where) + " GROUP BY 1", args))
+    out = []
+    for key in picked:
+        n = int(got.get(key) or 0)
+        out.append({"key": key, "label": names.get(key) or key, "n": n,
+                    "on": key == now, "off": n == 0})
+    out.sort(key=lambda x: (-x["n"], x["label"]))
+    return tuple(out)
+
+
 def _active_targets(root: str = ".") -> list:
     """★★★★★ 09-01 마스터 지시 — ★ **고르신 차종**만 (`targets.json` `active`).
 
@@ -3825,6 +3848,10 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     #     ★ ★ **지우지 않는다** — ★ `/listings` 는 그대로 다 본다.
     #     ★ ★ ★ 추천에서만 ★ 고르신 것으로 좁힌다
     picked = _active_targets(root)
+    # ★ 시안 `.rc-models` — ★ 고르신 차종 하나만 볼 수 있다 (`?model=`)
+    one = (flt.model if getattr(flt, "model", None) else None)
+    if one and one not in picked:
+        one = None                 # ★ 고르지 않은 차종은 ★ 안 받는다
     # ★ 화면에 낼 이름은 ★ `targets.json` 의 `label` 이다 (「G80 2.5T」) —
     #   ★ 열쇠(`G80_25T`)를 그대로 내면 ★ 사람이 읽는 이름이 아니다
     names = {k: (v.get("label") or k)
@@ -3834,6 +3861,12 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     if picked:
         where = [*where, "l.target_key IN (" + ",".join("?" * len(picked)) + ")"]
         args = [*args, *picked]
+    # ★ 고르개로 하나를 누르셨으면 ★ 그것만.  ★ 건수는 ★ **누르기 전 것**을 센다 —
+    #   ★ 안 그러면 ★ 누른 차종만 남고 ★ 나머지가 다 0 이 된다
+    model_where, model_args = list(where), list(args)
+    if one:
+        where = [*where, "l.target_key = ?"]
+        args = [*args, one]
     marks = ",".join("?" * len(RECOMMEND_AXES))
     sql = (
         "SELECT l.listing_id, l.target_key,"
@@ -3919,6 +3952,7 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     full = sum(x.full for x in (out[0].axes if out else ())) if out else 0
     # ★ 시안 `.rc-head` — 「차종 13종」.  ★ 정본은 `config/targets.json` 이다
     targets = len(picked)
+    models = _recommend_models(conn, model_where, model_args, picked, names, one)
     return RecommendView(tab=tab, rows=out, total=total,
                          axes=RECOMMEND_AXES, full=round(full, 1),
                          empty_note=None, title="내 기준에 가까운 차",
@@ -3929,6 +3963,7 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                          orders=({"key": "score", "label":
                                   "합이 높은 차례 (같으면 싼 차가 앞)",
                                   "on": True},),
+                         models=models, model=one,
                          targets=targets)
 
 

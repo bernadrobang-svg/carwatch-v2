@@ -1608,7 +1608,10 @@ body.s-listings main { max-width:1560px; }
    ★ 고칠 줄 셋 (마스터가 짚어 주셨다) —
      ① 여기에 `z-index:5`  ② 카드 겉 div 를 `.cardbody` 로  ③ 그 div 에 relative
    ★ `body` · `header` 는 안 건드린다 */
-.heart { position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:14px; background:var(--surface2);border:1px solid var(--line2);color:var(--dim);cursor:pointer;font-size:14px; display:flex;align-items:center;justify-content:center; z-index:5 }
+/* ★★★★★ 09-02 — ★ 손가락 자리는 44px 이다 (실측 09-02 — ★ 28px 이었다).
+   ★ ★ **보이는 동그라미는 28px 그대로다** — ★ 안쪽 테두리로 그린다.
+   ★ ★ ★ 규칙은 ★ **여기 하나뿐이다** (`S46-118` 「두 곳이면 안 된다」) */
+.heart { position:absolute;top:-4px;right:-4px;width:44px;height:44px;border-radius:22px; background:transparent;border:0;color:var(--dim);cursor:pointer;font-size:14px; display:flex;align-items:center;justify-content:center; z-index:5;box-shadow:inset 0 0 0 8px var(--surface2), inset 0 0 0 9px var(--line2) }
 /* ★ 하트가 기댈 ★ **기준 상자**다.  ★ 이것이 없으면 하트가 화면 꼭대기로 간다 */
 .cardbody { position:relative; }
 .heart:hover { color:var(--amber); }
@@ -2621,4 +2624,107 @@ body.auto #progress { font-size:15px; line-height:1.7; }
   main { max-width:100%; overflow-x:hidden; }
   main > table.rows,
   main > .tablewrap { display:block; max-width:100%; overflow-x:auto; }
+}
+
+/* ★★★★★ 09-02 — ★ **손가락이 닿는 자리는 44px 이다** (UI_REVIEW · 시안 `.v4-btn`).
+   ★ 브라우저로 모바일(390×844)·태블릿(820×1180)을 대조해 찾았다 [실측 09-02] —
+   ★ ★ 여덟 화면 전부에서 ★ 단추가 19~33px 이었다:
+   ★ ★ ★ 「미판정 보기」33 · 「가기」**19** · 「함께 보기」19 · ♡ 28 · 「원문 ↗」31
+   ★★ 눈에 보이는 크기는 ★ 안 바꾼다 — ★ 글자와 테두리는 그대로다.
+     ★ ★ **닿는 자리만** 늘린다 (`min-height` ＋ 가운데 맞춤).
+     ★ ★ ★ 그래야 ★ 시안의 촘촘함을 잃지 않으면서 ★ 손가락이 빗나가지 않는다 */
+.btn,
+button[type="submit"],
+input[type="submit"] {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ★ 표 안이나 곁말 속 작은 문 — 「가기」·「함께 보기」가 19px 이었다 */
+td .btn.mini, .chips .btn, .sitebar .btn, .cellset .btn {
+  min-height: 44px;
+}
+
+/* ★ 곁말 속 「가기」·「함께 보기」·「따로 보기」·「전부 지우기」 — ★ 이것들도 문이다 */
+.note a, .dim a, .muted a, .cond a, nav a, footer a,
+a.mini, a.clear, .sub a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ★★ 값 링크는 다르다 — 「A」「2,300km」「게시중」은 ★ **글 속의 값**이다
+   ★ (`V11-61` 「값을 누르면 그 조건으로 걸러진다」).  ★ 44px 상자로 만들면
+   ★ ★ 카드가 통째로 벌어져 ★ 시안이 깨진다.
+   ★★ 그래서 ★ **보이는 크기는 그대로 두고 ★ 닿는 자리만 넓힌다** —
+     ★ ★ 위아래로 패딩을 주고 ★ 같은 만큼 여백을 뺀다.  ★ 줄 높이가 안 변한다 */
+.row a:not(.btn):not(.heart),
+td a:not(.btn),
+li a, p a, .notice a,
+.pickspec a, .pickname a, .cellset a {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  margin-top: -14px;
+  margin-bottom: -14px;
+}
+
+/* ★ 「가기」가 ★ 43px 이었다 — ★ 한 픽셀이 모자랐다.  ★ 재서 맞춘다 */
+a.mini, .note a, .dim a, .muted a { line-height: 1.5; }
+
+/* ★ 좁은 폭에서 표가 화면을 넘겼다 — ★ 실측 09-02 (모바일 390).
+   ★ 「좁으니 뺀다」가 아니라 ★ **「좁으니 그 표만 옆으로 민다」**다 (`V11-70`·`V11-71`).
+   ★ ★ 몸통은 안 밀린다 — ★ 표 안에서만 민다 */
+@media (max-width: 820px) {
+  /* ★ `main` 밖의 표도 있다 — ★ 관심 화면이 그렇다 [실측 09-02].
+     ★ ★ 자리를 가리지 않고 ★ **표라면 다 민다** */
+  table { display: block; max-width: 100%; overflow-x: auto; }
+}
+
+/* ★ 쪽 번호 — ★ 29px 이었다 [실측 09-02].  ★ 목록에서 **가장 자주 누르는 자리**다.
+   ★ 여기서 빗나가면 ★ 엉뚱한 쪽으로 간다 */
+.page a { min-height: 44px; min-width: 44px;
+          display: inline-flex; align-items: center; justify-content: center; }
+
+/* ★★★★★ 09-02 — ★ 시안 `.rc-models` — ★ **차종 고르개**.
+   ★ 시안 이름(`rc-models`·`mb`)은 못 쓴다 (`S46-67`) — ★ 값만 옮긴다.
+   ★ 시안 — 알약 · 옆으로 밀린다 · 0 건은 흐리게 · 고른 것은 호박색 */
+.pickmodels { display:flex; gap:6px; overflow-x:auto; padding:10px 0;
+              flex-wrap:nowrap; -webkit-overflow-scrolling:touch; }
+.pickmodels::-webkit-scrollbar { display:none; }
+.pickmodels .mb { flex:0 0 auto; font-size:12px; white-space:nowrap;
+                  border-radius:16px; padding:7px 12px; }
+.pickmodels .mb b { font-weight:600; color:var(--text); font-size:11px; }
+.pickmodels .mb.on { border-color:var(--amber); color:var(--amber); }
+.pickmodels .mb.on b { color:var(--amber); }
+/* ★ 0 건 — ★ 흐리게.  ★ **누를 수는 있다** (「없다」가 아니라 「지금 없다」) */
+.pickmodels .mb.off { opacity:.45; }
+
+/* ★★★★★ 09-02 마스터 지시 — ★ 시안 `.v4-tabs` 대로.
+   ★ 「★ 시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해」
+   ★★ 넓은 화면 — ★ 기호를 이름 앞에 둔다 (자리는 안 옮긴다) */
+.nav-item b { font-weight: 400; margin-right: 4px; }
+
+/* ★★ 좁은 화면 — ★ **시안 그대로 아래에 붙인다.**
+   ★ 시안은 ★ 기호가 **위**, 이름이 **아래**, 여섯 칸이 ★ 화면을 나눠 갖는다.
+   ★ ★ 손가락은 아래에 있다 — ★ 위쪽 메뉴는 엄지가 안 닿는다 */
+@media (max-width: 820px) {
+  .nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    max-width: 1180px; margin: 0 auto;
+    display: flex; flex-wrap: nowrap; gap: 0; padding: 0;
+    background: var(--surface); border-top: 1px solid var(--line2);
+    border-bottom: 0; z-index: 10;
+  }
+  .nav-item {
+    flex: 1; text-align: center; padding: 9px 0 11px;
+    font-size: 11px; min-height: 44px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center;
+  }
+  .nav-item b { display: block; font-size: 17px; line-height: 1.2;
+                margin: 0; }
+  /* ★ 아래 띠가 마지막 줄을 가리지 않게 ★ 자리를 비운다 */
+  body { padding-bottom: 64px; }
 }
