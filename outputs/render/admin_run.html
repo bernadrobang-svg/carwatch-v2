@@ -62,12 +62,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>running</strong> · 사유 listing_updated · 범위 all
-    </p>
+  <p><strong>failed</strong> · 사유 listing_updated · 범위 all
+    <span class="muted">· run 20260831T163028</span></p>
   <p>단계 <strong>-</strong>
     
     <span class="muted">· 넣은 시각 2026-08-31T16:29:48.200271+00:00</span></p>
-  
+  <p class="muted">S4: ValidationError: 불변 필드 변경: color_ext_raw &#x27;검정색&#x27; → &#x27;은회색&#x27; — 원인 site_schema_change. 이 원인은 사람이 봐야 한다 [listing_id=127 step=STEP 29]</p>
   
   
 
@@ -113,7 +113,7 @@
   
   </tbody>
   </table>
-  <p class="muted">매물 20,673건 · 판정 10,437건</p>
+  <p class="muted">매물 20,673건 · 판정 10,459건</p>
 
   
   <p class="muted">이 화면은 <strong>스스로 갱신되지 않습니다</strong> —
@@ -121,7 +121,7 @@
     도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
-<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
+
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -233,17 +233,10 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-08-31T16:29:48.200271+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-08-31T16:29:48.200271+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">listing_updated</td>
-  <td data-label=""><form method="post" action="/admin/run" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="action" value="halt">
-    <input type="hidden" name="job_id" value="ace716343efb4ec8cf">
-    <input name="reason" size="12" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
-  </form></td></tr>
+  <td data-label=""></td></tr>
 
 <tr><td data-label="시각">2026-08-31T16:26:35.410984+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
@@ -347,7 +340,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-08-31T16:13:32.228432+00:00 · 20260831T161249 · 정상 · 12.8초</li><li>2026-08-31T16:06:34.524321+00:00 · 20260831T160548 · fatal 8 · 2.8초</li><li>2026-08-31T02:43:33.989375+00:00 · 20260831T024324 · fatal 9 · 0.7초</li><li>2026-08-30T23:21:35.343766+00:00 · 20260830T232047 · fatal 6 · 6.2초</li><li>2026-08-30T23:10:47.349490+00:00 · 20260830T230959 · 정상 · 3.3초</li></ul>
+<ul class="muted"><li>2026-08-31T16:13:32.228432+00:00 · 20260831T161249 · fatal 8 · 12.8초</li><li>2026-08-31T16:06:34.524321+00:00 · 20260831T160548 · fatal 8 · 2.8초</li><li>2026-08-31T02:43:33.989375+00:00 · 20260831T024324 · fatal 9 · 0.7초</li><li>2026-08-30T23:21:35.343766+00:00 · 20260830T232047 · fatal 6 · 6.2초</li><li>2026-08-30T23:10:47.349490+00:00 · 20260830T230959 · 정상 · 3.3초</li></ul>
 
 
 
@@ -358,7 +351,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260831T161249</span>
-  <span>2026-09-01 01:30</span>
+  <span>2026-09-01 01:47</span>
 </footer>
 
 </body>

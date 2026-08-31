@@ -99,10 +99,28 @@ def raw_body(value):
         if raw.startswith(BODY_MAGIC):
             import zlib
 
-            return zlib.decompress(raw[len(BODY_MAGIC):]).decode("utf-8")
-        # ★ 우리가 압축한 것이 아니다.  ★ 지어내지 않고 글자로만 돌린다
-        return raw.decode("utf-8")
+            raw = zlib.decompress(raw[len(BODY_MAGIC):])
+        return _text_of(raw)
     return value
+
+
+def _text_of(raw: bytes) -> str:
+    """바이트 → 글자.  ★ **한글 쪽은 utf-8 만이 아니다**.
+
+    ★★★★★ 09-02 실측 — ★ KB 점검표 26건 가운데 ★ **7건이 EUC-KR** 이었다
+      (`www.encar.com` 4 · `autocafe.co.kr` 2 · `moldeoncar.com` 1).
+      ★ ★ `utf-8` 로만 풀다 ★ `UnicodeDecodeError` 로 죽어
+      ★ ★ ★ 그 점검표가 ★ **통째로 안 펼쳐졌다**.
+    ★★ 차례 — ★ utf-8 → cp949(EUC-KR 을 품는다).  ★ 둘 다 아니면 ★ **버리지 않고**
+      ★ ★ 못 읽은 글자만 바꿔 돌린다 — ★ 「못 읽었다」로 통째로 잃지 않는다
+    ★ 지어내지 않는다 — ★ 인코딩을 고르는 것이지 ★ 내용을 만드는 것이 아니다
+    """
+    for enc in ("utf-8", "cp949"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-8", "replace")
 
 
 # 단계 트랜잭션 중인 연결.  sqlite3.Connection 은 임의 속성을 받지 않는다

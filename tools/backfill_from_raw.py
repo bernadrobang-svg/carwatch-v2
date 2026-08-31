@@ -509,7 +509,7 @@ def kb_detail(conn, write: bool) -> Counter:
     ★★ 사이트를 ★ **한 번도 안 두드린다** — ★ 저장해 둔 원문만 읽는다
     """
     from parse.kbchachacha.mapping import parse_detail
-    from store.core import upsert_core
+    from store.core import upsert_child, upsert_core
 
     at = _now()
     got: Counter = Counter()
@@ -533,9 +533,47 @@ def kb_detail(conn, write: bool) -> Counter:
             #   ★ 「없는 옵션」은 ★ 회차 기록에 적고 ★ 가이드께 여쭙는다
             deep.pop("options_absent_json", None)
             upsert_core(conn, deep, at)
+    # ★★★★★ 09-02 (로드맵 차례 4) — ★ **점검표를 다시 펼친다.**
+    #   ★ 사이트를 안 두드린다 — ★ 저장해 둔 원문만 읽는다.
+    #   ★ 실측 09-02 — ★ 26건이 안 펼쳐져 있었다.  ★ 까닭 둘 —
+    #   ★ ★ ① `raw_body` 가 utf-8 로만 풀어 ★ **EUC-KR 7건이 죽었다** (고쳤다)
+    #   ★ ★ ② 발급기관이 여섯 곳이라 ★ **꼴이 다르다** (정부 표준 서식을 더했다)
+    from parse.kbchachacha.inspection import panels
+
+    for lid, sid, blob in _latest(conn, "kbchachacha", "inspection"):
+        del sid
+        try:
+            html = raw_body(blob)
+        except (UnicodeDecodeError, ValueError):
+            got["★ 점검표를 글자로 못 읽는다"] += 1
+            continue
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        pan = panels(html or "")
+        if pan is None:
+            got["★ 점검표 — 모르는 꼴"] += 1
+            continue
+        got["★ 점검표를 펼쳤다"] += 1
+        if write:
+            upsert_child(conn, "core_inspection", {
+                "listing_id": lid, "site": "kbchachacha", "row_status": "ok",
+                "inspection_panel_json": json.dumps(pan, ensure_ascii=False),
+                "collected_at": at}, "p1", at)
     if write:
         conn.commit()
     return got
+
+
+def _latest(conn, site: str, endpoint: str):
+    """매물마다 ★ **마지막** 봉투 하나 (site · endpoint 로 좁혀서)."""
+    return conn.execute(
+        "SELECT listing_id, source_id, body FROM ("
+        " SELECT listing_id, source_id, body, status,"
+        "        ROW_NUMBER() OVER (PARTITION BY listing_id"
+        "                           ORDER BY fetched_at DESC, id DESC) AS n"
+        " FROM raw_response WHERE site=? AND endpoint=?"
+        "   AND listing_id IS NOT NULL"
+        ") WHERE n=1 AND status='ok'", (site, endpoint)).fetchall()
 
 
 SITES = {"kb_detail": kb_detail, "volvo_detail": volvo_detail,

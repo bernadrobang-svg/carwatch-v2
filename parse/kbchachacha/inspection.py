@@ -106,6 +106,46 @@ def legend(html: str) -> dict:
     return out
 
 
+# ★★★★★ 09-02 (로드맵 차례 4) — ★ **정부 표준 성능점검기록부 서식**.
+#   ★ 실측 09-02 — ★ KB 점검표 26건 가운데 ★ **8건**이 이 꼴이다
+#     (`autocafe.co.kr` · `checkpaper.iwsp.co.kr` · `www.encar.com`).
+#   ★ ★ KB 제 뷰어(`ucAccOutCheck`)가 아니라 ★ 발급기관이 그린 표라
+#   ★ ★ ★ 우리 파서가 ★ 통째로 못 읽고 있었다.
+#   ★★ 부호는 ★ **그림 이름**으로 온다 — `icon_x.png`(교환) · `icon_w.png`(판금) ·
+#     ★ `icon_n.png`(정상) · a·u·c·t(흠집·요철·부식·손상 — ★ 축 밖이다)
+RE_GOV_RANK = re.compile(r"<th[^>]*>\s*([0-9A-C])랭크\s*</th>")
+RE_GOV_PART = re.compile(
+    r"<label>\s*<img[^>]*icon_([a-z])\.png[^>]*>\s*(\d+)\.\s*([^<]+?)\s*</label>",
+    re.I)
+
+
+def panels_gov(html: str) -> list | None:
+    """정부 표준 서식 → 엔카 `inspection_panel_json` 과 같은 꼴.
+
+    ★ 랭크는 ★ 그 칸 **앞의 `<th>`** 가 말해 준다 (1·2랭크 = 외판 · A~C랭크 = 골격)
+    ★ 부호를 모르면 ★ **안 낸다** — ★ 흠집·부식은 축 밖이다 (기존 `STATUS` 와 같은 잣대)
+    ★ 표가 아예 없으면 ★ `None` — ★ 빈 목록(「이상 없음」)과 다르다
+    """
+    if not html or "랭크" not in html:
+        return None
+    got, seen_any = [], False
+    for chunk in re.split(r"(?=<th[^>]*>\s*[0-9A-C]랭크\s*</th>)", html):
+        m = RE_GOV_RANK.search(chunk)
+        if not m:
+            continue
+        rank = f"{m.group(1)}랭크"
+        for code, num, name in RE_GOV_PART.findall(chunk):
+            seen_any = True
+            title = STATUS.get(code.upper())
+            if not title:
+                continue        # ★ 정상(n)·흠집·부식 — ★ 축 밖이다.  ★ 안 낸다
+            got.append({"type": {"code": str(num), "title": name.strip()},
+                        "statusTypes": [{"code": code.upper(),
+                                         "title": title}],
+                        "attributes": [rank]})
+    return got if seen_any else None
+
+
 def panels(html: str) -> list | None:
     """성능점검부 한 쪽 → 엔카 `inspection_panel_json` 과 같은 꼴.
 
@@ -115,7 +155,9 @@ def panels(html: str) -> list | None:
     out_c = _blob(html, "ucAccOutCheck")
     bone_c = _blob(html, "ucAccBoneCheck")
     if out_c is None and bone_c is None:
-        return None                    # ★ 이 쪽은 우리가 아는 꼴이 아니다
+        # ★★★★★ 09-02 — ★ KB 제 뷰어가 아니면 ★ **정부 표준 서식**을 본다.
+        #   ★ 발급기관이 여섯 곳이라 ★ 꼴이 다르다 [실측 09-02]
+        return panels_gov(html)
     table = legend(html)
     if not table:
         return None                    # ★ 범례를 못 읽었다 — ★ 등급을 지어내지 않는다
