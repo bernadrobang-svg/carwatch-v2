@@ -173,7 +173,7 @@
 | `S46-186` | 등급 분포를 보고 있는가 | fatal | `validate/v0_guide.py:4438` | **★ 없음** | 없음 | guide/06_오판대장.md:312 |
 | `S46-187` | 값 곡선이 쌀수록 높은가 | fatal | `validate/v0_guide.py:4452` | **★ 없음** | 없음 | guide/03_이력.md:1141 · guide/06_오판대장.md:313 |
 | `S46-188` | 「화면에 없다」를 열어 보고 적었는가 | fatal | `validate/v0_guide.py:4479` | **★ 없음** | 없음 | guide/06_오판대장.md:314 |
-| `S46-191` | 차종별 예산이 원칙대로인가 | fatal | `validate/v0_guide.py:4503` | **★ 없음** | 없음 | guide/03_이력.md:1175 · chapters/30-score/f-table.md:2507 |
+| `S46-191` | 차종별 예산이 원칙대로인가 | fatal | `validate/v0_guide.py:4503` | **★ 없음** | 없음 | guide/03_이력.md:1175 · guide/03_이력.md:1215 · chapters/30-score/f-table.md:2507 |
 | `S46-192` | 선호차종이 등록부에 다 있는가 | fatal | `validate/v0_guide.py:4539` | **★ 없음** | 없음 | guide/03_이력.md:1179 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
