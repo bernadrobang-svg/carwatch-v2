@@ -4560,6 +4560,19 @@ def s46_192_pref_brands_registered():
     n = sum(len(v) for v in pref.values())
     return True, f"선호차종 {n}종이 다 등록돼 있다 ({len(pref)}개 제조사)"
 
+
+def s46_202_no_raw_template_tags():
+    """S46-202 — ★ 배포된 화면에 ★ 안 풀린 틀 문법이 없는가 (09-01).
+
+    ★ `/recommend` 가 200 인데 ★ 화면에 `{% if v.tab == "1" %}` 가 ★ 글자로 나왔다.
+      ★ ★ 마스터께서 열어 보시고 ★ 「개발은 화면을 왜 안 고쳐?」 하셨다
+    ★ 잣대 — ★ 규격이 이 금지를 적었는가
+    """
+    body = _read(ROOT / "docs" / "RECOMMEND_SCREEN.md")
+    if "안 풀린 틀 문법" not in body:
+        return False, "★ 「안 풀린 틀 문법」 금지가 규격에 없다"
+    return True, "「안 풀린 틀 문법」 금지가 규격에 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4595,6 +4608,7 @@ CHECKS = (
      s46_177_catalog_not_site_locked),
     ("S46-188", "「화면에 없다」를 열어 보고 적었는가",
      s46_188_screen_before_claiming_missing),
+    ("S46-202", "안 풀린 틀 문법이 없는가", s46_202_no_raw_template_tags),
     ("S46-192", "선호차종이 등록부에 다 있는가",
      s46_192_pref_brands_registered),
     ("S46-191", "차종별 예산이 원칙대로인가",

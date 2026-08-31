@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v4m 추천 시안 — 모바일 기준</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+--text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
+--mono:ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:#000;color:var(--text);
+font:15px/1.55 system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif}
+.v4-wrap{width:100%;max-width:1180px;margin:0 auto;background:var(--bg);
+min-height:100vh;padding-bottom:64px;position:relative}
+.v4-note{font-size:12px;color:var(--faint);line-height:1.6}
+.v4-top{position:sticky;top:0;z-index:9;background:var(--bg);
+padding:10px 14px 8px;border-bottom:1px solid var(--line)}
+.v4-title{font-size:17px;font-weight:700}
+.v4-sub{font-size:12px;color:var(--dim);margin-top:2px}
+.v4-tabs{position:fixed;bottom:0;left:0;right:0;max-width:1180px;margin:0 auto;
+display:flex;background:var(--surface);border-top:1px solid var(--line2);z-index:10}
+.v4-tabs a{flex:1;text-align:center;padding:9px 0 11px;font-size:11px;
+color:var(--dim);text-decoration:none}
+.v4-tabs a.on{color:var(--amber)}
+.v4-tabs b{display:block;font-size:17px;line-height:1.2;font-weight:400}
+.rc-tabs{display:flex;border-bottom:1px solid var(--line);background:var(--bg);
+position:sticky;top:56px;z-index:8}
+.rc-tabs a{flex:1;text-align:center;padding:11px 0;font-size:13px;
+color:var(--dim);text-decoration:none;border-bottom:2px solid transparent}
+.rc-tabs a.on{color:var(--amber);border-bottom-color:var(--amber);font-weight:600}
+.v4-cards{display:block}
+.v4-card{background:var(--surface);border-bottom:1px solid var(--line);padding:12px 14px}
+.v4-row{display:flex;gap:10px}
+.v4-thumb{width:104px;height:78px;flex:0 0 104px;border-radius:8px;
+background:var(--surface2);border:1px solid var(--line);
+display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)}
+.v4-mid{flex:1;min-width:0}
+.v4-name{font-size:14px;font-weight:600}
+.v4-spec{font-size:12px;color:var(--dim);margin-top:2px}
+.v4-price{font-size:16px;font-weight:700;margin-top:4px}
+.rc-score{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px}
+.rc-axes{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.rc-ax{font-size:11px;color:var(--dim);background:var(--surface2);
+border:1px solid var(--line);border-radius:4px;padding:2px 6px;font-family:var(--mono)}
+.rc-ax b{color:var(--text);font-weight:600}
+.rc-ax.hi{border-color:var(--amber);color:var(--amber)}
+.rc-ax.hi b{color:var(--amber)}
+.rc-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden}
+.rc-bar i{display:block;height:100%;background:var(--amber)}
+.rc-grade{font-size:11px;color:var(--faint);margin-left:6px}
+.rc-empty{padding:60px 20px;text-align:center;color:var(--faint);font-size:13px}
+.rc-head{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--line);
+font-size:12px;color:var(--dim);line-height:1.6}
+</style></head>
+<body><div class="v4-wrap">
+
+<div class="v4-top">
+  <div class="v4-title">추천</div>
+  <div class="v4-sub">내 기준에 가까운 차를 먼저 냅니다</div>
+</div>
+
+<div class="rc-tabs">
+  <a href="?tab=1" class="on">내 기준에 가까운 차</a>
+  <a href="?tab=2">탭 2</a>
+  <a href="?tab=3">탭 3</a>
+</div>
+
+<div class="rc-head">
+  ★ <b>등급을 보지 않습니다.</b> 예산 · 주행 · 연식 · 색 <b>네 축의 합(297점)</b>으로만 세웁니다.<br>
+  차종 13종 · 13,842건 중 <b>297점에 가까운 차례</b>
+</div>
+
+<div class="v4-cards">
+
+  <div class="v4-card">
+    <div class="rc-score">271 / 297 <span class="rc-grade">등급 C · 등급은 안 봅니다</span></div>
+    <div class="v4-row">
+      <div class="v4-thumb">사진</div>
+      <div class="v4-mid">
+        <div class="v4-name">XC40_IMPORT B4 얼티메이트</div>
+        <div class="v4-spec">2023-04 · 21,400km · 청색 / 검정색 계열 · 볼보셀렉트</div>
+        <div class="v4-price">3,290만원</div>
+        <div class="rc-axes">
+          <span class="rc-ax">예산 <b>89</b>/95</span>
+          <span class="rc-ax">주행 <b>92</b>/107</span>
+          <span class="rc-ax">연식 <b>75</b>/80</span>
+          <span class="rc-ax hi">색 <b>15</b>/15</span>
+        </div>
+        <div class="rc-bar"><i style="width:91%"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v4-card">
+    <div class="rc-score">248 / 297 <span class="rc-grade">등급 B</span></div>
+    <div class="v4-row">
+      <div class="v4-thumb">사진</div>
+      <div class="v4-mid">
+        <div class="v4-name">MODEL_Y 롱 레인지 AWD</div>
+        <div class="v4-spec">2022-09 · 44,700km · 흰색 / 검정색 계열 · 엔카</div>
+        <div class="v4-price">3,750만원</div>
+        <div class="rc-axes">
+          <span class="rc-ax">예산 <b>78</b>/95</span>
+          <span class="rc-ax">주행 <b>52</b>/107</span>
+          <span class="rc-ax">연식 <b>71</b>/80</span>
+          <span class="rc-ax">색 <b>7</b>/15</span>
+        </div>
+        <div class="rc-bar"><i style="width:83%"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v4-card">
+    <div class="rc-score">223 / 297 <span class="rc-grade">등급 E · 등급은 안 봅니다</span></div>
+    <div class="v4-row">
+      <div class="v4-thumb">사진</div>
+      <div class="v4-mid">
+        <div class="v4-name">KOLEOS_HEV 1.5 E-TECH 아이코닉</div>
+        <div class="v4-spec">2024-10 · 34,145km · 진주색 / 검정색 계열 · 엔카</div>
+        <div class="v4-price">3,190만원</div>
+        <div class="rc-axes">
+          <span class="rc-ax">예산 <b>62</b>/95</span>
+          <span class="rc-ax">주행 <b>63</b>/107</span>
+          <span class="rc-ax">연식 <b>78</b>/80</span>
+          <span class="rc-ax hi">색 <b>15</b>/15</span>
+        </div>
+        <div class="rc-bar"><i style="width:75%"></i></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="v4-tabs">
+  <a href="/"><b>▤</b>현황</a>
+  <a href="/listings"><b>≡</b>매물</a>
+  <a href="/recommend" class="on"><b>★</b>추천</a>
+  <a href="/watch"><b>♡</b>관심</a>
+  <a href="/track"><b>⇄</b>추적</a>
+  <a href="/admin"><b>⚙</b>관리</a>
+</div>
+
+</div></body></html>

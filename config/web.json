@@ -402,9 +402,10 @@
   "sian_screens_login": {
     "v4m_watch_시안.html": "/watch",
     "v4m_admin_시안.html": "/admin",
-    "v4m_compare_시안.html": "/compare"
+    "v4m_compare_시안.html": "/compare",
+    "v4m_recommend_시안.html": "/recommend"
   },
-  "_sian_screens_login_why": "★★ 명령서 82장 — 「★ 여덟 화면 다」.  ★ 이 셋은 ★ 로그인 뒤에만 열린다 (앞에서는 403 이 정상이다).  ★ 자격은 `secrets/check_login.json` 이고 ★ `.gitignore` 에 있다 — ★ 비밀번호를 저장소에 안 적는다.  ★ 검사 `S46-100`",
+  "_sian_screens_login_why": "★★ 명령서 82장 — 「★ 여덟 화면 다」.  ★ 이 셋은 ★ 로그인 뒤에만 열린다 (앞에서는 403 이 정상이다).  ★ 자격은 `secrets/check_login.json` 이고 ★ `.gitignore` 에 있다 — ★ 비밀번호를 저장소에 안 적는다.  ★ 검사 `S46-100`  ★★ 09-01 — ★ `v4m_recommend_시안.html` 을 더했다 (추천 화면 · 마스터 확정).  ★ 탭 2·3 은 `v4m_recommend_tab23_시안.html` 에 따로 있다 — ★ **빈 채로 두는 꼴**을 보인다",
   "sian_order_override": {
     "/listings": [
       "이 화면은 무엇을 하는 곳인가",
