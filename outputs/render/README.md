@@ -28,7 +28,7 @@
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,034B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,339B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,872B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,199B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,193B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,936B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,390B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,636B |
@@ -37,7 +37,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 17,508B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,262B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,619B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 25,981B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 25,951B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 5,376B |
 
 ## 못 낸 화면
