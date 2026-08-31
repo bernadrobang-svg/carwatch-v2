@@ -379,14 +379,14 @@
   },
   "bobaedream": {
     "label": "보배드림",
-    "status": "planned",
+    "status": "paused",
     "order": 10,
     "multi_instance": false,
     "warranty_evidence": null,
     "warranty_items": [],
     "_spec": "docs/BOBAEDREAM_API.md",
     "_warranty_note": "★ 사이트 보증 없음 — 개인·딜러 혼재.  ★ 「무사고」는 판매자 글이라 안 쓴다 (규격 1a)",
-    "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
+    "_status_why": "★★★★★ 09-01 마스터 확정 — 「★ **보배를 빼고 여기(리볼트) 것 쓰자**」.  ★ 까닭 — ★ 성능점검이 ★ **이미지**다 · ★ 사고 라벨이 ★ **31/223 건뿐**이고 ★ 값이 ★ **딜러가 쓴 자유 문장**이다 · 마스터 08-29 「진짜 검증할 방법이 없다」.  ★★ ★ `paused` 를 쓴다 — ★ 규격이 허락하는 셋(`active`·`paused`·`planned`) 중 ★ ★ 「받았었으나 지금은 안 받는다」에 맞는 것이다 (`S46-41`).  ★ ★ ★ 내가 `retired` 를 지어냈다가 물렸다 — ★ 규격에 없는 낱말이었다.  ★ `core_listing` 행도 ★ `raw_response` 원문도 ★ **안 지운다** (P3) — ★ 화면에서만 뺀다",
     "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
   },
   "reborncar": {
@@ -436,5 +436,25 @@
     "_warranty_note": "★ 바바리안 딜러 한 곳.  ★ 「사고유무 26/26 무」는 ★ 안 갈려 축에 안 쓴다",
     "_status_why": "★ 규격은 있다.  ★ 아직 저장을 안 했다 — ★ 명령서 7단계.  ★ 넣으면 `active` 로 바꾼다",
     "_ref": "★ 개정 651 — 규격을 쓸 때 config 등록을 같은 커밋에 넣는다 (마스터 지시 08-24)"
+  },
+  "revolt": {
+    "label": "리볼트",
+    "status": "active",
+    "order": 13,
+    "multi_instance": false,
+    "warranty_evidence": "site_home_verify",
+    "warranty_items": [
+      {
+        "key": "리볼트 전기차 기술 인증",
+        "points": 36,
+        "when": {
+          "site_home_verify": 1
+        },
+        "why": "★ 사이트 소개 — 「★ **오직, 전기차를 위한 기술 인증 중고차**」 · 「★ 전기차 기술 점검을 통해 ★ **배터리 정상 ・ 무사고 차만 선별해서 판매합니다**」 (규격 `REVOLT_API.md` 1장).  ★ 원문 자국은 ★ `merchandise_type: 'certified'` 다 [실측 09-01 · 목록 269건 전건].  ★ ★ 단계는 ★ `f-table` 5장이 정본이다 — ★ 현대인증과 ★ **같은 꼴로 한 단계 36점**이다.  ★ 내가 점수를 지어내지 않았다"
+      }
+    ],
+    "_spec": "docs/REVOLT_API.md",
+    "_why": "★★★★★ 09-01 마스터 확정 — 「★ 보배를 빼고 여기 것 쓰자 ★ 지금 우선 작업으로」.  ★ 전기차 전용 인증중고차 (PRND — ★ 헤이딜러와 같은 회사).  ★ 실측 09-01 — ★ 매물 **270건** · ★ 전건 전기·수소 · ★ 전건 무사고 · ★ 차량번호를 줘서 ★ 짝(`plate_hash`)이 바로 생긴다",
+    "_warranty_note": "★ 사이트 검증은 ★ `merchandise_type: 'certified'` 다 — ★ 배점은 `f-table` 5장이 정한다.  ★ 여기서 점수를 매기지 않는다"
   }
 }

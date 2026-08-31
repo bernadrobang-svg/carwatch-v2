@@ -31,6 +31,8 @@
   
   <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
   
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색)에 가까운 차. ★ 등급을 안 본다 — 네 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)">추천</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -49,730 +51,1973 @@
 
 
 <main>
-<h1>후보 <small>10건</small></h1>
+<h1>추천 <small>내 기준에 가까운 차</small></h1>
 
 
-<p class="cond"><span class="q"><strong>10건</strong> —
-  E · 미판정을 뺀 후보 8,023건 중
-  <strong>이유를 댈 수 있는 것</strong>만 · 비율 높은 순</span>
-  <span class="n">판정 10,359건 →
-    E · 미판정 2,336건 뺌</span></p>
+
+<p class="sitebar">
+  <a class="btn on"
+    href="/recommend?tab=1">탭 1</a><a class="btn"
+    href="/recommend?tab=2">탭 2</a><a class="btn"
+    href="/recommend?tab=3">탭 3</a>
+</p>
 
 
-<div class="bar">
-  <form class="inline" method="get" action="/recommend">
-    
-    <select name="order" onchange="this.form.submit()" title="무엇을 먼저 볼지 고릅니다">
-      <option value="rank" selected>추천 순위</option><option value="price">가격 낮은순</option><option value="grade">등급순</option><option value="price_desc">가격 높은순</option><option value="mileage">주행거리</option><option value="year">연식 최신</option><option value="new">등록 최신</option><option value="dom">오래된 매물</option>
-    </select>
-    <noscript><button type="submit" class="mini">정렬</button></noscript>
-  </form>
-  <a class="btn"
-    href="/recommend?min_grade=A" title="S · A 만 봅니다">A 이상만</a><a class="btn"
-    href="/recommend?min_grade=B" title="S · A · B 만 봅니다">B 이상만</a><a class="btn"
-    href="/recommend?axis=history.damage&amp;bucket=1" title="사고 이력에서 점수를 받은 매물만">사고 양호</a><a class="btn"
-    href="/recommend?axis=history.rental&amp;bucket=1" title="렌트 이력에서 점수를 받은 매물만">렌트 아님</a><a class="btn"
-    href="/recommend?year=2024" title="2024년식 이후만">2024년 이후</a>
-  <a class="clear" href="/recommend" title="걸어 둔 조건을 모두 지웁니다 (동작입니다) — ★ 거르개의 「전체」는 「거르지 않는다」는 뜻입니다">전부 지우기</a>
+
+
+<div class="cond what">
+  <h2>★ 이 탭은 무엇으로 세우나</h2>
+  <p><strong>네 축의 합</strong>으로 세웁니다 —
+    <b>예산 95</b> · <b>주행 107</b> · <b>연식 80</b> · <b>색 15</b> =
+    <b>297점</b>.</p>
+  <p><strong>등급을 보지 않습니다</strong> — 거르지도 않고 더하지도 않습니다.
+    E 든 G 든 네 축이 높으면 위에 옵니다.</p>
+  <p class="muted">★ 넷 다 이미 매겨 둔 점수입니다 — 새로 셈하지 않습니다.</p>
 </div>
 
 
+<p class="sentence">
+  <b>★ 왜 이 순위인가</b> — <b>네 축의 합</b>이 높은 차부터입니다.
+  등급은 보지 않습니다.
+</p>
+<p class="sentence">
+  화면에 든 매물 <b>5,461건</b> ·
+  위에서부터 <b>60건</b>을 냅니다
+</p>
 
-
-
-<table class="rows cand-rows">
+<table class="rows">
 <thead><tr>
-<th class="c">사진</th><th class="c">관심</th>
-<th class="c">등급</th><th class="r">순위</th><th class="r">비율</th>
-<th>차종</th><th>트림</th><th class="r">연식</th><th class="r">주행</th>
-<th class="r">시세 대비</th><th class="r">신차가 대비</th>
-<th class="r">가격</th>
-<th class="c">사고</th><th class="c">골격</th><th class="c">용도</th><th class="c">제조사 보증</th><th class="c">사이트 보증</th>
-<th class="r">옵션</th><th>왜 이 순위인가</th>
-<th class="c">보기</th>
+  <th>차종</th><th class="num">값</th><th class="num">주행</th><th>연식</th>
+  <th>색</th><th>사이트</th>
+  <th class="num">예산</th><th class="num">주행</th><th class="num">연식</th>
+  <th class="num">색</th><th class="num">★ 합</th><th>등급</th><th></th>
 </tr></thead>
 <tbody>
 
-<tr data-peek="https://ci.encar.com/carpicture08/pic4238/42380646_027.jpg" data-href="/why/133">
-  <td class="c photo" data-label="사진">
-    <a href="/why/133"><img class="thumb" src="https://ci.encar.com/carpicture08/pic4238/42380646_027.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/3657">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD (택시형)</span></td>
+  <td class="num mono" data-label="값">2,690만</td>
+  <td class="num mono" data-label="주행">12,705km</td>
+  <td data-label="연식">2023-03</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="133">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>1</b></td>
   
-  <td class="r num" data-label="비율"><strong>70.4%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:70.4%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 77.0 / 95.0">77.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2025-01</td>
-  <td class="r num" data-label="주행">3,552km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">10.2%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-18.5%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,680만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 84.0 / 107.0">84.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 5개월 · 96천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 77.0 / 80.0">77.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/133">3종 361만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/133" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42380646" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=133" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>245.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="245.0 / 297.0"><i
+      style="width:82.5%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-b">B</span></td>
+  <td><a class="btn mini" href="/detail/3657">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture04/pic4204/42047175_027.jpg" data-href="/why/69">
-  <td class="c photo" data-label="사진">
-    <a href="/why/69"><img class="thumb" src="https://ci.encar.com/carpicture04/pic4204/42047175_027.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/11234">G70_20T</a>
+    <span class="dim">가솔린 터보 2.0</span></td>
+  <td class="num mono" data-label="값">2,710만</td>
+  <td class="num mono" data-label="주행">14,814km</td>
+  <td data-label="연식">202209</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">kcar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="69">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>2</b></td>
   
-  <td class="r num" data-label="비율"><strong>70.3%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:70.3%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 76.0 / 95.0">76.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-09</td>
-  <td class="r num" data-label="주행">18,877km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">5.3%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-26.2%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,360만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 80.0 / 107.0">80.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 1개월 · 81천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 73.0 / 80.0">73.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/69">4종 401만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/69" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42047175" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=69" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>244.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="244.0 / 297.0"><i
+      style="width:82.2%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/11234">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture05/pic4255/42559310_001.jpg" data-href="/why/8131">
-  <td class="c photo" data-label="사진">
-    <a href="/why/8131"><img class="thumb" src="https://ci.encar.com/carpicture05/pic4255/42559310_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/92">KOLEOS_HEV</a>
+    <span class="dim">1.5 E-TECH 아이코닉 2WD</span></td>
+  <td class="num mono" data-label="값">2,448만</td>
+  <td class="num mono" data-label="주행">5km</td>
+  <td data-label="연식">2026-06</td>
+  <td data-label="색"><span class="dim">확인 못 함</span></td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="8131">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>3</b></td>
   
-  <td class="r num" data-label="비율"><strong>69.9%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:69.9%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">G80_25T</td>
+  <td class="num mono" data-label="예산"
+      title="예산 84.0 / 95.0">84.0</td>
   
-  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-08</td>
-  <td class="r num" data-label="주행">1,904km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">10.4%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-16.8%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>5,830만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 107.0 / 107.0">107.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 · 98천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 48.0 / 80.0">48.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/8131">4종 840만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 0.0 / 15.0">0.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/8131" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42559310" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=8131" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>239.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="239.0 / 297.0"><i
+      style="width:80.5%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-none">판정 중</span></td>
+  <td><a class="btn mini" href="/detail/92">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" data-href="/why/5749">
-  <td class="c photo" data-label="사진">
-    <a href="/why/5749"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42528750_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/16256">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">2,770만</td>
+  <td class="num mono" data-label="주행">22,390km</td>
+  <td data-label="연식">2023-02</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="5749">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>4</b></td>
   
-  <td class="r num" data-label="비율"><strong>69.8%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:69.8%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 86.0 / 95.0">86.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2026-02</td>
-  <td class="r num" data-label="주행">2,300km</td>
-  <td class="r num gap" data-label="시세 대비">
-    
-    <span class="dim">표본 부족</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.2%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,550만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 69.0 / 107.0">69.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">4년 6개월 · 97천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 76.0 / 80.0">76.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/5749">4종 413만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/5749" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42528750" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=5749" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>238.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="238.0 / 297.0"><i
+      style="width:80.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16256">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture07/pic4167/41675685_001.jpg" data-href="/why/22">
-  <td class="c photo" data-label="사진">
-    <a href="/why/22"><img class="thumb" src="https://ci.encar.com/carpicture07/pic4167/41675685_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/16371">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,220만</td>
+  <td class="num mono" data-label="주행">20,357km</td>
+  <td data-label="연식">2022-11</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="22">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>5</b></td>
   
-  <td class="r num" data-label="비율"><strong>69.7%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:69.7%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 74.0 / 95.0">74.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-10</td>
-  <td class="r num" data-label="주행">10,393km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">3.9%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-24.5%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,499만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 72.0 / 107.0">72.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 2개월 · 89천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 74.0 / 80.0">74.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/22">3종 283만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/22" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/41675685" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=22" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>235.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="235.0 / 297.0"><i
+      style="width:79.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16371">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture07/pic4227/42275202_001.jpg" data-href="/why/113">
-  <td class="c photo" data-label="사진">
-    <a href="/why/113"><img class="thumb" src="https://ci.encar.com/carpicture07/pic4227/42275202_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/16386">XC40_IMPORT</a>
+    <span class="dim">B4 인스크립션</span></td>
+  <td class="num mono" data-label="값">3,170만</td>
+  <td class="num mono" data-label="주행">14,056km</td>
+  <td data-label="연식">2022-04</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="113">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>6</b></td>
   
-  <td class="r num" data-label="비율"><strong>69.2%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:69.2%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 76.0 / 95.0">76.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 에스카파드 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2025-11</td>
-  <td class="r num" data-label="주행">8,693km</td>
-  <td class="r num gap" data-label="시세 대비">
-    
-    <span class="dim">표본 부족</span>
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-22.4%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,899만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 82.0 / 107.0">82.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">4년 3개월 · 91천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 63.0 / 80.0">63.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/113">3종 524만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/113" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42275202" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=113" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>228.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="228.0 / 297.0"><i
+      style="width:76.8%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16386">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture03/pic4253/42537844_001.jpg" data-href="/why/16404">
-  <td class="c photo" data-label="사진">
-    <a href="/why/16404"><img class="thumb" src="https://ci.encar.com/carpicture03/pic4253/42537844_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/14836">S60_IMPORT</a>
+    <span class="dim">B5 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">2,900만</td>
+  <td class="num mono" data-label="주행">30,675km</td>
+  <td data-label="연식">2023-06</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="16404">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>7</b></td>
   
-  <td class="r num" data-label="비율"><strong>69.1%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:69.1%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">XC40_IMPORT</td>
+  <td class="num mono" data-label="예산"
+      title="예산 83.0 / 95.0">83.0</td>
   
-  <td class="trim" data-label="트림">B4 얼티메이트 브라이트 · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2023-05</td>
-  <td class="r num" data-label="주행">18,940km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="down-v">-1.4%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-33.7%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,500만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 58.0 / 107.0">58.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">1년 9개월 · 81천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
   
-  <td class="r num" data-label="옵션">
-    
-    <span class="dim">없음</span>
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">시세보다 50만 싸고 무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/16404" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42537844" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=16404" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>227.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="227.0 / 297.0"><i
+      style="width:76.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/14836">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture10/pic4180/41807370_001.jpg" data-href="/why/30">
-  <td class="c photo" data-label="사진">
-    <a href="/why/30"><img class="thumb" src="https://ci.encar.com/carpicture10/pic4180/41807370_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/10">KOLEOS_HEV</a>
+    <span class="dim">1.5 E-TECH 아이코닉 2WD</span></td>
+  <td class="num mono" data-label="값">2,950만</td>
+  <td class="num mono" data-label="주행">9,149km</td>
+  <td data-label="연식">2024-09</td>
+  <td data-label="색">쥐색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="30">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>8</b></td>
   
-  <td class="r num" data-label="비율"><strong>69.1%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:69.1%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 61.0 / 95.0">61.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-11</td>
-  <td class="r num" data-label="주행">6,509km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">7.7%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-21.0%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,630만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 90.0 / 107.0">90.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 3개월 · 93천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 69.0 / 80.0">69.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/30">2종 243만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/30" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/41807370" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=30" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>227.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="227.0 / 297.0"><i
+      style="width:76.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/10">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" data-href="/why/202">
-  <td class="c photo" data-label="사진">
-    <a href="/why/202"><img class="thumb" src="https://ci.encar.com/carpicture02/pic4252/42520259_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/448">G70_20T</a>
+    <span class="dim">가솔린 2.0T 4WD</span></td>
+  <td class="num mono" data-label="값">2,950만</td>
+  <td class="num mono" data-label="주행">12,687km</td>
+  <td data-label="연식">2023-01</td>
+  <td data-label="색">쥐색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="202">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>9</b></td>
   
-  <td class="r num" data-label="비율"><strong>68.9%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:68.9%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">KOLEOS_HEV</td>
+  <td class="num mono" data-label="예산"
+      title="예산 61.0 / 95.0">61.0</td>
   
-  <td class="trim" data-label="트림">1.5 E-TECH 아이코닉 2WD · 세부등급 없음
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-10</td>
-  <td class="r num" data-label="주행">34,145km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">3.4%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-27.5%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>3,300만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 84.0 / 107.0">84.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">3년 2개월 · 65천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단 + </a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 75.0 / 80.0">75.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/202">4종 401만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/202" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42520259" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=202" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>227.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="227.0 / 297.0"><i
+      style="width:76.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/448">상세 ▸</a></td>
 </tr>
 
-<tr data-peek="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" data-href="/why/2414">
-  <td class="c photo" data-label="사진">
-    <a href="/why/2414"><img class="thumb" src="https://ci.encar.com/carpicture03/pic4233/42338636_001.jpg" alt="" loading="lazy"></a>
-    
-  </td>
+<tr>
+  <td data-label="차종"><a href="/detail/3451">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD (택시형)</span></td>
+  <td class="num mono" data-label="값">2,699만</td>
+  <td class="num mono" data-label="주행">26,016km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
   
-  <td class="c" data-label="관심">
-    <form method="post" action="/watch/add" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="listing_id" value="2414">
-      <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-    </form>
-  </td>
-  <td class="c" data-label="등급"><span class="grade-a">A</span></td>
-  <td class="r num" data-label="순위"><b>10</b></td>
   
-  <td class="r num" data-label="비율"><strong>68.8%</strong>
-    <span class="pbar" title="초록은 지금 받은 몫, 어두운 쪽은 확인 못 한 축을 채우면 더 받을 수 있는 몫입니다"><i class="got" style="width:68.8%"></i><i class="may" style="width:0.0%"></i></span></td>
-  <td data-label="차종">G80_25T</td>
+  <td class="num mono" data-label="예산"
+      title="예산 76.0 / 95.0">76.0</td>
   
-  <td class="trim" data-label="트림">가솔린 2.5 터보 AWD · (세부등급 없음)
-    <span class="tag" title="이 매물을 받은 사이트입니다">엔카</span></td>
-  <td class="r" data-label="연식">2024-06</td>
-  <td class="r num" data-label="주행">15,615km</td>
-  <td class="r num gap" data-label="시세 대비">
-    <span class="up-v">6.4%</span>
-    
-  </td>
-  <td class="r num gap" data-label="신차가 대비">
-    <span class="down-v">-23.5%</span>
-    
-  </td>
-  <td class="r num" data-label="가격"><b>5,620만</b></td>
+  <td class="num mono" data-label="주행"
+      title="주행 64.0 / 107.0">64.0</td>
   
-  <td class="c ax" data-label="사고"><a class="chip-good axis-good" href="/listings?axis=state.accident&amp;bucket=1" title="사고 이력 양호">무사고</a></td><td class="c ax" data-label="골격"><a class="chip-good axis-good" href="/listings?axis=state.frame&amp;bucket=1" title="골격 이상 없음">골격 이상 없음</a></td><td class="c ax" data-label="용도"><a class="chip-good axis-good" href="/listings?axis=history.use&amp;bucket=1" title="자가용">렌트 아님</a></td><td class="c ax" data-label="제조사 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.power&amp;bucket=1" title="제조사 보증 있음">2년 10개월 · 84천km</a></td><td class="c ax" data-label="사이트 보증"><a class="chip-good axis-good" href="/listings?axis=warranty.site&amp;bucket=1" title="사이트 보증 있음">엔카진단</a></td>
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
   
-  <td class="r num" data-label="옵션">
-    <a href="/why/2414">5종 1,180만</a>
-    
-  </td>
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
   
-  <td data-label="왜 이 순위인가"><span class="reason">무사고이며 렌트 이력이 없고 사이트가 우수등급을 줬습니다</span></td>
-  <td class="c act" data-label="보기">
-    <a href="/why/2414" class="mini">근거</a>
-    <a href="https://fem.encar.com/cars/detail/42338636" target="_blank" rel="noopener" class="mini"
-      title="원문 매물로 갑니다">엔카 ↗</a>
-    <a href="/compare?ids=2414" class="mini">⇄ 비교</a>
-  </td>
+  
+  <td class="num mono" data-label="합"><strong>226.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="226.0 / 297.0"><i
+      style="width:76.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3451">상세 ▸</a></td>
 </tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16257">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,490만</td>
+  <td class="num mono" data-label="주행">13,912km</td>
+  <td data-label="연식">2023-07</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 58.0 / 95.0">58.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 82.0 / 107.0">82.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>226.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="226.0 / 297.0"><i
+      style="width:76.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-b">B</span></td>
+  <td><a class="btn mini" href="/detail/16257">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3051">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD (택시형)</span></td>
+  <td class="num mono" data-label="값">2,490만</td>
+  <td class="num mono" data-label="주행">32,591km</td>
+  <td data-label="연식">2023-10</td>
+  <td data-label="색">은색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 83.0 / 95.0">83.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 56.0 / 107.0">56.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>224.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="224.0 / 297.0"><i
+      style="width:75.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3051">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3290">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD</span></td>
+  <td class="num mono" data-label="값">2,720만</td>
+  <td class="num mono" data-label="주행">26,372km</td>
+  <td data-label="연식">2023-04</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 76.0 / 95.0">76.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 64.0 / 107.0">64.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 77.0 / 80.0">77.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>224.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="224.0 / 297.0"><i
+      style="width:75.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3290">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16373">XC40_IMPORT</a>
+    <span class="dim">B4 인스크립션</span></td>
+  <td class="num mono" data-label="값">2,779만</td>
+  <td class="num mono" data-label="주행">20,737km</td>
+  <td data-label="연식">2021-11</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 85.0 / 95.0">85.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 72.0 / 107.0">72.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 52.0 / 80.0">52.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>224.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="224.0 / 297.0"><i
+      style="width:75.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/16373">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/168">KOLEOS_HEV</a>
+    <span class="dim">1.5 E-TECH 에스프리 알핀 2WD</span></td>
+  <td class="num mono" data-label="값">2,390만</td>
+  <td class="num mono" data-label="주행">19,514km</td>
+  <td data-label="연식">2024-12</td>
+  <td data-label="색"><span class="dim">확인 못 함</span></td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 85.0 / 95.0">85.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 73.0 / 107.0">73.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 65.0 / 80.0">65.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 0.0 / 15.0">0.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>223.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="223.0 / 297.0"><i
+      style="width:75.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-none">판정 중</span></td>
+  <td><a class="btn mini" href="/detail/168">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/238">G70_20T</a>
+    <span class="dim">가솔린 2.0T 2WD</span></td>
+  <td class="num mono" data-label="값">2,690만</td>
+  <td class="num mono" data-label="주행">30,981km</td>
+  <td data-label="연식">2023-05</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 77.0 / 95.0">77.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 58.0 / 107.0">58.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>220.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="220.0 / 297.0"><i
+      style="width:74.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/238">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/579">G70_20T</a>
+    <span class="dim">가솔린 2.0T 4WD</span></td>
+  <td class="num mono" data-label="값">2,650만</td>
+  <td class="num mono" data-label="주행">15,000km</td>
+  <td data-label="연식">2022-03</td>
+  <td data-label="색">빨간색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 78.0 / 95.0">78.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 80.0 / 107.0">80.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 61.0 / 80.0">61.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 0.0 / 15.0">0.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>219.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="219.0 / 297.0"><i
+      style="width:73.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/579">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3664">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD</span></td>
+  <td class="num mono" data-label="값">2,700만</td>
+  <td class="num mono" data-label="주행">31,955km</td>
+  <td data-label="연식">2023-07</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 76.0 / 95.0">76.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 57.0 / 107.0">57.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>219.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="219.0 / 297.0"><i
+      style="width:73.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/3664">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/445">G70_20T</a>
+    <span class="dim">가솔린 2.0T 2WD</span></td>
+  <td class="num mono" data-label="값">2,890만</td>
+  <td class="num mono" data-label="주행">20,372km</td>
+  <td data-label="연식">2022-09</td>
+  <td data-label="색">쥐색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 67.0 / 95.0">67.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 72.0 / 107.0">72.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 73.0 / 80.0">73.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>219.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="219.0 / 297.0"><i
+      style="width:73.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/445">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16415">XC40_IMPORT</a>
+    <span class="dim">B4 인스크립션</span></td>
+  <td class="num mono" data-label="값">3,289만</td>
+  <td class="num mono" data-label="주행">7,516km</td>
+  <td data-label="연식">2021-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 71.0 / 95.0">71.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 93.0 / 107.0">93.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 47.0 / 80.0">47.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>218.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="218.0 / 297.0"><i
+      style="width:73.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-a">A</span></td>
+  <td><a class="btn mini" href="/detail/16415">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/12899">XC40_IMPORT</a>
+    </td>
+  <td class="num mono" data-label="값">3,500만</td>
+  <td class="num mono" data-label="주행">18,940km</td>
+  <td data-label="연식">202305</td>
+  <td data-label="색">717 Onyx Black</td>
+  <td data-label="사이트">volvo_selekt</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 57.0 / 95.0">57.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 74.0 / 107.0">74.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>216.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="216.0 / 297.0"><i
+      style="width:72.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/12899">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16404">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,500만</td>
+  <td class="num mono" data-label="주행">18,940km</td>
+  <td data-label="연식">2023-05</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 57.0 / 95.0">57.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 74.0 / 107.0">74.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>216.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="216.0 / 297.0"><i
+      style="width:72.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-a">A</span></td>
+  <td><a class="btn mini" href="/detail/16404">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6275">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,950만</td>
+  <td class="num mono" data-label="주행">26,980km</td>
+  <td data-label="연식">2023-10</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 60.0 / 95.0">60.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 63.0 / 107.0">63.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>216.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="216.0 / 297.0"><i
+      style="width:72.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/6275">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3081">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD (택시형)</span></td>
+  <td class="num mono" data-label="값">2,940만</td>
+  <td class="num mono" data-label="주행">22,618km</td>
+  <td data-label="연식">2023-03</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 62.0 / 95.0">62.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 69.0 / 107.0">69.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 77.0 / 80.0">77.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>215.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="215.0 / 297.0"><i
+      style="width:72.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3081">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16205">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,550만</td>
+  <td class="num mono" data-label="주행">15,967km</td>
+  <td data-label="연식">2023-06</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 50.0 / 95.0">50.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 79.0 / 107.0">79.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>215.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="215.0 / 297.0"><i
+      style="width:72.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16205">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/14749">S60_IMPORT</a>
+    <span class="dim">B5 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,699만</td>
+  <td class="num mono" data-label="주행">6,904km</td>
+  <td data-label="연식">2023-08</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 34.0 / 95.0">34.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 94.0 / 107.0">94.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 80.0 / 80.0">80.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>215.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="215.0 / 297.0"><i
+      style="width:72.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/14749">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/309">G70_25T</a>
+    <span class="dim">가솔린 2.5T 4WD</span></td>
+  <td class="num mono" data-label="값">2,800만</td>
+  <td class="num mono" data-label="주행">30,840km</td>
+  <td data-label="연식">2023-12</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 72.0 / 95.0">72.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 58.0 / 107.0">58.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 77.0 / 80.0">77.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>214.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="214.0 / 297.0"><i
+      style="width:72.1%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/309">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/587">G70_20T</a>
+    <span class="dim">가솔린 2.0T 2WD</span></td>
+  <td class="num mono" data-label="값">3,290만</td>
+  <td class="num mono" data-label="주행">4,083km</td>
+  <td data-label="연식">2022-11</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 25.0 / 95.0">25.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 99.0 / 107.0">99.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 74.0 / 80.0">74.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>213.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="213.0 / 297.0"><i
+      style="width:71.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-b">B</span></td>
+  <td><a class="btn mini" href="/detail/587">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/14750">S60_IMPORT</a>
+    <span class="dim">B5 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,500만</td>
+  <td class="num mono" data-label="주행">20,246km</td>
+  <td data-label="연식">2023-03</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 57.0 / 95.0">57.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 72.0 / 107.0">72.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 77.0 / 80.0">77.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>213.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="213.0 / 297.0"><i
+      style="width:71.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/14750">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/5958">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,990만</td>
+  <td class="num mono" data-label="주행">23,762km</td>
+  <td data-label="연식">2023-08</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 58.0 / 95.0">58.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 67.0 / 107.0">67.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 80.0 / 80.0">80.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>212.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="212.0 / 297.0"><i
+      style="width:71.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/5958">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/5918">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">4,190만</td>
+  <td class="num mono" data-label="주행">8,761km</td>
+  <td data-label="연식">2023-11</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 36.0 / 95.0">36.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 91.0 / 107.0">91.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>212.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="212.0 / 297.0"><i
+      style="width:71.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/5918">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/10217">GRANDEUR_LPG</a>
+    </td>
+  <td class="num mono" data-label="값">2,590만</td>
+  <td class="num mono" data-label="주행">36,585km</td>
+  <td data-label="연식">2022-09</td>
+  <td data-label="색">세레니티</td>
+  <td data-label="사이트">hyundai_cert</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 80.0 / 95.0">80.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 51.0 / 107.0">51.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 73.0 / 80.0">73.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-b">B</span></td>
+  <td><a class="btn mini" href="/detail/10217">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/369">G70_20T</a>
+    <span class="dim">가솔린 2.0T 4WD</span></td>
+  <td class="num mono" data-label="값">2,999만</td>
+  <td class="num mono" data-label="주행">27,753km</td>
+  <td data-label="연식">2023-04</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 57.0 / 95.0">57.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 62.0 / 107.0">62.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 77.0 / 80.0">77.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/369">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/7465">SPORTAGE_LPI</a>
+    <span class="dim">LPG 2.0 2WD</span></td>
+  <td class="num mono" data-label="값">3,130만</td>
+  <td class="num mono" data-label="주행">8,508km</td>
+  <td data-label="연식">2024-01</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 37.0 / 95.0">37.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 91.0 / 107.0">91.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 76.0 / 80.0">76.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-a">A</span></td>
+  <td><a class="btn mini" href="/detail/7465">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6269">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,905만</td>
+  <td class="num mono" data-label="주행">27,664km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 63.0 / 95.0">63.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 62.0 / 107.0">62.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/6269">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6109">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,920만</td>
+  <td class="num mono" data-label="주행">22,000km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">빨간색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 62.0 / 95.0">62.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 70.0 / 107.0">70.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 0.0 / 15.0">0.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-a">A</span></td>
+  <td><a class="btn mini" href="/detail/6109">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/5780">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,990만</td>
+  <td class="num mono" data-label="주행">26,436km</td>
+  <td data-label="연식">2024-03</td>
+  <td data-label="색">청색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 58.0 / 95.0">58.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 64.0 / 107.0">64.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 74.0 / 80.0">74.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 15.0 / 15.0">15.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/5780">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/5901">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">4,030만</td>
+  <td class="num mono" data-label="주행">20,078km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 53.0 / 95.0">53.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 72.0 / 107.0">72.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>211.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="211.0 / 297.0"><i
+      style="width:71.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/5901">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6255">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,780만</td>
+  <td class="num mono" data-label="주행">30,311km</td>
+  <td data-label="연식">2024-03</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 70.0 / 95.0">70.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 59.0 / 107.0">59.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 74.0 / 80.0">74.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>210.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="210.0 / 297.0"><i
+      style="width:70.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/6255">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3083">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD (택시형)</span></td>
+  <td class="num mono" data-label="값">2,790만</td>
+  <td class="num mono" data-label="주행">33,887km</td>
+  <td data-label="연식">2024-01</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 72.0 / 95.0">72.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 54.0 / 107.0">54.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 76.0 / 80.0">76.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>209.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="209.0 / 297.0"><i
+      style="width:70.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/3083">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16300">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,500만</td>
+  <td class="num mono" data-label="주행">21,171km</td>
+  <td data-label="연식">2022-11</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 57.0 / 95.0">57.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 71.0 / 107.0">71.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 74.0 / 80.0">74.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>209.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="209.0 / 297.0"><i
+      style="width:70.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16300">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/11788">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,530만</td>
+  <td class="num mono" data-label="주행">22,613km</td>
+  <td data-label="연식">202306</td>
+  <td data-label="색">크리스탈 화이트</td>
+  <td data-label="사이트">heydealer</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 53.0 / 95.0">53.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 69.0 / 107.0">69.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>208.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="208.0 / 297.0"><i
+      style="width:70.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/11788">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16210">XC40_IMPORT</a>
+    <span class="dim">B4 얼티메이트 브라이트</span></td>
+  <td class="num mono" data-label="값">3,790만</td>
+  <td class="num mono" data-label="주행">6,796km</td>
+  <td data-label="연식">2023-08</td>
+  <td data-label="색">녹색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 27.0 / 95.0">27.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 94.0 / 107.0">94.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 80.0 / 80.0">80.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>208.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="208.0 / 297.0"><i
+      style="width:70.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16210">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/7971">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">4,040만</td>
+  <td class="num mono" data-label="주행">21,671km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 52.0 / 95.0">52.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 70.0 / 107.0">70.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>208.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="208.0 / 297.0"><i
+      style="width:70.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/7971">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/5950">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">4,250만</td>
+  <td class="num mono" data-label="주행">8,774km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 32.0 / 95.0">32.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 90.0 / 107.0">90.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>208.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="208.0 / 297.0"><i
+      style="width:70.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/5950">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/85">KOLEOS_HEV</a>
+    <span class="dim">1.5 E-TECH 아이코닉 2WD</span></td>
+  <td class="num mono" data-label="값">2,830만</td>
+  <td class="num mono" data-label="주행">25,787km</td>
+  <td data-label="연식">2024-12</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 70.0 / 95.0">70.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 65.0 / 107.0">65.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 65.0 / 80.0">65.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>207.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="207.0 / 297.0"><i
+      style="width:69.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-b">B</span></td>
+  <td><a class="btn mini" href="/detail/85">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16429">XC40_IMPORT</a>
+    <span class="dim">B4 인스크립션</span></td>
+  <td class="num mono" data-label="값">3,090만</td>
+  <td class="num mono" data-label="주행">11,847km</td>
+  <td data-label="연식">2021-06</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 78.0 / 95.0">78.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 85.0 / 107.0">85.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 37.0 / 80.0">37.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>207.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="207.0 / 297.0"><i
+      style="width:69.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/16429">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6299">SPORTAGE_LPI</a>
+    <span class="dim">LPG 2.0 2WD</span></td>
+  <td class="num mono" data-label="값">3,180만</td>
+  <td class="num mono" data-label="주행">6,318km</td>
+  <td data-label="연식">2024-06</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 33.0 / 95.0">33.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 95.0 / 107.0">95.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 72.0 / 80.0">72.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>207.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="207.0 / 297.0"><i
+      style="width:69.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-b">B</span></td>
+  <td><a class="btn mini" href="/detail/6299">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/5844">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,999만</td>
+  <td class="num mono" data-label="주행">26,428km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 57.0 / 95.0">57.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 64.0 / 107.0">64.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>207.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="207.0 / 297.0"><i
+      style="width:69.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/5844">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/14779">S60_IMPORT</a>
+    <span class="dim">B5 인스크립션</span></td>
+  <td class="num mono" data-label="값">2,190만</td>
+  <td class="num mono" data-label="주행">33,066km</td>
+  <td data-label="연식">2021-10</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 94.0 / 95.0">94.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 55.0 / 107.0">55.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 50.0 / 80.0">50.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>206.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="206.0 / 297.0"><i
+      style="width:69.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-none">판정 중</span></td>
+  <td><a class="btn mini" href="/detail/14779">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3412">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD (택시형)</span></td>
+  <td class="num mono" data-label="값">2,350만</td>
+  <td class="num mono" data-label="주행">52,493km</td>
+  <td data-label="연식">2023-06</td>
+  <td data-label="색">은색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 86.0 / 95.0">86.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 34.0 / 107.0">34.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>206.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="206.0 / 297.0"><i
+      style="width:69.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3412">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6993">SPORTAGE_LPI</a>
+    <span class="dim">LPG 2.0 2WD</span></td>
+  <td class="num mono" data-label="값">2,890만</td>
+  <td class="num mono" data-label="주행">34,290km</td>
+  <td data-label="연식">2023-10</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 67.0 / 95.0">67.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 54.0 / 107.0">54.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>206.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="206.0 / 297.0"><i
+      style="width:69.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/6993">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/6709">SPORTAGE_LPI</a>
+    <span class="dim">LPG 2.0 2WD</span></td>
+  <td class="num mono" data-label="값">2,990만</td>
+  <td class="num mono" data-label="주행">22,663km</td>
+  <td data-label="연식">2024-07</td>
+  <td data-label="색">쥐색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 58.0 / 95.0">58.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 69.0 / 107.0">69.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 71.0 / 80.0">71.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>205.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="205.0 / 297.0"><i
+      style="width:69.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/6709">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/19380">C40_EV</a>
+    <span class="dim">트윈 얼티메이트</span></td>
+  <td class="num mono" data-label="값">3,980만</td>
+  <td class="num mono" data-label="주행">27,736km</td>
+  <td data-label="연식">2023-05</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 58.0 / 95.0">58.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 62.0 / 107.0">62.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>205.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="205.0 / 297.0"><i
+      style="width:69.0%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/19380">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/16190">XC40_IMPORT</a>
+    <span class="dim">B4 인스크립션</span></td>
+  <td class="num mono" data-label="값">3,280만</td>
+  <td class="num mono" data-label="주행">34,147km</td>
+  <td data-label="연식">2022-08</td>
+  <td data-label="색">쥐색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 71.0 / 95.0">71.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 54.0 / 107.0">54.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 72.0 / 80.0">72.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>204.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="204.0 / 297.0"><i
+      style="width:68.7%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/16190">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3807">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD</span></td>
+  <td class="num mono" data-label="값">2,450만</td>
+  <td class="num mono" data-label="주행">50,212km</td>
+  <td data-label="연식">2023-01</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 84.0 / 95.0">84.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 37.0 / 107.0">37.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 75.0 / 80.0">75.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>203.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="203.0 / 297.0"><i
+      style="width:68.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3807">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/3908">GRANDEUR_LPG</a>
+    <span class="dim">3.5 LPG 2WD</span></td>
+  <td class="num mono" data-label="값">2,500만</td>
+  <td class="num mono" data-label="주행">49,600km</td>
+  <td data-label="연식">2023-02</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 83.0 / 95.0">83.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 37.0 / 107.0">37.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 76.0 / 80.0">76.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>203.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="203.0 / 297.0"><i
+      style="width:68.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/3908">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/11789">XC40_IMPORT</a>
+    <span class="dim">B4 인스크립션</span></td>
+  <td class="num mono" data-label="값">3,070만</td>
+  <td class="num mono" data-label="주행">42,291km</td>
+  <td data-label="연식">202208</td>
+  <td data-label="색">썬더 그레이</td>
+  <td data-label="사이트">heydealer</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 79.0 / 95.0">79.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 45.0 / 107.0">45.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 72.0 / 80.0">72.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>203.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="203.0 / 297.0"><i
+      style="width:68.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-c">C</span></td>
+  <td><a class="btn mini" href="/detail/11789">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/19244">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,820만</td>
+  <td class="num mono" data-label="주행">38,531km</td>
+  <td data-label="연식">2023-09</td>
+  <td data-label="색">검정색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 68.0 / 95.0">68.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 49.0 / 107.0">49.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 79.0 / 80.0">79.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>203.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="203.0 / 297.0"><i
+      style="width:68.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-d">D</span></td>
+  <td><a class="btn mini" href="/detail/19244">상세 ▸</a></td>
+</tr>
+
+<tr>
+  <td data-label="차종"><a href="/detail/19239">MODEL_Y</a>
+    <span class="dim">RWD</span></td>
+  <td class="num mono" data-label="값">3,930만</td>
+  <td class="num mono" data-label="주행">32,214km</td>
+  <td data-label="연식">2023-11</td>
+  <td data-label="색">흰색</td>
+  <td data-label="사이트">encar</td>
+  
+  
+  <td class="num mono" data-label="예산"
+      title="예산 62.0 / 95.0">62.0</td>
+  
+  <td class="num mono" data-label="주행"
+      title="주행 56.0 / 107.0">56.0</td>
+  
+  <td class="num mono" data-label="연식"
+      title="연식 78.0 / 80.0">78.0</td>
+  
+  <td class="num mono" data-label="색"
+      title="색 7.0 / 15.0">7.0</td>
+  
+  
+  <td class="num mono" data-label="합"><strong>203.0</strong>
+    <span class="dim">/297.0</span>
+    <span class="bars" title="203.0 / 297.0"><i
+      style="width:68.4%"></i></span></td>
+  
+  <td data-label="등급"><span class="grade-e">E</span></td>
+  <td><a class="btn mini" href="/detail/19239">상세 ▸</a></td>
+</tr>
+
 
 </tbody>
 </table>
 
-
-<h2>왜 이 순서인가</h2>
-<p class="muted">점수순이 아닙니다. 예산 · 월납입을 함께 봅니다.
-  같은 비율이면 값이 싼 쪽이, 그것도 같으면 먼저 본 매물이 앞입니다.
-  <strong>이유를 못 대는 매물은 아예 내지 않습니다</strong>.
-  자세한 근거는 <strong>매물을 눌러 상세</strong>에서 봅니다.</p>
-
-
-<h2>후보에서 뺀 것 2,032건</h2>
-
-<p class="muted">★ 아래 <strong>건수는 사유별</strong>입니다 —
-  한 매물에 사유가 여럿이면 여러 줄에 셉니다.
-  그래서 <strong>더한 값이 위 총계보다 큽니다</strong>
-  (매물 2,032건 · 사유를 세면 더 많습니다).</p>
-<table>
-<thead><tr><th>사유</th><th class="num" title="매물 수가 아니라 사유 수입니다">건수 <span class="dim">사유별</span></th><th>무엇을 뜻하나</th><th></th></tr></thead>
-<tbody>
-
-<tr><td>리스·렌트 상품</td><td class="num">825</td>
-  <td class="muted">표시가가 승계 인수금입니다. 월 사용료가 따로 듭니다</td>
-  <td><a href="/listings?excluded=1&amp;reason=%EB%A6%AC%EC%8A%A4%C2%B7%EB%A0%8C%ED%8A%B8%20%EC%83%81%ED%92%88">보기</a></td></tr>
-
-<tr><td>계약중·판매완료</td><td class="num">441</td>
-  <td class="muted">이미 계약된 매물입니다</td>
-  <td><a href="/listings?excluded=1&amp;reason=%EA%B3%84%EC%95%BD%EC%A4%91%C2%B7%ED%8C%90%EB%A7%A4%EC%99%84%EB%A3%8C">보기</a></td></tr>
-
-<tr><td>수리비 10% 초과</td><td class="num">423</td>
-  <td class="muted">수리비가 차값의 10% 를 넘었습니다</td>
-  <td><a href="/listings?excluded=1&amp;reason=%EC%88%98%EB%A6%AC%EB%B9%84%2010%25%20%EC%B4%88%EA%B3%BC">보기</a></td></tr>
-
-<tr><td>골격 손상</td><td class="num">187</td>
-  <td class="muted">골격 수리 이력이 있습니다</td>
-  <td><a href="/listings?excluded=1&amp;reason=%EA%B3%A8%EA%B2%A9%20%EC%86%90%EC%83%81">보기</a></td></tr>
-
-<tr><td>저당</td><td class="num">114</td>
-  <td class="muted">저당 · 압류가 걸려 있습니다</td>
-  <td><a href="/listings?excluded=1&amp;reason=%EC%A0%80%EB%8B%B9">보기</a></td></tr>
-
-<tr><td>전손</td><td class="num">38</td>
-  <td class="muted">전손 처리 이력이 있습니다</td>
-  <td><a href="/listings?excluded=1&amp;reason=%EC%A0%84%EC%86%90">보기</a></td></tr>
-
-<tr><td>압류</td><td class="num">3</td>
-  <td class="muted"></td>
-  <td><a href="/listings?excluded=1&amp;reason=%EC%95%95%EB%A5%98">보기</a></td></tr>
-
-<tr><td>침수</td><td class="num">1</td>
-  <td class="muted"></td>
-  <td><a href="/listings?excluded=1&amp;reason=%EC%B9%A8%EC%88%98">보기</a></td></tr>
-
-</tbody>
-</table>
-
-
-
-<div id="peek">
-  <img id="peek-img" alt="">
-  <div class="pk">
-    <div class="pk-t" id="peek-title"></div>
-    <div class="pk-p" id="peek-price"></div>
-    <div class="pk-r" id="peek-tags"></div>
-    <div class="pk-d" id="peek-desc"></div>
-  </div>
-</div>
-
-<script>
-/* 매물 미리보기.  바닐라 · 한 파일.
-   ★ 값을 다시 실어 보내지 않는다 — 이미 그 행에 있는 칸을 읽는다.
-     서버가 낸 것과 미리보기가 어긋날 수 없다.
-   ★ JS 가 꺼져도 표는 그대로다.  이건 더해 주는 것이지 필요한 것이 아니다 */
-(function () {
-  var box = document.getElementById('peek');
-  if (!box) { return; }
-  var img = document.getElementById('peek-img');
-  var PAD = 16, W = 290, EDGE = 8;
-  var cur = null;
-
-  function cell(tr, label) {
-    var td = tr.querySelector('[data-label="' + label + '"]');
-    return td ? td.textContent.trim() : '';
-  }
-
-  function show(tr, e) {
-    cur = tr;
-    var pic = tr.querySelector('img.thumb');
-    if (pic) { img.src = pic.src; img.style.display = ''; }
-    else { img.removeAttribute('src'); img.style.display = 'none'; }
-
-    document.getElementById('peek-title').textContent =
-      cell(tr, '차종') + ' ' + cell(tr, '트림');
-    document.getElementById('peek-price').textContent =
-      cell(tr, '가격') + '   시세차 ' + cell(tr, '시세차');
-
-    /* ★ 「얼마에 파는가」가 아니라 「얼마를 내는가」다.
-       ★★ 08-29 — ★ 이 칸은 ★ 매물 화면에만 있다.  ★ 없으면 아무 일도 안 한다 —
-         ★ 그래야 세 화면이 ★ 이 조각 하나를 같이 쓴다 (UI_REVIEW 28장) */
-    var pkBuy = document.getElementById('peek-buy');
-    if (pkBuy) {
-      var buy = tr.getAttribute('data-buy');
-      pkBuy.textContent =
-        buy ? ('실제로 내는 돈 ' + buy +
-               (tr.getAttribute('data-buyest') === 'True' ? ' (추정)' : '')) : '';
-    }
-
-    /* ★ 강점만 모은다 — 「이 차의 무엇이 좋은가」가 미리보기의 뜻이다 */
-    var tags = [];
-    tr.querySelectorAll('td.ax').forEach(function (td) {
-      var a = td.querySelector('a');
-      if (!a) { return; }
-      var tone = a.className.indexOf('chip-good') >= 0 ? 'down'
-               : a.className.indexOf('chip-bad') >= 0 ? 'up' : '';
-      tags.push('<span class="tag ' + tone + '">'
-                + td.getAttribute('data-label') + ' ' + a.textContent.trim()
-                + '</span>');
-    });
-    document.getElementById('peek-tags').innerHTML = tags.join('');
-    document.getElementById('peek-desc').textContent =
-      cell(tr, '등급') + '등급 · ' + cell(tr, '비율')
-      + ' · ' + cell(tr, '연식') + ' · ' + cell(tr, '주행')
-      + ' · ' + cell(tr, '딜러');
-
-    box.style.display = 'block';
-    move(e);
-  }
-
-  function move(e) {
-    if (!cur) { return; }
-    var h = box.offsetHeight || 300;
-    var x = e.clientX + PAD, y = e.clientY + PAD;
-    if (x + W > window.innerWidth - EDGE) { x = e.clientX - W - PAD; }
-    if (y + h > window.innerHeight - EDGE) { y = window.innerHeight - h - EDGE; }
-    if (y < EDGE) { y = EDGE; }
-    box.style.left = x + 'px';
-    box.style.top = y + 'px';
-  }
-
-  function hide() { cur = null; box.style.display = 'none'; }
-
-  document.addEventListener('mouseover', function (e) {
-    if (!e.target.closest) { return; }          /* 아주 낡은 브라우저 */
-    var tr = e.target.closest('tr[data-peek]');
-    if (tr && tr !== cur) { show(tr, e); }
-    else if (!tr && cur) { hide(); }
-  });
-  document.addEventListener('mousemove', move);
-  document.addEventListener('scroll', hide, true);
-
-  /* ★ 행 어디를 눌러도 상세로 (V11-116).
-     「근거」 글자 하나만 링크면 손가락으로 못 누른다 (마스터 지적 08-18).
-     ★ 이미 링크·단추·입력인 곳은 그대로 둔다 — 그것이 제 일을 한다 */
-  function ownLink(el) {
-    return el.closest('a, button, input, select, label, form');
-  }
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest) { return; }
-    var tr = e.target.closest('tr[data-href]');
-    if (!tr || ownLink(e.target)) { return; }
-    if (window.getSelection && String(window.getSelection())) { return; }
-    window.location.href = tr.getAttribute('data-href');
-  });
-
-  /* ★ 터치에서도 미리보기가 뜬다 (V11-117).
-     마스터는 휴대폰·태블릿으로 본다 — hover 가 없다.
-     한 번 대면 뜨고, 같은 행을 다시 대면 상세로 간다 */
-  var tapped = null;
-  document.addEventListener('touchstart', function (e) {
-    if (!e.target.closest) { return; }
-    var tr = e.target.closest('tr[data-peek]');
-    if (!tr || ownLink(e.target)) { tapped = null; hide(); return; }
-    if (tapped === tr) { return; }              /* 두 번째 — 클릭이 넘긴다 */
-    e.preventDefault();
-    tapped = tr;
-    var t = e.touches && e.touches[0];
-    show(tr, {clientX: t ? t.clientX : 0, clientY: t ? t.clientY : 0});
-  }, {passive: false});
-})();
-</script>
 
 </main>
 
@@ -780,8 +2025,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260830T232047</span>
-  <span>2026-08-31 10:12</span>
+  <span>run 20260831T024324</span>
+  <span>2026-08-31 14:37</span>
 </footer>
 
 </body>

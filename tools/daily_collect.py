@@ -22,7 +22,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ★ 도는 차례.  ★ 가벼운 것부터 — ★ 앞이 죽어도 뒤가 돈다
 SITES: tuple[str, ...] = (
-    "lexus", "volvo", "bobaedream", "heydealer", "bmw",
+    # ★★★★★ 09-01 마스터 확정 — ★ **보배를 뺐다.  ★ 리볼트를 넣었다**
+    #   ★ 마스터 — 「★ 보배를 빼고 여기 것 쓰자 ★ 지금 우선 작업으로」
+    #   ★ ★ 보배 매물·원문은 ★ **안 지운다** (P3) — ★ 더 받지 않을 뿐이다
+    "lexus", "volvo", "revolt", "heydealer", "bmw",
     "kia_cpo", "reborncar", "hyundai_cert", "kcar", "kbchachacha",
 )
 

@@ -770,3 +770,46 @@ class ReportsView:
     open_head: tuple = ()
     truncated: bool = False  # 앞부분만 냈는가
     open_bytes: int = 0
+
+
+# ★★★★★ 09-01 (규격 `docs/RECOMMEND_SCREEN.md`) — ★ 추천 화면의 칸.
+#   ★ 튜플이 아니라 ★ **이름 있는 칸**으로 낸다 — ★ 틀이 `{{ x.0 }}` 을 못 짚는다
+#     (`web/template.py` `_step` — ★ 점 뒤는 늘 글자다.  08-26 실측)
+@dataclass(frozen=True)
+class RecommendAxis:
+    axis: str
+    label: str
+    got: float
+    full: float
+
+
+@dataclass(frozen=True)
+class RecommendRow:
+    listing_id: int
+    target_label: str
+    trim: str | None
+    year_month: str | None
+    mileage_km: int | None
+    color_ext: str | None
+    price_won: int | None
+    site: str | None
+    # ★ 등급은 ★ **보이기만** 한다 — ★ 세우는 데 안 쓴다 (규격 「금지」)
+    grade: str | None
+    got: float
+    full: float
+    # ★ 막대는 ★ **비율**을 그린다 (부록 G · A-3) — ★ 틀은 나눗셈을 못 한다
+    pct: float
+    axes: tuple
+
+
+@dataclass(frozen=True)
+class RecommendView:
+    tab: str
+    rows: list
+    total: int
+    axes: tuple
+    full: float
+    # ★ 탭 2·3 — ★ 「아직 정하지 않았습니다」.  ★ 오류가 아니다 (규격 2장)
+    empty_note: str | None = None
+    # ★ 틀은 ★ `==` 를 못 한다 (`V11-104`) — ★ 머리말을 여기서 정한다
+    title: str = ""

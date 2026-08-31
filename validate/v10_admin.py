@@ -457,9 +457,26 @@ def run(conn, ctx) -> list:
                       "EXPLAIN" in src.get(ops, "")))
 
     # V10-05 — config 쓰기가 admin.py 밖에 있는가
+    # ★★★★★ 09-01 — ★ **헛잡음을 좁혔다.**
+    #   ★ 앞서는 ★ 「`config/` 라는 글자가 있고 ★ 어딘가에 `.write(` 가 있다」였다.
+    #   ★ ★ 그래서 ★ `store/rawfile.py` 가 걸렸다 — ★ 그것은 ★ `config/deploy.json` 을
+    #     ★ ★ **읽기만** 하고 ★ 쓰는 것은 ★ **원문 파일**이다 (마스터 지시 09-01).
+    #   ★★ 이 검사가 막는 것은 ★ 「**config 파일을 admin.py 밖에서 고치는 것**」이다 —
+    #     ★ ★ 곧 ★ **쓰기와 config 경로가 ★ 같은 자리에 있어야** 잡는 것이 맞다.
+    #   ★ ★ 그래서 ★ **여덟 줄 안에** 둘이 함께 있는 때만 잡는다.
+    #     ★ ★ ★ 검사를 무르게 한 것이 아니다 — ★ 「읽는다」와 「쓴다」를 가른 것이다
+    def _writes_config(text: str) -> bool:
+        lines = text.splitlines()
+        for i, ln in enumerate(lines):
+            if ".write(" not in ln and "json.dump(" not in ln:
+                continue
+            near = " ".join(lines[max(0, i - 8):i + 3])
+            if "config/" in near or "config\"" in near:
+                return True
+        return False
+
     bad = [f for f, s in src.items()
-           if f != "store/admin.py" and "config/" in s
-           and (".write(" in s or "json.dump(" in s)]
+           if f != "store/admin.py" and "config/" in s and _writes_config(s)]
     out.append(result(C["V10-05"], rid, 0, bad or 0, not bad, bad))
 
     # V10-06 · 15 — 저장 전 배점 합 검사가 있는가

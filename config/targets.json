@@ -278,7 +278,8 @@
     "trim_include": [],
     "trim_exclude": [],
     "displacement_range": null,
-    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
+    "active": true
   },
   "GV60": {
     "label": "GV60",
@@ -540,7 +541,8 @@
     "trim_include": [],
     "trim_exclude": [],
     "displacement_range": null,
-    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:MODEL_Y` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다"
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:MODEL_Y` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
+    "active": true
   },
   "X3_IMPORT": {
     "label": "BMW X3",
@@ -989,8 +991,12 @@
     "active": false,
     "_쉬는 까닭": "★ [마스터 확정 09-01] 「★ 내가 범위를 조정했을 것 같은데.  ★ ID4 ID5 iX3 model Y, EV4, GV70, 폴스타 4, C40 XC40」.  ★ 아홉만 대상이다.  ★ 지우지 않고 쉰다 — ★ 다시 넣으실 수 있다"
   },
-  "SPEC_DEFAULT_ON": {},
-  "SPEC_DEFAULT_OFF": {},
+  "SPEC_DEFAULT_ON": {
+    "active": false
+  },
+  "SPEC_DEFAULT_OFF": {
+    "active": false
+  },
   "_heydealer_hash_note": "[마스터 08-24] ★ 차종 해시는 ★ 마스터가 화면을 눌러 주셔야 나온다.  ★ 지어낼 수 없다.  ★ 갈래(연료)는 섞여 오니 ★ fuel_match 로 우리 쪽에서 거른다",
   "XC40_IMPORT": {
     "label": "볼보 XC40 (전기 제외)",
@@ -1045,7 +1051,11 @@
     "_fuel_why": "★ 명령서 2-2 「fuel_match 는 비워 먼저 다 받고, 무엇이 오는지 본 뒤에 좁힌다」",
     "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통",
     "_전기_섞임": "[실측 08-28] ★ 엔카 42152084 — ★ ModelGroup=XC40 인데 ★ 연료가 전기다(EX40 · 트윈 얼티메이트 · 2024-08).  ★ 엔카는 ★ EX40 을 XC40 아래 둔다 — ★ `fuel_match` 로 갈린다",
+<<<<<<< HEAD
     "_가른 날": "★ 2026-09-01 — 마스터 지시로 ★ 전기(Recharge)를 `XC40_EV` 로 뺐다"
+=======
+    "active": true
+>>>>>>> cb993826 (수집 아키텍처: 받기는 파일만(store/rawfile.py) · 넣기는 tools/load_raw.py · 목록대조 list_diff_check · 살림 raw_lifecycle — 내가 DB 에 직접 써서 check_all 이 잠금으로 죽던 것을 고쳤다 · 추천화면·13종·리볼트·보배 paused)
   },
   "V60CC_IMPORT": {
     "label": "볼보 V60 크로스컨트리",
@@ -1178,7 +1188,8 @@
     "fuel_match": [
       "전기"
     ],
-    "_fuel_why": "★ C40 은 ★ 전기 전용이다"
+    "_fuel_why": "★ C40 은 ★ 전기 전용이다",
+    "active": true
   },
   "EX30_EV": {
     "label": "볼보 EX30 (전기)",
@@ -1279,7 +1290,8 @@
     "price_range": null,
     "fuel_match": [
       "전기"
-    ]
+    ],
+    "active": true
   },
   "POLESTAR3_EV": {
     "label": "폴스타 3 (전기)",
@@ -1338,7 +1350,8 @@
     "fuel_match": [
       "전기"
     ],
-    "year_range": "202100.."
+    "year_range": "202100..",
+    "active": true
   },
   "ID4_EV": {
     "_차명": "폭스바겐 ID.4 (전기)",
@@ -1373,7 +1386,8 @@
     "fuel_match": [
       "전기"
     ],
-    "year_range": "202100.."
+    "year_range": "202100..",
+    "active": true
   },
   "UX300E_EV": {
     "_차명": "렉서스 UX300e (전기)",
@@ -1427,7 +1441,8 @@
         "_차명": "EV4",
         "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
       }
-    }
+    },
+    "active": true
   },
   "ID5_EV": {
     "label": "폭스바겐 ID.5",
@@ -1437,6 +1452,7 @@
     ],
     "year_range": "202200..",
     "site_query": {
+<<<<<<< HEAD
       "_왜 비었나": "★ 09-01 — 질의 열쇠를 아직 못 쟀다.  ★ ID.4 와 같은 자리다(폭스바겐 KB 112 · 보배 44).  ★ 짐작으로 코드를 적지 않는다",
       "revolt": {
         "brand_hash_id": "LZY3JW",
@@ -1498,5 +1514,10 @@
       }
     },
     "_가르는 법": "★ KB 는 carCode 로 갈린다(3244=Recharge · 2940=가솔린).  ★ 다른 곳은 열쇠가 같아 ★ fuel_match 로 가른다 — ★ 짐작으로 코드를 나누지 않는다"
+=======
+      "_왜 비었나": "★ 09-01 — 질의 열쇠를 아직 못 쟀다.  ★ ID.4 와 같은 자리다(폭스바겐 KB 112 · 보배 44).  ★ 짐작으로 코드를 적지 않는다"
+    },
+    "active": true
+>>>>>>> cb993826 (수집 아키텍처: 받기는 파일만(store/rawfile.py) · 넣기는 tools/load_raw.py · 목록대조 list_diff_check · 살림 raw_lifecycle — 내가 DB 에 직접 써서 check_all 이 잠금으로 죽던 것을 고쳤다 · 추천화면·13종·리볼트·보배 paused)
   }
 }

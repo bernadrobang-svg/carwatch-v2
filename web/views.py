@@ -1087,6 +1087,38 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
 
 def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: str = "-",
          **_kw) -> tuple:
+    """/recommend — ★ 탭 (규격 `docs/RECOMMEND_SCREEN.md` · `S46-201`).
+
+    ★★★★★ 09-01 마스터 확정 — 「★ 이제 추천 페이지를 만들자.  ★ 추천은 여러 탭으로.
+      ★ 1번 탭은 ★ **등급 무시하고** ★ 내가 선호하는 색과 예산 점수 및 킬로와 연식 점수에
+      ★ 근접하는 차야 … ★ 2번 3번은 ★ **탭만 만들자**」
+    ★★ 탭 1 — ★ 네 축의 합 **297점**으로 세운다 (예산 95 · 주행 107 · 연식 80 · 색 15).
+      ★ ★ **등급으로 거르지도 더하지도 않는다** (규격 「금지」)
+    ★★ 탭 2·3 — ★ 빈 채로 둔다.  ★ 안도 이름도 안 짓는다 (마스터께서 정하실 자리)
+    """
+    from report.screens.build import view_recommend_tabs
+
+    ver = _versions(conn)
+    flt = _filter(conn, req.get("query", {}), ver)
+    q = req.get("query", {})
+    tab = str(q.get("tab") or "1")
+    got = view_recommend_tabs(account, conn, ver["calc_version"], flt,
+                              tab=tab, root=root)
+    return page(conn, account, "추천", "recommend.html",
+                {"v": got, "tab": got.tab,
+                 "tabs": [{"n": n, "on": n == got.tab} for n in ("1", "2", "3")],
+                 "buttons": _filter_buttons(flt, base="/recommend"),
+                 "carry": _carry(flt)},
+                root=root, csrf=csrf, flash_key=flash_key)
+
+
+def _recommend_old(conn, account, req, root: str = ROOT, csrf: str = "",
+                   flash_key: str = "-", **_kw) -> tuple:
+    """★ 옛 추천 (「이유가 있는 것만」).  ★ **안 지운다** (개정 427).
+
+    ★ 09-01 — ★ 규격이 ★ `/recommend` 를 ★ 탭 화면으로 다시 정의했다.
+      ★ ★ 이 안을 ★ 탭 2 로 할지는 ★ **마스터께서 정하신다** — ★ 내가 안 짓는다
+    """
     from report.screens.build import (
         axis_heads, excluded_groups, recommend_funnel, view_recommend,
     )

@@ -31,6 +31,8 @@
   
   <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
   
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색)에 가까운 차. ★ 등급을 안 본다 — 네 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)">추천</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -3329,108 +3331,6 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.G80_25T</td>
-  <td class="num" data-label="현재 값">2000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.G80_25T">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.G70_20T</td>
-  <td class="num" data-label="현재 값">2000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.G70_20T">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.G70_25T</td>
-  <td class="num" data-label="현재 값">2000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.G70_25T">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.GRANDEUR_LPG</td>
-  <td class="num" data-label="현재 값">2000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.GRANDEUR_LPG">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.SPORTAGE_LPI</td>
-  <td class="num" data-label="현재 값">2000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.SPORTAGE_LPI">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.KOLEOS_HEV</td>
-  <td class="num" data-label="현재 값">3000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.KOLEOS_HEV">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
   <td class="runid" data-label="키">budget_manwon.by_target.MODEL_Y</td>
   <td class="num" data-label="현재 값">4000</td>
   <td class="muted" data-label="형">int</td>
@@ -3440,23 +3340,6 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="budget_manwon.by_target.MODEL_Y">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.G80_EV</td>
-  <td class="num" data-label="현재 값">3500</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.G80_EV">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -3482,23 +3365,6 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.GV60</td>
-  <td class="num" data-label="현재 값">3500</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.GV60">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
   <td class="runid" data-label="키">budget_manwon.by_target.C40_EV</td>
   <td class="num" data-label="현재 값">4000</td>
   <td class="muted" data-label="형">int</td>
@@ -3508,23 +3374,6 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="budget_manwon.by_target.C40_EV">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.XC60_IMPORT</td>
-  <td class="num" data-label="현재 값">3500</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.XC60_IMPORT">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -3550,57 +3399,6 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.S60_IMPORT</td>
-  <td class="num" data-label="현재 값">3500</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.S60_IMPORT">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.V60CC_IMPORT</td>
-  <td class="num" data-label="현재 값">3500</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.V60CC_IMPORT">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.POLESTAR2_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.POLESTAR2_EV">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
   <td class="runid" data-label="키">budget_manwon.by_target.POLESTAR4_EV</td>
   <td class="num" data-label="현재 값">4000</td>
   <td class="muted" data-label="형">int</td>
@@ -3618,40 +3416,6 @@
 </tr>
 
 <tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.EX30_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.EX30_EV">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
-  <td class="runid" data-label="키">budget_manwon.by_target.POLESTAR3_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
-  <td class="muted" data-label="형">int</td>
-  <td data-label="바꾸기">
-    <form method="post" action="/admin/config" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="file" value="scoring.json">
-      <input type="hidden" name="key_path" value="budget_manwon.by_target.POLESTAR3_EV">
-      <input name="value" size="10" placeholder="새 값">
-      <input name="reason" size="18" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">저장</button>
-    </form>
-  </td>
-</tr>
-
-<tr>
   <td class="runid" data-label="키">budget_manwon.by_target.EV4_EV</td>
   <td class="num" data-label="현재 값">3500</td>
   <td class="muted" data-label="형">int</td>
@@ -3661,6 +3425,125 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="budget_manwon.by_target.EV4_EV">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.ID5_EV</td>
+  <td class="num" data-label="현재 값">4000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.ID5_EV">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.IX3_EV</td>
+  <td class="num" data-label="현재 값">4000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.IX3_EV">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.ID4_EV</td>
+  <td class="num" data-label="현재 값">4000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.ID4_EV">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.KOLEOS_HEV</td>
+  <td class="num" data-label="현재 값">3000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.KOLEOS_HEV">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.XC60_IMPORT</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.XC60_IMPORT">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.S60_IMPORT</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.S60_IMPORT">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target.X3_IMPORT</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target.X3_IMPORT">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -4359,8 +4242,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260830T232047</span>
-  <span>2026-08-31 10:12</span>
+  <span>run 20260831T024324</span>
+  <span>2026-08-31 14:37</span>
 </footer>
 
 </body>

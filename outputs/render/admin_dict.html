@@ -31,6 +31,8 @@
   
   <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
   
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색)에 가까운 차. ★ 등급을 안 본다 — 네 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)">추천</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -68,11 +70,11 @@
 </p>
 
 
-<h2>확정 대기 191종</h2>
+<h2>확정 대기 193종</h2>
 
 
 <h3>축 단위로 한 번에</h3>
-<p class="muted">191종을 하나씩 누르지 않습니다.
+<p class="muted">193종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.
   지금 대기 중인 묶음은 <strong>6가지</strong>입니다 —
   <strong>사이트마다 따로</strong> 셉니다. 나머지는 이미 확정됐습니다.</p>
@@ -144,6 +146,28 @@
 </details>
 
 <details class="card tight">
+  <summary><strong>heydealer</strong> · <strong>part</strong>
+    <span class="dim">9종 ·
+      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
+      facet</span></summary>
+  <p class="dim">값 예시 door_front_passenger · door_rear_passenger · fender_front_driver · fender_front_passenger · fender_rear_driver  외 4종</p>
+  <form method="post" action="/admin/dict">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="axis" value="part">
+    
+    <input type="hidden" name="site" value="heydealer">
+    <input type="hidden" name="previewed" value="1">
+    <label>사유 <input name="reason" size="24"
+      placeholder="왜 확정하는가 (필수)" required></label>
+    <button type="submit" name="action" value="confirm"
+      title="이 사이트·축의 대기 값을 한 번에 확정합니다">heydealer part 9종 확정</button>
+    <button type="submit" name="action" value="retire"
+      title="쓰지 않는 값으로 내립니다">폐기</button>
+  </form>
+  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
+</details>
+
+<details class="card tight">
   <summary><strong>encar</strong> · <strong>target</strong>
     <span class="dim">8종 ·
       <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
@@ -159,28 +183,6 @@
       placeholder="왜 확정하는가 (필수)" required></label>
     <button type="submit" name="action" value="confirm"
       title="이 사이트·축의 대기 값을 한 번에 확정합니다">encar target 8종 확정</button>
-    <button type="submit" name="action" value="retire"
-      title="쓰지 않는 값으로 내립니다">폐기</button>
-  </form>
-  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
-</details>
-
-<details class="card tight">
-  <summary><strong>heydealer</strong> · <strong>part</strong>
-    <span class="dim">7종 ·
-      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
-      facet</span></summary>
-  <p class="dim">값 예시 door_front_passenger · door_rear_passenger · fender_front_driver · fender_front_passenger · fender_rear_driver  외 2종</p>
-  <form method="post" action="/admin/dict">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="axis" value="part">
-    
-    <input type="hidden" name="site" value="heydealer">
-    <input type="hidden" name="previewed" value="1">
-    <label>사유 <input name="reason" size="24"
-      placeholder="왜 확정하는가 (필수)" required></label>
-    <button type="submit" name="action" value="confirm"
-      title="이 사이트·축의 대기 값을 한 번에 확정합니다">heydealer part 7종 확정</button>
     <button type="submit" name="action" value="retire"
       title="쓰지 않는 값으로 내립니다">폐기</button>
   </form>
@@ -357,6 +359,26 @@
   <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
   <td data-label="출처">facet</td>
   <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>hood</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-31</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>radiator_support</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-31</td>
 </tr>
 
 <tr>
@@ -2177,8 +2199,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260830T232047</span>
-  <span>2026-08-31 10:12</span>
+  <span>run 20260831T024324</span>
+  <span>2026-08-31 14:37</span>
 </footer>
 
 </body>

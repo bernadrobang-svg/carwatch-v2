@@ -31,6 +31,8 @@
   
   <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다">추적</a>
   
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색)에 가까운 차. ★ 등급을 안 본다 — 네 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)">추천</a>
+  
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다">현황</a>
   
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)">관리</a>
@@ -75,8 +77,8 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-08-31_0600</td>
-  <td data-label="기록" class="muted">outputs/light/ · 67건 ·
+  <td data-label="마지막">2026-08-31_1400</td>
+  <td data-label="기록" class="muted">outputs/light/ · 69건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
   <td data-label="마지막">2026-08-30</td>
@@ -96,11 +98,11 @@
 <thead><tr><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
 <tbody>
 
-<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">191</td>
+<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">193</td>
   <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
   <td data-label=""><a href="/notready">가기</a></td></tr>
 
-<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">323</td>
+<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">324</td>
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
   <td data-label=""><a href="/admin/registry">가기</a></td></tr>
 
@@ -116,7 +118,7 @@
 
 
 <ul class="stat">
-  <li>등록부 미분류 <strong>323</strong></li>
+  <li>등록부 미분류 <strong>324</strong></li>
   <li>개발 요청 <strong>1</strong></li>
   <li>대기 작업 <strong>0</strong></li>
 </ul>
@@ -264,6 +266,10 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-31T02:43:33.989375+00:00</td><td class="muted" data-label="사유">요청 24건</td>
+  <td class="runid" data-label="실행">20260831T024324</td>
+  <td class="num" data-label="소요">0.7초</td><td data-label="판정">fatal 17</td></tr>
+
 <tr><td data-label="시각">2026-08-30T23:21:35.343766+00:00</td><td class="muted" data-label="사유">요청 120건</td>
   <td class="runid" data-label="실행">20260830T232047</td>
   <td class="num" data-label="소요">6.2초</td><td data-label="판정">fatal 6</td></tr>
@@ -279,10 +285,6 @@
 <tr><td data-label="시각">2026-08-29T00:00:23.005613+00:00</td><td class="muted" data-label="사유">요청 2,095건</td>
   <td class="runid" data-label="실행">20260829T000005</td>
   <td class="num" data-label="소요">124.3초</td><td data-label="판정">fatal 12</td></tr>
-
-<tr><td data-label="시각">2026-08-28T23:43:34.252799+00:00</td><td class="muted" data-label="사유">요청 1,133건</td>
-  <td class="runid" data-label="실행">20260828T234317</td>
-  <td class="num" data-label="소요">57.8초</td><td data-label="판정">정상</td></tr>
 
 </tbody>
 </table>
@@ -358,8 +360,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260830T232047</span>
-  <span>2026-08-31 10:12</span>
+  <span>run 20260831T024324</span>
+  <span>2026-08-31 14:37</span>
 </footer>
 
 </body>

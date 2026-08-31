@@ -65,6 +65,9 @@ from analyze.trust import SOURCE_WORDS, inspection_source, platform_trust
 from report.why_cheap import verdict as why_verdict
 from report.screens.views import (
     MIN_SAMPLE,
+    RecommendAxis,
+    RecommendRow,
+    RecommendView,
     Bucket,
     ExcludedGroup,
     PendingValue,
@@ -1171,6 +1174,18 @@ def _fuel_where(key: str, root: str = ".") -> tuple:
     return "l.fuel_raw = ?", [key]
 
 
+def _paused_sites(root: str = ".") -> tuple:
+    """★ 쉬는 사이트 (`status: paused`).  ★ 정본은 `config/sites.json` 이다.
+
+    ★ `paused` — ★ 「받았었으나 지금은 안 받는다」.  ★ `planned`(아직 안 받았다)와 다르다.
+      ★ ★ 낱말 셋(`active`·`paused`·`planned`)은 ★ 규격이 정한다 (`S46-41`)
+    """
+    got = load_config(f"{root}/config/sites.json") or {}
+    return tuple(sorted(
+        k for k, v in got.items()
+        if isinstance(v, dict) and v.get("status") == "paused"))
+
+
 def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
     갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
@@ -1181,6 +1196,17 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if flt.site:
         where.append("l.site = ?")
         args.append(flt.site)
+    else:
+        # ★★★★★ 09-01 마스터 확정 — ★ **쉬는 사이트는 화면에 안 낸다.**
+        #   ★ 마스터 — 「★ 보배를 빼고 여기(리볼트) 것 쓰자」
+        #   ★★ **행도 원문도 안 지운다** (P3) — ★ 여기서만 뺀다.
+        #     ★ ★ 「보배만 보기」로 콕 집으면 ★ 그때는 나온다 (위 `flt.site`) —
+        #     ★ ★ ★ **숨기는 것이 아니라 ★ 기본에서 빼는 것**이다
+        #   ★ 정본은 ★ `config/sites.json` 의 `status` 다 — ★ 코드에 이름을 안 박는다
+        off = _paused_sites()
+        if off:
+            where.append("l.site NOT IN (" + ",".join("?" * len(off)) + ")")
+            args.extend(off)
     if getattr(flt, "sell_type", None):
         where.append("l.sell_type = ?")
         args.append(flt.sell_type)
@@ -3737,3 +3763,114 @@ def axis_zero_rates(conn, calc_version: str) -> dict:
                      # ★ 전건 0 이면 ★ 「내 차 탓이 아니다」 — ★ 그것을 말한다
                      "all_zero": (zero or 0) == n}
     return out
+
+
+# ★★★★★ 09-01 (규격 `docs/RECOMMEND_SCREEN.md` · `S46-201`) — ★ 추천 화면.
+#   ★ 마스터 — 「★ 등급 무시하고 ★ 내가 선호하는 색과 예산 점수 및 킬로와 연식 점수에
+#     ★ 근접하는 차야 … ★ 모두 가격에 있는 항목이니 점수로 소팅하면 되지?」
+#   ★★ 「그렇다」 — ★ 넷 다 이미 `result_axis` 에 있다.  ★ **새로 셈하지 않는다**
+RECOMMEND_AXES: tuple = ("value.budget", "value.mileage", "state.year",
+                         "taste.color")
+RECOMMEND_TABS: tuple = ("1", "2", "3")
+
+
+def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
+                        calc_version: str, flt: ListingFilter,
+                        tab: str = "1", root: str = ".",
+                        page_size: int = 60) -> "RecommendView":
+    """추천 — ★ 탭 (규격 `RECOMMEND_SCREEN.md` · `S46-201`).
+
+    ★★★★★ 09-01 — ★ `/recommend` 는 ★ **이미 있었다** (「추천 대상만 · 이유가 있는 것」).
+      ★ 규격이 ★ 그 자리를 ★ **탭 화면으로 다시 정의**한다.
+      ★★ 옛 `view_recommend` 는 ★ **안 지운다** (개정 427 「화면을 지우지 않는다」) —
+        ★ ★ 길만 이 함수로 바꾼다.  ★ 옛 것을 탭 2 로 할지는 ★ 마스터께서 정하신다
+
+    ★★★ 탭 1 — ★ **네 축의 합 297점**으로 세운다.
+      ★ 예산 95 · 주행 107 · 연식 80 · 색 15.
+      ★ ★ **등급을 안 본다** — ★ 거르지도 않고 더하지도 않는다 (규격 「금지」)
+    ★★ 탭 2·3 — ★ **탭만 만든다.**  ★ 안을 지어내지 않는다 (규격 2장)
+    ★ 목록 줄은 ★ `/listings` 와 ★ 같은 부품(`_listings_where`)을 쓴다
+    """
+    del account
+    tab = str(tab or "1")
+    if tab not in RECOMMEND_TABS:
+        tab = "1"
+    if tab != "1":
+        # ★ 마스터께서 정하실 자리다 — ★ 이름도 안 짓는다
+        return RecommendView(tab=tab, rows=[], total=0, axes=(), full=0,
+                             empty_note="아직 정하지 않았습니다", title="")
+
+    where, args = _listings_where(flt)
+    marks = ",".join("?" * len(RECOMMEND_AXES))
+    sql = (
+        "SELECT l.listing_id, l.target_key,"
+        " l.trim_badge, l.year_month, l.mileage_km, l.color_ext_raw,"
+        " l.price_current_won, l.site, s.grade,"
+        " SUM(a.value) AS got, SUM(a.max_points) AS full"
+        " FROM core_listing l"
+        " JOIN result_axis a ON a.listing_id = l.listing_id"
+        "  AND a.calc_version = ? AND a.axis IN (" + marks + ")"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        "  AND s.calc_version = ?"
+        " WHERE " + " AND ".join(where) +
+        " GROUP BY l.listing_id"
+        # ★ 높은 것이 위다 (규격 「필수」)
+        " ORDER BY got DESC, l.price_current_won ASC"
+        " LIMIT ?")
+    rows = list(conn.execute(
+        sql, [calc_version, *RECOMMEND_AXES, calc_version, *args, page_size]))
+    # ★ 축을 따로 낸다 — ★ 「왜 위에 있는지」가 보여야 한다 (규격 「필수」)
+    per = _recommend_axes(conn, calc_version, [r[0] for r in rows])
+    labels = _labels(root)
+    out = []
+    for r in rows:
+        lid = r[0]
+        out.append(RecommendRow(
+            listing_id=lid,
+            target_label=str(labels.get(r[1]) or r[1] or "차종 미정"),
+            trim=r[2], year_month=r[3], mileage_km=r[4], color_ext=r[5],
+            price_won=r[6], site=r[7], grade=r[8],
+            got=round(float(r[9] or 0), 1), full=round(float(r[10] or 0), 1),
+            # ★ 틀은 나눗셈을 못 한다 (V11-104) — ★ 여기서 낸다
+            pct=round(float(r[9] or 0) / float(r[10] or 1) * 100, 1),
+            axes=per.get(lid, ())))
+    # ★ 화면에 든 전건 — ★ 거르개는 `s.` 를 쓰므로 ★ 같은 이음을 걸어야 한다
+    total = conn.execute(
+        "SELECT COUNT(*) FROM core_listing l"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        " WHERE " + " AND ".join(where), args).fetchone()[0]
+    full = sum(x.full for x in (out[0].axes if out else ())) if out else 0
+    return RecommendView(tab=tab, rows=out, total=total,
+                         axes=RECOMMEND_AXES, full=round(full, 1),
+                         empty_note=None, title="내 기준에 가까운 차")
+
+
+def _recommend_axes(conn, calc_version: str, ids: list) -> dict:
+    """매물마다 ★ 네 축을 따로.  ★ 한 번에 받는다 (V11-34 — 줄마다 부르지 않는다)."""
+    if not ids:
+        return {}
+    marks = ",".join("?" * len(ids))
+    ax = ",".join("?" * len(RECOMMEND_AXES))
+    out: dict = {}
+    for lid, axis, value, mx in conn.execute(
+        f"SELECT listing_id, axis, value, max_points FROM result_axis"
+        f" WHERE calc_version=? AND listing_id IN ({marks})"
+        f"   AND axis IN ({ax})",
+        [calc_version, *ids, *RECOMMEND_AXES]
+    ):
+        out.setdefault(lid, {})[axis] = (value, mx)
+    order = {a: i for i, a in enumerate(RECOMMEND_AXES)}
+    got: dict = {}
+    for lid, per in out.items():
+        got[lid] = tuple(sorted(
+            (RecommendAxis(axis=a, label=AXIS_LABEL.get(a, a),
+                           got=round(float(v or 0), 1),
+                           full=round(float(m or 0), 1))
+             for a, (v, m) in per.items()),
+            key=lambda x: order.get(x.axis, 99)))
+    return got
+
+
+# ★ 화면 글 — ★ 마스터께서 부르신 이름 그대로 (규격 1장 표)
+AXIS_LABEL = {"value.budget": "예산", "value.mileage": "주행",
+              "state.year": "연식", "taste.color": "색"}

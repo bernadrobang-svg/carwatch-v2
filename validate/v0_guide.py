@@ -1269,15 +1269,25 @@ def s46_76_collectors_keep_raw() -> tuple[bool, str]:
         ★ ★ `encar` ★ 하나뿐이었다.  ★ 셋은 ★ 주석에 「남는다」고 ★ **적어만** 두었다
       ★ ★ 그래서 ★ 파싱이 틀리면 ★ 다시 받는 수밖에 없었다 — ★ KB 는 ★ 그것이 엿새다
     ★ 이 검사는 ★ 「부르는가」만 본다 — ★ 「실제로 들어갔는가」는 ★ `V2-01` 이 센다
+
+    ★★★★★ 09-01 마스터 지시 — ★ **원본이 파일로 뒤집혔다** (`ARCHITECTURE_20260830.md` 9장).
+      ★ 마스터 — 「★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다** — 잠금이 아예 안 생긴다.
+        ★ ★ 넣기 걸음은 그 폴더를 읽어 ★ `raw_response` ＋ `core_listing` 에 넣는다」
+      ★★ 그러므로 ★ **`store/rawfile.save` 도 ★ 「원문을 남긴다」**다 —
+        ★ ★ 오히려 ★ **그쪽이 원본**이고 ★ `raw_response` 는 ★ 사본이다.
+      ★ ★ 실측 09-01 — ★ 내가 한 건마다 DB 에 쓰다가 ★ `check_all` 이
+        ★ ★ **`database is locked`** 로 통째로 죽었다.  ★ 그것이 이 뒤집힘의 까닭이다
     """
     tools = ROOT / "tools"
     if not tools.is_dir():
         return False, "tools/ 가 없다"
     bad, seen = [], 0
+    # ★ 셋 중 하나면 된다 — ★ 파일(새 판) · `save_site_raw`·`save_raw`(옛 판)
+    keeps = ("rawfile", "save_file", "save_site_raw", "save_raw")
     for q in sorted(tools.glob("collect_*.py")):
         # ★ 엔카는 ★ `collect/runner.py` 가 ★ `save_raw` 로 남긴다 — ★ 결이 다르다
         body = _read(q)
-        if "save_site_raw" not in body and "save_raw" not in body:
+        if not any(k in body for k in keeps):
             bad.append(q.name)
         seen += 1
     if bad:

@@ -195,7 +195,13 @@ def _warranty_sum_check(rid):
         return not_applicable(C["V9-10"], rid, "scoring 에 warranty.site 가 없다")
     bad = []
     for name, one in _sites().items():
-        if not isinstance(one, dict) or one.get("status") == "planned":
+        # ★★★★★ 09-01 — ★ `paused` 도 건너뛴다.
+        #   ★ 마스터 확정 — 「★ 보배를 빼고 여기(리볼트) 것 쓰자」로 ★ 보배가 `paused` 다.
+        #   ★ ★ `paused` 는 ★ 「받았었으나 지금은 안 받는다」다 — ★ 그 사이트의 보증 단계는
+        #     ★ ★ **지금 쓰지 않는다.**  ★ 안 쓰는 것을 채우라고 물으면 ★ 지어내게 된다
+        #   ★ ★ 다시 켜면 ★ 그때 다시 묻는다 (`status` 를 `active` 로 되돌리면 걸린다)
+        if not isinstance(one, dict) or one.get("status") in ("planned",
+                                                              "paused"):
             continue
         # ★★ 개정 428 — 사이트 검증은 **합산이 아니라 단계**다.
         #   엔카진단++ 52 · 엔카진단+ 40 · 엔카진단 26 · 없음 0.

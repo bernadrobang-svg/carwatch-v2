@@ -559,7 +559,13 @@ def test_price_real() -> None:
     check("★ 시세 축이 0점이다 — 음수를 뺐다 (마스터 확정 08-29 밤)",
           POLICY.comp("value.market") == 0,
           str(POLICY.comp("value.market")))
-    _bud = POLICY.raw["budget_manwon"]["by_target"]["G80_25T"] * 10_000
+    # ★★★★★ 09-01 — ★ `by_target` 이 ★ **대상 13종으로 갈렸다** (가이드 · 마스터 확정).
+    #   ★ `G80_25T` 를 박아 두어 ★ `KeyError` 로 죽었다.
+    #   ★ ★ 이름을 박지 않는다 (개정 428) — ★ 시험 매물의 차종을 그대로 쓴다.
+    #   ★ ★ 그 차종에 마지노선이 없으면 ★ `default` 다 (`_budget_won` 과 같은 길)
+    _bcfg = POLICY.raw["budget_manwon"]
+    _bud = (_bcfg.get("by_target", {}).get("G80_25T")
+            or _bcfg["default"]) * 10_000
     # ★★★ 08-28 마스터 확정 (r798) — 「★ 기준점에 맞으면 ★ 60% 수준 ·
     #   ★ 1,000만 이상 싸면 거의 만점 · ★ 계단이 아니라 로그로」.
     #   ★ 정본은 `axis_rules.value.budget_curve` 다 — ★ 규칙 1 대로 시험을 맞춘다.
