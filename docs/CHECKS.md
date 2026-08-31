@@ -562,7 +562,7 @@
 | `V11-154` | 뺀 건수가 화면에 있음 | run | `validate/v11_web.py:437` | **★ 없음** | 없음 | — |
 | `V11-155` | 차종·가격대 필터가 있음 | run | `validate/v11_web.py:441` | **★ 없음** | 없음 | — |
 | `V11-156` | 필터 조건이 그대로 넘어감 | run | `validate/v11_web.py:505` | **★ 없음** | 없음 | guide/03_이력.md:440 |
-| `V11-157` | 상단 메뉴가 다섯을 넘지 않음 | run | `validate/v11_web.py:493` | **★ 없음** | 없음 | guide/03_이력.md:447 · guide/03_이력.md:458 · guide/03_이력.md:463 |
+| `V11-157` | 상단 메뉴가 다섯을 넘지 않음 | run | `validate/v11_web.py:493` | **★ 없음** | 없음 | UI_REVIEW.md:1982 · UI_REVIEW.md:1985 · UI_REVIEW.md:1988 |
 | `V11-158` | 내린 화면이 열리고 ★ 들어가는 문이 있음 | run | `validate/v11_web.py:499` | **★ 없음** | 없음 | UI_REVIEW.md:562 · UI_REVIEW.md:855 · guide/03_이력.md:565 |
 | `V11-159` | 상세 11개 절이 규격 순서로 있음 | run | `validate/v11_web.py:452` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:161 · UI_REVIEW.md:88 · UI_REVIEW.md:328 |
 | `V11-160` | 1 절에 「왜 그 등급인가」 문장이 있음 | run | `validate/v11_web.py:457` | **★ 없음** | 없음 | guide/03_이력.md:511 · chapters/41-view.md:98 |

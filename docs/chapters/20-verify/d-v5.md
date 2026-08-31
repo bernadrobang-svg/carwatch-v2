@@ -1,7 +1,7 @@
 ## STEP 63 — V5 수치 검증
 
 ```
-version  SPEC-2026.09.01-r1050
+version  SPEC-2026.09.01-r1051
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
