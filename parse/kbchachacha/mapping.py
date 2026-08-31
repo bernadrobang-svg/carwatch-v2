@@ -114,6 +114,34 @@ def _model_of(name: str) -> tuple:
     return words[0], (got.split("(")[0].strip() or None)
 
 
+# ★★★★★ 09-02 (로드맵 차례 1-5 · KB **169점**) — ★ **주요옵션 표**.
+#   ★ 실측 09-02 — ★ `<li class="optionN">` · ★ **`disable` 이면 「없음」**이다.
+#   ★ ★ 「선루프 (일반)」·「헤드업디스플레이」가 ★ 원문에 그대로 있다.
+#   ★ ★ ★ 그런데 ★ `options_standard_json` 이 ★ **전건 NULL** 이었다 —
+#     ★ ★ 그래서 ★ `taste.option` 43 · `taste.sunroof` 12 · `taste.hud` 18 이
+#     ★ ★ ★ 332건 **전건 0점**이었다.  ★ 사이트가 안 준 것이 아니라 ★ 안 읽었다
+RE_OPT_LI = re.compile(
+    r'<li[^>]*class="option\d+([^"]*)"[^>]*>\s*<span[^>]*class="text"[^>]*>'
+    r'(.*?)</span>', re.S)
+
+
+def _options(html: str) -> tuple:
+    """주요옵션 → (있는 것, 없는 것).  ★ 못 읽으면 ★ 빈 짝이다 (지어내지 않는다).
+
+    ★ `disable` 이 붙은 칸은 ★ **그 차에 없는 옵션**이다 [실측 09-02].
+      ★ ★ 「없다」도 사실이다 — ★ 버리지 않고 따로 담는다
+    """
+    have, miss = [], []
+    for cls, inner in RE_OPT_LI.findall(html or ""):
+        name = RE_WS.sub(" ", RE_TAG.sub(" ", inner)).strip()
+        name = re.sub(r"\s*\(\s*", " (", name)
+        name = re.sub(r"\s*\)", ")", name).strip()
+        if not name:
+            continue
+        (miss if "disable" in cls else have).append(name)
+    return have, miss
+
+
 def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     """상세 한 쪽 → `core_listing` 한 줄.
 
@@ -188,6 +216,15 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     if photos:
         out["photo_main"] = photos[0]
         out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+
+    # ★★★★★ 09-02 — ★ 주요옵션 (로드맵 차례 1-5).  ★ 없으면 ★ 안 담는다
+    have, miss = _options(html)
+    if have:
+        out["options_standard_json"] = json.dumps(have, ensure_ascii=False)
+    if miss:
+        # ★ 「이 차에 없는 옵션」도 사실이다 — ★ 버리지 않는다.
+        #   ★ 값 자리를 지어내지 않고 ★ 곁말로 남긴다
+        out["options_absent_json"] = json.dumps(miss, ensure_ascii=False)
     return out
 
 

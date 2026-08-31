@@ -497,7 +497,49 @@ def lexus_detail(conn, write: bool) -> Counter:
     return got
 
 
-SITES = {"volvo_detail": volvo_detail, "lexus_detail": lexus_detail,
+def kb_detail(conn, write: bool) -> Counter:
+    """★★★★★ 09-02 (로드맵 차례 1-5 · KB **169점**) — ★ KB 상세를 다시 펼친다.
+
+    ★ 실측 09-02 — ★ `options_standard_json` 이 ★ **578건 전건 NULL** 이었다.
+      ★ ★ 원문에는 ★ 「주요옵션」 표가 ★ 그대로 있다 —
+      ★ ★ ★ `<li class="optionN">` · ★ `disable` 이면 「없음」.
+      ★ ★ ★ ★ 사이트가 안 준 것이 아니라 ★ **우리가 안 읽었다**.
+    ★ 그 탓에 ★ `taste.option` 43 · `taste.sunroof` 12 · `taste.hud` 18 이
+      ★ ★ 332건 ★ 전건 0점이었다 (합 **73점**)
+    ★★ 사이트를 ★ **한 번도 안 두드린다** — ★ 저장해 둔 원문만 읽는다
+    """
+    from parse.kbchachacha.mapping import parse_detail
+    from store.core import upsert_core
+
+    at = _now()
+    got: Counter = Counter()
+    for lid, sid, blob in latest_details(conn, "kbchachacha"):
+        html = raw_body(blob)
+        if isinstance(html, bytes):
+            html = html.decode("utf-8", "replace")
+        deep = parse_detail(html or "", "kbchachacha", sid)
+        if not deep:
+            got["★ 못 펼쳤다"] += 1
+            continue
+        if deep.get("options_standard_json"):
+            got["★ 옵션을 읽었다"] += 1
+        else:
+            got["옵션이 없다"] += 1
+        got["펼쳤다"] += 1
+        if write:
+            deep["listing_id"] = lid
+            deep["detail_status"] = "ok"
+            # ★ DDL 에 없는 칸은 ★ 안 보낸다 — ★ 규격에 없는 칸을 만들지 않는다.
+            #   ★ 「없는 옵션」은 ★ 회차 기록에 적고 ★ 가이드께 여쭙는다
+            deep.pop("options_absent_json", None)
+            upsert_core(conn, deep, at)
+    if write:
+        conn.commit()
+    return got
+
+
+SITES = {"kb_detail": kb_detail, "volvo_detail": volvo_detail,
+         "lexus_detail": lexus_detail,
          "heydealer": heydealer, "kbchachacha": kbchachacha,
          "hyundai_cert": hyundai_cert, "reborncar": reborncar,
          "bmw_bps": bmw_bps, "kcar": kcar, "kb_record": kb_record,

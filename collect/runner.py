@@ -1094,8 +1094,14 @@ def _dicts(conn, root: str) -> DictionarySet:
         by_code.setdefault(code, []).append(int(mw))
     prices = {code: sorted(v)[len(v) // 2] * WON_PER_MANWON
               for code, v in by_code.items()}
+    # ★★★★★ 09-02 — ★ 규격의 ★ 이름 맞대기 표 (`OPTION_CATALOG` 09-01).
+    #   ★ 없으면 ★ 빈 표다 — ★ 그때는 ★ 옛 길(엔카 코드)로만 본다
+    with open(os.path.join(root, "config", "dictionaries",
+                           "option_names.json"), encoding="utf-8") as f:
+        axis_match = (json.load(f) or {}).get("axis_match") or {}
     return DictionarySet(option_names=names, option_descriptions=desc,
                          option_prices=prices,
+                         option_axis_match=axis_match,
                          tint_keywords=tk, color_grade=grade,
                          color_default=cg["default"])
 

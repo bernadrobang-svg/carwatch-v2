@@ -112,7 +112,7 @@
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
   <td data-label=""><a href="/admin/registry">가기</a></td></tr>
 
-<tr><td class="warn-warn" data-label="무엇">처리 중인 요청</td><td class="num" data-label="건수">1</td>
+<tr><td class="warn-warn" data-label="무엇">처리 중인 요청</td><td class="num" data-label="건수">2</td>
   <td class="muted" data-label="왜">개발 요청이 열려 있습니다</td><td class="muted" data-label="하면 되는 것">요청 화면에서 상태를 봅니다</td>
   <td data-label=""><a href="/admin/requests">가기</a></td></tr>
 
@@ -122,11 +122,11 @@
 
 
 
-
+<p class="warn-warn">재계산 ace716343efb4ec8cf 실행 중 — 조정 메뉴가 잠깁니다</p>
 <ul class="stat">
   <li>등록부 미분류 <strong>324</strong></li>
-  <li>개발 요청 <strong>1</strong></li>
-  <li>대기 작업 <strong>0</strong></li>
+  <li>개발 요청 <strong>2</strong></li>
+  <li>대기 작업 <strong>1</strong></li>
 </ul>
 
 <h3>★ 운영</h3>
@@ -205,31 +205,31 @@
 <a class="vline" href="/admin/scoring"
   title="STEP 128 · 129 — 그렇게 판단한 까닭입니다"><span>배점 조정
   <span class="dim">STEP 128 · 129</span>
-  </span>
+  <span class="warn-warn">재계산 ace716343efb4ec8cf 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/targets"
   title="STEP 130 — 그렇게 판단한 까닭입니다"><span>차종 추가 · 수정
   <span class="dim">STEP 130</span>
-  </span>
+  <span class="warn-warn">재계산 ace716343efb4ec8cf 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/registry"
   title="STEP 131 — 그렇게 판단한 까닭입니다"><span>등록부 분류
   <span class="dim">STEP 131</span>
-  </span>
+  <span class="warn-warn">재계산 ace716343efb4ec8cf 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/dict"
   title="STEP 136e — 그렇게 판단한 까닭입니다"><span>사전 확정
   <span class="dim">STEP 136e</span>
-  </span>
+  <span class="warn-warn">재계산 ace716343efb4ec8cf 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/config"
   title="STEP 127 — 그렇게 판단한 까닭입니다"><span>config 편집 · 이력
   <span class="dim">STEP 127</span>
-  </span>
+  <span class="warn-warn">재계산 ace716343efb4ec8cf 실행 중</span></span>
   <b>▸</b></a>
 
 </div>
@@ -272,9 +272,17 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 
+<tr><td data-label="시각">2026-08-31T16:13:32.228432+00:00</td><td class="muted" data-label="사유">요청 259건</td>
+  <td class="runid" data-label="실행">20260831T161249</td>
+  <td class="num" data-label="소요">12.8초</td><td data-label="판정">정상</td></tr>
+
+<tr><td data-label="시각">2026-08-31T16:06:34.524321+00:00</td><td class="muted" data-label="사유">요청 56건</td>
+  <td class="runid" data-label="실행">20260831T160548</td>
+  <td class="num" data-label="소요">2.8초</td><td data-label="판정">fatal 8</td></tr>
+
 <tr><td data-label="시각">2026-08-31T02:43:33.989375+00:00</td><td class="muted" data-label="사유">요청 24건</td>
   <td class="runid" data-label="실행">20260831T024324</td>
-  <td class="num" data-label="소요">0.7초</td><td data-label="판정">fatal 8</td></tr>
+  <td class="num" data-label="소요">0.7초</td><td data-label="판정">fatal 9</td></tr>
 
 <tr><td data-label="시각">2026-08-30T23:21:35.343766+00:00</td><td class="muted" data-label="사유">요청 120건</td>
   <td class="runid" data-label="실행">20260830T232047</td>
@@ -283,14 +291,6 @@
 <tr><td data-label="시각">2026-08-30T23:10:47.349490+00:00</td><td class="muted" data-label="사유">요청 65건</td>
   <td class="runid" data-label="실행">20260830T230959</td>
   <td class="num" data-label="소요">3.3초</td><td data-label="판정">정상</td></tr>
-
-<tr><td data-label="시각">2026-08-29T02:41:47.513604+00:00</td><td class="muted" data-label="사유">요청 1,938건</td>
-  <td class="runid" data-label="실행">20260829T024133</td>
-  <td class="num" data-label="소요">105.4초</td><td data-label="판정">fatal 5</td></tr>
-
-<tr><td data-label="시각">2026-08-29T00:00:23.005613+00:00</td><td class="muted" data-label="사유">요청 2,095건</td>
-  <td class="runid" data-label="실행">20260829T000005</td>
-  <td class="num" data-label="소요">124.3초</td><td data-label="판정">fatal 12</td></tr>
 
 </tbody>
 </table>
@@ -366,8 +366,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260831T024324</span>
-  <span>2026-09-01 00:19</span>
+  <span>run 20260831T161249</span>
+  <span>2026-09-01 01:30</span>
 </footer>
 
 </body>

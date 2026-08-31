@@ -30,6 +30,10 @@ class DictionarySet:
     """Analyzer 가 읽는 사전.  DB 접근을 대신한다 (순수 함수 유지)."""
 
     option_names: dict[str, str] = field(default_factory=dict)
+    # ★★★★★ 09-02 — ★ 규격의 ★ **이름 맞대기 표** (`OPTION_CATALOG` 09-01).
+    #   ★ 아홉 사이트는 ★ 한글 이름을 준다 — ★ 엔카 3자리 코드로는 못 찾는다.
+    #   ★ ★ 정본은 ★ `config/dictionaries/option_names.json` 의 `axis_match` 다
+    option_axis_match: dict = field(default_factory=dict)
     # 선택 옵션가 (원).  ★ 사양 축의 「옵션 합」 백분위에 쓴다 (개정 292 ③)
     option_prices: dict[str, int] = field(default_factory=dict)
     option_descriptions: dict[str, str] = field(default_factory=dict)

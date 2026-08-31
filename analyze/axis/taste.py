@@ -12,7 +12,7 @@
 from __future__ import annotations
 
 from analyze.axes import AxisContext
-from analyze.axis.spec import OPTION3, _installed, _spec_table
+from analyze.axis.spec import _has_option, _installed, _spec_table
 from analyze.verdict import PRIO_MANUFACTURER, PRIO_OBSERVED, Verdict, put
 
 HUD = "taste.hud"
@@ -48,7 +48,13 @@ def _fitting(ctx: AxisContext, v: Verdict, comp: str) -> None:
     if s.options_standard is None and s.options_choice is None:
         put(v, comp, None, PRIO_OBSERVED, "missing", excluded=True)
         return
-    has = OPTION3[spec_name] in _installed(ctx)
+    # ★★★★★ 09-02 — ★ **이름으로도 맞댄다** (규격 `OPTION_CATALOG` 09-01).
+    #   ★ 전에는 ★ 엔카 3자리 코드만 봤다 — ★ 아홉 사이트는 한글 이름을 준다.
+    #   ★ ★ 그래서 ★ KB 332건이 ★ `taste.hud`·`taste.sunroof` **전건 0점**이었다
+    has = _has_option(ctx, spec_name)
+    if has is None:
+        put(v, comp, None, PRIO_OBSERVED, "missing", excluded=True)
+        return
     put(v, comp, full if has else 0, PRIO_OBSERVED, "option_codes")
 
 

@@ -6,14 +6,14 @@
 
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
-| `/` | [home.html](home.html) | 200 | 44,392B |
-| `/listings` | [listings.html](listings.html) | 200 | 90,528B |
-| `/sold` | [sold.html](sold.html) | 200 | 26,727B |
-| `/recommend` | [recommend.html](recommend.html) | 200 | 122,762B |
+| `/` | [home.html](home.html) | 200 | 45,161B |
+| `/listings` | [listings.html](listings.html) | 200 | 90,443B |
+| `/sold` | [sold.html](sold.html) | 200 | 26,219B |
+| `/recommend` | [recommend.html](recommend.html) | 200 | 122,769B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,614B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 35,142B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,780B |
-| `/track` | [track.html](track.html) | 200 | 41,387B |
+| `/track` | [track.html](track.html) | 200 | 41,317B |
 | `/market` | [market.html](market.html) | 200 | 14,568B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 19,405B |
 | `/notready` | [notready.html](notready.html) | 200 | 22,252B |
@@ -22,12 +22,12 @@
 | `/login` | [login.html](login.html) | 200 | 2,771B |
 | `/join` | [join.html](join.html) | 200 | 2,594B |
 | `/password` | [password.html](password.html) | 200 | 2,585B |
-| `/admin` | [admin.html](admin.html) | 200 | 15,897B |
-| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,064B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 61,640B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 12,036B |
+| `/admin` | [admin.html](admin.html) | 200 | 16,335B |
+| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,545B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 61,407B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,238B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,339B |
-| `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,872B |
+| `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,867B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,195B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,936B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,390B |
@@ -38,7 +38,7 @@
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,262B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,619B |
 | `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 25,952B |
-| `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 5,376B |
+| `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 6,725B |
 
 ## 못 낸 화면
 
