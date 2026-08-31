@@ -82,9 +82,17 @@ def main() -> int:
     # ★ 조합마다 ★ 대표 매물을 든다 — ★ 부르는 열쇠는 매물 ID 다
     reps: dict = {}
     marks = ",".join("?" * len(miss))
+    # ★★★★★ 08-31 — ★ **엔카 매물만 대표로 쓴다.**
+    #   ★ 창구가 ★ 엔카 것이다 (`api.encar.com/v1/readside/vehicles/car/{id}`).
+    #   ★★ 08-31 (차례 2) 에 ★ 아홉 사이트에도 `model_catalog_key` 를 이었더니
+    #     ★ ★ 헤이딜러 매물번호(`2yM25bnW`)가 ★ 대표로 뽑혀 ★ 엔카에 들어갔다 →
+    #     ★ ★ ★ **HTTP 400**.  ★ `V1-23` 의 `error` 3조합이 그것이었다 [실측 08-31]
+    #   ★ 운영 `S7` 은 ★ `_scope` 가 ★ `site = ?` 를 붙여 안 걸린다 —
+    #     ★ ★ 이 도구만 ★ 안 걸러 두고 있었다
     for k, sid in conn.execute(
         f"SELECT model_catalog_key, source_id FROM core_listing"
         f" WHERE model_catalog_key IN ({marks}) AND status='active'"
+        f"   AND site='encar'"
         f" ORDER BY source_id", tuple(miss)
     ):
         reps.setdefault(k, []).append(sid)
