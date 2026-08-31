@@ -95,7 +95,7 @@
 | `S46-92` | 브라우저 수집이 0건을 받았는가 | warn | `validate/v0_guide.py:3002` | **★ 없음** | 없음 | guide/03_이력.md:783 · guide/03_이력.md:784 |
 | `S46-94` | 원문 문이 그 매물의 사이트로 가는가 | fatal | `validate/v0_guide.py:2219` | **★ 없음** | 없음 | guide/03_이력.md:787 · guide/06_오판대장.md:228 |
 | `S46-95` | 배포된 화면이 다 열리는가 | fatal | `validate/v0_guide.py:2906` | **★ 없음** | 없음 | guide/03_이력.md:788 · guide/03_이력.md:789 · guide/03_이력.md:792 |
-| `S46-96` | 사이트가 파는 차종인데 코드가 없는가 | warn | `validate/v0_guide.py:2962` | **★ 없음** | 없음 | guide/03_이력.md:791 · guide/03_이력.md:860 · guide/04_질의.md:718 |
+| `S46-96` | 사이트가 파는 차종인데 코드가 없는가 | warn | `validate/v0_guide.py:2962` | **★ 없음** | 없음 | guide/03_이력.md:791 · guide/03_이력.md:860 · guide/03_이력.md:1279 |
 | `S46-97` | 원문이 source_id 로 매물에 이어지는가 | fatal | `validate/v0_guide.py:2335` | **★ 없음** | 없음 | guide/03_이력.md:792 · guide/03_이력.md:879 · guide/06_오판대장.md:263 |
 | `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:2800` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:97 · UI_REVIEW.md:1880 · guide/03_이력.md:793 |
 | `S46-99` | 로그인하면 관심·관리가 열리는가 | fatal | `validate/v0_guide.py:2403` | **★ 없음** | 없음 | guide/03_이력.md:794 · guide/03_이력.md:879 · guide/03_이력.md:1009 |
@@ -128,7 +128,7 @@
 | `S46-139` | 「칸이 비었다」에 전수가 있는가 | fatal | `validate/v0_guide.py:3716` | **★ 없음** | 없음 | guide/06_오판대장.md:270 |
 | `S46-140` | 쓰는 호스트가 robots 문서에 있는가 | fatal | `validate/v0_guide.py:3298` | **★ 없음** | 없음 | guide/06_오판대장.md:271 · guide/07_밀린일대장.md:39 |
 | `S46-141` | 거르개 판정에 실측이 있는가 | fatal | `validate/v0_guide.py:3551` | **★ 없음** | 없음 | guide/06_오판대장.md:272 |
-| `S46-142` | 「N 사이트」가 config 와 같은가 | fatal | `validate/v0_guide.py:3317` | **★ 없음** | 없음 | guide/06_오판대장.md:273 · guide/07_밀린일대장.md:40 |
+| `S46-142` | 「N 사이트」가 config 와 같은가 | fatal | `validate/v0_guide.py:3317` | **★ 없음** | 없음 | guide/03_이력.md:1279 · guide/06_오판대장.md:273 · guide/07_밀린일대장.md:40 |
 | `S46-143` | 마스터께 올릴 것이 세어졌는가 | fatal | `validate/v0_guide.py:3568` | **★ 없음** | 없음 | guide/03_이력.md:1001 · guide/06_오판대장.md:274 |
 | `S46-144` | 「비었다」가 ⑤·⑥·⑦ 로 갈렸는가 | fatal | `validate/v0_guide.py:3797` | **★ 없음** | 없음 | guide/03_이력.md:983 · guide/06_오판대장.md:275 · guide/12_남은것_20260829.md:15 |
 | `S46-145` | 마스터께 드리는 표에 수의 뜻이 있는가 | fatal | `validate/v0_guide.py:3150` | **★ 없음** | 없음 | guide/03_이력.md:985 · guide/06_오판대장.md:276 |
