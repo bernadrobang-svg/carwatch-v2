@@ -1,7 +1,7 @@
 # 현대·제네시스 인증중고차 API — 규격
 
 ```
-version  SPEC-2026.09.01-r1025
+version  SPEC-2026.09.01-r1026
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 865 · 실측 08-29
 checks   S46-5 · S46-27 · S46-31
@@ -490,3 +490,46 @@ GET /api/search/vehicle/count/selling?srchType=srchFilter&mdlGrpList=1171
 ```
 
 ★ 파서 — `parse/hyundai_cert/mapping.py` 가 ★ 이 값을 넣는다 (`price_origin_won` · 08-29 신설분)
+
+---
+
+# ★★★★★ 09-01 — ★ **성능점검부 창구를 찾았다.  ★ 다만 스캔 이미지다**
+
+```
+★ `v323` 이 「현대인증은 점검표 주소가 0 이다」라 했다 — ★ 상세 HTML 에는 없다.  ★ 맞다
+★ ★ 그런데 ★ **버튼 뒤에 있었다** — ★ 오늘 배운 대로 ★ **호출부를 열었다**
+```
+
+## ★ 찾은 길 [실측 09-01 · 표본 4건 전건]
+
+```
+① 상세에 버튼 — `<button class="btn_accident" onclick="goods.goods.openPdfViewer()">
+     <span>성능점검기록부</span><strong>발행완료</strong></button>`
+② 함수 — ★ `fo/m/js/goods/goods.js` (77,730B) 에 있다
+     openPdfViewer() { const pdfFilePath = `${_uploadUrl}` + $("#pdfViewerPath").val(); … }
+③ ★ **상세에 값이 박혀 있다** —
+     `#pdfViewerPath` = `RC/RCDC/20260601/RCDCREG/RC20260204000000019508/760100305346`
+     `_uploadUrl`     = `https://certified-static.hyundai.com/contents/`
+     ★ ★ **매물마다 다르다** (표본 4건 다 다른 경로)
+④ ★ 받는다 — ★ **200 · 790KB~1.29MB · `%PDF-`** [표본 4건 **전건 성공**]
+```
+
+## ★★★★ 그런데 ★ **글자가 0 이다**
+
+| 쪽 | 이미지 | 글자 |
+|--:|--:|--:|
+| 1 | **171** | ★ **0** |
+| 2 | **27** | ★ **0** |
+
+```
+★★★ ★ **스캔 이미지 PDF 다** — ★ 글자를 못 뽑는다
+   ★ ★ 보배 「성능지는 성능점검 기록부의 **이미지**입니다」와 ★ **같은 자리**다
+★ ★ ★ 그러므로 ★ **골격 43 × 205건은 ★ 지금 방법으로는 못 연다**
+   ★ ★ ★ ★ 「창구가 없다」가 아니라 ★ **「받았는데 글자가 없다」**다 — ★ 갈래가 다르다
+★ ★ 남은 길은 ★ **OCR 하나**다 — ★ 그것은 ★ **마스터께서 정하실 자리**다
+   ★ ★ 값이 큰지 — 205건 × 43점 · 외판 28 을 더하면 ★ 205건 × 71점
+   ★ ★ 값이 싼지 — ★ PDF 를 200건 받아 ★ OCR 을 돌려야 한다
+```
+
+★ **적어 두는 까닭** — ★ 뒤에 「현대는 성능점검부가 없다」로 읽히면 안 된다.
+  ★ ★ **있다.  ★ 받는다.  ★ 다만 사진이다.**
