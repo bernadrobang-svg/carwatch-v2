@@ -150,10 +150,14 @@
         "collect_group": "encar:SPORTAGE"
       },
       "그랑 콜레오스 하이브리드": {
-        "collect_group": "encar:KOLEOS"
+        "collect_group": "encar:KOLEOS",
+        "target_key": "KOLEOS_HEV",
+        "_09-02": "★ `target_key` 가 없어 ★ 내 셈에서 빠졌다 [실측 09-02 · K카 표본 300건에 있다]"
       },
       "그랑 콜레오스": {
-        "collect_group": "encar:KOLEOS"
+        "collect_group": "encar:KOLEOS",
+        "target_key": "KOLEOS_HEV",
+        "_09-02": "★ `target_key` 가 없어 ★ 내 셈에서 빠졌다 [실측 09-02 · K카 표본 300건에 있다]"
       },
       "모델 Y": {
         "collect_group": "encar:MODEL_Y"

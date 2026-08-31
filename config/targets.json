@@ -1450,12 +1450,19 @@
     ],
     "year_range": "202200..",
     "site_query": {
-      "_왜 비었나": "★ 09-01 — 질의 열쇠를 아직 못 쟀다.  ★ ID.4 와 같은 자리다(폭스바겐 KB 112 · 보배 44).  ★ 짐작으로 코드를 적지 않는다",
       "revolt": {
         "brand_hash_id": "LZY3JW",
         "model_hash_id": "oxmmrp",
         "_차명": "ID.5",
         "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
+      },
+      "kbchachacha": {
+        "makerCode": "112",
+        "classCode": "2882",
+        "carCode": [
+          "3462"
+        ],
+        "_세대": "★ [실측 09-02] ★ 마스터 지적으로 다시 두드렸다 — ★ KB 에 ★ ID.5 가 있다(「폭스바겐 ID.5 Pro 기본형」 3,830만 · carSeq 28697447).  ★ 09-01 에 「없다」 한 것은 ★ 내가 못 찾은 것이다"
       }
     },
     "active": true

@@ -1,7 +1,7 @@
 
 
 ```
-version  SPEC-2026.09.02-r1079
+version  SPEC-2026.09.02-r1080
 follows  `config/targets.json`
 sources  개정 726 · 실측 08-25
 checks   S46-38 · S46-39
