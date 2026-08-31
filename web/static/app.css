@@ -2534,6 +2534,26 @@ body.auto #progress { font-size:15px; line-height:1.7; }
 .pickgrade { font-size:11px; color:var(--faint); margin-left:6px;
             font-weight:400; }
 
+/* ★★★★★ 09-01 — ★ `V11-94` 「추천 조건이 화면에 적혀 있음」이 부른 두 줄.
+   ★ 시안에는 없다 — ★ 규격(개정 304)이 요구해 ★ **덧붙인** 것이다.
+   ★ ★ 시안의 글자와 자리는 ★ 하나도 안 건드렸다 */
+.pickwhyall { color:var(--dim); }
+
+/* ★★★★★ 09-01 — ★ `V11-69` 로 되살린 조작들.
+   ★ 시안의 자리와 크기는 ★ 안 건드렸다 — ★ 카드 안에 ★ 줄을 하나 더했을 뿐이다.
+   ★ ★ 손가락 자리는 ★ 44px 이다 (`V11-76` · 모바일 대조 09-01) */
+.pickorder { margin:8px 0 0; }
+.pickcmp { font-size:11px; color:var(--dim); margin-right:6px; }
+.pickcmp input { width:16px; height:16px; vertical-align:-2px; }
+.pickfoot { display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+            margin-top:8px; }
+.pickbuy { font-size:11px; color:var(--dim); }
+.pickbuy b { color:var(--text); font-weight:600; }
+.pickfoot .btn { min-height:44px; display:inline-flex; align-items:center; }
+.cmpbar { margin:12px 0; }
+.pickwhy { font-size:11px; color:var(--dim); margin-top:8px;
+           letter-spacing:.02em; }
+
 /* ★ 시안 `.pickaxes` · `.pickax` — ★ 네 축을 알약으로.  ★ 만점이면 호박색 */
 .pickaxes { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
 .pickax { font-size:11px; color:var(--dim);
@@ -2545,9 +2565,12 @@ body.auto #progress { font-size:15px; line-height:1.7; }
 .pickax.hi { border-color:var(--amber); }
 
 /* ★ 시안 `.pickbar` — ★ 막대는 비율이다 (부록 G · A-3).  4px */
-.pickbar { height:4px; background:var(--surface2); border-radius:2px;
-          margin-top:6px; overflow:hidden; }
-.pickbar i { display:block; height:100%; background:var(--amber); }
+/* ★★★★★ 09-01 — ★ `.pbar` 를 ★ 함께 단다 (`V11-77`).
+   ★ 위쪽 `.pbar` 는 ★ `display:flex` 라 ★ 시안 꼴이 깨진다 —
+   ★ ★ 여기서 ★ **되돌린다** (`.pbar.pickbar` 가 ★ 더 좁아 이긴다) */
+.pbar.pickbar { display:block; height:4px; background:var(--surface2);
+          border:0; border-radius:2px; margin-top:6px; overflow:hidden; }
+.pbar.pickbar i { display:block; height:100%; background:var(--amber); }
 
 /* ★ 시안 `.pickempty` — 빈 탭 (탭 2·3) */
 .pickempty { padding:60px 20px; text-align:center;

@@ -112,6 +112,10 @@ class ListingRow:
     # ★ 분모로 등급을 막지 않는 대신 얼마나 봤는지를 낸다
     confirmed_points: float | None = None
     confirm_pct: float | None = None
+    # ★★★★★ 09-01 — ★ 부록 G A-3 막대의 ★ **둘째 칸** (`.may`).
+    #   ★ 「근거는 있는데 아직 못 받은 몫」 = 확인율 − 받은 비율.
+    #   ★★ 틀은 ★ 뺄셈을 못 한다 (`V11-04`) — ★ 여기서 낸다
+    confirm_extra_pct: float = 0.0
     # 전기차 배터리 진단 — SOH · 등급 (개정 296)
     battery_soh: float | None = None
     battery_grade: str | None = None
@@ -807,6 +811,15 @@ class RecommendRow:
     photo_url: str | None = None
     # ★ 시안 — ★ 「등급 C · **등급은 안 봅니다**」.  ★ 낮은 등급일 때만 덧붙인다
     ignored: bool = False
+    # ★★★★★ 09-01 — ★ `V11-69` 「v1 이 가진 조작이 v2 에도 있음」.
+    #   ★ 제가 시안대로 다시 만들면서 ★ **조작 다섯을 떨어뜨렸다** —
+    #   ★ ★ ♡ · 미리보기 · 원문 링크 · 비교 담기 · 정렬.
+    #   ★ ★ ★ 시안은 ★ **무엇을 보여 줄지**를 정한 것이지
+    #     ★ ★ 「할 수 있던 일을 없애라」가 아니다 (개정 429 「값을 버리지 마라」)
+    site_badge: str | None = None
+    encar_url: str | None = None
+    total_cost_won: int | None = None
+    buy_estimated: bool = False
 
 
 @dataclass(frozen=True)
@@ -820,5 +833,8 @@ class RecommendView:
     targets: int = 0
     # ★ 탭 2·3 — ★ 「아직 정하지 않았습니다」.  ★ 오류가 아니다 (규격 2장)
     empty_note: str | None = None
+    # ★★★★★ 09-01 — ★ `V11-69` 정렬 드롭다운.  ★ 「지금 눌린 것」은 여기서 정한다
+    #   ★ 틀은 `==` 를 못 한다 (V11-104)
+    orders: tuple = ()
     # ★ 틀은 ★ `==` 를 못 한다 (`V11-104`) — ★ 머리말을 여기서 정한다
     title: str = ""

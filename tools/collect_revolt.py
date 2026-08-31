@@ -75,34 +75,80 @@ def _get(url: str, timeout: float = 30.0):
         return None
 
 
+def _targets() -> dict:
+    """★★★★★ 09-01 — ★ 가이드가 ★ **리볼트 질의 열쇠**를 줬다 (`targets.json`).
+
+    ★ 앞서는 ★ 차종 이름(「Model Y」)으로 짚으려다 ★ **264/270건을 못 넣었다**.
+      ★ ★ 이제 ★ `model_hash_id` 로 ★ **사이트가 직접 갈라 준다** — ★ 이름을 안 옮긴다
+    돌려줌  {model_hash_id: target_key}
+    """
+    with open(os.path.join(ROOT, "config", "targets.json"),
+              encoding="utf-8") as f:
+        got = json.load(f)
+    out: dict = {}
+    for key, spec in got.items():
+        if key.startswith("_") or not isinstance(spec, dict):
+            continue
+        if not spec.get("active"):
+            continue
+        q = (spec.get("site_query") or {}).get(SITE_CODE)
+        if not isinstance(q, dict):
+            continue
+        # ★★ 열쇠 둘을 ★ **함께** 쓴다 — ★ 규격이 준 것을 ★ 하나도 안 버린다.
+        #   ★ 실측 09-01 — ★ `?brand_hash_id=` 도 ★ 걸린다
+        #     (폴스타 `RWlnAZ` → 7건 · 볼보 `Jo6rOo` → 0건 = 재고 없음)
+        bid = q.get("brand_hash_id")
+        mid = q.get("model_hash_id")
+        for one in (mid if isinstance(mid, list) else [mid]):
+            if one:
+                out[(str(bid) if bid else "", str(one))] = key
+    return out
+
+
 def main() -> int:
     args = sys.argv[1:]
+    want = _targets()
+    print(f"★ 우리 차종의 리볼트 열쇠 {len(want)}가지 — "
+          f"{sorted(set(want.values()))}")
     cars: list = []
-    pages: list = []          # ★ 쪽마다 파일 하나로 남긴다
+    pages: list = []          # ★ (열쇠, 쪽번호, 항목들) — ★ 쪽마다 파일 하나
     seen: set = set()
-    done = False
-    for page in range(1, MAX_PAGES + 1):
-        body = _get(f"{BASE}/cars/?page={page}")
-        if body is None:
-            break
-        try:
-            got = json.loads(body)
-        except ValueError:
-            break
-        if isinstance(got, dict):
-            got = got.get("results") or got.get("cars") or []
-        if not got:
-            done = True            # ★ 빈 쪽을 봤다 = 끝을 봤다
-            break
-        pages.append(got)
-        fresh = [x for x in got if x.get("hash_id") not in seen]
-        seen.update(x.get("hash_id") for x in fresh)
-        cars.extend(fresh)
-        print(f"  page={page} → {len(got)}건 (새로 {len(fresh)} · 누계 {len(cars)})")
-        if not fresh:
-            done = True            # ★ 같은 쪽이 되풀이된다 — ★ 끝이다
-            break
-        time.sleep(SLEEP)
+    key_of: dict = {}         # ★ hash_id → 우리 차종 키.  ★ **질의가 알려 준다**
+    done = True
+    # ★★★★★ 09-01 규격 (`docs/REVOLT_API.md` 「거르개는 `?model_hash_id=` 다」) —
+    #   ★ ★ **차종마다 따로 받는다.**  ★ 전량 220건을 훑고 이름으로 거르지 않는다.
+    #   ★ ★ ★ 까닭 — ★ 목록 항목에 ★ `model_hash_id` 가 ★ **없다** [실측 09-01].
+    #     ★ ★ 있는 것은 ★ `model_name`(영문 "Model Y")뿐이라 ★ 이름을 옮겨야 했고,
+    #     ★ ★ ★ 그래서 ★ **264/270건을 못 넣었다**.  ★ 질의로 가르면 ★ 옮길 것이 없다
+    #   ★ ★ ★ `?model=` 은 안 걸린다 (규격) — ★ `?model_hash_id=` 여야 한다
+    for (bid, mid), tkey in sorted(want.items()):
+        for page in range(1, MAX_PAGES + 1):
+            url = (f"{BASE}/cars/?brand_hash_id={bid}&model_hash_id={mid}"
+                   f"&page={page}")
+            body = _get(url)
+            if body is None:
+                done = False       # ★ 못 받았다 — ★ 「끝까지 받았다」고 하지 않는다
+                break
+            try:
+                got = json.loads(body)
+            except ValueError:
+                done = False
+                break
+            if isinstance(got, dict):
+                got = got.get("results") or got.get("cars") or []
+            if not got:
+                break              # ★ 빈 쪽 = ★ 이 차종은 끝이다
+            pages.append((bid, mid, page, got))
+            fresh = [x for x in got if x.get("hash_id") not in seen]
+            seen.update(x.get("hash_id") for x in fresh)
+            for x in fresh:
+                key_of[x.get("hash_id")] = tkey
+            cars.extend(fresh)
+            print(f"  {tkey:<14} {mid} page={page} → {len(got)}건 "
+                  f"(새로 {len(fresh)} · 누계 {len(cars)})")
+            if not fresh:
+                break              # ★ 같은 쪽이 되풀이된다
+            time.sleep(SLEEP)
     print(f"★ 목록 합계 {len(cars)}건 · 끝까지 받았나 {'예' if done else '아니오'}")
 
     rows = []
@@ -112,15 +158,20 @@ def main() -> int:
         if row is None:
             continue
         row["detail_status"] = "not_requested"
+        # ★★★★★ 09-01 — ★ **질의가 짚어 줬다** (이름으로 안 짚는다).
+        #   ★ `?model_hash_id=` 로 받았으니 ★ 이 쪽에 온 것은 ★ 그 차종이다
+        tkey = key_of.get(one.get("hash_id"))
+        if tkey:
+            row["target_key"] = tkey
         known = known_model_of((row.get("site_model") or "").split()[0]
                                if row.get("site_model") else None)
         if known:
             row["site_model_group"] = known
         raw_of[row["source_id"]] = one
         rows.append(row)
-    ours = [r for r in rows if r.get("site_model_group")]
+    ours = [r for r in rows if r.get("target_key") or r.get("site_model_group")]
     print(f"★ 우리 대상 — {len(ours)}건 / {len(rows)}건 "
-          f"({sorted({r['site_model_group'] for r in ours})})")
+          f"({sorted({r.get('target_key') or r.get('site_model_group')  for r in ours})})")
     if "--dry" in args:
         print("★ --dry 라 저장하지 않았다")
         return 0
@@ -128,8 +179,10 @@ def main() -> int:
     at = _now()
     run_id = f"revolt-{at[:19]}"
     # ★★ 목록은 ★ 쪽마다 한 파일이다 — ★ `page-{NNNN}.json` (마스터 지시)
-    for n, page in enumerate(pages, 1):
-        save_file(SITE_CODE, "list", None, f"{BASE}/cars/?page={n}",
+    for n, (bid, mid, pno, page) in enumerate(pages, 1):
+        save_file(SITE_CODE, "list", None,
+                  f"{BASE}/cars/?brand_hash_id={bid}"
+                  f"&model_hash_id={mid}&page={pno}",
                   json.dumps(page, ensure_ascii=False), at,
                   run_id=run_id, page=n, root=ROOT)
     print(f"★ 목록 {len(pages)}쪽을 파일로 남겼다 — "

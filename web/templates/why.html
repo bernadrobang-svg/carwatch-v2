@@ -113,6 +113,17 @@
 </div>
 {% endif %}
 
+<!-- ★★★★★ 09-01 — ★ 부록 G A-3 「막대는 비율을 그린다 (★ 추천 · **상세**)」.
+     ★ 상세에는 ★ **막대가 없었다** — ★ 숫자만 있었다.
+     ★ ★ 「489 / 675」를 ★ 눈으로 견주려면 ★ 사람이 나눗셈을 해야 했다.
+     ★★ 두 칸이다 — ★ `.got` 는 ★ **받은 점수**, ★ `.may` 는
+       ★ ★ **근거는 있는데 아직 안 받은 몫**이다 (확인율 − 받은 몫).
+       ★ ★ ★ 나머지 빈 자리가 ★ 「못 본 축」이다 (개정 298 I) -->
+<div class="pbar" title="받은 {{ v.earned | num }} · 근거 있는 축 {{ v.confirmed_points | num }} / 만점 {{ v.denominator | num }}">
+  <span class="got" style="width:{{ v.ratio_pct }}%"></span>
+  <span class="may" style="width:{{ v.confirm_extra_pct }}%"></span>
+</div>
+
 <p class="score">
   <strong>{{ v.earned | num }}</strong> / {{ v.denominator | num }}
   <span class="muted">분모는 늘 만점입니다.

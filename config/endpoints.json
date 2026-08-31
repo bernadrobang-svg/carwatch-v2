@@ -270,6 +270,8 @@
       "ev_info": "/cars/{source_id}/ev_info/"
     },
     "_왜 넣었나": "★ [실측 09-01] 마스터께서 주소를 주셨다.  ★ 전기차 전용 인증중고차(PRND · 헤이딜러와 같은 회사).  ★ 창구만 적어 둔다 — ★ 대상에 넣을지는 마스터께서 정하신다",
-    "_금지": "★ App-Os·App-Type·App-Version 헤더를 넣으면 500 이 난다.  ★ 넣지 마라"
+    "_금지": "★ App-Os·App-Type·App-Version 헤더를 넣으면 500 이 난다.  ★ 넣지 마라",
+    "brand_scope": "all",
+    "_brand_scope_why": "[실측 09-01] ★ `/customers/web/brands/` 가 ★ **브랜드 22 · 차종 93** 을 준다 (규격 `docs/REVOLT_API.md`) — ★ 한 브랜드 전용이 아니다.  ★ 우리 DB 의 `site_manufacturer` 도 6종이다 (테슬라 42 · 폭스바겐 4 · 제네시스 4 · 폴스타 3 · BMW 3 · 렉서스 1) — ★ ★ 그것은 ★ **우리가 좁혀 받아서**지 ★ 리볼트가 그만 판다는 뜻이 아니다"
   }
 }

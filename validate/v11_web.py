@@ -3880,7 +3880,13 @@ def _purchase_cost_checks(conn, rid):
     # ① 쓰는 사이트마다 구매비용 구성이 config 에 있는가
     bad = []
     for name, one in sorted(sites.items()):
-        if not isinstance(one, dict) or one.get("status") == "planned":
+        # ★★★★★ 09-01 — ★ `paused` 도 건너뛴다.  ★ **쉬는 사이트는 안 쓴다.**
+        #   ★ 마스터 확정 09-01 — 「★ 보배를 빼고 리볼트를 넣자」.
+        #   ★ ★ 보배는 `paused` 가 됐는데 ★ 여기서 ★ 「총액이 없다」로 걸렸다 —
+        #     ★ ★ **안 사는 사이트의 구매비용을 지어낼 수는 없다** (금지 6).
+        #     ★ ★ ★ 다시 켤 때 ★ 재서 넣는다 — ★ 그때 이 검사가 다시 잡는다
+        if not isinstance(one, dict) or one.get("status") in ("planned",
+                                                              "paused"):
             continue
         if not one.get("purchase_cost"):
             bad.append(f"{name} — sites.json 에 purchase_cost 가 없다")

@@ -140,7 +140,11 @@ def main() -> int:
     at = _now()
     # ★★ 쪽 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
     for _n, (_u, _b) in enumerate(pages, 1):
-        save_file(SITE_CODE, "listpage", None, _u, _b, at, page=_n, root=ROOT)
+        # ★★★★★ 09-01 — ★ 이름을 ★ `list` 로 맞춘다 (`S46-97`).
+        #   ★ `listpage` 는 ★ 나만 쓰던 이름이라
+        #   ★ ★ 「매물 봉투가 아니다」 목록에서 빠져
+        #   ★ ★ ★ 「source_id 가 비었다」로 20건이 걸렸다
+        save_file(SITE_CODE, "list", None, _u, _b, at, page=_n, root=ROOT)
     # ★ 목록에서 뽑은 줄은 ★ 매물마다 한 파일로.  ★ 줄을 **만드는 자리**는 `parse/` 다
     for sid, text in seen.items():
         save_file(SITE_CODE, "list", sid, cfg["base_url"],

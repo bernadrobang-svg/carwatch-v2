@@ -468,7 +468,36 @@ def volvo_detail(conn, write: bool) -> Counter:
     return got
 
 
-SITES = {"volvo_detail": volvo_detail,
+def lexus_detail(conn, write: bool) -> Counter:
+    """★★★★★ 09-01 (차례 3 · `V2-01`) — ★ 렉서스 상세를 ★ 다시 펼친다.
+
+    ★ 실측 09-01 — ★ 마지막 원문이 `ok` 인데 ★ `detail_status` 가
+      ★ `not_requested` 인 것이 ★ **49건**.  ★ 원문은 있는데 ★ 안 펼쳐져 있었다.
+    ★★ 사이트를 ★ **한 번도 안 두드린다** — ★ 저장해 둔 원문만 읽는다
+    """
+    from parse.lexus_certified.mapping import parse_detail
+    from store.core import upsert_core
+
+    at = _now()
+    got: Counter = Counter()
+    for lid, sid, blob in latest_details(conn, "lexus_certified"):
+        body = raw_body(blob)
+        deep = parse_detail(body, "lexus_certified", sid)
+        if not deep:
+            # ★ 「없는 차」도 200 을 준다 — ★ 200 으로 가르지 않는다 (규격 08-29)
+            got["★ 못 펼쳤다 (car_detail 이 없다)"] += 1
+            continue
+        got["★ 펼쳤다 (detail_status=ok)"] += 1
+        if write:
+            deep["listing_id"] = lid
+            deep["detail_status"] = "ok"
+            upsert_core(conn, deep, at)
+    if write:
+        conn.commit()
+    return got
+
+
+SITES = {"volvo_detail": volvo_detail, "lexus_detail": lexus_detail,
          "heydealer": heydealer, "kbchachacha": kbchachacha,
          "hyundai_cert": hyundai_cert, "reborncar": reborncar,
          "bmw_bps": bmw_bps, "kcar": kcar, "kb_record": kb_record,

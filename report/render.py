@@ -477,6 +477,12 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         confirmed_points=float(head[13] or 0),
         confirm_pct=(round(float(head[13] or 0) / float(head[3]) * 100, 1)
                      if head[3] else 0.0),
+        # ★ 부록 G A-3 막대 두 칸 — ★ 나눗셈은 여기서 한다 (`V11-04`)
+        ratio_pct=(round(float(head[4] or 0) / float(head[3]) * 100, 1)
+                   if head[3] else 0.0),
+        confirm_extra_pct=(max(0.0, round(
+            (float(head[13] or 0) - float(head[4] or 0))
+            / float(head[3]) * 100, 1)) if head[3] else 0.0),
         penalties=_penalty_rows(head[14]),
         penalty_total=sum(p["points"] for p in _penalty_rows(head[14])),
         # ★ 가점 (개정 380).  없으면 「배터리 진단 없음」을 낸다

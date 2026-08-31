@@ -180,6 +180,13 @@ class ScoreView:
     #   「안 받아서 0점」은 확인한 것이 아니다
     confirmed_points: float = 0.0
     confirm_pct: float = 0.0
+    # ★★★★★ 09-01 — ★ 부록 G A-3 「막대는 비율을 그린다 (추천 · **상세**)」.
+    #   ★ 상세에는 ★ **막대가 없었다** — ★ 「419 / 895」를 견주려면
+    #   ★ ★ 사람이 나눗셈을 해야 했다.  ★ 틀은 나눗셈을 못 한다 (`V11-04`)
+    #   ★ `ratio_pct` — ★ 받은 몫.  ★ `confirm_extra_pct` — ★ 근거는 있는데
+    #     ★ ★ 아직 못 받은 몫.  ★ 나머지 빈 자리가 ★ 「못 본 축」이다 (개정 298 I)
+    ratio_pct: float = 0.0
+    confirm_extra_pct: float = 0.0
     # 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다
     penalties: tuple = ()
     penalty_total: float = 0.0

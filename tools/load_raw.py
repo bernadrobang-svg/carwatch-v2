@@ -61,6 +61,71 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def query_target(site: str, url: str, root: str = ROOT) -> str | None:
+    """★★★★★ 09-01 — ★ **받을 때 쓴 질의가 차종을 말해 준다.**
+
+    ★ 자리 — ★ 파일에 남은 `url` 에 ★ `?model_hash_id=…` 가 들어 있다.
+      ★ ★ `targets.json` 의 `site_query.{site}` 를 ★ 거꾸로 뒤져 ★ 우리 키를 낸다
+    ★★ 까닭 — ★ 리볼트 목록 항목에는 ★ `model_hash_id` 가 ★ **없다** [실측 09-01].
+      ★ ★ 있는 것은 영문 `model_name` 뿐이라 ★ 이름을 옮기다 ★ 264/270건을 놓쳤다.
+      ★ ★ ★ **질의로 받았으면 ★ 옮길 것이 없다** — ★ 사이트가 이미 갈라 줬다
+    ★ 표에 없으면 ★ `None` 이다 — ★ **짐작으로 짓지 않는다** (금지 6)
+    """
+    if not url:
+        return None
+    from urllib.parse import parse_qs, urlparse
+
+    q = parse_qs(urlparse(url).query)
+    if not q:
+        return None
+    with open(os.path.join(root, "config", "targets.json"),
+              encoding="utf-8") as f:
+        rows = json.load(f)
+    for tkey, spec in rows.items():
+        if tkey.startswith("_") or not isinstance(spec, dict):
+            continue
+        want = (spec.get("site_query") or {}).get(site)
+        if not isinstance(want, dict):
+            continue
+        hit = False
+        for name, val in want.items():
+            if name.startswith("_") or name not in q:
+                continue
+            allowed = {str(x) for x in
+                       (val if isinstance(val, list) else [val])}
+            if set(q[name]) & allowed:
+                hit = True
+        if hit:
+            return tkey
+    return None
+
+
+def body_target(site: str, env: dict, root: str = ROOT) -> str | None:
+    """★★★★★ 09-01 — ★ **상세 본문의 열쇠**로 차종을 짚는다.
+
+    ★ 규격 `docs/REVOLT_API.md` 100줄 —
+      ★ 「차종 이름은 `car_info.brand_name` ＋ `model_name` ＋ `model_hash_id` 다」
+    ★★ 상세에는 ★ 질의가 없다 — ★ 목록은 `?model_hash_id=` 로 갈랐지만
+      ★ ★ 상세 URL 은 `/cars/{hash_id}/` 라 ★ 열쇠가 안 붙는다.
+      ★ ★ ★ 그래서 ★ **본문에서 읽는다** — ★ 이름을 옮기지 않는다
+    ★ 표에 없으면 ★ `None` 이다 (금지 6)
+    """
+    body = env.get("body")
+    if not body:
+        return None
+    try:
+        got = json.loads(body)
+    except (ValueError, TypeError):
+        return None
+    if not isinstance(got, dict):
+        return None
+    info = got.get("car_info") if isinstance(got.get("car_info"), dict) else got
+    mid = info.get("model_hash_id")
+    if not mid:
+        return None
+    return query_target(site, f"?model_hash_id={mid}", root)
+
+
 def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
     """봉투 하나 → (core 줄들, 이력, 판).  ★ 목록이면 여러 줄이 나온다.
 
@@ -197,17 +262,41 @@ def main() -> int:
                       http_code=int(env.get("http_code") or 200))
         rows, rec, pan = _rows_from(site, env, mod, spec)
         for row in rows:
+            # ★★★★★ 09-01 — ★ **열쇠를 먼저 본다** (이름보다 앞선다).
+            #   ★ 목록 — ★ 받을 때 쓴 질의(`?model_hash_id=`)가 말해 준다
+            #   ★ 상세 — ★ 본문 `car_info.model_hash_id` 가 말해 준다 (규격 100줄)
+            #   ★★ 실측 09-01 — ★ 전에는 ★ 이름(`known_model_of`)이 먼저라
+            #     ★ ★ 「ID.4」·「iX3」처럼 ★ **이름이 걸리는 것은 열쇠를 안 봤다**.
+            #     ★ ★ ★ 그래서 ★ 7건이 ★ 차종 없이 남았다
+            by_q = (query_target(site, env.get("url") or "")
+                    or body_target(site, env))
+            if by_q:
+                row["target_key"] = by_q
             known = known_model_of((row.get("site_model") or "").split()[0]
                                    if row.get("site_model") else None)
             if known:
                 row["site_model_group"] = known
-            elif env.get("endpoint") == "list":
+            elif not by_q and env.get("endpoint") == "list":
                 # ★ 우리 차종이 아니다 — ★ **원문은 남고** ★ core 에만 안 넣는다
                 got["  차종을 못 짚음"] += 1
                 continue
+            if env.get("endpoint") == "detail":
+                # ★★★★★ 09-01 — ★ **상세를 넣었으면 ★ 「받았다」고 적는다** (`V2-01`).
+                #   ★ 목록에서 온 줄은 ★ `not_requested` 를 달고 온다 —
+                #   ★ ★ 상세를 파싱해 행을 냈으면 ★ 그것은 ★ 더는 사실이 아니다.
+                #   ★★ 실측 09-01 — ★ 볼보 148 · 렉서스 49 가
+                #     ★ ★ 상세 봉투는 `ok` 인데 ★ 칸은 `not_requested` 였다
+                row["detail_status"] = "ok"
             row["listing_id"] = resolve_listing_id(
                 conn, site, row["source_id"], at)
-            fill_target_key(site, row)
+            if not row.get("target_key"):
+                fill_target_key(site, row)
+            if not row.get("target_key"):
+                # ★★★★★ 09-01 — ★ **「못 짚었다」를 ★ 「없다」로 저장하지 않는다**
+                #   ★ (금지 12).  ★ 키를 빼면 ★ `upsert_core` 가 ★ 그 칸을 안 건드린다
+                #   ★★ 실측 09-01 — ★ 옛 전량 목록 파일이 ★ 뒤에 와서
+                #     ★ ★ 질의로 짚어 둔 `ID4_EV`·`IX3_EV` 7건을 ★ **다시 비웠다**
+                row.pop("target_key", None)
             upsert_core(conn, split_pii(conn, row, site, key, at), at)
             got["  넣음"] += 1
             if rec:

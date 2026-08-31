@@ -455,6 +455,17 @@
     ],
     "_spec": "docs/REVOLT_API.md",
     "_why": "★★★★★ 09-01 마스터 확정 — 「★ 보배를 빼고 여기 것 쓰자 ★ 지금 우선 작업으로」.  ★ 전기차 전용 인증중고차 (PRND — ★ 헤이딜러와 같은 회사).  ★ 실측 09-01 — ★ 매물 **270건** · ★ 전건 전기·수소 · ★ 전건 무사고 · ★ 차량번호를 줘서 ★ 짝(`plate_hash`)이 바로 생긴다",
-    "_warranty_note": "★ 사이트 검증은 ★ `merchandise_type: 'certified'` 다 — ★ 배점은 `f-table` 5장이 정한다.  ★ 여기서 점수를 매기지 않는다"
+    "_warranty_note": "★ 사이트 검증은 ★ `merchandise_type: 'certified'` 다 — ★ 배점은 `f-table` 5장이 정한다.  ★ 여기서 점수를 매기지 않는다",
+    "purchase_cost": {
+      "_ref": "8장 · 개정 353 「예상 구매비용은 사이트별로」",
+      "_note": "★★ 리볼트는 ★ **총액을 직접 준다** — ★ 상세의 `purchase_cost.total` 이다.  ★ 받아서 쓴다 · ★ 우리가 계산하지 않는다 (개정 353 [원문]).  ★★ 아래 금액은 ★ 사이트 총액을 못 받았을 때만 쓰는 대체값이다",
+      "_measured": "[실측 09-01 · 상세 6건] ★ `total` = `car_price` ＋ `registration_cost` 다.  3,290＋158=3,448 · 5,290＋304=5,594 · 3,530＋175=3,705 · 6,990＋431=7,421 · 7,290＋454=7,744 · 4,290＋231=4,521 (만원).  ★★ `green_car_acquisition_tax_discount` 140 은 ★ **빼지 않는다** — ★ 여섯 건 다 140 이고 ★ 합에 안 들어가 있다.  ★ 안내 문구다",
+      "total_from_site": true,
+      "transfer_fee_rule": "acquisition",
+      "warranty_fee": 0,
+      "etc_fee": 0,
+      "delivery_fee": 0,
+      "extra_benefit": []
+    }
   }
 }

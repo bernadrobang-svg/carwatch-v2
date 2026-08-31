@@ -779,6 +779,10 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 개정 298 로 분모는 늘 만점이다 — 짧으면 그것 자체가 사고다
         denom_short=bool(denom and denom < _total_points()),
         confirmed_points=_confirm[0], confirm_pct=round(_confirm[1] * 100, 1),
+        # ★ 막대 둘째 칸 — ★ 음수가 되지 않게 0 에서 자른다 (부록 G A-3)
+        confirm_extra_pct=max(0.0, round(
+            _confirm[1] * 100
+            - (g_earned / g_base * 100 if g_base else 0), 1)),
         # ★ 값을 누르면 그 조건으로 걸러진다 (부록 G).  없으면 링크를 안 만든다
         price_bucket_won=_bucket(price, _view_int("price_bucket_won", root)),
         mileage_bucket_km=_bucket(km, _view_int("mileage_bucket_km", root)),
@@ -3774,6 +3778,18 @@ RECOMMEND_AXES: tuple = ("value.budget", "value.mileage", "state.year",
 RECOMMEND_TABS: tuple = ("1", "2", "3")
 
 
+def _active_targets(root: str = ".") -> list:
+    """★★★★★ 09-01 마스터 지시 — ★ **고르신 차종**만 (`targets.json` `active`).
+
+    ★ 정본은 `config/targets.json` 이다 — ★ 코드에 차종을 박지 않는다 (`S14` · 금지 6)
+    ★ 비어 있으면 ★ 빈 목록이다 — ★ 그때는 ★ 좁히지 않는다 (다 지워 버리지 않는다)
+    """
+    got = load_config(f"{root}/config/targets.json") or {}
+    return sorted(k for k, v in got.items()
+                  if not k.startswith("_") and isinstance(v, dict)
+                  and v.get("active"))
+
+
 def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                         calc_version: str, flt: ListingFilter,
                         tab: str = "1", root: str = ".",
@@ -3801,12 +3817,29 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                              empty_note="아직 정하지 않았습니다", title="")
 
     where, args = _listings_where(flt)
+    # ★★★★★ 09-01 마스터 지시 — 「★ 추천 화면에서 ★ 내가 고르지 않은 차들을
+    #   ★ 보게 하는 거지?  ★ **내가 고른 차종만 보이게 지금 당장 바꿔**」
+    #   ★★ 실측 09-01 — ★ 화면에 24가지가 들었고 ★ 그중 15가지 · **3,660건**이
+    #     ★ ★ 고르신 열셋 밖이었다 (G80_25T 1,412 · GLC 676 · 차종 미정 200 …).
+    #   ★★ 정본은 ★ `config/targets.json` 의 `active` 다 — ★ 코드에 안 박는다 (S14).
+    #     ★ ★ **지우지 않는다** — ★ `/listings` 는 그대로 다 본다.
+    #     ★ ★ ★ 추천에서만 ★ 고르신 것으로 좁힌다
+    picked = _active_targets(root)
+    # ★ 화면에 낼 이름은 ★ `targets.json` 의 `label` 이다 (「G80 2.5T」) —
+    #   ★ 열쇠(`G80_25T`)를 그대로 내면 ★ 사람이 읽는 이름이 아니다
+    names = {k: (v.get("label") or k)
+             for k, v in (load_config(f"{root}/config/targets.json")
+                          or {}).items()
+             if not k.startswith("_") and isinstance(v, dict)}
+    if picked:
+        where = [*where, "l.target_key IN (" + ",".join("?" * len(picked)) + ")"]
+        args = [*args, *picked]
     marks = ",".join("?" * len(RECOMMEND_AXES))
     sql = (
         "SELECT l.listing_id, l.target_key,"
         " l.trim_badge, l.year_month, l.mileage_km, l.color_ext_raw,"
         " l.price_current_won, l.site, s.grade, l.color_int_raw,"
-        " l.photo_list_json,"
+        " l.photo_list_json, l.source_id, l.sell_type,"
         " SUM(a.value) AS got, SUM(a.max_points) AS full"
         " FROM core_listing l"
         " JOIN result_axis a ON a.listing_id = l.listing_id"
@@ -3824,6 +3857,24 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     per = _recommend_axes(conn, calc_version, [r[0] for r in rows])
     labels = _labels(root)
     sites = _site_labels(root)
+    # ★★★★★ 09-01 — ★ `V11-69` · `V11-120`.  ★ `/listings` 가 쓰는 것을 그대로 쓴다
+    # ★ 원문 주소 틀은 ★ `web.json` 의 `site_detail_url` 이다 — ★ `sites.json` 이 아니다
+    site_tpl = _site_detail_urls(root)
+    site_cfg = load_config(f"{root}/config/sites.json") or {}
+    fin_cfg = load_config(f"{root}/config/finance.json") or {}
+
+    def _buy(site, price, tkey):
+        from report.finance import purchase_cost
+        return purchase_cost(site, price, fin_cfg, site_cfg, tkey)
+
+    def _buy_of(site, price, tkey):
+        got = _buy(site, price, tkey)
+        return got.total_won if got else None
+
+    def _buy_est(site, price, tkey):
+        got = _buy(site, price, tkey)
+        return bool(got and got.estimated)
+
     # ★ 시안 — ★ 「등급 C · **등급은 안 봅니다**」.  ★ 무엇이 「낮은가」는 config 다
     cuts = load_config(f"{root}/config/scoring.json").get("grade_cuts") or {}
     top = [g for g, _v in sorted(cuts.items(), key=lambda kv: -float(kv[1]))][:3]
@@ -3831,11 +3882,12 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     for r in rows:
         lid = r[0]
         # ★ 시안은 ★ **정수**다 — 「271 / 297」·「예산 89/95」 (브라우저로 대조 09-01)
-        got = round(float(r[11] or 0))
-        full = round(float(r[12] or 0))
+        got = round(float(r[13] or 0))
+        full = round(float(r[14] or 0))
         out.append(RecommendRow(
             listing_id=lid,
-            target_label=str(labels.get(r[1]) or r[1] or "차종 미정"),
+            target_label=str(names.get(r[1]) or labels.get(r[1])
+                             or r[1] or "차종 미정"),
             trim=r[2], year_month=r[3], mileage_km=r[4], color_ext=r[5],
             price_won=r[6], site=r[7], grade=r[8],
             got=got, full=full,
@@ -3849,21 +3901,34 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                 sites.get(r[7], r[7])) if x),
             photo_url=_first_photo(r[10], root),
             ignored=bool(r[8]) and r[8] not in top,
+            # ★★★★★ 09-01 — ★ `V11-69`.  ★ `/listings` 와 ★ **같은 부품**을 쓴다.
+            #   ★ 원문 문은 ★ 그 매물의 사이트로 간다 (S46-94) —
+            #   ★ ★ 못 잰 사이트는 ★ **안 낸다.**  ★ 지어내지 않는다
+            site_badge=site_badge(r[7], r[12], root),
+            encar_url=_source_url(r[7], r[11], site_tpl),
+            # ★ 「그 사이트에서 사면 얼마를 내는가」 (개정 353 · `V11-120`)
+            total_cost_won=(_buy_of(r[7], r[6], r[1]) or None),
+            buy_estimated=_buy_est(r[7], r[6], r[1]),
             axes=per.get(lid, ())))
     # ★ 화면에 든 전건 — ★ 거르개는 `s.` 를 쓰므로 ★ 같은 이음을 걸어야 한다
+    # ★ 「N건 중」도 ★ **같은 잣대**로 센다 — ★ 안 그러면 화면이 거짓말을 한다
     total = conn.execute(
         "SELECT COUNT(*) FROM core_listing l"
         " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         " WHERE " + " AND ".join(where), args).fetchone()[0]
     full = sum(x.full for x in (out[0].axes if out else ())) if out else 0
     # ★ 시안 `.rc-head` — 「차종 13종」.  ★ 정본은 `config/targets.json` 이다
-    tg = load_config(f"{root}/config/targets.json") or {}
-    targets = sum(1 for k, v in tg.items()
-                  if not k.startswith("_") and isinstance(v, dict)
-                  and v.get("active"))
+    targets = len(picked)
     return RecommendView(tab=tab, rows=out, total=total,
                          axes=RECOMMEND_AXES, full=round(full, 1),
                          empty_note=None, title="내 기준에 가까운 차",
+                         # ★★★★★ 09-01 — ★ `V11-69` 정렬.  ★ 지금은 ★ 규격이 정한
+                         #   ★ 「합이 높은 차례 · 같으면 싼 차가 앞」 하나뿐이다.
+                         #   ★★ **없는 차례를 지어내지 않는다** (금지 6) —
+                         #     ★ ★ 있는 것을 ★ 적어 보여 줄 뿐이다
+                         orders=({"key": "score", "label":
+                                  "합이 높은 차례 (같으면 싼 차가 앞)",
+                                  "on": True},),
                          targets=targets)
 
 

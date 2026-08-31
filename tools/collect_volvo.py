@@ -168,7 +168,11 @@ def main() -> int:
     # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
     #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
     for _n, (_u, _b) in enumerate(pages, 1):
-        save_file(SITE_CODE, "listpage", None, _u, _b, at, page=_n, root=ROOT)
+        # ★★★★★ 09-01 — ★ 이름을 ★ `list` 로 맞춘다 (`S46-97`).
+        #   ★ `listpage` 는 ★ 나만 쓰던 이름이라
+        #   ★ ★ 「매물 봉투가 아니다」 목록에서 빠져
+        #   ★ ★ ★ 「source_id 가 비었다」로 20건이 걸렸다
+        save_file(SITE_CODE, "list", None, _u, _b, at, page=_n, root=ROOT)
     # ★★ 목록에서 뽑은 줄은 ★ 매물마다 한 파일로 남긴다 —
     #   ★ 볼보 목록은 ★ 매물번호와 슬러그만 준다 (나머지는 상세가 준다).
     #   ★ ★ 줄을 **만드는 자리**는 ★ `parse/volvo_selekt/mapping.py` 다 (여기가 아니다)

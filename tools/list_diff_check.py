@@ -36,6 +36,29 @@ from store.rawfile import read, walk  # noqa: E402
 SLEEP = 1.2
 
 
+def _bot_wall(site: str, body) -> bool:
+    """★★★★★ 09-01 — ★ 이 봉투가 ★ **봇 차단**인가.
+
+    ★ 사이트 어댑터가 ★ `is_bot_wall` 을 가지고 있으면 ★ 그것에 묻는다.
+      ★ ★ 없으면 ★ **거짓**이다 — ★ 「모르니 차단이다」로 넘겨짚지 않는다.
+    ★★ 까닭 — ★ 실측 09-01.  ★ KB 상세가 ★ 200 · 1,382B
+      ★ 「로봇여부 확인 | KB차차차」로 왔는데 ★ 파서가 `None` 을 내
+      ★ ★ 그것을 ★ 「없는 차」로 읽어 ★ **23건을 죽였다** (`V2-01` 이 잡았다)
+    """
+    import importlib
+
+    try:
+        ad = importlib.import_module(f"adapters.{site}")
+    except ModuleNotFoundError:
+        return False
+    fn = getattr(ad, "is_bot_wall", None)
+    if fn is None:
+        return False
+    text = body.decode("utf-8", "replace") if isinstance(body, bytes) else body
+    cfg = getattr(ad, "load_config", None)
+    return bool(fn(text, cfg(ROOT) if cfg else None))
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -119,6 +142,17 @@ def main() -> int:
         if body is None:
             # ★ 못 받았다 — ★ 「없다」가 아니다.  ★ 잇달아 사흘이면 unreachable
             got["못 받음 (안 죽인다)"] += 1
+            time.sleep(SLEEP * 2)
+            continue
+        # ★★★★★ 09-01 — ★ **차단 페이지를 「없다」로 읽지 않는다.**
+        #   ★ 실측 09-01 — ★ KB 매물 23건이 ★ 200 · 1,382B
+        #     ★ 「로봇여부 확인 | KB차차차」를 받고 ★ **죽었다.**
+        #   ★★ ★ 파서가 `None` 을 돌려준 까닭이 ★ 「없는 차」인지 ★ 「못 받았다」인지
+        #     ★ ★ 갈라야 한다 — ★ 안 가르면 ★ 살아 있는 차를 죽인다 (74대 오살과 같은 꼴).
+        #   ★ ★ ★ 판정은 ★ 사이트 어댑터 하나에 둔다 (`is_bot_wall`) —
+        #     ★ ★ 부르는 쪽마다 다르게 세면 ★ 샌다
+        if _bot_wall(site, body):
+            got["★ 차단 페이지 (못 받았다 · 안 죽인다)"] += 1
             time.sleep(SLEEP * 2)
             continue
         deep = mod.parse_detail(body, site, sid) if body else None

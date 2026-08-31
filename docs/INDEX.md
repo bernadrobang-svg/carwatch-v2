@@ -9,21 +9,20 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 50,219줄 · 3,447KB**
+**131파일 · 49,418줄 · 3,383KB**
 
-★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,163줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
-- UI_REVIEW.md 1,992줄
+- UI_REVIEW.md 1,979줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,274줄
+- guide/03_이력.md 1,258줄
 - guide/05_가이드역할.md 1,817줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
-- chapters/30-score/f-table.md 2,833줄
+- chapters/30-score/f-table.md 2,727줄
 - chapters/11-store/a-key.md 895줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
@@ -31,12 +30,12 @@
 | 파일 | 줄 | KB |
 |---|--:|--:|
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
-| `BMW_BPS_API.md` | 349 | 17 |
+| `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,163 | 144 |
+| `CHECKS.md` | 674 | 109 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
-| `ENCAR_API.md` | 491 | 22 |
+| `ENCAR_API.md` | 398 | 17 |
 | `ENCAR_ROBOTS.md` | 253 | 12 |
 | `HEYDEALER_API.md` | 702 | 35 |
 | `HYUNDAI_CERTIFIED_API.md` | 589 | 29 |
@@ -49,14 +48,14 @@
 | `OPTION_CATALOG.md` | 298 | 15 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
-| `RECOMMEND_SCREEN.md` | 185 | 9 |
+| `RECOMMEND_SCREEN.md` | 140 | 6 |
 | `REVOLT_API.md` | 197 | 10 |
 | `ROADMAP_20260830.md` | 128 | 5 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 732 | 55 |
+| `SOURCE.md` | 738 | 56 |
 | `TARGET_KEY_MAP.md` | 406 | 21 |
-| `UI_REVIEW.md`  ★ | 1,992 | 99 |
+| `UI_REVIEW.md`  ★ | 1,979 | 98 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -85,7 +84,7 @@
 | `chapters/30-score/c-spec.md` | 145 | 5 |
 | `chapters/30-score/d-history.md` | 373 | 12 |
 | `chapters/30-score/e-etc.md` | 233 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 2,833 | 139 |
+| `chapters/30-score/f-table.md`  ★ | 2,727 | 132 |
 | `chapters/30-score/g-absolute.md` | 150 | 5 |
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
@@ -120,12 +119,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,274 | 915 |
+| `guide/03_이력.md`  ★ | 1,258 | 905 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,817 | 95 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 637 | 254 |
+| `guide/06_오판대장.md` | 635 | 252 |
 | `guide/07_밀린일대장.md` | 492 | 37 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
