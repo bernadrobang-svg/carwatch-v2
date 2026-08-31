@@ -3332,6 +3332,10 @@ def s46_142_site_count_matches():
             if not m:
                 continue
             # ★ 「그 밖 N」·「나머지 N」은 ★ 이미 뺀 수다 — 걸지 않는다
+            # ★ 09-02 — ★ 「아홉 사이트」는 ★ 잣대 이름이다 (엔카를 뺀 아홉).
+            #   ★ 사이트 수가 아니다 — ★ 마스터께서 그 말로 잣대 ①을 부르신다
+            if m.group(1) == "아홉":
+                continue
             if _re.search(r"(그 밖|나머지|빼면|제외)\s*★?\s*" + m.group(1), ln):
                 continue
             said = words[m.group(1)]
@@ -3758,8 +3762,14 @@ def s46_152_dev_rounds_read():
     import os as _os
     import re as _re
 
-    recs = sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")),
-                  key=_os.path.getmtime)
+    # ★ 09-02 — ★ getmtime 은 ★ git rebase 가 옛 파일을 새로 만들면 뒤집힌다.
+    #   ★ 실측 — v327 이 있는데 ★ v228 을 마지막이라 했다.  ★ 이름(날짜＋회차)으로 센다
+    def _key(f):
+        b = _os.path.basename(f)
+        mm = _re.search(r"_v(\d+)", b)
+        return (b[:8], int(mm.group(1)) if mm else 0)
+
+    recs = sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")), key=_key)
     if not recs:
         return True, "개발 기록이 없다"
     last = _os.path.basename(recs[-1])
@@ -3907,8 +3917,14 @@ def s46_164_dev_pending_answered():
     import os as _os
     import re as _re
 
-    recs = sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")),
-                  key=_os.path.getmtime)
+    # ★ 09-02 — ★ getmtime 은 ★ git rebase 가 옛 파일을 새로 만들면 뒤집힌다.
+    #   ★ 실측 — v327 이 있는데 ★ v228 을 마지막이라 했다.  ★ 이름(날짜＋회차)으로 센다
+    def _key(f):
+        b = _os.path.basename(f)
+        mm = _re.search(r"_v(\d+)", b)
+        return (b[:8], int(mm.group(1)) if mm else 0)
+
+    recs = sorted(_g.glob(str(ROOT / "outputs" / "2026*_v*.md")), key=_key)
     if not recs:
         return True, "개발 기록이 없다"
     body = _read(ROOT / recs[-1][len(str(ROOT)) + 1:])

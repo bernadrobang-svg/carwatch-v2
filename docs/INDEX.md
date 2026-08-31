@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 50,655줄 · 3,481KB**
+**131파일 · 50,657줄 · 3,483KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -18,7 +18,7 @@
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,036줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,292줄
+- guide/03_이력.md 1,294줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -49,7 +49,7 @@
 | `OPTION_CATALOG.md` | 298 | 15 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
-| `RECOMMEND_SCREEN.md` | 487 | 23 |
+| `RECOMMEND_SCREEN.md` | 487 | 24 |
 | `REVOLT_API.md` | 217 | 11 |
 | `ROADMAP_20260830.md` | 128 | 5 |
 | `SCHEMA.md` | 112 | 5 |
@@ -120,7 +120,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,292 | 927 |
+| `guide/03_이력.md`  ★ | 1,294 | 928 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
