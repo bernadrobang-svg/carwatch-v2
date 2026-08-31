@@ -421,6 +421,52 @@
         "collect_group": "multi",
         "target_key": "X3_IMPORT"
       }
+    },
+    "revolt": {
+      "_field": "★ `car_info.model_name` (영문).  ★ 개발측이 표본 270건에서 60가지를 다 세었다 [실측 09-01]",
+      "_rule": "★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
+      "Model Y": {
+        "collect_group": "ev",
+        "target_key": "MODEL_Y"
+      },
+      "Model Y Juniper": {
+        "collect_group": "ev",
+        "target_key": "MODEL_Y",
+        "_왜": "★ 신형이다.  ★ 같은 차종으로 본다 — ★ 마스터께서 모델 Y 를 넣으셨다"
+      },
+      "ID.4": {
+        "collect_group": "ev",
+        "target_key": "ID4_EV"
+      },
+      "ID.5": {
+        "collect_group": "ev",
+        "target_key": "ID5_EV"
+      },
+      "iX3": {
+        "collect_group": "ev",
+        "target_key": "IX3_EV"
+      },
+      "Polestar 4": {
+        "collect_group": "ev",
+        "target_key": "POLESTAR4_EV"
+      },
+      "Electrified GV70": {
+        "collect_group": "ev",
+        "target_key": "GV70_EV"
+      },
+      "EV4": {
+        "collect_group": "ev",
+        "target_key": "EV4_EV"
+      },
+      "XC40 Recharge": {
+        "collect_group": "ev",
+        "target_key": "XC40_EV"
+      },
+      "C40 Recharge": {
+        "collect_group": "ev",
+        "target_key": "C40_EV"
+      },
+      "_안 넣은 것": "★ RAY EV 26 · e-tron 14 · SEALION 7 12 · Model 3 Highland 11 · IONIQ 5 10 · NEXO 9 · EV6 8 · Torres EVX 8 · Q4 e-tron 7 · EV9 7 · Model 3 7 · CASPER Electric 6 · IONIQ 6 6 · Bongo Ⅲ EV 5 · i5 5 · Taycan 5 … ★ 우리 대상 열넷에 없다.  ★ 마스터께서 넣으시면 그때 더한다"
     }
   },
   "_pending": {

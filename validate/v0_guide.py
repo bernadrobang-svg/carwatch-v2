@@ -4707,7 +4707,7 @@ def s46_206_pdf_link_only():
     return True, "PDF 는 링크만 건다"
 
 
-def s46_207_commit_title_says_measured():
+def _retired_s46_207_says_measured():   # ★ 09-01 물린다 — ★ 가이드 것(says_fact)이 정본이다
     """S46-207 — ★ 가이드 커밋 제목이 ★ 사실을 말하는가 (가이드 지적 09-01).
 
     ★ 마스터께서 커밋 46건의 제목을 세셨다 — ★ 「쟀다·세었다」 꼴이 ★ 4% 뿐이었다.
@@ -4815,8 +4815,6 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
-    ("S46-207", "커밋 제목이 사실을 말하는가",
-     s46_207_commit_title_says_measured),
     ("S46-207", "커밋 제목이 사실을 말하는가",
      s46_207_commit_title_says_fact),
     ("S46-206", "PDF 를 받아 두라 하지 않는가", s46_206_pdf_link_only),
