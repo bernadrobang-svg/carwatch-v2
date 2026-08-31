@@ -63,8 +63,20 @@ def _has_option(ctx: AxisContext, comp: str):
     #   ★ `[]`  — ★ 읽었는데 ★ 하나도 없었다 → ★ **0점이 맞다** (확인한 0 이다)
     #   ★ 실측 09-02 — ★ 내가 이 둘을 뭉개서 ★ `test_score` 가 깨졌다
     s = ctx.snapshot
-    if s.options_standard is None and s.options_choice is None:
+    absent = getattr(s, "options_absent", None)
+    if (s.options_standard is None and s.options_choice is None
+            and not absent):
         return None
+    if absent:
+        # ★★★★★ 09-02 가이드 확정 — ★ 사이트가 ★ **「이 차엔 없다」고 밝혔다**.
+        #   ★ 점수는 ★ 그대로 0 이되 ★ **확인한 0** 이다 — ★ 미확인이 아니다
+        table_ = _match_table(ctx).get(AXIS_KEY.get(comp) or comp)
+        want_ = [_norm(x) for x in ((table_ or {}).get("names") or ())
+                 if _norm(x)]
+        for one in absent:
+            k = _norm(one)
+            if k and want_ and any(w in k or k in w for w in want_):
+                return False
     got = _installed(ctx)
     table = _match_table(ctx).get(AXIS_KEY.get(comp) or comp)
     if not got:

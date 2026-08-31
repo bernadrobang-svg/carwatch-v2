@@ -57,6 +57,10 @@ CREATE TABLE IF NOT EXISTS core_listing (
   warranty_deemed        TEXT,
   -- 옵션.  '[]' 와 NULL 을 구분한다 (STEP 32)
   options_standard_json  TEXT,
+  -- ★★★★★ 09-02 가이드 확정 (`11-store/a-key.md`) — ★ 「없음」과 「모름」은 다르다.
+  --   ★ 사이트가 ★ **「이 차엔 없다」고 밝힌 것만** 넣는다 (KB `disable`).
+  --   ★ ★ 안 준 것은 ★ `NULL` 이다 — ★ 셋을 가른다 (`S46-227`)
+  options_absent_json    TEXT,
   options_choice_json    TEXT,
   options_etc_json       TEXT,
   options_tuning_json    TEXT,

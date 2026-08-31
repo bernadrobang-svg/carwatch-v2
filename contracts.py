@@ -156,6 +156,11 @@ class ListingSnapshot:
     first_registration_date: date | None
     options_standard: list[str] | None
     options_choice: list[str] | None
+    # ★★★★★ 09-02 가이드 확정 (`11-store/a-key.md`) — ★ 「없음」과 「모름」은 다르다.
+    #   ★ 사이트가 ★ **「이 차엔 없다」고 밝힌 것**이다 (KB `disable`).
+    #   ★ ★ 점수는 그대로 0 이되 ★ **확인율에는 든다**
+    #   ★ 기본값을 주면 ★ 뒤 칸이 다 기본값이어야 한다 — ★ 그래서 ★ 여기서는 안 준다
+    options_absent: list[str] | None
     inspection_panels: list[dict] | None  # outers 원문 배열
     # ── E등급 절대조건 필드는 dict 에 숨기지 않고 명시한다 (7장 STEP 82) ──
     flood_total_cnt: int | None
@@ -417,6 +422,7 @@ FIELD_SHAPES: dict[str, str] = {
     #   "not json" 이 통과한다 (불변식 ④ · C-5)
     "options_choice_json": "json",
     "options_standard_json": "json",
+    "options_absent_json": "json",
     "options_etc_json": "json",
     "options_tuning_json": "json",
     "usage_change_types_json": "json",

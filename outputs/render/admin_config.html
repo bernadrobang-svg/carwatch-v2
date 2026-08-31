@@ -2113,6 +2113,23 @@
 </tr>
 
 <tr>
+  <td class="runid" data-label="키">axis_rules.value.market_unknown_ratio</td>
+  <td class="num" data-label="현재 값">0.8</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.value.market_unknown_ratio">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
   <td class="runid" data-label="키">axis_rules.state.accident_curve</td>
   <td class="num" data-label="현재 값">[[0, 51], [1, 28], [2, 13], [3, 0]]</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
@@ -2513,6 +2530,23 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="axis_rules.state.worse_of_inspection">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">axis_rules.state.leak_ev_full</td>
+  <td class="num" data-label="현재 값">True</td>
+  <td class="muted" data-label="형">bool</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="axis_rules.state.leak_ev_full">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -4202,7 +4236,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260831T161249</span>
-  <span>2026-09-01 06:41</span>
+  <span>2026-09-01 06:59</span>
 </footer>
 
 </body>

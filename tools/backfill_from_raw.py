@@ -529,9 +529,8 @@ def kb_detail(conn, write: bool) -> Counter:
         if write:
             deep["listing_id"] = lid
             deep["detail_status"] = "ok"
-            # ★ DDL 에 없는 칸은 ★ 안 보낸다 — ★ 규격에 없는 칸을 만들지 않는다.
-            #   ★ 「없는 옵션」은 ★ 회차 기록에 적고 ★ 가이드께 여쭙는다
-            deep.pop("options_absent_json", None)
+            # ★★★★★ 09-02 가이드 확정 — ★ **칸을 줬다** (`11-store/a-key.md`).
+            #   ★ 「사이트가 없다고 밝혔다」와 ★ 「안 줬다」를 ★ 가른다
             upsert_core(conn, deep, at)
     # ★★★★★ 09-02 (로드맵 차례 4) — ★ **점검표를 다시 펼친다.**
     #   ★ 사이트를 안 두드린다 — ★ 저장해 둔 원문만 읽는다.

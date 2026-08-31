@@ -4604,6 +4604,57 @@ def s46_202_no_raw_template_tags():
     return True, "「안 풀린 틀 문법」 금지가 규격에 있다"
 
 
+def s46_227_absent_only_declared():
+    """S46-227 — ★ `options_absent_json` 에 ★ **안 준 것**이 들어 있지 않은가.
+
+    ★ 가이드 확정 09-02 (`11-store/a-key.md`) —
+      ★ 「★ **사이트가 「없다」고 밝힌 것만** 넣는다 · ★ **안 준 것을 넣지 마라** —
+        ★ 그것은 `NULL` 이다」
+    ★★ 잣대 셋 — ① 빈 목록을 넣지 않았나 (그것은 `NULL` 이어야 한다)
+      ② 있다(`standard`)와 없다(`absent`)에 ★ **같은 것이 겹치지 않나**
+      ③ 셋이 갈리나 — 있다 · 없다고 밝혔다 · 둘 다 NULL(안 줬다)
+    """
+    import json as _j
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    rows = conn.execute(
+        "SELECT listing_id, options_standard_json, options_absent_json"
+        " FROM core_listing WHERE options_absent_json IS NOT NULL").fetchall()
+    if not rows:
+        return True, "「없다고 밝힌 것」이 아직 없다 — 잴 것이 없다"
+    empty, overlap = 0, 0
+    for _lid, std, ab in rows:
+        try:
+            miss = _j.loads(ab) or []
+        except (ValueError, TypeError):
+            return False, "★ `options_absent_json` 이 JSON 이 아니다"
+        if not miss:
+            empty += 1          # ★ 빈 목록 — ★ 「안 줬다」는 NULL 이어야 한다
+            continue
+        try:
+            have = set(_j.loads(std) or []) if std else set()
+        except (ValueError, TypeError):
+            have = set()
+        if have & set(miss):
+            overlap += 1        # ★ 있다와 없다에 ★ 같은 것이 들었다
+    bad = []
+    if empty:
+        bad.append(f"빈 목록 {empty}건 — 「안 줬다」는 NULL 이다")
+    if overlap:
+        bad.append(f"있다·없다가 겹치는 매물 {overlap}건")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    n_null = conn.execute(
+        "SELECT COUNT(*) FROM core_listing"
+        " WHERE options_standard_json IS NULL"
+        "   AND options_absent_json IS NULL").fetchone()[0]
+    return True, (f"밝힌 없음 {len(rows):,}건 · 안 줬다(NULL) {n_null:,}건 — 셋이 갈린다")
+
+
 def s46_213_recommend_has_no_sold():
     """S46-213 — ★ **추천에 판매완료가 없는가** (09-02 명령서 ④).
 
@@ -4957,6 +5008,7 @@ CHECKS = (
      s46_203_new_site_has_target_keys),
     ("S46-215", "수집기가 active 를 보는가", s46_215_collector_respects_active),
     ("S46-214", "사진 밑에 빈칸이 없는가", s46_214_photo_uses_space_below),
+    ("S46-227", "밝힌 없음에 안 준 것이 없는가", s46_227_absent_only_declared),
     ("S46-213", "추천에 판매완료가 없는가", s46_213_recommend_has_no_sold),
     ("S46-208", "시세 축이 음수를 내지 않는가", s46_208_market_no_negative),
     ("S46-207", "커밋 제목이 사실을 말하는가",

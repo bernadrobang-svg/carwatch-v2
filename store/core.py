@@ -622,6 +622,8 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         first_registration_date=d.get("first_registration_date"),
         options_standard=jload("options_standard_json"),
         options_choice=jload("options_choice_json"),
+        # ★★★★★ 09-02 — ★ 사이트가 ★ 「이 차엔 없다」고 밝힌 옵션 (`S46-227`)
+        options_absent=jload("options_absent_json"),
         inspection_panels=jload("inspection_panel_json"),
         # ★ 점검 출처 — TABLE 플랫폼 직영 · IMAGE 판매자 등록 (개정 300 · 306)
         inspection_formats=jload("inspection_formats_json"),
