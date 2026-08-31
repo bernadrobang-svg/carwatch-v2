@@ -4607,7 +4607,7 @@ def s46_203_new_site_has_target_keys():
 
 
 def s46_203_collect_writes_files_first():
-    """S46-203 — ★ 받기 걸음이 ★ **파일에 쓰는가** (마스터 확정 08-29 · 09-01 재지적).
+    """S46-204 — ★ 받기 걸음이 ★ **파일에 쓰는가** (마스터 확정 08-29 · 09-01 재지적).
 
     ★ 마스터 — 「★ 아직도 수집할 때 DB 쓰니?  ★ 그거 하지 말라고 했는데 뭐 하는 거지?
       ★ 목록과 상세를 ★ **파일로 받은 뒤에** ★ DB 에 넣으라고 했는데」
@@ -4669,7 +4669,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
-    ("S46-203", "받기가 파일에 쓰는가", s46_203_collect_writes_files_first),
+    ("S46-204", "받기가 파일에 쓰는가", s46_203_collect_writes_files_first),
     ("S46-202", "안 풀린 틀 문법이 없는가", s46_202_no_raw_template_tags),
     ("S46-192", "선호차종이 등록부에 다 있는가",
      s46_192_pref_brands_registered),
