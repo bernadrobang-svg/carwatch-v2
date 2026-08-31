@@ -4893,6 +4893,31 @@ def s46_214_photo_uses_space_below():
                        + " · ".join(bad[:4]) + "  ★ float 로 바꿔라")
     return True, "시안이 다 float 다 (사진 밑을 쓴다)"
 
+
+def s46_215_collector_respects_active():
+    """S46-215 — ★ 수집기가 ★ `targets.json` 의 `active` 를 보는가 (마스터 실측 09-02).
+
+    ★ 마스터 — 「★ 실패 1건 — `G80_25T/list` 저장 500 …… 뭐지?」
+      ★ ★ `G80_25T` 는 ★ 09-01 에 쉬게 한 차종이다.  ★ 받으러 갈 까닭이 없었다
+    ★ 잣대 — ★ `tools/collect_*.py` 가 ★ `active` 를 보는가
+    """
+    import glob as _g
+    import os as _os
+
+    bad = []
+    for f in sorted(_g.glob(str(ROOT / "tools" / "collect_*.py"))):
+        name = _os.path.basename(f)
+        body = _read(ROOT / "tools" / name)
+        if "targets" not in body and "target_key" not in body:
+            continue
+        if '"active"' in body or "'active'" in body:
+            continue
+        bad.append(name)
+    if bad:
+        return False, ("★ active 를 안 보는 수집기 " + str(len(bad)) + "개 — "
+                       + " · ".join(bad[:4]) + "  ★ 쉬는 차종을 받으러 간다")
+    return True, "수집기가 다 active 를 본다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4930,6 +4955,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-215", "수집기가 active 를 보는가", s46_215_collector_respects_active),
     ("S46-214", "사진 밑에 빈칸이 없는가", s46_214_photo_uses_space_below),
     ("S46-213", "추천에 판매완료가 없는가", s46_213_recommend_has_no_sold),
     ("S46-208", "시세 축이 음수를 내지 않는가", s46_208_market_no_negative),

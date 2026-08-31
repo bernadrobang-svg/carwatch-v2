@@ -1,7 +1,7 @@
 ## STEP 126 [규격] — 권한 3단
 
 ```
-version  SPEC-2026.09.02-r1066
+version  SPEC-2026.09.02-r1068
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
