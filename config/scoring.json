@@ -1030,16 +1030,12 @@
       "MODEL_Y": 4000,
       "GV70_EV": 3500,
       "C40_EV": 4000,
-      "XC40_IMPORT": 3500,
       "POLESTAR4_EV": 4000,
       "EV4_EV": 3500,
       "ID5_EV": 4000,
       "IX3_EV": 4000,
       "ID4_EV": 4000,
       "KOLEOS_HEV": 3000,
-      "XC60_IMPORT": 3500,
-      "S60_IMPORT": 3500,
-      "X3_IMPORT": 3500,
       "XC40_EV": 4000
     },
     "by_fuel": {
