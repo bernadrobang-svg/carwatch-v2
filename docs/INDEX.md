@@ -9,16 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 49,461줄 · 3,379KB**
+**131파일 · 49,483줄 · 3,382KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,157줄
+- CHECKS.md 1,159줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,979줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,240줄
+- guide/03_이력.md 1,242줄
 - guide/05_가이드역할.md 1,660줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -33,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,157 | 143 |
+| `CHECKS.md`  ★ | 1,159 | 143 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -65,7 +65,7 @@
 | `chapters/10-collect/a-endpoint.md` | 309 | 11 |
 | `chapters/10-collect/b-parse.md` | 104 | 4 |
 | `chapters/10-collect/c-mapping.md` | 56 | 3 |
-| `chapters/10-collect/d-policy.md` | 226 | 9 |
+| `chapters/10-collect/d-policy.md` | 243 | 10 |
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
@@ -120,12 +120,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,240 | 894 |
+| `guide/03_이력.md`  ★ | 1,242 | 895 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,660 | 86 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 633 | 250 |
+| `guide/06_오판대장.md` | 634 | 251 |
 | `guide/07_밀린일대장.md` | 491 | 37 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |

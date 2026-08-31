@@ -4664,6 +4664,38 @@ def s46_205_no_raw_response_writes():
                        + "  ★ 그 표는 없앤다")
     return True, "raw_response 에 넣으라 한 곳이 없다"
 
+
+def s46_206_pdf_link_only():
+    """S46-206 — ★ PDF 를 ★ 받아 두라 하지 않는가 (마스터 확정 09-01).
+
+    ★ 마스터 — 「★ PDF 적재 필요 없고 ★ 링크만 걸라고 했잖아」
+      ★ ★ 현대인증 성능점검부(개정 1027)에도 ★ 같은 말씀을 하셨다
+    ★ 잣대 — ★ 규격·명령서에 ★ 「PDF … 받아 둔다/적재/내려받는다」가 있으면 실패
+    """
+    import glob as _g
+    import re as _re
+
+    files = list(_guide_docs()) + [
+        ROOT / f[len(str(ROOT)) + 1:]
+        for f in _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    ]
+    bad = []
+    for q in files:
+        if not q.is_file():
+            continue
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if not _re.search(r"PDF|pdf", ln):
+                continue
+            if not _re.search(r"받아 둔|적재|내려받|저장한다", ln):
+                continue
+            if _re.search(r"~~|물린|금지|마스터 —|안 |않는|링크만", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ PDF 를 받아 두라 한 곳 " + " · ".join(bad[:4])
+                       + "  ★ 링크만 건다")
+    return True, "PDF 는 링크만 건다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4701,6 +4733,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-206", "PDF 를 받아 두라 하지 않는가", s46_206_pdf_link_only),
     ("S46-205", "raw_response 에 넣으라 하지 않는가",
      s46_205_no_raw_response_writes),
     ("S46-204", "받기가 파일에 쓰는가", s46_203_collect_writes_files_first),
