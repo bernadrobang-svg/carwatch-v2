@@ -4740,6 +4740,44 @@ def s46_207_commit_title_says_measured():
                        + " · ".join(bad[:3]))
     return True, f"가이드 커밋 제목 {len(titles)}개가 다 사실을 말한다"
 
+
+def s46_207_commit_title_says_fact():
+    """S46-207 — ★ 가이드 커밋 제목이 ★ 사실을 말하는가 (가이드 지적 09-01).
+
+    ★ 가이드 — 「★ 커밋 46건의 제목을 셌다.  ★ 「쟀다·세었다」 꼴이 4건(9%)뿐이다.
+      ★ 그래서 오판 227·228·229 가 ★ 연달아 났다 — ★ 전부 「정했다」 뒤에 뒤집힌 것이다.
+      ★ ★ 마스터는 휴대폰으로 ★ 제목만 보신다.
+      ★ ★ ★ 제목이 사실을 말하지 않으면 ★ 마스터가 속으신다」
+    ★ 잣대 — ★ 최근 가이드 커밋 제목에
+      ★ ① 「몇 → 몇」·건수 같은 ★ **수**가 있거나
+      ★ ② 끝에 ★ **「· 글만」**이 있어야 한다
+    """
+    import re as _re
+    import subprocess as _sp
+
+    try:
+        out = _sp.run(
+            ["git", "log", "--author=carwatch-guide", "--format=%s", "-12"],
+            cwd=str(ROOT), capture_output=True, text=True, timeout=20).stdout
+    except Exception as exc:
+        return False, f"git log 를 못 읽었다 — {exc}"
+    titles = [t.strip() for t in out.splitlines() if t.strip()]
+    if not titles:
+        return True, "가이드 커밋이 없다"
+    bad = []
+    for t in titles:
+        if t.startswith(("S46-32", "S28")):     # ★ 생성물 재생성은 뺀다
+            continue
+        if "글만" in t:
+            continue
+        if _re.search(r"\d+\s*→\s*\d+|\d+건|\d+개|\d+종|\d+곳|\d+/\d+", t):
+            continue
+        bad.append(t[:34])
+    if bad:
+        return False, (f"★ 수도 「글만」도 없는 제목 {len(bad)}건 — "
+                       + " · ".join(bad[:3]))
+    return True, f"최근 가이드 커밋 제목이 다 사실을 말한다 ({len(titles)}건)"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4779,6 +4817,8 @@ CHECKS = (
      s46_203_new_site_has_target_keys),
     ("S46-207", "커밋 제목이 사실을 말하는가",
      s46_207_commit_title_says_measured),
+    ("S46-207", "커밋 제목이 사실을 말하는가",
+     s46_207_commit_title_says_fact),
     ("S46-206", "PDF 를 받아 두라 하지 않는가", s46_206_pdf_link_only),
     ("S46-205", "raw_response 에 넣으라 하지 않는가",
      s46_205_no_raw_response_writes),

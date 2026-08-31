@@ -180,7 +180,7 @@
 | `S46-204` | 받기가 파일에 쓰는가 | fatal | `validate/v0_guide.py:4619` | **★ 없음** | 없음 | guide/03_이력.md:1227 |
 | `S46-205` | raw_response 에 넣으라 하지 않는가 | fatal | `validate/v0_guide.py:4646` | **★ 없음** | 없음 | guide/03_이력.md:1229 · guide/06_오판대장.md:318 |
 | `S46-206` | PDF 를 받아 두라 하지 않는가 | fatal | `validate/v0_guide.py:4678` | **★ 없음** | 없음 | guide/03_이력.md:1231 · guide/06_오판대장.md:319 · chapters/10-collect/d-policy.md:186 |
-| `S46-207` | 커밋 제목이 사실을 말하는가 | fatal | `validate/v0_guide.py:4710` | **★ 없음** | 없음 | guide/03_이력.md:1235 · guide/05_가이드역할.md:1685 |
+| `S46-207` | 커밋 제목이 사실을 말하는가 | fatal | `validate/v0_guide.py:4744` | **★ 없음** | 없음 | guide/03_이력.md:1235 · guide/03_이력.md:1237 · guide/05_가이드역할.md:1685 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
