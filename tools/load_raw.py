@@ -45,7 +45,10 @@ LOADERS: dict = {
     "bobaedream": {"mod": "parse.bobaedream.mapping", "json": False},
     "kbchachacha": {"mod": "parse.kbchachacha.mapping", "json": False},
     "reborncar": {"mod": "parse.reborncar.mapping", "json": False},
-    "volvo_selekt": {"mod": "parse.volvo_selekt.mapping", "json": False},
+    # ★ 볼보 목록 줄은 ★ 우리가 만든 JSON 이다 (`parse_list_item`) —
+    #   ★ 상세는 ★ HTML 이다.  ★ `json` 은 ★ **목록에만** 걸린다
+    "volvo_selekt": {"mod": "parse.volvo_selekt.mapping", "json": False,
+                     "list_json": True},
     "bmw_bps": {"mod": "parse.bmw_bps.mapping", "json": False,
                 "detail_args": "sid_only"},
     "hyundai_cert": {"mod": "parse.hyundai_cert.mapping", "json": False,
@@ -66,7 +69,8 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
     if not body:
         return [], None, None
     got = body
-    if spec.get("json"):
+    if spec.get("json") or (spec.get("list_json")
+                            and env.get("endpoint") == "list"):
         try:
             got = json.loads(body)
         except ValueError:

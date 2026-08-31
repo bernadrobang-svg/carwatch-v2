@@ -22,6 +22,8 @@ from __future__ import annotations
 import json
 import re
 
+SITE_CODE = "volvo_selekt"
+
 # ★ 라벨/값 두 칸 표.  ★ 표본에서 재서 적었다 (08-26)
 RE_ROW = re.compile(
     r'<div class="small">\s*([^<]{1,20}?)\s*</div>\s*</td>\s*'
@@ -152,4 +154,25 @@ def record_of(html: str, site: str) -> dict | None:
         out["use_gov"] = 0
         out["use_business"] = 0
         out["plate_history_hash_json"] = "[]"
+    return out
+
+
+
+# ★★★★★ 09-01 마스터 지시 — ★ **받기는 파일만 쓴다.  ★ 넣기가 폴더를 읽는다.**
+#   ★ 그래서 ★ 「목록 줄 만들기」가 ★ 수집기에 있으면 안 된다 — ★ 여기가 제자리다
+def parse_list_item(one: dict, site: str = SITE_CODE) -> dict | None:
+    """목록에서 뽑은 한 건 → `core_listing` 한 줄.
+
+    ★ 볼보 목록은 ★ 매물번호와 슬러그(차종)만 준다 — ★ 나머지는 상세가 준다
+    ★ `one` 은 ★ 수집기가 파일로 남긴 것이다 —
+      `{"source_id","slug","site_model_group","url"}`
+    """
+    if not isinstance(one, dict) or not one.get("source_id"):
+        return None
+    out = {"site": site, "source_id": str(one["source_id"]),
+           "price_unit": "won", "detail_status": "not_requested"}
+    if one.get("slug"):
+        out["site_model"] = one["slug"]
+    if one.get("site_model_group"):
+        out["site_model_group"] = one["site_model_group"]
     return out

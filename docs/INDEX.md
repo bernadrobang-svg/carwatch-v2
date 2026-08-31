@@ -9,21 +9,20 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 49,913줄 · 3,418KB**
+**131파일 · 49,306줄 · 3,374KB**
 
-★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,163줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,979줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,258줄
+- guide/03_이력.md 1,254줄
 - guide/05_가이드역할.md 1,817줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
-- chapters/30-score/f-table.md 2,727줄
+- chapters/30-score/f-table.md 2,651줄
 - chapters/11-store/a-key.md 895줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
@@ -33,10 +32,10 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,163 | 144 |
+| `CHECKS.md` | 674 | 109 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
-| `ENCAR_API.md` | 398 | 17 |
+| `ENCAR_API.md` | 360 | 15 |
 | `ENCAR_ROBOTS.md` | 253 | 12 |
 | `HEYDEALER_API.md` | 702 | 35 |
 | `HYUNDAI_CERTIFIED_API.md` | 589 | 29 |
@@ -85,7 +84,7 @@
 | `chapters/30-score/c-spec.md` | 145 | 5 |
 | `chapters/30-score/d-history.md` | 373 | 12 |
 | `chapters/30-score/e-etc.md` | 233 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 2,727 | 132 |
+| `chapters/30-score/f-table.md`  ★ | 2,651 | 128 |
 | `chapters/30-score/g-absolute.md` | 150 | 5 |
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
@@ -120,7 +119,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,258 | 905 |
+| `guide/03_이력.md`  ★ | 1,254 | 902 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,817 | 95 |

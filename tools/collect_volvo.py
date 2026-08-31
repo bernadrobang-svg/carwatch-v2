@@ -27,11 +27,8 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from parse.target_rules import fill_target_key  # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
-from store.raw import commit, open_db                       # noqa: E402
 
 SITE_CODE = "volvo_selekt"
 PAGE_LINKS = 12                # ★ 한 쪽 상한
@@ -163,56 +160,36 @@ def main() -> int:
         print("★ --dry 라 저장하지 않았다" if "--dry" in args else "★ 우리 대상이 없다")
         return 0
 
-    from store.core import resolve_listing_id, upsert_core
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 「★ 넣기 걸음은 그 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다」
+    #   ★★ `open_db`·`upsert_core`·`sweep_gone_groups` 를 ★ **뺐다** —
+    #     ★ 넣기는 ★ `python3.11 tools/load_raw.py volvo_selekt --write`
     at = _now()
     # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
     #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
-    for _u, _b in pages:
-        save_file(SITE_CODE, "list", None, _u, _b, at)
+    for _n, (_u, _b) in enumerate(pages, 1):
+        save_file(SITE_CODE, "listpage", None, _u, _b, at, page=_n, root=ROOT)
+    # ★★ 목록에서 뽑은 줄은 ★ 매물마다 한 파일로 남긴다 —
+    #   ★ 볼보 목록은 ★ 매물번호와 슬러그만 준다 (나머지는 상세가 준다).
+    #   ★ ★ 줄을 **만드는 자리**는 ★ `parse/volvo_selekt/mapping.py` 다 (여기가 아니다)
     for sid, (slug, url) in ours.items():
-        row = {"site": SITE_CODE, "source_id": sid, "price_unit": "won",
-               # ★ 사전이 아는 이름으로 적는다 — ★ 없으면 target_key 를 그대로
-               "site_model_group": _known_name(ours_map[slug]) or ours_map[slug],
-               "site_model": slug,
-               "detail_status": "not_requested"}
-        row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
-        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-        fill_target_key(SITE_CODE, row)
-        upsert_core(conn, row, at)
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
-    #   ★ 「끝까지 받았나」 — ★ 사이트가 적어 준 `data-found`(said)와
-    #     ★ 받은 매물번호 수가 ★ **같아야** 참이다.
-    #   ★ 못 받은 쪽이 있거나 · 수가 어긋나면 ★ 안 매긴다 —
-    #     ★ 반만 받고 매기면 ★ 산 차를 죽인다
-    from store.core import sweep_gone_groups
-
-    # ★ 슬러그(차종)별로 몇 건을 받았는지 낸다 — ★ 마스터께서 차종별로 견주라 하셨다.
-    #   ★ `data-found` 가 우리 창구에 없으므로 ★ 이 수를 모델 화면과 견주면 된다
+        save_file(SITE_CODE, "list", sid, url, json.dumps({
+            "source_id": sid, "slug": slug, "url": url,
+            "site_model_group": _known_name(ours_map[slug]) or ours_map[slug],
+        }, ensure_ascii=False), at, root=ROOT)
     by_slug: dict = {}
     for _sid, (_slug, _u) in seen.items():
         by_slug[_slug] = by_slug.get(_slug, 0) + 1
     print("★ 슬러그별 받은 수 — " + " · ".join(
         f"{k} {v}" for k, v in sorted(by_slug.items(), key=lambda x: -x[1])))
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    # ★★★★★ 08-30 (마스터 지시 4) — ★ 「본 것」에 ★ **목록 전체**를 넘긴다.
-    #   ★ 앞서는 `ours`(우리 대상)만 넘겼다.  ★ 그러면 ★ 우리 대상이 아닌 행은
-    #   ★ ★ 「목록에 없다」로 보여 ★ 죽거나 · 반대로 ★ 훑는 갈래에 안 들어
-    #   ★ ★ **영영 안 죽는다.**  ★ 실측 08-30 — ★ 값이 다 빈 15건이 그 꼴이었다
-    #   ★ ★ (`last_seen` 이 08-29 22:37 에 멈춘 채 `status='new'`).
-    #   ★ 「본 것」은 ★ **이번 목록에서 본 매물번호 전부**다 — ★ `seen` 이 그것이다
-    _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(seen))], at)
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}"
-          f" (빈 쪽까지 갔나)")
-    if not done:
-        print("  ★ 빈 쪽까지 못 갔다 — 안 매겼다.  반만 보고 매기면 산 차를 죽인다")
-    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
-                     (SITE_CODE,)).fetchone()[0]
-    print(f"★ 저장 {len(ours)}건 · 저장된 볼보 매물 {n:,}건")
+    print(f"★ 목록 {len(ours)}건을 파일로 남겼다 — "
+          f"raw/{SITE_CODE}/list/{at[:10]}/  ·  끝까지 받았나 "
+          f"{'예' if done else '아니오'}")
+    # ★★★★★ 09-01 — ★ 「목록에 없으면 죽인다」는 ★ **여기서 안 한다.**
+    #   ★ 그 자리는 ★ `tools/list_diff_check.py` 다 — ★ 상세로 확인한 뒤에 죽인다
+    #   ★ ★ 마스터 지시 — 「★ 목록 대조해서 사라지면 ★ 상세를 조회해서 판매상태를 본다」
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
+
 
     # ★★★★★ 08-30 (마스터 지시 4·5 · 규격 0b · 개정 887) —
     #   ★ 앞서는 ★ `--detail` 을 줘야만 상세를 받았다.  ★ 그래서
@@ -222,20 +199,21 @@ def main() -> int:
     #   ★ ★ **상세를 못 받은 것**이었다 (눌러서 확인 08-30).
     #   ★ 이제 ★ **원문이 없는 것만** 스스로 받는다 — ★ 전건을 다시 안 받는다.
     #   ★ ★ `--detail` 을 주면 ★ 옛 꼴대로 ★ 전건을 받는다
-    from parse.volvo_selekt.mapping import parse_detail, photos
-
     limit = 0
     if "--detail" in args:
         i = args.index("--detail")
         limit = int(args[i + 1]) if i + 1 < len(args) and args[i + 1].isdigit() else 0
         todo = list(ours.items())[:limit] if limit else list(ours.items())
     else:
-        have = {r[0] for r in conn.execute(
-            "SELECT source_id FROM raw_response"
-            " WHERE site=? AND endpoint='detail'", (SITE_CODE,))}
+        # ★★★★★ 09-01 — ★ **이미 받은 것은 파일로 안다** (DB 를 안 연다).
+        #   ★ 앞서는 ★ `raw_response` 를 물어 봤다 — ★ 그것이 DB 를 여는 자리였다
+        from store.rawfile import walk as _walk
+
+        have = {os.path.basename(x).split("__")[0][:-5]
+                for x in _walk(site=SITE_CODE, endpoint="detail", root=ROOT)}
         todo = [(sid, v) for sid, v in ours.items() if sid not in have]
         print(f"★ 상세 — 받을 것 {len(todo)}건 "
-              f"(우리 대상 {len(ours)}건 중 · 원문이 있는 것 "
+              f"(우리 대상 {len(ours)}건 중 · 원문 파일이 있는 것 "
               f"{len(ours) - len(todo)}건은 안 받는다)")
         if not todo:
             return 0
@@ -247,32 +225,11 @@ def main() -> int:
             got["못 받음"] += 1
             time.sleep(interval)
             continue
-        save_file(SITE_CODE, "detail", sid, url, body, at)
-        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
-        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
-        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
-        commit(conn)
-        row = parse_detail(body, SITE_CODE, sid)
-        if row:
-            row["listing_id"] = resolve_listing_id(conn, SITE_CODE, sid, at)
-            pics = photos(body, sid)
-            if pics:
-                # ★ 상대경로다 — ★ 주소의 정본은 endpoints.json 의 base_url 이다
-                pics = [base + one if one.startswith("/") else one for one in pics]
-                row["photo_main"] = pics[0]
-                row["photo_list_json"] = json.dumps(pics, ensure_ascii=False)
-            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-            fill_target_key(SITE_CODE, row)
-            upsert_core(conn, row, at)
-            got["정상"] += 1
-        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
-        commit(conn)
+        save_file(SITE_CODE, "detail", sid, url, body, at, root=ROOT)
+        got["정상"] += 1
         time.sleep(interval)
-    commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
-    from tools.daily_enqueue import enqueue_after_store
-    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
-                        got.get("정상", 0))
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
 
 

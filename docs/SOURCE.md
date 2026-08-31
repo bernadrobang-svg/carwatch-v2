@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 204개 · 총 72,270줄
+파일 204개 · 총 72,254줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -69,7 +69,6 @@
 | `tools/check_screens.py` | 285 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
 | `tests/test_crosssite.py` | 282 | 12장 다중 사이트 시험. |
-| `tools/collect_volvo.py` | 280 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
 | `tools/collect_bobaedream.py` | 272 | 보배드림 수집 (명령서 7단계 · `docs/BOBAEDREAM_API.md`). |
 | `report/exports/export.py` | 269 | 내보내기. |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
@@ -85,7 +84,8 @@
 | `tools/undo_wrong_gone.py` | 243 | ★★★★★ 잘못 매긴 `gone` 을 되돌린다 (마스터 0a·0c · 08-30). |
 | `analyze/axis/site.py` | 240 | ⑤ 사이트 보증 50 · ⑦ 제조사 보증 50 (일반 20 + 동력계 30). |
 | `tests/test_invariants.py` | 239 | 불변식 시험. |
-| `tools/load_raw.py` | 233 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
+| `tools/collect_volvo.py` | 237 | 볼보 셀렉트 수집 — xhr-results 쪽넘김 (명령서 1a). |
+| `tools/load_raw.py` | 237 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `tools/repair_facet_chunks.py` | 222 | 낱개로 저장된 facet 조각을 이어붙인다 (개정 307 사고 복구). |
 | `tools/collect_bmw.py` | 220 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `score/scorer.py` | 218 | 채점 · 분모 (L7). |
@@ -101,6 +101,7 @@
 | `tools/collect_kia_cpo.py` | 182 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
 | `collect/worker.py` | 180 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `tools/run_tests.py` | 180 | 시험 전체 실행. |
+| `parse/volvo_selekt/mapping.py` | 178 | 볼보 셀렉트 상세 → `core_listing` 칸 (규격 `VOLVO_SELEKT_API.md` 2장). |
 | `tools/measure_0k.py` | 176 | ★ 0k (명령서 r974 뒤) — ★ **잰다.  안 고친다.** |
 | `tools/classify_unclassified.py` | 175 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
@@ -118,7 +119,6 @@
 | `score/adjust.py` | 157 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
 | `tools/fetch_missing_catalog.py` | 156 | ★★★★★ 08-31 (로드맵 차례 5 · `V1-23`) — ★ **안 부른 카탈로그를 받는다.** |
-| `parse/volvo_selekt/mapping.py` | 155 | 볼보 셀렉트 상세 → `core_listing` 칸 (규격 `VOLVO_SELEKT_API.md` 2장). |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
 | `tools/daily_enqueue.py` | 153 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
@@ -591,12 +591,6 @@ check:33  fx:39  test_inspection:53  test_frame_vs_outer:84  test_record:123  te
 check:34  db:40  add:45  test_vin:63  test_vin_parse:107  test_cross_site:129  test_regression:175  test_readiness:207  v9_04_site_isolation:229
 ```
 
-### `tools/collect_volvo.py` — 280줄
-
-```
-_known_name:46  load_slugs:62  _now:91  _get:95  main:110
-```
-
 ### `tools/collect_bobaedream.py` — 272줄
 
 ```
@@ -687,10 +681,16 @@ remaining_months:26  warranty_points:39  _truthy:73  warranty_grade:89  _seller_
 check:35  inv1_order_independent:42  inv1_shuffle_100:72  inv2_banned:95  inv5_points:113  put_contract:133  excluded_contract:150  inv3_source_not_null:176  inv4_label_shape:195  inv6_no_unclassified:211
 ```
 
-### `tools/load_raw.py` — 233줄
+### `tools/collect_volvo.py` — 237줄
 
 ```
-_now:56  _rows_from:60  main:133
+_known_name:43  load_slugs:59  _now:88  _get:92  main:107
+```
+
+### `tools/load_raw.py` — 237줄
+
+```
+_now:59  _rows_from:63  main:137
 ```
 
 ### `tools/repair_facet_chunks.py` — 222줄
