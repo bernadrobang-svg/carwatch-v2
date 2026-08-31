@@ -1,7 +1,7 @@
 # 6장. 검증 5차 (STEP 54–66)
 
 ```
-version  SPEC-2026.08.31-r1018
+version  SPEC-2026.09.01-r1019
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
