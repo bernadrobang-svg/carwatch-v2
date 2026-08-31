@@ -150,11 +150,23 @@ def kbchachacha(conn, write: bool) -> Counter:
         todo.append((lid, sid, url))
     got["성능점검 주소가 있다"] = len(todo)
     for lid, sid, url in todo:
-        try:
-            body = urllib.request.urlopen(urllib.request.Request(
-                url, headers={"User-Agent": UA}), timeout=30).read()
-        except (urllib.error.URLError, OSError, TimeoutError) as e:
-            got[f"못 받음 ({type(e).__name__})"] += 1
+        # ★★★★★ 08-31 (차례 4) — ★ **쉬면서 두드린다.**
+        #   ★ 앞서는 ★ 성공했을 때만 잤다 — ★ 실패하면 ★ 쉬지 않고 다음을 쳤다.
+        #   ★ ★ 그래서 ★ 같은 집을 ★ 251번 몰아쳤고 ★ 못 받음이 ★ 53 → **92** 로 늘었다
+        #     (실측 08-31 — ★ 두 번째 바퀴가 더 많이 실패했다.  ★ 우리가 막힌 것이다)
+        #   ★ ★ 한 번 더 두드려 본다 — ★ 그래도 안 되면 ★ **넘어간다** (지어내지 않는다)
+        body = None
+        for tryn in range(2):
+            try:
+                body = urllib.request.urlopen(urllib.request.Request(
+                    url, headers={"User-Agent": UA}), timeout=30).read()
+                break
+            except (urllib.error.URLError, OSError, TimeoutError) as e:
+                last = type(e).__name__
+                time.sleep(1.5 * (tryn + 1))
+        if body is None:
+            got[f"못 받음 ({last})"] += 1
+            time.sleep(0.6)
             continue
         text = None
         for enc in ("utf-8", "euc-kr", "cp949"):
@@ -186,7 +198,7 @@ def kbchachacha(conn, write: bool) -> Counter:
             "inspection_panel_json": json.dumps(pan, ensure_ascii=False),
             "collected_at": at}, "p1", at)
         conn.commit()
-        time.sleep(0.4)
+        time.sleep(0.6)
     if write:
         conn.commit()
     return got

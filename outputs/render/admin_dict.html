@@ -40,11 +40,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카가 2일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -68,13 +68,13 @@
 </p>
 
 
-<h2>확정 대기 184종</h2>
+<h2>확정 대기 191종</h2>
 
 
 <h3>축 단위로 한 번에</h3>
-<p class="muted">184종을 하나씩 누르지 않습니다.
+<p class="muted">191종을 하나씩 누르지 않습니다.
   다만 <strong>몇 종인지 먼저 봅니다</strong>.
-  지금 대기 중인 묶음은 <strong>5가지</strong>입니다 —
+  지금 대기 중인 묶음은 <strong>6가지</strong>입니다 —
   <strong>사이트마다 따로</strong> 셉니다. 나머지는 이미 확정됐습니다.</p>
 
 <details class="card tight">
@@ -159,6 +159,28 @@
       placeholder="왜 확정하는가 (필수)" required></label>
     <button type="submit" name="action" value="confirm"
       title="이 사이트·축의 대기 값을 한 번에 확정합니다">encar target 8종 확정</button>
+    <button type="submit" name="action" value="retire"
+      title="쓰지 않는 값으로 내립니다">폐기</button>
+  </form>
+  <p class="dim">확정하면 이 축을 쓰는 판정이 열립니다.</p>
+</details>
+
+<details class="card tight">
+  <summary><strong>heydealer</strong> · <strong>part</strong>
+    <span class="dim">7종 ·
+      <span title="이 축은 core_listing 에 열이 없습니다. 값이 점검 원문에 있어 매물 수를 여기서 셀 수 없습니다">매물 수 셀 수 없음</span> ·
+      facet</span></summary>
+  <p class="dim">값 예시 door_front_passenger · door_rear_passenger · fender_front_driver · fender_front_passenger · fender_rear_driver  외 2종</p>
+  <form method="post" action="/admin/dict">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="axis" value="part">
+    
+    <input type="hidden" name="site" value="heydealer">
+    <input type="hidden" name="previewed" value="1">
+    <label>사유 <input name="reason" size="24"
+      placeholder="왜 확정하는가 (필수)" required></label>
+    <button type="submit" name="action" value="confirm"
+      title="이 사이트·축의 대기 값을 한 번에 확정합니다">heydealer part 7종 확정</button>
     <button type="submit" name="action" value="retire"
       title="쓰지 않는 값으로 내립니다">폐기</button>
   </form>
@@ -275,6 +297,76 @@
   <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
   <td data-label="출처"><strong>list</strong></td>
   <td class="muted" data-label="처음 본 시각">2026-08-23</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>door_front_passenger</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>door_rear_passenger</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>fender_front_driver</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>fender_front_passenger</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>fender_rear_driver</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>fender_rear_passenger</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
+</tr>
+
+<tr>
+  <td data-label="사이트">heydealer</td>
+  <td data-label="축">part</td>
+  <td data-label="값"><strong>trunk_lid</strong></td>
+  <td class="num" data-label="관측">1</td>
+  <td class="num" data-label="매물"><span class="dim" title="이 축은 core_listing 에 열이 없어 여기서 셀 수 없습니다">셀 수 없음</span></td>
+  <td data-label="출처">facet</td>
+  <td class="muted" data-label="처음 본 시각">2026-08-30</td>
 </tr>
 
 <tr>
@@ -2085,8 +2177,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260829T024133</span>
-  <span>2026-08-31 06:12</span>
+  <span>run 20260830T232047</span>
+  <span>2026-08-31 10:12</span>
 </footer>
 
 </body>
