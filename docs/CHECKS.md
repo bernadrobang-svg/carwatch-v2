@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **524개**
+검사 **525개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **36** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **37** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **17** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **34** | 개발측 |
 
@@ -181,6 +181,7 @@
 | `S46-205` | raw_response 에 넣으라 하지 않는가 | fatal | `validate/v0_guide.py:4646` | 2026-08-31 07:33 | 없음 | guide/03_이력.md:1229 · guide/06_오판대장.md:318 |
 | `S46-206` | PDF 를 받아 두라 하지 않는가 | fatal | `validate/v0_guide.py:4681` | 2026-08-31 07:33 | 없음 | guide/03_이력.md:1231 · guide/06_오판대장.md:319 · chapters/10-collect/d-policy.md:186 |
 | `S46-207` | 커밋 제목이 사실을 말하는가 | fatal | `validate/v0_guide.py:4747` | **★ 없음** | 2026-08-31 07:33 | guide/03_이력.md:1235 · guide/03_이력.md:1237 · guide/03_이력.md:1239 |
+| `S46-208` | 시세 축이 음수를 내지 않는가 | fatal | `validate/v0_guide.py:4785` | **★ 없음** | 없음 | guide/03_이력.md:1243 · guide/06_오판대장.md:320 · chapters/30-score/f-table.md:2649 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -608,6 +609,7 @@
 - `S39-1` R 마다 층이 적혀 있음 — `tools/check_src.py`
 - `S39-2` 화면 층이 아닌데 「화면 없음」이 아님 — `tools/check_src.py`
 - `S4` 테이블 DDL (STEP 28) — `tools/check_src.py`
+- `S46-208` 시세 축이 음수를 내지 않는가 — `validate/v0_guide.py`
 - `S5` config 키 (V4-15) — `tools/check_src.py`
 - `S6` 배점 검산 (불변식 ⑤) — `tools/check_src.py`
 - `S7` 매직 넘버 (V4-13) — `tools/check_src.py`
