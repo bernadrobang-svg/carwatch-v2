@@ -144,6 +144,12 @@ def load_filters(root: str = ROOT) -> list:
     for key, one in rows.items():
         if key.startswith("_") or not isinstance(one, dict):
             continue
+        # ★★★★★ 09-02 마스터 실측 — ★ 「★ 실패 1건 — `G80_25T/list` 저장 500 …
+        #   ★ 뭐지?」  ★ `G80_25T` 는 ★ 09-01 에 **쉬게 한 차종**이다 —
+        #   ★ ★ 받으러 갈 까닭이 없었다.  ★ 쉬는 차종은 ★ **안 받는다** (`S46-215`).
+        #   ★ 매물을 지우지 않는다 — ★ 받지만 않는다
+        if not one.get("active"):
+            continue
         q = (one.get("site_query") or {}).get(SITE_CODE)
         if not isinstance(q, dict):
             continue

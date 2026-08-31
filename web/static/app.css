@@ -2863,3 +2863,16 @@ details.chip .filter-body { max-width: 100%; overflow-x: auto; }
    ★★ 시안은 ★ 거르개가 ★ **한 판**이고 ★ 그 안에서 알약이 접힌다 */
 form.chips { display: block; }
 form.chips > * { max-width: 100%; }
+
+/* ★★★★★ 09-02 — ★ 추적 카드의 사진 (시안 `v4m_track_시안` `.v4-thumb` · `S46-98`).
+   ★ 사진은 ★ **float** 다 — ★ 글이 그 밑으로 흐른다 (명령서 ①) */
+.thumb.ktrack {
+  float: left; width: 104px; height: 78px; margin: 0 10px 6px 0;
+  border-radius: 8px; background: var(--surface2);
+  border: 1px solid var(--line); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--faint);
+}
+.thumb.ktrack img { width: 100%; height: 100%; object-fit: cover; }
+.kcardline { display: flow-root; }
+.kcardline::after { content: ''; display: block; clear: both; }

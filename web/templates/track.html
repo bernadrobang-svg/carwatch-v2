@@ -44,7 +44,14 @@
   <div class="kchg {{ p.gap_cls }}"
     title="가장 싼 곳과 가장 비싼 곳의 차이입니다">차액 {{ p.gap_won | won }} · {{ p.gap_pct }}%</div>
   <div class="kcardline">
-    <div class="kline"><div class="kmid">
+    <!-- ★★★★★ 09-02 — ★ 시안 `v4m_track_시안.html` `.v4-thumb` (`S46-98`).
+         ★ 사진은 ★ **float** 다 (명령서 ①) — ★ 글이 그 밑으로 흐른다.
+         ★ ★ 사진이 없으면 ★ 「사진」이라 적은 빈 자리다 — ★ 지어내지 않는다 -->
+    <div class="kline"><div class="thumb ktrack">
+      {% if p.photo_url %}<img src="{{ p.photo_url }}" alt="{{ p.target_label }} 사진"
+        title="사진" loading="lazy">{% endif %}
+      {% if !p.photo_url %}<span class="pimg">사진</span>{% endif %}
+    </div><div class="kmid">
       <div class="kname">{{ p.target_label }}</div>
       <div class="ktrim">{{ p.trim }}</div>
       <div class="kspec">{{ p.site_count }}곳 ·

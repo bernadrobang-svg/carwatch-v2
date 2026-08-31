@@ -3545,7 +3545,7 @@ def view_track(account: Account, conn, calc_version: str,
     rows = conn.execute(
         "SELECT l.plate_hash, l.listing_id, l.site, l.sell_type,"
         "       l.target_key, l.trim_badge, l.price_current_won,"
-        "       s.grade, s.earned, s.denominator"
+        "       s.grade, s.earned, s.denominator, l.photo_list_json"
         "  FROM core_listing l"
         "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         "   AND s.calc_version = ?"
@@ -3601,6 +3601,9 @@ def view_track(account: Account, conn, calc_version: str,
             trim=str(got[0][5] or ""),
             sites=sites, site_count=len({x[2] for x in got}),
             low_won=low, high_won=high, gap_won=gap, gap_pct=pct,
+            # ★★★★★ 09-02 — ★ 시안 `.v4-thumb` (`S46-98`).  ★ 짝의 첫 사진이다
+            photo_url=next((_first_photo(x[10], root) for x in got
+                            if len(x) > 10 and x[10]), None),
             grades=grades, grade_split=step > 0,
             # ★ 틀은 `>=` 를 못 한다 (V11-104) — ★ 여기서 정한다.
             #   ★ 30% 넘으면 ★ 짝짓기가 틀렸을 자리다 (v4m 추적 시안)

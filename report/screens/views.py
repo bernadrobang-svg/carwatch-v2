@@ -503,6 +503,10 @@ class TrackPair:
     # ★ 등급이 갈렸는가 · 사고 판정이 갈렸는가
     grade_split: bool = False
     accident_split: bool = False
+    # ★★★★★ 09-02 — ★ 시안 `v4m_track_시안.html` 이 ★ **사진 자리**를 둔다
+    #   (`.v4-thumbwrap` · `.v4-thumb`).  ★ 우리 화면에 없었다 (`S46-98`).
+    #   ★ ★ 없으면 ★ 「사진」이라 적은 빈 자리다 — ★ 지어내지 않는다
+    photo_url: str | None = None
     # ★★ 틀은 `>=` 비교를 못 한다 (V11-104) — ★ 판단은 build 가 한다.
     #   ★ 30% 넘으면 ★ 짝짓기가 틀렸을 자리다 (v4m 추적 시안)
     big_gap: bool = False

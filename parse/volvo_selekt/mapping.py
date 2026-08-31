@@ -50,6 +50,69 @@ def fields(html: str) -> dict:
     return {k: _txt(v) for k, v in RE_ROW.findall(html or "")}
 
 
+# ★★★★★ 09-02 (로드맵 차례 1-6 · 볼보 **129점**) — ★ **옵션 목록**.
+#   ★ 실측 09-02 — ★ `<div class="… description">` 안에 ★ `<ul><li>` 로 온다.
+#   ★ ★ 「헤드업 디스플레이」·「파노라마 글라스 루프」가 ★ 그대로 있다.
+#   ★ ★ ★ 그런데 ★ `options_standard_json` 이 ★ **140건 전건 NULL** 이었다 —
+#     ★ ★ 그래서 ★ `taste.hud` 18 · `taste.sunroof` 12 가 ★ 전건 0점이었다
+RE_DESC = re.compile(
+    r'<div[^>]*class="[^"]*description[^"]*"[^>]*>(.*?)</div>', re.S | re.I)
+RE_LI = re.compile(r"<li[^>]*>(.*?)</li>", re.S | re.I)
+RE_TAGS = re.compile(r"<[^>]+>")
+
+# ★★ 보증 — ★ 「신차 등록일로부터 5년 or 주행거리 10만km 선도래 기준」
+RE_WARRANTY = re.compile(
+    r"신차\s*등록일\s*로?부터\s*(\d+)\s*년\s*(?:or|또는|/|,)?\s*"
+    r"주행\s*거리\s*(\d+)\s*만\s*km", re.I)
+# ★★ 볼보는 ★ **만료일**로도 적는다 — 「보증만료일 : 2031. 4」 [실측 09-02]
+RE_WARRANTY_END = re.compile(r"보증\s*만료일\s*[:：]?\s*(\d{4})\s*[.\-/]\s*(\d{1,2})")
+MONTHS_PER_YEAR = 12
+KM_PER_MAN = 10_000
+
+
+def options(html: str) -> list:
+    """옵션 목록.  ★ 못 읽으면 ★ 빈 목록이다 — ★ 지어내지 않는다."""
+    out, seen = [], set()
+    for block in RE_DESC.findall(html or ""):
+        for one in RE_LI.findall(block):
+            name = RE_TAGS.sub(" ", one)
+            name = re.sub(r"\s+", " ", name).strip()
+            # ★ 딜러 인사말이 섞이지 않게 ★ 너무 긴 줄은 안 담는다 (옵션 이름이 아니다)
+            if not name or len(name) > 60 or name in seen:
+                continue
+            seen.add(name)
+            out.append(name)
+    return out
+
+
+def warranty(text: str, reg_ym: str | None = None) -> dict:
+    """제조사 보증 — ★ 「신차 등록일로부터 N년 or 주행거리 N만km」.
+
+    ★ 볼보 셀렉트는 ★ **차마다 같은 문구**로 적는다 [실측 09-02].
+      ★ ★ 그래도 ★ **원문에 적힌 것**이다 — ★ 우리가 지어낸 값이 아니다.
+    ★ 잔여는 ★ 축이 ★ 연식·주행으로 스스로 낸다
+    """
+    m = RE_WARRANTY.search(text or "")
+    if not m:
+        # ★ 만료일 꼴 — ★ 등록일부터 만료일까지가 ★ 보증 기간이다.
+        #   ★ 등록 연월을 모르면 ★ **안 담는다** (지어내지 않는다)
+        end = RE_WARRANTY_END.search(text or "")
+        if not end or not reg_ym or len(str(reg_ym)) < 6:
+            return {}
+        y0, m0 = int(str(reg_ym)[:4]), int(str(reg_ym)[4:6])
+        month = (int(end.group(1)) - y0) * MONTHS_PER_YEAR \
+            + (int(end.group(2)) - m0)
+        if month <= 0:
+            return {}          # ★ 이미 끝났거나 ★ 읽기가 틀렸다 — ★ 안 담는다
+        return {"warranty_body_month": month,
+                "warranty_power_month": month}
+    month = int(m.group(1)) * MONTHS_PER_YEAR
+    km = int(m.group(2)) * KM_PER_MAN
+    # ★ 볼보는 ★ 차체와 동력계를 ★ 안 가른다 — ★ 한 줄로 준다.  ★ 둘 다 그 값이다
+    return {"warranty_body_month": month, "warranty_body_km": km,
+            "warranty_power_month": month, "warranty_power_km": km}
+
+
 def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     """상세 한 쪽 → `core_listing` 한 줄.  ★ 못 읽은 칸은 ★ 안 담는다 (NULL 이 맞다)."""
     if not html:
@@ -90,6 +153,16 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     # ★ 사이트 검증 — ★ 볼보 공식딜러 인증중고차라는 ★ 사이트의 사실이다.
     #   ★ 배점은 `f-table` 5장이 정한다 — ★ 여기서 점수를 매기지 않는다
     out["site_home_verify"] = 1
+
+    # ★★★★★ 09-02 — ★ 옵션 목록 (로드맵 차례 1-6).  ★ 없으면 ★ 안 담는다
+    got_opts = options(html)
+    if got_opts:
+        import json as _json
+
+        out["options_standard_json"] = _json.dumps(got_opts, ensure_ascii=False)
+
+    # ★★★★★ 09-02 — ★ 보증.  ★ 문구가 없으면 ★ 안 담는다 (지어내지 않는다)
+    out.update(warranty(RE_TAGS.sub(" ", html), out.get("year_month")))
     return out
 
 

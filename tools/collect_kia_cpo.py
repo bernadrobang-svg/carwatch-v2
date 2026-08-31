@@ -73,6 +73,10 @@ def wanted_names(root: str = ROOT) -> list:
     for key, one in rows.items():
         if key.startswith("_") or not isinstance(one, dict):
             continue
+        # ★★★★★ 09-02 — ★ **쉬는 차종은 안 받는다** (`S46-215` · 마스터 실측).
+        #   ★ 매물을 지우지 않는다 — ★ 받으러 가지만 않는다
+        if not one.get("active"):
+            continue
         q = (one.get("site_query") or {}).get(SITE_CODE)
         name = (q or {}).get("modelCodeNames") if isinstance(q, dict) else None
         if name and name not in got:
