@@ -59,6 +59,7 @@
     "tools/daily_collect.py",
     "tools/daily_enqueue.py",
     "tools/deploy_check.py",
+    "tools/fetch_missing_catalog.py",
     "tools/fill_photos.py",
     "tools/fold_out_of_scope.py",
     "tools/gen_table.py",
