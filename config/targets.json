@@ -262,6 +262,12 @@
           "3253"
         ],
         "_세대": "[가이드 08-27] ★ ELECTRIFIED GV70 만 — ★ 3154(GV70 내연 728건)는 뺐다.  ★ fuel_match=전기"
+      },
+      "revolt": {
+        "brand_hash_id": "vgm7Do",
+        "model_hash_id": "Mo7j63",
+        "_차명": "Electrified GV70",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 2건"
       }
     },
     "year_range": "202200..",
@@ -515,7 +521,16 @@
           "model": "N49KGo",
           "_차명": "테슬라 모델 Y"
         }
-      ]
+      ],
+      "revolt": {
+        "brand_hash_id": "xozX5g",
+        "model_hash_id": [
+          "N49KGo",
+          "4NQQ7p"
+        ],
+        "_차명": "Model Y ＋ Model Y Juniper",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 17건"
+      }
     },
     "year_range": "202200..",
     "price_range": "..6000",
@@ -1150,6 +1165,12 @@
       "volvo_selekt": {
         "_전수": "true",
         "_차명": "볼보 C40"
+      },
+      "revolt": {
+        "brand_hash_id": "Jo6rOo",
+        "model_hash_id": "N491G4",
+        "_차명": "C40 Recharge",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
       }
     },
     "year_range": "201900..",
@@ -1246,6 +1267,12 @@
         "maker_no": "1019",
         "_차명": "폴스타 4",
         "_실측": "[실측 08-29] ★ ajax_maker_new.php dep=0 으로 받았다 — ★ 폴스타 no=1019 · car_cnt 1.  ★ dep=1 에 폴스타 2·4 뿐이다"
+      },
+      "revolt": {
+        "brand_hash_id": "RWlnAZ",
+        "model_hash_id": "ojxxB4",
+        "_차명": "Polestar 4",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 3건"
       }
     },
     "year_range": "201900..",
@@ -1299,6 +1326,12 @@
         "Manufacturer": "BMW",
         "ModelGroup": "iX3",
         "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
+      },
+      "revolt": {
+        "brand_hash_id": "0W5AWm",
+        "model_hash_id": "dpYgk3",
+        "_차명": "iX3",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 3건"
       }
     },
     "label": "BMW iX3 (전기)",
@@ -1328,6 +1361,12 @@
         "Manufacturer": "폭스바겐",
         "ModelGroup": "ID.4",
         "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
+      },
+      "revolt": {
+        "brand_hash_id": "LZY3JW",
+        "model_hash_id": "eojn2o",
+        "_차명": "ID.4",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 4건"
       }
     },
     "label": "폭스바겐 ID.4",
@@ -1381,6 +1420,12 @@
         "Manufacturer": "기아",
         "ModelGroup": "EV4",
         "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
+      },
+      "revolt": {
+        "brand_hash_id": "2oV0gK",
+        "model_hash_id": "oqk6k4",
+        "_차명": "EV4",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
       }
     }
   },
@@ -1392,7 +1437,13 @@
     ],
     "year_range": "202200..",
     "site_query": {
-      "_왜 비었나": "★ 09-01 — 질의 열쇠를 아직 못 쟀다.  ★ ID.4 와 같은 자리다(폭스바겐 KB 112 · 보배 44).  ★ 짐작으로 코드를 적지 않는다"
+      "_왜 비었나": "★ 09-01 — 질의 열쇠를 아직 못 쟀다.  ★ ID.4 와 같은 자리다(폭스바겐 KB 112 · 보배 44).  ★ 짐작으로 코드를 적지 않는다",
+      "revolt": {
+        "brand_hash_id": "LZY3JW",
+        "model_hash_id": "oxmmrp",
+        "_차명": "ID.5",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
+      }
     }
   },
   "XC40_EV": {
@@ -1438,7 +1489,13 @@
           "model": "wo2dG4",
           "_차명": "볼보 XC40"
         }
-      ]
+      ],
+      "revolt": {
+        "brand_hash_id": "Jo6rOo",
+        "model_hash_id": "Z40wEp",
+        "_차명": "XC40 Recharge",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
+      }
     },
     "_가르는 법": "★ KB 는 carCode 로 갈린다(3244=Recharge · 2940=가솔린).  ★ 다른 곳은 열쇠가 같아 ★ fuel_match 로 가른다 — ★ 짐작으로 코드를 나누지 않는다"
   }

@@ -4573,6 +4573,38 @@ def s46_202_no_raw_template_tags():
         return False, "★ 「안 풀린 틀 문법」 금지가 규격에 없다"
     return True, "「안 풀린 틀 문법」 금지가 규격에 있다"
 
+
+def s46_203_new_site_has_target_keys():
+    """S46-203 — ★ 넣으라 한 사이트에 ★ 차종 열쇠가 있는가 (오판 227).
+
+    ★ 09-01 — ★ 리볼트를 「0순위로 넣어라」고 내면서 ★ `site_query.revolt` 가 0 종이었다.
+      ★ ★ 마스터 — 「★ 차종이 해시값이라서 발라내야 하는데 ★ 그걸 했니?」
+    ★ 잣대 — ★ `endpoints.json` 에 있는 사이트가
+      ★ `targets.json` 의 `site_query` 에도 ★ 한 종 이상 있어야 한다
+    """
+    import json as _j
+
+    eps = _j.loads(_read(ROOT / "config" / "endpoints.json"))
+    tgt = _j.loads(_read(ROOT / "config" / "targets.json"))
+    used = set()
+    for k, v in tgt.items():
+        if not isinstance(v, dict) or k.startswith("_"):
+            continue
+        used |= set((v.get("site_query") or {}))
+    bad = []
+    for site in eps:
+        if site.startswith("_"):
+            continue
+        # ★ 엔카는 마스터 회선으로 받고 · ★ 리본카는 사이트맵 전건을 받아
+        #   ★ ★ 우리 쪽에서 `fuel_match`·`target_key` 로 거른다 — ★ 차종 열쇠가 없는 것이 옳다
+        if site in ("encar", "reborncar"):
+            continue
+        if site not in used:
+            bad.append(site)
+    if bad:
+        return False, ("★ 창구는 있는데 차종 열쇠가 없는 사이트 " + " · ".join(bad[:4]))
+    return True, f"창구가 있는 사이트에 다 차종 열쇠가 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4608,6 +4640,8 @@ CHECKS = (
      s46_177_catalog_not_site_locked),
     ("S46-188", "「화면에 없다」를 열어 보고 적었는가",
      s46_188_screen_before_claiming_missing),
+    ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
+     s46_203_new_site_has_target_keys),
     ("S46-202", "안 풀린 틀 문법이 없는가", s46_202_no_raw_template_tags),
     ("S46-192", "선호차종이 등록부에 다 있는가",
      s46_192_pref_brands_registered),

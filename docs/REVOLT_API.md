@@ -1,7 +1,7 @@
 # 리볼트 (revolt.kr) — 전기차 전용 인증중고차
 
 ```
-version  SPEC-2026.09.01-r1034
+version  SPEC-2026.09.01-r1035
 follows  ★ 정본 — 가이드 문서
 sources  실측 09-01
 checks   S46-200
@@ -123,4 +123,49 @@ checks   S46-200
    ★ ★ 값이 ★ **딜러가 쓴 자유 문장**이다 · ★ 「진짜 검증할 방법이 없다」(마스터 08-29)
 필수  ★ 수집을 ★ **멈춘다**.  ★ 이미 받은 것은 ★ **지우지 않는다** (P3 · 화면에서 뺀다)
 필수  ★ 사이트 갈래 표에서 ★ 보배를 빼고 ★ **리볼트를 「상품화·보증」에 넣는다**
+```
+
+---
+
+# ★★★★★ 09-01 — ★ **차종 해시를 뽑았다** (마스터 지적)
+
+```
+★★★ 마스터 — 「★ **넌 리볼트 256건 중 6건만 대상이라는데 ★ 네가 매핑표를 뭘 준 거야?
+   ★ 설마 KB 것을 준 거니?  ★ 리볼트도 헤이딜러처럼 차종이 해시값이라서 발라내야 하는데
+   ★ 그걸 했니?**」
+★ ★ ★ **안 했다.  ★ `site_query.revolt` 가 ★ 한 종도 없었다** — ★ 옳은 지적이다
+```
+
+## ★ 어디서 뽑나 — ★ **`/brands/` 안에 `models[]` 가 있다**
+
+```
+GET /customers/web/brands/   ★ 200 · 브랜드 22 · ★ 차종 합 93
+  [{ "hash_id":"Jo6rOo", "name":"Volvo",
+     "models":[{ "hash_id":"Z40wEp", "name":"XC40 Recharge" }, …] }, …]
+★★★ ★ **거르개는 `?model_hash_id=` 다**
+   ★ ★ ★ **`?model=` 은 안 걸린다** — ★ 전건(100건)이 그대로 온다.  ★ 내가 처음에 그렇게 세었다
+   ★ ★ 번들에서 찾았다 — `{model_hash_id:n}:{brand_hash_id:e}`
+```
+
+## ★★ 우리 차종 아홉 — ★ **다 찾았다** [실측 09-01]
+
+| 우리 차종 | 브랜드 | ★ `model_hash_id` | 리볼트 이름 | ★ 건수 |
+|---|---|---|---|--:|
+| `MODEL_Y` | Tesla `xozX5g` | ★ **`N49KGo`** ＋ **`4NQQ7p`** | Model Y ＋ ★ **Model Y Juniper** | **17** |
+| `ID4_EV` | Volkswagen `LZY3JW` | `eojn2o` | ID.4 | **4** |
+| `IX3_EV` | BMW `0W5AWm` | `dpYgk3` | iX3 | **3** |
+| `POLESTAR4_EV` | Polestar `RWlnAZ` | `ojxxB4` | Polestar 4 | **3** |
+| `GV70_EV` | GENESIS `vgm7Do` | `Mo7j63` | Electrified GV70 | **2** |
+| `XC40_EV` | Volvo `Jo6rOo` | `Z40wEp` | ★ **XC40 Recharge** | 0 |
+| `C40_EV` | Volvo `Jo6rOo` | `N491G4` | ★ **C40 Recharge** | 0 |
+| `ID5_EV` | Volkswagen `LZY3JW` | `oxmmrp` | ID.5 | 0 |
+| `EV4_EV` | KIA `2oV0gK` | `oqk6k4` | EV4 | 0 |
+| **합** | | | | ★ **29 / 220** |
+
+```
+★★ ★ **브랜드 해시가 헤이딜러와 똑같다** — 볼보 `Jo6rOo` · BMW `0W5AWm` · 테슬라 `xozX5g`
+   ★ ★ 다만 ★ **폴스타는 다르다** — 리볼트 `RWlnAZ` ↔ 헤이딜러 계열과 견줘 봐야 한다
+★ ★ ★ **차종은 있는데 매물이 0 인 것이 넷**이다 (XC40·C40 Recharge · ID.5 · EV4)
+   ★ ★ **「리볼트가 안 판다」가 아니다** — ★ 지금 재고가 없는 것이다.  ★ 들어오면 걸린다
+★★ ★ **모델 Y 는 해시가 둘이다** — ★ `Model Y` 와 ★ `Model Y Juniper`(신형).  ★ 둘 다 넣었다
 ```
