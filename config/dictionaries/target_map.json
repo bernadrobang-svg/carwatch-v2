@@ -193,7 +193,41 @@
         "target_key": "GV70_EV",
         "_주의": "〃"
       },
-      "_실측": "★ [09-02] K카 표본 500건 · 이름 59가지에서 우리 대상에 걸리는 것.  ★ 나머지 대상(EV4·ID.4·ID.5·iX3·모델Y·폴스타4·C40·XC40)은 ★ 이 표본에 없다 — ★ 「K카가 안 판다」가 아니라 ★ 표본에 안 걸린 것이다.  ★ 개발측이 전량에서 세어 새 이름을 올리면 그때 더한다"
+      "_실측": "★ [09-02] K카 표본 500건 · 이름 59가지에서 우리 대상에 걸리는 것.  ★ 나머지 대상(EV4·ID.4·ID.5·iX3·모델Y·폴스타4·C40·XC40)은 ★ 이 표본에 없다 — ★ 「K카가 안 판다」가 아니라 ★ 표본에 안 걸린 것이다.  ★ 개발측이 전량에서 세어 새 이름을 올리면 그때 더한다",
+      "EV4": {
+        "collect_group": "ev",
+        "target_key": "EV4_EV"
+      },
+      "모델Y": {
+        "collect_group": "ev",
+        "target_key": "MODEL_Y"
+      },
+      "ID.4": {
+        "collect_group": "ev",
+        "target_key": "ID4_EV"
+      },
+      "ID.5": {
+        "collect_group": "ev",
+        "target_key": "ID5_EV"
+      },
+      "iX3": {
+        "collect_group": "ev",
+        "target_key": "IX3_EV"
+      },
+      "폴스타 4": {
+        "collect_group": "ev",
+        "target_key": "POLESTAR4_EV"
+      },
+      "XC40": {
+        "collect_group": "ev",
+        "target_key": "XC40_EV",
+        "_주의": "★ 가솔린·디젤도 같은 이름이다 — ★ fuel_match 「전기」로 가른다"
+      },
+      "C40": {
+        "collect_group": "ev",
+        "target_key": "C40_EV"
+      },
+      "_09-02": "★ 대상 열 중 ★ 아홉을 미리 넣었다 [09-02].  ★ K카 표본 500건에 ★ 우리 대상이 GV70·콜레오스뿐이었다 — ★ 「K카가 안 판다」가 아니라 ★ 표본에 안 걸린 것이다.  ★ 들어오면 바로 걸린다"
     },
     "bobaedream": {
       "_field": "목록 차명에서 거른 뒤 상세를 받는다 (BOBAEDREAM_API · maker_no facet 은 못 받았다)",
