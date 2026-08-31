@@ -1,7 +1,7 @@
 ## STEP 70 — 가격 · 기대가와 감가 곡선
 
 ```
-version  SPEC-2026.09.02-r1073
+version  SPEC-2026.09.02-r1074
 follows  ★ 정본 — 배점의 원천은 `config/scoring.json`
 sources  실측 08-22
 checks   S46-38 · S46-39

@@ -1,7 +1,7 @@
 # 엔카 robots · 407 — ★ 실측 규격
 
 ```
-version  SPEC-2026.09.02-r1073
+version  SPEC-2026.09.02-r1074
 follows  `docs/INDEX.md`
 sources  개정 560 · 실측 08-23
 checks   S46-29
