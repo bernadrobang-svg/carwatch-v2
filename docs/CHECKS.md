@@ -176,7 +176,7 @@
 | `S46-191` | 차종별 예산이 원칙대로인가 | fatal | `validate/v0_guide.py:4503` | **★ 없음** | 없음 | guide/03_이력.md:1175 · guide/03_이력.md:1215 · guide/03_이력.md:1217 |
 | `S46-192` | 선호차종이 등록부에 다 있는가 | fatal | `validate/v0_guide.py:4539` | **★ 없음** | 없음 | guide/03_이력.md:1179 |
 | `S46-202` | 안 풀린 틀 문법이 없는가 | fatal | `validate/v0_guide.py:4564` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:138 · guide/03_이력.md:1219 |
-| `S46-203` | 넣으라 한 사이트에 차종 열쇠가 있는가 | fatal | `validate/v0_guide.py:4577` | **★ 없음** | 없음 | guide/03_이력.md:1223 · guide/06_오판대장.md:316 |
+| `S46-203` | 받기가 파일에 쓰는가 | fatal | `validate/v0_guide.py:4609` | **★ 없음** | 없음 | guide/03_이력.md:1223 · guide/03_이력.md:1227 · guide/06_오판대장.md:316 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -695,7 +695,7 @@
 - `S46-191` 차종별 예산이 원칙대로인가 — `validate/v0_guide.py`
 - `S46-192` 선호차종이 등록부에 다 있는가 — `validate/v0_guide.py`
 - `S46-202` 안 풀린 틀 문법이 없는가 — `validate/v0_guide.py`
-- `S46-203` 넣으라 한 사이트에 차종 열쇠가 있는가 — `validate/v0_guide.py`
+- `S46-203` 받기가 파일에 쓰는가 — `validate/v0_guide.py`
 - `S46-21` 시안 한 파일에 화면이 하나인가 — `validate/v0_guide.py`
 - `S46-22` 시안 절 차례가 화면과 같은가 — `validate/v0_guide.py`
 - `S46-23` 빈 site_query 가 없는가 — `validate/v0_guide.py`

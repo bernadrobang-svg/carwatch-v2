@@ -4605,6 +4605,33 @@ def s46_203_new_site_has_target_keys():
         return False, ("★ 창구는 있는데 차종 열쇠가 없는 사이트 " + " · ".join(bad[:4]))
     return True, f"창구가 있는 사이트에 다 차종 열쇠가 있다"
 
+
+def s46_203_collect_writes_files_first():
+    """S46-203 — ★ 받기 걸음이 ★ **파일에 쓰는가** (마스터 확정 08-29 · 09-01 재지적).
+
+    ★ 마스터 — 「★ 아직도 수집할 때 DB 쓰니?  ★ 그거 하지 말라고 했는데 뭐 하는 거지?
+      ★ 목록과 상세를 ★ **파일로 받은 뒤에** ★ DB 에 넣으라고 했는데」
+    ★ 규격 — `10-collect/00-intro.md` ④ 「★ 받기 걸음은 ★ 파일만 쓴다.  ★ DB 를 안 연다」
+    ★ 잣대 — ★ `tools/collect_*.py` 가 ★ `save_site_raw` 를 ★ 곧장 부르면 실패
+    """
+    import glob as _g
+    import os as _os
+
+    bad = []
+    for f in sorted(_g.glob(str(ROOT / "tools" / "collect_*.py"))):
+        name = _os.path.basename(f)
+        body = _read(ROOT / "tools" / name)
+        if "save_site_raw" not in body:
+            continue
+        # ★ 파일에 먼저 쓰는 자취가 있으면 통과 — ★ raw/ 자리를 쓰는가
+        if "raw/" in body or "save_raw_file" in body or "work_dir" in body:
+            continue
+        bad.append(name)
+    if bad:
+        return False, ("★ 받기가 DB 에 곧장 쓰는 수집기 " + str(len(bad)) + "개 — "
+                       + " · ".join(bad[:4]) + "  ★ 파일로 받은 뒤 넣어라")
+    return True, "받기 걸음이 파일에 쓴다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4642,6 +4669,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-203", "받기가 파일에 쓰는가", s46_203_collect_writes_files_first),
     ("S46-202", "안 풀린 틀 문법이 없는가", s46_202_no_raw_template_tags),
     ("S46-192", "선호차종이 등록부에 다 있는가",
      s46_192_pref_brands_registered),

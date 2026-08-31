@@ -1,7 +1,7 @@
 # 관리 화면 시안 2 — 나머지 11개
 
 ```
-version  SPEC-2026.09.01-r1035
+version  SPEC-2026.09.01-r1036
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
