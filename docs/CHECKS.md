@@ -182,7 +182,7 @@
 | `S46-206` | PDF 를 받아 두라 하지 않는가 | fatal | `validate/v0_guide.py:4681` | **★ 없음** | 없음 | guide/03_이력.md:1231 · guide/06_오판대장.md:319 · chapters/10-collect/d-policy.md:186 |
 | `S46-207` | 커밋 제목이 사실을 말하는가 | fatal | `validate/v0_guide.py:4747` | **★ 없음** | 없음 | guide/03_이력.md:1235 · guide/03_이력.md:1237 · guide/03_이력.md:1239 |
 | `S46-208` | 시세 축이 음수를 내지 않는가 | fatal | `validate/v0_guide.py:4785` | **★ 없음** | 없음 | guide/03_이력.md:1243 · guide/06_오판대장.md:320 · chapters/30-score/f-table.md:2650 |
-| `S46-214` | 사진 밑에 빈칸이 없는가 | fatal | `validate/v0_guide.py:4804` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:478 · UI_REVIEW.md:2034 · guide/03_이력.md:1273 |
+| `S46-214` | 사진 밑에 빈칸이 없는가 | fatal | `validate/v0_guide.py:4804` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:485 · UI_REVIEW.md:2034 · guide/03_이력.md:1273 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |

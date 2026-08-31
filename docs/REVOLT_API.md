@@ -1,7 +1,7 @@
 # 리볼트 (revolt.kr) — 전기차 전용 인증중고차
 
 ```
-version  SPEC-2026.09.02-r1061
+version  SPEC-2026.09.02-r1062
 follows  ★ 정본 — 가이드 문서
 sources  실측 09-01
 checks   S46-200
@@ -42,6 +42,12 @@ checks   S46-200
 | 〃 `/brands/` · `/models/{id}/grades/` | — | (아직 안 잼) |
 
 ---
+
+```
+★★★★ **이 문서의 건수는 ★ 규격이 아니다** — ★ 잰 날의 수다.  ★ 날마다 변한다
+   ★ ★ 규격은 ★ **창구 주소 · 열쇠 · 칸 이름**이다.  ★ 그것만 못을 박는다
+   ★ ★ ★ **개발측 수가 다르면 ★ 나중에 잰 것이 맞다** — ★ 불일치로 세지 마라
+```
 
 # 3. ★★★ 우리 축과 이어 보면 — ★ **거의 다 준다**
 
@@ -151,7 +157,7 @@ GET /customers/web/brands/   ★ 200 · 브랜드 22 · ★ 차종 합 93
 
 | 우리 차종 | 브랜드 | ★ `model_hash_id` | 리볼트 이름 | ★ 건수 |
 |---|---|---|---|--:|
-| `MODEL_Y` | Tesla `xozX5g` | ★ **`N49KGo`** ＋ **`4NQQ7p`** | Model Y ＋ ★ **Model Y Juniper** | ★ **38** |
+| `MODEL_Y` | Tesla `xozX5g` | ★ **`N49KGo`** ＋ **`4NQQ7p`** | Model Y ＋ ★ **Model Y Juniper** | 38 → 42 [날마다 다르다] |
 | `ID4_EV` | Volkswagen `LZY3JW` | `eojn2o` | ID.4 | **4** |
 | `IX3_EV` | BMW `0W5AWm` | `dpYgk3` | iX3 | **3** |
 | `POLESTAR4_EV` | Polestar `RWlnAZ` | `ojxxB4` | Polestar 4 | **3** |
