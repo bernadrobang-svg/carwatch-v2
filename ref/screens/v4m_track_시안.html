@@ -57,7 +57,7 @@ border-radius:10px;background:var(--surface)}
 .v4-ax{font-size:11px;color:var(--faint);font-family:var(--mono);margin-bottom:3px}
 .v4-ax b{color:var(--dim);font-weight:600}
 .v4-heart{color:var(--amber);float:right}
-.v4-thumbwrap{position:relative;flex:0 0 auto}
+.v4-thumbwrap{position:relative;float:left;margin:0 10px 6px 0}
 .v4-pick{position:absolute;top:5px;left:5px;width:26px;height:26px;border-radius:6px;
 background:rgba(0,0,0,.55);border:1px solid var(--line2);color:var(--dim);font-size:14px;z-index:2}
 .v4-pick.on{background:var(--amber);border-color:var(--amber);color:#111;font-weight:700}
@@ -65,6 +65,10 @@ background:rgba(0,0,0,.55);border:1px solid var(--line2);color:var(--dim);font-s
 border-top:1px solid var(--amber);display:flex;gap:10px;align-items:center;z-index:8}
 .v4-cmp b{color:var(--amber)}
 .v4-trim{font-size:12px;color:var(--dim);margin-top:1px}
+.v4-plate{font-size:12px;color:var(--text);font-weight:600;letter-spacing:.3px;margin-bottom:2px}
+.v4-vin{font-size:10px;font-weight:400;color:var(--ok);border:1px solid var(--line);
+border-radius:3px;padding:1px 4px;margin-left:4px}
+.v4-vin.na{color:var(--faint)}
 .v4-j{display:flex;flex-wrap:wrap;gap:3px 8px;margin-top:5px;font-size:11px;color:var(--faint)}
 .v4-j b.ok{color:var(--ok)} .v4-j b.no{color:var(--no)}
 
@@ -77,7 +81,7 @@ border-top:1px solid var(--amber);display:flex;gap:10px;align-items:center;z-ind
   .v4-top{padding:14px 22px 10px}
   .v4-title{font-size:20px}
   .v4-card{padding:16px 22px}
-  .v4-thumb{width:180px;height:135px;flex:0 0 180px}
+  .v4-thumb{width:180px;height:135px;float:left;margin:0 10px 6px 0}
   .v4-name{font-size:16px}
   .v4-price{font-size:19px}
   .v4-j{flex-wrap:nowrap}
@@ -97,7 +101,7 @@ border-top:1px solid var(--amber);display:flex;gap:10px;align-items:center;z-ind
 /* ★ 1024 이상 — 사진을 더 키우고 · 곁말을 옆에 편다 */
 @media (min-width:1024px){
   .v4-card{padding:18px 26px}
-  .v4-thumb{width:240px;height:180px;flex:0 0 240px}
+  .v4-thumb{width:240px;height:180px;float:left;margin:0 10px 6px 0}
   .v4-name{font-size:17px}
   .v4-trim,.v4-spec{font-size:13px}
   .v4-price{font-size:21px}
@@ -117,7 +121,7 @@ h3{font-size:13px;font-weight:600;margin:18px 14px 6px;color:var(--dim)}
 
 /* ★ 340 아래에서도 안 깨진다 — 사진만 줄인다.  글자는 그대로 */
 @media (max-width:359px){
-  .v4-thumb{width:88px;height:66px;flex:0 0 88px}
+  .v4-thumb{width:88px;height:66px;float:left;margin:0 10px 6px 0}
   .v4-price{font-size:15px}
   .v4-btn{font-size:12px}
 }
@@ -151,18 +155,22 @@ border-radius:10px;display:flex;align-items:center;justify-content:center;color:
 <div class="v4-box"><div class="v4-lbl">★ 이 화면은 무엇을 하는 곳인가</div>
 <div class="v4-note">★ <b>한 대의 차</b>가 엔카에도 K카에도 있을 때 <b>어디가 싸고 왜 등급이 다른지</b>를 본다<br>★★ <b>관심·비교와 다르다</b> — 관심은 「내가 담은 것」 · 비교는 「다른 차끼리」 · 여기는 <b>같은 차끼리</b><br>★ 짝이 없는 매물은 여기 안 나온다</div></div>
 <div class="v4-seg"><button class="on">차액 큰 순</button><button>등급 차 큰 순</button><button>사이트 많은 순</button></div>
-<div class="v4-card"><div class="v4-cardline"><div class="v4-row"><div class="v4-mid">
+<div class="v4-card"><div class="v4-cardline"><div class="v4-row">
+<div class="v4-thumbwrap"><div class="v4-thumb">사진</div></div><div class="v4-mid">
+<div class="v4-plate">243부2495 <span class="v4-vin">VIN ○</span></div>
 <div class="v4-name">X3_IMPORT xDrive20d</div>
 <div class="v4-spec">2곳 · 3,900 ~ 5,800만</div>
 <div class="v4-price" style="color:var(--no)">차액 1,900만 · 48.7%</div>
 <div class="v4-note">★ 30% 넘는다 — <b>짝짓기가 틀렸을 자리다.</b>  연식·트림이 다른 차를 묶었을 수 있다</div>
-<div class="v4-j"><span>엔카 <b>B</b> 638/910</span><span>KB <b>C</b> 521/910</span></div>
-</div></div><div class="v4-acts"><button class="v4-btn go">상세 ▸</button></div></div></div>
-<div class="v4-card"><div class="v4-cardline"><div class="v4-row"><div class="v4-mid">
+<div class="v4-j"><span>엔카 <b>3,900만</b> <b>B</b> 638/910</span><span>KB <b>5,800만</b> <b>C</b> 521/910</span></div>
+</div><div class="v4-acts"><button class="v4-btn go">상세 ▸</button></div></div></div>
+<div class="v4-card"><div class="v4-cardline"><div class="v4-row">
+<div class="v4-thumbwrap"><div class="v4-thumb">사진</div></div><div class="v4-mid">
+<div class="v4-plate">108모3600 <span class="v4-vin na">VIN —</span></div>
 <div class="v4-name">GRANDEUR_LPG 3.0</div>
 <div class="v4-spec">2곳 · 2,890 ~ 3,260만</div>
 <div class="v4-price">차액 370만 · 12.8%</div>
-<div class="v4-j"><span>엔카 <b>S</b> 742/910</span><span>헤이딜러 <b>B</b> 498/910</span></div>
+<div class="v4-j"><span>엔카 <b>2,890만</b> <b>S</b> 742/910</span><span>헤이딜러 <b>3,260만</b> <b>B</b> 498/910</span></div>
 <div class="v4-note">★★ <b>분모는 910 으로 같다.</b>  갈리는 것은 <b>earned</b> 다<br>
 ★ 빠진 축 — 소모품 <b>⑤</b>(어디서도 못 채운다) · 사이트보증 <b>②</b><br>
 ★ <b>차가 나쁜 것이 아니라 그 사이트가 안 준 것이다</b></div>

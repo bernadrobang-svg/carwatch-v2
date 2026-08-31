@@ -1,7 +1,7 @@
 # 리볼트 (revolt.kr) — 전기차 전용 인증중고차
 
 ```
-version  SPEC-2026.09.02-r1068
+version  SPEC-2026.09.02-r1069
 follows  ★ 정본 — 가이드 문서
 sources  실측 09-01
 checks   S46-200
