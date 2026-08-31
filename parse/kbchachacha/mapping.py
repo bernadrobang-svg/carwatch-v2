@@ -142,6 +142,33 @@ def _options(html: str) -> tuple:
     return have, miss
 
 
+# ★★★★★ 09-02 (로드맵 차례 1-5) — ★ **제조사 보증 표**.
+#   ★ 실측 09-02 — ★ 「차체/일반 (100,000km / 5년) 45,007km / 2개월 남음」
+#   ★ ★ 표본 60건 중 ★ **39건**에 있다.  ★ `warranty.general` 22 ＋ `warranty.power` 32
+#   ★ ★ ★ KB 332건이 ★ 이 둘을 ★ 거의 다 0점으로 두고 있었다
+RE_WARRANTY = re.compile(
+    r"(차체\s*/\s*일반|엔진\s*/\s*주요|동력\s*전달|파워\s*트레인)"
+    r"\s*\(\s*([\d,]+)\s*km"
+    r"\s*/\s*(\d+)\s*년\s*\)", re.I)
+MONTHS_PER_YEAR = 12
+
+
+def _warranty(text: str) -> dict:
+    """제조사 보증 → 개월·km.  ★ 못 읽으면 ★ 빈 표다 (지어내지 않는다).
+
+    ★ 「(100,000km / 5년)」은 ★ **그 차의 보증 한도**다 — ★ 잔여가 아니다.
+      ★ ★ 잔여는 ★ 축이 ★ 연식·주행으로 스스로 낸다 (`analyze/axis/warranty.py`)
+    """
+    out: dict = {}
+    for kind, km, year in RE_WARRANTY.findall(text or ""):
+        k = re.sub(r"\s+", "", kind)
+        # ★ KB 는 ★ 「엔진/주요」라 적는다 [실측 09-02] — ★ 그것이 동력계다
+        pre = "body" if k.startswith("차체") else "power"
+        out[f"warranty_{pre}_km"] = int(km.replace(",", ""))
+        out[f"warranty_{pre}_month"] = int(year) * MONTHS_PER_YEAR
+    return out
+
+
 def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     """상세 한 쪽 → `core_listing` 한 줄.
 
@@ -216,6 +243,9 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     if photos:
         out["photo_main"] = photos[0]
         out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+
+    # ★★★★★ 09-02 — ★ 제조사 보증 (로드맵 차례 1-5).  ★ 없으면 ★ 안 담는다
+    out.update(_warranty(text))
 
     # ★★★★★ 09-02 — ★ 주요옵션 (로드맵 차례 1-5).  ★ 없으면 ★ 안 담는다
     have, miss = _options(html)
