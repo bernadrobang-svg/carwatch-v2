@@ -13,6 +13,7 @@
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
 import time
@@ -33,13 +34,10 @@ from adapters.bobaedream import (  # noqa: E402
     BobaedreamAdapter,
     load_config,
 )
-from parse.bobaedream.mapping import list_items, parse_detail  # noqa: E402
-from parse.target_rules import fill_target_key  # noqa: E402
+from parse.bobaedream.mapping import list_items  # noqa: E402
 from store.dictionary import target_map  # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
-from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 80
 
@@ -140,7 +138,6 @@ def main() -> int:
     #   ★ 기본값에서 `--pages` 를 없앤다 — ★ 빈 쪽까지 간다 (MAX_PAGES 가 울타리다).
     #   ★ 사람이 `--pages` 를 준 때는 ★ 시험용이라 ★ `done=False` 다
     pages = opt("--pages", MAX_PAGES)
-    pages_given = "--pages" in args
     groups = load_filters()
     if groups:
         print(f"★ 좁혀 받는다 — 차종 {len(groups)}종 "
@@ -188,85 +185,30 @@ def main() -> int:
         print("★ --dry 라 상세를 안 받았다")
         return 0
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
-    from store.pii import load_key
-    from store.raw import commit
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
-    at, key = _now(), load_key()
-    now = datetime.now(timezone.utc)
-    kept = {"저장": 0, "못 받음": 0, "리스·렌트": 0}
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 넣기는 ★ `python3.11 tools/load_raw.py bobaedream --write` 가 한다
+    #   ★★ 보배는 ★ 09-01 마스터 확정으로 ★ **쉰다** (`sites.json` `paused`) —
+    #     ★ 그래도 ★ 받는 길은 ★ 같은 꼴로 남겨 둔다 (다시 켤 때를 위해)
+    at = _now()
+    kept = {"저장": 0, "못 받음": 0}
     for no, _title, _name in hits:
         d = adapter.detail_urls(no)[0]
         html = _get(d.url, d.headers, d.timeout_sec)
         if not html:
             kept["못 받음"] += 1
+            time.sleep(gap)
             continue
-        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
-        #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
-        save_file(SITE_CODE, "detail", no, d.url, html, at)
-        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
-        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
-        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
-        commit(conn)
-        deep = parse_detail(html, SITE_CODE, no)
-        if not deep:
-            kept["못 받음"] += 1
-            continue
-        # ★ 보증은 ★ 전체 기간이라 ★ 연식과 빼야 잔여가 된다 (규격 3a ③)
-        deep = parse_detail(html, SITE_CODE, no,
-                            _elapsed(deep.get("year_month"), now))
-        # ★ 상세에 ★ 차종 칸이 없다 — ★ 목록에서 고른 이름을 넣는다.
-        #   ★ 지어낸 것이 아니라 ★ 목록이 준 차명에서 ★ 짚은 것이다
-        deep["site_model"] = _title
-        deep["site_model_group"] = _name
-        if deep.get("sell_type") == "리스":
-            kept["리스·렌트"] += 1
-        deep.pop("_insurance_cnt", None)
-        deep.pop("_repair_cnt", None)
-        deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, no, at)
-        deep["detail_status"] = "ok"
-        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-        fill_target_key(SITE_CODE, deep)
-        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
+        save_file(SITE_CODE, "detail", no, d.url, html, at, root=ROOT)
+        # ★ 목록이 준 차명은 ★ 상세에 없다 — ★ 곁들여 남긴다 (지어낸 것이 아니다)
+        save_file(SITE_CODE, "list", no, d.url, json.dumps(
+            {"source_id": no, "title": _title, "site_model_group": _name},
+            ensure_ascii=False), at, root=ROOT)
         kept["저장"] += 1
-        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
-        commit(conn)
         time.sleep(gap)
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
-    #   ★★★ 보배드림은 ★ **끝까지 받는 구조가 아직 없다** —
-    #     ★ `--pages N` 으로 ★ **한정해 훑는다** (기본 5쪽 · `_walk_plan`).
-    #     ★ ★ 그러니 ★ 「이번 목록에 없다」가 ★ 「팔렸다」를 뜻하지 않는다.
-    #   ★ ★ 그래서 ★ 부르되 ★ **안 매긴다** (`done=False`) — ★ 지어내지 않는다.
-    #     ★ 반만 보고 매기면 ★ 산 차를 죽인다 (규격 「필수」).
-    #   ★ ★ 끝 신호(마지막 쪽·총계)를 얻으면 ★ 그때 참으로 바꾼다 — ★ 가이드에 올렸다
-
-    # ★★★★ 08-29 (규격 확정) — ★ 빈 쪽까지 갔을 때만 참이다.
-    #   ★ 사람이 `--pages` 를 준 때 · ★ MAX_PAGES 에 닿은 때는 ★ 거짓이다
-    _done = bool(walked) and walked <= ended and not pages_given
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    # ★★★★★ 08-30 정정 (마스터 0c) — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
-    #   ★ K카가 살아 있는 12대를 죽인 것과 ★ **같은 함정**이다 (0a).
-    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 것을 ★ **표본으로 눌러 봤다** —
-    #   ★ ★ 표본 10건 중 ★ **2건이 살아 있었다** (파서가 값을 뽑았다)
-    #   ★★★ 까닭 — ★ 「끝까지 받았나」 가드는 ★ 「이 창구를 끝까지 받았나」를 재지
-    #     ★ ★ **「이 창구가 전량인가」를 안 잰다.**  ★ 우리는 ★ 차종으로 좁혀 받는다 —
-    #     ★ ★ 좁힌 목록에 없다고 ★ 사이트에서 사라진 것이 아니다.
-    #   ★ 되돌리는 길은 ★ `tools/undo_wrong_gone.py` 다 (눌러서 살아 있는 것만 되돌린다)
-    _got = {}
-    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 빈 쪽까지 간 조건 {len(ended)}/{len(walked)}"
-          f"{' · --pages 를 주셨으므로 안 매긴다' if pages_given else ''}")
     print("★ " + " · ".join(f"{k} {v}" for k, v in kept.items()))
-    conn.close()
-    from tools.daily_enqueue import enqueue_after_store
-    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
-                        kept.get("저장", 0))
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

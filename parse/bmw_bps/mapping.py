@@ -156,3 +156,20 @@ def inspect_of(html: str) -> tuple:
     """★ 「72가지 점검 없음」 — ★ (몇 가지, 결과).  ★ 못 찾으면 (None, None)."""
     m = RE_INSPECT.search(_text(html))
     return (_int(m.group(1)), m.group(2)) if m else (None, None)
+
+
+
+# ★★★★★ 09-01 마스터 지시 — ★ **받기는 파일만.  ★ 넣기가 폴더를 읽는다.**
+#   ★ 그래서 ★ 「목록 줄 만들기」가 ★ 여기 있어야 한다 (수집기가 아니라)
+def parse_list_item(one: dict, site: str = SITE_CODE) -> dict | None:
+    """목록에서 뽑은 한 건 → `core_listing` 한 줄.
+
+    ★ BMW 목록은 ★ 매물번호와 ★ 한 줄 글(차명 ＋ 색 ＋ 연료)을 준다.
+    ★ `one` 은 ★ 수집기가 파일로 남긴 것이다 — `{"source_id","text"}`
+    """
+    if not isinstance(one, dict) or not one.get("source_id"):
+        return None
+    text = str(one.get("text") or "")
+    return {"site": site, "source_id": str(one["source_id"]),
+            "price_unit": "won", "site_model": text[:80],
+            "detail_status": "not_requested"}

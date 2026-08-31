@@ -315,15 +315,13 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     ★★ ★ 통신과 ★ `time.sleep` 은 ★ **트랜잭션 밖**이다.
       ★ 한 건 넣고 ★ 곧바로 커밋해 ★ 잠금 창을 ★ 한 INSERT 로 줄인다
     """
-    from store.raw import commit
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 DB 를 안 연다.**
+    #   ★ 「이미 받았나」는 ★ **원문 파일이 있나**로 본다 —
+    #     ★ 앞서는 ★ `raw_response` 를 물었다.  ★ 그것이 DB 를 여는 자리였다
+    from store.rawfile import walk as _walk
 
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
-    # ★ 「이미 받았나」는 ★ **원문이 있나**로 본다 (받기 걸음이므로).
-    #   ★ 옛 꼴은 `detail_status='ok'` 로 봤는데 ★ 원문 없이 「받았다」인 것이
-    #     ★ 226건 있었다 (08-28 실측) — ★ 그것들을 영영 안 받게 된다
-    done = {r[0] for r in conn.execute(
-        "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
-        (SITE_CODE,))}
+    done = {os.path.basename(x).split("__")[0][:-5]
+            for x in _walk(site=SITE_CODE, endpoint="detail", root=ROOT)}
     # ★★★ 08-28 — ★ `--missing-raw` : ★ **원문이 없는 것만** 다시 받는다 (P3).
     #   ★ 실측 08-28 — ★ `detail_status='ok'` 가 ★ 406건인데
     #     ★ ★ `raw_response` 는 ★ **180건**뿐이다.  ★ 226건이 원문 없이 「받았다」다.
@@ -332,9 +330,7 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     #   ★ 전량을 다시 받지 않는다 — ★ **원문이 빈 것만**이다.
     #     ★ ★ KB 는 봇 차단이 있으므로 ★ 더더욱 좁혀 받는다
     if "--missing-raw" in sys.argv[1:]:
-        have = {r[0] for r in conn.execute(
-            "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
-            (SITE_CODE,))}
+        have = done                    # ★ 파일이 있나 — ★ DB 를 안 연다
         todo = [x for x in ids if x not in have]
         print(f"★ 원문이 없는 것 {len(todo):,}건만 다시 받는다"
               f" (원문 있는 것 {len(have):,}건)")
@@ -369,14 +365,12 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
         #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
         # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
         #   ★★ 곧바로 커밋한다 — ★ 잠금 창이 ★ INSERT 하나로 끝난다
-        save_file(SITE_CODE, "detail", one, req.url, body, _now())
-        commit(conn)
+        save_file(SITE_CODE, "detail", one, req.url, body, _now(), root=ROOT)
         got["받음"] += 1
         if n % 100 == 0:
             print(f"    {n:,}/{len(todo):,} … 받음 {got['받음']:,}")
         # ★★ 자는 것은 ★ **커밋 뒤**다 — ★ 트랜잭션 안에서 자지 않는다
         time.sleep(float(cfg.get("interval_sec") or 1.2))
-    conn.close()
     return got
 
 
@@ -392,19 +386,24 @@ def load_details(cfg: dict, groups: list | None = None) -> dict:
     from store.core import (resolve_listing_id, split_pii,
                             upsert_core)
     from store.pii import load_key
-    from store.raw import commit, raw_body
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
     put = {"본 원문": 0, "넣음": 0, "그대로라 건너뜀": 0, "파싱 실패": 0,
            "gone": 0}
-    rows = conn.execute(
-        "SELECT r.source_id, r.body, r.fetched_at,"
-        "       (SELECT l.parsed_at FROM core_listing l"
-        "         WHERE l.site = r.site AND l.source_id = r.source_id)"
-        "  FROM raw_response r"
-        " WHERE r.site = ? AND r.endpoint = 'detail' AND r.status = 'ok'"
-        "   AND r.body IS NOT NULL", (SITE_CODE,)).fetchall()
+    # ★★★★★ 09-01 마스터 지시 — ★ **원본은 파일이다.**  ★ 거기서 읽는다.
+    #   ★ 앞서는 ★ `raw_response` 를 읽었다 — ★ 이제 그것은 ★ **사본**이다
+    from store.rawfile import read as _read
+    from store.rawfile import walk as _walk
+
+    rows = []
+    for path in _walk(site=SITE_CODE, endpoint="detail", root=ROOT):
+        env = _read(path)
+        if env is None or not env.get("body"):
+            continue
+        rows.append((env.get("source_id"), env["body"],
+                     env.get("fetched_at"), None))
     n = 0
     for sid, body, fetched_at, parsed_at in rows:
         put["본 원문"] += 1
@@ -412,7 +411,7 @@ def load_details(cfg: dict, groups: list | None = None) -> dict:
         if parsed_at and fetched_at and str(parsed_at) >= str(fetched_at):
             put["그대로라 건너뜀"] += 1
             continue
-        deep = parse_detail(raw_body(body), SITE_CODE, str(sid))
+        deep = parse_detail(body, SITE_CODE, str(sid))
         if not deep:
             put["파싱 실패"] += 1
             continue

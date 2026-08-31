@@ -42,11 +42,9 @@ SWEEP_OFF = (
     " 「없는 매물」이라 답할 때만 죽인다")
 
 INSP_PATH = "/bc/car-insp/photo/cm?i_sCarCd={source_id}"
-from parse.kcar.mapping import (parse_detail, parse_list_item,  # noqa: E402
-                                record_of)
-from parse.target_rules import fill_target_key  # noqa: E402
+from parse.kcar.mapping import (parse_list_item,  # noqa: E402
+                                )
 from store.dictionary import collect_group_of, match_target_name  # noqa: E402
-from store.raw import open_db  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
 
@@ -158,165 +156,26 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import mark_gone, resolve_listing_id, split_pii, upsert_core
-    from store.pii import load_key
-    from store.raw import commit
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
-    at, key = _now(), load_key()
-    # ★★ 08-28 — ★ 받은 목록 봉투를 ★ **먼저 남긴다** (명령서 3-2 · P3).
-    #   ★ 전에는 ★ 887KB 를 ★ 그냥 버렸다 — ★ `raw_response` 에 `stock_list` 가 0건이었다.
-    #   ★ ★ 갈래를 넓히시면 ★ 이 봉투로 ★ 다시 판다.  ★ 다시 받을 일이 없다
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 넣기는 ★ `python3.11 tools/load_raw.py kcar --write` 가 한다
+    at = _now()
+    # ★★ 08-28 — ★ 받은 목록 봉투를 ★ **먼저 남긴다** (명령서 3-2 · P3)
     if stock_body:
-        got = save_file(SITE_CODE, "stock_list", None,
-                            stock_url, stock_body, at)
-        print(f"★ 목록 원문을 남겼다 ({len(stock_body):,}자 · {got})")
-    # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 우리 대상만 ★ `core_listing` 에 넣는다.
-    #   ★ K카는 ★ 목록이 `enc` 라 ★ 좁힐 길이 없다 — ★ 다 받되 ★ 걸러 넣는다
-    #   ★ ★ 원문(`raw_response`)에는 남는다 — ★ 갈래를 넓히면 다시 판다
-    keep = ours if "--all" not in args else parsed
-    print(f"★ 저장할 것 {len(keep)}건 · ★ 안 넣는 것 {len(parsed) - len(keep)}건 "
-          f"(원문은 남는다)")
-    for one in keep:
-        one["listing_id"] = resolve_listing_id(conn, SITE_CODE,
-                                               one["source_id"], at)
-        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-        fill_target_key(SITE_CODE, one)
-        upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
-    commit(conn)
-    print(f"★ 목록 저장 {len(parsed)}건 · site='{SITE_CODE}'")
-    # ★★★★★ 08-29 (ORDER r879 1b · `S46-117`) — ★ 팔린 것을 가른다.
-    #   ★ 앞서는 ★ 상세를 다시 받아 「없는 매물」이 나올 때만 gone 이었다.
-    #   ★ ★ 그런데 ★ `todo` 가 `detail_status='ok'` 를 빼므로
-    #   ★ ★ **한 번 받은 매물은 다시 안 본다** — ★ 영영 gone 에 안 닿았다.
-    #   ★ 목록에 없으면 팔린 것이다 — ★ 보배(`collect_bobaedream.py`) 꼴로 한다
-    from store.raw import link_raws as raw_link_raws
-
-    raw_link_raws(conn, SITE_CODE)
-    # ★★★★★ 08-30 정정 — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
+        save_file(SITE_CODE, "stock_list", None, stock_url, stock_body, at,
+                  root=ROOT)
+        print(f"★ 목록 원문을 남겼다 ({len(stock_body):,}자)")
+    # ★★ 3-2 걸러 저장은 ★ **넣기 걸음**이 한다 — ★ 받기는 다 남길 뿐이다
+    for one in parsed:
+        save_file(SITE_CODE, "list", one["source_id"], stock_url or "",
+                  json.dumps(one, ensure_ascii=False), at, root=ROOT)
+    print(f"★ 목록 {len(parsed)}건을 파일로 남겼다 "
+          f"(우리 대상으로 보이는 것 {len(ours)}건)")
+    # ★★★★★ 08-30 정정 — ★ 「목록에 없으면 죽인다」는 ★ **여기서 안 한다.**
     #   ★ 08-29 에 켰다가 ★ **살아 있는 차 12대를 죽였다** (마스터 0a 지적).
-    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 19건을 ★ **하나씩 눌러 봤다** —
-    #     ★ ★ **12건이 아직 살아 있었다** (`statCdNm` 「판매중」) · 7건만 정말 팔렸다.
-    #   ★★★ 까닭 — ★ `stock_list` 는 ★ **전량이 아니다.**
-    #     ★ `pageSize=1000` 으로 불러도 ★ 487건이고 ★ 사이트가 말한 총계도 487 이다 —
-    #     ★ ★ **잘린 것이 아니라 ★ 이 창구가 담는 범위가 그것뿐이다.**
-    #     ★ ★ 살아 있는 12건은 ★ `statCd`·`sellDcd` 어느 갈래로도 ★ 이 목록에 안 온다.
-    #   ★ 「끝까지 받았나」가 참이어도 ★ **「목록이 전량인가」가 거짓**이면
-    #     ★ ★ gone 을 매기면 안 된다 — ★ 반만 보고 매기면 산 차를 죽인다 (오판 161).
-    #   ★ K카의 gone 은 ★ **상세를 눌러 「없는 매물」이 나올 때만** 매긴다 (아래).
-    #     ★ ★ 그것은 사이트가 직접 「없다」고 답한 것이라 ★ 근거가 있다
-    _got = {}
+    #   ★ 그 자리는 ★ `tools/list_diff_check.py` 다 — ★ 상세로 확인한 뒤에 죽인다
     print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
-    del list_done, unparsed
-    print("★ 목록으로는 gone 을 안 매긴다 — 이 창구가 전량이 아니다 "
-          "(실측 08-30 · 살아 있는 12대를 죽였다).  상세가 「없는 매물」이라 할 때만 매긴다")
-
-    # ★ 상세는 ★ 우리 대상만 ★ 뒤에 받는다 (18-3 ③).  ★ 이미 받은 것은 건너뛴다
-    # ★★ `--all` 이면 ★ **527건 전부** 받는다 (가이드 지시 08-24 · 오판 98).
-    #   ★ ★ 까닭 — ★ `cno`(차량번호)가 ★ **목록에 없고 상세에만 있다.**
-    #     ★ `cno` 가 없으면 ★ `plate_hash` 가 없고 ★ 5a 짝짓기가 안 된다
-    want = parsed if "--all" in args else ours
-    limit = 0
-    if "--detail" in args:
-        i = args.index("--detail")
-        limit = int(args[i + 1]) if i + 1 < len(args) and args[i + 1].isdigit() else 0
-    done = {r[0] for r in conn.execute(
-        "SELECT source_id FROM core_listing WHERE site=? AND detail_status='ok'",
-        (SITE_CODE,))}
-    todo = [o for o in want if o["source_id"] not in done]
-    if limit:
-        todo = todo[:limit]
-    print(f"★ 상세 — 받을 것 {len(todo)}건 (이미 받은 것 {len(done)}건은 건너뛴다)")
-    got = {"정상": 0, "없는 매물": 0, "못 받음": 0}
-    gone = 0
-    for one in todo:
-        req = adapter.detail_urls(one["source_id"])[0]
-        size, body = fetch(req.url, req.headers, req.timeout_sec)
-        state = classify(size, body)
-        got[state] = got.get(state, 0) + 1
-        if state != "정상":
-            # ★★ 「없는 매물」은 ★ **팔린 것**이다 (가이드 지시 08-24).
-            #   ★ 지우지 않는다 — ★ `gone_at` 이 ★ 「얼마에 팔렸나」의 근거다
-            if state == "없는 매물":
-                mark_gone(conn, one["listing_id"], at)
-                gone += 1
-            time.sleep(float(cfg.get("interval_sec") or 1.5))
-            continue
-        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
-        #   ★ K카 상세는 ★ JSON 이다 — ★ 글자로 되돌려 넣는다
-        save_file(SITE_CODE, "detail", one["source_id"], req.url,
-                      json.dumps(body, ensure_ascii=False), at)
-        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
-        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
-        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
-        commit(conn)
-        deep = parse_detail(body, SITE_CODE, one["source_id"])
-        if deep:
-            deep["listing_id"] = one["listing_id"]
-            deep["detail_status"] = "ok"
-            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-            fill_target_key(SITE_CODE, deep)
-            upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
-        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
-        commit(conn)
-        time.sleep(float(cfg.get("interval_sec") or 1.5))
-    commit(conn)
-    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items())
-          + (f"  ★ 팔린 것 {gone}건을 gone 으로" if gone else ""))
-
-    # ★★★★★ 08-30 (마스터 지시 1 · `DEDUP_CROSS_SITE` 1장) — ★ 점검 경로로 `cno` 를 얻는다.
-    #   ★★ 마스터 — 「★ 여섯 축은 못 채워도 ★ **`cno` 가 짝짓기 열쇠**다.
-    #     ★ ★ 지금 같은 차 짝이 0건이고 ★ 그것이 이 도구의 심장이다」
-    #   ★ 실측 08-30 — ★ `GET /bc/car-insp/photo/cm?i_sCarCd={id}` → 200 · 462B ·
-    #     ★ ★ `inspDetail.cno` 에 번호판이 있다.  ★ 부위별 값은 없다 (사진뿐)
-    #   ★★ **번호판 원문을 `core_listing` 에 안 넣는다** (마스터 지시 · STEP 35) —
-    #     ★ `_pii_plate_no` 로 넘기면 ★ `split_pii` 가 ★ `plate_hash` 만 남기고
-    #     ★ ★ 원문은 `core_pii` 로 간다
-    need_plate = [o for o in ours
-                  if not conn.execute(
-                      "SELECT plate_hash FROM core_listing"
-                      " WHERE site=? AND source_id=?",
-                      (SITE_CODE, o["source_id"])).fetchone()[0]]
-    print(f"★ 점검 경로로 번호판 — 받을 것 {len(need_plate)}건 "
-          f"(우리 대상 {len(ours)}건 중 · 이미 있는 것은 안 받는다)")
-    ins = {"받음": 0, "번호판 없음": 0, "못 받음": 0}
-    for one in need_plate:
-        url = (cfg["base_url"] + INSP_PATH.format(source_id=one["source_id"]))
-        size, body = fetch(url, adapter.headers(), float(cfg.get("timeout_sec") or 30))
-        del size
-        if not isinstance(body, dict):
-            ins["못 받음"] += 1
-            time.sleep(float(cfg.get("interval_sec") or 1.5))
-            continue
-        save_file(SITE_CODE, "inspection", one["source_id"], url,
-                      json.dumps(body, ensure_ascii=False), at,
-                      listing_id=one.get("listing_id"))
-        commit(conn)
-        det = ((body.get("data") or {}).get("inspDetail") or {})
-        plate = (det.get("cno") or "").strip()
-        if not plate:
-            ins["번호판 없음"] += 1
-            time.sleep(float(cfg.get("interval_sec") or 1.5))
-            continue
-        # ★ 이 매물의 다른 칸을 안 건드린다 — ★ 번호판만 얹는다
-        row = {"site": SITE_CODE, "source_id": one["source_id"],
-               "listing_id": one.get("listing_id"),
-               "_pii_plate_no": plate,
-               "inspection_status": "ok"}
-        upsert_core(conn, split_pii(conn, row, SITE_CODE, key, at), at)
-        commit(conn)
-        ins["받음"] += 1
-        time.sleep(float(cfg.get("interval_sec") or 1.5))
-    print("★ 점검 경로 — " + " · ".join(f"{k} {v}" for k, v in ins.items()))
-    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
-                     (SITE_CODE,)).fetchone()[0]
-    print(f"★ 저장된 K카 매물 — {n}건")
-    conn.close()
-    # ★ 저장했으면 ★ 재판정을 함께 큐에 넣는다 (명령서 14-3 ④)
-    from tools.daily_enqueue import enqueue_after_store
-    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE, len(parsed))
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
-
 
 def main() -> int:
     args = sys.argv[1:]
@@ -378,44 +237,18 @@ def main() -> int:
         print("★ --check 라 저장하지 않았다")
         return 0
 
-    from store.core import (resolve_listing_id, split_pii, upsert_child,
-                            upsert_core)
-    from store.pii import load_key
-    from store.raw import commit
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 펼치기(`parse_detail`·`record_of`)는 ★ 넣기 걸음이 한다
     at = _now()
-    key = load_key()
-    stored, empty, records = 0, 0, 0
     for cd, body in ok_rows:
-        # ★★ `data` 를 벗긴다 — ★ 안 벗기면 ★ 전건 NULL 이다 (명령서 6단계)
-        deep = parse_detail(body, SITE_CODE, cd)
-        if not deep:
-            empty += 1
-            continue
-        lid = resolve_listing_id(conn, SITE_CODE, cd, at)
-        deep["listing_id"] = lid
-        deep["detail_status"] = "ok"
-        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-        fill_target_key(SITE_CODE, deep)
-        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
-        # ★★★ 08-28 — ★ 이력은 ★ `core_record` 의 칸이다 (규격 3-2·3-3).
-        #   ★ 전에는 ★ `core_listing` 만 썼다 — ★ 그래서 상세를 받아도
-        #     ★ ★ `state.accident` 51점이 ★ 0/34 로 비어 있었다 (실측 08-28).
-        #   ★ 엔카는 5,603행인데 ★ K카는 0행이었다
-        rec = record_of(body, SITE_CODE)
-        if rec:
-            rec["listing_id"] = lid
-            rec["collected_at"] = at
-            upsert_child(conn, "core_record", rec, "p1", at)
-            records += 1
-        stored += 1
-    commit(conn)
-    print(f"★ 저장 {stored}건 · ★ 이력(core_record) {records}건 · site='{SITE_CODE}'"
-          + (f" · ★ 매핑이 빈 것 {empty}건" if empty else ""))
+        save_file(SITE_CODE, "detail", cd, "",
+                  body if isinstance(body, str)
+                  else json.dumps(body, ensure_ascii=False), at, root=ROOT)
+    print(f"★ 상세 {len(ok_rows)}건을 파일로 남겼다 — "
+          f"raw/{SITE_CODE}/detail/{at[:10]}/")
     print("★ 성능점검은 ★ 사진뿐이라 ★ 골격·외판 축은 ★ 안 채웠다 (④ · 규격 4장)")
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

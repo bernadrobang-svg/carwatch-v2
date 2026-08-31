@@ -20,12 +20,9 @@ from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of        # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
-from store.raw import commit, open_db              # noqa: E402
 
 SITE_CODE = "bmw_bps"
 RETRY, RETRY_WAIT = 3, 3.0
@@ -129,92 +126,24 @@ def main() -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, upsert_core
-    from store.raw import raw_body
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 넣기는 ★ `python3.11 tools/load_raw.py bmw_bps --write` 가 한다.
+    #   ★★ 「목록에 없으면 죽인다」는 ★ `tools/list_diff_check.py` 자리다 —
+    #     ★ 마스터 지시 「★ 사라지면 ★ 상세를 조회해서 판매상태를 본다」
     at = _now()
-    # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
-    #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
-    for _u, _b in pages:
-        save_file(SITE_CODE, "list", None, _u, _b, at)
-    for r in rows:
-        r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
-        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-        fill_target_key(SITE_CODE, r)
-        upsert_core(conn, r, at)
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
-    #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다.
-    #   ★ 「끝까지 받았나」가 거짓이면 ★ 안 매긴다 — 반만 보고 매기면 산 차를 죽인다
-    from store.core import sweep_gone_groups
-
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    _got = sweep_gone_groups(conn, SITE_CODE, [(done, set(seen))], at)
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if done else '아니오'}")
-
-    # ★★★★★ 08-30 (마스터 지시 4 · `BMW_BPS_API.md` 08-29 절) —
-    #   ★ **값·주행·연식이 다 상세에 있다.**  ★ 목록 카드에는 없다.
-    #   ★ ★ 그래서 화면 BMW 가 ★ 376건 전부 ★ 값·주행·연식이 비어 있었다.
-    #   ★ 우리 대상만 받는다 — ★ 전량 364건을 다 받지 않는다 (마스터 확정 3-0)
-    from parse.bmw_bps.mapping import inspect_of, parse_detail
-
-    have = _have_detail(conn)
-    todo = [r for r in ours if r["source_id"] not in have]
-    print(f"★ 상세 — 받을 것 {len(todo)}건 "
-          f"(우리 대상 {len(ours)}건 중 · 원문이 있는 것 {len(ours) - len(todo)}건은 안 받는다)")
-    got = {"받음": 0, "못 받음": 0, "원문에서 다시 넣음": 0}
-    for one in ours:
-        sid = one["source_id"]
-        if sid in have:
-            # ★★ 안 받는다.  ★ 그러나 ★ **넣기는 한다** — ★ 파서가 늘면
-            #   ★ ★ 이미 받은 원문에서 ★ 새 칸이 나온다 (리본카 08-29 에서 배운 것)
-            row = conn.execute(
-                "SELECT body FROM raw_response WHERE site=? AND endpoint='detail'"
-                "   AND source_id=? LIMIT 1", (SITE_CODE, sid)).fetchone()
-            html = raw_body(row[0]) if row else None
-            if html is None:
-                continue
-            got["원문에서 다시 넣음"] += 1
-        else:
-            html = _get(f"{base}/shop/item.php?it_id={sid}", head, timeout)
-            if not html:
-                # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
-                got["못 받음"] += 1
-                time.sleep(interval)
-                continue
-            save_file(SITE_CODE, "detail", sid,
-                          f"{base}/shop/item.php?it_id={sid}", html, at,
-                          listing_id=one.get("listing_id"))
-            # ★ 통신·sleep 이 트랜잭션 안에 들지 않게 곧바로 커밋한다 (개정 857)
-            commit(conn)
-            got["받음"] += 1
-        one = dict(one)
-        deep = parse_detail(html, sid)
-        deep["listing_id"] = one.get("listing_id")
-        deep["detail_status"] = "ok"
-        # ★★ 차종 이름은 ★ **목록**이 준다 (상세에는 없다) — ★ 이어 준다.
-        #   ★ 안 이으면 ★ `fill_target_key` 가 ★ 이름이 없어 못 붙인다
-        for k in ("site_model_group", "site_model"):
-            if one.get(k) and not deep.get(k):
-                deep[k] = one[k]
-        n_chk, chk = inspect_of(html)
-        if n_chk:
-            deep["inspection_status"] = "ok"
-        fill_target_key(SITE_CODE, deep)
-        upsert_core(conn, deep, at)
-        commit(conn)
-        if sid not in have:
-            time.sleep(interval)
-    print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
-    raw_link_raws(conn, SITE_CODE)
-    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
-                     (SITE_CODE,)).fetchone()[0]
-    print(f"★ 저장 {len(rows)}건 · 저장된 BMW 매물 {n:,}건")
+    # ★★ 쪽 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
+    for _n, (_u, _b) in enumerate(pages, 1):
+        save_file(SITE_CODE, "listpage", None, _u, _b, at, page=_n, root=ROOT)
+    # ★ 목록에서 뽑은 줄은 ★ 매물마다 한 파일로.  ★ 줄을 **만드는 자리**는 `parse/` 다
+    for sid, text in seen.items():
+        save_file(SITE_CODE, "list", sid, cfg["base_url"],
+                  json.dumps({"source_id": sid, "text": text},
+                             ensure_ascii=False), at, root=ROOT)
+    print(f"★ 목록 {len(seen)}건을 파일로 남겼다 — "
+          f"raw/{SITE_CODE}/list/{at[:10]}/ · 끝까지 받았나 "
+          f"{'예' if done else '아니오'}")
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -32,10 +32,8 @@ from parse.hyundai_cert.mapping import (  # noqa: E402
     parse_detail_all,
 )
 from parse.target_rules import target_by_rules  # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
-from store.raw import open_db  # noqa: E402
 
 # ★★★★★ 이 수집기는 ★ **팔린 차를 목록으로 안 거른다** (마스터 지시 08-30 · S46-117).
 #   ★ 낱말 `SWEEP_OFF` 를 ★ 검사가 본다 — ★ 「안 거른다」와 「못 거른다」를 가른다
@@ -307,48 +305,24 @@ def main() -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
-    from store.pii import load_key
-    from store.raw import commit
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 넣기는 ★ `python3.11 tools/load_raw.py hyundai_cert --write` 가 한다
     at = _now()
-    key = load_key()
     for one in ids:
-        one["listing_id"] = resolve_listing_id(conn, SITE_CODE,
-                                               one["source_id"], at)
-        upsert_core(conn, split_pii(conn, one, SITE_CODE, key, at), at)
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
-    #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다
-
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    # ★★★★★ 08-30 정정 (마스터 0c) — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
-    #   ★ K카가 살아 있는 12대를 죽인 것과 ★ **같은 함정**이다 (0a).
-    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 것을 ★ **표본으로 눌러 봤다** —
-    #   ★ ★ 표본 10건 중 ★ **10건이 다 살아 있었다**
-    #   ★★★ 까닭 — ★ 「끝까지 받았나」 가드는 ★ 「이 창구를 끝까지 받았나」를 재지
-    #     ★ ★ **「이 창구가 전량인가」를 안 잰다.**  ★ 우리는 ★ 차종으로 좁혀 받는다 —
-    #     ★ ★ 좁힌 목록에 없다고 ★ 사이트에서 사라진 것이 아니다.
-    #   ★ 되돌리는 길은 ★ `tools/undo_wrong_gone.py` 다 (눌러서 살아 있는 것만 되돌린다)
-    _got = {}
-    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
+        save_file(SITE_CODE, "list", one["source_id"], BASE,
+                  json.dumps(one, ensure_ascii=False), at, root=ROOT)
     _dn = sum(1 for d, _i in done_groups if d)
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종 · 끝까지 받은 묶음 {_dn}/{len(done_groups)})")
-    if len(done_groups) - _dn:
-        print("  ★ 끝까지 못 받은 묶음이 건드린 차종은 안 매겼다")
-    print(f"★ 저장 {len(ids):,}건 · site='{SITE_CODE}'")
+    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
+    print(f"★ 목록 {len(ids):,}건을 파일로 남겼다 · "
+          f"끝까지 받은 묶음 {_dn}/{len(done_groups)}")
 
     if not want_detail:
-        print("★ 상세는 --detail 로 받는다")
+        print("★ 상세는 --detail 로 받는다 · 넣기는 "
+              f"python3.11 tools/load_raw.py {SITE_CODE} --write")
         return 0
 
     todo = ids[:limit] if limit else ids
     got = {"정상": 0, "못 받음": 0}
-    from store.core import upsert_child
-
     for one in todo:
         pair = fetch_detail(one["source_id"])
         if pair is None:
@@ -356,32 +330,16 @@ def main() -> int:
             got["못 받음"] += 1
             time.sleep(INTERVAL)
             continue
-        deep, record, body = pair
-        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수)
+        _deep, _record, body = pair
+        # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 펼치기는 넣기 걸음이 한다
         save_file(SITE_CODE, "detail", one["source_id"],
-                      BASE + DETAIL_PATH.format(goods_no=one["source_id"]),
-                      body, at)
-        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
-        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
-        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
-        commit(conn)
-        deep["listing_id"] = one["listing_id"]
-        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
-        # ★ 사고·소유자 이력은 ★ core_record 의 칸이다 (A-2)
-        record["listing_id"] = one["listing_id"]
-        record["collected_at"] = at
-        upsert_child(conn, "core_record", record, "p1", at)
+                  BASE + DETAIL_PATH.format(goods_no=one["source_id"]),
+                  body, at, root=ROOT)
         got["정상"] += 1
-        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
-        commit(conn)
         time.sleep(INTERVAL)
-    commit(conn)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
-    from tools.daily_enqueue import enqueue_after_store
-    enqueue_after_store(os.path.join(ROOT, "carwatch.db"), SITE_CODE,
-                        got.get("정상", 0))
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

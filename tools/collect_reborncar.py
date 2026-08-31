@@ -27,14 +27,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from parse.reborncar.mapping import (  # noqa: E402
-    option_keys, options_of, parse_detail, title_name,
+    option_keys, options_of,
 )
-from parse.target_rules import fill_target_key  # noqa: E402
-from store.dictionary import known_model_of                    # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
-from store.raw import open_db                                  # noqa: E402
 
 # ★★★★★ 이 수집기는 ★ **팔린 차를 목록으로 안 거른다** (마스터 지시 08-30 · S46-117).
 #   ★ 낱말 `SWEEP_OFF` 를 ★ 검사가 본다 — ★ 「안 거른다」와 「못 거른다」를 가른다
@@ -55,7 +51,35 @@ def _now() -> str:
 OPTION_PATH = "/api/v1/car/carOption.rb"
 
 
-def _options(conn, cfg, source_id: str, html: str, at: str, lid):
+def _option_body(cfg, source_id: str, html: str):
+    """★ 옵션 창구 몸통만 받는다 (r1007 1b · 09-01 파일 걸음).
+
+    ★★ **DB 를 안 연다** — ★ 받아서 몸통을 돌려줄 뿐이다.  ★ 저장은 부르는 쪽이 한다
+    """
+    tok, csrf = option_keys(html)
+    if not tok or not csrf:
+        return None
+    base = cfg["base_url"]
+    head = dict(cfg.get("headers") or {})
+    head["Accept"] = "application/json, text/javascript, */*; q=0.01"
+    head.update({"X-Ajax-call": "true", "Authorization": tok,
+                 "X-CSRF-TOKEN": csrf, "X-Requested-With": "XMLHttpRequest",
+                 "Referer": base + cfg["paths"]["detail"].format(
+                     source_id=source_id),
+                 "Origin": base,
+                 "Content-Type":
+                     "application/x-www-form-urlencoded; charset=UTF-8"})
+    data = urllib.parse.urlencode({"productId": source_id}).encode()
+    try:
+        with _OPENER.open(urllib.request.Request(base + OPTION_PATH,
+                                                 data=data, headers=head),
+                          timeout=float(cfg["timeout_sec"])) as res:
+            return res.read()
+    except (urllib.error.URLError, OSError, TimeoutError):
+        return None
+
+
+def _options_old(conn, cfg, source_id: str, html: str, at: str, lid):
     """★ 옵션 창구 (r1007 1b).  ★ 못 받으면 ★ None — ★ 「없다」로 안 적는다.
 
     ★ 원문은 ★ 남긴다 (P3) — ★ 받은 것도 못 받은 것도
@@ -147,7 +171,12 @@ def main() -> int:
         #     ★ ★ 저장된 원문의 토큰은 ★ 이미 죽어 있다.
         #   ★ 그래서 ★ 상세 쪽을 ★ 다시 한 번 받아 ★ 그 세션으로 창구를 두드린다.
         #   ★ ★ 상세 원문도 ★ 함께 새로 남긴다 (P3 — 잃는 것이 없다)
-        return _options_only(cfg, args)
+        # ★★★★★ 09-01 — ★ 옵션도 ★ **받기 걸음**에서 파일로 남긴다.
+        #   ★ 옛 `_options_only` 는 ★ DB 를 열었다 — ★ 걷어냈다
+        print("★ --options 는 없어졌다 — ★ 상세를 받을 때 함께 받는다.\n"
+              "  python3.11 tools/collect_reborncar.py  ·  "
+              "그다음 python3.11 tools/load_raw.py reborncar --write")
+        return 0
     # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」.
     #   ★ 리본카는 ★ **사이트맵 한 번**으로 전부를 준다 — ★ 쪽넘김이 없다.
     #   ★ 그러나 ★ `--limit` 으로 자르면 ★ 전부가 아니다 — ★ 그때는 안 매긴다
@@ -159,176 +188,43 @@ def main() -> int:
             got = got[:int(args[i + 1])]
             _done = False
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
-    from store.pii import load_key
-    from store.raw import commit
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 넣기는 ★ `python3.11 tools/load_raw.py reborncar --write` 가 한다.
+    #   ★★ 「이미 받았나」도 ★ **파일로 안다** — ★ 앞서는 `core_listing` 을 물었다
+    from store.rawfile import walk as _walk
 
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
-    at, pii_key = _now(), load_key()
-    done = {r[0] for r in conn.execute(
-        "SELECT source_id FROM core_listing WHERE site=? AND detail_status='ok'",
-        (SITE_CODE,))}
-    # ★★★ 08-26 — ★ `--missing-raw` : ★ **원문이 없는 것만** 다시 받는다 (P3).
-    #   ★ 실측 08-26 — ★ `detail_status='ok'` 가 ★ 1,045건인데
-    #     ★ ★ `raw_response` 는 ★ **23건**뿐이었다.  ★ 우리 21종 72건은 ★ **0건**이다.
-    #   ★ ★ 원문이 없으면 ★ **다시 캘 수가 없다** — ★ 사진도 축도 못 뽑는다.
-    #     ★ ★ 「원문은 남긴다.  갈래를 넓히시면 다시 판다」(명령서 3-2)가 안 지켜졌다.
-    #   ★ 전량을 다시 받지 않는다 — ★ **원문이 빈 것만**이다
-    if "--missing-raw" in args:
-        have = {r[0] for r in conn.execute(
-            "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
-            (SITE_CODE,))}
-        ours_keys = {r[0] for r in conn.execute(
-            "SELECT source_id FROM core_listing"
-            " WHERE site=? AND target_key IS NOT NULL", (SITE_CODE,))}
-        todo = [c for c in got if c in ours_keys and c not in have]
-        print(f"★ 원문이 없는 우리 차종 {len(todo):,}건만 다시 받는다"
-              f" (원문 있는 것 {len(have):,}건 · 우리 차종 {len(ours_keys):,}건)")
-    else:
-        # ★★★★★ 08-29 (ORDER r879 1d) — ★ 「이미 받았나」를 ★ **원문으로** 가른다.
-        #   ★ 앞서는 `detail_status='ok'` 로 갈랐다.  ★ 그런데 실측 08-29 —
-        #   ★ ★ `detail_status='ok'` **1,106건** vs ★ 상세 원문 **301건**.
-        #   ★ ★ **805건이 「받았다」고 서 있는데 원문이 없다** — ★ 다시 캘 수가 없고
-        #   ★ ★ 그래서 ★ `target_key` 가 ★ 1,107 중 **72건**뿐이다 (차종 미정 1,035).
-        #   ★ 원문이 정본이다 (명령서 3-2 「원문은 남긴다.  갈래를 넓히시면 다시 판다」).
-        #   ★ ★ KB 도 08-29 에 같은 까닭으로 고쳤다 (개정 857)
-        have = {r[0] for r in conn.execute(
-            "SELECT source_id FROM raw_response WHERE site=? AND endpoint='detail'",
-            (SITE_CODE,))}
-        todo = [c for c in got if c not in have]
-        print(f"★ 상세 — 받을 것 {len(todo):,}건"
-              f" (원문이 있는 것 {len(have):,}건은 건너뛴다)")
-        if len(done) > len(have):
-            print(f"  ★ `detail_status='ok'` 는 {len(done):,}건인데 "
-                  f"원문은 {len(have):,}건이다 — {len(done) - len(have):,}건이 "
-                  "「받았다」고 서 있으나 원문이 없다 (그래서 다시 받는다)")
+    at = _now()
     interval = float(cfg.get("interval_sec") or 1.0)
-    seen = {"정상": 0, "못 받음": 0}
-    ours = skipped = 0
+    have = {os.path.basename(x).split("__")[0][:-5]
+            for x in _walk(site=SITE_CODE, endpoint="detail", root=ROOT)}
+    todo = [x for x in got if x not in have]
+    if "--limit" in args:
+        k = args.index("--limit")
+        if k + 1 < len(args) and args[k + 1].isdigit():
+            todo = todo[:int(args[k + 1])]
+    print(f"★ 상세 — 받을 것 {len(todo)}건 "
+          f"(원문 파일이 있는 것 {len(got) - len(todo)}건은 건너뛴다)")
+    seen = {"정상": 0, "못 받음": 0, "옵션": 0}
     for one in todo:
-        html = _get(cfg["base_url"] + cfg["paths"]["detail"].format(source_id=one),
-                    cfg["headers"], float(cfg["timeout_sec"]))
+        url = cfg["base_url"] + cfg["paths"]["detail"].format(source_id=one)
+        html = _get(url, cfg["headers"], float(cfg["timeout_sec"]))
         if not html:
             seen["못 받음"] += 1
             time.sleep(interval)
             continue
-        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
-        #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
-        save_file(SITE_CODE, "detail", one,
-                      cfg["base_url"] + cfg["paths"]["detail"].format(
-                          source_id=one), html, at)
-        # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
-        #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
-        #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)
-        commit(conn)
-        deep = parse_detail(html, SITE_CODE, one)
-        if deep:
-            # ★ 차종은 ★ 우리가 아는 이름이 들어 있는지로 고른다 (K카와 같다)
-            known = known_model_of(title_name(html))
-            seen["정상"] += 1
-            if not known:
-                # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 차종이 안 맞으면
-                #   ★ **`core_listing` 에 안 넣는다.**  ★ 좁힐 길이 없는 사이트다
-                #   ★ ★ `raw_response` 에는 남는다 — ★ 갈래를 넓히면 다시 판다
-                skipped += 1
-                time.sleep(interval)
-                continue
-            deep["site_model_group"] = known
-            ours += 1
-            deep["detail_status"] = "ok"
-            deep["listing_id"] = resolve_listing_id(conn, SITE_CODE, one, at)
-            # ★★★★★ 08-31 (r1007 · 1b) — ★ 옵션 창구를 두드린다.
-            #   ★ 열쇠 둘이 ★ 상세 쪽 안에 있다 (`RB_TOKEN` · `_csrf`)
-            got_opt = _options(conn, cfg, one, html, at, deep["listing_id"])
-            if got_opt:
-                seen["옵션"] = seen.get("옵션", 0) + 1
-                deep["options_standard_json"] = json.dumps(
-                    [x["name"] for x in got_opt["on"] if x["name"]],
-                    ensure_ascii=False)
-                deep["options_etc_json"] = json.dumps(
-                    [x["name"] for x in got_opt["off"] if x["name"]],
-                    ensure_ascii=False)
-            # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-            fill_target_key(SITE_CODE, deep)
-            upsert_core(conn, split_pii(conn, deep, SITE_CODE, pii_key, at), at)
-        # ★ 자기 전에 커밋한다 — ★ 넣기가 sleep 을 넘지 않게 (개정 857)
-        commit(conn)
+        save_file(SITE_CODE, "detail", one, url, html, at, root=ROOT)
+        seen["정상"] += 1
+        # ★★★★★ 08-31 (r1007 · 1b) — ★ 옵션 창구.  ★ 열쇠 둘이 ★ 상세 쪽 안에 있다.
+        #   ★ ★ **같은 세션**이라야 준다 — ★ 그래서 받기 걸음에 있어야 한다
+        opt = _option_body(cfg, one, html)
+        if opt is not None:
+            save_file(SITE_CODE, "option", one,
+                      cfg["base_url"] + OPTION_PATH, opt, at, root=ROOT)
+            seen["옵션"] += 1
         time.sleep(interval)
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
-
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    # ★★★★★ 08-30 정정 (마스터 0c) — ★ **이 목록으로는 gone 을 못 매긴다.  ★ 껐다**
-    #   ★ K카가 살아 있는 12대를 죽인 것과 ★ **같은 함정**이다 (0a).
-    #   ★★ 실측 08-30 — ★ 08-29 에 gone 으로 매긴 것을 ★ **표본으로 눌러 봤다** —
-    #   ★ ★ 표본 10건 중 ★ **3건이 살아 있었다**
-    #   ★★★ 까닭 — ★ 「끝까지 받았나」 가드는 ★ 「이 창구를 끝까지 받았나」를 재지
-    #     ★ ★ **「이 창구가 전량인가」를 안 잰다.**  ★ 우리는 ★ 차종으로 좁혀 받는다 —
-    #     ★ ★ 좁힌 목록에 없다고 ★ 사이트에서 사라진 것이 아니다.
-    #   ★ 되돌리는 길은 ★ `tools/undo_wrong_gone.py` 다 (눌러서 살아 있는 것만 되돌린다)
-    _got = {}
-    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in seen.items()))
-    print(f"★ 우리 대상 — {ours}건 / {len(todo)}건 "
-          f"· ★ 안 넣은 것 {skipped}건 (원문은 남는다)")
-    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
-                     (SITE_CODE,)).fetchone()[0]
-    print(f"★ 저장된 리본카 매물 — {n:,}건")
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
-
-
-def _options_only(cfg, args) -> int:
-    """★ 옵션만 받는 바퀴 (r1007 1b).  ★ 이미 넣은 매물에만 붙인다."""
-    from store.core import upsert_core
-    from store.raw import commit, open_db
-
-    limit = 0
-    if "--limit" in args:
-        i = args.index("--limit")
-        if i + 1 < len(args) and args[i + 1].isdigit():
-            limit = int(args[i + 1])
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
-    at = _now()
-    rows = list(conn.execute(
-        "SELECT listing_id, source_id FROM core_listing"
-        " WHERE site=? AND status IN ('active','new')"
-        "   AND options_standard_json IS NULL", (SITE_CODE,)))
-    if limit:
-        rows = rows[:limit]
-    print(f"★ 옵션이 빈 매물 {len(rows)}건")
-    seen = {"옵션 받음": 0, "상세를 못 받음": 0, "창구가 안 줌": 0}
-    for lid, sid in rows:
-        url = cfg["base_url"] + cfg["paths"]["detail"].format(source_id=sid)
-        html = _get(url, cfg["headers"], float(cfg["timeout_sec"]))
-        if not html:
-            seen["상세를 못 받음"] += 1
-            time.sleep(float(cfg.get("interval_sec") or 1.0))
-            continue
-        got = _options(conn, cfg, sid, html, at, lid)
-        if not got:
-            seen["창구가 안 줌"] += 1
-        else:
-            seen["옵션 받음"] += 1
-            upsert_core(conn, {
-                "site": SITE_CODE, "source_id": sid, "listing_id": lid,
-                "options_standard_json": json.dumps(
-                    [x["name"] for x in got["on"] if x["name"]],
-                    ensure_ascii=False),
-                "options_etc_json": json.dumps(
-                    [x["name"] for x in got["off"] if x["name"]],
-                    ensure_ascii=False)}, at)
-        commit(conn)
-        time.sleep(float(cfg.get("interval_sec") or 1.0))
-    print("★ " + " · ".join(f"{k} {v}" for k, v in seen.items()))
-    n = conn.execute(
-        "SELECT COUNT(*) FROM core_listing WHERE site=?"
-        "  AND options_standard_json IS NOT NULL", (SITE_CODE,)).fetchone()[0]
-    print(f"★ 옵션이 찬 리본카 매물 {n:,}건")
-    return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

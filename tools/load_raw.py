@@ -49,8 +49,9 @@ LOADERS: dict = {
     #   ★ 상세는 ★ HTML 이다.  ★ `json` 은 ★ **목록에만** 걸린다
     "volvo_selekt": {"mod": "parse.volvo_selekt.mapping", "json": False,
                      "list_json": True},
+    # ★ BMW 목록 줄은 ★ 우리가 만든 JSON 이다 · 상세는 ★ HTML 이다
     "bmw_bps": {"mod": "parse.bmw_bps.mapping", "json": False,
-                "detail_args": "sid_only"},
+                "list_json": True, "detail_args": "sid_only"},
     "hyundai_cert": {"mod": "parse.hyundai_cert.mapping", "json": False,
                      "detail_fn": "parse_detail_all"},
 }

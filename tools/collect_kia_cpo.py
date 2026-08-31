@@ -33,10 +33,8 @@ from parse.kia_cpo.mapping import (  # noqa: E402
     unpack_envelope,
 )
 from store.dictionary import target_key_of  # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
 # ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
 from store.rawfile import save as save_file  # noqa: E402
-from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 40          # ★ 1,020건 ÷ 100 = 11쪽.  ★ 넉넉히 두고 새 것이 없으면 멈춘다
 
@@ -145,36 +143,21 @@ def main() -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, split_pii, upsert_core
-    from store.pii import load_key
-    from store.raw import commit
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 넣기는 ★ `python3.11 tools/load_raw.py kia_cpo --write` 가 한다.
+    #   ★★ `open_db`·`upsert_core`·`sweep_gone_groups` 를 ★ 뺐다 —
+    #     ★ 「목록에 없으면 죽인다」는 ★ `tools/list_diff_check.py` 자리다
     at = _now()
-    key = load_key()
-    stored = 0
-    for p in parsed_rows:
-        # ★★ 번호판은 ★ PII 다 (STEP 35) — ★ 원본을 core 에 넣지 않는다.
-        #   ★ 순서를 지킨다 — split_pii → resolve_id → upsert
-        p["listing_id"] = resolve_listing_id(conn, SITE_CODE, p["source_id"], at)
+    for p_ in parsed_rows:
         # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
-        save_file(SITE_CODE, "list", p["source_id"],
-                      adapter.list_url(None).url,
-                      json.dumps(raw_of.get(p["source_id"]),
-                                 ensure_ascii=False), at,
-                      listing_id=p["listing_id"])
-        upsert_core(conn, split_pii(conn, p, SITE_CODE, key, at), at)
-        stored += 1
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`)
-    from store.core import sweep_gone_groups
-
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in parsed_rows})], at)
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
-    print(f"저장 {stored}건 · site='{SITE_CODE}'")
+        save_file(SITE_CODE, "list", p_["source_id"],
+                  adapter.list_url(None).url,
+                  json.dumps(raw_of.get(p_["source_id"]), ensure_ascii=False),
+                  at, root=ROOT)
+    print(f"★ 목록 {len(parsed_rows)}건을 파일로 남겼다 — "
+          f"raw/{SITE_CODE}/list/{at[:10]}/ · 끝까지 받았나 "
+          f"{'예' if _done else '아니오'}")
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
 
 
