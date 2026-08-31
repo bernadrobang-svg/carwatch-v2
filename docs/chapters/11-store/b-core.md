@@ -1,7 +1,7 @@
 ## STEP 33 — `raw_*` 스키마
 
 ```
-version  SPEC-2026.09.01-r1021
+version  SPEC-2026.09.01-r1022
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
