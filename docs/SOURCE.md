@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 196개 · 총 70,507줄
+파일 196개 · 총 70,515줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -114,12 +114,12 @@
 | `parse/bmw_bps/mapping.py` | 158 | BMW BPS 상세 파서 (`docs/BMW_BPS_API.md` 08-29 절). |
 | `score/adjust.py` | 157 | 배점 조정 — 비율 재배분과 정수 보정. |
 | `report/finance.py` | 156 | 금융 — 점수가 아니라 비용이다. |
+| `tools/fetch_missing_catalog.py` | 156 | ★★★★★ 08-31 (로드맵 차례 5 · `V1-23`) — ★ **안 부른 카탈로그를 받는다.** |
 | `parse/volvo_selekt/mapping.py` | 155 | 볼보 셀렉트 상세 → `core_listing` 칸 (규격 `VOLVO_SELEKT_API.md` 2장). |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
 | `tools/daily_enqueue.py` | 153 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
 | `store/pii.py` | 152 | 개인정보 분리 (L4). |
 | `web/routes.py` | 152 | 라우팅 표 (14장 STEP 142). |
-| `tools/fetch_missing_catalog.py` | 148 | ★★★★★ 08-31 (로드맵 차례 5 · `V1-23`) — ★ **안 부른 카탈로그를 받는다.** |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
 | `parse/kbchachacha/inspection.py` | 141 | KB차차차 성능점검부 → ★ **부위별** (규격 `KBCHACHACHA_API.md` 3장 · 268~269줄). |
