@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**129파일 · 48,749줄 · 3,314KB**
+**129파일 · 48,755줄 · 3,315KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -18,7 +18,7 @@
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,979줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,204줄
+- guide/03_이력.md 1,206줄
 - guide/05_가이드역할.md 1,660줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -38,7 +38,7 @@
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
 | `ENCAR_API.md` | 360 | 15 |
 | `ENCAR_ROBOTS.md` | 253 | 12 |
-| `HEYDEALER_API.md` | 698 | 35 |
+| `HEYDEALER_API.md` | 702 | 35 |
 | `HYUNDAI_CERTIFIED_API.md` | 493 | 23 |
 | `KBCHACHACHA_API.md` | 592 | 30 |
 | `KCAR_API.md` | 671 | 32 |
@@ -118,7 +118,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,204 | 870 |
+| `guide/03_이력.md`  ★ | 1,206 | 871 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,660 | 86 |

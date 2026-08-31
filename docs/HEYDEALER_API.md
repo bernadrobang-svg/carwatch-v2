@@ -1,7 +1,7 @@
 # 헤이딜러 API · 매핑 규격
 
 ```
-version  SPEC-2026.09.01-r1020
+version  SPEC-2026.09.01-r1021
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 866 · 실측 08-29
 checks   S46-5 · S46-31
@@ -690,8 +690,12 @@ GET /v2/customers/web/market/filters/   ★ 200 · 1,269B
 | `car_shape` | `small`(경 ∙ 소형) · `sedan`(세단) · ★ **`suv_rv`(SUV ∙ RV)** · `coupe` · `limousine` · `convertible` · `hatchback` · `sut`(픽업트럭) · 화물 |
 
 ```
-★★★ ★ **마스터께서 「가급적이면 SUV 면 좋겠고」 하신 그 거르개다**
-   ★ ★ 앞서 「세그먼트 거르개가 없다」고 적었는데 ★ **헤이딜러는 준다**
-★ ★ 다른 사이트도 ★ 같은 갈래가 있는지 ★ 내가 재야 한다
+★★★★ ★ **09-01 마스터 확정 — ★ 안 쓴다**
+   ★ 마스터 — 「★ **안 써도 돼.  ★ 차종으로 정리하면서 굳이 필요가 없어졌어**」
+   ★ ★ **옳다** — ★ 우리는 ★ **차종 32 를 등록해 받는다**.  ★ 그 32 가 이미 갈래다
+      ★ ★ XC60·XC40·GV70·iX3·ID.4 는 SUV 이고 ★ S60·G80·폴스타2 는 세단이다
+   ★ ★ ★ **거르개를 하나 더 두면 ★ 같은 것을 두 번 거른다** — ★ 안 만든다
+★ ★ ★ ★ 다른 사이트의 `car_shape` 도 ★ **안 잰다** — ★ 쓸 데가 없다
+★ 적어 두는 까닭 — ★ 나중에 차종을 크게 늘리면 ★ 그때 다시 볼 자리다
 ★ ★ ★ `fuel` 도 함께 온다 — `gasoline`·`diesel`·`lpg`·`bifuel`·`electric`·`hydrogen`·`hybrid`
 ```
