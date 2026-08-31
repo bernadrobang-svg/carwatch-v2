@@ -1,7 +1,7 @@
 ## STEP 58 — V2 GAP 보정
 
 ```
-version  SPEC-2026.09.02-r1071
+version  SPEC-2026.09.02-r1072
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39

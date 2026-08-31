@@ -1,7 +1,7 @@
 # 14장-7. 차트 · 미분류 표시
 
 ```
-version  SPEC-2026.09.02-r1071
+version  SPEC-2026.09.02-r1072
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
