@@ -24,7 +24,10 @@ sys.path.insert(0, ROOT)
 SIAN = os.path.join(ROOT, "ref", "screens")
 RENDER = os.path.join(ROOT, "outputs", "render")
 # ★ 마스터 지시 — ★ **모바일용·태블릿용으로 나눈다**
-SIZES = (("모바일", 390, 844), ("태블릿", 820, 1180))
+# ★★★★★ 09-02 명령서 ② — ★ 「★ **300 · 360 · 600 · 900px 네 폭**에서
+#   ★ ★ 겹침 0 · 넘침 0」
+SIZES = (("300", 300, 800), ("360", 360, 800),
+         ("600", 600, 900), ("900", 900, 1000))
 # ★ 재는 것 — ★ 보이는 글·가로 넘침·눌러야 닿는 크기
 TAP_MIN = 44          # ★ 손가락이 닿는 최소 (UI_REVIEW · 시안 `.v4-btn`)
 
@@ -56,10 +59,22 @@ def look(pg, url: str) -> dict:
         const w = document.documentElement.clientWidth;
         const vis = e => {
             const s = getComputedStyle(e);
-            return s.display !== 'none' && s.visibility !== 'hidden';
+            if (s.display === 'none' || s.visibility === 'hidden') return false;
+            // ★★★★★ 09-02 — ★ **접힌 `<details>` 속은 ★ 안 보인다.**
+            //   ★ 크롬은 그 속 칸의 `display` 를 ★ `none` 으로 안 준다 —
+            //   ★ ★ 그래서 ★ 접힌 거르개 속 단추가 ★ 「겹쳤다」로 잡혔다
+            //   ★ ★ ★ [실측 09-02 · 600·900px · 여섯 쌍].  ★ 거짓 숫자였다
+            for (let a = e; a; a = a.parentElement)
+                if (a.tagName === 'DETAILS' && !a.open
+                    && a.firstElementChild !== e
+                    && !(a.firstElementChild
+                         && a.firstElementChild.contains(e))) return false;
+            return true;
         };
         const over = [];
         const small = [];
+        const hit = [];
+        const gapy = [];
         for (const e of document.querySelectorAll('*')) {
             if (!vis(e)) continue;
             const r = e.getBoundingClientRect();
@@ -83,7 +98,88 @@ def look(pg, url: str) -> dict:
                 && r.height < 44 && r.width > 0)
                 small.push(Math.round(r.height) + 'px ' + (e.innerText || '').slice(0, 14));
         }
+        // ★★ 겹침 — ★ 「단추와 단추가 서로 덮는가」다 (명령서 ②).
+        //   ★ 눈으로 못 찾는다 — ★ 상자를 재서 ★ 겹친 넓이가 있으면 잡는다
+        // ★★★★★ 09-02 — ★ **떠 있는 띠는 겹침이 아니다.**
+        //   ★ 시안도 ★ `.v4-tabs` 를 ★ `position:fixed` 로 아래에 붙인다 —
+        //   ★ ★ 스크롤하면 ★ 글이 그 밑으로 지나간다.  ★ 그것이 시안이 시킨 것이다.
+        //   ★★ 겹침으로 셀 것은 ★ **같은 흐름 안의 단추끼리**다.
+        //     ★ ★ 떠 있는 띠가 ★ 마지막 줄을 가리지 않는지는 ★ `foot` 로 따로 잰다
+        const fixed = (el) => {
+            for (let a = el; a; a = a.parentElement)
+                if (getComputedStyle(a).position === 'fixed') return true;
+            return false;
+        };
+        const btns = Array.from(document.querySelectorAll(
+            'a.btn,button,input[type=submit],.nav-item,.mb'))
+            .filter(e => vis(e) && !fixed(e));
+        for (let i = 0; i < btns.length; i++) {
+            for (let j = i + 1; j < btns.length; j++) {
+                if (btns[i].contains(btns[j]) || btns[j].contains(btns[i])) continue;
+                const a = btns[i].getBoundingClientRect();
+                const b = btns[j].getBoundingClientRect();
+                const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+                const oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+                // ★★★★★ 09-02 — ★ **눌러 봤을 때 덮이는가**로 가른다.
+                //   ★ 상자만 보면 ★ 잘려 안 보이는 것(`overflow:hidden` 속)까지
+                //   ★ ★ 「겹쳤다」로 세어 ★ 거짓 숫자가 나온다 [실측 09-02].
+                //   ★ ★ ★ 손가락이 닿는 자리가 ★ 남의 것이면 ★ 그때가 겹침이다
+                const covered = (el) => {
+                    const r = el.getBoundingClientRect();
+                    const x = r.left + r.width / 2, y = r.top + r.height / 2;
+                    if (x < 0 || y < 0 || x > w || y > window.innerHeight)
+                        return false;          // ★ 화면 밖 — ★ 잴 수 없다
+                    const at = document.elementFromPoint(x, y);
+                    return at !== null && !el.contains(at) && at !== el;
+                };
+                if (ox > 2 && oy > 2 && (covered(btns[i]) || covered(btns[j])))
+                    hit.push(((btns[i].innerText || btns[i].className)
+                              .toString().slice(0, 10)) + '/'
+                             + ((btns[j].innerText || btns[j].className)
+                                .toString().slice(0, 10)));
+            }
+        }
+        // ★★★★★ 09-02 — ★ 명령서 「★ 사진은 **float** 다.  ★ flex 가 아니다.
+        //   ★ ★ 실측 — 300px 에서 ★ **사진 밑 130px 이 비어 있었다**」
+        //   ★★ 재는 법 — ★ 「카드 밑이 사진 밑보다 얼마나 아래인가」가 ★ **아니다**.
+        //     ★ ★ 시안도 그 값이 크다 (글이 길면 당연히 아래로 간다).
+        //   ★★★ ★ 옳은 자 — ★ **사진 밑 · 사진 왼쪽 자리에 ★ 글이 흐르는가**다.
+        //     ★ `float` 면 ★ 흐른다.  ★ `flex` 면 ★ 그 칸이 통째로 **빈다**
+        // ★★★★★ 09-02 — ★ **사진 칸만** 본다.
+        //   ★ 전에는 ★ `.desk`(넓은 화면 전용 칸)까지 세어 ★ 「사진 밑 1,783px」
+        //   ★ ★ 같은 ★ **거짓 숫자**가 나왔다 — ★ 그 칸은 사진이 아니다
+        for (const t of document.querySelectorAll(
+                '.pickthumb,.thumb,.kthumbwrap,.v4-thumbwrap')) {
+            if (!vis(t)) continue;
+            const tw = t.getBoundingClientRect().width;
+            if (tw < 40 || tw > 200) continue;   // ★ 사진 칸은 104px 언저리다
+            const card = t.closest('.row,.pickcard,.v4-card');
+            if (!card) continue;
+            const tb = t.getBoundingClientRect();
+            const cb = card.getBoundingClientRect();
+            const below = Math.round(cb.bottom - tb.bottom);
+            if (below <= 40) continue;          // ★ 사진 밑에 글이 얼마 없다
+            let flowed = false;
+            for (const e of card.querySelectorAll('*')) {
+                if (!vis(e) || e.children.length) continue;
+                const r = e.getBoundingClientRect();
+                if (r.top >= tb.bottom - 2 && r.left < tb.right - 2
+                    && r.width > 4) { flowed = true; break; }
+            }
+            if (!flowed) gapy.push(below + 'px');
+        }
+        // ★★ 떠 있는 띠가 ★ 문서 마지막 줄을 가리는가 — ★ `body` 가 자리를 비웠나
+        let foot = 0;
+        for (const b of document.querySelectorAll('nav,.nav,.v4-tabs')) {
+            if (getComputedStyle(b).position !== 'fixed') continue;
+            const bar = b.getBoundingClientRect();
+            const pad = parseFloat(getComputedStyle(document.body).paddingBottom);
+            if (pad < bar.height - 2) foot = Math.round(bar.height - pad);
+        }
         return {
+            foot: foot,
+            hit: hit.slice(0, 6),
+            gapy: gapy.slice(0, 4),
             // ★★★★★ 09-02 — ★ `innerText` 는 ★ **접힌 `<details>` 속 글을 안 준다**.
             //   ★ 실측 09-02 — ★ 「거르개」·「낮은순」이 ★ 화면에 **있는데**
             //   ★ ★ 「시안에만 있는 말」로 나왔다.  ★ 거짓 어긋남이다.
@@ -124,6 +220,8 @@ def main() -> int:
             for name, sian, ours in got:
                 a = look(pg, sian)
                 o = look(pg, ours)
+                if "--sian" in sys.argv:
+                    o = a          # ★ 시안 자체를 같은 자로 잰다 (기준 잡기)
                 # ★ 시안에 있는 낱말이 ★ 우리 화면에 다 있는가
                 words = [x for x in re.findall(r"[가-힣]{2,}", a["text"])
                          if len(x) >= 3]
@@ -133,6 +231,12 @@ def main() -> int:
                     note.append(f"★ 가로 넘침 {o['docw']}px")
                 if o["over"]:
                     note.append(f"★ 넘치는 칸 {o['over'][:2]}")
+                if o.get("foot"):
+                    note.append(f"★ 아래 띠가 {o['foot']}px 가린다")
+                if o["hit"]:
+                    note.append(f"★ 겹침 {len(o['hit'])}쌍 {o['hit'][:2]}")
+                if o["gapy"]:
+                    note.append(f"★ 사진 밑 빈 자리 {o['gapy'][:2]}")
                 if o["small"]:
                     note.append(f"★ 44px 미만 {len(o['small'])}개")
                     if "--detail" in sys.argv:

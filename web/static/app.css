@@ -2660,10 +2660,17 @@ a.mini, a.clear, .sub a {
    ★ ★ 카드가 통째로 벌어져 ★ 시안이 깨진다.
    ★★ 그래서 ★ **보이는 크기는 그대로 두고 ★ 닿는 자리만 넓힌다** —
      ★ ★ 위아래로 패딩을 주고 ★ 같은 만큼 여백을 뺀다.  ★ 줄 높이가 안 변한다 */
-.row a:not(.btn):not(.heart),
-td a:not(.btn),
-li a, p a, .notice a,
-.pickspec a, .pickname a, .cellset a {
+/* ★★★★★ 09-02 정정 — ★ `p a` 가 ★ **단추까지 물었다**.
+   ★ 실측 09-02 — ★ 알약 단추에 ★ `margin:-14px 0` 이 붙어
+   ★ ★ 줄 높이가 ★ 51px 자식에 ★ **24px** 로 잡히고 ★ 다음 줄과 겹쳤다
+   ★ ★ ★ (300·360·600·900px 전 폭 · 여섯 쌍).
+   ★★ 값 링크만 물린다 — ★ 단추(`.btn`·`.mb`·`.nav-item`·`.heart`)는 뺀다 */
+.row a:not(.btn):not(.heart):not(.mb),
+td a:not(.btn):not(.mb),
+li a:not(.btn):not(.mb):not(.nav-item),
+p a:not(.btn):not(.mb):not(.nav-item),
+.notice a:not(.btn):not(.mb),
+.pickspec a, .pickname a:not(.btn), .cellset a:not(.btn) {
   padding-top: 14px;
   padding-bottom: 14px;
   margin-top: -14px;
@@ -2725,6 +2732,134 @@ a.mini, .note a, .dim a, .muted a { line-height: 1.5; }
   }
   .nav-item b { display: block; font-size: 17px; line-height: 1.2;
                 margin: 0; }
-  /* ★ 아래 띠가 마지막 줄을 가리지 않게 ★ 자리를 비운다 */
-  body { padding-bottom: 64px; }
+  /* ★ 아래 띠가 마지막 줄을 가리지 않게 ★ 자리를 비운다.
+     ★★★★★ 09-02 실측 — ★ 300px 에서 ★ 띠가 **두 줄**이 되어 138px 이었다.
+       ★ ★ 64px 로는 ★ **74px 이 가려졌다.**  ★ 넉넉히 둔다 */
+  /* ★ `body.s-listings{padding:0}` 같은 규칙이 ★ 이것을 되돌린다 —
+     ★ ★ 실측 09-02 — ★ `padding-bottom` 이 ★ **0px** 이었다.
+     ★ ★ ★ 그래서 ★ `body[class]` 로 ★ 한 칸 더 좁게 쓴다 */
+  body, body[class] { padding-bottom: 150px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   ★★★★★ 09-02 명령서 ①② — ★ 시안 `ref/screens/v4m_*.html` 그대로.
+   ★ 마스터 — 「★ 전 화면을 시안에 맞게 · ★ 단추 겹침 0」
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ★★★ ① 사진은 **float** 다.  ★ flex 가 아니다 (명령서 ①).
+   ★ 까닭 — ★ flex 는 **칸을 나눈다**.  ★ 글이 사진 밑으로 안 흐른다.
+   ★ ★ 실측 — 300px 에서 ★ **사진 밑 1,840px 이 비어 있었다**
+   ★★ `clear:both` 를 꼭 붙인다 — ★ 없으면 다음 카드가 사진 옆으로 파고든다 */
+.pickrow, .row .cardbody, .cardbody {
+  display: block;
+}
+.pickrow::after, .cardbody::after {
+  content: ''; display: block; clear: both;
+}
+.pickthumb, .row .desk, .thumb {
+  float: left;
+  width: 104px;
+  height: 78px;
+  margin: 0 10px 6px 0;
+  flex: 0 0 auto;
+}
+.pickmid, .row .mid, .cardbody > div:not(.desk):not(.thumb) {
+  min-width: 0;
+}
+
+/* ★★ ② 단추 — ★ 글자가 넘치면 **두 줄**로.  ★ 「…」로 줄이지 않는다 (명령서 ②) */
+.btn, .nav-item, .mb, button, input[type="submit"] {
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  /* ★★★★★ 09-02 실측 — ★ `min-height` 만으로는 ★ **줄 높이가 안 큰다.**
+     ★ 알약이 44px 인데 ★ 줄은 27.5px 로 잡혀 ★ 두 줄이 12px 씩 겹쳤다
+     ★ ★ (600·900px · 여섯 쌍).  ★ `min-height` 는 ★ 칸 안에서만 늘린다.
+     ★★ 그래서 ★ **속 높이 자체를 44 로 만든다** — ★ 여백과 줄간으로.
+       ★ ★ 12.5px × 1.5 = 19 ＋ 위아래 12 ＋ 테두리 2 = ★ 45 */
+  padding-top: 12px;
+  padding-bottom: 12px;
+  line-height: 1.5;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+/* ★★ ② 단추 줄이 모자라면 ★ **두 줄로 접는다**.
+   ★ ★ **가로 스크롤 금지** — ★ 밀어 보게 하면 ★ 뒤에 무엇이 있는지 모르신다 */
+/* ★★★★★ 09-02 정정 — ★ `.chips` 를 통째로 물면 ★ **거르개 판을 감싼 `<form>`**
+   ★ 까지 `flex` 가 되어 ★ 판이 눌리고 ★ 목록이 그 위로 올라탄다
+   ★ ★ [실측 09-02 — 600·900px · 「덮은 것: MAIN.rows car-rows」].
+   ★★ 알약 줄만 문다 — ★ `p`·`span` 만.  ★ 판을 감싼 것은 안 건드린다 */
+.sitebar, p.chips, span.chips, .picktabs, .pickmodels, .pickorder,
+/* ★ 시안 이름(`v4-*`)은 ★ app.css 에 쓰지 않는다 (`S46-67`) —
+   ★ 우리 이름만 쓴다.  ★ 값만 시안에서 옮긴다 */
+.cmpbar, .seg, .bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  overflow-x: visible;
+  /* ★★★★★ 09-02 실측 — ★ 늘림(`stretch`)이면 ★ 칸 높이가 ★ **글줄 높이**로 잡히고
+     ★ ★ `min-height:44px` 인 단추가 ★ 그 밖으로 **삐져나온다**.
+     ★ ★ ★ 그래서 ★ 다음 줄과 ★ 겹쳤다 (300~900px 전 폭).
+     ★★ 시안도 `.v4-row{align-items:flex-start}` 다 — ★ 그대로 간다 */
+  align-items: flex-start;
+  align-content: flex-start;
+  height: auto;
+}
+
+/* ★★★ ① `listings` 카드 — ★ 시안 `v4m_listings_시안.html` 의 `.v4-card` 다.
+   ★ 전에는 ★ **9칸 grid** 였다 — ★ 좁아지면 칸이 아래로 쌓여
+   ★ ★ 실측 09-02 — 300px 에서 ★ **한 줄이 1,820px** 이 되고
+   ★ ★ ★ 사진 밑이 통째로 비었다 (글이 옆 칸에 갇혀 안 흐른다).
+   ★★ 시안대로 ★ **`display:block` ＋ 사진 `float:left`** 로 간다.
+     ★ ★ 칸은 하나도 안 없앤다 (`V11-68` 「v1 이 낸 열이 v2 에도 있음」) —
+     ★ ★ ★ 놓는 법만 바꾼다 (`V11-70` 「좁으니 다르게 놓는다」) */
+main.car-rows .row {
+  /* ★★★★★ 09-02 — ★ `flow-root` 는 ★ **띄운 사진을 제 안에 가둔다**.
+     ★ `block` 이면 ★ 카드 밖으로 새어 ★ 다음 덩이와 겹친다
+     ★ ★ (실측 09-02 — ★ 축 알약이 ★ 사이트 거르개 단추를 덮었다) */
+  display: flow-root;
+  grid-template-columns: none;
+  padding: 12px 14px;
+}
+main.car-rows .row::after { content: ''; display: block; clear: both; }
+main.car-rows .row .kthumbwrap,
+main.car-rows .row .thumb {
+  float: left; width: 104px; margin: 0 10px 6px 0;
+}
+main.car-rows .row .gr { float: left; margin: 0 8px 6px 0; min-width: 44px; }
+main.car-rows .row .cellset {
+  display: flex; flex-wrap: wrap; gap: 8px 14px; clear: both;
+  padding-top: 8px;
+}
+/* ★ 카드 안의 알약 줄도 ★ 띄운 사진 밑에서 ★ **새 줄로 시작한다** */
+main.car-rows .row .chips, main.car-rows .row .axis-chips { clear: both; }
+
+/* ★★★★★ 09-02 — ★ `<details class="chip">` 는 ★ **알약이 아니라 판**이다.
+   ★ `.chip` 은 ★ `display:inline-flex` 라 ★ 속이 옆으로만 늘어나
+   ★ ★ 실측 09-02 — ★ 거르개 판이 ★ **화면을 넘치고** ★ 아래 줄 단추를 덮었다
+   ★ ★ ★ (300·600px · 겹침 두 쌍 · 「넘치는 칸 DETAILS.chip」).
+   ★★ `<details>` 일 때만 ★ 판으로 되돌린다 — ★ 진짜 알약은 안 건드린다 */
+details.chip {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  border-radius: 9px;
+  overflow: hidden;
+}
+details.chip > summary {
+  display: block;
+  padding: 10px 12px;
+  min-height: 44px;
+  cursor: pointer;
+}
+details.chip .filter-body { max-width: 100%; overflow-x: auto; }
+
+/* ★★★★★ 09-02 — ★ 거르개를 감싼 `<form class="chips">` 는 ★ **판**이다.
+   ★ `flex` 로 두면 ★ 접힌 `<details>` 와 알약 줄이 ★ 한 줄에 눌려
+   ★ ★ 실측 09-02 — ★ 매물 목록(`main.car-rows`)이 ★ 그 위로 올라타
+   ★ ★ ★ 사이트 단추를 ★ **덮었다** (600·900px · 여섯 쌍).
+   ★★ 시안은 ★ 거르개가 ★ **한 판**이고 ★ 그 안에서 알약이 접힌다 */
+form.chips { display: block; }
+form.chips > * { max-width: 100%; }
