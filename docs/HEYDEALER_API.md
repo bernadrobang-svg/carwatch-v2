@@ -1,7 +1,7 @@
 # 헤이딜러 API · 매핑 규격
 
 ```
-version  SPEC-2026.09.01-r1019
+version  SPEC-2026.09.01-r1020
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 866 · 실측 08-29
 checks   S46-5 · S46-31
@@ -675,4 +675,23 @@ SEALION7 7 · EV6 7 · EV9 6 · … · ★ **폴스타4 3 · 폴스타2 3** · e
    ★ ★ 순서를 바꾸면 ★ 전량 수집이 한 번 돈다
 ★ 등록부에는 ★ 먼저 넣어 두었다 — `target_map.json` `by_site.heydealer` 의
   ★ `폴스타2` → `POLESTAR2_EV` · `폴스타4` → `POLESTAR4_EV` (★ 이것만으로는 안 돈다)
+```
+
+---
+
+# ★★★★ 09-01 — ★ **`filters/` 에 `car_shape` 가 있다** (SUV 거르개 자리)
+
+```
+GET /v2/customers/web/market/filters/   ★ 200 · 1,269B
+칸 — fuel · car_shape · exterior_color · interior_color · option · price · year ·
+     mileage · transmission · accident_repairs_summary · my_car_accident_cost
+```
+
+| `car_shape` | `small`(경 ∙ 소형) · `sedan`(세단) · ★ **`suv_rv`(SUV ∙ RV)** · `coupe` · `limousine` · `convertible` · `hatchback` · `sut`(픽업트럭) · 화물 |
+
+```
+★★★ ★ **마스터께서 「가급적이면 SUV 면 좋겠고」 하신 그 거르개다**
+   ★ ★ 앞서 「세그먼트 거르개가 없다」고 적었는데 ★ **헤이딜러는 준다**
+★ ★ 다른 사이트도 ★ 같은 갈래가 있는지 ★ 내가 재야 한다
+★ ★ ★ `fuel` 도 함께 온다 — `gasoline`·`diesel`·`lpg`·`bifuel`·`electric`·`hydrogen`·`hybrid`
 ```

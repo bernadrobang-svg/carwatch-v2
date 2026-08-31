@@ -1252,6 +1252,12 @@
         "model_no": "32",
         "_차명": "BMW iX3",
         "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
+      },
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "BMW",
+        "ModelGroup": "iX3",
+        "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
       }
     }
   },
@@ -1270,6 +1276,12 @@
         "model_no": "9",
         "_차명": "폭스바겐 ID.4",
         "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
+      },
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "폭스바겐",
+        "ModelGroup": "ID.4",
+        "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
       }
     }
   },
@@ -1288,6 +1300,12 @@
         "model_no": "13",
         "_차명": "렉서스 UX",
         "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
+      },
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "렉서스",
+        "ModelGroup": "UX",
+        "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
       }
     }
   },
@@ -1304,6 +1322,12 @@
         "model_no": "1",
         "_차명": "기아 EV4",
         "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
+      },
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "기아",
+        "ModelGroup": "EV4",
+        "_실측": "[실측 09-01] ★ 엔카는 ★ 이름 그대로 쓴다 (등록된 차종과 같은 꼴).  ★ 마스터 회선으로 받아야 건수가 나온다"
       }
     }
   }
