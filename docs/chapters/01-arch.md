@@ -1,7 +1,7 @@
 # 1장. 아키텍처
 
 ```
-version  SPEC-2026.09.01-r1046
+version  SPEC-2026.09.01-r1047
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
