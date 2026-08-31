@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 194개 · 총 70,201줄
+파일 195개 · 총 70,293줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -147,6 +147,7 @@
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
 | `parse/target_rules.py` | 93 | 차종군 + `targets.json` 규칙으로 ★ 갈래를 고른다. |
 | `tools/export_cli.py` | 93 | 데이터 내보내기 (9장 STEP 91a · B-6). |
+| `tools/link_catalog_key.py` | 92 | ★★★★★ 08-31 (로드맵 차례 2) — ★ `model_catalog_key` 를 아홉 사이트에 잇는다. |
 | `tools/setup_check.py` | 92 | 착수 점검 — 실행 전에 무엇이 준비됐는지 한 번에 본다. |
 | `tools/daily_collect.py` | 91 | 아홉+한 사이트를 하루 한 번 받는다 (ORDER_20260829 1순위 2 · S46-127). |
 | `analyze/axis/price.py` | 90 | 가격 200점. |
