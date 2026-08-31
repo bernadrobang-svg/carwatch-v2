@@ -187,7 +187,13 @@
       "ES": {
         "collect_group": "multi",
         "target_key": "ES_HEV"
-      }
+      },
+      "GV70 (F/L)": {
+        "collect_group": "ev",
+        "target_key": "GV70_EV",
+        "_주의": "〃"
+      },
+      "_실측": "★ [09-02] K카 표본 500건 · 이름 59가지에서 우리 대상에 걸리는 것.  ★ 나머지 대상(EV4·ID.4·ID.5·iX3·모델Y·폴스타4·C40·XC40)은 ★ 이 표본에 없다 — ★ 「K카가 안 판다」가 아니라 ★ 표본에 안 걸린 것이다.  ★ 개발측이 전량에서 세어 새 이름을 올리면 그때 더한다"
     },
     "bobaedream": {
       "_field": "목록 차명에서 거른 뒤 상세를 받는다 (BOBAEDREAM_API · maker_no facet 은 못 받았다)",
@@ -303,8 +309,8 @@
       }
     },
     "reborncar": {
-      "_field": "상세 <title> 의 차명에서 아는 이름을 찾은 것 (REBORNCAR_API 1b)",
-      "_rule": "★ 목록 API 를 robots 가 막아 ★ 사이트맵 전량을 받아 ★ 우리가 거른다. ★ 상세에 차종 칸이 따로 없다 — ★ 차명으로 고른다 (보배드림과 같다)",
+      "_field": "★ 상세의 `name` — 「제조사 ＋ 차명 ＋ 배기량·구동 ＋ 등급」 한 줄이다 [실측 09-02 · 표본 40건]",
+      "_rule": "★ **앞머리(제조사＋차명)로만 고른다** — ★ 뒤의 배기량·구동은 ★ 트림이지 차종이 아니다.  ★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
       "G80": {
         "collect_group": "encar:G80"
       },
@@ -372,7 +378,50 @@
       "ES": {
         "collect_group": "multi",
         "target_key": "ES_HEV"
-      }
+      },
+      "제네시스 GV70": {
+        "collect_group": "ev",
+        "target_key": "GV70_EV",
+        "_주의": "★ 「2.5T」·「2.2 디젤」도 같은 이름이다 — ★ fuel_match 「전기」로 가른다"
+      },
+      "기아 EV4": {
+        "collect_group": "ev",
+        "target_key": "EV4_EV"
+      },
+      "테슬라 모델Y": {
+        "collect_group": "ev",
+        "target_key": "MODEL_Y"
+      },
+      "폭스바겐 ID.4": {
+        "collect_group": "ev",
+        "target_key": "ID4_EV"
+      },
+      "폭스바겐 ID.5": {
+        "collect_group": "ev",
+        "target_key": "ID5_EV"
+      },
+      "BMW iX3": {
+        "collect_group": "ev",
+        "target_key": "IX3_EV"
+      },
+      "볼보 XC40": {
+        "collect_group": "ev",
+        "target_key": "XC40_EV",
+        "_주의": "★ 「리차지」가 붙은 것만 — ★ fuel_match 「전기」로 가른다"
+      },
+      "볼보 C40": {
+        "collect_group": "ev",
+        "target_key": "C40_EV"
+      },
+      "폴스타 폴스타4": {
+        "collect_group": "ev",
+        "target_key": "POLESTAR4_EV"
+      },
+      "르노코리아(삼성) 그랑 콜레오스": {
+        "collect_group": "hev",
+        "target_key": "KOLEOS_HEV"
+      },
+      "_안 걸린 것": "★ [09-02] 표본 40건에 ★ 우리 대상은 ★ GV70 만 걸렸다.  ★ 나머지는 ★ 「리본카가 안 판다」가 아니라 ★ 표본에 안 나온 것이다.  ★ 이름 꼴을 앞머리로 맞춰 미리 넣어 뒀다 — ★ 들어오면 바로 걸린다"
     },
     "volvo_selekt": {
       "_field": "★ 목록 링크의 슬러그로 고른다 (xc60 · s60 · xc40 · v60-cross-country · v60cc · ★ ex30 · ex30-cross-country — 마스터 확정 08-29)",

@@ -2982,6 +2982,10 @@ def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
                        f"{len(no_scope)} — " + " · ".join(no_scope[:6]))
     miss: dict[str, list[str]] = {}
     for key, spec in got.items():
+        # ★ 09-02 — ★ 쉬는 차종(active=false)은 ★ 안 센다.
+        #   ★ 마스터께서 09-01 에 대상을 열로 좁히셨다 — ★ 쉬는 것을 세면 89칸이 남는다
+        if spec.get("active") is False:
+            continue
         maker = ((spec.get("site_query") or {}).get("encar") or {}).get(
             "Manufacturer")
         if not maker:
