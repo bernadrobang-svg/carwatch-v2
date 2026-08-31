@@ -4604,6 +4604,55 @@ def s46_202_no_raw_template_tags():
     return True, "「안 풀린 틀 문법」 금지가 규격에 있다"
 
 
+def s46_213_recommend_has_no_sold():
+    """S46-213 — ★ **추천에 판매완료가 없는가** (09-02 명령서 ④).
+
+    ★ 마스터 — 「★ 판매완료·삭제를 ★ 화면에서 뺀다 — 매물 · 추천 · 관심 · 비교 다.
+      ★ ★ 다만 ★ 시세 표본에는 넣는다 (누적) · ★ `/sold` 에는 남긴다」
+    ★★ 잣대 — ★ 화면이 **실제로 낸 줄**을 받아 ★ 그 매물의 상태를 본다.
+      ★ ★ 조건문을 읽는 것이 아니다 — ★ 「조건은 있는데 안 걸린다」를 잡아야 한다
+    ★ 지우지 않는다 — ★ `core_listing` 에 남는다 (P3)
+    """
+    import sqlite3
+    import sys as _sys
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    _sys.path.insert(0, str(ROOT))
+    from contracts import ROLE_ADMIN, Account
+    from report.screens.build import (
+        _sold_words,
+        view_recommend_tabs,
+    )
+    from report.screens.views import ListingFilter
+
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    ver = conn.execute(
+        "SELECT calc_version FROM result_score LIMIT 1").fetchone()
+    if ver is None:
+        return True, "판정 결과가 없다 — 잴 것이 없다"
+    got = view_recommend_tabs(Account(1, ROLE_ADMIN, "마스터"), conn,
+                              ver[0], ListingFilter(), tab="1",
+                              root=str(ROOT))
+    ids = [r.listing_id for r in got.rows]
+    if not ids:
+        return True, "추천이 빈 화면이다 — 잴 것이 없다"
+    words = sorted(_sold_words(str(ROOT)))
+    marks = ",".join("?" * len(ids))
+    where = "status='gone'"
+    if words:
+        where += (" OR UPPER(COALESCE(sales_status,'')) IN ("
+                  + ",".join("?" * len(words)) + ")")
+    bad = conn.execute(
+        f"SELECT COUNT(*) FROM core_listing WHERE listing_id IN ({marks})"
+        f" AND ({where})", [*ids, *words]).fetchone()[0]
+    if bad:
+        return False, f"★ 추천 {len(ids)}줄 가운데 ★ 판매완료·사라짐 {bad}건"
+    return True, f"추천 {len(ids)}줄 · 판매완료 0"
+
+
 def s46_203_new_site_has_target_keys():
     """S46-203 — ★ 넣으라 한 사이트에 ★ 차종 열쇠가 있는가 (오판 227).
 
@@ -4882,6 +4931,7 @@ CHECKS = (
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
     ("S46-214", "사진 밑에 빈칸이 없는가", s46_214_photo_uses_space_below),
+    ("S46-213", "추천에 판매완료가 없는가", s46_213_recommend_has_no_sold),
     ("S46-208", "시세 축이 음수를 내지 않는가", s46_208_market_no_negative),
     ("S46-207", "커밋 제목이 사실을 말하는가",
      s46_207_commit_title_says_fact),

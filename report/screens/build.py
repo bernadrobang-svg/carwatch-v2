@@ -3779,7 +3779,7 @@ RECOMMEND_TABS: tuple = ("1", "2", "3")
 
 
 def _recommend_models(conn, where: list, args: list, picked: list,
-                      names: dict, now: str | None = None) -> tuple:
+                      names: dict, now: tuple = ()) -> tuple:
     """★★★★★ 09-02 — ★ 시안 `.rc-models` — ★ **차종 고르개**.
 
     ★ 마스터 — 「★ **시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해**」
@@ -3793,11 +3793,40 @@ def _recommend_models(conn, where: list, args: list, picked: list,
         " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         " WHERE " + " AND ".join(where) + " GROUP BY 1", args))
     out = []
-    for key in picked:
+    for i, key in enumerate(picked):
         n = int(got.get(key) or 0)
+        # ★★ 스위치다 — ★ 켜져 있으면 ★ 그것을 **뺀 주소**를 준다 (끄기).
+        #   ★ 꺼져 있으면 ★ 그것을 **더한 주소**를 준다 (켜기)
+        rest = [x for x in now if x != key] if key in now else [*now, key]
         out.append({"key": key, "label": names.get(key) or key, "n": n,
-                    "on": key == now, "off": n == 0})
-    out.sort(key=lambda x: (-x["n"], x["label"]))
+                    "on": key in now, "off": n == 0,
+                    "q": "".join(f"&model={quote(x)}" for x in rest),
+                    # ★ 같은 건수면 ★ `targets.json` 차례를 지킨다 (`S46-100`)
+                    "_i": i})
+    # ★★ 건수 많은 것부터 — ★ 시안이 그렇다.  ★ 0 건은 뒤로 간다.
+    #   ★★★★★ 09-02 — ★ 0 건 안에서는 ★ **브랜드로 묶는다** (시안 실측).
+    #     ★ 시안 — 「볼보 XC40 리차지 · 폭스바겐 ID.4 · 폭스바겐 ID.5 ·
+    #       ★ BMW iX3 · 기아 EV4」 — ★ **같은 브랜드가 붙어 있다.**
+    #     ★ ★ 가나다순도 `targets.json` 차례도 아니었다 [실측 09-02].
+    #   ★ 브랜드 차례는 ★ **이미 나온 브랜드가 먼저**다 (C40 볼보 → XC40 볼보).
+    #     ★ ★ 그다음은 ★ `targets.json` 차례를 따른다
+    #   ★★ 브랜드 차례 — ① 이미 나온 브랜드가 먼저 (C40 볼보 → XC40 볼보)
+    #     ★ ② 그다음은 ★ **차종이 많은 브랜드가 먼저** (폭스바겐 ID.4·ID.5 둘)
+    #     ★ ③ 그래도 같으면 ★ `targets.json` 차례.
+    #   ★ 시안 실측 09-02 — ★ 「XC40 · ID.4 · ID.5 · iX3 · EV4」가 그 꼴이다
+    seen_brand: dict = {}
+    for one in sorted(out, key=lambda x: (-x["n"], x["_i"])):
+        if one["n"]:
+            seen_brand.setdefault(str(one["label"]).split()[0], len(seen_brand))
+    many: dict = {}
+    for one in out:
+        b = str(one["label"]).split()[0]
+        many[b] = many.get(b, 0) + 1
+    out.sort(key=lambda x: (
+        -x["n"],
+        seen_brand.get(str(x["label"]).split()[0], 99),
+        -many.get(str(x["label"]).split()[0], 0),
+        x["_i"]))
     return tuple(out)
 
 
@@ -3808,15 +3837,18 @@ def _active_targets(root: str = ".") -> list:
     ★ 비어 있으면 ★ 빈 목록이다 — ★ 그때는 ★ 좁히지 않는다 (다 지워 버리지 않는다)
     """
     got = load_config(f"{root}/config/targets.json") or {}
-    return sorted(k for k, v in got.items()
-                  if not k.startswith("_") and isinstance(v, dict)
-                  and v.get("active"))
+    # ★ `targets.json` 에 적힌 차례를 그대로 둔다 — ★ 가나다순으로 안 바꾼다.
+    #   ★ 시안의 차종 고르개가 ★ 그 차례다 (`S46-100`)
+    return [k for k, v in got.items()
+            if not k.startswith("_") and isinstance(v, dict)
+            and v.get("active")]
 
 
 def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                         calc_version: str, flt: ListingFilter,
                         tab: str = "1", root: str = ".",
-                        page_size: int = 60) -> "RecommendView":
+                        page_size: int = 60,
+                        models_on: tuple = ()) -> "RecommendView":
     """추천 — ★ 탭 (규격 `RECOMMEND_SCREEN.md` · `S46-201`).
 
     ★★★★★ 09-01 — ★ `/recommend` 는 ★ **이미 있었다** (「추천 대상만 · 이유가 있는 것」).
@@ -3848,10 +3880,10 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     #     ★ ★ **지우지 않는다** — ★ `/listings` 는 그대로 다 본다.
     #     ★ ★ ★ 추천에서만 ★ 고르신 것으로 좁힌다
     picked = _active_targets(root)
-    # ★ 시안 `.rc-models` — ★ 고르신 차종 하나만 볼 수 있다 (`?model=`)
-    one = (flt.model if getattr(flt, "model", None) else None)
-    if one and one not in picked:
-        one = None                 # ★ 고르지 않은 차종은 ★ 안 받는다
+    # ★★★★★ 09-02 명령서 ② — ★ 「★ 차종 단추는 ★ **켜고 끄는 스위치** ·
+    #   ★ ★ **여럿 켜면 OR** · ★ 「전체」를 맨 앞에」
+    #   ★ 고르지 않은 차종은 ★ 안 받는다 — ★ 주소로 억지로 넣어도 안 걸린다
+    on = tuple(x for x in (models_on or ()) if x in picked)
     # ★ 화면에 낼 이름은 ★ `targets.json` 의 `label` 이다 (「G80 2.5T」) —
     #   ★ 열쇠(`G80_25T`)를 그대로 내면 ★ 사람이 읽는 이름이 아니다
     names = {k: (v.get("label") or k)
@@ -3864,9 +3896,10 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     # ★ 고르개로 하나를 누르셨으면 ★ 그것만.  ★ 건수는 ★ **누르기 전 것**을 센다 —
     #   ★ 안 그러면 ★ 누른 차종만 남고 ★ 나머지가 다 0 이 된다
     model_where, model_args = list(where), list(args)
-    if one:
-        where = [*where, "l.target_key = ?"]
-        args = [*args, one]
+    if on:
+        # ★ 여럿이면 ★ **OR** 다 — ★ 「이것들 중 아무거나」
+        where = [*where, "l.target_key IN (" + ",".join("?" * len(on)) + ")"]
+        args = [*args, *on]
     marks = ",".join("?" * len(RECOMMEND_AXES))
     sql = (
         "SELECT l.listing_id, l.target_key,"
@@ -3952,7 +3985,7 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     full = sum(x.full for x in (out[0].axes if out else ())) if out else 0
     # ★ 시안 `.rc-head` — 「차종 13종」.  ★ 정본은 `config/targets.json` 이다
     targets = len(picked)
-    models = _recommend_models(conn, model_where, model_args, picked, names, one)
+    models = _recommend_models(conn, model_where, model_args, picked, names, on)
     return RecommendView(tab=tab, rows=out, total=total,
                          axes=RECOMMEND_AXES, full=round(full, 1),
                          empty_note=None, title="내 기준에 가까운 차",
@@ -3963,7 +3996,7 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                          orders=({"key": "score", "label":
                                   "합이 높은 차례 (같으면 싼 차가 앞)",
                                   "on": True},),
-                         models=models, model=one,
+                         models=models, model=on,
                          targets=targets)
 
 

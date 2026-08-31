@@ -152,6 +152,13 @@ def make_handler(app):
 
             req = {
                 "query": dict(urllib.parse.parse_qsl(parsed.query)),
+                # ★★★★★ 09-02 명령서 ② — ★ 「★ 차종 단추는 ★ **켜고 끄는 스위치**
+                #   ★ ★ · ★ **여럿 켜면 OR** · ★ 주소에 남긴다 —
+                #   ★ ★ ★ `?tab=1&model=MODEL_Y&model=KOLEOS_HEV`」
+                #   ★★ `dict(parse_qsl(...))` 는 ★ **마지막 하나만** 남긴다 —
+                #     ★ ★ 그러면 ★ 여럿 켠 것을 잃는다.  ★ 나란히 둔다.
+                #   ★ ★ ★ `query` 는 안 건드린다 — ★ 쓰던 화면이 다 그대로 돈다
+                "query_all": urllib.parse.parse_qs(parsed.query),
                 # ★ 폼 파싱은 parse_form 이 한다 (STEP 147).
                 #   GET Route 면 빈 dict — GET 으로 상태를 바꾸지 않는다
                 "form": parse_form(route, body),

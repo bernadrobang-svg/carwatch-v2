@@ -16,10 +16,14 @@
      ★ 이름 ＋ 건수.  ★ 0 건인 차종도 ★ **흐리게 남긴다** — ★ 지우지 않는다 -->
 {% if v.models %}
 <p class="sitebar pickmodels">
+  <!-- ★ 「전체」가 맨 앞이다 (명령서 ②).  ★ 누르면 ★ 켠 것을 다 끈다 -->
   <a class="btn mb{% if !v.model %} on{% endif %}"
-     href="/recommend?tab={{ v.tab | url }}">전체 <b>{{ v.total | num }}</b></a>
+     href="/recommend?tab={{ v.tab | url }}"
+     title="켠 차종을 다 끕니다">전체 <b>{{ v.total | num }}</b></a>
+  <!-- ★ 스위치다 — ★ 켜져 있으면 ★ 누를 때 꺼진다.  ★ 여럿 켜면 ★ OR -->
   {% for m in v.models %}<a class="btn mb{% if m.on %} on{% endif %}{% if m.off %} off{% endif %}"
-    href="/recommend?tab={{ v.tab | url }}&model={{ m.key | url }}"
+    href="/recommend?tab={{ v.tab | url }}{{ m.q }}"
+    title="{% if m.on %}이 차종을 끕니다{% endif %}{% if !m.on %}이 차종을 켭니다 — 여럿 켜면 함께 봅니다{% endif %}"
     >{{ m.label }} <b>{{ m.n | num }}</b></a>{% endfor %}
 </p>
 {% endif %}
@@ -37,8 +41,10 @@
 <div class="cond what pickhead">
   <p>★ <strong>등급을 보지 않습니다.</strong> 예산 · 주행 · 연식 · 색
     <strong>네 축의 합({{ v.full | num }}점)</strong>으로만 세웁니다.</p>
-  <p>차종 {{ v.targets }}종 · {{ v.total | num }}건 중
-    <strong>{{ v.full | num }}점에 가까운 차례</strong></p>
+  <!-- ★★★★★ 09-02 — ★ 시안이 ★ 「★ **· 판매완료는 뺐습니다**」를 더했다.
+       ★ 조용히 빼지 않는다 (`V11-154`) — ★ 뺐다고 적는다 -->
+  <p>차종 {{ v.targets }}종 · <strong>{{ v.total | num }}건</strong> 중
+    {{ v.full | num }}점에 가까운 차례 · <strong>판매완료는 뺐습니다</strong></p>
   <!-- ★★★★★ 09-01 — ★ `V11-94` 「추천 조건이 화면에 적혀 있음」.
        ★ 「왜 이 목록인지」가 먼저다 — ★ 점수만 내고 이유를 안 내지 않는다 (개정 304).
        ★★ 시안의 두 줄은 ★ 글자 하나 안 건드렸다 — ★ 이 줄을 ★ **덧붙였을 뿐**이다 -->

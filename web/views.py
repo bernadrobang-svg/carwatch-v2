@@ -1102,8 +1102,13 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
     flt = _filter(conn, req.get("query", {}), ver)
     q = req.get("query", {})
     tab = str(q.get("tab") or "1")
+    # ★★★★★ 09-02 명령서 ② — ★ 여럿 켠 차종을 ★ 그대로 받는다 (OR).
+    #   ★ `query` 는 마지막 하나만 준다 — ★ `query_all` 이 다 준다
+    on = tuple((req.get("query_all") or {}).get("model") or ())
+    if not on and q.get("model"):
+        on = (str(q["model"]),)          # ★ 옛 주소 하나짜리도 받는다
     got = view_recommend_tabs(account, conn, ver["calc_version"], flt,
-                              tab=tab, root=root)
+                              tab=tab, root=root, models_on=on)
     return page(conn, account, "추천", "recommend.html",
                 {"v": got, "tab": got.tab,
                  # ★ 시안 — ★ 탭 이름은 ★ 「내 기준에 가까운 차 · 탭 2 · 탭 3」

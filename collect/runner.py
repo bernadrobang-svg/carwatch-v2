@@ -1152,26 +1152,45 @@ def _market_medians(conn, need: int) -> dict:
     ★ 이론가가 아니다.  실제로 팔리고 있는 값이다.
       표본이 need 미만이면 넣지 않는다 — 그 매물은 시세 축이 excluded 다
     금지   렌트·리스 승계를 표본에 넣는 것.  같은 차의 값이 아니다
+
+    ★★★★★ 09-02 명령서 ②④ — ★ 「★ **시세는 누적이다** —
+      ★ `status='active'` 로 거르지 마라.  ★ **팔린 차를 함께 센다** ·
+      ★ 사이트를 안 가린다 · ★ 회차마다 안 지운다.  ★ 표본 5,456 → 6,974 (＋28%)」
+    ★★ 까닭 — ★ **팔린 값이 진짜 시세다.**  ★ 안 팔린 값은 ★ 부르는 값일 뿐이다.
+      ★ ★ 팔린 차를 빼면 ★ 「안 팔리는 비싼 차」만 남아 ★ 시세가 위로 뜬다
+    ★ 화면에서만 뺀다 — ★ 표본에는 넣는다 (명령서 ④ 「다만 시세 표본엔 넣는다」)
     """
+    from datetime import datetime, timedelta, timezone
+
+    # ★ 「여섯 달 넘은 값은 ★ **반으로**」 (명령서 ②) — ★ **버리지 않는다**
+    old_at = (datetime.now(timezone.utc) - timedelta(days=182)).isoformat()
     groups: dict = {}
-    for lid, tk, trim, ym, price in conn.execute(
+    for lid, tk, trim, ym, price, seen in conn.execute(
         "SELECT listing_id, target_key, trim_badge, substr(year_month,1,4),"
-        " price_current_won FROM core_listing"
-        " WHERE status='active' AND price_current_won IS NOT NULL"
+        " price_current_won, COALESCE(gone_at, last_seen, first_seen)"
+        " FROM core_listing"
+        " WHERE price_current_won IS NOT NULL"
         " AND target_key IS NOT NULL"
         " AND (advertisement_type IS NULL OR advertisement_type='NORMAL')"
     ):
-        groups.setdefault((tk, trim, ym), []).append((lid, price))
+        w = 0.5 if (seen and str(seen) < old_at) else 1.0
+        groups.setdefault((tk, trim, ym), []).append((lid, price, w))
     out: dict = {}
     for rows in groups.values():
         if len(rows) < need:
             continue
-        prices = sorted(p for _lid, p in rows)
-        mid = len(prices) // 2
-        median = (prices[mid] if len(prices) % 2
-                  else (prices[mid - 1] + prices[mid]) / 2)
-        for lid, _p in rows:
-            out[lid] = (median, len(prices))
+        # ★★ 무게가 있는 중앙값 — ★ 무게 합의 절반을 지나는 값이다.
+        #   ★ 오래된 값은 반만 센다 — ★ 그래도 ★ **표본에는 남는다**
+        pairs = sorted((p, w) for _lid, p, w in rows)
+        half = sum(w for _p, w in pairs) / 2
+        run, median = 0.0, pairs[-1][0]
+        for price_, w in pairs:
+            run += w
+            if run >= half:
+                median = price_
+                break
+        for lid, _p, _w in rows:
+            out[lid] = (median, len(rows))
     return out
 
 
