@@ -1246,6 +1246,12 @@
         "classCode": "2799",
         "_차명": "BMW iX3(G08)",
         "_실측": "[실측 08-31] ★ list.empty 를 넘겨 이름으로 찾고 ★ 그 carSeq 의 detail.kbc 에서 classCode 를 뽑았다"
+      },
+      "bobaedream": {
+        "maker_no": "1",
+        "model_no": "32",
+        "_차명": "BMW iX3",
+        "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
       }
     }
   },
@@ -1258,6 +1264,12 @@
         "classCode": "2824",
         "_차명": "폭스바겐 ID.4 Pro",
         "_실측": "[실측 08-31] ★ list.empty 를 넘겨 이름으로 찾고 ★ 그 carSeq 의 detail.kbc 에서 classCode 를 뽑았다"
+      },
+      "bobaedream": {
+        "maker_no": "44",
+        "model_no": "9",
+        "_차명": "폭스바겐 ID.4",
+        "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
       }
     }
   },
@@ -1270,6 +1282,12 @@
         "classCode": "2728",
         "_차명": "렉서스 UX 300h",
         "_실측": "[실측 08-31] ★ list.empty 를 넘겨 이름으로 찾고 ★ 그 carSeq 의 detail.kbc 에서 classCode 를 뽑았다"
+      },
+      "bobaedream": {
+        "maker_no": "13",
+        "model_no": "13",
+        "_차명": "렉서스 UX",
+        "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
       }
     }
   },
@@ -1281,7 +1299,12 @@
     ],
     "year_range": "202500..",
     "site_query": {
-      "_왜 비었나": "★ [실측 08-31] ★ KB 기아 목록(makerCode=102)을 ★ 20쪽(약 800건)까지 넘겨도 ★ EV4 가 없다.  ★ 2025년 신차라 ★ 중고 매물이 아직 없는 것으로 보인다.  ★ 「KB 가 안 준다」가 아니다 — ★ 매물이 생기면 다시 잰다"
+      "bobaedream": {
+        "maker_no": "3",
+        "model_no": "1",
+        "_차명": "기아 EV4",
+        "_실측": "[실측 08-31] ★ ajax_maker_new.php · getSel=maker&dep=0 으로 제조사 · dep=1 로 차종을 받았다"
+      }
     }
   }
 }
