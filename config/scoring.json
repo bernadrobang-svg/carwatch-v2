@@ -1043,7 +1043,8 @@
       "POLESTAR2_EV": 4000,
       "POLESTAR4_EV": 4000,
       "EX30_EV": 4000,
-      "POLESTAR3_EV": 4000
+      "POLESTAR3_EV": 4000,
+      "EV4_EV": 3500
     },
     "by_fuel": {
       "전기": {

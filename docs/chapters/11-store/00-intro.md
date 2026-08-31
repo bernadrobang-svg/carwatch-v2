@@ -1,7 +1,7 @@
 # 3장. 테이블 설계 (STEP 28–39)
 
 ```
-version  SPEC-2026.08.31-r1014
+version  SPEC-2026.08.31-r1015
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
