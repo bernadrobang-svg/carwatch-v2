@@ -1698,6 +1698,15 @@
     "core:accident_my_cnt": {
       "usage": "not_provided",
       "reason": "4회차 재측정"
+    },
+    "platform_check:vehicleId": {
+      "usage": "in_use",
+      "reason": "4회차 시험 — 쓴다",
+      "core_column": "core_listing.source_id"
+    },
+    "detail:advertisement.verification": {
+      "usage": "not_provided",
+      "reason": "4회차 시험 — 안 쓴다"
     }
   },
   "not_provided": {

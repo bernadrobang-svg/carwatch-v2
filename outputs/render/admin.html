@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=f10a934f2f">
+<link rel="stylesheet" href="/static/app.css?v=2ba9f1be13">
 
 </head>
 <body class="s-admin">
@@ -268,7 +268,7 @@
 
 <tr><td data-label="시각">2026-08-31T02:43:33.989375+00:00</td><td class="muted" data-label="사유">요청 24건</td>
   <td class="runid" data-label="실행">20260831T024324</td>
-  <td class="num" data-label="소요">0.7초</td><td data-label="판정">fatal 17</td></tr>
+  <td class="num" data-label="소요">0.7초</td><td data-label="판정">fatal 22</td></tr>
 
 <tr><td data-label="시각">2026-08-30T23:21:35.343766+00:00</td><td class="muted" data-label="사유">요청 120건</td>
   <td class="runid" data-label="실행">20260830T232047</td>
@@ -295,6 +295,16 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-31T06:40:55.406521+00:00</td><td data-label="무엇">detail:advertisement.verification {&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;4회차 시험 — 안 쓴다&quot;}</td><td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 안 쓴다</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="e8f2a0dbcb23b56207">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
 
 <tr><td data-label="시각">2026-08-24T03:36:11.219068+00:00</td><td data-label="무엇">target[23] pending → confirm</td><td class="muted" data-label="사유">기아 CPO 목록이 낸 차종 이름이다. 원문과 대조해 확정한다 (명령서 0장 2)</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
@@ -326,21 +336,11 @@
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-28T10:40:29.441582+00:00</td><td data-label="무엇">TESTER_V90 null → {&quot;label&quot;: &quot;시험자 V90&quot;, &quot;origin_type&quot;: &quot;N&quot;, &quot;collect_group&quot;: &quot;import&quot;, &quot;site_query&quot;: &quot;(And.Hidden.N._.CarType.N._.(C.Manufacturer.볼보._.ModelGroup.V90.))&quot;, &quot;status&quot;: &quot;pending_review&quot;}</td><td class="muted" data-label="사유">시험자 2회차</td>
+<tr><td data-label="시각">2026-08-31T06:40:40.362387+00:00</td><td data-label="무엇">platform_check:vehicleId {&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;4회차 시험 — 저장되는지&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td><td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 저장되는지</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="c48747ca3b14470afb">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
-<tr><td data-label="시각">2026-08-24T03:37:42.158168+00:00</td><td data-label="무엇">target[8] pending → confirm</td><td class="muted" data-label="사유">엔카 차종 8종. G80 2,752 · 그랜저 1,797 등 전부 매물이 붙어 있다</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="c4452df2c05f480b1f">
+    <input type="hidden" name="change_id" value="c4bc39b495998a8535">
     <input name="reason" size="10" placeholder="사유 (필수)" required>
     <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
   </form></td></tr>
@@ -361,7 +361,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260831T024324</span>
-  <span>2026-08-31 14:37</span>
+  <span>2026-08-31 16:09</span>
 </footer>
 
 </body>

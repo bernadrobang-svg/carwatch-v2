@@ -125,19 +125,47 @@ def collect_groups(targets: dict[str, dict], site: str) -> list[CollectGroup]:
             merged["Year_range"] = spec["year_range"]
         if spec.get("price_range"):
             merged["Price_range"] = spec["price_range"]
-        gk = (spec["collect_group"],
+        # ★★★★★ 09-01 — ★ `collect_group` 이 ★ **아예 없는 차종**이 있다.
+        #   ★ 가이드가 09-01 에 넣은 넷 (ID4·ID5·iX3·EV4) 이다 —
+        #     ★ ★ 「질의 열쇠를 아직 못 쟀다」라 ★ 칸이 안 적혀 있다.
+        #   ★★ `spec["collect_group"]` 은 ★ **`KeyError` 로 죽는다** — ★ `.get` 을 쓴다.
+        #     ★ ★ 이름은 ★ 차종으로 쓴다 (아래) — ★ 안 그러면 넷이 한 이름이 되어
+        #     ★ ★ ★ `raw_facet` 의 열쇠가 부딪친다 (실측 09-01)
+        gk = (spec.get("collect_group"),
               tuple(sorted((k, str(v)) for k, v in merged.items())))
         bucket.setdefault(gk, []).append(key)
         query.setdefault(gk, merged)
         # ★ 이름이 겹치면 ★ 무엇으로 갈렸는지 이름에 적는다 — ★ 화면이 그것을 낸다
-        said = spec["collect_group"]
+        said = spec.get("collect_group")
         if said == "multi":
             said = f"multi:{merged.get('ModelGroup') or key}"
+        elif not said:
+            # ★★★★★ 09-01 — ★ `collect_group` 이 ★ **없는 차종**이 있다.
+            #   ★ 가이드가 09-01 에 넣은 넷 (ID4·ID5·iX3·EV4) 은
+            #     ★ ★ 「질의 열쇠를 아직 못 쟀다」라 ★ 묶음 이름이 비어 있다.
+            #   ★★ 그대로 두면 ★ 넷이 ★ **다 `None` 이라는 한 이름**이 되어
+            #     ★ ★ `raw_facet` 의 ★ `(site, target_key, kind, fetched_at)` 이 부딪친다
+            #     ★ ★ ★ 실측 09-01 — ★ `UNIQUE constraint failed: raw_facet…`
+            #   ★ `multi` 와 ★ 같은 길로 ★ 차종 이름을 쓴다 — ★ 이름이 안 겹친다
+            said = key
         label.setdefault(gk, said)
-    return [
-        CollectGroup(label[gk], site, query[gk], tuple(sorted(keys)))
-        for gk, keys in sorted(bucket.items(), key=lambda kv: label[kv[0]])
-    ]
+    # ★★★★★ 09-01 — ★ **이름이 겹치면 차종을 덧붙인다.**
+    #   ★ 실측 09-01 — ★ 가이드가 넣은 `XC40_EV` 와 ★ `XC40_IMPORT` 가
+    #     ★ ★ 둘 다 ★ `multi:XC40` 이 됐다 (엔카 `ModelGroup` 이 같다 — 연료로 가른다).
+    #   ★ ★ 그러면 ★ `raw_facet(site, target_key, kind, fetched_at)` 이 부딪쳐
+    #     ★ ★ ★ **수집이 통째로 죽는다** (`UNIQUE constraint failed`).
+    #   ★★ 묶음 자체는 ★ **갈라 두는 것이 맞다** — ★ 쿼리가 다르기 때문이다
+    #     (한쪽은 `fuel_match` 로 전기를 고른다).  ★ 이름만 갈라 준다
+    from collections import Counter as _C
+
+    dup = {k for k, n in _C(label.values()).items() if n > 1}
+    out = []
+    for gk, keys in sorted(bucket.items(), key=lambda kv: label[kv[0]]):
+        name = label[gk]
+        if name in dup:
+            name = f"{name}:{'+'.join(sorted(keys))}"
+        out.append(CollectGroup(name, site, query[gk], tuple(sorted(keys))))
+    return out
 
 
 # ── facet 축 (STEP 23) ───────────────────────────────────────────────

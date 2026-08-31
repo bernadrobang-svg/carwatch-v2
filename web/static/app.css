@@ -2437,9 +2437,9 @@ a.vline b { color:var(--amber); }
   /* ★ 등급 배지 — 시안 `.v4-gr` 는 작은 알약이다 (19px 큰 글씨가 아니다) */
   .gr { font-size:12px; font-weight:700; border-radius:12px; padding:0 6px;
         line-height:1.6; text-align:left; display:inline-block; }
-  /* ★ 값 — 시안 `.v4-price` 16px/700 */
+  /* ★ 값 — 시안 `.pickprice` 16px/700 */
   .row .price b { font-size:16px; font-weight:700; }
-  /* ★ 칸 글씨 — 시안 `.v4-spec` 12px */
+  /* ★ 칸 글씨 — 시안 `.pickspec` 12px */
   .row .cell { font-size:12px; }
   /* ★ 단추 — 시안 `.v4-btn` 은 ★ 손가락이 닿게 44px 다 */
   .row .btn, .cellset .btn { min-height:44px; border-radius:8px; font-size:13px; }
@@ -2502,3 +2502,100 @@ body.auto #progress { font-size:15px; line-height:1.7; }
 
 /* 「약 N시간 걸립니다」 — 누르기 전에 눈에 들어와야 한다 (UI_REVIEW 25-2) */
 .run-hours { color:var(--accent) }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   ★★★★★ 09-01 — ★ 추천 화면 (시안 `ref/screens/v4m_recommend_시안.html`)
+   ★ 마스터 — 「★ 시안을 꼭 보라는데 왜 안 보고 네 마음대로 하지?」
+   ★★ 값은 ★ **시안에서 재서 적었다** — ★ 시안 CSS 를 통째로 들이지 않는다
+     (08-28 실측 — 그렇게 했다가 289곳이 겹쳐 검사 셋이 터졌다.  위 2425줄 참고)
+   ★★★ 이름은 ★ **우리 것**(`pick*`)이다 — ★ 시안 이름(`rc-*`·`v4-*`)을 쓰면
+     ★ ★ `S46-67`(시안 이름이 app.css 와 겹치면 안 된다)이 문다.
+     ★ ★ 위 2425줄이 적어 둔 그대로다 — ★ **값만** 옮긴다
+   ★ 색은 ★ **`:root` 토큰만** 쓴다 — ★ 값을 박으면 `V11-13`·`S46-123` 이 문다
+   ★ 브라우저(playwright chromium)로 ★ 시안과 우리 화면을 나란히 열어 맞췄다 (09-01)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ★ 시안 `.picktabs` — 탭 셋.  ★ 눌린 것은 호박색 밑줄 */
+.picktabs { display:flex; gap:0; border-bottom:1px solid var(--line);
+           margin:0 0 0; }
+.picktabs .btn { flex:1; text-align:center; padding:11px 0; font-size:13px;
+                border:0; border-bottom:2px solid transparent;
+                border-radius:0; background:none; }
+.picktabs .btn.on { color:var(--amber); font-weight:600;
+                   border-bottom-color:var(--amber); }
+
+/* ★ 시안 `.pickhead` — 무엇으로 세우는지 두 줄 */
+.pickhead { font-size:12px; line-height:1.6; }
+
+/* ★ 시안 `.pickscore` — ★ 합이 카드 맨 위다 (13px/700 · 호박색) */
+.pickscore { font-size:13px; font-weight:700; color:var(--amber);
+            margin-bottom:6px; }
+.pickgrade { font-size:11px; color:var(--faint); margin-left:6px;
+            font-weight:400; }
+
+/* ★ 시안 `.pickaxes` · `.pickax` — ★ 네 축을 알약으로.  ★ 만점이면 호박색 */
+.pickaxes { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+.pickax { font-size:11px; color:var(--dim);
+         background:var(--surface2); border:1px solid var(--line);
+         border-radius:4px; padding:2px 6px;
+         font-family:ui-monospace,monospace; }
+.pickax b { color:var(--text); font-weight:600; }
+.pickax.hi, .pickax.hi b { color:var(--amber); }
+.pickax.hi { border-color:var(--amber); }
+
+/* ★ 시안 `.pickbar` — ★ 막대는 비율이다 (부록 G · A-3).  4px */
+.pickbar { height:4px; background:var(--surface2); border-radius:2px;
+          margin-top:6px; overflow:hidden; }
+.pickbar i { display:block; height:100%; background:var(--amber); }
+
+/* ★ 시안 `.pickempty` — 빈 탭 (탭 2·3) */
+.pickempty { padding:60px 20px; text-align:center;
+            color:var(--faint); font-size:13px; }
+
+/* ★ 시안 `.pickrow` · `.pickmid` · `.v4-thumb` 104×78 · 이름·제원·값 */
+.pickrow { display:flex; gap:10px; }
+.pickmid { flex:1; min-width:0; }
+.pickname { font-size:14px; font-weight:600; }
+.pickspec { font-size:12px; color:var(--dim); margin-top:2px; }
+.pickprice { font-size:16px; font-weight:700; margin-top:4px; }
+.pickthumb { width:104px; height:78px; flex:0 0 104px; border-radius:8px;
+            background:var(--surface2); border:1px solid var(--line);
+            display:flex; align-items:center; justify-content:center;
+            font-size:11px; color:var(--faint); overflow:hidden; }
+.pickthumb img { width:100%; height:100%; object-fit:cover; }
+/* ★ 시안 `.v4-cards` — 카드가 줄줄이 붙는다 (사이 여백 없음 · 아래 선으로 가른다) */
+.pickcards { display:block; }
+.pickcard { display:block; border-bottom:1px solid var(--line); }
+@media (max-width:479px) {
+  /* ★ 시안 — ★ 아주 좁으면 사진이 88×66 이다 (목록과 같은 결) */
+  .pickthumb { width:88px; height:66px; flex:0 0 88px; }
+  .pickprice { font-size:15px; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   ★★★★★ 09-01 — ★ **브라우저로 재서 고친 둘** (`tools/browser_diff.py`).
+   ★ 마스터 지시 — 「★ 모바일용 태블릿용으로 나누어서 ★ 제대로 되는지 확인해」
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ★ ① 누르는 자리는 ★ **44px** 이다 (`UI_REVIEW` · 시안 `.v4-btn`).
+     ★ 실측 09-01 — ★ 상단 메뉴가 ★ **24px** 이었다 (여덟 화면 전부).
+     ★ ★ 손가락이 닿는 크기가 아니다 — ★ 글씨는 그대로 두고 ★ 닿는 자리만 넓힌다 */
+.brand, .nav-item, header button {
+  display:inline-flex; align-items:center; min-height:44px;
+}
+/* ★ 카드 안의 이름·값 링크도 ★ 손가락이 닿아야 한다.
+     ★ 실측 09-01 — ★ 추천 카드의 차종 이름이 ★ 20~42px 이었다.
+     ★ ★ 글씨는 그대로 두고 ★ 닿는 자리만 넓힌다 (줄 높이로) */
+.pickname a, .pickprice a { display:inline-block; min-height:44px;
+  line-height:44px; }
+
+/* ★ ② 넓은 표는 ★ **가로로만 스크롤한다** — ★ 쪽 전체가 밀리면 안 된다.
+     ★ 실측 09-01 — ★ `/admin` 이 모바일에서 ★ 문서 폭 **584px** 였다 (뷰포트 390).
+     ★ ★ 표 하나 때문에 ★ 쪽 전체가 옆으로 밀렸다 */
+@media (max-width:639px) {
+  main { max-width:100%; overflow-x:hidden; }
+  main > table.rows,
+  main > .tablewrap { display:block; max-width:100%; overflow-x:auto; }
+}

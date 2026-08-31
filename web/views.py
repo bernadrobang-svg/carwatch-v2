@@ -1106,7 +1106,10 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                               tab=tab, root=root)
     return page(conn, account, "추천", "recommend.html",
                 {"v": got, "tab": got.tab,
-                 "tabs": [{"n": n, "on": n == got.tab} for n in ("1", "2", "3")],
+                 # ★ 시안 — ★ 탭 이름은 ★ 「내 기준에 가까운 차 · 탭 2 · 탭 3」
+                 "tabs": [{"n": n, "on": n == got.tab,
+                           "label": "내 기준에 가까운 차" if n == "1"
+                           else f"탭 {n}"} for n in ("1", "2", "3")],
                  "buttons": _filter_buttons(flt, base="/recommend"),
                  "carry": _carry(flt)},
                 root=root, csrf=csrf, flash_key=flash_key)

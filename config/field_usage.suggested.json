@@ -1,6 +1,6 @@
 {
   "_note": "sync_registry 가 낸 분류 후보다. 정본은 config/field_usage.json 이다. 그대로 옮기지 않는다 — 사람이 확인·수정한다",
-  "count": 11,
+  "count": 10,
   "candidates": {
     "ev_battery:encarComputedInfo": {
       "suggested_usage": "not_provided",
@@ -33,18 +33,8 @@
       ]
     },
     "inspection_summary:vehicleId": {
-      "suggested_usage": "unused_by_policy",
-      "reason_hint": "값이 전건 동일 — 변별력 0",
-      "observed": 3,
-      "samples": [
-        1,
-        1,
-        1
-      ]
-    },
-    "platform_check:vehicleId": {
-      "suggested_usage": "unused_by_policy",
-      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "suggested_usage": "in_use",
+      "reason_hint": "매핑표에 있는 경로",
       "observed": 3,
       "samples": [
         1,
@@ -103,8 +93,8 @@
       ]
     },
     "sellingpoint:vehicleId": {
-      "suggested_usage": "unused_by_policy",
-      "reason_hint": "값이 전건 동일 — 변별력 0",
+      "suggested_usage": "in_use",
+      "reason_hint": "매핑표에 있는 경로",
       "observed": 3,
       "samples": [
         1,

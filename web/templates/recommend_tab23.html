@@ -1,0 +1,16 @@
+<!-- ★★★★★ 09-01 — ★ 시안 `ref/screens/v4m_recommend_tab23_시안.html` 짝.
+     ★ 탭 2·3 은 ★ **빈 채로 둔다** — ★ 안도 이름도 안 짓는다 (규격 2장).
+     ★★ `/recommend?tab=2` 는 ★ `recommend.html` 이 ★ 같은 것을 낸다 —
+       ★ 이 틀은 ★ **시안 짝**이다 (검사 `check_screens.py` 가 짝을 본다) -->
+
+<h1>추천 <small>내 기준에 가까운 차를 먼저 냅니다</small></h1>
+
+<p class="sitebar picktabs">
+  {% for t in tabs %}<a class="btn{% if t.on %} on{% endif %}"
+    href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
+</p>
+
+<div class="cond what pickempty">
+  <h2>아직 정하지 않았습니다</h2>
+  <p>이 탭에 무엇을 낼지는 아직 정해지지 않았습니다. <strong>오류가 아닙니다.</strong></p>
+</div>

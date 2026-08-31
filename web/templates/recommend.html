@@ -1,81 +1,70 @@
-<h1>추천 <small>{{ v.title }}</small></h1>
+<!-- ★★★★★ 09-01 — ★ **시안대로 다시 만들었다** (`ref/screens/v4m_recommend_시안.html`).
+     ★ 마스터 — 「★ 시안을 꼭 보라는데 왜 안 보고 네 마음대로 하지?」
+     ★★ 제가 시안을 안 보고 표로 만들었다.  ★ 시안은 ★ **카드**다.
+     ★ 규격 `docs/RECOMMEND_SCREEN.md` (SPEC-2026.09.01-r1032 · 검산 `S46-201`) -->
 
-<!-- ★★ 규격 `docs/RECOMMEND_SCREEN.md` (SPEC-2026.09.01-r1032 · 검산 `S46-201`).
-     ★ 마스터 확정 09-01 — 「★ 등급 무시하고 ★ 내가 선호하는 색과 예산 점수 및
-       ★ 킬로와 연식 점수에 근접하는 차야 … ★ 2번 3번은 탭만 만들자」
-     ★ 금지 — ★ 등급으로 거르거나 ★ 등급을 함께 더하는 것 -->
+<h1>추천 <small>내 기준에 가까운 차를 먼저 냅니다</small></h1>
 
-<p class="sitebar">
+<!-- ★ 시안 `.picktabs` — 탭 셋 -->
+<p class="sitebar picktabs">
   {% for t in tabs %}<a class="btn{% if t.on %} on{% endif %}"
-    href="/recommend?tab={{ t.n | url }}">탭 {{ t.n }}</a>{% endfor %}
+    href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
 </p>
 
 {% if v.empty_note %}
-<div class="cond what">
-  <h2>탭 {{ v.tab }}</h2>
-  <p><strong>{{ v.empty_note }}</strong></p>
-  <p class="muted">★ 무엇을 낼지 마스터께서 정하실 자리입니다 —
-    개발측이 지어내지 않습니다.</p>
+<!-- ★ 시안 `v4m_recommend_tab23_시안.html` — ★ 빈 탭 -->
+<div class="cond what pickempty">
+  <h2>{{ v.empty_note }}</h2>
+  <p>이 탭에 무엇을 낼지는 아직 정해지지 않았습니다. <strong>오류가 아닙니다.</strong></p>
 </div>
 {% endif %}
 
 {% if !v.empty_note %}
-<div class="cond what">
-  <h2>★ 이 탭은 무엇으로 세우나</h2>
-  <p><strong>네 축의 합</strong>으로 세웁니다 —
-    <b>예산 95</b> · <b>주행 107</b> · <b>연식 80</b> · <b>색 15</b> =
-    <b>{{ v.full | num }}점</b>.</p>
-  <p><strong>등급을 보지 않습니다</strong> — 거르지도 않고 더하지도 않습니다.
-    E 든 G 든 네 축이 높으면 위에 옵니다.</p>
-  <p class="muted">★ 넷 다 이미 매겨 둔 점수입니다 — 새로 셈하지 않습니다.</p>
+<!-- ★ 시안 `.pickhead` — 두 줄 -->
+<div class="cond what pickhead">
+  <p>★ <strong>등급을 보지 않습니다.</strong> 예산 · 주행 · 연식 · 색
+    <strong>네 축의 합({{ v.full | num }}점)</strong>으로만 세웁니다.</p>
+  <p>차종 {{ v.targets }}종 · {{ v.total | num }}건 중
+    <strong>{{ v.full | num }}점에 가까운 차례</strong></p>
 </div>
 
-<!-- ★ V11-94 — ★ 「왜 이 순위인가」를 ★ 표 앞에 한 줄로 적는다.
-     ★ 점수만 내고 이유를 안 내지 않는다 -->
-<p class="sentence">
-  <b>★ 왜 이 순위인가</b> — <b>네 축의 합</b>이 높은 차부터입니다.
-  등급은 보지 않습니다.
-</p>
-<p class="sentence">
-  화면에 든 매물 <b>{{ v.total | num }}건</b> ·
-  위에서부터 <b>{{ v.rows | count }}건</b>을 냅니다
-</p>
-
-<table class="rows">
-<thead><tr>
-  <th>차종</th><th class="num">값</th><th class="num">주행</th><th>연식</th>
-  <th>색</th><th>사이트</th>
-  <th class="num">예산</th><th class="num">주행</th><th class="num">연식</th>
-  <th class="num">색</th><th class="num">★ 합</th><th>등급</th><th></th>
-</tr></thead>
-<tbody>
+<main class="rows car-rows pickcards">
 {% for r in v.rows %}
-<tr>
-  <td data-label="차종"><a href="/detail/{{ r.listing_id }}">{{ r.target_label }}</a>
-    {% if r.trim %}<span class="dim">{{ r.trim }}</span>{% endif %}</td>
-  <td class="num mono" data-label="값">{{ r.price_won | won }}</td>
-  <td class="num mono" data-label="주행">{{ r.mileage_km | km }}</td>
-  <td data-label="연식">{{ r.year_month }}</td>
-  <td data-label="색">{% if r.color_ext %}{{ r.color_ext }}{% endif %}{% if !r.color_ext %}<span class="dim">확인 못 함</span>{% endif %}</td>
-  <td data-label="사이트">{{ r.site }}</td>
-  <!-- ★ 네 축을 따로 낸다 — ★ 「왜 위에 있는지」가 보여야 한다 (규격 「필수」) -->
-  {% for a in r.axes %}
-  <td class="num mono" data-label="{{ a.label }}"
-      title="{{ a.label }} {{ a.got }} / {{ a.full }}">{{ a.got }}</td>
-  {% endfor %}
-  <!-- ★ 막대는 ★ **비율**을 그린다 (부록 G · A-3) — ★ 297점 중 몇 점인가 -->
-  <td class="num mono" data-label="합"><strong>{{ r.got }}</strong>
-    <span class="dim">/{{ r.full }}</span>
-    <span class="bars" title="{{ r.got }} / {{ r.full }}"><i
-      style="width:{{ r.pct }}%"></i></span></td>
-  <!-- ★ 등급은 ★ 보이기만 한다 — ★ 세우는 데 안 쓴다 -->
-  <td data-label="등급"><span class="{{ r.grade | gradecls }}">{{ r.grade | gradelabel }}</span></td>
-  <td><a class="btn mini" href="/detail/{{ r.listing_id }}">상세 ▸</a></td>
-</tr>
+<div class="row pickcard" data-href="/detail/{{ r.listing_id }}">
+
+  <!-- ★ 시안 `.pickscore` — ★ 합이 맨 위다.  ★ 등급은 곁에 작게 -->
+  <div class="pickscore">{{ r.got }} / {{ r.full }}
+    <span class="pickgrade">등급 {{ r.grade | gradelabel }}{% if r.ignored %} · 등급은 안 봅니다{% endif %}</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    <!-- ★ 시안 `.v4-thumb` 104×78 -->
+    <div class="desk pickthumb">
+      {% if r.photo_url %}<img src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
+      {% if !r.photo_url %}<span class="pimg">사진</span>{% endif %}
+    </div>
+    <div class="pickmid">
+      <div class="pickname"><a href="/detail/{{ r.listing_id }}">{{ r.target_label }}{% if r.trim %} {{ r.trim }}{% endif %}</a></div>
+      <div class="pickspec">{{ r.spec }}</div>
+      <!-- ★ 시안은 「3,290만원」이다 — ★ 공통 `won` 필터는 「만」에서 끊는다.
+           ★ 필터를 바꾸면 ★ 다른 화면이 다 바뀐다 — ★ 여기서만 「원」을 붙인다 -->
+      <div class="pickprice">{{ r.price_won | won }}원</div>
+
+      <!-- ★ 시안 `.pickaxes` — ★ 네 축을 알약으로.  ★ 만점이면 `hi` -->
+      <div class="pickaxes">
+        {% for a in r.axes %}<span class="pickax{% if a.hi %} hi{% endif %}"
+          >{{ a.label }} <b>{{ a.got }}</b>/{{ a.full }}</span>{% endfor %}
+      </div>
+
+      <!-- ★ 시안 `.pickbar` — ★ 막대는 비율이다 (부록 G · A-3) -->
+      <div class="pickbar"><i style="width:{{ r.pct }}%"></i></div>
+    </div>
+  </div>
+</div>
 {% endfor %}
 {% if !v.rows %}
-<tr><td colspan="13"><p class="note">조건에 드는 매물이 없습니다.</p></td></tr>
+<div class="pickempty"><p class="note">조건에 드는 매물이 없습니다.
+  필터를 하나 지워 보십시오.</p></div>
 {% endif %}
-</tbody>
-</table>
+</main>
 {% endif %}

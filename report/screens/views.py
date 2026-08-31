@@ -781,6 +781,8 @@ class RecommendAxis:
     label: str
     got: float
     full: float
+    # ★ 시안 `.rc-ax.hi` — ★ 만점이면 노랗게 (틀은 `==` 를 못 한다 · V11-104)
+    hi: bool = False
 
 
 @dataclass(frozen=True)
@@ -800,6 +802,11 @@ class RecommendRow:
     # ★ 막대는 ★ **비율**을 그린다 (부록 G · A-3) — ★ 틀은 나눗셈을 못 한다
     pct: float
     axes: tuple
+    # ★ 시안 `.v4-spec` — ★ 「2023-04 · 21,400km · 청색 / 검정색 계열 · 볼보셀렉트」
+    spec: str = ""
+    photo_url: str | None = None
+    # ★ 시안 — ★ 「등급 C · **등급은 안 봅니다**」.  ★ 낮은 등급일 때만 덧붙인다
+    ignored: bool = False
 
 
 @dataclass(frozen=True)
@@ -809,6 +816,8 @@ class RecommendView:
     total: int
     axes: tuple
     full: float
+    # ★ 시안 `.rc-head` — 「차종 13종 · N건 중」
+    targets: int = 0
     # ★ 탭 2·3 — ★ 「아직 정하지 않았습니다」.  ★ 오류가 아니다 (규격 2장)
     empty_note: str | None = None
     # ★ 틀은 ★ `==` 를 못 한다 (`V11-104`) — ★ 머리말을 여기서 정한다

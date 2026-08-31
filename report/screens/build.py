@@ -3805,7 +3805,8 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     sql = (
         "SELECT l.listing_id, l.target_key,"
         " l.trim_badge, l.year_month, l.mileage_km, l.color_ext_raw,"
-        " l.price_current_won, l.site, s.grade,"
+        " l.price_current_won, l.site, s.grade, l.color_int_raw,"
+        " l.photo_list_json,"
         " SUM(a.value) AS got, SUM(a.max_points) AS full"
         " FROM core_listing l"
         " JOIN result_axis a ON a.listing_id = l.listing_id"
@@ -3822,17 +3823,32 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     # ★ 축을 따로 낸다 — ★ 「왜 위에 있는지」가 보여야 한다 (규격 「필수」)
     per = _recommend_axes(conn, calc_version, [r[0] for r in rows])
     labels = _labels(root)
+    sites = _site_labels(root)
+    # ★ 시안 — ★ 「등급 C · **등급은 안 봅니다**」.  ★ 무엇이 「낮은가」는 config 다
+    cuts = load_config(f"{root}/config/scoring.json").get("grade_cuts") or {}
+    top = [g for g, _v in sorted(cuts.items(), key=lambda kv: -float(kv[1]))][:3]
     out = []
     for r in rows:
         lid = r[0]
+        # ★ 시안은 ★ **정수**다 — 「271 / 297」·「예산 89/95」 (브라우저로 대조 09-01)
+        got = round(float(r[11] or 0))
+        full = round(float(r[12] or 0))
         out.append(RecommendRow(
             listing_id=lid,
             target_label=str(labels.get(r[1]) or r[1] or "차종 미정"),
             trim=r[2], year_month=r[3], mileage_km=r[4], color_ext=r[5],
             price_won=r[6], site=r[7], grade=r[8],
-            got=round(float(r[9] or 0), 1), full=round(float(r[10] or 0), 1),
+            got=got, full=full,
             # ★ 틀은 나눗셈을 못 한다 (V11-104) — ★ 여기서 낸다
-            pct=round(float(r[9] or 0) / float(r[10] or 1) * 100, 1),
+            pct=round(got / (full or 1) * 100, 1),
+            # ★ 시안 `.v4-spec` — ★ 「2023-04 · 21,400km · 청색 / 검정색 계열 · 볼보셀렉트」
+            spec=" · ".join(x for x in (
+                _ym_dash(r[3]),
+                f"{int(r[4]):,}km" if r[4] is not None else None,
+                " / ".join(y for y in (r[5], r[9]) if y) or None,
+                sites.get(r[7], r[7])) if x),
+            photo_url=_first_photo(r[10], root),
+            ignored=bool(r[8]) and r[8] not in top,
             axes=per.get(lid, ())))
     # ★ 화면에 든 전건 — ★ 거르개는 `s.` 를 쓰므로 ★ 같은 이음을 걸어야 한다
     total = conn.execute(
@@ -3840,9 +3856,40 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
         " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         " WHERE " + " AND ".join(where), args).fetchone()[0]
     full = sum(x.full for x in (out[0].axes if out else ())) if out else 0
+    # ★ 시안 `.rc-head` — 「차종 13종」.  ★ 정본은 `config/targets.json` 이다
+    tg = load_config(f"{root}/config/targets.json") or {}
+    targets = sum(1 for k, v in tg.items()
+                  if not k.startswith("_") and isinstance(v, dict)
+                  and v.get("active"))
     return RecommendView(tab=tab, rows=out, total=total,
                          axes=RECOMMEND_AXES, full=round(full, 1),
-                         empty_note=None, title="내 기준에 가까운 차")
+                         empty_note=None, title="내 기준에 가까운 차",
+                         targets=targets)
+
+
+def _ym_dash(ym) -> str | None:
+    """연식을 ★ 시안 꼴 「2023-04」로.  ★ K카는 `202209` 로 준다 (실측 09-01)."""
+    got = str(ym or "")
+    if len(got) == 6 and got.isdigit():
+        return f"{got[:4]}-{got[4:]}"
+    return got or None
+
+
+def _first_photo(raw, root: str = ".") -> str | None:
+    """★ 사진 한 장 — ★ 시안 `.v4-thumb`.  ★ 없으면 「사진」 자리만 둔다.
+
+    ★★ 새로 짜지 않는다 — ★ 목록이 쓰는 `photo_url()` 을 ★ 그대로 쓴다.
+      ★ ★ 원문이 ★ `{"type","location","ordering"}` 꼴이라 ★ 첫 칸을 그냥 쓰면
+      ★ ★ ★ dict 가 통째로 주소 자리에 들어간다 (실측 09-01 — 내가 그렇게 냈다)
+    """
+    return photo_url(raw, _view_str("photo_base_url", root))
+
+
+def _site_labels(root: str = ".") -> dict:
+    """사이트 이름 — ★ 정본은 `config/sites.json` 이다 (코드에 안 박는다)."""
+    got = load_config(f"{root}/config/sites.json") or {}
+    return {k: (v.get("label") or k) for k, v in got.items()
+            if isinstance(v, dict)}
 
 
 def _recommend_axes(conn, calc_version: str, ids: list) -> dict:
@@ -3864,8 +3911,10 @@ def _recommend_axes(conn, calc_version: str, ids: list) -> dict:
     for lid, per in out.items():
         got[lid] = tuple(sorted(
             (RecommendAxis(axis=a, label=AXIS_LABEL.get(a, a),
-                           got=round(float(v or 0), 1),
-                           full=round(float(m or 0), 1))
+                           got=round(float(v or 0)),
+                           full=round(float(m or 0)),
+                           # ★ 시안 `.rc-ax.hi` — ★ 만점이면 노랗게
+                           hi=bool(m) and float(v or 0) >= float(m))
              for a, (v, m) in per.items()),
             key=lambda x: order.get(x.axis, 99)))
     return got

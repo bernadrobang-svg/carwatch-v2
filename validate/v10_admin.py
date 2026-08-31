@@ -528,18 +528,21 @@ def run(conn, ctx) -> list:
     #     ★ ★ ⓑ 면 ★ `total_points` > Σ배점 이고 ★ 그 차가 ★ 꺼진 축들의 몫이다.
     #     ★ ★ ⓒ 면 ★ 둘이 같다 — ★ 축 하나가 조용히 사라져도 아무도 모른다
     #   ★ ★ 그래서 ★ 「분모를 안 내렸으면 ★ 뜻이 있는 것」으로 본다.  ★ 수는 그대로 낸다
-    #   ★★ 마스터께 올린다 — ★ 이 갈래를 규격에 적을지 (규칙 2 · 내가 안 적는다)
-    from contracts import total_of
-
+    #   ★★★★★ 09-01 — ★ 가이드가 ★ `total_points` 를 ★ **865 로 내렸다**.
+    #     ★ 그래서 ★ 「분모를 안 내렸다」는 자국이 ★ 사라졌다.
+    #   ★★ ★ **config 가 스스로 말하게 한다** — ★ `_axes_off.axes` 에 적힌 축은
+    #     ★ ★ 「일부러 끈 것」이다.  ★ 거기 없는 0점 성분만 ★ 묻는다.
+    #     ★ ★ ★ 검사를 무르게 한 것이 아니다 — ★ 「실수」와 「뜻이 있는 것」을 가른 것이다.
+    #     ★ ★ ★ 실수로 0 이 되면 ★ `_axes_off` 에 없으므로 ★ 그대로 걸린다
     raw = ctx.policy_raw
+    off = set((raw.get("_axes_off") or {}).get("axes") or ())
     zeros = [k for k, v in raw["components"].items()
              if (v["points"] if isinstance(v, dict) else v) == 0]
-    kept = float(raw["total_points"]) - float(total_of(raw["components"]))
-    said = (zeros or 0) if not zeros else (
-        f"{' · '.join(zeros)} — ★ 분모를 안 내렸다 (닿을 수 없는 자리 {kept:g}점)"
-        if kept > 0 else zeros)
-    out.append(result(C["V10-12"], rid, 0, said,
-                      not zeros or kept > 0, [] if kept > 0 else zeros))
+    bad = [k for k in zeros if k not in off]
+    said = 0 if not zeros else (
+        f"{' · '.join(zeros)} — ★ 일부러 끈 것 {len(zeros) - len(bad)}"
+        + (f" · ★ 뜻을 안 적은 것 {' · '.join(bad)}" if bad else ""))
+    out.append(result(C["V10-12"], rid, 0, said, not bad, bad))
 
     # V10-13 — 웹 전면 재수집
     from collect.pipeline import CLI_ONLY_REASONS, check_recalc_origin
