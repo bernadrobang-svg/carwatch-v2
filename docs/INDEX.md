@@ -9,21 +9,21 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 50,577줄 · 3,473KB**
+**131파일 · 50,582줄 · 3,474KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,163줄
+- CHECKS.md 1,167줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,036줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,286줄
+- guide/03_이력.md 1,288줄
 - guide/05_가이드역할.md 1,817줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
-- chapters/30-score/f-table.md 2,833줄
+- chapters/30-score/f-table.md 2,832줄
 - chapters/11-store/a-key.md 895줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
@@ -33,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,163 | 144 |
+| `CHECKS.md`  ★ | 1,167 | 144 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
 | `ENCAR_API.md` | 491 | 22 |
@@ -85,7 +85,7 @@
 | `chapters/30-score/c-spec.md` | 145 | 5 |
 | `chapters/30-score/d-history.md` | 373 | 12 |
 | `chapters/30-score/e-etc.md` | 233 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 2,833 | 139 |
+| `chapters/30-score/f-table.md`  ★ | 2,832 | 139 |
 | `chapters/30-score/g-absolute.md` | 150 | 5 |
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
@@ -120,7 +120,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,286 | 923 |
+| `guide/03_이력.md`  ★ | 1,288 | 924 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,817 | 95 |

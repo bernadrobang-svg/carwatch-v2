@@ -4800,6 +4800,30 @@ def s46_208_market_no_negative():
         return False, "★ 「음수는 안 낸다」가 규격에 없다"
     return True, f"시세 {got}점 · 음수 금지가 규격에 있다"
 
+
+def s46_214_photo_uses_space_below():
+    """S46-214 — ★ 사진 밑에 ★ 빈칸이 없는가 (마스터 지적 09-01 · 오판 233).
+
+    ★ 마스터 — 「★ 내가 300px 때 ★ 사진 아래 공간 비워 두지 말라고 했잖아」
+      ★ ★ 실측 — 300px 에서 ★ 사진 밑 130px 이 비어 있었다
+    ★ 까닭 — ★ `flex` 는 칸을 나눈다.  ★ 글이 사진 밑으로 안 흐른다.  ★ `float` 라야 흐른다
+    ★ 잣대 — ★ 시안이 ★ `.v4-row{display:flex}` 를 쓰지 않는가
+    """
+    import glob as _g
+    import os as _os
+
+    bad = []
+    for f in sorted(_g.glob(str(ROOT / "ref" / "screens" / "v4m_*.html"))):
+        body = _read(ROOT / "ref" / "screens" / _os.path.basename(f))
+        if ".v4-thumb" not in body:
+            continue
+        if ".v4-row{display:flex" in body.replace(" ", ""):
+            bad.append(_os.path.basename(f))
+    if bad:
+        return False, ("★ 사진이 flex 인 시안 " + str(len(bad)) + "개 — "
+                       + " · ".join(bad[:4]) + "  ★ float 로 바꿔라")
+    return True, "시안이 다 float 다 (사진 밑을 쓴다)"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4837,6 +4861,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-214", "사진 밑에 빈칸이 없는가", s46_214_photo_uses_space_below),
     ("S46-208", "시세 축이 음수를 내지 않는가", s46_208_market_no_negative),
     ("S46-207", "커밋 제목이 사실을 말하는가",
      s46_207_commit_title_says_fact),
