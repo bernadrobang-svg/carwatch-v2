@@ -19,12 +19,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from parse.lexus_certified.mapping import (  # noqa: E402
-    parse_detail, parse_list_item,
+    parse_list_item,
 )
-from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of        # noqa: E402
-from store.raw import link_raws as raw_link_raws  # noqa: E402
-from store.raw import commit, open_db              # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 
 SITE_CODE = "lexus_certified"
 WON_PER_MANWON = 10_000
@@ -113,71 +112,41 @@ def main() -> int:
         print("★ --dry 라 저장하지 않았다")
         return 0
 
-    from store.core import resolve_listing_id, upsert_core
-    from store.raw import save_site_raw
-
-    conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 09-01 마스터 지시 — ★ **받기 걸음은 파일만 쓴다.  ★ DB 를 안 연다.**
+    #   ★ 「★ 넣기 걸음은 그 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다」
+    #   ★★ 그래서 ★ 여기서 ★ `open_db`·`upsert_core`·`sweep_gone_groups` 를 ★ **뺐다**.
+    #     ★ ★ 넣기는 ★ `python3.11 tools/load_raw.py lexus_certified --write` 가 한다
     at = _now()
-    # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 우리 대상만 넣는다.
-    #   ★ 렉서스는 ★ 전수 36건이라 ★ 좁힐 길이 없다 — ★ 다 받되 ★ 걸러 넣는다
-    #   ★ ★ 원문은 남는다 — ★ 갈래를 넓히면 다시 판다
-    keep = ours if "--all" not in args else rows
-    print(f"★ 저장할 것 {len(keep)}건 · ★ 안 넣는 것 {len(rows) - len(keep)}건 "
-          f"(원문은 남는다)")
     # ★★ 원문은 ★ **다 남긴다** — ★ 안 넣는 것도 남긴다 (「갈래를 넓히면 다시 판다」)
+    #   ★ 걸러 넣기(3-2)는 ★ 넣기 걸음이 한다 — ★ 받기는 다 남길 뿐이다
     for r in rows:
-        save_site_raw(conn, SITE_CODE, "list", r["source_id"], cfg["base_url"],
-                      json.dumps(raw_of.get(r["source_id"]),
-                                 ensure_ascii=False), at)
-    for r in keep:
-        r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
-        # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
-        fill_target_key(SITE_CODE, r)
-        upsert_core(conn, r, at)
-    commit(conn)
-    # ★★★★★ 08-29 (개정 838 · 오판 161) — ★ 팔린 차를 거른다 (`S46-117`).
-    #   ★ 저장한 **뒤에** 부른다 — ★ 새 매물이 차종을 갖고 있어야 한다.
-    #   ★ 「끝까지 받았나」가 거짓이면 ★ 안 매긴다 — 반만 보고 매기면 산 차를 죽인다
-    from store.core import sweep_gone_groups
-
-    # ★★ 「끝까지 받았나」는 ★ **마지막 쪽을 봤는가**다 (08-29).
-    #   ★ 앞서는 `bool(cars)` 였다 — ★ 1쪽만 받고도 참이었다.
-    #   ★ ★ 그래서 ★ 2·3쪽 38건이 ★ 안 팔렸는데 gone 이 됐다
-    _done = done and bool(cars)
-    # ★ 넣기가 끝났다 — ★ 원문을 매물에 잇는다 (S46-97 · 08-29)
-    raw_link_raws(conn, SITE_CODE)
-    _got = sweep_gone_groups(conn, SITE_CODE, [(_done, {r["source_id"] for r in rows})], at)
-    print(f"★ 목록에 없어 gone 으로 매긴 것 {sum(_got.values())}건 "
-          f"({len(_got)}차종) · 끝까지 받았나 {'예' if _done else '아니오'}")
-    n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
-                     (SITE_CODE,)).fetchone()[0]
-    print(f"★ 저장 {len(keep)}건 · 저장된 렉서스 매물 {n:,}건")
+        save_file(SITE_CODE, "list", r["source_id"], cfg["base_url"],
+                  json.dumps(raw_of.get(r["source_id"]), ensure_ascii=False),
+                  at, root=ROOT)
+    print(f"★ 목록 {len(rows)}건을 파일로 남겼다 — "
+          f"raw/{SITE_CODE}/list/{at[:10]}/")
+    print(f"★ 우리 대상으로 보이는 것 {len(ours)}건 — ★ 넣기는 "
+          f"python3.11 tools/load_raw.py {SITE_CODE} --write")
 
     if "--detail" not in args:
         print("★ 상세는 --detail 로 받는다 — ★ 연식(`year_month`)은 상세에만 있다")
         return 0
-    return _detail(conn, cfg, keep, at)
+    return _detail(cfg, ours, at)
 
 
 DETAIL_PATH = "/api/json/getData_car_detail.json.php?idx={idx}"
 
 
-def _detail(conn, cfg, rows, at) -> int:
-    """★★★ 08-30 (r974 · 0j 1) — ★ 상세를 받아 ★ **연식**을 채운다.
+def _detail(cfg, rows, at) -> int:
+    """상세를 받아 ★ **파일로만** 남긴다 (마스터 지시 09-01).
 
     ★ 목록의 `year` 는 ★ 모델연도다.  ★ 연식은 ★ `car_info.registration_date` 다
       (규격 `LEXUS_CERTIFIED_API.md` 3장 ③).  ★ 그래서 ★ 상세를 열어야 한다
-    ★★ ★ 「없는 차」도 ★ 200 을 준다 — ★ `car_detail` 이 있나로 가른다.
-      ★ ★ 200 으로 가르지 않는다 (마스터 08-29)
+    ★★ ★ **DB 를 안 연다** — ★ 넣기는 `tools/load_raw.py` 가 한다
     """
-    from store.core import split_pii, upsert_core
-    from store.pii import load_key
-    from store.raw import save_site_raw
-
-    key = load_key()
     base = cfg["base_url"]
     timeout = float(cfg.get("timeout_sec") or 40)
-    got = {"정상": 0, "없는 차": 0, "못 받음": 0}
+    got = {"정상": 0, "못 받음": 0}
     for r in rows:
         sid = r["source_id"]
         url = base + DETAIL_PATH.format(idx=sid)
@@ -190,27 +159,11 @@ def _detail(conn, cfg, rows, at) -> int:
             got["못 받음"] += 1
             time.sleep(SLEEP_SEC)
             continue
-        # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수).  ★ 곧바로 커밋한다 (개정 857)
-        save_site_raw(conn, SITE_CODE, "detail", sid, url, body, at,
-                      listing_id=r.get("listing_id"))
-        commit(conn)
-        deep = parse_detail(body, SITE_CODE, sid)
-        if deep is None:
-            got["없는 차"] += 1
-            time.sleep(SLEEP_SEC)
-            continue
-        deep["listing_id"] = r.get("listing_id")
-        fill_target_key(SITE_CODE, deep)
-        upsert_core(conn, split_pii(conn, deep, SITE_CODE, key, at), at)
+        save_file(SITE_CODE, "detail", sid, url, body, at, root=ROOT)
         got["정상"] += 1
-        commit(conn)
         time.sleep(SLEEP_SEC)
     print("★ 상세 — " + " · ".join(f"{k} {v}" for k, v in got.items()))
-    ym = conn.execute(
-        "SELECT COUNT(*), SUM(year_month IS NOT NULL), SUM(plate_hash IS NOT NULL)"
-        " FROM core_listing WHERE site=? AND status IN ('active','new')",
-        (SITE_CODE,)).fetchone()
-    print(f"★ 연식이 찬 매물 {ym[1] or 0}/{ym[0]}건 · 번호판 해시 {ym[2] or 0}건")
+    print(f"★ 넣기 — python3.11 tools/load_raw.py {SITE_CODE} --write")
     return 0
 
 

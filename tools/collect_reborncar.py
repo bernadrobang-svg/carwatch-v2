@@ -32,6 +32,8 @@ from parse.reborncar.mapping import (  # noqa: E402
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of                    # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import open_db                                  # noqa: E402
 
 # ★★★★★ 이 수집기는 ★ **팔린 차를 목록으로 안 거른다** (마스터 지시 08-30 · S46-117).
@@ -58,7 +60,6 @@ def _options(conn, cfg, source_id: str, html: str, at: str, lid):
 
     ★ 원문은 ★ 남긴다 (P3) — ★ 받은 것도 못 받은 것도
     """
-    from store.raw import save_site_raw
 
     tok, csrf = option_keys(html)
     if not tok or not csrf:
@@ -83,7 +84,7 @@ def _options(conn, cfg, source_id: str, html: str, at: str, lid):
             body = res.read()
     except (urllib.error.URLError, OSError, TimeoutError):
         return None
-    save_site_raw(conn, SITE_CODE, "option", source_id, url, body, at,
+    save_file(SITE_CODE, "option", source_id, url, body, at,
                   listing_id=lid)
     # ★★★ 08-31 (`S46-126`) — ★ 원문을 남겼으면 ★ **곧바로 커밋한다.**
     #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다 (개정 857)
@@ -160,7 +161,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, pii_key = _now(), load_key()
@@ -213,7 +214,7 @@ def main() -> int:
             continue
         # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
         #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
-        save_site_raw(conn, SITE_CODE, "detail", one,
+        save_file(SITE_CODE, "detail", one,
                       cfg["base_url"] + cfg["paths"]["detail"].format(
                           source_id=one), html, at)
         # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.

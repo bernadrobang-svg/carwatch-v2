@@ -29,6 +29,8 @@ sys.path.insert(0, ROOT)
 
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import commit, open_db                       # noqa: E402
 
 SITE_CODE = "volvo_selekt"
@@ -162,14 +164,13 @@ def main() -> int:
         return 0
 
     from store.core import resolve_listing_id, upsert_core
-    from store.raw import save_site_raw
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
     # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
     #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
     for _u, _b in pages:
-        save_site_raw(conn, SITE_CODE, "list", None, _u, _b, at)
+        save_file(SITE_CODE, "list", None, _u, _b, at)
     for sid, (slug, url) in ours.items():
         row = {"site": SITE_CODE, "source_id": sid, "price_unit": "won",
                # ★ 사전이 아는 이름으로 적는다 — ★ 없으면 target_key 를 그대로
@@ -246,7 +247,7 @@ def main() -> int:
             got["못 받음"] += 1
             time.sleep(interval)
             continue
-        save_site_raw(conn, SITE_CODE, "detail", sid, url, body, at)
+        save_file(SITE_CODE, "detail", sid, url, body, at)
         # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
         #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
         #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)

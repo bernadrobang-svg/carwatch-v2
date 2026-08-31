@@ -47,6 +47,8 @@ from parse.kcar.mapping import (parse_detail, parse_list_item,  # noqa: E402
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import collect_group_of, match_target_name  # noqa: E402
 from store.raw import open_db  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 
 # ① ★ 없는 매물도 200 이다.  ★ 크기로 한 번 · carCd 로 한 번 가른다
 MIN_BYTES = 10_000
@@ -158,7 +160,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
 
     from store.core import mark_gone, resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
@@ -166,7 +168,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
     #   ★ 전에는 ★ 887KB 를 ★ 그냥 버렸다 — ★ `raw_response` 에 `stock_list` 가 0건이었다.
     #   ★ ★ 갈래를 넓히시면 ★ 이 봉투로 ★ 다시 판다.  ★ 다시 받을 일이 없다
     if stock_body:
-        got = save_site_raw(conn, SITE_CODE, "stock_list", None,
+        got = save_file(SITE_CODE, "stock_list", None,
                             stock_url, stock_body, at)
         print(f"★ 목록 원문을 남겼다 ({len(stock_body):,}자 · {got})")
     # ★★ 3-2 걸러 저장 (마스터 확정 08-25) — ★ 우리 대상만 ★ `core_listing` 에 넣는다.
@@ -242,7 +244,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
             continue
         # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
         #   ★ K카 상세는 ★ JSON 이다 — ★ 글자로 되돌려 넣는다
-        save_site_raw(conn, SITE_CODE, "detail", one["source_id"], req.url,
+        save_file(SITE_CODE, "detail", one["source_id"], req.url,
                       json.dumps(body, ensure_ascii=False), at)
         # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
         #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
@@ -286,7 +288,7 @@ def collect_list(adapter: KcarAdapter, cfg: dict, args: list) -> int:
             ins["못 받음"] += 1
             time.sleep(float(cfg.get("interval_sec") or 1.5))
             continue
-        save_site_raw(conn, SITE_CODE, "inspection", one["source_id"], url,
+        save_file(SITE_CODE, "inspection", one["source_id"], url,
                       json.dumps(body, ensure_ascii=False), at,
                       listing_id=one.get("listing_id"))
         commit(conn)

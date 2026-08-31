@@ -26,10 +26,30 @@ sys.path.insert(0, ROOT)
 
 from store.rawfile import read, walk  # noqa: E402
 
-# ★ 사이트마다 ★ 「봉투 → 줄」을 내는 자리.  ★ 코드에 사이트 이름을 박지 않는다 —
-#   ★ `parse/{site}/mapping.py` 가 정본이다
-LOADERS = {
-    "revolt": "parse.revolt.mapping",
+# ★★★★★ 09-01 — ★ **열 사이트를 다 받는다** (마스터 지시).
+#   ★ 파서 이름은 같은데 ★ **부르는 꼴이 사이트마다 다르다** (실측 09-01) —
+#     `parse_detail(html, site, source_id)`  · 대부분
+#     `parse_detail(html, source_id)`        · BMW
+#     `parse_detail(body: dict, …)`          · K카 · 리볼트 · 렉서스
+#     `parse_detail_all(html, site, sid)`    · 현대인증 (줄 ＋ 이력을 함께 낸다)
+#   ★ ★ 그래서 ★ **어떻게 부르는지**를 여기 표로 적는다 — ★ 짐작으로 부르지 않는다
+#   ★ `json` — 몸통을 JSON 으로 풀어 넘길지 (아니면 글자 그대로)
+LOADERS: dict = {
+    "revolt": {"mod": "parse.revolt.mapping", "json": True,
+               "list_one": True},
+    "heydealer": {"mod": "parse.heydealer.mapping", "json": True},
+    "kcar": {"mod": "parse.kcar.mapping", "json": True},
+    "lexus_certified": {"mod": "parse.lexus_certified.mapping", "json": True,
+                        "list_one": True},
+    "kia_cpo": {"mod": "parse.kia_cpo.mapping", "json": True},
+    "bobaedream": {"mod": "parse.bobaedream.mapping", "json": False},
+    "kbchachacha": {"mod": "parse.kbchachacha.mapping", "json": False},
+    "reborncar": {"mod": "parse.reborncar.mapping", "json": False},
+    "volvo_selekt": {"mod": "parse.volvo_selekt.mapping", "json": False},
+    "bmw_bps": {"mod": "parse.bmw_bps.mapping", "json": False,
+                "detail_args": "sid_only"},
+    "hyundai_cert": {"mod": "parse.hyundai_cert.mapping", "json": False,
+                     "detail_fn": "parse_detail_all"},
 }
 
 
@@ -37,23 +57,76 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _rows_from(site: str, env: dict, mod) -> tuple:
-    """봉투 하나 → (core 줄들, 이력, 판).  ★ 목록이면 여러 줄이 나온다."""
+def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
+    """봉투 하나 → (core 줄들, 이력, 판).  ★ 목록이면 여러 줄이 나온다.
+
+    ★★ 사이트마다 ★ 부르는 꼴이 다르다 — ★ `LOADERS` 표가 정본이다
+    """
     body = env.get("body")
     if not body:
         return [], None, None
-    try:
-        got = json.loads(body)
-    except ValueError:
-        return [], None, None
+    got = body
+    if spec.get("json"):
+        try:
+            got = json.loads(body)
+        except ValueError:
+            return [], None, None
+    sid = env.get("source_id")
+
     if env.get("endpoint") == "list":
-        items = got.get("results") if isinstance(got, dict) else got
-        rows = [mod.parse_list_item(x) for x in (items or [])
-                if isinstance(x, dict)]
+        fn = getattr(mod, "parse_list_item", None)
+        if fn is None:
+            return [], None, None      # ★ 목록 파서가 없다 — ★ 원문만 남는다
+        # ★★★★★ 09-01 — ★ 목록 몸통이 ★ 세 꼴로 온다 (실측) —
+        #   ⓐ 배열                        · 리볼트 (`page-0001.json` 한 쪽 20건)
+        #   ⓑ `{"results": [...]}`        · 감싸 주는 곳
+        #   ⓒ ★ **항목 하나짜리 dict**     · 렉서스 (`{source_id}.json` 한 건씩)
+        #   ★★ 앞서는 ⓒ 를 ★ `got.get("results")` 로 물어 ★ **`None`** 을 받았다 —
+        #     ★ ★ 그래서 ★ 144개를 읽고도 ★ 줄이 0 이었다 (실측 09-01)
+        if isinstance(got, list):
+            items = got
+        elif isinstance(got, dict):
+            items = got.get("results")
+            if items is None:
+                items = [got]          # ⓒ ★ 한 건짜리다
+        else:
+            return [], None, None
+        if not isinstance(items, list):
+            return [], None, None
+        rows = []
+        for x in items:
+            if not isinstance(x, dict):
+                continue
+            # ★ 사이트 인자를 ★ 받는 것과 ★ 안 받는 것이 있다 (렉서스는 안 받는다)
+            try:
+                rows.append(fn(x, site))
+            except TypeError:
+                rows.append(fn(x))
         return [r for r in rows if r], None, None
-    deep = mod.parse_detail(got, site, env.get("source_id"))
-    rec = mod.record_of(got, site) if hasattr(mod, "record_of") else None
-    pan = mod.panels_of(got) if hasattr(mod, "panels_of") else None
+
+    name = spec.get("detail_fn") or "parse_detail"
+    fn = getattr(mod, name, None)
+    if fn is None:
+        return [], None, None
+    if spec.get("detail_args") == "sid_only":
+        deep = fn(got, sid)            # ★ BMW
+    else:
+        deep = fn(got, site, sid)
+    rec = None
+    if isinstance(deep, tuple):
+        # ★ 현대인증 — ★ (줄, 이력) 을 함께 낸다
+        deep, rec = (list(deep) + [None, None])[:2]
+    if rec is None and hasattr(mod, "record_of"):
+        try:
+            rec = mod.record_of(got, site)
+        except TypeError:
+            rec = mod.record_of(got)
+    pan = None
+    if hasattr(mod, "panels_of"):
+        try:
+            pan = mod.panels_of(got)
+        except (TypeError, ValueError, AttributeError):
+            pan = None
     return ([deep] if deep else []), rec, pan
 
 
@@ -73,7 +146,8 @@ def main() -> int:
 
     import importlib
 
-    mod = importlib.import_module(LOADERS[site])
+    spec = LOADERS[site]
+    mod = importlib.import_module(spec["mod"])
     files = walk(site=site, day=day, root=ROOT)
     print(f"★ {site} — 파일 {len(files):,}개"
           + ("" if write else "  ★ 재기만 한다"))
@@ -84,7 +158,7 @@ def main() -> int:
             if env is None:
                 got["못 읽음"] += 1
                 continue
-            rows, rec, pan = _rows_from(site, env, mod)
+            rows, rec, pan = _rows_from(site, env, mod, spec)
             got[env.get("endpoint") or "?"] += 1
             got["  줄"] += len(rows)
             if rec:
@@ -116,7 +190,7 @@ def main() -> int:
                       env.get("source_id"), env.get("url") or "",
                       env.get("body"), env.get("fetched_at") or at,
                       http_code=int(env.get("http_code") or 200))
-        rows, rec, pan = _rows_from(site, env, mod)
+        rows, rec, pan = _rows_from(site, env, mod, spec)
         for row in rows:
             known = known_model_of((row.get("site_model") or "").split()[0]
                                    if row.get("site_model") else None)

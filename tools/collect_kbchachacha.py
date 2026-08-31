@@ -43,6 +43,8 @@ from adapters.kbchachacha import (  # noqa: E402
 from parse.kbchachacha.mapping import parse_detail  # noqa: E402
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 RETRY = 3               # ★ 봇 차단 재시도 (KBCHACHACHA_API 1-1)
@@ -313,7 +315,7 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     ★★ ★ 통신과 ★ `time.sleep` 은 ★ **트랜잭션 밖**이다.
       ★ 한 건 넣고 ★ 곧바로 커밋해 ★ 잠금 창을 ★ 한 INSERT 로 줄인다
     """
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     # ★ 「이미 받았나」는 ★ **원문이 있나**로 본다 (받기 걸음이므로).
@@ -367,7 +369,7 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
         #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
         # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
         #   ★★ 곧바로 커밋한다 — ★ 잠금 창이 ★ INSERT 하나로 끝난다
-        save_site_raw(conn, SITE_CODE, "detail", one, req.url, body, _now())
+        save_file(SITE_CODE, "detail", one, req.url, body, _now())
         commit(conn)
         got["받음"] += 1
         if n % 100 == 0:
@@ -390,7 +392,7 @@ def load_details(cfg: dict, groups: list | None = None) -> dict:
     from store.core import (resolve_listing_id, split_pii,
                             upsert_core)
     from store.pii import load_key
-    from store.raw import commit, raw_body, save_site_raw  # noqa: F401
+    from store.raw import commit, raw_body
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()

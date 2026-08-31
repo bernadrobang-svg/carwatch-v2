@@ -23,6 +23,8 @@ sys.path.insert(0, ROOT)
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import known_model_of        # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import commit, open_db              # noqa: E402
 
 SITE_CODE = "bmw_bps"
@@ -128,14 +130,14 @@ def main() -> int:
         return 0
 
     from store.core import resolve_listing_id, upsert_core
-    from store.raw import raw_body, save_site_raw
+    from store.raw import raw_body
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
     # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
     #   ★ 쪽마다 한 줄이다 — ★ 매물번호가 없으니 ★ 겹침을 안 접는다
     for _u, _b in pages:
-        save_site_raw(conn, SITE_CODE, "list", None, _u, _b, at)
+        save_file(SITE_CODE, "list", None, _u, _b, at)
     for r in rows:
         r["listing_id"] = resolve_listing_id(conn, SITE_CODE, r["source_id"], at)
         # ★ 넣기 직전에 ★ 차종을 붙인다 (마스터 지시 08-30) — ★ 안 붙이면 판정에 안 들어간다
@@ -183,7 +185,7 @@ def main() -> int:
                 got["못 받음"] += 1
                 time.sleep(interval)
                 continue
-            save_site_raw(conn, SITE_CODE, "detail", sid,
+            save_file(SITE_CODE, "detail", sid,
                           f"{base}/shop/item.php?it_id={sid}", html, at,
                           listing_id=one.get("listing_id"))
             # ★ 통신·sleep 이 트랜잭션 안에 들지 않게 곧바로 커밋한다 (개정 857)

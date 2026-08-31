@@ -33,6 +33,8 @@ from parse.hyundai_cert.mapping import (  # noqa: E402
 )
 from parse.target_rules import target_by_rules  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 # ★★★★★ 이 수집기는 ★ **팔린 차를 목록으로 안 거른다** (마스터 지시 08-30 · S46-117).
@@ -307,7 +309,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
@@ -356,7 +358,7 @@ def main() -> int:
             continue
         deep, record, body = pair
         # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수)
-        save_site_raw(conn, SITE_CODE, "detail", one["source_id"],
+        save_file(SITE_CODE, "detail", one["source_id"],
                       BASE + DETAIL_PATH.format(goods_no=one["source_id"]),
                       body, at)
         # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.

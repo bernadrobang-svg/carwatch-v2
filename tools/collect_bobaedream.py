@@ -37,6 +37,8 @@ from parse.bobaedream.mapping import list_items, parse_detail  # noqa: E402
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.dictionary import target_map  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 80
@@ -188,7 +190,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, key = _now(), load_key()
@@ -202,7 +204,7 @@ def main() -> int:
             continue
         # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」.
         #   ★ 파싱보다 앞에 둔다 — ★ 파싱이 실패해도 ★ 원문은 남아야 한다
-        save_site_raw(conn, SITE_CODE, "detail", no, d.url, html, at)
+        save_file(SITE_CODE, "detail", no, d.url, html, at)
         # ★★ 08-29 (개정 857) — ★ 곧바로 커밋한다.
         #   ★ 통신·`sleep` 이 ★ 트랜잭션 안에 들면 ★ 잠금 창이 분 단위가 된다
         #   (KB 실측 — 100건 × 1.2초 = 120초 · 잠금 38.4초 · locked 로 죽었다)

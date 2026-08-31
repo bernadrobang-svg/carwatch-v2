@@ -34,6 +34,8 @@ from parse.kia_cpo.mapping import (  # noqa: E402
 )
 from store.dictionary import target_key_of  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import open_db  # noqa: E402
 
 MAX_PAGES = 40          # ★ 1,020건 ÷ 100 = 11쪽.  ★ 넉넉히 두고 새 것이 없으면 멈춘다
@@ -145,7 +147,7 @@ def main() -> int:
 
     from store.core import resolve_listing_id, split_pii, upsert_core
     from store.pii import load_key
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
@@ -156,7 +158,7 @@ def main() -> int:
         #   ★ 순서를 지킨다 — split_pii → resolve_id → upsert
         p["listing_id"] = resolve_listing_id(conn, SITE_CODE, p["source_id"], at)
         # ★★ 원문을 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
-        save_site_raw(conn, SITE_CODE, "list", p["source_id"],
+        save_file(SITE_CODE, "list", p["source_id"],
                       adapter.list_url(None).url,
                       json.dumps(raw_of.get(p["source_id"]),
                                  ensure_ascii=False), at,

@@ -34,6 +34,8 @@ from parse.heydealer.mapping import (  # noqa: E402
 )
 from parse.target_rules import fill_target_key  # noqa: E402
 from store.raw import link_raws as raw_link_raws  # noqa: E402
+# ★★★★★ 09-01 마스터 지시 — ★ 받기는 ★ **파일만** 쓴다 (`S46-204`)
+from store.rawfile import save as save_file  # noqa: E402
 from store.raw import open_db                                          # noqa: E402
 
 MAX_PAGES = 40          # ★ 안전장치.  ★ 10건 미만이 오면 그 전에 멈춘다
@@ -148,7 +150,7 @@ def main() -> int:
     from errors import ValidationError
     from store.dictionary import upsert_enum
     from store.pii import load_key
-    from store.raw import commit, save_site_raw
+    from store.raw import commit
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at, pii_key = _now(), load_key()
@@ -192,7 +194,7 @@ def main() -> int:
             time.sleep(interval)
             continue
         # ★★ 원문을 ★ 먼저 남긴다 (명령서 3-2 필수) — ★ 「갈래를 넓히시면 다시 판다」
-        save_site_raw(conn, SITE_CODE, "detail", one["source_id"],
+        save_file(SITE_CODE, "detail", one["source_id"],
                       adapter.detail_urls(one["source_id"])[0].url,
                       json.dumps(body, ensure_ascii=False), at)
         deep = parse_detail(body, SITE_CODE, one["source_id"])
