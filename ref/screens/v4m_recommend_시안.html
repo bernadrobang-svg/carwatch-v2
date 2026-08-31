@@ -44,14 +44,15 @@ font-size:12px;color:var(--dim);line-height:1.6}
 
 /* 카드 — 목록과 같은 꼴.  사진 옆을 다 쓴다 */
 .v4-card{background:var(--surface);border-bottom:1px solid var(--line);padding:12px 14px}
-.v4-row{display:flex;gap:10px}
-.v4-thumbwrap{position:relative;flex:0 0 104px}
+.v4-row{display:block}
+.v4-row::after{content:'';display:block;clear:both}
+.v4-thumbwrap{position:relative;float:left;width:104px;margin:0 10px 6px 0}
 .v4-thumb{width:104px;height:78px;border-radius:8px;background:var(--surface2);
 border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
 font-size:11px;color:var(--faint)}
 .v4-pick{position:absolute;left:4px;bottom:4px;width:24px;height:24px;border-radius:6px;
 background:rgba(0,0,0,.6);border:1px solid var(--line2);color:var(--dim);font-size:12px}
-.v4-mid{flex:1;min-width:0}
+.v4-mid{min-width:0;overflow:visible}
 .rc-top{display:flex;align-items:center;gap:7px;margin-bottom:3px}
 .rc-score{font-size:15px;font-weight:700;color:var(--amber)}
 .rc-grade{font-size:12px;font-weight:700;border-radius:4px;padding:1px 7px;
@@ -86,7 +87,7 @@ color:var(--dim);text-decoration:none}
 
 /* ★ 좁은 화면 (360px 아래) — 줄을 줄인다 */
 @media (max-width:359px){
-  .v4-thumbwrap{flex:0 0 84px}
+  .v4-thumbwrap{width:84px;margin:0 8px 5px 0}
   .v4-thumb{width:84px;height:63px}
   .v4-name{font-size:13px}
   .v4-trim,.v4-spec{font-size:11px;line-height:1.35}
