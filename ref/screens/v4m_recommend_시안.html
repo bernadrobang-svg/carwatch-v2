@@ -17,18 +17,21 @@ padding:10px 14px 8px;border-bottom:1px solid var(--line)}
 
 /* 탭 — 글자가 넘치면 두 줄로 */
 .rc-tabs{display:flex;border-bottom:1px solid var(--line)}
-.rc-tabs a{flex:1;text-align:center;padding:9px 6px;font-size:13px;line-height:1.3;
+.rc-tabs a{flex:1;text-align:center;padding:6px 5px;font-size:12.5px;line-height:1.25;
 color:var(--dim);text-decoration:none;border-bottom:2px solid transparent;
-min-height:44px;display:flex;align-items:center;justify-content:center;
+min-height:44px;max-height:44px;display:flex;align-items:center;justify-content:center;
 word-break:keep-all;overflow-wrap:break-word}
 .rc-tabs a.on{color:var(--amber);border-bottom-color:var(--amber);font-weight:600}
 
 /* 차종 단추 — 줄이 모자라면 두 줄로 접힌다 (가로 스크롤 아님) */
-.rc-models{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;
-border-bottom:1px solid var(--line)}
-.rc-models .mb{font-size:12px;line-height:1.3;color:var(--dim);text-decoration:none;
+.rc-models{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px;
+border-bottom:1px solid var(--line);max-height:82px;overflow:hidden;position:relative}
+.rc-models.open{max-height:none}
+.rc-more{display:block;text-align:center;font-size:11px;color:var(--faint);
+padding:6px 0 8px;border-bottom:1px solid var(--line);text-decoration:none;background:var(--bg)}
+.rc-models .mb{font-size:12px;line-height:1.25;color:var(--dim);text-decoration:none;
 background:var(--surface2);border:1px solid var(--line);border-radius:16px;
-padding:6px 11px;min-height:34px;display:inline-flex;align-items:center;gap:5px;
+padding:5px 10px;min-height:34px;display:inline-flex;align-items:center;gap:4px;
 white-space:normal;word-break:keep-all;max-width:100%}
 .rc-models .mb b{font-weight:600;color:var(--text);font-size:11px}
 .rc-models .mb.on{border-color:var(--amber);color:var(--amber);background:rgba(240,180,41,.08)}
@@ -60,16 +63,18 @@ border:1px solid var(--line2);color:var(--dim)}
 .v4-trim{font-size:12px;color:var(--dim)}
 .v4-spec{font-size:12px;color:var(--dim)}
 .v4-price{font-size:16px;font-weight:700;margin-top:3px}
-.v4-j{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px;font-size:11px;color:var(--dim)}
+.v4-j{display:flex;flex-wrap:wrap;gap:3px 8px;margin-top:4px;font-size:10.5px;color:var(--dim);line-height:1.4}
 .v4-j b.ok{color:var(--ok)} .v4-j b.na{color:var(--faint)}
 .rc-why{font-size:11px;color:var(--faint);margin-top:6px;display:inline-block;text-decoration:none}
-.rc-axes{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.rc-axes{display:none;gap:5px;flex-wrap:wrap;margin-top:5px}
+.v4-card.open .rc-axes{display:flex}
+.v4-card.open .rc-bar{display:block}
 .rc-ax{font-size:11px;color:var(--dim);background:var(--surface2);
 border:1px solid var(--line);border-radius:4px;padding:2px 6px}
 .rc-ax b{color:var(--text);font-weight:600}
 .rc-ax.hi{border-color:var(--amber);color:var(--amber)} .rc-ax.hi b{color:var(--amber)}
 .rc-ax.na{opacity:.45}
-.rc-bar{height:3px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden}
+.rc-bar{display:none;height:3px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden}
 .rc-bar i{display:block;height:100%;background:var(--amber)}
 
 .v4-tabs{position:fixed;bottom:0;left:0;right:0;max-width:1180px;margin:0 auto;
@@ -78,6 +83,19 @@ display:flex;background:var(--surface);border-top:1px solid var(--line2)}
 color:var(--dim);text-decoration:none}
 .v4-tabs a.on{color:var(--amber)}
 .v4-tabs b{display:block;font-size:17px;line-height:1.2;font-weight:400}
+
+/* ★ 좁은 화면 (360px 아래) — 줄을 줄인다 */
+@media (max-width:359px){
+  .v4-thumbwrap{flex:0 0 84px}
+  .v4-thumb{width:84px;height:63px}
+  .v4-name{font-size:13px}
+  .v4-trim,.v4-spec{font-size:11px;line-height:1.35}
+  .v4-j{font-size:10px;gap:2px 6px}
+  .rc-score{font-size:14px}
+  .v4-price{font-size:15px}
+  .rc-models{max-height:76px;padding:7px 12px}
+  .v4-card{padding:10px 12px}
+}
 </style></head>
 <body><div class="v4-wrap">
 
@@ -105,6 +123,7 @@ color:var(--dim);text-decoration:none}
   <a class="mb off">BMW iX3 <b>0</b></a>
   <a class="mb off">기아 EV4 <b>0</b></a>
 </div>
+<a href="#" class="rc-more">차종 더 보기 ▾ (10종)</a>
 
 <div class="rc-head">
   ★ <b>등급을 보지 않습니다.</b> 예산 · 주행 · 연식 · 색 <b>네 축의 합(297점)</b>으로만 세웁니다.<br>
@@ -113,7 +132,7 @@ color:var(--dim);text-decoration:none}
 
 <div class="v4-cards">
 
-  <div class="v4-card">
+  <div class="v4-card open">
     <div class="v4-row">
       <div class="v4-thumbwrap"><div class="v4-thumb">사진</div><button class="v4-pick">✓</button></div>
       <div class="v4-mid">
