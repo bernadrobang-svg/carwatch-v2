@@ -978,7 +978,7 @@
   "SPEC_DEFAULT_OFF": {},
   "_heydealer_hash_note": "[마스터 08-24] ★ 차종 해시는 ★ 마스터가 화면을 눌러 주셔야 나온다.  ★ 지어낼 수 없다.  ★ 갈래(연료)는 섞여 오니 ★ fuel_match 로 우리 쪽에서 거른다",
   "XC40_IMPORT": {
-    "label": "볼보 XC40",
+    "label": "볼보 XC40 (전기 제외)",
     "collect_group": "multi",
     "_ref": "★ 마스터 확정 08-24 — 요구 추적표 99번",
     "_facet": "★ KB carClass.json 으로 확인했다 — makerCode=117 classCode=2708 (실측 08-24)",
@@ -994,10 +994,9 @@
         "makerCode": "117",
         "classCode": "2708",
         "carCode": [
-          "2940",
-          "3244"
+          "2940"
         ],
-        "_세대": "[가이드 08-27] ★ XC40(2018~) ＋ Recharge(2022~) — ★ 둘 다 2019 가 걸친다"
+        "_세대": "[가이드 08-27 · ★ 09-01 정정] ★ XC40(2018~) — ★ carCode 3244(Recharge)를 `XC40_EV` 로 뺐다.  ★ 2940 만 남는다 (「B4 AWD Inscription」·「T4 AWD R-Design」 실측 09-01)"
       },
       "heydealer": [
         {
@@ -1026,12 +1025,12 @@
       "가솔린",
       "디젤",
       "가솔린+전기",
-      "디젤+전기",
-      "전기"
+      "디젤+전기"
     ],
     "_fuel_why": "★ 명령서 2-2 「fuel_match 는 비워 먼저 다 받고, 무엇이 오는지 본 뒤에 좁힌다」",
     "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통",
-    "_전기_섞임": "[실측 08-28] ★ 엔카 42152084 — ★ ModelGroup=XC40 인데 ★ 연료가 전기다(EX40 · 트윈 얼티메이트 · 2024-08).  ★ 엔카는 ★ EX40 을 XC40 아래 둔다 — ★ `fuel_match` 로 갈린다"
+    "_전기_섞임": "[실측 08-28] ★ 엔카 42152084 — ★ ModelGroup=XC40 인데 ★ 연료가 전기다(EX40 · 트윈 얼티메이트 · 2024-08).  ★ 엔카는 ★ EX40 을 XC40 아래 둔다 — ★ `fuel_match` 로 갈린다",
+    "_가른 날": "★ 2026-09-01 — 마스터 지시로 ★ 전기(Recharge)를 `XC40_EV` 로 뺐다"
   },
   "V60CC_IMPORT": {
     "label": "볼보 V60 크로스컨트리",
@@ -1395,5 +1394,52 @@
     "site_query": {
       "_왜 비었나": "★ 09-01 — 질의 열쇠를 아직 못 쟀다.  ★ ID.4 와 같은 자리다(폭스바겐 KB 112 · 보배 44).  ★ 짐작으로 코드를 적지 않는다"
     }
+  },
+  "XC40_EV": {
+    "label": "볼보 XC40 리차지 (전기)",
+    "_넣은 날": "2026-09-01 마스터 지시 — 「Volvo XC40 Recharge · Volvo C40 Recharge · 전기차이니까 차종을 분리하자」",
+    "fuel_match": [
+      "전기"
+    ],
+    "year_range": "202100..",
+    "collect_group": "multi",
+    "site_query": {
+      "kbchachacha": {
+        "makerCode": "117",
+        "classCode": "2708",
+        "carCode": [
+          "3244"
+        ],
+        "_세대": "[실측 09-01] ★ carCode 3244 를 열어 보니 ★ 「볼보 XC40 Recharge Twin Ultimate」가 나온다 (Recharge 6회).  ★ 2940 은 「B4 AWD Inscription」·「T4 AWD R-Design」이라 ★ 가솔린이다"
+      },
+      "encar": {
+        "CarType": "N",
+        "Manufacturer": "볼보",
+        "ModelGroup": "XC40",
+        "_주의": "★ 엔카는 ModelGroup 이 같다 — ★ fuel_match 「전기」로 우리 쪽에서 가른다"
+      },
+      "volvo_selekt": {
+        "slug": [
+          "xc40"
+        ],
+        "_주의": "★ 볼보 셀렉트도 slug 가 같다 — ★ 본문 「순수 전기」로 가른다.  ★ 표본 4쪽에서 XC40 은 다 B4/B5 mild hybrid 였다 [실측 09-01]"
+      },
+      "bobaedream": {
+        "maker_no": "23",
+        "model_no": "1092",
+        "_차명": "볼보 XC40",
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다",
+        "_주의": "★ model_no 가 같다 — ★ fuel_match 로 가른다"
+      },
+      "heydealer": [
+        {
+          "brand": "Jo6rOo",
+          "model-group": "zyx6mk",
+          "model": "wo2dG4",
+          "_차명": "볼보 XC40"
+        }
+      ]
+    },
+    "_가르는 법": "★ KB 는 carCode 로 갈린다(3244=Recharge · 2940=가솔린).  ★ 다른 곳은 열쇠가 같아 ★ fuel_match 로 가른다 — ★ 짐작으로 코드를 나누지 않는다"
   }
 }
