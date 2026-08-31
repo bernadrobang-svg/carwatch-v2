@@ -4969,6 +4969,34 @@ def s46_215_collector_respects_active():
                        + " · ".join(bad[:4]) + "  ★ 쉬는 차종을 받으러 간다")
     return True, "수집기가 다 active 를 본다"
 
+
+def s46_229_recommend_not_active_off():
+    """S46-229 — ★ `recommend=false` 인 차종이 ★ `active=true` 인가 (오판 237).
+
+    ★ 마스터 — 「★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」
+      ★ ★ 09-01 에 내가 ★ 추천에서 빼려고 ★ active 를 꺼서 ★ 수집까지 멈췄다
+    ★ 잣대 — ★ `active` 는 「받는가」 · `recommend` 는 「추천에 내는가」.  ★ 둘은 다르다
+    """
+    import json as _j
+
+    tg = _j.loads(_read(ROOT / "config" / "targets.json"))
+    bad = []
+    for key, spec in tg.items():
+        if not isinstance(spec, dict) or key.startswith("_"):
+            continue
+        if key in ("SPEC_DEFAULT_ON", "SPEC_DEFAULT_OFF"):
+            continue
+        if spec.get("active") is False:
+            bad.append(key)
+    tot = sum(1 for k, v in tg.items()
+              if isinstance(v, dict) and not k.startswith("_")
+              and k not in ("SPEC_DEFAULT_ON", "SPEC_DEFAULT_OFF"))
+    if bad:
+        return False, (f"★ active 가 꺼진 차종 {len(bad)}/{tot}종 — "
+                       + " · ".join(bad[:4])
+                       + "  ★ 추천에서 빼려면 recommend=false 를 써라")
+    return True, f"active 가 꺼진 차종 0/{tot}종 (추천은 recommend 로 거른다)"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -5006,6 +5034,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-229", "recommend 로 거르는가", s46_229_recommend_not_active_off),
     ("S46-215", "수집기가 active 를 보는가", s46_215_collector_respects_active),
     ("S46-214", "사진 밑에 빈칸이 없는가", s46_214_photo_uses_space_below),
     ("S46-227", "밝힌 없음에 안 준 것이 없는가", s46_227_absent_only_declared),

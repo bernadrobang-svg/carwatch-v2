@@ -9,16 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 51,424줄 · 3,553KB**
+**132파일 · 51,638줄 · 3,564KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,173줄
+- CHECKS.md 1,175줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,328줄
+- guide/03_이력.md 1,330줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -33,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,173 | 145 |
+| `CHECKS.md`  ★ | 1,175 | 145 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -46,7 +46,7 @@
 | `LEXUS_CERTIFIED_API.md` | 340 | 18 |
 | `MAPPING.md` | 104 | 3 |
 | `MULTISITE_MAPPING.md`  ★ | 1,098 | 60 |
-| `OPTION_CATALOG.md` | 298 | 15 |
+| `OPTION_CATALOG.md` | 321 | 16 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
 | `RECOMMEND_SCREEN.md` | 530 | 26 |
@@ -115,12 +115,13 @@
 | `evidence/volvo_selekt_신차가_20260830.md` | 72 | 2 |
 | `guide/00_개요.md` | 149 | 6 |
 | `guide/00_버전.md` | 177 | 11 |
+| `guide/00_인수인계.md` | 187 | 9 |
 | `guide/01_시작.md` | 291 | 10 |
 | `guide/01_요구사항.md`  ★ | 1,001 | 46 |
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,328 | 950 |
+| `guide/03_이력.md`  ★ | 1,330 | 951 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
