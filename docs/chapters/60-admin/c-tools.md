@@ -1,7 +1,7 @@
 ## STEP 133 [규격] — 조회 전용 쿼리
 
 ```
-version  SPEC-2026.09.01-r1036
+version  SPEC-2026.09.01-r1037
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -194,7 +194,7 @@ CREATE TABLE admin_api_snapshot (
 원천    사람이 붙여넣거나 올린 JSON · CSV
 입력    붙여넣기 상자 또는 파일 · 사이트 · 차종 · 사유
 출력    S4 결과와 같은 형태로 core_listing 에 반영 · 원문은 raw_response 로
-값규칙  반입은 「수집」이다.  탐색이 아니다 — raw_response 에 넣는다
+값규칙  반입은 「수집」이다.  탐색이 아니다 — ~~raw_response 에 넣는다~~ ★ **09-01 물린다** — ★ **파일로 받은 뒤 core_listing 에**
 근거    실측 08-16.  AWS 서울 IP 에서 엔카 /search/ 가 407 로 막혔다
         /v1/readside/ 4종은 200 이라 상세는 서버가 직접 받는다
         「목록만 밖에서, 나머지는 서버가」가 가능한 구조다

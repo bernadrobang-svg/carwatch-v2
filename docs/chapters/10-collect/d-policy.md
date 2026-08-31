@@ -1,7 +1,7 @@
 ## STEP 24 — 요청 정책
 
 ```
-version  SPEC-2026.09.01-r1036
+version  SPEC-2026.09.01-r1037
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -164,7 +164,7 @@ v1 은 `record` 경로 후보 5개가 전부 404 였을 때 「없는 엔드포�
 대조   현재 endpoints.json 과 무엇이 다른가 (경로 · 파라미터 · 헤더)
 반영   EndpointSpec.required_keys 를 응답에서 도출
        추정하지 않는다.  PDF 에 없는 키는 넣지 않는다
-기록   raw_response 에 PDF 출처 표본으로 1건 적재 (source='master_manual')
+기록   ~~raw_response 에 PDF 출처 표본으로 1건 적재~~ ★ **09-01 물린다** — ★ 그 표는 없앤다.  ★ **파일에 남긴다** (`raw/{site}/…`)
 ```
 
 **PDF 로 받은 응답도 원문이다. RAW 에 넣고 경로 전수를 뽑는다.**

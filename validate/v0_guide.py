@@ -4632,6 +4632,38 @@ def s46_203_collect_writes_files_first():
                        + " · ".join(bad[:4]) + "  ★ 파일로 받은 뒤 넣어라")
     return True, "받기 걸음이 파일에 쓴다"
 
+
+def s46_205_no_raw_response_writes():
+    """S46-205 — ★ `raw_response` 에 ★ 넣으라고 적힌 곳이 없는가 (오판 228).
+
+    ★ 마스터 — 「★ 야 왜 `raw_response` 를 살려.  ★ 내가 지우라고 했잖아」
+    ★ 08-29 확정 — 「★ `raw_response` 테이블을 없앤다.  ★ 원문은 파일에만 둔다」
+    ★ 잣대 — ★ 규격·명령서에 ★ 「`raw_response` … 넣는다」가 있으면 실패
+    """
+    import glob as _g
+    import re as _re
+
+    files = list(_guide_docs()) + [
+        ROOT / f[len(str(ROOT)) + 1:]
+        for f in _g.glob(str(ROOT / "outputs" / "ORDER_*.md"))
+    ]
+    bad = []
+    for q in files:
+        if not q.is_file():
+            continue
+        for i, ln in enumerate(_read(q).splitlines(), 1):
+            if "raw_response" not in ln:
+                continue
+            if not _re.search(r"넣는다|넣어|적재", ln):
+                continue
+            if _re.search(r"~~|물린|금지|없앤다|정정|오판|마스터 —", ln):
+                continue
+            bad.append(f"{q.name}:{i}")
+    if bad:
+        return False, ("★ raw_response 에 넣으라 한 곳 " + " · ".join(bad[:4])
+                       + "  ★ 그 표는 없앤다")
+    return True, "raw_response 에 넣으라 한 곳이 없다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4669,6 +4701,8 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-205", "raw_response 에 넣으라 하지 않는가",
+     s46_205_no_raw_response_writes),
     ("S46-204", "받기가 파일에 쓰는가", s46_203_collect_writes_files_first),
     ("S46-202", "안 풀린 틀 문법이 없는가", s46_202_no_raw_template_tags),
     ("S46-192", "선호차종이 등록부에 다 있는가",

@@ -1,7 +1,7 @@
 # 2장. 수집 정의 (STEP 16–27)
 
 ```
-version  SPEC-2026.09.01-r1036
+version  SPEC-2026.09.01-r1037
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -441,7 +441,11 @@ web/server.py    run.py web 이 부른다.  직접 실행하지 않는다
              ★ body 는 ★ 원문 그대로.  ★ 자르지 않는다 (P3 무손실)
 
 지킬 것  ★ 받기 걸음은 ★ **파일만 쓴다.  ★ DB 를 안 연다** — ★ 잠금이 아예 안 생긴다
-         ★ 넣기 걸음은 ★ **그 폴더를 읽어** `raw_response` ＋ `core_listing` 에 넣는다
+         ★ 넣기 걸음은 ★ **그 폴더를 읽어** ★ `core_listing` 에만 넣는다
+         ★★★★ **09-01 정정** — ★ 앞서 「`raw_response` ＋ `core_listing`」이라 적었는데
+            ★ 마스터 — 「★ **야 왜 `raw_response` 를 살려.  ★ 내가 지우라고 했잖아**」
+            ★ ★ **그 표는 없앤다** (`11-store/a-key` 08-29 확정 ①).  ★ **원문은 파일에만**
+            ★ ★ ★ 내가 08-29 에 그렇게 정해 놓고 ★ **이 줄을 안 고쳤다**
          ★ 이미 넣은 파일은 ★ 건너뛴다 (`fetched_at` 을 `parsed_at` 과 대본다)
 금지     ★ 파일을 지우는 것.  ★ 원문은 남는다 (STEP 33)
 ```

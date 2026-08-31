@@ -1,7 +1,7 @@
 ## STEP 28 — 테이블 목록
 
 ```
-version  SPEC-2026.09.01-r1036
+version  SPEC-2026.09.01-r1037
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-22
 checks   S46-38 · S46-39
@@ -627,11 +627,11 @@ journal_mode 는 까닭이 아니다
 ## 정한다 — 두 걸음이다
 
 ```
-1걸음  받는다     사이트를 두드려 raw_response 에만 넣는다
+1걸음  받는다     ~~사이트를 두드려 raw_response 에만 넣는다~~ ★ **09-01 물린다** — ★ **파일에만 쓴다.  ★ DB 를 안 연다**
                 DB 를 오래 쥐지 않는다.  한 건 받고 한 건 넣는다
                 자는 것(sleep)·통신은 트랜잭션 밖이다
 
-2걸음  넣는다     raw_response 를 읽어 core_listing 에 넣는다
+2걸음  넣는다     ~~raw_response 를 읽어~~ ★ **09-01 물린다** — ★ **`raw/` 폴더를 읽어** core_listing 에 넣는다
                 통신이 없다.  자지 않는다.  한 번에 끝난다
                 이번에 받은 목록에 없는 것은 그 자리에서 gone
 ```
