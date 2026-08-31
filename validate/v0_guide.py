@@ -4661,6 +4661,9 @@ def s46_205_no_raw_response_writes():
     for q in files:
         if not q.is_file():
             continue
+        # ★ 생성물은 규격이 아니다 — ★ 원본을 고치면 따라 바뀐다
+        if q.name in ("CHECKS.md", "INDEX.md", "SOURCE.md", "SCHEMA.md"):
+            continue
         for i, ln in enumerate(_read(q).splitlines(), 1):
             if "raw_response" not in ln:
                 continue

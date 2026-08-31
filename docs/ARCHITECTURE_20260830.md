@@ -1,7 +1,7 @@
 # 아키텍처 2판 — 파일 수집 · 적재 · 판정
 
 ```
-version  SPEC-2026.09.01-r1041
+version  SPEC-2026.09.01-r1042
 follows  docs/chapters/10-collect/00-intro.md · docs/chapters/11-store/a-key.md
 sources  마스터 확정 08-29 · 개발측 물음 58개(`outputs/QUESTIONS_ARCH_20260829.md`)
          가이드 답(`outputs/ANSWERS_ARCH_20260829.md`) · 실측 08-29
@@ -307,7 +307,7 @@ PII   ★ 안 들어간다 — split_pii 를 2걸음에서 먼저 부르고 plat
 
 ---
 
-# 8. ★★★★★ 08-29 — ★ **왜 아홉 사이트에 A 가 0 인가** (개발측이 쟀다)
+# 8. ★★★★★ 08-29 — ★ **왜 열둘 사이트에 A 가 0 인가** (개발측이 쟀다)
 
 ```
 ★ 잣대 ①(아홉 사이트 A)이 ★ 하루 종일 ★ **0** 이었다.  ★ 개발측이 까닭을 찾았다
