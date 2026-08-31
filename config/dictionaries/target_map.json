@@ -5,11 +5,17 @@
   "_fuel_note": "★ fuel_contains 가 있으면 ★ 차종 이름만으로는 안 걸린다 — 연료로 한 번 더 거른다",
   "by_site": {
     "kia_cpo": {
-      "_field": "modelCodeName (GET /api/search/category-models/)",
+      "_field": "`modelName` — 「EV6 롱레인지 GT-Line 4WD」 꼴 [실측 09-02 · 전량 100건]",
       "스포티지": {
         "target_key": "SPORTAGE_LPI",
         "fuel_contains": "LPI",
         "_why": "★ 기아 CPO 는 연료를 안 갈라 놓았다 — car.engine 을 본다 (TARGET_KEY_MAP 2장)"
+      },
+      "_rule": "★ 앞머리(차명)로만 고른다 — ★ 뒤의 등급·구동은 트림이다",
+      "EV4": {
+        "collect_group": "ev",
+        "target_key": "EV4_EV",
+        "_실측": "★ [09-02] 전량 100건에 ★ EV4 가 없다 — ★ 「기아가 안 판다」가 아니라 ★ 지금 재고가 없다.  ★ EV3·EV6·EV9 는 판다"
       }
     },
     "hyundai_cert": {
@@ -340,7 +346,8 @@
       "V60 크로스 컨트리": {
         "collect_group": "multi",
         "target_key": "V60CC_IMPORT"
-      }
+      },
+      "_09-02": "★ 헤이딜러는 ★ 해시로 고른다 — ★ 이름 표를 안 쓴다.  ★ 매물이 0건이면 ★ 해시를 못 잰다(지어낼 수 없다).  ★ 회차마다 다시 두드린다"
     },
     "reborncar": {
       "_field": "★ 상세의 `name` — 「제조사 ＋ 차명 ＋ 배기량·구동 ＋ 등급」 한 줄이다 [실측 09-02 · 표본 40건]",
@@ -498,11 +505,16 @@
       }
     },
     "bmw_bps": {
-      "_field": "★ 목록 카드 글자에 아는 이름이 들어 있는지로 고른다 (딜러 한 곳)",
-      "_rule": "★ collect_group 만 준다 — ★ 갈래는 targets.json 의 fuel_match 가 고른다",
+      "_field": "목록 카드 `alt` — 「iX1 xDrive 30 M Spt」 꼴 [실측 09-02 · 매물 80건 · 이름 68가지]",
+      "_rule": "★ 앞머리(차명)로만 고른다",
       "X3": {
         "collect_group": "multi",
         "target_key": "X3_IMPORT"
+      },
+      "iX3": {
+        "collect_group": "ev",
+        "target_key": "IX3_EV",
+        "_실측": "★ [09-02] 매물 80건에 ★ iX3 가 없다 — ★ 「BMW 가 안 판다」가 아니라 ★ 지금 재고가 없다.  ★ iX1·iX·i7 은 판다"
       }
     },
     "revolt": {
