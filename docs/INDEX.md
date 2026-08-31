@@ -9,11 +9,10 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**129파일 · 48,970줄 · 3,336KB**
+**129파일 · 48,489줄 · 3,301KB**
 
-★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,150줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 1,979줄
@@ -33,7 +32,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 306 | 15 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,150 | 142 |
+| `CHECKS.md` | 668 | 107 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 210 | 10 |
 | `ENCAR_API.md` | 360 | 15 |
@@ -52,7 +51,7 @@
 | `ROADMAP_20260830.md` | 128 | 5 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 729 | 54 |
+| `SOURCE.md` | 730 | 54 |
 | `TARGET_KEY_MAP.md` | 319 | 16 |
 | `UI_REVIEW.md`  ★ | 1,979 | 98 |
 | `VOLVO_SELEKT_API.md` | 515 | 22 |
