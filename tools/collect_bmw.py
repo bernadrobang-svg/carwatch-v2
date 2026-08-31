@@ -35,6 +35,13 @@ RETRY, RETRY_WAIT = 3, 3.0
 #   ★ 넉넉히 둔다 — ★ 끝은 「빈 쪽」과 「안 늘어남」으로 안다.  상한은 안전판이다
 MAX_PAGES = 120
 RE_ITEM = re.compile(r'it_id=([A-Za-z0-9_-]+)[^>]*>(.{0,400}?)</a>', re.S)
+# ★★★★★ 09-01 — ★ 「목록에 없으면 죽인다」를 ★ **여기서 안 한다.**
+#   ★ 마스터 지시 — 「★ 목록 대조해서 사라지면 ★ 상세를 조회해서 판매상태를 본다」
+#   ★ 그 자리는 ★ `tools/list_diff_check.py` 다 — ★ 상세로 확인한 뒤에 죽인다
+SWEEP_OFF = ("08-29 — 목록에 없다고 죽이면 살아 있는 차를 죽인다 "
+             "(11-store/a-key 08-29 절).  상세로 확인한 뒤 죽이는 꼴로 "
+             "바꾼 뒤 다시 켠다")
+
 RE_TAG = re.compile(r"<[^>]+>")
 
 
@@ -139,6 +146,7 @@ def main() -> int:
         save_file(SITE_CODE, "list", sid, cfg["base_url"],
                   json.dumps({"source_id": sid, "text": text},
                              ensure_ascii=False), at, root=ROOT)
+    print(f"★ 팔린 차를 목록으로 안 거른다 — {SWEEP_OFF}")
     print(f"★ 목록 {len(seen)}건을 파일로 남겼다 — "
           f"raw/{SITE_CODE}/list/{at[:10]}/ · 끝까지 받았나 "
           f"{'예' if done else '아니오'}")
