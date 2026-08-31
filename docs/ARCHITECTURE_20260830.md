@@ -1,7 +1,7 @@
 # 아키텍처 2판 — 파일 수집 · 적재 · 판정
 
 ```
-version  SPEC-2026.09.02-r1069
+version  SPEC-2026.09.02-r1070
 follows  docs/chapters/10-collect/00-intro.md · docs/chapters/11-store/a-key.md
 sources  마스터 확정 08-29 · 개발측 물음 58개(`outputs/QUESTIONS_ARCH_20260829.md`)
          가이드 답(`outputs/ANSWERS_ARCH_20260829.md`) · 실측 08-29
