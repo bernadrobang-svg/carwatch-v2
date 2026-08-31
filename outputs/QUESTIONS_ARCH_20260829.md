@@ -1,4 +1,4 @@
-# 설계도 물음 — `docs/ARCHITECTURE_20260830.md` (SPEC-2026.08.31-r1016)
+# 설계도 물음 — `docs/ARCHITECTURE_20260830.md` (SPEC-2026.08.31-r1017)
 
 ```
 읽은 것   `docs/ARCHITECTURE_20260830.md` 357줄 전체
