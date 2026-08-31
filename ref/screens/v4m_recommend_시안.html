@@ -46,7 +46,12 @@ border:1px solid var(--line);border-radius:4px;padding:2px 6px;font-family:var(-
 .rc-ax.hi b{color:var(--amber)}
 .rc-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:6px;overflow:hidden}
 .rc-bar i{display:block;height:100%;background:var(--amber)}
-.rc-grade{font-size:11px;color:var(--faint);margin-left:6px}
+.rc-grade{font-size:12px;font-weight:700;border-radius:4px;padding:1px 7px;margin-left:7px;
+border:1px solid var(--line2);color:var(--dim)}
+.rc-grade.hi{border-color:var(--amber);color:var(--amber)}
+.rc-grade.lo{opacity:.5}
+.rc-ax.na{opacity:.45}
+.rc-why{font-size:11px;color:var(--faint);margin-top:6px;text-decoration:none;display:inline-block}
 .rc-empty{padding:60px 20px;text-align:center;color:var(--faint);font-size:13px}
 .rc-models{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;
 background:var(--bg);border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch}
@@ -89,19 +94,20 @@ font-size:12px;color:var(--dim);line-height:1.6}
 
 <div class="rc-head">
   ★ <b>등급을 보지 않습니다.</b> 예산 · 주행 · 연식 · 색 <b>네 축의 합(297점)</b>으로만 세웁니다.<br>
-  차종 13종 · 13,842건 중 <b>297점에 가까운 차례</b>
+  차종 10종 · 537건 중 <b>297점에 가까운 차례</b> · 판매완료는 뺐습니다
 </div>
 
 <div class="v4-cards">
 
   <div class="v4-card">
-    <div class="rc-score">271 / 297 <span class="rc-grade">등급 C · 등급은 안 봅니다</span></div>
+    <div class="rc-score">271 / 297 <span class="rc-grade">C</span></div>
     <div class="v4-row">
       <div class="v4-thumb">사진</div>
       <div class="v4-mid">
         <div class="v4-name">XC40_IMPORT B4 얼티메이트</div>
         <div class="v4-spec">2023-04 · 21,400km · 청색 / 검정색 계열 · 볼보셀렉트</div>
         <div class="v4-price">3,290만원</div>
+        <a href="#" class="rc-why">왜 이 순위인가 ▾</a>
         <div class="rc-axes">
           <span class="rc-ax">예산 <b>89</b>/95</span>
           <span class="rc-ax">주행 <b>92</b>/107</span>
@@ -114,18 +120,19 @@ font-size:12px;color:var(--dim);line-height:1.6}
   </div>
 
   <div class="v4-card">
-    <div class="rc-score">248 / 297 <span class="rc-grade">등급 B</span></div>
+    <div class="rc-score">248 / 297 <span class="rc-grade">B</span></div>
     <div class="v4-row">
       <div class="v4-thumb">사진</div>
       <div class="v4-mid">
         <div class="v4-name">MODEL_Y 롱 레인지 AWD</div>
         <div class="v4-spec">2022-09 · 44,700km · 흰색 / 검정색 계열 · 엔카</div>
         <div class="v4-price">3,750만원</div>
+        <a href="#" class="rc-why">왜 이 순위인가 ▾</a>
         <div class="rc-axes">
           <span class="rc-ax">예산 <b>78</b>/95</span>
           <span class="rc-ax">주행 <b>52</b>/107</span>
           <span class="rc-ax">연식 <b>71</b>/80</span>
-          <span class="rc-ax">색 <b>7</b>/15</span>
+          <span class="rc-ax na">색 <b>—</b>/15</span>
         </div>
         <div class="rc-bar"><i style="width:83%"></i></div>
       </div>
@@ -133,13 +140,14 @@ font-size:12px;color:var(--dim);line-height:1.6}
   </div>
 
   <div class="v4-card">
-    <div class="rc-score">223 / 297 <span class="rc-grade">등급 E · 등급은 안 봅니다</span></div>
+    <div class="rc-score">223 / 297 <span class="rc-grade lo">E</span></div>
     <div class="v4-row">
       <div class="v4-thumb">사진</div>
       <div class="v4-mid">
         <div class="v4-name">KOLEOS_HEV 1.5 E-TECH 아이코닉</div>
         <div class="v4-spec">2024-10 · 34,145km · 진주색 / 검정색 계열 · 엔카</div>
         <div class="v4-price">3,190만원</div>
+        <a href="#" class="rc-why">왜 이 순위인가 ▾</a>
         <div class="rc-axes">
           <span class="rc-ax">예산 <b>62</b>/95</span>
           <span class="rc-ax">주행 <b>63</b>/107</span>
