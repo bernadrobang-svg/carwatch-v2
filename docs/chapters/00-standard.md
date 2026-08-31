@@ -1,7 +1,7 @@
 # 0장. 개발 표준
 
 ```
-version  SPEC-2026.09.02-r1064
+version  SPEC-2026.09.02-r1065
 follows  `docs/chapters/30-score/f-table.md`
 sources  실측 08-24
 checks   S46-38 · S46-39
