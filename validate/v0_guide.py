@@ -4781,6 +4781,25 @@ def s46_207_commit_title_says_fact():
                        + " · ".join(bad[:3]))
     return True, f"최근 가이드 커밋 제목이 다 사실을 말한다 ({len(titles)}건)"
 
+
+def s46_208_market_no_negative():
+    """S46-208 — ★ 시세 축이 ★ 음수를 내지 않는가 (마스터 정정 09-01).
+
+    ★ 마스터 — 「★ 시세를 네가 못 낸 것을 왜 빼?」
+      ★ ★ 시세는 나온다 (표본 12건 중 11건).  ★ 뺄 것은 ★ 음수였다
+    ★ 잣대 — ★ `value.market` 이 0 이 아니고 ★ 규격이 「음수는 안 낸다」를 적었는가
+    """
+    import json as _j
+
+    cfg = _j.loads(_read(ROOT / "config" / "scoring.json"))
+    got = (cfg.get("components") or {}).get("value.market")
+    if not got:
+        return False, "★ value.market 이 0 이다 — ★ 시세는 나온다 (09-01 마스터 정정)"
+    body = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
+    if "음수는 안 낸다" not in body:
+        return False, "★ 「음수는 안 낸다」가 규격에 없다"
+    return True, f"시세 {got}점 · 음수 금지가 규격에 있다"
+
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
@@ -4818,6 +4837,7 @@ CHECKS = (
      s46_188_screen_before_claiming_missing),
     ("S46-203", "넣으라 한 사이트에 차종 열쇠가 있는가",
      s46_203_new_site_has_target_keys),
+    ("S46-208", "시세 축이 음수를 내지 않는가", s46_208_market_no_negative),
     ("S46-207", "커밋 제목이 사실을 말하는가",
      s46_207_commit_title_says_fact),
     ("S46-206", "PDF 를 받아 두라 하지 않는가", s46_206_pdf_link_only),
