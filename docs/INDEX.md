@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**131파일 · 51,157줄 · 3,529KB**
+**131파일 · 51,201줄 · 3,534KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -18,13 +18,13 @@
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,318줄
+- guide/03_이력.md 1,320줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
 - chapters/30-score/f-table.md 3,044줄
-- chapters/11-store/a-key.md 895줄
+- chapters/11-store/a-key.md 937줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
 
@@ -69,7 +69,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md`  ★ | 895 | 43 |
+| `chapters/11-store/a-key.md`  ★ | 937 | 46 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 618 | 25 |
@@ -120,7 +120,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,318 | 943 |
+| `guide/03_이력.md`  ★ | 1,320 | 945 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |

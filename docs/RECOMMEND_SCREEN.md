@@ -1,7 +1,7 @@
 # 추천 화면 (`/recommend`) — 탭으로 나눈다
 
 ```
-version  SPEC-2026.09.02-r1076
+version  SPEC-2026.09.02-r1077
 follows  ★ 정본 — 가이드 문서
 sources  실측 09-01
 checks   S46-201
