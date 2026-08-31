@@ -252,5 +252,22 @@
     ],
     "_brand_scope_why": "★ [확인 완료 08-29 · 가이드 실측] BMW BPS — ★ 미니가 섞인다 (364건 중 2건 — 「MINI Cooper SE Gen Z-E」·「MINI 5DOOR C」).  ★ 그래도 `brand_scope` 를 넓히지 않는다 — ★ 그 2건은 우리 26종에 없어 어차피 「범위 밖」으로 접히고, 넓히면 안 볼 차를 받는 것이 되어 수집 범위 확정에 어긋난다.  ★ 「BMW 만 판다」는 말은 틀렸다 — 그래서 그 낱말을 안 쓴다 (`docs/BMW_BPS_API.md` 「개발측 청에 답한다」)"
   },
-  "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2"
+  "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2",
+  "revolt": {
+    "base_url": "https://api.revolt.kr/customers/web",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148",
+      "Referer": "https://www.revolt.kr/",
+      "Accept": "application/json"
+    },
+    "paths": {
+      "list": "/cars/?page={page}",
+      "detail": "/cars/{source_id}/",
+      "carhistory": "/cars/{source_id}/carhistory/",
+      "inspection": "/cars/{source_id}/inspection_records/",
+      "ev_info": "/cars/{source_id}/ev_info/"
+    },
+    "_왜 넣었나": "★ [실측 09-01] 마스터께서 주소를 주셨다.  ★ 전기차 전용 인증중고차(PRND · 헤이딜러와 같은 회사).  ★ 창구만 적어 둔다 — ★ 대상에 넣을지는 마스터께서 정하신다",
+    "_금지": "★ App-Os·App-Type·App-Version 헤더를 넣으면 500 이 난다.  ★ 넣지 마라"
+  }
 }
