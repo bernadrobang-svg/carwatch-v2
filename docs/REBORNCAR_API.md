@@ -1,7 +1,7 @@
 # 리본카 API · 매핑 규격
 
 ```
-version  SPEC-2026.09.01-r1045
+version  SPEC-2026.09.01-r1046
 follows  `f-table.md` · `MULTISITE_MAPPING.md`
 sources  개정 866 · 실측 08-29
 checks   S46-5 · S46-31
