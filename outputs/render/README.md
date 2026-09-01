@@ -6,12 +6,12 @@
 
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
-| `/` | [home.html](home.html) | 200 | 45,302B |
-| `/listings` | [listings.html](listings.html) | 200 | 94,067B |
+| `/` | [home.html](home.html) | 200 | 45,293B |
+| `/listings` | [listings.html](listings.html) | 200 | 94,069B |
 | `/sold` | [sold.html](sold.html) | 200 | 26,219B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 131,456B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,614B |
-| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 35,975B |
+| `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 35,971B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,780B |
 | `/track` | [track.html](track.html) | 200 | 44,998B |
 | `/market` | [market.html](market.html) | 200 | 14,568B |
@@ -24,7 +24,7 @@
 | `/password` | [password.html](password.html) | 200 | 2,585B |
 | `/admin` | [admin.html](admin.html) | 200 | 17,476B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,230B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 77,490B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 78,163B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,364B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,339B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,867B |
@@ -34,7 +34,7 @@
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,636B |
 | `/admin/dict` | [admin_dict.html](admin_dict.html) | 200 | 104,581B |
 | `/admin/config` | [admin_config.html](admin_config.html) | 200 | 219,917B |
-| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 23,347B |
+| `/admin/query` | [admin_query.html](admin_query.html) | 200 | 23,382B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,262B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,619B |
 | `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 26,125B |

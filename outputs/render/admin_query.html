@@ -92,6 +92,14 @@
   <td class="num" data-label="행">10</td><td class="num" data-label="시간">4ms</td>
   <td data-label="결과">실행</td></tr>
 
+<tr><td data-label="시각">2026-09-01T03:22:37.300083+00:00</td><td class="runid" data-label="SQL">SELECT listing_id, source_id, site, trim_grade_name, year_month, mileage_km, price_current_won, price_origin_won, color_</td>
+  <td class="num" data-label="행">0</td><td class="num" data-label="시간">0ms</td>
+  <td data-label="결과">실행</td></tr>
+
+<tr><td data-label="시각">2026-09-01T03:22:46.747609+00:00</td><td class="runid" data-label="SQL">SELECT target_key, COUNT(*) AS n FROM core_listing WHERE site_model LIKE &#x27;%ID.4%&#x27; GROUP BY 1</td>
+  <td class="num" data-label="행">1</td><td class="num" data-label="시간">35ms</td>
+  <td data-label="결과">실행</td></tr>
+
 <tr><td data-label="시각">2026-09-01T01:58:28.101305+00:00</td><td class="runid" data-label="SQL">SELECT classify_stage, classify_source, price_origin_won, has_record, has_resume, seizing_cnt, pledge_cnt, warranty_powe</td>
   <td class="num" data-label="행">1</td><td class="num" data-label="시간">22ms</td>
   <td data-label="결과">실행</td></tr>
@@ -150,14 +158,6 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
   <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
   <td data-label="결과"><span class="warn-block">거부 — SQL 을 해석할 수 없다: no such column: created_at</span></td></tr>
 
-<tr><td data-label="시각">2026-09-01T01:58:43.278485+00:00</td><td class="runid" data-label="SQL">SELECT COUNT(*) AS n FROM core_listing WHERE source_id = &#x27;42494203&#x27;</td>
-  <td class="num" data-label="행">1</td><td class="num" data-label="시간">239ms</td>
-  <td data-label="결과">실행</td></tr>
-
-<tr><td data-label="시각">2026-09-01T01:52:23.518535+00:00</td><td class="runid" data-label="SQL">SELECT COUNT(*) AS n FROM core_listing WHERE target_key = &#x27;GV70_EV&#x27; AND status = &#x27;active&#x27;</td>
-  <td class="num" data-label="행">1</td><td class="num" data-label="시간">0ms</td>
-  <td data-label="결과">실행</td></tr>
-
 </tbody>
 </table>
 
@@ -177,7 +177,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">199,891</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">20,191</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">20,576</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
 <tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">2,957</td>
@@ -249,7 +249,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">meta_field_usage</td><td class="num" data-label="행">845</td>
   <td class="muted" data-label="컬럼">site · endpoint · json_path · core_column · usage · reason · unblock_condition · use_when · priority · observed_hits</td></tr>
 
-<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">38</td>
+<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">41</td>
   <td class="muted" data-label="컬럼">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · reject_kind · executed_at</td></tr>
 
 <tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">212</td>
@@ -294,7 +294,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">watch_query</td><td class="num" data-label="행">1</td>
   <td class="muted" data-label="컬럼">query_id · account_id · name · conditions_json · min_grade · max_price_won · notify_on_new · notify_on_price · created_at · last_run_at</td></tr>
 
-<tr><td class="runid" data-label="표">watch_query_hit</td><td class="num" data-label="행">903</td>
+<tr><td class="runid" data-label="표">watch_query_hit</td><td class="num" data-label="행">905</td>
   <td class="muted" data-label="컬럼">query_id · listing_id · first_hit_at · notified</td></tr>
 
 <tr><td class="runid" data-label="표">watch_track</td><td class="num" data-label="행">0</td>
@@ -326,7 +326,7 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260831T161249</span>
-  <span>2026-09-01 12:18</span>
+  <span>2026-09-01 12:32</span>
 </footer>
 
 </body>

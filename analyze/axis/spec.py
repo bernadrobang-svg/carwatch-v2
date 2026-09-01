@@ -93,11 +93,17 @@ def _has_option(ctx: AxisContext, comp: str):
             #   ★ ★ 곧 ★ **똑같은 글자만 찾는 것이 아니다.**
             #   ★ ★ ★ 실측 09-02 — ★ KB 는 ★ 「선루프 (일반)」로 준다.
             #     ★ ★ 똑같이만 찾으니 ★ 86건이 ★ 있는데도 0점이었다
+            # ★★★★★ 09-03 — ★ **한쪽 방향만** 본다 (표 이름이 ★ 매물 이름 **안에**).
+            #   ★ 규격 09-02 — 「★ **「글라스 루프」만 있고 ★ 「파노라마」가 없으면
+            #     ★ 잇지 마라** — ★ 안 열리는 것일 수 있다」
+            #   ★ ★ 거꾸로도 보면 ★ 「글라스 루프」가 ★ 「파노라마 글라스 루프」에
+            #     ★ ★ 걸려 ★ **규격이 막은 것을 잇는다**.
+            #   ★ 이 방향이면 ★ KB 「선루프 (일반)」도 ★ 표의 「선루프」로 걸린다
             for one in got:
                 k = _norm(one)
                 if not k:
                     continue
-                if any(w in k or k in w for w in want):
+                if any(w in k for w in want):
                     return True
             return False
     return OPTION3[comp] in got
