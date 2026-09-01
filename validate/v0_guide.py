@@ -5366,7 +5366,46 @@ def s46_238_trim_not_double_counting():
     return True, f"트림 {trim} < 신차가 {origin} · 까닭이 적혀 있다"
 
 
+def s46_241_regrade_alive_on_deploy():
+    """S46-241 — ★ 배포에서 ★ 재판정 판이 살아 있는가 (마스터 09-01 「개발체크」).
+
+    ★★★ 09-01 — ★ `S46-230` 이 ★ **지키는 척했다**.
+      ★ ★ 그 검사는 ★ `store/core.py` 의 **글자만** 본다 —
+        ★ 코드가 고쳐지면 ★ 통과한다.
+      ★ ★ ★ 그런데 ★ 배포에서는 ★ **똑같은 두 건이 그대로 죽어 있었다**
+        (`listing_id=127`·`7998` · 24시간째 · 실측 09-01).
+    ★ 마스터께서 인수인계에 못 박으셨다 —
+      ★ 「★ **배포에서 확인한 것만 「끝」이라 써라.  ★ 규격을 적은 것은 끝이 아니다**」
+    ★ 잣대 — ★ `/admin/status` 를 열어 ★ **마지막 재판정 판이 `failed` 인가**를 본다.
+      ★ 오늘 만든 곡선이 ★ 매물에 붙으려면 ★ 판이 한 번 성공해야 한다.
+    """
+    got = _logged_opener()
+    if not isinstance(got, tuple) or len(got) != 2:
+        return False, "로그인을 못 했다 — secrets/check_login.json 을 보라"
+    opener, base = got
+    base = str(base).rstrip("/")
+    try:
+        with opener.open(base + "/admin/status", timeout=40) as res:
+            page = res.read().decode("utf-8", "replace")
+    except Exception as exc:  # noqa: BLE001
+        return False, f"/admin/status 를 못 두드렸다 ({type(exc).__name__})"
+
+    text = re.sub(r"<[^>]+>", " ", page)
+    text = re.sub(r"\s+", " ", text)
+    # ★ 「불변 필드 변경 … 이 원인은 사람이 봐야 한다」가 ★ 남아 있으면 ★ 판이 죽은 것이다
+    stuck = re.findall(r"불변 필드 변경[^|]{0,120}?listing_id=(\d+)", text)
+    fails = text.count("ValidationError")
+    if stuck:
+        return False, (f"★ 재판정이 배포에서 죽어 있다 — 불변 필드로 멈춘 매물 "
+                       f"{len(set(stuck))}건 (listing_id={' · '.join(sorted(set(stuck))[:3])})"
+                       "  ★ 코드만 고친 것은 끝이 아니다")
+    if fails:
+        return False, f"★ /admin/status 에 ValidationError 가 {fails}건 남아 있다"
+    return True, "배포에서 재판정이 불변 필드로 멈춰 있지 않다"
+
+
 CHECKS = (
+    ("S46-241", "배포에서 재판정이 살아 있는가", s46_241_regrade_alive_on_deploy),
     ("S46-240", "DDL 색인이 DB 에 다 있는가", s46_240_all_indexes_exist),
     ("S46-237", "추천이 예산 안인가", s46_237_recommend_in_budget),
     ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
