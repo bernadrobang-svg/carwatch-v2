@@ -127,9 +127,14 @@ def test_listings() -> None:
         " GROUP BY axis HAVING COUNT(*)=? LIMIT 1",
         (ctx.calc_version, len(rows))).fetchone()
     if ex:
+        # ★★★★★ 09-03 — ★ 위에서 ★ `rows` 를 ★ `lease=True` 로 잡았다.
+        #   ★ 여기만 ★ 빼고 견주면 ★ **다른 조건으로 견주는 것**이다 —
+        #   ★ ★ 바로 위 「축·버킷 필터가 실제로 거른다」가 ★ 이미 그 주의를 적었다.
+        #   ★ ★ ★ 실측 09-03 — ★ `taste.size` 가 새로 생기며 ★ 그 어긋남이 드러났다
+        #     ★ ★ (거르개 없음 6행 ↔ unknown 6행인데 ★ 시험은 1행이라 했다)
         na = view_listings(ADMIN, conn, ListingFilter(
-            calc_version=ctx.calc_version, axis=ex[0], bucket="unknown"),
-            FIN, ROOT)
+            calc_version=ctx.calc_version, axis=ex[0], bucket="unknown",
+            lease=True), FIN, ROOT)
         check(f"미확정 축({ex[0]})은 unknown 버킷으로 걸린다",
               len(na) == len(rows), f"{len(na)}행")
     else:

@@ -161,13 +161,28 @@ def test_change_history() -> None:
 
 
 def test_invariant_violation() -> None:
+    """★★★★★ 09-03 작업가이드 3번 — ★ **판을 통째로 죽이지 않는다.**
+
+    ★ 규격 `STEP 50` 8번은 ★ 「**경고 — 기록하고 계속**」이다.
+      ★ ★ 08-28 에 ★ 매물 하나(5980)의 색 하나 때문에 ★ `S4` 가 멈춰
+      ★ ★ ★ 봉투 931건이 ★ 나흘간 안 실렸다.
+    ★★ 그러니 잣대가 바뀐다 — ★ 「죽는가」가 아니라
+      ★ ★ ① **그 매물만 건너뛰는가**(값을 안 덮어쓴다) ·
+      ★ ★ ② **이력에 남기는가**(조용히 넘기지 않는다)
+    """
     conn = db()
     upsert_core(conn, seed(conn), T1)
-    try:
-        upsert_core(conn, seed(conn, displacement_cc=1999), T2)
-        check("불변 필드 변경 → ValidationError", False)
-    except ValidationError:
-        check("불변 필드 변경 → ValidationError", True)
+    got = upsert_core(conn, seed(conn, displacement_cc=1999), T2)
+    check("★ 불변 필드 변경 — 판이 안 죽는다 (STEP 50 8번 「기록하고 계속」)",
+          got == 0, f"돌려준 값 {got}")
+    now = conn.execute(
+        "SELECT displacement_cc FROM core_listing").fetchone()[0]
+    check("★ 그 매물만 건너뛴다 — 값을 안 덮어쓴다",
+          now != 1999, f"지금 {now}")
+    n = conn.execute(
+        "SELECT COUNT(*) FROM core_listing_change"
+        " WHERE field LIKE 'displacement_cc%'").fetchone()[0]
+    check("★ 조용히 넘기지 않는다 — 이력에 남는다", n > 0, f"이력 {n}줄")
     kind = conn.execute(
         "SELECT change_kind FROM core_listing_change"
         " WHERE field='displacement_cc'").fetchone()

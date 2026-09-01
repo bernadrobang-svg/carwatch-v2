@@ -5235,8 +5235,12 @@ def _recommend_rows_once(conn, calc_version: str):
     return _REC_ROWS
 
 
-def s46_238_all_indexes_exist():
-    """S46-238 — ★ DDL 이 말한 **색인이 DB 에 다 있는가**.
+def s46_240_all_indexes_exist():
+    """S46-240 — ★ DDL 이 말한 **색인이 DB 에 다 있는가**.
+
+    ★★★★★ 09-03 — ★ 처음에 ★ `S46-238` 로 냈다가 ★ **가이드가 같은 번호를 썼다**
+      (「트림이 신차가를 두 번 세지 않는가」 · 개정 1085).
+      ★ ★ 번호는 ★ **규격이 정본**이다 — ★ 내가 비켜 ★ 240 으로 옮겼다
 
     ★★★★★ 09-03 실측 — ★ `run.py migrate` 가 ★ 표를 다시 만들 때
       ★ ★ `DROP TABLE` ＋ `RENAME` 을 하는데 ★ **색인이 함께 사라진다** (SQLite).
@@ -5363,7 +5367,7 @@ def s46_238_trim_not_double_counting():
 
 
 CHECKS = (
-    ("S46-238", "DDL 색인이 DB 에 다 있는가", s46_238_all_indexes_exist),
+    ("S46-240", "DDL 색인이 DB 에 다 있는가", s46_240_all_indexes_exist),
     ("S46-237", "추천이 예산 안인가", s46_237_recommend_in_budget),
     ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
     ("S46-235", "화면이 안 파는 것을 감추는가", s46_235_screen_hides_unsellable),

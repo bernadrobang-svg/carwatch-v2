@@ -492,13 +492,23 @@ def test_spec_gate() -> None:
     check("★ 깡통은 트림 점수가 낮다",
           low.values["taste.trim"] < high.values["taste.trim"],
           f"{low.values['taste.trim']} < {high.values['taste.trim']}")
-    # ★★ 개정 432 — 배점으로 막았다.  트림 사다리가 옵션 하나를 이겨야 한다
-    _hi, _lo = score(high, POLICY).grade_earned, score(low, POLICY).grade_earned
+    # ★★★★★ 09-03 개정 1085 — ★ 개정 432 의 잣대가 ★ **바뀌었다.**
+    #   ★ 가이드 — 「★ 트림 40 → **20**.  ★ 규격이 스스로 「트림 ＋ 옵션 = 곧 신차가」라
+    #     ★ 적었는데 ★ `value.origin` **75** 가 ★ 이미 신차가를 잰다.
+    #     ★ ★ **두 곳에서 세고 ★ 방향도 반대**다 —
+    #     ★ ★ ★ 트림은 비쌀수록 만점 · ★ 예산·신차가는 쌀수록 만점」
+    #   ★★ 그러니 ★ 「풀옵션(7,000만)의 **총점**이 더 높다」는 ★ 더는 규격이 아니다 —
+    #     ★ ★ 싼 차가 ★ 예산·신차가 170점을 가져가는 것이 ★ **규격이 뜻한 바**다.
+    #   ★★★ 살아 있는 뜻은 ★ 「신차가를 **두 번 세지 않는다**」이고
+    #     ★ ★ 그것은 ★ 검사 `S46-238` 이 잰다 (트림 ≤ 신차가).
+    #     ★ ★ ★ 여기서는 ★ **트림이 값을 반영하는가**만 본다
     _span = high.values["taste.trim"] - low.values["taste.trim"]
-    check("★★ 「풀옵션에 HUD 없음」이 「깡통에 HUD」보다 등급이 높다 (개정 432)",
-          _hi > _lo and _span > POLICY.comp("taste.hud"),
-          f"풀옵션 {_hi} > 깡통 {_lo} · "
-          f"트림격차 {_span:.1f} > HUD {POLICY.comp('taste.hud')}")
+    check("★★ 트림이 신차가를 두 번 세지 않는다 (개정 1085)",
+          POLICY.comp("taste.trim") <= POLICY.comp("value.origin"),
+          f"트림 {POLICY.comp('taste.trim')} ≤ "
+          f"신차가 {POLICY.comp('value.origin')}")
+    check("★ 3,000만 트림 차이가 점수로 남는다",
+          _span > 0, f"트림격차 {_span:.1f}")
     check("HUD 095 장착 → 취향 배점 만점",
           low.values["taste.hud"] == POLICY.comp("taste.hud"),
           str(low.values["taste.hud"]))
@@ -571,9 +581,16 @@ def test_price_real() -> None:
     #   ★ 정본은 `axis_rules.value.budget_curve` 다 — ★ 규칙 1 대로 시험을 맞춘다.
     #   ★ 옛 시험은 「예산과 같으면 절반(50)」이었다 — ★ 그것이 옛 정책이다
     _b100 = at(_bud).values["value.budget"]
-    check("★★ 예산과 같으면 60% 수준이다 (마스터 확정 08-28)",
-          50 < _b100 <= 95 * 0.62, str(_b100))
-    check("★ 예산보다 싸면 더 준다 — 60% 면 만점 95",
+    # ★★★★★ 09-03 개정 1084 — ★ 곡선의 **기준이 옮겨졌다**.
+    #   ★ 가이드 — 「★ 예산 곡선의 기준을 ★ **한계 → 기본**으로 옮겼다.
+    #     ★ ★ 전에는 ★ 한계선(4,000)에서 ★ 57.0/95 를 줘서
+    #     ★ ★ ★ 4,450 짜리도 ★ 21.9 를 챙겼다.
+    #     ★ ★ 이제 ★ **기본 100% 가 만점** · ★ 한계 133% 가 ★ 0.4점이다」
+    #   ★★ 그러니 ★ 「예산과 같으면 60%」는 ★ **옛 정책**이다 — ★ 이제 만점이다.
+    #     ★ ★ 정본은 ★ `axis_rules.value.budget_curve` 다 (규칙 1)
+    check("★★ 예산과 같으면 만점이다 (개정 1084 — 기준이 한계 → 기본)",
+          _b100 == 95, str(_b100))
+    check("★ 예산보다 싸도 만점을 넘지 않는다",
           at(_bud * 0.6).values["value.budget"] == 95)
     check("★ 비쌀수록 더 떨어진다",
           at(_bud * 1.10).values["value.budget"]
@@ -670,8 +687,15 @@ def test_color() -> None:
           .values["taste.color"] == r["default"],
           str(analyze_listing(ctx(snap(color_ext_raw="분홍")))
               .values["taste.color"]))
-    check("★ 싫어하는 색은 0 점이다 (마스터 확정 08-29 — 「빵점」)",
-          r["avoided"] == 0)
+    # ★★★★★ 09-03 개정 1085 — ★ **기피색이 0 → 7 이 됐다.**
+    #   ★ 가이드 — 「★ 기피색이 ★ **0점이었다** — ★ 죽은 규칙에
+    #     ★ ★ `avoided 4` 와 ★ 「**기피는 손해이지 가치 없음이 아니다**」가
+    #     ★ ★ ★ 이미 있었다.  ★ 25/12/7 로 깔았다」
+    #   ★★ 규격이 바뀌었으니 ★ 시험도 바꾼다 — ★ 잣대는 ★ **차례**다 —
+    #     ★ ★ 선호 > 보통 > 기피 · ★ 그리고 ★ 기피가 만점이 아니다
+    check("★ 싫어하는 색이 가장 낮다 (개정 1085 — 「손해이지 가치 없음이 아니다」)",
+          r["avoided"] < r["default"] < r["preferred"],
+          f"기피 {r['avoided']} < 보통 {r['default']} < 선호 {r['preferred']}")
     check("★ 표에 없는 이름도 미분류가 아니다 — 점수가 난다",
           "taste.color" not in
           analyze_listing(ctx(snap(color_ext_raw="분홍"))).excluded)
