@@ -5573,17 +5573,31 @@ def results(run_id: str) -> list:
         ★ 손으로 `python3.11 -c "…"` 를 쳐야 돌았다.
       ★ ★ 그래서 ★ 색인의 ★ 「마지막 통과」가 ★ 늘 「없음」이었다
     """
+    import os as _os
+    import time as _time
+
     from validate.base import result
+    # ★★★★★ 09-03 — ★ **어느 검사가 느린가**를 남긴다.
+    #   ★ 실측 09-03 — ★ 새 검사 셋을 넣고 ★ 한 판이 **40분**을 넘었다.
+    #   ★ ★ 그런데 ★ 「어느 것이 느린가」를 ★ 알 길이 없었다 —
+    #   ★ ★ ★ 검사를 하나씩 손으로 돌려 봐야 했다.
+    #   ★★ `CARWATCH_CHECK_SLOW` 초를 넘으면 ★ 화면에 적는다 (기본 5초).
+    #     ★ ★ 늘 찍지 않는다 — ★ 137줄이 다 찍히면 ★ 읽을 수가 없다
+    slow = float(_os.environ.get("CARWATCH_CHECK_SLOW") or 5.0)
     out = []
     for row in CHECKS:
         code, name, fn = row[0], row[1], row[2]
         kind = row[3] if len(row) > 3 else "fatal"
         chk = _as_check(code, name, kind)
+        t0 = _time.time()
         try:
             ok, msg = fn()
         except Exception as e:                      # noqa: BLE001
             # ★ 검사가 죽어도 ★ 나머지를 다 돌린다 — ★ 죽은 것도 실패로 남긴다
             ok, msg = False, f"검사가 예외로 죽었다: {type(e).__name__}: {e}"
+        took = _time.time() - t0
+        if took >= slow:
+            msg = f"{msg}  ★ {took:.0f}초 걸렸다"
         out.append(result(chk, run_id, "지시서대로", msg, ok))
     return out
 
