@@ -201,6 +201,18 @@ def _scoring(root: str) -> dict:
         return json.load(f)
 
 
+_RECORD_COLS: set | None = None
+
+
+def _record_cols(conn) -> set:
+    """`core_record` 의 칸 이름.  ★ 한 번만 본다 (`V11-34`)."""
+    global _RECORD_COLS
+    if _RECORD_COLS is None:
+        _RECORD_COLS = {r[1] for r in
+                        conn.execute("PRAGMA table_info(core_record)")}
+    return _RECORD_COLS
+
+
 def record_rows(conn, listing_id: int) -> tuple:
     """★★★★★ 09-02 마스터 물음 ② — ★ **보험 이력 절** (`S46-219`).
 
@@ -209,8 +221,14 @@ def record_rows(conn, listing_id: int) -> tuple:
       ★ 전손·도난·침수 · 용도(영업용·관용) · 압류·저당
     ★ 값이 ★ `None` 이면 ★ **그 줄을 안 낸다** — ★ 0 으로 지어내지 않는다 (금지 12)
     ★ 행이 아예 없으면 ★ 빈 짝 — ★ 화면이 절을 안 낸다
+    ★★★★★ 09-03 — ★ 이 절은 ★ **쿼리 하나**를 쓴다 (`V11-34` · `/detail` 상한).
+      ★ 마스터 물음 ②가 시킨 절이라 ★ 예산을 하나 늘렸다 (`web.json` 에 적었다) —
+      ★ ★ 개정 726 이 ★ 「중복매물」에 하나를 늘린 것과 같은 꼴이다
     """
-    cols = {r[1] for r in conn.execute("PRAGMA table_info(core_record)")}
+    # ★★★★★ 09-03 — ★ `PRAGMA` 도 ★ **쿼리로 센다** (`V11-34`).
+    #   ★ 매물마다 부르면 ★ 한 쪽에 쿼리가 ★ 둘씩 는다 — ★ 상한을 넘었다 (29).
+    #   ★ ★ 칸 이름은 ★ 안 바뀐다 — ★ 한 번만 보고 ★ 들고 있는다
+    cols = _record_cols(conn)
     want = (
         ("accident_my_cnt", "내차 피해", "건"),
         ("accident_my_cost", "내차 피해액", "원"),
@@ -237,7 +255,15 @@ def record_rows(conn, listing_id: int) -> tuple:
     for col, label, unit in want:
         if col not in by or by[col] is None:
             continue          # ★ 모르는 것은 ★ 안 낸다 (0 이 아니다)
-        out.append({"label": label, "value": by[col], "unit": unit})
+        # ★★★★★ 09-03 — ★ 틀은 ★ `==` 를 못 한다 (`V11-104`) —
+        #   ★ **글자를 여기서 만든다**.  ★ 숫자는 ★ 단위와 함께 낸다 (`V11-74`)
+        got_v = by[col]
+        if unit == "원":
+            text = f"{int(got_v) // 10_000:,}만원"
+        else:
+            text = f"{int(got_v):,}{unit}"
+        out.append({"label": label, "value": got_v, "unit": unit,
+                    "text": text})
     return tuple(out)
 
 

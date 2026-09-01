@@ -257,6 +257,11 @@
     <a href="/listings?grade={{ r.grade | url }}">{{ r.grade_label }}</a>
     {% if r.rank %}<small>{{ r.rank }}위</small>{% endif %}
     {% if !r.rank %}<small>순위 없음</small>{% endif %}
+    <!-- ★★★★★ 09-03 시험자 #22 — ★ 「★ **카드 점수 안 보임** · ★ 6회차째 그대로」.
+         ★ 점수가 ★ **툴팁에만** 있었다 — ★ 눌러 보기 전에는 안 보인다.
+         ★ ★ 겉에 낸다.  ★ 분모는 ★ 판정이 낸 값이다 (`910` 을 안 박는다) -->
+    {% if r.earned %}<small class="grscore"
+      title="받은 점수 / 만점입니다">{{ r.earned | num }}/{{ r.denominator | num }}</small>{% endif %}
     {% if r.provisional %}<span class="prov"
       title="상세 조회가 아직 안 끝났습니다. 등급이 바뀔 수 있습니다">잠정</span>{% endif %}
   </div>

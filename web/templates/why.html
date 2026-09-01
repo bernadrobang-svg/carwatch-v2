@@ -161,8 +161,8 @@
 <thead><tr><th>무엇</th><th>값</th></tr></thead>
 <tbody>
 {% for r in v.record_rows %}
-<tr><td>{{ r.label }}</td>
-  <td>{% if r.unit == "원" %}{{ r.value | won }}원{% endif %}{% if r.unit != "원" %}{{ r.value | num }}{{ r.unit }}{% endif %}</td></tr>
+<!-- ★ 틀은 ★ `==` 를 못 한다 (`V11-104`) — ★ 값에서 이미 글자로 만들어 온다 -->
+<tr><td>{{ r.label }}</td><td>{{ r.text }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

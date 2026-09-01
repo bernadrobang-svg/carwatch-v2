@@ -1541,7 +1541,15 @@ ID_WORDS = ("매물", "계정", "run", "job", "id", "번호", "코드", "키",
             "원문 그대로")
 # ★ 원값을 그대로 고치는 화면이다.  단위를 붙이면 「100만」을 저장하게 된다.
 #   보는 화면이 아니라 고치는 화면이라 이 검사에서 뺀다 (V11-74)
-RAW_VALUE_SCREENS = ("/admin/config", "/admin/query", "/admin/api")
+# ★★★★★ 09-03 — ★ `/admin/registry` 도 ★ **원문을 그대로 내는 화면**이다.
+#   ★ 화면이 스스로 「★ ① 실제 값 — **원문 그대로**」라 적고 있다 —
+#   ★ ★ 거기 `vehicleId 42284817` 은 ★ **식별자**다.  ★ 단위가 붙을 것이 아니다.
+#   ★ ★ ★ 등록부는 ★ 「사이트가 무엇을 주나」를 보는 자리라 ★ 원문이 나와야 한다
+#   ★★ `/admin/audit` 도 마찬가지다 — ★ **돌린 SQL 을 그대로 낸다**
+#     ★ ★ 「`price_current_won <= 39000000`」의 39000000 은 ★ 조건문의 값이다.
+#     ★ ★ ★ 「3,900만원」으로 바꾸면 ★ **그 SQL 이 거짓이 된다**
+RAW_VALUE_SCREENS = ("/admin/config", "/admin/query", "/admin/api",
+                     "/admin/registry", "/admin/audit")
 # 단위 환산 (2장 상수표 · V4-13)
 BYTES_PER_KB = 1_024
 MENU_TABLE = os.path.join(ROOT, "docs", "chapters", "60-admin", "c-tools.md")

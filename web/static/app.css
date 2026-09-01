@@ -2897,3 +2897,17 @@ details.pen > summary::-webkit-details-marker { display: none; }
         border: 1px solid var(--line); border-radius: 3px;
         padding: 1px 4px; margin-left: 4px; }
 .kvin.na { color: var(--faint); }
+
+/* ★★★★★ 09-03 시험자 4회차 #121 — ★ **현황 하트가 안 눌린다** (x=346 · y=−4).
+   ★ `.heart` 는 ★ `position:absolute` 다 — ★ 카드에서는 `.cardbody` 가 기준이다.
+   ★ ★ 그런데 ★ 현황은 ★ **표**라 ★ 기준 상자가 없어 ★ 화면 밖(y=−4)으로 나갔다.
+   ★ ★ ★ 표 안에서는 ★ **제자리에 둔다** — ★ 자리를 안 띄운다 */
+td .heart, th .heart {
+  position: static;
+  width: 44px; height: 44px;
+  margin: 0 auto;
+}
+
+/* ★★★★★ 09-03 시험자 #22 — ★ 카드에 ★ 점수를 겉으로 낸다 (툴팁에만 있었다) */
+.gr .grscore { display: block; font-size: 9px; font-weight: 500;
+               opacity: .7; margin-top: 2px; letter-spacing: -.02em; }
