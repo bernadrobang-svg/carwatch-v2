@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 206개 · 총 73,811줄
+파일 206개 · 총 73,858줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -60,6 +60,7 @@
 | `tools/build_dict.py` | 321 | RAW → 사전 생성. |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
+| `tools/browser_diff.py` | 310 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `tests/test_dict.py` | 293 | 4장 키·코드·사전 시험. |
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
 | `tests/test_endtoend.py` | 291 | 종단 시험 — 수집부터 리포트까지 (5장 STEP 47 · 49). |
@@ -72,7 +73,6 @@
 | `report/exports/export.py` | 269 | 내보내기. |
 | `web/server.py` | 266 | HTTP 서버 (14장 STEP 141 · 150). |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
-| `tools/browser_diff.py` | 263 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `parse/revolt/mapping.py` | 260 | 리볼트 (revolt.kr) — 전기차 전용 인증중고차 (규격 `docs/REVOLT_API.md` · `S46-200`). |
 | `parse/reborncar/mapping.py` | 259 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
@@ -539,6 +539,12 @@ _cols:85  _reads:89  _progress_note_check:117  _relist_check:201  run:227
 _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _origin_check:156  _warranty_sum_check:186  _tie_break_check:229  _axis_site_check:267  run:307
 ```
 
+### `tools/browser_diff.py` — 310줄
+
+```
+pairs:35  look:48  main:246
+```
+
 ### `tests/test_dict.py` — 293줄
 
 ```
@@ -609,12 +615,6 @@ load_web_config:47  guard:60  _drain_chunk:92  TOO_LARGE:96  make_handler:105  s
 
 ```
 check:33  test_finance:40  test_display:97  _pipeline:113  test_layers:124  test_halt_layer:160  test_export:202
-```
-
-### `tools/browser_diff.py` — 263줄
-
-```
-pairs:35  look:48  main:202
 ```
 
 ### `parse/revolt/mapping.py` — 260줄

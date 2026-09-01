@@ -176,8 +176,52 @@ def look(pg, url: str) -> dict:
             const pad = parseFloat(getComputedStyle(document.body).paddingBottom);
             if (pad < bar.height - 2) foot = Math.round(bar.height - pad);
         }
+        // ★★★★★ 09-01 신설 — ★ **글자 겹침**을 ★ 셋으로 갈라 낸다 (오판 245).
+        //   ★ 시험자가 여섯 회차째 ★ 「638 → 0」을 좇았는데
+        //   ★ ★ 그 수의 ★ **99%가 자의 헛것**이었다 [실측 09-01 — 955 중 951].
+        //   ★★ 한 문단 안에서 ★ **줄바꿈된 인라인 글자끼리**는
+        //     ★ `getBoundingClientRect` 가 서로 겹치지만 ★ **눈에는 안 겹친다**.
+        //   ★★★ 거르는 법 셋 —
+        //     ① `getClientRects()` 가 ★ 여럿이면 ★ 줄바꿈된 것이다
+        //     ② 같은 부모의 ★ 인라인끼리는 ★ 한 줄 상자를 나눠 쓴다
+        //     ③ 겹친 자리 ★ **가운데를 눌러** ★ 둘 중 하나가 안 나오면 ★ 헛것이다
+        //   ★ 「진짜」만 좇는다.  ★ 「날것」은 ★ 옛 수와 견주라고 함께 낸다
+        const leaf = [];
+        for (const e of document.querySelectorAll('*')) {
+            const cs = getComputedStyle(e);
+            if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+            if (+cs.opacity === 0 || e.children.length) continue;
+            const txt = (e.textContent || '').trim();
+            if (!txt) continue;
+            const rr = e.getBoundingClientRect();
+            if (rr.width <= 0 || rr.height <= 0) continue;
+            leaf.push({e: e, r: rr, txt: txt,
+                       multi: e.getClientRects().length > 1,
+                       inline: cs.display.indexOf('inline') === 0});
+        }
+        let traw = 0, tfake = 0; const treal = [];
+        for (let i = 0; i < leaf.length; i++)
+            for (let j = i + 1; j < leaf.length; j++) {
+                const A = leaf[i], C = leaf[j];
+                const ox = Math.min(A.r.right, C.r.right) - Math.max(A.r.left, C.r.left);
+                const oy = Math.min(A.r.bottom, C.r.bottom) - Math.max(A.r.top, C.r.top);
+                if (!(ox > 1 && oy > 1)) continue;
+                traw++;
+                if (A.multi || C.multi ||
+                    (A.inline && C.inline && A.e.parentElement === C.e.parentElement)) {
+                    tfake++; continue;
+                }
+                const cx = (Math.max(A.r.left, C.r.left) + Math.min(A.r.right, C.r.right)) / 2;
+                const cy = (Math.max(A.r.top, C.r.top) + Math.min(A.r.bottom, C.r.bottom)) / 2;
+                if (cx < 0 || cy < 0 || cx > innerWidth || cy > innerHeight) { tfake++; continue; }
+                const at = document.elementFromPoint(cx, cy);
+                if (at === A.e || at === C.e || A.e.contains(at) || C.e.contains(at)) {
+                    if (treal.length < 6) treal.push(A.txt.slice(0, 14) + ' / ' + C.txt.slice(0, 14));
+                } else { tfake++; }
+            }
         return {
             foot: foot,
+            traw: traw, tfake: tfake, treal: treal, tn: traw - tfake,
             hit: hit.slice(0, 6),
             gapy: gapy.slice(0, 4),
             // ★★★★★ 09-02 — ★ `innerText` 는 ★ **접힌 `<details>` 속 글을 안 준다**.
@@ -234,7 +278,10 @@ def main() -> int:
                 if o.get("foot"):
                     note.append(f"★ 아래 띠가 {o['foot']}px 가린다")
                 if o["hit"]:
-                    note.append(f"★ 겹침 {len(o['hit'])}쌍 {o['hit'][:2]}")
+                    note.append(f"★ 단추 겹침 {len(o['hit'])}쌍 {o['hit'][:2]}")
+                if o.get("traw"):
+                    note.append(f"★ 글자 겹침 — 날것 {o['traw']} · 줄바꿈 헛것 "
+                                f"{o['tfake']} · ★ 진짜 {o['tn']} {o['treal'][:2]}")
                 if o["gapy"]:
                     note.append(f"★ 사진 밑 빈 자리 {o['gapy'][:2]}")
                 if o["small"]:

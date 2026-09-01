@@ -191,9 +191,9 @@
 | `S46-231` | 매물 있는 사이트가 거르개에 다 있는가 | fatal | `validate/v0_guide.py:5039` | **★ 없음** | 없음 | guide/03_이력.md:1320 · guide/06_오판대장.md:330 |
 | `S46-232` | 예산 곡선이 한계에서 0 인가 | fatal | `validate/v0_guide.py:5066` | **★ 없음** | 없음 | guide/03_이력.md:1321 |
 | `S46-233` | 크기 축이 0점을 안 주는가 | fatal | `validate/v0_guide.py:5110` | **★ 없음** | 없음 | guide/03_이력.md:1321 |
-| `S46-236` | 내장색 축이 있고 기피가 0이 아닌가 | fatal | `validate/v0_guide.py:5149` | **★ 없음** | 없음 | guide/03_이력.md:1322 · guide/06_오판대장.md:334 |
+| `S46-236` | 내장색 축이 있고 기피가 0이 아닌가 | fatal | `validate/v0_guide.py:5149` | **★ 없음** | 없음 | guide/03_이력.md:1322 · guide/03_이력.md:1323 · guide/06_오판대장.md:334 |
 | `S46-238` | 트림이 신차가를 두 번 안 세는가 | fatal | `validate/v0_guide.py:5191` | **★ 없음** | 없음 | guide/03_이력.md:1322 |
-| `S46-239` | 새 축이 시안에 들어갔는가 | fatal | `validate/v0_guide.py:5214` | **★ 없음** | 없음 | guide/06_오판대장.md:335 |
+| `S46-239` | 새 축이 시안에 들어갔는가 | fatal | `validate/v0_guide.py:5214` | **★ 없음** | 없음 | guide/03_이력.md:1323 · guide/06_오판대장.md:335 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
