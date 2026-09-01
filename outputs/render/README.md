@@ -23,9 +23,9 @@
 | `/join` | [join.html](join.html) | 200 | 2,594B |
 | `/password` | [password.html](password.html) | 200 | 2,585B |
 | `/admin` | [admin.html](admin.html) | 200 | 17,476B |
-| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,230B |
+| `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,340B |
 | `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 78,163B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,364B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,496B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,339B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,867B |
 | `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,761B |

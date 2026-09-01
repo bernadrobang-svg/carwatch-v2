@@ -575,7 +575,65 @@ def _latest(conn, site: str, endpoint: str):
         ") WHERE n=1 AND status='ok'", (site, endpoint)).fetchall()
 
 
-SITES = {"kb_detail": kb_detail, "volvo_detail": volvo_detail,
+def mpark_inspection(conn, write: bool) -> Counter:
+    """★★★★★ 09-03 (로드맵 차례 4) — ★ **m-park 점검 창구**를 받아 넣는다.
+
+    ★ 앞 회차에 ★ 「주소가 원문에 없다」고 적고 ★ **멈췄다** (지어내지 않았다).
+      ★ ★ 브라우저로 그 쪽을 열어 ★ **실제 호출을 잡았다** —
+      ★ ★ ★ `api.m-park.co.kr/home/api/v1/wb/searchmycar/carcheckdetailinfo/get`
+    ★★ 여기서 여는 것은 ★ **누유 15점**뿐이다.
+      ★ 외판·골격(`carCheckGbn1`·`2`)은 ★ **자리 표가 없어 안 옮긴다** (금지 6)
+    ★ 살살 부른다 — ★ 사이 1.2초.  ★ 열 건뿐이다
+    """
+    import time
+    import urllib.error
+    import urllib.request
+
+    from parse.mpark.inspection import BASE, HEADERS, check_no, inners
+    from store.core import upsert_child
+    from store.raw import save_site_raw
+
+    at = _now()
+    got: Counter = Counter()
+    rows = conn.execute(
+        "SELECT listing_id, request_url FROM raw_response"
+        " WHERE site='kbchachacha' AND endpoint='inspection'"
+        "   AND request_url LIKE '%m-park%'"
+        " GROUP BY listing_id").fetchall()
+    for lid, url in rows:
+        no = check_no(url)
+        if not no:
+            got["★ 점검표 번호를 못 읽었다"] += 1
+            continue
+        try:
+            req = urllib.request.Request(BASE + no, headers=HEADERS)
+            with urllib.request.urlopen(req, timeout=25) as f:   # noqa: S310
+                body = f.read()
+        except (urllib.error.URLError, OSError, TimeoutError) as e:
+            got[f"★ 못 받음 ({type(e).__name__})"] += 1
+            time.sleep(2.0)
+            continue
+        pan = inners(body)
+        if pan is None:
+            got["★ 모르는 꼴"] += 1
+            time.sleep(1.2)
+            continue
+        got["★ 받아서 펼쳤다"] += 1
+        if write:
+            # ★ 원문을 먼저 남긴다 — ★ 파일이 원본이고 이것은 사본이다 (P3)
+            save_site_raw(conn, "kbchachacha", "inspection_api", str(no),
+                          BASE + no, body, at, http_code=200)
+            upsert_child(conn, "core_inspection", {
+                "listing_id": lid, "site": "kbchachacha", "row_status": "ok",
+                "inspection_inner_json": json.dumps(pan, ensure_ascii=False),
+                "collected_at": at}, "p1", at)
+        time.sleep(1.2)
+    if write:
+        conn.commit()
+    return got
+
+
+SITES = {"mpark": mpark_inspection, "kb_detail": kb_detail, "volvo_detail": volvo_detail,
          "lexus_detail": lexus_detail,
          "heydealer": heydealer, "kbchachacha": kbchachacha,
          "hyundai_cert": hyundai_cert, "reborncar": reborncar,
