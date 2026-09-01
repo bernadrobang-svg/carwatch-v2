@@ -9,15 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 51,306줄 · 3,567KB**
+**132파일 · 51,815줄 · 3,608KB**
 
-★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
+- CHECKS.md 1,204줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,337줄
+- guide/03_이력.md 1,338줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -32,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md` | 696 | 112 |
+| `CHECKS.md`  ★ | 1,204 | 149 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -53,7 +54,7 @@
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 765 | 57 |
+| `SOURCE.md` | 765 | 58 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,154 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
@@ -120,7 +121,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,337 | 966 |
+| `guide/03_이력.md`  ★ | 1,338 | 969 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |

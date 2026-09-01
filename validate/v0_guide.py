@@ -5383,6 +5383,10 @@ def s46_241_regrade_alive_on_deploy():
     if not isinstance(got, tuple) or len(got) != 2:
         return False, "로그인을 못 했다 — secrets/check_login.json 을 보라"
     opener, base = got
+    if isinstance(opener, str) or not hasattr(opener, "open"):
+        opener, base = base, opener
+    if not hasattr(opener, "open"):
+        return False, "로그인한 열개를 못 얻었다"
     base = str(base).rstrip("/")
     try:
         with opener.open(base + "/admin/status", timeout=40) as res:
@@ -5404,7 +5408,63 @@ def s46_241_regrade_alive_on_deploy():
     return True, "배포에서 재판정이 불변 필드로 멈춰 있지 않다"
 
 
+def s46_242_mock_has_required_header():
+    """S46-242 — ★ 시안마다 ★ 「반드시 있는 것」 머리가 있는가 (RULES.md 1 · 09-01).
+
+    ★ 마스터 — 「★ 왜 추천에 목록 번호가 없고 … ★ 빨리 시안 제도를 만들어 올려」
+    ★ 넷 다 ★ **시안이 안 적어서** 빠졌다 — ★ 시안이 「모양」만 그리고
+      ★ ★ **「반드시 있어야 하는 것」을 안 적었다**.  ★ 그래서 빠져도 아무도 모른다.
+    """
+    mocks = ROOT / "ref" / "screens"
+    rules = mocks / "RULES.md"
+    if not rules.is_file():
+        return False, "ref/screens/RULES.md 가 없다 — 시안 제도가 없다"
+    bad = []
+    files = sorted(mocks.glob("v4m_*_시안.html"))
+    if not files:
+        return False, "v4m 시안이 없다"
+    for f in files:
+        if "반드시 있는 것" not in _read(f):
+            bad.append(f.name)
+    if bad:
+        return False, (f"★ 머리가 없는 시안 {len(bad)}/{len(files)}장 — "
+                       + " · ".join(bad[:4]))
+    return True, f"시안 {len(files)}장에 「반드시 있는 것」 머리가 있다"
+
+
+def s46_243_empty_says_why():
+    """S46-243 — ★ 비는 자리가 ★ 「왜 없나」를 내는가 (RULES.md 2 · 09-01).
+
+    ★★★ 실측 09-01 — ★ 마스터께서 ★ 「왜 안 보이지」를 ★ **네 번** 물으셨다.
+      ★ ★ 화면이 ★ **까닭을 말했으면 ★ 안 물으셨을 것**이다.
+    ★ 사진 밑주소는 ★ `photo_base_url` 이 ★ **엔카 하나뿐**이고
+      ★ ★ 원문 문은 ★ `site_detail_url` 열셋 중 ★ **다섯이 `null`** 이다.
+    ★ 잣대 — ① 시안이 ★ 「없음 — 까닭」 꼴을 갖는가
+             ② `null` 인 사이트가 ★ 몇 곳인지 ★ 수로 나오는가
+    """
+    import json as _j
+
+    mocks = ROOT / "ref" / "screens"
+    blob = " ".join(_read(q) for q in sorted(mocks.glob("v4m_*_시안.html")))
+    bad = []
+    if "아직 못 쟀습니다" not in blob and "아직 안 깔았습니다" not in blob:
+        bad.append("시안에 「없음 — 까닭」 꼴이 없다")
+
+    web = _j.loads(_read(ROOT / "config" / "web.json") or "{}")
+    urls = web.get("site_detail_url") or {}
+    empty = sorted(k for k, v in urls.items() if not v)
+    base = web.get("photo_base_url") or ""
+    photo = web.get("site_photo_base") or {}
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, (f"시안이 까닭을 낸다 · 원문 문 없는 사이트 {len(empty)}곳"
+                  f"({' · '.join(empty[:3])}) · 사진 밑주소 {len(photo)}곳"
+                  f"{' (기본 ' + base.split('//')[-1] + ')' if base else ''}")
+
+
 CHECKS = (
+    ("S46-242", "시안에 「반드시 있는 것」 머리가 있는가", s46_242_mock_has_required_header),
+    ("S46-243", "비는 자리가 까닭을 내는가", s46_243_empty_says_why),
     ("S46-241", "배포에서 재판정이 살아 있는가", s46_241_regrade_alive_on_deploy),
     ("S46-240", "DDL 색인이 DB 에 다 있는가", s46_240_all_indexes_exist),
     ("S46-237", "추천이 예산 안인가", s46_237_recommend_in_budget),

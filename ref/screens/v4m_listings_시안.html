@@ -145,6 +145,11 @@ border-radius:10px;display:flex;align-items:center;justify-content:center;color:
 @media (min-width:1024px){.v4-fil{padding:12px 26px}.v4-sec{padding:16px 26px}
  .v4-fil form{grid-template-columns:repeat(5,1fr)}.v4-photo{max-width:640px}}
 </style></head><body>
+<!-- ★ 반드시 있는 것 (ref/screens/RULES.md 1)
+     · 순위 번호   · 사이트 이름   · 원문 문   · 사진   · 값   · 판정
+     ★ 없으면 ★ 「왜 없는지」를 글로 낸다 — ★ 조용히 비우지 않는다 (RULES.md 2)
+-->
+
 <div class="v4-wrap">
 <div class="v4-top"><div class="v4-title">매물</div><div class="v4-sub">2,815건 중 <b>30</b>건 · 94쪽 중 1쪽</div></div>
 <nav class="v4-tabs"><a href="#"><b>≡</b>매물</a><a href="#"><b>♥</b>관심</a><a href="#"><b>⇄</b>추적</a><a href="#"><b>◔</b>현황</a><a href="#"><b>⚙</b>관리</a></nav>
@@ -162,11 +167,14 @@ border-radius:10px;display:flex;align-items:center;justify-content:center;color:
 <div class="v4-card">
   <div class="v4-cardline">
     <div class="v4-row">
-      <div class="v4-thumbwrap"><div class="v4-thumb">사진</div><button class="v4-pick">✓</button></div>
+      <span class="lst-rank">1</span>
+<div class="v4-thumbwrap"><div class="v4-thumb">사진</div><button class="v4-pick">✓</button></div>
       <div class="v4-mid">
         <div class="v4-ax"><b>89</b> 차량 <b>80</b> 값 <b>59</b> 보증 <b>73</b> 취향</div>
         <div class="v4-name"><span class="v4-gr">S</span>KOLEOS_HEV<span class="v4-heart">♡</span></div>
         <div class="v4-trim">1.5 E-TECH 에스프리 알핀 2WD · 세부등급 없음</div>
+<div class="lst-site">엔카 · <a class="lst-src">원문 보기 ↗</a></div>
+<div class="lst-why-empty">★ 원문 문이 없으면 ★ 「그 사이트는 주소를 아직 못 쟀습니다」를 낸다 (RULES.md 2)</div>
         <div class="v4-spec">2024-12 · 55,763km · 쥐색 / 검정색 계열</div>
         <div class="v4-spec">점보모터스 · <b>엔카</b> · 게시중 · <b style="color:var(--amber)">3곳</b></div>
         <div class="v4-price">2,990만</div>
