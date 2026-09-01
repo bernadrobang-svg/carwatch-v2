@@ -5192,11 +5192,9 @@ def s46_235_screen_hides_unsellable():
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     _sys.path.insert(0, str(ROOT))
-    from contracts import ROLE_ADMIN, Account
     from report.screens.build import _listings_where, _sold_words
     from report.screens.views import ListingFilter
 
-    del Account, ROLE_ADMIN
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     where, args = _listings_where(ListingFilter())
     words = sorted(_sold_words(str(ROOT)))

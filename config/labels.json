@@ -32,7 +32,9 @@
     "taste.hud": "HUD",
     "taste.fitting": "지정 옵션",
     "taste.color": "색상",
-    "taste.sunroof": "선루프"
+    "taste.sunroof": "선루프",
+    "taste.size": "크기",
+    "taste.color_int": "내장색"
   },
   "GRADE_LABELS": {
     "S": "S",
@@ -187,5 +189,6 @@
       "PHEV",
       "플러그인"
     ]
-  }
+  },
+  "_AXIS_LABELS_new_1084": "★★★★★ 09-03 개정 1084·1085 — ★ 축 둘이 새로 생겨 ★ 이름을 붙였다.  ★ 없으면 ★ 화면에 ★ `taste.size` 가 **그대로 나온다**.  ★ `크기` — 마스터 「★ 큰 차를 나는 좋아」 (전장으로 잰다) · ★ `내장색` — 「★ 약간의 블랙 계열의 내장재를 찾는 중이야」"
 }
