@@ -65,9 +65,24 @@ def _cfg() -> dict:
         return json.load(f)
 
 
+# ★★★★★ 09-03 실측 — ★ 한 판이 ★ **33분**을 넘겨 물려 있었다.
+#   ★ 예산은 ★ 180초라 적혀 있는데 ★ **시간 상한이 없었다** —
+#   ★ ★ `check_all` 이 막히면 ★ 타이머 판이 ★ **영영 안 끝난다**.
+#   ★ ★ ★ 그동안 ★ DB 를 물고 있어 ★ 마스터 화면까지 느려진다 (실측 09-03).
+#   ★★ 상한을 건다 — ★ 넘으면 ★ **그 걸음만 접고** ★ 남은 걸음을 잇는다.
+#     ★ ★ 조용히 넘기지 않는다 — ★ 「몇 초에 끊었다」를 ★ 글로 남긴다
+_STEP_LIMIT_SEC = 900
+
+
 def _run(*cmd) -> str:
-    got = subprocess.run([sys.executable, *cmd], cwd=ROOT, check=False,
-                         capture_output=True, text=True)
+    try:
+        got = subprocess.run([sys.executable, *cmd], cwd=ROOT, check=False,
+                             capture_output=True, text=True,
+                             timeout=_STEP_LIMIT_SEC)
+    except subprocess.TimeoutExpired:
+        name = os.path.basename(str(cmd[0]))
+        return (f"★ {name} 이 {_STEP_LIMIT_SEC}초를 넘겨 끊었다 — "
+                "★ 이 걸음의 숫자는 이번 판에 없다")
     return got.stdout + got.stderr
 
 

@@ -177,6 +177,14 @@ def main() -> int:
             if not t.startswith("sqlite_")):
         if rebuild_to_ddl(conn, mem, table):
             fixed.append(f"{table} — DDL 대로 재작성 (제약 반영)")
+    # ★★★★★ 09-03 실측 — ★ `rebuild_to_ddl` 이 ★ `DROP TABLE` ＋ `RENAME` 을 한다.
+    #   ★ 그러면 ★ **그 표의 색인이 함께 사라진다** (SQLite 가 그렇다).
+    #   ★ ★ 실측 09-03 — ★ `core_listing` 의 색인 다섯이 ★ **통째로 없어져**
+    #   ★ ★ ★ 「같은 차 중 싼 것 하나」 하위 질의가 ★ 20,684행을 훑어
+    #     ★ ★ **마스터 화면이 10분에도 안 떴다**.
+    #   ★★ 그래서 ★ 마지막에 ★ **DDL 을 한 번 더 돌려** ★ 색인을 되건다.
+    #     ★ ★ `CREATE INDEX IF NOT EXISTS` 라 ★ 있는 것은 안 건드린다
+    _run_ddl(strict=False)
     conn.commit()
     conn.execute("PRAGMA foreign_keys = ON")
 

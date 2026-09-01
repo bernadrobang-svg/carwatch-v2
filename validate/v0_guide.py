@@ -5235,6 +5235,43 @@ def _recommend_rows_once(conn, calc_version: str):
     return _REC_ROWS
 
 
+def s46_238_all_indexes_exist():
+    """S46-238 — ★ DDL 이 말한 **색인이 DB 에 다 있는가**.
+
+    ★★★★★ 09-03 실측 — ★ `run.py migrate` 가 ★ 표를 다시 만들 때
+      ★ ★ `DROP TABLE` ＋ `RENAME` 을 하는데 ★ **색인이 함께 사라진다** (SQLite).
+      ★ ★ ★ `core_listing` 의 색인 다섯이 통째로 없어져
+        ★ ★ 「같은 차 중 싼 것 하나」 하위 질의가 ★ 20,684행을 훑었고
+        ★ ★ ★ **마스터 화면이 10분에도 안 떴다**.
+    ★ 잣대 — ★ `sql/ddl/*.sql` 의 `CREATE INDEX` 이름이 ★ DB 에 다 있어야 한다.
+      ★ ★ 「느리다」로는 못 잡는다 — ★ **없는 것을 이름으로 짚는다**
+    """
+    import re as _re
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    want = {}
+    for f in sorted((ROOT / "sql" / "ddl").glob("*.sql")):
+        for m in _re.finditer(
+                r"CREATE INDEX IF NOT EXISTS\s+(\w+)\s+ON\s+(\w+)",
+                _read(f) or "", _re.S | _re.I):
+            want[m.group(1)] = m.group(2)
+    if not want:
+        return False, "★ DDL 에서 색인을 하나도 못 읽었다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    got = {r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='index'")}
+    miss = sorted(k for k in want if k not in got)
+    if miss:
+        return False, (f"★ DDL 이 말한 색인 {len(want)}개 중 "
+                       f"★ **{len(miss)}개가 DB 에 없다** — "
+                       + " · ".join(f"{k}({want[k]})" for k in miss[:4])
+                       + "  ★ 화면이 통째로 느려진다")
+    return True, f"DDL 색인 {len(want)}개가 다 있다 · 예외 0곳"
+
+
 def s46_237_recommend_in_budget():
     """S46-237 — ★ 추천에 ★ **예산 넘는 것**이 있으면 실패.
 
@@ -5326,6 +5363,7 @@ def s46_238_trim_not_double_counting():
 
 
 CHECKS = (
+    ("S46-238", "DDL 색인이 DB 에 다 있는가", s46_238_all_indexes_exist),
     ("S46-237", "추천이 예산 안인가", s46_237_recommend_in_budget),
     ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
     ("S46-235", "화면이 안 파는 것을 감추는가", s46_235_screen_hides_unsellable),
