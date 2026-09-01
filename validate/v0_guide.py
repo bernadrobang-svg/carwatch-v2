@@ -5170,8 +5170,15 @@ def s46_236_interior_color_axis():
             bad.append(f"{label} 기피가 {pts.get('avoided')}점 — 0을 주지 않는다")
         if pts.get("preferred", 0) <= pts.get("default", 0):
             bad.append(f"{label} 선호가 보통보다 높지 않다")
-    if not (t.get("color_int_groups") or {}).get("preferred"):
+    g = t.get("color_int_groups") or {}
+    if not g.get("preferred"):
         bad.append("내장색 목록이 없다")
+    # ★★★ 09-01 정정 (오판 243) — ★ `avoided` 가 **비어 있어야 맞다**.
+    #   ★ 마스터께서 ★ 「이 색은 싫다」고 하신 ★ **내장색이 없다**.
+    #   ★ 전에 내가 ★ 청색 계열을 ★ 지어내어 넣었다 — ★ 그것을 막는다.
+    if g.get("avoided"):
+        bad.append("내장 기피에 색이 들어 있다 — 마스터께서 정하신 것이 없다 "
+                   f"({' · '.join(g['avoided'][:3])})")
     tot = sum(v for v in comp.values() if isinstance(v, (int, float)))
     if tot != 910:
         bad.append(f"배점 합이 {tot} 다")
