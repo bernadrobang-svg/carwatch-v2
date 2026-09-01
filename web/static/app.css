@@ -2700,7 +2700,15 @@ a.mini, .note a, .dim a, .muted a { line-height: 1.5; }
 .pickmodels { display:flex; gap:6px; overflow-x:auto; padding:10px 0;
               flex-wrap:nowrap; -webkit-overflow-scrolling:touch; }
 .pickmodels::-webkit-scrollbar { display:none; }
-.pickmodels .mb { flex:0 0 auto; font-size:12px; white-space:nowrap;
+/* ★★★★★ 09-03 시험자 「칩 잘림 33/225 — 더 나빠졌다」 —
+   ★ `white-space:nowrap` 이라 ★ 긴 차종 이름이 ★ **잘렸다**
+   ★ ★ (「그랑 콜레오스 1.5 E-TECH」·「볼보 XC40 리차지 (전기)」).
+   ★★ 명령서 ② — 「★ 단추 안 글자가 넘치면 ★ **두 줄로** ·
+     ★ ★ `white-space:normal` · `word-break:keep-all` · ★ **…로 줄이지 마라**」
+   ★ 차종이 32종이라 ★ 한 줄에 다 못 들어간다 — ★ 줄이 접히면 된다 */
+.pickmodels .mb { flex:0 1 auto; font-size:12px;
+                  white-space:normal; word-break:keep-all;
+                  overflow-wrap:anywhere; max-width:100%;
                   border-radius:16px; padding:7px 12px; }
 .pickmodels .mb b { font-weight:600; color:var(--text); font-size:11px; }
 .pickmodels .mb.on { border-color:var(--amber); color:var(--amber); }
@@ -2911,3 +2919,28 @@ td .heart, th .heart {
 /* ★★★★★ 09-03 시험자 #22 — ★ 카드에 ★ 점수를 겉으로 낸다 (툴팁에만 있었다) */
 .gr .grscore { display: block; font-size: 9px; font-weight: 500;
                opacity: .7; margin-top: 2px; letter-spacing: -.02em; }
+
+/* ★★★★★ 09-03 시험자 #60 (6회차째) — ★ 「★ 사진 크기 ★ **104×78 고정**」.
+   ★ 시안(`v4m_listings_시안`)은 ★ **네 단**이다 [실측 09-03] —
+   ★ ★ 359px 아래 88×66 · 기본 104×78 · ★ 640 이상 **180×135** ·
+   ★ ★ ★ 1024 이상 **240×180**.
+   ★ 우리는 ★ 128×86 하나에 ★ 1750px 에서만 160 이었다 — ★ 시안과 다르다.
+   ★★ 시안 그대로 간다.  ★ 사진은 ★ `float` 라 ★ 글이 그 밑으로 흐른다 */
+@media (max-width: 359px) {
+  .thumb, .thumb-none, .pickthumb, .thumb.ktrack,
+  main.car-rows .row .kthumbwrap, main.car-rows .row .thumb {
+    width: 88px; height: 66px;
+  }
+}
+@media (min-width: 640px) {
+  .thumb, .thumb-none, .pickthumb, .thumb.ktrack,
+  main.car-rows .row .kthumbwrap, main.car-rows .row .thumb {
+    width: 180px; height: 135px;
+  }
+}
+@media (min-width: 1024px) {
+  .thumb, .thumb-none, .pickthumb, .thumb.ktrack,
+  main.car-rows .row .kthumbwrap, main.car-rows .row .thumb {
+    width: 240px; height: 180px;
+  }
+}
