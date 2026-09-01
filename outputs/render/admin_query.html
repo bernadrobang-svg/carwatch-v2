@@ -88,6 +88,10 @@
   <td class="num" data-label="행">6</td><td class="num" data-label="시간">93ms</td>
   <td data-label="결과">실행</td></tr>
 
+<tr><td data-label="시각">2026-09-01T17:57:06.910673+00:00</td><td class="runid" data-label="SQL">SELECT site, COUNT(*) AS n FROM audit_request WHERE run_id = &#x27;20260901T165912&#x27; GROUP BY site</td>
+  <td class="num" data-label="행">1</td><td class="num" data-label="시간">0ms</td>
+  <td data-label="결과">실행</td></tr>
+
 <tr><td data-label="시각">2026-09-01T07:45:43.925953+00:00</td><td class="runid" data-label="SQL">SELECT listing_id, year_month, mileage_km, price_current_won, color_ext_raw FROM core_listing WHERE target_key = &#x27;POLEST</td>
   <td class="num" data-label="행">45</td><td class="num" data-label="시간">0ms</td>
   <td data-label="결과">실행</td></tr>
@@ -128,6 +132,18 @@
   <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
   <td data-label="결과"><span class="warn-block">거부 — 쓰기 연산이 포함됐다</span></td></tr>
 
+<tr><td data-label="시각">2026-09-01T17:58:21.543331+00:00</td><td class="runid" data-label="SQL">SELECT status, COUNT(*) AS n FROM audit_request WHERE run_id &gt; &#x27;20260901T170000&#x27; GROUP BY status</td>
+  <td class="num" data-label="행">0</td><td class="num" data-label="시간">45ms</td>
+  <td data-label="결과">실행</td></tr>
+
+<tr><td data-label="시각">2026-09-01T17:40:45.950520+00:00</td><td class="runid" data-label="SQL">SELECT site, source_id, site_model FROM core_listing WHERE site = &#x27;lexus_certified&#x27; LIMIT 3</td>
+  <td class="num" data-label="행">3</td><td class="num" data-label="시간">0ms</td>
+  <td data-label="결과">실행</td></tr>
+
+<tr><td data-label="시각">2026-09-01T17:56:57.847400+00:00</td><td class="runid" data-label="SQL">SELECT http_code, status, COUNT(*) AS n FROM audit_request WHERE run_id = &#x27;20260901T165912&#x27; GROUP BY http_code, status O</td>
+  <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
+  <td data-label="결과"><span class="warn-block">거부 — 쓰기 연산이 포함됐다</span></td></tr>
+
 <tr><td data-label="시각">2026-09-01T01:51:34.311492+00:00</td><td class="runid" data-label="SQL">SELECT COUNT(*) cheaper FROM core_listing WHERE target_key=&#x27;GV70_EV&#x27; AND status=&#x27;active&#x27; AND price_current_won &lt; 3900000</td>
   <td class="num" data-label="행">1</td><td class="num" data-label="시간">521ms</td>
   <td data-label="결과">실행</td></tr>
@@ -139,22 +155,6 @@
 <tr><td data-label="시각">2026-09-01T01:46:47.645717+00:00</td><td class="runid" data-label="SQL">SELECT listing_id, site, source_id, target_key, trim, year_month, mileage_km, price_current_won, color_ext_raw, status, </td>
   <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
   <td data-label="결과"><span class="warn-block">거부 — SQL 을 해석할 수 없다: no such column: trim</span></td></tr>
-
-<tr><td data-label="시각">2026-08-18T23:09:42.562722+00:00</td><td class="runid" data-label="SQL">DELETE FROM core_listing</td>
-  <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
-  <td data-label="결과"><span class="warn-block">거부 — SELECT · WITH 만 허용한다</span></td></tr>
-
-<tr><td data-label="시각">2026-09-01T01:52:22.702603+00:00</td><td class="runid" data-label="SQL">SELECT COUNT(*) AS n FROM core_listing WHERE target_key = &#x27;GV70_EV&#x27; AND status = &#x27;active&#x27; AND mileage_km &gt; 130000</td>
-  <td class="num" data-label="행">1</td><td class="num" data-label="시간">0ms</td>
-  <td data-label="결과">실행</td></tr>
-
-<tr><td data-label="시각">2026-08-18T23:09:42.555608+00:00</td><td class="runid" data-label="SQL">SELECT created_at FROM raw_response LIMIT 1</td>
-  <td class="num" data-label="행">없습니다</td><td class="num" data-label="시간">없습니다ms</td>
-  <td data-label="결과"><span class="warn-block">거부 — SQL 을 해석할 수 없다: no such column: created_at</span></td></tr>
-
-<tr><td data-label="시각">2026-09-01T01:58:46.218298+00:00</td><td class="runid" data-label="SQL">SELECT target_key, COUNT(*) AS n FROM core_listing WHERE site = &#x27;reborncar&#x27; AND status &lt;&gt; &#x27;gone&#x27; GROUP BY 1</td>
-  <td class="num" data-label="행">11</td><td class="num" data-label="시간">1,044ms</td>
-  <td data-label="결과">실행</td></tr>
 
 </tbody>
 </table>
@@ -172,16 +172,16 @@
 <tr><td class="runid" data-label="표">admin_api_snapshot</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">snapshot_id · account_id · url · http_code · content_type · body · note · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">200,061</td>
+<tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">201,402</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">22,263</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">23,869</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
-<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">3,067</td>
+<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">3,160</td>
   <td class="muted" data-label="컬럼">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
 
-<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">3,018</td>
+<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">3,111</td>
   <td class="muted" data-label="컬럼">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
 
 <tr><td class="runid" data-label="표">coefficient_history</td><td class="num" data-label="행">0</td>
@@ -208,10 +208,10 @@
 <tr><td class="runid" data-label="표">core_inspection</td><td class="num" data-label="행">6,566</td>
   <td class="muted" data-label="컬럼">listing_id · site · inspection_vin · inspection_mileage_km · first_registration_date · inspection_valid_from · inspection_valid_to · inspection_issued_at · check_engine · check_transmission</td></tr>
 
-<tr><td class="runid" data-label="표">core_listing</td><td class="num" data-label="행">20,684</td>
+<tr><td class="runid" data-label="표">core_listing</td><td class="num" data-label="행">21,173</td>
   <td class="muted" data-label="컬럼">listing_id · site · source_id · target_key · vehicle_id · classify_stage · classify_source · classify_conflict · price_current_won · price_detail_won</td></tr>
 
-<tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">31,181</td>
+<tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">34,155</td>
   <td class="muted" data-label="컬럼">listing_id · changed_at · field · old_value · new_value · change_kind · cause · run_id</td></tr>
 
 <tr><td class="runid" data-label="표">core_parse_issue</td><td class="num" data-label="행">0</td>
@@ -247,22 +247,22 @@
 <tr><td class="runid" data-label="표">meta_field_usage</td><td class="num" data-label="행">845</td>
   <td class="muted" data-label="컬럼">site · endpoint · json_path · core_column · usage · reason · unblock_condition · use_when · priority · observed_hits</td></tr>
 
-<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">80</td>
+<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">95</td>
   <td class="muted" data-label="컬럼">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · reject_kind · executed_at</td></tr>
 
-<tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">212</td>
+<tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">237</td>
   <td class="muted" data-label="컬럼">site · target_key · request_kind · request_url · axis_count · body · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">raw_response</td><td class="num" data-label="행">198,660</td>
+<tr><td class="runid" data-label="표">raw_response</td><td class="num" data-label="행">199,419</td>
   <td class="muted" data-label="컬럼">id · run_id · site · listing_id · source_id · endpoint · request_url · request_meta · http_code · response_meta</td></tr>
 
 <tr><td class="runid" data-label="표">raw_response_reject</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · site · listing_id · endpoint · request_url · http_code · body · reject_reason · fetched_at</td></tr>
 
-<tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">234</td>
+<tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">240</td>
   <td class="muted" data-label="컬럼">job_id · account_id · trigger · reason · from_step · scope · status · run_id · current_step · step_done</td></tr>
 
-<tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">292,824</td>
+<tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">300,972</td>
   <td class="muted" data-label="컬럼">listing_id · calc_version · dict_version · axis · value · source · prio · excluded · max_points · score</td></tr>
 
 <tr><td class="runid" data-label="표">result_axis_conflict</td><td class="num" data-label="행">0</td>
@@ -283,7 +283,7 @@
 <tr><td class="runid" data-label="표">watch_event</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · listing_id · vehicle_id · run_id · kind · before_value · after_value · cause · occurred_at · notified</td></tr>
 
-<tr><td class="runid" data-label="표">watch_item</td><td class="num" data-label="행">12</td>
+<tr><td class="runid" data-label="표">watch_item</td><td class="num" data-label="행">13</td>
   <td class="muted" data-label="컬럼">watch_id · account_id · vehicle_id · primary_listing_id · added_at · memo · target_price_won · on_price_drop · on_target_price · on_gone</td></tr>
 
 <tr><td class="runid" data-label="표">watch_note</td><td class="num" data-label="행">1</td>
@@ -323,8 +323,8 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260901T043204</span>
-  <span>2026-09-01 23:23</span>
+  <span>run 20260901T180017</span>
+  <span>2026-09-02 06:16</span>
 </footer>
 
 </body>
