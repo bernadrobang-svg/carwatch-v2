@@ -201,6 +201,46 @@ def _scoring(root: str) -> dict:
         return json.load(f)
 
 
+def record_rows(conn, listing_id: int) -> tuple:
+    """★★★★★ 09-02 마스터 물음 ② — ★ **보험 이력 절** (`S46-219`).
+
+    ★ 마스터 — 「★ 상세에 보험 정보가 없다 — ★ **원문은 오는데 화면에 안 낸다**」
+    ★★ 낼 것 — ★ 내차피해·상대차피해 건수와 금액 · 소유자 변경 · 번호 변경 ·
+      ★ 전손·도난·침수 · 용도(영업용·관용) · 압류·저당
+    ★ 값이 ★ `None` 이면 ★ **그 줄을 안 낸다** — ★ 0 으로 지어내지 않는다 (금지 12)
+    ★ 행이 아예 없으면 ★ 빈 짝 — ★ 화면이 절을 안 낸다
+    """
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(core_record)")}
+    want = (
+        ("accident_my_cnt", "내차 피해", "건"),
+        ("accident_my_cost", "내차 피해액", "원"),
+        ("accident_other_cnt", "상대차 피해", "건"),
+        ("accident_other_cost", "상대차 피해액", "원"),
+        ("accident_total_cnt", "보험 사고 합", "건"),
+        ("owner_change_cnt", "소유자 변경", "회"),
+        ("car_no_change_cnt", "번호 변경", "회"),
+        ("total_loss_cnt", "전손", "건"),
+        ("robber_cnt", "도난", "건"),
+        ("flood_total_cnt", "침수 전손", "건"),
+        ("flood_part_cnt", "침수 분손", "건"),
+    )
+    pick = [c for c, _l, _u in want if c in cols]
+    if not pick:
+        return ()
+    got = conn.execute(
+        "SELECT " + ", ".join(pick) + " FROM core_record"
+        " WHERE listing_id = ? LIMIT 1", (listing_id,)).fetchone()
+    if got is None:
+        return ()
+    by = dict(zip(pick, got, strict=True))
+    out = []
+    for col, label, unit in want:
+        if col not in by or by[col] is None:
+            continue          # ★ 모르는 것은 ★ 안 낸다 (0 이 아니다)
+        out.append({"label": label, "value": by[col], "unit": unit})
+    return tuple(out)
+
+
 def _penalty_rows(raw) -> tuple:
     """뺀 것 → 화면 행 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다."""
     if not raw:
@@ -483,6 +523,8 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         confirm_extra_pct=(max(0.0, round(
             (float(head[13] or 0) - float(head[4] or 0))
             / float(head[3]) * 100, 1)) if head[3] else 0.0),
+        # ★★★★★ 09-02 마스터 물음 ② — ★ 보험 이력 절 (`S46-219`)
+        record_rows=record_rows(conn, listing_id),
         penalties=_penalty_rows(head[14]),
         penalty_total=sum(p["points"] for p in _penalty_rows(head[14])),
         # ★ 가점 (개정 380).  없으면 「배터리 진단 없음」을 낸다

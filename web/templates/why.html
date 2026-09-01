@@ -149,6 +149,25 @@
 <p class="muted">시세보다 싸지 않거나, 시세를 낼 표본이 모자랍니다.</p>
 {% endif %}
 
+<!-- ★★★★★ 09-02 마스터 물음 ② — ★ 「★ 상세에 ★ **보험 이력 절**을 내라 —
+     ★ 성능점검 절과 나란히」 (`S46-219`).
+     ★ ★ 마스터 — 「★ 상세에 보험 정보가 없다 — ★ **원문은 오는데 화면에 안 낸다**」
+     ★ 모르는 칸은 ★ **안 낸다** — ★ 0 으로 지어내지 않는다 -->
+{% if v.record_rows %}
+<h2>보험 이력 <span class="more">보험금이 나갔는가 — 성능점검(골격)과 다릅니다</span></h2>
+<p class="muted">★ <strong>보험</strong>은 「보험금이 나갔는가」이고
+  <strong>성능점검</strong>은 「골격이 상했는가」입니다. 둘은 다른 것입니다.</p>
+<table>
+<thead><tr><th>무엇</th><th>값</th></tr></thead>
+<tbody>
+{% for r in v.record_rows %}
+<tr><td>{{ r.label }}</td>
+  <td>{% if r.unit == "원" %}{{ r.value | won }}원{% endif %}{% if r.unit != "원" %}{{ r.value | num }}{{ r.unit }}{% endif %}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
 <h2>무엇을 조회했는가</h2>
 <p class="muted">★ 「안 부른 것」과 「불렀는데 못 받은 것」은 다릅니다.
   앞은 우리 잘못이고, 뒤는 그 매물에 없는 것입니다.</p>

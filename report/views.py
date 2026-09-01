@@ -187,6 +187,10 @@ class ScoreView:
     #     ★ ★ 아직 못 받은 몫.  ★ 나머지 빈 자리가 ★ 「못 본 축」이다 (개정 298 I)
     ratio_pct: float = 0.0
     confirm_extra_pct: float = 0.0
+    # ★★★★★ 09-02 마스터 물음 ② — ★ 「★ 상세에 ★ **보험 이력 절**을 내라 —
+    #   ★ 성능점검 절과 나란히」 (`S46-219`).  ★ 원문은 오는데 화면에 안 냈다.
+    #   ★ ★ 없으면 ★ 빈 짝이다 — ★ 그때는 절을 안 낸다 (지어내지 않는다)
+    record_rows: tuple = ()
     # 뺀 것 (개정 322).  ★ 무엇을 왜 뺐는지가 보여야 한다
     penalties: tuple = ()
     penalty_total: float = 0.0
