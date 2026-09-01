@@ -50,7 +50,10 @@ LABEL = {
     "warranty.power": "동력계", "warranty.general": "일반·차체",
     "warranty.site": "사이트 검증",
     "taste.trim": "트림", "taste.option": "옵션", "taste.hud": "HUD",
-    "taste.fitting": "지정 옵션", "taste.color": "색상", "taste.sunroof": "선루프",
+    "taste.fitting": "지정 옵션", "taste.color": "색상 (외장)",
+    "taste.sunroof": "선루프",
+    # ★★★ 개정 1084·1085 — ★ 마스터 확정 09-01 로 신설한 둘
+    "taste.size": "크기 (전장)", "taste.color_int": "색상 (내장)",
 }
 
 # 갈래 — config `groups` 의 접두 규칙을 규격 이름 기준으로 다시 적는다

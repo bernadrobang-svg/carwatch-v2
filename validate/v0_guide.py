@@ -5211,7 +5211,42 @@ def s46_238_trim_not_double_counting():
     return True, f"트림 {trim} < 신차가 {origin} · 까닭이 적혀 있다"
 
 
+def s46_239_mock_has_new_axes():
+    """S46-239 — ★ 새 축이 ★ 시안에 들어갔는가 (개정 1086 · 마스터 09-01 「넌 시안 고쳤니?」).
+
+    ★ 시안은 ★ **모양의 정본**이다 (`ref/screens/README.md`).
+      ★ ★ 배점 숫자는 `f-table` 이 정본이지만 ★ **축이 화면에 있느냐**는 시안이 정한다.
+    ★ 09-01 — ★ 내가 ★ `taste.size`·`taste.color_int` 두 축을 만들고 ★ **시안을 안 고쳤다**.
+      ★ ★ 그러면 ★ 개발측이 ★ 그 줄을 안 만든다 — ★ 조용히 사라진다 (개정 506 자리).
+    ★ 잣대 — ★ `components` 의 취향 축 이름이 ★ 시안 어딘가에 글로 나오는가.
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    comp = c.get("components") or {}
+    mocks = ROOT / "ref" / "screens"
+    if not mocks.is_dir():
+        return False, "ref/screens 가 없다"
+    blob = " ".join(_read(q) for q in sorted(mocks.glob("*.html")))
+    # ★ 낱말 하나로 세면 ★ 딴 데 쓰인 「크기」·「색」에 걸려 ★ 지키는 척한다 (오판 241 무늬).
+    #   ★ **축 표에 쓰는 꼴 그대로** 찾는다
+    want = {"taste.size": "크기 (전장)", "taste.color_int": "색상 (내장)",
+            "taste.color": "색상 (외장)", "taste.trim": "트림"}
+    # ★ 낱말만 세면 ★ 「글자 크기」·「여섯 축의 합」에도 걸린다.
+    #   ★ **축 이름 ＋ 그 배점**이 함께 있어야 센다
+    alt = {k: rf"{re.escape(n)}\s*<b>[\d.]+</b>\s*/\s*{comp.get(k)}"
+           for k, n in (("taste.size", "크기"), ("taste.color_int", "색(내)"),
+                        ("taste.color", "색(외)"), ("taste.trim", "트림"))}
+    miss = [f"{k}({v})" for k, v in want.items()
+            if comp.get(k) and v not in blob
+            and not re.search(alt[k], blob)]
+    if miss:
+        return False, f"★ 시안에 없는 축 {len(miss)}개 — " + " · ".join(miss)
+    return True, f"취향 축 {len(want)}개가 다 시안에 있다"
+
+
 CHECKS = (
+    ("S46-239", "새 축이 시안에 들어갔는가", s46_239_mock_has_new_axes),
     ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
     ("S46-238", "트림이 신차가를 두 번 안 세는가", s46_238_trim_not_double_counting),
     ("S46-232", "예산 곡선이 한계에서 0 인가", s46_232_budget_curve_is_log),

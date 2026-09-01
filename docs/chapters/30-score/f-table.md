@@ -87,10 +87,10 @@ checks   S46-38 · S46-39
 |  | 옵션 | `taste.option` | **43** |
 |  | HUD | `taste.hud` | **10** |
 |  | 지정 옵션 | `taste.fitting` | **18** |
-|  | 색상 | `taste.color` | **25** |
+|  | 색상 (외장) | `taste.color` | **25** |
 |  | 선루프 | `taste.sunroof` | **8** |
-|  | taste.size | `taste.size` | **31** |
-|  | taste.color_int | `taste.color_int` | **10** |
+|  | 크기 (전장) | `taste.size` | **31** |
+|  | 색상 (내장) | `taste.color_int` | **10** |
 |  |  | **합 28축** | **910** |
 
 <!-- AUTO:배점표 끝 -->
