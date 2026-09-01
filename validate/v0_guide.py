@@ -5146,7 +5146,67 @@ def s46_233_size_axis_never_zero():
                   f"실측 {len(known)}종 · 미확인 {len(pend)}종")
 
 
+def s46_236_interior_color_axis():
+    """S46-236 — ★ 내장색 축이 있는가 · ★ 기피가 0점이 아닌가 (개정 1085).
+
+    ★ 마스터 — 「★ 나는 약간 블루 계열의 외장재를 찾고 ★ 약간의 블랙 계열의 내장재를」
+    ★ 그런데 ★ 외장만 재고 ★ 내장은 안 쟀다.  ★ `color_int_raw` 는 97.5% 차 있다.
+    ★ 그리고 ★ 기피색이 ★ **0점**이었다 — ★ 「극단적으로 주지 말라」는 ★ 색에도 든다.
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    comp = c.get("components") or {}
+    t = (c.get("axis_rules") or {}).get("taste") or {}
+    bad = []
+    if not comp.get("taste.color_int"):
+        bad.append("내장색 축(taste.color_int)이 없다")
+    for key, label in (("color_points", "외장"), ("color_int_points", "내장")):
+        pts = t.get(key) or {}
+        if not pts:
+            bad.append(f"{label} 점수표가 없다")
+            continue
+        if pts.get("avoided", 0) <= 0:
+            bad.append(f"{label} 기피가 {pts.get('avoided')}점 — 0을 주지 않는다")
+        if pts.get("preferred", 0) <= pts.get("default", 0):
+            bad.append(f"{label} 선호가 보통보다 높지 않다")
+    if not (t.get("color_int_groups") or {}).get("preferred"):
+        bad.append("내장색 목록이 없다")
+    tot = sum(v for v in comp.values() if isinstance(v, (int, float)))
+    if tot != 910:
+        bad.append(f"배점 합이 {tot} 다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, (f"외장 {comp.get('taste.color')} · 내장 {comp.get('taste.color_int')} · "
+                  f"기피 {t['color_points']['avoided']}/{t['color_int_points']['avoided']} · 합 910")
+
+
+def s46_238_trim_not_double_counting():
+    """S46-238 — ★ 트림이 ★ 신차가를 두 번 세지 않는가 (개정 1085).
+
+    ★ 규격이 스스로 적었다 — 「★ 트림 ＋ 옵션 을 더하면 ★ 곧 신차가다」.
+      ★ ★ 그런데 ★ `value.origin` 이 ★ 이미 신차가 대비를 잰다.
+    ★ 방향도 반대다 — ★ 트림은 비쌀수록 만점 · ★ 예산·신차가는 쌀수록 만점.
+    ★ 잣대 — ★ 트림이 ★ 신차가 대비(75)보다 ★ 작아야 한다.  ★ 그리고 까닭이 적혀 있어야 한다.
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    comp = c.get("components") or {}
+    t = (c.get("axis_rules") or {}).get("taste") or {}
+    trim = comp.get("taste.trim") or 0
+    origin = comp.get("value.origin") or 0
+    if trim >= origin:
+        return False, (f"★ 트림 {trim} 이 신차가 {origin} 보다 작지 않다 — "
+                       "★ 같은 것을 두 번 센다")
+    if "_trim_why" not in t:
+        return False, "★ 트림 배점을 바꾼 까닭이 규격에 없다"
+    return True, f"트림 {trim} < 신차가 {origin} · 까닭이 적혀 있다"
+
+
 CHECKS = (
+    ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
+    ("S46-238", "트림이 신차가를 두 번 안 세는가", s46_238_trim_not_double_counting),
     ("S46-232", "예산 곡선이 한계에서 0 인가", s46_232_budget_curve_is_log),
     ("S46-233", "크기 축이 0점을 안 주는가", s46_233_size_axis_never_zero),
     ("S46-230", "④ 셈이 같은 판 안만 세는가", s46_230_schema_change_counts_one_run),
