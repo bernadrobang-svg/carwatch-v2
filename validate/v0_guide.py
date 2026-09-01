@@ -4676,12 +4676,7 @@ def s46_213_recommend_has_no_sold():
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     _sys.path.insert(0, str(ROOT))
-    from contracts import ROLE_ADMIN, Account
-    from report.screens.build import (
-        _sold_words,
-        view_recommend_tabs,
-    )
-    from report.screens.views import ListingFilter
+    from report.screens.build import _sold_words
 
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
@@ -4689,10 +4684,12 @@ def s46_213_recommend_has_no_sold():
         "SELECT calc_version FROM result_score LIMIT 1").fetchone()
     if ver is None:
         return True, "판정 결과가 없다 — 잴 것이 없다"
-    got = view_recommend_tabs(Account(1, ROLE_ADMIN, "마스터"), conn,
-                              ver[0], ListingFilter(), tab="1",
-                              root=str(ROOT))
-    ids = [r.listing_id for r in got.rows]
+    # ★★★★★ 09-03 — ★ 화면을 그리는 검사는 ★ **한 판에 한 번만** 돈다.
+    #   ★ `check_all` 이 ★ 검사마다 화면을 그리면 ★ 한 판이 통째로 느려진다
+    #   ★ ★ (실측 09-03 — ★ 새 검사 셋을 넣고 ★ 열 분이 넘었다).
+    #   ★ ★ ★ 낸 줄은 ★ 60줄뿐이라 ★ 한 번이면 넉넉하다
+    got = _recommend_rows_once(conn, ver[0])
+    ids = [r.listing_id for r in got]
     if not ids:
         return True, "추천이 빈 화면이다 — 잴 것이 없다"
     words = sorted(_sold_words(str(ROOT)))
@@ -5217,6 +5214,27 @@ def s46_235_screen_hides_unsellable():
                   f"(낱말 {len(words)}가지)")
 
 
+_REC_ROWS = None
+
+
+def _recommend_rows_once(conn, calc_version: str):
+    """추천 화면이 낸 줄 — ★ **한 판에 한 번만** 그린다 (검사가 여럿이라서)."""
+    global _REC_ROWS
+    if _REC_ROWS is None:
+        import sys as _sys
+
+        _sys.path.insert(0, str(ROOT))
+        from contracts import ROLE_ADMIN, Account
+        from report.screens.build import view_recommend_tabs
+        from report.screens.views import ListingFilter
+
+        got = view_recommend_tabs(Account(1, ROLE_ADMIN, "마스터"), conn,
+                                  calc_version, ListingFilter(), tab="1",
+                                  root=str(ROOT))
+        _REC_ROWS = list(got.rows)
+    return _REC_ROWS
+
+
 def s46_237_recommend_in_budget():
     """S46-237 — ★ 추천에 ★ **예산 넘는 것**이 있으면 실패.
 
@@ -5225,26 +5243,18 @@ def s46_237_recommend_in_budget():
       ★ ★ 배점이 0 이거나 ★ 판정이 없으면 ★ 잴 것이 없다
     """
     import sqlite3
-    import sys as _sys
 
     db = ROOT / "carwatch.db"
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
-    _sys.path.insert(0, str(ROOT))
-    from contracts import ROLE_ADMIN, Account
-    from report.screens.build import view_recommend_tabs
-    from report.screens.views import ListingFilter
-
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
     ver = conn.execute(
         "SELECT calc_version FROM result_score LIMIT 1").fetchone()
     if ver is None:
         return True, "판정 결과가 없다 — 잴 것이 없다"
-    got = view_recommend_tabs(Account(1, ROLE_ADMIN, "마스터"), conn,
-                              ver[0], ListingFilter(), tab="1",
-                              root=str(ROOT))
-    ids = [r.listing_id for r in got.rows]
+    # ★ 화면은 ★ **한 판에 한 번만** 그린다 (검사가 둘이라서)
+    ids = [r.listing_id for r in _recommend_rows_once(conn, ver[0])]
     if not ids:
         return True, "추천이 빈 화면이다 — 잴 것이 없다"
     marks = ",".join("?" * len(ids))
