@@ -48,33 +48,63 @@
       "value": 4751,
       "_확인": "실측 09-01 — 모델Y 4,751×1,921×1,624 · 축거 2,890",
       "_주의": "★ 세대마다 다르다 — ★ 주니퍼 4,790 · ★ 장축 L 4,976.  ★ 우리 매물 대부분은 초기형·주니퍼다"
+    },
+    "G80_25T": {
+      "value": 5005,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — ko.wikipedia 「제네시스 G80」 RG3 가솔린 2.5 터보 전장 5,005 (스포츠 패키지 4,995) · 매물 2020~2026 이 다 RG3 한 세대다"
+    },
+    "G70_25T": {
+      "value": 4685,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — ko.wikipedia 「제네시스 G70」 전장 4,685×1,850 · 매물 2023~2026"
+    },
+    "G70_20T": {
+      "value": 4685,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — 위와 같은 몸통(IK 한 세대) · 매물 2017~2023"
+    },
+    "GV60": {
+      "value": 4545,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — ko.wikipedia 「제네시스 GV60」 전장 4,545×1,890 · 매물 2021~2025"
+    },
+    "SPORTAGE_LPI": {
+      "value": 4660,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — ko.wikipedia 「기아 스포티지」 NQ5 전장 4,660×1,865 · 매물 2022~2026 이 다 NQ5 다"
+    },
+    "XC40_IMPORT": {
+      "value": 4425,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Volvo XC40」 Length 4,425mm · 매물 2018~2026 한 세대 · XC40_EV 와 같은 몸통이다"
+    },
+    "POLESTAR2_EV": {
+      "value": 4606,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Polestar 2」 Length 4,606mm · 매물 2022~2025"
+    },
+    "POLESTAR4_EV": {
+      "value": 4839,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Polestar 4」 Length 4,839mm · 매물 2025~2026"
+    },
+    "ID5_EV": {
+      "value": 4584,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Volkswagen ID.5」 Length 4,584mm"
+    },
+    "UX300E_EV": {
+      "value": 4495,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Lexus UX」 Length 4,495mm"
     }
   },
   "_pending": {
     "_note": "★★ 아직 ★ **확인 못 한 것**이다.  ★ 내 기억일 뿐이라 ★ 점수에 쓰지 않는다.  ★ 확인한 뒤 `length_mm` 로 옮긴다",
-    "POLESTAR4_EV": "미확인",
-    "ID5_EV": "미확인",
-    "POLESTAR2_EV": "미확인",
     "POLESTAR3_EV": "미확인",
     "X3_IMPORT": "미확인",
     "GLC_IMPORT": "미확인",
     "XC60_IMPORT": "미확인",
     "NX_HEV": "미확인",
     "RX_IMPORT": "미확인",
-    "UX300E_EV": "미확인",
-    "_남은수": "★ 실측 09-01 — ★ 대상 32종 중 ★ **10종 확인** · ★ 22종 남았다",
-    "_다음": "★ G80·G70·GV60 · 스포티지·그랜저 · X3·GLC · NX·RX·ES·UX300e · XC60·S60·V60CC·EX60·XC40(가솔린) · 폴스타 2·3·4 · ID.5",
-    "G80_25T": "미확인",
+    "_남은수": "★★ 실측 09-02 — ★ 대상 32종 중 ★ **20종 확인** · ★ 12종 남았다.  ★ 남은 것은 ★ **세대가 갈리는 차종**이다 — ★ 매물 연식이 두 세대에 걸쳐 있어 ★ ★ 「연식 구간으로 나눠 적어라」(명령서 10)를 지키려면 ★ **세대 갈림 해**가 있어야 한다. ★ ★ ★ 전장 값은 세대별로 다 받아 뒀다(회차 기록) — ★ 갈림 해를 못 확인해 안 넣었다",
+    "_다음": "★ 남은 12종 — POLESTAR3_EV · X3_IMPORT · GLC_IMPORT · XC60_IMPORT · NX_HEV · RX_IMPORT · G80_EV · GRANDEUR_LPG · ES_HEV · S60_IMPORT · V60CC_IMPORT · EX60_IMPORT",
     "G80_EV": "미확인",
-    "G70_25T": "미확인",
-    "G70_20T": "미확인",
-    "GV60": "미확인",
-    "SPORTAGE_LPI": "미확인",
     "GRANDEUR_LPG": "미확인",
     "ES_HEV": "미확인",
     "S60_IMPORT": "미확인",
     "V60CC_IMPORT": "미확인",
-    "EX60_IMPORT": "미확인",
-    "XC40_IMPORT": "미확인 — ★ 전기(4,425)와 가솔린이 다를 수 있다.  ★ 베끼지 않는다"
+    "EX60_IMPORT": "미확인"
   }
 }
