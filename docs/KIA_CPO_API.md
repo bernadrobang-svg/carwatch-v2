@@ -55,7 +55,7 @@ checks   S46-5 · S46-31
 | `state.year` 연식 | 80 | `modelYear` · **`firstRegisteredOn`** | 2025 · **2024-10-11** |
 | `value.mileage` 주행 | 107 | `drivingDistance` | 32,842 |
 | 연료 | — | `modelEngine` | 1.6 가솔린 |
-| `taste.color` 색상 | 15 | `exteriorColorCodeName` · `interiorColorCodeName` | 스노우화이트펄 · 블랙 |
+| `taste.color` 색상(외장) | 25 | `exteriorColorCodeName` · `interiorColorCodeName` | 스노우화이트펄 · 블랙 |
 | `warranty.site` 사이트 검증 | 36 | ★ `classification` | **LITE / EXCLUSIVE** (등급이 있다) |
 | `state.accident` 사고 | 48 | ★ `customKeywords` | **「보험이력없음」** |
 | 사진 | — | `exteriorImageUrl` · `interiorImageUrl` | CDN |
@@ -73,7 +73,7 @@ checks   S46-5 · S46-31
 ## 목록만으로 채워지는 축
 
 ```
-채워진다  트림 59 · 연식 80 · 주행 107 · 예산 95 · 색상 15 · 사이트검증 36 ·
+채워진다  트림 20 · 연식 80 · 주행 107 · 예산 95 · 색상 25 · 사이트검증 36 ·
           사고 48(`보험이력없음` 키워드 기준)                      ★ 합 440 / 910
 못 채운다 신차가 75 · 시세 30 · 옵션 43 · HUD 18 · 지정옵션 18 · 선루프 12 ·
           골격 40 · 외판 26 · 수리비 26 · 특수사고 20 · 소모품 14 · 누유 14 ·
@@ -120,7 +120,7 @@ consultationCount · classification · customKeywords · ★ performanceReportPd
 | `state.year` 연식 | 80 | `car.firstRegisteredOn` | **2024-02-19** (날짜) |
 | `value.mileage` 주행 | 107 | `car.drivingDistance` | 31,486 |
 | `value.budget` 예산 | 95 | `car.price` · `discount.discountedPrice` | 4,789만 → **4,693만** (96만 할인) |
-| `taste.color` 색상 | 15 | `car.color` | 스노우화이트펄 / 토프 |
+| `taste.color` 색상(외장) | 25 | `car.color` | 스노우화이트펄 / 토프 |
 | `warranty.site` 사이트 검증 | 36 | ★ `classification` | **PREMIUM** (LITE · EXCLUSIVE 외에 ★ PREMIUM 도 있다) |
 | — 옵션가 | — | `optionPrice` · `optionCount` | 600만 · 102개 |
 | — 판매자 | — | `productSeller` · `salesOffice` | 안기태 · 경기 평택 · 지점/층/구역 |

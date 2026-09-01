@@ -320,7 +320,7 @@ BMW Premium Selection   ★ `bmw-premiumselection.co.kr` · `premiumselection.bm
 | ★ `value.origin` 신차가 | **75** | ★ **`release_price`** | ★ **7613** (현재가 7000) |
 | ★ `warranty.general`·`power` | **54** | ★ **`car_info.warranty`** | ★ **「2031년 1월까지 (120,000km)」** |
 | ★ `taste.option` 옵션 | **43** | ★ **`spec[].list[].txt`** | 「오픈포어 우드 인테리어 트림」 … |
-| `taste.color` 색상 | 15 | `color.title`·`value` | Black · `#000000` |
+| `taste.color` 색상(외장) | 25 | `color.title`·`value` | Black · `#000000` |
 | `state.year` 연식 | 80 | `year` | 2026 |
 | `value.mileage` 주행 | 107 | `mileage` | 4748 |
 | `warranty.site` 사이트검증 | 36 | `isCertified` · `isCheckComplete` · `benefit` 「191항목」 | true |

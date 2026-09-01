@@ -5245,7 +5245,43 @@ def s46_239_mock_has_new_axes():
     return True, f"취향 축 {len(want)}개가 다 시안에 있다"
 
 
+def s46_240_recommend_axes_match_config():
+    """S46-240 — ★ 추천 규격·시안의 합이 ★ config 와 같은가 (개정 1086).
+
+    ★ 09-01 — ★ 배점을 세 번 고치면서 ★ **손으로 쓴 것**을 세 번 다 빠뜨렸다.
+      ★ ★ 오판 242(규격 제목) · 244(시안) · 그리고 규격 본문.  ★ **같은 무늬 셋**이다.
+    ★ 잣대 — ★ 추천이 쓰는 여섯 축의 합을 ★ `config` 에서 세고
+      ★ ★ 그 수가 ★ `RECOMMEND_SCREEN.md` 와 ★ 추천 시안에 ★ 있는가.
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    comp = c.get("components") or {}
+    axes = ("value.budget", "value.mileage", "state.year",
+            "taste.color", "taste.color_int", "taste.size")
+    miss = [a for a in axes if not comp.get(a)]
+    if miss:
+        return False, "★ config 에 없는 축 — " + " · ".join(miss)
+    want = sum(comp[a] for a in axes)
+    spec = _read(ROOT / "docs" / "RECOMMEND_SCREEN.md")
+    mock = _read(ROOT / "ref" / "screens" / "v4m_recommend_시안.html")
+    bad = []
+    if str(want) not in spec:
+        bad.append(f"RECOMMEND_SCREEN.md 에 {want} 이 없다")
+    if str(want) not in mock:
+        bad.append(f"추천 시안에 {want} 이 없다")
+    for stale in ("297", "네 축"):
+        if stale in spec:
+            bad.append(f"규격에 옛 값 「{stale}」이 남았다")
+        if stale in mock:
+            bad.append(f"시안에 옛 값 「{stale}」이 남았다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"추천 여섯 축 합 {want} 이 config·규격·시안에서 같다"
+
+
 CHECKS = (
+    ("S46-240", "추천 축 합이 config·규격·시안에서 같은가", s46_240_recommend_axes_match_config),
     ("S46-239", "새 축이 시안에 들어갔는가", s46_239_mock_has_new_axes),
     ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
     ("S46-238", "트림이 신차가를 두 번 안 세는가", s46_238_trim_not_double_counting),
