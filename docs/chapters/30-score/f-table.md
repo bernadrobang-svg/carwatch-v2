@@ -55,7 +55,7 @@ checks   S46-38 · S46-39
 
 <!-- AUTO:배점표 시작 -->
 
-## 축 — 26축
+## 축 — 27축
 
 | 갈래 | 축 | 축 id | **점수** |
 |---|---|---|--:|
@@ -83,13 +83,14 @@ checks   S46-38 · S46-39
 |  | 일반·차체 | `warranty.general` | **22** |
 |  | 사이트 검증 | `warranty.site` | **36** |
 | **④ 취향 165** |  |  |  |
-|  | 트림 | `taste.trim` | **59** |
+|  | 트림 | `taste.trim` | **40** |
 |  | 옵션 | `taste.option` | **43** |
-|  | HUD | `taste.hud` | **18** |
+|  | HUD | `taste.hud` | **10** |
 |  | 지정 옵션 | `taste.fitting` | **18** |
 |  | 색상 | `taste.color` | **15** |
-|  | 선루프 | `taste.sunroof` | **12** |
-|  |  | **합 26축** | **910** |
+|  | 선루프 | `taste.sunroof` | **8** |
+|  | taste.size | `taste.size` | **31** |
+|  |  | **합 27축** | **910** |
 
 <!-- AUTO:배점표 끝 -->
 

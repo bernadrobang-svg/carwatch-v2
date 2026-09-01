@@ -5063,7 +5063,92 @@ def s46_231_all_sites_in_filter():
     return True, "사이트 단추가 매물이 있는가로 갈린다"
 
 
+def s46_232_budget_curve_is_log():
+    """S46-232 — ★ 예산 곡선이 ★ 한계에서 0 인가 (개정 1084 · 마스터 09-01).
+
+    ★ 마스터 — 「★ 문을 닫지 말고 ★ 로그 점수화를 하라고 했잖아.
+      ★ ★ 4,000 이상이면 거의 0점에 가깝게 주면 돼」
+    ★ 전에는 ★ **한계값을 100%** 로 놓고 재서 ★ 한계선에서 ★ **57.0** 을 줬다.
+      ★ ★ 그래서 4,450 짜리도 21.9 를 챙겨 ★ 나머지 815점에 묻혔다.
+    ★ 잣대 — ① 기본(100%)이 만점인가 ② 한계(133%)가 ★ **1점 미만**인가
+             ③ ★ 문(gate)을 안 만들었는가 — ★ 마스터께서 물리셨다
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    v = (c.get("axis_rules") or {}).get("value") or {}
+    cv = v.get("budget_curve")
+    if not cv:
+        return False, "budget_curve 가 없다"
+
+    def ip(x):
+        cc = sorted(cv)
+        if x <= cc[0][0]:
+            return cc[0][1]
+        if x >= cc[-1][0]:
+            return cc[-1][1]
+        for (a, b), (d, e) in zip(cc, cc[1:]):
+            if a <= x <= d:
+                return b + (e - b) * (x - a) / (d - a)
+        return 0
+
+    bad = []
+    if ip(100) < 94:
+        bad.append(f"기본(100%)이 만점이 아니다 — {ip(100):.1f}/95")
+    if ip(133.3) >= 1.0:
+        bad.append(f"한계(133%)에서 {ip(133.3):.1f}점을 준다 — 0 이어야 한다")
+    if "budget_gate" in _j.dumps(c.get("grade_gates") or {}):
+        bad.append("★ 예산에 문(gate)을 만들었다 — 마스터께서 물리셨다")
+    if (c.get("budget_manwon") or {}).get("base_ratio") is None:
+        bad.append("base_ratio 가 없다 — 기본값 차등이 안 깔렸다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, (f"기본 {ip(100):.0f}/95 · 한계 {ip(133.3):.1f} · "
+                  "문 없이 로그로만 꺼진다")
+
+
+def s46_233_size_axis_never_zero():
+    """S46-233 — ★ 크기 축이 ★ 0점을 안 주는가 · ★ 제원이 실측인가 (개정 1084).
+
+    ★ 마스터 — 「★ EX30 류가 거의 0점이겠지.  ★ 극단적으로 주지 말고 ★ 로그로 줘야지」
+    ★ 그리고 ★ 제원을 ★ **기억으로 박으면** ★ 나중에 뒤집힌다 (오판 무늬 ㉯) —
+      ★ `_pending` 에 있는 것은 ★ 점수에 쓰지 않는다.
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    t = (c.get("axis_rules") or {}).get("taste") or {}
+    cv = t.get("size_curve")
+    comp = c.get("components") or {}
+    bad = []
+    if not cv:
+        return False, "size_curve 가 없다"
+    if comp.get("taste.size") is None:
+        bad.append("taste.size 배점이 없다")
+    lo = min(y for _, y in cv)
+    if lo <= 0.05:
+        bad.append(f"가장 작은 차가 {lo * 100:.0f}% — ★ 0점에 가깝다")
+    if t.get("size_metric") != "length_mm":
+        bad.append("잣대가 전장이 아니다 (마스터 09-01 확정)")
+    tot = sum(v for v in comp.values() if isinstance(v, (int, float)))
+    if tot != 910:
+        bad.append(f"배점 합이 {tot} 다 — 910 이어야 한다")
+    dim = _j.loads(_read(ROOT / "config" / "dimensions.json") or "{}")
+    known = dim.get("length_mm") or {}
+    pend = {k: v for k, v in (dim.get("_pending") or {}).items()
+            if not k.startswith("_")}
+    overlap = sorted(set(known) & set(pend))
+    if overlap:
+        bad.append("확인된 것과 미확인이 겹친다 — " + " · ".join(overlap[:3]))
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, (f"가장 작은 차 {lo * 100:.0f}% · 전장 기준 · 배점 합 910 · "
+                  f"실측 {len(known)}종 · 미확인 {len(pend)}종")
+
+
 CHECKS = (
+    ("S46-232", "예산 곡선이 한계에서 0 인가", s46_232_budget_curve_is_log),
+    ("S46-233", "크기 축이 0점을 안 주는가", s46_233_size_axis_never_zero),
     ("S46-230", "④ 셈이 같은 판 안만 세는가", s46_230_schema_change_counts_one_run),
     ("S46-231", "매물 있는 사이트가 거르개에 다 있는가", s46_231_all_sites_in_filter),
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
