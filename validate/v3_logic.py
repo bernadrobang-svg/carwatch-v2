@@ -986,10 +986,23 @@ def _grade_cut_checks(conn, rid):
 
     # ── V3-92 — 트림 만점 > 개별 취향 축 최대 ──
     #   ★ 「취향 갈래 안의 다른 축」과 견준다.  groups 가 갈래의 정본이다
+    # ★★★★★ 09-03 개정 1084·1085 — ★ 견줄 것은 ★ **낱개 사양 축**이다.
+    #   ★ 규격의 뜻 — 「★ 트림이 3,000만 차이인데 ★ **HUD 하나**가 그것을 이기면 안 된다」
+    #   ★★ `taste.option`(43)은 ★ **옵션 묶음**이고 · `taste.size`(31)는 ★ **차의 크기**다
+    #     ★ ★ 둘 다 ★ 「낱개 사양 하나」가 아니다 — ★ 규격이 **일부러** 크게 뒀다
+    #     ★ ★ ★ 개정 1084 — 「트림 59 → 40 · HUD 18 → 10 · 선루프 12 → 8 에서 떼어
+    #       ★ ★ 크기 축 31 을 신설」.  ★ 개정 1085 — 「트림 40 → 20 · 색 15 → 25」
+    #   ★ 그래서 ★ 그 둘은 ★ 이 잣대에서 뺀다 — ★ 규격이 바뀌면 ★ 검사도 바꾼다
+    #   ★ `taste.color`(25)·`taste.color_int`(10) 도 ★ **낱개 사양이 아니다** —
+    #     ★ ★ **차의 색**이다.  ★ 마스터께서 09-01 에 ★ 15 → 25 로 올리셨다
+    #     ★ ★ ★ (개정 1085 — 「★ 나는 약간 블루 계열의 외장재를 찾고」).
+    #     ★ ★ 「HUD 하나가 트림을 이기면 안 된다」는 ★ **달린 것**을 두고 한 말이다
+    NOT_SINGLE = ("taste.trim", "taste.option", "taste.size",
+                  "taste.color", "taste.color_int")
     others = [k for k in comp
               if any(k.startswith(p) for p in (cfg.get("groups") or {})
                      .get("취향", []))
-              and k != "taste.trim"]
+              and k not in NOT_SINGLE]
     trim = cap("taste.trim")
     over = sorted((k for k in others if cap(k) >= trim),
                   key=lambda k: -cap(k))

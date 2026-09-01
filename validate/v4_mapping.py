@@ -686,6 +686,11 @@ TARGET_CONFIG_KEYS = ("as_of", "depreciation", "SPEC_DEFAULT_ON",
                       "SPEC_DEFAULT_OFF",
                       # 차종 단위 — 트림 신차가 사다리 · 옵션가 P90 (F-scoring ④)
                       "trim_ladder", "option_base",
+                      # ★★★★★ 09-03 개정 1084 — ★ 차종별 **전장** (크기 축 31).
+                      #   ★ `config/dimensions.json` 이 원천이다 —
+                      #   ★ ★ **차종 설정**이지 ★ 매물 값이 아니다 (F-1 을 지킨다).
+                      #   ★ ★ ★ 같은 차종이면 ★ 매물이 달라도 ★ 같은 값이다
+                      "DIMENSIONS",
                       # 실행 단위 — 사용자가 끈 취향 · 고른 옵션 (개정 292 ④)
                       "taste_off", "picked_options",
                       # 사이트 단위 — 그 사이트의 우수등급 규칙 (개정 306)

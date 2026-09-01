@@ -89,16 +89,22 @@ def record_change(
     changed_at: str,
     change_kind: str,
     cause: str | None = None,
+    run_id: str | None = None,
 ) -> None:
-    """변경 1건을 적재한다.  삭제하지 않는다."""
+    """변경 1건을 적재한다.  삭제하지 않는다.
+
+    ★★★★★ 09-03 (`S46-230`) — ★ `run_id` 를 함께 남긴다.
+      ★ 「동시 발생」을 ★ **한 판 안**으로 세려면 ★ 그 행이 어느 판인지 알아야 한다
+    """
     conn.execute(
         "INSERT OR REPLACE INTO core_listing_change"
-        "(listing_id,changed_at,field,old_value,new_value,change_kind,cause)"
-        " VALUES (?,?,?,?,?,?,?)",
+        "(listing_id,changed_at,field,old_value,new_value,change_kind,cause,"
+        " run_id)"
+        " VALUES (?,?,?,?,?,?,?,?)",
         (listing_id, changed_at, field,
          None if old is None else str(old),
          None if new is None else str(new),
-         change_kind, cause),
+         change_kind, cause, run_id),
     )
 
 
@@ -226,11 +232,22 @@ def classify_invariant_change(conn, lid: str, field: str, old, new,
     #       ★ ★ 로 잘못 갈렸고 ★ `S4` 가 통째로 멈췄다.
     #     ★ ★ 시간이 갈수록 ★ **반드시** 넘는다 — ★ 누적은 「동시」가 아니다
     #   ★ 관측 시각이 있으면 그것을 쓴다 — ★ 이 함수가 이미 받고 있다
-    since = _today(parsed) or str(observed_at)[:10]
-    n = conn.execute(
-        "SELECT COUNT(DISTINCT listing_id) FROM core_listing_change"
-        " WHERE field = ? AND change_kind = 'invariant_violation'"
-        " AND changed_at >= ?", (field, since)).fetchone()[0]
+    # ★★★★★ 09-03 (`S46-230`) — ★ 「동시」를 ★ **한 판 안**으로 센다.
+    #   ★ 날로 세면 ★ 같은 날 다시 돌릴 때 ★ 앞 판이 남긴 행을 **또 센다** —
+    #   ★ ★ **실패가 다음 실패를 만든다**.  ★ `run_id` 가 있으면 그것으로 좁힌다.
+    #   ★ ★ ★ `run_id` 를 모르면 ★ 옛 길(날)로 내린다 — ★ 그때만이다
+    run_id = parsed.get("_run_id") or parsed.get("run_id")
+    if run_id:
+        n = conn.execute(
+            "SELECT COUNT(DISTINCT listing_id) FROM core_listing_change"
+            " WHERE field = ? AND change_kind = 'invariant_violation'"
+            " AND run_id = ?", (field, str(run_id))).fetchone()[0]
+    else:
+        since = _today(parsed) or str(observed_at)[:10]
+        n = conn.execute(
+            "SELECT COUNT(DISTINCT listing_id) FROM core_listing_change"
+            " WHERE field = ? AND change_kind = 'invariant_violation'"
+            " AND changed_at >= ?", (field, since)).fetchone()[0]
     if n >= _schema_change_min():
         return CAUSE_SCHEMA
     # ① 이전 원문을 실제로 읽어 본다.  ★ 못 읽으면 분류하지 않는다 —
@@ -374,6 +391,27 @@ def _drop_impossible_origin(parsed: dict) -> dict:
         pass
     return parsed
 
+def _note_skipped(conn, lid, field: str, cause: str, at: str) -> None:
+    """★★★★★ 09-03 (`S46-230` 3번) — ★ 「원인을 못 가른 불변 변경」을 ★ **센다**.
+
+    ★ 규격 `STEP 50` 8번 — 「★ **경고 — 기록하고 계속**」.
+      ★ ★ 판을 죽이지 않는다.  ★ 그 매물만 건너뛴다.
+    ★★ 다만 ★ **조용히 넘기지 않는다** — ★ 이력에 남기고 ★ 리포트가 수로 낸다.
+      ★ ★ 「고쳤습니다」만 적는 것이 ★ 이 프로젝트의 가장 큰 실패 모드다
+    """
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO core_listing_change"
+            "(listing_id,changed_at,field,old_value,new_value,change_kind,"
+            " cause,run_id) VALUES (?,?,?,?,?,?,?,?)",
+            (lid, at, f"{field}:skipped", None, None, "anomaly",
+             cause or "분류 못 함", None))
+        commit(conn)
+    except sqlite3.Error:
+        # ★ 기록을 못 남겨도 ★ 판은 이어 간다 — ★ 그것이 규격이 시킨 것이다
+        pass
+
+
 def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int:
     """파싱 결과를 core_listing 에 적재한다.
 
@@ -427,9 +465,18 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
             cause = classify_invariant_change(conn, lid, field, old[field],
                                               parsed[field], parsed,
                                               observed_at)
+            # ★★★★★ 09-03 (`S46-230` 2번) — ★ ①③ 으로 갈려 ★ **건너뛴 것**도
+            #   ★ 행을 남기면 ★ 그 행이 ★ 다음 판의 「동시」 셈에 ★ **다시 든다**.
+            #   ★ ★ 곧 ★ **실패가 다음 실패를 만든다**.
+            #   ★★ 그래서 ★ 갈래를 ★ **먼저 본다** — ★ ①③ 이면
+            #     ★ ★ `invariant_violation` 이 아니라 ★ `anomaly` 로 남긴다.
+            #     ★ ★ ★ **이력은 그대로 남는다** — ★ 사람이 다 볼 수 있다 (P3)
+            skipped = cause in (CAUSE_PARSE, CAUSE_REPLACED)
             record_change(conn, lid, field, old[field], parsed[field],
-                          observed_at, "invariant_violation",
-                          cause=cause or None)
+                          observed_at,
+                          "anomaly" if skipped else "invariant_violation",
+                          cause=cause or None,
+                          run_id=parsed.get("_run_id") or parsed.get("run_id"))
             commit(conn)
             if cause == CAUSE_SOURCE_EDIT:
                 # ★ 원문이 실제로 바뀌었다 (딜러 오기입 정정).
@@ -450,12 +497,14 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
                 #     (금지 「원인 분류 없이 새 값으로 덮어쓰는 것」).
                 #     ★ ★ 이력은 위에서 이미 남겼다 — ★ 사람이 볼 수 있다
                 return 0
-            raise ValidationError(
-                f"불변 필드 변경: {field} {old[field]!r} → {parsed[field]!r} "
-                f"— 원인 {cause or '분류 못 함'}. 이 원인은 사람이 봐야 한다",
-                listing_id=lid,
-                step="STEP 29",
-            )
+            # ★★★★★ 09-03 (`S46-230` 3번) — ★ **판을 통째로 죽이지 않는다.**
+            #   ★ 규격 `STEP 50` 8번은 ★ 「**경고 — 기록하고 계속**」이다.
+            #   ★ ★ 여기서 `raise` 하면 ★ 매물 하나 때문에 ★ 전 판이 멈춘다 —
+            #   ★ ★ ★ 08-28 에 그 일이 실제로 났다 (봉투 931건이 안 실렸다).
+            #   ★★ 그 매물만 ★ **건너뛴다.**  ★ 이력은 위에 남겼다 —
+            #     ★ ★ 리포트가 ★ **수로** 낸다 (`_note_skipped`)
+            _note_skipped(conn, lid, field, cause, observed_at)
+            return 0
 
     for field in TRACKED_FIELDS:
         if field in parsed and old.get(field) != parsed[field]:
@@ -661,6 +710,8 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         plate_use_char=d.get("plate_use_char"),
         plate_history_hash_json=d.get("plate_history_hash_json"),
         color_ext_raw=d["color_ext_raw"],
+        # ★★★★★ 09-03 개정 1085 — ★ 내장색 (`taste.color_int`)
+        color_int_raw=d.get("color_int_raw"),
         color_ext_hex=d["color_ext_hex"],
         sell_type=d["sell_type"],
         plate_hash=d["plate_hash"],

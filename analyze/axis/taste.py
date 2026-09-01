@@ -19,6 +19,13 @@ HUD = "taste.hud"
 SUNROOF = "taste.sunroof"
 COLOR = "taste.color"
 PICKED = "taste.fitting"
+# ★★★★★ 09-03 개정 1084·1085 — ★ 취향 축 **둘이 새로 생겼다**
+#   ★ `taste.size` 31 — ★ 마스터 「★ 선호도 넣어.  ★ 그러면 작은 차들이 유리하지.
+#     ★ ★ **큰 차를 나는 좋아**」.  ★ 잣대는 ★ **전장**이다 (휠베이스가 아니다)
+#   ★ `taste.color_int` 10 — ★ 마스터 「★ 나는 약간 **블루 계열의 외장재**를 찾고
+#     ★ ★ 약간의 **블랙 계열의 내장재**를 찾는 중이야」.  ★ 외장만 재고 있었다
+SIZE = "taste.size"
+COLOR_INT = "taste.color_int"
 
 NA_VALUE = -1
 
@@ -121,8 +128,93 @@ def _picked(ctx: AxisContext, v: Verdict) -> None:
         f"picked_{hit}_of_{len(want)}")
 
 
+
+
+def _size(ctx: AxisContext, v: Verdict) -> None:
+    """④ 크기 31 — ★ **전장**으로 잰다 (개정 1084 · 마스터 09-01).
+
+    ★ 마스터 — 「★ 선호도 넣어.  ★ 그러면 작은 차들이 유리하지.  ★ **큰 차를 나는 좋아**」
+    ★★ 잣대가 ★ **전장**인 까닭 — 「★ 전기차 전용이면 휠베이스가 좋지만
+      ★ ★ 내 후보가 다 전용은 아니다」.  ★ 휠베이스로 재면 ★ 전용 플랫폼이 유리해
+      ★ ★ ★ GV70·콜레오스가 불리해진다.
+    ★★★ **0점을 주지 않는다** — 「★ EX30 류가 거의 0점이겠지.
+      ★ ★ **극단적으로 주지 말고 로그로**」.  ★ 바닥 15% 를 깔았다 (곡선이 그렇다).
+    ★ 제원은 ★ `config/dimensions.json` 이 원천이다 — ★ 코드에 안 박는다.
+    ★ 제원을 모르면 ★ **미확인 0점**이다 — ★ 지어내지 않는다 (금지 12)
+    """
+    full = ctx.policy.comp(SIZE)
+    if not full:
+        return                       # ★ 배점이 0 이면 ★ 안 낸다
+    r = ctx.policy.rule("taste")
+    key = str(getattr(ctx.snapshot, "target_key", "") or "")
+    got = (ctx.target_config.get("DIMENSIONS") or {}).get(key)
+    if got is None:
+        put(v, SIZE, None, PRIO_OBSERVED, "missing", excluded=True)
+        return
+    share = _on_curve(float(got), r.get("size_curve") or ())
+    if share is None:
+        put(v, SIZE, None, PRIO_OBSERVED, "missing", excluded=True)
+        return
+    put(v, SIZE, round(share * full), PRIO_MANUFACTURER, "size_curve")
+
+
+def _on_curve(x: float, curve) -> float | None:
+    """곡선 위의 값 — ★ 사이는 ★ **직선으로 잇는다** (규격의 표가 촘촘하다).
+
+    ★ 표 밖은 ★ 양 끝값이다 — ★ 늘려 잡지 않는다
+    ★ 표가 없으면 ★ `None` (지어내지 않는다)
+    """
+    pts = [(float(a), float(b)) for a, b in (curve or ())]
+    if not pts:
+        return None
+    pts.sort()
+    if x <= pts[0][0]:
+        return pts[0][1]
+    if x >= pts[-1][0]:
+        return pts[-1][1]
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:], strict=False):
+        if x0 <= x <= x1:
+            if x1 == x0:
+                return y0
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+    return pts[-1][1]
+
+
+def _color_int(ctx: AxisContext, v: Verdict) -> None:
+    """④ 내장색 10 (개정 1085 · 마스터 09-01).
+
+    ★ 마스터 — 「★ 나는 약간 **블루 계열의 외장재**를 찾고
+      ★ ★ 약간의 **블랙 계열의 내장재**를 찾는 중이야」
+    ★★ 사이트가 ★ 「…계열」 꼴로 준다 — ★ **그대로 받는다**.
+      ★ ★ 표에 없는 이름은 ★ `default` 다 — ★ 짐작으로 갈래에 안 넣는다.
+    ★★★ ★ **청색 계열은 내장에서 `avoided`** 다 — ★ 마스터께서 찾으시는 것은
+      ★ ★ **외장이 블루 · 내장이 블랙**이다.
+    ★ 색을 못 받으면 ★ **미확인 0점** (금지 12)
+    """
+    full = ctx.policy.comp(COLOR_INT)
+    if not full:
+        return
+    r = ctx.policy.rule("taste")
+    name = str(getattr(ctx.snapshot, "color_int_raw", "") or "").strip()
+    if not name:
+        put(v, COLOR_INT, None, PRIO_OBSERVED, "missing", excluded=True)
+        return
+    groups = r.get("color_int_groups") or {}
+    points = r.get("color_int_points") or {}
+    grade = color_grade_of(name, groups) if groups else "default"
+    got = points.get(grade)
+    if got is None:
+        put(v, COLOR_INT, None, PRIO_OBSERVED, "rule_or_source_missing",
+            excluded=True)
+        return
+    put(v, COLOR_INT, int(got), PRIO_OBSERVED, f"color_int_{grade}")
+
+
 def analyze_taste(ctx: AxisContext, v: Verdict) -> None:
     _fitting(ctx, v, HUD)
     _fitting(ctx, v, SUNROOF)
     _color(ctx, v)
     _picked(ctx, v)
+    # ★★★★★ 09-03 — ★ 새 축 둘 (개정 1084·1085)
+    _size(ctx, v)
+    _color_int(ctx, v)

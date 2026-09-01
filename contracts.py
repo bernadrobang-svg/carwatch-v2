@@ -182,6 +182,10 @@ class ListingSnapshot:
     plate_history_hash_json: str | None
     color_ext_raw: str | None
     color_ext_hex: str | None
+    # ★★★★★ 09-03 개정 1085 — ★ **내장색** (`taste.color_int` 10).
+    #   ★ 마스터 — 「★ 외장은 **블루 계열** · ★ 내장은 **블랙 계열**을 찾는 중이야」
+    #   ★ ★ 외장만 재고 ★ 내장은 안 쟀다.  ★ `color_int_raw` 는 97.5% 차 있다
+    color_int_raw: str | None
     sell_type: str | None
     plate_hash: str | None  # ★ 원본은 core_pii.  마스킹 컬럼은 없다 (STEP 35)
     ad_body_text: str | None

@@ -201,6 +201,10 @@ CREATE TABLE IF NOT EXISTS core_listing_change (
   new_value    TEXT,
   change_kind  TEXT NOT NULL,
   cause        TEXT,
+  -- ★★★★★ 09-03 (`S46-230`) — ★ 「**동시**」를 ★ 날이 아니라 ★ **한 판**으로 센다.
+  --   ★ 같은 날 다시 돌리면 ★ 앞 판이 남긴 행을 또 세어
+  --   ★ ★ **실패가 다음 실패를 만든다** (STEP 29 판별 ②)
+  run_id       TEXT,
   PRIMARY KEY (listing_id, changed_at, field),
   FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),
   CHECK (change_kind IN ('new','gone','relisted','price','status','anomaly','invariant_violation'))

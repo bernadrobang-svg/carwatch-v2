@@ -105,6 +105,10 @@ COMPONENTS: tuple[str, ...] = (
     # ④ 취향 165
     "taste.trim", "taste.option",
     "taste.hud", "taste.fitting", "taste.color", "taste.sunroof",
+    # ★★★★★ 09-03 개정 1084·1085 — ★ 새 축 둘.
+    #   ★ `taste.size` 31 — ★ 「★ **큰 차를 나는 좋아**」 (전장으로 잰다)
+    #   ★ `taste.color_int` 10 — ★ 「★ 외장은 블루 · **내장은 블랙**」
+    "taste.size", "taste.color_int",
 )
 
 # 등급에 들어가지 않는 갈래 (개정 292 ④).  ★ 취향으로 등급이 오르내리면 안 된다

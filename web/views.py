@@ -482,12 +482,23 @@ def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
     from store.core import site_counts
 
     scoped = site_counts(conn) if conn is not None else {}
-    from store.crosssite import active_sites, load_sites
+    from store.crosssite import load_sites
 
     import os as _o
 
     sites = load_sites(_o.path.join(root, "config", "sites.json"))
-    live = active_sites(sites)
+    # ★★★★★ 09-03 마스터 실측 (`S46-231`) — ★ 단추를 ★ `status` 로 가르면
+    #   ★ **매물이 있는데 못 고르는 사이트**가 생긴다.
+    #   ★ ★ 실측 09-02 — ★ 넷만 나오고 ★ 여덟 사이트 **550건**을 못 골랐다.
+    #   ★ ★ ★ `status` 는 ★ 「지금 받는가」다 — ★ 화면에서 고르는 것과 다르다.
+    #   ★★ 그래서 ★ **매물이 있는가**로 가른다 (`site_counts`).
+    #     ★ ★ `status` 가 `planned` 여도 ★ 매물이 쌓였으면 ★ 고를 수 있어야 한다
+    live = [n for n in sites
+            if not str(n).startswith("_") and isinstance(sites.get(n), dict)
+            and sum(x or 0 for x in (scoped.get(n) or (0, 0)))]
+    if len(live) < 2:
+        # ★ 매물이 아직 없다 — ★ 그때는 ★ 받기로 켠 사이트를 낸다 (첫 판)
+        live = _fallback_sites(sites)
     if len(live) < 2:
         return []
     # ★ 「전체」 줄에도 ★ 같은 칸을 둔다 — ★ 없으면 템플릿이 빈 이름을 읽는다 (V11-38)
@@ -515,6 +526,18 @@ def _site_buttons(flt, root: str = ROOT, conn=None) -> list:
                         "on": flt.site == name and flt.sell_type == key,
                         "live": live_n, "out_of_scope": oos_n})
     return out
+
+
+def _fallback_sites(sites: dict) -> list:
+    """★ 매물이 아직 하나도 없을 때만 — ★ 받기로 켠 사이트를 낸다.
+
+    ★★ 이것은 ★ **첫 판**을 위한 것이다 — ★ 매물이 쌓이면 ★ 안 쓰인다.
+      ★ ★ 단추를 ★ `status` 로 가르면 안 된다 (`S46-231` · 오판 239) —
+      ★ ★ ★ 매물이 있는데 못 고르는 사이트가 생긴다 (실측 09-02 — 550건)
+    """
+    from store.crosssite import active_sites
+
+    return list(active_sites(sites))
 
 
 def _filter_chips(flt) -> list:

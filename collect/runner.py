@@ -666,9 +666,22 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         swept = 0
         seen_by_target: dict = {}
         blocked_targets: set = set()
+        # ★★★★★ 09-03 마스터 실측 (`S46-234`) — ★ **엔카가 두 달에 3건**만
+        #   ★ gone 을 매겼다 (KB 198 · K카 149).  ★ 까닭을 쟀다 [실측 09-03] —
+        #   ★ ★ 질의 스무 가지 중 ★ **열 가지가 몇 건씩 모자라** 막혀 있었다.
+        #   ★ ★ ★ 「366 말했는데 364 봄」·「988 말했는데 975 봄」 —
+        #     ★ ★ 받는 사이에 ★ 매물이 팔려 빠진 것이다.  ★ 우리 잘못이 아니다.
+        #   ★★ 그런데 ★ 그 두 건 때문에 ★ **그 차종을 통째로 안 죽인다** —
+        #     ★ ★ 그래서 ★ 15,020건 가운데 ★ 3건만 죽었다.
+        #   ★★★ 잣대를 ★ **비율**로 바꾼다 — ★ `sweep_done_ratio` (config).
+        #     ★ ★ 「거의 다 받았으면 끝난 것으로 본다」.  ★ 0 이면 옛 잣대다.
+        #     ★ ★ ★ **반만 보고 매기는 것은 여전히 막는다** — ★ 비율이 그 문이다
+        ratio = float((_cfg_num("sweep_done_ratio") or 0) or 0)
         for qkey, seen in q_seen.items():
             declared = q_declared.get(qkey, 0)
             done = declared > 0 and len(seen) >= declared
+            if not done and declared > 0 and ratio:
+                done = len(seen) >= declared * ratio
             for tk in q_targets.get(qkey, ()):
                 if done:
                     seen_by_target.setdefault(tk, set()).update(seen)
@@ -1286,6 +1299,47 @@ def _site_grade_rules(root: str) -> dict:
                 for k, v in json.load(f).items() if isinstance(v, dict)}
 
 
+_DIMS: dict | None = None
+
+
+def _cfg_num(key: str, root: str | None = None):
+    """`config/collect.json` 의 수 하나.  ★ 없으면 `None` (코드에 안 박는다)."""
+    import json as _j
+
+    base = root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for name in ("collect.json", "web.json", "scoring.json"):
+        try:
+            with open(os.path.join(base, "config", name), encoding="utf-8") as f:
+                got = _j.load(f)
+        except (OSError, ValueError):
+            continue
+        if key in got:
+            return got[key]
+    return None
+
+
+def _dimensions(root: str | None = None) -> dict:
+    """★★★★★ 09-03 개정 1084 — ★ 차종별 **전장** (`config/dimensions.json`).
+
+    ★ 크기 축(`taste.size` 31)이 쓴다.  ★ 제원은 ★ **config 가 원천**이다 —
+      ★ ★ 코드에 안 박는다 (`S14`).  ★ 못 읽으면 ★ 빈 표다 (지어내지 않는다)
+    """
+    global _DIMS
+    if _DIMS is None:
+        import json as _j
+
+        base = root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        try:
+            with open(os.path.join(base, "config", "dimensions.json"),
+                      encoding="utf-8") as f:
+                got = (_j.load(f) or {}).get("length_mm") or {}
+        except (OSError, ValueError):
+            got = {}
+        _DIMS = {k: v.get("value") for k, v in got.items()
+                 if isinstance(v, dict) and v.get("value") is not None}
+    return _DIMS
+
+
 def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
                     ladder: dict, site_rule: dict, opt_base: dict) -> dict:
     """차종 설정만 담는다.
@@ -1308,6 +1362,8 @@ def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
         # ★ 개정 365 — 사이트마다 「무엇이 몇 점인가」가 다르다.
         #   코드에 사이트 이름을 박지 않는다 (V3-55)
         "site_warranty": site_rule,
+        # ★★★★★ 09-03 개정 1084 — ★ 크기 축이 쓰는 ★ 차종별 전장
+        "DIMENSIONS": _dimensions(),
     }
 
 

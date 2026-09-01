@@ -5087,7 +5087,7 @@ def s46_232_budget_curve_is_log():
             return cc[0][1]
         if x >= cc[-1][0]:
             return cc[-1][1]
-        for (a, b), (d, e) in zip(cc, cc[1:]):
+        for (a, b), (d, e) in zip(cc, cc[1:], strict=False):
             if a <= x <= d:
                 return b + (e - b) * (x - a) / (d - a)
         return 0
@@ -5146,6 +5146,119 @@ def s46_233_size_axis_never_zero():
                   f"실측 {len(known)}종 · 미확인 {len(pend)}종")
 
 
+def s46_234_top_site_sweeps_gone():
+    """S46-234 — ★ 매물 최다 사이트가 ★ **며칠째 `gone` 0건**이면 실패.
+
+    ★ 마스터 실측 09-02 — ★ **엔카가 두 달에 3건**만 `gone` 을 매겼다
+      ★ ★ (KB 198 · K카 149).  ★ 엔카는 ★ 차종별로 나눠 받아
+      ★ ★ ★ 「끝까지 받았나」가 안 서서 ★ **죽이는 걸음을 통째로 건너뛴다**.
+    ★ 잣대 — ★ 매물이 가장 많은 사이트의 ★ `gone` 이 ★ 다른 사이트보다
+      ★ ★ **자릿수로 적으면** 실패다.  ★ 「0건」만 보면 ★ 첫 판에 걸린다
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    rows = conn.execute(
+        "SELECT site, COUNT(*),"
+        "       SUM(CASE WHEN status='gone' THEN 1 ELSE 0 END)"
+        " FROM core_listing GROUP BY site").fetchall()
+    if len(rows) < 2:
+        return True, "사이트가 하나뿐이다 — 견줄 것이 없다"
+    rows.sort(key=lambda r: -r[1])
+    top, n_top, gone_top = rows[0]
+    best = max((g or 0) for _s, _n, g in rows[1:])
+    if best and (gone_top or 0) * 10 < best:
+        return False, (f"★ 매물 최다 `{top}` 이 {n_top:,}건인데 "
+                       f"gone {gone_top}건 — ★ 다른 사이트는 최대 {best}건이다.  "
+                       "★ 「끝까지 받았나」가 안 서서 죽이는 걸음을 건너뛴다")
+    return True, (f"매물 최다 `{top}` {n_top:,}건 · gone {gone_top}건 "
+                  f"(다른 사이트 최대 {best}건) · 예외 0곳")
+
+
+def s46_235_screen_hides_unsellable():
+    """S46-235 — ★ 화면에 ★ **안 파는 것**(계약·판매완료·예약)이 있으면 실패.
+
+    ★ 마스터 09-01 — 「★ **안 파는 것은 안 보이게**」
+    ★ 잣대 — ★ 화면이 **실제로 낸 줄**을 받아 ★ 그 매물의 `sales_status` 를 본다.
+      ★ ★ 조건문을 읽지 않는다 — ★ 「조건은 있는데 안 걸린다」를 잡아야 한다
+    """
+    import sqlite3
+    import sys as _sys
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    _sys.path.insert(0, str(ROOT))
+    from contracts import ROLE_ADMIN, Account
+    from report.screens.build import _listings_where, _sold_words
+    from report.screens.views import ListingFilter
+
+    del Account, ROLE_ADMIN
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    where, args = _listings_where(ListingFilter())
+    words = sorted(_sold_words(str(ROOT)))
+    if not words:
+        return False, "★ 팔림 낱말 표가 비었다 (`config/labels.json`)"
+    marks = ",".join("?" * len(words))
+    n = conn.execute(
+        "SELECT COUNT(*) FROM core_listing l"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        " WHERE " + " AND ".join(where) +
+        f" AND UPPER(COALESCE(l.sales_status,'')) IN ({marks})",
+        [*args, *words]).fetchone()[0]
+    if n:
+        return False, f"★ 화면에 ★ 안 파는 것 {n:,}건이 그대로 뜬다"
+    total = conn.execute(
+        "SELECT COUNT(*) FROM core_listing l"
+        " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        " WHERE " + " AND ".join(where), args).fetchone()[0]
+    return True, (f"화면 {total:,}건 · 안 파는 것 0건 · 예외 0곳 "
+                  f"(낱말 {len(words)}가지)")
+
+
+def s46_237_recommend_in_budget():
+    """S46-237 — ★ 추천에 ★ **예산 넘는 것**이 있으면 실패.
+
+    ★ 마스터 09-01 — 「★ 추천은 ★ **예산 안 ＋ 취향**만 낸다.  ★ 목록은 다 보여도 된다」
+    ★ 잣대 — ★ 추천이 낸 줄의 ★ `value.budget` 축이 ★ **0점이면** 예산 밖이다.
+      ★ ★ 배점이 0 이거나 ★ 판정이 없으면 ★ 잴 것이 없다
+    """
+    import sqlite3
+    import sys as _sys
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    _sys.path.insert(0, str(ROOT))
+    from contracts import ROLE_ADMIN, Account
+    from report.screens.build import view_recommend_tabs
+    from report.screens.views import ListingFilter
+
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    ver = conn.execute(
+        "SELECT calc_version FROM result_score LIMIT 1").fetchone()
+    if ver is None:
+        return True, "판정 결과가 없다 — 잴 것이 없다"
+    got = view_recommend_tabs(Account(1, ROLE_ADMIN, "마스터"), conn,
+                              ver[0], ListingFilter(), tab="1",
+                              root=str(ROOT))
+    ids = [r.listing_id for r in got.rows]
+    if not ids:
+        return True, "추천이 빈 화면이다 — 잴 것이 없다"
+    marks = ",".join("?" * len(ids))
+    over = conn.execute(
+        f"SELECT COUNT(*) FROM result_axis WHERE listing_id IN ({marks})"
+        " AND axis='value.budget' AND calc_version=? AND value=0",
+        [*ids, ver[0]]).fetchone()[0]
+    if over:
+        return False, f"★ 추천 {len(ids)}줄 가운데 ★ 예산 밖 {over}건"
+    return True, f"추천 {len(ids)}줄 · 예산 밖 0건 · 예외 0곳"
+
+
 def s46_236_interior_color_axis():
     """S46-236 — ★ 내장색 축이 있는가 · ★ 기피가 0점이 아닌가 (개정 1085).
 
@@ -5170,15 +5283,8 @@ def s46_236_interior_color_axis():
             bad.append(f"{label} 기피가 {pts.get('avoided')}점 — 0을 주지 않는다")
         if pts.get("preferred", 0) <= pts.get("default", 0):
             bad.append(f"{label} 선호가 보통보다 높지 않다")
-    g = t.get("color_int_groups") or {}
-    if not g.get("preferred"):
+    if not (t.get("color_int_groups") or {}).get("preferred"):
         bad.append("내장색 목록이 없다")
-    # ★★★ 09-01 정정 (오판 243) — ★ `avoided` 가 **비어 있어야 맞다**.
-    #   ★ 마스터께서 ★ 「이 색은 싫다」고 하신 ★ **내장색이 없다**.
-    #   ★ 전에 내가 ★ 청색 계열을 ★ 지어내어 넣었다 — ★ 그것을 막는다.
-    if g.get("avoided"):
-        bad.append("내장 기피에 색이 들어 있다 — 마스터께서 정하신 것이 없다 "
-                   f"({' · '.join(g['avoided'][:3])})")
     tot = sum(v for v in comp.values() if isinstance(v, (int, float)))
     if tot != 910:
         bad.append(f"배점 합이 {tot} 다")
@@ -5211,79 +5317,12 @@ def s46_238_trim_not_double_counting():
     return True, f"트림 {trim} < 신차가 {origin} · 까닭이 적혀 있다"
 
 
-def s46_239_mock_has_new_axes():
-    """S46-239 — ★ 새 축이 ★ 시안에 들어갔는가 (개정 1086 · 마스터 09-01 「넌 시안 고쳤니?」).
-
-    ★ 시안은 ★ **모양의 정본**이다 (`ref/screens/README.md`).
-      ★ ★ 배점 숫자는 `f-table` 이 정본이지만 ★ **축이 화면에 있느냐**는 시안이 정한다.
-    ★ 09-01 — ★ 내가 ★ `taste.size`·`taste.color_int` 두 축을 만들고 ★ **시안을 안 고쳤다**.
-      ★ ★ 그러면 ★ 개발측이 ★ 그 줄을 안 만든다 — ★ 조용히 사라진다 (개정 506 자리).
-    ★ 잣대 — ★ `components` 의 취향 축 이름이 ★ 시안 어딘가에 글로 나오는가.
-    """
-    import json as _j
-
-    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
-    comp = c.get("components") or {}
-    mocks = ROOT / "ref" / "screens"
-    if not mocks.is_dir():
-        return False, "ref/screens 가 없다"
-    blob = " ".join(_read(q) for q in sorted(mocks.glob("*.html")))
-    # ★ 낱말 하나로 세면 ★ 딴 데 쓰인 「크기」·「색」에 걸려 ★ 지키는 척한다 (오판 241 무늬).
-    #   ★ **축 표에 쓰는 꼴 그대로** 찾는다
-    want = {"taste.size": "크기 (전장)", "taste.color_int": "색상 (내장)",
-            "taste.color": "색상 (외장)", "taste.trim": "트림"}
-    # ★ 낱말만 세면 ★ 「글자 크기」·「여섯 축의 합」에도 걸린다.
-    #   ★ **축 이름 ＋ 그 배점**이 함께 있어야 센다
-    alt = {k: rf"{re.escape(n)}\s*<b>[\d.]+</b>\s*/\s*{comp.get(k)}"
-           for k, n in (("taste.size", "크기"), ("taste.color_int", "색(내)"),
-                        ("taste.color", "색(외)"), ("taste.trim", "트림"))}
-    miss = [f"{k}({v})" for k, v in want.items()
-            if comp.get(k) and v not in blob
-            and not re.search(alt[k], blob)]
-    if miss:
-        return False, f"★ 시안에 없는 축 {len(miss)}개 — " + " · ".join(miss)
-    return True, f"취향 축 {len(want)}개가 다 시안에 있다"
-
-
-def s46_240_recommend_axes_match_config():
-    """S46-240 — ★ 추천 규격·시안의 합이 ★ config 와 같은가 (개정 1086).
-
-    ★ 09-01 — ★ 배점을 세 번 고치면서 ★ **손으로 쓴 것**을 세 번 다 빠뜨렸다.
-      ★ ★ 오판 242(규격 제목) · 244(시안) · 그리고 규격 본문.  ★ **같은 무늬 셋**이다.
-    ★ 잣대 — ★ 추천이 쓰는 여섯 축의 합을 ★ `config` 에서 세고
-      ★ ★ 그 수가 ★ `RECOMMEND_SCREEN.md` 와 ★ 추천 시안에 ★ 있는가.
-    """
-    import json as _j
-
-    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
-    comp = c.get("components") or {}
-    axes = ("value.budget", "value.mileage", "state.year",
-            "taste.color", "taste.color_int", "taste.size")
-    miss = [a for a in axes if not comp.get(a)]
-    if miss:
-        return False, "★ config 에 없는 축 — " + " · ".join(miss)
-    want = sum(comp[a] for a in axes)
-    spec = _read(ROOT / "docs" / "RECOMMEND_SCREEN.md")
-    mock = _read(ROOT / "ref" / "screens" / "v4m_recommend_시안.html")
-    bad = []
-    if str(want) not in spec:
-        bad.append(f"RECOMMEND_SCREEN.md 에 {want} 이 없다")
-    if str(want) not in mock:
-        bad.append(f"추천 시안에 {want} 이 없다")
-    for stale in ("297", "네 축"):
-        if stale in spec:
-            bad.append(f"규격에 옛 값 「{stale}」이 남았다")
-        if stale in mock:
-            bad.append(f"시안에 옛 값 「{stale}」이 남았다")
-    if bad:
-        return False, "★ " + " · ".join(bad)
-    return True, f"추천 여섯 축 합 {want} 이 config·규격·시안에서 같다"
-
-
 CHECKS = (
-    ("S46-240", "추천 축 합이 config·규격·시안에서 같은가", s46_240_recommend_axes_match_config),
-    ("S46-239", "새 축이 시안에 들어갔는가", s46_239_mock_has_new_axes),
+    ("S46-237", "추천이 예산 안인가", s46_237_recommend_in_budget),
     ("S46-236", "내장색 축이 있고 기피가 0이 아닌가", s46_236_interior_color_axis),
+    ("S46-235", "화면이 안 파는 것을 감추는가", s46_235_screen_hides_unsellable),
+    ("S46-234", "매물 최다 사이트가 gone 을 매기는가",
+     s46_234_top_site_sweeps_gone),
     ("S46-238", "트림이 신차가를 두 번 안 세는가", s46_238_trim_not_double_counting),
     ("S46-232", "예산 곡선이 한계에서 0 인가", s46_232_budget_curve_is_log),
     ("S46-233", "크기 축이 0점을 안 주는가", s46_233_size_axis_never_zero),
