@@ -5482,7 +5482,45 @@ def s46_244_failed_response_kept():
     return True, "규격이 「실패 응답도 원문이다」를 지키고 S5 ⑤ 가 살아 있다"
 
 
+def s46_245_each_screen_has_its_parts():
+    """S46-245 — ★ 화면마다 ★ **그 화면에 드는 것**이 시안에 있는가 (RULES.md 1 · 09-02).
+
+    ★ `S46-242` 는 ★ 머리 상자만 본다 — ★ 있어도 ★ **알맹이가 빠질 수 있다**.
+    ★★ 마스터 09-01 — 「★ 왜 추천에 목록 번호가 없고 … ★ 사진이 하나도 안 보이고」
+      ★ ★ 넷 다 ★ **화면마다 무엇이 드는지 안 적어서** 빠졌다.
+    ★ 화면마다 드는 것이 다르다 — ★ 목록·추천은 순위 · 카드 화면은 까닭 · 축 내는 곳은 축.
+      ★ ★ `dashboard`·`notready`·`compare` 는 ★ **뺀다** (마스터 09-02 「비교는 스킵해 지금 안 써」).
+    """
+    import os
+
+    want = {"순위": ("rc-rank", "lst-rank"),
+            "까닭": ("아직 못 쟀습니다", "아직 안 깔았습니다", "why-empty"),
+            "크기": ("크기 (전장)",),
+            "내장색": ("색상 (내장)", "색(내)")}
+    need = {"recommend": ("순위", "까닭", "크기", "내장색"),
+            "recommend_tab23": ("순위",),
+            "listings": ("순위", "까닭", "크기", "내장색"),
+            "detail": ("까닭", "크기", "내장색"),
+            "why": ("크기", "내장색"),
+            "watch": ("까닭",), "track": ("까닭",), "sold": ("까닭",)}
+    mocks = ROOT / "ref" / "screens"
+    bad = []
+    for name, keys in need.items():
+        f = mocks / f"v4m_{name}_시안.html"
+        if not f.is_file():
+            bad.append(f"{name}(시안 없음)")
+            continue
+        body = _read(f)
+        miss = [k for k in keys if not any(x in body for x in want[k])]
+        if miss:
+            bad.append(f"{name}({'·'.join(miss)})")
+    if bad:
+        return False, f"★ 알맹이가 빠진 시안 {len(bad)}장 — " + " · ".join(bad[:4])
+    return True, f"시안 {len(need)}장이 저마다 드는 것을 다 갖췄다"
+
+
 CHECKS = (
+    ("S46-245", "화면마다 그 화면에 드는 것이 있는가", s46_245_each_screen_has_its_parts),
     ("S46-244", "실패 응답도 원문으로 남는가", s46_244_failed_response_kept),
     ("S46-242", "시안에 「반드시 있는 것」 머리가 있는가", s46_242_mock_has_required_header),
     ("S46-243", "비는 자리가 까닭을 내는가", s46_243_empty_says_why),
