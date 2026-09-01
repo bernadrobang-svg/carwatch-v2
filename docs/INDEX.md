@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 51,703줄 · 3,578KB**
+**132파일 · 51,725줄 · 3,582KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -23,7 +23,7 @@
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
-- chapters/30-score/f-table.md 3,045줄
+- chapters/30-score/f-table.md 3,066줄
 - chapters/11-store/a-key.md 963줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
@@ -85,7 +85,7 @@
 | `chapters/30-score/c-spec.md` | 145 | 5 |
 | `chapters/30-score/d-history.md` | 373 | 12 |
 | `chapters/30-score/e-etc.md` | 233 | 7 |
-| `chapters/30-score/f-table.md`  ★ | 3,045 | 151 |
+| `chapters/30-score/f-table.md`  ★ | 3,066 | 153 |
 | `chapters/30-score/g-absolute.md` | 150 | 5 |
 | `chapters/30-score/h-verdict.md` | 196 | 7 |
 | `chapters/31-registry.md` | 681 | 28 |
@@ -126,7 +126,7 @@
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 647 | 264 |
+| `guide/06_오판대장.md` | 648 | 266 |
 | `guide/07_밀린일대장.md` | 514 | 39 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
