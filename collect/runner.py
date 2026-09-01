@@ -1335,8 +1335,15 @@ def _dimensions(root: str | None = None) -> dict:
                 got = (_j.load(f) or {}).get("length_mm") or {}
         except (OSError, ValueError):
             got = {}
-        _DIMS = {k: v.get("value") for k, v in got.items()
-                 if isinstance(v, dict) and v.get("value") is not None}
+        # ★★★★★ 09-02 명령서 17 — ★ **`by_year` 를 그대로 넘긴다.**
+        #   ★ 전에는 ★ `value` 하나만 뽑아 ★ 세대가 갈리는 차종이 틀렸다 —
+        #   ★ ★ 모델Y 827건이 ★ **450 대 377 로 반씩** 갈리는데 ★ 한 값을 썼다.
+        #   ★ ★ ★ 4,751 과 4,790 — ★ **39mm** 가 틀린다 (가이드 실측 09-02).
+        #   ★★ 고르는 것은 ★ `_size()` 가 한다 (매물 연식을 그것만 안다).
+        #     ★ 여기는 ★ **차종 설정**을 넘길 뿐이라 ★ F-1 을 지킨다
+        _DIMS = {k: v for k, v in got.items()
+                 if isinstance(v, dict)
+                 and (v.get("value") is not None or v.get("by_year"))}
     return _DIMS
 
 

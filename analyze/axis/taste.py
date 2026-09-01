@@ -130,6 +130,33 @@ def _picked(ctx: AxisContext, v: Verdict) -> None:
 
 
 
+def _length_mm(entry, year_month: str):
+    """★★★★★ 09-02 명령서 17 — ★ **세대가 갈리면 연식으로 고른다** (`by_year`).
+
+    ★ 까닭   ★ 모델Y 는 ★ 2025-01 주니퍼부터 ★ 4,751 → **4,790** 이다.
+             ★ 우리 매물 827건이 ★ **450 대 377** 로 반씩 갈린다 —
+             ★ ★ 한 값으로 재면 ★ 절반이 **39mm** 틀린다 (가이드 실측 09-02)
+    ★★      ★ `until`(그 달까지) · `from`(그 달부터) 둘 다 **포함**이다.
+             ★ `year_month` 가 `2025-01` 꼴이라 ★ 글자로 견줘도 차례가 맞다
+    ★★★     ★ 연식을 모르면 ★ `by_year` 를 못 쓴다 — ★ 그때는 ★ `value` 로 물러선다.
+             ★ ★ `value` 도 없으면 ★ **`None`(못 쟀다)** 이다 — ★ 지어내지 않는다
+    """
+    if not isinstance(entry, dict):
+        return entry
+    ym = (year_month or "")[:7]
+    if ym:
+        for row in entry.get("by_year") or ():
+            if not isinstance(row, dict) or row.get("value") is None:
+                continue
+            lo, hi = row.get("from"), row.get("until")
+            if lo and ym < str(lo):
+                continue
+            if hi and ym > str(hi):
+                continue
+            return row["value"]
+    return entry.get("value")
+
+
 def _size(ctx: AxisContext, v: Verdict) -> None:
     """④ 크기 31 — ★ **전장**으로 잰다 (개정 1084 · 마스터 09-01).
 
@@ -147,7 +174,8 @@ def _size(ctx: AxisContext, v: Verdict) -> None:
         return                       # ★ 배점이 0 이면 ★ 안 낸다
     r = ctx.policy.rule("taste")
     key = str(getattr(ctx.snapshot, "target_key", "") or "")
-    got = (ctx.target_config.get("DIMENSIONS") or {}).get(key)
+    got = _length_mm((ctx.target_config.get("DIMENSIONS") or {}).get(key),
+                     str(getattr(ctx.snapshot, "year_month", "") or ""))
     if got is None:
         put(v, SIZE, None, PRIO_OBSERVED, "missing", excluded=True)
         return

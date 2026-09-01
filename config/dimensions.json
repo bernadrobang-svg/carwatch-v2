@@ -100,22 +100,134 @@
     "UX300E_EV": {
       "value": 4495,
       "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Lexus UX」 Length 4,495mm"
+    },
+    "X3_IMPORT": {
+      "by_year": [
+        {
+          "until": "2009-12",
+          "value": 4564,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「BMW X3」 E83(2003~) Length 4,564"
+        },
+        {
+          "from": "2010-01",
+          "until": "2016-12",
+          "value": 4652,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — F25(2010~) Length 4,652"
+        },
+        {
+          "from": "2017-01",
+          "until": "2024-12",
+          "value": 4708,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — G01(2017~) Length 4,708"
+        },
+        {
+          "from": "2025-01",
+          "value": 4755,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「BMW X3 (G45)」 Length 4,755 (2024/2025~)"
+        }
+      ],
+      "_확인": "★ 세대 머리말 — E83;2003 · F25;2010 · G01;2017 · G45;2024/2025.  ★ 갈림 달은 그 해 1월로 뒀다 — ★ 바뀌는 해 한 해만 어긋날 수 있다",
+      "_건수": "우리 매물 1,181건 (2006~2026)"
+    },
+    "GLC_IMPORT": {
+      "by_year": [
+        {
+          "until": "2021-12",
+          "value": 4656,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Mercedes-Benz GLC-Class」 X253(2015~) Length 4,656"
+        },
+        {
+          "from": "2022-01",
+          "value": 4716,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — X254(2022~) Length 4,716"
+        }
+      ],
+      "_확인": "★ 세대 머리말 — X253;2015 · X254;2022.  ★ 4,765 는 중국 전용 L 이라 뺐다",
+      "_건수": "우리 매물 1,322건 (2017~2026)"
+    },
+    "XC60_IMPORT": {
+      "by_year": [
+        {
+          "until": "2016-12",
+          "value": 4644,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Volvo XC60」 1세대(2008–2017) Length 4,644"
+        },
+        {
+          "from": "2017-01",
+          "value": 4688,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — 2세대(2017~) Length 4,688–4,708 중 4,688"
+        }
+      ],
+      "_확인": "★ 세대 머리말 — 2008–2017 · 2017–present",
+      "_건수": "우리 매물 576건 (2011~2026)"
+    },
+    "NX_HEV": {
+      "by_year": [
+        {
+          "until": "2020-12",
+          "value": 4640,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Lexus NX」 AZ10(2014~) Length 4,640"
+        },
+        {
+          "from": "2021-01",
+          "value": 4660,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — AZ20(2021~) Length 4,660"
+        }
+      ],
+      "_확인": "★ 세대 머리말 — AZ10;2014 · AZ20;2021",
+      "_건수": "우리 매물 196건 (2014~2026)"
+    },
+    "S60_IMPORT": {
+      "by_year": [
+        {
+          "until": "2009-12",
+          "value": 4581,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Volvo S60」 1세대(2000~) Length 4,581"
+        },
+        {
+          "from": "2010-01",
+          "until": "2017-12",
+          "value": 4628,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — 2세대(2010~) Length 4,628"
+        },
+        {
+          "from": "2018-01",
+          "value": 4761,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — 3세대(2018~) Length 4,761"
+        }
+      ],
+      "_확인": "★ 세대 머리말 — 2000 · 2010 · 2018",
+      "_건수": "우리 매물 230건 (2005~2025)"
+    },
+    "GRANDEUR_LPG": {
+      "by_year": [
+        {
+          "from": "2016-01",
+          "until": "2021-12",
+          "value": 4930,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Hyundai Grandeur」 IG(2016~) Length 4,930 (pre-facelift)"
+        },
+        {
+          "from": "2022-01",
+          "value": 5035,
+          "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — GN7(2022~) Length 5,035"
+        }
+      ],
+      "_확인": "★★ **2015년식 앞은 안 적었다** — ★ 세대가 7개인데 전장이 6개만 나와 ★ HG(2011~2016)에 짝을 못 지었다.  ★ 못 지은 것은 ★ **미확인으로 둔다** (지어내지 않는다).  ★ 그 매물은 크기 축이 0 이 아니라 「못 쟀다」가 된다",
+      "_건수": "우리 매물 330건 (2014~2026)"
+    },
+    "POLESTAR3_EV": {
+      "value": 4900,
+      "_확인": "실측 09-02 (브라우저 · tools/fetch_dimensions.py) — en.wikipedia 「Polestar 3」 Length 4,900mm · 한 세대다"
     }
   },
   "_pending": {
     "_note": "★★ 아직 ★ **확인 못 한 것**이다.  ★ 내 기억일 뿐이라 ★ 점수에 쓰지 않는다.  ★ 확인한 뒤 `length_mm` 로 옮긴다",
-    "POLESTAR3_EV": "미확인",
-    "X3_IMPORT": "미확인",
-    "GLC_IMPORT": "미확인",
-    "XC60_IMPORT": "미확인",
-    "NX_HEV": "미확인",
     "RX_IMPORT": "미확인",
-    "_남은수": "★★ 실측 09-02 — ★ 대상 32종 중 ★ **20종 확인** · ★ 12종 남았다.  ★ 남은 것은 ★ **세대가 갈리는 차종**이다 — ★ 매물 연식이 두 세대에 걸쳐 있어 ★ ★ 「연식 구간으로 나눠 적어라」(명령서 10)를 지키려면 ★ **세대 갈림 해**가 있어야 한다. ★ ★ ★ 전장 값은 세대별로 다 받아 뒀다(회차 기록) — ★ 갈림 해를 못 확인해 안 넣었다",
-    "_다음": "★ 남은 12종 — POLESTAR3_EV · X3_IMPORT · GLC_IMPORT · XC60_IMPORT · NX_HEV · RX_IMPORT · G80_EV · GRANDEUR_LPG · ES_HEV · S60_IMPORT · V60CC_IMPORT · EX60_IMPORT",
+    "_남은수": "★★ 실측 09-02 — ★ 대상 32종 중 ★ **27종 확인** · ★ 5종 남았다",
+    "_다음": "★ `RX_IMPORT`·`ES_HEV` — ★ 세대 수와 전장 수가 안 맞아 ★ **짝을 못 지었다** (RX 5세대에 전장 4개 · ES 는 XZ10 이 「4,960–4,975」 범위다).  ★ 지어내지 않았다.  ★ `V60CC_IMPORT` — ★ 크로스컨트리는 몸통이 V60 과 다르다.  ★ 그 값을 못 찾았다.  ★ `G80_EV` — ★ 전동화 G80 의 전장을 못 찾았다 (RG3 와 같다고 짐작하지 않는다).  ★ `EX60_IMPORT` — ★ 아직 안 나온 차라 쪽이 없다 (`S46-92` 도 같은 것을 짚는다)",
     "G80_EV": "미확인",
-    "GRANDEUR_LPG": "미확인",
     "ES_HEV": "미확인",
-    "S60_IMPORT": "미확인",
     "V60CC_IMPORT": "미확인",
     "EX60_IMPORT": "미확인"
   }

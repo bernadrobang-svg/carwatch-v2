@@ -5491,8 +5491,6 @@ def s46_245_each_screen_has_its_parts():
     ★ 화면마다 드는 것이 다르다 — ★ 목록·추천은 순위 · 카드 화면은 까닭 · 축 내는 곳은 축.
       ★ ★ `dashboard`·`notready`·`compare` 는 ★ **뺀다** (마스터 09-02 「비교는 스킵해 지금 안 써」).
     """
-    import os
-
     want = {"순위": ("rc-rank", "lst-rank"),
             "까닭": ("아직 못 쟀습니다", "아직 안 깔았습니다", "why-empty"),
             "크기": ("크기 (전장)",),

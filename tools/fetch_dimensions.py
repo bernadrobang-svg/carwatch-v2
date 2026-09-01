@@ -23,6 +23,29 @@ PATS = (
 )
 
 
+_GEN = re.compile(
+    r"(?:First|Second|Third|Fourth|Fifth|Sixth|Seventh|Eighth|Ninth|Tenth)"
+    r"\s+generation\s*\(([^)]{0,50})\)")
+
+
+def _gens(text: str) -> list[str]:
+    """★★★★★ 09-02 명령서 17·18 — ★ **세대가 갈리는 「해」**를 뽑는다.
+
+    ★ 까닭   ★ 전장만 있고 ★ 갈림 해가 없으면 ★ `by_year` 를 못 적는다.
+             ★ ★ 「2017년식은 어느 세대인가」를 못 가르면 ★ **틀린 점수**다
+    ★★      ★ 제원 상자의 「Production」은 ★ 맨 위 상자 것이 섞여 못 쓴다
+             ★ (실측 09-02 — X3 가 「2003–present」 하나만 나왔다).
+             ★ ★ **차례 머리말**이 곧다 — 「Third generation (G01; 2017)」
+    ★        ★ 못 찾으면 ★ **빈 목록**이다 — ★ 해를 지어내지 않는다
+    """
+    out: list[str] = []
+    for m in _GEN.finditer(text):
+        g = " ".join(m.group(1).split())
+        if g not in out:
+            out.append(g)
+    return out
+
+
 def _hits(text: str) -> list[tuple[str, str]]:
     out: list[tuple[str, str]] = []
     for pat in PATS:
@@ -30,8 +53,18 @@ def _hits(text: str) -> list[tuple[str, str]]:
             n = int(m.group(1).replace(",", ""))
             if not 3000 <= n <= 5500:
                 continue
-            lo = max(0, m.start() - 40)
-            out.append((str(n), " ".join(text[lo:m.end() + 20].split())))
+            # ★★★★★ 09-02 명령서 17·18 — ★ **갈림 해**가 있어야
+            #   ★ `by_year` 를 적을 수 있다.  ★ 위키 제원 상자는
+            #   ★ ★ 「Production 2017–2024」를 ★ 전장보다 **앞**에 둔다 —
+            #   ★ ★ ★ 그래서 앞을 ★ **넓게** 본다 (40 → 400자).
+            #   ★ 해를 못 찾으면 ★ **적지 않는다** — ★ 지어내지 않는다
+            lo = max(0, m.start() - 400)
+            back = " ".join(text[lo:m.start()].split())
+            yrs = re.findall(r"(?:Production|생산)[^0-9]{0,12}"
+                             r"(\d{4}\s*[–\-~]\s*(?:\d{4}|present|현재)?"
+                             r"|\d{4})", back)
+            tail = " ".join(text[m.start():m.end() + 20].split())
+            out.append((str(n), (f"[생산 {yrs[-1]}] " if yrs else "") + tail))
     return out
 
 
@@ -41,32 +74,55 @@ def fetch(url: str) -> None:
         b = p.chromium.launch()
         pg = b.new_page(viewport={"width": 1280, "height": 2000})
         try:
-            pg.goto(url, timeout=45000, wait_until="networkidle")
+            pg.goto(url, timeout=45000, wait_until="load")
+            pg.wait_for_timeout(2500)   # ★ 표가 늦게 차는 쪽이 있다
         except Exception as e:  # noqa: BLE001 ★ 조용히 넘기지 않는다 — 무엇이 막혔는지 낸다
             print(f"  ✗ {url}\n     {type(e).__name__}: {str(e)[:90]}")
             b.close()
             return
-        # ★ 제원표가 접혀 있는 쪽이 많다 — ★ 「제원」 단추를 눌러 본다
-        for word in ("제원", "사양", "스펙", "Specifications"):
-            try:
-                el = pg.get_by_text(word, exact=False).first
-                if el.is_visible(timeout=1500):
+        # ★★★★★ 09-02 — ★ **먼저 읽고, ★ 못 찾을 때만 누른다.**
+        #   ★ 전에는 ★ 무조건 「Specifications」를 눌렀는데 ★ 위키 **각주**가
+        #     ★ ★ 걸려 ★ **BMW 보도자료 쪽으로 넘어가** ★ 엉뚱한 글을 읽었다
+        #     ★ ★ ★ (실측 09-02 — `BMW_X3_(G01)` 이 ★ 「Login Contact World Wide
+        #       ★ ★ ★ Corporate Brands…」를 냈다).  ★ **내 도구가 거짓을 냈다**
+        #   ★★ 눌러서 ★ 주소가 바뀌면 ★ **되돌아온다** — ★ 다른 쪽 값을 쓰지 않는다
+        text = pg.inner_text("body")
+        if not _hits(text):
+            here = pg.url
+            for word in ("제원", "사양", "스펙", "Specifications"):
+                try:
+                    el = pg.get_by_text(word, exact=False).first
+                    if not el.is_visible(timeout=1500):
+                        continue
                     el.click(timeout=2500)
                     pg.wait_for_timeout(1200)
-                    break
-            except Exception as e:  # noqa: BLE001 ★ 그 단추가 없는 쪽이 흔하다
-                _ = e  # ★ 다음 낱말로 넘어간다 — ★ 이것은 실패가 아니다
+                    if pg.url != here:          # ★ 딴 쪽으로 갔다.  되돌린다
+                        pg.go_back(timeout=20000)
+                        pg.wait_for_timeout(800)
+                        continue
+                    if _hits(pg.inner_text("body")):
+                        break
+                except Exception as e:  # noqa: BLE001 ★ 그 단추가 없는 쪽이 흔하다
+                    _ = e   # ★ 다음 낱말로 넘어간다 — ★ 이것은 실패가 아니다
         text = pg.inner_text("body")
         b.close()
+    gens = _gens(text)
+    if gens:
+        print(f"  ○ {url}  세대 — " + " · ".join(gens))
     hits = _hits(text)
     if not hits:
-        print(f"  ✗ {url}\n     못 찾았다 (글자 {len(text)}자)")
+        # ★ 「못 찾았다」만 내면 ★ 쪽이 안 열린 것인지 ★ 제원이 없는 것인지 모른다.
+        #   ★ 실측 09-02 — ★ 위키가 2,289자짜리 껍데기를 준 적이 있다
+        head = " ".join(text.split())[:160]
+        print(f"  ✗ {url}\n     못 찾았다 (글자 {len(text)}자) — {head}")
         return
     seen: dict[str, str] = {}
     for n, ctx in hits:
         seen.setdefault(n, ctx)
     print(f"  ● {url}")
-    for n, ctx in sorted(seen.items(), key=lambda x: -int(x[0]))[:4]:
+    # ★ 쪽에 나온 **차례대로** 낸다 — ★ 위키는 옛 세대부터 적으므로
+    #   ★ 위의 세대 머리말과 ★ 짝을 맞춰 볼 수 있다.  ★ 크기순으로 내면 못 맞춘다
+    for n, ctx in list(seen.items())[:12]:
         print(f"     {n}mm   … {ctx[:100]}")
 
 
