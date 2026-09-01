@@ -193,8 +193,55 @@ def leak_state(inners) -> str:
     return "none" if not minor else ("minor1" if minor == 1 else "minor2")
 
 
+def _is_ev(ctx: AxisContext) -> bool:
+    """전기차인가.  ★ 하이브리드는 ★ **아니다** (규격 「하이브리드엔 쓰지 마라」).
+
+    ★ 연료 낱말의 정본은 ★ `config/labels.json` 이다 — ★ 코드에 안 박는다 (`S14`).
+    ★ 못 읽으면 ★ 거짓이다 — ★ 만점을 지어 주지 않는다 (금지 12)
+    """
+    got = str(getattr(ctx.snapshot, "fuel_raw", "") or "")
+    if not got:
+        return False
+    words = _ev_words()
+    if not words:
+        return False
+    # ★ 「하이브리드」가 들면 ★ 전기차가 아니다 — ★ 「전기」가 함께 들어 있어도
+    for no in words.get("not_ev", ()):
+        if no and no in got:
+            return False
+    return any(w and w in got for w in words.get("ev", ()))
+
+
+_EV_WORDS: dict | None = None
+
+
+def _ev_words() -> dict:
+    """연료 낱말 표 (`config/labels.json` `EV_FUEL_WORDS`)."""
+    global _EV_WORDS
+    if _EV_WORDS is None:
+        import json as _j
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+            _o.path.abspath(__file__))))
+        try:
+            with open(_o.path.join(root, "config", "labels.json"),
+                      encoding="utf-8") as f:
+                _EV_WORDS = _j.load(f).get("EV_FUEL_WORDS") or {}
+        except (OSError, ValueError):
+            _EV_WORDS = {}
+    return _EV_WORDS
+
+
 def _leak(ctx: AxisContext, v: Verdict) -> None:
     s, r = ctx.snapshot, ctx.policy.rule("state")
+    # ★★★★★ 09-02 마스터 확정 — ★ **전기차는 누유 만점**이다 (`leak_ev_full`).
+    #   ★ 「★ 전기차엔 ★ 엔진오일·미션오일·냉각수 누유가 ★ **구조상 없다**」
+    #   ★ ★ 하이브리드엔 ★ **쓰지 마라** — ★ 콜레오스는 그대로 잰다.
+    #   ★ ★ ★ 「없어서 0점」이 아니라 ★ 「없을 수가 없어서 만점」이다
+    if r.get("leak_ev_full") and _is_ev(ctx):
+        put(v, LEAK, ctx.policy.comp(LEAK), PRIO_OBSERVED, "leak_ev_none")
+        return
     raw = s.inspection_inner_json
     if raw is None:
         put(v, LEAK, 0, PRIO_OBSERVED, "missing")

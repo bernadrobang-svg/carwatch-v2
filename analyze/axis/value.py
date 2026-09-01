@@ -155,6 +155,15 @@ def _market(ctx: AxisContext, v: Verdict) -> None:
     median = s.market_median_won
     if not median or (s.market_sample_n or 0) < int(r["market_min_sample"]) \
             or s.price_current_won is None:
+        # ★★★★★ 09-02 마스터 확정 — ★ **시세를 못 재면 ★ 80%** (`market_unknown_ratio`).
+        #   ★ 「★ 화면에 ★ 「24/30 (표본 부족 · 80%)」 — ★ **만점처럼 보이면 안 된다**」
+        #   ★★ 0점도 아니고 ★ 만점도 아니다 — ★ **모르는 자리**를 그만큼만 채운다.
+        #     ★ ★ 시세 축에만 쓴다 — ★ 다른 축에 옮기지 않는다 (`S46-221`)
+        share = r.get("market_unknown_ratio")
+        if share is not None:
+            got = round(float(share) * ctx.policy.comp(MARKET))
+            put(v, MARKET, got, PRIO_OBSERVED, "market_sample_short")
+            return
         put(v, MARKET, 0, PRIO_OBSERVED, "market_sample_short")
         return
     pct = (median - s.price_current_won) / median * PCT

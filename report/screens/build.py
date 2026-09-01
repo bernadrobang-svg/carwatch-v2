@@ -587,9 +587,13 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         gen, power = _warranty_state(w, as_of)
         return power if axis == "warranty.power" else gen
     if axis == "state.accident" and rec:
+        # ★★★★★ 09-02 마스터 물음 ① — ★ **보험과 성능점검은 다른 것이다**.
+        #   ★ 보험 = ★ 보험금이 나갔는가 · ★ 성능점검 = ★ 골격이 상했는가
+        #   ★★ 「★ 보험 건수가 있으면 ★ **「무사고」라 쓰지 마라**」 (`S46-218`)
+        #     ★ ★ 이 축은 ★ **보험 이력**을 센다 — ★ 그러니 ★ 그렇게 적는다
         mycnt, _cost, othcnt, tot = rec
         n = tot if tot is not None else (mycnt or 0) + (othcnt or 0)
-        return "무사고" if not n else f"{n}회"
+        return "보험 이력 없음" if not n else f"보험 {n}건"
     if axis in ("state.frame", "state.outer"):
         return "골격 이상" if chip.tone != TONE_GOOD else "골격 이상 없음"
     if axis == "state.my_cost" and rec:
@@ -1894,7 +1898,9 @@ def recommend_reason(row) -> str:
     # ★ 축 점수로 만든다.  상태 문구에 기대면 그 조회를 켠 화면에서만 이유가 난다
     full = {c.axis: c for c in row.axis_chips}
     if (full.get("state.accident") or _EMPTY).tone == TONE_GOOD:
-        parts.append("무사고이며")
+        # ★★★★★ 09-02 마스터 물음 ① — ★ 「★ **보험 건수가 있으면 「무사고」라 쓰지 마라**」.
+        #   ★ 이 축이 좋다는 것은 ★ **보험 이력이 없다**는 뜻이다 — ★ 그렇게 적는다
+        parts.append("보험 이력이 없고")
     if (full.get("history.use") or _EMPTY).tone == TONE_GOOD:
         parts.append("렌트 이력이 없고")
     if (full.get("warranty.site") or _EMPTY).tone == TONE_GOOD:
@@ -1903,7 +1909,7 @@ def recommend_reason(row) -> str:
         return ""
     # ★ 조사를 이어 한 문장으로 만든다.  「무사고 엔카가 보증합니다」는 말이 아니다
     last = parts[-1]
-    tail = {"싸고": "쌉니다", "무사고이며": "무사고입니다",
+    tail = {"싸고": "쌉니다", "보험 이력이 없고": "보험 이력이 없습니다",
             "렌트 이력이 없고": "렌트 이력이 없습니다",
             "사이트가 우수등급을 준": "사이트가 우수등급을 줬습니다"}
     for k, v in tail.items():
