@@ -94,8 +94,22 @@ def look(pg, url: str) -> dict:
             };
             if (r.width > w + 2 && e.children.length < 3 && !scrollable(e))
                 over.push(e.tagName + '.' + (e.className || '').toString().slice(0, 24));
+            // ★★★★★ 09-03 — ★ 손가락 자리는 ★ **누르는 칸**이 받으면 된다.
+            //   ★ 배지 안 「A」는 ★ 14px 이지만 ★ 배지(`.gr`)가 44px 이라
+            //   ★ ★ 손가락이 ★ 배지를 누르면 ★ 그 글자가 눌린다.
+            //   ★ ★ ★ 그러니 ★ **44px 짜리 조상이 있으면** ★ 세지 않는다.
+            //     ★ ★ 「글자 상자」를 44px 로 키우면 ★ 오히려 줄이 겹친다 (실측 09-03)
+            const bigParent = (el) => {
+                for (let a = el.parentElement; a; a = a.parentElement) {
+                    const rr = a.getBoundingClientRect();
+                    if (rr.height >= 44 && rr.width >= 44
+                        && rr.width <= w) return true;
+                    if (a.tagName === 'BODY') break;
+                }
+                return false;
+            };
             if (e.matches('a,button,input[type=submit]') && r.height > 0
-                && r.height < 44 && r.width > 0)
+                && r.height < 44 && r.width > 0 && !bigParent(e))
                 small.push(Math.round(r.height) + 'px ' + (e.innerText || '').slice(0, 14));
         }
         // ★★ 겹침 — ★ 「단추와 단추가 서로 덮는가」다 (명령서 ②).
@@ -105,9 +119,15 @@ def look(pg, url: str) -> dict:
         //   ★ ★ 스크롤하면 ★ 글이 그 밑으로 지나간다.  ★ 그것이 시안이 시킨 것이다.
         //   ★★ 겹침으로 셀 것은 ★ **같은 흐름 안의 단추끼리**다.
         //     ★ ★ 떠 있는 띠가 ★ 마지막 줄을 가리지 않는지는 ★ `foot` 로 따로 잰다
+        // ★★★★★ 09-03 — ★ `sticky` 도 ★ **떠 있는 띠**다.
+        //   ★ 「비교하기 ▸」 띠가 ★ `position:sticky` 로 ★ 본문 위를 지나간다 —
+        //   ★ ★ 시안이 그렇게 만들라 한 것이다 (`.v4-cmp{position:sticky}`).
+        //   ★ ★ ★ `fixed` 만 가르면 ★ 그것이 「겹쳤다」로 나온다 [실측 09-03]
         const fixed = (el) => {
-            for (let a = el; a; a = a.parentElement)
-                if (getComputedStyle(a).position === 'fixed') return true;
+            for (let a = el; a; a = a.parentElement) {
+                const pos = getComputedStyle(a).position;
+                if (pos === 'fixed' || pos === 'sticky') return true;
+            }
             return false;
         };
         const btns = Array.from(document.querySelectorAll(
@@ -191,6 +211,11 @@ def look(pg, url: str) -> dict:
             const cs = getComputedStyle(e);
             if (cs.display === 'none' || cs.visibility === 'hidden') continue;
             if (+cs.opacity === 0 || e.children.length) continue;
+            // ★★★★★ 09-03 — ★ **접힌 `<details>` 속은 ★ 안 보인다.**
+            //   ★ 단추 자에는 ★ 이미 넣었는데 ★ 글자 자에는 ★ 안 넣었다 —
+            //   ★ ★ 그래서 ★ 접힌 거르개 속 「사고 OK」가
+            //   ★ ★ ★ 본문 「5,492건」과 ★ **겹쳤다**고 나왔다 [실측 09-03]
+            if (!vis(e)) continue;
             const txt = (e.textContent || '').trim();
             if (!txt) continue;
             const rr = e.getBoundingClientRect();
@@ -207,6 +232,12 @@ def look(pg, url: str) -> dict:
                 const oy = Math.min(A.r.bottom, C.r.bottom) - Math.max(A.r.top, C.r.top);
                 if (!(ox > 1 && oy > 1)) continue;
                 traw++;
+                // ★★★★★ 09-03 — ★ **떠 있는 띠는 겹침이 아니다.**
+                //   ★ 아래 메뉴(`position:fixed`)가 ★ 스크롤하는 글 위를 지나간다 —
+                //   ★ ★ 시안도 ★ 그렇게 만들라고 한 것이다 (`.v4-tabs`).
+                //   ★ ★ ★ 단추 겹침 자에서 이미 갈랐는데 ★ 글자 겹침 자에서 안 갈랐다
+                //     ★ ★ (실측 09-03 — 「≡ / 거르기」·「♡ / 4시간마다」가 다 그것이다)
+                if (fixed(A.e) !== fixed(C.e)) { tfake++; continue; }
                 if (A.multi || C.multi ||
                     (A.inline && C.inline && A.e.parentElement === C.e.parentElement)) {
                     tfake++; continue;

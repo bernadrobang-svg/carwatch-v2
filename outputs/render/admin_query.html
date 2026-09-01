@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쿼리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=a6869d2662">
+<link rel="stylesheet" href="/static/app.css?v=64a870c60b">
 
 </head>
 <body class="s-admin-query">
@@ -175,13 +175,13 @@
 <tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">200,061</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">21,484</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">22,263</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
-<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">3,005</td>
+<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">3,067</td>
   <td class="muted" data-label="컬럼">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
 
-<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">2,956</td>
+<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">3,018</td>
   <td class="muted" data-label="컬럼">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
 
 <tr><td class="runid" data-label="표">coefficient_history</td><td class="num" data-label="행">0</td>
@@ -212,7 +212,7 @@
   <td class="muted" data-label="컬럼">listing_id · site · source_id · target_key · vehicle_id · classify_stage · classify_source · classify_conflict · price_current_won · price_detail_won</td></tr>
 
 <tr><td class="runid" data-label="표">core_listing_change</td><td class="num" data-label="행">31,181</td>
-  <td class="muted" data-label="컬럼">listing_id · changed_at · field · old_value · new_value · change_kind · cause</td></tr>
+  <td class="muted" data-label="컬럼">listing_id · changed_at · field · old_value · new_value · change_kind · cause · run_id</td></tr>
 
 <tr><td class="runid" data-label="표">core_parse_issue</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · listing_id · endpoint · json_path · reason · raw_sample · parse_version · detected_at</td></tr>
@@ -262,7 +262,7 @@
 <tr><td class="runid" data-label="표">recalc_job</td><td class="num" data-label="행">234</td>
   <td class="muted" data-label="컬럼">job_id · account_id · trigger · reason · from_step · scope · status · run_id · current_step · step_done</td></tr>
 
-<tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">271,908</td>
+<tr><td class="runid" data-label="표">result_axis</td><td class="num" data-label="행">292,824</td>
   <td class="muted" data-label="컬럼">listing_id · calc_version · dict_version · axis · value · source · prio · excluded · max_points · score</td></tr>
 
 <tr><td class="runid" data-label="표">result_axis_conflict</td><td class="num" data-label="행">0</td>
@@ -324,7 +324,7 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260901T043204</span>
-  <span>2026-09-01 18:17</span>
+  <span>2026-09-01 23:23</span>
 </footer>
 
 </body>

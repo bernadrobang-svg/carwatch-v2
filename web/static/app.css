@@ -2665,7 +2665,10 @@ a.mini, a.clear, .sub a {
    ★ ★ 줄 높이가 ★ 51px 자식에 ★ **24px** 로 잡히고 ★ 다음 줄과 겹쳤다
    ★ ★ ★ (300·360·600·900px 전 폭 · 여섯 쌍).
    ★★ 값 링크만 물린다 — ★ 단추(`.btn`·`.mb`·`.nav-item`·`.heart`)는 뺀다 */
-.row a:not(.btn):not(.heart):not(.mb),
+/* ★★★★★ 09-03 — ★ 배지(`.gr`) 안 글자는 ★ **뺀다.**
+   ★ 값 링크에 준 ★ `padding:14px 0` 이 ★ 배지 글자까지 물어
+   ★ ★ 「A」가 50px 이 되어 ★ 아래 「1위」와 겹쳤다 [실측 09-03] */
+.row a:not(.btn):not(.heart):not(.mb):not(.gr *),
 td a:not(.btn):not(.mb),
 li a:not(.btn):not(.mb):not(.nav-item),
 p a:not(.btn):not(.mb):not(.nav-item),
@@ -2944,3 +2947,61 @@ td .heart, th .heart {
     width: 240px; height: 180px;
   }
 }
+
+/* ★★★★★ 09-03 브라우저 실측 — ★ 넓은 폭에서 ★ **글자가 겹쳤다**.
+   ★ ① 등급 배지 — 「A / 1위 / 637.5/910」 셋이 ★ 한 상자에 쌓이는데
+   ★ ★ 상자 높이가 모자라 ★ 서로 물렸다.  ★ 줄을 세로로 세운다.
+   ★ ② 추천 카드 — ★ 내가 넣은 「(2년)」·「(연 0.5만)」이 ★ 이름 줄과 물렸다.
+   ★ ★ 제원 줄이 ★ 한 줄에 안 들어가면 ★ **접히게** 한다 (명령서 ②) */
+.gr {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 1px; height: auto; min-height: 44px;
+}
+.gr small, .gr .grscore { position: static; }
+/* ★★★★★ 09-03 실측 — ★ 등급 글자(`<a>`)가 ★ `min-height:44px` 를 받아
+   ★ ★ **제 상자를 넘어** ★ 아래 「1위」와 겹쳤다 (888~935 vs 925~934).
+   ★ ★ ★ 그 44px 은 ★ **손가락 자리**로 준 것이다 (`.btn` 계열) —
+   ★ ★ ★ ★ 배지 안 글자에는 ★ 안 맞는다.  ★ 여기서 되돌린다.
+   ★ 손가락 자리는 ★ 배지 **전체**(`.gr`)가 44px 로 받는다 — ★ 안 잃는다 */
+.gr > a { min-height: 0; line-height: 1.15; display: block;
+          padding: 0; margin: 0; }
+.pickspec {
+  display: block; white-space: normal; word-break: keep-all;
+  overflow-wrap: anywhere; line-height: 1.6;
+}
+.pickname { white-space: normal; word-break: keep-all; }
+
+/* ★★★★★ 09-03 — ★ 배지(`.gr`) 안 글자는 ★ 여백을 안 받는다.
+   ★ 값 링크에 준 `padding:14px 0` 이 ★ 「A」를 50px 로 만들어
+   ★ ★ 아래 「1위」와 겹쳤다 [실측 09-03].  ★ 손가락 자리는 ★ 배지 전체가 44px 로 받는다 */
+.gr a { padding: 0; margin: 0; min-height: 0; line-height: 1.15; }
+
+/* ★★★★★ 09-03 실측 — ★ 막대의 숫자(`<u>`)와 ★ 이름 줄(`.barlab`)이 겹쳤다
+   ★ (「77 / 차량」·「70 / 값」).  ★ 막대는 ★ **104px 짜리 작은 그림**인데
+   ★ ★ 사진을 240px 로 키우자 ★ 그 칸이 눌려 ★ 둘이 물렸다.
+   ★★ 숫자는 ★ 막대 **안**에 둔다 — ★ 이름 줄과 자리를 안 다툰다 */
+.bars .bar { position: relative; overflow: hidden; }
+.bars .bar u { position: absolute; left: 0; right: 0; bottom: 1px;
+               text-decoration: none; font-size: 8px; line-height: 1;
+               text-align: center; }
+.barlab { clear: both; }
+
+/* ★★★★★ 09-03 실측 — ★ 추천 카드 이름(`.pickname a`)이
+   ★ 값 링크 여백(`padding:14px`)을 받아 ★ **72px 상자**가 되어
+   ★ ★ 아래 제원 줄(「(2년)」·「(연 0.5만)」)과 ★ 겹쳤다 (664~736 vs 724~743).
+   ★★ 배지와 같은 자리다 — ★ 이름 줄은 ★ **글**이지 ★ 값 링크가 아니다.
+   ★ 손가락 자리는 ★ 카드 전체가 받는다 (`data-href`) — ★ 안 잃는다 */
+.pickname a { padding: 0; margin: 0; min-height: 0; line-height: 1.35; }
+
+/* ★★★★★ 09-03 실측 — ★ 좁은 폭에서 ★ 추천 이름이 **두 줄**이 되면
+   ★ 그 상자가 ★ 아래 제원 줄과 물린다.  ★ `inline-block` 이라 ★ 줄 높이를 안 민다.
+   ★★ 이름 줄을 ★ **덩이**로 만든다 — ★ 두 줄이 되어도 ★ 아래를 밀어낸다 */
+.pickname { display: block; }
+.pickname a { display: block; }
+
+/* ★★★★★ 09-03 — ★ 관심 화면의 고르개(`<label><input>`)가 ★ 화면을 넘쳤다.
+   ★ 좁은 폭에서 ★ 이름이 안 접혀서다 (명령서 ② 「넘치면 두 줄로」) */
+.rows label, main label { max-width: 100%; white-space: normal;
+                          word-break: keep-all; }
+main input[type="text"], main input[type="number"],
+main input[type="search"] { max-width: 100%; box-sizing: border-box; }

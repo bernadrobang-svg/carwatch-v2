@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>설정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=a6869d2662">
+<link rel="stylesheet" href="/static/app.css?v=64a870c60b">
 
 </head>
 <body class="s-admin-config">
@@ -65,7 +65,7 @@
   <span class="muted">근거 STEP 127</span>
 </p>
 
-<p><a class="chip" href="/admin/config?file=admin.json">admin.json</a><a class="chip" href="/admin/config?file=checks.json">checks.json</a><a class="chip" href="/admin/config?file=cli_screens.json">cli_screens.json</a><a class="chip" href="/admin/config?file=dealer_trust.json">dealer_trust.json</a><a class="chip" href="/admin/config?file=deploy.json">deploy.json</a><a class="chip" href="/admin/config?file=depreciation.json">depreciation.json</a><a class="chip" href="/admin/config?file=dimensions.json">dimensions.json</a><a class="chip" href="/admin/config?file=endpoints.json">endpoints.json</a><a class="chip" href="/admin/config?file=field_usage.json">field_usage.json</a><a class="chip" href="/admin/config?file=finance.json">finance.json</a><a class="chip" href="/admin/config?file=known_issues.json">known_issues.json</a><a class="chip" href="/admin/config?file=labels.json">labels.json</a><a class="chip" href="/admin/config?file=scoring.json">scoring.json</a><a class="chip" href="/admin/config?file=sites.json">sites.json</a><a class="chip" href="/admin/config?file=targets.json">targets.json</a><a class="chip" href="/admin/config?file=trace_hints.json">trace_hints.json</a><a class="chip" href="/admin/config?file=trace_layers.json">trace_layers.json</a><a class="chip" href="/admin/config?file=unknown_split.json">unknown_split.json</a><a class="chip" href="/admin/config?file=warnings.json">warnings.json</a><a class="chip" href="/admin/config?file=web.json">web.json</a></p>
+<p><a class="chip" href="/admin/config?file=admin.json">admin.json</a><a class="chip" href="/admin/config?file=checks.json">checks.json</a><a class="chip" href="/admin/config?file=cli_screens.json">cli_screens.json</a><a class="chip" href="/admin/config?file=collect.json">collect.json</a><a class="chip" href="/admin/config?file=dealer_trust.json">dealer_trust.json</a><a class="chip" href="/admin/config?file=deploy.json">deploy.json</a><a class="chip" href="/admin/config?file=depreciation.json">depreciation.json</a><a class="chip" href="/admin/config?file=dimensions.json">dimensions.json</a><a class="chip" href="/admin/config?file=endpoints.json">endpoints.json</a><a class="chip" href="/admin/config?file=field_usage.json">field_usage.json</a><a class="chip" href="/admin/config?file=finance.json">finance.json</a><a class="chip" href="/admin/config?file=known_issues.json">known_issues.json</a><a class="chip" href="/admin/config?file=labels.json">labels.json</a><a class="chip" href="/admin/config?file=scoring.json">scoring.json</a><a class="chip" href="/admin/config?file=sites.json">sites.json</a><a class="chip" href="/admin/config?file=targets.json">targets.json</a><a class="chip" href="/admin/config?file=trace_hints.json">trace_hints.json</a><a class="chip" href="/admin/config?file=trace_layers.json">trace_layers.json</a><a class="chip" href="/admin/config?file=unknown_split.json">unknown_split.json</a><a class="chip" href="/admin/config?file=warnings.json">warnings.json</a><a class="chip" href="/admin/config?file=web.json">web.json</a></p>
 
 <h2>scoring.json</h2>
 <table class="rows">
@@ -2828,7 +2828,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.taste.color_int_groups.preferred</td>
-  <td class="num" data-label="현재 값">[&quot;검정색 계열&quot;, &quot;블랙&quot;, &quot;차콜&quot;, &quot;다크그레이&quot;, &quot;진회색 계열&quot;, &quot;그레이 계열&quot;, &quot;회색 계열&quot;]</td>
+  <td class="num" data-label="현재 값">[&quot;검정색 계열&quot;, &quot;블랙&quot;, &quot;차콜&quot;, &quot;블랙 계열&quot;]</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2845,7 +2845,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.taste.color_int_groups.default</td>
-  <td class="num" data-label="현재 값">[&quot;흰색 계열&quot;, &quot;화이트&quot;, &quot;아이보리&quot;, &quot;은색 계열&quot;]</td>
+  <td class="num" data-label="현재 값">[&quot;그레이 계열&quot;, &quot;회색 계열&quot;, &quot;진회색 계열&quot;, &quot;갈색 계열&quot;, &quot;브라운&quot;, &quot;베이지색 계열&quot;, &quot;베이지&quot;, &quot;흰색 계열&quot;, &quot;화이트&quot;, </td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -2862,7 +2862,7 @@
 
 <tr>
   <td class="runid" data-label="키">axis_rules.taste.color_int_groups.avoided</td>
-  <td class="num" data-label="현재 값">[&quot;갈색 계열&quot;, &quot;브라운&quot;, &quot;베이지색 계열&quot;, &quot;베이지&quot;, &quot;탠&quot;, &quot;적색 계열&quot;, &quot;청색 계열&quot;]</td>
+  <td class="num" data-label="현재 값">[]</td>
   <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -4797,7 +4797,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260901T043204</span>
-  <span>2026-09-01 18:17</span>
+  <span>2026-09-01 23:23</span>
 </footer>
 
 </body>
