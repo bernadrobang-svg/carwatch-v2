@@ -5462,7 +5462,28 @@ def s46_243_empty_says_why():
                   f"{' (기본 ' + base.split('//')[-1] + ')' if base else ''}")
 
 
+def s46_244_failed_response_kept():
+    """S46-244 — ★ 실패 응답도 ★ 원문으로 남는가 (5장 STEP 53-⑤ · 실측 09-01).
+
+    ★ 규격 — 「★ `raw_*` 삭제 금지.  ★ **실패 응답도 원문이다**」
+    ★★ 실측 09-01 · 판 `20260901T165912` —
+      ★ 두드림 **318**(error 312 · not_found 3 · ok 3) 인데 ★ 원문은 **32건**.
+      ★ ★ **286건이 사라졌다**.  ★ 그래서 `S5 ⑤ raw_response 신규 32 != 응답 합 318` 이 뜬다.
+      ★ ★ ★ 차단당한 증거가 사라져 ★ 「왜 안 왔나」를 못 캔다.
+    ★ 잣대 — ★ 규격이 이 말을 여전히 담고 있는가 · ★ 저장 코드가 ★ 실패를 걸러 내지 않는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "11-store" / "a-key.md") + \
+        _read(ROOT / "docs" / "chapters" / "13-pipeline.md")
+    if "실패 응답도 원문이다" not in spec:
+        return False, "규격에서 「실패 응답도 원문이다」가 사라졌다"
+    src = _read(ROOT / "collect" / "pipeline.py")
+    if "raw_rows != answered" not in src:
+        return False, "S5 ⑤ 검사(raw_rows != answered)가 사라졌다"
+    return True, "규격이 「실패 응답도 원문이다」를 지키고 S5 ⑤ 가 살아 있다"
+
+
 CHECKS = (
+    ("S46-244", "실패 응답도 원문으로 남는가", s46_244_failed_response_kept),
     ("S46-242", "시안에 「반드시 있는 것」 머리가 있는가", s46_242_mock_has_required_header),
     ("S46-243", "비는 자리가 까닭을 내는가", s46_243_empty_says_why),
     ("S46-241", "배포에서 재판정이 살아 있는가", s46_241_regrade_alive_on_deploy),
