@@ -143,6 +143,15 @@ class ListingRow:
     #   목록에 딱지로 · 막대 옆에 「막대 합 − 감점 = 등급 점수」로 낸다
     penalty_won: int = 0          # ★ 상한을 먹인 뒤의 합 (음수)
     penalty_labels: list = field(default_factory=list)
+    # ★★★★★ 09-02 마스터 확정 — ★ **가장 큰 감점 하나**를 겉에 낸다.
+    #   ★ 「감점 -40 ★ (렌트 이력 -22)」 — ★ 무엇 때문인지 접힌 채로 보인다
+    penalty_top: str = ""
+    # ★★★★★ 09-02 마스터 확정 — ★ 「★ 연식·거리에 ★ **셈을 함께** 낸다」
+    #   ★ 「연식 2022-07 ★ (3년 2개월)」 · 「주행 139,571km ★ (연 4.4만)」
+    #   ★ ★ **한 해에 얼마나 탔나**가 ★ 많이 탔는지를 가른다 —
+    #   ★ ★ ★ 총 거리만으로는 모른다.  ★ 못 재면 ★ 빈 글자다 (지어내지 않는다)
+    age_label: str = ""
+    km_per_year_label: str = ""
     # ★ 상세 조회가 안 끝난 매물 — 등급 옆에 「잠정」 (STEP 97)
     provisional: bool = False
     # ★ 등급 문구 — 「제외」는 등급 문자가 아니다 (개정 433)
@@ -828,6 +837,9 @@ class RecommendRow:
     site_badge: str | None = None
     # ★★★★★ 09-02 — ★ 판매지역 (`S46-225`)
     region_label: str | None = None
+    # ★★★★★ 09-02 마스터 확정 — ★ 연식·거리의 셈 (「3년 2개월」·「연 4.4만」)
+    age_label: str = ""
+    km_per_year_label: str = ""
     encar_url: str | None = None
     total_cost_won: int | None = None
     buy_estimated: bool = False

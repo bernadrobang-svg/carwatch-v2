@@ -2880,3 +2880,11 @@ form.chips > * { max-width: 100%; }
 /* ★★★★★ 09-02 마스터 확정 — ★ 판매지역 딱지 (`S46-225`).
    ★ 사이트 딱지 옆이다 — 「엔카 · 게시중 · ★ 강서구」 */
 .tag.region { color: var(--dim); }
+
+/* ★★★★★ 09-02 마스터 확정 — ★ 감점 까닭 (접었다 편다).
+   ★ 「감점 -40 (렌트 이력 -22) ▾」 — ★ 누르면 다 펴진다 */
+details.pen > summary { list-style: none; cursor: pointer; }
+details.pen > summary::-webkit-details-marker { display: none; }
+.penlist { margin: 6px 0 0; padding-left: 16px; font-size: 11px;
+           color: var(--dim); }
+.penlist b { color: var(--up); font-weight: 600; }

@@ -751,6 +751,11 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★★ 감점 (개정 491) — 상한을 먹인 뒤의 합과 문구
         penalty_won=_pen_sum(pen_json),
         penalty_labels=_pen_words(pen_json),
+        # ★★★★★ 09-02 — ★ 가장 큰 감점 하나 (접힌 채로 보인다)
+        penalty_top=_pen_top(pen_json),
+        # ★★★★★ 09-02 마스터 확정 — ★ 연식·거리에 ★ 셈을 함께 낸다
+        age_label=_age_label(ym),
+        km_per_year_label=_km_per_year(ym, km),
         # ★★ 네 묶음 막대 (개정 427).  ★ 갈래 이름은 scoring.json groups 가 정본
         # ★ 등급 문구 — 「제외」는 문자가 아니다 (개정 433).  config 가 정본
         grade_label=labels.get("GRADE_LABELS", {}).get(
@@ -927,6 +932,77 @@ def _pen_words(raw) -> list:
     return [{"key": k, "points": p, "label": w,
              "is_cap": str(k).startswith("cap:")}
             for k, p, w in _pen_rows(raw)]
+
+
+MONTHS_PER_YEAR = 12
+KM_PER_MAN = 10_000
+
+
+def _ym_parts(ym) -> tuple:
+    """연식 → (해, 달).  ★ `202207` 도 `2022-07` 도 받는다 [실측 09-03].
+
+    ★ 화면은 ★ `2023-05` 꼴로 들고 있다 — ★ 여섯 자리만 보면 ★ 못 읽는다
+    ★ 못 읽으면 ★ `(None, None)` 이다 — ★ 지어내지 않는다
+    """
+    got = re.sub(r"[^0-9]", "", str(ym or ""))
+    if len(got) < 6:
+        return None, None
+    return int(got[:4]), int(got[4:6])
+
+
+def _age_label(ym, as_of: str | None = None) -> str:
+    """★★★★★ 09-02 — ★ 「연식 2022-07 ★ **(3년 2개월)**」.
+
+    ★ 못 재면 ★ 빈 글자다 — ★ 지어내지 않는다
+    """
+    from datetime import datetime, timezone
+
+    y0, m0 = _ym_parts(ym)
+    if y0 is None:
+        return ""
+    now = (datetime.fromisoformat(str(as_of).replace("Z", "+00:00"))
+           if as_of else datetime.now(timezone.utc))
+    n = (now.year - y0) * MONTHS_PER_YEAR + (now.month - m0)
+    if n < 0:
+        return ""
+    y, m = divmod(n, MONTHS_PER_YEAR)
+    if y and m:
+        return f"{y}년 {m}개월"
+    return f"{y}년" if y else f"{m}개월"
+
+
+def _km_per_year(ym, km, as_of: str | None = None) -> str:
+    """★★★★★ 09-02 — ★ 「주행 139,571km ★ **(연 4.4만)**」.
+
+    ★ 마스터 — 「★ **한 해에 얼마나 탔나**가 ★ 많이 탔는지를 가른다」
+    ★ 한 해가 안 됐으면 ★ 안 낸다 — ★ 늘려 잡으면 거짓이 된다
+    """
+    from datetime import datetime, timezone
+
+    y0, m0 = _ym_parts(ym)
+    if km is None or y0 is None:
+        return ""
+    now = (datetime.fromisoformat(str(as_of).replace("Z", "+00:00"))
+           if as_of else datetime.now(timezone.utc))
+    months = (now.year - y0) * MONTHS_PER_YEAR + (now.month - m0)
+    if months < MONTHS_PER_YEAR:
+        return ""
+    per = float(km) / (months / MONTHS_PER_YEAR)
+    return f"연 {per / KM_PER_MAN:.1f}만"
+
+
+def _pen_top(raw) -> str:
+    """★★★★★ 09-02 마스터 확정 — ★ **가장 큰 감점 하나**를 겉에 낸다.
+
+    ★ 마스터 — 「★ 지금 「감점 -40」이라고만 나온다.  ★ **무엇 때문인지 안 낸다**」
+    ★ 「상한」 줄은 ★ 되돌린 몫이라 ★ 안 고른다 — ★ 흠이 아니다
+    ★ 없으면 ★ 빈 글자다 — ★ 지어내지 않는다
+    """
+    got = [x for x in _pen_words(raw) if not x["is_cap"]]
+    if not got:
+        return ""
+    one = min(got, key=lambda x: float(x["points"] or 0))
+    return f"{one['label']} {one['points']}"
 
 
 def _view_cfg(key: str, root: str = ".") -> int:
@@ -4041,6 +4117,9 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
             site_badge=site_badge(r[7], r[12], root),
             # ★★★★★ 09-02 마스터 확정 — ★ 판매지역 (`S46-225`)
             region_label=region_of(r[7], r[13], r[14], root),
+            # ★★★★★ 09-02 마스터 확정 — ★ 연식·거리에 셈을 함께
+            age_label=_age_label(r[3]),
+            km_per_year_label=_km_per_year(r[3], r[4]),
             encar_url=_source_url(r[7], r[11], site_tpl),
             # ★ 「그 사이트에서 사면 얼마를 내는가」 (개정 353 · `V11-120`)
             total_cost_won=(_buy_of(r[7], r[6], r[1]) or None),

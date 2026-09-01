@@ -272,10 +272,19 @@
     <!-- ★★ 감점 딱지 (개정 491 · 명령서 1-2 ⓑⓒ)
          ★ 조용히 깎지 않습니다.  막대 합에서 이만큼 빠져 등급 점수가 됩니다
          ★ 「깎인 합 → 상한」은 딱지에 손대면 보입니다 -->
+    <!-- ★★★★★ 09-02 마스터 확정 — ★ 「★ 지금 「감점 -40」이라고만 나온다.
+         ★ **무엇 때문인지 안 낸다**.  ★ 접힌 채로 ★ **가장 큰 것 하나** —
+         ★ 「감점 -40 ★ (렌트 이력 -22 …)」 · ★ 누르면 ★ 다 펴진다」 -->
     {% if r.penalty_won %}
-    <div class="barlab"><span class="chip-bad"
-      title="{% for p in r.penalty_labels %}{{ p.label }}{% if !p.is_cap %} {{ p.points }}{% endif %} · {% endfor %}★ 막대 합 − 감점 = 등급 점수입니다"
-      >감점 {{ r.penalty_won }}</span></div>
+    <div class="barlab"><details class="pen">
+      <summary class="chip-bad"
+        title="★ 막대 합 − 감점 = 등급 점수입니다.  ★ 눌러 다 봅니다"
+        >감점 {{ r.penalty_won }}{% if r.penalty_top %} ({{ r.penalty_top }}){% endif %} ▾</summary>
+      <ul class="penlist">
+        {% for p in r.penalty_labels %}<li>{{ p.label }}{% if !p.is_cap %}
+          <b>{{ p.points }}</b>{% endif %}</li>{% endfor %}
+      </ul>
+    </details></div>
     {% endif %}
   </div>
 
@@ -325,10 +334,15 @@
       <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
            ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
       <div class="meta">
+        <!-- ★★★★★ 09-02 마스터 확정 — ★ 「★ 연식·거리에 ★ **셈을 함께** 낸다」.
+             ★ 「연식 2022-07 ★ (3년 2개월)」 · 「주행 139,571km ★ (연 4.4만)」
+             ★ ★ **한 해에 얼마나 탔나**가 ★ 많이 탔는지를 가른다 -->
         <a href="/listings?year_from={{ r.year_month }}"
-           title="이 연식 이후만 봅니다">{{ r.year_month }}</a> ·
+           title="이 연식 이후만 봅니다">{{ r.year_month }}</a>{% if r.age_label %}
+          <span class="dim">({{ r.age_label }})</span>{% endif %} ·
         {% if r.mileage_bucket_km %}<a href="/listings?km_max={{ r.mileage_bucket_km }}"
-          title="이 주행거리 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}
+          title="이 주행거리 이하만 봅니다">{{ r.mileage_km | km }}</a>{% endif %}{% if r.km_per_year_label %}
+          <span class="dim" title="한 해에 얼마나 탔나입니다">({{ r.km_per_year_label }})</span>{% endif %}
         {% if !r.mileage_bucket_km %}<span class="dim">주행 없음</span>{% endif %} ·
         {% if r.color_ext_hex %}<span class="swatch"
           style="background:{{ r.color_ext_hex }}"></span>{% endif %}{{ r.color_ext }}
