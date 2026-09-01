@@ -117,10 +117,15 @@ def split_pii(conn: sqlite3.Connection, parsed: dict, site: str,
 
     from store.pii import (
         hash_list, plate_hash, plate_use_char, save_dealer_pii, save_listing_pii,
+        vin_hash,
     )
 
     out = {k: v for k, v in parsed.items() if not k.startswith("_pii_")}
     lid = parsed.get("listing_id")
+    # ★★★★★ 09-02 마스터 확정 — ★ 차대번호도 ★ **감춘다** (`S46-216`).
+    #   ★ 짝의 열쇠를 ★ VIN 으로 올린다 — ★ 번호판은 바뀌고 ★ VIN 은 안 바뀐다
+    if parsed.get("vin"):
+        out["vin_hash"] = vin_hash(parsed.get("vin"), key)
     plate = parsed.get("_pii_plate_no")
     if plate is not None:
         out["plate_hash"] = plate_hash(plate, key)

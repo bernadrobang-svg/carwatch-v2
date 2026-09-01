@@ -2888,3 +2888,12 @@ details.pen > summary::-webkit-details-marker { display: none; }
 .penlist { margin: 6px 0 0; padding-left: 16px; font-size: 11px;
            color: var(--dim); }
 .penlist b { color: var(--up); font-weight: 600; }
+
+/* ★★★★★ 09-02 마스터 확정 — ★ 시안 `.v4-plate`·`.v4-vin` (추적).
+   ★ 차량번호 ＋ VIN 딱지 — ★ 「VIN ○」는 ★ 차대번호로 짝지었다는 뜻이다 */
+.kplate { font-size: 12px; color: var(--text); font-weight: 600;
+          letter-spacing: .3px; margin-bottom: 2px; }
+.kvin { font-size: 10px; font-weight: 400; color: var(--ok);
+        border: 1px solid var(--line); border-radius: 3px;
+        padding: 1px 4px; margin-left: 4px; }
+.kvin.na { color: var(--faint); }

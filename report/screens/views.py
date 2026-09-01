@@ -519,6 +519,11 @@ class TrackPair:
     #   (`.v4-thumbwrap` · `.v4-thumb`).  ★ 우리 화면에 없었다 (`S46-98`).
     #   ★ ★ 없으면 ★ 「사진」이라 적은 빈 자리다 — ★ 지어내지 않는다
     photo_url: str | None = None
+    # ★★★★★ 09-02 마스터 확정 — ★ 시안 `.v4-plate` — ★ 차량번호 ＋ VIN 딱지.
+    #   ★ 번호판은 ★ 감춘 값(해시)이라 ★ 앞 여섯 자만 낸다 (STEP 35 — 원본을 안 낸다)
+    plate_label: str = ""
+    # ★ VIN 으로 짝지었나 — ★ 「VIN ○」 / 「VIN —」.  ★ 감추지 않는다
+    has_vin: bool = False
     # ★★ 틀은 `>=` 비교를 못 한다 (V11-104) — ★ 판단은 build 가 한다.
     #   ★ 30% 넘으면 ★ 짝짓기가 틀렸을 자리다 (v4m 추적 시안)
     big_gap: bool = False

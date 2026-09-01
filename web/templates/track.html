@@ -52,6 +52,12 @@
         title="사진" loading="lazy">{% endif %}
       {% if !p.photo_url %}<span class="pimg">사진</span>{% endif %}
     </div><div class="kmid">
+      <!-- ★★★★★ 09-02 마스터 확정 — ★ 시안 `.v4-plate` — ★ 차량번호 ＋ VIN 딱지.
+           ★ 「★ 차량번호는 ★ 바뀐다.  ★ 차대번호는 ★ 평생 안 바뀐다」
+           ★ ★ VIN 이 있으면 ★ 「VIN ○」 · 없으면 ★ 「VIN —」 — ★ 감추지 않는다 -->
+      <div class="kplate">{{ p.plate_label }}
+        {% if p.has_vin %}<span class="kvin" title="차대번호로 짝지었습니다 — 번호판이 바뀌어도 같은 차입니다">VIN ○</span>{% endif %}
+        {% if !p.has_vin %}<span class="kvin na" title="차대번호가 없어 차량번호로 짝지었습니다">VIN —</span>{% endif %}</div>
       <div class="kname">{{ p.target_label }}</div>
       <div class="ktrim">{{ p.trim }}</div>
       <div class="kspec">{{ p.site_count }}곳 ·
@@ -60,7 +66,11 @@
       {% if p.big_gap %}<div class="kspec up">★ 30% 넘습니다 —
         <strong>짝짓기가 틀렸을 자리입니다.</strong>
         연식·트림이 다른 차를 묶었을 수 있습니다</div>{% endif %}
+      <!-- ★★★★★ 09-02 마스터 확정 — ★ 「★ 사이트 줄에 ★ **값을 등급 앞에** —
+           ★ 「엔카 3,900만 B 638/910」.  ★ 마스터께서 ★ **어디가 싼지를 보러 오신다.
+           ★ 값이 먼저다**」 -->
       <div class="kj">{% for s in p.sites %}<span>{{ s.badge }}
+        <b>{{ s.price_won | won }}</b>
         <b class="{{ s.grade | gradecls }}">{{ s.grade | gradelabel }}</b>
         <!-- ★ 점수가 없으면 「없습니다/…」이 된다 — ★ 그것을 안 낸다
              ★★ 08-29 — ★ `/910` 을 박아 두었었다.  ★ 분모는 판정이 낸 값이다 -->

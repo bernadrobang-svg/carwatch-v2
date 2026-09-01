@@ -76,6 +76,23 @@ def plate_hash(plate_no: str | None, key: bytes) -> str | None:
     return mac.hexdigest()[:HASH_HEX_LEN]
 
 
+def vin_hash(vin: str | None, key: bytes) -> str | None:
+    """★★★★★ 09-02 마스터 확정 — ★ 차대번호도 ★ **HMAC 로 감춘다**.
+
+    ★ 「★ VIN 도 HMAC 로 감춘다(vin_hash) — ★ **차주를 가리킬 수 있다**」
+    ★ 번호판과 ★ 같은 셈이다 — ★ 결정적이어야 짝짓기에 쓸 수 있다.
+    ★★ **앞 몇 자만 견주지 않는다** (규격 「금지」) — ★ 통째로 넣는다.
+      ★ ★ 대문자로 맞춘다 — ★ 사이트마다 대소문자가 다르다
+    """
+    if not vin:
+        return None
+    got = str(vin).strip().upper()
+    if not got:
+        return None
+    mac = hmac.new(key, got.encode("utf-8"), hashlib.sha256)
+    return mac.hexdigest()[:HASH_HEX_LEN]
+
+
 def plate_use_char(plate_no: str | None) -> str | None:
     """번호판의 용도 문자.  '허' · '하' · '호' · None (그 외).
 

@@ -1152,6 +1152,20 @@ def _option_medians(conn, prices: dict) -> tuple:
             for lid, (key, tk) in where.items()}
 
 
+def _lease_types(root: str | None = None) -> tuple:
+    """리스·렌트 낱말.  ★ 정본은 `config/labels.json` 이다 — ★ 코드에 안 박는다."""
+    import json as _j
+
+    base = root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    try:
+        with open(os.path.join(base, "config", "labels.json"),
+                  encoding="utf-8") as f:
+            got = _j.load(f).get("LEASE_SELL_TYPES")
+    except (OSError, ValueError):
+        return ()
+    return tuple(str(x) for x in got) if isinstance(got, list) else ()
+
+
 def _market_medians(conn, need: int) -> dict:
     """매물별 「같은 차종·트림·연식」 실매물 중앙값 (개정 292 ①).
 
@@ -1171,6 +1185,14 @@ def _market_medians(conn, need: int) -> dict:
     # ★ 「여섯 달 넘은 값은 ★ **반으로**」 (명령서 ②) — ★ **버리지 않는다**
     old_at = (datetime.now(timezone.utc) - timedelta(days=182)).isoformat()
     groups: dict = {}
+    # ★★★★★ 09-02 마스터 확정 — ★ **리스·렌트를 표본에서 뺀다** (`S46-217`).
+    #   ★ 마스터 — 「★ **왜 리스가 비교가 되니?**」
+    #   ★ ★ 「엔카 3,200만 ↔ K카 리스 승계 1,900만」은 ★ **같은 값이 아니다** —
+    #   ★ ★ ★ 섞으면 ★ 시세가 통째로 내려간다.  ★ 매물 화면에는 남긴다
+    lease = _lease_types()
+    marks = ",".join("?" * len(lease)) if lease else ""
+    no_lease = (f" AND (sell_type IS NULL OR sell_type NOT IN ({marks}))"
+                if lease else "")
     for lid, tk, trim, ym, price, seen in conn.execute(
         "SELECT listing_id, target_key, trim_badge, substr(year_month,1,4),"
         " price_current_won, COALESCE(gone_at, last_seen, first_seen)"
@@ -1178,6 +1200,7 @@ def _market_medians(conn, need: int) -> dict:
         " WHERE price_current_won IS NOT NULL"
         " AND target_key IS NOT NULL"
         " AND (advertisement_type IS NULL OR advertisement_type='NORMAL')"
+        + no_lease, tuple(lease)
     ):
         w = 0.5 if (seen and str(seen) < old_at) else 1.0
         groups.setdefault((tk, trim, ym), []).append((lid, price, w))

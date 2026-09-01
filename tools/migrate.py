@@ -111,10 +111,27 @@ def main() -> int:
 
     before = {r[0] for r in conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table'")}
-    for name in sorted(os.listdir(DDL)):
-        if name.endswith(".sql"):
-            conn.executescript(open(os.path.join(DDL, name),
-                                    encoding="utf-8").read())
+    # ★★★★★ 09-03 — ★ **새 칸에 색인을 걸면 ★ 첫 판이 죽는다.**
+    #   ★ 실측 09-03 — ★ `vin_hash` 를 더하고 ★ 그 칸에 색인을 걸었더니
+    #   ★ ★ `no such column: vin_hash` 로 ★ 마이그레이션이 통째로 멈췄다.
+    #   ★ ★ ★ 칸은 ★ 아래 `ALTER TABLE` 이 더한다 — ★ 그것이 색인보다 뒤다.
+    #   ★★ 그래서 ★ 첫 판은 ★ **넘어가도 된다** — ★ 칸을 더한 뒤 ★ 다시 돌린다.
+    #     ★ ★ 두 판 다 실패하면 ★ 그때 멈춘다 (조용히 넘기지 않는다)
+    def _run_ddl(strict: bool) -> list:
+        got = []
+        for name in sorted(os.listdir(DDL)):
+            if not name.endswith(".sql"):
+                continue
+            try:
+                conn.executescript(open(os.path.join(DDL, name),
+                                        encoding="utf-8").read())
+            except sqlite3.OperationalError:
+                if strict:
+                    raise
+                got.append(name)
+        return got
+
+    later = _run_ddl(strict=False)
     after = {r[0] for r in conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table'")}
     added = sorted(after - before)
@@ -145,6 +162,10 @@ def main() -> int:
                 continue
             conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {ctype}{tail}")
             added_cols.append(f"{table}.{col}")
+
+    # ★ 칸을 다 더했다 — ★ 이제 색인이 붙는다.  ★ 여기서 또 죽으면 ★ 진짜 잘못이다
+    if later:
+        _run_ddl(strict=True)
 
     fixed = []
     for table, column, why in DROP_NOT_NULL:

@@ -6,14 +6,14 @@
 
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
-| `/` | [home.html](home.html) | 200 | 45,303B |
-| `/listings` | [listings.html](listings.html) | 200 | 93,144B |
+| `/` | [home.html](home.html) | 200 | 45,302B |
+| `/listings` | [listings.html](listings.html) | 200 | 93,109B |
 | `/sold` | [sold.html](sold.html) | 200 | 26,219B |
-| `/recommend` | [recommend.html](recommend.html) | 200 | 131,450B |
+| `/recommend` | [recommend.html](recommend.html) | 200 | 131,456B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 20,614B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 35,142B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,780B |
-| `/track` | [track.html](track.html) | 200 | 43,134B |
+| `/track` | [track.html](track.html) | 200 | 44,998B |
 | `/market` | [market.html](market.html) | 200 | 14,568B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 19,405B |
 | `/notready` | [notready.html](notready.html) | 200 | 22,252B |
@@ -24,11 +24,11 @@
 | `/password` | [password.html](password.html) | 200 | 2,585B |
 | `/admin` | [admin.html](admin.html) | 200 | 17,476B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,230B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 66,967B |
-| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,205B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 66,722B |
+| `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,206B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,339B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,867B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,751B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,759B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 44,860B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,406B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,636B |

@@ -3663,6 +3663,66 @@ def _sold_bins(conn, root: str = ".", target_key: str | None = None):
     return out, (target_key or "전체 차종"), note
 
 
+def _pair_rows(raw: list) -> list:
+    """★★★★★ 09-02 마스터 확정 — ★ 짝을 ★ **VIN 이 이기게** 묶는다 (`S46-216`).
+
+    ★ 규격 — 「★ 둘 다 VIN 이 있으면 ★ **VIN 으로** 짝짓는다 ·
+      ★ 한쪽이라도 없으면 ★ 차량번호로 내린다」
+    ★★ 재는 법 — ★ 번호판으로 모으고 ★ **VIN 이 같은 묶음을 이어 붙인다**.
+      ★ ★ 번호판이 바뀌어도(교체·이전) ★ VIN 이 같으면 ★ 한 대다.
+    ★ 두 사이트 넘게 있는 묶음만 돌려준다 — ★ 짝이 없으면 견줄 것이 없다
+    ★ 돌려주는 꼴은 ★ 옛 것과 같다 — ★ 첫 칸이 ★ 묶음 열쇠다
+    """
+    parent: dict = {}
+
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[rb] = ra
+
+    for r in raw:
+        plate, lid, vin = r[0], r[1], r[11]
+        me = f"l:{lid}"
+        find(me)
+        if plate:
+            union(f"p:{plate}", me)
+        if vin:
+            union(f"v:{vin}", me)
+    groups: dict = {}
+    for r in raw:
+        groups.setdefault(find(f"l:{r[1]}"), []).append(r)
+    out = []
+    for key, got in groups.items():
+        if len({x[2] for x in got}) < 2:
+            continue                  # ★ 한 사이트뿐 — ★ 견줄 것이 없다
+        for r in got:
+            # ★ 뒤에 ★ **진짜 번호판**을 붙여 둔다 — ★ 앞의 `key` 는 ★ 묶는 데만 쓴다.
+            #   ★ 화면에 낼 것은 ★ 번호판이지 ★ 내부 열쇠가 아니다
+            out.append((key, *r[1:11], r[0]))
+    return out
+
+
+def _lease_words(root: str = ".") -> tuple:
+    """★★★★★ 09-02 마스터 확정 — ★ **리스·렌트** 낱말.
+
+    ★ 마스터 — 「★ **왜 리스가 비교가 되니?**」
+    ★ 낱말의 정본은 ★ `config/labels.json` 이다 — ★ 코드에 안 박는다 (`S14`)
+    ★ 없으면 ★ 빈 짝이다 — ★ 그때는 안 거른다 (다 지워 버리지 않는다)
+    """
+    got = load_config(f"{root}/config/labels.json") or {}
+    words = got.get("LEASE_SELL_TYPES")
+    if isinstance(words, (list, tuple)) and words:
+        return tuple(str(x) for x in words)
+    return ()
+
+
 def view_track(account: Account, conn, calc_version: str,
                order: str = "gap", root: str = ".") -> "TrackView":
     """추적 (명령서 1-2 · v3_track_시안).
@@ -3673,20 +3733,40 @@ def view_track(account: Account, conn, calc_version: str,
     del account
     labels = _labels(root)
     order_of = _grade_order(root)
-    rows = conn.execute(
+    # ★★★★★ 09-02 마스터 확정 — ★ 짝의 열쇠를 ★ **차대번호(VIN)**로 올린다.
+    #   ★ 「★ 차량번호는 ★ 바뀐다(번호판 교체·이전).  ★ 차대번호는 ★ 평생 안 바뀐다」
+    #   ★★ 둘 다 VIN 이 있으면 ★ **VIN 으로** · ★ 한쪽이라도 없으면 ★ 번호로 내린다
+    #   ★★★ 그리고 ★ **리스·렌트를 뺀다** — ★ 마스터 「★ 왜 리스가 비교가 되니?」
+    #     ★ ★ 「엔카 3,200만 ↔ K카 리스 승계 1,900만」은 ★ **같은 값이 아니다**.
+    #     ★ ★ ★ 매물 화면에는 ★ 남긴다 — ★ 여기서만 뺀다 (`S46-217`)
+    lease = _lease_words(root)
+    no_lease = ""
+    lease_args: list = []
+    if lease:
+        marks = ",".join("?" * len(lease))
+        no_lease = (" AND (l.sell_type IS NULL"
+                    f" OR l.sell_type NOT IN ({marks}))")
+        lease_args = list(lease)
+    # ★★ 규격 — 「★ **둘 다 VIN 이 있으면 VIN 으로** · ★ 한쪽이라도 없으면 번호로 내린다」.
+    #   ★ 그래서 ★ `COALESCE(vin, plate)` 로 뭉뚱그리면 ★ **틀린다** —
+    #   ★ ★ 한쪽만 VIN 이 있으면 ★ 열쇠가 갈려 ★ 짝이 깨진다 [실측 09-03 · 180 → 32].
+    #   ★★ 그래서 ★ 번호판으로 모으고 ★ **VIN 이 같으면 이어 붙인다** (union) —
+    #     ★ ★ 번호판이 바뀌어도 ★ VIN 이 같으면 ★ 한 대다.  ★ VIN 이 이긴다
+    raw_rows = conn.execute(
         "SELECT l.plate_hash, l.listing_id, l.site, l.sell_type,"
         "       l.target_key, l.trim_badge, l.price_current_won,"
-        "       s.grade, s.earned, s.denominator, l.photo_list_json"
+        "       s.grade, s.earned, s.denominator, l.photo_list_json,"
+        "       l.vin_hash"
         "  FROM core_listing l"
         "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         "   AND s.calc_version = ?"
-        " WHERE l.plate_hash IS NOT NULL AND l.status = 'active'"
-        "   AND l.plate_hash IN ("
-        "       SELECT plate_hash FROM core_listing"
-        "        WHERE plate_hash IS NOT NULL AND status = 'active'"
-        "        GROUP BY plate_hash HAVING COUNT(DISTINCT site) > 1)"
-        " ORDER BY l.plate_hash, l.price_current_won",
-        (calc_version,)).fetchall()
+        " WHERE (l.plate_hash IS NOT NULL OR l.vin_hash IS NOT NULL)"
+        "   AND l.status = 'active'" + no_lease +
+        " ORDER BY l.price_current_won",
+        (calc_version, *lease_args)).fetchall()
+    rows = _pair_rows(raw_rows)
+    # ★ VIN 을 가진 매물 — ★ 「VIN ○」 딱지를 달지 가른다
+    vin_ids = {r[1] for r in raw_rows if r[11]}
 
     by_plate: dict = {}
     for r in rows:
@@ -3733,6 +3813,12 @@ def view_track(account: Account, conn, calc_version: str,
             sites=sites, site_count=len({x[2] for x in got}),
             low_won=low, high_won=high, gap_won=gap, gap_pct=pct,
             # ★★★★★ 09-02 — ★ 시안 `.v4-thumb` (`S46-98`).  ★ 짝의 첫 사진이다
+            # ★★★★★ 09-02 — ★ 차량번호는 ★ **감춘 값**이다 (STEP 35) —
+            #   ★ 원본을 안 낸다.  ★ 앞 여섯 자로 ★ 「이 차」임을 가린다
+            plate_label=str(next((x[11] for x in got if len(x) > 11 and x[11]),
+                                 "") or "")[:6],
+            # ★ VIN 으로 이었나 — ★ 짝의 매물이 ★ 다 VIN 을 가졌을 때다
+            has_vin=all(x[1] in vin_ids for x in got),
             photo_url=next((_first_photo(x[10], root) for x in got
                             if len(x) > 10 and x[10]), None),
             grades=grades, grade_split=step > 0,

@@ -101,6 +101,10 @@ CREATE TABLE IF NOT EXISTS core_listing (
   -- ★ 번호판 원본은 core_pii 다.  여기는 결합용 해시만 둔다.
   --   마스킹 컬럼을 두지 않는다 — 「확보 여부」는 hash IS NOT NULL 로 충분하다
   plate_hash             TEXT,
+  -- ★★★★★ 09-02 마스터 확정 — ★ 짝의 열쇠를 ★ **차대번호(VIN)**로 올린다.
+  --   ★ 차량번호는 ★ 바뀐다(번호판 교체·이전).  ★ 차대번호는 ★ 평생 안 바뀐다.
+  --   ★ ★ VIN 도 ★ **HMAC 로 감춘다** — ★ 차주를 가리킬 수 있다 (STEP 35)
+  vin_hash               TEXT,
   -- 사이트 고유.  어댑터를 통해서만 해석한다
   site_model_group       TEXT,
   site_model             TEXT,
@@ -178,6 +182,9 @@ CREATE INDEX IF NOT EXISTS ix_listing_vehicle ON core_listing(vehicle_id);
 --   ★ 값까지 넣는다 — ★ 「가장 싼 것」을 색인만으로 고른다
 CREATE INDEX IF NOT EXISTS ix_listing_plate
   ON core_listing(plate_hash, status, price_current_won, listing_id);
+-- ★ VIN 으로 짝지을 때 쓰는 색인 (`S46-216`)
+CREATE INDEX IF NOT EXISTS ix_listing_vin
+  ON core_listing(vin_hash, status, price_current_won, listing_id);
 
 -- ★ 「지금 쓰는 parse 판본」을 화면 아래마다 낸다 (base.html 의 ver 줄).
 --   ★ 전에는 ★ 전건을 훑고 ★ 임시 B-트리로 정렬했다 — ★ 실측 08-26 2.4초.
