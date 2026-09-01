@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쿼리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2c76a1ec07">
+<link rel="stylesheet" href="/static/app.css?v=7a066e17bb">
 
 </head>
 <body class="s-admin-query">
@@ -104,7 +104,7 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <thead><tr><th>표</th><th class="num" title="표의 줄 수입니다">행</th><th title="우리 DB 의 어느 칸에 담기는지입니다">컬럼</th></tr></thead>
 <tbody>
 
-<tr><td class="runid" data-label="표">account</td><td class="num" data-label="행">4</td>
+<tr><td class="runid" data-label="표">account</td><td class="num" data-label="행">5</td>
   <td class="muted" data-label="컬럼">account_id · role · login_name · display_name · email · secret_hash · must_change_secret · created_at · last_seen_at · disabled_at</td></tr>
 
 <tr><td class="runid" data-label="표">admin_api_snapshot</td><td class="num" data-label="행">0</td>
@@ -113,19 +113,19 @@ SELECT * FROM raw_response WHERE endpoint LIKE &#x27;%facet%&#x27;
 <tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">199,891</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">19,419</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">19,806</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
-<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">2,786</td>
+<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">2,861</td>
   <td class="muted" data-label="컬럼">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
 
-<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">2,737</td>
+<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">2,812</td>
   <td class="muted" data-label="컬럼">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
 
 <tr><td class="runid" data-label="표">coefficient_history</td><td class="num" data-label="행">0</td>
   <td class="muted" data-label="컬럼">id · site · target_key · before_value · after_value · sample_size · measured · reason · changed_at</td></tr>
 
-<tr><td class="runid" data-label="표">config_change</td><td class="num" data-label="행">24</td>
+<tr><td class="runid" data-label="표">config_change</td><td class="num" data-label="행">29</td>
   <td class="muted" data-label="컬럼">change_id · account_id · file · key_path · before_value · after_value · reason · applied_at · reverted_at · recalc_job_id</td></tr>
 
 <tr><td class="runid" data-label="표">core_dealer</td><td class="num" data-label="행">1,208</td>
@@ -262,7 +262,7 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260831T161249</span>
-  <span>2026-09-01 06:59</span>
+  <span>2026-09-01 09:07</span>
 </footer>
 
 </body>

@@ -91,7 +91,10 @@
         <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
           name="id" value="{{ r.listing_id }}"> 비교</label>
         <a href="/detail/{{ r.listing_id }}">{{ r.target_label }}{% if r.trim %} {{ r.trim }}{% endif %}</a></div>
-      <div class="pickspec">{{ r.spec }}</div>
+      <!-- ★★★★★ 09-02 마스터 확정 — ★ **판매지역**을 ★ 사이트 딱지 옆에 (`S46-225`).
+           ★ 마스터 — 「★ 딜러의 지역을 ★ 도시 또는 서울인 경우는 구로 ★ 전체적으로」
+           ★ ★ 못 받으면 ★ 「지역 —」이라 적는다.  ★ 조용히 빼지 않는다 -->
+      <div class="pickspec">{{ r.spec }}{% if r.region_label %} · {{ r.region_label }}{% endif %}{% if !r.region_label %} · <span class="dim">지역 —</span>{% endif %}</div>
       <!-- ★ 시안은 「3,290만원」이다 — ★ 공통 `won` 필터는 「만」에서 끊는다.
            ★ 필터를 바꾸면 ★ 다른 화면이 다 바뀐다 — ★ 여기서만 「원」을 붙인다 -->
       <div class="pickprice">{{ r.price_won | won }}원</div>

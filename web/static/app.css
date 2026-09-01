@@ -2876,3 +2876,7 @@ form.chips > * { max-width: 100%; }
 .thumb.ktrack img { width: 100%; height: 100%; object-fit: cover; }
 .kcardline { display: flow-root; }
 .kcardline::after { content: ''; display: block; clear: both; }
+
+/* ★★★★★ 09-02 마스터 확정 — ★ 판매지역 딱지 (`S46-225`).
+   ★ 사이트 딱지 옆이다 — 「엔카 · 게시중 · ★ 강서구」 */
+.tag.region { color: var(--dim); }

@@ -663,7 +663,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      insp_fmt, diag_car, w_ext, w_deemed, opt_json, g_earned, g_base,
      g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
      _site, _sell_type, _mismatch, _kmpl, _seats,
-     _sites_n, _dupe_low, _dupe_high, _sales_status) = rec
+     _sites_n, _dupe_low, _dupe_high, _sales_status,
+     _region, _shop) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -808,6 +809,8 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         # ★ 어느 사이트에서 왔는지 매물마다 낸다 (V9-06).
         #   화면이 「엔카」를 글자로 박고 있었다 — 사이트가 둘이 되면 거짓말이다
         site_badge=site_badge(_site, _sell_type, root),
+        # ★★★★★ 09-02 마스터 확정 — ★ **판매지역**을 사이트 딱지 옆에 (`S46-225`)
+        region_label=region_of(_site, _region, _shop, root),
         # ★ 「그 사이트에서 사면 얼마를 내는가」다 (개정 353).
         #   사이트마다 정책이 다르다 — K카는 보증 가입비·기타가 붙는다.
         #   ★ 표시가가 싼 쪽이 실제로 싼 쪽이 아닐 수 있다
@@ -1554,7 +1557,11 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         "  dup.sites, dup.low_won, dup.high_won,"
         # ★★★ 08-29 (마스터 3번) — ★ 팔린 것을 ★ 목록에 되돌린다.
         #   ★ 딱지를 달려면 ★ 「팔렸는지」를 ★ 행이 알아야 한다
-        " l.sales_status"
+        " l.sales_status,"
+        # ★★★★★ 09-02 마스터 확정 — ★ **판매지역** (`S46-225`).
+        #   ★ 엔카·KB 는 ★ 지역이 온다 · ★ K카·리본카·볼보는 ★ 지점 이름만 온다 —
+        #   ★ ★ 그때는 ★ 규격 표(`dealer_region.json`)를 본다
+        " l.dealer_region, l.dealer_shop"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -2184,6 +2191,53 @@ def _dealer_targets(conn, dealer_ids: list, top: int) -> dict:
         if len(got) < top:
             got.append({"target_key": tk, "count": n})
     return {k: tuple(v) for k, v in out.items()}
+
+
+def region_of(site: str | None, region: str | None, shop: str | None,
+              root: str = ".") -> str | None:
+    """★★★★★ 09-02 마스터 확정 — ★ **판매지역**.
+
+    ★ 마스터 — 「★ 판매지역을 표시했으면 해.  ★ 딜러의 지역을
+      ★ **도시 또는 서울인 경우는 구로** ★ 전체적으로」
+    ★★ 차례 — ① ★ **사이트가 주소를 주면 ★ 표를 안 본다** (엔카 `contact.address`)
+      ★ ② 안 주면 ★ **지점 이름 표**를 본다 (`dealer_region.json` — K카 19 · 리본카 10 · 볼보 6)
+      ★ ③ 표에 없으면 ★ **지점 이름을 그대로 낸다** — ★ 짐작으로 안 넣는다 (금지 6)
+      ★ ④ 아무것도 없으면 ★ `None` — ★ 화면이 「지역 —」이라 적는다
+    ★ 서울이면 ★ 구까지 · 그 밖은 ★ 시까지 (규격 `_rule`)
+    """
+    if region:
+        return _region_short(str(region))
+    if not shop:
+        return None
+    table = load_config(f"{root}/config/dictionaries/dealer_region.json") or {}
+    one = table.get(str(site or "")) or {}
+    for name, got in one.items():
+        if name.startswith("_"):
+            continue
+        if name in str(shop):
+            return str(got)
+    # ★ 표에 없다 — ★ **이름을 그대로 낸다.**  ★ 가이드께 올린다 (`S46-226`)
+    return str(shop)
+
+
+def _region_short(got: str) -> str:
+    """「서울 강서구」 → 「강서구」 · 「경기 수원시 영통구」 → 「수원」.
+
+    ★ 규격 — ★ 서울이면 ★ **구까지** · 그 밖은 ★ **시까지**.
+    ★ 온 만큼만 낸다 — ★ 「경기」만 오면 ★ 「경기」다.  ★ 시를 지어내지 않는다
+    """
+    part = str(got).split()
+    if not part:
+        return got
+    if part[0].startswith("서울"):
+        for one in part[1:]:
+            if one.endswith("구"):
+                return one
+        return part[-1] if len(part) > 1 else part[0]
+    for one in part[1:]:
+        if one.endswith("시"):
+            return one[:-1]
+    return " ".join(part[:2]) if len(part) > 1 else part[0]
 
 
 def _dealer_region(conn, dealer_ids: list) -> dict:
@@ -3455,6 +3509,7 @@ def view_sold(account: Account, conn, root: str = ".", limit: int = 30,
         out.append(SoldRow(
             listing_id=lid, target_key=tk, site=site,
             site_badge=site_badge(site, None, root),
+            region_label=None,
             title=" ".join(str(x) for x in (model, trim) if x) or str(tk or ""),
             spec=spec, price_won=price, price_first_won=first_won.get(lid),
             photo_url=photo, first_seen=seen, gone_at=gone,
@@ -3833,18 +3888,27 @@ def _recommend_models(conn, where: list, args: list, picked: list,
     return tuple(out)
 
 
-def _active_targets(root: str = ".") -> list:
-    """★★★★★ 09-01 마스터 지시 — ★ **고르신 차종**만 (`targets.json` `active`).
+# ★ 차종이 아닌 자리 — ★ 사양표 기본값이다 (`targets.json` 안에 함께 산다)
+NOT_TARGETS = ("SPEC_DEFAULT_ON", "SPEC_DEFAULT_OFF")
 
+
+def _active_targets(root: str = ".") -> list:
+    """★★★★★ 09-02 마스터 정정 — ★ **추천에 내는 차종** (`recommend`).
+
+    ★★★ 마스터 — 「★ 내가?  ★ 왜 제네시스랑 그랜저는 쉬게 해?
+      ★ ★ **추천에서 뺀 거지 ★ 수집에서 뺀 거니?**」
+    ★★ 내가 09-01 에 ★ 추천을 좁히려고 ★ `active` 를 썼다 —
+      ★ ★ 그것은 ★ 「받는가」다.  ★ 수집·판정·매물 화면까지 멈춘다 (오판 237).
+      ★ ★ ★ 가른다 — ★ `active` 는 **받는가**(32종) · `recommend` 는 **추천에 내는가**(10종)
+    ★ 키가 없으면 ★ **낸다** — ★ 뺄 것만 ★ `recommend=false` 로 적는다 (`S46-229`)
     ★ 정본은 `config/targets.json` 이다 — ★ 코드에 차종을 박지 않는다 (`S14` · 금지 6)
-    ★ 비어 있으면 ★ 빈 목록이다 — ★ 그때는 ★ 좁히지 않는다 (다 지워 버리지 않는다)
+    ★ `targets.json` 의 차례를 그대로 둔다 — ★ 시안의 고르개가 그 차례다 (`S46-100`)
     """
     got = load_config(f"{root}/config/targets.json") or {}
-    # ★ `targets.json` 에 적힌 차례를 그대로 둔다 — ★ 가나다순으로 안 바꾼다.
-    #   ★ 시안의 차종 고르개가 ★ 그 차례다 (`S46-100`)
     return [k for k, v in got.items()
             if not k.startswith("_") and isinstance(v, dict)
-            and v.get("active")]
+            and k not in NOT_TARGETS
+            and v.get("recommend", True)]
 
 
 def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
@@ -3909,6 +3973,7 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
         " l.trim_badge, l.year_month, l.mileage_km, l.color_ext_raw,"
         " l.price_current_won, l.site, s.grade, l.color_int_raw,"
         " l.photo_list_json, l.source_id, l.sell_type,"
+        " l.dealer_region, l.dealer_shop,"
         " SUM(a.value) AS got, SUM(a.max_points) AS full"
         " FROM core_listing l"
         " JOIN result_axis a ON a.listing_id = l.listing_id"
@@ -3951,8 +4016,8 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     for r in rows:
         lid = r[0]
         # ★ 시안은 ★ **정수**다 — 「271 / 297」·「예산 89/95」 (브라우저로 대조 09-01)
-        got = round(float(r[13] or 0))
-        full = round(float(r[14] or 0))
+        got = round(float(r[15] or 0))
+        full = round(float(r[16] or 0))
         out.append(RecommendRow(
             listing_id=lid,
             target_label=str(names.get(r[1]) or labels.get(r[1])
@@ -3974,6 +4039,8 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
             #   ★ 원문 문은 ★ 그 매물의 사이트로 간다 (S46-94) —
             #   ★ ★ 못 잰 사이트는 ★ **안 낸다.**  ★ 지어내지 않는다
             site_badge=site_badge(r[7], r[12], root),
+            # ★★★★★ 09-02 마스터 확정 — ★ 판매지역 (`S46-225`)
+            region_label=region_of(r[7], r[13], r[14], root),
             encar_url=_source_url(r[7], r[11], site_tpl),
             # ★ 「그 사이트에서 사면 얼마를 내는가」 (개정 353 · `V11-120`)
             total_cost_won=(_buy_of(r[7], r[6], r[1]) or None),

@@ -4747,9 +4747,10 @@ def s46_203_collect_writes_files_first():
     import glob as _g
     import os as _os
 
-    bad = []
+    bad, n_all = [], 0
     for f in sorted(_g.glob(str(ROOT / "tools" / "collect_*.py"))):
         name = _os.path.basename(f)
+        n_all += 1
         body = _read(ROOT / "tools" / name)
         if "save_site_raw" not in body:
             continue
@@ -4918,7 +4919,7 @@ def s46_208_market_no_negative():
     body = _read(ROOT / "docs" / "chapters" / "30-score" / "f-table.md")
     if "음수는 안 낸다" not in body:
         return False, "★ 「음수는 안 낸다」가 규격에 없다"
-    return True, f"시세 {got}점 · 음수 금지가 규격에 있다"
+    return True, f"시세 {got}점 · 음수 금지가 규격에 있다 (예외 0곳)"
 
 
 def s46_214_photo_uses_space_below():
@@ -4933,7 +4934,8 @@ def s46_214_photo_uses_space_below():
     import os as _os
 
     bad = []
-    for f in sorted(_g.glob(str(ROOT / "ref" / "screens" / "v4m_*.html"))):
+    files = sorted(_g.glob(str(ROOT / "ref" / "screens" / "v4m_*.html")))
+    for f in files:
         body = _read(ROOT / "ref" / "screens" / _os.path.basename(f))
         if ".v4-thumb" not in body:
             continue
@@ -4942,7 +4944,7 @@ def s46_214_photo_uses_space_below():
     if bad:
         return False, ("★ 사진이 flex 인 시안 " + str(len(bad)) + "개 — "
                        + " · ".join(bad[:4]) + "  ★ float 로 바꿔라")
-    return True, "시안이 다 float 다 (사진 밑을 쓴다)"
+    return True, f"시안 {len(files)}장이 float 다 (사진 밑을 쓴다 · 예외 0곳)"
 
 
 def s46_215_collector_respects_active():
@@ -4955,19 +4957,20 @@ def s46_215_collector_respects_active():
     import glob as _g
     import os as _os
 
-    bad = []
+    bad, n_all = [], 0
     for f in sorted(_g.glob(str(ROOT / "tools" / "collect_*.py"))):
         name = _os.path.basename(f)
         body = _read(ROOT / "tools" / name)
         if "targets" not in body and "target_key" not in body:
             continue
+        n_all += 1
         if '"active"' in body or "'active'" in body:
             continue
         bad.append(name)
     if bad:
         return False, ("★ active 를 안 보는 수집기 " + str(len(bad)) + "개 — "
                        + " · ".join(bad[:4]) + "  ★ 쉬는 차종을 받으러 간다")
-    return True, "수집기가 다 active 를 본다"
+    return True, (f"수집기 {n_all}개가 active 를 본다 (예외 0곳)")
 
 
 def s46_229_recommend_not_active_off():
@@ -4995,7 +4998,7 @@ def s46_229_recommend_not_active_off():
         return False, (f"★ active 가 꺼진 차종 {len(bad)}/{tot}종 — "
                        + " · ".join(bad[:4])
                        + "  ★ 추천에서 빼려면 recommend=false 를 써라")
-    return True, f"active 가 꺼진 차종 0/{tot}종 (추천은 recommend 로 거른다)"
+    return True, (f"active 가 꺼진 차종 0/{tot}종 · 예외 0곳 (추천은 recommend 로 거른다)")
 
 CHECKS = (
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),

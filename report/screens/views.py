@@ -95,6 +95,9 @@ class ListingRow:
     # 어느 사이트에서 왔는가 — 「엔카」 · 「K카 직영」 · 「K카 직거래」
     # ★ 사이트가 둘 이상이면 값의 뜻이 사이트에 달려 있다 (50-multisite)
     site_badge: str = ""
+    # ★★★★★ 09-02 마스터 확정 — ★ **판매지역** (사이트 딱지 옆 · `S46-225`).
+    #   ★ 못 받으면 ★ `None` — ★ 화면이 「지역 —」이라 적는다
+    region_label: str | None = None
     # ★ 세 값을 한 셀에 (41-view) — 표시가 · 현금 · 월.
     #   금지 「표시가만 보여주는 것」 — 부대비용이 차종마다 달라 순위가 뒤집힌다
     down_payment_won: int | None = None
@@ -599,6 +602,8 @@ class SoldRow:
     target_key: str | None
     site: str
     site_badge: str
+    # ★★★★★ 09-02 — ★ 판매지역 (`S46-225`).  ★ 기본값을 주면 뒤 칸이 다 그래야 한다
+    region_label: str | None
     title: str
     spec: str                    # 「2022-06 · 48,210km · 흰색 · 가솔린」
     price_won: int | None        # 마지막에 본 값
@@ -821,6 +826,8 @@ class RecommendRow:
     #   ★ ★ ★ 시안은 ★ **무엇을 보여 줄지**를 정한 것이지
     #     ★ ★ 「할 수 있던 일을 없애라」가 아니다 (개정 429 「값을 버리지 마라」)
     site_badge: str | None = None
+    # ★★★★★ 09-02 — ★ 판매지역 (`S46-225`)
+    region_label: str | None = None
     encar_url: str | None = None
     total_cost_won: int | None = None
     buy_estimated: bool = False

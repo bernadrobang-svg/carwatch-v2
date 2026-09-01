@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=2c76a1ec07">
+<link rel="stylesheet" href="/static/app.css?v=7a066e17bb">
 
 </head>
 <body class="s-admin">
@@ -274,7 +274,7 @@
 
 <tr><td data-label="시각">2026-08-31T16:13:32.228432+00:00</td><td class="muted" data-label="사유">요청 259건</td>
   <td class="runid" data-label="실행">20260831T161249</td>
-  <td class="num" data-label="소요">12.8초</td><td data-label="판정">fatal 10</td></tr>
+  <td class="num" data-label="소요">12.8초</td><td data-label="판정">fatal 8</td></tr>
 
 <tr><td data-label="시각">2026-08-31T16:06:34.524321+00:00</td><td class="muted" data-label="사유">요청 56건</td>
   <td class="runid" data-label="실행">20260831T160548</td>
@@ -301,6 +301,26 @@
 <table class="rows">
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
+
+<tr><td data-label="시각">2026-08-31T23:51:04.218458+00:00</td><td data-label="무엇">components {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12}</td><td class="muted" data-label="사유">6회차 — 원상복구</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="fba36b7bbef1fa935c">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+<tr><td data-label="시각">2026-08-31T23:51:20.387886+00:00</td><td data-label="무엇">platform_check:vehicleId {&quot;usage&quot;: &quot;in_use&quot;, &quot;reason&quot;: &quot;4회차 시험 — 쓴다&quot;, &quot;core_column&quot;: &quot;core_listing.source_id&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;6회차 시험 — deferred&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td><td class="muted" data-label="사유">등록부 분류: 6회차 시험 — deferred</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="f9dfc5f63edb4f550e">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
 
 <tr><td data-label="시각">2026-08-31T06:40:55.406521+00:00</td><td data-label="무엇">detail:advertisement.verification {&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;4회차 시험 — 안 쓴다&quot;}</td><td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 안 쓴다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
@@ -332,26 +352,6 @@
   </form></td></tr>
 
 
-<tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td data-label="무엇">color_ext[23] pending → confirm</td><td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="d1d6beaa6b86d5c7a0">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
-<tr><td data-label="시각">2026-08-31T06:40:40.362387+00:00</td><td data-label="무엇">platform_check:vehicleId {&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;4회차 시험 — 저장되는지&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td><td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 저장되는지</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="c4bc39b495998a8535">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
 </tbody>
 </table>
 
@@ -367,7 +367,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260831T161249</span>
-  <span>2026-09-01 06:59</span>
+  <span>2026-09-01 09:07</span>
 </footer>
 
 </body>

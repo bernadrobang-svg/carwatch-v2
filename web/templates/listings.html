@@ -338,6 +338,12 @@
         {% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}
         <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
           >{{ r.site_badge }}</span>
+        <!-- ★★★★★ 09-02 마스터 확정 — ★ **판매지역** (`S46-225`).
+             ★ 「★ 딜러의 지역을 ★ 도시 또는 서울인 경우는 구로 ★ 전체적으로」
+             ★ ★ 못 받으면 ★ 「지역 —」 — ★ 조용히 빼지 않는다 -->
+        {% if r.region_label %}<span class="tag region"
+          title="판매지역입니다 — 서울은 구까지, 그 밖은 시까지">{{ r.region_label }}</span>{% endif %}
+        {% if !r.region_label %}<span class="dim" title="지역을 못 받았습니다">지역 —</span>{% endif %}
         {% if r.status_key %}<a href="/listings?status={{ r.status_key }}"
           title="게시중 · 내려감 · 재등록">{{ r.status_label }}</a>{% endif %}
         <!-- ★★ 08-29 (마스터 3번) — ★ 팔린 것에 ★ 딱지를 단다 -->
