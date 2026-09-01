@@ -9,21 +9,22 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 51,146줄 · 3,530KB**
+**132파일 · 51,697줄 · 3,575KB**
 
-★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
+- CHECKS.md 1,179줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,330줄
+- guide/03_이력.md 1,331줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
 - chapters/30-score/f-table.md 3,044줄
-- chapters/11-store/a-key.md 937줄
+- chapters/11-store/a-key.md 963줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
 
@@ -32,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md` | 681 | 110 |
+| `CHECKS.md`  ★ | 1,179 | 146 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -68,7 +69,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md`  ★ | 937 | 46 |
+| `chapters/11-store/a-key.md`  ★ | 963 | 47 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 618 | 25 |
@@ -120,13 +121,13 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,330 | 951 |
+| `guide/03_이력.md`  ★ | 1,331 | 953 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 642 | 260 |
-| `guide/07_밀린일대장.md` | 493 | 37 |
+| `guide/06_오판대장.md` | 647 | 264 |
+| `guide/07_밀린일대장.md` | 514 | 39 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
 | `guide/09_인계_20260829.md` | 98 | 3 |

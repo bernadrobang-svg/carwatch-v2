@@ -4030,7 +4030,12 @@ def s46_168_check_counts_exceptions():
     bad = []
     for m in _re.finditer(r"\ndef (s\d+_[\w]+)\(", src):
         fname = m.group(1)
-        body = src[m.start():m.start() + 3000]
+        # ★★★ 09-02 정정 — ★ 3,000자로 잘라 ★ **다음 함수까지 삼켰다**.
+        #   ★ 그래서 ★ 옆 검사의 `_OFF` 와 ★ 또 다른 검사의 통과 글을 짝지어
+        #   ★ ★ **엉뚱한 셋을 지목했다** (`s46_208`·`s46_214`·`s46_215` — 오판 241).
+        #   ★ ★ ★ 함수는 ★ **다음 `\ndef ` 앞에서 끊는다**
+        nxt = src.find("\ndef ", m.start() + 1)
+        body = src[m.start():nxt if nxt > 0 else len(src)]
         # ★ 「끄기 표시」를 세는 검사만 본다 — ★ `_OFF` 낱말을 실제로 찾는 것
         if not _re.search(r'"[A-Z_]+_OFF"|\'[A-Z_]+_OFF\'', body):
             continue
@@ -5000,7 +5005,67 @@ def s46_229_recommend_not_active_off():
                        + "  ★ 추천에서 빼려면 recommend=false 를 써라")
     return True, (f"active 가 꺼진 차종 0/{tot}종 · 예외 0곳 (추천은 recommend 로 거른다)")
 
+
+def s46_230_schema_change_counts_one_run():
+    """S46-230 — ★ ④(사이트 스키마 변경) 셈이 ★ 같은 판 안만 세는가 (오판 1083).
+
+    ★ 실측 09-02 — ★ 재판정 판이 ★ 두 번 잇달아 `S4` 에서 죽었다.
+      ★ ★ 색 하나(`color_ext_raw` 검정→은회색)가 ★ `site_schema_change` 로 갈렸다.
+      ★ ★ ★ 두 매물의 차종이 ★ 서로 다르다 — ★ 스키마가 바뀐 꼴이 아니다.
+    ★ 까닭 — ★ `store/core.py` 가 ★ 「동시」를 ★ **날짜**로 센다.
+      ★ ★ 같은 날 다시 돌리면 ★ 앞 판이 남긴 행을 또 세어 ★ 문턱을 넘는다.
+      ★ ★ ★ 그러면 ★ **실패가 다음 실패를 만든다** — ★ 시간 문제일 뿐이다.
+    ★ 잣대 — ★ ④ 셈이 ★ `run_id` 로 좁혀져 있는가 · ★ 위반이 판을 죽이지 않는가.
+    """
+    src = _read(ROOT / "store" / "core.py")
+    if not src:
+        return False, "store/core.py 를 못 읽었다"
+    body = src.split("def classify_invariant_change", 1)
+    if len(body) < 2:
+        return False, "classify_invariant_change 가 없다"
+    fn = body[1].split("\ndef ", 1)[0]
+    bad = []
+    if "run_id" not in fn:
+        bad.append("④ 셈에 run_id 가 없다 (날짜로 센다)")
+    if re.search(r"changed_at\s*>=", fn) and "run_id" not in fn:
+        bad.append("changed_at 으로 센다 — 「동시」가 아니다")
+    if "raise ValidationError" in src.split("for field in INVARIANT_FIELDS", 1)[-1][:2000]:
+        bad.append("불변 필드 위반이 판을 죽인다 (STEP 50 8번은 「경고」다)")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "④ 셈이 같은 판 안만 세고 · 위반이 판을 안 죽인다"
+
+
+def s46_231_all_sites_in_filter():
+    """S46-231 — ★ 매물이 있는 사이트가 ★ 목록 거르개에 ★ 다 나오는가 (오판 239).
+
+    ★ 실측 09-02 — ★ `/listings` 의 `?site=` 단추가 ★ **넷**뿐이다.
+      ★ ★ 못 고르는 여덟에 ★ 550건이 있다 (BMW 176 · 볼보 151 · 헤이딜러 75 …).
+      ★ ★ ★ 마스터께서 ★ 그 매물을 ★ 화면에서 못 고르신다 (목적 ⑤).
+    ★ 잣대 — ★ 단추를 ★ **무엇으로 가르는가**를 본다.
+      ★ ★ `status` 로 가르면 ★ 실패다 — ★ `config/sites.json` 은 ★ 넷만 `active` 인데
+        ★ ★ 화면에는 ★ 열둘 중 열의 매물이 들어 있다 [실측 09-02].
+      ★ ★ ★ 매물이 ★ **있는가**로 갈라야 한다 (`site_counts`).
+      ★ 거르개는 ★ `select` 만이 아니다 — ★ `a href="?site="` 도 거르개다 (오판 239)
+    """
+    src = _read(ROOT / "web" / "views.py")
+    if not src:
+        return False, "web/views.py 를 못 읽었다"
+    if "def _site_buttons" not in src:
+        return False, "_site_buttons 가 없다"
+    fn = src.split("def _site_buttons", 1)[1].split("\ndef ", 1)[0]
+    if re.search(r"live\s*=\s*active_sites\(", fn):
+        return False, ("★ 사이트 단추를 ★ `status` 로 가른다 — "
+                       "★ 매물이 있는데 못 고르는 사이트가 생긴다 "
+                       "(실측 09-02 — 넷만 나오고 여덟 550건을 못 고른다)")
+    if "site_counts" not in fn:
+        return False, "★ 단추가 매물 수를 안 본다"
+    return True, "사이트 단추가 매물이 있는가로 갈린다"
+
+
 CHECKS = (
+    ("S46-230", "④ 셈이 같은 판 안만 세는가", s46_230_schema_change_counts_one_run),
+    ("S46-231", "매물 있는 사이트가 거르개에 다 있는가", s46_231_all_sites_in_filter),
     ("S43-2", "규격의 축 id 가 config 에 있는가", s43_2_axis_ids),
     ("S43-2b", "config 축 id 가 규격 이름인가", s43_2b_axis_renamed),
     ("S43-2c", "HDA 가 저장소에 없는가", s43_2c_no_hda),
