@@ -5992,7 +5992,76 @@ def s46_256_blocked_needs_evidence():
     return True, "「이어 받는다」와 「증거 없이 막혔다 금지」가 규격·가이드에 있다"
 
 
+def s46_257_pipeline_not_encar_only():
+    """S46-257 — ★ 파이프라인이 ★ **엔카만 돌지 않는가** (마스터 09-02).
+
+    ★★★ 마스터 — 「★ 왜 S1 부터 끝까지 ★ **엔카만 돌고 다른 사이트 못 도는지**
+      ★ 사이트별로 진단해 줘」
+    ★ 가이드 실측 09-02 — ★ 뿌리는 ★ **하나**다:
+      ★ `run.py:113` 이 ★ `adapter = EncarAdapter(cfg)` 로 ★ **못 박혀** 있다.
+      ★ ★ 파이프라인(`collect/runner.py`)은 ★ 어댑터 **하나만** 받는다.
+      ★ ★ ★ 열한 사이트는 ★ `tools/collect_*.py` 로 따로 돌아 ★
+        `parsed_at`(`runner.py:650`)을 ★ **한 번도 안 찍는다**.
+    ★ 재료는 있다 — ★ `parse/{site}/` 는 ★ **열셋 다** 있고 ★ 어댑터도 여섯 있다.
+    ★ 잣대 — ★ `run.py` 가 ★ 어댑터를 ★ **골라 받는가** · ★ 진단이 가이드에 있는가.
+    """
+    src = _read(ROOT / "run.py")
+    if not src:
+        return False, "run.py 를 못 읽었다"
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    bad = []
+    if "adapters" in src and "EncarAdapter(cfg)" in src:
+        picks = any(w in src for w in
+                        ("--site", "SITE_ADAPTERS", "adapter_for", "ADAPTERS["))
+        if not picks:
+            bad.append("run.py 가 EncarAdapter 하나로 못 박혀 있다")
+    if "엔카만 안다" not in order:
+        bad.append("가이드 2-0 에 진단이 없다")
+    n_parse = len([q for q in (ROOT / "parse").glob("*") if q.is_dir()])
+    if n_parse < 10:
+        bad.append(f"parse 매핑이 {n_parse}곳뿐이다")
+    if bad:
+        return False, "★ " + " · ".join(bad) + f"  (파서 매핑은 {n_parse}곳 있다)"
+    return True, f"파이프라인이 어댑터를 골라 받는다 · 파서 매핑 {n_parse}곳"
+
+
+def s46_257_pipeline_not_encar_only():
+    """S46-257 — ★ 파이프라인이 ★ **엔카만 돌지 않는가** (마스터 09-02).
+
+    ★★★ 마스터 — 「★ 왜 S1 부터 끝까지 ★ **엔카만 돌고 다른 사이트 못 도는지**
+      ★ 사이트별로 진단해 줘」
+    ★★ 가이드 진단 09-02 — ★ 뿌리는 ★ **하나**다 —
+      `run.py:113` 이 ★ `adapter = EncarAdapter(cfg)` 로 ★ **못 박혀** 있다.
+      ★ ★ 파이프라인(`collect/runner.py`)은 어댑터를 하나만 받는데 그것이 엔카다.
+      ★ ★ ★ 다른 열한 사이트는 ★ `tools/collect_*.py` **열한 개**로 따로 돌고
+        ★ `make_executors` 를 부르는 도구는 ★ **0개**다.
+      ★ 그래서 ★ `parsed_at` 을 찍는 자리(`runner.py:650`)에 ★ **안 닿는다**.
+    ★ 잣대 — ① `run.py` 가 ★ 어댑터를 **골라** 받는가 ② 진단이 가이드에 있는가.
+    """
+    src = _read(ROOT / "run.py")
+    if not src:
+        return False, "run.py 를 못 읽었다"
+    adapters = sorted(q.stem for q in (ROOT / "adapters").glob("*.py")
+                      if q.stem not in ("__init__", "base"))
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    bad = []
+    if "왜 엔카만 도나" not in order:
+        bad.append("가이드에 「왜 엔카만 도나」 진단이 없다")
+    hard = re.search(r"adapter\s*=\s*EncarAdapter\(", src)
+    picker = ("--site" in src and "adapters" in src) or "ADAPTERS" in src
+    if hard and not picker:
+        return False, (f"★ run.py 가 ★ 엔카로 못 박혀 있다 — "
+                       f"어댑터는 이미 {len(adapters)}개 있다 "
+                       f"({' · '.join(adapters[:4])} …)"
+                       + ("  ★ " + " · ".join(bad) if bad else ""))
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"파이프라인이 어댑터 {len(adapters)}개를 골라 쓴다"
+
+
 CHECKS = (
+    ("S46-257", "파이프라인이 엔카만 돌지 않는가", s46_257_pipeline_not_encar_only),
+    ("S46-257", "파이프라인이 엔카만 돌지 않는가", s46_257_pipeline_not_encar_only),
     ("S46-256", "막혔다를 증거 없이 쓰지 않는가", s46_256_blocked_needs_evidence),
     ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),
     ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
