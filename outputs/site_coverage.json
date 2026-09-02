@@ -41,28 +41,43 @@
   "_전체": 63
  },
  "_우리": {
-  "kbchachacha": 589,
-  "revolt": 57,
-  "kia_cpo": 1025,
-  "lexus_certified": 64,
   "encar": 15509,
   "hyundai_cert": 1156,
-  "bobaedream": 241,
-  "heydealer": 275,
-  "volvo_selekt": 160,
-  "bmw_bps": 382,
-  "kcar": 604,
   "reborncar": 1111,
-  "_실측": "09-02 · SELECT site, COUNT(*) FROM core_listing GROUP BY site"
+  "kia_cpo": 1025,
+  "kcar": 604,
+  "kbchachacha": 592,
+  "bmw_bps": 382,
+  "heydealer": 275,
+  "bobaedream": 241,
+  "volvo_selekt": 160,
+  "lexus_certified": 64,
+  "revolt": 57,
+  "_실측": "09-02"
  },
  "_못잰곳": {
-  "hyundai_cert": "HTTPError — 헤더를 다시 맞춰야 한다",
-  "heydealer": "HTTP 500 — 우리 헤더로는 목록이 안 온다 (275건을 들고 있는데도)",
-  "bobaedream": "쪽넘김 자를 아직 안 만들었다",
-  "volvo_selekt": "응답 89KB 에 수 필드가 없다",
-  "encar": "★ 마스터 회선만 — 서버에서 못 잰다",
-  "bmw_bps": "아직",
-  "kcar": "아직",
-  "reborncar": "아직"
+  "hyundai_cert": "API 가 totalCount 0 · 목록은 405/500",
+  "bmw_bps": "ca_id 별로 세야 한다 (10건/분류)",
+  "kcar": "목록 POST 가 500",
+  "reborncar": "sitemap 으로 세야 한다",
+  "encar": "★ 마스터 회선만"
+ },
+ "heydealer": {
+  "_전체": 254,
+  "_주의": "★ 대상 20종 합.  ★ 사이트 전체 재고는 2,990건 이상 (300쪽 상한)"
+ },
+ "bobaedream": {
+  "_전체": 3286,
+  "_확인": "실측 09-02 — 66쪽까지 · /mycar/mlist/0/{page}"
+ },
+ "volvo_selekt": {
+  "_전체": 237,
+  "_확인": "실측 09-02 — 20쪽까지 · /kr/vehicles/xhr-results/{page}"
+ },
+ "_합": {
+  "잰 사이트 저기": 11346,
+  "우리": 2414,
+  "비율": "21.3%",
+  "_실측": "09-02 · 잰 일곱 곳만.  ★ 엔카는 마스터 회선만"
  }
 }
