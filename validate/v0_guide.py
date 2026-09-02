@@ -5840,15 +5840,83 @@ def s46_252_admin_write_actually_saves():
     if "total_points" not in seg and "910" not in seg:
         bad.append("scoring 저장에 총점 막이가 없다 — 911 이 저장된다")
     order = _read(ROOT / "outputs" / "ORDER_20260829.md")
-    for want, who in (("911", "배점 911 저장"), ("333 → 333", "등록부 303")):
-        if want not in order:
-            bad.append(f"작업가이드에 「{who}」가 없다")
+    # ★ 닫힌 뒤에도 ★ **근거가 남아야** 한다 — ★ 「333 → 331」이 닫힌 꼴이다
+    for want, who in ((("911",), "배점 911 저장"),
+                      (("333 → 333", "333 → 331"), "등록부 저장")):
+        if not any(w in order for w in want):
+            bad.append(f"작업가이드에 「{who}」 근거가 없다")
     if bad:
         return False, "★ " + " · ".join(bad)
     return True, "관리 쓰기 두 건이 작업가이드에 올라 있고 총점 막이가 있다"
 
 
+def s46_253_part1_seen_in_browser():
+    """S46-253 — ★ 1부 여덟 줄을 ★ **브라우저로 봤는가** (마스터 09-02 「개발체크」).
+
+    ★★★ 09-02 — ★ 개발측이 ★ 「1부 여덟 줄을 다 닫았다」고 했다.
+      ★ ★ 그런데 ★ **브라우저로 열어 보니 넷이 그대로였다**:
+        ① 「N곳」 배지 — ★ DB 는 **161쌍**인데 ★ 화면은 **0개**
+        ② 사진 — ★ CSS 는 **180/240** 인데 ★ `/listings` 는 **104×78** · `/recommend` 는 **88×66**
+        ③ 「왜 없나」 — ★ 322건이라는데 ★ 두 화면 다 **없다**
+        ④ 등록부 저장 — ★ 「333 → 332」라는데 ★ 눌러 보니 **333 → 333**
+    ★ 개발측은 ★ **DB·소스에서** 재고 ★ 나는 ★ **브라우저로 화면을 열었다**.
+      ★ ★ 마스터 인수인계 ③ — 「★ **배포에서 확인한 것만 「끝」이라 써라**」.
+    ★ 잣대 — ★ 회차 기록이 ★ **무엇으로 쟀는지**를 밝히는가.
+      ★ ★ 「DB 에 N쌍」은 ★ 「화면에 N개」가 아니다.
+    """
+    outs = sorted((ROOT / "outputs").glob("2026*_v3*.md"),
+                  key=lambda q: q.name, reverse=True)[:3]
+    if not outs:
+        return False, "개발 회차 기록이 없다"
+    bad = []
+    for f in outs:
+        body = _read(f)
+        if "1부" not in body and "1-1" not in body:
+            continue
+        has_browser = any(w in body for w in
+                          ("브라우저", "playwright", "Playwright",
+                           "getBoundingClientRect", "화면에서", "캡처"))
+        if not has_browser:
+            bad.append(f.name[:24])
+    if bad:
+        return False, ("★ 화면 일을 ★ 브라우저로 안 재고 닫은 회차 "
+                       f"{len(bad)}개 — " + " · ".join(bad[:2])
+                       + "  ★ 「DB 에 N쌍」은 「화면에 N개」가 아니다")
+    return True, "화면 일을 브라우저로 재고 닫았다"
+
+
+def s46_254_pair_badge_not_by_order():
+    """S46-254 — ★ 짝지어진 차를 ★ **순위로 올리지 않는가** (개정 1099 · 09-02).
+
+    ★★★ 실측 09-02 — ★ 「N곳」 배지가 ★ 목록 1쪽에 **0개**다 (★ 8회차째).
+      ★ ★ 배지 대상 **161행** 중 ★ **가장 앞 차례가 233위**다.
+      ★ ★ ★ 까닭 — ★ 배지 행 평균 **302.6점** ↔ 전체 **340.8점** · ★ **38점 낮다**.
+    ★ 곧 ★ **화면 결함이 아니라 차례의 결함**이다.
+    ★★ 그런데 ★ **올려서 고치면 안 된다** — ★ 순위는 마스터 기준(348점)이 정하고
+      ★ ★ 「짝이 있다」는 ★ 좋은 차라는 뜻이 아니다.  ★ 올리면 ★ 나쁜 차가 먼저 온다.
+    ★ 잣대 — ★ 규격이 ★ ①머리에 수 ②배지 유지 ③거르개 ★ 셋을 담고 ·
+             ★ ★ **정렬에 짝 여부를 섞지 말라**고 못 박았는가.
+    """
+    spec = _read(ROOT / "docs" / "CROSS_SITE_COMPARE.md")
+    if not spec:
+        return False, "CROSS_SITE_COMPARE.md 를 못 읽었다"
+    bad = []
+    if "정렬에 ★ 짝 여부를 섞는 것" not in spec and "짝 여부를 섞" not in spec:
+        bad.append("「정렬에 짝 여부를 섞지 마라」가 없다")
+    for want, label in (("짝지어진 차 N대", "머리에 수"),
+                        ("짝지어진 것만", "거르개")):
+        if want not in spec:
+            bad.append(f"{label}가 규격에 없다")
+    if "302.6" not in spec:
+        bad.append("까닭(배지 행이 38점 낮다)이 수로 안 적혀 있다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "짝 배지를 순위로 올리지 않고 머리·거르개로 낸다"
+
+
 CHECKS = (
+    ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
+    ("S46-253", "1부를 브라우저로 봤는가", s46_253_part1_seen_in_browser),
     ("S46-252", "관리 쓰기가 정말 저장되는가", s46_252_admin_write_actually_saves),
     ("S46-251", "사이트마다 차량 키가 붙는가", s46_251_vehicle_key_per_site),
     ("S46-250", "시안이 모양을 갖췄는가", s46_250_mock_has_real_shape),
