@@ -1700,13 +1700,17 @@
       "reason": "4회차 재측정"
     },
     "platform_check:vehicleId": {
-      "usage": "in_use",
-      "reason": "6회차 시험 — in_use",
-      "core_column": "core_listing.source_id"
+      "usage": "deferred",
+      "reason": "7회차 — 등록부 시험",
+      "use_when": "상세를 받으면"
     },
     "detail:advertisement.verification": {
       "usage": "not_provided",
       "reason": "6회차 시험 — not_provided"
+    },
+    "list:Count": {
+      "usage": "not_provided",
+      "reason": "시험자 82~84 재검 — facet:Count 와 같은 것 (가이드 09-02)"
     }
   },
   "not_provided": {

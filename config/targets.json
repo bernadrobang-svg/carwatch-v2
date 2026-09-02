@@ -1547,5 +1547,12 @@
     },
     "_가르는 법": "★ KB 는 carCode 로 갈린다(3244=Recharge · 2940=가솔린).  ★ 다른 곳은 열쇠가 같아 ★ fuel_match 로 가른다 — ★ 짐작으로 코드를 나누지 않는다",
     "active": true
+  },
+  "GV70_25T": {
+    "label": "GV70 2.5T 가솔린",
+    "origin_type": "Y",
+    "collect_group": "domestic",
+    "site_query": "(And.Hidden.N._.CarType.Y._.(C.Manufacturer.제네시스._.ModelGroup.GV70.))",
+    "status": "pending_review"
   }
 }
