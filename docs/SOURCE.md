@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 210개 · 총 76,457줄
+파일 210개 · 총 76,544줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -11,7 +11,7 @@
 | `report/screens/build.py` | 4,548 | 화면 데이터 생성. |
 | `web/views.py` | 2,891 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,329 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `store/core.py` | 2,001 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
+| `store/core.py` | 2,015 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `collect/runner.py` | 1,857 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,275 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -32,8 +32,8 @@
 | `store/watch.py` | 746 | 후보 추적 (11장). |
 | `store/admin.py` | 716 | 관리자 — 계정 · 권한 · config 변경 (13장 앞부분). |
 | `tools/backfill_from_raw.py` | 663 | ★★★★★ 08-30 (명령서 r974 · 0j 4) — ★ Ⓐ 「이미 오는 것을 읽는다」. |
+| `tools/collect_kbchachacha.py` | 631 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `parse/encar/mapping.py` | 625 | 엔카 원문 → CORE 필드 (L3). |
-| `tools/collect_kbchachacha.py` | 621 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `store/raw.py` | 617 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `store/dictionary.py` | 591 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `tests/test_admin_flow.py` | 575 | 관리 화면 동작 시험 (13장 · 14장). |
@@ -48,6 +48,7 @@
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
+| `tools/load_raw.py` | 390 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `parse/hyundai_cert/mapping.py` | 374 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/browser_diff.py` | 362 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
@@ -58,7 +59,6 @@
 | `tools/build_dict.py` | 336 | RAW → 사전 생성. |
 | `parse/kcar/mapping.py` | 333 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
-| `tools/load_raw.py` | 327 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `tests/test_crosssite.py` | 293 | 12장 다중 사이트 시험. |
@@ -249,10 +249,10 @@ _rows_per_page:30  _cfg:34  _versions:39  page_extras:58  _points:67  page:89  s
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:772  _grade_base_checks:800  _checks_cfg:893  _labels_cfg:907  _unknown_mark_checks:915  _grade_cut_checks:966  _points_cap_checks:1089  _worse_of_checks:1141  _checks_json:1203  _value_curve_checks:1214  _group_sum_checks:1319  _mapped_other_check:1430  _denominator_check:1457  _core_axis_check:1485  _rental_cross_check:1506  _why_cheap_check:1544  _source_before_value_check:1585  _absolute_cut_check:1620  _spec_files:1650  _confirm_ratio_check:1660  _warranty_checks:1710  _spec_axis_check:1744  _site_axis_checks:1785  _rendered_why:1842  _rendered_listings:1852  _fill_gap_check:1862  _points_sum_check:1895  _market_gap_check:1920  _bonus_checks:1976  _trim_price_check:2080  run:2137  _shuffle_check:2272  _halt_dict_check:2297  _ensure_tmp:2326
 ```
 
-### `store/core.py` — 2,001줄
+### `store/core.py` — 2,015줄
 
 ```
-resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:111  flush_dealer_pii:163  _record_dropped:175  classify_invariant_change:210  _lookback:271  _source_history:285  _schema_change_min:314  _current:328  _today:334  _drop_non_values:348  origin_dropped:360  _drop_impossible_origin:365  _note_skipped:394  upsert_core:415  mark_gone:528  sweep_gone:545  sweep_gone_groups:589  load_snapshot:631  build_identities:744  resolve_vehicle_id:770  merge_conflict:802  upsert_vehicle:813  upsert_dealer:834  dealer_trust:861  _trust_cfg:954  upsert_child:971  _flag:992  _not_join_months:1006  state_counts:1031  current_versions:1071  diagnosis_of:1101  target_counts:1114  top_target:1121  vehicle_of:1126  collect_scale:1133  our_fault:1153  catalog_coverage:1162  _walk:1206  _sample_bodies:1222  hits_of:1235  key_seen:1254  stored_hits:1269  sample_bodies:1285  observed:1307  known_leaves:1345  has_unclassified:1360  classify_unclassified:1367  _card_limit:1410  _value_chars:1415  _admin_cfg:1420  unclassified_cards:1437  _peek:1493  _short:1540  _blocking_paths:1551  _raw_rows_max:1571  used_endpoints:1581  raw_sections:1590  _flatten:1629  option_diff:1653  _option_names:1691  blocking_keys:1707  full_hits:1725  axis_paths_empty:1750  blocking_rows:1787  record_mismatch_sql:1849  record_mismatch_count:1855  relist_counts:1881  listing_models:1898  filter_options:1918  site_counts:1935  unscored_count:1948  photo_ready_sites:1965  unclassified_fields:1990
+resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:111  flush_dealer_pii:163  _record_dropped:175  classify_invariant_change:210  _lookback:271  _source_history:285  _schema_change_min:314  _current:328  _today:334  _drop_non_values:348  origin_dropped:360  _drop_impossible_origin:365  _note_skipped:394  upsert_core:415  mark_gone:542  sweep_gone:559  sweep_gone_groups:603  load_snapshot:645  build_identities:758  resolve_vehicle_id:784  merge_conflict:816  upsert_vehicle:827  upsert_dealer:848  dealer_trust:875  _trust_cfg:968  upsert_child:985  _flag:1006  _not_join_months:1020  state_counts:1045  current_versions:1085  diagnosis_of:1115  target_counts:1128  top_target:1135  vehicle_of:1140  collect_scale:1147  our_fault:1167  catalog_coverage:1176  _walk:1220  _sample_bodies:1236  hits_of:1249  key_seen:1268  stored_hits:1283  sample_bodies:1299  observed:1321  known_leaves:1359  has_unclassified:1374  classify_unclassified:1381  _card_limit:1424  _value_chars:1429  _admin_cfg:1434  unclassified_cards:1451  _peek:1507  _short:1554  _blocking_paths:1565  _raw_rows_max:1585  used_endpoints:1595  raw_sections:1604  _flatten:1643  option_diff:1667  _option_names:1705  blocking_keys:1721  full_hits:1739  axis_paths_empty:1764  blocking_rows:1801  record_mismatch_sql:1863  record_mismatch_count:1869  relist_counts:1895  listing_models:1912  filter_options:1932  site_counts:1949  unscored_count:1962  photo_ready_sites:1979  unclassified_fields:2004
 ```
 
 ### `collect/runner.py` — 1,857줄
@@ -375,16 +375,16 @@ _admin_cfg:46  ConfigChange:68  running_job:86  hash_secret:96  _split:104  crea
 _now:28  latest_details:32  heydealer:44  kbchachacha:124  hyundai_cert:210  reborncar:259  out_of_scope:292  bmw_bps:328  kcar:366  _record_site:397  kb_record:424  volvo:434  volvo_detail:443  lexus_detail:471  kb_detail:500  _latest:566  mpark_inspection:578  main:644
 ```
 
+### `tools/collect_kbchachacha.py` — 631줄
+
+```
+_now:93  _get:97  fetch_ok:106  page_ids:123  load_filters:133  walk_group:222  count_all:264  probe_detail:290  store_details:309  fetch_details:338  load_details:406  main:485
+```
+
 ### `parse/encar/mapping.py` — 625줄
 
 ```
 _get:30  _json:42  _won:53  _ym:73  _date10:83  _int:99  _bool:105  unpack_envelope:116  parse_list_item:124  parse_detail:171  parse_inspection:247  parse_record:295  _sample_chars:349  safe_field:363  parse_with_issues:385  _salvage:403  _parses:446  dig:453  as_list:476  _diag_comment:504  parse_diagnosis:511  parse_diagnosis_items:543  _text:551  parse_record_summary:561  parse_platform_check:587  parse_inspection_summary:594  parse_ev_battery:599  parse_sellingpoint:619
-```
-
-### `tools/collect_kbchachacha.py` — 621줄
-
-```
-_now:93  _get:97  fetch_ok:106  page_ids:123  load_filters:133  walk_group:212  count_all:254  probe_detail:280  store_details:299  fetch_details:328  load_details:396  main:475
 ```
 
 ### `store/raw.py` — 617줄
@@ -471,6 +471,12 @@ FieldUsage:40  RegistrySyncReport:57  facet_path:75  scan_paths:83  shape_ok:88 
 _target_count:35  check:51  R:57  test_verify_shape:62  _Stub:97  _Clock:105  test_fetch_status:110  test_interpret_failure:123  test_facet_axes:135  test_collect_groups:163  test_build_q:191  test_collect_check:241  test_save_raw:256  test_fail_streak:285  test_all_fail_sample:327  test_diagnosis_scope:371
 ```
 
+### `tools/load_raw.py` — 390줄
+
+```
+_now:61  query_target:65  body_target:104  _rows_from:130  _envs_from_db:210  main:254
+```
+
 ### `tests/test_pipeline.py` — 388줄
 
 ```
@@ -529,12 +535,6 @@ _int:25  yn:33  _months_until:46  _model_group:60  parse_detail:70  _photos:158 
 
 ```
 _shot_widths:32  _tmp_root:57  main:81  shot_paths:172  _localize_images:197  shoot:234
-```
-
-### `tools/load_raw.py` — 327줄
-
-```
-_now:60  query_target:64  body_target:103  _rows_from:129  main:203
 ```
 
 ### `validate/v7_watch.py` — 320줄
