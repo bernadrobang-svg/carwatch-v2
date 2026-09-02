@@ -1250,6 +1250,54 @@ def _lease_kinds(root: str = ".") -> tuple:
             list(cfg["lease_sell_types"]))
 
 
+def paused_hidden(conn, flt: ListingFilter, root: str = ".") -> tuple:
+    """★★★★★ 09-03 (1부 1-11) — ★ **쉬는 사이트 때문에 뺀 건수**.
+
+    ★ 「몇 건을 안 보여 줬는지」를 안 적으면 ★ 사람은 ★ 「합이 안 맞는다」고 본다
+    ★ 반환   (건수, 사이트 이름들)
+    """
+    from dataclasses import replace as _replace
+
+    off = _paused_sites(root)
+    if not off:
+        return 0, ()
+    # ★★ 조건과 값은 ★ **짝을 지어** 다뤄야 한다 — ★ 조건만 빼면 ★ 값이 밀린다.
+    #   ★ 실측 09-03 — ★ 그렇게 했다가 ★ **0건**이 나왔다.
+    #   ★ 그래서 ★ 「쉬는 사이트만」을 ★ 조건으로 걸어 ★ 그 사이트를 직접 센다
+    try:
+        where, args = _listings_where(_replace(flt, site=off[0]))
+        keep, keep_args, i = [], [], 0
+        for w in where:
+            n_q = w.count("?")
+            take = args[i:i + n_q]
+            i += n_q
+            if w == "l.site = ?":
+                continue          # ★ 한 곳이 아니라 ★ 쉬는 곳 **전부**를 센다
+            keep.append(w)
+            keep_args.extend(take)
+        n_all = int(conn.execute(
+            "SELECT COUNT(*) FROM core_listing l"
+            " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+            " WHERE " + " AND ".join(keep)
+            + " AND l.site IN (" + ",".join("?" * len(off)) + ")",
+            [*keep_args, *off]).fetchone()[0])
+    except sqlite3.Error:
+        return 0, ()
+    labels = _site_labels(root)
+    return n_all, tuple(labels.get(s, s) for s in off)
+
+
+def _topic(word: str) -> str:
+    """★ 「보배드림**는**」은 틀린 말이다.  ★ 받침이 있으면 「은」이다.
+
+    ★ 한글 낱자 셈 — ★ (코드 − 0xAC00) % 28 이 0 이 아니면 받침이 있다
+    """
+    last = (word or " ")[-1]
+    if "가" <= last <= "힣" and (ord(last) - 0xAC00) % 28:
+        return "은"
+    return "는"
+
+
 def paired_count(conn, flt: ListingFilter, root: str = ".") -> int:
     """★★★★★ 09-03 (1부 1-1 ① · `CROSS_SITE_COMPARE` 3b-2 · `S46-254`) —
     ★ **지금 걸린 조건 안에서** ★ 짝지어진 차가 몇 대인가.

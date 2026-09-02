@@ -162,6 +162,8 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "excluded_hidden": _excluded_hidden(conn, flt, root),
                  # ★ 09-03 (1부 1-1 ①) — ★ 지금 조건 안에서 ★ 짝지어진 차 수
                  "paired_n": _paired_n(conn, flt, root),
+                 # ★ 09-03 (1부 1-11) — ★ 쉬는 사이트를 ★ **말로** 낸다
+                 "paused_note": _paused_note(conn, flt, root),
                  # ★ 누르면 ★ **지금 조건 그대로** ＋ 「짝지어진 것만」이다
                  "paired_url": _paired_url(flt),
                  # ★ 사유별 — 「몇 건」보다 왜인지가 먼저다
@@ -1017,6 +1019,26 @@ def _lease_hidden(conn, flt, root: str = ROOT) -> int:
     from report.screens.build import lease_hidden
 
     return lease_hidden(conn, flt, root)
+
+
+def _paused_note(conn, flt, root: str = ROOT) -> str:
+    """★★★★★ 09-03 (1부 1-11 · 시험자 18) — ★ **왜 합이 안 맞나**를 말한다.
+
+    ★ 실측 09-03 — ★ 사이트별 합 **5,601** ↔ `site=all` **5,549** · ★ **52건** 차이.
+    ★★ 두 번 세는 것이 ★ **아니었다** — ★ 한 매물이 두 사이트로 세어진 것은 **0건**이다.
+      ★ ★ 까닭은 ★ **쉬는 사이트**다 — ★ 마스터 확정 09-01 「보배를 뺀다」.
+      ★ ★ ★ 기본 화면에서만 빼고 ★ 「보배만 보기」로 집으면 나온다 (`S46-215`).
+    ★ 그런데 ★ 화면이 ★ **아무 말도 안 했다** — ★ 그래서 ★ 「합이 안 맞는다」로 보였다.
+    ★ 조용히 비우지 않는다 (`RULES.md` 2) — ★ **몇 건인지 · 왜인지**를 낸다
+    """
+    if getattr(flt, "site", None):
+        return ""      # ★ 그 사이트만 볼 때는 ★ 뺀 것이 없다
+    from report.screens.build import _topic, paused_hidden
+    n, names = paused_hidden(conn, flt, root)
+    if not n:
+        return ""
+    said = " · ".join(names)
+    return f"{said}{_topic(said)} 쉬고 있어 {n:,}건을 뺐습니다"
 
 
 def _paired_url(flt) -> str:
