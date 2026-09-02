@@ -5617,10 +5617,22 @@ def s46_253_browser_confirms_deploy() -> tuple[bool, str]:
         if site in ("bobaedream", "heydealer") and isinstance(one, dict):
             if one.get("카드") and not one.get("까닭"):
                 bad.append(f"{site} 카드 {one['카드']}장에 까닭이 0")
-    # ★ 1-1 — ★ 기본 쪽에 ★ 「N곳」 배지가 보이는가
+    # ★★★★★ 09-03 — ★ 1-1 의 **규격이 바뀌었다** (`CROSS_SITE_COMPARE` 3b-2).
+    #   ★ 전에는 ★ 「기본 쪽에 배지가 보이는가」를 봤다.
+    #   ★★ 그런데 규격이 ★ **「짝이 있다고 위로 올리지 마라」**고 금지한다 —
+    #     ★ ★ 배지 대상은 ★ 평균 38점 낮아 ★ 1쪽에 올 수가 없다.
+    #     ★ ★ ★ 그것을 실패로 세면 ★ **규격이 금지한 것을 하라고 조르는 검사**가 된다.
+    #   ★★★ 규격이 시키는 셋을 본다 —
+    #     ① 목록 **머리에 수** ② 배지는 카드에 그대로 ③ 거르개 「짝지어진 것만」
     one = (got.get("1-1") or {}).get("(기본)")
-    if isinstance(one, dict) and one.get("카드") and not one.get("배지"):
-        bad.append(f"기본 목록 {one['카드']}장에 「N곳」 배지 0개")
+    if isinstance(one, dict):
+        if not one.get("머리수"):
+            bad.append("목록 머리에 「짝지어진 차 N대」가 없다")
+        paired = (got.get("1-1") or {}).get("?paired=1")
+        if isinstance(paired, dict) and paired.get("카드") \
+                and paired.get("배지", 0) < paired["카드"]:
+            bad.append(f"「짝지어진 것만」인데 배지가 "
+                       f"{paired.get('배지')}/{paired['카드']}")
     if bad:
         return False, "★ 브라우저로 열어 보니 — " + " · ".join(bad[:4])
     return True, f"★ 배포({got.get('_주소')})를 브라우저로 열어 다 확인했다"

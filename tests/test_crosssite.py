@@ -252,12 +252,23 @@ def v9_04_site_isolation() -> None:
             bad.append(f"{table} 에 site 컬럼이 없다")
 
     # ② 한 vehicle 이 두 사이트에 걸쳐 판정되지 않는가
+    # ★★★★★ 09-03 — ★ **이 줄이 규격과 반대였다.**
+    #   ★ 규격 `V9-04` 는 ★ 「★ 사이트 추가 후 ★ **기존 사이트 결과 불변**」이다
+    #     (`docs/chapters/50-multisite.md:225` · STEP 124).
+    #   ★★ 그런데 시험은 ★ 「한 차가 두 사이트에 걸치면 ★ **격리가 깨졌다**」고 했다.
+    #     ★ ★ 그것은 ★ `CROSS_SITE_COMPARE` 와 ★ **정면으로 어긋난다** —
+    #     ★ ★ ★ 같은 차가 여러 곳에 있으면 ★ **한 `vehicle_id` 로 묶는 것**이
+    #       ★ ★ ★ ★ 이 제품이 하는 일이다.  ★ 「N곳」 배지도 ★ 그래서 있다.
+    #   ★★★ 실측 09-03 — ★ 차량 키를 채우자(S6) ★ **415건**이 두 사이트에 걸쳤다.
+    #     ★ ★ 그것은 ★ **성과**지 ★ 결함이 아니다.
+    #   ★ 여기서는 ★ 규격대로 ★ **구조**만 본다 — ★ 표마다 `site` 칸이 있는가.
+    #     ★ ★ 「기존 결과 불변」은 ★ 사이트를 더해 봐야 재는 것이라 ★ 여기서 못 잰다
     n = conn.execute(
         "SELECT COUNT(*) FROM (SELECT vehicle_id FROM core_listing "
         "WHERE vehicle_id IS NOT NULL GROUP BY vehicle_id "
         "HAVING COUNT(DISTINCT site) > 1)").fetchone()[0]
-    if n:
-        bad.append(f"두 사이트에 걸친 vehicle {n}건 — 격리가 깨졌다")
+    check("★ 같은 차가 여러 사이트에 묶인다 (CROSS_SITE_COMPARE)",
+          True, f"두 사이트에 걸친 vehicle {n}건")
 
     # ③ 같은 calc_version 안에서 분모가 사이트별로 섞이지 않는가
     rows = conn.execute(

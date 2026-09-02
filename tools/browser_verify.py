@@ -55,14 +55,25 @@ def _open(b, url: str, width: int = 900):
 
 
 def check_1_1(b, base: str) -> dict:
-    """1-1 ★ 「N곳」 배지가 ★ **눈에 보이는가**."""
+    """1-1 ★ 짝지어진 차를 ★ **찾을 수 있는가** (`CROSS_SITE_COMPARE` 3b-2).
+
+    ★★ 「배지가 1쪽에 보이는가」를 ★ **안 본다** — ★ 규격이
+      ★ ★ 「★ 짝이 있다고 ★ 위로 올리지 마라」고 ★ **금지**한다.
+      ★ ★ ★ 배지 대상은 ★ 평균 38점 낮아 ★ 1쪽에 올 수가 없다.
+    ★ 규격이 시키는 셋을 본다 — ① 머리에 수 ② 배지는 그대로 ③ 거르개
+    """
+    import re as _re
+
     got = {}
-    for q in ("", "?order=price"):
+    for q in ("", "?paired=1", "?order=price"):
         pg = _open(b, f"{base}/listings{q}")
         seen = pg.evaluate(_SEEN, ".nsite")
         cards = len(pg.evaluate(_SEEN, ".cardbody"))
+        body = " ".join(pg.inner_text("body").split())
+        m = _re.search(r"짝지어진 차 ([0-9,]+)대", body)
         pg.close()
         got[q or "(기본)"] = {"배지": len(seen), "카드": cards,
+                              "머리수": m.group(1) if m else "",
                               "보기": [x["t"] for x in seen[:2]]}
     return got
 

@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 209개 · 총 76,000줄
+파일 210개 · 총 76,165줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
-| `validate/v0_guide.py` | 6,272 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `validate/v0_guide.py` | 6,284 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `validate/v11_web.py` | 5,057 | V11 표현 계층 검증 (14장 STEP 153). |
 | `report/screens/build.py` | 4,545 | 화면 데이터 생성. |
 | `web/views.py` | 2,891 | 화면 어댑터 (14장 STEP 142 · 152). |
@@ -46,8 +46,8 @@
 | `run.py` | 421 | CarWatch v2 진입점. |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
+| `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
-| `tools/sync_registry.py` | 394 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `parse/hyundai_cert/mapping.py` | 374 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/browser_diff.py` | 362 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
@@ -61,6 +61,7 @@
 | `tools/load_raw.py` | 327 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `validate/v7_watch.py` | 320 | V7 관심·추적 검증. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
+| `tests/test_crosssite.py` | 293 | 12장 다중 사이트 시험. |
 | `tests/test_dict.py` | 293 | 4장 키·코드·사전 시험. |
 | `tests/test_screens.py` | 292 | 10장 화면 시험. |
 | `store/crosssite.py` | 291 | 다중 사이트 확장 (12장). |
@@ -68,7 +69,6 @@
 | `adapters/encar.py` | 290 | 엔카 어댑터 — URL · 헤더 · 쿼리 조립. |
 | `tools/check_screens.py` | 285 | 화면 ↔ 시안 대조 (10장 · 14장). |
 | `tests/test_fixtures.py` | 284 | 실물 표본 시험 — v1 원문 12건. |
-| `tests/test_crosssite.py` | 282 | 12장 다중 사이트 시험. |
 | `parse/kbchachacha/mapping.py` | 277 | KB차차차 상세 → `core_listing` (`docs/KBCHACHACHA_API.md` 3장). |
 | `tests/test_store.py` | 270 | 3장 테이블 시험. |
 | `report/exports/export.py` | 269 | 내보내기. |
@@ -107,6 +107,7 @@
 | `analyze/axis/value.py` | 181 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `collect/worker.py` | 180 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `tools/run_tests.py` | 180 | 시험 전체 실행. |
+| `score/grade.py` | 178 | 등급 (L7). |
 | `tools/measure_0k.py` | 176 | ★ 0k (명령서 r974 뒤) — ★ **잰다.  안 고친다.** |
 | `parse/bmw_bps/mapping.py` | 175 | BMW BPS 상세 파서 (`docs/BMW_BPS_API.md` 08-29 절). |
 | `tools/classify_unclassified.py` | 175 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
@@ -132,15 +133,14 @@
 | `store/rawfile.py` | 149 | 1걸음 — ★ **받은 것을 파일로만 쓴다.  ★ DB 를 안 연다.** |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
+| `tools/browser_verify.py` | 140 | ★★★★★ 09-02 — ★ **배포를 브라우저로 확인한다** (`S46-253`). |
 | `tools/classify_fields.py` | 139 | 등록부 분류 초안 — 파서가 쓰는 경로를 근거로 자동 분류한다. |
 | `tools/check_all.py` | 137 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
 | `tools/fold_out_of_scope.py` | 137 | 이미 들어온 것을 ★ 되돌린다 — ★ 우리 대상이 아닌 것은 ★ 접는다 (명령서 3-3). |
 | `parse/classify.py` | 136 | 분류 2단 — target_key 판정. |
 | `tools/trace_verify.py` | 136 | 추적표 「상태」를 사실로 (개정 349 · 350 · S34). |
 | `tools/fetch_dimensions.py` | 134 | ★★★★★ 제원(전장)을 ★ **브라우저로** 받는다 — 명령서 10번 (`S46-233`). |
-| `tools/browser_verify.py` | 129 | ★★★★★ 09-02 — ★ **배포를 브라우저로 확인한다** (`S46-253`). |
 | `adapters/heydealer.py` | 127 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
-| `score/grade.py` | 127 | 등급 (L7). |
 | `analyze/axes.py` | 126 | 축 판정 계약. |
 | `tools/recalc_catchup.py` | 126 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
 | `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
@@ -173,6 +173,7 @@
 | `store/chunk.py` | 77 | 조각 전송 — 바이트를 나누고 서버가 이어붙인다 (개정 307). |
 | `tools/inspect_dict.py` | 75 | 사전 검토 — pending 값과 원문 표본을 본다. |
 | `tools/inspect_facet.py` | 74 | facet 원문에 실제로 어떤 축이 왔는지 본다. |
+| `tools/backfill_vehicle_id.py` | 71 | ★★★★★ 09-03 (2부 S6) — ★ **차량 키가 빈 매물을 채운다.** |
 | `analyze/trust.py` | 70 | 플랫폼 신뢰도 — 점검 출처 · 엔카진단 · 엔카보증 (개정 300). |
 | `tools/three_numbers.py` | 69 | ★★★★★ 회차마다 낼 세 수 — ★ **화면 기준**으로 센다 (마스터 지시 08-30). |
 | `tools/fill_raw_run_id.py` | 65 | 원문에 ★ 빠진 `run_id` 를 채운다 (`V1-19` · A-10 · 개발측 자진 수정). |
@@ -218,10 +219,10 @@
 
 ## 큰 파일 — 무엇이 어디에 (200줄 이상 91개)
 
-### `validate/v0_guide.py` — 6,272줄
+### `validate/v0_guide.py` — 6,284줄
 
 ```
-_read:25  s43_2_axis_ids:32  s44_4_scope_written:70  s44_5_site_consistent:102  s45_1_one_version:135  _order_files:158  s44_1_order_exists:171  s44_2_one_order:213  s43_2b_axis_renamed:228  s43_2c_no_hda:254  s45_5_no_axis_scores:308  s45_4_table_generated:346  s45_3_spec_totals:361  s45_2_mock_numbers:432  s44_3_specs_in_order:453  s43_3_version_matches:491  _h_tags:532  s46_21_one_screen_per_file:548  s46_22_section_order:573  _targets:642  s46_23_site_query_filled:648  s46_24_facet_unconfirmed:663  s46_30_index_covers_docs:683  s46_31_spec_sites_in_config:722  s46_32_generated_fresh:743  _req_rows:785  _tokens:797  _named_docs:812  s46_36_dropped_not_alive:824  s46_40_progress_docs_changed:852  s46_41_site_status_known:883  _templates:925  s46_45_spec_not_in_list:930  s46_46_spec_forbidden_ten:950  s46_66_links_encoded:976  s46_65_verdict_fresh:1015  _sian_files:1053  s46_67_sian_names_dont_clash:1062  s46_68_watch_is_mobile_first:1125  s46_74_rows_per_page:1179  s46_75_v4m_common:1225  s46_76_collectors_keep_raw:1265  s46_115_run_screen_still:1303  s46_125_sort_axes_really_sort:1332  s46_118_heart_has_anchor:1363  s46_121_header_rule_in_one_place:1403  s46_116_reasons_in_plain_words:1425  s46_120_registry_key_matches:1452  s46_123_toss_palette_only:1488  s46_122_shared_fragments:1530  s46_128_batch_gives_a_window:1574  s46_127_collector_has_screen_or_timer:1618  s46_124_db_opened_with_pragmas:1666  s46_126_fetch_outside_transaction:1702  s46_117_collectors_sweep_gone:1736  s46_77_kb_is_our_targets_only:1785  s46_78_encar_only_paths_are_scoped:1841  s46_87_request_site_matches_listing:1883  s46_88_encar_blocked_banner:1952  _paired_rows:2017  _grade_order_list:2057  s46_54_grade_two_step:2069  s46_55_price_gap_30:2094  s46_56_accident_split:2120  s46_90_pending_not_graded:2160  _registrable:2209  s46_94_source_url_site_matches:2223  s46_91_raw_vs_stored:2267  s46_97_raw_linked_by_source_id:2339  s46_99_login_then_watch:2407  _logged_opener:2503  _sian_seq:2542  s46_100_sian_word_order:2574  s46_102_electric_only_is_electric:2711  s46_103_sian_values_carried:2763  s46_98_sian_words_on_screen:2804  s46_95_screens_alive:2910  s46_96_site_sells_but_no_code:2966  s46_92_browser_zero_count:3013  s46_161_no_unproven_absence:3082  s46_162_promised_checks_exist:3131  s46_145_numbers_have_meaning:3161  s46_155_screen_spec_has_mockup:3190  s46_163_mockup_has_route:3223  _guide_docs:3254  s46_129_table_sum_counted:3263  s46_132_handover_says_remeasure:3295  s46_140_new_host_has_robots:3309  s46_142_site_count_matches:3328  s46_146_absence_needs_parser_check:3363  s46_154_master_wish_in_registry:3385  s46_131_paging_claim_measured:3407  s46_135_generalisation_has_sample:3429  s46_138_all_claim_needs_source:3446  s46_149_confession_is_closed:3470  s46_156_answer_touches_spec:3497  s46_130_one_tally_per_register:3523  s46_134_target_site_pair:3540  s46_141_filter_claim_measured:3566  s46_143_master_items_are_master:3583  s46_147_absence_needs_ten:3618  s46_150_column_from_ddl:3640  s46_133_check_gap_in_pending:3662  s46_136_warn_number_moves:3680  s46_137_config_key_has_reader:3702  s46_139_field_claim_counted:3731  s46_148_axis_gap_traced:3748  s46_152_dev_rounds_read:3766  s46_159_design_is_doable:3799  s46_144_empty_is_split:3818  s46_153_owner_is_judged:3835  s46_157_perf_claim_is_timed:3867  s46_158_size_claim_is_measured:3885  s46_160_ev_leak_full_mark:3903  s46_164_dev_pending_answered:3920  s46_165_fixable_not_called_unmeasurable:3954  s46_166_decision_reached_chapters:3995  s46_168_check_counts_exceptions:4025  s46_169_gone_has_reason:4064  s46_170_one_architecture:4081  s46_171_yardstick_names_screen:4099  s46_172_absence_read_as_human:4118  s46_173_endpoint_not_wordcount:4142  s46_174_no_endpoint_only_if_probed:4167  s46_175_no_lumped_axes:4194  s46_176_guide_probes_sites:4227  s46_177_catalog_not_site_locked:4255  s46_178_list_field_not_empty_axis:4280  s46_179_no_penalty_without_source:4305  s46_180_code_table_per_site:4319  s46_181_read_stored_before_probing:4346  s46_182_all_sites_before_claiming_all:4365  s46_183_master_only_after_probing:4393  s46_184_unfetched_is_not_absent:4422  s46_185_file_is_the_原本:4450  s46_186_grade_distribution_watched:4480  s46_187_cheaper_scores_higher:4494  s46_188_screen_before_claiming_missing:4521  s46_191_budget_follows_fuel_rule:4545  s46_192_pref_brands_registered:4591  s46_202_no_raw_template_tags:4616  s46_227_absent_only_declared:4629  s46_213_recommend_has_no_sold:4680  s46_203_new_site_has_target_keys:4726  s46_203_collect_writes_files_first:4758  s46_205_no_raw_response_writes:4786  s46_206_pdf_link_only:4821  _retired_s46_207_says_measured:4853  s46_207_commit_title_says_fact:4887  s46_208_market_no_negative:4925  s46_214_photo_uses_space_below:4944  s46_215_collector_respects_active:4969  s46_229_recommend_not_active_off:4995  s46_230_schema_change_counts_one_run:5023  s46_231_all_sites_in_filter:5053  s46_232_budget_curve_is_log:5080  s46_233_size_axis_never_zero:5124  s46_234_top_site_sweeps_gone:5163  s46_235_screen_hides_unsellable:5195  _recommend_rows_once:5237  s46_240_all_indexes_exist:5255  s46_237_recommend_in_budget:5296  s46_236_interior_color_axis:5328  s46_238_trim_not_double_counting:5363  s46_241_regrade_alive_on_deploy:5386  s46_242_mock_has_required_header:5428  s46_243_empty_says_why:5452  s46_244_failed_response_kept:5482  s46_245_each_screen_has_its_parts:5502  s46_246_every_screen_has_a_mock:5537  s46_253_browser_confirms_deploy:5571  s46_247_site_coverage:5629  s46_248_grade_is_realistic:5695  s46_249_budget_pairs_are_masters:5729  s46_250_mock_has_real_shape:5758  s46_251_vehicle_key_per_site:5791  s46_252_admin_write_actually_saves:5821  s46_253_part1_seen_in_browser:5853  s46_254_pair_badge_not_by_order:5888  s46_255_tester_items_listed_one_by_one:5922  _as_check:6185  results:6199  save:6238  run:6249
+_read:25  s43_2_axis_ids:32  s44_4_scope_written:70  s44_5_site_consistent:102  s45_1_one_version:135  _order_files:158  s44_1_order_exists:171  s44_2_one_order:213  s43_2b_axis_renamed:228  s43_2c_no_hda:254  s45_5_no_axis_scores:308  s45_4_table_generated:346  s45_3_spec_totals:361  s45_2_mock_numbers:432  s44_3_specs_in_order:453  s43_3_version_matches:491  _h_tags:532  s46_21_one_screen_per_file:548  s46_22_section_order:573  _targets:642  s46_23_site_query_filled:648  s46_24_facet_unconfirmed:663  s46_30_index_covers_docs:683  s46_31_spec_sites_in_config:722  s46_32_generated_fresh:743  _req_rows:785  _tokens:797  _named_docs:812  s46_36_dropped_not_alive:824  s46_40_progress_docs_changed:852  s46_41_site_status_known:883  _templates:925  s46_45_spec_not_in_list:930  s46_46_spec_forbidden_ten:950  s46_66_links_encoded:976  s46_65_verdict_fresh:1015  _sian_files:1053  s46_67_sian_names_dont_clash:1062  s46_68_watch_is_mobile_first:1125  s46_74_rows_per_page:1179  s46_75_v4m_common:1225  s46_76_collectors_keep_raw:1265  s46_115_run_screen_still:1303  s46_125_sort_axes_really_sort:1332  s46_118_heart_has_anchor:1363  s46_121_header_rule_in_one_place:1403  s46_116_reasons_in_plain_words:1425  s46_120_registry_key_matches:1452  s46_123_toss_palette_only:1488  s46_122_shared_fragments:1530  s46_128_batch_gives_a_window:1574  s46_127_collector_has_screen_or_timer:1618  s46_124_db_opened_with_pragmas:1666  s46_126_fetch_outside_transaction:1702  s46_117_collectors_sweep_gone:1736  s46_77_kb_is_our_targets_only:1785  s46_78_encar_only_paths_are_scoped:1841  s46_87_request_site_matches_listing:1883  s46_88_encar_blocked_banner:1952  _paired_rows:2017  _grade_order_list:2057  s46_54_grade_two_step:2069  s46_55_price_gap_30:2094  s46_56_accident_split:2120  s46_90_pending_not_graded:2160  _registrable:2209  s46_94_source_url_site_matches:2223  s46_91_raw_vs_stored:2267  s46_97_raw_linked_by_source_id:2339  s46_99_login_then_watch:2407  _logged_opener:2503  _sian_seq:2542  s46_100_sian_word_order:2574  s46_102_electric_only_is_electric:2711  s46_103_sian_values_carried:2763  s46_98_sian_words_on_screen:2804  s46_95_screens_alive:2910  s46_96_site_sells_but_no_code:2966  s46_92_browser_zero_count:3013  s46_161_no_unproven_absence:3082  s46_162_promised_checks_exist:3131  s46_145_numbers_have_meaning:3161  s46_155_screen_spec_has_mockup:3190  s46_163_mockup_has_route:3223  _guide_docs:3254  s46_129_table_sum_counted:3263  s46_132_handover_says_remeasure:3295  s46_140_new_host_has_robots:3309  s46_142_site_count_matches:3328  s46_146_absence_needs_parser_check:3363  s46_154_master_wish_in_registry:3385  s46_131_paging_claim_measured:3407  s46_135_generalisation_has_sample:3429  s46_138_all_claim_needs_source:3446  s46_149_confession_is_closed:3470  s46_156_answer_touches_spec:3497  s46_130_one_tally_per_register:3523  s46_134_target_site_pair:3540  s46_141_filter_claim_measured:3566  s46_143_master_items_are_master:3583  s46_147_absence_needs_ten:3618  s46_150_column_from_ddl:3640  s46_133_check_gap_in_pending:3662  s46_136_warn_number_moves:3680  s46_137_config_key_has_reader:3702  s46_139_field_claim_counted:3731  s46_148_axis_gap_traced:3748  s46_152_dev_rounds_read:3766  s46_159_design_is_doable:3799  s46_144_empty_is_split:3818  s46_153_owner_is_judged:3835  s46_157_perf_claim_is_timed:3867  s46_158_size_claim_is_measured:3885  s46_160_ev_leak_full_mark:3903  s46_164_dev_pending_answered:3920  s46_165_fixable_not_called_unmeasurable:3954  s46_166_decision_reached_chapters:3995  s46_168_check_counts_exceptions:4025  s46_169_gone_has_reason:4064  s46_170_one_architecture:4081  s46_171_yardstick_names_screen:4099  s46_172_absence_read_as_human:4118  s46_173_endpoint_not_wordcount:4142  s46_174_no_endpoint_only_if_probed:4167  s46_175_no_lumped_axes:4194  s46_176_guide_probes_sites:4227  s46_177_catalog_not_site_locked:4255  s46_178_list_field_not_empty_axis:4280  s46_179_no_penalty_without_source:4305  s46_180_code_table_per_site:4319  s46_181_read_stored_before_probing:4346  s46_182_all_sites_before_claiming_all:4365  s46_183_master_only_after_probing:4393  s46_184_unfetched_is_not_absent:4422  s46_185_file_is_the_原本:4450  s46_186_grade_distribution_watched:4480  s46_187_cheaper_scores_higher:4494  s46_188_screen_before_claiming_missing:4521  s46_191_budget_follows_fuel_rule:4545  s46_192_pref_brands_registered:4591  s46_202_no_raw_template_tags:4616  s46_227_absent_only_declared:4629  s46_213_recommend_has_no_sold:4680  s46_203_new_site_has_target_keys:4726  s46_203_collect_writes_files_first:4758  s46_205_no_raw_response_writes:4786  s46_206_pdf_link_only:4821  _retired_s46_207_says_measured:4853  s46_207_commit_title_says_fact:4887  s46_208_market_no_negative:4925  s46_214_photo_uses_space_below:4944  s46_215_collector_respects_active:4969  s46_229_recommend_not_active_off:4995  s46_230_schema_change_counts_one_run:5023  s46_231_all_sites_in_filter:5053  s46_232_budget_curve_is_log:5080  s46_233_size_axis_never_zero:5124  s46_234_top_site_sweeps_gone:5163  s46_235_screen_hides_unsellable:5195  _recommend_rows_once:5237  s46_240_all_indexes_exist:5255  s46_237_recommend_in_budget:5296  s46_236_interior_color_axis:5328  s46_238_trim_not_double_counting:5363  s46_241_regrade_alive_on_deploy:5386  s46_242_mock_has_required_header:5428  s46_243_empty_says_why:5452  s46_244_failed_response_kept:5482  s46_245_each_screen_has_its_parts:5502  s46_246_every_screen_has_a_mock:5537  s46_253_browser_confirms_deploy:5571  s46_247_site_coverage:5641  s46_248_grade_is_realistic:5707  s46_249_budget_pairs_are_masters:5741  s46_250_mock_has_real_shape:5770  s46_251_vehicle_key_per_site:5803  s46_252_admin_write_actually_saves:5833  s46_253_part1_seen_in_browser:5865  s46_254_pair_badge_not_by_order:5900  s46_255_tester_items_listed_one_by_one:5934  _as_check:6197  results:6211  save:6250  run:6261
 ```
 
 ### `validate/v11_web.py` — 5,057줄
@@ -458,16 +459,16 @@ VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85
 f_won:55  f_km:71  f_pct:75  f_date:79  f_num:90  f_gradecls:97  f_gradelabel:110  _grade_classes:125  f_count:134  f_signcls:142  f_signwon:152  f_url:160  _index_key:198  _step:213  _lookup:225  _truthy:234  render_str:238  strip_comments:345  expand_includes:350  render:387
 ```
 
+### `tools/sync_registry.py` — 403줄
+
+```
+FieldUsage:40  RegistrySyncReport:57  facet_path:75  scan_paths:83  shape_ok:88  _walk_values:101  collect_values:115  collect_paths:141  _has_value:182  _seed_for:198  sync_registry:209  suggest_usage:304  write_suggested:316  halt_report:343  list_by_usage:366  assert_registered:373
+```
+
 ### `tests/test_collect.py` — 401줄
 
 ```
 _target_count:35  check:51  R:57  test_verify_shape:62  _Stub:97  _Clock:105  test_fetch_status:110  test_interpret_failure:123  test_facet_axes:135  test_collect_groups:163  test_build_q:191  test_collect_check:241  test_save_raw:256  test_fail_streak:285  test_all_fail_sample:327  test_diagnosis_scope:371
-```
-
-### `tools/sync_registry.py` — 394줄
-
-```
-FieldUsage:31  RegistrySyncReport:48  facet_path:66  scan_paths:74  shape_ok:79  _walk_values:92  collect_values:106  collect_paths:132  _has_value:173  _seed_for:189  sync_registry:200  suggest_usage:295  write_suggested:307  halt_report:334  list_by_usage:357  assert_registered:364
 ```
 
 ### `tests/test_pipeline.py` — 388줄
@@ -548,6 +549,12 @@ _cols:85  _reads:89  _progress_note_check:117  _relist_check:201  run:227
 _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _origin_check:156  _warranty_sum_check:186  _tie_break_check:229  _axis_site_check:267  run:307
 ```
 
+### `tests/test_crosssite.py` — 293줄
+
+```
+check:34  db:40  add:45  test_vin:63  test_vin_parse:107  test_cross_site:129  test_regression:175  test_readiness:207  v9_04_site_isolation:229
+```
+
 ### `tests/test_dict.py` — 293줄
 
 ```
@@ -588,12 +595,6 @@ _pairs:23  say:89  _text:98  check_pairs:105  check_phrases:118  _sian_heads:150
 
 ```
 check:33  fx:39  test_inspection:53  test_frame_vs_outer:84  test_record:123  test_detail:152  test_classify_real:172  test_catalog:207  test_diagnosis:219
-```
-
-### `tests/test_crosssite.py` — 282줄
-
-```
-check:34  db:40  add:45  test_vin:63  test_vin_parse:107  test_cross_site:129  test_regression:175  test_readiness:207  v9_04_site_isolation:229
 ```
 
 ### `parse/kbchachacha/mapping.py` — 277줄
