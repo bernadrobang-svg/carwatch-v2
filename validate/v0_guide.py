@@ -6165,10 +6165,16 @@ def s46_259_master_target_names():
     #   ★ ★ 「★ 케이카 없어」 · ★ 「모델 Y」도 ★ 고르신 목록에 **없다**
     want = [("encar", "GV70", "GV70_25T"),
             ("encar", "G80", "G80_25T"),
+            ("encar", "그랜저", "GRANDEUR_LPG"),
+            ("encar", "스포티지", "SPORTAGE_LPI"),
+            ("encar", "그랑 콜레오스", "KOLEOS_HEV"),
+            ("encar", "모델 Y", "MODEL_Y"),
             ("heydealer", "e-GV70", "GV70_EV"),
             ("heydealer", "X3 (G01)", "X3_IMPORT"),
             ("heydealer", "e-G80", "G80_EV"),
-            ("reborncar", "그랑 콜레오스 하이브리드", "KOLEOS_HEV")]
+            ("reborncar", "그랑 콜레오스 하이브리드", "KOLEOS_HEV"),
+            ("kcar", "S60 3세대", "S60_IMPORT"),
+            ("kcar", "V60 크로스컨트리 2세대", "V60CC_IMPORT")]
     bad = []
     for site, name, key in want:
         got = (bs.get(site) or {}).get(name) or {}
@@ -6177,16 +6183,24 @@ def s46_259_master_target_names():
         if "_why" not in got:
             bad.append(f"{site}/{name} 에 까닭이 없다")
     # ★ 내가 ★ **혼자 넣은 것**이 남아 있으면 실패다 (오판 251)
-    for site, name in (("kcar", "S60 3세대"), ("kcar", "V60 크로스컨트리 2세대"),
-                       ("encar", "그랜저"), ("encar", "스포티지"),
-                       ("encar", "GV60"), ("encar", "G70"), ("encar", "모델 Y")):
+    # ★ 마스터께서 ★ **제외**라 하신 것이 들어 있으면 실패다 (09-02 2차)
+    for site, name in (("encar", "GV60"), ("encar", "G70")):
         if name in (bs.get(site) or {}):
             bad.append(f"★ 마스터께서 안 고르신 {site}/{name} 이 들어 있다")
     if bad:
         return False, "★ 마스터 확정과 다른 것 — " + " · ".join(bad[:3])
-    g80 = ((bs.get("encar") or {}).get("G80") or {})
-    if g80.get("trim_contains") != "2.5":
-        return False, "★ 엔카 G80 이 ★ 「2.5 만」이 아니다"
+    # ★ 마스터께서 ★ **갈래를 못 박으신 것** — ★ 조건이 빠지면 실패다
+    enc = bs.get("encar") or {}
+    for name, key, val in (("G80", "trim_contains", "2.5"),
+                           ("그랜저", "fuel_contains", "LPG"),
+                           ("스포티지", "fuel_contains", "LPG"),
+                           ("그랑 콜레오스", "fuel_contains", "가솔린+전기"),
+                           ("모델 Y", "year_from", "2025-01")):
+        got = (enc.get(name) or {}).get(key)
+        if got != val:
+            bad.append(f"엔카 {name} 의 {key} 가 {got} 다 — {val} 여야 한다")
+    if bad:
+        return False, "★ " + " · ".join(bad[:3])
     return True, f"마스터께서 정하신 차종 이름 {len(want)}개가 그대로다"
 
 

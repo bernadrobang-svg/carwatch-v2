@@ -36,7 +36,7 @@
 | `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:758` | **★ 없음** | 없음 | trace/RULES.md:87 · trace/RULES.md:88 · trace/RULES.md:89 |
 | `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:786` | **★ 없음** | 없음 | trace/00-standard.md:53 · trace/00-standard.md:54 · trace/00-standard.md:55 |
 | `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:822` | **★ 없음** | 없음 | trace/00-standard.md:34 · trace/00-standard.md:38 · trace/RULES.md:85 |
-| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:845` | **★ 없음** | 없음 | INDEX.md:18 · SCHEMA.md:7 · trace/00-standard.md:78 |
+| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:845` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · trace/00-standard.md:78 |
 | `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:876` | **★ 없음** | 없음 | trace/00-standard.md:110 · trace/00-standard.md:111 · trace/00-standard.md:112 |
 | `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:899` | **★ 없음** | 없음 | trace/00-standard.md:109 · trace/00-standard.md:110 · trace/00-standard.md:111 |
 | `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:981` | **★ 없음** | 없음 | trace/00-standard.md:231 · trace/00-standard.md:232 · trace/00-standard.md:234 |
@@ -215,7 +215,7 @@
 | `S46-256` | 막혔다를 증거 없이 쓰지 않는가 | fatal | `validate/v0_guide.py:5964` | **★ 없음** | 없음 | guide/03_이력.md:1338 · guide/06_오판대장.md:341 · chapters/13-pipeline.md:290 |
 | `S46-257` | 파이프라인이 엔카만 돌지 않는가 | fatal | `validate/v0_guide.py:5995` | **★ 없음** | 없음 | guide/03_이력.md:1339 · guide/06_오판대장.md:343 |
 | `S46-258` | 판정 축 사전이 정해졌는가 | fatal | `validate/v0_guide.py:6117` | **★ 없음** | 없음 | guide/03_이력.md:1341 |
-| `S46-259` | 마스터 차종 이름이 그대로인가 | fatal | `validate/v0_guide.py:6149` | **★ 없음** | 없음 | guide/03_이력.md:1342 · guide/06_오판대장.md:342 · guide/07_밀린일대장.md:37 |
+| `S46-259` | 마스터 차종 이름이 그대로인가 | fatal | `validate/v0_guide.py:6149` | **★ 없음** | 없음 | guide/03_이력.md:1342 · guide/03_이력.md:1343 · guide/06_오판대장.md:342 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
