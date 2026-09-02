@@ -5592,18 +5592,29 @@ def s46_247_site_coverage():
     except Exception:  # noqa: BLE001
         return False, "site_coverage.json 을 못 읽었다"
     ours = data.get("_우리") or {}
-    bad, zero = [], []
+    bad, zero, unmeasured = [], [], []
     for site, per in data.items():
         if site.startswith("_") or not isinstance(per, dict):
             continue
         got = ours.get(site)
-        tot = per.get("_전체")
-        if tot is None:
-            nums = [v for k, v in per.items()
-                    if not k.startswith("_") and isinstance(v, int)]
-            tot = sum(nums) if nums else None
-            zero += [f"{site}:{k}" for k, v in per.items()
-                     if not k.startswith("_") and v == 0]
+        # ★★★★★ 09-02 — ★ **`_전체` 로는 못 잰다.**
+        #   ★ `_전체` 는 ★ 그 사이트가 파는 ★ **전 재고**다 —
+        #   ★ ★ 보배드림 3,286 · 볼보 237 · 리볼트 281 이 다 그것이다
+        #   ★ ★ ★ (`tools/site_coverage.py` 의 `TOTAL_FIELD` 갈래).
+        #   ★★ 우리는 ★ **32종만** 받는다 (마스터 확정 08-23 「전량을 받지 않는다」).
+        #     ★ ★ 그 둘을 견주면 ★ 보배드림은 ★ **영원히 7%** 다 —
+        #     ★ ★ ★ 우리 차종을 하나도 안 빠뜨려도 그렇다.  ★ 자가 틀린 것이다.
+        #   ★★★ 차종별로 잰 사이트만 셈한다.  ★ 나머지는 ★ **「아직 안 쟀다」**로 낸다 —
+        #     ★ ★ 「괜찮다」로 넘기지 않는다 (조용히 비우지 않는다)
+        nums = [v for k, v in per.items()
+                if not k.startswith("_") and isinstance(v, int)]
+        if not nums:
+            if per.get("_전체") is not None:
+                unmeasured.append(f"{site}(전 재고 {per['_전체']:,}만 쟀다)")
+            continue
+        tot = sum(nums)
+        zero += [f"{site}:{k}" for k, v in per.items()
+                 if not k.startswith("_") and v == 0]
         if isinstance(tot, int) and tot and isinstance(got, int):
             pct = got / tot * 100
             if pct < 60:
@@ -5613,6 +5624,11 @@ def s46_247_site_coverage():
         msg.append("★ 많이 못 받은 사이트 " + " · ".join(bad[:3]))
     if zero:
         msg.append(f"★ 0건 차종 {len(zero)}개 — " + " · ".join(zero[:3]))
+    if unmeasured:
+        # ★ 「못 쟀다」를 ★ 「괜찮다」로 넘기지 않는다.  ★ 다만 실패로도 안 센다 —
+        #   ★ ★ 그 사이트를 ★ **차종별로 재는 것**이 먼저다 (`tools/site_coverage.py`)
+        msg.append(f"★ 차종별로 아직 안 잰 사이트 {len(unmeasured)}곳 — "
+                   + " · ".join(unmeasured[:3]))
     if msg:
         return False, "  ".join(msg)
     return True, "잰 사이트가 다 넉넉히 들어온다"
