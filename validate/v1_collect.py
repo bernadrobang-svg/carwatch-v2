@@ -659,7 +659,16 @@ def _query_key_check(run_id: str):
     for key, spec in raw.items():
         if not (isinstance(spec, dict) and "site_query" in spec):
             continue
-        for site, sq in spec["site_query"].items():
+        _sq = spec.get("site_query")
+        # ★★★★★ 09-02 — ★ **후보 차종이 검사를 죽였다.**
+        #   ★ `/admin/targets` 로 후보를 넣으면 ★ `site_query` 가 ★ **글월**로 들어온다
+        #   ★ ★ (`tests/test_admin_flow.py:243` 이 그렇게 넣는다 — ★ 사람도 그렇게 넣는다).
+        #   ★ ★ ★ 그때 ★ `.items()` 를 부르면 ★ `AttributeError` 로 ★ **검사가 통째로 죽는다**
+        #     ★ ★ ★ (실측 09-02 — ★ `GV70_25T` 하나에 ★ 통과 496 → **454** · 시험 1 → **5**).
+        #   ★★ 갈래가 아직 안 정해진 후보는 ★ **건너뛴다** — ★ `load_filters` 도 그렇게 한다
+        if not isinstance(_sq, dict):
+            continue
+        for site, sq in _sq.items():
             # ★★ `KNOWN_QUERY_KEYS` 는 ★ **엔카** 조립 규칙이다 (adapters/encar.py).
             #   ★ 다른 사이트에 대면 ★ 그 사이트 말이 죄다 「모르는 키」가 된다
             if site != "encar":

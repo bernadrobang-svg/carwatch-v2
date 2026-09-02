@@ -33,8 +33,8 @@
       ]
     },
     "inspection_summary:vehicleId": {
-      "suggested_usage": "in_use",
-      "reason_hint": "매핑표에 있는 경로",
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
       "observed": 3,
       "samples": [
         1,
@@ -93,8 +93,8 @@
       ]
     },
     "sellingpoint:vehicleId": {
-      "suggested_usage": "in_use",
-      "reason_hint": "매핑표에 있는 경로",
+      "suggested_usage": "unused_by_policy",
+      "reason_hint": "값이 전건 동일 — 변별력 0",
       "observed": 3,
       "samples": [
         1,

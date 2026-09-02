@@ -668,7 +668,10 @@ def s46_24_facet_unconfirmed() -> tuple[bool, str]:
     """
     left = []
     for key, spec in _targets().items():
-        for site, sq in (spec.get("site_query") or {}).items():
+        _sq = spec.get("site_query")
+        if not isinstance(_sq, dict):
+            continue   # ★ 09-02 — ★ 후보 차종은 글월이다.  ★ 건너뛴다
+        for site, sq in _sq.items():
             if any(str(k).startswith("_확인") for k in sq):
                 left.append(f"{key}.{site}")
     if left:
@@ -1812,7 +1815,8 @@ def s46_77_kb_is_our_targets_only() -> tuple[bool, str]:
     rows = json.loads(_read(tg))
     have = [k for k, v in rows.items()
             if isinstance(v, dict) and not k.startswith("_")
-            and (v.get("site_query") or {}).get("kbchachacha")]
+            and isinstance(v.get("site_query"), dict)
+            and v["site_query"].get("kbchachacha")]
     if not have:
         bad.append("targets.json 에 kbchachacha 코드가 한 종도 없다")
     # ⑤ ★★ 세대(`carCode`)를 적었으면 ★ **근거를 함께 적었는가** (금지 6 「지어내지 마라」).
@@ -2986,14 +2990,17 @@ def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
         #   ★ 마스터께서 09-01 에 대상을 열로 좁히셨다 — ★ 쉬는 것을 세면 89칸이 남는다
         if spec.get("active") is False:
             continue
-        maker = ((spec.get("site_query") or {}).get("encar") or {}).get(
+        _q = spec.get("site_query")
+        _q = _q if isinstance(_q, dict) else {}
+        maker = ((_q.get("encar") or {}) if isinstance(_q.get("encar"), dict)
+                 else {}).get(
             "Manufacturer")
         if not maker:
             return False, f"{key} 에 제조사가 없다 — site_query.encar.Manufacturer"
         for site in sites:
             scope = eps[site]["brand_scope"]
             sells = scope == "all" or maker in scope
-            if sells and site not in (spec.get("site_query") or {}):
+            if sells and site not in _q:
                 miss.setdefault(site, []).append(key)
     if miss:
         n = sum(len(v) for v in miss.values())
