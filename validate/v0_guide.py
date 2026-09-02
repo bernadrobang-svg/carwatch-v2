@@ -1915,9 +1915,17 @@ def s46_87_request_site_matches_listing(db_path=None) -> tuple[bool, str]:
         if row is None:
             return True, "요청 기록이 없다 — 잴 것이 없다"
         rid = row[0]
+        # ★★★★★ 09-03 — ★ **`catalog` 은 매물이 아니다.**
+        #   ★ 카탈로그는 ★ `source_id` 칸에 ★ **모델 카탈로그 열쇠**를 적는다
+        #   ★ ★ (실측 09-03 — `814554120240605`).  ★ 그것은 ★ 매물번호가 아니라
+        #   ★ ★ ★ **차종·연식 묶음의 열쇠**다 — ★ `core_listing.source_id` 에 없다.
+        #   ★★ 그것을 「남의 사이트 매물번호」로 세면 ★ **거짓 실패**다.
+        #     ★ ★ 이 검사가 잡으려던 것은 ★ 「엔카 상세 API 에 ★ K카 매물번호를
+        #     ★ ★ ★ 넣어 사흘 전량 400」이었다 — ★ **매물 두드림**의 이야기다
         rows = conn.execute(
             "SELECT url, source_id, COUNT(*) FROM audit_request"
             " WHERE run_id=? AND source_id IS NOT NULL AND url IS NOT NULL"
+            "   AND kind <> 'catalog'"
             " GROUP BY 1, 2", (rid,)).fetchall()
         bad, seen = {}, 0
         for url, sid, n in rows:
