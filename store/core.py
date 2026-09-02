@@ -433,6 +433,20 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
             f"라벨과 내용 형식이 어긋난다: {', '.join(bad[:3])}",
             step="0장 불변식 ④")
     lid = parsed["listing_id"]
+    # ★★★★★ 09-03 (2부 S6) — ★ **푼 때를 여기서 적는다.**
+    #   ★ 실측 09-03 — ★ 엔카 말고 ★ 열한 사이트가 ★ `parsed_at` **전부 0** 이다.
+    #     ★ ★ 그런데 ★ 상세 원문은 ★ **2,285건** 있고 ★ 수집기들이 ★ 풀어서 넣고 있다.
+    #   ★★ 까닭 — ★ 판(`collect/runner.py`)은 ★ `parsed_at=at` 을 ★ 함께 넘기는데
+    #     ★ ★ ★ 열한 수집기(`tools/collect_*.py`)는 ★ **아무도 안 넘긴다.**
+    #     ★ ★ ★ ★ `upsert_core` 는 ★ 준 것만 쓰므로 ★ 칸이 영영 빈다.
+    #   ★★★ 그 값이 비면 ★ 두 가지가 깨진다 —
+    #     ① 「푼 적 있나」를 못 본다 (`S6` 의 끝 조건이다)
+    #     ② 수집기가 ★ 「원문이 `parsed_at` 보다 새로우면 다시 푼다」로 가르는데
+    #        ★ ★ 늘 비어 있어 ★ **판마다 같은 것을 다시 푼다**
+    #   ★ 여기는 ★ **파싱 결과가 들어오는 단 하나의 문**이다 — ★ 한 군데서 적는다.
+    #     ★ 이미 준 값이 있으면 ★ 그것을 쓴다 (판이 넘긴 것을 안 덮는다)
+    if "parsed_at" not in parsed:
+        parsed["parsed_at"] = observed_at
     cols = [r[1] for r in conn.execute("PRAGMA table_info(core_listing)")]
     cur = conn.execute(
         "SELECT * FROM core_listing WHERE listing_id = ?", (lid,)

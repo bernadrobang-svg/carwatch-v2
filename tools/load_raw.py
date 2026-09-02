@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import json as _j
 from collections import Counter
 from datetime import datetime, timezone
 
@@ -137,10 +138,16 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
     got = body
     if spec.get("json") or (spec.get("list_json")
                             and env.get("endpoint") == "list"):
-        try:
-            got = json.loads(body)
-        except ValueError:
-            return [], None, None
+        # ★★★★★ 09-03 — ★ **이미 풀린 묶음이 들어올 수 있다.**
+        #   ★ 파일 봉투는 ★ 글월을 주고 ★ 표 봉투(`_envs_from_db`)는
+        #   ★ ★ **이미 `json.loads` 한 묶음**을 준다 —
+        #   ★ ★ ★ 그때 다시 풀면 ★ `TypeError: … not dict` 로 죽는다 [실측 09-03].
+        #   ★ 글월일 때만 푼다.  ★ 못 풀면 ★ 조용히 버리지 않고 ★ 빈 줄을 낸다
+        if isinstance(body, (str, bytes, bytearray)):
+            try:
+                got = json.loads(body)
+            except ValueError:
+                return [], None, None
     sid = env.get("source_id")
 
     if env.get("endpoint") == "list":
@@ -200,6 +207,50 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
     return ([deep] if deep else []), rec, pan
 
 
+def _envs_from_db(site: str, day: str | None) -> list:
+    """★ 09-03 (S6) — ★ `raw_response` 표의 원문을 ★ 파일과 **같은 꼴**로 낸다.
+
+    ★ 파일 봉투(`store.rawfile.read`)와 ★ 열쇠 이름을 맞춘다 —
+      ★ ★ 그래야 ★ 아래 넣기 고리를 ★ **하나도 안 고치고** 쓴다
+    ★ 못 읽는 몸통은 ★ 건너뛴다 — ★ 「없음」으로 안 만든다 (금지 12)
+    """
+    import sqlite3 as _sq
+
+    db = os.path.join(ROOT, "carwatch.db")
+    if not os.path.isfile(db):
+        return []
+    from store.raw import raw_body
+
+    conn = _sq.connect(f"file:{db}?mode=ro", uri=True)
+    sql = ("SELECT endpoint, source_id, request_url, body, fetched_at, http_code"
+           "  FROM raw_response WHERE site=? AND status='ok'"
+           "    AND endpoint <> 'list' AND body IS NOT NULL")
+    args: list = [site]
+    if day:
+        sql += " AND substr(fetched_at,1,10)=?"
+        args.append(day)
+    out = []
+    try:
+        for ep, sid, url, body, at, code in conn.execute(sql, args):
+            # ★★★★★ 09-03 — ★ **원문이 다 JSON 은 아니다.**
+            #   ★ 현대인증·K카·보배드림 상세는 ★ **HTML 쪽**이다 [실측 09-03].
+            #   ★ ★ 그것이 그 사이트의 ★ **바른 원문**이다 — ★ 파서가 그렇게 받는다.
+            #   ★ ★ ★ JSON 으로만 읽으려다 ★ 셋을 통째로 버리고 있었다
+            raw = raw_body(body)
+            try:
+                doc = _j.loads(raw)
+            except (ValueError, TypeError):
+                doc = raw          # ★ HTML 은 글월 그대로 넘긴다
+            out.append({"endpoint": ep, "source_id": sid, "url": url or "",
+                        "body": doc, "fetched_at": at,
+                        "http_code": int(code or 200)})
+    except _sq.Error:
+        return []
+    finally:
+        conn.close()
+    return out
+
+
 def main() -> int:
     args = sys.argv[1:]
     site = next((a for a in args if not a.startswith("-")), None)
@@ -221,6 +272,15 @@ def main() -> int:
     files = walk(site=site, day=day, root=ROOT)
     print(f"★ {site} — 파일 {len(files):,}개"
           + ("" if write else "  ★ 재기만 한다"))
+    # ★★★★★ 09-03 (2부 S6) — ★ **원문이 파일에만 있는 게 아니다.**
+    #   ★ 실측 09-03 — ★ 현대인증·K카·보배드림은 ★ 상세 원문이
+    #   ★ ★ `raw/` 폴더가 아니라 ★ **`raw_response` 표**에 있다
+    #   ★ ★ ★ (현대인증 detail 225 · K카 115 · 보배 225).
+    #   ★★ `walk()` 는 ★ 폴더만 본다 — ★ 그래서 ★ 그 셋이 ★ `parsed_at` **0** 이었다.
+    #   ★ 표에 있는 것도 ★ **같은 길로** 넣는다 — ★ 새 길을 만들지 않는다
+    from_db = _envs_from_db(site, day)
+    if from_db:
+        print(f"  ＋ 표에 있는 원문 {len(from_db):,}개 (raw_response)")
     got: Counter = Counter()
     if not write:
         for path in files:
@@ -249,17 +309,20 @@ def main() -> int:
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
     at = _now()
     key = load_key()
-    for path in files:
-        env = read(path)
+    # ★ 09-03 (S6) — ★ 파일 봉투 ＋ ★ **표 봉투**를 ★ 한 고리로 돈다
+    for path in [*files, *from_db]:
+        env = path if isinstance(path, dict) else read(path)
         if env is None:
             got["못 읽음"] += 1
             continue
         got[env.get("endpoint") or "?"] += 1
         # ★★ 원문을 ★ 먼저 남긴다 — ★ 파일이 원본이고 ★ 이것은 사본이다 (P3)
-        save_site_raw(conn, site, env["endpoint"],
-                      env.get("source_id"), env.get("url") or "",
-                      env.get("body"), env.get("fetched_at") or at,
-                      http_code=int(env.get("http_code") or 200))
+        #   ★ 09-03 — ★ 표에서 온 것은 ★ 이미 `raw_response` 에 있다.  ★ 두 번 안 쓴다
+        if not isinstance(path, dict):
+            save_site_raw(conn, site, env["endpoint"],
+                          env.get("source_id"), env.get("url") or "",
+                          env.get("body"), env.get("fetched_at") or at,
+                          http_code=int(env.get("http_code") or 200))
         rows, rec, pan = _rows_from(site, env, mod, spec)
         for row in rows:
             # ★★★★★ 09-01 — ★ **열쇠를 먼저 본다** (이름보다 앞선다).
