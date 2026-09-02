@@ -5519,7 +5519,42 @@ def s46_245_each_screen_has_its_parts():
     return True, f"시안 {len(need)}장이 저마다 드는 것을 다 갖췄다"
 
 
+def s46_246_every_screen_has_a_mock():
+    """S46-246 — ★ **화면마다 시안이 있는가** (마스터 09-02 「너가 그것만 있니?」).
+
+    ★★★ 09-02 — ★ 내가 ★ **시안 12장만 세고** ★ 「여덟 장 고쳤다」고 올렸다.
+      ★ ★ 화면은 ★ **38개**였다 — ★ 시안 없는 화면이 ★ **26개**.
+      ★ ★ ★ 하필 ★ 마스터께서 그날 겪으신 것이 ★ **다 그 26개에 있었다**
+        (`admin_collect` 수집 뒤 안내 · `admin_scoring` 911 · `admin_status` S5 · `market`).
+    ★ 그래서 ★ `S46-245` 도 ★ **지키는 척했다** — ★ 12/12 라 통과였다.
+    ★ 잣대 — ★ `web/templates/*.html` 을 **분모**로 세고 ★ 시안이 없는 화면 수를 낸다.
+    """
+    tpl_dir = ROOT / "web" / "templates"
+    mock_dir = ROOT / "ref" / "screens"
+    if not tpl_dir.is_dir():
+        return False, "web/templates 가 없다"
+    # ★ 부분틀은 화면이 아니다 — ★ `base` 는 뼈대이고 `empty` 는 빈 상태 조각이다
+    PARTIAL = {"base", "empty"}
+    # ★ 템플릿 이름과 시안 이름이 다른 것 — ★ 시안은 **주소**를 따르고 (S46-163)
+    #   ★ 템플릿은 파일 이름을 따른다.  ★ 여기서 잇는다
+    ALIAS = {"audit": "admin_audit", "docs": "admin_docs",
+             "watch_invite": "watch"}
+    tpl = {p.stem for p in tpl_dir.glob("*.html")
+           if not p.name.startswith("_") and p.stem not in PARTIAL}
+    mock = set()
+    for p in mock_dir.glob("*_시안.html"):
+        mock.add(p.name.replace("v4m_", "").replace("v3_", "")
+                 .replace("v5_", "").replace("_시안.html", ""))
+    tpl = {ALIAS.get(t, t) for t in tpl}
+    miss = sorted(tpl - mock)
+    if miss:
+        return False, (f"★ 시안이 없는 화면 {len(miss)}/{len(tpl)}개 — "
+                       + " · ".join(miss[:5]))
+    return True, f"화면 {len(tpl)}개가 다 시안을 갖고 있다"
+
+
 CHECKS = (
+    ("S46-246", "화면마다 시안이 있는가", s46_246_every_screen_has_a_mock),
     ("S46-245", "화면마다 그 화면에 드는 것이 있는가", s46_245_each_screen_has_its_parts),
     ("S46-244", "실패 응답도 원문으로 남는가", s46_244_failed_response_kept),
     ("S46-242", "시안에 「반드시 있는 것」 머리가 있는가", s46_242_mock_has_required_header),

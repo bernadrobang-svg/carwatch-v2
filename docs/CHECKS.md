@@ -2,12 +2,12 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **545개**
+검사 **546개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **545** | 개발측 |
-| ④ 규격에 근거가 없는 검사 | **21** | 가이드가 판단 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **546** | 개발측 |
+| ④ 규격에 근거가 없는 검사 | **20** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **35** | 개발측 |
 
 ★ ① 중복 · ③ 못 잡는 검사는 기계가 못 가릅니다 — 가이드·테스터 몫입니다 (개정 344).
@@ -148,7 +148,7 @@
 | `S46-160` | 전기차 누유가 만점·분모 910 인가 | fatal | `validate/v0_guide.py:3896` | **★ 없음** | 없음 | guide/03_이력.md:971 · guide/06_오판대장.md:292 · guide/06_오판대장.md:293 |
 | `S46-161` | 「사이트가 안 준다」에 증거가 있는가 | fatal | `validate/v0_guide.py:3075` | **★ 없음** | 없음 | guide/03_이력.md:975 · guide/03_이력.md:977 · guide/03_이력.md:979 |
 | `S46-162` | 오판이 약속한 검사가 실제로 있는가 | fatal | `validate/v0_guide.py:3124` | **★ 없음** | 없음 | guide/03_이력.md:977 · guide/03_이력.md:979 · guide/03_이력.md:985 |
-| `S46-163` | 시안마다 라우팅 표에 주소가 있는가 | fatal | `validate/v0_guide.py:3216` | **★ 없음** | 없음 | guide/03_이력.md:985 · guide/03_이력.md:1003 · guide/06_오판대장.md:295 |
+| `S46-163` | 시안마다 라우팅 표에 주소가 있는가 | fatal | `validate/v0_guide.py:3216` | **★ 없음** | 없음 | guide/03_이력.md:985 · guide/03_이력.md:1003 · guide/03_이력.md:1329 |
 | `S46-164` | 개발 회차의 「마스터 몫」에 답을 냈는가 | fatal | `validate/v0_guide.py:3913` | **★ 없음** | 없음 | guide/03_이력.md:991 · guide/06_오판대장.md:296 · guide/14_누가할것_20260829.md:39 |
 | `S46-165` | 「못 잰다」가 진짜인가 | fatal | `validate/v0_guide.py:3947` | **★ 없음** | 없음 | guide/03_이력.md:1011 · guide/06_오판대장.md:297 · guide/06_오판대장.md:298 |
 | `S46-166` | 마스터 확정이 장 규격에 닿았는가 | fatal | `validate/v0_guide.py:3988` | **★ 없음** | 없음 | ARCHITECTURE_20260830.md:8 · guide/03_이력.md:1017 · guide/06_오판대장.md:299 |
@@ -201,7 +201,8 @@
 | `S46-242` | 시안에 「반드시 있는 것」 머리가 있는가 | fatal | `validate/v0_guide.py:5411` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
 | `S46-243` | 비는 자리가 까닭을 내는가 | fatal | `validate/v0_guide.py:5435` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
 | `S46-244` | 실패 응답도 원문으로 남는가 | fatal | `validate/v0_guide.py:5465` | **★ 없음** | 없음 | guide/03_이력.md:1328 |
-| `S46-245` | 화면마다 그 화면에 드는 것이 있는가 | fatal | `validate/v0_guide.py:5485` | **★ 없음** | 없음 | — |
+| `S46-245` | 화면마다 그 화면에 드는 것이 있는가 | fatal | `validate/v0_guide.py:5485` | **★ 없음** | 없음 | guide/03_이력.md:1329 · guide/06_오판대장.md:338 |
+| `S46-246` | 화면마다 시안이 있는가 | fatal | `validate/v0_guide.py:5522` | **★ 없음** | 없음 | guide/03_이력.md:1329 · guide/06_오판대장.md:338 |
 | `V0-01` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | — | — | **★ 코드에 없다** | — | — | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -751,6 +752,7 @@
 - `S46-243` 비는 자리가 까닭을 내는가 — `validate/v0_guide.py`
 - `S46-244` 실패 응답도 원문으로 남는가 — `validate/v0_guide.py`
 - `S46-245` 화면마다 그 화면에 드는 것이 있는가 — `validate/v0_guide.py`
+- `S46-246` 화면마다 시안이 있는가 — `validate/v0_guide.py`
 - `S46-30` INDEX 가 docs 를 다 가리키는가 — `validate/v0_guide.py`
 - `S46-31` 규격이 있는 사이트가 config 에 있는가 — `validate/v0_guide.py`
 - `S46-32` 생성물이 최신인가 — `validate/v0_guide.py`
@@ -1189,7 +1191,6 @@
 - `S46-234` 매물 최다 사이트가 gone 을 매기는가 — `validate/v0_guide.py`
 - `S46-235` 화면이 안 파는 것을 감추는가 — `validate/v0_guide.py`
 - `S46-237` 추천이 예산 안인가 — `validate/v0_guide.py`
-- `S46-245` 화면마다 그 화면에 드는 것이 있는가 — `validate/v0_guide.py`
 - `V1-19` 이번 실행이 저장한 원문에 run_id 가 있음 — `validate/v1_collect.py`
 - `V1-20` 카탈로그를 모델당 1회만 받음 — `validate/v1_collect.py`
 - `V1-25` ok 로 저장된 원문이 온전한가 — `validate/v1_collect.py`
