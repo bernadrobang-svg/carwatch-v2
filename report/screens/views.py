@@ -260,6 +260,9 @@ class ListingRow:
         return [c for c in self.axis_chips if c.tone == TONE_MUTED]
     # ★ 09-02 시안 `lst-axes` — ★ 축 이름과 **몇 점인지**
     axis_points: tuple = ()
+    # ★★★★★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ **사진이 왜 없나.**
+    #   ★ `None` 이면 ★ 사진이 있다.  ★ 글이 있으면 ★ 그것을 낸다
+    photo_note: str | None = None
 
 
 @dataclass(frozen=True)

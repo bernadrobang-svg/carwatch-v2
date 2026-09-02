@@ -2764,7 +2764,15 @@ a.mini, .note a, .dim a, .muted a { line-height: 1.5; }
    ★ 마스터 — 「★ 전 화면을 시안에 맞게 · ★ 단추 겹침 0」
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ★★★ ① 사진은 **float** 다.  ★ flex 가 아니다 (명령서 ①).
+/* ★★★★★ 09-02 (1부 1-2 · **7회차째**) — ★ 추천만 ★ **104×78 에 갇혀 있었다.**
+   ★ 실측 09-02 — ★ 목록·추적은 ★ 360:104 · 900:180 · 1200:240 으로 커지는데
+   ★ ★ 추천은 ★ 셋 다 ★ **104×78** 이었다.
+   ★★ 까닭 — ★ 추천 카드는 ★ `<div class="desk pickthumb">` 다.
+     ★ ★ 아래 `.row .desk`(클래스 둘)가 ★ 폭 규칙의 `.pickthumb`(클래스 하나)보다
+     ★ ★ ★ **더 세서** ★ 104px 로 되돌렸다.
+     ★ ★ ★ ★ 폭 규칙에 ★ `.row .desk` 를 함께 적어 ★ 같이 커지게 했다
+
+   ★★★ ① 사진은 **float** 다.  ★ flex 가 아니다 (명령서 ①).
    ★ 까닭 — ★ flex 는 **칸을 나눈다**.  ★ 글이 사진 밑으로 안 흐른다.
    ★ ★ 실측 — 300px 에서 ★ **사진 밑 1,840px 이 비어 있었다**
    ★★ `clear:both` 를 꼭 붙인다 — ★ 없으면 다음 카드가 사진 옆으로 파고든다 */
@@ -2937,19 +2945,19 @@ td .heart, th .heart {
    ★ 우리는 ★ 128×86 하나에 ★ 1750px 에서만 160 이었다 — ★ 시안과 다르다.
    ★★ 시안 그대로 간다.  ★ 사진은 ★ `float` 라 ★ 글이 그 밑으로 흐른다 */
 @media (max-width: 359px) {
-  .thumb, .thumb-none, .pickthumb, .thumb.ktrack,
+  .thumb, .thumb-none, .pickthumb, .thumb.ktrack, .row .desk,
   main.car-rows .row .kthumbwrap, main.car-rows .row .thumb {
     width: 88px; height: 66px;
   }
 }
 @media (min-width: 640px) {
-  .thumb, .thumb-none, .pickthumb, .thumb.ktrack,
+  .thumb, .thumb-none, .pickthumb, .thumb.ktrack, .row .desk,
   main.car-rows .row .kthumbwrap, main.car-rows .row .thumb {
     width: 180px; height: 135px;
   }
 }
 @media (min-width: 1024px) {
-  .thumb, .thumb-none, .pickthumb, .thumb.ktrack,
+  .thumb, .thumb-none, .pickthumb, .thumb.ktrack, .row .desk,
   main.car-rows .row .kthumbwrap, main.car-rows .row .thumb {
     width: 240px; height: 180px;
   }
@@ -3076,3 +3084,13 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
    ★ ★ 이름이 그 밑으로 뻗어 ★ 겹쳤다 (「♡ / 그랑 콜레오스 1.5 E-」).
    ★★ 하트 몫을 ★ **비워 둔다**.  ★ 하트를 흐름에 넣으면 ★ 시안 자리가 틀어진다 */
 .pickname, .row .name, .cardbody > .name { padding-right: 48px; }
+
+/* ★★★★★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ **빈 자리의 까닭**.
+   ★ 「사진 없음」 자리에 ★ 한 줄이 들어간다 — ★ 넘치면 두 줄로 접는다 (명령서 ②).
+   ★ 사진 자리와 ★ **같은 크기**여야 ★ 줄이 안 흔들린다 (`.thumb-none` 이 그 몫) */
+.photo-why {
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px; font-size: 10.5px; line-height: 1.35;
+  text-align: center; white-space: normal; word-break: keep-all;
+  color: var(--dim);
+}

@@ -34,7 +34,8 @@
       </div>
       {% endif %}
       {% if !v.photos %}
-      <div class="pimg">사진 없음</div>
+      <!-- ★ 09-02 (1부 1-4) — ★ 빈 자리에 ★ 까닭을 낸다 -->
+      <div class="pimg photo-why">{% if v.photo_note %}{{ v.photo_note }}{% endif %}{% if !v.photo_note %}이 매물에는 사진이 없습니다{% endif %}</div>
       <div class="psite">{{ v.site_badge }}</div>
       {% endif %}
     </div>

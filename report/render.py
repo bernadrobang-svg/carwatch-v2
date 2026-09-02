@@ -372,6 +372,21 @@ def _raw_sections(conn, listing_id: int) -> list:
     return raw_sections(conn, listing_id)
 
 
+def _photo_why(conn, site, photos_json, root: str) -> str | None:
+    """★ 09-02 (1부 1-4) — ★ 사진이 없으면 ★ **까닭**을 낸다 (`RULES.md` 2).
+
+    ★ 셈은 ★ `report.screens.build._photo_note` 하나만 쓴다 —
+      ★ ★ 같은 일을 두 군데 적으면 ★ 한 군데만 고치는 일이 생긴다 (`S14`)
+    """
+    from report.screens.build import _photo_note, _view_str
+    from store.core import photo_ready_sites
+    try:
+        base = _view_str("photo_base_url", root)
+    except (KeyError, OSError, ValueError):
+        base = ""
+    return _photo_note(site, photos_json, base, photo_ready_sites(conn))
+
+
 def _photo_urls(photos_json, root: str) -> tuple:
     """상세에 낼 사진 전부 (개정 375).
 
@@ -583,6 +598,9 @@ def render_listing(conn: sqlite3.Connection, listing_id: int,
         source_id=head[8],
         # ★ 상세는 사진을 전부 낸다 (개정 375).  주소는 config 가 갖는다
         photos=_photo_urls(head[17], root),
+        # ★ 09-02 (1부 1-4) — ★ 빈 자리에 ★ 까닭을 낸다.
+        #   ★ 「우리가 못 받았다」와 ★ 「그 매물에 없다」를 가른다
+        photo_note=_photo_why(conn, head[15], head[17], root),
         curve=_curve_points(head[9], head[10], root),
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
         # ★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장).  head[15] 가 site 다

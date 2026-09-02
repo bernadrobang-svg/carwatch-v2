@@ -47,8 +47,10 @@
           title="{{ r.listing.target_label }} {{ r.listing.trim }} · {{ r.listing.year_month }} · {{ r.listing.mileage_km | km }} · {{ r.listing.price_won | won }} · {{ r.listing.grade }}등급">
           {% if r.listing.photo_url %}<img src="{{ r.listing.photo_url }}" alt=""
             loading="lazy">{% endif %}
-          {% if !r.listing.photo_url %}<span class="thumb-none"
-            title="원문에 사진이 없습니다">사진 없음</span>{% endif %}</a>
+          <!-- ★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ 빈 자리에 ★ **까닭**을 낸다 -->
+          {% if !r.listing.photo_url %}<span class="thumb-none photo-why"
+            title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다"
+            >{{ r.listing.photo_note }}</span>{% endif %}</a>
       </div>
       <div class="kmid">
         <!-- ★ 축 넷 — ★ 목록과 같은 차례·같은 이름.  ★ 막대도 함께 낸다 (V11-163) -->

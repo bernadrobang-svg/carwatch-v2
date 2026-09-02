@@ -85,6 +85,7 @@ from report.screens.views import (
 )
 from report.views import AxisView, ReportMeta, VersionStamp
 from contracts import ROLE_ADMIN, ROLE_USER, Account, require_role
+from store.core import photo_ready_sites
 # ★ 어긋남 조건은 store 에 하나만 둔다 (V3-50).  화면이 SQL 을 짓지 않는다
 from store.core import record_mismatch_sql, relist_counts
 
@@ -321,6 +322,28 @@ def _total_points() -> float:
         load_config(_o.path.join(here, "config", "scoring.json"))
         ["total_points"])
 
+
+
+def _photo_note(site, photos, base: str, ready) -> str | None:
+    """★★★★★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ 사진이 없으면 ★ **까닭**을 낸다.
+
+    ★ 마스터께서 09-01 에 ★ 「왜 안 보이지」를 ★ 네 번 물으셨다.
+      ★ ★ 화면이 ★ 까닭을 말했으면 ★ 안 물으셨을 것이다.
+    ★★ 가른다 —
+      ★ ㉮ 그 사이트에서 ★ **한 장도 못 받았다** → ★ 「우리가 아직 못 받았다」
+      ★ ㉯ 같은 사이트의 다른 매물엔 있다 → ★ 「그 매물에 사진이 없다」
+    ★ 사진이 있으면 ★ `None` 이다 — ★ 쓸데없는 말을 안 낸다
+    """
+    if photo_url(photos, base):
+        return None
+    name = (_site_labels().get(str(site)) or str(site or "이 사이트"))
+    if site and ready is not None and str(site) not in ready:
+        # ★ 「보배드림**는**」은 틀린 말이다.  ★ 받침이 있으면 「은」이다.
+        #   ★ 한글 낱자 셈 — ★ (코드 − 0xAC00) % 28 이 0 이 아니면 받침이 있다
+        last = name[-1]
+        has_jong = ("가" <= last <= "힣") and (ord(last) - 0xAC00) % 28
+        return f"{name}{'은' if has_jong else '는'} 사진을 아직 못 받았습니다"
+    return "이 매물에는 사진이 없습니다"
 
 
 def photo_urls(photos_json: str | None, base: str) -> list:
@@ -672,6 +695,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
          opt_prices: dict | None = None,   # noqa: ARG001 — 아래에서 쓴다
          axes: dict | None = None, changes_by: dict | None = None,
          photo_base: str = "", site_tpl: dict | None = None,
+         photo_sites: set | None = None,
          km_unit: int = 0, monthly_unit: int = 0,
          dep_cfg: dict | None = None, state_by: dict | None = None,
          market_by: dict | None = None, high_km: int = 0,
@@ -906,6 +930,9 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         dealer_quadrant=quadrant if enough else None,
         note_tags=tuple(tags),
         photo_url=photo_url(photos, photo_base),
+        # ★★★★★ 09-02 (1부 1-4) — ★ **조용히 비우지 않는다** (`RULES.md` 2).
+        #   ★ 「우리가 못 받았다」와 ★ 「그 매물에 없다」를 ★ 가른다
+        photo_note=_photo_note(_site, photos, photo_base, photo_sites),
         source_id=sid,
         # ★ source_id 가 없으면 링크를 만들지 않는다.  깨진 주소를 내지 않는다
         # ★★★ 원문 문은 ★ 그 매물의 사이트로 간다 (명령서 72장 · 실측 08-26).
@@ -1690,7 +1717,12 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★★ 08-25 — ★ 서브쿼리 ★ **셋을 조인 하나로** 묶었다 (V11-34).
         #   ★ ★ 셋을 따로 두면 ★ 한 쪽에 ★ 쿼리가 셋씩 는다 —
         #     ★ ★ 실측 ★ 상한을 넘었다 (28).  ★ 값은 그대로다
-        "  dup.sites, dup.low_won, dup.high_won,"
+        # ★ 09-02 — ★ 둘 중 **많이 잡은 쪽**을 쓴다 (위 주석 참고)
+        "  MAX(COALESCE(dp.sites,1), COALESCE(dv.sites,1)),"
+        "  MIN(COALESCE(dp.low_won, dv.low_won),"
+        "      COALESCE(dv.low_won, dp.low_won)),"
+        "  MAX(COALESCE(dp.high_won, dv.high_won),"
+        "      COALESCE(dv.high_won, dp.high_won)),"
         # ★★★ 08-29 (마스터 3번) — ★ 팔린 것을 ★ 목록에 되돌린다.
         #   ★ 딱지를 달려면 ★ 「팔렸는지」를 ★ 행이 알아야 한다
         " l.sales_status,"
@@ -1705,14 +1737,32 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
-        # ★ 같은 차 묶음 — ★ 곳 수·값 폭을 ★ 한 번에 받는다 (색인 ix_listing_plate)
-        " LEFT JOIN (SELECT plate_hash,"
+        # ★ 같은 차 묶음 — ★ 곳 수·값 폭을 ★ 한 번에 받는다 (색인 `ix_listing_plate`)
+        # ★★★★★ 09-02 (1부 1-1 · **8회차째**) — ★ **차대번호도 본다.**
+        #   ★ 전에는 ★ **번호판만** 봤다.  ★ 그런데 ★ 추적 화면(`/track`)은
+        #   ★ ★ **번호판＋차대**를 이어 붙여 짝을 짓는다 (`_pair_rows` 의 union-find).
+        #   ★ ★ ★ 같은 「같은 차」를 ★ **두 자로 재고 있었다** — ★ 이 판의 가장 큰 실패다
+        #     ★ ★ ★ (「선언과 실제의 괴리」 · `docs/guide/00_개요.md`).
+        #   ★★ 실측 09-02 — ★ 번호판만 **154행** → ★ 번호판 또는 차대 **161행**.
+        #     ★ ★ `/track` 의 176대와는 ★ 아직 다르다 — ★ union-find 는
+        #       ★ ★ 「A—번호판—B—차대—C」까지 잇는데 ★ SQL 한 판으로는 못 잇는다.
+        #       ★ ★ ★ 그 차이(15대)는 ★ 회차에 적었다 — ★ 지어내 메우지 않는다
+        " LEFT JOIN (SELECT plate_hash k,"
         "                   COUNT(DISTINCT site) sites,"
         "                   MIN(price_current_won) low_won,"
         "                   MAX(price_current_won) high_won"
-        "              FROM core_listing WHERE status = 'active'"
-        "             GROUP BY plate_hash) dup"
-        "   ON dup.plate_hash = l.plate_hash"
+        "              FROM core_listing"
+        "             WHERE status = 'active' AND plate_hash IS NOT NULL"
+        "             GROUP BY plate_hash) dp"
+        "   ON dp.k = l.plate_hash"
+        " LEFT JOIN (SELECT vin_hash k,"
+        "                   COUNT(DISTINCT site) sites,"
+        "                   MIN(price_current_won) low_won,"
+        "                   MAX(price_current_won) high_won"
+        "              FROM core_listing"
+        "             WHERE status = 'active' AND vin_hash IS NOT NULL"
+        "             GROUP BY vin_hash) dv"
+        "   ON dv.k = l.vin_hash"
         f" WHERE {' AND '.join(where)}"
         f" ORDER BY {order_clause(flt.order)}"
         " LIMIT ? OFFSET ?")
@@ -1750,8 +1800,10 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     want_opt = with_state if opt_money is None else opt_money
     opt_prices = _option_prices(conn) if (extras and want_opt) else {}
     high_km = _high_km(root)
+    # ★ 09-02 (1부 1-4) — ★ 사진을 받아 본 사이트를 ★ **한 번만** 센다 (`V11-34`)
+    _psites = photo_ready_sites(conn)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
-                 opt_prices, axes, changes, base, site_tpl, km_unit,
+                 opt_prices, axes, changes, base, site_tpl, _psites, km_unit,
                  monthly_unit, dep_cfg, state_by, market_by, high_km, root)
             for i, r in enumerate(recs)]
 

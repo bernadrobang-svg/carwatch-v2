@@ -1960,3 +1960,28 @@ def unscored_count(conn: sqlite3.Connection) -> int:
             " WHERE s.listing_id IS NULL").fetchone()[0])
     except sqlite3.Error:
         return 0
+
+
+def photo_ready_sites(conn: sqlite3.Connection) -> set:
+    """★★★★★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ **사진을 받아 본 적 있는 사이트.**
+
+    ★★ 「빈 자리」에는 ★ **까닭**을 낸다.  ★ 두 가지를 가른다 —
+      ★ ★ ㉮ **우리가 아직 못 받았다** (그 사이트에서 ★ 한 장도 못 받았다)
+      ★ ★ ㉯ **그 매물에 사진이 없다** (같은 사이트의 다른 매물엔 있다)
+    ★ 실측 09-02 — ★ ㉮ 가 넷이다:
+      ★ 현대인증 174 · 헤이딜러 92 · 보배드림 47 · BMW BPS 9 = **322건**.
+      ★ ★ 엔카도 28건이 비는데 ★ 그것은 ㉯ 다 (9,319장을 받고 있다)
+    ★ 「사진 없음」만 내면 ★ 마스터께서 ★ 「왜 안 보이지」를 물으신다 (09-01 · 네 번)
+    """
+    got: set = set()
+    try:
+        rows = conn.execute(
+            "SELECT DISTINCT site FROM core_listing"
+            " WHERE photo_list_json IS NOT NULL AND photo_list_json <> ''"
+            "   AND photo_list_json <> '[]'")
+    except sqlite3.Error:
+        return got
+    for (site,) in rows:
+        if site:
+            got.add(str(site))
+    return got

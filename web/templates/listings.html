@@ -310,8 +310,11 @@
         >{{ r.site_count }}곳 · {{ r.dupe_low_won | won }}~{{ r.dupe_high_won | won }}</a>{% endif %}
       {% if r.photo_url %}<a href="/detail/{{ r.listing_id }}"><img class="thumb"
         src="{{ r.photo_url }}" alt="" loading="lazy"></a>{% endif %}
-      {% if !r.photo_url %}<span class="thumb thumb-none nophoto"
-        title="원문에 사진이 없습니다">사진 없음</span>{% endif %}
+      <!-- ★★★★★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ **조용히 비우지 않는다.**
+           ★ 「사진 없음」은 ★ 까닭을 안 말한다 — ★ 마스터께서 09-01 에
+           ★ ★ 「왜 안 보이지」를 ★ **네 번** 물으셨다.
+           ★ 「우리가 아직 못 받았다」와 ★ 「그 매물에 없다」를 가른다 -->
+      {% if !r.photo_url %}{% if r.photo_note %}<span class="thumb thumb-none nophoto photo-why" title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다">{{ r.photo_note }}</span>{% endif %}{% endif %}
     </div>
   </div>
 
@@ -319,7 +322,7 @@
   <div class="head">
     <div class="mob">
       {% if r.photo_url %}<img class="thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
-      {% if !r.photo_url %}<span class="thumb thumb-none nophoto">사진 없음</span>{% endif %}
+      {% if !r.photo_url %}{% if r.photo_note %}<span class="thumb thumb-none nophoto photo-why" title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다">{{ r.photo_note }}</span>{% endif %}{% endif %}
     </div>
     <!-- ★★★★★ 08-29 (UI_REVIEW 26-1 · 시험자 119~121) — ★ `.cardbody` 다.
          ★ 하트가 `position:absolute` 인데 ★ 기준 상자가 없어 ★ 카드 밖으로 나갔다.
