@@ -1711,6 +1711,10 @@
     "list:Count": {
       "usage": "not_provided",
       "reason": "1-8 재검 (가이드 09-02)"
+    },
+    "list:SearchResults": {
+      "usage": "not_provided",
+      "reason": "9회차 — 등록부 시험"
     }
   },
   "not_provided": {
