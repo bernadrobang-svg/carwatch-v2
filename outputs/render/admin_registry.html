@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>등록부 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0076690fd4">
+<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
 
 </head>
 <body class="s-admin-registry">
@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -70,91 +70,15 @@
 </p>
 
 
-<h2>미분류 333건 — 원인별</h2>
-<p class="chips"><span class="chip">② 이름만 다름 87</span><span class="chip">③ 늘 비어 있음 134</span><span class="chip">④ 새로운 것 112</span></p>
-<p class="big"><strong>사람이 봐야 할 것 112건</strong>
-  <span class="muted">나머지 221건은 제안이 있습니다</span></p>
+<h2>미분류 330건 — 원인별</h2>
+<p class="chips"><span class="chip">② 이름만 다름 86</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 111</span></p>
+<p class="big"><strong>사람이 봐야 할 것 111건</strong>
+  <span class="muted">나머지 219건은 제안이 있습니다</span></p>
 
 
 <h2>정해 주십시오 — 판정을 막는 것부터</h2>
 <p class="muted">★ 항목마다 <strong>실제 값 · 옆에 있던 것 · 안 정하면 무엇이 막히나</strong>를
   함께 냅니다. 경로만 보고는 아무도 못 정합니다.</p>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>list:Count</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값 — 원문 그대로
-    <code>없음</code> 21건 · <code>2341</code> 12건 · <code>1128</code> 7건 · <code>1525</code> 5건 · <code>2332</code> 5건 · 
-    <span class="dim">관측 21/7,187</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>SearchResults</code> <code>price</code> <code>hash_id</code> 
-    <span class="dim">— in_use — 「facet:Count」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="list">
-    <input type="hidden" name="json_path" value="Count">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
-      <input name="core_column" size="14" placeholder="예) core_listing.fuel"></label>
-    <label title="「나중에」에 필요합니다 — 언제 다시 볼지">언제
-      <input name="use_when" size="16" placeholder="예) 상세를 받으면"></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
-
-<div class="decide">
-  <div class="dec-h">
-    <code>list:SearchResults</code>
-    <span class="tag bad">판정을 막습니다</span>
-    
-  </div>
-  <p class="muted">① 실제 값 — 원문 그대로
-    <code>[20개]</code> 156건 · <code>없음</code> 21건 · <code>[6개]</code> 2건 · <code>[14개]</code> 2건 · <code>[12개]</code> 1건 · 
-    <span class="dim">관측 0/7,187</span></p>
-  <p class="muted">③ 옆에 있던 것
-    <code>Count</code> <code>price</code> <code>hash_id</code> 
-    <span class="dim">— not_provided — 안 쓰기로 정하면 됩니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="list">
-    <input type="hidden" name="json_path" value="SearchResults">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
-    
-    <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
-      <input name="core_column" size="14" placeholder="예) core_listing.fuel"></label>
-    <label title="「나중에」에 필요합니다 — 언제 다시 볼지">언제
-      <input name="use_when" size="16" placeholder="예) 상세를 받으면"></label>
-    
-    <button type="submit" name="usage" value="in_use"
-      title="판정에 씁니다">쓴다</button>
-    
-    <button type="submit" name="usage" value="not_provided"
-      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
-    
-    <button type="submit" name="usage" value="deferred"
-      title="지금 정하지 않습니다">나중에</button>
-    
-  </form>
-</div>
 
 <div class="decide">
   <div class="dec-h">
@@ -384,6 +308,82 @@
   </form>
 </div>
 
+<div class="decide">
+  <div class="dec-h">
+    <code>record_summary:year</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>2022</code> 47건 · <code>2025</code> 41건 · <code>2021</code> 33건 · <code>2023</code> 28건 · <code>2024</code> 26건 · 
+    <span class="dim">관측 13,909/13,909</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>regDate</code> <code>carNo</code> <code>maker</code> 
+    <span class="dim">— in_use — 「list:Year」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="record_summary">
+    <input type="hidden" name="json_path" value="year">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
+      <input name="core_column" size="14" placeholder="예) core_listing.fuel"></label>
+    <label title="「나중에」에 필요합니다 — 언제 다시 볼지">언제
+      <input name="use_when" size="16" placeholder="예) 상세를 받으면"></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
+<div class="decide">
+  <div class="dec-h">
+    <code>record_summary:carShape</code>
+    
+    <span class="tag">지금 안 쓰입니다</span>
+  </div>
+  <p class="muted">① 실제 값 — 원문 그대로
+    <code>세단 4도어</code> 117건 · <code>SUV</code> 45건 · <code>없음</code> 18건 · <code>왜건 5도어</code> 10건 · <code>왜건</code> 6건 · 
+    <span class="dim">관측 12,523/13,909</span></p>
+  <p class="muted">③ 옆에 있던 것
+    <code>regDate</code> <code>carNo</code> <code>year</code> 
+    <span class="dim">— blocked — 「record:carShape」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="record_summary">
+    <input type="hidden" name="json_path" value="carShape">
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    
+    <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
+      <input name="core_column" size="14" placeholder="예) core_listing.fuel"></label>
+    <label title="「나중에」에 필요합니다 — 언제 다시 볼지">언제
+      <input name="use_when" size="16" placeholder="예) 상세를 받으면"></label>
+    
+    <button type="submit" name="usage" value="in_use"
+      title="판정에 씁니다">쓴다</button>
+    
+    <button type="submit" name="usage" value="not_provided"
+      title="사이트가 이 값을 주지 않습니다">안 쓴다</button>
+    
+    <button type="submit" name="usage" value="deferred"
+      title="지금 정하지 않습니다">나중에</button>
+    
+  </form>
+</div>
+
 
 
 <table class="rows reg-rows">
@@ -440,38 +440,17 @@
 
 </tbody>
 </table>
-<p class="muted">그 밖 100건이 더 있습니다.</p>
+<p class="muted">그 밖 99건이 더 있습니다.</p>
 
 
 
 <p class="chips">
-<a class="chip" href="/admin/registry?usage=unclassified">unclassified (333)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (223)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (142)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
+<a class="chip" href="/admin/registry?usage=unclassified">unclassified (330)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (223)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (143)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (48)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
 </p>
 <table class="rows">
 <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th class="num">미관측</th>
 <th title="갈래입니다">구분</th><th title="우리 DB 의 어느 칸에 담기는지입니다">컬럼</th><th title="그렇게 판단한 까닭입니다">근거</th><th title="이 경로를 판정에 쓰는지 아닌지입니다">분류</th></tr></thead>
 <tbody>
-
-<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_my_cnt</code></td>
-<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
-<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
-<td data-label="분류">
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="core">
-    <input type="hidden" name="json_path" value="accident_my_cnt">
-    <select name="usage">
-      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
-    </select>
-    <input name="core_column" placeholder="컬럼" size="12">
-    
-    <input name="use_when" placeholder="언제 (나중에)" size="12">
-    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
-    <input name="reason" placeholder="근거 (필수)" size="18" required>
-    <button type="submit" class="mini">저장</button>
-  </form>
-</td></tr>
 
 <tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_raw</code></td>
 <td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
@@ -662,6 +641,27 @@
   </form>
 </td></tr>
 
+<tr><td data-label="엔드포인트">ev_battery</td><td data-label="경로"><code>encarComputedInfo</code></td>
+<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">되돌림 — core_column 을 못 찾았다</td>
+<td data-label="분류">
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="ev_battery">
+    <input type="hidden" name="json_path" value="encarComputedInfo">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    
+    <input name="use_when" placeholder="언제 (나중에)" size="12">
+    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
 </tbody>
 </table>
 
@@ -671,8 +671,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260902T040544</span>
-  <span>2026-09-02 18:13</span>
+  <span>run 20260902T132928</span>
+  <span>2026-09-03 02:10</span>
 </footer>
 
 </body>

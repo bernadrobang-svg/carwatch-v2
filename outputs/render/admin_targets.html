@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>차종 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0076690fd4">
+<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
 
 </head>
 <body class="s-admin-targets">
@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -119,7 +119,7 @@
   <button type="submit">확인 대기로 등록</button>
 </form>
 
-<h2>등록된 차종 33종</h2>
+<h2>등록된 차종 32종</h2>
 <table class="rows">
 <thead><tr><th title="설정 파일의 키 이름입니다">키</th><th title="사람이 읽는 이름입니다">이름</th><th title="갈래입니다">구분</th><th class="num" title="★ 이 표의 매물 수는 「그 차종으로 잡힌 전부」입니다 — 내려간 것(gone)도 셉니다. 그래서 합 9,567 이 현황·목록의 9,563 보다 4 큽니다 (#40 · #52). 목록에 나오는 수는 /listings 의 차종 드롭다운이 냅니다">매물 <span class="dim">전부·내려간 것 포함</span></th><th title="지금 어떤 상태인지입니다">상태</th><th>수집</th><th></th></tr></thead>
 <tbody>
@@ -128,7 +128,7 @@
   <td class="runid" data-label="키">G80_25T</td>
   <td data-label="이름">G80 2.5T</td>
   <td data-label="구분"><span class="muted">없습니다</span></td>
-  <td class="num" data-label="매물">3,040</td>
+  <td class="num" data-label="매물">3,043</td>
   <td data-label="상태">확정</td>
   <td data-label="수집">됨</td>
   <td data-label="">
@@ -508,27 +508,6 @@
   </td>
 </tr>
 
-<tr>
-  <td class="runid" data-label="키">GV70_25T</td>
-  <td data-label="이름">GV70 2.5T 가솔린</td>
-  <td data-label="구분">국산</td>
-  <td class="num" data-label="매물">0</td>
-  <td data-label="상태"><span class="warn-warn">확인 대기</span></td>
-  <td data-label="수집"><span class="muted">미수집</span></td>
-  <td data-label="">
-    
-    <form method="post" action="/admin/targets" class="inline">
-      <input type="hidden" name="csrf" value="render">
-      <input type="hidden" name="previewed" value="1">
-      <input type="hidden" name="action" value="confirm">
-      <input type="hidden" name="target_key" value="GV70_25T">
-      <input name="reason" size="14" placeholder="사유 (필수)" required>
-      <button type="submit" class="mini">확정</button>
-    </form>
-    
-  </td>
-</tr>
-
 </tbody>
 </table>
 
@@ -538,8 +517,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260902T040544</span>
-  <span>2026-09-02 18:13</span>
+  <span>run 20260902T132928</span>
+  <span>2026-09-03 02:10</span>
 </footer>
 
 </body>

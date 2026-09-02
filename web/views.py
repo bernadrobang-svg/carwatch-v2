@@ -160,6 +160,10 @@ def listings(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: st
                  "grade_help": _grade_help(root),
                  # ★ 관문 배제로 뺀 건수 (개정 433).  조용히 빼지 않는다
                  "excluded_hidden": _excluded_hidden(conn, flt, root),
+                 # ★ 09-03 (1부 1-1 ①) — ★ 지금 조건 안에서 ★ 짝지어진 차 수
+                 "paired_n": _paired_n(conn, flt, root),
+                 # ★ 누르면 ★ **지금 조건 그대로** ＋ 「짝지어진 것만」이다
+                 "paired_url": _paired_url(flt),
                  # ★ 사유별 — 「몇 건」보다 왜인지가 먼저다
                  "excluded_why": _excluded_why(conn, flt),
                  # ★ ＋12 선택지 — DB 에 있는 값만 낸다 (개정 427)
@@ -1011,6 +1015,21 @@ def _lease_hidden(conn, flt, root: str = ROOT) -> int:
     return lease_hidden(conn, flt, root)
 
 
+def _paired_url(flt) -> str:
+    """★ 09-03 (1부 1-1 ①) — ★ 지금 조건을 지킨 채 ★ 「짝지어진 것만」을 더한다.
+
+    ★ 조건을 버리고 새 주소를 만들면 ★ 「이 조건에 N대」와 ★ 다른 것이 나온다
+    """
+    q = _query_string(flt)
+    return "/listings?" + (q + "&" if q else "") + "paired=1"
+
+
+def _paired_n(conn, flt, root: str = ROOT) -> int:
+    """★ 09-03 (1부 1-1 ①) — ★ 짝지어진 차 수.  ★ SQL 은 `report` 가 갖는다"""
+    from report.screens.build import paired_count
+    return paired_count(conn, flt, root)
+
+
 def _excluded_hidden(conn, flt, root: str = ROOT) -> int:
     """관문 배제로 뺀 건수 (개정 433).  ★ 리스와 같은 방식이다."""
     from report.screens.build import excluded_hidden
@@ -1082,6 +1101,8 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         listing_status=q.get("status") or None,
         # ★ 성능부 ↔ 보험이 어긋난 것만 (V3-50)
         mismatch=q.get("mismatch") == "1",
+        # ★ 09-03 (1부 1-1 ③) — ★ 「짝지어진 것만」
+        paired=q.get("paired") == "1",
         # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  켜면 함께 낸다
         lease=q.get("lease") == "1",
         # ★★ 관문 배제는 기본으로 뺀다 (개정 433).  ?excluded=1 이면 그것만 낸다

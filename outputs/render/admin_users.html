@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>사용자 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0076690fd4">
+<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
 
 </head>
 <body class="s-admin-users">
@@ -48,16 +48,16 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
 <main>
-<h1>사용자 <small>5명 · 관리자 3</small></h1>
+<h1>사용자 <small>6명 · 관리자 4</small></h1>
 <p class="notice">
   관리자를 <strong>0명으로 만들 수 없습니다.</strong>
   마지막 관리자의 역할을 내리거나 중지하면 아무도 관리할 수 없게 됩니다.<br>
@@ -143,6 +143,20 @@
   </form>
 </td></tr>
 
+<tr><td data-label="ID">6</td><td data-label="이름">검사자</td><td data-label="역할">admin</td>
+<td data-label="마지막 접속">없습니다</td><td data-label="가입">2026-09-02</td>
+<td data-label="상태"></td>
+<td data-label="">
+  <form method="post" action="/admin/users" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="account_id" value="6">
+    <input type="hidden" name="action" value="disable">
+    <button type="submit" class="mini">중지</button>
+  </form>
+  
+  </form>
+</td></tr>
+
 </tbody>
 </table>
 
@@ -152,25 +166,25 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th>누가</th><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-09-02T09:09:37.121361+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:07:48.731305+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:09:33.120427+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:07:39.185976+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:08:52.341162+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:07:06.428016+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:08:48.246802+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:06:56.341194+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:08:00.898621+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:05:59.818002+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:07:44.222066+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:04:54.537383+00:00</td><td data-label="누가">admin</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:02:49.200092+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:04:19.495718+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:02:45.167051+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:04:14.887489+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:02:06.179578+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:03:16.146622+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
 
-<tr><td data-label="시각">2026-09-02T09:02:02.091812+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
+<tr><td data-label="시각">2026-09-02T17:03:11.422984+00:00</td><td data-label="누가">master</td><td class="muted" data-label="무엇">로그인</td></tr>
 
 </tbody>
 </table>
@@ -206,8 +220,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260902T040544</span>
-  <span>2026-09-02 18:13</span>
+  <span>run 20260902T132928</span>
+  <span>2026-09-03 02:10</span>
 </footer>
 
 </body>

@@ -1238,6 +1238,29 @@ def _lease_kinds(root: str = ".") -> tuple:
             list(cfg["lease_sell_types"]))
 
 
+def paired_count(conn, flt: ListingFilter, root: str = ".") -> int:
+    """★★★★★ 09-03 (1부 1-1 ① · `CROSS_SITE_COMPARE` 3b-2 · `S46-254`) —
+    ★ **지금 걸린 조건 안에서** ★ 짝지어진 차가 몇 대인가.
+
+    ★ 왜 수를 내나 — ★ 화면 글이 ★ 「「3곳」 배지를 누르면 추적으로」인데
+      ★ ★ **1쪽에 배지가 하나도 없다** — ★ 그러면 그 글이 ★ **거짓말**이 된다.
+      ★ ★ ★ 배지 대상의 가장 앞 차례가 ★ **233위**다 [실측 09-02].
+    ★★ **전체 수가 아니다** — ★ 지금 걸린 조건 안에서 센다 (규격 「필수」).
+    ★ 세는 자는 ★ 카드의 배지·거르개와 ★ **같은 것**이다 —
+      ★ ★ 다르면 ★ 「N대」와 ★ 걸러 본 수가 어긋난다
+    """
+    from dataclasses import replace as _replace
+
+    try:
+        where, args = _listings_where(_replace(flt, paired=True))
+        return int(conn.execute(
+            "SELECT COUNT(*) FROM core_listing l"
+            " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+            " WHERE " + " AND ".join(where), args).fetchone()[0])
+    except sqlite3.Error:
+        return 0
+
+
 def excluded_hidden(conn, flt: ListingFilter, root: str = ".") -> int:
     """★ 뺀 건수를 밝힌다 (개정 433).  「몇 건을 안 보여 줬는지」를 안 적으면
     사람이 목록을 전부로 착각한다 — 리스에서 겪은 것과 같다 (개정 420).
@@ -1408,6 +1431,18 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         args.extend([like, like])
     if getattr(flt, "mismatch", False):
         where.append(record_mismatch_sql())
+    if getattr(flt, "paired", False):
+        # ★★★★★ 09-03 (1부 1-1 ③) — ★ **짝지어진 것만.**
+        #   ★ 「같은 차」의 자는 ★ 카드의 「N곳」 배지와 ★ **같아야 한다** —
+        #   ★ ★ 번호판 **또는** 차대로 ★ 두 사이트 넘게 올라온 것이다.
+        #   ★ ★ ★ 다른 자를 쓰면 ★ 「N대」와 ★ 걸러진 수가 어긋난다
+        where.append(
+            "(EXISTS (SELECT 1 FROM core_listing x WHERE x.status='active'"
+            "         AND x.plate_hash IS NOT NULL"
+            "         AND x.plate_hash = l.plate_hash AND x.site <> l.site)"
+            " OR EXISTS (SELECT 1 FROM core_listing y WHERE y.status='active'"
+            "         AND y.vin_hash IS NOT NULL"
+            "         AND y.vin_hash = l.vin_hash AND y.site <> l.site))")
     # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  ?lease=1 이면 함께 낸다
     if not getattr(flt, "lease", False):
         ads, sells = _lease_kinds()

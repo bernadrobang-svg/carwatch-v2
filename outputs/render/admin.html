@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0076690fd4">
+<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
 
 </head>
 <body class="s-admin">
@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -83,12 +83,12 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-09-02_1400</td>
-  <td data-label="기록" class="muted">outputs/light/ · 79건 ·
+  <td data-label="마지막">2026-09-02_1800</td>
+  <td data-label="기록" class="muted">outputs/light/ · 80건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
-  <td data-label="마지막">2026-09-01</td>
-  <td data-label="기록" class="muted">outputs/daily/ · 16건</td></tr>
+  <td data-label="마지막">2026-09-02</td>
+  <td data-label="기록" class="muted">outputs/daily/ · 17건</td></tr>
 <tr><td data-label="주기">주간 <span class="muted">서로 점검</span></td>
   <td data-label="언제" class="muted">금 02:00</td>
   <td data-label="마지막">2026-08-28_주간점검</td>
@@ -108,7 +108,7 @@
   <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
   <td data-label=""><a href="/notready">가기</a></td></tr>
 
-<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">333</td>
+<tr><td class="warn-warn" data-label="무엇">등록부 미분류</td><td class="num" data-label="건수">330</td>
   <td class="muted" data-label="왜">판정에 쓰지 않는 경로입니다 — 급하지 않습니다</td><td class="muted" data-label="하면 되는 것">등록부에서 구분을 정합니다</td>
   <td data-label=""><a href="/admin/registry">가기</a></td></tr>
 
@@ -124,7 +124,7 @@
 
 
 <ul class="stat">
-  <li>등록부 미분류 <strong>333</strong></li>
+  <li>등록부 미분류 <strong>330</strong></li>
   <li>개발 요청 <strong>2</strong></li>
   <li>대기 작업 <strong>0</strong></li>
 </ul>
@@ -272,25 +272,25 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-09-02T04:05:45.287065+00:00</td><td class="muted" data-label="사유">요청 340건</td>
-  <td class="runid" data-label="실행">20260902T040544</td>
-  <td class="num" data-label="소요">9.3초</td><td data-label="판정">fatal 13</td></tr>
+<tr><td data-label="시각">2026-09-02T13:29:28.655689+00:00</td><td class="muted" data-label="사유">요청 331건</td>
+  <td class="runid" data-label="실행">20260902T132928</td>
+  <td class="num" data-label="소요">8.8초</td><td data-label="판정">fatal 17</td></tr>
 
-<tr><td data-label="시각">2026-09-01T18:01:07.128738+00:00</td><td class="muted" data-label="사유">요청 331건</td>
-  <td class="runid" data-label="실행">20260901T180017</td>
-  <td class="num" data-label="소요">7.8초</td><td data-label="판정">fatal 14</td></tr>
+<tr><td data-label="시각">2026-09-02T13:23:59.969399+00:00</td><td class="muted" data-label="사유">요청 322건</td>
+  <td class="runid" data-label="실행">20260902T132359</td>
+  <td class="num" data-label="소요">9.0초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-09-01T17:00:15.062224+00:00</td><td class="muted" data-label="사유">요청 318건</td>
-  <td class="runid" data-label="실행">20260901T165912</td>
-  <td class="num" data-label="소요">8.5초</td><td data-label="판정">fatal 11</td></tr>
+<tr><td data-label="시각">2026-09-02T13:18:32.485668+00:00</td><td class="muted" data-label="사유">요청 332건</td>
+  <td class="runid" data-label="실행">20260902T131831</td>
+  <td class="num" data-label="소요">8.8초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-09-01T16:58:55.549146+00:00</td><td class="muted" data-label="사유">요청 259건</td>
-  <td class="runid" data-label="실행">20260901T165742</td>
-  <td class="num" data-label="소요">7.9초</td><td data-label="판정">fatal 1</td></tr>
+<tr><td data-label="시각">2026-09-02T13:13:03.549921+00:00</td><td class="muted" data-label="사유">요청 334건</td>
+  <td class="runid" data-label="실행">20260902T131303</td>
+  <td class="num" data-label="소요">8.9초</td><td data-label="판정">fatal 1</td></tr>
 
-<tr><td data-label="시각">2026-09-01T16:57:28.097267+00:00</td><td class="muted" data-label="사유">요청 204건</td>
-  <td class="runid" data-label="실행">20260901T165630</td>
-  <td class="num" data-label="소요">6.4초</td><td data-label="판정">fatal 1</td></tr>
+<tr><td data-label="시각">2026-09-02T13:03:18.023608+00:00</td><td class="muted" data-label="사유">요청 327건</td>
+  <td class="runid" data-label="실행">20260902T130316</td>
+  <td class="num" data-label="소요">10.1초</td><td data-label="판정">fatal 1</td></tr>
 
 </tbody>
 </table>
@@ -322,31 +322,31 @@
   </form></td></tr>
 
 
+<tr><td data-label="시각">2026-09-02T11:45:04.019645+00:00</td><td data-label="무엇">components {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 8, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 9, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10}</td><td class="muted" data-label="사유">시험자 7회차 75번 재검 (가이드 09-02)</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="ea4ed72198d03eac02">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
+<tr><td data-label="시각">2026-09-02T13:38:10.661646+00:00</td><td data-label="무엇">list:Count {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;시험자 82~84 재검 — facet:Count 와 같은 것 (가이드 09-02)&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;1-8 재검 (가이드 09-02)&quot;}</td><td class="muted" data-label="사유">등록부 분류: 1-8 재검 (가이드 09-02)</td>
+  <td data-label=""><form method="post" action="/admin/config" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="action" value="revert">
+    <input type="hidden" name="change_id" value="ea03885714fa5f2791">
+    <input name="reason" size="10" placeholder="사유 (필수)" required>
+    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
+  </form></td></tr>
+
+
 <tr><td data-label="시각">2026-08-31T06:40:55.406521+00:00</td><td data-label="무엇">detail:advertisement.verification {&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;4회차 시험 — 안 쓴다&quot;}</td><td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 안 쓴다</td>
   <td data-label=""><form method="post" action="/admin/config" class="inline">
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="action" value="revert">
     <input type="hidden" name="change_id" value="e8f2a0dbcb23b56207">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
-<tr><td data-label="시각">2026-08-24T03:36:11.219068+00:00</td><td data-label="무엇">target[23] pending → confirm</td><td class="muted" data-label="사유">기아 CPO 목록이 낸 차종 이름이다. 원문과 대조해 확정한다 (명령서 0장 2)</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="e4fe1bcf95e43bcba5">
-    <input name="reason" size="10" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
-  </form></td></tr>
-
-
-<tr><td data-label="시각">2026-08-24T03:37:41.708093+00:00</td><td data-label="무엇">target[149] pending → confirm</td><td class="muted" data-label="사유">K카 목록 mapi 가 낸 차종 이름 149종. 전부 매물이 붙어 있다 (매물 0인 것 0종)</td>
-  <td data-label=""><form method="post" action="/admin/config" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="action" value="revert">
-    <input type="hidden" name="change_id" value="d22cae1e5b8b582cdd">
     <input name="reason" size="10" placeholder="사유 (필수)" required>
     <button type="submit" class="mini" data-confirm="이 변경을 되돌립니다. 재계산이 걸립니다">되돌리기</button>
   </form></td></tr>
@@ -366,8 +366,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260902T040544</span>
-  <span>2026-09-02 18:13</span>
+  <span>run 20260902T132928</span>
+  <span>2026-09-03 02:10</span>
 </footer>
 
 </body>

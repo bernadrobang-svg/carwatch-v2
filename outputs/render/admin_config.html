@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>설정 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0076690fd4">
+<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
 
 </head>
 <body class="s-admin-config">
@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -3542,7 +3542,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.MODEL_Y</td>
-  <td class="num" data-label="현재 값">4000</td>
+  <td class="num" data-label="현재 값">3500</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3559,7 +3559,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.GV70_EV</td>
-  <td class="num" data-label="현재 값">3500</td>
+  <td class="num" data-label="현재 값">4200</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3576,7 +3576,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.C40_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
+  <td class="num" data-label="현재 값">3200</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3627,7 +3627,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.ID5_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
+  <td class="num" data-label="현재 값">3500</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3661,7 +3661,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.ID4_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
+  <td class="num" data-label="현재 값">3200</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3678,7 +3678,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.KOLEOS_HEV</td>
-  <td class="num" data-label="현재 값">3000</td>
+  <td class="num" data-label="현재 값">3200</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -3695,7 +3695,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.XC40_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
+  <td class="num" data-label="현재 값">3200</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -4035,7 +4035,7 @@
 
 <tr>
   <td class="runid" data-label="키">budget_manwon.by_target.POLESTAR2_EV</td>
-  <td class="num" data-label="현재 값">4000</td>
+  <td class="num" data-label="현재 값">3500</td>
   <td class="muted" data-label="형">int</td>
   <td data-label="바꾸기">
     <form method="post" action="/admin/config" class="inline">
@@ -4213,6 +4213,278 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="budget_manwon.base_ratio">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.KOLEOS_HEV.base</td>
+  <td class="num" data-label="현재 값">2900</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.KOLEOS_HEV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.KOLEOS_HEV.limit</td>
+  <td class="num" data-label="현재 값">3200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.KOLEOS_HEV.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.MODEL_Y.base</td>
+  <td class="num" data-label="현재 값">2800</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.MODEL_Y.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.MODEL_Y.limit</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.MODEL_Y.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.POLESTAR2_EV.base</td>
+  <td class="num" data-label="현재 값">2800</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.POLESTAR2_EV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.POLESTAR2_EV.limit</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.POLESTAR2_EV.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.ID4_EV.base</td>
+  <td class="num" data-label="현재 값">3000</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.ID4_EV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.ID4_EV.limit</td>
+  <td class="num" data-label="현재 값">3200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.ID4_EV.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.ID5_EV.base</td>
+  <td class="num" data-label="현재 값">3200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.ID5_EV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.ID5_EV.limit</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.ID5_EV.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.XC40_EV.base</td>
+  <td class="num" data-label="현재 값">2900</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.XC40_EV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.XC40_EV.limit</td>
+  <td class="num" data-label="현재 값">3200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.XC40_EV.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.C40_EV.base</td>
+  <td class="num" data-label="현재 값">2900</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.C40_EV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.C40_EV.limit</td>
+  <td class="num" data-label="현재 값">3200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.C40_EV.limit">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.GV70_EV.base</td>
+  <td class="num" data-label="현재 값">3500</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.GV70_EV.base">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">budget_manwon.by_target_pair.GV70_EV.limit</td>
+  <td class="num" data-label="현재 값">4200</td>
+  <td class="muted" data-label="형">int</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="budget_manwon.by_target_pair.GV70_EV.limit">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -4451,6 +4723,57 @@
       <input type="hidden" name="previewed" value="1">
       <input type="hidden" name="file" value="scoring.json">
       <input type="hidden" name="key_path" value="grade_gates.mileage_gate.max_grade">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">grade_gates.state_ok_floor.grade</td>
+  <td class="num" data-label="현재 값">C</td>
+  <td class="muted" data-label="형">str</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="grade_gates.state_ok_floor.grade">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">grade_gates.state_ok_floor.state_axes</td>
+  <td class="num" data-label="현재 값">[&quot;state.accident&quot;, &quot;state.frame&quot;, &quot;state.outer&quot;, &quot;state.special&quot;, &quot;state.integri</td>
+  <td class="muted" data-label="형">복합 — CLI 로 고칩니다</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="grade_gates.state_ok_floor.state_axes">
+      <input name="value" size="10" placeholder="새 값">
+      <input name="reason" size="18" placeholder="사유 (필수)" required>
+      <button type="submit" class="mini">저장</button>
+    </form>
+  </td>
+</tr>
+
+<tr>
+  <td class="runid" data-label="키">grade_gates.state_ok_floor.need_ratio</td>
+  <td class="num" data-label="현재 값">0.9</td>
+  <td class="muted" data-label="형">float</td>
+  <td data-label="바꾸기">
+    <form method="post" action="/admin/config" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <input type="hidden" name="previewed" value="1">
+      <input type="hidden" name="file" value="scoring.json">
+      <input type="hidden" name="key_path" value="grade_gates.state_ok_floor.need_ratio">
       <input name="value" size="10" placeholder="새 값">
       <input name="reason" size="18" placeholder="사유 (필수)" required>
       <button type="submit" class="mini">저장</button>
@@ -4713,9 +5036,21 @@
   <td class="num" data-label="값">{&quot;usage&quot;: &quot;in_use&quot;, &quot;reason&quot;: &quot;4회차 시험 — 쓴다&quot;, &quot;core_column&quot;: &quot;core_listing.source_id&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;6회차 시험 — deferred&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td>
   <td class="muted" data-label="사유">등록부 분류: 6회차 시험 — deferred</td></tr>
 
+<tr><td data-label="시각">2026-09-02T11:45:04.019645+00:00</td><td class="runid" data-label="키">components</td>
+  <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 8, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 9, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10}</td>
+  <td class="muted" data-label="사유">시험자 7회차 75번 재검 (가이드 09-02)</td></tr>
+
+<tr><td data-label="시각">2026-09-02T13:38:10.661646+00:00</td><td class="runid" data-label="키">list:Count</td>
+  <td class="num" data-label="값">{&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;시험자 82~84 재검 — facet:Count 와 같은 것 (가이드 09-02)&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;1-8 재검 (가이드 09-02)&quot;}</td>
+  <td class="muted" data-label="사유">등록부 분류: 1-8 재검 (가이드 09-02)</td></tr>
+
 <tr><td data-label="시각">2026-08-31T06:40:55.406521+00:00</td><td class="runid" data-label="키">detail:advertisement.verification</td>
   <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;4회차 시험 — 안 쓴다&quot;}</td>
   <td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 안 쓴다</td></tr>
+
+<tr><td data-label="시각">2026-09-02T11:45:21.152701+00:00</td><td class="runid" data-label="키">components</td>
+  <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 9, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 8, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10}</td>
+  <td class="muted" data-label="사유">되돌림 — 시험자 75번 재검 (가이드 09-02)</td></tr>
 
 <tr><td data-label="시각">2026-08-24T03:36:11.219068+00:00</td><td class="runid" data-label="키">target[23]</td>
   <td class="num" data-label="값">pending → confirm</td>
@@ -4728,6 +5063,10 @@
 <tr><td data-label="시각">2026-08-16T07:28:00.430084+00:00</td><td class="runid" data-label="키">color_ext[23]</td>
   <td class="num" data-label="값">pending → confirm</td>
   <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
+
+<tr><td data-label="시각">2026-09-02T11:45:54.751160+00:00</td><td class="runid" data-label="키">list:Count</td>
+  <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;시험자 82~84 재검 — facet:Count 와 같은 것 (가이드 09-02)&quot;}</td>
+  <td class="muted" data-label="사유">등록부 분류: 시험자 82~84 재검 — facet:Count 와 같은 것 (가이드 09-02)</td></tr>
 
 <tr><td data-label="시각">2026-08-31T06:40:40.362387+00:00</td><td class="runid" data-label="키">platform_check:vehicleId</td>
   <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;4회차 시험 — 저장되는지&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td>
@@ -4745,9 +5084,17 @@
   <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 0, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 0, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 0, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 0, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13}</td>
   <td class="muted" data-label="사유">2회차 시험 — 911 이 막히나</td></tr>
 
+<tr><td data-label="시각">2026-09-02T15:33:13.680292+00:00</td><td class="runid" data-label="키">list:SearchResults</td>
+  <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;9회차 — 등록부 시험&quot;}</td>
+  <td class="muted" data-label="사유">등록부 분류: 9회차 — 등록부 시험</td></tr>
+
 <tr><td data-label="시각">2026-08-28T13:47:34.361224+00:00</td><td class="runid" data-label="키">components</td>
   <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13}</td>
   <td class="muted" data-label="사유">4회차 재측정 — 합계 검사</td></tr>
+
+<tr><td data-label="시각">2026-09-02T09:58:33.559749+00:00</td><td class="runid" data-label="키">platform_check:vehicleId</td>
+  <td class="num" data-label="값">{&quot;usage&quot;: &quot;in_use&quot;, &quot;reason&quot;: &quot;6회차 시험 — in_use&quot;, &quot;core_column&quot;: &quot;core_listing.source_id&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;7회차 — 등록부 시험&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td>
+  <td class="muted" data-label="사유">등록부 분류: 7회차 — 등록부 시험</td></tr>
 
 <tr><td data-label="시각">2026-08-31T23:51:24.930947+00:00</td><td class="runid" data-label="키">detail:advertisement.verification</td>
   <td class="num" data-label="값">{&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;4회차 시험 — 안 쓴다&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;6회차 시험 — not_provided&quot;}</td>
@@ -4761,30 +5108,6 @@
   <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13}</td>
   <td class="muted" data-label="사유">6회차 시험 — 합계 검사</td></tr>
 
-<tr><td data-label="시각">2026-08-16T07:28:00.353171+00:00</td><td class="runid" data-label="키">fuel[5]</td>
-  <td class="num" data-label="값">pending → confirm</td>
-  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
-
-<tr><td data-label="시각">2026-08-28T13:47:45.390403+00:00</td><td class="runid" data-label="키">components</td>
-  <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12}</td>
-  <td class="muted" data-label="사유">4회차 원상복구</td></tr>
-
-<tr><td data-label="시각">2026-08-16T07:28:00.590132+00:00</td><td class="runid" data-label="키">sell_type[3]</td>
-  <td class="num" data-label="값">pending → confirm</td>
-  <td class="muted" data-label="사유">목록 7,631매물에서 관측한 값. 원문 표본을 확인했다</td></tr>
-
-<tr><td data-label="시각">2026-08-28T10:39:56.212658+00:00</td><td class="runid" data-label="키">components</td>
-  <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12}</td>
-  <td class="muted" data-label="사유">시험자 2회차 — 원상복구</td></tr>
-
-<tr><td data-label="시각">2026-08-29T00:23:58.465499+00:00</td><td class="runid" data-label="키">seed.platform_check:vehicleId</td>
-  <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;in_use&quot;, &quot;reason&quot;: &quot;7회차 — 쓴다 단추 시험&quot;, &quot;core_column&quot;: &quot;core_listing.source_id&quot;}</td>
-  <td class="muted" data-label="사유">등록부 분류: 7회차 — 쓴다 단추 시험</td></tr>
-
-<tr><td data-label="시각">2026-08-24T03:37:42.298781+00:00</td><td class="runid" data-label="키">panel[35]</td>
-  <td class="num" data-label="값">pending → confirm</td>
-  <td class="muted" data-label="사유">엔카 점검 원문 inspection_panel_json 의 외판 부위 이름. 원문에서 후드·프론트 휀더(좌)·프론트 패널을 눈으로 대조했다</td></tr>
-
 </tbody>
 </table>
 
@@ -4796,8 +5119,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260902T040544</span>
-  <span>2026-09-02 18:13</span>
+  <span>run 20260902T132928</span>
+  <span>2026-09-03 02:10</span>
 </footer>
 
 </body>
