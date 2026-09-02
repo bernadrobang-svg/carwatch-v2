@@ -19,6 +19,7 @@ import json
 import os
 import re
 import sys
+import json as _json
 
 # ★ V4-13 은 형태만 본다 — 모듈 최상위 · 대문자 · 스칼라 (2장 상수표).
 #   이름 목록을 검사기가 들고 있지 않는다.  판단은 V4-17(S14)이 표로 한다.
@@ -70,9 +71,53 @@ fail: list[str] = []
 todo_total = 0
 
 
+# ★★★★★ 09-03 (2부 S11) — ★ **여기 검사들이 「죽었다」로 세어지고 있었다.**
+#   ★ `docs/CHECKS.md` 「② 죽은 검사 — 한 번도 안 돌았다」에 ★ **36개**가 올라 있는데
+#   ★ ★ 그 전부가 ★ `tools/check_src.py` 것이다.
+#   ★★ 실측 09-03 — ★ **돈다.**  ★ `python3.11 tools/check_src.py` 를 부르면
+#     ★ ★ 「S35-1 … 통과」처럼 ★ 하나하나 결과를 낸다.
+#   ★★★ 까닭 — ★ 색인(`tools/build_index.py` `last_runs`)은
+#     ★ ★ **`audit_validation` 표**를 보고 「돌았나」를 정한다.
+#     ★ ★ ★ `check_all` 은 ★ `save_results` 로 남기는데 ★ **여기는 안 남겼다.**
+#   ★ 「있다」와 「돈다」는 다르다 — ★ 그런데 ★ **「돈다」와 「남는다」도 다르다**
+_RUN_ID = None
+
+
+def _record(no: str, title: str, ok: int, todo: list, bad: list) -> None:
+    """★ 결과를 ★ `audit_validation` 에 남긴다 — ★ 색인이 그것을 본다.
+
+    ★ 못 남겨도 ★ **검사를 멈추지 않는다** — ★ 남기기는 곁일이다
+    """
+    global _RUN_ID
+    try:
+        import sqlite3
+        from datetime import datetime, timezone
+
+        db = os.path.join(ROOT, "carwatch.db")
+        if not os.path.isfile(db):
+            return
+        if _RUN_ID is None:
+            _RUN_ID = "src-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+        at = datetime.now(timezone.utc).isoformat()
+        conn = sqlite3.connect(db, timeout=10)
+        conn.execute(
+            "INSERT OR REPLACE INTO audit_validation"
+            "(run_id,phase,code,target_key,expected,actual,passed,severity,"
+            " samples,applicable,checked_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (_RUN_ID, "S", no, "", "0",
+             f"통과 {ok} · 미착수 {len(todo)} · 실패 {len(bad)}",
+             0 if bad else 1, "fatal",
+             _json.dumps(bad[:8] or todo[:8], ensure_ascii=False), 1, at))
+        conn.commit()
+        conn.close()
+    except Exception:  # noqa: BLE001,S110 ★ 남기기가 검사를 막지 않는다
+        pass
+
+
 def say(no: str, title: str, ok: int, todo: list[str], bad: list[str]) -> None:
     global todo_total
     todo_total += len(todo)
+    _record(no, title, ok, todo, bad)
     mark = "실패" if bad else ("부분" if todo else "통과")
     print(f"{no} {title:28} {mark}  통과 {ok} · 미착수 {len(todo)} · 실패 {len(bad)}")
     for b in bad[:20]:
