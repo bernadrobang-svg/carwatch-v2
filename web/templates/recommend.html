@@ -74,6 +74,11 @@
   </div>
 
   <div class="pickrow cardbody">
+    <!-- ★★★★★ 09-02 명령서 11 (`S46-242`) — ★ **순위 번호**.
+         ★ 시안 `v4m_recommend_시안.html:143` 의 `rc-rank` 를 그대로 베꼈다.
+         ★ 마스터 09-01 — 「★ 왜 추천에 목록 번호가 없고」 -->
+    {% if r.rank %}<span class="rc-rank" title="점수 차례입니다">{{ r.rank }}</span>{% endif %}
+    {% if !r.rank %}<span class="rc-rank dim" title="순위를 안 매긴 매물입니다">—</span>{% endif %}
     <!-- ★ 시안 `.v4-thumb` 104×78 -->
     <div class="desk pickthumb">
       {% if r.photo_url %}<img src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
@@ -124,6 +129,10 @@
           <b>{{ r.total_cost_won | won }}원</b>{% if r.buy_estimated %} (추정){% endif %}</span>{% endif %}
         {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener"
           class="btn go mini" title="원문 매물로 갑니다">{{ r.site_badge }}에서 보기 ↗</a>{% endif %}
+        <!-- ★★★★★ 09-02 명령서 14 (`S46-243`) — ★ **말없이 비우지 않는다** -->
+        {% if !r.encar_url %}<span class="rc-why-empty dim"
+          title="원문으로 가는 문을 아직 못 만들었습니다. 그 매물이 없어진 것이 아닙니다"
+          >그 사이트는 주소를 아직 못 쟀습니다</span>{% endif %}
       </div>
     </div>
   </div>

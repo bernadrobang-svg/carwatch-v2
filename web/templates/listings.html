@@ -325,6 +325,13 @@
          ★ 하트가 `position:absolute` 인데 ★ 기준 상자가 없어 ★ 카드 밖으로 나갔다.
          ★ 이 div 가 ★ `position:relative` 를 갖는다 (app.css `.cardbody`) -->
     <div class="cardbody">
+      <!-- ★★★★★ 09-02 명령서 11 (`S46-242`) — ★ **순위 번호**.
+           ★ 마스터 09-01 — 「★ 왜 추천에 목록 번호가 없고」.
+           ★ 시안 `v4m_listings_시안.html:170` 의 `lst-rank` 를 그대로 베꼈다.
+           ★★ 순위를 못 매긴 것(제외·등급 없음)은 ★ **숫자 대신 「—」** 다 —
+             ★ ★ 없는 번호를 지어내지 않는다 (`V6-04` 「등급이 있으면 순위가 있다」) -->
+      {% if r.rank %}<span class="lst-rank" title="점수 차례입니다">{{ r.rank }}</span>{% endif %}
+      {% if !r.rank %}<span class="lst-rank dim" title="순위를 안 매긴 매물입니다">—</span>{% endif %}
       <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
       <div class="name">
         <form method="post" action="/watch/add" class="inline">
@@ -336,6 +343,11 @@
            title="판정 근거와 상세를 봅니다">{{ r.target_label }}</a>
       </div>
       <div class="trim" title="트림 = Badge + BadgeDetail 입니다 (개정 313)">{{ r.trim }}</div>
+      <!-- ★★★★★ 09-02 명령서 11·14 (`S46-98`·`S46-242`) — ★ 시안 `lst-axes` 줄.
+           ★ 「색상 (외장) 25/25 · 색상 (내장) 10/10 · 크기 (전장) 9/31 · 트림 17/20」
+           ★★ 못 쟀으면 ★ **「못 쟀습니다」**를 낸다 — ★ 0점으로 적지 않는다 (금지 12) -->
+      {% if r.axis_points %}<div class="lst-axes">{% for a in r.axis_points %}<span class="ax1">{{ a.label }} {% if a.got %}<b>{{ a.got }}</b>/{{ a.full }}{% endif %}{% if !a.got %}<span class="dim">아직 못 쟀습니다</span>{% endif %}</span>{% endfor %}</div>{% endif %}
+
       <!-- ★ 값을 누르면 그 조건으로 걸러진다 (STEP 149g · V11-61).
            ★ 8칸으로 줄여도 이 조작은 안 버린다 (개정 429 「값을 버리지 마라」) -->
       <div class="meta">
@@ -382,6 +394,14 @@
         <!-- ★ 최종 확인은 원문 사이트에서 한다 (V11-63).  주소는 살린다 -->
         {% if r.encar_url %}<a href="{{ r.encar_url }}" target="_blank" rel="noopener"
           class="btn go mini" title="원문 매물로 갑니다">{{ r.site_badge }}에서 보기 ↗</a>{% endif %}
+        <!-- ★★★★★ 09-02 명령서 14 (`S46-243`) — ★ **말없이 비우지 않는다.**
+             ★ 시안 `v4m_listings_시안.html:178` — ★ 「원문 문이 없으면
+             ★ ★ 『그 사이트는 주소를 아직 못 쟀습니다』를 낸다」 (RULES.md 2).
+             ★★ 「우리가 못 쟀다」와 「그 매물에 없다」를 가른다 —
+               ★ ★ K카는 ★ robots 가 막아 ★ **우리가 못 쟀다** (명령서 13) -->
+        {% if !r.encar_url %}<span class="lst-why-empty dim"
+          title="원문으로 가는 문을 아직 못 만들었습니다. 그 매물이 없어진 것이 아닙니다"
+          >그 사이트는 주소를 아직 못 쟀습니다</span>{% endif %}
       </div>
     </div>
   </div>

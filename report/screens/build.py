@@ -74,7 +74,8 @@ from report.screens.views import (
     StepRow,
     TodayChange,
     TONE_BAD, TONE_GOOD, TONE_MUTED, TONE_UNKNOWN,
-    AttentionItem, AxisChip, ChangeRow, CompareView, DashboardView, DealerRow,
+    AttentionItem, AxisChip, AxisPoint, ChangeRow, CompareView, DashboardView,
+    DealerRow,
     TrackPair, TrackView,
     ListingFilter, ListingRow, MarketRow, MarketView, NotReadyView,
     RelaxRow, ReportFile, ReportsView,
@@ -106,6 +107,12 @@ GONE = "gone"
 #     ★ ★ 그래서 ★ 마스터가 ★ 목록에서 ★ 무엇이 좋은 매물인지 못 보셨다 (오판 100)
 CHIP_AXES = ("state.accident", "state.frame", "history.use",
              "warranty.power", "warranty.site")
+
+# ★★★★★ 09-02 시안 `lst-axes`·`rc-axes` (`S46-98`·`S46-242`) —
+#   ★ 「색상 (외장) 25/25 · 색상 (내장) 10/10 · 크기 (전장) 9/31 · 트림 17/20」
+#   ★★ **취향 넷**이다.  ★ 마스터 09-01 — 「★ 크기·내장색 축이 화면에 안 보인다」.
+#     ★ ★ 이름은 ★ `config/labels.json` 이 원천이다 — ★ 코드에 안 박는다 (`S14`)
+POINT_AXES = ("taste.color", "taste.color_int", "taste.size", "taste.trim")
 
 
 def site_badge(site: str | None, sell_type: str | None,
@@ -668,7 +675,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
      g_value, g_car, g_warranty, g_site, g_taste, pen_json, conf_pts,
      _site, _sell_type, _mismatch, _kmpl, _seats,
      _sites_n, _dupe_low, _dupe_high, _sales_status,
-     _region, _shop) = rec
+     _region, _shop, _site_model) = rec
     got = (axes or {}).get(lid, {})
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
@@ -702,6 +709,20 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
             calc_at, (got.get(axis) or (0, 0, ""))[2])))
     # ★★ ⓕ — 채점이 저장한 confirmed_points 를 쓴다.  ★ 화면이 다시 세지 않는다.
     #   ★ 없으면(옛 판) 그때만 다시 센다
+    # ★★★★★ 09-02 — ★ 시안 `lst-axes` 줄.  ★ **몇 점인지**를 낸다.
+    #   ★ 미확인(`excluded`)은 ★ `got=None` — ★ 0점과 가른다 (금지 12)
+    _pts = []
+    for _a in POINT_AXES:
+        _v = got.get(_a)
+        if _v is None:
+            continue
+        _full = float(_v[3] or 0)
+        if not _full:
+            continue        # ★ 배점이 0 인 축은 ★ 안 낸다
+        _pts.append(AxisPoint(
+            label=(labels.get("AXIS_LABELS", {}) or {}).get(_a, _a),
+            got=(None if _v[1] else float(_v[0] or 0)), full=_full))
+
     _den = float(denom or _total_points())
     _confirm = ((float(conf_pts), float(conf_pts) / _den if _den else 0.0)
                 if conf_pts is not None
@@ -815,6 +836,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         option_count=len(_codes) if isinstance(_codes, list) else 0,
         year_month=ym, mileage_km=km,
         color_ext=ce, color_int=ci, axis_chips=chips, price_won=price,
+        axis_points=tuple(_pts),
         # ★ 어느 사이트에서 왔는지 매물마다 낸다 (V9-06).
         #   화면이 「엔카」를 글자로 박고 있었다 — 사이트가 둘이 되면 거짓말이다
         site_badge=site_badge(_site, _sell_type, root),
@@ -879,7 +901,7 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
         #     `encar.com/…?carid=EC61384014` 로 갔다.  ★ 엔카는 모르는 carid 에도
         #     200 을 준다 — 「200 이면 됐다」로 세지 않는다 (S46-87 과 같은 잣대)
         #   ★ 못 잰 사이트는 ★ **안 낸다.**  ★ 지어내지 않는다 (검산 S46-94)
-        encar_url=_source_url(_site, sid, site_tpl),
+        encar_url=_source_url(_site, sid, site_tpl, _site_model),
         # ★ 'YYYY-MM' 의 앞 4자가 연식이다 — 판정값이 아니다
         year=(ym or "")[:4] or None,
         km_bucket=_ceil_to(km, km_unit),
@@ -1135,12 +1157,34 @@ def _site_detail_urls(root: str = ".") -> dict:
         os.path.join(root, "config", "web.json")).get("site_detail_url") or {})
 
 
-def _source_url(site: str, source_id: str, tpl: dict | None) -> str | None:
-    """그 매물의 사이트로 가는 원문 주소.  ★ 없으면 None (명령서 72장)."""
+def _source_url(site: str, source_id: str, tpl: dict | None,
+                site_model: str | None = None) -> str | None:
+    """그 매물의 사이트로 가는 원문 주소.  ★ 없으면 None (명령서 72장).
+
+    ★★★★★ 09-02 명령서 13 (`S46-94`) — ★ **두 칸**으로 늘렸다.
+      ★ 「주소는 ★ 가이드가 다 쟀다 — ★ 너희는 재지 마라.  ★ 고칠 것은 하나 —
+        ★ ★ `volvo_selekt` 틀에 `{site_model}` 이 더 든다」.
+      ★ ★ 볼보는 ★ `…/xc40/b4-awd-…` 처럼 ★ **차종이 길에 든다**
+        ★ ★ (실측 09-02 — `site_model` 이 `xc40` · `v60-cross-country`).
+    ★★ 틀이 안 쓰는 칸은 ★ `format` 이 그냥 버린다 — ★ 나머지 열 사이트는 그대로다.
+    ★ 틀이 바라는 칸이 ★ **비어 있으면** ★ `None` 이다 —
+      ★ ★ `…/None/b4-awd-…` 같은 ★ **깨진 주소를 만들지 않는다** (금지 12)
+    ★ `kcar` 는 ★ robots 가 막아 ★ 틀이 `None` 이다 (명령서 13) — ★ 그대로 둔다.
+      ★ ★ 화면이 ★ 「그 사이트는 주소를 아직 못 쟀습니다」를 낸다 (명령서 14)
+    """
     if not site or not source_id or not tpl:
         return None
     one = tpl.get(site)
-    return str(one).format(source_id=source_id) if one else None
+    if not one:
+        return None
+    one = str(one)
+    if "{site_model}" in one and not site_model:
+        return None
+    try:
+        return one.format(source_id=source_id, site_model=site_model or "")
+    except (KeyError, IndexError):
+        # ★ 틀에 우리가 모르는 칸이 있다.  ★ 깨진 주소 대신 ★ **없다**로 낸다
+        return None
 
 
 def _view_str(key: str, root: str = ".") -> str:
@@ -1641,7 +1685,11 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         # ★★★★★ 09-02 마스터 확정 — ★ **판매지역** (`S46-225`).
         #   ★ 엔카·KB 는 ★ 지역이 온다 · ★ K카·리본카·볼보는 ★ 지점 이름만 온다 —
         #   ★ ★ 그때는 ★ 규격 표(`dealer_region.json`)를 본다
-        " l.dealer_region, l.dealer_shop"
+        " l.dealer_region, l.dealer_shop,"
+        # ★★★★★ 09-02 명령서 13 (`S46-94`) — ★ 볼보 원문 주소에 ★ **차종이 든다**
+        #   (`…/xc40/b4-awd-…`).  ★ 칸을 **맨 뒤**에 붙였다 —
+        #   ★ ★ 가운데 넣으면 ★ 아래 풀기의 번호가 전부 밀린다
+        " l.site_model"
         " FROM core_listing l LEFT JOIN result_score s"
         " ON s.listing_id = l.listing_id AND s.calc_version = ?"
         " LEFT JOIN core_dealer d ON d.dealer_id = l.dealer_id"
@@ -3999,8 +4047,12 @@ def axis_zero_rates(conn, calc_version: str) -> dict:
 #   ★ 마스터 — 「★ 등급 무시하고 ★ 내가 선호하는 색과 예산 점수 및 킬로와 연식 점수에
 #     ★ 근접하는 차야 … ★ 모두 가격에 있는 항목이니 점수로 소팅하면 되지?」
 #   ★★ 「그렇다」 — ★ 넷 다 이미 `result_axis` 에 있다.  ★ **새로 셈하지 않는다**
+#   ★★★★★ 09-02 명령서 11 (`S46-98`·`S46-242`) — ★ **크기·내장색을 더한다.**
+#     ★ 시안 `v4m_recommend_시안.html` 이 ★ 「크기 (전장)」을 낸다 —
+#     ★ ★ 마스터 09-01 「★ 크기·내장색 축이 화면에 안 보인다」.
+#     ★ ★ ★ 이것도 ★ **이미 `result_axis` 에 있다** — ★ 새로 셈하지 않는다
 RECOMMEND_AXES: tuple = ("value.budget", "value.mileage", "state.year",
-                         "taste.color")
+                         "taste.color", "taste.color_int", "taste.size")
 RECOMMEND_TABS: tuple = ("1", "2", "3")
 
 
@@ -4142,7 +4194,11 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
         " l.price_current_won, l.site, s.grade, l.color_int_raw,"
         " l.photo_list_json, l.source_id, l.sell_type,"
         " l.dealer_region, l.dealer_shop,"
-        " SUM(a.value) AS got, SUM(a.max_points) AS full"
+        " SUM(a.value) AS got, SUM(a.max_points) AS full,"
+        # ★★★★★ 09-02 명령서 13 (`S46-94`) — ★ 볼보 원문 주소에 ★ 차종이 든다.
+        #   ★ **맨 뒤**에 붙였다 — ★ `r[15]`(`got`)·`r[16]`(`full`) 을 안 민다.
+        #   ★ ★ 앞에 끼우면 ★ 합 두 칸이 밀려 ★ 점수가 통째로 어긋난다
+        " l.site_model"
         " FROM core_listing l"
         " JOIN result_axis a ON a.listing_id = l.listing_id"
         "  AND a.calc_version = ? AND a.axis IN (" + marks + ")"
@@ -4181,7 +4237,10 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     cuts = load_config(f"{root}/config/scoring.json").get("grade_cuts") or {}
     top = [g for g, _v in sorted(cuts.items(), key=lambda kv: -float(kv[1]))][:3]
     out = []
-    for r in rows:
+    # ★★★★★ 09-02 명령서 11 — ★ **1부터 차례로** (`S46-242`).
+    #   ★ 이 화면은 ★ `LIMIT` 만 쓰고 ★ **쪽을 안 넘긴다** (`OFFSET` 이 없다) —
+    #   ★ ★ 그래서 ★ 1부터다.  ★ 쪽 넘김이 생기면 ★ 여기부터 고쳐야 한다
+    for _i, r in enumerate(rows, start=1):
         lid = r[0]
         # ★ 시안은 ★ **정수**다 — 「271 / 297」·「예산 89/95」 (브라우저로 대조 09-01)
         got = round(float(r[15] or 0))
@@ -4212,10 +4271,11 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
             # ★★★★★ 09-02 마스터 확정 — ★ 연식·거리에 셈을 함께
             age_label=_age_label(r[3]),
             km_per_year_label=_km_per_year(r[3], r[4]),
-            encar_url=_source_url(r[7], r[11], site_tpl),
+            encar_url=_source_url(r[7], r[11], site_tpl, r[17]),
             # ★ 「그 사이트에서 사면 얼마를 내는가」 (개정 353 · `V11-120`)
             total_cost_won=(_buy_of(r[7], r[6], r[1]) or None),
             buy_estimated=_buy_est(r[7], r[6], r[1]),
+            rank=_i,
             axes=per.get(lid, ())))
     # ★ 화면에 든 전건 — ★ 거르개는 `s.` 를 쓰므로 ★ 같은 이음을 걸어야 한다
     # ★ 「N건 중」도 ★ **같은 잣대**로 센다 — ★ 안 그러면 화면이 거짓말을 한다
@@ -4295,5 +4355,18 @@ def _recommend_axes(conn, calc_version: str, ids: list) -> dict:
 
 
 # ★ 화면 글 — ★ 마스터께서 부르신 이름 그대로 (규격 1장 표)
-AXIS_LABEL = {"value.budget": "예산", "value.mileage": "주행",
-              "state.year": "연식", "taste.color": "색"}
+# ★★★★★ 09-02 명령서 11 (`S46-98`) — ★ **`config/labels.json` 이 원천이다** (`S14`).
+#   ★ 전에는 ★ 넷을 ★ **코드에 박아** 뒀다.  ★ 축이 둘 늘자
+#   ★ ★ 「크기 (전장)」·「색상 (내장)」이 ★ **이름을 못 찾아** 화면에서 사라졌다
+#   ★ ★ ★ (실측 09-02 — ★ `AXIS_LABEL.get("taste.size")` 가 `None` 이었다).
+#   ★★ 못 찾으면 ★ 축 코드를 그대로 낸다 — ★ **조용히 빼지 않는다** (금지 12)
+def _axis_labels() -> dict:
+    """★ 축 이름 표.  ★ 정본은 `config/labels.json` 의 `AXIS_LABELS` 다 (`S14`)."""
+    import json as _j
+    import os as _o
+    _p = _o.path.join(_ROOT_LBL, "config", "labels.json")
+    with open(_p, encoding="utf-8") as _f:
+        return dict(_j.load(_f).get("AXIS_LABELS") or {})
+
+
+AXIS_LABEL = _axis_labels()

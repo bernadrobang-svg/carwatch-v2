@@ -68,6 +68,22 @@ class ScoreBar:
 
 
 @dataclass(frozen=True)
+class AxisPoint:
+    """★★★★★ 09-02 명령서 11·14 (`S46-98`·`S46-242`) — ★ 시안 `lst-axes` 줄.
+
+    ★ 시안   ★ 「색상 (외장) **25**/25 · 색상 (내장) **10**/10 ·
+             ★ ★ 크기 (전장) **9**/31 · 트림 **17**/20」
+    ★★      ★ `AxisChip` 은 ★ **O·-·?** 만 낸다 — ★ **몇 점인지를 못 낸다**.
+             ★ ★ 마스터 09-01 — 「★ 크기·내장색 축이 화면에 안 보인다」
+    ★        ★ 미확인은 ★ `got` 이 `None` 이다 — ★ 0점과 가른다 (금지 12)
+    """
+
+    label: str
+    got: float | None      # ★ None = 못 쟀다.  ★ 0 과 다르다
+    full: float
+
+
+@dataclass(frozen=True)
 class ListingRow:
     listing_id: int
     grade: str
@@ -242,6 +258,8 @@ class ListingRow:
     def unknowns(self) -> list:
         """확인 못 한 축.  채우면 오를 수 있다 (STEP 105)."""
         return [c for c in self.axis_chips if c.tone == TONE_MUTED]
+    # ★ 09-02 시안 `lst-axes` — ★ 축 이름과 **몇 점인지**
+    axis_points: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -848,6 +866,11 @@ class RecommendRow:
     encar_url: str | None = None
     total_cost_won: int | None = None
     buy_estimated: bool = False
+    # ★★★★★ 09-02 명령서 11 (`S46-242`) — ★ **순위 번호**.
+    #   ★ 마스터 09-01 — 「★ 왜 추천에 목록 번호가 없고」.
+    #   ★★ 추천은 ★ **점수 차례로 이미 정렬돼 있다** — ★ 그 자리가 곧 순위다.
+    #     ★ ★ 「1부터 차례로」 (명령서 11).  ★ 쪽을 넘기면 이어서 센다
+    rank: int | None = None
 
 
 @dataclass(frozen=True)
