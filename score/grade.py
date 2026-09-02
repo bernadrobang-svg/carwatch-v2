@@ -86,6 +86,39 @@ def grade_cut_points(policy: ScoringPolicy) -> list[tuple[str, int]]:
     return sorted(out, key=lambda kv: -kv[1])
 
 
+def _rank_of(grade: str, policy: ScoringPolicy) -> int:
+    """★ 등급 차례에서 몇째인가.  ★ 0 이 가장 좋다.  ★ 모르면 맨 뒤다."""
+    order = [g for g, _cut in cutoffs(policy)]
+    return order.index(grade) if grade in order else len(order)
+
+
+def _state_ok_floor(result: "ScoreResult", policy: ScoringPolicy) -> str | None:
+    """★ 상태 축이 다 정상이면 ★ 바닥 등급을 준다 (`grade_gates.state_ok_floor`).
+
+    ★ 「정상」의 뜻 — ★ 그 축이 ★ **만점의 `need_ratio` 이상**을 받았는가.
+      ★ ★ 못 잰 축(0점)은 ★ 「흠이 있다」가 아니다 — ★ 그러나 ★ **정상도 아니다**.
+      ★ ★ ★ 그래서 ★ 「몇 개가 정상인가」의 비율로 본다 (규격 `need_ratio`).
+    ★ 규칙이 없으면 ★ `None` 이다 — ★ 코드가 지어내지 않는다 (`S14` · 금지 6)
+    """
+    # ★ 규격은 ★ `policy.raw` 안에 그대로 있다 — ★ 코드에 안 박는다 (`S14`)
+    raw = getattr(policy, "raw", None) or {}
+    gate = (raw.get("grade_gates") or {}).get("state_ok_floor")
+    if not isinstance(gate, dict):
+        return None
+    axes = list(gate.get("state_axes") or ())
+    if not axes:
+        return None
+    need = float(gate.get("need_ratio") or 1.0)
+    ok = 0
+    for a in axes:
+        full = policy.comp(a)
+        if not full:
+            continue
+        if float((result.by_axis or {}).get(a) or 0.0) >= full * need:
+            ok += 1
+    return gate.get("grade") if ok >= len(axes) * need else None
+
+
 def grade_of(result: ScoreResult, policy: ScoringPolicy) -> str:
     # ★★ 개정 433 — 관문 배제는 등급이 아니다.  「제외」로 따로 둔다.
     #   전에는 E 를 돌려줬는데, 8단계로 내리면서 E 가 30~40% 자리가 됐다.
@@ -118,9 +151,27 @@ def grade_of(result: ScoreResult, policy: ScoringPolicy) -> str:
         ratio = result.grade_earned / result.grade_base
     else:
         ratio = result.earned / result.denominator
+    got = NO_GRADE
     for g, cut in cutoffs(policy):
         if ratio >= cut:
-            return g
+            got = g
+            break
+    # ★★★★★ 09-03 (2부 S9 · 개정 1093) — ★ **차가 멀쩡하면 바닥이 C 다.**
+    #   ★★★ 마스터 09-02 — 「★ 내가 원하는 것은 ★ **등급의 현실화**다.
+    #     ★ **차가 멀쩡하면 C** 라고 하고 ★ 나머지는 **가격과 취향**으로 하라」
+    #   ★★ 까닭 — ★ 분모 910 은 ★ **새 차에 가까운 완벽한 차** 기준이다.
+    #     ★ 3,000만원대 4~5년 차는 ★ 주행·보증·사고·소모품이 ★ 시작부터 0 이라
+    #     ★ ★ 그 잣대로는 ★ **영원히 D·E** 였다 (실측 09-03 — D 이하 **59.3%**).
+    #   ★★★ 규칙은 ★ `config/scoring.json` `grade_gates.state_ok_floor` 가 정본이다 —
+    #     ★ ★ **코드에 등급도 축 이름도 안 박는다** (`S14`).
+    #     ★ ★ ★ 검사(`S46-248`)는 ★ 그 규칙이 **있는지**만 봤다 —
+    #       ★ ★ ★ ★ 판정 코드는 ★ **한 번도 안 읽고 있었다** [실측 09-03].
+    #   ★ 상태에 흠이 있으면 ★ 이 바닥을 안 준다 — ★ D 아래로 내려간다
+    floor = _state_ok_floor(result, policy)
+    if floor and _rank_of(floor, policy) < _rank_of(got, policy):
+        return floor
+    if got != NO_GRADE:
+        return got
     # ★ 개정 433 — 맨 아래 컷(G 10%)에도 못 미치면 「등급 없음」이다.
     #   전에는 D 를 돌려줬다 — 5단계 시절엔 D 가 맨 아래였기 때문이다.
     #   ★ 이제 맨 아래는 G 다.  D 를 돌려주면 40% 자리에 10% 미만이 섞인다
