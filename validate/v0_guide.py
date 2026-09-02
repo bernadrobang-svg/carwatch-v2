@@ -6067,6 +6067,49 @@ def v0_03_points_only_in_appendix() -> tuple[bool, str]:
     return True, f"배점 숫자가 부록 F 안에만 있다 (축 {len(comps)}개를 봤다)"
 
 
+def v1_22_site_given_is_not_remade() -> tuple[bool, str]:
+    """V1-22 — ★ **사이트가 이미 주는 것**을 ★ 우리가 안 만들고 ★ 받아 쓰는가.
+
+    ★ 규격 `guide/01_요구사항.md` 8절 (개정 296 · 08-16 · 5장) —
+      「★ 엔카가 이미 주는 것 · `V1-22`·`V3-51` · `platform_verified`」
+      ★ ★ 지금 — 「★ **검사가 사라졌다** … ★ 뿌리는 살아 있다 → ★ 다시 만든다」
+    ★★ 규격이 적어 둔 ★ **실패 모습**이 있다 (`collect/runner.py:827`) —
+      「★ `record_summary`·`platform_check`·… 가 ★ 8천 건씩 쌓여 있는데
+       ★ ★ 아무도 안 펼쳐 ★ **`platform_verified` 가 전건 NULL** 이었다 (실측 08-18)」
+    ★ 그러므로 재는 것 — ★ **원문이 있는데 칸이 전건 비어 있지 않은가**.
+      ★ ★ 원문이 없으면 ★ 잴 것이 없다 (「모른다」다 · 실패로 안 센다)
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        raw = conn.execute(
+            "SELECT site, COUNT(*) FROM raw_response"
+            " WHERE endpoint = 'platform_check' AND status = 'ok'"
+            " GROUP BY 1").fetchall()
+        if not raw:
+            return True, "platform_check 원문이 없다 — 아직 잴 것이 없다"
+        bad = []
+        for site, n in raw:
+            got = conn.execute(
+                "SELECT COUNT(*) FROM core_listing"
+                " WHERE site = ? AND platform_verified IS NOT NULL",
+                (site,)).fetchone()[0]
+            if not got:
+                bad.append(f"{site} — 원문 {n:,}건인데 platform_verified 가 전건 NULL")
+    except sqlite3.Error as e:
+        return False, f"못 읽었다: {e}"
+    finally:
+        conn.close()
+    if bad:
+        return False, "★ 사이트가 준 것을 안 펼쳤다 — " + " · ".join(bad[:3])
+    said = " · ".join(f"{s} {n:,}" for s, n in raw[:3])
+    return True, f"사이트가 준 것을 받아 쓴다 (platform_check 원문 — {said})"
+
+
 def s46_256_blocked_needs_evidence():
     """S46-256 — ★ 「막혔다」를 ★ **증거 없이** 쓰지 않는가 (개정 1102 · 09-02).
 
@@ -6344,6 +6387,7 @@ CHECKS = (
     ("V0-01", "버전이 이력의 마지막 개정과 같은가", v0_01_version_matches_history),
     ("V0-02", "폐기 표시가 이력에 있는가", v0_02_retired_marks_match),
     ("V0-03", "배점 숫자가 부록 F 밖에 있는가", v0_03_points_only_in_appendix),
+    ("V1-22", "사이트가 주는 것을 받아 쓰는가", v1_22_site_given_is_not_remade),
     ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),
     ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
     ("S46-253", "1부를 브라우저로 봤는가", s46_253_part1_seen_in_browser),
