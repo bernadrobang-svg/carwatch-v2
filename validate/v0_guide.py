@@ -6114,7 +6114,40 @@ def run(run_id: str = "-") -> int:
 #   ★ 돌리려면  python3.11 -c "from validate.v0_guide import run; \
 #                              raise SystemExit(1 if run() else 0)"
 
+def s46_258_part_axis_decided():
+    """S46-258 — ★ 판정 축의 사전이 ★ **가이드 손에서 정해졌는가** (09-02).
+
+    ★★★ 실측 09-02 — ★ `dict_enum` pending **193건**이 ★ 두 갈래였다:
+      ★ `target` **184건** — ★ 차종 이름이라 ★ **마스터 몫**이다.
+      ★ `part` **9건** — ★ 헤이딜러 부위명.  ★ **낱말이 우리 부위와 그대로 맞는다**.
+    ★★ 개발측은 ★ 「규격이 코드 자동 확정을 막아 ★ **사람 몫**」이라 적고 멈췄다 — ★ 옳다.
+      ★ ★ 그런데 ★ 그 「사람」이 ★ **마스터가 아니라 가이드**다.  ★ 내가 정할 자리였다.
+    ★★★ 그리고 ★ **`hood` 가 `HD_PART` 에 없다** — ★ 열 칸 중 ★ 후드만 빠졌다.
+      ★ ★ 사전에도 없고 코드에도 없어 ★ **두 번 샌다**.
+    ★ 이것이 ★ **판정 축**이라 급하다 — ★ `state.outer` **28점** · 헤이딜러 **275건**.
+    """
+    import json as _j
+
+    fx = _j.loads(_read(ROOT / "config" / "dictionaries" / "fixed_enums.json") or "{}")
+    part = fx.get("part") or []
+    bad = []
+    want = {"hood", "radiator_support", "trunk_lid",
+            "fender_front_driver", "door_rear_passenger"}
+    miss = sorted(want - set(part))
+    if miss:
+        bad.append("fixed_enums 의 part 에 없는 값 — " + " · ".join(miss[:3]))
+    if "_part_why" not in fx:
+        bad.append("part 를 정한 까닭이 없다")
+    mp = _read(ROOT / "parse" / "heydealer" / "mapping.py")
+    if mp and '"hood"' not in mp:
+        bad.append("★ HD_PART 에 hood 가 없다 — 후드가 외판 판정에서 빠진다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"part 축 {len(part)}값이 정해졌고 hood 도 매핑돼 있다"
+
+
 CHECKS = (
+    ("S46-258", "판정 축 사전이 정해졌는가", s46_258_part_axis_decided),
     ("S46-257", "파이프라인이 엔카만 돌지 않는가", s46_257_pipeline_not_encar_only),
     ("S46-256", "막혔다를 증거 없이 쓰지 않는가", s46_256_blocked_needs_evidence),
     ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),

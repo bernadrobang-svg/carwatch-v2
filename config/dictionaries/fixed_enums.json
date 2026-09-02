@@ -2,7 +2,36 @@
   "_ref": "지시서 4장 STEP 41 (AxisPolicy · halt 3축)",
   "_note": "★ 부트스트랩. on_new=halt 인 축은 첫 수집에 사전이 비어 있어 전 값이 「새 값」이 된다. 지시서가 고정 집합을 명시한 축이므로 그 집합을 미리 심는다. 여기 없는 값이 나올 때만 멈춘다 — 원래 의도다",
   "_source": "지시서 STEP 41 본문 · 실물 표본 12건",
-  "panel_rank": ["RANK_ONE", "RANK_TWO", "RANK_A", "RANK_B", "RANK_C"],
-  "panel_status": ["교환(교체)", "판금/용접", "용접,절단", "손상"],
-  "accident_type": ["1", "2", "3"]
+  "panel_rank": [
+    "RANK_ONE",
+    "RANK_TWO",
+    "RANK_A",
+    "RANK_B",
+    "RANK_C"
+  ],
+  "panel_status": [
+    "교환(교체)",
+    "판금/용접",
+    "용접,절단",
+    "손상"
+  ],
+  "accident_type": [
+    "1",
+    "2",
+    "3"
+  ],
+  "part": [
+    "hood",
+    "radiator_support",
+    "fender_front_driver",
+    "fender_front_passenger",
+    "fender_rear_driver",
+    "fender_rear_passenger",
+    "door_front_driver",
+    "door_front_passenger",
+    "door_rear_driver",
+    "door_rear_passenger",
+    "trunk_lid"
+  ],
+  "_part_why": "★★★★★ 개정 1105 — ★ **가이드가 정한다** (마스터 09-02 「ㄱㄱ」).  ★ 실측 09-02 — ★ `dict_enum` pending **193건**이 ★ 둘로 갈린다: ★ `target` **184**(★ 차종 이름 — **마스터 몫**) · ★ `part` **9**(★ 헤이딜러 부위명).  ★★ `part` 아홉은 ★ **내가 정할 수 있다** — ★ 낱말이 우리 부위와 ★ **그대로 맞는다** (`hood` 후드 · `radiator_support` 라디에이터 서포트 · `fender_front_driver` 프런트 휀더(좌) · `fender_rear_*` 쿼터 패널 · `door_*` 앞·뒷문 · `trunk_lid` 트렁크 리드).  ★ 짐작이 아니다.  ★★★ 이것이 ★ **판정 축**이라 급하다 — ★ `state.outer` **28점**이 걸린다.  ★ 헤이딜러 매물 **275건**이 ★ 외판 판정을 못 받고 있었다.  ★★ 그리고 ★ **`hood` 가 `parse/heydealer/mapping.py:282` `HD_PART` 에 ★ 없다** — ★ 열 칸 중 후드만 빠졌다.  ★ ★ 그래서 ★ 후드는 ★ **사전에도 없고 코드에도 없어** ★ 두 번 샌다.  ★ 작업가이드 S3 에 냈다"
 }
