@@ -588,8 +588,25 @@ def classify_field(conn: sqlite3.Connection, account: Account, endpoint: str,
     # ★★ 08-29 (마스터 판정) — ★ `seed.` 를 안 붙인다.
     #   ★ 감사(`config_change.key_path`)에 ★ 목록과 **같은 열쇠**가 남아야
     #     ★ 사람이 둘을 맞춰 볼 수 있다 (시험자 #82)
-    return apply_config(conn, account, "field_usage.json", key,
-                        entry, f"등록부 분류: {reason}", root=root, at=at)
+    change = apply_config(conn, account, "field_usage.json", key,
+                          entry, f"등록부 분류: {reason}", root=root, at=at)
+    # ★★★★★ 09-02 (1부 1-8 · **5회차째**) — ★ **표도 함께 고친다.**
+    #   ★ 전에는 ★ `config/field_usage.json` **파일에만** 썼다.
+    #   ★ ★ 그런데 ★ 화면이 세는 것은 ★ **`meta_field_usage` 표**다
+    #   ★ ★ ★ (`report/screens/admin.py:193` — ★ `WHERE usage='unclassified'`).
+    #   ★★ 그래서 ★ 눌러도 ★ **미분류 333 → 333** 이었다.  ★ `303` 은 왔는데
+    #     ★ ★ 화면 수가 안 움직였다 — ★ 가이드가 다섯 회차째 짚었다.
+    #   ★ 표는 ★ **사이트마다 한 행**이라 ★ 같은 (endpoint, json_path) 를 다 고친다.
+    #     ★ ★ 파일은 사이트를 안 나눈다 — ★ 분류는 「그 길이 무엇인가」이지
+    #     ★ ★ ★ 「어느 사이트인가」가 아니다 (`tools/sync_registry.py` 도 그렇게 편다)
+    conn.execute(
+        "UPDATE meta_field_usage SET usage=?, reason=?, core_column=?,"
+        " unblock_condition=?, use_when=?, priority=?"
+        " WHERE endpoint=? AND json_path=?",
+        (usage, reason, core_column, unblock_condition, use_when, priority,
+         endpoint, json_path))
+    conn.commit()
+    return change
 
 
 # ── 가입 · 사용자 관리 (13장 STEP 126 · 시안 v2_join · v2_admin_users) ──

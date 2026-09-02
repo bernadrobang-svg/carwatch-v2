@@ -1985,3 +1985,17 @@ def photo_ready_sites(conn: sqlite3.Connection) -> set:
         if site:
             got.add(str(site))
     return got
+
+
+def unclassified_fields(conn: sqlite3.Connection) -> int:
+    """★ 09-02 (1부 1-8) — ★ 등록부 미분류 건수 (`meta_field_usage`).
+
+    ★ 화면(`report/screens/admin.py` `_todos`)이 세는 것과 ★ **같은 표·같은 조건**이다 —
+      ★ ★ 다른 것을 세면 ★ 「저장했다」와 「안 줄었다」가 함께 참이 된다
+    """
+    try:
+        return int(conn.execute(
+            "SELECT COUNT(*) FROM meta_field_usage"
+            " WHERE usage = 'unclassified'").fetchone()[0])
+    except sqlite3.Error:
+        return 0

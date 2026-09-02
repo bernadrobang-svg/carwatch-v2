@@ -2114,14 +2114,29 @@ def admin_scoring(conn, account, req, root: str = ROOT, csrf: str = "", flash_ke
         #   store 가 score 를 부르면 층이 거꾸로 간다
         new = next_components(pol["components"], form.get("action") or "",
                               form.get("target") or "", form.get("value"))
-        # ★ total_points 는 성분 합이다.  직접 받지 않는다 (STEP 128).
-        #   한 번에 쓴다 — 따로 쓰면 중간 상태가 「Σ != total」 이라 막힌다
+        # ★★★★★ 09-02 (1부 1-7 · **5회차째**) — ★ **총점을 합에 맞추지 않는다.**
+        #   ★ 전에는 ★ `also={"total_points": total_of(new)}` 로 ★ 총점을
+        #   ★ ★ **합에 맞춰 올렸다**.  ★ 그래서 ★ 선루프 8→9 를 누르면
+        #   ★ ★ ★ ★ 합 911 · 총점 911 로 ★ **그냥 저장됐다** (가이드 실측 09-02).
+        #   ★ ★ ★ ★ `_validate_blob` 의 막이(`Σ > total_points`)는 ★ 걸릴 수가 없었다 —
+        #     ★ ★ ★ ★ 늘 같은 수를 견주고 있었으니.  ★ 문서엔 「막는다」고 적혀 있었다.
+        #   ★★ 분모는 ★ **910 이 정본**이다 (STEP 128 · 2부 S10).
+        #     ★ ★ 분모를 늘려 주면 ★ 등급이 후해진다 — ★ 그것이 이 관문이 막던 것이다.
+        #   ★ 합이 ★ **작은** 것은 그대로 둔다 — ★ 「닿을 수 없는 자리」다 (08-30 확정)
+        _sum, _cap = total_of(new), pol["total_points"]
+        if _sum > _cap:
+            # ★ 303 만 내고 안 고치면 ★ 「저장됐다」로 보인다 (지키는 법 ③).
+            #   ★ **무엇을 왜 안 했는지**를 수로 낸다
+            return redirect(
+                "/admin/scoring",
+                f"저장하지 않았습니다 — 배점 합 {_sum} 이 분모 {_cap} 을 넘습니다. "
+                f"먼저 다른 축을 {_sum - _cap}점 줄이십시오", flash_key)
         change = apply_config(conn, account, "scoring.json", "components",
                               new, form.get("reason", ""), root=root,
-                              at=_now(), also={"total_points": total_of(new)})
+                              at=_now())
         return redirect("/admin/scoring",
                         f"배점을 바꿨습니다 — {change.key_path} · "
-                        f"재판정이 필요합니다", flash_key)
+                        f"합 {_sum} / 분모 {_cap} · 재판정이 필요합니다", flash_key)
 
     ver = _versions(conn)
     prev = None
@@ -2178,6 +2193,15 @@ def _decide_cards(conn, root: str = ROOT, rows=None) -> list:
     return got
 
 
+def _unclassified_count(conn) -> int:
+    """★ 09-02 (1부 1-8) — ★ 등록부 미분류 건수.  ★ 화면이 세는 것과 **같은 표**다.
+
+    ★ SQL 은 `store` 에 둔다 — ★ `web/` 은 SQL 을 안 쓴다 (`V11-01`)
+    """
+    from store.core import unclassified_fields
+    return unclassified_fields(conn)
+
+
 def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
                    flash_key: str = "-", **_kw):
     """등록부 분류.  ★ 한 차종 관측으로 「값이 하나뿐」을 판단하지 않는다."""
@@ -2192,6 +2216,7 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
         #   ★ `deferred` 는 ★ `USAGE_REQUIRES` 가 ★ 그것을 요구하는데
         #     ★ 폼에도 없고 ★ 여기서도 안 넘겨 ★ 「나중에」 단추가
         #     ★ 무엇을 채워도 ★ 400 이었다 (store/admin.py:508)
+        _before = _unclassified_count(conn)   # ★ 고치기 전 수 (지키는 법 ③)
         classify_field(conn, account, form.get("endpoint", ""),
                        form.get("json_path", ""), form.get("usage", ""),
                        form.get("reason", ""),
@@ -2199,7 +2224,13 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
                        unblock_condition=form.get("unblock_condition") or None,
                        use_when=form.get("use_when") or None,
                        root=root, at=_now())
-        return redirect("/admin/registry", "분류를 저장했습니다", flash_key)
+        # ★★★★★ 09-02 (1부 1-8 · 지키는 법 ③) — ★ **303 은 저장 성공이 아니다.**
+        #   ★ 저장한 뒤 ★ **다시 읽어** ★ 몇 → 몇 인지를 낸다.
+        #   ★ ★ 「저장했습니다」만 내면 ★ 안 바뀌어도 알 길이 없다 (5회차째)
+        _left = _unclassified_count(conn)
+        return redirect("/admin/registry",
+                        f"분류를 저장했습니다 — 미분류 {_before:,} → {_left:,}건",
+                        flash_key)
 
     q = req.get("query", {})
     usage = q.get("usage") or "unclassified"
