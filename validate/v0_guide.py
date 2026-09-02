@@ -6160,9 +6160,15 @@ def s46_259_master_target_names():
 
     d = _j.loads(_read(ROOT / "config" / "dictionaries" / "target_map.json") or "{}")
     bs = d.get("by_site") or {}
+    # ★★★ 09-02 재확정 — ★ 마스터께서 ★ **다섯만** 고르셨다:
+    #   ★ 엔카 GV70 · 엔카 G80(★ 2.5 만) · 헤이딜러 X3 · 헤이딜러 e-G80 · 리본카 콜레오스
+    #   ★ ★ 「★ 케이카 없어」 · ★ 「모델 Y」도 ★ 고르신 목록에 **없다**
     want = [("encar", "GV70", "GV70_25T"),
+            ("encar", "G80", "G80_25T"),
             ("heydealer", "e-GV70", "GV70_EV"),
-            ("encar", "모델 Y", "MODEL_Y")]
+            ("heydealer", "X3 (G01)", "X3_IMPORT"),
+            ("heydealer", "e-G80", "G80_EV"),
+            ("reborncar", "그랑 콜레오스 하이브리드", "KOLEOS_HEV")]
     bad = []
     for site, name, key in want:
         got = (bs.get(site) or {}).get(name) or {}
@@ -6170,9 +6176,18 @@ def s46_259_master_target_names():
             bad.append(f"{site}/{name} → {got.get('target_key')} ≠ {key}")
         if "_why" not in got:
             bad.append(f"{site}/{name} 에 까닭이 없다")
+    # ★ 내가 ★ **혼자 넣은 것**이 남아 있으면 실패다 (오판 251)
+    for site, name in (("kcar", "S60 3세대"), ("kcar", "V60 크로스컨트리 2세대"),
+                       ("encar", "그랜저"), ("encar", "스포티지"),
+                       ("encar", "GV60"), ("encar", "G70"), ("encar", "모델 Y")):
+        if name in (bs.get(site) or {}):
+            bad.append(f"★ 마스터께서 안 고르신 {site}/{name} 이 들어 있다")
     if bad:
         return False, "★ 마스터 확정과 다른 것 — " + " · ".join(bad[:3])
-    return True, "마스터께서 정하신 차종 이름 셋이 그대로다"
+    g80 = ((bs.get("encar") or {}).get("G80") or {})
+    if g80.get("trim_contains") != "2.5":
+        return False, "★ 엔카 G80 이 ★ 「2.5 만」이 아니다"
+    return True, f"마스터께서 정하신 차종 이름 {len(want)}개가 그대로다"
 
 
 CHECKS = (
