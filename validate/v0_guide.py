@@ -4551,8 +4551,15 @@ def s46_191_budget_follows_fuel_rule():
     if not by_fuel:
         return False, "by_fuel 표가 없다"
     imported = ("볼보", "폴스타", "테슬라", "BMW", "렉서스", "폭스바겐", "벤츠", "아우디")
+    # ★★★★★ 09-02 — ★ 마스터께서 ★ **차종마다 직접 정하신 것**은 ★ 원칙보다 앞선다.
+    #   ★ 「★ 그랑콜레오스는 2900 이하로 상한은 3200.  ★ 테슬라 Y랑 폴스타2는 2800 이하에
+    #     ★ 상한은 3500.  ★ ID4는 3000-3200 …」 (마스터 09-02)
+    #   ★ ★ 원칙(08-30)은 ★ **안 정하신 차종**에만 쓴다.  ★ 규격 둘이 어긋나면 ★ 마스터 값이 이긴다.
+    pinned = set(b.get("by_target_pair") or {})
     bad = []
     for k, v in (b.get("by_target") or {}).items():
+        if k in pinned:
+            continue
         one = tgt.get(k) or {}
         fm = one.get("fuel_match") or []
         if fm == ["전기"]:
@@ -4568,6 +4575,9 @@ def s46_191_budget_follows_fuel_rule():
             bad.append(f"{k} {v}≠{want}")
     if bad:
         return False, ("★ 원칙과 다른 차종 예산 " + " · ".join(bad[:5]))
+    if pinned:
+        return True, (f"원칙대로다 · ★ 마스터께서 따로 정하신 {len(pinned)}종은 뺐다 "
+                      f"({' · '.join(sorted(pinned)[:3])} …)")
     return True, "차종별 예산이 다 원칙대로다"
 
 
