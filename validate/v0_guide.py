@@ -5674,7 +5674,41 @@ def s46_249_budget_pairs_are_masters():
     return True, f"마스터께서 정하신 차종 {len(want)}개 예산이 그대로다"
 
 
+def s46_250_mock_has_real_shape():
+    """S46-250 — ★ 시안이 ★ **모양을 갖췄는가** (마스터 09-02 「시안 다 되었지」).
+
+    ★★ 09-02 — ★ 화면 35개에 시안을 다 붙였는데 ★ **26장이 뼈대뿐**이었다
+      (`admin_users` 58자 · `join` 39자 · `reports` 48자).
+      ★ ★ 「반드시 있는 것」과 「왜 없나」만 적혀 있고 ★ **실제 화면 모양이 없었다**.
+      ★ ★ ★ 개발측이 그걸로 화면을 못 만든다 — ★ **자리만 잡아 둔 것**이다.
+    ★ 잣대 — ★ 글자가 ★ **200자 넘는가** · ★ 머리 띠와 바닥 메뉴가 있는가.
+    """
+    import html as _h
+
+    mocks = sorted((ROOT / "ref" / "screens").glob("v4m_*_시안.html"))
+    if not mocks:
+        return False, "v4m 시안이 없다"
+    thin, noskel = [], []
+    for f in mocks:
+        body = _read(f).split("<body>")[-1]
+        text = re.sub(r"\s+", " ", _h.unescape(re.sub(r"<[^>]+>", " ", body))).strip()
+        name = f.name.replace("v4m_", "").replace("_시안.html", "")
+        if len(text) < 200:
+            thin.append(f"{name}({len(text)}자)")
+        if "v4-tabs" not in body or "v4-top" not in body:
+            noskel.append(name)
+    bad = []
+    if thin:
+        bad.append(f"뼈대뿐인 시안 {len(thin)}장 — " + " · ".join(thin[:4]))
+    if noskel:
+        bad.append(f"머리·바닥이 없는 시안 {len(noskel)}장 — " + " · ".join(noskel[:3]))
+    if bad:
+        return False, "★ " + "  ".join(bad)
+    return True, f"시안 {len(mocks)}장이 다 모양을 갖췄다"
+
+
 CHECKS = (
+    ("S46-250", "시안이 모양을 갖췄는가", s46_250_mock_has_real_shape),
     ("S46-248", "등급이 현실을 가르는가", s46_248_grade_is_realistic),
     ("S46-249", "마스터 예산이 그대로인가", s46_249_budget_pairs_are_masters),
     ("S46-247", "사이트에 있는 것을 얼마나 받았나", s46_247_site_coverage),
