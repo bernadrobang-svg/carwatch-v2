@@ -1194,8 +1194,11 @@ def order_clause(order: str) -> str:
     #     ★ ★ 등급은 「얼마나 좋은가」고 ★ 그 안에서 고를 잣대는 ★ 값이다.
     #   ★ 여쭐 것에 적었다 (안 ① 정렬을 없앤다 · **안 ② 값으로 가른다 ← 이것으로 갔다**)
     if order == "grade":
+        # ★★ 4단(`ORDER_TAIL`)을 ★ **버리지 않는다** (`V6-07`) —
+        #   ★ 「E 뒤로 → 비율 → 가격 → listing_id」가 ★ 마지막 잣대다.
+        #   ★ ★ 값을 ★ **그 앞**에 끼워 ★ 같은 등급 안에서 값이 먼저 갈리게 한다
         return (f"{ORDER_SOLD}, {first}, {ORDER_HEAD},"
-                " l.price_current_won ASC, l.listing_id ASC")
+                f" l.price_current_won ASC, {ORDER_TAIL}")
     return f"{ORDER_SOLD}, {first}, {ORDER_HEAD}, {ORDER_TAIL}"
 
 
