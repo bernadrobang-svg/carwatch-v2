@@ -1856,21 +1856,6 @@ def admin_status(conn, account, req, root: str = ROOT, csrf: str = "",
                 refresh_sec=ctx.get("poll_sec", 0))
 
 
-def _unscored_count(conn) -> int:
-    """★★★★★ 09-02 명령서 16 — ★ **판을 못 받은 매물 수**.
-
-    ★ 「담았습니다」만 내면 ★ 마스터께서 ★ 「왜 화면이 그대로냐」를 물으신다.
-    ★ 셈이 안 되면 ★ **0** 이다 — ★ 틀린 수를 지어내지 않는다 (금지 12)
-    """
-    try:
-        return int(conn.execute(
-            "SELECT COUNT(*) FROM core_listing l"
-            " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
-            " WHERE s.listing_id IS NULL").fetchone()[0])
-    except Exception:  # noqa: BLE001 ★ 안내 글이다.  ★ 화면을 무너뜨리지 않는다
-        return 0
-
-
 def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
                   flash_key: str = "-", collect_urls=None, plan=None, **_kw):
     """브라우저 수집 (13장 STEP 136c).
@@ -1924,7 +1909,9 @@ def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
         #   ★ ★ 판정은 **10,458건 그대로**였다.  ★ 화면이 ★ **아무 말도 안 했다**.
         #   ★★ 「담았습니다」로 끝내면 ★ 「했는데 왜 화면이 그대로냐」가 된다 —
         #     ★ ★ 몇 건이 판을 못 받았는지 ★ **수로** 낸다 (조용히 비우지 않는다)
-        _wait = _unscored_count(conn)
+        from store.core import unscored_count
+
+        _wait = unscored_count(conn)
         _todo = (f" · ★ 아직 판정 안 된 매물 {_wait:,}건 — "
                  "★ 판을 돌려야 화면에 나옵니다 (관리 ▸ 실행)"
                  if _wait else " · 판정까지 끝났습니다")

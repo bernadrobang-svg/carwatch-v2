@@ -1943,3 +1943,20 @@ def site_counts(conn) -> dict:
         "       SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END),"
         "       SUM(CASE WHEN status = 'out_of_scope' THEN 1 ELSE 0 END)"
         "  FROM core_listing GROUP BY site")}
+
+
+def unscored_count(conn: sqlite3.Connection) -> int:
+    """★★★★★ 09-02 명령서 16 — ★ **판을 못 받은 매물 수**.
+
+    ★ 화면이 ★ 「담았습니다」만 내면 ★ 마스터께서 ★ 「왜 화면이 그대로냐」를
+      ★ 물으신다 (실측 09-01 — ★ 매물 21,156건 · 판정 10,458건 그대로).
+    ★★ SQL 은 ★ **여기**에 둔다 — ★ `web/` 은 SQL 을 안 쓴다 (`V11-01`).
+    ★ 셈이 안 되면 ★ **0** 이다 — ★ 틀린 수를 지어내지 않는다 (금지 12)
+    """
+    try:
+        return int(conn.execute(
+            "SELECT COUNT(*) FROM core_listing l"
+            " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+            " WHERE s.listing_id IS NULL").fetchone()[0])
+    except sqlite3.Error:
+        return 0

@@ -7,13 +7,13 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 45,620B |
-| `/listings` | [listings.html](listings.html) | 200 | 101,683B |
+| `/listings` | [listings.html](listings.html) | 200 | 101,693B |
 | `/sold` | [sold.html](sold.html) | 200 | 28,823B |
-| `/recommend` | [recommend.html](recommend.html) | 200 | 145,949B |
+| `/recommend` | [recommend.html](recommend.html) | 200 | 146,129B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 21,403B |
 | `/why/{listing_id}` | [why_listing_id.html](why_listing_id.html) | 200 | 37,429B |
 | `/compare` | [compare.html](compare.html) | 200 | 4,780B |
-| `/track` | [track.html](track.html) | 200 | 45,434B |
+| `/track` | [track.html](track.html) | 200 | 45,806B |
 | `/market` | [market.html](market.html) | 200 | 14,570B |
 | `/dealers` | [dealers.html](dealers.html) | 200 | 19,405B |
 | `/notready` | [notready.html](notready.html) | 200 | 22,253B |
@@ -24,11 +24,11 @@
 | `/password` | [password.html](password.html) | 200 | 2,585B |
 | `/admin` | [admin.html](admin.html) | 200 | 17,482B |
 | `/admin/run` | [admin_run.html](admin_run.html) | 200 | 16,288B |
-| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 94,411B |
+| `/admin/audit` | [admin_audit.html](admin_audit.html) | 200 | 94,256B |
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 14,710B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,341B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,867B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,755B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 8,761B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 47,392B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,409B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,767B |

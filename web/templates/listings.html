@@ -325,15 +325,10 @@
          ★ 하트가 `position:absolute` 인데 ★ 기준 상자가 없어 ★ 카드 밖으로 나갔다.
          ★ 이 div 가 ★ `position:relative` 를 갖는다 (app.css `.cardbody`) -->
     <div class="cardbody">
-      <!-- ★★★★★ 09-02 명령서 11 (`S46-242`) — ★ **순위 번호**.
-           ★ 마스터 09-01 — 「★ 왜 추천에 목록 번호가 없고」.
-           ★ 시안 `v4m_listings_시안.html:170` 의 `lst-rank` 를 그대로 베꼈다.
-           ★★ 순위를 못 매긴 것(제외·등급 없음)은 ★ **숫자 대신 「—」** 다 —
-             ★ ★ 없는 번호를 지어내지 않는다 (`V6-04` 「등급이 있으면 순위가 있다」) -->
-      {% if r.rank %}<span class="lst-rank" title="점수 차례입니다">{{ r.rank }}</span>{% endif %}
-      {% if !r.rank %}<span class="lst-rank dim" title="순위를 안 매긴 매물입니다">—</span>{% endif %}
       <!-- ★ ♡ 는 제목 줄에 (V11-96).  ★ v1 이 가진 조작을 잃지 않는다 (V11-69) -->
       <div class="name">
+          {% if r.rank %}<span class="lst-rank" title="점수 차례입니다">{{ r.rank }}</span>{% endif %}
+          {% if !r.rank %}<span class="lst-rank dim" title="순위를 안 매긴 매물입니다">—</span>{% endif %}
         <form method="post" action="/watch/add" class="inline">
           <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
           <input type="hidden" name="listing_id" value="{{ r.listing_id }}">

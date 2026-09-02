@@ -74,11 +74,6 @@
   </div>
 
   <div class="pickrow cardbody">
-    <!-- ★★★★★ 09-02 명령서 11 (`S46-242`) — ★ **순위 번호**.
-         ★ 시안 `v4m_recommend_시안.html:143` 의 `rc-rank` 를 그대로 베꼈다.
-         ★ 마스터 09-01 — 「★ 왜 추천에 목록 번호가 없고」 -->
-    {% if r.rank %}<span class="rc-rank" title="점수 차례입니다">{{ r.rank }}</span>{% endif %}
-    {% if !r.rank %}<span class="rc-rank dim" title="순위를 안 매긴 매물입니다">—</span>{% endif %}
     <!-- ★ 시안 `.v4-thumb` 104×78 -->
     <div class="desk pickthumb">
       {% if r.photo_url %}<img src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
@@ -87,6 +82,8 @@
     <div class="pickmid">
       <!-- ★ ♡ 는 제목 줄에 (`V11-96`).  ★ v1 이 가진 조작을 잃지 않는다 (`V11-69`) -->
       <div class="pickname">
+        {% if r.rank %}<span class="rc-rank" title="점수 차례입니다">{{ r.rank }}</span>{% endif %}
+        {% if !r.rank %}<span class="rc-rank dim" title="순위를 안 매긴 매물입니다">—</span>{% endif %}
         <form method="post" action="/watch/add" class="inline">
           <!-- ★ 표는 ★ `page` 가 준다 (`V11-29` · STEP 144) — ★ 화면마다 안 만든다 -->
           <input type="hidden" name="csrf" value="{{ page.csrf_token }}">
