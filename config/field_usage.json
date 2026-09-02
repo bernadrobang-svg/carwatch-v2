@@ -1696,8 +1696,8 @@
       "core_column": "accident_other_cost"
     },
     "core:accident_my_cnt": {
-      "usage": "not_provided",
-      "reason": "4회차 재측정"
+      "usage": "unused_by_policy",
+      "reason": "브라우저 확인 — 미분류가 실제로 줄어드는가 (1-8)"
     },
     "platform_check:vehicleId": {
       "usage": "deferred",

@@ -5568,6 +5568,64 @@ def s46_246_every_screen_has_a_mock():
     return True, f"화면 {len(tpl)}개가 다 시안을 갖고 있다"
 
 
+def s46_253_browser_confirms_deploy() -> tuple[bool, str]:
+    """S46-253 — ★ **배포를 브라우저로 열어** 확인한다 (가이드 지적 09-02).
+
+    ★★★ 가이드 — 「★ 1-1·1-2·1-4·1-8 을 ★ **안 닫혔다**로 되돌린다.
+      ★ ★ **무엇으로 쟀는가**를 적어라 — ★ DB 가 아니라 ★ **브라우저**다」
+    ★★ 왜 필요한가 — ★ 내가 닫았다고 한 넷 중 셋을 ★ **브라우저로 안 쟀다** —
+      ★ `curl | grep` 은 ★ **글자**를 본다.  ★ CSS 가 감추면 ★ 글자는 있고
+      ★ ★ 사람 눈에는 없다.  ★ 로컬 `outputs/render/*.html` 은 ★ **배포도 아니다**.
+      ★ ★ ★ 실측 09-02 — ★ 브라우저로 다시 재니 ★ 1-1 이 ★ **정말 안 닫혀 있었다**
+        ★ ★ ★ (기본 쪽 배지 0/30 · 배지 대상의 가장 앞 차례가 **233위**).
+    ★ 재는 것 — ★ `tools/browser_verify.py` 가 ★ 크로미움으로 배포를 연다.
+      ★ ★ 「보이는가」는 ★ 상자 크기·`display`·`visibility` 를 다 본다.
+    ★ 잣대 — ① 자가 있는가 ② 배포가 열리는가 ③ ★ **눈에 보이는 수**가 규격대로인가
+    ★ 로그인이 드는 화면(`/admin/*`)은 ★ 여기서 안 본다 — ★ 회차 기록에 손으로 적는다
+    """
+    tool = ROOT / "tools" / "browser_verify.py"
+    if not tool.is_file():
+        return False, "tools/browser_verify.py 가 없다 — 브라우저로 잴 자가 없다"
+    try:
+        import playwright  # noqa: F401
+    except ImportError:
+        return True, "★ 환경 차이 — playwright 가 없다 (여기서는 못 연다)"
+    import subprocess
+    try:
+        out = subprocess.run(
+            [sys.executable, str(tool), "--json"], check=False,
+            capture_output=True, text=True, timeout=600, cwd=str(ROOT))
+    except subprocess.TimeoutExpired:
+        return False, "★ 브라우저가 600초 안에 못 끝냈다"
+    if out.returncode != 0:
+        return False, f"★ 브라우저가 죽었다 — {(out.stderr or '')[-120:]}"
+    try:
+        got = json.loads(out.stdout or "{}")
+    except ValueError:
+        return False, f"★ 낸 것을 못 읽었다 — {(out.stdout or '')[:100]}"
+
+    bad = []
+    # ★ 1-2 — ★ 사진이 ★ 폭 따라 커지는가 (시안 네 단)
+    for page, per in (got.get("1-2") or {}).items():
+        if not isinstance(per, dict):
+            continue
+        wide = str(per.get("1200") or per.get(1200) or "")
+        if wide and wide.split("x")[0] in ("104", "88"):
+            bad.append(f"{page} 사진이 1200px 에서도 {wide}")
+    # ★ 1-4 — ★ 사진을 못 받은 사이트는 ★ 까닭을 내야 한다
+    for site, one in (got.get("1-4") or {}).items():
+        if site in ("bobaedream", "heydealer") and isinstance(one, dict):
+            if one.get("카드") and not one.get("까닭"):
+                bad.append(f"{site} 카드 {one['카드']}장에 까닭이 0")
+    # ★ 1-1 — ★ 기본 쪽에 ★ 「N곳」 배지가 보이는가
+    one = (got.get("1-1") or {}).get("(기본)")
+    if isinstance(one, dict) and one.get("카드") and not one.get("배지"):
+        bad.append(f"기본 목록 {one['카드']}장에 「N곳」 배지 0개")
+    if bad:
+        return False, "★ 브라우저로 열어 보니 — " + " · ".join(bad[:4])
+    return True, f"★ 배포({got.get('_주소')})를 브라우저로 열어 다 확인했다"
+
+
 def s46_247_site_coverage():
     """S46-247 — ★ 사이트에 있는 것을 ★ 우리가 얼마나 받았나 (마스터 09-02).
 
@@ -5796,6 +5854,7 @@ CHECKS = (
     ("S46-250", "시안이 모양을 갖췄는가", s46_250_mock_has_real_shape),
     ("S46-248", "등급이 현실을 가르는가", s46_248_grade_is_realistic),
     ("S46-249", "마스터 예산이 그대로인가", s46_249_budget_pairs_are_masters),
+    ("S46-253", "배포를 브라우저로 확인했는가", s46_253_browser_confirms_deploy),
     ("S46-247", "사이트에 있는 것을 얼마나 받았나", s46_247_site_coverage),
     ("S46-246", "화면마다 시안이 있는가", s46_246_every_screen_has_a_mock),
     ("S46-245", "화면마다 그 화면에 드는 것이 있는가", s46_245_each_screen_has_its_parts),
