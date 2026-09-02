@@ -14,10 +14,19 @@
 """
 from __future__ import annotations
 
-from contracts import json_paths  # noqa: F401
-
 import json
+import os
 import sqlite3
+import sys
+
+# ★★★★★ 09-03 (2부 S3) — ★ **홀로 못 돌고 있었다.**
+#   ★ `python3.11 tools/sync_registry.py` 로 부르면
+#   ★ ★ `ModuleNotFoundError: No module named 'contracts'` 로 죽었다 [실측 09-03].
+#   ★ ★ ★ 다른 `tools/*.py` 는 다 ★ 뿌리를 `sys.path` 에 넣는다 — ★ 이 파일만 빠졌다.
+#   ★ 그래서 ★ 등록부를 펴는 길이 ★ **막혀 있었다** (미분류 330건)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from contracts import json_paths  # noqa: E402,F401
 import sys
 from dataclasses import dataclass
 

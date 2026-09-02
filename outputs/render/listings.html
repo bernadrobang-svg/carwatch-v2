@@ -66,7 +66,14 @@
 <div class="cond what">
   <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
   <p>모든 사이트의 매물을 한 자리에서 본다. 등급순으로 서 있다</p>
-  <p>같은 차가 여러 곳에 있으면 낮은 값 하나만 낸다 (「3곳」 배지를 누르면 추적으로)</p>
+  
+  <p>같은 차가 여러 곳에 있으면 낮은 값 하나만 낸다.
+    이 조건에 짝지어진 차 <b>161대</b> —
+    <a href="/listings?paired=1" title="여러 사이트에 함께 올라온 차만 봅니다. 순위 차례는 그대로입니다"
+      >짝지어진 것만 보기 ▸</a> · <a href="/track" title="값·등급을 나란히 봅니다">추적에서 보기 ▸</a>
+    </p>
+  
+  <p class="dim" title="행도 원문도 안 지웁니다. 기본 화면에서만 뺍니다 — 그 사이트만 골라 보면 나옵니다">보배드림은 쉬고 있어 52건을 뺐습니다</p>
 </div>
 
 
@@ -179,7 +186,11 @@
 
       <h3>옵션</h3>
       <p class="chips">
-        <span class="chip">깡통 빼기 <input name="option_min" size="2" inputmode="numeric"
+        
+        <label class="chip" title="선택 옵션이 하나도 없는 차를 뺍니다 (마스터 확정 08-24 「깡통」)">
+          <input type="checkbox" name="no_bare" value="1"
+            > 깡통 빼기</label>
+        <span class="chip">옵션 <input name="option_min" size="2" inputmode="numeric"
           value="" placeholder="1" title="선택 옵션 종수 이상">종 이상</span>
         
         <a class="btn"
@@ -2311,7 +2322,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260902T132928</span>
-  <span>2026-09-03 02:10</span>
+  <span>2026-09-03 02:23</span>
 </footer>
 
 </body>

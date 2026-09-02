@@ -7,7 +7,7 @@
 | 경로 | 파일 | 상태 | 크기 |
 |---|---|--:|--:|
 | `/` | [home.html](home.html) | 200 | 45,551B |
-| `/listings` | [listings.html](listings.html) | 200 | 101,858B |
+| `/listings` | [listings.html](listings.html) | 200 | 102,561B |
 | `/sold` | [sold.html](sold.html) | 200 | 28,918B |
 | `/recommend` | [recommend.html](recommend.html) | 200 | 146,224B |
 | `/detail/{listing_id}` | [detail_listing_id.html](detail_listing_id.html) | 200 | 21,498B |
@@ -28,7 +28,7 @@
 | `/admin/status` | [admin_status.html](admin_status.html) | 200 | 13,933B |
 | `/admin/import` | [admin_import.html](admin_import.html) | 200 | 8,436B |
 | `/admin/collect` | [admin_collect.html](admin_collect.html) | 200 | 47,962B |
-| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,406B |
+| `/admin/users` | [admin_users.html](admin_users.html) | 200 | 9,408B |
 | `/admin/scoring` | [admin_scoring.html](admin_scoring.html) | 200 | 47,555B |
 | `/admin/targets` | [admin_targets.html](admin_targets.html) | 200 | 22,504B |
 | `/admin/registry` | [admin_registry.html](admin_registry.html) | 200 | 35,877B |
@@ -37,7 +37,7 @@
 | `/admin/query` | [admin_query.html](admin_query.html) | 200 | 22,890B |
 | `/admin/api` | [admin_api.html](admin_api.html) | 200 | 3,357B |
 | `/admin/tools` | [admin_tools.html](admin_tools.html) | 200 | 6,714B |
-| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 26,250B |
+| `/admin/docs` | [admin_docs.html](admin_docs.html) | 200 | 26,220B |
 | `/admin/requests` | [admin_requests.html](admin_requests.html) | 200 | 6,820B |
 
 ## 못 낸 화면
