@@ -6204,7 +6204,33 @@ def s46_259_master_target_names():
     return True, f"마스터께서 정하신 차종 이름 {len(want)}개가 그대로다"
 
 
+def s46_260_end_signal_not_empty_pages():
+    """S46-260 — ★ 「빈 쪽」이 아니라 ★ **끝 신호**로 멈추는가 (개정 1108 · 09-02).
+
+    ★★★ 실측 09-02 — ★ KB 는 ★ 매물이 끝난 뒤에도 ★ **여섯 쪽을 72KB 로** 돌려준다.
+      ★ page 46 carSeq 11 → ★ 47·50 은 carSeq 0 인데 ★ **72KB 짜리 빈 카드 화면**이고
+      ★ ★ page 53 에서야 ★ **3,585B ＋ 「차량이 없습니다」** 가 온다.
+    ★ 우리 `TAIL_LIMIT` 이 ★ **4** 라 ★ 47~50 을 보고 멈췄다 —
+      ★ ★ 그래서 `G80_25T` 한 묶음이 안 끝나 ★ **34/35** 였다.  ★ 88.3% 의 정체다.
+    ★★ 「사이트가 막았다」가 ★ **아니었다** (오판 250).
+    ★ 잣대 — ★ 규격이 ★ 「빈 쪽 N개로 단정하지 마라 · 끝 신호를 보라」를 담는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "13-pipeline.md")
+    if not spec:
+        return False, "13-pipeline.md 를 못 읽었다"
+    bad = []
+    for want, label in (("끝 신호", "「끝 신호」"),
+                        ("3,585B", "KB 실측(3,585B)"),
+                        ("단정하는 것", "「빈 쪽으로 단정 금지」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "빈 쪽이 아니라 끝 신호로 멈추라고 규격에 있다"
+
+
 CHECKS = (
+    ("S46-260", "빈 쪽이 아니라 끝 신호로 멈추는가", s46_260_end_signal_not_empty_pages),
     ("S46-259", "마스터 차종 이름이 그대로인가", s46_259_master_target_names),
     ("S46-258", "판정 축 사전이 정해졌는가", s46_258_part_axis_decided),
     ("S46-257", "파이프라인이 엔카만 돌지 않는가", s46_257_pipeline_not_encar_only),
