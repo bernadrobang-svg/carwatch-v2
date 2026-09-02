@@ -20,7 +20,7 @@
 | `S4` | 테이블 DDL (STEP 28) | fatal | `tools/check_src.py:281` | **★ 없음** | 없음 | trace/13-pipeline.md:57 · trace/60-admin.md:91 · trace/60-admin.md:92 |
 | `S5` | config 키 (V4-15) | fatal | `tools/check_src.py:358` | **★ 없음** | 없음 | ARCHITECTURE_20260830.md:200 · trace/02-collect.md:22 · trace/02-collect.md:64 |
 | `S6` | 배점 검산 (불변식 ⑤) | fatal | `tools/check_src.py:393` | **★ 없음** | 없음 | ref/E-attach.md:66 · guide/03_이력.md:289 · guide/03_이력.md:855 |
-| `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:448` | **★ 없음** | 없음 | ref/E-attach.md:67 · guide/03_이력.md:734 · chapters/13-pipeline.md:114 |
+| `S7` | 매직 넘버 (V4-13) | fatal | `tools/check_src.py:448` | **★ 없음** | 없음 | ref/E-attach.md:67 · guide/03_이력.md:734 · guide/03_이력.md:1340 |
 | `S8` | 접미사 규칙 (STEP 4) | fatal | `tools/check_src.py:455` | **★ 없음** | 없음 | ref/E-attach.md:68 · guide/03_이력.md:92 · guide/03_이력.md:734 |
 | `S9` | 금지 근거 (STEP 14) | fatal | `tools/check_src.py:471` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:274 · CROSS_SITE_COMPARE.md:277 · CROSS_SITE_COMPARE.md:280 |
 | `S10` | 도메인 예외 (STEP 3) | fatal | `tools/check_src.py:477` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:277 · trace/02-collect.md:22 · trace/02-collect.md:64 |
