@@ -6146,7 +6146,37 @@ def s46_258_part_axis_decided():
     return True, f"part 축 {len(part)}값이 정해졌고 hood 도 매핑돼 있다"
 
 
+def s46_259_master_target_names():
+    """S46-259 — ★ 마스터께서 정하신 차종 이름이 ★ 그대로 있는가 (09-02).
+
+    ★ 마스터 확정 09-02 —
+      ★ 엔카 「GV70」      → ★ **가솔린 `GV70_25T`**
+      ★ 헤이딜러 「e-GV70」 → ★ `GV70_EV`
+    ★ 「모델 Y」는 ★ **답을 안 주셨다** — ★ 띄어쓰기만 다르므로 ★ `MODEL_Y` 로 넣고 진행했다.
+      ★ ★ 물리시면 되돌린다 (★ 개발측에 시킨 꼴 그대로 한다).
+    ★★ **차종은 마스터 몫이다** — ★ 내가 바꾸면 ★ 오판 237 자리를 다시 밟는다.
+    """
+    import json as _j
+
+    d = _j.loads(_read(ROOT / "config" / "dictionaries" / "target_map.json") or "{}")
+    bs = d.get("by_site") or {}
+    want = [("encar", "GV70", "GV70_25T"),
+            ("heydealer", "e-GV70", "GV70_EV"),
+            ("encar", "모델 Y", "MODEL_Y")]
+    bad = []
+    for site, name, key in want:
+        got = (bs.get(site) or {}).get(name) or {}
+        if got.get("target_key") != key:
+            bad.append(f"{site}/{name} → {got.get('target_key')} ≠ {key}")
+        if "_why" not in got:
+            bad.append(f"{site}/{name} 에 까닭이 없다")
+    if bad:
+        return False, "★ 마스터 확정과 다른 것 — " + " · ".join(bad[:3])
+    return True, "마스터께서 정하신 차종 이름 셋이 그대로다"
+
+
 CHECKS = (
+    ("S46-259", "마스터 차종 이름이 그대로인가", s46_259_master_target_names),
     ("S46-258", "판정 축 사전이 정해졌는가", s46_258_part_axis_decided),
     ("S46-257", "파이프라인이 엔카만 돌지 않는가", s46_257_pipeline_not_encar_only),
     ("S46-256", "막혔다를 증거 없이 쓰지 않는가", s46_256_blocked_needs_evidence),
