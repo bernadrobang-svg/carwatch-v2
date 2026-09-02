@@ -5973,6 +5973,100 @@ def s46_255_tester_items_listed_one_by_one():
     return True, f"시험자 번호 {len(want)}개가 다 낱개 줄로 있다"
 
 
+def v0_01_version_matches_history() -> tuple[bool, str]:
+    """V0-01 — ★ 이력의 ★ **마지막 개정 번호**와 ★ `00_버전.md` 가 같은가.
+
+    ★ 규격 `guide/00_버전.md:26` — 「★ 검산 V0-01 ★ 이력의 마지막 개정 번호와
+      ★ 이 파일이 같은가」
+    ★★ 왜 — ★ 「어느 버전으로 만들었나」가 ★ 회차 기록에 남아야 한다.
+      ★ ★ 버전 줄이 낡으면 ★ 개발측이 ★ **옛 규격으로 일한다**
+    ★ 못 읽으면 ★ 실패다 — ★ 「모르니 통과」로 넘기지 않는다
+    """
+    ver = _read(ROOT / "docs" / "guide" / "00_버전.md")
+    hist = _read(ROOT / "docs" / "guide" / "03_이력.md")
+    if not ver or not hist:
+        return False, "00_버전.md 나 03_이력.md 를 못 읽었다"
+    m = re.search(r"SPEC-\d{4}\.\d{2}\.\d{2}-r(\d+)", ver)
+    if not m:
+        return False, "00_버전.md 에 SPEC-…-rNNN 이 없다"
+    nums = [int(x) for x in re.findall(r"^\|\s*(\d{3,5})\s*\|", hist, re.M)]
+    if not nums:
+        return False, "03_이력.md 에서 개정 번호를 못 찾았다"
+    last = max(nums)
+    if int(m.group(1)) != last:
+        return False, (f"★ 버전 r{m.group(1)} ↔ 이력 마지막 개정 {last} — "
+                       "★ 둘이 다르다")
+    return True, f"버전과 이력이 같다 (r{last})"
+
+
+def v0_02_retired_marks_match() -> tuple[bool, str]:
+    """V0-02 — ★ 본문의 ★ **폐기 표시**와 ★ 표가 같은가.
+
+    ★ 규격 `guide/00_버전.md:56` — 「★ 폐기된 절을 지우지 않고
+      ★ 「폐기 — 개정 N」이라 적는다.  ★ 왜 바뀌었는지가 남아야 한다」
+    ★★ 재는 법 — ★ 본문이 ★ 「폐기 — 개정 N」이라 적은 ★ **그 N 이
+      ★ ★ 이력에 실제로 있는가**.  ★ 없는 번호를 적으면 ★ 근거가 없는 것이다
+    """
+    hist = _read(ROOT / "docs" / "guide" / "03_이력.md")
+    if not hist:
+        return False, "03_이력.md 를 못 읽었다"
+    known = {int(x) for x in re.findall(r"^\|\s*(\d{3,5})\s*\|", hist, re.M)}
+    if not known:
+        return False, "03_이력.md 에서 개정 번호를 못 찾았다"
+    bad = []
+    for q in sorted((ROOT / "docs").rglob("*.md")):
+        body = _read(q) or ""
+        for m in re.finditer(r"폐기\s*[—-]\s*개정\s*(\d{3,5})", body):
+            n = int(m.group(1))
+            if n not in known:
+                bad.append(f"{q.name} — 폐기 개정 {n} 이 이력에 없다")
+    if bad:
+        return False, f"★ 근거 없는 폐기 표시 {len(bad)}곳 — " + " · ".join(bad[:4])
+    return True, "폐기 표시가 다 이력에 있다"
+
+
+def v0_03_points_only_in_appendix() -> tuple[bool, str]:
+    """V0-03 — ★ **배점 숫자**가 ★ 부록 F 밖에 있는가.
+
+    ★ 규격 `guide/00_버전.md:78` — 「★ 「부록 F 대로」 — ★ 값을 다시 적지 않는다.
+      ★ 금지 ★ 본문에 배점 숫자를 다시 적는 것」
+    ★★ 왜 — ★ 두 군데 적으면 ★ **한 군데만 고치는 일**이 생긴다.
+      ★ ★ 이 판이 막으려는 「선언과 실제의 괴리」가 ★ 규격 안에서 나는 자리다.
+    ★ 재는 법 — ★ 「축 이름 ＋ 숫자」 꼴이 ★ 부록 F 밖 본문에 있는가.
+      ★ ★ 정본은 ★ `config/scoring.json` 이다 — ★ 축 이름을 거기서 가져온다
+    """
+    import json as _j
+
+    pol = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    comps = [k for k in (pol.get("components") or {}) if "." in k]
+    if not comps:
+        return False, "config/scoring.json 에서 축을 못 읽었다"
+    # ★★ 「본문」은 ★ **규격 장(`docs/chapters/`)**이다.
+    #   ★ `docs/guide/` 는 ★ 이력·오판대장 — ★ **기록**이다.
+    #   ★ ★ 기록은 ★ 「그때 몇 점이었나」를 ★ 적어야 뜻이 산다 —
+    #   ★ ★ ★ 그것까지 세면 ★ 63곳이 나와 ★ 검사가 늘 붉다 [실측 09-03].
+    # ★ 부록 F 는 ★ 배점을 적는 ★ **유일한 자리**다 — ★ 거기서는 안 센다
+    skip = ("f-table.md",)
+    bad = []
+    for q in sorted((ROOT / "docs" / "chapters").rglob("*.md")):
+        if q.name in skip:
+            continue
+        body = _read(q) or ""
+        for axis in comps:
+            for m in re.finditer(re.escape(axis) + r"[^0-9\n]{0,12}(\d{1,3})\b",
+                                 body):
+                got = int(m.group(1))
+                want = pol["components"].get(axis)
+                want = want if isinstance(want, int) else (want or {}).get("points")
+                if want is not None and got == want:
+                    bad.append(f"{q.name} — {axis} {got}")
+                    break
+    if bad:
+        return False, (f"★ 부록 F 밖에 배점 숫자 {len(bad)}곳 — "
+                       + " · ".join(sorted(set(bad))[:4]))
+    return True, f"배점 숫자가 부록 F 안에만 있다 (축 {len(comps)}개를 봤다)"
+
+
 def s46_256_blocked_needs_evidence():
     """S46-256 — ★ 「막혔다」를 ★ **증거 없이** 쓰지 않는가 (개정 1102 · 09-02).
 
@@ -6247,6 +6341,9 @@ CHECKS = (
     ("S46-258", "판정 축 사전이 정해졌는가", s46_258_part_axis_decided),
     ("S46-257", "파이프라인이 엔카만 돌지 않는가", s46_257_pipeline_not_encar_only),
     ("S46-256", "막혔다를 증거 없이 쓰지 않는가", s46_256_blocked_needs_evidence),
+    ("V0-01", "버전이 이력의 마지막 개정과 같은가", v0_01_version_matches_history),
+    ("V0-02", "폐기 표시가 이력에 있는가", v0_02_retired_marks_match),
+    ("V0-03", "배점 숫자가 부록 F 밖에 있는가", v0_03_points_only_in_appendix),
     ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),
     ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
     ("S46-253", "1부를 브라우저로 봤는가", s46_253_part1_seen_in_browser),
