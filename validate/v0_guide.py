@@ -5901,6 +5901,11 @@ def s46_254_pair_badge_not_by_order():
     if not spec:
         return False, "CROSS_SITE_COMPARE.md 를 못 읽었다"
     bad = []
+    # ★★ 규격만 고치고 ★ 시안을 안 고치는 것을 막는다 (RULES.md 3 · 오판 244 자리)
+    mock = _read(ROOT / "ref" / "screens" / "v4m_listings_시안.html")
+    for want, label in (("짝지어진 차", "머리에 수"), ("짝지어진 것만", "거르개")):
+        if want not in mock:
+            bad.append(f"목록 시안에 {label}가 없다")
     if "정렬에 ★ 짝 여부를 섞는 것" not in spec and "짝 여부를 섞" not in spec:
         bad.append("「정렬에 짝 여부를 섞지 마라」가 없다")
     for want, label in (("짝지어진 차 N대", "머리에 수"),
@@ -5914,7 +5919,30 @@ def s46_254_pair_badge_not_by_order():
     return True, "짝 배지를 순위로 올리지 않고 머리·거르개로 낸다"
 
 
+def s46_255_tester_items_listed_one_by_one():
+    """S46-255 — ★ 시험자 번호가 ★ **낱개로** 표에 있는가 (마스터 09-02).
+
+    ★★ 09-02 — ★ 마스터께서 ★ 「★ 테스터의 요건은 다 반영했고?」라 물으셨다.
+      ★ ★ 세어 보니 ★ **일곱이 빠져 있었다**.
+      ★ ★ ★ 까닭 둘 — ① ★ 「82~84」처럼 ★ **묶어 적어** ★ `83` 이 낱개로 안 남았다
+        ② ★ `8`·`10`·`29`·`101` 은 ★ **다른 글의 숫자에 우연히 걸려** ★ 있는 것처럼 보였다.
+    ★ 잣대 — ★ 밀린일에 ★ **번호마다 한 줄**(`| 8 |` 꼴)이 있는가.
+    """
+    bl = _read(ROOT / "docs" / "guide" / "07_밀린일대장.md")
+    if not bl:
+        return False, "밀린일대장을 못 읽었다"
+    want = [8, 10, 11, 16, 17, 18, 22, 23, 29, 34, 36, 60,
+            75, 82, 83, 84, 101, 107, 108, 114, 121, 122]
+    miss = [n for n in want
+            if not re.search(rf"^\|\s*{n}\s*\|", bl, re.M)]
+    if miss:
+        return False, (f"★ 낱개 줄이 없는 시험자 번호 {len(miss)}/{len(want)}개 — "
+                       + " · ".join(str(n) for n in miss[:6]))
+    return True, f"시험자 번호 {len(want)}개가 다 낱개 줄로 있다"
+
+
 CHECKS = (
+    ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),
     ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
     ("S46-253", "1부를 브라우저로 봤는가", s46_253_part1_seen_in_browser),
     ("S46-252", "관리 쓰기가 정말 저장되는가", s46_252_admin_write_actually_saves),
