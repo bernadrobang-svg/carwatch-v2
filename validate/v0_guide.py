@@ -5707,7 +5707,38 @@ def s46_250_mock_has_real_shape():
     return True, f"시안 {len(mocks)}장이 다 모양을 갖췄다"
 
 
+def s46_251_vehicle_key_per_site():
+    """S46-251 — ★ 사이트마다 ★ **차량 키가 붙는가** (시험자 8회차 · 09-02).
+
+    ★★★ 실측 09-02 — ★ `vehicle_id` 가 ★ **11,917건(56.3%)** 에 없다.
+      ★ ★ 사이트별로 보니 ★ **엔카만 붙고 ★ 열한 곳이 전부 0** 이다.
+      ★ ★ ★ 뿌리 — ★ 그 열한 곳은 ★ `parsed_at` 도 **전부 0** 이다.
+        ★ **S6(파싱) 구간을 한 번도 안 탔다** (`collect/runner.py:862`).
+    ★ `build_identities` 는 ★ 번호판도 차대도 없으면 ★ `site_id` 로라도 키를 만든다 —
+      ★ ★ 그 구간만 돌면 ★ **NULL 이 나올 수 없다**.
+    ★ 그런데 ★ 재료는 이미 있다 — ★ 번호판 **3,827건** · 차대 **592건**
+      (K카 467/463 · 현대인증 1,156 · 리본카 1,111 · 헤이딜러 275 · KB 479 …).
+    ★★ 짝을 못 지으면 ★ **마스터가 같은 차를 여러 번 보신다** — ★ 목적 ⑤ 가 깨진다.
+    ★ 잣대 — ★ 규격이 이 말을 담고 있는가 · ★ 그 구간이 사이트를 안 가리는가.
+    """
+    src = _read(ROOT / "collect" / "runner.py")
+    if "resolve_vehicle_id" not in src:
+        return False, "runner 가 resolve_vehicle_id 를 안 부른다"
+    core = _read(ROOT / "store" / "core.py")
+    if "KEY_SITE" not in core or "site_id_hash" not in core:
+        return False, "build_identities 가 site_id 대체 키를 잃었다"
+    spec = _read(ROOT / "docs" / "chapters" / "11-store" / "a-key.md")
+    if "site_vehicle_id" not in spec and "사이트 고유 ID" not in spec:
+        return False, "규격에서 「3순위 사이트 고유 ID」가 사라졌다"
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    if "parsed_at" not in order:
+        return False, ("★ 실측 09-02 — ★ 열한 사이트가 `parsed_at` 0 이라 "
+                       "★ 차량 키가 안 붙는다.  ★ 작업가이드에 안 올렸다")
+    return True, "차량 키 규격이 살아 있고 작업가이드에 올라 있다"
+
+
 CHECKS = (
+    ("S46-251", "사이트마다 차량 키가 붙는가", s46_251_vehicle_key_per_site),
     ("S46-250", "시안이 모양을 갖췄는가", s46_250_mock_has_real_shape),
     ("S46-248", "등급이 현실을 가르는가", s46_248_grade_is_realistic),
     ("S46-249", "마스터 예산이 그대로인가", s46_249_budget_pairs_are_masters),
