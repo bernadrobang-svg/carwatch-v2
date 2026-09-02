@@ -5553,7 +5553,58 @@ def s46_246_every_screen_has_a_mock():
     return True, f"화면 {len(tpl)}개가 다 시안을 갖고 있다"
 
 
+def s46_247_site_coverage():
+    """S46-247 — ★ 사이트에 있는 것을 ★ 우리가 얼마나 받았나 (마스터 09-02).
+
+    ★★★ 마스터 — 「★ 내가 선정한 차종이 안 들어오는 것을 ★ 너나 개발놈들이
+      ★ **제대로 수집 검증을 안 한 거야**.  ★ 목록이 제대로 뽑히는지부터
+      ★ 차종들의 호출 쿼리가 정상인 건지」 · 「★ **전수 검사해**」
+    ★★ 실측 09-02 — ★ KB차차차 ★ **6,261대 중 589대(9.4%)** 만 들고 있었다.
+      ★ ★ 대상 **29종 중 26종이 0건** — ★ GV70 전동화 23 · iX3 22 · C40 2 가 다 0.
+      ★ ★ ★ 그런데 ★ **호출 쿼리는 정상**이었다 (`carCode=9999`→0 · `3077`→1,801).
+    ★ `S5` 는 「두드린 수 vs 응답 수」만 본다 — ★ **「저기 몇 대인가」를 안 센다**.
+      ★ ★ 그래서 ★ **90%를 놓치고도 판이 「성공」으로 끝난다**.
+    ★ 잣대 — ① 자가 있는가 ② 잰 결과가 있는가 ③ ★ **0건 차종이 있으면 실패**
+    """
+    tool = ROOT / "tools" / "site_coverage.py"
+    if not tool.is_file():
+        return False, "tools/site_coverage.py 가 없다 — 잴 자가 없다"
+    raw = _read(ROOT / "outputs" / "site_coverage.json")
+    if not raw:
+        return False, "outputs/site_coverage.json 이 없다 — 아직 안 쟀다"
+    try:
+        data = json.loads(raw)
+    except Exception:  # noqa: BLE001
+        return False, "site_coverage.json 을 못 읽었다"
+    ours = data.get("_우리") or {}
+    bad, zero = [], []
+    for site, per in data.items():
+        if site.startswith("_") or not isinstance(per, dict):
+            continue
+        got = ours.get(site)
+        tot = per.get("_전체")
+        if tot is None:
+            nums = [v for k, v in per.items()
+                    if not k.startswith("_") and isinstance(v, int)]
+            tot = sum(nums) if nums else None
+            zero += [f"{site}:{k}" for k, v in per.items()
+                     if not k.startswith("_") and v == 0]
+        if isinstance(tot, int) and tot and isinstance(got, int):
+            pct = got / tot * 100
+            if pct < 60:
+                bad.append(f"{site} {got:,}/{tot:,} ({pct:.0f}%)")
+    msg = []
+    if bad:
+        msg.append("★ 많이 못 받은 사이트 " + " · ".join(bad[:3]))
+    if zero:
+        msg.append(f"★ 0건 차종 {len(zero)}개 — " + " · ".join(zero[:3]))
+    if msg:
+        return False, "  ".join(msg)
+    return True, "잰 사이트가 다 넉넉히 들어온다"
+
+
 CHECKS = (
+    ("S46-247", "사이트에 있는 것을 얼마나 받았나", s46_247_site_coverage),
     ("S46-246", "화면마다 시안이 있는가", s46_246_every_screen_has_a_mock),
     ("S46-245", "화면마다 그 화면에 드는 것이 있는가", s46_245_each_screen_has_its_parts),
     ("S46-244", "실패 응답도 원문으로 남는가", s46_244_failed_response_kept),

@@ -9,11 +9,11 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 51,824줄 · 3,614KB**
+**132파일 · 51,828줄 · 3,617KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,210줄
+- CHECKS.md 1,212줄
 - CROSS_SITE_COMPARE.md 1,337줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
@@ -33,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,210 | 149 |
+| `CHECKS.md`  ★ | 1,212 | 150 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,337 | 78 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -54,7 +54,7 @@
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 765 | 58 |
+| `SOURCE.md` | 766 | 58 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,154 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
@@ -126,7 +126,7 @@
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 653 | 273 |
+| `guide/06_오판대장.md` | 654 | 275 |
 | `guide/07_밀린일대장.md` | 548 | 41 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
