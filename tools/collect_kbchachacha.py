@@ -523,6 +523,38 @@ def main() -> int:
         gap = opt("--interval", 0)
         if gap:
             cfg = dict(cfg, interval_sec=gap)
+        # ★★★★★ 09-02 (2부 S1) — ★ **찾은 매물번호를 먼저 넣는다.**
+        #   ★ 전에는 ★ 목록이 **5,294건**을 찾아 놓고 ★ `store_details` 에만 넘겼다 —
+        #   ★ ★ 상세는 ★ 한 번에 `--detail`(기본 10)건만 받는다.
+        #   ★ ★ ★ 그래서 ★ **나머지 매물번호가 판마다 통째로 버려졌다**
+        #     ★ ★ ★ (실측 09-02 — ★ 목록 5,294 ↔ ★ DB **627건** · 차종 **3종**).
+        #   ★★ `--pages` 길은 ★ 이미 넣고 있었다 (`resolve_listing_id`).
+        #     ★ ★ 우리 차종만 받는 `--narrow` 길에만 ★ 그 걸음이 없었다.
+        #   ★★★ 여기서는 ★ **차종도 함께 붙인다** — ★ 어느 묶음이 찾았는지 아니까.
+        #     ★ ★ `--pages` 는 못 붙인다 (묶음 없이 전부를 훑으므로) —
+        #     ★ ★ ★ 그래서 ★ 차종 미정 260건이 쌓여 있었다
+        from store.core import resolve_listing_id
+        from store.raw import commit as _commit
+
+        _conn = open_db(os.path.join(ROOT, "carwatch.db"))
+        _at = _now()
+        _new = _tagged = 0
+        for _g, _gids in by_group:
+            for _sid in _gids:
+                _seen_row = _conn.execute(
+                    "SELECT 1 FROM core_listing WHERE site=? AND source_id=?",
+                    (SITE_CODE, _sid)).fetchone()
+                _lid = resolve_listing_id(_conn, SITE_CODE, _sid, _at)
+                if not _seen_row:
+                    _new += 1
+                # ★ 차종이 비어 있을 때만 붙인다 — ★ 이미 붙은 것을 덮지 않는다
+                _tagged += _conn.execute(
+                    "UPDATE core_listing SET target_key=?"
+                    " WHERE listing_id=? AND target_key IS NULL",
+                    (_g["for"], _lid)).rowcount
+        _commit(_conn)
+        print(f"★ 매물번호를 넣었다 — 새로 {_new:,}건 · 차종을 붙인 것 {_tagged:,}건")
+
         # ★ 한 묶음 크기 — ★ 안 주면 ★ 실측값 10 이다 (08-25)
         want = opt("--detail", DETAIL_BATCH)
         # ★★ 묶음을 ★ 몇 번 도는가 — ★ 사이에 ★ 5분씩 쉰다 (실측).
