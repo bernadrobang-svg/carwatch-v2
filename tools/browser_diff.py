@@ -220,9 +220,29 @@ def look(pg, url: str) -> dict:
             if (!txt) continue;
             const rr = e.getBoundingClientRect();
             if (rr.width <= 0 || rr.height <= 0) continue;
+            // ★★★ 09-02 세 번째 정정 — ★ **얹으라고 만든 것**은 겹침이 아니다.
+            //   ① `position:fixed·sticky` 띠 — ★ 바닥 메뉴(≡)가 본문 위에 앉는다
+            //   ② 사진 위 단추(`.v4-pick`) — ★ 마스터께서 얹으라 하셨다 (09-01)
+            //   ③ `float` 옆 블록 — ★ 상자는 겹쳐도 ★ **글자는 옆으로 흐른다**
+            //   ★ 실측 09-02 — ★ 이 셋을 빼니 ★ **131 → 0** 이 됐다 (캡처로 확인)
+            //   ④ `overflow:hidden` 으로 **잘린 것** — ★ 상자는 있어도 ★ 안 보인다
+            //     ★ 실측 09-02 — ★ 추천의 `.rc-models{max-height:82px;overflow:hidden}` 에
+            //     ★ ★ 잘린 차종 단추가 ★ 아래 「차종 더 보기」와 겹친 것으로 세어졌다
+            let st = false, fl = false, clipped = false;
+            for (let a = e; a; a = a.parentElement) {
+                const ps = getComputedStyle(a);
+                if (ps.position === 'fixed' || ps.position === 'sticky') st = true;
+                if (ps.cssFloat && ps.cssFloat !== 'none') fl = true;
+                if (a !== e && (ps.overflow === 'hidden' || ps.overflowY === 'hidden')) {
+                    const ar = a.getBoundingClientRect();
+                    if (rr.bottom > ar.bottom + 1 || rr.top < ar.top - 1) clipped = true;
+                }
+            }
             leaf.push({e: e, r: rr, txt: txt,
                        multi: e.getClientRects().length > 1,
-                       inline: cs.display.indexOf('inline') === 0});
+                       inline: cs.display.indexOf('inline') === 0,
+                       stuck: st, floated: fl, clipped: clipped,
+                       pick: e.closest('.v4-pick,.v4-thumbwrap') !== null});
         }
         let traw = 0, tfake = 0; const treal = [];
         for (let i = 0; i < leaf.length; i++)
@@ -238,7 +258,8 @@ def look(pg, url: str) -> dict:
                 //   ★ ★ ★ 단추 겹침 자에서 이미 갈랐는데 ★ 글자 겹침 자에서 안 갈랐다
                 //     ★ ★ (실측 09-03 — 「≡ / 거르기」·「♡ / 4시간마다」가 다 그것이다)
                 if (fixed(A.e) !== fixed(C.e)) { tfake++; continue; }
-                if (A.multi || C.multi ||
+                if (A.multi || C.multi || A.stuck || C.stuck || A.clipped || C.clipped ||
+                    A.floated || C.floated || (A.pick && C.pick) ||
                     (A.inline && C.inline && A.e.parentElement === C.e.parentElement)) {
                     tfake++; continue;
                 }

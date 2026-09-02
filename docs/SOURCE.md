@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 208개 · 총 75,164줄
+파일 208개 · 총 75,185줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -50,10 +50,10 @@
 | `tools/sync_registry.py` | 394 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `parse/hyundai_cert/mapping.py` | 374 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
+| `tools/browser_diff.py` | 362 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `analyze/axis/state.py` | 355 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tools/collect_hyundai_cert.py` | 351 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `parse/heydealer/mapping.py` | 341 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
-| `tools/browser_diff.py` | 341 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `tools/light_check.py` | 340 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `tools/build_dict.py` | 336 | RAW → 사전 생성. |
 | `parse/kcar/mapping.py` | 333 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
@@ -481,6 +481,12 @@ check:37  db:43  test_expected:49  test_halt:61  test_reprocess:82  test_refetch
 _int:48  cards:57  _fuel_of:82  _model_group:93  parse_card:111  _json:183  detail_text:190  _one:197  parse_detail:202  parse_detail_all:208  _num:278  _warranty:285  _months_since:339  _months_left:351  _options:368
 ```
 
+### `tools/browser_diff.py` — 362줄
+
+```
+pairs:35  look:48  main:298
+```
+
 ### `analyze/axis/state.py` — 355줄
 
 ```
@@ -497,12 +503,6 @@ target_of:79  _now:95  _post:99  _get:109  fetch_detail:120  load_filters:133  t
 
 ```
 _int:22  _won:29  _ym:34  _model_group:42  parse_list_item:60  parse_detail:89  fuel_efficiency_kmpl:117  options_of:124  record_of:153  warranty_of:206  _months_since:240  part_enums:252  panels_of:303
-```
-
-### `tools/browser_diff.py` — 341줄
-
-```
-pairs:35  look:48  main:277
 ```
 
 ### `tools/light_check.py` — 340줄
