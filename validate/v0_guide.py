@@ -5737,7 +5737,38 @@ def s46_251_vehicle_key_per_site():
     return True, "차량 키 규격이 살아 있고 작업가이드에 올라 있다"
 
 
+def s46_252_admin_write_actually_saves():
+    """S46-252 — ★ 관리 쓰기가 ★ **정말 저장되는가** (시험자 75·82~84 · 5회차째).
+
+    ★★★ 가이드가 09-02 에 ★ **직접 눌러 확인했다** —
+      ① `/admin/scoring` 선루프 8 → 9 저장 → `303` → ★ 합계 **911/911** 이 됐다.
+         ★ ★ `/admin/config` 는 「배점 합 > total_points」를 막는데 ★ 이 화면은 안 막는다.
+         ★ ★ ★ 곧 8 로 되돌렸다 — ★ 지금 910 이다.
+      ② `/admin/registry` 「안 쓴다」 저장 → `303` → ★ 미분류 **333 → 333** ·
+         ★ ★ `list/Count` 항목이 ★ **그대로 남았다**.
+    ★★ 마스터께서 인수인계에 못 박으셨다 — 「★ **HTTP 303 은 저장 성공이 아니다.
+      ★ 다시 읽어라**」.  ★ 두 화면 다 ★ 그 자리다.
+    ★ 잣대 — ★ 두 화면이 ★ 저장 뒤 ★ **상태를 다시 읽는 코드**를 갖는가 ·
+             ★ scoring 이 ★ **총점 막이**를 쓰는가.
+    """
+    src = _read(ROOT / "web" / "views.py")
+    if not src:
+        return False, "web/views.py 를 못 읽었다"
+    bad = []
+    seg = src.split("admin/scoring", 1)[-1][:6000]
+    if "total_points" not in seg and "910" not in seg:
+        bad.append("scoring 저장에 총점 막이가 없다 — 911 이 저장된다")
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    for want, who in (("911", "배점 911 저장"), ("333 → 333", "등록부 303")):
+        if want not in order:
+            bad.append(f"작업가이드에 「{who}」가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "관리 쓰기 두 건이 작업가이드에 올라 있고 총점 막이가 있다"
+
+
 CHECKS = (
+    ("S46-252", "관리 쓰기가 정말 저장되는가", s46_252_admin_write_actually_saves),
     ("S46-251", "사이트마다 차량 키가 붙는가", s46_251_vehicle_key_per_site),
     ("S46-250", "시안이 모양을 갖췄는가", s46_250_mock_has_real_shape),
     ("S46-248", "등급이 현실을 가르는가", s46_248_grade_is_realistic),
