@@ -456,17 +456,41 @@ def m3(ad: Client, db: str, root: str) -> None:
     conn_.execute("UPDATE recalc_job SET status='done' "
                   "WHERE status IN ('queued','running')")
     conn_.commit()
+    # ★★★★★ 09-02 (명령서 1부 1-7 · **5회차째**) — ★ **분모를 안 넘어야 저장된다.**
+    #   ★ 전에는 ★ 총점을 ★ 합에 맞춰 올려 줘 ★ 무엇이든 저장됐다 —
+    #   ★ ★ 그래서 ★ 합 **911** 이 그냥 들어갔다 (가이드가 눌러 확인 09-02).
+    #   ★ 그러므로 ★ **두 가지를 다 본다** — ① 넘으면 막힌다 ② 줄이면 된다
+    def _hud():
+        with open(os.path.join(root, "config", "scoring.json"),
+                  encoding="utf-8") as f:
+            return json.load(f)["components"].get("taste.hud")
+
+    _was = _hud()
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
                          "target": "taste.hud", "value": "25",
                          "reason": "HUD 를 더 본다", "previewed": "1"})
+    rec(40, "/admin/scoring", "분모를 넘으면 안 바뀐다",
+        f"{st} · hud={_hud()}", _hud() == _was,
+        "합이 분모를 넘으면 저장을 막는다 (1-7)")
+
+    # ★ 다른 축을 그만큼 줄이면 ★ 저장된다 — ★ 막이가 ★ **길을 아주 막는 것은 아니다**
+    token = ad.csrf("/admin/scoring")
+    ad.post("/admin/scoring",
+            {"csrf": token, "action": "component",
+             "target": "taste.trim", "value": "5",
+             "reason": "HUD 자리를 만든다", "previewed": "1"})
+    token = ad.csrf("/admin/scoring")
+    st, b, _l = ad.post("/admin/scoring",
+                        {"csrf": token, "action": "component",
+                         "target": "taste.hud", "value": "12",
+                         "reason": "HUD 를 더 본다", "previewed": "1"})
+    rec(40.5, "/admin/scoring", "자리를 만들면 바뀐다",
+        f"{st} · hud={_hud()}", _hud() == 12)
     with open(os.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
         pol = json.load(f)
-    rec(40, "/admin/scoring", "성분 점수 변경",
-        f"{st} · hud={pol['components'].get('taste.hud')}",
-        pol["components"].get("taste.hud") == 25)
 
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",

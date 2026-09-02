@@ -1800,8 +1800,12 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     want_opt = with_state if opt_money is None else opt_money
     opt_prices = _option_prices(conn) if (extras and want_opt) else {}
     high_km = _high_km(root)
-    # ★ 09-02 (1부 1-4) — ★ 사진을 받아 본 사이트를 ★ **한 번만** 센다 (`V11-34`)
-    _psites = photo_ready_sites(conn)
+    # ★★★★★ 09-02 (1부 1-4 · `V11-34`) — ★ **빈 사진이 있을 때만** 센다.
+    #   ★ 늘 세면 ★ 쪽마다 쿼리가 하나씩 는다 —
+    #   ★ ★ 실측 09-02 — ★ `/` 가 21 → **22** 로 상한을 넘었다.
+    #   ★★ 거의 모든 쪽은 ★ 사진이 다 있다 — ★ 그때는 ★ **한 번도 안 센다**
+    _psites = (photo_ready_sites(conn)
+               if any(not r[16] for r in recs) else frozenset())
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
                  opt_prices, axes, changes, base, site_tpl, _psites, km_unit,
                  monthly_unit, dep_cfg, state_by, market_by, high_km, root)

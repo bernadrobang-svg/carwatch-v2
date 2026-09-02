@@ -124,11 +124,20 @@ def flow_scoring(conn, acc, root) -> None:
     check("배점 — 축 총점이 비율로 재배분된다",
           sum(after_war.values()) == 120,
           f"{before_war} → {after_war}")
-    check("배점 — total_points 가 성분 합과 같다",
-          pol["total_points"] == sum(
-              v if isinstance(v, int) else v.get("points", 0)
-              for k, v in pol["components"].items()
-              if not (isinstance(v, dict) and v.get("skipped"))),
+    # ★★★★★ 09-02 (명령서 1부 1-7 · **5회차째**) — ★ **규칙이 바뀌었다.**
+    #   ★ 전에는 ★ 성분을 바꾸면 ★ 총점을 ★ **그 합으로 올려** 줬다 —
+    #   ★ ★ 그래서 ★ 합 **911** 이 ★ 그냥 저장됐다 (가이드가 눌러 확인 09-02).
+    #   ★★ 이제 ★ **분모는 안 움직인다** — ★ 합이 분모를 넘으면 ★ 저장이 막힌다.
+    #     ★ ★ 합이 ★ **작은** 것은 그대로 둔다 — ★ 「닿을 수 없는 자리」다 (08-30 확정).
+    #   ★ 그러므로 ★ 「같다」가 아니라 ★ **「넘지 않는다」**를 본다
+    _sum = sum(v if isinstance(v, int) else v.get("points", 0)
+               for k, v in pol["components"].items()
+               if not (isinstance(v, dict) and v.get("skipped")))
+    check("배점 — 성분 합이 분모를 넘지 않는다",
+          _sum <= pol["total_points"],
+          f"합 {_sum} / 분모 {pol['total_points']}")
+    check("배점 — 분모는 여기서 안 움직인다",
+          pol["total_points"] == before_total,
           f"{before_total} → {pol['total_points']}")
 
     _post(admin_scoring, conn, acc,

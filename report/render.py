@@ -378,12 +378,18 @@ def _photo_why(conn, site, photos_json, root: str) -> str | None:
     ★ 셈은 ★ `report.screens.build._photo_note` 하나만 쓴다 —
       ★ ★ 같은 일을 두 군데 적으면 ★ 한 군데만 고치는 일이 생긴다 (`S14`)
     """
-    from report.screens.build import _photo_note, _view_str
+    from report.screens.build import _photo_note, _view_str, photo_url
     from store.core import photo_ready_sites
     try:
         base = _view_str("photo_base_url", root)
     except (KeyError, OSError, ValueError):
         base = ""
+    # ★★★★★ 09-02 (`V11-34`) — ★ **사진이 있으면 안 센다.**
+    #   ★ 늘 세면 ★ 상세 한 쪽에 쿼리가 하나 는다 —
+    #   ★ ★ 실측 09-02 — ★ `/detail` 이 31 → **32** 가 됐다 (상한 28).
+    #   ★ 거의 모든 매물은 ★ 사진이 있다 — ★ 그때는 ★ 낼 말도 없다
+    if photo_url(photos_json, base):
+        return None
     return _photo_note(site, photos_json, base, photo_ready_sites(conn))
 
 
