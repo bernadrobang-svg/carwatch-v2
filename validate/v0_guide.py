@@ -5601,7 +5601,72 @@ def s46_247_site_coverage():
     return True, "잰 사이트가 다 넉넉히 들어온다"
 
 
+def s46_248_grade_is_realistic():
+    """S46-248 — ★ 등급이 ★ **현실을 가르는가** (마스터 09-02).
+
+    ★★★ 마스터 — 「★ 내가 원하는 것은 ★ **등급의 현실화**다.
+      ★ **차가 멀쩡하면 C** 라고 하고 ★ 나머지는 **가격과 취향**으로 하라」
+    ★★ 실측 09-02 — ★ 판정 10,458건 중 ★ **D 이하 6,206건(59%)** · ★ A **172건(1.6%)**.
+      ★ ★ 그러면 D·E 는 ★ 「나쁘다」가 아니라 ★ **「보통」**이다 — ★ 등급이 가르는 일을 못 한다.
+    ★ 잣대 — ① 「멀쩡하면 C」 규칙이 있는가 ② 상태 축 목록이 있는가
+             ③ ★ 까닭이 적혀 있는가
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    g = (c.get("grade_gates") or {}).get("state_ok_floor")
+    if not g:
+        return False, "★ 「차가 멀쩡하면 C」 규칙이 없다 (grade_gates.state_ok_floor)"
+    bad = []
+    if g.get("grade") != "C":
+        bad.append(f"바닥이 {g.get('grade')} 다 — C 여야 한다")
+    axes = g.get("state_axes") or []
+    comp = c.get("components") or {}
+    unknown = [a for a in axes if a not in comp]
+    if len(axes) < 5:
+        bad.append(f"상태 축이 {len(axes)}개뿐이다")
+    if unknown:
+        bad.append("components 에 없는 축 — " + " · ".join(unknown[:3]))
+    if "_why" not in g:
+        bad.append("까닭이 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, (f"「멀쩡하면 C」 · 상태 축 {len(axes)}개 · "
+                  f"그 위는 값·취향이 올린다")
+
+
+def s46_249_budget_pairs_are_masters():
+    """S46-249 — ★ 마스터께서 정하신 차종별 예산이 ★ 그대로 들어 있는가 (09-02).
+
+    ★ 마스터 — 「★ 그랑콜레오스는 2900 이하로 상한은 3200.  ★ 테슬라 Y랑 폴스타2는
+      ★ 2800 이하에 상한은 3500.  ★ ID4는 3000-3200.  ★ ID5 3200-3500.
+      ★ XC40 리차지랑 C40 리차지는 2900-3200.  ★ GV70은 3500-4200」
+    ★ **배점·컷·예산은 마스터 몫이다** — ★ 내가 비율로 만들어 덮어쓰면 안 된다.
+    """
+    import json as _j
+
+    c = _j.loads(_read(ROOT / "config" / "scoring.json") or "{}")
+    bm = c.get("budget_manwon") or {}
+    pair = bm.get("by_target_pair") or {}
+    want = {"KOLEOS_HEV": (2900, 3200), "MODEL_Y": (2800, 3500),
+            "POLESTAR2_EV": (2800, 3500), "ID4_EV": (3000, 3200),
+            "ID5_EV": (3200, 3500), "XC40_EV": (2900, 3200),
+            "C40_EV": (2900, 3200), "GV70_EV": (3500, 4200)}
+    bad = []
+    for k, (b, l) in want.items():
+        got = pair.get(k) or {}
+        if got.get("base") != b or got.get("limit") != l:
+            bad.append(f"{k}({got.get('base')}~{got.get('limit')} ≠ {b}~{l})")
+        if (bm.get("by_target") or {}).get(k) != l:
+            bad.append(f"{k} 한계가 by_target 과 다르다")
+    if bad:
+        return False, f"★ 마스터 값과 다른 것 {len(bad)}개 — " + " · ".join(bad[:3])
+    return True, f"마스터께서 정하신 차종 {len(want)}개 예산이 그대로다"
+
+
 CHECKS = (
+    ("S46-248", "등급이 현실을 가르는가", s46_248_grade_is_realistic),
+    ("S46-249", "마스터 예산이 그대로인가", s46_249_budget_pairs_are_masters),
     ("S46-247", "사이트에 있는 것을 얼마나 받았나", s46_247_site_coverage),
     ("S46-246", "화면마다 시안이 있는가", s46_246_every_screen_has_a_mock),
     ("S46-245", "화면마다 그 화면에 드는 것이 있는가", s46_245_each_screen_has_its_parts),
