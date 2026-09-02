@@ -174,6 +174,19 @@ def load_filters(root: str = ROOT) -> list:
         for car in cars:
             mark = (q["makerCode"], q.get("classCode"), car)
             if mark in seen:
+                # ★★★★★ 09-03 (2부 S1) — ★ **같은 질의를 두 차종이 쓴다.**
+                #   ★ 실측 09-03 — ★ `G70_20T` 와 `G70_25T` 가 ★ 질의가 **똑같다**
+                #   ★ ★ (`makerCode 189 · classCode 2698 · carCode 3138/3279/3139`) —
+                #   ★ ★ ★ KB 는 ★ **배기량으로 안 가른다**.  ★ 트림이 상세에 있다.
+                #   ★★ 전에는 ★ 뒤에 온 차종을 ★ **통째로 버렸다** —
+                #     ★ ★ 그래서 ★ `G70_20T` 이 ★ **0건**이었다 (저기 179건).
+                #   ★★★ 부름은 ★ 한 번만 한다 (그대로) — ★ 그러나 ★ **차종은 다 적는다**.
+                #     ★ ★ 어느 차종인지는 ★ 상세를 풀 때 ★ `fill_target_key` 가 가른다
+                for one_g in got:
+                    if (one_g["makerCode"], one_g["classCode"],
+                            one_g["carCode"]) == mark:
+                        one_g.setdefault("also", []).append(key)
+                        break
                 continue
             seen.add(mark)
             got.append({"for": key, "makerCode": q["makerCode"],
@@ -548,10 +561,16 @@ def main() -> int:
                 if not _seen_row:
                     _new += 1
                 # ★ 차종이 비어 있을 때만 붙인다 — ★ 이미 붙은 것을 덮지 않는다
-                _tagged += _conn.execute(
-                    "UPDATE core_listing SET target_key=?"
-                    " WHERE listing_id=? AND target_key IS NULL",
-                    (_g["for"], _lid)).rowcount
+                # ★★★★★ 09-03 — ★ **한 질의가 두 차종을 물면 ★ 안 붙인다.**
+                #   ★ `G70_20T`·`G70_25T` 는 ★ KB 질의가 똑같다 (배기량으로 안 가른다).
+                #   ★ ★ 그때 ★ 하나를 골라 붙이면 ★ **짐작으로 이름을 짓는 것**이다 (금지 6).
+                #   ★ ★ ★ 비워 두면 ★ 상세를 풀 때 ★ `fill_target_key` 가 ★ 트림으로 가른다.
+                #   ★ 다만 ★ **매물번호는 넣는다** — ★ 그래야 상세를 받으러 갈 수 있다
+                if not _g.get("also"):
+                    _tagged += _conn.execute(
+                        "UPDATE core_listing SET target_key=?"
+                        " WHERE listing_id=? AND target_key IS NULL",
+                        (_g["for"], _lid)).rowcount
         _commit(_conn)
         print(f"★ 매물번호를 넣었다 — 새로 {_new:,}건 · 차종을 붙인 것 {_tagged:,}건")
 
