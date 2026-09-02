@@ -56,11 +56,7 @@
   "_실측": "09-02"
  },
  "_못잰곳": {
-  "hyundai_cert": "API 가 totalCount 0 · 목록은 405/500",
-  "bmw_bps": "ca_id 별로 세야 한다 (10건/분류)",
-  "kcar": "목록 POST 가 500",
-  "reborncar": "sitemap 으로 세야 한다",
-  "encar": "★ 마스터 회선만"
+  "encar": "★ 마스터 회선만 — 서버에서 못 잰다 (우리 15,509건)"
  },
  "heydealer": {
   "_전체": 254,
@@ -75,9 +71,25 @@
   "_확인": "실측 09-02 — 20쪽까지 · /kr/vehicles/xhr-results/{page}"
  },
  "_합": {
-  "잰 사이트 저기": 11346,
-  "우리": 2414,
-  "비율": "21.3%",
-  "_실측": "09-02 · 잰 일곱 곳만.  ★ 엔카는 마스터 회선만"
+  "잰 사이트 저기": 14184,
+  "우리": 5667,
+  "비율": "40.0%",
+  "_실측": "09-02 · 열한 곳.  ★ 엔카만 못 쟀다 (마스터 회선)"
+ },
+ "hyundai_cert": {
+  "_전체": 1163,
+  "_확인": "실측 09-02 — POST /m/search/results/selling · 우리 수집기 본문 그대로(rowsPerPage 100 · lowModelYear 2017) · 12쪽"
+ },
+ "kcar": {
+  "_전체": 461,
+  "_확인": "실측 09-02 — GET /bc/stockCar/list?pageSize=1 의 data.listCount"
+ },
+ "bmw_bps": {
+  "_전체": 130,
+  "_확인": "실측 09-02 — /shop/list.php?ca_id 를 19개 훑어 it_id 를 모았다"
+ },
+ "reborncar": {
+  "_전체": 1084,
+  "_확인": "실측 09-02 — /sitemap-ext.xml 의 /SB1002/{id}"
  }
 }
