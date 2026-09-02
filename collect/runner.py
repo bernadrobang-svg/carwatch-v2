@@ -450,13 +450,14 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 _log_request(conn, ctx, "list", None, req.url, res,
                              int((time.time() - st) * MS_PER_SEC))
                 tally[res.status] = tally.get(res.status, 0) + 1
+                # ★ 09-02 명령서 15 (`S46-244`) — ★ **먼저 남기고 나서 끊는다**
+                r = save_raw(conn, res, schema["list"], adapter.site_code, None,
+                             req.url, req.headers, verify=verify_shape, reason=reject_reason,
+                            run_id=ctx.run_id)
                 streak.observe(res)
                 if streak.tripped:
                     halted = streak.reason()
                     break
-                r = save_raw(conn, res, schema["list"], adapter.site_code, None,
-                             req.url, req.headers, verify=verify_shape, reason=reject_reason,
-                            run_id=ctx.run_id)
                 rows += 1
                 if r == "rejected":
                     rejected += 1
@@ -500,17 +501,27 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 _log_request(conn, ctx, "facet", None, req.url, res,
                              int((time.time() - st) * MS_PER_SEC))
                 tally[res.status] = tally.get(res.status, 0) + 1
+                # ★★★★★ 09-02 명령서 15 (`S46-244`) — ★ **실패 응답도 원문이다.**
+                #   ★ 전에는 ★ `ok` 가 아니면 ★ `continue` 로 ★ **그냥 버렸다** —
+                #   ★ ★ 그리고 ★ `streak` 이 걸리면 ★ `save_facet` 앞에서 끊었다.
+                #   ★★ 규격 5장 STEP 53-⑤ — 「★ 실패 응답도 원문이다 · 삭제 금지」.
+                #     ★ ★ 차단당한 증거가 사라지면 ★ 「왜 안 왔나」를 못 캔다
+                #     ★ ★ ★ (`S46-92` 가 「0건으로 온 쿼리 4가지」를 묻는데
+                #       ★ ★ ★ 그 답이 되는 원문이 없었다).
+                #   ★ 못 읽은 응답은 ★ `axis_count=None` 이다 — ★ **0 과 가른다**
+                #     ★ ★ (0 = 「받았는데 축이 없다」 · None = 「못 읽었다」 · 금지 12)
+                _ok = res.status == "ok"
+                axes = aspect_names(res.raw) if _ok else ()
+                save_facet(conn, res, adapter.site_code, g.group_key, kind,
+                           req.url, len(axes) if _ok else None)
                 streak.observe(res)
                 if streak.tripped:
                     halted = streak.reason()
                     break
                 rows += 1
-                if res.status != "ok":
+                if not _ok:
                     _sleep(cfg, rng)
                     continue
-                axes = aspect_names(res.raw)
-                save_facet(conn, res, adapter.site_code, g.group_key, kind,
-                           req.url, len(axes))
                 bodies.setdefault(g.group_key, {})[kind] = res.raw
                 _sleep(cfg, rng)
         # 필수 축 집합 검사.  축 수로 보지 않는다 (V4-12 · fatal)
@@ -760,14 +771,26 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                     view = res.raw.get("view")
                     diag_grade = (view.get("encarDiagnosis")
                                   if isinstance(view, dict) else None)
-                streak.observe(res)
-                if streak.tripped:
-                    halted = streak.reason()
-                    break
+                # ★★★★★ 09-02 명령서 15 (`S46-244`) — ★ **먼저 남기고 나서 끊는다.**
+                #   ★ 전에는 ★ `streak.tripped` 가 ★ **`save_raw` 앞**에 있었다.
+                #   ★★ 이 `break` 는 ★ **안쪽(`kind`) 고리만** 끊는다 —
+                #     ★ ★ 바깥 매물 고리는 계속 돈다.  ★ 그래서 ★ 연속 실패로
+                #     ★ ★ ★ 한 번 걸리면 ★ **그 뒤 매물은 모두**
+                #       ★ ★ ★ 두드리기만 하고 ★ 원문을 안 남겼다.
+                #   ★★★ 실측 09-02 (판 `20260901T165912`) —
+                #     ★ `audit_request` detail **288건**(287 error) ↔
+                #     ★ ★ `raw_response` detail **3건**.  ★ **285건이 사라졌다**.
+                #     ★ ★ ★ 가이드가 센 「286건」이 이것이다.
+                #   ★ 규격 5장 STEP 53-⑤ — 「★ **실패 응답도 원문이다** · 삭제 금지」.
+                #     ★ ★ 차단당한 증거가 사라지면 ★ 「왜 안 왔나」를 못 캔다
                 if save_raw(conn, res, schema[kind], adapter.site_code, lid,
                             req.url, req.headers, verify=verify_shape, reason=reject_reason,
                             run_id=ctx.run_id) == "rejected":
                     rejected += 1
+                streak.observe(res)
+                if streak.tripped:
+                    halted = streak.reason()
+                    break
                 rows += 1
                 conn.execute(
                     f"UPDATE core_listing SET {kind}_status=? WHERE listing_id=?",
@@ -953,14 +976,15 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 # ★ 이 매물만 사라진 것일 수 있다 — 다음 대표로 다시 묻는다
                 _sleep(cfg, rng)
             tally[res.status] = tally.get(res.status, 0) + 1
-            streak.observe(res)
-            if streak.tripped:
-                halted = streak.reason()
-                break
+            # ★ 09-02 명령서 15 (`S46-244`) — ★ **먼저 남기고 나서 끊는다**
             if save_raw(conn, res, schema["catalog"], adapter.site_code, None,
                         req.url, req.headers, verify=verify_shape, reason=reject_reason,
                             run_id=ctx.run_id) == "rejected":
                 rejected += 1
+            streak.observe(res)
+            if streak.tripped:
+                halted = streak.reason()
+                break
             rows += 1
             _sleep(cfg, rng)
         rep = step_report("S7", None, len(keys), tally, rejected,

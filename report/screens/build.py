@@ -339,17 +339,37 @@ def photo_urls(photos_json: str | None, base: str) -> list:
     if not isinstance(photos, list):
         return []
     got = []
-    for p in photos:
+    for i, p in enumerate(photos):
+        # ★★★★★ 09-02 명령서 12 (`S46-243`) — ★ **꼴이 사이트마다 다르다.**
+        #   ★ 마스터 09-01 — 「★ 사진이 하나도 안 보이고」.
+        #   ★★ 까닭을 쟀다 [실측 09-02] — ★ 밑주소가 아니었다.
+        #     ★ 엔카만  `{"location": "/carpicture…", "ordering": …}` 꼴이고
+        #     ★ ★ K카·차차차·리본카·볼보·렉서스는 ★ **온전한 주소 글월**이다
+        #       ★ ★ (`["https://img.kcar.com/…", …]`).
+        #     ★ ★ ★ `isinstance(p, dict)` 에서 ★ **다섯 사이트가 통째로 버려졌다**
+        #   ★ 온전한 주소는 ★ 밑주소를 **안 붙인다** — ★ 붙이면 두 번 들어간다
+        if isinstance(p, str):
+            u = p.strip()
+            if u.startswith(("http://", "https://")):
+                got.append((float(i), u))     # ★ 차례는 적힌 차례다
+            continue
         if not isinstance(p, dict):
             continue
         loc = p.get("location")
-        if not loc or not str(loc).startswith("/"):
+        if not loc:
+            continue
+        loc = str(loc)
+        if loc.startswith(("http://", "https://")):
+            url = loc                          # ★ 이미 온전하다
+        elif loc.startswith("/"):
+            url = f"{base}{loc}"
+        else:
             continue
         try:
             o = float(p.get("ordering"))
         except (TypeError, ValueError):
             o = float("inf")       # 순서를 모르면 맨 뒤 — 있는 것을 버리지 않는다
-        got.append((o, f"{base}{loc}"))
+        got.append((o, url))
     got.sort(key=lambda x: x[0])
     # 같은 주소가 두 번 오면 한 번만 — 화면에 같은 사진이 겹친다
     return list(dict.fromkeys(u for _o, u in got))
@@ -370,20 +390,12 @@ def photo_url(photos_json: str | None, base: str) -> str | None:
         return None
     if not isinstance(photos, list):
         return None
-    best, best_ord = None, None
-    for p in photos:
-        if not isinstance(p, dict):
-            continue
-        loc = p.get("location")
-        if not loc:
-            continue
-        try:
-            o = float(p.get("ordering"))
-        except (TypeError, ValueError):
-            o = float("inf")       # 순서를 모르면 맨 뒤로 — 있는 것을 버리진 않는다
-        if best_ord is None or o < best_ord:
-            best, best_ord = loc, o
-    return f"{base}{best}" if best else None
+    # ★★★★★ 09-02 명령서 12 — ★ **`photo_urls` 하나로 모은다.**
+    #   ★ 전에는 ★ 여기서 ★ 꼴을 **따로 풀었다** — ★ 그래서 `photo_urls` 만
+    #   ★ ★ 고치면 ★ 목록 대표 사진은 ★ 그대로 안 나온다.
+    #   ★ ★ ★ 같은 일을 두 군데 적으면 ★ 한 군데만 고치는 일이 생긴다 (`S14`)
+    got = photo_urls(photos_json, base)
+    return got[0] if got else None
 
 
 def market_price(origin_won, year_month, as_of, target_key, dep: dict):

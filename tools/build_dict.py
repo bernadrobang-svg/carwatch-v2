@@ -99,9 +99,24 @@ def extract_distinct(conn: sqlite3.Connection, endpoint: str,
         )
         from store.raw import raw_body
 
+        # ★★★★★ 09-02 — ★ **원문이 다 JSON 은 아니다.**
+        #   ★ 리본카·BMW BPS·보배드림·KB·현대인증·볼보는 ★ **HTML 쪽**을 준다 —
+        #   ★ ★ 그것이 그 사이트의 ★ **바른 원문**이다 (실측 09-02 — 2,766건).
+        #   ★★ 전에는 ★ `json.loads` 가 ★ 그 첫 줄에서 죽어 ★ **S6a 가 통째로 멎었다**
+        #     ★ ★ (`JSONDecodeError: line 16 column 1` · 실측 09-02).
+        #   ★ 건너뛰되 ★ **조용히 넘기지 않는다** — ★ 몇 건인지 낸다
+        skipped = 0
         for (body,) in rows:
-            for value in _walk_path(json.loads(raw_body(body)), json_path):
+            try:
+                doc = json.loads(raw_body(body))
+            except (ValueError, TypeError):
+                skipped += 1
+                continue
+            for value in _walk_path(doc, json_path):
                 counts[value] = counts.get(value, 0) + 1
+        if skipped:
+            print(f"    ★ {endpoint} — JSON 이 아닌 원문 {skipped}건은 건너뛴다 "
+                  f"(HTML 쪽을 주는 사이트다)")
     return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
 
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>등록부 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=64a870c60b">
+<link rel="stylesheet" href="/static/app.css?v=5bf180bbc2">
 
 </head>
 <body class="s-admin-registry">
@@ -70,10 +70,10 @@
 </p>
 
 
-<h2>미분류 324건 — 원인별</h2>
-<p class="chips"><span class="chip">② 이름만 다름 79</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 112</span></p>
+<h2>미분류 333건 — 원인별</h2>
+<p class="chips"><span class="chip">② 이름만 다름 87</span><span class="chip">③ 늘 비어 있음 134</span><span class="chip">④ 새로운 것 112</span></p>
 <p class="big"><strong>사람이 봐야 할 것 112건</strong>
-  <span class="muted">나머지 212건은 제안이 있습니다</span></p>
+  <span class="muted">나머지 221건은 제안이 있습니다</span></p>
 
 
 <h2>정해 주십시오 — 판정을 막는 것부터</h2>
@@ -82,23 +82,23 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>platform_check:vehicleId</code>
+    <code>list:Count</code>
+    <span class="tag bad">판정을 막습니다</span>
     
-    <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>42284817</code> 2건 · <code>42401953</code> 1건 · <code>42572406</code> 1건 · <code>42481821</code> 1건 · <code>41804825</code> 1건 · 
-    <span class="dim">관측 12,937/12,937</span></p>
+    <code>없음</code> 21건 · <code>2341</code> 12건 · <code>1128</code> 7건 · <code>1525</code> 5건 · <code>2332</code> 5건 · 
+    <span class="dim">관측 21/7,187</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>cleaned</code> 
-    <span class="dim">— in_use — 「detail:vehicleId」과 같은 것으로 보입니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+    <code>SearchResults</code> <code>price</code> <code>hash_id</code> 
+    <span class="dim">— in_use — 「facet:Count」과 같은 것으로 보입니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     
     <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="platform_check">
-    <input type="hidden" name="json_path" value="vehicleId">
+    <input type="hidden" name="endpoint" value="list">
+    <input type="hidden" name="json_path" value="Count">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
@@ -120,23 +120,23 @@
 
 <div class="decide">
   <div class="dec-h">
-    <code>detail:advertisement.verification</code>
+    <code>list:SearchResults</code>
+    <span class="tag bad">판정을 막습니다</span>
     
-    <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>{reportExists · reportVersion · version …}</code> 179건 · 
-    <span class="dim">관측 12,348/12,348</span></p>
+    <code>[20개]</code> 156건 · <code>없음</code> 21건 · <code>[6개]</code> 2건 · <code>[14개]</code> 2건 · <code>[12개]</code> 1건 · 
+    <span class="dim">관측 0/7,187</span></p>
   <p class="muted">③ 옆에 있던 것
-    <code>type</code> <code>price</code> <code>status</code> 
-    <span class="dim">— 사람이 봐야 합니다</span></p>
-  <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
+    <code>Count</code> <code>price</code> <code>hash_id</code> 
+    <span class="dim">— not_provided — 안 쓰기로 정하면 됩니다</span></p>
+  <p class="muted">⑤ 안 정하면 — <strong>판정이 막힙니다 — 이 매물들이 등급을 못 받습니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
     <input type="hidden" name="csrf" value="render">
     
     <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="advertisement.verification">
+    <input type="hidden" name="endpoint" value="list">
+    <input type="hidden" name="json_path" value="SearchResults">
     <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
     
     <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
@@ -164,7 +164,7 @@
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
     <code>False</code> 131건 · <code>True</code> 48건 · 
-    <span class="dim">관측 12,348/12,348</span></p>
+    <span class="dim">관측 21,661/21,661</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>version</code> <code>reportVersion</code> 
     <span class="dim">— 사람이 봐야 합니다</span></p>
@@ -202,7 +202,7 @@
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
     <code>False</code> 179건 · 
-    <span class="dim">관측 12,348/12,348</span></p>
+    <span class="dim">관측 21,661/21,661</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
     <span class="dim">— 사람이 봐야 합니다</span></p>
@@ -240,7 +240,7 @@
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
     <code>False</code> 179건 · 
-    <span class="dim">관측 12,348/12,348</span></p>
+    <span class="dim">관측 21,661/21,661</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
     <span class="dim">— 사람이 봐야 합니다</span></p>
@@ -278,7 +278,7 @@
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
     <code>42441443</code> 2건 · <code>42335705</code> 1건 · <code>41743281</code> 1건 · <code>42460275</code> 1건 · <code>41780653</code> 1건 · 
-    <span class="dim">관측 12,111/12,111</span></p>
+    <span class="dim">관측 21,424/21,424</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>sellingPoint</code> <code>uniqueOptionPhotos</code> <code>choiceOptionPhotos</code> 
     <span class="dim">— in_use — 「detail:vehicleId」과 같은 것으로 보입니다</span></p>
@@ -316,7 +316,7 @@
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
     <code>1</code> 200건 · 
-    <span class="dim">관측 7,824/7,824</span></p>
+    <span class="dim">관측 13,909/13,909</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
     <span class="dim">— blocked — 「record:carKind」과 같은 것으로 보입니다</span></p>
@@ -354,7 +354,7 @@
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
     <code>2497</code> 88건 · <code>1998</code> 21건 · <code>3470</code> 14건 · <code>1969</code> 13건 · <code>1499</code> 12건 · 
-    <span class="dim">관측 7,824/7,824</span></p>
+    <span class="dim">관측 13,909/13,909</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
     <span class="dim">— in_use — 「detail:spec.displacement」과 같은 것으로 보입니다</span></p>
@@ -390,53 +390,53 @@
 <thead><tr><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th>제안</th><th class="r" title="원문에서 몇 번 보였는지입니다">관측</th></tr></thead>
 <tbody>
 
-<tr><td data-label="경로"><code>detail:advertisement.verification</code></td>
-  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
-
 <tr><td data-label="경로"><code>detail:advertisement.verification.reportExists</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
+  <td class="r num" data-label="관측">21,661 / 21,661</td></tr>
 
 <tr><td data-label="경로"><code>detail:view.meetgoCheckupAvailable</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
+  <td class="r num" data-label="관측">21,661 / 21,661</td></tr>
 
 <tr><td data-label="경로"><code>detail:view.meetgoVisitAvailable</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">12,348 / 12,348</td></tr>
+  <td class="r num" data-label="관측">21,661 / 21,661</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.sellingPointId</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,538 / 12,111</td></tr>
-
-<tr><td data-label="경로"><code>sellingpoint:uniqueOptionPhotos</code></td>
-  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,430 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,720 / 21,424</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.largeCategoryCode</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.largeCategoryName</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.mediumCategoryCode</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.mediumCategoryName</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.sentence</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
 
 <tr><td data-label="경로"><code>sellingpoint:sellingPoint.smallCategoryCode</code></td>
   <td data-label="제안" class="muted">사람이 봐야 합니다</td>
-  <td class="r num" data-label="관측">5,295 / 12,111</td></tr>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
+
+<tr><td data-label="경로"><code>sellingpoint:sellingPoint.smallCategoryName</code></td>
+  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
+  <td class="r num" data-label="관측">9,313 / 21,424</td></tr>
+
+<tr><td data-label="경로"><code>sellingpoint:uniqueOptionPhotos</code></td>
+  <td data-label="제안" class="muted">사람이 봐야 합니다</td>
+  <td class="r num" data-label="관측">9,175 / 21,424</td></tr>
 
 </tbody>
 </table>
@@ -445,7 +445,7 @@
 
 
 <p class="chips">
-<a class="chip" href="/admin/registry?usage=unclassified">unclassified (324)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (222)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (141)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
+<a class="chip" href="/admin/registry?usage=unclassified">unclassified (333)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (223)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (142)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (46)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
 </p>
 <table class="rows">
 <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th class="num">미관측</th>
@@ -578,7 +578,7 @@
   </form>
 </td></tr>
 
-<tr><td data-label="엔드포인트">detail</td><td data-label="경로"><code>advertisement.verification</code></td>
+<tr><td data-label="엔드포인트">detail</td><td data-label="경로"><code>advertisement.verification.reportExists</code></td>
 <td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
 <td data-label="컬럼"></td><td class="muted" data-label="근거">sync_registry 자동 적재. 사람이 분류해야 한다</td>
 <td data-label="분류">
@@ -586,7 +586,7 @@
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
     <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="advertisement.verification">
+    <input type="hidden" name="json_path" value="advertisement.verification.reportExists">
     <select name="usage">
       <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
     </select>
@@ -599,7 +599,7 @@
   </form>
 </td></tr>
 
-<tr><td data-label="엔드포인트">detail</td><td data-label="경로"><code>advertisement.verification.reportExists</code></td>
+<tr><td data-label="엔드포인트">detail</td><td data-label="경로"><code>partnership.brand.partnerCd</code></td>
 <td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
 <td data-label="컬럼"></td><td class="muted" data-label="근거">sync_registry 자동 적재. 사람이 분류해야 한다</td>
 <td data-label="분류">
@@ -607,7 +607,7 @@
     <input type="hidden" name="csrf" value="render">
     <input type="hidden" name="previewed" value="1">
     <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="advertisement.verification.reportExists">
+    <input type="hidden" name="json_path" value="partnership.brand.partnerCd">
     <select name="usage">
       <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
     </select>
@@ -672,7 +672,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260901T180017</span>
-  <span>2026-09-02 06:16</span>
+  <span>2026-09-02 10:19</span>
 </footer>
 
 </body>
