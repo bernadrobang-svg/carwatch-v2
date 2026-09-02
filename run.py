@@ -100,23 +100,66 @@ def _steps_from(name: str | None) -> tuple[str, ...]:
     return ALL_STEPS[ALL_STEPS.index(name):]
 
 
+# ★★★★★ 09-03 (가이드 지적 09-03 「왜 엔카만 도나」) — ★ **판이 사이트를 고른다.**
+#   ★ `run.py:113` 이 ★ `EncarAdapter` 로 ★ **못 박혀 있었다** —
+#   ★ ★ `endpoints.json` 에 ★ 열두 사이트가 다 있는데 ★ 판은 ★ **하나만** 돌았다.
+#   ★★ 어댑터 이름을 ★ 여기 표에 둔다 — ★ 사이트 이름은 ★ `endpoints.json` 이 정본이다.
+#     ★ ★ 어댑터가 없는 사이트는 ★ 저마다의 `tools/collect_*.py` 가 받는다 —
+#     ★ ★ ★ 그것을 ★ **지어내지 않는다** (없으면 「없다」고 말한다)
+ADAPTERS: dict = {
+    "encar": ("adapters.encar", "EncarAdapter"),
+    "kbchachacha": ("adapters.kbchachacha", "KbChaChaChaAdapter"),
+    "kia_cpo": ("adapters.kia_cpo", "KiaCpoAdapter"),
+    "bobaedream": ("adapters.bobaedream", "BobaedreamAdapter"),
+    "heydealer": ("adapters.heydealer", "HeydealerAdapter"),
+    "kcar": ("adapters.kcar", "KcarAdapter"),
+}
+
+
+def _adapter_for(site: str):
+    """★ 사이트 이름 → 어댑터.  ★ 없으면 ★ **무엇이 되는지 말한다** (금지 12)."""
+    got = ADAPTERS.get(site)
+    if got is None:
+        raise PolicyError(
+            f"{site} 는 판이 못 돈다 — 어댑터가 없다. "
+            f"되는 것: {', '.join(sorted(ADAPTERS))} · "
+            f"그 밖은 tools/collect_{site}.py 가 받는다",
+            step="STEP 47")
+    import importlib
+
+    return getattr(importlib.import_module(got[0]), got[1])
+
+
 def cmd_collect(dry: bool, only: list[str] | None = None,
                 from_step: str | None = None,
                 only_step: str | None = None,
                 diagnose_mode: bool = False,
-                refetch: bool = False, resume: bool = False) -> int:
-    cfg = load("endpoints.json")["encar"]
+                refetch: bool = False, resume: bool = False,
+                site: str | None = None) -> int:
+    site = site or "encar"
+    eps = load("endpoints.json")
+    eps = eps.get("sites", eps)
+    if site not in eps:
+        raise PolicyError(
+            f"endpoints.json 에 없는 사이트: {site} — "
+            f"있는 것: {', '.join(k for k in eps if not k.startswith('_'))}",
+            step="STEP 47")
+    cfg = eps[site]
     targets = _filter_targets(
         load_targets(os.path.join(ROOT, "config", "targets.json")), only or [])
     if only:
         print(f"★ 범위 제한: {', '.join(only)}  (targets.json 은 그대로다)")
-    adapter = EncarAdapter(cfg)
+    print(f"★ 사이트: {site}")
+    adapter = _adapter_for(site)(cfg)
     groups = collect_groups(targets, adapter.site_code)
 
     print(f"차종 {len(targets)}종 · collect_group {len(groups)}개")
     for g in groups:
         print(f"  {g.group_key:20} {'·'.join(g.target_keys)}")
-        print(f"    q = {adapter.build_q(g.site_query)}")
+        # ★ 09-03 — ★ `build_q` 는 ★ **엔카에만** 있다.
+        #   ★ 없는 어댑터에서 부르면 죽는다 — ★ 있을 때만 낸다
+        if hasattr(adapter, "build_q"):
+            print(f"    q = {adapter.build_q(g.site_query)}")
     if dry:
         print("\n--dry: 요청하지 않았다")
         return 0
@@ -415,7 +458,8 @@ if __name__ == "__main__":
     try:
         sys.exit(cmd_collect("--dry" in args, only, opt("--from"),
                              opt("--only"), "--diagnose" in args,
-                             "--refetch" in args, "--resume" in args))
+                             "--refetch" in args, "--resume" in args,
+                             opt("--site")))
     except PolicyError as e:
         print(f"[X] {e}")
         sys.exit(2)
