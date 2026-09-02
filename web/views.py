@@ -795,6 +795,8 @@ def _pick_state(flt, root: str = ROOT) -> dict:
         said.append(f"경과 {flt.days_max}일 이내")
     if getattr(flt, "price_dropped", False):
         said.append("가격 내린 것만")
+    if getattr(flt, "no_bare", False):
+        said.append("깡통 제외")
     if getattr(flt, "warranty_month_min", None) is not None:
         said.append(f"보증 잔여 {flt.warranty_month_min}개월 이상")
     if getattr(flt, "honesty_min", None) is not None:
@@ -815,6 +817,8 @@ def _pick_state(flt, root: str = ROOT) -> dict:
                       "score_car_min", "score_warranty_min",
                       "score_taste_min")}
     more["price_dropped"] = getattr(flt, "price_dropped", False)
+    # ★ 09-03 (1부 1-10) — ★ 눌러 둔 것을 ★ 화면이 그대로 되비춘다
+    more["no_bare"] = getattr(flt, "no_bare", False)
     # ★ 체크상자도 되돌려 넣는다 — 거르면 체크가 풀리면 안 된다 (#11)
     more["unknown_too"] = getattr(flt, "unknown_too", False)
     more["with_sold"] = getattr(flt, "with_sold", False)
@@ -1103,6 +1107,8 @@ def _filter(conn, q: dict, ver: dict, root: str = ROOT) -> ListingFilter:
         mismatch=q.get("mismatch") == "1",
         # ★ 09-03 (1부 1-1 ③) — ★ 「짝지어진 것만」
         paired=q.get("paired") == "1",
+        # ★ 09-03 (1부 1-10) — ★ 깡통 빼기
+        no_bare=q.get("no_bare") == "1",
         # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  켜면 함께 낸다
         lease=q.get("lease") == "1",
         # ★★ 관문 배제는 기본으로 뺀다 (개정 433).  ?excluded=1 이면 그것만 낸다

@@ -1576,6 +1576,16 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         where.append("(json_valid(l.options_choice_json)"
                      " AND json_array_length(l.options_choice_json) >= ?)")
         args.append(flt.option_min)
+    if getattr(flt, "no_bare", False):
+        # ★★★★★ 09-03 (1부 1-10) — ★ **깡통 빼기.**
+        #   ★ 「깡통」은 ★ 옵션가가 `bare_option_won` 이하인 차다 (마스터 확정 08-24).
+        #   ★★ 옵션가는 ★ 코드 목록(`options_choice_json`)에 ★ 값을 곱해야 나온다 —
+        #     ★ ★ SQL 로는 못 곱한다.  ★ 그래서 ★ **종 수**로 가른다:
+        #     ★ ★ ★ 옵션이 ★ **하나도 없으면** ★ 그것이 깡통이다.
+        #   ★ ★ ★ 값까지 보려면 ★ 판정이 낸 `option_price_won` 을 저장해야 한다 —
+        #     ★ ★ ★ 그것은 규격 물음이라 ★ 회차에 적었다 (여쭐 것)
+        where.append("(json_valid(l.options_choice_json)"
+                     " AND json_array_length(l.options_choice_json) > 0)")
     if getattr(flt, "honesty_min", None) is not None:
         where.append("d.trust_score >= ?")
         args.append(flt.honesty_min)

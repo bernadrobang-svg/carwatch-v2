@@ -329,6 +329,11 @@ class ListingFilter:
     fuel: str | None = None
     trim: str | None = None
     option_min: int | None = None       # 선택 옵션 종수 하한
+    # ★★★★★ 09-03 (1부 1-10 · 시험자 10) — ★ **깡통 빼기**.
+    #   ★ 시안 `v3_listings_시안.html:133` 에 ★ 단추가 있는데 ★ 화면에 없었다.
+    #   ★ 잣대는 ★ `config/web.json` `bare_option_won` 이다 —
+    #   ★ ★ 「옵션가 **100만원 이하**」 (마스터 확정 08-24).  ★ 코드에 안 박는다
+    no_bare: bool = False
     honesty_min: float | None = None    # 딜러 정직도 하한
     days_max: int | None = None         # 경과일 상한
     price_dropped: bool = False         # 가격이 내린 것만

@@ -107,7 +107,15 @@
 
       <h3>옵션</h3>
       <p class="chips">
-        <span class="chip">깡통 빼기 <input name="option_min" size="2" inputmode="numeric"
+        <!-- ★★★★★ 09-03 (1부 1-10 · 시험자 10) — ★ **한 번 눌러 빼는 단추**.
+             ★ 시안 `v3_listings_시안.html:133` 에 ★ 「깡통 빼기」가 ★ **단추**로 있다.
+             ★ ★ 화면에는 ★ 「N종 이상」 칸만 있어 ★ 수를 적어야 했다 —
+             ★ ★ ★ 마스터께서 ★ 「깡통이 몇 종인지」를 아셔야 쓸 수 있었다.
+             ★ 잣대는 `config/web.json` `bare_option_won` 이다 (마스터 확정 08-24) -->
+        <label class="chip" title="선택 옵션이 하나도 없는 차를 뺍니다 (마스터 확정 08-24 「깡통」)">
+          <input type="checkbox" name="no_bare" value="1"
+            {% if pick.no_bare %}checked{% endif %}> 깡통 빼기</label>
+        <span class="chip">옵션 <input name="option_min" size="2" inputmode="numeric"
           value="{{ pick.option_min }}" placeholder="1" title="선택 옵션 종수 이상">종 이상</span>
         <!-- ★★ 옵션은 ★ **이름으로** 건다 (마스터 확정 08-25 · B).
              ★ 이름은 `config/dictionaries/option_names.json` 이 정본이다 —
