@@ -5953,7 +5953,39 @@ def s46_255_tester_items_listed_one_by_one():
     return True, f"시험자 번호 {len(want)}개가 다 낱개 줄로 있다"
 
 
+def s46_256_blocked_needs_evidence():
+    """S46-256 — ★ 「막혔다」를 ★ **증거 없이** 쓰지 않는가 (개정 1102 · 09-02).
+
+    ★★★ 09-02 — ★ 개발측 커밋 제목이 ★ 「S1 KB 88.3% 에서 ★ **사이트가 막았다**」였다.
+      ★ ★ 가이드가 두드려 보니 ★ **안 막는다** —
+        robots 가 `/public/search/list.empty`·`/public/car/detail.kbc` 를 안 막고
+        (막힌 것은 `/public/review/car/detail.kbc` — ★ **다른 경로**다) ·
+        page 1·20·45 가 ★ 다 200 · carSeq 40 ·
+        ★ 쉼 없이 12번 쳐도 ★ 11/12 가 40건 · 상세도 200 · carSeq **109회**.
+      ★ ★ ★ 진짜는 ★ 「**35묶음 중 한 묶음이 안 끝났다**」였다 — ★ 회차에 그렇게 적혀 있다.
+    ★★ 마스터 인수인계 ㉰ — 「★ 개발측이 「막혔다」라 해도 ★ **네가 두드려 봐라**」.
+      ★ 08-24 에도 ★ KB 「전건 봇 차단」이 ★ **마스터 실측 6/6 정상**이었다.  ★ 같은 자리다.
+    ★ 잣대 — ★ 규격이 ★ 「이어 받는다」와 ★ 「증거 없이 막혔다를 쓰지 마라」를 담는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "13-pipeline.md")
+    if not spec:
+        return False, "13-pipeline.md 를 못 읽었다"
+    bad = []
+    for want, label in (("이어 받는다", "「이어 받는다」"),
+                        ("그날 다시 세어", "「그날 다시 세어 90%」"),
+                        ("두드린 증거 없이", "「증거 없이 막혔다를 쓰지 마라」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    if "그날 다시 세어" not in order:
+        bad.append("작업가이드 S1 의 끝 조건이 안 고쳐졌다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "「이어 받는다」와 「증거 없이 막혔다 금지」가 규격·가이드에 있다"
+
+
 CHECKS = (
+    ("S46-256", "막혔다를 증거 없이 쓰지 않는가", s46_256_blocked_needs_evidence),
     ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),
     ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
     ("S46-253", "1부를 브라우저로 봤는가", s46_253_part1_seen_in_browser),
