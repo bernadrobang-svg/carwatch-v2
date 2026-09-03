@@ -437,15 +437,22 @@ def load_details(cfg: dict, groups: list | None = None) -> dict:
     from store.rawfile import read as _read
     from store.rawfile import walk as _walk
 
-    rows = []
-    for path in _walk(site=SITE_CODE, endpoint="detail", root=ROOT):
-        env = _read(path)
-        if env is None or not env.get("body"):
-            continue
-        rows.append((env.get("source_id"), env["body"],
-                     env.get("fetched_at"), None))
+    # ★★★★★ 09-04 — ★ **전건을 RAM 에 쌓지 않는다.**
+    #   ★ 전에는 ★ 원문 파일을 ★ 통째로 `rows` 에 모은 뒤 ★ 돌았다.
+    #   ★★ 실측 09-03 — ★ 원문 하나가 ★ 평균 **488 KB** 다.
+    #     ★ ★ KB 상세 파일이 ★ 760개면 ★ **371 MB** · 리본카 1,158개면 ★ 565 MB —
+    #     ★ ★ ★ 장비 RAM 이 ★ **1,841 MB** 다.  ★ 09-03 에 ★ 그렇게 세 번 죽었다.
+    #   ★ 한 건씩 흘려 보낸다 — ★ 한 번에 ★ 한 개만 메모리에 있다 (`S46-265` 와 같은 뜻)
+    def _stream():
+        for path in _walk(site=SITE_CODE, endpoint="detail", root=ROOT):
+            env = _read(path)
+            if env is None or not env.get("body"):
+                continue
+            yield (env.get("source_id"), env["body"],
+                   env.get("fetched_at"), None)
+
     n = 0
-    for sid, body, fetched_at, parsed_at in rows:
+    for sid, body, fetched_at, parsed_at in _stream():
         put["본 원문"] += 1
         # ★ 값이 그대로면 건너뛴다 — ★ 이미 그 원문으로 넣었다
         if parsed_at and fetched_at and str(parsed_at) >= str(fetched_at):
