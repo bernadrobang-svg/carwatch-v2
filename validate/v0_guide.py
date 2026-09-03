@@ -6668,7 +6668,44 @@ def s46_263_four_states_and_pending():
     return True, "네 갈래 로직과 확인율 규격이 있다"
 
 
+def s46_264_deploy_is_up():
+    """S46-264 — ★ 배포가 ★ **열려 있는가** (마스터 09-03).
+
+    ★★★ 실측 09-03 — ★ `/` · `/listings` · `/admin/status` 가 ★ **전부 503 · 114B**.
+      ★ ★ **화면이 통째로 안 열린다** — ★ 마스터께서 ★ 아무것도 못 보신다.
+      ★ ★ ★ 그런데 ★ 그 직전 검사 한 판에서는 ★ `S46-95` 가 ★ **통과**였다 —
+        ★ 그 사이에 죽었다.  ★ **한 판 도는 데 4~5분**이라 ★ 그 틈이 안 잡힌다.
+    ★★ 그래서 ★ **맨 앞에서 한 번만** 두드린다 — ★ 화면 하나면 된다.
+      ★ ★ 503 이면 ★ **뒤의 배포 검사가 다 헛것**이다 (로그인도 못 한다).
+    ★ 잣대 — ★ `/listings` 가 ★ 200 인가.  ★ 아니면 ★ 그 수를 그대로 낸다.
+    """
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    if not base:
+        return False, "config/deploy.json 에 base_url 이 없다"
+    import urllib.error
+    import urllib.request
+
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    try:
+        req = urllib.request.Request(base + "/listings",
+                                     headers={"User-Agent": "carwatch-guide"})
+        with urllib.request.urlopen(req, timeout=40, context=ctx) as res:
+            code, size = res.status, len(res.read())
+    except urllib.error.HTTPError as exc:
+        return False, (f"★ 배포가 안 열린다 — HTTP {exc.code}  "
+                       "★ 이러면 뒤의 배포 검사가 다 헛것이다")
+    except Exception as exc:  # noqa: BLE001
+        return False, f"★ 배포를 못 두드렸다 ({type(exc).__name__})"
+    if code != 200:
+        return False, f"★ 배포가 HTTP {code} 다"
+    return True, f"배포가 열려 있다 (200 · {size:,}B)"
+
+
 CHECKS = (
+    ("S46-264", "배포가 열려 있는가", s46_264_deploy_is_up),
     ("S46-263", "네 갈래 로직이 규격에 있는가", s46_263_four_states_and_pending),
     ("S46-262", "개발측 「여쭐 것」이 물렸는가", s46_262_dev_questions_answered),
     ("S46-260", "빈 쪽이 아니라 끝 신호로 멈추는가", s46_260_end_signal_not_empty_pages),

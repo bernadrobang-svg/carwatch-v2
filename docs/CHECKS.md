@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **567개**
+검사 **568개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **567** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **568** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **22** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
 
@@ -220,6 +220,7 @@
 | `S46-261` | 회차의 수와 배포의 수가 같은가 | fatal | `validate/v0_guide.py:6232` | **★ 없음** | 없음 | — |
 | `S46-262` | 개발측 「여쭐 것」이 물렸는가 | fatal | `validate/v0_guide.py:6600` | **★ 없음** | 없음 | guide/03_이력.md:1347 · guide/03_이력.md:1348 · guide/06_오판대장.md:343 |
 | `S46-263` | 네 갈래 로직이 규격에 있는가 | fatal | `validate/v0_guide.py:6632` | **★ 없음** | 없음 | guide/03_이력.md:1351 · guide/03_이력.md:1352 · guide/03_이력.md:1353 |
+| `S46-264` | 배포가 열려 있는가 | fatal | `validate/v0_guide.py:6671` | **★ 없음** | 없음 | guide/03_이력.md:1354 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6053` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6079` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6105` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -787,6 +788,7 @@
 - `S46-261` 회차의 수와 배포의 수가 같은가 — `validate/v0_guide.py`
 - `S46-262` 개발측 「여쭐 것」이 물렸는가 — `validate/v0_guide.py`
 - `S46-263` 네 갈래 로직이 규격에 있는가 — `validate/v0_guide.py`
+- `S46-264` 배포가 열려 있는가 — `validate/v0_guide.py`
 - `S46-30` INDEX 가 docs 를 다 가리키는가 — `validate/v0_guide.py`
 - `S46-31` 규격이 있는 사이트가 config 에 있는가 — `validate/v0_guide.py`
 - `S46-32` 생성물이 최신인가 — `validate/v0_guide.py`
