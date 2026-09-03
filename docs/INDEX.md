@@ -9,16 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 52,288줄 · 3,712KB**
+**132파일 · 52,373줄 · 3,719KB**
 
 ★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,250줄
+- CHECKS.md 1,254줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,367줄
+- guide/03_이력.md 1,368줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/41-view.md 978줄
@@ -33,7 +33,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,250 | 154 |
+| `CHECKS.md`  ★ | 1,254 | 155 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -60,7 +60,7 @@
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
-| `chapters/10-collect/00-intro.md` | 545 | 24 |
+| `chapters/10-collect/00-intro.md` | 625 | 28 |
 | `chapters/10-collect/COLLECT_STRATEGY.md` | 115 | 5 |
 | `chapters/10-collect/a-endpoint.md` | 309 | 11 |
 | `chapters/10-collect/b-parse.md` | 104 | 4 |
@@ -121,7 +121,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,367 | 1,023 |
+| `guide/03_이력.md`  ★ | 1,368 | 1,025 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |

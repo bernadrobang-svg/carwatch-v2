@@ -6748,7 +6748,56 @@ def s46_265_raw_purged_after_load():
     return True, "적재 뒤 지우는 걸음이 규격에 있고 DB 를 통째로 안 올린다"
 
 
+def s46_266_detail_not_refetched():
+    """S46-266 — ★ **이미 받은 상세를 다시 안 받는가** (마스터 철학 ① · 09-03).
+
+    ★ 마스터 — 「★ 이미 적재 테이블의 상세페이지 목록만 받아 놓고
+      ★ **이미 받은 상세페이지는 대상으로 받지 않는다**는 게 철학인데」
+    ★ 실측 09-03 — ★ 상세를 이미 받은 것이 ★ **16,437건**이다.
+      ★ ★ 한 판에 그걸 또 부르면 ★ 사이트가 막고 ★ 하루가 간다.
+    ★ 잣대 — ★ 규격에 철학 ①이 있고 · ★ S5 가 ★ `detail_status` 로 거르는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "10-collect" / "00-intro.md")
+    bad = []
+    if "이미 받은 상세는 다시 안 받는다" not in spec:
+        bad.append("규격에 철학 ①이 없다")
+    src = _read(ROOT / "collect" / "runner.py")
+    seg = src.split("S5 상세 수집", 1)[-1][:9000]
+    if "detail_status" not in seg and "_status IS NULL" not in seg:
+        bad.append("S5 가 이미 받은 상세를 안 거른다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "이미 받은 상세를 다시 안 받는다"
+
+
+def s46_267_sold_swept_after_detail():
+    """S46-267 — ★ **팔린 것을 대조하고 치우는가** (마스터 철학 ② · 09-03).
+
+    ★★★ 마스터 — 「★ 제발 좀 ★ **이미 팔린 상태**, 즉 ★ 목록에 없는 상품에 대해서
+      ★ **상태 체크한 다음에 치우는 걸** 만들어줘.  ★ 특히 **엔카** 쪽
+      ★ 목록에 없는데 · 또는 ★ 상태가 판매 중으로 받았는데 **판매 완료가 된 것**은
+      ★ ★ **상세로 대조한 다음에 목록에서 삭제**해 줘」
+    ★★ 실측 09-03 — ★ 엔카에 ★ `active` 인데 `sales_status = CONTRACT` 인 것이
+      ★ **553건**이고 ★ 엔카 `gone` 은 ★ **29건**뿐이다.
+      ★ ★ 곧 ★ **팔린 차 553건이 마스터 화면에 살아 있다**.
+    ★ 잣대 — ★ 규격에 ★ 가·나·다·라·마 걸음이 있고 ★ 「대조 없이 죽이지 마라」가 있는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "10-collect" / "00-intro.md")
+    bad = []
+    for want, label in (("팔린 것은 대조하고 치운다", "철학 ②"),
+                        ("상세로 대조한다", "「상세로 대조한다」"),
+                        ("대조 없이", "「대조 없이 죽이지 마라」"),
+                        ("relisted", "되살리기")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "팔린 것을 상세로 대조하고 치우는 걸음이 있다"
+
+
 CHECKS = (
+    ("S46-266", "이미 받은 상세를 다시 안 받는가", s46_266_detail_not_refetched),
+    ("S46-267", "팔린 것을 대조하고 치우는가", s46_267_sold_swept_after_detail),
     ("S46-265", "적재 뒤 raw_response 를 지우는가", s46_265_raw_purged_after_load),
     ("S46-264", "배포가 열려 있는가", s46_264_deploy_is_up),
     ("S46-263", "네 갈래 로직이 규격에 있는가", s46_263_four_states_and_pending),
