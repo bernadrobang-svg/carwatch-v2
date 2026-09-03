@@ -6830,7 +6830,45 @@ def s46_268_order_is_one_and_current():
     return True, f"지시문이 한 벌이다 ({n}줄 · r{m.group(1)})"
 
 
+def s46_269_recommend_set_and_chips():
+    """S46-269 — ★ 추천 차종과 ★ **단추 크기**가 마스터 확정대로인가 (09-03).
+
+    ★★★ 마스터 — 「★ **버튼 사이즈 픽스 하지 말고 ★ 글자에 맞게 늘어나게** 하고.
+      ★ 여기 ★ **전기차 랑(모델Y는 주니퍼만) ＋ 그랑콜레오스 ＋ GV70 가솔린**만 보이게 해줘」
+    ★★ 배포 실측 09-03 — ★ 「BMW X3」가 ★ **「BM / W / X3」로 세 줄로 잘렸다**.
+    ★★★ 그리고 ★ `GV70_25T` 가 ★ **대상에 아예 없었다** — ★ `target_map` 에 이름표만 있고
+      ★ ★ **차종이 없어** ★ 붙을 데가 없었다.  ★ 가이드가 만들었다 (KB `carCode` **3154** 내연).
+    ★ 잣대 — ① 추천이 ★ **전기 ＋ 콜레오스 ＋ GV70 가솔린**인가
+             ② `MODEL_Y` 에 ★ `recommend_year_from` 이 있는가
+             ③ 시안이 ★ 「글자에 맞게 늘어난다」를 담는가
+    """
+    t = json.loads(_read(ROOT / "config" / "targets.json") or "{}")
+    rec = {k for k, v in t.items()
+           if isinstance(v, dict) and v.get("recommend")}
+    ev = {k for k, v in t.items()
+          if isinstance(v, dict) and (v.get("fuel_match") or []) == ["전기"]}
+    want = ev | {"KOLEOS_HEV", "GV70_25T"}
+    bad = []
+    miss = sorted(want - rec)
+    extra = sorted(rec - want)
+    if miss:
+        bad.append("추천에 빠진 것 — " + " · ".join(miss[:4]))
+    if extra:
+        bad.append("추천에 더 든 것 — " + " · ".join(extra[:4]))
+    if (t.get("MODEL_Y") or {}).get("recommend_year_from") != "2025-01":
+        bad.append("모델Y 주니퍼 조건(recommend_year_from)이 없다")
+    if "GV70_25T" not in t:
+        bad.append("★ GV70 가솔린 차종이 없다")
+    mock = _read(ROOT / "ref" / "screens" / "v4m_recommend_시안.html")
+    if "글자에 맞게 늘어난다" not in mock:
+        bad.append("시안에 「단추는 글자에 맞게 늘어난다」가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad[:3])
+    return True, f"추천 {len(rec)}종 · 모델Y 주니퍼만 · 단추는 글자에 맞게 늘어난다"
+
+
 CHECKS = (
+    ("S46-269", "추천 차종과 단추 크기가 확정대로인가", s46_269_recommend_set_and_chips),
     ("S46-268", "지시문이 한 벌이고 지금 판인가", s46_268_order_is_one_and_current),
     ("S46-266", "이미 받은 상세를 다시 안 받는가", s46_266_detail_not_refetched),
     ("S46-267", "팔린 것을 대조하고 치우는가", s46_267_sold_swept_after_detail),

@@ -109,7 +109,7 @@
     "displacement_range": null,
     "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:G80` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다"
   },
   "G70_25T": {
@@ -283,7 +283,8 @@
     "trim_exclude": [],
     "displacement_range": null,
     "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "GV60": {
     "label": "GV60",
@@ -329,7 +330,7 @@
     "displacement_range": null,
     "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV60` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다"
   },
   "KOLEOS_HEV": {
@@ -381,7 +382,9 @@
     ],
     "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:KOLEOS` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
     "active": true,
-    "_쉬는 까닭": "★ [마스터 확정 09-01] 추천 탭 1 이 「콜레오스 · 수입 전기차 모두 · XC60 · S60 · X3」를 요구하므로 ★ 되살렸다"
+    "_쉬는 까닭": "★ [마스터 확정 09-01] 추천 탭 1 이 「콜레오스 · 수입 전기차 모두 · XC60 · S60 · X3」를 요구하므로 ★ 되살렸다",
+    "recommend": true,
+    "_recommend_why": "★★★★★ 마스터 확정 09-03 — 「★ 여기 ★ **전기차 랑(모델Y는 주니퍼만) ＋ 그랑콜레오스 ＋ GV70 가솔린**만 보이게 해줘」"
   },
   "SPORTAGE_LPI": {
     "label": "스포티지 LPi",
@@ -549,7 +552,10 @@
     "trim_exclude": [],
     "displacement_range": null,
     "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:MODEL_Y` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
-    "active": true
+    "active": true,
+    "recommend": true,
+    "recommend_year_from": "2025-01",
+    "_recommend_why": "★★★★★ 마스터 확정 09-03 — 「★ 여기 ★ **전기차 랑(모델Y는 주니퍼만) ＋ 그랑콜레오스 ＋ GV70 가솔린**만 보이게 해줘」  ★ **주니퍼만** — ★ 2025-01 부터다 (제원 실측 09-02 — 초기형 4,751 / 주니퍼 4,790 · 우리 매물 450 대 377)"
   },
   "X3_IMPORT": {
     "label": "BMW X3",
@@ -609,7 +615,7 @@
     "_collect_group_why": "★ 08-24 마스터 확정 — ★ 한 사이트 전담으로 묶지 않는다.  ★ 엔카·KB·K카·기아·현대에서 ★ 겹쳐 받고 ★ `cno`(차량번호)로 가른다 (`docs/DEDUP_CROSS_SITE.md`).  ★ 목적 ⑤ 「사이트 안 가고 훑는다」가 그것이다",
     "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통",
     "active": true,
-    "recommend": true,
+    "recommend": false,
     "_왜 recommend=true": "★ [개발측 09-04 · 규칙 1] ★ 규격 `docs/RECOMMEND_SCREEN.md` 의 표가 정본이다 — ★ 탭 1 은 ★ **14종**이고 ★ 이 차종이 ★ 그 표에 들어 있다 (★ 「마스터께서 따로 부르신 셋 — XC60 · S60 · X3」 · 「볼보 — XC40_IMPORT · XC40_EV」).  ★★ 그런데 ★ `recommend: false` 가 ★ **22종에 똑같이 복사**돼 있었다 — ★ 거기 인용된 마스터 말씀은 ★ 「제네시스랑 그랜저」뿐이다.  ★★★ 실측 09-04 — ★ 그래서 ★ 추천에 ★ **폴스타·모델Y·콜레오스만** 보였다.  ★ 마스터 — 「★ 왜 볼보와 폭스바겐이 안 보이지?」.  ★ ★ 볼보 XC60 **331대** · XC40 **161대** · S60 **72대** · BMW X3 **367대**가 ★ 빠져 있었다"
   },
   "GLC_IMPORT": {
@@ -905,7 +911,7 @@
     "_collect_group_why": "★ 08-24 마스터 확정 — ★ 한 사이트 전담으로 묶지 않는다.  ★ 엔카·KB·K카·기아·현대에서 ★ 겹쳐 받고 ★ `cno`(차량번호)로 가른다 (`docs/DEDUP_CROSS_SITE.md`).  ★ 목적 ⑤ 「사이트 안 가고 훑는다」가 그것이다",
     "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통",
     "active": true,
-    "recommend": true,
+    "recommend": false,
     "_왜 recommend=true": "★ [개발측 09-04 · 규칙 1] ★ 규격 `docs/RECOMMEND_SCREEN.md` 의 표가 정본이다 — ★ 탭 1 은 ★ **14종**이고 ★ 이 차종이 ★ 그 표에 들어 있다 (★ 「마스터께서 따로 부르신 셋 — XC60 · S60 · X3」 · 「볼보 — XC40_IMPORT · XC40_EV」).  ★★ 그런데 ★ `recommend: false` 가 ★ **22종에 똑같이 복사**돼 있었다 — ★ 거기 인용된 마스터 말씀은 ★ 「제네시스랑 그랜저」뿐이다.  ★★★ 실측 09-04 — ★ 그래서 ★ 추천에 ★ **폴스타·모델Y·콜레오스만** 보였다.  ★ 마스터 — 「★ 왜 볼보와 폭스바겐이 안 보이지?」.  ★ ★ 볼보 XC60 **331대** · XC40 **161대** · S60 **72대** · BMW X3 **367대**가 ★ 빠져 있었다"
   },
   "S60_IMPORT": {
@@ -966,7 +972,7 @@
     "_collect_group_why": "★ 08-24 마스터 확정 — ★ 한 사이트 전담으로 묶지 않는다.  ★ 엔카·KB·K카·기아·현대에서 ★ 겹쳐 받고 ★ `cno`(차량번호)로 가른다 (`docs/DEDUP_CROSS_SITE.md`).  ★ 목적 ⑤ 「사이트 안 가고 훑는다」가 그것이다",
     "_연식": "[마스터 08-27] ★ 「2019년도 기준으로 잡자」 — ★ 수입 열 종 공통",
     "active": true,
-    "recommend": true,
+    "recommend": false,
     "_왜 recommend=true": "★ [개발측 09-04 · 규칙 1] ★ 규격 `docs/RECOMMEND_SCREEN.md` 의 표가 정본이다 — ★ 탭 1 은 ★ **14종**이고 ★ 이 차종이 ★ 그 표에 들어 있다 (★ 「마스터께서 따로 부르신 셋 — XC60 · S60 · X3」 · 「볼보 — XC40_IMPORT · XC40_EV」).  ★★ 그런데 ★ `recommend: false` 가 ★ **22종에 똑같이 복사**돼 있었다 — ★ 거기 인용된 마스터 말씀은 ★ 「제네시스랑 그랜저」뿐이다.  ★★★ 실측 09-04 — ★ 그래서 ★ 추천에 ★ **폴스타·모델Y·콜레오스만** 보였다.  ★ 마스터 — 「★ 왜 볼보와 폭스바겐이 안 보이지?」.  ★ ★ 볼보 XC60 **331대** · XC40 **161대** · S60 **72대** · BMW X3 **367대**가 ★ 빠져 있었다"
   },
   "EX60_IMPORT": {
@@ -1003,7 +1009,7 @@
     "_no_stock_ok": true,
     "_no_stock_why": "[가이드 08-28] ★ 2025년 신차라 ★ 중고 매물이 없는 것이 정상이다.  ★ S46-92(Count 0 알림)가 이것을 보고 안 운다",
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다"
   },
   "SPEC_DEFAULT_ON": {
@@ -1068,7 +1074,7 @@
     "_전기_섞임": "[실측 08-28] ★ 엔카 42152084 — ★ ModelGroup=XC40 인데 ★ 연료가 전기다(EX40 · 트윈 얼티메이트 · 2024-08).  ★ 엔카는 ★ EX40 을 XC40 아래 둔다 — ★ `fuel_match` 로 갈린다",
     "_가른 날": "★ 2026-09-01 — 마스터 지시로 ★ 전기(Recharge)를 `XC40_EV` 로 뺐다",
     "active": true,
-    "recommend": true,
+    "recommend": false,
     "_왜 recommend=true": "★ [개발측 09-04 · 규칙 1] ★ 규격 `docs/RECOMMEND_SCREEN.md` 의 표가 정본이다 — ★ 탭 1 은 ★ **14종**이고 ★ 이 차종이 ★ 그 표에 들어 있다 (★ 「마스터께서 따로 부르신 셋 — XC60 · S60 · X3」 · 「볼보 — XC40_IMPORT · XC40_EV」).  ★★ 그런데 ★ `recommend: false` 가 ★ **22종에 똑같이 복사**돼 있었다 — ★ 거기 인용된 마스터 말씀은 ★ 「제네시스랑 그랜저」뿐이다.  ★★★ 실측 09-04 — ★ 그래서 ★ 추천에 ★ **폴스타·모델Y·콜레오스만** 보였다.  ★ 마스터 — 「★ 왜 볼보와 폭스바겐이 안 보이지?」.  ★ ★ 볼보 XC60 **331대** · XC40 **161대** · S60 **72대** · BMW X3 **367대**가 ★ 빠져 있었다"
   },
   "V60CC_IMPORT": {
@@ -1205,7 +1211,8 @@
       "전기"
     ],
     "_fuel_why": "★ C40 은 ★ 전기 전용이다",
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "EX30_EV": {
     "label": "볼보 EX30 (전기)",
@@ -1234,7 +1241,7 @@
       "전기"
     ],
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다"
   },
   "POLESTAR2_EV": {
@@ -1272,7 +1279,7 @@
       "전기"
     ],
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다"
   },
   "POLESTAR4_EV": {
@@ -1309,7 +1316,8 @@
     "fuel_match": [
       "전기"
     ],
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "POLESTAR3_EV": {
     "label": "폴스타 3 (전기)",
@@ -1333,7 +1341,7 @@
       "전기"
     ],
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다"
   },
   "IX3_EV": {
@@ -1370,7 +1378,8 @@
       "전기"
     ],
     "year_range": "202100..",
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "ID4_EV": {
     "_차명": "폭스바겐 ID.4 (전기)",
@@ -1406,7 +1415,8 @@
       "전기"
     ],
     "year_range": "202100..",
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "UX300E_EV": {
     "_차명": "렉서스 UX300e (전기)",
@@ -1432,7 +1442,7 @@
       }
     },
     "active": true,
-    "recommend": false,
+    "recommend": true,
     "_왜 recommend=false": "★ [마스터 정정 09-02] 「★ 내가?  ★ 왜 제네시스랑 그랜저를 쉬게 해?  ★ 추천에서 뺀 거지 ★ 수집에서 뺀 거니?」.  ★ ★ **추천에서만 뺀 것**이다 — ★ 내가 `active=false` 로 ★ **수집까지 껐다.  ★ 물린다**.  ★ 수집은 그대로 하고 ★ 추천 탭 1 에서만 안 보인다",
     "label": "렉서스 UX300e (전기)",
     "fuel_match": [
@@ -1467,7 +1477,8 @@
         "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 0건"
       }
     },
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "ID5_EV": {
     "label": "폭스바겐 ID.5",
@@ -1492,7 +1503,8 @@
         "_세대": "★ [실측 09-02] ★ 마스터 지적으로 다시 두드렸다 — ★ KB 에 ★ ID.5 가 있다(「폭스바겐 ID.5 Pro 기본형」 3,830만 · carSeq 28697447).  ★ 09-01 에 「없다」 한 것은 ★ 내가 못 찾은 것이다"
       }
     },
-    "active": true
+    "active": true,
+    "recommend": true
   },
   "XC40_EV": {
     "label": "볼보 XC40 리차지 (전기)",
@@ -1546,6 +1558,65 @@
       }
     },
     "_가르는 법": "★ KB 는 carCode 로 갈린다(3244=Recharge · 2940=가솔린).  ★ 다른 곳은 열쇠가 같아 ★ fuel_match 로 가른다 — ★ 짐작으로 코드를 나누지 않는다",
-    "active": true
-  }
+    "active": true,
+    "recommend": true
+  },
+  "GV70_25T": {
+    "label": "GV70 2.5T (가솔린)",
+    "collect_group": "encar:GV70",
+    "site_query": {
+      "encar": {
+        "CarType": "Y",
+        "Manufacturer": "제네시스",
+        "ModelGroup": "GV70"
+      },
+      "heydealer": [
+        {
+          "brand": "vgm7Do",
+          "model-group": "peqqRe",
+          "model": "Mo7j63",
+          "_차명": "e-GV70"
+        }
+      ],
+      "hyundai_cert": {
+        "mdlGrpList": "1389_V",
+        "_실측": 3
+      },
+      "bobaedream": {
+        "maker_no": "1010",
+        "model_no": "1070",
+        "_차명": "제네시스 GV70",
+        "_실측": "[실측 08-25] ★ ajax_maker_new.php 로 확인했다"
+      },
+      "kbchachacha": {
+        "makerCode": "189",
+        "classCode": "2771",
+        "_차명": "제네시스 GV70",
+        "_실측": "[실측 08-25] ★ carMaker.json · carClass.json 으로 확인했다",
+        "carCode": [
+          "3154"
+        ],
+        "_세대": "[가이드 09-03] ★ **내연 GV70 만** — ★ `3154`.  ★ `3253`(ELECTRIFIED)은 ★ `GV70_EV` 가 쓴다 [08-27 실측 — 3154 는 내연 728건]"
+      },
+      "revolt": {
+        "brand_hash_id": "vgm7Do",
+        "model_hash_id": "Mo7j63",
+        "_차명": "Electrified GV70",
+        "_실측": "[실측 09-01] ★ GET /brands/ 안의 `models[]` 에서 뽑았다.  ★ 거르개는 `?model_hash_id=` 다 (`?model=` 은 안 걸린다 — 전건이 온다).  ★ 09-01 건수 2건"
+      }
+    },
+    "year_range": "202200..",
+    "price_range": "..6000",
+    "fuel_match": [
+      "가솔린"
+    ],
+    "trim_include": [],
+    "trim_exclude": [],
+    "displacement_range": null,
+    "_collect_group_why": "★ 개정 655 — ★ 한 사이트 전담으로 묶지 않는다 (마스터 확정 08-24).  ★ 전에는 `encar:GV70` 였다.  ★ 엔카·KB·K카·기아·현대에서 겹쳐 받고 `cno`(차량번호)로 가른다",
+    "active": true,
+    "_새로_만든_까닭": "★★★★★ 마스터 확정 09-03 — 「★ 여기 ★ **전기차 랑(모델Y는 주니퍼만) ＋ 그랑콜레오스 ＋ GV70 가솔린**만 보이게 해줘」  ★★ **`GV70_25T` 가 ★ 대상에 아예 없었다** — ★ `target_map` 에 ★ 「엔카 GV70 → `GV70_25T`」 이름표만 있고 ★ **차종이 없어** ★ 붙을 데가 없었다 [실측 09-03].  ★ ★ `GV70_EV` 를 본떠 만들고 ★ 연료만 **가솔린**으로 바꿨다",
+    "recommend": true
+  },
+  "_recommend_why": "★★★★★ 마스터 확정 09-03 — 「★ 여기 ★ **전기차 랑(모델Y는 주니퍼만) ＋ 그랑콜레오스 ＋ GV70 가솔린**만 보이게 해줘」  ★ 곧 ★ **전기 16종 ＋ 콜레오스 ＋ GV70 가솔린 = 18종**이다.  ★ 뺀 넷 — `X3_IMPORT` · `XC60_IMPORT` · `S60_IMPORT` · `XC40_IMPORT`(전기 제외).  ★★ `GV60` 는 ★ **전기차라 넣었다** — ★ 09-02 「GV60 제외」는 ★ **엔카 이름 등록**을 두고 하신 말씀이라 ★ 추천과 다른 자리로 읽었다.  ★ ★ **물리시면 뺀다**"
 }
