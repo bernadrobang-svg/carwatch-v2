@@ -237,17 +237,18 @@ def interpret_failure(
 
 
 # ── 수집 종료 자동 산출 (STEP 27) ────────────────────────────────────
-def _kinds_for(adapter) -> tuple:
-    """★ 09-04 — ★ 그 사이트의 ★ **상세 창구**.  ★ 목록 갈래는 뺀다.
+def _detail_calls(adapter) -> int:
+    """★ 09-04 — ★ 매물 하나에 ★ **몇 번 부르는가**.
 
-    ★ `core_listing` 에 ★ `{창구}_status` 칸이 있는 것만 센다 —
-      ★ ★ 이름을 코드에 박지 않는다 (`S14`)
+    ★★ `endpoint_schema()` 를 세면 ★ 안 된다 — ★ 거기엔 ★ `catalog`·`facet` 처럼
+      ★ ★ **매물당 부르지 않는 창구**도 들어 있다 (엔카는 12개인데 상세는 9번이다).
+    ★ 실제로 부르는 수는 ★ `detail_urls()` 가 ★ 말해 준다 — ★ 그것을 쓴다.
+    ★ 못 물어보면 ★ **0** 이다 — ★ 부르는 쪽이 옛 셈으로 물러선다
     """
     try:
-        got = tuple(adapter.endpoint_schema())
-    except Exception:  # noqa: BLE001 ★ 어댑터가 못 말하면 ★ 엔카 셈으로 물러선다
-        return ()
-    return tuple(k for k in got if k != "list" and not k.startswith("list_"))
+        return len(adapter.detail_urls("_probe_"))
+    except Exception:  # noqa: BLE001 ★ 길이 모자란 어댑터가 있다 — ★ 물러선다
+        return 0
 
 
 def collect_check(expected: int, requested: int, tally: dict[str, int],
@@ -892,7 +893,7 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         #   ★ ★ ★ 「⑥ not_requested 8,232건」이 늘 남아 ★ **판이 늘 실패**였다
         #     ★ ★ ★ ★ (배포에서 `raw_missing` 이 ★ **211번** 죽어 있었다).
         #   ★ 어댑터가 주는 창구 수로 센다 — ★ 이름은 `endpoint_schema()` 가 준다
-        _per = len(_kinds_for(adapter)) or len(LISTING_ENDPOINTS)
+        _per = _detail_calls(adapter) or len(LISTING_ENDPOINTS)
         expected = len(lids) * _per - skipped - done_before
         rep = step_report("S5", None, expected, tally,
                           rejected, time.time() - t0)
