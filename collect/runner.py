@@ -779,9 +779,15 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             _reqs = adapter.detail_urls(sid)
             # ★ `list` 는 ★ 상세 창구가 아니다 — ★ 뺀다 (`core_listing` 에
             #   ★ ★ `list_status` 칸이 없다 · 실측 09-03)
+            # ★ 목록 갈래는 ★ 상세 창구가 아니다 — ★ 다 뺀다.
+            #   ★ 실측 09-03 — ★ 현대인증은 ★ `list` 말고 ★ `list_coming` 도 있어
+            #   ★ ★ `no such column: list_coming_status` 로 죽었다.
+            #   ★ ★ ★ 「`core_listing` 에 `{kind}_status` 칸이 있는가」로 가른다 —
+            #     ★ ★ ★ ★ 이름을 박지 않는다 (`S14`)
+            _cols = {r[1] for r in conn.execute("PRAGMA table_info(core_listing)")}
             _kinds = (LISTING_ENDPOINTS if len(_reqs) == len(LISTING_ENDPOINTS)
                       else tuple(k for k in adapter.endpoint_schema()
-                                 if k != "list")[:len(_reqs)])
+                                 if f"{k}_status" in _cols)[:len(_reqs)])
             for kind, req in zip(_kinds, _reqs, strict=True):
                 if resume:
                     from collect.pipeline import should_refetch

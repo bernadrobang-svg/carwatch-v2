@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 211개 · 총 76,840줄
+파일 211개 · 총 76,924줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -12,7 +12,7 @@
 | `web/views.py` | 2,891 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,329 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `store/core.py` | 2,015 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
-| `collect/runner.py` | 1,857 | 수집 실행 규칙. |
+| `collect/runner.py` | 1,905 | 수집 실행 규칙. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,275 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,201 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
@@ -45,10 +45,10 @@
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 469 | CarWatch v2 진입점. |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
+| `tools/load_raw.py` | 406 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
-| `tools/load_raw.py` | 390 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `parse/hyundai_cert/mapping.py` | 374 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `tools/browser_diff.py` | 362 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
@@ -133,6 +133,7 @@
 | `store/rawfile.py` | 149 | 1걸음 — ★ **받은 것을 파일로만 쓴다.  ★ DB 를 안 연다.** |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
+| `collect/fetcher.py` | 141 | 원문 획득 · 형식 검증. |
 | `tools/browser_verify.py` | 140 | ★★★★★ 09-02 — ★ **배포를 브라우저로 확인한다** (`S46-253`). |
 | `tools/classify_fields.py` | 139 | 등록부 분류 초안 — 파서가 쓰는 경로를 근거로 자동 분류한다. |
 | `tools/check_all.py` | 137 | 실측 DB 회귀 — V1~V5 · V10 전건을 한 번에 돌린다. |
@@ -143,7 +144,6 @@
 | `adapters/heydealer.py` | 127 | 헤이딜러 어댑터 — 토큰 두 걸음 (명령서 37 · `docs/HEYDEALER_API.md` 0장). |
 | `analyze/axes.py` | 126 | 축 판정 계약. |
 | `tools/recalc_catchup.py` | 126 | 재판정이 밀렸으면 채운다 (명령서 14-3 · 마스터 지시 08-24). |
-| `collect/fetcher.py` | 121 | 원문 획득 · 형식 검증. |
 | `adapters/kia_cpo.py` | 118 | 기아 인증중고차(CPO) 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `parse/kia_cpo/mapping.py` | 118 | 기아 인증중고차(CPO) 원문 → CORE 필드 (L3). |
 | `tools/gen_table.py` | 117 | 배점표를 config 에서 생성한다 (개정 512). |
@@ -256,10 +256,10 @@ _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort
 resolve_listing_id:38  resolve_dealer_id:56  serialize_container:72  record_change:83  split_pii:111  flush_dealer_pii:163  _record_dropped:175  classify_invariant_change:210  _lookback:271  _source_history:285  _schema_change_min:314  _current:328  _today:334  _drop_non_values:348  origin_dropped:360  _drop_impossible_origin:365  _note_skipped:394  upsert_core:415  mark_gone:542  sweep_gone:559  sweep_gone_groups:603  load_snapshot:645  build_identities:758  resolve_vehicle_id:784  merge_conflict:816  upsert_vehicle:827  upsert_dealer:848  dealer_trust:875  _trust_cfg:968  upsert_child:985  _flag:1006  _not_join_months:1020  state_counts:1045  current_versions:1085  diagnosis_of:1115  target_counts:1128  top_target:1135  vehicle_of:1140  collect_scale:1147  our_fault:1167  catalog_coverage:1176  _walk:1220  _sample_bodies:1236  hits_of:1249  key_seen:1268  stored_hits:1283  sample_bodies:1299  observed:1321  known_leaves:1359  has_unclassified:1374  classify_unclassified:1381  _card_limit:1424  _value_chars:1429  _admin_cfg:1434  unclassified_cards:1451  _peek:1507  _short:1554  _blocking_paths:1565  _raw_rows_max:1585  used_endpoints:1595  raw_sections:1604  _flatten:1643  option_diff:1667  _option_names:1705  blocking_keys:1721  full_hits:1739  axis_paths_empty:1764  blocking_rows:1801  record_mismatch_sql:1863  record_mismatch_count:1869  relist_counts:1895  listing_models:1912  filter_options:1932  site_counts:1949  unscored_count:1962  photo_ready_sites:1979  unclassified_fields:2004
 ```
 
-### `collect/runner.py` — 1,857줄
+### `collect/runner.py` — 1,905줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:172  aspect_names:193  check_facet_axes:197  interpret_failure:211  collect_check:240  FailStreak:310  _sleep:344  _log_request:350  _save_issues:361  make_executors:372  classify_in_group:1026  _query_key:1055  _group_of:1063  _fuel_of:1078  _badge_of:1084  _pages_for:1090  _dicts:1104  _option_medians:1146  _lease_types:1192  _market_medians:1206  _trim_ladders:1263  _option_base:1280  _site_grade_rules:1310  _cfg_num:1329  _dimensions:1345  _listing_config:1374  _listing_values:1401  _option_money:1420  _owned_months:1439  _option_of:1451  _market_of:1459  _group_sums:1469  _origin_lend_table:1497  _origin_keys:1527  _origin_lent:1546  make_score_executors:1566  make_validate_executor:1786  make_registry_executor:1828
+CollectGroup:67  load_targets:91  collect_groups:104  facet_axes:172  aspect_names:193  check_facet_axes:197  interpret_failure:211  collect_check:240  FailStreak:310  _sleep:344  _log_request:359  _save_issues:370  make_executors:381  classify_in_group:1074  _query_key:1103  _group_of:1111  _fuel_of:1126  _badge_of:1132  _pages_for:1138  _dicts:1152  _option_medians:1194  _lease_types:1240  _market_medians:1254  _trim_ladders:1311  _option_base:1328  _site_grade_rules:1358  _cfg_num:1377  _dimensions:1393  _listing_config:1422  _listing_values:1449  _option_money:1468  _owned_months:1487  _option_of:1499  _market_of:1507  _group_sums:1517  _origin_lend_table:1545  _origin_keys:1575  _origin_lent:1594  make_score_executors:1614  make_validate_executor:1834  make_registry_executor:1876
 ```
 
 ### `tests/test_spec_ui.py` — 1,494줄
@@ -454,6 +454,12 @@ load:51  make_context:56  _filter_targets:70  _steps_from:89  _adapter_for:119  
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:267  ClassifySummary:274  PriceSummary:281  AxisStat:290  CoefficientChange:300  DictChangeSummary:310  TargetReport:318  RunStep:330  RunReport:345  HaltReport:356  FixAction:373  NotifyResult:383  ExportResult:396  display_value:405  display_points:415
 ```
 
+### `tools/load_raw.py` — 406줄
+
+```
+_now:61  query_target:65  body_target:104  _rows_from:130  _envs_from_db:210  main:254
+```
+
 ### `web/template.py` — 406줄
 
 ```
@@ -470,12 +476,6 @@ FieldUsage:40  RegistrySyncReport:57  facet_path:75  scan_paths:83  shape_ok:88 
 
 ```
 _target_count:35  check:51  R:57  test_verify_shape:62  _Stub:97  _Clock:105  test_fetch_status:110  test_interpret_failure:123  test_facet_axes:135  test_collect_groups:163  test_build_q:191  test_collect_check:241  test_save_raw:256  test_fail_streak:285  test_all_fail_sample:327  test_diagnosis_scope:371
-```
-
-### `tools/load_raw.py` — 390줄
-
-```
-_now:61  query_target:65  body_target:104  _rows_from:130  _envs_from_db:210  main:254
 ```
 
 ### `tests/test_pipeline.py` — 388줄
