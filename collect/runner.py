@@ -799,7 +799,10 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
     def s5(conn, ctx):
         """매물당 4종 전건.  condition 값과 무관하게 전부 던진다 (STEP 25).
 
-        금지   skip_done 류 건너뛰기 플래그
+        ★★ 철학 ① (마스터 09-03 · `S46-266`) — ★ **이미 받은 상세는 다시 안 받는다.**
+          ★ 칸마다 `{kind}_status` 를 보고 ★ `should_refetch` 가 「받을 것」이라 한
+          ★ ★ `not_requested` · `error` ★ **둘만** 부른다
+        금지   ★ 플래그 하나로 ★ **통째로** 건너뛰는 것 — ★ v1 은 208 중 76건만 받았다
         """
         t0 = time.time()
         tally = {"ok": 0, "empty": 0, "not_found": 0, "error": 0}
@@ -843,15 +846,38 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         ).fetchall()
         skipped = 0
         done_before = 0
-        # ★ 재개일 때만 이미 답을 받은 것을 뺀다 (STEP 52 · should_refetch)
+        # ★★★★★ 철학 ① — ★ **이미 받은 상세는 다시 안 받는다**
+        #   (마스터 확정 09-03 · `S46-266` · 규격 `10-collect/00-intro.md`)
+        #   ★ 전에는 ★ `if resume:` 였다 — ★ **재개할 때만** 뺐다.
+        #   ★ ★ 그래서 ★ 한 판마다 ★ 이미 받은 ★ **16,437건**을 또 불렀다 [실측 09-03].
+        #   ★ ★ ★ 마스터 — 「★ **이미 받은 상세페이지는 대상으로 받지 않는다**는 게 철학인데」
+        #   ★★ 「다시 받는 때」는 ★ `should_refetch` 가 정한다 —
+        #     ★ ★ `not_requested` · `error` ★ **둘뿐**이고
+        #     ★ ★ ★ `ok` · `empty` · `not_found` 는 ★ 안 부른다 (STEP 52).
+        #   ★★★ 옛 금지(「`skip_done` 류 건너뛰기 플래그」)와 ★ 말이 어긋난다 —
+        #     ★ ★ 회차에 ★ **여쭐 것**으로 적었다.  ★ 내가 보는 뜻은 이렇다 —
+        #     ★ ★ ★ 그 금지는 ★ 「플래그 하나로 통째로 건너뛰어 ★ 208 중 76건만 받은 것」을
+        #     ★ ★ ★ ★ 막는 것이고, ★ 이것은 ★ **칸마다 답이 있는지 보고** 거르는 것이다.
+        #     ★ ★ ★ ★ ★ `not_requested` 는 ★ 여전히 ★ **다시 받는다** — ★ 덮는 범위가 안 준다
+        # ★ `lids` 와 ★ **같은 갈래**를 본다 — ★ 전에는 `status='active'` 만 봐서
+        #   ★ ★ `new` 5,900건이 ★ 늘 ★ 「받은 적 없다」로 나와 ★ 다시 받혔다
         have: dict = {}
-        if resume:
-            cols = ", ".join(f"{k}_status" for k in LISTING_ENDPOINTS)
-            for row in conn.execute(
-                    *_scope(f"SELECT listing_id, {cols} FROM core_listing "
-                            f"WHERE status='active'")):
-                have[row[0]] = dict(zip(LISTING_ENDPOINTS, row[1:],
-                                        strict=True))
+        cols = ", ".join(f"{k}_status" for k in LISTING_ENDPOINTS)
+        for row in conn.execute(
+                *_scope(f"SELECT listing_id, {cols} FROM core_listing "
+                        f"WHERE (status IN ('active','new')"
+                        f"       OR (status = 'out_of_scope'"
+                        f"           AND target_key IS NULL))")):
+            have[row[0]] = dict(zip(LISTING_ENDPOINTS, row[1:], strict=True))
+        # ★ 철학 ① — ★ **무엇을 이미 받았나를 적는다.**  ★ 마스터께서 물으신 수다
+        #   ★ `detail_status` 가 ★ 답이 있는 것 — ★ `not_requested`·`error` 는 아직이다
+        _done = conn.execute(*_scope(
+            "SELECT COUNT(*) FROM core_listing"
+            " WHERE detail_status IS NOT NULL"
+            "   AND detail_status NOT IN ('not_requested','error')")
+        ).fetchone()[0]
+        say("S5", f"이미 받은 상세 {_done:,}건은 다시 안 받는다 (철학 ①)",
+            0, len(lids))
         for i, (lid, sid) in enumerate(lids, start=1):
             diag_grade = None
             # ★★★★★ 09-03 (가이드 지시 ①②) — ★ **창구는 어댑터가 말한다.**
@@ -874,17 +900,17 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                       else tuple(k for k in adapter.endpoint_schema()
                                  if f"{k}_status" in _cols)[:len(_reqs)])
             for kind, req in zip(_kinds, _reqs, strict=True):
-                if resume:
-                    from collect.pipeline import should_refetch
+                # ★ 철학 ① — ★ **재개든 아니든** 이미 답을 받은 칸은 안 부른다
+                from collect.pipeline import should_refetch
 
-                    got = (have.get(lid) or {}).get(kind)
-                    if got is not None and not should_refetch(got):
-                        # ★ 이미 답을 받았다.  「건너뛴」 것이 아니라
-                        #   「받은 것」이다 — expected 에서도 뺀다
-                        done_before += 1
-                        if kind == "detail":
-                            diag_grade = None
-                        continue
+                got = (have.get(lid) or {}).get(kind)
+                if got is not None and not should_refetch(got):
+                    # ★ 이미 답을 받았다.  「건너뛴」 것이 아니라
+                    #   「받은 것」이다 — expected 에서도 뺀다
+                    done_before += 1
+                    if kind == "detail":
+                        diag_grade = None
+                    continue
                 # ★ 진단은 encarDiagnosis == 0 인 매물만 부른다 (STEP 21b).
                 #   1·2 는 404 다.  전량 호출이 v1 에서 「원문 0건」을 만들었다
                 if kind == "diagnosis" and diag_grade != DIAG_HAS_REPORT:
@@ -949,6 +975,31 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         #   ★ 어댑터가 주는 창구 수로 센다 — ★ 이름은 `endpoint_schema()` 가 준다
         _per = _detail_calls(adapter) or len(LISTING_ENDPOINTS)
         expected = len(lids) * _per - skipped - done_before
+        # ★★★★★ 철학 ② — ★ **팔린 것을 치운다** (마스터 확정 09-03 · `S46-267`).
+        #   ★ 여기가 자리다 — ★ 상세를 방금 눌러 봤으므로 ★ `detail_status` 가 ★ 새것이다.
+        #   ★ ★ 「가」(목록에서 사라짐)는 ★ S4 의 `sweep_gone` 이 매긴다.
+        #   ★ ★ ★ 여기서는 ★ 「나」(사이트가 팔렸다 함) · 「다」(상세가 없다 함)를 본다.
+        #   ★★★ 마스터 — 「★ 100개 중 90개를 버려야 하는데 ★ 91개를 버린다고
+        #     ★ ★ 살아있는 1개 때문에 ★ 90개를 안 버리는 ★ **철학을 인정 못해**」.
+        #     ★ ★ ★ 그래서 ★ 세게 내리고 ★ 「마」(`relisted`)로 되살린다
+        #   ★ 실측 09-03 — ★ 한 번 돌려 ★ **10,701건**을 내렸다 (16,535 → 5,834).
+        #     ★ ★ 그랑 콜레오스는 ★ **467 → 121대** — ★ 74%가 팔린 차였다
+        from collect.sweep import revive as _revive
+        from collect.sweep import sweep_sold as _sweep_sold
+
+        # ★ `at` 은 s5 안에 없다 — ★ 여기서 뜬다 (s4 의 `at` 은 그 함수 것이다)
+        _at = clock.now().isoformat()
+        _swept = _sweep_sold(conn, _at, site=adapter.site_code,
+                             run_id=getattr(ctx, "run_id", None))
+        if _swept:
+            for _why, _n in sorted(_swept.items(), key=lambda x: -x[1]):
+                say("S5", f"팔려서 내린 것 {_n:,}건 — {_why}", rows, rows)
+        # ★ 「마」 — ★ 상세가 ★ 「아직 판다」면 ★ 되살린다.  ★ 잘못 죽이지 않는다
+        _back = _revive(conn, _at, site=adapter.site_code,
+                        run_id=getattr(ctx, "run_id", None))
+        if _back:
+            say("S5", f"상세가 아직 판다고 해 되살린 것 {_back:,}건 (relisted)",
+                rows, rows)
         rep = step_report("S5", None, expected, tally,
                           rejected, time.time() - t0)
         if halted:

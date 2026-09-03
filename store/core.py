@@ -539,8 +539,14 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
     return changes
 
 
-def mark_gone(conn: sqlite3.Connection, listing_id: str, at: str) -> None:
-    """목록에서 사라져도 삭제하지 않는다.  gone_at 이 「얼마에 팔렸나」의 근거다."""
+def mark_gone(conn: sqlite3.Connection, listing_id: str, at: str,
+              cause: str | None = None, run_id: str | None = None) -> None:
+    """목록에서 사라져도 삭제하지 않는다.  gone_at 이 「얼마에 팔렸나」의 근거다.
+
+    ★★ 09-03 (철학 ② · `S46-267`) — ★ `cause` 로 ★ **「왜 죽였나」를 적는다.**
+      ★ 규격 — 「★ 필수 ★ 「왜 죽였나」를 ★ 적는다 (가/나/다 중 무엇인가)」.
+      ★ ★ 안 적으면 ★ 되살릴 때 ★ 무엇을 물릴지 모른다
+    """
     cur = conn.execute(
         "SELECT status, price_current_won FROM core_listing WHERE listing_id = ?",
         (listing_id,),
@@ -552,7 +558,35 @@ def mark_gone(conn: sqlite3.Connection, listing_id: str, at: str) -> None:
         "WHERE listing_id = ?",
         (at, cur[1], listing_id),
     )
-    record_change(conn, listing_id, "status", cur[0], "gone", at, "gone")
+    record_change(conn, listing_id, "status", cur[0], "gone", at, "gone",
+                  cause=cause, run_id=run_id)
+    commit(conn)
+
+
+def mark_relisted(conn: sqlite3.Connection, listing_id: str, at: str,
+                  cause: str | None = None,
+                  run_id: str | None = None) -> None:
+    """★ 「마」 — ★ 죽인 것을 ★ **되살린다** (`relisted` · 철학 ② · `S46-267`).
+
+    ★★ 규격 — 「★ 상세가 「아직 판다」면 ★ **되살린다**(`relisted`).
+      ★ ★ 잘못 죽이지 않는다」.
+    ★★★ 마스터 확정 09-03 — ★ 「★ 살아있는 1개 때문에 ★ 90개를 안 버리는
+      ★ ★ 철학을 인정 못해」.  ★ ★ 그래서 ★ **세게 내리고** ★ 이 문으로 되살린다.
+      ★ ★ ★ `gone_at` 은 ★ 지운다 — ★ 「팔린 때」가 아니었기 때문이다
+    """
+    cur = conn.execute(
+        "SELECT status FROM core_listing WHERE listing_id = ?",
+        (listing_id,),
+    ).fetchone()
+    if cur is None or cur[0] == "relisted":
+        return
+    conn.execute(
+        "UPDATE core_listing SET status='relisted', gone_at=NULL "
+        "WHERE listing_id = ?",
+        (listing_id,),
+    )
+    record_change(conn, listing_id, "status", cur[0], "relisted", at,
+                  "relisted", cause=cause, run_id=run_id)
     commit(conn)
 
 

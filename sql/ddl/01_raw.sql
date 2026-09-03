@@ -61,6 +61,14 @@ CREATE INDEX IF NOT EXISTS ix_raw_origin_endpoint
 --     ★ 크기가 3.2MB 로 작다.  ★ 이것이 있으면 플래너가 스스로 고른다 —
 --     ★ 쿼리는 한 글자도 안 고쳤다
 --   ★★ 실측 결과 — ★ 10.00초 → ★ **0.19초** (53배)
+-- ★★★★★ 09-03 (지시문 r1124 · 마스터 「★ **db 를 메모리에 적재 말고 ★ 인덱스만 적재해**」)
+--   ★ 철학 ② 가 묻는 것은 ★ 「이 매물의 상세를 눌러 봤더니 ★ 몇 이 왔나」다 —
+--   ★ ★ 곧 ★ `(site, endpoint, source_id, http_code)` 다.  ★ 색인이 없었다.
+--   ★★ 실측 09-03 — ★ 그 물음 하나가 ★ **120초에도 안 끝났다** (37만 행 훑기).
+--   ★ ★ 색인이 없으면 ★ 「전건을 RAM 에 올려 맞춰 보는」 길로 빠진다 — ★ 그것이 서버를 죽였다
+CREATE INDEX IF NOT EXISTS ix_raw_site_source
+  ON raw_response(site, endpoint, source_id, http_code);
+
 CREATE INDEX IF NOT EXISTS ix_raw_sample
   ON raw_response(endpoint, (id * 2654435761) % 1000003)
   WHERE status = 'ok' AND body IS NOT NULL;
