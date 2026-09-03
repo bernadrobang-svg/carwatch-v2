@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카가 1일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
-  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -70,9 +70,9 @@
 </p>
 
 
-<h2>미분류 330건 — 원인별</h2>
-<p class="chips"><span class="chip">② 이름만 다름 86</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 111</span></p>
-<p class="big"><strong>사람이 봐야 할 것 111건</strong>
+<h2>미분류 332건 — 원인별</h2>
+<p class="chips"><span class="chip">② 이름만 다름 86</span><span class="chip">③ 늘 비어 있음 133</span><span class="chip">④ 새로운 것 113</span></p>
+<p class="big"><strong>사람이 봐야 할 것 113건</strong>
   <span class="muted">나머지 219건은 제안이 있습니다</span></p>
 
 
@@ -87,7 +87,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>False</code> 131건 · <code>True</code> 48건 · 
+    <code>False</code> 96건 · <code>True</code> 38건 · 
     <span class="dim">관측 21,667/21,667</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>version</code> <code>reportVersion</code> 
@@ -125,7 +125,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>False</code> 179건 · 
+    <code>False</code> 134건 · 
     <span class="dim">관측 21,667/21,667</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
@@ -163,7 +163,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>False</code> 179건 · 
+    <code>False</code> 134건 · 
     <span class="dim">관측 21,667/21,667</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
@@ -440,17 +440,59 @@
 
 </tbody>
 </table>
-<p class="muted">그 밖 99건이 더 있습니다.</p>
+<p class="muted">그 밖 101건이 더 있습니다.</p>
 
 
 
 <p class="chips">
-<a class="chip" href="/admin/registry?usage=unclassified">unclassified (330)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (223)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (144)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (47)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
+<a class="chip" href="/admin/registry?usage=unclassified">unclassified (332)</a><a class="chip" href="/admin/registry?usage=in_use">in_use (223)</a><a class="chip" href="/admin/registry?usage=not_provided">not_provided (144)</a><a class="chip" href="/admin/registry?usage=blocked">blocked (64)</a><a class="chip" href="/admin/registry?usage=unused_by_policy">unused_by_policy (47)</a><a class="chip" href="/admin/registry?usage=display_only">display_only (40)</a><a class="chip" href="/admin/registry?usage=deferred">deferred (8)</a>
 </p>
 <table class="rows">
 <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th title="원문 JSON 안의 자리입니다 (점으로 잇습니다)">경로</th><th class="num">미관측</th>
 <th title="갈래입니다">구분</th><th title="우리 DB 의 어느 칸에 담기는지입니다">컬럼</th><th title="그렇게 판단한 까닭입니다">근거</th><th title="이 경로를 판정에 쓰는지 아닌지입니다">분류</th></tr></thead>
 <tbody>
+
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>_insurance_cnt</code></td>
+<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="_insurance_cnt">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    
+    <input name="use_when" placeholder="언제 (나중에)" size="12">
+    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
+
+<tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>_repair_cnt</code></td>
+<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
+<td data-label="컬럼"></td><td class="muted" data-label="근거">upsert 가 버린 키 — 컬럼이 없다</td>
+<td data-label="분류">
+  <form method="post" action="/admin/registry" class="inline">
+    <input type="hidden" name="csrf" value="render">
+    <input type="hidden" name="previewed" value="1">
+    <input type="hidden" name="endpoint" value="core">
+    <input type="hidden" name="json_path" value="_repair_cnt">
+    <select name="usage">
+      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
+    </select>
+    <input name="core_column" placeholder="컬럼" size="12">
+    
+    <input name="use_when" placeholder="언제 (나중에)" size="12">
+    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
+    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <button type="submit" class="mini">저장</button>
+  </form>
+</td></tr>
 
 <tr><td data-label="엔드포인트">core</td><td data-label="경로"><code>accident_raw</code></td>
 <td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
@@ -620,48 +662,6 @@
   </form>
 </td></tr>
 
-<tr><td data-label="엔드포인트">detail</td><td data-label="경로"><code>view.meetgoVisitAvailable</code></td>
-<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
-<td data-label="컬럼"></td><td class="muted" data-label="근거">sync_registry 자동 적재. 사람이 분류해야 한다</td>
-<td data-label="분류">
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="detail">
-    <input type="hidden" name="json_path" value="view.meetgoVisitAvailable">
-    <select name="usage">
-      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
-    </select>
-    <input name="core_column" placeholder="컬럼" size="12">
-    
-    <input name="use_when" placeholder="언제 (나중에)" size="12">
-    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
-    <input name="reason" placeholder="근거 (필수)" size="18" required>
-    <button type="submit" class="mini">저장</button>
-  </form>
-</td></tr>
-
-<tr><td data-label="엔드포인트">ev_battery</td><td data-label="경로"><code>encarComputedInfo</code></td>
-<td class="num" data-label="미관측">0</td><td data-label="구분">unclassified</td>
-<td data-label="컬럼"></td><td class="muted" data-label="근거">되돌림 — core_column 을 못 찾았다</td>
-<td data-label="분류">
-  <form method="post" action="/admin/registry" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="endpoint" value="ev_battery">
-    <input type="hidden" name="json_path" value="encarComputedInfo">
-    <select name="usage">
-      <option value="blocked">blocked</option><option value="deferred">deferred</option><option value="display_only">display_only</option><option value="in_use">in_use</option><option value="not_provided">not_provided</option><option value="unused_by_policy">unused_by_policy</option>
-    </select>
-    <input name="core_column" placeholder="컬럼" size="12">
-    
-    <input name="use_when" placeholder="언제 (나중에)" size="12">
-    <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
-    <input name="reason" placeholder="근거 (필수)" size="18" required>
-    <button type="submit" class="mini">저장</button>
-  </form>
-</td></tr>
-
 </tbody>
 </table>
 
@@ -671,8 +671,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260902T181903</span>
-  <span>2026-09-03 06:21</span>
+  <span>run 20260903T043040</span>
+  <span>2026-09-03 14:10</span>
 </footer>
 
 </body>
