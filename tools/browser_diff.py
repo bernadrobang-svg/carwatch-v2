@@ -380,6 +380,8 @@ if __name__ == "__main__":
 #
 #   ★★★★ 그리고 ★ **캡처를 남긴다** — ★ 자만 믿지 않는다.  ★ 눈으로 대조한다
 
+REPORT = "outputs/hidden_text.json"     # ★ 잰 수가 남는 곳
+
 HIDDEN_TEXT_JS = r"""
 () => {
   const leaf = [];
@@ -422,6 +424,7 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
     돌리기   python3 -c "from tools.browser_diff import hidden_text_report as r; \
                         r('https://…sslip.io')"
     """
+    import datetime as _dt
     import json as _j
     import os as _os
 
@@ -460,5 +463,15 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
                       f"★ 가려진 글자 {got['hidden']:>3}  → {shot}")
         br.close()
     total = sum(v["hidden"] for v in out.values())
+    # ★★★★★ 09-04 마스터 — 「★ **캡처만 내면 되나?**」
+    #   ★ ★ **안 된다.**  ★ 캡처는 ★ **증거**이지 ★ 잣대가 아니다.
+    #   ★ ★ ★ 잣대는 ★ **수**이고 ★ 그 수가 ★ **검사에서 실패로 떠야** 한다.
+    #   ★ 그래서 ★ 잰 수를 ★ 파일로 남긴다 — ★ `S46-271` 이 ★ 이 파일을 읽어 ★ **0 이 아니면 실패**한다.
+    #   ★ ★ 그리고 ★ **날짜를 적는다** — ★ 낡으면 ★ 「안 쟀다」로 본다
+    rep = {"_잰_때": _dt.datetime.now(_dt.timezone.utc).isoformat(),
+           "_잰_곳": base_url, "합": total, "자리": out}
+    with open(REPORT, "w", encoding="utf-8") as f:
+        _j.dump(rep, f, ensure_ascii=False, indent=1)
     print(f"\n★ 합 {total}개 · 캡처 {len(out)}장 — {shot_dir}/")
+    print(f"★ 잰 수를 적었다 — {REPORT}  (★ 0 이 아니면 `S46-271` 이 운다)")
     return out

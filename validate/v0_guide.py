@@ -6924,12 +6924,40 @@ def s46_271_screen_checked_in_browser():
     tool = _read(ROOT / "tools" / "browser_diff.py")
     if "HIDDEN_TEXT_JS" not in tool:
         return False, "★ 가려진 글자를 세는 자가 없다 (HIDDEN_TEXT_JS)"
+    # ★★★★★ 09-04 마스터 — 「★ **캡처만 내면 되나?**」
+    #   ★ ★ **안 된다.**  ★ 캡처는 ★ **증거**이지 ★ 잣대가 아니다.
+    #   ★ ★ ★ 앞 판에서 이 검사는 ★ 「자가 있다」만 보고 ★ **63개인데 통과**였다 —
+    #     ★ ★ ★ ★ **또 지키는 척했다**.
+    #   ★ 이제 ★ 잰 수(`outputs/hidden_text.json`)를 읽어 ★ **0 이 아니면 실패**한다.
+    raw = _read(ROOT / "outputs" / "hidden_text.json")
+    if not raw:
+        return False, ("★ 아직 안 쟀다 — "
+                       "`python3 -c \"from tools.browser_diff import "
+                       "hidden_text_report as r; r('배포주소')\"` 를 돌려라")
     try:
-        from playwright.sync_api import sync_playwright  # noqa: F401
+        rep = json.loads(raw)
     except Exception:  # noqa: BLE001
-        return True, "playwright 가 없다 — 자는 있다 (여기서는 못 잰다)"
-    return True, ("가려진 글자를 배포에서 세는 자가 있다 — "
-                  "★ 실측 09-04 합 **63개** (tools/browser_diff.py 로 돌린다)")
+        return False, "hidden_text.json 을 못 읽었다"
+    when = str(rep.get("_잰_때") or "")[:10]
+    total = rep.get("합")
+    if not when:
+        return False, "★ 잰 때가 없다 — 언제 잰 것인지 모른다"
+    try:
+        import datetime as _dt
+
+        days = (_dt.date.today() - _dt.date.fromisoformat(when)).days
+    except Exception:  # noqa: BLE001
+        days = 0
+    if days > 2:
+        return False, f"★ 잰 지 {days}일 됐다 ({when}) — 다시 재라"
+    if total:
+        worst = sorted(((k, v.get("hidden", 0))
+                        for k, v in (rep.get("자리") or {}).items()),
+                       key=lambda q: -q[1])[:3]
+        return False, (f"★ 가려진 글자 {total}개 — "
+                       + " · ".join(f"{k} {n}" for k, n in worst)
+                       + f"  ★ 캡처는 outputs/shots/ 에 있다 ({when})")
+    return True, f"가려진 글자 0 ({when} · 배포를 브라우저로 열어 쟀다)"
 
 
 CHECKS = (
