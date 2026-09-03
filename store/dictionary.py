@@ -98,7 +98,15 @@ AXIS_POLICY: dict[str, AxisPolicy] = {
     #     ★ ★ 축은 미확인 0점」 (규격 STEP 41 절).  ★ `confirmed` 로 바로 안 올린다
     #   ★ `on_conflict` 는 ★ **halt** — ★ 같은 부위 코드가 ★ 두 뜻을 가지면
     #     ★ ★ 골격·외판 갈래가 갈린다.  ★ 조용히 넘기면 판정이 통째로 틀린다
-    "part": AxisPolicy(SCOPE_GLOBAL, "pending", "halt"),
+    # ★★★★★ 09-03 (개정 1105) — ★ `pending` → **`halt`**.
+    #   ★ 가이드가 ★ `fixed_enums.json` 에 ★ `part` **열한 값**을 심었다
+    #   ★ ★ (`hood` · `radiator_support` · `fender_*` · `trunk_lid` …).
+    #   ★★ 부트스트랩(`seed_fixed_enums`)은 ★ **`halt` 축만** 심는다 —
+    #     ★ ★ 「고정 집합이 정해진 축」이라는 뜻이다.
+    #     ★ ★ ★ `pending` 이면 ★ `part 는 halt 축이 아니다` 로 죽는다
+    #       ★ ★ ★ ★ (실측 09-03 — ★ 시험 **열 개**가 그것으로 실패했다).
+    #   ★ 부위는 ★ 정부 서식이 정한 ★ **닫힌 집합**이다 — ★ 새 값이 나오면 멈춰야 맞다
+    "part": AxisPolicy(SCOPE_GLOBAL, "halt", "halt"),
     "repair": AxisPolicy(SCOPE_GLOBAL, "pending", "halt"),
     # ★★ 개정 540 — 사이트마다 차종을 다르게 부른다 (docs/TARGET_KEY_MAP.md).
     #   ★ 새 차종 이름은 ★ 늘 새로 뜬다 — ★ 멈추지 않는다.
