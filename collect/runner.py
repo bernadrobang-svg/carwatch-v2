@@ -474,11 +474,12 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 r = save_raw(conn, res, schema["list"], adapter.site_code, None,
                              req.url, req.headers, verify=verify_shape, reason=reject_reason,
                             run_id=ctx.run_id)
+                # ★ 09-04 — ★ **남겼으면 센다** (배포가 「신규 != 응답 합」으로 죽었다)
+                rows += 1
                 streak.observe(res)
                 if streak.tripped:
                     halted = streak.reason()
                     break
-                rows += 1
                 if r == "rejected":
                     rejected += 1
                     break
@@ -534,11 +535,12 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 axes = aspect_names(res.raw) if _ok else ()
                 save_facet(conn, res, adapter.site_code, g.group_key, kind,
                            req.url, len(axes) if _ok else None)
+                # ★ 09-04 — ★ **남겼으면 센다** (배포가 「신규 != 응답 합」으로 죽었다)
+                rows += 1
                 streak.observe(res)
                 if streak.tripped:
                     halted = streak.reason()
                     break
-                rows += 1
                 if not _ok:
                     _sleep(cfg, rng)
                     continue
@@ -844,11 +846,20 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                             req.url, req.headers, verify=verify_shape, reason=reject_reason,
                             run_id=ctx.run_id) == "rejected":
                     rejected += 1
+                # ★★★★★ 09-04 (가이드 배포 실측) — ★ **남겼으면 센다.**
+                #   ★ 배포가 ★ 「⑤ raw_response 신규 **32** != 응답 합 **310**」로
+                #   ★ ★ **다섯 판을 잇달아 죽였다** (가이드 실측 09-03).
+                #   ★★ 까닭 — ★ 앞 회차(v336)에 ★ `save_raw` 를 ★ `break` **앞**으로
+                #     ★ ★ 옮겨 ★ **원문은 남게** 했는데,
+                #     ★ ★ ★ `rows += 1` 은 ★ 여전히 `break` **뒤**에 있었다.
+                #     ★ ★ ★ ★ 그래서 ★ 남긴 것을 ★ **안 세고** 넘어갔다 —
+                #       ★ ★ ★ ★ ★ 「신규」와 「응답 합」이 어긋나 ★ 판이 죽었다.
+                #   ★ 세는 자리도 ★ **남기는 자리와 같아야 한다** (선언과 실제)
+                rows += 1
                 streak.observe(res)
                 if streak.tripped:
                     halted = streak.reason()
                     break
-                rows += 1
                 conn.execute(
                     f"UPDATE core_listing SET {kind}_status=? WHERE listing_id=?",
                     (res.status, lid))
