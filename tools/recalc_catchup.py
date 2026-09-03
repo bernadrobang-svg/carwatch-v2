@@ -69,9 +69,19 @@ def collector_running(conn, at: str) -> tuple[bool, str]:
     ★ 창은 `config/admin.json` 이 정본이다 (V10-31) — ★ 코드에 안 박는다
     """
     win = float(_admin_cfg().get("collect_busy_minutes") or 10)
+    # ★★★★★ 09-04 — ★ **`datetime()` 을 양쪽에 씌운다.**
+    #   ★ `fetched_at` 은 ★ `2026-09-03T08:30:39.278561+00:00` (ISO · `T` 구분자) 인데
+    #   ★ ★ `datetime(?, ?)` 은 ★ `2026-09-03 23:55:00` (공백 구분자)을 낸다.
+    #   ★ ★ ★ 둘을 그냥 견주면 ★ **글자 견주기**가 되고
+    #     ★ ★ ★ ★ `'T'`(0x54) > `' '`(0x20) 이라 ★ **같은 날짜면 무조건 참**이었다.
+    #   ★★ 실측 09-04 — ★ 틀린 자 **148,848건** ↔ ★ 바른 자 **0건**.
+    #     ★ ★ 마지막 원문이 ★ 16시간 전(08:30:39)인데도 ★ 「수집기가 도는 중」이라 했다.
+    #   ★★★ 그래서 ★ 네 시간마다 도는 ★ **따라잡기 판정이 통째로 막혀 있었다** —
+    #     ★ ★ 살아 있는 매물 ★ **10,343건**이 ★ 점수가 없었다.
+    #     ★ ★ ★ 마스터 — 「★ 그렇게 수집을 했는데 ★ 왜 안 보이지」.  ★ 이 자리다
     row = conn.execute(
         "SELECT site, COUNT(*), MAX(fetched_at) FROM raw_response"
-        " WHERE fetched_at > datetime(?, ?) GROUP BY site"
+        " WHERE datetime(fetched_at) > datetime(?, ?) GROUP BY site"
         " ORDER BY 3 DESC LIMIT 1", (at, f"-{win:g} minutes")).fetchone()
     if not row:
         return False, ""

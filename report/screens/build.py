@@ -4253,7 +4253,8 @@ RECOMMEND_TABS: tuple = ("1", "2", "3")
 
 
 def _recommend_models(conn, where: list, args: list, picked: list,
-                      names: dict, now: tuple = ()) -> tuple:
+                      names: dict, now: tuple = (),
+                      calc_version: str | None = None) -> tuple:
     """★★★★★ 09-02 — ★ 시안 `.rc-models` — ★ **차종 고르개**.
 
     ★ 마스터 — 「★ **시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해**」
@@ -4262,10 +4263,25 @@ def _recommend_models(conn, where: list, args: list, picked: list,
       ★ ★ ★ **지우지 않는다.**  ★ 「없다」가 아니라 ★ 「지금 재고가 없다」다
     ★ 차례는 ★ 건수 많은 것부터 (시안이 그렇다) · ★ 0 은 뒤로
     """
+    # ★★★★★ 09-04 — ★ **세는 자와 뽑는 자가 같아야 한다** (`V11-55` 와 같은 뜻).
+    #   ★★★ 마스터 — 「★ 차종은 수집했는데 ★ **목록이 없는 건 뭐지**」.
+    #   ★★ 실측 09-04 (브라우저) — ★ 단추가 ★ 「폭스바겐 ID.4 **33**」이라 해 놓고
+    #     ★ ★ 누르면 ★ **카드가 0개**였다.  ★ 머리글도 ★ 「33건 중 **0점**」이라 했다.
+    #   ★ 까닭 — ★ 단추는 ★ `result_score` 를 ★ **LEFT JOIN** 으로 세어
+    #     ★ ★ **점수가 없는 것까지** 셌고, ★ 목록은 ★ `result_axis` 를
+    #     ★ ★ ★ **INNER JOIN** 으로 뽑는다 — ★ 자가 두 개였다.
+    #   ★★ 시안도 ★ 그것을 안다 — ★ `v4m_recommend_시안` 은 ★ ID.4 · ID.5 · iX3 ·
+    #     ★ ★ EV4 를 ★ **0건 무리**(흐리게)에 둔다.  ★ 「없다」가 아니라 ★ 「재고가 없다」다
+    axis_marks = ",".join("?" * len(RECOMMEND_AXES))
+    ver = [calc_version] if calc_version else []
     got = dict(conn.execute(
-        "SELECT l.target_key, COUNT(*) FROM core_listing l"
+        "SELECT l.target_key, COUNT(DISTINCT l.listing_id) FROM core_listing l"
+        " JOIN result_axis a ON a.listing_id = l.listing_id"
+        + ("  AND a.calc_version = ?" if calc_version else "")
+        + f"  AND a.axis IN ({axis_marks})"
         " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
-        " WHERE " + " AND ".join(where) + " GROUP BY 1", args))
+        " WHERE " + " AND ".join(where) + " GROUP BY 1",
+        [*ver, *RECOMMEND_AXES, *args]))
     out = []
     for i, key in enumerate(picked):
         n = int(got.get(key) or 0)
@@ -4409,6 +4425,10 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
         sql, [calc_version, *RECOMMEND_AXES, calc_version, *args, page_size]))
     # ★ 축을 따로 낸다 — ★ 「왜 위에 있는지」가 보여야 한다 (규격 「필수」)
     per = _recommend_axes(conn, calc_version, [r[0] for r in rows])
+    # ★ 빈 사진이 있을 때만 센다 — ★ 늘 세면 ★ 쪽마다 쿼리가 하나 는다 (`V11-34`)
+    _psites = (photo_ready_sites(conn)
+               if any(not _first_photo(r[10], root) for r in rows)
+               else frozenset())
     labels = _labels(root)
     sites = _site_labels(root)
     # ★★★★★ 09-01 — ★ `V11-69` · `V11-120`.  ★ `/listings` 가 쓰는 것을 그대로 쓴다
@@ -4457,6 +4477,9 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
                 " / ".join(y for y in (r[5], r[9]) if y) or None,
                 sites.get(r[7], r[7])) if x),
             photo_url=_first_photo(r[10], root),
+            # ★ 09-04 — ★ 빈 자리에 ★ 까닭을 낸다 (목록과 같은 부품을 쓴다)
+            photo_note=_photo_note(r[7], r[10],
+                                   _view_str("photo_base_url", root), _psites),
             ignored=bool(r[8]) and r[8] not in top,
             # ★★★★★ 09-01 — ★ `V11-69`.  ★ `/listings` 와 ★ **같은 부품**을 쓴다.
             #   ★ 원문 문은 ★ 그 매물의 사이트로 간다 (S46-94) —
@@ -4475,14 +4498,33 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
             axes=per.get(lid, ())))
     # ★ 화면에 든 전건 — ★ 거르개는 `s.` 를 쓰므로 ★ 같은 이음을 걸어야 한다
     # ★ 「N건 중」도 ★ **같은 잣대**로 센다 — ★ 안 그러면 화면이 거짓말을 한다
+    # ★★★★★ 09-04 — ★ 위 주석이 ★ 「같은 잣대로 센다」인데 ★ **안 그랬다.**
+    #   ★ 목록은 ★ `result_axis` 를 ★ INNER JOIN 으로 뽑는데
+    #   ★ ★ 여기는 ★ `result_score` 를 ★ LEFT JOIN 으로 셌다.
+    #   ★★ 실측 09-04 (브라우저) — ★ `?model=ID4_EV` 가 ★ 「**33건** 중」이라 해 놓고
+    #     ★ ★ 카드는 ★ **0개**였다.  ★ 마스터 — 「★ 목록이 없는 건 뭐지」
+    _amarks = ",".join("?" * len(RECOMMEND_AXES))
     total = conn.execute(
-        "SELECT COUNT(*) FROM core_listing l"
+        "SELECT COUNT(DISTINCT l.listing_id) FROM core_listing l"
+        " JOIN result_axis a ON a.listing_id = l.listing_id"
+        "  AND a.calc_version = ?"
+        f"  AND a.axis IN ({_amarks})"
         " LEFT JOIN result_score s ON s.listing_id = l.listing_id"
-        " WHERE " + " AND ".join(where), args).fetchone()[0]
+        " WHERE " + " AND ".join(where),
+        [calc_version, *RECOMMEND_AXES, *args]).fetchone()[0]
     full = sum(x.full for x in (out[0].axes if out else ())) if out else 0
+    if not full:
+        # ★ 한 건도 없을 때 ★ 「합(0점)」이라 적으면 ★ 배점이 0인 것처럼 보인다.
+        #   ★ 만점은 ★ 매물이 있든 없든 ★ 같다 — ★ 표에서 그대로 읽는다
+        full = conn.execute(
+            "SELECT COALESCE(SUM(m), 0) FROM (SELECT MAX(max_points) m"
+            "   FROM result_axis WHERE calc_version = ?"
+            f"    AND axis IN ({_amarks}) GROUP BY axis)",
+            [calc_version, *RECOMMEND_AXES]).fetchone()[0]
     # ★ 시안 `.rc-head` — 「차종 13종」.  ★ 정본은 `config/targets.json` 이다
     targets = len(picked)
-    models = _recommend_models(conn, model_where, model_args, picked, names, on)
+    models = _recommend_models(conn, model_where, model_args, picked, names,
+                               on, calc_version)
     return RecommendView(tab=tab, rows=out, total=total,
                          axes=RECOMMEND_AXES, full=round(full, 1),
                          empty_note=None, title="내 기준에 가까운 차",

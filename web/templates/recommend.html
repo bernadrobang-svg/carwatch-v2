@@ -77,7 +77,7 @@
     <!-- ★ 시안 `.v4-thumb` 104×78 -->
     <div class="desk pickthumb">
       {% if r.photo_url %}<img src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
-      {% if !r.photo_url %}<span class="pimg">사진</span>{% endif %}
+      {% if !r.photo_url %}<span class="pimg photo-why" title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다">{% if r.photo_note %}{{ r.photo_note }}{% endif %}{% if !r.photo_note %}사진{% endif %}</span>{% endif %}
     </div>
     <div class="pickmid">
       <!-- ★ ♡ 는 제목 줄에 (`V11-96`).  ★ v1 이 가진 조작을 잃지 않는다 (`V11-69`) -->
