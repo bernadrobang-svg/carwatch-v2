@@ -5454,6 +5454,30 @@ def s46_241_regrade_alive_on_deploy():
     #   ★ ★ 오늘만 ★ **세 번째**다 (09-01 S4 · 09-02 1부 · 09-03 지시②③).
     #   ★ ★ ★ 그래서 ★ **판이 실패로 끝나 있으면** ★ 그대로 잡는다.
     fails = re.findall(r"failed[^|]{0,40}?(S\d+):", text)
+    # ★★★★★ 09-03 — ★ **「마지막 판」을 본다** (★ 이 검사의 잣대 그대로).
+    #   ★ 화면 ② 「방금 끝난 것」은 ★ **최근 다섯 판**을 새것부터 늘어놓는다.
+    #   ★ 옛 실패는 ★ **이력**이다 — ★ 지워지지 않는다.
+    #     ★ ★ 그것까지 세면 ★ 뿌리를 고쳐도 ★ 검사가 ★ **영영 빨갛다** —
+    #     ★ ★ ★ 그러면 ★ 아무도 안 보게 된다 (조용히 지키는 척하는 자리).
+    #   ★★ 실측 09-03 — ★ 엔카 407 뿌리를 고치니 ★ 마지막 판이
+    #     ★ ★ `done — S5 ok 0 · S6 ok 142,986 · S9 ok 441,028 · S10 ok 15,751` 이 됐다.
+    #     ★ ★ ★ 그런데 ★ 앞선 네 판(고치기 전)이 남아 ★ 검사는 그대로 실패였다.
+    #   ★ 그러므로 ★ **맨 앞 판**으로 가르고 · ★ 남은 옛 실패는 ★ **세어서 함께 낸다** —
+    #     ★ ★ 감추지 않는다 (「조용히 비우지 않는다」)
+    _rows = re.findall(r"([0-9a-f]{16}) (done|failed|running|queued)", text)
+    if _rows:
+        _last_id, _last = _rows[0]
+        _older = sum(1 for _, st in _rows[1:] if st == "failed")
+        if _last == "failed":
+            kinds = sorted(set(fails))
+            return False, (f"★ 배포에서 마지막 판이 실패다 — {_last_id[:8]} "
+                           f"({' · '.join(kinds[:3]) or '걸음 이름을 못 읽었다'})"
+                           "  ★ 「끝」은 배포에서 확인한 것만이다")
+        if _last in ("running", "queued"):
+            return True, (f"배포에서 판이 {_last} 다 ({_last_id[:8]}) — "
+                          f"아직 안 끝났다 · 앞선 실패 {_older}건")
+        return True, (f"★ 배포에서 마지막 판이 살아 있다 — {_last_id[:8]} done"
+                      + (f"  (그 앞의 옛 실패 {_older}건은 이력이다)" if _older else ""))
     if fails:
         kinds = sorted(set(fails))
         return False, (f"★ 배포에서 판이 실패로 끝나 있다 — {len(fails)}건 "
