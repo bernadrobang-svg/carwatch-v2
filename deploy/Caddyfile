@@ -2,7 +2,7 @@
 #
 # ★ 앱은 자체 TLS 를 두지 않는다.  Caddy 가 인증서를 받고 갱신한다.
 # ★ 도메인이 필요하다 — Let's Encrypt 는 IP 에 인증서를 주지 않는다.
-#   sslip.io 는 43.201.16.78.sslip.io → 43.201.16.78 로 해석되는 실제 도메인이다.
+#   sslip.io 는 54.180.227.109.sslip.io → 54.180.227.109 로 해석되는 실제 도메인이다.
 #   나중에 진짜 도메인을 사면 아래 한 줄만 바꾼다.
 #
 # 세우는 순서 — ★ 3번을 먼저 하면 화면이 안 열린다
@@ -10,9 +10,9 @@
 #   2  Caddy 설치 후 이 파일을 /etc/caddy/Caddyfile 로
 #   3  앱을 127.0.0.1 만 듣게 바꾼다 (carwatch.service --host)
 #   4  보안 그룹에서 8765 를 닫는다                      ← 마스터 (콘솔)
-#   5  확인   curl -sI https://43.201.16.78.sslip.io/ | head -3
+#   5  확인   curl -sI https://54.180.227.109.sslip.io/ | head -3
 
-43.201.16.78.sslip.io {
+54.180.227.109.sslip.io {
 	reverse_proxy 127.0.0.1:8765
 	encode gzip
 }
