@@ -213,7 +213,7 @@
 | `S46-254` | 짝지어진 차를 순위로 올리지 않는가 | fatal | `validate/v0_guide.py:5997` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:188 · guide/03_이력.md:1336 · guide/03_이력.md:1337 |
 | `S46-255` | 시험자 번호가 낱개로 있는가 | fatal | `validate/v0_guide.py:6031` | **★ 없음** | 없음 | guide/03_이력.md:1337 · guide/07_밀린일대장.md:90 |
 | `S46-256` | 막혔다를 증거 없이 쓰지 않는가 | fatal | `validate/v0_guide.py:6332` | **★ 없음** | 없음 | guide/03_이력.md:1338 · guide/06_오판대장.md:341 · chapters/13-pipeline.md:290 |
-| `S46-257` | 파이프라인이 엔카만 돌지 않는가 | fatal | `validate/v0_guide.py:6363` | **★ 없음** | 없음 | guide/03_이력.md:1339 · guide/03_이력.md:1360 · guide/06_오판대장.md:348 |
+| `S46-257` | 파이프라인이 엔카만 돌지 않는가 | fatal | `validate/v0_guide.py:6363` | **★ 없음** | 없음 | guide/03_이력.md:1339 · guide/03_이력.md:1360 · guide/06_오판대장.md:349 |
 | `S46-258` | 판정 축 사전이 정해졌는가 | fatal | `validate/v0_guide.py:6485` | **★ 없음** | 없음 | guide/03_이력.md:1341 |
 | `S46-259` | 마스터 차종 이름이 그대로인가 | fatal | `validate/v0_guide.py:6517` | **★ 없음** | 없음 | guide/03_이력.md:1342 · guide/03_이력.md:1343 · guide/06_오판대장.md:342 |
 | `S46-260` | 빈 쪽이 아니라 끝 신호로 멈추는가 | fatal | `validate/v0_guide.py:6575` | **★ 없음** | 없음 | guide/03_이력.md:1344 · chapters/13-pipeline.md:334 |
@@ -225,7 +225,7 @@
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6751` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:14 · chapters/10-collect/00-intro.md:485 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6773` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:16 · chapters/10-collect/00-intro.md:522 |
 | `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6798` | **★ 없음** | 없음 | guide/03_이력.md:1359 |
-| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6833` | **★ 없음** | 없음 | guide/03_이력.md:1362 |
+| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6833` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/06_오판대장.md:348 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6053` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6079` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6105` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |

@@ -6847,7 +6847,10 @@ def s46_269_recommend_set_and_chips():
            if isinstance(v, dict) and v.get("recommend")}
     ev = {k for k, v in t.items()
           if isinstance(v, dict) and (v.get("fuel_match") or []) == ["전기"]}
-    want = ev | {"KOLEOS_HEV", "GV70_25T"}
+    # ★★★ 마스터 확정 09-03 — 「★ **GV60 빼죠**」.  ★ 전기차이지만 ★ 추천에 안 낸다.
+    #   ★ 09-02 에도 ★ 「GV60 제외」라 하셨다 — ★ **두 번 말씀하신 것을 내가 두 번 다 흘렸다**.
+    #   ★ ★ `active` 는 그대로다 — ★ 「추천에서 빼기」와 「수집 끄기」는 ★ 다르다 (오판 237)
+    want = (ev | {"KOLEOS_HEV", "GV70_25T"}) - {"GV60"}
     bad = []
     miss = sorted(want - rec)
     extra = sorted(rec - want)
@@ -6859,6 +6862,11 @@ def s46_269_recommend_set_and_chips():
         bad.append("모델Y 주니퍼 조건(recommend_year_from)이 없다")
     if "GV70_25T" not in t:
         bad.append("★ GV70 가솔린 차종이 없다")
+    gv60 = t.get("GV60") or {}
+    if gv60.get("recommend"):
+        bad.append("★ GV60 이 추천에 들어 있다 — 마스터께서 두 번 빼라 하셨다")
+    if gv60.get("active") is False:
+        bad.append("★ GV60 수집이 꺼졌다 — 「추천에서 빼기」와 「수집 끄기」는 다르다")
     mock = _read(ROOT / "ref" / "screens" / "v4m_recommend_시안.html")
     if "글자에 맞게 늘어난다" not in mock:
         bad.append("시안에 「단추는 글자에 맞게 늘어난다」가 없다")
