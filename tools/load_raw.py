@@ -8,10 +8,25 @@
 ★★ 곧 ★ **DB 를 여는 곳은 여기 하나다.**  ★ 통신은 하나도 안 한다 —
   ★ 그래서 ★ 한 번에 몰아 넣고 ★ 곧바로 끝난다.  ★ 잠금 창이 짧다
 
+★★★★★ 09-04 (지시문 r1124 · 0-1·0-2·0-4 · `S46-265`) — ★ **적재 DB 를 거친다.**
+
+```
+① 받기      raw/{site}/{endpoint}/{날짜}/…      ★ 파일만.  DB 를 안 연다
+② ★ 적재    tmp/load-{run_id}.db                ★ **본 DB 가 아니다**
+③ 파싱      core_* · result_*                   ★ 제 표로
+④ 원문 표   ★ 본 DB 에 ★ **안 쌓는다**            ★ 그래야 DB 가 안 부푼다
+⑤ ★ 치운다  tmp/load-{run_id}.db 를 지운다        ★ 판이 끝나면
+```
+
+★ 전에는 ★ ②가 ★ **본 DB 의 `raw_response`** 였다.  ★ 그것이 ★ 372,571행 · 425MB 로
+  ★ 자라 ★ DB 를 ★ **1.08 GiB** 로 만들었고 ★ 장비(RAM 1,841MB)를 ★ **세 번** 죽였다.
+★ ★ 원문은 ★ **파일에 남는다** — ★ 적재 DB 는 ★ 그저 ★ 한 판의 발판이다
+
 돌리는 법
     python3.11 tools/load_raw.py revolt            ★ 잰다
     python3.11 tools/load_raw.py revolt --write    ★ 넣는다
     python3.11 tools/load_raw.py revolt --write --day 2026-08-31
+    python3.11 tools/load_raw.py revolt --write --keep-load-db   ★ 적재 DB 를 안 지운다
 """
 from __future__ import annotations
 
@@ -307,6 +322,13 @@ def main() -> int:
     from store.raw import link_raws as raw_link_raws
 
     conn = open_db(os.path.join(ROOT, "carwatch.db"))
+    # ★★★★★ 0-1·0-2 — ★ 원문은 ★ **적재 DB** 로 간다.  ★ 본 DB 에 안 쌓는다
+    run_id = _now().replace("-", "").replace(":", "")[:15]
+    load_dir = os.path.join(ROOT, "tmp")
+    os.makedirs(load_dir, exist_ok=True)
+    load_path = os.path.join(load_dir, f"load-{run_id}.db")
+    load_conn = open_db(load_path)
+    print(f"★ 적재 DB — {os.path.relpath(load_path, ROOT)}")
     at = _now()
     key = load_key()
     # ★ 09-03 (S6) — ★ 파일 봉투 ＋ ★ **표 봉투**를 ★ 한 고리로 돈다
@@ -319,7 +341,8 @@ def main() -> int:
         # ★★ 원문을 ★ 먼저 남긴다 — ★ 파일이 원본이고 ★ 이것은 사본이다 (P3)
         #   ★ 09-03 — ★ 표에서 온 것은 ★ 이미 `raw_response` 에 있다.  ★ 두 번 안 쓴다
         if not isinstance(path, dict):
-            save_site_raw(conn, site, env["endpoint"],
+            # ★ 0-2 — ★ **적재 DB** 에 넣는다 (`conn` 이 아니다).  ★ 본 DB 가 안 부푼다
+            save_site_raw(load_conn, site, env["endpoint"],
                           env.get("source_id"), env.get("url") or "",
                           env.get("body"), env.get("fetched_at") or at,
                           http_code=int(env.get("http_code") or 200))
@@ -399,6 +422,20 @@ def main() -> int:
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (site,)).fetchone()[0]
     print(f"★ 저장된 {site} 매물 {n:,}건")
+    # ★★★★★ 0-4 — ★ 적재 DB 를 ★ **치운다.**  ★ 안 치우면 디스크가 찬다
+    commit(load_conn)
+    size = os.path.getsize(load_path) if os.path.isfile(load_path) else 0
+    rows = load_conn.execute("SELECT COUNT(*) FROM raw_response").fetchone()[0]
+    load_conn.close()
+    if "--keep-load-db" in args:
+        print(f"★ 적재 DB 를 남겼다 — {os.path.relpath(load_path, ROOT)}"
+              f" ({rows:,}행 · {size / 2**20:,.1f} MiB)")
+    else:
+        os.remove(load_path)
+        for tail in ("-wal", "-shm"):
+            if os.path.isfile(load_path + tail):
+                os.remove(load_path + tail)
+        print(f"★ 적재 DB 를 치웠다 — {rows:,}행 · {size / 2**20:,.1f} MiB")
     return 0
 
 

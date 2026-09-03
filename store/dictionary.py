@@ -171,9 +171,27 @@ def seed_fixed_enums(conn: sqlite3.Connection, site: str, fixed: dict,
                 step="STEP 41")
         for value in values:
             cur = conn.execute(
-                "SELECT 1 FROM dict_enum WHERE site=? AND axis=? AND value=?",
+                "SELECT status FROM dict_enum"
+                " WHERE site=? AND axis=? AND value=?",
                 (site, axis, value)).fetchone()
             if cur:
+                # ★★★★★ 09-04 (S3 · `S46-258`) — ★ **묵은 `pending` 을 푼다.**
+                #   ★ 전에는 ★ 행이 있으면 ★ 그냥 건너뛰었다.
+                #   ★ ★ 그래서 ★ 고정 집합이 ★ **뒤에 정해진** 축은
+                #   ★ ★ ★ 먼저 들어와 있던 행이 ★ **영영 `pending`** 이었다.
+                #   ★★ 실측 09-04 — ★ 헤이딜러 `part` **9건**(`hood` 포함)이
+                #     ★ ★ 그대로 남아 ★ `state.outer` **28점**이 안 매겨졌다 —
+                #     ★ ★ ★ 헤이딜러 매물 **275건**이 외판 판정을 못 받았다.
+                #   ★ 지어내는 것이 아니다 — ★ 값이 ★ **`fixed_enums.json` 안에 있다.**
+                #     ★ ★ 그 파일이 ★ 「이 축의 값은 이것뿐」이라 못 박은 정본이다
+                if cur[0] != STATUS_CONFIRMED:
+                    conn.execute(
+                        "UPDATE dict_enum SET status=?, dict_version=?,"
+                        "       last_seen=?"
+                        " WHERE site=? AND axis=? AND value=?",
+                        (STATUS_CONFIRMED, dict_version, at,
+                         site, axis, value))
+                    n += 1
                 continue
             conn.execute(
                 "INSERT INTO dict_enum"
@@ -193,6 +211,49 @@ _TARGETS: dict | None = None
 _TARGETS_FUEL: dict | None = None
 
 
+def _with_site_query(base: dict, root: str) -> dict:
+    """★ `config/targets.json` 의 `site_query` 에서 ★ 사이트 이름을 뽑아 더한다.
+
+    ★ `target_map.json` 이 ★ 먼저다 — ★ 거기 있는 이름은 ★ 안 덮는다.
+    ★ 한 이름을 ★ 두 차종이 다투면 ★ **버린다** (「아마」로 안 짚는다 · 금지 6)
+    """
+    import json as _j
+    import os as _o
+
+    path = _o.path.join(root, "config", "targets.json")
+    if not _o.path.isfile(path):
+        return base
+    try:
+        with open(path, encoding="utf-8") as f:
+            targets = _j.load(f)
+    except (OSError, ValueError):
+        return base
+    seen: dict = {}          # (site, name) -> {target_key, …} · 다투면 None
+    for key, spec in targets.items():
+        if key.startswith("_") or not isinstance(spec, dict):
+            continue
+        for site, sq in (spec.get("site_query") or {}).items():
+            for one in (sq if isinstance(sq, list) else [sq]):
+                if not isinstance(one, dict):
+                    continue
+                names = [str(x) for x in (one.get("slug") or []) if x]
+                if one.get("_차명"):
+                    names.append(str(one["_차명"]))
+                for nm in names:
+                    at = (site, nm)
+                    if at in seen and (seen[at] or {}).get("target_key") != key:
+                        seen[at] = None          # ★ 다툰다 — 버린다
+                    elif at not in seen:
+                        seen[at] = {"target_key": key,
+                                    "collect_group": spec.get("collect_group")}
+    out = {s: dict(v) for s, v in base.items()}
+    for (site, nm), got in seen.items():
+        if got is None:
+            continue
+        out.setdefault(site, {}).setdefault(nm, got)
+    return out
+
+
 def target_map(site: str | None = None) -> dict:
     """사이트 차종 이름 → 우리 차종 키 (개정 540 · TARGET_KEY_MAP).
 
@@ -210,6 +271,20 @@ def target_map(site: str | None = None) -> dict:
         path = _o.path.join(root, "config", "dictionaries", "target_map.json")
         _TARGETS = ((_j.load(open(path, encoding="utf-8")).get("by_site") or {})
                     if _o.path.isfile(path) else {})
+        # ★★★★★ 09-04 (S3) — ★ `targets.json` 의 `site_query` 도 ★ **읽는다.**
+        #   ★★ 실측 09-04 — ★ `target_map.json` 의 `by_site` 에
+        #     ★ ★ 볼보셀렉트 · 헤이딜러 · 리본카가 ★ **항목이 하나도 없다**.
+        #     ★ ★ ★ 그래서 ★ 살아 있는 매물 ★ **539건**이 ★ 영영 「차종 미정」이었다
+        #       ★ ★ ★ ★ (리본카 382 · 헤이딜러 123 · 볼보 34).
+        #   ★★ 그런데 ★ 이름은 ★ **이미 정본에 있다** —
+        #     ★ 볼보는 `site_query.volvo_selekt.slug` (`xc60`·`s60`·`xc40` …) ·
+        #     ★ 헤이딜러는 `site_query.heydealer[].._차명` (「테슬라 모델 Y 주니퍼」 …).
+        #   ★ ★ ★ **지어내지 않는다** — ★ 정본을 ★ 읽을 뿐이다 (S14 · 금지 6).
+        #   ★★★ 두 차종이 ★ **같은 이름을 다투면** ★ 아무것도 안 짚는다 —
+        #     ★ ★ 볼보 `xc40` 은 ★ `XC40_IMPORT` ↔ `XC40_EV` 가 다툰다
+        #     ★ ★ ★ (config 주석 — 「본문 「순수 전기」로 가른다」).
+        #     ★ ★ ★ ★ 「아마 이것일 것」으로 넘기지 않는다 (금지 6)
+        _TARGETS = _with_site_query(_TARGETS, root)
     if site is None:
         return dict(_TARGETS)
     return {k: v for k, v in (_TARGETS.get(site) or {}).items()

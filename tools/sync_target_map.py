@@ -117,6 +117,12 @@ def main() -> int:
 
     if "--apply" not in sys.argv:
         return 0
+    # ★★★★★ 09-04 — ★ `--dry` 는 ★ **아무것도 안 고쳐야 한다.**
+    #   ★ 실측 09-04 — ★ `--apply --dry` 로 돌렸는데 ★ 「(--dry 라 안 넣었다)」라 찍고
+    #   ★ ★ 그 아래에서 ★ **4,151건에 차종을 붙였다**.  ★ 말과 한 일이 달랐다
+    if "--dry" in sys.argv:
+        print("★ `--dry` 다 — ★ 차종을 안 붙였다 (`--apply` 만으로 돌려라)")
+        return 0
     return apply_targets(conn, at)
 
 
@@ -150,14 +156,31 @@ def apply_targets(conn, at: str) -> int:
             #   ★ `out_of_scope` 도 ★ 행은 남는다.  ★ 버리는 것이 아니다
             said = "active" if got else "out_of_scope"
             if got:
+                # ★ 차종은 ★ 늘 붙인다 — ★ 팔린 차도 ★ 「무슨 차였나」는 남아야 한다
                 conn.execute(
-                    "UPDATE core_listing SET target_key=?, status=?"
-                    " WHERE listing_id=?", (got, said, lid))
-                put += 1
-            else:
+                    "UPDATE core_listing SET target_key=? WHERE listing_id=?",
+                    (got, lid))
+                # ★★★★★ 09-04 — ★ **`gone` 을 되살리지 않는다.**
+                #   ★ 실측 09-04 — ★ 전에는 ★ `status` 를 함께 `active` 로 덮어
+                #   ★ ★ 팔려서 내린 ★ **2,036건**이 ★ 도로 살아났다 —
+                #   ★ ★ ★ 철학 ②(`S46-267`)가 한 일을 ★ 이 줄이 물렸다.
+                #   ★★ 되살리는 자리는 ★ **하나**다 — ★ `collect/sweep.py` 의 「마」
+                #     ★ ★ (`mark_relisted` · 상세가 「아직 판다」고 할 때만)
                 conn.execute(
                     "UPDATE core_listing SET status=? WHERE listing_id=?"
-                    " AND status='new'", (said, lid))
+                    "   AND status <> 'gone'", (said, lid))
+                put += 1
+            else:
+                # ★★★★★ 09-04 — ★ **차종이 이미 붙어 있으면 ★ 안 내린다.**
+                #   ★ 실측 09-04 — ★ 이 줄이 ★ `target_key` 가 **있는** 행까지
+                #   ★ ★ `out_of_scope` 로 내렸다 — ★ **4,122건**이
+                #   ★ ★ ★ 「우리 차종 열쇠가 붙었는데 ★ 남의 차」라는 ★ **모순**이 됐다
+                #     ★ ★ ★ ★ (스포티지 682 · GLC 573 · 그랜저 512 · X3 354 · 모델Y 268 …).
+                #   ★★ 규칙이 ★ **이번 판에 못 짚었을 뿐**이다 —
+                #     ★ ★ 못 짚은 것을 ★ 「남의 차」라고 말하지 않는다 (금지 6)
+                conn.execute(
+                    "UPDATE core_listing SET status=? WHERE listing_id=?"
+                    " AND status='new' AND target_key IS NULL", (said, lid))
                 keep += 1
     conn.commit()
     print(f"★ 차종을 붙였다 {put}건 · ★ 「차종 미정」으로 둔 것 {keep}건")
