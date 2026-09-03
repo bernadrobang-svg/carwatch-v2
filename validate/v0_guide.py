@@ -2852,6 +2852,16 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
 
     han = re.compile(r"[가-힣]{2,}")
     drop = re.compile(r"<(script|style|title)[^>]*>.*?</\1>", re.S | re.I)
+    # ★★★★★ 09-02 — ★ 시안의 ★ **「왜 없나」 줄은 ★ 화면에 낼 글이 아니라 ★ 지시문**이다.
+    #   ★ `RULES.md` 2 조 — 「★ 없으면 ★ 왜 없는지를 글로 낸다」를 ★ 시안에 적어 둔 것이다.
+    #   ★ ★ 낱말을 하나씩 `sian_word_skip` 에 빼면 ★ **두더지잡기**가 된다 —
+    #     ★ 09-02 에 「거르기만·규격·나쁜·낮다·눌러도·먼저」 ★ 25개가 한꺼번에 걸렸다.
+    #   ★ ★ ★ 그래서 ★ **그 상자를 통째로 걷어낸다**.  ★ 짝은 `_why_classes` 다
+    why_cls = "|".join(("v4-why-empty", "rc-why-empty", "lst-why-empty",
+                        "wch-why-empty", "trk-why-empty", "sld-why-empty",
+                        "adm-note", "rc-rank-note", "lst-pairhead"))
+    drop_why = re.compile(
+        rf'<div[^>]*class="[^"]*(?:{why_cls})[^"]*"[^>]*>.*?</div>', re.S)
     # ★ 화면 쪽은 `<title>` 을 남긴다 — ★ 그것이 그 화면의 이름이다
     keep_drop = re.compile(r"<(script|style)[^>]*>.*?</\1>", re.S | re.I)
     note = re.compile(
@@ -2870,6 +2880,8 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
         if cut > 0:
             html = html[:cut]
         killer = keep_drop if keep_title else drop
+        if not keep_title:                      # ★ 시안 쪽만 — ★ 지시문 상자를 걷어낸다
+            html = drop_why.sub(" ", html)
         return re.sub(r"<[^>]+>", " ", note.sub(" ", killer.sub(" ", html)))
 
     def squeeze(text: str) -> str:
