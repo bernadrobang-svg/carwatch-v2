@@ -3119,9 +3119,35 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
 /* ★ 한 줄에 여럿이 서면 ★ 겹치지 말고 ★ 다음 줄로 넘긴다 */
 .meta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;height:auto}
 .gr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+/* ★ 2차 (09-04) — ★ **재서 골랐다**.  ★ `.dim` 을 한 줄로 두니 ★ 49 → **47** */
+.dim{white-space:nowrap;overflow:visible;height:auto}
+.card .dim{display:inline-block}
+
+/* ★ 3차 (09-04) — ★ 남은 것이 어느 어미에 있는지 세어 ★ 그것만 노렸다
+   ★ 남은 47 의 자리 — `.cell` 8 · `.gr` 7 · `.pickname` 4 · `.kspec` 4 · `.kpick` 3
+   ★ ★ 재서 고른 둘 — ★ 47 → **44** */
+.kspec{height:auto;min-height:0;line-height:1.4;overflow:visible;
+       display:flex;flex-wrap:wrap;gap:2px 6px}
+.gr{padding:8px 6px;gap:3px;line-height:1.35;height:auto}
+
+/* ★ 4차 (09-04) — ★ 44 → **43** */
+.cell{padding:2px 0;min-height:0;height:auto}
+
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
    ★ ★ **49 → 52 로 더 나빠졌다** — ★ 안 넣는다.
+   ★ 그 밖에 재서 뺀 것 [09-04] —
+     `.gr` 를 가로로 (`flex-direction:row`)   ★ 49 → **60**
+     카드를 `display:block` 으로              49 → 47 (안 준다)
+     사진을 `max-width:38%` 로                49 → 47 (안 준다)
+     `.gr` 글자를 15px 로                     49 → 48 (안 준다)
+     `.meta` 를 grid 두 칸으로                47 → **75** ★ 크게 나빠졌다
+     `.cell` 에 `overflow-wrap:anywhere`      47 → **49**
+     `.kpick` 을 `position:static` 으로        47 → 49
+     `.pickname` 늘리기 · `.kpick` 줄이기      44 에서 안 준다
+     `.cell` 을 flex 로 · 카드 글자 12px · `.gr` 88px · 카드 여백 10px   44 에서 안 준다
+★★★ **다섯 차례 돌려 ★ 63 → 43 (32% 줄었다)**.  ★ 스무 가지를 시험해 ★ **다섯만 남겼다.
+   ★ ★ 나머지 열다섯은 ★ 안 주거나 ★ 더 나빠졌다 — ★ 그 수를 위에 적어 뒀다** */
    ★ ★ ★ 「재고 · 넣고 · 다시 재고 · **나빠지면 되돌린다**」 (RULES.md 2-3) */
 
 /* ★ 단추는 ★ 글자에 맞게 늘어난다 (마스터 확정 09-03) */
