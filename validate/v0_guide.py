@@ -6677,6 +6677,12 @@ def s46_264_deploy_is_up():
         ★ 그 사이에 죽었다.  ★ **한 판 도는 데 4~5분**이라 ★ 그 틈이 안 잡힌다.
     ★★ 그래서 ★ **맨 앞에서 한 번만** 두드린다 — ★ 화면 하나면 된다.
       ★ ★ 503 이면 ★ **뒤의 배포 검사가 다 헛것**이다 (로그인도 못 한다).
+    ★★★★★ 09-03 (2차) — ★ **503 의 정체는 ★ 서버가 옮겨진 것이었다**.
+      ★ 옛 주소 `43.201.16.78` → ★ 새 주소 `54.180.227.109`.
+      ★ ★ `config/deploy.json` 은 ★ **이미 새 주소**였는데 ★ 내가 ★ 옛 주소를 물고 있었다.
+      ★ ★ ★ **밖만 재고 ★ 안을 안 봤다** (오판 246 과 같은 뿌리).
+    ★★ 그래서 ★ 이 검사는 ★ **늘 `deploy.json` 을 다시 읽는다** — ★ 값을 기억하지 않는다.
+      ★ ★ 그리고 ★ 503 이면 ★ **「주소가 바뀌지 않았는지 먼저 보라」**고 낸다.
     ★ 잣대 — ★ `/listings` 가 ★ 200 인가.  ★ 아니면 ★ 그 수를 그대로 낸다.
     """
     dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
@@ -6695,8 +6701,9 @@ def s46_264_deploy_is_up():
         with urllib.request.urlopen(req, timeout=40, context=ctx) as res:
             code, size = res.status, len(res.read())
     except urllib.error.HTTPError as exc:
-        return False, (f"★ 배포가 안 열린다 — HTTP {exc.code}  "
-                       "★ 이러면 뒤의 배포 검사가 다 헛것이다")
+        return False, (f"★ 배포가 안 열린다 — HTTP {exc.code} ({base})  "
+                       "★ **주소가 바뀌지 않았는지 먼저 보라** — "
+                       "★ 09-03 에 503 의 정체가 ★ 서버 이사였다")
     except Exception as exc:  # noqa: BLE001
         return False, f"★ 배포를 못 두드렸다 ({type(exc).__name__})"
     if code != 200:
