@@ -9,18 +9,19 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 52,373줄 · 3,719KB**
+**132파일 · 52,397줄 · 3,724KB**
 
-★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,254줄
+- CHECKS.md 1,256줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,368줄
+- guide/03_이력.md 1,370줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
+- chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
 - chapters/30-score/f-table.md 3,067줄
@@ -33,7 +34,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,254 | 155 |
+| `CHECKS.md`  ★ | 1,256 | 155 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -73,7 +74,7 @@
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 618 | 25 |
-| `chapters/13-pipeline.md` | 789 | 31 |
+| `chapters/13-pipeline.md`  ★ | 809 | 33 |
 | `chapters/20-verify/00-intro.md` | 202 | 8 |
 | `chapters/20-verify/a-frame.md` | 27 | 0 |
 | `chapters/20-verify/b-v1v2.md` | 210 | 9 |
@@ -121,7 +122,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,368 | 1,025 |
+| `guide/03_이력.md`  ★ | 1,370 | 1,028 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |

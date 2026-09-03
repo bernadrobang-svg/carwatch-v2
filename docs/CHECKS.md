@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **571개**
+검사 **572개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **571** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **572** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **22** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
 
@@ -197,7 +197,7 @@
 | `S46-237` | 추천이 예산 안인가 | fatal | `validate/v0_guide.py:5332` | **★ 없음** | 없음 | — |
 | `S46-238` | 트림이 신차가를 두 번 안 세는가 | fatal | `validate/v0_guide.py:5399` | **★ 없음** | 없음 | guide/03_이력.md:1322 |
 | `S46-240` | DDL 색인이 DB 에 다 있는가 | fatal | `validate/v0_guide.py:5291` | **★ 없음** | 없음 | guide/03_이력.md:1324 |
-| `S46-241` | 배포에서 재판정이 살아 있는가 | fatal | `validate/v0_guide.py:5422` | **★ 없음** | 없음 | guide/03_이력.md:1326 · guide/03_이력.md:1349 · guide/07_밀린일대장.md:152 |
+| `S46-241` | 배포에서 재판정이 살아 있는가 | fatal | `validate/v0_guide.py:5422` | **★ 없음** | 없음 | guide/03_이력.md:1326 · guide/03_이력.md:1349 · guide/03_이력.md:1358 |
 | `S46-242` | 시안에 「반드시 있는 것」 머리가 있는가 | fatal | `validate/v0_guide.py:5517` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
 | `S46-243` | 비는 자리가 까닭을 내는가 | fatal | `validate/v0_guide.py:5541` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
 | `S46-244` | 실패 응답도 원문으로 남는가 | fatal | `validate/v0_guide.py:5571` | **★ 없음** | 없음 | guide/03_이력.md:1328 |
@@ -216,7 +216,7 @@
 | `S46-257` | 파이프라인이 엔카만 돌지 않는가 | fatal | `validate/v0_guide.py:6363` | **★ 없음** | 없음 | guide/03_이력.md:1339 · guide/06_오판대장.md:348 |
 | `S46-258` | 판정 축 사전이 정해졌는가 | fatal | `validate/v0_guide.py:6485` | **★ 없음** | 없음 | guide/03_이력.md:1341 |
 | `S46-259` | 마스터 차종 이름이 그대로인가 | fatal | `validate/v0_guide.py:6517` | **★ 없음** | 없음 | guide/03_이력.md:1342 · guide/03_이력.md:1343 · guide/06_오판대장.md:342 |
-| `S46-260` | 빈 쪽이 아니라 끝 신호로 멈추는가 | fatal | `validate/v0_guide.py:6575` | **★ 없음** | 없음 | guide/03_이력.md:1344 · chapters/13-pipeline.md:314 |
+| `S46-260` | 빈 쪽이 아니라 끝 신호로 멈추는가 | fatal | `validate/v0_guide.py:6575` | **★ 없음** | 없음 | guide/03_이력.md:1344 · chapters/13-pipeline.md:334 |
 | `S46-261` | 회차의 수와 배포의 수가 같은가 | fatal | `validate/v0_guide.py:6232` | **★ 없음** | 없음 | — |
 | `S46-262` | 개발측 「여쭐 것」이 물렸는가 | fatal | `validate/v0_guide.py:6600` | **★ 없음** | 없음 | guide/03_이력.md:1347 · guide/03_이력.md:1348 · guide/06_오판대장.md:343 |
 | `S46-263` | 네 갈래 로직이 규격에 있는가 | fatal | `validate/v0_guide.py:6632` | **★ 없음** | 없음 | guide/03_이력.md:1351 · guide/03_이력.md:1352 · guide/03_이력.md:1353 |
@@ -224,10 +224,11 @@
 | `S46-265` | 적재 뒤 raw_response 를 지우는가 | fatal | `validate/v0_guide.py:6714` | **★ 없음** | 없음 | guide/03_이력.md:1356 · guide/06_오판대장.md:347 · chapters/10-collect/00-intro.md:566 |
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6751` | **★ 없음** | 없음 | guide/03_이력.md:1357 · chapters/10-collect/00-intro.md:485 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6773` | **★ 없음** | 없음 | guide/03_이력.md:1357 · chapters/10-collect/00-intro.md:522 |
+| `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6798` | **★ 없음** | 없음 | guide/03_이력.md:1359 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6053` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6079` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6105` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
-| `V1-01` | expected == requested + not_requested | run | `validate/v1_collect.py:34` | **★ 없음** | 없음 | trace/02-collect.md:21 · chapters/00-standard.md:362 · chapters/13-pipeline.md:705 |
+| `V1-01` | expected == requested + not_requested | run | `validate/v1_collect.py:34` | **★ 없음** | 없음 | trace/02-collect.md:21 · chapters/00-standard.md:362 · chapters/13-pipeline.md:725 |
 | `V1-02` | not_requested == 0 | run | `validate/v1_collect.py:37` | **★ 없음** | 없음 | trace/02-collect.md:37 · chapters/20-verify/b-v1v2.md:14 |
 | `V1-03` | requested == ok+empty+not_found+error | run | `validate/v1_collect.py:40` | **★ 없음** | 없음 | chapters/20-verify/00-intro.md:22 · chapters/20-verify/b-v1v2.md:15 · chapters/20-verify/d-v5.md:221 |
 | `V1-04` | 형식 검증 거부 0 | run | `validate/v1_collect.py:43` | **★ 없음** | 없음 | chapters/60-admin/b-ops.md:215 · chapters/20-verify/b-v1v2.md:16 · chapters/20-verify/b-v1v2.md:95 |
@@ -274,7 +275,7 @@
 | `V2-15` | 자연키가 UNIQUE 로 걸려 있음 | run | `validate/v2_load.py:112` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:134 |
 | `V2-16` | PK·FK 컬럼에 개인정보 없음 | run | `validate/v2_load.py:115` | **★ 없음** | 없음 | chapters/60-admin/00-intro.md:147 · chapters/20-verify/b-v1v2.md:135 |
 | `V2-17` | PII 고아 행 없음 | run | `validate/v2_load.py:60` | **★ 없음** | 없음 | guide/03_이력.md:110 · chapters/11-store/b-core.md:474 · chapters/20-verify/b-v1v2.md:136 |
-| `V2-18` | parse_rule 재처리 후 전 봉투가 현재 parse_version | run | `validate/v2_load.py:105` | **★ 없음** | 없음 | trace/RULES.md:226 · guide/03_이력.md:136 · chapters/13-pipeline.md:434 |
+| `V2-18` | parse_rule 재처리 후 전 봉투가 현재 parse_version | run | `validate/v2_load.py:105` | **★ 없음** | 없음 | trace/RULES.md:226 · guide/03_이력.md:136 · chapters/13-pipeline.md:454 |
 | `V2-19` | 원문 유래 컬럼에 NOT NULL 없음 | run | `validate/v2_load.py:102` | **★ 없음** | 없음 | guide/01_요구사항.md:910 · guide/01_요구사항.md:919 · guide/01_요구사항.md:920 |
 | `V2-20` | 파싱 실패 필드가 있는 행도 CORE 에 있음 | run | `validate/v2_load.py:64` | **★ 없음** | 없음 | guide/01_요구사항.md:923 · guide/01_요구사항.md:932 · guide/01_요구사항.md:933 |
 | `V2-21` | parse_error · type_mismatch 건수 | run | `validate/v2_load.py:68` | **★ 없음** | 없음 | chapters/20-verify/b-v1v2.md:115 |
@@ -615,7 +616,7 @@
 | `V11-164` | 점수 필터가 SQL 로 걸림 | run | `validate/v11_web.py:469` | **★ 없음** | 없음 | chapters/41-view.md:424 |
 | `V11-165` | 고른 조건이 문장으로 나옴 | run | `validate/v11_web.py:475` | **★ 없음** | 없음 | KCAR_API.md:354 · guide/03_이력.md:447 · guide/03_이력.md:466 |
 | `V11-166` | 비교에 막대 넷·총 구매비용·결론이 있음 | run | `validate/v11_web.py:446` | **★ 없음** | 없음 | guide/03_이력.md:449 · chapters/41-view.md:495 |
-| `V13-08` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:446 · chapters/13-pipeline.md:400 |
+| `V13-08` | — | — | **★ 코드에 없다** | — | — | guide/03_이력.md:446 · chapters/13-pipeline.md:420 |
 
 ## ② 죽은 검사 — 한 번도 안 돌았다
 
@@ -795,6 +796,7 @@
 - `S46-265` 적재 뒤 raw_response 를 지우는가 — `validate/v0_guide.py`
 - `S46-266` 이미 받은 상세를 다시 안 받는가 — `validate/v0_guide.py`
 - `S46-267` 팔린 것을 대조하고 치우는가 — `validate/v0_guide.py`
+- `S46-268` 지시문이 한 벌이고 지금 판인가 — `validate/v0_guide.py`
 - `S46-30` INDEX 가 docs 를 다 가리키는가 — `validate/v0_guide.py`
 - `S46-31` 규격이 있는 사이트가 config 에 있는가 — `validate/v0_guide.py`
 - `S46-32` 생성물이 최신인가 — `validate/v0_guide.py`
@@ -1211,7 +1213,7 @@
 - `V11-87` — guide/01_요구사항.md:156 · guide/01_요구사항.md:219 · guide/01_요구사항.md:229
 - `V11-88` — guide/01_요구사항.md:161 · guide/01_요구사항.md:567 · guide/01_요구사항.md:577
 - `V11-93` — trace/14-web.md:47 · guide/01_요구사항.md:162 · guide/01_요구사항.md:581
-- `V13-08` — guide/03_이력.md:446 · chapters/13-pipeline.md:400
+- `V13-08` — guide/03_이력.md:446 · chapters/13-pipeline.md:420
 - `V2-03` — trace/RULES.md:186 · chapters/11-store/a-key.md:403 · chapters/20-verify/b-v1v2.md:107
 - `V3-12` — guide/03_이력.md:97 · chapters/30-score/f-table.md:1320 · chapters/20-verify/00-intro.md:147
 - `V3-42` — trace/14-web.md:55 · guide/01_요구사항.md:157 · guide/01_요구사항.md:233

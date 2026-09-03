@@ -6795,7 +6795,43 @@ def s46_267_sold_swept_after_detail():
     return True, "팔린 것을 상세로 대조하고 치우는 걸음이 있다"
 
 
+def s46_268_order_is_one_and_current():
+    """S46-268 — ★ 지시문이 ★ **한 벌이고 ★ 지금 판인가** (마스터 09-03).
+
+    ★★★ 마스터 — 「★ 네가 만든 가이드나 지시 ★ 문제들이 ★ 다 **일관성이 있는 건지**
+      ★ 확인이 필요할 것 같아.  ★ 일단 너는 ★ **자꾸 이자 먹기 바빠**」
+    ★★ 실측 09-03 — ★ 지시문이 ★ **455줄 · 27절**이고 —
+      ★ 「다음 지시문」이 ★ **2개**(어느 것이 지금인지 모른다) ·
+      ★ 「마스터 지시 09-02」가 ★ **2번** 되풀이 ·
+      ★ 판번호가 ★ **r1101 ↔ r1121 — 20 뒤졌다** ·
+      ★ 「목록만으로 판정」이 ★ **살아 있는 절과 물린 절이 둘 다** 있었다.
+    ★ ★ **새 절을 앞에 붙이기만 하고 ★ 옛 것을 안 걷어냈다** — ★ 「이자만 먹었다」.
+    ★ 잣대 — ★ 「다음 지시문」이 ★ 둘 이상이면 실패 · ★ 판번호가 뒤지면 실패.
+    """
+    o = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    if not o:
+        return False, "지시문을 못 읽었다"
+    bad = []
+    if o.count("다음 지시문") > 1:
+        bad.append(f"「다음 지시문」이 {o.count('다음 지시문')}개 — 어느 것이 지금인지 모른다")
+    m = re.search(r"SPEC-2026\.\d+\.\d+-r(\d+)", o)
+    v = re.search(r"SPEC-2026\.\d+\.\d+-r(\d+)",
+                  _read(ROOT / "docs" / "guide" / "00_버전.md"))
+    if not m:
+        bad.append("지시문에 판번호가 없다")
+    elif v and int(v.group(1)) - int(m.group(1)) > 3:
+        bad.append(f"판번호가 {int(v.group(1)) - int(m.group(1))} 뒤졌다 "
+                   f"(r{m.group(1)} ↔ r{v.group(1)})")
+    n = len(o.splitlines())
+    if n > 300:
+        bad.append(f"지시문이 {n}줄이다 — 옛 절을 안 걷어냈다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"지시문이 한 벌이다 ({n}줄 · r{m.group(1)})"
+
+
 CHECKS = (
+    ("S46-268", "지시문이 한 벌이고 지금 판인가", s46_268_order_is_one_and_current),
     ("S46-266", "이미 받은 상세를 다시 안 받는가", s46_266_detail_not_refetched),
     ("S46-267", "팔린 것을 대조하고 치우는가", s46_267_sold_swept_after_detail),
     ("S46-265", "적재 뒤 raw_response 를 지우는가", s46_265_raw_purged_after_load),
