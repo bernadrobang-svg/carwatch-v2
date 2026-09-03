@@ -5465,9 +5465,27 @@ def s46_241_regrade_alive_on_deploy():
         return False, (f"★ 재판정이 배포에서 죽어 있다 — 불변 필드로 멈춘 매물 "
                        f"{len(set(stuck))}건 (listing_id={' · '.join(sorted(set(stuck))[:3])})"
                        "  ★ 코드만 고친 것은 끝이 아니다")
+    # ★★★★★ 09-04 (가이드 지시 ①) — ★ **S5 까지 넓힌다.**
+    #   ★★★ 09-03 — ★ 이 검사가 ★ **지키는 척했다.**
+    #     ★ 불변 필드(재판정)만 봐서 ★ `S5` 가 ★ **네 번 죽었는데 통과**였다
+    #     ★ ★ (가이드 실측 — 「마지막 판 failed — S5: raw_response 신규 32 !=
+    #     ★ ★ ★ 응답 합 310 · 96분 전」).
+    #   ★★ 마스터 인수인계 — 「★ **배포에서 확인한 것만 「끝」이라 써라**」.
+    #     ★ ★ 그러려면 ★ 검사가 ★ **판이 죽었는지**를 봐야 한다.
+    #   ★ `/admin/status` 에 ★ `failed` 가 있으면 ★ 실패다 —
+    #     ★ ★ 어느 걸음이 죽었는지도 ★ 함께 낸다 (「무엇이 왜」를 적는다)
+    # ★ 배포 화면은 ★ 「… failed raw_missing · all 125분 전 **S5**: ⑤ …」 꼴이다 —
+    #   ★ 걸음 이름이 ★ `failed` **뒤**에 온다 [실측 09-04]
+    dead = re.findall(r"failed.{0,60}?\b(S\d+[a-z]?)\s*:", text)
+    if not dead and "failed" in text:
+        dead = ["(걸음 이름을 못 읽음)"]
+    if dead:
+        return False, (f"★ 배포에서 판이 죽어 있다 — failed {len(dead)}건 "
+                       f"({' · '.join(sorted(set(dead))[:4])})"
+                       "  ★ 코드만 고친 것은 끝이 아니다")
     if fails:
         return False, f"★ /admin/status 에 ValidationError 가 {fails}건 남아 있다"
-    return True, "배포에서 재판정이 불변 필드로 멈춰 있지 않다"
+    return True, "배포에서 판이 살아 있다 (failed 없음 · 불변 필드로 멈춘 것 없음)"
 
 
 def s46_242_mock_has_required_header():
@@ -6135,6 +6153,63 @@ def v1_22_site_given_is_not_remade() -> tuple[bool, str]:
     return True, f"사이트가 준 것을 받아 쓴다 (platform_check 원문 — {said})"
 
 
+def s46_261_report_matches_deploy() -> tuple[bool, str]:
+    """S46-261 — ★ 「닫았다」는 ★ **회차의 수**와 ★ **배포의 수**가 같은가 (09-04).
+
+    ★★★ 09-03 — ★ 개발측이 ★ 「기아 CPO 상세율 0 → **100%**」라 적었는데
+      ★ ★ 가이드가 배포에서 재니 ★ **0.8%** 였다.
+      ★ ★ ★ 까닭은 ★ **분모**다 — ★ 개발측이 `out_of_scope` 1,021건을 뺐다.
+    ★★ 마스터 인수인계 — 「★ **배포에서 확인한 것만 「끝」이라 써라**」.
+      ★ ★ 그러려면 ★ 「무엇으로 쟀는가」가 ★ **한 자로 고정**돼야 한다.
+    ★ 이 검사가 정하는 자 — ★ 상세율 = ★ **상세 원문이 있는 매물 ÷ 그 사이트 전 매물**.
+      ★ ★ `out_of_scope` 를 ★ **빼지 않는다** — ★ 빼면 분모가 작아져 수가 부푼다.
+    ★ 잣대 — ★ 마지막 회차 기록이 적은 상세율과 ★ 지금 잰 값이 ★ **10%p 넘게** 다르면 실패.
+      ★ ★ 회차에 수가 없으면 ★ 잴 것이 없다 (통과 — ★ 그것은 `S46-152` 가 본다)
+    """
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 잴 것이 없다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        now: dict = {}
+        for site, n in conn.execute(
+                "SELECT site, COUNT(*) FROM core_listing GROUP BY 1"):
+            if not n:
+                continue
+            d = conn.execute(
+                "SELECT COUNT(DISTINCT source_id) FROM raw_response"
+                " WHERE site=? AND endpoint='detail' AND status='ok'",
+                (site,)).fetchone()[0]
+            now[site] = 100.0 * min(d, n) / n
+    except sqlite3.Error as e:
+        return False, f"못 읽었다: {e}"
+    finally:
+        conn.close()
+    if not now:
+        return True, "매물이 없다 — 잴 것이 없다"
+
+    # ★ 마지막 회차 기록에서 ★ 「사이트 … NN.N%」 꼴을 찾는다
+    outs = sorted((ROOT / "outputs").glob("2026*_v*.md"))
+    if not outs:
+        return True, "회차 기록이 없다 — 잴 것이 없다"
+    body = _read(outs[-1]) or ""
+    bad = []
+    for site, real in sorted(now.items()):
+        for m in re.finditer(re.escape(site) + r"[^0-9\n]{0,40}(\d{1,3}\.\d)%", body):
+            said = float(m.group(1))
+            if abs(said - real) > 10.0:
+                bad.append(f"{site} — 회차 {said:.1f}% ↔ 지금 {real:.1f}%")
+            break
+    if bad:
+        return False, ("★ 회차의 수와 지금 수가 다르다 — " + " · ".join(bad[:4])
+                       + f"  ★ 잣대는 ★ **전 매물**이다 ({outs[-1].name})")
+    said_n = sum(1 for site in now
+                 if re.search(re.escape(site) + r"[^0-9\n]{0,40}\d{1,3}\.\d%", body))
+    return True, (f"회차가 적은 상세율이 지금과 같다 ({said_n}곳 견줌 · {outs[-1].name})")
+
+
 def s46_256_blocked_needs_evidence():
     """S46-256 — ★ 「막혔다」를 ★ **증거 없이** 쓰지 않는가 (개정 1102 · 09-02).
 
@@ -6446,6 +6521,7 @@ CHECKS = (
     ("V0-02", "폐기 표시가 이력에 있는가", v0_02_retired_marks_match),
     ("V0-03", "배점 숫자가 부록 F 밖에 있는가", v0_03_points_only_in_appendix),
     ("V1-22", "사이트가 주는 것을 받아 쓰는가", v1_22_site_given_is_not_remade),
+    ("S46-261", "회차의 수와 배포의 수가 같은가", s46_261_report_matches_deploy),
     ("S46-255", "시험자 번호가 낱개로 있는가", s46_255_tester_items_listed_one_by_one),
     ("S46-254", "짝지어진 차를 순위로 올리지 않는가", s46_254_pair_badge_not_by_order),
     ("S46-253", "1부를 브라우저로 봤는가", s46_253_part1_seen_in_browser),
