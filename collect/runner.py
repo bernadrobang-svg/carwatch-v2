@@ -763,9 +763,15 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             #     ★ ★ 가 ★ 차종을 모르는 것을 ★ **곧장 밀어냈다** —
             #     ★ ★ ★ 그러면 ★ 상세를 영영 못 받아 ★ **영영 못 가른다**.
             #   ★ 차종이 **정해진** `out_of_scope` 는 안 본다 — ★ 그것은 진짜 남의 차다
+            # ★★★★★ 09-04 — ★ **괄호를 꼭 씌운다.**
+            #   ★ `_scope` 가 뒤에 ★ `AND site=? AND (…)` 를 붙인다 —
+            #   ★ ★ `AND` 가 `OR` 보다 세서 ★ 괄호가 없으면
+            #   ★ ★ ★ 첫 갈래(`active`·`new`)가 ★ **사이트도 차종도 안 걸린다**.
+            #   ★ ★ ★ ★ 시험 `test_target_scope` 가 그것을 잡았다 (24 여야 하는데 32) —
+            #     ★ ★ ★ ★ ★ 「240건을 지정했는데 S5 expected 가 30,580」이던 옛 사고 자리다
             *_scope("SELECT listing_id, source_id FROM core_listing "
-                    "WHERE status IN ('active','new')"
-                    "   OR (status = 'out_of_scope' AND target_key IS NULL)")
+                    "WHERE (status IN ('active','new')"
+                    "       OR (status = 'out_of_scope' AND target_key IS NULL))")
         ).fetchall()
         skipped = 0
         done_before = 0
