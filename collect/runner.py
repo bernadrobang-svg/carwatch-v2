@@ -342,8 +342,17 @@ class FailStreak:
 
 
 def _sleep(cfg, rng) -> None:
-    """간격은 정책값이다.  코드에 박지 않는다 (STEP 24)."""
-    lo, hi = cfg["interval_sec"]
+    """간격은 정책값이다.  코드에 박지 않는다 (STEP 24).
+
+    ★★★★★ 09-03 — ★ 꼴이 ★ **사이트마다 다르다.**
+      ★ 엔카는 ★ `[lo, hi]` 범위고 ★ 나머지는 ★ 수 하나다 (실측 09-03 —
+      ★ ★ `TypeError: cannot unpack non-iterable float object`).
+    ★ 둘 다 받는다 — ★ 하나면 ★ 그 값으로 고정이다.  ★ 값을 지어내지 않는다
+    """
+    got = cfg["interval_sec"]
+    if isinstance(got, (int, float)):
+        got = [got, got]
+    lo, hi = got
     time.sleep(rng.uniform(lo, hi))
 
 
@@ -423,8 +432,19 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         """
         col = f"{alias}.target_key" if alias else "target_key"
         site_col = f"{alias}.site" if alias else "site"
+        # ★★★★★ 09-03 (가이드 지시 ②) — ★ **차종을 아직 모르는 것도 본다.**
+        #   ★ 실측 09-03 — ★ `status='new'` 이면서 ★ 차종이 빈 매물이 ★ **787건**
+        #   ★ ★ (리본카 341 · BMW 171 · 헤이딜러 114 · 보배 98 · 차차차 53 …).
+        #   ★★ 그것은 ★ 목록으로 ★ **매물번호만** 넣은 것이다 —
+        #     ★ ★ 차종은 ★ **상세를 풀어야** 정해진다 (`fill_target_key`).
+        #   ★ ★ ★ 그런데 ★ 차종으로 걸러 ★ 상세를 안 받으니
+        #     ★ ★ ★ ★ 「상세를 받아야 차종을 아는데 ★ 차종을 알아야 상세를 받는」 고리다.
+        #   ★★★ **아직 모르는 것(NULL)은 통과시킨다** — ★ 받아 보고 나서 가른다.
+        #     ★ ★ 우리 차종이 아니면 ★ `upsert_core` 가 ★ `out_of_scope` 로 적는다.
+        #     ★ ★ ★ 「전량을 받는다」가 아니다 — ★ 목록이 이미 우리 질의로 좁혀졌다
         return (f"{sql} AND {site_col} = ?"
-                f" AND {col} IN ({','.join('?' * len(scope))})",
+                f" AND ({col} IS NULL"
+                f"      OR {col} IN ({','.join('?' * len(scope))}))",
                 (adapter.site_code, *scope))
 
     def s1(conn, ctx):
@@ -725,8 +745,16 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         streak = FailStreak(streak_limit)
         halted = None
         lids = conn.execute(
+            # ★★★★★ 09-03 (가이드 지시 ②) — ★ **`new` 도 받는다.**
+            #   ★ 실측 09-03 — ★ `new` 가 ★ **5,900건** 있다
+            #   ★ ★ (차차차 5,050 · 리본카 342 · BMW 185 · 보배 144 · 헤이딜러 121 …).
+            #   ★★ 목록으로 ★ 매물번호만 넣은 것이 ★ `new` 다 —
+            #     ★ ★ 상세를 받아야 ★ `active` 가 된다 (`upsert_core` 가 바꾼다).
+            #   ★ ★ ★ 그런데 ★ 여기서 ★ `active` 만 골라 ★ **영영 못 받았다** —
+            #     ★ ★ ★ ★ 「상세를 받아야 active 인데 ★ active 여야 상세를 받는」 고리다.
+            #   ★ 기아 CPO 는 ★ `active` 가 **0건**이라 ★ 상세율이 **0%** 였다
             *_scope("SELECT listing_id, source_id FROM core_listing "
-                    "WHERE status='active'")
+                    "WHERE status IN ('active','new')")
         ).fetchall()
         skipped = 0
         done_before = 0
@@ -741,7 +769,20 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                                         strict=True))
         for i, (lid, sid) in enumerate(lids, start=1):
             diag_grade = None
-            for kind, req in zip(LISTING_ENDPOINTS, adapter.detail_urls(sid), strict=True):
+            # ★★★★★ 09-03 (가이드 지시 ①②) — ★ **창구는 어댑터가 말한다.**
+            #   ★ `LISTING_ENDPOINTS` 는 ★ **엔카의 아홉 창구**다
+            #   ★ ★ (`detail`·`inspection`·`record`·`diagnosis`·…).
+            #   ★★ 다른 사이트는 ★ 창구가 적다 — ★ 기아 CPO 는 ★ `detail` 하나다.
+            #     ★ ★ `strict=True` 로 묶으면 ★ `ValueError: zip() argument 2 is
+            #     ★ ★ ★ shorter` 로 죽는다 [실측 09-03].
+            #   ★ 어댑터가 준 만큼만 돈다 — ★ 이름은 ★ `endpoint_schema()` 가 준다
+            _reqs = adapter.detail_urls(sid)
+            # ★ `list` 는 ★ 상세 창구가 아니다 — ★ 뺀다 (`core_listing` 에
+            #   ★ ★ `list_status` 칸이 없다 · 실측 09-03)
+            _kinds = (LISTING_ENDPOINTS if len(_reqs) == len(LISTING_ENDPOINTS)
+                      else tuple(k for k in adapter.endpoint_schema()
+                                 if k != "list")[:len(_reqs)])
+            for kind, req in zip(_kinds, _reqs, strict=True):
                 if resume:
                     from collect.pipeline import should_refetch
 
