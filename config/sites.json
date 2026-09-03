@@ -3,6 +3,8 @@
   "encar": {
     "label": "엔카",
     "status": "active",
+    "master_line_only": true,
+    "_master_line_note": "★ 서버에서 자동으로 두드리지 않는다 — docs/ENCAR_ROBOTS.md 「남기는 사실」③ (08-23 · 요구 추적표 85번). ★ 서버에서 부르면 407 이다. ★ 마스터 회선(/admin/collect)으로만 받는다. ★ 실측 09-03 — 예약 판(trigger='schedule')이 상세를 6,153번 두드려 전량 407 이 났고, 그 탓에 판이 「⑥ not_requested 48,405건」으로 다섯 번 죽었다.",
     "order": 1,
     "multi_instance": false,
     "warranty_evidence": "diagnosis_car",

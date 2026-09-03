@@ -392,10 +392,25 @@ def _save_issues(conn, listing_id: int, issues: list, parse_version: str,
             (listing_id, endpoint, path, reason, sample, parse_version, at))
 
 
+def _master_line_only(root_dir: str, site: str) -> bool:
+    """★ 그 사이트를 ★ **마스터 회선으로만** 받는가 (09-03).
+
+    ★ 이름을 코드에 박지 않는다 — ★ `config/sites.json` 이 말한다 (`S14`).
+    ★ 못 읽으면 ★ `False` 다 — ★ 「모른다」를 ★ 「막혔다」로 바꾸지 않는다
+    """
+    try:
+        with open(os.path.join(root_dir, "config", "sites.json"),
+                  encoding="utf-8") as f:
+            one = json.load(f).get(site) or {}
+    except (OSError, ValueError):
+        return False
+    return bool(one.get("master_line_only"))
+
+
 def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                    backup_path: str | None = None, rng=None,
                    root_dir: str = ".", progress=None,
-                   resume: bool = False) -> dict:
+                   resume: bool = False, master_line: bool = True) -> dict:
     """S0~S3 실행기.  I/O 는 전부 주입받는다 (0장 STEP 2).
 
     progress   진행 표시.  ★ 없으면 단계가 끝나야 한 줄이 나와
@@ -405,11 +420,26 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                  skip_done 을 기본으로 두면 v1 처럼 208건 중 76건만 받는다
                ★ True 일 때만 should_refetch 를 본다.  ok·empty·not_found 는
                  이미 답을 받은 것이라 다시 안 던진다.  error·미요청만 던진다
+    master_line ★ **마스터 회선인가** (09-03).
+               ★ 규격이 ★ 「서버에서 자동으로 두드리지 않는다」고 못 박은 사이트가
+                 ★ 있다 — ★ 엔카다 (`docs/ENCAR_ROBOTS.md` 「남기는 사실」③ ·
+                 ★ ★ 08-23 · 요구 추적표 85번).  ★ 서버에서 부르면 ★ **407** 이다.
+               ★ 소비기(예약 판)는 ★ `False` 로 부른다 — ★ CLI 와
+                 ★ `/admin/collect`(마스터가 누른다)는 ★ `True` 다.
+               ★ 설정의 ★ `sites.json[site].master_line_only` 를 본다 —
+                 ★ ★ 이름을 코드에 박지 않는다 (`S14`)
     """
     from collect.pipeline import silent_progress
 
     say = progress or silent_progress
     rng = rng or random.Random()
+    # ★★★★★ 09-03 — ★ **마스터 회선 전용 사이트를 서버가 안 두드린다.**
+    #   ★ 실측 09-03 (배포) — ★ 예약 판이 ★ 엔카 상세를 ★ **6,153번** 두드려
+    #     ★ ★ 전량 `error`(407) 였고, ★ 그 탓에 ★ 판이
+    #     ★ ★ ★ 「⑥ not_requested 48,405건」으로 ★ **다섯 번 잇달아 죽었다**.
+    #   ★ 규격은 ★ 08-23 부터 ★ 「서버에서 자동으로 두드리지 않는다」였다 —
+    #     ★ ★ 코드가 ★ 그것을 ★ **한 번도 안 지켰다** (규칙 1 — 코드를 고친다)
+    _blocked = _master_line_only(root_dir, adapter.site_code) and not master_line
     groups = collect_groups(targets, adapter.site_code)
     schema = adapter.endpoint_schema()
     # ★ 키가 없으면 시작하지 않는다.  임시 키는 다음 실행과 결합을 깬다 (STEP 35)
@@ -468,6 +498,14 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         rejected = rows = expected = 0
         streak = FailStreak(streak_limit)
         halted = None
+        # ★★★★★ 09-03 — ★ **마스터 회선 전용 사이트는 ★ 서버가 안 두드린다.**
+        #   ★ 「할 일이 없었다」로 낸다 — ★ `expected 0 · requested 0` 이면
+        #     ★ ★ `halt_if` 가 ★ 「처리할 것이 없었다」로 그냥 돌려준다.
+        #   ★ 「못 받았다」가 아니다 — ★ **안 두드리기로 한 것**이다 (규격 08-23)
+        if _blocked:
+            say("S1", f"{adapter.site_code} 는 마스터 회선으로만 받는다", 1, 1)
+            return step_report("S1", None, 0, {"ok": 0}, 0,
+                               time.time() - t0), 0
         for gi, g in enumerate(groups, start=1):
             spec = g.as_target_spec()
             page = 0
@@ -525,6 +563,14 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         rejected = rows = 0
         streak = FailStreak(streak_limit)
         halted = None
+        # ★★★★★ 09-03 — ★ **마스터 회선 전용 사이트는 ★ 서버가 안 두드린다.**
+        #   ★ 「할 일이 없었다」로 낸다 — ★ `expected 0 · requested 0` 이면
+        #     ★ ★ `halt_if` 가 ★ 「처리할 것이 없었다」로 그냥 돌려준다.
+        #   ★ 「못 받았다」가 아니다 — ★ **안 두드리기로 한 것**이다 (규격 08-23)
+        if _blocked:
+            say("S2", f"{adapter.site_code} 는 마스터 회선으로만 받는다", 1, 1)
+            return step_report("S2", None, 0, {"ok": 0}, 0,
+                               time.time() - t0), 0
         bodies: dict[str, dict[str, dict]] = {}
         for gi, g in enumerate(groups, start=1):
             reqs = adapter.facet_urls(g.as_target_spec())
@@ -760,6 +806,14 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         rejected = rows = 0
         streak = FailStreak(streak_limit)
         halted = None
+        # ★★★★★ 09-03 — ★ **마스터 회선 전용 사이트는 ★ 서버가 안 두드린다.**
+        #   ★ 「할 일이 없었다」로 낸다 — ★ `expected 0 · requested 0` 이면
+        #     ★ ★ `halt_if` 가 ★ 「처리할 것이 없었다」로 그냥 돌려준다.
+        #   ★ 「못 받았다」가 아니다 — ★ **안 두드리기로 한 것**이다 (규격 08-23)
+        if _blocked:
+            say("S5", f"{adapter.site_code} 는 마스터 회선으로만 받는다", 1, 1)
+            return step_report("S5", None, 0, {"ok": 0}, 0,
+                               time.time() - t0), 0
         lids = conn.execute(
             # ★★★★★ 09-03 (가이드 지시 ②) — ★ **`new` 도 받는다.**
             #   ★ 실측 09-03 — ★ `new` 가 ★ **5,900건** 있다

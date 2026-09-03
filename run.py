@@ -362,10 +362,17 @@ def make_worker_executors(reason: str = ""):
     cfg = load("endpoints.json")["encar"]
     targets = load_targets(os.path.join(ROOT, "config", "targets.json"))
     adapter = EncarAdapter(cfg)
+    # ★★★★★ 09-03 — ★ 소비기는 ★ **마스터 회선이 아니다.**
+    #   ★ 규격이 ★ 「서버에서 자동으로 두드리지 않는다」고 못 박은 사이트를
+    #     ★ ★ 여기서 두드리면 안 된다 (`docs/ENCAR_ROBOTS.md` · 요구 추적표 85번).
+    #   ★ 실측 09-03 — ★ 예약 판이 ★ 엔카를 ★ **6,153번** 두드려 전량 407 이었고
+    #     ★ ★ 판이 ★ 「⑥ not_requested 48,405건」으로 ★ 다섯 번 죽었다.
+    #   ★ 마스터가 ★ `/admin/collect` 로 누르는 길은 ★ 이 길이 아니다
     ex = make_executors(adapter, UrlFetcher(), SystemClock(), cfg, targets,
                         backup_path=BACKUP_PATH, rng=random.Random(),
                         root_dir=ROOT, progress=print_progress,
-                        resume=not refetch_all(reason))
+                        resume=not refetch_all(reason),
+                        master_line=False)
     ex.update(make_score_executors(ROOT, SystemClock(), targets,
                                    load("scoring.json"),
                                    load("depreciation.json")))
