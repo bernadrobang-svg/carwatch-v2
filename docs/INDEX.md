@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 51,540줄 · 3,645KB**
+**132파일 · 51,534줄 · 3,644KB**
 
 ★ 800줄을 넘는 파일 13개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -32,7 +32,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md` | 679 | 114 |
+| `CHECKS.md` | 673 | 113 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
