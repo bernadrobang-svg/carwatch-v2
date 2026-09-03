@@ -147,6 +147,23 @@ border-radius:10px;display:flex;align-items:center;justify-content:center;color:
 
 .v4-why-empty,.rc-why-empty,.lst-why-empty,.wch-why-empty,.trk-why-empty,.sld-why-empty,.adm-note,.rc-rank-note{font-size:11px;line-height:1.45;color:var(--faint);opacity:.72;font-weight:400;margin:3px 0}
 .v4-why-empty b,.rc-why-empty b,.lst-why-empty b,.wch-why-empty b,.trk-why-empty b,.sld-why-empty b,.adm-note b{font-weight:600;color:var(--dim)}
+
+/* ★★★★★★ 09-04 — ★ **높이·너비를 고정하지 않는다.  ★ 글자에 맞게 늘어난다** (마스터 확정)
+   ★ 마스터 — 「★ 버튼 사이즈 픽스 하지 말고 ★ 글자에 맞게 늘어나게 하고」
+             「★ 이거 등급 밑에 ★ 네 개 영역이 ★ 사진에 가려서 안 보이는데」
+   ★★ 배포 실측 09-04 — ★ **어미보다 자식이 크다**:
+        U.dim  높이 18  ↔  자식 「52만」 ★ 45   (세 줄로 넘쳤다)
+        DIV.gr 높이 52  ↔  자식 「A」·「11위」   (겹친다)
+        DIV.meta 높이 229 ↔ 「엔카·경기·게시중」 ★ 서로 포갠다
+   ★ ★ ★ 그래서 ★ 가려진 글자가 ★ **63개**다 (아홉 점 자 · outputs/hidden_text.json)
+   ★★ 뿌리는 ★ **하나** — ★ 높이를 박아 두고 ★ 글자가 넘친다 */
+.lst-card *,.lst-card{min-height:0}
+.lst-card .dim,.lst-card .meta,.lst-card .gr,.lst-card .ax1{
+  height:auto;min-height:0;overflow:visible;line-height:1.35}
+.lst-card .meta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.lst-card .gr{display:flex;flex-direction:column;align-items:center;gap:2px;height:auto}
+/* 금지  height 고정 · line-height 를 글자보다 작게 · overflow:hidden 으로 감추기 */
+
 </style></head><body>
 <!-- ★ 반드시 있는 것 (ref/screens/RULES.md 1)
      · 순위 번호   · 사이트 이름   · 원문 문   · 사진   · 값   · 판정
@@ -155,6 +172,7 @@ border-radius:10px;display:flex;align-items:center;justify-content:center;color:
 
 <div class="v4-wrap">
 <div class="v4-top"><div class="v4-title">매물</div><div class="v4-sub">2,815건 중 <b>30</b>건 · 94쪽 중 1쪽</div></div>
+<div class="lst-why-empty">★★★★★ 마스터 확정 09-04 — ★ **높이·너비를 고정하지 않는다.  ★ 글자에 맞게 늘어난다**.  ★ 배포 실측 — ★ `U.dim` 높이 **18** 인데 자식 「52만」이 **45** 라 ★ 세 줄로 넘쳤고 · ★ `DIV.meta` 안에서 「엔카·경기·게시중」이 ★ **서로 포갰다**.  ★ ★ 그래서 ★ **가려진 글자 63개**다.  ★ 금지 — `height` 고정 · `line-height` 를 글자보다 작게 · `overflow:hidden` 으로 감추기</div>
 <div class="lst-pairhead">★ <b>이 조건에 짝지어진 차 161대</b> — <a href="#">추적에서 보기 ▸</a></div>
 <div class="lst-why-empty">★ 수는 <b>지금 걸린 조건 안</b>에서 센다 — 전체 수가 아니다 (규격 CROSS_SITE_COMPARE 3b-2)</div>
 

@@ -100,6 +100,19 @@ color:var(--dim);text-decoration:none}
 
 .v4-why-empty,.rc-why-empty,.lst-why-empty,.wch-why-empty,.trk-why-empty,.sld-why-empty,.adm-note,.rc-rank-note{font-size:11px;line-height:1.45;color:var(--faint);opacity:.72;font-weight:400;margin:3px 0}
 .v4-why-empty b,.rc-why-empty b,.lst-why-empty b,.wch-why-empty b,.trk-why-empty b,.sld-why-empty b,.adm-note b{font-weight:600;color:var(--dim)}
+
+
+
+/* ★★★★★★ 09-04 — ★ **높이·너비를 고정하지 않는다** (마스터 확정 · RULES.md 2-4)
+   ★ 실측 09-04 — ★ 손대기 전 시안 ★ **64** → ★ 이 줄들로 ★ **57**
+   ★ ★ 배포는 ★ **63** 이다 — ★ 뿌리가 같다 (어미보다 자식이 크다) */
+*{min-height:0}
+body,div,span,p,a,b,u,li,td{height:auto;overflow:visible}
+.rc-why-empty,.lst-why-empty,.trk-why-empty,.wch-why-empty,.sld-why-empty,
+.v4-why-empty,.adm-note,.lst-pairhead{line-height:1.5;overflow:visible;height:auto}
+.rc-models,.lst-chips{max-height:none;overflow:visible}
+.v4-card,.lst-card,.rc-card{overflow:visible}
+.v4-line,.v4-sec,.meta,.dim,.gr{height:auto;line-height:1.4;overflow:visible}
 </style></head>
 <body>
 <!-- ★ 반드시 있는 것 (ref/screens/RULES.md 1)
