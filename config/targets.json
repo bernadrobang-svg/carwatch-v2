@@ -980,7 +980,7 @@
         "CarType": "N",
         "Manufacturer": "볼보",
         "ModelGroup": "EX60",
-        "_확인": "[추론 08-24] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다.  ★ 사흘 넘으면 검사가 잡는다 (S46-37)"
+        "_확인": "[가이드 09-03] ★ **두드려 봤으나 못 쟀다** — ★ 엔카 API 가 ★ **HTTP 407** 로 ★ 서버 IP 를 막는다 (`api.encar.com/search/car/list/general`).  ★ 「볼보 전체」도 407 이다 — ★ ★ 이 차종(볼보 EX60)만의 문제가 아니다.  ★★ **마스터 회선**의 `/admin/collect` 「facet 만」으로만 확인된다.  ★ 그때까지 ★ **이 줄을 안 지운다** — ★ 지우면 지어내는 것이다 (금지 6)"
       },
       "volvo_selekt": {
         "slug": [
@@ -1140,7 +1140,7 @@
         "CarType": "Y",
         "Manufacturer": "렉서스",
         "ModelGroup": "ES",
-        "_확인": "[추론 08-27] ★ facet 미확인 — /admin/collect 「facet 만」으로 확인한 뒤 이 줄을 지운다"
+        "_확인": "[가이드 09-03] ★ **두드려 봤으나 못 쟀다** — ★ 엔카 API 가 ★ **HTTP 407** 로 ★ 서버 IP 를 막는다 (`api.encar.com/search/car/list/general`).  ★ 「볼보 전체」도 407 이다 — ★ ★ 이 차종(렉서스 ES)만의 문제가 아니다.  ★★ **마스터 회선**의 `/admin/collect` 「facet 만」으로만 확인된다.  ★ 그때까지 ★ **이 줄을 안 지운다** — ★ 지우면 지어내는 것이다 (금지 6)"
       },
       "kbchachacha": {
         "makerCode": "133",

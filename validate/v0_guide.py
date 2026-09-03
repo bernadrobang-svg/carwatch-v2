@@ -2993,6 +2993,13 @@ def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
     ★ 재는 법 — ★ 그 차종의 제조사(`site_query.encar.Manufacturer`)가
       ★ 그 사이트의 `brand_scope` 안이면 ★ 파는 것이다.  ★ `all` 은 종합이다.
     ★ 알림이다 — ★ 막지 않는다.  ★ 코드는 ★ 마스터께 청한다 (개발측이 안 넣는다)
+
+    ★★★★★ 09-03 — ★ **마스터께서 이미 정하셨다**.  ★ 09-02 에 ★ K카 pending
+      **151종** 중 ★ **둘만** 고르시고 ★ 「★ 케이카 없어」라 하셨다.
+      ★ ★ 곧 ★ **나머지는 안 받으시는 것**이다 — ★ 「코드가 없다」가 아니라
+        ★ ★ **「안 받는다」**다.  ★ 89칸은 ★ **결함이 아니다**.
+      ★ ★ ★ 그래서 ★ `config/dictionaries/target_map.json` 의 ★ `_안_넣은_것` 에
+        ★ 그 사이트가 적혀 있으면 ★ **세지 않는다**
     """
     got = _targets()
     if not got:
@@ -3010,6 +3017,13 @@ def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
         #   ★ 마스터께서 09-01 에 대상을 열로 좁히셨다 — ★ 쉬는 것을 세면 89칸이 남는다
         if spec.get("active") is False:
             continue
+        # ★ 09-03 — ★ 마스터께서 ★ 「안 받는다」 하신 사이트는 ★ 세지 않는다
+        if not hasattr(s46_96_site_sells_but_no_code, "_skip_sites"):
+            tm = json.loads(_read(
+                ROOT / "config" / "dictionaries" / "target_map.json") or "{}")
+            s46_96_site_sells_but_no_code._skip_sites = {
+                st for st, v in (tm.get("by_site") or {}).items()
+                if isinstance(v, dict) and "_안_넣은_것" in v}
         _q = spec.get("site_query")
         _q = _q if isinstance(_q, dict) else {}
         maker = ((_q.get("encar") or {}) if isinstance(_q.get("encar"), dict)
@@ -3018,6 +3032,8 @@ def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
         if not maker:
             return False, f"{key} 에 제조사가 없다 — site_query.encar.Manufacturer"
         for site in sites:
+            if site in s46_96_site_sells_but_no_code._skip_sites:
+                continue          # ★ 09-03 — ★ 마스터께서 「안 받는다」 하신 곳
             scope = eps[site]["brand_scope"]
             sells = scope == "all" or maker in scope
             if sells and site not in _q:
