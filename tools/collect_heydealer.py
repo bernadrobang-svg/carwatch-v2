@@ -27,7 +27,12 @@ SWEEP_OFF = (
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from adapters.heydealer import PAGE_SIZE, SITE_CODE, HeydealerAdapter  # noqa: E402
+from adapters.heydealer import (  # noqa: E402
+    PAGE_SIZE,
+    SITE_CODE,
+    HeydealerAdapter,
+    schema,
+)
 from parse.heydealer.mapping import (  # noqa: E402
     parse_list_item,
 )
@@ -159,18 +164,53 @@ def main() -> int:
 
     # ★ 상세 — ★ 연료·차량번호가 여기에만 있다.
     #   ★★ 09-01 — ★ 「이미 받았나」는 ★ **파일로 안다** (DB 를 안 연다)
+    # ★★★★★ 09-03 — ★ **껍데기는 「받은 것」으로 안 센다.**
+    #   ★ 파일이 있다는 것만 보고 건너뛰면 ★ 오류 안내 198바이트가
+    #     ★ ★ 영영 상세 자리를 차지한다 (실측 18건).
+    #   ★ 원문 파일은 ★ **지우지 않는다** — ★ 세는 자리에서만 가른다
+    from store.rawfile import read as _read
     from store.rawfile import walk as _walk
 
-    have = {os.path.basename(x).split("__")[0][:-5]
-            for x in _walk(site=SITE_CODE, endpoint="detail", root=ROOT)}
+    _spec_have = schema("detail")
+    have, _shell = set(), 0
+    for x in _walk(site=SITE_CODE, endpoint="detail", root=ROOT):
+        _sid = os.path.basename(x).split("__")[0][:-5]
+        _env = _read(x) or {}
+        try:
+            _b = json.loads(_env.get("body") or "null")
+        except ValueError:
+            _b = None
+        if isinstance(_b, dict) and all(k in _b for k in _spec_have.required_keys):
+            have.add(_sid)
+        else:
+            _shell += 1
+    if _shell:
+        print(f"★ 껍데기 원문 {_shell}건 — 상세로 안 세고 다시 받는다")
     todo = [o for o in got_all.values() if o["source_id"] not in have]
     print(f"★ 상세 — 받을 것 {len(todo)}건 "
           f"(원문 파일이 있는 것 {len(got_all) - len(todo)}건은 건너뛴다)")
-    seen = {"정상": 0, "못 받음": 0}
+    seen = {"정상": 0, "못 받음": 0, "껍데기": 0}
+    _spec = schema("detail")
     for one in todo:
         code, body = _get(adapter.detail_urls(one["source_id"])[0])
         if code != 200 or not isinstance(body, dict):
             seen["못 받음"] += 1
+            time.sleep(interval)
+            continue
+        # ★★★★★ 09-03 — ★ **200 이라고 상세가 아니다.**
+        #   ★ 실측 — ★ 18건이 ★ HTTP 200 · dict 인데 ★ 본문이
+        #     ★ `{"code":null,"message":null,"toast":{"message":"서버 오류가
+        #        발생했습니다…"}}` ★ 198바이트짜리 ★ **오류 안내**였다.
+        #   ★★ 그것을 상세로 세어 ★ 「상세 99 · 파싱 81」이 났다 —
+        #     ★ ★ 상세가 99가 아니라 ★ **81** 이었다.
+        #   ★★★ 규격의 관문을 여기서도 건다 — `required_keys` 는
+        #     ★ `adapters/heydealer.py` 의 `hash_id`·`detail_info` 다
+        #     ★ (2장 STEP 18 「저장 직전에 건다」).
+        #   ★ 「받았다」와 「제대로 받았다」를 가른다 — ★ 껍데기를 안 남긴다
+        if not all(k in body for k in _spec.required_keys):
+            _miss = ",".join(k for k in _spec.required_keys if k not in body)
+            seen["껍데기"] = seen.get("껍데기", 0) + 1
+            print(f"    ⨯ {one['source_id']} — required_keys 누락: {_miss}")
             time.sleep(interval)
             continue
         save_file(SITE_CODE, "detail", one["source_id"],
