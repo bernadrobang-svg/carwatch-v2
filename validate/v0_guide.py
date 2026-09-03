@@ -6629,7 +6629,36 @@ def s46_262_dev_questions_answered():
     return True, "개발측이 여쭌 회차가 다 이력·가이드에 물려 있다"
 
 
+def s46_263_four_states_and_pending():
+    """S46-263 — ★ **네 갈래 로직**이 규격에 있고 ★ PENDING 으로 감추지 않는가 (09-03).
+
+    ★ 마스터 — 「★ 파서와 점수 평가는 ★ 어떤 로직으로 돌지.
+      ★ **신규 · 변경 · 유지 · 판매**.  ★ 상세는」
+    ★★ 실측 09-03 — ★ `PENDING` 이 **5,378건(34.4%)** 이고 ★ 그 **92%가 KB** 다.
+      ★ ★ 상세를 못 받아 ★ 갇힌 것이다 — ★ 마스터께서 ★ **KB 5,000건을 못 보신다**.
+    ★★★ 그런데 ★ 목록이 이미 준다 [실측 09-03] —
+      ★ 값 · 주행 · 연식 · 트림 · 지역 · 보증 · 사진.
+      ★ ★ 추천 여섯 축(348점) 중 ★ **예산 95 · 주행 107 · 연식 80 · 크기 31 이 다 선다**.
+    ★ 그래서 ★ **목록만으로 매기고 ★ 확인율로 말한다** — ★ `PENDING` 으로 감추지 않는다.
+    ★ 상세는 ★ ①처음 · ②값이 바뀔 때 · ④빠졌을 때만 받는다.  ★ ③유지에는 안 받는다.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "11-store" / "a-key.md")
+    if not spec:
+        return False, "a-key.md 를 못 읽었다"
+    bad = []
+    for want, label in (("네 갈래 로직", "네 갈래 표"),
+                        ("확인율", "확인율로 말한다"),
+                        ("10건 · 5분", "KB 받는 속도"),
+                        ("감추지 않는다", "「PENDING 으로 감추지 않는다」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "네 갈래 로직과 확인율 규격이 있다"
+
+
 CHECKS = (
+    ("S46-263", "네 갈래 로직이 규격에 있는가", s46_263_four_states_and_pending),
     ("S46-262", "개발측 「여쭐 것」이 물렸는가", s46_262_dev_questions_answered),
     ("S46-260", "빈 쪽이 아니라 끝 신호로 멈추는가", s46_260_end_signal_not_empty_pages),
     ("S46-259", "마스터 차종 이름이 그대로인가", s46_259_master_target_names),
