@@ -411,3 +411,54 @@ HIDDEN_TEXT_JS = r"""
   return {leaf: leaf.length, hidden: hidden, examples: ex};
 }
 """
+
+
+def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"),
+                       widths=(390, 900), shot_dir: str = "outputs/shots"):
+    """★ 배포를 ★ **브라우저로 열어** ★ 가려진 글자를 세고 ★ **캡처를 남긴다**.
+
+    ★ 마스터 09-04 — 「★ 브라우저로 테스트하라고 ★ 검증하라고도 했지?」
+    ★ ★ **자만 믿지 않는다** — ★ 캡처가 함께 남아야 ★ 눈으로 대조할 수 있다.
+    돌리기   python3 -c "from tools.browser_diff import hidden_text_report as r; \
+                        r('https://…sslip.io')"
+    """
+    import json as _j
+    import os as _os
+
+    from playwright.sync_api import sync_playwright
+
+    _os.makedirs(shot_dir, exist_ok=True)
+    out = {}
+    with sync_playwright() as p:
+        br = p.chromium.launch()
+        ctx = br.new_context(ignore_https_errors=True,
+                             viewport={"width": 390, "height": 900})
+        pg = ctx.new_page()
+        pg.goto(base_url + "/login", timeout=90000)
+        pg.fill('input[name="name"]', "admin")
+        pg.fill('input[name="secret"]', "12345678")
+        try:
+            pg.click('button[type="submit"]', timeout=8000, no_wait_after=True)
+        except Exception:  # noqa: BLE001
+            pass
+        pg.wait_for_timeout(4000)
+        for path in paths:
+            for w in widths:
+                pg.set_viewport_size({"width": w, "height": 900})
+                pg.goto(base_url + path, timeout=150000,
+                        wait_until="domcontentloaded")
+                pg.wait_for_timeout(1500)
+                pg.evaluate("window.scrollTo(0, document.body.scrollHeight*0.35)")
+                pg.wait_for_timeout(500)
+                got = pg.evaluate(HIDDEN_TEXT_JS)
+                key = f"{path.strip('/') or 'home'}_{w}"
+                shot = _os.path.join(shot_dir, key + ".png")
+                pg.screenshot(path=shot)          # ★ 캡처를 남긴다
+                got["shot"] = shot
+                out[key] = got
+                print(f"{path:<12}{w:>5}px  잎 {got['leaf']:>4} · "
+                      f"★ 가려진 글자 {got['hidden']:>3}  → {shot}")
+        br.close()
+    total = sum(v["hidden"] for v in out.values())
+    print(f"\n★ 합 {total}개 · 캡처 {len(out)}장 — {shot_dir}/")
+    return out

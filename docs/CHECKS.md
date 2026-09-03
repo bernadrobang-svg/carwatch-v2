@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **574개**
+검사 **575개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **574** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **575** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **22** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
 
@@ -225,8 +225,9 @@
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6751` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:42 · chapters/10-collect/00-intro.md:485 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6773` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:44 · chapters/10-collect/00-intro.md:522 |
 | `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6798` | **★ 없음** | 없음 | guide/03_이력.md:1359 |
-| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6833` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1366 |
+| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6833` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1367 |
 | `S46-270` | 가려진 글자를 세는 자가 있는가 | fatal | `validate/v0_guide.py:6878` | **★ 없음** | 없음 | guide/03_이력.md:1365 · guide/06_오판대장.md:348 |
+| `S46-271` | 화면을 브라우저로 열어 재는가 | fatal | `validate/v0_guide.py:6908` | **★ 없음** | 없음 | guide/03_이력.md:1366 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6053` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6079` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6105` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -801,6 +802,7 @@
 - `S46-268` 지시문이 한 벌이고 지금 판인가 — `validate/v0_guide.py`
 - `S46-269` 추천 차종과 단추 크기가 확정대로인가 — `validate/v0_guide.py`
 - `S46-270` 가려진 글자를 세는 자가 있는가 — `validate/v0_guide.py`
+- `S46-271` 화면을 브라우저로 열어 재는가 — `validate/v0_guide.py`
 - `S46-30` INDEX 가 docs 를 다 가리키는가 — `validate/v0_guide.py`
 - `S46-31` 규격이 있는 사이트가 config 에 있는가 — `validate/v0_guide.py`
 - `S46-32` 생성물이 최신인가 — `validate/v0_guide.py`

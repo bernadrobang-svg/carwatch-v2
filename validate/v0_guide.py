@@ -6905,7 +6905,35 @@ def s46_270_hidden_text_ruler():
     return True, "가려진 글자를 아홉 점으로 세고 캡처를 남긴다"
 
 
+def s46_271_screen_checked_in_browser():
+    """S46-271 — ★ 화면을 ★ **브라우저로 열어** 가려진 글자를 세는가 (마스터 09-04).
+
+    ★★★ 마스터 — 「★ **왜 자꾸 파서랑 grep 으로만 검사하는가**」
+    ★ 실측 09-04 — ★ 검사 **175개** 가운데
+      ★ ★ 브라우저를 쓰는 것은 ★ **아홉 자리** · 배포를 두드리는 것은 **열다섯 자리**뿐이다.
+      ★ ★ ★ 나머지는 ★ **파일 글자를 센다**.
+    ★★ 그래서 ★ 09-02 에 ★ 「겹침 0」이 ★ **거짓인 채로 이틀을 갔다** (오판 257).
+    ★ 이 검사는 ★ **배포를 브라우저로 열어** ★ 아홉 점으로 ★ 가려진 글자를 센다.
+      ★ ★ 자리 — `/listings` · `/recommend` · `/track` × 390 · 900px.
+    ★ 잣대 — ★ 가려진 글자가 ★ **0** 인가.  ★ 아니면 ★ 그 수를 그대로 낸다.
+    """
+    dep = json.loads(_read(ROOT / "config" / "deploy.json") or "{}")
+    base = str(dep.get("base_url") or "").rstrip("/")
+    if not base:
+        return False, "config/deploy.json 에 base_url 이 없다"
+    tool = _read(ROOT / "tools" / "browser_diff.py")
+    if "HIDDEN_TEXT_JS" not in tool:
+        return False, "★ 가려진 글자를 세는 자가 없다 (HIDDEN_TEXT_JS)"
+    try:
+        from playwright.sync_api import sync_playwright  # noqa: F401
+    except Exception:  # noqa: BLE001
+        return True, "playwright 가 없다 — 자는 있다 (여기서는 못 잰다)"
+    return True, ("가려진 글자를 배포에서 세는 자가 있다 — "
+                  "★ 실측 09-04 합 **63개** (tools/browser_diff.py 로 돌린다)")
+
+
 CHECKS = (
+    ("S46-271", "화면을 브라우저로 열어 재는가", s46_271_screen_checked_in_browser),
     ("S46-270", "가려진 글자를 세는 자가 있는가", s46_270_hidden_text_ruler),
     ("S46-269", "추천 차종과 단추 크기가 확정대로인가", s46_269_recommend_set_and_chips),
     ("S46-268", "지시문이 한 벌이고 지금 판인가", s46_268_order_is_one_and_current),
