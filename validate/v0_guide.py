@@ -5476,13 +5476,15 @@ def s46_241_regrade_alive_on_deploy():
     #     ★ ★ 어느 걸음이 죽었는지도 ★ 함께 낸다 (「무엇이 왜」를 적는다)
     # ★ 배포 화면은 ★ 「… failed raw_missing · all 125분 전 **S5**: ⑤ …」 꼴이다 —
     #   ★ 걸음 이름이 ★ `failed` **뒤**에 온다 [실측 09-04]
-    dead = re.findall(r"failed.{0,60}?\b(S\d+[a-z]?)\s*:", text)
-    if not dead and "failed" in text:
-        dead = ["(걸음 이름을 못 읽음)"]
-    if dead:
-        return False, (f"★ 배포에서 판이 죽어 있다 — failed {len(dead)}건 "
-                       f"({' · '.join(sorted(set(dead))[:4])})"
-                       "  ★ 코드만 고친 것은 끝이 아니다")
+    # ★★★★★ 09-04 — ★ 내가 넣은 갈래를 ★ **뺐다.**
+    #   ★ 가이드도 ★ 같은 것을 ★ 위에 넣었다 (`failed … (S5)` 를 먼저 본다) —
+    #   ★ ★ 그래서 ★ 내 갈래는 ★ **닿지 않는 죽은 코드**였다.
+    #   ★ 규격이 정본이다 (규칙 1) — ★ 가이드 것을 남긴다.
+    #     ★ ★ 다만 ★ 「걸음 이름을 못 읽음」은 ★ 살려 둔다 —
+    #     ★ ★ ★ `failed` 가 있는데 ★ 이름을 못 읽으면 ★ **조용히 통과**하기 때문이다
+    if "failed" in text:
+        return False, ("★ 배포에서 판이 실패로 끝나 있다 — 걸음 이름을 못 읽었다"
+                       "  ★ 「끝」은 배포에서 확인한 것만이다")
     if fails:
         return False, f"★ /admin/status 에 ValidationError 가 {fails}건 남아 있다"
     return True, "배포에서 판이 살아 있다 (failed 없음 · 불변 필드로 멈춘 것 없음)"
