@@ -343,7 +343,9 @@ def _query_error_checks(conn, rid):
     from errors import PolicyError, ValidationError
     from store.adminops import KIND_COMPILE, KIND_POLICY, run_query
 
-    probe = _s.connect(":memory:")
+    # ★★ 09-03 정정 — 전에는 `:memory:` 였다.  ★ DB 1.08GiB 를 RAM 1,841MB
+    #   장비의 메모리에 통째로 올렸다.  ★ 임시 **파일** 사본을 쓴다 (S46-265)
+    probe = _s.connect(os.path.join(_scratch(), "query.db"))
     conn.backup(probe)
     acc = Account(1, ROLE_ADMIN, "마스터")
     bad33, bad34, bad35 = [], [], []

@@ -18,6 +18,21 @@ from validate.base import (
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# ★ 검사 사본을 /tmp 에 두지 않는다 — 921MB tmpfs 다 (v10_admin.py:15 와 같은 본)
+CHECK_TMP = os.path.join(ROOT, "outputs", "check-tmp")
+
+
+def _scratch() -> str:
+    """검사용 임시 자리.  ★ 끝나면 지운다 — 검사가 디스크를 채우면 안 된다."""
+    import atexit
+    import shutil
+    import tempfile
+
+    os.makedirs(CHECK_TMP, exist_ok=True)
+    path = tempfile.mkdtemp(prefix="cw-check-", dir=CHECK_TMP)
+    atexit.register(shutil.rmtree, path, ignore_errors=True)
+    return path
+
 # DDL CHECK 와 같아야 한다 (11장).  자유 문구를 넘기면 CHECK 위반이다
 CLOSED_REASONS = ("bought", "lost", "dropped")
 
@@ -133,8 +148,11 @@ def _progress_note_check(conn, rid):
     from store.watch import NOTE_KINDS, note_add, note_delete, notes_of
 
     bad = []
-    # ★ 운영 DB 를 건드리지 않는다.  메모리 사본에서 시험한다
-    probe = _s.connect(":memory:")
+    # ★ 운영 DB 를 건드리지 않는다.  ★ 임시 **파일** 사본에서 시험한다
+    #   ★★ 09-03 정정 — 전에는 `:memory:` 였다.  ★ DB 1.08GiB 를
+    #   RAM 1,841MB 장비의 메모리에 통째로 올려 이 검사 하나가 1,194MB 를 먹었다.
+    #   ★ OOM 두 번 · 사람이 전원을 눌러 끔 · 마스터 화면 35분 정지 (S46-265)
+    probe = _s.connect(os.path.join(_scratch(), "watch.db"))
     conn.backup(probe)
     lid = probe.execute("SELECT listing_id FROM core_listing LIMIT 1").fetchone()
     if lid is None:
