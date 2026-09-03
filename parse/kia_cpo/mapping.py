@@ -116,3 +116,49 @@ def parse_list_item(item: dict, site: str) -> dict:
         "view_cnt": _int(item.get("consultationCount")),
         "subscribe_cnt": _int(item.get("wishCount")),
     }
+
+def parse_detail(doc: dict, site: str = "kia_cpo",
+                 source_id: str | None = None) -> dict | None:
+    """★★★★★ 09-04 (가이드 배포 실측) — ★ **상세 파서가 아예 없었다.**
+
+    ★★★ 실측 09-04 — ★ 기아 CPO 상세 원문이 ★ **1,584건** 있는데
+      ★ ★ `parse_detail` 이 없어 ★ 한 건도 못 풀었다 —
+      ★ ★ ★ 그래서 ★ 상세율 **100%** 인데 ★ 파싱률은 **7%** 였다.
+    ★★ 상세의 `car` 는 ★ 목록과 ★ **거의 같은 열쇠**를 쓴다 —
+      ★ ★ 다른 것만 옮긴다 (`color` 가 묶음 · `trim` 이 낱말 · `engine`).
+    ★ 원문에 없는 것은 ★ **안 만든다** (금지 12) — ★ 없으면 그 칸을 안 넣는다
+    """
+    if not isinstance(doc, dict):
+        return None
+    car = doc.get("car")
+    if not isinstance(car, dict):
+        return None
+    sid = source_id or doc.get("id")
+    if not sid:
+        return None
+    color = car.get("color") if isinstance(car.get("color"), dict) else {}
+    got = {
+        "site": site,
+        "source_id": str(sid),
+        "site_manufacturer": "기아",
+        "site_model_group": car.get("modelCodeName"),
+        "site_model": car.get("modelName"),
+        "trim_badge": car.get("trim"),
+        "fuel_raw": car.get("engine"),
+        "price_current_won": _int(car.get("price")),
+        "price_unit": PRICE_UNIT,
+        "mileage_km": _int(car.get("drivingDistance")),
+        "year_month": _ym(car.get("firstRegisteredOn")),
+        "form_year": _int(car.get("modelYear")),
+        "reg_at": _date10(car.get("firstRegisteredOn")),
+        "color_ext_raw": color.get("exteriorCodeName"),
+        "color_int_raw": color.get("interiorCodeName"),
+        "transmission": car.get("mission"),
+        "_pii_plate_no": car.get("plateNumber"),
+    }
+    # ★ 배기량은 ★ 「1,598」처럼 ★ 쉼표가 든 글월이다
+    cc = str(car.get("displacement") or "").replace(",", "").strip()
+    if cc.isdigit():
+        got["displacement_cc"] = int(cc)
+    # ★ 값이 없는 칸은 ★ **넣지 않는다** — ★ 「없음」으로 덮지 않는다 (금지 12)
+    return {k: v for k, v in got.items() if v is not None}
