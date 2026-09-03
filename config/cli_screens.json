@@ -78,6 +78,7 @@
     "tools/recalc_catchup.py",
     "tools/refetch_unsourced.py",
     "tools/repair_facet_chunks.py",
+    "tools/sweep_sold.py",
     "tools/sync_target_map.py",
     "tools/three_numbers.py",
     "tools/trace_fill.py",
@@ -91,5 +92,6 @@
   "_pending_08_25": "★ 08-25 에 더한 일곱 — ★ 사이트 수집기 다섯 · 갈래 넣기 · 접기. ★★ ★ 규격이 ★ 이 일곱의 ★ **대응 화면을 아직 안 정했다** — ★ 가이드 판단 대기다. ★ ★ `/admin/collect` (브라우저 수집)에 붙일 수 있으나 ★ 개발측이 스스로 정하지 않는다",
   "_pending_note_20260829": "★ 08-29 개발측 — ★ 다섯을 새로 넣었다.  ★ 화면을 지어 채우지 않는다 (규칙 2).  ★ `daily_collect.py` 는 ★ 화면은 없지만 ★ **타이머**가 부른다 (`carwatch-daily.service` ExecStartPre · S46-127).  ★ `link_raw_ids.py` · `compress_raw.py` 는 ★ 한 번 돌리면 끝나는 손질이다.  ★ `clear_zero_values.py` · `fill_photos.py` 는 ★ 관리 화면에 붙을 만하다 — ★ ★ 어디에 붙일지 ★ 가이드께서 정해 주십시오",
   "_pending_note_20260830": "★ 08-30 개발측 — ★ 둘을 새로 넣었다.  ★ 화면을 지어 채우지 않는다 (규칙 2).  ★ `undo_wrong_gone.py` — ★ 잘못 매긴 `gone` 을 되돌린다 (마스터 0a·0c).  ★ ★ 눌러서 살아 있는 것만 되돌린다.  ★ 한 번 돌리면 끝나는 손질이다.  ★ `clear_bad_origin.py` — ★ 「신차가 < 현재값」인 신차가를 지운다 (마스터 지시 2).  ★ ★ 앞으로 들어오는 것은 `store/core._drop_impossible_origin` 이 문에서 막는다 — ★ ★ 이 도구는 이미 든 것만 치운다.  ★ 한 번 돌리면 끝이다.  ★ 둘 다 ★ 관리 화면에 붙을 만하다 — ★ 어디에 붙일지 가이드께서 정해 주십시오",
-  "_bobaedream_why": "★★★★★ 09-01 마스터 확정 — ★ **보배를 뺐다** (`sites.json` `paused`).  ★ 그래서 ★ 하루치 타이머(`tools/daily_collect.py` `SITES`)에서 빠졌다.  ★★ ★ 그러면 ★ `S46-127`(수집기마다 화면이나 타이머가 있어야 한다)에 걸린다 — ★ ★ 「손으로만 도는 수집기」가 된다.  ★★ ★ **수집기를 지우지 않는다** (다시 켤 수 있어야 한다) — ★ ★ 대신 ★ 관리 화면(`/admin/collect`)에서 ★ 손으로 부를 수 있게 자리를 준다.  ★ ★ ★ 곧 ★ 「안 돈다」가 ★ 화면에 보인다 (오판 169 가 막으려던 것)"
+  "_bobaedream_why": "★★★★★ 09-01 마스터 확정 — ★ **보배를 뺐다** (`sites.json` `paused`).  ★ 그래서 ★ 하루치 타이머(`tools/daily_collect.py` `SITES`)에서 빠졌다.  ★★ ★ 그러면 ★ `S46-127`(수집기마다 화면이나 타이머가 있어야 한다)에 걸린다 — ★ ★ 「손으로만 도는 수집기」가 된다.  ★★ ★ **수집기를 지우지 않는다** (다시 켤 수 있어야 한다) — ★ ★ 대신 ★ 관리 화면(`/admin/collect`)에서 ★ 손으로 부를 수 있게 자리를 준다.  ★ ★ ★ 곧 ★ 「안 돈다」가 ★ 화면에 보인다 (오판 169 가 막으려던 것)",
+  "_pending_why_sweep_sold": "★ [개발측 09-03] ★ `tools/sweep_sold.py` — ★ 철학 ② (팔린 것을 치운다 · S46-267).  ★ 기능은 ★ **판마다 자동으로 돈다** (collect/runner.py s5 끝) — ★ 손으로 돌리는 자리만 CLI 다.  ★★ 화면을 ★ **내가 못 정한다** (규칙 2).  ★ `/admin/collect` 가 맞아 보이나 여쭙는다.  ★ 붙일 것 둘 — ① 「팔린 것 치우기」 (몇 건이 내려갈지 먼저 세어 보이고 누르게) ② 「되살리기」 (`--revive` — 상세가 아직 판다는 것)"
 }

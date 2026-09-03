@@ -1442,6 +1442,23 @@ def _paused_sites(root: str = ".") -> tuple:
         if isinstance(v, dict) and v.get("status") == "paused"))
 
 
+# ★★★★★ 09-03 (1부 1-1 · 브라우저 실측) — ★ **「살아 있다」의 자는 하나다.**
+#   ★ 목록 본체는 ★ `l.status <> 'gone'` 으로 거른다 (아래 `_listings_where`).
+#   ★ ★ 그런데 ★ 짝 맞추기 · 「N곳」 배지 · 같은 차 접기만 ★ `status='active'` 였다 —
+#   ★ ★ ★ **자가 두 개였다.**
+#   ★★ 실측 09-03 (브라우저로 배포를 열어 쟀다 · `tools/browser_verify.py`) —
+#     ★ `/listings` 의 「짝지어진 차 N대」가 ★ **빈칸**이고 ★ 「N곳」 배지가 ★ **0개**이고
+#     ★ ★ `?paired=1` 이 ★ **카드 0개**였다.  ★ 8회차째 안 닫힌 자리다.
+#   ★★★ 까닭 — ★ 매물의 대부분이 ★ `new` 다 (`new` 4,963 ↔ `active` 871).
+#     ★ ★ 짝을 ★ `active` 끼리만 맞추니 ★ **사이트 넘은 짝이 0쌍**이었다.
+#     ★ ★ ★ 같은 자(`<> 'gone'`)로 재면 ★ **94쌍**이다.
+#   ★★★★ 더 나쁜 것 — ★ 같은 차 접기가 ★ `active` 대표를 못 찾으면
+#     ★ ★ 그 매물이 ★ **목록에서 아예 사라진다** (조건이 거짓이 된다).
+#     ★ ★ ★ 번호판이 있는 살아 있는 매물이 ★ 1,526건인데 ★ `active` 는 871건뿐이다
+# ★ 「팔린 것」은 ★ 여전히 짝이 아니다 — ★ `gone` 을 뺀다 (철학 ② 가 매긴다)
+LIVE_STATUS_SQL = "status <> 'gone'"
+
+
 def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     """목록 조건.  ★ 세는 것과 뽑는 것이 같은 조건을 쓴다 —
     갈라 두면 「3,471건 중 200건」의 3,471 이 거짓말이 된다 (V11-55)."""
@@ -1500,10 +1517,12 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         #   ★ ★ 번호판 **또는** 차대로 ★ 두 사이트 넘게 올라온 것이다.
         #   ★ ★ ★ 다른 자를 쓰면 ★ 「N대」와 ★ 걸러진 수가 어긋난다
         where.append(
-            "(EXISTS (SELECT 1 FROM core_listing x WHERE x.status='active'"
+            "(EXISTS (SELECT 1 FROM core_listing x"
+            f"        WHERE x.{LIVE_STATUS_SQL}"
             "         AND x.plate_hash IS NOT NULL"
             "         AND x.plate_hash = l.plate_hash AND x.site <> l.site)"
-            " OR EXISTS (SELECT 1 FROM core_listing y WHERE y.status='active'"
+            " OR EXISTS (SELECT 1 FROM core_listing y"
+            f"        WHERE y.{LIVE_STATUS_SQL}"
             "         AND y.vin_hash IS NOT NULL"
             "         AND y.vin_hash = l.vin_hash AND y.site <> l.site))")
     # ★ 리스·렌트는 기본으로 뺀다 (개정 420).  ?lease=1 이면 함께 낸다
@@ -1540,7 +1559,8 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
         where.append(
             "(l.plate_hash IS NULL OR l.listing_id = ("
             "  SELECT l2.listing_id FROM core_listing l2"
-            "   WHERE l2.plate_hash = l.plate_hash AND l2.status = 'active'"
+            "   WHERE l2.plate_hash = l.plate_hash"
+            f"    AND l2.{LIVE_STATUS_SQL}"
             "   ORDER BY l2.price_current_won, l2.listing_id LIMIT 1))")
     # ★ 매물 하나만 (개정 427 상세).  ★ 맨 앞에 둔다 — 가장 좁은 조건이다
     # ★★★★ 08-28 — ★ 팔린 것 · 내려간 것 · 계약·예약중은 ★ **목록에 안 낸다**.
@@ -1860,7 +1880,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         "                   MIN(price_current_won) low_won,"
         "                   MAX(price_current_won) high_won"
         "              FROM core_listing"
-        "             WHERE status = 'active' AND plate_hash IS NOT NULL"
+        f"            WHERE {LIVE_STATUS_SQL} AND plate_hash IS NOT NULL"
         "             GROUP BY plate_hash) dp"
         "   ON dp.k = l.plate_hash"
         " LEFT JOIN (SELECT vin_hash k,"
@@ -1868,7 +1888,7 @@ def view_listings(account: Account, conn: sqlite3.Connection,
         "                   MIN(price_current_won) low_won,"
         "                   MAX(price_current_won) high_won"
         "              FROM core_listing"
-        "             WHERE status = 'active' AND vin_hash IS NOT NULL"
+        f"            WHERE {LIVE_STATUS_SQL} AND vin_hash IS NOT NULL"
         "             GROUP BY vin_hash) dv"
         "   ON dv.k = l.vin_hash"
         f" WHERE {' AND '.join(where)}"
