@@ -6378,7 +6378,40 @@ def s46_260_end_signal_not_empty_pages():
     return True, "빈 쪽이 아니라 끝 신호로 멈추라고 규격에 있다"
 
 
+def s46_262_dev_questions_answered():
+    """S46-262 — ★ 개발 회차의 ★ **「여쭐 것」이 물렸는가** (마스터 09-03).
+
+    ★★★ 마스터 — 「★ 너는 너가 할 일이 없다고 했는데 ★ **왜 이렇게 많지?**」
+    ★ 실측 09-03 — ★ 「여쭐 것」을 낸 회차 **14** 중 ★ **11 을 내가 안 물렸다**.
+      ★ ★ `S46-152` 는 ★ 「**마지막** 개발 회차를 읽었는가」만 본다 —
+        ★ v353 하나를 읽으면 ★ **통과**다.  ★ 그 앞은 아무도 안 센다.
+      ★ ★ ★ 그래서 ★ 검사가 **161 통과**인데 ★ 내 몫이 **열한 건 밀려** 있었다.
+    ★★ 오판 247 과 ★ **같은 뿌리** — 「★ **내가 가진 것을 분모로 잡는다**」.
+      ★ 그때는 시안 12장을 분모로 잡았고 ★ 이번엔 ★ 내 검사를 분모로 잡았다.
+    ★ 잣대 — ★ 최근 회차 스물의 ★ 「여쭐 것」이 ★ 이력이나 가이드에 ★ 물렸는가.
+    """
+    outs = sorted((ROOT / "outputs").glob("2026*_v3*.md"))[-20:]
+    if not outs:
+        return False, "개발 회차 기록이 없다"
+    hist = _read(ROOT / "docs" / "guide" / "03_이력.md")
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    miss = []
+    for f in outs:
+        body = _read(f)
+        if "여쭐 것" not in body:
+            continue
+        m = re.search(r"_v(\d+)_", f.name)
+        vid = "v" + m.group(1) if m else f.name[:12]
+        if vid not in hist and vid not in order:
+            miss.append(vid)
+    if miss:
+        return False, (f"★ 「여쭐 것」을 냈는데 ★ 안 물린 회차 {len(miss)}개 — "
+                       + " · ".join(miss[:6]))
+    return True, "개발측이 여쭌 회차가 다 이력·가이드에 물려 있다"
+
+
 CHECKS = (
+    ("S46-262", "개발측 「여쭐 것」이 물렸는가", s46_262_dev_questions_answered),
     ("S46-260", "빈 쪽이 아니라 끝 신호로 멈추는가", s46_260_end_signal_not_empty_pages),
     ("S46-259", "마스터 차종 이름이 그대로인가", s46_259_master_target_names),
     ("S46-258", "판정 축 사전이 정해졌는가", s46_258_part_axis_decided),
