@@ -5948,7 +5948,15 @@ def s46_253_part1_seen_in_browser():
     bad = []
     for f in outs:
         body = _read(f)
-        if "1부" not in body and "1-1" not in body:
+        # ★★★★★ 09-03 — ★ **절 번호를 화면 항목으로 읽지 않는다.**
+        #   ★ 실측 09-03 — ★ KB 수집 회차(v367)가 ★ 규격
+        #     ★ ★ `KBCHACHACHA_API.md` 의 ★ **「1-1 봇 차단」 절**을 인용했다는
+        #     ★ ★ ★ 까닭만으로 ★ 「화면 일을 안 재고 닫았다」로 잡혔다.
+        #   ★ 1부는 ★ **시안** 일이다 — ★ 「1부」라 적었거나,
+        #     ★ ★ 「시안」을 말하면서 ★ `1-N` 을 든 회차만 본다.
+        #   ★ 느슨하게 두면 ★ 참말을 한 회차가 잡혀 ★ 검사를 안 믿게 된다
+        if not ("1부" in body
+                or ("시안" in body and re.search(r"\b1-\d", body))):
             continue
         has_browser = any(w in body for w in
                           ("브라우저", "playwright", "Playwright",
@@ -6155,6 +6163,48 @@ def v1_22_site_given_is_not_remade() -> tuple[bool, str]:
     return True, f"사이트가 준 것을 받아 쓴다 (platform_check 원문 — {said})"
 
 
+def _file_detail_ids(site: str) -> set:
+    """★ 원문 **파일**로 받은 상세의 매물번호 (09-03).
+
+    ★ 받기가 ★ 「파일만 쓴다」로 옮겨 가는 중이라 (`S46-204` · 09-01 마스터 지시)
+      ★ ★ 상세가 ★ `raw/{site}/detail/` 과 ★ `raw_response` ★ **두 자리**에 갈려 있다.
+    ★ DB 만 보면 ★ 파일로 받은 것을 ★ 「안 받았다」로 센다 —
+      ★ ★ 헤이딜러 실측 09-03: ★ 파일 248 · DB 186.
+    ★ 못 읽으면 ★ 빈 것을 준다 (★ 「없다」가 아니라 ★ 「못 셌다」 — ★ 합집합이다)
+    """
+    d = ROOT / "raw" / site / "detail"
+    if not d.is_dir():
+        return set()
+    try:
+        return {p.name.split("__")[0][:-5] for p in d.rglob("*.json")}
+    except OSError:
+        return set()
+
+
+def _rates_in(body: str, sites) -> dict:
+    """★ 회차 글에서 ★ 사이트별 ★ **상세율**을 읽는다 (09-03).
+
+    ★ 줄 단위로 본다 — ★ 사이트 이름과 ★ 값 사이에 ★ 건수가 끼기 때문이다
+      ★ ★ (「`heydealer  81/103  상세 78.6%`」).  ★ 한 줄에서
+      ★ ★ ★ 「상세 NN.N%」를 먼저 찾고 ★ 없으면 ★ 첫 백분율을 쓴다.
+    ★ 「파싱 NN.N%」는 ★ 상세율이 아니다 — ★ 안 읽는다
+    """
+    want = set(sites)
+    out: dict = {}
+    for line in body.splitlines():
+        for site in want:
+            if site not in line or site in out:
+                continue
+            m = re.search(r"상세[^0-9\n]{0,6}(\d{1,3}\.\d)%", line)
+            if m is None:
+                seg = line.split(site, 1)[1]
+                seg = seg.split("파싱", 1)[0]
+                m = re.search(r"(\d{1,3}\.\d)%", seg)
+            if m is not None:
+                out[site] = float(m.group(1))
+    return out
+
+
 def s46_261_report_matches_deploy() -> tuple[bool, str]:
     """S46-261 — ★ 「닫았다」는 ★ **회차의 수**와 ★ **배포의 수**가 같은가 (09-04).
 
@@ -6163,8 +6213,17 @@ def s46_261_report_matches_deploy() -> tuple[bool, str]:
       ★ ★ ★ 까닭은 ★ **분모**다 — ★ 개발측이 `out_of_scope` 1,021건을 뺐다.
     ★★ 마스터 인수인계 — 「★ **배포에서 확인한 것만 「끝」이라 써라**」.
       ★ ★ 그러려면 ★ 「무엇으로 쟀는가」가 ★ **한 자로 고정**돼야 한다.
-    ★ 이 검사가 정하는 자 — ★ 상세율 = ★ **상세 원문이 있는 매물 ÷ 그 사이트 전 매물**.
-      ★ ★ `out_of_scope` 를 ★ **빼지 않는다** — ★ 빼면 분모가 작아져 수가 부푼다.
+    ★ 이 검사가 정하는 자 — ★ 상세율 = ★ **상세 원문이 있는 매물 ÷ ★ 우리 차종 매물**.
+      ★★★★★ 09-03 갱신 (ORDER r1101 8줄 · 「분모를 갈랐다 · v360 답」) —
+        ★ ★ 분모가 ★ **우리 차종**(`target_key` 가 `targets.json` 의 활성 차종)으로
+          ★ ★ 못 박혔다.  ★ 까닭은 ★ 규격이 ★ **「전량을 받지 않는다」**(마스터 08-23)라
+          ★ ★ ★ **사이트 전 재고를 분모로 잡으면 영영 못 넘기기** 때문이다.
+        ★ ★ 앞서 이 검사가 쓰던 ★ 「그 사이트 전 매물」은 ★ 그 지시로 ★ **갈렸다**.
+        ★ ★ ★ 여전히 ★ `out_of_scope` 를 ★ **까닭 삼아 빼지는 않는다** —
+          ★ ★ ★ 가르는 것은 ★ **상태**가 아니라 ★ **차종**이다.
+      ★★ 그리고 ★ 상세는 ★ **원문 파일 ∪ `raw_response(ok)`** 로 센다 (09-03) —
+        ★ ★ 받기가 ★ 파일로 옮겨 가는 중이라 (`S46-204`) ★ 두 자리에 갈려 있다.
+        ★ ★ ★ DB 만 보면 ★ 파일로 받은 것을 ★ 「안 받았다」고 센다 (헤이딜러 실측).
     ★ 잣대 — ★ 마지막 회차 기록이 적은 상세율과 ★ 지금 잰 값이 ★ **10%p 넘게** 다르면 실패.
       ★ ★ 회차에 수가 없으면 ★ 잴 것이 없다 (통과 — ★ 그것은 `S46-152` 가 본다)
     """
@@ -6175,15 +6234,35 @@ def s46_261_report_matches_deploy() -> tuple[bool, str]:
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     try:
+        # ★ 우리 차종 — ★ `config/targets.json` 의 ★ 활성 차종만
+        import json as _json
+        _t = _json.loads(_read(ROOT / "config" / "targets.json") or "{}")
+        _scope = [k for k, v in _t.items()
+                  if isinstance(v, dict) and v.get("active")]
+        if not _scope:
+            return True, "활성 차종이 없다 — 잴 것이 없다"
+        _ph = ",".join("?" * len(_scope))
+        # ★★★★★ 09-03 — ★ **원문표를 한 번만 읽는다.**
+        #   ★ 매물마다 `EXISTS(…)` 를 걸면 ★ `raw_response` 를 매물 수만큼 훑어
+        #     ★ ★ 검사 하나가 ★ **40분**을 넘겼다 (실측 09-03).
+        #   ★ 있는 것을 ★ 한 번에 집어 ★ 파이썬에서 견준다
+        _have: dict = {}
+        for _s, _sid in conn.execute(
+                "SELECT DISTINCT site, source_id FROM raw_response"
+                " WHERE endpoint='detail' AND status='ok'"):
+            _have.setdefault(_s, set()).add(_sid)
+        _mine: dict = {}
+        for _s, _sid in conn.execute(
+                "SELECT site, source_id FROM core_listing"
+                f" WHERE target_key IN ({_ph})", _scope):
+            _mine.setdefault(_s, []).append(_sid)
         now: dict = {}
-        for site, n in conn.execute(
-                "SELECT site, COUNT(*) FROM core_listing GROUP BY 1"):
+        for site, ids in _mine.items():
+            n = len(ids)
             if not n:
                 continue
-            d = conn.execute(
-                "SELECT COUNT(DISTINCT source_id) FROM raw_response"
-                " WHERE site=? AND endpoint='detail' AND status='ok'",
-                (site,)).fetchone()[0]
+            got = (_have.get(site) or set()) | _file_detail_ids(site)
+            d = sum(1 for i in ids if i in got)
             now[site] = 100.0 * min(d, n) / n
     except sqlite3.Error as e:
         return False, f"못 읽었다: {e}"
@@ -6193,22 +6272,36 @@ def s46_261_report_matches_deploy() -> tuple[bool, str]:
         return True, "매물이 없다 — 잴 것이 없다"
 
     # ★ 마지막 회차 기록에서 ★ 「사이트 … NN.N%」 꼴을 찾는다
+    # ★★★★★ 09-03 — ★ **잣대를 밝힌 회차만 잰다.**
+    #   ★ 마스터 지시 — 「★ **「무엇으로 쟀는가」를 적게 한다**」.
+    #   ★ 09-03 에 ★ 분모가 ★ 「전 매물」 → ★ **「우리 차종」**으로 갈렸다.
+    #     ★ ★ 그 전 회차의 수는 ★ **다른 자로 잰 것**이라 ★ 견주면 늘 다르다
+    #     ★ ★ ★ (실측 — ★ `20260904_0400_v365` 의 엔카 59.9% ↔ 지금 95.5%).
+    #   ★ 그러므로 ★ 회차가 ★ **「우리 차종」이라 적었을 때만** 잰다 —
+    #     ★ ★ 안 적었으면 ★ 「무엇으로 쟀는지 모른다」이지 ★ 「틀렸다」가 아니다.
+    #   ★ 적게 하는 것은 ★ `S46-253` 과 짝이다 (★ 「무엇으로 쟀는가」)
     outs = sorted((ROOT / "outputs").glob("2026*_v*.md"))
     if not outs:
         return True, "회차 기록이 없다 — 잴 것이 없다"
+    # ★ ① 잣대를 밝히고 ★ ② 사이트별 수를 ★ **실제로 적은** 회차만 고른다.
+    #   ★ 「0곳 견줌」으로 통과하면 ★ 안 잰 것을 ★ 「같다」라 말하는 꼴이다
+    _said = [f for f in outs
+             if "우리 차종" in (_read(f) or "") and _rates_in(_read(f) or "", now)]
+    if not _said:
+        return True, ("★ 잣대(「우리 차종」)로 ★ 사이트별 수를 적은 회차가 없다 — "
+                      "★ 회차에 ★ 「무엇으로 쟀는가」와 ★ 수를 적어라")
+    outs = _said
     body = _read(outs[-1]) or ""
     bad = []
-    for site, real in sorted(now.items()):
-        for m in re.finditer(re.escape(site) + r"[^0-9\n]{0,40}(\d{1,3}\.\d)%", body):
-            said = float(m.group(1))
-            if abs(said - real) > 10.0:
-                bad.append(f"{site} — 회차 {said:.1f}% ↔ 지금 {real:.1f}%")
-            break
+    _said_rates = _rates_in(body, now)
+    for site, said in sorted(_said_rates.items()):
+        real = now[site]
+        if abs(said - real) > 10.0:
+            bad.append(f"{site} — 회차 {said:.1f}% ↔ 지금 {real:.1f}%")
     if bad:
         return False, ("★ 회차의 수와 지금 수가 다르다 — " + " · ".join(bad[:4])
-                       + f"  ★ 잣대는 ★ **전 매물**이다 ({outs[-1].name})")
-    said_n = sum(1 for site in now
-                 if re.search(re.escape(site) + r"[^0-9\n]{0,40}\d{1,3}\.\d%", body))
+                       + f"  ★ 잣대는 ★ **우리 차종**이다 ({outs[-1].name})")
+    said_n = len(_said_rates)
     return True, (f"회차가 적은 상세율이 지금과 같다 ({said_n}곳 견줌 · {outs[-1].name})")
 
 
