@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 210개 · 총 76,611줄
+파일 211개 · 총 76,840줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
-| `validate/v0_guide.py` | 6,576 | 가이드 문서 자체를 검사한다 (V0 계열). |
+| `validate/v0_guide.py` | 6,627 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `validate/v11_web.py` | 5,057 | V11 표현 계층 검증 (14장 STEP 153). |
 | `report/screens/build.py` | 4,548 | 화면 데이터 생성. |
 | `web/views.py` | 2,891 | 화면 어댑터 (14장 STEP 142 · 152). |
@@ -34,8 +34,8 @@
 | `tools/backfill_from_raw.py` | 663 | ★★★★★ 08-30 (명령서 r974 · 0j 4) — ★ Ⓐ 「이미 오는 것을 읽는다」. |
 | `tools/collect_kbchachacha.py` | 631 | KB차차차 목록 수집 · 총 매물 수 세기 (명령서 `ORDER_20260822_r515.md` 3-2 · 단계 9). |
 | `parse/encar/mapping.py` | 625 | 엔카 원문 → CORE 필드 (L3). |
+| `store/dictionary.py` | 618 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `store/raw.py` | 617 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
-| `store/dictionary.py` | 591 | 사전 저장소 (L5).  RAW 에서 생성한다. |
 | `tests/test_admin_flow.py` | 575 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tests/test_admin.py` | 567 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
@@ -43,7 +43,7 @@
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
-| `run.py` | 421 | CarWatch v2 진입점. |
+| `run.py` | 469 | CarWatch v2 진입점. |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
@@ -54,7 +54,7 @@
 | `tools/browser_diff.py` | 362 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `analyze/axis/state.py` | 355 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tools/collect_hyundai_cert.py` | 351 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
-| `parse/heydealer/mapping.py` | 341 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
+| `parse/heydealer/mapping.py` | 348 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `tools/light_check.py` | 340 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `tools/build_dict.py` | 336 | RAW → 사전 생성. |
 | `parse/kcar/mapping.py` | 333 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
@@ -157,6 +157,7 @@
 | `parse/kbchachacha/record.py` | 98 | KB차차차 상세 → `core_record` (명령서 r1007 · 1-5 · 로드맵 차례 1). |
 | `tools/daily_collect.py` | 98 | 아홉+한 사이트를 하루 한 번 받는다 (ORDER_20260829 1순위 2 · S46-127). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
+| `adapters/generic.py` | 96 | ★★★★★ 09-03 (가이드 지시 ①) — ★ **config 의 길만 읽는 어댑터.** |
 | `analyze/verdict.py` | 94 | 판정 엔진 — 순서 무관 put(). |
 | `parse/target_rules.py` | 93 | 차종군 + `targets.json` 규칙으로 ★ 갈래를 고른다. |
 | `tools/export_cli.py` | 93 | 데이터 내보내기 (9장 STEP 91a · B-6). |
@@ -219,10 +220,10 @@
 
 ## 큰 파일 — 무엇이 어디에 (200줄 이상 91개)
 
-### `validate/v0_guide.py` — 6,576줄
+### `validate/v0_guide.py` — 6,627줄
 
 ```
-_read:25  s43_2_axis_ids:32  s44_4_scope_written:70  s44_5_site_consistent:102  s45_1_one_version:135  _order_files:158  s44_1_order_exists:171  s44_2_one_order:213  s43_2b_axis_renamed:228  s43_2c_no_hda:254  s45_5_no_axis_scores:308  s45_4_table_generated:346  s45_3_spec_totals:361  s45_2_mock_numbers:432  s44_3_specs_in_order:453  s43_3_version_matches:491  _h_tags:532  s46_21_one_screen_per_file:548  s46_22_section_order:573  _targets:642  s46_23_site_query_filled:648  s46_24_facet_unconfirmed:663  s46_30_index_covers_docs:683  s46_31_spec_sites_in_config:722  s46_32_generated_fresh:743  _req_rows:785  _tokens:797  _named_docs:812  s46_36_dropped_not_alive:824  s46_40_progress_docs_changed:852  s46_41_site_status_known:883  _templates:925  s46_45_spec_not_in_list:930  s46_46_spec_forbidden_ten:950  s46_66_links_encoded:976  s46_65_verdict_fresh:1015  _sian_files:1053  s46_67_sian_names_dont_clash:1062  s46_68_watch_is_mobile_first:1125  s46_74_rows_per_page:1179  s46_75_v4m_common:1225  s46_76_collectors_keep_raw:1265  s46_115_run_screen_still:1303  s46_125_sort_axes_really_sort:1332  s46_118_heart_has_anchor:1363  s46_121_header_rule_in_one_place:1403  s46_116_reasons_in_plain_words:1425  s46_120_registry_key_matches:1452  s46_123_toss_palette_only:1488  s46_122_shared_fragments:1530  s46_128_batch_gives_a_window:1574  s46_127_collector_has_screen_or_timer:1618  s46_124_db_opened_with_pragmas:1666  s46_126_fetch_outside_transaction:1702  s46_117_collectors_sweep_gone:1736  s46_77_kb_is_our_targets_only:1785  s46_78_encar_only_paths_are_scoped:1841  s46_87_request_site_matches_listing:1883  s46_88_encar_blocked_banner:1960  _paired_rows:2025  _grade_order_list:2065  s46_54_grade_two_step:2077  s46_55_price_gap_30:2102  s46_56_accident_split:2128  s46_90_pending_not_graded:2168  _registrable:2217  s46_94_source_url_site_matches:2231  s46_91_raw_vs_stored:2275  s46_97_raw_linked_by_source_id:2347  s46_99_login_then_watch:2415  _logged_opener:2511  _sian_seq:2550  s46_100_sian_word_order:2582  s46_102_electric_only_is_electric:2719  s46_103_sian_values_carried:2771  s46_98_sian_words_on_screen:2812  s46_95_screens_alive:2930  s46_96_site_sells_but_no_code:2986  s46_92_browser_zero_count:3033  s46_161_no_unproven_absence:3102  s46_162_promised_checks_exist:3151  s46_145_numbers_have_meaning:3181  s46_155_screen_spec_has_mockup:3210  s46_163_mockup_has_route:3243  _guide_docs:3274  s46_129_table_sum_counted:3283  s46_132_handover_says_remeasure:3315  s46_140_new_host_has_robots:3329  s46_142_site_count_matches:3348  s46_146_absence_needs_parser_check:3383  s46_154_master_wish_in_registry:3405  s46_131_paging_claim_measured:3427  s46_135_generalisation_has_sample:3449  s46_138_all_claim_needs_source:3466  s46_149_confession_is_closed:3490  s46_156_answer_touches_spec:3517  s46_130_one_tally_per_register:3543  s46_134_target_site_pair:3560  s46_141_filter_claim_measured:3586  s46_143_master_items_are_master:3603  s46_147_absence_needs_ten:3638  s46_150_column_from_ddl:3660  s46_133_check_gap_in_pending:3682  s46_136_warn_number_moves:3700  s46_137_config_key_has_reader:3722  s46_139_field_claim_counted:3751  s46_148_axis_gap_traced:3768  s46_152_dev_rounds_read:3786  s46_159_design_is_doable:3819  s46_144_empty_is_split:3838  s46_153_owner_is_judged:3855  s46_157_perf_claim_is_timed:3887  s46_158_size_claim_is_measured:3905  s46_160_ev_leak_full_mark:3923  s46_164_dev_pending_answered:3940  s46_165_fixable_not_called_unmeasurable:3974  s46_166_decision_reached_chapters:4015  s46_168_check_counts_exceptions:4045  s46_169_gone_has_reason:4084  s46_170_one_architecture:4101  s46_171_yardstick_names_screen:4119  s46_172_absence_read_as_human:4138  s46_173_endpoint_not_wordcount:4162  s46_174_no_endpoint_only_if_probed:4187  s46_175_no_lumped_axes:4214  s46_176_guide_probes_sites:4247  s46_177_catalog_not_site_locked:4275  s46_178_list_field_not_empty_axis:4300  s46_179_no_penalty_without_source:4325  s46_180_code_table_per_site:4339  s46_181_read_stored_before_probing:4366  s46_182_all_sites_before_claiming_all:4385  s46_183_master_only_after_probing:4413  s46_184_unfetched_is_not_absent:4442  s46_185_file_is_the_原本:4470  s46_186_grade_distribution_watched:4500  s46_187_cheaper_scores_higher:4514  s46_188_screen_before_claiming_missing:4541  s46_191_budget_follows_fuel_rule:4565  s46_192_pref_brands_registered:4611  s46_202_no_raw_template_tags:4636  s46_227_absent_only_declared:4649  s46_213_recommend_has_no_sold:4700  s46_203_new_site_has_target_keys:4746  s46_203_collect_writes_files_first:4778  s46_205_no_raw_response_writes:4806  s46_206_pdf_link_only:4841  _retired_s46_207_says_measured:4873  s46_207_commit_title_says_fact:4907  s46_208_market_no_negative:4945  s46_214_photo_uses_space_below:4964  s46_215_collector_respects_active:4989  s46_229_recommend_not_active_off:5015  s46_230_schema_change_counts_one_run:5043  s46_231_all_sites_in_filter:5073  s46_232_budget_curve_is_log:5100  s46_233_size_axis_never_zero:5144  s46_234_top_site_sweeps_gone:5183  s46_235_screen_hides_unsellable:5215  _recommend_rows_once:5257  s46_240_all_indexes_exist:5275  s46_237_recommend_in_budget:5316  s46_236_interior_color_axis:5348  s46_238_trim_not_double_counting:5383  s46_241_regrade_alive_on_deploy:5406  s46_242_mock_has_required_header:5448  s46_243_empty_says_why:5472  s46_244_failed_response_kept:5502  s46_245_each_screen_has_its_parts:5522  s46_246_every_screen_has_a_mock:5557  s46_253_browser_confirms_deploy:5591  s46_247_site_coverage:5661  s46_248_grade_is_realistic:5727  s46_249_budget_pairs_are_masters:5761  s46_250_mock_has_real_shape:5790  s46_251_vehicle_key_per_site:5823  s46_252_admin_write_actually_saves:5853  s46_253_part1_seen_in_browser:5885  s46_254_pair_badge_not_by_order:5920  s46_255_tester_items_listed_one_by_one:5954  s46_256_blocked_needs_evidence:5976  s46_257_pipeline_not_encar_only:6007  _as_check:6040  results:6054  save:6093  run:6104  s46_258_part_axis_decided:6129  s46_259_master_target_names:6161  s46_260_end_signal_not_empty_pages:6219  _as_check:6489  results:6503  save:6542  run:6553
+_read:25  s43_2_axis_ids:32  s44_4_scope_written:70  s44_5_site_consistent:102  s45_1_one_version:135  _order_files:158  s44_1_order_exists:171  s44_2_one_order:213  s43_2b_axis_renamed:228  s43_2c_no_hda:254  s45_5_no_axis_scores:308  s45_4_table_generated:346  s45_3_spec_totals:361  s45_2_mock_numbers:432  s44_3_specs_in_order:453  s43_3_version_matches:491  _h_tags:532  s46_21_one_screen_per_file:548  s46_22_section_order:573  _targets:642  s46_23_site_query_filled:648  s46_24_facet_unconfirmed:663  s46_30_index_covers_docs:683  s46_31_spec_sites_in_config:722  s46_32_generated_fresh:743  _req_rows:785  _tokens:797  _named_docs:812  s46_36_dropped_not_alive:824  s46_40_progress_docs_changed:852  s46_41_site_status_known:883  _templates:925  s46_45_spec_not_in_list:930  s46_46_spec_forbidden_ten:950  s46_66_links_encoded:976  s46_65_verdict_fresh:1015  _sian_files:1053  s46_67_sian_names_dont_clash:1062  s46_68_watch_is_mobile_first:1125  s46_74_rows_per_page:1179  s46_75_v4m_common:1225  s46_76_collectors_keep_raw:1265  s46_115_run_screen_still:1303  s46_125_sort_axes_really_sort:1332  s46_118_heart_has_anchor:1363  s46_121_header_rule_in_one_place:1403  s46_116_reasons_in_plain_words:1425  s46_120_registry_key_matches:1452  s46_123_toss_palette_only:1488  s46_122_shared_fragments:1530  s46_128_batch_gives_a_window:1574  s46_127_collector_has_screen_or_timer:1618  s46_124_db_opened_with_pragmas:1666  s46_126_fetch_outside_transaction:1702  s46_117_collectors_sweep_gone:1736  s46_77_kb_is_our_targets_only:1785  s46_78_encar_only_paths_are_scoped:1841  s46_87_request_site_matches_listing:1883  s46_88_encar_blocked_banner:1960  _paired_rows:2025  _grade_order_list:2065  s46_54_grade_two_step:2077  s46_55_price_gap_30:2102  s46_56_accident_split:2128  s46_90_pending_not_graded:2168  _registrable:2217  s46_94_source_url_site_matches:2231  s46_91_raw_vs_stored:2275  s46_97_raw_linked_by_source_id:2347  s46_99_login_then_watch:2415  _logged_opener:2511  _sian_seq:2550  s46_100_sian_word_order:2582  s46_102_electric_only_is_electric:2719  s46_103_sian_values_carried:2771  s46_98_sian_words_on_screen:2812  s46_95_screens_alive:2930  s46_96_site_sells_but_no_code:2986  s46_92_browser_zero_count:3033  s46_161_no_unproven_absence:3102  s46_162_promised_checks_exist:3151  s46_145_numbers_have_meaning:3181  s46_155_screen_spec_has_mockup:3210  s46_163_mockup_has_route:3243  _guide_docs:3274  s46_129_table_sum_counted:3283  s46_132_handover_says_remeasure:3315  s46_140_new_host_has_robots:3329  s46_142_site_count_matches:3348  s46_146_absence_needs_parser_check:3383  s46_154_master_wish_in_registry:3405  s46_131_paging_claim_measured:3427  s46_135_generalisation_has_sample:3449  s46_138_all_claim_needs_source:3466  s46_149_confession_is_closed:3490  s46_156_answer_touches_spec:3517  s46_130_one_tally_per_register:3543  s46_134_target_site_pair:3560  s46_141_filter_claim_measured:3586  s46_143_master_items_are_master:3603  s46_147_absence_needs_ten:3638  s46_150_column_from_ddl:3660  s46_133_check_gap_in_pending:3682  s46_136_warn_number_moves:3700  s46_137_config_key_has_reader:3722  s46_139_field_claim_counted:3751  s46_148_axis_gap_traced:3768  s46_152_dev_rounds_read:3786  s46_159_design_is_doable:3819  s46_144_empty_is_split:3838  s46_153_owner_is_judged:3855  s46_157_perf_claim_is_timed:3887  s46_158_size_claim_is_measured:3905  s46_160_ev_leak_full_mark:3923  s46_164_dev_pending_answered:3940  s46_165_fixable_not_called_unmeasurable:3974  s46_166_decision_reached_chapters:4015  s46_168_check_counts_exceptions:4045  s46_169_gone_has_reason:4084  s46_170_one_architecture:4101  s46_171_yardstick_names_screen:4119  s46_172_absence_read_as_human:4138  s46_173_endpoint_not_wordcount:4162  s46_174_no_endpoint_only_if_probed:4187  s46_175_no_lumped_axes:4214  s46_176_guide_probes_sites:4247  s46_177_catalog_not_site_locked:4275  s46_178_list_field_not_empty_axis:4300  s46_179_no_penalty_without_source:4325  s46_180_code_table_per_site:4339  s46_181_read_stored_before_probing:4366  s46_182_all_sites_before_claiming_all:4385  s46_183_master_only_after_probing:4413  s46_184_unfetched_is_not_absent:4442  s46_185_file_is_the_原本:4470  s46_186_grade_distribution_watched:4500  s46_187_cheaper_scores_higher:4514  s46_188_screen_before_claiming_missing:4541  s46_191_budget_follows_fuel_rule:4565  s46_192_pref_brands_registered:4611  s46_202_no_raw_template_tags:4636  s46_227_absent_only_declared:4649  s46_213_recommend_has_no_sold:4700  s46_203_new_site_has_target_keys:4746  s46_203_collect_writes_files_first:4778  s46_205_no_raw_response_writes:4806  s46_206_pdf_link_only:4841  _retired_s46_207_says_measured:4873  s46_207_commit_title_says_fact:4907  s46_208_market_no_negative:4945  s46_214_photo_uses_space_below:4964  s46_215_collector_respects_active:4989  s46_229_recommend_not_active_off:5015  s46_230_schema_change_counts_one_run:5043  s46_231_all_sites_in_filter:5073  s46_232_budget_curve_is_log:5100  s46_233_size_axis_never_zero:5144  s46_234_top_site_sweeps_gone:5183  s46_235_screen_hides_unsellable:5215  _recommend_rows_once:5257  s46_240_all_indexes_exist:5275  s46_237_recommend_in_budget:5316  s46_236_interior_color_axis:5348  s46_238_trim_not_double_counting:5383  s46_241_regrade_alive_on_deploy:5406  s46_242_mock_has_required_header:5448  s46_243_empty_says_why:5472  s46_244_failed_response_kept:5502  s46_245_each_screen_has_its_parts:5522  s46_246_every_screen_has_a_mock:5557  s46_253_browser_confirms_deploy:5591  s46_247_site_coverage:5661  s46_248_grade_is_realistic:5727  s46_249_budget_pairs_are_masters:5761  s46_250_mock_has_real_shape:5790  s46_251_vehicle_key_per_site:5823  s46_252_admin_write_actually_saves:5853  s46_253_part1_seen_in_browser:5885  s46_254_pair_badge_not_by_order:5920  s46_255_tester_items_listed_one_by_one:5954  v0_01_version_matches_history:5976  v0_02_retired_marks_match:6002  v0_03_points_only_in_appendix:6028  v1_22_site_given_is_not_remade:6070  s46_256_blocked_needs_evidence:6113  s46_257_pipeline_not_encar_only:6144  _as_check:6177  results:6191  save:6230  run:6241  s46_258_part_axis_decided:6266  s46_259_master_target_names:6298  s46_260_end_signal_not_empty_pages:6356
 ```
 
 ### `validate/v11_web.py` — 5,057줄
@@ -387,16 +388,16 @@ _now:93  _get:97  fetch_ok:106  page_ids:123  load_filters:133  walk_group:222  
 _get:30  _json:42  _won:53  _ym:73  _date10:83  _int:99  _bool:105  unpack_envelope:116  parse_list_item:124  parse_detail:171  parse_inspection:247  parse_record:295  _sample_chars:349  safe_field:363  parse_with_issues:385  _salvage:403  _parses:446  dig:453  as_list:476  _diag_comment:504  parse_diagnosis:511  parse_diagnosis_items:543  _text:551  parse_record_summary:561  parse_platform_check:587  parse_inspection_summary:594  parse_ev_battery:599  parse_sellingpoint:619
 ```
 
+### `store/dictionary.py` — 618줄
+
+```
+CodeEntry:31  AxisPolicy:57  policy:122  scope_key:130  seed_fixed_enums:155  target_map:196  target_key_of:219  fuel_normalize:254  collect_group_of:277  match_target_name:282  known_model_names:299  known_model_of:316  mapped_of:321  upsert_enum:342  _handle_conflict:394  upsert_option3:415  retire_unseen:451  resolve_code:466  installed_option_names:504  normalize_enum:522  assert_no_unknown:538  bump_dict_version:581  list_pending:591  confirm_enum:599
+```
+
 ### `store/raw.py` — 617줄
 
 ```
 _compress_cfg:59  pack_body:70  raw_body:91  _text_of:107  batch:134  tick:164  commit:199  _batch_commit_rows:226  _batch_commit_pause_ms:236  _busy_timeout_ms:261  connect_db:272  open_db:300  link_raws:311  _safe_headers:337  save_raw:344  proc_run_id:402  save_site_raw:412  save_import_raw:467  save_browser_raw:500  save_browser_facet:541  save_import_facet:567  save_facet:597
-```
-
-### `store/dictionary.py` — 591줄
-
-```
-CodeEntry:31  AxisPolicy:57  policy:114  scope_key:122  seed_fixed_enums:147  target_map:188  target_key_of:211  fuel_normalize:227  collect_group_of:250  match_target_name:255  known_model_names:272  known_model_of:289  mapped_of:294  upsert_enum:315  _handle_conflict:367  upsert_option3:388  retire_unseen:424  resolve_code:439  installed_option_names:477  normalize_enum:495  assert_no_unknown:511  bump_dict_version:554  list_pending:564  confirm_enum:572
 ```
 
 ### `tests/test_admin_flow.py` — 575줄
@@ -441,10 +442,10 @@ check:21  test_routes:28  test_template:85  test_no_logic_in_template:126  test_
 Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:244  Account:263  require_role:280  RunContext:297  StepReport:317  ResumePoint:341  clean_vin:362  total_of:373  RegressionReport:386  json_paths:397  shape_ok:446  shape_violations:479
 ```
 
-### `run.py` — 421줄
+### `run.py` — 469줄
 
 ```
-load:51  make_context:56  _filter_targets:70  _steps_from:89  cmd_collect:103  _grade_summary:171  cmd_admin_create:186  _collect_urls:203  _page_url:240  cmd_web:259  make_worker_ctx:299  make_worker_executors:305  cmd_delegate:343  _api_fetch:354  cmd_setup:364
+load:51  make_context:56  _filter_targets:70  _steps_from:89  _adapter_for:119  cmd_collect:137  _grade_summary:218  cmd_admin_create:233  _collect_urls:250  _page_url:287  cmd_web:306  make_worker_ctx:346  make_worker_executors:352  cmd_delegate:390  _api_fetch:401  cmd_setup:411
 ```
 
 ### `report/views.py` — 419줄
@@ -507,10 +508,10 @@ _panels:43  _rank_worst:47  insurance_trace:59  panel_trace:68  worse_step:80  _
 target_of:79  _now:95  _post:99  _get:109  fetch_detail:120  load_filters:133  total_count:171  walk:184  main:216
 ```
 
-### `parse/heydealer/mapping.py` — 341줄
+### `parse/heydealer/mapping.py` — 348줄
 
 ```
-_int:22  _won:29  _ym:34  _model_group:42  parse_list_item:60  parse_detail:89  fuel_efficiency_kmpl:117  options_of:124  record_of:153  warranty_of:206  _months_since:240  part_enums:252  panels_of:303
+_int:22  _won:29  _ym:34  _model_group:42  parse_list_item:60  parse_detail:89  fuel_efficiency_kmpl:117  options_of:124  record_of:153  warranty_of:206  _months_since:240  part_enums:252  panels_of:310
 ```
 
 ### `tools/light_check.py` — 340줄

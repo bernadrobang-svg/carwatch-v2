@@ -117,17 +117,21 @@ ADAPTERS: dict = {
 
 
 def _adapter_for(site: str):
-    """★ 사이트 이름 → 어댑터.  ★ 없으면 ★ **무엇이 되는지 말한다** (금지 12)."""
-    got = ADAPTERS.get(site)
-    if got is None:
-        raise PolicyError(
-            f"{site} 는 판이 못 돈다 — 어댑터가 없다. "
-            f"되는 것: {', '.join(sorted(ADAPTERS))} · "
-            f"그 밖은 tools/collect_{site}.py 가 받는다",
-            step="STEP 47")
+    """★ 사이트 이름 → 어댑터.
+
+    ★★★★★ 09-03 (가이드 지시 ①) — ★ **열두 곳이 다 돈다.**
+      ★ 손으로 지은 어댑터가 있으면 ★ 그것을 쓰고,
+      ★ ★ 없으면 ★ `GenericAdapter` 가 ★ **config 의 길**로 돈다.
+      ★ ★ ★ 길이 모자라면 ★ 그 어댑터가 ★ **무엇이 모자란지 말한다** (금지 12)
+    """
     import importlib
 
-    return getattr(importlib.import_module(got[0]), got[1])
+    got = ADAPTERS.get(site)
+    if got is not None:
+        return getattr(importlib.import_module(got[0]), got[1])
+    from adapters.generic import GenericAdapter
+
+    return lambda cfg: GenericAdapter(cfg, site)
 
 
 def cmd_collect(dry: bool, only: list[str] | None = None,
