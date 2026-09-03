@@ -197,30 +197,30 @@
 | `S46-237` | 추천이 예산 안인가 | fatal | `validate/v0_guide.py:5316` | **★ 없음** | 없음 | — |
 | `S46-238` | 트림이 신차가를 두 번 안 세는가 | fatal | `validate/v0_guide.py:5383` | **★ 없음** | 없음 | guide/03_이력.md:1322 |
 | `S46-240` | DDL 색인이 DB 에 다 있는가 | fatal | `validate/v0_guide.py:5275` | **★ 없음** | 없음 | guide/03_이력.md:1324 |
-| `S46-241` | 배포에서 재판정이 살아 있는가 | fatal | `validate/v0_guide.py:5406` | **★ 없음** | 없음 | guide/03_이력.md:1326 · guide/07_밀린일대장.md:137 |
-| `S46-242` | 시안에 「반드시 있는 것」 머리가 있는가 | fatal | `validate/v0_guide.py:5448` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
-| `S46-243` | 비는 자리가 까닭을 내는가 | fatal | `validate/v0_guide.py:5472` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
-| `S46-244` | 실패 응답도 원문으로 남는가 | fatal | `validate/v0_guide.py:5502` | **★ 없음** | 없음 | guide/03_이력.md:1328 |
-| `S46-245` | 화면마다 그 화면에 드는 것이 있는가 | fatal | `validate/v0_guide.py:5522` | **★ 없음** | 없음 | guide/03_이력.md:1329 · guide/06_오판대장.md:338 |
-| `S46-246` | 화면마다 시안이 있는가 | fatal | `validate/v0_guide.py:5557` | **★ 없음** | 없음 | guide/03_이력.md:1329 · guide/06_오판대장.md:338 |
-| `S46-247` | 사이트에 있는 것을 얼마나 받았나 | fatal | `validate/v0_guide.py:5661` | **★ 없음** | 없음 | guide/03_이력.md:1331 · guide/03_이력.md:1348 · guide/06_오판대장.md:339 |
-| `S46-248` | 등급이 현실을 가르는가 | fatal | `validate/v0_guide.py:5727` | **★ 없음** | 없음 | guide/03_이력.md:1330 |
-| `S46-249` | 마스터 예산이 그대로인가 | fatal | `validate/v0_guide.py:5761` | **★ 없음** | 없음 | guide/03_이력.md:1330 |
-| `S46-250` | 시안이 모양을 갖췄는가 | fatal | `validate/v0_guide.py:5790` | **★ 없음** | 없음 | guide/03_이력.md:1331 |
-| `S46-251` | 사이트마다 차량 키가 붙는가 | fatal | `validate/v0_guide.py:5823` | **★ 없음** | 없음 | guide/03_이력.md:1333 |
-| `S46-252` | 관리 쓰기가 정말 저장되는가 | fatal | `validate/v0_guide.py:5853` | **★ 없음** | 없음 | guide/03_이력.md:1334 |
-| `S46-253` | 1부를 브라우저로 봤는가 | fatal | `validate/v0_guide.py:5885` | **★ 없음** | 없음 | — |
-| `S46-254` | 짝지어진 차를 순위로 올리지 않는가 | fatal | `validate/v0_guide.py:5920` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:188 · guide/03_이력.md:1336 · guide/03_이력.md:1337 |
-| `S46-255` | 시험자 번호가 낱개로 있는가 | fatal | `validate/v0_guide.py:5954` | **★ 없음** | 없음 | guide/03_이력.md:1337 · guide/07_밀린일대장.md:44 |
-| `S46-256` | 막혔다를 증거 없이 쓰지 않는가 | fatal | `validate/v0_guide.py:6113` | **★ 없음** | 없음 | guide/03_이력.md:1338 · guide/06_오판대장.md:341 · chapters/13-pipeline.md:290 |
-| `S46-257` | 파이프라인이 엔카만 돌지 않는가 | fatal | `validate/v0_guide.py:6144` | **★ 없음** | 없음 | guide/03_이력.md:1339 · guide/06_오판대장.md:344 |
-| `S46-258` | 판정 축 사전이 정해졌는가 | fatal | `validate/v0_guide.py:6266` | **★ 없음** | 없음 | guide/03_이력.md:1341 |
-| `S46-259` | 마스터 차종 이름이 그대로인가 | fatal | `validate/v0_guide.py:6298` | **★ 없음** | 없음 | guide/03_이력.md:1342 · guide/03_이력.md:1343 · guide/06_오판대장.md:342 |
-| `S46-260` | 빈 쪽이 아니라 끝 신호로 멈추는가 | fatal | `validate/v0_guide.py:6356` | **★ 없음** | 없음 | guide/03_이력.md:1344 · chapters/13-pipeline.md:314 |
-| `S46-262` | 개발측 「여쭐 것」이 물렸는가 | fatal | `validate/v0_guide.py:6381` | **★ 없음** | 없음 | guide/03_이력.md:1347 · guide/03_이력.md:1348 · guide/06_오판대장.md:343 |
-| `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:5976` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
-| `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6002` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
-| `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6028` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
+| `S46-241` | 배포에서 재판정이 살아 있는가 | fatal | `validate/v0_guide.py:5406` | **★ 없음** | 없음 | guide/03_이력.md:1326 · guide/03_이력.md:1349 · guide/07_밀린일대장.md:137 |
+| `S46-242` | 시안에 「반드시 있는 것」 머리가 있는가 | fatal | `validate/v0_guide.py:5457` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
+| `S46-243` | 비는 자리가 까닭을 내는가 | fatal | `validate/v0_guide.py:5481` | **★ 없음** | 없음 | guide/03_이력.md:1327 |
+| `S46-244` | 실패 응답도 원문으로 남는가 | fatal | `validate/v0_guide.py:5511` | **★ 없음** | 없음 | guide/03_이력.md:1328 |
+| `S46-245` | 화면마다 그 화면에 드는 것이 있는가 | fatal | `validate/v0_guide.py:5531` | **★ 없음** | 없음 | guide/03_이력.md:1329 · guide/06_오판대장.md:338 |
+| `S46-246` | 화면마다 시안이 있는가 | fatal | `validate/v0_guide.py:5566` | **★ 없음** | 없음 | guide/03_이력.md:1329 · guide/06_오판대장.md:338 |
+| `S46-247` | 사이트에 있는 것을 얼마나 받았나 | fatal | `validate/v0_guide.py:5670` | **★ 없음** | 없음 | guide/03_이력.md:1331 · guide/03_이력.md:1348 · guide/06_오판대장.md:339 |
+| `S46-248` | 등급이 현실을 가르는가 | fatal | `validate/v0_guide.py:5736` | **★ 없음** | 없음 | guide/03_이력.md:1330 |
+| `S46-249` | 마스터 예산이 그대로인가 | fatal | `validate/v0_guide.py:5770` | **★ 없음** | 없음 | guide/03_이력.md:1330 |
+| `S46-250` | 시안이 모양을 갖췄는가 | fatal | `validate/v0_guide.py:5799` | **★ 없음** | 없음 | guide/03_이력.md:1331 |
+| `S46-251` | 사이트마다 차량 키가 붙는가 | fatal | `validate/v0_guide.py:5832` | **★ 없음** | 없음 | guide/03_이력.md:1333 |
+| `S46-252` | 관리 쓰기가 정말 저장되는가 | fatal | `validate/v0_guide.py:5862` | **★ 없음** | 없음 | guide/03_이력.md:1334 |
+| `S46-253` | 1부를 브라우저로 봤는가 | fatal | `validate/v0_guide.py:5894` | **★ 없음** | 없음 | — |
+| `S46-254` | 짝지어진 차를 순위로 올리지 않는가 | fatal | `validate/v0_guide.py:5929` | **★ 없음** | 없음 | CROSS_SITE_COMPARE.md:188 · guide/03_이력.md:1336 · guide/03_이력.md:1337 |
+| `S46-255` | 시험자 번호가 낱개로 있는가 | fatal | `validate/v0_guide.py:5963` | **★ 없음** | 없음 | guide/03_이력.md:1337 · guide/07_밀린일대장.md:44 |
+| `S46-256` | 막혔다를 증거 없이 쓰지 않는가 | fatal | `validate/v0_guide.py:6122` | **★ 없음** | 없음 | guide/03_이력.md:1338 · guide/06_오판대장.md:341 · chapters/13-pipeline.md:290 |
+| `S46-257` | 파이프라인이 엔카만 돌지 않는가 | fatal | `validate/v0_guide.py:6153` | **★ 없음** | 없음 | guide/03_이력.md:1339 · guide/06_오판대장.md:344 |
+| `S46-258` | 판정 축 사전이 정해졌는가 | fatal | `validate/v0_guide.py:6275` | **★ 없음** | 없음 | guide/03_이력.md:1341 |
+| `S46-259` | 마스터 차종 이름이 그대로인가 | fatal | `validate/v0_guide.py:6307` | **★ 없음** | 없음 | guide/03_이력.md:1342 · guide/03_이력.md:1343 · guide/06_오판대장.md:342 |
+| `S46-260` | 빈 쪽이 아니라 끝 신호로 멈추는가 | fatal | `validate/v0_guide.py:6365` | **★ 없음** | 없음 | guide/03_이력.md:1344 · chapters/13-pipeline.md:314 |
+| `S46-262` | 개발측 「여쭐 것」이 물렸는가 | fatal | `validate/v0_guide.py:6390` | **★ 없음** | 없음 | guide/03_이력.md:1347 · guide/03_이력.md:1348 · guide/06_오판대장.md:343 |
+| `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:5985` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
+| `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6011` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
+| `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6037` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V1-01` | expected == requested + not_requested | run | `validate/v1_collect.py:34` | **★ 없음** | 없음 | trace/02-collect.md:21 · chapters/00-standard.md:362 · chapters/13-pipeline.md:705 |
 | `V1-02` | not_requested == 0 | run | `validate/v1_collect.py:37` | **★ 없음** | 없음 | trace/02-collect.md:37 · chapters/20-verify/b-v1v2.md:14 |
 | `V1-03` | requested == ok+empty+not_found+error | run | `validate/v1_collect.py:40` | **★ 없음** | 없음 | chapters/20-verify/00-intro.md:22 · chapters/20-verify/b-v1v2.md:15 · chapters/20-verify/d-v5.md:221 |
@@ -243,7 +243,7 @@
 | `V1-19` | 이번 실행이 저장한 원문에 run_id 가 있음 | run | `validate/v1_collect.py:128` | **★ 없음** | 없음 | — |
 | `V1-20` | 카탈로그를 모델당 1회만 받음 | run | `validate/v1_collect.py:123` | **★ 없음** | 없음 | — |
 | `V1-21` | 받아 두고 안 펼쳐진 원문이 없음 | run | `validate/v1_collect.py:113` | **★ 없음** | 없음 | ROADMAP_20260830.md:62 · trace/02-collect.md:62 · trace/13-pipeline.md:40 |
-| `V1-22` | 사이트가 주는 것을 받아 쓰는가 | fatal | `validate/v0_guide.py:6070` | **★ 없음** | 없음 | trace/05-score.md:47 · guide/01_요구사항.md:159 · guide/01_요구사항.md:275 |
+| `V1-22` | 사이트가 주는 것을 받아 쓰는가 | fatal | `validate/v0_guide.py:6079` | **★ 없음** | 없음 | trace/05-score.md:47 · guide/01_요구사항.md:159 · guide/01_요구사항.md:275 |
 | `V1-23` | 필요한 조합 대비 받은 카탈로그 비율 | run | `validate/v1_collect.py:81` | **★ 없음** | 없음 | ROADMAP_20260830.md:38 · trace/02-collect.md:44 · guide/02_결함대장.md:235 |
 | `V1-24` | 받은 카탈로그가 매물과 이어짐 | run | `validate/v1_collect.py:108` | **★ 없음** | 없음 | guide/02_결함대장.md:235 · guide/02_결함대장.md:245 · guide/03_이력.md:346 |
 | `V1-25` | ok 로 저장된 원문이 온전한가 | run | `validate/v1_collect.py:72` | **★ 없음** | 없음 | — |

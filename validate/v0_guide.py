@@ -5433,6 +5433,15 @@ def s46_241_regrade_alive_on_deploy():
 
     text = re.sub(r"<[^>]+>", " ", page)
     text = re.sub(r"\s+", " ", text)
+    # ★★★★★ 09-03 — ★ S4(불변 필드)만 보다 ★ **S5 가 네 번 죽었는데 통과**였다.
+    #   ★ 마스터께서 「개발체크」 하실 때마다 ★ 배포가 그대로인데 ★ 내 검사는 조용했다.
+    #   ★ ★ 오늘만 ★ **세 번째**다 (09-01 S4 · 09-02 1부 · 09-03 지시②③).
+    #   ★ ★ ★ 그래서 ★ **판이 실패로 끝나 있으면** ★ 그대로 잡는다.
+    fails = re.findall(r"failed[^|]{0,40}?(S\d+):", text)
+    if fails:
+        kinds = sorted(set(fails))
+        return False, (f"★ 배포에서 판이 실패로 끝나 있다 — {len(fails)}건 "
+                       f"({' · '.join(kinds[:3])})  ★ 「끝」은 배포에서 확인한 것만이다")
     # ★ 「불변 필드 변경 … 이 원인은 사람이 봐야 한다」가 ★ 남아 있으면 ★ 판이 죽은 것이다
     stuck = re.findall(r"불변 필드 변경[^|]{0,120}?listing_id=(\d+)", text)
     fails = text.count("ValidationError")
