@@ -753,8 +753,17 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
             #   ★ ★ ★ 그런데 ★ 여기서 ★ `active` 만 골라 ★ **영영 못 받았다** —
             #     ★ ★ ★ ★ 「상세를 받아야 active 인데 ★ active 여야 상세를 받는」 고리다.
             #   ★ 기아 CPO 는 ★ `active` 가 **0건**이라 ★ 상세율이 **0%** 였다
+            # ★★★★★ 09-03 (가이드 배포 실측) — ★ `out_of_scope` 도 본다.
+            #   ★ 실측 09-03 — ★ 기아 CPO `out_of_scope` **1,021건**이
+            #   ★ ★ **차종이 전부 NULL** 이다 — ★ 「우리 차종이 아니다」가 아니라
+            #   ★ ★ ★ **아직 안 가른 것**이다 (상세를 안 받아 못 갈랐다).
+            #   ★★ 위 `UPDATE … SET status='out_of_scope' WHERE target_key IS NULL`
+            #     ★ ★ 가 ★ 차종을 모르는 것을 ★ **곧장 밀어냈다** —
+            #     ★ ★ ★ 그러면 ★ 상세를 영영 못 받아 ★ **영영 못 가른다**.
+            #   ★ 차종이 **정해진** `out_of_scope` 는 안 본다 — ★ 그것은 진짜 남의 차다
             *_scope("SELECT listing_id, source_id FROM core_listing "
-                    "WHERE status IN ('active','new')")
+                    "WHERE status IN ('active','new')"
+                    "   OR (status = 'out_of_scope' AND target_key IS NULL)")
         ).fetchall()
         skipped = 0
         done_before = 0
