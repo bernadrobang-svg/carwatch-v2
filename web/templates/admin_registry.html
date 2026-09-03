@@ -1,4 +1,8 @@
-<h1>등록부 <small>{{ usage }} {{ count }}건</small></h1>
+<!-- ★ 09-04 — ★ `count` 는 ★ **그 갈래의 전체 수**다 (쪽에 든 줄 수가 아니다).
+     ★ 실측 09-04 — ★ 표에 `unclassified` 가 **332건**인데 ★ 머리는 **30건**이라 했다 —
+     ★ ★ 30 은 ★ 한 쪽의 줄 수였다.  ★ 「몇 건 중 몇 건」이 아니면 ★ 사람이 다 본 줄 안다 -->
+<h1>등록부 <small>{{ usage }} {{ count }}건</small>
+  {% if page_n %}<small class="muted">· 이 쪽 {{ page_n }}건</small>{% endif %}</h1>
 <p class="notice">
   엔카 응답의 모든 경로를 여기서 구분합니다.
   분류하지 않은 경로가 <strong>판정에 쓰이는 축</strong>에 있으면 그 축이 멈춥니다.
@@ -43,7 +47,14 @@
     <input type="hidden" name="previewed" value="1">
     <input type="hidden" name="endpoint" value="{{ c.endpoint }}">
     <input type="hidden" name="json_path" value="{{ c.path }}">
-    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지" required></label>
+    <!-- ★★★★★ 09-04 (관리 · 5회차) — ★ **`required` 를 뺐다.**
+         ★★★ 마스터 — 「★ 등록부 저장이 ★ 표를 고치는가」 — ★ 다섯 회차를 물으셨다.
+         ★★ 실측 09-04 (브라우저로 눌러 봤다) — ★ 단추를 눌렀는데
+           ★ ★ **요청이 아예 안 나갔다** (응답이 0건이다).
+           ★ ★ ★ `required` 인 사유 칸이 비어 ★ 브라우저가 ★ **소리 없이** 막았다 —
+             ★ ★ ★ ★ 네이티브 말풍선은 곧 사라지고 ★ 사람은 「눌렀는데 안 된다」만 본다.
+         ★ 이제는 ★ 보내고 ★ **화면이 무엇이 모자란지 말한다** (`web/views.py` · `RULES.md` 2) -->
+    <label>사유 <input name="reason" size="26" placeholder="왜 그렇게 정했는지 (필수)"></label>
     <!-- ★★ 08-28 (#84 · #83) — 분류마다 반드시 있어야 하는 칸이다
          (store/admin.py USAGE_REQUIRES).  없으면 그 단추가 안 먹는다 -->
     <label title="「쓴다」에 필요합니다 — 우리 DB 의 어느 칸에 담는지">컬럼
@@ -98,7 +109,7 @@
          을 요구한다 (USAGE_REQUIRES).  칸이 없어 그 둘을 고르면 400 이었다 -->
     <input name="use_when" placeholder="언제 (나중에)" size="12">
     <input name="unblock_condition" placeholder="풀리는 조건 (막힘)" size="14">
-    <input name="reason" placeholder="근거 (필수)" size="18" required>
+    <input name="reason" placeholder="근거 (필수)" size="18">
     <button type="submit" class="mini">저장</button>
   </form>
 </td></tr>

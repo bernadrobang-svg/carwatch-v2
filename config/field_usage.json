@@ -1715,6 +1715,16 @@
     "list:SearchResults": {
       "usage": "not_provided",
       "reason": "9회차 — 등록부 시험"
+    },
+    "detail:advertisement.verification.reportExists": {
+      "usage": "deferred",
+      "reason": "상세를 받으면 갈린다",
+      "use_when": "상세를 받으면"
+    },
+    "detail:view.meetgoCheckupAvailable": {
+      "usage": "deferred",
+      "reason": "상세를 받으면 갈린다",
+      "use_when": "상세를 받으면"
     }
   },
   "not_provided": {

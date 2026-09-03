@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 막혀 있습니다 — 4일째 멈췄습니다</strong>
+  <span class="banner-action">우리 회선은 407 입니다. 「엔카 받기」가 브라우저 수집을 대신 눌러 줍니다 — 마스터 휴대폰으로만 받아집니다</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -83,16 +83,16 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-09-03_1400</td>
-  <td data-label="기록" class="muted">outputs/light/ · 83건 ·
+  <td data-label="마지막">2026-09-03_2200</td>
+  <td data-label="기록" class="muted">outputs/light/ · 84건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
-  <td data-label="마지막">2026-09-02</td>
-  <td data-label="기록" class="muted">outputs/daily/ · 17건</td></tr>
+  <td data-label="마지막">2026-09-03</td>
+  <td data-label="기록" class="muted">outputs/daily/ · 18건</td></tr>
 <tr><td data-label="주기">주간 <span class="muted">서로 점검</span></td>
   <td data-label="언제" class="muted">금 02:00</td>
-  <td data-label="마지막">2026-08-28_주간점검</td>
-  <td data-label="기록" class="muted">outputs/weekly/ · 3건</td></tr>
+  <td data-label="마지막">2026-09-04_주간점검</td>
+  <td data-label="기록" class="muted">outputs/weekly/ · 4건</td></tr>
 </tbody>
 </table>
 <p class="muted">★ 주간은 <strong>개발측이 규격을, 가이드가 구현을</strong> 검사합니다.
@@ -104,7 +104,7 @@
 <thead><tr><th title="그 항목이 무엇을 뜻하는지입니다">무엇</th><th class="num">건수</th><th>왜</th><th>하면 되는 것</th><th></th></tr></thead>
 <tbody>
 
-<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">193</td>
+<tr><td class="warn-warn" data-label="무엇">사전 미검토</td><td class="num" data-label="건수">184</td>
   <td class="muted" data-label="왜">그 축의 판정이 멈춰 있습니다</td><td class="muted" data-label="하면 되는 것">원문 표본을 확인해 confirmed 로 올린 뒤 S9 재실행</td>
   <td data-label=""><a href="/notready">가기</a></td></tr>
 
@@ -122,11 +122,11 @@
 
 
 
-
+<p class="warn-warn">재계산 d65d0938382a8e56 실행 중 — 조정 메뉴가 잠깁니다</p>
 <ul class="stat">
   <li>등록부 미분류 <strong>332</strong></li>
   <li>개발 요청 <strong>2</strong></li>
-  <li>대기 작업 <strong>0</strong></li>
+  <li>대기 작업 <strong>1</strong></li>
 </ul>
 
 <h3>★ 운영</h3>
@@ -205,31 +205,31 @@
 <a class="vline" href="/admin/scoring"
   title="STEP 128 · 129 — 그렇게 판단한 까닭입니다"><span>배점 조정
   <span class="dim">STEP 128 · 129</span>
-  </span>
+  <span class="warn-warn">재계산 d65d0938382a8e56 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/targets"
   title="STEP 130 — 그렇게 판단한 까닭입니다"><span>차종 추가 · 수정
   <span class="dim">STEP 130</span>
-  </span>
+  <span class="warn-warn">재계산 d65d0938382a8e56 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/registry"
   title="STEP 131 — 그렇게 판단한 까닭입니다"><span>등록부 분류
   <span class="dim">STEP 131</span>
-  </span>
+  <span class="warn-warn">재계산 d65d0938382a8e56 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/dict"
   title="STEP 136e — 그렇게 판단한 까닭입니다"><span>사전 확정
   <span class="dim">STEP 136e</span>
-  </span>
+  <span class="warn-warn">재계산 d65d0938382a8e56 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/config"
   title="STEP 127 — 그렇게 판단한 까닭입니다"><span>config 편집 · 이력
   <span class="dim">STEP 127</span>
-  </span>
+  <span class="warn-warn">재계산 d65d0938382a8e56 실행 중</span></span>
   <b>▸</b></a>
 
 </div>
@@ -274,7 +274,7 @@
 
 <tr><td data-label="시각">2026-09-03T08:29:25.349540+00:00</td><td class="muted" data-label="사유">요청 1,380건</td>
   <td class="runid" data-label="실행">20260903T082924</td>
-  <td class="num" data-label="소요">49.5초</td><td data-label="판정">fatal 18</td></tr>
+  <td class="num" data-label="소요">49.5초</td><td data-label="판정">fatal 24</td></tr>
 
 <tr><td data-label="시각">2026-09-03T08:23:57.160338+00:00</td><td class="muted" data-label="사유">요청 6,120건</td>
   <td class="runid" data-label="실행">20260903T082356</td>
@@ -367,7 +367,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260903T082924</span>
-  <span>2026-09-03 22:18</span>
+  <span>2026-09-04 02:16</span>
 </footer>
 
 </body>

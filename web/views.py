@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 # ★★ 주소에 넣는 값은 ★ 다 인코딩한다 (마스터 지적 08-25 · 오판 119).
 #   ★ `| url` 필터는 ★ 템플릿에만 닿는다 — ★ 파이썬이 만드는 주소는 여기서 한다
@@ -1700,6 +1701,15 @@ def _reason_gate(conn, account, req, csrf: str) -> dict:
     return form
 
 
+# ★ 등록부 카드가 내는 세 값 — ★ `web/views.py:unclassified_cards` 의 `choices` 와 같다
+CARD_USAGES = ("in_use", "not_provided", "deferred")
+
+
+def _said(e) -> str:
+    """★ 사람에게 낼 말만 남긴다 — ★ `[step=STEP 138]` 은 ★ 기록에 쓰는 꼬리표다."""
+    return re.sub(r"\s*\[step=[^\]]*\]\s*$", "", str(e)).strip()
+
+
 def _gate(conn, account, req, csrf: str, group: str | None = None):
     """★ 미리보기 없이 저장이 안 된다 (V11-09 · STEP 138).
 
@@ -2259,20 +2269,52 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
     if req.get("method") == "POST":
         from store.admin import classify_field
 
-        form = _gate(conn, account, req, csrf)
+        # ★★★★★ 09-04 — ★ `_gate` 의 거절도 ★ **화면이 말해야 한다.**
+        #   ★ `_gate` 는 ★ 좋은 말을 갖고 있다 (「사유를 적어야 저장합니다」 ·
+        #     ★ ★ 「수집·재계산이 도는 동안에는 잠깁니다」) — ★ 그런데 ★ **밖으로 던져**
+        #     ★ ★ ★ 사람은 ★ 빈 400·409 쪽만 봤다.  ★ 여기서 받아 ★ 알림으로 낸다.
+        #   ★★ 실측 09-04 — ★ 마스터께서 ★ **다섯 회차** 「저장이 되는가」를 물으셨다
+        try:
+            form = _gate(conn, account, req, csrf)
+        except (ValidationError, PolicyError) as e:
+            return redirect("/admin/registry",
+                            f"저장하지 못했습니다 — {_said(e)}", flash_key)
         # ★ 실제로 저장한다.  「저장했습니다」만 내면 사람이 바뀐 줄 안다 (V11-33)
         # ★★ 08-28 (#83) — ★ `use_when` 을 ★ 안 넘기고 있었다.
         #   ★ `deferred` 는 ★ `USAGE_REQUIRES` 가 ★ 그것을 요구하는데
         #     ★ 폼에도 없고 ★ 여기서도 안 넘겨 ★ 「나중에」 단추가
         #     ★ 무엇을 채워도 ★ 400 이었다 (store/admin.py:508)
         _before = _unclassified_count(conn)   # ★ 고치기 전 수 (지키는 법 ③)
-        classify_field(conn, account, form.get("endpoint", ""),
-                       form.get("json_path", ""), form.get("usage", ""),
-                       form.get("reason", ""),
-                       core_column=form.get("core_column") or None,
-                       unblock_condition=form.get("unblock_condition") or None,
-                       use_when=form.get("use_when") or None,
-                       root=root, at=_now())
+        # ★★★★★ 09-04 (관리 · 5회차) — ★ **거절을 화면이 말한다.**
+        #   ★★★ 마스터 — 「★ 등록부 저장이 ★ 표를 고치는가 (333 → 331)」.
+        #   ★★ 실측 09-04 (브라우저로 눌러 봤다) — ★ 「나중에」를 눌렀는데
+        #     ★ ★ `meta_field_usage` 가 ★ **한 줄도 안 바뀌었다** (unclassified 332 그대로)
+        #     ★ ★ ★ 그런데 ★ **화면이 아무 말도 안 했다.**
+        #   ★ 까닭 — ★ `USAGE_REQUIRES` 가 ★ `deferred` 에 ★ `use_when` 을 요구한다.
+        #     ★ ★ 단추만 누르면 ★ 그 칸이 비어 ★ `ValidationError` 가 난다.
+        #     ★ ★ ★ 그 예외를 ★ **아무도 안 받아** ★ 조용히 끝났다 —
+        #       ★ ★ ★ ★ 사람은 ★ 「눌렀는데 안 된다」만 본다 (`RULES.md` 2 · `V11-33`)
+        #   ★ **고친다 — 무엇이 모자란지 그대로 낸다** (금지 12)
+        try:
+            classify_field(conn, account, form.get("endpoint", ""),
+                           form.get("json_path", ""), form.get("usage", ""),
+                           form.get("reason", ""),
+                           core_column=form.get("core_column") or None,
+                           unblock_condition=form.get("unblock_condition")
+                           or None,
+                           use_when=form.get("use_when") or None,
+                           root=root, at=_now())
+        except (ValidationError, PolicyError) as e:
+            # ★ 사람이 ★ **단추로 낼 수 있는 값**만 ★ 알림으로 낸다.
+            #   ★ 카드의 단추는 셋뿐이다 — 「쓴다」·「안 쓴다」·「나중에」.
+            #   ★★ 그 밖의 값(`display_only`·`blocked`·「없는구분」)은 ★ 그대로 던진다 —
+            #     ★ ★ 화면이 낼 수 없는 것이라 ★ 사람 실수가 아니라 ★ **규약 위반**이다.
+            #     ★ ★ ★ `test_admin_flow`(6종 밖) · `V11-39`(저장 단추 연기) 가 그 계약이다
+            if form.get("usage") not in CARD_USAGES:
+                raise
+            return redirect("/admin/registry",
+                            f"저장하지 못했습니다 — {_said(e)} "
+                            f"(미분류 {_before:,}건 그대로입니다)", flash_key)
         # ★★★★★ 09-02 (1부 1-8 · 지키는 법 ③) — ★ **303 은 저장 성공이 아니다.**
         #   ★ 저장한 뒤 ★ **다시 읽어** ★ 몇 → 몇 인지를 낸다.
         #   ★ ★ 「저장했습니다」만 내면 ★ 안 바뀌어도 알 길이 없다 (5회차째)
@@ -2297,7 +2339,12 @@ def admin_registry(conn, account, req, root: str = ROOT, csrf: str = "",
     #   그대로 하면 400 이었다 (실측 08-15).  실제 값만 고르게 한다
     return page(conn, account, "등록부", "admin_registry.html",
                 {"rows": rows, "counts": counts, "usage": usage,
-                 "count": len(rows),
+                 # ★ 09-04 — ★ 「몇 건」은 ★ **그 갈래의 전체**다.
+                 #   ★ 전에는 ★ `len(rows)` (한 쪽의 줄 수 · 30) 였다 —
+                 #   ★ ★ 표에는 332건인데 ★ 머리가 30건이라 ★ 다 본 줄 알게 했다
+                 "count": next((c["n"] for c in counts
+                                if c.get("usage") == usage), len(rows)),
+                 "page_n": len(rows),
                  # ★ 「349건 미분류」라고만 내면 아무도 안 본다 (개정 341).
                  #   원인별로 갈라 「사람이 봐야 할 것」만 남긴다
                  "split": _unclassified_split(conn, root, _seen),
