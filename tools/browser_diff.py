@@ -360,3 +360,54 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# ★★★★★★ 09-04 — ★ **가려진 글자**를 센다 (마스터 지적)
+#
+#   ★ 마스터 — 「★ 이거 등급 밑에 ★ 네 개 영역이 ★ **사진에 가려서 안 보이는데**.
+#     ★ 브라우저로 테스트하라고 검증하라고도 했지?  ★ **왜 자꾸 파서랑 grep 으로만 검사하는가**」
+#
+#   ★★ 09-02 의 겹침 자는 ★ **한 점**(`elementFromPoint` 가운데)만 봤다 —
+#     ★ ★ 글자가 반쯤 겹쳐도 ★ 가운데가 제 것이면 ★ **「보인다」로 셌다**.
+#     ★ ★ ★ 그래서 ★ 「차량·값·보증·취향」이 ★ **8/8 보인다**로 나왔다.
+#   ★★ 그리고 ★ 09-02 에 ★ 헛것 넷(붙박이·float·잘림·줄바꿈)을 빼며 ★ **너무 많이 뺐다** —
+#     ★ ★ 「겹침 0」이 됐는데 ★ **진짜 겹침까지 걷어냈다**.
+#
+#   ★★★ 새 자 — ★ 잎마다 ★ **아홉 점**(가로 1/4·2/4·3/4 × 세로 1/4·2/4·3/4)을 찍어
+#     ★ ★ **6할을 못 지키면 ★ 「가려졌다」**로 센다.
+#   ★ 실측 09-04 (배포) — ★ `/listings` 390px **17** · 900px **24** ·
+#     `/recommend` 390px **9** · `/track` 390px **8** ★ 합 **63개**.
+#
+#   ★★★★ 그리고 ★ **캡처를 남긴다** — ★ 자만 믿지 않는다.  ★ 눈으로 대조한다
+
+HIDDEN_TEXT_JS = r"""
+() => {
+  const leaf = [];
+  for (const e of document.querySelectorAll('*')) {
+    const s = getComputedStyle(e);
+    if (s.display === 'none' || s.visibility === 'hidden' || +s.opacity === 0) continue;
+    if (e.children.length) continue;
+    const t = (e.textContent || '').trim(); if (!t) continue;
+    const r = e.getBoundingClientRect();
+    if (r.width <= 0 || r.height <= 0) continue;
+    if (r.bottom < 0 || r.top > innerHeight) continue;
+    leaf.push({e: e, r: r, t: t});
+  }
+  let hidden = 0; const ex = [];
+  for (const L of leaf) {
+    let seen = 0, tot = 0;
+    for (let i = 1; i <= 3; i++) for (let j = 1; j <= 3; j++) {
+      const x = L.r.left + L.r.width * i / 4, y = L.r.top + L.r.height * j / 4;
+      if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) continue;
+      tot++;
+      const at = document.elementFromPoint(x, y);
+      if (at && (at === L.e || L.e.contains(at))) seen++;
+    }
+    if (tot && seen / tot < 0.6) {
+      hidden++;
+      if (ex.length < 6) ex.push(L.t.slice(0, 16) + ' (' + seen + '/' + tot + ')');
+    }
+  }
+  return {leaf: leaf.length, hidden: hidden, examples: ex};
+}
+"""

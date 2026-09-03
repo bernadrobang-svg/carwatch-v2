@@ -6875,7 +6875,38 @@ def s46_269_recommend_set_and_chips():
     return True, f"추천 {len(rec)}종 · 모델Y 주니퍼만 · 단추는 글자에 맞게 늘어난다"
 
 
+def s46_270_hidden_text_ruler():
+    """S46-270 — ★ **가려진 글자**를 세는 자가 있는가 (마스터 09-04).
+
+    ★★★ 마스터 — 「★ 이거 등급 밑에 ★ 네 개 영역이 ★ **사진에 가려서 안 보이는데**.
+      ★ 브라우저로 테스트하라고 ★ 검증하라고도 했지?
+      ★ ★ **왜 자꾸 파서랑 grep 으로만 검사하는가**」
+    ★★ 09-02 의 겹침 자는 ★ **한 점**만 봤다 — ★ 글자가 반쯤 겹쳐도
+      ★ 가운데가 제 것이면 ★ **「보인다」로 셌다**.
+      ★ ★ 그래서 ★ 「차량·값·보증·취향」이 ★ **8/8 보인다**로 나왔다.
+    ★ 그리고 ★ 09-02 에 헛것 넷을 빼며 ★ **너무 많이 뺐다** —
+      ★ ★ 「겹침 0」이 됐는데 ★ **진짜 겹침까지 걷어냈다**.
+    ★★★ 새 자 — ★ 잎마다 ★ **아홉 점**을 찍어 ★ **6할을 못 지키면 「가려졌다」**.
+      ★ 실측 09-04 (배포) — ★ `/listings` 390px **17** · 900px **24** ·
+        `/recommend` 390px **9** · `/track` 390px **8** ★ 합 **63개**.
+    ★ 잣대 — ★ 자에 그 셈이 있고 · ★ 「캡처를 남긴다」가 적혀 있는가.
+    """
+    tool = _read(ROOT / "tools" / "browser_diff.py")
+    if not tool:
+        return False, "tools/browser_diff.py 가 없다"
+    bad = []
+    for want, label in (("HIDDEN_TEXT_JS", "가려진 글자 셈"),
+                        ("아홉 점", "아홉 점"),
+                        ("캡처를 남긴다", "「캡처를 남긴다」")):
+        if want not in tool:
+            bad.append(f"자에 {label}이 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "가려진 글자를 아홉 점으로 세고 캡처를 남긴다"
+
+
 CHECKS = (
+    ("S46-270", "가려진 글자를 세는 자가 있는가", s46_270_hidden_text_ruler),
     ("S46-269", "추천 차종과 단추 크기가 확정대로인가", s46_269_recommend_set_and_chips),
     ("S46-268", "지시문이 한 벌이고 지금 판인가", s46_268_order_is_one_and_current),
     ("S46-266", "이미 받은 상세를 다시 안 받는가", s46_266_detail_not_refetched),
