@@ -6711,7 +6711,45 @@ def s46_264_deploy_is_up():
     return True, f"배포가 열려 있다 (200 · {size:,}B)"
 
 
+def s46_265_raw_purged_after_load():
+    """S46-265 — ★ 적재 뒤 ★ **`raw_response` 를 지우는가** (마스터 지시 09-03).
+
+    ★★★ 마스터 — 「★ 데이터를 다 파일로 받고 ★ **임시 캐시 탭**을 만들어 넣고
+      ★ **`raw_response` 이 테이블 다 지우라고** 얘기했는데 ★ 왜 안 지우고 버티는가.
+      ★ ★ **이렇게 해서 서버 죽은 게 벌써 세 번째**야」
+    ★★ 실측 09-03 — ★ `raw_response` **372,571행 · body 425 MB** · DB **1.08 GiB** ·
+      ★ 장비 RAM **1,841 MB**.
+      ★ ★ 그런데 ★ `validate/v7_watch.py:137` · `v10_admin.py:346` 이
+        ★ **`conn.backup(":memory:")` 로 DB 를 통째로 RAM 에 올린다**.
+      ★ ★ ★ 09-03 에 ★ OOM 두 번 ＋ 사람이 전원을 눌러 껐다 — ★ 마스터 화면이 **35분** 죽었다.
+    ★ **원문은 파일에 남는다** (`raw/{site}/{endpoint}/{날짜}/…`) —
+      ★ ★ 「실패 응답도 원문이다」(STEP 53-⑤)는 ★ **파일이 지킨다**.
+      ★ ★ ★ 그러니 ★ `raw_response` 를 지워도 ★ **잃는 것이 없다**.
+    ★ 잣대 — ① 규격에 걸음이 있는가 ② ★ 검사가 ★ DB 를 통째로 RAM 에 안 올리는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "10-collect" / "00-intro.md")
+    bad = []
+    for want, label in (("임시 DB 로 옮긴다", "★ 임시 DB 걸음"),
+                        ("VACUUM", "VACUUM"),
+                        ("파일에 남는다", "「원문은 파일에 남는다」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    hot = []
+    for f in sorted((ROOT / "validate").glob("*.py")):
+        body = _read(f)
+        for m in re.finditer(r'connect\(":memory:"\)', body):
+            tail = body[m.end():m.end() + 260]
+            if ".backup(" in tail:
+                hot.append(f.name)
+    if hot:
+        bad.append("★ DB 를 통째로 RAM 에 올리는 검사 — " + " · ".join(sorted(set(hot))))
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "적재 뒤 지우는 걸음이 규격에 있고 DB 를 통째로 안 올린다"
+
+
 CHECKS = (
+    ("S46-265", "적재 뒤 raw_response 를 지우는가", s46_265_raw_purged_after_load),
     ("S46-264", "배포가 열려 있는가", s46_264_deploy_is_up),
     ("S46-263", "네 갈래 로직이 규격에 있는가", s46_263_four_states_and_pending),
     ("S46-262", "개발측 「여쭐 것」이 물렸는가", s46_262_dev_questions_answered),
