@@ -280,6 +280,13 @@ def part_enums(body: dict) -> list:
 #   ★ ★ 곧 ★ `RANK_A` 는 ★ 「A랭크다」가 아니라 ★ 「골격 무리다」라는 뜻이다
 HD_BONE, HD_OUTER = "RANK_A", "RANK_ONE"
 HD_PART = {
+    # ★★★★★ 09-03 (개정 1105 · `S46-258`) — ★ **후드가 빠져 있었다.**
+    #   ★ 정부 서식 외판 여덟 중 ★ 열 칸을 적어 두고 ★ **후드 하나만** 없었다.
+    #   ★ ★ 사전(`fixed_enums.json`)에도 없고 ★ 코드에도 없어 ★ **두 번 샜다**.
+    #   ★★ 이것은 ★ 판정 축이다 — ★ `state.outer` **28점** ·
+    #     ★ ★ 헤이딜러 **275건**이 ★ 외판 판정을 못 받고 있었다.
+    #   ★ 후드는 ★ **외판**이다 (골격이 아니다) — ★ 정부 서식 외판 8부위에 든다
+    "hood": HD_OUTER,
     "radiator_support": HD_BONE,          # ★ 라디에이터서포트는 뼈대다 (3a)
     "door_front_driver": HD_OUTER,
     "door_front_passenger": HD_OUTER,

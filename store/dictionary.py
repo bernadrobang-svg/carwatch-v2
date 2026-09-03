@@ -217,11 +217,20 @@ def target_map(site: str | None = None) -> dict:
 
 
 def target_key_of(site: str, name: str | None,
-                  fuel_text: str = "") -> str | None:
+                  fuel_text: str = "", trim_text: str = "",
+                  year_month: str = "") -> str | None:
     """사이트 차종 이름 → 우리 키.  ★ 없으면 None 이다 — 「차종 미정」이고 버리지 않는다.
 
     ★ 차종만으로 안 걸리는 것은 ★ 연료로 한 번 더 거른다 (명령서 2a) —
       SPORTAGE_LPI ← 기아 「스포티지」 + LPI · GRANDEUR_LPG ← 현대 「그랜저」 + LPG
+    ★★★★★ 09-03 (가이드 지시 09-03) — ★ **거르개 둘을 더 읽는다.**
+      ★ `trim_contains` — ★ 이름이 같은데 ★ 트림으로 갈리는 차종
+        ★ ★ (엔카 「GV70」이 ★ 전기·가솔린으로 안 갈린다 · `G70_20T`↔`G70_25T`).
+      ★ `year_from` — ★ 이름이 같은데 ★ **연식으로 갈리는** 차종
+        ★ ★ (모델Y 주니퍼는 ★ 2025-01 부터다).
+    ★★ 값은 ★ `config/dictionaries/target_map.json` 이 정본이다 —
+      ★ ★ 코드는 ★ **읽기만** 한다.  ★ 없으면 ★ 안 거른다 (지어내지 않는다)
+    ★ 하나라도 안 맞으면 ★ `None` 이다 — ★ 「아마 이것일 것」으로 넘기지 않는다 (금지 6)
     """
     got = target_map(site).get(name or "")
     if not got:
@@ -229,6 +238,16 @@ def target_key_of(site: str, name: str | None,
     need = got.get("fuel_contains")
     if need and need.lower() not in (fuel_text or "").lower():
         return None
+    want_trim = got.get("trim_contains")
+    if want_trim and str(want_trim).lower() not in (trim_text or "").lower():
+        return None
+    since = got.get("year_from")
+    if since:
+        # ★ `year_month` 는 `2025-01` 꼴이다 — ★ 글자로 견줘도 차례가 맞다.
+        #   ★ 연식을 모르면 ★ **안 건다** — ★ 모르는 것을 틀렸다고 하지 않는다
+        ym = (year_month or "")[:7]
+        if ym and ym < str(since)[:7]:
+            return None
     return got["target_key"]
 
 
