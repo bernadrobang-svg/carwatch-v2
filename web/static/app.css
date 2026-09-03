@@ -3094,3 +3094,35 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
   text-align: center; white-space: normal; word-break: keep-all;
   color: var(--dim);
 }
+
+
+/* ★★★★★★★ 09-04 — ★ **글자가 가려지지 않게 한다** (가이드 퍼블리싱)
+   ★★★ 마스터 — 「★ 버튼 사이즈 픽스 하지 말고 ★ **글자에 맞게 늘어나게** 하고」
+                「★ 이거 등급 밑에 ★ 네 개 영역이 ★ **사진에 가려서 안 보이는데**」
+                「★ 시안에 맞게 ★ **HTML 과 CSS 를 너가 만들면 되지 않아**」
+   ★★ 실측 09-04 (배포 · 아홉 점 자) — ★ **가려진 글자 63개**
+        `/listings` 390px 17 · 900px 24 · `/recommend` 390px 9 · `/track` 390px 8
+   ★ 뿌리 — ★ **어미보다 자식이 크다**
+        `U.dim`  높이 18  ↔  자식 「52만」 ★ 45   (세 줄로 넘쳐 아래를 덮는다)
+        `DIV.gr` 높이 52  ↔  「A」·「11위」        (겹친다)
+        `DIV.meta` 높이 229 ↔ 「엔카·경기·게시중」 ★ 서로 포갠다
+   ★★★ 규격 — `ref/screens/RULES.md` **2-4 조** · 검산 `S46-271`
+   ★ ★ 이 묶음은 ★ **맨 끝에 둔다** — ★ 앞의 규칙을 덮어써야 한다 */
+
+.card,.card *,.v4-card,.v4-card *{min-height:0}
+.card .dim,.card .meta,.card .gr,.card .ax1,
+.v4-card .dim,.v4-card .meta,.v4-card .gr{
+  height:auto;overflow:visible}
+/* ★ 글자보다 좁은 줄높이를 쓰지 않는다 — ★ 1 은 글자가 서로 닿는다 */
+.gr{line-height:1.25}
+.dim,.meta,.ax1{line-height:1.4}
+/* ★ 한 줄에 여럿이 서면 ★ 겹치지 말고 ★ 다음 줄로 넘긴다 */
+.meta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;height:auto}
+.gr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+/* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
+   ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
+   ★ ★ **49 → 52 로 더 나빠졌다** — ★ 안 넣는다.
+   ★ ★ ★ 「재고 · 넣고 · 다시 재고 · **나빠지면 되돌린다**」 (RULES.md 2-3) */
+
+/* ★ 단추는 ★ 글자에 맞게 늘어난다 (마스터 확정 09-03) */
+.mb,.chip,.btn.mini{width:auto;flex:0 0 auto;white-space:nowrap;word-break:keep-all}
