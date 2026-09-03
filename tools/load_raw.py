@@ -340,9 +340,25 @@ def main() -> int:
             if known:
                 row["site_model_group"] = known
             elif not by_q and env.get("endpoint") == "list":
-                # ★ 우리 차종이 아니다 — ★ **원문은 남고** ★ core 에만 안 넣는다
-                got["  차종을 못 짚음"] += 1
-                continue
+                # ★★★★★ 09-03 (가이드 지시 ③) — ★ **사전에 한 번 더 물어본다.**
+                #   ★ `known_model_of` 는 ★ 이름이 **그대로 들어 있는가**만 본다 —
+                #   ★ ★ BMW 는 ★ 「X3 20 xDrive M Spt 블루 자동 휘발유」처럼
+                #   ★ ★ ★ 차명이 ★ **글월 한 줄**로 온다.
+                #   ★★ 실측 09-03 — ★ BMW 목록 820건 중 ★ **701건을 버렸다**.
+                #     ★ ★ 그런데 ★ `target_key_of` 는 ★ 그 첫 낱말로
+                #     ★ ★ ★ **`X3_IMPORT` 를 제대로 짚는다** (42건 확인).
+                #   ★ 사전이 짚으면 ★ 그것을 쓴다 — ★ 못 짚으면 ★ 그때 버린다.
+                #     ★ ★ 원문은 ★ 어느 쪽이든 ★ **남는다** (P3)
+                from store.dictionary import target_key_of
+
+                _first = (row.get("site_model") or "").split()
+                _by_dict = target_key_of(site, _first[0]) if _first else None
+                if _by_dict:
+                    row["target_key"] = _by_dict
+                else:
+                    # ★ 우리 차종이 아니다 — ★ **원문은 남고** ★ core 에만 안 넣는다
+                    got["  차종을 못 짚음"] += 1
+                    continue
             if env.get("endpoint") == "detail":
                 # ★★★★★ 09-01 — ★ **상세를 넣었으면 ★ 「받았다」고 적는다** (`V2-01`).
                 #   ★ 목록에서 온 줄은 ★ `not_requested` 를 달고 온다 —

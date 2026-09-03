@@ -56,7 +56,7 @@ class UrlFetcher:
 
 
 def fetch(req: Request, fetcher: Fetcher, kind: str, clock: Clock,
-          source_id: str | None = None) -> FetchResult:
+          source_id: str | None = None, spec=None) -> FetchResult:
     """획득만 한다.  파싱하지 않는다.
 
     반환값에 raw 를 담는다.  공유 변수를 쓰지 않는다 (STEP 12).
@@ -81,6 +81,20 @@ def fetch(req: Request, fetcher: Fetcher, kind: str, clock: Clock,
     try:
         body = json.loads(res.body_text)
     except ValueError as e:
+        # ★★★★★ 09-03 (가이드 지시 ①②) — ★ **원문이 다 JSON 은 아니다.**
+        #   ★ BMW BPS·현대인증·K카·보배드림 상세는 ★ **HTML 쪽**이다 —
+        #   ★ ★ 그것이 그 사이트의 ★ **바른 원문**이다 (파서가 그렇게 받는다).
+        #   ★★ 실측 09-03 — ★ BMW 상세 194건이 ★ **HTTP 200 인데 전부 `error`**
+        #     ★ ★ 였다.  ★ 「200 이 왔다」와 「제대로 왔다」가 다른 자리이지만,
+        #     ★ ★ ★ 여기서는 ★ **우리가 JSON 만 알아서** 난 것이다.
+        #   ★★★ 어댑터가 ★ 「이 창구는 HTML 이다」라고 말하면 ★ 그대로 받는다 —
+        #     ★ ★ `endpoint_schema()[kind].root_type == "html"`.
+        #     ★ ★ ★ 말이 없으면 ★ 옛날처럼 ★ **`error`** 다 (조용히 안 삼킨다)
+        if str(getattr(spec, "root_type", "") or "") == "html":
+            body = res.body_text
+            status = "empty" if not (body or "").strip() else "ok"
+            return FetchResult(kind, source_id, status, body,
+                               res.http_code, None, at)
         return FetchResult(kind, source_id, "error", None, res.http_code, repr(e), at)
 
     status = "empty" if body in (None, {}, []) else "ok"
@@ -96,6 +110,12 @@ def verify_shape(res: FetchResult, spec: EndpointSpec) -> bool:
     """
     if res.status != "ok":
         return True  # empty · not_found · error 는 검증 대상이 아니다
+    # ★★★★★ 09-03 — ★ **HTML 창구는 ★ 키로 못 잰다.**
+    #   ★ `required_keys` 는 ★ JSON 의 열쇠다 — ★ HTML 에는 그런 것이 없다.
+    #   ★ 실측 09-03 — ★ BMW 상세 194건이 ★ `ok` 인데 ★ **형식 검증 거부 194건**이었다.
+    #   ★★ 「비어 있지 않은가」만 본다 — ★ 내용은 ★ **파서가 본다** (층을 지킨다)
+    if str(getattr(spec, "root_type", "") or "") == "html":
+        return bool(str(res.raw or "").strip())
     body = res.raw
     if spec.root_type == "array":
         if not isinstance(body, list):

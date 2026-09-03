@@ -466,7 +466,7 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                     rows, expected or 0)
                 req = adapter.list_url(spec, page)
                 st = time.time()
-                res = fetch(req, fetcher, "list", clock)
+                res = fetch(req, fetcher, "list", clock, spec=schema.get("list"))
                 _log_request(conn, ctx, "list", None, req.url, res,
                              int((time.time() - st) * MS_PER_SEC))
                 tally[res.status] = tally.get(res.status, 0) + 1
@@ -517,7 +517,7 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 say("S2", f"{g.group_key} {kind}", rows,
                     len(groups) * len(FACET_REQUEST_KINDS))
                 st = time.time()
-                res = fetch(req, fetcher, "facet", clock)
+                res = fetch(req, fetcher, "facet", clock, spec=schema.get("facet"))
                 _log_request(conn, ctx, "facet", None, req.url, res,
                              int((time.time() - st) * MS_PER_SEC))
                 tally[res.status] = tally.get(res.status, 0) + 1
@@ -804,7 +804,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 say("S5", f"매물 {sid} {kind}", (i - 1) * len(LISTING_ENDPOINTS),
                     len(lids) * len(LISTING_ENDPOINTS))
                 st = time.time()
-                res = fetch(req, fetcher, kind, clock, source_id=sid)
+                res = fetch(req, fetcher, kind, clock, source_id=sid,
+                            spec=schema.get(kind))
                 _log_request(conn, ctx, kind, sid, req.url, res,
                              int((time.time() - st) * MS_PER_SEC))
                 tally[res.status] = tally.get(res.status, 0) + 1
@@ -1009,7 +1010,7 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 req = adapter.catalog_url(rep_sid)
                 st = time.time()
                 # 저장 키는 모델이다 — 다음 실행의 중복 제거가 이 값으로 돈다
-                res = fetch(req, fetcher, "catalog", clock, source_id=k)
+                res = fetch(req, fetcher, "catalog", clock, spec=schema.get("catalog"), source_id=k)
                 _log_request(conn, ctx, "catalog", k, req.url, res,
                              int((time.time() - st) * MS_PER_SEC))
                 if res.status != "not_found":

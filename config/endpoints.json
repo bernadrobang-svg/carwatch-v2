@@ -58,7 +58,11 @@
     "_stock_list_note": "★ 개정 626 (마스터가 찾으심) — ★ 목록이 뚫렸다.  ★ enc 없음 · 헤더 불필요. ★ `data.listCount` 가 총건수다 — ★ 쪽마다 더하지 않는다. ★ `pageSize` 만 먹는다 — ★ `mnuftrCd`·`modelGrpCd` 는 안 먹으니 ★ 전량 받아 우리가 거른다",
     "stock_page_size": 1000,
     "brand_scope": "all",
-    "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 20종 — 종합"
+    "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 20종 — 종합",
+    "root_type": {
+      "detail": "html"
+    },
+    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
   },
   "kia_cpo": {
     "_ref": "docs/KIA_CPO_API.md · 실측 2026-08-22 서버에서 직접 · 표본 30건",
@@ -108,7 +112,11 @@
       "현대",
       "제네시스"
     ],
-    "_brand_scope_why": "[실측 08-26] 제네시스 G80 174건이 들어와 있다 — 제네시스도 준다"
+    "_brand_scope_why": "[실측 08-26] 제네시스 G80 174건이 들어와 있다 — 제네시스도 준다",
+    "root_type": {
+      "detail": "html"
+    },
+    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
   },
   "heydealer": {
     "_ref": "docs/HEYDEALER_API.md 0장 · 명령서 37 · 실측 2026-08-24 (개정 694)",
@@ -176,7 +184,11 @@
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
     },
     "brand_scope": "all",
-    "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합"
+    "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합",
+    "root_type": {
+      "detail": "html"
+    },
+    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
   },
   "reborncar": {
     "base_url": "https://www.reborncar.co.kr",
@@ -252,7 +264,11 @@
       "BMW"
     ],
     "_brand_scope_why": "★ [확인 완료 08-29 · 가이드 실측] BMW BPS — ★ 미니가 섞인다 (364건 중 2건 — 「MINI Cooper SE Gen Z-E」·「MINI 5DOOR C」).  ★ 그래도 `brand_scope` 를 넓히지 않는다 — ★ 그 2건은 우리 26종에 없어 어차피 「범위 밖」으로 접히고, 넓히면 안 볼 차를 받는 것이 되어 수집 범위 확정에 어긋난다.  ★ 「BMW 만 판다」는 말은 틀렸다 — 그래서 그 낱말을 안 쓴다 (`docs/BMW_BPS_API.md` 「개발측 청에 답한다」)",
-    "_inspection_why": "★★ [실측 09-01] ★ 상세의 「72가지 점검 [다운로드]」 링크다.  ★ 200 · 274KB · %PDF-1.7 · 2쪽 · ★ **글자 5,822자가 뽑힌다**(사진이 아니다).  ★ 안에 ★ 성능점검기록부 전문 — ★ 외판부위 1/2/A/B랭크 · 타이어(양호/불량) · 누유 · ★ 가격조사·산정 금액.  ★ 축 넷이 열린다 — 골격·외판·소모품·시세.  ★ Referer 를 붙여라"
+    "_inspection_why": "★★ [실측 09-01] ★ 상세의 「72가지 점검 [다운로드]」 링크다.  ★ 200 · 274KB · %PDF-1.7 · 2쪽 · ★ **글자 5,822자가 뽑힌다**(사진이 아니다).  ★ 안에 ★ 성능점검기록부 전문 — ★ 외판부위 1/2/A/B랭크 · 타이어(양호/불량) · 누유 · ★ 가격조사·산정 금액.  ★ 축 넷이 열린다 — 골격·외판·소모품·시세.  ★ Referer 를 붙여라",
+    "root_type": {
+      "detail": "html"
+    },
+    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
   },
   "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2",
   "revolt": {
