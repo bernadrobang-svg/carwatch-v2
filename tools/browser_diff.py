@@ -571,3 +571,91 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
 #         ★ **상자 자는 「보기 흉한가」** 를 본다 — ★ **둘 다 있어야 한다**.
 #   ★ 실측 09-04 — ★ 상자 겹침 ★ **27 → 17** (`.meta{row-gap:14px}`)
 #     ★ 남은 것 — 「17.9/2024-09 5px」·「(주)우리집자동차/게시중 11px」·「옵션가/2종 10px」
+
+
+# ★★★★★★ 09-05 — ★ **엔카 수집에 구멍이 없는가**를 잰다 (마스터 지시)
+#
+#   ★ 마스터 — 「★ **말만 하지 말고 ★ 기준을 세우고 ★ 그것 못하게 검증을 만들어라**」
+#   ★ ★ 잰 수를 ★ `outputs/encar_collect.json` 에 남긴다 — ★ `S46-276` 이 읽는다
+
+ENCAR_REPORT = "outputs/encar_collect.json"
+
+_ENCAR_SQL = {
+    "매물": "SELECT COUNT(*) FROM core_listing WHERE site='encar'",
+    "상세": "SELECT COUNT(*) FROM core_listing WHERE site='encar' "
+            "AND detail_status IS NOT NULL",
+    "상세원문": "SELECT COUNT(*) FROM raw_response WHERE site='encar' "
+                "AND endpoint='detail'",
+    "catalog": "SELECT COUNT(*) FROM raw_response WHERE site='encar' "
+               "AND endpoint='catalog'",
+    "record원문": "SELECT COUNT(*) FROM raw_response WHERE site='encar' "
+                  "AND endpoint='record'",
+    "record상태": "SELECT COUNT(*) FROM core_listing WHERE site='encar' "
+                  "AND record_status IS NOT NULL",
+}
+
+
+def encar_collect_report(base_url: str, name: str = "admin",
+                         secret: str = "12345678"):
+    """★ 배포의 `/admin/query` 를 눌러 ★ 엔카 수집을 재고 ★ 파일로 남긴다.
+
+    ★★ 09-05 — ★ 브라우저(Playwright)로 하려다 ★ **로그인 뒤 칸을 못 찾아** 헤맸다.
+      ★ ★ 내가 손으로 쓰던 ★ **쿠키 ＋ csrf** 길로 바꿨다 — ★ 그게 잘 돈다.
+    돌리기  python3 -c "from tools.browser_diff import encar_collect_report as r; \\
+                       r('https://…sslip.io')"
+    """
+    import datetime as _dt
+    import html as _html
+    import json as _j
+    import re as _re
+    import ssl as _ssl
+    import urllib.parse as _up
+    import urllib.request as _ur
+    from http.cookiejar import CookieJar
+
+    ctx = _ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = _ssl.CERT_NONE
+    op = _ur.build_opener(_ur.HTTPSHandler(context=ctx),
+                          _ur.HTTPCookieProcessor(CookieJar()))
+
+    def _get(path):
+        with op.open(base_url + path, timeout=60) as r:
+            return r.read().decode("utf-8", "replace")
+
+    def _csrf(html_text):
+        m = _re.search(r'name="csrf" value="([^"]+)"', html_text)
+        return m.group(1) if m else ""
+
+    op.open(base_url + "/login", timeout=60)
+    tok = _csrf(_get("/login"))
+    op.open(_ur.Request(
+        base_url + "/login",
+        data=_up.urlencode({"name": name, "secret": secret,
+                            "csrf": tok}).encode()), timeout=60)
+
+    out = {}
+    for key, sql in _ENCAR_SQL.items():
+        tok = _csrf(_get("/admin/query"))
+        with op.open(_ur.Request(
+                base_url + "/admin/query",
+                data=_up.urlencode({"sql": sql, "csrf": tok}).encode()),
+                timeout=120) as r:
+            body = r.read().decode("utf-8", "replace")
+        txt = _html.unescape(_re.sub(r"<[^>]+>", "\n", body))
+        rows = [x.strip() for x in txt.split("\n") if x.strip()]
+        got = None
+        if "탭 구분 — 표에 그대로 붙습니다" in rows:
+            j = rows.index("탭 구분 — 표에 그대로 붙습니다")
+            for cand in rows[j + 1:j + 4]:
+                if cand.replace(",", "").isdigit():
+                    got = int(cand.replace(",", ""))
+                    break
+        out[key] = got
+        print(f"  {key:<12}{got}")
+    out["_잰_때"] = _dt.datetime.now(_dt.timezone.utc).isoformat()
+    out["_잰_곳"] = base_url
+    with open(ENCAR_REPORT, "w", encoding="utf-8") as f:
+        _j.dump(out, f, ensure_ascii=False, indent=1)
+    print(f"\n★ 적었다 — {ENCAR_REPORT}  (★ 구멍이 있으면 `S46-276` 이 운다)")
+    return out

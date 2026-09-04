@@ -7156,7 +7156,64 @@ def s46_275_axis_score_persisted():
     return True, "result_axis.score 를 저장한다"
 
 
+def s46_276_encar_collect_no_gap():
+    """S46-276 — ★ 엔카 수집에 ★ **구멍이 없는가** (마스터 09-05 「기준을 세우고 검증하라」).
+
+    ★★★ 마스터 — 「★ **말만 하지 말고 ★ 기준을 세우고 ★ 그것 못하게 검증을 만들어라**」
+    ★ 실측 09-05 (배포) — ★ 넷이 어긋났다:
+      ★ ① 엔카 매물 **16,693** 중 ★ `detail` 을 받은 것이 **9,760**(58.5%) —
+          ★ ★ **6,933건을 아예 안 잡았다**
+      ★ ② `detail` 원문 **138,659** ↔ 매물 **9,760** — ★ **한 매물을 열네 번** 다시 받는다.
+          ★ ★ 철학 ①(이미 받은 상세는 다시 안 받는다)이 ★ **안 돈다**
+      ★ ③ `catalog` **138건** — ★ 매물의 **0.8%**.  ★ 옵션 축 **45점**이 죽는다
+      ★ ④ `record` 원문 **9,210** ↔ 상태 **9,491** — ★ **281건은 원문이 없다**
+    ★★ 기준 — ★ 이 넷을 ★ **수로** 적어 두고 ★ 나아졌는지 본다.
+      ★ ★ 잰 수는 ★ `outputs/encar_collect.json` 에 남긴다 (★ 자가 적는다).
+      ★ ★ ★ 낡으면(이틀 넘으면) ★ 「안 쟀다」로 본다 — ★ `S46-271` 과 같은 꼴이다.
+    ★ 잣대 — ① 상세율 **90%** 이상 ② 원문/매물 **3배** 이하
+             ③ `catalog` **50%** 이상 ④ `record` 원문 ≥ 상태.
+    """
+    raw = _read(ROOT / "outputs" / "encar_collect.json")
+    if not raw:
+        return False, ("★ 아직 안 쟀다 — "
+                       "`python3 -c \"from tools.browser_diff import "
+                       "encar_collect_report as r; r('배포주소')\"` 를 돌려라")
+    try:
+        rep = json.loads(raw)
+    except Exception:  # noqa: BLE001
+        return False, "encar_collect.json 을 못 읽었다"
+    when = str(rep.get("_잰_때") or "")[:10]
+    if not when:
+        return False, "★ 잰 때가 없다"
+    try:
+        import datetime as _dt
+
+        if (_dt.date.today() - _dt.date.fromisoformat(when)).days > 2:
+            return False, f"★ 잰 지 오래됐다 ({when}) — 다시 재라"
+    except Exception:  # noqa: BLE001
+        pass
+    m = rep.get("매물") or 0
+    d = rep.get("상세") or 0
+    raw_d = rep.get("상세원문") or 0
+    cat = rep.get("catalog") or 0
+    rec_raw = rep.get("record원문") or 0
+    rec_st = rep.get("record상태") or 0
+    bad = []
+    if m and d / m < 0.9:
+        bad.append(f"① 상세율 {d / m * 100:.1f}% — {m - d:,}건 안 잡았다")
+    if d and raw_d / d > 3:
+        bad.append(f"② 원문이 매물의 {raw_d / d:.1f}배 — 다시 받고 있다")
+    if m and cat / m < 0.5:
+        bad.append(f"③ catalog {cat / m * 100:.1f}% — 옵션 축이 죽는다")
+    if rec_st and rec_raw < rec_st:
+        bad.append(f"④ record 원문이 {rec_st - rec_raw:,}건 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad) + f"  ({when})"
+    return True, f"엔카 수집에 구멍이 없다 ({when})"
+
+
 CHECKS = (
+    ("S46-276", "엔카 수집에 구멍이 없는가", s46_276_encar_collect_no_gap),
     ("S46-275", "축 점수를 저장하는가", s46_275_axis_score_persisted),
     ("S46-274", "기본 차례가 등급 > 값 > 추천인가", s46_274_default_sort_grade_price_rank),
     ("S46-273", "엔카 배너가 마스터가 받은 것을 세는가", s46_273_encar_banner_counts_browser),
