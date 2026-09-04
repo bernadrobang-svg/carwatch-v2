@@ -385,9 +385,18 @@
         {% if r.color_ext_hex %}<span class="swatch"
           style="background:{{ r.color_ext_hex }}"></span>{% endif %}{{ r.color_ext }}
         / {{ r.color_int }} ·
+        <!-- ★★★★★ 09-04 (가이드) — ★ **딜러 이름을 제 줄로 내린다**.
+             ★ 실측 09-04 — ★ 「(주)아이오카」(68×43)가 ★ 두 줄이 되면서
+             ★ ★ 옆의 「게시중」(33×43)과 ★ **7px 겹쳤다**.
+             ★ ★ ★ `.meta` 가 `flex-wrap` 이라 ★ **제 줄을 차지하게** 하면 안 겹친다
+             ★★★★ **아직 못 쟀다** — ★ 배포가 옛 HTML 이라 ★ 씌워서 잴 수가 없다.
+               ★ CSS 로 흉내내니 ★ 14 → **18** 로 나빴다 — ★ 흉내가 자리를 못 짚은 것이다.
+               ★ ★ **배포에 올린 뒤 ★ `hidden_text_report()` 로 재고 ★ 나빠지면 되돌린다** -->
+        <span class="dealerline">
         {% if r.dealer_shop %}<a href="/dealers?q={{ r.dealer_shop | url }}"
           title="이 딜러의 매물을 봅니다">{{ r.dealer_shop }}</a>{% endif %}
         {% if !r.dealer_shop %}<span class="dim">딜러 정보 없음</span>{% endif %}
+        </span>
         <span class="tag" title="이 매물을 받은 사이트입니다. K카는 직영·직거래를 함께 냅니다"
           >{{ r.site_badge }}</span>
         <!-- ★★★★★ 09-02 마스터 확정 — ★ **판매지역** (`S46-225`).
@@ -443,7 +452,12 @@
       {% if r.origin_total_won %}<span class="raw"
         title="판매자가 입력한 것입니다">신차가 {{ r.origin_total_won | won }}{% if r.option_price_won %}
         (등급 {{ r.origin_price_won | won }} + 옵션 {{ r.option_price_won | won }}){% endif %}</span>{% endif %}</div>
-    <div class="cell mono num"><u>옵션가</u>
+    <!-- ★★★★★ 09-04 (가이드) — ★ **이름과 값을 두 줄로 나눈다**.
+         ★ 실측 09-04 — ★ 「옵션가」(147×14)가 ★ 값 「2종 …」과 ★ **10px 겹쳤다**.
+         ★ ★ `<u>` 와 `<b>` 가 ★ 한 칸에 겹쳐 앉아 있었다 —
+         ★ ★ ★ `<u>` 를 ★ **제 줄(`block`)** 로 두면 안 겹친다 (`.cell>u{display:block}`)
+         ★★★★ **아직 못 쟀다** — ★ 배포에 올린 뒤 재고 ★ 나빠지면 되돌린다 -->
+    <div class="cell mono num"><u class="cellname">옵션가</u>
       {% if r.option_count %}<b><a href="/detail/{{ r.listing_id }}"
         title="선택 옵션 종수와 합계입니다">{{ r.option_count }}종{% if r.option_price_won %}
         {{ r.option_price_won | won }}{% endif %}</a></b>{% endif %}

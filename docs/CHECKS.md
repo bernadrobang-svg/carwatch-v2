@@ -36,7 +36,7 @@
 | `S25` | 형상 관리 (미커밋 없음) | fatal | `tools/check_src.py:758` | **★ 없음** | 없음 | trace/RULES.md:87 · trace/RULES.md:88 · trace/RULES.md:89 |
 | `S26` | 작업 기록 (6절 · 이름 규칙) | fatal | `tools/check_src.py:786` | **★ 없음** | 없음 | trace/00-standard.md:53 · trace/00-standard.md:54 · trace/00-standard.md:55 |
 | `S27` | 기능마다 화면 (CLI 는 완성이 아니다) | fatal | `tools/check_src.py:822` | **★ 없음** | 없음 | trace/00-standard.md:34 · trace/00-standard.md:38 · trace/RULES.md:85 |
-| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:845` | **★ 없음** | 없음 | INDEX.md:18 · SCHEMA.md:7 · trace/00-standard.md:78 |
+| `S28` | 검사 색인 (규격 ↔ 코드) | fatal | `tools/check_src.py:845` | **★ 없음** | 없음 | INDEX.md:14 · SCHEMA.md:7 · trace/00-standard.md:78 |
 | `S29-0` | 가벼운 점검 (4시간 · 실제로 돎) | fatal | `tools/check_src.py:876` | **★ 없음** | 없음 | trace/00-standard.md:110 · trace/00-standard.md:111 · trace/00-standard.md:112 |
 | `S29-4` | 점검이 찾은 fatal 을 고침 | fatal | `tools/check_src.py:899` | **★ 없음** | 없음 | trace/00-standard.md:109 · trace/00-standard.md:110 · trace/00-standard.md:111 |
 | `S34-1` | 표의 규격이 실재 | fatal | `tools/check_src.py:981` | **★ 없음** | 없음 | trace/00-standard.md:231 · trace/00-standard.md:232 · trace/00-standard.md:234 |
@@ -225,7 +225,7 @@
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6772` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:57 · chapters/10-collect/00-intro.md:485 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6794` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:59 · chapters/10-collect/00-intro.md:522 |
 | `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6819` | **★ 없음** | 없음 | guide/03_이력.md:1359 · guide/03_이력.md:1374 |
-| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6854` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1378 |
+| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6854` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1379 |
 | `S46-270` | 가려진 글자를 세는 자가 있는가 | fatal | `validate/v0_guide.py:6899` | **★ 없음** | 없음 | guide/03_이력.md:1365 · guide/06_오판대장.md:348 |
 | `S46-271` | 화면을 브라우저로 열어 재는가 | fatal | `validate/v0_guide.py:6929` | **★ 없음** | 없음 | guide/03_이력.md:1366 · guide/03_이력.md:1367 · guide/03_이력.md:1373 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6074` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
