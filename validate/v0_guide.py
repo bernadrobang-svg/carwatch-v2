@@ -6924,6 +6924,11 @@ def s46_271_screen_checked_in_browser():
     tool = _read(ROOT / "tools" / "browser_diff.py")
     if "HIDDEN_TEXT_JS" not in tool:
         return False, "★ 가려진 글자를 세는 자가 없다 (HIDDEN_TEXT_JS)"
+    # ★★★★★ 09-04 — ★ 점 자만으로는 ★ **보기 흉한 것을 못 잡는다**.
+    #   ★ 마스터 「★ 겹치는 것도 안 되지만 ★ **내가 보기 좋게 바꿔**」
+    #   ★ ★ 점 자 「2」인데 ★ 캡처에는 딱지가 겹쳐 보였다 — ★ **상자 자**가 따로 있어야 한다
+    if "BOX_OVERLAP_JS" not in tool:
+        return False, "★ 상자 겹침을 세는 자가 없다 (BOX_OVERLAP_JS)"
     # ★★★★★ 09-04 마스터 — 「★ **캡처만 내면 되나?**」
     #   ★ ★ **안 된다.**  ★ 캡처는 ★ **증거**이지 ★ 잣대가 아니다.
     #   ★ ★ ★ 앞 판에서 이 검사는 ★ 「자가 있다」만 보고 ★ **63개인데 통과**였다 —

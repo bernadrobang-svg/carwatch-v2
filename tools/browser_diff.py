@@ -489,3 +489,44 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
     print(f"\n★ 합 {total}개 · 캡처 {len(out)}장 — {shot_dir}/")
     print(f"★ 잰 수를 적었다 — {REPORT}  (★ 0 이 아니면 `S46-271` 이 운다)")
     return out
+
+
+# ★★★★★★ 09-04 — ★ **상자 겹침**도 따로 센다 (마스터 「★ 내가 보기 좋게 바꿔」)
+#
+#   ★ 아홉 점 자는 ★ 「2」라 했는데 ★ **캡처에는 딱지가 겹쳐 보였다**.
+#   ★ ★ 두 상자가 겹쳐도 ★ 가운데가 제 것이면 ★ **6할을 넘겨** 통과한다.
+#   ★ ★ ★ 곧 ★ **점 자는 「글자가 안 읽히나」** 를 보고
+#         ★ **상자 자는 「보기 흉한가」** 를 본다 — ★ **둘 다 있어야 한다**.
+#   ★ 실측 09-04 — ★ 상자 겹침 ★ **27 → 17** (`.meta{row-gap:14px}`)
+#     ★ 남은 것 — 「17.9/2024-09 5px」·「(주)우리집자동차/게시중 11px」·「옵션가/2종 10px」
+
+BOX_OVERLAP_JS = r"""
+() => {
+  const stuck = e => { for (let a = e; a; a = a.parentElement) {
+      const p = getComputedStyle(a).position;
+      if (p === 'fixed' || p === 'sticky') return true; } return false; };
+  const L = [];
+  for (const e of document.querySelectorAll('*')) {
+    const s = getComputedStyle(e);
+    if (s.display === 'none' || e.children.length) continue;
+    const t = (e.textContent || '').trim(); if (!t) continue;
+    const r = e.getBoundingClientRect();
+    if (r.width <= 0 || r.height <= 0 || r.bottom < 0 || r.top > innerHeight) continue;
+    if (stuck(e)) continue;                 // ★ 붙박이 띠는 얹으라고 만든 것이다
+    L.push({e: e, r: r, t: t});
+  }
+  let n = 0; const ex = [];
+  for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+    const A = L[i], B = L[j];
+    if (A.e.contains(B.e) || B.e.contains(A.e)) continue;
+    const ox = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
+    const oy = Math.min(A.r.bottom, B.r.bottom) - Math.max(A.r.top, B.r.top);
+    if (ox > 2 && oy > 2) {
+      n++;
+      if (ex.length < 6) ex.push(A.t.slice(0, 10) + ' / ' + B.t.slice(0, 10) +
+                                 ' ' + Math.round(oy) + 'px');
+    }
+  }
+  return {overlap: n, examples: ex};
+}
+"""
