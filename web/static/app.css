@@ -3227,6 +3227,17 @@ img.thumb,.thumb,.card img{width:132px;height:99px;object-fit:cover}
 .bars{height:26px}
 .bars .bar{height:26px;min-height:26px}
 
+/* ★★★★★★ 13차 (09-04) — ★ **거르개 칩이 서로 포갠다** (마스터 09-04)
+   ★ 마스터 — 「★ `?site=bmw_bps` ★ **사진과 내 리스트가 있지?**」 · 「★ 겹침이 있고」
+   ★ 실측 09-04 — ★ `P.chips`(286×161) 안에서 ★ 「검정색 (5,162)」(123×44) 같은 칩이
+     ★ ★ **줄바꿈 없이 포개져** ★ 목록 값과 겹쳤다 (「검정색 / 121만 **39px**」).
+   ★ ★ ★ BMW 가 유독 나빴다 — ★ 색이 많아 칩이 길다.
+   ★ 고친 뒤 — ★ BMW 가려진 글자 **34 → 24** · 상자 겹침 **92 → 73**.
+     ★ ★ 렉서스·볼보는 ★ 그대로다(0·4) — ★ 나빠지지 않았다 */
+p.chips,.chips{display:flex;flex-wrap:wrap;gap:6px;height:auto;
+  align-items:flex-start;align-content:flex-start}
+.chips>*{flex:0 0 auto;height:auto;min-height:0}
+
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
    ★ ★ **49 → 52 로 더 나빠졌다** — ★ 안 넣는다.
@@ -3243,6 +3254,8 @@ img.thumb,.thumb,.card img{width:132px;height:99px;object-fit:cover}
    ★ 상자 겹침(27)으로 재서 뺀 것 —
      카드 줄높이 1.55  27 (안 준다) · 딱지 낮게 **26**(거의 안 준다) ·
      인라인 여백 · 카드 안 블록 사이  19 에서 안 준다
+   ★ 09-04 — ★ 사진을 ★ **띄우기(float)** 로 바꿔 ★ 「사진 밑 공간」을 쓰게 해 봤다:
+     볼보 3→4 · 렉서스 4→3 · ★ **BMW 92 → 115** — ★ **크게 나빠져 안 넣었다**
 ★★★ **다섯 차례 돌려 ★ 63 → 43 (32% 줄었다)**.  ★ 스무 가지를 시험해 ★ **다섯만 남겼다.
    ★ ★ 나머지 열다섯은 ★ 안 주거나 ★ 더 나빠졌다 — ★ 그 수를 위에 적어 뒀다** */
    ★ ★ ★ 「재고 · 넣고 · 다시 재고 · **나빠지면 되돌린다**」 (RULES.md 2-3) */
