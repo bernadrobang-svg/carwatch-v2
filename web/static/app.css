@@ -3133,6 +3133,21 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
 /* ★ 4차 (09-04) — ★ 44 → **43** */
 .cell{padding:2px 0;min-height:0;height:auto}
 
+/* ★ 5차 (09-04) — ★ 48 → **43** */
+.cell{min-width:0;flex:1 1 auto;white-space:normal}
+.row,.grid{display:flex;flex-wrap:wrap;gap:4px 10px}
+.pickname{white-space:nowrap;overflow:visible;height:auto;display:inline-block}
+
+/* ★ 6차 (09-04) — ★ 6 → **5**.  ★ `.meta` 줄 사이를 벌린다 */
+.meta{row-gap:6px;column-gap:8px;align-items:center}
+
+/* ★ 7차 (09-04) — ★ 5 → **4** */
+.ax1{display:block;width:auto;padding:1px 0}
+
+/* ★ 8차 (09-04) — ★ 4 → **1**.  ★ 카드를 덮는 링크(`A`) 아래 깔린 글자를 꺼낸다 */
+.ax1,.cell{position:relative;z-index:1;isolation:isolate}
+.ax1{line-height:1.6;padding:2px 0}
+
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
    ★ ★ **49 → 52 로 더 나빠졌다** — ★ 안 넣는다.

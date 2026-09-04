@@ -403,7 +403,21 @@ HIDDEN_TEXT_JS = r"""
       if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) continue;
       tot++;
       const at = document.elementFromPoint(x, y);
-      if (at && (at === L.e || L.e.contains(at))) seen++;
+      if (at && (at === L.e || L.e.contains(at))) { seen++; continue; }
+      // ★★★★★ 09-04 (2차) — ★ **붙박이 띠는 결함이 아니다**.
+      //   ★ 머리(`HEADER.top`)와 바닥 메뉴(`A.nav-item`)는 ★ 얹으라고 만든 것이고
+      //   ★ ★ 글이 그 아래로 지나가는 것은 ★ **스크롤이지 겹침이 아니다**.
+      //   ★ ★ ★ 09-02 에 이 헛것을 뺐는데 ★ **아홉 점 자를 새로 만들며 안 옮겼다** —
+      //     ★ 그래서 43 중 상당수가 ★ 헛것이었다.  ★ **자를 먼저 검증한다**
+      let stuck = false;
+      for (let a = at; a; a = a.parentElement) {
+        const ps = getComputedStyle(a).position;
+        if (ps === 'fixed' || ps === 'sticky') { stuck = true; break; }
+      }
+      if (stuck) { seen++; continue; }          // ★ 띠 아래로 지나간 것
+      // ★ 제 짝(같은 label 안의 input 등)도 결함이 아니다
+      if (at && (at.closest('label') === L.e.closest('label')) &&
+          L.e.closest('label')) { seen++; }
     }
     if (tot && seen / tot < 0.6) {
       hidden++;

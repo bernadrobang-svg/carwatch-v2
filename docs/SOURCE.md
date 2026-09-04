@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 215개 · 총 78,769줄
+파일 215개 · 총 78,783줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -42,8 +42,8 @@
 | `web/app.py` | 547 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
+| `tools/browser_diff.py` | 491 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
-| `tools/browser_diff.py` | 477 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `run.py` | 476 | CarWatch v2 진입점. |
 | `tools/load_raw.py` | 443 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
@@ -440,16 +440,16 @@ _py_files:48  _checks_in_code:73  _guide_checks:119  _checks_in_docs:152  last_r
 check:21  test_routes:28  test_template:85  test_no_logic_in_template:126  test_static_escape:141  test_session_cookie:153  test_error_page:171  test_layout:198  test_filters:227  test_empty_state:250  test_menu_by_role:277  test_guard_and_csrf:298  _call:345  test_screens_render:362  test_sketch_match:453  test_account_policy:468
 ```
 
+### `tools/browser_diff.py` — 491줄
+
+```
+pairs:35  look:48  main:298  hidden_text_report:432
+```
+
 ### `contracts.py` — 481줄
 
 ```
 Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchResult:71  TargetSpec:84  ListingSnapshot:141  AxisResult:244  Account:263  require_role:280  RunContext:297  StepReport:317  ResumePoint:341  clean_vin:362  total_of:373  RegressionReport:386  json_paths:397  shape_ok:446  shape_violations:479
-```
-
-### `tools/browser_diff.py` — 477줄
-
-```
-pairs:35  look:48  main:298  hidden_text_report:418
 ```
 
 ### `run.py` — 476줄
