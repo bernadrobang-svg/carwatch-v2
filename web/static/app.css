@@ -3168,9 +3168,9 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
 
 /* ★ 사진을 폭에 따라 키운다 — ★ 390px 에서 104 는 ★ 차를 알아보기 어렵다
    ★ 시안(`ref/screens/RULES.md` 2-4)대로 ★ **고정하지 않고 폭에 맞춘다** */
-.thumb,.card img{width:132px;height:99px;object-fit:cover}
-@media (min-width:760px){.thumb,.card img{width:200px;height:150px}}
-@media (min-width:1080px){.thumb,.card img{width:260px;height:195px}}
+img.thumb,.thumb,.card img{width:132px;height:99px;object-fit:cover}
+@media (min-width:760px){img.thumb,.thumb,.card img{width:200px;height:150px}}
+@media (min-width:1080px){img.thumb,.thumb,.card img{width:260px;height:195px}}
 
 /* ★★★★★★ 10차 (09-04) — ★ **켠 단추의 글자가 안 보인다**
    ★ 실측 09-04 — ★ `.btn.on` 이 ★ 글자색 `rgb(49,130,246)` · 바탕 `rgb(49,130,246)` —
@@ -3214,6 +3214,18 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
         ★ `DIV.cell.mono.num` 이 ★ 이름과 값을 ★ **한 칸에 겹쳐 넣는다**
         ★ ★ 고칠 곳 — ★ 이름과 값을 ★ **두 줄로** 나눈다
    ★ ★ 서른다섯 넘게 시험했다 — ★ 여기서부터는 ★ **템플릿 몫**이다 */
+
+/* ★★★★★★★ 12차 (09-04) — ★ **내가 막대를 무너뜨렸다** (마스터 지적)
+   ★★★ 마스터 — 「★ `?site=volvo_selekt` ★ 왜 여전히 ★ **네 개 값이 겹쳐 있지**」
+   ★ 실측 09-04 — ★ `.bars .bar` 높이가 ★ **0px** 이다.  ★ `.bars` 는 **282×10**.
+     ★ ★ 그래서 ★ 막대가 안 보이고 ★ 이름표(`.barlab` 「차량·값·보증·취향」)만 떠 있었다.
+     ★ ★ ★ 마스터께서 ★ 「네 개 값이 겹쳐 있다」 하신 것이 ★ **이것**이다 —
+       ★ 겹친 게 아니라 ★ **막대가 사라져 이름만 남은 것**이다.
+   ★★ 뿌리 — ★ 내가 넣은 ★ `.card *{min-height:0}` 과 ★ 높이 자동 규칙들이
+     ★ ★ `.bar{height:26px}` 를 ★ **눌렀다**.  ★ 「높이를 풀라」가 ★ **너무 넓었다**.
+   ★ 되살린 뒤 — ★ `.bar` **26px** · 안쪽 `i` 가 ★ 31% 만큼 찬다 */
+.bars{height:26px}
+.bars .bar{height:26px;min-height:26px}
 
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
