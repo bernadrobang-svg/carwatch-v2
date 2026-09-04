@@ -18,6 +18,7 @@
 """
 from __future__ import annotations
 
+import json
 import re
 
 SITE_CODE = "bmw_bps"
@@ -170,6 +171,38 @@ def parse_list_item(one: dict, site: str = SITE_CODE) -> dict | None:
     if not isinstance(one, dict) or not one.get("source_id"):
         return None
     text = str(one.get("text") or "")
-    return {"site": site, "source_id": str(one["source_id"]),
-            "price_unit": "won", "site_model": text[:80],
-            "detail_status": "not_requested"}
+    out = {"site": site, "source_id": str(one["source_id"]),
+           "price_unit": "won", "site_model": text[:80],
+           "detail_status": "not_requested"}
+    # ★★★★★ 09-05 (4-8) — ★ **사진은 목록이 준다.**
+    #   ★★★ 가이드 실측 09-04 — ★ 마스터 「★ `?site=bmw_bps` ★ 사진과 내 리스트가 있지?」.
+    #     ★ 배포에서 재니 ★ 사진 `src` 가 ★ **빈 값**이었다 — ★ 우리가 URL 을 안 갖고 있었다.
+    #     ★ ★ 두드려 찾았다 — ★ 목록(`list.php?ca_id=10`)이 ★ 이미 준다:
+    #       ★ ★ `…/data/item/{it_id}/thumb-…_230x0.jpg` (★ 상세는 `_640x0` 로 더 큰 것).
+    #   ★ **크기를 안 박는다** — ★ 실측 09-05 에 ★ `_230x0` 였다 (가이드 글은 `_247x0`).
+    #     ★ ★ 사이트가 바꿔도 ★ 안 깨지게 ★ 크기 자리를 안 본다
+    #   ★ 상세를 또 두드리지 않는다 — ★ 리볼트·볼보와 ★ 같은 자리다
+    photos = [u for u in (one.get("photo"),) if u]
+    if photos:
+        out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+    return out
+
+
+# ★ 목록 HTML 에서 ★ 매물번호 → 사진 주소.  ★ 크기 자리를 안 박는다 (`S14`)
+RE_LIST_THUMB = re.compile(
+    r'''/data/item/(\d+)/(thumb-[^"'\s>]+\.(?:jpg|jpeg|png|gif))''',
+    re.I)
+
+
+def list_photos(html: str, base_url: str = "") -> dict:
+    """★ 목록 한 쪽 → ★ `{매물번호: 사진 주소}` (4-8).
+
+    ★ 목록이 ★ **이미 주는 것**을 뽑는다 — ★ 상세를 또 두드리지 않는다.
+    ★ 없으면 ★ 빈 표다 — ★ 지어내지 않는다
+    """
+    out: dict = {}
+    for sid, name in RE_LIST_THUMB.findall(html or ""):
+        out.setdefault(str(sid),
+                       f"{base_url.rstrip('/')}/data/item/{sid}/{name}"
+                       if base_url else f"/data/item/{sid}/{name}")
+    return out

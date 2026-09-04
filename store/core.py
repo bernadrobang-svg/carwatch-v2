@@ -345,6 +345,51 @@ def _today(parsed: dict) -> str:
 NOT_A_VALUE = {"displacement_cc": (0,)}
 
 
+_PHOTO_MAX: int | None = None
+
+
+def _photo_max() -> int:
+    """★ 한 매물에 담을 사진 수 상한 (3A-2).  ★ 정본은 `config/web.json` (`S14`)."""
+    global _PHOTO_MAX
+
+    if _PHOTO_MAX is None:
+        import json as _j
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+        try:
+            with open(_o.path.join(root, "config", "web.json"),
+                      encoding="utf-8") as f:
+                _PHOTO_MAX = int(_j.load(f).get("photo_max_per_listing") or 0)
+        except (OSError, ValueError, TypeError):
+            _PHOTO_MAX = 0
+    return _PHOTO_MAX
+
+
+def _cap_photos(parsed: dict) -> dict:
+    """★★★★★ 3A-2 (마스터 확정 09-04) — ★ **사진을 스무 장에서 자른다.**
+
+    ★ 마스터 — 「★ 사진은 ★ **URL 로만** · ★ **스무 장까지**」.
+    ★ 실측 09-05 — ★ 상한이 없어 ★ 볼보 **4,358자** · KB **2,868자**까지 부풀었고
+      ★ ★ 스무 장을 넘는 매물이 ★ **1,480건**이었다.
+    ★★ 자르는 자리는 ★ **여기 하나**다 — ★ 열두 파서에 따로 적으면 ★ 한 군데가 샌다.
+    ★ 차례를 지킨다 — ★ 앞에서부터 스무 장.  ★ 첫 장이 ★ 목록·카드에 쓰는 것이다
+    ★ 상한이 0 이면 ★ 안 자른다 (config 가 끈 것이다)
+    """
+    cap = _photo_max()
+    raw = parsed.get("photo_list_json")
+    if not cap or not raw:
+        return parsed
+    try:
+        got = json.loads(raw) if isinstance(raw, str) else raw
+    except (ValueError, TypeError):
+        return parsed                 # ★ 못 읽는 것은 ★ 손대지 않는다
+    if not isinstance(got, list) or len(got) <= cap:
+        return parsed
+    return {**parsed,
+            "photo_list_json": json.dumps(got[:cap], ensure_ascii=False)}
+
+
 def _drop_non_values(parsed: dict) -> dict:
     """★ 값이 아닌 것을 ★ 넣기 전에 뺀다.  ★ 위 `NOT_A_VALUE` 참고."""
     for key, bad in NOT_A_VALUE.items():
@@ -425,6 +470,7 @@ def upsert_core(conn: sqlite3.Connection, parsed: dict, observed_at: str) -> int
     """
     parsed = _drop_non_values(parsed)
     parsed = _drop_impossible_origin(parsed)
+    parsed = _cap_photos(parsed)          # ★ 3A-2 — 스무 장에서 자른다
     from contracts import shape_violations
 
     bad = shape_violations(parsed)

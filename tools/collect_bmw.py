@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import json as _j
 import re
 import sys
 import time
@@ -93,6 +94,7 @@ def main() -> int:
     #   ★ BMW·볼보는 ★ 상세가 없다.  ★ 목록 쪽이 ★ 원문의 전부다
     pages: list = []
     walls = 0
+    shots: dict = {}          # ★ 09-05 (4-8) — 매물번호 → 목록이 준 사진
     # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」.  ★ 안 늘어 멈췄을 때만 참이다
     done = False
     for page in range(1, MAX_PAGES + 1):
@@ -108,6 +110,10 @@ def main() -> int:
             done = True
             break
         before = len(seen)
+        # ★ 09-05 (4-8) — ★ 사진도 함께 뽑는다.  ★ 목록이 이미 준다
+        from parse.bmw_bps.mapping import list_photos as _list_photos
+
+        shots.update(_list_photos(raw, base))
         for sid, block in RE_ITEM.findall(raw):
             text = " ".join(RE_TAG.sub(" ", block).split())
             if text and sid not in seen:
@@ -125,6 +131,10 @@ def main() -> int:
                "site_model": text[:80], "detail_status": "not_requested"}
         if known:
             row["site_model_group"] = known
+        # ★ 09-05 (4-8) — ★ 목록이 준 사진을 함께 넣는다
+        if shots.get(sid):
+            row["photo_list_json"] = _j.dumps([shots[sid]],
+                                              ensure_ascii=False)
         rows.append(row)
     ours = [r for r in rows if r.get("site_model_group")]
     print(f"★ 우리 대상 — {len(ours)}건 / {len(rows)}건 "

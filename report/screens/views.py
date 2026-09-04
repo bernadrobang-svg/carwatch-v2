@@ -663,6 +663,11 @@ class SoldRow:
     said_sold: bool
     said_label: str | None       # 「판매완료」 · 「예약중」 · None
     detail_url: str | None
+    # ★★★★★ 09-05 (3A-3 · 마스터 확정) — ★ 「★ 팔린차 화면에
+    #   ★ **「그 사이트가 내려 사진이 없습니다」** — ★ 빈 자리로 두지 마라」
+    #   ★ 실측 09-05 — ★ `gone` **3,076건** 중 ★ 사진이 있는 것이 ★ **1,553건**이다.
+    #     ★ ★ 나머지 절반은 ★ **빈 자리**였다 — ★ 까닭을 안 적었다
+    photo_note: str | None = None
 
 
 @dataclass(frozen=True)

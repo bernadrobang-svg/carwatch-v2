@@ -324,7 +324,7 @@ def _total_points() -> float:
 
 
 
-def _photo_note(site, photos, base: str, ready) -> str | None:
+def _photo_note(site, photos, base: str, ready, gone: bool = False) -> str | None:
     """★★★★★ 09-02 (1부 1-4 · `RULES.md` 2) — ★ 사진이 없으면 ★ **까닭**을 낸다.
 
     ★ 마스터께서 09-01 에 ★ 「왜 안 보이지」를 ★ 네 번 물으셨다.
@@ -336,6 +336,20 @@ def _photo_note(site, photos, base: str, ready) -> str | None:
     """
     if photo_url(photos, base):
         return None
+    # ★★★★★ 09-05 (3A-3) — ★ **내려간 매물은 까닭이 다르다.**
+    #   ★ 마스터 — 「★ 팔린차 화면에 ★ **「그 사이트가 내려 사진이 없습니다」**」.
+    #   ★ ★ 「우리가 못 받았다」도 ★ 「그 매물에 없다」도 아니다 —
+    #   ★ ★ ★ **사이트가 내려서** 없는 것이다.  ★ 셋을 섞지 않는다
+    if gone:
+        return "그 사이트가 내려 사진이 없습니다"
+    # ★ 09-05 — ★ 주소는 있는데 ★ **브라우저가 막는** 자리 (http ↔ https)
+    first = (photo_urls(photos, base) or [None])[0]
+    if first and _blocked_by_https(first):
+        name = (_site_labels().get(str(site)) or str(site or "이 사이트"))
+        # ★ 받침이 있으면 「이」다 — ★ 「셀렉션가」는 틀린 말이다 (아래 은/는과 같은 셈)
+        last = name[-1]
+        jong = ("가" <= last <= "힣") and (ord(last) - 0xAC00) % 28
+        return f"{name}{'이' if jong else '가'} https 를 안 줘서 사진을 못 보입니다"
     name = (_site_labels().get(str(site)) or str(site or "이 사이트"))
     if site and ready is not None and str(site) not in ready:
         # ★ 「보배드림**는**」은 틀린 말이다.  ★ 받침이 있으면 「은」이다.
@@ -418,7 +432,46 @@ def photo_url(photos_json: str | None, base: str) -> str | None:
     #   ★ ★ 고치면 ★ 목록 대표 사진은 ★ 그대로 안 나온다.
     #   ★ ★ ★ 같은 일을 두 군데 적으면 ★ 한 군데만 고치는 일이 생긴다 (`S14`)
     got = photo_urls(photos_json, base)
-    return got[0] if got else None
+    # ★★★★★ 09-05 (4-8 · 3A-3) — ★ **https 화면에 http 그림은 ★ 안 뜬다.**
+    #   ★★ 실측 09-05 — ★ BMW 사진 **아홉 장**을 꽂았더니 ★ `<img>` 는 아홉인데
+    #     ★ ★ ★ **뜬 것이 0/9** 였다 — ★ 브라우저가 ★ `Mixed Content` 로 막는다.
+    #     ★ ★ 두드려 보니 ★ `bavarian-bps.co.kr` 은 ★ **http 200 · https 000** —
+    #     ★ ★ ★ 그 사이트가 ★ **https 를 아예 안 준다**.
+    #   ★★★ 「붙였다」고 적을 뻔했다 — ★ 그것이 이 프로젝트가 막으려는 ★ **선언과 실제의 괴리**다.
+    #   ★ 그래서 ★ **주소는 그대로 두되**(참말이다) ★ 화면에는 안 낸다 —
+    #     ★ ★ 빈 자리로 두지 않고 ★ `_photo_note` 가 ★ **까닭을 적는다** (`RULES.md` 2).
+    #   ★ 프록시로 돌려 보이는 것은 ★ 「그림을 내려받지 마라」(3A-1)와 부딪힌다 —
+    #     ★ ★ **가이드 몫으로 냈다** (회차 「여쭐 것」)
+    first = got[0] if got else None
+    if first and _blocked_by_https(first):
+        return None
+    return first
+
+
+_DEPLOY_HTTPS: bool | None = None
+
+
+def _deploy_is_https(root: str = ".") -> bool:
+    """★ 배포가 https 인가.  ★ 정본은 `config/deploy.json` 이다 (`S14`)."""
+    global _DEPLOY_HTTPS
+
+    if _DEPLOY_HTTPS is None:
+        try:
+            got = load_config(os.path.join(root, "config", "deploy.json"))
+            _DEPLOY_HTTPS = str((got or {}).get("base_url") or "").startswith(
+                "https://")
+        except (OSError, ValueError, TypeError):
+            _DEPLOY_HTTPS = False
+    return bool(_DEPLOY_HTTPS)
+
+
+def _blocked_by_https(url: str) -> bool:
+    """★ 이 그림이 ★ **브라우저에 막히는가** (Mixed Content).
+
+    ★ https 쪽에 ★ `http://` 그림을 실으면 ★ 브라우저가 안 띄운다 —
+      ★ ★ `<img>` 는 있고 ★ 사람 눈에는 없다.  ★ 그것이 가장 나쁜 꼴이다
+    """
+    return str(url or "").startswith("http://") and _deploy_is_https()
 
 
 def market_price(origin_won, year_month, as_of, target_key, dep: dict):
@@ -1960,8 +2013,14 @@ def view_listings(account: Account, conn: sqlite3.Connection,
     #   ★ 늘 세면 ★ 쪽마다 쿼리가 하나씩 는다 —
     #   ★ ★ 실측 09-02 — ★ `/` 가 21 → **22** 로 상한을 넘었다.
     #   ★★ 거의 모든 쪽은 ★ 사진이 다 있다 — ★ 그때는 ★ **한 번도 안 센다**
+    # ★★★★★ 09-05 — ★ 「안 쟀다」는 ★ **`None`** 이다.  ★ `frozenset()` 이 아니다.
+    #   ★ `_photo_note` 는 ★ `ready is not None` 이면 ★ **「그 사이트는 한 장도 없다」**로
+    #   ★ ★ 읽는다 — ★ 빈 집합을 주면 ★ **모든 사이트가 「못 받았다」**가 된다.
+    #   ★★ 실측 09-05 (브라우저) — ★ `/listings` 가 ★ 엔카 매물에
+    #     ★ ★ 「**엔카는 사진을 아직 못 받았습니다**」라 했다 —
+    #     ★ ★ ★ 엔카는 사진이 ★ **16,227건** 있다.  ★ 화면이 거짓말을 했다
     _psites = (photo_ready_sites(conn)
-               if any(not r[16] for r in recs) else frozenset())
+               if any(not r[16] for r in recs) else None)
     return [_row(conn, r, labels, fin_cfg, first + i + 1, flt.calc_version,
                  opt_prices, axes, changes, base, site_tpl, _psites, km_unit,
                  monthly_unit, dep_cfg, state_by, market_by, high_km, root)
@@ -3867,6 +3926,9 @@ def view_sold(account: Account, conn, root: str = ".", limit: int = 30,
             title=" ".join(str(x) for x in (model, trim) if x) or str(tk or ""),
             spec=spec, price_won=price, price_first_won=first_won.get(lid),
             photo_url=photo, first_seen=seen, gone_at=gone,
+            # ★ 3A-3 — ★ 빈 자리에 ★ **까닭**을 낸다.  ★ 내려간 매물은 말이 다르다
+            photo_note=_photo_note(site, photo, "", None, gone=True)
+            if not photo else None,
             days=_days_between(seen, gone), gap_pct=gap,
             said_sold=said,
             said_label=words.get(str(ss or "").upper()),
@@ -4486,7 +4548,7 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     # ★ 빈 사진이 있을 때만 센다 — ★ 늘 세면 ★ 쪽마다 쿼리가 하나 는다 (`V11-34`)
     _psites = (photo_ready_sites(conn)
                if any(not _first_photo(r[10], root) for r in rows)
-               else frozenset())
+               else None)          # ★ 09-05 — 「안 쟀다」는 None 이다 (위와 같은 자리)
     labels = _labels(root)
     sites = _site_labels(root)
     # ★★★★★ 09-01 — ★ `V11-69` · `V11-120`.  ★ `/listings` 가 쓰는 것을 그대로 쓴다
