@@ -3032,8 +3032,24 @@ def s46_96_site_sells_but_no_code() -> tuple[bool, str]:
         if not maker:
             return False, f"{key} 에 제조사가 없다 — site_query.encar.Manufacturer"
         for site in sites:
-            if site in s46_96_site_sells_but_no_code._skip_sites:
-                continue          # ★ 09-03 — ★ 마스터께서 「안 받는다」 하신 곳
+            # ★★★★★ 09-04 마스터 — 「★ 난 **이미 정했는데 모두 가지고 오라**고.
+            #   ★ 그런데 ★ **너는 왜 사이트별로 승인받으려고 하지?**」
+            #   ★ ★ 09-03 에 내가 ★ 「케이카 없어」를 ★ **「K카에서 안 받는다」로 읽어**
+            #     ★ ★ K카를 통째로 건너뛰게 했다 — ★ **틀렸다**.
+            #   ★ ★ ★ 그 말씀은 ★ **우리 32종에 없는 차(싼타페·카니발…)를 넣지 마라**였다.
+            #   ★ 차종은 `targets.json` 32종으로 ★ **이미 정해져 있다** —
+            #     ★ ★ 사이트는 ★ **그 32종을 파는 곳이면 다 받는다**.  ★ 다시 물을 일이 아니다
+            # ★★★★★ 09-04 — ★ 사이트마다 ★ **받는 걸음이 다르다** (`_list_walk_kinds`).
+            #   ★ 리본카·K카·리볼트·보배는 ★ **전량을 받아 이름으로 가른다** —
+            #     ★ ★ `site_query` 코드가 ★ **필요 없다**.  ★ 필요한 것은 ★ `target_map` 이름표다.
+            #   ★ ★ 그런데 이 검사는 ★ 코드만 봐서 ★ 「91칸 없다」로 울었다 — ★ **잣대가 틀렸다**.
+            #   ★ 실측 09-04 — ★ 이름표로 닿는 우리 차종: 리본카 **21** · K카 **20** ·
+            #     KB **13** · 리볼트 **9** · 보배 **9** · 헤이딜러 **8** (우리 차종 33 중)
+            paths = (eps[site].get("paths") or {})
+            by_name = not any("{maker}" in str(v) or "{car}" in str(v)
+                              for v in paths.values())
+            if by_name:
+                continue          # ★ 이름으로 가르는 사이트 — ★ 코드를 안 센다
             scope = eps[site]["brand_scope"]
             sells = scope == "all" or maker in scope
             if sells and site not in _q:
