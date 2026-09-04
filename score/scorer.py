@@ -80,6 +80,41 @@ def _certified_credit(policy: ScoringPolicy, snapshot) -> tuple:
     return frozenset(rule.get("axes") or ()), float(rule.get("ratio") or 0.0)
 
 
+def axis_points(v: Verdict, policy: ScoringPolicy,
+                snapshot=None) -> dict:
+    """★★★★★ 축마다 ★ **`earned` 에 실제로 더해지는 점수** (마스터 지시 09-05 ①).
+
+    ★★★ 지시 — 「★ `runner.py:1855` 에 ★ `score` 를 넣어라.
+      ★ 값은 ★ `v.values[comp]` × 규칙 → 점수.  ★ `max_points` 는 이미 넣고 있다」
+    ★★ 규칙을 ★ **여기 한 자리**에 둔다 — ★ `score()` 도 이것을 쓴다.
+      ★ ★ 두 벌로 적으면 ★ 갈린다 (이 저장소가 거듭 겪은 것이다 · `S14`).
+    ★ 규칙 —
+      ① `policy.skipped(comp)`        → ★ 표에 아예 안 넣는다 (전 매물 스킵)
+      ② `excluded` · 값이 없음 · `None` → ★ **`None`** (「0점」과 「안 봤다」는 다르다)
+      ③ 인증중고차 몫 — ★ 근거 없는 축이 ★ 0 이면 ★ `배점 × 비율` (마스터 08-28)
+      ④ 그 밖                          → ★ `v.values[comp]` 그대로
+    ★ 돌려줌  `{comp: 점수 또는 None}`
+    """
+    credit_axes, credit_ratio = _certified_credit(policy, snapshot)
+    out: dict = {}
+    for comp in COMPONENTS:
+        if policy.skipped(comp):
+            continue
+        if comp in v.excluded or comp not in v.values:
+            out[comp] = None
+            continue
+        got = v.values[comp]
+        if got is None:
+            out[comp] = None
+            continue
+        got = float(got)
+        if (comp in credit_axes and credit_ratio and got == 0.0
+                and v.sources.get(comp) in UNCONFIRMED_SOURCES):
+            got = float(policy.comp(comp)) * credit_ratio
+        out[comp] = got
+    return out
+
+
 def score(v: Verdict, policy: ScoringPolicy,
           absolute: list[str] | None = None,
           snapshot=None) -> ScoreResult:
@@ -111,6 +146,8 @@ def score(v: Verdict, policy: ScoringPolicy,
     grade_base = total
     confirmed = 0.0
     by_axis: dict[str, float] = {}
+    # ★ 축별 점수 — ★ 규칙은 `axis_points()` 하나다 (09-05 지시 ①)
+    per_comp = axis_points(v, policy, snapshot)
 
     for comp in COMPONENTS:
         if policy.skipped(comp):
@@ -128,22 +165,20 @@ def score(v: Verdict, policy: ScoringPolicy,
             #   ★ ★ 그래서 ★ 만점에서 ★ **등급에서 뺀 축만** 덜어낸다.
             #     ★ 지금 `GRADE_EXCLUDED_AXES` 는 비어 있으므로 ★ 곧 910 이다
             grade_base -= weight
-        if comp in v.excluded or comp not in v.values:
+        # ★★★★★ 09-05 — ★ 점수는 ★ `axis_points()` 하나가 낸다 (지시 ①).
+        #   ★ `runner.py` 가 ★ `result_axis.score` 에 넣는 것과 ★ **같은 값**이어야 한다 —
+        #   ★ ★ 두 벌로 적으면 ★ 화면과 표가 갈린다.  ★ `S46-272` 가 그것을 본다
+        got = per_comp.get(comp)
+        if got is None:
             excluded_points += weight
             continue
-        value = v.values[comp]
-        if value is None:
-            # excluded 없이 NULL 이 오면 판정기가 계약을 어긴 것이다
-            excluded_points += weight
-            continue
-        value = float(value)
+        raw_value = v.values.get(comp)
+        value = float(got)
         confirmed_here = v.sources.get(comp) not in UNCONFIRMED_SOURCES
-        # ★★ 인증중고차 몫 — ★ 그 사이트의 ★ 그 축이 ★ **근거 없이 0** 일 때만 준다.
-        #   ★ 근거가 있으면 ★ 그 값이 옳다 — ★ 덧붙이지 않는다.
-        #   ★ 0 이 아니면 ★ 이미 점수가 났다 — ★ 역시 덧붙이지 않는다
-        if (comp in credit_axes and not confirmed_here and value == 0.0
-                and credit_ratio):
-            value = weight * credit_ratio
+        # ★★ 인증중고차 몫을 받았나 — ★ 값이 늘었으면 그것이다 (규칙은 위 한 자리)
+        if (comp in credit_axes and not confirmed_here and credit_ratio
+                and raw_value is not None and float(raw_value) == 0.0
+                and value > 0.0):
             credit_given += value
             # ★ 받은 몫은 ★ 「근거 있는 축의 합」에도 넣는다 (규격 `_pending_note`) —
             #   ★ ★ 그래야 ★ 「판정 중」에서 풀린다

@@ -6929,6 +6929,58 @@ def s46_270_hidden_text_ruler():
     return True, "가려진 글자를 아홉 점으로 세고 캡처를 남긴다"
 
 
+
+
+def s46_273_axis_score_filled():
+    """S46-273 — ★ **축 점수(`result_axis.score`)를 넣는가** (마스터 지시 09-05 ①).
+
+    ★★★ 마스터 — 「★ 지시문 맨 앞에 올린다 — ★ `runner.py:1855` 에 ★ `score` 를 넣어라.
+      ★ 값은 ★ `v.values[comp]` × 규칙 → 점수.  ★ `max_points` 는 **이미 넣고 있다**」
+    ★★ 실측 09-05 — ★ `result_axis` **502,936행** 가운데
+      ★ ★ `max_points` 가 빈 것은 ★ **0건**인데 ★ `score` 는 ★ **전부 NULL** 이었다.
+      ★ ★ ★ 한 줄에 ★ 두 칸을 적으면서 ★ **한쪽만** 넣고 있었다.
+    ★ 왜 큰일인가 — ★ 화면은 ★ `value` 로 점수를 세는데 ★ 표에는 ★ 점수 칸이 비어 있다.
+      ★ ★ 그러면 ★ 「축이 몇 점을 냈나」를 ★ **표만 보고는 못 센다** —
+      ★ ★ ★ 「선언과 실제의 괴리」다 (`docs/guide/00_개요.md`).
+    ★ 잣대 —
+      ① 넣는 코드가 있는가 (`runner.py` 의 `result_axis` INSERT 에 `score`)
+      ② 규칙이 ★ **한 자리**인가 (`score.scorer.axis_points`)
+      ③ ★ 표에 ★ `score` 가 NULL 인 행이 ★ **없는가** (`excluded` 는 뺀다 — 「안 봤다」다)
+    """
+    src = _read(ROOT / "collect" / "runner.py")
+    bad = []
+    seg = src.split("INSERT OR REPLACE INTO result_axis", 1)
+    if len(seg) < 2 or "score" not in seg[1][:400]:
+        bad.append("★ runner 가 `score` 를 안 넣는다")
+    if "axis_points" not in src:
+        bad.append("★ 규칙이 `axis_points` 한 자리가 아니다")
+    if "def axis_points" not in _read(ROOT / "score" / "scorer.py"):
+        bad.append("★ `score/scorer.py` 에 `axis_points` 가 없다")
+    if bad:
+        return False, " · ".join(bad)
+
+    import sqlite3
+
+    db = ROOT / "carwatch.db"
+    if not db.is_file():
+        return True, "DB 가 없다 — 코드만 봤다"
+    conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    try:
+        # ★ `excluded` 는 ★ 「안 봤다」다 — ★ `score` 가 비어 있는 것이 맞다
+        n, null = conn.execute(
+            "SELECT COUNT(*), SUM(CASE WHEN score IS NULL THEN 1 ELSE 0 END)"
+            " FROM result_axis WHERE excluded = 0").fetchone()
+    except sqlite3.Error as e:
+        return False, f"표를 못 읽었다 — {e}"
+    finally:
+        conn.close()
+    if not n:
+        return True, "판정 행이 없다 — 잴 것이 없다"
+    if null:
+        return False, (f"★ `result_axis.score` 가 빈 행 {null:,}개 "
+                       f"/ {n:,}개 — ★ 판을 다시 돌려야 채워진다")
+    return True, f"축 점수가 다 차 있다 ({n:,}행)"
+
 def s46_271_screen_checked_in_browser():
     """S46-271 — ★ 화면을 ★ **브라우저로 열어** 가려진 글자를 세는가 (마스터 09-04).
 
@@ -7109,6 +7161,8 @@ CHECKS = (
     ("S46-274", "기본 차례가 등급 > 값 > 추천인가", s46_274_default_sort_grade_price_rank),
     ("S46-273", "엔카 배너가 마스터가 받은 것을 세는가", s46_273_encar_banner_counts_browser),
     ("S46-272", "사진을 URL 로만 스무 장까지 두는가", s46_272_photo_url_only_max20),
+    ("S46-273", "축 점수(result_axis.score)를 넣는가",
+     s46_273_axis_score_filled),
     ("S46-271", "화면을 브라우저로 열어 재는가", s46_271_screen_checked_in_browser),
     ("S46-270", "가려진 글자를 세는 자가 있는가", s46_270_hidden_text_ruler),
     ("S46-269", "추천 차종과 단추 크기가 확정대로인가", s46_269_recommend_set_and_chips),

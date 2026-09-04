@@ -1848,16 +1848,30 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             actx = AxisContext(snap, dicts, policy,
                                TargetSpec(snap.target_key or "", "", {}), tc)
             v = analyze_listing(actx)
+            # ★★★★★ 09-05 (마스터 지시 ① · `S46-272`) — ★ **`score` 를 넣는다.**
+            #   ★ 지시 — 「★ 값은 ★ `v.values[comp]` × 규칙 → 점수.
+            #     ★ `max_points` 는 이미 넣고 있다」
+            #   ★★ 실측 09-05 — ★ `result_axis` **502,936행**이 ★ `score` 전부 **NULL** 이었다.
+            #     ★ ★ `max_points` 는 다 차 있었다 — ★ **한쪽만 넣고 있었다.**
+            #   ★ 규칙은 ★ `score.scorer.axis_points()` ★ **한 자리**다 —
+            #     ★ ★ 채점기(`score()`)가 ★ `earned` 를 만들 때 쓰는 것과 ★ **같은 표**다.
+            #     ★ ★ ★ 여기서 다시 셈하면 ★ 화면과 표가 갈린다 (`S14`)
+            #   ★ 못 매긴 축은 ★ `None` 이다 — ★ 「0점」과 ★ 「안 봤다」를 안 섞는다
+            from score.scorer import axis_points as _axis_points
+
+            _pts = _axis_points(v, policy, snap)
             for comp in COMPONENTS:
                 if comp not in v.values:
                     continue
                 conn.execute(
                     "INSERT OR REPLACE INTO result_axis"
                     "(listing_id,calc_version,dict_version,axis,value,source,"
-                    " prio,excluded,max_points) VALUES (?,?,?,?,?,?,?,?,?)",
+                    " prio,excluded,max_points,score)"
+                    " VALUES (?,?,?,?,?,?,?,?,?,?)",
                     (lid, ctx.calc_version, ctx.dict_version, comp,
                      v.values[comp], v.sources[comp], v.prios[comp],
-                     1 if comp in v.excluded else 0, policy.comp(comp)))
+                     1 if comp in v.excluded else 0, policy.comp(comp),
+                     _pts.get(comp)))
                 rows += 1
             # ★ 충돌을 버리지 않는다 (A-5 · V3-35).
             #   같은 우선순위에서 다른 값이 나온 것은 규칙이 겹쳤다는 뜻이다.
