@@ -3272,6 +3272,18 @@ p.chips,.chips{display:flex!important;flex-wrap:wrap!important;gap:6px!important
 .meta a,.chip-good,.chip-bad,.meta .chip{padding:4px 8px;font-size:11px;
   line-height:1.3;height:auto;display:inline-flex;align-items:center}
 
+/* ★★★★★ 17차 (09-04) — ★ **띄우기에 힘을 준다**
+   ★ 실측 09-04 — ★ 배포에서 `.head` 가 ★ 여전히 `flex` 였다 —
+     ★ ★ 내 `.head{display:block}` 이 ★ **더 센 규칙에 눌렸다**.
+   ★ 힘을 주니 ★ 볼보 겹침 **4 → 3** · 렉서스 **5 → 3**.
+     ★ ★ 다만 ★ **BMW 는 20 → 24 로 나빠진다** — ★ 색 칩이 많아서다.
+     ★ ★ ★ 둘을 저울질해 ★ **넣는다** — ★ 열두 곳 가운데 ★ BMW 하나만 는다 */
+.head{display:block!important}
+.head .mob{float:left!important;margin:0 10px 4px 0!important;display:block!important;width:auto!important}
+.head .cardbody{display:block!important;width:auto!important;margin-left:0!important;
+  max-width:100%!important;flex:none!important}
+.head::after{content:'';display:block;clear:both}
+
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
    ★ ★ **49 → 52 로 더 나빠졌다** — ★ 안 넣는다.
@@ -3292,6 +3304,11 @@ p.chips,.chips{display:flex!important;flex-wrap:wrap!important;gap:6px!important
      ① 칩을 안 고친 채 — 볼보 3→4 · 렉서스 4→3 · ★ **BMW 92 → 115** ★ 나빴다
      ② 칩을 고친 뒤   — ★ **BMW 73 → 56** ★ 좋아졌다 → ★ **넣었다** (14차)
      ★ ★ **한 번 나빴다고 버리지 않는다** — ★ 앞을 고치면 뜻이 달라진다
+   ★★ 09-04 — ★ **BMW 의 남은 겹침(81)은 ★ 「더 보기」 색 패널이다**.
+     ★ `DETAILS.chip` 안 `P.chips`(284×195)에 ★ 「크리미 (186)」(108×31) 같은 칩이 많다.
+     ★ ★ 재서 뺀 것 — ★ `details.chip{position:relative;overflow:visible}` ·
+       `details.chip>.chips{position:static;height:auto}` · `[open]` 여백 —
+       ★ ★ ★ **셋 다 81 에서 하나도 안 줬다**.  ★ 다른 길을 찾아야 한다
 ★★★ **다섯 차례 돌려 ★ 63 → 43 (32% 줄었다)**.  ★ 스무 가지를 시험해 ★ **다섯만 남겼다.
    ★ ★ 나머지 열다섯은 ★ 안 주거나 ★ 더 나빠졌다 — ★ 그 수를 위에 적어 뒀다** */
    ★ ★ ★ 「재고 · 넣고 · 다시 재고 · **나빠지면 되돌린다**」 (RULES.md 2-3) */

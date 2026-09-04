@@ -2,13 +2,13 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 216개 · 총 79,032줄
+파일 216개 · 총 79,103줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
 | `validate/v0_guide.py` | 7,246 | 가이드 문서 자체를 검사한다 (V0 계열). |
 | `validate/v11_web.py` | 5,057 | V11 표현 계층 검증 (14장 STEP 153). |
-| `report/screens/build.py` | 4,640 | 화면 데이터 생성. |
+| `report/screens/build.py` | 4,668 | 화면 데이터 생성. |
 | `web/views.py` | 2,939 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,329 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `collect/runner.py` | 2,057 | 수집 실행 규칙. |
@@ -39,8 +39,8 @@
 | `tests/test_admin_flow.py` | 575 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tests/test_admin.py` | 567 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
+| `tools/browser_diff.py` | 554 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `web/app.py` | 547 | 화면 조립 (14장 STEP 144 · 147 · 149). |
-| `tools/browser_diff.py` | 545 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
@@ -61,6 +61,7 @@
 | `parse/kcar/mapping.py` | 333 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
+| `parse/revolt/mapping.py` | 294 | 리볼트 (revolt.kr) — 전기차 전용 인증중고차 (규격 `docs/REVOLT_API.md` · `S46-200`). |
 | `tests/test_crosssite.py` | 293 | 12장 다중 사이트 시험. |
 | `tests/test_dict.py` | 293 | 4장 키·코드·사전 시험. |
 | `tests/test_screens.py` | 292 | 10장 화면 시험. |
@@ -74,7 +75,6 @@
 | `report/exports/export.py` | 269 | 내보내기. |
 | `web/server.py` | 266 | HTTP 서버 (14장 STEP 141 · 150). |
 | `tests/test_report.py` | 263 | 9장 리포트 시험. |
-| `parse/revolt/mapping.py` | 260 | 리볼트 (revolt.kr) — 전기차 전용 인증중고차 (규격 `docs/REVOLT_API.md` · `S46-200`). |
 | `parse/reborncar/mapping.py` | 259 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
 | `tests/test_watch.py` | 259 | 11장 후보 추적 시험. |
 | `tools/collect_kcar.py` | 254 | K카 상세 수집 (명령서 `ORDER_20260822_r515.md` 3-3 · 단계 10). |
@@ -237,10 +237,10 @@ _read:25  s43_2_axis_ids:32  s44_4_scope_written:70  s44_5_site_consistent:102  
 _web_sources:644  run:656  _late_checks:766  _templates_with_form:830  _spec_routes:851  _screen_routes:876  _routing_table_check:900  _count:937  ctx_account:944  _view_exists:950  _tpl:971  _all_templates:976  _screen_checks:981  _query_budget_check:1235  _import_origin_check:1314  _import_step4_check:1349  _browser_origin_check:1373  _browser_confirm_check:1391  _browser_chunk_check:1416  _status_screen_checks:1474  _status_liveness_check:1512  _menu_label_check:1561  _menu_paths:1589  _listing_rows:1614  _cli_caps:1632  _cli_only_check:1646  _stale_notice_check:1691  _trim_detail_check:1727  _option_sum_check:1750  _heart_line_check:1777  _recommend_terms_check:1798  _lease_checks:1817  _pick_filter_checks:1877  _shortfall_check:1916  _cash_limit_check:1935  _py_files:1966  _menu_no_path_check:1980  _listing_paging_checks:1998  _photo_checks:2034  _compare_shape_check:2075  _detail_shape_checks:2125  _filter_shape_checks:2203  _row_shape_checks:2273  _menu_shape_checks:2345  _sian_css_checks:2428  _cell_of:2503  _link_tip_checks:2526  _origin_link_check:2540  _origin_opens_bad:2585  _choose_check:2634  _order_filter_checks:2650  _checks_cfg:2693  _photo_size_by_screen_check:2702  _template_leak_check:2726  _em_dash_check:2752  _card_limits:2788  _cells_of:2805  _matches:2833  _grid_areas:2853  _hidden_cells:2883  _brace_block:2908  _place_cards:2922  _card_shape_checks:3044  _why_order_spec:3142  _why_order_check:3159  _width_policy:3194  _width_checks:3201  _chart_check:3300  _row_link_checks:3331  _screen_contradiction_check:3367  _chunk_check:3389  _csrf_reuse_check:3429  _origin_price_check:3473  _with_includes:3509  _v1_parity_checks:3531  _media_blocks:3621  _responsive_checks:3642  _dead_links:3730  _null_link_check:3744  _sian_visual_check:3808  _purchase_cost_checks:3872  _report_popup_check:3965  _detail_photo_check:4039  _raw_shown_checks:4090  _compare_diff_check:4177  _chunk_message_check:4241  _whole_char:4268  _chunk_boundary_check:4281  _cell_squeeze_check:4369  _static_version_check:4424  _axis_state_check:4442  _three_values_check:4485  _photo_size_check:4524  _render_metrics_checks:4550  _browser_scope_checks:4649  _import_opened_steps_check:4670  _import_resume_check:4698  _watch_invite_check:4717  _post_smoke_check:4761  _template_roots:4834  _loop_fields:4844  _context_supplied_check:4866  _first_item:4937  _has_field:4951  _table_counts:4957  _save_button_check:4964  _probe:5021  _scratch:5039
 ```
 
-### `report/screens/build.py` — 4,640줄
+### `report/screens/build.py` — 4,668줄
 
 ```
-load_config:48  site_badge:119  axis_heads:138  _grade_order:148  _not_ranked:161  _labels:177  viewer_state:181  _unknown_cfg:191  is_unknown:200  chip:216  _stamp:252  _bulk_axes:256  confirm_ratio:277  _bulk_changes:288  _total_points:315  _photo_note:327  photo_urls:349  photo_url:401  market_price:424  _days_between:441  _ceil_to:456  _bulk_market:471  _bulk_state:510  not_join_months:543  _left:566  _warranty_state:575  _axis_state:613  _sites_cfg:681  _row:694  _pen_rows:954  _pen_axes:965  _pen_sum:985  _pen_words:993  _ym_parts:1006  _age_label:1018  _km_per_year:1039  _pen_top:1059  _view_cfg:1073  _grade_rank_sql:1087  _sold_words:1142  _order_sold:1160  order_clause:1175  _site_detail_urls:1205  _source_url:1214  _view_str:1244  _lease_kinds:1249  paused_hidden:1256  _topic:1293  paired_count:1304  excluded_hidden:1327  lease_hidden:1343  _option_blind_sites:1365  _option_group_match:1382  fuel_groups:1396  _fuel_where:1407  _paused_sites:1433  _listings_where:1462  model_counts:1742  count_listings:1769  view_listings:1786  _market_gap_label:1944  _score_bars:1960  _group_caps:1991  _view_list:2012  _view_dict:2017  _soh_low:2022  _view_int:2031  _bucket:2036  _high_km:2043  _option_prices:2052  recommend_funnel:2064  _bulk_upside:2082  view_recommend:2097  recommend_reason:2132  excluded_groups:2177  view_why:2195  _compare_conclusion:2205  view_compare:2228  market_trims:2295  view_market:2317  _web_cfg:2353  _median:2367  _with_height:2372  _price_bins:2387  _group_prices:2408  _by_year:2426  _year_line:2443  _by_trim:2469  _other_targets:2487  count_dealers:2496  _dealer_targets:2502  region_of:2522  _region_short:2549  _dealer_region:2569  view_dealers:2584  view_run:2620  _rank1_of:2626  view_dashboard:2634  _bars:2771  _grade_counts:2786  _relax_sim:2804  _axis_shortfall:2825  _progress:2844  _gone_and_watch:2859  _e_reasons:2902  _today_changes:2920  _step_rows:2945  _bulk_spark:2962  view_watch:2998  _man:3098  _mmdd:3112  _chg:3125  _gap:3140  _days_since:3155  _pending_values:3180  _done_items:3189  view_notready:3215  _unmatched_rows:3256  _report_files:3301  view_reports:3333  _warranty_until:3389  _verdict_lines:3438  _manwon_str:3480  _unknown_lines:3487  _price_history:3519  _alternatives:3536  _rep_flt:3572  view_detail:3578  _quartiles_by_target:3620  market_by_target:3644  _grade_order:3681  _grade_step:3696  _miss_axes_bulk:3702  _sold_int:3750  _sold_where:3758  _days_between:3768  view_sold:3783  _sold_bins:3858  _pair_rows:3916  _lease_words:3962  view_track:3976  _accident_bulk:4104  duplicate_listings:4119  _today_counts:4171  _notready_counts:4195  axis_zero_rates:4215  _recommend_year_from:4255  _recommend_models:4267  _active_targets:4339  view_recommend_tabs:4358  _ym_dash:4572  _first_photo:4580  _site_labels:4590  _recommend_axes:4597  _axis_labels:4631
+load_config:48  site_badge:119  axis_heads:138  _grade_order:148  _not_ranked:161  _labels:177  viewer_state:181  _unknown_cfg:191  is_unknown:200  chip:216  _stamp:252  _bulk_axes:256  confirm_ratio:277  _bulk_changes:288  _total_points:315  _photo_note:327  photo_urls:349  photo_url:401  market_price:424  _days_between:441  _ceil_to:456  _bulk_market:471  _bulk_state:510  not_join_months:543  _left:566  _warranty_state:575  _axis_state:613  _sites_cfg:681  _row:694  _pen_rows:954  _pen_axes:965  _pen_sum:985  _pen_words:993  _ym_parts:1006  _age_label:1018  _km_per_year:1039  _pen_top:1059  _view_cfg:1073  _grade_rank_sql:1087  _sold_words:1142  _order_sold:1160  order_clause:1175  _site_detail_urls:1205  _source_url:1242  _view_str:1272  _lease_kinds:1277  paused_hidden:1284  _topic:1321  paired_count:1332  excluded_hidden:1355  lease_hidden:1371  _option_blind_sites:1393  _option_group_match:1410  fuel_groups:1424  _fuel_where:1435  _paused_sites:1461  _listings_where:1490  model_counts:1770  count_listings:1797  view_listings:1814  _market_gap_label:1972  _score_bars:1988  _group_caps:2019  _view_list:2040  _view_dict:2045  _soh_low:2050  _view_int:2059  _bucket:2064  _high_km:2071  _option_prices:2080  recommend_funnel:2092  _bulk_upside:2110  view_recommend:2125  recommend_reason:2160  excluded_groups:2205  view_why:2223  _compare_conclusion:2233  view_compare:2256  market_trims:2323  view_market:2345  _web_cfg:2381  _median:2395  _with_height:2400  _price_bins:2415  _group_prices:2436  _by_year:2454  _year_line:2471  _by_trim:2497  _other_targets:2515  count_dealers:2524  _dealer_targets:2530  region_of:2550  _region_short:2577  _dealer_region:2597  view_dealers:2612  view_run:2648  _rank1_of:2654  view_dashboard:2662  _bars:2799  _grade_counts:2814  _relax_sim:2832  _axis_shortfall:2853  _progress:2872  _gone_and_watch:2887  _e_reasons:2930  _today_changes:2948  _step_rows:2973  _bulk_spark:2990  view_watch:3026  _man:3126  _mmdd:3140  _chg:3153  _gap:3168  _days_since:3183  _pending_values:3208  _done_items:3217  view_notready:3243  _unmatched_rows:3284  _report_files:3329  view_reports:3361  _warranty_until:3417  _verdict_lines:3466  _manwon_str:3508  _unknown_lines:3515  _price_history:3547  _alternatives:3564  _rep_flt:3600  view_detail:3606  _quartiles_by_target:3648  market_by_target:3672  _grade_order:3709  _grade_step:3724  _miss_axes_bulk:3730  _sold_int:3778  _sold_where:3786  _days_between:3796  view_sold:3811  _sold_bins:3886  _pair_rows:3944  _lease_words:3990  view_track:4004  _accident_bulk:4132  duplicate_listings:4147  _today_counts:4199  _notready_counts:4223  axis_zero_rates:4243  _recommend_year_from:4283  _recommend_models:4295  _active_targets:4367  view_recommend_tabs:4386  _ym_dash:4600  _first_photo:4608  _site_labels:4618  _recommend_axes:4625  _axis_labels:4659
 ```
 
 ### `web/views.py` — 2,939줄
@@ -423,16 +423,16 @@ _spec_menu_paths:31  check:47  setup:53  test_bootstrap:65  test_auth:95  test_a
 _read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373  _md:468
 ```
 
+### `tools/browser_diff.py` — 554줄
+
+```
+pairs:35  look:48  main:298  hidden_text_report:464
+```
+
 ### `web/app.py` — 547줄
 
 ```
 menu_items:22  _tip:107  _label:112  empty_state:123  banner_of:142  _encar_blocked:203  _list_stale:234  static_version:260  build_page:288  check_post:309  redirect:331  take_flashes:351  _display_now:364  make_app:390  _Denied:523  build_context:531  _title_of:546
-```
-
-### `tools/browser_diff.py` — 545줄
-
-```
-pairs:35  look:48  main:298  hidden_text_report:464
 ```
 
 ### `tools/build_index.py` — 536줄
@@ -555,6 +555,12 @@ _shot_widths:32  _tmp_root:57  main:81  shot_paths:172  _localize_images:197  sh
 _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _origin_check:156  _warranty_sum_check:186  _tie_break_check:229  _axis_site_check:267  run:307
 ```
 
+### `parse/revolt/mapping.py` — 294줄
+
+```
+_int:37  _won:44  _ym:49  _photo_field:57  parse_list_item:76  parse_detail:119  options_of:164  warranty_of:175  _months_since:208  record_of:219  panels_of:262
+```
+
 ### `tests/test_crosssite.py` — 293줄
 
 ```
@@ -631,12 +637,6 @@ load_web_config:47  guard:60  _drain_chunk:92  TOO_LARGE:96  make_handler:105  s
 
 ```
 check:33  test_finance:40  test_display:97  _pipeline:113  test_layers:124  test_halt_layer:160  test_export:202
-```
-
-### `parse/revolt/mapping.py` — 260줄
-
-```
-_int:37  _won:44  _ym:49  parse_list_item:54  parse_detail:85  options_of:130  warranty_of:141  _months_since:174  record_of:185  panels_of:228
 ```
 
 ### `parse/reborncar/mapping.py` — 259줄
