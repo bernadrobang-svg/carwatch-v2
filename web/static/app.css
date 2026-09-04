@@ -6,6 +6,9 @@
 
 /* ── 0. 토큰 · 껍데기.  ★ 색 12 · 글꼴 2 밖의 값을 쓰지 않는다 (V11-13) ── */
 :root {
+  /* ★★ 09-04 — ★ **켠 단추의 글자색**.  ★ `--on-accent` 는 ★ 이미 어두운색이라 못 쓴다
+     ★ 실측 09-04 — 글자 rgb(25,31,40) · 바탕 rgb(49,130,246) → ★ **안 읽힌다** */
+  --btn-on-text:#ffffff;
   --bg:#ffffff;  --surface:#ffffff;  --surface2:#f9fafb;
   --line:#e5e8eb; --line2:#d1d6db;
   --text:#191f28; --dim:#8b95a1;     --faint:#b0b8c1;
@@ -3174,8 +3177,8 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
      ★ ★ **똑같은 파랑**이다.  ★ 그래서 ★ 「내 기준에 가까운 차」·「전체 2,527」이
      ★ ★ ★ **파란 상자만 보이고 글자가 사라졌다** (캡처 09-04).
    ★ 마스터 — 「★ **내가 보기 좋게 바꿔**」 */
-.btn.on,.mb.on,.tab.on,a.on{color:var(--on-accent)!important}
-.btn.on b,.mb.on b,.tab.on b,a.on b{color:var(--on-accent)!important}
+.btn.on,.mb.on,.tab.on,a.on{color:var(--btn-on-text)!important}
+.btn.on b,.mb.on b,.tab.on b,a.on b{color:var(--btn-on-text)!important}
 /* ★ 끈 단추는 ★ 읽히게 — ★ 바탕과 글자를 벌린다 */
 .btn,.mb{color:var(--text)}
 .btn.off,.mb.off{opacity:.55}
