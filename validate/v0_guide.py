@@ -392,6 +392,9 @@ def s45_3_spec_totals() -> tuple[bool, str]:
         "못 읽는다",              # f-table — 675 건 (갈래별 건수)
         "확인 안 됨 0/3,555",     # f-table — 3,555 는 매물 건수
         "mapping.py",            # SOURCE — 625 는 줄 수
+        "web/app.py`",           # ★ SOURCE — 555 는 ★ **줄 수**다 (09-05).
+                                 #   ★ `build_index.py` 가 세어 적는다 —
+                                 #   ★ ★ 배점이 아니다.  ★ `mapping.py` 와 같은 자리
         "j-admin-mock2.md`",     # INDEX — 495 는 줄 수 (자동 생성)
         "K카",                   # MULTISITE_MAPPING — 495 는 경위 서술
         "guide/03_이력.md`",      # INDEX — 850 은 줄 수 (자동 생성 · 08-30)
