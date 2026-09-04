@@ -7071,7 +7071,38 @@ def s46_274_default_sort_grade_price_rank():
     return True, "기본 차례가 등급 > 값 > 추천으로 규격에 있다"
 
 
+def s46_275_axis_score_persisted():
+    """S46-275 — ★ `result_axis.score` 를 ★ **저장하는가** (마스터 09-04 「왜 안 고치는데」).
+
+    ★★★ 실측 09-04 — ★ `result_axis` 가 ★ **17,962줄씩 있는데 ★ `score` 가 전부 NULL** 이다.
+      ★ 까닭 — ★ `collect/runner.py:1855` 의 `INSERT` 가
+        ★ ★ `(listing_id, calc_version, dict_version, axis, value, source,
+              prio, excluded, max_points)` ★ **아홉 칸만** 넣는다.
+        ★ ★ ★ 표에 `score` 칸이 있는데 ★ **넣는 곳이 한 군데도 없다**.
+    ★★ 값이 큰 결함이다 —
+      ★ 「시세·소모품이 0점」으로 보인 것도 ★ **이것 때문**이었다.
+      ★ ★ 그 둘만이 아니라 ★ **스물여덟 축 전부**가 0 이다.
+      ★ ★ ★ 그래서 ★ 「어느 축에서 몇 점을 잃었나」를 ★ **화면이 못 말한다**.
+    ★★★ 내가 오래 밀렸다 — ★ 밀린일대장에 있었는데 ★ **화면 CSS 만 붙들고 있었다**.
+      ★ ★ 마스터 — 「★ **왜 안 고치는데**」.
+    ★ 잣대 — ★ 그 `INSERT` 가 ★ `score` 를 담는가.
+    """
+    src = _read(ROOT / "collect" / "runner.py")
+    if not src:
+        return False, "collect/runner.py 를 못 읽었다"
+    i = src.find("INSERT OR REPLACE INTO result_axis")
+    if i < 0:
+        return False, "result_axis 를 넣는 자리를 못 찾았다"
+    seg = src[i:i + 420]
+    if "score" not in seg:
+        return False, ("★ `result_axis.score` 를 안 넣는다 — "
+                       "★ `collect/runner.py` 의 INSERT 에 ★ `score` 칸이 없다 "
+                       "(★ 17,962줄이 다 NULL)")
+    return True, "result_axis.score 를 저장한다"
+
+
 CHECKS = (
+    ("S46-275", "축 점수를 저장하는가", s46_275_axis_score_persisted),
     ("S46-274", "기본 차례가 등급 > 값 > 추천인가", s46_274_default_sort_grade_price_rank),
     ("S46-273", "엔카 배너가 마스터가 받은 것을 세는가", s46_273_encar_banner_counts_browser),
     ("S46-272", "사진을 URL 로만 스무 장까지 두는가", s46_272_photo_url_only_max20),
