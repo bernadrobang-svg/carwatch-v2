@@ -4252,6 +4252,18 @@ RECOMMEND_AXES: tuple = ("value.budget", "value.mileage", "state.year",
 RECOMMEND_TABS: tuple = ("1", "2", "3")
 
 
+def _recommend_year_from(root: str = ".") -> dict:
+    """★ 추천에 낼 ★ **가장 이른 연식** (4-3 · `recommend_year_from`).
+
+    ★ 정본은 ★ `config/targets.json` 이다 — ★ 코드에 차종도 연식도 안 박는다 (`S14`).
+    ★ 지금은 ★ `MODEL_Y = 2025-01`(주니퍼) 하나뿐이다 — ★ 늘면 그대로 걸린다
+    """
+    got = load_config(f"{root}/config/targets.json") or {}
+    return {k: v["recommend_year_from"] for k, v in got.items()
+            if isinstance(v, dict) and v.get("recommend_year_from")
+            and not k.startswith("_")}
+
+
 def _recommend_models(conn, where: list, args: list, picked: list,
                       names: dict, now: tuple = (),
                       calc_version: str | None = None) -> tuple:
@@ -4392,6 +4404,24 @@ def view_recommend_tabs(account: Account, conn: sqlite3.Connection,
     if picked:
         where = [*where, "l.target_key IN (" + ",".join("?" * len(picked)) + ")"]
         args = [*args, *picked]
+    # ★★★★★ 09-04 (4-3 · `S46-269`) — ★ **`recommend_year_from` 을 읽는다.**
+    #   ★★★ 마스터 확정 09-03 — 「★ 전기차랑 ★ **(모델Y는 주니퍼만)** ＋ 그랑콜레오스
+    #     ★ ＋ GV70 가솔린만 보이게 해줘」.
+    #   ★ 주니퍼는 ★ **2025-01 부터**다 (제원 실측 09-02 — 초기형 4,751 / 주니퍼 4,790).
+    #   ★★ 값은 ★ `config/targets.json` 이 정본이고 ★ 가이드가 넣었다 —
+    #     ★ ★ 그런데 ★ **아무도 안 읽고 있었다.**
+    #     ★ ★ ★ 실측 09-04 — ★ 추천에 든 모델Y **782대** 가운데
+    #       ★ ★ ★ ★ **518대가 초기형·연식 모름**이었다 (주니퍼는 264대).
+    #   ★ 연식을 ★ **모르는 것도 뺀다** — ★ 「주니퍼만」이라 하셨다.
+    #     ★ ★ 모르는 것을 넣으면 ★ 「아마 주니퍼일 것」이 된다 (금지 6)
+    #   ★ 연식 꼴이 두 가지다 — ★ `2025-01` 과 ★ `202501` (K카).  ★ 하이픈을 떼고 견준다
+    for _key, _since in _recommend_year_from(root).items():
+        if _key not in picked:
+            continue
+        where = [*where,
+                 "(l.target_key <> ? OR (l.year_month IS NOT NULL"
+                 "   AND REPLACE(l.year_month, '-', '') >= ?))"]
+        args = [*args, _key, str(_since).replace("-", "")[:6]]
     # ★ 고르개로 하나를 누르셨으면 ★ 그것만.  ★ 건수는 ★ **누르기 전 것**을 센다 —
     #   ★ 안 그러면 ★ 누른 차종만 남고 ★ 나머지가 다 0 이 된다
     model_where, model_args = list(where), list(args)

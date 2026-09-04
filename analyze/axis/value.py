@@ -159,18 +159,25 @@ def _market(ctx: AxisContext, v: Verdict) -> None:
         #   ★ 「★ 화면에 ★ 「24/30 (표본 부족 · 80%)」 — ★ **만점처럼 보이면 안 된다**」
         #   ★★ 0점도 아니고 ★ 만점도 아니다 — ★ **모르는 자리**를 그만큼만 채운다.
         #     ★ ★ 시세 축에만 쓴다 — ★ 다른 축에 옮기지 않는다 (`S46-221`)
+        # ★★★★★ 09-04 (4-7 · 시험자 9회차) — ★ **표본 수를 함께 낸다.**
+        #   ★ 범례가 ★ 「근거 코드 `market_median_N`」이라 적어 두었는데
+        #   ★ ★ 코드는 ★ `market_median` 만 냈다 — ★ **N 이 안 붙었다.**
+        #   ★ ★ ★ 그래서 화면은 ★ 「표본 N건」을 ★ **글자 N 그대로** 보였다.
+        #   ★ 뜻은 ★ `source_labels.json` 의 ★ `prefix` 가 ★ `{}` 로 치환한다 — 이미 있는 자리다
+        _n = int(s.market_sample_n or 0)
         share = r.get("market_unknown_ratio")
         if share is not None:
             got = round(float(share) * ctx.policy.comp(MARKET))
-            put(v, MARKET, got, PRIO_OBSERVED, "market_sample_short")
+            put(v, MARKET, got, PRIO_OBSERVED, f"market_sample_short_{_n}")
             return
-        put(v, MARKET, 0, PRIO_OBSERVED, "market_sample_short")
+        put(v, MARKET, 0, PRIO_OBSERVED, f"market_sample_short_{_n}")
         return
     pct = (median - s.price_current_won) / median * PCT
     per = float(r["market_per_percent_cheap" if pct >= 0
                   else "market_per_percent_over"])
     got = max(float(r["market_min"]), min(float(r["market_max"]), pct * per))
-    put(v, MARKET, round(got), PRIO_OBSERVED, "market_median")
+    put(v, MARKET, round(got), PRIO_OBSERVED,
+        f"market_median_{int(s.market_sample_n or 0)}")
 
 
 def analyze_value(ctx: AxisContext, v: Verdict) -> None:

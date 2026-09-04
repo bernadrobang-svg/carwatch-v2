@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import re as _re
 import sqlite3
 
 from report.finance import build_finance
@@ -654,7 +655,11 @@ def axis_mark(value, max_points, source: str | None, excluded: bool = False):
     금지  ★ 확인 못 한 것을 ★ `×` 로 적는 것 — ★ 「없다」와 「모른다」를 섞는 것이다
     """
     code = (source or "").split("+")[0]
-    if excluded or code in UNKNOWN_SOURCES:
+    # ★★★★★ 09-04 (4-7) — ★ 근거 코드에 ★ **표본 수**가 붙는다 (`market_sample_short_3`).
+    #   ★ 통째로 견주면 ★ 「모른다」가 ★ `×`(없다)로 새어 나간다 —
+    #   ★ ★ 그것이 ★ 이 함수가 막으려는 바로 그 잘못이다 (개정 325).  ★ 앞자리로 본다
+    _bare = _re.sub(r"_\d+$", "", code)
+    if excluded or code in UNKNOWN_SOURCES or _bare in UNKNOWN_SOURCES:
         return MARK_UNKNOWN, "확인하지 못했습니다"
     if value is None:
         return MARK_UNKNOWN, "확인하지 못했습니다"
