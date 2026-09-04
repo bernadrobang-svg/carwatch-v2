@@ -227,6 +227,14 @@ def _encar_blocked(at407: str | None, list_at: str | None) -> float | None:
     # ★ 막힌 뒤에 목록이 들어왔으면 ★ 이제 안 막힌 것이다
     if since > blocked_at:
         return None
+    # ★★★★★★ 09-04 — ★ **서버가 받은 407 은 ★ 잣대가 못 된다**.
+    #   ★ 마스터 — 「★ 내가 매일 브라우저로 수집했는데 ★ 왜 5일째라 하지?」
+    #   ★ 실측 — ★ 마스터께서 ★ **09-04 15:54** 에 받으셨는데 ★ 「5일째」가 떴다.
+    #   ★ ★ 까닭 — ★ 서버 판이 ★ **지금도 돌며 407 을 받는다**.  ★ `at407` 이 늘 최신이라
+    #     ★ ★ 마스터가 아무리 받으셔도 ★ **다시 막힌 것으로 셌다**.
+    #   ★★ 이제 `list_at` 은 ★ `origin='browser'` 만 본다 (`store/core.py`) —
+    #     ★ ★ 그러니 ★ **마스터가 받으신 날부터** 센다.
+    #   ★★★ 문턱(`encar_blocked_days`)은 ★ 아래 `days > limit` 이 이미 본다
     days = (_dt.now(since.tzinfo) - since).total_seconds() / SECONDS_PER_DAY
     return days if days > limit else None
 

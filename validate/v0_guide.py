@@ -7016,7 +7016,36 @@ def s46_272_photo_url_only_max20():
     return True, "사진은 URL 로만 두고 스무 장 상한이 규격에 있다"
 
 
+def s46_273_encar_banner_counts_browser():
+    """S46-273 — ★ 엔카 배너가 ★ **마스터가 받으신 것을 세는가** (마스터 09-04).
+
+    ★★★ 마스터 — 「★ 내가 **매일 브라우저로 수집했는데**
+      ★ ★ 왜 ★ **5일째 수집 안 됐다**고 하지?」
+    ★★ 실측 09-04 — ★ 엔카 목록 원문이 ★ `origin='browser'` **389건**이고
+      ★ 마지막이 ★ **09-04 15:54** 다.  ★ 마스터께서 어제 받으셨는데
+      ★ ★ 화면은 ★ 「**5일째 멈췄다**」고 했다.
+    ★★★ 까닭 — ★ `list_at` 이 ★ **origin 을 안 가렸고**,
+      ★ `encar_407_at` 은 ★ **서버 판이 지금도 받는 407** 을 본다.
+      ★ ★ 서버 판이 도는 한 ★ `at407` 이 늘 최신이라 ★ 마스터가 아무리 받으셔도
+        ★ ★ **다시 「막혔다」**가 됐다.
+    ★ 고침 — ★ `list_at` 을 ★ `origin='browser'` 로 좁혔다.
+    ★ 잣대 — ★ 그 질의가 ★ `origin='browser'` 를 담는가.
+    """
+    src = _read(ROOT / "store" / "core.py")
+    if not src:
+        return False, "store/core.py 를 못 읽었다"
+    seg = ""
+    i = src.find('"list_at"')
+    if i > 0:
+        seg = src[i:i + 400]
+    if "origin='browser'" not in seg:
+        return False, ("★ 엔카 배너가 ★ 서버가 받은 것까지 센다 — "
+                       "★ `list_at` 을 `origin='browser'` 로 좁혀라")
+    return True, "엔카 배너가 마스터가 받으신 것만 센다"
+
+
 CHECKS = (
+    ("S46-273", "엔카 배너가 마스터가 받은 것을 세는가", s46_273_encar_banner_counts_browser),
     ("S46-272", "사진을 URL 로만 스무 장까지 두는가", s46_272_photo_url_only_max20),
     ("S46-271", "화면을 브라우저로 열어 재는가", s46_271_screen_checked_in_browser),
     ("S46-270", "가려진 글자를 세는 자가 있는가", s46_270_hidden_text_ruler),
