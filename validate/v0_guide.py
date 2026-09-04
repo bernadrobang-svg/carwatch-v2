@@ -7212,7 +7212,33 @@ def s46_276_encar_collect_no_gap():
     return True, f"엔카 수집에 구멍이 없다 ({when})"
 
 
+def s46_277_admin_query_allows_order_limit():
+    """S46-277 — ★ 관리 질의가 ★ **조회를 쓰기로 오인하지 않는가** (마스터 09-05).
+
+    ★★★ 마스터 — 「★ **조회용 쿼리야 ★ 쓰기용은 아니야**」
+    ★ 실측 09-05 — ★ `ORDER BY` 와 `LIMIT` 이 ★ **함께** 있으면 막힌다.
+      ★ ★ `GROUP BY` 만 · `ORDER BY` 만 · `LIMIT` 만은 ★ 된다.
+    ★★ 까닭 — ★ `sql_reject_reason()` 이 ★ `EXPLAIN` 에 쓰기 명령이 있으면 막는데,
+      ★ ★ **정렬이 임시 표를 쓴다** — ★ `OpenEphemeral`(P1=1) ★ `Delete P1=1`
+        ★ `IdxInsert P1=1`.  ★ ★ **우리 표가 아니라 임시 커서**인데 쓰기로 셌다.
+    ★★★ 고치는 법 — ★ **커서를 따라간다**.  ★ `P1` 이 임시 커서면 ★ 쓰기가 아니다.
+      ★ 가이드가 아홉 가지로 재서 확인했다 — ★ 쓰기 다섯은 ★ **그대로 걸린다**.
+    ★ 잣대 — ★ 그 함수가 ★ 임시 커서를 가리는가.
+    """
+    src = _read(ROOT / "store" / "adminops.py")
+    if not src:
+        return False, "store/adminops.py 를 못 읽었다"
+    i = src.find("def sql_reject_reason")
+    seg = src[i:i + 2200] if i > 0 else ""
+    if "OpenEphemeral" not in seg and "TEMP" not in seg:
+        return False, ("★ 관리 질의가 ★ **정렬을 쓰기로 오인한다** — "
+                       "★ `ORDER BY` ＋ `LIMIT` 이 막힌다.  "
+                       "★ 임시 커서(`OpenEphemeral`·`SorterOpen`)를 가려라")
+    return True, "관리 질의가 임시 커서를 가려 조회를 막지 않는다"
+
+
 CHECKS = (
+    ("S46-277", "관리 질의가 조회를 막지 않는가", s46_277_admin_query_allows_order_limit),
     ("S46-276", "엔카 수집에 구멍이 없는가", s46_276_encar_collect_no_gap),
     ("S46-275", "축 점수를 저장하는가", s46_275_axis_score_persisted),
     ("S46-274", "기본 차례가 등급 > 값 > 추천인가", s46_274_default_sort_grade_price_rank),
