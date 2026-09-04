@@ -462,7 +462,8 @@ BOX_OVERLAP_JS = r"""
 
 
 def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"),
-                       widths=(390, 900), shot_dir: str = "outputs/shots"):
+                       widths=(390, 900), shot_dir: str = "outputs/shots",
+                       report: str | None = None):
     """★ 배포를 ★ **브라우저로 열어** ★ 가려진 글자를 세고 ★ **캡처를 남긴다**.
 
     ★ 마스터 09-04 — 「★ 브라우저로 테스트하라고 ★ 검증하라고도 했지?」
@@ -527,11 +528,19 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
     #   ★ ★ 그리고 ★ **날짜를 적는다** — ★ 낡으면 ★ 「안 쟀다」로 본다
     rep = {"_잰_때": _dt.datetime.now(_dt.timezone.utc).isoformat(),
            "_잰_곳": base_url, "합": total, "상자겹침합": boxes, "자리": out}
-    with open(REPORT, "w", encoding="utf-8") as f:
+    # ★★★★★ 09-04 — ★ **낼 곳을 고를 수 있게 한다.**
+    #   ★ `S46-271` 은 ★ `outputs/hidden_text.json` 하나를 읽는다.
+    #   ★ ★ 그런데 ★ 한 화면만 따로 재려고 돌리면 ★ **그 파일을 덮어** ★ 검사가
+    #   ★ ★ ★ 「전체」 대신 ★ 그 한 화면의 수를 ★ 전체로 읽는다 [실측 09-04 — 내가 그랬다].
+    #   ★ 곁가지로 잴 때는 ★ `report=` 로 ★ **다른 곳에 적는다**
+    out_path = report or REPORT
+    _os.makedirs(_os.path.dirname(out_path) or ".", exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
         _j.dump(rep, f, ensure_ascii=False, indent=1)
     print(f"\n★ 가려진 글자 {total}개 · ★ 상자 겹침 {boxes}개 ·"
           f" 캡처 {len(out)}장 — {shot_dir}/")
-    print(f"★ 잰 수를 적었다 — {REPORT}  (★ 0 이 아니면 `S46-271` 이 운다)")
+    print(f"★ 잰 수를 적었다 — {out_path}"
+          + ("  (★ 0 이 아니면 `S46-271` 이 운다)" if out_path == REPORT else ""))
     return out
 
 

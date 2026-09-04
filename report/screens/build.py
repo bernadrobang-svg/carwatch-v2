@@ -1206,9 +1206,37 @@ def _site_detail_urls(root: str = ".") -> dict:
     """★★★ 사이트별 원문 주소 꼴 (명령서 72장).  ★ 코드에 박지 않는다.
 
     ★ 못 잰 사이트는 값이 None 이다 — ★ 「모른다」다.  ★ 링크를 안 낸다
+    ★★★★★ 09-04 (4-8) — ★ `config/endpoints.json` 의 ★ **`web_url`** 도 읽는다.
+      ★★★ 가이드 실측 09-04 — 「★ 링크·사진은 ★ **없는 게 아니라 ★ 안 낸 것**이었다」.
+        ★ 리볼트 `https://www.revolt.kr/cars/{source_id}` ·
+        ★ 볼보셀렉트 `https://selekt.volvocars.co.kr{detail_path}` 를 ★ 넣어 두셨다.
+      ★★ `web.json` 이 ★ **먼저**다 — ★ 거기 값이 있으면 ★ 안 덮는다.
+        ★ ★ 두 벌로 적지 않으려고 ★ **가이드가 잰 자리를 그대로 읽는다** (`S14`)
+      ★ `{detail_path}` 는 ★ 그 사이트의 ★ `paths.detail` 로 편다 —
+        ★ ★ 볼보는 `/kr/vehicles/volvo/{model}/{source_id}` 이고
+        ★ ★ ★ `{model}` 은 ★ 우리 `site_model` 이다 (`xc40` · `v60-cross-country`).
+        ★ ★ ★ ★ 그러면 ★ `_source_url` 의 ★ **두 칸 틀**이 그대로 받는다
     """
-    return dict(load_config(
+    got = dict(load_config(
         os.path.join(root, "config", "web.json")).get("site_detail_url") or {})
+    ends = load_config(os.path.join(root, "config", "endpoints.json")) or {}
+    for site, spec in ends.items():
+        if site.startswith("_") or not isinstance(spec, dict):
+            continue
+        if got.get(site):
+            continue                      # ★ web.json 이 먼저다
+        web = spec.get("web_url")
+        if not web:
+            continue
+        web = str(web)
+        if "{detail_path}" in web:
+            path = str((spec.get("paths") or {}).get("detail") or "")
+            if not path:
+                continue                  # ★ 펼 길이 없다 — ★ 지어내지 않는다
+            web = web.replace("{detail_path}",
+                              path.replace("{model}", "{site_model}"))
+        got[site] = web
+    return got
 
 
 def _source_url(site: str, source_id: str, tpl: dict | None,

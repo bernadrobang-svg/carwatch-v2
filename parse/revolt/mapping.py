@@ -51,6 +51,28 @@ def _ym(text):
     return f"{m.group(1)}-{m.group(2)}" if m else None
 
 
+_PHOTO_FIELD: str | None = None
+
+
+def _photo_field() -> str:
+    """★ 사진 칸 이름 — ★ `config/endpoints.json` 의 `photo_field` 가 정본이다 (`S14`)."""
+    global _PHOTO_FIELD
+
+    if _PHOTO_FIELD is None:
+        import os as _o
+
+        root = _o.path.dirname(_o.path.dirname(_o.path.dirname(
+            _o.path.abspath(__file__))))
+        try:
+            with open(_o.path.join(root, "config", "endpoints.json"),
+                      encoding="utf-8") as f:
+                _PHOTO_FIELD = str((json.load(f).get(SITE_CODE) or {})
+                                   .get("photo_field") or "")
+        except (OSError, ValueError):
+            _PHOTO_FIELD = ""
+    return _PHOTO_FIELD
+
+
 def parse_list_item(one: dict) -> dict | None:
     """목록 한 줄 → `core_listing` 한 줄.  ★ 목록이 이미 많이 준다."""
     if not isinstance(one, dict) or not one.get("hash_id"):
@@ -76,6 +98,18 @@ def parse_list_item(one: dict) -> dict | None:
     if ym:
         out["year_month"] = ym
         out["reg_at"] = str(one["initial_registration_date"])[:10]
+    # ★★★★★ 09-04 (4-8) — ★ **사진을 꽂는다.**
+    #   ★★★ 가이드 실측 09-04 — 「★ 링크·사진은 ★ **없는 게 아니라 ★ 안 낸 것**이었다.
+    #     ★ 사진은 ★ 목록이 ★ `thumbnail_image_url` 로 준다 —
+    #     ★ ★ **받고 있으면서 화면에 안 냈다**」
+    #   ★ 실측 09-04 — ★ 리볼트 살아 있는 매물 **47건**이 ★ 사진 **0건**이었고
+    #     ★ ★ `photo_list_json` 에 ★ **글자 `"None"`** 이 들어 있었다.
+    #   ★ 칸 이름은 ★ `config/endpoints.json` 의 ★ `photo_field` 가 정본이다 —
+    #     ★ ★ 코드에 안 박는다 (`S14`).  ★ 없으면 ★ 아무것도 안 넣는다 (지어내지 않는다)
+    photos = [u for u in (one.get(_photo_field()),) if u] or [
+        u for u in (one.get("thumbnail_image_urls") or []) if u]
+    if photos:
+        out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
     # ★ 인증중고차다 — ★ 사이트의 사실이다 (`merchandise_type: 'certified'`)
     if one.get("merchandise_type") == "certified":
         out["site_home_verify"] = 1

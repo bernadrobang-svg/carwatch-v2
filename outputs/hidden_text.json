@@ -1,43 +1,43 @@
 {
- "_잰_때": "2026-09-04T10:49:27.327103+00:00",
+ "_잰_때": "2026-09-04T13:40:04.024242+00:00",
  "_잰_곳": "https://54.180.227.109.sslip.io",
- "합": 2,
- "상자겹침합": 15,
+ "합": 7,
+ "상자겹침합": 18,
  "자리": {
   "listings_390": {
-   "leaf": 51,
-   "hidden": 0,
-   "examples": [],
-   "overlap": 5,
+   "leaf": 59,
+   "hidden": 1,
+   "examples": [
+    "옵션가 (0/9)"
+   ],
+   "overlap": 6,
    "overlap_examples": [
     "취향 / ♡ 4px",
-    "2024-12 / 19,792km 10px",
-    "옵션가 / 1종\n        10px",
-    "1종\n        / 3,245만 12px",
-    "3,245만 / -100만 · 1회 9px"
+    "17.9 / 2024-12 3px",
+    "2024-12 / 19,792km 9px",
+    "옵션가 / 1종\n        12px",
+    "3,245만 / -100만 · 1회 11px",
+    "시세보다 85만 싸 / 45만 12px"
    ],
    "shot": "outputs/shots/listings_390.png"
   },
   "listings_900": {
-   "leaf": 94,
-   "hidden": 2,
-   "examples": [
-    "옵션가 (3/9)",
-    "엔카에서 보기 ↗ (0/3)"
-   ],
-   "overlap": 10,
+   "leaf": 102,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 12,
    "overlap_examples": [
-    "옵션가 / 4종\n        10px",
-    "3,300만 / -70만 · 3회 9px",
+    "옵션가 / 4종\n        12px",
+    "3,300만 / -70만 · 3회 11px",
     "시세보다 70만 비 / 47만 12px",
     "♡ / 1.5 E-TECH 19px",
-    "2024-12 / 정인모터스 9px",
-    "옵션가 / 1종\n        10px"
+    "10.0 / 19,792km 3px",
+    "2024-12 / 정인모터스 9px"
    ],
    "shot": "outputs/shots/listings_900.png"
   },
   "recommend_390": {
-   "leaf": 40,
+   "leaf": 41,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
@@ -45,15 +45,22 @@
    "shot": "outputs/shots/recommend_390.png"
   },
   "recommend_900": {
-   "leaf": 50,
-   "hidden": 0,
-   "examples": [],
+   "leaf": 56,
+   "hidden": 6,
+   "examples": [
+    "81 (0/3)",
+    "67 (0/3)",
+    "68 (0/3)",
+    "12 (0/3)",
+    "10 (0/3)",
+    "29 (0/3)"
+   ],
    "overlap": 0,
    "overlap_examples": [],
    "shot": "outputs/shots/recommend_900.png"
   },
   "track_390": {
-   "leaf": 56,
+   "leaf": 54,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
