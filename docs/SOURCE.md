@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 216개 · 총 79,134줄
+파일 216개 · 총 79,153줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -37,9 +37,9 @@
 | `parse/encar/mapping.py` | 625 | 엔카 원문 → CORE 필드 (L3). |
 | `store/raw.py` | 617 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
 | `tests/test_admin_flow.py` | 575 | 관리 화면 동작 시험 (13장 · 14장). |
+| `tools/browser_diff.py` | 573 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `tests/test_admin.py` | 567 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
-| `tools/browser_diff.py` | 554 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `web/app.py` | 547 | 화면 조립 (14장 STEP 144 · 147 · 149). |
 | `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
@@ -411,6 +411,12 @@ _compress_cfg:59  pack_body:70  raw_body:91  _text_of:107  batch:134  tick:164  
 check:32  _env:38  _cfg:55  _post:60  _get:65  flow_config:71  flow_scoring:107  _rescore:172  _sum:233  _dist:240  flow_targets:247  flow_registry:282  flow_run:322  flow_query:355  flow_api:381  flow_tools:418  flow_users:440  flow_requests:485  flow_permission:527  main:540
 ```
 
+### `tools/browser_diff.py` — 573줄
+
+```
+pairs:35  look:48  main:298  hidden_text_report:464
+```
+
 ### `tests/test_admin.py` — 567줄
 
 ```
@@ -421,12 +427,6 @@ _spec_menu_paths:31  check:47  setup:53  test_bootstrap:65  test_auth:95  test_a
 
 ```
 _read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373  _md:468
-```
-
-### `tools/browser_diff.py` — 554줄
-
-```
-pairs:35  look:48  main:298  hidden_text_report:464
 ```
 
 ### `web/app.py` — 547줄

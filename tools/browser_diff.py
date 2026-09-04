@@ -498,9 +498,28 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
                 pg.goto(base_url + path, timeout=150000,
                         wait_until="domcontentloaded")
                 pg.wait_for_timeout(1500)
-                pg.evaluate("window.scrollTo(0, document.body.scrollHeight*0.35)")
-                pg.wait_for_timeout(500)
-                got = pg.evaluate(HIDDEN_TEXT_JS)
+                # ★★★★★★ 09-04 — ★ **자가 「지금 보이는 데」만 센다**.
+                #   ★ 개발측 v378 이 ★ BMW 를 **67·170** 이라 했고 ★ 나는 **20·81** 이었다.
+                #   ★ ★ 같은 판에서 ★ **굴린 자리만 바꿔** 재 보니 —
+                #     안 굴림 **0·4** · 35% **33·97** · 40% **20·81** · 70% **1·4**.
+                #   ★ ★ ★ **둘 다 참말이었다** — ★ 자리가 달랐을 뿐이다.
+                #   ★★ 그러니 ★ **여러 자리를 재고 ★ 가장 나쁜 것을 낸다** —
+                #     ★ 그래야 ★ 누가 재도 ★ 같은 수가 나온다
+                worst = {"hidden": -1}
+                for at in (0.0, 0.2, 0.35, 0.5, 0.7, 0.85):
+                    pg.evaluate(
+                        f"window.scrollTo(0, document.body.scrollHeight*{at})")
+                    pg.wait_for_timeout(320)
+                    one = pg.evaluate(HIDDEN_TEXT_JS)
+                    one["overlap"] = pg.evaluate(BOX_OVERLAP_JS)["overlap"]
+                    one["at"] = at
+                    if one["hidden"] + one["overlap"] > \
+                            worst["hidden"] + worst.get("overlap", 0):
+                        worst = one
+                pg.evaluate(
+                    f"window.scrollTo(0, document.body.scrollHeight*{worst['at']})")
+                pg.wait_for_timeout(320)
+                got = worst
                 # ★★★★★ 09-04 — ★ **상자 겹침도 여기서 센다.**
                 #   ★ `BOX_OVERLAP_JS` 는 ★ 아래에 적혀만 있고
                 #   ★ ★ **아무도 안 불렀다** — ★ 그래서 ★ 겹침 수는 ★ 손으로 세야 했다.

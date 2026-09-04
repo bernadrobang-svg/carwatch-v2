@@ -3284,6 +3284,16 @@ p.chips,.chips{display:flex!important;flex-wrap:wrap!important;gap:6px!important
   max-width:100%!important;flex:none!important}
 .head::after{content:'';display:block;clear:both}
 
+/* ★★★★★★★ 18차 (09-04) — ★ **닫힌 「더 보기」가 안 감춰지고 있었다**
+   ★★★ 마스터께서 짚으신 ★ BMW 화면이 나빴던 ★ **진짜 뿌리**다.
+   ★ 실측 09-04 — ★ `<details>` 가 ★ **닫혀 있는데 속이 그대로 그려져** ★ 아래를 덮었다.
+     ★ ★ `details` 셋을 ★ **열어 보니** ★ 겹침이 ★ **96 → 2** 로 떨어졌다 —
+       ★ ★ ★ 열면 자리를 차지해 ★ 안 덮고, ★ 닫으면 ★ **자리 없이 겹친다**.
+   ★ 고친 뒤 — ★ BMW 가려짐 **38 → 4** · 겹침 **96 → 8**.
+   ★★ 앞서 세 가지(`position:relative` · `.chips{position:static}` · `[open]` 여백)를
+     ★ 재서 다 뺐는데 ★ **열어 놓고 안 재서** ★ 뿌리를 못 봤다 */
+details:not([open])>*:not(summary){display:none}
+
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
    ★ ★ **49 → 52 로 더 나빠졌다** — ★ 안 넣는다.
