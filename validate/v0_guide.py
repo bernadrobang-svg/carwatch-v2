@@ -7044,7 +7044,35 @@ def s46_273_encar_banner_counts_browser():
     return True, "엔카 배너가 마스터가 받으신 것만 센다"
 
 
+def s46_274_default_sort_grade_price_rank():
+    """S46-274 — ★ 모든 화면의 ★ **기본 차례가 등급 > 값 > 추천**인가 (마스터 09-04).
+
+    ★★★ 마스터 — 「★ 모든 화면의 ★ **디폴트 순서**는 ★ **가격이 낮은 것부터**.
+      ★ 즉 ★ **등급 > 판매가격 > 추천** 순으로」
+    ★ 09-01 의 ★ 「등급 무시하고 348 로만 세운다」는 ★ **물린다**.
+      ★ ★ 348 점수는 ★ 그대로 내고 ★ **③에서 쓴다**.
+    ★ 맨 뒤로 — ★ `EXCLUDED`·`PENDING`(등급이 없다) · ★ **값이 없는 것**
+      ★ ★ 값 없음을 0 으로 보면 ★ **맨 앞에 온다** — ★ 가장 싼 차로 읽힌다.
+    ★ 잣대 — ① 규격이 그 차례를 담는가 ② 「등급 무시」가 남아 있지 않은가.
+    """
+    spec = _read(ROOT / "docs" / "RECOMMEND_SCREEN.md")
+    if not spec:
+        return False, "RECOMMEND_SCREEN.md 를 못 읽었다"
+    bad = []
+    for want, label in (("등급 > 판매가격 > 추천", "차례(등급>값>추천)"),
+                        ("낮은 것이 위", "「값은 낮은 것이 위」"),
+                        ("맨 뒤", "「값 없음·등급 없음은 맨 뒤」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    if "★ ★ **등급을 무시한다**" in spec:
+        bad.append("★ 「등급을 무시한다」가 아직 남아 있다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "기본 차례가 등급 > 값 > 추천으로 규격에 있다"
+
+
 CHECKS = (
+    ("S46-274", "기본 차례가 등급 > 값 > 추천인가", s46_274_default_sort_grade_price_rank),
     ("S46-273", "엔카 배너가 마스터가 받은 것을 세는가", s46_273_encar_banner_counts_browser),
     ("S46-272", "사진을 URL 로만 스무 장까지 두는가", s46_272_photo_url_only_max20),
     ("S46-271", "화면을 브라우저로 열어 재는가", s46_271_screen_checked_in_browser),

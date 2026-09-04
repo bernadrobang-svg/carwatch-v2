@@ -9,16 +9,16 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 52,554줄 · 3,782KB**
+**132파일 · 52,583줄 · 3,784KB**
 
 ★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,266줄
+- CHECKS.md 1,268줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,399줄
+- guide/03_이력.md 1,400줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
@@ -34,7 +34,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,266 | 157 |
+| `CHECKS.md`  ★ | 1,268 | 157 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -50,12 +50,12 @@
 | `OPTION_CATALOG.md` | 321 | 16 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
-| `RECOMMEND_SCREEN.md` | 541 | 27 |
+| `RECOMMEND_SCREEN.md` | 561 | 28 |
 | `REVOLT_API.md` | 217 | 11 |
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 786 | 61 |
+| `SOURCE.md` | 792 | 61 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,154 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
@@ -122,7 +122,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,399 | 1,070 |
+| `guide/03_이력.md`  ★ | 1,400 | 1,071 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |

@@ -2,11 +2,11 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-검사 **577개**
+검사 **578개**
 
 | 갈래 | 몇 개 | 누가 |
 |---|--:|---|
-| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **577** | 개발측 |
+| ② 죽은 검사 — 통과도 실패도 한 적 없다 | **578** | 개발측 |
 | ④ 규격에 근거가 없는 검사 | **22** | 가이드가 판단 |
 | ⑤ ★ 규격에 있는데 코드에 없는 검사 | **31** | 개발측 |
 
@@ -97,9 +97,9 @@
 | `S46-95` | 배포된 화면이 다 열리는가 | fatal | `validate/v0_guide.py:2935` | **★ 없음** | 없음 | guide/03_이력.md:788 · guide/03_이력.md:789 · guide/03_이력.md:792 |
 | `S46-96` | 사이트가 파는 차종인데 코드가 없는가 | warn | `validate/v0_guide.py:2991` | **★ 없음** | 없음 | ROADMAP_20260830.md:95 · guide/00_인수인계.md:154 · guide/03_이력.md:791 |
 | `S46-97` | 원문이 source_id 로 매물에 이어지는가 | fatal | `validate/v0_guide.py:2352` | **★ 없음** | 없음 | guide/00_인수인계.md:134 · guide/03_이력.md:792 · guide/03_이력.md:879 |
-| `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:2817` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:108 · UI_REVIEW.md:1880 · guide/03_이력.md:793 |
+| `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:2817` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:128 · UI_REVIEW.md:1880 · guide/03_이력.md:793 |
 | `S46-99` | 로그인하면 관심·관리가 열리는가 | fatal | `validate/v0_guide.py:2420` | **★ 없음** | 없음 | guide/03_이력.md:794 · guide/03_이력.md:879 · guide/03_이력.md:1009 |
-| `S46-100` | 시안의 낱말 차례가 화면과 같은가 | fatal | `validate/v0_guide.py:2587` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:108 · guide/03_이력.md:804 · guide/03_이력.md:879 |
+| `S46-100` | 시안의 낱말 차례가 화면과 같은가 | fatal | `validate/v0_guide.py:2587` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:128 · guide/03_이력.md:804 · guide/03_이력.md:879 |
 | `S46-102` | 「전기만」에 전기 아닌 것이 없는가 | fatal | `validate/v0_guide.py:2724` | **★ 없음** | 없음 | UI_REVIEW.md:1133 · guide/03_이력.md:814 · guide/06_오판대장.md:240 |
 | `S46-103` | 시안의 크기·자리 값을 담았는가 | fatal | `validate/v0_guide.py:2776` | **★ 없음** | 없음 | guide/03_이력.md:819 · guide/03_이력.md:847 · guide/06_오판대장.md:242 |
 | `S46-115` | 시키는 화면이 스스로 안 바뀌는가 | fatal | `validate/v0_guide.py:1308` | **★ 없음** | 없음 | UI_REVIEW.md:1338 · guide/03_이력.md:850 |
@@ -175,18 +175,18 @@
 | `S46-188` | 「화면에 없다」를 열어 보고 적었는가 | fatal | `validate/v0_guide.py:4578` | **★ 없음** | 없음 | guide/06_오판대장.md:315 |
 | `S46-191` | 차종별 예산이 원칙대로인가 | fatal | `validate/v0_guide.py:4602` | **★ 없음** | 없음 | guide/03_이력.md:1175 · guide/03_이력.md:1215 · guide/03_이력.md:1217 |
 | `S46-192` | 선호차종이 등록부에 다 있는가 | fatal | `validate/v0_guide.py:4648` | **★ 없음** | 없음 | guide/03_이력.md:1179 |
-| `S46-202` | 안 풀린 틀 문법이 없는가 | fatal | `validate/v0_guide.py:4673` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:149 · guide/03_이력.md:1219 |
+| `S46-202` | 안 풀린 틀 문법이 없는가 | fatal | `validate/v0_guide.py:4673` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:169 · guide/03_이력.md:1219 |
 | `S46-203` | 넣으라 한 사이트에 차종 열쇠가 있는가 | fatal | `validate/v0_guide.py:4783` | **★ 없음** | 없음 | guide/03_이력.md:1223 · guide/06_오판대장.md:317 |
 | `S46-204` | 받기가 파일에 쓰는가 | fatal | `validate/v0_guide.py:4815` | **★ 없음** | 없음 | guide/03_이력.md:1227 · guide/03_이력.md:1356 · guide/06_오판대장.md:347 |
 | `S46-205` | raw_response 에 넣으라 하지 않는가 | fatal | `validate/v0_guide.py:4843` | **★ 없음** | 없음 | guide/03_이력.md:1229 · guide/03_이력.md:1360 · guide/03_이력.md:1373 |
 | `S46-206` | PDF 를 받아 두라 하지 않는가 | fatal | `validate/v0_guide.py:4878` | **★ 없음** | 없음 | guide/03_이력.md:1231 · guide/06_오판대장.md:320 · chapters/10-collect/d-policy.md:186 |
 | `S46-207` | 커밋 제목이 사실을 말하는가 | fatal | `validate/v0_guide.py:4944` | **★ 없음** | 없음 | ROADMAP_20260830.md:66 · guide/03_이력.md:1235 · guide/03_이력.md:1237 |
 | `S46-208` | 시세 축이 음수를 내지 않는가 | fatal | `validate/v0_guide.py:4982` | **★ 없음** | 없음 | guide/03_이력.md:1243 · guide/06_오판대장.md:321 · chapters/30-score/f-table.md:2673 |
-| `S46-213` | 추천에 판매완료가 없는가 | fatal | `validate/v0_guide.py:4737` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:308 · guide/03_이력.md:1267 |
-| `S46-214` | 사진 밑에 빈칸이 없는가 | fatal | `validate/v0_guide.py:5001` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:496 · UI_REVIEW.md:2034 · guide/03_이력.md:1273 |
+| `S46-213` | 추천에 판매완료가 없는가 | fatal | `validate/v0_guide.py:4737` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:328 · guide/03_이력.md:1267 |
+| `S46-214` | 사진 밑에 빈칸이 없는가 | fatal | `validate/v0_guide.py:5001` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:516 · UI_REVIEW.md:2034 · guide/03_이력.md:1273 |
 | `S46-215` | 수집기가 active 를 보는가 | fatal | `validate/v0_guide.py:5026` | **★ 없음** | 없음 | guide/03_이력.md:1291 · guide/03_이력.md:1319 · chapters/10-collect/00-intro.md:651 |
 | `S46-227` | 밝힌 없음에 안 준 것이 없는가 | fatal | `validate/v0_guide.py:4686` | **★ 없음** | 없음 | guide/03_이력.md:1309 · chapters/11-store/a-key.md:1074 |
-| `S46-229` | recommend 로 거르는가 | fatal | `validate/v0_guide.py:5052` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:536 · guide/03_이력.md:1317 · guide/03_이력.md:1319 |
+| `S46-229` | recommend 로 거르는가 | fatal | `validate/v0_guide.py:5052` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:556 · guide/03_이력.md:1317 · guide/03_이력.md:1319 |
 | `S46-230` | ④ 셈이 같은 판 안만 세는가 | fatal | `validate/v0_guide.py:5080` | **★ 없음** | 없음 | guide/03_이력.md:1320 · guide/03_이력.md:1326 · guide/07_밀린일대장.md:226 |
 | `S46-231` | 매물 있는 사이트가 거르개에 다 있는가 | fatal | `validate/v0_guide.py:5110` | **★ 없음** | 없음 | guide/03_이력.md:1320 · guide/03_이력.md:1326 · guide/06_오판대장.md:330 |
 | `S46-232` | 예산 곡선이 한계에서 0 인가 | fatal | `validate/v0_guide.py:5137` | **★ 없음** | 없음 | guide/03_이력.md:1321 |
@@ -225,11 +225,12 @@
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6772` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:57 · chapters/10-collect/00-intro.md:516 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6794` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:59 · chapters/10-collect/00-intro.md:553 |
 | `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6819` | **★ 없음** | 없음 | guide/03_이력.md:1359 · guide/03_이력.md:1374 |
-| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6854` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1388 |
+| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6854` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1389 |
 | `S46-270` | 가려진 글자를 세는 자가 있는가 | fatal | `validate/v0_guide.py:6899` | **★ 없음** | 없음 | guide/03_이력.md:1365 · guide/06_오판대장.md:348 |
 | `S46-271` | 화면을 브라우저로 열어 재는가 | fatal | `validate/v0_guide.py:6929` | **★ 없음** | 없음 | guide/03_이력.md:1366 · guide/03_이력.md:1367 · guide/03_이력.md:1373 |
 | `S46-272` | 사진을 URL 로만 스무 장까지 두는가 | fatal | `validate/v0_guide.py:6989` | **★ 없음** | 없음 | guide/03_이력.md:1385 · chapters/10-collect/00-intro.md:495 |
 | `S46-273` | 엔카 배너가 마스터가 받은 것을 세는가 | fatal | `validate/v0_guide.py:7019` | **★ 없음** | 없음 | guide/03_이력.md:1387 |
+| `S46-274` | 기본 차례가 등급 > 값 > 추천인가 | fatal | `validate/v0_guide.py:7047` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:62 · guide/03_이력.md:1388 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6074` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6100` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6126` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
@@ -807,6 +808,7 @@
 - `S46-271` 화면을 브라우저로 열어 재는가 — `validate/v0_guide.py`
 - `S46-272` 사진을 URL 로만 스무 장까지 두는가 — `validate/v0_guide.py`
 - `S46-273` 엔카 배너가 마스터가 받은 것을 세는가 — `validate/v0_guide.py`
+- `S46-274` 기본 차례가 등급 > 값 > 추천인가 — `validate/v0_guide.py`
 - `S46-30` INDEX 가 docs 를 다 가리키는가 — `validate/v0_guide.py`
 - `S46-31` 규격이 있는 사이트가 config 에 있는가 — `validate/v0_guide.py`
 - `S46-32` 생성물이 최신인가 — `validate/v0_guide.py`
