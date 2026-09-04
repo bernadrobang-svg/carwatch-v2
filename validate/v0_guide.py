@@ -6986,7 +6986,38 @@ def s46_271_screen_checked_in_browser():
     return True, f"가려진 글자 0 ({when} · 배포를 브라우저로 열어 쟀다)"
 
 
+def s46_272_photo_url_only_max20():
+    """S46-272 — ★ 사진을 ★ **URL 로만 · 스무 장까지** 두는가 (마스터 확정 09-04).
+
+    ★★★ 마스터 — 「★ **사진은 절대 URL 로만 존재한다.
+      ★ 사진은 ★ 최대 20장까지 ★ URL 로 관리한다**」
+    ★ 까닭 — ★ 그림을 받으면 ★ 매물 **26,608건 × 40KB ≈ 1GB** 다.
+      ★ ★ 장비 RAM 이 **1.8GB** 이고 ★ DB 가 이미 1.08GiB 인데 ★ **서버가 세 번 죽었다**.
+    ★★ 실측 09-04 — ★ 상한이 **없어** ★ 한 매물의 주소 목록이
+      ★ 볼보셀렉트 **4,358자** · KB **2,868자** 까지 부푼다.
+    ★ 잣대 — ① 규격에 「URL 로만 · 스무 장」이 있는가
+             ② ★ 그림 파일을 ★ **받아 두지 않는가** (`raw/` 에 jpg·png 가 없다)
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "10-collect" / "00-intro.md")
+    bad = []
+    for want, label in (("URL 로만", "「URL 로만」"),
+                        ("상한 스무 장", "「스무 장 상한」"),
+                        ("내려받지 않는다", "「내려받지 않는다」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    raw = ROOT / "raw"
+    if raw.is_dir():
+        got = [q.name for q in raw.rglob("*")
+               if q.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp")]
+        if got:
+            bad.append(f"★ 그림을 받아 뒀다 {len(got)}장 — " + " · ".join(got[:2]))
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "사진은 URL 로만 두고 스무 장 상한이 규격에 있다"
+
+
 CHECKS = (
+    ("S46-272", "사진을 URL 로만 스무 장까지 두는가", s46_272_photo_url_only_max20),
     ("S46-271", "화면을 브라우저로 열어 재는가", s46_271_screen_checked_in_browser),
     ("S46-270", "가려진 글자를 세는 자가 있는가", s46_270_hidden_text_ruler),
     ("S46-269", "추천 차종과 단추 크기가 확정대로인가", s46_269_recommend_set_and_chips),
