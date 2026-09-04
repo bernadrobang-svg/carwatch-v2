@@ -3144,7 +3144,7 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
 .meta{row-gap:6px;column-gap:8px;align-items:center}
 
 /* ★ 7차 (09-04) — ★ 5 → **4** */
-.ax1{display:block;width:auto;padding:1px 0}
+.ax1{display:block;width:auto;padding:1px 0;margin-bottom:4px}
 
 /* ★ 8차 (09-04) — ★ 4 → **1**.  ★ 카드를 덮는 링크(`A`) 아래 깔린 글자를 꺼낸다 */
 .ax1,.cell{position:relative;z-index:1;isolation:isolate}
@@ -3189,13 +3189,24 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
      ★ 두 상자가 겹쳐도 ★ 가운데가 제 것이면 ★ **6할을 넘겨** 통과한다.
    ★ ★ ★ 그래서 ★ **상자 겹침**을 따로 셌다 — ★ **27개**.
      (사고OK 높이 **49** ↔ 줄 사이 **26** → ★ **23px 씩 겹친다**)
-   ★ `.meta{row-gap:14px}` 로 ★ **27 → 17** */
-.meta{row-gap:14px;align-items:flex-start}
+   ★ `.meta{row-gap:18px}` ＋ `.ax1{margin-bottom:4px}` 로 ★ **27 → 14** */
+.meta{row-gap:18px;align-items:flex-start}
+.meta>*{height:auto;line-height:1.4;align-self:flex-start}
 
 /* ★★★★★ 09-04 — ★ **시안 이름을 `app.css` 에 넣지 않는다** (마스터 확정 ㉮ · 08-24)
    ★ 내가 퍼블리싱하며 ★ `.v4-thumb`·`.v4-card` 를 여기 적었다 —
    ★ ★ `S46-67` 이 ★ **70곳 이름 충돌**로 잡았다.  ★ 뺐다.
    ★ ★ ★ 시안은 `.v4-` · 화면은 `.card`·`.thumb` — ★ **섞지 않는다** */
+
+/* ★★★★★ 09-04 — ★ **여기가 바닥이다 (상자 겹침 27 → 14)**
+   ★ 남은 둘은 ★ **CSS 로 안 된다 — ★ HTML 이 바뀌어야 한다**:
+     ① 「(주)아이오카」(68×43) ↔ 「게시중」(33×43) — ★ 7px 겹침
+        ★ `DIV.meta` 안에서 ★ **딜러 이름이 길어 두 줄이 되는데** ★ 옆 딱지와 같은 줄이다
+        ★ ★ 고칠 곳 — ★ **딜러 이름을 제 줄로 내린다** (`flex:1 1 100%`) 또는 ★ 줄여 쓴다
+     ② 「옵션가」(147×14) ↔ 「2종 …」 — ★ 10px 겹침
+        ★ `DIV.cell.mono.num` 이 ★ 이름과 값을 ★ **한 칸에 겹쳐 넣는다**
+        ★ ★ 고칠 곳 — ★ 이름과 값을 ★ **두 줄로** 나눈다
+   ★ ★ 서른다섯 넘게 시험했다 — ★ 여기서부터는 ★ **템플릿 몫**이다 */
 
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
