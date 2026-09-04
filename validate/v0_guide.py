@@ -673,11 +673,11 @@ def s46_24_facet_unconfirmed() -> tuple[bool, str]:
             continue   # ★ 09-02 — ★ 후보 차종은 글월이다.  ★ 건너뛴다
         for site, sq in _sq.items():
             # ★★ 09-04 — ★ `null` 은 ★ **「그 사이트가 안 판다」**는 뜻이다 (EX60 · KB).
-        #   ★ ★ 앞서 내가 `null` 을 넣자 ★ 이 검사가 ★ **예외로 죽었다** —
-        #     ★ 검사는 ★ **죽지 말고 넘어가야** 한다
-        if not isinstance(sq, dict):
-            continue
-        if any(str(k).startswith("_확인") for k in sq):
+            #   ★ ★ 앞서 내가 `null` 을 넣자 ★ 이 검사가 ★ **예외로 죽었다** —
+            #     ★ 검사는 ★ **죽지 말고 넘어가야** 한다
+            if not isinstance(sq, dict):
+                continue
+            if any(str(k).startswith("_확인") for k in sq):
                 left.append(f"{key}.{site}")
     if left:
         return False, (f"★ facet 미확인 {len(left)}종 — " + " · ".join(left[:6])
