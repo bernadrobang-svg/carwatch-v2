@@ -3234,9 +3234,43 @@ img.thumb,.thumb,.card img{width:132px;height:99px;object-fit:cover}
    ★ ★ ★ BMW 가 유독 나빴다 — ★ 색이 많아 칩이 길다.
    ★ 고친 뒤 — ★ BMW 가려진 글자 **34 → 24** · 상자 겹침 **92 → 73**.
      ★ ★ 렉서스·볼보는 ★ 그대로다(0·4) — ★ 나빠지지 않았다 */
-p.chips,.chips{display:flex;flex-wrap:wrap;gap:6px;height:auto;
-  align-items:flex-start;align-content:flex-start}
-.chips>*{flex:0 0 auto;height:auto;min-height:0}
+/* ★ 09-04 — ★ **힘을 준다**(`!important`).  ★ 앞에 더 센 규칙이 있어 ★ 안 먹었다
+   ★ ★ 실측 — 힘 없이 넣으니 BMW 겹침이 ★ 73 이 아니라 **98** 이었다 */
+p.chips,.chips{display:flex!important;flex-wrap:wrap!important;gap:6px!important;
+  height:auto!important;align-items:flex-start!important;align-content:flex-start!important}
+.chips>*{flex:0 0 auto!important;height:auto!important;min-height:0!important}
+
+/* ★★★★★★★ 14차 (09-04) — ★ **사진을 글자와 같이 둔다** (마스터 확정)
+   ★★★ 마스터 — 「★ **사진을 글자와 같이 두면 돼.  ★ 별도 td·tr 로 구분하지 말고**」
+   ★ 앞은 ★ `.head{display:flex}` 라 ★ 사진과 글이 ★ **딴 칸**이었다 —
+     ★ ★ 글이 제 칸에만 갇혀 ★ **사진 밑이 비었다** (마스터 지적).
+   ★★ `float` 로 ★ **한 흐름**에 둔다 — ★ 글이 사진을 지나 ★ 아래로 흐른다.
+   ★★★ **처음엔 나빠졌다** (BMW 92 → 115) — ★ 그때는 ★ 거르개 칩이 포개진 채였다.
+     ★ ★ 칩을 먼저 고치고(13차) ★ 다시 재니 ★ **73 → 56** 으로 좋아졌다.
+     ★ ★ ★ **차례가 있다** — ★ 덮는 것을 먼저 걷고 ★ 흐름을 고친다.
+   ★ 실측 09-04 — BMW 가려짐 **24 → 19** · 겹침 **73 → 56** ·
+     볼보 3→4 · 렉서스 4→3 (★ 잔물결) */
+.head{display:block}
+.head .mob{float:left;margin:0 10px 4px 0;display:block;width:auto}
+.head .cardbody{display:block;overflow:visible}
+.head::after{content:'';display:block;clear:both}
+
+/* ★★★★★★★ 15차 (09-04) — ★ **띄운 뒤 글이 화면 밖으로 잘렸다**
+   ★ 실측 09-04 — ★ `.cardbody` 오른쪽이 ★ 화면을 **110px**(BMW **143px**) 넘었다.
+     ★ ★ 앞 `.head{display:flex}` 시절의 ★ **칸 너비**를 그대로 지녔기 때문이다.
+   ★ 그리고 ★ **사진이 둘** 나왔다 — ★ 틀에 ★ 위쪽 사진과 `.mob` 사진이 ★ 둘 다 있다.
+     ★ ★ 앞은 `flex` 라 하나가 눌려 안 보였는데 ★ 띄우니 ★ **둘 다 보였다**.
+   ★ 고친 뒤 — ★ 넘침 **0** · 볼보 가려짐 **8 → 0** · BMW **28 → 18** */
+.head .cardbody{width:auto;margin-left:0;max-width:100%;flex:none}
+.head .mob{display:none}
+
+/* ★★★★★ 16차 (09-04) — ★ **OK 딱지를 낮춘다**
+   ★ 캡처 09-04 — ★ 「사고OK · 골격− · 용도OK · 제조사 보증OK · 사이트 보증×」가
+     ★ ★ 서로 **포개 보였다**.  ★ 딱지 높이가 ★ 줄 사이보다 컸다.
+   ★ 재서 골랐다 — ★ 볼보 겹침 **4 → 3** · BMW **93 → 77**.
+     ★ ★ 「줄 맞춤」도 재 봤으나 ★ 가려진 글자가 늘어(26→29) ★ 안 넣었다 */
+.meta a,.chip-good,.chip-bad,.meta .chip{padding:4px 8px;font-size:11px;
+  line-height:1.3;height:auto;display:inline-flex;align-items:center}
 
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
@@ -3254,8 +3288,10 @@ p.chips,.chips{display:flex;flex-wrap:wrap;gap:6px;height:auto;
    ★ 상자 겹침(27)으로 재서 뺀 것 —
      카드 줄높이 1.55  27 (안 준다) · 딱지 낮게 **26**(거의 안 준다) ·
      인라인 여백 · 카드 안 블록 사이  19 에서 안 준다
-   ★ 09-04 — ★ 사진을 ★ **띄우기(float)** 로 바꿔 ★ 「사진 밑 공간」을 쓰게 해 봤다:
-     볼보 3→4 · 렉서스 4→3 · ★ **BMW 92 → 115** — ★ **크게 나빠져 안 넣었다**
+   ★ 09-04 — ★ 사진 띄우기를 ★ **두 번 쟀다**:
+     ① 칩을 안 고친 채 — 볼보 3→4 · 렉서스 4→3 · ★ **BMW 92 → 115** ★ 나빴다
+     ② 칩을 고친 뒤   — ★ **BMW 73 → 56** ★ 좋아졌다 → ★ **넣었다** (14차)
+     ★ ★ **한 번 나빴다고 버리지 않는다** — ★ 앞을 고치면 뜻이 달라진다
 ★★★ **다섯 차례 돌려 ★ 63 → 43 (32% 줄었다)**.  ★ 스무 가지를 시험해 ★ **다섯만 남겼다.
    ★ ★ 나머지 열다섯은 ★ 안 주거나 ★ 더 나빠졌다 — ★ 그 수를 위에 적어 뒀다** */
    ★ ★ ★ 「재고 · 넣고 · 다시 재고 · **나빠지면 되돌린다**」 (RULES.md 2-3) */
