@@ -3109,9 +3109,8 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
    ★★★ 규격 — `ref/screens/RULES.md` **2-4 조** · 검산 `S46-271`
    ★ ★ 이 묶음은 ★ **맨 끝에 둔다** — ★ 앞의 규칙을 덮어써야 한다 */
 
-.card,.card *,.v4-card,.v4-card *{min-height:0}
-.card .dim,.card .meta,.card .gr,.card .ax1,
-.v4-card .dim,.v4-card .meta,.v4-card .gr{
+.card,.card * *{min-height:0}
+.card .dim,.card .meta,.card .gr,.card .ax1 .dim .meta .gr{
   height:auto;overflow:visible}
 /* ★ 글자보다 좁은 줄높이를 쓰지 않는다 — ★ 1 은 글자가 서로 닿는다 */
 .gr{line-height:1.25}
@@ -3166,9 +3165,9 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
 
 /* ★ 사진을 폭에 따라 키운다 — ★ 390px 에서 104 는 ★ 차를 알아보기 어렵다
    ★ 시안(`ref/screens/RULES.md` 2-4)대로 ★ **고정하지 않고 폭에 맞춘다** */
-.thumb,.v4-thumb,.card img{width:132px;height:99px;object-fit:cover}
-@media (min-width:760px){.thumb,.v4-thumb,.card img{width:200px;height:150px}}
-@media (min-width:1080px){.thumb,.v4-thumb,.card img{width:260px;height:195px}}
+.thumb,.card img{width:132px;height:99px;object-fit:cover}
+@media (min-width:760px){.thumb,.card img{width:200px;height:150px}}
+@media (min-width:1080px){.thumb,.card img{width:260px;height:195px}}
 
 /* ★★★★★★ 10차 (09-04) — ★ **켠 단추의 글자가 안 보인다**
    ★ 실측 09-04 — ★ `.btn.on` 이 ★ 글자색 `rgb(49,130,246)` · 바탕 `rgb(49,130,246)` —
@@ -3189,6 +3188,11 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
      (사고OK 높이 **49** ↔ 줄 사이 **26** → ★ **23px 씩 겹친다**)
    ★ `.meta{row-gap:14px}` 로 ★ **27 → 17** */
 .meta{row-gap:14px;align-items:flex-start}
+
+/* ★★★★★ 09-04 — ★ **시안 이름을 `app.css` 에 넣지 않는다** (마스터 확정 ㉮ · 08-24)
+   ★ 내가 퍼블리싱하며 ★ `.v4-thumb`·`.v4-card` 를 여기 적었다 —
+   ★ ★ `S46-67` 이 ★ **70곳 이름 충돌**로 잡았다.  ★ 뺐다.
+   ★ ★ ★ 시안은 `.v4-` · 화면은 `.card`·`.thumb` — ★ **섞지 않는다** */
 
 /* ★★ 09-04 — ★ **넣었다 빼 본 것** (다음 사람이 또 넣지 않게)
    ★ `.gr,.dim,.meta{position:relative;z-index:2}` ＋ `.thumb{z-index:0}` 를 더해 봤더니
