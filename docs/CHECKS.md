@@ -109,7 +109,7 @@
 | `S46-120` | 등록부의 감사 열쇠가 목록 열쇠와 같은가 | fatal | `validate/v0_guide.py:1452` | **★ 없음** | 없음 | guide/03_이력.md:854 |
 | `S46-121` | 머리띠 규칙이 한 곳에만 있는가 | fatal | `validate/v0_guide.py:1403` | **★ 없음** | 없음 | UI_REVIEW.md:1510 · guide/03_이력.md:862 · guide/09_설계뒤에할것_20260829.md:102 |
 | `S46-122` | 머리·발이 한 곳에만 있는가 | fatal | `validate/v0_guide.py:1530` | **★ 없음** | 없음 | UI_REVIEW.md:1545 · guide/03_이력.md:863 · guide/09_설계뒤에할것_20260829.md:101 |
-| `S46-123` | 토스 표에 없는 색이 없는가 | fatal | `validate/v0_guide.py:1488` | **★ 없음** | 없음 | UI_REVIEW.md:1609 · guide/03_이력.md:863 |
+| `S46-123` | 토스 표에 없는 색이 없는가 | fatal | `validate/v0_guide.py:1488` | **★ 없음** | 없음 | UI_REVIEW.md:1609 · guide/03_이력.md:863 · guide/03_이력.md:1374 |
 | `S46-124` | DB 를 PRAGMA 없이 열지 않는가 | fatal | `validate/v0_guide.py:1666` | **★ 없음** | 없음 | VOLVO_SELEKT_API.md:513 · guide/03_이력.md:866 |
 | `S46-125` | 고른 정렬 축이 정말 먹는가 | fatal | `validate/v0_guide.py:1332` | **★ 없음** | 없음 | guide/03_이력.md:868 |
 | `S46-126` | 수집기가 통신·sleep 을 트랜잭션 밖에서 하는가 | fatal | `validate/v0_guide.py:1702` | **★ 없음** | 없음 | guide/03_이력.md:870 · guide/03_이력.md:935 · guide/06_오판대장.md:283 |
@@ -224,8 +224,8 @@
 | `S46-265` | 적재 뒤 raw_response 를 지우는가 | fatal | `validate/v0_guide.py:6714` | **★ 없음** | 없음 | guide/03_이력.md:1356 · guide/06_오판대장.md:347 · guide/07_밀린일대장.md:40 |
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6751` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:42 · chapters/10-collect/00-intro.md:485 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6773` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:44 · chapters/10-collect/00-intro.md:522 |
-| `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6798` | **★ 없음** | 없음 | guide/03_이력.md:1359 |
-| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6833` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1374 |
+| `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6798` | **★ 없음** | 없음 | guide/03_이력.md:1359 · guide/03_이력.md:1374 |
+| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6833` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1375 |
 | `S46-270` | 가려진 글자를 세는 자가 있는가 | fatal | `validate/v0_guide.py:6878` | **★ 없음** | 없음 | guide/03_이력.md:1365 · guide/06_오판대장.md:348 |
 | `S46-271` | 화면을 브라우저로 열어 재는가 | fatal | `validate/v0_guide.py:6908` | **★ 없음** | 없음 | guide/03_이력.md:1366 · guide/03_이력.md:1367 · guide/03_이력.md:1373 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6053` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |

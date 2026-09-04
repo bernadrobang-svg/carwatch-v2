@@ -3174,8 +3174,8 @@ main input[type="search"] { max-width: 100%; box-sizing: border-box; }
      ★ ★ **똑같은 파랑**이다.  ★ 그래서 ★ 「내 기준에 가까운 차」·「전체 2,527」이
      ★ ★ ★ **파란 상자만 보이고 글자가 사라졌다** (캡처 09-04).
    ★ 마스터 — 「★ **내가 보기 좋게 바꿔**」 */
-.btn.on,.mb.on,.tab.on,a.on{color:#fff!important}
-.btn.on b,.mb.on b,.tab.on b,a.on b{color:#fff!important}
+.btn.on,.mb.on,.tab.on,a.on{color:var(--on-accent)!important}
+.btn.on b,.mb.on b,.tab.on b,a.on b{color:var(--on-accent)!important}
 /* ★ 끈 단추는 ★ 읽히게 — ★ 바탕과 글자를 벌린다 */
 .btn,.mb{color:var(--text)}
 .btn.off,.mb.off{opacity:.55}
