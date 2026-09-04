@@ -250,7 +250,10 @@
     "brand_scope": [
       "볼보"
     ],
-    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 볼보만 판다 — 목록 1쪽 카드가 S60·S90·XC40·XC60·V60·EX30 이고 ★ `Polestar` 가 ★ 0회다.  ★ 폴스타는 여기 없다(별도 브랜드).  ★ 닫혔다"
+    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 볼보만 판다 — 목록 1쪽 카드가 S60·S90·XC40·XC60·V60·EX30 이고 ★ `Polestar` 가 ★ 0회다.  ★ 폴스타는 여기 없다(별도 브랜드).  ★ 닫혔다",
+    "web_url": "https://selekt.volvocars.co.kr{detail_path}",
+    "_web_url_why": "★★★★★ 가이드 실측 09-04 — ★ **목록이 상세 링크를 그대로 준다**.  ★ `xhr-results/1`(85,777B) 안에 ★ `/kr/vehicles/volvo/{모델}/{트림}--{해시}` 가 있다 — ★ 보기: `/kr/vehicles/volvo/ex30-cross-country/ultra-twin-motor-performance--jbbbeks`.  ★★ 그러니 ★ `{model}` 을 따로 캘 것 없이 ★ **목록에서 뽑은 길을 그대로 쓴다** (`detail_path`).  ★ ★ 지금 규격의 `detail` 은 `/kr/vehicles/volvo/{model}/{source_id}` 인데 ★ 트림이 빠져 ★ **안 열린다**.  ★★★ 사진도 목록이 준다 — ★ `https://picserver1.sg.mdxprod.io/userdata/…/kfz82573_1.jpg` — ★ ★ **받고 있으면서 화면에 안 냈다**",
+    "photo_field": "picserver_url"
   },
   "bmw_bps": {
     "base_url": "http://www.bavarian-bps.co.kr",
@@ -296,7 +299,10 @@
     "_왜 넣었나": "★ [실측 09-01] 마스터께서 주소를 주셨다.  ★ 전기차 전용 인증중고차(PRND · 헤이딜러와 같은 회사).  ★ 창구만 적어 둔다 — ★ 대상에 넣을지는 마스터께서 정하신다",
     "_금지": "★ App-Os·App-Type·App-Version 헤더를 넣으면 500 이 난다.  ★ 넣지 마라",
     "brand_scope": "all",
-    "_brand_scope_why": "[실측 09-01] ★ `/customers/web/brands/` 가 ★ **브랜드 22 · 차종 93** 을 준다 (규격 `docs/REVOLT_API.md`) — ★ 한 브랜드 전용이 아니다.  ★ 우리 DB 의 `site_manufacturer` 도 6종이다 (테슬라 42 · 폭스바겐 4 · 제네시스 4 · 폴스타 3 · BMW 3 · 렉서스 1) — ★ ★ 그것은 ★ **우리가 좁혀 받아서**지 ★ 리볼트가 그만 판다는 뜻이 아니다"
+    "_brand_scope_why": "[실측 09-01] ★ `/customers/web/brands/` 가 ★ **브랜드 22 · 차종 93** 을 준다 (규격 `docs/REVOLT_API.md`) — ★ 한 브랜드 전용이 아니다.  ★ 우리 DB 의 `site_manufacturer` 도 6종이다 (테슬라 42 · 폭스바겐 4 · 제네시스 4 · 폴스타 3 · BMW 3 · 렉서스 1) — ★ ★ 그것은 ★ **우리가 좁혀 받아서**지 ★ 리볼트가 그만 판다는 뜻이 아니다",
+    "web_url": "https://www.revolt.kr/cars/{source_id}",
+    "photo_field": "thumbnail_image_url",
+    "_web_url_why": "★★★★★ 가이드 실측 09-04 — ★ 마스터 「★ 링크나 사진 없는 것은」.  ★ 두드려 찾았다 — ★ 네 꼴을 다 쳐 보니 ★ **다 HTTP 200**(2,680B SPA 껍데기)이라 ★ 글자로는 못 갈랐다.  ★ ★ **브라우저로 열어** 갈랐다: ★ `/car/{hash}` 는 ★ 「오직, 전기차를 위한 기술 인증 중고차」(★ **첫 화면**) · ★ ★ `/cars/{hash}` 는 ★ 「리볼트 … **1/56 단순교환 무사고 · 배터리 진단 완료 KONA EV 프리미엄**」(★ **그 차**).  ★ ★ ★ 그러니 ★ **`/cars/{hash_id}` 가 맞다**.  ★ `{source_id}` 는 ★ `hash_id` 다(숫자 id 가 아니다).  ★★ 사진은 ★ 목록이 ★ `thumbnail_image_url` 로 준다 (★ `inside_thumbnail_image_url`·`live_view_thumbnail_image_url` 도 있다) — ★ ★ **받고 있으면서 화면에 안 냈다**"
   },
   "_list_walk_kinds": "★★★★★ 09-03 신설 — ★ **목록 걸음은 세 가지다**.  ★ 사이트마다 다르다:  ① ★ **쪽넘김** — `list?page=N` (엔카·KB·보배·헤이딜러·볼보·리볼트)  ② ★ **분류 훑기** — `list?ca_id=N` 을 ★ 분류마다 (BMW BPS · `ca_id=10` 이 전체)  ③ ★ **sitemap** — 목록 API 가 없다 (리본카).  ★★ 새 사이트를 붙일 때 ★ **어느 걸음인지부터 정하고** ★ `{SITE}_API.md` 에 적는다.  ★ ★ 「길이 없다」로 멈추지 마라 — ★ 걸음이 다른 것이다"
 }
