@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추천 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
+<link rel="stylesheet" href="/static/app.css?v=f1d70762bc">
 
 </head>
 <body class="s-recommend">
@@ -35,7 +35,7 @@
   <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다"><b>⇄</b>추적</a>
   
   
-  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색)에 가까운 차. ★ 등급을 안 본다 — 네 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)"><b>★</b>추천</a>
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색(외)·색(내)·크기)에 가까운 차. ★ 등급을 안 본다 — 여섯 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)"><b>★</b>추천</a>
   
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
@@ -75,27 +75,21 @@
   
   <a class="btn mb on"
      href="/recommend?tab=1"
-     title="켠 차종을 다 끕니다">전체 <b>2,527</b></a>
+     title="켠 차종을 다 끕니다">전체 <b>1,031</b></a>
   
   <a class="btn mb"
-    href="/recommend?tab=1&amp;model=X3_IMPORT"
-    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
-    >BMW X3 <b>839</b></a><a class="btn mb"
     href="/recommend?tab=1&amp;model=MODEL_Y"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
     >테슬라 모델Y <b>456</b></a><a class="btn mb"
-    href="/recommend?tab=1&amp;model=XC60_IMPORT"
-    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
-    >볼보 XC60 <b>417</b></a><a class="btn mb"
-    href="/recommend?tab=1&amp;model=XC40_IMPORT"
-    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
-    >볼보 XC40 (전기 제외) <b>312</b></a><a class="btn mb"
     href="/recommend?tab=1&amp;model=KOLEOS_HEV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
     >그랑 콜레오스 1.5 E-TECH <b>239</b></a><a class="btn mb"
-    href="/recommend?tab=1&amp;model=S60_IMPORT"
+    href="/recommend?tab=1&amp;model=POLESTAR2_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
-    >볼보 S60 <b>146</b></a><a class="btn mb"
+    >폴스타 2 (전기) <b>136</b></a><a class="btn mb"
+    href="/recommend?tab=1&amp;model=G80_EV"
+    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
+    >G80 전동화 <b>78</b></a><a class="btn mb"
     href="/recommend?tab=1&amp;model=GV70_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
     >GV70 전동화 <b>63</b></a><a class="btn mb"
@@ -107,16 +101,31 @@
     >볼보 C40 리차지 (전기) <b>11</b></a><a class="btn mb"
     href="/recommend?tab=1&amp;model=XC40_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
-    >볼보 XC40 리차지 (전기) <b>5</b></a><a class="btn mb off"
-    href="/recommend?tab=1&amp;model=IX3_EV"
+    >볼보 XC40 리차지 (전기) <b>5</b></a><a class="btn mb"
+    href="/recommend?tab=1&amp;model=EX30_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
-    >BMW iX3 (전기) <b>0</b></a><a class="btn mb off"
+    >볼보 EX30 (전기) <b>4</b></a><a class="btn mb off"
+    href="/recommend?tab=1&amp;model=POLESTAR3_EV"
+    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
+    >폴스타 3 (전기) <b>0</b></a><a class="btn mb off"
+    href="/recommend?tab=1&amp;model=GV70_25T"
+    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
+    >GV70 2.5T (가솔린) <b>0</b></a><a class="btn mb off"
+    href="/recommend?tab=1&amp;model=EX60_IMPORT"
+    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
+    >볼보 EX60 <b>0</b></a><a class="btn mb off"
     href="/recommend?tab=1&amp;model=ID4_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
     >폭스바겐 ID.4 <b>0</b></a><a class="btn mb off"
     href="/recommend?tab=1&amp;model=ID5_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
     >폭스바겐 ID.5 <b>0</b></a><a class="btn mb off"
+    href="/recommend?tab=1&amp;model=IX3_EV"
+    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
+    >BMW iX3 (전기) <b>0</b></a><a class="btn mb off"
+    href="/recommend?tab=1&amp;model=UX300E_EV"
+    title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
+    >렉서스 UX300e (전기) <b>0</b></a><a class="btn mb off"
     href="/recommend?tab=1&amp;model=EV4_EV"
     title="이 차종을 켭니다 — 여럿 켜면 함께 봅니다"
     >기아 EV4 <b>0</b></a>
@@ -128,13 +137,15 @@
 
 
 <div class="cond what pickhead">
-  <p>★ <strong>등급을 보지 않습니다.</strong> 예산 · 주행 · 연식 · 색
-    <strong>네 축의 합(348점)</strong>으로만 세웁니다.</p>
   
-  <p>차종 14종 · <strong>2,527건</strong> 중
+  <p>★ <strong>등급을 보지 않습니다.</strong> 예산 · 주행 · 연식 ·
+    색(외장) · 색(내장) · 크기
+    <strong>여섯 축의 합(348점)</strong>으로만 세웁니다.</p>
+  
+  <p>차종 17종 · <strong>1,031건</strong> 중
     348점에 가까운 차례 · <strong>판매완료는 뺐습니다</strong></p>
   
-  <p class="pickwhyall">이 <strong>순위</strong>는 네 축의 합만으로 세웁니다.
+  <p class="pickwhyall">이 <strong>순위</strong>는 여섯 축의 합만으로 세웁니다.
     등급 · 사고 이력 · 사이트는 순위에 넣지 않습니다.
     같은 합이면 <strong>싼 차가 앞</strong>입니다.</p>
 </div>
@@ -214,70 +225,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/14750"
-     data-peek="https://ci.encar.com/carpicture04/pic4214/42140672_027.jpg"
-     data-buy="3,745만" data-buyest="True">
-
-  
-  <div class="pickscore">287 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture04/pic4214/42140672_027.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">2</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="14750">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="14750"> 비교</label>
-        <a href="/detail/14750">볼보 S60 B5 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-03 · 20,246km · 흰색 / 갈색 계열 · 엔카 <span class="dim">(3년 6개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 서울</div>
-      
-      <div class="pickprice">3,500만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>72</b>/107</span><span class="pickax"
-          >연식 <b>76</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:82.5%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,745만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42140700" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/95"
      data-peek="https://ci.encar.com/carpicture08/pic4218/42187407_001.jpg"
      data-buy="3,391만" data-buyest="True">
@@ -296,7 +243,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">3</span>
+        <span class="rc-rank" title="점수 차례입니다">2</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -342,61 +289,61 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/16371"
-     data-peek="https://ci.encar.com/carpicture04/pic4204/42042637_001.jpg"
-     data-buy="3,445만" data-buyest="True">
+<div class="row pickcard" data-href="/detail/19650"
+     data-peek="https://ci.encar.com/carpicture04/pic4254/42543629_001.jpg"
+     data-buy="3,520만" data-buyest="True">
 
   
-  <div class="pickscore">279 / 348
+  <div class="pickscore">274 / 348
     <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
   </div>
 
   <div class="pickrow cardbody">
     
     <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture04/pic4204/42042637_001.jpg" alt="" loading="lazy">
+      <img src="https://ci.encar.com/carpicture04/pic4254/42543629_001.jpg" alt="" loading="lazy">
       
     </div>
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">4</span>
+        <span class="rc-rank" title="점수 차례입니다">3</span>
         
         <form method="post" action="/watch/add" class="inline">
           
           <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16371">
+          <input type="hidden" name="listing_id" value="19650">
           <button type="submit" class="heart" title="관심에 담습니다">♡</button>
         </form>
         <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16371"> 비교</label>
-        <a href="/detail/16371">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
+          name="id" value="19650"> 비교</label>
+        <a href="/detail/19650">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
       
       
-      <div class="pickspec">2022-11 · 20,357km · 청색 / 회색 계열 · 엔카 <span class="dim">(3년 10개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.5만)</span> · 경기</div>
+      <div class="pickspec">2022-08 · 21,184km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(4년 1개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.5만)</span> · 경기</div>
       
-      <div class="pickprice">3,220만원</div>
+      <div class="pickprice">3,290만원</div>
 
       
       <div class="pickwhy">왜 이 순위인가</div>
       <div class="pickaxes">
         <span class="pickax hi"
           >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>72</b>/107</span><span class="pickax"
-          >연식 <b>73</b>/80</span><span class="pickax hi"
-          >색상 (외장) <b>25</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
+          >주행 <b>71</b>/107</span><span class="pickax"
+          >연식 <b>70</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
       </div>
 
       
-      <div class="pbar pickbar"><i style="width:80.2%"></i></div>
+      <div class="pbar pickbar"><i style="width:78.7%"></i></div>
 
       
       <div class="pickfoot">
         <span class="pickbuy">사는 값
-          <b>3,445만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42043250" target="_blank" rel="noopener"
+          <b>3,520만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42545440" target="_blank" rel="noopener"
           class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
         
         
@@ -424,7 +371,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">5</span>
+        <span class="rc-rank" title="점수 차례입니다">4</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -488,7 +435,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">6</span>
+        <span class="rc-rank" title="점수 차례입니다">5</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -534,198 +481,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/27408"
-     data-peek="https://ci.encar.com/carpicture06/pic4266/42667196_001.jpg"
-     data-buy="3,659만" data-buyest="True">
-
-  
-  <div class="pickscore">274 / 348
-    <span class="pickgrade">등급 판정 중 · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture06/pic4266/42667196_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">7</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="27408">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="27408"> 비교</label>
-        <a href="/detail/27408">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-06 · 18,729km · 흰색 / 베이지색 계열 · 엔카 <span class="dim">(3년 3개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 경기</div>
-      
-      <div class="pickprice">3,420만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>75</b>/107</span><span class="pickax"
-          >연식 <b>78</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:78.7%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,659만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42667196" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/14777"
-     data-peek="https://ci.encar.com/carpicture03/pic4203/42032852_001.jpg"
-     data-buy="3,691만" data-buyest="True">
-
-  
-  <div class="pickscore">274 / 348
-    <span class="pickgrade">등급 C · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture03/pic4203/42032852_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">8</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="14777">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="14777"> 비교</label>
-        <a href="/detail/14777">볼보 S60 B5 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2024-01 · 30,629km · 흰색 / 갈색 계열 · 엔카 <span class="dim">(2년 8개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.1만)</span> · 경기</div>
-      
-      <div class="pickprice">3,450만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>58</b>/107</span><span class="pickax"
-          >연식 <b>77</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:78.7%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,691만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42034284" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/14749"
-     data-peek="https://ci.encar.com/carpicture03/pic4183/41832648_001.jpg"
-     data-buy="3,957만" data-buyest="True">
-
-  
-  <div class="pickscore">274 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture03/pic4183/41832648_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">9</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="14749">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="14749"> 비교</label>
-        <a href="/detail/14749">볼보 S60 B5 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-08 · 6,904km · 흰색 / 갈색 계열 · 엔카 <span class="dim">(3년 1개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.2만)</span> · 경기</div>
-      
-      <div class="pickprice">3,699만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax"
-          >예산 <b>57</b>/95</span><span class="pickax"
-          >주행 <b>94</b>/107</span><span class="pickax"
-          >연식 <b>79</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:78.7%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,957만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/41844707" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/42"
      data-peek="https://ci.encar.com/carpicture07/pic4187/41871865_001.jpg"
      data-buy="3,472만" data-buyest="True">
@@ -744,7 +499,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">10</span>
+        <span class="rc-rank" title="점수 차례입니다">6</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -808,7 +563,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">11</span>
+        <span class="rc-rank" title="점수 차례입니다">7</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -872,7 +627,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">12</span>
+        <span class="rc-rank" title="점수 차례입니다">8</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -918,134 +673,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/12899"
-     data-peek="https://selekt.volvocars.co.kr/picserver1/userdata/25/11821/UimSvhkkBYuwn/xxl_kfz87723_1.jpg"
-     data-buy="없습니다" data-buyest="False">
-
-  
-  <div class="pickscore">272 / 348
-    <span class="pickgrade">등급 B</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://selekt.volvocars.co.kr/picserver1/userdata/25/11821/UimSvhkkBYuwn/xxl_kfz87723_1.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">13</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="12899">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="12899"> 비교</label>
-        <a href="/detail/12899">볼보 XC40 (전기 제외)</a></div>
-      
-      
-      <div class="pickspec">2023-05 · 18,940km · 717 Onyx Black / Blond &amp; Blond Charcoal · 볼보 셀렉트 <span class="dim">(3년 4개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · <span class="dim">지역 —</span></div>
-      
-      <div class="pickprice">3,500만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>74</b>/107</span><span class="pickax"
-          >연식 <b>77</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:78.2%"></i></div>
-
-      
-      <div class="pickfoot">
-        
-        
-        
-        <span class="rc-why-empty dim"
-          title="원문으로 가는 문을 아직 못 만들었습니다. 그 매물이 없어진 것이 아닙니다"
-          >그 사이트는 주소를 아직 못 쟀습니다</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/16256"
-     data-peek="https://ci.encar.com/carpicture08/pic4138/41387852_001.jpg"
-     data-buy="2,931만" data-buyest="True">
-
-  
-  <div class="pickscore">270 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture08/pic4138/41387852_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">14</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16256">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16256"> 비교</label>
-        <a href="/detail/16256">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-02 · 22,390km · 검정색 / 검정색 계열 · 엔카 <span class="dim">(3년 7개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 경기</div>
-      
-      <div class="pickprice">2,740만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>69</b>/107</span><span class="pickax"
-          >연식 <b>75</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
-          >색상 (내장) <b>10</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:77.6%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>2,931만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/41387852" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/19071"
      data-peek="https://ci.encar.com/carpicture02/pic4262/42626514_001.jpg"
      data-buy="3,531만" data-buyest="True">
@@ -1064,7 +691,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">15</span>
+        <span class="rc-rank" title="점수 차례입니다">9</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1128,7 +755,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">16</span>
+        <span class="rc-rank" title="점수 차례입니다">10</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1192,7 +819,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">17</span>
+        <span class="rc-rank" title="점수 차례입니다">11</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1256,7 +883,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">18</span>
+        <span class="rc-rank" title="점수 차례입니다">12</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1320,7 +947,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">19</span>
+        <span class="rc-rank" title="점수 차례입니다">13</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1384,7 +1011,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">20</span>
+        <span class="rc-rank" title="점수 차례입니다">14</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1448,7 +1075,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">21</span>
+        <span class="rc-rank" title="점수 차례입니다">15</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1512,7 +1139,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">22</span>
+        <span class="rc-rank" title="점수 차례입니다">16</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1576,7 +1203,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">23</span>
+        <span class="rc-rank" title="점수 차례입니다">17</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1639,7 +1266,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">24</span>
+        <span class="rc-rank" title="점수 차례입니다">18</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1685,70 +1312,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/16300"
-     data-peek="https://ci.encar.com/carpicture03/pic4203/42031898_027.jpg"
-     data-buy="3,743만" data-buyest="True">
-
-  
-  <div class="pickscore">265 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture03/pic4203/42031898_027.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">25</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16300">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16300"> 비교</label>
-        <a href="/detail/16300">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2022-11 · 21,171km · 흰색 / 회색 계열 · 엔카 <span class="dim">(3년 10개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 서울</div>
-      
-      <div class="pickprice">3,499만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>71</b>/107</span><span class="pickax"
-          >연식 <b>73</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:76.1%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,743만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42031900" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/35"
      data-peek="https://ci.encar.com/carpicture04/pic4184/41842977_001.jpg"
      data-buy="3,627만" data-buyest="True">
@@ -1767,7 +1330,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">26</span>
+        <span class="rc-rank" title="점수 차례입니다">19</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1831,7 +1394,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">27</span>
+        <span class="rc-rank" title="점수 차례입니다">20</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1895,7 +1458,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">28</span>
+        <span class="rc-rank" title="점수 차례입니다">21</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -1959,7 +1522,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">29</span>
+        <span class="rc-rank" title="점수 차례입니다">22</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2023,7 +1586,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">30</span>
+        <span class="rc-rank" title="점수 차례입니다">23</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2068,70 +1631,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/16317"
-     data-peek="https://ci.encar.com/carpicture07/pic4227/42276164_001.jpg"
-     data-buy="3,745만" data-buyest="True">
-
-  
-  <div class="pickscore">262 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture07/pic4227/42276164_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">31</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16317">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16317"> 비교</label>
-        <a href="/detail/16317">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2022-09 · 22,414km · 검정색 / 베이지색 계열 · 엔카 <span class="dim">(4년)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 경기</div>
-      
-      <div class="pickprice">3,500만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>69</b>/107</span><span class="pickax"
-          >연식 <b>72</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:75.3%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,745만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42280301" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/44"
      data-peek="https://ci.encar.com/carpicture08/pic4188/41880249_001.jpg"
      data-buy="3,531만" data-buyest="True">
@@ -2150,7 +1649,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">32</span>
+        <span class="rc-rank" title="점수 차례입니다">24</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2214,7 +1713,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">33</span>
+        <span class="rc-rank" title="점수 차례입니다">25</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2278,7 +1777,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">34</span>
+        <span class="rc-rank" title="점수 차례입니다">26</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2324,114 +1823,51 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/11788"
-     data-peek=""
-     data-buy="없습니다" data-buyest="False">
+<div class="row pickcard" data-href="/detail/19602"
+     data-peek="https://ci.encar.com/carpicture08/pic4178/41782070_001.jpg"
+     data-buy="3,670만" data-buyest="True">
 
   
-  <div class="pickscore">260 / 348
+  <div class="pickscore">259 / 348
     <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
   </div>
 
   <div class="pickrow cardbody">
     
     <div class="desk pickthumb">
-      
-      <span class="pimg photo-why" title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다">헤이딜러는 사진을 아직 못 받았습니다</span>
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">35</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="11788">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="11788"> 비교</label>
-        <a href="/detail/11788">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-06 · 22,613km · 크리스탈 화이트 / 블론드 베이지 · 헤이딜러 <span class="dim">(3년 3개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.7만)</span> · <span class="dim">지역 —</span></div>
-      
-      <div class="pickprice">3,530만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax"
-          >예산 <b>87</b>/95</span><span class="pickax"
-          >주행 <b>69</b>/107</span><span class="pickax"
-          >연식 <b>78</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:74.7%"></i></div>
-
-      
-      <div class="pickfoot">
-        
-        <a href="https://www.heydealer.com/market/cars/5lOOdjl4" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">헤이딜러에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/16415"
-     data-peek="https://ci.encar.com/carpicture03/pic4253/42530081_001.jpg"
-     data-buy="3,519만" data-buyest="True">
-
-  
-  <div class="pickscore">259 / 348
-    <span class="pickgrade">등급 B</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture03/pic4253/42530081_001.jpg" alt="" loading="lazy">
+      <img src="https://ci.encar.com/carpicture08/pic4178/41782070_001.jpg" alt="" loading="lazy">
       
     </div>
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">36</span>
+        <span class="rc-rank" title="점수 차례입니다">27</span>
         
         <form method="post" action="/watch/add" class="inline">
           
           <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16415">
+          <input type="hidden" name="listing_id" value="19602">
           <button type="submit" class="heart" title="관심에 담습니다">♡</button>
         </form>
         <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16415"> 비교</label>
-        <a href="/detail/16415">볼보 XC40 (전기 제외) B4 인스크립션</a></div>
+          name="id" value="19602"> 비교</label>
+        <a href="/detail/19602">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
       
       
-      <div class="pickspec">2021-09 · 7,516km · 흰색 / 갈색 계열 · 엔카 <span class="dim">(5년)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.2만)</span> · 경기</div>
+      <div class="pickspec">2023-02 · 36,794km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(3년 7개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.0만)</span> · 서울</div>
       
-      <div class="pickprice">3,289만원</div>
+      <div class="pickprice">3,430만원</div>
 
       
       <div class="pickwhy">왜 이 순위인가</div>
       <div class="pickaxes">
         <span class="pickax hi"
           >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>93</b>/107</span><span class="pickax"
-          >연식 <b>45</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
+          >주행 <b>51</b>/107</span><span class="pickax"
+          >연식 <b>75</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
       </div>
 
       
@@ -2440,8 +1876,8 @@
       
       <div class="pickfoot">
         <span class="pickbuy">사는 값
-          <b>3,519만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42530081" target="_blank" rel="noopener"
+          <b>3,670만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/41782791" target="_blank" rel="noopener"
           class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
         
         
@@ -2451,51 +1887,51 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/27406"
-     data-peek="https://ci.encar.com/carpicture05/pic4265/42655450_001.jpg"
-     data-buy="3,798만" data-buyest="True">
+<div class="row pickcard" data-href="/detail/19594"
+     data-peek="https://ci.encar.com/carpicture08/pic4258/42580172_001.jpg"
+     data-buy="3,734만" data-buyest="True">
 
   
   <div class="pickscore">259 / 348
-    <span class="pickgrade">등급 판정 중 · 등급은 안 봅니다</span>
+    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
   </div>
 
   <div class="pickrow cardbody">
     
     <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture05/pic4265/42655450_001.jpg" alt="" loading="lazy">
+      <img src="https://ci.encar.com/carpicture08/pic4258/42580172_001.jpg" alt="" loading="lazy">
       
     </div>
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">37</span>
+        <span class="rc-rank" title="점수 차례입니다">28</span>
         
         <form method="post" action="/watch/add" class="inline">
           
           <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="27406">
+          <input type="hidden" name="listing_id" value="19594">
           <button type="submit" class="heart" title="관심에 담습니다">♡</button>
         </form>
         <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="27406"> 비교</label>
-        <a href="/detail/27406">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
+          name="id" value="19594"> 비교</label>
+        <a href="/detail/19594">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
       
       
-      <div class="pickspec">2023-05 · 18,986km · 검정색 / 회색 계열 · 엔카 <span class="dim">(3년 4개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 서울</div>
+      <div class="pickspec">2022-11 · 35,099km · 명은색 / 검정색 계열 · 엔카 <span class="dim">(3년 10개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.9만)</span> · 경기</div>
       
-      <div class="pickprice">3,550만원</div>
+      <div class="pickprice">3,490만원</div>
 
       
       <div class="pickwhy">왜 이 순위인가</div>
       <div class="pickaxes">
-        <span class="pickax"
-          >예산 <b>82</b>/95</span><span class="pickax"
-          >주행 <b>74</b>/107</span><span class="pickax"
-          >연식 <b>77</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>53</b>/107</span><span class="pickax"
+          >연식 <b>73</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
       </div>
 
       
@@ -2504,72 +1940,8 @@
       
       <div class="pickfoot">
         <span class="pickbuy">사는 값
-          <b>3,798만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42663970" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/27407"
-     data-peek="https://ci.encar.com/carpicture05/pic4265/42655450_001.jpg"
-     data-buy="3,798만" data-buyest="True">
-
-  
-  <div class="pickscore">259 / 348
-    <span class="pickgrade">등급 판정 중 · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture05/pic4265/42655450_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">38</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="27407">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="27407"> 비교</label>
-        <a href="/detail/27407">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-05 · 18,986km · 검정색 / 회색 계열 · 엔카 <span class="dim">(3년 4개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 서울</div>
-      
-      <div class="pickprice">3,550만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax"
-          >예산 <b>82</b>/95</span><span class="pickax"
-          >주행 <b>74</b>/107</span><span class="pickax"
-          >연식 <b>77</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:74.4%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,798만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42655450" target="_blank" rel="noopener"
+          <b>3,734만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42580974" target="_blank" rel="noopener"
           class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
         
         
@@ -2597,7 +1969,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">39</span>
+        <span class="rc-rank" title="점수 차례입니다">29</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2643,134 +2015,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/19735"
-     data-peek="https://selekt.volvocars.co.kr/picserver1/userdata/25/11779/UilXDhkkBYuwn/xxl_kfz88683_.jpg"
-     data-buy="없습니다" data-buyest="False">
-
-  
-  <div class="pickscore">257 / 348
-    <span class="pickgrade">등급 C · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://selekt.volvocars.co.kr/picserver1/userdata/25/11779/UilXDhkkBYuwn/xxl_kfz88683_.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">40</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="19735">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="19735"> 비교</label>
-        <a href="/detail/19735">볼보 S60</a></div>
-      
-      
-      <div class="pickspec">2021-12 · 28,835km · 728 Thunder Grey / 앰버 &amp; 차콜 색상 인테리어, RC20 · 볼보 셀렉트 <span class="dim">(4년 9개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · <span class="dim">지역 —</span></div>
-      
-      <div class="pickprice">3,200만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>61</b>/107</span><span class="pickax"
-          >연식 <b>52</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
-          >색상 (내장) <b>10</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:73.9%"></i></div>
-
-      
-      <div class="pickfoot">
-        
-        
-        
-        <span class="rc-why-empty dim"
-          title="원문으로 가는 문을 아직 못 만들었습니다. 그 매물이 없어진 것이 아닙니다"
-          >그 사이트는 주소를 아직 못 쟀습니다</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/14767"
-     data-peek="https://ci.encar.com/carpicture04/pic4214/42147520_001.jpg"
-     data-buy="3,477만" data-buyest="True">
-
-  
-  <div class="pickscore">257 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture04/pic4214/42147520_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">41</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="14767">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="14767"> 비교</label>
-        <a href="/detail/14767">볼보 S60 B5 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-12 · 47,341km · 흰색 / 갈색 계열 · 엔카 <span class="dim">(2년 9개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.7만)</span> · 경기</div>
-      
-      <div class="pickprice">3,250만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>40</b>/107</span><span class="pickax"
-          >연식 <b>78</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:73.9%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,477만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42155328" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/148"
      data-peek="https://ci.encar.com/carpicture01/pic4241/42412303_027.jpg"
      data-buy="3,520만" data-buyest="True">
@@ -2789,7 +2033,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">42</span>
+        <span class="rc-rank" title="점수 차례입니다">30</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2853,7 +2097,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">43</span>
+        <span class="rc-rank" title="점수 차례입니다">31</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -2900,134 +2144,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/16210"
-     data-peek="https://ci.encar.com/carpicture10/pic4220/42207264_001.jpg"
-     data-buy="3,948만" data-buyest="True">
-
-  
-  <div class="pickscore">257 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture10/pic4220/42207264_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">44</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16210">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16210"> 비교</label>
-        <a href="/detail/16210">볼보 XC40 (전기 제외) B4 얼티메이트 브라이트</a></div>
-      
-      
-      <div class="pickspec">2023-08 · 6,796km · 녹색 / 베이지색 계열 · 엔카 <span class="dim">(3년 1개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.2만)</span> · 경기</div>
-      
-      <div class="pickprice">3,690만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax"
-          >예산 <b>58</b>/95</span><span class="pickax"
-          >주행 <b>94</b>/107</span><span class="pickax"
-          >연식 <b>79</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:73.9%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,948만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42221447" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/16373"
-     data-peek="https://ci.encar.com/carpicture07/pic4167/41675071_001.jpg"
-     data-buy="2,973만" data-buyest="True">
-
-  
-  <div class="pickscore">256 / 348
-    <span class="pickgrade">등급 C · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture07/pic4167/41675071_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">45</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="16373">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="16373"> 비교</label>
-        <a href="/detail/16373">볼보 XC40 (전기 제외) B4 인스크립션</a></div>
-      
-      
-      <div class="pickspec">2021-11 · 20,737km · 청색 / 갈색 계열 · 엔카 <span class="dim">(4년 10개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.4만)</span> · 부산</div>
-      
-      <div class="pickprice">2,779만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>72</b>/107</span><span class="pickax"
-          >연식 <b>50</b>/80</span><span class="pickax hi"
-          >색상 (외장) <b>25</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>9</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:73.6%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>2,973만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/41675071" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/27088"
      data-peek="https://ci.encar.com/carpicture05/pic4265/42659741_001.jpg"
      data-buy="3,349만" data-buyest="True">
@@ -3046,7 +2162,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">46</span>
+        <span class="rc-rank" title="점수 차례입니다">32</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3110,7 +2226,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">47</span>
+        <span class="rc-rank" title="점수 차례입니다">33</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3174,7 +2290,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">48</span>
+        <span class="rc-rank" title="점수 차례입니다">34</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3238,7 +2354,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">49</span>
+        <span class="rc-rank" title="점수 차례입니다">35</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3302,7 +2418,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">50</span>
+        <span class="rc-rank" title="점수 차례입니다">36</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3366,7 +2482,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">51</span>
+        <span class="rc-rank" title="점수 차례입니다">37</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3412,6 +2528,70 @@
 </div>
 
 
+<div class="row pickcard" data-href="/detail/19675"
+     data-peek="https://ci.encar.com/carpicture01/pic4261/42617809_001.jpg"
+     data-buy="3,584만" data-buyest="True">
+
+  
+  <div class="pickscore">255 / 348
+    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture01/pic4261/42617809_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">38</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="19675">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="19675"> 비교</label>
+        <a href="/detail/19675">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
+      
+      
+      <div class="pickspec">2022-09 · 38,002km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(4년)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.0만)</span> · 경기</div>
+      
+      <div class="pickprice">3,350만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>50</b>/107</span><span class="pickax"
+          >연식 <b>72</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:73.3%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,584만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42619584" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="row pickcard" data-href="/detail/204"
      data-peek="https://ci.encar.com/carpicture02/pic4252/42520647_001.jpg"
      data-buy="3,531만" data-buyest="True">
@@ -3430,7 +2610,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">52</span>
+        <span class="rc-rank" title="점수 차례입니다">39</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3476,6 +2656,134 @@
 </div>
 
 
+<div class="row pickcard" data-href="/detail/19599"
+     data-peek="https://ci.encar.com/carpicture02/pic4262/42624707_001.jpg"
+     data-buy="3,734만" data-buyest="True">
+
+  
+  <div class="pickscore">254 / 348
+    <span class="pickgrade">등급 E · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture02/pic4262/42624707_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">40</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="19599">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="19599"> 비교</label>
+        <a href="/detail/19599">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
+      
+      
+      <div class="pickspec">2022-07 · 29,783km · 흰색 / 회색 계열 · 엔카 <span class="dim">(4년 2개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.7만)</span> · 경기</div>
+      
+      <div class="pickprice">3,490만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>59</b>/107</span><span class="pickax"
+          >연식 <b>67</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:73.0%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,734만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42626060" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/19386"
+     data-peek="https://ci.encar.com/carpicture01/pic4251/42519598_027.jpg"
+     data-buy="4,269만" data-buyest="True">
+
+  
+  <div class="pickscore">254 / 348
+    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture01/pic4251/42519598_027.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">41</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="19386">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="19386"> 비교</label>
+        <a href="/detail/19386">볼보 EX30 (전기) 울트라</a></div>
+      
+      
+      <div class="pickspec">2025-05 · 16,796km · 흰색 / 청색 계열 · 엔카 <span class="dim">(1년 4개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.3만)</span> · 서울</div>
+      
+      <div class="pickprice">3,990만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>77</b>/107</span><span class="pickax"
+          >연식 <b>60</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>5</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:73.0%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>4,269만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42519599" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="row pickcard" data-href="/detail/20"
      data-peek="https://ci.encar.com/carpicture04/pic4164/41642653_027.jpg"
      data-buy="3,540만" data-buyest="True">
@@ -3494,7 +2802,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">53</span>
+        <span class="rc-rank" title="점수 차례입니다">42</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3558,7 +2866,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">54</span>
+        <span class="rc-rank" title="점수 차례입니다">43</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3622,7 +2930,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">55</span>
+        <span class="rc-rank" title="점수 차례입니다">44</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3686,7 +2994,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">56</span>
+        <span class="rc-rank" title="점수 차례입니다">45</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3732,134 +3040,6 @@
 </div>
 
 
-<div class="row pickcard" data-href="/detail/19489"
-     data-peek="https://ci.encar.com/carpicture02/pic4262/42628950_001.jpg"
-     data-buy="3,531만" data-buyest="True">
-
-  
-  <div class="pickscore">252 / 348
-    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://ci.encar.com/carpicture02/pic4262/42628950_001.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">57</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="19489">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="19489"> 비교</label>
-        <a href="/detail/19489">볼보 S60 B5 인스크립션</a></div>
-      
-      
-      <div class="pickspec">2021-12 · 28,835km · 쥐색 / 베이지색 계열 · 엔카 <span class="dim">(4년 9개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.6만)</span> · 경기</div>
-      
-      <div class="pickprice">3,300만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax hi"
-          >예산 <b>95</b>/95</span><span class="pickax"
-          >주행 <b>61</b>/107</span><span class="pickax"
-          >연식 <b>52</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax"
-          >색상 (내장) <b>5</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:72.4%"></i></div>
-
-      
-      <div class="pickfoot">
-        <span class="pickbuy">사는 값
-          <b>3,531만원</b> (추정)</span>
-        <a href="https://fem.encar.com/cars/detail/42628950" target="_blank" rel="noopener"
-          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
-        
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="row pickcard" data-href="/detail/12900"
-     data-peek="https://selekt.volvocars.co.kr/picserver1/userdata/25/11779/UilXDhkkBYuwn/xxl_kfz88521_.jpg"
-     data-buy="없습니다" data-buyest="False">
-
-  
-  <div class="pickscore">252 / 348
-    <span class="pickgrade">등급 B</span>
-  </div>
-
-  <div class="pickrow cardbody">
-    
-    <div class="desk pickthumb">
-      <img src="https://selekt.volvocars.co.kr/picserver1/userdata/25/11779/UilXDhkkBYuwn/xxl_kfz88521_.jpg" alt="" loading="lazy">
-      
-    </div>
-    <div class="pickmid">
-      
-      <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">58</span>
-        
-        <form method="post" action="/watch/add" class="inline">
-          
-          <input type="hidden" name="csrf" value="render">
-          <input type="hidden" name="listing_id" value="12900">
-          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
-        </form>
-        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
-          name="id" value="12900"> 비교</label>
-        <a href="/detail/12900">볼보 S60</a></div>
-      
-      
-      <div class="pickspec">2023-09 · 30,201km · 크리스탈 화이트 / 앰버 통풍 나파 가죽, 차콜 인테리어 · 볼보 셀렉트 <span class="dim">(3년)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.0만)</span> · <span class="dim">지역 —</span></div>
-      
-      <div class="pickprice">3,650만원</div>
-
-      
-      <div class="pickwhy">왜 이 순위인가</div>
-      <div class="pickaxes">
-        <span class="pickax"
-          >예산 <b>64</b>/95</span><span class="pickax"
-          >주행 <b>59</b>/107</span><span class="pickax hi"
-          >연식 <b>80</b>/80</span><span class="pickax"
-          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
-          >색상 (내장) <b>10</b>/10</span><span class="pickax"
-          >크기 (전장) <b>27</b>/31</span>
-      </div>
-
-      
-      <div class="pbar pickbar"><i style="width:72.4%"></i></div>
-
-      
-      <div class="pickfoot">
-        
-        
-        
-        <span class="rc-why-empty dim"
-          title="원문으로 가는 문을 아직 못 만들었습니다. 그 매물이 없어진 것이 아닙니다"
-          >그 사이트는 주소를 아직 못 쟀습니다</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <div class="row pickcard" data-href="/detail/27135"
      data-peek="https://ci.encar.com/carpicture06/pic4266/42669676_001.jpg"
      data-buy="3,090만" data-buyest="True">
@@ -3878,7 +3058,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">59</span>
+        <span class="rc-rank" title="점수 차례입니다">46</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3942,7 +3122,7 @@
     <div class="pickmid">
       
       <div class="pickname">
-        <span class="rc-rank" title="점수 차례입니다">60</span>
+        <span class="rc-rank" title="점수 차례입니다">47</span>
         
         <form method="post" action="/watch/add" class="inline">
           
@@ -3988,6 +3168,836 @@
 </div>
 
 
+<div class="row pickcard" data-href="/detail/22"
+     data-peek="https://ci.encar.com/carpicture07/pic4167/41675685_001.jpg"
+     data-buy="3,743만" data-buyest="True">
+
+  
+  <div class="pickscore">251 / 348
+    <span class="pickgrade">등급 A</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture07/pic4167/41675685_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">48</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="22">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="22"> 비교</label>
+        <a href="/detail/22">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 에스프리 알핀 2WD</a></div>
+      
+      
+      <div class="pickspec">2024-10 · 10,393km · 쥐색 / 검정색 계열 · 엔카 <span class="dim">(1년 11개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.5만)</span> · 부산</div>
+      
+      <div class="pickprice">3,499만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax"
+          >예산 <b>43</b>/95</span><span class="pickax"
+          >주행 <b>88</b>/107</span><span class="pickax"
+          >연식 <b>69</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:72.1%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,743만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/41675685" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/19587"
+     data-peek="https://ci.encar.com/carpicture07/pic4177/41773470_001.jpg"
+     data-buy="3,841만" data-buyest="True">
+
+  
+  <div class="pickscore">251 / 348
+    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture07/pic4177/41773470_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">49</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="19587">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="19587"> 비교</label>
+        <a href="/detail/19587">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
+      
+      
+      <div class="pickspec">2023-02 · 26,582km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(3년 7개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.7만)</span> · 서울</div>
+      
+      <div class="pickprice">3,590만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax"
+          >예산 <b>74</b>/95</span><span class="pickax"
+          >주행 <b>64</b>/107</span><span class="pickax"
+          >연식 <b>75</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:72.1%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,841만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/41777127" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/88"
+     data-peek="https://ci.encar.com/carpicture06/pic4216/42162787_001.jpg"
+     data-buy="3,208만" data-buyest="True">
+
+  
+  <div class="pickscore">250 / 348
+    <span class="pickgrade">등급 C · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture06/pic4216/42162787_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">50</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="88">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="88"> 비교</label>
+        <a href="/detail/88">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 아이코닉 2WD</a></div>
+      
+      
+      <div class="pickspec">2024-12 · 43,574km · 흰색 / 청색 계열 · 엔카 <span class="dim">(1년 9개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 2.5만)</span> · 전북</div>
+      
+      <div class="pickprice">2,999만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>43</b>/107</span><span class="pickax"
+          >연식 <b>66</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.8%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,208만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42162787" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/13812"
+     data-peek="https://ci.encar.com/carpicture07/pic4257/42574851_001.jpg"
+     data-buy="3,424만" data-buyest="True">
+
+  
+  <div class="pickscore">250 / 348
+    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture07/pic4257/42574851_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">51</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="13812">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="13812"> 비교</label>
+        <a href="/detail/13812">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 에스프리 알핀 2WD</a></div>
+      
+      
+      <div class="pickspec">2024-11 · 50,626km · 검정색 / 검정색 계열 · 엔카 <span class="dim">(1년 10개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 2.8만)</span> · 경기</div>
+      
+      <div class="pickprice">3,200만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>36</b>/107</span><span class="pickax"
+          >연식 <b>68</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.8%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,424만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42577524" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/11684"
+     data-peek=""
+     data-buy="없습니다" data-buyest="False">
+
+  
+  <div class="pickscore">250 / 348
+    <span class="pickgrade">등급 B</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      
+      <span class="pimg photo-why" title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다">헤이딜러는 사진을 아직 못 받았습니다</span>
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">52</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="11684">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="11684"> 비교</label>
+        <a href="/detail/11684">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 하이브리드 2WD 에스프리 알핀</a></div>
+      
+      
+      <div class="pickspec">2025-03 · 12,284km · 클라우드 펄 / 검정 가죽+알칸타라 · 헤이딜러 <span class="dim">(1년 6개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.8만)</span> · <span class="dim">지역 —</span></div>
+      
+      <div class="pickprice">3,490만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax"
+          >예산 <b>44</b>/95</span><span class="pickax"
+          >주행 <b>85</b>/107</span><span class="pickax"
+          >연식 <b>62</b>/80</span><span class="pickax hi"
+          >색상 (외장) <b>25</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.8%"></i></div>
+
+      
+      <div class="pickfoot">
+        
+        <a href="https://www.heydealer.com/market/cars/pQPxZ9Q9" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">헤이딜러에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/14"
+     data-peek="https://ci.encar.com/carpicture03/pic4153/41537669_001.jpg"
+     data-buy="3,884만" data-buyest="True">
+
+  
+  <div class="pickscore">250 / 348
+    <span class="pickgrade">등급 A</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture03/pic4153/41537669_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">53</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="14">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="14"> 비교</label>
+        <a href="/detail/14">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 에스프리 알핀 2WD</a></div>
+      
+      
+      <div class="pickspec">2024-09 · 5,349km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(2년)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.3만)</span> · 서울</div>
+      
+      <div class="pickprice">3,630만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax"
+          >예산 <b>32</b>/95</span><span class="pickax"
+          >주행 <b>97</b>/107</span><span class="pickax"
+          >연식 <b>70</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.8%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,884만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/41537669" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/21029"
+     data-peek="https://ci.encar.com/carpicture03/pic4263/42635711_001.jpg"
+     data-buy="3,049만" data-buyest="True">
+
+  
+  <div class="pickscore">249 / 348
+    <span class="pickgrade">등급 판정 중 · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture03/pic4263/42635711_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">54</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="21029">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="21029"> 비교</label>
+        <a href="/detail/21029">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 에스프리 알핀 2WD</a></div>
+      
+      
+      <div class="pickspec">2024-10 · 53,030km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(1년 11개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 2.8만)</span> · 경기</div>
+      
+      <div class="pickprice">2,850만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>34</b>/107</span><span class="pickax"
+          >연식 <b>69</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.6%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,049만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42635711" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/6219"
+     data-peek="https://ci.encar.com/carpicture10/pic4200/42006988_001.jpg"
+     data-buy="3,140만" data-buyest="True">
+
+  
+  <div class="pickscore">249 / 348
+    <span class="pickgrade">등급 A</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture10/pic4200/42006988_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">55</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="6219">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="6219"> 비교</label>
+        <a href="/detail/6219">테슬라 모델Y RWD</a></div>
+      
+      
+      <div class="pickspec">2025-02 · 44,186km · 흰색 / 회색 계열 · 엔카 <span class="dim">(1년 7개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 2.8만)</span> · 경기</div>
+      
+      <div class="pickprice">3,140만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>43</b>/107</span><span class="pickax"
+          >연식 <b>64</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>30</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.6%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,140만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42006988" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/19672"
+     data-peek="https://ci.encar.com/carpicture09/pic4249/42498451_027.jpg"
+     data-buy="3,627만" data-buyest="True">
+
+  
+  <div class="pickscore">249 / 348
+    <span class="pickgrade">등급 E · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture09/pic4249/42498451_027.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">56</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="19672">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="19672"> 비교</label>
+        <a href="/detail/19672">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
+      
+      
+      <div class="pickspec">2022-09 · 38,291km · 검정색 / 회색 계열 · 엔카 <span class="dim">(4년)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.0만)</span> · 부산</div>
+      
+      <div class="pickprice">3,390만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>49</b>/107</span><span class="pickax"
+          >연식 <b>72</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.6%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,627만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42501830" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/17183"
+     data-peek="https://ci.encar.com/carpicture09/pic4259/42597261_027.jpg"
+     data-buy="3,349만" data-buyest="True">
+
+  
+  <div class="pickscore">248 / 348
+    <span class="pickgrade">등급 D · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture09/pic4259/42597261_027.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">57</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="17183">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="17183"> 비교</label>
+        <a href="/detail/17183">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 아이코닉 2WD</a></div>
+      
+      
+      <div class="pickspec">2025-04 · 41,617km · 흰색 / 베이지색 계열 · 엔카 <span class="dim">(1년 5개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 2.9만)</span> · 경기</div>
+      
+      <div class="pickprice">3,130만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>46</b>/107</span><span class="pickax"
+          >연식 <b>61</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.3%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,349만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42603172" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/26393"
+     data-peek=""
+     data-buy="없습니다" data-buyest="False">
+
+  
+  <div class="pickscore">248 / 348
+    <span class="pickgrade">등급 B</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      
+      <span class="pimg photo-why" title="빈 자리에는 까닭을 냅니다 — 「우리가 못 받았다」와 「그 매물에 없다」는 다릅니다">헤이딜러는 사진을 아직 못 받았습니다</span>
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">58</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="26393">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="26393"> 비교</label>
+        <a href="/detail/26393">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 하이브리드 2WD 아이코닉</a></div>
+      
+      
+      <div class="pickspec">2025-08 · 13,741km · 헤이딜러 <span class="dim">(1년 1개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.3만)</span> · <span class="dim">지역 —</span></div>
+      
+      <div class="pickprice">3,250만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax"
+          >예산 <b>81</b>/95</span><span class="pickax"
+          >주행 <b>82</b>/107</span><span class="pickax"
+          >연식 <b>56</b>/80</span><span class="pickax"
+          >색상 (외장) <b>0</b>/25</span><span class="pickax"
+          >색상 (내장) <b>0</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.3%"></i></div>
+
+      
+      <div class="pickfoot">
+        
+        <a href="https://www.heydealer.com/market/cars/gQz78OlK" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">헤이딜러에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/19613"
+     data-peek="https://ci.encar.com/carpicture06/pic4256/42567043_001.jpg"
+     data-buy="3,670만" data-buyest="True">
+
+  
+  <div class="pickscore">248 / 348
+    <span class="pickgrade">등급 E · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture06/pic4256/42567043_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">59</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="19613">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="19613"> 비교</label>
+        <a href="/detail/19613">폴스타 2 (전기) 롱레인지 싱글모터</a></div>
+      
+      
+      <div class="pickspec">2022-10 · 44,517km · 흰색 / 검정색 계열 · 엔카 <span class="dim">(3년 11개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 1.1만)</span> · 경기</div>
+      
+      <div class="pickprice">3,430만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax hi"
+          >예산 <b>95</b>/95</span><span class="pickax"
+          >주행 <b>42</b>/107</span><span class="pickax"
+          >연식 <b>73</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax hi"
+          >색상 (내장) <b>10</b>/10</span><span class="pickax"
+          >크기 (전장) <b>16</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.3%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,670만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42569569" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row pickcard" data-href="/detail/27076"
+     data-peek="https://ci.encar.com/carpicture05/pic4265/42652258_001.jpg"
+     data-buy="3,702만" data-buyest="True">
+
+  
+  <div class="pickscore">248 / 348
+    <span class="pickgrade">등급 판정 중 · 등급은 안 봅니다</span>
+  </div>
+
+  <div class="pickrow cardbody">
+    
+    <div class="desk pickthumb">
+      <img src="https://ci.encar.com/carpicture05/pic4265/42652258_001.jpg" alt="" loading="lazy">
+      
+    </div>
+    <div class="pickmid">
+      
+      <div class="pickname">
+        <span class="rc-rank" title="점수 차례입니다">60</span>
+        
+        <form method="post" action="/watch/add" class="inline">
+          
+          <input type="hidden" name="csrf" value="render">
+          <input type="hidden" name="listing_id" value="27076">
+          <button type="submit" class="heart" title="관심에 담습니다">♡</button>
+        </form>
+        <label class="pickcmp" title="비교에 담습니다"><input type="checkbox"
+          name="id" value="27076"> 비교</label>
+        <a href="/detail/27076">그랑 콜레오스 1.5 E-TECH 1.5 E-TECH 아이코닉 2WD</a></div>
+      
+      
+      <div class="pickspec">2025-06 · 5,699km · 흰색 / 갈색 계열 · 엔카 <span class="dim">(1년 3개월)</span> <span class="dim" title="한 해에 얼마나 탔나입니다">(연 0.5만)</span> · 서울</div>
+      
+      <div class="pickprice">3,460만원</div>
+
+      
+      <div class="pickwhy">왜 이 순위인가</div>
+      <div class="pickaxes">
+        <span class="pickax"
+          >예산 <b>47</b>/95</span><span class="pickax"
+          >주행 <b>96</b>/107</span><span class="pickax"
+          >연식 <b>59</b>/80</span><span class="pickax"
+          >색상 (외장) <b>12</b>/25</span><span class="pickax"
+          >색상 (내장) <b>5</b>/10</span><span class="pickax"
+          >크기 (전장) <b>29</b>/31</span>
+      </div>
+
+      
+      <div class="pbar pickbar"><i style="width:71.3%"></i></div>
+
+      
+      <div class="pickfoot">
+        <span class="pickbuy">사는 값
+          <b>3,702만원</b> (추정)</span>
+        <a href="https://fem.encar.com/cars/detail/42666306" target="_blank" rel="noopener"
+          class="btn go mini" title="원문 매물로 갑니다">엔카에서 보기 ↗</a>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </main>
 <p class="cmpbar"><button type="submit" class="btn">고른 차 비교하기</button></p>
 </form>
@@ -4000,7 +4010,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260903T082924</span>
-  <span>2026-09-04 14:24</span>
+  <span>2026-09-04 18:24</span>
 </footer>
 
 </body>

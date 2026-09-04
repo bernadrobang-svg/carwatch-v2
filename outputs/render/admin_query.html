@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쿼리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=0a378a75ba">
+<link rel="stylesheet" href="/static/app.css?v=f1d70762bc">
 
 </head>
 <body class="s-admin-query">
@@ -35,7 +35,7 @@
   <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다"><b>⇄</b>추적</a>
   
   
-  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색)에 가까운 차. ★ 등급을 안 본다 — 네 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)"><b>★</b>추천</a>
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색(외)·색(내)·크기)에 가까운 차. ★ 등급을 안 본다 — 여섯 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)"><b>★</b>추천</a>
   
   
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
@@ -175,13 +175,13 @@
 <tr><td class="runid" data-label="표">audit_request</td><td class="num" data-label="행">370,873</td>
   <td class="muted" data-label="컬럼">id · run_id · site · kind · source_id · url · http_code · status · elapsed_ms · attempt</td></tr>
 
-<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">32,794</td>
+<tr><td class="runid" data-label="표">audit_validation</td><td class="num" data-label="행">32,797</td>
   <td class="muted" data-label="컬럼">run_id · phase · code · target_key · expected · actual · passed · severity · samples · applicable</td></tr>
 
-<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">3,980</td>
+<tr><td class="runid" data-label="표">auth_login_attempt</td><td class="num" data-label="행">4,030</td>
   <td class="muted" data-label="컬럼">attempt_id · display_name · succeeded · reason · attempted_at</td></tr>
 
-<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">3,930</td>
+<tr><td class="runid" data-label="표">auth_session</td><td class="num" data-label="행">3,980</td>
   <td class="muted" data-label="컬럼">session_id · account_id · created_at · expires_at · revoked_at</td></tr>
 
 <tr><td class="runid" data-label="표">coefficient_history</td><td class="num" data-label="행">0</td>
@@ -247,7 +247,7 @@
 <tr><td class="runid" data-label="표">meta_field_usage</td><td class="num" data-label="행">858</td>
   <td class="muted" data-label="컬럼">site · endpoint · json_path · core_column · usage · reason · unblock_condition · use_when · priority · observed_hits</td></tr>
 
-<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">307</td>
+<tr><td class="runid" data-label="표">query_log</td><td class="num" data-label="행">315</td>
   <td class="muted" data-label="컬럼">query_id · account_id · sql_text · row_count · elapsed_ms · rejected_reason · reject_kind · executed_at</td></tr>
 
 <tr><td class="runid" data-label="표">raw_facet</td><td class="num" data-label="행">288</td>
@@ -324,7 +324,7 @@ document.querySelectorAll('button.copy').forEach(function (b) {
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260903T082924</span>
-  <span>2026-09-04 14:24</span>
+  <span>2026-09-04 18:24</span>
 </footer>
 
 </body>
