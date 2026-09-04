@@ -1,59 +1,84 @@
 {
- "_잰_때": "2026-09-04T02:50:12.804991+00:00",
+ "_잰_때": "2026-09-04T07:40:16.484967+00:00",
  "_잰_곳": "https://54.180.227.109.sslip.io",
- "합": 14,
+ "합": 10,
+ "상자겹침합": 20,
  "자리": {
   "listings_390": {
-   "leaf": 65,
-   "hidden": 7,
+   "leaf": 62,
+   "hidden": 1,
    "examples": [
-    "17.9 (3/9)",
-    "엔카 (0/9)",
-    "경기 (3/9)",
-    "게시중 (4/9)",
-    "OK (0/9)",
-    "OK (1/9)"
+    "옵션가 (0/9)"
+   ],
+   "overlap": 7,
+   "overlap_examples": [
+    "취향 / ♡ 4px",
+    "17.9 / 2024-09 7px",
+    "(주)우리집자동차 / 게시중 11px",
+    "옵션가 / 2종\n        12px",
+    "3,380만 / -70만 · 1회 11px",
+    "시세보다 50만 비 / 49만 12px"
    ],
    "shot": "outputs/shots/listings_390.png"
   },
   "listings_900": {
-   "leaf": 115,
-   "hidden": 2,
+   "leaf": 113,
+   "hidden": 3,
    "examples": [
-    "옵션가 (0/9)",
-    "옵션가 (0/9)"
+    "2024-09 (3/9)",
+    "옵션가 (3/9)",
+    "옵션가 (3/9)"
+   ],
+   "overlap": 12,
+   "overlap_examples": [
+    "옵션가 / 3종\n        12px",
+    "3,499만 / 변동 없음 11px",
+    "시세보다 169만  / 52만 12px",
+    "♡ / 1.5 E-TECH 19px",
+    "17.9 / (주)우리집자동차 7px",
+    "옵션가 / 2종\n        12px"
    ],
    "shot": "outputs/shots/listings_900.png"
   },
   "recommend_390": {
-   "leaf": 45,
-   "hidden": 4,
-   "examples": [
-    "그랑 콜레오스 1.5 E-TE (4/9)",
-    "(1년 10개월) (0/9)",
-    "그랑 콜레오스 1.5 E-TE (4/9)",
-    "(1년 7개월) (0/9)"
-   ],
+   "leaf": 41,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "overlap_examples": [],
    "shot": "outputs/shots/recommend_390.png"
   },
   "recommend_900": {
-   "leaf": 52,
-   "hidden": 0,
-   "examples": [],
+   "leaf": 58,
+   "hidden": 6,
+   "examples": [
+    "65 (0/3)",
+    "68 (0/3)",
+    "70 (0/3)",
+    "25 (0/3)",
+    "5 (0/3)",
+    "29 (0/3)"
+   ],
+   "overlap": 1,
+   "overlap_examples": [
+    "헤이딜러는 사진을  / 3,330만원 25px"
+   ],
    "shot": "outputs/shots/recommend_900.png"
   },
   "track_390": {
-   "leaf": 49,
+   "leaf": 50,
    "hidden": 0,
    "examples": [],
+   "overlap": 0,
+   "overlap_examples": [],
    "shot": "outputs/shots/track_390.png"
   },
   "track_900": {
-   "leaf": 38,
-   "hidden": 1,
-   "examples": [
-    "차가 나쁜 것이 아니라 그 사 (0/9)"
-   ],
+   "leaf": 45,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "overlap_examples": [],
    "shot": "outputs/shots/track_900.png"
   }
  }

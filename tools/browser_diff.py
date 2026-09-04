@@ -429,6 +429,38 @@ HIDDEN_TEXT_JS = r"""
 """
 
 
+BOX_OVERLAP_JS = r"""
+() => {
+  const stuck = e => { for (let a = e; a; a = a.parentElement) {
+      const p = getComputedStyle(a).position;
+      if (p === 'fixed' || p === 'sticky') return true; } return false; };
+  const L = [];
+  for (const e of document.querySelectorAll('*')) {
+    const s = getComputedStyle(e);
+    if (s.display === 'none' || e.children.length) continue;
+    const t = (e.textContent || '').trim(); if (!t) continue;
+    const r = e.getBoundingClientRect();
+    if (r.width <= 0 || r.height <= 0 || r.bottom < 0 || r.top > innerHeight) continue;
+    if (stuck(e)) continue;                 // ★ 붙박이 띠는 얹으라고 만든 것이다
+    L.push({e: e, r: r, t: t});
+  }
+  let n = 0; const ex = [];
+  for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+    const A = L[i], B = L[j];
+    if (A.e.contains(B.e) || B.e.contains(A.e)) continue;
+    const ox = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
+    const oy = Math.min(A.r.bottom, B.r.bottom) - Math.max(A.r.top, B.r.top);
+    if (ox > 2 && oy > 2) {
+      n++;
+      if (ex.length < 6) ex.push(A.t.slice(0, 10) + ' / ' + B.t.slice(0, 10) +
+                                 ' ' + Math.round(oy) + 'px');
+    }
+  }
+  return {overlap: n, examples: ex};
+}
+"""
+
+
 def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"),
                        widths=(390, 900), shot_dir: str = "outputs/shots"):
     """★ 배포를 ★ **브라우저로 열어** ★ 가려진 글자를 세고 ★ **캡처를 남긴다**.
@@ -468,25 +500,37 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
                 pg.evaluate("window.scrollTo(0, document.body.scrollHeight*0.35)")
                 pg.wait_for_timeout(500)
                 got = pg.evaluate(HIDDEN_TEXT_JS)
+                # ★★★★★ 09-04 — ★ **상자 겹침도 여기서 센다.**
+                #   ★ `BOX_OVERLAP_JS` 는 ★ 아래에 적혀만 있고
+                #   ★ ★ **아무도 안 불렀다** — ★ 그래서 ★ 겹침 수는 ★ 손으로 세야 했다.
+                #   ★★ 마스터 — 「★ 겹치는 것도 안 되지만 ★ **내가 보기 좋게 바꿔**」.
+                #     ★ ★ 점 자(가려진 글자)만으로는 ★ **딱지가 겹쳐 보이는 것**을 못 잡는다
+                #   ★ `S46-271` 이 ★ 두 자를 다 요구한다 — ★ 이제 둘 다 남는다
+                box = pg.evaluate(BOX_OVERLAP_JS)
+                got["overlap"] = box.get("overlap", 0)
+                got["overlap_examples"] = box.get("examples", [])
                 key = f"{path.strip('/') or 'home'}_{w}"
                 shot = _os.path.join(shot_dir, key + ".png")
                 pg.screenshot(path=shot)          # ★ 캡처를 남긴다
                 got["shot"] = shot
                 out[key] = got
                 print(f"{path:<12}{w:>5}px  잎 {got['leaf']:>4} · "
-                      f"★ 가려진 글자 {got['hidden']:>3}  → {shot}")
+                      f"★ 가려진 글자 {got['hidden']:>3} · "
+                      f"★ 상자 겹침 {got['overlap']:>3}  → {shot}")
         br.close()
     total = sum(v["hidden"] for v in out.values())
+    boxes = sum(v.get("overlap", 0) for v in out.values())
     # ★★★★★ 09-04 마스터 — 「★ **캡처만 내면 되나?**」
     #   ★ ★ **안 된다.**  ★ 캡처는 ★ **증거**이지 ★ 잣대가 아니다.
     #   ★ ★ ★ 잣대는 ★ **수**이고 ★ 그 수가 ★ **검사에서 실패로 떠야** 한다.
     #   ★ 그래서 ★ 잰 수를 ★ 파일로 남긴다 — ★ `S46-271` 이 ★ 이 파일을 읽어 ★ **0 이 아니면 실패**한다.
     #   ★ ★ 그리고 ★ **날짜를 적는다** — ★ 낡으면 ★ 「안 쟀다」로 본다
     rep = {"_잰_때": _dt.datetime.now(_dt.timezone.utc).isoformat(),
-           "_잰_곳": base_url, "합": total, "자리": out}
+           "_잰_곳": base_url, "합": total, "상자겹침합": boxes, "자리": out}
     with open(REPORT, "w", encoding="utf-8") as f:
         _j.dump(rep, f, ensure_ascii=False, indent=1)
-    print(f"\n★ 합 {total}개 · 캡처 {len(out)}장 — {shot_dir}/")
+    print(f"\n★ 가려진 글자 {total}개 · ★ 상자 겹침 {boxes}개 ·"
+          f" 캡처 {len(out)}장 — {shot_dir}/")
     print(f"★ 잰 수를 적었다 — {REPORT}  (★ 0 이 아니면 `S46-271` 이 운다)")
     return out
 
@@ -499,34 +543,3 @@ def hidden_text_report(base_url: str, paths=("/listings", "/recommend", "/track"
 #         ★ **상자 자는 「보기 흉한가」** 를 본다 — ★ **둘 다 있어야 한다**.
 #   ★ 실측 09-04 — ★ 상자 겹침 ★ **27 → 17** (`.meta{row-gap:14px}`)
 #     ★ 남은 것 — 「17.9/2024-09 5px」·「(주)우리집자동차/게시중 11px」·「옵션가/2종 10px」
-
-BOX_OVERLAP_JS = r"""
-() => {
-  const stuck = e => { for (let a = e; a; a = a.parentElement) {
-      const p = getComputedStyle(a).position;
-      if (p === 'fixed' || p === 'sticky') return true; } return false; };
-  const L = [];
-  for (const e of document.querySelectorAll('*')) {
-    const s = getComputedStyle(e);
-    if (s.display === 'none' || e.children.length) continue;
-    const t = (e.textContent || '').trim(); if (!t) continue;
-    const r = e.getBoundingClientRect();
-    if (r.width <= 0 || r.height <= 0 || r.bottom < 0 || r.top > innerHeight) continue;
-    if (stuck(e)) continue;                 // ★ 붙박이 띠는 얹으라고 만든 것이다
-    L.push({e: e, r: r, t: t});
-  }
-  let n = 0; const ex = [];
-  for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
-    const A = L[i], B = L[j];
-    if (A.e.contains(B.e) || B.e.contains(A.e)) continue;
-    const ox = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
-    const oy = Math.min(A.r.bottom, B.r.bottom) - Math.max(A.r.top, B.r.top);
-    if (ox > 2 && oy > 2) {
-      n++;
-      if (ex.length < 6) ex.push(A.t.slice(0, 10) + ' / ' + B.t.slice(0, 10) +
-                                 ' ' + Math.round(oy) + 'px');
-    }
-  }
-  return {overlap: n, examples: ex};
-}
-"""

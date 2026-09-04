@@ -443,13 +443,26 @@ def load_details(cfg: dict, groups: list | None = None) -> dict:
     #     ★ ★ KB 상세 파일이 ★ 760개면 ★ **371 MB** · 리본카 1,158개면 ★ 565 MB —
     #     ★ ★ ★ 장비 RAM 이 ★ **1,841 MB** 다.  ★ 09-03 에 ★ 그렇게 세 번 죽었다.
     #   ★ 한 건씩 흘려 보낸다 — ★ 한 번에 ★ 한 개만 메모리에 있다 (`S46-265` 와 같은 뜻)
+    # ★★★★★ 09-04 — ★ **`parsed_at` 을 정말 읽는다.**
+    #   ★ 이 함수는 ★ 「값이 그대로면 건너뛴다」라 적어 두고
+    #   ★ ★ `parsed_at` 자리에 ★ **늘 `None`** 을 넘겼다 — ★ 그래서 ★ 한 번도 안 건너뛰었다.
+    #   ★★ 실측 09-04 — ★ 묶음 **40번**을 도는 동안 ★ 「본 원문 742 · 넣음 742 ·
+    #     ★ ★ 그대로라 건너뜀 **0**」이 ★ 마흔 번 되풀이됐다.
+    #     ★ ★ ★ 새로 받은 상세는 ★ **0건**인데 ★ 같은 742개를 ★ 마흔 번 다시 파싱했고
+    #     ★ ★ ★ ★ 그때마다 ★ **재판정을 큐에 넣었다** (40판).
+    #   ★ `source_id` → `parsed_at` 을 ★ 한 번만 읽어 둔다 — ★ 건마다 묻지 않는다
+    _seen = {str(r[0]): r[1] for r in conn.execute(
+        "SELECT source_id, parsed_at FROM core_listing"
+        " WHERE site = ? AND parsed_at IS NOT NULL", (SITE_CODE,))}
+
     def _stream():
         for path in _walk(site=SITE_CODE, endpoint="detail", root=ROOT):
             env = _read(path)
             if env is None or not env.get("body"):
                 continue
-            yield (env.get("source_id"), env["body"],
-                   env.get("fetched_at"), None)
+            sid = env.get("source_id")
+            yield (sid, env["body"], env.get("fetched_at"),
+                   _seen.get(str(sid)))
 
     n = 0
     for sid, body, fetched_at, parsed_at in _stream():
