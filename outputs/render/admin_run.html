@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카가 막혀 있습니다 — 4일째 멈췄습니다</strong>
-  <span class="banner-action">우리 회선은 407 입니다. 「엔카 받기」가 브라우저 수집을 대신 눌러 줍니다 — 마스터 휴대폰으로만 받아집니다</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -62,12 +62,12 @@
 <div class="notice" id="progress">
   <h2>진행</h2>
   
-  <p><strong>running</strong> · 사유 raw_missing · 범위 all
-    </p>
+  <p><strong>done</strong> · 사유 raw_missing · 범위 all
+    <span class="muted">· run 20260904T040508</span></p>
   <p>단계 <strong>-</strong>
     
-    <span class="muted">· 넣은 시각 2026-09-03T17:08:19.242409+00:00</span></p>
-  
+    <span class="muted">· 넣은 시각 2026-09-04T04:05:07.579426+00:00</span></p>
+  <p class="muted">S5 ok 0 · S6 ok 0 · S9 ok 457436 · S10 ok 16337</p>
   
   
 
@@ -81,9 +81,13 @@
   <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th class="num">원문</th></tr></thead>
   <tbody>
   
+  <tr><td data-label="엔드포인트">facet</td><td class="num" data-label="원문">26</td></tr>
+  
+  <tr><td data-label="엔드포인트">list</td><td class="num" data-label="원문">603</td></tr>
+  
   </tbody>
   </table>
-  <p class="muted">매물 26,701건 · 판정 15,858건</p>
+  <p class="muted">매물 27,466건 · 판정 16,337건</p>
 
   
   <p class="muted">이 화면은 <strong>스스로 갱신되지 않습니다</strong> —
@@ -91,7 +95,7 @@
     도는 것을 보시려면 <a class="btn mini" href="/admin/status">진행 보기 ▸</a></p>
 </div>
 
-<p class="warn-warn">실행 중입니다. 배점·설정 변경이 잠깁니다.</p>
+
 
 <form method="post" action="/admin/run">
   <input type="hidden" name="csrf" value="render">
@@ -105,80 +109,80 @@
   
   <label class="opt"><input type="radio" name="scope" value="all" checked>
     <strong>전 차종</strong> — 30차종
-    <strong class="run-hours">약 11.6시간</strong> 걸립니다</label>
+    <strong class="run-hours">약 11.9시간</strong> 걸립니다</label>
   <p class="muted">시작하면 중간에 세우기 어렵습니다. 받은 것은 남습니다.</p>
 
   <details class="opt">
     <summary>차종 하나만 돌리기 <span class="muted">(개발측이 씁니다)</span></summary>
     
     <label class="opt"><input type="radio" name="scope" value="G80_25T">
-      G80_25T <span class="muted">(4,449건)</span></label>
+      G80_25T <span class="muted">(4,580건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="GLC_IMPORT">
-      GLC_IMPORT <span class="muted">(1,925건)</span></label>
+      GLC_IMPORT <span class="muted">(1,990건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="X3_IMPORT">
-      X3_IMPORT <span class="muted">(1,558건)</span></label>
-    
-    <label class="opt"><input type="radio" name="scope" value="GV70_25T">
-      GV70_25T <span class="muted">(1,311건)</span></label>
+      X3_IMPORT <span class="muted">(1,609건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="MODEL_Y">
-      MODEL_Y <span class="muted">(1,063건)</span></label>
+      MODEL_Y <span class="muted">(1,119건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="SPORTAGE_LPI">
-      SPORTAGE_LPI <span class="muted">(953건)</span></label>
+      SPORTAGE_LPI <span class="muted">(956건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="GRANDEUR_LPG">
-      GRANDEUR_LPG <span class="muted">(857건)</span></label>
+      GRANDEUR_LPG <span class="muted">(870건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="XC60_IMPORT">
-      XC60_IMPORT <span class="muted">(739건)</span></label>
+      XC60_IMPORT <span class="muted">(760건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="Q5_IMPORT">
-      Q5_IMPORT <span class="muted">(701건)</span></label>
+      Q5_IMPORT <span class="muted">(718건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="XC40_IMPORT">
-      XC40_IMPORT <span class="muted">(523건)</span></label>
+      XC40_IMPORT <span class="muted">(537건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="KOLEOS_HEV">
-      KOLEOS_HEV <span class="muted">(473건)</span></label>
+      KOLEOS_HEV <span class="muted">(488건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="GV70_25T">
+      GV70_25T <span class="muted">(484건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="V60CC_IMPORT">
-      V60CC_IMPORT <span class="muted">(393건)</span></label>
+      V60CC_IMPORT <span class="muted">(404건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="G70_20T">
-      G70_20T <span class="muted">(359건)</span></label>
+      G70_20T <span class="muted">(364건)</span></label>
+    
+    <label class="opt"><input type="radio" name="scope" value="NX_HEV">
+      NX_HEV <span class="muted">(299건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="S60_IMPORT">
       S60_IMPORT <span class="muted">(299건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="G70_25T">
-      G70_25T <span class="muted">(295건)</span></label>
-    
-    <label class="opt"><input type="radio" name="scope" value="NX_HEV">
-      NX_HEV <span class="muted">(292건)</span></label>
+      G70_25T <span class="muted">(298건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="GV60">
-      GV60 <span class="muted">(221건)</span></label>
+      GV60 <span class="muted">(228건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="POLESTAR2_EV">
-      POLESTAR2_EV <span class="muted">(196건)</span></label>
+      POLESTAR2_EV <span class="muted">(213건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="RX_IMPORT">
-      RX_IMPORT <span class="muted">(170건)</span></label>
+      RX_IMPORT <span class="muted">(175건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="G80_EV">
-      G80_EV <span class="muted">(135건)</span></label>
+      G80_EV <span class="muted">(145건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="ES_HEV">
       ES_HEV <span class="muted">(129건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="GV70_EV">
-      GV70_EV <span class="muted">(126건)</span></label>
+      GV70_EV <span class="muted">(128건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="POLESTAR4_EV">
-      POLESTAR4_EV <span class="muted">(69건)</span></label>
+      POLESTAR4_EV <span class="muted">(75건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="UX300E_EV">
       UX300E_EV <span class="muted">(34건)</span></label>
@@ -190,7 +194,7 @@
       IX3_EV <span class="muted">(27건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="C40_EV">
-      C40_EV <span class="muted">(17건)</span></label>
+      C40_EV <span class="muted">(20건)</span></label>
     
     <label class="opt"><input type="radio" name="scope" value="EX30_EV">
       EX30_EV <span class="muted">(10건)</span></label>
@@ -218,109 +222,102 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="지금 어떤 상태인지입니다">상태</th><th title="수집 단계입니다 (S0~S11)">단계</th><th class="num">진행</th><th title="왜 그렇게 됐는지입니다">사유</th><th></th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-09-03T17:08:19.242409+00:00</td><td data-label="상태">running</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""><form method="post" action="/admin/run" class="inline">
-    <input type="hidden" name="csrf" value="render">
-    <input type="hidden" name="previewed" value="1">
-    <input type="hidden" name="action" value="halt">
-    <input type="hidden" name="job_id" value="d65d0938382a8e56">
-    <input name="reason" size="12" placeholder="사유 (필수)" required>
-    <button type="submit" class="mini" data-confirm="중단합니다. 받은 것은 남고 재개점이 저장됩니다">중단</button>
-  </form></td></tr>
-
-<tr><td data-label="시각">2026-09-03T16:48:29.961130+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-04T04:05:07.579426+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T16:43:50.523020+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T22:35:54.787217+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">listing_updated</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-09-03T22:31:06.883269+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">listing_updated</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-09-03T22:29:18.760809+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+  <td class="num" data-label="진행">없습니다/없습니다</td>
+  <td class="muted" data-label="사유">listing_updated</td>
+  <td data-label=""></td></tr>
+
+<tr><td data-label="시각">2026-09-03T21:52:31.576568+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T16:38:46.284776+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:46:54.048090+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T16:35:23.907352+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:41:16.501479+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T16:21:14.891723+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:35:38.882962+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:59:23.812918+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:30:01.219994+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:29:24.649801+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:24:23.773832+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:23:56.019088+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:18:44.786097+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:18:34.737991+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:13:04.300560+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:13:13.964934+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:07:22.136998+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T07:31:13.047183+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T21:01:40.446455+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T07:25:43.898420+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T20:56:00.797273+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T06:28:05.628242+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T20:49:22.423365+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T06:22:40.122075+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T20:38:08.412694+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T06:16:50.656678+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T20:26:54.581900+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T06:11:09.461321+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T20:15:40.645938+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
 
-<tr><td data-label="시각">2026-09-03T06:04:56.110721+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-09-03T05:51:23.533798+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
-  <td class="num" data-label="진행">없습니다/없습니다</td>
-  <td class="muted" data-label="사유">raw_missing</td>
-  <td data-label=""></td></tr>
-
-<tr><td data-label="시각">2026-09-03T05:45:48.554500+00:00</td><td data-label="상태">failed</td><td data-label="단계">-</td>
+<tr><td data-label="시각">2026-09-03T20:04:26.526081+00:00</td><td data-label="상태">done</td><td data-label="단계">-</td>
   <td class="num" data-label="진행">없습니다/없습니다</td>
   <td class="muted" data-label="사유">raw_missing</td>
   <td data-label=""></td></tr>
@@ -332,7 +329,7 @@
 
 <h2>로그</h2>
 
-<ul class="muted"><li>2026-09-03T08:29:25.349540+00:00 · 20260903T082924 · fatal 24 · 49.5초</li><li>2026-09-03T08:23:57.160338+00:00 · 20260903T082356 · fatal 1 · 218.3초</li><li>2026-09-03T08:18:36.427958+00:00 · 20260903T081836 · fatal 1 · 196.4초</li><li>2026-09-03T08:13:15.427675+00:00 · 20260903T081314 · fatal 1 · 192.9초</li><li>2026-09-03T07:31:14.658365+00:00 · 20260903T073113 · fatal 1 · 925.2초</li></ul>
+<ul class="muted"><li>2026-09-03T08:29:25.349540+00:00 · 20260903T082924 · fatal 19 · 49.5초</li><li>2026-09-03T08:23:57.160338+00:00 · 20260903T082356 · fatal 1 · 218.3초</li><li>2026-09-03T08:18:36.427958+00:00 · 20260903T081836 · fatal 1 · 196.4초</li><li>2026-09-03T08:13:15.427675+00:00 · 20260903T081314 · fatal 1 · 192.9초</li><li>2026-09-03T07:31:14.658365+00:00 · 20260903T073113 · fatal 1 · 925.2초</li></ul>
 
 
 
@@ -343,7 +340,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260903T082924</span>
-  <span>2026-09-04 02:16</span>
+  <span>2026-09-04 14:24</span>
 </footer>
 
 </body>

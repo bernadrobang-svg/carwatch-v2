@@ -48,11 +48,11 @@
 
 
 
-<div class="banner banner-stale">
-  <strong>엔카가 막혀 있습니다 — 4일째 멈췄습니다</strong>
-  <span class="banner-action">우리 회선은 407 입니다. 「엔카 받기」가 브라우저 수집을 대신 눌러 줍니다 — 마스터 휴대폰으로만 받아집니다</span>
+<div class="banner banner-unclassified">
+  <strong>등록부에 미분류가 있습니다</strong>
+  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
   
-  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
+  <a class="btn" href="/notready">미판정 보기</a>
 </div>
 
 
@@ -5048,6 +5048,10 @@
   <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;not_provided&quot;, &quot;reason&quot;: &quot;4회차 시험 — 안 쓴다&quot;}</td>
   <td class="muted" data-label="사유">등록부 분류: 4회차 시험 — 안 쓴다</td></tr>
 
+<tr><td data-label="시각">2026-09-03T17:16:48.911080+00:00</td><td class="runid" data-label="키">detail:advertisement.verification.reportExists</td>
+  <td class="num" data-label="값">{&quot;usage&quot;: &quot;unclassified&quot;, &quot;reason&quot;: &quot;신규&quot;} → {&quot;usage&quot;: &quot;deferred&quot;, &quot;reason&quot;: &quot;상세를 받으면 갈린다&quot;, &quot;use_when&quot;: &quot;상세를 받으면&quot;}</td>
+  <td class="muted" data-label="사유">등록부 분류: 상세를 받으면 갈린다</td></tr>
+
 <tr><td data-label="시각">2026-09-02T11:45:21.152701+00:00</td><td class="runid" data-label="키">components</td>
   <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 9, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 20, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 10, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 25, &quot;taste.sunroof&quot;: 8, &quot;taste.size&quot;: 31, &quot;taste.color_int&quot;: 10}</td>
   <td class="muted" data-label="사유">되돌림 — 시험자 75번 재검 (가이드 09-02)</td></tr>
@@ -5104,10 +5108,6 @@
   <td class="num" data-label="값">pending → confirm</td>
   <td class="muted" data-label="사유">시험자 2회차 검사</td></tr>
 
-<tr><td data-label="시각">2026-08-31T23:50:51.174199+00:00</td><td class="runid" data-label="키">components</td>
-  <td class="num" data-label="값">{&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 12} → {&quot;state.accident&quot;: 51, &quot;state.frame&quot;: 43, &quot;state.outer&quot;: 28, &quot;state.my_cost&quot;: 28, &quot;state.special&quot;: 21, &quot;state.consumable&quot;: 15, &quot;state.leak&quot;: 15, &quot;state.integrity&quot;: 8, &quot;history.use&quot;: 22, &quot;history.not_join&quot;: 18, &quot;history.owner&quot;: 11, &quot;history.seizing&quot;: 8, &quot;value.mileage&quot;: 107, &quot;state.year&quot;: 80, &quot;value.origin&quot;: 75, &quot;value.budget&quot;: 95, &quot;value.market&quot;: 30, &quot;warranty.power&quot;: 32, &quot;warranty.general&quot;: 22, &quot;warranty.site&quot;: 36, &quot;taste.trim&quot;: 59, &quot;taste.option&quot;: 43, &quot;taste.hud&quot;: 18, &quot;taste.fitting&quot;: 18, &quot;taste.color&quot;: 15, &quot;taste.sunroof&quot;: 13}</td>
-  <td class="muted" data-label="사유">6회차 시험 — 합계 검사</td></tr>
-
 </tbody>
 </table>
 
@@ -5120,7 +5120,7 @@
   <span>dict d1</span>
   <span>parse p1</span>
   <span>run 20260903T082924</span>
-  <span>2026-09-04 02:16</span>
+  <span>2026-09-04 14:24</span>
 </footer>
 
 </body>
