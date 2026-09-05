@@ -83,14 +83,14 @@ checks   S46-38 · S46-39
 |  | 일반·차체 | `warranty.general` | **22** |
 |  | 사이트 검증 | `warranty.site` | **36** |
 | **④ 취향 165** |  |  |  |
-|  | 트림 | `taste.trim` | **20** |
-|  | 옵션 | `taste.option` | **43** |
-|  | HUD | `taste.hud` | **10** |
+|  | 옵션 | `taste.option` | **30** |
 |  | 지정 옵션 | `taste.fitting` | **18** |
-|  | 색상 (외장) | `taste.color` | **25** |
+|  | 색상 (외장) | `taste.color` | **15** |
 |  | 선루프 | `taste.sunroof` | **8** |
 |  | 크기 (전장) | `taste.size` | **31** |
-|  | 색상 (내장) | `taste.color_int` | **10** |
+|  | 색상 (내장) | `taste.color_int` | **8** |
+|  | taste.display | `taste.display` | **35** |
+|  | taste.interior | `taste.interior` | **20** |
 |  |  | **합 28축** | **910** |
 
 <!-- AUTO:배점표 끝 -->

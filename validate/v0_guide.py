@@ -7636,7 +7636,68 @@ def s46_285_master_targets_have_detail():
     return True, "마스터 대상 차종 채우기가 작업 지시 0번에 있다"
 
 
+def s46_286_taste_axes_165():
+    """S46-286 — 취향 축 합이 165 이고 총점이 910 인가 (마스터 확정 09-05).
+
+    마스터가 취향 축을 다시 짰다. 165 안에서만 옮기고 총점 910 은 그대로다.
+      taste.hud(10) → taste.display(35) · taste.trim(20) → taste.interior(20)
+      taste.option 43 → 30 · taste.color 25 → 15 · taste.color_int 10 → 8
+      taste.size 31 · taste.fitting 18 · taste.sunroof 8 은 그대로.
+    값은 config/scoring.json 한 곳에만 둔다. 문서에 옮겨 적지 않는다.
+    잣대 — 취향 합 165 · 총점 910 · 옛 이름(hud·trim)이 남지 않았는가.
+    """
+    raw = _read(ROOT / "config" / "scoring.json")
+    if not raw:
+        return False, "scoring.json 을 못 읽었다"
+    comp = json.loads(raw).get("components") or {}
+    taste = {k: v for k, v in comp.items() if k.startswith("taste.")}
+    bad = []
+    ts = sum(taste.values())
+    if ts != 165:
+        bad.append(f"취향 합이 {ts} 다 (165 이어야)")
+    tot = sum(v for v in comp.values() if isinstance(v, (int, float)))
+    if tot != 910:
+        bad.append(f"총점이 {tot} 다 (910 이어야)")
+    for old in ("taste.hud", "taste.trim"):
+        if old in taste:
+            bad.append(f"옛 이름 `{old}` 이 남아 있다")
+    for want, val in (("taste.display", 35), ("taste.interior", 20)):
+        if taste.get(want) != val:
+            bad.append(f"`{want}` 가 {taste.get(want)} 다 ({val} 이어야)")
+    if bad:
+        return False, " · ".join(bad)
+    return True, f"취향 합 {ts} · 총점 {tot}"
+
+
+def s46_287_taste_fixed_by_target():
+    """S46-287 — 차종별 취향 고정값이 다 있는가 (마스터 확정 09-05).
+
+    display·interior·size 는 차종별 고정값이다. 매물마다 재지 않는다.
+    값은 config/targets.json 에 둔다. 코드에 박지 않는다.
+    크기는 길이가 아니라 축간으로 잰다 —
+      2,999(폴스타4)=31 · 2,890(모델Y)=28 · 2,875(GV70)=25 ·
+      2,865(X3·iX3)=22 · 2,770(ID.4)=14 · 2,702(C40)=8.
+    표에 없는 차종은 0 이 아니라 「미정」이다. 화면에 「미정」으로 낸다.
+    잣대 — active 차종 중 세 값이 없는 것을 센다. 0 이면 통과.
+    """
+    raw = _read(ROOT / "config" / "targets.json")
+    if not raw:
+        return False, "targets.json 을 못 읽었다"
+    t = json.loads(raw)
+    on = [k for k, v in t.items() if isinstance(v, dict) and v.get("active")]
+    undef = [k for k in on
+             if not all(t[k].get(x) for x in
+                        ("taste_display", "taste_interior", "taste_size"))]
+    if undef:
+        return False, (f"취향 고정값이 미정인 차종 {len(undef)}/{len(on)} — "
+                       + " · ".join(undef[:6]) +
+                       "  (0 이 아니라 「미정」으로 화면에 낸다)")
+    return True, f"active {len(on)}종에 취향 고정값이 다 있다"
+
+
 CHECKS = (
+    ("S46-286", "취향 축 합이 165 인가", s46_286_taste_axes_165),
+    ("S46-287", "차종별 취향 고정값이 있는가", s46_287_taste_fixed_by_target),
     ("S46-285", "마스터 대상 차종의 상세가 채워졌는가", s46_285_master_targets_have_detail),
     ("S46-284", "작업 지시가 읽히는 꼴인가", s46_284_order_is_readable),
     ("S46-283", "추천 탭·고르기·쪽·분석이 규격에 있는가", s46_283_recommend_tabs_filters_page),
