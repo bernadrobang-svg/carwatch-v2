@@ -45,6 +45,57 @@ SKIP_DIRS = {".git", "__pycache__", ".render_root", "ref", "outputs",
 RE_V_CODE = re.compile(r"\bV\d+-\d+[a-z]?\b")
 
 
+def guide_check_owners() -> str:
+    """★★★★★★ 09-05 — ★ **가이드 검사를 ★ 누구 몫인지 갈라 적는다** (마스터 지시).
+
+    ★ 마스터 — 「★ 검사 중에 ★ **너를 위한 것 · 개발을 위한 것**을 구분해」 · 「그래」
+    ★ ★ 갈래는 ★ **그 검사가 무엇을 읽는가**로 정한다 —
+      ★ `docs/`·`ref/screens/`·지시문·이력·사전 → ★ **가이드**
+      ★ `collect/`·`store/`·`web/`·`score/`·`parse/`·`run.py` → ★ **개발측**
+      ★ 배포를 열어 잰 수(`hidden_text.json`·`encar_collect.json`·`/admin/…`) → ★ **배포·값**
+    ★ ★ ★ 이러면 ★ **개발측이 제 몫만 골라** 볼 수 있다
+    """
+    import io as _io
+    import sys as _sys
+
+    _sys.path.insert(0, ROOT)
+    try:
+        import validate.v0_guide as V
+    except Exception:  # noqa: BLE001
+        return ""
+    import os as _os
+    src = _io.open(_os.path.join(ROOT, "validate", "v0_guide.py"),
+                   encoding="utf-8").read()
+    GUIDE = ("docs/", "ref/screens", "outputs/ORDER", "03_이력", "00_버전",
+             "06_오판", "07_밀린", "config/dictionaries", "config/targets",
+             "RULES.md", "SOURCE.md", "INDEX.md")
+    DEV = ("collect/", "store/", "web/", "score/", "parse/", "adapters/",
+           "run.py", "tools/")
+    out = {"가이드": [], "개발측": [], "배포·값": [], "둘 다": []}
+    for row in V.CHECKS:
+        code, name, fn = row[0], row[1], row[2]
+        i = src.find("def " + fn.__name__)
+        body = src[i:i + 3000] if i > 0 else ""
+        g = any(k in body for k in GUIDE)
+        d = any(k in body for k in DEV)
+        key = "둘 다" if (g and d) else "가이드" if g else "개발측" if d else "배포·값"
+        out[key].append((code, name))
+    lines = ["", "## ★ 가이드 검사는 ★ **누구 몫인가** (09-05 · 마스터 지시)", "",
+             "| 갈래 | 몇 개 | 무엇을 보나 | 누가 고치나 |",
+             "|---|--:|---|---|",
+             f"| ★ **가이드** | **{len(out['가이드'])}** | `docs/` · 시안 · 지시문 · 이력 · 사전 | ★ 가이드 |",
+             f"| ★ **개발측** | **{len(out['개발측'])}** | `collect/` · `store/` · `web/` · `score/` · `parse/` | ★ 개발측 |",
+             f"| ★ **배포·값** | **{len(out['배포·값'])}** | 배포를 열어 잰 수 | ★ 개발측이 고치고 ★ 가이드가 잰다 |",
+             f"| 둘 다 | {len(out['둘 다'])} | 규격과 코드를 함께 | 둘 |", ""]
+    for key in ("개발측", "배포·값", "가이드", "둘 다"):
+        lines.append(f"### {key} ({len(out[key])})")
+        lines.append("")
+        for code, name in out[key]:
+            lines.append(f"- `{code}` {name}")
+        lines.append("")
+    return "\n".join(lines)
+
+
 def _py_files() -> list:
     out = []
     for base, dirs, files in os.walk(ROOT):
@@ -305,6 +356,8 @@ def build_checks() -> tuple:
         lines += ["", "## ④ 코드에 있는데 규격에 안 적힌 검사", ""]
         lines += [f"- `{c}` {code[c]['title']} — `{code[c]['source']}`"
                   for c in only_code]
+    # ★★★ 09-05 — ★ **누구 몫인지 갈래를 함께 낸다** (마스터 지시)
+    lines.append(guide_check_owners())
     with open(CHECKS_MD, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
     return len(code), only_spec, only_code, kinds

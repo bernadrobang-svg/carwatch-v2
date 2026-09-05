@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 216개 · 총 79,695줄
+파일 216개 · 총 79,748줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -37,11 +37,11 @@
 | `tools/browser_diff.py` | 661 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `parse/encar/mapping.py` | 625 | 엔카 원문 → CORE 필드 (L3). |
 | `store/raw.py` | 617 | RAW 저장소 (L2).  원문 무손실.  삭제 금지. |
+| `tools/build_index.py` | 589 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_admin_flow.py` | 575 | 관리 화면 동작 시험 (13장 · 14장). |
 | `tests/test_admin.py` | 567 | 13장 앞부분 시험 — 계정 · 권한 · config 변경. |
 | `tools/check_spec.py` | 557 | CarWatch v2 지시서 자체 점검 — 7종 |
 | `web/app.py` | 555 | 화면 조립 (14장 STEP 144 · 147 · 149). |
-| `tools/build_index.py` | 536 | 검사 색인 · 소스 색인을 만든다 (규칙 11). |
 | `tests/test_web.py` | 522 | 14장 표현 계층 시험 — 템플릿 · 라우팅. |
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 476 | CarWatch v2 진입점. |
@@ -411,6 +411,12 @@ _get:30  _json:42  _won:53  _ym:73  _date10:83  _int:99  _bool:105  unpack_envel
 _compress_cfg:59  pack_body:70  raw_body:91  _text_of:107  batch:134  tick:164  commit:199  _batch_commit_rows:226  _batch_commit_pause_ms:236  _busy_timeout_ms:261  connect_db:272  open_db:300  link_raws:311  _safe_headers:337  save_raw:344  proc_run_id:402  save_site_raw:412  save_import_raw:467  save_browser_raw:500  save_browser_facet:541  save_import_facet:567  save_facet:597
 ```
 
+### `tools/build_index.py` — 589줄
+
+```
+guide_check_owners:48  _py_files:99  _checks_in_code:124  _guide_checks:170  _checks_in_docs:203  last_runs:236  _run_time:265  sort_checks:275  build_checks:292  _outline:366  build_source:377  build_schema:409  build_doc_index:468  check_fresh:533  main:566
+```
+
 ### `tests/test_admin_flow.py` — 575줄
 
 ```
@@ -433,12 +439,6 @@ _read_spec:10  _refs_source:73  _spec_files:284  _guide_files:368  _sections:373
 
 ```
 menu_items:22  _tip:107  _label:112  empty_state:123  banner_of:142  _encar_blocked:203  _list_stale:242  static_version:268  build_page:296  check_post:317  redirect:339  take_flashes:359  _display_now:372  make_app:398  _Denied:531  build_context:539  _title_of:554
-```
-
-### `tools/build_index.py` — 536줄
-
-```
-_py_files:48  _checks_in_code:73  _guide_checks:119  _checks_in_docs:152  last_runs:185  _run_time:214  sort_checks:224  build_checks:241  _outline:313  build_source:324  build_schema:356  build_doc_index:415  check_fresh:480  main:513
 ```
 
 ### `tests/test_web.py` — 522줄
