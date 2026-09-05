@@ -166,6 +166,20 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
     sid = env.get("source_id")
 
     if env.get("endpoint") == "list":
+        # ★★★★★ 09-05 (D4) — ★ **목록이 HTML 인 곳이 있다.**
+        #   ★ KB 목록 카드가 ★ 값·주행·연식·트림·사진을 ★ **다 준다**
+        #     [실측 09-05 — 한 쪽 40장 전부].
+        #   ★ ★ 그런데 여기는 ★ JSON 만 알아서 ★ 그 쪽을 통째로 버렸다.
+        #   ★ `parse_list(html)` 이 있으면 ★ **그것이 먼저**다
+        whole = getattr(mod, "parse_list", None)
+        if whole is not None and isinstance(body, (str, bytes, bytearray)):
+            text = (body.decode("utf-8", "replace")
+                    if isinstance(body, (bytes, bytearray)) else body)
+            try:
+                rows = whole(text, site)
+            except TypeError:
+                rows = whole(text)
+            return [r for r in rows if r], None, None
         fn = getattr(mod, "parse_list_item", None)
         if fn is None:
             return [], None, None      # ★ 목록 파서가 없다 — ★ 원문만 남는다

@@ -275,3 +275,93 @@ def _photos(html: str, source_id: str) -> list:
         seen.add(url)
         out.append(url)
     return out
+
+
+# ★★★★★★ 09-05 (D4 · `S46-279`) — ★ **목록 파서.**
+#   ★★★ 마스터 — 「★ **가격이랑 세부 항목이랑 이미지랑**」.
+#   ★★ 실측 09-05 — ★ 이 파일에 ★ `parse_detail` 뿐이고 ★ **목록 파서가 없었다** —
+#     ★ ★ 그래서 ★ 매물 5,704건 중 ★ 값 **12%** · 사진 **9%** · ★ 트림 **0** 이었다.
+#   ★ 그런데 ★ 목록 카드가 ★ **다 준다** [실측 09-05 · page-0001 291KB] —
+#     ★ `data-car-seq` · `<strong class="tit">` 차명 ·
+#     ★ `<div class="data-line">` 「24/08식(24년형)」 「13,748km」 「경기」 ·
+#     ★ `<span class="price">3,970<span class="unit">만원` · `img.kbchachacha.com` 사진
+#   ★★ **색·옵션은 카드에 없다** — ★ 상세가 준다.  ★ 지어내지 않는다 (금지 6)
+RE_CARD = re.compile(r'<div class="area[^"]*"\s+data-car-seq="(\d+)"(.*?)'
+                     r'(?=<div class="area[^"]*"\s+data-car-seq=|\Z)', re.S)
+RE_TIT = re.compile(r'<strong class="tit">\s*(.*?)\s*</strong>', re.S)
+RE_DATALINE = re.compile(r'<div class="data-line">(.*?)</div>', re.S)
+RE_SPAN = re.compile(r'<span[^>]*>\s*(.*?)\s*</span>', re.S)
+RE_PRICE = re.compile(r'<span class="price">\s*([\d,]+)\s*<span class="unit">')
+RE_CARD_IMG = re.compile(r'src="(https://img\.kbchachacha\.com/[^"?]+)')
+# ★ 이름을 가른다 — ★ 위 `RE_YM`·`RE_KM`(상세용)을 ★ 덮으면 안 된다.
+#   ★ 실측 09-05 — ★ 덮었더니 ★ `parse_detail` 이 `group(3)` 에서 죽었다
+RE_CARD_YM = re.compile(r"(\d{2})/(\d{2})식")
+RE_CARD_KM = re.compile(r"([\d,]+)\s*km", re.I)
+
+
+def parse_list(html: str, site: str = "kbchachacha") -> list:
+    """★ 목록 한 쪽 → ★ `core_listing` 줄들 (D4).
+
+    ★ 카드가 주는 것만 넣는다 — ★ 값 · 주행 · 연식 · 차명(트림) · 지역 · 사진.
+    ★ ★ **색 · 옵션은 안 넣는다** — ★ 카드에 없다.  ★ 상세가 준다
+    ★ 못 읽은 칸은 ★ 아예 안 넣는다 — ★ 「없음」으로 덮지 않는다 (금지 12)
+    """
+    out = []
+    for sid, block in RE_CARD.findall(html or ""):
+        row = {"site": site, "source_id": str(sid), "price_unit": "won"}
+        tit = RE_TIT.search(block)
+        if tit:
+            name = " ".join(_text(tit.group(1)).split())
+            if name:
+                row["site_model"] = name[:120]
+                maker, model = _model_of(name)
+                if maker:
+                    row["site_manufacturer"] = maker
+                if model:
+                    row["site_model_group"] = model
+                # ★ 트림 — ★ 차명에서 ★ 차종 뒤를 쓴다.  ★ 없으면 안 넣는다
+                if model and model in name:
+                    trim = name.split(model, 1)[1].strip()
+                    trim = trim.split(")", 1)[-1].strip() if trim.startswith(
+                        "(") else trim
+                    if trim:
+                        row["trim_badge"] = trim[:80]
+        line = RE_DATALINE.search(block)
+        if line:
+            parts = [" ".join(_text(x).split())
+                     for x in RE_SPAN.findall(line.group(1))]
+            for one in parts:
+                ym = RE_CARD_YM.search(one)
+                if ym and "year_month" not in row:
+                    # ★ 「24/08식」 → 2024-08.  ★ 두 자리 해는 2000년대다
+                    row["year_month"] = f"20{ym.group(1)}-{ym.group(2)}"
+                    row["form_year"] = 2000 + int(ym.group(1))
+                    continue
+                km = RE_CARD_KM.search(one)
+                if km and "mileage_km" not in row:
+                    row["mileage_km"] = _int(km.group(1))
+                    continue
+                if one and "dealer_region" not in row and not any(
+                        ch.isdigit() for ch in one):
+                    row["dealer_region"] = one[:20]
+        won = RE_PRICE.search(block)
+        if won:
+            got = _int(won.group(1))
+            if got is not None:
+                row["price_current_won"] = got * 10000      # 만원 → 원
+        shots = []
+        for u in RE_CARD_IMG.findall(block):
+            if u not in shots:
+                shots.append(u)
+        if shots:
+            row["photo_list_json"] = json.dumps(shots, ensure_ascii=False)
+        if len(row) > 3:            # ★ 번호만 있는 것은 줄이 아니다
+            out.append(row)
+    return out
+
+
+def parse_list_item(one, site: str = "kbchachacha") -> dict | None:
+    """★ 이미 푼 줄 하나 (`load_raw` 가 부른다).  ★ 표 꼴을 안 바꾼다."""
+    if isinstance(one, dict) and one.get("source_id"):
+        return {**one, "site": site}
+    return None

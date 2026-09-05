@@ -273,6 +273,15 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
                           status="blocked", page=page, root=ROOT)
             print(f"    {page}쪽 — ★ 3회 다 막혔다.  ★ 막힌 쪽을 원문으로 남겼다")
             break
+        # ★★★★★ 09-05 (D1·D4) — ★ **받은 목록 쪽도 원문이다.**
+        #   ★ 실측 09-05 — ★ KB 목록 원문이 ★ **0개**였다.  ★ 막힌 것만이 아니라
+        #   ★ ★ **성공한 쪽도 안 남기고** 있었다 — ★ 매물번호만 뽑고 버렸다.
+        #   ★ ★ ★ 그래서 ★ 목록 파서를 만들 ★ **바탕이 없다** (D4).
+        #   ★ 카드가 ★ 값·주행·연식·트림을 다 주는데 ★ 다시 받아야만 볼 수 있었다
+        #   ★★ 09-05 정정 — ★ 처음에 이 줄을 ★ `break` **뒤에** 넣어 ★ 죽은 코드였다.
+        #     ★ ★ 검사는 통과했는데 ★ 파일이 ★ **세 개**뿐이라 ★ 자료를 보고 잡았다
+        save_file(SITE_CODE, "list", None, req.url, body, _now(),
+                  page=page, root=ROOT)
         if is_real_end(body, cfg):
             done = True                 # ★ 진짜 끝이다 — ★ 끝까지 받았다
             break
@@ -304,6 +313,9 @@ def count_all(adapter: KbChaChaChaAdapter, cfg: dict, limit: int = MAX_PAGES):
                           status="blocked", page=page, root=ROOT)
             print(f"  {page}쪽 — ★ 못 받았다 (봇 차단 {walled}) · 원문은 남겼다")
             break
+        # ★ 09-05 (D1·D4) — ★ 받은 목록 쪽을 원문으로 남긴다
+        save_file(SITE_CODE, "list", None, req.url, body, _now(),
+                  page=page, root=ROOT)
         got = page_ids(body)
         if not got:
             empty_at = page
