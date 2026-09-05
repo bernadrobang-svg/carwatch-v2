@@ -103,8 +103,10 @@ COMPONENTS: tuple[str, ...] = (
     # ③ 보증 90 — 제조사 54 (동력계 32 + 일반 22) + 사이트 36
     "warranty.power", "warranty.general", "warranty.site",
     # ④ 취향 165
-    "taste.trim", "taste.option",
-    "taste.hud", "taste.fitting", "taste.color", "taste.sunroof",
+    # ★★★★★ 09-05 (마스터 확정 · 0-1e) — ★ `taste.trim` → `taste.interior` ·
+    #   ★ `taste.hud` → `taste.display`.  ★ 취향 165 · 총점 910 은 그대로다
+    "taste.interior", "taste.option",
+    "taste.display", "taste.fitting", "taste.color", "taste.sunroof",
     # ★★★★★ 09-03 개정 1084·1085 — ★ 새 축 둘.
     #   ★ `taste.size` 31 — ★ 「★ **큰 차를 나는 좋아**」 (전장으로 잰다)
     #   ★ `taste.color_int` 10 — ★ 「★ 외장은 블루 · **내장은 블랙**」

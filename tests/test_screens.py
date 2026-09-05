@@ -63,20 +63,20 @@ def test_chip() -> None:
     cases = ((1, False, "1"), (0, False, "0"), (-1, True, "na"),
              (None, True, "unknown"), (None, False, "unknown"))
     for value, ex, bucket in cases:
-        c = chip("taste.hud", value, ex, LABELS)
+        c = chip("taste.display", value, ex, LABELS)
         check(f"chip value={value} excluded={ex} → {vl[bucket]}",
               c.label.endswith(vl[bucket]), c.label)
         check(f"  필터 링크가 Component 이름을 쓴다",
-              "axis=taste.hud" in c.filter_url and f"bucket={bucket}" in c.filter_url,
+              "axis=taste.display" in c.filter_url and f"bucket={bucket}" in c.filter_url,
               c.filter_url)
 
     check("★ V6-02 — VALUE_LABELS 밖의 문구를 쓰지 않는다",
           all(any(c.label.endswith(v) for v in allowed)
-              for c in [chip("taste.hud", v, e, LABELS)
+              for c in [chip("taste.display", v, e, LABELS)
                         for v, e, _ in cases]))
     check("★ 「해당 없음」과 「없음」이 다른 톤",
-          chip("taste.hud", -1, True, LABELS).tone
-          != chip("taste.hud", 0, False, LABELS).tone)
+          chip("taste.display", -1, True, LABELS).tone
+          != chip("taste.display", 0, False, LABELS).tone)
 
 
 # ── STEP 97 목록 · V6-04 ─────────────────────────────────────────────
@@ -113,10 +113,10 @@ def test_listings() -> None:
     # ★ 위에서 rows 를 lease=True 로 바꿨다.  같은 조건으로 견줘야 한다 —
     #   한쪽만 리스를 빼면 「1+0 != 3」이 된다 (실측 08-21)
     hit = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="taste.hud", bucket="1",
+        calc_version=ctx.calc_version, axis="taste.display", bucket="1",
         lease=True), FIN, ROOT)
     miss = view_listings(ADMIN, conn, ListingFilter(
-        calc_version=ctx.calc_version, axis="taste.hud", bucket="0",
+        calc_version=ctx.calc_version, axis="taste.display", bucket="0",
         lease=True), FIN, ROOT)
     check("★ 축·버킷 필터가 실제로 거른다",
           len(hit) + len(miss) == len(rows), f"{len(hit)}+{len(miss)}")

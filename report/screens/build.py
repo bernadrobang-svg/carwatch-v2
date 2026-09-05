@@ -113,7 +113,10 @@ CHIP_AXES = ("state.accident", "state.frame", "history.use",
 #   ★ 「색상 (외장) 25/25 · 색상 (내장) 10/10 · 크기 (전장) 9/31 · 트림 17/20」
 #   ★★ **취향 넷**이다.  ★ 마스터 09-01 — 「★ 크기·내장색 축이 화면에 안 보인다」.
 #     ★ ★ 이름은 ★ `config/labels.json` 이 원천이다 — ★ 코드에 안 박는다 (`S14`)
-POINT_AXES = ("taste.color", "taste.color_int", "taste.size", "taste.trim")
+# ★★★★★ 09-05 (0-1e-1 · 마스터 확정) — ★ `taste.trim` → `taste.interior`.
+#   ★ 셋(`display`·`interior`·`size`)은 ★ **차종 고정값**이라 ★ 점수로 보인다
+POINT_AXES = ("taste.color", "taste.color_int", "taste.size",
+              "taste.interior", "taste.display")
 
 
 def site_badge(site: str | None, sell_type: str | None,
@@ -654,7 +657,7 @@ def _warranty_state(got, as_of) -> tuple:
 # ★ 여기 없는 축은 기호(O · - · ?)를 그대로 쓴다.  지어내지 않는다
 STATE_AXES = ("warranty.general", "warranty.power", "state.accident",
               "state.frame", "state.outer", "state.my_cost", "history.use",
-              "history.not_join", "taste.trim", "taste.option",
+              "history.not_join", "taste.interior", "taste.option",
               "warranty.site")
 
 
@@ -704,12 +707,14 @@ def _axis_state(axis: str, chip, state: dict, as_of: str,
         got = [RENT_SOURCE_WORDS[k] for k in source.split("+")
                if k in RENT_SOURCE_WORDS]
         return f"렌트 이력 ({'·'.join(got)})" if got else "렌트 이력"
-    if axis == "taste.trim":
-        # ★ 트림은 그 차종 신차가 사다리의 백분위다.  「있음/없음」이 아니다
+    if axis in ("taste.interior", "taste.display", "taste.size"):
+        # ★★★★★ 09-05 (0-1e-1) — ★ 셋은 ★ **차종 고정값**이다 (마스터가 정하신 점수).
+        #   ★ 전에는 ★ `taste.trim` 이 ★ 신차가 사다리의 백분위였다 —
+        #   ★ ★ 이제 ★ 「상위 몇 %」가 아니다.  ★ **몇 점인지**를 그대로 낸다
         pts, mx = state.get("points", {}).get(axis, (None, None))
         if pts is None or not mx:
-            return ""
-        return f"상위 {max(1, 100 - round(pts / mx * 100))}%"
+            return "미정"          # ★ 0 이 아니다 — ★ 「아직 안 정했다」다 (0-1e-3)
+        return f"{pts:g}/{mx:g}점"
     if axis == "warranty.site":
         # ★ 개정 365 — 무엇으로 받았는지 낸다.
         #   「엔카검증 10 + 엔카보증 10 = 20 / 50」

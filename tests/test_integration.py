@@ -393,7 +393,7 @@ def m3(ad: Client, db: str, root: str) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "previewed": "1",
-                         "action": "component", "target": "taste.hud",
+                         "action": "component", "target": "taste.display",
                          "value": "25", "reason": "실행 중 변경"})
     rec("S5-2", "/admin/scoring", "실행 중 조정 잠김", str(st),
         st == 409, "409 Conflict (Q-3)")
@@ -460,34 +460,34 @@ def m3(ad: Client, db: str, root: str) -> None:
     #   ★ 전에는 ★ 총점을 ★ 합에 맞춰 올려 줘 ★ 무엇이든 저장됐다 —
     #   ★ ★ 그래서 ★ 합 **911** 이 그냥 들어갔다 (가이드가 눌러 확인 09-02).
     #   ★ 그러므로 ★ **두 가지를 다 본다** — ① 넘으면 막힌다 ② 줄이면 된다
-    def _hud():
+    def _display():
         with open(os.path.join(root, "config", "scoring.json"),
                   encoding="utf-8") as f:
-            return json.load(f)["components"].get("taste.hud")
+            return json.load(f)["components"].get("taste.display")
 
-    _was = _hud()
+    _was = _display()
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "taste.hud", "value": "25",
-                         "reason": "HUD 를 더 본다", "previewed": "1"})
+                         "target": "taste.display", "value": "50",
+                         "reason": "디스플레이를 더 본다", "previewed": "1"})
     rec(40, "/admin/scoring", "분모를 넘으면 안 바뀐다",
-        f"{st} · hud={_hud()}", _hud() == _was,
+        f"{st} · display={_display()}", _display() == _was,
         "합이 분모를 넘으면 저장을 막는다 (1-7)")
 
     # ★ 다른 축을 그만큼 줄이면 ★ 저장된다 — ★ 막이가 ★ **길을 아주 막는 것은 아니다**
     token = ad.csrf("/admin/scoring")
     ad.post("/admin/scoring",
             {"csrf": token, "action": "component",
-             "target": "taste.trim", "value": "5",
-             "reason": "HUD 자리를 만든다", "previewed": "1"})
+             "target": "taste.interior", "value": "5",
+             "reason": "디스플레이 자리를 만든다", "previewed": "1"})
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "taste.hud", "value": "12",
-                         "reason": "HUD 를 더 본다", "previewed": "1"})
+                         "target": "taste.display", "value": "37",
+                         "reason": "디스플레이를 더 본다", "previewed": "1"})
     rec(40.5, "/admin/scoring", "자리를 만들면 바뀐다",
-        f"{st} · hud={_hud()}", _hud() == 12)
+        f"{st} · display={_display()}", _display() == 37)
     with open(os.path.join(root, "config", "scoring.json"),
               encoding="utf-8") as f:
         pol = json.load(f)
@@ -495,7 +495,7 @@ def m3(ad: Client, db: str, root: str) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "taste.hud", "value": "30",
+                         "target": "taste.display", "value": "30",
                          "reason": "미리보기 없이"})
     # ★ 잠금(409)이 아니라 「미리보기 없음」(400)으로 거부돼야 한다.
     #   잠금이 먼저 걸리면 이 검사가 헛돈다 — 큐를 비운 뒤에 본다
@@ -1019,7 +1019,7 @@ def flows(anon: Client, u1: Client, ad: Client, db: str, lid: int) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "previewed": "1",
-                         "action": "component", "target": "taste.hud",
+                         "action": "component", "target": "taste.display",
                          "value": "21", "reason": "실행 중"})
     msg = text(b)
     rec("S5-2", "/admin/scoring", "실행 중 조정 잠김",

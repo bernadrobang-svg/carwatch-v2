@@ -79,5 +79,6 @@ def _options(ctx: AxisContext, v: Verdict) -> None:
 
 
 def analyze_trim(ctx: AxisContext, v: Verdict) -> None:
-    _trim(ctx, v)
+    # ★ 개정 r1174 — 트림 축은 물러났다 (「내장」이 그 배점 20 을 받는다).
+    #   이 갈래는 이제 옵션 30 만 낸다.  `_trim` 은 옛 셈을 남겨 둔 것이다
     _options(ctx, v)

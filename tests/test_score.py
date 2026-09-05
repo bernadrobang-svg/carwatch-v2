@@ -183,9 +183,10 @@ def test_components_form() -> None:
     p = ScoringPolicy(raw)
     # ★ 배점 숫자를 박지 않는다 (개정 428) — 안 스킵한 축은 그대로, 스킵한 축은 0
     check("파서가 두 형태를 다 받는다",
-          p.comp("taste.hud") == POLICY.comp("taste.hud")
+          p.comp("taste.display") == POLICY.comp("taste.display")
           and p.comp("taste.sunroof") == 0,
-          f"hud {p.comp('taste.hud')} · sunroof {p.comp('taste.sunroof')}")
+          f"display {p.comp('taste.display')} · "
+          f"sunroof {p.comp('taste.sunroof')}")
     check("Component 수도 준다", len(p.active_components()) == len(COMPONENTS) - 1,
           str(len(p.active_components())))
 
@@ -489,30 +490,38 @@ def test_spec_gate() -> None:
                                     price_origin_won=70000000,
                                     options_standard=[], options_choice=[]),
                                trim_ladder=ladder))
-    check("★ 깡통은 트림 점수가 낮다",
-          low.values["taste.trim"] < high.values["taste.trim"],
-          f"{low.values['taste.trim']} < {high.values['taste.trim']}")
-    # ★★★★★ 09-03 개정 1085 — ★ 개정 432 의 잣대가 ★ **바뀌었다.**
-    #   ★ 가이드 — 「★ 트림 40 → **20**.  ★ 규격이 스스로 「트림 ＋ 옵션 = 곧 신차가」라
-    #     ★ 적었는데 ★ `value.origin` **75** 가 ★ 이미 신차가를 잰다.
-    #     ★ ★ **두 곳에서 세고 ★ 방향도 반대**다 —
-    #     ★ ★ ★ 트림은 비쌀수록 만점 · ★ 예산·신차가는 쌀수록 만점」
-    #   ★★ 그러니 ★ 「풀옵션(7,000만)의 **총점**이 더 높다」는 ★ 더는 규격이 아니다 —
-    #     ★ ★ 싼 차가 ★ 예산·신차가 170점을 가져가는 것이 ★ **규격이 뜻한 바**다.
-    #   ★★★ 살아 있는 뜻은 ★ 「신차가를 **두 번 세지 않는다**」이고
-    #     ★ ★ 그것은 ★ 검사 `S46-238` 이 잰다 (트림 ≤ 신차가).
-    #     ★ ★ ★ 여기서는 ★ **트림이 값을 반영하는가**만 본다
-    _span = high.values["taste.trim"] - low.values["taste.trim"]
-    check("★★ 트림이 신차가를 두 번 세지 않는다 (개정 1085)",
-          POLICY.comp("taste.trim") <= POLICY.comp("value.origin"),
-          f"트림 {POLICY.comp('taste.trim')} ≤ "
-          f"신차가 {POLICY.comp('value.origin')}")
-    check("★ 3,000만 트림 차이가 점수로 남는다",
-          _span > 0, f"트림격차 {_span:.1f}")
-    check("HUD 095 장착 → 취향 배점 만점",
-          low.values["taste.hud"] == POLICY.comp("taste.hud"),
-          str(low.values["taste.hud"]))
-    check("HUD 미장착 → 0점", high.values["taste.hud"] == 0)
+    # ★★★★★ 09-05 개정 r1174 (0-1e) — ★ `taste.trim` 20 이 물러나고
+    #   ★ `taste.interior` 20 이 그 자리를 받았다.  ★ 트림 사다리는 더 안 잰다.
+    #   ★ `taste.hud` 10 도 물러나고 ★ `taste.display` 35 가 왔다.
+    #   ★ 그러니 여기서 볼 것은 ★ **옵션 축**과 ★ **차종 고정값** 둘이다
+    check("★ 물러난 축은 더 나오지 않는다",
+          "taste.trim" not in low.values and "taste.hud" not in low.values,
+          str(sorted(k for k in low.values if k.startswith("taste."))))
+    check("★ 옵션 축은 그대로 나온다",
+          "taste.option" in low.values and "taste.option" in high.values,
+          f"{low.values.get('taste.option')} · {high.values.get('taste.option')}")
+
+    # ★ 고정값 — ★ 차종 표에서 읽는다.  ★ 매물마다 재지 않는다 (0-1e-2)
+    fx = analyze_listing(ctx(snap(target_key="G80_25T"),
+                             TASTE_FIXED={"taste_display": 35,
+                                          "taste_interior": 10,
+                                          "taste_size": 31}))
+    check("★ 디스플레이·내장·크기를 차종 표에서 읽는다",
+          fx.values["taste.display"] == POLICY.comp("taste.display")
+          and fx.values["taste.interior"] == 10,
+          f"display {fx.values['taste.display']} · "
+          f"interior {fx.values['taste.interior']}")
+    # ★ 표에 없는 차종은 ★ 0 이 아니라 ★ 「미정」이다 (0-1e-3)
+    nofx = analyze_listing(ctx(snap(target_key="G80_25T"),
+                               TASTE_FIXED={"taste_display": None,
+                                            "taste_interior": None,
+                                            "taste_size": None}))
+    check("★★ 표에 없는 차종은 0 이 아니라 「미정」이다 (0-1e-3)",
+          all(x.excluded for x in nofx.entries
+              if x.component in ("taste.display", "taste.interior",
+                                 "taste.size")),
+          str([(x.component, x.excluded) for x in nofx.entries
+               if x.component.startswith("taste.")]))
     # ★★ 개정 431 — 개정 292 를 폐기했다.  등급에서 빼는 갈래가 **없다**
     check("★★ HUD 도 등급에 들어간다 — 빼는 갈래가 없다 (개정 431)",
           __import__("analyze.axes", fromlist=["x"]
@@ -520,10 +529,11 @@ def test_spec_gate() -> None:
 
     v = analyze_listing(ctx(snap(target_key="MODEL_Y", options_standard=[],
                                  options_choice=[]),
-                            SPEC_DEFAULT_OFF={"spec.hud": True},
+                            SPEC_DEFAULT_OFF={"spec.sunroof": True},
                             trim_ladder=ladder))
-    check("★ 모델Y HUD → -1 · 분모 제외 (사양표 근거)",
-          v.values["taste.hud"] == -1 and "taste.hud" in v.excluded)
+    # ★ 09-05 r1174 — ★ `taste.hud` 가 물러나서 ★ 선루프로 같은 것을 본다
+    check("★ 모델Y 선루프 → -1 · 분모 제외 (사양표 근거)",
+          v.values["taste.sunroof"] == -1 and "taste.sunroof" in v.excluded)
 
     v = analyze_listing(ctx(snap(options_standard=[], options_choice=[],
                                  ad_body_text="선루프 있습니다")))
@@ -899,7 +909,7 @@ def test_hda_gate() -> None:
     v = analyze_listing(ctx(snap(options_standard=[], options_choice=[],
                                  ad_body_text="HUD 있습니다 선루프도 있습니다")))
     check("★ 판매글 키워드가 실장착을 이기지 못한다 (v1 사고)",
-          v.values["taste.hud"] == 0 and v.values["taste.sunroof"] == 0)
+          v.values["taste.sunroof"] == 0)
 
 
 if __name__ == "__main__":

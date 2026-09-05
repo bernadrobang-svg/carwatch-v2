@@ -1622,6 +1622,13 @@ def _listing_config(conn, lid: str, targets: dict, dep: dict, as_of: str,
         "site_warranty": site_rule,
         # ★★★★★ 09-03 개정 1084 — ★ 크기 축이 쓰는 ★ 차종별 전장
         "DIMENSIONS": _dimensions(),
+        # ★★★★★ 09-05 (0-1e-2 · 마스터 확정) — ★ **차종 고정 취향값**.
+        #   ★ `taste.display`·`taste.interior`·`taste.size` 는
+        #   ★ ★ **차종이 정해지면 값이 정해진다** — ★ 매물마다 재지 않는다.
+        #   ★ `targets` 는 ★ 판이 시작할 때 ★ **한 번** 읽는다 — ★ 여기서 고르기만 한다.
+        #   ★ 표에 없으면 ★ `None` 이고 ★ 축이 ★ 「미정」으로 낸다 (0-1e-3)
+        "TASTE_FIXED": {k: tk.get(k) for k in
+                        ("taste_display", "taste_interior", "taste_size")},
     }
 
 
@@ -1835,9 +1842,14 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
         #   ★ ★ 판정은 지웠다 다시 만드는 것이라 ★ 넓혀도 잃는 것이 없다 —
         #     ★ ★ 화면은 어차피 `_listings_where` 로 다시 거른다
         #   ★ `out_of_scope` 는 ★ 뺀다 — ★ 우리 차종이 아니다 (마스터 확정 ④ 참고)
+        # ★★★★★ 09-05 (r1174 · 0-1e 에서 잡혔다) — ★ `relisted` 가 빠져 있었다.
+        #   ★ 실측 — ★ 취향 배점을 새로 짜고 S9 을 돌렸더니 ★ **291건만**
+        #     ★ ★ 옛 배점(색 25 · 내장색 10)을 그대로 들고 있었다.
+        #   ★ 그 291건은 ★ 전부 `relisted` — ★ 내려갔다 ★ **되살아난 매물**이다.
+        #   ★ ★ 살아 있는데 판정이 낡으면 ★ 화면이 옛 점수를 보여 준다
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
-                    "WHERE status IN ('active','new','gone')"))]
+                    "WHERE status IN ('active','new','gone','relisted')"))]
         # ★ 배점이 바뀌면 옛 성분 행이 남는다 (개정 292 실측 — 17 → 14 성분).
         #   그대로 두면 화면과 검사가 없어진 축을 계속 읽는다
         gone = [r[0] for r in conn.execute(
@@ -1947,9 +1959,10 @@ def make_score_executors(root: str, clock, targets: dict, policy_raw: dict,
             "WHERE target_key IS NULL AND status='active'")
         conn.commit()
         # ★ 위 s9 와 ★ 같은 까닭으로 넓힌다 (r990 · `V3-80`)
+        # ★ `relisted` 도 같이 넓혔다 (09-05 · r1174) — ★ s9 의 주석을 보라
         lids = [r[0] for r in conn.execute(
             *_scope("SELECT listing_id FROM core_listing "
-                    "WHERE status IN ('active','new','gone')"))]
+                    "WHERE status IN ('active','new','gone','relisted')"))]
         # ★ ③ 끌어오기 밑감 — ★ 한 번만 만든다 (마스터 지시 3 · 08-30)
         _otable = _origin_lend_table(conn)
         _okeys = _origin_keys(conn, lids)

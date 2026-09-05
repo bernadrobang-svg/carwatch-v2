@@ -829,7 +829,7 @@ def spec_monkey(port: int, ad: Client, db: str, lid: int) -> None:
          {"previewed": "1", "file": "web.json",
           "key_path": "rows_per_page", "value": "111"}),
         ("미리보기 없이", "/admin/scoring",
-         {"action": "component", "target": "taste.hud", "value": "22",
+         {"action": "component", "target": "taste.display", "value": "22",
           "reason": "순서 어김"}),
     ):
         token = ad.csrf(path)
@@ -1052,7 +1052,7 @@ def flow_s5(port: int, ad: Client, db: str, root: str) -> None:
     token = ad.csrf("/admin/scoring")
     st, b, _l = ad.post("/admin/scoring",
                         {"csrf": token, "action": "component",
-                         "target": "taste.hud", "value": "26",
+                         "target": "taste.display", "value": "26",
                          "reason": "미리 막히나"})
     rec("S5-16", "미리보기 없이 저장 → 미리 막힌다", "16걸음",
         f"{st} · {text(b)[:20]}", st in (400, 409))
@@ -1373,12 +1373,12 @@ def guide_v132(port: int, ad: Client, db: str, root: str, lid: int) -> None:
                              "secret": "usersecret9", "reason": "B-7"})
     u = Client(port, "g-b7")
     u.login("축조건자", "usersecret9")
-    st, lb, _h = u.get("/listings?axis=taste.hud&bucket=1&target=KOLEOS_HEV")
+    st, lb, _h = u.get("/listings?axis=taste.display&bucket=1&target=KOLEOS_HEV")
     fields = dict(re.findall(
         r'name="(axis|bucket|target_key|min_grade)" value="([^"]*)"', lb))
     rec("가이드-3a", "축·구간이 폼에 실린다", "목록에서 축을 걸고 본다",
         f"{fields}",
-        fields.get("axis") == "taste.hud" and fields.get("bucket") == "1",
+        fields.get("axis") == "taste.display" and fields.get("bucket") == "1",
         "문장에 적고 폼에 안 실으면 어긋난다")
 
     # ★ 차종·축을 시험에 박지 않는다.  씨앗에 실제로 갈리는 축을 골라 건다 —
@@ -1392,7 +1392,7 @@ def guide_v132(port: int, ad: Client, db: str, root: str, lid: int) -> None:
         " WHERE a.calc_version=? AND a.excluded=0"
         " GROUP BY l.target_key, a.axis"
         " HAVING COUNT(DISTINCT CASE WHEN a.value>0 THEN 1 ELSE 0 END)=2"
-        " LIMIT 1", (ver,)).fetchone() or ("G80_25T", "taste.hud")
+        " LIMIT 1", (ver,)).fetchone() or ("G80_25T", "taste.display")
     token = u.csrf("/watch")
     st, b, _l = u.post("/watch/add",
                        {"csrf": token, "kind": "query",

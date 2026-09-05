@@ -26,6 +26,19 @@ PICKED = "taste.fitting"
 #     ★ ★ 약간의 **블랙 계열의 내장재**를 찾는 중이야」.  ★ 외장만 재고 있었다
 SIZE = "taste.size"
 COLOR_INT = "taste.color_int"
+# ★★★★★★ 09-05 (마스터 확정 · 0-1e) — ★ **취향 축을 다시 짰다.**
+#   ★ `taste.hud` 10 → ★ `taste.display` **35** · ★ `taste.trim` 20 → ★ `taste.interior` 20
+#   ★ ★ 취향 합은 ★ **165 그대로** · ★ 총점 ★ **910 그대로**다.
+#   ★★★ 셋(`display`·`interior`·`size`)은 ★ **차종별 고정값**이다 —
+#     ★ ★ **매물마다 재지 않는다**.  ★ 값은 ★ `config/targets.json` 이 정본이다.
+#   ★ ★ ★ 표에 없는 차종은 ★ **0 이 아니라 「미정」**이다 (마스터 확정) —
+#     ★ ★ ★ ★ 0 을 주면 ★ 「작다·없다」로 읽힌다.  ★ 「아직 안 정했다」와 다르다
+DISPLAY = "taste.display"
+INTERIOR = "taste.interior"
+# ★ 차종 고정값 — ★ 축 이름 → `targets.json` 의 칸 이름
+FIXED_FIELD = {DISPLAY: "taste_display",
+               INTERIOR: "taste_interior",
+               SIZE: "taste_size"}
 
 NA_VALUE = -1
 
@@ -238,11 +251,42 @@ def _color_int(ctx: AxisContext, v: Verdict) -> None:
     put(v, COLOR_INT, int(got), PRIO_OBSERVED, f"color_int_{grade}")
 
 
+def _fixed(ctx: AxisContext, v: Verdict, comp: str) -> None:
+    """★ 차종 고정값 축 (0-1e-2 · 마스터 확정 09-05).
+
+    ★ `display`·`interior`·`size` 는 ★ **차종이 정해지면 값이 정해진다** —
+      ★ ★ 매물마다 재지 않는다.  ★ 값은 ★ `config/targets.json` 이 정본이다 (`S14`).
+    ★★ 표에 없으면 ★ **「미정」**이다 (0-1e-3) — ★ `excluded=True` 로 낸다.
+      ★ ★ 0 을 주면 ★ 「작다·없다」로 읽히고 ★ 그 배점만큼 ★ **등급이 내려간다**.
+      ★ ★ ★ 「아직 안 정했다」는 ★ 그것과 다르다 (개정 325 · 「없다」와 「모른다」)
+    ★ 배점을 넘는 값은 ★ 배점으로 자른다 — ★ 표가 틀려도 ★ 100%를 안 넘긴다
+    """
+    full = ctx.policy.comp(comp)
+    if not full:
+        return                       # ★ 배점이 0 이면 ★ 안 낸다
+    got = (ctx.target_config.get("TASTE_FIXED") or {}).get(FIXED_FIELD[comp])
+    if got is None:
+        put(v, comp, None, PRIO_MANUFACTURER, "taste_fixed_missing",
+            excluded=True)
+        return
+    try:
+        val = float(got)
+    except (TypeError, ValueError):
+        put(v, comp, None, PRIO_MANUFACTURER, "taste_fixed_missing",
+            excluded=True)
+        return
+    put(v, comp, round(min(max(val, 0.0), float(full)), 1),
+        PRIO_MANUFACTURER, "taste_fixed")
+
+
 def analyze_taste(ctx: AxisContext, v: Verdict) -> None:
-    _fitting(ctx, v, HUD)
     _fitting(ctx, v, SUNROOF)
     _color(ctx, v)
     _picked(ctx, v)
-    # ★★★★★ 09-03 — ★ 새 축 둘 (개정 1084·1085)
-    _size(ctx, v)
     _color_int(ctx, v)
+    # ★★★★★ 09-05 (0-1e) — ★ 셋은 ★ **차종 고정값**이다.  ★ 매물마다 안 잰다
+    #   ★ `taste.size` 는 ★ 전에 ★ 제원 곡선으로 쟀다 (`_size`) —
+    #   ★ ★ 이제 ★ 표가 준다.  ★ `_size` 는 ★ 안 지웠다 (되살릴 수 있게 · 개정 427)
+    _fixed(ctx, v, DISPLAY)
+    _fixed(ctx, v, INTERIOR)
+    _fixed(ctx, v, SIZE)

@@ -232,7 +232,7 @@ def test_export() -> None:
                     else one.get("points", 0)
     check("★ csv 헤더에 배점을 표기한다",
           f"value.budget({_cap('value.budget'):g})" in cs
-          and f"taste.hud({_cap('taste.hud'):g})" in cs,
+          and f"taste.display({_cap('taste.display'):g})" in cs,
           cs.splitlines()[0][:60])
 
     js = json.loads(export(v, "json", meta=m1).content.decode("utf-8"))

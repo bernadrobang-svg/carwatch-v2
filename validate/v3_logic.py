@@ -1004,7 +1004,13 @@ def _grade_cut_checks(conn, rid):
                      .get("취향", []))
               and k not in NOT_SINGLE]
     trim = cap("taste.trim")
-    over = sorted((k for k in others if cap(k) >= trim),
+    # ★★★★★ 09-05 r1174 (0-1e) — ★ 마스터께서 ★ `taste.trim` 20 을 ★ 물리시고
+    #   ★ 그 자리에 ★ `taste.interior` 20 (차종 고정값)을 두셨다.
+    #   ★★ 이 잣대가 지키던 것은 ★ 「신차가를 두 번 세지 않는다」였는데
+    #     ★ ★ 트림 축이 ★ **아예 없어져** ★ 두 번 셀 곳이 사라졌다.
+    #   ★★★ 그러니 ★ 축이 없으면 ★ 잴 것이 없다 — ★ 거짓 실패를 내지 않는다.
+    #     ★ ★ 축이 되살아나면 ★ 이 잣대도 저절로 다시 돈다
+    over = sorted((k for k in others if trim and cap(k) >= trim),
                   key=lambda k: -cap(k))
     bad92 = [f"{k} 가 {cap(k):.0f} 인데 트림은 {trim:.0f} 다 — "
              f"옵션 하나가 트림 사다리를 이긴다" for k in over]
@@ -1019,7 +1025,7 @@ def _grade_cut_checks(conn, rid):
     row = conn.execute(
         "SELECT MIN(value), MAX(value) FROM result_axis"
         " WHERE axis='taste.trim' AND value IS NOT NULL").fetchone()
-    if row and row[0] is not None and n_trim >= min_trim:
+    if trim and row and row[0] is not None and n_trim >= min_trim:
         span = float(row[1]) - float(row[0])
         top = max((conn.execute(
             "SELECT MAX(value) FROM result_axis WHERE axis=?",
@@ -1078,8 +1084,10 @@ def _grade_cut_checks(conn, rid):
     # ★ 제외는 점수를 안 매긴다 — 등급 자리를 안 쓴다는 뜻이다.
     #   grade_earned 는 남긴다 (왜 제외됐는지 화면이 설명해야 한다)
     return [
-        result(C["V3-92"], rid, f"트림 {trim:.0f}",
-               "크다" if not bad92 else "작다", not bad92, bad92[:4]),
+        result(C["V3-92"], rid,
+               f"트림 {trim:.0f}" if trim else "트림 축 없음",
+               ("크다" if not bad92 else "작다") if trim
+               else "물러났다 (r1174)", not bad92, bad92[:4]),
         result(C["V3-93"], rid, 0, n_bad + n_rev, not bad93, bad93[:4]),
         result(C["V3-94"], rid, "8단계",
                f"{len(got)}단계", not bad94, bad94[:6]),
