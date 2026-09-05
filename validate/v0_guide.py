@@ -7120,16 +7120,35 @@ def s46_274_default_sort_grade_price_rank():
     if not spec:
         return False, "RECOMMEND_SCREEN.md 를 못 읽었다"
     bad = []
-    for want, label in (("등급 > 판매가격 > 추천", "차례(등급>값>추천)"),
+    # ★★★★★★ 09-05 — ★ 마스터께서 ★ **차례를 다시 정하셨다**.
+    #   ★ 「★ **가격이 맨 먼저다.  ★ 낮은 값부터 역순으로**.
+    #     ★ 그다음 ★ 등급(A→E) · 그다음 ★ **마스터 취향 순위**」
+    #   ★ ★ 09-04 의 ★ 「등급 > 값 > 추천」은 ★ **물린다**.
+    #   ★★ 그리고 ★ **반드시 낼 것 넷** — 감가율(★ 50% 기준선) · 배터리 SOH ·
+    #     사고(★ 「미조회」 · **「무사고」로 적지 마라**) · 주행(★ 차종 평균과 견준다).
+    for want, label in (("판매가격", "①값"), ("취향 순위", "③취향 순위"),
                         ("낮은 것이 위", "「값은 낮은 것이 위」"),
-                        ("맨 뒤", "「값 없음·등급 없음은 맨 뒤」")):
+                        ("맨 뒤", "「값 없음·등급 없음은 맨 뒤」"),
+                        ("예산 밖", "「값이 안 맞아도 지우지 마라」"),
+                        ("신차가 미조회", "「신차가 없으면 비운다」"),
+                        ("무사고」로 적지 마라", "「무사고로 적지 마라」"),
+                        ("모름", "「SOH 없으면 모름」")):
         if want not in spec:
             bad.append(f"규격에 {label}가 없다")
     if "★ ★ **등급을 무시한다**" in spec:
         bad.append("★ 「등급을 무시한다」가 아직 남아 있다")
+    if "등급 > 판매가격 > 추천" in spec:
+        bad.append("★ 09-04 의 옛 차례(등급>값>추천)가 남아 있다 — "
+                   "★ 09-05 에 ★ **값이 앞으로 왔다**")
+    tgt = json.loads(_read(ROOT / "config" / "targets.json") or "{}")
+    ranked = [k for k, v in tgt.items()
+              if isinstance(v, dict) and v.get("taste_rank")]
+    if len(ranked) < 12:
+        bad.append(f"★ 취향 순위가 붙은 차종이 {len(ranked)}종뿐이다 (열둘이어야)")
     if bad:
         return False, "★ " + " · ".join(bad)
-    return True, "기본 차례가 등급 > 값 > 추천으로 규격에 있다"
+    return True, (f"차례가 값 > 등급 > 취향으로 있고 "
+                  f"취향 순위 {len(ranked)}종이 붙었다")
 
 
 def s46_275_axis_score_persisted():
