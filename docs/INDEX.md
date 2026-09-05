@@ -9,22 +9,23 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 52,004줄 · 3,747KB**
+**132파일 · 52,337줄 · 3,787KB**
 
-★ 800줄을 넘는 파일 14개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
+★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
+- CHECKS.md 921줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,402줄
+- guide/03_이력.md 1,417줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
 - chapters/61-web.md 2,268줄
 - chapters/30-score/f-table.md 3,067줄
-- chapters/11-store/a-key.md 1,076줄
+- chapters/11-store/a-key.md 1,111줄
 - chapters/11-store/b-core.md 815줄
 - chapters/60-admin/c-tools.md 1,121줄
 
@@ -33,7 +34,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md` | 686 | 116 |
+| `CHECKS.md`  ★ | 921 | 129 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -54,7 +55,7 @@
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 792 | 61 |
+| `SOURCE.md` | 793 | 62 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,154 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
@@ -69,7 +70,7 @@
 | `chapters/10-collect/d-record.md` | 595 | 22 |
 | `chapters/10-collect/e-catalog.md` | 208 | 7 |
 | `chapters/11-store/00-intro.md` | 103 | 3 |
-| `chapters/11-store/a-key.md`  ★ | 1,076 | 54 |
+| `chapters/11-store/a-key.md`  ★ | 1,111 | 56 |
 | `chapters/11-store/b-core.md`  ★ | 815 | 30 |
 | `chapters/11-store/c-result.md` | 236 | 8 |
 | `chapters/12-dict.md` | 618 | 25 |
@@ -121,13 +122,13 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,402 | 1,074 |
+| `guide/03_이력.md`  ★ | 1,417 | 1,094 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 667 | 298 |
-| `guide/07_밀린일대장.md` | 750 | 56 |
+| `guide/06_오판대장.md` | 668 | 300 |
+| `guide/07_밀린일대장.md` | 796 | 58 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
 | `guide/09_인계_20260829.md` | 98 | 3 |
