@@ -7326,7 +7326,65 @@ def s46_279_kb_fields_filled():
     return True, f"KB 값·항목·사진이 다 찼다 ({when})"
 
 
+def s46_280_all_sites_no_gap():
+    """S46-280 — ★ **열두 사이트에 같은 구멍이 없는가** (마스터 09-05 「부탁해」).
+
+    ★ 엔카·KB 를 낱개로 재고 나서 ★ **나머지 열도 같은지** 전수로 쟀다.
+    ★★ 실측 09-05 —
+      ★ **원문 0 — 여덟 곳** (KB · 리본카 · K카 · 헤이딜러 · 보배 · 볼보 · 렉서스 · 리볼트)
+        ★ ★ 파서를 고쳐도 ★ **다시 못 편다**
+      ★ **옵션 0 — 열한 곳** (엔카만 있다) · ★ **트림 0 — 열 곳** (엔카·헤이딜러만)
+        ★ ★ 옵션 **45점** · 트림 **20점**이 ★ 열 곳 넘게 통째로 죽는다
+      ★ **사진 0 — 네 곳** (현대인증 · 기아CPO · 헤이딜러 · 보배)
+      ★ **값 90% 미만 — 세 곳** (KB 12% · BMW 34% · 보배 89%)
+      ★ **상세 90% 미만 — 네 곳** (엔카 58% · KB 26% · 리볼트 86% · 리본카 88%)
+    ★ 잣대 — ① 원문 0 인 곳이 없다 ② 사진 0 인 곳이 없다
+             ③ 값·상세 **90%** ④ 옵션·트림이 ★ 절반 넘는 곳에서 0 이 아니다.
+    """
+    raw = _read(ROOT / "outputs" / "all_sites.json")
+    if not raw:
+        return False, ("★ 아직 안 쟀다 — "
+                       "`python3 -c \"from tools.browser_diff import "
+                       "all_sites_report as r; r('배포주소')\"` 를 돌려라")
+    try:
+        rep = json.loads(raw)
+    except Exception:  # noqa: BLE001
+        return False, "all_sites.json 을 못 읽었다"
+    sites = sorted({k.split(".")[0] for k in rep if "." in k})
+    no_raw, no_photo, low_price, low_detail, no_opt = [], [], [], [], []
+    for site in sites:
+        m = rep.get(f"{site}.매물") or 0
+        if not m:
+            continue
+        if not rep.get(f"{site}.원문"):
+            no_raw.append(site)
+        if not rep.get(f"{site}.사진"):
+            no_photo.append(site)
+        if (rep.get(f"{site}.값") or 0) / m < 0.9:
+            low_price.append(site)
+        if (rep.get(f"{site}.상세") or 0) / m < 0.9:
+            low_detail.append(site)
+        if not rep.get(f"{site}.옵션"):
+            no_opt.append(site)
+    bad = []
+    if no_raw:
+        bad.append(f"★ 원문 0 — {len(no_raw)}곳")
+    if no_opt:
+        bad.append(f"★ 옵션 0 — {len(no_opt)}곳")
+    if no_photo:
+        bad.append(f"사진 0 — {len(no_photo)}곳")
+    if low_price:
+        bad.append(f"값 90% 미만 — {len(low_price)}곳")
+    if low_detail:
+        bad.append(f"상세 90% 미만 — {len(low_detail)}곳")
+    if bad:
+        return False, ("★ " + " · ".join(bad)
+                       + f"  (원문0: {', '.join(no_raw[:4])})")
+    return True, f"열두 사이트에 구멍이 없다 ({len(sites)}곳)"
+
+
 CHECKS = (
+    ("S46-280", "열두 사이트에 같은 구멍이 없는가", s46_280_all_sites_no_gap),
     ("S46-279", "KB 값·항목·사진이 찼는가", s46_279_kb_fields_filled),
     ("S46-278", "KB 가 막힌 응답도 남기는가", s46_278_kb_saves_blocked_raw),
     ("S46-277", "관리 질의가 조회를 막지 않는가", s46_277_admin_query_allows_order_limit),

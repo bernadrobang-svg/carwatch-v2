@@ -752,3 +752,34 @@ def kb_collect_report(base_url: str, name: str = "admin",
                       secret: str = "12345678"):
     """★ KB 를 재고 ★ `outputs/kb_collect.json` 에 남긴다.  ★ `S46-279` 가 읽는다."""
     return _site_report(base_url, _KB_SQL, KB_REPORT, name, secret)
+
+
+# ★★★★★★ 09-05 — ★ **열두 사이트를 한꺼번에 잰다** (마스터 「부탁해」)
+#
+#   ★ 엔카·KB 를 낱개로 재고 나니 ★ **나머지 열도 같은 구멍인지** 봐야 했다.
+#   ★ 실측 09-05 — ★ **원문 0 이 여덟 곳** · ★ **옵션 0 이 열한 곳** · ★ 트림 0 이 열 곳.
+
+ALL_REPORT = "outputs/all_sites.json"
+
+ALL_SITES = ("encar", "kbchachacha", "reborncar", "hyundai_cert", "kia_cpo",
+             "kcar", "bmw_bps", "heydealer", "bobaedream", "volvo_selekt",
+             "lexus_certified", "revolt")
+
+_FIELDS = (("매물", "COUNT(*)"), ("상세", "COUNT(detail_status)"),
+           ("값", "COUNT(price_current_won)"),
+           ("사진", "COUNT(photo_list_json)"),
+           ("트림", "COUNT(trim_grade_name)"),
+           ("옵션", "COUNT(options_choice_json)"))
+
+
+def all_sites_report(base_url: str, name: str = "admin",
+                     secret: str = "12345678"):
+    """★ 열두 사이트 × 여섯 칸 ＋ 원문을 재고 ★ 파일로 남긴다.  ★ `S46-280` 이 읽는다."""
+    sqls = {}
+    for site in ALL_SITES:
+        for key, expr in _FIELDS:
+            sqls[f"{site}.{key}"] = (f"SELECT {expr} AS n FROM core_listing "
+                                     f"WHERE site='{site}'")
+        sqls[f"{site}.원문"] = ("SELECT COUNT(*) AS n FROM raw_response "
+                                f"WHERE site='{site}'")
+    return _site_report(base_url, sqls, ALL_REPORT, name, secret)
