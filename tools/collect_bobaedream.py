@@ -17,6 +17,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
@@ -46,12 +47,29 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _get(url: str, headers: dict, timeout: float) -> str | None:
+def _get(url: str, headers: dict, timeout: float,
+         endpoint: str | None = None, source_id=None,
+         page: int | None = None) -> str | None:
+    """★ 받는다.  ★ 못 받으면 `None` 이다.
+
+    ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) — ★ **막힌 응답도 원문이다.**
+      ★ 전에는 ★ 실패하면 ★ **몸통을 버렸다** — ★ 「어떻게 막혔나」를 뒤에 못 봤다
+    """
+    from collect.rawfetch import keep_blocked
+
     try:
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as f:   # noqa: S310
             # ★ 모바일은 UTF-8 이다 (규격 1장).  ★ PC(EUC-KR)와 섞지 않는다
             return f.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        if endpoint:
+            try:
+                keep_blocked(SITE_CODE, endpoint, source_id, url, e.read(),
+                             page=page, http_code=e.code, root=ROOT)
+            except OSError:
+                pass
+        return None
     except OSError:
         return None
 
@@ -163,7 +181,8 @@ def main() -> int:
         req = adapter.list_url(None, page=page,
                               maker=g.get("maker_no") if g else None,
                               model=g.get("model_no") if g else None)
-        body = _get(req.url, req.headers, req.timeout_sec)
+        body = _get(req.url, req.headers, req.timeout_sec,
+                    endpoint="list")
         if body is None:
             print(f"  {page}쪽 — ★ 못 받았다.  ★ 저장하지 않는다")
             break                       # ★ 못 받았다 — ★ `ended` 에 안 넣는다
@@ -199,7 +218,8 @@ def main() -> int:
     kept = {"저장": 0, "못 받음": 0}
     for no, _title, _name in hits:
         d = adapter.detail_urls(no)[0]
-        html = _get(d.url, d.headers, d.timeout_sec)
+        html = _get(d.url, d.headers, d.timeout_sec,
+                    endpoint="detail", source_id=no)
         if not html:
             kept["못 받음"] += 1
             time.sleep(gap)

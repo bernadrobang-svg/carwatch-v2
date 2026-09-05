@@ -46,13 +46,27 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _get(req) -> tuple[int, object]:
+def _get(req, endpoint: str | None = None, source_id=None,
+         page: int | None = None) -> tuple[int, object]:
+    """★ 받는다.  ★ 돌려줌 `(코드, 푼 묶음 또는 None)`.
+
+    ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) — ★ **막힌 응답도 원문이다.**
+      ★ 전에는 ★ 실패하면 ★ **몸통을 버렸다** — ★ 「어떻게 막혔나」를 뒤에 못 봤다
+    """
+    from collect.rawfetch import keep_blocked
+
     r = urllib.request.Request(req.url, headers=req.headers)
     try:
         with urllib.request.urlopen(r, timeout=req.timeout_sec) as res:
             raw = res.read()
             return res.status, json.loads(raw)
     except urllib.error.HTTPError as e:
+        if endpoint:
+            try:
+                keep_blocked(SITE_CODE, endpoint, source_id, req.url,
+                             e.read(), page=page, http_code=e.code, root=ROOT)
+            except OSError:
+                pass
         return e.code, None
     except Exception:
         return 0, None
@@ -107,7 +121,8 @@ def walk(adapter, key: str, queries: list, interval: float) -> tuple:
             done = False
             continue
         for page in range(1, MAX_PAGES + 1):
-            code, body = _get(adapter.list_url(None, page, pick))
+            code, body = _get(adapter.list_url(None, page, pick),
+                              endpoint="list", page=page)
             if code != 200 or not isinstance(body, list):
                 print(f"    {key} {q.get('_차명', '')} {page}쪽 — ★ {code} · 멈춘다")
                 done = False            # ★ 못 받았다 — ★ 끝이 아니다
@@ -192,7 +207,9 @@ def main() -> int:
     seen = {"정상": 0, "못 받음": 0, "껍데기": 0}
     _spec = schema("detail")
     for one in todo:
-        code, body = _get(adapter.detail_urls(one["source_id"])[0])
+        code, body = _get(adapter.detail_urls(one["source_id"])[0],
+                          endpoint="detail",
+                          source_id=one["source_id"])
         if code != 200 or not isinstance(body, dict):
             seen["못 받음"] += 1
             time.sleep(interval)

@@ -126,7 +126,18 @@ _OPENER = urllib.request.build_opener(
     urllib.request.HTTPCookieProcessor(_JAR))
 
 
-def _get(url: str, headers: dict, timeout: float) -> str | None:
+def _get(url: str, headers: dict, timeout: float,
+         endpoint: str | None = None, source_id=None,
+         page: int | None = None) -> str | None:
+    """★ 받는다.  ★ 못 받으면 `None` 이다.
+
+    ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) — ★ **막힌 응답도 원문이다.**
+      ★ 전에는 ★ 실패하면 ★ **몸통을 버리고** `None` 을 냈다 —
+      ★ ★ 그래서 ★ 「언제부터 · 어떻게 막혔나」를 ★ 뒤에 못 봤다.
+      ★ ★ ★ 창구를 알려 주면 ★ `status="blocked"` 로 ★ **남긴다** (파싱은 안 한다)
+    """
+    from collect.rawfetch import keep_blocked
+
     for _ in range(RETRY):
         try:
             req = urllib.request.Request(url, headers=headers)
@@ -134,6 +145,13 @@ def _get(url: str, headers: dict, timeout: float) -> str | None:
                 return res.read().decode("utf-8", "replace")
         except urllib.error.HTTPError as e:
             if e.code != 503:
+                if endpoint:
+                    try:
+                        keep_blocked(SITE_CODE, endpoint, source_id, url,
+                                     e.read(), page=page, http_code=e.code,
+                                     root=ROOT)
+                    except OSError:
+                        pass
                 return None
             time.sleep(RETRY_WAIT)
         except Exception:
@@ -207,7 +225,8 @@ def main() -> int:
     seen = {"정상": 0, "못 받음": 0, "옵션": 0}
     for one in todo:
         url = cfg["base_url"] + cfg["paths"]["detail"].format(source_id=one)
-        html = _get(url, cfg["headers"], float(cfg["timeout_sec"]))
+        html = _get(url, cfg["headers"], float(cfg["timeout_sec"]),
+                    endpoint="detail", source_id=one)
         if not html:
             seen["못 받음"] += 1
             time.sleep(interval)

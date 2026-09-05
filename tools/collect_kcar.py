@@ -23,6 +23,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
@@ -59,17 +60,30 @@ def _now() -> str:
 
 
 def fetch(url: str, headers: dict, timeout: float,
-          want_text: bool = False) -> tuple:
+          want_text: bool = False, endpoint: str | None = None,
+          source_id=None, page: int | None = None) -> tuple:
     """반환 (본문 bytes 길이, JSON 또는 None[, 원문 글자]).
 
     ★★ 08-28 — ★ `want_text` 를 붙였다.  ★ 재고 목록 봉투(887KB)를
       ★ ★ **그냥 버리고 있었다** — ★ P3(원문 무손실) 어긋남이다.
       ★ ★ 다시 만들지 않는다.  ★ 받은 글자를 ★ 그대로 남긴다
     """
+    from collect.rawfetch import keep_blocked
+
     try:
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as f:   # noqa: S310
             raw = f.read()
+    except urllib.error.HTTPError as e:
+        # ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) —
+        #   ★ **막힌 응답도 원문이다.**  ★ 전에는 몸통을 버렸다
+        if endpoint:
+            try:
+                keep_blocked(SITE_CODE, endpoint, source_id, url, e.read(),
+                             page=page, http_code=e.code, root=ROOT)
+            except OSError:
+                pass
+        return (0, None, None) if want_text else (0, None)
     except OSError:
         return (0, None, None) if want_text else (0, None)
     try:
@@ -112,6 +126,7 @@ def fetch_stock(adapter: KcarAdapter) -> tuple:
     """
     req = adapter.stock_list_url()
     size, body, text = fetch(req.url, req.headers, req.timeout_sec,
+                             endpoint="stock_list",
                              want_text=True)
     if not body:
         print(f"  ★ 목록을 못 받았다 ({size}B)")
@@ -209,7 +224,8 @@ def main() -> int:
     ok_rows: list = []
     for cd in cars:
         req = adapter.detail_urls(cd)[0]
-        size, body = fetch(req.url, req.headers, req.timeout_sec)
+        size, body = fetch(req.url, req.headers, req.timeout_sec,
+                           endpoint="detail", source_id=cd)
         state = classify(size, body)
         seen[state] += 1
         print(f"  {cd:14} {size:>8}B  {state}")

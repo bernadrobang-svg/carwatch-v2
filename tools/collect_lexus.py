@@ -59,9 +59,21 @@ def main() -> int:
     cars: list = []
     pages, done = 0, False
     for page in range(1, MAX_PAGES + 1):
-        req = urllib.request.Request(f"{base}{sep}cur_page={page}",
-                                     headers=cfg.get("headers") or {})
-        d = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
+        _url = f"{base}{sep}cur_page={page}"
+        req = urllib.request.Request(_url, headers=cfg.get("headers") or {})
+        try:
+            d = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
+        except urllib.error.HTTPError as e:
+            # ★ 09-05 (지시 1번) — ★ 막힌 쪽도 원문으로 남긴다 (STEP 53-⑤)
+            from collect.rawfetch import keep_blocked
+
+            try:
+                keep_blocked(SITE_CODE, "list", None, _url, e.read(),
+                             page=page, http_code=e.code, root=ROOT)
+            except OSError:
+                pass
+            print(f"★ {page}쪽 — ★ 막혔다 {e.code}.  ★ 원문은 남겼다")
+            break
         sl = d.get("search_list") or {}
         got = sl.get("car_list") or []
         # ★ 돌려준 `cur_page` 가 ★ 부른 쪽과 다르면 ★ 쪽넘김이 안 먹은 것이다.
@@ -153,6 +165,21 @@ def _detail(cfg, rows, at) -> int:
         try:
             req = urllib.request.Request(url, headers=cfg.get("headers") or {})
             body = urllib.request.urlopen(req, timeout=timeout).read()
+        except urllib.error.HTTPError as e:
+            # ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) —
+            #   ★ **막힌 응답도 원문이다.**  ★ 전에는 몸통을 버렸다.
+            #   ★ 「없음」을 ★ **값으로 삼지는** 않는다 (금지 12) — ★ 자취만 남긴다
+            from collect.rawfetch import keep_blocked
+
+            try:
+                keep_blocked(SITE_CODE, "detail", sid, url, e.read(),
+                             http_code=e.code, root=ROOT)
+            except OSError:
+                pass
+            print(f"  idx={sid} ★ 막혔다 {e.code} — ★ 원문은 남겼다")
+            got["못 받음"] += 1
+            time.sleep(SLEEP_SEC)
+            continue
         except (urllib.error.URLError, OSError, TimeoutError) as e:
             # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
             print(f"  idx={sid} ★ 못 받음 — {e}")

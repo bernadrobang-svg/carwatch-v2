@@ -60,8 +60,15 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _get(url: str, timeout: float = 30.0):
-    """★ 못 받으면 ★ `None` — ★ 「없음」으로 저장하지 않는다 (금지 12)."""
+def _get(url: str, timeout: float = 30.0, endpoint: str | None = None,
+         source_id=None, page: int | None = None):
+    """★ 못 받으면 ★ `None` — ★ 「없음」을 **값으로 삼지** 않는다 (금지 12).
+
+    ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) — ★ **막힌 응답도 원문이다.**
+      ★ 전에는 ★ 실패하면 ★ **몸통을 버렸다** — ★ 「어떻게 막혔나」를 뒤에 못 봤다
+    """
+    from collect.rawfetch import keep_blocked
+
     try:
         with urllib.request.urlopen(
                 urllib.request.Request(url, headers=HEADERS),
@@ -69,6 +76,12 @@ def _get(url: str, timeout: float = 30.0):
             return res.read()
     except urllib.error.HTTPError as e:
         print(f"  ★ HTTP {e.code} — {url}")
+        if endpoint:
+            try:
+                keep_blocked(SITE_CODE, endpoint, source_id, url, e.read(),
+                             page=page, http_code=e.code, root=ROOT)
+            except OSError:
+                pass
         return None
     except (urllib.error.URLError, OSError, TimeoutError) as e:
         print(f"  ★ 못 받음 {type(e).__name__} — {url}")
@@ -125,7 +138,7 @@ def main() -> int:
         for page in range(1, MAX_PAGES + 1):
             url = (f"{BASE}/cars/?brand_hash_id={bid}&model_hash_id={mid}"
                    f"&page={page}")
-            body = _get(url)
+            body = _get(url, endpoint="list", page=page)
             if body is None:
                 done = False       # ★ 못 받았다 — ★ 「끝까지 받았다」고 하지 않는다
                 break
@@ -197,7 +210,7 @@ def main() -> int:
     for r in ours:
         sid = r["source_id"]
         url = f"{BASE}/cars/{sid}/"
-        body = _get(url)
+        body = _get(url, endpoint="detail", source_id=sid)
         if body is None:
             got["못 받음"] += 1
             time.sleep(SLEEP * 2)

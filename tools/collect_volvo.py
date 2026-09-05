@@ -93,7 +93,18 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _get(url: str, headers: dict, timeout: float) -> str | None:
+def _get(url: str, headers: dict, timeout: float,
+         endpoint: str | None = None, source_id=None,
+         page: int | None = None) -> str | None:
+    """★ 받는다.  ★ 못 받으면 `None` 이다.
+
+    ★★★★★ 09-05 (지시 1번 · `S46-278` · `STEP 53-⑤`) — ★ **막힌 응답도 원문이다.**
+      ★ 전에는 ★ 실패하면 ★ **몸통을 버리고** `None` 을 냈다 —
+      ★ ★ 그래서 ★ 「언제부터 · 어떻게 막혔나」를 ★ 뒤에 못 봤다.
+      ★ ★ ★ 창구를 알려 주면 ★ `status="blocked"` 로 ★ **남긴다** (파싱은 안 한다)
+    """
+    from collect.rawfetch import keep_blocked
+
     for _ in range(RETRY):
         try:
             req = urllib.request.Request(url, headers=headers)
@@ -101,6 +112,13 @@ def _get(url: str, headers: dict, timeout: float) -> str | None:
                 return res.read().decode("utf-8", "replace")
         except urllib.error.HTTPError as e:
             if e.code not in (429, 500, 502, 503):
+                if endpoint:
+                    try:
+                        keep_blocked(SITE_CODE, endpoint, source_id, url,
+                                     e.read(), page=page, http_code=e.code,
+                                     root=ROOT)
+                    except OSError:
+                        pass
                 return None
             time.sleep(RETRY_WAIT)
         except Exception:
@@ -123,7 +141,8 @@ def main() -> int:
     pages: list = []
     done = False
     for page in range(1, MAX_PAGES + 1):
-        raw = _get(f"{base}/kr/vehicles/xhr-results/{page}", head, timeout)
+        raw = _get(f"{base}/kr/vehicles/xhr-results/{page}", head,
+                   timeout, endpoint="list", page=page)
         pages.append((f"{base}/kr/vehicles/xhr-results/{page}", raw))
         if not raw:
             print(f"  {page}쪽 — ★ 못 받았다.  멈춘다")
@@ -227,7 +246,8 @@ def main() -> int:
             return 0
     got = {"정상": 0, "못 받음": 0}
     for sid, (_slug, url) in todo:
-        body = _get(url, head, timeout)
+        body = _get(url, head, timeout, endpoint="detail",
+                    source_id=sid)
         if not body:
             # ★ 못 받은 것을 ★ 「없음」으로 저장하지 않는다 (금지 12)
             got["못 받음"] += 1
