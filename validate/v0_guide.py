@@ -7745,7 +7745,37 @@ def s46_288_no_asking_about_out_of_scope():
     return True, "미분류를 다시 묻지 않는다"
 
 
+def s46_289_vehicle_table_is_source():
+    """S46-289 — 차종 표가 분류의 정본인가 (마스터 확정 09-05).
+
+    마스터 — 「차종 목록을 만들고 그 테이블에 받는 목록과 안 받는 목록을 표시해라.
+      수집 Y/N · 전체 목록 표시 · 추천 표시 · 추천 탭별 표시.
+      각 차종과 수집 채널(사이트)별로 수집할 수 있는지 여부도 표시해라.
+      앞으로 분류 관련된 부분은 다 그 테이블을 보게 프로그램을 고쳐라」
+
+    내가 앞서 미분류 목록을 뽑아 「이거 받을까요」 물었다. 마스터가 이미
+      「받지 마라」고 정하신 것을 되물은 것이다. 물을 일이 아니라 표로 만들 일이었다.
+    잣대 — config/vehicle_table.json 이 있고, 차종마다 여덟 칸이 있는가.
+    """
+    raw = _read(ROOT / "config" / "vehicle_table.json")
+    if not raw:
+        return False, ("차종 표가 없다 — "
+                       "`python3 -c \"from tools.make_vehicle_table import "
+                       "build; build('배포주소')\"` 를 돌려라")
+    t = json.loads(raw).get("차종") or {}
+    if len(t) < 50:
+        return False, f"차종이 {len(t)}개뿐이다 — 미수집 갈래가 안 들어갔다"
+    need = ("collect", "show_list", "show_recommend",
+            "tab1", "tab2", "tab3", "tab4", "sites")
+    bad = [k for k, v in t.items() if not all(x in v for x in need)]
+    if bad:
+        return False, f"칸이 빠진 차종 {len(bad)} — {' · '.join(bad[:3])}"
+    on = sum(1 for v in t.values() if v.get("collect") == "Y")
+    return True, f"차종 표 {len(t)}종 (수집 {on} · 미수집 {len(t) - on})"
+
+
 CHECKS = (
+    ("S46-289", "차종 표가 분류의 정본인가", s46_289_vehicle_table_is_source),
     ("S46-288", "미분류를 다시 묻지 않는가", s46_288_no_asking_about_out_of_scope),
     ("S46-286", "취향 축 합이 165 인가", s46_286_taste_axes_165),
     ("S46-287", "차종별 취향 고정값이 있는가", s46_287_taste_fixed_by_target),

@@ -1,0 +1,3074 @@
+{
+ "_뜻": "차종 표 — 분류의 정본이다 (마스터 확정 09-05). 분류와 관련된 코드는 모두 이 표를 읽는다. 새 차종을 켜려면 여기서 collect 를 Y 로 바꾼다.",
+ "_칸": {
+  "collect": "수집한다 Y/N",
+  "show_list": "전체 목록에 낸다 Y/N",
+  "show_recommend": "추천에 낸다 Y/N",
+  "tab1": "추천 탭1(내 기준에 가까운 차) Y/N",
+  "tab2": "추천 탭2(값→등급→취향) Y/N",
+  "tab3": "추천 탭3(분석) Y/N",
+  "tab4": "추천 탭4(GV70·X3) Y/N",
+  "sites": "사이트별 받은 건수. 0 이면 그 사이트에 없거나 못 받는다",
+  "taste_rank": "마스터 취향 순위"
+ },
+ "차종": {
+  "G80_25T": {
+   "label": "G80 2.5T",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 50,
+    "encar": 2728,
+    "heydealer": 38,
+    "hyundai_cert": 183,
+    "kbchachacha": 1641,
+    "kcar": 14,
+    "reborncar": 57
+   }
+  },
+  "G80_EV": {
+   "label": "G80 전동화",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 121,
+    "heydealer": 3,
+    "kbchachacha": 27,
+    "reborncar": 1
+   }
+  },
+  "G70_25T": {
+   "label": "G70 2.5T",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 1,
+    "encar": 119,
+    "hyundai_cert": 1,
+    "kbchachacha": 175,
+    "reborncar": 2
+   }
+  },
+  "G70_20T": {
+   "label": "G70 2.0T",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 6,
+    "encar": 334,
+    "heydealer": 5,
+    "hyundai_cert": 12,
+    "kcar": 14,
+    "reborncar": 7
+   }
+  },
+  "GV70_EV": {
+   "label": "GV70 전동화",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 4,
+   "sites": {
+    "bobaedream": 1,
+    "encar": 96,
+    "heydealer": 2,
+    "hyundai_cert": 5,
+    "kbchachacha": 25,
+    "reborncar": 1,
+    "revolt": 2
+   }
+  },
+  "GV60": {
+   "label": "GV60",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 179,
+    "heydealer": 6,
+    "hyundai_cert": 2,
+    "kbchachacha": 53
+   }
+  },
+  "KOLEOS_HEV": {
+   "label": "그랑 콜레오스 1.5 E-TECH",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 7,
+   "sites": {
+    "encar": 382,
+    "heydealer": 15,
+    "kbchachacha": 106,
+    "kcar": 2,
+    "reborncar": 2
+   }
+  },
+  "SPORTAGE_LPI": {
+   "label": "스포티지 LPi",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 276,
+    "kbchachacha": 707
+   }
+  },
+  "GRANDEUR_LPG": {
+   "label": "그랜저 GN7 LPG",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 6,
+    "encar": 339,
+    "heydealer": 3,
+    "hyundai_cert": 6,
+    "kbchachacha": 531,
+    "reborncar": 16
+   }
+  },
+  "MODEL_Y": {
+   "label": "테슬라 모델Y",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 2,
+   "sites": {
+    "bobaedream": 4,
+    "encar": 860,
+    "kbchachacha": 248,
+    "revolt": 54
+   }
+  },
+  "X3_IMPORT": {
+   "label": "BMW X3",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "Y",
+   "taste_rank": 8,
+   "sites": {
+    "bmw_bps": 26,
+    "bobaedream": 7,
+    "encar": 1200,
+    "heydealer": 10,
+    "kbchachacha": 402,
+    "kcar": 2
+   }
+  },
+  "GLC_IMPORT": {
+   "label": "벤츠 GLC",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 15,
+    "encar": 1323,
+    "kbchachacha": 684,
+    "kcar": 2,
+    "reborncar": 4
+   }
+  },
+  "Q5_IMPORT": {
+   "label": "아우디 Q5",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 5,
+    "encar": 502,
+    "kbchachacha": 226,
+    "reborncar": 2
+   }
+  },
+  "NX_HEV": {
+   "label": "렉서스 NX 하이브리드",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 198,
+    "kbchachacha": 90,
+    "lexus_certified": 16
+   }
+  },
+  "RX_IMPORT": {
+   "label": "렉서스 RX",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 2,
+    "encar": 120,
+    "heydealer": 1,
+    "kbchachacha": 51,
+    "lexus_certified": 5
+   }
+  },
+  "XC60_IMPORT": {
+   "label": "볼보 XC60",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 10,
+   "sites": {
+    "bobaedream": 3,
+    "encar": 537,
+    "heydealer": 15,
+    "kbchachacha": 150,
+    "kcar": 1,
+    "volvo_selekt": 63
+   }
+  },
+  "S60_IMPORT": {
+   "label": "볼보 S60",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 1,
+    "encar": 225,
+    "heydealer": 6,
+    "kbchachacha": 66,
+    "kcar": 1,
+    "volvo_selekt": 4
+   }
+  },
+  "EX60_IMPORT": {
+   "label": "볼보 EX60",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {}
+  },
+  "XC40_IMPORT": {
+   "label": "볼보 XC40 (전기 제외)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 376,
+    "heydealer": 14,
+    "kbchachacha": 113,
+    "reborncar": 2,
+    "volvo_selekt": 37
+   }
+  },
+  "V60CC_IMPORT": {
+   "label": "볼보 V60 크로스컨트리",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 266,
+    "heydealer": 2,
+    "kbchachacha": 89,
+    "kcar": 1,
+    "volvo_selekt": 49
+   }
+  },
+  "ES_HEV": {
+   "label": "렉서스 ES300h",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 103,
+    "lexus_certified": 31
+   }
+  },
+  "C40_EV": {
+   "label": "볼보 C40 리차지 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 5,
+   "sites": {
+    "encar": 17,
+    "kbchachacha": 3,
+    "revolt": 1
+   }
+  },
+  "EX30_EV": {
+   "label": "볼보 EX30 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 5,
+   "sites": {
+    "encar": 12
+   }
+  },
+  "POLESTAR2_EV": {
+   "label": "폴스타 2 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 1,
+    "encar": 162,
+    "kbchachacha": 60
+   }
+  },
+  "POLESTAR4_EV": {
+   "label": "폴스타 4 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 3,
+   "sites": {
+    "encar": 57,
+    "kbchachacha": 17,
+    "revolt": 3
+   }
+  },
+  "POLESTAR3_EV": {
+   "label": "폴스타 3 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {}
+  },
+  "IX3_EV": {
+   "label": "BMW iX3 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 1,
+   "sites": {
+    "kbchachacha": 25,
+    "revolt": 5
+   }
+  },
+  "ID4_EV": {
+   "label": "폭스바겐 ID.4",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 29,
+    "revolt": 6
+   }
+  },
+  "UX300E_EV": {
+   "label": "렉서스 UX300e (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 35
+   }
+  },
+  "EV4_EV": {
+   "label": "기아 EV4",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 6,
+   "sites": {
+    "kbchachacha": 12
+   }
+  },
+  "ID5_EV": {
+   "label": "폭스바겐 ID.5",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 5
+   }
+  },
+  "XC40_EV": {
+   "label": "볼보 XC40 리차지 (전기)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "N",
+   "taste_rank": 5,
+   "sites": {
+    "kbchachacha": 5
+   }
+  },
+  "GV70_25T": {
+   "label": "GV70 2.5T (가솔린)",
+   "collect": "Y",
+   "show_list": "Y",
+   "show_recommend": "Y",
+   "tab1": "Y",
+   "tab2": "Y",
+   "tab3": "Y",
+   "tab4": "Y",
+   "taste_rank": 9,
+   "sites": {
+    "encar": 1360,
+    "kbchachacha": 676,
+    "kcar": 6
+   }
+  },
+  "OFF:그랜저": {
+   "label": "그랜저",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 5,
+    "encar": 2049,
+    "heydealer": 37,
+    "hyundai_cert": 338,
+    "kcar": 39,
+    "reborncar": 117
+   }
+  },
+  "OFF:스포티지": {
+   "label": "스포티지",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 1,
+    "encar": 1812,
+    "kcar": 14,
+    "kia_cpo": 85,
+    "reborncar": 22
+   }
+  },
+  "OFF:G80": {
+   "label": "G80",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 21,
+    "encar": 771,
+    "hyundai_cert": 20,
+    "kbchachacha": 116,
+    "kcar": 16,
+    "reborncar": 19
+   }
+  },
+  "OFF:GV70": {
+   "label": "GV70",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 11,
+    "encar": 106,
+    "hyundai_cert": 67,
+    "kcar": 8,
+    "reborncar": 67
+   }
+  },
+  "OFF:카니발": {
+   "label": "카니발",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 10,
+    "kia_cpo": 244
+   }
+  },
+  "OFF:쏘렌토": {
+   "label": "쏘렌토",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 222
+   }
+  },
+  "OFF:팰리세이드": {
+   "label": "팰리세이드",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 135,
+    "kcar": 6
+   }
+  },
+  "OFF:G70": {
+   "label": "G70",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "bobaedream": 4,
+    "encar": 95,
+    "kcar": 9
+   }
+  },
+  "OFF:K8": {
+   "label": "K8",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1,
+    "kia_cpo": 88
+   }
+  },
+  "OFF:싼타페": {
+   "label": "싼타페",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 87
+   }
+  },
+  "OFF:K5": {
+   "label": "K5",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 78
+   }
+  },
+  "OFF:아이오닉5": {
+   "label": "아이오닉5",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 68
+   }
+  },
+  "OFF:쏘나타": {
+   "label": "쏘나타",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 61
+   }
+  },
+  "OFF:그랑 콜레오스": {
+   "label": "그랑 콜레오스",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 52,
+    "heydealer": 1,
+    "reborncar": 2
+   }
+  },
+  "OFF:셀토스": {
+   "label": "셀토스",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1,
+    "kia_cpo": 54
+   }
+  },
+  "OFF:투싼": {
+   "label": "투싼",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 49,
+    "kcar": 5
+   }
+  },
+  "OFF:모하비": {
+   "label": "모하비",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2,
+    "kia_cpo": 49
+   }
+  },
+  "OFF:더 뉴 그랜저 IG": {
+   "label": "더 뉴 그랜저 IG",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 44
+   }
+  },
+  "OFF:GV80": {
+   "label": "GV80",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 18,
+    "kcar": 16
+   }
+  },
+  "OFF:코나": {
+   "label": "코나",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 23,
+    "kcar": 10
+   }
+  },
+  "OFF:레이": {
+   "label": "레이",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 29
+   }
+  },
+  "OFF:모델 Y 주니퍼": {
+   "label": "모델 Y 주니퍼",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 28
+   }
+  },
+  "OFF:더 뉴 그랜저": {
+   "label": "더 뉴 그랜저",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 26
+   }
+  },
+  "OFF:K9": {
+   "label": "K9",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1,
+    "kia_cpo": 24
+   }
+  },
+  "OFF:G90": {
+   "label": "G90",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 23
+   }
+  },
+  "OFF:니로": {
+   "label": "니로",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 22
+   }
+  },
+  "OFF:모닝": {
+   "label": "모닝",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 22
+   }
+  },
+  "OFF:GLC클래스 (X253)": {
+   "label": "GLC클래스 (X253)",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 21
+   }
+  },
+  "OFF:타스만": {
+   "label": "타스만",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 21
+   }
+  },
+  "OFF:아반떼": {
+   "label": "아반떼",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 20
+   }
+  },
+  "OFF:아이오닉6": {
+   "label": "아이오닉6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 20
+   }
+  },
+  "OFF:모델 Y": {
+   "label": "모델 Y",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 18
+   }
+  },
+  "OFF:PV5": {
+   "label": "PV5",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 17
+   }
+  },
+  "OFF:EV6": {
+   "label": "EV6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 16
+   }
+  },
+  "OFF:싼타페 TM": {
+   "label": "싼타페 TM",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 16
+   }
+  },
+  "OFF:카니발 하이리무진": {
+   "label": "카니발 하이리무진",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 15
+   }
+  },
+  "OFF:ES": {
+   "label": "ES",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "lexus_certified": 10,
+    "reborncar": 2
+   }
+  },
+  "OFF:XC40": {
+   "label": "XC40",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 11
+   }
+  },
+  "OFF:캐스퍼": {
+   "label": "캐스퍼",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 10,
+    "kcar": 1
+   }
+  },
+  "OFF:EV3": {
+   "label": "EV3",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 10
+   }
+  },
+  "OFF:NX": {
+   "label": "NX",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "encar": 8,
+    "lexus_certified": 2
+   }
+  },
+  "OFF:EV5": {
+   "label": "EV5",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 9
+   }
+  },
+  "OFF:K3": {
+   "label": "K3",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 9
+   }
+  },
+  "OFF:더 뉴 카니발": {
+   "label": "더 뉴 카니발",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 9
+   }
+  },
+  "OFF:EV9": {
+   "label": "EV9",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 8
+   }
+  },
+  "OFF:xc60": {
+   "label": "xc60",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "volvo_selekt": 8
+   }
+  },
+  "OFF:쏘나타 뉴 라이즈": {
+   "label": "쏘나타 뉴 라이즈",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 8
+   }
+  },
+  "OFF:올 뉴 쏘렌토": {
+   "label": "올 뉴 쏘렌토",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 8
+   }
+  },
+  "OFF:E-클래스 W213": {
+   "label": "E-클래스 W213",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 7
+   }
+  },
+  "OFF:그랜저 IG": {
+   "label": "그랜저 IG",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 7
+   }
+  },
+  "OFF:디 올 뉴 스포티지": {
+   "label": "디 올 뉴 스포티지",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 7
+   }
+  },
+  "OFF:쏘나타 DN8": {
+   "label": "쏘나타 DN8",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 7
+   }
+  },
+  "OFF:제네시스 DH": {
+   "label": "제네시스 DH",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 7
+   }
+  },
+  "OFF:모하비 더 마스터": {
+   "label": "모하비 더 마스터",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 6
+   }
+  },
+  "OFF:베뉴": {
+   "label": "베뉴",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 6
+   }
+  },
+  "OFF:올 뉴 카니발": {
+   "label": "올 뉴 카니발",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 6
+   }
+  },
+  "OFF:ID.4": {
+   "label": "ID.4",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "revolt": 5
+   }
+  },
+  "OFF:더 뉴 그랜저 하이브리드": {
+   "label": "더 뉴 그랜저 하이브리드",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 5
+   }
+  },
+  "OFF:더 뉴 맥스크루즈": {
+   "label": "더 뉴 맥스크루즈",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 5
+   }
+  },
+  "OFF:더 뉴 싼타페": {
+   "label": "더 뉴 싼타페",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 5
+   }
+  },
+  "OFF:더 뉴 팰리세이드": {
+   "label": "더 뉴 팰리세이드",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 5
+   }
+  },
+  "OFF:스토닉": {
+   "label": "스토닉",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 5
+   }
+  },
+  "OFF:5시리즈": {
+   "label": "5시리즈",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:A4": {
+   "label": "A4",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:EQ900": {
+   "label": "EQ900",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:UX250h": {
+   "label": "UX250h",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 4
+   }
+  },
+  "OFF:뉴 QM6": {
+   "label": "뉴 QM6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:모닝 어반": {
+   "label": "모닝 어반",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:뷰티풀 코란도": {
+   "label": "뷰티풀 코란도",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:스팅어": {
+   "label": "스팅어",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2,
+    "kia_cpo": 2
+   }
+  },
+  "OFF:싼타페 더 프라임": {
+   "label": "싼타페 더 프라임",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:쏘울 부스터": {
+   "label": "쏘울 부스터",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:올 뉴 투싼": {
+   "label": "올 뉴 투싼",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 4
+   }
+  },
+  "OFF:2시리즈 그란쿠페": {
+   "label": "2시리즈 그란쿠페",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:C-클래스 W205": {
+   "label": "C-클래스 W205",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:ES300h": {
+   "label": "ES300h",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 3
+   }
+  },
+  "OFF:K5 2세대": {
+   "label": "K5 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:K5 3세대": {
+   "label": "K5 3세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:K5 하이브리드 2세대": {
+   "label": "K5 하이브리드 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:K7 프리미어": {
+   "label": "K7 프리미어",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:NX350h": {
+   "label": "NX350h",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 3
+   }
+  },
+  "OFF:Q5 (FY)": {
+   "label": "Q5 (FY)",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 3
+   }
+  },
+  "OFF:ex30": {
+   "label": "ex30",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "volvo_selekt": 3
+   }
+  },
+  "OFF:iX3": {
+   "label": "iX3",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "revolt": 3
+   }
+  },
+  "OFF:v60-cross-country": {
+   "label": "v60-cross-country",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "volvo_selekt": 3
+   }
+  },
+  "OFF:뉴 ES300h": {
+   "label": "뉴 ES300h",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 3
+   }
+  },
+  "OFF:더 뉴 G70": {
+   "label": "더 뉴 G70",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 3
+   }
+  },
+  "OFF:더 뉴 K9 2세대": {
+   "label": "더 뉴 K9 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:더 뉴 SM6": {
+   "label": "더 뉴 SM6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:더 뉴 쏘울": {
+   "label": "더 뉴 쏘울",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:아반떼 N": {
+   "label": "아반떼 N",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:올 뉴 투싼 TL": {
+   "label": "올 뉴 투싼 TL",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:쿠퍼": {
+   "label": "쿠퍼",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 3
+   }
+  },
+  "OFF:4시리즈": {
+   "label": "4시리즈",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:A3": {
+   "label": "A3",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:EV4": {
+   "label": "EV4",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 2
+   }
+  },
+  "OFF:G4 렉스턴": {
+   "label": "G4 렉스턴",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:GLA-클래스 X156": {
+   "label": "GLA-클래스 X156",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:GLC클래스 (X254)": {
+   "label": "GLC클래스 (X254)",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 2
+   }
+  },
+  "OFF:GV60": {
+   "label": "GV60",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "revolt": 2
+   }
+  },
+  "OFF:LF 쏘나타": {
+   "label": "LF 쏘나타",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:NX300h": {
+   "label": "NX300h",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 2
+   }
+  },
+  "OFF:X2": {
+   "label": "X2",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:X4": {
+   "label": "X4",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:ex30-cross-country": {
+   "label": "ex30-cross-country",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "volvo_selekt": 2
+   }
+  },
+  "OFF:더 뉴 K7": {
+   "label": "더 뉴 K7",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:더 뉴 레이": {
+   "label": "더 뉴 레이",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:더 뉴 모하비": {
+   "label": "더 뉴 모하비",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:더 뉴 스포티지": {
+   "label": "더 뉴 스포티지",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 2
+   }
+  },
+  "OFF:더 뉴 카니발 4세대": {
+   "label": "더 뉴 카니발 4세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:쏘렌토 4세대": {
+   "label": "쏘렌토 4세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:에쿠스": {
+   "label": "에쿠스",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:올 뉴 K7": {
+   "label": "올 뉴 K7",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:쿠퍼 클럽맨": {
+   "label": "쿠퍼 클럽맨",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:투아렉 3세대": {
+   "label": "투아렉 3세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 2
+   }
+  },
+  "OFF:3시리즈": {
+   "label": "3시리즈",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:3시리즈 GT": {
+   "label": "3시리즈 GT",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:5시리즈 GT": {
+   "label": "5시리즈 GT",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:7시리즈": {
+   "label": "7시리즈",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:A7": {
+   "label": "A7",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:C40": {
+   "label": "C40",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "reborncar": 1
+   }
+  },
+  "OFF:CR-V 5세대": {
+   "label": "CR-V 5세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:GLB-클래스 X247": {
+   "label": "GLB-클래스 X247",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:GV80 쿠페": {
+   "label": "GV80 쿠페",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:K3 GT": {
+   "label": "K3 GT",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:K7": {
+   "label": "K7",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 1
+   }
+  },
+  "OFF:K8 하이브리드": {
+   "label": "K8 하이브리드",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:Q7": {
+   "label": "Q7",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:Q8": {
+   "label": "Q8",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:QM6": {
+   "label": "QM6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:RX": {
+   "label": "RX",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "lexus_certified": 1
+   }
+  },
+  "OFF:UX300e": {
+   "label": "UX300e",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 1
+   }
+  },
+  "OFF:UX300h": {
+   "label": "UX300h",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 1
+   }
+  },
+  "OFF:X3": {
+   "label": "X3",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "revolt": 1
+   }
+  },
+  "OFF:X6": {
+   "label": "X6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:s60": {
+   "label": "s60",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "volvo_selekt": 1
+   }
+  },
+  "OFF:뉴 A6": {
+   "label": "뉴 A6",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:뉴 QX50": {
+   "label": "뉴 QX50",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:뉴 투싼 ix": {
+   "label": "뉴 투싼 ix",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 K9": {
+   "label": "더 K9",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 넥스트 이쿼녹스": {
+   "label": "더 넥스트 이쿼녹스",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 300C": {
+   "label": "더 뉴 300C",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 K3 GT 2세대": {
+   "label": "더 뉴 K3 GT 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 K5 2세대": {
+   "label": "더 뉴 K5 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 i40 살룬": {
+   "label": "더 뉴 i40 살룬",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 니로": {
+   "label": "더 뉴 니로",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 렉스턴 스포츠 칸": {
+   "label": "더 뉴 렉스턴 스포츠 칸",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 봉고III 트럭 LPi 2.5 터보 카고": {
+   "label": "더 뉴 봉고III 트럭 LPi 2.5 터보 카고",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 셀토스": {
+   "label": "더 뉴 셀토스",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 쏘렌토": {
+   "label": "더 뉴 쏘렌토",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 아반떼 AD": {
+   "label": "더 뉴 아반떼 AD",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 뉴 카이엔": {
+   "label": "더 뉴 카이엔",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:더 올 뉴 G80": {
+   "label": "더 올 뉴 G80",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "heydealer": 1
+   }
+  },
+  "OFF:디 올 뉴 싼타페": {
+   "label": "디 올 뉴 싼타페",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:랭글러": {
+   "label": "랭글러",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:레인지로버 벨라": {
+   "label": "레인지로버 벨라",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:베리 뉴 티볼리": {
+   "label": "베리 뉴 티볼리",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:벨로스터": {
+   "label": "벨로스터",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:스타리아": {
+   "label": "스타리아",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 1
+   }
+  },
+  "OFF:스팅어 마이스터": {
+   "label": "스팅어 마이스터",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:싼타페 DM": {
+   "label": "싼타페 DM",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:쏘울": {
+   "label": "쏘울",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 1
+   }
+  },
+  "OFF:아르카나": {
+   "label": "아르카나",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:아반떼 AD": {
+   "label": "아반떼 AD",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:아이오닉": {
+   "label": "아이오닉",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "hyundai_cert": 1
+   }
+  },
+  "OFF:아테온": {
+   "label": "아테온",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:아틀라스 2세대": {
+   "label": "아틀라스 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:에비에이터 2세대": {
+   "label": "에비에이터 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:엑센트": {
+   "label": "엑센트",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:올 뉴 모닝": {
+   "label": "올 뉴 모닝",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:제네시스": {
+   "label": "제네시스",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:카니발 아웃도어": {
+   "label": "카니발 아웃도어",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kia_cpo": 1
+   }
+  },
+  "OFF:쿠퍼 컨트리맨": {
+   "label": "쿠퍼 컨트리맨",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:투싼 하이브리드": {
+   "label": "투싼 하이브리드",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:티구안 2세대": {
+   "label": "티구안 2세대",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:티볼리 아머": {
+   "label": "티볼리 아머",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  },
+  "OFF:포터2 LPi 2.5 터보 카고": {
+   "label": "포터2 LPi 2.5 터보 카고",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kcar": 1
+   }
+  }
+ }
+}
