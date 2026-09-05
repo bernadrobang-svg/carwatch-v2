@@ -106,6 +106,16 @@ details.v3-open:not([open])>*:not(summary){display:none}
  display:flex;flex-wrap:wrap;gap:6px 16px}
 .v3-more2 div{font-size:12px;color:var(--dim);flex:1 1 150px}
 .v3-more2 b{color:var(--text)}
+
+/* 09-06 — 카드를 색으로 가른다 (마스터 「살짝 색깔별로 구분되게」).
+   기준은 사고다. clean 무사고·보험 100만 이하 / mid 100만 초과 / bad 큰 사고 /
+   none 미조회 — 모르는 것을 좋게도 나쁘게도 칠하지 않는다 */
+.v3-card.clean{border-left:4px solid var(--ok)}
+.v3-card.mid{border-left:4px solid var(--amber)}
+.v3-card.bad{border-left:4px solid var(--no)}
+.v3-card.none{border-left:4px solid var(--line2)}
+.v3-clean{padding:2px 9px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--ok);color:var(--ok);white-space:nowrap}
 </style>
 
 <div class="v3-wrap">
@@ -152,6 +162,10 @@ details.v3-open:not([open])>*:not(summary){display:none}
   <div class="v3-pickrow"><b>등급</b>
     <span class="v3-chip on">A</span><span class="v3-chip on">B</span>
     <span class="v3-chip">C</span><span class="v3-chip">D 아래</span></div>
+  <div class="v3-pickrow"><b>사고</b>
+    <span class="v3-chip on">깨끗 (무사고·보험 100만 이하)</span>
+    <span class="v3-chip">100만 초과</span>
+    <span class="v3-chip">미조회도 보기</span></div>
   <div class="v3-pickrow"><b>값</b>
     <span class="v3-chip on">3,000만대</span><span class="v3-chip">4,000만대</span>
     <span class="v3-chip">예산 밖도 보기</span></div>
@@ -176,12 +190,13 @@ details.v3-open:not([open])>*:not(summary){display:none}
   <a href="?page=54">≫</a></p>
 
 <!-- ─────────── 카드 ─────────── -->
-<div class="v3-card">
+<div class="v3-card clean">
   <div class="v3-line1">
     <span class="v3-price">3,180만</span>
     <span class="v3-grade">B</span>
     <span class="v3-rank">취향 1위</span>
     <span class="v3-name">BMW iX3 (전기)</span>
+    <span class="v3-clean">깨끗</span>
     <span class="v3-region deliver">전국 배달</span>
   </div>
   <img class="v3-thumb" src="" alt="" loading="lazy">
@@ -189,7 +204,8 @@ details.v3-open:not([open])>*:not(summary){display:none}
   <div class="v3-facts">
     <span class="v3-fact">감가율 <b class="v3-good">54.2%</b> <span class="v3-meta">(기준 50% 넘음)</span></span>
     <span class="v3-fact">배터리 SOH <b class="v3-good">96%</b></span>
-    <span class="v3-fact">사고 <b class="v3-unknown">미조회</b></span>
+    <span class="v3-fact">사고 <b class="v3-good">무사고</b></span>
+    <span class="v3-fact">보험 이력 <b class="v3-good">0원</b></span>
     <span class="v3-fact">주행 <b>평균보다 -2.1만</b></span>
   </div>
   <details class="v3-open"><summary>★ 더 보기 ▾ (옵션 · 보증 · 트림 · 색)</summary>
@@ -209,7 +225,7 @@ details.v3-open:not([open])>*:not(summary){display:none}
   </div>
 </div>
 
-<div class="v3-card">
+<div class="v3-card none">
   <div class="v3-line1">
     <span class="v3-price">3,370만</span>
     <span class="v3-grade">B</span>
@@ -223,6 +239,7 @@ details.v3-open:not([open])>*:not(summary){display:none}
     <span class="v3-fact">감가율 <b class="v3-bad">24.5%</b> <span class="v3-meta">(기준 50% 못 넘음)</span></span>
     <span class="v3-fact">배터리 SOH <b class="v3-unknown">모름</b></span>
     <span class="v3-fact">사고 <b class="v3-unknown">미조회</b></span>
+    <span class="v3-fact">보험 이력 <b class="v3-unknown">미조회</b></span>
     <span class="v3-fact">주행 <b>평균보다 +3.3만</b></span>
   </div>
   <details class="v3-open"><summary>★ 더 보기 ▾ (옵션 · 보증 · 트림 · 색)</summary>
@@ -242,7 +259,7 @@ details.v3-open:not([open])>*:not(summary){display:none}
   </div>
 </div>
 
-<div class="v3-card">
+<div class="v3-card mid">
   <div class="v3-line1">
     <span class="v3-price">4,850만</span>
     <span class="v3-grade" style="color:var(--dim)">C</span>
@@ -256,7 +273,8 @@ details.v3-open:not([open])>*:not(summary){display:none}
   <div class="v3-facts">
     <span class="v3-fact">감가율 <b class="v3-unknown">신차가 미조회</b></span>
     <span class="v3-fact">배터리 SOH <b class="v3-unknown">모름</b></span>
-    <span class="v3-fact">사고 <b class="v3-unknown">미조회</b></span>
+    <span class="v3-fact">사고 <b>내차 1회</b></span>
+    <span class="v3-fact">보험 이력 <b class="v3-over">340만</b></span>
     <span class="v3-fact">주행 <b>평균보다 -4.8만</b></span>
   </div>
   <div class="v3-acts">

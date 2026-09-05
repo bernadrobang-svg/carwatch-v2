@@ -51,7 +51,7 @@
   <a href="{{ page.last }}">≫</a></p>
 
 {% for r in rows %}
-<div class="rc2-card">
+<div class="rc2-card {{ r.accident_tone }}">
   <div class="rc2-line1">
     <span class="rc2-price">{{ r.price }}</span>
     <span class="rc2-grade">{{ r.grade }}</span>
@@ -60,6 +60,8 @@
     <span class="rc2-region {{ r.region_kind }}">{{ r.region }}</span>
     <!-- ★ 값이 안 맞아도 ★ 지우지 않는다 — ★ 「예산 밖」으로 적는다 (마스터 09-05) -->
     {% if r.over_budget %}<span class="rc2-over">예산 밖</span>{% endif %}
+    <!-- 09-06 — 마스터 「무사고 또는 보험 이력이 100만원 이하인 것」 -->
+    {% if r.clean_car %}<span class="rc2-clean">깨끗</span>{% endif %}
   </div>
 
   <!-- ★ 사진 — ★ 글과 한 흐름에 (마스터 09-04 「별도 td·tr 로 구분하지 말고」) -->
@@ -81,6 +83,9 @@
     <span class="rc2-fact">사고
       {% if r.accident %}<b>{{ r.accident }}</b>{% endif %}
       {% if !r.accident %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
+    <span class="rc2-fact">보험 이력
+      {% if r.insurance_cost %}<b>{{ r.insurance_cost }}</b>{% endif %}
+      {% if !r.insurance_cost %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
     <span class="rc2-fact">주행 <b>{{ r.km_vs_avg }}</b></span>
     <!-- 09-06 — 등급이 낮은 것이 차 탓인지 자료 탓인지 보이게 한다 (마스터 지적).
          실측 — G 315건 중 314건, F 1,544 중 1,409 가 확인 700점 미만이다.

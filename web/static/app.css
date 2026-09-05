@@ -3459,3 +3459,23 @@ details.open2:not([open])>*:not(summary){display:none}
    작은 폼이 줄을 깨지 않게 인라인으로 둔다 */
 .btnform{display:inline-flex;margin:0;padding:0}
 .btnform .btn{cursor:pointer;font:inherit}
+
+
+/* 09-06 — 카드를 색으로 가른다 (마스터 「살짝 색깔별로 구분되게」).
+   기준은 사고다. 마스터 목적에 「사기 안 당한다」가 있다.
+     clean  무사고 또는 보험이력 100만 이하 — 초록 띠
+     mid    100만 초과 — 노랑 띠
+     bad    큰 사고 — 붉은 띠
+     none   미조회 — 띠 없음. 모르는 것을 좋게도 나쁘게도 칠하지 않는다 */
+.rc2-card.clean{border-left:4px solid var(--ok)}
+.rc2-card.mid{border-left:4px solid var(--amber)}
+.rc2-card.bad{border-left:4px solid var(--no)}
+.rc2-card.none{border-left:4px solid var(--line2)}
+.acard.clean{border-left:4px solid var(--ok)}
+.acard.mid{border-left:4px solid var(--amber)}
+.acard.bad{border-left:4px solid var(--no)}
+.acard.none{border-left:4px solid var(--line2)}
+
+/* 깨끗한 차 딱지 — 무사고 또는 보험이력 100만 이하 */
+.rc2-clean{padding:2px 9px;border-radius:12px;font-size:11px;font-weight:800;
+  border:1px solid var(--ok);color:var(--ok);white-space:nowrap}
