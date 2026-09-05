@@ -445,7 +445,13 @@ def s45_2_mock_numbers() -> tuple[bool, str]:
         return False, "ref/screens 가 없다"
     bad: list[str] = []
     for q in sorted(mocks.glob("*.html")):
-        hit = {n for n in STALE if re.search(rf"(?<!\d){n}(?!\d)", _read(q))}
+        # ★★★★★ 09-05 — ★ **값에 든 숫자를 배점으로 셌다**.
+        #   ★ 실측 — ★ 「4,850만」의 ★ **850** 을 ★ 옛 배점으로 잡았다.
+        #   ★ ★ 그래서 ★ 앞에 ★ **쉼표나 숫자**가 오면 ★ 안 센다 —
+        #     ★ ★ 「4,850만」·「1,850」은 값이고 ★ 「850점」·「850 분모」가 배점이다
+        body = _read(q)
+        hit = {n for n in STALE
+               if re.search(rf"(?<![\d,]){n}(?!\d)(?!\s*만)", body)}
         if hit:
             bad.append(f"{q.name}({'·'.join(sorted(hit))})")
     if bad:
