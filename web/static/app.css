@@ -3453,3 +3453,9 @@ details.open2:not([open])>*:not(summary){display:none}
 /* ★ 모르는 것은 ★ 눈에 띄게 — ★ 지어내지 않았다는 표시다 */
 .rc2-unknown{color:var(--no);font-weight:700}
 .rc2-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+
+/* 09-06 — 「분석 맡기기」·「제외」는 POST 다 (v385 지적).
+   작은 폼이 줄을 깨지 않게 인라인으로 둔다 */
+.btnform{display:inline-flex;margin:0;padding:0}
+.btnform .btn{cursor:pointer;font:inherit}

@@ -100,7 +100,11 @@
   <!-- ★★★ 관심과 분석은 ★ 다르다 (마스터 09-05)
        ★ 관심은 ★ 비교 용도 · ★ 분석은 ★ 진짜 사기 위한 것 -->
   <div class="rc2-acts">
-    <a class="btn ask" href="/analyze/add/{{ r.listing_id }}">분석 맡기기</a>
+    <!-- 09-06 — 규격이 POST 다. 작은 폼으로 보낸다 (v385 지적) -->
+    <form class="btnform" method="post" action="/analyze/add/{{ r.listing_id }}">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <button class="btn ask" type="submit">분석 맡기기</button>
+    </form>
     <a class="btn" href="/watch/add/{{ r.listing_id }}">관심</a>
     <a class="btn" href="/detail/{{ r.listing_id }}">상세 ▸</a>
   </div>
