@@ -7584,7 +7584,37 @@ def s46_284_order_is_readable():
     return True, f"작업 지시가 읽히는 꼴이다 ({len(lines)}줄 · 별표 {stars})"
 
 
+def s46_285_master_targets_have_detail():
+    """S46-285 — 마스터 대상 차종의 상세가 채워졌는가 (마스터 09-05).
+
+    마스터가 DB 를 직접 조회해 알려준 수치 (active 만, 범위 밖 제외):
+      GV70_25T 879건 전부 카탈로그·옵션·사고이력이 없다.
+      detail_status 가 NULL 인 것이 873건 — 한 번도 요청하지 않았다.
+      같은 제네시스 G70_20T 는 ok 32건이다.
+    옵션이 빈 비율: GV70_25T 100% · SPORTAGE_LPI 78% · GRANDEUR_LPG 71% ·
+      G70_25T 65% · POLESTAR2 48% · KOLEOS_HEV 42% · GLC 41% · X3 38% · MODEL_Y 33%.
+    마스터 지시 — 새 사이트를 붙이지 말고 이미 받은 것부터 채운다.
+      고칠 때마다 「몇 → 몇」으로 보고한다.
+    잣대 — 작업 지시에 이 목록과 순서가 적혀 있는가.
+    """
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    bad = []
+    for want, label in (("GV70_25T", "GV70 2.5T"),
+                        ("873", "요청조차 안 된 873건"),
+                        ("SPORTAGE_LPI", "스포티지 LPi"),
+                        ("사고 이력", "사고 이력"),
+                        ("새 사이트를 붙이지 않는다", "「새 사이트를 붙이지 마라」"),
+                        ("몇 → 몇", "「몇 → 몇 으로 보고」"),
+                        ("리스", "리스·렌트 걸러내기")):
+        if want not in order:
+            bad.append(label)
+    if bad:
+        return False, "작업 지시에 없는 것 — " + " · ".join(bad[:3])
+    return True, "마스터 대상 차종 채우기가 작업 지시 0번에 있다"
+
+
 CHECKS = (
+    ("S46-285", "마스터 대상 차종의 상세가 채워졌는가", s46_285_master_targets_have_detail),
     ("S46-284", "작업 지시가 읽히는 꼴인가", s46_284_order_is_readable),
     ("S46-283", "추천 탭·고르기·쪽·분석이 규격에 있는가", s46_283_recommend_tabs_filters_page),
     ("S46-282", "사이트별 매핑표가 있는가", s46_282_field_map_by_site),

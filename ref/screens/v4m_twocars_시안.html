@@ -1,0 +1,210 @@
+<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>추천 · 탭 4 — GV70 2.5T · BMW X3 (시안)</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+ --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
+ --blue:#3182f6;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1100px;margin:0 auto;padding:12px 14px 66px}
+.v3-wrap *{height:auto;overflow:visible}
+.v4-top{display:flex;justify-content:space-between;align-items:center;
+ padding:10px 0;border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:14px 0 4px}
+.v3-sub{color:var(--dim);font-size:13px;margin:0 0 12px}
+.v4-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.v4-tabs a{padding:7px 12px;border-radius:16px;border:1px solid var(--line);
+ background:var(--surface2);color:var(--dim);text-decoration:none;
+ white-space:nowrap;font-size:13px}
+.v4-tabs a.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+
+/* 상황 띠 */
+.v3-state{border:1px solid var(--ok);border-radius:10px;padding:10px 12px;
+ margin-bottom:12px;background:rgba(74,222,128,.06);font-size:13px;line-height:1.6}
+.v3-state b{color:var(--ok)}
+
+/* 차종 두 갈래 */
+.v3-two{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.v3-two a{flex:1 1 150px;padding:10px 12px;border-radius:10px;
+ border:1px solid var(--line2);background:var(--surface2);color:var(--dim);
+ text-decoration:none;text-align:center}
+.v3-two a.on{border-color:var(--amber);color:var(--amber);font-weight:800}
+.v3-two .cnt{display:block;font-size:11px;color:var(--faint);margin-top:2px}
+
+/* 시장 눈금 */
+.v3-market{border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+ margin-bottom:12px}
+.v3-market h3{margin:0 0 8px;font-size:13px;color:var(--amber)}
+.v3-mrow{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--dim)}
+.v3-mrow b{color:var(--text);font-family:var(--mono)}
+
+.v3-card{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+ padding:12px;margin-bottom:12px;overflow:visible}
+.v3-card::after{content:'';display:block;clear:both}
+.v3-line1{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.v3-price{font-size:19px;font-weight:800;font-family:var(--mono)}
+.v3-verdict{padding:2px 9px;border-radius:12px;border:1px solid currentColor;
+ font-weight:800;font-size:12px;white-space:nowrap}
+.v3-verdict.buy{color:var(--ok)}
+.v3-verdict.hold{color:var(--amber)}
+.v3-verdict.risk{color:var(--no)}
+.v3-name{font-weight:700}
+.v3-meta{color:var(--dim);font-size:12px;font-family:var(--mono);margin:0}
+.v3-region{padding:2px 8px;border-radius:12px;font-size:11px;
+ border:1px solid var(--line2);color:var(--dim)}
+.v3-region.deliver{border-color:var(--blue);color:var(--blue)}
+.v3-lease{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--no);color:var(--no)}
+.v3-thumb{float:left;width:104px;height:78px;object-fit:cover;border-radius:7px;
+ margin:0 10px 6px 0;background:var(--surface2);border:1px solid var(--line)}
+.v3-nophoto{float:left;width:104px;height:78px;border-radius:7px;margin:0 10px 6px 0;
+ border:1px dashed var(--line2);color:var(--dim);font-size:10px;
+ display:flex;align-items:center;justify-content:center;text-align:center;padding:4px}
+
+/* 값 셈 — 이 탭의 핵심 */
+.v3-calc{margin:10px 0 0;border-top:1px solid var(--line);padding-top:10px}
+.v3-crow{display:flex;justify-content:space-between;gap:10px;font-size:13px;
+ padding:3px 0;border-bottom:1px dashed var(--line)}
+.v3-crow:last-child{border-bottom:none}
+.v3-crow span{color:var(--dim)}
+.v3-crow b{font-family:var(--mono)}
+.v3-crow.sum b{color:var(--amber);font-size:15px}
+.v3-good{color:var(--ok);font-weight:700}
+.v3-bad{color:var(--no);font-weight:700}
+.v3-unknown{color:var(--no);font-weight:700}
+
+/* 패키지 */
+.v3-pkgs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.v3-pkg{padding:3px 9px;border-radius:12px;border:1px solid var(--line2);
+ font-size:11px;color:var(--dim);white-space:nowrap}
+.v3-pkg b{color:var(--text);font-family:var(--mono)}
+.v3-pkg.want{border-color:var(--ok);color:var(--ok)}
+
+.v3-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.v3-btn{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
+ background:var(--surface2);color:var(--text);text-decoration:none;font-size:13px}
+.v3-btn.ask{border-color:var(--amber);color:var(--amber);font-weight:700}
+.v3-why{border-left:3px solid var(--blue);background:var(--surface2);padding:10px 12px;
+ margin:12px 0;color:var(--dim);font-size:12px;line-height:1.6}
+.v4-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);
+ border-top:1px solid var(--line);padding:6px 0}
+.v4-nav a{flex:1;text-align:center;color:var(--dim);text-decoration:none;
+ font-size:12px;padding:6px 0}
+.v4-nav a.on{color:var(--amber);font-weight:700}
+</style>
+
+<div class="v3-wrap">
+<!-- 반드시 있는 것 (RULES.md 1)
+     차종 두 갈래(GV70 2.5T · BMW X3) · 시장 눈금(중앙값·사분위·표본)
+     카드마다 — 사진 · 값 · 평가 한 마디 · 리스/렌트 표시
+       값 셈(표시가 → 옵션값 → 신차 대비 → 사고 감액 → 주행 보정 → 제값)
+       패키지 이름＋가격 · 원하는 패키지 표시
+       분석 맡기기 · 관심 · 상세
+     모르는 것은 「모름」·「미조회」를 붉게 -->
+
+<div class="v4-top"><span><b>CarWatch</b></span><span class="v3-meta">master · admin</span></div>
+
+<h1>GV70 2.5T · BMW X3</h1>
+<p class="v3-sub">두 차종만 봅니다. 패키지 가격과 신차 대비로 제값을 셈합니다</p>
+
+<p class="v4-tabs">
+  <a href="?tab=1">내 기준에 가까운 차</a>
+  <a href="?tab=2">값 → 등급 → 취향</a>
+  <a href="?tab=3">분석</a>
+  <a class="on" href="?tab=4">GV70 · X3</a>
+</p>
+
+<div class="v3-state">
+  <b>전기차는 정리됐습니다</b> — EX30 2,990만 가계약.
+  배터리 SOH 를 확인한 뒤 진행 여부를 정합니다.
+  그동안 이 탭에서 <b>GV70 2.5T</b> 와 <b>BMW X3</b> 의 값을 매깁니다.
+</div>
+
+<p class="v3-two">
+  <a class="on" href="?tab=4&amp;m=GV70_25T">GV70 2.5T<span class="cnt">879건 · 상세 6건</span></a>
+  <a href="?tab=4&amp;m=X3_IMPORT">BMW X3<span class="cnt">1,216건 · 상세 788건</span></a>
+</p>
+
+<!-- 중고 시장 모델 분석 -->
+<div class="v3-market">
+  <h3>GV70 2.5T · 중고 시장</h3>
+  <div class="v3-mrow">
+    <span>표본 <b>879</b>건</span>
+    <span>중앙값 <b>3,780만</b></span>
+    <span>하위 25% <b>3,420만</b></span>
+    <span>상위 25% <b>4,150만</b></span>
+    <span>신차가 <b class="v3-unknown">미조회</b></span>
+    <span>평균 주행 <b>4.2만km</b></span>
+  </div>
+  <div class="v3-mrow" style="margin-top:6px">
+    <span>연식별 중앙값 — 2022 <b>3,380만</b> · 2023 <b>3,760만</b> · 2024 <b>4,240만</b></span>
+  </div>
+</div>
+
+<div class="v3-card">
+  <div class="v3-line1">
+    <span class="v3-price">3,420만</span>
+    <span class="v3-verdict buy">사도 된다</span>
+    <span class="v3-name">GV70 2.5T AWD</span>
+    <span class="v3-region deliver">전국 배달</span>
+  </div>
+  <img class="v3-thumb" src="" alt="" loading="lazy">
+  <p class="v3-meta">2023-08 · 38,200km · 흰색 / 검정 · 엔카</p>
+
+  <div class="v3-pkgs">
+    <span class="v3-pkg want">컴포트 <b>190만</b></span>
+    <span class="v3-pkg">AR-HUD <b>100만</b></span>
+    <span class="v3-pkg">BOSE 10스피커 <b>115만</b></span>
+  </div>
+
+  <div class="v3-calc">
+    <div class="v3-crow"><span>표시가</span><b>3,420만</b></div>
+    <div class="v3-crow"><span>든 옵션값</span><b>405만</b></div>
+    <div class="v3-crow"><span>신차가 (옵션 포함)</span><b class="v3-unknown">미조회</b></div>
+    <div class="v3-crow"><span>사고 감액</span><b class="v3-unknown">미조회</b></div>
+    <div class="v3-crow"><span>주행 보정 (평균 -0.4만)</span><b class="v3-good">＋18만</b></div>
+    <div class="v3-crow sum"><span>시세 대비</span><b class="v3-good">360만 싸다</b></div>
+  </div>
+
+  <div class="v3-acts">
+    <a class="v3-btn ask" href="/analyze/add/1">분석 맡기기</a>
+    <a class="v3-btn" href="/watch/add/1">관심</a>
+    <a class="v3-btn" href="/detail/1">상세 ▸</a>
+  </div>
+</div>
+
+<div class="v3-card">
+  <div class="v3-line1">
+    <span class="v3-price">3,236만</span>
+    <span class="v3-verdict risk">리스 승계</span>
+    <span class="v3-name">BMW X3 xDrive20d</span>
+    <span class="v3-lease">리스·렌트</span>
+    <span class="v3-region">경기 · 성남</span>
+  </div>
+  <span class="v3-nophoto">사진<br>미조회</span>
+  <p class="v3-meta">2024-03 · 21,700km · 검정 / 검정 · 엔카</p>
+  <div class="v3-calc">
+    <div class="v3-crow"><span>표시가</span><b>3,236만</b></div>
+    <div class="v3-crow"><span>승계금</span><b class="v3-bad">1,525만</b></div>
+    <div class="v3-crow"><span>월 납입</span><b class="v3-bad">83.5만</b></div>
+    <div class="v3-crow sum"><span>실제로 드는 돈</span><b class="v3-bad">표시가와 다르다</b></div>
+  </div>
+  <p class="v3-meta">표시가는 차값이 아닙니다. 목록에서 걸러야 합니다.</p>
+  <div class="v3-acts">
+    <a class="v3-btn" href="?hide=2">이런 것 숨기기</a>
+    <a class="v3-btn" href="/detail/2">상세 ▸</a>
+  </div>
+</div>
+
+<div class="v3-why">값 셈은 <b>패키지 가격</b>과 <b>신차 대비</b>로 합니다.
+ 「HUD 있음/없음」이 아니라 <b>「AR-HUD 패키지 100만」</b>으로 냅니다.
+ 신차가·사고를 모르면 <b>「미조회」</b>로 두고 지어내지 않습니다.</div>
+
+<nav class="v4-nav">
+  <a href="/listings">매물</a><a href="/watch">관심</a><a href="/track">추적</a>
+  <a class="on" href="/recommend">추천</a><a href="/status">현황</a><a href="/admin">관리</a>
+</nav>
+</div>
+</html>
