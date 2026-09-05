@@ -544,16 +544,32 @@ def _source_link(conn, listing_id: int, root: str = ".") -> str | None:
 # ★★★★★ 09-06 — ★ 마스터께서 ★ **직접 재신 표**를 화면에 낸다 (지시 0-1c).
 #   ★ **리스·렌트를 뺀 수**로 낸다 — ★ 879 가 아니라 755 다.
 #   ★ 정본은 ★ `config/scoring.json` 의 관문이다 — ★ 코드에 말을 안 박는다
-def _lease_where() -> str:
-    """리스·렌트를 뺀다 (B-8 · 0-1c).  ★ 관문과 같은 칸을 본다."""
-    return ("COALESCE(l.advertisement_type,'') NOT IN ('리스','렌트')"
-            " AND COALESCE(l.sell_type,'') NOT IN ('리스','렌트')"
-            " AND l.lease_rent_info_json IS NULL")
+def _lease_where() -> tuple:
+    """리스·렌트를 뺀다 (B-8 · 0-1c).
+
+    ★ 갈래 이름을 ★ **코드에 박지 않는다** (`S14`) — ★ `config/scoring.json` 이
+      ★ 정본이고 ★ `_lease_kinds()` 가 목록과 ★ **같은 부품**이다.
+    ★ 실측 09-06 — GV70 2,042건 중 ★ 160건이 리스·렌트다
+    """
+    from report.screens.build import _lease_kinds
+
+    ads, sells = _lease_kinds()
+    part, args = [], []
+    if ads:
+        marks = ",".join("?" * len(ads))
+        part.append(f"COALESCE(l.advertisement_type,'') NOT IN ({marks})")
+        args.extend(ads)
+    if sells:
+        marks = ",".join("?" * len(sells))
+        part.append(f"COALESCE(l.sell_type,'') NOT IN ({marks})")
+        args.extend(sells)
+    return (" AND ".join(part) or "1=1"), args
 
 
 def _cell_stats(conn, target: str, pb: dict, kb: dict) -> dict:
-    w = ["l.target_key = ?", _lease_where()]
-    a: list = [target]
+    lw, la = _lease_where()
+    w = ["l.target_key = ?", lw]
+    a: list = [target, *la]
     for band, col, lo, hi in ((pb, "l.price_current_won", "min_won", "max_won"),
                               (kb, "l.mileage_km", "min_km", "max_km")):
         ww, aa = _band_where(band, col, lo, hi)
@@ -607,9 +623,10 @@ def view_tab4(conn: sqlite3.Connection, query: dict,
 
     pbs = list(cfg.get("recommend_price_bands") or ())
     kbs = list(cfg.get("recommend_km_bands") or ())
+    _lw, _la = _lease_where()
     live = conn.execute(
         "SELECT COUNT(*) FROM core_listing l WHERE l.target_key = ? AND "
-        + _lease_where(), (cur,)).fetchone()[0]
+        + _lw, (cur, *_la)).fetchone()[0]
     allc = conn.execute(
         "SELECT COUNT(*) FROM core_listing WHERE target_key = ?",
         (cur,)).fetchone()[0]
@@ -639,8 +656,8 @@ def view_tab4(conn: sqlite3.Connection, query: dict,
 
     trim_rows = []
     for pb in pbs:
-        w = ["l.target_key = ?", _lease_where()]
-        a: list = [cur]
+        w = ["l.target_key = ?", _lw]
+        a: list = [cur, *_la]
         ww, aa = _band_where(pb, "l.price_current_won", "min_won", "max_won")
         w.extend(ww)
         a.extend(aa)
@@ -719,10 +736,11 @@ def _split_trim(rows: list) -> str:
 
 
 def _market(conn, target: str, label: str) -> dict:
+    _mlw, _mla = _lease_where()
     got = conn.execute(
         "SELECT price_current_won, mileage_km, price_origin_won, year_month"
-        " FROM core_listing l WHERE l.target_key = ? AND " + _lease_where(),
-        (target,)).fetchall()
+        " FROM core_listing l WHERE l.target_key = ? AND " + _mlw,
+        (target, *_mla)).fetchall()
     price = [float(r[0]) for r in got if r[0]]
     km = [float(r[1]) for r in got if r[1]]
     origin = [float(r[2]) for r in got if r[2]]
@@ -745,8 +763,9 @@ def _market(conn, target: str, label: str) -> dict:
 
 def _cell_rows(conn, target: str, pb: dict, kb: dict, root: str) -> list:
     """★ B-12 — 고른 칸의 차를 ★ **등급순**으로 (A → E · PENDING 은 맨 뒤)."""
-    w = ["l.target_key = ?", _lease_where()]
-    a: list = [target]
+    lw, la = _lease_where()
+    w = ["l.target_key = ?", lw]
+    a: list = [target, *la]
     for band, col, lo, hi in ((pb, "l.price_current_won", "min_won", "max_won"),
                               (kb, "l.mileage_km", "min_km", "max_km")):
         ww, aa = _band_where(band, col, lo, hi)

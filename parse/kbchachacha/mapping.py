@@ -251,6 +251,11 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     have, miss = _options(html)
     if have:
         out["options_standard_json"] = json.dumps(have, ensure_ascii=False)
+        # ★★★★★ 09-06 (r1184 H) — ★ 「옵션은 두 갈래로 저장한다.
+        #   ★ 가격이 있으면 `options_choice_json` · ★ **이름만 있으면
+        #   ★ ★ `options_name_json`**.  ★ 가격이 없다고 옵션 축을 0 으로 두지 않는다」
+        #   ★ KB 는 ★ **가격을 안 준다** — ★ 이름만 온다.  ★ 값을 지어내지 않는다
+        out["options_name_json"] = json.dumps(have, ensure_ascii=False)
     if miss:
         # ★ 「이 차에 없는 옵션」도 사실이다 — ★ 버리지 않는다.
         #   ★ 값 자리를 지어내지 않고 ★ 곁말로 남긴다
@@ -326,6 +331,12 @@ def parse_list(html: str, site: str = "kbchachacha") -> list:
                         "(") else trim
                     if trim:
                         row["trim_badge"] = trim[:80]
+                        # ★★★★★ 09-06 (r1184 F-3) — ★ 「트림 0건」의 자리.
+                        #   ★ 검사 `S46-279` 와 화면은 ★ `trim_grade_name` 을
+                        #   ★ ★ 센다 — ★ `trim_badge` 만 채우면 ★ 0 으로 남는다.
+                        #   ★ KB 카드가 주는 것은 ★ 등급명 그대로다 —
+                        #     ★ ★ 우리가 고치지 않고 ★ 그대로 넣는다
+                        row["trim_grade_name"] = trim[:80]
         line = RE_DATALINE.search(block)
         if line:
             parts = [" ".join(_text(x).split())

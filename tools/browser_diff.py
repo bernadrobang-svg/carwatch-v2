@@ -751,8 +751,10 @@ _KB_SQL = {
             "WHERE site='kbchachacha'",
     "트림": "SELECT COUNT(trim_grade_name) FROM core_listing "
             "WHERE site='kbchachacha'",
-    "옵션": "SELECT COUNT(options_choice_json) FROM core_listing "
-            "WHERE site='kbchachacha'",
+    # ★ 09-06 r1184 H — ★ 옵션은 ★ **두 갈래**다.  ★ KB 는 ★ 이름만 준다 —
+    #   ★ 가격 갈래(`choice`)만 세면 ★ 이름으로 받은 것이 ★ 0 으로 보인다
+    "옵션": "SELECT COUNT(COALESCE(options_choice_json, options_name_json)) "
+            "FROM core_listing WHERE site='kbchachacha'",
 }
 
 

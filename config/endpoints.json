@@ -39,7 +39,11 @@
       "list": false,
       "detail": true
     },
-    "_server_may_fetch_why": "★★★★★★ 마스터 확정 09-05 — 「★ **407 번은 목록뿐이고 ★ 상세는 그런 거 없다**.  ★ 이미 몇 번이나 확인했는데 ★ 또 헛소리한다.  ★ **엔카 상세를 제대로 받아라**」  ★★ **가이드가 09-04 에 `detail:false` 로 막았다 — ★ 틀렸다.  ★ 물린다**.  ★ ★ 그 뒤로 ★ 엔카 상세가 ★ **09-03 08:30 에 멈춰** 있었다.  ★★★ 갈래 — ★ **목록**(`/search/car/list/…`)은 ★ **407** 이라 ★ 마스터 회선으로만 받는다 · ★ **상세와 그 아래 열한 길**(`/v1/readside/…` — detail·inspection·record·diagnosis·catalog· record_summary·inspection_summary·platform_check·sellingpoint·ev_battery·extend_warrant)은 ★ ★ **서버가 받는다**.  ★ 407 을 핑계로 막지 마라.  ★ ★ ★ 못 받은 상세 ★ **5,749건**(15,509 중 9,760 받음)을 ★ 채워라"
+    "_server_may_fetch_why": "★★★★★★ 마스터 확정 09-05 — 「★ **407 번은 목록뿐이고 ★ 상세는 그런 거 없다**.  ★ 이미 몇 번이나 확인했는데 ★ 또 헛소리한다.  ★ **엔카 상세를 제대로 받아라**」  ★★ **가이드가 09-04 에 `detail:false` 로 막았다 — ★ 틀렸다.  ★ 물린다**.  ★ ★ 그 뒤로 ★ 엔카 상세가 ★ **09-03 08:30 에 멈춰** 있었다.  ★★★ 갈래 — ★ **목록**(`/search/car/list/…`)은 ★ **407** 이라 ★ 마스터 회선으로만 받는다 · ★ **상세와 그 아래 열한 길**(`/v1/readside/…` — detail·inspection·record·diagnosis·catalog· record_summary·inspection_summary·platform_check·sellingpoint·ev_battery·extend_warrant)은 ★ ★ **서버가 받는다**.  ★ 407 을 핑계로 막지 마라.  ★ ★ ★ 못 받은 상세 ★ **5,749건**(15,509 중 9,760 받음)을 ★ 채워라",
+    "interval_max_sec": 30,
+    "interval_backoff": 2.0,
+    "interval_recover": 0.7,
+    "_interval_why": "★★★★★ 09-06 r1184 E-2 실측 (tools/encar_detail_probe.py) — ★ 엔카 상세는 ★ **막힌 것이 아니라 조리개**다. ★ 간격 0.3초로 5,846번 던지니 ★ 200 이 4건 · 407 이 5,841건. ★ 간격 5초 → 24번 중 200 3건(12.5%) · ★ 간격 30초 → 8번 중 200 2건·404 2건(33%). ★ 그래서 ★ 407 이 오면 간격을 2배로 늘리고(최대 30초) · ★ 200 이 오면 0.7배로 줄인다.  ★ 값은 여기가 정본이다 (S14)"
   },
   "kcar": {
     "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",

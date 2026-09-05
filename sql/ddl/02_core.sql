@@ -62,6 +62,12 @@ CREATE TABLE IF NOT EXISTS core_listing (
   --   ★ ★ 안 준 것은 ★ `NULL` 이다 — ★ 셋을 가른다 (`S46-227`)
   options_absent_json    TEXT,
   options_choice_json    TEXT,
+  -- ★★★★★ 09-06 (r1184 H) — ★ **옵션을 두 갈래로 담는다.**
+  --   ★ 지시 — 「가격이 있으면 `options_choice_json` · ★ **이름만 있으면
+  --     ★ `options_name_json`**.  ★ 가격이 없다고 옵션 축을 0 으로 두지 않는다」
+  --   ★ 실측 09-06 — KB 상세가 ★ `car-option-list` 로 ★ **이름만** 준다
+  --     (`disable` 이 붙은 것은 ★ 안 달린 것이다)
+  options_name_json      TEXT,
   options_etc_json       TEXT,
   options_tuning_json    TEXT,
   -- 판매 · 딜러

@@ -23,7 +23,7 @@
 
 | 표 | 열 | 무엇 |
 |---|--:|---|
-| `core_listing` | 121 | 공통 컬럼 6종은 전 core_* 에 둔다 (STEP 31) |
+| `core_listing` | 122 | 공통 컬럼 6종은 전 core_* 에 둔다 (STEP 31) |
 | `core_listing_change` | 8 | 변경분만 쌓는다.  전량 스냅샷을 쌓지 않는다 (STEP 29) |
 | `core_vehicle` | 9 | vehicle_id 는 그대로라 relist 추적이 끊기지 않는다 (11장 STEP 112) |
 | `vehicle_identity` | 7 | ★ 해시는 결합 「입력」이지 키가 아니다.  원본은 core_pii — 조인 경로에 PII 가 없다 |
@@ -76,7 +76,7 @@
 | `audit_request` | 11 | 검증 결과를 테이블에 남긴다.  화면 출력만 하면 어제와 비교할 수 없다 |
 | `audit_validation` | 11 |  |
 
-## `sql/ddl/07_watch.sql` — 표 9개
+## `sql/ddl/07_watch.sql` — 표 10개
 
 > 활용 테이블.  지시서 11장 STEP 112a · 113 · 117a · 118 · 7장 STEP 82d / ★ status 는 네 곳에서 뜻이 다르다.  DDL 의 CHECK 로 집합을 강제한다
 
@@ -91,6 +91,7 @@
 | `watch_candidate` | 5 |  |
 | `vehicle_duplicate` | 6 | 동시 중복 게시.  ★ 재등록이 아니다 (STEP 112) |
 | `watch_note` | 6 | 순서도 없고, 앞 단계 없이 'done' 을 적어도 된다 |
+| `analyze_request` | 8 | ★ ★ 지어내지 않는다 (규격 「모르는 것은 「모른다」」) |
 
 ## `sql/ddl/08_admin.sql` — 표 8개
 
@@ -107,5 +108,5 @@
 | `admin_api_snapshot` | 8 |  |
 | `auth_login_attempt` | 5 | 금지   계정을 영구 잠그는 것.  1인 도구라 스스로 못 풀면 CLI 로 가야 한다 |
 
-**표 44개.**
+**표 45개.**
 

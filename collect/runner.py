@@ -355,6 +355,56 @@ class FailStreak:
                 f"차단·과부하를 의심한다 (STEP 25a · 52)")
 
 
+class Pace:
+    """★★★★★ 09-06 (r1184 E-2) — ★ **조리개에 맞춰 간격을 늘린다.**
+
+    ★ 실측 09-06 (`tools/encar_detail_probe.py`) — ★ 엔카 상세는
+      ★ ★ **막힌 것이 아니라 조리개**다.  ★ 같은 매물을 다시 부르면 200 이 온다:
+    ```
+    간격  0.3초 (지금 설정)   S5 실측 — 5,846번 중 ★ 200 이 4건 · 407 이 5,841건
+    간격  5초                 24번 중 ★ 200 3건 (12.5%)
+    간격 30초                 8번 중 ★ 200 2건 · 404 2건 → ★ 33%
+    ```
+    ★★ 그러므로 ★ **간격을 사정에 맞춰 늘린다** — ★ 407 이 오면 곱하고 ·
+      ★ 200 이 오면 줄인다.  ★ 상한·곱수는 ★ `config/endpoints.json` 이 준다
+      (`interval_max_sec` · `interval_backoff` · `interval_recover`).
+    ★★★ 값을 코드에 박지 않는다 (`S14`) — ★ 설정이 없으면 ★ 늘리지 않는다.
+      ★ 곧 ★ **지금까지와 똑같이 돈다** — ★ 켜야 달라진다
+    """
+
+    __slots__ = ("cfg", "rng", "now")
+
+    def __init__(self, cfg, rng) -> None:
+        self.cfg, self.rng = cfg, rng
+        got = cfg.get("interval_sec", 0)
+        self.now = float(got if isinstance(got, (int, float)) else got[0])
+
+    def _span(self) -> tuple:
+        got = self.cfg.get("interval_sec", 0)
+        if isinstance(got, (int, float)):
+            return float(got), float(got)
+        return float(got[0]), float(got[1])
+
+    def observe(self, res) -> None:
+        """응답을 보고 다음 간격을 정한다.  ★ 상한이 없으면 아무 것도 안 한다."""
+        cap = self.cfg.get("interval_max_sec")
+        if not cap:
+            return
+        lo, _hi = self._span()
+        code = getattr(res, "http_code", None)
+        if code in (407, 429, 503):
+            up = float(self.cfg.get("interval_backoff") or 2.0)
+            self.now = min(float(cap), max(self.now, lo or 0.5) * up)
+        elif code == 200:
+            down = float(self.cfg.get("interval_recover") or 0.8)
+            self.now = max(lo, self.now * down)
+
+    def sleep(self) -> None:
+        lo, hi = self._span()
+        base = max(self.now, lo)
+        time.sleep(self.rng.uniform(base, base + max(0.0, hi - lo)))
+
+
 def _sleep(cfg, rng) -> None:
     """간격은 정책값이다.  코드에 박지 않는다 (STEP 24).
 
@@ -835,6 +885,9 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         tally = {"ok": 0, "empty": 0, "not_found": 0, "error": 0}
         rejected = rows = 0
         streak = FailStreak(streak_limit)
+        # ★ 09-06 r1184 E-2 — ★ 조리개에 맞춰 간격을 늘린다 (`Pace`).
+        #   ★ `interval_max_sec` 이 없으면 ★ 지금까지와 똑같이 돈다
+        pace = Pace(cfg, rng)
         halted = None
         # ★★★★★ 09-03 — ★ **마스터 회선 전용 사이트는 ★ 서버가 안 두드린다.**
         #   ★ 「할 일이 없었다」로 낸다 — ★ `expected 0 · requested 0` 이면
@@ -991,7 +1044,8 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                     f"UPDATE core_listing SET {kind}_status=? WHERE listing_id=?",
                     (res.status, lid))
                 conn.commit()
-                _sleep(cfg, rng)
+                pace.observe(res)
+                pace.sleep()
         # ★ 안 부르기로 한 것은 expected 에서 뺀다.
         #   빼지 않으면 「미완성 매물」로 잡힌다 (V1-01 · V1-02)
         # ★★★★★ 09-04 (가이드 지시 ①) — ★ **창구 수는 사이트마다 다르다.**
