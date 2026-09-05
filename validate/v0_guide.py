@@ -6852,9 +6852,29 @@ def s46_268_order_is_one_and_current():
     elif v and int(v.group(1)) - int(m.group(1)) > 3:
         bad.append(f"판번호가 {int(v.group(1)) - int(m.group(1))} 뒤졌다 "
                    f"(r{m.group(1)} ↔ r{v.group(1)})")
+    # ★★★★★★ 09-05 — ★ 마스터 「★ **줄이지 말고 검사를 수정해**」
+    #   ★ 09-03 에 300줄로 막은 까닭은 ★ **길이가 아니라** —
+    #     ★ 455줄 · 27절에 ★ **모순과 옛 절**이 섞여 있었기 때문이다.
+    #   ★ 지금 지시문은 ★ 별표 0 · 표 머리 갖춤 · 순서표가 맨 앞이다 (`S46-284`).
+    #     ★ ★ 여기서 더 줄이면 ★ **지시가 사라진다** — ★ 실제로 09-05 에
+    #       ★ 줄이다가 ★ **검사 여섯이 깨졌다**(수집 범위·종료 조건·규격 가리킴).
+    #   ★★ 그래서 잣대를 바꾼다 —
+    #     ① ★ **절이 서른을 넘지 않는다** (묶음이 흩어지면 못 읽는다)
+    #     ② ★ **같은 절 번호가 두 번 나오지 않는다** (모순의 뿌리다)
+    #     ③ ★ 길이는 ★ **600줄**까지 둔다 — ★ 표가 촘촘하면 길어지는 게 맞다
     n = len(o.splitlines())
-    if n > 300:
-        bad.append(f"지시문이 {n}줄이다 — 옛 절을 안 걷어냈다")
+    heads = [x for x in o.splitlines() if x.startswith("## ")]
+    if len(heads) > 30:
+        bad.append(f"절이 {len(heads)}개다 — 묶음이 흩어졌다")
+    seen = {}
+    for h in heads:
+        key = h.split(".")[0].replace("## ", "").strip()
+        if key and key in seen:
+            bad.append(f"절 번호가 겹친다 — {key}")
+            break
+        seen[key] = 1
+    if n > 600:
+        bad.append(f"지시문이 {n}줄이다 — 옛 절을 걷어내라")
     if bad:
         return False, "★ " + " · ".join(bad)
     return True, f"지시문이 한 벌이다 ({n}줄 · r{m.group(1)})"
