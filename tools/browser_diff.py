@@ -595,6 +595,66 @@ _ENCAR_SQL = {
 }
 
 
+def _site_report(base_url, sqls, out_path, name="admin", secret="12345678"):
+    """★ 배포 `/admin/query` 를 눌러 수를 재고 ★ 파일로 남긴다 (엔카·KB 공용).
+
+    ★ 09-05 — ★ 엔카에서 만든 길을 ★ KB 도 쓰게 ★ 갈라 뒀다
+    """
+    import datetime as _dt
+    import html as _html
+    import json as _j
+    import re as _re
+    import ssl as _ssl
+    import urllib.parse as _up
+    import urllib.request as _ur
+    from http.cookiejar import CookieJar
+
+    ctx = _ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = _ssl.CERT_NONE
+    op = _ur.build_opener(_ur.HTTPSHandler(context=ctx),
+                          _ur.HTTPCookieProcessor(CookieJar()))
+
+    def _get(path):
+        with op.open(base_url + path, timeout=60) as r:
+            return r.read().decode("utf-8", "replace")
+
+    def _csrf(t):
+        m = _re.search(r'name="csrf" value="([^"]+)"', t)
+        return m.group(1) if m else ""
+
+    op.open(base_url + "/login", timeout=60)
+    tok = _csrf(_get("/login"))
+    op.open(_ur.Request(base_url + "/login",
+                        data=_up.urlencode({"name": name, "secret": secret,
+                                            "csrf": tok}).encode()), timeout=60)
+    out = {}
+    for key, sql in sqls.items():
+        tok = _csrf(_get("/admin/query"))
+        with op.open(_ur.Request(
+                base_url + "/admin/query",
+                data=_up.urlencode({"sql": sql, "csrf": tok}).encode()),
+                timeout=120) as r:
+            body = r.read().decode("utf-8", "replace")
+        txt = _html.unescape(_re.sub(r"<[^>]+>", "\n", body))
+        rows = [x.strip() for x in txt.split("\n") if x.strip()]
+        got = None
+        if "탭 구분 — 표에 그대로 붙습니다" in rows:
+            j = rows.index("탭 구분 — 표에 그대로 붙습니다")
+            for cand in rows[j + 1:j + 4]:
+                if cand.replace(",", "").isdigit():
+                    got = int(cand.replace(",", ""))
+                    break
+        out[key] = got
+        print(f"  {key:<10}{got}")
+    out["_잰_때"] = _dt.datetime.now(_dt.timezone.utc).isoformat()
+    out["_잰_곳"] = base_url
+    with open(out_path, "w", encoding="utf-8") as f:
+        _j.dump(out, f, ensure_ascii=False, indent=1)
+    print(f"\n★ 적었다 — {out_path}")
+    return out
+
+
 def encar_collect_report(base_url: str, name: str = "admin",
                          secret: str = "12345678"):
     """★ 배포의 `/admin/query` 를 눌러 ★ 엔카 수집을 재고 ★ 파일로 남긴다.
@@ -659,3 +719,36 @@ def encar_collect_report(base_url: str, name: str = "admin",
         _j.dump(out, f, ensure_ascii=False, indent=1)
     print(f"\n★ 적었다 — {ENCAR_REPORT}  (★ 구멍이 있으면 `S46-276` 이 운다)")
     return out
+
+
+# ★★★★★★ 09-05 — ★ **KB 수집·파싱에 구멍이 없는가**를 잰다 (마스터 지시)
+#
+#   ★ 마스터 — 「★ 하나씩 해.  ★ **KB 만 집중**해」 · 「★ 가격이랑 세부 항목이랑 이미지랑」
+
+KB_REPORT = "outputs/kb_collect.json"
+
+_KB_SQL = {
+    "매물": "SELECT COUNT(*) FROM core_listing WHERE site='kbchachacha'",
+    "우리차종": "SELECT COUNT(*) FROM core_listing WHERE site='kbchachacha' "
+                "AND target_key IS NOT NULL",
+    "상세": "SELECT COUNT(detail_status) FROM core_listing "
+            "WHERE site='kbchachacha'",
+    "원문": "SELECT COUNT(*) FROM raw_response WHERE site='kbchachacha'",
+    "값": "SELECT COUNT(price_current_won) FROM core_listing "
+          "WHERE site='kbchachacha'",
+    "주행": "SELECT COUNT(mileage_km) FROM core_listing WHERE site='kbchachacha'",
+    "연식": "SELECT COUNT(year_month) FROM core_listing WHERE site='kbchachacha'",
+    "색": "SELECT COUNT(color_ext_raw) FROM core_listing WHERE site='kbchachacha'",
+    "사진": "SELECT COUNT(photo_list_json) FROM core_listing "
+            "WHERE site='kbchachacha'",
+    "트림": "SELECT COUNT(trim_grade_name) FROM core_listing "
+            "WHERE site='kbchachacha'",
+    "옵션": "SELECT COUNT(options_choice_json) FROM core_listing "
+            "WHERE site='kbchachacha'",
+}
+
+
+def kb_collect_report(base_url: str, name: str = "admin",
+                      secret: str = "12345678"):
+    """★ KB 를 재고 ★ `outputs/kb_collect.json` 에 남긴다.  ★ `S46-279` 가 읽는다."""
+    return _site_report(base_url, _KB_SQL, KB_REPORT, name, secret)

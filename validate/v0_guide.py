@@ -7237,7 +7237,98 @@ def s46_277_admin_query_allows_order_limit():
     return True, "관리 질의가 임시 커서를 가려 조회를 막지 않는다"
 
 
+def s46_278_kb_saves_blocked_raw():
+    """S46-278 — ★ KB 가 ★ **막힌 응답도 원문으로 남기는가** (마스터 09-05).
+
+    ★★★ 마스터 — 「★ **캡차를 하더라도 받는 건 받아야 하는데 ★ 원문 파일 저장을 안 하나?**」
+    ★★ 실측 09-05 — ★ KB 원문이 ★ **0건**이다 (다른 네 사이트는 205,065건).
+      ★ ★ `tools/collect_kbchachacha.py` 가 ★ **네 자리에서 안 남기고 빠진다** —
+        ★ **258** 목록 3회 다 막힘 → `break` (★ 코드가 「저장하지 않는다」라 적었다)
+        ★ **285** 목록 못 받음 → `break`
+        ★ **643** 목록 훑기 봇 차단 → `continue` (★ 「저장하지 않는다」)
+        ★ **400** 상세 캡차 → ★ `save_file` **앞에서** `continue`
+    ★★★ 규격 `STEP 53-⑤` — ★ 「**실패 응답도 원문이다**」.
+      ★ 09-02 에 ★ 엔카에서 「286건이 사라진다」를 잡아 고쳤는데
+      ★ ★ **KB 는 같은 자리가 그대로**였다.
+    ★ 값 — ★ 막힌 것을 안 남기면 ★ 「언제부터 · 어떻게 막혔나」를 ★ **뒤에 못 본다**.
+      ★ ★ 그래서 내가 매번 ★ **손으로 두드려** 확인했다.
+    ★ 잣대 — ★ 그 네 자리에 ★ `save_file` 이 있는가.
+    """
+    src = _read(ROOT / "tools" / "collect_kbchachacha.py")
+    if not src:
+        return False, "collect_kbchachacha.py 를 못 읽었다"
+    if "저장하지 않는다" in src:
+        return False, ("★ KB 가 ★ **막힌 응답을 안 남긴다** — "
+                       "★ 코드가 「저장하지 않는다」라 적었다 (목록 258·285·643 · 상세 400).  "
+                       "★ `STEP 53-⑤`(실패 응답도 원문이다)를 어긴다")
+    lines = src.split("\n")
+    bad = []
+    for i, ln in enumerate(lines):
+        t = ln.strip()
+        if t not in ("continue", "break"):
+            continue
+        near = "\n".join(lines[max(0, i - 12):i])
+        if "wall" in near.lower() and "save_file" not in near:
+            bad.append(i + 1)
+    if bad:
+        return False, ("★ 막힌 뒤 원문 없이 빠지는 자리 — 줄 "
+                       + " · ".join(str(x) for x in bad[:4]))
+    return True, "KB 가 막힌 응답도 원문으로 남긴다"
+
+
+def s46_279_kb_fields_filled():
+    """S46-279 — ★ KB 가 ★ **값·항목·사진을 채우는가** (마스터 09-05 「KB 만 집중해」).
+
+    ★★★ 마스터 — 「★ **가격이랑 세부 항목이랑 이미지랑**」
+    ★★ 실측 09-05 — ★ 매물 **5,704** 중
+      ★ 값 **706**(12%) · 주행 709 · 연식 709 · 색 709 · ★ 사진 **525**(9%)
+      ★ ★ **트림 0 · 옵션 0** — ★ 상세를 1,468건 받고도 ★ 하나도 안 뽑았다.
+      ★ ★ ★ 트림 **20점** · 옵션 **45점**이 ★ 통째로 죽는다.
+    ★★★ 뿌리 둘 —
+      ★ ① `parse/kbchachacha/` 에 ★ **목록 파서가 없다**(`parse_detail` 뿐) —
+        ★ 목록 카드가 ★ 「G80(RG3) 3.5 T-GDi · 22/03식 · 51,234km · 3,520만원」을
+        ★ ★ **다 주는데** ★ 우리는 ★ `carSeq` 만 뽑는다.
+      ★ ② 상세를 ★ **1,468 / 5,504** 만 받았다 (26%).
+    ★ 잣대 — ① 값·주행·연식·색 ★ **90%** ② 사진 **50%** ③ 트림·옵션 ★ **0 이 아니다**.
+    """
+    raw = _read(ROOT / "outputs" / "kb_collect.json")
+    if not raw:
+        return False, ("★ 아직 안 쟀다 — "
+                       "`python3 -c \"from tools.browser_diff import "
+                       "kb_collect_report as r; r('배포주소')\"` 를 돌려라")
+    try:
+        rep = json.loads(raw)
+    except Exception:  # noqa: BLE001
+        return False, "kb_collect.json 을 못 읽었다"
+    when = str(rep.get("_잰_때") or "")[:10]
+    try:
+        import datetime as _dt
+
+        if when and (_dt.date.today()
+                     - _dt.date.fromisoformat(when)).days > 2:
+            return False, f"★ 잰 지 오래됐다 ({when}) — 다시 재라"
+    except Exception:  # noqa: BLE001
+        pass
+    m = rep.get("매물") or 0
+    bad = []
+    for key in ("값", "주행", "연식", "색"):
+        v = rep.get(key) or 0
+        if m and v / m < 0.9:
+            bad.append(f"{key} {v / m * 100:.0f}%")
+    ph = rep.get("사진") or 0
+    if m and ph / m < 0.5:
+        bad.append(f"사진 {ph / m * 100:.0f}%")
+    for key in ("트림", "옵션"):
+        if not rep.get(key):
+            bad.append(f"★ {key} 0건")
+    if bad:
+        return False, "★ " + " · ".join(bad) + f"  (매물 {m:,} · {when})"
+    return True, f"KB 값·항목·사진이 다 찼다 ({when})"
+
+
 CHECKS = (
+    ("S46-279", "KB 값·항목·사진이 찼는가", s46_279_kb_fields_filled),
+    ("S46-278", "KB 가 막힌 응답도 남기는가", s46_278_kb_saves_blocked_raw),
     ("S46-277", "관리 질의가 조회를 막지 않는가", s46_277_admin_query_allows_order_limit),
     ("S46-276", "엔카 수집에 구멍이 없는가", s46_276_encar_collect_no_gap),
     ("S46-275", "축 점수를 저장하는가", s46_275_axis_score_persisted),
