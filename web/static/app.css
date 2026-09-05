@@ -6,6 +6,8 @@
 
 /* ── 0. 토큰 · 껍데기.  ★ 색 12 · 글꼴 2 밖의 값을 쓰지 않는다 (V11-13) ── */
 :root {
+  /* ★ 09-05 — ★ 「토털 분석」 띠 바탕.  ★ 색은 :root 에만 둔다 (S46-123) */
+  --amber-soft:rgba(240,180,41,.07);
   /* ★★ 09-04 — ★ **켠 단추의 글자색**.  ★ `--on-accent` 는 ★ 이미 어두운색이라 못 쓴다
      ★ 실측 09-04 — 글자 rgb(25,31,40) · 바탕 rgb(49,130,246) → ★ **안 읽힌다** */
   --btn-on-text:#ffffff;
@@ -3337,7 +3339,7 @@ details:not([open])>*:not(summary){display:none}
 .totalbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;
   padding:10px 12px;margin-bottom:14px;
   border:1px solid var(--amber);border-radius:10px;
-  background:rgba(240,180,41,.07)}
+  background:var(--amber-soft)}
 .totalbar b{color:var(--amber)}
 .btn.go{border-color:var(--amber);color:var(--amber)}
 

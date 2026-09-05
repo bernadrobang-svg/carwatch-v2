@@ -190,6 +190,9 @@ python3 run.py web --port N
 | `/why/{listing_id}` | GET | `view_why` | anonymous | — | 구현 |
 | `/notready` | GET | `view_notready` | anonymous | — | 구현 |
 | ★ `/track` | GET | `view_track` | anonymous | — | 구현 |
+| ★★ `/analyze` | GET | `view_analyze` | anonymous | — | ★ **가이드가 지었다 09-05** — ★ 추천 **탭 3**.  ★ 시안 `v4m_analyze_시안.html` · 틀 `analyze.html` |
+| ★ `/analyze/copy/{listing_id}` | GET | `view_analyze_copy` | anonymous | — | ★ **타 AI 요청** — ★ 그 차의 원문을 ★ 하나의 글월로 |
+| ★ `/analyze/drop/{listing_id}` | POST | `view_analyze_drop` | anonymous | — | ★ **분석 제외** |
 | ★ `/sold` | GET | `view_sold` | anonymous | ★ **팔린 차** | ★ 시안 (`UI_REVIEW` 30장 · `ref/screens/v4m_sold_시안.html`) |
 | `/static/{path}` | GET | — | anonymous | — | 구현 |
 | `/admin` | GET | `view_admin` | **admin** | — | 구현 |

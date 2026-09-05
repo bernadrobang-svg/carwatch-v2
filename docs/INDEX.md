@@ -9,21 +9,21 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 53,072줄 · 3,842KB**
+**132파일 · 53,076줄 · 3,842KB**
 
 ★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - CHECKS.md 1,503줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
-- UI_REVIEW.md 2,154줄
+- UI_REVIEW.md 2,155줄
 - guide/01_요구사항.md 1,001줄
 - guide/03_이력.md 1,421줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
-- chapters/61-web.md 2,268줄
+- chapters/61-web.md 2,271줄
 - chapters/30-score/f-table.md 3,067줄
 - chapters/11-store/a-key.md 1,111줄
 - chapters/11-store/b-core.md 815줄
@@ -57,7 +57,7 @@
 | `SERVER_SURVIVAL.md` | 258 | 12 |
 | `SOURCE.md` | 795 | 62 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
-| `UI_REVIEW.md`  ★ | 2,154 | 109 |
+| `UI_REVIEW.md`  ★ | 2,155 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -98,7 +98,7 @@
 | `chapters/60-admin/a-auth.md` | 405 | 15 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,121 | 45 |
-| `chapters/61-web.md`  ★ | 2,268 | 86 |
+| `chapters/61-web.md`  ★ | 2,271 | 86 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
 | `chapters/61-web/c-recommend.md` | 50 | 1 |
