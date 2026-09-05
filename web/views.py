@@ -1201,21 +1201,27 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
     tabbar = T.tab_list(tab, root, counts)
     tpl = T.tab_template(tab, root) or "recommend.html"
 
+    # ★★★★★ 09-06 (r1188) — ★ 가이드가 ★ 「분석 맡기기」를 ★ **POST 폼**으로
+    #   ★ 고쳐 주셨다.  ★ 그 폼은 ★ `{{ csrf }}` 를 부른다 —
+    #   ★ ★ 다른 틀처럼 `page.csrf_token` 이 아니다.  ★ 까닭이 있다:
+    #   ★ ★ ★ 탭 2 는 ★ 쪽 번호를 ★ `page` 라 부르므로 ★ 그 자리에
+    #     ★ ★ ★ ★ 얼개의 `page` 가 없다.  ★ 그래서 ★ **낱말로 따로 넘긴다**.
+    #   ★ 안 넘기면 ★ 빈 토큰이 나가 ★ 누를 때마다 **403** 이다 [실측 09-06]
     if tab == "2":
         got = T.view_tab2(conn, ver["calc_version"], flt, q, qall, root)
         return page(conn, account, "추천", tpl,
-                    {"tabs": tabbar, **got}, root=root, csrf=csrf,
-                    flash_key=flash_key)
+                    {"tabs": tabbar, "csrf": csrf, **got}, root=root,
+                    csrf=csrf, flash_key=flash_key)
     if tab == "3":
         got = T.view_tab3(conn, getattr(account, "account_id", 0) or 0, root)
         return page(conn, account, "분석", tpl,
-                    {"tabs": tabbar, **got}, root=root, csrf=csrf,
-                    flash_key=flash_key)
+                    {"tabs": tabbar, "csrf": csrf, **got}, root=root,
+                    csrf=csrf, flash_key=flash_key)
     if tab == "4":
         got = T.view_tab4(conn, q, root)
         return page(conn, account, "추천", tpl,
-                    {"tabs": tabbar, **got}, root=root, csrf=csrf,
-                    flash_key=flash_key)
+                    {"tabs": tabbar, "csrf": csrf, **got}, root=root,
+                    csrf=csrf, flash_key=flash_key)
 
     # ★★★★★ 09-02 명령서 ② — ★ 여럿 켠 차종을 ★ 그대로 받는다 (OR).
     #   ★ `query` 는 마지막 하나만 준다 — ★ `query_all` 이 다 준다
@@ -1250,7 +1256,8 @@ def analyze(conn, account, req, root: str = ROOT, csrf: str = "",
     got = T.view_tab3(conn, aid, root)
     return page(conn, account, "분석", T.tab_template("3", root) or "analyze.html",
                 {"tabs": T.tab_list("3", root, {"analyze": got["count"]}),
-                 **got}, root=root, csrf=csrf, flash_key=flash_key)
+                 "csrf": csrf, **got}, root=root, csrf=csrf,
+                flash_key=flash_key)
 
 
 def analyze_add(conn, account, req, path_vars: dict | None = None,

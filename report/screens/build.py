@@ -1569,6 +1569,18 @@ def _listings_where(flt: ListingFilter) -> tuple[list, list]:
     if getattr(flt, "sell_type", None):
         where.append("l.sell_type = ?")
         args.append(flt.sell_type)
+    # ★★★★★ 09-06 (r1188 J-3) — ★ **차종 표가 분류의 정본**이다.
+    #   ★ `show_list=N` 인 차종은 ★ 전체 목록에 ★ **안 낸다.**
+    #   ★ ★ 지우는 것이 아니다 — ★ 차종을 콕 집으면(`?target=…`) ★ 그때는 나온다.
+    #   ★ 표가 없으면 ★ 안 거른다 (`S46-289` 몫)
+    if not getattr(flt, "target_key", None):
+        from store.dictionary import vehicle_keys, vehicle_table
+
+        _on = vehicle_keys("show_list")
+        if vehicle_table(".") and _on:
+            marks = ",".join("?" * len(_on))
+            where.append(f"(l.target_key IS NULL OR l.target_key IN ({marks}))")
+            args.extend(_on)
     if not where:
         where.append("1=1")
     if flt.target_key:
@@ -4443,11 +4455,19 @@ def _active_targets(root: str = ".") -> list:
     ★ 정본은 `config/targets.json` 이다 — ★ 코드에 차종을 박지 않는다 (`S14` · 금지 6)
     ★ `targets.json` 의 차례를 그대로 둔다 — ★ 시안의 고르개가 그 차례다 (`S46-100`)
     """
+    # ★★★★★ 09-06 (r1188 J-3) — ★ **차종 표가 분류의 정본**이다.
+    #   ★ 마스터 — 「★ 앞으로 ★ 분류 관련된 부분은 ★ **다 그 테이블을 보게** 고쳐라」
+    #   ★ 표에 `show_recommend` 가 있으면 ★ 그것을 따른다.
+    #   ★ ★ 차례는 ★ `targets.json` 그대로 둔다 — ★ 시안 고르개가 그 차례다 (`S46-100`)
+    from store.dictionary import vehicle_says, vehicle_table
+
     got = load_config(f"{root}/config/targets.json") or {}
-    return [k for k, v in got.items()
+    keys = [k for k, v in got.items()
             if not k.startswith("_") and isinstance(v, dict)
-            and k not in NOT_TARGETS
-            and v.get("recommend", True)]
+            and k not in NOT_TARGETS]
+    if vehicle_table(root):
+        return [k for k in keys if vehicle_says(k, "show_recommend", root)]
+    return [k for k in keys if got[k].get("recommend", True)]
 
 
 def view_recommend_tabs(account: Account, conn: sqlite3.Connection,

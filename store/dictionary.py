@@ -691,3 +691,53 @@ def confirm_enum(conn: sqlite3.Connection, site: str, axis: str,
         (STATUS_CONFIRMED, at, site, axis, value))
     commit(conn)
     return STATUS_CONFIRMED
+
+
+# ── 차종 표 — ★ 분류의 정본 (지시 r1188 J · `S46-289`) ───────────────────
+# ★★★ 마스터 — 「★ 차종 목록을 만들고 ★ 그 테이블에 ★ **받는 목록과 안 받는 목록**을
+#   ★ 표시해라 … ★ 앞으로 ★ **분류 관련된 부분은 다 그 테이블을 보게** 프로그램을 고쳐라」
+# ★ 그러므로 ★ 「이 차종을 받나 · 목록에 내나 · 추천에 내나 · 어느 탭에 내나」는
+#   ★ ★ **여기 하나에서만** 답한다.  ★ `targets.json` 을 따로 묻지 않는다.
+# ★★ 표에 없는 차종은 ★ **안 받는다**로 본다 — ★ 새 차종은 ★ 표에서 `collect` 를 Y 로
+#   ★ ★ 바꾼다.  ★ 목록을 뽑아 되묻지 않는다 (`S46-288`)
+_VEHICLE_TABLE: dict | None = None
+
+VEHICLE_TABLE_COLS = ("collect", "show_list", "show_recommend",
+                      "tab1", "tab2", "tab3", "tab4")
+
+
+def vehicle_table(root: str = ".") -> dict:
+    """`config/vehicle_table.json` 의 차종 칸.  ★ 없으면 빈 표다."""
+    global _VEHICLE_TABLE
+
+    if _VEHICLE_TABLE is None:
+        import json as _j
+        import os as _o
+
+        path = _o.path.join(root, "config", "vehicle_table.json")
+        try:
+            with open(path, encoding="utf-8") as f:
+                _VEHICLE_TABLE = (_j.load(f).get("차종") or {})
+        except (OSError, ValueError):
+            _VEHICLE_TABLE = {}
+    return _VEHICLE_TABLE
+
+
+def vehicle_says(target_key: str | None, col: str, root: str = ".") -> bool:
+    """표가 ★ 「Y」라 했는가.
+
+    ★ 표에 없는 차종은 ★ `False` 다 — ★ 「아마 받을 것」으로 넘기지 않는다 (금지 6).
+    ★ 표를 아예 못 읽으면 ★ `True` 다 — ★ 표가 없다고 ★ 화면이 통째로 비면 안 된다.
+      ★ ★ 표가 없는 것은 ★ `S46-289` 가 잡는다 — ★ 여기서 두 번 잡지 않는다
+    """
+    table = vehicle_table(root)
+    if not table:
+        return True
+    got = table.get(str(target_key or ""))
+    return bool(got) and got.get(col) == "Y"
+
+
+def vehicle_keys(col: str, root: str = ".") -> tuple:
+    """그 칸이 「Y」인 차종을 ★ 다 준다 (수집 범위·화면 범위를 잡을 때)."""
+    return tuple(sorted(k for k, v in vehicle_table(root).items()
+                        if v.get(col) == "Y"))

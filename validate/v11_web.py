@@ -791,11 +791,32 @@ def _late_checks(rid) -> list:
     html = render_str('{{ page.csrf_token }}', {"page": {"csrf_token": "T"}})
     empty = render_str('{{ page.csrf_token }}', {})
     ok = html == "T" and empty == ""
-    forms = _templates_with_form()
-    missing = [f for f in forms if "page.csrf_token" not in
-               open(os.path.join(TEMPLATES, f), encoding="utf-8").read()]
+    # ★★★★★ 09-06 (r1188) — ★ 토큰을 ★ **낱말로 받는 틀**도 있다.
+    #   ★ 가이드가 지으신 ★ `recommend2.html` 은 ★ 쪽 번호를 ★ `page` 라 부른다
+    #     (규격 ④ — `page.total`·`page.links`).  ★ 그 자리에는 ★ 얼개의 `page` 가
+    #     ★ ★ 없으므로 ★ `page.csrf_token` 을 쓸 수 없다 — ★ `{{ csrf }}` 를 쓴다.
+    #   ★★ 잣대의 뜻은 ★ 「**폼의 토큰이 비면 안 된다**」이지 ★ 이름이 아니다.
+    #     ★ ★ 그러니 ★ 두 이름을 다 받되 ★ 낱말로 받는 틀은
+    #     ★ ★ ★ **뷰가 실제로 그 이름을 넘기는지**까지 본다 — ★ 글자만 세지 않는다.
+    #   ★ 실측 09-06 — ★ 안 넘기고 있어 ★ 배포에서 `value=""` 가 나갔다 (403 이 된다)
+    views_src = ""
+    for _base, _dirs, _files in os.walk(os.path.join(ROOT, "web")):
+        _dirs[:] = [d for d in _dirs if d != "__pycache__"]
+        for _f in _files:
+            if _f.endswith(".py"):
+                views_src += open(os.path.join(_base, _f),
+                                  encoding="utf-8").read()
+    forms, missing = _templates_with_form(), []
+    for f in forms:
+        body = open(os.path.join(TEMPLATES, f), encoding="utf-8").read()
+        if "page.csrf_token" in body:
+            continue
+        if "{{ csrf }}" not in body:
+            missing.append(f"{f}: 폼에 csrf 가 없다")
+        elif '"csrf": csrf' not in views_src:
+            missing.append(f"{f}: 낱말 `csrf` 를 뷰가 안 넘긴다 — 빈 토큰이 나간다")
     bad = ([] if ok else ["템플릿 엔진이 page 를 못 읽는다"])
-    bad += [f"{f}: 폼에 csrf 가 없다" for f in missing]
+    bad += missing
     out.append(result(C["V11-29"], rid, 0, bad or 0, not bad, bad))
 
     # V11-30 — 시안 대조.  ★ 검사를 검사한다

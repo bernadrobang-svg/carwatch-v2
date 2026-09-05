@@ -913,8 +913,29 @@ def collect_state(conn, collect_urls=None, root: str = ".",
             "saved_list": done.get("list", 0), "saved_facet": done.get("facet", 0),
             # ★ 기본값을 코드에 두지 않는다.  없으면 그 자리에서 드러난다
             "rows_per_call": int(web["browser_collect_rows"]),
-            "interval_sec": float(web["browser_interval_sec"]),
+            # ★★★★★ 09-06 (r1188) — ★ **마스터 회선은 조리개에 안 걸린다.**
+            #   ★ 마스터 — 「★ 1건 30초로 하라는 건 헛소리다.
+            #     ★ ★ **0.1초로 받아서 문제 없었다**」.  ★ 맞다 —
+            #     ★ ★ ★ 30초는 ★ **서버 IP 에서만** 쓰는 값이다.
+            #   ★ 그러므로 ★ 사이트마다 ★ `endpoints.json` 의
+            #     ★ ★ `browser_interval_sec` 이 ★ **먼저**다.
+            #     ★ ★ ★ 없으면 ★ `web.json` 의 값을 쓴다 (`S14` — 값은 자료에)
+            "interval_sec": _browser_interval(web, root),
             "max_form_bytes": int(web["max_form_bytes"])}
+
+
+def _browser_interval(web: dict, root: str = ".") -> float:
+    """마스터 회선 간격.  ★ 사이트 설정이 먼저다 (r1188).
+
+    ★ 서버가 받을 때의 `interval_sec`(엔카 0.3초 · 조리개로 30초까지)와
+      ★ **다른 값**이다 — ★ 마스터 회선은 조리개에 안 걸린다.
+    """
+    from report.screens.build import load_config
+
+    got = load_config(f"{root}/config/endpoints.json") or {}
+    best = max((float(v.get("browser_interval_sec") or 0)
+                for v in got.values() if isinstance(v, dict)), default=0.0)
+    return best or float(web["browser_interval_sec"])
 
 
 def received_vs_used(conn) -> dict:

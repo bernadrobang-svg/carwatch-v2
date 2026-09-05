@@ -20,6 +20,7 @@ from report.screens.build import (
     load_config,
     region_of,
 )
+from store.dictionary import vehicle_keys, vehicle_says, vehicle_table
 
 UNKNOWN = "모름"
 NOT_ASKED = "미조회"
@@ -168,7 +169,9 @@ def _picks(conn, root, flt, sel: dict, base: str) -> list:
     live = [r[0] for r in conn.execute(
         "SELECT target_key, COUNT(*) FROM core_listing"
         " WHERE target_key IS NOT NULL AND status IN"
-        " ('active','new','relisted') GROUP BY 1 ORDER BY 2 DESC")]
+        " ('active','new','relisted') GROUP BY 1 ORDER BY 2 DESC")
+        # ★ J-4 — ★ 그 탭에 내는 차종만 고르개에 낸다 (차종 표가 정본)
+        if vehicle_says(r[0], "tab2", root) or not vehicle_table(root)]
     group("차종", "m", [(k, str((names.get(k) or {}).get("label") or k))
                         for k in live])
     group("등급", "g", [(g, g) for g in GRADE_ORDER])
@@ -272,6 +275,14 @@ def view_tab2(conn: sqlite3.Connection, calc_version: str, flt,
 
     where, args = _listings_where(flt)
     where = list(where)
+    # ★★★★★ 09-06 (r1188 J-4) — ★ **탭마다 낼 차종이 다르다.**
+    #   ★ 정본은 ★ `config/vehicle_table.json` 의 ★ `tab2` 칸이다.
+    #   ★ 표가 없으면 ★ 안 거른다 — ★ 표가 없다고 화면이 비면 안 된다 (`S46-289` 몫)
+    _on2 = vehicle_keys("tab2", root)
+    if vehicle_table(root) and _on2:
+        marks = ",".join("?" * len(_on2))
+        where.append(f"l.target_key IN ({marks})")
+        args.extend(_on2)
     if sel["m"]:
         marks = ",".join("?" * len(sel["m"]))
         where.append(f"l.target_key IN ({marks})")
@@ -615,7 +626,9 @@ def view_tab4(conn: sqlite3.Connection, query: dict,
     """★ A-4 · B-11 · B-12 — 두 차종 · 격자 둘 · 칸을 누르면 등급순 목록."""
     cfg = load_config(f"{root}/config/web.json") or {}
     names = load_config(f"{root}/config/targets.json") or {}
-    keys = tab_targets("4", root)
+    # ★ J-4 — ★ 탭 4 의 두 차종도 ★ **표**가 정한다 (`tab4` 칸).
+    #   ★ `config/web.json` 의 `targets` 는 ★ 표가 없을 때만 쓴다
+    keys = vehicle_keys("tab4", root) or tab_targets("4", root)
     if not keys:
         return {"two": [], "rows": [], "pick": None}
     cur = str((query or {}).get("m") or keys[0])

@@ -27,7 +27,7 @@
     "encar": 2728,
     "heydealer": 38,
     "hyundai_cert": 183,
-    "kbchachacha": 1641,
+    "kbchachacha": 1768,
     "kcar": 14,
     "reborncar": 57
    }
@@ -45,7 +45,7 @@
    "sites": {
     "encar": 121,
     "heydealer": 3,
-    "kbchachacha": 27,
+    "kbchachacha": 13,
     "reborncar": 1
    }
   },
@@ -63,7 +63,7 @@
     "bobaedream": 1,
     "encar": 119,
     "hyundai_cert": 1,
-    "kbchachacha": 175,
+    "kbchachacha": 107,
     "reborncar": 2
    }
   },
@@ -101,7 +101,7 @@
     "encar": 96,
     "heydealer": 2,
     "hyundai_cert": 5,
-    "kbchachacha": 25,
+    "kbchachacha": 13,
     "reborncar": 1,
     "revolt": 2
    }
@@ -120,7 +120,7 @@
     "encar": 179,
     "heydealer": 6,
     "hyundai_cert": 2,
-    "kbchachacha": 53
+    "kbchachacha": 25
    }
   },
   "KOLEOS_HEV": {
@@ -153,7 +153,7 @@
    "taste_rank": null,
    "sites": {
     "encar": 276,
-    "kbchachacha": 707
+    "kbchachacha": 714
    }
   },
   "GRANDEUR_LPG": {
@@ -207,7 +207,7 @@
     "bobaedream": 7,
     "encar": 1200,
     "heydealer": 10,
-    "kbchachacha": 402,
+    "kbchachacha": 420,
     "kcar": 2
    }
   },
@@ -258,7 +258,7 @@
    "taste_rank": null,
    "sites": {
     "encar": 198,
-    "kbchachacha": 90,
+    "kbchachacha": 174,
     "lexus_certified": 16
    }
   },
@@ -276,7 +276,7 @@
     "bobaedream": 2,
     "encar": 120,
     "heydealer": 1,
-    "kbchachacha": 51,
+    "kbchachacha": 28,
     "lexus_certified": 5
    }
   },
@@ -294,7 +294,7 @@
     "bobaedream": 3,
     "encar": 537,
     "heydealer": 15,
-    "kbchachacha": 150,
+    "kbchachacha": 294,
     "kcar": 1,
     "volvo_selekt": 63
    }
@@ -313,7 +313,7 @@
     "bobaedream": 1,
     "encar": 225,
     "heydealer": 6,
-    "kbchachacha": 66,
+    "kbchachacha": 31,
     "kcar": 1,
     "volvo_selekt": 4
    }
@@ -343,7 +343,7 @@
    "sites": {
     "encar": 376,
     "heydealer": 14,
-    "kbchachacha": 113,
+    "kbchachacha": 54,
     "reborncar": 2,
     "volvo_selekt": 37
    }
@@ -361,7 +361,7 @@
    "sites": {
     "encar": 266,
     "heydealer": 2,
-    "kbchachacha": 89,
+    "kbchachacha": 40,
     "kcar": 1,
     "volvo_selekt": 49
    }
@@ -377,7 +377,7 @@
    "tab4": "N",
    "taste_rank": null,
    "sites": {
-    "kbchachacha": 103,
+    "kbchachacha": 58,
     "lexus_certified": 31
    }
   },
@@ -393,7 +393,7 @@
    "taste_rank": 5,
    "sites": {
     "encar": 17,
-    "kbchachacha": 3,
+    "kbchachacha": 2,
     "revolt": 1
    }
   },
@@ -424,7 +424,7 @@
    "sites": {
     "bobaedream": 1,
     "encar": 162,
-    "kbchachacha": 60
+    "kbchachacha": 70
    }
   },
   "POLESTAR4_EV": {
@@ -439,7 +439,7 @@
    "taste_rank": 3,
    "sites": {
     "encar": 57,
-    "kbchachacha": 17,
+    "kbchachacha": 7,
     "revolt": 3
    }
   },
@@ -466,7 +466,7 @@
    "tab4": "N",
    "taste_rank": 1,
    "sites": {
-    "kbchachacha": 25,
+    "kbchachacha": 7,
     "revolt": 5
    }
   },
@@ -481,7 +481,7 @@
    "tab4": "N",
    "taste_rank": null,
    "sites": {
-    "kbchachacha": 29,
+    "kbchachacha": 32,
     "revolt": 6
    }
   },
@@ -496,7 +496,7 @@
    "tab4": "N",
    "taste_rank": null,
    "sites": {
-    "kbchachacha": 35
+    "kbchachacha": 19
    }
   },
   "EV4_EV": {
@@ -510,7 +510,7 @@
    "tab4": "N",
    "taste_rank": 6,
    "sites": {
-    "kbchachacha": 12
+    "kbchachacha": 5
    }
   },
   "ID5_EV": {
@@ -524,7 +524,7 @@
    "tab4": "N",
    "taste_rank": null,
    "sites": {
-    "kbchachacha": 5
+    "kbchachacha": 2
    }
   },
   "XC40_EV": {
@@ -572,6 +572,7 @@
     "encar": 2049,
     "heydealer": 37,
     "hyundai_cert": 338,
+    "kbchachacha": 1,
     "kcar": 39,
     "reborncar": 117
    }
@@ -589,6 +590,7 @@
    "sites": {
     "bobaedream": 1,
     "encar": 1812,
+    "kbchachacha": 1,
     "kcar": 14,
     "kia_cpo": 85,
     "reborncar": 22
@@ -688,6 +690,7 @@
    "sites": {
     "bobaedream": 4,
     "encar": 95,
+    "kbchachacha": 3,
     "kcar": 9
    }
   },
@@ -994,6 +997,21 @@
     "kia_cpo": 21
    }
   },
+  "OFF:iX3": {
+   "label": "iX3",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 17,
+    "revolt": 3
+   }
+  },
   "OFF:아반떼": {
    "label": "아반떼",
    "collect": "N",
@@ -1020,6 +1038,21 @@
    "taste_rank": null,
    "sites": {
     "hyundai_cert": 20
+   }
+  },
+  "OFF:ID.4": {
+   "label": "ID.4",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 14,
+    "revolt": 5
    }
   },
   "OFF:모델 Y": {
@@ -1076,6 +1109,20 @@
    "taste_rank": null,
    "sites": {
     "kcar": 16
+   }
+  },
+  "OFF:UX": {
+   "label": "UX",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 15
    }
   },
   "OFF:카니발 하이리무진": {
@@ -1375,20 +1422,6 @@
     "kcar": 6
    }
   },
-  "OFF:ID.4": {
-   "label": "ID.4",
-   "collect": "N",
-   "show_list": "N",
-   "show_recommend": "N",
-   "tab1": "N",
-   "tab2": "N",
-   "tab3": "N",
-   "tab4": "N",
-   "taste_rank": null,
-   "sites": {
-    "revolt": 5
-   }
-  },
   "OFF:더 뉴 그랜저 하이브리드": {
    "label": "더 뉴 그랜저 하이브리드",
    "collect": "N",
@@ -1499,6 +1532,20 @@
    "taste_rank": null,
    "sites": {
     "kcar": 4
+   }
+  },
+  "OFF:Model": {
+   "label": "Model",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 4
    }
   },
   "OFF:UX250h": {
@@ -1656,6 +1703,20 @@
     "heydealer": 3
    }
   },
+  "OFF:ID.5": {
+   "label": "ID.5",
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {
+    "kbchachacha": 3
+   }
+  },
   "OFF:K5 2세대": {
    "label": "K5 2세대",
    "collect": "N",
@@ -1752,20 +1813,6 @@
    "taste_rank": null,
    "sites": {
     "volvo_selekt": 3
-   }
-  },
-  "OFF:iX3": {
-   "label": "iX3",
-   "collect": "N",
-   "show_list": "N",
-   "show_recommend": "N",
-   "tab1": "N",
-   "tab2": "N",
-   "tab3": "N",
-   "tab4": "N",
-   "taste_rank": null,
-   "sites": {
-    "revolt": 3
    }
   },
   "OFF:v60-cross-country": {

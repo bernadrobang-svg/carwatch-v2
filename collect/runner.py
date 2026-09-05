@@ -95,10 +95,22 @@ def load_targets(path: str = "config/targets.json") -> dict[str, dict]:
     """
     with open(path, encoding="utf-8") as f:
         raw = json.load(f)
-    return {
+    got = {
         k: v for k, v in raw.items()
         if isinstance(v, dict) and "collect_group" in v
     }
+    # ★★★★★ 09-06 (r1188 J-2) — ★ **차종 표가 분류의 정본**이다.
+    #   ★ 마스터 — 「★ 앞으로 ★ 분류 관련된 부분은 ★ **다 그 테이블을 보게** 고쳐라」
+    #   ★ ★ `collect=N` 인 차종은 ★ **안 받는다.**  ★ 새 차종을 켜려면
+    #     ★ ★ ★ 표에서 ★ `collect` 를 Y 로 바꾼다 — ★ 목록을 뽑아 되묻지 않는다.
+    #   ★ 표가 없으면 ★ 안 거른다 — ★ 표가 없는 것은 ★ `S46-289` 가 잡는다
+    from store.dictionary import vehicle_says, vehicle_table
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(path)))
+    if vehicle_table(root):
+        got = {k: v for k, v in got.items()
+               if vehicle_says(k, "collect", root)}
+    return got
 
 
 def collect_groups(targets: dict[str, dict], site: str) -> list[CollectGroup]:
