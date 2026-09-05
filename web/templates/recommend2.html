@@ -1,0 +1,115 @@
+<!-- ★★★★★★★ 09-05 — ★ **추천 탭 2** · ★ 가이드가 짓는다
+     ★ 마스터 — 「★ 시안·HTML·CSS 는 ★ **네가 해야 될 일**이다.
+       ★ 개발팀은 ★ **관련된 값을 찾아서 붙인다**」
+     ★ 시안 `ref/screens/v4m_recommend2_시안.html` · 규격 `docs/RECOMMEND_SCREEN.md`
+     ★ CSS 는 `web/static/app.css` 맨 끝 (`.rc2-*`)
+
+     ★★ 개발측이 채울 것 —
+       `tabs`     탭 목록 (★ 자료로 정한다 · ★ 코드에 박지 마라)
+       `picks`    고르개.  ★ 묶음마다 — `label` ＋ `items[]`(`label`·`on`·`q`)
+                  ★ 배달 / 지역(서울·인천·경기·대구·그 외) / 차종 / 등급 / 값
+       `sorts`    줄 세우기 단추 (`label`·`on`·`q`)
+       `page`     `total`·`from`·`to`·`links[]`(`n`·`on`·`q`)·`first`·`last`
+       `rows`     매물.  ★ 한 줄에 —
+                  listing_id · photo_url · photo_note · price · grade · taste_rank
+                  title · meta · region · region_kind(`deliver`·`near`·`far`) · over_budget
+                  depreciation(감가율) · dep_ok(50% 넘었나) · soh · accident
+                  km_vs_avg · trim · colors · options · warranty · site_warranty · tire
+     ★★★ 없는 값은 ★ **빈칸으로 두지 말고** ★ 「모름」·「미조회」를 넣어라 (RULES 2) -->
+
+<h1>추천 · 값이 먼저</h1>
+<p class="sub">값 → 등급 → 취향 순위로 세웁니다</p>
+
+<!-- ★ 탭 — ★ 자료로 정한다.  ★ 늘고 빠진다 (마스터 09-05) -->
+<p class="sitebar picktabs">
+  {% for t in tabs %}<a class="btn{% if t.on %} on{% endif %}"
+    href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
+</p>
+
+<!-- ★★ 여럿 고르기 — ★ 고른 것은 ★ 모두 함께(AND) 걸린다 -->
+<div class="rc2-pickbox">
+  {% for g in picks %}
+  <div class="rc2-pickrow"><b>{{ g.label }}</b>
+    {% for it in g.items %}<a class="rc2-chip{% if it.on %} on{% endif %}"
+      href="{{ it.q }}">{{ it.label }}</a>{% endfor %}</div>
+  {% endfor %}
+  <p class="rc2-and">★ 고른 것은 <strong>모두 함께(AND)</strong> 걸립니다</p>
+</div>
+
+<!-- ★ 줄 세우기 단추 — ★ 눌린 것이 보여야 한다 -->
+<p class="rc2-sorts">
+  {% for s in sorts %}<a class="{% if s.on %}on{% endif %}"
+    href="{{ s.q }}">{{ s.label }}</a>{% endfor %}
+</p>
+
+<!-- ★★ 쪽 번호 — ★ 마스터 09-05 「★ 지금 전혀 없다」 -->
+<p class="rc2-pager"><span class="cnt">{{ page.total | num }}건 중
+  {{ page.from | num }}–{{ page.to | num }}</span>
+  <a href="{{ page.first }}">≪</a>
+  {% for l in page.links %}<a class="{% if l.on %}on{% endif %}"
+    href="{{ l.q }}">{{ l.n }}</a>{% endfor %}
+  <a href="{{ page.last }}">≫</a></p>
+
+{% for r in rows %}
+<div class="rc2-card">
+  <div class="rc2-line1">
+    <span class="rc2-price">{{ r.price }}</span>
+    <span class="rc2-grade">{{ r.grade }}</span>
+    {% if r.taste_rank %}<span class="rc2-rank">취향 {{ r.taste_rank }}위</span>{% endif %}
+    <span class="rc2-name">{{ r.title }}</span>
+    <span class="rc2-region {{ r.region_kind }}">{{ r.region }}</span>
+    <!-- ★ 값이 안 맞아도 ★ 지우지 않는다 — ★ 「예산 밖」으로 적는다 (마스터 09-05) -->
+    {% if r.over_budget %}<span class="rc2-over">예산 밖</span>{% endif %}
+  </div>
+
+  <!-- ★ 사진 — ★ 글과 한 흐름에 (마스터 09-04 「별도 td·tr 로 구분하지 말고」) -->
+  {% if r.photo_url %}<img class="rc2-thumb" src="{{ r.photo_url }}"
+    alt="" loading="lazy">{% endif %}
+  {% if !r.photo_url %}<span class="rc2-nophoto">{{ r.photo_note }}</span>{% endif %}
+
+  <p class="rc2-meta">{{ r.meta }}</p>
+
+  <!-- ★★ 반드시 낼 것 넷 (마스터 09-05) -->
+  <div class="rc2-facts">
+    <span class="rc2-fact">감가율
+      {% if r.depreciation %}<b class="{% if r.dep_ok %}rc2-good{% endif %}{% if !r.dep_ok %}rc2-bad{% endif %}"
+        >{{ r.depreciation }}</b>{% endif %}
+      {% if !r.depreciation %}<b class="rc2-unknown">신차가 미조회</b>{% endif %}</span>
+    <span class="rc2-fact">배터리 SOH
+      {% if r.soh %}<b class="rc2-good">{{ r.soh }}</b>{% endif %}
+      {% if !r.soh %}<b class="rc2-unknown">모름</b>{% endif %}</span>
+    <span class="rc2-fact">사고
+      {% if r.accident %}<b>{{ r.accident }}</b>{% endif %}
+      {% if !r.accident %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
+    <span class="rc2-fact">주행 <b>{{ r.km_vs_avg }}</b></span>
+  </div>
+
+  <!-- ★★ 더 보기 — ★ 옵션·보증·트림·색 (마스터 확정 안 ②)
+       ★ 26축 전부는 ★ `/detail/{id}` 가 낸다 — ★ 여기 다 내지 마라 -->
+  <details class="open2"><summary>★ 더 보기 ▾ (옵션 · 보증 · 트림 · 색)</summary>
+    <div class="more2">
+      <div>트림 <b>{{ r.trim }}</b></div>
+      <div>외장 / 내장 <b>{{ r.colors }}</b></div>
+      <div>선택 옵션 <b>{{ r.options }}</b></div>
+      <div>제조사 보증 <b>{{ r.warranty }}</b></div>
+      <div>사이트 보증 <b>{{ r.site_warranty }}</b></div>
+      <div>타이어 <b>{{ r.tire }}</b></div>
+    </div>
+  </details>
+
+  <!-- ★★★ 관심과 분석은 ★ 다르다 (마스터 09-05)
+       ★ 관심은 ★ 비교 용도 · ★ 분석은 ★ 진짜 사기 위한 것 -->
+  <div class="rc2-acts">
+    <a class="btn ask" href="/analyze/add/{{ r.listing_id }}">분석 맡기기</a>
+    <a class="btn" href="/watch/add/{{ r.listing_id }}">관심</a>
+    <a class="btn" href="/detail/{{ r.listing_id }}">상세 ▸</a>
+  </div>
+</div>
+{% endfor %}
+
+<p class="rc2-pager"><span class="cnt">{{ page.total | num }}건 중
+  {{ page.from | num }}–{{ page.to | num }}</span>
+  <a href="{{ page.first }}">≪</a>
+  {% for l in page.links %}<a class="{% if l.on %}on{% endif %}"
+    href="{{ l.q }}">{{ l.n }}</a>{% endfor %}
+  <a href="{{ page.last }}">≫</a></p>

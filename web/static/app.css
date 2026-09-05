@@ -3383,3 +3383,73 @@ details.open2:not([open])>*:not(summary){display:none}
   display:flex;flex-wrap:wrap;gap:6px 16px}
 .more2 div{font-size:12px;color:var(--dim);flex:1 1 150px}
 .more2 b{color:var(--text)}
+
+
+/* ★★★★★★★ 09-05 — ★ **추천 탭 2** · ★ 가이드가 짓는다
+   ★ 시안 `ref/screens/v4m_recommend2_시안.html` · 틀 `web/templates/recommend2.html`
+   ★★ 시안에서 재고 넣었다 — ★ 390px 가려진 글자 **0** (펼친 채로도 0) */
+
+/* ★ 여럿 고르기 — ★ AND */
+.rc2-pickbox{border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+  margin-bottom:10px}
+.rc2-pickrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.rc2-pickrow b{font-size:12px;color:var(--faint);min-width:52px}
+.rc2-chip{padding:5px 10px;border-radius:14px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--dim);font-size:12px;
+  white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.rc2-chip.on{border-color:var(--accent);color:var(--btn-on-text);
+  background:var(--accent);font-weight:700}
+.rc2-and{font-size:12px;color:var(--amber);margin:4px 0 0}
+
+/* ★ 줄 세우기 단추 — ★ 눌린 것이 보인다 */
+.rc2-sorts{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.rc2-sorts a{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
+  background:var(--surface2);color:var(--dim);text-decoration:none;font-size:13px}
+.rc2-sorts a.on{border-color:var(--amber);color:var(--amber);font-weight:700}
+
+/* ★★ 쪽 번호 — ★ 마스터 09-05 「지금 전혀 없다」 */
+.rc2-pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:14px 0;
+  font-size:13px}
+.rc2-pager a{padding:6px 10px;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--dim);text-decoration:none}
+.rc2-pager a.on{border-color:var(--accent);color:var(--btn-on-text);
+  background:var(--accent);font-weight:700}
+.rc2-pager .cnt{color:var(--dim);margin-right:6px;font-family:var(--mono)}
+
+/* ★ 카드 — ★ 값이 맨 앞이다 (마스터 확정 09-05) */
+.rc2-card{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  padding:12px;margin-bottom:12px;overflow:visible}
+.rc2-card::after{content:'';display:block;clear:both}
+.rc2-line1{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.rc2-price{font-size:19px;font-weight:800;font-family:var(--mono)}
+.rc2-grade{padding:2px 8px;border-radius:12px;border:1px solid currentColor;
+  font-weight:800;font-size:12px}
+.rc2-rank{font-size:12px;color:var(--amber);font-weight:700}
+.rc2-name{font-weight:700}
+.rc2-meta{color:var(--dim);font-size:12px;font-family:var(--mono);margin:0}
+
+/* ★ 배달 / 지역 — ★ 전국배달은 ★ 모든 사이트에 다 있다 (마스터 09-05) */
+.rc2-region{padding:2px 8px;border-radius:12px;font-size:11px;
+  border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.rc2-region.deliver{border-color:var(--accent);color:var(--accent)}
+.rc2-region.near{border-color:var(--ok);color:var(--ok)}
+/* ★ 값이 안 맞아도 ★ 지우지 않는다 */
+.rc2-over{color:var(--amber);font-weight:700;font-size:12px}
+
+/* ★ 사진 — ★ 글과 한 흐름에 */
+.rc2-thumb{float:left;width:104px;height:78px;object-fit:cover;border-radius:7px;
+  margin:0 10px 6px 0;background:var(--surface2);border:1px solid var(--line)}
+.rc2-nophoto{float:left;width:104px;height:78px;border-radius:7px;margin:0 10px 6px 0;
+  border:1px dashed var(--line2);color:var(--dim);font-size:10px;line-height:1.35;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:4px}
+@media (min-width:760px){.rc2-thumb,.rc2-nophoto{width:200px;height:150px}}
+
+/* ★★ 반드시 낼 것 넷 — 감가율 · SOH · 사고 · 주행 */
+.rc2-facts{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0}
+.rc2-fact{font-size:12px;color:var(--dim)}
+.rc2-fact b{color:var(--text)}
+.rc2-good{color:var(--ok);font-weight:700}
+.rc2-bad{color:var(--no);font-weight:700}
+/* ★ 모르는 것은 ★ 눈에 띄게 — ★ 지어내지 않았다는 표시다 */
+.rc2-unknown{color:var(--no);font-weight:700}
+.rc2-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}

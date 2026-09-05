@@ -7525,7 +7525,67 @@ def s46_283_recommend_tabs_filters_page():
     return True, "추천 화면의 탭·고르기·쪽·분석이 규격에 있다"
 
 
+def s46_284_order_is_readable():
+    """S46-284 — ★ 작업 지시가 ★ **읽히는 꼴인가** (마스터 09-05).
+
+    ★ 마스터 — 「★ 말을 정갈하게 하고 ★ 개발팀에 ★ 체계적으로 전달하는 게 중요한데
+      ★ 너는 자꾸 ★ **이력이나 너의 사고를 그냥 글자에 적기** 바쁘잖아.
+      ★ ★ 누가 ★ **네가 생각하는 사고나 그 내용을 알고 싶어 해**.
+      ★ ★ ★ 정확하게 ★ **해야 될 것만 정확히 순서대로** 지정하라고 하는데」
+    ★ 그리고 — 「★ **네가 쓴 글에도 왜 검사는 안 해?**
+      ★ ★ 개발자가 ★ **더 개발할 수 없는지** 여부에 대해서.
+      ★ ★ ★ 왜 ★ **두 번 세 번 시간을 낭비**하게 만드는 거야?」
+
+    ★ 09-05 에 무엇이 잘못됐나 —
+      ① ★ 표에 ★ **머리줄이 없었다**(`| # | 무엇 | 검산 |` 과 `|---|`) —
+         ★ 내가 520 → 253줄로 줄이며 ★ `| **` 로 시작하는 줄만 남겨
+         ★ ★ **표가 안 그려지고 글자 덩어리로** 보였다.
+      ② ★ **차례가 어디에도 없었다** — ★ 대장에만 적고 지시문엔 안 옮겨
+         ★ ★ 개발측이 ★ 위에서부터 손대 ★ **원문(1번)이 뒤로 밀렸다**.
+      ③ ★ 이름이 둘이었다 — ★ 대장은 `D1~D7` · 지시문은 `0-α~0-θ`.
+      ④ ★ 별표와 내 판단이 ★ 지시보다 많았다.
+
+    ★ 잣대 — ① 맨 앞에 ★ **차례 표**가 있다 ② 표마다 ★ **머리줄**이 있다
+             ③ 별표(★)가 ★ **줄 수보다 적다** (내 사고가 지시를 덮지 않는다).
+    """
+    orders = sorted((ROOT / "outputs").glob("ORDER_*.md"))
+    if not orders:
+        return False, "작업 지시 문서가 없다"
+    text = _read(orders[0])
+    lines = text.split("\n")
+    bad = []
+    head = "\n".join(lines[:20])
+    if "차례" not in head:
+        bad.append("맨 앞에 ★ **차례 표**가 없다 — 무엇부터 할지 모른다")
+    # ★ 표 머리 — ★ `| … |` 줄이 있으면 ★ 그 위에 `|---|` 이 있어야 한다
+    broken = 0
+    for i, ln in enumerate(lines):
+        if not ln.startswith("|") or set(ln) <= set("|- :"):
+            continue
+        # ★★★★★ 09-05 — ★ **자가 머리줄 자신을 잡았다**.
+        #   ★ 내 새 글에서 ★ 14줄이 걸렸는데 ★ 다 ★ **표의 머리**였다.
+        #   ★ ★ 봐야 할 것은 ★ 「아래에 구분줄(`|---|`)이 있는가」다 —
+        #     ★ ★ 위가 아니라 ★ **아래**를 본다.
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        prev = lines[i - 1] if i else ""
+        if nxt.strip() and set(nxt) <= set("|- :"):
+            continue          # ★ 머리줄 — ★ 아래에 구분줄이 있다
+        if prev.startswith("|"):
+            continue          # ★ 표 한가운데
+        broken += 1
+    if broken:
+        bad.append(f"표 머리가 없는 줄 {broken}개 — 마크다운이 표로 안 그려진다")
+    stars = text.count("★")
+    if stars > len(lines):
+        bad.append(f"별표가 {stars}개로 줄 수({len(lines)})보다 많다 — "
+                   "지시보다 내 판단이 많다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, f"작업 지시가 읽히는 꼴이다 ({len(lines)}줄 · 별표 {stars})"
+
+
 CHECKS = (
+    ("S46-284", "작업 지시가 읽히는 꼴인가", s46_284_order_is_readable),
     ("S46-283", "추천 탭·고르기·쪽·분석이 규격에 있는가", s46_283_recommend_tabs_filters_page),
     ("S46-282", "사이트별 매핑표가 있는가", s46_282_field_map_by_site),
     ("S46-281", "이름만 있는 옵션도 받는가", s46_281_option_names_collected),
