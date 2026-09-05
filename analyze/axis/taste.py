@@ -100,6 +100,29 @@ def color_grade_of(name: str, groups: dict) -> str:
     return hit[0] if hit else "default"
 
 
+def _fit_ladder(points: dict, full: float, grade: str):
+    """★ 사다리를 ★ **배점 안**으로 맞춘다 (09-05 · r1174 에서 잡혔다).
+
+    ★ 마스터께서 ★ `taste.color` 25 → **15** · `taste.color_int` 10 → **8** 로
+      ★ ★ 배점을 줄이셨는데 ★ `axis_rules.taste.color_points` 사다리는
+      ★ ★ ★ **25/12/7 그대로**였다 — ★ `V3-86`(축 점수가 배점을 넘지 않음)이 잡았다.
+    ★★ 사다리를 손으로 다시 쓰지 않는다 (★ 그건 가이드의 값이다) —
+      ★ ★ **맨 위를 배점에 맞추고 나머지를 그 비율로** 줄인다.
+    ★ ★ ★ 가이드가 사다리를 고치시면 ★ 비율이 1.0 이 되어 ★ 아무 것도 안 바뀐다
+    """
+    got = points.get(grade)
+    if got is None or not full:
+        return got
+    top = max(float(x) for x in points.values())
+    if top <= float(full):
+        return got
+    # ★ 사다리는 규격이 다 정수다 (25/12/7 · 10/5/2) — ★ 줄인 뒤에도 정수로 둔다.
+    #   ★ `report/export` 가 ★ 「값과 코드로 낸다」를 정수로 잰다 (test_report).
+    #   ★ 실측 — 색 25/12/7 → **15/7/4** · 내장색 10/5/2 → **8/4/2**.
+    #   ★ ★ 마스터의 말씀 「흰색·검정은 디폴트 7점」과 그대로 맞는다
+    return int(round(float(got) * float(full) / top))
+
+
 def _color(ctx: AxisContext, v: Verdict) -> None:
     """색상 15/7/0 — ★ 좋아함 15 · 보통 7 · 싫어함 0 (마스터 확정 08-29 · r1000 ②)."""
     r = ctx.policy.rule("taste")
@@ -120,7 +143,9 @@ def _color(ctx: AxisContext, v: Verdict) -> None:
     if grade is None:
         put(v, COLOR, None, PRIO_OBSERVED, "unclassified", excluded=True)
         return
-    put(v, COLOR, r["color_points"][grade], PRIO_OBSERVED, "detail_color")
+    put(v, COLOR, _fit_ladder(r["color_points"], ctx.policy.comp(COLOR),
+                              grade),
+        PRIO_OBSERVED, "detail_color")
 
 
 def _picked(ctx: AxisContext, v: Verdict) -> None:
@@ -243,12 +268,12 @@ def _color_int(ctx: AxisContext, v: Verdict) -> None:
     groups = r.get("color_int_groups") or {}
     points = r.get("color_int_points") or {}
     grade = color_grade_of(name, groups) if groups else "default"
-    got = points.get(grade)
+    got = _fit_ladder(points, full, grade)
     if got is None:
         put(v, COLOR_INT, None, PRIO_OBSERVED, "rule_or_source_missing",
             excluded=True)
         return
-    put(v, COLOR_INT, int(got), PRIO_OBSERVED, f"color_int_{grade}")
+    put(v, COLOR_INT, got, PRIO_OBSERVED, f"color_int_{grade}")
 
 
 def _fixed(ctx: AxisContext, v: Verdict, comp: str) -> None:

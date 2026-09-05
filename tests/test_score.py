@@ -516,12 +516,11 @@ def test_spec_gate() -> None:
                                TASTE_FIXED={"taste_display": None,
                                             "taste_interior": None,
                                             "taste_size": None}))
+    _fixed3 = ("taste.display", "taste.interior", "taste.size")
     check("★★ 표에 없는 차종은 0 이 아니라 「미정」이다 (0-1e-3)",
-          all(x.excluded for x in nofx.entries
-              if x.component in ("taste.display", "taste.interior",
-                                 "taste.size")),
-          str([(x.component, x.excluded) for x in nofx.entries
-               if x.component.startswith("taste.")]))
+          all(k in nofx.excluded for k in _fixed3),
+          str({k: (nofx.values.get(k), k in nofx.excluded)
+               for k in _fixed3}))
     # ★★ 개정 431 — 개정 292 를 폐기했다.  등급에서 빼는 갈래가 **없다**
     check("★★ HUD 도 등급에 들어간다 — 빼는 갈래가 없다 (개정 431)",
           __import__("analyze.axes", fromlist=["x"]
@@ -681,7 +680,13 @@ def test_color() -> None:
     ★ 옛 시험은 ★ 「흔한가」로 재던 판이었다 (흰색이 선호 · 유색이 기피).
       ★ ★ 갈래 이름도 ★ `neutral` → `default` 로 바뀌었다
     """
-    r = POLICY.rule("taste")["color_points"]
+    # ★★★★★ 09-05 r1174 — ★ 배점이 ★ 25 → **15** 로 줄었는데
+    #   ★ `color_points` 사다리는 ★ 25/12/7 그대로다.  ★ 사다리를 배점 안으로
+    #   ★ ★ 맞춰 읽는다 (`_fit_ladder`) — ★ 시험도 코드와 같은 자를 쓴다
+    from analyze.axis.taste import _fit_ladder as _fit
+    _cpts = POLICY.rule("taste")["color_points"]
+    _ccap = POLICY.comp("taste.color")
+    r = {g: _fit(_cpts, _ccap, g) for g in _cpts}
     for name, want in (("청색", r["preferred"]), ("흰색", r["default"]),
                        ("빨간색", r["avoided"])):
         v = analyze_listing(ctx(snap(color_ext_raw=name)))

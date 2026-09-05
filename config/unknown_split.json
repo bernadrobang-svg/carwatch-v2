@@ -104,13 +104,6 @@
       "endpoint": "unified_report",
       "key": "tireTread"
     },
-    "taste.trim": {
-      "unknown": [
-        "origin_price_missing"
-      ],
-      "endpoint": "detail",
-      "key": "category.originPrice"
-    },
     "value.origin": {
       "unknown": [
         "origin_price_missing"
@@ -119,13 +112,6 @@
       "key": "category.originPrice"
     },
     "taste.option": {
-      "unknown": [
-        "missing"
-      ],
-      "endpoint": "detail",
-      "key": "options.standard"
-    },
-    "taste.hud": {
       "unknown": [
         "missing"
       ],
@@ -201,6 +187,42 @@
       "key": "advertisement.price",
       "kind_override": "4",
       "why": "★ 갈래 ④ — 원문에는 값이 다 있다. 같은 차종·트림·연식 표본이 5건에 못 미쳐 ★ 우리가 중앙값을 못 만든다 (개정 430 「시세 세 겹」)"
+    },
+    "taste.display": {
+      "unknown": [
+        "taste_fixed_missing"
+      ],
+      "endpoint": "config",
+      "key": "targets.json:taste_display",
+      "kind_override": "4",
+      "why": "★ 갈래 ④ — 원문과는 상관이 없다.  ★ 차종이 정해지면 값이 정해지는 ★ **차종 고정값**인데 (마스터 0-1e-2 「매물마다 재지 않는다」) ★ `config/targets.json` 그 차종 칸이 비어 있어 ★ 우리가 못 만든다. ★ 0 이 아니라 ★ 「미정」이다 (0-1e-3)"
+    },
+    "taste.interior": {
+      "unknown": [
+        "taste_fixed_missing"
+      ],
+      "endpoint": "config",
+      "key": "targets.json:taste_interior",
+      "kind_override": "4",
+      "why": "★ 갈래 ④ — 원문과는 상관이 없다.  ★ 차종이 정해지면 값이 정해지는 ★ **차종 고정값**인데 (마스터 0-1e-2 「매물마다 재지 않는다」) ★ `config/targets.json` 그 차종 칸이 비어 있어 ★ 우리가 못 만든다. ★ 0 이 아니라 ★ 「미정」이다 (0-1e-3)"
+    },
+    "taste.size": {
+      "unknown": [
+        "taste_fixed_missing"
+      ],
+      "endpoint": "config",
+      "key": "targets.json:taste_size",
+      "kind_override": "4",
+      "why": "★ 갈래 ④ — 원문과는 상관이 없다.  ★ 차종이 정해지면 값이 정해지는 ★ **차종 고정값**인데 (마스터 0-1e-2 「매물마다 재지 않는다」) ★ `config/targets.json` 그 차종 칸이 비어 있어 ★ 우리가 못 만든다. ★ 0 이 아니라 ★ 「미정」이다 (0-1e-3)"
+    },
+    "taste.color_int": {
+      "unknown": [
+        "missing",
+        "rule_or_source_missing"
+      ],
+      "endpoint": "detail",
+      "key": "spec.colorInnerName",
+      "why": "★ 내장색 — 사이트마다 이름이 다르다 (kia_cpo interiorColorCodeName · heydealer interior_description · volvo_selekt 「내부 색상」). ★ 원문에 없으면 ① 이다"
     }
   },
   "_kind_override_note": "★ 원문 body 로 못 가르는 축이 있다.  그런 축은 여기에 갈래와 까닭을 적는다.  ★ 짐작이 아니라 **왜 그렇게 정했는지**를 남긴다",
@@ -208,7 +230,9 @@
     "missing",
     "site_unavailable",
     "origin_price_missing",
-    "market_sample_short"
+    "market_sample_short",
+    "taste_fixed_missing",
+    "rule_or_source_missing"
   ],
   "unknown_source_marks": [
     "확인 못 함"
