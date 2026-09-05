@@ -1,0 +1,98 @@
+{
+ "_어떻게": "가이드가 원문에서 캤다 (09-05) — 개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "encar",
+ "줄": 13,
+ "표": [
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "category.gradeName",
+   "core_column": "trim_grade_name",
+   "본보기": "3.5 LPG 2WD"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "category.yearMonth",
+   "core_column": "year_month",
+   "본보기": "202408"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "category.formYear",
+   "core_column": "year_month",
+   "본보기": "2025"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "category.originPrice",
+   "core_column": "price_origin_won",
+   "본보기": "4406"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "category.gradeDetailName",
+   "core_column": "trim_grade_name",
+   "본보기": "익스클루시브"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "advertisement.price",
+   "core_column": "price_current_won",
+   "본보기": "3044"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "spec.mileage",
+   "core_column": "mileage_km",
+   "본보기": "3847"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "spec.colorName",
+   "core_column": "color_ext_raw",
+   "본보기": "흰색"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "options.standard[]",
+   "core_column": "options_name_json",
+   "본보기": "001"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "options.etc[]",
+   "core_column": "options_name_json",
+   "본보기": "취등록세 0원"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "options.choice[]",
+   "core_column": "options_choice_json",
+   "본보기": "10004"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "options.tuning[]",
+   "core_column": "options_name_json",
+   "본보기": "023"
+  },
+  {
+   "site": "encar",
+   "endpoint": "detail",
+   "json_path": "vin",
+   "core_column": "vin",
+   "본보기": "None"
+  }
+ ]
+}

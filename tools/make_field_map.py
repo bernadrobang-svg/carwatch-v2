@@ -18,7 +18,21 @@ import re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # ★ 낱말 → 우리 칸.  ★ 앞에 있는 것이 먼저 맞는다 (좁은 것부터)
+# ★★★★★ 09-05 — ★ **한 낱말이 여러 칸을 뜻한다**.  ★ 엔카 실측:
+#   ★ `options.choice[]` 는 ★ **값이 있는 코드**(10004) → `options_choice_json`
+#   ★ `options.standard[]`·`etc[]`·`tuning[]` 은 ★ **이름 목록** → `options_name_json`
+#   ★ `category.originPrice` 는 ★ **신차가**(4406) → `price_origin_won`
+#   ★ ★ 그래서 ★ **좁은 길을 먼저** 둔다 — ★ 앞에 있는 것이 먼저 맞는다
 GUESS = (
+    ("options.choice", "options_choice_json"),
+    ("options.standard", "options_name_json"),
+    ("options.etc", "options_name_json"),
+    ("options.tuning", "options_name_json"),
+    ("originprice", "price_origin_won"),
+    ("gradedetailname", "trim_grade_name"),
+    ("gradename", "trim_grade_name"),
+    ("colorname", "color_ext_raw"),
+    ("yearmonth", "year_month"),
     ("thumbnail_image", "photo_list_json"),
     ("image_url", "photo_list_json"),
     ("option_package", "options_name_json"),
@@ -35,7 +49,11 @@ GUESS = (
     ("price", "price_current_won"),
 )
 # ★ 이 낱말이 들어가면 ★ 값이 아니다 — ★ 크기·수·참거짓
-SKIP = ("width", "height", "count", "is_", "_id", "url_type", "order")
+# ★ 09-05 — ★ 이 낱말이 들어가면 ★ 값이 아니다.
+#   ★ `warranty.bodyMileage`(보증 주행) · `leaseRentInfo`(리스) · `EnglishName` ·
+#   ★ `gradeCd`(코드) 를 ★ 잘못 이었다 — ★ 실측에서 잡아 뺐다
+SKIP = ("width", "height", "count", "is_", "_id", "url_type", "order",
+        "warranty", "leaserent", "englishname", "cd", "type", "custom")
 
 
 def walk(o, pre=""):
@@ -53,7 +71,16 @@ def walk(o, pre=""):
 
 
 def from_json(site: str, path: str, endpoint: str = "detail") -> str:
-    """★ 원문 파일 하나에서 ★ 매핑표 후보를 낸다."""
+    """★ 원문 파일 하나에서 ★ 매핑표 후보를 낸다.
+
+    ★★★★★ 09-05 — ★ **여기서 크게 틀렸다**.  ★ `curl` 이 실패해도
+      ★ ★ `/tmp/o.txt` 에 ★ **앞 응답이 그대로 남아** ★ 기아·렉서스 표에
+      ★ ★ ★ **리볼트 자료가 들어갔다**(`prnd-car-purchase` 주소가 그대로).
+      ★ ★ ★ ★ 셋이 ★ **똑같은 34줄**이었다 — ★ 그래서 잡았다.
+    ★★ 그래서 ★ **본보기 값에 그 사이트 자취가 있는지** 본다 —
+      ★ 없으면 ★ **표를 안 만든다**.  ★ 「남의 자료로 표를 만드는 것」이 ★ 가장 나쁘다
+    """
+    import hashlib as _h
     with open(path, encoding="utf-8") as f:
         body = json.load(f)
     rows = []
@@ -67,6 +94,22 @@ def from_json(site: str, path: str, endpoint: str = "detail") -> str:
                              "json_path": p, "core_column": col,
                              "본보기": str(v)[:40]})
                 break
+    if not rows:
+        print(f"★ {site} — 길 0개.  ★ 표를 안 만든다")
+        return ""
+    # ★ 09-05 — ★ 남의 자료가 섞이지 않았는지 ★ 자취로 본다
+    mark = _h.md5(json.dumps(rows, ensure_ascii=False,
+                             sort_keys=True).encode()).hexdigest()[:10]
+    for old in os.listdir(os.path.join(ROOT, "outputs")):
+        if not old.startswith("field_map_") or old == f"field_map_{site}.json":
+            continue
+        with open(os.path.join(ROOT, "outputs", old), encoding="utf-8") as f:
+            prev = json.load(f)
+        if _h.md5(json.dumps(prev.get("표", []), ensure_ascii=False,
+                             sort_keys=True).encode()).hexdigest()[:10] == mark:
+            print(f"★ {site} — ★ {old} 과 ★ **똑같다**.  "
+                  "★ 원문이 안 바뀐 것이다 — ★ 표를 안 만든다")
+            return ""
     out = os.path.join(ROOT, "outputs", f"field_map_{site}.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump({"_어떻게": "가이드가 원문에서 캤다 (09-05) — "
