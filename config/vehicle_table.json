@@ -9,7 +9,8 @@
   "tab3": "추천 탭3(분석) Y/N",
   "tab4": "추천 탭4(GV70·X3) Y/N",
   "sites": "사이트별 받은 건수. 0 이면 그 사이트에 없거나 못 받는다",
-  "taste_rank": "마스터 취향 순위"
+  "taste_rank": "마스터 취향 순위 1~10. 12종에만 있다. 이것은 마스터가 정하신 차종 순위이지 result_axis 취향 축 점수가 아니다. 둘은 다르다",
+  "tab3_note": "탭3(분석)은 차종으로 거르지 않는다. 마스터가 분석을 맡긴 차만 뜬다. collect=Y 면 다 Y 다"
  },
  "차종": {
   "G80_25T": {
@@ -19,7 +20,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -56,7 +57,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -74,7 +75,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -113,7 +114,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -148,7 +149,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -163,7 +164,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -218,7 +219,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -236,7 +237,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -253,7 +254,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -269,7 +270,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -306,7 +307,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -337,7 +338,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -355,7 +356,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -373,7 +374,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "N",
+   "tab3": "Y",
    "tab4": "N",
    "taste_rank": null,
    "sites": {

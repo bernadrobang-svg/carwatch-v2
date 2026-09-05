@@ -105,7 +105,11 @@ def build(base_url: str, name: str = "admin", secret: str = "12345678") -> str:
             "tab3": "추천 탭3(분석) Y/N",
             "tab4": "추천 탭4(GV70·X3) Y/N",
             "sites": "사이트별 받은 건수. 0 이면 그 사이트에 없거나 못 받는다",
-            "taste_rank": "마스터 취향 순위",
+            "taste_rank": ("마스터 취향 순위 1~10. 12종에만 있다. "
+                           "이것은 마스터가 정하신 차종 순위이지 "
+                           "result_axis 취향 축 점수가 아니다. 둘은 다르다"),
+            "tab3_note": ("탭3(분석)은 차종으로 거르지 않는다. "
+                          "마스터가 분석을 맡긴 차만 뜬다. collect=Y 면 다 Y 다"),
         },
         "차종": {},
     }
@@ -115,6 +119,11 @@ def build(base_url: str, name: str = "admin", secret: str = "12345678") -> str:
         on = bool(v.get("active"))
         rec = bool(v.get("recommend"))
         rank = v.get("taste_rank")
+        # 09-06 — 탭마다 뜻이 다르다 (개발측 v386 지적 「탭별로 갈리는 것이 없다」).
+        #   탭1 내 기준에 가까운 차 — 추천 차종 전부. 마스터가 「그대로 두라」 하셨다
+        #   탭2 값→등급→취향 — 추천 차종 전부. 순서만 다르다
+        #   탭3 분석 — 차종으로 안 가른다. 마스터가 맡긴 차만 뜬다 → 전 차종 Y
+        #   탭4 GV70 2.5T · BMW X3 — 마스터가 지금 고르시는 둘뿐
         out["차종"][k] = {
             "label": v.get("label"),
             "collect": "Y" if on else "N",
@@ -122,7 +131,7 @@ def build(base_url: str, name: str = "admin", secret: str = "12345678") -> str:
             "show_recommend": "Y" if rec else "N",
             "tab1": "Y" if rec else "N",
             "tab2": "Y" if rec else "N",
-            "tab3": "Y" if rec else "N",
+            "tab3": "Y" if on else "N",
             "tab4": "Y" if k in ("GV70_25T", "X3_IMPORT") else "N",
             "taste_rank": rank,
             "sites": seen.get(k, {}),
