@@ -11,7 +11,8 @@
 지시서   `docs/KBCHACHACHA_API.md` · `docs/TARGET_KEY_MAP.md`
 근거     ★★ 봇 차단 가르기가 ★ 핵심이다 (명령서 3-2)
 값규칙   ★ 10KB 미만이거나 「로봇 여부 확인」이 있으면 ★ 수집 실패다.
-        ★ 최대 3회 재시도.  ★ 절대 「없음」으로 저장하지 않는다
+        ★ 최대 3회 재시도.  ★ 절대 「없음」을 **값으로 삼지** 않는다
+        ★ 막힌 쪽은 ★ `status="blocked"` 로 ★ **원문에 남긴다** (STEP 53-⑤)
         ★ 3회 다 실패하면 ★ 그대로 두고 ★ 세어서 보고한다
 금지     ★ 못 받은 것을 「없음」으로 저장하는 것 — ★ 28% 가 「사고 없음」이 된다
 """
@@ -115,20 +116,30 @@ def _get(url: str, headers: dict, timeout: float) -> str | None:
 
 
 def fetch_ok(url: str, headers: dict, timeout: float, cfg: dict) -> tuple:
-    """★ 봇 차단이면 다시 부른다.  ★ 「없음」으로 내려가지 않는다.
+    """★ 봇 차단이면 다시 부른다.  ★ 「없음」을 값으로 삼지 않는다.
 
-    반환   (본문 또는 None, 시도 횟수, 봇차단이었나)
-    ★ 3회 다 막히면 ★ None 이다 — ★ 부르는 쪽이 「못 받았다」로 적는다
+    반환   (본문 또는 None, 시도 횟수, 봇차단이었나, ★ **막힌 몸통**)
+    ★ 3회 다 막히면 ★ 첫째 값이 None 이다 — ★ 부르는 쪽이 「못 받았다」로 적는다
+    ★★★★★ 09-05 (D1 · `S46-278`) — ★ **막힌 몸통을 함께 돌려준다.**
+      ★★★ 마스터 — 「★ **캡차를 하더라도 ★ 받는 건 받아야 하는데
+        ★ 원문 파일 저장을 안 하나?**」
+      ★ 규격 `STEP 53-⑤` — 「★ **실패 응답도 원문이다**」.
+      ★★ 실측 09-05 — ★ KB 원문이 ★ **0건**이었다.  ★ 막힌 것을 ★ 버리고 있었다 —
+        ★ ★ 그래서 ★ 「언제부터 · 어떻게 막혔나」를 ★ **뒤에 못 봤다**
+      ★ 넷째 값은 ★ 부르는 쪽이 ★ `save_file(..., status="blocked")` 로 남긴다
     """
     walled = False
+    last = None
     for n in range(1, RETRY + 1):
         body = _get(url, headers, timeout)
         if body is not None and not is_bot_wall(body, cfg):
-            return body, n, walled
+            return body, n, walled, None
+        if body is not None:
+            last = body                # ★ 막힌 쪽 그 자체가 ★ 원문이다
         walled = True
         if n < RETRY:
             time.sleep(RETRY_WAIT * n)
-    return None, RETRY, True
+    return None, RETRY, True, last
 
 
 def page_ids(body: str) -> list:
@@ -234,7 +245,8 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
                seen: set) -> dict:
     """차종 하나를 ★ 끝까지 받는다.  ★ 끝은 ★ 크기로 가른다 (규격 1a).
 
-    ★ 봇 차단(2,759B)  → ★ 재시도한다.  ★ 「없음」으로 저장하지 않는다
+    ★ 봇 차단(2,759B)  → ★ 재시도한다.  ★ 「없음」을 값으로 삼지 않는다
+                     ★ 막힌 쪽은 ★ 원문으로 남긴다 (D1 · STEP 53-⑤)
     ★ 진짜 끝(3,585B + 「차량이 없습니다」) → ★ 거기서 멈춘다
     """
     # ★★★ 08-29 (개정 838) — ★ 「끝까지 받았나」를 돌려준다.
@@ -247,14 +259,19 @@ def walk_group(adapter: KbChaChaChaAdapter, cfg: dict, g: dict,
         req = adapter.list_url(None, page=page,
                                maker=g["makerCode"], klass=g["classCode"],
                                car=g.get("carCode"))
-        body, _tries, walled = fetch_ok(req.url, req.headers,
+        body, _tries, walled, blocked = fetch_ok(req.url, req.headers,
                                         req.timeout_sec, cfg)
         pages = page
         if walled:
             walls += 1
         if body is None:
             # ★ 3회 다 막혔다.  ★ 여기서 끝이라고 하지 않는다 — ★ 못 받은 것이다
-            print(f"    {page}쪽 — ★ 3회 다 막혔다.  ★ 저장하지 않는다")
+            # ★★★★★ 09-05 (D1 · `S46-278`) — ★ **막힌 쪽도 원문이다** (STEP 53-⑤).
+            #   ★ 값으로 삼지는 않는다 (금지 12) — ★ `status="blocked"` 로 남길 뿐이다
+            if blocked:
+                save_file(SITE_CODE, "list", None, req.url, blocked, _now(),
+                          status="blocked", page=page, root=ROOT)
+            print(f"    {page}쪽 — ★ 3회 다 막혔다.  ★ 막힌 쪽을 원문으로 남겼다")
             break
         if is_real_end(body, cfg):
             done = True                 # ★ 진짜 끝이다 — ★ 끝까지 받았다
@@ -277,11 +294,15 @@ def count_all(adapter: KbChaChaChaAdapter, cfg: dict, limit: int = MAX_PAGES):
     seen, pages, empty_at = set(), 0, None
     for page in range(1, limit + 1):
         req = adapter.list_url(None, page=page)
-        body, _tries, walled = fetch_ok(req.url, req.headers,
+        body, _tries, walled, blocked = fetch_ok(req.url, req.headers,
                                         req.timeout_sec, cfg)
         pages = page
         if body is None:
-            print(f"  {page}쪽 — ★ 못 받았다 (봇 차단 {walled})")
+            # ★ 09-05 (D1) — ★ 막힌 쪽도 원문으로 남긴다 (STEP 53-⑤)
+            if blocked:
+                save_file(SITE_CODE, "list", None, req.url, blocked, _now(),
+                          status="blocked", page=page, root=ROOT)
+            print(f"  {page}쪽 — ★ 못 받았다 (봇 차단 {walled}) · 원문은 남겼다")
             break
         got = page_ids(body)
         if not got:
@@ -303,7 +324,7 @@ def probe_detail(adapter: KbChaChaChaAdapter, cfg: dict, ids: list) -> dict:
     got = {"본": 0, "정상": 0, "재시도로 살림": 0, "3회 다 막힘": 0}
     for one in ids:
         req = adapter.detail_urls(one)[0]
-        body, tries, walled = fetch_ok(req.url, req.headers,
+        body, tries, walled, blocked = fetch_ok(req.url, req.headers,
                                        req.timeout_sec, cfg)
         got["본"] += 1
         if body is None:
@@ -350,7 +371,8 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
                   limit: int = 0) -> dict:
     """★ 1걸음 — 받는다.  ★ `raw_response` 에만 넣는다 (개정 857).
 
-    ★ 봇 차단(30%)은 ★ 「없음」으로 저장하지 않는다 — ★ 다음 회차에 다시 부른다
+    ★ 봇 차단(30%)은 ★ 「없음」을 값으로 삼지 않는다 — ★ 다음 회차에 다시 부른다
+      ★ 막힌 몸통은 ★ `status="blocked"` 로 ★ 원문에 남긴다 (D1)
     ★ 이미 받은 것은 ★ 건너뛴다 — ★ 여러 회차에 나눠 채운다 (규격 1-1)
     ★★ ★ 통신과 ★ `time.sleep` 은 ★ **트랜잭션 밖**이다.
       ★ 한 건 넣고 ★ 곧바로 커밋해 ★ 잠금 창을 ★ 한 INSERT 로 줄인다
@@ -385,9 +407,15 @@ def fetch_details(adapter: KbChaChaChaAdapter, cfg: dict, ids: list,
     walls_in_row = 0
     for n, one in enumerate(todo, 1):
         req = adapter.detail_urls(one)[0]
-        body, _tries, _w = fetch_ok(req.url, req.headers, req.timeout_sec, cfg)
+        body, _tries, _w, blocked = fetch_ok(req.url, req.headers,
+                                             req.timeout_sec, cfg)
         if body is None:
-            # ★ 못 받았다.  ★ 「없음」으로 저장하지 않는다 (금지 12 · 개정 289)
+            # ★ 못 받았다.  ★ 「없음」을 **값으로 삼지** 않는다 (금지 12 · 개정 289)
+            # ★★★★★ 09-05 (D1 · `S46-278`) — ★ **막힌 몸통은 원문으로 남긴다**.
+            #   ★ 값이 아니라 ★ 자취다 — ★ 「언제부터 어떻게 막혔나」가 남아야 한다
+            if blocked:
+                save_file(SITE_CODE, "detail", one, req.url, blocked, _now(),
+                          status="blocked", root=ROOT)
             got["봇차단 3회"] += 1
             walls_in_row += 1
             # ★★ 이만큼 이어서 막히면 ★ 사이트가 회차를 닫은 것이다 —
@@ -533,7 +561,8 @@ def main() -> int:
 
     if "--probe" in args:
         req = adapter.list_url(None, page=1)
-        body, _t, _w = fetch_ok(req.url, req.headers, req.timeout_sec, cfg)
+        body, _t, _w, blocked = fetch_ok(req.url, req.headers,
+                                         req.timeout_sec, cfg)
         ids = page_ids(body or "")[:opt("--probe", 10)]
         got = probe_detail(adapter, cfg, ids)
         print("★ 봇 차단 실측 —", " · ".join(f"{k} {v}" for k, v in got.items()))
@@ -637,9 +666,14 @@ def main() -> int:
     seen: set = set()
     for page in range(1, pages + 1):
         req = adapter.list_url(None, page=page)
-        body, _t, walled = fetch_ok(req.url, req.headers, req.timeout_sec, cfg)
+        body, _t, walled, blocked = fetch_ok(req.url, req.headers,
+                                             req.timeout_sec, cfg)
         if body is None:
-            print(f"  {page}쪽 — ★ 못 받았다 (봇 차단 {walled}).  ★ 저장하지 않는다")
+            # ★ 09-05 (D1) — ★ 막힌 쪽도 원문으로 남긴다 (STEP 53-⑤)
+            if blocked:
+                save_file(SITE_CODE, "list", None, req.url, blocked, _now(),
+                          status="blocked", page=page, root=ROOT)
+            print(f"  {page}쪽 — ★ 못 받았다 (봇 차단 {walled}).  ★ 원문은 남겼다")
             continue
         seen.update(page_ids(body))
         time.sleep(float(cfg.get("interval_sec") or 1.2))

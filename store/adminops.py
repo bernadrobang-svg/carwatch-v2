@@ -45,6 +45,47 @@ WRITE_OPCODES = frozenset({
     "CreateBtree", "DropTable", "DropIndex", "DropTrigger", "RenameTable",
     "ParseSchema", "VUpdate", "VCreate", "VDestroy", "Vacuum", "JournalMode",
 })
+# ★★★★★ 09-05 (D2 · `S46-277`) — ★ **임시 커서를 가린다.**
+#   ★★★ 마스터 — 「★ **조회용 쿼리야 ★ 쓰기용은 아니야**」
+#   ★★ 실측 09-05 — ★ `ORDER BY` ＋ `LIMIT` 이 ★ **함께** 있으면 막혔다.
+#     ★ ★ `GROUP BY` 만 · `ORDER BY` 만 · `LIMIT` 만은 됐다.
+#     ★ ★ ★ 정렬이 ★ **임시 표**를 쓴다 —
+#       ★ `OpenEphemeral P1=1` → `Delete P1=1` → `IdxInsert P1=1`.
+#     ★ ★ ★ ★ **우리 표가 아니라 ★ 임시 커서**인데 ★ 쓰기로 셌다.
+#   ★ 그래서 ★ **커서를 따라간다** — ★ `P1` 이 임시 커서면 ★ 쓰기가 아니다.
+# ★ 임시 커서를 여는 연산 — ★ 이것이 연 번호는 ★ 우리 표가 아니다
+TEMP_OPEN_OPCODES = frozenset({
+    "OpenEphemeral", "SorterOpen", "OpenAutoindex", "OpenDup", "OpenPseudo",
+})
+# ★★ 커서를 안 봐도 ★ **무조건 막는 것** — ★ 임시든 아니든 위험하다
+HARD_WRITE_OPCODES = frozenset({
+    "Clear", "Destroy", "DropTable", "DropIndex", "CreateBtree", "OpenWrite",
+})
+
+
+def _write_opcodes(plan: list) -> set:
+    """★ 이 판이 ★ **정말로 쓰는가** (D2 · `S46-277`).
+
+    ★ `EXPLAIN` 한 줄은 ★ `(addr, opcode, p1, p2, p3, p4, p5, comment)` 다.
+      ★ ★ 커서 연산은 ★ `p1` 이 ★ **커서 번호**다.
+    ★ 걸음 —
+      ① `TEMP_OPEN_OPCODES` 가 연 ★ 커서 번호를 모은다 (임시다)
+      ② `HARD_WRITE_OPCODES` 는 ★ 커서를 안 보고 ★ **무조건** 쓰기다
+      ③ 그 밖의 쓰기 연산은 ★ `p1` 이 ★ **임시 커서면 아니다**
+    ★ 돌려줌  ★ 걸린 연산 이름들 (비면 ★ 조회다)
+    """
+    temp: set = set()
+    for row in plan:
+        if row[1] in TEMP_OPEN_OPCODES:
+            temp.add(row[2])
+    got: set = set()
+    for row in plan:
+        op, cur = row[1], row[2]
+        if op in HARD_WRITE_OPCODES:
+            got.add(op)
+        elif op in WRITE_OPCODES and cur not in temp:
+            got.add(op)
+    return got
 REJECT_MULTI = "다중 문장은 거부한다 (세미콜론 분리)"
 REJECT_NOT_SELECT = "SELECT · WITH 만 허용한다"
 REJECT_WRITE = "쓰기 연산이 포함됐다"
@@ -519,8 +560,14 @@ def sql_reject_reason(conn: sqlite3.Connection, sql: str) -> str | None:
         plan = conn.execute(f"EXPLAIN {body.rstrip(';')}").fetchall()
     except sqlite3.Error as e:
         return f"{REJECT_COMPILE}: {e}"
-    ops = {row[1] for row in plan}
-    if ops & WRITE_OPCODES:
+    # ★★★★★ 09-05 (D2 · `S46-277`) — ★ **커서를 따라간다.**
+    #   ★ 정렬은 ★ 임시 표를 쓴다 — ★ `OpenEphemeral`·`SorterOpen`·`OpenAutoindex`·
+    #     ★ `OpenDup`·`OpenPseudo` 가 연 커서(`P1`)는 ★ **우리 표가 아니다**.
+    #   ★ 그 커서에 든 `Delete`·`IdxInsert` 는 ★ 쓰기가 아니다 — ★ TEMP 로 가린다.
+    #   ★★ `Clear`·`Destroy`·`DropTable`·`DropIndex`·`CreateBtree`·`OpenWrite` 는
+    #     ★ ★ 커서를 안 보고 ★ **무조건** 막는다 (HARD).
+    #   ★ 셈은 ★ `_write_opcodes()` 한 자리다 (위)
+    if _write_opcodes(plan):
         return REJECT_WRITE
     # ★ PII 표는 조회도 막는다 (C-2 · V10-18).
     #   쓰기만 막으면 SELECT * FROM core_pii 로 번호판이 그대로 나온다.

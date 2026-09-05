@@ -392,6 +392,27 @@ def _save_issues(conn, listing_id: int, issues: list, parse_version: str,
             (listing_id, endpoint, path, reason, sample, parse_version, at))
 
 
+def _may_fetch(root_dir: str, site: str, endpoint: str) -> bool | None:
+    """★ 그 사이트의 ★ **그 창구**를 ★ 서버가 두드려도 되는가 (D3 · 09-05).
+
+    ★★★ 지시 09-05 D3 — 「★ `detail:false` 를 ★ **물렸다** — ★ 407 은 ★ **목록뿐**이다」
+    ★★ `config/sites.json` 의 `master_line_only` 는 ★ **사이트 통째**다 — ★ 너무 굵다.
+      ★ ★ `config/endpoints.json` 의 ★ `server_may_fetch` 는 ★ **창구마다** 말한다 —
+      ★ ★ ★ 실측 09-05 — ★ 엔카는 ★ `{list: false, detail: true}` 다.
+    ★ 창구 값이 있으면 ★ **그것이 이긴다** (더 정확하다).
+    ★ 없으면 ★ `None` — ★ 부르는 쪽이 ★ 굵은 값으로 돌아간다.  ★ 지어내지 않는다
+    """
+    try:
+        with open(os.path.join(root_dir, "config", "endpoints.json"),
+                  encoding="utf-8") as f:
+            got = (json.load(f).get(site) or {}).get("server_may_fetch")
+    except (OSError, ValueError):
+        return None
+    if not isinstance(got, dict) or endpoint not in got:
+        return None
+    return bool(got[endpoint])
+
+
 def _master_line_only(root_dir: str, site: str) -> bool:
     """★ 그 사이트를 ★ **마스터 회선으로만** 받는가 (09-03).
 
@@ -439,7 +460,13 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
     #     ★ ★ ★ 「⑥ not_requested 48,405건」으로 ★ **다섯 번 잇달아 죽었다**.
     #   ★ 규격은 ★ 08-23 부터 ★ 「서버에서 자동으로 두드리지 않는다」였다 —
     #     ★ ★ 코드가 ★ 그것을 ★ **한 번도 안 지켰다** (규칙 1 — 코드를 고친다)
-    _blocked = _master_line_only(root_dir, adapter.site_code) and not master_line
+    # ★★★★★ 09-05 (D3) — ★ **창구마다 가른다.**
+    #   ★ 엔카는 ★ `list` 가 407 이고 ★ `detail` 은 ★ **서버가 받아도 된다**
+    #     (`config/endpoints.json` 의 `server_may_fetch`).
+    #   ★ 창구 값이 없으면 ★ 옛날처럼 ★ 사이트 통째 값을 쓴다
+    _coarse = _master_line_only(root_dir, adapter.site_code) and not master_line
+    _fine = _may_fetch(root_dir, adapter.site_code, "detail")
+    _blocked = (not _fine) if _fine is not None else _coarse
     groups = collect_groups(targets, adapter.site_code)
     schema = adapter.endpoint_schema()
     # ★ 키가 없으면 시작하지 않는다.  임시 키는 다음 실행과 결합을 깬다 (STEP 35)
