@@ -73,6 +73,22 @@ ROUTES: tuple[Route, ...] = (
     #   /reports?open=… 이 팝업이다.  JS 없이 닫힌다 — 별도 경로다
     Route("/reports", (GET,), "view_reports", ROLE_USER),
     Route("/reports/{name}", (GET,), "view_report_download", ROLE_USER),
+    # ★★★★★ 09-06 r1184 A-5 — ★ 분석 (추천 탭 3) · 규격 `61-web` 194~196행.
+    #   ★ 규격 표는 `drop` 을 POST 라 적었는데 ★ 가이드가 지으신 틀은
+    #   ★ ★ `<a href>` 곧 GET 이다 — ★ 틀이 그대로 돌게 ★ 둘 다 받는다 (회차에 적었다)
+    # ★ 규격 표(61-web 194~196)가 ★ 셋 다 `anonymous` 다 — ★ 그대로 따른다.
+    #   ★ 로그인 안 한 분은 ★ 담을 자리가 없으니 ★ 담기지 않는다 (화면이 그리 말한다)
+    Route("/analyze", (GET,), "view_analyze", ROLE_ANONYMOUS),
+    # ★★ `V11-08` — ★ **상태를 바꾸는 길은 GET 에 두지 않는다.**
+    #   ★ 가이드가 지으신 틀은 ★ `<a href>` 곧 GET 이라 ★ 이대로는 405 다 —
+    #   ★ ★ **작은 폼(POST)으로 바꿔 주셔야 한다.**  ★ 회차에 적어 여쭙는다.
+    #   ★ 규격 표(61-web 196)도 ★ `drop` 을 POST 라 적었다 — ★ 그것을 따른다
+    Route("/analyze/add/{listing_id}", (POST,), "view_analyze_add",
+          ROLE_ANONYMOUS),
+    Route("/analyze/drop/{listing_id}", (POST,), "view_analyze_drop",
+          ROLE_ANONYMOUS),
+    Route("/analyze/copy/{listing_id}", (GET,), "view_analyze_copy",
+          ROLE_ANONYMOUS),
     Route("/watch", (GET,), "view_watch", ROLE_USER),
     Route("/watch/add", (POST,), "watch_add", ROLE_USER),
     Route("/watch/{watch_id}", (POST,), "watch_update", ROLE_USER),
@@ -122,6 +138,9 @@ ROUTES: tuple[Route, ...] = (
 NON_SCREEN_VIEWS: tuple = (
     "serve_static",       # 정적 파일
     "view_report_download",  # 리포트 내려받기 (개정 357)
+    # ★ 09-06 r1184 A-5 — ★ 「타 AI 요청」은 ★ 화면이 아니다.
+    #   ★ 그 차의 ★ **원문을 하나의 글월**로 준다 (`text/plain`) — ★ `<h1>` 이 없다
+    "view_analyze_copy",
 )
 
 

@@ -744,3 +744,27 @@ def close_watch_query(conn: sqlite3.Connection, query_id: int,
     conn.execute("UPDATE watch_query SET active = 0 WHERE query_id = ?",
                  (query_id,))
     conn.commit()
+
+
+# ── 분석 의뢰 (추천 탭 3) — ★ 지시 r1184 A-3 · A-5 ───────────────────────
+# ★ 관심과 ★ **따로**다 (마스터 09-05 — 「관심은 비교 용도 · 분석은 진짜 사기 위한 것」).
+# ★ SQL 은 ★ `web/` 에 두지 않는다 (`V11-01`) — ★ 저장은 ★ 여기서 한다
+def ask_analyze(conn: sqlite3.Connection, account_id: int,
+                listing_id: int, at: str) -> None:
+    """★ 「분석 맡기기」.  ★ 제외했다 다시 맡기면 ★ 제외를 푼다."""
+    conn.execute(
+        "INSERT INTO analyze_request(account_id, listing_id, asked_at)"
+        " VALUES(?,?,?) ON CONFLICT(account_id, listing_id)"
+        " DO UPDATE SET dropped_at = NULL, asked_at = excluded.asked_at",
+        (account_id, listing_id, at))
+    conn.commit()
+
+
+def drop_analyze(conn: sqlite3.Connection, account_id: int,
+                 listing_id: int, at: str) -> None:
+    """★ 「분석 제외」 — ★ 줄은 안 지운다.  ★ 언제 뺐는지 남긴다."""
+    conn.execute(
+        "UPDATE analyze_request SET dropped_at = ?"
+        " WHERE account_id = ? AND listing_id = ?",
+        (at, account_id, listing_id))
+    conn.commit()

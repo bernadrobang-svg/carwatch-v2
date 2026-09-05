@@ -147,3 +147,32 @@ CREATE TABLE IF NOT EXISTS watch_note (
 
 CREATE INDEX IF NOT EXISTS ix_watch_note_who
   ON watch_note(account_id, listing_id, noted_at);
+
+
+-- ★★★★★★★ 09-06 (r1184 · A-3 · A-5) — ★ **분석 의뢰** (규격 `RECOMMEND_SCREEN.md` ⑥)
+-- ★ 마스터 — 「★ **관심과는 별개**다.  ★ 관심은 그냥 보기 심심해 클릭하는 것 ·
+--   ★ **비교 용도일 뿐**이고, ★ **분석은 진짜 사기 위해** 있는 것이다」
+-- ★★ 그러므로 ★ `watch_item` 에 섞지 않는다 — ★ 표를 따로 둔다.
+--   ★ `watch_note.kind` 에 얹는 것도 안 된다 — ★ 그 칸은
+--   ★ ★ `CHECK (kind IN ('contacted','visited','done'))` 로 잠겨 있다
+-- ★★★ 평가와 글은 ★ **가이드가 쓴다** — ★ 우리는 ★ 의뢰와 그 글을 담기만 한다.
+--   ★ 아직 안 쓰였으면 ★ `verdict` 가 NULL 이고 ★ 화면은 「대기」로 낸다
+--   ★ ★ 지어내지 않는다 (규격 「모르는 것은 「모른다」」)
+CREATE TABLE IF NOT EXISTS analyze_request (
+  request_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+  account_id   INTEGER NOT NULL,
+  listing_id   INTEGER NOT NULL,
+  asked_at     TEXT NOT NULL,      -- ★ 의뢰한 때 (화면이 낸다)
+  -- ★ 규격 ⑥ — buy(구매 적절) · hold(보류) · wait(대기) · risk(위험)
+  verdict      TEXT,               -- ★ NULL = 아직 안 봤다.  0 이 아니다
+  body         TEXT,               -- ★ 가이드가 쓴 글 (제목/본문 여러 마디)
+  written_at   TEXT,
+  dropped_at   TEXT,               -- ★ 「분석 제외」.  지우지 않고 표시만 한다
+  FOREIGN KEY (account_id) REFERENCES account(account_id),
+  FOREIGN KEY (listing_id) REFERENCES core_listing(listing_id),
+  CHECK (verdict IS NULL OR verdict IN ('buy','hold','wait','risk'))
+);
+
+-- ★ 같은 차를 두 번 맡겨도 줄이 하나다 (제외했다 다시 맡기면 dropped_at 을 지운다)
+CREATE UNIQUE INDEX IF NOT EXISTS ux_analyze_who
+  ON analyze_request(account_id, listing_id);

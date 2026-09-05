@@ -1,0 +1,124 @@
+<!-- ★★★★★★★ 09-06 (r1184 · A-4) — ★ **추천 탭 4 — 두 차종**
+     ★ 시안 `ref/screens/v4m_twocars_시안.html` · 규격 `docs/RECOMMEND_SCREEN.md`
+     ★★ 여쭐 것 — ★ [화면] 절은 「틀은 가이드가 작성한다」인데
+       ★ ★ `A-4` 는 「★ **탭 4 틀을 만든다**」로 개발측에 주셨다.
+       ★ ★ ★ 최근 지시가 우선이라 하셨으므로 `A-4` 를 따라 지었다.
+       ★ ★ ★ 가이드가 다시 지으시면 ★ 이 파일을 그것으로 바꾼다 (값 이름은 아래 그대로)
+
+     ★★ 개발측이 채우는 값 —
+       `tabs`     탭 목록 (★ `config/web.json` `recommend_tabs`)
+       `two`      차종 두 갈래 — `key`·`label`·`cnt`·`on`·`q`
+       `state`    맨 위 상황 띠 (없으면 안 낸다)
+       `market`   시장 눈금 — `sample`·`median`·`q1`·`q3`·`origin`·`avg_km`·`by_year`
+       `grid_km`  가격 × 주행 — `cols[]` ＋ `rows[].cells[]`(`n`·`price`·`km`·`year`·`q`·`cls`)
+       `grid_trim` 가격대별 트림 — `rows[]`(`price_label`·`trim`·`n`·`km`·`year`·`cls`)
+       `pick`     고른 칸 — `label`·`cnt`·`clear`
+       `rows`     그 칸의 차 (등급순) — 카드 값
+     ★★★ 없는 값은 ★ 빈칸으로 두지 말고 ★ 「모름」·「미조회」 -->
+
+<h1>{{ head }}</h1>
+<p class="sub">{{ sub }}</p>
+
+<p class="sitebar picktabs">
+  {% for t in tabs %}<a class="btn{% if t.on %} on{% endif %}"
+    href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
+</p>
+
+{% if state %}<div class="v3-state">{{ state }}</div>{% endif %}
+
+<p class="v3-two">
+  {% for o in two %}<a class="{% if o.on %}on{% endif %}" href="{{ o.q }}"
+    >{{ o.label }}<span class="cnt">{{ o.cnt }}</span></a>{% endfor %}
+</p>
+
+<div class="v3-market">
+  <h3>{{ market.title }}</h3>
+  <div class="v3-mrow">
+    <span>표본 <b>{{ market.sample }}</b>건</span>
+    <span>중앙값 <b>{{ market.median }}</b></span>
+    <span>하위 25% <b>{{ market.q1 }}</b></span>
+    <span>상위 25% <b>{{ market.q3 }}</b></span>
+    <span>신차가 <b class="{{ market.origin_cls }}">{{ market.origin }}</b></span>
+    <span>평균 주행 <b>{{ market.avg_km }}</b></span>
+  </div>
+  <div class="v3-mrow" style="margin-top:6px">
+    <span>연식별 중앙값 — {{ market.by_year }}</span>
+  </div>
+</div>
+
+<div class="v3-grid">
+  <h3>{{ grid_km.title }}</h3>
+  <p class="note">{{ grid_km.note }}</p>
+  <table class="v3-g">
+    <tr><th></th>{% for c in grid_km.cols %}<th>{{ c }}</th>{% endfor %}</tr>
+    {% for r in grid_km.rows %}
+    <tr><th class="row">{{ r.label }}</th>
+      {% for c in r.cells %}<td class="{{ c.cls }}">{% if c.q %}<a href="{{ c.q }}"
+        ><b>{{ c.n }}</b><span>{{ c.price }}<br>{{ c.km }}<br>{{ c.year }}</span></a
+        >{% endif %}{% if !c.q %}{{ c.n }}{% endif %}</td>{% endfor %}</tr>
+    {% endfor %}
+  </table>
+  <p class="v3-split">{{ grid_km.split }}</p>
+</div>
+
+<div class="v3-grid">
+  <h3>{{ grid_trim.title }}</h3>
+  <table class="v3-g">
+    <tr><th class="row">가격대</th><th>트림</th><th>건수</th><th>평균주행</th><th>평균연식</th></tr>
+    {% for r in grid_trim.rows %}
+    <tr><th class="row">{{ r.price_label }}</th><td class="{{ r.cls }}">{{ r.trim }}</td>
+      <td><b>{{ r.n }}</b></td><td>{{ r.km }}</td><td>{{ r.year }}</td></tr>
+    {% endfor %}
+  </table>
+  <p class="v3-split">{{ grid_trim.split }}</p>
+</div>
+
+{% if pick %}
+<div class="v3-pickhead">
+  <b>{{ pick.label }}</b>
+  <span class="v3-meta">{{ pick.cnt }}건 · 등급순</span>
+  <a class="clear" href="{{ pick.clear }}">칸 고르기 지우기 ✕</a>
+</div>
+{% endif %}
+
+{% if !pick %}
+<p class="cond what">격자에서 <strong>칸을 누르시면</strong> 그 칸의 차가
+  여기에 <strong>등급순</strong>으로 나옵니다.</p>
+{% endif %}
+
+{% for r in rows %}
+<div class="v3-card">
+  <div class="v3-line1">
+    <span class="v3-price">{{ r.price }}</span>
+    <span class="v3-gr {{ r.grade }}">{{ r.grade }}</span>
+    {% if r.verdict %}<span class="v3-verdict {{ r.verdict_cls }}">{{ r.verdict }}</span>{% endif %}
+    <span class="v3-name">{{ r.title }}</span>
+    {% if r.lease %}<span class="v3-lease">리스·렌트</span>{% endif %}
+    <span class="v3-region {{ r.region_kind }}">{{ r.region }}</span>
+  </div>
+  {% if r.photo_url %}<img class="v3-thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
+  {% if !r.photo_url %}<span class="v3-nophoto">{{ r.photo_note }}</span>{% endif %}
+  <p class="v3-meta">{{ r.meta }}</p>
+
+  {% if r.pkgs %}
+  <div class="v3-pkgs">
+    {% for p in r.pkgs %}<span class="v3-pkg {{ p.cls }}">{{ p.label }}
+      <b>{{ p.won }}</b></span>{% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="v3-calc">
+    {% for c in r.calc %}<div class="v3-crow {{ c.cls }}"><span>{{ c.label }}</span>
+      <b class="{{ c.mark }}">{{ c.value }}</b></div>{% endfor %}
+  </div>
+
+  <div class="v3-acts">
+    <a class="v3-btn ask" href="/analyze/add/{{ r.listing_id }}">분석 맡기기</a>
+    <a class="v3-btn" href="/watch/add/{{ r.listing_id }}">관심</a>
+    <a class="v3-btn" href="/detail/{{ r.listing_id }}">상세 ▸</a>
+  </div>
+</div>
+{% endfor %}
+
+<div class="v3-why">값 셈은 <b>패키지 가격</b>과 <b>신차 대비</b>로 합니다.
+ 신차가·사고를 모르면 <b>「미조회」</b>로 두고 지어내지 않습니다.</div>

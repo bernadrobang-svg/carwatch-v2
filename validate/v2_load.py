@@ -398,6 +398,8 @@ OUR_COLUMNS: frozenset[str] = frozenset({
     "parsed_at", "collected_at",
     # 진행 메모 — 사람이 적는다.  원문에서 오지 않는다 (개정 362)
     "noted_at",
+    # ★ 09-06 r1184 A-3 — ★ 분석을 맡긴 때.  ★ 원문이 아니라 ★ 우리 것이다
+    "asked_at",
     # 진단 부위 — resultCode 가 있는 것만 넣는다.  거르고 남은 것이라 필수다
     "item_code", "part_name", "result_code",
     # 로그인 시도 — 우리가 찍는다 (STEP 126)

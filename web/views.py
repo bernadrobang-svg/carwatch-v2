@@ -109,7 +109,14 @@ def page(conn, account, title: str, template: str, ctx: dict, *,
     body = render(template, {"page": p, **extra, **ctx})
     p = build_page(conn, account, title, body, csrf=csrf, flashes=flashes,
                    refresh_sec=refresh_sec, screen=screen, **ver)
-    html = render("_page.html", {"page": p, **extra, **ctx})
+    # ★★★★★ 09-06 (r1184 A-6 에서 잡혔다) — ★ 얼개(`_page.html`)의 `page` 는
+    #   ★ **덮이면 안 된다.**  ★ 가이드가 지으신 `recommend2.html` 은
+    #   ★ ★ 쪽 번호를 ★ `page.total`·`page.links` 로 부른다 (규격 ④) —
+    #   ★ ★ ★ 그 `page` 가 얼개의 `page` 를 덮어 ★ **머리·꼬리·차림표가 통째로 비었다**
+    #     ★ ★ 실측 — `/recommend?tab=2` 가 ★ 200 인데 ★ **618B** 였다.
+    #   ★ 속틀에서는 ★ 그 이름을 ★ 틀이 부르는 대로 두고 (위 줄) ·
+    #     ★ ★ 얼개에서는 ★ **얼개 것이 이긴다**
+    html = render("_page.html", {**extra, **ctx, "page": p})
     return HTTP_OK, {}, html.encode("utf-8")
 
 
@@ -1178,27 +1185,129 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
     ★★ 탭 2·3 — ★ 빈 채로 둔다.  ★ 안도 이름도 안 짓는다 (마스터께서 정하실 자리)
     """
     from report.screens.build import view_recommend_tabs
+    from report.screens import tabs as T
 
     ver = _versions(conn)
     flt = _filter(conn, req.get("query", {}), ver)
     q = req.get("query", {})
+    qall = req.get("query_all", {}) or {}
     tab = str(q.get("tab") or "1")
+    # ★★★★★ 09-06 r1184 A-1 — ★ 탭은 ★ **자료가 정본**이다 (`config/web.json`).
+    #   ★ 마스터 — 「★ 탭들이 자꾸 늘어나고 ★ 빠지고 ★ 추가된다」
+    if tab not in {str(t.get("n")) for t in T.tabs_config(root)}:
+        tab = "1"
+    counts = {"analyze": T.analyze_count(conn, account.account_id)
+              if getattr(account, "account_id", None) else 0}
+    tabbar = T.tab_list(tab, root, counts)
+    tpl = T.tab_template(tab, root) or "recommend.html"
+
+    if tab == "2":
+        got = T.view_tab2(conn, ver["calc_version"], flt, q, qall, root)
+        return page(conn, account, "추천", tpl,
+                    {"tabs": tabbar, **got}, root=root, csrf=csrf,
+                    flash_key=flash_key)
+    if tab == "3":
+        got = T.view_tab3(conn, getattr(account, "account_id", 0) or 0, root)
+        return page(conn, account, "분석", tpl,
+                    {"tabs": tabbar, **got}, root=root, csrf=csrf,
+                    flash_key=flash_key)
+    if tab == "4":
+        got = T.view_tab4(conn, q, root)
+        return page(conn, account, "추천", tpl,
+                    {"tabs": tabbar, **got}, root=root, csrf=csrf,
+                    flash_key=flash_key)
+
     # ★★★★★ 09-02 명령서 ② — ★ 여럿 켠 차종을 ★ 그대로 받는다 (OR).
     #   ★ `query` 는 마지막 하나만 준다 — ★ `query_all` 이 다 준다
-    on = tuple((req.get("query_all") or {}).get("model") or ())
+    on = tuple(qall.get("model") or ())
     if not on and q.get("model"):
         on = (str(q["model"]),)          # ★ 옛 주소 하나짜리도 받는다
     got = view_recommend_tabs(account, conn, ver["calc_version"], flt,
                               tab=tab, root=root, models_on=on)
-    return page(conn, account, "추천", "recommend.html",
-                {"v": got, "tab": got.tab,
-                 # ★ 시안 — ★ 탭 이름은 ★ 「내 기준에 가까운 차 · 탭 2 · 탭 3」
-                 "tabs": [{"n": n, "on": n == got.tab,
-                           "label": "내 기준에 가까운 차" if n == "1"
-                           else f"탭 {n}"} for n in ("1", "2", "3")],
+    return page(conn, account, "추천", tpl,
+                {"v": got, "tab": got.tab, "tabs": tabbar,
                  "buttons": _filter_buttons(flt, base="/recommend"),
                  "carry": _carry(flt)},
                 root=root, csrf=csrf, flash_key=flash_key)
+
+
+# ── 분석 (추천 탭 3) — ★ 지시 r1184 A-3 · A-5 ────────────────────────────
+def _analyze_go(listing_id) -> tuple:
+    """맡기고·빼고 나면 ★ 탭 3 으로 돌려보낸다."""
+    from web.context import HTTP_SEE_OTHER
+
+    del listing_id
+    return HTTP_SEE_OTHER, {"Location": "/recommend?tab=3"}, b""
+
+
+def analyze(conn, account, req, root: str = ROOT, csrf: str = "",
+            flash_key: str = "-", **_kw) -> tuple:
+    """/analyze — ★ 추천 탭 3 과 ★ 같은 화면이다 (규격 61-web · `S46-283`)."""
+    from report.screens import tabs as T
+
+    del req
+    aid = getattr(account, "account_id", 0) or 0
+    got = T.view_tab3(conn, aid, root)
+    return page(conn, account, "분석", T.tab_template("3", root) or "analyze.html",
+                {"tabs": T.tab_list("3", root, {"analyze": got["count"]}),
+                 **got}, root=root, csrf=csrf, flash_key=flash_key)
+
+
+def analyze_add(conn, account, req, path_vars: dict | None = None,
+                root: str = ROOT, csrf: str = "",
+                flash_key: str = "-", **_kw) -> tuple:
+    """★ 「분석 맡기기」.  ★ 관심과 ★ **따로**다 (마스터 09-05).
+
+    ★★ 여쭐 것 — ★ 규격 `61-web` 표는 ★ `drop` 을 **POST** 라 적었는데
+      ★ 가이드가 지으신 틀(`analyze.html`)은 ★ `<a href>` 곧 **GET** 이다.
+      ★ ★ 틀이 그대로 돌게 ★ **둘 다 받는다** — ★ 회차에 적어 여쭙는다
+    """
+    del req, csrf, flash_key, root
+    aid = getattr(account, "account_id", 0) or 0
+    lid = _path_int(path_vars, "listing_id")
+    if aid and lid:
+        from store.watch import ask_analyze
+
+        ask_analyze(conn, aid, lid, _now())
+    return _analyze_go(lid)
+
+
+def analyze_drop(conn, account, req, path_vars: dict | None = None,
+                 root: str = ROOT, csrf: str = "",
+                 flash_key: str = "-", **_kw) -> tuple:
+    """★ 「분석 제외」 — ★ 누르면 그 차는 빠진다.  ★ 줄은 안 지운다."""
+    del req, csrf, flash_key, root
+    aid = getattr(account, "account_id", 0) or 0
+    lid = _path_int(path_vars, "listing_id")
+    if aid and lid:
+        from store.watch import drop_analyze
+
+        drop_analyze(conn, aid, lid, _now())
+    return _analyze_go(lid)
+
+
+def analyze_copy(conn, account, req, path_vars: dict | None = None,
+                 root: str = ROOT, csrf: str = "",
+                 flash_key: str = "-", **_kw) -> tuple:
+    """★ 「타 AI 요청」 — ★ 그 차의 ★ **원문을 그대로 하나의 글월**로 낸다.
+
+    ★ 규격 ⑦ — ★ 우리가 고친 값이 아니라 ★ 사이트가 준 그대로.
+    ★ 그대로 붙여 쓰실 수 있게 ★ `text/plain` 으로 낸다
+    """
+    from report.screens.tabs import copy_text
+
+    del account, req, csrf, flash_key
+    lid = _path_int(path_vars, "listing_id")
+    body = copy_text(conn, lid, root).encode("utf-8") if lid else b""
+    return 200, {"Content-Type": "text/plain; charset=utf-8"}, body
+
+
+def _path_int(path_vars, name: str):
+    got = (path_vars or {}).get(name)
+    try:
+        return int(got)
+    except (TypeError, ValueError):
+        return None
 
 
 def _recommend_old(conn, account, req, root: str = ROOT, csrf: str = "",
@@ -2912,6 +3021,11 @@ HANDLERS = {
     "view_recommend": recommend,
     "view_compare": compare,
     "view_track": track,
+    # ★ 09-06 r1184 A-3 · A-5 — ★ 분석 (추천 탭 3)
+    "view_analyze": analyze,
+    "view_analyze_add": analyze_add,
+    "view_analyze_drop": analyze_drop,
+    "view_analyze_copy": analyze_copy,
     "view_market": market,
     "view_dealers": dealers,
     "view_watch": watch,
