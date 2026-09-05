@@ -39,6 +39,31 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def extra() -> list:
+    """★ **원문에서 캔 길** (D5 ② · 개발측 몫).
+
+    ★ 가이드 표는 ★ **파서 코드에서** 뽑은 것이라 ★ 파서가 이미 읽는 길뿐이다 —
+      ★ ★ 실측 09-05 — ★ 그 표로는 ★ 새로 메우는 칸이 ★ **0개**였다.
+      ★ ★ ★ 「파서가 안 읽는 칸」은 ★ 거기 없다.
+    ★ 그래서 ★ 원문을 열어 ★ 그 칸이 정말 있는지 보고 ★ `field_map_extra.json` 에 적는다.
+      ★ ★ 줄마다 ★ **본 값**을 남긴다 — ★ 짐작으로 안 적는다
+    """
+    path = os.path.join(ROOT, "config", "dictionaries", "field_map_extra.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            got = json.load(f).get("by_site") or {}
+    except (OSError, ValueError):
+        return []
+    out = []
+    for site, table in got.items():
+        for json_path, col in (table or {}).items():
+            out.append({"site": site, "core_column": col,
+                        "json_path": json_path,
+                        "코드": "field_map_extra.json",
+                        "식": "(원문에서 캤다)"})
+    return out
+
+
 def rows() -> list:
     """★ `outputs/field_map_{site}.json` 을 다 읽어 ★ 한 줄씩 낸다."""
     out = []
@@ -60,7 +85,7 @@ def rows() -> list:
 
 def main() -> int:
     write = "--write" in sys.argv
-    got = rows()
+    got = rows() + extra()
     per: dict = {}
     for r in got:
         per[r["site"]] = per.get(r["site"], 0) + 1
@@ -121,6 +146,26 @@ def main() -> int:
             conn.commit()
     conn.commit()
     print(f"\n★ 새로 넣은 줄 {added:,} · 빈 칸을 채운 것 {filled:,} · 그대로 둔 것 {kept:,}")
+    # ★★★★★ D5 ② — ★ **파서가 읽을 꼴로 낸다.**
+    #   ★ 파서는 ★ DB 를 안 연다 (`V11-01` 과 같은 뜻) — ★ config 를 읽는다.
+    #   ★ 길이 없는 줄(코드에 박힌 것)은 ★ **안 낸다** — ★ 읽을 길이 없다
+    out: dict = {}
+    for site, ep, path, col in conn.execute(
+            "SELECT site, endpoint, json_path, core_column"
+            "  FROM meta_field_usage"
+            " WHERE core_column IS NOT NULL AND core_column <> ''"
+            "   AND json_path NOT LIKE ? ORDER BY site, json_path",
+            (IN_CODE + "%",)):
+        out.setdefault(str(site), {}).setdefault(str(path), str(col))
+    dest = os.path.join(ROOT, "config", "dictionaries", "field_map.json")
+    with open(dest, "w", encoding="utf-8") as f:
+        json.dump({
+            "_어떻게": ("★ `meta_field_usage` 에서 낸다 (`tools/load_field_map.py`). "
+                     "★ 손으로 고치지 않는다 — ★ 등록부가 정본이다.  "
+                     "★ 길이 없는 줄(코드에 박힌 것)은 안 낸다"),
+            "_잰_때": at[:10], "by_site": out}, f, ensure_ascii=False, indent=1)
+    print(f"★ 파서가 읽을 표를 냈다 — {os.path.relpath(dest, ROOT)} "
+          f"({sum(len(v) for v in out.values()):,}줄 · {len(out)}곳)")
     after = dict(conn.execute(
         "SELECT site, COUNT(*) FROM meta_field_usage GROUP BY 1"))
     print(f"★ 등록부 {sum(before.values()):,} → {sum(after.values()):,}줄 ·"

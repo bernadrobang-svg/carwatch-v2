@@ -205,9 +205,16 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
                 continue
             # ★ 사이트 인자를 ★ 받는 것과 ★ 안 받는 것이 있다 (렉서스는 안 받는다)
             try:
-                rows.append(fn(x, site))
+                one = fn(x, site)
             except TypeError:
-                rows.append(fn(x))
+                one = fn(x)
+            # ★★★★★ 09-05 (D5 ② · `S46-282`) — ★ **매핑표가 빈 칸을 메운다.**
+            #   ★★★ 마스터 — 「★ 사이트별로 매핑표를 만들고 ★ **그걸 파서가 보게 하라**」
+            #   ★ 한 자리다 — ★ 열두 곳이 ★ 여기를 지나간다 (「한 번 고치면 함께 산다」).
+            #   ★ ★ 파서가 이미 채운 칸은 ★ **안 덮는다** — ★ 코드가 더 잘 아는 자리가 있다
+            if isinstance(one, dict):
+                _apply_map(site, x, one)
+            rows.append(one)
         return [r for r in rows if r], None, None
 
     name = spec.get("detail_fn") or "parse_detail"
@@ -218,6 +225,9 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
         deep = fn(got, sid)            # ★ BMW
     else:
         deep = fn(got, site, sid)
+    # ★ 09-05 (D5 ②) — ★ 상세도 같은 표를 지난다
+    if isinstance(deep, dict):
+        _apply_map(site, got, deep)
     rec = None
     if isinstance(deep, tuple):
         # ★ 현대인증 — ★ (줄, 이력) 을 함께 낸다
@@ -234,6 +244,22 @@ def _rows_from(site: str, env: dict, mod, spec: dict) -> tuple:
         except (TypeError, ValueError, AttributeError):
             pan = None
     return ([deep] if deep else []), rec, pan
+
+
+def _apply_map(site: str, item, out: dict) -> None:
+    """★ 매핑표로 ★ 빈 칸을 메운다 (D5 ②).  ★ 표가 없으면 ★ 아무 일도 안 한다."""
+    try:
+        from parse.field_map import apply_map
+
+        got = apply_map(site, item, out)
+    except Exception:                                    # noqa: BLE001
+        return                       # ★ 표 때문에 넣기가 죽지 않는다
+    if got:
+        MAP_FILLED[site] = MAP_FILLED.get(site, 0) + len(got)
+
+
+# ★ 표가 메운 칸을 센다 — ★ 「썼다」를 ★ 수로 말한다 (D5 ②)
+MAP_FILLED: dict = {}
 
 
 def _envs_from_db(site: str, day: str | None) -> list:
@@ -436,6 +462,10 @@ def main() -> int:
     n = conn.execute("SELECT COUNT(*) FROM core_listing WHERE site=?",
                      (site,)).fetchone()[0]
     print(f"★ 저장된 {site} 매물 {n:,}건")
+    if MAP_FILLED:
+        print("★ 매핑표가 메운 칸 — "
+              + " · ".join(f"{k} {v:,}" for k, v in sorted(
+                  MAP_FILLED.items(), key=lambda x: -x[1])))
     # ★★★★★ 0-4 — ★ 적재 DB 를 ★ **치운다.**  ★ 안 치우면 디스크가 찬다
     commit(load_conn)
     size = os.path.getsize(load_path) if os.path.isfile(load_path) else 0
