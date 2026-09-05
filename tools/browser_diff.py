@@ -417,7 +417,15 @@ HIDDEN_TEXT_JS = r"""
       if (stuck) { seen++; continue; }          // ★ 띠 아래로 지나간 것
       // ★ 제 짝(같은 label 안의 input 등)도 결함이 아니다
       if (at && (at.closest('label') === L.e.closest('label')) &&
-          L.e.closest('label')) { seen++; }
+          L.e.closest('label')) { seen++; continue; }
+      // ★★★★★ 09-05 — ★ **한 문장 안은 겹침이 아니다**.
+      //   ★ 실측 — 「판정에 쓰는 경로면 멈춥니다」가 ★ 같은 `DIV.banner` 안의
+      //     ★ `<strong>` 에 덮인 것으로 셌다.  ★ 「내 기준에 가까운 차를…」도
+      //     ★ ★ 같은 `H1` 안이었다.  ★ **글이 굵은 글자를 감싸고 흐르는 것**이지
+      //     ★ ★ ★ 겹친 게 아니다.
+      //   ★ 그래서 ★ **같은 덩이(p·h1~h6·li·div) 안이면** ★ 안 센다
+      const blk = e => e && e.closest('p,h1,h2,h3,h4,h5,h6,li,div');
+      if (at && blk(at) && blk(at) === blk(L.e)) { seen++; }
     }
     if (tot && seen / tot < 0.6) {
       hidden++;

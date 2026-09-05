@@ -1,103 +1,85 @@
 {
- "_잰_때": "2026-09-04T15:48:36.981419+00:00",
+ "_잰_때": "2026-09-05T03:38:54.132053+00:00",
  "_잰_곳": "https://54.180.227.109.sslip.io",
- "합": 9,
- "상자겹침합": 34,
+ "합": 0,
+ "상자겹침합": 24,
  "자리": {
   "listings_390": {
-   "leaf": 71,
-   "hidden": 2,
-   "examples": [
-    "옵션가 (0/9)",
-    "옵션가 (0/9)"
-   ],
-   "overlap": 9,
-   "at": 0.5,
+   "leaf": 59,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 6,
+   "at": 0.2,
    "overlap_examples": [
-    "옵션가 / 4종\n        12px",
-    "3,530만 / 변동 없음 11px",
-    "시세보다 20만 싸 / 52만 12px",
+    "옵션가 / 1종\n        10px",
+    "1종\n        / 3,370만 12px",
+    "3,370만 / -80만 · 4회 9px",
+    "시세보다 150만  / 48만 12px",
     "취향 / ♡ 4px",
-    "17.1 / 33,133km 3px",
-    "주식회사 정이모터스 / 게시중 9px"
+    "(주)정든모터스 / 게시중 10px"
    ],
    "shot": "outputs/shots/listings_390.png"
   },
   "listings_900": {
-   "leaf": 104,
-   "hidden": 2,
-   "examples": [
-    "옵션가 (3/9)",
-    "옵션가 (3/9)"
-   ],
-   "overlap": 16,
-   "at": 0.7,
+   "leaf": 94,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 11,
+   "at": 0.2,
    "overlap_examples": [
-    "옵션가 / 2종\n        12px",
-    "3,500만 / 변동 없음 11px",
-    "시세보다 20만 싸 / 52만 12px",
+    "3,370만 / -80만 · 4회 9px",
+    "시세보다 150만  / 48만 12px",
     "✓ / 1.5 E-TECH 19px",
     "♡ / 1.5 E-TECH 19px",
-    "5.0 / 72,859km 3px"
+    "2025-11 / (주)정든모터스 8px",
+    "(주)정든모터스 / 게시중 10px"
    ],
    "shot": "outputs/shots/listings_900.png"
   },
   "recommend_390": {
    "leaf": 39,
-   "hidden": 2,
-   "examples": [
-    "내 기준에 가까운 차를 먼저  (3/9)",
-    "판매완료는 뺐습니다 (0/9)"
-   ],
-   "overlap": 2,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 3,
    "at": 0.0,
    "overlap_examples": [
-    "엔카가 막혀 있습니 / 우리 회선은 407 20px",
-    "1,062건 / 판매완료는 뺐습니다 19px"
+    "등록부에 미분류가  / 판정에 쓰는 경로면 16px",
+    "판정에 쓰는 경로면 / 미판정 보기 29px",
+    "1,465건 / 판매완료는 뺐습니다 14px"
    ],
    "shot": "outputs/shots/recommend_390.png"
   },
   "recommend_900": {
-   "leaf": 46,
-   "hidden": 1,
-   "examples": [
-    "우리 회선은 407 입니다.  (2/9)"
-   ],
-   "overlap": 2,
-   "at": 0.0,
+   "leaf": 51,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 1,
+   "at": 0.85,
    "overlap_examples": [
-    "엔카가 막혀 있습니 / 우리 회선은 407 20px",
-    "우리 회선은 407 / 엔카 받기 31px"
+    "헤이딜러는 사진을  / 3,490만원 25px"
    ],
    "shot": "outputs/shots/recommend_900.png"
   },
   "track_390": {
-   "leaf": 29,
-   "hidden": 1,
-   "examples": [
-    "어디가 싸고 왜 등급이 다른지 (1/9)"
-   ],
+   "leaf": 31,
+   "hidden": 0,
+   "examples": [],
    "overlap": 3,
    "at": 0.0,
    "overlap_examples": [
-    "엔카가 막혀 있습니 / 우리 회선은 407 21px",
-    "우리 회선은 407 / 엔카 받기 31px",
-    "한 대의 차 / 어디가 싸고 왜 등 19px"
+    "등록부에 미분류가  / 판정에 쓰는 경로면 17px",
+    "판정에 쓰는 경로면 / 미판정 보기 29px",
+    "한 대의 차 / 어디가 싸고 왜 등 14px"
    ],
    "shot": "outputs/shots/track_390.png"
   },
   "track_900": {
    "leaf": 39,
-   "hidden": 1,
-   "examples": [
-    "우리 회선은 407 입니다.  (2/9)"
-   ],
-   "overlap": 2,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
    "at": 0.0,
-   "overlap_examples": [
-    "엔카가 막혀 있습니 / 우리 회선은 407 21px",
-    "우리 회선은 407 / 엔카 받기 31px"
-   ],
+   "overlap_examples": [],
    "shot": "outputs/shots/track_900.png"
   }
  }

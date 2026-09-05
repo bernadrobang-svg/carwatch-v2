@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 217개 · 총 80,273줄
+파일 217개 · 총 80,281줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -26,8 +26,8 @@
 | `validate/v2_load.py` | 919 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `validate/v1_collect.py` | 910 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
+| `tools/browser_diff.py` | 793 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `collect/pipeline.py` | 792 | 실행 순서 · 중단 · 재처리 · 재개. |
-| `tools/browser_diff.py` | 785 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `validate/v4_mapping.py` | 785 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `tests/test_run.py` | 783 | S0~S3 종단 시험 (모의 응답). |
 | `store/watch.py` | 746 | 후보 추적 (11장). |
@@ -346,16 +346,16 @@ _unknown_split_checks:171  _axis_empty_check:257  run:287  _endpoint_order_check
 spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:176  _stem:214  tokens:223  _best_in:253  _rows:290  layers_of:303  layer_pool:310  _rare_hit:322  axis_words:346  json_key_at:367  _place:394  _hints:405  find_in_layer:421  _best_step_in:469  _layers:500  derive_state:520  src_mark:546  relayer:559  restate:574  fill_file:597  move_to_rules:665  survey:708  lists:736  write_index:757  main:796
 ```
 
+### `tools/browser_diff.py` — 793줄
+
+```
+pairs:35  look:48  main:298  hidden_text_report:472  _site_report:606  encar_collect_report:666  kb_collect_report:759  all_sites_report:783
+```
+
 ### `collect/pipeline.py` — 792줄
 
 ```
 envelope_scope:41  Reprocess:91  refetch_all:121  reprocess_plan:131  should_refetch:148  expected_for:160  step_report:194  halt_if:210  precheck:260  resume_point:314  config_hash:334  build_run_context_fields:340  stale_rows:349  save_step_report:364  rss_mb:388  run_step:407  _execute:445  completed_steps:464  run_pipeline:476  print_progress:525  silent_progress:544  from_step_for:558  web_reasons:588  check_recalc_origin:593  plan_recalc:605  _current:622  run_recalc:628  Defect:649  DefectReport:660  diagnose:681  _DiagCtx:705  _collect_defects:715  format_defects:769
-```
-
-### `tools/browser_diff.py` — 785줄
-
-```
-pairs:35  look:48  main:298  hidden_text_report:464  _site_report:598  encar_collect_report:658  kb_collect_report:751  all_sites_report:775
 ```
 
 ### `validate/v4_mapping.py` — 785줄
