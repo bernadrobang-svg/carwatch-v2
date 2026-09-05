@@ -1,98 +1,98 @@
 {
- "_어떻게": "가이드가 원문에서 캤다 (09-05) — 개발측이 meta_field_usage 에 넣는다",
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
  "_사이트": "encar",
  "줄": 13,
  "표": [
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "category.gradeName",
-   "core_column": "trim_grade_name",
-   "본보기": "3.5 LPG 2WD"
+   "core_column": "fuel_raw",
+   "json_path": "FuelType",
+   "코드": "mapping.py:140",
+   "식": "item.get(\"FuelType\")"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "category.yearMonth",
    "core_column": "year_month",
-   "본보기": "202408"
+   "json_path": "Year",
+   "코드": "mapping.py:141",
+   "식": "_ym(item.get(\"Year\"))"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "category.formYear",
-   "core_column": "year_month",
-   "본보기": "2025"
+   "core_column": "form_year",
+   "json_path": "FormYear",
+   "코드": "mapping.py:142",
+   "식": "_int(item.get(\"FormYear\"))"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "category.originPrice",
-   "core_column": "price_origin_won",
-   "본보기": "4406"
-  },
-  {
-   "site": "encar",
-   "endpoint": "detail",
-   "json_path": "category.gradeDetailName",
-   "core_column": "trim_grade_name",
-   "본보기": "익스클루시브"
-  },
-  {
-   "site": "encar",
-   "endpoint": "detail",
-   "json_path": "advertisement.price",
-   "core_column": "price_current_won",
-   "본보기": "3044"
-  },
-  {
-   "site": "encar",
-   "endpoint": "detail",
-   "json_path": "spec.mileage",
    "core_column": "mileage_km",
-   "본보기": "3847"
+   "json_path": "Mileage",
+   "코드": "mapping.py:143",
+   "식": "_int(item.get(\"Mileage\"))"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "spec.colorName",
+   "core_column": "price_current_won",
+   "json_path": "Price",
+   "코드": "mapping.py:144",
+   "식": "_won(item.get(\"Price\"))"
+  },
+  {
+   "site": "encar",
    "core_column": "color_ext_raw",
-   "본보기": "흰색"
+   "json_path": "Color",
+   "코드": "mapping.py:146",
+   "식": "item.get(\"Color\")"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "options.standard[]",
-   "core_column": "options_name_json",
-   "본보기": "001"
+   "core_column": "color_int_raw",
+   "json_path": "SeatColor",
+   "코드": "mapping.py:148",
+   "식": "item.get(\"SeatColor\")"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "options.etc[]",
-   "core_column": "options_name_json",
-   "본보기": "취등록세 0원"
+   "core_column": "photo_list_json",
+   "json_path": "Photos",
+   "코드": "mapping.py:158",
+   "식": "_json(item.get(\"Photos\"))"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "options.choice[]",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:181",
+   "식": "_won(_get(body"
+  },
+  {
+   "site": "encar",
+   "core_column": "trim_grade_name",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:191",
+   "식": "_get(body"
+  },
+  {
+   "site": "encar",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:192",
+   "식": "_int(_get(body"
+  },
+  {
+   "site": "encar",
    "core_column": "options_choice_json",
-   "본보기": "10004"
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:198",
+   "식": "_json(_get(body"
   },
   {
    "site": "encar",
-   "endpoint": "detail",
-   "json_path": "options.tuning[]",
-   "core_column": "options_name_json",
-   "본보기": "023"
-  },
-  {
-   "site": "encar",
-   "endpoint": "detail",
-   "json_path": "vin",
    "core_column": "vin",
-   "본보기": "None"
+   "json_path": "vin",
+   "코드": "mapping.py:240",
+   "식": "clean_vin(body.get(\"vin\"))"
   }
  ]
 }

@@ -1,0 +1,63 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "bobaedream",
+ "줄": 8,
+ "표": [
+  {
+   "site": "bobaedream",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:134",
+   "식": "_int(got.group(1)) * WON_PER_MANWON"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:139",
+   "식": "f\"20{ymd.group(1)}{ymd.group(2)}\""
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:140",
+   "식": "2000 + int(ymd.group(4) or ymd.group(1))"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:145",
+   "식": "f\"{ym4.group(1)}-{int(ym4.group(2)):02d}\""
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:146",
+   "식": "int(ym4.group(1))"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:154",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "vin",
+   "json_path": "차대번호",
+   "코드": "mapping.py:167",
+   "식": "f[\"차대번호\"]"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:195",
+   "식": "None"
+  }
+ ]
+}

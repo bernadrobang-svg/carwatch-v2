@@ -1,0 +1,63 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "bmw_bps",
+ "줄": 8,
+ "표": [
+  {
+   "site": "bmw_bps",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:73",
+   "식": "(won * WON_PER_MANWON"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:80",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "mileage_km",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:83",
+   "식": "_int(m.group(1))"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:86",
+   "식": "_int(m.group(1))"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:91",
+   "식": "f\"{m.group(1)}-{int(m.group(2)):02d}\""
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:94",
+   "식": "m.group(1)"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:97",
+   "식": "_int(m.group(1))"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:187",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  }
+ ]
+}

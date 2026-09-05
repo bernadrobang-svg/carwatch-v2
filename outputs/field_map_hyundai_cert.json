@@ -1,0 +1,84 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "hyundai_cert",
+ "줄": 11,
+ "표": [
+  {
+   "site": "hyundai_cert",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:133",
+   "식": "_fuel_of(name)"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:134",
+   "식": "_int(name.split(maxsplit=1)[0])"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:135",
+   "식": "(f\"20{ym.group(1)}-{int(ym.group(2)):02d}\""
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "mileage_km",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:137",
+   "식": "_int(km.group(1)) if km else None"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:138",
+   "식": "(_int(prices[0]) * WON_PER_MANWON"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:230",
+   "식": "f\"{reg.group(1)}-{reg.group(2)}\" if reg else None"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:231",
+   "식": "_num(_one(RE_CC"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:233",
+   "식": "_num(_one(RE_ORIGIN"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:234",
+   "식": "_one(RE_FUEL"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "color_ext_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:235",
+   "식": "_one(RE_COLOR_EXT"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "color_int_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:236",
+   "식": "_one(RE_COLOR_INT"
+  }
+ ]
+}

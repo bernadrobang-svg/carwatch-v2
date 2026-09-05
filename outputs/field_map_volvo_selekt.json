@@ -1,0 +1,63 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "volvo_selekt",
+ "줄": 8,
+ "표": [
+  {
+   "site": "volvo_selekt",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:129",
+   "식": "_int(price.group(1))"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:132",
+   "식": "_int(f[\"모델 년도\"])"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:137",
+   "식": "got.group(1) + got.group(2)"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "mileage_km",
+   "json_path": "마일리지",
+   "코드": "mapping.py:139",
+   "식": "_int(f[\"마일리지\"])"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "color_ext_raw",
+   "json_path": "색상",
+   "코드": "mapping.py:141",
+   "식": "f[\"색상\"]"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "color_int_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:143",
+   "식": "f[\"내부 색상\"]"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "displacement_cc",
+   "json_path": "cm",
+   "코드": "mapping.py:147",
+   "식": "_int(f[\"엔진 크기\"].split(\"cm\")[0])"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:149",
+   "식": "f[\"연료 유형\"]"
+  }
+ ]
+}

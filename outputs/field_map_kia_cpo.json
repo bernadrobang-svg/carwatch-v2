@@ -1,0 +1,112 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "kia_cpo",
+ "줄": 15,
+ "표": [
+  {
+   "site": "kia_cpo",
+   "core_column": "fuel_raw",
+   "json_path": "modelEngine",
+   "코드": "mapping.py:93",
+   "식": "item.get(\"modelEngine\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "price_current_won",
+   "json_path": "price",
+   "코드": "mapping.py:95",
+   "식": "_int(item.get(\"price\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "mileage_km",
+   "json_path": "drivingDistance",
+   "코드": "mapping.py:97",
+   "식": "_int(item.get(\"drivingDistance\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "year_month",
+   "json_path": "firstRegisteredOn",
+   "코드": "mapping.py:99",
+   "식": "_ym(item.get(\"firstRegisteredOn\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "form_year",
+   "json_path": "modelYear",
+   "코드": "mapping.py:100",
+   "식": "_int(item.get(\"modelYear\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_ext_raw",
+   "json_path": "exteriorColorCodeName",
+   "코드": "mapping.py:102",
+   "식": "item.get(\"exteriorColorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_int_raw",
+   "json_path": "interiorColorCodeName",
+   "코드": "mapping.py:103",
+   "식": "item.get(\"interiorColorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "fuel_raw",
+   "json_path": "engine",
+   "코드": "mapping.py:147",
+   "식": "car.get(\"engine\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "price_current_won",
+   "json_path": "price",
+   "코드": "mapping.py:148",
+   "식": "_int(car.get(\"price\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "mileage_km",
+   "json_path": "drivingDistance",
+   "코드": "mapping.py:150",
+   "식": "_int(car.get(\"drivingDistance\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "year_month",
+   "json_path": "firstRegisteredOn",
+   "코드": "mapping.py:151",
+   "식": "_ym(car.get(\"firstRegisteredOn\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "form_year",
+   "json_path": "modelYear",
+   "코드": "mapping.py:152",
+   "식": "_int(car.get(\"modelYear\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_ext_raw",
+   "json_path": "exteriorCodeName",
+   "코드": "mapping.py:154",
+   "식": "color.get(\"exteriorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_int_raw",
+   "json_path": "interiorCodeName",
+   "코드": "mapping.py:155",
+   "식": "color.get(\"interiorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:162",
+   "식": "int(cc)"
+  }
+ ]
+}

@@ -118,3 +118,65 @@ def from_json(site: str, path: str, endpoint: str = "detail") -> str:
                   f, ensure_ascii=False, indent=1)
     print(f"★ {site} — 길 {len(rows)}개 → {out}")
     return out
+
+
+# ★★★★★★★ 09-05 — ★ **파서에서 뽑는다** (마스터 지시)
+#
+#   ★ 마스터 — 「★ **개발에게 왜 위임하지?  ★ 파서에 하드코딩으로 값이 있다면서**」
+#   ★ ★ 맞다.  ★ **사이트를 두드릴 것 없이** ★ 파서 코드에 ★ 이미 짝이 들어 있다 —
+#     ★ 실측 09-05 — ★ 우리 칸 이름이 ★ **열한 곳 파서에 다 나온다**
+#       (KB 11가지 · 보배 10 · 볼보 9 · 리본카 10 · BMW 9 · 기아CPO 14 · K카 11 …)
+#   ★ ★ ★ 그러니 ★ **코드에서 뽑아 표로 만들면** ★ 사이트가 막혀도 된다
+
+COL_RE = (r"(price_current_won|price_origin_won|mileage_km|year_month|"
+          r"color_ext_raw|color_int_raw|trim_grade_name|options_choice_json|"
+          r"options_name_json|photo_list_json|vin|plate|form_year|"
+          r"displacement_cc|fuel_raw)")
+
+
+def from_parser(site: str) -> str:
+    """★ 파서 코드에서 ★ 「우리 칸 ← 원문 길」 짝을 뽑아 ★ 표로 낸다.
+
+    ★ 세 꼴을 본다 —
+      ① `"칸": _get(body, "a.b")`      ★ 길이 그대로 있다
+      ② `out["칸"] = ...`              ★ 길을 옆에서 찾는다
+      ③ `"칸": 변수`                    ★ 길을 못 캐면 ★ **「코드에 박혀 있다」로 적는다**
+    ★ ★ 못 캔 것도 ★ **버리지 않는다** — ★ 개발측이 그 줄을 보고 옮긴다
+    """
+    import glob as _g
+    import re as _re
+
+    rows = []
+    for f in sorted(_g.glob(os.path.join(ROOT, "parse", site, "*.py"))):
+        body = open(f, encoding="utf-8").read()
+        name = os.path.basename(f)
+        # ★★ 09-05 (2차) — ★ **꼴이 셋이다**.  ★ 여섯 곳을 못 뽑아 찾아보니 —
+        #   ① `"칸": _get(body, "a.b")`        ★ 엔카·기아·K카·현대·헤이딜러
+        #   ② `out["칸"] = _int(price)`        ★ KB·볼보·리본카·BMW·보배
+        #   ③ `("칸", RE_KM)` ★ 짝 목록         ★ KB 가 정규식과 짝지어 쓴다
+        #   ★ ★ **셋 다 잡는다** — ★ 한 꼴만 보면 ★ 절반이 빈다
+        pat = (r'"' + COL_RE + r'"\s*:\s*([^,\n]{0,90})'
+               r'|\[\s*"' + COL_RE + r'"\s*\]\s*=\s*([^\n]{0,90})'
+               r'|\(\s*"' + COL_RE + r'"\s*,\s*([^)\n]{0,60})')
+        for m in _re.finditer(pat, body):
+            col = m.group(1) or m.group(3) or m.group(5)
+            expr = (m.group(2) or m.group(4) or m.group(6) or "").strip()
+            path = ""
+            g = _re.search(r'"([\w.\[\]]+)"', expr)
+            if g:
+                path = g.group(1)
+            line = body[:m.start()].count("\n") + 1
+            rows.append({"site": site, "core_column": col,
+                         "json_path": path or "(코드에 박혀 있다)",
+                         "코드": f"{name}:{line}", "식": expr[:60]})
+    if not rows:
+        print(f"★ {site} — 파서에서 못 뽑았다")
+        return ""
+    out = os.path.join(ROOT, "outputs", f"field_map_{site}.json")
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump({"_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — "
+                             "★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+                   "_사이트": site, "줄": len(rows), "표": rows},
+                  f, ensure_ascii=False, indent=1)
+    print(f"★ {site} — 파서에서 {len(rows)}줄 → {out}")
+    return out

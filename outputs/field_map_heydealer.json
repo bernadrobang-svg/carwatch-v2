@@ -1,0 +1,77 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "heydealer",
+ "줄": 10,
+ "표": [
+  {
+   "site": "heydealer",
+   "core_column": "price_current_won",
+   "json_path": "price",
+   "코드": "mapping.py:69",
+   "식": "_won(item.get(\"price\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "trim_grade_name",
+   "json_path": "grade_name",
+   "코드": "mapping.py:73",
+   "식": "d.get(\"grade_name\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "mileage_km",
+   "json_path": "mileage",
+   "코드": "mapping.py:74",
+   "식": "_int(d.get(\"mileage\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "form_year",
+   "json_path": "year",
+   "코드": "mapping.py:75",
+   "식": "_int(d.get(\"year\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "year_month",
+   "json_path": "initial_registration_date",
+   "코드": "mapping.py:76",
+   "식": "_ym(d.get(\"initial_registration_date\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "color_ext_raw",
+   "json_path": "exterior_description",
+   "코드": "mapping.py:77",
+   "식": "d.get(\"exterior_description\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "color_int_raw",
+   "json_path": "interior_description",
+   "코드": "mapping.py:78",
+   "식": "d.get(\"interior_description\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "price_origin_won",
+   "json_path": "factory_price",
+   "코드": "mapping.py:80",
+   "식": "_won(d.get(\"factory_price\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "fuel_raw",
+   "json_path": "fuel_display",
+   "코드": "mapping.py:104",
+   "식": "d.get(\"fuel_display\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "displacement_cc",
+   "json_path": "displacement",
+   "코드": "mapping.py:105",
+   "식": "_int(d.get(\"displacement\"))"
+  }
+ ]
+}

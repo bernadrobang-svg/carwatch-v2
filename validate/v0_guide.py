@@ -7430,12 +7430,19 @@ def s46_282_field_map_by_site():
     if not tool:
         return False, ("★ 매핑표를 만드는 자가 없다 — "
                        "★ `tools/make_field_map.py` 를 세워라")
+    # ★★★★★ 09-05 (2차) — ★ 마스터 「★ **개발에게 왜 위임하지?
+    #   ★ 파서에 하드코딩으로 값이 있다면서**」.
+    #   ★ ★ 맞다 — ★ **사이트를 안 두드리고 ★ 파서 코드에서 뽑았다**.
+    #   ★ ★ ★ 꼴이 셋이라(`"칸": _get(…)` · `out["칸"] =` · `("칸", RE_…)`)
+    #     ★ 하나만 보면 ★ 절반이 빈다 — ★ 처음에 여섯 곳을 못 뽑았다.
+    #   ★ 실측 — ★ **열두 곳 · 113줄** (길을 캔 것 56 · 코드에 박힌 것 57)
     got = sorted((ROOT / "outputs").glob("field_map_*.json"))
-    if len(got) < 2:
+    if len(got) < 12:
         return False, (f"★ 사이트별 매핑표가 {len(got)}곳뿐이다 — "
-                       "★ 원문이 있는 사이트부터 캐라  "
-                       "(★ `meta_field_usage` 는 엔카 850줄 · 나머지 8줄)")
-    return True, f"사이트별 매핑표 {len(got)}곳을 냈다"
+                       "★ `from_parser()` 로 ★ 열두 곳을 다 뽑아라")
+    if not (ROOT / "outputs" / "field_map_ALL.json").is_file():
+        return False, "★ 한 벌로 묶은 `field_map_ALL.json` 이 없다"
+    return True, f"사이트별 매핑표 {len(got) - 1}곳 ＋ 한 벌을 냈다"
 
 
 CHECKS = (

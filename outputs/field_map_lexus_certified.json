@@ -1,0 +1,42 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "lexus_certified",
+ "줄": 5,
+ "표": [
+  {
+   "site": "lexus_certified",
+   "core_column": "color_ext_raw",
+   "json_path": "color",
+   "코드": "mapping.py:73",
+   "식": "_title(one.get(\"color\"))"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:88",
+   "식": "fy"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:120",
+   "식": "ym"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:132",
+   "식": "cc"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:172",
+   "식": "json.dumps(got, ensure_ascii=False)"
+  }
+ ]
+}

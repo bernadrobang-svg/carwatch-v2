@@ -1,0 +1,28 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "reborncar",
+ "줄": 3,
+ "표": [
+  {
+   "site": "reborncar",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:67",
+   "식": "f\"{ym.group(1)}{int(ym.group(2)):02d}\""
+  },
+  {
+   "site": "reborncar",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:68",
+   "식": "int(ym.group(1))"
+  },
+  {
+   "site": "reborncar",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:100",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  }
+ ]
+}

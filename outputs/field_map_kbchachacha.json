@@ -1,0 +1,77 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "kbchachacha",
+ "줄": 10,
+ "표": [
+  {
+   "site": "kbchachacha",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:195",
+   "식": "_int(price)"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:199",
+   "식": "f\"20{got.group(1)}{got.group(2)}\""
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:200",
+   "식": "2000 + int(got.group(3))"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "mileage_km",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:201",
+   "식": "RE_KM"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:201",
+   "식": "RE_CC"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:205",
+   "식": "RE_FUEL"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "color_ext_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:206",
+   "식": "RE_COLOR_EXT"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "color_int_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:207",
+   "식": "RE_COLOR_INT"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "price_origin_won",
+   "json_path": "price_current_won",
+   "코드": "mapping.py:234",
+   "식": "round(out[\"price_current_won\"] * 100 / pct)"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:245",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  }
+ ]
+}

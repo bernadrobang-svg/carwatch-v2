@@ -1,0 +1,815 @@
+{
+ "_어떻게": "★★★★★★ 가이드가 ★ **파서 코드에서 뽑았다** (09-05).  ★ 마스터 — 「★ 개발에게 왜 위임하지?  ★ **파서에 하드코딩으로 값이 있다면서**」.  ★ ★ 맞다 — ★ **사이트를 두드릴 것 없이** ★ 코드에 이미 짝이 있었다.  ★ ★ ★ 꼴이 셋이라(`\"칸\": _get(...)` · `out[\"칸\"] =` · `(\"칸\", RE_…)`) ★ 하나만 보면 절반이 빈다 — ★ **셋 다 잡았다**.  ★★ 개발측은 ★ **이 표를 `meta_field_usage` 에 넣고 ★ 파서가 읽게** 하면 된다",
+ "_잰_때": "2026-09-05",
+ "_사이트수": 12,
+ "줄": 113,
+ "_길을_캔_것": 56,
+ "_코드에_박힌_것": 57,
+ "_사이트별": {
+  "bmw_bps": 8,
+  "bobaedream": 8,
+  "encar": 13,
+  "heydealer": 10,
+  "hyundai_cert": 11,
+  "kbchachacha": 10,
+  "kcar": 15,
+  "kia_cpo": 15,
+  "lexus_certified": 5,
+  "reborncar": 3,
+  "revolt": 7,
+  "volvo_selekt": 8
+ },
+ "표": [
+  {
+   "site": "bmw_bps",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:73",
+   "식": "(won * WON_PER_MANWON"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:80",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "mileage_km",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:83",
+   "식": "_int(m.group(1))"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:86",
+   "식": "_int(m.group(1))"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:91",
+   "식": "f\"{m.group(1)}-{int(m.group(2)):02d}\""
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:94",
+   "식": "m.group(1)"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:97",
+   "식": "_int(m.group(1))"
+  },
+  {
+   "site": "bmw_bps",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:187",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:134",
+   "식": "_int(got.group(1)) * WON_PER_MANWON"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:139",
+   "식": "f\"20{ymd.group(1)}{ymd.group(2)}\""
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:140",
+   "식": "2000 + int(ymd.group(4) or ymd.group(1))"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:145",
+   "식": "f\"{ym4.group(1)}-{int(ym4.group(2)):02d}\""
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:146",
+   "식": "int(ym4.group(1))"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:154",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "vin",
+   "json_path": "차대번호",
+   "코드": "mapping.py:167",
+   "식": "f[\"차대번호\"]"
+  },
+  {
+   "site": "bobaedream",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:195",
+   "식": "None"
+  },
+  {
+   "site": "encar",
+   "core_column": "fuel_raw",
+   "json_path": "FuelType",
+   "코드": "mapping.py:140",
+   "식": "item.get(\"FuelType\")"
+  },
+  {
+   "site": "encar",
+   "core_column": "year_month",
+   "json_path": "Year",
+   "코드": "mapping.py:141",
+   "식": "_ym(item.get(\"Year\"))"
+  },
+  {
+   "site": "encar",
+   "core_column": "form_year",
+   "json_path": "FormYear",
+   "코드": "mapping.py:142",
+   "식": "_int(item.get(\"FormYear\"))"
+  },
+  {
+   "site": "encar",
+   "core_column": "mileage_km",
+   "json_path": "Mileage",
+   "코드": "mapping.py:143",
+   "식": "_int(item.get(\"Mileage\"))"
+  },
+  {
+   "site": "encar",
+   "core_column": "price_current_won",
+   "json_path": "Price",
+   "코드": "mapping.py:144",
+   "식": "_won(item.get(\"Price\"))"
+  },
+  {
+   "site": "encar",
+   "core_column": "color_ext_raw",
+   "json_path": "Color",
+   "코드": "mapping.py:146",
+   "식": "item.get(\"Color\")"
+  },
+  {
+   "site": "encar",
+   "core_column": "color_int_raw",
+   "json_path": "SeatColor",
+   "코드": "mapping.py:148",
+   "식": "item.get(\"SeatColor\")"
+  },
+  {
+   "site": "encar",
+   "core_column": "photo_list_json",
+   "json_path": "Photos",
+   "코드": "mapping.py:158",
+   "식": "_json(item.get(\"Photos\"))"
+  },
+  {
+   "site": "encar",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:181",
+   "식": "_won(_get(body"
+  },
+  {
+   "site": "encar",
+   "core_column": "trim_grade_name",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:191",
+   "식": "_get(body"
+  },
+  {
+   "site": "encar",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:192",
+   "식": "_int(_get(body"
+  },
+  {
+   "site": "encar",
+   "core_column": "options_choice_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:198",
+   "식": "_json(_get(body"
+  },
+  {
+   "site": "encar",
+   "core_column": "vin",
+   "json_path": "vin",
+   "코드": "mapping.py:240",
+   "식": "clean_vin(body.get(\"vin\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "price_current_won",
+   "json_path": "price",
+   "코드": "mapping.py:69",
+   "식": "_won(item.get(\"price\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "trim_grade_name",
+   "json_path": "grade_name",
+   "코드": "mapping.py:73",
+   "식": "d.get(\"grade_name\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "mileage_km",
+   "json_path": "mileage",
+   "코드": "mapping.py:74",
+   "식": "_int(d.get(\"mileage\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "form_year",
+   "json_path": "year",
+   "코드": "mapping.py:75",
+   "식": "_int(d.get(\"year\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "year_month",
+   "json_path": "initial_registration_date",
+   "코드": "mapping.py:76",
+   "식": "_ym(d.get(\"initial_registration_date\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "color_ext_raw",
+   "json_path": "exterior_description",
+   "코드": "mapping.py:77",
+   "식": "d.get(\"exterior_description\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "color_int_raw",
+   "json_path": "interior_description",
+   "코드": "mapping.py:78",
+   "식": "d.get(\"interior_description\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "price_origin_won",
+   "json_path": "factory_price",
+   "코드": "mapping.py:80",
+   "식": "_won(d.get(\"factory_price\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "fuel_raw",
+   "json_path": "fuel_display",
+   "코드": "mapping.py:104",
+   "식": "d.get(\"fuel_display\")"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "displacement_cc",
+   "json_path": "displacement",
+   "코드": "mapping.py:105",
+   "식": "_int(d.get(\"displacement\"))"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:133",
+   "식": "_fuel_of(name)"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:134",
+   "식": "_int(name.split(maxsplit=1)[0])"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:135",
+   "식": "(f\"20{ym.group(1)}-{int(ym.group(2)):02d}\""
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "mileage_km",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:137",
+   "식": "_int(km.group(1)) if km else None"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:138",
+   "식": "(_int(prices[0]) * WON_PER_MANWON"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:230",
+   "식": "f\"{reg.group(1)}-{reg.group(2)}\" if reg else None"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:231",
+   "식": "_num(_one(RE_CC"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "price_origin_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:233",
+   "식": "_num(_one(RE_ORIGIN"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:234",
+   "식": "_one(RE_FUEL"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "color_ext_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:235",
+   "식": "_one(RE_COLOR_EXT"
+  },
+  {
+   "site": "hyundai_cert",
+   "core_column": "color_int_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:236",
+   "식": "_one(RE_COLOR_INT"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:195",
+   "식": "_int(price)"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:199",
+   "식": "f\"20{got.group(1)}{got.group(2)}\""
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:200",
+   "식": "2000 + int(got.group(3))"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "mileage_km",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:201",
+   "식": "RE_KM"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:201",
+   "식": "RE_CC"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:205",
+   "식": "RE_FUEL"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "color_ext_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:206",
+   "식": "RE_COLOR_EXT"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "color_int_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:207",
+   "식": "RE_COLOR_INT"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "price_origin_won",
+   "json_path": "price_current_won",
+   "코드": "mapping.py:234",
+   "식": "round(out[\"price_current_won\"] * 100 / pct)"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:245",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  },
+  {
+   "site": "kcar",
+   "core_column": "fuel_raw",
+   "json_path": "fuelTypecdNm",
+   "코드": "mapping.py:99",
+   "식": "rvo.get(\"fuelTypecdNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "color_ext_raw",
+   "json_path": "extrColorNm",
+   "코드": "mapping.py:100",
+   "식": "rvo.get(\"extrColorNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "vin",
+   "json_path": "vin",
+   "코드": "mapping.py:102",
+   "식": "rvo.get(\"vin\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "year_month",
+   "json_path": "mfgDt",
+   "코드": "mapping.py:105",
+   "식": "(str(rvo.get(\"mfgDt\")) or None) if rvo.get(\"mfgDt\") else Non"
+  },
+  {
+   "site": "kcar",
+   "core_column": "form_year",
+   "json_path": "regModelyr",
+   "코드": "mapping.py:106",
+   "식": "_int(rvo.get(\"regModelyr\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "mileage_km",
+   "json_path": "milg",
+   "코드": "mapping.py:107",
+   "식": "_int(rvo.get(\"milg\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "displacement_cc",
+   "json_path": "engdispmnt",
+   "코드": "mapping.py:108",
+   "식": "_int(rvo.get(\"engdispmnt\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:113",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "kcar",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:148",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  },
+  {
+   "site": "kcar",
+   "core_column": "fuel_raw",
+   "json_path": "fuelNm",
+   "코드": "mapping.py:190",
+   "식": "item.get(\"fuelNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "color_ext_raw",
+   "json_path": "extrColorNm",
+   "코드": "mapping.py:191",
+   "식": "item.get(\"extrColorNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "form_year",
+   "json_path": "prdcnYr",
+   "코드": "mapping.py:193",
+   "식": "_int(item.get(\"prdcnYr\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "mileage_km",
+   "json_path": "milg",
+   "코드": "mapping.py:194",
+   "식": "_int(item.get(\"milg\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "year_month",
+   "json_path": "mfgDt",
+   "코드": "mapping.py:197",
+   "식": "str(item[\"mfgDt\"])"
+  },
+  {
+   "site": "kcar",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:201",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "fuel_raw",
+   "json_path": "modelEngine",
+   "코드": "mapping.py:93",
+   "식": "item.get(\"modelEngine\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "price_current_won",
+   "json_path": "price",
+   "코드": "mapping.py:95",
+   "식": "_int(item.get(\"price\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "mileage_km",
+   "json_path": "drivingDistance",
+   "코드": "mapping.py:97",
+   "식": "_int(item.get(\"drivingDistance\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "year_month",
+   "json_path": "firstRegisteredOn",
+   "코드": "mapping.py:99",
+   "식": "_ym(item.get(\"firstRegisteredOn\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "form_year",
+   "json_path": "modelYear",
+   "코드": "mapping.py:100",
+   "식": "_int(item.get(\"modelYear\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_ext_raw",
+   "json_path": "exteriorColorCodeName",
+   "코드": "mapping.py:102",
+   "식": "item.get(\"exteriorColorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_int_raw",
+   "json_path": "interiorColorCodeName",
+   "코드": "mapping.py:103",
+   "식": "item.get(\"interiorColorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "fuel_raw",
+   "json_path": "engine",
+   "코드": "mapping.py:147",
+   "식": "car.get(\"engine\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "price_current_won",
+   "json_path": "price",
+   "코드": "mapping.py:148",
+   "식": "_int(car.get(\"price\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "mileage_km",
+   "json_path": "drivingDistance",
+   "코드": "mapping.py:150",
+   "식": "_int(car.get(\"drivingDistance\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "year_month",
+   "json_path": "firstRegisteredOn",
+   "코드": "mapping.py:151",
+   "식": "_ym(car.get(\"firstRegisteredOn\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "form_year",
+   "json_path": "modelYear",
+   "코드": "mapping.py:152",
+   "식": "_int(car.get(\"modelYear\"))"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_ext_raw",
+   "json_path": "exteriorCodeName",
+   "코드": "mapping.py:154",
+   "식": "color.get(\"exteriorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "color_int_raw",
+   "json_path": "interiorCodeName",
+   "코드": "mapping.py:155",
+   "식": "color.get(\"interiorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:162",
+   "식": "int(cc)"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "color_ext_raw",
+   "json_path": "color",
+   "코드": "mapping.py:73",
+   "식": "_title(one.get(\"color\"))"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:88",
+   "식": "fy"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:120",
+   "식": "ym"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "displacement_cc",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:132",
+   "식": "cc"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:172",
+   "식": "json.dumps(got, ensure_ascii=False)"
+  },
+  {
+   "site": "reborncar",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:67",
+   "식": "f\"{ym.group(1)}{int(ym.group(2)):02d}\""
+  },
+  {
+   "site": "reborncar",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:68",
+   "식": "int(ym.group(1))"
+  },
+  {
+   "site": "reborncar",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:100",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  },
+  {
+   "site": "revolt",
+   "core_column": "fuel_raw",
+   "json_path": "fuel",
+   "코드": "mapping.py:85",
+   "식": "one.get(\"fuel\") or None"
+  },
+  {
+   "site": "revolt",
+   "core_column": "mileage_km",
+   "json_path": "mileage",
+   "코드": "mapping.py:94",
+   "식": "_int(one[\"mileage\"])"
+  },
+  {
+   "site": "revolt",
+   "core_column": "form_year",
+   "json_path": "year",
+   "코드": "mapping.py:96",
+   "식": "_int(one[\"year\"])"
+  },
+  {
+   "site": "revolt",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:99",
+   "식": "ym"
+  },
+  {
+   "site": "revolt",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:112",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  },
+  {
+   "site": "revolt",
+   "core_column": "color_ext_raw",
+   "json_path": "exterior_description",
+   "코드": "mapping.py:144",
+   "식": "col[\"exterior_description\"]"
+  },
+  {
+   "site": "revolt",
+   "core_column": "color_int_raw",
+   "json_path": "interior_description",
+   "코드": "mapping.py:146",
+   "식": "col[\"interior_description\"]"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:129",
+   "식": "_int(price.group(1))"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "form_year",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:132",
+   "식": "_int(f[\"모델 년도\"])"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "year_month",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:137",
+   "식": "got.group(1) + got.group(2)"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "mileage_km",
+   "json_path": "마일리지",
+   "코드": "mapping.py:139",
+   "식": "_int(f[\"마일리지\"])"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "color_ext_raw",
+   "json_path": "색상",
+   "코드": "mapping.py:141",
+   "식": "f[\"색상\"]"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "color_int_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:143",
+   "식": "f[\"내부 색상\"]"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "displacement_cc",
+   "json_path": "cm",
+   "코드": "mapping.py:147",
+   "식": "_int(f[\"엔진 크기\"].split(\"cm\")[0])"
+  },
+  {
+   "site": "volvo_selekt",
+   "core_column": "fuel_raw",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:149",
+   "식": "f[\"연료 유형\"]"
+  }
+ ]
+}

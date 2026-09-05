@@ -1,0 +1,112 @@
+{
+ "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "kcar",
+ "줄": 15,
+ "표": [
+  {
+   "site": "kcar",
+   "core_column": "fuel_raw",
+   "json_path": "fuelTypecdNm",
+   "코드": "mapping.py:99",
+   "식": "rvo.get(\"fuelTypecdNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "color_ext_raw",
+   "json_path": "extrColorNm",
+   "코드": "mapping.py:100",
+   "식": "rvo.get(\"extrColorNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "vin",
+   "json_path": "vin",
+   "코드": "mapping.py:102",
+   "식": "rvo.get(\"vin\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "year_month",
+   "json_path": "mfgDt",
+   "코드": "mapping.py:105",
+   "식": "(str(rvo.get(\"mfgDt\")) or None) if rvo.get(\"mfgDt\") else Non"
+  },
+  {
+   "site": "kcar",
+   "core_column": "form_year",
+   "json_path": "regModelyr",
+   "코드": "mapping.py:106",
+   "식": "_int(rvo.get(\"regModelyr\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "mileage_km",
+   "json_path": "milg",
+   "코드": "mapping.py:107",
+   "식": "_int(rvo.get(\"milg\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "displacement_cc",
+   "json_path": "engdispmnt",
+   "코드": "mapping.py:108",
+   "식": "_int(rvo.get(\"engdispmnt\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:113",
+   "식": "won * WON_PER_MANWON"
+  },
+  {
+   "site": "kcar",
+   "core_column": "photo_list_json",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:148",
+   "식": "json.dumps(photos, ensure_ascii=False)"
+  },
+  {
+   "site": "kcar",
+   "core_column": "fuel_raw",
+   "json_path": "fuelNm",
+   "코드": "mapping.py:190",
+   "식": "item.get(\"fuelNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "color_ext_raw",
+   "json_path": "extrColorNm",
+   "코드": "mapping.py:191",
+   "식": "item.get(\"extrColorNm\")"
+  },
+  {
+   "site": "kcar",
+   "core_column": "form_year",
+   "json_path": "prdcnYr",
+   "코드": "mapping.py:193",
+   "식": "_int(item.get(\"prdcnYr\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "mileage_km",
+   "json_path": "milg",
+   "코드": "mapping.py:194",
+   "식": "_int(item.get(\"milg\"))"
+  },
+  {
+   "site": "kcar",
+   "core_column": "year_month",
+   "json_path": "mfgDt",
+   "코드": "mapping.py:197",
+   "식": "str(item[\"mfgDt\"])"
+  },
+  {
+   "site": "kcar",
+   "core_column": "price_current_won",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:201",
+   "식": "won * WON_PER_MANWON"
+  }
+ ]
+}
