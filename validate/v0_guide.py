@@ -7692,14 +7692,24 @@ def s46_287_taste_fixed_by_target():
         return False, "targets.json 을 못 읽었다"
     t = json.loads(raw)
     on = [k for k, v in t.items() if isinstance(v, dict) and v.get("active")]
-    undef = [k for k in on
+    # 09-05 — 마스터 「UX300e·EV4 는 시장에 없다. 집착하지 마라. 코드로만 담아라」
+    #   실제로 UX300e 는 시장에 한 대뿐이고 엔카 목록에도 없다.
+    #   값이 없다고 검사가 울면 채울 수 없는 것을 채우라고 조르는 꼴이다.
+    #   그래서 매물이 있는 차종만 본다. 매물이 없으면 「미정」으로 두고 넘어간다.
+    listed = {k for k in on if (t[k].get("listing_count") or 0) > 0}
+    check = listed or set()
+    undef = [k for k in sorted(check)
              if not all(t[k].get(x) for x in
                         ("taste_display", "taste_interior", "taste_size"))]
+    empty = [k for k in on
+             if k not in listed
+             and not all(t[k].get(x) for x in
+                         ("taste_display", "taste_interior", "taste_size"))]
     if undef:
-        return False, (f"취향 고정값이 미정인 차종 {len(undef)}/{len(on)} — "
-                       + " · ".join(undef[:6]) +
-                       "  (0 이 아니라 「미정」으로 화면에 낸다)")
-    return True, f"active {len(on)}종에 취향 고정값이 다 있다"
+        return False, (f"매물이 있는데 취향 고정값이 없는 차종 {len(undef)} — "
+                       + " · ".join(undef[:6]))
+    note = f" (매물 없어 미정인 것 {len(empty)}종은 넘어간다)" if empty else ""
+    return True, f"active {len(on)}종 취향 고정값{note}"
 
 
 CHECKS = (
