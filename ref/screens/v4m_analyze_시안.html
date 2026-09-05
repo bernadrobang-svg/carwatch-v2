@@ -1,0 +1,160 @@
+<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>추천 · 탭 3 — 분석 (시안)</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+ --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
+ --mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:12px 14px 60px}
+
+/* ★★★★★★ 09-05 — ★ **높이·너비를 고정하지 않는다** (RULES.md 2-4) */
+.wrap *{height:auto;overflow:visible}
+
+/* ─ 머리 ─ */
+.top{display:flex;justify-content:space-between;align-items:center;
+ padding:10px 0;border-bottom:1px solid var(--line)}
+.brand{font-weight:800}
+h1{font-size:20px;margin:14px 0 4px}
+.sub{color:var(--dim);font-size:13px;margin:0 0 14px}
+
+/* ─ 탭 — ★ 자료로 정한다.  ★ 늘고 빠진다 ─ */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tabs a{display:inline-flex;align-items:center;padding:7px 12px;border-radius:16px;
+ border:1px solid var(--line);background:var(--surface2);color:var(--dim);
+ text-decoration:none;white-space:nowrap;font-size:13px}
+.tabs a.on{background:#1d4ed8;border-color:#1d4ed8;color:#fff;font-weight:700}
+
+/* ─ 맨 위 「토털 분석」 ─ */
+.totalbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+ padding:10px 12px;margin-bottom:14px;border:1px solid var(--amber);
+ border-radius:10px;background:rgba(240,180,41,.07)}
+.totalbar b{color:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:8px;
+ border:1px solid var(--line2);background:var(--surface2);color:var(--text);
+ text-decoration:none;white-space:nowrap;font-size:13px;cursor:pointer}
+.btn.go{border-color:var(--amber);color:var(--amber)}
+
+/* ─ 분석 카드 ─ */
+.acard{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+ padding:12px;margin-bottom:12px}
+.ahead{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.aname{font-weight:700;font-size:15px}
+.ameta{color:var(--dim);font-size:12px;font-family:var(--mono)}
+
+/* ★ 평가 한 마디 — ★ 마스터 확정 09-05 */
+.verdict{padding:3px 10px;border-radius:14px;font-weight:800;font-size:12px;
+ border:1px solid currentColor;white-space:nowrap}
+.verdict.buy{color:var(--ok)}
+.verdict.hold{color:var(--amber)}
+.verdict.wait{color:var(--dim)}
+.verdict.risk{color:var(--no)}
+
+.arow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.detail{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.detail h4{margin:12px 0 4px;font-size:13px;color:var(--amber)}
+.detail p{margin:0 0 6px;color:var(--dim);font-size:13px}
+.unknown{color:var(--no);font-weight:700}
+
+.why{border-left:3px solid #1d4ed8;background:var(--surface2);padding:10px 12px;
+ margin:12px 0;color:var(--dim);font-size:12px;line-height:1.6}
+</style>
+
+<div class="wrap">
+<div class="top"><span class="brand">CarWatch</span><span class="ameta">master · admin</span></div>
+
+<h1>분석</h1>
+<p class="sub">내가 <b>분석을 맡긴 차</b>만 여기 있습니다 — 관심과 다릅니다</p>
+
+<div class="why">★★★★★★ 마스터 확정 09-05 — ★ <b>관심과는 별개다</b>.
+ ★ 마스터 — 「★ 관심은 ★ 그냥 보기 심심해 클릭하는 것 · ★ <b>비교 용도일 뿐</b>이고,
+ ★ <b>분석은 ★ 진짜 사기 위해</b> 있는 것이다」.
+ ★★ 그리고 — 「★ 나는 ★ <b>다섯 개 찍는다고 얘기한 적 없다</b> —
+ ★ 이 차들이 ★ 열 개가 될지 ★ 한 개가 될지 ★ 네 개가 될지는 모른다」 →
+ ★ ★ <b>항목 수를 미리 못 박지 않는다</b>.  ★ 차마다 볼 것이 다르다.
+ ★★★ 이 화면은 ★ <b>가이드가 짓는다</b> (마스터 09-05 — 「★ 시안·HTML·CSS 는 네가 해야 될 일이다.
+ ★ 개발팀은 ★ <b>관련된 값을 찾아서 붙인다</b>」)</div>
+
+<!-- ★ 탭 — ★ 자료로 정한다.  ★ 코드에 박지 않는다 -->
+<p class="tabs">
+  <a href="?tab=1">내 기준에 가까운 차</a>
+  <a href="?tab=2">값 → 등급 → 취향</a>
+  <a class="on" href="?tab=3">분석 · 3</a>
+</p>
+
+<!-- ★ 맨 위 「토털 분석」 — ★ 마스터 확정 09-05 -->
+<div class="totalbar">
+  <b>토털 분석</b>
+  <span class="ameta">고른 3대를 ★ 한꺼번에 견줍니다</span>
+  <a class="btn go" href="?tab=3&amp;total=1">전체 종합 분석 ▸</a>
+</div>
+
+<!-- ─────────── 분석 카드 ─────────── -->
+<div class="acard">
+  <div class="ahead">
+    <span class="verdict buy">구매 적절</span>
+    <span class="aname">볼보 XC40 리차지</span>
+    <span class="ameta">2023-05 · 18,940km · 3,370만 · 볼보 셀렉트</span>
+  </div>
+  <p class="ameta">맡긴 때 2026-09-05 07:12</p>
+
+  <div class="arow">
+    <a class="btn" href="/detail/12345">그 차로 ▸</a>
+    <a class="btn" href="?copy=12345">타 AI 요청 (원문 복사)</a>
+    <a class="btn" href="?drop=12345">분석 제외</a>
+  </div>
+
+  <div class="detail">
+    <h4>값이 제값인가</h4>
+    <p>시세 3,540만 대비 <b>170만 싸다</b>(-4.8%).
+      게시 18일째 · 값이 <b>두 번 내렸다</b> — <b>급매로 보인다</b>.</p>
+
+    <h4>사고 위험 대비 값이 제대로 매겨졌나</h4>
+    <p>사고 <span class="unknown">미조회</span> · 골격 <span class="unknown">미조회</span> —
+      <b>「무사고」라 적지 않는다</b>. 상세를 못 받아 <b>모른다</b>.</p>
+
+    <h4>지금 살 때 좋은 점</h4>
+    <p>주행이 차종 평균보다 <b>-1.8만km</b> 적다 · 제조사 보증이 <b>3년 4개월</b> 남았다.</p>
+
+    <h4>3년 · 5년 뒤</h4>
+    <p>배터리 SOH <span class="unknown">모름</span> — 전기차는 <b>이것이 핵심</b>인데
+      그 사이트가 안 준다. 3년 뒤 잔가를 <b>가늠할 수 없다</b>.</p>
+
+    <h4>중고차 수리 때 생길 위험</h4>
+    <p>수입 전기차라 부품이 <b>본사 주문</b>이다 · 사고 이력을 모르는 채로 사면
+      배터리팩 손상 여부를 <b>나중에야 안다</b>.</p>
+  </div>
+</div>
+
+<div class="acard">
+  <div class="ahead">
+    <span class="verdict risk">위험</span>
+    <span class="aname">그랑 콜레오스 1.5 E-TECH</span>
+    <span class="ameta">2025-11 · 8,693km · 3,890만 · 엔카</span>
+  </div>
+  <p class="ameta">맡긴 때 2026-09-05 07:40</p>
+  <div class="arow">
+    <a class="btn" href="/detail/23456">그 차로 ▸</a>
+    <a class="btn" href="?copy=23456">타 AI 요청 (원문 복사)</a>
+    <a class="btn" href="?drop=23456">분석 제외</a>
+  </div>
+  <div class="detail">
+    <h4>값이 제값인가</h4>
+    <p>시세 <span class="unknown">표본 부족</span> — 같은 차종·연식이
+      <b>세 대뿐</b>이라 견줄 수가 없다. <b>제값인지 모른다</b>.</p>
+    <h4>사고 위험 대비 값이 제대로 매겨졌나</h4>
+    <p>골격 <b>2곳 교환</b>인데 시세와 <b>거의 같다</b> —
+      <b>사고 값이 안 빠졌다</b>. 같은 값이면 <b>무사고를 사는 것이 낫다</b>.</p>
+    <h4>중고차 수리 때 생길 위험</h4>
+    <p>교환한 곳이 <b>뒷펜더·트렁크플로어</b>다 — 뒤 충돌 흔적이다.
+      전기 계통이 뒤에 있어 <b>나중에 잔고장이 날 수 있다</b>.</p>
+  </div>
+</div>
+
+<div class="why">★★ <b>없는 것은 「모른다」·「미조회」라 적는다</b> — ★ 지어내지 않는다 (RULES.md 2).
+ ★ 위 카드에서 ★ <b>SOH 모름</b> · <b>사고 미조회</b> · <b>표본 부족</b>이 그 자리다.
+ ★★ 항목 이름은 <b>보기</b>다 — ★ 차마다 볼 것이 다르니 ★ <b>수를 못 박지 않는다</b></div>
+</div>
+</html>

@@ -3325,3 +3325,43 @@ details:not([open])>*:not(summary){display:none}
 
 /* ★ 단추는 ★ 글자에 맞게 늘어난다 (마스터 확정 09-03) */
 .mb,.chip,.btn.mini{width:auto;flex:0 0 auto;white-space:nowrap;word-break:keep-all}
+
+
+/* ★★★★★★★ 09-05 — ★ **분석 (추천 탭 3)** · ★ 가이드가 짓는다
+   ★ 마스터 — 「★ 시안·HTML·CSS 는 ★ **네가 해야 될 일**이다.
+     ★ 개발팀은 ★ **관련된 값을 찾아서 붙인다**」
+   ★ 시안 `ref/screens/v4m_analyze_시안.html` · 틀 `web/templates/analyze.html`
+   ★★ 시안에서 재고 넣었다 — ★ 390px 가려진 글자 **0** · 상자 겹침 **2** */
+
+/* ★ 맨 위 「토털 분석」 — ★ 고른 차 전체를 종합한다 */
+.totalbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  padding:10px 12px;margin-bottom:14px;
+  border:1px solid var(--amber);border-radius:10px;
+  background:rgba(240,180,41,.07)}
+.totalbar b{color:var(--amber)}
+.btn.go{border-color:var(--amber);color:var(--amber)}
+
+/* ★ 분석 카드 */
+.acard{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  padding:12px;margin-bottom:12px;overflow:visible}
+.ahead{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.aname{font-weight:700;font-size:15px}
+.ameta{color:var(--dim);font-size:12px;font-family:var(--mono)}
+.arow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+/* ★★ 평가 한 마디 — ★ 마스터 확정 09-05
+   ★ 「구매 적절」·「보류」·「대기」·「위험」 */
+.verdict{padding:3px 10px;border-radius:14px;font-weight:800;font-size:12px;
+  border:1px solid currentColor;white-space:nowrap;
+  display:inline-flex;align-items:center;height:auto}
+.verdict.buy{color:var(--ok)}
+.verdict.hold{color:var(--amber)}
+.verdict.wait{color:var(--dim)}
+.verdict.risk{color:var(--no)}
+
+/* ★ 분석 속 — ★ 항목 수를 못 박지 않는다.  ★ 주는 만큼 낸다 */
+.detail{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.detail h4{margin:12px 0 4px;font-size:13px;color:var(--amber);line-height:1.4}
+.detail p{margin:0 0 6px;color:var(--dim);font-size:13px;line-height:1.6}
+/* ★ 모르는 것은 ★ **눈에 띄게** — ★ 지어내지 않았다는 표시다 */
+.detail .unknown{color:var(--no);font-weight:700}
