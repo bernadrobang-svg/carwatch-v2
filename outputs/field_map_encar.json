@@ -1,7 +1,7 @@
 {
  "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
  "_사이트": "encar",
- "줄": 13,
+ "줄": 15,
  "표": [
   {
    "site": "encar",
@@ -93,6 +93,20 @@
    "json_path": "vin",
    "코드": "mapping.py:240",
    "식": "clean_vin(body.get(\"vin\"))"
+  },
+  {
+   "site": "encar",
+   "core_column": "_pii_plate_no",
+   "json_path": "vehicleNo",
+   "코드": "mapping.py:241",
+   "식": "body.get(\"vehicleNo\")"
+  },
+  {
+   "site": "encar",
+   "core_column": "_pii_record_plate_no",
+   "json_path": "carNo",
+   "코드": "mapping.py:308",
+   "식": "body.get(\"carNo\")"
   }
  ]
 }

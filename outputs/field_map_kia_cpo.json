@@ -1,7 +1,7 @@
 {
  "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
  "_사이트": "kia_cpo",
- "줄": 15,
+ "줄": 17,
  "표": [
   {
    "site": "kia_cpo",
@@ -54,6 +54,13 @@
   },
   {
    "site": "kia_cpo",
+   "core_column": "_pii_plate_no",
+   "json_path": "plateNumber",
+   "코드": "mapping.py:112",
+   "식": "item.get(\"plateNumber\")"
+  },
+  {
+   "site": "kia_cpo",
    "core_column": "fuel_raw",
    "json_path": "engine",
    "코드": "mapping.py:147",
@@ -100,6 +107,13 @@
    "json_path": "interiorCodeName",
    "코드": "mapping.py:155",
    "식": "color.get(\"interiorCodeName\")"
+  },
+  {
+   "site": "kia_cpo",
+   "core_column": "_pii_plate_no",
+   "json_path": "plateNumber",
+   "코드": "mapping.py:157",
+   "식": "car.get(\"plateNumber\")"
   },
   {
    "site": "kia_cpo",

@@ -128,7 +128,13 @@ def from_json(site: str, path: str, endpoint: str = "detail") -> str:
 #       (KB 11가지 · 보배 10 · 볼보 9 · 리본카 10 · BMW 9 · 기아CPO 14 · K카 11 …)
 #   ★ ★ ★ 그러니 ★ **코드에서 뽑아 표로 만들면** ★ 사이트가 막혀도 된다
 
-COL_RE = (r"(price_current_won|price_origin_won|mileage_km|year_month|"
+# ★★★★★ 09-05 — ★ **개인정보 칸은 이름이 다르다**.
+#   ★ 번호판은 ★ `core_listing.plate` 가 아니라 ★ **`_pii_plate_no`** 로 넘긴다 —
+#   ★ ★ `save_listing_pii()` 가 ★ `core_pii` 표에 따로 넣기 때문이다.
+#   ★ ★ ★ 그걸 몰라 ★ 「번호판이 열두 곳 다 없다」로 잘못 냈다 [09-05].
+#   ★ 차대번호(`vin`)도 ★ 같은 자리일 수 있다 — ★ 둘 다 본다
+COL_RE = (r"(_pii_plate_no|_pii_record_plate_no|"
+          r"price_current_won|price_origin_won|mileage_km|year_month|"
           r"color_ext_raw|color_int_raw|trim_grade_name|options_choice_json|"
           r"options_name_json|photo_list_json|vin|plate|form_year|"
           r"displacement_cc|fuel_raw)")

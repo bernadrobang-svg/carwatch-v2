@@ -1,7 +1,7 @@
 {
  "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
  "_사이트": "heydealer",
- "줄": 10,
+ "줄": 11,
  "표": [
   {
    "site": "heydealer",
@@ -58,6 +58,13 @@
    "json_path": "factory_price",
    "코드": "mapping.py:80",
    "식": "_won(d.get(\"factory_price\"))"
+  },
+  {
+   "site": "heydealer",
+   "core_column": "_pii_plate_no",
+   "json_path": "car_number",
+   "코드": "mapping.py:103",
+   "식": "body.get(\"car_number\")"
   },
   {
    "site": "heydealer",

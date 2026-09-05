@@ -1,7 +1,7 @@
 {
  "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
  "_사이트": "kbchachacha",
- "줄": 10,
+ "줄": 11,
  "표": [
   {
    "site": "kbchachacha",
@@ -58,6 +58,13 @@
    "json_path": "(코드에 박혀 있다)",
    "코드": "mapping.py:207",
    "식": "RE_COLOR_INT"
+  },
+  {
+   "site": "kbchachacha",
+   "core_column": "_pii_plate_no",
+   "json_path": "(코드에 박혀 있다)",
+   "코드": "mapping.py:215",
+   "식": "m.group(1)"
   },
   {
    "site": "kbchachacha",

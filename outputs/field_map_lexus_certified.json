@@ -1,7 +1,7 @@
 {
  "_어떻게": "가이드가 ★ 파서 코드에서 뽑았다 (09-05) — ★ 사이트를 안 두드렸다.  개발측이 meta_field_usage 에 넣는다",
  "_사이트": "lexus_certified",
- "줄": 5,
+ "줄": 6,
  "표": [
   {
    "site": "lexus_certified",
@@ -30,6 +30,13 @@
    "json_path": "(코드에 박혀 있다)",
    "코드": "mapping.py:132",
    "식": "cc"
+  },
+  {
+   "site": "lexus_certified",
+   "core_column": "_pii_plate_no",
+   "json_path": "number_plate",
+   "코드": "mapping.py:136",
+   "식": "str(ci[\"number_plate\"]).strip()"
   },
   {
    "site": "lexus_certified",
