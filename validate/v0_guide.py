@@ -6874,7 +6874,13 @@ def s46_269_recommend_set_and_chips():
     # ★★★ 마스터 확정 09-03 — 「★ **GV60 빼죠**」.  ★ 전기차이지만 ★ 추천에 안 낸다.
     #   ★ 09-02 에도 ★ 「GV60 제외」라 하셨다 — ★ **두 번 말씀하신 것을 내가 두 번 다 흘렸다**.
     #   ★ ★ `active` 는 그대로다 — ★ 「추천에서 빼기」와 「수집 끄기」는 ★ 다르다 (오판 237)
-    want = (ev | {"KOLEOS_HEV", "GV70_25T"}) - {"GV60"}
+    # ★★★★★★ 09-05 — ★ 마스터께서 ★ **취향 순위 열**을 정하셨다.
+    #   ★ 8위 `X3_IMPORT`(X3 가솔린) · 10위 `XC60_IMPORT`(XC60 가솔린)이 ★ 들어왔다 —
+    #   ★ ★ 09-03 에 「전기차 ＋ 콜레오스 ＋ GV70 가솔린」으로 뺐던 것을 ★ **되살렸다**.
+    #   ★ ★ ★ 그러니 ★ **취향 순위가 붙은 것은 다 추천에 든다**
+    ranked = {k for k, v in t.items()
+              if isinstance(v, dict) and v.get("taste_rank")}
+    want = ((ev | {"KOLEOS_HEV", "GV70_25T"}) | ranked) - {"GV60"}
     bad = []
     miss = sorted(want - rec)
     extra = sorted(rec - want)
