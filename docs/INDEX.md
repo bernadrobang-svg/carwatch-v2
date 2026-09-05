@@ -9,7 +9,7 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 53,125줄 · 3,851KB**
+**132파일 · 53,126줄 · 3,851KB**
 
 ★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
@@ -23,7 +23,7 @@
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
-- chapters/61-web.md 2,271줄
+- chapters/61-web.md 2,272줄
 - chapters/30-score/f-table.md 3,067줄
 - chapters/11-store/a-key.md 1,111줄
 - chapters/11-store/b-core.md 815줄
@@ -98,7 +98,7 @@
 | `chapters/60-admin/a-auth.md` | 405 | 15 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,121 | 45 |
-| `chapters/61-web.md`  ★ | 2,271 | 86 |
+| `chapters/61-web.md`  ★ | 2,272 | 86 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
 | `chapters/61-web/c-recommend.md` | 50 | 1 |

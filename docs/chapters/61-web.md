@@ -190,6 +190,7 @@ python3 run.py web --port N
 | `/why/{listing_id}` | GET | `view_why` | anonymous | — | 구현 |
 | `/notready` | GET | `view_notready` | anonymous | — | 구현 |
 | ★ `/track` | GET | `view_track` | anonymous | — | 구현 |
+| `/recommend?tab=4` | GET | `view_twocars` | anonymous | — | GV70 2.5T · BMW X3 전용. 시안 `v4m_twocars_시안.html` (09-05) |
 | ★★ `/analyze` | GET | `view_analyze` | anonymous | — | ★ **가이드가 지었다 09-05** — ★ 추천 **탭 3**.  ★ 시안 `v4m_analyze_시안.html` · 틀 `analyze.html` |
 | ★ `/analyze/copy/{listing_id}` | GET | `view_analyze_copy` | anonymous | — | ★ **타 AI 요청** — ★ 그 차의 원문을 ★ 하나의 글월로 |
 | ★ `/analyze/drop/{listing_id}` | POST | `view_analyze_drop` | anonymous | — | ★ **분석 제외** |
