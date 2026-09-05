@@ -566,28 +566,43 @@ def _lease_where() -> tuple:
     return (" AND ".join(part) or "1=1"), args
 
 
-def _cell_stats(conn, target: str, pb: dict, kb: dict) -> dict:
+def _band_case(bands: list, col: str, lo: str, hi: str) -> tuple:
+    """칸을 ★ 한 줄의 `CASE` 로 바꾼다 — ★ 칸마다 질의하지 않으려고."""
+    part, args = [], []
+    for b in bands:
+        w, a = _band_where(b, col, lo, hi)
+        part.append(f"WHEN {' AND '.join(w) or '1=1'} THEN ?")
+        args.extend([*a, b["key"]])
+    return "CASE " + " ".join(part) + " ELSE NULL END", args
+
+
+def _grid_stats(conn, target: str, pbs: list, kbs: list) -> dict:
+    """★★★★★ 09-06 (r1184 · `V11-34` 가 잡았다) — ★ 격자를 ★ **한 번에** 뽑는다.
+
+    ★ 전에는 ★ 칸마다 한 질의였다 — ★ 4×4 = **16 질의**.
+      ★ 실측 09-06 — ★ `/recommend?tab=4` 한 쪽이 ★ **28 질의**(상한 20)였다.
+    ★ 칸 나누기를 ★ `CASE` 로 옮겨 ★ **한 질의**로 줄인다
+    """
     lw, la = _lease_where()
-    w = ["l.target_key = ?", lw]
-    a: list = [target, *la]
-    for band, col, lo, hi in ((pb, "l.price_current_won", "min_won", "max_won"),
-                              (kb, "l.mileage_km", "min_km", "max_km")):
-        ww, aa = _band_where(band, col, lo, hi)
-        w.extend(ww)
-        a.extend(aa)
-    row = conn.execute(
-        "SELECT COUNT(*), AVG(l.price_current_won), AVG(l.mileage_km),"
+    pcase, pargs = _band_case(pbs, "l.price_current_won", "min_won", "max_won")
+    kcase, kargs = _band_case(kbs, "l.mileage_km", "min_km", "max_km")
+    got = conn.execute(
+        f"SELECT {pcase} AS pb, {kcase} AS kb, COUNT(*),"
+        "       AVG(l.price_current_won), AVG(l.mileage_km),"
         "       AVG(CAST(SUBSTR(l.year_month,1,4) AS INTEGER)),"
         "       AVG(CAST(SUBSTR(l.year_month,6,2) AS INTEGER))"
-        " FROM core_listing l WHERE " + " AND ".join(w), a).fetchone()
-    n = row[0] or 0
-    return {"n": n, "price": row[1], "km": row[2],
-            "year": (row[3], row[4]) if row[3] else None}
+        f" FROM core_listing l WHERE l.target_key = ? AND {lw}"
+        " GROUP BY 1, 2",
+        [*pargs, *kargs, target, *la]).fetchall()
+    out = {}
+    for r in got:
+        if r[0] is None or r[1] is None:
+            continue
+        out[(r[0], r[1])] = {"n": r[2] or 0, "price": r[3], "km": r[4],
+                             "year": (r[5], r[6]) if r[5] else None}
+    return out
 
 
-# ★ 09-06 실측 — ★ `year_month` 는 ★ `'2023-01'` 꼴이다.
-#   ★ 5번째 자리부터 자르면 ★ `'-0'` 이라 ★ 월이 ★ **전건 0(→1월)** 이 됐다.
-#   ★ 격자 평균연식이 ★ 죄다 ★ `2022.1` 로 나왔다 — ★ 6번째부터 자른다
 def _year_label(pair) -> str:
     if not pair or pair[0] is None:
         return UNKNOWN
@@ -633,11 +648,13 @@ def view_tab4(conn: sqlite3.Connection, query: dict,
 
     sel_p = str((query or {}).get("p") or "")
     sel_k = str((query or {}).get("km") or "")
+    grid = _grid_stats(conn, cur, pbs, kbs)
     rows_g = []
     for pb in pbs:
         cells = []
         for kb in kbs:
-            st = _cell_stats(conn, cur, pb, kb)
+            st = grid.get((pb["key"], kb["key"]),
+                          {"n": 0, "price": None, "km": None, "year": None})
             on = (pb["key"] == sel_p and kb["key"] == sel_k)
             cells.append({
                 "n": st["n"] if st["n"] else "—",
