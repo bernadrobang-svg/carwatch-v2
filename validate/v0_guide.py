@@ -7712,7 +7712,41 @@ def s46_287_taste_fixed_by_target():
     return True, f"active {len(on)}종 취향 고정값{note}"
 
 
+def s46_288_no_asking_about_out_of_scope():
+    """S46-288 — out_of_scope 를 두고 다시 묻지 않는가 (마스터 09-05).
+
+    마스터 — 「내가 받지 말라고 그랬잖아. 그런데 왜 자꾸 난리 치는 거야.
+      목록도 받지 않는 거잖아. 대상에서 제외하고 그냥 관리만 하라고 하는 것을
+      왜 매번 잊어먹고 문서를 만들어 문서 낭비 토큰 낭비를 하냐.
+      구조는 이미 있다 — 내가 필요한 게 있으면 추가로 빼서 쓰는 구조인데」
+
+    가이드가 09-05 에 `outputs/UNCLASSIFIED.md` 와 `tools/make_unclassified.py` 를
+      만들어 「이거 받을까요」를 물었다. 만들지 말았어야 했다. 지웠다.
+
+    구조 —
+      active        targets.json 에서 켠 차종. 수집·판정한다.
+      out_of_scope  그 밖 전부. 건드리지 않는다. 건수만 센다.
+      필요하면 마스터가 targets.json 에서 켠다. 그러면 자동으로 active 가 된다.
+    out_of_scope 비율이 높은 것은 정상이다. 좁혀서 받는다는 뜻이다.
+
+    잣대 — 미분류를 묻는 산출물이 다시 생기지 않았는가.
+    """
+    stray = [p.name for p in (ROOT / "outputs").glob("*.md")
+             if "UNCLASSIFIED" in p.name.upper()]
+    stray += [p.name for p in (ROOT / "tools").glob("*.py")
+              if "unclassified" in p.name.lower()]
+    if stray:
+        return False, ("미분류를 묻는 산출물이 다시 생겼다 — "
+                       + " · ".join(stray) +
+                       "  (out_of_scope 는 받지 않기로 정해진 것이다)")
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    if "받지 않기로 정해진 것" not in order:
+        return False, "작업 지시에 out_of_scope 의 뜻이 적혀 있지 않다"
+    return True, "미분류를 다시 묻지 않는다"
+
+
 CHECKS = (
+    ("S46-288", "미분류를 다시 묻지 않는가", s46_288_no_asking_about_out_of_scope),
     ("S46-286", "취향 축 합이 165 인가", s46_286_taste_axes_165),
     ("S46-287", "차종별 취향 고정값이 있는가", s46_287_taste_fixed_by_target),
     ("S46-285", "마스터 대상 차종의 상세가 채워졌는가", s46_285_master_targets_have_detail),
