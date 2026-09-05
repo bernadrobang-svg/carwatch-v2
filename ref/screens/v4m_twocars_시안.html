@@ -105,6 +105,20 @@ table.v3-g th,table.v3-g td{border:1px solid var(--line);padding:5px 6px;
 table.v3-g th{color:var(--faint);font-weight:600;background:var(--surface2)}
 table.v3-g th.row{text-align:left;white-space:nowrap}
 table.v3-g td b{font-size:14px;font-family:var(--mono);color:var(--text)}
+/* 칸을 누르면 아래에 그 칸의 차들이 등급순으로 나온다 */
+table.v3-g td a{display:block;color:inherit;text-decoration:none;margin:-5px -6px;padding:5px 6px}
+table.v3-g td a:hover{background:rgba(49,130,246,.10)}
+table.v3-g td.sel{background:rgba(49,130,246,.16);border-color:var(--blue)}
+.v3-pickhead{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;
+ border-left:3px solid var(--blue);background:var(--surface2);
+ padding:9px 12px;margin:12px 0 10px}
+.v3-pickhead b{color:var(--text)}
+.v3-pickhead .clear{margin-left:auto;color:var(--dim);font-size:12px;text-decoration:none}
+.v3-gr{padding:2px 8px;border-radius:12px;border:1px solid currentColor;
+ font-weight:800;font-size:12px}
+.v3-gr.A{color:var(--ok)}.v3-gr.B{color:var(--ok)}
+.v3-gr.C{color:var(--amber)}.v3-gr.D{color:var(--dim)}
+.v3-gr.PENDING{color:var(--no)}
 table.v3-g td span{display:block;color:var(--faint);font-size:10px;line-height:1.4}
 table.v3-g td.hot{background:rgba(240,180,41,.10)}
 table.v3-g td.none{color:var(--faint)}
@@ -118,6 +132,8 @@ table.v3-g td.pick{background:rgba(74,222,128,.10);border-color:var(--ok)}
      차종 두 갈래(GV70 2.5T · BMW X3) · 시장 눈금(중앙값·사분위·표본)
      격자 — 가격대 × 주행대 (칸마다 건수·평균가·평균주행·평균연식)
      격자 — 가격대별 트림 (같은 값이면 2WD 가 덜 탄 차다)
+     칸을 누르면 아래에 그 칸의 차들이 등급순으로 나온다
+     고른 칸을 보여주고 지우는 길을 둔다
      리스·렌트를 뺀 수로 낸다 (879 가 아니라 755)
      카드마다 — 사진 · 값 · 평가 한 마디 · 리스/렌트 표시
        값 셈(표시가 → 옵션값 → 신차 대비 → 사고 감액 → 주행 보정 → 제값)
@@ -177,13 +193,13 @@ table.v3-g td.pick{background:rgba(74,222,128,.10);border-color:var(--ok)}
       <td><b>8</b><span>2,880만<br>8.2만km<br>2021.9</span></td>
       <td><b>20</b><span>2,760만<br>13.9만km<br>2021.7</span></td></tr>
     <tr><th class="row">3,500만 이하</th>
-      <td class="pick"><b>2</b><span>3,499만<br>1.8만km<br>2022.6</span></td>
-      <td class="hot"><b>30</b><span>3,320만<br>4.9만km<br>2022.8</span></td>
-      <td class="hot"><b>57</b><span>3,240만<br>7.8만km<br>2022.5</span></td>
+      <td class="pick"><a href="?tab=4&amp;m=GV70_25T&amp;p=3500&amp;km=3"><b>2</b><span>3,499만<br>1.8만km<br>2022.6</span></a></td>
+      <td class="hot"><a href="?tab=4&amp;m=GV70_25T&amp;p=3500&amp;km=36"><b>30</b><span>3,320만<br>4.9만km<br>2022.8</span></a></td>
+      <td class="hot sel"><a href="?tab=4&amp;m=GV70_25T&amp;p=3500&amp;km=610"><b>57</b><span>3,240만<br>7.8만km<br>2022.5</span></a></td>
       <td><b>19</b><span>3,180만<br>12.1만km<br>2022.2</span></td></tr>
     <tr><th class="row">4,000만 이하</th>
-      <td class="pick"><b>23</b><span>3,841만<br>2.1만km<br>2023.4</span></td>
-      <td class="hot"><b>98</b><span>3,720만<br>4.4만km<br>2022.9</span></td>
+      <td class="pick"><a href="?tab=4&amp;m=GV70_25T&amp;p=4000&amp;km=3"><b>23</b><span>3,841만<br>2.1만km<br>2023.4</span></a></td>
+      <td class="hot"><a href="?tab=4&amp;m=GV70_25T&amp;p=4000&amp;km=36"><b>98</b><span>3,720만<br>4.4만km<br>2022.9</span></a></td>
       <td><b>42</b><span>3,610만<br>7.5만km<br>2022.6</span></td>
       <td><b>2</b><span>3,540만<br>11.2만km<br>2022.3</span></td></tr>
     <tr><th class="row">4,000만 초과</th>
@@ -215,9 +231,18 @@ table.v3-g td.pick{background:rgba(74,222,128,.10);border-color:var(--ok)}
     AWD 가 2WD 보다 주행이 많습니다 — <b>같은 값이면 2WD 가 덜 탄 차</b>입니다.</p>
 </div>
 
+
+<!-- 칸을 누르면 여기에 그 칸의 차들이 등급순으로 나온다 -->
+<div class="v3-pickhead">
+  <b>3,500만 이하 · 6~10만km</b>
+  <span class="v3-meta">57건 · 등급순</span>
+  <a class="clear" href="?tab=4&amp;m=GV70_25T">칸 고르기 지우기 ✕</a>
+</div>
+
 <div class="v3-card">
   <div class="v3-line1">
     <span class="v3-price">3,420만</span>
+    <span class="v3-gr B">B</span>
     <span class="v3-verdict buy">사도 된다</span>
     <span class="v3-name">GV70 2.5T AWD</span>
     <span class="v3-region deliver">전국 배달</span>
@@ -250,6 +275,7 @@ table.v3-g td.pick{background:rgba(74,222,128,.10);border-color:var(--ok)}
 <div class="v3-card">
   <div class="v3-line1">
     <span class="v3-price">3,236만</span>
+    <span class="v3-gr PENDING">PENDING</span>
     <span class="v3-verdict risk">리스 승계</span>
     <span class="v3-name">BMW X3 xDrive20d</span>
     <span class="v3-lease">리스·렌트</span>
