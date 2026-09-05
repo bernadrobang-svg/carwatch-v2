@@ -93,11 +93,32 @@ h1{font-size:20px;margin:14px 0 4px}
 .v4-nav a{flex:1;text-align:center;color:var(--dim);text-decoration:none;
  font-size:12px;padding:6px 0}
 .v4-nav a.on{color:var(--amber);font-weight:700}
+
+/* 격자 — 가격대 × 주행대. 마스터가 「어디가 값이 갈리는 자리인가」를 한눈에 본다 */
+.v3-grid{border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+ margin-bottom:12px;overflow-x:auto}
+.v3-grid h3{margin:0 0 4px;font-size:13px;color:var(--amber)}
+.v3-grid .note{margin:0 0 8px;font-size:11px;color:var(--faint)}
+table.v3-g{border-collapse:collapse;width:100%;font-size:11px;min-width:330px}
+table.v3-g th,table.v3-g td{border:1px solid var(--line);padding:5px 6px;
+ text-align:right;vertical-align:top}
+table.v3-g th{color:var(--faint);font-weight:600;background:var(--surface2)}
+table.v3-g th.row{text-align:left;white-space:nowrap}
+table.v3-g td b{font-size:14px;font-family:var(--mono);color:var(--text)}
+table.v3-g td span{display:block;color:var(--faint);font-size:10px;line-height:1.4}
+table.v3-g td.hot{background:rgba(240,180,41,.10)}
+table.v3-g td.none{color:var(--faint)}
+table.v3-g td.pick{background:rgba(74,222,128,.10);border-color:var(--ok)}
+.v3-split{margin:8px 0 0;font-size:12px;color:var(--dim);line-height:1.7}
+.v3-split b{color:var(--amber)}
 </style>
 
 <div class="v3-wrap">
 <!-- 반드시 있는 것 (RULES.md 1)
      차종 두 갈래(GV70 2.5T · BMW X3) · 시장 눈금(중앙값·사분위·표본)
+     격자 — 가격대 × 주행대 (칸마다 건수·평균가·평균주행·평균연식)
+     격자 — 가격대별 트림 (같은 값이면 2WD 가 덜 탄 차다)
+     리스·렌트를 뺀 수로 낸다 (879 가 아니라 755)
      카드마다 — 사진 · 값 · 평가 한 마디 · 리스/렌트 표시
        값 셈(표시가 → 옵션값 → 신차 대비 → 사고 감액 → 주행 보정 → 제값)
        패키지 이름＋가격 · 원하는 패키지 표시
@@ -141,6 +162,57 @@ h1{font-size:20px;margin:14px 0 4px}
   <div class="v3-mrow" style="margin-top:6px">
     <span>연식별 중앙값 — 2022 <b>3,380만</b> · 2023 <b>3,760만</b> · 2024 <b>4,240만</b></span>
   </div>
+</div>
+
+
+<!-- 격자 — 마스터가 직접 재신 수 (09-05) -->
+<div class="v3-grid">
+  <h3>GV70 2.5T · 가격대 × 주행</h3>
+  <p class="note">리스·렌트를 뺀 755건. 879건이 아닙니다</p>
+  <table class="v3-g">
+    <tr><th></th><th>3만 이하</th><th>3~6만</th><th>6~10만</th><th>10만 초과</th></tr>
+    <tr><th class="row">3,000만 이하</th>
+      <td class="none">—</td>
+      <td><b>3</b><span>2,930만<br>4.8만km<br>2022.1</span></td>
+      <td><b>8</b><span>2,880만<br>8.2만km<br>2021.9</span></td>
+      <td><b>20</b><span>2,760만<br>13.9만km<br>2021.7</span></td></tr>
+    <tr><th class="row">3,500만 이하</th>
+      <td class="pick"><b>2</b><span>3,499만<br>1.8만km<br>2022.6</span></td>
+      <td class="hot"><b>30</b><span>3,320만<br>4.9만km<br>2022.8</span></td>
+      <td class="hot"><b>57</b><span>3,240만<br>7.8만km<br>2022.5</span></td>
+      <td><b>19</b><span>3,180만<br>12.1만km<br>2022.2</span></td></tr>
+    <tr><th class="row">4,000만 이하</th>
+      <td class="pick"><b>23</b><span>3,841만<br>2.1만km<br>2023.4</span></td>
+      <td class="hot"><b>98</b><span>3,720만<br>4.4만km<br>2022.9</span></td>
+      <td><b>42</b><span>3,610만<br>7.5만km<br>2022.6</span></td>
+      <td><b>2</b><span>3,540만<br>11.2만km<br>2022.3</span></td></tr>
+    <tr><th class="row">4,000만 초과</th>
+      <td><b>312</b><span>4,680만<br>2.0만km<br>2024.3</span></td>
+      <td><b>135</b><span>4,320만<br>4.2만km<br>2023.8</span></td>
+      <td><b>4</b><span>4,140만<br>7.1만km<br>2023.1</span></td>
+      <td class="none">—</td></tr>
+  </table>
+  <p class="v3-split">값이 갈리는 자리 —
+    3,500만 → 4,000만 이면 주행이 <b>8.1만 → 5.4만</b> (2.7만km 준다).
+    4,000만 선이 <b>2022년식과 2024년식</b>을 가릅니다.
+    저주행(3만 이하)을 원하시면 <b>3,800만</b>은 줘야 합니다.</p>
+</div>
+
+<div class="v3-grid">
+  <h3>GV70 2.5T · 가격대별 트림</h3>
+  <table class="v3-g">
+    <tr><th class="row">가격대</th><th>트림</th><th>건수</th><th>평균주행</th><th>평균연식</th></tr>
+    <tr><th class="row">3,000 이하</th><td>2.5T 2WD</td><td><b>17</b></td><td>10.6만</td><td>2022.4</td></tr>
+    <tr><th class="row"></th><td>2.5T AWD</td><td><b>14</b></td><td>12.9만</td><td>2022.6</td></tr>
+    <tr><th class="row">3,500 이하</th><td>2.5T AWD</td><td><b>67</b></td><td>8.1만</td><td>2022.7</td></tr>
+    <tr><th class="row"></th><td class="pick">2.5T 2WD</td><td><b>38</b></td><td>6.4만</td><td>2022.8</td></tr>
+    <tr><th class="row"></th><td>3.5T AWD</td><td><b>3</b></td><td>8.9만</td><td>2022.3</td></tr>
+    <tr><th class="row">4,000 이하</th><td>2.5T AWD</td><td><b>103</b></td><td>5.4만</td><td>2022.9</td></tr>
+    <tr><th class="row"></th><td class="pick">2.5T 2WD</td><td><b>60</b></td><td>4.2만</td><td>2022.9</td></tr>
+    <tr><th class="row">4,000 초과</th><td>2.5T AWD</td><td><b>278</b></td><td>2.5만</td><td>2024.2</td></tr>
+  </table>
+  <p class="v3-split">3,500만 아래는 전부 <b>2022년식</b>입니다. 연식으로는 못 올라갑니다.
+    AWD 가 2WD 보다 주행이 많습니다 — <b>같은 값이면 2WD 가 덜 탄 차</b>입니다.</p>
 </div>
 
 <div class="v3-card">
