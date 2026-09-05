@@ -224,14 +224,14 @@
 | `S46-265` | 적재 뒤 raw_response 를 지우는가 | fatal | `validate/v0_guide.py:6738` | **★ 없음** | 없음 | guide/03_이력.md:1356 · guide/06_오판대장.md:347 · guide/07_밀린일대장.md:55 |
 | `S46-266` | 이미 받은 상세를 다시 안 받는가 | fatal | `validate/v0_guide.py:6775` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:57 · chapters/10-collect/00-intro.md:516 |
 | `S46-267` | 팔린 것을 대조하고 치우는가 | fatal | `validate/v0_guide.py:6797` | **★ 없음** | 없음 | guide/03_이력.md:1357 · guide/07_밀린일대장.md:59 · chapters/10-collect/00-intro.md:553 |
-| `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6822` | **★ 없음** | 없음 | guide/03_이력.md:1359 · guide/03_이력.md:1374 |
-| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6857` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1404 |
+| `S46-268` | 지시문이 한 벌이고 지금 판인가 | fatal | `validate/v0_guide.py:6822` | **★ 없음** | 없음 | guide/03_이력.md:1359 · guide/03_이력.md:1374 · guide/03_이력.md:1404 |
+| `S46-269` | 추천 차종과 단추 크기가 확정대로인가 | fatal | `validate/v0_guide.py:6857` | **★ 없음** | 없음 | guide/03_이력.md:1362 · guide/03_이력.md:1363 · guide/03_이력.md:1405 |
 | `S46-270` | 가려진 글자를 세는 자가 있는가 | fatal | `validate/v0_guide.py:6902` | **★ 없음** | 없음 | guide/03_이력.md:1365 · guide/06_오판대장.md:348 |
 | `S46-271` | 화면을 브라우저로 열어 재는가 | fatal | `validate/v0_guide.py:6984` | **★ 없음** | 없음 | guide/03_이력.md:1366 · guide/03_이력.md:1367 · guide/03_이력.md:1373 |
 | `S46-272` | 사진을 URL 로만 스무 장까지 두는가 | fatal | `validate/v0_guide.py:7044` | **★ 없음** | 없음 | guide/03_이력.md:1385 · chapters/10-collect/00-intro.md:495 |
 | `S46-273` | 축 점수(result_axis.score)를 넣는가 | fatal | `validate/v0_guide.py:6934` | **★ 없음** | 없음 | guide/03_이력.md:1387 |
 | `S46-274` | 기본 차례가 등급 > 값 > 추천인가 | fatal | `validate/v0_guide.py:7102` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:62 · guide/03_이력.md:1388 |
-| `S46-275` | 축 점수를 저장하는가 | fatal | `validate/v0_guide.py:7129` | **★ 없음** | 없음 | guide/03_이력.md:1389 · guide/06_오판대장.md:350 |
+| `S46-275` | 축 점수를 저장하는가 | fatal | `validate/v0_guide.py:7129` | **★ 없음** | 없음 | guide/03_이력.md:1389 · guide/03_이력.md:1404 · guide/06_오판대장.md:350 |
 | `S46-276` | 엔카 수집에 구멍이 없는가 | fatal | `validate/v0_guide.py:7159` | **★ 없음** | 없음 | guide/03_이력.md:1393 |
 | `S46-277` | 관리 질의가 조회를 막지 않는가 | fatal | `validate/v0_guide.py:7215` | **★ 없음** | 없음 | guide/03_이력.md:1394 · guide/03_이력.md:1402 |
 | `S46-278` | KB 가 막힌 응답도 남기는가 | fatal | `validate/v0_guide.py:7240` | **★ 없음** | 없음 | guide/03_이력.md:1396 |
