@@ -7383,7 +7383,35 @@ def s46_280_all_sites_no_gap():
     return True, f"열두 사이트에 구멍이 없다 ({len(sites)}곳)"
 
 
+def s46_281_option_names_collected():
+    """S46-281 — ★ **이름만 있는 옵션도 받는가** (마스터 확정 09-05).
+
+    ★★★ 마스터 — 「★ **후자**.  ★ 그리고 ★ **최대한 수집해서 채워야지**」
+    ★★ 실측 09-05 — ★ `options_choice_json` 을 넣는 곳이
+      ★ **`parse/encar/mapping.py:198` 하나뿐**이라 ★ **옵션 0 이 열한 곳**이다.
+      ★ ★ 우리 매물의 ★ **절반 넘게**가 옵션 축(**45점**)을 못 받는다.
+    ★★★ 그런데 ★ **사이트는 준다** [가이드가 두드려 확인 09-05] —
+      ★ 리볼트 `options`·`option_name`·`option_packages`·`car_spec_info`
+      ★ 볼보셀렉트 「옵션·사양·편의·안전」 · ★ KB 「옵션·사양·편의」.
+      ★ ★ **안 주는 게 아니라 ★ 우리가 안 뽑는다**.
+    ★ 칸을 둘로 — ★ 값이 있는 것은 `options_choice_json` ·
+      ★ **이름만 있는 것은 `options_name_json`**(신설).
+    ★ 잣대 — ★ 규격이 그 갈래를 담는가.
+    """
+    spec = _read(ROOT / "docs" / "chapters" / "11-store" / "a-key.md")
+    bad = []
+    for want, label in (("이름만 있어도 받는다", "「이름만 있어도 받는다」"),
+                        ("options_name_json", "새 칸 `options_name_json`"),
+                        ("버리지 않는다", "「이름만 있는 것을 버리지 않는다」")):
+        if want not in spec:
+            bad.append(f"규격에 {label}가 없다")
+    if bad:
+        return False, "★ " + " · ".join(bad)
+    return True, "이름만 있는 옵션도 받는 규격이 있다"
+
+
 CHECKS = (
+    ("S46-281", "이름만 있는 옵션도 받는가", s46_281_option_names_collected),
     ("S46-280", "열두 사이트에 같은 구멍이 없는가", s46_280_all_sites_no_gap),
     ("S46-279", "KB 값·항목·사진이 찼는가", s46_279_kb_fields_filled),
     ("S46-278", "KB 가 막힌 응답도 남기는가", s46_278_kb_saves_blocked_raw),
