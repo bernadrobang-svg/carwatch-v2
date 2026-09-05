@@ -456,6 +456,17 @@ BOX_OVERLAP_JS = r"""
   for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
     const A = L[i], B = L[j];
     if (A.e.contains(B.e) || B.e.contains(A.e)) continue;
+    // ★★★★★ 09-06 — ★ **흐르는 글 속 인라인은 겹침이 아니다** (마스터 「600 으로 하면 화면 깨져」).
+    //   ★ 900px 실측 — ★ `B. ↔ B.` 여섯 쌍이 나왔는데 ★ 다 `<b>` 끼리였다.
+    //   ★ 인라인은 ★ 줄이 바뀌면 ★ **상자가 두 줄에 걸쳐** 옆 형제와 포개진다 —
+    //     ★ ★ 눈에는 안 겹친다.  ★ 그래서 ★ 둘 다 인라인이고 ★ **같은 덩이 안**이면 안 센다.
+    //   ★ 진짜 겹침(★ 쪽 번호가 바닥 메뉴에 가린 것)은 ★ 블록이라 ★ 그대로 잡힌다.
+    {
+      const inA = getComputedStyle(A.e).display.startsWith('inline');
+      const inB = getComputedStyle(B.e).display.startsWith('inline');
+      const blk = x => x.closest('p,h1,h2,h3,h4,h5,h6,li,td,th,div');
+      if (inA && inB && blk(A.e) && blk(A.e) === blk(B.e)) continue;
+    }
     const ox = Math.min(A.r.right, B.r.right) - Math.max(A.r.left, B.r.left);
     const oy = Math.min(A.r.bottom, B.r.bottom) - Math.max(A.r.top, B.r.top);
     if (ox > 2 && oy > 2) {

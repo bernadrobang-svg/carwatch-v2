@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 223개 · 총 82,720줄
+파일 223개 · 총 82,731줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -27,7 +27,7 @@
 | `validate/v1_collect.py` | 910 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `report/screens/tabs.py` | 846 | 추천 탭 2·3·4 — ★ 값을 붙인다 (지시 `r1184` A · 규격 `docs/RECOMMEND_SCREEN.md`). |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
-| `tools/browser_diff.py` | 795 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
+| `tools/browser_diff.py` | 806 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `collect/pipeline.py` | 792 | 실행 순서 · 중단 · 재처리 · 재개. |
 | `validate/v4_mapping.py` | 790 | V4 매핑 검증 — 이름이 아니라 값으로 검증한다. |
 | `tests/test_run.py` | 783 | S0~S3 종단 시험 (모의 응답). |
@@ -358,10 +358,10 @@ tabs_config:32  tab_list:38  tab_template:56  tab_targets:63  _won:71  _km:78  _
 spec_lines:94  anchor_step:112  build_symbols:131  enclosing:166  build_texts:176  _stem:214  tokens:223  _best_in:253  _rows:290  layers_of:303  layer_pool:310  _rare_hit:322  axis_words:346  json_key_at:367  _place:394  _hints:405  find_in_layer:421  _best_step_in:469  _layers:500  derive_state:520  src_mark:546  relayer:559  restate:574  fill_file:597  move_to_rules:665  survey:708  lists:736  write_index:757  main:796
 ```
 
-### `tools/browser_diff.py` — 795줄
+### `tools/browser_diff.py` — 806줄
 
 ```
-pairs:35  look:48  main:298  hidden_text_report:472  _site_report:606  encar_collect_report:666  kb_collect_report:761  all_sites_report:785
+pairs:35  look:48  main:298  hidden_text_report:483  _site_report:617  encar_collect_report:677  kb_collect_report:772  all_sites_report:796
 ```
 
 ### `collect/pipeline.py` — 792줄
