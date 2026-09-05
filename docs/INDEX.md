@@ -9,21 +9,21 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 52,528줄 · 3,808KB**
+**132파일 · 52,548줄 · 3,815KB**
 
 ★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 913줄
+- CHECKS.md 927줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
 - UI_REVIEW.md 2,155줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,423줄
+- guide/03_이력.md 1,428줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
-- chapters/61-web.md 2,271줄
+- chapters/61-web.md 2,272줄
 - chapters/30-score/f-table.md 3,067줄
 - chapters/11-store/a-key.md 1,111줄
 - chapters/11-store/b-core.md 815줄
@@ -34,7 +34,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 913 | 129 |
+| `CHECKS.md`  ★ | 927 | 130 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -98,7 +98,7 @@
 | `chapters/60-admin/a-auth.md` | 405 | 15 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,121 | 45 |
-| `chapters/61-web.md`  ★ | 2,271 | 86 |
+| `chapters/61-web.md`  ★ | 2,272 | 86 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
 | `chapters/61-web/c-recommend.md` | 50 | 1 |
@@ -122,7 +122,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,423 | 1,105 |
+| `guide/03_이력.md`  ★ | 1,428 | 1,111 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
