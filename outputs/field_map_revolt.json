@@ -1,0 +1,245 @@
+{
+ "_어떻게": "가이드가 원문에서 캤다 (09-05) — 개발측이 meta_field_usage 에 넣는다",
+ "_사이트": "revolt",
+ "줄": 34,
+ "표": [
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "price",
+   "core_column": "price_current_won",
+   "본보기": "1790"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "new_car_price",
+   "core_column": "price_origin_won",
+   "본보기": "3630"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "original_new_car_price",
+   "core_column": "price_origin_won",
+   "본보기": "5330"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "standard_price",
+   "core_column": "price_current_won",
+   "본보기": "5330"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.preview_media_files[].image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.preview_media_files[].thumbnail_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.media_files[].image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.media_files[].thumbnail_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.grade_part_name",
+   "core_column": "trim_grade_name",
+   "본보기": "프리미엄"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.grade_name",
+   "core_column": "trim_grade_name",
+   "본보기": "프리미엄"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.year",
+   "core_column": "year_month",
+   "본보기": "2019"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.mileage",
+   "core_column": "mileage_km",
+   "본보기": "120671"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.options[].name",
+   "core_column": "options_name_json",
+   "본보기": "블랙박스"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.options[].content.option_name",
+   "core_column": "options_name_json",
+   "본보기": "블랙박스"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.options[].content.info_text",
+   "core_column": "options_name_json",
+   "본보기": "None"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.options[].content.info_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.car_spec_info.option_packages[].name",
+   "core_column": "options_name_json",
+   "본보기": "1) 충전 어시스트 패키지 (50만원)"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.car_spec_info.option_packages[].detail_items[]",
+   "core_column": "options_name_json",
+   "본보기": "완속 충전 케이블"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.color_and_trim.exterior_description",
+   "core_column": "trim_grade_name",
+   "본보기": "갤럭틱 그레이"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.color_and_trim.interior_description",
+   "core_column": "trim_grade_name",
+   "본보기": "검정, 천연 가죽"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.color_and_trim.exterior_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.color_and_trim.interior_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.inside_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "car_info.inside_360.thumbnail_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "condition.image_urls[]",
+   "core_column": "photo_list_json",
+   "본보기": "https://prnd-car-purchase.s3.ap-northeas"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.owner_records[].date",
+   "core_column": "vin",
+   "본보기": "2018-07-18 00:00:00"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.owner_records[].owner_info",
+   "core_column": "vin",
+   "본보기": "대구 법인"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.owner_records[].description",
+   "core_column": "vin",
+   "본보기": "1년 11개월 / 21,000km 운행"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.has_public_use_record",
+   "core_column": "vin",
+   "본보기": "False"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.has_rent_use_record",
+   "core_column": "vin",
+   "본보기": "False"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.has_business_use_record",
+   "core_column": "vin",
+   "본보기": "False"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "driving_history.recall_summary",
+   "core_column": "vin",
+   "본보기": "completed"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "manager.profile_image_url",
+   "core_column": "photo_list_json",
+   "본보기": "https://d30tof5713a66d.cloudfront.net/st"
+  },
+  {
+   "site": "revolt",
+   "endpoint": "detail",
+   "json_path": "purchase_cost.car_price",
+   "core_column": "price_current_won",
+   "본보기": "1790"
+  }
+ ]
+}

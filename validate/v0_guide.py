@@ -7410,7 +7410,36 @@ def s46_281_option_names_collected():
     return True, "이름만 있는 옵션도 받는 규격이 있다"
 
 
+def s46_282_field_map_by_site():
+    """S46-282 — ★ **사이트별 매핑표**가 있고 ★ 파서가 그것을 읽는가 (마스터 09-05).
+
+    ★★★ 마스터 — 「★ 내가 ★ **사이트별로 매핑표를 만들고 ★ 그걸 파서가 보게 하라**고 했는데
+      ★ 왜 안 되어 있지?  ★ ★ 지금 파서에 ★ **`if` 구문으로 하드코딩**되어 있거나
+      ★ ★ ★ **정규식으로 흩어져** 있지?」 · 「★ **표는 너가 만들어야지**」
+    ★★ 실측 09-05 —
+      ★ `meta_field_usage` ★ **858줄인데 ★ 엔카가 850줄** · 나머지 넷은 ★ **8줄**
+        (bmw_bps 4 · bobaedream 2 · hyundai_cert 1 · revolt 1) · ★ **일곱 곳은 한 줄도 없다**
+      ★ 파서는 ★ **표를 한 곳도 안 읽는다** — ★ KB `if` **24**·정규식 **38** ·
+        리볼트 `if` **41** · 볼보 `if` **25**·정규식 **27**
+    ★★★ 그래서 ★ **옵션 0 이 열한 곳** · 트림 0 이 열 곳이다 — ★ 같은 뿌리다.
+    ★ 가이드가 ★ `tools/make_field_map.py` 로 ★ **표를 만든다** (원문에서 길을 편다) —
+      ★ ★ 낸 것은 ★ `outputs/field_map_{site}.json` · ★ **개발측이 넣는다**.
+    ★ 잣대 — ① 자가 있는가 ② 사이트별 표가 ★ **두 곳 넘게** 있는가.
+    """
+    tool = _read(ROOT / "tools" / "make_field_map.py")
+    if not tool:
+        return False, ("★ 매핑표를 만드는 자가 없다 — "
+                       "★ `tools/make_field_map.py` 를 세워라")
+    got = sorted((ROOT / "outputs").glob("field_map_*.json"))
+    if len(got) < 2:
+        return False, (f"★ 사이트별 매핑표가 {len(got)}곳뿐이다 — "
+                       "★ 원문이 있는 사이트부터 캐라  "
+                       "(★ `meta_field_usage` 는 엔카 850줄 · 나머지 8줄)")
+    return True, f"사이트별 매핑표 {len(got)}곳을 냈다"
+
+
 CHECKS = (
+    ("S46-282", "사이트별 매핑표가 있는가", s46_282_field_map_by_site),
     ("S46-281", "이름만 있는 옵션도 받는가", s46_281_option_names_collected),
     ("S46-280", "열두 사이트에 같은 구멍이 없는가", s46_280_all_sites_no_gap),
     ("S46-279", "KB 값·항목·사진이 찼는가", s46_279_kb_fields_filled),
