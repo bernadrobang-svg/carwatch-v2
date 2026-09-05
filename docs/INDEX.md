@@ -9,21 +9,21 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 53,120줄 · 3,850KB**
+**132파일 · 52,329줄 · 3,787KB**
 
 ★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,506줄
+- CHECKS.md 911줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
-- UI_REVIEW.md 2,155줄
+- UI_REVIEW.md 2,154줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,423줄
+- guide/03_이력.md 1,417줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
-- chapters/61-web.md 2,271줄
+- chapters/61-web.md 2,268줄
 - chapters/30-score/f-table.md 3,067줄
 - chapters/11-store/a-key.md 1,111줄
 - chapters/11-store/b-core.md 815줄
@@ -34,7 +34,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,506 | 171 |
+| `CHECKS.md`  ★ | 911 | 129 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
@@ -50,14 +50,14 @@
 | `OPTION_CATALOG.md` | 321 | 16 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
-| `RECOMMEND_SCREEN.md` | 746 | 37 |
+| `RECOMMEND_SCREEN.md` | 561 | 28 |
 | `REVOLT_API.md` | 217 | 11 |
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 112 | 5 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
 | `SOURCE.md` | 795 | 62 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
-| `UI_REVIEW.md`  ★ | 2,155 | 109 |
+| `UI_REVIEW.md`  ★ | 2,154 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
@@ -98,7 +98,7 @@
 | `chapters/60-admin/a-auth.md` | 405 | 15 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,121 | 45 |
-| `chapters/61-web.md`  ★ | 2,271 | 86 |
+| `chapters/61-web.md`  ★ | 2,268 | 86 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
 | `chapters/61-web/c-recommend.md` | 50 | 1 |
@@ -122,12 +122,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,423 | 1,105 |
+| `guide/03_이력.md`  ★ | 1,417 | 1,094 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 669 | 301 |
+| `guide/06_오판대장.md` | 668 | 300 |
 | `guide/07_밀린일대장.md` | 796 | 58 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
