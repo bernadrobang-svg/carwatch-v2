@@ -1,0 +1,281 @@
+<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>추천 · 탭 2 — 값 → 등급 → 취향 (시안)</title>
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+ --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
+ --blue:#3182f6;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1100px;margin:0 auto;padding:12px 14px 66px}
+.v3-wrap *{height:auto;overflow:visible}
+.v4-top{display:flex;justify-content:space-between;align-items:center;
+ padding:10px 0;border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:14px 0 4px}
+.v3-sub{color:var(--dim);font-size:13px;margin:0 0 12px}
+
+.v4-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.v4-tabs a{padding:7px 12px;border-radius:16px;border:1px solid var(--line);
+ background:var(--surface2);color:var(--dim);text-decoration:none;
+ white-space:nowrap;font-size:13px}
+.v4-tabs a.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+
+/* ─ 고르개 — ★ 여럿 고른다 · ★ AND ─ */
+.v3-pickbox{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.v3-pickrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.v3-pickrow b{font-size:12px;color:var(--faint);min-width:52px}
+.v3-chip{padding:5px 10px;border-radius:14px;border:1px solid var(--line);
+ background:var(--surface2);color:var(--dim);font-size:12px;
+ white-space:nowrap;cursor:pointer}
+.v3-chip.on{border-color:var(--blue);color:#fff;background:var(--blue);font-weight:700}
+.v3-and{font-size:12px;color:var(--amber);margin-top:4px}
+
+/* ─ 줄 세우기 단추 ─ */
+.v3-sorts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.v3-sorts a{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
+ background:var(--surface2);color:var(--dim);text-decoration:none;font-size:13px}
+.v3-sorts a.on{border-color:var(--amber);color:var(--amber);font-weight:700}
+
+/* ─ 카드 ─ */
+.v3-card{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+ padding:12px;margin-bottom:12px;overflow:visible}
+/* ★★★★★ 09-05 — ★ **사진을 넣는다** (마스터 지적 — 「★ 차량 사진 이미지가 들어야 되겠지?  ★ 어디 갔어?」)
+   ★ 사진은 ★ **글과 한 흐름**에 둔다 (마스터 09-04 — 「★ 별도 td·tr 로 구분하지 말고」) */
+.v3-thumb{float:left;width:104px;height:78px;object-fit:cover;border-radius:7px;
+ margin:0 10px 6px 0;background:var(--surface2);border:1px solid var(--line)}
+.v3-nophoto{float:left;width:104px;height:78px;border-radius:7px;margin:0 10px 6px 0;
+ border:1px dashed var(--line2);color:var(--dim);font-size:10px;line-height:1.35;
+ display:flex;align-items:center;justify-content:center;text-align:center;padding:4px}
+.v3-card::after{content:'';display:block;clear:both}
+@media (min-width:760px){.v3-thumb,.v3-nophoto{width:200px;height:150px}}
+.v3-line1{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.v3-price{font-size:19px;font-weight:800;font-family:var(--mono)}
+.v3-grade{padding:2px 8px;border-radius:12px;border:1px solid currentColor;
+ font-weight:800;font-size:12px;color:var(--ok)}
+.v3-rank{font-size:12px;color:var(--amber);font-weight:700}
+.v3-name{font-weight:700}
+.v3-meta{color:var(--dim);font-size:12px;font-family:var(--mono)}
+.v3-region{padding:2px 8px;border-radius:12px;font-size:11px;
+ border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.v3-region.deliver{border-color:var(--blue);color:var(--blue)}
+.v3-region.near{border-color:var(--ok);color:var(--ok)}
+
+.v3-facts{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 0}
+.v3-fact{font-size:12px;color:var(--dim)}
+.v3-fact b{color:var(--text)}
+.v3-good{color:var(--ok);font-weight:700}
+.v3-bad{color:var(--no);font-weight:700}
+.v3-unknown{color:var(--no);font-weight:700}
+.v3-over{color:var(--amber);font-weight:700}
+
+.v3-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.v3-btn{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
+ background:var(--surface2);color:var(--text);text-decoration:none;font-size:13px;
+ white-space:nowrap;cursor:pointer}
+.v3-btn.ask{border-color:var(--amber);color:var(--amber);font-weight:700}
+.v3-btn.like{border-color:var(--line2)}
+
+/* ─ 쪽 번호 ─ */
+.v3-pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+ margin:14px 0;font-size:13px}
+.v3-pager a{padding:6px 10px;border-radius:8px;border:1px solid var(--line);
+ background:var(--surface2);color:var(--dim);text-decoration:none}
+.v3-pager a.on{border-color:var(--blue);color:#fff;background:var(--blue);font-weight:700}
+.v3-pager .cnt{color:var(--dim);margin-right:6px;font-family:var(--mono)}
+
+.v3-why{border-left:3px solid var(--blue);background:var(--surface2);
+ padding:10px 12px;margin:12px 0;color:var(--dim);font-size:12px;line-height:1.6}
+.v4-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);
+ border-top:1px solid var(--line);padding:6px 0}
+.v4-nav a{flex:1;text-align:center;color:var(--dim);text-decoration:none;font-size:12px;padding:6px 0}
+.v4-nav a.on{color:var(--amber);font-weight:700}
+
+/* ★★★★★★ 09-05 — ★ **목록에서 아래로 펼친다** (마스터 확정 — 안 ②)
+   ★ 마스터 — 「★ 안 ①은 ★ **너무 라이트**하고 · ★ **이 정도 나오면 내가 본다**.
+     ★ 그리고 ★ **상세 페이지 누르면 거기로 가는 걸로**」
+   ★ ★ 펼침 = ★ 판단 넷 ＋ ★ **옵션 · 보증 · 트림 · 색** — ★ 26축 전부는 ★ 안 낸다
+   ★ ★ ★ 26축 낱낱 · 성능점검기록부 · 보험이력 · 사진 전부는 ★ `/detail/{id}` 가 낸다 */
+details.v3-open>summary{cursor:pointer;color:var(--amber);font-size:13px;
+ margin-top:8px;list-style:none}
+details.v3-open>summary::-webkit-details-marker{display:none}
+details.v3-open:not([open])>*:not(summary){display:none}
+.v3-more2{margin-top:10px;border-top:1px solid var(--line);padding-top:10px;
+ display:flex;flex-wrap:wrap;gap:6px 16px}
+.v3-more2 div{font-size:12px;color:var(--dim);flex:1 1 150px}
+.v3-more2 b{color:var(--text)}
+</style>
+
+<div class="v3-wrap">
+<!-- ★★★★★★ 반드시 있는 것 (RULES.md 1)
+     ★ 탭 (자료로 정한다) · ★ 여럿 고르기(AND) · ★ 줄 세우기 단추 여럿
+     ★ 카드마다 — ★ **사진** · 값(맨 앞) · 등급 · 취향 순위 · ★ 배달/지역
+       · ★ 감가율(50% 기준선) · ★ 배터리 SOH · ★ 사고 · ★ 주행(차종 평균 대비)
+       · ★ 「분석 맡기기」 · ★ 「관심」  (★ 둘은 다르다)
+     ★ ★ **더 보기** — ★ 옵션·보증·트림·색 (★ 26축 전부는 ★ `/detail` 이 낸다)
+     ★ ★ 쪽 번호 · ★ 바닥 메뉴 여섯
+     ★ ★ ★ 예산 밖도 지우지 않는다 — 「예산 밖」으로 적는다 -->
+
+<div class="v4-top"><span><b>CarWatch</b></span><span class="v3-meta">master · admin</span></div>
+
+<h1>추천 · 값이 먼저</h1>
+<p class="v3-sub">값 → 등급 → 취향 순위로 세웁니다</p>
+
+<p class="v4-tabs">
+  <a href="?tab=1">내 기준에 가까운 차</a>
+  <a class="on" href="?tab=2">값 → 등급 → 취향</a>
+  <a href="?tab=3">분석 · 3</a>
+</p>
+
+<div class="v3-why">★★★★★★ 마스터 확정 09-05 — ★ <b>값이 맨 먼저다</b>.
+ ★ 「★ 가격이 맨 먼저다. ★ <b>낮은 값부터 역순으로</b>. ★ 그다음 등급(A→E) ·
+ ★ 그다음 <b>마스터 취향 순위</b>」.
+ ★★ <b>여럿 골라 AND 로</b> 걸고 · ★ <b>줄 세우기 단추</b>로 바로 바꾸고 ·
+ ★ <b>쪽 번호</b>가 있고 · ★ 카드마다 <b>「분석 맡기기」</b>가 있습니다.
+ ★★★ <b>관심과 분석은 다릅니다</b> — 관심은 비교용, ★ <b>분석은 진짜 사기 위한 것</b></div>
+
+<!-- ★ 여럿 고르기 — ★ AND -->
+<div class="v3-pickbox">
+  <div class="v3-pickrow"><b>배달</b>
+    <span class="v3-chip on">전국 배달</span>
+    <span class="v3-meta">★ 엔카·리본카·K카 등 ★ <b>모든 사이트에 다 있다</b> (마스터 09-05)</span></div>
+  <div class="v3-pickrow"><b>지역</b>
+    <span class="v3-chip on">서울</span><span class="v3-chip on">인천</span>
+    <span class="v3-chip on">경기</span><span class="v3-chip">대구</span>
+    <span class="v3-chip">그 외</span></div>
+  <div class="v3-pickrow"><b>차종</b>
+    <span class="v3-chip on">iX3</span><span class="v3-chip on">모델Y 주니퍼</span>
+    <span class="v3-chip">폴스타4</span><span class="v3-chip">GV70 EV</span>
+    <span class="v3-chip">＋ 더 고르기</span></div>
+  <div class="v3-pickrow"><b>등급</b>
+    <span class="v3-chip on">A</span><span class="v3-chip on">B</span>
+    <span class="v3-chip">C</span><span class="v3-chip">D 아래</span></div>
+  <div class="v3-pickrow"><b>값</b>
+    <span class="v3-chip on">3,000만대</span><span class="v3-chip">4,000만대</span>
+    <span class="v3-chip">예산 밖도 보기</span></div>
+  <p class="v3-and">★ 고른 것은 <b>모두 함께(AND)</b> 걸립니다 —
+    「(전국 배달 또는 서울·인천·경기) ＋ (iX3 또는 모델Y) ＋ (A 또는 B) ＋ 3,000만대」</p>
+</div>
+
+<!-- ★ 줄 세우기 단추 -->
+<p class="v3-sorts">
+  <a class="on" href="?sort=price">값순 ↑</a>
+  <a href="?sort=grade">등급순</a>
+  <a href="?sort=taste">취향순</a>
+  <a href="?sort=safety">차량 안전순</a>
+  <a href="?sort=km">주행순</a>
+  <a href="?sort=year">연식순</a>
+</p>
+
+<!-- ★ 쪽 번호 — ★ 지금 배포에는 전혀 없다 -->
+<p class="v3-pager"><span class="cnt">1,062건 중 1–20</span>
+  <a href="?page=1">≪</a><a class="on" href="?page=1">1</a>
+  <a href="?page=2">2</a><a href="?page=3">3</a><a href="?page=4">4</a>
+  <a href="?page=54">≫</a></p>
+
+<!-- ─────────── 카드 ─────────── -->
+<div class="v3-card">
+  <div class="v3-line1">
+    <span class="v3-price">3,180만</span>
+    <span class="v3-grade">B</span>
+    <span class="v3-rank">취향 1위</span>
+    <span class="v3-name">BMW iX3 (전기)</span>
+    <span class="v3-region deliver">전국 배달</span>
+  </div>
+  <img class="v3-thumb" src="" alt="" loading="lazy">
+  <p class="v3-meta">2026-02 · 12,400km · 흰색 / 검정 · 엔카</p>
+  <div class="v3-facts">
+    <span class="v3-fact">감가율 <b class="v3-good">54.2%</b> <span class="v3-meta">(기준 50% 넘음)</span></span>
+    <span class="v3-fact">배터리 SOH <b class="v3-good">96%</b></span>
+    <span class="v3-fact">사고 <b class="v3-unknown">미조회</b></span>
+    <span class="v3-fact">주행 <b>평균보다 -2.1만</b></span>
+  </div>
+  <details class="v3-open"><summary>★ 더 보기 ▾ (옵션 · 보증 · 트림 · 색)</summary>
+    <div class="v3-more2">
+      <div>트림 <b>M 스포츠 패키지</b></div>
+      <div>외장 / 내장 <b>알파인 화이트 / 검정 베르네스카</b></div>
+      <div>선택 옵션 <b>3종 · 412만</b> <span class="v3-meta">(HUD · 하만카돈 · 파노라마)</span></div>
+      <div>제조사 보증 <b>2년 3개월</b> · 동력계 <b>5년 9개월</b></div>
+      <div>사이트 보증 <b class="v3-unknown">미조회</b></div>
+      <div>타이어 <b class="v3-unknown">미조회</b></div>
+    </div>
+  </details>
+  <div class="v3-acts">
+    <a class="v3-btn ask" href="?ask=1">분석 맡기기</a>
+    <a class="v3-btn like" href="?like=1">관심</a>
+    <a class="v3-btn" href="/detail/1">상세 ▸</a>
+  </div>
+</div>
+
+<div class="v3-card">
+  <div class="v3-line1">
+    <span class="v3-price">3,370만</span>
+    <span class="v3-grade">B</span>
+    <span class="v3-rank">취향 5위</span>
+    <span class="v3-name">볼보 XC40 리차지</span>
+    <span class="v3-region near">경기 · 성남</span>
+  </div>
+  <img class="v3-thumb" src="" alt="" loading="lazy">
+  <p class="v3-meta">2023-05 · 18,940km · 흰색 / 갈색 · 볼보 셀렉트</p>
+  <div class="v3-facts">
+    <span class="v3-fact">감가율 <b class="v3-bad">24.5%</b> <span class="v3-meta">(기준 50% 못 넘음)</span></span>
+    <span class="v3-fact">배터리 SOH <b class="v3-unknown">모름</b></span>
+    <span class="v3-fact">사고 <b class="v3-unknown">미조회</b></span>
+    <span class="v3-fact">주행 <b>평균보다 +3.3만</b></span>
+  </div>
+  <details class="v3-open"><summary>★ 더 보기 ▾ (옵션 · 보증 · 트림 · 색)</summary>
+    <div class="v3-more2">
+      <div>트림 <b>얼티메이트 트윈</b></div>
+      <div>외장 / 내장 <b>흰색 / 갈색 나파가죽</b></div>
+      <div>선택 옵션 <b>1종 · 114만</b></div>
+      <div>제조사 보증 <b>3년 4개월</b></div>
+      <div>사이트 보증 <b>볼보 셀렉트 1년</b></div>
+      <div>타이어 <b class="v3-unknown">미조회</b></div>
+    </div>
+  </details>
+  <div class="v3-acts">
+    <a class="v3-btn ask" href="?ask=2">분석 맡기기</a>
+    <a class="v3-btn like" href="?like=2">관심</a>
+    <a class="v3-btn" href="/detail/2">상세 ▸</a>
+  </div>
+</div>
+
+<div class="v3-card">
+  <div class="v3-line1">
+    <span class="v3-price">4,850만</span>
+    <span class="v3-grade" style="color:var(--dim)">C</span>
+    <span class="v3-rank">취향 1위</span>
+    <span class="v3-name">BMW iX3 2026</span>
+    <span class="v3-region">대구</span>
+    <span class="v3-over">예산 밖</span>
+  </div>
+  <span class="v3-nophoto">그 사이트가<br>주소를 아직<br>못 쟀습니다</span>
+  <p class="v3-meta">2026-05 · 3,047km · 검정 / 검정 · KB차차차</p>
+  <div class="v3-facts">
+    <span class="v3-fact">감가율 <b class="v3-unknown">신차가 미조회</b></span>
+    <span class="v3-fact">배터리 SOH <b class="v3-unknown">모름</b></span>
+    <span class="v3-fact">사고 <b class="v3-unknown">미조회</b></span>
+    <span class="v3-fact">주행 <b>평균보다 -4.8만</b></span>
+  </div>
+  <div class="v3-acts">
+    <a class="v3-btn ask" href="?ask=3">분석 맡기기</a>
+    <a class="v3-btn like" href="?like=3">관심</a>
+    <a class="v3-btn" href="/detail/3">상세 ▸</a>
+  </div>
+</div>
+
+<div class="v3-why">★★ <b>예산 밖도 지우지 않습니다</b> — 「예산 밖」으로 적어서 냅니다 (마스터 09-05).
+ ★ 위 셋째 카드가 그 자리입니다.
+ ★★ <b>모르는 것은 붉게</b> — 「모름」·「미조회」·「신차가 미조회」.
+ ★ <b>지어내지 않았다는 표시</b>입니다</div>
+
+<p class="v3-pager"><span class="cnt">1,062건 중 1–20</span>
+  <a href="?page=1">≪</a><a class="on" href="?page=1">1</a>
+  <a href="?page=2">2</a><a href="?page=3">3</a><a href="?page=54">≫</a></p>
+
+<nav class="v4-nav">
+  <a href="/listings">매물</a><a href="/watch">관심</a><a href="/track">추적</a>
+  <a class="on" href="/recommend">추천</a><a href="/status">현황</a><a href="/admin">관리</a>
+</nav>
+</div>
+</html>

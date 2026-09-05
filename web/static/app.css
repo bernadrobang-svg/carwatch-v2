@@ -3367,3 +3367,19 @@ details:not([open])>*:not(summary){display:none}
 .detail p{margin:0 0 6px;color:var(--dim);font-size:13px;line-height:1.6}
 /* ★ 모르는 것은 ★ **눈에 띄게** — ★ 지어내지 않았다는 표시다 */
 .detail .unknown{color:var(--no);font-weight:700}
+
+
+/* ★★★★★ 09-05 — ★ **상세에서 돌아갈 길** (마스터 지적 — 「★ 다시 원래 비교를 하려면?」)
+   ★ 왔던 주소(`back`)를 그대로 담아 ★ 탭·거르개·쪽이 안 날아가게 한다 */
+.v4-backbar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.v4-backbar .btn.ask{border-color:var(--amber);color:var(--amber);font-weight:700}
+
+/* ★ 목록에서 아래로 펼치는 자리 — ★ 옵션·보증·트림·색 (마스터 확정 안 ②) */
+details.open2>summary{cursor:pointer;color:var(--amber);font-size:13px;
+  margin-top:8px;list-style:none}
+details.open2>summary::-webkit-details-marker{display:none}
+details.open2:not([open])>*:not(summary){display:none}
+.more2{margin-top:10px;border-top:1px solid var(--line);padding-top:10px;
+  display:flex;flex-wrap:wrap;gap:6px 16px}
+.more2 div{font-size:12px;color:var(--dim);flex:1 1 150px}
+.more2 b{color:var(--text)}
