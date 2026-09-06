@@ -1,0 +1,188 @@
+<!-- ★★★★★★★ 09-06 (r1200 L-1 ~ L-9) — ★ **마스터 회선으로 받기** (`/fetch`)
+     ★ 시안 `ref/screens/v4m_fetch_시안.html` (가이드 09-06) · CSS `app.css` (`.v3-*`)
+     ★★ 가이드께서 ★ **시안만** 지으셨다 — ★ L-1 이 「화면을 만든다」라 여기까지 지었다
+
+     ★★ 서버가 「받아야 할 주소」를 만들고 · ★ 이 화면이 ★ **폰 회선으로** 받아 올린다.
+       ★ 폰에서 ★ **파싱하지 않는다** — ★ 원문 그대로 올린다 (L-5)
+     ★★★ 값 — `steps[]`(`no`·`name`·`desc`·`need`·`total`·`pct`·`done`)
+       `chunks[]` · `n` · `now_no`·`now_name`·`now_need` · `go_label` · `eta`
+       `interval_ms` · `tabs[]` · `site` · `last` -->
+
+<h1>마스터 회선으로 받기</h1>
+<p class="sub">서버가 못 받는 것을 이 폰이 대신 받습니다</p>
+
+<p class="v4-tabs">
+  {% for t in tabs %}<a class="{% if t.on %}on{% endif %}"
+    href="/fetch?site={{ t.site | url }}">{{ t.label }}</a>{% endfor %}
+</p>
+
+<div class="v3-why">
+  엔카는 서버 IP 를 막습니다(<b>407</b>). 목록·성능점검·보험이력이 다 막힙니다.
+  이 폰은 열립니다. 그래서 <b>서버가 「받아야 할 주소」를 만들고</b>,
+  <b>이 화면이 폰 회선으로 받아 서버에 올립니다</b>.
+  주소를 손으로 옮기실 일은 없습니다.
+</div>
+
+{% for s in steps %}
+<div class="v3-step {% if s.done %}done{% endif %}">
+  <div class="v3-sline"><span class="v3-sno">{{ s.no }}</span>
+    <span class="v3-sname">{{ s.name }}</span>
+    <span class="v3-snum">받을 것
+      <b class="{% if s.done %}ok{% endif %}{% if !s.done %}need{% endif %}"
+        >{{ s.need | num }}</b> / {{ s.total | num }}</span></div>
+  <p class="v3-sdesc">{{ s.desc }}</p>
+  <div class="v3-bar {% if s.done %}done{% endif %}"><i data-pct="{{ s.pct }}"></i></div>
+</div>
+{% endfor %}
+
+<div class="v3-chunk">
+  <b>한 번에</b>
+  {% for c in chunks %}<a class="v3-chip {% if c.on %}on{% endif %}"
+    href="/fetch?site={{ site | url }}&n={{ c.n | url }}">{{ c.label }}</a>{% endfor %}
+  <p class="v3-note">{{ eta }} 걸립니다 (0.1초 간격).
+    멈추셔도 받은 데까지 남습니다. 다시 누르면 이어서 받습니다.</p>
+</div>
+
+<a class="v3-go" id="go" href="#">{{ go_label }}</a>
+<div class="v3-subacts">
+  {% for s in steps %}{% if !s.done %}<a class="v3-btn" id="step{{ s.no }}"
+    href="#" data-step="{{ s.no }}">{{ s.no }}단계부터 받기</a>{% endif %}{% endfor %}
+  <a class="v3-btn" id="retry" href="#">실패한 것만 다시</a>
+</div>
+
+<div class="v3-live" id="live" hidden>
+  <h3>받는 중</h3>
+  <div class="cnt" id="cnt">0 / 0</div>
+  <div class="v3-bar"><i id="livebar"></i></div>
+  <p class="url" id="url">—</p>
+  <p class="rate" id="rate">—</p>
+</div>
+<a class="v3-go stop" id="stop" href="#" hidden>멈추기</a>
+
+{% if last.at %}
+<div class="v3-res">
+  <h3>지난번 결과 ({{ last.at }})</h3>
+  <div class="v3-rrow"><span>받은 것</span><b class="ok">{{ last.ok | num }}</b></div>
+  <div class="v3-rrow"><span>안내문 — 상세가 아님</span><b>{{ last.empty | num }}</b></div>
+  <div class="v3-rrow"><span>팔린 차 (404)</span><b>{{ last.not_found | num }}</b></div>
+  <div class="v3-rrow"><span>실패 — 다시 받아야 함</span><b class="no">{{ last.error | num }}</b></div>
+  <div class="v3-rrow"><span>걸린 시간</span><b>{{ last.secs }}초</b></div>
+</div>
+{% endif %}
+
+<script>
+/* ★ 폰 회선으로 받아 서버에 올린다.  ★ 파싱은 서버가 한다 (L-5)
+   ★ 간격은 서버가 준다 — 코드에 안 박는다 (S14) */
+(function () {
+  var CSRF = "{{ csrf }}";
+  var SITE = "{{ site }}";
+  var N = "{{ n }}";
+  var GAP = {{ interval_ms }};
+  var stop = false, t0 = 0;
+  var tally = {ok: 0, empty: 0, not_found: 0, error: 0};
+
+  function el(id) { return document.getElementById(id); }
+  function say(i, all, url) {
+    el("cnt").textContent = i + " / " + all;
+    el("livebar").style.width = (all ? Math.round(i * 100 / all) : 0) + "%";
+    el("url").textContent = url || "—";
+    var left = Math.round((all - i) * GAP / 1000);
+    el("rate").textContent = (GAP / 1000) + "초 간격 · 남은 시간 약 "
+      + left + "초 · 실패 " + tally.error + "건";
+  }
+  function wait(ms) { return new Promise(function (k) { setTimeout(k, ms); }); }
+
+  function grab(url) {
+    /* ★ 헤더를 붙이지 않는다 — preflight 가 생기면 CORS 가 아닌 이유로 막힌다 */
+    return fetch(url, {method: "GET", mode: "cors", credentials: "omit"})
+      .then(function (r) {
+        return r.text().then(function (b) { return {status: r.status, body: b}; });
+      })
+      .catch(function () { return {status: 0, body: ""}; });
+  }
+  function put(job, got) {
+    var f = new FormData();
+    f.append("csrf", CSRF);
+    f.append("site", SITE);
+    f.append("kind", job.kind);
+    f.append("source_id", job.source_id);
+    f.append("url", job.url);
+    f.append("http_code", String(got.status));
+    f.append("body", got.body);
+    return fetch("/fetch/put", {method: "POST", body: f, credentials: "same-origin"})
+      .then(function (r) { return r.json(); })
+      .then(function (j) { tally[j.status] = (tally[j.status] || 0) + 1; })
+      .catch(function () { tally.error += 1; });
+  }
+
+  function run(step, retry) {
+    stop = false;
+    el("live").hidden = false;
+    el("stop").hidden = false;
+    t0 = Date.now();
+    tally = {ok: 0, empty: 0, not_found: 0, error: 0};
+    var q = "/fetch/queue?site=" + encodeURIComponent(SITE)
+          + "&step=" + step + "&n=" + encodeURIComponent(N)
+          + (retry ? "&retry=1" : "");
+    /* ★ V11-19 — ★ 부르기가 실패해도 ★ 화면이 안 깨진다.
+       ★ 까닭을 적고 멈춘다 — ★ 조용히 사라지지 않는다 */
+    fetch(q, {credentials: "same-origin"})
+      .then(function (r) { return r.json(); })
+      .catch(function () { return {rows: [], said: "큐를 못 받았습니다"}; })
+      .then(function (j) {
+        if (j.said) { el("rate").textContent = j.said; }
+        var rows = j.rows || [];
+        say(0, rows.length, "");
+        var i = 0;
+        function next() {
+          if (stop || i >= rows.length) { return done(rows.length); }
+          var job = rows[i];
+          say(i, rows.length, job.url);
+          return grab(job.url).then(function (got) {
+            return put(job, got);
+          }).then(function () {
+            i += 1;
+            return wait(GAP).then(next);
+          });
+        }
+        return next();
+      });
+  }
+  function done(all) {
+    var secs = Math.round((Date.now() - t0) / 1000);
+    /* ★ 길을 넷째로 늘리지 않는다 — ★ 규격 표는 셋이다 (61-web 193~195).
+       ★ 한 판의 셈은 ★ 같은 길에 `done=1` 로 올린다 */
+    var f = new FormData();
+    f.append("csrf", CSRF);
+    f.append("done", "1");
+    f.append("secs", String(secs));
+    f.append("ok", String(tally.ok));
+    f.append("empty", String(tally.empty));
+    f.append("not_found", String(tally.not_found));
+    f.append("error", String(tally.error));
+    fetch("/fetch/put", {method: "POST", body: f, credentials: "same-origin"})
+      .then(function () { location.reload(); });
+    say(all, all, "끝났습니다");
+  }
+
+  el("go").addEventListener("click", function (e) {
+    e.preventDefault(); run({{ now_no }}, false);
+  });
+  el("retry").addEventListener("click", function (e) {
+    e.preventDefault(); run({{ now_no }}, true);
+  });
+  el("stop").addEventListener("click", function (e) {
+    e.preventDefault(); stop = true;
+  });
+  Array.prototype.forEach.call(
+    document.querySelectorAll("[data-step]"), function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault(); run(parseInt(a.getAttribute("data-step"), 10), false);
+      });
+    });
+  Array.prototype.forEach.call(
+    document.querySelectorAll(".v3-bar i[data-pct]"), function (i) {
+      i.style.width = i.getAttribute("data-pct") + "%";
+    });
+})();
+</script>

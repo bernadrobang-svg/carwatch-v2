@@ -93,7 +93,7 @@
 | `watch_note` | 6 | 순서도 없고, 앞 단계 없이 'done' 을 적어도 된다 |
 | `analyze_request` | 8 | ★ ★ 지어내지 않는다 (규격 「모르는 것은 「모른다」」) |
 
-## `sql/ddl/08_admin.sql` — 표 8개
+## `sql/ddl/08_admin.sql` — 표 9개
 
 > 관리자 저장소.  지시서 13장 STEP 126~137 · 3장 STEP 28 / ★ 관리자 화면에서 하는 일은 전부 config 변경 또는 실행 지시다
 
@@ -107,6 +107,7 @@
 | `recalc_job` | 15 | 관리자가 단계를 직접 고르지 않는다.  재처리 결정표가 from_step 을 준다 |
 | `admin_api_snapshot` | 8 |  |
 | `auth_login_attempt` | 5 | 금지   계정을 영구 잠그는 것.  1인 도구라 스스로 못 풀면 CLI 로 가야 한다 |
+| `fetch_run` | 7 | ★ 우리 셈이라 ★ 기본값 0 이면 넉넉하다 |
 
-**표 45개.**
+**표 46개.**
 

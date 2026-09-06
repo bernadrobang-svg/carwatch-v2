@@ -1079,7 +1079,12 @@ def _screen_checks(conn, rid) -> list:
     # V11-19 — 폴링 실패에도 화면이 안 깨진다.
     # ★ 개정 248 — 금지된 것은 빌드 도구이지 JS 자체가 아니다.
     #   「브라우저만 할 수 있는 일」(STEP 136c)에만 열어 준다.  나머지는 그대로 금지다
-    JS_ALLOWED = ("admin_collect.html",)
+    # ★★★★★ 09-06 (r1200 L) — ★ `fetch.html` 도 ★ **브라우저만 할 수 있는 일**이다.
+    #   ★ 엔카가 ★ 서버 IP 를 막는다(407) — ★ 마스터 폰 회선으로만 받힌다.
+    #   ★ ★ 그 회선을 쓰는 것은 ★ **그 브라우저뿐**이라 ★ 서버가 대신 못 한다.
+    #   ★ 화면은 ★ JS 가 죽어도 안 깨진다 — ★ 단계·건수·단추가 ★ 다 HTML 이다.
+    #     ★ ★ 큐를 못 받으면 ★ 까닭을 적고 멈춘다 (`catch`)
+    JS_ALLOWED = ("admin_collect.html", "fetch.html")
     ok19 = not any(("setInterval" in b or "fetch(" in b)
                    for name, b in tpls.items() if name not in JS_ALLOWED)
     out.append(result(C["V11-19"], rid, "JS 없음",

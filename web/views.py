@@ -21,6 +21,8 @@ from errors import PolicyError, ValidationError, WiringError
 from report.screens.views import ListingFilter
 from web.app import build_page
 from web.context import HTTP_OK
+import json as _json
+
 from web.template import render
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1238,6 +1240,65 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                  "buttons": _filter_buttons(flt, base="/recommend"),
                  "carry": _carry(flt)},
                 root=root, csrf=csrf, flash_key=flash_key)
+
+
+# ── 마스터 회선으로 받기 (`/fetch`) — ★ 지시 r1200 L ────────────────────
+def fetch_screen(conn, account, req, root: str = ROOT, csrf: str = "",
+                 flash_key: str = "-", **_kw) -> tuple:
+    """`/fetch` — ★ 엔카가 서버 IP 를 막아(407) ★ 폰 회선으로 받는 자리."""
+    from report.screens.fetch import view_fetch
+
+    got = view_fetch(conn, req.get("query", {}), root)
+    return page(conn, account, "받기", "fetch.html",
+                {"csrf": csrf, **got}, root=root, csrf=csrf,
+                flash_key=flash_key)
+
+
+def fetch_queue(conn, account, req, root: str = ROOT, csrf: str = "",
+                flash_key: str = "-", **_kw) -> tuple:
+    """`/fetch/queue` — ★ L-2.  ★ 받을 주소를 ★ JSON 으로 준다.
+
+    ★ 큐 크기를 ★ 미리 정하지 않는다 — ★ 그때그때 세어서 낸다
+    """
+    from report.screens.fetch import queue
+
+    del account, csrf, flash_key
+    q = req.get("query", {}) or {}
+    n = str(q.get("n") or "500")
+    got = queue(conn, int(q.get("step") or 2),
+                1000000 if n == "all" else int(n),
+                str(q.get("site") or "encar"), root,
+                retry=bool(q.get("retry")))
+    body = _json.dumps(got, ensure_ascii=False).encode("utf-8")
+    return 200, {"Content-Type": "application/json; charset=utf-8"}, body
+
+
+def fetch_put(conn, account, req, root: str = ROOT, csrf: str = "",
+              flash_key: str = "-", **_kw) -> tuple:
+    """`/fetch/put` — ★ L-5.  ★ 폰이 받은 ★ **원문 그대로**를 올린다.
+
+    ★ 폰에서 파싱하지 않는다.  ★ 크기로 가른다 — ★ 작은 안내문은 상세가 아니다
+    """
+    from report.screens.fetch import put_one
+
+    del account, csrf, flash_key
+    f = req.get("form", {}) or {}
+    # ★ 한 판이 끝나면 ★ 같은 길로 ★ 셈만 올린다 (`done=1`) —
+    #   ★ 규격 표(61-web 193~195)는 ★ 길이 **셋**이다.  ★ 넷째를 만들지 않는다
+    if str(f.get("done") or "") == "1":
+        from report.screens.fetch import save_last
+
+        save_last(conn, {k: str(f.get(k) or 0) for k in
+                         ("ok", "empty", "not_found", "error", "secs")})
+        return 200, {"Content-Type": "application/json; charset=utf-8"}, \
+            b'{"status":"done"}'
+    got = put_one(conn, str(f.get("site") or "encar"),
+                  str(f.get("kind") or "detail"),
+                  str(f.get("source_id") or ""), str(f.get("url") or ""),
+                  int(str(f.get("http_code") or 0) or 0),
+                  str(f.get("body") or ""), root)
+    body = _json.dumps(got, ensure_ascii=False).encode("utf-8")
+    return 200, {"Content-Type": "application/json; charset=utf-8"}, body
 
 
 # ── 분석 (추천 탭 3) — ★ 지시 r1184 A-3 · A-5 ────────────────────────────
@@ -3032,6 +3093,10 @@ HANDLERS = {
     "view_compare": compare,
     "view_track": track,
     # ★ 09-06 r1184 A-3 · A-5 — ★ 분석 (추천 탭 3)
+    # ★ 09-06 r1200 L — ★ 마스터 회선으로 받기
+    "view_fetch": fetch_screen,
+    "api_fetch_queue": fetch_queue,
+    "api_fetch_put": fetch_put,
     "view_analyze": analyze,
     "view_analyze_add": analyze_add,
     "view_analyze_drop": analyze_drop,

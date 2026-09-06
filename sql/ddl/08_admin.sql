@@ -126,3 +126,21 @@ CREATE TABLE IF NOT EXISTS auth_login_attempt (
 
 CREATE INDEX IF NOT EXISTS idx_login_attempt_name
   ON auth_login_attempt(display_name, attempted_at);
+
+
+-- ★★★★★★ 09-06 (r1200 L-6) — ★ **마스터 회선으로 받은 한 판의 셈.**
+--   ★ 화면이 ★ 「지난번 결과」로 낸다 (시안 `v4m_fetch_시안.html`).
+--   ★ 파일(`outputs/*.json`)에 두지 않는다 — ★ `admin.py` 밖에서
+--   ★ ★ 설정 파일을 쓰지 않는다는 잣대에 걸린다 (test_admin).
+--   ★ 셈만 담는다.  ★ 원문은 ★ 파일이 갖는다 (`S46-185`)
+-- ★ `NOT NULL` 을 안 건다 — ★ 「모르면 멈춘다」로 저장하지 않는다 (`V2-19`).
+--   ★ 우리 셈이라 ★ 기본값 0 이면 넉넉하다
+CREATE TABLE IF NOT EXISTS fetch_run (
+  run_no      INTEGER PRIMARY KEY AUTOINCREMENT,
+  at          TEXT,
+  ok          INTEGER DEFAULT 0,
+  empty       INTEGER DEFAULT 0,   -- ★ 안내문 — 상세가 아니다
+  not_found   INTEGER DEFAULT 0,   -- ★ 팔린 차 (404)
+  error       INTEGER DEFAULT 0,
+  secs        INTEGER DEFAULT 0
+);

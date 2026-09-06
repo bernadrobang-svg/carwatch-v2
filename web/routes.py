@@ -73,6 +73,13 @@ ROUTES: tuple[Route, ...] = (
     #   /reports?open=… 이 팝업이다.  JS 없이 닫힌다 — 별도 경로다
     Route("/reports", (GET,), "view_reports", ROLE_USER),
     Route("/reports/{name}", (GET,), "view_report_download", ROLE_USER),
+    # ★★★★★ 09-06 r1200 L — ★ **마스터 회선으로 받기.**
+    #   ★ 엔카가 ★ 서버 IP 를 막는다(407) — ★ 폰 회선이 대신 받는다.
+    #   ★ `queue` 는 ★ 받을 주소를 주고 · `put` 은 ★ **원문 그대로**를 받는다.
+    #   ★ 마스터만 쓰신다 — ★ `admin` 이다
+    Route("/fetch", (GET,), "view_fetch", ROLE_ADMIN, GROUP_OPS),
+    Route("/fetch/queue", (GET,), "api_fetch_queue", ROLE_ADMIN, GROUP_OPS),
+    Route("/fetch/put", (POST,), "api_fetch_put", ROLE_ADMIN, GROUP_OPS),
     # ★★★★★ 09-06 r1184 A-5 — ★ 분석 (추천 탭 3) · 규격 `61-web` 194~196행.
     #   ★ 규격 표는 `drop` 을 POST 라 적었는데 ★ 가이드가 지으신 틀은
     #   ★ ★ `<a href>` 곧 GET 이다 — ★ 틀이 그대로 돌게 ★ 둘 다 받는다 (회차에 적었다)
@@ -141,6 +148,8 @@ NON_SCREEN_VIEWS: tuple = (
     # ★ 09-06 r1184 A-5 — ★ 「타 AI 요청」은 ★ 화면이 아니다.
     #   ★ 그 차의 ★ **원문을 하나의 글월**로 준다 (`text/plain`) — ★ `<h1>` 이 없다
     "view_analyze_copy",
+    # ★ 09-06 r1200 L — ★ 큐는 화면이 아니다.  ★ JSON 을 준다
+    "api_fetch_queue",
 )
 
 
