@@ -98,6 +98,29 @@ details.v3-more:not([open])>*:not(summary){display:none}
 .v3-fact b{color:var(--text)}
 .v3-fact b.no{color:var(--no);font-weight:700}
 .v3-fact b.ok{color:var(--ok);font-weight:700}
+
+/* 09-06 — 거른 조건을 맨 위에 보인다. 무엇을 걸어 놓았는지 늘 보여야 한다 */
+.v3-cond{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+ border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:8px}
+.v3-cond b{font-size:12px;color:var(--faint);margin-right:2px}
+.v3-cchip{padding:3px 9px;border-radius:12px;font-size:11px;
+ border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.v3-cchip.ok{border-color:var(--ok);color:var(--ok)}
+.v3-cclear{margin-left:auto;font-size:12px;color:var(--amber)}
+.v3-count{font-size:12px;color:var(--dim);margin:0 0 12px}
+.v3-count b{color:var(--text);font-family:var(--mono)}
+/* 어느 사이트에서 나온 차인가 — 늘 보인다 */
+.v3-site{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
+ border:1px solid var(--blue);color:var(--blue);white-space:nowrap}
+.v3-shop{font-size:12px;color:var(--dim)}
+.v3-shop b{color:var(--text)}
+/* 왜 걸렀는지 — 조건마다 O / X */
+.v3-why2{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:8px;
+ border-top:1px solid var(--line);padding-top:8px}
+.v3-w{font-size:11px;color:var(--dim);white-space:nowrap}
+.v3-w b.y{color:var(--ok)}
+.v3-w b.n{color:var(--no)}
+.v3-w b.q{color:var(--faint)}
 </style>
 
 <div class="v3-wrap">
@@ -111,8 +134,31 @@ details.v3-more:not([open])>*:not(summary){display:none}
      ★ 바닥 메뉴 여섯 -->
 <div class="v4-top"><span class="v3-brand">CarWatch</span><span class="v3-ameta">master · admin</span></div>
 
-<h1>분석</h1>
-<p class="v3-sub">내가 <b>분석을 맡긴 차</b>만 여기 있습니다 — 관심과 다릅니다</p>
+<h1>GV70 2.5T 후보</h1>
+<p class="v3-sub">3,600만 이하 · 2022년식 이상 · 8만km 미만 · 보증 남음 · 멀쩡한 차</p>
+
+<!-- 마스터 확정 09-06 — 탭 3 은 「내가 지금 고르고 있는 차」다.
+     가이드가 쓴 글이 아니라 조건에 맞는 후보를 추려 내는 자리다.
+     조건 — GV70 2.5T · 3,500만(3,600만까지 봐준다) · 2022년식 이상 ·
+       8만km 미만 · 제조사 보증 남음 · 사이트 보증 있음 · 전국 배달 ·
+       멀쩡함(판금·범퍼·휀더는 사고로 안 친다. 보험 300만 미만이면 본다) ·
+       외장 흰색 · 내장은 검정 또는 스포츠면 좋다
+     사이트 — 엔카 · KB차차차 · K카 · 리본카 · 헤이딜러 전부 -->
+
+<div class="v3-cond">
+  <b>지금 거른 조건</b>
+  <span class="v3-cchip">GV70 2.5T</span>
+  <span class="v3-cchip">3,600만 이하</span>
+  <span class="v3-cchip">2022년식 ↑</span>
+  <span class="v3-cchip">8만km 미만</span>
+  <span class="v3-cchip">보증 남음</span>
+  <span class="v3-cchip">전국 배달</span>
+  <span class="v3-cchip ok">멀쩡 (보험 300만 미만)</span>
+  <span class="v3-cchip">흰색</span>
+  <span class="v3-cclear">조건 고치기 ▾</span>
+</div>
+<p class="v3-count">다섯 사이트에서 <b>14대</b> — 엔카 6 · KB 4 · K카 2 · 리본카 1 · 헤이딜러 1</p>
+
 
 <div class="v3-why">★★★★★★ 마스터 확정 09-05 — ★ <b>관심과는 별개다</b>.
  ★ 마스터 — 「★ 관심은 ★ 그냥 보기 심심해 클릭하는 것 · ★ <b>비교 용도일 뿐</b>이고,
@@ -138,109 +184,82 @@ details.v3-more:not([open])>*:not(summary){display:none}
 </div>
 
 <!-- ─────────── 분석 카드 ─────────── -->
+<div class="v3-acard clean">
+  <div class="v3-aline">
+    <span class="v3-aprice">3,480만</span>
+    <span class="v3-verdict buy">멀쩡 · 조건 다 맞음</span>
+    <span class="v3-site">엔카</span>
+  </div>
+  <p class="v3-ameta">2022-11 · 6.2만km · <b>흰색</b> / 검정 · 2.5T AWD</p>
+  <p class="v3-shop">판매 <b>제네시스 인증중고 수원</b> · 경기 수원 · <b>전국 배달</b></p>
+  <div class="v3-why2">
+    <span class="v3-w">값 <b class="y">O</b> 3,480</span>
+    <span class="v3-w">연식 <b class="y">O</b> 2022</span>
+    <span class="v3-w">주행 <b class="y">O</b> 6.2만</span>
+    <span class="v3-w">제조사 보증 <b class="y">O</b> 2년 3개월</span>
+    <span class="v3-w">사이트 보증 <b class="y">O</b> 1년</span>
+    <span class="v3-w">보험 <b class="y">O</b> 0원</span>
+    <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
+    <span class="v3-w">배달 <b class="y">O</b></span>
+  </div>
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/1">상세 ▸</a>
+    <a class="v3-abtn" href="#">엔카 ↗</a>
+    <a class="v3-abtn ask" href="#">분석 맡기기</a>
+    <a class="v3-abtn" href="#">비교 담기</a>
+  </div>
+</div>
+
+<div class="v3-acard mid">
+  <div class="v3-aline">
+    <span class="v3-aprice">3,590만</span>
+    <span class="v3-verdict hold">봐야 함 · 판금 1곳</span>
+    <span class="v3-site">KB차차차</span>
+  </div>
+  <p class="v3-ameta">2022-06 · 7.4만km · <b>흰색</b> / 검정 · 2.5T 2WD</p>
+  <p class="v3-shop">판매 <b>KB차차차 직영 인천</b> · 인천 · <b>전국 배달</b></p>
+  <div class="v3-why2">
+    <span class="v3-w">값 <b class="y">O</b> 3,590</span>
+    <span class="v3-w">연식 <b class="y">O</b> 2022</span>
+    <span class="v3-w">주행 <b class="y">O</b> 7.4만</span>
+    <span class="v3-w">제조사 보증 <b class="y">O</b> 1년 8개월</span>
+    <span class="v3-w">사이트 보증 <b class="q">미조회</b></span>
+    <span class="v3-w">보험 <b class="y">O</b> 180만 · 뒷휀더 판금</span>
+    <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
+    <span class="v3-w">배달 <b class="y">O</b></span>
+  </div>
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/2">상세 ▸</a>
+    <a class="v3-abtn" href="#">KB ↗</a>
+    <a class="v3-abtn ask" href="#">분석 맡기기</a>
+    <a class="v3-abtn" href="#">비교 담기</a>
+  </div>
+</div>
+
 <div class="v3-acard none">
-  <div class="v3-ahead">
-    <span class="v3-verdict buy">구매 적절</span>
-    <span class="v3-aname">볼보 XC40 리차지</span>
-    <span class="v3-ameta">2023-05 · 18,940km · 3,370만 · 볼보 셀렉트</span>
+  <div class="v3-aline">
+    <span class="v3-aprice">3,420만</span>
+    <span class="v3-verdict wait">보류 · 보험을 모름</span>
+    <span class="v3-site">헤이딜러</span>
   </div>
-  <img class="v3-thumb" src="" alt="" loading="lazy">
-  <p class="v3-ameta">맡긴 때 2026-09-05 07:12 · 경기 · 성남</p>
-  <div class="v3-facts">
-    <span class="v3-fact">감가율 <b class="no">신차가 미조회</b></span>
-    <span class="v3-fact">SOH <b class="no">모름</b></span>
-    <span class="v3-fact">사고 <b class="no">미조회</b></span>
-    <span class="v3-fact">보험 이력 <b class="no">미조회</b></span>
-    <span class="v3-fact">주행 <b>평균보다 -1.8만</b></span>
+  <p class="v3-ameta">2023-02 · 4.1만km · <b>흰색</b> / 검정 · 2.5T AWD</p>
+  <p class="v3-shop">판매 <b>미조회</b> · 미조회 · 배달 <b>미조회</b></p>
+  <div class="v3-why2">
+    <span class="v3-w">값 <b class="y">O</b> 3,420</span>
+    <span class="v3-w">연식 <b class="y">O</b> 2023</span>
+    <span class="v3-w">주행 <b class="y">O</b> 4.1만</span>
+    <span class="v3-w">제조사 보증 <b class="q">미조회</b></span>
+    <span class="v3-w">사이트 보증 <b class="q">미조회</b></span>
+    <span class="v3-w">보험 <b class="q">미조회</b></span>
+    <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
+    <span class="v3-w">배달 <b class="q">미조회</b></span>
   </div>
-  <div class="v3-facts">
-    <span class="v3-fact">판매자 <b>정도모터스</b></span>
-    <span class="v3-fact">지역 <b>경기 성남</b></span>
-    <span class="v3-fact">정직도 <b class="ok">값을 안 흔든다</b></span>
-    <span class="v3-fact">그 딜러 매물 <b>14대</b></span>
+  <p class="v3-ameta">값과 주행은 좋은데 <b>보험·보증을 아직 못 받았습니다</b>. 상세를 받으면 판단이 섭니다.</p>
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/3">상세 ▸</a>
+    <a class="v3-abtn" href="#">헤이딜러 ↗</a>
+    <a class="v3-abtn ask" href="#">분석 맡기기</a>
   </div>
-  <p class="v3-gist">★ <b>시세보다 170만 싸고 급매로 보인다</b> —
-    다만 <b class="v3-unknown">사고·SOH 를 모른다</b>. 상세를 받으면 판이 달라진다.</p>
-
-  <div class="v3-arow">
-    <a class="v3-btn" href="/detail/12345">그 차로 ▸</a>
-    <a class="v3-btn" href="?copy=12345">타 AI 요청 (원문 복사)</a>
-    <a class="v3-btn" href="?drop=12345">분석 제외</a>
-  </div>
-
-  <details class="v3-more"><summary>★ 자세히 보기 ▾</summary>
-  <div class="v3-detail">
-    <h4>값이 제값인가</h4>
-    <p>시세 3,540만 대비 <b>170만 싸다</b>(-4.8%).
-      게시 18일째 · 값이 <b>두 번 내렸다</b> — <b>급매로 보인다</b>.</p>
-
-    <h4>사고 위험 대비 값이 제대로 매겨졌나</h4>
-    <p>사고 <span class="v3-unknown">미조회</span> · 골격 <span class="v3-unknown">미조회</span> —
-      <b>「무사고」라 적지 않는다</b>. 상세를 못 받아 <b>모른다</b>.</p>
-
-    <h4>지금 살 때 좋은 점</h4>
-    <p>주행이 차종 평균보다 <b>-1.8만km</b> 적다 · 제조사 보증이 <b>3년 4개월</b> 남았다.</p>
-
-    <h4>3년 · 5년 뒤</h4>
-    <p>배터리 SOH <span class="v3-unknown">모름</span> — 전기차는 <b>이것이 핵심</b>인데
-      그 사이트가 안 준다. 3년 뒤 잔가를 <b>가늠할 수 없다</b>.</p>
-
-    <h4>중고차 수리 때 생길 위험</h4>
-    <p>수입 전기차라 부품이 <b>본사 주문</b>이다 · 사고 이력을 모르는 채로 사면
-      배터리팩 손상 여부를 <b>나중에야 안다</b>.</p>
-  </div></details>
 </div>
 
-<div class="v3-acard bad">
-  <div class="v3-ahead">
-    <span class="v3-verdict risk">위험</span>
-    <span class="v3-aname">그랑 콜레오스 1.5 E-TECH</span>
-    <span class="v3-ameta">2025-11 · 8,693km · 3,890만 · 엔카</span>
-  </div>
-  <span class="v3-nophoto">사진<br>미조회</span>
-  <p class="v3-ameta">맡긴 때 2026-09-05 07:40 · 전국 배달</p>
-  <div class="v3-facts">
-    <span class="v3-fact">감가율 <b>62%</b></span>
-    <span class="v3-fact">SOH <b class="no">모름</b></span>
-    <span class="v3-fact">사고 <b class="no">골격 2곳 교환</b></span>
-    <span class="v3-fact">보험 이력 <b class="no">1,240만</b></span>
-    <span class="v3-fact">주행 <b>평균보다 -3.1만</b></span>
-  </div>
-  <div class="v3-facts">
-    <span class="v3-fact">판매자 <b>한빛오토</b></span>
-    <span class="v3-fact">지역 <b>인천</b></span>
-    <span class="v3-fact">정직도 <b class="no">값을 자주 내린다</b></span>
-    <span class="v3-fact">그 딜러 매물 <b>87대</b></span>
-  </div>
-  <p class="v3-gist">★ <b>골격 2곳 교환인데 값이 안 빠졌다</b> —
-    같은 값이면 <b>무사고를 사는 것이 낫다</b>.</p>
-  <div class="v3-arow">
-    <a class="v3-btn" href="/detail/23456">그 차로 ▸</a>
-    <a class="v3-btn" href="?copy=23456">타 AI 요청 (원문 복사)</a>
-    <a class="v3-btn" href="?drop=23456">분석 제외</a>
-  </div>
-  <details class="v3-more"><summary>★ 자세히 보기 ▾</summary>
-  <div class="v3-detail">
-    <h4>값이 제값인가</h4>
-    <p>시세 <span class="v3-unknown">표본 부족</span> — 같은 차종·연식이
-      <b>세 대뿐</b>이라 견줄 수가 없다. <b>제값인지 모른다</b>.</p>
-    <h4>사고 위험 대비 값이 제대로 매겨졌나</h4>
-    <p>골격 <b>2곳 교환</b>인데 시세와 <b>거의 같다</b> —
-      <b>사고 값이 안 빠졌다</b>. 같은 값이면 <b>무사고를 사는 것이 낫다</b>.</p>
-    <h4>중고차 수리 때 생길 위험</h4>
-    <p>교환한 곳이 <b>뒷펜더·트렁크플로어</b>다 — 뒤 충돌 흔적이다.
-      전기 계통이 뒤에 있어 <b>나중에 잔고장이 날 수 있다</b>.</p>
-  </div></details>
-</div>
 
-<div class="v3-why">★★ <b>없는 것은 「모른다」·「미조회」라 적는다</b> — ★ 지어내지 않는다 (RULES.md 2).
- ★ 위 카드에서 ★ <b>SOH 모름</b> · <b>사고 미조회</b> · <b>표본 부족</b>이 그 자리다.
- ★★ 항목 이름은 <b>보기</b>다 — ★ 차마다 볼 것이 다르니 ★ <b>수를 못 박지 않는다</b></div>
-
-<!-- ★ 바닥 메뉴 — ★ 다른 시안과 같다 -->
-<nav class="v4-nav">
-  <a href="/listings">매물</a><a href="/watch">관심</a><a href="/track">추적</a>
-  <a class="on" href="/recommend">추천</a><a href="/status">현황</a><a href="/admin">관리</a>
-</nav>
-</div>
-</html>
