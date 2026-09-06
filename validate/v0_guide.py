@@ -5676,8 +5676,10 @@ def s46_246_every_screen_has_a_mock():
     PARTIAL = {"base", "empty"}
     # ★ 템플릿 이름과 시안 이름이 다른 것 — ★ 시안은 **주소**를 따르고 (S46-163)
     #   ★ 템플릿은 파일 이름을 따른다.  ★ 여기서 잇는다
+    # 09-06 — 개발측이 탭 3 틀을 analyze_list.html 로 지었다.
+    #   시안은 v4m_analyze_시안.html 이다. 같은 화면이니 이어 준다.
     ALIAS = {"audit": "admin_audit", "docs": "admin_docs",
-             "watch_invite": "watch"}
+             "watch_invite": "watch", "analyze_list": "analyze"}
     tpl = {p.stem for p in tpl_dir.glob("*.html")
            if not p.name.startswith("_") and p.stem not in PARTIAL}
     mock = set()
