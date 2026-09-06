@@ -168,6 +168,20 @@ def parse_list_item(item: dict, site: str) -> dict:
 
 
 # ── STEP 20 detail ───────────────────────────────────────────────────
+def _yn(v) -> str | None:
+    """참/거짓 → ★ `Y`·`N`.  ★ 값이 없으면 ★ `None`(미조회)다 — ★ N 이 아니다 (K-4)."""
+    if v is None or v == "":
+        return None
+    if isinstance(v, str):
+        low = v.strip().lower()
+        if low in ("true", "y", "yes", "1"):
+            return "Y"
+        if low in ("false", "n", "no", "0"):
+            return "N"
+        return None
+    return "Y" if v else "N"
+
+
 def parse_detail(body: dict, site: str, source_id: str) -> dict:
     """상세 A → core_listing 필드.
 
@@ -212,6 +226,25 @@ def parse_detail(body: dict, site: str, source_id: str) -> dict:
         "warranty_deemed": _get(body, "advertisement.deemedExtendWarranty"),
         "photo_underbody_json": _json(_get(body, "advertisement.underBodyPhotos")),
         "site_diagnosis_grade": _get(body, "view.encarDiagnosis"),
+        # ★★★★★★ 09-06 (r1190 K-2) — ★ **전국 배달**.  ★ 마스터 확정 —
+        #   ★ 「전국 배달은 ★ 모든 사이트에 다 있다」.
+        #   ★ 실측 09-06 (상세 60건) — ★ `advertisement.homeService` 가
+        #     ★ ★ `True` 36 · `False` 24 로 갈린다.  ★ 그것이 그 값이다.
+        #   ★★ 판매글의 ★ 「전국 탁송」 글자는 ★ **안 쓴다** —
+        #     ★ ★ 딸린 말이 ★ 실장착을 이기지 못한다 (v1 사고 · 금지 12)
+        "delivery_nationwide": _yn(_get(body, "advertisement.homeService")),
+        # ★★★★★★ 09-06 (r1190 A-19) — ★ **사이트 진단 이름**.
+        #   ★ 실측 09-06 — ★ `diagnosisCar` 가 참이면 ★ `view.encarDiagnosis`
+        #     ★ ★ 가 `0`·`1`·`2` 이고 · 거짓이면 `-1` 이다 (120건 전건).
+        #   ★★ 이름은 ★ **「엔카진단」까지만** 확실하다 —
+        #     ★ ★ 규격 표(`_사이트_진단`)는 ★ 「엔카진단」과 ★ 「엔카진단 플러스」
+        #     ★ ★ ★ **둘**을 적었는데 ★ 자릿수는 ★ **셋**(0·1·2)이다.
+        #     ★ ★ ★ ★ 어느 자리가 「플러스」인지 ★ **원문이 말하지 않는다** —
+        #       ★ ★ ★ ★ ★ 짐작으로 붙이지 않는다 (지시 「짐작으로 확정하지 마라」).
+        #   ★ 등급은 ★ `site_diagnosis_grade` 에 그대로 남는다 — ★ 근거가 남는다
+        "site_inspection": ("엔카진단"
+                            if _bool(_get(body, "advertisement.diagnosisCar"))
+                            else None),
         # E등급 절대조건 근거 (STEP 82).  키 이름은 leaseRentInfo 다 — lease 가 아니다
         "advertisement_type": _get(body, "advertisement.advertisementType"),
         "lease_rent_info_json": _json(_get(body, "advertisement.leaseRentInfo")),

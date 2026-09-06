@@ -83,9 +83,22 @@ def parse_detail(body: dict, site: str, source_id: str,
         return None
     hist = data.get("carhistory") or {}
     mast = data.get("master") or {}
+    # ★★★★★★ 09-06 (r1190 A-19 · 가이드 실측) — ★ **보증·진단은 있다.**
+    #   ★ 가이드 — 「★ 개발측이 ★ 「데이터가 하나도 없다」고 한 것은 ·
+    #     ★ ★ **팔린 차(3.6KB 안내문)를 눌러 놓고** 그렇게 말한 것이다」.
+    #   ★ 실측 09-06 — ★ 살아 있는 차 `EC61391861` 상세가 ★ **114,599B** 고
+    #     ★ ★ `data.masterInfo` 에 ★ 진단·성능점검이 다 들어 있다.
+    #   ★ 경로는 ★ `config/targets.json` `_사이트_진단.kcar.칸` 이 정본이다
+    minfo = data.get("masterInfo") or {}
     now = at or datetime.now(timezone.utc)
 
+    # ★ 진단 이름 — ★ 사람이 직접 본 것이 있으면 ★ 「K카 진단」이다.
+    #   ★ 없으면 ★ **None(미조회)** 이다 — ★ 「없다」로 굳히지 않는다 (`S46-184`)
+    _insp = str(minfo.get("inspNm") or "").strip()
+    _pfm = str(minfo.get("pfmncStatCkqtYn") or "").strip().upper()
+
     out: dict = {
+        "site_inspection": ("K카 진단" if (_insp or _pfm == "Y") else None),
         "site": site,
         "source_id": str(source_id),
         "price_unit": "won",

@@ -1213,8 +1213,11 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                     {"tabs": tabbar, "csrf": csrf, **got}, root=root,
                     csrf=csrf, flash_key=flash_key)
     if tab == "3":
-        got = T.view_tab3(conn, getattr(account, "account_id", 0) or 0, root)
-        return page(conn, account, "분석", tpl,
+        # ★★★★★ 09-06 (r1190 A-14) — ★ 마스터께서 ★ 탭 3 을 다시 정하셨다 —
+        #   ★ 「가이드가 쓴 글」이 아니라 ★ **지금 고르시는 차의 후보 목록**이다.
+        #   ★ 맡긴 차 목록은 ★ `/analyze` 가 그대로 낸다
+        got = T.view_tab3(conn, root, q)
+        return page(conn, account, got.get("head") or "후보", tpl,
                     {"tabs": tabbar, "csrf": csrf, **got}, root=root,
                     csrf=csrf, flash_key=flash_key)
     if tab == "4":
@@ -1253,8 +1256,8 @@ def analyze(conn, account, req, root: str = ROOT, csrf: str = "",
 
     del req
     aid = getattr(account, "account_id", 0) or 0
-    got = T.view_tab3(conn, aid, root)
-    return page(conn, account, "분석", T.tab_template("3", root) or "analyze.html",
+    got = T.view_analyze_list(conn, aid, root)
+    return page(conn, account, "분석", "analyze_list.html",
                 {"tabs": T.tab_list("3", root, {"analyze": got["count"]}),
                  "csrf": csrf, **got}, root=root, csrf=csrf,
                 flash_key=flash_key)

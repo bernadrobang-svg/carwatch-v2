@@ -1,117 +1,118 @@
-<!-- ★★★★★★★ 09-05 — ★ **분석 (추천 탭 3)** · ★ 가이드가 짓는다
-     ★ 마스터 — 「★ 시안·HTML·CSS 는 ★ **네가 해야 될 일**이다.
-       ★ 개발팀은 ★ **관련된 값을 찾아서 붙인다**」
-     ★ 시안 `ref/screens/v4m_analyze_시안.html` · 규격 `docs/RECOMMEND_SCREEN.md`
+<!-- ★★★★★★★ 09-06 (r1190 A-14 ~ A-25) — ★ **추천 탭 3 — GV70 후보**
+     ★ 시안 `ref/screens/v4m_analyze_시안.html` (가이드 09-06) · 규격 `RECOMMEND_SCREEN.md`
+     ★ CSS 는 `web/static/app.css` (`.v3-*`)
 
-     ★★ 개발측이 채울 것 (★ 이름만 맞춰 주면 된다) —
-       `tabs`      탭 목록 (★ 자료로 정한다 · ★ 코드에 박지 마라)
-       `rows`      분석을 맡긴 차.  ★ 한 줄에 —
-                   listing_id · title · meta(연식·주행·값·사이트)
-                   verdict(`buy`·`hold`·`wait`·`risk`) · verdict_label
-                   asked_at(맡긴 때) · parts[] (제목 `h` ＋ 글 `p`)
-       `total_url` 토털 분석 자리 · `count` 몇 대
-     ★★★ 없는 값은 ★ **빈칸으로 두지 말고** ★ 「모름」·「미조회」를 넣어라 (RULES 2) -->
+     ★★ 여쭐 것 — ★ 가이드께서 ★ **시안만** 고치시고 ★ 이 틀은 09-05 판이었다.
+       ★ ★ 지시 A-14 가 「★ 탭 3 을 GV70 후보 화면으로 **만든다**」이므로
+       ★ ★ ★ 시안대로 여기까지 지었다.  ★ 가이드가 다시 지으시면 그것으로 바꾼다 —
+       ★ ★ ★ ★ 값 이름은 아래 그대로 두시면 된다
 
-<h1>분석</h1>
-<p class="sub">내가 <strong>분석을 맡긴 차</strong>만 여기 있습니다 — 관심과 다릅니다</p>
+     ★★ 개발측이 채우는 값 —
+       `tabs`        탭 목록 (★ `config/vehicle_table.json` · `web.json`)
+       `cond[]`      지금 거른 조건 딱지 — `label` ＋ `ok`
+       `count`       「다섯 사이트에서 N대」 — `all`·`matched`·`near`·`by_site`
+       `matched[]`   조건에 다 맞는 차 (값 낮은 순)
+       `near[]`      하나가 아쉬운 차 (값 낮은 순) — ★ 지우지 않는다
+       ★ 카드 한 줄 —
+         listing_id · price · verdict · verdict_label · site_label · site_badge
+         inspection · inspection_ok · miss[] · meta · shop · photo_url · photo_note
+         accident_tone(`clean`·`mid`·`bad`·`none`) · clean_car · insurance_cost
+         thin_data · thin_why · encar_url · good(아래 묶음의 좋은 점 한 줄)
+         checks[] — `label`·`mark`(`O`·`X`·`미조회`)·`cls`(`y`·`n`·`q`)·`said`
+     ★★★ 없는 값은 ★ **빈칸으로 두지 말고** ★ 「모름」·「미조회」 (RULES 2) -->
 
-<!-- ★ 탭 — ★ 자료로 정한다.  ★ 늘고 빠진다 (마스터 09-05) -->
+<h1>{{ head }}</h1>
+<p class="sub">{{ sub }}</p>
+
 <p class="sitebar picktabs">
   {% for t in tabs %}<a class="btn{% if t.on %} on{% endif %}"
     href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
 </p>
 
-<!-- ★★ 맨 위 「토털 분석」 — ★ 마스터 확정 09-05 -->
-<div class="totalbar">
-  <b>토털 분석</b>
-  <span class="dim">고른 {{ count }}대를 ★ 한꺼번에 견줍니다</span>
-  <a class="btn go" href="{{ total_url }}">전체 종합 분석 ▸</a>
+<div class="v3-cond">
+  <b>지금 거른 조건</b>
+  {% for c in cond %}<span class="v3-cchip {{ c.cls }}">{{ c.label }}</span>{% endfor %}
+</div>
+<p class="v3-count">다섯 사이트에서 <b>{{ count.all }}대</b> —
+  조건에 맞는 <b>{{ count.matched }}대</b> · 하나가 아쉬운 <b>{{ count.near }}대</b><br>
+  {{ count.by_site }}</p>
+
+<div class="v3-group on">
+  <h2>조건에 다 맞는 차</h2><span>{{ count.matched }}대 · 값 낮은 순</span>
 </div>
 
-{% if !rows %}
-<p class="cond what">아직 <strong>분석을 맡긴 차가 없습니다</strong>.
-  매물·추천 화면에서 <strong>「분석」</strong>을 눌러 담으십시오.
-  <span class="dim">관심은 비교용이고, 분석은 진짜 살 차를 살피는 자리입니다.</span></p>
+{% if !matched %}
+<p class="cond what">조건에 <strong>다 맞는 차가 아직 없습니다</strong>.
+  아래 <strong>「하나가 아쉬운 차」</strong>를 봐 주십시오 — 무엇이 아쉬운지 적었습니다.</p>
 {% endif %}
 
-{% for r in rows %}
-<div class="acard {{ r.accident_tone }}">
-  <div class="ahead">
-    <span class="verdict {{ r.verdict }}">{{ r.verdict_label }}</span>
-    <span class="aname">{{ r.title }}</span>
-    <span class="ameta">{{ r.meta }}</span>
-    {% if r.clean_car %}<span class="rc2-clean">깨끗</span>{% endif %}
+{% for r in matched %}
+<div class="v3-acard {{ r.accident_tone }}">
+  <div class="v3-aline">
+    <span class="v3-aprice">{{ r.price }}</span>
+    <span class="v3-verdict {{ r.verdict }}">{{ r.verdict_label }}</span>
+    <span class="v3-site">{{ r.site_label }}</span>
+    <span class="v3-dx {% if !r.inspection_ok %}no{% endif %}">{{ r.inspection }}</span>
+    {% if r.clean_car %}<span class="v3-cchip ok">깨끗</span>{% endif %}
   </div>
-  <!-- 09-06 — 마스터 「세 번째 탭에도 첫 번째 탭에 포함된 정보가 같이 있는 게 좋겠다」 -->
-  <div class="rc2-facts">
-    <span class="rc2-fact">감가율
-      {% if r.depreciation %}<b>{{ r.depreciation }}</b>{% endif %}
-      {% if !r.depreciation %}<b class="rc2-unknown">신차가 미조회</b>{% endif %}</span>
-    <span class="rc2-fact">배터리 SOH
-      {% if r.soh %}<b>{{ r.soh }}</b>{% endif %}
-      {% if !r.soh %}<b class="rc2-unknown">모름</b>{% endif %}</span>
-    <span class="rc2-fact">사고
-      {% if r.accident %}<b>{{ r.accident }}</b>{% endif %}
-      {% if !r.accident %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
-    <span class="rc2-fact">보험 이력
-      {% if r.insurance_cost %}<b>{{ r.insurance_cost }}</b>{% endif %}
-      {% if !r.insurance_cost %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
-    <span class="rc2-fact">주행 <b>{{ r.km_vs_avg }}</b></span>
-    {% if r.thin_data %}<span class="rc2-fact rc2-unknown">자료 부족 — {{ r.thin_why }}</span>{% endif %}
+  {% if r.photo_url %}<img class="v3-thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
+  {% if !r.photo_url %}<span class="v3-nophoto">{{ r.photo_note }}</span>{% endif %}
+  <p class="v3-ameta">{{ r.meta }}</p>
+  <p class="v3-shop">{{ r.shop }}</p>
+  <div class="v3-why2">
+    {% for w in r.checks %}<span class="v3-w">{{ w.label }}
+      <b class="{{ w.cls }}">{{ w.mark }}</b> {{ w.said }}</span>{% endfor %}
   </div>
-  <!-- 09-06 — 사진이 없었다 (마스터 지적) -->
-  {% if r.photo_url %}<img class="rc2-thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
-  {% if !r.photo_url %}<span class="rc2-nophoto">{{ r.photo_note }}</span>{% endif %}
-  <p class="ameta">맡긴 때 {{ r.asked_at }}</p>
-
-  <!-- 09-06 — 마스터 「추천 3 에는 판매자」.
-       분석은 진짜 사기 위한 자리다. 누구에게 사는지가 판단에 든다.
-       정직도는 그 딜러가 값을 올렸다 내렸다 하는지, 매물을 자주 지우는지를 본다.
-       모르면 「미조회」다. 좋게도 나쁘게도 적지 않는다 -->
-  <div class="rc2-facts">
-    <span class="rc2-fact">판매자
-      {% if r.dealer_name %}<b>{{ r.dealer_name }}</b>{% endif %}
-      {% if !r.dealer_name %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
-    <span class="rc2-fact">지역
-      {% if r.dealer_region %}<b>{{ r.dealer_region }}</b>{% endif %}
-      {% if !r.dealer_region %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
-    <span class="rc2-fact">정직도
-      {% if r.dealer_quadrant %}<b>{{ r.dealer_quadrant }}</b>{% endif %}
-      {% if !r.dealer_quadrant %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
-    <span class="rc2-fact">그 딜러 매물
-      {% if r.dealer_count %}<b>{{ r.dealer_count }}대</b>{% endif %}
-      {% if !r.dealer_count %}<b class="rc2-unknown">미조회</b>{% endif %}</span>
-  </div>
-
-  <div class="arow">
-    <a class="btn" href="/detail/{{ r.listing_id }}">그 차로 ▸</a>
-    {% if r.encar_url %}<a class="btn" href="{{ r.encar_url }}"
-       target="_blank" rel="noopener">{{ r.site_badge }} ↗</a>{% endif %}
-    <!-- ★★ 타 AI 요청 — ★ 그 차의 **원문을 그대로 하나의 글월로** 낸다
-         ★ 값 · **보험 이력** · **수리 이력** · 사고 · 골격 · 옵션 · 주행 · 연식 ·
-           색 · 트림 · 사이트 주소.  ★ **우리가 고친 값이 아니라 사이트가 준 그대로** -->
-    <a class="btn" href="/analyze/copy/{{ r.listing_id }}"
-       title="이 차의 원문을 그대로 복사합니다 — 다른 AI 에게 물어보실 수 있습니다"
-       >타 AI 요청 (원문 복사)</a>
-    <!-- 09-06 — 규격이 POST 다. 작은 폼으로 보낸다 (v385 지적) -->
-    <form class="btnform" method="post" action="/analyze/drop/{{ r.listing_id }}">
+  {% if r.thin_data %}<p class="v3-ameta"><b class="v3-unknown">자료가 얇습니다</b> —
+    {{ r.thin_why }}</p>{% endif %}
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/{{ r.listing_id }}">상세 ▸</a>
+    {% if r.encar_url %}<a class="v3-abtn" href="{{ r.encar_url }}"
+      target="_blank" rel="noopener">{{ r.site_label }} ↗</a>{% endif %}
+    <form method="post" action="/analyze/add/{{ r.listing_id }}" class="inline">
       <input type="hidden" name="csrf" value="{{ csrf }}">
-      <button class="btn" type="submit"
-              title="누르면 이 차는 분석에서 빠집니다">분석 제외</button>
+      <button class="v3-abtn ask" type="submit">분석 맡기기</button>
     </form>
+    <a class="v3-abtn" href="/compare?add={{ r.listing_id }}">비교 담기</a>
   </div>
+</div>
+{% endfor %}
 
-  <div class="detail">
-    <!-- ★★★ **항목 수를 못 박지 않는다** (마스터 09-05 —
-         「★ 나는 ★ 다섯 개 찍는다고 얘기한 적 없다」).
-         ★ 차마다 볼 것이 다르니 ★ `parts` 가 주는 만큼 낸다 -->
-    {% for x in r.parts %}
-    <h4>{{ x.h }}</h4>
-    <p>{{ x.p }}</p>
-    {% endfor %}
-    {% if !r.parts %}
-    <p class="dim">아직 <strong>분석 전</strong>입니다.</p>
-    {% endif %}
+<div class="v3-group off">
+  <h2>하나가 아쉬운 차</h2>
+  <span>{{ count.near }}대 중 <b>{{ count.shown }}대</b> ·
+    아쉬운 것이 적은 차부터 · 지우지 않습니다. 무엇이 아쉬운지 적었습니다</span>
+</div>
+
+{% for r in near %}
+<div class="v3-acard {{ r.accident_tone }}">
+  <div class="v3-aline">
+    <span class="v3-aprice">{{ r.price }}</span>
+    <span class="v3-verdict {{ r.verdict }}">{{ r.verdict_label }}</span>
+    {% for m in r.miss %}<span class="v3-miss">{{ m }}</span>{% endfor %}
+    <span class="v3-site">{{ r.site_label }}</span>
+    <span class="v3-dx {% if !r.inspection_ok %}no{% endif %}">{{ r.inspection }}</span>
+  </div>
+  {% if r.photo_url %}<img class="v3-thumb" src="{{ r.photo_url }}" alt="" loading="lazy">{% endif %}
+  {% if !r.photo_url %}<span class="v3-nophoto">{{ r.photo_note }}</span>{% endif %}
+  <p class="v3-ameta">{{ r.meta }}</p>
+  <p class="v3-shop">{{ r.shop }}</p>
+  <div class="v3-why2">
+    {% for w in r.checks %}<span class="v3-w">{{ w.label }}
+      <b class="{{ w.cls }}">{{ w.mark }}</b> {{ w.said }}</span>{% endfor %}
+  </div>
+  <!-- ★ 아래 묶음에도 ★ **좋은 점**을 한 줄 넣는다 (A-25) -->
+  <p class="v3-ameta">{{ r.good }}</p>
+  {% if r.thin_data %}<p class="v3-ameta"><b class="v3-unknown">자료가 얇습니다</b> —
+    {{ r.thin_why }}</p>{% endif %}
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/{{ r.listing_id }}">상세 ▸</a>
+    {% if r.encar_url %}<a class="v3-abtn" href="{{ r.encar_url }}"
+      target="_blank" rel="noopener">{{ r.site_label }} ↗</a>{% endif %}
+    <form method="post" action="/analyze/add/{{ r.listing_id }}" class="inline">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <button class="v3-abtn ask" type="submit">분석 맡기기</button>
+    </form>
   </div>
 </div>
 {% endfor %}

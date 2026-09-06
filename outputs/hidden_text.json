@@ -1,86 +1,143 @@
 {
- "_잰_때": "2026-09-05T03:38:54.132053+00:00",
+ "_잰_때": "2026-09-06T08:42:39.637388+00:00",
  "_잰_곳": "https://54.180.227.109.sslip.io",
- "합": 0,
- "상자겹침합": 24,
+ "합": 2,
+ "상자겹침합": 38,
  "자리": {
-  "listings_390": {
-   "leaf": 59,
+  "recommend?tab=2_390": {
+   "leaf": 64,
    "hidden": 0,
    "examples": [],
-   "overlap": 6,
-   "at": 0.2,
-   "overlap_examples": [
-    "옵션가 / 1종\n        10px",
-    "1종\n        / 3,370만 12px",
-    "3,370만 / -80만 · 4회 9px",
-    "시세보다 150만  / 48만 12px",
-    "취향 / ♡ 4px",
-    "(주)정든모터스 / 게시중 10px"
-   ],
-   "shot": "outputs/shots/listings_390.png"
-  },
-  "listings_900": {
-   "leaf": 94,
-   "hidden": 0,
-   "examples": [],
-   "overlap": 11,
-   "at": 0.2,
-   "overlap_examples": [
-    "3,370만 / -80만 · 4회 9px",
-    "시세보다 150만  / 48만 12px",
-    "✓ / 1.5 E-TECH 19px",
-    "♡ / 1.5 E-TECH 19px",
-    "2025-11 / (주)정든모터스 8px",
-    "(주)정든모터스 / 게시중 10px"
-   ],
-   "shot": "outputs/shots/listings_900.png"
-  },
-  "recommend_390": {
-   "leaf": 39,
-   "hidden": 0,
-   "examples": [],
-   "overlap": 3,
+   "overlap": 2,
    "at": 0.0,
    "overlap_examples": [
-    "등록부에 미분류가  / 판정에 쓰는 경로면 16px",
-    "판정에 쓰는 경로면 / 미판정 보기 29px",
-    "1,465건 / 판매완료는 뺐습니다 14px"
+    "값순 / 연식순 22px",
+    "등급순 / 연식순 22px"
    ],
-   "shot": "outputs/shots/recommend_390.png"
+   "shot": "outputs/shots/recommend?tab=2_390.png"
   },
-  "recommend_900": {
-   "leaf": 51,
+  "recommend?tab=2_600": {
+   "leaf": 86,
    "hidden": 0,
    "examples": [],
-   "overlap": 1,
-   "at": 0.85,
-   "overlap_examples": [
-    "헤이딜러는 사진을  / 3,490만원 25px"
-   ],
-   "shot": "outputs/shots/recommend_900.png"
-  },
-  "track_390": {
-   "leaf": 31,
-   "hidden": 0,
-   "examples": [],
-   "overlap": 3,
+   "overlap": 12,
    "at": 0.0,
    "overlap_examples": [
-    "등록부에 미분류가  / 판정에 쓰는 경로면 17px",
-    "판정에 쓰는 경로면 / 미판정 보기 29px",
-    "한 대의 차 / 어디가 싸고 왜 등 14px"
+    "등급순 / ≪ 14px",
+    "취향순 / ≪ 14px",
+    "취향순 / 1 14px",
+    "차량 안전순 / 2 14px",
+    "차량 안전순 / 3 14px",
+    "차량 안전순 / 4 14px"
    ],
-   "shot": "outputs/shots/track_390.png"
+   "shot": "outputs/shots/recommend?tab=2_600.png"
   },
-  "track_900": {
-   "leaf": 39,
+  "recommend?tab=2_760": {
+   "leaf": 87,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 12,
+   "at": 0.0,
+   "overlap_examples": [
+    "등급순 / ≪ 14px",
+    "취향순 / ≪ 14px",
+    "취향순 / 1 14px",
+    "차량 안전순 / 2 14px",
+    "차량 안전순 / 3 14px",
+    "차량 안전순 / 4 14px"
+   ],
+   "shot": "outputs/shots/recommend?tab=2_760.png"
+  },
+  "recommend?tab=2_900": {
+   "leaf": 86,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 12,
+   "at": 0.0,
+   "overlap_examples": [
+    "등급순 / ≪ 14px",
+    "취향순 / ≪ 14px",
+    "취향순 / 1 14px",
+    "차량 안전순 / 2 14px",
+    "차량 안전순 / 3 14px",
+    "차량 안전순 / 4 14px"
+   ],
+   "shot": "outputs/shots/recommend?tab=2_900.png"
+  },
+  "recommend?tab=3_390": {
+   "leaf": 36,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
    "at": 0.0,
    "overlap_examples": [],
-   "shot": "outputs/shots/track_900.png"
+   "shot": "outputs/shots/recommend?tab=3_390.png"
+  },
+  "recommend?tab=3_600": {
+   "leaf": 42,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "at": 0.0,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=3_600.png"
+  },
+  "recommend?tab=3_760": {
+   "leaf": 42,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "at": 0.0,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=3_760.png"
+  },
+  "recommend?tab=3_900": {
+   "leaf": 42,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "at": 0.0,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=3_900.png"
+  },
+  "recommend?tab=4_390": {
+   "leaf": 55,
+   "hidden": 2,
+   "examples": [
+    "10만 초과 (0/3)",
+    "— (0/3)"
+   ],
+   "overlap": 0,
+   "at": 0.2,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=4_390.png"
+  },
+  "recommend?tab=4_600": {
+   "leaf": 48,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "at": 0.0,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=4_600.png"
+  },
+  "recommend?tab=4_760": {
+   "leaf": 53,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "at": 0.0,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=4_760.png"
+  },
+  "recommend?tab=4_900": {
+   "leaf": 48,
+   "hidden": 0,
+   "examples": [],
+   "overlap": 0,
+   "at": 0.0,
+   "overlap_examples": [],
+   "shot": "outputs/shots/recommend?tab=4_900.png"
   }
  }
 }

@@ -125,6 +125,17 @@ CREATE TABLE IF NOT EXISTS core_listing (
   site_pass_type         TEXT,
   site_pass_grade        TEXT,
   site_diagnosis_grade   TEXT,
+  -- ★★★★★★ 09-06 (r1190 K-1) — ★ **전국 배달**.  ★ 마스터 확정 —
+  --   ★ 「전국 배달은 엔카·리본카·K카 등 ★ **모든 사이트에 다 있다**」
+  --   ★ `Y` · `N` · ★ **NULL = 미조회**.  ★ 못 찾으면 ★ N 이 아니라 NULL 이다 (K-4)
+  --   ★ 엔카 실측 09-06 — `advertisement.homeService` 가 그것이다 (60건 중 36 True).
+  --   ★ ★ 판매글의 「전국 탁송」 글자는 ★ **안 쓴다** — ★ 딸린 말이 실장착을 못 이긴다
+  delivery_nationwide    TEXT,
+  -- ★★★★★★ 09-06 (r1190 A-19) — ★ **사이트 진단·보증 이름**.
+  --   ★ 마스터 확정 — 「사이트 진단 등급이 필수적이다」.
+  --   ★ 이름은 사이트마다 다르다 (`config/targets.json` `_사이트_진단`).
+  --   ★ NULL = 미조회.  ★ 짐작으로 이름을 짓지 않는다
+  site_inspection        TEXT,
   -- 상태 추적 (STEP 29)
   status                 TEXT NOT NULL,
   first_seen             TEXT NOT NULL,

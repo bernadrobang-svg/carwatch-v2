@@ -31,9 +31,21 @@ VERDICT_LABEL = {"buy": "구매 적절", "hold": "보류",
 
 
 def tabs_config(root: str = ".") -> list:
-    """★ A-1 — 탭 목록.  ★ 자료가 정본이다."""
-    got = (load_config(f"{root}/config/web.json") or {}).get("recommend_tabs")
-    return list(got or [])
+    """★ A-1 — 탭 목록.  ★ 자료가 정본이다.
+
+    ★★★★★ 09-06 (r1190 A-1) — ★ 「탭 목록을 ★ `vehicle_table.json` 에서 읽는다」.
+      ★ 탭이 ★ **몇 개인가**는 ★ `web.json` `recommend_tabs` 가 말하고 ·
+      ★ ★ 그 탭에 ★ **어느 차종을 내는가**는 ★ 차종 표의 `tabN` 이 말한다.
+      ★ ★ ★ 그러므로 ★ **표에 한 차종도 없는 탭은 안 낸다** — ★ 빈 탭을 안 낸다.
+      ★ 표를 못 읽으면 ★ 다 낸다 (`S46-289` 몫)
+    """
+    got = list((load_config(f"{root}/config/web.json") or {})
+               .get("recommend_tabs") or [])
+    if not vehicle_table(root):
+        return got
+    return [t for t in got
+            if vehicle_keys(f"tab{t.get('n')}", root)
+            or not str(t.get("n") or "").isdigit()]
 
 
 def tab_list(on: str, root: str = ".", counts: dict | None = None) -> list:
@@ -164,6 +176,11 @@ def _picks(conn, root, flt, sel: dict, base: str) -> list:
         if got:
             out.append({"label": label, "items": got})
 
+    # ★★★★★ 09-06 (r1190 K) — ★ **배달 묶음을 낸다.**  ★ 전에는 못 냈다 —
+    #   ★ 어느 사이트도 배달 여부를 안 줬기 때문이다 (09-05 실측 0건).
+    #   ★ 이제 ★ `delivery_nationwide` 가 있다 (엔카 실측 Y 5,913 · N 3,382)
+    group("배달", "dv", [("Y", "전국 배달"), ("N", "배달 없음"),
+                         ("q", "배달 미조회")])
     group("지역", "rg", [(r["key"], r["label"])
                          for r in cfg.get("recommend_regions") or ()])
     live = [r[0] for r in conn.execute(
@@ -233,6 +250,7 @@ def _sel(query: dict, query_all: dict) -> dict:
             got = (str(query[k]),)
         return tuple(x for x in got if x)
     return {"rg": many("rg"), "m": many("m"), "g": many("g"), "pb": many("pb"),
+            "dv": many("dv"),
             "sort": str((query or {}).get("sort") or "") or None}
 
 
@@ -321,6 +339,17 @@ def view_tab2(conn: sqlite3.Connection, calc_version: str, flt,
         if ors:
             where.append("(" + " OR ".join(ors) + ")")
             args.extend(oargs)
+    # ★ A-7 — ★ 배달.  ★ `q` 는 ★ **미조회**다 — ★ N 과 다르다 (K-4)
+    if sel["dv"]:
+        part, dargs = [], []
+        for key in sel["dv"]:
+            if key == "q":
+                part.append("l.delivery_nationwide IS NULL")
+            else:
+                part.append("l.delivery_nationwide = ?")
+                dargs.append(key)
+        where.append("(" + " OR ".join(part) + ")")
+        args.extend(dargs)
     for key in sel["pb"]:
         band = next((b for b in cfg.get("recommend_price_bands") or ()
                      if b["key"] == key), None)
@@ -355,6 +384,10 @@ def view_tab2(conn: sqlite3.Connection, calc_version: str, flt,
             " l.warranty_body_month, l.warranty_body_km,"
             " l.site_pass_grade, l.ev_battery_soh, l.price_origin_won,"
             " l.options_choice_json, l.advertisement_type, s.grade,"
+            " l.paired_source_id, s.confirmed_points, l.source_id,"
+            " l.delivery_nationwide, l.site_inspection,"
+            " (SELECT accident_my_cost FROM core_record x"
+            "   WHERE x.listing_id = l.listing_id) AS _ins,"
             f" {taste_sql} AS _taste, {safe_sql} AS _safe,"
             f" {grade_rank} AS _grade_rank")
     got = conn.execute(
@@ -362,6 +395,8 @@ def view_tab2(conn: sqlite3.Connection, calc_version: str, flt,
         + ORDER_SQL.get(order, ORDER_SQL["value"])
         + ", l.listing_id LIMIT ? OFFSET ?",
         [*SAFE_AXES, *args, size, (page["page"] - 1) * size]).fetchall()
+
+    from report.screens.build import site_badge
 
     names = load_config(f"{root}/config/targets.json") or {}
     sites = (load_config(f"{root}/config/sites.json") or {}).get("labels") or {}
@@ -384,7 +419,10 @@ def view_tab2(conn: sqlite3.Connection, calc_version: str, flt,
                 _ym(r[4]), _km(r[5]),
                 " / ".join(y for y in (r[6], r[7]) if y) or None,
                 sites.get(r[1], r[1])) if x),
-            "region": rlabel, "region_kind": rkind,
+            # ★ 09-06 K — ★ 전국 배달이면 ★ 지역을 안 봐도 된다 (규격 ⑤ ①).
+            #   ★ 틀의 `.rc2-region.deliver` 가 그 자리다
+            "region": ("전국 배달" if str(r[25] or "") == "Y" else rlabel),
+            "region_kind": ("deliver" if str(r[25] or "") == "Y" else rkind),
             "over_budget": False,
             "depreciation": _dep(r[3], r[18]),
             "dep_ok": _dep_ok(r[3], r[18]),
@@ -392,6 +430,19 @@ def view_tab2(conn: sqlite3.Connection, calc_version: str, flt,
             "accident": None,
             "km_vs_avg": _km(r[5]),
             "trim": r[9] or r[8] or UNKNOWN,
+            # ★★★★★ 09-06 (r1190 A-6 · A-8 · A-10 · A-11 · A-12) —
+            #   ★ 마스터 지시 — 「★ **목록과 추천 1 의 정보는 ★ 추천 2·3 에
+            #     ★ ★ 다 들어가야 한다**」.  ★ 탭 1 이 내던 것을 여기도 낸다
+            "site_badge": site_badge(r[1], None, root),
+            "encar_url": _source_url_of(r[1], r[24], r[22], root),
+            "accident_tone": _accident_tone(r[27], None, _tab3_cfg(root))[0],
+            "clean_car": _accident_tone(r[27], None, _tab3_cfg(root))[1],
+            "insurance_cost": (_won(r[27]) if r[27] is not None
+                               else NOT_ASKED),
+            "thin_data": (r[23] is not None
+                          and r[23] < (_tab3_cfg(root).get("thin_points")
+                                       or 700)),
+            "thin_why": _thin_why(r[18], r[27], r[26]),
             "colors": " / ".join(y for y in (r[6], r[7]) if y) or UNKNOWN,
             "options": _opt_label(r[19]),
             "warranty": _warranty(r[14], r[15]),
@@ -445,9 +496,14 @@ def analyze_count(conn, account_id: int) -> int:
         (account_id,)).fetchone()[0]
 
 
-def view_tab3(conn: sqlite3.Connection, account_id: int,
-              root: str = ".") -> dict:
-    """★ A-3 — 분석.  ★ **내가 맡긴 차만** 있다 (관심과 따로다).
+def view_analyze_list(conn: sqlite3.Connection, account_id: int,
+                      root: str = ".") -> dict:
+    """★ 분석을 맡긴 차 (`/analyze`).  ★ **내가 맡긴 차만** 있다 (관심과 따로다).
+
+    ★★★★★ 09-06 (r1190 A-14) — ★ 마스터께서 ★ **탭 3 을 다시 정하셨다** —
+      ★ ★ 「가이드가 쓴 글」이 아니라 ★ **GV70 후보 목록**이다 (`view_tab3`).
+      ★ ★ ★ 그래서 이 갈래는 ★ 탭에서 내려와 ★ `/analyze` 길만 쓴다.
+      ★ ★ ★ ★ 「분석 맡기기」 단추는 ★ 그대로다 — ★ 담은 것이 여기 쌓인다
 
     ★ 평가와 글은 ★ **가이드가 쓴다** — ★ 없으면 ★ 「대기」 · 「아직 분석 전」이다.
       ★ 우리가 지어내지 않는다 (규격 ⑥ 「모르는 것은 「모른다」」)
@@ -824,7 +880,10 @@ def _cell_rows(conn, target: str, pb: dict, kb: dict, root: str) -> list:
             "verdict": None, "verdict_cls": "",
             "title": " ".join(x for x in (r[4] or r[3],) if x) or UNKNOWN,
             "lease": bool(r[14]),
-            "region": rlabel, "region_kind": rkind,
+            # ★ 09-06 K — ★ 전국 배달이면 ★ 지역을 안 봐도 된다 (규격 ⑤ ①).
+            #   ★ 틀의 `.rc2-region.deliver` 가 그 자리다
+            "region": ("전국 배달" if str(r[25] or "") == "Y" else rlabel),
+            "region_kind": ("deliver" if str(r[25] or "") == "Y" else rkind),
             "photo_url": _first_photo(r[10], root),
             "photo_note": f"사진<br>{NOT_ASKED}",
             "meta": " · ".join(x for x in (
@@ -857,3 +916,289 @@ def _calc(now, origin, opt_json) -> list:
         got.append({"label": "신차 대비", "value": NOT_ASKED,
                     "mark": "v3-unknown", "cls": "sum"})
     return got
+
+
+# ── 탭 3 — GV70 후보 (A-14 ~ A-25 · 마스터 확정 09-06) ────────────────────
+# ★★★ 마스터 — ★ 탭 3 은 ★ 「가이드가 쓴 글」이 ★ **아니다.**
+#   ★ ★ **지금 고르고 계신 차**를 조건으로 추려 내는 자리다.
+# ★★ 조건은 ★ `config/web.json` `tab3_candidate` 가 정본이다 — ★ 코드에 안 박는다.
+# ★★★ 조건에 안 맞는다고 ★ **화면에서 없애지 않는다** — ★ 뒤로 보낼 뿐이다.
+#   ★ 모르는 조건은 ★ 「미조회」다 — ★ O 로도 X 로도 치지 않는다
+MARK_OK, MARK_NO, MARK_Q = "O", "X", "미조회"
+
+
+def _mark(state) -> tuple:
+    """참/거짓/모름 → (표시, 글자 갈래)."""
+    if state is None:
+        return MARK_Q, "q"
+    return (MARK_OK, "y") if state else (MARK_NO, "n")
+
+
+def _tab3_cfg(root: str = ".") -> dict:
+    return (load_config(f"{root}/config/web.json") or {}).get(
+        "tab3_candidate") or {}
+
+
+def _warranty_left(month, km) -> bool | None:
+    """제조사 보증이 남아 있는가.  ★ 안 받았으면 ★ None(미조회)."""
+    if month is None and km is None:
+        return None
+    return bool(month) or bool(km)
+
+
+def _insurance_won(row_cost) -> int | None:
+    return int(row_cost) if row_cost is not None else None
+
+
+def view_tab3(conn: sqlite3.Connection, root: str = ".",
+              query: dict | None = None) -> dict:
+    """★ A-14 ~ A-25 — ★ GV70 후보를 ★ 두 묶음으로 낸다.
+
+    ★ 위  — 조건에 ★ **다 맞는 차** (값 낮은 순)
+    ★ 아래 — ★ **하나가 아쉬운 차** (값 낮은 순).  ★ 지우지 않는다
+    ★ 등급으로 자르지 않는다 — ★ 자료가 없어 낮은 것이지 ★ 차가 나쁜 것이 아니다.
+      ★ ★ 대신 ★ `thin_data`·`thin_why` 로 ★ 까닭을 화면에 낸다
+    """
+    del query
+    cfg = _tab3_cfg(root)
+    if not cfg:
+        return {"cond": [], "count": {"all": 0, "matched": 0, "near": 0,
+                                      "by_site": UNKNOWN},
+                "matched": [], "near": [], "head": "후보", "sub": UNKNOWN}
+    sites = list(cfg.get("sites") or ())
+    marks = ",".join("?" * len(sites)) if sites else "''"
+    # ★★★★★ 09-06 — ★ **리스·렌트를 뺀다.**  ★ 표시가가 ★ **차값이 아니다.**
+    #   ★ 실측 09-06 — ★ 값 낮은 순 맨 앞 여섯이 ★ 전부 리스·렌트였다
+    #     (`38만` · `649만` · `660만` … ★ GV70 이 그 값일 수 없다).
+    #   ★ 잣대는 ★ 목록과 ★ **같은 부품**을 쓴다 (`_lease_kinds` · B-8)
+    lw, la = _lease_where()
+    got = conn.execute(
+        "SELECT l.listing_id, l.site, l.source_id, l.price_current_won,"
+        "       l.year_month, l.mileage_km, l.color_ext_raw, l.color_int_raw,"
+        "       l.trim_grade_name, l.trim_badge, l.photo_list_json,"
+        "       l.warranty_body_month, l.warranty_body_km,"
+        "       l.delivery_nationwide, l.site_inspection,"
+        "       l.dealer_shop, l.dealer_region, l.paired_source_id,"
+        "       l.sell_type, l.price_origin_won, s.confirmed_points,"
+        "       s.grade, r.accident_my_cost, r.accident_total_cnt"
+        "  FROM core_listing l"
+        "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
+        f" WHERE l.target_key = ? AND l.site IN ({marks})"
+        "   AND l.status IN ('active','new','relisted')"
+        f"   AND {lw}",
+        [cfg.get("target"), *sites, *la]).fetchall()
+
+    matched, near = [], []
+    by_site: dict = {}
+    for row in got:
+        card, ok = _tab3_card(row, cfg, root)
+        by_site[card["site_label"]] = by_site.get(card["site_label"], 0) + 1
+        (matched if ok else near).append(card)
+    matched.sort(key=lambda c: c["_won"] or 10 ** 12)
+    # ★ 「**하나가** 아쉬운 차」 — ★ 말 그대로 ★ **아쉬운 수가 적은 것부터** 낸다.
+    #   ★ 같으면 ★ 값 낮은 순이다 (지시 「아래도 값 낮은 순」)
+    near.sort(key=lambda c: (len(c["miss"]), c["_won"] or 10 ** 12))
+    near_all = len(near)
+    cap = int(cfg.get("near_max") or 30)
+    near = near[:cap]
+    said = " · ".join(f"{k} {v}" for k, v in
+                      sorted(by_site.items(), key=lambda x: -x[1]))
+    return {
+        "cond": _tab3_cond(cfg),
+        "count": {"all": len(got), "matched": len(matched),
+                  "near": near_all, "shown": len(near),
+                  "by_site": said or UNKNOWN},
+        "matched": matched, "near": near,
+        "head": _tab3_head(cfg, root),
+        "sub": _tab3_sub(cfg),
+    }
+
+
+def _tab3_head(cfg, root) -> str:
+    names = load_config(f"{root}/config/targets.json") or {}
+    label = (names.get(cfg.get("target")) or {}).get("label") or cfg.get("target")
+    return f"{label} 후보"
+
+
+def _tab3_sub(cfg) -> str:
+    return " · ".join(x for x in (
+        f"{_won(cfg.get('price_grace_won'))} 이하",
+        f"{str(cfg.get('year_from') or '')[:4]}년식 이상",
+        f"{int((cfg.get('mileage_max_km') or 0) / 10000)}만km 미만",
+        "보증 남음", "멀쩡한 차") if x)
+
+
+def _tab3_cond(cfg) -> list:
+    got = [{"label": str(cfg.get("target") or UNKNOWN), "cls": ""},
+           {"label": f"{_won(cfg.get('price_grace_won'))} 이하", "cls": ""},
+           {"label": f"{str(cfg.get('year_from') or '')[:4]}년식 ↑", "cls": ""},
+           {"label": f"{int((cfg.get('mileage_max_km') or 0) / 10000)}만km 미만",
+            "cls": ""}]
+    if cfg.get("need_warranty"):
+        got.append({"label": "보증 남음", "cls": ""})
+    if cfg.get("need_delivery"):
+        got.append({"label": "전국 배달", "cls": ""})
+    got.append({"label": f"멀쩡 (보험 {_won(cfg.get('insurance_max_won'))} 미만)",
+                "cls": "ok"})
+    for c in cfg.get("color_ext") or ():
+        got.append({"label": str(c), "cls": ""})
+    if cfg.get("need_inspection"):
+        got.append({"label": "사이트 진단 필수", "cls": "ok"})
+    return got
+
+
+def _tab3_card(row, cfg: dict, root: str) -> tuple:
+    """카드 한 장 ＋ ★ 「다 맞는가」.
+
+    ★ 모르는 조건은 ★ 「미조회」다 — ★ 그것도 ★ **다 맞는 것은 아니다** (뒤로 간다).
+      ★ ★ 다만 ★ X 와 달리 ★ 딱지에 ★ 「미조회」로 적는다 (지시 A-24)
+    """
+    from report.screens.build import site_badge
+
+    (lid, site, sid, won, ym, km, cext, cint, tgrade, tbadge, photos,
+     wmon, wkm, deliver, inspect, shop, region, paired, _sell, origin,
+     confirmed, _grade, ins_cost, acc_cnt) = row
+    sites = (load_config(f"{root}/config/sites.json") or {}).get("labels") or {}
+    label = sites.get(site, site)
+
+    grace = cfg.get("price_grace_won")
+    want_year = str(cfg.get("year_from") or "")[:7]
+    kmax = cfg.get("mileage_max_km")
+    colors = tuple(cfg.get("color_ext") or ())
+    ins_max = cfg.get("insurance_max_won")
+
+    st_price = None if won is None else (won <= grace)
+    st_year = None if not ym else (str(ym)[:7] >= want_year)
+    st_km = None if km is None else (km < kmax)
+    st_war = _warranty_left(wmon, wkm) if cfg.get("need_warranty") else True
+    st_col = None if not cext else any(c in str(cext) for c in colors)
+    st_del = ({"Y": True, "N": False}.get(str(deliver or ""))
+              if cfg.get("need_delivery") else True)
+    st_dx = (bool(inspect) or None) if cfg.get("need_inspection") else True
+    # ★ 보험 — ★ 「멀쩡하다」는 ★ 판금·범퍼·휀더를 사고로 안 친다.
+    #   ★ 우리가 가진 것은 ★ **금액**이다 — ★ 금액으로 잰다 (지시 「300만 미만이면 본다」)
+    st_ins = None if ins_cost is None else (int(ins_cost) < ins_max)
+
+    checks = []
+    for name, state, said in (
+            ("값", st_price, _won(won)),
+            ("연식", st_year, _ym(ym)),
+            ("주행", st_km, _km(km)),
+            ("제조사 보증", st_war, _warranty(wmon, wkm)),
+            ("보험", st_ins,
+             _won(ins_cost) if ins_cost is not None else NOT_ASKED),
+            ("외장", st_col, cext or NOT_ASKED),
+            ("배달", st_del, {"Y": "전국 배달", "N": "없음"}.get(
+                str(deliver or ""), NOT_ASKED)),
+            ("사이트 진단", st_dx, inspect or NOT_ASKED)):
+        mark, cls = _mark(state)
+        checks.append({"label": name, "mark": mark, "cls": cls,
+                       "said": "" if mark == MARK_Q else said})
+
+    miss = []
+    if st_price is False and won is not None:
+        miss.append(f"＋{_won(won - grace)}")
+    if st_km is False and km is not None:
+        miss.append(f"＋{_km(km - kmax)}")
+    if st_year is False:
+        miss.append(f"{_ym(ym)}")
+    if st_col is False:
+        miss.append(str(cext))
+    if st_dx is None:
+        miss.append("진단 미조회")
+    if st_del is None:
+        miss.append("배달 미조회")
+    if st_war is None:
+        miss.append("보증 미조회")
+    if st_ins is None:
+        miss.append("보험 미조회")
+    if st_ins is False:
+        miss.append(f"보험 {_won(ins_cost)}")
+
+    tone, clean = _accident_tone(ins_cost, acc_cnt, cfg)
+    ok = all(x is True for x in (st_price, st_year, st_km, st_war,
+                                 st_col, st_del, st_dx)) and st_ins is not False
+    thin = confirmed is not None and confirmed < (cfg.get("thin_points") or 700)
+    return ({
+        "listing_id": lid, "_won": won, "price": _won(won),
+        "verdict": _verdict(ok, tone, miss)[0],
+        "verdict_label": _verdict(ok, tone, miss)[1],
+        "site_label": label, "site_badge": site_badge(site, None, root),
+        "inspection": inspect or NOT_ASKED, "inspection_ok": bool(inspect),
+        "miss": miss[:2],
+        "meta": " · ".join(x for x in (
+            _ym(ym), _km(km),
+            " / ".join(y for y in (cext, cint) if y) or None,
+            tgrade or tbadge) if x),
+        "shop": f"판매 {shop or NOT_ASKED} · {region or NOT_ASKED} · "
+                + {"Y": "전국 배달", "N": "배달 없음"}.get(
+                    str(deliver or ""), f"배달 {NOT_ASKED}"),
+        "photo_url": _first_photo(photos, root),
+        "photo_note": _photo_note(site, photos,
+                                  _view_str("photo_base_url", root), None)
+        or NOT_ASKED,
+        "accident_tone": tone, "clean_car": clean,
+        "insurance_cost": _won(ins_cost) if ins_cost is not None else NOT_ASKED,
+        "thin_data": thin, "thin_why": _thin_why(origin, ins_cost, inspect),
+        "encar_url": _source_url_of(site, sid, paired, root),
+        "checks": checks, "good": _good_line(won, km, ym, tone),
+    }, ok)
+
+
+def _accident_tone(ins_cost, acc_cnt, cfg) -> tuple:
+    """★ A-10 · A-11 — 카드 색 띠.  ★ **미조회는 안 칠한다.**
+
+    ★ 마스터 — 「★ 모르는 것을 ★ 좋게도 나쁘게도 칠하지 않는다」
+    """
+    if ins_cost is None and acc_cnt is None:
+        return "none", False
+    cost = int(ins_cost or 0)
+    if cost > int(cfg.get("insurance_max_won") or 3000000):
+        return "bad", False
+    if cost > int(cfg.get("clean_max_won") or 1000000):
+        return "mid", False
+    return "clean", True
+
+
+def _verdict(ok: bool, tone: str, miss: list) -> tuple:
+    if ok:
+        return ("buy", "멀쩡 · 조건 다 맞음") if tone == "clean" \
+            else ("hold", "조건 다 맞음")
+    if any("미조회" in m for m in miss):
+        return "wait", "보류"
+    return "hold", (miss[0] if miss else "아쉬움")
+
+
+def _thin_why(origin, ins_cost, inspect) -> str:
+    got = []
+    if not origin:
+        got.append("신차가 미조회")
+    if ins_cost is None:
+        got.append("보험 이력 미조회")
+    if not inspect:
+        got.append("사이트 진단 미조회")
+    return " · ".join(got) or UNKNOWN
+
+
+def _good_line(won, km, ym, tone) -> str:
+    """★ A-25 — 아래 묶음에도 ★ **좋은 점**을 한 줄.  ★ 잰 것만 적는다."""
+    got = []
+    if km is not None and km < 50000:
+        got.append(f"주행이 {_km(km)}로 적습니다")
+    if ym and str(ym)[:4] >= "2023":
+        got.append(f"연식이 {_ym(ym)}로 새것입니다")
+    if tone == "clean":
+        got.append("사고가 깨끗합니다")
+    if won is not None and won < 33000000:
+        got.append(f"값이 {_won(won)}로 낮습니다")
+    return " · ".join(got[:2]) or "좋은 점을 아직 못 쟀습니다"
+
+
+def _source_url_of(site, sid, paired, root):
+    from report.screens.build import _site_detail_urls, _source_url
+
+    try:
+        return _source_url(site, sid, _site_detail_urls(root), paired)
+    except (TypeError, ValueError, KeyError):
+        return None

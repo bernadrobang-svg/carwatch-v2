@@ -70,6 +70,9 @@ LOADERS: dict = {
                 "list_json": True, "detail_args": "sid_only"},
     "hyundai_cert": {"mod": "parse.hyundai_cert.mapping", "json": False,
                      "detail_fn": "parse_detail_all"},
+    # ★ 엔카는 여기 없다 — ★ 창구가 열둘이라 (`detail`·`inspection`·`record`…)
+    #   ★ 한 갈래로 태울 수 없다.  ★ 상세만 다시 읽는 자는
+    #   ★ ★ `tools/refill_encar_detail.py` 다 (09-06 · K-2 · A-19)
 }
 
 

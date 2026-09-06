@@ -23,7 +23,7 @@
 
 | 표 | 열 | 무엇 |
 |---|--:|---|
-| `core_listing` | 122 | 공통 컬럼 6종은 전 core_* 에 둔다 (STEP 31) |
+| `core_listing` | 124 | 공통 컬럼 6종은 전 core_* 에 둔다 (STEP 31) |
 | `core_listing_change` | 8 | 변경분만 쌓는다.  전량 스냅샷을 쌓지 않는다 (STEP 29) |
 | `core_vehicle` | 9 | vehicle_id 는 그대로라 relist 추적이 끊기지 않는다 (11장 STEP 112) |
 | `vehicle_identity` | 7 | ★ 해시는 결합 「입력」이지 키가 아니다.  원본은 core_pii — 조인 경로에 PII 가 없다 |

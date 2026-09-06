@@ -666,5 +666,31 @@
       "key": "year",
       "label": "연식순"
     }
-  ]
+  ],
+  "_note_tab3": "★★★★★ 09-06 r1190 A-14 — ★ 탭 3 은 ★ **GV70 후보 화면**이다 (마스터 확정 09-06 — 「가이드가 쓴 글」이 아니다). ★ 조건을 ★ 코드에 박지 않는다 (S14) — ★ 여기가 정본이다. ★ 마스터께서 조건을 바꾸시면 ★ 이 값만 고친다",
+  "tab3_candidate": {
+    "target": "GV70_25T",
+    "price_max_won": 35000000,
+    "price_grace_won": 36000000,
+    "year_from": "2022-01",
+    "mileage_max_km": 80000,
+    "color_ext": [
+      "흰색"
+    ],
+    "need_warranty": true,
+    "need_delivery": true,
+    "need_inspection": true,
+    "sites": [
+      "encar",
+      "kbchachacha",
+      "kcar",
+      "reborncar",
+      "heydealer"
+    ],
+    "insurance_max_won": 3000000,
+    "clean_max_won": 1000000,
+    "thin_points": 700,
+    "near_max": 30,
+    "_near_max_why": "★ 「하나가 아쉬운 차」를 ★ **지우지 않는다** (마스터 확정) — ★ 다만 ★ 1,430장을 한 쪽에 다 그리면 ★ 2.7MB 라 ★ 화면이 못 쓴다 (09-06 실측). ★ **아쉬운 수가 적은 것부터** 세우고 ★ 이만큼만 그린다. ★ 전체 수는 ★ 화면에 그대로 적는다 — ★ 숨기는 것이 아니다"
+  }
 }
