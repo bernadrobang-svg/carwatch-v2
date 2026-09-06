@@ -1092,9 +1092,25 @@ def s46_67_sian_names_dont_clash() -> tuple[bool, str]:
     body = re.sub(r"/\*.*?\*/", " ", _read(css), flags=re.S)
     have = set(re.findall(r"\.([a-zA-Z][\w-]*)", body))
     bad = []
+    # ★★★★★ 09-06 — ★ 틀이 쓰는 이름은 ★ **겹쳐야 맞다**.
+    #   ★ 마스터 — 「★ 넌 이게 내가 보기 편하니?」 — ★ 배포 `/fetch` 에
+    #     ★ CSS 가 하나도 안 붙어 ★ **파란 밑줄 글자**만 나왔다.
+    #   ★ 까닭 — ★ 시안 `<style>` 에만 규칙이 있고 ★ **app.css 로 안 옮겼다**.
+    #   ★ ★ 그래서 옮겼더니 ★ 이 검사가 「겹친다」고 울었다 — ★ 잣대가 틀린 것이다.
+    #   ★ ★ ★ 막으려던 것은 ★ **시안에만 쓰는 이름이 새는 것**이지,
+    #     ★ ★ ★ ★ **틀과 함께 쓰는 이름**이 아니다.
+    #   ★ 그래서 ★ `web/templates/` 가 쓰는 이름은 ★ **겹쳐도 안 센다**.
+    #   ★ 09-06 — ★ 처음엔 `class="([^"{]+)"` 로 뽑아 ★ **틀 표현이 든 것을 놓쳤다** —
+    #     ★ `class="v3-chip {% if c.on %}on{% endif %}"` 가 안 잡혔다.
+    #     ★ ★ 먼저 ★ **틀 표현을 지우고** 읽는다.
+    used = set()
+    for q in sorted((ROOT / "web" / "templates").glob("*.html")):
+        body = re.sub(r"\{%[^%]*%\}|\{\{[^}]*\}\}", " ", _read(q))
+        for m in re.finditer(r'class="([^"]+)"', body):
+            used.update(m.group(1).split())
     for q in _sian_files(sian):
         for sel in re.findall(r"\n\.([\w-]+)\s*\{", _read(q)):
-            if sel in have:
+            if sel in have and sel not in used:
                 bad.append(f"{q.name} — .{sel}")
     if bad:
         return False, (f"★ 시안 이름이 app.css 와 겹친다 {len(bad)}곳 — "
@@ -7813,7 +7829,42 @@ def s46_290_master_line_fetch():
     return True, "마스터 회선으로 받는 길이 시안·라우팅·지시에 다 있다"
 
 
+def s46_291_mockup_css_reaches_appcss():
+    """S46-291 — 시안 CSS 가 app.css 에 옮겨졌는가 (마스터 09-06).
+
+    마스터 — 「넌 이게 내가 보기 편하니?」
+    배포 /fetch 에 CSS 가 하나도 안 붙어 파란 밑줄 글자만 나왔다.
+    까닭 — 시안에는 <style> 안에 규칙이 있는데 app.css 로 옮기지 않았다.
+      개발측은 내가 준 class 이름을 그대로 썼다. 규칙을 안 옮긴 것은 내 빠뜨림이다.
+    시안을 짓는 것으로 끝이 아니다. app.css 에 옮겨야 화면에 붙는다.
+    잣대 — 틀이 쓰는 v3-·rc2- 이름이 app.css 에 다 있는가.
+    """
+    import re as _re
+    css = _read(ROOT / "web" / "static" / "app.css")
+    if not css:
+        return False, "app.css 를 못 읽었다"
+    tpl_dir = ROOT / "web" / "templates"
+    miss = {}
+    for q in sorted(tpl_dir.glob("*.html")):
+        names = set()
+        for m in _re.finditer(r'class="([^"{]+)"', _read(q)):
+            for n in m.group(1).split():
+                if n.startswith(("v3-", "v4-", "rc2-")):
+                    names.add(n)
+        gone = [n for n in sorted(names) if f".{n}" not in css]
+        if gone:
+            miss[q.name] = gone
+    if miss:
+        first = list(miss.items())[0]
+        return False, (f"app.css 에 없는 이름 — {first[0]} 의 "
+                       + " · ".join(first[1][:5])
+                       + f"  (틀 {len(miss)}장)")
+    total = len(_re.findall(r"\.(?:v3|v4|rc2)-[\w-]+", css))
+    return True, f"틀이 쓰는 이름이 app.css 에 다 있다 (규칙 {total}개)"
+
+
 CHECKS = (
+    ("S46-291", "시안 CSS 가 app.css 에 옮겨졌는가", s46_291_mockup_css_reaches_appcss),
     ("S46-290", "마스터 회선으로 받는 길이 있는가", s46_290_master_line_fetch),
     ("S46-289", "차종 표가 분류의 정본인가", s46_289_vehicle_table_is_source),
     ("S46-288", "미분류를 다시 묻지 않는가", s46_288_no_asking_about_out_of_scope),
