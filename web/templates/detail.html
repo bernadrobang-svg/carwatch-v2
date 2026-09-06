@@ -7,6 +7,83 @@
   <a class="btn" href="/compare?add={{ row.listing_id }}">비교 담기</a>
   <a class="btn ask" href="/analyze/add/{{ row.listing_id }}">분석 맡기기</a>
 </p>
+
+<!-- ★★★★★★ 09-06 (r1204 L-12) — ★ **이 차의 성능·보험을 바로 받는 길.**
+     ★ 서버는 그 둘이 ★ 407 이라 못 받는다 — ★ 이 폰은 열린다.
+     ★ 마스터께서 ★ 「이 차」를 보고 계실 때 ★ 9,317건을 다 받으실 까닭이 없다 —
+       ★ ★ 두 번만 부르면 된다.
+     ★ 관리자에게만 낸다 — ★ 큐·올림 길이 `admin` 이다 -->
+{% if page.viewer.can_admin %}
+<p class="v4-backbar" id="fetchone" data-lid="{{ row.listing_id }}">
+  <a class="btn ask" href="#" id="fetchgo">⤓ 이 차의 성능·보험 받기</a>
+  <span class="dim" id="fetchsay">서버가 못 받는 것을 이 폰이 받습니다</span>
+</p>
+<script>
+/* ★ 브라우저만 할 수 있는 일 (STEP 136c) — ★ 이 회선으로만 열린다.
+   ★ JS 가 죽어도 화면은 그대로다 — ★ 이 줄만 안 움직인다 */
+(function () {
+  var box = document.getElementById("fetchone");
+  if (!box) { return; }
+  var go = document.getElementById("fetchgo");
+  var say = document.getElementById("fetchsay");
+  var lid = box.getAttribute("data-lid");
+  function nap(ms) { return new Promise(function (k) { setTimeout(k, ms); }); }
+  go.addEventListener("click", function (e) {
+    e.preventDefault();
+    go.textContent = "받는 중…";
+    fetch("/fetch/queue?listing_id=" + encodeURIComponent(lid),
+          {credentials: "same-origin"})
+      .then(function (r) { return r.json(); })
+      .catch(function () { return {rows: [], said: "큐를 못 받았습니다"}; })
+      .then(function (j) {
+        var rows = j.rows || [];
+        if (!rows.length) { say.textContent = j.said || "받을 것이 없습니다";
+                            go.textContent = "⤓ 이 차의 성능·보험 받기"; return; }
+        var i = 0, ok = 0;
+        function step() {
+          if (i >= rows.length) {
+            say.textContent = rows.length + "곳 중 " + ok + "곳을 받았습니다 — "
+              + "새로고침하시면 반영됩니다";
+            go.textContent = "⤓ 다시 받기";
+            return;
+          }
+          var job = rows[i];
+          say.textContent = job.name + " 받는 중…";
+          return fetch(job.url, {method: "GET", mode: "cors",
+                                 credentials: "omit"})
+            .then(function (r) {
+              return r.text().then(function (b) {
+                return {status: r.status, body: b}; });
+            })
+            .catch(function () { return {status: 0, body: ""}; })
+            .then(function (got) {
+              /* ★ 잠기면 ★ 60초 쉬었다 ★ 같은 것을 다시 부른다 (L-10) */
+              if (got.status === 0 || got.status === 407 || got.status === 429) {
+                say.textContent = job.name + " — 잠겼습니다. 60초 쉽니다";
+                return nap(60000).then(step);
+              }
+              var f = new FormData();
+              f.append("csrf", "{{ page.csrf_token }}");
+              f.append("site", "encar");
+              f.append("kind", job.kind);
+              f.append("source_id", job.source_id);
+              f.append("url", job.url);
+              f.append("http_code", String(got.status));
+              f.append("body", got.body);
+              return fetch("/fetch/put", {method: "POST", body: f,
+                                          credentials: "same-origin"})
+                .then(function (r) { return r.json(); })
+                .then(function (r) { if (r.status === "ok") { ok += 1; } })
+                .catch(function () {})
+                .then(function () { i += 1; return nap(1000).then(step); });
+            });
+        }
+        return step();
+      });
+  });
+})();
+</script>
+{% endif %}
 <!-- ══════════ /detail/<id> — 11절 (개정 427 · STEP 97a) ══════════
      ★ 정본은 ref/screens/v2_시안_목록상세.html
      ★ 마스터 확정 — 「목록은 간략하게 상세는 최대한 모든 정보」

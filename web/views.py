@@ -1264,9 +1264,17 @@ def fetch_queue(conn, account, req, root: str = ROOT, csrf: str = "",
 
     del account, csrf, flash_key
     q = req.get("query", {}) or {}
-    n = str(q.get("n") or "500")
+    # ★★★★★ 09-06 (r1204 L-12) — ★ **그 차 하나**만 받는 길.
+    #   ★ 상세 화면에서 부른다 — ★ 9,317건을 다 받으실 까닭이 없다
+    if q.get("listing_id"):
+        from report.screens.fetch import one_car
+
+        one = one_car(conn, int(str(q["listing_id"])), root)
+        return 200, {"Content-Type": "application/json; charset=utf-8"}, \
+            _json.dumps(one, ensure_ascii=False).encode("utf-8")
+    n = str(q.get("n") or "30")
     got = queue(conn, int(q.get("step") or 2),
-                1000000 if n == "all" else int(n),
+                int(n),
                 str(q.get("site") or "encar"), root,
                 retry=bool(q.get("retry")))
     body = _json.dumps(got, ensure_ascii=False).encode("utf-8")

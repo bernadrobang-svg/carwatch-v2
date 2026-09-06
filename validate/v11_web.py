@@ -1084,7 +1084,11 @@ def _screen_checks(conn, rid) -> list:
     #   ★ ★ 그 회선을 쓰는 것은 ★ **그 브라우저뿐**이라 ★ 서버가 대신 못 한다.
     #   ★ 화면은 ★ JS 가 죽어도 안 깨진다 — ★ 단계·건수·단추가 ★ 다 HTML 이다.
     #     ★ ★ 큐를 못 받으면 ★ 까닭을 적고 멈춘다 (`catch`)
-    JS_ALLOWED = ("admin_collect.html", "fetch.html")
+    #   ★★ 09-06 (r1204 L-12) — ★ `detail.html` 의 ★ **한 줄**도 같은 까닭이다.
+    #     ★ 그 차의 성능·보험은 ★ 서버가 407 이라 못 받는다 —
+    #     ★ ★ **마스터 회선만** 열린다.  ★ 서버가 대신 못 하는 일이다.
+    #     ★ ★ ★ JS 가 죽어도 ★ 상세 열 절이 ★ 그대로 나온다 — ★ 그 줄만 안 움직인다
+    JS_ALLOWED = ("admin_collect.html", "fetch.html", "detail.html")
     ok19 = not any(("setInterval" in b or "fetch(" in b)
                    for name, b in tpls.items() if name not in JS_ALLOWED)
     out.append(result(C["V11-19"], rid, "JS 없음",

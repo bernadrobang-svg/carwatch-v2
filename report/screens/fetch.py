@@ -31,7 +31,10 @@ STEPS: tuple = (
 # ★ 큐에서 뺄 상태 (L-3) — ★ 「받았다」와 「그 차가 없다」 둘.
 #   ★ `error` 는 ★ **안 뺀다** — ★ 407 로 막힌 것이라 ★ 다시 받아야 한다
 DONE = ("ok", "not_found")
-CHUNKS = (100, 500, 2000)
+# ★★★★★ 09-06 (r1204 L-11) — ★ **「전부 받기」를 만들지 않는다.**
+#   ★ 마스터 실측 — ★ 성능·보험은 ★ **1분에 2~3건**이다.
+#   ★ ★ 9,317건이면 ★ **50시간이 넘는다** — ★ 누를 수 있는 단추로 두면 안 된다
+CHUNKS = (10, 30, 100)
 
 
 def _cfg(root: str = ".") -> dict:
@@ -116,6 +119,44 @@ def queue(conn: sqlite3.Connection, step: int, n: int = 500,
     return {"step": step, "kind": kind, "rows": out, "said": ""}
 
 
+def one_car(conn: sqlite3.Connection, listing_id: int,
+            root: str = ".") -> dict:
+    """★ L-12 — ★ **그 차 하나**의 못 받은 창구를 준다 (상세 화면에서 바로 받는 길).
+
+    ★ 마스터께서 ★ 「이 차」를 고르셨을 때 ★ 9,317건을 다 받으실 까닭이 없다.
+      ★ ★ 성능점검·보험이력만 ★ 두 번 부르면 된다 — ★ 2분이면 끝난다.
+    ★ 이미 받은 창구는 ★ 뺀다.  ★ 없으면 ★ 빈 목록이다 (「다 받았습니다」)
+    """
+    row = conn.execute(
+        "SELECT site, source_id FROM core_listing WHERE listing_id = ?",
+        (int(listing_id),)).fetchone()
+    if not row or str(row[0]) != "encar":
+        return {"rows": [], "said": "엔카 매물만 이 길로 받습니다"}
+    site, sid = str(row[0]), str(row[1])
+    cfg = _cfg(root)
+    base = str(cfg.get("base_url") or "").rstrip("/")
+    paths = cfg.get("paths") or {}
+    out, done = [], []
+    for st in STEPS:
+        kind = st["kind"]
+        if kind == "list" or kind not in paths:
+            continue
+        col = _col(kind)
+        if not _has_col(conn, col):
+            continue
+        got = conn.execute(
+            f"SELECT {col} FROM core_listing WHERE listing_id = ?",
+            (int(listing_id),)).fetchone()
+        if got and str(got[0] or "") in DONE:
+            done.append(st["name"])
+            continue
+        out.append({"kind": kind, "name": st["name"], "source_id": sid,
+                    "url": base + paths[kind].format(source_id=sid)})
+    return {"rows": out, "site": site, "source_id": sid,
+            "done": done,
+            "said": "" if out else "이 차는 다 받았습니다"}
+
+
 def put_one(conn: sqlite3.Connection, site: str, kind: str, source_id: str,
             url: str, http_code: int, body: str, root: str = ".") -> dict:
     """★ L-5 — 폰이 받은 ★ **원문 그대로**를 남긴다.  ★ 파싱은 서버가 한다.
@@ -152,25 +193,38 @@ def view_fetch(conn: sqlite3.Connection, query: dict | None = None,
     """화면에 넘길 값.  ★ 시안 `v4m_fetch_시안.html` 의 이름 그대로."""
     q = query or {}
     site = str(q.get("site") or "encar")
-    n = str(q.get("n") or "500")
+    n = str(q.get("n") or str(CHUNKS[1]))
     steps = step_counts(conn, site)
-    now = next((s for s in steps if not s["done"]), steps[-1])
-    size = 0 if n == "all" else int(n)
-    secs = round((size or now["need"]) * float(
-        _cfg(root).get("browser_interval_sec") or 0.1))
+    # ★★★★★ 09-06 (r1204 L-10) — ★ 「지금 단계」를 ★ **주소가 정할 수 있다.**
+    #   ★ 창구마다 ★ 묶음·쉼이 다르므로 (`상세`는 안 쉬고 `성능·보험`은 3건에 60초)
+    #   ★ ★ 화면이 ★ **그 단계의 값**을 실어야 한다 — ★ 아니면 안 쉬고 몰아친다
+    want = str(q.get("step") or "")
+    now = None
+    if want.isdigit():
+        now = next((s for s in steps if s["no"] == int(want)), None)
+    if now is None:
+        now = next((s for s in steps if not s["done"]), steps[-1])
+    try:
+        size = int(n)
+    except ValueError:
+        size = CHUNKS[1]
+    secs = eta_secs(now["kind"], size, root)
     return {
         "steps": steps,
         "site": site,
+        # ★ L-11 — ★ 「전부」가 없다.  ★ 끊어서만 받는다
         "chunks": [{"n": str(c), "label": f"{c:,}건", "on": n == str(c)}
-                   for c in CHUNKS]
-        + [{"n": "all", "label": "전부", "on": n == "all"}],
+                   for c in CHUNKS],
         "n": n,
         "now_no": now["no"], "now_name": now["name"], "now_need": now["need"],
-        "go_label": f"{now['no']}단계 {now['name']} "
-                    f"{'전부' if n == 'all' else f'{size:,}건'} 받기 ▸",
-        "eta": f"{secs:,}초",
+        "go_label": f"{now['no']}단계 {now['name']} {size:,}건 받기 ▸",
+        "eta": _say_secs(secs),
         "interval_ms": int(float(
             _cfg(root).get("browser_interval_sec") or 0.1) * 1000),
+        # ★ L-10 — ★ 창구마다 ★ 「몇 건 받고 몇 초 쉬나」.  ★ 값은 config 가 준다
+        "batch_n": _batch(now["kind"], root)[0],
+        "batch_rest_ms": _batch(now["kind"], root)[1] * 1000,
+        "batch_said": _batch_said(now["kind"], root),
         "tabs": [{"site": "encar", "label": "엔카", "on": site == "encar"},
                  {"site": "kbchachacha", "label": "KB차차차",
                   "on": site == "kbchachacha"},
@@ -209,3 +263,41 @@ def save_last(conn: sqlite3.Connection, got: dict) -> None:
         " VALUES(?,?,?,?,?,?)",
         (at, _n("ok"), _n("empty"), _n("not_found"), _n("error"), _n("secs")))
     conn.commit()
+
+
+def _batch(kind: str, root: str = ".") -> tuple:
+    """★ L-10 — ★ 그 창구는 ★ 몇 건 받고 몇 초 쉬나.
+
+    ★ 실측 09-06 (마스터 회선) — ★ 성능점검·보험이력은 ★ **2~3건에서 잠긴다.**
+      ★ ★ 간격을 2.0초로 늘려도 ★ 200 이 **0건**이다 — ★ 느리게 해서 될 일이 아니다.
+      ★ ★ ★ 다만 ★ **1분이면 풀린다.**
+    ★ 상세는 서버에서도 열리므로 ★ 묶지 않는다 — ★ `(0, 0)` 이면 안 쉰다.
+    ★ 값은 ★ `config/endpoints.json` `browser_batch` 가 정본이다 (`S14`)
+    """
+    got = (_cfg(root).get("browser_batch") or {}).get(kind) or {}
+    return int(got.get("n") or 0), int(got.get("rest_sec") or 0)
+
+
+def _batch_said(kind: str, root: str = ".") -> str:
+    n, rest = _batch(kind, root)
+    if not n:
+        return "쉬지 않고 이어 받습니다"
+    return f"{n}건 받고 {rest}초 쉽니다 — 그 창구는 몰아치면 잠깁니다"
+
+
+def eta_secs(kind: str, size: int, root: str = ".") -> int:
+    """★ 걸리는 시간.  ★ 쉬는 시간을 ★ **빼놓지 않는다** — 그러면 거짓말이 된다."""
+    gap = float(_cfg(root).get("browser_interval_sec") or 0.1)
+    n, rest = _batch(kind, root)
+    secs = size * gap
+    if n:
+        secs += (max(0, size - 1) // n) * rest
+    return round(secs)
+
+
+def _say_secs(secs: int) -> str:
+    if secs < 60:
+        return f"{secs:,}초"
+    if secs < 3600:
+        return f"{secs // 60}분 {secs % 60}초"
+    return f"{secs // 3600}시간 {(secs % 3600) // 60}분"

@@ -39,14 +39,20 @@
   <b>한 번에</b>
   {% for c in chunks %}<a class="v3-chip {% if c.on %}on{% endif %}"
     href="/fetch?site={{ site | url }}&n={{ c.n | url }}">{{ c.label }}</a>{% endfor %}
-  <p class="v3-note">{{ eta }} 걸립니다 (0.1초 간격).
-    멈추셔도 받은 데까지 남습니다. 다시 누르면 이어서 받습니다.</p>
+  <p class="v3-note">{{ eta }} 걸립니다 — <b>{{ batch_said }}</b>.
+    멈추셔도 받은 데까지 남습니다. 다시 누르면 이어서 받습니다.
+    <!-- ★ L-11 — ★ 「전부 받기」 단추는 ★ **없습니다.**
+         ★ 성능·보험은 1분에 2~3건이라 ★ 9,317건이면 50시간이 넘습니다 -->
+    <br><span class="dim">「전부 받기」는 없습니다.</span>
+    <br><span class="dim">성능·보험은 1분에 2~3건입니다.</span></p>
 </div>
 
 <a class="v3-go" id="go" href="#">{{ go_label }}</a>
 <div class="v3-subacts">
-  {% for s in steps %}{% if !s.done %}<a class="v3-btn" id="step{{ s.no }}"
-    href="#" data-step="{{ s.no }}">{{ s.no }}단계부터 받기</a>{% endif %}{% endfor %}
+  <!-- ★ 창구마다 묶음·쉼이 다르다 — ★ 주소로 옮겨 ★ 그 단계 값을 싣는다 (L-10) -->
+  {% for s in steps %}{% if !s.done %}<a class="v3-btn"
+    href="/fetch?site={{ site | url }}&n={{ n | url }}&step={{ s.no | url }}"
+    >{{ s.no }}단계 {{ s.name }} 받기</a>{% endif %}{% endfor %}
   <a class="v3-btn" id="retry" href="#">실패한 것만 다시</a>
 </div>
 
@@ -78,6 +84,9 @@
   var SITE = "{{ site }}";
   var N = "{{ n }}";
   var GAP = {{ interval_ms }};
+  /* ★ L-10 — ★ 몇 건 받고 몇 초 쉬나.  ★ 서버가 준다 (config 가 정본) */
+  var BATCH = {{ batch_n }};
+  var REST = {{ batch_rest_ms }};
   var stop = false, t0 = 0;
   var tally = {ok: 0, empty: 0, not_found: 0, error: 0};
 
@@ -91,6 +100,20 @@
       + left + "초 · 실패 " + tally.error + "건";
   }
   function wait(ms) { return new Promise(function (k) { setTimeout(k, ms); }); }
+  /* ★ 쉬는 동안에도 ★ 무엇을 하고 있는지 보인다 — ★ 멈춘 것처럼 보이면 안 된다 */
+  function rest(ms, why) {
+    var end = Date.now() + ms;
+    return new Promise(function (k) {
+      (function tick() {
+        if (stop) { return k(); }
+        var left = Math.max(0, Math.round((end - Date.now()) / 1000));
+        el("rate").textContent = why + " — " + left + "초 쉽니다 (실패 "
+          + tally.error + "건)";
+        if (left <= 0) { return k(); }
+        setTimeout(tick, 1000);
+      })();
+    });
+  }
 
   function grab(url) {
     /* ★ 헤더를 붙이지 않는다 — preflight 가 생기면 CORS 가 아닌 이유로 막힌다 */
@@ -133,16 +156,32 @@
         if (j.said) { el("rate").textContent = j.said; }
         var rows = j.rows || [];
         say(0, rows.length, "");
-        var i = 0;
+        var i = 0, since = 0;
         function next() {
           if (stop || i >= rows.length) { return done(rows.length); }
           var job = rows[i];
           say(i, rows.length, job.url);
           return grab(job.url).then(function (got) {
-            return put(job, got);
-          }).then(function () {
-            i += 1;
-            return wait(GAP).then(next);
+            /* ★ L-10 — ★ **잠기면 60초 쉬었다 이어받는다.**
+               ★ 407 · 429 · 던진 것(0) 이 잠긴 것이다.
+               ★ ★ 그 자리를 건너뛰지 않는다 — ★ 쉬고 ★ **같은 것을 다시** 부른다 */
+            if (REST && (got.status === 0 || got.status === 407
+                         || got.status === 429)) {
+              return rest(REST, "잠겼습니다").then(function () {
+                since = 0;
+                return next();
+              });
+            }
+            return put(job, got).then(function () {
+              i += 1;
+              since += 1;
+              /* ★ L-10 — ★ 3건 받고 60초 쉰다 */
+              if (BATCH && since >= BATCH && i < rows.length) {
+                since = 0;
+                return rest(REST, BATCH + "건 받았습니다").then(next);
+              }
+              return wait(GAP).then(next);
+            });
           });
         }
         return next();
@@ -174,12 +213,6 @@
   el("stop").addEventListener("click", function (e) {
     e.preventDefault(); stop = true;
   });
-  Array.prototype.forEach.call(
-    document.querySelectorAll("[data-step]"), function (a) {
-      a.addEventListener("click", function (e) {
-        e.preventDefault(); run(parseInt(a.getAttribute("data-step"), 10), false);
-      });
-    });
   Array.prototype.forEach.call(
     document.querySelectorAll(".v3-bar i[data-pct]"), function (i) {
       i.style.width = i.getAttribute("data-pct") + "%";
