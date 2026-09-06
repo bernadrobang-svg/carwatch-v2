@@ -109,6 +109,16 @@ details.v3-more:not([open])>*:not(summary){display:none}
 .v3-cclear{margin-left:auto;font-size:12px;color:var(--amber)}
 .v3-count{font-size:12px;color:var(--dim);margin:0 0 12px}
 .v3-count b{color:var(--text);font-family:var(--mono)}
+/* 09-06 — 목록이 둘이다 (마스터 「지우지 말고 목록 뒤에 붙여라」).
+   위 = 조건 다 맞는 것 · 아래 = 하나라도 못 맞춘 것. 지우지 않는다 */
+.v3-group{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;
+ margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line2)}
+.v3-group h2{font-size:15px;margin:0}
+.v3-group.on h2{color:var(--ok)}
+.v3-group.off h2{color:var(--faint)}
+.v3-group span{font-size:12px;color:var(--dim)}
+.v3-miss{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
+ border:1px solid var(--amber);color:var(--amber);white-space:nowrap}
 /* 어느 사이트에서 나온 차인가 — 늘 보인다 */
 .v3-site{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
  border:1px solid var(--blue);color:var(--blue);white-space:nowrap}
@@ -162,7 +172,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
   <span class="v3-cchip ok">사이트 진단 필수</span>
   <span class="v3-cclear">조건 고치기 ▾</span>
 </div>
-<p class="v3-count">다섯 사이트에서 <b>14대</b> — 엔카 6 · KB 4 · K카 2 · 리본카 1 · 헤이딜러 1</p>
+<p class="v3-count">다섯 사이트에서 <b>14대</b> — 조건에 맞는 <b>8대</b> · 하나가 아쉬운 <b>6대</b><br>엔카 6 · KB 4 · K카 2 · 리본카 1 · 헤이딜러 1</p>
 
 
 <div class="v3-why">★★★★★★ 마스터 확정 09-05 — ★ <b>관심과는 별개다</b>.
@@ -189,6 +199,10 @@ details.v3-more:not([open])>*:not(summary){display:none}
 </div>
 
 <!-- ─────────── 분석 카드 ─────────── -->
+<div class="v3-group on">
+  <h2>조건에 다 맞는 차</h2><span>8대 · 값 낮은 순</span>
+</div>
+
 <div class="v3-acard clean">
   <div class="v3-aline">
     <span class="v3-aprice">3,480만</span>
@@ -245,10 +259,15 @@ details.v3-more:not([open])>*:not(summary){display:none}
   </div>
 </div>
 
+<div class="v3-group off">
+  <h2>하나가 아쉬운 차</h2><span>6대 · 지우지 않습니다. 무엇이 아쉬운지 적었습니다</span>
+</div>
+
 <div class="v3-acard none">
   <div class="v3-aline">
     <span class="v3-aprice">3,420만</span>
-    <span class="v3-verdict wait">보류 · 보험을 모름</span>
+    <span class="v3-verdict wait">보류</span>
+    <span class="v3-miss">진단 미조회</span>
     <span class="v3-site">헤이딜러</span>
     <span class="v3-dx no">진단 미조회</span>
   </div>
@@ -269,6 +288,61 @@ details.v3-more:not([open])>*:not(summary){display:none}
   <div class="v3-aacts">
     <a class="v3-abtn" href="/detail/3">상세 ▸</a>
     <a class="v3-abtn" href="#">헤이딜러 ↗</a>
+    <a class="v3-abtn ask" href="#">분석 맡기기</a>
+  </div>
+</div>
+
+
+<div class="v3-acard clean">
+  <div class="v3-aline">
+    <span class="v3-aprice">3,780만</span>
+    <span class="v3-verdict hold">값이 넘음</span>
+    <span class="v3-miss">＋180만</span>
+    <span class="v3-site">엔카</span>
+    <span class="v3-dx">엔카진단</span>
+  </div>
+  <p class="v3-ameta">2023-05 · 3.8만km · <b>흰색</b> / 검정 · 2.5T AWD</p>
+  <p class="v3-shop">판매 <b>동성모터스</b> · 서울 강서 · <b>전국 배달</b></p>
+  <div class="v3-why2">
+    <span class="v3-w">값 <b class="n">X</b> 3,780 (3,600 넘음)</span>
+    <span class="v3-w">연식 <b class="y">O</b> 2023</span>
+    <span class="v3-w">주행 <b class="y">O</b> 3.8만</span>
+    <span class="v3-w">제조사 보증 <b class="y">O</b> 3년 1개월</span>
+    <span class="v3-w">보험 <b class="y">O</b> 0원</span>
+    <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
+    <span class="v3-w">사이트 진단 <b class="y">O</b> 엔카진단</span>
+  </div>
+  <p class="v3-ameta">값만 <b>180만</b> 넘습니다. 주행이 <b>3.8만km</b>로 적습니다.</p>
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/4">상세 ▸</a>
+    <a class="v3-abtn" href="#">엔카 ↗</a>
+    <a class="v3-abtn ask" href="#">분석 맡기기</a>
+  </div>
+</div>
+
+<div class="v3-acard mid">
+  <div class="v3-aline">
+    <span class="v3-aprice">3,290만</span>
+    <span class="v3-verdict hold">주행이 많음</span>
+    <span class="v3-miss">＋1.6만km</span>
+    <span class="v3-site">리본카</span>
+    <span class="v3-dx">리본카 보증</span>
+  </div>
+  <p class="v3-ameta">2022-03 · 9.6만km · 회색 / 검정 · 2.5T AWD</p>
+  <p class="v3-shop">판매 <b>리본카 직영</b> · 경기 광주 · <b>전국 배달</b></p>
+  <div class="v3-why2">
+    <span class="v3-w">값 <b class="y">O</b> 3,290</span>
+    <span class="v3-w">연식 <b class="y">O</b> 2022</span>
+    <span class="v3-w">주행 <b class="n">X</b> 9.6만 (8만 넘음)</span>
+    <span class="v3-w">제조사 보증 <b class="y">O</b> 1년 2개월</span>
+    <span class="v3-w">보험 <b class="y">O</b> 240만 · 범퍼·판금</span>
+    <span class="v3-w">외장 <b class="n">X</b> 회색</span>
+    <span class="v3-w">사이트 진단 <b class="y">O</b> 리본카 보증</span>
+  </div>
+  <p class="v3-ameta">주행 <b>1.6만km</b> 초과 · 색이 <b>회색</b>입니다. 값은 가장 쌉니다.</p>
+  <div class="v3-aacts">
+    <a class="v3-abtn" href="/detail/5">상세 ▸</a>
+    <a class="v3-abtn" href="#">리본카 ↗</a>
     <a class="v3-abtn ask" href="#">분석 맡기기</a>
   </div>
 </div>
