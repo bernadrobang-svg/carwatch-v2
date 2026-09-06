@@ -7779,7 +7779,40 @@ def s46_289_vehicle_table_is_source():
     return True, f"차종 표 {len(t)}종 (수집 {on} · 미수집 {len(t) - on})"
 
 
+def s46_290_master_line_fetch():
+    """S46-290 — 마스터 회선으로 받는 길이 있는가 (마스터 확정 09-06).
+
+    마스터 — 「내가 어떻게 그걸 손으로 처리하냐.
+      DB 에 이미 있는 것과 없는 것을 구분해서, 상세가 없는 URL 에 대해서는
+      자동으로 웹브라우저를 통해 받게끔 하든지, 그 목록을 만들어서
+      내가 버튼을 누르면 한꺼번에 받는다든지 그렇게 처리해야지.
+      URL 목록을 리스트로 해서 브라우저가 데이터를 떨어뜨리는 방법을 해야지」
+
+    실측 09-06 — 엔카는 서버 IP 에서 407 이다. 목록만이 아니라
+      inspection(성능점검)·record(보험이력) 도 막힌다.
+      fem.encar.com 화면은 1.6KB 껍데기고 JS 가 API 를 불러 채운다.
+      마스터 폰은 열린다. 그래서 서버가 주소를 만들고 폰이 받는다.
+
+    큐 크기는 미리 정하지 않는다. 100건일지 1만건일지 그때 세어서 낸다.
+    잣대 — 시안이 있고, 라우팅에 /fetch · queue · put 이 있는가.
+    """
+    bad = []
+    if not (ROOT / "ref" / "screens" / "v4m_fetch_시안.html").exists():
+        bad.append("받기 시안이 없다")
+    web = _read(ROOT / "docs" / "chapters" / "61-web.md")
+    for want in ("/fetch", "/fetch/queue", "/fetch/put"):
+        if want not in web:
+            bad.append(f"라우팅에 `{want}` 가 없다")
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    if "L-1" not in order:
+        bad.append("작업 지시에 L 장이 없다")
+    if bad:
+        return False, " · ".join(bad[:3])
+    return True, "마스터 회선으로 받는 길이 시안·라우팅·지시에 다 있다"
+
+
 CHECKS = (
+    ("S46-290", "마스터 회선으로 받는 길이 있는가", s46_290_master_line_fetch),
     ("S46-289", "차종 표가 분류의 정본인가", s46_289_vehicle_table_is_source),
     ("S46-288", "미분류를 다시 묻지 않는가", s46_288_no_asking_about_out_of_scope),
     ("S46-286", "취향 축 합이 165 인가", s46_286_taste_axes_165),
