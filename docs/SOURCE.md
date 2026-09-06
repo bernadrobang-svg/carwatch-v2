@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 226개 · 총 83,906줄
+파일 226개 · 총 83,953줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -56,6 +56,7 @@
 | `parse/hyundai_cert/mapping.py` | 374 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `analyze/axis/state.py` | 355 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tools/collect_hyundai_cert.py` | 351 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
+| `report/screens/fetch.py` | 350 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `parse/heydealer/mapping.py` | 348 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `parse/kcar/mapping.py` | 346 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `tools/light_check.py` | 340 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
@@ -64,7 +65,6 @@
 | `tools/render_screens.py` | 331 | 전 화면을 실제로 렌더해 `outputs/render/` 에 남긴다. |
 | `analyze/axis/taste.py` | 317 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
-| `report/screens/fetch.py` | 303 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `parse/revolt/mapping.py` | 294 | 리볼트 (revolt.kr) — 전기차 전용 인증중고차 (규격 `docs/REVOLT_API.md` · `S46-200`). |
 | `tests/test_crosssite.py` | 293 | 12장 다중 사이트 시험. |
 | `tests/test_dict.py` | 293 | 4장 키·코드·사전 시험. |
@@ -535,6 +535,12 @@ _panels:43  _rank_worst:47  insurance_trace:59  panel_trace:68  worse_step:80  _
 target_of:79  _now:95  _post:99  _get:109  fetch_detail:120  load_filters:133  total_count:171  walk:184  main:216
 ```
 
+### `report/screens/fetch.py` — 350줄
+
+```
+_cfg:40  _col:44  _has_col:48  step_counts:52  queue:81  one_car:122  put_one:160  _parse_into:200  view_fetch:238  _last_run:283  save_last:297  _batch:315  _batch_said:328  eta_secs:335  _say_secs:345
+```
+
 ### `parse/heydealer/mapping.py` — 348줄
 
 ```
@@ -581,12 +587,6 @@ _off:49  _fitting:54  color_grade_of:81  _fit_ladder:103  _color:126  _picked:15
 
 ```
 _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _origin_check:156  _warranty_sum_check:186  _tie_break_check:229  _axis_site_check:267  run:307
-```
-
-### `report/screens/fetch.py` — 303줄
-
-```
-_cfg:40  _col:44  _has_col:48  step_counts:52  queue:81  one_car:122  put_one:160  view_fetch:191  _last_run:236  save_last:250  _batch:268  _batch_said:281  eta_secs:288  _say_secs:298
 ```
 
 ### `parse/revolt/mapping.py` — 294줄

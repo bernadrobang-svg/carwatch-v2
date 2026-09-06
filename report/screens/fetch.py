@@ -185,7 +185,54 @@ def put_one(conn: sqlite3.Connection, site: str, kind: str, source_id: str,
             f"UPDATE core_listing SET {col} = ? WHERE site = ? AND source_id = ?",
             (status, site, str(source_id)))
         conn.commit()
-    return {"status": status, "bytes": n}
+    # ★★★★★★ 09-07 — ★ **파싱은 서버가 한다** (지시 L-5).
+    #   ★ 09-06 실측 — ★ 상세 5건을 받았는데 ★ `warranty_body_month` ·
+    #     ★ ★ `delivery_nationwide` · `site_inspection` 이 ★ **0/29 그대로**였다.
+    #   ★ 까닭 — ★ 원문만 남기고 ★ **칸에 안 넣었다.**  ★ 「올렸다」가
+    #     ★ ★ 「반영됐다」가 아니었다 — ★ 선언과 실제의 괴리다 (v1 사고).
+    #   ★ 받은 자리에서 바로 넣는다 — ★ 그래야 화면이 곧바로 달라진다
+    filled = 0
+    if status == "ok":
+        filled = _parse_into(conn, site, kind, source_id, body, root)
+    return {"status": status, "bytes": n, "filled": filled}
+
+
+def _parse_into(conn: sqlite3.Connection, site: str, kind: str,
+                source_id: str, body: str, root: str = ".") -> int:
+    """받은 원문을 ★ 그 자리에서 ★ `core_listing` 칸에 넣는다.
+
+    ★ 파서는 ★ 사이트마다 다르다 — ★ `parse/{site}/mapping.py` 가 정본이다.
+    ★ 못 읽으면 ★ **0 을 돌려주고 조용히 넘어간다** — ★ 원문은 이미 남았다.
+      ★ ★ 나중에 ★ `tools/load_raw.py` 가 다시 읽는다 (`S46-185`).
+    ★ 지금은 ★ `detail` 만 넣는다 — ★ `inspection`·`record` 는 표가 따로라
+      ★ ★ `S6` 이 맡는다 (여쭐 것에 적었다)
+    """
+    if kind != "detail":
+        return 0
+    import importlib
+    import json as _j
+
+    try:
+        mod = importlib.import_module(f"parse.{site}.mapping")
+        fn = getattr(mod, "parse_detail", None)
+        if fn is None:
+            return 0
+        got = fn(_j.loads(body), site, str(source_id))
+    except (ImportError, ValueError, TypeError, AttributeError, KeyError):
+        return 0
+    if not isinstance(got, dict) or not got:
+        return 0
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(core_listing)")}
+    use = {k: v for k, v in got.items()
+           if k in cols and v is not None and k != "listing_id"}
+    if not use:
+        return 0
+    sets = ", ".join(f"{k} = ?" for k in use)
+    conn.execute(
+        f"UPDATE core_listing SET {sets} WHERE site = ? AND source_id = ?",
+        [*use.values(), site, str(source_id)])
+    conn.commit()
+    return len(use)
 
 
 def view_fetch(conn: sqlite3.Connection, query: dict | None = None,
