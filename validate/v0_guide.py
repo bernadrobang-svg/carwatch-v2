@@ -4504,7 +4504,12 @@ def s46_184_unfetched_is_not_absent():
                 continue
             if not _re.search(r"안 준다|없다", ln):
                 continue
-            if _re.search(r"~~|물린다|오판|마스터 —|다르다|아니다", ln):
+            # 09-06 — 「없다고 치지 않는다」는 규칙을 적은 줄이다. 잡으면 안 된다.
+            #   실측 — RECOMMEND_SCREEN.md:208 「아직 못 받은 것은 「미조회」다 —
+            #   없다고 치지 않는다」가 걸렸다. 이건 지키라는 말이지 어긴 말이 아니다.
+            if _re.search(r"~~|물린다|오판|마스터 —|다르다|아니다"
+                          r"|없다고 치지 않는다|없다고 보고|없다고 판단"
+                          r"|없다」는|없다\」", ln):
                 continue
             bad.append(f"{q.name}:{i}")
     if bad:
