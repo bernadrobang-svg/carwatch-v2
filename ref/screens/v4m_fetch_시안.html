@@ -130,17 +130,23 @@ nav.bot a.on{color:var(--amber);font-weight:700}
   <div class="v3-bar"><i style="width:58%"></i></div>
 </div>
 
+<!-- 09-06 실측 — 성능·보험은 1분에 2~3건뿐이다.
+     0.3초로 몰아치면 2~3건에서 407 로 잠기고 1분 쉬어야 풀린다.
+     9,317건을 다 받으면 50시간이 넘는다. 전부 받기는 하지 않는다.
+     마스터가 고르시는 차만 받는다 -->
 <div class="v3-step">
   <div class="v3-sline"><span class="v3-sno">3</span><span class="v3-sname">성능점검</span>
-    <span class="v3-snum">받을 것 <b class="need">9,766</b> / 9,766</span></div>
-  <p class="v3-sdesc">판금·교환 자리, 용도변경(렌트), 주행거리 계기 상태</p>
+    <span class="v3-snum">고른 차만 <b class="need">96</b></span></div>
+  <p class="v3-sdesc">판금·교환 자리, 용도변경(렌트), 주행거리 계기 상태<br>
+    1분에 3건까지만 열립니다. 96건이면 약 32분</p>
   <div class="v3-bar"><i style="width:0%"></i></div>
 </div>
 
 <div class="v3-step">
   <div class="v3-sline"><span class="v3-sno">4</span><span class="v3-sname">보험이력</span>
-    <span class="v3-snum">받을 것 <b class="need">9,766</b> / 9,766</span></div>
-  <p class="v3-sdesc">사고 금액, 영업용(대여) 이력, 정보제공 불가능기간</p>
+    <span class="v3-snum">고른 차만 <b class="need">96</b></span></div>
+  <p class="v3-sdesc">사고 금액, 영업용(대여) 이력, 정보제공 불가능기간<br>
+    1분에 3건까지만 열립니다. 96건이면 약 32분</p>
   <div class="v3-bar"><i style="width:0%"></i></div>
 </div>
 
@@ -153,16 +159,17 @@ nav.bot a.on{color:var(--amber);font-weight:700}
 
 <!-- 한 번에 다 받으면 폰이 오래 잡힙니다. 끊어 받습니다 -->
 <div class="v3-chunk">
-  <b>한 번에</b>
-  <a class="v3-chip" href="?n=100">100건</a>
-  <a class="v3-chip on" href="?n=500">500건</a>
-  <a class="v3-chip" href="?n=2000">2,000건</a>
-  <a class="v3-chip" href="?n=all">전부</a>
-  <p class="v3-note">500건이면 0.1초 간격으로 약 <b>50초</b>입니다.
-    멈추셔도 받은 데까지 남습니다. 다시 누르면 이어서 받습니다.</p>
+  <b>무엇을</b>
+  <a class="v3-chip on" href="?pick=tab3">탭 3 후보 96건</a>
+  <a class="v3-chip" href="?pick=one">지금 보는 차 1건</a>
+  <a class="v3-chip" href="?pick=watch">관심 담은 차</a>
+  <p class="v3-note">성능·보험은 <b>1분에 3건</b>까지만 열립니다.
+    전부 받기는 하지 않습니다 — 9,317건이면 50시간이 넘습니다.
+    <b>화면을 켜 두시면 알아서 쉬었다 이어받습니다.</b>
+    멈추셔도 받은 데까지 남습니다.</p>
 </div>
 
-<a class="v3-go" href="?start=1">2단계 상세 500건 받기 ▸</a>
+<a class="v3-go" href="?start=1">탭 3 후보 96건 받기 ▸ (약 32분)</a>
 <div class="v3-subacts">
   <a class="v3-btn" href="?step=3">3단계부터 받기</a>
   <a class="v3-btn" href="?retry=1">실패한 것만 다시</a>
@@ -172,8 +179,8 @@ nav.bot a.on{color:var(--amber);font-weight:700}
 <!-- 받는 중일 때만 뜹니다 -->
 <div class="v3-live">
   <h3>받는 중</h3>
-  <div class="cnt">372 / 500</div>
-  <div class="v3-bar"><i style="width:74%"></i></div>
+  <div class="cnt">37 / 96</div>
+  <div class="v3-bar"><i style="width:39%"></i></div>
   <p class="url">api.encar.com/v1/readside/vehicle/42496038</p>
   <p class="rate">0.1초 간격 · 남은 시간 약 13초 · 실패 2건</p>
 </div>
