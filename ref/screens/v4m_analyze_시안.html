@@ -114,6 +114,10 @@ details.v3-more:not([open])>*:not(summary){display:none}
  border:1px solid var(--blue);color:var(--blue);white-space:nowrap}
 .v3-shop{font-size:12px;color:var(--dim)}
 .v3-shop b{color:var(--text)}
+/* 사이트 진단 — 마스터 「진단 등급이 필수적이다」. 없으면 후보에서 뺀다 */
+.v3-dx{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--ok);color:var(--ok);white-space:nowrap}
+.v3-dx.no{border-color:var(--no);color:var(--no)}
 /* 왜 걸렀는지 — 조건마다 O / X */
 .v3-why2{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:8px;
  border-top:1px solid var(--line);padding-top:8px}
@@ -155,6 +159,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
   <span class="v3-cchip">전국 배달</span>
   <span class="v3-cchip ok">멀쩡 (보험 300만 미만)</span>
   <span class="v3-cchip">흰색</span>
+  <span class="v3-cchip ok">사이트 진단 필수</span>
   <span class="v3-cclear">조건 고치기 ▾</span>
 </div>
 <p class="v3-count">다섯 사이트에서 <b>14대</b> — 엔카 6 · KB 4 · K카 2 · 리본카 1 · 헤이딜러 1</p>
@@ -189,6 +194,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
     <span class="v3-aprice">3,480만</span>
     <span class="v3-verdict buy">멀쩡 · 조건 다 맞음</span>
     <span class="v3-site">엔카</span>
+    <span class="v3-dx">엔카진단 플러스</span>
   </div>
   <p class="v3-ameta">2022-11 · 6.2만km · <b>흰색</b> / 검정 · 2.5T AWD</p>
   <p class="v3-shop">판매 <b>제네시스 인증중고 수원</b> · 경기 수원 · <b>전국 배달</b></p>
@@ -201,6 +207,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
     <span class="v3-w">보험 <b class="y">O</b> 0원</span>
     <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
     <span class="v3-w">배달 <b class="y">O</b></span>
+    <span class="v3-w">사이트 진단 <b class="y">O</b> 엔카진단 플러스</span>
   </div>
   <div class="v3-aacts">
     <a class="v3-abtn" href="/detail/1">상세 ▸</a>
@@ -215,6 +222,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
     <span class="v3-aprice">3,590만</span>
     <span class="v3-verdict hold">봐야 함 · 판금 1곳</span>
     <span class="v3-site">KB차차차</span>
+    <span class="v3-dx">KB진단</span>
   </div>
   <p class="v3-ameta">2022-06 · 7.4만km · <b>흰색</b> / 검정 · 2.5T 2WD</p>
   <p class="v3-shop">판매 <b>KB차차차 직영 인천</b> · 인천 · <b>전국 배달</b></p>
@@ -227,6 +235,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
     <span class="v3-w">보험 <b class="y">O</b> 180만 · 뒷휀더 판금</span>
     <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
     <span class="v3-w">배달 <b class="y">O</b></span>
+    <span class="v3-w">사이트 진단 <b class="y">O</b> KB진단</span>
   </div>
   <div class="v3-aacts">
     <a class="v3-abtn" href="/detail/2">상세 ▸</a>
@@ -241,6 +250,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
     <span class="v3-aprice">3,420만</span>
     <span class="v3-verdict wait">보류 · 보험을 모름</span>
     <span class="v3-site">헤이딜러</span>
+    <span class="v3-dx no">진단 미조회</span>
   </div>
   <p class="v3-ameta">2023-02 · 4.1만km · <b>흰색</b> / 검정 · 2.5T AWD</p>
   <p class="v3-shop">판매 <b>미조회</b> · 미조회 · 배달 <b>미조회</b></p>
@@ -253,6 +263,7 @@ details.v3-more:not([open])>*:not(summary){display:none}
     <span class="v3-w">보험 <b class="q">미조회</b></span>
     <span class="v3-w">외장 <b class="y">O</b> 흰색</span>
     <span class="v3-w">배달 <b class="q">미조회</b></span>
+    <span class="v3-w">사이트 진단 <b class="q">미조회</b></span>
   </div>
   <p class="v3-ameta">값과 주행은 좋은데 <b>보험·보증을 아직 못 받았습니다</b>. 상세를 받으면 판단이 섭니다.</p>
   <div class="v3-aacts">
