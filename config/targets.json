@@ -1735,25 +1735,43 @@
         "엔카진단",
         "엔카진단 플러스"
       ],
-      "확인": "미조회"
+      "확인": "있음 (09-06 실측)",
+      "매물": "42648178 · 상세 10,203B",
+      "경로": "GET https://api.encar.com/v1/readside/vehicle/{id} (include 없이)",
+      "칸": {
+        "advertisement.diagnosisCar": "엔카진단 (실측 True)",
+        "view.encarDiagnosis": "진단 등급 (실측 2)",
+        "partnership.dealer.firm.diag2Partnered": "엔카진단 플러스 제휴 (실측 True)",
+        "advertisement.directInspected": "직접 점검",
+        "advertisement.extendWarranty": "연장보증",
+        "advertisement.deemedExtendWarranty": "연장보증 간주 (실측 True)",
+        "advertisement.warrantyStyleColor": "보증 표시색",
+        "partnership.certifiedBrand": "제조사 인증 브랜드"
+      }
     },
     "kbchachacha": {
       "이름": [
         "KB진단"
       ],
-      "확인": "미조회"
+      "확인": "주소 확인 필요 — 09-06 에 /public/car/main.kbc 가 404"
     },
     "reborncar": {
       "이름": [
         "리본카 보증"
       ],
-      "확인": "미조회"
+      "확인": "있음 (09-06 실측)",
+      "표기": "연장보증 서비스",
+      "경로": "/m/RS3031.rb"
     },
     "heydealer": {
       "이름": [
         "헤이딜러 검수"
       ],
-      "확인": "미조회"
+      "확인": "있음 (09-06 실측)",
+      "표기": [
+        "1년 무료 보증",
+        "헤이딜러 인증중고차"
+      ]
     },
     "kcar": {
       "이름": [
