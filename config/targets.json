@@ -1760,7 +1760,22 @@
         "K카 진단",
         "K카 홈서비스"
       ],
-      "확인": "미조회"
-    }
+      "확인": "있음 (09-06 실측)",
+      "매물": "EC61391861 · 상세 114,599B",
+      "경로": "GET https://mapi.kcar.com/bc/car-info-detail-of-ng?i_sCarCd={carCd}",
+      "칸": {
+        "data.warrantyCount": "보증 건수 (실측 5)",
+        "data.masterInfo.guarantytype": "보증 종류",
+        "data.masterInfo.inspNm": "진단한 사람 (실측 「동대구현대서비스 김정민」)",
+        "data.masterInfo.pfmncStatCkqtYn": "성능점검 여부 Y/N",
+        "data.masterInfo.pfmncCkqtDt": "성능점검 날짜",
+        "data.masterInfo.acdtHistYn": "사고이력 여부",
+        "data.masterInfo.smplReprYn": "단순수리 여부",
+        "data.reqVo.i_sInspScreenGb": "점검 화면 갈래",
+        "목록 gmCertYn": "인증 여부 (목록에서도 온다)"
+      },
+      "주의": "팔린 차는 3.6KB 안내문이 온다. success=true 라도 상세가 아니다. 크기로 가른다"
+    },
+    "_실측_09-06": "가이드가 직접 눌러 봤다. 개발측이 「데이터가 하나도 없다」고 한 것은 팔린 차를 눌러 놓고 한 말이다. 팔린 차는 3.6KB 안내문(「이미 판매완료된 차량입니다」)이 오고, 살아 있는 차는 114KB 가 온다. 「없다」가 아니라 「죽은 매물을 눌렀다」였다."
   }
 }
