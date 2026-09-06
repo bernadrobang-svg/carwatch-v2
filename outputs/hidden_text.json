@@ -1,80 +1,89 @@
 {
- "_잰_때": "2026-09-06T08:42:39.637388+00:00",
+ "_잰_때": "2026-09-06T12:23:53.762361+00:00",
  "_잰_곳": "https://54.180.227.109.sslip.io",
- "합": 2,
- "상자겹침합": 38,
+ "합": 17,
+ "상자겹침합": 39,
  "자리": {
   "recommend?tab=2_390": {
-   "leaf": 64,
+   "leaf": 77,
    "hidden": 0,
    "examples": [],
-   "overlap": 2,
+   "overlap": 6,
    "at": 0.0,
    "overlap_examples": [
     "값순 / 연식순 22px",
-    "등급순 / 연식순 22px"
+    "등급순 / 연식순 22px",
+    "4,123건 중\n  / 7 8px",
+    "4,123건 중\n  / 8 8px",
+    "4,123건 중\n  / 9 8px",
+    "≪ / ≫ 22px"
    ],
    "shot": "outputs/shots/recommend?tab=2_390.png"
   },
   "recommend?tab=2_600": {
-   "leaf": 86,
+   "leaf": 88,
    "hidden": 0,
    "examples": [],
-   "overlap": 12,
+   "overlap": 11,
    "at": 0.0,
    "overlap_examples": [
-    "등급순 / ≪ 14px",
     "취향순 / ≪ 14px",
     "취향순 / 1 14px",
     "차량 안전순 / 2 14px",
     "차량 안전순 / 3 14px",
-    "차량 안전순 / 4 14px"
+    "차량 안전순 / 4 14px",
+    "주행순 / 4 14px"
    ],
    "shot": "outputs/shots/recommend?tab=2_600.png"
   },
   "recommend?tab=2_760": {
-   "leaf": 87,
+   "leaf": 94,
    "hidden": 0,
    "examples": [],
-   "overlap": 12,
+   "overlap": 11,
    "at": 0.0,
    "overlap_examples": [
-    "등급순 / ≪ 14px",
     "취향순 / ≪ 14px",
     "취향순 / 1 14px",
     "차량 안전순 / 2 14px",
     "차량 안전순 / 3 14px",
-    "차량 안전순 / 4 14px"
+    "차량 안전순 / 4 14px",
+    "주행순 / 4 14px"
    ],
    "shot": "outputs/shots/recommend?tab=2_760.png"
   },
   "recommend?tab=2_900": {
-   "leaf": 86,
+   "leaf": 88,
    "hidden": 0,
    "examples": [],
-   "overlap": 12,
+   "overlap": 11,
    "at": 0.0,
    "overlap_examples": [
-    "등급순 / ≪ 14px",
     "취향순 / ≪ 14px",
     "취향순 / 1 14px",
     "차량 안전순 / 2 14px",
     "차량 안전순 / 3 14px",
-    "차량 안전순 / 4 14px"
+    "차량 안전순 / 4 14px",
+    "주행순 / 4 14px"
    ],
    "shot": "outputs/shots/recommend?tab=2_900.png"
   },
   "recommend?tab=3_390": {
-   "leaf": 36,
-   "hidden": 0,
-   "examples": [],
+   "leaf": 46,
+   "hidden": 4,
+   "examples": [
+    "2022-05 · 17.8만k (3/9)",
+    "판매 미조회 · 경기 · 배달 (3/9)",
+    "2022-05 · 17.8만k (3/9)",
+    "판매 미조회 · 경기 · 배달 (3/9)"
+   ],
    "overlap": 0,
-   "at": 0.0,
+   "at": 0.2,
    "overlap_examples": [],
    "shot": "outputs/shots/recommend?tab=3_390.png"
   },
   "recommend?tab=3_600": {
-   "leaf": 42,
+   "leaf": 55,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
@@ -83,7 +92,7 @@
    "shot": "outputs/shots/recommend?tab=3_600.png"
   },
   "recommend?tab=3_760": {
-   "leaf": 42,
+   "leaf": 58,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
@@ -92,7 +101,7 @@
    "shot": "outputs/shots/recommend?tab=3_760.png"
   },
   "recommend?tab=3_900": {
-   "leaf": 42,
+   "leaf": 58,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
@@ -101,19 +110,23 @@
    "shot": "outputs/shots/recommend?tab=3_900.png"
   },
   "recommend?tab=4_390": {
-   "leaf": 55,
-   "hidden": 2,
+   "leaf": 89,
+   "hidden": 13,
    "examples": [
-    "10만 초과 (0/3)",
-    "— (0/3)"
+    "4 (0/9)",
+    "평균연식 (3/6)",
+    "2022.4 (3/6)",
+    "2022.5 (3/6)",
+    "2022.6 (3/6)",
+    "2022.5 (3/6)"
    ],
    "overlap": 0,
-   "at": 0.2,
+   "at": 0.35,
    "overlap_examples": [],
    "shot": "outputs/shots/recommend?tab=4_390.png"
   },
   "recommend?tab=4_600": {
-   "leaf": 48,
+   "leaf": 54,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
@@ -122,7 +135,7 @@
    "shot": "outputs/shots/recommend?tab=4_600.png"
   },
   "recommend?tab=4_760": {
-   "leaf": 53,
+   "leaf": 54,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
@@ -131,7 +144,7 @@
    "shot": "outputs/shots/recommend?tab=4_760.png"
   },
   "recommend?tab=4_900": {
-   "leaf": 48,
+   "leaf": 54,
    "hidden": 0,
    "examples": [],
    "overlap": 0,
