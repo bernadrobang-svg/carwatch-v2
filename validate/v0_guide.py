@@ -7891,7 +7891,37 @@ def s46_292_tab3_is_master_car_only():
     return True, f"탭 3 은 {' · '.join(on)} 뿐이다"
 
 
+def s46_293_tab3_filter_in_config():
+    """S46-293 — 탭 3 거를 조건이 설정에 있는가 (마스터 확정 09-07).
+
+    마스터 — 「추천 3 에 GV70 만 나오게. 2022년 6월부터 5만킬로 이하.
+      가격은 4,000만원 이하. 렌터카 이력 관계없어. 무사고이거나
+      단순교환 판금 정도 되는 것들. 옵션은 최소 200만원 이상인 것 중에서.
+      엔카진단, K카, 헤이딜러, 리본카, KB보증인증 된 것들」
+
+    09-06 조건을 물린다 — 흰색·3,600만·8만km·렌트 제외는 다 지난 것이다.
+    최근 지시가 우선이다.
+
+    값은 config/targets.json 의 _탭3_거름 에 둔다. 코드에 박지 않는다.
+    실측 09-07 — 141대 (879 → 383 → 260 → 141).
+      그중 상세가 있는 것은 31대뿐. 옵션 4 · 사고 0.
+      옵션·사고·인증은 상세가 있어야 건다.
+    """
+    raw = _read(ROOT / "config" / "targets.json")
+    if not raw:
+        return False, "targets.json 을 못 읽었다"
+    f = json.loads(raw).get("_탭3_거름")
+    if not f:
+        return False, "`_탭3_거름` 이 없다 — 조건을 설정에 두어야 한다"
+    bad = [k for k in ("차종", "연식", "주행", "값", "사고", "옵션", "사이트 인증")
+           if not f.get(k)]
+    if bad:
+        return False, "빠진 조건 — " + " · ".join(bad)
+    return True, f"탭 3 거를 조건 {len(f) - 1}가지가 설정에 있다"
+
+
 CHECKS = (
+    ("S46-293", "탭 3 거를 조건이 설정에 있는가", s46_293_tab3_filter_in_config),
     ("S46-292", "탭 3 이 마스터의 차종만 내는가", s46_292_tab3_is_master_car_only),
     ("S46-291", "시안 CSS 가 app.css 에 옮겨졌는가", s46_291_mockup_css_reaches_appcss),
     ("S46-290", "마스터 회선으로 받는 길이 있는가", s46_290_master_line_fetch),
