@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 226개 · 총 83,953줄
+파일 228개 · 총 84,172줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -11,7 +11,7 @@
 | `report/screens/build.py` | 4,755 | 화면 데이터 생성. |
 | `web/views.py` | 3,136 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,337 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `collect/runner.py` | 2,177 | 수집 실행 규칙. |
+| `collect/runner.py` | 2,189 | 수집 실행 규칙. |
 | `store/core.py` | 2,108 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,276 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -48,6 +48,7 @@
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 476 | CarWatch v2 진입점. |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
+| `report/screens/fetch.py` | 416 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
@@ -56,7 +57,6 @@
 | `parse/hyundai_cert/mapping.py` | 374 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `analyze/axis/state.py` | 355 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tools/collect_hyundai_cert.py` | 351 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
-| `report/screens/fetch.py` | 350 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `parse/heydealer/mapping.py` | 348 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `parse/kcar/mapping.py` | 346 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `tools/light_check.py` | 340 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
@@ -175,6 +175,7 @@
 | `analyze/absolute.py` | 88 | E등급 절대조건 10종. |
 | `adapters/bobaedream.py` | 87 | 보배드림 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `parse/mpark/inspection.py` | 85 | m-park 성능점검 창구 → 우리 꼴 (로드맵 차례 4 · KB 점검표). |
+| `tools/heal_status_from_raw.py` | 85 | 원문 파일이 ★ `ok` 인데 ★ DB 가 ★ 「못 받았다」로 적힌 자리를 고친다 (09-08). |
 | `analyze/axis/trim.py` | 84 | ④ 사양 45 — 트림 25 · 옵션 20 (docs/ref/F-scoring.md ④). |
 | `tools/sweep_sold.py` | 84 | 철학 ② — ★ **팔린 것을 치운다** (마스터 확정 09-03 · `S46-267`). |
 | `tools/deploy_check.py` | 81 | 배포 확인 — ★ 「소스가 맞다」와 「마스터 화면이 맞다」는 다른 말이다. |
@@ -197,6 +198,7 @@
 | `tools/clear_bad_origin.py` | 58 | ★★★★ 「신차가 < 현재값」인 신차가를 지운다 (마스터 지시 2 · 08-30). |
 | `analyze/axis/warranty.py` | 56 | 보증 100점 — 일반 50 + 파워트레인 50. |
 | `parse/encar/paths.py` | 56 | 파서가 읽는 원문 경로 — 코드에서 뽑는다 (2장 STEP 20). |
+| `tools/parse_stored_encar.py` | 56 | 이미 가진 엔카 상세 원문을 ★ `core_listing` 칸에 넣는다 (09-08). |
 | `tools/encar_detail_probe.py` | 54 | 엔카 상세를 서버에서 얼마나 받을 수 있는가 — ★ 두드려 재는 자 (지시 r1184 E). |
 | `tools/inspect_requests.py` | 52 | 요청 기록을 본다 — 무엇을 던졌고 무엇이 돌아왔는가. |
 | `analyze/axis/_util.py` | 50 | 축 공용 도우미. |
@@ -265,10 +267,10 @@ _rows_per_page:33  _cfg:37  _versions:42  page_extras:61  _points:70  page:92  s
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:772  _grade_base_checks:800  _checks_cfg:893  _labels_cfg:907  _unknown_mark_checks:915  _grade_cut_checks:966  _points_cap_checks:1097  _worse_of_checks:1149  _checks_json:1211  _value_curve_checks:1222  _group_sum_checks:1327  _mapped_other_check:1438  _denominator_check:1465  _core_axis_check:1493  _rental_cross_check:1514  _why_cheap_check:1552  _source_before_value_check:1593  _absolute_cut_check:1628  _spec_files:1658  _confirm_ratio_check:1668  _warranty_checks:1718  _spec_axis_check:1752  _site_axis_checks:1793  _rendered_why:1850  _rendered_listings:1860  _fill_gap_check:1870  _points_sum_check:1903  _market_gap_check:1928  _bonus_checks:1984  _trim_price_check:2088  run:2145  _shuffle_check:2280  _halt_dict_check:2305  _ensure_tmp:2334
 ```
 
-### `collect/runner.py` — 2,177줄
+### `collect/runner.py` — 2,189줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:116  facet_axes:184  aspect_names:205  check_facet_axes:209  interpret_failure:223  _detail_calls:252  collect_check:266  FailStreak:336  Pace:370  _sleep:420  _log_request:435  _save_issues:446  _may_fetch:457  _master_line_only:478  make_executors:493  classify_in_group:1319  _query_key:1348  _group_of:1356  _fuel_of:1371  _badge_of:1377  _pages_for:1383  _dicts:1397  _option_medians:1439  _lease_types:1485  _market_medians:1499  _trim_ladders:1556  _option_base:1573  _site_grade_rules:1603  _cfg_num:1622  _dimensions:1638  _listing_config:1667  _listing_values:1701  _option_money:1720  _owned_months:1739  _option_of:1751  _market_of:1759  _group_sums:1769  _origin_lend_table:1797  _origin_keys:1827  _origin_lent:1846  make_score_executors:1866  make_validate_executor:2106  make_registry_executor:2148
+CollectGroup:67  load_targets:91  collect_groups:116  facet_axes:184  aspect_names:205  check_facet_axes:209  interpret_failure:223  _detail_calls:252  collect_check:266  FailStreak:336  Pace:370  _sleep:420  _log_request:435  _save_issues:446  _may_fetch:457  _master_line_only:478  make_executors:493  classify_in_group:1331  _query_key:1360  _group_of:1368  _fuel_of:1383  _badge_of:1389  _pages_for:1395  _dicts:1409  _option_medians:1451  _lease_types:1497  _market_medians:1511  _trim_ladders:1568  _option_base:1585  _site_grade_rules:1615  _cfg_num:1634  _dimensions:1650  _listing_config:1679  _listing_values:1713  _option_money:1732  _owned_months:1751  _option_of:1763  _market_of:1771  _group_sums:1781  _origin_lend_table:1809  _origin_keys:1839  _origin_lent:1858  make_score_executors:1878  make_validate_executor:2118  make_registry_executor:2160
 ```
 
 ### `store/core.py` — 2,108줄
@@ -487,6 +489,12 @@ load:51  make_context:56  _filter_targets:70  _steps_from:89  _adapter_for:119  
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:267  ClassifySummary:274  PriceSummary:281  AxisStat:290  CoefficientChange:300  DictChangeSummary:310  TargetReport:318  RunStep:330  RunReport:345  HaltReport:356  FixAction:373  NotifyResult:383  ExportResult:396  display_value:405  display_points:415
 ```
 
+### `report/screens/fetch.py` — 416줄
+
+```
+_cfg:40  _col:44  _has_col:48  step_counts:52  queue:81  one_car:122  put_one:160  _parse_into:207  view_fetch:253  _last_run:298  save_last:312  _batch:330  _batch_said:343  eta_secs:350  _say_secs:360  _into_side:375
+```
+
 ### `web/template.py` — 406줄
 
 ```
@@ -533,12 +541,6 @@ _panels:43  _rank_worst:47  insurance_trace:59  panel_trace:68  worse_step:80  _
 
 ```
 target_of:79  _now:95  _post:99  _get:109  fetch_detail:120  load_filters:133  total_count:171  walk:184  main:216
-```
-
-### `report/screens/fetch.py` — 350줄
-
-```
-_cfg:40  _col:44  _has_col:48  step_counts:52  queue:81  one_car:122  put_one:160  _parse_into:200  view_fetch:238  _last_run:283  save_last:297  _batch:315  _batch_said:328  eta_secs:335  _say_secs:345
 ```
 
 ### `parse/heydealer/mapping.py` — 348줄

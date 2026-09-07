@@ -1052,10 +1052,22 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 if streak.tripped:
                     halted = streak.reason()
                     break
-                conn.execute(
-                    f"UPDATE core_listing SET {kind}_status=? WHERE listing_id=?",
-                    (res.status, lid))
-                conn.commit()
+                # ★★★★★★ 09-08 — ★ **잘 받은 것을 되덮지 않는다.**
+                #   ★ 실측 09-08 — ★ 09-06 에 마스터 회선으로 받아 `ok` 였던
+                #     ★ ★ 상세 둘이 ★ 하룻밤 사이 ★ **`error` 로 덮여** 있었다.
+                #     ★ ★ ★ 원문 파일은 ★ `ok` · 9,880B 로 **그대로 있었다** —
+                #       ★ ★ ★ ★ 곧 ★ **자료는 있는데 없다고 적힌 것**이다.
+                #   ★ 407 은 ★ 그때 못 받았다는 말이지 ★ 「자료가 없다」가 아니다.
+                #   ★ ★ 그러므로 ★ `ok`·`not_found` 를 ★ `error`·`empty` 로 못 낮춘다
+                _keep = conn.execute(
+                    f"SELECT {kind}_status FROM core_listing WHERE listing_id=?",
+                    (lid,)).fetchone()
+                if not (_keep and str(_keep[0] or "") in ("ok", "not_found")
+                        and res.status in ("error", "empty")):
+                    conn.execute(
+                        f"UPDATE core_listing SET {kind}_status=?"
+                        " WHERE listing_id=?", (res.status, lid))
+                    conn.commit()
                 pace.observe(res)
                 pace.sleep()
         # ★ 안 부르기로 한 것은 expected 에서 뺀다.

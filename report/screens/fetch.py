@@ -181,10 +181,17 @@ def put_one(conn: sqlite3.Connection, site: str, kind: str, source_id: str,
          status=status, origin="browser", root=root)
     col = _col(kind)
     if _has_col(conn, col):
-        conn.execute(
-            f"UPDATE core_listing SET {col} = ? WHERE site = ? AND source_id = ?",
-            (status, site, str(source_id)))
-        conn.commit()
+        # ★ 09-08 — ★ 여기서도 ★ 잘 받은 것을 되덮지 않는다 (S5 와 같은 잣대)
+        keep = conn.execute(
+            f"SELECT {col} FROM core_listing WHERE site = ? AND source_id = ?",
+            (site, str(source_id))).fetchone()
+        if not (keep and str(keep[0] or "") in ("ok", "not_found")
+                and status in ("error", "empty")):
+            conn.execute(
+                f"UPDATE core_listing SET {col} = ?"
+                " WHERE site = ? AND source_id = ?",
+                (status, site, str(source_id)))
+            conn.commit()
     # ★★★★★★ 09-07 — ★ **파싱은 서버가 한다** (지시 L-5).
     #   ★ 09-06 실측 — ★ 상세 5건을 받았는데 ★ `warranty_body_month` ·
     #     ★ ★ `delivery_nationwide` · `site_inspection` 이 ★ **0/29 그대로**였다.
@@ -204,21 +211,29 @@ def _parse_into(conn: sqlite3.Connection, site: str, kind: str,
     ★ 파서는 ★ 사이트마다 다르다 — ★ `parse/{site}/mapping.py` 가 정본이다.
     ★ 못 읽으면 ★ **0 을 돌려주고 조용히 넘어간다** — ★ 원문은 이미 남았다.
       ★ ★ 나중에 ★ `tools/load_raw.py` 가 다시 읽는다 (`S46-185`).
-    ★ 지금은 ★ `detail` 만 넣는다 — ★ `inspection`·`record` 는 표가 따로라
-      ★ ★ `S6` 이 맡는다 (여쭐 것에 적었다)
+    ★★ 09-08 — ★ `inspection`·`record` 도 넣는다.  ★ 그 둘은 ★ **표가 따로**다
+      (`core_inspection`·`core_record`) — ★ 파서가 주는 것을 그 표에 넣고,
+      ★ ★ `core_listing` 에 걸치는 칸(사고 수·소유자 수 …)도 함께 채운다.
+    ★ 그러면 ★ 「⤓ 이 차의 성능·보험 받기」가 ★ **누르는 즉시** 화면에 반영된다
     """
-    if kind != "detail":
-        return 0
     import importlib
     import json as _j
 
+    if kind not in ("detail", "inspection", "record"):
+        return 0
     try:
         mod = importlib.import_module(f"parse.{site}.mapping")
+        raw = _j.loads(body)
+    except (ImportError, ValueError, TypeError):
+        return 0
+    if kind != "detail":
+        return _into_side(conn, mod, kind, site, source_id, raw)
+    try:
         fn = getattr(mod, "parse_detail", None)
         if fn is None:
             return 0
-        got = fn(_j.loads(body), site, str(source_id))
-    except (ImportError, ValueError, TypeError, AttributeError, KeyError):
+        got = fn(raw, site, str(source_id))
+    except (ValueError, TypeError, AttributeError, KeyError):
         return 0
     if not isinstance(got, dict) or not got:
         return 0
@@ -348,3 +363,54 @@ def _say_secs(secs: int) -> str:
     if secs < 3600:
         return f"{secs // 60}분 {secs % 60}초"
     return f"{secs // 3600}시간 {(secs % 3600) // 60}분"
+
+
+# ★ 창구마다 ★ 파서 이름과 ★ 갈 표가 다르다.  ★ 코드에 한 자리로 모은다
+SIDE = {
+    "inspection": ("parse_inspection", "core_inspection"),
+    "record": ("parse_record", "core_record"),
+}
+
+
+def _into_side(conn: sqlite3.Connection, mod, kind: str, site: str,
+               source_id: str, raw) -> int:
+    """★ 09-08 — ★ 성능점검·보험이력을 ★ 제 표에 넣는다.
+
+    ★ 매물을 못 찾으면 ★ 아무것도 안 한다 — ★ 떠도는 줄을 만들지 않는다.
+    ★ 파서가 없거나 못 읽으면 ★ 0 이다 — ★ 원문은 이미 남았다 (`S6` 이 다시 읽는다)
+    """
+    name, table = SIDE.get(kind, (None, None))
+    if not name:
+        return 0
+    fn = getattr(mod, name, None)
+    if fn is None:
+        return 0
+    row = conn.execute(
+        "SELECT listing_id FROM core_listing WHERE site = ? AND source_id = ?",
+        (site, str(source_id))).fetchone()
+    if not row:
+        return 0
+    lid = row[0]
+    try:
+        got = fn(raw, site, str(source_id))
+    except TypeError:
+        try:
+            got = fn(raw, site)
+        except (ValueError, TypeError, AttributeError, KeyError):
+            return 0
+    except (ValueError, TypeError, AttributeError, KeyError):
+        return 0
+    if not isinstance(got, dict) or not got:
+        return 0
+    cols = {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}
+    use = {k: v for k, v in got.items() if k in cols and v is not None}
+    if not use:
+        return 0
+    use["listing_id"] = lid
+    keys = ", ".join(use)
+    marks = ", ".join("?" * len(use))
+    conn.execute(
+        f"INSERT OR REPLACE INTO {table}({keys}) VALUES({marks})",
+        list(use.values()))
+    conn.commit()
+    return len(use)
