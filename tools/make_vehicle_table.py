@@ -131,7 +131,12 @@ def build(base_url: str, name: str = "admin", secret: str = "12345678") -> str:
             "show_recommend": "Y" if rec else "N",
             "tab1": "Y" if rec else "N",
             "tab2": "Y" if rec else "N",
-            "tab3": "Y" if on else "N",
+            # 09-07 — 마스터 「추천 3 이 이상하다. GV70 만 나오게 해라」.
+            #   내가 두 곳에 다르게 적어 어긋났다. 09-06 앞에는 개발측 물음에
+            #   「분석은 차종으로 안 거른다」며 33종을 켰고, 09-06 뒤에 마스터가
+            #   「탭 3 = GV70 후보」로 정하셨는데 규격만 고치고 이 표를 안 고쳤다.
+            #   그래서 배포에 GV70 아닌 차 1,421대가 나왔다.
+            "tab3": "Y" if k == "GV70_25T" else "N",
             "tab4": "Y" if k in ("GV70_25T", "X3_IMPORT") else "N",
             "taste_rank": rank,
             "sites": seen.get(k, {}),

@@ -20,7 +20,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -40,7 +40,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -57,7 +57,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -75,7 +75,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -94,7 +94,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 4,
    "sites": {
@@ -114,7 +114,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -131,7 +131,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 7,
    "sites": {
@@ -149,7 +149,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -164,7 +164,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -183,7 +183,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 2,
    "sites": {
@@ -200,7 +200,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "Y",
    "taste_rank": 8,
    "sites": {
@@ -219,7 +219,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -237,7 +237,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -254,7 +254,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -270,7 +270,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -288,7 +288,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 10,
    "sites": {
@@ -307,7 +307,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -326,7 +326,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {}
@@ -338,7 +338,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -356,7 +356,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -374,7 +374,7 @@
    "show_recommend": "N",
    "tab1": "N",
    "tab2": "N",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -389,7 +389,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 5,
    "sites": {
@@ -405,7 +405,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 5,
    "sites": {
@@ -419,7 +419,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -435,7 +435,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 3,
    "sites": {
@@ -451,7 +451,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {}
@@ -463,7 +463,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 1,
    "sites": {
@@ -478,7 +478,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -493,7 +493,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -507,7 +507,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 6,
    "sites": {
@@ -521,7 +521,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": null,
    "sites": {
@@ -535,7 +535,7 @@
    "show_recommend": "Y",
    "tab1": "Y",
    "tab2": "Y",
-   "tab3": "Y",
+   "tab3": "N",
    "tab4": "N",
    "taste_rank": 5,
    "sites": {
@@ -557,6 +557,18 @@
     "kbchachacha": 676,
     "kcar": 6
    }
+  },
+  "_사이트_진단": {
+   "label": null,
+   "collect": "N",
+   "show_list": "N",
+   "show_recommend": "N",
+   "tab1": "N",
+   "tab2": "N",
+   "tab3": "N",
+   "tab4": "N",
+   "taste_rank": null,
+   "sites": {}
   },
   "OFF:그랜저": {
    "label": "그랜저",

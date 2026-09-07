@@ -3,43 +3,43 @@
 `python3 -c "from tools.make_vehicle_table import build; build('배포주소')"` 가 만든다.
 정본은 `config/vehicle_table.json` 이다. 분류 관련 코드는 모두 이 표를 읽는다.
 
-차종 **213** · 수집 **33** · 미수집 180
+차종 **214** · 수집 **33** · 미수집 181
 
 | 차종 | 수집 | 목록 | 추천 | 탭1 | 탭2 | 탭3 | 탭4 | 취향 | 받은 사이트 |
 |---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|---|
-| G80 2.5T | Y | Y | N | N | N | Y | N | — | encar 2,728 · kbchachacha 1,768 · hyundai_cert 183 · reborncar 57 |
+| G80 2.5T | Y | Y | N | N | N | N | N | — | encar 2,728 · kbchachacha 1,768 · hyundai_cert 183 · reborncar 57 |
 | GV70 2.5T (가솔린) | Y | Y | Y | Y | Y | Y | Y | 9 | encar 1,360 · kbchachacha 676 · kcar 6 |
-| 벤츠 GLC | Y | Y | N | N | N | Y | N | — | encar 1,323 · kbchachacha 684 · bobaedream 15 · reborncar 4 |
-| BMW X3 | Y | Y | Y | Y | Y | Y | Y | 8 | encar 1,200 · kbchachacha 420 · bmw_bps 26 · heydealer 10 |
-| 테슬라 모델Y | Y | Y | Y | Y | Y | Y | N | 2 | encar 860 · kbchachacha 248 · revolt 54 · bobaedream 4 |
-| 스포티지 LPi | Y | Y | N | N | N | Y | N | — | kbchachacha 714 · encar 276 |
-| 볼보 XC60 | Y | Y | Y | Y | Y | Y | N | 10 | encar 537 · kbchachacha 294 · volvo_selekt 63 · heydealer 15 |
-| 그랜저 GN7 LPG | Y | Y | N | N | N | Y | N | — | kbchachacha 531 · encar 339 · reborncar 16 · bobaedream 6 |
-| 아우디 Q5 | Y | Y | N | N | N | Y | N | — | encar 502 · kbchachacha 226 · bobaedream 5 · reborncar 2 |
-| 그랑 콜레오스 1.5 E-TECH | Y | Y | Y | Y | Y | Y | N | 7 | encar 382 · kbchachacha 106 · heydealer 15 · kcar 2 |
-| 볼보 XC40 (전기 제외) | Y | Y | N | N | N | Y | N | — | encar 376 · kbchachacha 54 · volvo_selekt 37 · heydealer 14 |
-| 렉서스 NX 하이브리드 | Y | Y | N | N | N | Y | N | — | encar 198 · kbchachacha 174 · lexus_certified 16 |
-| G70 2.0T | Y | Y | N | N | N | Y | N | — | encar 334 · kcar 14 · hyundai_cert 12 · reborncar 7 |
-| 볼보 V60 크로스컨트리 | Y | Y | N | N | N | Y | N | — | encar 266 · volvo_selekt 49 · kbchachacha 40 · heydealer 2 |
-| 볼보 S60 | Y | Y | N | N | N | Y | N | — | encar 225 · kbchachacha 31 · heydealer 6 · volvo_selekt 4 |
-| 폴스타 2 (전기) | Y | Y | Y | Y | Y | Y | N | — | encar 162 · kbchachacha 70 · bobaedream 1 |
-| G70 2.5T | Y | Y | N | N | N | Y | N | — | encar 119 · kbchachacha 107 · reborncar 2 · bobaedream 1 |
-| GV60 | Y | Y | N | N | N | Y | N | — | encar 179 · kbchachacha 25 · heydealer 6 · hyundai_cert 2 |
-| 렉서스 RX | Y | Y | N | N | N | Y | N | — | encar 120 · kbchachacha 28 · lexus_certified 5 · bobaedream 2 |
-| G80 전동화 | Y | Y | Y | Y | Y | Y | N | — | encar 121 · kbchachacha 13 · heydealer 3 · reborncar 1 |
-| GV70 전동화 | Y | Y | Y | Y | Y | Y | N | 4 | encar 96 · kbchachacha 13 · hyundai_cert 5 · heydealer 2 |
-| 렉서스 ES300h | Y | Y | N | N | N | Y | N | — | kbchachacha 58 · lexus_certified 31 |
-| 폴스타 4 (전기) | Y | Y | Y | Y | Y | Y | N | 3 | encar 57 · kbchachacha 7 · revolt 3 |
-| 폭스바겐 ID.4 | Y | Y | Y | Y | Y | Y | N | — | kbchachacha 32 · revolt 6 |
-| 볼보 C40 리차지 (전기) | Y | Y | Y | Y | Y | Y | N | 5 | encar 17 · kbchachacha 2 · revolt 1 |
-| 렉서스 UX300e (전기) | Y | Y | Y | Y | Y | Y | N | — | kbchachacha 19 |
-| 볼보 EX30 (전기) | Y | Y | Y | Y | Y | Y | N | 5 | encar 12 |
-| BMW iX3 (전기) | Y | Y | Y | Y | Y | Y | N | 1 | kbchachacha 7 · revolt 5 |
-| 기아 EV4 | Y | Y | Y | Y | Y | Y | N | 6 | kbchachacha 5 |
-| 볼보 XC40 리차지 (전기) | Y | Y | Y | Y | Y | Y | N | 5 | kbchachacha 5 |
-| 폭스바겐 ID.5 | Y | Y | Y | Y | Y | Y | N | — | kbchachacha 2 |
-| 볼보 EX60 | Y | Y | Y | Y | Y | Y | N | — | — |
-| 폴스타 3 (전기) | Y | Y | Y | Y | Y | Y | N | — | — |
+| 벤츠 GLC | Y | Y | N | N | N | N | N | — | encar 1,323 · kbchachacha 684 · bobaedream 15 · reborncar 4 |
+| BMW X3 | Y | Y | Y | Y | Y | N | Y | 8 | encar 1,200 · kbchachacha 420 · bmw_bps 26 · heydealer 10 |
+| 테슬라 모델Y | Y | Y | Y | Y | Y | N | N | 2 | encar 860 · kbchachacha 248 · revolt 54 · bobaedream 4 |
+| 스포티지 LPi | Y | Y | N | N | N | N | N | — | kbchachacha 714 · encar 276 |
+| 볼보 XC60 | Y | Y | Y | Y | Y | N | N | 10 | encar 537 · kbchachacha 294 · volvo_selekt 63 · heydealer 15 |
+| 그랜저 GN7 LPG | Y | Y | N | N | N | N | N | — | kbchachacha 531 · encar 339 · reborncar 16 · bobaedream 6 |
+| 아우디 Q5 | Y | Y | N | N | N | N | N | — | encar 502 · kbchachacha 226 · bobaedream 5 · reborncar 2 |
+| 그랑 콜레오스 1.5 E-TECH | Y | Y | Y | Y | Y | N | N | 7 | encar 382 · kbchachacha 106 · heydealer 15 · kcar 2 |
+| 볼보 XC40 (전기 제외) | Y | Y | N | N | N | N | N | — | encar 376 · kbchachacha 54 · volvo_selekt 37 · heydealer 14 |
+| 렉서스 NX 하이브리드 | Y | Y | N | N | N | N | N | — | encar 198 · kbchachacha 174 · lexus_certified 16 |
+| G70 2.0T | Y | Y | N | N | N | N | N | — | encar 334 · kcar 14 · hyundai_cert 12 · reborncar 7 |
+| 볼보 V60 크로스컨트리 | Y | Y | N | N | N | N | N | — | encar 266 · volvo_selekt 49 · kbchachacha 40 · heydealer 2 |
+| 볼보 S60 | Y | Y | N | N | N | N | N | — | encar 225 · kbchachacha 31 · heydealer 6 · volvo_selekt 4 |
+| 폴스타 2 (전기) | Y | Y | Y | Y | Y | N | N | — | encar 162 · kbchachacha 70 · bobaedream 1 |
+| G70 2.5T | Y | Y | N | N | N | N | N | — | encar 119 · kbchachacha 107 · reborncar 2 · bobaedream 1 |
+| GV60 | Y | Y | N | N | N | N | N | — | encar 179 · kbchachacha 25 · heydealer 6 · hyundai_cert 2 |
+| 렉서스 RX | Y | Y | N | N | N | N | N | — | encar 120 · kbchachacha 28 · lexus_certified 5 · bobaedream 2 |
+| G80 전동화 | Y | Y | Y | Y | Y | N | N | — | encar 121 · kbchachacha 13 · heydealer 3 · reborncar 1 |
+| GV70 전동화 | Y | Y | Y | Y | Y | N | N | 4 | encar 96 · kbchachacha 13 · hyundai_cert 5 · heydealer 2 |
+| 렉서스 ES300h | Y | Y | N | N | N | N | N | — | kbchachacha 58 · lexus_certified 31 |
+| 폴스타 4 (전기) | Y | Y | Y | Y | Y | N | N | 3 | encar 57 · kbchachacha 7 · revolt 3 |
+| 폭스바겐 ID.4 | Y | Y | Y | Y | Y | N | N | — | kbchachacha 32 · revolt 6 |
+| 볼보 C40 리차지 (전기) | Y | Y | Y | Y | Y | N | N | 5 | encar 17 · kbchachacha 2 · revolt 1 |
+| 렉서스 UX300e (전기) | Y | Y | Y | Y | Y | N | N | — | kbchachacha 19 |
+| 볼보 EX30 (전기) | Y | Y | Y | Y | Y | N | N | 5 | encar 12 |
+| BMW iX3 (전기) | Y | Y | Y | Y | Y | N | N | 1 | kbchachacha 7 · revolt 5 |
+| 기아 EV4 | Y | Y | Y | Y | Y | N | N | 6 | kbchachacha 5 |
+| 볼보 XC40 리차지 (전기) | Y | Y | Y | Y | Y | N | N | 5 | kbchachacha 5 |
+| 폭스바겐 ID.5 | Y | Y | Y | Y | Y | N | N | — | kbchachacha 2 |
+| 볼보 EX60 | Y | Y | Y | Y | Y | N | N | — | — |
+| 폴스타 3 (전기) | Y | Y | Y | Y | Y | N | N | — | — |
 | 그랜저 | N | N | N | N | N | N | N | — | encar 2,049 · hyundai_cert 338 · reborncar 117 · kcar 39 |
 | 스포티지 | N | N | N | N | N | N | N | — | encar 1,812 · kia_cpo 85 · reborncar 22 · kcar 14 |
 | G80 | N | N | N | N | N | N | N | — | encar 771 · kbchachacha 116 · bobaedream 21 · hyundai_cert 20 |
@@ -220,3 +220,4 @@
 | 티구안 2세대 | N | N | N | N | N | N | N | — | kcar 1 |
 | 티볼리 아머 | N | N | N | N | N | N | N | — | kcar 1 |
 | 포터2 LPi 2.5 터보 카고 | N | N | N | N | N | N | N | — | kcar 1 |
+| _사이트_진단 | N | N | N | N | N | N | N | — | — |

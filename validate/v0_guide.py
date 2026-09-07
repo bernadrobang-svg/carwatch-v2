@@ -7863,7 +7863,36 @@ def s46_291_mockup_css_reaches_appcss():
     return True, f"틀이 쓰는 이름이 app.css 에 다 있다 (규칙 {total}개)"
 
 
+def s46_292_tab3_is_master_car_only():
+    """S46-292 — 탭 3 이 마스터의 차종만 내는가 (마스터 09-07).
+
+    마스터 — 「추천 3 이 이상하다. GV70 만 나오게 해라」
+    배포에 1,421대가 나왔다. GV70 이 아닌 차가 섞였다.
+
+    가이드 잘못이다. 같은 것을 두 곳에 적어 어긋났다 —
+      09-06 앞: 개발측이 「탭별로 갈리는 것이 없다」고 묻자
+        「분석은 차종으로 안 거른다」며 tab3 을 33종으로 켰다.
+      09-06 뒤: 마스터가 「탭 3 = GV70 후보」로 정하셨다.
+        규격(RECOMMEND_SCREEN.md)만 고치고 차종 표를 안 고쳤다.
+    규격을 고칠 때는 그 값이 든 설정 파일도 같이 고친다.
+
+    잣대 — vehicle_table.json 의 tab3=Y 가 둘을 넘지 않는가.
+    """
+    raw = _read(ROOT / "config" / "vehicle_table.json")
+    if not raw:
+        return False, "차종 표가 없다"
+    t = json.loads(raw).get("차종") or {}
+    on = sorted(k for k, v in t.items() if v.get("tab3") == "Y")
+    if not on:
+        return False, "탭 3 에 켜진 차종이 없다"
+    if len(on) > 2:
+        return False, (f"탭 3 에 {len(on)}종이 켜져 있다 — "
+                       "마스터가 지금 고르시는 차만 낸다")
+    return True, f"탭 3 은 {' · '.join(on)} 뿐이다"
+
+
 CHECKS = (
+    ("S46-292", "탭 3 이 마스터의 차종만 내는가", s46_292_tab3_is_master_car_only),
     ("S46-291", "시안 CSS 가 app.css 에 옮겨졌는가", s46_291_mockup_css_reaches_appcss),
     ("S46-290", "마스터 회선으로 받는 길이 있는가", s46_290_master_line_fetch),
     ("S46-289", "차종 표가 분류의 정본인가", s46_289_vehicle_table_is_source),

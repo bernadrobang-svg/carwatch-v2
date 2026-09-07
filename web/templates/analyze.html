@@ -50,6 +50,9 @@
 <div class="v3-acard {{ r.accident_tone }}">
   <div class="v3-aline">
     <span class="v3-aprice">{{ r.price }}</span>
+    <!-- 09-07 — 카드에 차종 이름이 없었다 (마스터 「GV70 만 나오게 해라」).
+         무슨 차인지 안 보이면 섞여도 모른다 -->
+    <span class="v3-name">{{ r.model_name }}</span>
     <span class="v3-verdict {{ r.verdict }}">{{ r.verdict_label }}</span>
     <span class="v3-site">{{ r.site_label }}</span>
     <span class="v3-dx {% if !r.inspection_ok %}no{% endif %}">{{ r.inspection }}</span>
