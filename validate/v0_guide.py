@@ -1103,8 +1103,13 @@ def s46_67_sian_names_dont_clash() -> tuple[bool, str]:
     #   ★ 09-06 — ★ 처음엔 `class="([^"{]+)"` 로 뽑아 ★ **틀 표현이 든 것을 놓쳤다** —
     #     ★ `class="v3-chip {% if c.on %}on{% endif %}"` 가 안 잡혔다.
     #     ★ ★ 먼저 ★ **틀 표현을 지우고** 읽는다.
+    #   ★ 09-08 — ★ 지금 판 시안(`v4m_`)이 쓰는 이름도 ★ **함께 쓰는 이름**이다.
+    #     ★ `S46-291` 이 그 이름을 ★ app.css 에 넣으라고 한다.
+    #     ★ ★ 그러니 겹치는 것이 맞다 — ★ 개발측이 틀을 만들기 전에도 그렇다.
     used = set()
-    for q in sorted((ROOT / "web" / "templates").glob("*.html")):
+    srcs = (sorted((ROOT / "web" / "templates").glob("*.html"))
+            + sorted((ROOT / "ref" / "screens").glob("v4m_*.html")))
+    for q in srcs:
         body = re.sub(r"\{%[^%]*%\}|\{\{[^}]*\}\}", " ", _read(q))
         for m in re.finditer(r'class="([^"]+)"', body):
             used.update(m.group(1).split())
@@ -7857,13 +7862,35 @@ def s46_291_mockup_css_reaches_appcss():
     css = _read(ROOT / "web" / "static" / "app.css")
     if not css:
         return False, "app.css 를 못 읽었다"
+    # ★★★★★ 09-08 — 마스터 「★ **왜 CSS 적용 안 되니**」.
+    #   ★ 어제 이 검사를 세웠는데 ★ **또 같은 일이 났다** — ★ 추천4 의 `g4-` 규칙 23개가
+    #     ★ 시안에만 있고 ★ app.css 에 없었다.
+    #   ★ 까닭 — 이 검사는 ★ **틀(web/templates)이 쓰는 이름**만 봤다.
+    #     ★ ★ 개발측이 ★ **틀을 만들기 전**이면 ★ 안 잡힌다.
+    #     ★ ★ ★ 그런데 ★ 내가 시안을 짓는 것과 ★ 개발측이 틀을 짓는 것은 ★ **때가 다르다**.
+    #   ★★ 그래서 ★ **시안(ref/screens)도 함께 본다** — ★ 시안이 쓰는 이름은
+    #     ★ ★ 언젠가 틀이 쓸 이름이다.  ★ 지을 때 바로 옮겨야 한다.
     tpl_dir = ROOT / "web" / "templates"
+    #   ★ 시안은 ★ **지금 판(`v4m_`)만** 본다.  ★ 옛 `v3_` 시안에는
+    #     ★ ★ 쓰지도 않는 이름이 남아 있다 (예: `v3_compare_시안` 의 `.v3-nav`).
+    #     ★ ★ ★ 그건 죽은 이름이지 ★ 안 옮긴 규칙이 아니다.
+    files = sorted(tpl_dir.glob("*.html")) + sorted(
+        (ROOT / "ref" / "screens").glob("v4m_*.html"))
     miss = {}
-    for q in sorted(tpl_dir.glob("*.html")):
+    for q in files:
+        body = _re.sub(r"\{%[^%]*%\}|\{\{[^}]*\}\}", " ", _read(q))
+        #   ★ 제 안에 쓴 규칙 — ★ `.a{` 만이 아니라 ★ `nav.a{` · `.a.b{` · `.a .b{` 도
+        #     ★ ★ 다 잡아야 한다.  ★ 처음엔 `\n\.(...)` 만 봐서 ★ `nav.v3-bot{` 을 놓쳤다.
+        own = set()
+        for blk in _re.finditer(r"([^{}]+)\{[^}]*\}", body):
+            for nm in _re.findall(r"\.([\w-]+)", blk.group(1)):
+                own.add(nm)
         names = set()
-        for m in _re.finditer(r'class="([^"{]+)"', _read(q)):
+        for m in _re.finditer(r'class="([^"]+)"', body):
             for n in m.group(1).split():
-                if n.startswith(("v3-", "v4-", "rc2-")):
+                #   ★ `noop` 은 ★ 자리막이다 — ★ 꾸밈이 없어야 맞다
+                if (n.startswith(("v3-", "v4-", "rc2-", "g4-"))
+                        and n not in own and "noop" not in n):
                     names.add(n)
         gone = [n for n in sorted(names) if f".{n}" not in css]
         if gone:

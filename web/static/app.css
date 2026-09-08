@@ -3651,3 +3651,127 @@ nav.bot a.on{color:var(--amber);font-weight:700}
 .v3-abtn{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
   background:var(--surface2);color:var(--text);text-decoration:none;font-size:13px}
 .v3-abtn.ask{border-color:var(--amber);color:var(--amber);font-weight:700}
+
+
+/* 09-08 — 추천4(GV70) CSS (마스터 「왜 CSS 적용 안 되니」).
+   또 같은 잘못이다. 시안 <style> 에만 쓰고 app.css 로 안 옮겼다.
+   어제 S46-291 을 세웠는데, 그 검사는 「틀이 쓰는 이름」만 본다.
+   개발측이 틀을 만들기 전이라 안 잡혔다. 검사도 함께 고친다.
+   규격 docs/GV70_TAB4.md */
+:root{--bg:var(--bg);--surface:var(--surface);--surface2:var(--surface2);--line:var(--line);--line2:var(--line2);
+ --text:var(--text);--dim:var(--dim);--faint:var(--faint);--amber:var(--amber);--ok:var(--ok);--no:var(--no);
+ --blue:var(--accent);--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+/* 기준 띠 — 마스터가 쓰신 일곱 */
+.g4-rule{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.g4-rule b{font-size:12px;color:var(--faint);display:block;margin-bottom:6px}
+.g4-rule span{display:inline-block;padding:3px 9px;border-radius:12px;margin:0 5px 5px 0;
+ border:1px solid var(--line2);color:var(--dim);font-size:11px;white-space:nowrap}
+.g4-rule span.key{border-color:var(--amber);color:var(--amber);font-weight:700}
+.g4-note{font-size:11px;color:var(--faint);margin:4px 0 0}
+.g4-count{font-size:12px;color:var(--dim);margin:0 0 12px}
+.g4-count b{color:var(--text);font-family:var(--mono)}
+/* 카드 */
+.g4-card{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+ padding:12px;margin-bottom:12px}
+.g4-card.pick{border-left:4px solid var(--ok)}
+.g4-card.warn{border-left:4px solid var(--amber)}
+.g4-card.out{border-left:4px solid var(--no)}
+.g4-head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.g4-price{font-size:20px;font-weight:800;font-family:var(--mono)}
+.g4-name{font-weight:700}
+.g4-site{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
+ border:1px solid var(--blue);color:var(--blue);white-space:nowrap}
+.g4-dx{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--ok);color:var(--ok);white-space:nowrap}
+.g4-dx.none{border-color:var(--no);color:var(--no)}
+.g4-sell{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--no);color:var(--no)}
+/* 판단이 갈리는 네 줄 — 규격 3장 */
+.g4-four{margin:10px 0 0;border-top:1px solid var(--line);padding-top:9px}
+.g4-row{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--dim);
+ padding:4px 0;border-bottom:1px dashed var(--line)}
+.g4-row:last-child{border-bottom:none}
+.g4-row b{color:var(--text);font-family:var(--mono)}
+.g4-row b.ok{color:var(--ok)}
+.g4-row b.no{color:var(--no)}
+.g4-row b.q{color:var(--faint)}
+.g4-row b.grey{color:var(--faint);text-decoration:line-through}
+.g4-say{font-size:11px;color:var(--amber);margin:6px 0 0}
+.g4-say.bad{color:var(--no)}
+/* 옵션 패키지 */
+.g4-pkgs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.g4-pkg{padding:3px 9px;border-radius:12px;border:1px solid var(--line2);
+ font-size:11px;color:var(--dim)}
+.g4-pkg b{color:var(--text);font-family:var(--mono)}
+/* 총비용 */
+.g4-total{margin-top:10px;border-top:1px solid var(--line);padding-top:9px}
+.g4-trow{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);padding:2px 0}
+.g4-trow b{font-family:var(--mono);color:var(--text)}
+.g4-trow.sum b{color:var(--amber);font-size:16px;font-weight:800}
+/* 갈래별 막대 다섯 */
+.g4-bars{margin-top:10px;border-top:1px solid var(--line);padding-top:9px}
+.g4-brow{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--dim);margin-bottom:4px}
+.g4-brow i{flex:1;height:6px;border-radius:3px;background:var(--surface2);
+ border:1px solid var(--line);display:block}
+.g4-brow i em{display:block;height:100%;border-radius:3px;background:var(--blue)}
+.g4-brow i em.hi{background:var(--ok)}
+.g4-brow span:first-child{width:52px;flex:0 0 auto}
+.g4-brow span:last-child{width:56px;flex:0 0 auto;text-align:right;font-family:var(--mono)}
+.g4-best{color:var(--ok);font-weight:700}
+.g4-grade{padding:2px 9px;border-radius:12px;border:1px solid currentColor;
+ font-weight:800;font-size:12px}
+.g4-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.g4-btn{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
+ background:var(--surface2);color:var(--text);text-decoration:none;font-size:13px}
+.g4-btn.ask{border-color:var(--amber);color:var(--amber);font-weight:700}
+.g4-group{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin:18px 0 10px;
+ padding-bottom:6px;border-bottom:2px solid var(--line2)}
+.g4-group h2{font-size:15px;margin:0}
+.g4-group.on h2{color:var(--ok)}
+.g4-group.off h2{color:var(--faint)}
+.g4-group span{font-size:12px;color:var(--dim)}
+.g4-lead{border-left:3px solid var(--blue);background:var(--surface2);
+ padding:10px 12px;margin:0 0 12px;font-size:12px;color:var(--dim);line-height:1.7}
+.g4-lead b{color:var(--text)}
+
+
+/* 09-08 — 시안에만 있던 규칙을 마저 옮긴다 (S46-291 이 시안까지 보게 고친 뒤) */
+.v3-acard{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+ padding:12px;margin-bottom:12px}
+.v3-acard::after{content:'';display:block;clear:both}
+.v3-acard.clean{border-left:4px solid var(--ok)}
+.v3-acard.mid{border-left:4px solid var(--amber)}
+.v3-acard.bad{border-left:4px solid var(--no)}
+.v3-acard.none{border-left:4px solid var(--line2)}
+.v3-crow{display:flex;justify-content:space-between;gap:10px;font-size:13px;
+ padding:3px 0;border-bottom:1px dashed var(--line)}
+.v3-crow:last-child{border-bottom:none}
+.v3-crow span{color:var(--dim)}
+.v3-crow b{font-family:var(--mono)}
+.v3-crow.sum b{color:var(--amber);font-size:15px}
+.v3-dx{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--ok);color:var(--ok);white-space:nowrap}
+.v3-dx.no{border-color:var(--no);color:var(--no)}
+.v3-region{padding:2px 8px;border-radius:12px;font-size:11px;
+ border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.v3-region.deliver{border-color:var(--blue);color:var(--blue)}
+.v3-region.near{border-color:var(--ok);color:var(--ok)}
+.v3-region{padding:2px 8px;border-radius:12px;font-size:11px;
+ border:1px solid var(--line2);color:var(--dim)}
+.v3-verdict{padding:3px 10px;border-radius:14px;font-weight:800;font-size:12px;
+ border:1px solid currentColor;white-space:nowrap}
+.v3-verdict.buy{color:var(--ok)}
+.v3-verdict.hold{color:var(--amber)}
+.v3-verdict.wait{color:var(--dim)}
+.v3-verdict.risk{color:var(--no)}
+.v3-verdict{padding:2px 9px;border-radius:12px;border:1px solid currentColor;
+ font-weight:800;font-size:12px;white-space:nowrap}
+
+
+/* 09-08 — 「받기」 화면 바닥 메뉴. 09-06 에 이름을 v3- 로 바꾸며 규칙을 빠뜨렸다 */
+.v3-bot{position:fixed;left:0;right:0;bottom:0;display:flex;
+  background:var(--surface);border-top:1px solid var(--line);padding:6px 0;z-index:20}
+.v3-bot a{flex:1;text-align:center;color:var(--dim);text-decoration:none;
+  font-size:12px;padding:6px 0}
+.v3-bot a.on{color:var(--amber);font-weight:700}
