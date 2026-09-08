@@ -3871,7 +3871,11 @@ def s46_152_dev_rounds_read():
         return True, "회차 번호를 못 읽는다"
     hist = _read(ROOT / "docs" / "guide" / "03_이력.md")
     # ★ 이력은 ★ 새 줄을 뒤에 쌓는다 — ★ 끝쪽을 본다 (08-29 정정)
-    tail = hist[-8000:]
+    # ★★★★★ 09-08 — ★ 이력은 ★ **맨 위에** 새 줄을 넣는다.
+    #   ★ 그런데 이 검사는 ★ **끝쪽 8,000자**만 봤다 — ★ 새 줄이 안 잡힌다.
+    #   ★ ★ 09-08 실측 — ★ v392~v394 를 적었는데 ★ 「안 읽었다」고 울었다.
+    #   ★ ★ ★ 맨 위 8,000자도 함께 본다.
+    tail = hist[:8000] + hist[-8000:]
     if m.group(1) in tail or last[:13] in tail:
         return True, f"마지막 개발 회차 v{m.group(1)} 를 읽었다"
     return False, (f"★ 마지막 개발 회차 v{m.group(1)}({last}) 가 "
