@@ -99,6 +99,18 @@ C = {
                    FATAL, "run",
                    "dig(raw, \"a.b.c\") 로 바꾼다. 중간 null 하나로 매물이 사라진다",
                    KIND_CODE),
+    # ★★★★★★ 09-08 — ★ **가지고 있는데 「못 받았다」고 적혀 있으면 안 된다.**
+    #   ★ 실측 09-08 — ★ 원문 파일은 `ok` 인데 ★ DB 는 `error` 인 줄이 ★ **8,450건**.
+    #   ★ ★ 그래서 ★ S5 가 ★ 이미 가진 상세를 다시 불러 ★ 09-03 하루에
+    #     ★ ★ ★ `407` 을 ★ **127,129건** 쌓았고 ★ 상태가 또 `error` 가 되어
+    #     ★ ★ ★ ★ **영영 안 끝났다.**  ★ 화면도 ★ 「8,684건 받아야 한다」고
+    #       ★ ★ ★ ★ ★ 거짓을 말했다 (실제 1,753).
+    #   ★ 파일이 정본이다 (`S46-185`) — ★ 어긋나면 ★ `heal_status_from_raw` 가 고친다
+    "V2-20": Check("V2", "V2-20", "원문이 ok 인데 DB 가 「못 받았다」인 줄 없음",
+                   FATAL, "run",
+                   "python3.11 tools/heal_status_from_raw.py --write 로 "
+                   "원문 기준으로 되돌린다. 다시 받지 않는다",
+                   KIND_CODE),
     "V2-19": Check("V2", "V2-19", "원문 유래 컬럼에 NOT NULL 없음", FATAL, "run",
                    "그 컬럼의 NOT NULL 을 뺀다. 사이트가 안 주면 없는 것이다",
                    KIND_CODE),
@@ -263,6 +275,7 @@ def run(conn, ctx) -> list:
 
     out += _surrogate_key_checks(conn, rid)
     out.append(_not_null_check(conn, rid))
+    out.append(_raw_says_ok_check(conn, rid))
     out.append(_chained_subscript_check(rid))
     out += _exception_shape_checks(conn, rid)
     out.append(_salvage_check(rid))
@@ -429,6 +442,27 @@ OUR_COLUMNS: frozenset[str] = frozenset({
     "body", "sql_text", "url", "condition", "label", "file", "key_path",
     "curve_json", "sample_json", "request_kind", "reject_reason", "raw_body",
 })
+
+
+def _raw_says_ok_check(conn, run_id):
+    """★ V2-20 — ★ 원문 파일이 `ok` 인데 ★ DB 가 「못 받았다」로 적힌 줄.
+
+    ★ 「가지고 있는데 없다고 적는 것」은 ★ 이 프로젝트가 막으려는 바로 그 괴리다.
+    ★ 자는 ★ `tools/heal_status_from_raw.py` 와 ★ **같은 셈**을 쓴다 —
+      ★ 자와 고치는 자가 갈리면 ★ 「고쳤다」가 거짓이 된다
+    """
+    try:
+        from tools.heal_status_from_raw import run as _heal
+    except ImportError:
+        return not_applicable(C["V2-20"], run_id, "자를 못 불렀다")
+    del conn
+    try:
+        got = _heal(write=False)
+    except (OSError, ValueError):
+        return not_applicable(C["V2-20"], run_id, "원문 자리를 못 읽었다")
+    n = sum(got.values())
+    return result(C["V2-20"], run_id, 0, n, not n,
+                  [f"{k} {v:,}건" for k, v in sorted(got.items())][:6])
 
 
 def _not_null_check(conn, run_id):

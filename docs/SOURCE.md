@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 228개 · 총 84,236줄
+파일 228개 · 총 84,351줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -11,7 +11,7 @@
 | `report/screens/build.py` | 4,755 | 화면 데이터 생성. |
 | `web/views.py` | 3,136 | 화면 어댑터 (14장 STEP 142 · 152). |
 | `validate/v3_logic.py` | 2,337 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
-| `collect/runner.py` | 2,189 | 수집 실행 규칙. |
+| `collect/runner.py` | 2,213 | 수집 실행 규칙. |
 | `store/core.py` | 2,108 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,276 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
@@ -21,9 +21,9 @@
 | `store/adminops.py` | 1,104 | 관리자 서버 계층 — 실행 지시 · 쿼리 · API 조회 · 개발 요청 · 미리보기. |
 | `tools/verify_axes.py` | 1,084 | 손계산 대조 — 축마다 표본 3건 (개정 329 전수검증 · V3-66). |
 | `report/render.py` | 1,042 | 리포트 생성 (L9). |
+| `validate/v2_load.py` | 955 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `tests/test_score.py` | 943 | 7장 판정·채점 시험. |
 | `validate/v10_admin.py` | 936 | V10 관리자 검증. |
-| `validate/v2_load.py` | 921 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `report/screens/views.py` | 920 | 화면 전용 DTO. |
 | `validate/v1_collect.py` | 910 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
@@ -47,8 +47,8 @@
 | `tools/load_raw.py` | 490 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 476 | CarWatch v2 진입점. |
+| `report/screens/fetch.py` | 435 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
-| `report/screens/fetch.py` | 416 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
@@ -108,6 +108,7 @@
 | `parse/lexus_certified/mapping.py` | 195 | 렉서스 인증중고 목록·상세 → `core_listing` 칸 (규격 `LEXUS_CERTIFIED_API.md` 2장). |
 | `tools/sync_target_map.py` | 195 | 차종 대응표 → `dict_enum` (명령서 `ORDER_20260822_r515.md` 2a장 · 개정 540). |
 | `analyze/axis/value.py` | 188 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
+| `store/rawfile.py` | 187 | 1걸음 — ★ **받은 것을 파일로만 쓴다.  ★ DB 를 안 연다.** |
 | `tools/make_field_map.py` | 187 | ★★★★★★ 09-05 — ★ **사이트별 매핑표를 가이드가 만든다** (마스터 지시). |
 | `parse/kbchachacha/inspection.py` | 183 | KB차차차 성능점검부 → ★ **부위별** (규격 `KBCHACHACHA_API.md` 3장 · 268~269줄). |
 | `parse/importer.py` | 182 | 반입 입력 해석 (13장 STEP 136a · 136b). |
@@ -137,7 +138,6 @@
 | `tools/fetch_missing_catalog.py` | 156 | ★★★★★ 08-31 (로드맵 차례 5 · `V1-23`) — ★ **안 부른 카탈로그를 받는다.** |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
 | `tools/daily_enqueue.py` | 153 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
-| `store/rawfile.py` | 149 | 1걸음 — ★ **받은 것을 파일로만 쓴다.  ★ DB 를 안 연다.** |
 | `collect/sweep.py` | 147 | 철학 ② — ★ **팔린 것은 대조하고 치운다** (마스터 확정 09-03 · `S46-267`). |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
 | `analyze/axis/history.py` | 143 | ③ 이력 80 — 어떻게 쓰였나 (docs/ref/F-scoring.md ③). |
@@ -267,10 +267,10 @@ _rows_per_page:33  _cfg:37  _versions:42  page_extras:61  _points:70  page:92  s
 _file_output_checks:384  _conflict_checks:437  _diagnosis_count_check:461  _sort_determinism:478  _warning_contract_checks:500  _list_observed_source_check:595  _facet_reconcile_check:625  _record_mismatch_check:669  _curve_table_check:699  _special_null_check:772  _grade_base_checks:800  _checks_cfg:893  _labels_cfg:907  _unknown_mark_checks:915  _grade_cut_checks:966  _points_cap_checks:1097  _worse_of_checks:1149  _checks_json:1211  _value_curve_checks:1222  _group_sum_checks:1327  _mapped_other_check:1438  _denominator_check:1465  _core_axis_check:1493  _rental_cross_check:1514  _why_cheap_check:1552  _source_before_value_check:1593  _absolute_cut_check:1628  _spec_files:1658  _confirm_ratio_check:1668  _warranty_checks:1718  _spec_axis_check:1752  _site_axis_checks:1793  _rendered_why:1850  _rendered_listings:1860  _fill_gap_check:1870  _points_sum_check:1903  _market_gap_check:1928  _bonus_checks:1984  _trim_price_check:2088  run:2145  _shuffle_check:2280  _halt_dict_check:2305  _ensure_tmp:2334
 ```
 
-### `collect/runner.py` — 2,189줄
+### `collect/runner.py` — 2,213줄
 
 ```
-CollectGroup:67  load_targets:91  collect_groups:116  facet_axes:184  aspect_names:205  check_facet_axes:209  interpret_failure:223  _detail_calls:252  collect_check:266  FailStreak:336  Pace:370  _sleep:420  _log_request:435  _save_issues:446  _may_fetch:457  _master_line_only:478  make_executors:493  classify_in_group:1331  _query_key:1360  _group_of:1368  _fuel_of:1383  _badge_of:1389  _pages_for:1395  _dicts:1409  _option_medians:1451  _lease_types:1497  _market_medians:1511  _trim_ladders:1568  _option_base:1585  _site_grade_rules:1615  _cfg_num:1634  _dimensions:1650  _listing_config:1679  _listing_values:1713  _option_money:1732  _owned_months:1751  _option_of:1763  _market_of:1771  _group_sums:1781  _origin_lend_table:1809  _origin_keys:1839  _origin_lent:1858  make_score_executors:1878  make_validate_executor:2118  make_registry_executor:2160
+CollectGroup:67  load_targets:91  collect_groups:116  facet_axes:184  aspect_names:205  check_facet_axes:209  interpret_failure:223  _detail_calls:252  collect_check:266  FailStreak:336  Pace:370  _sleep:420  _log_request:435  _save_issues:446  _may_fetch:457  _master_line_only:478  make_executors:493  classify_in_group:1355  _query_key:1384  _group_of:1392  _fuel_of:1407  _badge_of:1413  _pages_for:1419  _dicts:1433  _option_medians:1475  _lease_types:1521  _market_medians:1535  _trim_ladders:1592  _option_base:1609  _site_grade_rules:1639  _cfg_num:1658  _dimensions:1674  _listing_config:1703  _listing_values:1737  _option_money:1756  _owned_months:1775  _option_of:1787  _market_of:1795  _group_sums:1805  _origin_lend_table:1833  _origin_keys:1863  _origin_lent:1882  make_score_executors:1902  make_validate_executor:2142  make_registry_executor:2184
 ```
 
 ### `store/core.py` — 2,108줄
@@ -327,6 +327,12 @@ _spec_text:26  _grade_order:59  _not_ranked:72  spec_tables:86  _num:109  pick:1
 _labels:31  _site_blind_axes:36  _stamp:77  _curve_points:92  source_detail_url:135  _why_cheap_of:156  _scoring:197  _record_cols:208  record_rows:217  _penalty_rows:271  _market_pos:285  _site_badge:329  _axis_why:336  _raw_sections:366  _photo_why:376  _photo_urls:397  _purchase_costs:420  _unknown_axis_cfg:448  render_listing:471  axis_mark:649  source_label:674  _option_rows:722  _fetch_views:782  _strengths:797  _weaknesses:804  _pending_best:811  _cost_rows:844  _known_issues:865  _diagnosis_view:883  render_target:894  render_run:975  render_halt:1017  _j:1035
 ```
 
+### `validate/v2_load.py` — 955줄
+
+```
+DayGapReport:163  GapCause:176  run:182  _surrogate_key_checks:360  _raw_says_ok_check:447  _not_null_check:468  _chained_subscript_check:485  _Boom:533  _salvage_check:541  _table_exists:582  _exception_shape_checks:588  _schema_sync_check:654  _pii_access_check:691  gap_alerts:730  diff_prev_day:746  explain_gap:768  _pii_column_check:800  _secret_key_check:818  _parser_common_fields_check:856  _null_target_not_judged_check:907  _null_target_visible_check:932
+```
+
 ### `tests/test_score.py` — 943줄
 
 ```
@@ -337,12 +343,6 @@ check:36  fx:42  snap:46  ctx:66  full_verdict:87  test_denominator:100  test_co
 
 ```
 _sources:212  _admin_guard_checks:233  _sql_strings:278  _schedule_checks:290  _query_error_checks:333  run:434  _session_checks:579  _pii_query_check:659  _scratch:706  _dict_reason_check:721  _dict_source_shown_check:737  _automation_checks:755  _queue_consumer_check:888  _queue_stale_shown_check:917  _ensure_tmp:933
-```
-
-### `validate/v2_load.py` — 921줄
-
-```
-DayGapReport:151  GapCause:164  run:170  _surrogate_key_checks:347  _not_null_check:434  _chained_subscript_check:451  _Boom:499  _salvage_check:507  _table_exists:548  _exception_shape_checks:554  _schema_sync_check:620  _pii_access_check:657  gap_alerts:696  diff_prev_day:712  explain_gap:734  _pii_column_check:766  _secret_key_check:784  _parser_common_fields_check:822  _null_target_not_judged_check:873  _null_target_visible_check:898
 ```
 
 ### `report/screens/views.py` — 920줄
@@ -483,16 +483,16 @@ Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchRes
 load:51  make_context:56  _filter_targets:70  _steps_from:89  _adapter_for:119  cmd_collect:137  _grade_summary:218  cmd_admin_create:233  _collect_urls:250  _page_url:287  cmd_web:306  make_worker_ctx:346  make_worker_executors:352  cmd_delegate:397  _api_fetch:408  cmd_setup:418
 ```
 
+### `report/screens/fetch.py` — 435줄
+
+```
+_cfg:40  _col:44  _has_col:48  step_counts:52  queue:88  one_car:136  put_one:174  _parse_into:226  view_fetch:272  _last_run:317  save_last:331  _batch:349  _batch_said:362  eta_secs:369  _say_secs:379  _into_side:394
+```
+
 ### `report/views.py` — 419줄
 
 ```
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:267  ClassifySummary:274  PriceSummary:281  AxisStat:290  CoefficientChange:300  DictChangeSummary:310  TargetReport:318  RunStep:330  RunReport:345  HaltReport:356  FixAction:373  NotifyResult:383  ExportResult:396  display_value:405  display_points:415
-```
-
-### `report/screens/fetch.py` — 416줄
-
-```
-_cfg:40  _col:44  _has_col:48  step_counts:52  queue:81  one_car:122  put_one:160  _parse_into:207  view_fetch:253  _last_run:298  save_last:312  _batch:330  _batch_said:343  eta_secs:350  _say_secs:360  _into_side:375
 ```
 
 ### `web/template.py` — 406줄

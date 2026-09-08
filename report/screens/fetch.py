@@ -66,12 +66,19 @@ def step_counts(conn: sqlite3.Connection, site: str = "encar") -> list:
         elif not _has_col(conn, col):
             need = total
         else:
+            # ★ 09-08 — ★ **파일에 이미 있는 것은 안 센다** (v392 여쭐 것 2).
+            #   ★ 「받을 것」이 거짓이면 ★ 마스터께서 헛되이 도신다
+            from store.rawfile import have_ok
+
+            files = have_ok(site, st["kind"], ".")
             marks = ",".join("?" * len(DONE))
-            need = conn.execute(
-                f"SELECT COUNT(*) FROM core_listing WHERE site = ?"
-                f" AND status IN ('active','new','relisted')"
-                f" AND ({col} IS NULL OR {col} NOT IN ({marks}))",
-                (site, *DONE)).fetchone()[0]
+            need = sum(
+                1 for r in conn.execute(
+                    f"SELECT source_id FROM core_listing WHERE site = ?"
+                    f" AND status IN ('active','new','relisted')"
+                    f" AND ({col} IS NULL OR {col} NOT IN ({marks}))",
+                    (site, *DONE))
+                if str(r[0]) not in files)
         out.append({**st, "need": need, "total": total,
                     "pct": round((total - need) * 100 / total) if total else 0,
                     "done": need == 0})
@@ -99,11 +106,18 @@ def queue(conn: sqlite3.Connection, step: int, n: int = 500,
     else:
         marks = ",".join("?" * len(DONE))
         where, args = f"({col} IS NULL OR {col} NOT IN ({marks}))", list(DONE)
-    rows = conn.execute(
+    # ★★★★★★ 09-08 (v392 여쭐 것 2) — ★ **파일도 함께 본다.**
+    #   ★ DB 칸만 믿으면 ★ 어긋났을 때 화면도 같이 틀린다 —
+    #   ★ ★ 실측 09-08 — ★ 화면이 「8,684건 받아야」라 했는데 ★ 실제는 1,753 이었다.
+    #   ★ ★ ★ 마스터께서 그 말을 믿고 도셨으면 ★ 여섯 시간을 헛되이 쓰셨을 것이다
+    from store.rawfile import have_ok
+
+    files = have_ok(site, kind, root)
+    rows = [r for r in conn.execute(
         "SELECT source_id FROM core_listing WHERE site = ?"
         " AND status IN ('active','new','relisted')"
-        f" AND {where} ORDER BY listing_id LIMIT ?",
-        (site, *args, int(n))).fetchall()
+        f" AND {where} ORDER BY listing_id",
+        (site, *args)) if str(r[0]) not in files][:int(n)]
 
     # ★★★★★ 09-06 — ★ `adapters/` 를 ★ **안 부른다** (`V4-22` 의존 방향).
     #   ★ 주소는 ★ `config/endpoints.json` 의 ★ `base` ＋ `paths` 가 정본이다 (`S14`)
@@ -179,6 +193,11 @@ def put_one(conn: sqlite3.Connection, site: str, kind: str, source_id: str,
         status = "ok"
     save(site, kind, source_id, url, body or "", http_code=http_code,
          status=status, origin="browser", root=root)
+    # ★ 방금 파일을 하나 더 남겼다 — ★ 담아 둔 목록을 버린다.
+    #   ★ 아니면 ★ 다음 큐가 ★ 방금 받은 것을 또 준다
+    from store.rawfile import have_ok_forget
+
+    have_ok_forget()
     col = _col(kind)
     if _has_col(conn, col):
         # ★ 09-08 — ★ 여기서도 ★ 잘 받은 것을 되덮지 않는다 (S5 와 같은 잣대)

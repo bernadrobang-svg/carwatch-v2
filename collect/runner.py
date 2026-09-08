@@ -970,6 +970,16 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
         ).fetchone()[0]
         say("S5", f"이미 받은 상세 {_done:,}건은 다시 안 받는다 (철학 ①)",
             0, len(lids))
+        # ★ 09-08 — ★ **파일에 이미 있는 것**을 창구마다 한 번만 훑는다.
+        #   ★ 매물마다 훑으면 ★ 만 번을 훑는다 — ★ 한 번만 훑고 집합으로 쓴다
+        from store.rawfile import have_ok
+
+        _have_file = {k: have_ok(adapter.site_code, k, root_dir)
+                      for k in LISTING_ENDPOINTS}
+        say("S5", "파일에 이미 있는 것 "
+                  + " · ".join(f"{k} {len(v):,}" for k, v in _have_file.items()
+                               if v),
+            0, len(lids))
         for i, (lid, sid) in enumerate(lids, start=1):
             diag_grade = None
             # ★★★★★ 09-03 (가이드 지시 ①②) — ★ **창구는 어댑터가 말한다.**
@@ -996,6 +1006,20 @@ def make_executors(adapter, fetcher, clock, cfg, targets: dict,
                 from collect.pipeline import should_refetch
 
                 got = (have.get(lid) or {}).get(kind)
+                # ★★★★★★ 09-08 — ★ **파일도 본다.**  ★ DB 칸만 믿으면 안 된다.
+                #   ★ 실측 09-08 — ★ 원문 파일은 `ok` 인데 ★ DB 는 `error` 인 줄이
+                #     ★ ★ **8,450건**이었다.  ★ 그래서 ★ 이미 가진 상세를 다시 불러
+                #     ★ ★ ★ 09-03 하루에 ★ `407` 을 **127,129건** 쌓았다.
+                #   ★ 407 을 받으면 상태가 또 `error` 가 되어 ★ **영영 안 끝난다.**
+                #   ★ ★ 파일이 정본이다 (`S46-185`) — ★ 있으면 안 부르고 ★ 칸을 고친다
+                if got is None or should_refetch(got):
+                    if str(sid) in _have_file.get(kind, ()):
+                        conn.execute(
+                            f"UPDATE core_listing SET {kind}_status='ok'"
+                            " WHERE listing_id=?", (lid,))
+                        conn.commit()
+                        done_before += 1
+                        continue
                 if got is not None and not should_refetch(got):
                     # ★ 이미 답을 받았다.  「건너뛴」 것이 아니라
                     #   「받은 것」이다 — expected 에서도 뺀다

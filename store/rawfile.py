@@ -147,3 +147,41 @@ def walk(site: str | None = None, endpoint: str | None = None,
                         continue
                     out.append(os.path.join(ddir, n))
     return out
+
+
+# ★ 파일 훑기는 ★ 6초쯤 걸린다 (엔카 상세 18,000장).  ★ 화면 한 장에 다섯 번 부르면
+#   ★ ★ 31초다 — ★ 짧게 담아 둔다.  ★ 오래 담으면 ★ 방금 받은 것을 못 본다
+_HAVE_TTL_SEC = 60.0
+_HAVE_CACHE: dict = {}
+
+
+def have_ok_forget() -> None:
+    """담아 둔 것을 버린다 — ★ 방금 받았을 때 부른다."""
+    _HAVE_CACHE.clear()
+
+
+def have_ok(site: str, endpoint: str, root: str = ".") -> set:
+    """★ 그 창구를 ★ **이미 잘 받은** 매물번호 (09-08).
+
+    ★★★ 왜 필요한가 — ★ 「받았나」를 ★ DB 칸으로만 물으면 ★ 어긋난다.
+      ★ 실측 09-08 — ★ 원문 파일은 `ok` 인데 ★ DB 는 `error` 인 줄이 ★ **8,450건**.
+      ★ ★ 그래서 ★ `S5` 가 ★ 이미 가진 상세를 ★ **다시 불렀다** —
+      ★ ★ ★ 09-03 하루에만 ★ `407` 이 **127,129건**이다.
+      ★ ★ ★ ★ 407 을 받으면 ★ 상태가 다시 `error` 가 되어 ★ **영영 안 끝난다.**
+    ★ 그러므로 ★ **파일을 정본으로 본다** (`S46-185`) — ★ 파일이 있으면 안 부른다
+    """
+    import time as _t
+
+    key = (site, endpoint, root)
+    hit = _HAVE_CACHE.get(key)
+    if hit and _t.monotonic() - hit[0] < _HAVE_TTL_SEC:
+        return hit[1]
+    got = set()
+    for path in walk(site=site, endpoint=endpoint, root=root):
+        env = read(path) or {}
+        if str(env.get("status") or "") == "ok" and env.get("body"):
+            sid = env.get("source_id")
+            if sid:
+                got.add(str(sid))
+    _HAVE_CACHE[key] = (_t.monotonic(), got)
+    return got
