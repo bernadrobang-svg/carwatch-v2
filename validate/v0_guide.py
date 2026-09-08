@@ -7930,7 +7930,55 @@ def s46_293_tab3_filter_in_config():
     return True, f"탭 3 거를 조건 {len(f) - 1}가지가 설정에 있다"
 
 
+def s46_294_tab4_spec_is_stored():
+    """S46-294 — 추천4 규격이 설정에 있는가 (마스터가 09-07 에 주신 규격).
+
+    마스터가 이틀에 걸쳐 예순 대 넘게 걸러 얻은 기준이다.
+      감가 78% 이하(신차출고가 대비) · 2022년 5월 이후 · 8만km 이하 ·
+      단순교환까지(골격에 안 갔으면 통과) · 깡통도 후보 ·
+      진단 없어도 감가 70% 아래면 후보 · 렌터카는 결격이 아님 ·
+      리스·렌트 승계는 뺀다.
+    정본은 docs/GV70_TAB4.md, 값은 config/targets.json 의 _탭4_규격 에 둔다.
+    """
+    raw = _read(ROOT / "config" / "targets.json")
+    if not raw:
+        return False, "targets.json 을 못 읽었다"
+    f = json.loads(raw).get("_탭4_규격")
+    if not f:
+        return False, "`_탭4_규격` 이 없다"
+    bad = [k for k in ("감가율", "감가율_분모", "연식", "주행", "사고",
+                       "옵션", "진단", "렌트", "리스렌트_승계",
+                       "총비용", "하체_낱말", "소모품") if not f.get(k)]
+    if bad:
+        return False, "빠진 것 — " + " · ".join(bad[:4])
+    if not (ROOT / "docs" / "GV70_TAB4.md").exists():
+        return False, "정본 `docs/GV70_TAB4.md` 가 없다"
+    return True, f"추천4 규격 {len(f) - 1}가지 · 하체 낱말 {len(f['하체_낱말'])}개"
+
+
+def s46_295_undercarriage_words():
+    """S46-295 — 정비이력 하체 낱말이 다 있는가 (마스터 규격 4-2).
+
+    성능점검부는 골격만 본다. 하체·기계는 정비이력에만 남는다.
+      110루9860 — 점검부는 「골격 무사고」인데 정비이력에
+      너클 앞뒤 교환 + 서스펜션 + ECU, 부품값 628만이었다.
+    이 낱말이 정비이력에 있으면 점검부가 무사고여도 경고한다.
+    """
+    raw = _read(ROOT / "config" / "targets.json")
+    if not raw:
+        return False, "targets.json 을 못 읽었다"
+    got = set((json.loads(raw).get("_탭4_규격") or {}).get("하체_낱말") or [])
+    need = {"너클", "로워암", "래터럴암", "어퍼암", "서스펜션", "쇽업소버",
+            "스트럿", "스티어링기어", "휠얼라인먼트", "ABS", "캘리퍼", "ECU"}
+    miss = sorted(need - got)
+    if miss:
+        return False, "빠진 낱말 — " + " · ".join(miss[:6])
+    return True, f"하체 낱말 {len(got)}개가 다 있다"
+
+
 CHECKS = (
+    ("S46-294", "추천4 규격이 설정에 있는가", s46_294_tab4_spec_is_stored),
+    ("S46-295", "정비이력 하체 낱말이 다 있는가", s46_295_undercarriage_words),
     ("S46-293", "탭 3 거를 조건이 설정에 있는가", s46_293_tab3_filter_in_config),
     ("S46-292", "탭 3 이 마스터의 차종만 내는가", s46_292_tab3_is_master_car_only),
     ("S46-291", "시안 CSS 가 app.css 에 옮겨졌는가", s46_291_mockup_css_reaches_appcss),

@@ -190,6 +190,7 @@ python3 run.py web --port N
 | `/why/{listing_id}` | GET | `view_why` | anonymous | — | 구현 |
 | `/notready` | GET | `view_notready` | anonymous | — | 구현 |
 | ★ `/track` | GET | `view_track` | anonymous | — | 구현 |
+| `/recommend?tab=4` | GET | `view_gv70` | anonymous | — | GV70 전용. 시안 `v4m_gv70_시안.html` · 규격 `docs/GV70_TAB4.md` (09-07) |
 | ★★ `/fetch` | GET | `view_fetch` | admin | — | 마스터 회선으로 받기. 시안 `v4m_fetch_시안.html` (09-06) |
 | `/fetch/queue` | GET | `api_fetch_queue` | admin | — | 받아야 할 주소 목록을 JSON 으로 준다 (`step`·`n`) |
 | `/fetch/put` | POST | `api_fetch_put` | admin | csrf | 폰이 받은 응답 원문을 올린다 |

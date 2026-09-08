@@ -1,0 +1,300 @@
+<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>추천 4 · GV70 (시안)</title>
+<!-- 시안 · SPEC-2026.09.07 · 규격 docs/GV70_TAB4.md (마스터가 쓰신 것)
+     마스터가 이틀에 걸쳐 예순 대 넘게 걸러 얻은 기준을 화면 하나로 옮긴다 -->
+<style>
+:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
+ --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
+ --blue:#3182f6;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1100px;margin:0 auto;padding:12px 14px 96px}
+.v3-wrap *{height:auto;overflow:visible}
+.v4-top{display:flex;justify-content:space-between;align-items:center;
+ padding:10px 0;border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:14px 0 4px}
+.v3-sub{color:var(--dim);font-size:13px;margin:0 0 12px}
+.v4-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.v4-tabs a{padding:7px 12px;border-radius:16px;border:1px solid var(--line);
+ background:var(--surface2);color:var(--dim);text-decoration:none;
+ white-space:nowrap;font-size:13px}
+.v4-tabs a.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+
+/* 기준 띠 — 마스터가 쓰신 일곱 */
+.g4-rule{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.g4-rule b{font-size:12px;color:var(--faint);display:block;margin-bottom:6px}
+.g4-rule span{display:inline-block;padding:3px 9px;border-radius:12px;margin:0 5px 5px 0;
+ border:1px solid var(--line2);color:var(--dim);font-size:11px;white-space:nowrap}
+.g4-rule span.key{border-color:var(--amber);color:var(--amber);font-weight:700}
+.g4-note{font-size:11px;color:var(--faint);margin:4px 0 0}
+.g4-count{font-size:12px;color:var(--dim);margin:0 0 12px}
+.g4-count b{color:var(--text);font-family:var(--mono)}
+
+/* 카드 */
+.g4-card{border:1px solid var(--line);border-radius:10px;background:var(--surface);
+ padding:12px;margin-bottom:12px}
+.g4-card.pick{border-left:4px solid var(--ok)}
+.g4-card.warn{border-left:4px solid var(--amber)}
+.g4-card.out{border-left:4px solid var(--no)}
+.g4-head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.g4-price{font-size:20px;font-weight:800;font-family:var(--mono)}
+.g4-name{font-weight:700}
+.g4-site{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
+ border:1px solid var(--blue);color:var(--blue);white-space:nowrap}
+.g4-dx{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--ok);color:var(--ok);white-space:nowrap}
+.g4-dx.none{border-color:var(--no);color:var(--no)}
+.g4-sell{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:800;
+ border:1px solid var(--no);color:var(--no)}
+
+/* 판단이 갈리는 네 줄 — 규격 3장 */
+.g4-four{margin:10px 0 0;border-top:1px solid var(--line);padding-top:9px}
+.g4-row{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--dim);
+ padding:4px 0;border-bottom:1px dashed var(--line)}
+.g4-row:last-child{border-bottom:none}
+.g4-row b{color:var(--text);font-family:var(--mono)}
+.g4-row b.ok{color:var(--ok)}
+.g4-row b.no{color:var(--no)}
+.g4-row b.q{color:var(--faint)}
+.g4-row b.grey{color:var(--faint);text-decoration:line-through}
+.g4-say{font-size:11px;color:var(--amber);margin:6px 0 0}
+.g4-say.bad{color:var(--no)}
+
+/* 옵션 패키지 */
+.g4-pkgs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.g4-pkg{padding:3px 9px;border-radius:12px;border:1px solid var(--line2);
+ font-size:11px;color:var(--dim)}
+.g4-pkg b{color:var(--text);font-family:var(--mono)}
+
+/* 총비용 */
+.g4-total{margin-top:10px;border-top:1px solid var(--line);padding-top:9px}
+.g4-trow{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);padding:2px 0}
+.g4-trow b{font-family:var(--mono);color:var(--text)}
+.g4-trow.sum b{color:var(--amber);font-size:16px;font-weight:800}
+
+/* 갈래별 막대 다섯 */
+.g4-bars{margin-top:10px;border-top:1px solid var(--line);padding-top:9px}
+.g4-brow{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--dim);margin-bottom:4px}
+.g4-brow i{flex:1;height:6px;border-radius:3px;background:var(--surface2);
+ border:1px solid var(--line);display:block}
+.g4-brow i em{display:block;height:100%;border-radius:3px;background:var(--blue)}
+.g4-brow i em.hi{background:var(--ok)}
+.g4-brow span:first-child{width:52px;flex:0 0 auto}
+.g4-brow span:last-child{width:56px;flex:0 0 auto;text-align:right;font-family:var(--mono)}
+.g4-best{color:var(--ok);font-weight:700}
+.g4-grade{padding:2px 9px;border-radius:12px;border:1px solid currentColor;
+ font-weight:800;font-size:12px}
+.g4-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.g4-btn{padding:6px 11px;border-radius:8px;border:1px solid var(--line2);
+ background:var(--surface2);color:var(--text);text-decoration:none;font-size:13px}
+.g4-btn.ask{border-color:var(--amber);color:var(--amber);font-weight:700}
+.g4-group{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin:18px 0 10px;
+ padding-bottom:6px;border-bottom:2px solid var(--line2)}
+.g4-group h2{font-size:15px;margin:0}
+.g4-group.on h2{color:var(--ok)}
+.g4-group.off h2{color:var(--faint)}
+.g4-group span{font-size:12px;color:var(--dim)}
+.g4-lead{border-left:3px solid var(--blue);background:var(--surface2);
+ padding:10px 12px;margin:0 0 12px;font-size:12px;color:var(--dim);line-height:1.7}
+.g4-lead b{color:var(--text)}
+nav.v3-bot{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);
+ border-top:1px solid var(--line);padding:6px 0}
+nav.v3-bot a{flex:1;text-align:center;color:var(--dim);text-decoration:none;
+ font-size:12px;padding:6px 0}
+nav.v3-bot a.on{color:var(--amber);font-weight:700}
+</style>
+
+<div class="v3-wrap">
+<!-- 반드시 있는 것 (규격 docs/GV70_TAB4.md)
+     기준 일곱 · 판단 네 줄(감가율·주행/등록일·사고·진단)
+     교환/판금/골격을 갈라 낸다 · 정비이력 하체 낱말 경고
+     옵션은 패키지 이름＋정가 · 깡통도 후보
+     총비용(차값＋8.5%＋소모품) · 갈래별 막대 다섯 · 갈래별 1등
+     리스·렌트 승계는 뺀다 (렌터카 이력은 결격 아님)
+     모르는 것은 「미조회」 — 지어내지 않는다 -->
+
+<div class="v4-top"><span><b>CarWatch</b></span><span class="v3-sub">master · admin</span></div>
+
+<h1>GV70 2.5T</h1>
+<p class="v3-sub">마스터 기준으로 걸렀습니다 — 감가 78% 이하 · 2022년 5월↑ · 8만km 이하 · 골격 무사고</p>
+
+<p class="v4-tabs">
+  <a href="?tab=1">내 기준에 가까운 차</a>
+  <a href="?tab=2">값 → 등급 → 취향</a>
+  <a href="?tab=3">분석</a>
+  <a class="on" href="?tab=4">GV70</a>
+</p>
+
+<div class="g4-rule">
+  <b>거른 기준</b>
+  <span class="key">감가 78% 이하</span>
+  <span class="key">2022년 5월 ↑</span>
+  <span class="key">8만km 이하</span>
+  <span class="key">골격 무사고</span>
+  <span>단순교환까지 봄</span>
+  <span>깡통도 후보</span>
+  <span>진단 없어도 감가 70%↓면 후보</span>
+  <span>리스·렌트 승계 제외</span>
+  <p class="g4-note">렌터카 이력은 결격이 아닙니다. 리본카·K카는 렌터카를 정리해 팔아 값이 쌉니다.</p>
+</div>
+
+<p class="g4-count">GV70 2.5T <b>879대</b> 중 <b>141대</b>가 값·연식·주행을 넘었고,
+  그중 상세를 받은 것은 <b>31대</b>입니다 — 나머지 <b>110대</b>는 아직 못 받았습니다</p>
+
+<div class="g4-group on"><h2>후보</h2><span>6대 · 총비용 낮은 순</span></div>
+
+<div class="g4-card pick">
+  <div class="g4-head">
+    <span class="g4-price">3,850만</span>
+    <span class="g4-grade" style="color:var(--ok)">B</span>
+    <span class="g4-name">GV70 2.5T AWD</span>
+    <span class="g4-site">엔카</span>
+    <span class="g4-dx">엔카진단+</span>
+  </div>
+  <div class="g4-four">
+    <div class="g4-row"><span>값 / 신차출고가 / 감가율</span>
+      <b>3,850만</b> <b>5,210만</b> <b class="ok">73.9%</b></div>
+    <div class="g4-row"><span>주행 / 최초등록</span>
+      <b class="ok">4.2만km</b> <b class="ok">2022-11</b></div>
+    <div class="g4-row"><span>사고</span>
+      <b class="ok">교환 0곳</b> <b>판금 1곳 (뒷휀더)</b> <b class="ok">골격 무사고</b>
+      <b>내차 1회 / 180만</b> <b class="ok">상대차 0회</b></div>
+    <div class="g4-row"><span>진단 / 환불</span>
+      <b class="ok">엔카진단+</b> <b>계약금 30만 · 7일</b></div>
+  </div>
+  <div class="g4-pkgs">
+    <span class="g4-pkg">파퓰러 패키지Ⅰ <b>420만</b></span>
+    <span class="g4-pkg">시그니처 디자인 셀렉션Ⅰ <b>230만</b></span>
+    <span class="g4-pkg">19인치 미쉐린 + 모노블럭 4P <b>100만</b></span>
+  </div>
+  <div class="g4-total">
+    <div class="g4-trow"><span>차값</span><b>3,850만</b></div>
+    <div class="g4-trow"><span>이전등록비 · 매도비 (8.5%)</span><b>327만</b></div>
+    <div class="g4-trow"><span>소모품 — 아직 아닙니다</span><b class="ok">0</b></div>
+    <div class="g4-trow sum"><span>총비용</span><b>4,177만</b></div>
+  </div>
+  <div class="g4-bars">
+    <div class="g4-brow"><span>값</span><i><em style="width:71%"></em></i><span>218/307</span></div>
+    <div class="g4-brow"><span>상태</span><i><em class="hi" style="width:84%"></em></i><span class="g4-best">243/289 ★</span></div>
+    <div class="g4-brow"><span>이력</span><i><em style="width:76%"></em></i><span>45/59</span></div>
+    <div class="g4-brow"><span>보증</span><i><em style="width:80%"></em></i><span>72/90</span></div>
+    <div class="g4-brow"><span>취향</span><i><em style="width:64%"></em></i><span>106/165</span></div>
+    <div class="g4-brow"><span><b>총점</b></span><i><em class="hi" style="width:75%"></em></i><span><b>684/910</b></span></div>
+  </div>
+  <p class="g4-say">상태 1등입니다. 보증이 <b>2027.07 또는 2.8만km — km가 먼저 옵니다</b>.</p>
+  <div class="g4-acts">
+    <a class="g4-btn" href="/detail/1">상세 ▸</a>
+    <a class="g4-btn" href="#">엔카 ↗</a>
+    <a class="g4-btn ask" href="#">분석 맡기기</a>
+    <a class="g4-btn" href="#">비교 담기</a>
+  </div>
+</div>
+
+<div class="g4-card warn">
+  <div class="g4-head">
+    <span class="g4-price">3,860만</span>
+    <span class="g4-grade" style="color:var(--amber)">C</span>
+    <span class="g4-name">GV70 2.5T 2WD</span>
+    <span class="g4-site">K카</span>
+    <span class="g4-dx">K카 직영</span>
+  </div>
+  <div class="g4-four">
+    <div class="g4-row"><span>값 / 신차출고가 / 감가율</span>
+      <b>3,860만</b> <b>4,460만</b> <b class="ok">86.5%</b></div>
+    <div class="g4-row"><span>주행 / 최초등록</span>
+      <b class="ok">3.1만km</b> <b class="ok">2023-02</b></div>
+    <div class="g4-row"><span>사고</span>
+      <b class="ok">교환 0곳</b> <b class="ok">판금 0곳</b> <b class="ok">골격 무사고</b>
+      <b class="ok">내차 0회</b></div>
+    <div class="g4-row"><span>진단 / 환불</span>
+      <b class="ok">K카 직영</b> <b>전액 선납 후 3일</b></div>
+  </div>
+  <div class="g4-pkgs"><span class="g4-pkg">선택 옵션 없음 (깡통)</span></div>
+  <div class="g4-total">
+    <div class="g4-trow"><span>차값</span><b>3,860만</b></div>
+    <div class="g4-trow"><span>이전등록비 · 매도비 (8.5%)</span><b>328만</b></div>
+    <div class="g4-trow sum"><span>총비용</span><b>4,188만</b></div>
+  </div>
+  <p class="g4-say">위 김포 차와 <b>10만원</b> 차이인데 <b>옵션이 750만</b> 적습니다.
+    깡통이라 뺄 일은 아니지만, 같은 값이면 위가 낫습니다.</p>
+  <div class="g4-acts">
+    <a class="g4-btn" href="/detail/2">상세 ▸</a>
+    <a class="g4-btn" href="#">K카 ↗</a>
+    <a class="g4-btn ask" href="#">분석 맡기기</a>
+  </div>
+</div>
+
+<div class="g4-group off"><h2>거른 것</h2><span>55대 · 왜 걸렀는지 적었습니다</span></div>
+
+<div class="g4-card out">
+  <div class="g4-head">
+    <span class="g4-price">3,180만</span>
+    <span class="g4-name">GV70 2.5T AWD</span>
+    <span class="g4-site">엔카</span>
+    <span class="g4-dx none">진단 없음</span>
+  </div>
+  <div class="g4-four">
+    <div class="g4-row"><span>값 / 신차출고가 / 감가율</span>
+      <b>3,180만</b> <b>4,820만</b> <b class="no">66.0%</b></div>
+    <div class="g4-row"><span>주행 / 최초등록</span>
+      <b class="ok">5.8만km</b> <b class="ok">2022-07</b></div>
+    <div class="g4-row"><span>사고</span>
+      <b class="no">교환 3곳 (문·후드·펜더)</b> <b class="no">골격 B랭크</b>
+      <b class="no">내차 2회 / 1,240만</b></div>
+    <div class="g4-row"><span>진단 / 환불</span>
+      <b class="no">없음</b> <b class="q">미조회</b></div>
+  </div>
+  <p class="g4-say bad">감가가 큽니다. 사고 이력을 확인하십시오 — <b>골격 B랭크</b>라 뺐습니다.</p>
+  <div class="g4-acts"><a class="g4-btn" href="/detail/3">상세 ▸</a></div>
+</div>
+
+<div class="g4-card out">
+  <div class="g4-head">
+    <span class="g4-price">3,420만</span>
+    <span class="g4-name">GV70 2.5T AWD</span>
+    <span class="g4-site">리본카</span>
+    <span class="g4-dx">리본카 RQI</span>
+  </div>
+  <div class="g4-four">
+    <div class="g4-row"><span>값 / 신차출고가 / 감가율</span>
+      <b>3,420만</b> <b>4,910만</b> <b class="ok">69.7%</b></div>
+    <div class="g4-row"><span>주행 / 최초등록</span>
+      <b class="ok">6.4만km</b> <b class="ok">2022-09</b></div>
+    <div class="g4-row"><span>사고</span>
+      <b class="ok">교환 0곳</b> <b class="ok">골격 무사고</b>
+      <b class="ok">내차 0회</b></div>
+    <div class="g4-row"><span>정비이력</span>
+      <b class="no">너클 앞뒤 교환 · 서스펜션 · ECU — 부품값 628만</b></div>
+  </div>
+  <p class="g4-say bad">하체·조향 부품 수리 이력이 있습니다.
+    성능점검부는 <b>골격만</b> 봅니다. 하체·기계는 <b>정비이력에만</b> 남습니다.</p>
+  <div class="g4-acts"><a class="g4-btn" href="/detail/4">상세 ▸</a></div>
+</div>
+
+<div class="g4-card out">
+  <div class="g4-head">
+    <span class="g4-price">3,236만</span>
+    <span class="g4-name">GV70 2.5T AWD</span>
+    <span class="g4-site">엔카</span>
+    <span class="g4-sell">리스 승계</span>
+  </div>
+  <div class="g4-four">
+    <div class="g4-row"><span>표시가 / 승계금 / 월 납입</span>
+      <b>3,236만</b> <b class="no">1,525만</b> <b class="no">83.5만</b></div>
+  </div>
+  <p class="g4-say bad">표시가는 차값이 아닙니다. <b>내 차가 되지 않습니다.</b></p>
+  <div class="g4-acts"><a class="g4-btn" href="?hide=5">이런 것 숨기기</a></div>
+</div>
+
+<div class="g4-lead">감가율은 <b>신차정가가 아니라 신차출고가</b>(옵션 포함)로 잽니다.
+  신차출고가가 없으면 <b>「신차가 미조회 — 감가율을 계산하지 않음」</b>으로 비웁니다.
+  「무사고」는 <b>골격 기준</b>입니다. 외판·하체는 위 줄을 보십시오.</div>
+
+<nav class="v3-bot">
+  <a href="/listings">매물</a><a href="/watch">관심</a><a href="/track">추적</a>
+  <a class="on" href="/recommend">추천</a><a href="/status">현황</a><a href="/admin">관리</a>
+</nav>
+</div>
+</html>
