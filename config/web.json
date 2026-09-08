@@ -549,8 +549,8 @@
     },
     {
       "n": "4",
-      "label": "GV70 · X3",
-      "template": "twocars.html",
+      "label": "GV70",
+      "template": "gv70.html",
       "targets": [
         "GV70_25T",
         "X3_IMPORT"
@@ -698,5 +698,21 @@
     "thin_points": 700,
     "near_max": 30,
     "_near_max_why": "★ 「하나가 아쉬운 차」를 ★ **지우지 않는다** (마스터 확정) — ★ 다만 ★ 1,430장을 한 쪽에 다 그리면 ★ 2.7MB 라 ★ 화면이 못 쓴다 (09-06 실측). ★ **아쉬운 수가 적은 것부터** 세우고 ★ 이만큼만 그린다. ★ 전체 수는 ★ 화면에 그대로 적는다 — ★ 숨기는 것이 아니다"
+  },
+  "_note_tab4_gv70": "★★★★★ 09-08 r1206 M — ★ 추천4 GV70 전용 화면의 ★ **잣대 수**. ★ 뜻과 까닭은 ★ config/targets.json 의 `_탭4_규격` 과 docs/GV70_TAB4.md 가 정본이다. ★ 여기는 ★ 코드가 재는 데 쓰는 ★ **수**만 둔다 (S14 — 코드에 안 박는다)",
+  "tab4_gv70": {
+    "target": "GV70_25T",
+    "depreciation_max_pct": 78,
+    "depreciation_no_dx_pct": 70,
+    "accident_signal_lo_pct": 65,
+    "accident_signal_hi_pct": 68,
+    "year_from": "2022-05",
+    "mileage_max_km": 80000,
+    "fee_pct": 8.5,
+    "tire_from_km": 45000,
+    "tire_won": 1350000,
+    "brake_from_km": 50000,
+    "brake_won": 400000,
+    "shown": 20
   }
 }

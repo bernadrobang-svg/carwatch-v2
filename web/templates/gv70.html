@@ -1,0 +1,99 @@
+<!-- ★★★★★★★ 09-08 (r1206 M) — ★ **추천 탭 4 — GV70 전용**
+     ★ 정본 `docs/GV70_TAB4.md` · 값 `config/targets.json` `_탭4_규격`
+     ★ 시안 `ref/screens/v4m_gv70_시안.html` (가이드 09-07) · CSS `app.css` (`.g4-*`)
+     ★ 마스터께서 이틀에 걸쳐 예순 대 넘게 걸러 얻은 기준이다
+
+     ★★ 개발측이 채우는 값 —
+       `tabs` `head` `sub` · `rule[]`(`label`·`key`) · `note`
+       `count`(`all`·`passed`·`detailed`·`missing`)
+       `rows[]` — listing_id · price · grade · name · site · dx · dx_ok · pick
+         four[] (`label` ＋ `cells[{v, cls}]`)   ★ 판단 네 줄
+         pkgs[] (`label`·`won`) · total[] (`label`·`v`·`cls`)
+         bars[] (`label`·`pct`·`said`·`best`·`hi`) · say
+     ★★★ 모르는 것은 ★ 「미조회」 — ★ 지어내지 않는다 (규격 13장) -->
+
+<h1>{{ head }}</h1>
+<p class="v3-sub">{{ sub }}</p>
+
+<p class="sitebar picktabs">
+  {% for t in tabs %}<a class="btn{% if t.on %} on{% endif %}"
+    href="/recommend?tab={{ t.n | url }}">{{ t.label }}</a>{% endfor %}
+</p>
+
+<div class="g4-rule">
+  <b>거른 기준</b>
+  {% for r in rule %}<span class="{{ r.key }}">{{ r.label }}</span>{% endfor %}
+  <p class="g4-note">{{ note }}</p>
+</div>
+
+<p class="g4-count">{{ head }} <b>{{ count.all | num }}대</b> 중
+  <b>{{ count.passed | num }}대</b>가 값·연식·주행을 넘었고,
+  그중 상세를 받은 것은 <b>{{ count.detailed | num }}대</b>입니다 —
+  나머지 <b>{{ count.missing | num }}대</b>는 아직 못 받았습니다</p>
+
+<div class="g4-group on"><h2>후보</h2>
+  <span>{{ count.shown | num }}대 · 총비용 낮은 순</span></div>
+
+{% if !rows %}
+<p class="cond what">기준을 다 넘은 차가 <strong>아직 없습니다</strong>.
+  상세를 더 받으면 채워집니다 — 지금 못 받은 것이
+  <strong>{{ count.missing | num }}대</strong>입니다.</p>
+{% endif %}
+
+{% for r in rows %}
+<div class="g4-card {% if r.pick %}pick{% endif %}">
+  <div class="g4-head">
+    <span class="g4-price">{{ r.price }}</span>
+    <span class="g4-grade">{{ r.grade }}</span>
+    <span class="g4-name">{{ r.name }}</span>
+    <span class="g4-site">{{ r.site }}</span>
+    <span class="g4-dx {% if !r.dx_ok %}no{% endif %}">{{ r.dx }}</span>
+  </div>
+
+  <!-- ★ 판단 네 줄 — 감가율 · 주행/등록일 · 사고 · 진단/환불 -->
+  <div class="g4-four">
+    {% for f in r.four %}
+    <div class="g4-row"><span>{{ f.label }}</span>
+      {% for c in f.cells %}<b class="{{ c.cls }}">{{ c.v }}</b>{% endfor %}</div>
+    {% endfor %}
+  </div>
+
+  <!-- ★ 옵션은 ★ 패키지 이름 ＋ 정가 (M-7).  ★ 깡통도 후보다 -->
+  {% if r.pkgs %}
+  <div class="g4-pkgs">
+    {% for p in r.pkgs %}<span class="g4-pkg">{{ p.label }}
+      <b>{{ p.won }}</b></span>{% endfor %}
+  </div>
+  {% endif %}
+  {% if !r.pkgs %}<p class="g4-note">선택 옵션 {{ r.pkg_note }}</p>{% endif %}
+
+  <!-- ★ 총비용 = 차값 ＋ 8.5% ＋ 소모품 (M-11) -->
+  <div class="g4-total">
+    {% for t in r.total %}<div class="g4-trow {{ t.cls }}"><span>{{ t.label }}</span>
+      <b>{{ t.v }}</b></div>{% endfor %}
+  </div>
+
+  <!-- ★ 갈래별 막대 다섯 ＋ 갈래별 1등 (M-12) -->
+  <div class="g4-bars">
+    {% for b in r.bars %}
+    <div class="g4-brow"><span>{{ b.label }}</span>
+      <i><em class="{{ b.hi }}" data-pct="{{ b.pct }}"></em></i>
+      <span class="{% if b.best %}g4-best{% endif %}">{{ b.said }}</span></div>
+    {% endfor %}
+  </div>
+
+  <p class="g4-say">{{ r.say }}</p>
+  <div class="g4-acts">
+    <a class="g4-btn" href="/detail/{{ r.listing_id }}">상세 ▸</a>
+    {% if r.url %}<a class="g4-btn" href="{{ r.url }}"
+      target="_blank" rel="noopener">{{ r.site }} ↗</a>{% endif %}
+    <a class="g4-btn" href="/compare?add={{ r.listing_id }}">비교 담기</a>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+/* ★ 막대 너비는 값이다 — ★ 인라인 style 로 박지 않는다 (V11-59 가 잡는다) */
+Array.prototype.forEach.call(document.querySelectorAll("em[data-pct]"),
+  function (i) { i.style.width = i.getAttribute("data-pct") + "%"; });
+</script>

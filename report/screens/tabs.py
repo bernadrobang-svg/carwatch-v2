@@ -1202,3 +1202,276 @@ def _source_url_of(site, sid, paired, root):
         return _source_url(site, sid, _site_detail_urls(root), paired)
     except (TypeError, ValueError, KeyError):
         return None
+
+
+# ── 탭 4 — GV70 전용 (지시 r1206 M · 규격 `docs/GV70_TAB4.md`) ────────────
+# ★★★ 마스터께서 ★ **이틀에 걸쳐 예순 대 넘게** 걸러 얻은 기준이다.
+#   ★ 값은 ★ `config/web.json` `tab4_gv70` · 뜻은 ★ `targets.json` `_탭4_규격` 이 정본.
+# ★★ 모르는 것은 ★ 「미조회」다 — ★ 지어내지 않는다 (규격 13장).
+#   ★ 특히 ★ **감가율의 분모는 신차출고가**다 — ★ 없으면 비운다 (M-2)
+GROUPS = (("값", "value."), ("상태", "state."), ("이력", "history."),
+          ("보증", "warranty."), ("취향", "taste."))
+
+
+def _t4(root: str = ".") -> dict:
+    return (load_config(f"{root}/config/web.json") or {}).get("tab4_gv70") or {}
+
+
+def _dep_pct(now, origin):
+    """감가율 = ★ 판매가 ÷ **신차출고가**.  ★ 분모가 없으면 ★ None(미조회)."""
+    if not now or not origin:
+        return None
+    return round(float(now) * 100 / float(origin), 1)
+
+
+def _fee(won, pct) -> int:
+    return round(float(won or 0) * float(pct) / 100)
+
+
+def _wear(km, cfg) -> tuple:
+    """소모품 예상비 (M-10).  ★ 주행을 모르면 ★ 「미조회」다."""
+    if km is None:
+        return None, "미조회"
+    got, say = 0, []
+    if km >= int(cfg.get("tire_from_km") or 45000):
+        got += int(cfg.get("tire_won") or 0)
+        say.append("타이어")
+    if km >= int(cfg.get("brake_from_km") or 50000):
+        got += int(cfg.get("brake_won") or 0)
+        say.append("브레이크")
+    return got, (" · ".join(say) if say else "아직 아닙니다")
+
+
+def view_gv70(conn: sqlite3.Connection, root: str = ".",
+              query: dict | None = None) -> dict:
+    """★ M — 추천 탭 4.  ★ 마스터 기준 일곱으로 거른다.
+
+    ★ 리스·렌트 승계는 뺀다 (M-13) — ★ **내 차가 되지 않는다.**
+    ★ 렌터카 이력은 ★ **결격이 아니다** — ★ 리본카·K카는 그것을 정리해 판다.
+    """
+    del query
+    cfg = _t4(root)
+    if not cfg:
+        return {"rule": [], "rows": [], "count": {}, "head": "GV70",
+                "sub": UNKNOWN, "note": ""}
+    names = load_config(f"{root}/config/targets.json") or {}
+    label = str((names.get(cfg["target"]) or {}).get("label") or cfg["target"])
+    sites = (load_config(f"{root}/config/sites.json") or {}).get("labels") or {}
+    lw, la = _lease_where()
+
+    allc = conn.execute(
+        "SELECT COUNT(*) FROM core_listing l WHERE l.target_key = ?",
+        (cfg["target"],)).fetchone()[0]
+    got = conn.execute(
+        "SELECT l.listing_id, l.site, l.source_id, l.price_current_won,"
+        "       l.price_origin_won, l.year_month, l.mileage_km,"
+        "       l.trim_grade_name, l.trim_badge, l.site_inspection,"
+        "       l.options_choice_json, l.warranty_body_month,"
+        "       l.warranty_body_km, l.paired_source_id, s.grade,"
+        "       r.accident_my_cnt, r.accident_my_cost,"
+        "       r.accident_other_cnt, r.accident_other_cost,"
+        "       s.group_value, s.group_car, s.group_warranty, s.group_taste,"
+        "       s.grade_earned, s.grade_base"
+        "  FROM core_listing l"
+        "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
+        "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
+        " WHERE l.target_key = ? AND l.status IN ('active','new','relisted')"
+        f"   AND {lw}"
+        "   AND l.year_month >= ? AND l.mileage_km <= ?",
+        (cfg["target"], *la, cfg["year_from"],
+         cfg["mileage_max_km"])).fetchall()
+    passed = len(got)
+    detailed = sum(1 for r in got if r[4])
+    rows = [_gv70_card(r, cfg, sites, root, conn) for r in got if r[4]]
+    # ★ 감가율이 잣대를 넘으면 ★ 후보가 아니다 — ★ 진단이 없으면 더 낮아야 한다
+    keep = [c for c in rows if c["_ok"]]
+    keep.sort(key=lambda c: c["_total"] or 10 ** 12)
+    keep = keep[:int(cfg.get("shown") or 20)]
+    _mark_best(keep)
+    return {
+        "head": label,
+        "sub": "마스터 기준으로 걸렀습니다 — "
+               f"감가 {cfg['depreciation_max_pct']}% 이하 · "
+               f"{cfg['year_from'][:4]}년 {int(cfg['year_from'][5:7])}월↑ · "
+               f"{int(cfg['mileage_max_km'] / 10000)}만km 이하 · 골격 무사고",
+        "rule": [
+            {"label": f"감가 {cfg['depreciation_max_pct']}% 이하", "key": "key"},
+            {"label": f"{cfg['year_from'][:4]}년 "
+                      f"{int(cfg['year_from'][5:7])}월 ↑", "key": "key"},
+            {"label": f"{int(cfg['mileage_max_km'] / 10000)}만km 이하",
+             "key": "key"},
+            {"label": "골격 무사고", "key": "key"},
+            {"label": "단순교환까지 봄", "key": ""},
+            {"label": "깡통도 후보", "key": ""},
+            {"label": f"진단 없어도 감가 {cfg['depreciation_no_dx_pct']}%↓면 후보",
+             "key": ""},
+            {"label": "리스·렌트 승계 제외", "key": ""},
+        ],
+        "note": "렌터카 이력은 결격이 아닙니다. "
+                "리본카·K카는 렌터카를 정리해 팔아 값이 쌉니다.",
+        "count": {"all": allc, "passed": passed, "detailed": detailed,
+                  "missing": passed - detailed, "shown": len(keep)},
+        "rows": keep,
+    }
+
+
+def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
+    (lid, site, sid, won, origin, ym, km, tgrade, tbadge, dx, optj,
+     wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
+     g_value, g_car, g_warranty, g_taste, earned, base) = r
+    pct = _dep_pct(won, origin)
+    cap = float(cfg["depreciation_max_pct"])
+    nodx = float(cfg["depreciation_no_dx_pct"])
+    # ★ 진단이 없으면 ★ 확인 비용이 따로 든다 — ★ 감가가 더 낮아야 후보다
+    ok = pct is not None and pct <= (cap if dx else nodx)
+    lo, hi = float(cfg["accident_signal_lo_pct"]), float(
+        cfg["accident_signal_hi_pct"])
+
+    fee = _fee(won, cfg["fee_pct"])
+    wear, wear_say = _wear(km, cfg)
+    total = (won or 0) + fee + (wear or 0)
+
+    def cell(v, cls=""):
+        return {"v": v, "cls": cls}
+
+    dep_cls = "ok" if (pct is not None and pct <= cap) else "no"
+    if pct is not None and lo <= pct <= hi:
+        dep_cls = "warn"          # ★ 65~68% 는 ★ **사고 신호**다
+    four = [
+        {"label": "값 / 신차출고가 / 감가율",
+         "cells": [cell(_won(won)),
+                   cell(_won(origin) if origin else NOT_ASKED,
+                        "" if origin else "no"),
+                   cell(f"{pct}%" if pct is not None else NOT_ASKED,
+                        dep_cls)]},
+        {"label": "주행 / 최초등록",
+         "cells": [cell(_km(km), "ok" if km is not None else "no"),
+                   cell(_ym(ym), "ok" if ym else "no")]},
+        # ★ M-3 — ★ 교환·판금·골격을 갈라 낸다.  ★ 우리는 아직 **금액과 횟수**만 있다
+        {"label": "사고",
+         "cells": [cell(f"내차 {my_cnt}회 / {_won(my_cost)}"
+                        if my_cnt is not None else f"내차 {NOT_ASKED}",
+                        "ok" if not my_cnt else ""),
+                   cell(f"상대차 {ot_cnt}회 / {_won(ot_cost)}"
+                        if ot_cnt is not None else f"상대차 {NOT_ASKED}",
+                        "ok" if not ot_cnt else ""),
+                   cell(f"교환·판금·골격 {NOT_ASKED}", "no")]},
+        {"label": "진단 / 보증",
+         "cells": [cell(dx or NOT_ASKED, "ok" if dx else "no"),
+                   cell(_warranty(wmon, wkm))]},
+    ]
+    return {
+        "listing_id": lid, "price": _won(won),
+        "grade": grade or "판정 중",
+        "name": tgrade or tbadge or UNKNOWN,
+        "site": sites.get(site, site),
+        "dx": dx or NOT_ASKED, "dx_ok": bool(dx),
+        "pick": bool(ok and dx),
+        "url": _source_url_of(site, sid, paired, root),
+        "four": four,
+        "pkgs": _pkgs(optj, conn, site),
+        "pkg_note": _opt_label(optj),
+        "total": [
+            {"label": "차값", "v": _won(won), "cls": ""},
+            {"label": f"이전등록비 · 매도비 ({cfg['fee_pct']}%)",
+             "v": _won(fee), "cls": ""},
+            {"label": f"소모품 — {wear_say}",
+             "v": _won(wear) if wear else ("0" if wear == 0 else NOT_ASKED),
+             "cls": ""},
+            {"label": "총비용", "v": _won(total), "cls": "sum"},
+        ],
+        "bars": _bars(g_value, g_car, g_warranty, g_taste, earned, base),
+        "say": _gv70_say(pct, lo, hi, dx, wmon, wkm),
+        "_ok": ok, "_total": total,
+    }
+
+
+def _pkgs(optj, conn=None, site: str = "encar") -> list:
+    """★ M-7 — 옵션을 ★ **패키지 이름 ＋ 정가**로.
+
+    ★★ 실측 09-08 — ★ 엔카는 ★ **숫자 코드**만 준다 (`["1050","1046",…]`).
+      ★ 그것을 그대로 내면 ★ 화면에 ★ 「1050 미조회」가 뜬다 —
+      ★ ★ **사람이 못 읽는 말**이다.
+    ★ 이름은 ★ `dict_option_code` 가 안다 — ★ 있으면 붙인다.
+    ★★ 정가는 ★ **우리에게 없다** — ★ `catalog` 창구가 그것을 준다 (지금 0.8%).
+      ★ ★ 그러니 ★ 「정가 미조회」라 적는다.  ★ 지어내지 않는다 (금지 12)
+    """
+    try:
+        got = _j.loads(optj) if optj else []
+    except (ValueError, TypeError):
+        return []
+    if not isinstance(got, list) or not got:
+        return []
+    name: dict = {}
+    if conn is not None:
+        try:
+            name = {str(r[0]): str(r[1]) for r in conn.execute(
+                "SELECT code, display FROM dict_option_code WHERE site = ?",
+                (site,))}
+        except sqlite3.Error:
+            name = {}
+    out = []
+    for one in got:
+        if isinstance(one, dict):
+            out.append({"label": str(one.get("name") or one.get("label")
+                                     or UNKNOWN),
+                        "won": _won(one.get("price"))})
+        else:
+            code = str(one)
+            said = name.get(code, "")
+            # ★ 사전에 든 것이 ★ **코드 그 자체**이면 ★ 이름을 모르는 것이다 —
+            #   ★ 「1057」을 이름인 척 내지 않는다 (금지 12)
+            out.append({"label": (said if said and said != code
+                                  else f"코드 {code} · 이름 미조회"),
+                        "won": "정가 미조회"})
+    return out[:6]
+
+
+def _bars(g_value, g_car, g_warranty, g_taste, earned, base) -> list:
+    """★ M-12 — 갈래별 막대 다섯 ＋ 총점.  ★ 배점은 `result_score` 가 준다."""
+    got = []
+    for label, v in (("값", g_value), ("상태", g_car),
+                     ("보증", g_warranty), ("취향", g_taste)):
+        if v is None:
+            got.append({"label": label, "pct": 0, "said": NOT_ASKED,
+                        "best": False, "hi": ""})
+        else:
+            got.append({"label": label, "pct": 0, "said": f"{v:g}",
+                        "best": False, "hi": "", "_v": float(v)})
+    if earned and base:
+        got.append({"label": "총점", "pct": round(earned * 100 / base),
+                    "said": f"{earned:g}/{base:g}", "best": False, "hi": "hi"})
+    else:
+        got.append({"label": "총점", "pct": 0, "said": NOT_ASKED,
+                    "best": False, "hi": ""})
+    return got
+
+
+def _mark_best(rows: list) -> None:
+    """★ 갈래별 1등에 ★ 별을 붙인다 (M-12).  ★ 잰 것이 없으면 안 붙인다."""
+    if not rows:
+        return
+    for i in range(len(rows[0]["bars"]) - 1):
+        vals = [(c["bars"][i].get("_v"), c) for c in rows
+                if c["bars"][i].get("_v") is not None]
+        if not vals:
+            continue
+        top = max(v for v, _c in vals)
+        for v, c in vals:
+            c["bars"][i]["pct"] = round(v * 100 / top) if top else 0
+            if v == top:
+                c["bars"][i]["best"] = True
+                c["bars"][i]["hi"] = "hi"
+                c["bars"][i]["said"] += " ★"
+
+
+def _gv70_say(pct, lo, hi, dx, wmon, wkm) -> str:
+    """★ 한 줄 — ★ **잰 것만** 적는다.  ★ 지어내지 않는다."""
+    got = []
+    if pct is not None and lo <= pct <= hi:
+        got.append(f"감가가 {pct}% 입니다 — 이 자리는 사고 신호일 수 있습니다")
+    if not dx:
+        got.append("사이트 진단이 없습니다 — 확인 비용이 따로 듭니다")
+    if wmon or wkm:
+        got.append(f"제조사 보증 {_warranty(wmon, wkm)}")
+    return " · ".join(got) or "더 볼 것을 아직 못 쟀습니다"

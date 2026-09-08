@@ -1223,7 +1223,10 @@ def recommend(conn, account, req, root: str = ROOT, csrf: str = "", flash_key: s
                     {"tabs": tabbar, "csrf": csrf, **got}, root=root,
                     csrf=csrf, flash_key=flash_key)
     if tab == "4":
-        got = T.view_tab4(conn, q, root)
+        # ★★★★★ 09-08 (r1206 M) — ★ 마스터께서 ★ 탭 4 를 ★ **GV70 전용**으로
+        #   ★ 다시 정하셨다 (규격 `docs/GV70_TAB4.md`).  ★ 옛 격자 둘은
+        #   ★ ★ `view_tab4` 로 남는다 — ★ 안 지운다 (개정 427)
+        got = T.view_gv70(conn, root, q)
         return page(conn, account, "추천", tpl,
                     {"tabs": tabbar, "csrf": csrf, **got}, root=root,
                     csrf=csrf, flash_key=flash_key)
