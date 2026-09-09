@@ -9,17 +9,17 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**133파일 · 53,488줄 · 3,909KB**
+**133파일 · 53,495줄 · 3,910KB**
 
 ★ 800줄을 넘는 파일 16개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - CHECKS.md 1,545줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
-- SOURCE.md 820줄
+- SOURCE.md 826줄
 - UI_REVIEW.md 2,155줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,372줄
+- guide/03_이력.md 1,373줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
@@ -57,7 +57,7 @@
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 114 | 6 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md`  ★ | 820 | 66 |
+| `SOURCE.md`  ★ | 826 | 66 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,155 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
@@ -124,7 +124,7 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,372 | 1,141 |
+| `guide/03_이력.md`  ★ | 1,373 | 1,142 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
