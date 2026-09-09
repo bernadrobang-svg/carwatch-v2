@@ -116,6 +116,32 @@ def parse_list_item(one: dict) -> dict | None:
     return out
 
 
+
+
+# ★★★★★★ 09-09 (r1208 N-2 · G) — ★ **옵션을 읽는다.**
+#   ★ 실측 09-09 — ★ `car_info.options[].content.option_name` 이 있는데
+#     ★ ★ 파서가 안 읽어 ★ 「옵션 0%」였다.
+#   ★ 리볼트는 ★ **값을 안 준다** (`option_packages` 가 빈 목록이다) —
+#     ★ ★ 그러니 ★ 이름만 담는다 (`options_name_json` · 지시 H)
+def _options(node: dict) -> dict:
+    out: dict = {}
+    have, miss = [], []
+    for one in (node.get("options") or []):
+        if not isinstance(one, dict):
+            continue
+        name = str(((one.get("content") or {}).get("option_name")
+                    or one.get("name") or "")).strip()
+        if not name:
+            continue
+        (have if one.get("is_loaded") else miss).append(name)
+    if have:
+        out["options_name_json"] = json.dumps(have, ensure_ascii=False)
+        out["options_standard_json"] = json.dumps(have, ensure_ascii=False)
+    if miss:
+        out["options_absent_json"] = json.dumps(miss, ensure_ascii=False)
+    return out
+
+
 def parse_detail(body, site: str = SITE_CODE,
                  source_id: str | None = None) -> dict | None:
     """상세 → `core_listing` 한 줄.  ★ 껍데기가 없다 — ★ 바로 `car_info` 다."""
@@ -158,6 +184,8 @@ def parse_detail(body, site: str = SITE_CODE,
     if got:
         out["options_standard_json"] = json.dumps(
             [x for x in got if x], ensure_ascii=False)
+    # ★ 09-09 (N-2 · G) — ★ 이름을 두 갈래 자리에 담는다 (지시 H)
+    out.update(_options(body.get("car_info") or body))
     return out
 
 

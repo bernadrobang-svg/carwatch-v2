@@ -117,6 +117,37 @@ def parse_list_item(item: dict, site: str) -> dict:
         "subscribe_cnt": _int(item.get("wishCount")),
     }
 
+
+
+# ★★★★★★ 09-09 (r1208 N-2 · G) — ★ **옵션을 읽는다.**
+#   ★ 실측 09-09 — ★ `mainOptions[].mainOption` 에 ★ 영문 코드가 오고
+#     ★ ★ `has` 가 ★ 달렸는지 말한다.  ★ `optionPrice` 는 ★ **옵션값 합**이다.
+#   ★ 이름이 ★ 영문 코드(`LEATHER_SEATS`)라 ★ 그대로 담는다 —
+#     ★ ★ 한글로 바꾸지 않는다.  ★ 사전이 생기면 그때 붙인다 (금지 6)
+#   ★ 값이 ★ **합계 하나**뿐이라 ★ 패키지별로 못 가른다 —
+#     ★ ★ `options_choice_json` 에 ★ 「합계」 한 줄로 담는다
+def _options(doc: dict) -> dict:
+    out: dict = {}
+    have, miss = [], []
+    for one in (doc.get("mainOptions") or []):
+        if not isinstance(one, dict):
+            continue
+        name = str(one.get("mainOption") or "").strip()
+        if not name:
+            continue
+        (have if one.get("has") else miss).append(name)
+    if have:
+        out["options_name_json"] = json.dumps(have, ensure_ascii=False)
+        out["options_standard_json"] = json.dumps(have, ensure_ascii=False)
+    if miss:
+        out["options_absent_json"] = json.dumps(miss, ensure_ascii=False)
+    won = doc.get("optionPrice")
+    if won:
+        out["options_choice_json"] = json.dumps(
+            [{"name": "선택 옵션 합계", "price": int(won)}], ensure_ascii=False)
+    return out
+
+
 def parse_detail(doc: dict, site: str = "kia_cpo",
                  source_id: str | None = None) -> dict | None:
     """★★★★★ 09-04 (가이드 배포 실측) — ★ **상세 파서가 아예 없었다.**
@@ -160,5 +191,7 @@ def parse_detail(doc: dict, site: str = "kia_cpo",
     cc = str(car.get("displacement") or "").replace(",", "").strip()
     if cc.isdigit():
         got["displacement_cc"] = int(cc)
+    # ★ 09-09 (N-2 · G) — ★ 옵션을 두 갈래로 담는다
+    got.update(_options(doc))
     # ★ 값이 없는 칸은 ★ **넣지 않는다** — ★ 「없음」으로 덮지 않는다 (금지 12)
     return {k: v for k, v in got.items() if v is not None}

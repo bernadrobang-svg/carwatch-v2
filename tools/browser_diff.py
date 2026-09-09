@@ -819,7 +819,14 @@ _FIELDS = (("매물", "COUNT(*)"), ("상세", "COUNT(detail_status)"),
            ("값", "COUNT(price_current_won)"),
            ("사진", "COUNT(photo_list_json)"),
            ("트림", "COUNT(trim_grade_name)"),
-           ("옵션", "COUNT(options_choice_json)"))
+           # ★★★★★ 09-09 (r1208 N-2) — ★ 옵션은 ★ **두 갈래**다 (지시 H).
+           #   ★ 「가격이 있으면 `options_choice_json` · ★ 이름만 있으면
+           #     ★ ★ `options_name_json`.  ★ 가격이 없다고 옵션 축을 0 으로 두지 않는다」
+           #   ★ 한 갈래만 세면 ★ 이름으로 받은 것이 ★ **0 으로 보인다** —
+           #     ★ ★ 자가 붉은 것이지 ★ 파서가 못 읽은 것이 아니다.
+           #   ★ `_KB_SQL` 은 09-06 에 이미 고쳤는데 ★ 여기를 안 고쳤다
+           ("옵션",
+            "COUNT(COALESCE(options_choice_json, options_name_json))"))
 
 
 def all_sites_report(base_url: str, name: str = "admin",

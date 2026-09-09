@@ -98,6 +98,8 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     if photos:
         out["photo_main"] = photos[0]
         out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+    # ★ 09-09 (N-2 · G) — ★ 옵션 이름을 담는다
+    out.update(options_in_html(html))
     return out
 
 
@@ -257,3 +259,24 @@ def options_of(payload) -> dict | None:
         (on if str(one.get("carApply")) == "1" else off).append(
             {"code": one["optCode"], "name": one.get("codeNm")})
     return {"on": on, "off": off}
+
+# ★★★★★★ 09-09 (r1208 N-2 · G) — ★ **옵션을 읽는다.**
+#   ★ 실측 09-09 — ★ `<p class="car-option01">하이패스</p>` 처럼 ★ **한글 이름**이
+#     ★ ★ 상세에 그대로 있는데 ★ 파서가 안 읽어 ★ 「옵션 0%」였다 (19개 나온다).
+#   ★ 리본카는 ★ **값을 안 준다** — ★ 이름만 담는다 (`options_name_json` · 지시 H)
+#   ★★ `options_of` 는 ★ **다른 창구**(`carOption.rb`)를 읽는 함수다 —
+#     ★ ★ 이름을 겹치지 않게 ★ `options_in_html` 로 둔다
+RE_RB_OPT = re.compile(r'<p class="car-option\d+">(.*?)</p>', re.S)
+
+
+def options_in_html(html: str) -> dict:
+    got = []
+    for one in RE_RB_OPT.findall(html or ""):
+        name = re.sub(r"<[^>]+>", " ", one)
+        name = " ".join(name.split()).strip()
+        if name and name not in got:
+            got.append(name)
+    if not got:
+        return {}
+    return {"options_name_json": json.dumps(got, ensure_ascii=False),
+            "options_standard_json": json.dumps(got, ensure_ascii=False)}

@@ -86,6 +86,53 @@ def parse_list_item(item: dict, site: str) -> dict | None:
     return {k: v for k, v in out.items() if v is not None}
 
 
+
+
+# ★★★★★★ 09-09 (r1208 N-2 · G) — ★ **옵션을 읽는다.**
+#   ★ 실측 09-09 — ★ 원문에 ★ `detail_info.options[].content.option_name` 이 있는데
+#     ★ ★ 파서가 ★ **한 줄도 안 읽고** 있었다 (`옵션 0%`).
+#   ★★ 헤이딜러는 ★ **값도 준다** — ★ `car_spec.option_packages[].name` 에
+#     ★ ★ 「1) 파노라마 선루프 (110만원)」처럼 ★ 이름과 값이 함께 있다.
+#   ★ 값이 있으면 ★ `options_choice_json` · ★ 이름만이면 ★ `options_name_json` (지시 H)
+RE_PKG_WON = re.compile(r"^\s*[\d)\.]*\s*(.+?)\s*\((\d[\d,]*)\s*만원\)\s*$")
+
+
+def _options(node: dict) -> dict:
+    """옵션 → 두 갈래.  ★ 안 달린 것은 ★ 「없다」로 따로 담는다."""
+    out: dict = {}
+    have, miss = [], []
+    for one in (node.get("options") or []):
+        if not isinstance(one, dict):
+            continue
+        name = str(((one.get("content") or {}).get("option_name")
+                    or one.get("name") or "")).strip()
+        if not name:
+            continue
+        on = one.get("is_loaded")
+        if on is None:
+            on = str(one.get("choice") or "") == "loaded"
+        (have if on else miss).append(name)
+    if have:
+        out["options_name_json"] = json.dumps(have, ensure_ascii=False)
+        out["options_standard_json"] = json.dumps(have, ensure_ascii=False)
+    if miss:
+        # ★ 「이 차엔 없다」도 사실이다 — ★ 버리지 않는다 (`S46-227`)
+        out["options_absent_json"] = json.dumps(miss, ensure_ascii=False)
+    pkg = []
+    spec = node.get("car_spec") or node.get("car_spec_info") or {}
+    for one in (spec.get("option_packages") or []):
+        if not isinstance(one, dict):
+            continue
+        got = RE_PKG_WON.match(str(one.get("name") or ""))
+        if got:
+            pkg.append({"name": got.group(1),
+                        "price": int(got.group(2).replace(",", "")) * 10000})
+    if pkg:
+        # ★ 값까지 있는 것은 ★ `choice` 다 (지시 H)
+        out["options_choice_json"] = json.dumps(pkg, ensure_ascii=False)
+    return out
+
+
 def parse_detail(body: dict, site: str, source_id: str) -> dict | None:
     """상세 한 건 → `core_listing` 줄.
 
@@ -111,6 +158,8 @@ def parse_detail(body: dict, site: str, source_id: str) -> dict | None:
     kmpl = fuel_efficiency_kmpl(body)
     if kmpl is not None:
         out["spec_fuel_economy_kmpl"] = kmpl
+    # ★ 09-09 (N-2 · G) — ★ 옵션을 두 갈래로 담는다
+    out.update(_options(d))
     return {k: v for k, v in out.items() if v is not None}
 
 

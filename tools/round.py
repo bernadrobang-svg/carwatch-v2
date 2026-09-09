@@ -14,7 +14,6 @@
 크론    0 * * * * cd /path && python3 tools/round.py https://... >> /tmp/round.log
 """
 import io
-import json
 import os
 import re
 import sys

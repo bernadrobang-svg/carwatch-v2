@@ -1765,7 +1765,12 @@ def _option_money(snap, prices: dict) -> dict:
     if not codes:
         total = 0
     else:
-        got = [prices.get(c) for c in codes]
+        # ★★★★★★ 09-09 (r1208 N-2) — ★ 이 칸이 ★ **두 꼴**이다.
+        #   ★ 엔카는 ★ 코드 글자 — ★ 값은 ★ `prices` 표가 안다.
+        #   ★ 헤이딜러·기아CPO 는 ★ **값을 함께** 준다 (지시 H).
+        #   ★ dict 를 ★ 표의 열쇠로 쓰면 ★ 죽는다 (`unhashable type: dict`)
+        got = [one.get("price") if isinstance(one, dict) else prices.get(one)
+               for one in codes]
         total = sum(x for x in got if x) if any(x for x in got) else None
     origin = snap.price_origin_won
     return {"option_total_won": total,

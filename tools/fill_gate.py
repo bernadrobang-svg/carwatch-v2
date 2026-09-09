@@ -33,15 +33,16 @@ def run(base_url: str) -> dict:
     sites = sorted({k.split(".")[0] for k in cur if "." in k})
     rows, holes, dropped = [], [], []
 
-    old = {}
+    old_n = {}
     if os.path.exists(OUT):
         try:
             with open(OUT, encoding="utf-8") as f:
-                old = (json.load(f) or {}).get("채움율") or {}
+                _was = json.load(f) or {}
+            old_n = _was.get("건수") or {}
         except Exception:  # noqa: BLE001
-            old = {}
+            old_n = {}
 
-    rate = {}
+    rate, count = {}, {}
     for s in sites:
         total = cur.get(f"{s}.매물") or 0
         if not total:
@@ -54,17 +55,27 @@ def run(base_url: str) -> dict:
             pct = round(n / total * 100, 1)
             row[c] = pct
             rate[f"{s}.{c}"] = pct
+            count[f"{s}.{c}"] = n
             if n == 0:
                 holes.append(f"{s}.{c}")
-            was = old.get(f"{s}.{c}")
-            if was is not None and pct < was - 5:
-                dropped.append(f"{s}.{c} {was}% → {pct}%")
+            # ★★★★★★ 09-09 (r1208 N-4) — ★ **건수로 견준다.  비율로 안 본다.**
+            #   ★ 가이드 개정 1061 — 「★ 건수가 달라도 검사를 실패시키지 마라 —
+            #     ★ ★ **매물은 날마다 는다**」.
+            #   ★ 실측 09-09 — ★ 리볼트 상세가 ★ **57건 그대로**인데
+            #     ★ ★ 매물이 74 → 90 이 되어 ★ 77% → 63% 로 「떨어졌다」고 잡혔다.
+            #     ★ ★ ★ 되돌아간 것이 아니라 ★ **분모가 큰 것**이다.
+            #   ★★ 그러므로 ★ 「받아 놓은 것이 줄었나」를 ★ **건수**로 본다.
+            #     ★ ★ 비율은 ★ 보이기 위한 것이지 ★ 잣대가 아니다
+            was_n = old_n.get(f"{s}.{c}")
+            if was_n is not None and n < was_n:
+                dropped.append(f"{s}.{c} {was_n:,}건 → {n:,}건")
         rows.append(row)
 
     out = {
         "_잰_때": datetime.now(timezone.utc).isoformat(),
         "_잰_곳": base_url,
         "채움율": rate,
+        "건수": count,
         "구멍": holes,
         "되돌아간_것": dropped,
     }

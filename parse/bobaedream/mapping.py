@@ -13,6 +13,7 @@
 """
 from __future__ import annotations
 
+import json
 import re
 
 WON_PER_MANWON = 10_000
@@ -193,4 +194,25 @@ def parse_detail(html: str, site: str, source_id: str,
     if LEASE_MARK in html:
         out["sell_type"] = "리스"
         out.pop("price_current_won", None)
+    # ★ 09-09 (N-2 · G) — ★ 옵션 이름을 담는다
+    out.update(options_of(html))
     return out
+
+# ★★★★★★ 09-09 (r1208 N-2 · G) — ★ **옵션을 읽는다.**
+#   ★ 실측 09-09 — ★ `class="icon-option01-sunroof"` 처럼 ★ **아이콘 이름**으로 온다
+#     (41개 나온다).  ★ 파서가 안 읽어 ★ 「옵션 0%」였다.
+#   ★★ 이름이 ★ **영문 코드**다 (`sunroof`·`navigation`·`TPMS`) —
+#     ★ ★ 한글로 바꾸지 않는다.  ★ 사전이 생기면 그때 붙인다 (금지 6).
+#   ★ 값은 안 준다 — ★ 이름만 담는다 (지시 H)
+RE_BB_OPT = re.compile(r'icon-option\d+-([A-Za-z0-9_]+)')
+
+
+def options_of(html: str) -> dict:
+    got = []
+    for one in RE_BB_OPT.findall(html or ""):
+        if one not in got:
+            got.append(one)
+    if not got:
+        return {}
+    return {"options_name_json": json.dumps(got, ensure_ascii=False),
+            "options_standard_json": json.dumps(got, ensure_ascii=False)}

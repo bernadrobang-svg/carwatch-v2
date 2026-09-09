@@ -1778,7 +1778,10 @@ def option_diff(conn: sqlite3.Connection, listing_ids: list,
             codes = _j.loads(row[0]) if row and row[0] else []
         except (ValueError, TypeError):
             codes = []
-        picked[lid] = [str(c) for c in codes] if isinstance(codes, list) else []
+        # ★ 09-09 — ★ 값이 함께 오는 꼴이면 ★ **이름**을 쓴다 (지시 H · 두 꼴)
+        picked[lid] = ([str(c.get("name") or "") if isinstance(c, dict)
+                        else str(c) for c in codes]
+                       if isinstance(codes, list) else [])
     names, prices = _option_names(conn)
     every = [set(v) for v in picked.values()]
     same = sorted(set.intersection(*every)) if every else []

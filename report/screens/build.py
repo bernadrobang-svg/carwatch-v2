@@ -774,8 +774,20 @@ def _row(conn, rec, labels, fin_cfg, rank, calc_version: str,
     st = (state_by or {}).get(lid, {})
     # ★ 원문이 배열이 아닐 수 있다.  그때는 0 이 아니라 「모른다」다
     _codes = json.loads(opt_json) if opt_json else []
-    _opt_won = (sum((opt_prices or {}).get(c, 0) for c in _codes)
-                if isinstance(_codes, list) else 0)
+    # ★★★★★★ 09-09 (r1208 N-2 에서 잡혔다) — ★ 이 칸이 ★ **두 꼴**이다.
+    #   ★ 엔카는 ★ 코드 글자(`["1050","1046"]`) — ★ 값은 ★ `opt_prices` 표가 안다.
+    #   ★ 헤이딜러·기아CPO 는 ★ **값을 함께** 준다
+    #     (`[{"name":"파노라마 선루프","price":1100000}]` · 지시 H).
+    #   ★★ 실측 09-09 — ★ dict 를 ★ 표의 열쇠로 쓰다가 ★ `/detail/3` 이 **500** 이 났다
+    #     ★ ★ (`TypeError: unhashable type: 'dict'`).  ★ 내가 낸 것이다.
+    #   ★ 두 꼴을 다 받는다 — ★ 값이 함께 오면 ★ 그것을 쓰고 · 아니면 표를 본다
+    _opt_won = 0
+    if isinstance(_codes, list):
+        for one in _codes:
+            if isinstance(one, dict):
+                _opt_won += int(one.get("price") or 0)
+            else:
+                _opt_won += (opt_prices or {}).get(one, 0)
     _fmt = json.loads(insp_fmt) if insp_fmt else None
     _insp_word = SOURCE_WORDS.get(inspection_source(_fmt), "")
     # 신차가 = 등급기준 + 선택옵션 (개정 301)
