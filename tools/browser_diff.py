@@ -413,8 +413,14 @@ HIDDEN_TEXT_JS = r"""
       for (let a = at; a; a = a.parentElement) {
         const ps = getComputedStyle(a).position;
         if (ps === 'fixed' || ps === 'sticky') { stuck = true; break; }
+        // ★★★★★ 09-08 — ★ **띄운 것(float) 아래는 가린 것이 아니다**.
+        //   ★ 실측 — ★ `v4m_watch_시안` 760px 에서 ★ 트림 글이 「3/9」로 잡혔다.
+        //   ★ ★ 까닭 — ★ 글 상자는 ★ **사진(float) 아래까지 깔리는데**
+        //     ★ ★ ★ ★ 글자는 ★ 옆으로 흐른다.  ★ 아홉 점 중 여섯이 사진에 맞았다.
+        //   ★ ★ ★ ★ ★ 눈에는 다 보인다.  ★ 그러니 안 센다.
+        if (getComputedStyle(a).float !== 'none') { stuck = true; break; }
       }
-      if (stuck) { seen++; continue; }          // ★ 띠 아래로 지나간 것
+      if (stuck) { seen++; continue; }          // ★ 띠·띄운 것 아래로 지나간 것
       // ★ 제 짝(같은 label 안의 input 등)도 결함이 아니다
       if (at && (at.closest('label') === L.e.closest('label')) &&
           L.e.closest('label')) { seen++; continue; }
@@ -456,6 +462,29 @@ BOX_OVERLAP_JS = r"""
   for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
     const A = L[i], B = L[j];
     if (A.e.contains(B.e) || B.e.contains(A.e)) continue;
+    // ★★★★★ 09-08 — ★ **얹으라고 만든 것은 겹침이 아니다**.
+    //   ★ 실측 — ★ `v4m_recommend_시안` 의 `.v4-pick` 은
+    //     ★ ★ `position:absolute; left:4px; bottom:4px` 로 ★ **사진 위에 얹는 단추**다.
+    //   ★ ★ ★ 겹치는 것이 ★ 만든 뜻이다.  ★ 자가 헛잡았다.
+    //   ★ `absolute` · `sticky` 는 ★ 자리를 벗어나라고 준 것이니 ★ 안 센다.
+    {
+      const pa = getComputedStyle(A.e).position, pb = getComputedStyle(B.e).position;
+      const lift = x => x === 'absolute' || x === 'sticky';
+      if (lift(pa) || lift(pb)) continue;
+      // ★★★★★ 09-08 — ★ **띄운 조상**도 봐야 한다.
+      //   ★ 실측 — ★ `v4m_watch_시안` 의 사진 상자는 ★ `float:left` 인데
+      //     ★ ★ 그 **안에 「사진」이라는 글자**가 있다.
+      //   ★ ★ ★ 그 글자와 옆 글이 잡혔다 — ★ 글자끼리는 형제가 아니라
+      //     ★ ★ ★ ★ 앞서 넣은 「형제 float」 막이가 안 걸렸다.
+      //   ★ 그래서 ★ 카드까지 거슬러 ★ **띄운 조상이 있으면 안 센다**.
+      const floated = x => {
+        for (let n = x; n && n !== document.body; n = n.parentElement) {
+          if (getComputedStyle(n).float !== 'none') return true;
+        }
+        return false;
+      };
+      if (floated(A.e) || floated(B.e)) continue;
+    }
     // ★★★★★ 09-06 — ★ **흐르는 글 속 인라인은 겹침이 아니다** (마스터 「600 으로 하면 화면 깨져」).
     //   ★ 900px 실측 — ★ `B. ↔ B.` 여섯 쌍이 나왔는데 ★ 다 `<b>` 끼리였다.
     //   ★ 인라인은 ★ 줄이 바뀌면 ★ **상자가 두 줄에 걸쳐** 옆 형제와 포개진다 —

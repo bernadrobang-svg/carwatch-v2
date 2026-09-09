@@ -8007,7 +8007,73 @@ def s46_295_undercarriage_words():
     return True, f"하체 낱말 {len(got)}개가 다 있다"
 
 
+def s46_296_no_parser_holes():
+    """S46-296 — 안 도는 파서가 없는가 (마스터 09-08).
+
+    마스터 — 「이제 자동화를 하자. 클로드가 없더라도 알아서 수행하는 것으로.
+      모든 소스의 최적화가 이루어지고 자동 처리가 되어야 돼.
+      아직도 안 도는 파서는 없어야 하고, 아직도 반영 안 된 페이지는 없어야 돼」
+
+    한 칸이 0% 면 그 파서가 그 칸을 못 읽는 것이다.
+    실측 09-08 — 구멍 30칸. 옵션은 엔카 말고 다 0, 원문은 여덟 곳이 0.
+    `tools/fill_gate.py` 가 재고 `outputs/FILL_GATE.md` 에 표로 낸다.
+    사람이 눈으로 보지 않아도 잡힌다. 되돌아간 칸(5%p 넘게 준 것)도 잡는다.
+    """
+    raw = _read(ROOT / "outputs" / "fill_gate.json")
+    if not raw:
+        return False, ("채움율을 안 쟀다 — "
+                       "`python3 -c \"from tools.fill_gate import run; "
+                       "run('배포주소')\"`")
+    d = json.loads(raw)
+    from datetime import datetime, timezone
+    when = d.get("_잰_때")
+    if when:
+        try:
+            age = (datetime.now(timezone.utc)
+                   - datetime.fromisoformat(when)).days
+            if age > 2:
+                return False, f"잰 지 {age}일 됐다 — 다시 재라"
+        except Exception:  # noqa: BLE001
+            pass
+    back = d.get("되돌아간_것") or []
+    if back:
+        return False, "되돌아간 칸 — " + " · ".join(back[:3])
+    holes = d.get("구멍") or []
+    if holes:
+        return False, (f"파서 구멍 {len(holes)}칸 — " + " · ".join(holes[:5]))
+    return True, f"열두 사이트에 구멍이 없다 ({len(d.get('채움율') or {})}칸)"
+
+
+def s46_297_round_runs_itself():
+    """S46-297 — 한 판이 스스로 도는가 (마스터 09-08).
+
+    마스터 — 「이제 자동화를 하자. 클로드가 없더라도 알아서 수행하는 것으로.
+      모든 소스의 최적화가 이루어지고 자동 처리가 되어야 돼」
+
+    `tools/round.py` 하나가 재고·검사하고·붉은 것을 담당별로 낸다.
+      ① 사이트 칸 채움율 ② 엔카·KB 수집 ③ 시안 네 너비 ④ 검사 전부
+      ⑤ outputs/ROUND.md 에 담당(가이드·개발측·배포)별로 갈라 낸다
+    크론에 걸면 사람이 없어도 돈다.
+    """
+    bad = []
+    for f in ("tools/round.py", "tools/fill_gate.py"):
+        if not (ROOT / f).exists():
+            bad.append(f"`{f}` 가 없다")
+    doc = _read(ROOT / "outputs" / "ROUND.md")
+    if not doc:
+        bad.append("한 판을 안 돌렸다 — `python3 tools/round.py 배포주소`")
+    else:
+        for want in ("가이드", "개발측", "화면"):
+            if want not in doc:
+                bad.append(f"한 판 결과에 「{want}」 가 없다")
+    if bad:
+        return False, " · ".join(bad[:3])
+    return True, "한 판이 스스로 돈다 (재고 · 검사하고 · 담당별로 낸다)"
+
+
 CHECKS = (
+    ("S46-297", "한 판이 스스로 도는가", s46_297_round_runs_itself),
+    ("S46-296", "안 도는 파서가 없는가", s46_296_no_parser_holes),
     ("S46-294", "추천4 규격이 설정에 있는가", s46_294_tab4_spec_is_stored),
     ("S46-295", "정비이력 하체 낱말이 다 있는가", s46_295_undercarriage_words),
     ("S46-293", "탭 3 거를 조건이 설정에 있는가", s46_293_tab3_filter_in_config),
