@@ -254,7 +254,7 @@
 | `S46-295` | 정비이력 하체 낱말이 다 있는가 | fatal | `validate/v0_guide.py:8038` | **★ 없음** | 없음 | guide/03_이력.md:1356 |
 | `S46-296` | 안 도는 파서가 없는가 | fatal | `validate/v0_guide.py:8058` | **★ 없음** | 없음 | guide/03_이력.md:1361 |
 | `S46-297` | 한 판이 스스로 도는가 | fatal | `validate/v0_guide.py:8095` | **★ 없음** | 없음 | guide/03_이력.md:1361 |
-| `S46-298` | 이번 주 과제가 지시에 있는가 | fatal | `validate/v0_guide.py:8122` | **★ 없음** | 없음 | guide/03_이력.md:1363 · guide/03_이력.md:1366 |
+| `S46-298` | 이번 주 과제가 지시에 있는가 | fatal | `validate/v0_guide.py:8122` | **★ 없음** | 없음 | guide/03_이력.md:1363 · guide/03_이력.md:1366 · guide/03_이력.md:1367 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6145` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6171` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6197` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
