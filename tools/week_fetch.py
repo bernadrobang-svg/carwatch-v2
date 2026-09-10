@@ -83,6 +83,29 @@ def targets(db: str = "carwatch.db", cap: int = 0) -> list:
     return got[:cap] if cap else got
 
 
+GONE = os.path.join(ROOT, "outputs", "week_gone.json")
+
+
+def _mark_gone(sid: str, ep: str) -> None:
+    """★ 사이트에서 내려간 매물을 적어 둔다.  ★ 파일이 정본이다."""
+    got = gone_book()
+    got.setdefault(str(sid), [])
+    if ep not in got[str(sid)]:
+        got[str(sid)].append(ep)
+    tmp = GONE + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(got, fh, ensure_ascii=False, indent=1)
+    os.replace(tmp, GONE)
+
+
+def gone_book() -> dict:
+    try:
+        with open(GONE, encoding="utf-8") as fh:
+            return json.load(fh) or {}
+    except (OSError, ValueError):
+        return {}
+
+
 def run(cap: int = 0) -> dict:
     with open(os.path.join(ROOT, "config", "endpoints.json"),
               encoding="utf-8") as fh:
@@ -110,8 +133,12 @@ def run(cap: int = 0) -> dict:
                     break
                 except urllib.error.HTTPError as ex:
                     if ex.code == 404:
-                        # ★ 사이트에 없다 — ★ 「못 찾았다」가 아니라 ★ **없다**
+                        # ★ 사이트에 없다 — ★ 「못 찾았다」가 아니라 ★ **없다**.
+                        #   ★★ 404 와 407 은 다르다 — ★ 407 은 「지금 막혔다」다.
+                        #   ★ 이 사실을 ★ **남긴다** — ★ 안 남기면 ★ 내려간 차가
+                        #     ★ ★ 다음에도 ★ 「이기는 차」로 올라온다 (실측 09-10)
                         tally["사이트에 없다"] += 1
+                        _mark_gone(sid, ep)
                         break
                     time.sleep(rest)
                 except OSError:

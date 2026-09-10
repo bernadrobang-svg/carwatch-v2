@@ -70,6 +70,21 @@ def rows(conn: sqlite3.Connection, cfg: dict) -> list:
     return got
 
 
+_GONE: dict = {}
+
+
+def _gone() -> dict:
+    """사이트에서 내려간 매물 — ★ `tools/week_fetch.py` 가 적는다."""
+    if not _GONE:
+        try:
+            with open(os.path.join(ROOT, "outputs", "week_gone.json"),
+                      encoding="utf-8") as fh:
+                _GONE.update(json.load(fh) or {"_": []})
+        except (OSError, ValueError):
+            _GONE["_"] = []
+    return _GONE
+
+
 _PLATE: dict = {}
 
 
@@ -143,6 +158,12 @@ def judge(one, cfg: dict) -> tuple:
     said = _plate(site, sid)
     if said and said in cfg.get("이미_거른_차번호", ()):
         return None, [f"이미 걸렀다 (차번호 {said})"]
+    # ★★★★★ 09-10 — ★ **사이트에서 내려간 차는 올리지 않는다.**
+    #   ★ 실측 — ★ 값싼 열 대 중 ★ **일곱**이 404 였다.
+    #   ★ 우리 표는 `active` 인데 사이트에는 없다 — ★ 두드려 본 것만 안다 (S46-267).
+    #   ★ 404 와 407 은 다르다 — ★ **404 만** 여기 적힌다
+    if str(sid) in _gone():
+        return None, ["사이트에 없다 (두드려 404)"]
     if won > base["차값_원"] + 0 and won > cfg["이기는_칸"][2]["차값_최대_원"]:
         return None, [f"차값 {_won(won)} — 3,900만 초과"]
     # ★ 색 — ★ 빨간색·자주색은 제외 (마스터 확정)
