@@ -32,9 +32,14 @@ from store.rawfile import save as raw_save      # noqa: E402
 from store.rawfile import walk as raw_walk      # noqa: E402
 
 WANT = ("detail", "inspection", "record")
-REST_ON_WALL = 45.0          # ★ 막히면 이만큼 쉰다
 GAP = 2.5                    # ★ 한 번 받고 이만큼 쉰다
-TRIES = 3                    # ★ 한 자리를 이만큼 두드린다
+TRIES = 2                    # ★ 한 자리를 이만큼 두드린다
+# ★★★★★ 09-10 실측 — ★ 조리개가 **완전히 닫히는 때**가 있다.
+#   ★ 그때는 ★ 계약하신 차(`42598705`)까지 407 이 난다 — ★ 매물 탓이 아니다.
+#   ★ ★ 25분을 두드려 ★ **한 건도 못 받았다.**  ★ 자주 두드리면 더 길어질 뿐이다.
+#   ★ 그러니 ★ **물러섰다 받는다** — ★ 이어서 막히면 ★ 쉬는 시간을 늘린다
+REST_MIN, REST_MAX = 30.0, 900.0
+WALL_ROW = 6                 # ★ 이어서 이만큼 막히면 ★ 크게 쉰다
 
 
 def _now() -> str:
@@ -85,6 +90,7 @@ def run(cap: int = 0) -> dict:
     mine = have()
     ids = targets(cap=cap)
     tally = {"받음": 0, "이미 있다": 0, "사이트에 없다": 0, "막혔다": 0}
+    rest, row = REST_MIN, 0
     print(f"★ 후보 {len(ids):,}대 · 창구 {len(WANT)}종", flush=True)
     for n, sid in enumerate(ids, 1):
         for ep in WANT:
@@ -107,11 +113,22 @@ def run(cap: int = 0) -> dict:
                         # ★ 사이트에 없다 — ★ 「못 찾았다」가 아니라 ★ **없다**
                         tally["사이트에 없다"] += 1
                         break
-                    time.sleep(REST_ON_WALL)
+                    time.sleep(rest)
                 except OSError:
-                    time.sleep(REST_ON_WALL)
+                    time.sleep(rest)
             else:
                 tally["막혔다"] += 1
+                row += 1
+                if row >= WALL_ROW:
+                    rest = min(rest * 2, REST_MAX)
+                    row = 0
+                    print(f"    ★ 이어서 막힌다 — 쉬는 시간을 {rest:.0f}초로"
+                          " 늘린다", flush=True)
+                time.sleep(GAP)
+                continue
+            # ★ 받았으면 ★ 쉬는 시간을 도로 줄인다 — ★ 조리개가 열린 것이다
+            row = 0
+            rest = max(REST_MIN, rest / 2)
             time.sleep(GAP)
         if n % 10 == 0:
             print(f"    {n}/{len(ids)} … "
