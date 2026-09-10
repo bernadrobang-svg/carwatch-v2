@@ -200,6 +200,11 @@ def judge(one, cfg: dict) -> tuple:
     if why:
         return None, why
 
+    # ★★★★★ 09-10 — ★ **「모른다」를 「없다」로 읽지 않는다** (금지 12).
+    #   ★ 실측 09-10 — ★ 조건에 든 735대 중 ★ 진단을 **아는 것은 73대**뿐이다.
+    #     ★ ★ 그런데 칸 C·D 가 ★ 「진단 있음」을 요구해 ★ 나머지가 다 떨어졌다.
+    #   ★ ★ ★ 그것은 ★ 「진단이 없다」가 아니라 ★ **「아직 안 봤다」**다.
+    #   ★ 그러니 ★ 미조회는 ★ **떨어뜨리지 않고** ★ 「확인하면 이긴다」로 가른다
     hud = _has_hud(opt_c, opt_s, opt_n)
     # ★★ 사이트가 ★ 「HUD 없다」고 밝혔으면 ★ **없는 것**이다 — ★ 미조회가 아니다
     if opt_absent and ("헤드업" in str(opt_absent) or "HUD" in str(opt_absent)):
@@ -218,7 +223,8 @@ def judge(one, cfg: dict) -> tuple:
             break
         if key == "C" and won <= one_band["차값_최대_원"] \
                 and str(ym or "") >= one_band["등록_이후"] \
-                and "흰색" in str(color or "") and hud and dx and clean:
+                and "흰색" in str(color or "") and hud is not False \
+                and dx is not None and clean:
             band = key
             break
         # ★★ 09-10 (r1216) — ★ 칸 D 를 마스터가 더하셨다.
@@ -226,11 +232,16 @@ def judge(one, cfg: dict) -> tuple:
         if key == "D" and won <= one_band["차값_최대_원"] \
                 and won > cfg["이기는_칸"][2]["차값_최대_원"] \
                 and str(ym or "") >= one_band["등록_이후"] \
-                and "흰색" in str(color or "") and dx and clean:
+                and "흰색" in str(color or "") and dx is not None and clean:
             band = key
             break
     if band is None:
-        why.append("이기는 칸에 못 든다")
+        # ★ 값·연식·색은 맞는데 ★ **진단이나 사고를 아직 안 본** 것인가
+        maybe = (str(ym or "") >= "2023-01" and "흰색" in str(color or "")
+                 and won <= cfg["조건"]["차값_최대_원"]
+                 and (dx is None or acc_cnt is None))
+        why.append("확인하면 이길 수 있다 (진단·사고 미조회)" if maybe
+                   else "이기는 칸에 못 든다")
     return band, why
 
 
@@ -289,6 +300,18 @@ def main() -> int:
               f" · 골격 {frame if frame is not None else UNKNOWN}"
               f" · ★ HUD {hud}")
         print(f"      {_url(site, sid, one[18])}")
+    # ★★ 「확인하면 이긴다」 — ★ 값·연식·색은 맞는데 ★ 진단·사고를 아직 안 본 것.
+    #   ★ **이것이 다음에 받을 목록**이다 — ★ 아무거나 받지 않는다 (가이드 r1215)
+    maybe = [(w, o) for _b, w, o in out["lost"]
+             if any("확인하면" in x for x in w)]
+    if maybe:
+        print(f"\n★ 확인하면 이길 수 있는 것 {len(maybe)}대 "
+              "— 진단·사고만 안 봤다 (값·연식·색은 맞는다)")
+        for _w, one in sorted(maybe, key=lambda x: x[1][2])[:20]:
+            site, sid, won, ym, km, color = one[0], one[1], one[2], one[3], one[4], one[5]
+            print(f"  {_won(won):>8} → {_won(swap_won(won, cfg) + wear_won(km, cfg))}"
+                  f" · {ym} · {km:,}km · {color}"
+                  f"\n        {_url(site, sid, one[19])}")
     if "--all" in sys.argv:
         print("\n★ 떨어진 까닭")
         for _b, why, one in out["lost"][:60]:
