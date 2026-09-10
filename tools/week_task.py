@@ -135,6 +135,14 @@ def _has_hud(*jsons) -> bool | None:
     return False if seen else None
 
 
+def swap_won(won, cfg: dict) -> int:
+    """★ 갈아타는 값 — ★ 차값 ＋ **위약 80만** (마스터 09-10).
+
+    ★ 계약을 포기하면 위약금이 든다 — ★ 그것을 안 더하면 ★ **덜 비싸 보인다**
+    """
+    return int(won or 0) + int(cfg.get("위약금_원") or 0)
+
+
 def wear_won(km, cfg: dict) -> int:
     """소모품 — ★ 4.5만km 를 넘는 차만 더한다 (지시 3장)."""
     w = cfg["소모품"]
@@ -145,7 +153,6 @@ def wear_won(km, cfg: dict) -> int:
 
 def judge(one, cfg: dict) -> tuple:
     """(이기는 칸, 떨어진 까닭들).  ★ 못 본 것은 ★ 「미조회」로 남긴다."""
-    base = cfg["기준차"]
     c = cfg["조건"]
     (site, sid, won, ym, km, color, dx, trim, swap, weld, frame, parts,
      origin, opt_c, opt_s, opt_n, opt_absent, under, region, paired,
@@ -173,8 +180,8 @@ def judge(one, cfg: dict) -> tuple:
     #   ★ 창구를 안 가리고 빼면 ★ 멀쩡한 차를 지운다 — ★ 자를 먼저 의심한다
     if "detail" in (_gone().get(str(sid)) or ()):
         return None, ["사이트에 없다 (상세가 404)"]
-    if won > base["차값_원"] + 0 and won > cfg["이기는_칸"][2]["차값_최대_원"]:
-        return None, [f"차값 {_won(won)} — 3,900만 초과"]
+    if won > cfg["조건"]["차값_최대_원"]:
+        return None, [f"차값 {_won(won)} — 상한 초과"]
     # ★ 색 — ★ 빨간색·자주색은 제외 (마스터 확정)
     said = str(color or "")
     if any(x in said for x in c["색_제외"]):
@@ -212,6 +219,14 @@ def judge(one, cfg: dict) -> tuple:
         if key == "C" and won <= one_band["차값_최대_원"] \
                 and str(ym or "") >= one_band["등록_이후"] \
                 and "흰색" in str(color or "") and hud and dx and clean:
+            band = key
+            break
+        # ★★ 09-10 (r1216) — ★ 칸 D 를 마스터가 더하셨다.
+        #   ★ 3,900~3,999만 · 2023년 이후 · 흰색 · 진단 · 사고 0.  ★ **HUD 는 안 본다**
+        if key == "D" and won <= one_band["차값_최대_원"] \
+                and won > cfg["이기는_칸"][2]["차값_최대_원"] \
+                and str(ym or "") >= one_band["등록_이후"] \
+                and "흰색" in str(color or "") and dx and clean:
             band = key
             break
     if band is None:
@@ -266,8 +281,9 @@ def main() -> int:
         hud = ("없다 (사이트가 밝혔다)"
                if absent and ("헤드업" in str(absent) or "HUD" in str(absent))
                else ("있다" if _has_hud(one[13], one[14], one[15]) else UNKNOWN))
-        print(f"[{band}] {_won(won)}"
-              f"{f' (＋소모품 {_won(wear)})' if wear else ''}"
+        real = swap_won(won, cfg) + wear
+        print(f"[{band}] {_won(won)} → 갈아타면 {_won(real)}"
+              f"{f' (위약 80만＋소모품 {_won(wear)})' if wear else ' (위약 80만)'}"
               f" · {ym} · {km:,}km · {color or UNKNOWN}"
               f" · {dx or '진단 없음'}"
               f" · 골격 {frame if frame is not None else UNKNOWN}"
