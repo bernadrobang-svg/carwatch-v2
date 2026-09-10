@@ -8089,7 +8089,42 @@ def s46_297_round_runs_itself():
     return True, "한 판이 스스로 돈다 (재고 · 검사하고 · 담당별로 낸다)"
 
 
+def s46_298_week_task():
+    """S46-298 — 이번 주 과제가 지시에 있는가 (마스터 09-10 · 기한 9/11).
+
+    마스터가 270오1279(엔카 42598705)를 계약하셨다. 차값 3,490만 · 650점.
+    7일 안에 이보다 나은 차를 찾는다. 늦게 찾으면 값어치가 없다.
+
+    가이드가 09-10 에 KB 코드를 직접 눌러 확인했다 —
+      마스터 규격의 「현대(101) 안에 classCode=1132」는 틀렸다.
+      1132 는 옛 제네시스DH(2013~2016)뿐이다.
+      KB 는 제네시스를 제 제조사로 둔다: makerCode=189 · GV70 은 classCode=2771.
+      개발측이 쓰던 makerCode=107 은 BMW 다.
+    """
+    bad = []
+    if not (ROOT / "docs" / "WEEK_TASK.md").exists():
+        bad.append("정본 `docs/WEEK_TASK.md` 가 없다")
+    raw = _read(ROOT / "config" / "endpoints.json")
+    if raw:
+        kb = (json.loads(raw).get("sites") or json.loads(raw)).get("kbchachacha") or {}
+        g = kb.get("gv70") or {}
+        if g.get("makerCode") != "189" or g.get("classCode") != "2771":
+            bad.append("KB GV70 코드가 설정에 없다 (makerCode 189 · classCode 2771)")
+    else:
+        bad.append("endpoints.json 을 못 읽었다")
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    for want, label in (("3,490만", "이겨야 할 차값"),
+                        ("270오1279", "계약한 차"),
+                        ("P-1", "P 장")):
+        if want not in order:
+            bad.append(f"작업 지시에 {label} 이 없다")
+    if bad:
+        return False, " · ".join(bad[:3])
+    return True, "이번 주 과제가 지시에 있다 (차값 3,490만 · KB 189/2771)"
+
+
 CHECKS = (
+    ("S46-298", "이번 주 과제가 지시에 있는가", s46_298_week_task),
     ("S46-297", "한 판이 스스로 도는가", s46_297_round_runs_itself),
     ("S46-296", "안 도는 파서가 없는가", s46_296_no_parser_holes),
     ("S46-294", "추천4 규격이 설정에 있는가", s46_294_tab4_spec_is_stored),
