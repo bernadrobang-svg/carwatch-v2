@@ -8142,9 +8142,26 @@ def s46_298_week_task():
             bad.append("KB GV70 코드가 설정에 없다 (makerCode 189 · classCode 2771)")
     else:
         bad.append("endpoints.json 을 못 읽었다")
+    #   ★ 09-10 저녁 — 마스터가 둘을 고치셨다 —
+    #     ★ 차값 상한 3,900만 → **3,999만** · ★ 계약 포기 **위약 80만**
+    #   ★ ★ 갈아탈 차는 ★ **차값 ＋ 80만**으로 견준다.
+    #   ★ 그리고 ★ 2군 넷(216너9034·142우4719·**130호3966**·124노4563)은
+    #     ★ ★ **거른 것이 아니다** — ★ 개발측이 「이미 거른 차번호」에 넣어 둔 것을 갈랐다.
+    raw2 = _read(ROOT / "config" / "week_task.json")
+    if raw2:
+        w = json.loads(raw2)
+        if (w.get("조건") or {}).get("차값_최대_원") != 39990000:
+            bad.append("차값 상한이 3,999만이 아니다")
+        if w.get("위약금_원") != 800000:
+            bad.append("계약 포기 위약 80만이 설정에 없다")
+        for no in ("130호3966",):
+            if no in (w.get("이미_거른_차번호") or []):
+                bad.append(f"{no} 는 2군이지 거른 차가 아니다")
     order = _read(ROOT / "outputs" / "ORDER_20260829.md")
     for want, label in (("3,490만", "이겨야 할 차값"),
                         ("270오1279", "계약한 차"),
+                        ("3,999만", "올린 차값 상한"),
+                        ("80만", "계약 포기 위약금"),
                         ("P-1", "P 장")):
         if want not in order:
             bad.append(f"작업 지시에 {label} 이 없다")
