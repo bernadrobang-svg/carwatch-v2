@@ -100,6 +100,13 @@ def run(base_url: str) -> str:
         red.append((code, _who(src[i:i + 3000] if i > 0 else ""), name,
                     re.sub(r"\s+", " ", str(why))[:80]))
 
+    #   ★ 09-10 — ★ 어느 DB 를 봤는지 ★ 함께 낸다.
+    #     ★ 가이드 자리에서는 ★ 옛 판(`tmp/load-*.db`)을 본다 — ★ 가늠일 뿐이다.
+    #     ★ ★ 참말은 ★ **배포에서 돌린 것**이다.
+    try:
+        db = str(V._pick_db())
+    except Exception:  # noqa: BLE001
+        db = "?"
     ver = ""
     m = re.search(r"SPEC-[\d.]+-r\d+",
                   io.open(os.path.join(ROOT, "docs", "guide", "00_버전.md"),
@@ -116,7 +123,8 @@ def run(base_url: str) -> str:
              "",
              f"검사 **{len(V.CHECKS)}** · 통과 **{len(V.CHECKS) - len(red)}** · "
              f"붉은 것 **{len(red)}**", ""]
-    lines += ["| 잰 것 | 결과 |", "|---|---|"]
+    lines += ["| 잰 것 | 결과 |", "|---|---|",
+              f"| 본 DB | `{db}` |"]
     for k, v in got.items():
         lines.append(f"| {k} | {v} |")
     lines.append(f"| 화면 | {'깨끗' if not bad_screens else f'★ {len(bad_screens)}곳'} |")

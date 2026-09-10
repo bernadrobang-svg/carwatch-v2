@@ -22,6 +22,36 @@ FTABLE = ROOT / "docs" / "chapters" / "30-score" / "f-table.md"
 SCORING = ROOT / "config" / "scoring.json"
 
 
+def _pick_db():
+    """★★★★★ 09-10 — ★ 검사가 볼 DB 를 고른다 (마스터 「★ **왜 네가 DB 를 못 보지**」).
+
+    ★ 검사들이 ★ `ROOT/carwatch.db` 를 ★ **박아 두고** 봤다.
+      ★ 그런데 ★ 가이드 자리의 그 파일은 ★ **0바이트**다 — ★ 진짜는 배포에 있다.
+      ★ ★ 그래서 ★ 검사 열여덟이 ★ **거짓으로 붉었다**.
+    ★ 이제 ★ 살아 있는 것을 고른다 —
+      ① `CARWATCH_DB` 환경값 ② `ROOT/carwatch.db` (비어 있지 않을 때)
+      ③ `tmp/load-*.db` 중 가장 최근 것
+    ★ 배포에서 돌리면 ②가 잡힌다.  ★ 가이드 자리에서는 ③이 잡힌다.
+    ★ 셋 다 없으면 ★ None 을 준다 — ★ 그 검사는 「못 쟀다」로 두어야 한다.
+    """
+    import os as _o
+    env = _o.environ.get("CARWATCH_DB")
+    if env and Path(env).exists() and Path(env).stat().st_size > 0:
+        return Path(env)
+    here = ROOT / "carwatch.db"
+    if here.exists() and here.stat().st_size > 0:
+        return here
+    got = sorted((ROOT / "tmp").glob("load-*.db"),
+                 key=lambda q: q.stat().st_mtime, reverse=True)
+    for q in got:
+        if q.stat().st_size > 0:
+            #   ★ 이건 ★ **옛 판**이다.  ★ 배포와 다르다.
+            #   ★ ★ 그러니 ★ 이 자리에서 잰 수는 ★ **가늠일 뿐**이고,
+            #     ★ ★ ★ 참말은 ★ **배포에서 돌린 것**이다 (`tools/round.py 배포주소`).
+            return q
+    return here
+
+
 def _read(p: Path) -> str:
     try:
         return p.read_text(encoding="utf-8")
@@ -1038,7 +1068,7 @@ def s46_65_verdict_fresh() -> tuple[bool, str]:
     import sqlite3 as _s
     from datetime import datetime, timezone
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = _s.connect(str(db))
@@ -1504,7 +1534,7 @@ def s46_120_registry_key_matches() -> tuple[bool, str]:
     # ★ 옛 이력이 안 깨지는지 — ★ 되돌리기가 옛 열쇠를 그대로 받아야 한다
     import sqlite3 as _sq
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     old = 0
     if db.is_file():
         try:
@@ -2066,7 +2096,7 @@ def _paired_rows():
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return {}, ""
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -2171,7 +2201,7 @@ def s46_56_accident_split() -> tuple[bool, str]:
     if not by:
         return True, "짝지어진 차가 없다 — 잴 것이 없다"
     ids = [lid for rows in by.values() for lid, _s, _p, _g in rows]
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     try:
         acc = {}
@@ -2215,7 +2245,7 @@ def s46_90_pending_not_graded() -> tuple[bool, str]:
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     with open(ROOT / "config" / "scoring.json", encoding="utf-8") as f:
@@ -2321,7 +2351,7 @@ def s46_91_raw_vs_stored() -> tuple[bool, str]:
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -2416,7 +2446,7 @@ def s46_97_raw_linked_by_source_id() -> tuple[bool, str]:
             if pat.search(line) and "source_id" not in line:
                 bad.append(f"{path.name}:{i} 주소에서 되뽑는다")
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         if bad:
             return False, " · ".join(bad[:4])
@@ -2639,7 +2669,7 @@ def s46_100_sian_word_order() -> tuple[bool, str]:
         return False, "config 에 sian_screens · base_url 이 없다"
 
     lid = ""
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if db.is_file():
         import sqlite3
         conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -2763,7 +2793,7 @@ def s46_102_electric_only_is_electric() -> tuple[bool, str]:
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     try:
@@ -2872,7 +2902,7 @@ def s46_98_sian_words_on_screen() -> tuple[bool, str]:
         return False, "config/deploy.json 에 base_url 이 없다"
 
     lid = ""
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if db.is_file():
         import sqlite3
         conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -2982,7 +3012,7 @@ def s46_95_screens_alive() -> tuple[bool, str]:
     if not base or not screens:
         return False, "config/deploy.json 에 base_url · health_screens 가 없다"
     lid = ""
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if db.is_file():
         import sqlite3
         conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -3112,7 +3142,7 @@ def s46_92_browser_zero_count() -> tuple[bool, str]:
     import re as _re
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -4735,7 +4765,7 @@ def s46_227_absent_only_declared():
     import json as _j
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -4785,7 +4815,7 @@ def s46_213_recommend_has_no_sold():
     import sqlite3
     import sys as _sys
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     _sys.path.insert(0, str(ROOT))
@@ -5267,7 +5297,7 @@ def s46_234_top_site_sweeps_gone():
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -5298,7 +5328,7 @@ def s46_235_screen_hides_unsellable():
     import sqlite3
     import sys as _sys
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     _sys.path.insert(0, str(ROOT))
@@ -5366,7 +5396,7 @@ def s46_240_all_indexes_exist():
     import re as _re
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     want = {}
@@ -5398,7 +5428,7 @@ def s46_237_recommend_in_budget():
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -6220,7 +6250,7 @@ def v1_22_site_given_is_not_remade() -> tuple[bool, str]:
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -6315,7 +6345,7 @@ def s46_261_report_matches_deploy() -> tuple[bool, str]:
     """
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 잴 것이 없다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -7031,7 +7061,7 @@ def s46_283_axis_score_filled():
 
     import sqlite3
 
-    db = ROOT / "carwatch.db"
+    db = _pick_db()
     if not db.is_file():
         return True, "DB 가 없다 — 코드만 봤다"
     conn = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
