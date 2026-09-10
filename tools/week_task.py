@@ -53,7 +53,7 @@ def rows(conn: sqlite3.Connection, cfg: dict) -> list:
         "       l.options_standard_json, l.options_name_json,"
         "       l.undercarriage_json, l.dealer_region, l.paired_source_id,"
         "       r.accident_my_cost, r.accident_other_cost, r.accident_total_cnt,"
-        "       s.grade, s.score_total"
+        "       s.grade, s.score_total, r.record_plate_hash, l.plate_hash"
         "  FROM core_listing l"
         "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
         "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
@@ -68,6 +68,38 @@ def rows(conn: sqlite3.Connection, cfg: dict) -> list:
         [c["차값_최대_원"], c["연식_이후"], c["주행_최대km"], *ads, *sells]
     ).fetchall()
     return got
+
+
+_PLATE: dict = {}
+
+
+def _plate(site: str, sid: str) -> str | None:
+    """그 매물의 차번호 — ★ 보험이력 원문이 준다 (`carNo`).
+
+    ★ 우리 표에는 ★ 해시만 남는다 (개인정보 · STEP 35) — ★ 견줄 수가 없다.
+    ★ 그래서 ★ **원문 파일**을 본다.  ★ 없으면 ★ None (모른다)
+    """
+    import glob as _g
+
+    key = f"{site}/{sid}"
+    if key in _PLATE:
+        return _PLATE[key]
+    _PLATE[key] = None
+    for path in _g.glob(os.path.join(ROOT, "raw", site, "record",
+                                     "*", f"{sid}.json")):
+        from store.rawfile import read as _read
+
+        body = (_read(path) or {}).get("body") or b""
+        if isinstance(body, bytes):
+            body = body.decode("utf-8", "replace")
+        try:
+            said = json.loads(body).get("carNo")
+        except (ValueError, TypeError, AttributeError):
+            continue
+        if said:
+            _PLATE[key] = str(said).strip()
+            break
+    return _PLATE[key]
 
 
 def _has_hud(*jsons) -> bool | None:
@@ -97,13 +129,20 @@ def judge(one, cfg: dict) -> tuple:
     c = cfg["조건"]
     (site, sid, won, ym, km, color, dx, trim, swap, weld, frame, parts,
      origin, opt_c, opt_s, opt_n, under, region, paired,
-     my_cost, ot_cost, acc_cnt, grade, score) = one
+     my_cost, ot_cost, acc_cnt, grade, score, rec_hash, plate_hash) = one
 
     why = []
     if str(sid) in cfg["이미_거른_것"]:
         return None, ["이미 걸렀다 (WEEK_TASK 4·5장)"]
     if str(paired or "") in cfg["이미_거른_것"]:
         return None, ["이미 걸렀다 (같은 차)"]
+    # ★★★★★ 09-10 — ★ **차번호로도 거른다.**
+    #   ★ 실측 — ★ `42305326` 이 「이기는 차」로 올라왔는데 ★ 차번호가
+    #     ★ ★ `342러8929` 였다 — ★ WEEK_TASK 4장의 「문 2짝 교환」 그 차다.
+    #   ★ 매물번호는 ★ 사이트가 다시 등록하면 바뀐다.  ★ 차번호는 안 바뀐다
+    said = _plate(site, sid)
+    if said and said in cfg.get("이미_거른_차번호", ()):
+        return None, [f"이미 걸렀다 (차번호 {said})"]
     if won > base["차값_원"] + 0 and won > cfg["이기는_칸"][2]["차값_최대_원"]:
         return None, [f"차값 {_won(won)} — 3,900만 초과"]
     # ★ 색 — ★ 빨간색·자주색은 제외 (마스터 확정)
