@@ -14,6 +14,7 @@
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -826,7 +827,13 @@ ALL_SITES = ("encar", "kbchachacha", "reborncar", "hyundai_cert", "kia_cpo",
 _FIELDS = (("매물", "COUNT(*)"), ("상세", "COUNT(detail_status)"),
            ("값", "COUNT(price_current_won)"),
            ("사진", "COUNT(photo_list_json)"),
-           ("트림", "COUNT(trim_grade_name)"),
+           # ★★★★★ 09-10 (N-2) — ★ 트림도 ★ **두 갈래**다.  ★ 옵션과 같은 까닭이다.
+           #   ★ 사이트마다 주는 것이 다르다 — ★ 엔카는 등급이름과 배지를 다 주고
+           #     ★ ★ K카 · 렉서스는 ★ **배지만** 준다 (`trim_badge` 604/604 · 85/85).
+           #   ★ 등급이름 하나로 세면 ★ 그 둘이 ★ **0 으로 보인다** —
+           #     ★ ★ 파서가 못 읽은 것이 아니라 ★ **자가 한 갈래만 본 것**이다.
+           #   ★ 09-09 에 옵션을 이렇게 고쳤는데 ★ 트림을 안 고쳤다 (같은 실수)
+           ("트림", "COUNT(COALESCE(trim_grade_name, trim_badge))"),
            # ★★★★★ 09-09 (r1208 N-2) — ★ 옵션은 ★ **두 갈래**다 (지시 H).
            #   ★ 「가격이 있으면 `options_choice_json` · ★ 이름만 있으면
            #     ★ ★ `options_name_json`.  ★ 가격이 없다고 옵션 축을 0 으로 두지 않는다」
@@ -845,6 +852,41 @@ def all_sites_report(base_url: str, name: str = "admin",
         for key, expr in _FIELDS:
             sqls[f"{site}.{key}"] = (f"SELECT {expr} AS n FROM core_listing "
                                      f"WHERE site='{site}'")
-        sqls[f"{site}.원문"] = ("SELECT COUNT(*) AS n FROM raw_response "
-                                f"WHERE site='{site}'")
-    return _site_report(base_url, sqls, ALL_REPORT, name, secret)
+    got = _site_report(base_url, sqls, ALL_REPORT, name, secret)
+    # ★★★★★ 09-10 — ★ 「원문」은 ★ **파일**로 센다.  ★ `raw_response` 로 안 센다.
+    #   ★★ 자가 틀렸다 — ★ 전에는 `SELECT COUNT(*) FROM raw_response` 였다.
+    #     ★ ★ 그런데 ★ `raw_response` 는 ★ **비우기로 정한 표**다 (0-3·0-4) —
+    #       ★ ★ ★ 원문의 정본은 ★ `raw/{site}/…` ★ **파일**이다 (S46-185).
+    #   ★★ 실측 09-10 — ★ 「원문 0」이던 여덟 곳에 ★ 파일이 이만큼 있었다:
+    #     ★ kcar 11,489 · heydealer 5,729 · volvo_selekt 5,209 · reborncar 3,998
+    #     ★ lexus_certified 1,933 · kbchachacha 1,169 · revolt 703 · bobaedream 416
+    #   ★★★ 엔카 1,472% · 기아 1,433% 도 ★ 같은 헛것이었다 —
+    #     ★ ★ 안 비운 옛 줄을 ★ 매물로 나눈 값이다.  ★ **비율일 수 없는 수**다.
+    #   ★ 지시 r1208 「★ 자가 붉으면 ★ 자를 먼저 의심한다」
+    got.update(raw_file_counts())
+    with open(ALL_REPORT, "w", encoding="utf-8") as f:
+        json.dump(got, f, ensure_ascii=False, indent=1)
+    return got
+
+
+def raw_file_counts(root: str = ROOT) -> dict:
+    """{사이트}.원문 — ★ 그 사이트 매물 중 ★ **원문 파일을 가진 것**의 수.
+
+    ★ 파일 수가 아니라 ★ **매물 수**다 — ★ 한 매물이 여러 창구·여러 날 있어서
+      ★ ★ 파일을 그냥 세면 ★ 매물보다 커져 ★ 「1,472%」 같은 수가 나온다
+    """
+    import glob as _g
+    import sqlite3 as _s
+
+    got: dict = {}
+    conn = _s.connect(os.path.join(root, "carwatch.db"))
+    for site in ALL_SITES:
+        mine = {r[0] for r in conn.execute(
+            "SELECT source_id FROM core_listing WHERE site = ?", (site,))}
+        if not mine:
+            continue
+        seen = {os.path.basename(f)[:-5] for f in
+                _g.glob(os.path.join(root, "raw", site, "*", "*", "*.json"))}
+        got[f"{site}.원문"] = len(mine & seen)
+    conn.close()
+    return got
