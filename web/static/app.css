@@ -3485,9 +3485,7 @@ details.open2:not([open])>*:not(summary){display:none}
    배포에서 CSS 가 하나도 안 붙어 파란 밑줄 글자만 나왔다.
    시안에는 <style> 안에 있었는데 app.css 로 옮기지 않았다. 내 빠뜨림이다.
    개발측은 내가 준 class 이름을 그대로 썼다. 규칙은 지켜졌다. */
-:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
- --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
- --blue:var(--accent);--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+
 /* 왜 이 화면이 있나 */
 .v3-why{border-left:3px solid var(--blue);background:var(--surface2);
  padding:10px 12px;margin:0 0 14px;font-size:12px;color:var(--dim);line-height:1.7}
@@ -3658,9 +3656,7 @@ nav.bot a.on{color:var(--amber);font-weight:700}
    어제 S46-291 을 세웠는데, 그 검사는 「틀이 쓰는 이름」만 본다.
    개발측이 틀을 만들기 전이라 안 잡혔다. 검사도 함께 고친다.
    규격 docs/GV70_TAB4.md */
-:root{--bg:#0f1114;--surface:#15181d;--surface2:#1b1f25;--line:#2a2f37;--line2:#3a414b;
- --text:#e8eaed;--dim:#9aa3ad;--faint:#6b747e;--amber:#f0b429;--ok:#4ade80;--no:#f87171;
- --blue:var(--accent);--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+
 *{box-sizing:border-box;min-height:0}
 /* 기준 띠 — 마스터가 쓰신 일곱 */
 .g4-rule{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
