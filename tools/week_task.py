@@ -61,11 +61,13 @@ def rows(conn: sqlite3.Connection, cfg: dict) -> list:
         "   AND l.status IN ('active','new','relisted')"
         "   AND l.price_current_won IS NOT NULL"
         "   AND l.price_current_won <= ?"
+        "   AND l.price_current_won >= ?"
         "   AND l.year_month >= ? AND l.mileage_km <= ?"
         f"   AND COALESCE(l.advertisement_type,'') NOT IN ({m})"
         f"   AND COALESCE(l.sell_type,'') NOT IN ({m2})"
         " ORDER BY l.price_current_won",
-        [c["차값_최대_원"], c["연식_이후"], c["주행_최대km"], *ads, *sells]
+        [c["차값_최대_원"], c.get("차값_최소_원") or 0,
+         c["연식_이후"], c["주행_최대km"], *ads, *sells]
     ).fetchall()
     return got
 
@@ -269,3 +271,28 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def kb_only(db: str = "carwatch.db") -> list:
+    """★ KB 후보 — ★ **값만 아는 것**.  ★ 연식·주행은 ★ 상세가 막혀 못 받았다.
+
+    ★★ 그래도 낸다 — ★ 그것이 ★ **아직 아무도 안 본 곳**이기 때문이다 (지시 6-1).
+      ★ ★ 다만 ★ 화면에 ★ 「연식·주행 미조회」라 적는다 — ★ 지어내지 않는다.
+    ★ 값은 ★ 목록의 `data-ga4` 가 준다 (`tools/kb_list_prices.py`)
+    """
+    cfg = book()
+    c = cfg["조건"]
+    conn = sqlite3.connect(os.path.join(ROOT, db))
+    got = conn.execute(
+        "SELECT source_id, price_current_won, trim_grade_name,"
+        "       year_month, mileage_km"
+        "  FROM core_listing"
+        " WHERE site = 'kbchachacha' AND target_key = 'GV70_25T'"
+        "   AND price_current_won IS NOT NULL"
+        "   AND price_current_won >= ? AND price_current_won <= ?"
+        # ★ 마스터 차는 ★ 2.5T 다 — ★ 디젤 2.2 는 다른 차다
+        "   AND trim_grade_name LIKE '%2.5T%'"
+        " ORDER BY price_current_won",
+        (c.get("차값_최소_원") or 0, cfg["기준차"]["차값_원"])).fetchall()
+    conn.close()
+    return got
