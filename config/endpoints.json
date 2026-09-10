@@ -1,341 +1,343 @@
 {
-  "_ref": "지시서 2장 STEP 17 (URL) · STEP 24 (요청 정책) · 마스터 회신 20260809",
-  "_pending": "encar.headers.User-Agent 는 v1 에 남아 있지 않다. 일반 모바일 UA 로 1차 시도하고, 전량 401·403 이면 STEP 25a 실측 요청서를 낸다. 일부만 실패하면 UA 문제가 아니다",
-  "encar": {
-    "base_url": "https://api.encar.com",
-    "paths": {
-      "list": "/search/car/list/mobile",
-      "detail": "/v1/readside/vehicle/{source_id}",
-      "inspection": "/v1/readside/inspection/vehicle/{source_id}",
-      "record": "/v1/readside/record/vehicle/{source_id}/open",
-      "diagnosis": "/v1/readside/diagnosis/vehicle/{source_id}",
-      "catalog": "/v1/readside/vehicles/car/{source_id}/options/choice",
-      "facet": "/search/car/list/mobile",
-      "record_summary": "/v1/readside/record/vehicle/{source_id}/summary",
-      "inspection_summary": "/v1/readside/inspection/vehicle/{source_id}/summary",
-      "platform_check": "/v1/readside/clean-encar/vehicle/{source_id}",
-      "sellingpoint": "/v1/readside/diagnosis/vehicle/{source_id}/sellingpoint",
-      "ev_battery": "/v1/readside/vehicle/ev-battery/{source_id}",
-      "extend_warrant": "/v1/readside/extend-warrant/vehicle/{source_id}"
-    },
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-    },
-    "timeout_sec": 15.0,
-    "interval_sec": [
-      0.3,
-      0.3
-    ],
-    "retry_max": 2,
-    "catalog_reps": 3,
-    "_catalog_reps_note": "한 조합에서 몇 매물까지 카탈로그를 물어볼 것인가 (개정 327). ★ 하나가 404 여도 조합이 없는 것이 아니다 — 그 매물만 사라진 것이다. 실측 08-18: 같은 조합 23매물 중 셋은 404, 셋은 200 [] 였다",
-    "fail_streak_limit": 20,
-    "page_size": 20,
-    "detail_refresh_days": 7,
-    "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다",
-    "brand_scope": "all",
-    "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 9종 — 종합",
-    "server_may_fetch": {
-      "list": false,
-      "detail": true
-    },
-    "_server_may_fetch_why": "★★★★★★ 마스터 확정 09-05 — 「★ **407 번은 목록뿐이고 ★ 상세는 그런 거 없다**.  ★ 이미 몇 번이나 확인했는데 ★ 또 헛소리한다.  ★ **엔카 상세를 제대로 받아라**」  ★★ **가이드가 09-04 에 `detail:false` 로 막았다 — ★ 틀렸다.  ★ 물린다**.  ★ ★ 그 뒤로 ★ 엔카 상세가 ★ **09-03 08:30 에 멈춰** 있었다.  ★★★ 갈래 — ★ **목록**(`/search/car/list/…`)은 ★ **407** 이라 ★ 마스터 회선으로만 받는다 · ★ **상세와 그 아래 열한 길**(`/v1/readside/…` — detail·inspection·record·diagnosis·catalog· record_summary·inspection_summary·platform_check·sellingpoint·ev_battery·extend_warrant)은 ★ ★ **서버가 받는다**.  ★ 407 을 핑계로 막지 마라.  ★ ★ ★ 못 받은 상세 ★ **5,749건**(15,509 중 9,760 받음)을 ★ 채워라",
-    "interval_max_sec": 30,
-    "interval_backoff": 2.0,
-    "interval_recover": 0.7,
-    "_interval_why": "★★★★★ 09-06 r1184 E-2 실측 (tools/encar_detail_probe.py) — ★ 엔카 상세는 ★ **막힌 것이 아니라 조리개**다. ★ 간격 0.3초로 5,846번 던지니 ★ 200 이 4건 · 407 이 5,841건. ★ 간격 5초 → 24번 중 200 3건(12.5%) · ★ 간격 30초 → 8번 중 200 2건·404 2건(33%). ★ 그래서 ★ 407 이 오면 간격을 2배로 늘리고(최대 30초) · ★ 200 이 오면 0.7배로 줄인다.  ★ 값은 여기가 정본이다 (S14)",
-    "_interval_origin_why": "마스터 지적 09-06 — 「1건 30초로 하라는 건 헛소리다. 0.1초로 받아서 문제 없었다」. 맞다. 30초는 서버 IP 에서만 쓰는 값이다. 서버는 조리개에 걸려 0.3초면 407 이 99.9% 지만, 마스터 회선은 0.1초에도 200 이 온다. 그러므로 (1) 서버가 받을 때만 interval_sec 를 쓴다. (2) 마스터 회선(origin=browser)으로 받을 때는 조리개를 적용하지 않는다. (3) 엔카 상세 6,900건은 마스터 회선이면 0.1초 간격으로 약 12분이다. 서버로 6~7일 잡지 마라.",
-    "browser_interval_sec": 0.1,
-    "_407_실측_09-06": "서버 IP 에서 407 인 것 — 목록 · inspection(성능점검) · record/open(보험이력). 상세 vehicle/{id} 는 서버에서도 열린다. 앞서 규격에 「목록만 막힌다」고 적은 것은 틀렸다. fem.encar.com 화면은 1.6KB 껍데기다. JS 가 API 를 불러 채우므로 화면만 긁으면 빈다. 성능점검·보험이력은 마스터 회선(/fetch)으로 받는다.",
-    "master_line_only": [
-      "list",
-      "inspection",
-      "record_open"
-    ],
-    "_조리개_실측_09-06": "마스터 회선으로 재봤다. 머리(header)를 넷으로 바꿔 봐도 다 같았다 — 간격 문제가 아니다. 0.3초 간격으로 몰아치면 2~3건에서 407 로 잠긴다. 잠기면 느리게 해도 안 열린다. 1분 쉬면 풀린다. 곧 1분에 2~3건이다. 성능점검 9,317건을 다 받으면 50시간이 넘는다. 전부 받기는 포기한다. 마스터가 고르시는 차만 받는다.",
-    "inspection_policy": {
-      "성능·보험": "서버로는 못 받는다. 후보가 몇 대로 좁혀진 뒤 그때 다시 정한다",
-      "상세": "서버가 받는다. 407 이면 쉬었다 다시",
-      "마스터 회선": "쓰지 않는다 (마스터 09-07)"
-    },
-    "browser_batch": {
-      "_왜": "★★★★★ 09-06 r1204 L-10 실측 (마스터 회선) — ★ 성능점검·보험이력은 ★ 0.3초로 몰아치면 ★ **2~3건에서 407 로 잠긴다**. ★ 잠긴 뒤에는 ★ 0.5초로 12번 눌러도 200 이 2건 · 2.0초로 12번은 **0건**이다 — ★ **간격을 늘려서 되는 문제가 아니다**. ★ 다만 ★ **1분이면 풀린다**. ★ 그래서 ★ 3건 받고 60초 쉰다.  ★ 잠기면 60초 쉬었다 이어받는다. ★ 상세(vehicle/{id})는 서버에서도 열리므로 ★ 묶지 않는다",
-      "inspection": {
-        "n": 3,
-        "rest_sec": 60
-      },
-      "record": {
-        "n": 3,
-        "rest_sec": 60
-      }
-    },
-    "_수집_주체_09-07": "마스터 — 「내가 안 받을 거야」. /fetch(마스터 회선)는 쓰지 않는다. 서버가 받는다. 실측 09-07 — 상세 vehicle/{id} 는 데이터센터 IP 에서도 5번 중 3번 열린다. 그 안에 옵션·진단(diagnosisCar)·진단등급이 다 있다. 이미 엔카 옵션 9,286건이 서버로 들어왔다. 407 이 나면 쉬었다 다시 부른다. 못 받는 것은 성능점검·보험이력뿐이다. 그 둘은 골격 사고를 가르는 데 쓰는데, 마스터 조건은 상세만으로 거의 다 걸린다."
+ "_ref": "지시서 2장 STEP 17 (URL) · STEP 24 (요청 정책) · 마스터 회신 20260809",
+ "_pending": "encar.headers.User-Agent 는 v1 에 남아 있지 않다. 일반 모바일 UA 로 1차 시도하고, 전량 401·403 이면 STEP 25a 실측 요청서를 낸다. 일부만 실패하면 UA 문제가 아니다",
+ "encar": {
+  "base_url": "https://api.encar.com",
+  "paths": {
+   "list": "/search/car/list/mobile",
+   "detail": "/v1/readside/vehicle/{source_id}",
+   "inspection": "/v1/readside/inspection/vehicle/{source_id}",
+   "record": "/v1/readside/record/vehicle/{source_id}/open",
+   "diagnosis": "/v1/readside/diagnosis/vehicle/{source_id}",
+   "catalog": "/v1/readside/vehicles/car/{source_id}/options/choice",
+   "facet": "/search/car/list/mobile",
+   "record_summary": "/v1/readside/record/vehicle/{source_id}/summary",
+   "inspection_summary": "/v1/readside/inspection/vehicle/{source_id}/summary",
+   "platform_check": "/v1/readside/clean-encar/vehicle/{source_id}",
+   "sellingpoint": "/v1/readside/diagnosis/vehicle/{source_id}/sellingpoint",
+   "ev_battery": "/v1/readside/vehicle/ev-battery/{source_id}",
+   "extend_warrant": "/v1/readside/extend-warrant/vehicle/{source_id}"
   },
-  "kcar": {
-    "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",
-    "_note": "★ 문서에 없던 호스트를 번들에서 뽑았다 — mapi.kcar.com. api.kcar.com · marketm-api.kcar.com 은 전부 404 다. /bc/detail/popup/* 은 API 가 아니라 SPA 껍데기(2.1MB HTML)다",
-    "base_url": "https://mapi.kcar.com",
-    "paths": {
-      "detail": "/bc/car-info-detail-of-ng?i_sCarCd={source_id}",
-      "inspection": "/bc/car-insp/photo/cm?i_sCarCd={source_id}",
-      "list": "/bc/search/list/drct",
-      "stock_list": "/bc/stockCar/list?pageSize={size}"
-    },
-    "_paths_note": "★ detail 하나가 상세·옵션 42·보증 5·타이어 5·소유이력·보험·진단을 함께 준다. 타이어 트레드(tirResQty)가 여기 있다 — 엔카는 401 이라 못 받는다",
-    "_list_note": "★ 개정 467 실측 — POST /bc/search/list/drct (직영) · /acm (제휴). 요청 본문만 enc 암호화 · 응답은 평문 JSON · totalCnt·totalPageCnt 를 준다 · 쪽당 10건. ★ 조건 검색은 사람이 화면에서 고른 뒤 응답을 읽는다. ★ enc 를 풀지 않는다",
-    "timeout_sec": 20,
-    "interval_sec": 1.5,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile Safari/604.1",
-      "Accept": "application/json, text/plain, */*",
-      "Referer": "https://m.kcar.com/"
-    },
-    "_stock_list_note": "★ 개정 626 (마스터가 찾으심) — ★ 목록이 뚫렸다.  ★ enc 없음 · 헤더 불필요. ★ `data.listCount` 가 총건수다 — ★ 쪽마다 더하지 않는다. ★ `pageSize` 만 먹는다 — ★ `mnuftrCd`·`modelGrpCd` 는 안 먹으니 ★ 전량 받아 우리가 거른다",
-    "stock_page_size": 1000,
-    "brand_scope": "all",
-    "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 20종 — 종합",
-    "root_type": {
-      "detail": "html"
-    },
-    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
   },
-  "kia_cpo": {
-    "_ref": "docs/KIA_CPO_API.md · 실측 2026-08-22 서버에서 직접 · 표본 30건",
-    "_note": "★ 인증·토큰·암호화 없다 · robots.txt 자체가 404(없다) · 서버에서 그냥 200 이다",
-    "base_url": "https://cpo.kia.com",
-    "paths": {
-      "list": "/api/search/?size=100",
-      "detail": "/api/product/detail/{source_id}/",
-      "facet_conditions": "/api/search/conditions/",
-      "facet_models": "/api/search/category-models/"
-    },
-    "_paths_note": "★ 상세 화면 /products/{id}/ 는 404 다. ★ API 로만 받는다. list 의 id 를 detail 에 그대로 쓴다",
-    "timeout_sec": 20,
-    "interval_sec": 0.5,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
-      "Accept": "application/json",
-      "Referer": "https://cpo.kia.com/products/",
-      "x-referer-pathname": "/products/"
-    },
-    "brand_scope": [
-      "기아"
-    ],
-    "_brand_scope_why": "[실측 08-26] site_manufacturer 기아 하나 · 기아 인증중고"
+  "timeout_sec": 15.0,
+  "interval_sec": [
+   0.3,
+   0.3
+  ],
+  "retry_max": 2,
+  "catalog_reps": 3,
+  "_catalog_reps_note": "한 조합에서 몇 매물까지 카탈로그를 물어볼 것인가 (개정 327). ★ 하나가 404 여도 조합이 없는 것이 아니다 — 그 매물만 사라진 것이다. 실측 08-18: 같은 조합 23매물 중 셋은 404, 셋은 200 [] 였다",
+  "fail_streak_limit": 20,
+  "page_size": 20,
+  "detail_refresh_days": 7,
+  "_detail_refresh_note": "상세를 다시 받는 기준 (STEP 136h · 개정 315). ★ 목록 저장이 전건 재수집을 부르지 않는다 — 3,470건 × 9종 = 3만 호출이다. 가격이 바뀐 매물은 이 기준과 무관하게 다시 받는다",
+  "brand_scope": "all",
+  "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 9종 — 종합",
+  "server_may_fetch": {
+   "list": false,
+   "detail": true
   },
-  "hyundai_cert": {
-    "_ref": "docs/HYUNDAI_CERTIFIED_API.md · 실측 2026-08-22 · 표본 30건",
-    "_note": "★ robots 금지 경로 없음 · 인증 없음. ★ 목록 응답이 JSON 이 아니라 HTML 조각이다 — 매물번호는 data-favContsNo 에 있다",
-    "base_url": "https://certified.hyundai.com",
-    "paths": {
-      "list": "/m/search/results/selling",
-      "list_coming": "/m/search/results/coming",
-      "count": "/api/search/vehicle/count/selling",
-      "detail": "/m/goods/goodsDetail.do?goodsNo={source_id}"
-    },
-    "_paths_note": "★ 목록은 POST · Content-Type: application/json. tmnlId 를 빈 문자열로 둬도 200 이다 — 토큰이 필요 없다. rowsPerPage=100 으로 한 번에 100건 · pageIdx 로 쪽넘김. ★ 매물번호 정규식 data-favContsNo=\"([A-Z]{3}\\\\d{12})\"",
-    "timeout_sec": 30,
-    "interval_sec": 0.5,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
-      "Accept": "*/*",
-      "Content-Type": "application/json",
-      "Referer": "https://certified.hyundai.com/m/search/vehicle?srchType=srchFilter",
-      "X-Requested-With": "XMLHttpRequest"
-    },
-    "brand_scope": [
-      "현대",
-      "제네시스"
-    ],
-    "_brand_scope_why": "[실측 08-26] 제네시스 G80 174건이 들어와 있다 — 제네시스도 준다",
-    "root_type": {
-      "detail": "html"
-    },
-    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
+  "_server_may_fetch_why": "★★★★★★ 마스터 확정 09-05 — 「★ **407 번은 목록뿐이고 ★ 상세는 그런 거 없다**.  ★ 이미 몇 번이나 확인했는데 ★ 또 헛소리한다.  ★ **엔카 상세를 제대로 받아라**」  ★★ **가이드가 09-04 에 `detail:false` 로 막았다 — ★ 틀렸다.  ★ 물린다**.  ★ ★ 그 뒤로 ★ 엔카 상세가 ★ **09-03 08:30 에 멈춰** 있었다.  ★★★ 갈래 — ★ **목록**(`/search/car/list/…`)은 ★ **407** 이라 ★ 마스터 회선으로만 받는다 · ★ **상세와 그 아래 열한 길**(`/v1/readside/…` — detail·inspection·record·diagnosis·catalog· record_summary·inspection_summary·platform_check·sellingpoint·ev_battery·extend_warrant)은 ★ ★ **서버가 받는다**.  ★ 407 을 핑계로 막지 마라.  ★ ★ ★ 못 받은 상세 ★ **5,749건**(15,509 중 9,760 받음)을 ★ 채워라",
+  "interval_max_sec": 30,
+  "interval_backoff": 2.0,
+  "interval_recover": 0.7,
+  "_interval_why": "★★★★★ 09-06 r1184 E-2 실측 (tools/encar_detail_probe.py) — ★ 엔카 상세는 ★ **막힌 것이 아니라 조리개**다. ★ 간격 0.3초로 5,846번 던지니 ★ 200 이 4건 · 407 이 5,841건. ★ 간격 5초 → 24번 중 200 3건(12.5%) · ★ 간격 30초 → 8번 중 200 2건·404 2건(33%). ★ 그래서 ★ 407 이 오면 간격을 2배로 늘리고(최대 30초) · ★ 200 이 오면 0.7배로 줄인다.  ★ 값은 여기가 정본이다 (S14)",
+  "_interval_origin_why": "마스터 지적 09-06 — 「1건 30초로 하라는 건 헛소리다. 0.1초로 받아서 문제 없었다」. 맞다. 30초는 서버 IP 에서만 쓰는 값이다. 서버는 조리개에 걸려 0.3초면 407 이 99.9% 지만, 마스터 회선은 0.1초에도 200 이 온다. 그러므로 (1) 서버가 받을 때만 interval_sec 를 쓴다. (2) 마스터 회선(origin=browser)으로 받을 때는 조리개를 적용하지 않는다. (3) 엔카 상세 6,900건은 마스터 회선이면 0.1초 간격으로 약 12분이다. 서버로 6~7일 잡지 마라.",
+  "browser_interval_sec": 0.1,
+  "_407_실측_09-06": "서버 IP 에서 407 인 것 — 목록 · inspection(성능점검) · record/open(보험이력). 상세 vehicle/{id} 는 서버에서도 열린다. 앞서 규격에 「목록만 막힌다」고 적은 것은 틀렸다. fem.encar.com 화면은 1.6KB 껍데기다. JS 가 API 를 불러 채우므로 화면만 긁으면 빈다. 성능점검·보험이력은 마스터 회선(/fetch)으로 받는다.",
+  "master_line_only": [
+   "list",
+   "inspection",
+   "record_open"
+  ],
+  "_조리개_실측_09-06": "마스터 회선으로 재봤다. 머리(header)를 넷으로 바꿔 봐도 다 같았다 — 간격 문제가 아니다. 0.3초 간격으로 몰아치면 2~3건에서 407 로 잠긴다. 잠기면 느리게 해도 안 열린다. 1분 쉬면 풀린다. 곧 1분에 2~3건이다. 성능점검 9,317건을 다 받으면 50시간이 넘는다. 전부 받기는 포기한다. 마스터가 고르시는 차만 받는다.",
+  "inspection_policy": {
+   "성능·보험": "서버로는 못 받는다. 후보가 몇 대로 좁혀진 뒤 그때 다시 정한다",
+   "상세": "서버가 받는다. 407 이면 쉬었다 다시",
+   "마스터 회선": "쓰지 않는다 (마스터 09-07)"
   },
-  "heydealer": {
-    "_ref": "docs/HEYDEALER_API.md 0장 · 명령서 37 · 실측 2026-08-24 (개정 694)",
-    "_note": "★★ 두 걸음이다 — ① POST token_api_url 로 손님 토큰(JWT)을 받고 ② Authorization: Bearer 로 목록을 부른다. ★ 토큰이 없으면 목록이 500 이다 — 「고장」이 아니었다 (오판 97). ★ 응답이 배열(list)이다 — dict 가 아니다. ★ 연료는 목록에 없고 상세의 detail_info.fuel_display 에 있다. ★ 상세에 car_number(차량번호)가 있어 5a 짝짓기가 된다. 금지 — 토큰을 저장소에 적는 것",
-    "base_url": "https://market-api.heydealer.com",
-    "paths": {
-      "list": "/v2/customers/web/market/cars/?order=recommendation&view_type=compact&page={page}",
-      "detail": "/v2/customers/web/market/cars/{source_id}/"
-    },
-    "_paths_note": "★ 목록은 쪽당 10건 · 칸 14개다. ★ 10건이 오면 다음 쪽이 있다. ★ hash_id 가 매물번호다. ★ 값은 상세에 있다(칸 33 · detail_info 51)",
-    "timeout_sec": 40,
-    "interval_sec": 0.5,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
-      "Accept": "application/json",
-      "Referer": "https://www.heydealer.com/",
-      "Origin": "https://www.heydealer.com",
-      "app-os": "web"
-    },
-    "token_api_url": "https://api.heydealer.com/v2/customers/web/initialize_app/",
-    "token_referrer": "https://www.heydealer.com/",
-    "brand_scope": "all",
-    "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합"
+  "browser_batch": {
+   "_왜": "★★★★★ 09-06 r1204 L-10 실측 (마스터 회선) — ★ 성능점검·보험이력은 ★ 0.3초로 몰아치면 ★ **2~3건에서 407 로 잠긴다**. ★ 잠긴 뒤에는 ★ 0.5초로 12번 눌러도 200 이 2건 · 2.0초로 12번은 **0건**이다 — ★ **간격을 늘려서 되는 문제가 아니다**. ★ 다만 ★ **1분이면 풀린다**. ★ 그래서 ★ 3건 받고 60초 쉰다.  ★ 잠기면 60초 쉬었다 이어받는다. ★ 상세(vehicle/{id})는 서버에서도 열리므로 ★ 묶지 않는다",
+   "inspection": {
+    "n": 3,
+    "rest_sec": 60
+   },
+   "record": {
+    "n": 3,
+    "rest_sec": 60
+   }
   },
-  "kbchachacha": {
-    "_ref": "docs/KBCHACHACHA_API.md · 실측 2026-08-22 · 표본 25건",
-    "_note": "★★ 봇 차단 — 상세가 200 인데 본문이 「로봇 여부 확인 중」 2,759B 로 올 때가 있다(25건 중 7건). ★ 10KB 미만이거나 그 문구가 있으면 수집 실패로 적고 최대 3회 재시도. ★ 절대 「없음」으로 저장하지 마라",
-    "base_url": "https://www.kbchachacha.com",
-    "paths": {
-      "list": "/public/search/list.empty?page={page}",
-      "detail": "/public/car/detail.kbc?carSeq={source_id}",
-      "diagnosis": "/public/diag/car/attach/list.json",
-      "facet_maker": "/public/search/carMaker.json?page=1",
-      "facet_option": "/public/search/optionSale.json?page=1",
-      "list_narrow": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}",
-      "list_gen": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}&carCode={car}",
-      "car_name": "/public/search/carName.json?makerCode={maker}&classCode={klass}"
-    },
-    "_paths_note": "★ 목록은 쪽넘김 · 쪽당 40건. robots 전면 허용",
-    "timeout_sec": 30,
-    "interval_sec": 1.2,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
-      "Referer": "https://www.kbchachacha.com/public/search/main.kbc",
-      "X-Requested-With": "XMLHttpRequest"
-    },
-    "end_bytes": 3585,
-    "end_mark": "차량이 없습니다",
-    "bot_bytes": 2759,
-    "brand_scope": "all",
-    "_brand_scope_why": "[실측 08-26] site_manufacturer 3종 · 종합 사이트다"
+  "_수집_주체_09-07": "마스터 — 「내가 안 받을 거야」. /fetch(마스터 회선)는 쓰지 않는다. 서버가 받는다. 실측 09-07 — 상세 vehicle/{id} 는 데이터센터 IP 에서도 5번 중 3번 열린다. 그 안에 옵션·진단(diagnosisCar)·진단등급이 다 있다. 이미 엔카 옵션 9,286건이 서버로 들어왔다. 407 이 나면 쉬었다 다시 부른다. 못 받는 것은 성능점검·보험이력뿐이다. 그 둘은 골격 사고를 가르는 데 쓰는데, 마스터 조건은 상세만으로 거의 다 걸린다."
+ },
+ "kcar": {
+  "_ref": "docs/KCAR_API.md · 실측 2026-08-18 서버에서 직접 · 표본 EC61393706",
+  "_note": "★ 문서에 없던 호스트를 번들에서 뽑았다 — mapi.kcar.com. api.kcar.com · marketm-api.kcar.com 은 전부 404 다. /bc/detail/popup/* 은 API 가 아니라 SPA 껍데기(2.1MB HTML)다",
+  "base_url": "https://mapi.kcar.com",
+  "paths": {
+   "detail": "/bc/car-info-detail-of-ng?i_sCarCd={source_id}",
+   "inspection": "/bc/car-insp/photo/cm?i_sCarCd={source_id}",
+   "list": "/bc/search/list/drct",
+   "stock_list": "/bc/stockCar/list?pageSize={size}"
   },
-  "bobaedream": {
-    "_ref": "docs/BOBAEDREAM_API.md · 실측 2026-08-24",
-    "_note": "★★ 호스트가 ★ m. (모바일)이다.  ★ www. 는 다른 화면이고 ★ EUC-KR 이다 — ★ 섞지 마라",
-    "base_url": "https://m.bobaedream.co.kr",
-    "paths": {
-      "list": "/mycar/mlist/0/{page}",
-      "detail": "/mycar/mview/{source_id}"
-    },
-    "_paths_note": "★ 목록 쪽당 50건 · 상세 77~90KB · robots 는 www 가 Allow:/ (Amazonbot 만 금지) · m. 은 404",
-    "timeout_sec": 30,
-    "interval_sec": 1.2,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
-    },
-    "brand_scope": "all",
-    "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합",
-    "root_type": {
-      "detail": "html"
-    },
-    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
+  "_paths_note": "★ detail 하나가 상세·옵션 42·보증 5·타이어 5·소유이력·보험·진단을 함께 준다. 타이어 트레드(tirResQty)가 여기 있다 — 엔카는 401 이라 못 받는다",
+  "_list_note": "★ 개정 467 실측 — POST /bc/search/list/drct (직영) · /acm (제휴). 요청 본문만 enc 암호화 · 응답은 평문 JSON · totalCnt·totalPageCnt 를 준다 · 쪽당 10건. ★ 조건 검색은 사람이 화면에서 고른 뒤 응답을 읽는다. ★ enc 를 풀지 않는다",
+  "timeout_sec": 20,
+  "interval_sec": 1.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile Safari/604.1",
+   "Accept": "application/json, text/plain, */*",
+   "Referer": "https://m.kcar.com/"
   },
-  "reborncar": {
-    "base_url": "https://www.reborncar.co.kr",
-    "paths": {
-      "sitemap": "/sitemap-ext.xml",
-      "detail": "/m/smartbuy/SB1002/{source_id}"
-    },
-    "_note": "★ 모바일 UA 필수 — ★ 데스크톱은 「용도변경 없음」으로 거짓이 온다 (2a장). ★ 목록 API 는 robots 가 막았다 — ★ 사이트맵이 목록이다 (1b장 · 개정 697). ★ 실측 08-24 — <loc> 2,658개 중 매물 1,036건 (중복 0). ★ 상세 /smartbuy/SB1002/{코드} 는 robots 가 안 막았다. ★ ?carNo= 는 404 다",
-    "_ref": "docs/REBORNCAR_API.md 1b장 · 명령서 39 · 실측 2026-08-24",
-    "timeout_sec": 60,
-    "interval_sec": 1.0,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
-      "Accept": "text/html,application/xhtml+xml"
-    },
-    "brand_scope": "all",
-    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 종합이 맞다 — 상세 표본 12건이 기아 8 · 현대 2 · 제네시스 1 · 쉐보레 1 로 ★ 제조사가 섞인다.  ★ `brand_scope` 를 좁히지 않는다 — ★ 우리 26종은 목록이 아니라 ★ 상세를 받아 이름으로 거른다.  ★ 닫혔다",
-    "_list_why": "★★★★★ 09-03 가이드 확정 — ★ 개발측 v358 「여쭐 것」에 답한다.  ★ **`list` 길을 만들지 않는다.  ★ 리본카는 목록 API 가 없다**.  ★ `sitemap` 이 ★ 이 사이트의 목록이다 — ★ 가이드가 09-02 에 그것으로 **1,084건**을 셌다.  ★★ 개발측 말이 맞다 — 「★ 목록 쪽넘김이 아니라 ★ **다른 걸음**이다」"
+  "_stock_list_note": "★ 개정 626 (마스터가 찾으심) — ★ 목록이 뚫렸다.  ★ enc 없음 · 헤더 불필요. ★ `data.listCount` 가 총건수다 — ★ 쪽마다 더하지 않는다. ★ `pageSize` 만 먹는다 — ★ `mnuftrCd`·`modelGrpCd` 는 안 먹으니 ★ 전량 받아 우리가 거른다",
+  "stock_page_size": 1000,
+  "brand_scope": "all",
+  "_brand_scope_why": "[실측 08-26] core_listing.site_manufacturer 20종 — 종합",
+  "root_type": {
+   "detail": "html"
   },
-  "lexus_certified": {
-    "base_url": "https://certified.lexus.co.kr",
-    "paths": {
-      "list": "/api/json/getList_search.json.php?price_area_min=0&price_area_max=99999",
-      "detail": "/api/json/getData_car_detail.json.php?idx={source_id}"
-    },
-    "_note": "★ 모바일 UA ＋ Referer 필요.  ★ `search_list.car_list` 가 매물이다. ★ ★ `total_list_num` 을 믿지 마라 — ★ 실측 08-24 car_list 36 · total_list_num 84 로 서로 다르다 (규격은 0 이라 적었다).  ★ 전수 74건 · 3쪽 [실측 08-29 · 눌러 봤다].  ★ 쪽넘김 열쇠는 `cur_page` 다 — `page`·`pageNo` 는 조용히 1쪽을 돌려준다.  ★ cur_page 1→36 · 2→36 · 3→2 · 4→0.  ★ 「전수 36」은 1쪽만 센 것이었다 (개정 587 · `LEXUS_CERTIFIED_API.md` 1c)",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
-    "timeout_sec": 40,
-    "interval_sec": 1.0,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
-      "Referer": "https://certified.lexus.co.kr/",
-      "Accept": "application/json"
-    },
-    "brand_scope": [
-      "렉서스"
-    ],
-    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 렉서스만 판다 — 목록 1쪽 36건의 `model_name` 이 ES 21 · NX 9 · UX 5 · RX 1 로 ★ 전부 렉서스다.  ★ 토요타도 섞이지 않는다.  ★ 닫혔다"
+  "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
+ },
+ "kia_cpo": {
+  "_ref": "docs/KIA_CPO_API.md · 실측 2026-08-22 서버에서 직접 · 표본 30건",
+  "_note": "★ 인증·토큰·암호화 없다 · robots.txt 자체가 404(없다) · 서버에서 그냥 200 이다",
+  "base_url": "https://cpo.kia.com",
+  "paths": {
+   "list": "/api/search/?size=100",
+   "detail": "/api/product/detail/{source_id}/",
+   "facet_conditions": "/api/search/conditions/",
+   "facet_models": "/api/search/category-models/"
   },
-  "volvo_selekt": {
-    "base_url": "https://selekt.volvocars.co.kr",
-    "paths": {
-      "list": "/kr/vehicles/xhr-results/{page}",
-      "detail": "/kr/vehicles/volvo/{model}/{source_id}"
-    },
-    "_note": "★ 목록은 xhr-results 쪽넘김이다 (명령서 1a · 실측 08-24). ★ 한 쪽에 링크 12개가 상한 — ★ 12 면 다음 쪽이 있다. ★ 총건수는 화면 글자 「총 N」에서 읽는다 — ★ 실측 08-24 ★ 180건 (규격의 221 은 08-23 값). ★ 매물번호가 숫자가 아니라 슬러그다. ★ 503 이 잦아 재시도가 필요하다",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
-    "timeout_sec": 40,
-    "interval_sec": 1.0,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
-      "Referer": "https://selekt.volvocars.co.kr/"
-    },
-    "brand_scope": [
-      "볼보"
-    ],
-    "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 볼보만 판다 — 목록 1쪽 카드가 S60·S90·XC40·XC60·V60·EX30 이고 ★ `Polestar` 가 ★ 0회다.  ★ 폴스타는 여기 없다(별도 브랜드).  ★ 닫혔다",
-    "web_url": "https://selekt.volvocars.co.kr{detail_path}",
-    "_web_url_why": "★★★★★ 가이드 실측 09-04 — ★ **목록이 상세 링크를 그대로 준다**.  ★ `xhr-results/1`(85,777B) 안에 ★ `/kr/vehicles/volvo/{모델}/{트림}--{해시}` 가 있다 — ★ 보기: `/kr/vehicles/volvo/ex30-cross-country/ultra-twin-motor-performance--jbbbeks`.  ★★ 그러니 ★ `{model}` 을 따로 캘 것 없이 ★ **목록에서 뽑은 길을 그대로 쓴다** (`detail_path`).  ★ ★ 지금 규격의 `detail` 은 `/kr/vehicles/volvo/{model}/{source_id}` 인데 ★ 트림이 빠져 ★ **안 열린다**.  ★★★ 사진도 목록이 준다 — ★ `https://picserver1.sg.mdxprod.io/userdata/…/kfz82573_1.jpg` — ★ ★ **받고 있으면서 화면에 안 냈다**",
-    "photo_field": "picserver_url"
+  "_paths_note": "★ 상세 화면 /products/{id}/ 는 404 다. ★ API 로만 받는다. list 의 id 를 detail 에 그대로 쓴다",
+  "timeout_sec": 20,
+  "interval_sec": 0.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Accept": "application/json",
+   "Referer": "https://cpo.kia.com/products/",
+   "x-referer-pathname": "/products/"
   },
-  "bmw_bps": {
-    "base_url": "http://www.bavarian-bps.co.kr",
-    "paths": {
-      "list": "/shop/list.php?ca_id={ca_id}",
-      "detail": "/shop/item.php?it_id={source_id}",
-      "inspection_pdf": "/bbs/it_download.php?it_id={source_id}"
-    },
-    "_note": "★ 바바리안 딜러 한 곳.  ★ ★ 08-29 정정 — 값·주행·연식은 ★ 상세에 있다 (목록 카드에는 없다).  ★ 값은 딜러가 손으로 써 꼴이 셋이다 — BMW_BPS_API 08-29 절. ★★ 503 은 고장이 아니다 — ★ 「503·200·200」이다 (가이드 정정 08-24). ★ 재시도 세 번이면 산다.  ★ 쪽넘김이 있다 — ★ 매물번호가 안 늘거나 ★ 빈 쪽이 오면 끝이다.  ★ 전수 364건 · 37쪽 · 쪽당 10건 [실측 08-29 · 눌러 봤다 — page 38 이 0건].  ★ 우리 대상 23건 (X3).  ★ 앞서 MAX_PAGES=20 이라 200건에서 잘렸고 164건이 통째로 빠져 있었다",
-    "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
-    "timeout_sec": 40,
-    "interval_sec": 1.0,
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-    },
-    "brand_scope": [
-      "BMW"
-    ],
-    "_brand_scope_why": "★ [확인 완료 08-29 · 가이드 실측] BMW BPS — ★ 미니가 섞인다 (364건 중 2건 — 「MINI Cooper SE Gen Z-E」·「MINI 5DOOR C」).  ★ 그래도 `brand_scope` 를 넓히지 않는다 — ★ 그 2건은 우리 26종에 없어 어차피 「범위 밖」으로 접히고, 넓히면 안 볼 차를 받는 것이 되어 수집 범위 확정에 어긋난다.  ★ 「BMW 만 판다」는 말은 틀렸다 — 그래서 그 낱말을 안 쓴다 (`docs/BMW_BPS_API.md` 「개발측 청에 답한다」)",
-    "_inspection_why": "★★ [실측 09-01] ★ 상세의 「72가지 점검 [다운로드]」 링크다.  ★ 200 · 274KB · %PDF-1.7 · 2쪽 · ★ **글자 5,822자가 뽑힌다**(사진이 아니다).  ★ 안에 ★ 성능점검기록부 전문 — ★ 외판부위 1/2/A/B랭크 · 타이어(양호/불량) · 누유 · ★ 가격조사·산정 금액.  ★ 축 넷이 열린다 — 골격·외판·소모품·시세.  ★ Referer 를 붙여라",
-    "root_type": {
-      "detail": "html"
-    },
-    "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다",
-    "ca_id_default": "10",
-    "_ca_id_why": "★★★★★ 09-03 가이드 실측 — ★ 개발측 v358 「여쭐 것」에 답한다.  ★ `ca_id` 는 ★ **분류**다.  ★ 열아홉 개를 두드려 봤다 — ★ `10` = **모델 전체 보기 (BMW)** · `20` = 모델 전체 보기 (MINI) · `1010~1090` = 1·2·3·4·5·6·7 Series · GT · **X** · `2010~2080` = MINI 여덟.  ★★ **`10` 이 규격 값이다** — ★ `tools/collect_bmw.py` 가 쓰던 값이 ★ 맞다 (그때 값이 아니다).  ★ 우리 대상은 `X3_IMPORT`·`IX3_EV` 뿐이라 ★ `1090`(BMW X)로 좁힐 수도 있으나 ★ ★ iX3 가 X 에 드는지 안 재서 ★ **`10`(전체)** 으로 두고 ★ 차종 표로 거른다.  ★ 한 쪽에 **5건**씩 — ★ 쪽넘김이 있다",
-    "web_url": "http://www.bavarian-bps.co.kr/shop/item.php?it_id={source_id}",
-    "photo_field": "list_thumb",
-    "_photo_why": "★★★★★ 가이드 실측 09-04 — ★ 마스터 「★ `?site=bmw_bps` ★ **사진과 내 리스트가 있지?**」.  ★ 배포에서 재니 ★ 사진 `src` 가 ★ **빈 값**이었다 — ★ 우리가 URL 을 안 갖고 있었다.  ★★ 두드려 찾았다 — ★ **목록(`list.php?ca_id=10`)이 이미 사진을 준다**: `http://www.bavarian-bps.co.kr/data/item/{it_id}/thumb-…_247x0.jpg` (★ 한 쪽에 5장).  ★ ★ 상세는 ★ 같은 꼴에 ★ `_640x0.jpg` 로 ★ **더 큰 것**을 준다.  ★★★ 곧 ★ **목록에서 뽑아 쓰면 된다** — ★ 상세를 또 두드릴 것 없다.  ★ 리볼트·볼보와 ★ **같은 자리**다"
+  "brand_scope": [
+   "기아"
+  ],
+  "_brand_scope_why": "[실측 08-26] site_manufacturer 기아 하나 · 기아 인증중고",
+  "cdn_url": "https://cpo-cdn.kia.com",
+  "_cdn_url_why": "★ 09-10 (N-2 · G) — ★ 상세의 `car.images[].url` 은 ★ **상대 경로**다 (`public/product/merchandising/…`).  ★ 앞에 붙일 호스트를 ★ 사이트가 스스로 알려 준다 — ★ 목록이 `exteriorImagePath`(상대) 와 `exteriorImageUrl`(온전한 주소)을 ★ 나란히 준다: `public/model/SPORTAGE_25_SIG_X_FSB.png` ↔ `https://cpo-cdn.kia.com/public/model/SPORTAGE_25_SIG_X_FSB.png`. ★ 지어낸 호스트가 아니라 ★ **원문이 준 것**이다.  ★★ 길이 없으면 ★ 「.../null」을 주므로 ★ 그것은 뺀다"
+ },
+ "hyundai_cert": {
+  "_ref": "docs/HYUNDAI_CERTIFIED_API.md · 실측 2026-08-22 · 표본 30건",
+  "_note": "★ robots 금지 경로 없음 · 인증 없음. ★ 목록 응답이 JSON 이 아니라 HTML 조각이다 — 매물번호는 data-favContsNo 에 있다",
+  "base_url": "https://certified.hyundai.com",
+  "paths": {
+   "list": "/m/search/results/selling",
+   "list_coming": "/m/search/results/coming",
+   "count": "/api/search/vehicle/count/selling",
+   "detail": "/m/goods/goodsDetail.do?goodsNo={source_id}"
   },
-  "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2",
-  "revolt": {
-    "base_url": "https://api.revolt.kr/customers/web",
-    "headers": {
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148",
-      "Referer": "https://www.revolt.kr/",
-      "Accept": "application/json"
-    },
-    "paths": {
-      "list": "/cars/?page={page}",
-      "detail": "/cars/{source_id}/",
-      "carhistory": "/cars/{source_id}/carhistory/",
-      "inspection": "/cars/{source_id}/inspection_records/",
-      "ev_info": "/cars/{source_id}/ev_info/"
-    },
-    "_왜 넣었나": "★ [실측 09-01] 마스터께서 주소를 주셨다.  ★ 전기차 전용 인증중고차(PRND · 헤이딜러와 같은 회사).  ★ 창구만 적어 둔다 — ★ 대상에 넣을지는 마스터께서 정하신다",
-    "_금지": "★ App-Os·App-Type·App-Version 헤더를 넣으면 500 이 난다.  ★ 넣지 마라",
-    "brand_scope": "all",
-    "_brand_scope_why": "[실측 09-01] ★ `/customers/web/brands/` 가 ★ **브랜드 22 · 차종 93** 을 준다 (규격 `docs/REVOLT_API.md`) — ★ 한 브랜드 전용이 아니다.  ★ 우리 DB 의 `site_manufacturer` 도 6종이다 (테슬라 42 · 폭스바겐 4 · 제네시스 4 · 폴스타 3 · BMW 3 · 렉서스 1) — ★ ★ 그것은 ★ **우리가 좁혀 받아서**지 ★ 리볼트가 그만 판다는 뜻이 아니다",
-    "web_url": "https://www.revolt.kr/cars/{source_id}",
-    "photo_field": "thumbnail_image_url",
-    "_web_url_why": "★★★★★ 가이드 실측 09-04 — ★ 마스터 「★ 링크나 사진 없는 것은」.  ★ 두드려 찾았다 — ★ 네 꼴을 다 쳐 보니 ★ **다 HTTP 200**(2,680B SPA 껍데기)이라 ★ 글자로는 못 갈랐다.  ★ ★ **브라우저로 열어** 갈랐다: ★ `/car/{hash}` 는 ★ 「오직, 전기차를 위한 기술 인증 중고차」(★ **첫 화면**) · ★ ★ `/cars/{hash}` 는 ★ 「리볼트 … **1/56 단순교환 무사고 · 배터리 진단 완료 KONA EV 프리미엄**」(★ **그 차**).  ★ ★ ★ 그러니 ★ **`/cars/{hash_id}` 가 맞다**.  ★ `{source_id}` 는 ★ `hash_id` 다(숫자 id 가 아니다).  ★★ 사진은 ★ 목록이 ★ `thumbnail_image_url` 로 준다 (★ `inside_thumbnail_image_url`·`live_view_thumbnail_image_url` 도 있다) — ★ ★ **받고 있으면서 화면에 안 냈다**"
+  "_paths_note": "★ 목록은 POST · Content-Type: application/json. tmnlId 를 빈 문자열로 둬도 200 이다 — 토큰이 필요 없다. rowsPerPage=100 으로 한 번에 100건 · pageIdx 로 쪽넘김. ★ 매물번호 정규식 data-favContsNo=\"([A-Z]{3}\\\\d{12})\"",
+  "timeout_sec": 30,
+  "interval_sec": 0.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Accept": "*/*",
+   "Content-Type": "application/json",
+   "Referer": "https://certified.hyundai.com/m/search/vehicle?srchType=srchFilter",
+   "X-Requested-With": "XMLHttpRequest"
   },
-  "_list_walk_kinds": "★★★★★ 09-03 신설 — ★ **목록 걸음은 세 가지다**.  ★ 사이트마다 다르다:  ① ★ **쪽넘김** — `list?page=N` (엔카·KB·보배·헤이딜러·볼보·리볼트)  ② ★ **분류 훑기** — `list?ca_id=N` 을 ★ 분류마다 (BMW BPS · `ca_id=10` 이 전체)  ③ ★ **sitemap** — 목록 API 가 없다 (리본카).  ★★ 새 사이트를 붙일 때 ★ **어느 걸음인지부터 정하고** ★ `{SITE}_API.md` 에 적는다.  ★ ★ 「길이 없다」로 멈추지 마라 — ★ 걸음이 다른 것이다"
+  "brand_scope": [
+   "현대",
+   "제네시스"
+  ],
+  "_brand_scope_why": "[실측 08-26] 제네시스 G80 174건이 들어와 있다 — 제네시스도 준다",
+  "root_type": {
+   "detail": "html"
+  },
+  "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
+ },
+ "heydealer": {
+  "_ref": "docs/HEYDEALER_API.md 0장 · 명령서 37 · 실측 2026-08-24 (개정 694)",
+  "_note": "★★ 두 걸음이다 — ① POST token_api_url 로 손님 토큰(JWT)을 받고 ② Authorization: Bearer 로 목록을 부른다. ★ 토큰이 없으면 목록이 500 이다 — 「고장」이 아니었다 (오판 97). ★ 응답이 배열(list)이다 — dict 가 아니다. ★ 연료는 목록에 없고 상세의 detail_info.fuel_display 에 있다. ★ 상세에 car_number(차량번호)가 있어 5a 짝짓기가 된다. 금지 — 토큰을 저장소에 적는 것",
+  "base_url": "https://market-api.heydealer.com",
+  "paths": {
+   "list": "/v2/customers/web/market/cars/?order=recommendation&view_type=compact&page={page}",
+   "detail": "/v2/customers/web/market/cars/{source_id}/"
+  },
+  "_paths_note": "★ 목록은 쪽당 10건 · 칸 14개다. ★ 10건이 오면 다음 쪽이 있다. ★ hash_id 가 매물번호다. ★ 값은 상세에 있다(칸 33 · detail_info 51)",
+  "timeout_sec": 40,
+  "interval_sec": 0.5,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Accept": "application/json",
+   "Referer": "https://www.heydealer.com/",
+   "Origin": "https://www.heydealer.com",
+   "app-os": "web"
+  },
+  "token_api_url": "https://api.heydealer.com/v2/customers/web/initialize_app/",
+  "token_referrer": "https://www.heydealer.com/",
+  "brand_scope": "all",
+  "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합"
+ },
+ "kbchachacha": {
+  "_ref": "docs/KBCHACHACHA_API.md · 실측 2026-08-22 · 표본 25건",
+  "_note": "★★ 봇 차단 — 상세가 200 인데 본문이 「로봇 여부 확인 중」 2,759B 로 올 때가 있다(25건 중 7건). ★ 10KB 미만이거나 그 문구가 있으면 수집 실패로 적고 최대 3회 재시도. ★ 절대 「없음」으로 저장하지 마라",
+  "base_url": "https://www.kbchachacha.com",
+  "paths": {
+   "list": "/public/search/list.empty?page={page}",
+   "detail": "/public/car/detail.kbc?carSeq={source_id}",
+   "diagnosis": "/public/diag/car/attach/list.json",
+   "facet_maker": "/public/search/carMaker.json?page=1",
+   "facet_option": "/public/search/optionSale.json?page=1",
+   "list_narrow": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}",
+   "list_gen": "/public/search/list.empty?page={page}&makerCode={maker}&classCode={klass}&carCode={car}",
+   "car_name": "/public/search/carName.json?makerCode={maker}&classCode={klass}"
+  },
+  "_paths_note": "★ 목록은 쪽넘김 · 쪽당 40건. robots 전면 허용",
+  "timeout_sec": 30,
+  "interval_sec": 1.2,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 SamsungBrowser/25.0 Mobile Safari/537.36",
+   "Referer": "https://www.kbchachacha.com/public/search/main.kbc",
+   "X-Requested-With": "XMLHttpRequest"
+  },
+  "end_bytes": 3585,
+  "end_mark": "차량이 없습니다",
+  "bot_bytes": 2759,
+  "brand_scope": "all",
+  "_brand_scope_why": "[실측 08-26] site_manufacturer 3종 · 종합 사이트다"
+ },
+ "bobaedream": {
+  "_ref": "docs/BOBAEDREAM_API.md · 실측 2026-08-24",
+  "_note": "★★ 호스트가 ★ m. (모바일)이다.  ★ www. 는 다른 화면이고 ★ EUC-KR 이다 — ★ 섞지 마라",
+  "base_url": "https://m.bobaedream.co.kr",
+  "paths": {
+   "list": "/mycar/mlist/0/{page}",
+   "detail": "/mycar/mview/{source_id}"
+  },
+  "_paths_note": "★ 목록 쪽당 50건 · 상세 77~90KB · robots 는 www 가 Allow:/ (Amazonbot 만 금지) · m. 은 404",
+  "timeout_sec": 30,
+  "interval_sec": 1.2,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+  },
+  "brand_scope": "all",
+  "_brand_scope_why": "[config 08-26] targets.json 이 19종에 코드를 준다 — 여러 제조사 · 종합",
+  "root_type": {
+   "detail": "html"
+  },
+  "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다"
+ },
+ "reborncar": {
+  "base_url": "https://www.reborncar.co.kr",
+  "paths": {
+   "sitemap": "/sitemap-ext.xml",
+   "detail": "/m/smartbuy/SB1002/{source_id}"
+  },
+  "_note": "★ 모바일 UA 필수 — ★ 데스크톱은 「용도변경 없음」으로 거짓이 온다 (2a장). ★ 목록 API 는 robots 가 막았다 — ★ 사이트맵이 목록이다 (1b장 · 개정 697). ★ 실측 08-24 — <loc> 2,658개 중 매물 1,036건 (중복 0). ★ 상세 /smartbuy/SB1002/{코드} 는 robots 가 안 막았다. ★ ?carNo= 는 404 다",
+  "_ref": "docs/REBORNCAR_API.md 1b장 · 명령서 39 · 실측 2026-08-24",
+  "timeout_sec": 60,
+  "interval_sec": 1.0,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+   "Accept": "text/html,application/xhtml+xml"
+  },
+  "brand_scope": "all",
+  "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 종합이 맞다 — 상세 표본 12건이 기아 8 · 현대 2 · 제네시스 1 · 쉐보레 1 로 ★ 제조사가 섞인다.  ★ `brand_scope` 를 좁히지 않는다 — ★ 우리 26종은 목록이 아니라 ★ 상세를 받아 이름으로 거른다.  ★ 닫혔다",
+  "_list_why": "★★★★★ 09-03 가이드 확정 — ★ 개발측 v358 「여쭐 것」에 답한다.  ★ **`list` 길을 만들지 않는다.  ★ 리본카는 목록 API 가 없다**.  ★ `sitemap` 이 ★ 이 사이트의 목록이다 — ★ 가이드가 09-02 에 그것으로 **1,084건**을 셌다.  ★★ 개발측 말이 맞다 — 「★ 목록 쪽넘김이 아니라 ★ **다른 걸음**이다」"
+ },
+ "lexus_certified": {
+  "base_url": "https://certified.lexus.co.kr",
+  "paths": {
+   "list": "/api/json/getList_search.json.php?price_area_min=0&price_area_max=99999",
+   "detail": "/api/json/getData_car_detail.json.php?idx={source_id}"
+  },
+  "_note": "★ 모바일 UA ＋ Referer 필요.  ★ `search_list.car_list` 가 매물이다. ★ ★ `total_list_num` 을 믿지 마라 — ★ 실측 08-24 car_list 36 · total_list_num 84 로 서로 다르다 (규격은 0 이라 적었다).  ★ 전수 74건 · 3쪽 [실측 08-29 · 눌러 봤다].  ★ 쪽넘김 열쇠는 `cur_page` 다 — `page`·`pageNo` 는 조용히 1쪽을 돌려준다.  ★ cur_page 1→36 · 2→36 · 3→2 · 4→0.  ★ 「전수 36」은 1쪽만 센 것이었다 (개정 587 · `LEXUS_CERTIFIED_API.md` 1c)",
+  "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
+  "timeout_sec": 40,
+  "interval_sec": 1.0,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+   "Referer": "https://certified.lexus.co.kr/",
+   "Accept": "application/json"
+  },
+  "brand_scope": [
+   "렉서스"
+  ],
+  "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 렉서스만 판다 — 목록 1쪽 36건의 `model_name` 이 ES 21 · NX 9 · UX 5 · RX 1 로 ★ 전부 렉서스다.  ★ 토요타도 섞이지 않는다.  ★ 닫혔다"
+ },
+ "volvo_selekt": {
+  "base_url": "https://selekt.volvocars.co.kr",
+  "paths": {
+   "list": "/kr/vehicles/xhr-results/{page}",
+   "detail": "/kr/vehicles/volvo/{model}/{source_id}"
+  },
+  "_note": "★ 목록은 xhr-results 쪽넘김이다 (명령서 1a · 실측 08-24). ★ 한 쪽에 링크 12개가 상한 — ★ 12 면 다음 쪽이 있다. ★ 총건수는 화면 글자 「총 N」에서 읽는다 — ★ 실측 08-24 ★ 180건 (규격의 221 은 08-23 값). ★ 매물번호가 숫자가 아니라 슬러그다. ★ 503 이 잦아 재시도가 필요하다",
+  "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
+  "timeout_sec": 40,
+  "interval_sec": 1.0,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+   "Referer": "https://selekt.volvocars.co.kr/"
+  },
+  "brand_scope": [
+   "볼보"
+  ],
+  "_brand_scope_why": "[실측 08-29 · 가이드가 답한다] ★ 볼보만 판다 — 목록 1쪽 카드가 S60·S90·XC40·XC60·V60·EX30 이고 ★ `Polestar` 가 ★ 0회다.  ★ 폴스타는 여기 없다(별도 브랜드).  ★ 닫혔다",
+  "web_url": "https://selekt.volvocars.co.kr{detail_path}",
+  "_web_url_why": "★★★★★ 가이드 실측 09-04 — ★ **목록이 상세 링크를 그대로 준다**.  ★ `xhr-results/1`(85,777B) 안에 ★ `/kr/vehicles/volvo/{모델}/{트림}--{해시}` 가 있다 — ★ 보기: `/kr/vehicles/volvo/ex30-cross-country/ultra-twin-motor-performance--jbbbeks`.  ★★ 그러니 ★ `{model}` 을 따로 캘 것 없이 ★ **목록에서 뽑은 길을 그대로 쓴다** (`detail_path`).  ★ ★ 지금 규격의 `detail` 은 `/kr/vehicles/volvo/{model}/{source_id}` 인데 ★ 트림이 빠져 ★ **안 열린다**.  ★★★ 사진도 목록이 준다 — ★ `https://picserver1.sg.mdxprod.io/userdata/…/kfz82573_1.jpg` — ★ ★ **받고 있으면서 화면에 안 냈다**",
+  "photo_field": "picserver_url"
+ },
+ "bmw_bps": {
+  "base_url": "http://www.bavarian-bps.co.kr",
+  "paths": {
+   "list": "/shop/list.php?ca_id={ca_id}",
+   "detail": "/shop/item.php?it_id={source_id}",
+   "inspection_pdf": "/bbs/it_download.php?it_id={source_id}"
+  },
+  "_note": "★ 바바리안 딜러 한 곳.  ★ ★ 08-29 정정 — 값·주행·연식은 ★ 상세에 있다 (목록 카드에는 없다).  ★ 값은 딜러가 손으로 써 꼴이 셋이다 — BMW_BPS_API 08-29 절. ★★ 503 은 고장이 아니다 — ★ 「503·200·200」이다 (가이드 정정 08-24). ★ 재시도 세 번이면 산다.  ★ 쪽넘김이 있다 — ★ 매물번호가 안 늘거나 ★ 빈 쪽이 오면 끝이다.  ★ 전수 364건 · 37쪽 · 쪽당 10건 [실측 08-29 · 눌러 봤다 — page 38 이 0건].  ★ 우리 대상 23건 (X3).  ★ 앞서 MAX_PAGES=20 이라 200건에서 잘렸고 164건이 통째로 빠져 있었다",
+  "_ref": "★ 개정 655 — 규격을 쓰면 config 등록을 같은 커밋에 (가이드역할 ㉻)",
+  "timeout_sec": 40,
+  "interval_sec": 1.0,
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
+  },
+  "brand_scope": [
+   "BMW"
+  ],
+  "_brand_scope_why": "★ [확인 완료 08-29 · 가이드 실측] BMW BPS — ★ 미니가 섞인다 (364건 중 2건 — 「MINI Cooper SE Gen Z-E」·「MINI 5DOOR C」).  ★ 그래도 `brand_scope` 를 넓히지 않는다 — ★ 그 2건은 우리 26종에 없어 어차피 「범위 밖」으로 접히고, 넓히면 안 볼 차를 받는 것이 되어 수집 범위 확정에 어긋난다.  ★ 「BMW 만 판다」는 말은 틀렸다 — 그래서 그 낱말을 안 쓴다 (`docs/BMW_BPS_API.md` 「개발측 청에 답한다」)",
+  "_inspection_why": "★★ [실측 09-01] ★ 상세의 「72가지 점검 [다운로드]」 링크다.  ★ 200 · 274KB · %PDF-1.7 · 2쪽 · ★ **글자 5,822자가 뽑힌다**(사진이 아니다).  ★ 안에 ★ 성능점검기록부 전문 — ★ 외판부위 1/2/A/B랭크 · 타이어(양호/불량) · 누유 · ★ 가격조사·산정 금액.  ★ 축 넷이 열린다 — 골격·외판·소모품·시세.  ★ Referer 를 붙여라",
+  "root_type": {
+   "detail": "html"
+  },
+  "_root_type_why_0903": "★★★★★ 09-03 — ★ 이 창구는 ★ **HTML 쪽**이다.  ★ 판(`collect/fetcher.py`)이 ★ JSON 만 알아 ★ 200 인데 `error` 로 적었다 [실측 09-03 — BMW 상세 194건이 다 그랬다].  ★ 어댑터가 말하면 ★ 그대로 받는다 — ★ 말이 없으면 옛날처럼 `error` 다",
+  "ca_id_default": "10",
+  "_ca_id_why": "★★★★★ 09-03 가이드 실측 — ★ 개발측 v358 「여쭐 것」에 답한다.  ★ `ca_id` 는 ★ **분류**다.  ★ 열아홉 개를 두드려 봤다 — ★ `10` = **모델 전체 보기 (BMW)** · `20` = 모델 전체 보기 (MINI) · `1010~1090` = 1·2·3·4·5·6·7 Series · GT · **X** · `2010~2080` = MINI 여덟.  ★★ **`10` 이 규격 값이다** — ★ `tools/collect_bmw.py` 가 쓰던 값이 ★ 맞다 (그때 값이 아니다).  ★ 우리 대상은 `X3_IMPORT`·`IX3_EV` 뿐이라 ★ `1090`(BMW X)로 좁힐 수도 있으나 ★ ★ iX3 가 X 에 드는지 안 재서 ★ **`10`(전체)** 으로 두고 ★ 차종 표로 거른다.  ★ 한 쪽에 **5건**씩 — ★ 쪽넘김이 있다",
+  "web_url": "http://www.bavarian-bps.co.kr/shop/item.php?it_id={source_id}",
+  "photo_field": "list_thumb",
+  "_photo_why": "★★★★★ 가이드 실측 09-04 — ★ 마스터 「★ `?site=bmw_bps` ★ **사진과 내 리스트가 있지?**」.  ★ 배포에서 재니 ★ 사진 `src` 가 ★ **빈 값**이었다 — ★ 우리가 URL 을 안 갖고 있었다.  ★★ 두드려 찾았다 — ★ **목록(`list.php?ca_id=10`)이 이미 사진을 준다**: `http://www.bavarian-bps.co.kr/data/item/{it_id}/thumb-…_247x0.jpg` (★ 한 쪽에 5장).  ★ ★ 상세는 ★ 같은 꼴에 ★ `_640x0.jpg` 로 ★ **더 큰 것**을 준다.  ★★★ 곧 ★ **목록에서 뽑아 쓰면 된다** — ★ 상세를 또 두드릴 것 없다.  ★ 리볼트·볼보와 ★ **같은 자리**다"
+ },
+ "_brand_scope_note": "★★ 명령서 08-26 ④ · 검사 S46-96 — ★ 그 사이트가 파는 제조사다.  ★ 'all' 은 종합 사이트다.  ★ 제조사의 정본은 targets.json 의 site_query.encar.Manufacturer 다 — 여기에 다시 안 적는다 (S14).  ★ ★ 「미확인」이라 적은 넷은 ★ 가이드 확인을 청한다 — 규칙 2",
+ "revolt": {
+  "base_url": "https://api.revolt.kr/customers/web",
+  "headers": {
+   "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148",
+   "Referer": "https://www.revolt.kr/",
+   "Accept": "application/json"
+  },
+  "paths": {
+   "list": "/cars/?page={page}",
+   "detail": "/cars/{source_id}/",
+   "carhistory": "/cars/{source_id}/carhistory/",
+   "inspection": "/cars/{source_id}/inspection_records/",
+   "ev_info": "/cars/{source_id}/ev_info/"
+  },
+  "_왜 넣었나": "★ [실측 09-01] 마스터께서 주소를 주셨다.  ★ 전기차 전용 인증중고차(PRND · 헤이딜러와 같은 회사).  ★ 창구만 적어 둔다 — ★ 대상에 넣을지는 마스터께서 정하신다",
+  "_금지": "★ App-Os·App-Type·App-Version 헤더를 넣으면 500 이 난다.  ★ 넣지 마라",
+  "brand_scope": "all",
+  "_brand_scope_why": "[실측 09-01] ★ `/customers/web/brands/` 가 ★ **브랜드 22 · 차종 93** 을 준다 (규격 `docs/REVOLT_API.md`) — ★ 한 브랜드 전용이 아니다.  ★ 우리 DB 의 `site_manufacturer` 도 6종이다 (테슬라 42 · 폭스바겐 4 · 제네시스 4 · 폴스타 3 · BMW 3 · 렉서스 1) — ★ ★ 그것은 ★ **우리가 좁혀 받아서**지 ★ 리볼트가 그만 판다는 뜻이 아니다",
+  "web_url": "https://www.revolt.kr/cars/{source_id}",
+  "photo_field": "thumbnail_image_url",
+  "_web_url_why": "★★★★★ 가이드 실측 09-04 — ★ 마스터 「★ 링크나 사진 없는 것은」.  ★ 두드려 찾았다 — ★ 네 꼴을 다 쳐 보니 ★ **다 HTTP 200**(2,680B SPA 껍데기)이라 ★ 글자로는 못 갈랐다.  ★ ★ **브라우저로 열어** 갈랐다: ★ `/car/{hash}` 는 ★ 「오직, 전기차를 위한 기술 인증 중고차」(★ **첫 화면**) · ★ ★ `/cars/{hash}` 는 ★ 「리볼트 … **1/56 단순교환 무사고 · 배터리 진단 완료 KONA EV 프리미엄**」(★ **그 차**).  ★ ★ ★ 그러니 ★ **`/cars/{hash_id}` 가 맞다**.  ★ `{source_id}` 는 ★ `hash_id` 다(숫자 id 가 아니다).  ★★ 사진은 ★ 목록이 ★ `thumbnail_image_url` 로 준다 (★ `inside_thumbnail_image_url`·`live_view_thumbnail_image_url` 도 있다) — ★ ★ **받고 있으면서 화면에 안 냈다**"
+ },
+ "_list_walk_kinds": "★★★★★ 09-03 신설 — ★ **목록 걸음은 세 가지다**.  ★ 사이트마다 다르다:  ① ★ **쪽넘김** — `list?page=N` (엔카·KB·보배·헤이딜러·볼보·리볼트)  ② ★ **분류 훑기** — `list?ca_id=N` 을 ★ 분류마다 (BMW BPS · `ca_id=10` 이 전체)  ③ ★ **sitemap** — 목록 API 가 없다 (리본카).  ★★ 새 사이트를 붙일 때 ★ **어느 걸음인지부터 정하고** ★ `{SITE}_API.md` 에 적는다.  ★ ★ 「길이 없다」로 멈추지 마라 — ★ 걸음이 다른 것이다"
 }

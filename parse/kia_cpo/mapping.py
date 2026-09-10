@@ -11,6 +11,9 @@
 from __future__ import annotations
 
 import json
+import os
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from errors import ParseError
 
@@ -193,5 +196,52 @@ def parse_detail(doc: dict, site: str = "kia_cpo",
         got["displacement_cc"] = int(cc)
     # ★ 09-09 (N-2 · G) — ★ 옵션을 두 갈래로 담는다
     got.update(_options(doc))
+    # ★ 09-10 (N-2 · G) — ★ 사진 (매핑표 1장 「`car.images` 63장」)
+    got.update(_photos(car))
     # ★ 값이 없는 칸은 ★ **넣지 않는다** — ★ 「없음」으로 덮지 않는다 (금지 12)
     return {k: v for k, v in got.items() if v is not None}
+
+
+_CDN: list = []
+
+
+def _cdn() -> str:
+    """사진 앞에 붙일 호스트 — ★ `config/endpoints.json` 이 안다 (S14).
+
+    ★ 지어낸 것이 아니다 — ★ 목록이 ★ 상대 경로와 온전한 주소를 ★ **나란히** 준다
+    """
+    if not _CDN:
+        try:
+            with open(os.path.join(ROOT, "config", "endpoints.json"),
+                      encoding="utf-8") as fh:
+                _CDN.append(str((json.load(fh).get("kia_cpo") or {})
+                                .get("cdn_url") or ""))
+        except (OSError, ValueError):
+            _CDN.append("")
+    return _CDN[0]
+
+
+def _photos(car: dict) -> dict:
+    """사진 — ★ `car.images[].url` 은 ★ **상대 경로**다.  ★ 호스트를 붙인다.
+
+    ★ 길이 없으면 사이트가 ★ 「null」을 주므로 ★ 그것은 사진이 아니다 (금지 12).
+    ★ 호스트를 모르면 ★ 아예 담지 않는다 — ★ 반쪽 주소를 넣지 않는다
+    """
+    base = _cdn()
+    if not base:
+        return {}
+    got, seen = [], set()
+    for one in car.get("images") or ():
+        path = (one or {}).get("url") if isinstance(one, dict) else one
+        path = str(path or "").strip().strip("/")
+        if not path or path == "null":
+            continue
+        url = f"{base}/{path}"
+        if url in seen:
+            continue
+        seen.add(url)
+        got.append(url)
+    if not got:
+        return {}
+    return {"photo_main": got[0],
+            "photo_list_json": json.dumps(got, ensure_ascii=False)}

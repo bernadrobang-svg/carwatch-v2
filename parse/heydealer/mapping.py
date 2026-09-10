@@ -160,7 +160,29 @@ def parse_detail(body: dict, site: str, source_id: str) -> dict | None:
         out["spec_fuel_economy_kmpl"] = kmpl
     # ★ 09-09 (N-2 · G) — ★ 옵션을 두 갈래로 담는다
     out.update(_options(d))
+    # ★ 09-10 (N-2 · G) — ★ 사진.  ★ `detail_info.images[].url` 이 ★ 온전한 주소다
+    out.update(_photos(d))
     return {k: v for k, v in out.items() if v is not None}
+
+
+def _photos(detail: dict) -> dict:
+    """사진 — ★ `detail_info.images[].url` (매핑표 3장 `image_urls`).
+
+    ★★ 점검부 사진(`inspection_records.images`)과 ★ 열화상(`heydealer_eye`)은
+      ★ ★ **차 사진이 아니다** — ★ 안 담는다.
+    ★ 하나도 없으면 ★ 담지 않는다 — ★ 빈 목록을 「사진이 없다」로 두지 않는다
+    """
+    got, seen = [], set()
+    for one in detail.get("images") or ():
+        url = (one or {}).get("url") if isinstance(one, dict) else one
+        if not url or url in seen:
+            continue
+        seen.add(url)
+        got.append(str(url))
+    if not got:
+        return {}
+    return {"photo_main": got[0],
+            "photo_list_json": json.dumps(got, ensure_ascii=False)}
 
 
 def fuel_efficiency_kmpl(body: dict) -> float | None:

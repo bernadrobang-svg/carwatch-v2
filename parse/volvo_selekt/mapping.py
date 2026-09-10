@@ -150,6 +150,13 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
     if f.get("트랜스미션"):
         out["transmission"] = f["트랜스미션"]
 
+    # ★★★ 09-10 (N-2 · G) — ★ 트림.  ★ 표(`fields`)에는 없고 ★ 쪽에 박힌 값에 있다.
+    #   ★ 실측 — `"VehicleVersion":"Ultra, B5 AWD 마일드 하이브리드, 가솔린, 브라이트"`.
+    #   ★★ `VehicleBadge` 는 ★ 트림이 아니다 — ★ 「해당사항 없음」이 들어 있다
+    got_trim = trim_of(html)
+    if got_trim:
+        out["trim_grade_name"] = got_trim
+
     # ★ 사이트 검증 — ★ 볼보 공식딜러 인증중고차라는 ★ 사이트의 사실이다.
     #   ★ 배점은 `f-table` 5장이 정한다 — ★ 여기서 점수를 매기지 않는다
     out["site_home_verify"] = 1
@@ -249,3 +256,21 @@ def parse_list_item(one: dict, site: str = SITE_CODE) -> dict | None:
     if one.get("site_model_group"):
         out["site_model_group"] = one["site_model_group"]
     return out
+
+
+RE_VS_VERSION = re.compile(r'"VehicleVersion"\s*:\s*"((?:[^"\\]|\\.)*)"')
+
+
+def trim_of(html: str) -> str | None:
+    """트림 — ★ `VehicleVersion`.  ★ 없으면 ★ None (금지 12)."""
+    got = RE_VS_VERSION.search(html or "")
+    if not got:
+        return None
+    import json as _json
+
+    try:
+        said = _json.loads(f'"{got.group(1)}"')
+    except ValueError:
+        return None
+    said = str(said or "").strip()
+    return said or None

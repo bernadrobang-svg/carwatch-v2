@@ -840,8 +840,15 @@ _FIELDS = (("매물", "COUNT(*)"), ("상세", "COUNT(detail_status)"),
            #   ★ 한 갈래만 세면 ★ 이름으로 받은 것이 ★ **0 으로 보인다** —
            #     ★ ★ 자가 붉은 것이지 ★ 파서가 못 읽은 것이 아니다.
            #   ★ `_KB_SQL` 은 09-06 에 이미 고쳤는데 ★ 여기를 안 고쳤다
+           # ★★★★★ 09-10 (N-2) — ★ 갈래가 ★ **셋**이다.  ★ 둘만 세고 있었다.
+           #   ★ `options_standard_json` 을 안 셌는데 ★ 판정 축은 ★ **그것을 읽는다**
+           #     (`analyze/axis/spec.py:114` · `taste.py:68` — standard ∪ choice).
+           #   ★ 실측 09-10 — ★ 「옵션 0」이던 세 곳이 ★ 사실은 채워져 있었다:
+           #     ★ 현대 인증 1,156/1,156 · 볼보 152/183 · 렉서스 49/85.
+           #   ★ ★ 자가 붉은 것이지 ★ 파서가 못 읽은 것이 아니다 (09-09 와 같은 실수)
            ("옵션",
-            "COUNT(COALESCE(options_choice_json, options_name_json))"))
+            "COUNT(COALESCE(options_choice_json, options_name_json,"
+            " options_standard_json))"))
 
 
 def all_sites_report(base_url: str, name: str = "admin",

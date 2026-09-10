@@ -100,7 +100,30 @@ def parse_detail(html: str, site: str, source_id: str) -> dict | None:
         out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
     # ★ 09-09 (N-2 · G) — ★ 옵션 이름을 담는다
     out.update(options_in_html(html))
+    # ★ 09-10 (N-2 · G) — ★ 트림.  ★ 쪽 안에 박힌 JSON 이 준다
+    got = trim_of(html)
+    if got:
+        out["trim_grade_name"] = got
     return out
+
+
+# ★★★ 09-10 (N-2 · G) — ★ 트림이 ★ **화면 글자**에 없고 ★ 쪽에 박힌 JSON 에 있다.
+#   ★ 실측 — `"boname":"니로 EV", … "gradename":"프레스티지"` (한글은 \u 로 온다).
+#   ★ `boname` 은 차 이름이고 ★ `gradename` 이 ★ **등급(트림)** 이다
+RE_RB_GRADE = re.compile(r'"gradename"\s*:\s*"((?:[^"\\]|\\.)*)"')
+
+
+def trim_of(html: str) -> str | None:
+    """등급(트림) — ★ 없으면 ★ None.  ★ 빈 글자를 값으로 삼지 않는다 (금지 12)."""
+    got = RE_RB_GRADE.search(html or "")
+    if not got:
+        return None
+    try:
+        said = json.loads(f'"{got.group(1)}"')
+    except ValueError:
+        return None
+    said = str(said or "").strip()
+    return said or None
 
 
 def _photos(html: str, source_id: str) -> list:
