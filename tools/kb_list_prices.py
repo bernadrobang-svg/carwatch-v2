@@ -34,6 +34,11 @@ from store.rawfile import save as raw_save          # noqa: E402
 # ★ 매물번호와 ★ 그 딱지를 함께 잡는다 — ★ 둘이 같은 `<a>` 안에 있다
 RE_GA4 = re.compile(r'carSeq=(\d+)"[^>]*?data-ga4=\'(\{.*?\})\'', re.S)
 RE_WON = re.compile(r"([\d,]+)\s*만원")
+# ★★★★★ 09-10 — ★ 목록이 ★ **연식·주행·지역**까지 준다.
+#   ★ 실측 — 「21/04식(21년형) ¦ 89,082km ¦ 경기」.
+#   ★ 상세가 막혀도 ★ 마스터 조건 ②③ 을 ★ **여기서** 걸 수 있다
+RE_YM = re.compile(r"(\d{2})/(\d{2})식")
+RE_KM = re.compile(r"([\d,]+)\s*km")
 GAP = 5.0
 
 
@@ -52,6 +57,41 @@ def cards(html: str) -> dict:
             continue
         got[sid] = {"won": int(won.group(1).replace(",", "")) * 10000,
                     "name": str(said.get("vehicle_info") or "").strip()}
+    # ★★ 연식·주행은 ★ 딱지가 아니라 ★ **카드 글자**에 있다.
+    #   ★ 한 카드에 ★ `carSeq` 가 ★ **다섯 번** 나온다 (숨은 것 · 사진 · 글자…).
+    #     ★ ★ 글자는 ★ **마지막 것 뒤**에 있다 (실측 09-10 — 앞 둘에는 없다).
+    #   ★ 그래서 ★ 마지막 자리에서 ★ 짧게 읽는다 — ★ 옆 카드까지 넘보지 않게
+    where: dict = {}
+    for m in re.finditer(r"carSeq=(\d+)", html):
+        where[m.group(1)] = m.start()
+    for sid in got:
+        at = where.get(sid)
+        if at is None:
+            continue
+        card = html[at:at + 900]
+        ym = RE_YM.search(card)
+        if ym:
+            year = 2000 + int(ym.group(1))
+            got[sid]["ym"] = f"{year}-{ym.group(2)}"
+        km = RE_KM.search(card)
+        if km:
+            got[sid]["km"] = int(km.group(1).replace(",", ""))
+    return got
+
+
+def from_files() -> dict:
+    """★ 이미 받아 둔 목록 원문에서 읽는다 — ★ 다시 안 받는다 (S46-266)."""
+    import glob as _g
+
+    got: dict = {}
+    for path in sorted(_g.glob(os.path.join(
+            ROOT, "raw", "kbchachacha", "list", "*", "gv70-*.json"))):
+        from store.rawfile import read as _read
+
+        body = (_read(path) or {}).get("body") or b""
+        if isinstance(body, bytes):
+            body = body.decode("utf-8", "replace")
+        got.update(cards(body))
     return got
 
 
@@ -92,8 +132,9 @@ def fetch(pages: int = 20) -> dict:
     return got
 
 
-def run(write: bool = False, db: str = "carwatch.db") -> Counter:
-    got = fetch()
+def run(write: bool = False, db: str = "carwatch.db",
+        again: bool = False) -> Counter:
+    got = fetch() if again else (from_files() or fetch())
     conn = sqlite3.connect(os.path.join(ROOT, db))
     mine = {r[0] for r in conn.execute(
         "SELECT source_id FROM core_listing WHERE site = 'kbchachacha'")}
@@ -107,10 +148,13 @@ def run(write: bool = False, db: str = "carwatch.db") -> Counter:
         if write:
             conn.execute(
                 "UPDATE core_listing SET price_current_won = ?,"
-                "       price_unit = 'won', trim_grade_name = ?"
-                " WHERE site = 'kbchachacha' AND source_id = ?"
-                "   AND price_current_won IS NULL",
-                (one["won"], one["name"] or None, sid))
+                "       price_unit = 'won',"
+                "       trim_grade_name = COALESCE(?, trim_grade_name),"
+                "       year_month = COALESCE(?, year_month),"
+                "       mileage_km = COALESCE(?, mileage_km)"
+                " WHERE site = 'kbchachacha' AND source_id = ?",
+                (one["won"], one["name"] or None, one.get("ym"),
+                 one.get("km"), sid))
     if write:
         conn.commit()
     conn.close()
@@ -118,5 +162,6 @@ def run(write: bool = False, db: str = "carwatch.db") -> Counter:
 
 
 if __name__ == "__main__":
-    for k, v in sorted(run("--write" in sys.argv).items()):
+    for k, v in sorted(run("--write" in sys.argv,
+                            again="--again" in sys.argv).items()):
         print(f"  {k:22} {v:,}")
