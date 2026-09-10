@@ -1570,10 +1570,20 @@ def s46_123_toss_palette_only() -> tuple[bool, str]:
     css = _read(ROOT / "web" / "static" / "app.css")
     # ★ 주석은 규칙이 아니다 — ★ 먼저 걷어낸다 (L-3 · 개정 849)
     css = re.sub(r"/\*.*?\*/", " ", css, flags=re.S)
-    m = re.search(r"(?m)^:root\s*\{[^}]*\}", css)
-    if not m:
+    # ★★★★★ 09-10 — ★ `:root` 는 ★ **한 덩이가 아니다**.
+    #   ★ 09-08 에 내가 박힌 색을 변수로 바꾸며 ★ `:root` 안의 정의까지
+    #     ★ ★ `--surface:var(--surface)` 로 바꿔 ★ **값이 없어졌다**.
+    #     ★ ★ ★ 그래서 바닥 메뉴가 ★ **투명**해졌다 (마스터 「메뉴가 안 보인다」).
+    #   ★ 되돌리며 보니 ★ `:root` 덩이가 ★ **셋**이었다 —
+    #     ★ ★ 이 자가 ★ **첫 덩이만** 보아 ★ 나머지 둘의 색을 「밖에 박혔다」고 울었다.
+    #   ★ ★ ★ 그러니 ★ **모든 `:root` 덩이**를 모아 본다.
+    ms = list(re.finditer(r"(?m)^:root\s*\{[^}]*\}", css))
+    if not ms:
         return False, "★ :root 를 못 찾았다"
-    root, rest = m.group(0), css.replace(m.group(0), "")
+    root = "\n".join(x.group(0) for x in ms)
+    rest = css
+    for x in ms:
+        rest = rest.replace(x.group(0), "")
     bad = []
     off = sorted({c.lower() for c in re.findall(r"#[0-9a-fA-F]{3,8}\b", root)} - OK)
     if off:
@@ -8178,7 +8188,40 @@ def s46_298_week_task():
     return True, "이번 주 과제가 지시에 있다 (차값 3,490만 · KB 189/2771)"
 
 
+def s46_299_root_vars_have_values():
+    """S46-299 — :root 변수가 값을 가지는가 (마스터 09-10 「메뉴가 안 보인다」).
+
+    마스터 — 「메뉴가 안 보인다. 글자에 가려져서」
+    배포에서 재니 바닥 메뉴의 background 가 rgba(0,0,0,0) — 투명이었다.
+      `.nav{position:fixed; background:var(--surface)}` 은 제대로 있는데
+      `--surface` 자체가 빈 값이었다.
+
+    까닭 — 내가 09-08 에 박힌 색을 변수로 바꾸며
+      `:root{--surface:#15181d}` 까지 `:root{--surface:var(--surface)}` 로 바꿨다.
+      변수가 제 자신을 가리키면 값이 없다. 22개가 그랬다.
+
+    잣대 — `--x: var(--x)` 꼴이 하나라도 있으면 붉다.
+    """
+    import re as _re
+    css = _read(ROOT / "web" / "static" / "app.css")
+    if not css:
+        return False, "app.css 를 못 읽었다"
+    self_ref = sorted(set(_re.findall(r"(--[\w-]+)\s*:\s*var\(\s*\1\s*\)", css)))
+    if self_ref:
+        return False, (f"제 자신을 가리키는 변수 {len(self_ref)}개 — "
+                       + " · ".join(self_ref[:5]) + "  (값이 없다)")
+    empty = []
+    for m in _re.finditer(r":root\s*\{(.*?)\}", css, _re.S):
+        for k, v in _re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", m.group(1)):
+            if not v.strip():
+                empty.append(k)
+    if empty:
+        return False, f"값이 빈 변수 {len(empty)}개 — " + " · ".join(empty[:4])
+    return True, "`:root` 변수가 다 값을 가진다"
+
+
 CHECKS = (
+    ("S46-299", ":root 변수가 값을 가지는가", s46_299_root_vars_have_values),
     ("S46-298", "이번 주 과제가 지시에 있는가", s46_298_week_task),
     ("S46-297", "한 판이 스스로 도는가", s46_297_round_runs_itself),
     ("S46-296", "안 도는 파서가 없는가", s46_296_no_parser_holes),
