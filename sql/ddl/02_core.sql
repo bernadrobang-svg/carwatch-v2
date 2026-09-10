@@ -17,6 +17,20 @@ CREATE TABLE IF NOT EXISTS core_listing (
   price_current_won      INTEGER,
   price_detail_won       INTEGER,
   price_origin_won       INTEGER,
+  -- ★★★★★★ 09-10 (r1213 M-1) — ★ **신차출고가 (옵션 포함).**
+  --   ★ 마스터 — 「★ 감가율의 **분모**다.  ★ 신차**정가**가 아니라
+  --     ★ ★ 신차**출고가**(옵션 포함)다」
+  --   ★ `price_origin_won` 은 ★ **등급기준가**다 (엔카 `category.originPrice`) —
+  --     ★ ★ 옵션값이 빠져 있다.  ★ 둘은 다르다.
+  --   ★★ 셈은 ★ 개정 301 부터 있었는데 (`origin_total_won`) ★ **어디에도 안 담겼다** —
+  --     ★ ★ 판정이 돌 때만 살아 있다가 사라졌다.  ★ 화면이 매번 다시 셌다.
+  --   ★ 분모가 없으면 ★ NULL 이다 — ★ 0 으로 두지 않는다 (금지 12)
+  price_origin_total_won INTEGER,
+  --   ★ 09-10 — ★ 분모가 ★ **어디서 왔는지** 적는다.
+  --     `encar_계산`  등급기준가 ＋ 옵션값 합 (개정 301 의 셈)
+  --     `kb_신차가`   KB 상세의 `newcarPrice` × 1.1 —
+  --       ★ ★ KB 스스로 「선택옵션 · 프로모션 · 부가세가 포함된 실 구매가격」이라 적는다
+  price_origin_total_src TEXT,
   price_unit             TEXT,
   -- 차량
   year_month             TEXT,
@@ -82,6 +96,17 @@ CREATE TABLE IF NOT EXISTS core_listing (
   dealer_region          TEXT,
   dealer_photo           TEXT,
   -- 조건 · 진단
+  -- ★★★★★★ 09-10 (r1213 M-3) — ★ **교환 · 판금 · 골격을 갈라 담는다.**
+  --   ★ 마스터 기준 — 「★ **단순교환까지.**  ★ 골격에 안 갔으면 통과」.
+  --   ★ 성능점검부는 ★ 부위마다 ★ 상태(`X` 교환 · `W` 판금)와
+  --     ★ ★ 랭크(외판 1·2 · 주요골격 A·B·C)를 준다 —
+  --     ★ ★ ★ 그 둘을 안 가르면 ★ 「단순교환까지」를 걸 수 없다.
+  --   ★ 부호는 ★ `config/dictionaries/panel_rank.json` 이 정본이다 (`S14`).
+  --   ★ 점검부를 못 받았으면 ★ NULL 이다 — ★ 0 은 「없다」이지 「모른다」가 아니다
+  accident_swap_cnt      INTEGER,   -- 교환한 자리 수
+  accident_weld_cnt      INTEGER,   -- 판금·용접한 자리 수
+  accident_frame_cnt     INTEGER,   -- ★ 그중 주요골격 (A·B·C)
+  accident_parts_json    TEXT,      -- 부위명 — [{"part":"후드","kind":"판금","frame":false}]
   seizing_cnt            INTEGER,
   pledge_cnt             INTEGER,
   has_record             INTEGER,

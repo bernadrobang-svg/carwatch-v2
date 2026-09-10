@@ -393,6 +393,14 @@ HIDDEN_TEXT_JS = r"""
     const r = e.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) continue;
     if (r.bottom < 0 || r.top > innerHeight) continue;
+    // ★★★★★ 09-10 — ★ **화면 아래 끝에 걸친 글은 ★ 가려진 것이 아니다**.
+    //   ★ 실측 09-10 — ★ 탭 4 를 600·900px 로 재니 ★ 「가려진 1」이 나왔다.
+    //   ★ ★ 까닭 — ★ 그 글 상자가 ★ 창 밑변(1400px)을 ★ **가로질러 있었다**
+    //     ★ (`bottom` 1413 · 1416).  ★ 아홉 점 중 아래쪽 여섯이 ★ 창 밖이라
+    //     ★ ★ `elementFromPoint` 가 ★ `null` 을 냈고 ★ 그것을 ★ 「가렸다」로 셌다.
+    //   ★ ★ ★ **스크롤하면 다 보인다** — ★ 화면 결함이 아니라 ★ **자의 헛것**이다.
+    //     ★ 지시 r1208 「★ 자가 붉으면 ★ 자를 먼저 의심한다」
+    if (r.bottom > innerHeight) continue;
     leaf.push({e: e, r: r, t: t});
   }
   let hidden = 0; const ex = [];

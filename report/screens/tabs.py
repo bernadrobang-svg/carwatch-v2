@@ -980,7 +980,9 @@ def view_tab3(conn: sqlite3.Connection, root: str = ".",
         "       l.delivery_nationwide, l.site_inspection,"
         "       l.dealer_shop, l.dealer_region, l.paired_source_id,"
         "       l.sell_type, l.price_origin_won, s.confirmed_points,"
-        "       s.grade, r.accident_my_cost, r.accident_total_cnt"
+        "       s.grade, r.accident_my_cost, r.accident_total_cnt,"
+        # ★ 09-10 M-3 — ★ 마스터 기준 「★ 골격에 안 갔으면 통과」를 ★ **조건으로 건다**
+        "       l.accident_swap_cnt, l.accident_frame_cnt"
         "  FROM core_listing l"
         "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
@@ -1041,6 +1043,8 @@ def _tab3_cond(cfg) -> list:
         got.append({"label": "전국 배달", "cls": ""})
     got.append({"label": f"멀쩡 (보험 {_won(cfg.get('insurance_max_won'))} 미만)",
                 "cls": "ok"})
+    # ★ 마스터 기준을 ★ 조건 줄에도 적는다 — ★ 「단순교환까지」
+    got.append({"label": "골격 무사고 (단순교환까지)", "cls": "ok"})
     for c in cfg.get("color_ext") or ():
         got.append({"label": str(c), "cls": ""})
     if cfg.get("need_inspection"):
@@ -1058,7 +1062,7 @@ def _tab3_card(row, cfg: dict, root: str) -> tuple:
 
     (lid, site, sid, won, ym, km, cext, cint, tgrade, tbadge, photos,
      wmon, wkm, deliver, inspect, shop, region, paired, _sell, origin,
-     confirmed, _grade, ins_cost, acc_cnt) = row
+     confirmed, _grade, ins_cost, acc_cnt, swap, frame) = row
     sites = (load_config(f"{root}/config/sites.json") or {}).get("labels") or {}
     label = sites.get(site, site)
 
@@ -1079,6 +1083,10 @@ def _tab3_card(row, cfg: dict, root: str) -> tuple:
     # ★ 보험 — ★ 「멀쩡하다」는 ★ 판금·범퍼·휀더를 사고로 안 친다.
     #   ★ 우리가 가진 것은 ★ **금액**이다 — ★ 금액으로 잰다 (지시 「300만 미만이면 본다」)
     st_ins = None if ins_cost is None else (int(ins_cost) < ins_max)
+    # ★★ 마스터 기준 — 「★ 단순교환까지.  ★ **골격에 안 갔으면 통과**」.
+    #   ★ 성능점검부의 ★ **자리별 등급**이 그것을 안다 (RANK_A·B·C 가 골격이다).
+    #   ★ 못 받았으면 ★ 「미조회」다 — ★ 「무사고」로 읽지 않는다
+    st_frame = None if frame is None else (frame == 0)
 
     checks = []
     for name, state, said in (
@@ -1091,7 +1099,8 @@ def _tab3_card(row, cfg: dict, root: str) -> tuple:
             ("외장", st_col, cext or NOT_ASKED),
             ("배달", st_del, {"Y": "전국 배달", "N": "없음"}.get(
                 str(deliver or ""), NOT_ASKED)),
-            ("사이트 진단", st_dx, inspect or NOT_ASKED)):
+            ("사이트 진단", st_dx, inspect or NOT_ASKED),
+            ("골격", st_frame, _frame_said(swap, frame))):
         mark, cls = _mark(state)
         checks.append({"label": name, "mark": mark, "cls": cls,
                        "said": "" if mark == MARK_Q else said})
@@ -1115,10 +1124,15 @@ def _tab3_card(row, cfg: dict, root: str) -> tuple:
         miss.append("보험 미조회")
     if st_ins is False:
         miss.append(f"보험 {_won(ins_cost)}")
+    if st_frame is None:
+        miss.append("골격 미조회")
+    if st_frame is False:
+        miss.append(f"골격 {frame}곳")
 
     tone, clean = _accident_tone(ins_cost, acc_cnt, cfg)
-    ok = all(x is True for x in (st_price, st_year, st_km, st_war,
-                                 st_col, st_del, st_dx)) and st_ins is not False
+    ok = (all(x is True for x in (st_price, st_year, st_km, st_war,
+                                  st_col, st_del, st_dx))
+          and st_ins is not False and st_frame is not False)
     thin = confirmed is not None and confirmed < (cfg.get("thin_points") or 700)
     return ({
         "listing_id": lid, "_won": won, "price": _won(won),
@@ -1218,7 +1232,17 @@ def _t4(root: str = ".") -> dict:
 
 
 def _dep_pct(now, origin):
-    """감가율 = ★ 판매가 ÷ **신차출고가**.  ★ 분모가 없으면 ★ None(미조회)."""
+    """★ **잔가율** = 판매가 ÷ 신차출고가.  ★ 분모가 없으면 ★ None(미조회).
+
+    ★★★ 09-10 (r1213 M-1) — ★ 규격이 ★ **두 말을 함께** 쓴다:
+      ★ 기준 — 「신차출고가 대비 ★ **78% 이하**」 · 「★ 25% 아래는 값이 센 편」
+      ★ 셈  — 「감가율 = ★ **(1 − 판매가 ÷ 신차출고가) × 100**」
+    ★★ 둘은 ★ 서로 뒤집힌 값이다 — ★ 78% 는 ★ 판매가÷신차가(잔가율)이고
+      ★ ★ 셈이 말하는 것은 ★ 100 − 잔가율(감가율)이다.
+      ★ ★ ★ 시안이 ★ 3,850만 / 5,210만 = ★ **73.9%** 로 적었으니 ★ 잔가율이다.
+    ★ 그래서 ★ **둘 다 낸다** — ★ 거르기는 잔가율로 · 화면에 감가율도 적는다.
+      ★ ★ 회차에 여쭀다 (말이 어긋난다)
+    """
     if not now or not origin:
         return None
     return round(float(now) * 100 / float(origin), 1)
@@ -1264,12 +1288,17 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         (cfg["target"],)).fetchone()[0]
     got = conn.execute(
         "SELECT l.listing_id, l.site, l.source_id, l.price_current_won,"
-        "       l.price_origin_won, l.year_month, l.mileage_km,"
+        # ★ 09-10 M-1 — ★ 분모는 ★ **출고가**(옵션 포함)다.
+        #   ★ 없으면 ★ 등급기준가로 **대신하지 않는다** — ★ 「미조회」로 비운다
+        "       l.price_origin_total_won, l.year_month, l.mileage_km,"
         "       l.trim_grade_name, l.trim_badge, l.site_inspection,"
         "       l.options_choice_json, l.warranty_body_month,"
         "       l.warranty_body_km, l.paired_source_id, s.grade,"
         "       r.accident_my_cnt, r.accident_my_cost,"
         "       r.accident_other_cnt, r.accident_other_cost,"
+        # ★ 09-10 M-3 — ★ 교환 · 판금 · 골격을 ★ 갈라 읽는다 ＋ 부위명
+        "       l.accident_swap_cnt, l.accident_weld_cnt,"
+        "       l.accident_frame_cnt, l.accident_parts_json,"
         "       s.group_value, s.group_car, s.group_warranty, s.group_taste,"
         "       s.grade_earned, s.grade_base"
         "  FROM core_listing l"
@@ -1318,12 +1347,22 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
 def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
     (lid, site, sid, won, origin, ym, km, tgrade, tbadge, dx, optj,
      wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
+     swap, weld, frame, parts_json,
      g_value, g_car, g_warranty, g_taste, earned, base) = r
     pct = _dep_pct(won, origin)
     cap = float(cfg["depreciation_max_pct"])
     nodx = float(cfg["depreciation_no_dx_pct"])
     # ★ 진단이 없으면 ★ 확인 비용이 따로 든다 — ★ 감가가 더 낮아야 후보다
     ok = pct is not None and pct <= (cap if dx else nodx)
+    # ★ 마스터 기준 — 「★ 단순교환까지.  ★ **골격에 안 갔으면 통과**」.
+    #   ★ 골격이 ★ **상한 것**은 후보가 아니다.
+    #   ★★ 미조회는 ★ 자르지 않는다 — ★ 「★ 못 찾았다」와 「★ 없다」는 다르다.
+    #     ★ ★ 대신 ★ 화면에 ★ 「골격 미조회」로 적고 ★ 「다 맞는 차」로 안 친다
+    if frame is not None and frame > 0:
+        ok = False
+    # ★ 교환이 ★ **4곳 이상**이면 ★ 사고 1,000만 이상으로 본다
+    many = int(_panel_book(root).get("교환_많으면", {}).get("갯수", 4))
+    big = swap is not None and swap >= many
     lo, hi = float(cfg["accident_signal_lo_pct"]), float(
         cfg["accident_signal_hi_pct"])
 
@@ -1338,24 +1377,20 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
     if pct is not None and lo <= pct <= hi:
         dep_cls = "warn"          # ★ 65~68% 는 ★ **사고 신호**다
     four = [
-        {"label": "값 / 신차출고가 / 감가율",
+        {"label": "값 / 신차출고가 / 잔가율 (감가율)",
          "cells": [cell(_won(won)),
-                   cell(_won(origin) if origin else NOT_ASKED,
+                   cell(_won(origin) if origin
+                        else "신차가 미조회 — 감가율을 계산하지 않음",
                         "" if origin else "no"),
-                   cell(f"{pct}%" if pct is not None else NOT_ASKED,
-                        dep_cls)]},
+                   cell(f"{pct}% (감가 {round(100 - pct, 1)}%)"
+                        if pct is not None else NOT_ASKED, dep_cls)]},
         {"label": "주행 / 최초등록",
          "cells": [cell(_km(km), "ok" if km is not None else "no"),
                    cell(_ym(ym), "ok" if ym else "no")]},
-        # ★ M-3 — ★ 교환·판금·골격을 갈라 낸다.  ★ 우리는 아직 **금액과 횟수**만 있다
+        # ★ M-3 — ★ **교환 · 판금 · 골격**을 갈라 낸다.  ★ 부위명도 낸다
         {"label": "사고",
-         "cells": [cell(f"내차 {my_cnt}회 / {_won(my_cost)}"
-                        if my_cnt is not None else f"내차 {NOT_ASKED}",
-                        "ok" if not my_cnt else ""),
-                   cell(f"상대차 {ot_cnt}회 / {_won(ot_cost)}"
-                        if ot_cnt is not None else f"상대차 {NOT_ASKED}",
-                        "ok" if not ot_cnt else ""),
-                   cell(f"교환·판금·골격 {NOT_ASKED}", "no")]},
+         "cells": _accident_cells(swap, weld, frame, parts_json,
+                                  my_cnt, my_cost, ot_cnt, ot_cost, big)},
         {"label": "진단 / 보증",
          "cells": [cell(dx or NOT_ASKED, "ok" if dx else "no"),
                    cell(_warranty(wmon, wkm))]},
@@ -1381,7 +1416,7 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
             {"label": "총비용", "v": _won(total), "cls": "sum"},
         ],
         "bars": _bars(g_value, g_car, g_warranty, g_taste, earned, base),
-        "say": _gv70_say(pct, lo, hi, dx, wmon, wkm),
+        "say": _gv70_say(pct, lo, hi, dx, wmon, wkm, swap, frame, big, many),
         "_ok": ok, "_total": total,
     }
 
@@ -1465,9 +1500,17 @@ def _mark_best(rows: list) -> None:
                 c["bars"][i]["said"] += " ★"
 
 
-def _gv70_say(pct, lo, hi, dx, wmon, wkm) -> str:
+def _gv70_say(pct, lo, hi, dx, wmon, wkm,
+              swap=None, frame=None, big=False, many=4) -> str:
     """★ 한 줄 — ★ **잰 것만** 적는다.  ★ 지어내지 않는다."""
     got = []
+    # ★ M-3 — ★ 마스터 기준을 ★ **그 줄에서** 말한다
+    if frame is None:
+        got.append("골격 미조회 — 「골격에 안 갔으면 통과」를 아직 못 걸었습니다")
+    elif frame > 0:
+        got.append(f"골격이 {frame}곳 상했습니다 — 마스터 기준에서 벗어납니다")
+    if big:
+        got.append(f"교환이 {swap}곳입니다 — {many}곳 이상이면 사고 1,000만 이상으로 봅니다")
     if pct is not None and lo <= pct <= hi:
         got.append(f"감가가 {pct}% 입니다 — 이 자리는 사고 신호일 수 있습니다")
     if not dx:
@@ -1475,3 +1518,72 @@ def _gv70_say(pct, lo, hi, dx, wmon, wkm) -> str:
     if wmon or wkm:
         got.append(f"제조사 보증 {_warranty(wmon, wkm)}")
     return " · ".join(got) or "더 볼 것을 아직 못 쟀습니다"
+
+
+def _accident_cells(swap, weld, frame, parts_json,
+                    my_cnt, my_cost, ot_cnt, ot_cost, big=False) -> list:
+    """★ M-3 — 교환 · 판금 · 골격 ＋ 부위명 ＋ 보험 금액.
+
+    ★ 점검부를 못 받았으면 ★ 「미조회」다 — ★ 0 으로 두지 않는다 (금지 12).
+    ★ 「골격 무사고」는 ★ **확인해서 0 일 때**만 적는다
+    """
+    def cell(v, cls=""):
+        return {"v": v, "cls": cls}
+
+    try:
+        parts = _j.loads(parts_json) if parts_json else []
+    except (ValueError, TypeError):
+        parts = []
+    if not isinstance(parts, list):
+        parts = []
+    parts = [p for p in parts if isinstance(p, dict)]
+    got = []
+    if swap is None:
+        got.append(cell(f"교환·판금·골격 {NOT_ASKED}", "no"))
+    else:
+        # ★ 부위명을 낸다 — ★ 「판금 1곳」이 아니라 ★ 「판금 1곳 (뒷휀더)」
+        def where(kind):
+            said = [str(p.get("part") or UNKNOWN)
+                    for p in parts if p.get("kind") == kind]
+            return f" ({' · '.join(said[:3])})" if said else ""
+
+        # ★ 교환이 4곳 이상이면 ★ **사고 1,000만 이상**으로 본다 — ★ 노랗게
+        got.append(cell(f"교환 {swap}곳{where('교환')}",
+                        "warn" if big else ("ok" if not swap else "")))
+        got.append(cell(f"판금 {weld}곳{where('판금')}",
+                        "ok" if not weld else ""))
+        if frame:
+            said = [str(p.get("part") or UNKNOWN)
+                    for p in parts if p.get("frame")]
+            got.append(cell(f"★ 골격 {frame}곳 ({' · '.join(said[:3])})", "no"))
+        else:
+            got.append(cell("골격 무사고", "ok"))
+    # ★ 미조회를 ★ **초록(무사고)으로 칠하지 않는다** — ★ 「없음」을 값으로
+    #   삼지 않는다 (금지 12).  ★ 0 은 ★ **확인해서 0** 일 때만이다
+    got.append(cell(f"내차 {my_cnt}회 / {_won(my_cost)}"
+                    if my_cnt is not None else f"내차 {NOT_ASKED}",
+                    "ok" if my_cnt == 0 else ("no" if my_cnt is None else "")))
+    got.append(cell(f"상대차 {ot_cnt}회 / {_won(ot_cost)}"
+                    if ot_cnt is not None else f"상대차 {NOT_ASKED}",
+                    "ok" if ot_cnt == 0 else ("no" if ot_cnt is None else "")))
+    return got
+
+
+_PANEL_BOOK: dict = {}
+
+
+def _panel_book(root: str = ".") -> dict:
+    """★ 자리·상태 사전 — ★ 값을 코드에 안 박는다 (S14)."""
+    if not _PANEL_BOOK:
+        got = load_config(f"{root}/config/dictionaries/panel_rank.json") or {}
+        _PANEL_BOOK.update(got or {"교환_많으면": {"갯수": 4}})
+    return _PANEL_BOOK
+
+
+def _frame_said(swap, frame) -> str:
+    """★ 골격 딱지에 적을 말 — ★ 잰 것만."""
+    if frame is None:
+        return NOT_ASKED
+    if frame:
+        return f"골격 {frame}곳"
+    return f"교환 {swap}곳 · 골격 없음" if swap else "무사고"
