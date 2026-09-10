@@ -9,14 +9,14 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**134파일 · 53,172줄 · 3,881KB**
+**134파일 · 53,182줄 · 3,882KB**
 
 ★ 800줄을 넘는 파일 16개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
 - CHECKS.md 947줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
-- SOURCE.md 837줄
+- SOURCE.md 847줄
 - UI_REVIEW.md 2,155줄
 - guide/01_요구사항.md 1,001줄
 - guide/03_이력.md 1,375줄
@@ -57,7 +57,7 @@
 | `ROADMAP_20260830.md` | 108 | 4 |
 | `SCHEMA.md` | 114 | 6 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md`  ★ | 837 | 67 |
+| `SOURCE.md`  ★ | 847 | 68 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,155 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |

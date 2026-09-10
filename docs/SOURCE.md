@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 237개 · 총 86,787줄
+파일 241개 · 총 87,616줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -67,6 +67,7 @@
 | `analyze/axis/taste.py` | 317 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
 | `parse/reborncar/mapping.py` | 305 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
+| `tools/week_task.py` | 298 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `tests/test_crosssite.py` | 293 | 12장 다중 사이트 시험. |
 | `tests/test_dict.py` | 293 | 4장 키·코드·사전 시험. |
 | `tests/test_screens.py` | 292 | 10장 화면 시험. |
@@ -113,6 +114,7 @@
 | `tools/make_field_map.py` | 187 | ★★★★★★ 09-05 — ★ **사이트별 매핑표를 가이드가 만든다** (마스터 지시). |
 | `tools/classify_unclassified.py` | 184 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `parse/kbchachacha/inspection.py` | 183 | KB차차차 성능점검부 → ★ **부위별** (규격 `KBCHACHACHA_API.md` 3장 · 268~269줄). |
+| `tools/mpark_check.py` | 183 | ★ 성능점검기록부를 ★ **원문 그대로** 읽는다 (P-3 ②). |
 | `parse/importer.py` | 182 | 반입 입력 해석 (13장 STEP 136a · 136b). |
 | `tools/list_diff_check.py` | 182 | 목록 대조 — ★ **사라진 것은 상세로 확인한 뒤에 죽인다.** |
 | `tools/make_vehicle_table.py` | 182 | 차종 표를 만든다 — 수집·표시·추천 탭·사이트별 가능 여부 (09-05 마스터 지시). |
@@ -122,15 +124,17 @@
 | `score/grade.py` | 178 | 등급 (L7). |
 | `tools/load_field_map.py` | 177 | D5 ① — ★ **가이드 매핑표를 ★ `meta_field_usage` 에 넣는다** (지시 r1168 · `S46-282`). |
 | `tools/measure_0k.py` | 176 | ★ 0k (명령서 r974 뒤) — ★ **잰다.  안 고친다.** |
+| `tools/week_fetch.py` | 175 | ★ 이번 주 과제 — ★ 후보의 **상세 · 성능점검 · 보험**을 받는다 (P-3). |
 | `web/session.py` | 175 | 세션 · CSRF · 정적 파일 (14장 STEP 145~147). |
 | `analyze/axis/spec.py` | 172 | 사양 90점 — HUD 20 · 선루프 20 · SVM 10 · SCC 10 · 후측방 5 · 틴팅 5. |
 | `tools/collect_bmw.py` | 171 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
 | `store/pii.py` | 169 | 개인정보 분리 (L4). |
 | `tools/collect_kia_cpo.py` | 169 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
+| `adapters/kbchachacha.py` | 167 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
+| `tools/kb_list_prices.py` | 167 | ★ KB 목록으로 ★ **값·트림**을 채운다 (이번 주 과제 P-2 를 돌아가는 길). |
 | `tools/fill_accident_parts.py` | 164 | ★ M-3 — **교환 · 판금 · 골격**을 갈라 저장하고 ★ 부위명을 낸다 (지시 r1213). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
-| `adapters/kbchachacha.py` | 161 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
 | `tools/measure_axis_gap.py` | 161 | ★ 3 — ★ 짝이 245 인데 ★ 아홉 사이트 A 가 0 인 까닭을 ★ **잰다**. |
 | `tools/refetch_unsourced.py` | 160 | ★★★★★ 찌꺼기를 끊고 ★ 근거 없는 행의 상세를 다시 받는다 (마스터 0e · 08-30). |
 | `tools/site_coverage.py` | 160 | 사이트에 몇 대인데 ★ 우리가 몇 대 받았나 — ★ 이걸 아무도 안 셌다. |
@@ -244,7 +248,7 @@
 | `parse/revolt/__init__.py` | 0 | — |
 | `parse/volvo_selekt/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 98개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 99개)
 
 ### `validate/v0_guide.py` — 8,442줄
 
@@ -610,6 +614,12 @@ _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _o
 
 ```
 _txt:25  _int:29  fields:37  title_name:50  parse_detail:56  trim_of:116  _photos:129  seats_of:144  kmpl_of:149  seats:155  marks:160  panels_of:199  counts_of:224  option_keys:252  options_of:259  options_in_html:295
+```
+
+### `tools/week_task.py` — 298줄
+
+```
+book:29  _won:34  rows:40  _gone:78  _plate:93  _has_hud:122  wear_won:135  judge:143  report:216  _url:235  main:245  kb_only:276
 ```
 
 ### `tests/test_crosssite.py` — 293줄

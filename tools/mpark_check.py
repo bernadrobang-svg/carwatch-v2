@@ -141,3 +141,43 @@ if __name__ == "__main__":
         got = read(one)
         print(json.dumps(got, ensure_ascii=False))
         print("  →", say(got))
+
+
+def into_db(db: str = "carwatch.db", limit: int = 0) -> dict:
+    """읽은 기록부를 ★ `core_listing` 의 사고 칸에 담는다 (M-3 과 같은 칸).
+
+    ★ 「주요골격 있음」이면 ★ 골격 1 이상이다 — ★ 몇 곳인지는 ★ 양식이 안 준다.
+      ★ ★ 그래서 ★ **1** 로 둔다.  ★ 지어내지 않는다 — ★ 0 이 아니라는 것만 안다.
+    ★ 「외판 1·2랭크 있음」은 ★ 단순수리다 — ★ 부위 이름을 그대로 담는다
+    """
+    import sqlite3
+
+    conn = sqlite3.connect(os.path.join(ROOT, db))
+    mine = {r[0] for r in conn.execute(
+        "SELECT source_id FROM core_listing WHERE site = 'kbchachacha'")}
+    tally = {"읽음": 0, "담음": 0, "못 읽음": 0}
+    for n, (sid, num) in enumerate(all_kb(), 1):
+        if sid not in mine or (limit and n > limit):
+            continue
+        try:
+            got = read(num)
+        except Exception:                      # noqa: BLE001
+            tally["못 읽음"] += 1
+            continue
+        tally["읽음"] += 1
+        if got.get("골격") is None:
+            continue
+        parts = [{"part": p, "kind": "교환·판금", "frame": False}
+                 for p in (got.get("부위") or ())]
+        conn.execute(
+            "UPDATE core_listing"
+            "   SET accident_frame_cnt = ?, accident_swap_cnt = ?,"
+            "       accident_weld_cnt = 0, accident_parts_json = ?,"
+            "       site_inspection = COALESCE(site_inspection, 'KB 성능점검')"
+            " WHERE site = 'kbchachacha' AND source_id = ?",
+            (1 if got["골격"] else 0, len(parts),
+             json.dumps(parts, ensure_ascii=False), sid))
+        tally["담음"] += 1
+    conn.commit()
+    conn.close()
+    return tally
