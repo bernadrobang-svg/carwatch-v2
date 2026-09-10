@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 241개 · 총 87,641줄
+파일 241개 · 총 87,652줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -66,8 +66,8 @@
 | `parse/revolt/mapping.py` | 322 | 리볼트 (revolt.kr) — 전기차 전용 인증중고차 (규격 `docs/REVOLT_API.md` · `S46-200`). |
 | `analyze/axis/taste.py` | 317 | ④ 취향 50점 — HUD 15 · 선루프 10 · 색상 10 · 지정 옵션 15. |
 | `validate/v9_multisite.py` | 311 | V9 — 다중 사이트 (`docs/chapters/50-multisite.md`). |
+| `tools/week_task.py` | 309 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `parse/reborncar/mapping.py` | 305 | 리본카 상세 → `core_listing` (명령서 39 · `docs/REBORNCAR_API.md` 1b). |
-| `tools/week_task.py` | 298 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `tests/test_crosssite.py` | 293 | 12장 다중 사이트 시험. |
 | `tests/test_dict.py` | 293 | 4장 키·코드·사전 시험. |
 | `tests/test_screens.py` | 292 | 10장 화면 시험. |
@@ -610,16 +610,16 @@ _off:49  _fitting:54  color_grade_of:81  _fit_ladder:103  _color:126  _picked:15
 _sites:69  live_sites:75  _labels:83  _badge_check:98  _hardcoded_badges:133  _origin_check:156  _warranty_sum_check:186  _tie_break_check:229  _axis_site_check:267  run:307
 ```
 
+### `tools/week_task.py` — 309줄
+
+```
+book:29  _won:34  rows:40  _gone:81  _plate:96  _has_hud:125  wear_won:138  judge:146  report:222  _url:241  main:251  kb_only:287
+```
+
 ### `parse/reborncar/mapping.py` — 305줄
 
 ```
 _txt:25  _int:29  fields:37  title_name:50  parse_detail:56  trim_of:116  _photos:129  seats_of:144  kmpl_of:149  seats:155  marks:160  panels_of:199  counts_of:224  option_keys:252  options_of:259  options_in_html:295
-```
-
-### `tools/week_task.py` — 298줄
-
-```
-book:29  _won:34  rows:40  _gone:78  _plate:93  _has_hud:122  wear_won:135  judge:143  report:216  _url:235  main:245  kb_only:276
 ```
 
 ### `tests/test_crosssite.py` — 293줄

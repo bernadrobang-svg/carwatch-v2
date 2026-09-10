@@ -9,11 +9,11 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**134파일 · 53,792줄 · 3,930KB**
+**134파일 · 53,185줄 · 3,887KB**
 
 ★ 800줄을 넘는 파일 16개 — 폴더로 쪼갭니다 (개정 342 · S28-9)
 
-- CHECKS.md 1,548줄
+- CHECKS.md 941줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
 - SOURCE.md 847줄
@@ -35,7 +35,7 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 1,548 | 175 |
+| `CHECKS.md`  ★ | 941 | 132 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
