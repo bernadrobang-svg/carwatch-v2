@@ -1309,6 +1309,8 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "       l.accident_frame_cnt, l.accident_parts_json,"
         "       s.group_value, s.group_car, s.group_warranty, s.group_taste,"
         "       s.grade_earned, s.grade_base,"
+        # ★ 09-10 M-5 — ★ 하체 낱말 (정비이력이 없어 ★ 판매자 글에서 잡은 것)
+        "       l.undercarriage_json, l.undercarriage_src,"
         # ★ 맨 뒤다 — ★ `r[-1]` 로 읽는다 (자리를 세지 않게)
         "       l.detail_status"
         "  FROM core_listing l"
@@ -1368,7 +1370,8 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
     (lid, site, sid, won, origin, ym, km, tgrade, tbadge, dx, optj,
      wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
      swap, weld, frame, parts_json,
-     g_value, g_car, g_warranty, g_taste, earned, base, _detail) = r
+     g_value, g_car, g_warranty, g_taste, earned, base,
+     under_json, under_src, _detail) = r
     pct = _dep_pct(won, origin)
     cap = float(cfg["depreciation_max_pct"])
     nodx = float(cfg["depreciation_no_dx_pct"])
@@ -1436,7 +1439,8 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
             {"label": "총비용", "v": _won(total), "cls": "sum"},
         ],
         "bars": _bars(g_value, g_car, g_warranty, g_taste, earned, base),
-        "say": _gv70_say(pct, lo, hi, dx, wmon, wkm, swap, frame, big, many),
+        "say": _gv70_say(pct, lo, hi, dx, wmon, wkm, swap, frame, big, many,
+                         under_json, under_src),
         "_ok": ok, "_total": total,
     }
 
@@ -1521,9 +1525,15 @@ def _mark_best(rows: list) -> None:
 
 
 def _gv70_say(pct, lo, hi, dx, wmon, wkm,
-              swap=None, frame=None, big=False, many=4) -> str:
+              swap=None, frame=None, big=False, many=4,
+              under_json=None, under_src=None) -> str:
     """★ 한 줄 — ★ **잰 것만** 적는다.  ★ 지어내지 않는다."""
     got = []
+    # ★★ M-5 — ★ 하체 낱말.  ★ **어디서 잡았는지**를 함께 적는다 —
+    #   ★ 정비이력이 아니라 ★ 판매자 글이면 ★ 그렇게 말한다 (금지 6)
+    said = _under_say(under_json, under_src)
+    if said:
+        got.append(said)
     # ★ M-3 — ★ 마스터 기준을 ★ **그 줄에서** 말한다
     if frame is None:
         got.append("골격 미조회 — 「골격에 안 갔으면 통과」를 아직 못 걸었습니다")
@@ -1607,3 +1617,20 @@ def _frame_said(swap, frame) -> str:
     if frame:
         return f"골격 {frame}곳"
     return f"교환 {swap}곳 · 골격 없음" if swap else "무사고"
+
+
+def _under_say(under_json, under_src) -> str:
+    """하체 낱말 한 마디.  ★ 없으면 ★ 빈 글 — ★ 「없다」고 말하지 않는다.
+
+    ★★ 「미조회」라 안 적는다 — ★ **거의 모든 차가 미조회**라
+      ★ ★ 그 말을 다 붙이면 ★ 줄이 그 말로만 찬다.  ★ 잡힌 것만 말한다
+    """
+    try:
+        got = _j.loads(under_json) if under_json else []
+    except (ValueError, TypeError):
+        return ""
+    if not isinstance(got, list) or not got:
+        return ""
+    where = str(under_src or UNKNOWN)
+    return (f"하체를 건드린 자국이 있습니다 — {' · '.join(str(x) for x in got)}"
+            f" ({where}에서 봤습니다)")

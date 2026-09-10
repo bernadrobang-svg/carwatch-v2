@@ -31,6 +31,15 @@ CREATE TABLE IF NOT EXISTS core_listing (
   --     `kb_신차가`   KB 상세의 `newcarPrice` × 1.1 —
   --       ★ ★ KB 스스로 「선택옵션 · 프로모션 · 부가세가 포함된 실 구매가격」이라 적는다
   price_origin_total_src TEXT,
+  --   ★ 09-10 M-5 — ★ **하체 낱말**을 잡은 것 (`config/dictionaries/undercarriage.json`).
+  --     ★ 마스터 — 「정비이력에서 하체 낱말 13개를 잡아 경고한다 — 너클 · 로워암」.
+  --   ★★ 그런데 ★ **정비이력을 주는 창구가 없다** (열두 사이트 실측 09-10).
+  --     ★ ★ 지금 잡는 것은 ★ `ad_body_text` — ★ **판매자가 쓴 글**이다.
+  --     ★ ★ ★ 그러니 ★ `undercarriage_src` 에 ★ **어디서 잡았는지**를 적는다 —
+  --       ★ ★ ★ ★ 정비이력이 들어오면 ★ 그때 `정비이력` 으로 바뀐다.
+  --   ★ 못 봤으면 NULL 이다 — ★ 「없다」가 아니라 ★ 「안 봤다」다 (금지 12)
+  undercarriage_json     TEXT,
+  undercarriage_src      TEXT,
   price_unit             TEXT,
   -- 차량
   year_month             TEXT,

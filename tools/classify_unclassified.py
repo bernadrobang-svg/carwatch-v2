@@ -56,9 +56,18 @@ def write_suggestion(rows: list) -> str:
             "reason": one["hint"],
             "observed": one["hits"], "of": one["total"]}
     path = os.path.join(ROOT, "config", "field_usage.suggested.json")
-    with open(path, "w", encoding="utf-8") as f:
+    # ★★★★★ 09-10 — ★ **통째로 바꾼다** (임시 파일 → `os.replace`).
+    #   ★★ 실측 09-10 — ★ 시간 맞춰 도는 판(`carwatch-round`, 11:00:18)이
+    #     ★ ★ 이 파일을 다시 쓰는 사이에 ★ `test_admin_flow` 가 `config/` 를 복사해
+    #       ★ ★ ★ `FileNotFoundError: …/config/field_usage.suggested.json` 이 났다.
+    #   ★ 코드가 틀린 것이 아니라 ★ **우리 두 일이 부딪힌 것**이다.
+    #   ★ `open(w)` 는 ★ 먼저 파일을 비우므로 ★ 그 찰나에 읽으면 ★ 없거나 반쪽이다.
+    #     ★ ★ `os.replace` 는 ★ 한 번에 바뀐다 — ★ 읽는 쪽은 ★ 늘 온전한 것을 본다
+    tmp = path + f".tmp{os.getpid()}"
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
         f.write("\n")
+    os.replace(tmp, path)
     return path
 
 
