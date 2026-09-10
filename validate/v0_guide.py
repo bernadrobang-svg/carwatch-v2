@@ -7763,16 +7763,34 @@ def s46_288_no_asking_about_out_of_scope():
 
     잣대 — 미분류를 묻는 산출물이 다시 생기지 않았는가.
     """
+    # ★★★★★ 09-10 (r1212) — ★ 가이드 지적: ★ **이 자가 헛잡았다.**
+    #   ★ `tools/classify_unclassified.py` 는 ★ **차종**이 아니라
+    #     ★ ★ **JSON 경로** 미분류를 가르는 옛 도구다 (개정 341 · V4-26 · V4-27).
+    #   ★ 이 검사가 막는 것은 ★ 「이 **차종** 받을까요」를 되묻는 산출물이다.
+    #   ★ 그러니 ★ 이름만 보지 말고 ★ **무엇을 묻는지**를 본다 —
+    #     ★ ★ 차종·수집 낱말이 있는 것만 잡는다
+    ASKS = ("target_key", "차종", "out_of_scope", "targets.json", "수집 대상")
+
+    def _asks_about_targets(path) -> bool:
+        said = _read(path)
+        return any(w in said for w in ASKS)
+
     stray = [p.name for p in (ROOT / "outputs").glob("*.md")
-             if "UNCLASSIFIED" in p.name.upper()]
+             if "UNCLASSIFIED" in p.name.upper() and _asks_about_targets(p)]
     stray += [p.name for p in (ROOT / "tools").glob("*.py")
-              if "unclassified" in p.name.lower()]
+              if "unclassified" in p.name.lower() and _asks_about_targets(p)]
     if stray:
         return False, ("미분류를 묻는 산출물이 다시 생겼다 — "
                        + " · ".join(stray) +
                        "  (out_of_scope 는 받지 않기로 정해진 것이다)")
+    # ★ 09-10 — ★ **한 문장을 못 박지 않는다.**  ★ 가이드가 지시문을 고쳐 쓰면
+    #   ★ ★ 뜻은 그대로인데 ★ 이 검사만 붉어진다 (실측 09-10 — 그렇게 됐다).
+    #   ★ 지금 지시문은 ★ 475줄에 ★ 「전량을 받지 않는다.  차종 조건으로 좁혀서
+    #     ★ ★ 받는다」로 적혀 있다 — ★ **같은 말**이다.  ★ 뜻을 본다
+    SAYS = ("받지 않기로 정해진 것", "전량을 받지 않는다",
+            "차종 조건으로 좁혀서 받는다", "대상에서 제외")
     order = _read(ROOT / "outputs" / "ORDER_20260829.md")
-    if "받지 않기로 정해진 것" not in order:
+    if not any(w in order for w in SAYS):
         return False, "작업 지시에 out_of_scope 의 뜻이 적혀 있지 않다"
     return True, "미분류를 다시 묻지 않는다"
 

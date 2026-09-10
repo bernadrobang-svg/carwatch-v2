@@ -159,7 +159,47 @@ def parse_detail(body: dict, site: str, source_id: str,
     if photos:
         out["photo_main"] = photos[0]
         out["photo_list_json"] = json.dumps(photos, ensure_ascii=False)
+    # ★ 09-10 (N-2 · G) — ★ 옵션을 두 갈래로 담는다
+    out.update(_options(data))
     return out
+
+
+def _options(data: dict) -> dict:
+    """옵션 — ★ K카는 ★ **이름**과 ★ **값 있는 선택옵션**을 ★ 따로 준다.
+
+    ★ `optList[]`       — ★ 그 차에 달린 것 (`optnNm` · `optnCd`).  ★ 값은 없다
+    ★ `carJatoOptList[]`— ★ **값이 붙은 선택 옵션** (`optNm` ＋ `optPrc` 원).
+      ★ ★ 실측 — 「파퓰러 패키지 5,100,000」.  ★ 이것이 ★ 신차출고가의 옵션값이다
+    ★ 지시 H — 「가격이 있으면 `options_choice_json` ·
+      ★ 이름만 있으면 `options_name_json`.  ★ 가격이 없다고 옵션 축을 0 으로 두지 않는다」
+    """
+    got: dict = {}
+    names, seen = [], set()
+    for one in data.get("optList") or ():
+        name = str((one or {}).get("optnNm")
+                   or (one or {}).get("optioncdName") or "").strip()
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        names.append(name)
+    if names:
+        got["options_name_json"] = json.dumps(names, ensure_ascii=False)
+        # ★ 축은 `standard ∪ choice` 를 읽는다 (`analyze/axis/spec.py`) —
+        #   ★ 이름만 담으면 ★ 판정이 그것을 ★ **못 본다**
+        got["options_standard_json"] = json.dumps(names, ensure_ascii=False)
+    picked, seen2 = [], set()
+    for one in data.get("carJatoOptList") or ():
+        name = str((one or {}).get("optNm") or "").strip()
+        if not name or name in seen2:
+            continue
+        seen2.add(name)
+        won = str((one or {}).get("optPrc") or "").strip()
+        picked.append({"name": name,
+                       "price": int(won) if won.isdigit() and won != "0"
+                       else None})
+    if picked:
+        got["options_choice_json"] = json.dumps(picked, ensure_ascii=False)
+    return got
 
 
 # ★ 사진이 담긴 자리 넷 (실측 08-26).  ★ `photoList` 가 전부를 담고

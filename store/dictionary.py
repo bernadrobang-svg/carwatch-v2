@@ -17,6 +17,7 @@ from datetime import date
 
 from errors import ValidationError
 from store.raw import commit
+from store.options import option_codes
 
 STATUS_CONFIRMED = "confirmed"
 STATUS_PENDING = "pending"
@@ -587,7 +588,7 @@ def installed_option_names(conn: sqlite3.Connection, site: str,
         return []
     key = scope_key(SCOPE_MODEL, site, model_catalog_key=model_catalog_key)
     out = []
-    for c in codes:
+    for c in option_codes(codes):
         e = resolve_code(conn, "option_model", c, key)
         if e is not None:
             out.append(e.display)

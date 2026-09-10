@@ -42,6 +42,18 @@ def _body(env: dict):
     return body
 
 
+def _call(fn, raw, site: str, sid: str):
+    """파서를 ★ 그 파서가 받는 꼴로 부른다."""
+    import inspect
+
+    names = list(inspect.signature(fn).parameters)
+    if len(names) >= 2 and names[1] in ("site", "site_code"):
+        return fn(raw, site, sid)
+    if len(names) >= 2:
+        return fn(raw, sid)
+    return fn(raw)
+
+
 def run(sites: list, write: bool = False, db: str = "carwatch.db") -> Counter:
     conn = sqlite3.connect(os.path.join(ROOT, db))
     cols = {r[1] for r in conn.execute("PRAGMA table_info(core_listing)")}
@@ -71,8 +83,11 @@ def run(sites: list, write: bool = False, db: str = "carwatch.db") -> Counter:
             raw = _body(env)
             if raw is None:
                 continue
+            # ★ 파서마다 ★ 받는 것이 다르다 — ★ BMW 는 `(html, source_id)` 둘이다.
+            #   ★ 규격을 하나로 맞추는 것은 ★ 이 자의 몫이 아니다 —
+            #     ★ ★ 여기서는 ★ **있는 대로 부른다** (규칙 2)
             try:
-                got = fn(raw, site, sid)
+                got = _call(fn, raw, site, sid)
             except (ValueError, TypeError, AttributeError, KeyError):
                 tally[f"{site} 못 읽음"] += 1
                 continue

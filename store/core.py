@@ -16,6 +16,7 @@ import sqlite3
 from contracts import ListingSnapshot
 from errors import ValidationError
 from store.raw import commit, raw_body
+from store.options import option_codes
 
 # 변하는 것만 추적한다 (STEP 29).  좁게 잡는다.
 TRACKED_FIELDS: tuple[str, ...] = ("price_current_won", "sales_status", "status")
@@ -768,8 +769,13 @@ def load_snapshot(conn: sqlite3.Connection, listing_id: str) -> ListingSnapshot:
         warranty_power_month=d["warranty_power_month"],
         warranty_power_km=d["warranty_power_km"],
         first_registration_date=d.get("first_registration_date"),
-        options_standard=jload("options_standard_json"),
-        options_choice=jload("options_choice_json"),
+        # ★★★★★ 09-10 — ★ 축에는 ★ **열쇠로 쓸 수 있는 글자**만 준다.
+        #   ★ 옵션 목록이 두 꼴이라 (지시 H) ★ dict 가 그대로 가면
+        #     ★ ★ `set(...)` 에서 ★ `unhashable type: 'dict'` 로 판정이 죽는다.
+        #   ★ 실측 09-10 — ★ K카 옵션을 dict 로 담자마자 ★ S9 가 멈췄다.
+        #   ★ 푸는 곳을 ★ **하나로 모았다** (`store/options.py`)
+        options_standard=option_codes(jload("options_standard_json")),
+        options_choice=option_codes(jload("options_choice_json")),
         # ★★★★★ 09-02 — ★ 사이트가 ★ 「이 차엔 없다」고 밝힌 옵션 (`S46-227`)
         options_absent=jload("options_absent_json"),
         inspection_panels=jload("inspection_panel_json"),
@@ -1790,8 +1796,8 @@ def option_diff(conn: sqlite3.Connection, listing_ids: list,
         rest = set()
         for other, o_codes in picked.items():
             if other != lid:
-                rest |= set(o_codes)
-        mine = sorted(set(codes) - rest)
+                rest |= set(option_codes(o_codes))
+        mine = sorted(set(option_codes(codes)) - rest)
         only[lid] = [{"code": c, "name": names.get(c, c),
                       "won": prices.get(c)} for c in mine]
     return {"same": [{"code": c, "name": names.get(c, c)} for c in same],

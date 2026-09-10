@@ -1428,6 +1428,7 @@ from score.grade import grade_of  # noqa: E402
 from score.scorer import score as score_listing  # noqa: E402
 from dataclasses import replace  # noqa: E402
 from store.core import load_snapshot  # noqa: E402
+from store.options import option_total
 
 
 def _dicts(conn, root: str) -> DictionarySet:
@@ -1506,7 +1507,12 @@ def _option_medians(conn, prices: dict) -> tuple:
             codes = []
         if not isinstance(codes, list):
             codes = []
-        won = sum(prices.get(c, 0) for c in codes)
+        # ★★★★★ 09-10 — ★ 옵션 목록이 ★ **두 꼴**이다 (지시 H).
+        #   ★ 코드 글자(`"1050"`) · ★ 값이 함께 온 dict(`{"name":…,"price":…}`).
+        #   ★ dict 를 ★ 표의 열쇠로 쓰면 ★ 죽는다 (`unhashable type: dict`) —
+        #     ★ ★ 실측 09-10 — ★ K카 옵션을 dict 로 담자마자 ★ S9 가 여기서 멈췄다.
+        #   ★ 같은 고침이 ★ 1772 줄에 이미 있었다 — ★ **이 자리를 안 고쳤다**
+        won = option_total(codes, prices)
         key = (tk, badge or "", detail or "")
         by_trim.setdefault(key, []).append(won)
         where[lid] = (key, tk)
@@ -1624,7 +1630,7 @@ def _option_base(conn, prices: dict, pct: float, need: int) -> dict:
             continue
         if not isinstance(codes, list) or not codes:
             continue
-        got = sum(prices.get(c, 0) for c in codes)
+        got = option_total(codes, prices)
         if got:
             sums.setdefault(tk, []).append(got)
     out = {}

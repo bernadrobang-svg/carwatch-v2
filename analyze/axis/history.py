@@ -15,6 +15,7 @@ import json
 from analyze.axes import AxisContext
 from analyze.curve import ascending, step_down
 from analyze.verdict import PRIO_OBSERVED, Verdict, put
+from store.options import option_codes
 
 USAGE = "history.use"
 NOT_JOIN = "history.not_join"
@@ -45,8 +46,8 @@ def rental_findings(s, commercial_codes) -> list:
         if RENT_TITLE in titles:
             out.append(("usage_change_types", "점검부 용도변경 렌트"))
     if s.record_use_json is not None:
-        codes = json.loads(s.record_use_json)
-        if any(str(c) in commercial_codes for c in codes):
+        if any(c in commercial_codes
+               for c in option_codes(s.record_use_json)):
             out.append(("record_use", "보험이력 영업용 이력"))
     if s.plate_use_char is not None:
         out.append(("plate_use_char", "번호판이 렌터카"))

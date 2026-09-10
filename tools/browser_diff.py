@@ -880,13 +880,28 @@ def raw_file_counts(root: str = ROOT) -> dict:
     """{사이트}.원문 — ★ 그 사이트 매물 중 ★ **원문 파일을 가진 것**의 수.
 
     ★ 파일 수가 아니라 ★ **매물 수**다 — ★ 한 매물이 여러 창구·여러 날 있어서
-      ★ ★ 파일을 그냥 세면 ★ 매물보다 커져 ★ 「1,472%」 같은 수가 나온다
+      ★ ★ 파일을 그냥 세면 ★ 매물보다 커져 ★ 「1,472%」 같은 수가 나온다.
+
+    ★★★★★ 09-10 (r1212 급한것 2) — ★ **이 자는 서버에서만 잴 수 있다.**
+      ★ 원문은 ★ `raw/` **파일**이고 ★ DB 는 `carwatch.db` 인데
+        ★ ★ 둘 다 ★ **git 에 안 올라간다** (`.gitignore:4`).
+      ★★ 그런데 ★ `sqlite3.connect` 는 ★ **없는 파일을 조용히 만든다** —
+        ★ ★ 그래서 가이드 장비에서 ★ 빈 DB 가 생기고
+          ★ ★ ★ `no such table: core_listing` 이 나서 ★ **자 전체가 죽었다.**
+      ★ 고침 ① ★ `mode=ro` 로 연다 — ★ 없으면 ★ **안 만들고 그냥 못 잰다**.
+      ★ 고침 ② ★ 못 재면 ★ 그 칸을 ★ **안 낸다** — ★ 0 으로 두지 않는다.
+        ★ ★ 0 이면 ★ 「구멍」으로 잡혀 ★ 거짓 경보가 된다 (금지 12)
     """
     import glob as _g
     import sqlite3 as _s
 
     got: dict = {}
-    conn = _s.connect(os.path.join(root, "carwatch.db"))
+    where = os.path.join(root, "carwatch.db")
+    if not os.path.exists(where) or not os.path.isdir(os.path.join(root, "raw")):
+        print("  원문 — 이 자리에서는 못 잰다 "
+              "(carwatch.db · raw/ 는 서버에만 있다).  그 칸을 비운다")
+        return got
+    conn = _s.connect(f"file:{where}?mode=ro", uri=True)
     for site in ALL_SITES:
         mine = {r[0] for r in conn.execute(
             "SELECT source_id FROM core_listing WHERE site = ?", (site,))}

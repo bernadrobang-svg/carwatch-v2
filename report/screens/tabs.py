@@ -1291,6 +1291,14 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         # ★ 09-10 M-1 — ★ 분모는 ★ **출고가**(옵션 포함)다.
         #   ★ 없으면 ★ 등급기준가로 **대신하지 않는다** — ★ 「미조회」로 비운다
         "       l.price_origin_total_won, l.year_month, l.mileage_km,"
+        # ★★★★★ 09-10 (r1212 급한것 1) — ★ 「상세를 받았나」는 ★ **따로** 읽는다.
+        #   ★★ 내가 낸 잘못 — ★ 위 칸을 `price_origin_won` → `price_origin_total_won`
+        #     ★ ★ 으로 바꾸면서 ★ **그 칸으로 「상세」를 세던 줄을 안 고쳤다**.
+        #   ★ ★ 그래서 ★ 「상세 62대」가 ★ 하루 만에 ★ 「5대」로 보였다 —
+        #     ★ ★ ★ **상태가 되돌아간 것이 아니라** ★ 자가 딴것을 세고 있었다.
+        #   ★ 실측 09-10 — ★ GV70_25T 1,554대 중
+        #     ★ 등급기준가 79 · 신차출고가 5 · ★ **`detail_status='ok'` 219**.
+        #   ★ 화면이 「상세를 받은 것」이라 적으므로 ★ **그것을 센다**
         "       l.trim_grade_name, l.trim_badge, l.site_inspection,"
         "       l.options_choice_json, l.warranty_body_month,"
         "       l.warranty_body_km, l.paired_source_id, s.grade,"
@@ -1300,7 +1308,9 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "       l.accident_swap_cnt, l.accident_weld_cnt,"
         "       l.accident_frame_cnt, l.accident_parts_json,"
         "       s.group_value, s.group_car, s.group_warranty, s.group_taste,"
-        "       s.grade_earned, s.grade_base"
+        "       s.grade_earned, s.grade_base,"
+        # ★ 맨 뒤다 — ★ `r[-1]` 로 읽는다 (자리를 세지 않게)
+        "       l.detail_status"
         "  FROM core_listing l"
         "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
@@ -1310,12 +1320,20 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         (cfg["target"], *la, cfg["year_from"],
          cfg["mileage_max_km"])).fetchall()
     passed = len(got)
-    detailed = sum(1 for r in got if r[4])
-    rows = [_gv70_card(r, cfg, sites, root, conn) for r in got if r[4]]
-    # ★ 감가율이 잣대를 넘으면 ★ 후보가 아니다 — ★ 진단이 없으면 더 낮아야 한다
+    # ★ 「상세를 받았다」 = ★ `detail_status` 가 ok 인 것 (화면 글자 그대로)
+    detailed = sum(1 for r in got if str(r[-1] or "") == "ok")
+    rows = [_gv70_card(r, cfg, sites, root, conn)
+            for r in got if str(r[-1] or "") == "ok"]
+    # ★★★★★ 09-10 (r1212) — ★ 감가율을 못 재는 차를 ★ **지우지 않는다**.
+    #   ★ 지시 r1213 — 「분모가 없으면 ★ 「신차가 미조회 — 감가율을 계산하지 않음」
+    #     ★ ★ 으로 **비운다**」.  ★ 「비운다」는 ★ **차를 지운다**가 아니다.
+    #   ★ 잣대를 넘은 것 · 못 잰 것도 ★ 뒤에 세운다 — ★ 마스터가 보고 고르신다
     keep = [c for c in rows if c["_ok"]]
+    rest = [c for c in rows if not c["_ok"]]
     keep.sort(key=lambda c: c["_total"] or 10 ** 12)
-    keep = keep[:int(cfg.get("shown") or 20)]
+    rest.sort(key=lambda c: c["_total"] or 10 ** 12)
+    picked = len(keep)
+    keep = (keep + rest)[:int(cfg.get("shown") or 20)]
     _mark_best(keep)
     return {
         "head": label,
@@ -1339,7 +1357,9 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "note": "렌터카 이력은 결격이 아닙니다. "
                 "리본카·K카는 렌터카를 정리해 팔아 값이 쌉니다.",
         "count": {"all": allc, "passed": passed, "detailed": detailed,
-                  "missing": passed - detailed, "shown": len(keep)},
+                  "missing": passed - detailed, "shown": len(keep),
+                  # ★ 「다 맞는 차」가 몇인지 ★ 따로 센다 — ★ shown 과 다르다
+                  "picked": picked},
         "rows": keep,
     }
 
@@ -1348,7 +1368,7 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
     (lid, site, sid, won, origin, ym, km, tgrade, tbadge, dx, optj,
      wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
      swap, weld, frame, parts_json,
-     g_value, g_car, g_warranty, g_taste, earned, base) = r
+     g_value, g_car, g_warranty, g_taste, earned, base, _detail) = r
     pct = _dep_pct(won, origin)
     cap = float(cfg["depreciation_max_pct"])
     nodx = float(cfg["depreciation_no_dx_pct"])

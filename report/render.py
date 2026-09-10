@@ -14,6 +14,7 @@ import re as _re
 import sqlite3
 
 from report.finance import build_finance
+from store.options import option_codes
 from report.views import (
     RunStep,
     CostRow,
@@ -749,7 +750,7 @@ def _option_rows(conn: sqlite3.Connection, listing_id: int) -> tuple:
         # ★ 이름을 아는 것만 낸다.  ★ 모르는 것은 ★ 세기만 한다 —
         #   ★ 「코드 46개 나열은 아무에게도 도움이 안 된다」 (규격 2장)
         known = [{"code": c, "name": names[c], "known": True}
-                 for c in codes if c in names]
+                 for c in option_codes(codes) if c in names]
         out.append({
             "group": label, "count": len(codes),
             "items": known,

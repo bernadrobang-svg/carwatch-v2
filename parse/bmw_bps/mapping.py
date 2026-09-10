@@ -116,7 +116,38 @@ def parse_detail(html: str, source_id: str) -> dict:
     n, _r = inspect_of(html)
     if n:
         out["site_home_verify"] = 1
+    # ★ 09-10 (N-2 · G) — ★ 트림 · 옵션.  ★ 주는 매물이 적다 — ★ 아래 주석 참고
+    out.update(_trim_and_options(html, t))
     return out
+
+
+# ★★★ 09-10 (N-2 · G) — ★ BMW BPS 는 ★ 트림·옵션을 ★ **거의 안 준다**.
+#   ★ 실측 09-10 (상세 217장) — ★ 「차량등급 :」이 채워진 것 ★ **3장** ·
+#     ★ 옵션 이름(`op_name_kr…`)이 있는 것 ★ **16장**.  ★ 나머지는 ★ 칸이 비어 있다.
+#   ★★ 그러니 ★ 이 칸이 0 에 가까운 것은 ★ **파서 잘못이 아니다** —
+#     ★ ★ 사이트가 안 적은 것이다.  ★ 있는 것만 담는다 (금지 6 · 금지 12)
+RE_BM_GRADE = re.compile(r"차량등급\s*[:：]\s*([^<\r\n]{1,40})")
+RE_BM_OPT = re.compile(r'id=\\?"op_name_kr\d+\\?"\s+value=\\?"([^"\\]{1,40})')
+
+
+def _trim_and_options(html: str, text: str) -> dict:
+    """트림 · 옵션 — ★ 사이트가 적은 것만.  ★ 없으면 안 담는다."""
+    got: dict = {}
+    m = RE_BM_GRADE.search(text or "")
+    said = re.sub(r"</?div>", "", (m.group(1) if m else "")).strip()
+    if said:
+        got["trim_grade_name"] = said
+    names, seen = [], set()
+    for one in RE_BM_OPT.findall(html or ""):
+        one = one.strip()
+        if one and one not in seen:
+            seen.add(one)
+            names.append(one)
+    if names:
+        got["options_name_json"] = json.dumps(names, ensure_ascii=False)
+        # ★ 판정 축은 `standard ∪ choice` 를 읽는다 — ★ 이름만 담으면 못 본다
+        got["options_standard_json"] = json.dumps(names, ensure_ascii=False)
+    return got
 
 
 # ★ 「차량번호 324수6142」 (실측 08-31)

@@ -196,7 +196,43 @@ def parse_detail(html: str, site: str, source_id: str,
         out.pop("price_current_won", None)
     # ★ 09-09 (N-2 · G) — ★ 옵션 이름을 담는다
     out.update(options_of(html))
+    # ★ 09-10 (N-2 · G) — ★ 사진
+    out.update(photos_of(html))
     return out
+
+
+# ★★★ 09-10 (N-2 · G) — ★ 사진.
+#   ★ 한 쪽에 ★ **여러 차의 사진**이 섞여 있다 (딜러의 다른 매물 · 광고 띠).
+#   ★ 그 차의 것을 가리는 열쇠는 ★ `og:image` 다 — ★ 쪽이 ★ **대표 사진**으로 지목한다:
+#     `…/pds/CyberCar/2/784592/img_784592_1.jpg`
+#   ★ 그 폴더 번호(`784592`)로 ★ 같은 폴더의 `img_{번호}_*` 만 모은다.
+#   ★★ 실측 09-10 — ★ 한 쪽에 CyberCar 폴더가 셋 있었는데
+#     ★ ★ 그 차 폴더 23장 · 남의 것 1장씩이었다.  ★ 폴더로 가르면 안 섞인다
+RE_BD_OG = re.compile(
+    r"og:image['\"]?\s*content=['\"]?"
+    r"(https?://[^\s'\"<>]+?/pds/CyberCar/\d+/(\d+)/[^\s'\"<>]+)")
+
+
+def photos_of(html: str) -> dict:
+    """그 차의 사진.  ★ 대표 사진을 못 찾으면 ★ 아무것도 안 담는다 (금지 6)."""
+    head = RE_BD_OG.search(html or "")
+    if not head:
+        return {}
+    folder = head.group(2)
+    want = re.compile(
+        r"https?://[^\s'\"<>\\]+?/pds/CyberCar/\d+/" + re.escape(folder)
+        + r"/img_" + re.escape(folder) + r"_[^\s'\"<>\\]+?"
+        r"\.(?:jpg|jpeg|png|webp)", re.I)
+    seen, got = set(), []
+    for url in [head.group(1), *want.findall(html or "")]:
+        if url in seen:
+            continue
+        seen.add(url)
+        got.append(url)
+    if not got:
+        return {}
+    return {"photo_main": got[0],
+            "photo_list_json": json.dumps(got, ensure_ascii=False)}
 
 # ★★★★★★ 09-09 (r1208 N-2 · G) — ★ **옵션을 읽는다.**
 #   ★ 실측 09-09 — ★ `class="icon-option01-sunroof"` 처럼 ★ **아이콘 이름**으로 온다

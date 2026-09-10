@@ -260,6 +260,9 @@ def parse_detail_all(html: str, site: str, source_id: str) -> tuple | None:
     #     ★ ★ 셈이지 짐작이 아니다.  ★ 등록일을 못 읽으면 ★ 넣지 않는다 (None)
     out.update(_warranty(text, out.get("reg_at")))
     out["options_standard_json"] = _json(_options(text))
+    # ★★★ 09-10 (N-2 · G) — ★ 트림 · 사진 · 신차가.
+    #   ★ 셋 다 ★ **쪽에 이미 있었다** — ★ 파서가 안 읽고 있었을 뿐이다
+    out.update(_hidden_bits(html, source_id))
     # ★★ 사고 건수는 ★ core_listing 이 아니라 ★ core_record 의 칸이다.
     #   ★ 남의 표 칸을 core 에 넣으면 upsert 가 조용히 버린다 (A-2)
     record = {
@@ -372,3 +375,65 @@ def _options(text: str) -> list:
         return []
     near = text[head:head + 1200]
     return [w for w in OPTION_WORDS if w in near]
+
+
+# ★★ 쪽 안의 숨은 칸 — `<input type="hidden" id="…" value="…">`.
+#   ★ 원문이 `\"` 로 감싸여 오기도 한다 (저장 봉투가 글자로 담는다)
+RE_HC_HIDDEN = re.compile(
+    r'<input[^>]*type=\\?"hidden\\?"[^>]*id=\\?"([A-Za-z_]+)\\?"'
+    r'[^>]*value=\\?"([^"\\]{0,120})')
+# ★ 사진 — ★ 그 매물 폴더 아래 것만 (`…/{source_id}/…`).
+#   ★ 같은 쪽의 광고·아이콘은 ★ 그 폴더에 없다
+RE_HC_IMG = re.compile(
+    r'https?://[^\s"\'<>\\]+?/{sid}/[^\s"\'<>\\]+?\.(?:jpg|jpeg|png|webp)',
+    re.I)
+
+
+def hidden_of(html: str) -> dict:
+    """숨은 칸 → dict.  ★ 빈 값은 ★ 안 담는다 (금지 12)."""
+    got = {}
+    for key, val in RE_HC_HIDDEN.findall(html or ""):
+        val = (val or "").strip()
+        if val and key not in got:
+            got[key] = val
+    return got
+
+
+def photos_of(html: str, source_id: str) -> list:
+    """그 매물의 사진.  ★ 없으면 빈 목록 — ★ 지어내지 않는다."""
+    want = re.compile(RE_HC_IMG.pattern.replace("{sid}",
+                                                re.escape(str(source_id))),
+                      re.I)
+    seen, out = set(), []
+    for url in want.findall(html or ""):
+        if url in seen:
+            continue
+        seen.add(url)
+        out.append(url)
+    return out
+
+
+def _hidden_bits(html: str, source_id: str) -> dict:
+    """트림 · 사진 · 신차가.
+
+    ★ 트림 — `vehicle_trim` (실측 「캘리그래피」).  ★ `trimCd`·`gradeCd` 는
+      ★ ★ **코드**(`LXMC`·`LXM`)라 ★ 사람이 못 읽는다 — ★ 그것을 안 쓴다.
+    ★★ 신차가 — `normPrc`.  ★ 쪽이 스스로 「신차가」라 적고
+      ★ ★ 「신차 가격 대비 21,230,000원 절약」이 ★ 판매가와의 차와 맞는다.
+      ★ ★★ 다만 ★ 쪽에 ★ 「신차가는 실제출고가격과 다르게 표현될 수 있습니다」라는
+        ★ ★ **사이트 자신의 단서**가 붙어 있다 — ★ 그대로 적어 둔다 (규칙 2).
+    """
+    said = hidden_of(html)
+    got: dict = {}
+    trim = said.get("vehicle_trim")
+    if trim:
+        got["trim_grade_name"] = trim
+    shots = photos_of(html, source_id)
+    if shots:
+        got["photo_main"] = shots[0]
+        got["photo_list_json"] = _json(shots)
+    norm = _num(said.get("normPrc"))
+    if norm:
+        got["price_origin_total_won"] = norm
+        got["price_origin_total_src"] = "hyundai_신차가"
+    return got
