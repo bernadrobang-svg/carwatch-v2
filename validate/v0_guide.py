@@ -8220,7 +8220,28 @@ def s46_299_root_vars_have_values():
     return True, "`:root` 변수가 다 값을 가진다"
 
 
+def s46_300_root_is_listings():
+    """S46-300 — 첫 화면이 목록인가 (마스터 확정 09-10).
+
+    마스터 — 「기본 화면을 목록을 보이게 해줘」
+    앞서는 `/` 가 현황(view_dashboard)이었다. 로그인하면 현황이 먼저 떴다.
+    현황은 판이 도는지 보는 자리이지 차를 고르는 자리가 아니다.
+    현황은 `/status` 로 간다.
+    """
+    web = _read(ROOT / "docs" / "chapters" / "61-web.md")
+    if not web:
+        return False, "61-web.md 를 못 읽었다"
+    import re as _re
+    m = _re.search(r"^\|[^|]*`/`\s*\|\s*GET\s*\|\s*`?(\w+)`?", web, _re.M)
+    if not m:
+        return False, "라우팅 표에서 `/` 를 못 찾았다"
+    if m.group(1) != "view_listings":
+        return False, f"`/` 가 `{m.group(1)}` 이다 — 첫 화면은 목록이어야 한다"
+    return True, "첫 화면이 목록이다 (`/` → `view_listings`)"
+
+
 CHECKS = (
+    ("S46-300", "첫 화면이 목록인가", s46_300_root_is_listings),
     ("S46-299", ":root 변수가 값을 가지는가", s46_299_root_vars_have_values),
     ("S46-298", "이번 주 과제가 지시에 있는가", s46_298_week_task),
     ("S46-297", "한 판이 스스로 도는가", s46_297_round_runs_itself),

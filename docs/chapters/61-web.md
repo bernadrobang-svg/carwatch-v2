@@ -184,7 +184,7 @@ python3 run.py web --port N
 
 | path | method | view | role | menu | 상태 |
 |---|---|---|---|---|---|
-| `/` | GET | `view_dashboard` | anonymous | — | 구현 |
+| ★★ `/` | GET | `view_listings` | anonymous | — | ★ **첫 화면은 목록이다** (마스터 확정 09-10). ★ 앞서는 현황(`view_dashboard`)이었다 — ★ 마스터께서 「기본 화면을 목록을 보이게 해줘」 하셨다. ★ 현황은 `/status` 로 간다 |
 | `/listings` | GET | `view_listings` | anonymous | — | 구현 |
 | ★ `/detail/{listing_id}` | GET | `view_detail` | anonymous | — | 구현 (★ 08-29 — 표에 빠져 있었다) |
 | `/why/{listing_id}` | GET | `view_why` | anonymous | — | 구현 |
