@@ -145,9 +145,15 @@ class KbChaChaChaAdapter:
 
     def detail_urls(self, source_id: str) -> list[Request]:
         """매물당 1종.  ★ 한 쪽이 245~275KB 로 전부를 준다."""
+        # ★★★★★ 09-10 — ★ 자리표 이름이 ★ **두 가지**로 쓰인다.
+        #   ★ 규격은 `…?carSeq={id}` 로 적고 (지시 P-1) ★ 코드는 `{source_id}` 로 채웠다.
+        #   ★ ★ 그래서 ★ `KeyError: 'id'` 로 죽었다 (실측 09-10).
+        #   ★ 규격이 정본이다 (규칙 1) — ★ **코드가 둘 다 받게** 한다.
+        #     ★ ★ 이름을 하나로 못 박으면 ★ 규격이 바뀔 때마다 또 죽는다
         return [Request("GET",
                         self._base + self._paths["detail"].format(
-                            source_id=source_id),
+                            id=source_id, source_id=source_id,
+                            carSeq=source_id),
                         self.headers(), self._timeout)]
 
     def facet_urls(self, target: TargetSpec) -> list[Request]:
