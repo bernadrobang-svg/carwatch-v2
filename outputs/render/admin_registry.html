@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>등록부 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-admin-registry">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -89,7 +92,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>False</code> 4건 · 
+    <code>False</code> 198건 · <code>True</code> 2건 · 
     <span class="dim">관측 21,667/21,667</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>encarDiagnosis</code> <code>encarMeetGo</code> <code>hasEvBatteryInfo</code> 
@@ -128,7 +131,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>42516741</code> 1건 · 
+    <code>41290792</code> 1건 · <code>41108416</code> 1건 · <code>41161332</code> 1건 · <code>41626724</code> 1건 · <code>41344435</code> 1건 · 
     <span class="dim">관측 21,430/21,430</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>sellingPoint</code> <code>uniqueOptionPhotos</code> <code>choiceOptionPhotos</code> 
@@ -167,7 +170,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>1</code> 2건 · 
+    <code>1</code> 200건 · 
     <span class="dim">관측 13,916/13,916</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
@@ -206,7 +209,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>3470</code> 2건 · 
+    <code>1598</code> 59건 · <code>2497</code> 59건 · <code>3470</code> 44건 · <code>1998</code> 27건 · <code>2151</code> 6건 · 
     <span class="dim">관측 13,916/13,916</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
@@ -245,7 +248,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>2022</code> 1건 · <code>2023</code> 1건 · 
+    <code>2023</code> 69건 · <code>2022</code> 58건 · <code>2024</code> 32건 · <code>2025</code> 20건 · <code>2021</code> 15건 · 
     <span class="dim">관측 13,916/13,916</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>maker</code> 
@@ -284,7 +287,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>세단 4도어</code> 2건 · 
+    <code>세단 4도어</code> 78건 · <code>왜건 5도어</code> 70건 · <code>SUV</code> 51건 · <code>없음</code> 1건 · 
     <span class="dim">관측 12,527/13,916</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
@@ -323,7 +326,7 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    <code>없음</code> 2건 · 
+    <code>스포티지 5세대</code> 58건 · <code>GV70</code> 50건 · <code>G80 (RG3)</code> 34건 · <code>없음</code> 33건 · <code>그랜저 (GN7)</code> 19건 · 
     <span class="dim">관측 12,513/13,916</span></p>
   <p class="muted">③ 옆에 있던 것
     <code>regDate</code> <code>carNo</code> <code>year</code> 
@@ -362,10 +365,10 @@
     <span class="tag">지금 안 쓰입니다</span>
   </div>
   <p class="muted">① 실제 값 — 원문 그대로
-    
+    <code>41344431</code> 2건 · <code>41687266</code> 1건 · <code>41859760</code> 1건 · <code>41435220</code> 1건 · <code>40249904</code> 1건 · 
     <span class="dim">관측 11,642/11,642</span></p>
   <p class="muted">③ 옆에 있던 것
-    
+    <code>outers</code> <code>outerSummarys</code> <code>inspName</code> 
     <span class="dim">— in_use — 「detail:vehicleId」과 같은 것으로 보입니다</span></p>
   <p class="muted">⑤ 안 정하면 — <strong>막지 않습니다 — 그냥 안 씁니다</strong></p>
   <form method="post" action="/admin/registry" class="inline">
@@ -681,8 +684,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:03</span>
 </footer>
 
 </body>

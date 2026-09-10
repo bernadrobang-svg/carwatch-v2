@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>로그인 · CarWatch</title>
+<title>분석 · CarWatch</title>
 <link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
-<body class="s-login">
+<body class="s-analyze-list">
 
 <header class="top">
   <a class="brand" href="/" title="현황으로 갑니다">CarWatch</a>
@@ -61,26 +61,33 @@
 
 <main>
 
-<h1>로그인</h1>
-<p class="muted">이 도구는 로컬에서만 열립니다.</p>
+
+<h1>분석</h1>
+<p class="sub">내가 <strong>분석을 맡긴 차</strong>만 여기 있습니다 — 관심과 다릅니다</p>
+
+
+<p class="sitebar picktabs">
+  <a class="btn"
+    href="/recommend?tab=1">내 기준에 가까운 차</a><a class="btn"
+    href="/recommend?tab=2">값 → 등급 → 취향</a><a class="btn on"
+    href="/recommend?tab=3">분석</a><a class="btn"
+    href="/recommend?tab=4">GV70</a>
+</p>
+
+
+<div class="totalbar">
+  <b>토털 분석</b>
+  <span class="dim">고른 0대를 ★ 한꺼번에 견줍니다</span>
+  <a class="btn go" href="/recommend?tab=3&amp;total=1">전체 종합 분석 ▸</a>
+</div>
+
+
+<p class="cond what">아직 <strong>분석을 맡긴 차가 없습니다</strong>.
+  매물·추천 화면에서 <strong>「분석」</strong>을 눌러 담으십시오.
+  <span class="dim">관심은 비교용이고, 분석은 진짜 살 차를 살피는 자리입니다.</span></p>
 
 
 
-
-
-
-<form method="post" action="/login">
-  <input type="hidden" name="csrf" value="render">
-  
-  
-  <label>이름 <input name="name" required></label>
-  <label>비밀번호 <input type="password" name="secret" required></label>
-  <button type="submit">로그인</button>
-</form>
-<p class="muted">비밀번호를 잊었으면 CLI 에서 재설정합니다 —
-  <code>python run.py admin reset --name 마스터</code></p>
-
-<p class="muted">계정이 없으면 <a href="/join">계정 만들기</a></p>
 
 </main>
 

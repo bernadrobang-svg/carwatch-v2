@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>딜러 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-dealers">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -267,8 +270,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:02</span>
 </footer>
 
 </body>

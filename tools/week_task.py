@@ -51,6 +51,9 @@ def rows(conn: sqlite3.Connection, cfg: dict) -> list:
         "       l.accident_frame_cnt, l.accident_parts_json,"
         "       l.price_origin_total_won, l.options_choice_json,"
         "       l.options_standard_json, l.options_name_json,"
+        # ★ 09-10 — ★ 사이트가 ★ 「이 차엔 **없다**」고 밝힌 옵션.
+        #   ★ 그것을 안 보면 ★ 「모른다」와 「없다」를 못 가른다 (`S46-227`)
+        "       l.options_absent_json,"
         "       l.undercarriage_json, l.dealer_region, l.paired_source_id,"
         "       r.accident_my_cost, r.accident_other_cost, r.accident_total_cnt,"
         "       s.grade, s.score_total, r.record_plate_hash, l.plate_hash"
@@ -145,7 +148,7 @@ def judge(one, cfg: dict) -> tuple:
     base = cfg["기준차"]
     c = cfg["조건"]
     (site, sid, won, ym, km, color, dx, trim, swap, weld, frame, parts,
-     origin, opt_c, opt_s, opt_n, under, region, paired,
+     origin, opt_c, opt_s, opt_n, opt_absent, under, region, paired,
      my_cost, ot_cost, acc_cnt, grade, score, rec_hash, plate_hash) = one
 
     why = []
@@ -191,6 +194,9 @@ def judge(one, cfg: dict) -> tuple:
         return None, why
 
     hud = _has_hud(opt_c, opt_s, opt_n)
+    # ★★ 사이트가 ★ 「HUD 없다」고 밝혔으면 ★ **없는 것**이다 — ★ 미조회가 아니다
+    if opt_absent and ("헤드업" in str(opt_absent) or "HUD" in str(opt_absent)):
+        hud = False
     clean = (acc_cnt == 0) or (my_cost == 0 and ot_cost == 0)
     band = None
     for one_band in cfg["이기는_칸"]:
@@ -256,11 +262,16 @@ def main() -> int:
         (site, sid, won, ym, km, color, dx, trim, swap, weld, frame, parts,
          origin, *_rest) = one
         wear = wear_won(km, cfg)
+        absent = one[16]
+        hud = ("없다 (사이트가 밝혔다)"
+               if absent and ("헤드업" in str(absent) or "HUD" in str(absent))
+               else ("있다" if _has_hud(one[13], one[14], one[15]) else UNKNOWN))
         print(f"[{band}] {_won(won)}"
               f"{f' (＋소모품 {_won(wear)})' if wear else ''}"
               f" · {ym} · {km:,}km · {color or UNKNOWN}"
               f" · {dx or '진단 없음'}"
-              f" · 골격 {frame if frame is not None else UNKNOWN}")
+              f" · 골격 {frame if frame is not None else UNKNOWN}"
+              f" · ★ HUD {hud}")
         print(f"      {_url(site, sid, one[18])}")
     if "--all" in sys.argv:
         print("\n★ 떨어진 까닭")

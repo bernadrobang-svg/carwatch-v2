@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>브라우저 수집 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-admin-collect">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -72,7 +75,7 @@
   한 번에 <strong>20건</strong>씩 부르고, 한 번에
   <strong>65,536바이트</strong>를 넘지 않게
   <strong>나눠서 보냅니다</strong> — 사람이 나눌 일이 아닙니다.
-  호출 간격은 <strong>0.0초</strong>입니다.
+  호출 간격은 <strong>0.1초</strong>입니다.
   응답이 <code>407</code>·<code>403</code>·<code>429</code> 면 그대로 냅니다.
 </p>
 
@@ -131,16 +134,16 @@
 <h2>받았다 ↔ 쓰였다</h2>
 <p class="notice">
   <strong>「받았다」와 「쓰였다」는 다릅니다.</strong>
-  목록 원문 <strong>586쪽</strong>을 받았고,
+  목록 원문 <strong>789쪽</strong>을 받았고,
   그중에서 펼쳐 <code>core_listing</code> 에 앉은 매물이
-  <strong>28,811건</strong>입니다.
-  상세 원문 <strong>4건</strong> · 파싱된 매물
+  <strong>29,129건</strong>입니다.
+  상세 원문 <strong>753건</strong> · 파싱된 매물
   <strong>16,665건</strong>.
   <span class="muted">받았는데 안 펼쳐진 것이 있으면 V1-21 이 잡습니다</span>
 </p>
 
 <h2>지금까지 브라우저로 받은 것 5건</h2>
-<p class="muted">목록 586쪽 · facet 26건 저장돼 있습니다.
+<p class="muted">목록 789쪽 · facet 30건 저장돼 있습니다.
   중간에 실패해도 <strong>여기까지는 남습니다</strong> — 처음부터 다시 하지 않습니다.</p>
 
 <table class="rows">
@@ -148,25 +151,25 @@
   <th class="num" title="검사·오류 코드입니다">코드</th><th class="num" title="저장된 바이트 수입니다">크기</th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-09-04T15:57:17.697108+00:00</td><td class="num" data-label="raw_id">373307</td>
-  <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">23,627</td></tr>
-
-<tr><td data-label="시각">2026-09-04T15:57:17.198645+00:00</td><td class="num" data-label="raw_id">373306</td>
+<tr><td data-label="시각">2026-09-06T10:45:13.698694+00:00</td><td class="num" data-label="raw_id">410954</td>
   <td data-label="엔드포인트">facet</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">166,925</td></tr>
+  <td class="num" data-label="크기">167,133</td></tr>
 
-<tr><td data-label="시각">2026-09-04T15:56:59.782967+00:00</td><td class="num" data-label="raw_id">373305</td>
+<tr><td data-label="시각">2026-09-06T10:40:53.153705+00:00</td><td class="num" data-label="raw_id">410935</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">7,550</td></tr>
+  <td class="num" data-label="크기">22,880</td></tr>
 
-<tr><td data-label="시각">2026-09-04T15:56:59.548312+00:00</td><td class="num" data-label="raw_id">373304</td>
+<tr><td data-label="시각">2026-09-06T10:40:52.814615+00:00</td><td class="num" data-label="raw_id">410934</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">22,268</td></tr>
+  <td class="num" data-label="크기">22,522</td></tr>
 
-<tr><td data-label="시각">2026-09-04T15:56:58.249313+00:00</td><td class="num" data-label="raw_id">373303</td>
+<tr><td data-label="시각">2026-09-06T10:40:52.371708+00:00</td><td class="num" data-label="raw_id">410933</td>
   <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
-  <td class="num" data-label="크기">22,749</td></tr>
+  <td class="num" data-label="크기">22,632</td></tr>
+
+<tr><td data-label="시각">2026-09-06T10:40:52.041636+00:00</td><td class="num" data-label="raw_id">410932</td>
+  <td data-label="엔드포인트">list</td><td class="num" data-label="코드">200</td>
+  <td class="num" data-label="크기">22,493</td></tr>
 
 </tbody>
 </table>
@@ -179,9 +182,9 @@
 <thead><tr><th title="수집 단계입니다 (S0~S11)">단계</th><th>어떻게 확보했나</th><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th></tr></thead>
 <tbody>
 
-<tr><td data-label="단계">STEP53-S1</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-09-04T15:57:17.697108+00:00</td></tr>
+<tr><td data-label="단계">STEP53-S2</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-09-06T10:45:13.698694+00:00</td></tr>
 
-<tr><td data-label="단계">STEP53-S2</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-09-04T15:57:17.198645+00:00</td></tr>
+<tr><td data-label="단계">STEP53-S1</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-09-06T10:40:53.153705+00:00</td></tr>
 
 <tr><td data-label="단계">STEP53-S1</td><td data-label="어떻게 확보했나"><strong>browser</strong></td><td data-label="시각">2026-08-16T06:55:02.437095+00:00</td></tr>
 
@@ -410,7 +413,7 @@
 (function () {
   var PLAN = [];
   var ROWS = 20;
-  var GAP_MS = Math.round((0.0) * 1000);
+  var GAP_MS = Math.round((0.1) * 1000);
   var CAP = 65536;
   // ★ 폼에는 원문 말고도 사유·URL·경계가 함께 간다.  그만큼 뺀 자리에서 잰다
   var ROOM = Math.floor(CAP * 0.8);
@@ -861,8 +864,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:03</span>
 </footer>
 
 </body>

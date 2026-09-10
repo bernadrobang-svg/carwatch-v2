@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>관리 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-admin">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -83,12 +86,12 @@
 <tbody>
 <tr><td data-label="주기">가벼운 점검</td>
   <td data-label="언제" class="muted">4시간마다 · 02·06·10·14·18·22</td>
-  <td data-label="마지막">2026-09-05_1800</td>
-  <td data-label="기록" class="muted">outputs/light/ · 95건 ·
+  <td data-label="마지막">2026-09-05_2200</td>
+  <td data-label="기록" class="muted">outputs/light/ · 96건 ·
     <a href="/admin/status">지금 숫자</a></td></tr>
 <tr><td data-label="주기">일일</td><td data-label="언제" class="muted">매일 23:00</td>
-  <td data-label="마지막">2026-09-04</td>
-  <td data-label="기록" class="muted">outputs/daily/ · 19건</td></tr>
+  <td data-label="마지막">2026-09-09</td>
+  <td data-label="기록" class="muted">outputs/daily/ · 24건</td></tr>
 <tr><td data-label="주기">주간 <span class="muted">서로 점검</span></td>
   <td data-label="언제" class="muted">금 02:00</td>
   <td data-label="마지막">2026-09-04_주간점검</td>
@@ -122,11 +125,11 @@
 
 
 
-
+<p class="warn-warn">재계산 14f1814c5715d2b5 실행 중 — 조정 메뉴가 잠깁니다</p>
 <ul class="stat">
   <li>등록부 미분류 <strong>330</strong></li>
   <li>개발 요청 <strong>2</strong></li>
-  <li>대기 작업 <strong>0</strong></li>
+  <li>대기 작업 <strong>1</strong></li>
 </ul>
 
 <h3>★ 운영</h3>
@@ -205,31 +208,31 @@
 <a class="vline" href="/admin/scoring"
   title="STEP 128 · 129 — 그렇게 판단한 까닭입니다"><span>배점 조정
   <span class="dim">STEP 128 · 129</span>
-  </span>
+  <span class="warn-warn">재계산 14f1814c5715d2b5 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/targets"
   title="STEP 130 — 그렇게 판단한 까닭입니다"><span>차종 추가 · 수정
   <span class="dim">STEP 130</span>
-  </span>
+  <span class="warn-warn">재계산 14f1814c5715d2b5 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/registry"
   title="STEP 131 — 그렇게 판단한 까닭입니다"><span>등록부 분류
   <span class="dim">STEP 131</span>
-  </span>
+  <span class="warn-warn">재계산 14f1814c5715d2b5 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/dict"
   title="STEP 136e — 그렇게 판단한 까닭입니다"><span>사전 확정
   <span class="dim">STEP 136e</span>
-  </span>
+  <span class="warn-warn">재계산 14f1814c5715d2b5 실행 중</span></span>
   <b>▸</b></a>
 
 <a class="vline" href="/admin/config"
   title="STEP 127 — 그렇게 판단한 까닭입니다"><span>config 편집 · 이력
   <span class="dim">STEP 127</span>
-  </span>
+  <span class="warn-warn">재계산 14f1814c5715d2b5 실행 중</span></span>
   <b>▸</b></a>
 
 </div>
@@ -272,25 +275,25 @@
 <thead><tr><th title="그 일이 일어난 때입니다 (UTC 저장 · 화면은 한국 시각)">시각</th><th title="왜 그렇게 됐는지입니다">사유</th><th>실행</th><th class="num">소요</th><th>판정</th></tr></thead>
 <tbody>
 
-<tr><td data-label="시각">2026-09-05T10:40:16.696692+00:00</td><td class="muted" data-label="사유">요청 13,980건</td>
-  <td class="runid" data-label="실행">20260905T104015</td>
-  <td class="num" data-label="소요">425.7초</td><td data-label="판정">fatal 29</td></tr>
+<tr><td data-label="시각">2026-09-10T05:18:07.659343+00:00</td><td class="muted" data-label="사유">요청 99건</td>
+  <td class="runid" data-label="실행">20260910T051759</td>
+  <td class="num" data-label="소요">3.4초</td><td data-label="판정">fatal 37</td></tr>
 
-<tr><td data-label="시각">2026-09-05T03:59:10.963502+00:00</td><td class="muted" data-label="사유">요청 14,204건</td>
-  <td class="runid" data-label="실행">20260905T035910</td>
-  <td class="num" data-label="소요">379.9초</td><td data-label="판정">fatal 27</td></tr>
+<tr><td data-label="시각">2026-09-10T00:58:53.914601+00:00</td><td class="muted" data-label="사유">요청 84건</td>
+  <td class="runid" data-label="실행">20260910T005725</td>
+  <td class="num" data-label="소요">3.4초</td><td data-label="판정">fatal 37</td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:29:25.349540+00:00</td><td class="muted" data-label="사유">요청 1,380건</td>
-  <td class="runid" data-label="실행">20260903T082924</td>
-  <td class="num" data-label="소요">49.5초</td><td data-label="판정">fatal 21</td></tr>
+<tr><td data-label="시각">2026-09-10T00:52:18.453785+00:00</td><td class="muted" data-label="사유">요청 19건</td>
+  <td class="runid" data-label="실행">20260910T005046</td>
+  <td class="num" data-label="소요">0.6초</td><td data-label="판정">정상</td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:23:57.160338+00:00</td><td class="muted" data-label="사유">요청 6,120건</td>
-  <td class="runid" data-label="실행">20260903T082356</td>
-  <td class="num" data-label="소요">218.3초</td><td data-label="판정">fatal 1</td></tr>
+<tr><td data-label="시각">2026-09-09T23:44:55.947376+00:00</td><td class="muted" data-label="사유">요청 152건</td>
+  <td class="runid" data-label="실행">20260909T234350</td>
+  <td class="num" data-label="소요">5.3초</td><td data-label="판정">fatal 37</td></tr>
 
-<tr><td data-label="시각">2026-09-03T08:18:36.427958+00:00</td><td class="muted" data-label="사유">요청 6,125건</td>
-  <td class="runid" data-label="실행">20260903T081836</td>
-  <td class="num" data-label="소요">196.4초</td><td data-label="판정">fatal 1</td></tr>
+<tr><td data-label="시각">2026-09-09T23:33:12.711638+00:00</td><td class="muted" data-label="사유">요청 34건</td>
+  <td class="runid" data-label="실행">20260909T233229</td>
+  <td class="num" data-label="소요">1.4초</td><td data-label="판정">정상</td></tr>
 
 </tbody>
 </table>
@@ -366,8 +369,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:03</span>
 </footer>
 
 </body>

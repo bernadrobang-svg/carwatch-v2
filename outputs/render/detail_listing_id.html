@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>상세 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-detail">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -63,6 +66,79 @@
   <a class="btn" href="/compare?add=887">비교 담기</a>
   <a class="btn ask" href="/analyze/add/887">분석 맡기기</a>
 </p>
+
+
+
+<p class="v4-backbar" id="fetchone" data-lid="887">
+  <a class="btn ask" href="#" id="fetchgo">⤓ 이 차의 성능·보험 받기</a>
+  <span class="dim" id="fetchsay">서버가 못 받는 것을 이 폰이 받습니다</span>
+</p>
+<script>
+/* ★ 브라우저만 할 수 있는 일 — ★ 이 회선으로만 열린다.
+   ★ JS 가 죽어도 화면은 그대로다 — ★ 이 줄만 안 움직인다 */
+(function () {
+  var box = document.getElementById("fetchone");
+  if (!box) { return; }
+  var go = document.getElementById("fetchgo");
+  var say = document.getElementById("fetchsay");
+  var lid = box.getAttribute("data-lid");
+  function nap(ms) { return new Promise(function (k) { setTimeout(k, ms); }); }
+  go.addEventListener("click", function (e) {
+    e.preventDefault();
+    go.textContent = "받는 중…";
+    fetch("/fetch/queue?listing_id=" + encodeURIComponent(lid),
+          {credentials: "same-origin"})
+      .then(function (r) { return r.json(); })
+      .catch(function () { return {rows: [], said: "큐를 못 받았습니다"}; })
+      .then(function (j) {
+        var rows = j.rows || [];
+        if (!rows.length) { say.textContent = j.said || "받을 것이 없습니다";
+                            go.textContent = "⤓ 이 차의 성능·보험 받기"; return; }
+        var i = 0, ok = 0;
+        function step() {
+          if (i >= rows.length) {
+            say.textContent = rows.length + "곳 중 " + ok + "곳을 받았습니다 — "
+              + "새로고침하시면 반영됩니다";
+            go.textContent = "⤓ 다시 받기";
+            return;
+          }
+          var job = rows[i];
+          say.textContent = job.name + " 받는 중…";
+          return fetch(job.url, {method: "GET", mode: "cors",
+                                 credentials: "omit"})
+            .then(function (r) {
+              return r.text().then(function (b) {
+                return {status: r.status, body: b}; });
+            })
+            .catch(function () { return {status: 0, body: ""}; })
+            .then(function (got) {
+              /* ★ 잠기면 ★ 60초 쉬었다 ★ 같은 것을 다시 부른다 (L-10) */
+              if (got.status === 0 || got.status === 407 || got.status === 429) {
+                say.textContent = job.name + " — 잠겼습니다. 60초 쉽니다";
+                return nap(60000).then(step);
+              }
+              var f = new FormData();
+              f.append("csrf", "render");
+              f.append("site", "encar");
+              f.append("kind", job.kind);
+              f.append("source_id", job.source_id);
+              f.append("url", job.url);
+              f.append("http_code", String(got.status));
+              f.append("body", got.body);
+              return fetch("/fetch/put", {method: "POST", body: f,
+                                          credentials: "same-origin"})
+                .then(function (r) { return r.json(); })
+                .then(function (r) { if (r.status === "ok") { ok += 1; } })
+                .catch(function () {})
+                .then(function () { i += 1; return nap(1000).then(step); });
+            });
+        }
+        return step();
+      });
+  });
+})();
+</script>
+
 
 
 <h1><span class="scr">상세</span> G80_EV <small>e-AWD · 세부등급 없음 · 매물 887</small></h1>
@@ -283,7 +359,7 @@
   <h3>★ 가격 추이</h3>
   
   <p class="note">등록 뒤 가격이 바뀐 적이 없습니다.</p>
-  <p class="note">경과 <b>20일</b> · 변동
+  <p class="note">경과 <b>24일</b> · 변동
     <b>0회</b> · 게시중</p>
 </div>
 
@@ -509,8 +585,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:25</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:02</span>
 </footer>
 
 </body>

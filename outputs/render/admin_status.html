@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>진행 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 <meta http-equiv="refresh" content="5">
 </head>
 <body class="s-admin-status">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -68,7 +71,7 @@
 
 <p class="muted">
   <strong>5초</strong>마다 스스로 갱신합니다 ·
-  마지막 확인 <strong>2026-09-05T13:26:02+00:00</strong>.
+  마지막 확인 <strong>2026-09-10T06:03:09+00:00</strong>.
   갱신이 실패해도 <strong>여기 보이는 것은 그대로 남습니다</strong> —
   서버가 만든 화면이라 JS 가 없어도 새로고침하면 지금 상태가 나옵니다.
 </p>
@@ -80,8 +83,8 @@
 
 
 <p>
-  <strong>2026-09-05T09:00:15Z</strong>
-  <span class="muted">265분 전</span>
+  <strong>2026-09-05T13:00:15Z</strong>
+  <span class="muted">6,782분 전</span>
   
   <span class="chip-bad">어긋난 것이 있습니다</span>
 </p>
@@ -90,13 +93,13 @@
 <thead><tr><th>fatal</th><th>warn</th><th>시험 실패</th><th>「—」</th>
   <th>계산식</th><th>템플릿 문법</th><th>걸린 시간</th></tr></thead>
 <tbody><tr>
-  <td class="num" data-label="fatal">25</td>
+  <td class="num" data-label="fatal">27</td>
   <td class="num" data-label="warn">12</td>
   <td class="num" data-label="시험 실패">2</td>
   <td class="num" data-label="「—」">0</td>
-  <td class="num" data-label="계산식">626</td>
+  <td class="num" data-label="계산식">635</td>
   <td class="num" data-label="템플릿 문법">0</td>
-  <td class="num" data-label="걸린 시간">1,535.1초</td>
+  <td class="num" data-label="걸린 시간">1,549.3초</td>
 </tr></tbody>
 </table>
 
@@ -105,7 +108,7 @@
 
 
 <p><b>지난 번과 달라진 것</b>
-  <span class="chip-bad">통과 540 → 538  ★ 늘었다</span><span class="chip-bad">fatal 21 → 25  ★ 늘었다</span><span class="chip-bad">시험 실패 1 → 2  ★ 늘었다</span><span class="chip-bad">검사 587 → 588</span></p>
+  <span class="chip-bad">통과 538 → 539</span><span class="chip-bad">fatal 25 → 27  ★ 늘었다</span><span class="chip-bad">계산식 626 → 635  ★ 늘었다</span><span class="chip-bad">검사 588 → 591</span><span class="chip-bad">raw_response 219269 → 233249</span><span class="chip-bad">result_score 18797 → 18808</span></p>
 
 
 
@@ -114,11 +117,11 @@
 <h2>⓪-2 카탈로그 <span class="more">조합 단위로 셉니다</span></h2>
 
 <p>
-  <strong>547조합</strong> 중
+  <strong>559조합</strong> 중
   <strong>0조합</strong>을 받았습니다
   <span class="muted">0.0%</span>
-  <span class="chip-bad">카탈로그 없는 매물 3,980건</span>
-  <span class="chip-bad">우리 잘못 609조합</span>
+  <span class="chip-bad">카탈로그 없는 매물 4,061건</span>
+  <span class="chip-bad">우리 잘못 621조합</span>
   
 </p>
 <p class="muted">★ 카탈로그가 없으면 옵션 값을 못 매겨 <strong>옵션 축이 0점</strong>이 됩니다 —
@@ -163,7 +166,7 @@
 
 </tbody>
 </table>
-<p class="muted">그 밖 624조합이 더 있습니다.</p>
+<p class="muted">그 밖 636조합이 더 있습니다.</p>
 
 
 
@@ -171,25 +174,43 @@
 <h2>① 지금 도는 것</h2>
 
 
+<div class="notice">
+  <p class="big"><strong>S5 · 99 / 58,308</strong>
+    <span class="muted">요청</span></p>
+  <p><strong>0.0 요청/초</strong> ·
+    남은 <strong>58,209</strong> →
+    약 <strong>29104분</strong></p>
+  <p class="muted">최근 60초에 2건 ·
+    원문 <strong>262,019</strong>행 ·
+    run 20260910T051759</p>
+  <p class="muted">★ 전체는 상한입니다 — 진단은 <code>encarDiagnosis == 0</code> 인
+    매물만 부르므로 실제 요청은 이보다 적게 끝납니다.</p>
+</div>
 
-<p class="muted">최근 60초 동안 새 요청이 없습니다.</p>
 
 
 
+<table>
+<tbody>
+<tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><td>14f1814c5715d2b5
+  </td></tr>
+<tr><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><td>raw_missing · all</td></tr>
+<tr><th title="수집 단계입니다 (S0~S11)">단계</th><td><strong>-</strong>
+  </td></tr>
+<tr><th>경과</th><td>45분</td></tr>
+
+</tbody>
+</table>
 
 
-
-
-<p class="muted"><strong>도는 것이 없습니다.</strong>
-  대기 중인 작업도 없습니다 — 「멈춘 것」이 아니라 「할 일이 없는 것」입니다.</p>
 
 
 
 <h3>마지막으로 처리한 것</h3>
 
-<p>매물 <strong>42678566</strong> · detail
-  · <strong>157분 전</strong>
-  <span class="muted">(2026-09-05T10:48:51.415677+00:00)</span></p>
+<p>매물 <strong>41368449</strong> · record_summary
+  · <strong>0분 전</strong>
+  <span class="muted">(2026-09-10T06:02:44.182441+00:00)</span></p>
 
 
 
@@ -199,35 +220,35 @@
 <thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="지금 어떤 상태인지입니다">상태</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th title="언제 도는지입니다">언제</th><th title="사람이 적어 둔 말입니다">메모</th></tr></thead>
 <tbody>
 
+<tr><td class="runid" data-label="작업">14f1814c5715d2b5</td>
+  <td data-label="상태"><strong>running</strong></td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td class="muted" data-label="언제">45분 전</td>
+  <td class="muted" data-label="메모"></td></tr>
+
+<tr><td class="runid" data-label="작업">0a1510e4f76de8cc</td>
+  <td data-label="상태"><strong>failed</strong></td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td class="muted" data-label="언제">278분 전</td>
+  <td class="muted" data-label="메모">숨이 끊겼다 — 09-06T04:04 부터 running 인데 그 일을 하는 프로세스가 없다 (09-10 확인).  S46-65 가 잡던 것이다</td></tr>
+
 <tr><td class="runid" data-label="작업">3249601177bfc52e</td>
   <td data-label="상태"><strong>failed</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">157분 전</td>
+  <td class="muted" data-label="언제">6914분 전</td>
   <td class="muted" data-label="메모">S5: ⑥ not_requested 111098건 — 미완성 매물이 남았다</td></tr>
 
 <tr><td class="runid" data-label="작업">cf96644982590c10</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">203분 전</td>
+  <td class="muted" data-label="언제">6961분 전</td>
   <td class="muted" data-label="메모">S5 ok 0 · S6 ok 1 · S9 ok 518476 · S10 ok 18517</td></tr>
 
 <tr><td class="runid" data-label="작업">02945c7c7ff1b31f</td>
   <td data-label="상태"><strong>done</strong></td>
   <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">543분 전</td>
+  <td class="muted" data-label="언제">7301분 전</td>
   <td class="muted" data-label="메모">S5 ok 0 · S6 ok 1 · S9 ok 518168 · S10 ok 18506</td></tr>
-
-<tr><td class="runid" data-label="작업">f158494f73e776bf</td>
-  <td data-label="상태"><strong>done</strong></td>
-  <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">553분 전</td>
-  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 1 · S9 ok 518140 · S10 ok 18505</td></tr>
-
-<tr><td class="runid" data-label="작업">8e3715056a1693e5</td>
-  <td data-label="상태"><strong>done</strong></td>
-  <td data-label="사유 · 범위">raw_missing · all</td>
-  <td class="muted" data-label="언제">558분 전</td>
-  <td class="muted" data-label="메모">S5 ok 0 · S6 ok 1 · S9 ok 502936 · S10 ok 17671</td></tr>
 
 </tbody>
 </table>
@@ -240,32 +261,42 @@
 <thead><tr><th title="엔카의 어느 주소에서 받은 것인지입니다">엔드포인트</th><th class="num">받은 원문</th></tr></thead>
 <tbody>
 
-<tr><td data-label="엔드포인트">detail</td><td class="num" data-label="받은 원문">4</td></tr>
+<tr><td data-label="엔드포인트">detail</td><td class="num" data-label="받은 원문">753</td></tr>
 
-<tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="받은 원문">2</td></tr>
+<tr><td data-label="엔드포인트">diagnosis</td><td class="num" data-label="받은 원문">26</td></tr>
 
-<tr><td data-label="엔드포인트">facet</td><td class="num" data-label="받은 원문">26</td></tr>
+<tr><td data-label="엔드포인트">ev_battery</td><td class="num" data-label="받은 원문">661</td></tr>
 
-<tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="받은 원문">1</td></tr>
+<tr><td data-label="엔드포인트">facet</td><td class="num" data-label="받은 원문">30</td></tr>
 
-<tr><td data-label="엔드포인트">list</td><td class="num" data-label="받은 원문">586</td></tr>
+<tr><td data-label="엔드포인트">inspection</td><td class="num" data-label="받은 원문">312</td></tr>
 
-<tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="받은 원문">2</td></tr>
+<tr><td data-label="엔드포인트">inspection_summary</td><td class="num" data-label="받은 원문">289</td></tr>
 
-<tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="받은 원문">2</td></tr>
+<tr><td data-label="엔드포인트">list</td><td class="num" data-label="받은 원문">789</td></tr>
 
-<tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="받은 원문">1</td></tr>
+<tr><td data-label="엔드포인트">platform_check</td><td class="num" data-label="받은 원문">516</td></tr>
+
+<tr><td data-label="엔드포인트">record</td><td class="num" data-label="받은 원문">342</td></tr>
+
+<tr><td data-label="엔드포인트">record_summary</td><td class="num" data-label="받은 원문">335</td></tr>
+
+<tr><td data-label="엔드포인트">sellingpoint</td><td class="num" data-label="받은 원문">500</td></tr>
 
 </tbody>
 </table>
-<p>펼쳐 앉은 매물 <strong>28,811건</strong> ·
-  판정 <strong>18,808건</strong></p>
+<p>펼쳐 앉은 매물 <strong>29,129건</strong> ·
+  판정 <strong>18,844건</strong></p>
 
 <h2>④ 실패</h2>
 
 <table class="rows">
 <thead><tr><th title="실행 단위입니다 — 누른 것 하나가 작업 하나입니다">작업</th><th title="왜 돌렸는지와 어디까지 돌렸는지입니다">사유 · 범위</th><th>무엇이 왜</th></tr></thead>
 <tbody>
+
+<tr><td class="runid" data-label="작업">0a1510e4f76de8cc</td>
+  <td data-label="사유 · 범위">raw_missing · all</td>
+  <td data-label="무엇이 왜">숨이 끊겼다 — 09-06T04:04 부터 running 인데 그 일을 하는 프로세스가 없다 (09-10 확인).  S46-65 가 잡던 것이다</td></tr>
 
 <tr><td class="runid" data-label="작업">3249601177bfc52e</td>
   <td data-label="사유 · 범위">raw_missing · all</td>
@@ -283,8 +314,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:03</span>
 </footer>
 
 </body>

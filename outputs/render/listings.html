@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>매물 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-listings">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,18 +51,18 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
 <main>
 <h1>매물
-  <small>11,304건 중 10건 ·
-    1131쪽 중 1쪽</small></h1>
+  <small>11,615건 중 10건 ·
+    1162쪽 중 1쪽</small></h1>
 
 
 
@@ -68,7 +71,7 @@
   <p>모든 사이트의 매물을 한 자리에서 본다. 등급순으로 서 있다</p>
   
   <p>같은 차가 여러 곳에 있으면 낮은 값 하나만 낸다.
-    이 조건에 짝지어진 차 <b>191대</b> —
+    이 조건에 짝지어진 차 <b>203대</b> —
     <a href="/listings?paired=1" title="여러 사이트에 함께 올라온 차만 봅니다. 순위 차례는 그대로입니다"
       >짝지어진 것만 보기 ▸</a> · <a href="/track" title="값·등급을 나란히 봅니다">추적에서 보기 ▸</a>
     </p>
@@ -84,7 +87,7 @@
   <span class="chip">차종
     <select name="model" title="등록부에 있는 차종만 나옵니다">
       <option value="">전체</option>
-      <option value="G80_25T">G80_25T (2141건)</option><option value="GV70_25T">GV70_25T (1430건)</option><option value="GLC_IMPORT">GLC_IMPORT (1300건)</option><option value="X3_IMPORT">X3_IMPORT (854건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (833건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (704건)</option><option value="MODEL_Y">MODEL_Y (597건)</option><option value="Q5_IMPORT">Q5_IMPORT (525건)</option><option value="XC60_IMPORT">XC60_IMPORT (492건)</option><option value="XC40_IMPORT">XC40_IMPORT (311건)</option><option value="V60CC_IMPORT">V60CC_IMPORT (256건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (248건)</option><option value="G70_25T">G70_25T (226건)</option><option value="G70_20T">G70_20T (198건)</option><option value="NX_HEV">NX_HEV (166건)</option><option value="POLESTAR2_EV">POLESTAR2_EV (151건)</option><option value="S60_IMPORT">S60_IMPORT (145건)</option><option value="ES_HEV">ES_HEV (133건)</option><option value="RX_IMPORT">RX_IMPORT (121건)</option><option value="GV60">GV60 (120건)</option><option value="G80_EV">G80_EV (92건)</option><option value="GV70_EV">GV70_EV (67건)</option><option value="POLESTAR4_EV">POLESTAR4_EV (43건)</option><option value="C40_EV">C40_EV (12건)</option><option value="EV4_EV">EV4_EV (12건)</option><option value="EX30_EV">EX30_EV (5건)</option><option value="XC40_EV">XC40_EV (5건)</option><option value="IX3_EV">IX3_EV (3건)</option><option value="ID4_EV">ID4_EV (2건)</option><option value="UX300E_EV">UX300E_EV (1건)</option>
+      <option value="G80_25T">G80_25T (2270건)</option><option value="GV70_25T">GV70_25T (1430건)</option><option value="GLC_IMPORT">GLC_IMPORT (1300건)</option><option value="X3_IMPORT">X3_IMPORT (855건)</option><option value="SPORTAGE_LPI">SPORTAGE_LPI (840건)</option><option value="GRANDEUR_LPG">GRANDEUR_LPG (705건)</option><option value="XC60_IMPORT">XC60_IMPORT (636건)</option><option value="MODEL_Y">MODEL_Y (617건)</option><option value="Q5_IMPORT">Q5_IMPORT (525건)</option><option value="XC40_IMPORT">XC40_IMPORT (252건)</option><option value="KOLEOS_HEV">KOLEOS_HEV (252건)</option><option value="NX_HEV">NX_HEV (235건)</option><option value="V60CC_IMPORT">V60CC_IMPORT (207건)</option><option value="G70_20T">G70_20T (198건)</option><option value="POLESTAR2_EV">POLESTAR2_EV (161건)</option><option value="G70_25T">G70_25T (158건)</option><option value="S60_IMPORT">S60_IMPORT (110건)</option><option value="RX_IMPORT">RX_IMPORT (98건)</option><option value="GV60">GV60 (93건)</option><option value="ES_HEV">ES_HEV (88건)</option><option value="G80_EV">G80_EV (78건)</option><option value="GV70_EV">GV70_EV (55건)</option><option value="POLESTAR4_EV">POLESTAR4_EV (33건)</option><option value="C40_EV">C40_EV (10건)</option><option value="XC40_EV">XC40_EV (5건)</option><option value="EX30_EV">EX30_EV (5건)</option><option value="EV4_EV">EV4_EV (5건)</option><option value="IX3_EV">IX3_EV (3건)</option><option value="ID4_EV">ID4_EV (3건)</option>
     </select></span>
   <span class="chip">트림
     <input name="trim" size="8" value=""
@@ -144,7 +147,7 @@
           <span class="dim">29</span></a><a class="btn"
           href="/listings?site=kbchachacha"
           title="이 사이트 매물만 봅니다 — 옆 숫자는 「우리 대상(active)」 건수입니다. 목록은 여기서 리스·관문 제외·같은 차 접기·팔린 것을 더 빼므로 더 적습니다 (#18)">KB차차차만
-          <span class="dim">4,264</span></a><a class="btn"
+          <span class="dim">4,870</span></a><a class="btn"
           href="/listings?site=kia_cpo"
           title="이 사이트 매물만 봅니다 — 옆 숫자는 「우리 대상(active)」 건수입니다. 목록은 여기서 리스·관문 제외·같은 차 접기·팔린 것을 더 빼므로 더 적습니다 (#18)">기아 인증중고차(CPO)만</a><a class="btn"
           href="/listings?site=hyundai_cert"
@@ -207,24 +210,24 @@
       <p class="dim">★ 외장색 5＋9가지</p>
       <p class="chips">
         <a class="btn"
-          href="/listings?color_ext=%ED%9D%B0%EC%83%89">흰색 (8,357)</a><a class="btn"
-          href="/listings?color_ext=%EA%B2%80%EC%A0%95%EC%83%89">검정색 (5,292)</a><a class="btn"
-          href="/listings?color_ext=%EC%A5%90%EC%83%89">쥐색 (2,579)</a><a class="btn"
-          href="/listings?color_ext=%EC%B2%AD%EC%83%89">청색 (1,204)</a><a class="btn"
-          href="/listings?color_ext=%EC%9D%80%ED%9A%8C%EC%83%89">은회색 (495)</a>
+          href="/listings?color_ext=%ED%9D%B0%EC%83%89">흰색 (8,486)</a><a class="btn"
+          href="/listings?color_ext=%EA%B2%80%EC%A0%95%EC%83%89">검정색 (5,372)</a><a class="btn"
+          href="/listings?color_ext=%EC%A5%90%EC%83%89">쥐색 (2,581)</a><a class="btn"
+          href="/listings?color_ext=%EC%B2%AD%EC%83%89">청색 (1,210)</a><a class="btn"
+          href="/listings?color_ext=%5Cn%5Ct%5Ct%5Ct%5Ct%5Ct">\n\t\t\t\t\t (1,147)</a>
       </p>
       
       <details class="chip"><summary>더 보기 ▾</summary>
         <p class="chips"><a class="btn"
-          href="/listings?color_ext=%EC%8A%A4%EB%85%B8%EC%9A%B0%ED%99%94%EC%9D%B4%ED%8A%B8%ED%8E%84">스노우화이트펄 (408)</a><a class="btn"
-          href="/listings?color_ext=%EC%9D%80%EC%83%89">은색 (321)</a><a class="btn"
-          href="/listings?color_ext=%EC%A7%84%ED%9A%8C%EC%83%89">진회색 (279)</a><a class="btn"
+          href="/listings?color_ext=%EC%9D%80%ED%9A%8C%EC%83%89">은회색 (495)</a><a class="btn"
+          href="/listings?color_ext=%EC%8A%A4%EB%85%B8%EC%9A%B0%ED%99%94%EC%9D%B4%ED%8A%B8%ED%8E%84">스노우화이트펄 (409)</a><a class="btn"
+          href="/listings?color_ext=%EC%9D%80%EC%83%89">은색 (328)</a><a class="btn"
+          href="/listings?color_ext=%EC%A7%84%ED%9A%8C%EC%83%89">진회색 (319)</a><a class="btn"
           href="/listings?color_ext=%EC%98%A4%EB%A1%9C%EB%9D%BC%20%EB%B8%94%EB%9E%99%ED%8E%84">오로라 블랙펄 (266)</a><a class="btn"
-          href="/listings?color_ext=%ED%81%AC%EB%A6%AC%EB%AF%B8">크리미 (186)</a><a class="btn"
-          href="/listings?color_ext=%EB%B9%A8%EA%B0%84%EC%83%89">빨간색 (138)</a><a class="btn"
-          href="/listings?color_ext=%EC%96%B4%EB%B9%84%EC%8A%A4%EB%B8%94%EB%9E%99%ED%8E%84">어비스블랙펄 (136)</a><a class="btn"
+          href="/listings?color_ext=%EB%B9%A8%EA%B0%84%EC%83%89">빨간색 (140)</a><a class="btn"
+          href="/listings?color_ext=%ED%9A%8C%EC%83%89">회색 (136)</a><a class="btn"
           href="/listings?color_ext=%ED%81%AC%EB%A6%AC%EC%8A%A4%ED%83%88%20%ED%99%94%EC%9D%B4%ED%8A%B8">크리스탈 화이트 (130)</a><a class="btn"
-          href="/listings?color_ext=%ED%9A%8C%EC%83%89">회색 (125)</a></p>
+          href="/listings?color_ext=%EC%A7%84%EC%A3%BC%EC%83%89">진주색 (90)</a></p>
       </details>
   <span class="chip">정렬
     <select name="order">
@@ -237,21 +240,21 @@
           href="/listings?color_int=%EA%B2%80%EC%A0%95%EC%83%89%20%EA%B3%84%EC%97%B4">검정색 계열 (7,004)</a><a class="btn"
           href="/listings?color_int=%EA%B0%88%EC%83%89%20%EA%B3%84%EC%97%B4">갈색 계열 (5,696)</a><a class="btn"
           href="/listings?color_int=%EB%B2%A0%EC%9D%B4%EC%A7%80%EC%83%89%20%EA%B3%84%EC%97%B4">베이지색 계열 (2,131)</a><a class="btn"
-          href="/listings?color_int=%ED%9A%8C%EC%83%89%20%EA%B3%84%EC%97%B4">회색 계열 (627)</a><a class="btn"
-          href="/listings?color_int=%ED%9D%B0%EC%83%89%20%EA%B3%84%EC%97%B4">흰색 계열 (471)</a>
+          href="/listings?color_int=%5Cn%5Ct%5Ct%5Ct%5Ct%5Ct">\n\t\t\t\t\t (1,147)</a><a class="btn"
+          href="/listings?color_int=%ED%9A%8C%EC%83%89%20%EA%B3%84%EC%97%B4">회색 계열 (627)</a>
       </p>
       
       <details class="chip"><summary>더 보기 ▾</summary>
         <p class="chips"><a class="btn"
-          href="/listings?color_int=%EB%B8%94%EB%9E%99%EC%9B%90%ED%86%A4">블랙원톤 (462)</a><a class="btn"
-          href="/listings?color_int=%EB%B8%94%EB%9E%99">블랙 (373)</a><a class="btn"
+          href="/listings?color_int=%ED%9D%B0%EC%83%89%20%EA%B3%84%EC%97%B4">흰색 계열 (471)</a><a class="btn"
+          href="/listings?color_int=%EB%B8%94%EB%9E%99">블랙 (357)</a><a class="btn"
           href="/listings?color_int=%EB%B9%A8%EA%B0%84%EC%83%89%20%EA%B3%84%EC%97%B4">빨간색 계열 (309)</a><a class="btn"
           href="/listings?color_int=%EC%B2%AD%EC%83%89%20%EA%B3%84%EC%97%B4">청색 계열 (299)</a><a class="btn"
+          href="/listings?color_int=%EA%B2%80%EC%A0%95%EC%83%89">검정색 (189)</a><a class="btn"
           href="/listings?color_int=%EC%83%88%EB%93%A4%EB%B8%8C%EB%9D%BC%EC%9A%B4">새들브라운 (185)</a><a class="btn"
-          href="/listings?color_int=%EA%B2%80%EC%A0%95%EC%83%89">검정색 (177)</a><a class="btn"
-          href="/listings?color_int=%EB%B8%8C%EB%9D%BC%EC%9A%B4">브라운 (142)</a><a class="btn"
           href="/listings?color_int=%EC%98%AC%EB%A6%AC%EB%B8%8C%EB%B8%8C%EB%9D%BC%EC%9A%B4">올리브브라운 (112)</a><a class="btn"
-          href="/listings?color_int=%EA%B0%88%EC%83%89">갈색 (95)</a></p>
+          href="/listings?color_int=%EA%B0%88%EC%83%89">갈색 (101)</a><a class="btn"
+          href="/listings?color_int=%EB%B8%8C%EB%9D%BC%EC%9A%B4">브라운 (75)</a></p>
       </details>
       
 
@@ -280,7 +283,7 @@
         <span class="chip">보증잔여 <input name="warranty_month_min" size="2" inputmode="numeric"
           value="" placeholder="12" title="자체 보증 잔여 개월 이상">개월 이상</span>
         <span class="chip">지역 <select name="region"><option value="">전체</option>
-          <option value="경기">경기 (8,924)</option><option value="서울">서울 (2,289)</option><option value="부산">부산 (1,389)</option><option value="대구">대구 (1,359)</option><option value="인천">인천 (941)</option><option value="전남광주">전남광주 (692)</option><option value="대전">대전 (460)</option><option value="경남">경남 (322)</option><option value="충남">충남 (274)</option><option value="전북">전북 (245)</option><option value="울산">울산 (175)</option><option value="충북">충북 (133)</option><option value="광주">광주 (106)</option><option value="경북">경북 (42)</option>
+          <option value="경기">경기 (10,496)</option><option value="서울">서울 (2,427)</option><option value="부산">부산 (1,527)</option><option value="대구">대구 (1,454)</option><option value="인천">인천 (1,135)</option><option value="전남광주">전남광주 (692)</option><option value="대전">대전 (495)</option><option value="경남">경남 (343)</option><option value="충남">충남 (284)</option><option value="전북">전북 (268)</option><option value="울산">울산 (191)</option><option value="광주">광주 (186)</option><option value="충북">충북 (139)</option><option value="경북">경북 (43)</option>
         </select></span>
         
         <span class="chip" title="목록의 막대를 그대로 조건으로 씁니다. SQL 로 겁니다">점수
@@ -295,10 +298,10 @@
 
 
 <div class="sentence">
-  리스 제외 — <span class="n">11,304건</span>
+  리스 제외 — <span class="n">11,615건</span>
    · <b>리스·렌트 897건은 뺐습니다</b> —
     <a href="/listings?lease=1">함께 보기</a>
-   · <b>관문 제외 338건은 뺐습니다</b> —
+   · <b>관문 제외 339건은 뺐습니다</b> —
     <a href="/listings?excluded=1">따로 보기</a>
 </div>
 
@@ -572,7 +575,7 @@
         30만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -744,7 +747,7 @@
       
       <b class="dim">없음</b></div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -920,7 +923,7 @@
         30만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1096,7 +1099,7 @@
         283만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1272,7 +1275,7 @@
         114만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1448,7 +1451,7 @@
         114만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1621,7 +1624,7 @@
       
       <b class="dim">없음</b></div>
     <div class="cell mono num"><u>경과</u>
-      <b>7일째</b>
+      <b>12일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1796,7 +1799,7 @@
         283만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -1969,7 +1972,7 @@
         423만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=40000000"
@@ -2144,7 +2147,7 @@
         159만</a></b>
       </div>
     <div class="cell mono num"><u>경과</u>
-      <b>20일째</b>
+      <b>24일째</b>
       </div>
     <div class="price mono num">
       <b><a href="/listings?price_max=35000000"
@@ -2183,8 +2186,8 @@
   
   <a href="/listings?page=1" class="on">1</a><a href="/listings?page=2">2</a><a href="/listings?page=3">3</a><a href="/listings?page=4">4</a><a href="/listings?page=5">5</a><a href="/listings?page=6">6</a><a href="/listings?page=7">7</a><a href="/listings?page=8">8</a><a href="/listings?page=9">9</a>
   <a href="/listings?page=2">다음 ›</a>
-  <a href="/listings?page=1131">끝 »</a>
-  <span class="dim">한 쪽 10건 · 모두 1131쪽</span>
+  <a href="/listings?page=1162">끝 »</a>
+  <span class="dim">한 쪽 10건 · 모두 1162쪽</span>
 </div>
 <p class="dim">★ 쪽을 넘겨도 지금 조건이 그대로 붙습니다 (V11-58).</p>
 
@@ -2384,8 +2387,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:25</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:02</span>
 </footer>
 
 </body>

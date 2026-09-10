@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>받기 · CarWatch</title>
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
+
+</head>
+<body class="s-fetch">
+
+<header class="top">
+  <a class="brand" href="/" title="현황으로 갑니다">CarWatch</a>
+  <span class="who">
+    마스터 · admin
+    
+    <form method="post" action="/logout" class="inline">
+      <input type="hidden" name="csrf" value="render">
+      <button type="submit">로그아웃</button>
+    </form>
+    
+    
+  </span>
+</header>
+
+<nav class="nav">
+  
+  
+  <a class="nav-item" href="/listings" title="조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다"><b>≡</b>매물</a>
+  
+  
+  <a class="nav-item" href="/watch" title="담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다"><b>♡</b>관심</a>
+  
+  
+  <a class="nav-item" href="/track" title="한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다"><b>⇄</b>추적</a>
+  
+  
+  <a class="nav-item" href="/recommend" title="내 기준(예산·주행·연식·색(외)·색(내)·크기)에 가까운 차. ★ 등급을 안 본다 — 여섯 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)"><b>★</b>추천</a>
+  
+  
+  <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
+  
+  
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
+  <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
+  
+</nav>
+
+
+
+
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
+  
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
+</div>
+
+
+<main>
+
+
+<h1>마스터 회선으로 받기</h1>
+<p class="sub">서버가 못 받는 것을 이 폰이 대신 받습니다</p>
+
+<p class="v4-tabs">
+  <a class="on"
+    href="/fetch?site=encar">엔카</a><a class=""
+    href="/fetch?site=kbchachacha">KB차차차</a><a class=""
+    href="/fetch?site=kcar">K카</a>
+</p>
+
+<div class="v3-why">
+  엔카는 서버 IP 를 막습니다(<b>407</b>). 목록·성능점검·보험이력이 다 막힙니다.
+  이 폰은 열립니다. 그래서 <b>서버가 「받아야 할 주소」를 만들고</b>,
+  <b>이 화면이 폰 회선으로 받아 서버에 올립니다</b>.
+  주소를 손으로 옮기실 일은 없습니다.
+</div>
+
+
+<div class="v3-step done">
+  <div class="v3-sline"><span class="v3-sno">1</span>
+    <span class="v3-sname">목록</span>
+    <span class="v3-snum">받을 것
+      <b class="ok"
+        >0</b> / 9,317</span></div>
+  <p class="v3-sdesc">목록이 있어야 상세 주소가 나옵니다</p>
+  <div class="v3-bar done"><i data-pct="100"></i></div>
+</div>
+
+<div class="v3-step ">
+  <div class="v3-sline"><span class="v3-sno">2</span>
+    <span class="v3-sname">상세</span>
+    <span class="v3-snum">받을 것
+      <b class="need"
+        >1,574</b> / 9,317</span></div>
+  <p class="v3-sdesc">차 정보·옵션·트림·신차가. 상세가 있어야 성능·보험 주소가 나옵니다</p>
+  <div class="v3-bar "><i data-pct="83"></i></div>
+</div>
+
+<div class="v3-step ">
+  <div class="v3-sline"><span class="v3-sno">3</span>
+    <span class="v3-sname">성능점검</span>
+    <span class="v3-snum">받을 것
+      <b class="need"
+        >1,647</b> / 9,317</span></div>
+  <p class="v3-sdesc">판금·교환 자리, 용도변경(렌트), 주행거리 계기 상태</p>
+  <div class="v3-bar "><i data-pct="82"></i></div>
+</div>
+
+<div class="v3-step ">
+  <div class="v3-sline"><span class="v3-sno">4</span>
+    <span class="v3-sname">보험이력</span>
+    <span class="v3-snum">받을 것
+      <b class="need"
+        >1,671</b> / 9,317</span></div>
+  <p class="v3-sdesc">사고 금액, 영업용(대여) 이력, 정보제공 불가능기간</p>
+  <div class="v3-bar "><i data-pct="82"></i></div>
+</div>
+
+<div class="v3-step ">
+  <div class="v3-sline"><span class="v3-sno">5</span>
+    <span class="v3-sname">catalog</span>
+    <span class="v3-snum">받을 것
+      <b class="need"
+        >9,317</b> / 9,317</span></div>
+  <p class="v3-sdesc">신차가와 옵션 가격. 지금 0.8% 뿐이라 감가율이 안 나옵니다</p>
+  <div class="v3-bar "><i data-pct="0"></i></div>
+</div>
+
+
+<div class="v3-chunk">
+  <b>한 번에</b>
+  <a class="v3-chip "
+    href="/fetch?site=encar&n=10">10건</a><a class="v3-chip on"
+    href="/fetch?site=encar&n=30">30건</a><a class="v3-chip "
+    href="/fetch?site=encar&n=100">100건</a>
+  <p class="v3-note">3초 걸립니다 — <b>쉬지 않고 이어 받습니다</b>.
+    멈추셔도 받은 데까지 남습니다. 다시 누르면 이어서 받습니다.
+    
+    <br><span class="dim">「전부 받기」는 없습니다.</span>
+    <br><span class="dim">성능·보험은 1분에 2~3건입니다.</span></p>
+</div>
+
+<a class="v3-go" id="go" href="#">2단계 상세 30건 받기 ▸</a>
+<div class="v3-subacts">
+  
+  <a class="v3-btn"
+    href="/fetch?site=encar&n=30&step=2"
+    >2단계 상세 받기</a><a class="v3-btn"
+    href="/fetch?site=encar&n=30&step=3"
+    >3단계 성능점검 받기</a><a class="v3-btn"
+    href="/fetch?site=encar&n=30&step=4"
+    >4단계 보험이력 받기</a><a class="v3-btn"
+    href="/fetch?site=encar&n=30&step=5"
+    >5단계 catalog 받기</a>
+  <a class="v3-btn" id="retry" href="#">실패한 것만 다시</a>
+</div>
+
+<div class="v3-live" id="live" hidden>
+  <h3>받는 중</h3>
+  <div class="cnt" id="cnt">0 / 0</div>
+  <div class="v3-bar"><i id="livebar"></i></div>
+  <p class="url" id="url">—</p>
+  <p class="rate" id="rate">—</p>
+</div>
+<a class="v3-go stop" id="stop" href="#" hidden>멈추기</a>
+
+
+<div class="v3-res">
+  <h3>지난번 결과 (2026-09-06 19:38)</h3>
+  <div class="v3-rrow"><span>받은 것</span><b class="ok">0</b></div>
+  <div class="v3-rrow"><span>안내문 — 상세가 아님</span><b>0</b></div>
+  <div class="v3-rrow"><span>팔린 차 (404)</span><b>0</b></div>
+  <div class="v3-rrow"><span>실패 — 다시 받아야 함</span><b class="no">0</b></div>
+  <div class="v3-rrow"><span>걸린 시간</span><b>0초</b></div>
+</div>
+
+
+<script>
+/* ★ 폰 회선으로 받아 서버에 올린다.  ★ 파싱은 서버가 한다 (L-5)
+   ★ 간격은 서버가 준다 — 코드에 안 박는다 (S14) */
+(function () {
+  var CSRF = "render";
+  var SITE = "encar";
+  var N = "30";
+  var GAP = 100;
+  /* ★ L-10 — ★ 몇 건 받고 몇 초 쉬나.  ★ 서버가 준다 (config 가 정본) */
+  var BATCH = 0;
+  var REST = 0;
+  var stop = false, t0 = 0;
+  var tally = {ok: 0, empty: 0, not_found: 0, error: 0};
+
+  function el(id) { return document.getElementById(id); }
+  function say(i, all, url) {
+    el("cnt").textContent = i + " / " + all;
+    el("livebar").style.width = (all ? Math.round(i * 100 / all) : 0) + "%";
+    el("url").textContent = url || "—";
+    var left = Math.round((all - i) * GAP / 1000);
+    el("rate").textContent = (GAP / 1000) + "초 간격 · 남은 시간 약 "
+      + left + "초 · 실패 " + tally.error + "건";
+  }
+  function wait(ms) { return new Promise(function (k) { setTimeout(k, ms); }); }
+  /* ★ 쉬는 동안에도 ★ 무엇을 하고 있는지 보인다 — ★ 멈춘 것처럼 보이면 안 된다 */
+  function rest(ms, why) {
+    var end = Date.now() + ms;
+    return new Promise(function (k) {
+      (function tick() {
+        if (stop) { return k(); }
+        var left = Math.max(0, Math.round((end - Date.now()) / 1000));
+        el("rate").textContent = why + " — " + left + "초 쉽니다 (실패 "
+          + tally.error + "건)";
+        if (left <= 0) { return k(); }
+        setTimeout(tick, 1000);
+      })();
+    });
+  }
+
+  function grab(url) {
+    /* ★ 헤더를 붙이지 않는다 — preflight 가 생기면 CORS 가 아닌 이유로 막힌다 */
+    return fetch(url, {method: "GET", mode: "cors", credentials: "omit"})
+      .then(function (r) {
+        return r.text().then(function (b) { return {status: r.status, body: b}; });
+      })
+      .catch(function () { return {status: 0, body: ""}; });
+  }
+  function put(job, got) {
+    var f = new FormData();
+    f.append("csrf", CSRF);
+    f.append("site", SITE);
+    f.append("kind", job.kind);
+    f.append("source_id", job.source_id);
+    f.append("url", job.url);
+    f.append("http_code", String(got.status));
+    f.append("body", got.body);
+    return fetch("/fetch/put", {method: "POST", body: f, credentials: "same-origin"})
+      .then(function (r) { return r.json(); })
+      .then(function (j) { tally[j.status] = (tally[j.status] || 0) + 1; })
+      .catch(function () { tally.error += 1; });
+  }
+
+  function run(step, retry) {
+    stop = false;
+    el("live").hidden = false;
+    el("stop").hidden = false;
+    t0 = Date.now();
+    tally = {ok: 0, empty: 0, not_found: 0, error: 0};
+    var q = "/fetch/queue?site=" + encodeURIComponent(SITE)
+          + "&step=" + step + "&n=" + encodeURIComponent(N)
+          + (retry ? "&retry=1" : "");
+    /* ★ V11-19 — ★ 부르기가 실패해도 ★ 화면이 안 깨진다.
+       ★ 까닭을 적고 멈춘다 — ★ 조용히 사라지지 않는다 */
+    fetch(q, {credentials: "same-origin"})
+      .then(function (r) { return r.json(); })
+      .catch(function () { return {rows: [], said: "큐를 못 받았습니다"}; })
+      .then(function (j) {
+        if (j.said) { el("rate").textContent = j.said; }
+        var rows = j.rows || [];
+        say(0, rows.length, "");
+        var i = 0, since = 0;
+        function next() {
+          if (stop || i >= rows.length) { return done(rows.length); }
+          var job = rows[i];
+          say(i, rows.length, job.url);
+          return grab(job.url).then(function (got) {
+            /* ★ L-10 — ★ **잠기면 60초 쉬었다 이어받는다.**
+               ★ 407 · 429 · 던진 것(0) 이 잠긴 것이다.
+               ★ ★ 그 자리를 건너뛰지 않는다 — ★ 쉬고 ★ **같은 것을 다시** 부른다 */
+            if (REST && (got.status === 0 || got.status === 407
+                         || got.status === 429)) {
+              return rest(REST, "잠겼습니다").then(function () {
+                since = 0;
+                return next();
+              });
+            }
+            return put(job, got).then(function () {
+              i += 1;
+              since += 1;
+              /* ★ L-10 — ★ 3건 받고 60초 쉰다 */
+              if (BATCH && since >= BATCH && i < rows.length) {
+                since = 0;
+                return rest(REST, BATCH + "건 받았습니다").then(next);
+              }
+              return wait(GAP).then(next);
+            });
+          });
+        }
+        return next();
+      });
+  }
+  function done(all) {
+    var secs = Math.round((Date.now() - t0) / 1000);
+    /* ★ 길을 넷째로 늘리지 않는다 — ★ 규격 표는 셋이다 (61-web 193~195).
+       ★ 한 판의 셈은 ★ 같은 길에 `done=1` 로 올린다 */
+    var f = new FormData();
+    f.append("csrf", CSRF);
+    f.append("done", "1");
+    f.append("secs", String(secs));
+    f.append("ok", String(tally.ok));
+    f.append("empty", String(tally.empty));
+    f.append("not_found", String(tally.not_found));
+    f.append("error", String(tally.error));
+    fetch("/fetch/put", {method: "POST", body: f, credentials: "same-origin"})
+      .then(function () { location.reload(); });
+    say(all, all, "끝났습니다");
+  }
+
+  el("go").addEventListener("click", function (e) {
+    e.preventDefault(); run(2, false);
+  });
+  el("retry").addEventListener("click", function (e) {
+    e.preventDefault(); run(2, true);
+  });
+  el("stop").addEventListener("click", function (e) {
+    e.preventDefault(); stop = true;
+  });
+  Array.prototype.forEach.call(
+    document.querySelectorAll(".v3-bar i[data-pct]"), function (i) {
+      i.style.width = i.getAttribute("data-pct") + "%";
+    });
+})();
+</script>
+
+</main>
+
+<footer class="ver">
+  <span>calc c1</span>
+  <span>dict d1</span>
+  <span>parse p1</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:03</span>
+</footer>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>문서 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-docs">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -62,7 +65,7 @@
   <strong>웹에서 고치지 않습니다.</strong>
   <span class="muted">근거 STEP 136</span></p>
 
-<h2>문서 133개</h2>
+<h2>문서 135개</h2>
 <table>
 <thead><tr><th>파일</th><th class="num">줄</th></tr></thead>
 <tbody>
@@ -77,7 +80,7 @@
   <td class="num">497</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/CHECKS.md">CHECKS.md</a></td>
-  <td class="num">918</td></tr>
+  <td class="num">940</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/CROSS_SITE_COMPARE.md">CROSS_SITE_COMPARE.md</a></td>
   <td class="num">1,370</td></tr>
@@ -91,6 +94,9 @@
 <tr><td><a href="/admin/docs?path=docs/ENCAR_ROBOTS.md">ENCAR_ROBOTS.md</a></td>
   <td class="num">252</td></tr>
 
+<tr><td><a href="/admin/docs?path=docs/GV70_TAB4.md">GV70_TAB4.md</a></td>
+  <td class="num">300</td></tr>
+
 <tr><td><a href="/admin/docs?path=docs/HEYDEALER_API.md">HEYDEALER_API.md</a></td>
   <td class="num">701</td></tr>
 
@@ -98,7 +104,7 @@
   <td class="num">588</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/INDEX.md">INDEX.md</a></td>
-  <td class="num">166</td></tr>
+  <td class="num">169</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/KBCHACHACHA_API.md">KBCHACHACHA_API.md</a></td>
   <td class="num">591</td></tr>
@@ -128,7 +134,7 @@
   <td class="num">444</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/RECOMMEND_SCREEN.md">RECOMMEND_SCREEN.md</a></td>
-  <td class="num">745</td></tr>
+  <td class="num">790</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/REVOLT_API.md">REVOLT_API.md</a></td>
   <td class="num">216</td></tr>
@@ -137,13 +143,13 @@
   <td class="num">107</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/SCHEMA.md">SCHEMA.md</a></td>
-  <td class="num">111</td></tr>
+  <td class="num">113</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/SERVER_SURVIVAL.md">SERVER_SURVIVAL.md</a></td>
   <td class="num">257</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/SOURCE.md">SOURCE.md</a></td>
-  <td class="num">795</td></tr>
+  <td class="num">846</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/TARGET_KEY_MAP.md">TARGET_KEY_MAP.md</a></td>
   <td class="num">567</td></tr>
@@ -153,6 +159,9 @@
 
 <tr><td><a href="/admin/docs?path=docs/VOLVO_SELEKT_API.md">VOLVO_SELEKT_API.md</a></td>
   <td class="num">576</td></tr>
+
+<tr><td><a href="/admin/docs?path=docs/WEEK_TASK.md">WEEK_TASK.md</a></td>
+  <td class="num">261</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/chapters/00-standard.md">chapters/00-standard.md</a></td>
   <td class="num">2,214</td></tr>
@@ -272,7 +281,7 @@
   <td class="num">1,120</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/chapters/61-web.md">chapters/61-web.md</a></td>
-  <td class="num">2,271</td></tr>
+  <td class="num">2,275</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/chapters/61-web/a-common.md">chapters/61-web/a-common.md</a></td>
   <td class="num">68</td></tr>
@@ -344,7 +353,7 @@
   <td class="num">163</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/03_이력.md">guide/03_이력.md</a></td>
-  <td class="num">1,427</td></tr>
+  <td class="num">1,374</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/04_구성.md">guide/04_구성.md</a></td>
   <td class="num">47</td></tr>
@@ -359,7 +368,7 @@
   <td class="num">198</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/06_오판대장.md">guide/06_오판대장.md</a></td>
-  <td class="num">668</td></tr>
+  <td class="num">670</td></tr>
 
 <tr><td><a href="/admin/docs?path=docs/guide/07_밀린일대장.md">guide/07_밀린일대장.md</a></td>
   <td class="num">795</td></tr>
@@ -486,21 +495,22 @@
 금지     docs/ 전체를 읽는 것
 ```
 
-**132파일 · 52,540줄 · 3,814KB**
+**134파일 · 53,176줄 · 3,882KB**
 
-★ 800줄을 넘는 파일 15개 — 폴더로 쪼갭니다
+★ 800줄을 넘는 파일 16개 — 폴더로 쪼갭니다
 
-- CHECKS.md 919줄
+- CHECKS.md 941줄
 - CROSS_SITE_COMPARE.md 1,371줄
 - MULTISITE_MAPPING.md 1,098줄
+- SOURCE.md 847줄
 - UI_REVIEW.md 2,155줄
 - guide/01_요구사항.md 1,001줄
-- guide/03_이력.md 1,428줄
+- guide/03_이력.md 1,375줄
 - guide/05_가이드역할.md 1,858줄
 - chapters/00-standard.md 2,215줄
 - chapters/13-pipeline.md 809줄
 - chapters/41-view.md 978줄
-- chapters/61-web.md 2,272줄
+- chapters/61-web.md 2,276줄
 - chapters/30-score/f-table.md 3,067줄
 - chapters/11-store/a-key.md 1,111줄
 - chapters/11-store/b-core.md 815줄
@@ -511,11 +521,12 @@
 | `ARCHITECTURE_20260830.md` | 388 | 20 |
 | `BMW_BPS_API.md` | 349 | 17 |
 | `BOBAEDREAM_API.md` | 498 | 22 |
-| `CHECKS.md`  ★ | 919 | 129 |
+| `CHECKS.md`  ★ | 941 | 132 |
 | `CROSS_SITE_COMPARE.md`  ★ | 1,371 | 80 |
 | `DEDUP_CROSS_SITE.md` | 261 | 13 |
 | `ENCAR_API.md` | 551 | 26 |
 | `ENCAR_ROBOTS.md` | 253 | 12 |
+| `GV70_TAB4.md` | 301 | 10 |
 | `HEYDEALER_API.md` | 702 | 35 |
 | `HYUNDAI_CERTIFIED_API.md` | 589 | 29 |
 | `KBCHACHACHA_API.md` | 592 | 30 |
@@ -527,15 +538,16 @@
 | `OPTION_CATALOG.md` | 321 | 16 |
 | `README.md` | 65 | 1 |
 | `REBORNCAR_API.md` | 445 | 23 |
-| `RECOMMEND_SCREEN.md` | 746 | 37 |
+| `RECOMMEND_SCREEN.md` | 791 | 39 |
 | `REVOLT_API.md` | 217 | 11 |
 | `ROADMAP_20260830.md` | 108 | 4 |
-| `SCHEMA.md` | 112 | 5 |
+| `SCHEMA.md` | 114 | 6 |
 | `SERVER_SURVIVAL.md` | 258 | 12 |
-| `SOURCE.md` | 796 | 62 |
+| `SOURCE.md`  ★ | 847 | 68 |
 | `TARGET_KEY_MAP.md` | 568 | 30 |
 | `UI_REVIEW.md`  ★ | 2,155 | 109 |
 | `VOLVO_SELEKT_API.md` | 577 | 25 |
+| `WEEK_TASK.md` | 262 | 10 |
 | `chapters/00-standard.md`  ★ | 2,215 | 95 |
 | `chapters/01-arch.md` | 235 | 8 |
 | `chapters/10-collect/00-intro.md` | 656 | 30 |
@@ -575,7 +587,7 @@
 | `chapters/60-admin/a-auth.md` | 405 | 15 |
 | `chapters/60-admin/b-ops.md` | 312 | 11 |
 | `chapters/60-admin/c-tools.md`  ★ | 1,121 | 45 |
-| `chapters/61-web.md`  ★ | 2,272 | 86 |
+| `chapters/61-web.md`  ★ | 2,276 | 87 |
 | `chapters/61-web/a-common.md` | 69 | 2 |
 | `chapters/61-web/b-list.md` | 92 | 3 |
 | `chapters/61-web/c-recommend.md` | 50 | 1 |
@@ -599,12 +611,12 @@
 | `guide/02_결함대장.md` | 281 | 6 |
 | `guide/02_미확정.md` | 267 | 17 |
 | `guide/03_원칙지적.md` | 164 | 3 |
-| `guide/03_이력.md`  ★ | 1,428 | 1,111 |
+| `guide/03_이력.md`  ★ | 1,375 | 1,144 |
 | `guide/04_구성.md` | 48 | 2 |
 | `guide/04_질의.md` | 737 | 28 |
 | `guide/05_가이드역할.md`  ★ | 1,858 | 97 |
 | `guide/05_노션.md` | 199 | 6 |
-| `guide/06_오판대장.md` | 669 | 301 |
+| `guide/06_오판대장.md` | 671 | 303 |
 | `guide/07_밀린일대장.md` | 796 | 58 |
 | `guide/08_인수인계.md` | 310 | 14 |
 | `guide/09_설계뒤에할것_20260829.md` | 125 | 11 |
@@ -649,8 +661,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:03</span>
 </footer>
 
 </body>

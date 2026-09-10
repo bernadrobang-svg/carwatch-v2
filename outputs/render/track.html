@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>추적 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-track">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,11 +51,11 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
@@ -72,7 +75,7 @@
 <p class="sentence">
   짝지어진 차 <b>188대</b> ·
   값이 30% 넘게 갈린 것 <b>0</b> ·
-  등급이 두 칸 갈린 것 <b>74</b> ·
+  등급이 두 칸 갈린 것 <b>73</b> ·
   사고 판정이 갈린 것 <b>10</b>
 </p>
 <p class="muted">★ 30% 넘게 갈린 것은 짝짓기가 틀렸을 자리입니다 — 먼저 봅니다.</p>
@@ -350,17 +353,17 @@
         <b>3,700만</b>
         <b class="grade-d">D</b>
         
-        453.6/910
+        445.6/910
         </span><span>엔카
         <b>4,050만</b>
         <b class="grade-f">F</b>
         
-        266/910
+        265/910
         </span><span>엔카
         <b>4,050만</b>
         <b class="grade-e">E</b>
         
-        322/910
+        321/910
         </span></div>
     </div></div>
     <div class="kacts">
@@ -787,7 +790,7 @@
       
       <div class="kspec"><b>리본카</b>
         <span class="grade-d">D</span>
-        <span class="mono">453.6 / 910</span>
+        <span class="mono">445.6 / 910</span>
         
         
         <span class="dim">빠진 축 —
@@ -796,7 +799,7 @@
       
       <div class="kspec"><b>엔카</b>
         <span class="grade-f">F</span>
-        <span class="mono">266 / 910</span>
+        <span class="mono">265 / 910</span>
         
         
         
@@ -804,7 +807,7 @@
       
       <div class="kspec"><b>엔카</b>
         <span class="grade-e">E</span>
-        <span class="mono">322 / 910</span>
+        <span class="mono">321 / 910</span>
         
         
         
@@ -1234,8 +1237,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:26</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:02</span>
 </footer>
 
 </body>

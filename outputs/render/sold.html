@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>팔린 차 · CarWatch</title>
-<link rel="stylesheet" href="/static/app.css?v=03b359f39a">
+<link rel="stylesheet" href="/static/app.css?v=15627bfffb">
 
 </head>
 <body class="s-sold">
@@ -41,6 +41,9 @@
   <a class="nav-item" href="/" title="전체 상황과 차종별 시세. ★ 시세를 흡수했다"><b>▤</b>현황</a>
   
   
+  <a class="nav-item" href="/fetch" title="엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)"><b>⤓</b>받기</a>
+  
+  
   <a class="nav-item" href="/admin" title="수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)"><b>⚙</b>관리</a>
   
 </nav>
@@ -48,17 +51,17 @@
 
 
 
-<div class="banner banner-unclassified">
-  <strong>등록부에 미분류가 있습니다</strong>
-  <span class="banner-action">판정에 쓰는 경로면 멈춥니다</span>
+<div class="banner banner-stale">
+  <strong>엔카가 4일째 멈췄습니다 — 목록이 갱신되지 않았습니다. 그동안의 가격 변동을 알 수 없습니다</strong>
+  <span class="banner-action">「엔카 받기」를 눌러 주십시오</span>
   
-  <a class="btn" href="/notready">미판정 보기</a>
+  <a class="btn" href="/admin/collect?auto=1">엔카 받기</a>
 </div>
 
 
 <main>
 
-<h1>팔린 차 <span class="muted">4,828건 중 30건</span></h1>
+<h1>팔린 차 <span class="muted">4,849건 중 30건</span></h1>
 
 <div class="cond what">
   <h2>★ 이 화면은 무엇을 하는 곳인가</h2>
@@ -84,21 +87,21 @@
     
     <tr>
       <td data-label="시세 대비">−10% ~ 시세</td>
-      <td class="num" data-label="팔린 수">530</td>
+      <td class="num" data-label="팔린 수">532</td>
       
-      <td class="num" data-label="평균 며칠">14.2일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(525건으로 셈)</span></td>
+      <td class="num" data-label="평균 며칠">14.2일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(526건으로 셈)</span></td>
     </tr>
     
     <tr>
       <td data-label="시세 대비">시세 ~ +10%</td>
-      <td class="num" data-label="팔린 수">689</td>
+      <td class="num" data-label="팔린 수">694</td>
       
-      <td class="num" data-label="평균 며칠">14.1일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(680건으로 셈)</span></td>
+      <td class="num" data-label="평균 며칠">14.1일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(681건으로 셈)</span></td>
     </tr>
     
     <tr>
       <td data-label="시세 대비">+10% 위 (비싸다)</td>
-      <td class="num" data-label="팔린 수">421</td>
+      <td class="num" data-label="팔린 수">423</td>
       
       <td class="num" data-label="평균 며칠">14.2일 <span class="dim" title="처음 본 날과 사라진 날이 둘 다 있는 것만 셉니다">(414건으로 셈)</span></td>
     </tr>
@@ -116,22 +119,46 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6 HEV 시그니처 X라인 2WD A/T 시그니처 X-Line</strong>
     </div>
-    <p class="muted">2023-11 · 52,759km · electric</p>
-    <p class="price">3,890만
+    <p class="muted">2025-09 · 8,315km · 스노우화이트펄 · 1.6 가솔린 하이브리드</p>
+    <p class="price">4,314만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-09-09
+      
+      
+      
+    </p>
+    
+    <p>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=14043" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6T 가솔린 시그니처 2WD DCT 시그니처</strong>
+    </div>
+    <p class="muted">2021-11 · 60,169km · 그래비티그레이 · 1.6 가솔린</p>
+    <p class="price">2,392만
       </p>
     <p class="muted">
       ★ 처음 본 날 2026-09-05
       
       
-       · 시세 대비 <strong>-1.5%</strong>
+      
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/qyLK54lR" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=14001" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -140,22 +167,22 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6 HEV 30주년 4WD A/T 30th Edition</strong>
     </div>
-    <p class="muted">2023-09 · 30,090km · 펄 화이트 멀티 코트 · electric</p>
-    <p class="price">4,090만
+    <p class="muted">2024-02 · 33,117km · 퓨전블랙 · 1.6 가솔린 하이브리드</p>
+    <p class="price">3,440만
       </p>
     <p class="muted">
-      ★ 처음 본 날 2026-08-31
+      ★ 처음 본 날 2026-09-05
       
       
-       · 시세 대비 <strong>3.5%</strong>
+      
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/rnYpPMyP" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=14000" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -164,22 +191,22 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 2.0 LPi 노블레스 2WD A/T 노블레스</strong>
     </div>
-    <p class="muted">2024-06 · 60,990km · 펄 화이트 멀티 코트 · electric</p>
-    <p class="price">3,820만
+    <p class="muted">2025-04 · 28,052km · 울프그레이 · 2.0 LPG</p>
+    <p class="price">3,033만
       </p>
     <p class="muted">
-      ★ 처음 본 날 2026-08-31
+      ★ 처음 본 날 2026-09-05
       
       
-       · 시세 대비 <strong>-4.5%</strong>
+      
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/rnYZYoQP" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13999" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -188,22 +215,22 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y Juniper RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6 HEV 노블레스 2WD A/T 노블레스</strong>
     </div>
-    <p class="muted">2025-12 · 10,971km · 펄 화이트 멀티 코트 · electric</p>
-    <p class="price">5,290만
+    <p class="muted">2022-08 · 77,317km · 퓨전블랙 · 1.6 가솔린 하이브리드</p>
+    <p class="price">2,840만
       </p>
     <p class="muted">
-      ★ 처음 본 날 2026-08-31
+      ★ 처음 본 날 2026-09-05
       
       
-       · 시세 대비 <strong>6.0%</strong>
+      
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/pQPo7An9" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13983" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -212,22 +239,22 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6 HEV 시그니처 그래비티 2WD A/T 시그니처 그래비티</strong>
     </div>
-    <p class="muted">2024-03 · 39,245km · 솔리드 블랙 · electric</p>
-    <p class="price">3,990만
+    <p class="muted">2021-08 · 35,535km · 스노우화이트펄 · 1.6 가솔린 하이브리드</p>
+    <p class="price">3,206만
       </p>
     <p class="muted">
-      ★ 처음 본 날 2026-08-31
+      ★ 처음 본 날 2026-09-05
       
       
-       · 시세 대비 <strong>-0.2%</strong>
+      
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/jlZXYbnp" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13964" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -236,22 +263,22 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6T 가솔린 시그니처 2WD DCT 시그니처</strong>
     </div>
-    <p class="muted">2024-03 · 33,025km · 펄 화이트 멀티 코트 · electric</p>
-    <p class="price">4,290만
+    <p class="muted">2024-06 · 55,528km · 스노우화이트펄 · 1.6 가솔린 터보</p>
+    <p class="price">2,610만
       </p>
     <p class="muted">
-      ★ 처음 본 날 2026-08-31
+      ★ 처음 본 날 2026-09-05
       
       
-       · 시세 대비 <strong>7.2%</strong>
+      
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/Zl5gGJnA" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13948" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -260,94 +287,22 @@
   <div class="cardbody">
     <div class="name">
       <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y Juniper RWD</strong>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>스포티지 1.6 HEV 프레스티지 2WD A/T 프레스티지</strong>
     </div>
-    <p class="muted">2025-08 · 11,244km · 스텔스 그레이 · electric</p>
-    <p class="price">5,390만
+    <p class="muted">2022-11 · 86,234km · 베스타블루 · 1.6 가솔린 하이브리드</p>
+    <p class="price">2,221만
       </p>
     <p class="muted">
-      ★ 처음 본 날 2026-08-31
-      
-      
-       · 시세 대비 <strong>8.0%</strong>
-    </p>
-    
-    <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/Yn36V9yp" target="_blank" rel="noopener">원문 ↗</a>
-    </p>
-  </div>
-</div>
-
-<div class="row">
-  <div class="cardbody">
-    <div class="name">
-      <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Model Y RWD</strong>
-    </div>
-    <p class="muted">2023-09 · 25,207km · 펄 화이트 멀티 코트 · electric</p>
-    <p class="price">4,050만
-      </p>
-    <p class="muted">
-      ★ 처음 본 날 2026-08-31
-      
-      
-       · 시세 대비 <strong>2.5%</strong>
-    </p>
-    
-    <p>
-      <a class="btn" href="/listings?target=MODEL_Y">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/JQ8X65Q3" target="_blank" rel="noopener">원문 ↗</a>
-    </p>
-  </div>
-</div>
-
-<div class="row">
-  <div class="cardbody">
-    <div class="name">
-      <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>Electrified GV70 e-AWD</strong>
-    </div>
-    <p class="muted">2022-06 · 33,777km · 비크 블랙 · electric</p>
-    <p class="price">5,690만
-      </p>
-    <p class="muted">
-      ★ 처음 본 날 2026-08-31
-      
-      
-       · 시세 대비 <strong>8.2%</strong>
-    </p>
-    
-    <p>
-      <a class="btn" href="/listings?target=GV70_EV">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/JQ8X0WQ3" target="_blank" rel="noopener">원문 ↗</a>
-    </p>
-  </div>
-</div>
-
-<div class="row">
-  <div class="cardbody">
-    <div class="name">
-      <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
-      <span class="tag">리볼트</span>
-      <strong>iX3 M 스포츠</strong>
-    </div>
-    <p class="muted">2022-10 · 57,140km · 미네랄 화이트 · electric</p>
-    <p class="price">4,690만
-      </p>
-    <p class="muted">
-      ★ 처음 본 날 2026-08-31
+      ★ 처음 본 날 2026-09-02
       
       
       
     </p>
     
     <p>
-      <a class="btn" href="/listings?target=IX3_EV">같은 차 보기</a>
-      <a class="btn go" href="https://www.revolt.kr/cars/Zl5grrnA" target="_blank" rel="noopener">원문 ↗</a>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13895" target="_blank" rel="noopener">원문 ↗</a>
     </p>
   </div>
 </div>
@@ -832,6 +787,54 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>SG2니로 하이브리드 프레스티지 프레스티지</strong>
+    </div>
+    <p class="muted">2022-07 · 116,278km · 스노우화이트펄 · 1.6 가솔린 하이브리드</p>
+    <p class="price">2,001만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-22
+      
+      
+      
+    </p>
+    
+    <p>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13518" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="cardbody">
+    <div class="name">
+      <span class="tag" title="사이트가 그렇게 말했습니다">예약중</span>
+      <span class="tag">기아 인증중고차(CPO)</span>
+      <strong>K3 4DR 1.6 프레스티지 A/T 프레스티지</strong>
+    </div>
+    <p class="muted">2022-07 · 50,392km · 스노우화이트펄 · 1.6 가솔린</p>
+    <p class="price">1,575만
+      </p>
+    <p class="muted">
+      ★ 처음 본 날 2026-08-22
+      
+      
+      
+    </p>
+    
+    <p>
+      
+      <a class="btn go" href="https://cpo.kia.com/products/detail/?id=13604" target="_blank" rel="noopener">원문 ↗</a>
+    </p>
+  </div>
+</div>
+
 
 
 
@@ -849,8 +852,8 @@
   <span>calc c1</span>
   <span>dict d1</span>
   <span>parse p1</span>
-  <span>run 20260905T104015</span>
-  <span>2026-09-05 22:25</span>
+  <span>run 20260910T051759</span>
+  <span>2026-09-10 15:02</span>
 </footer>
 
 </body>
