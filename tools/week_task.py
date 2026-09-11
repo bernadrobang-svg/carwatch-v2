@@ -75,6 +75,40 @@ def rows(conn: sqlite3.Connection, cfg: dict) -> list:
     return got
 
 
+_NAMES: dict = {}
+
+
+def _opt_names(site: str, *jsons) -> str:
+    """★ 옵션 코드를 ★ **이름으로 풀어** 이어 붙인다.
+
+    ★★★ 09-11 — ★ 엔카는 옵션을 ★ 숫자 코드로 준다 (`["1051","1055"]`).
+      ★ 그 이름은 ★ `dict_option_code` 가 안다 — ★ `catalog` 창구가 채웠다
+        (`tools/fill_encar_options.py` · 3개 → 88개).
+      ★ ★ 풀지 않으면 ★ 「파퓰러 패키지Ⅰ 이상인가」를 ★ **영영 못 읽는다**
+    """
+    import sqlite3 as _s
+
+    if site not in _NAMES:
+        conn = _s.connect(os.path.join(ROOT, "carwatch.db"))
+        _NAMES[site] = {str(r[0]): str(r[1]) for r in conn.execute(
+            "SELECT code, display FROM dict_option_code WHERE site = ?",
+            (site,))}
+        conn.close()
+    book_ = _NAMES[site]
+    said = []
+    for one in jsons:
+        if not one:
+            continue
+        try:
+            got = json.loads(one) if isinstance(one, str) else one
+        except (ValueError, TypeError):
+            continue
+        for x in (got if isinstance(got, list) else []):
+            key = (x.get("code") or x.get("name")) if isinstance(x, dict) else x
+            said.append(book_.get(str(key), str(key)))
+    return " · ".join(said)
+
+
 _GONE: dict = {}
 
 
@@ -152,6 +186,15 @@ def _has_pkg(cfg: dict, *jsons) -> bool | None:
         said = str(one)
         if key and key in said:
             return True
+        # ★★★★★ 09-11 — ★ **못 푼 코드가 섞여 있으면 ★ 「없다」고 말할 수 없다.**
+        #   ★ 실측 — ★ 기준차인 **김포조차** 「파퓰러 패키지」가 안 잡혔다.
+        #     ★ ★ 마스터가 고른 차가 ★ 조건을 못 지킬 리 없다 — ★ **자가 틀린 것**이다.
+        #   ★ 까닭 — ★ 엔카 기본 옵션(`001`~`099`) ★ **67개가 이름이 하나도 없다**.
+        #     ★ ★ `catalog` 는 ★ **선택 옵션(1xxx)** 만 준다.
+        #   ★ ★ ★ 파퓰러 패키지Ⅰ 는 ★ 그 기본 묶음 쪽일 수 있다 — ★ **모른다**.
+        #   ★ 모르면 ★ 「미조회」다 (금지 12).  ★ 「없다」라 하지 않는다
+        if any(x.strip().isdigit() for x in said.split("·")):
+            return None
         # ★★★★★ 09-11 — ★ **코드만 있는 것은 「없다」가 아니다.**
         #   ★ 엔카는 옵션을 ★ 숫자 코드로 준다 (`["1075","1046","1072"]`) —
         #     ★ ★ 「파퓰러」라는 글자가 ★ **있을 수가 없다**.
@@ -258,9 +301,11 @@ def judge(one, cfg: dict) -> tuple:
     #     ★ ★ 그런데 칸 C·D 가 ★ 「진단 있음」을 요구해 ★ 나머지가 다 떨어졌다.
     #   ★ ★ ★ 그것은 ★ 「진단이 없다」가 아니라 ★ **「아직 안 봤다」**다.
     #   ★ 그러니 ★ 미조회는 ★ **떨어뜨리지 않고** ★ 「확인하면 이긴다」로 가른다
-    hud = _has_hud(opt_c, opt_s, opt_n)
+    # ★ 09-11 — ★ 코드를 ★ **이름으로 풀어** 본다 (엔카는 코드만 준다)
+    said_opt = _opt_names(site, opt_c, opt_s, opt_n)
+    hud = _has_hud(opt_c, opt_s, opt_n, said_opt)
     # ★ 09-11 — ★ 옵션이 ★ **파퓰러 패키지Ⅰ 이상**이어야 한다
-    pkg = _has_pkg(cfg, opt_c, opt_s, opt_n)
+    pkg = _has_pkg(cfg, said_opt or None)
     # ★★ 사이트가 ★ 「HUD 없다」고 밝혔으면 ★ **없는 것**이다 — ★ 미조회가 아니다
     if opt_absent and ("헤드업" in str(opt_absent) or "HUD" in str(opt_absent)):
         hud = False
@@ -362,9 +407,12 @@ def main() -> int:
          origin, *_rest) = one
         wear = wear_won(km, cfg)
         absent = one[16]
+        # ★ 09-11 — ★ 여기서도 ★ **코드를 이름으로 풀어** 본다
+        said_o = _opt_names(one[0], one[13], one[14], one[15])
         hud = ("없다 (사이트가 밝혔다)"
                if absent and ("헤드업" in str(absent) or "HUD" in str(absent))
-               else ("있다" if _has_hud(one[13], one[14], one[15]) else UNKNOWN))
+               else ("있다" if _has_hud(one[13], one[14], one[15], said_o)
+                     else UNKNOWN))
         real = swap_won(won, cfg) + wear
         print(f"[{band}] {_won(won)} → 갈아타면 {_won(real)}"
               f"{f' (위약 80만＋소모품 {_won(wear)})' if wear else ' (위약 80만)'}"
