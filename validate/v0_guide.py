@@ -8260,7 +8260,34 @@ def s46_300_root_is_listings():
     return True, "첫 화면이 목록이다 (`/` → `view_listings`)"
 
 
+def s46_301_tab4_filter_exists():
+    """S46-301 — 탭 4 거르개가 설정에 있는가 (마스터 09-11 「이따위야」).
+
+    배포 실측 — 탭 4 가 913대를 값·연식·주행만으로 추려 총비용 순으로 세웠다.
+      1위가 2024-03 · 6.1만km · 사고 미조회 · 옵션 미조회 · 잔가율 61.6%.
+      마스터가 정하신 연식·주행·색·옵션·골격이 하나도 안 걸렸다.
+    가이드가 조건을 week_task.json 에만 넣고 화면에 붙이라고 안 냈다.
+    `config/targets.json` 의 `_탭4_거름` 이 정본이다.
+    """
+    raw = _read(ROOT / "config" / "targets.json")
+    if not raw:
+        return False, "targets.json 을 못 읽었다"
+    f = json.loads(raw).get("_탭4_거름")
+    if not f:
+        return False, "`_탭4_거름` 이 없다 — 탭 4 거르개를 설정에 두어야 한다"
+    bad = [k for k in ("차종", "연식_이후", "주행_최대_km", "차값_최대_원",
+                       "색", "옵션값_최소_원", "골격", "리스렌트승계",
+                       "미조회_처리", "줄세우기") if not f.get(k)]
+    if bad:
+        return False, "빠진 것 — " + " · ".join(bad[:4])
+    order = _read(ROOT / "outputs" / "ORDER_20260829.md")
+    if "M-16" not in order:
+        return False, "작업 지시에 M-16 이 없다"
+    return True, f"탭 4 거르개 {len(f) - 2}가지가 설정에 있다"
+
+
 CHECKS = (
+    ("S46-301", "탭 4 거르개가 설정에 있는가", s46_301_tab4_filter_exists),
     ("S46-300", "첫 화면이 목록인가", s46_300_root_is_listings),
     ("S46-299", ":root 변수가 값을 가지는가", s46_299_root_vars_have_values),
     ("S46-298", "이번 주 과제가 지시에 있는가", s46_298_week_task),
