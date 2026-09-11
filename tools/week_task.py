@@ -131,14 +131,23 @@ def _has_pkg(cfg: dict, *jsons) -> bool | None:
     """
     want = str(cfg["조건"].get("옵션_최소") or "파퓰러")
     key = want.replace("Ⅰ", "").replace("I", "").strip()
-    seen = False
+    seen_name = False
     for one in jsons:
         if not one:
             continue
-        seen = True
-        if key and key in str(one):
+        said = str(one)
+        if key and key in said:
             return True
-    return False if seen else None
+        # ★★★★★ 09-11 — ★ **코드만 있는 것은 「없다」가 아니다.**
+        #   ★ 엔카는 옵션을 ★ 숫자 코드로 준다 (`["1075","1046","1072"]`) —
+        #     ★ ★ 「파퓰러」라는 글자가 ★ **있을 수가 없다**.
+        #   ★★ 사전에 이름이 ★ 153개 중 **3개**뿐이다 (실측 09-11) —
+        #     ★ ★ 코드를 이름으로 풀 수가 없다.
+        #   ★ ★ ★ 그것을 「없다」로 읽으면 ★ **엔카를 통째로 떨어뜨린다**.
+        #     ★ 이름이 하나라도 보일 때만 ★ 「없다」라 말한다 (금지 12)
+        if any("\uac00" <= ch <= "\ud7a3" for ch in said):
+            seen_name = True
+    return False if seen_name else None
 
 
 def _has_hud(*jsons) -> bool | None:
@@ -178,6 +187,10 @@ def judge(one, cfg: dict) -> tuple:
      my_cost, ot_cost, acc_cnt, grade, score, rec_hash, plate_hash) = one
 
     why = []
+    # ★ 09-11 — ★ **기준차 자신은 「이기는 차」가 아니다.**
+    #   ★ 기준이 김포로 바뀌면서 ★ 김포가 제 목록에 올라왔다
+    if str(sid) == str(cfg["기준차"].get("source_id")):
+        return None, ["기준차 자신이다"]
     if str(sid) in cfg["이미_거른_것"]:
         return None, ["이미 걸렀다 (WEEK_TASK 4·5장)"]
     if str(paired or "") in cfg["이미_거른_것"]:

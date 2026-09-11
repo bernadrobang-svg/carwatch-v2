@@ -215,6 +215,11 @@
   "record"
  ],
  "42648257": [
-  "inspection"
+  "inspection",
+  "detail"
+ ],
+ "42598767": [
+  "detail",
+  "record"
  ]
 }
