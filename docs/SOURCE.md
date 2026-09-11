@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 244개 · 총 88,060줄
+파일 244개 · 총 88,105줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -47,11 +47,11 @@
 | `tools/load_raw.py` | 490 | 넣기 걸음 — ★ **파일 폴더를 읽어 `raw_response` ＋ `core_listing` 에 넣는다.** |
 | `contracts.py` | 481 | 계층 간 계약 — Protocol · DTO. |
 | `run.py` | 476 | CarWatch v2 진입점. |
+| `tools/week_task.py` | 448 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `parse/hyundai_cert/mapping.py` | 439 | 현대·제네시스 인증중고차 목록 카드 → CORE 필드 (L3). |
 | `report/screens/fetch.py` | 435 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `parse/heydealer/mapping.py` | 419 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
-| `tools/week_task.py` | 408 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
@@ -112,6 +112,7 @@
 | `analyze/axis/value.py` | 188 | ① 값 250 — 시세 대비 100 · 신차가 대비 80 · 주행 대비 70. |
 | `store/rawfile.py` | 187 | 1걸음 — ★ **받은 것을 파일로만 쓴다.  ★ DB 를 안 연다.** |
 | `tools/make_field_map.py` | 187 | ★★★★★★ 09-05 — ★ **사이트별 매핑표를 가이드가 만든다** (마스터 지시). |
+| `web/routes.py` | 185 | 라우팅 표 (14장 STEP 142). |
 | `tools/classify_unclassified.py` | 184 | 미분류 경로를 원인별로 가른다 (개정 341 · V4-26 · V4-27). |
 | `parse/kbchachacha/inspection.py` | 183 | KB차차차 성능점검부 → ★ **부위별** (규격 `KBCHACHACHA_API.md` 3장 · 268~269줄). |
 | `tools/mpark_check.py` | 183 | ★ 성능점검기록부를 ★ **원문 그대로** 읽는다 (P-3 ②). |
@@ -120,7 +121,6 @@
 | `tools/make_vehicle_table.py` | 182 | 차종 표를 만든다 — 수집·표시·추천 탭·사이트별 가능 여부 (09-05 마스터 지시). |
 | `collect/worker.py` | 180 | 큐 소비기 (13장 STEP 132a · 개정 261). |
 | `tools/run_tests.py` | 180 | 시험 전체 실행. |
-| `web/routes.py` | 180 | 라우팅 표 (14장 STEP 142). |
 | `score/grade.py` | 178 | 등급 (L7). |
 | `tools/load_field_map.py` | 177 | D5 ① — ★ **가이드 매핑표를 ★ `meta_field_usage` 에 넣는다** (지시 r1168 · `S46-282`). |
 | `tools/measure_0k.py` | 176 | ★ 0k (명령서 r974 뒤) — ★ **잰다.  안 고친다.** |
@@ -499,6 +499,12 @@ Response:24  Clock:34  Fetcher:39  Rng:44  Request:52  EndpointSpec:60  FetchRes
 load:51  make_context:56  _filter_targets:70  _steps_from:89  _adapter_for:119  cmd_collect:137  _grade_summary:218  cmd_admin_create:233  _collect_urls:250  _page_url:287  cmd_web:306  make_worker_ctx:346  make_worker_executors:352  cmd_delegate:397  _api_fetch:408  cmd_setup:418
 ```
 
+### `tools/week_task.py` — 448줄
+
+```
+book:29  _won:34  rows:40  _gone:81  _plate:96  _acc_say:125  _has_pkg:139  _has_hud:167  swap_won:180  wear_won:188  judge:196  report:315  _url:334  main:344  kb_only:399  final:424
+```
+
 ### `parse/hyundai_cert/mapping.py` — 439줄
 
 ```
@@ -521,12 +527,6 @@ _int:22  _won:29  _ym:34  _model_group:42  parse_list_item:60  _options:100  par
 
 ```
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:267  ClassifySummary:274  PriceSummary:281  AxisStat:290  CoefficientChange:300  DictChangeSummary:310  TargetReport:318  RunStep:330  RunReport:345  HaltReport:356  FixAction:373  NotifyResult:383  ExportResult:396  display_value:405  display_points:415
-```
-
-### `tools/week_task.py` — 408줄
-
-```
-book:29  _won:34  rows:40  _gone:81  _plate:96  _has_pkg:125  _has_hud:144  swap_won:157  wear_won:165  judge:173  report:277  _url:296  main:306  kb_only:359  final:384
 ```
 
 ### `web/template.py` — 406줄
