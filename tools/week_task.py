@@ -122,6 +122,25 @@ def _plate(site: str, sid: str) -> str | None:
     return _PLATE[key]
 
 
+def _has_pkg(cfg: dict, *jsons) -> bool | None:
+    """★ 09-11 — ★ 마스터 —「옵션이 **파퓰러 패키지Ⅰ 이상**이어야 된다」.
+
+    ★ 09-07 의 「깡통도 후보」를 ★ **물린다** — ★ 최근 지시가 우선이다.
+    ★ 파퓰러 패키지Ⅰ 는 GV70 의 **기본 묶음**이다.  ★ 그것도 없으면 안 본다.
+    ★★ 옵션을 하나도 모르면 ★ **None(미조회)** 이다 — ★ 「없다」가 아니다 (금지 12)
+    """
+    want = str(cfg["조건"].get("옵션_최소") or "파퓰러")
+    key = want.replace("Ⅰ", "").replace("I", "").strip()
+    seen = False
+    for one in jsons:
+        if not one:
+            continue
+        seen = True
+        if key and key in str(one):
+            return True
+    return False if seen else None
+
+
 def _has_hud(*jsons) -> bool | None:
     """HUD 가 있나.  ★ 옵션을 하나도 모르면 ★ None(미조회)."""
     seen = False
@@ -206,6 +225,8 @@ def judge(one, cfg: dict) -> tuple:
     #   ★ ★ ★ 그것은 ★ 「진단이 없다」가 아니라 ★ **「아직 안 봤다」**다.
     #   ★ 그러니 ★ 미조회는 ★ **떨어뜨리지 않고** ★ 「확인하면 이긴다」로 가른다
     hud = _has_hud(opt_c, opt_s, opt_n)
+    # ★ 09-11 — ★ 옵션이 ★ **파퓰러 패키지Ⅰ 이상**이어야 한다
+    pkg = _has_pkg(cfg, opt_c, opt_s, opt_n)
     # ★★ 사이트가 ★ 「HUD 없다」고 밝혔으면 ★ **없는 것**이다 — ★ 미조회가 아니다
     if opt_absent and ("헤드업" in str(opt_absent) or "HUD" in str(opt_absent)):
         hud = False
@@ -213,6 +234,14 @@ def judge(one, cfg: dict) -> tuple:
     band = None
     for one_band in cfg["이기는_칸"]:
         key = one_band["칸"]
+        # ★★ 09-11 — ★ 마스터가 좁히셨다: ★ **2023년 이후 · 옵션 · 보험 사고 0회**.
+        #   ★ 그 셋은 ★ **칸을 가리지 않고** 모두에 걸린다
+        if str(ym or "").replace("-", "")[:6] < "202301":
+            break
+        if pkg is False:
+            break
+        if acc_cnt is not None and acc_cnt > 0:
+            break
         if key == "A" and won <= one_band["차값_최대_원"] \
                 and km is not None and km <= one_band["주행_최대km"]:
             band = key
@@ -279,9 +308,13 @@ def main() -> int:
     cfg, base = out["cfg"], out["cfg"]["기준차"]
     print(f"★ 조건에 든 매물 {out['seen']:,}대 · "
           f"이기는 것 {len(out['win'])}대\n")
-    print(f"기준 — {base['번호']} 차값 {_won(base['차값_원'])} · "
-          f"{base['등록']} · {base['주행km']:,}km · {base['색']} · "
-          f"{base['점수']}점({base['등급']})\n")
+    # ★ 09-11 — ★ 기준차가 ★ **김포**로 바뀌었다 (마스터가 본 것 중 가장 나은 차).
+    #   ★ 칸 이름도 바뀌었다 (`주행km` → `주행_km` · `등급` 이 빠졌다) —
+    #     ★ ★ 없는 칸을 못 박지 않는다.  ★ 있는 것만 낸다
+    print(f"기준 — {base.get('번호')} 차값 {_won(base.get('차값_원'))}"
+          f" (갈아타면 {_won(base.get('갈아타면_원'))})"
+          f" · {base.get('등록')} · {base.get('주행_km', 0):,}km"
+          f" · {base.get('색')} · {base.get('점수')}점\n")
     if not out["win"]:
         print("★ 이기는 차가 없다 — 올리지 않는다 (지시 P-5)")
     for band, _why, one in sorted(out["win"], key=lambda x: x[2][2]):
