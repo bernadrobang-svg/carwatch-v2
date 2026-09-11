@@ -196,9 +196,17 @@
   "inspection"
  ],
  "40812074": [
-  "record"
+  "record",
+  "inspection"
  ],
  "42434543": [
-  "inspection"
+  "inspection",
+  "record"
+ ],
+ "42434975": [
+  "detail"
+ ],
+ "42543525": [
+  "record"
  ]
 }
