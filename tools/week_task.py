@@ -346,3 +346,30 @@ def kb_only(db: str = "carwatch.db") -> list:
         (c.get("차값_최소_원") or 0, cfg["기준차"]["차값_원"])).fetchall()
     conn.close()
     return got
+
+
+def final(db: str = "carwatch.db") -> list:
+    """★ 마스터께 올릴 표 — ★ **차값을 먼저** 쓰고 ★ 주소를 반드시 넣는다 (P-5).
+
+    ★ 「갈아타면」은 ★ 차값 ＋ 위약 80만 ＋ (4.5만km 넘으면) 소모품이다
+    """
+    out = report(db)
+    cfg = out["cfg"]
+    got = []
+    for band, _why, one in sorted(out["win"], key=lambda x: x[2][2]):
+        (site, sid, won, ym, km, color, dx, trim, swap, weld, frame, parts,
+         origin, opt_c, opt_s, opt_n, absent, under, region, paired,
+         *_rest) = one
+        got.append({
+            "칸": band, "차값": won,
+            "갈아타면": swap_won(won, cfg) + wear_won(km, cfg),
+            "등록": str(ym or ""), "주행": km, "색": color or UNKNOWN,
+            "진단": dx or UNKNOWN,
+            "골격": ("무사고" if frame == 0 else
+                    (f"{frame}곳" if frame else UNKNOWN)),
+            "HUD": ("없다" if absent and ("헤드업" in str(absent)
+                                          or "HUD" in str(absent))
+                    else ("있다" if _has_hud(opt_c, opt_s, opt_n) else UNKNOWN)),
+            "주소": _url(site, sid, paired),
+        })
+    return got
