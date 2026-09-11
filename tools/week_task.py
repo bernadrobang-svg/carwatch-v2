@@ -122,6 +122,20 @@ def _plate(site: str, sid: str) -> str | None:
     return _PLATE[key]
 
 
+def _acc_say(acc_cnt, my_cost, ot_cost) -> str:
+    """보험 사고 — ★ **거르지 않고 낸다** (마스터 09-11).
+
+    ★ 마스터 —「★ 보험사고는 괜찮아.  ★ 내가 KB 를 마음에 안 든 이유를
+      ★ ★ 설명한 것뿐이야」 — ★ 그래도 ★ 몇 회 얼마인지는 ★ 보셔야 한다
+    """
+    if acc_cnt is None:
+        return UNKNOWN
+    if not acc_cnt:
+        return "0회"
+    won = (my_cost or 0) + (ot_cost or 0)
+    return f"{acc_cnt}회 {_won(won)}" if won else f"{acc_cnt}회"
+
+
 def _has_pkg(cfg: dict, *jsons) -> bool | None:
     """★ 09-11 — ★ 마스터 —「옵션이 **파퓰러 패키지Ⅰ 이상**이어야 된다」.
 
@@ -229,6 +243,13 @@ def judge(one, cfg: dict) -> tuple:
             got = []
         if got:
             why.append("하체 " + "·".join(str(x) for x in got))
+    # ★★ 09-11 (r1225) — ★ 마스터가 좁히셨다 — ★ 칸을 가리지 않고 건다
+    for one_want in (c.get("색_필수") or ()):
+        if one_want not in str(color or ""):
+            why.append(f"색 {color or UNKNOWN} — 흰색이 아니다")
+            break
+    if km is not None and km > (c.get("주행_최대km") or 80000):
+        why.append(f"주행 {km:,}km — 2.5만km 넘는다")
     if why:
         return None, why
 
@@ -253,8 +274,12 @@ def judge(one, cfg: dict) -> tuple:
             break
         if pkg is False:
             break
-        if acc_cnt is not None and acc_cnt > 0:
-            break
+        # ★★★★★ 09-11 (r1225) — ★ **보험 사고로 거르지 않는다.**
+        #   ★ 마스터 —「★ 보험사고는 괜찮아.  ★ 내가 KB 를 마음에 안 든 이유를
+        #     ★ ★ 설명한 것뿐이야」.  ★ 가이드가 지나가는 말을 조건으로 굳혔다가
+        #       ★ ★ ★ 되돌렸고 ★ 나도 그것을 따라 굳혔었다.  ★ 뺀다.
+        #   ★ 횟수와 금액은 ★ **화면에 낸다** — ★ 마스터가 보고 판단하신다.
+        #   ★ 사고로 거르는 것은 ★ **골격이 상한 것뿐**이다 (위에서 이미 걸렀다)
         if key == "A" and won <= one_band["차값_최대_원"] \
                 and km is not None and km <= one_band["주행_최대km"]:
             band = key
@@ -344,7 +369,9 @@ def main() -> int:
               f" · {ym} · {km:,}km · {color or UNKNOWN}"
               f" · {dx or '진단 없음'}"
               f" · 골격 {frame if frame is not None else UNKNOWN}"
-              f" · ★ HUD {hud}")
+              f" · ★ HUD {hud}"
+              # ★ 보험 사고는 ★ **거르지 않고 낸다** — ★ 마스터가 보신다
+              f" · 보험 {_acc_say(one[21], one[19], one[20])}")
         print(f"      {_url(site, sid, one[18])}")
     # ★★ 「확인하면 이긴다」 — ★ 값·연식·색은 맞는데 ★ 진단·사고를 아직 안 본 것.
     #   ★ **이것이 다음에 받을 목록**이다 — ★ 아무거나 받지 않는다 (가이드 r1215)

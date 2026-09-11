@@ -1,718 +1,719 @@
 {
-  "_ref": "지시서 14장 STEP 141",
-  "_note": "★ 1차는 단일 프로세스 · 로컬 바인딩. 1인 사용 도구다",
-  "host": "127.0.0.1",
-  "port": 8765,
-  "session_cookie": "cw_session",
-  "static_max_age_sec": 3600,
-  "flash_max": 5,
-  "max_form_bytes": 65536,
-  "session_max_age_sec": 43200,
-  "rows_per_page": 30,
-  "signup_policy": "closed",
-  "max_queries_per_request": 20,
-  "price_bins": 8,
-  "today_rows": 12,
-  "market_min_sample": 5,
-  "display_timezone": "Asia/Seoul",
-  "trim_rows": 20,
-  "doc_body_chars": 20000,
-  "browser_collect_rows": 20,
-  "browser_interval_sec": 0,
-  "worker_poll_sec": 2,
-  "progress_refresh_sec": 5,
-  "status_poll_sec": 5,
-  "live_window_sec": 60,
-  "photo_base_url": "https://ci.encar.com",
-  "encar_detail_url": "https://fem.encar.com/cars/detail/{source_id}",
-  "km_bucket": 10000,
-  "monthly_bucket_won": 100000,
-  "page_links": 9,
-  "narrow_max_px": 1099,
-  "hist_min_bar_pct": 3,
-  "min_cell_chars": 3,
-  "char_px": 7,
-  "narrow_px": 360,
-  "shot_widths": [
-    360,
-    640,
-    900,
-    1100,
-    1400
-  ],
-  "cell_chars_min": 3,
-  "row_pad_px": 62,
-  "grid_gap_px": 6,
-  "_cell_chars_note": "한 칸 폭 ÷ 글자 폭이 이보다 작으면 글자가 세로로 떨어진다 (개정 337 · V11-115). row_pad_px 는 main 여백 + tr 여백 + 테두리, grid_gap_px 는 칸 사이 틈이다",
-  "list_card_max_px": 639,
-  "list_wide_min_px": 1750,
-  "_list_width_note": "목록 배치가 바뀌는 폭 (개정 337). 좁음 ≤639 카드 · 중간 640~1749 표 2줄 · 넓음 ≥1750 표 22열. ★ 넓음 경계가 규격의 1100 이 아니라 1750 이다 — 부록 G 목록 22열의 폭 합이 1,710px 이고 좌우 여백이 40px 이다. 1100px 에서 22열을 내면 오른쪽 일곱 열이 잘린다 (실측 08-18). 이 어긋남은 가이드에게 보고했다",
-  "_shot_widths_note": "스크린샷을 찍는 폭 (개정 337). ★ 경계 바로 안쪽·바깥쪽을 함께 본다 — 640 은 좁음↔중간, 1100 은 중간↔넓음 경계다. 전에는 360·1400 둘뿐이라 마스터가 보는 1200px 대가 검증되지 않았다",
-  "curve_max_px": 84,
-  "dealer_target_top": 4,
-  "static_fingerprint_chars": 10,
-  "photo_min_px": 128,
-  "screen_max_kb": 300,
-  "screen_max_sec": 2.0,
-  "min_body_words": 40,
-  "chunk_stale_sec": 600,
-  "invariant_source_lookback": 1200,
-  "_invariant_lookback_note": "불변 필드가 바뀌면 이전 목록 원문을 몇 봉투까지 거슬러 찾는가 (STEP 29 ①). 하루 395쪽이라 이틀치를 덮는다",
-  "list_stale_days": 1,
-  "_list_stale_note": "엔카 목록이 며칠째 안 들어오면 화면에 내는가 (STEP 136i · 개정 316)",
-  "invariant_schema_change_min": 5,
-  "_invariant_schema_note": "같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)",
-  "price_bucket_won": 5000000,
-  "mileage_bucket_km": 10000,
-  "_bucket_note": "값을 누를 때 올려 잡는 단위 (부록 G). ★ 딱 그 값이 아니라 「이하」다",
-  "card_narrow_max_px": 639,
-  "card_screen_px": 700,
-  "card_line_factor": 1.7,
-  "card_pad_px": 24,
-  "_card_screen_note": "부록 G 「좁은 폭에서 한 화면(약 700px)에 매물이 2개 이상 보인다」. 카드 높이의 상한을 줄 수 × 글자 크기 × card_line_factor + card_pad_px 로 어림한다 (V11-108)",
-  "_card_narrow_note": "★ 부록 G 「좁음 (<640)」의 경계다. narrow_max_px(1099)는 표가 카드로 바뀌는 폭이고, 줄 수 상한(목록 6 · 추천 8)은 이 폭 아래에서 잰다",
-  "narrow_folded_labels": [
-    "순위",
-    "비율",
-    "월",
-    "상태",
-    "딜러",
-    "경과",
-    "사이트"
-  ],
-  "narrow_folded_parts": [
-    ".raw"
-  ],
-  "_narrow_folded_parts_note": "★ 칸이 아니라 칸 안의 조각이다. 부록 G 도면은 「시세 −13.0%」만 낸다 — 원값 「시세 5,290만」은 상세로 간다. 칸 자체는 그대로 보인다",
-  "_narrow_folded_note": "★ 부록 G 「좁음 (<640)」 도면에 없는 칸이다 (개정 332). 지우는 것이 아니라 접는 것 — 640 이상과 /why 에는 그대로 있다. 여기 없는 칸을 좁은 폭에서 display:none 하면 V11-70 이 잡는다",
-  "check_light_every_h": 4,
-  "check_light_budget_sec": 180,
-  "_check_light_note": "가벼운 점검 주기와 시간 예산 (개정 335 · S29-0). ★ 실측 2026-08-18 — check_all 72초 + run_tests 75초 + 렌더 4초 = 155초다. 가이드가 예산을 60 → 180 으로 고쳤다 (VERIFY_0817_1830 §2): 「1분은 근거 없이 쓴 숫자입니다. 실측이 155초면 규격이 틀린 것입니다」",
-  "check_daily_at": "23:00",
-  "check_weekly_at": "Fri 02:00",
-  "_check_note": "정기 점검 시각 (개정 334 · S29). 주간은 수집(04:00)보다 앞이다 — 결과를 보고 수집한다",
-  "check_repair_max": 3,
-  "_check_repair_note": "4시간 점검이 한 번에 고치는 상한 (개정 339 · S29-4). ★ 한꺼번에 많이 고치면 무엇이 깨졌는지 모른다. 고쳐도 되는 것은 되돌릴 수 있고 규격이 정해진 것뿐이다 — tools/light_check.py 의 REPAIRS",
-  "chart_bar_min_pct": 2,
-  "chart_line_pad_pct": 8,
-  "_chart_note": "차트 그리기 (개정 340 · V11-119). chart_bar_min_pct — 0 이 아닌데 안 보이면 「없다」로 읽힌다. chart_line_pad_pct — 위아래가 붙으면 점이 잘린다",
-  "report_preview_bytes": 200000,
-  "_report_preview_bytes_note": "리포트 팝업에 낼 앞부분 길이 (개정 357). ★ 전문을 내면 한 쪽이 수백 KB 가 된다. 넘으면 「전체는 내려받으십시오」를 낸다",
-  "raw_rows_max": 40,
-  "_raw_rows_max_note": "「받은 원문」 절에 엔드포인트마다 낼 줄 수 (개정 378). ★ 전부 펴면 한 쪽이 수백 KB 가 된다.  넘으면 「더 있습니다」를 낸다",
-  "raw_probe_listings": 30,
-  "_raw_probe_listings_note": "V11-136 이 엔드포인트마다 몇 매물까지 열어 「낼 수 있는가」를 볼 것인가. ★ 전건을 열면 검사가 파이프라인만큼 무거워진다",
-  "_note_lease_hidden": "개정 420 마스터 확정 — 「리스는 목록에서 아예 뺀다」. ★ 지우지 않는다. 저장은 그대로 하고 화면에서만 뺀다 (P3). ★ 건수는 낸다 — 안 내면 매물이 사라진 것으로 보인다. ?lease=1 로 볼 수 있다",
-  "lease_advertisement_types": [
-    "OPERATING_LEASE",
-    "FINANCING_LEASE",
-    "RENT_CAR",
-    "RENT_SUCCESSION"
-  ],
-  "lease_sell_types": [
-    "렌트",
-    "리스"
-  ],
-  "_note_price_filter_unit_won": "가격대 필터의 단위 (개정 420).  ★ 사람은 「3,500만」이라 말한다 — 원으로 받으면 0 을 네 번 더 쳐야 한다",
-  "price_filter_unit_won": 10000,
-  "top_menu": [
-    {
-      "path": "/listings",
-      "label": "매물",
-      "tip": "조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다",
-      "icon": "≡"
-    },
-    {
-      "path": "/watch",
-      "label": "관심",
-      "tip": "담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다",
-      "icon": "♡"
-    },
-    {
-      "path": "/track",
-      "label": "추적",
-      "tip": "한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다",
-      "icon": "⇄"
-    },
-    {
-      "path": "/recommend",
-      "label": "추천",
-      "tip": "내 기준(예산·주행·연식·색(외)·색(내)·크기)에 가까운 차. ★ 등급을 안 본다 — 여섯 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)",
-      "icon": "★"
-    },
-    {
-      "path": "/",
-      "label": "현황",
-      "tip": "전체 상황과 차종별 시세. ★ 시세를 흡수했다",
-      "icon": "▤"
-    },
-    {
-      "path": "/fetch",
-      "label": "받기",
-      "tip": "엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)",
-      "icon": "⤓"
-    },
-    {
-      "path": "/admin",
-      "label": "관리",
-      "tip": "수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)",
-      "icon": "⚙"
-    }
-  ],
-  "demoted_menu": [
-    "/reports",
-    "/notready"
-  ],
-  "_note_menu_427": "★★ 개정 427 — 상단 메뉴는 셋이다 (마스터 확정). ★ 화면을 지우지 않는다. 들어가는 문만 바꾼다 — demoted_menu 는 관리에서 연다. 왜 줄이나: 「후보」와 「매물」이 둘 다 「조건에 맞는 것을 등급순으로」라 화면이 두 벌이었다. 「비교」는 최종 후보를 고를 때만 쓴다. 「시세」의 차종별 표는 현황에 있어야 할 것이었다. 「딜러」를 먼저 고르는 사람은 없다 — 상세·목록에서 눌러 들어간다",
-  "score_bars": [
-    {
-      "key": "car",
-      "label": "차량",
-      "css": "b1",
-      "groups": [
-        "차량"
-      ]
-    },
-    {
-      "key": "value",
-      "label": "값",
-      "css": "b2",
-      "groups": [
-        "값"
-      ]
-    },
-    {
-      "key": "warranty",
-      "label": "보증",
-      "css": "b3",
-      "groups": [
-        "제조사 보증",
-        "사이트 검증"
-      ]
-    },
-    {
-      "key": "taste",
-      "label": "취향",
-      "css": "b4",
-      "groups": [
-        "취향"
-      ]
-    }
-  ],
-  "_note_bars_427": "★★ 개정 427 — 목록의 시그니처.  ★ 늘 같은 자리·같은 개수·같은 색. ★ 규격은 막대 넷(차량·값·보증·취향)이라 하는데 갈래는 다섯이다 (값·차량·제조사 보증·사이트 검증·취향 — 개정 428). ★ 「보증」 막대에 제조사 보증 78 + 사이트 검증 52 = 130 을 합쳤다. 합치지 않으면 막대가 다섯이 되어 규격과 어긋난다 — 작업기록에 여쭀다. 갈래 이름은 config/scoring.json groups 가 정본이다",
-  "color_swatch": {
-    "흰색": "#EDEDED",
-    "검정색": "#111111",
-    "쥐색": "#8A8F96",
-    "청색": "#2E5B9A",
-    "은회색": "#9BA3AC",
-    "은색": "#C4C9CE",
-    "빨간색": "#B23A34",
-    "담녹색": "#4E6B57",
-    "갈색": "#6B5844",
-    "청옥색": "#2E7D7A",
-    "진주색": "#E8E4DC",
-    "녹색": "#2F6B3A",
-    "하늘색": "#7FB3D8",
-    "남색": "#22355C",
-    "노란색": "#D8B23A",
-    "주황색": "#C9702E",
-    "보라색": "#5B4A85",
-    "분홍색": "#C77E9B",
-    "금색": "#B8963F",
-    "베이지": "#CBBFA6"
+ "_ref": "지시서 14장 STEP 141",
+ "_note": "★ 1차는 단일 프로세스 · 로컬 바인딩. 1인 사용 도구다",
+ "host": "127.0.0.1",
+ "port": 8765,
+ "session_cookie": "cw_session",
+ "static_max_age_sec": 3600,
+ "flash_max": 5,
+ "max_form_bytes": 65536,
+ "session_max_age_sec": 43200,
+ "rows_per_page": 30,
+ "signup_policy": "closed",
+ "max_queries_per_request": 20,
+ "price_bins": 8,
+ "today_rows": 12,
+ "market_min_sample": 5,
+ "display_timezone": "Asia/Seoul",
+ "trim_rows": 20,
+ "doc_body_chars": 20000,
+ "browser_collect_rows": 20,
+ "browser_interval_sec": 0,
+ "worker_poll_sec": 2,
+ "progress_refresh_sec": 5,
+ "status_poll_sec": 5,
+ "live_window_sec": 60,
+ "photo_base_url": "https://ci.encar.com",
+ "encar_detail_url": "https://fem.encar.com/cars/detail/{source_id}",
+ "km_bucket": 10000,
+ "monthly_bucket_won": 100000,
+ "page_links": 9,
+ "narrow_max_px": 1099,
+ "hist_min_bar_pct": 3,
+ "min_cell_chars": 3,
+ "char_px": 7,
+ "narrow_px": 360,
+ "shot_widths": [
+  360,
+  640,
+  900,
+  1100,
+  1400
+ ],
+ "cell_chars_min": 3,
+ "row_pad_px": 62,
+ "grid_gap_px": 6,
+ "_cell_chars_note": "한 칸 폭 ÷ 글자 폭이 이보다 작으면 글자가 세로로 떨어진다 (개정 337 · V11-115). row_pad_px 는 main 여백 + tr 여백 + 테두리, grid_gap_px 는 칸 사이 틈이다",
+ "list_card_max_px": 639,
+ "list_wide_min_px": 1750,
+ "_list_width_note": "목록 배치가 바뀌는 폭 (개정 337). 좁음 ≤639 카드 · 중간 640~1749 표 2줄 · 넓음 ≥1750 표 22열. ★ 넓음 경계가 규격의 1100 이 아니라 1750 이다 — 부록 G 목록 22열의 폭 합이 1,710px 이고 좌우 여백이 40px 이다. 1100px 에서 22열을 내면 오른쪽 일곱 열이 잘린다 (실측 08-18). 이 어긋남은 가이드에게 보고했다",
+ "_shot_widths_note": "스크린샷을 찍는 폭 (개정 337). ★ 경계 바로 안쪽·바깥쪽을 함께 본다 — 640 은 좁음↔중간, 1100 은 중간↔넓음 경계다. 전에는 360·1400 둘뿐이라 마스터가 보는 1200px 대가 검증되지 않았다",
+ "curve_max_px": 84,
+ "dealer_target_top": 4,
+ "static_fingerprint_chars": 10,
+ "photo_min_px": 128,
+ "screen_max_kb": 300,
+ "screen_max_sec": 2.0,
+ "min_body_words": 40,
+ "chunk_stale_sec": 600,
+ "invariant_source_lookback": 1200,
+ "_invariant_lookback_note": "불변 필드가 바뀌면 이전 목록 원문을 몇 봉투까지 거슬러 찾는가 (STEP 29 ①). 하루 395쪽이라 이틀치를 덮는다",
+ "list_stale_days": 1,
+ "_list_stale_note": "엔카 목록이 며칠째 안 들어오면 화면에 내는가 (STEP 136i · 개정 316)",
+ "invariant_schema_change_min": 5,
+ "_invariant_schema_note": "같은 필드가 이만큼 동시에 바뀌면 사이트 스키마 변경이다 (STEP 29 ④)",
+ "price_bucket_won": 5000000,
+ "mileage_bucket_km": 10000,
+ "_bucket_note": "값을 누를 때 올려 잡는 단위 (부록 G). ★ 딱 그 값이 아니라 「이하」다",
+ "card_narrow_max_px": 639,
+ "card_screen_px": 700,
+ "card_line_factor": 1.7,
+ "card_pad_px": 24,
+ "_card_screen_note": "부록 G 「좁은 폭에서 한 화면(약 700px)에 매물이 2개 이상 보인다」. 카드 높이의 상한을 줄 수 × 글자 크기 × card_line_factor + card_pad_px 로 어림한다 (V11-108)",
+ "_card_narrow_note": "★ 부록 G 「좁음 (<640)」의 경계다. narrow_max_px(1099)는 표가 카드로 바뀌는 폭이고, 줄 수 상한(목록 6 · 추천 8)은 이 폭 아래에서 잰다",
+ "narrow_folded_labels": [
+  "순위",
+  "비율",
+  "월",
+  "상태",
+  "딜러",
+  "경과",
+  "사이트"
+ ],
+ "narrow_folded_parts": [
+  ".raw"
+ ],
+ "_narrow_folded_parts_note": "★ 칸이 아니라 칸 안의 조각이다. 부록 G 도면은 「시세 −13.0%」만 낸다 — 원값 「시세 5,290만」은 상세로 간다. 칸 자체는 그대로 보인다",
+ "_narrow_folded_note": "★ 부록 G 「좁음 (<640)」 도면에 없는 칸이다 (개정 332). 지우는 것이 아니라 접는 것 — 640 이상과 /why 에는 그대로 있다. 여기 없는 칸을 좁은 폭에서 display:none 하면 V11-70 이 잡는다",
+ "check_light_every_h": 4,
+ "check_light_budget_sec": 180,
+ "_check_light_note": "가벼운 점검 주기와 시간 예산 (개정 335 · S29-0). ★ 실측 2026-08-18 — check_all 72초 + run_tests 75초 + 렌더 4초 = 155초다. 가이드가 예산을 60 → 180 으로 고쳤다 (VERIFY_0817_1830 §2): 「1분은 근거 없이 쓴 숫자입니다. 실측이 155초면 규격이 틀린 것입니다」",
+ "check_daily_at": "23:00",
+ "check_weekly_at": "Fri 02:00",
+ "_check_note": "정기 점검 시각 (개정 334 · S29). 주간은 수집(04:00)보다 앞이다 — 결과를 보고 수집한다",
+ "check_repair_max": 3,
+ "_check_repair_note": "4시간 점검이 한 번에 고치는 상한 (개정 339 · S29-4). ★ 한꺼번에 많이 고치면 무엇이 깨졌는지 모른다. 고쳐도 되는 것은 되돌릴 수 있고 규격이 정해진 것뿐이다 — tools/light_check.py 의 REPAIRS",
+ "chart_bar_min_pct": 2,
+ "chart_line_pad_pct": 8,
+ "_chart_note": "차트 그리기 (개정 340 · V11-119). chart_bar_min_pct — 0 이 아닌데 안 보이면 「없다」로 읽힌다. chart_line_pad_pct — 위아래가 붙으면 점이 잘린다",
+ "report_preview_bytes": 200000,
+ "_report_preview_bytes_note": "리포트 팝업에 낼 앞부분 길이 (개정 357). ★ 전문을 내면 한 쪽이 수백 KB 가 된다. 넘으면 「전체는 내려받으십시오」를 낸다",
+ "raw_rows_max": 40,
+ "_raw_rows_max_note": "「받은 원문」 절에 엔드포인트마다 낼 줄 수 (개정 378). ★ 전부 펴면 한 쪽이 수백 KB 가 된다.  넘으면 「더 있습니다」를 낸다",
+ "raw_probe_listings": 30,
+ "_raw_probe_listings_note": "V11-136 이 엔드포인트마다 몇 매물까지 열어 「낼 수 있는가」를 볼 것인가. ★ 전건을 열면 검사가 파이프라인만큼 무거워진다",
+ "_note_lease_hidden": "개정 420 마스터 확정 — 「리스는 목록에서 아예 뺀다」. ★ 지우지 않는다. 저장은 그대로 하고 화면에서만 뺀다 (P3). ★ 건수는 낸다 — 안 내면 매물이 사라진 것으로 보인다. ?lease=1 로 볼 수 있다",
+ "lease_advertisement_types": [
+  "OPERATING_LEASE",
+  "FINANCING_LEASE",
+  "RENT_CAR",
+  "RENT_SUCCESSION"
+ ],
+ "lease_sell_types": [
+  "렌트",
+  "리스"
+ ],
+ "_note_price_filter_unit_won": "가격대 필터의 단위 (개정 420).  ★ 사람은 「3,500만」이라 말한다 — 원으로 받으면 0 을 네 번 더 쳐야 한다",
+ "price_filter_unit_won": 10000,
+ "top_menu": [
+  {
+   "path": "/",
+   "label": "매물",
+   "tip": "조건에 맞는 매물을 등급순으로. ★ 후보를 흡수했다 — 등급 필터가 곧 후보다",
+   "icon": "≡"
   },
-  "_note_swatch": "★ 목록의 색 점 (개정 427 시안 .swatch). ★ 원문은 색 이름만 준다 — hex 가 없다.  보이는 색을 여기서 정한다. ★ 판정에 안 쓴다.  taste.color 는 config/dictionaries/color_grade.json 이 정본이다. 여기 없는 색은 점을 안 찍는다 — 지어내지 않는다",
-  "list_columns": [
-    {
-      "n": 1,
-      "name": "등급 + 순위",
-      "find": [
-        "class=\"gr "
-      ]
-    },
-    {
-      "n": 2,
-      "name": "네 묶음 막대",
-      "find": [
-        "class=\"barwrap\""
-      ]
-    },
-    {
-      "n": 3,
-      "name": "사진",
-      "find": [
-        "class=\"desk\""
-      ]
-    },
-    {
-      "n": 4,
-      "name": "차명·트림·연식·주행·색",
-      "find": [
-        "class=\"head\""
-      ]
-    },
-    {
-      "n": 5,
-      "name": "시세차",
-      "find": [
-        "<u>시세차</u>"
-      ]
-    },
-    {
-      "n": 6,
-      "name": "신차대비 %",
-      "find": [
-        "<u>신차대비</u>"
-      ]
-    },
-    {
-      "n": 7,
-      "name": "옵션가",
-      "find": [
-        "<u>옵션가</u>"
-      ]
-    },
-    {
-      "n": 8,
-      "name": "경과일 + 가격 + 변동",
-      "find": [
-        "class=\"price",
-        "<u>경과</u>"
-      ],
-      "_note": "★ 규격 칸 8 은 「경과일 + 가격 + 변동」 셋이 한 칸이다"
-    }
-  ],
-  "_note_list_columns": "★★ 개정 427 STEP 97 「목록 한 행 — 8칸」이 정본이다. ★ 정본이 둘인데 어긋난다 — 규격 표는 8칸(칸 8 = 「경과일·가격·변동」)인데 시안 ref/screens/v2_시안_목록상세.html 은 경과와 가격을 따로 둬 DOM 이 9칸이다. ★ 규격의 **정보 묶음**으로 센다 (V11-162).  시안 배치는 그대로 뒀다 — 작업기록에 여쭀다",
-  "column_evidence": {
-    "사이트": "r.site_badge",
-    "링크": "r.encar_url",
-    "관심": "watch/add",
-    "상태": "r.status_label",
-    "딜러": "r.dealer_shop",
-    "옵션": "r.option_count",
-    "월": "r.monthly_won",
-    "경과": "r.days_on_market",
-    "비율": "r.ratio_pct",
-    "순위": "r.rank"
+  {
+   "path": "/watch",
+   "label": "관심",
+   "tip": "담아 둔 매물. ★ 비교를 흡수했다 — 여기서 체크해 나란히 본다",
+   "icon": "♡"
   },
-  "_note_column_evidence": "★★ 개정 427 — 24칸이 8칸이 되면서 「열」이던 것이 「값」으로 옮겨 앉았다.  사이트 배지는 차명 줄에, 엔카 링크는 그 옆에 있다. ★ 열 이름(「사이트」·「링크」)이 화면 글자로는 안 나온다 — 그래도 값은 있다. V11-68 이 「열 이름이 없다」로 잡지 않게 여기에 표식을 적는다. ★ 값을 버린 것이 아님을 이 표가 증명한다 (개정 429 「값을 버리지 마라」)",
-  "detail_sections": [
-    {
-      "n": 1,
-      "name": "판정"
-    },
-    {
-      "n": 2,
-      "name": "값"
-    },
-    {
-      "n": 3,
-      "name": "총 얼마"
-    },
-    {
-      "n": 4,
-      "name": "관문"
-    },
-    {
-      "n": 5,
-      "name": "아직 모르는 것"
-    },
-    {
-      "n": 6,
-      "name": "취향"
-    },
-    {
-      "n": 7,
-      "name": "상태"
-    },
-    {
-      "n": 8,
-      "name": "가격 추이"
-    },
-    {
-      "n": 9,
-      "name": "딜러"
-    },
-    {
-      "n": 10,
-      "name": "판정 근거"
-    },
-    {
-      "n": 11,
-      "name": "이 차 대신 볼 것"
-    }
-  ],
-  "_note_detail_sections": "★★ 개정 427 STEP 97a — 절 차례는 **판단하는 순서**다. ★ 바꾸지 않는다 (V11-159).  1 절이 맨 위다 — 등급과 그 까닭이 한 화면에 함께 있다",
-  "max_queries_by_route": {
-    "/detail/{listing_id}": 28,
-    "/listings": 24,
-    "/": 21
+  {
+   "path": "/track",
+   "label": "추적",
+   "tip": "한 대의 차가 여러 사이트에 있을 때 어디가 싸고 왜 등급이 다른지. ★ 관심·비교와 다르다 — 여기는 같은 차끼리다",
+   "icon": "⇄"
   },
-  "_note_query_budget_427": "★★ 개정 427 — /detail 이 /why 를 흡수하면서 한 쪽 쿼리가 늘었다. 실측 08-21 — /why 만으로 19/20 이다 (render_listing 14 + 화면 껍데기 5). 상세는 거기에 ⑤ 아직 모르는 것 · ⑧ 가격 추이 · ⑪ 대신 볼 것 세 절을 더 얹는다. ★ 전 화면 상한(20)을 낮추지 않고 이 경로만 따로 적는다 — 다른 화면이 조용히 무거워지는 것을 막기 위해서다. ★ 줄일 자리는 render_listing 14쿼리다.  대청소 때 볼 것으로 적어 둔다",
-  "_top_menu_note_551": "★ 개정 551 — /admin 을 더해 넷이 됐다. ★ V11-157 상한이 「넷을 넘지 않음」이라 통과한다. ★ 마스터 지시 08-23 「메뉴가 전혀 안 보여」",
-  "_top_menu_why": "★★★★★ 09-01 가이드 확정 (개정 1051) — ★ **여섯이다** (매물 · 관심 · 추적 · 추천 · 현황 · 관리).  ★ 09-01 에 ★ 「추천」이 들어갔다 — ★ `V11-157` 의 「다섯」은 08-27 것이다.  ★★ 메뉴는 ★ **마스터 몫**이다.  ★ 개발측이 스스로 바꾸지 않는다",
-  "_demoted_menu_why": "★★ 마스터 확정 08-24 (v3_admin_시안 「화면 — 둘만 남는다」) — ★ 관리에 남는 화면은 ★ 리포트·미판정 ★ 둘뿐이다. ★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서 누른다. ★★ 라우트는 ★ 살려 둔다 — ★ 화면을 지우지 않는다 (개정 427).  ★ 문만 옮겼다",
-  "_note_query_budget_726": "★★ 08-25 — ★ 26 → **27**.  ★ 마스터 확정 ★ 11절 「중복매물」이 ★ 쿼리 하나를 더 쓴다 (명령서 1-3).  ★ ★ 그 하나를 ★ 최대한 줄였다 — ★ 처음엔 둘이었다 (번호판을 따로 물었다).  ★ 조인 한 번으로 합쳐 ★ 하나로 만들었다. ★★ ★ 짝이 있는 매물은 ★ 사고 축을 ★ 한 번에 받는다 — ★ 매물마다 안 부른다. ★ ★ 전 화면 상한(20)은 ★ 그대로다 — ★ 이 경로만 적는다 (개정 427 과 같은 뜻)",
-  "_note_query_budget_741": "★★ 08-25 — ★ 경로 둘을 더 적는다.  ★ **전 화면 상한(20)은 그대로다** — ★ 다른 화면이 조용히 무거워지는 것을 막기 위해서다 (개정 427 과 같은 뜻). ★★ ★ `/listings` 24 — ★ 마스터 확정 ★ 거르개 다섯 절 ＋ ★ 「N곳」 배지 ＋ ★ 사이트별 건수.  ★ ★ 줄일 것은 줄였다 — ★ 색 조회를 ★ **여섯에서 둘로** (`_split_top` 을 두 번씩 부르고 있었다) · ★ 「N곳·값 폭」 서브쿼리 셋을 ★ 조인 하나로. ★ ★ 남은 넷은 ★ 리스 뺀 수를 세는 `COUNT(*)` 로 ★ 앞서부터 있던 것이다. ★★ ★ `/` 21 — ★ 마스터 확정 ★ 1절 「오늘」 (새로 뜬 것·값 내린 것·사라진 것·마지막 재판정).  ★ 넷을 ★ **한 쿼리**로 받는다",
-  "encar_blocked_days": 2,
-  "site_detail_url": {
-    "encar": "https://fem.encar.com/cars/detail/{source_id}",
-    "kbchachacha": "https://www.kbchachacha.com/public/car/detail.kbc?carSeq={source_id}",
-    "reborncar": "https://www.reborncar.co.kr/m/smartbuy/SB1002/{source_id}",
-    "hyundai_cert": "https://certified.hyundai.com/m/goods/goodsDetail.do?goodsNo={source_id}",
-    "bobaedream": "https://m.bobaedream.co.kr/mycar/mview/{source_id}",
-    "bmw_bps": "http://www.bavarian-bps.co.kr/shop/item.php?it_id={source_id}",
-    "kcar": null,
-    "kia_cpo": "https://cpo.kia.com/products/detail/?id={source_id}",
-    "heydealer": "https://www.heydealer.com/market/cars/{source_id}",
-    "lexus_certified": "https://certified.lexus.co.kr/car-detail/?idx={source_id}",
-    "volvo_selekt": null
+  {
+   "path": "/recommend",
+   "label": "추천",
+   "tip": "내 기준(예산·주행·연식·색(외)·색(내)·크기)에 가까운 차. ★ 등급을 안 본다 — 여섯 축의 합으로만 세운다 (규격 RECOMMEND_SCREEN.md)",
+   "icon": "★"
   },
-  "_site_detail_url_note": "★★★ 명령서 72장 — ★ 원문으로 가는 문이다.  ★ 사이트마다 다르다. ★ 실측 08-26 — 전에는 `encar_detail_url` 하나로 다 만들어 K카·헤이딜러·KB 매물이 전부 encar.com 으로 갔다 (엔카는 모르는 carid 에도 200 을 준다). ★★ 지어내지 않았다 — 잰 자리를 적는다: encar 는 STEP 149q(마스터 확인) · kbchachacha 는 상세 본문의 canonical (실측 표본 3건) · reborncar 는 상세 본문의 링크 (실측 표본 3건) · hyundai_cert·bobaedream·bmw_bps 는 `config/endpoints.json` 의 상세 경로 자체가 사람이 보는 쪽이다 (HTML 을 그대로 받는다). ★★ null 다섯은 ★ **모른다**.  ★ kcar·kia_cpo·heydealer·lexus_certified 는 우리가 API 만 받아 사람 쪽 주소를 못 쟀고, volvo_selekt 는 주소에 {model} 이 더 든다. ★ null 이면 ★ **링크를 안 낸다** — ★ 엔카로 보내지 않는다.  ★ 지어내면 S46-94 가 잡는다  ★★★★ 08-29 (명령서 89장 · 마스터) — ★ 엔카를 `www.encar.com/dc/dc_cardetailview.do?carid=` 에서 `fem.encar.com/cars/detail/{source_id}` 로 바꿨다.  ★ 까닭을 실측으로 적는다 — ★ 옛 주소는 ★ **없는 매물번호(`abcdef`)에도 ★ 똑같이 200 · 2,547바이트**를 준다 (제목도 없다).  ★ 곧 ★ 그 200 은 ★ 「차가 있다」를 ★ 하나도 증명하지 않는다 — ★ 빈 껍데기다.  ★★ ★ 새 주소는 ★ **우리 서버 IP 에서 확인할 수 없다** — ★ 302 로 `/client-verification/blocked` 에 보낸다 (수집이 407 인 것과 같은 차단).  ★ ★ 그래서 ★ 「차 이름이 나오는지」는 ★ **마스터 휴대폰에서만** 확인된다 — ★ 개발측이 200 으로 세지 않는다 (마스터 지시 08-29)  ★★★★★ 09-01 (마스터 지시 · 가이드 실측) — ★ **넷을 쟀다.  ★ 하나는 막혔다**.  ★ 재는 법 — ★ **목록 화면을 브라우저로 열어 ★ 링크를 읽는다**.  ★ 주소를 지어내 두드리지 않는다.  ★★ `heydealer` `www.heydealer.com/market/cars/{source_id}` — ★ 200 · 매물번호가 ★ **24번** 나온다 (robots 는 `ClaudeBot Allow: /`).  ★★ `lexus_certified` `certified.lexus.co.kr/car-detail/?idx={source_id}` — ★ 목록에서 읽었다. ★ `curl` 로는 4,424B 껍데기라 ★ **브라우저로 검산했다** — `idx=6194`→**RX 500h** · `idx=6047`→**NX 350h** ★ 우리 DB 차종과 같다.  ★★ `kia_cpo` `cpo.kia.com/products/detail/?id={source_id}` — ★ 목록 링크의 `id=10091` 이 ★ **우리 source_id 와 같다**.  ★★ `volvo_selekt` — ★ `{site_model}` 이 ★ **더 든다** (`/kr/vehicles/volvo/{model}/{id}`). ★ `_source_url()` 이 지금 `source_id` 하나만 넣으므로 ★ **틀을 두 칸으로 늘려야 한다** (작업가이드 13).  ★★★ `kcar` 는 ★ **`null` 로 둔다 — ★ robots 가 막는다**: `m.kcar.com/robots.txt` 가 ★ `Disallow: /bc/detail/carInfoDtl?` · `/car/info/` 를 적었다. ★ **못 잰 것이 아니라 ★ 두드리면 안 되는 것**이다 — ★ 화면에 그렇게 적는다 (RULES.md 2).  ★★ 겪은 것 — ★ 볼보에서 ★ `/kr/volvo/{m}/{id}` 와 `/kr/vehicle/{m}/{id}` 가 ★ **둘 다 200 · 54,426B 로 같았다**. ★ 매물번호가 ★ **한 번도 안 나왔다** — ★ 검색 화면을 돌려준 것이다. ★ ★ 마스터 인수인계 ㉮ 「200 이 왔다와 제대로 왔다는 다르다 — ★ 반드시 건수를 세어라」 그대로다",
-  "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다  ★★ 08-29 — ★ 이 칸도 새 주소로 바꿨다.  ★ 옛 꼴이 남아 있으면 ★ 이것을 읽는 자리가 ★ 죽은 문을 만든다 (`ENCAR_API.md:50`)",
-  "db_busy_timeout_ms": 30000,
-  "_db_busy_timeout_why": "★★★ 08-26 실측 — ★ 로그인이 500 이었다.  ★ 마스터께서 담아 두신 차를 못 보셨다 (명령서 74장 ② · 08-26 지시 ②).  ★ 까닭 — ★ 파이프라인이 ★ 웹과 같은 프로세스에서 돌며 ★ 쓰기 잠금을 쥐고, ★ SQLite 의 busy_timeout 기본값이 ★ 0 이라 ★ `POST /login` 의 auth_login_attempt INSERT 가 ★ 곧바로 「database is locked」로 죽었다.  ★ 읽기는 WAL 이라 200 이었다 — ★ 그래서 ★ 쓰기만 골라 죽었다.  ★ 이 값만큼 ★ 기다렸다가 쓴다.  ★ 근본은 ③(웹에서 떼어내기)이다 — ★ 이것은 버팀목이다",
-  "db_batch_commit_rows": 100,
-  "db_batch_commit_pause_ms": 20,
-  "_db_batch_commit_pause_ms_why": "★★★★ 08-29 실측 — ★ 행수마다 커밋해도 ★ 수집기가 죽었다.  ★ 한 번에 쥐는 시간은 이미 짧다 (S6 최대 2.50초 · 1,503번 끊긴다). ★ ★ 그런데 ★ S6 은 588초 중 559초(95%)를 쥐고 있고 ★ 틈이 평균 19ms 다 — ★ ★ SQLite 는 점점 늘어나는 간격으로 다시 두드리므로 ★ 그 좁은 창을 계속 빗나가 ★ ★ 30초를 다 쓰고 죽는다.  ★ 그래서 커밋 뒤 이만큼 쉬어 창을 넓힌다.  ★★ 사본 실측 (재판정 ＋ 수집기 꼴 쓰기 200행/0.5초) — ★ pause=0ms: 재판정 543.8s · 성공 170 · locked 5 · 최대 대기 30.17초 / ★ pause=20ms: 재판정 630.1s · 성공 350 · locked 0 · 최대 대기 28.83초.  ★ 재판정이 15.9% 느려지는 대신 ★ 수집기가 안 죽고 ★ 쓰기 처리량이 2배가 된다.  ★ 0 이면 안 쉰다 (옛 꼴)",
-  "_db_batch_commit_rows_why": "★★★ 08-26 실측 — ★ busy_timeout 30초를 걸어도 ★ 로그인이 여전히 500 이었다.  ★ 까닭 — ★ S4·S6·S6a·S8·S9·S10 이 ★ **한 단계를 통째로 한 트랜잭션**으로 묶는다 (`BATCH_STEPS`).  ★ S6 은 130,040행이라 ★ 쓰기 잠금을 ★ 몇 분씩 쥔다.  ★ 그동안 ★ 웹의 쓰기가 ★ 전부 죽는다 — ★ 로그인·관심 담기·관리.  ★★ ★ 떼어내도(③) 안 낫는다 — ★ SQLite 는 ★ 프로세스가 아니라 ★ **파일**을 잠근다.  ★ 그래서 ★ 이 행수마다 한 번 커밋해 ★ 잠금 창을 잘라 낸다.  ★ 안전 — ★ 원문(RAW)이 이미 있어 ★ 중간에 죽어도 ★ 재파싱으로 복구된다 (`store/raw.batch` 가 처음부터 그렇게 적어 두었다).  ★ 0 이면 안 자른다  ★ 08-28 — ★ 200 에서도 ★ 30초를 넘는 창이 남아 ★ K카 수집기가 한 번 죽었다 (쓰기 5/6 성공 · 한 번 10초 넘김).  ★ 100 으로 내렸다",
-  "db_temp_store": "MEMORY",
-  "_db_temp_store_why": "★★ 08-28 실측 — ★ 현황(/)의 두 조회가 ★ GROUP BY · ORDER BY 에 ★ TEMP B-TREE 를 쓴다 (EXPLAIN QUERY PLAN).  ★ SQLite 기본값은 ★ 그 임시 표를 ★ 디스크에 쓴다.  ★ 이 장비는 t4g.small · EBS 다 — ★ 램에 두어 디스크를 안 건드린다.  ★ 표본이 9,543행이라 ★ 램에 부담이 없다.  ★ 쓰는 곳은 `web/app.py` 의 `_open_db`",
-  "raw_body_compress": true,
-  "raw_body_compress_min_bytes": 1024,
-  "raw_body_compress_level": 6,
-  "_raw_body_compress_why": "★★★ 08-28 마스터 지시 — 원문(raw_response.body)을 zlib 로 눌러 둔다.  ★ 까닭 — 이 장비는 t4g.small · 램 1,841MB 인데 DB 가 1.00GB 라 페이지 캐시에 안 들어간다.  화면이 차가울 때 10초 · 더울 때 0.7초로 14배 갈렸다 (outputs v285).  ★ raw_response 가 그 DB 의 77%(774MB)다.  ★★ 규격의 「원문 무손실 · 삭제 금지 · 추가만」을 어기지 않는다 — 압축은 무손실이고 글자 하나 안 바뀐다.  tools/compress_raw.py 가 옮길 때 전건을 되돌려 대조한다.  ★ min_bytes — 이보다 작으면 안 누른다.  머리글이 도리어 커진다.  실측 08-28 — body 가 있는 143,970건 중 86,969건이 1KB 미만인데 그 몫은 전체 바이트의 일부다.  ★ level 6 은 zlib 기본값이다 — 표본 400건에 3.6배 줄었다.  9 로 올려도 크게 안 달라지고 CPU 만 쓴다 (vCPU 2 · 버스터블이다).  ★ false 로 두면 새로 넣는 것만 안 누른다 — 이미 눌린 것은 raw_body() 가 그대로 읽는다",
-  "sian_screens": {
-    "v4m_listings_시안.html": "/listings",
-    "v4m_track_시안.html": "/track",
-    "v4m_notready_시안.html": "/notready",
-    "v4m_dashboard_시안.html": "/",
-    "v4m_detail_시안.html": "/detail/{listing_id}"
+  {
+   "path": "/status",
+   "label": "현황",
+   "tip": "전체 상황과 차종별 시세. ★ 시세를 흡수했다",
+   "icon": "▤"
   },
-  "sian_word_skip": [
-    "K카",
-    "곳에도",
-    "관리",
-    "관심",
-    "도는",
-    "리본카",
-    "문이",
-    "사진",
-    "알핀",
-    "없으면",
-    "에스프리",
-    "엔카",
-    "여쭐",
-    "이전비",
-    "있다",
-    "점보모터스",
-    "접어",
-    "지우기",
-    "차값",
-    "차차차",
-    "케이카",
-    "헤이딜러"
-  ],
-  "_sian_word_skip_why": "★★ [09-02 · `v330`] ★ 시안의 「사진」·「지우기」는 ★ **빈 자리 글자**다 — ★ 개발측 「★ 우리 화면은 ★ 진짜 사진이 **30장** 나온다 — ★ 그래서 그 글자가 안 나온다」.  ★ ★ **옳다.  ★ 우리 화면이 더 낫다** — ★ 검사에서 뺀다",
-  "login_screens": {
-    "/watch": 200,
-    "/admin": 200
+  {
+   "path": "/fetch",
+   "label": "받기",
+   "tip": "엔카가 서버 IP 를 막습니다(407). 이 폰 회선으로 대신 받습니다. ★ 마스터만 보입니다 (web/app.py 가 권한으로 가린다)",
+   "icon": "⤓"
   },
-  "_login_screens_why": "★★ 검사 `S46-99` — ★ **로그인한 뒤** 열려야 하는 화면이다 (마스터 지시 08-26).  ★ ★ `S46-95` 는 ★ **로그인 앞**만 본다 — ★ 거기서 이 둘은 ★ 403 이 정상이라 ★ 「자리를 안 내준다」를 ★ 못 잡았다.  ★ 자격은 ★ `secrets/check_login.json` 에 둔다 — ★ `secrets/` 는 `.gitignore` 에 있다.  ★ 비밀번호를 저장소에 적지 않는다",
-  "sian_screens_login": {
-    "v4m_watch_시안.html": "/watch",
-    "v4m_admin_시안.html": "/admin",
-    "v4m_compare_시안.html": "/compare",
-    "v4m_recommend_시안.html": "/recommend"
-  },
-  "_sian_screens_login_why": "★★ 명령서 82장 — 「★ 여덟 화면 다」.  ★ 이 셋은 ★ 로그인 뒤에만 열린다 (앞에서는 403 이 정상이다).  ★ 자격은 `secrets/check_login.json` 이고 ★ `.gitignore` 에 있다 — ★ 비밀번호를 저장소에 안 적는다.  ★ 검사 `S46-100`  ★★ 09-01 — ★ `v4m_recommend_시안.html` 을 더했다 (추천 화면 · 마스터 확정).  ★ 탭 2·3 은 `v4m_recommend_tab23_시안.html` 에 따로 있다 — ★ **빈 채로 두는 꼴**을 보인다",
-  "sian_order_override": {
-    "/listings": [
-      "이 화면은 무엇을 하는 곳인가",
-      "차종",
-      "트림",
-      "가격대",
-      "연료",
-      "등급",
-      "자세한 조건",
-      "정렬"
-    ]
-  },
-  "_sian_order_override_why": "★★★ 명령서 87장 (마스터 08-28) — 「★ 차종 · 트림 · 가격대 · ★ 연료 · 등급 · 정렬」 · ★ 「자리는 가격대 다음 · 등급 앞」.  ★ 앞선 82장의 차례를 ★ 이것으로 갈음한다.  ★ 시안 파일에는 ★ 아직 연료 칩이 없다 — ★ 마스터께서 「시안에 그려 뒀다」 하셨으나 ★ ★ 파일에서는 못 찾았다.  ★ 그래서 ★ 말씀하신 차례로 견준다.  ★ 시안을 고쳐 주시면 이 줄을 지운다 (규칙 2 — 시안은 개발측이 안 고친다)",
-  "fuel_groups": [
-    {
-      "key": "electric",
-      "label": "전기만",
-      "values": [
-        "전기",
-        "EV"
-      ]
-    },
-    {
-      "key": "hybrid",
-      "label": "하이브리드만",
-      "match": [
-        "하이브리드",
-        "+전기"
-      ]
-    },
-    {
-      "key": "gasoline",
-      "label": "가솔린",
-      "match": [
-        "가솔린",
-        "휘발유"
-      ],
-      "not": [
-        "하이브리드",
-        "+전기"
-      ]
-    },
-    {
-      "key": "diesel",
-      "label": "디젤",
-      "match": [
-        "디젤",
-        "경유"
-      ],
-      "not": [
-        "하이브리드",
-        "+전기"
-      ]
-    }
-  ],
-  "_fuel_groups_why": "★★★ 명령서 87장 (마스터 08-28) — 「★ 나는 내 목록에서 ★ 전기차만 보고 싶은 거야」.  ★ 매물의 ★ **연료 칸(`fuel_raw`)** 으로 거른다 — ★ 차종이 아니다.  ★ ★ 그래야 ★ XC40 안의 EX40(전기)이 갈린다.  ★★ ★ 값은 ★ **전수로 재서** 묶었다 (실측 08-28 · 33가지) — 가솔린 11,160 · 가솔린+전기 2,402 · 디젤 1,647 · 전기 1,196 · EV 84 · 「1.6 가솔린 하이브리드」처럼 배기량이 붙은 것도 있다.  ★★★ ★ 「전기만」은 ★ **정확히 `전기`·`EV`** 다 — ★ `가솔린+전기`(하이브리드)와 ★ `수소+전기`(연료전지)는 ★ **안 넣는다**.  ★ 검사 `S46-102` 가 그것을 지킨다.  ★ 나머지 셋은 낱말로 가른다 — ★ `match` 중 하나가 들고 ★ `not` 이 안 들면 그 갈래다",
-  "sian_cut_regions": {
-    "/detail/{listing_id}": [
-      "판정 근거 — 24축 전부",
-      "11 ★ 중복매물"
-    ]
-  },
-  "_sian_cut_regions_why": "★★★ 마스터 08-28 — 「★ 시안이 정본이다.  ★ 검사가 어긋나면 ★ 검사를 고쳐라」.  ★ `S46-100` 은 ★ **처음 나온 자리**로 차례를 견준다.  ★ ★ 그런데 ★ 상세에는 ★ 시안에 없는 ★ 「판정 근거 — 24축 전부」 표가 있고 ★ ★ 거기에 ★ 「골격」·「용도」가 ★ 먼저 나온다 — ★ 관문 칩보다 위다.  ★ ★ 그래서 ★ 자리가 맞는데도 ★ 「용도 → 골격」으로 뒤집혀 보였다 (실측 08-28).  ★ 여기 적은 두 글자 사이를 ★ 견주기 전에 잘라 낸다 — ★ 화면은 그대로 둔다.  ★ ★ 시안에 그 표가 그려지면 ★ 이 줄을 지운다",
-  "pref_brands": {
-    "볼보": [
-      "XC40_EV",
-      "C40_EV",
-      "POLESTAR4_EV"
-    ],
-    "제네시스": [
-      "GV70_EV"
-    ],
-    "BMW": [
-      "IX3_EV"
-    ],
-    "폭스바겐": [
-      "ID4_EV",
-      "ID5_EV"
-    ],
-    "기아": [
-      "EV4_EV"
-    ],
-    "테슬라": [
-      "MODEL_Y"
-    ],
-    "르노": [
-      "KOLEOS_HEV"
-    ]
-  },
-  "_pref_brands_why": "★★ 08-30 마스터 확정 — 「★ 선호차종은 볼보 · BMW · 폭스바겐 · 벤츠 · 르노 · 제네시스 ★ 그리고 나머지이고」 ＋ 「★ 폴스타 넣고.  ★ iX3 · ID.4 넣어 줘」.  ★ ★ **폴스타는 볼보 갈래**다 (볼보에서 갈라져 나왔다).  ★ `IX3_EV`·`ID4_EV` 는 ★ 등록은 됐고 ★ 질의 열쇠가 비어 있다(밀린일 G27) — ★ 가이드가 채운다.  ★ `UX300E_EV`(렉서스)는 ★ 「그 밖」이다 — ★ 마스터께서 선호에 안 넣으셨다.  ★ 지금 ★ **21/31 종**이 선호차종이다.  ★ 검사 `S46-192`  ★★ 08-31 — ★ 마스터 「★ **그리고 EV4 도 선호차종에 넣어 줘.  ★ 마음에 들더라**」.  ★ ★ EV4 는 ★ **기아**라 ★ 앞서 정하신 여섯(볼보·BMW·폭스바겐·벤츠·르노·제네시스)에 없다 — ★ **기아 갈래를 새로 열었다**.  ★ 다만 ★ **차종은 EV4 하나만** 넣었다 — ★ 「기아 전체」라 하신 것이 아니다.  ★ 스포티지(`SPORTAGE_LPI`)는 ★ 「그 밖」 그대로다.  ★ ★ EV4 는 ★ **새로 등록했고 질의 열쇠가 빈다**(G27) — ★ 수집기가 건너뛴다  ★★★ 09-01 — ★ 마스터께서 ★ **대상을 아홉으로 좁히셨다**(「★ 내가 범위를 조정했을 것 같은데.  ★ ID4 ID5 iX3 model Y, EV4, GV70, 폴스타 4, C40 XC40」).  ★ ★ **아홉이 다 선호차종**이 됐다 — ★ 「그 밖」이 ★ **0** 이다.  ★ ★ ★ 그러므로 ★ **「선호차종만」 단추는 지금 쓸 데가 없다** — ★ 만들되 ★ 다 걸린다고 적어라.  ★ 테슬라를 갈래에 더했다 (모델 Y) — ★ 마스터께서 넣으셨다  ★★★ 09-01 저녁 — ★ 마스터 「★ XC60 빼고 ★ S60 빼고 ★ 볼보는 전기차만 볼 거야.  ★ X3 도 빼」.  ★ ★ 대상이 ★ **10종**이 됐다 — ★ 볼보는 ★ `XC40_EV`·`C40_EV`·`POLESTAR4_EV` ★ 전기 셋만.  ★ ★ `XC40_IMPORT`(가솔린·디젤·PHEV)도 뺐다 — ★ 「전기차만」이라 하셨다.  ★ ★ ★ 콜레오스만 하이브리드이고 ★ 나머지 아홉이 전기차다",
-  "_top_menu_icon_why": "★★★★★ 09-02 마스터 지시 — 「★ 시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해」.  ★ 시안 `.v4-tabs` 가 ★ **기호를 준다** — ★ 현황 ▤ · 매물 ≡ · 추천 ★ · 관심 ♡ · 추적 ⇄ · 관리 ⚙.  ★★ 지어내지 않았다 — ★ 시안에서 그대로 옮겼다.  ★★ 메뉴의 **차례와 이름**은 ★ 여전히 마스터 몫이다 — ★ 안 건드렸다",
-  "_note_query_budget_1082": "★★★★★ 09-03 — ★ 27 → **28**.  ★ 마스터 물음 ② 「★ 상세에 ★ **보험 이력 절**을 내라 — ★ 성능점검 절과 나란히」(`S46-219`)가 ★ 쿼리 하나를 더 쓴다.  ★★ 줄일 것은 줄였다 — ★ `PRAGMA table_info` 를 ★ 한 번만 보고 들고 있는다 (전에는 매물마다 봤다 · 실측 09-03 — 29 → 28).  ★★ ★ **전 화면 상한(20)은 그대로다** — ★ 이 경로만 적는다 (개정 427·726·741 과 같은 뜻).  ★ 다른 화면이 조용히 무거워지는 것을 막는다",
-  "site_detail_url_2arg": {
-    "_note": "★★★ 09-01 — ★ **두 칸이 드는 원문 문**이다.  ★ `{source_id}` 말고 ★ `{site_model}` 도 든다.  ★ `_source_url()` 이 지금 ★ **한 칸만** 넣어 ★ `site_detail_url` 에 두면 ★ `KeyError` 로 죽는다 — ★ 09-01 에 내가 그렇게 넣었다가 ★ `S46-94` 가 잡았다.  ★★ 그래서 ★ **잰 것은 여기 남기고** ★ 코드가 두 칸을 받게 되면 ★ `site_detail_url` 로 옮긴다 (작업가이드 13)",
-    "volvo_selekt": "https://selekt.volvocars.co.kr/kr/vehicles/volvo/{site_model}/{source_id}"
-  },
-  "_sian_word_skip_why_0902": "★★★★★ 09-02 (물음 20) — ★ 「문이」·「없으면」을 더했다.  ★ 시안 `v4m_listings_시안.html:181` 의 `.lst-why-empty` 안에 있는 것은 ★ ★ **화면에 낼 글이 아니라 ★ 지시문**이다 — ★ ★ ★ 「★ 원문 **문이** 없으면 ★ 『그 사이트는 주소를 아직 못 쟀습니다』를 낸다 (RULES.md 2)」.  ★ 낼 글(「그 사이트는 주소를 아직 못 쟀습니다」)은 ★ **낸다** — ★ ★ `/listings?site=kcar` 에서 ★ 12행 중 12행이 그것을 낸다 [실측 09-02].  ★★ 다만 ★ 기본 쪽에는 ★ 링크 없는 행이 없어 ★ 그 낱말이 안 보인다 — ★ ★ 그것은 ★ **건너뛰지 않았다** (사이트는·주소를·아직·쟀습니다는 그대로 둔다)",
-  "bare_option_won": 1000000,
-  "_bare_option_won_why": "★★★★★ 09-03 (1부 1-10 · 시험자 10) — ★ **깡통의 잣대**.  ★ 시안 `ref/screens/v3_listings_시안.html:216` — 「★ 깡통은 ★ **옵션가 100만원 이하** (마스터 확정 08-24)」.  ★ 코드에 안 박는다 (`S14`) — ★ 마스터께서 바꾸시면 여기만 고친다",
-  "_sian_word_skip_why_0902b": "★★★★★ 09-02 (가이드) — ★ **낱말을 하나씩 빼는 것은 두더지잡기다**.  ★ 09-02 에 ★ 「거르기만·규격·나쁜·낮다·눌러도·먼저」 ★ **25개**가 한꺼번에 걸렸다 — ★ 다 ★ 내가 시안에 적은 ★ **지시문**이다.  ★★ 그래서 ★ `S46-98` 이 ★ **그 상자를 통째로 걷어내게** 고쳤다 — `.v4-why-empty` · `.rc-why-empty` · `.lst-why-empty` · `.wch-why-empty` · `.trk-why-empty` · `.sld-why-empty` · `.adm-note` · `.rc-rank-note` · `.lst-pairhead`.  ★ ★ `RULES.md` 2 조 — 「★ 없으면 왜 없는지를 글로 낸다」를 ★ 시안에 적어 둔 것이라 ★ **화면에 낼 글이 아니다**.  ★★★ 그 뒤 ★ **시안 5장의 낱말 103개가 다 화면에 있다**.  ★ 낱말을 더 빼지 않아도 된다",
-  "photo_max_per_listing": 20,
-  "_photo_max_per_listing_why": "★★★★★ [마스터 확정 09-04 · 3A-2] ★ 「★ 사진은 ★ **URL 로만** · ★ **스무 장까지**」.  ★ 상한이 없어 ★ `photo_list_json` 이 부풀었다 — ★ 실측 09-05: ★ 볼보셀렉트 **4,358자** · K카 3,637 · 리본카 2,964 · KB **2,868** (평균 2,434·1,946·1,973·1,781).  ★ 스무 장을 넘는 매물이 ★ **1,480건**이었다.  ★★ 그림은 ★ **안 내려받는다** (3A-1) — ★ 주소만 든다.  ★ 자르는 자리는 ★ `store/core.py` 하나다 — ★ 파서마다 적지 않는다",
-  "_note_recommend_tabs": "★★★★★ 09-06 r1184 A-1 — ★ 추천 탭은 ★ **자료로 정한다**. ★ 마스터 — 「★ 이런 식으로 ★ 탭들이 자꾸 늘어날 거고 ★ 어떤 것은 빠지고 ★ 어떤 것은 추가될 거야」.  ★ 코드에 세 개를 박지 마라 (규격 RECOMMEND_SCREEN ①). ★ n=주소의 tab 값 · label=탭에 적을 말 · template=그 탭이 쓰는 틀 · ★ count=탭 이름 뒤에 붙일 수 (analyze 는 의뢰한 대수) · ★ targets=그 탭이 보는 차종 (탭 4 는 마스터께서 지금 고르시는 둘)",
-  "recommend_tabs": [
-    {
-      "n": "1",
-      "label": "내 기준에 가까운 차",
-      "template": "recommend.html"
-    },
-    {
-      "n": "2",
-      "label": "값 → 등급 → 취향",
-      "template": "recommend2.html"
-    },
-    {
-      "n": "3",
-      "label": "분석",
-      "template": "analyze.html",
-      "count": "analyze"
-    },
-    {
-      "n": "4",
-      "label": "GV70",
-      "template": "gv70.html",
-      "targets": [
-        "GV70_25T",
-        "X3_IMPORT"
-      ]
-    }
-  ],
-  "_note_recommend_picks": "★★★★★ 09-06 r1184 A-7 — ★ 탭 2 고르개. ★ 여럿 골라 AND 로 건다. ★ 값·지역 칸을 코드에 박지 않는다 (S14). ★ 「배달(전국 배달)」은 ★ 아직 못 낸다 — ★ 열두 사이트 어디도 ★ 배달 여부를 주지 않는다 (09-06 실측 0건). ★ 자료가 오면 여기에 더한다",
-  "recommend_price_bands": [
-    {
-      "key": "3000",
-      "label": "3,000만 이하",
-      "max_won": 30000000
-    },
-    {
-      "key": "3500",
-      "label": "3,500만 이하",
-      "min_won": 30000000,
-      "max_won": 35000000
-    },
-    {
-      "key": "4000",
-      "label": "4,000만 이하",
-      "min_won": 35000000,
-      "max_won": 40000000
-    },
-    {
-      "key": "over",
-      "label": "4,000만 초과",
-      "min_won": 40000000
-    }
-  ],
-  "recommend_km_bands": [
-    {
-      "key": "3",
-      "label": "3만 이하",
-      "max_km": 30000
-    },
-    {
-      "key": "36",
-      "label": "3~6만",
-      "min_km": 30000,
-      "max_km": 60000
-    },
-    {
-      "key": "610",
-      "label": "6~10만",
-      "min_km": 60000,
-      "max_km": 100000
-    },
-    {
-      "key": "10p",
-      "label": "10만 초과",
-      "min_km": 100000
-    }
-  ],
-  "recommend_regions": [
-    {
-      "key": "seoul",
-      "label": "서울",
-      "match": [
-        "서울",
-        "구"
-      ],
-      "kind": "near"
-    },
-    {
-      "key": "incheon",
-      "label": "인천",
-      "match": [
-        "인천"
-      ],
-      "kind": "near"
-    },
-    {
-      "key": "gyeonggi",
-      "label": "경기",
-      "match": [
-        "경기"
-      ],
-      "kind": "near"
-    },
-    {
-      "key": "daegu",
-      "label": "대구",
-      "match": [
-        "대구"
-      ],
-      "kind": "far"
-    },
-    {
-      "key": "etc",
-      "label": "그 외",
-      "match": [],
-      "kind": "far"
-    }
-  ],
-  "recommend_sorts": [
-    {
-      "key": "value",
-      "label": "값순"
-    },
-    {
-      "key": "grade",
-      "label": "등급순"
-    },
-    {
-      "key": "taste",
-      "label": "취향순"
-    },
-    {
-      "key": "safe",
-      "label": "차량 안전순"
-    },
-    {
-      "key": "km",
-      "label": "주행순"
-    },
-    {
-      "key": "year",
-      "label": "연식순"
-    }
-  ],
-  "_note_tab3": "★★★★★ 09-06 r1190 A-14 — ★ 탭 3 은 ★ **GV70 후보 화면**이다 (마스터 확정 09-06 — 「가이드가 쓴 글」이 아니다). ★ 조건을 ★ 코드에 박지 않는다 (S14) — ★ 여기가 정본이다. ★ 마스터께서 조건을 바꾸시면 ★ 이 값만 고친다",
-  "tab3_candidate": {
-    "target": "GV70_25T",
-    "price_max_won": 35000000,
-    "price_grace_won": 36000000,
-    "year_from": "2022-01",
-    "mileage_max_km": 80000,
-    "color_ext": [
-      "흰색"
-    ],
-    "need_warranty": true,
-    "need_delivery": true,
-    "need_inspection": true,
-    "sites": [
-      "encar",
-      "kbchachacha",
-      "kcar",
-      "reborncar",
-      "heydealer"
-    ],
-    "insurance_max_won": 3000000,
-    "clean_max_won": 1000000,
-    "thin_points": 700,
-    "near_max": 30,
-    "_near_max_why": "★ 「하나가 아쉬운 차」를 ★ **지우지 않는다** (마스터 확정) — ★ 다만 ★ 1,430장을 한 쪽에 다 그리면 ★ 2.7MB 라 ★ 화면이 못 쓴다 (09-06 실측). ★ **아쉬운 수가 적은 것부터** 세우고 ★ 이만큼만 그린다. ★ 전체 수는 ★ 화면에 그대로 적는다 — ★ 숨기는 것이 아니다"
-  },
-  "_note_tab4_gv70": "★★★★★ 09-08 r1206 M — ★ 추천4 GV70 전용 화면의 ★ **잣대 수**. ★ 뜻과 까닭은 ★ config/targets.json 의 `_탭4_규격` 과 docs/GV70_TAB4.md 가 정본이다. ★ 여기는 ★ 코드가 재는 데 쓰는 ★ **수**만 둔다 (S14 — 코드에 안 박는다)",
-  "tab4_gv70": {
-    "target": "GV70_25T",
-    "depreciation_max_pct": 78,
-    "depreciation_no_dx_pct": 70,
-    "accident_signal_lo_pct": 65,
-    "accident_signal_hi_pct": 68,
-    "year_from": "2022-05",
-    "mileage_max_km": 80000,
-    "fee_pct": 8.5,
-    "tire_from_km": 45000,
-    "tire_won": 1350000,
-    "brake_from_km": 50000,
-    "brake_won": 400000,
-    "shown": 20
+  {
+   "path": "/admin",
+   "label": "관리",
+   "tip": "수집·배점·차종·등록부. ★ 관리자에게만 보인다 (web/app.py 가 권한으로 가린다)",
+   "icon": "⚙"
   }
+ ],
+ "demoted_menu": [
+  "/reports",
+  "/notready"
+ ],
+ "_note_menu_427": "★★ 개정 427 — 상단 메뉴는 셋이다 (마스터 확정). ★ 화면을 지우지 않는다. 들어가는 문만 바꾼다 — demoted_menu 는 관리에서 연다. 왜 줄이나: 「후보」와 「매물」이 둘 다 「조건에 맞는 것을 등급순으로」라 화면이 두 벌이었다. 「비교」는 최종 후보를 고를 때만 쓴다. 「시세」의 차종별 표는 현황에 있어야 할 것이었다. 「딜러」를 먼저 고르는 사람은 없다 — 상세·목록에서 눌러 들어간다",
+ "score_bars": [
+  {
+   "key": "car",
+   "label": "차량",
+   "css": "b1",
+   "groups": [
+    "차량"
+   ]
+  },
+  {
+   "key": "value",
+   "label": "값",
+   "css": "b2",
+   "groups": [
+    "값"
+   ]
+  },
+  {
+   "key": "warranty",
+   "label": "보증",
+   "css": "b3",
+   "groups": [
+    "제조사 보증",
+    "사이트 검증"
+   ]
+  },
+  {
+   "key": "taste",
+   "label": "취향",
+   "css": "b4",
+   "groups": [
+    "취향"
+   ]
+  }
+ ],
+ "_note_bars_427": "★★ 개정 427 — 목록의 시그니처.  ★ 늘 같은 자리·같은 개수·같은 색. ★ 규격은 막대 넷(차량·값·보증·취향)이라 하는데 갈래는 다섯이다 (값·차량·제조사 보증·사이트 검증·취향 — 개정 428). ★ 「보증」 막대에 제조사 보증 78 + 사이트 검증 52 = 130 을 합쳤다. 합치지 않으면 막대가 다섯이 되어 규격과 어긋난다 — 작업기록에 여쭀다. 갈래 이름은 config/scoring.json groups 가 정본이다",
+ "color_swatch": {
+  "흰색": "#EDEDED",
+  "검정색": "#111111",
+  "쥐색": "#8A8F96",
+  "청색": "#2E5B9A",
+  "은회색": "#9BA3AC",
+  "은색": "#C4C9CE",
+  "빨간색": "#B23A34",
+  "담녹색": "#4E6B57",
+  "갈색": "#6B5844",
+  "청옥색": "#2E7D7A",
+  "진주색": "#E8E4DC",
+  "녹색": "#2F6B3A",
+  "하늘색": "#7FB3D8",
+  "남색": "#22355C",
+  "노란색": "#D8B23A",
+  "주황색": "#C9702E",
+  "보라색": "#5B4A85",
+  "분홍색": "#C77E9B",
+  "금색": "#B8963F",
+  "베이지": "#CBBFA6"
+ },
+ "_note_swatch": "★ 목록의 색 점 (개정 427 시안 .swatch). ★ 원문은 색 이름만 준다 — hex 가 없다.  보이는 색을 여기서 정한다. ★ 판정에 안 쓴다.  taste.color 는 config/dictionaries/color_grade.json 이 정본이다. 여기 없는 색은 점을 안 찍는다 — 지어내지 않는다",
+ "list_columns": [
+  {
+   "n": 1,
+   "name": "등급 + 순위",
+   "find": [
+    "class=\"gr "
+   ]
+  },
+  {
+   "n": 2,
+   "name": "네 묶음 막대",
+   "find": [
+    "class=\"barwrap\""
+   ]
+  },
+  {
+   "n": 3,
+   "name": "사진",
+   "find": [
+    "class=\"desk\""
+   ]
+  },
+  {
+   "n": 4,
+   "name": "차명·트림·연식·주행·색",
+   "find": [
+    "class=\"head\""
+   ]
+  },
+  {
+   "n": 5,
+   "name": "시세차",
+   "find": [
+    "<u>시세차</u>"
+   ]
+  },
+  {
+   "n": 6,
+   "name": "신차대비 %",
+   "find": [
+    "<u>신차대비</u>"
+   ]
+  },
+  {
+   "n": 7,
+   "name": "옵션가",
+   "find": [
+    "<u>옵션가</u>"
+   ]
+  },
+  {
+   "n": 8,
+   "name": "경과일 + 가격 + 변동",
+   "find": [
+    "class=\"price",
+    "<u>경과</u>"
+   ],
+   "_note": "★ 규격 칸 8 은 「경과일 + 가격 + 변동」 셋이 한 칸이다"
+  }
+ ],
+ "_note_list_columns": "★★ 개정 427 STEP 97 「목록 한 행 — 8칸」이 정본이다. ★ 정본이 둘인데 어긋난다 — 규격 표는 8칸(칸 8 = 「경과일·가격·변동」)인데 시안 ref/screens/v2_시안_목록상세.html 은 경과와 가격을 따로 둬 DOM 이 9칸이다. ★ 규격의 **정보 묶음**으로 센다 (V11-162).  시안 배치는 그대로 뒀다 — 작업기록에 여쭀다",
+ "column_evidence": {
+  "사이트": "r.site_badge",
+  "링크": "r.encar_url",
+  "관심": "watch/add",
+  "상태": "r.status_label",
+  "딜러": "r.dealer_shop",
+  "옵션": "r.option_count",
+  "월": "r.monthly_won",
+  "경과": "r.days_on_market",
+  "비율": "r.ratio_pct",
+  "순위": "r.rank"
+ },
+ "_note_column_evidence": "★★ 개정 427 — 24칸이 8칸이 되면서 「열」이던 것이 「값」으로 옮겨 앉았다.  사이트 배지는 차명 줄에, 엔카 링크는 그 옆에 있다. ★ 열 이름(「사이트」·「링크」)이 화면 글자로는 안 나온다 — 그래도 값은 있다. V11-68 이 「열 이름이 없다」로 잡지 않게 여기에 표식을 적는다. ★ 값을 버린 것이 아님을 이 표가 증명한다 (개정 429 「값을 버리지 마라」)",
+ "detail_sections": [
+  {
+   "n": 1,
+   "name": "판정"
+  },
+  {
+   "n": 2,
+   "name": "값"
+  },
+  {
+   "n": 3,
+   "name": "총 얼마"
+  },
+  {
+   "n": 4,
+   "name": "관문"
+  },
+  {
+   "n": 5,
+   "name": "아직 모르는 것"
+  },
+  {
+   "n": 6,
+   "name": "취향"
+  },
+  {
+   "n": 7,
+   "name": "상태"
+  },
+  {
+   "n": 8,
+   "name": "가격 추이"
+  },
+  {
+   "n": 9,
+   "name": "딜러"
+  },
+  {
+   "n": 10,
+   "name": "판정 근거"
+  },
+  {
+   "n": 11,
+   "name": "이 차 대신 볼 것"
+  }
+ ],
+ "_note_detail_sections": "★★ 개정 427 STEP 97a — 절 차례는 **판단하는 순서**다. ★ 바꾸지 않는다 (V11-159).  1 절이 맨 위다 — 등급과 그 까닭이 한 화면에 함께 있다",
+ "max_queries_by_route": {
+  "/detail/{listing_id}": 28,
+  "/listings": 24,
+  "/": 21
+ },
+ "_note_query_budget_427": "★★ 개정 427 — /detail 이 /why 를 흡수하면서 한 쪽 쿼리가 늘었다. 실측 08-21 — /why 만으로 19/20 이다 (render_listing 14 + 화면 껍데기 5). 상세는 거기에 ⑤ 아직 모르는 것 · ⑧ 가격 추이 · ⑪ 대신 볼 것 세 절을 더 얹는다. ★ 전 화면 상한(20)을 낮추지 않고 이 경로만 따로 적는다 — 다른 화면이 조용히 무거워지는 것을 막기 위해서다. ★ 줄일 자리는 render_listing 14쿼리다.  대청소 때 볼 것으로 적어 둔다",
+ "_top_menu_note_551": "★ 개정 551 — /admin 을 더해 넷이 됐다. ★ V11-157 상한이 「넷을 넘지 않음」이라 통과한다. ★ 마스터 지시 08-23 「메뉴가 전혀 안 보여」",
+ "_top_menu_why": "★★★★★ 09-01 가이드 확정 (개정 1051) — ★ **여섯이다** (매물 · 관심 · 추적 · 추천 · 현황 · 관리).  ★ 09-01 에 ★ 「추천」이 들어갔다 — ★ `V11-157` 의 「다섯」은 08-27 것이다.  ★★ 메뉴는 ★ **마스터 몫**이다.  ★ 개발측이 스스로 바꾸지 않는다",
+ "_demoted_menu_why": "★★ 마스터 확정 08-24 (v3_admin_시안 「화면 — 둘만 남는다」) — ★ 관리에 남는 화면은 ★ 리포트·미판정 ★ 둘뿐이다. ★ 후보 → 매물이 흡수 · 비교 → 관심 · 시세 → 현황 · 딜러 → 카드에서 누른다. ★★ 라우트는 ★ 살려 둔다 — ★ 화면을 지우지 않는다 (개정 427).  ★ 문만 옮겼다",
+ "_note_query_budget_726": "★★ 08-25 — ★ 26 → **27**.  ★ 마스터 확정 ★ 11절 「중복매물」이 ★ 쿼리 하나를 더 쓴다 (명령서 1-3).  ★ ★ 그 하나를 ★ 최대한 줄였다 — ★ 처음엔 둘이었다 (번호판을 따로 물었다).  ★ 조인 한 번으로 합쳐 ★ 하나로 만들었다. ★★ ★ 짝이 있는 매물은 ★ 사고 축을 ★ 한 번에 받는다 — ★ 매물마다 안 부른다. ★ ★ 전 화면 상한(20)은 ★ 그대로다 — ★ 이 경로만 적는다 (개정 427 과 같은 뜻)",
+ "_note_query_budget_741": "★★ 08-25 — ★ 경로 둘을 더 적는다.  ★ **전 화면 상한(20)은 그대로다** — ★ 다른 화면이 조용히 무거워지는 것을 막기 위해서다 (개정 427 과 같은 뜻). ★★ ★ `/listings` 24 — ★ 마스터 확정 ★ 거르개 다섯 절 ＋ ★ 「N곳」 배지 ＋ ★ 사이트별 건수.  ★ ★ 줄일 것은 줄였다 — ★ 색 조회를 ★ **여섯에서 둘로** (`_split_top` 을 두 번씩 부르고 있었다) · ★ 「N곳·값 폭」 서브쿼리 셋을 ★ 조인 하나로. ★ ★ 남은 넷은 ★ 리스 뺀 수를 세는 `COUNT(*)` 로 ★ 앞서부터 있던 것이다. ★★ ★ `/` 21 — ★ 마스터 확정 ★ 1절 「오늘」 (새로 뜬 것·값 내린 것·사라진 것·마지막 재판정).  ★ 넷을 ★ **한 쿼리**로 받는다",
+ "encar_blocked_days": 2,
+ "site_detail_url": {
+  "encar": "https://fem.encar.com/cars/detail/{source_id}",
+  "kbchachacha": "https://www.kbchachacha.com/public/car/detail.kbc?carSeq={source_id}",
+  "reborncar": "https://www.reborncar.co.kr/m/smartbuy/SB1002/{source_id}",
+  "hyundai_cert": "https://certified.hyundai.com/m/goods/goodsDetail.do?goodsNo={source_id}",
+  "bobaedream": "https://m.bobaedream.co.kr/mycar/mview/{source_id}",
+  "bmw_bps": "http://www.bavarian-bps.co.kr/shop/item.php?it_id={source_id}",
+  "kcar": null,
+  "kia_cpo": "https://cpo.kia.com/products/detail/?id={source_id}",
+  "heydealer": "https://www.heydealer.com/market/cars/{source_id}",
+  "lexus_certified": "https://certified.lexus.co.kr/car-detail/?idx={source_id}",
+  "volvo_selekt": null
+ },
+ "_site_detail_url_note": "★★★ 명령서 72장 — ★ 원문으로 가는 문이다.  ★ 사이트마다 다르다. ★ 실측 08-26 — 전에는 `encar_detail_url` 하나로 다 만들어 K카·헤이딜러·KB 매물이 전부 encar.com 으로 갔다 (엔카는 모르는 carid 에도 200 을 준다). ★★ 지어내지 않았다 — 잰 자리를 적는다: encar 는 STEP 149q(마스터 확인) · kbchachacha 는 상세 본문의 canonical (실측 표본 3건) · reborncar 는 상세 본문의 링크 (실측 표본 3건) · hyundai_cert·bobaedream·bmw_bps 는 `config/endpoints.json` 의 상세 경로 자체가 사람이 보는 쪽이다 (HTML 을 그대로 받는다). ★★ null 다섯은 ★ **모른다**.  ★ kcar·kia_cpo·heydealer·lexus_certified 는 우리가 API 만 받아 사람 쪽 주소를 못 쟀고, volvo_selekt 는 주소에 {model} 이 더 든다. ★ null 이면 ★ **링크를 안 낸다** — ★ 엔카로 보내지 않는다.  ★ 지어내면 S46-94 가 잡는다  ★★★★ 08-29 (명령서 89장 · 마스터) — ★ 엔카를 `www.encar.com/dc/dc_cardetailview.do?carid=` 에서 `fem.encar.com/cars/detail/{source_id}` 로 바꿨다.  ★ 까닭을 실측으로 적는다 — ★ 옛 주소는 ★ **없는 매물번호(`abcdef`)에도 ★ 똑같이 200 · 2,547바이트**를 준다 (제목도 없다).  ★ 곧 ★ 그 200 은 ★ 「차가 있다」를 ★ 하나도 증명하지 않는다 — ★ 빈 껍데기다.  ★★ ★ 새 주소는 ★ **우리 서버 IP 에서 확인할 수 없다** — ★ 302 로 `/client-verification/blocked` 에 보낸다 (수집이 407 인 것과 같은 차단).  ★ ★ 그래서 ★ 「차 이름이 나오는지」는 ★ **마스터 휴대폰에서만** 확인된다 — ★ 개발측이 200 으로 세지 않는다 (마스터 지시 08-29)  ★★★★★ 09-01 (마스터 지시 · 가이드 실측) — ★ **넷을 쟀다.  ★ 하나는 막혔다**.  ★ 재는 법 — ★ **목록 화면을 브라우저로 열어 ★ 링크를 읽는다**.  ★ 주소를 지어내 두드리지 않는다.  ★★ `heydealer` `www.heydealer.com/market/cars/{source_id}` — ★ 200 · 매물번호가 ★ **24번** 나온다 (robots 는 `ClaudeBot Allow: /`).  ★★ `lexus_certified` `certified.lexus.co.kr/car-detail/?idx={source_id}` — ★ 목록에서 읽었다. ★ `curl` 로는 4,424B 껍데기라 ★ **브라우저로 검산했다** — `idx=6194`→**RX 500h** · `idx=6047`→**NX 350h** ★ 우리 DB 차종과 같다.  ★★ `kia_cpo` `cpo.kia.com/products/detail/?id={source_id}` — ★ 목록 링크의 `id=10091` 이 ★ **우리 source_id 와 같다**.  ★★ `volvo_selekt` — ★ `{site_model}` 이 ★ **더 든다** (`/kr/vehicles/volvo/{model}/{id}`). ★ `_source_url()` 이 지금 `source_id` 하나만 넣으므로 ★ **틀을 두 칸으로 늘려야 한다** (작업가이드 13).  ★★★ `kcar` 는 ★ **`null` 로 둔다 — ★ robots 가 막는다**: `m.kcar.com/robots.txt` 가 ★ `Disallow: /bc/detail/carInfoDtl?` · `/car/info/` 를 적었다. ★ **못 잰 것이 아니라 ★ 두드리면 안 되는 것**이다 — ★ 화면에 그렇게 적는다 (RULES.md 2).  ★★ 겪은 것 — ★ 볼보에서 ★ `/kr/volvo/{m}/{id}` 와 `/kr/vehicle/{m}/{id}` 가 ★ **둘 다 200 · 54,426B 로 같았다**. ★ 매물번호가 ★ **한 번도 안 나왔다** — ★ 검색 화면을 돌려준 것이다. ★ ★ 마스터 인수인계 ㉮ 「200 이 왔다와 제대로 왔다는 다르다 — ★ 반드시 건수를 세어라」 그대로다",
+ "_encar_detail_url_note": "★ 옛 칸이다.  ★ `site_detail_url` 이 정본이다 (명령서 72장). ★ 엔카 매물에만 쓰이고, 다른 사이트에 쓰면 S46-94 가 실패한다  ★★ 08-29 — ★ 이 칸도 새 주소로 바꿨다.  ★ 옛 꼴이 남아 있으면 ★ 이것을 읽는 자리가 ★ 죽은 문을 만든다 (`ENCAR_API.md:50`)",
+ "db_busy_timeout_ms": 30000,
+ "_db_busy_timeout_why": "★★★ 08-26 실측 — ★ 로그인이 500 이었다.  ★ 마스터께서 담아 두신 차를 못 보셨다 (명령서 74장 ② · 08-26 지시 ②).  ★ 까닭 — ★ 파이프라인이 ★ 웹과 같은 프로세스에서 돌며 ★ 쓰기 잠금을 쥐고, ★ SQLite 의 busy_timeout 기본값이 ★ 0 이라 ★ `POST /login` 의 auth_login_attempt INSERT 가 ★ 곧바로 「database is locked」로 죽었다.  ★ 읽기는 WAL 이라 200 이었다 — ★ 그래서 ★ 쓰기만 골라 죽었다.  ★ 이 값만큼 ★ 기다렸다가 쓴다.  ★ 근본은 ③(웹에서 떼어내기)이다 — ★ 이것은 버팀목이다",
+ "db_batch_commit_rows": 100,
+ "db_batch_commit_pause_ms": 20,
+ "_db_batch_commit_pause_ms_why": "★★★★ 08-29 실측 — ★ 행수마다 커밋해도 ★ 수집기가 죽었다.  ★ 한 번에 쥐는 시간은 이미 짧다 (S6 최대 2.50초 · 1,503번 끊긴다). ★ ★ 그런데 ★ S6 은 588초 중 559초(95%)를 쥐고 있고 ★ 틈이 평균 19ms 다 — ★ ★ SQLite 는 점점 늘어나는 간격으로 다시 두드리므로 ★ 그 좁은 창을 계속 빗나가 ★ ★ 30초를 다 쓰고 죽는다.  ★ 그래서 커밋 뒤 이만큼 쉬어 창을 넓힌다.  ★★ 사본 실측 (재판정 ＋ 수집기 꼴 쓰기 200행/0.5초) — ★ pause=0ms: 재판정 543.8s · 성공 170 · locked 5 · 최대 대기 30.17초 / ★ pause=20ms: 재판정 630.1s · 성공 350 · locked 0 · 최대 대기 28.83초.  ★ 재판정이 15.9% 느려지는 대신 ★ 수집기가 안 죽고 ★ 쓰기 처리량이 2배가 된다.  ★ 0 이면 안 쉰다 (옛 꼴)",
+ "_db_batch_commit_rows_why": "★★★ 08-26 실측 — ★ busy_timeout 30초를 걸어도 ★ 로그인이 여전히 500 이었다.  ★ 까닭 — ★ S4·S6·S6a·S8·S9·S10 이 ★ **한 단계를 통째로 한 트랜잭션**으로 묶는다 (`BATCH_STEPS`).  ★ S6 은 130,040행이라 ★ 쓰기 잠금을 ★ 몇 분씩 쥔다.  ★ 그동안 ★ 웹의 쓰기가 ★ 전부 죽는다 — ★ 로그인·관심 담기·관리.  ★★ ★ 떼어내도(③) 안 낫는다 — ★ SQLite 는 ★ 프로세스가 아니라 ★ **파일**을 잠근다.  ★ 그래서 ★ 이 행수마다 한 번 커밋해 ★ 잠금 창을 잘라 낸다.  ★ 안전 — ★ 원문(RAW)이 이미 있어 ★ 중간에 죽어도 ★ 재파싱으로 복구된다 (`store/raw.batch` 가 처음부터 그렇게 적어 두었다).  ★ 0 이면 안 자른다  ★ 08-28 — ★ 200 에서도 ★ 30초를 넘는 창이 남아 ★ K카 수집기가 한 번 죽었다 (쓰기 5/6 성공 · 한 번 10초 넘김).  ★ 100 으로 내렸다",
+ "db_temp_store": "MEMORY",
+ "_db_temp_store_why": "★★ 08-28 실측 — ★ 현황(/)의 두 조회가 ★ GROUP BY · ORDER BY 에 ★ TEMP B-TREE 를 쓴다 (EXPLAIN QUERY PLAN).  ★ SQLite 기본값은 ★ 그 임시 표를 ★ 디스크에 쓴다.  ★ 이 장비는 t4g.small · EBS 다 — ★ 램에 두어 디스크를 안 건드린다.  ★ 표본이 9,543행이라 ★ 램에 부담이 없다.  ★ 쓰는 곳은 `web/app.py` 의 `_open_db`",
+ "raw_body_compress": true,
+ "raw_body_compress_min_bytes": 1024,
+ "raw_body_compress_level": 6,
+ "_raw_body_compress_why": "★★★ 08-28 마스터 지시 — 원문(raw_response.body)을 zlib 로 눌러 둔다.  ★ 까닭 — 이 장비는 t4g.small · 램 1,841MB 인데 DB 가 1.00GB 라 페이지 캐시에 안 들어간다.  화면이 차가울 때 10초 · 더울 때 0.7초로 14배 갈렸다 (outputs v285).  ★ raw_response 가 그 DB 의 77%(774MB)다.  ★★ 규격의 「원문 무손실 · 삭제 금지 · 추가만」을 어기지 않는다 — 압축은 무손실이고 글자 하나 안 바뀐다.  tools/compress_raw.py 가 옮길 때 전건을 되돌려 대조한다.  ★ min_bytes — 이보다 작으면 안 누른다.  머리글이 도리어 커진다.  실측 08-28 — body 가 있는 143,970건 중 86,969건이 1KB 미만인데 그 몫은 전체 바이트의 일부다.  ★ level 6 은 zlib 기본값이다 — 표본 400건에 3.6배 줄었다.  9 로 올려도 크게 안 달라지고 CPU 만 쓴다 (vCPU 2 · 버스터블이다).  ★ false 로 두면 새로 넣는 것만 안 누른다 — 이미 눌린 것은 raw_body() 가 그대로 읽는다",
+ "sian_screens": {
+  "v4m_listings_시안.html": "/listings",
+  "v4m_track_시안.html": "/track",
+  "v4m_notready_시안.html": "/notready",
+  "v4m_dashboard_시안.html": "/",
+  "v4m_detail_시안.html": "/detail/{listing_id}"
+ },
+ "sian_word_skip": [
+  "K카",
+  "곳에도",
+  "관리",
+  "관심",
+  "도는",
+  "리본카",
+  "문이",
+  "사진",
+  "알핀",
+  "없으면",
+  "에스프리",
+  "엔카",
+  "여쭐",
+  "이전비",
+  "있다",
+  "점보모터스",
+  "접어",
+  "지우기",
+  "차값",
+  "차차차",
+  "케이카",
+  "헤이딜러"
+ ],
+ "_sian_word_skip_why": "★★ [09-02 · `v330`] ★ 시안의 「사진」·「지우기」는 ★ **빈 자리 글자**다 — ★ 개발측 「★ 우리 화면은 ★ 진짜 사진이 **30장** 나온다 — ★ 그래서 그 글자가 안 나온다」.  ★ ★ **옳다.  ★ 우리 화면이 더 낫다** — ★ 검사에서 뺀다",
+ "login_screens": {
+  "/watch": 200,
+  "/admin": 200
+ },
+ "_login_screens_why": "★★ 검사 `S46-99` — ★ **로그인한 뒤** 열려야 하는 화면이다 (마스터 지시 08-26).  ★ ★ `S46-95` 는 ★ **로그인 앞**만 본다 — ★ 거기서 이 둘은 ★ 403 이 정상이라 ★ 「자리를 안 내준다」를 ★ 못 잡았다.  ★ 자격은 ★ `secrets/check_login.json` 에 둔다 — ★ `secrets/` 는 `.gitignore` 에 있다.  ★ 비밀번호를 저장소에 적지 않는다",
+ "sian_screens_login": {
+  "v4m_watch_시안.html": "/watch",
+  "v4m_admin_시안.html": "/admin",
+  "v4m_compare_시안.html": "/compare",
+  "v4m_recommend_시안.html": "/recommend"
+ },
+ "_sian_screens_login_why": "★★ 명령서 82장 — 「★ 여덟 화면 다」.  ★ 이 셋은 ★ 로그인 뒤에만 열린다 (앞에서는 403 이 정상이다).  ★ 자격은 `secrets/check_login.json` 이고 ★ `.gitignore` 에 있다 — ★ 비밀번호를 저장소에 안 적는다.  ★ 검사 `S46-100`  ★★ 09-01 — ★ `v4m_recommend_시안.html` 을 더했다 (추천 화면 · 마스터 확정).  ★ 탭 2·3 은 `v4m_recommend_tab23_시안.html` 에 따로 있다 — ★ **빈 채로 두는 꼴**을 보인다",
+ "sian_order_override": {
+  "/listings": [
+   "이 화면은 무엇을 하는 곳인가",
+   "차종",
+   "트림",
+   "가격대",
+   "연료",
+   "등급",
+   "자세한 조건",
+   "정렬"
+  ]
+ },
+ "_sian_order_override_why": "★★★ 명령서 87장 (마스터 08-28) — 「★ 차종 · 트림 · 가격대 · ★ 연료 · 등급 · 정렬」 · ★ 「자리는 가격대 다음 · 등급 앞」.  ★ 앞선 82장의 차례를 ★ 이것으로 갈음한다.  ★ 시안 파일에는 ★ 아직 연료 칩이 없다 — ★ 마스터께서 「시안에 그려 뒀다」 하셨으나 ★ ★ 파일에서는 못 찾았다.  ★ 그래서 ★ 말씀하신 차례로 견준다.  ★ 시안을 고쳐 주시면 이 줄을 지운다 (규칙 2 — 시안은 개발측이 안 고친다)",
+ "fuel_groups": [
+  {
+   "key": "electric",
+   "label": "전기만",
+   "values": [
+    "전기",
+    "EV"
+   ]
+  },
+  {
+   "key": "hybrid",
+   "label": "하이브리드만",
+   "match": [
+    "하이브리드",
+    "+전기"
+   ]
+  },
+  {
+   "key": "gasoline",
+   "label": "가솔린",
+   "match": [
+    "가솔린",
+    "휘발유"
+   ],
+   "not": [
+    "하이브리드",
+    "+전기"
+   ]
+  },
+  {
+   "key": "diesel",
+   "label": "디젤",
+   "match": [
+    "디젤",
+    "경유"
+   ],
+   "not": [
+    "하이브리드",
+    "+전기"
+   ]
+  }
+ ],
+ "_fuel_groups_why": "★★★ 명령서 87장 (마스터 08-28) — 「★ 나는 내 목록에서 ★ 전기차만 보고 싶은 거야」.  ★ 매물의 ★ **연료 칸(`fuel_raw`)** 으로 거른다 — ★ 차종이 아니다.  ★ ★ 그래야 ★ XC40 안의 EX40(전기)이 갈린다.  ★★ ★ 값은 ★ **전수로 재서** 묶었다 (실측 08-28 · 33가지) — 가솔린 11,160 · 가솔린+전기 2,402 · 디젤 1,647 · 전기 1,196 · EV 84 · 「1.6 가솔린 하이브리드」처럼 배기량이 붙은 것도 있다.  ★★★ ★ 「전기만」은 ★ **정확히 `전기`·`EV`** 다 — ★ `가솔린+전기`(하이브리드)와 ★ `수소+전기`(연료전지)는 ★ **안 넣는다**.  ★ 검사 `S46-102` 가 그것을 지킨다.  ★ 나머지 셋은 낱말로 가른다 — ★ `match` 중 하나가 들고 ★ `not` 이 안 들면 그 갈래다",
+ "sian_cut_regions": {
+  "/detail/{listing_id}": [
+   "판정 근거 — 24축 전부",
+   "11 ★ 중복매물"
+  ]
+ },
+ "_sian_cut_regions_why": "★★★ 마스터 08-28 — 「★ 시안이 정본이다.  ★ 검사가 어긋나면 ★ 검사를 고쳐라」.  ★ `S46-100` 은 ★ **처음 나온 자리**로 차례를 견준다.  ★ ★ 그런데 ★ 상세에는 ★ 시안에 없는 ★ 「판정 근거 — 24축 전부」 표가 있고 ★ ★ 거기에 ★ 「골격」·「용도」가 ★ 먼저 나온다 — ★ 관문 칩보다 위다.  ★ ★ 그래서 ★ 자리가 맞는데도 ★ 「용도 → 골격」으로 뒤집혀 보였다 (실측 08-28).  ★ 여기 적은 두 글자 사이를 ★ 견주기 전에 잘라 낸다 — ★ 화면은 그대로 둔다.  ★ ★ 시안에 그 표가 그려지면 ★ 이 줄을 지운다",
+ "pref_brands": {
+  "볼보": [
+   "XC40_EV",
+   "C40_EV",
+   "POLESTAR4_EV"
+  ],
+  "제네시스": [
+   "GV70_EV"
+  ],
+  "BMW": [
+   "IX3_EV"
+  ],
+  "폭스바겐": [
+   "ID4_EV",
+   "ID5_EV"
+  ],
+  "기아": [
+   "EV4_EV"
+  ],
+  "테슬라": [
+   "MODEL_Y"
+  ],
+  "르노": [
+   "KOLEOS_HEV"
+  ]
+ },
+ "_pref_brands_why": "★★ 08-30 마스터 확정 — 「★ 선호차종은 볼보 · BMW · 폭스바겐 · 벤츠 · 르노 · 제네시스 ★ 그리고 나머지이고」 ＋ 「★ 폴스타 넣고.  ★ iX3 · ID.4 넣어 줘」.  ★ ★ **폴스타는 볼보 갈래**다 (볼보에서 갈라져 나왔다).  ★ `IX3_EV`·`ID4_EV` 는 ★ 등록은 됐고 ★ 질의 열쇠가 비어 있다(밀린일 G27) — ★ 가이드가 채운다.  ★ `UX300E_EV`(렉서스)는 ★ 「그 밖」이다 — ★ 마스터께서 선호에 안 넣으셨다.  ★ 지금 ★ **21/31 종**이 선호차종이다.  ★ 검사 `S46-192`  ★★ 08-31 — ★ 마스터 「★ **그리고 EV4 도 선호차종에 넣어 줘.  ★ 마음에 들더라**」.  ★ ★ EV4 는 ★ **기아**라 ★ 앞서 정하신 여섯(볼보·BMW·폭스바겐·벤츠·르노·제네시스)에 없다 — ★ **기아 갈래를 새로 열었다**.  ★ 다만 ★ **차종은 EV4 하나만** 넣었다 — ★ 「기아 전체」라 하신 것이 아니다.  ★ 스포티지(`SPORTAGE_LPI`)는 ★ 「그 밖」 그대로다.  ★ ★ EV4 는 ★ **새로 등록했고 질의 열쇠가 빈다**(G27) — ★ 수집기가 건너뛴다  ★★★ 09-01 — ★ 마스터께서 ★ **대상을 아홉으로 좁히셨다**(「★ 내가 범위를 조정했을 것 같은데.  ★ ID4 ID5 iX3 model Y, EV4, GV70, 폴스타 4, C40 XC40」).  ★ ★ **아홉이 다 선호차종**이 됐다 — ★ 「그 밖」이 ★ **0** 이다.  ★ ★ ★ 그러므로 ★ **「선호차종만」 단추는 지금 쓸 데가 없다** — ★ 만들되 ★ 다 걸린다고 적어라.  ★ 테슬라를 갈래에 더했다 (모델 Y) — ★ 마스터께서 넣으셨다  ★★★ 09-01 저녁 — ★ 마스터 「★ XC60 빼고 ★ S60 빼고 ★ 볼보는 전기차만 볼 거야.  ★ X3 도 빼」.  ★ ★ 대상이 ★ **10종**이 됐다 — ★ 볼보는 ★ `XC40_EV`·`C40_EV`·`POLESTAR4_EV` ★ 전기 셋만.  ★ ★ `XC40_IMPORT`(가솔린·디젤·PHEV)도 뺐다 — ★ 「전기차만」이라 하셨다.  ★ ★ ★ 콜레오스만 하이브리드이고 ★ 나머지 아홉이 전기차다",
+ "_top_menu_icon_why": "★★★★★ 09-02 마스터 지시 — 「★ 시안 `v4m_recommend_시안.html` 에 맞추어서 빨리 작업해」.  ★ 시안 `.v4-tabs` 가 ★ **기호를 준다** — ★ 현황 ▤ · 매물 ≡ · 추천 ★ · 관심 ♡ · 추적 ⇄ · 관리 ⚙.  ★★ 지어내지 않았다 — ★ 시안에서 그대로 옮겼다.  ★★ 메뉴의 **차례와 이름**은 ★ 여전히 마스터 몫이다 — ★ 안 건드렸다",
+ "_note_query_budget_1082": "★★★★★ 09-03 — ★ 27 → **28**.  ★ 마스터 물음 ② 「★ 상세에 ★ **보험 이력 절**을 내라 — ★ 성능점검 절과 나란히」(`S46-219`)가 ★ 쿼리 하나를 더 쓴다.  ★★ 줄일 것은 줄였다 — ★ `PRAGMA table_info` 를 ★ 한 번만 보고 들고 있는다 (전에는 매물마다 봤다 · 실측 09-03 — 29 → 28).  ★★ ★ **전 화면 상한(20)은 그대로다** — ★ 이 경로만 적는다 (개정 427·726·741 과 같은 뜻).  ★ 다른 화면이 조용히 무거워지는 것을 막는다",
+ "site_detail_url_2arg": {
+  "_note": "★★★ 09-01 — ★ **두 칸이 드는 원문 문**이다.  ★ `{source_id}` 말고 ★ `{site_model}` 도 든다.  ★ `_source_url()` 이 지금 ★ **한 칸만** 넣어 ★ `site_detail_url` 에 두면 ★ `KeyError` 로 죽는다 — ★ 09-01 에 내가 그렇게 넣었다가 ★ `S46-94` 가 잡았다.  ★★ 그래서 ★ **잰 것은 여기 남기고** ★ 코드가 두 칸을 받게 되면 ★ `site_detail_url` 로 옮긴다 (작업가이드 13)",
+  "volvo_selekt": "https://selekt.volvocars.co.kr/kr/vehicles/volvo/{site_model}/{source_id}"
+ },
+ "_sian_word_skip_why_0902": "★★★★★ 09-02 (물음 20) — ★ 「문이」·「없으면」을 더했다.  ★ 시안 `v4m_listings_시안.html:181` 의 `.lst-why-empty` 안에 있는 것은 ★ ★ **화면에 낼 글이 아니라 ★ 지시문**이다 — ★ ★ ★ 「★ 원문 **문이** 없으면 ★ 『그 사이트는 주소를 아직 못 쟀습니다』를 낸다 (RULES.md 2)」.  ★ 낼 글(「그 사이트는 주소를 아직 못 쟀습니다」)은 ★ **낸다** — ★ ★ `/listings?site=kcar` 에서 ★ 12행 중 12행이 그것을 낸다 [실측 09-02].  ★★ 다만 ★ 기본 쪽에는 ★ 링크 없는 행이 없어 ★ 그 낱말이 안 보인다 — ★ ★ 그것은 ★ **건너뛰지 않았다** (사이트는·주소를·아직·쟀습니다는 그대로 둔다)",
+ "bare_option_won": 1000000,
+ "_bare_option_won_why": "★★★★★ 09-03 (1부 1-10 · 시험자 10) — ★ **깡통의 잣대**.  ★ 시안 `ref/screens/v3_listings_시안.html:216` — 「★ 깡통은 ★ **옵션가 100만원 이하** (마스터 확정 08-24)」.  ★ 코드에 안 박는다 (`S14`) — ★ 마스터께서 바꾸시면 여기만 고친다",
+ "_sian_word_skip_why_0902b": "★★★★★ 09-02 (가이드) — ★ **낱말을 하나씩 빼는 것은 두더지잡기다**.  ★ 09-02 에 ★ 「거르기만·규격·나쁜·낮다·눌러도·먼저」 ★ **25개**가 한꺼번에 걸렸다 — ★ 다 ★ 내가 시안에 적은 ★ **지시문**이다.  ★★ 그래서 ★ `S46-98` 이 ★ **그 상자를 통째로 걷어내게** 고쳤다 — `.v4-why-empty` · `.rc-why-empty` · `.lst-why-empty` · `.wch-why-empty` · `.trk-why-empty` · `.sld-why-empty` · `.adm-note` · `.rc-rank-note` · `.lst-pairhead`.  ★ ★ `RULES.md` 2 조 — 「★ 없으면 왜 없는지를 글로 낸다」를 ★ 시안에 적어 둔 것이라 ★ **화면에 낼 글이 아니다**.  ★★★ 그 뒤 ★ **시안 5장의 낱말 103개가 다 화면에 있다**.  ★ 낱말을 더 빼지 않아도 된다",
+ "photo_max_per_listing": 20,
+ "_photo_max_per_listing_why": "★★★★★ [마스터 확정 09-04 · 3A-2] ★ 「★ 사진은 ★ **URL 로만** · ★ **스무 장까지**」.  ★ 상한이 없어 ★ `photo_list_json` 이 부풀었다 — ★ 실측 09-05: ★ 볼보셀렉트 **4,358자** · K카 3,637 · 리본카 2,964 · KB **2,868** (평균 2,434·1,946·1,973·1,781).  ★ 스무 장을 넘는 매물이 ★ **1,480건**이었다.  ★★ 그림은 ★ **안 내려받는다** (3A-1) — ★ 주소만 든다.  ★ 자르는 자리는 ★ `store/core.py` 하나다 — ★ 파서마다 적지 않는다",
+ "_note_recommend_tabs": "★★★★★ 09-06 r1184 A-1 — ★ 추천 탭은 ★ **자료로 정한다**. ★ 마스터 — 「★ 이런 식으로 ★ 탭들이 자꾸 늘어날 거고 ★ 어떤 것은 빠지고 ★ 어떤 것은 추가될 거야」.  ★ 코드에 세 개를 박지 마라 (규격 RECOMMEND_SCREEN ①). ★ n=주소의 tab 값 · label=탭에 적을 말 · template=그 탭이 쓰는 틀 · ★ count=탭 이름 뒤에 붙일 수 (analyze 는 의뢰한 대수) · ★ targets=그 탭이 보는 차종 (탭 4 는 마스터께서 지금 고르시는 둘)",
+ "recommend_tabs": [
+  {
+   "n": "1",
+   "label": "내 기준에 가까운 차",
+   "template": "recommend.html"
+  },
+  {
+   "n": "2",
+   "label": "값 → 등급 → 취향",
+   "template": "recommend2.html"
+  },
+  {
+   "n": "3",
+   "label": "분석",
+   "template": "analyze.html",
+   "count": "analyze"
+  },
+  {
+   "n": "4",
+   "label": "GV70",
+   "template": "gv70.html",
+   "targets": [
+    "GV70_25T",
+    "X3_IMPORT"
+   ]
+  }
+ ],
+ "_note_recommend_picks": "★★★★★ 09-06 r1184 A-7 — ★ 탭 2 고르개. ★ 여럿 골라 AND 로 건다. ★ 값·지역 칸을 코드에 박지 않는다 (S14). ★ 「배달(전국 배달)」은 ★ 아직 못 낸다 — ★ 열두 사이트 어디도 ★ 배달 여부를 주지 않는다 (09-06 실측 0건). ★ 자료가 오면 여기에 더한다",
+ "recommend_price_bands": [
+  {
+   "key": "3000",
+   "label": "3,000만 이하",
+   "max_won": 30000000
+  },
+  {
+   "key": "3500",
+   "label": "3,500만 이하",
+   "min_won": 30000000,
+   "max_won": 35000000
+  },
+  {
+   "key": "4000",
+   "label": "4,000만 이하",
+   "min_won": 35000000,
+   "max_won": 40000000
+  },
+  {
+   "key": "over",
+   "label": "4,000만 초과",
+   "min_won": 40000000
+  }
+ ],
+ "recommend_km_bands": [
+  {
+   "key": "3",
+   "label": "3만 이하",
+   "max_km": 30000
+  },
+  {
+   "key": "36",
+   "label": "3~6만",
+   "min_km": 30000,
+   "max_km": 60000
+  },
+  {
+   "key": "610",
+   "label": "6~10만",
+   "min_km": 60000,
+   "max_km": 100000
+  },
+  {
+   "key": "10p",
+   "label": "10만 초과",
+   "min_km": 100000
+  }
+ ],
+ "recommend_regions": [
+  {
+   "key": "seoul",
+   "label": "서울",
+   "match": [
+    "서울",
+    "구"
+   ],
+   "kind": "near"
+  },
+  {
+   "key": "incheon",
+   "label": "인천",
+   "match": [
+    "인천"
+   ],
+   "kind": "near"
+  },
+  {
+   "key": "gyeonggi",
+   "label": "경기",
+   "match": [
+    "경기"
+   ],
+   "kind": "near"
+  },
+  {
+   "key": "daegu",
+   "label": "대구",
+   "match": [
+    "대구"
+   ],
+   "kind": "far"
+  },
+  {
+   "key": "etc",
+   "label": "그 외",
+   "match": [],
+   "kind": "far"
+  }
+ ],
+ "recommend_sorts": [
+  {
+   "key": "value",
+   "label": "값순"
+  },
+  {
+   "key": "grade",
+   "label": "등급순"
+  },
+  {
+   "key": "taste",
+   "label": "취향순"
+  },
+  {
+   "key": "safe",
+   "label": "차량 안전순"
+  },
+  {
+   "key": "km",
+   "label": "주행순"
+  },
+  {
+   "key": "year",
+   "label": "연식순"
+  }
+ ],
+ "_note_tab3": "★★★★★ 09-06 r1190 A-14 — ★ 탭 3 은 ★ **GV70 후보 화면**이다 (마스터 확정 09-06 — 「가이드가 쓴 글」이 아니다). ★ 조건을 ★ 코드에 박지 않는다 (S14) — ★ 여기가 정본이다. ★ 마스터께서 조건을 바꾸시면 ★ 이 값만 고친다",
+ "tab3_candidate": {
+  "target": "GV70_25T",
+  "price_max_won": 35000000,
+  "price_grace_won": 36000000,
+  "year_from": "2022-01",
+  "mileage_max_km": 80000,
+  "color_ext": [
+   "흰색"
+  ],
+  "need_warranty": true,
+  "need_delivery": true,
+  "need_inspection": true,
+  "sites": [
+   "encar",
+   "kbchachacha",
+   "kcar",
+   "reborncar",
+   "heydealer"
+  ],
+  "insurance_max_won": 3000000,
+  "clean_max_won": 1000000,
+  "thin_points": 700,
+  "near_max": 30,
+  "_near_max_why": "★ 「하나가 아쉬운 차」를 ★ **지우지 않는다** (마스터 확정) — ★ 다만 ★ 1,430장을 한 쪽에 다 그리면 ★ 2.7MB 라 ★ 화면이 못 쓴다 (09-06 실측). ★ **아쉬운 수가 적은 것부터** 세우고 ★ 이만큼만 그린다. ★ 전체 수는 ★ 화면에 그대로 적는다 — ★ 숨기는 것이 아니다"
+ },
+ "_note_tab4_gv70": "★★★★★ 09-08 r1206 M — ★ 추천4 GV70 전용 화면의 ★ **잣대 수**. ★ 뜻과 까닭은 ★ config/targets.json 의 `_탭4_규격` 과 docs/GV70_TAB4.md 가 정본이다. ★ 여기는 ★ 코드가 재는 데 쓰는 ★ **수**만 둔다 (S14 — 코드에 안 박는다)",
+ "tab4_gv70": {
+  "target": "GV70_25T",
+  "depreciation_max_pct": 78,
+  "depreciation_no_dx_pct": 70,
+  "accident_signal_lo_pct": 65,
+  "accident_signal_hi_pct": 68,
+  "year_from": "2022-05",
+  "mileage_max_km": 80000,
+  "fee_pct": 8.5,
+  "tire_from_km": 45000,
+  "tire_won": 1350000,
+  "brake_from_km": 50000,
+  "brake_won": 400000,
+  "shown": 20
+ },
+ "_top_menu_why_0911": "★ 09-11 (Q-4) — ★ 마스터 —「기본 화면을 목록을 보이게 해줘」. ★ 「매물」이 ★ 첫 자리이고 ★ `/` 를 가리킨다.  ★ 「현황」은 ★ `/status` 다. ★ 차례와 이름은 안 건드렸다 — ★ 그것은 마스터 몫이다"
 }

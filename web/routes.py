@@ -54,8 +54,13 @@ class Route:
 
 
 ROUTES: tuple[Route, ...] = (
-    Route("/", (GET,), "view_dashboard", ROLE_ANONYMOUS),
+    # ★★★★★ 09-11 (Q-1) — ★ 마스터 —「★ **기본 화면을 목록을 보이게 해줘**」.
+    #   ★ 앞서 `/` 는 ★ **현황**이었다 — ★ 차를 고르는 자리가 아니라
+    #     ★ ★ 판이 도는지 보는 자리다.  ★ 로그인하면 그것이 먼저 떴다.
+    #   ★ 현황은 ★ `/status` 로 옮긴다 (Q-2) — ★ 지우지 않는다
+    Route("/", (GET,), "view_listings", ROLE_ANONYMOUS),
     Route("/listings", (GET,), "view_listings", ROLE_ANONYMOUS),
+    Route("/status", (GET,), "view_dashboard", ROLE_ANONYMOUS),
     # ★★ 08-30 (`61-web.md:193` · `UI_REVIEW` 30장) — ★ 팔린 차.
     #   ★ 목록에서 뺀 것을 ★ 여기서 따로 본다 (마스터 확정 08-29 요구 134)
     Route("/sold", (GET,), "view_sold", ROLE_ANONYMOUS),
