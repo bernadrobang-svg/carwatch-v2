@@ -164,7 +164,8 @@
   "inspection"
  ],
  "42633323": [
-  "inspection"
+  "inspection",
+  "record"
  ],
  "42650594": [
   "inspection",
@@ -195,7 +196,8 @@
   "record"
  ],
  "42532308": [
-  "inspection"
+  "inspection",
+  "record"
  ],
  "40812074": [
   "record",
@@ -203,12 +205,16 @@
  ],
  "42434543": [
   "inspection",
-  "record"
+  "record",
+  "detail"
  ],
  "42434975": [
   "detail"
  ],
  "42543525": [
   "record"
+ ],
+ "42648257": [
+  "inspection"
  ]
 }
