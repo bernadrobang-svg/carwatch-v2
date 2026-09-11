@@ -100,7 +100,7 @@
 | `S46-98` | 시안의 낱말이 화면에 있는가 | fatal | `validate/v0_guide.py:2887` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:358 · UI_REVIEW.md:1881 · guide/03_이력.md:793 |
 | `S46-99` | 로그인하면 관심·관리가 열리는가 | fatal | `validate/v0_guide.py:2490` | **★ 없음** | 없음 | guide/03_이력.md:794 · guide/03_이력.md:879 · guide/03_이력.md:1009 |
 | `S46-100` | 시안의 낱말 차례가 화면과 같은가 | fatal | `validate/v0_guide.py:2657` | **★ 없음** | 없음 | RECOMMEND_SCREEN.md:358 · guide/03_이력.md:804 · guide/03_이력.md:879 |
-| `S46-102` | 「전기만」에 전기 아닌 것이 없는가 | fatal | `validate/v0_guide.py:2794` | **★ 없음** | 없음 | UI_REVIEW.md:1134 · guide/03_이력.md:814 · guide/06_오판대장.md:240 |
+| `S46-102` | 「전기만」에 전기 아닌 것이 없는가 | fatal | `validate/v0_guide.py:2794` | **★ 없음** | 없음 | UI_REVIEW.md:1134 · guide/03_이력.md:814 · guide/03_이력.md:1376 |
 | `S46-103` | 시안의 크기·자리 값을 담았는가 | fatal | `validate/v0_guide.py:2846` | **★ 없음** | 없음 | guide/03_이력.md:819 · guide/03_이력.md:847 · guide/06_오판대장.md:242 |
 | `S46-115` | 시키는 화면이 스스로 안 바뀌는가 | fatal | `validate/v0_guide.py:1368` | **★ 없음** | 없음 | UI_REVIEW.md:1339 · guide/03_이력.md:850 |
 | `S46-116` | 사유에 쉬운 말이 있는가 | fatal | `validate/v0_guide.py:1490` | **★ 없음** | 없음 | UI_REVIEW.md:1375 · guide/03_이력.md:850 |

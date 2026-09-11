@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 244개 · 총 88,027줄
+파일 244개 · 총 88,060줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -51,13 +51,13 @@
 | `report/screens/fetch.py` | 435 | 마스터 회선으로 받기 (`/fetch`) — ★ 지시 `r1200` L-1 ~ L-9. |
 | `parse/heydealer/mapping.py` | 419 | 헤이딜러 원문 → `core_listing` (명령서 37-3 ② · `docs/HEYDEALER_API.md`). |
 | `report/views.py` | 419 | 리포트 DTO (L9). |
+| `tools/week_task.py` | 408 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `web/template.py` | 406 | 최소 템플릿 엔진 (14장 STEP 143). |
 | `tools/sync_registry.py` | 403 | RAW 경로 전수 → meta_field_usage. |
 | `tests/test_collect.py` | 401 | 2장 수집 시험. |
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `parse/kcar/mapping.py` | 386 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `parse/kbchachacha/mapping.py` | 378 | KB차차차 상세 → `core_listing` (`docs/KBCHACHACHA_API.md` 3장). |
-| `tools/week_task.py` | 375 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `analyze/axis/state.py` | 355 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tools/collect_hyundai_cert.py` | 351 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
 | `tools/light_check.py` | 340 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
@@ -523,6 +523,12 @@ _int:22  _won:29  _ym:34  _model_group:42  parse_list_item:60  _options:100  par
 VersionStamp:18  ReportMeta:30  AxisView:40  FinanceView:64  PurchaseCostItem:85  PurchaseCostView:94  DiagnosisView:118  FetchView:130  CostRow:144  ScoreView:153  CollectSummary:267  ClassifySummary:274  PriceSummary:281  AxisStat:290  CoefficientChange:300  DictChangeSummary:310  TargetReport:318  RunStep:330  RunReport:345  HaltReport:356  FixAction:373  NotifyResult:383  ExportResult:396  display_value:405  display_points:415
 ```
 
+### `tools/week_task.py` — 408줄
+
+```
+book:29  _won:34  rows:40  _gone:81  _plate:96  _has_pkg:125  _has_hud:144  swap_won:157  wear_won:165  judge:173  report:277  _url:296  main:306  kb_only:359  final:384
+```
+
 ### `web/template.py` — 406줄
 
 ```
@@ -557,12 +563,6 @@ _int:25  yn:33  _months_until:46  _model_group:60  parse_detail:70  _options:167
 
 ```
 _text:43  _int:48  ld_json:55  _yes_no:67  _model_of:97  _options:128  _warranty:156  parse_detail:172  _photos:271  parse_list:307  parse_list_item:374
-```
-
-### `tools/week_task.py` — 375줄
-
-```
-book:29  _won:34  rows:40  _gone:81  _plate:96  _has_hud:125  swap_won:138  wear_won:146  judge:154  report:248  _url:267  main:277  kb_only:326  final:351
 ```
 
 ### `analyze/axis/state.py` — 355줄
