@@ -264,7 +264,6 @@ def judge(one, cfg: dict) -> tuple:
     # ★★ 사이트가 ★ 「HUD 없다」고 밝혔으면 ★ **없는 것**이다 — ★ 미조회가 아니다
     if opt_absent and ("헤드업" in str(opt_absent) or "HUD" in str(opt_absent)):
         hud = False
-    clean = (acc_cnt == 0) or (my_cost == 0 and ot_cost == 0)
     band = None
     for one_band in cfg["이기는_칸"]:
         key = one_band["칸"]
@@ -285,13 +284,14 @@ def judge(one, cfg: dict) -> tuple:
             band = key
             break
         if key == "B" and won <= one_band["차값_최대_원"] \
-                and ((km is not None and km <= one_band["주행_최대km"]) or clean):
+                and km is not None and km <= one_band["주행_최대km"]:
             band = key
             break
         if key == "C" and won <= one_band["차값_최대_원"] \
                 and str(ym or "") >= one_band["등록_이후"] \
                 and "흰색" in str(color or "") and hud is not False \
-                and dx is not None and clean:
+                and dx is not None:
+            # ★ 09-11 — ★ 칸 C 에서도 ★ 「사고 0」을 뺐다 (같은 까닭)
             band = key
             break
         # ★★ 09-10 (r1216) — ★ 칸 D 를 마스터가 더하셨다.
@@ -299,7 +299,9 @@ def judge(one, cfg: dict) -> tuple:
         if key == "D" and won <= one_band["차값_최대_원"] \
                 and won > cfg["이기는_칸"][2]["차값_최대_원"] \
                 and str(ym or "") >= one_band["등록_이후"] \
-                and "흰색" in str(color or "") and dx is not None and clean:
+                and "흰색" in str(color or "") and dx is not None:
+            # ★ 09-11 — ★ 칸 D 에서 ★ **「사고 0」을 뺐다.**
+            #   ★ 마스터 —「보험사고는 괜찮아」.  ★ 골격만 본다
             band = key
             break
     if band is None:
@@ -371,7 +373,11 @@ def main() -> int:
               f" · 골격 {frame if frame is not None else UNKNOWN}"
               f" · ★ HUD {hud}"
               # ★ 보험 사고는 ★ **거르지 않고 낸다** — ★ 마스터가 보신다
-              f" · 보험 {_acc_say(one[21], one[19], one[20])}")
+              # ★★ 09-11 — ★ 자리 번호를 손으로 세다 ★ **어긋났다**.
+              #   ★ 실측 — 「사고 2,601,163회」가 나왔다 — ★ 그것은 **금액**이다.
+              #   ★ `options_absent_json` 을 더하며 ★ 뒤가 한 칸씩 밀렸다.
+              #   ★ 번호를 세지 말고 ★ **끝에서** 센다 (뒤가 안 바뀐다)
+              f" · 보험 {_acc_say(one[-5], one[-7], one[-6])}")
         print(f"      {_url(site, sid, one[18])}")
     # ★★ 「확인하면 이긴다」 — ★ 값·연식·색은 맞는데 ★ 진단·사고를 아직 안 본 것.
     #   ★ **이것이 다음에 받을 목록**이다 — ★ 아무거나 받지 않는다 (가이드 r1215)
