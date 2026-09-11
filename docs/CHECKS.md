@@ -255,8 +255,8 @@
 | `S46-296` | 안 도는 파서가 없는가 | fatal | `validate/v0_guide.py:8068` | **★ 없음** | 없음 | guide/03_이력.md:1361 |
 | `S46-297` | 한 판이 스스로 도는가 | fatal | `validate/v0_guide.py:8105` | **★ 없음** | 없음 | guide/03_이력.md:1361 |
 | `S46-298` | 이번 주 과제가 지시에 있는가 | fatal | `validate/v0_guide.py:8132` | **★ 없음** | 없음 | guide/03_이력.md:1363 · guide/03_이력.md:1366 · guide/03_이력.md:1367 |
-| `S46-299` | :root 변수가 값을 가지는가 | fatal | `validate/v0_guide.py:8203` | **★ 없음** | 없음 | guide/03_이력.md:1368 · guide/03_이력.md:1369 |
-| `S46-300` | 첫 화면이 목록인가 | fatal | `validate/v0_guide.py:8235` | **★ 없음** | 없음 | guide/03_이력.md:1370 |
+| `S46-299` | :root 변수가 값을 가지는가 | fatal | `validate/v0_guide.py:8211` | **★ 없음** | 없음 | guide/03_이력.md:1368 · guide/03_이력.md:1369 |
+| `S46-300` | 첫 화면이 목록인가 | fatal | `validate/v0_guide.py:8243` | **★ 없음** | 없음 | guide/03_이력.md:1370 |
 | `V0-01` | 버전이 이력의 마지막 개정과 같은가 | fatal | `validate/v0_guide.py:6155` | **★ 없음** | 없음 | guide/00_버전.md:26 · guide/03_이력.md:349 · guide/03_이력.md:413 |
 | `V0-02` | 폐기 표시가 이력에 있는가 | fatal | `validate/v0_guide.py:6181` | **★ 없음** | 없음 | guide/00_버전.md:56 · guide/03_이력.md:666 |
 | `V0-03` | 배점 숫자가 부록 F 밖에 있는가 | fatal | `validate/v0_guide.py:6207` | **★ 없음** | 없음 | guide/00_버전.md:78 · guide/03_이력.md:349 · guide/03_이력.md:413 |
