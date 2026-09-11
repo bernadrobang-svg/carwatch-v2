@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 242개 · 총 87,879줄
+파일 244개 · 총 88,015줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -57,9 +57,9 @@
 | `tests/test_pipeline.py` | 388 | 5장 수집 순서 시험. |
 | `parse/kcar/mapping.py` | 386 | K카 상세 → `core_listing` (`docs/KCAR_API.md` 3장 · `MULTISITE_MAPPING.md` 1장). |
 | `parse/kbchachacha/mapping.py` | 378 | KB차차차 상세 → `core_listing` (`docs/KBCHACHACHA_API.md` 3장). |
+| `tools/week_task.py` | 375 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `analyze/axis/state.py` | 355 | ② 상태 150 — 차가 성한가 (docs/ref/F-scoring.md ②). |
 | `tools/collect_hyundai_cert.py` | 351 | 현대·제네시스 인증중고차 목록 수집 (명령서 `ORDER_20260822_r515.md` 3장 · 단계 11). |
-| `tools/week_task.py` | 348 | ★ 이번 주 과제 — ★ **계약한 차를 이기는 GV70 만** 낸다 (기한 09-11). |
 | `tools/light_check.py` | 340 | 가벼운 점검 — 4시간마다 (개정 335 · S29-0). |
 | `validate/v7_watch.py` | 338 | V7 관심·추적 검증. |
 | `tools/build_dict.py` | 336 | RAW → 사전 생성. |
@@ -205,6 +205,7 @@
 | `analyze/trust.py` | 70 | 플랫폼 신뢰도 — 점검 출처 · 엔카진단 · 엔카보증 (개정 300). |
 | `tools/refill_encar_detail.py` | 69 | 이미 받아 둔 엔카 상세 원문에서 ★ **새 칸만** 다시 읽는다 (r1190 K-2 · A-19). |
 | `tools/three_numbers.py` | 69 | ★★★★★ 회차마다 낼 세 수 — ★ **화면 기준**으로 센다 (마스터 지시 08-30). |
+| `tools/load_sides.py` | 66 | ★ 받아 둔 **성능점검 · 보험이력** 원문을 제 표에 넣는다. |
 | `tools/fill_raw_run_id.py` | 65 | 원문에 ★ 빠진 `run_id` 를 채운다 (`V1-19` · A-10 · 개발측 자진 수정). |
 | `tools/link_raw_ids.py` | 64 | ★★ 이미 쌓인 원문의 `listing_id` 를 ★ `source_id` 로 이어 채운다. |
 | `analyze/curve.py` | 61 | 구간별 점수표 (docs/ref/F-scoring.md). |
@@ -218,6 +219,7 @@
 | `analyze/axis/_util.py` | 50 | 축 공용 도우미. |
 | `collect/rawfetch.py` | 45 | 1번 — ★ **막힌 응답도 원문으로 남긴다** (지시 r1174 · `S46-278` · `STEP 53-⑤`). |
 | `analyze/axis/safety.py` | 44 | 안전 40점 — 진단 20 + 보증상품 20. |
+| `tools/week_refresh.py` | 43 | ★ 받은 것을 ★ **표와 답까지** 밀어 올린다 (이번 주 과제). |
 | `adapters/base.py` | 36 | 사이트 어댑터 인터페이스. |
 | `analyze/engine.py` | 36 | 판정 실행 (L6).  축 함수를 순서 무관하게 호출한다. |
 | `report/peer.py` | 35 | 유사군 조회 (7장 STEP 82e). |
@@ -557,6 +559,12 @@ _int:25  yn:33  _months_until:46  _model_group:60  parse_detail:70  _options:167
 _text:43  _int:48  ld_json:55  _yes_no:67  _model_of:97  _options:128  _warranty:156  parse_detail:172  _photos:271  parse_list:307  parse_list_item:374
 ```
 
+### `tools/week_task.py` — 375줄
+
+```
+book:29  _won:34  rows:40  _gone:81  _plate:96  _has_hud:125  swap_won:138  wear_won:146  judge:154  report:248  _url:267  main:277  kb_only:326  final:351
+```
+
 ### `analyze/axis/state.py` — 355줄
 
 ```
@@ -567,12 +575,6 @@ _panels:43  _rank_worst:47  insurance_trace:59  panel_trace:68  worse_step:80  _
 
 ```
 target_of:79  _now:95  _post:99  _get:109  fetch_detail:120  load_filters:133  total_count:171  walk:184  main:216
-```
-
-### `tools/week_task.py` — 348줄
-
-```
-book:29  _won:34  rows:40  _gone:81  _plate:96  _has_hud:125  swap_won:138  wear_won:146  judge:154  report:248  _url:267  main:277  kb_only:326
 ```
 
 ### `tools/light_check.py` — 340줄
