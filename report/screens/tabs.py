@@ -1275,6 +1275,13 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
     """
     del query
     cfg = _t4(root)
+    # ★★★★★ 09-11 (M-16) — ★ 마스터 —「★ GV70 추천 수준이 이따위야」.
+    #   ★★ 실측 09-11 — ★ 이 화면에 ★ **거르개가 하나도 안 붙어 있었다.**
+    #     ★ 913대를 ★ 값·연식·주행만으로 추려 ★ 총비용 순으로 세운 것뿐이다.
+    #     ★ ★ 1위가 ★ 2024-03 · 6.1만km · 사고 미조회 · 옵션 미조회였다.
+    #   ★ 거르개 정본은 ★ `config/targets.json` 의 `_탭4_거름` 이다 —
+    #     ★ ★ **코드에 박지 않는다** (S14)
+    sift = _t4_sift(root)
     if not cfg:
         return {"rule": [], "rows": [], "count": {}, "head": "GV70",
                 "sub": UNKNOWN, "note": ""}
@@ -1311,6 +1318,8 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "       s.grade_earned, s.grade_base,"
         # ★ 09-10 M-5 — ★ 하체 낱말 (정비이력이 없어 ★ 판매자 글에서 잡은 것)
         "       l.undercarriage_json, l.undercarriage_src,"
+        # ★ 09-11 M-16 — ★ 거르개가 색·옵션을 본다
+        "       l.color_ext_raw, l.options_standard_json, l.options_name_json,"
         # ★ 맨 뒤다 — ★ `r[-1]` 로 읽는다 (자리를 세지 않게)
         "       l.detail_status"
         "  FROM core_listing l"
@@ -1324,18 +1333,34 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
     passed = len(got)
     # ★ 「상세를 받았다」 = ★ `detail_status` 가 ok 인 것 (화면 글자 그대로)
     detailed = sum(1 for r in got if str(r[-1] or "") == "ok")
-    rows = [_gv70_card(r, cfg, sites, root, conn)
+    rows = [_gv70_card(r, cfg, sites, root, conn, sift)
             for r in got if str(r[-1] or "") == "ok"]
     # ★★★★★ 09-10 (r1212) — ★ 감가율을 못 재는 차를 ★ **지우지 않는다**.
     #   ★ 지시 r1213 — 「분모가 없으면 ★ 「신차가 미조회 — 감가율을 계산하지 않음」
     #     ★ ★ 으로 **비운다**」.  ★ 「비운다」는 ★ **차를 지운다**가 아니다.
     #   ★ 잣대를 넘은 것 · 못 잰 것도 ★ 뒤에 세운다 — ★ 마스터가 보고 고르신다
-    keep = [c for c in rows if c["_ok"]]
-    rest = [c for c in rows if not c["_ok"]]
-    keep.sort(key=lambda c: c["_total"] or 10 ** 12)
-    rest.sort(key=lambda c: c["_total"] or 10 ** 12)
-    picked = len(keep)
-    keep = (keep + rest)[:int(cfg.get("shown") or 20)]
+    # ★★★★★ 09-11 (M-17) — ★ **네 묶음**으로 가른다.
+    #   ★ ① 조건 다 맞고 미조회 없음  ② 조건 맞는데 미조회 있음
+    #   ★ ③ 하나가 아쉬움            ④ 못 미침 — ★ 수만 센다
+    #   ★★ 미조회는 ★ **떨어뜨리지 않는다** — ★ 「없다」가 아니라 ★ 「안 봤다」다.
+    #   ★ 묶음 **안에서만** 총비용 낮은 순 — ★ 묶음을 건너뛰어 섞지 않는다
+    PACK_SAID = {1: "① 조건을 다 맞췄다", 2: "② 조건은 맞는데 못 본 것이 있다",
+                 3: "③ 하나가 아쉽다", 4: "④ 못 미친다"}
+    for one in rows:
+        one["_pack"], one["_miss"], one["_short"] = _t4_pack(one, sift)
+        # ★ 09-11 (M-19) — ★ **못 본 것을 낱개로** 적는다.
+        #   ★ 화면(템플릿)은 가이드 몫이라 ★ 이미 있는 줄에 넣는다
+        head = PACK_SAID.get(one["_pack"], "")
+        if one["_short"]:
+            head += " — " + " · ".join(one["_short"]) + " 이 모자라다"
+        if one["_miss"]:
+            head += " · ★ 아직 못 봤다: " + " · ".join(one["_miss"])
+        one["say"] = f"{head}.  {one['say']}" if head else one["say"]
+    packs = {n: [c for c in rows if c["_pack"] == n] for n in (1, 2, 3, 4)}
+    for n in packs:
+        packs[n].sort(key=lambda c: c["_total"] or 10 ** 12)
+    picked = len(packs[1])
+    keep = (packs[1] + packs[2] + packs[3])[:int(cfg.get("shown") or 20)]
     _mark_best(keep)
     return {
         "head": label,
@@ -1343,7 +1368,15 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
                f"감가 {cfg['depreciation_max_pct']}% 이하 · "
                f"{cfg['year_from'][:4]}년 {int(cfg['year_from'][5:7])}월↑ · "
                f"{int(cfg['mileage_max_km'] / 10000)}만km 이하 · 골격 무사고",
+        # ★ 09-11 (M-18) — ★ 「깡통도 후보」를 지웠다.  ★ 마스터가 09-11 에 물리셨다
         "rule": [
+            {"label": f"{str(sift.get('연식_이후') or '')[:4]}년 이후", "key": "key"},
+            {"label": f"{int((sift.get('주행_최대_km') or 0) / 10000)}만km 이하",
+             "key": "key"},
+            {"label": f"{_won(sift.get('차값_최대_원'))} 이하", "key": "key"},
+            {"label": " · ".join(sift.get("색") or ()) or UNKNOWN, "key": "key"},
+            {"label": f"옵션값 {_won(sift.get('옵션값_최소_원'))} 이상",
+             "key": "key"},
             {"label": f"감가 {cfg['depreciation_max_pct']}% 이하", "key": "key"},
             {"label": f"{cfg['year_from'][:4]}년 "
                       f"{int(cfg['year_from'][5:7])}월 ↑", "key": "key"},
@@ -1351,13 +1384,15 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
              "key": "key"},
             {"label": "골격 무사고", "key": "key"},
             {"label": "단순교환까지 봄", "key": ""},
-            {"label": "깡통도 후보", "key": ""},
             {"label": f"진단 없어도 감가 {cfg['depreciation_no_dx_pct']}%↓면 후보",
              "key": ""},
             {"label": "리스·렌트 승계 제외", "key": ""},
         ],
         "note": "렌터카 이력은 결격이 아닙니다. "
                 "리본카·K카는 렌터카를 정리해 팔아 값이 쌉니다.",
+        # ★ 묶음마다 몇인지 낸다 — ★ ④ 는 수만 센다 (지시)
+        "packs": {"다맞음": len(packs[1]), "미조회있음": len(packs[2]),
+                  "하나아쉬움": len(packs[3]), "못미침": len(packs[4])},
         "count": {"all": allc, "passed": passed, "detailed": detailed,
                   "missing": passed - detailed, "shown": len(keep),
                   # ★ 「다 맞는 차」가 몇인지 ★ 따로 센다 — ★ shown 과 다르다
@@ -1366,12 +1401,13 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
     }
 
 
-def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
+def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
+               sift: dict | None = None) -> dict:
     (lid, site, sid, won, origin, ym, km, tgrade, tbadge, dx, optj,
      wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
      swap, weld, frame, parts_json,
      g_value, g_car, g_warranty, g_taste, earned, base,
-     under_json, under_src, _detail) = r
+     under_json, under_src, color, opt_s, opt_n, _detail) = r
     pct = _dep_pct(won, origin)
     cap = float(cfg["depreciation_max_pct"])
     nodx = float(cfg["depreciation_no_dx_pct"])
@@ -1438,6 +1474,10 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None) -> dict:
              "cls": ""},
             {"label": "총비용", "v": _won(total), "cls": "sum"},
         ],
+        # ★ 09-11 (M-16·M-19) — ★ 거르개 일곱을 ★ **하나씩 잰다.**
+        #   ★ True 맞음 · False 못 미침 · **None 은 「안 봤다」** (금지 12)
+        "_sift": _t4_check(sift or {}, won, ym, km, color, origin, frame,
+                           optj, opt_s, opt_n, site, root),
         "bars": _bars(g_value, g_car, g_warranty, g_taste, earned, base),
         "say": _gv70_say(pct, lo, hi, dx, wmon, wkm, swap, frame, big, many,
                          under_json, under_src),
@@ -1634,3 +1674,105 @@ def _under_say(under_json, under_src) -> str:
     where = str(under_src or UNKNOWN)
     return (f"하체를 건드린 자국이 있습니다 — {' · '.join(str(x) for x in got)}"
             f" ({where}에서 봤습니다)")
+
+
+def _t4_sift(root: str = ".") -> dict:
+    """★ 탭 4 거르개 — ★ 정본은 `config/targets.json` 의 `_탭4_거름` 이다 (M-16).
+
+    ★★★ 마스터 09-11 —「★ GV70 추천 수준이 이따위야」.
+      ★ 이 화면에 ★ **거르개가 하나도 안 붙어 있었다** — ★ 값·연식·주행만 봤다.
+    ★ 값을 ★ **코드에 박지 않는다** (S14) — ★ 마스터가 고치시면 그 파일만 고친다
+    """
+    got = load_config(f"{root}/config/targets.json") or {}
+    return got.get("_탭4_거름") or {}
+
+
+def _t4_pack(card: dict, sift: dict) -> tuple:
+    """(묶음, 못 본 것[], 아쉬운 것[]) — ★ 네 묶음으로 가른다 (M-17).
+
+    ★ 1 조건 다 맞고 ★ 미조회 없음
+    ★ 2 조건 맞는데 ★ **미조회 있음** — ★ 떨어뜨리지 않는다
+    ★ 3 하나가 아쉬움
+    ★ 4 못 미침 — ★ 수만 센다
+    ★★ 「미조회」와 「못 미침」은 ★ **다르다.**  ★ 「없다」가 아니라 ★ 「안 봤다」다
+    """
+    said = card.get("_sift") or {}
+    miss = [k for k, v in said.items() if v is None]
+    bad = [k for k, v in said.items() if v is False]
+    if bad:
+        # ★ 하나만 아쉬우면 ③ · 둘 이상이면 ④
+        return (3 if len(bad) == 1 else 4), miss, bad
+    return (2 if miss else 1), miss, bad
+
+
+def _t4_check(sift: dict, won, ym, km, color, origin, frame,
+              opt_c, opt_s, opt_n, site: str, root: str = ".") -> dict:
+    """거르개 일곱을 ★ 하나씩 잰다 — ★ {이름: True/False/None}.
+
+    ★★ **None 은 「안 봤다」**다.  ★ 「없다」가 아니다 (금지 12).
+      ★ 화면이 그것을 ★ **낱개로** 적는다 (M-19) — ★ 무엇을 못 봤는지 알아야 한다
+    """
+    got: dict = {}
+    got["연식"] = (None if not ym else
+                  str(ym).replace("-", "")[:6] >= str(
+                      sift.get("연식_이후") or "").replace("-", "")[:6])
+    got["주행"] = (None if km is None else km <= (sift.get("주행_최대_km") or 0))
+    got["차값"] = (None if won is None else won <= (sift.get("차값_최대_원") or 0))
+    want = tuple(sift.get("색") or ())
+    got["색"] = (None if not color else
+                 any(x in str(color) for x in want) if want else True)
+    # ★ 옵션값 = ★ 신차출고가 − 신차정가.  ★ 우리는 ★ 옵션 **정가 합**으로 잰다
+    least = sift.get("옵션값_최소_원") or 0
+    got["옵션값"] = _opt_won_at_least(site, least, root, opt_c, opt_s, opt_n)
+    got["골격"] = None if frame is None else (frame == 0)
+    return got
+
+
+_OPT_PRICE: dict = {}
+
+
+def _opt_won_at_least(site: str, least: int, root: str,
+                      *jsons) -> bool | None:
+    """옵션 **정가 합**이 그만큼 되는가.  ★ 값을 하나도 모르면 ★ None.
+
+    ★★ 09-11 (M-7) — ★ 엔카는 옵션이 ★ **숫자 코드**다 (`1051`).
+      ★ 그 정가는 ★ `dict_option_code.price_manwon` 이 안다 —
+        ★ ★ `catalog` 창구가 채웠다 (`tools/fill_encar_options.py`).
+    ★ ★ ★ 값을 모르는 코드가 섞이면 ★ 합이 **모자라 보인다** —
+      ★ 그럴 때 ★ 「못 미침」이라 하지 않는다.  ★ 모으고도 모자라면 그때 False 다
+    """
+    import sqlite3 as _s
+
+    if not least:
+        return True
+    if site not in _OPT_PRICE:
+        conn = _s.connect(f"{root}/carwatch.db")
+        try:
+            _OPT_PRICE[site] = {
+                str(r[0]): int(r[1]) for r in conn.execute(
+                    "SELECT code, price_manwon FROM dict_option_code"
+                    " WHERE site = ? AND price_manwon IS NOT NULL", (site,))}
+        except _s.OperationalError:
+            _OPT_PRICE[site] = {}
+        conn.close()
+    book_ = _OPT_PRICE[site]
+    if not book_:
+        return None
+    got, unknown = 0, 0
+    for one in jsons:
+        if not one:
+            continue
+        try:
+            said = _j.loads(one) if isinstance(one, str) else one
+        except (ValueError, TypeError):
+            continue
+        for x in (said if isinstance(said, list) else []):
+            key = (x.get("code") or x.get("name")) if isinstance(x, dict) else x
+            won = book_.get(str(key))
+            if won:
+                got += won * 10000
+            else:
+                unknown += 1
+    if got >= least:
+        return True
+    return None if unknown else False
