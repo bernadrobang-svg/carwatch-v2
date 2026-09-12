@@ -3776,9 +3776,7 @@ nav.bot a.on{color:var(--amber);font-weight:700}
 /* 09-12 — 수집 현황 화면 CSS. 시안 v4m_admin_pipeline_시안.html.
    09-12 에 개발측이 틀을 먼저 짓고 내가 시안을 안 지었다. 그 자리를 메운다.
    시안을 지으면 그 자리에서 app.css 로 옮긴다 (S46-291) */
-:root{--bg:var(--text);--surface:var(--btn-on-text)fff;--surface2:var(--surface2);--line:var(--text);--line2:var(--text);
- --text:var(--text);--dim:var(--text);--faint:var(--text);--accent:var(--text);--ok:var(--text);--no:var(--text);
- --mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+
 *{box-sizing:border-box;min-height:0}
 .pl-sub{color:var(--dim);font-size:13px;margin:0 0 12px}
 /* 한눈에 — 셋 */

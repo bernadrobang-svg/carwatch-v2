@@ -8226,6 +8226,26 @@ def s46_299_root_vars_have_values():
     css = _read(ROOT / "web" / "static" / "app.css")
     if not css:
         return False, "app.css 를 못 읽었다"
+    # ★★★★★ 09-12 — ★ 마스터 「★ **왜 매번 CSS가 적용됐다가 빠지고**」.
+    #   ★ 어제 고쳤는데 ★ **또 투명해졌다**.  ★ 이번엔 다른 꼴이었다 —
+    #     ★ ★ `--surface: var(--btn-on-text)fff`  ← ★ **쓰레기**다.
+    #   ★ 까닭 — ★ 색을 변수로 바꾸는 치환에서 ★ `#fff` 를 먼저 바꿔
+    #     ★ ★ `#ffffff` 의 ★ **앞 세 자만** 갈아치웠다.
+    #   ★ ★ ★ 그래서 ★ 값이 뜻 없는 글자가 되고 ★ 메뉴가 투명해졌다.
+    #   ★ 이제 ★ **값이 꼴에 맞는지**까지 본다 — 색·길이·변수만 허락한다.
+    bad_val = []
+    for m in _re.finditer(r":root\s*\{(.*?)\}", css, _re.S):
+        for k, v in _re.findall(r"(--[\w-]+)\s*:\s*([^;]+);", m.group(1)):
+            t = v.strip()
+            ok = (t.startswith("#") or t.startswith("var(") or t.startswith("rgba")
+                  or t.startswith("rgb(") or t.startswith("color-mix")
+                  or _re.match(r"^[\d.]+(px|rem|em|%|s|ms)?$", t)
+                  or "," in t or t.replace("-", "").replace(" ", "").isalpha())
+            if not ok or _re.search(r"var\([^)]*\)[0-9a-fA-F]", t):
+                bad_val.append(f"{k}: {t[:26]}")
+    if bad_val:
+        return False, (f"값이 망가진 변수 {len(bad_val)}개 — "
+                       + " · ".join(bad_val[:3]))
     self_ref = sorted(set(_re.findall(r"(--[\w-]+)\s*:\s*var\(\s*\1\s*\)", css)))
     if self_ref:
         return False, (f"제 자신을 가리키는 변수 {len(self_ref)}개 — "
