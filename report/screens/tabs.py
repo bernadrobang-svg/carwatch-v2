@@ -1723,7 +1723,18 @@ def _t4_check(sift: dict, won, ym, km, color, origin, frame,
                  any(x in str(color) for x in want) if want else True)
     # ★ 옵션값 = ★ 신차출고가 − 신차정가.  ★ 우리는 ★ 옵션 **정가 합**으로 잰다
     least = sift.get("옵션값_최소_원") or 0
-    got["옵션값"] = _opt_won_at_least(site, least, root, opt_c, opt_s, opt_n)
+    # ★★★★★ 09-11 (M-7) — ★ 옵션값 = ★ 신차출고가 − 신차**정가**.
+    #   ★ 그것은 ★ **선택 옵션**(`options_choice_json`)의 정가 합이다.
+    #   ★★ 기본 옵션(`options_standard_json` · `001`~`099`)은 ★ **이미 신차정가에
+    #     ★ ★ 들어 있다** — ★ 더하면 두 번 세는 것이고,
+    #     ★ ★ ★ 이름·값을 모른다고 ★ 「미조회」로 만들 까닭도 없다.
+    #   ★ 앞서 셋을 다 넣어 ★ 기본 옵션 67개 때문에 ★ **전부 미조회**가 됐었다
+    #   ★★★ 09-11 — ★ 선택 옵션이 ★ **빈 목록**인 것은 ★ 두 가지다:
+    #     ★ ① 상세를 **안 받았다** (`NULL`) — ★ 미조회
+    #     ★ ② 받았는데 **선택 옵션이 없다** (`[]`) — ★ 그것은 **0원**이다
+    #   ★ 실측 09-11 — ★ 흰색·2023년·2.5만km 짜리 여덟 대가 ★ 전부 `NULL` 이었다
+    got["옵션값"] = (None if opt_c is None
+                   else _opt_won_at_least(site, least, root, opt_c))
     got["골격"] = None if frame is None else (frame == 0)
     return got
 

@@ -71,11 +71,15 @@ def run(write: bool = False, db: str = "carwatch.db") -> Counter:
         "SELECT code FROM dict_option_code WHERE site = ?", (SITE,))}
     for code, (name, price) in sorted(got.items()):
         if code in have:
-            tally["이미 있다 — 이름을 고친다"] += 1
+            tally["이미 있다 — 이름·정가를 고친다"] += 1
             if write:
+                # ★ 09-11 (M-7) — ★ **정가도 넣는다.**
+                #   ★ 앞서는 이름만 고쳐 ★ 「옵션값 400만 이상」을 못 쟀다
                 conn.execute(
-                    "UPDATE dict_option_code SET display = ?"
-                    " WHERE site = ? AND code = ?", (name, SITE, code))
+                    "UPDATE dict_option_code SET display = ?,"
+                    "       price_manwon = COALESCE(?, price_manwon)"
+                    " WHERE site = ? AND code = ?",
+                    (name, int(price) if price else None, SITE, code))
             continue
         tally["새로 넣는다"] += 1
         if write:
@@ -83,7 +87,8 @@ def run(write: bool = False, db: str = "carwatch.db") -> Counter:
             #   ★ `status='confirmed'` — ★ 사이트가 제 카탈로그로 준 이름이다.
             #     ★ ★ 짐작이 아니다 (S46-161 「안 준다에 증거가 있는가」)
             use = {"site": SITE, "target_key": "*", "code": code,
-                   "display": name, "status": "confirmed",
+                   "display": name, "price_manwon": int(price) if price
+                   else None, "status": "confirmed",
                    "dict_version": "d1", "count_seen": 1,
                    "first_seen": _now(), "last_seen": _now()}
             keys = ",".join(use)

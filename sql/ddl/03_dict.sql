@@ -6,6 +6,11 @@ CREATE TABLE IF NOT EXISTS dict_option_code (
   site        TEXT NOT NULL,
   target_key  TEXT NOT NULL,
   code        TEXT NOT NULL,
+  -- ★ 09-11 (M-7) — ★ 옵션 **정가**(만원).  ★ `catalog` 창구가 준다.
+  --   ★ 엔카는 옵션이 ★ 숫자 코드다 (`1051`) — ★ 이름도 값도 그 창구에만 있다.
+  --   ★★ 이것이 있어야 ★ 「옵션값 400만 이상」(_탭4_거름)을 잴 수 있다.
+  --   ★ 모르면 NULL 이다 — ★ 0 으로 두지 않는다 (금지 12)
+  price_manwon           INTEGER,
   display     TEXT NOT NULL,
   count_seen  INTEGER,
   status      TEXT NOT NULL,
