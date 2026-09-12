@@ -79,11 +79,31 @@ def screens() -> list:
     return bad
 
 
+def _freshen() -> None:
+    """★ 09-12 (R-1) — ★ `collected_at` 을 ★ **원문에서 되살린다.**
+
+    ★★ 실측 09-12 — ★ 이 칸이 ★ 엔카 말고 ★ **열한 곳 전부 빈칸**이었다.
+      ★ 수집은 ★ **돌고 있었는데** (`carwatch-daily` 가 열 곳의 목록을 받는다)
+        ★ ★ 그 칸을 ★ 아무도 안 써서 ★ **화면이 「안 돌았다」로 보였다.**
+    ★ 한 판마다 되살린다 — ★ 그래야 현황 화면이 ★ 늘 참말이다
+    """
+    try:
+        from tools.fill_collected_at import run as fill
+
+        got = fill(write=True)
+        n = sum(v for k, v in got.items() if "원문이 없다" not in k)
+        if n:
+            print(f"  collected_at 을 {n:,}건 되살렸다", flush=True)
+    except Exception as exc:                    # noqa: BLE001
+        print(f"  collected_at 되살리기가 실패했다 — {exc}", flush=True)
+
+
 def run(base_url: str) -> str:
     import validate.v0_guide as V
 
     src = io.open(os.path.join(ROOT, "validate", "v0_guide.py"),
                   encoding="utf-8").read()
+    _freshen()
     got = measure(base_url)
     bad_screens = screens()
 
