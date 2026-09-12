@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 246개 · 총 88,594줄
+파일 247개 · 총 88,729줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -103,6 +103,7 @@
 | `web/context.py` | 213 | 화면 문맥과 오류 (14장 STEP 144 · 148). |
 | `validate/base.py` | 212 | 검증 계약. |
 | `tools/unknown_split.py` | 210 | 「확인 안 됨」을 ①②③④ 로 가른다 (개정 434 · 435 · V1-27 · V1-28). |
+| `tools/kb_list_prices.py` | 205 | ★ KB 목록으로 ★ **값·트림**을 채운다 (이번 주 과제 P-2 를 돌아가는 길). |
 | `tests/seed.py` | 204 | 시험용 씨앗 DB — 운영 DB 를 복사하지 않는다. |
 | `tools/migrate.py` | 203 | 스키마 이행 — 기존 DB 를 현재 DDL 에 맞춘다. |
 | `tools/collect_lexus.py` | 198 | 렉서스 인증중고 수집 (명령서 1a). |
@@ -129,10 +130,10 @@
 | `analyze/axis/spec.py` | 172 | 사양 90점 — HUD 20 · 선루프 20 · SVM 10 · SCC 10 · 후측방 5 · 틴팅 5. |
 | `tools/collect_bmw.py` | 171 | BMW 바바리안(BPS) 수집 (명령서 1a). |
 | `tools/daily_check.py` | 170 | 일일 점검 — 매일 23:00 (개정 334 · S29). |
+| `tools/round.py` | 170 | 한 판 — 재고 · 검사하고 · 붉은 것을 낸다 (09-08 마스터 지시). |
 | `store/pii.py` | 169 | 개인정보 분리 (L4). |
 | `tools/collect_kia_cpo.py` | 169 | 기아 인증중고차(CPO) 목록 수집 (명령서 `ORDER_20260822_r515.md` 3-1 · 단계 8). |
 | `adapters/kbchachacha.py` | 167 | KB차차차 어댑터 — URL · 헤더 (1장 STEP 11). |
-| `tools/kb_list_prices.py` | 167 | ★ KB 목록으로 ★ **값·트림**을 채운다 (이번 주 과제 P-2 를 돌아가는 길). |
 | `tools/fill_accident_parts.py` | 164 | ★ M-3 — **교환 · 판금 · 골격**을 갈라 저장하고 ★ 부위명을 낸다 (지시 r1213). |
 | `tools/weekly_check.py` | 163 | 주간 일제 점검 — 금 02:00 · 개발측 몫 (개정 334 · S29). |
 | `tools/measure_axis_gap.py` | 161 | ★ 3 — ★ 짝이 245 인데 ★ 아홉 사이트 A 가 0 인 까닭을 ★ **잰다**. |
@@ -143,7 +144,6 @@
 | `tools/fetch_missing_catalog.py` | 156 | ★★★★★ 08-31 (로드맵 차례 5 · `V1-23`) — ★ **안 부른 카탈로그를 받는다.** |
 | `tools/compress_raw.py` | 155 | 원문(raw_response.body)을 눌러 둔다 (마스터 지시 2026-08-28). |
 | `tools/daily_enqueue.py` | 153 | 하루 한 번 스스로 돈다 (STEP 136h · 개정 315). |
-| `tools/round.py` | 150 | 한 판 — 재고 · 검사하고 · 붉은 것을 낸다 (09-08 마스터 지시). |
 | `tools/fill_origin_total.py` | 149 | ★ M-1 — **신차출고가(옵션 포함)** 를 저장한다 (지시 r1213). |
 | `collect/sweep.py` | 147 | 철학 ② — ★ **팔린 것은 대조하고 치운다** (마스터 확정 09-03 · `S46-267`). |
 | `tools/classify_registry.py` | 144 | 등록부 미분류 정리 — 근거가 있는 것만 (8장 STEP 87 · V4-11). |
@@ -198,6 +198,7 @@
 | `parse/field_map.py` | 80 | D5 ② — ★ **파서가 매핑표를 읽는다** (지시 r1168 · `S46-282`). |
 | `report/why_cheap.py` | 80 | 「왜 싼가」 — 싼 이유를 순서대로 찾아 낸다 (개정 299 · V3-52). |
 | `store/chunk.py` | 77 | 조각 전송 — 바이트를 나누고 서버가 이어붙인다 (개정 307). |
+| `tools/fill_collected_at.py` | 77 | ★ R-1 — ★ `collected_at` 을 ★ **원문 파일**에서 채운다 (09-12 지시). |
 | `tools/inspect_dict.py` | 75 | 사전 검토 — pending 값과 원문 표본을 본다. |
 | `tools/inspect_facet.py` | 74 | facet 원문에 실제로 어떤 축이 왔는지 본다. |
 | `tools/backfill_vehicle_id.py` | 71 | ★★★★★ 09-03 (2부 S6) — ★ **차량 키가 빈 매물을 채운다.** |
@@ -253,7 +254,7 @@
 | `parse/revolt/__init__.py` | 0 | — |
 | `parse/volvo_selekt/__init__.py` | 0 | — |
 
-## 큰 파일 — 무엇이 어디에 (200줄 이상 99개)
+## 큰 파일 — 무엇이 어디에 (200줄 이상 100개)
 
 ### `validate/v0_guide.py` — 8,578줄
 
@@ -835,6 +836,12 @@ _cfg:24  Check:55  CheckResult:93  _short:118  result:131  not_applicable:140  s
 
 ```
 _cfg:35  _walk:41  classify:51  main:127
+```
+
+### `tools/kb_list_prices.py` — 205줄
+
+```
+cards:45  from_files:82  queries:98  fetch:132  _one_target:143  run:173
 ```
 
 ### `tests/seed.py` — 204줄
