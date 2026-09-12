@@ -428,6 +428,15 @@ HIDDEN_TEXT_JS = r"""
         //     ★ ★ ★ ★ 글자는 ★ 옆으로 흐른다.  ★ 아홉 점 중 여섯이 사진에 맞았다.
         //   ★ ★ ★ ★ ★ 눈에는 다 보인다.  ★ 그러니 안 센다.
         if (getComputedStyle(a).float !== 'none') { stuck = true; break; }
+        // ★★★★★ 09-12 — ★ **옆으로 밀어 보는 표**는 가린 것이 아니다.
+        //   ★ 실측 — ★ `v4m_admin_pipeline_시안` 390px 에서 ★ 표 칸 다섯이 걸렸다.
+        //   ★ ★ `.pl-tw{overflow-x:auto}` 안의 표가 ★ 화면보다 넓어
+        //     ★ ★ 오른쪽 칸이 ★ **밖에 있을 뿐**이다.  ★ 밀면 다 보인다.
+        //   ★ ★ ★ 그렇게 지은 것이니 ★ 안 센다.
+        const ov = getComputedStyle(a).overflowX;
+        if ((ov === 'auto' || ov === 'scroll') && a.scrollWidth > a.clientWidth + 2) {
+          stuck = true; break;
+        }
       }
       if (stuck) { seen++; continue; }          // ★ 띠·띄운 것 아래로 지나간 것
       // ★ 제 짝(같은 label 안의 input 등)도 결함이 아니다

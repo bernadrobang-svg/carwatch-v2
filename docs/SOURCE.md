@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 246개 · 총 88,585줄
+파일 246개 · 총 88,594줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -24,8 +24,8 @@
 | `validate/v2_load.py` | 955 | V2 적재 검증 — 옮겨졌는가 · 전일 대비 변동이 타당한가. |
 | `tests/test_score.py` | 943 | 7장 판정·채점 시험. |
 | `validate/v10_admin.py` | 936 | V10 관리자 검증. |
+| `tools/browser_diff.py` | 923 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `report/screens/views.py` | 920 | 화면 전용 DTO. |
-| `tools/browser_diff.py` | 914 | ★★★★★ 09-01 마스터 지시 — ★ **브라우저로 시안과 화면을 대조한다.** |
 | `validate/v1_collect.py` | 910 | V1 수집 검증 — 다 받았는가 · 라벨이 맞는가. |
 | `tools/trace_fill.py` | 840 | 추적표의 소스 · 화면 · 검사 칸을 기계로 채운다 (`inbox/ORDER_00_trace_fill.md`). |
 | `collect/pipeline.py` | 792 | 실행 순서 · 중단 · 재처리 · 재개. |
@@ -363,16 +363,16 @@ check:36  fx:42  snap:46  ctx:66  full_verdict:87  test_denominator:100  test_co
 _sources:212  _admin_guard_checks:233  _sql_strings:278  _schedule_checks:290  _query_error_checks:333  run:434  _session_checks:579  _pii_query_check:659  _scratch:706  _dict_reason_check:721  _dict_source_shown_check:737  _automation_checks:755  _queue_consumer_check:888  _queue_stale_shown_check:917  _ensure_tmp:933
 ```
 
+### `tools/browser_diff.py` — 923줄
+
+```
+pairs:36  look:49  main:299  hidden_text_report:530  _site_report:664  encar_collect_report:724  kb_collect_report:819  all_sites_report:863  raw_file_counts:888
+```
+
 ### `report/screens/views.py` — 920줄
 
 ```
 AxisChip:30  ScoreBar:55  AxisPoint:71  ListingRow:87  ListingFilter:269  WatchRow:369  TargetStat:412  RelaxRow:421  MarketRow:428  ChangeRow:440  AttentionItem:450  ViewerState:458  DashboardView:472  CompareView:509  TrackPair:527  TrackView:566  MarketView:592  DealerRow:607  SoldBin:628  SoldRow:644  SoldView:674  NotReadyView:694  TodayChange:725  StepRow:737  _min_sample:749  PendingValue:767  Bucket:780  ExcludedGroup:800  ReportFile:809  ReportsView:821  RecommendAxis:843  RecommendRow:853  RecommendView:902
-```
-
-### `tools/browser_diff.py` — 914줄
-
-```
-pairs:36  look:49  main:299  hidden_text_report:521  _site_report:655  encar_collect_report:715  kb_collect_report:810  all_sites_report:854  raw_file_counts:879
 ```
 
 ### `validate/v1_collect.py` — 910줄

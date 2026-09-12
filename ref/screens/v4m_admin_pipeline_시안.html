@@ -1,0 +1,151 @@
+<!doctype html><html lang="ko"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수집 현황 (시안)</title>
+<!-- 시안 · SPEC-2026.09.12 · 틀 web/templates/admin_pipeline.html
+     09-12 에 개발측이 틀을 먼저 짓고 내가 시안을 안 지었다. 그 자리를 메운다.
+     마스터가 보시는 것 — 「지금 돌고 있나 · 어디서 막혔나 · 무엇이 갇혔나」 -->
+<style>
+:root{--bg:#f9fafb;--surface:#ffffff;--surface2:#f9fafb;--line:#e5e8eb;--line2:#d1d6db;
+ --text:#191f28;--dim:#8b95a1;--faint:#b0b8c1;--accent:#3182f6;--ok:#00c471;--no:#f04452;
+ --mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}
+.v3-wrap{max-width:1100px;margin:0 auto;padding:12px 14px 96px}
+.v3-wrap *{height:auto;overflow:visible}
+.v4-top{display:flex;justify-content:space-between;align-items:center;
+ padding:10px 0;border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:14px 0 4px}
+.pl-sub{color:var(--dim);font-size:13px;margin:0 0 12px}
+
+/* 한눈에 — 셋 */
+.pl-sum{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pl-box{flex:1 1 110px;border:1px solid var(--line);border-radius:10px;
+ background:var(--surface);padding:10px 12px}
+.pl-box b{display:block;font-size:22px;font-weight:800;font-family:var(--mono)}
+.pl-box span{font-size:12px;color:var(--dim)}
+.pl-box.warn b{color:var(--no)}
+.pl-box.good b{color:var(--ok)}
+
+/* 표 */
+.pl-h{font-size:13px;color:var(--dim);margin:16px 0 6px}
+.pl-tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table.pl{border-collapse:collapse;width:100%;font-size:12px;min-width:520px}
+table.pl th,table.pl td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:right;
+ white-space:nowrap}
+/* 09-12 — 좁은 쪽에서는 밀지 않고 글자를 줄여 다 보이게 한다.
+   밀어야 보이는 것은 마스터가 놓치신다 */
+@media (max-width:520px){
+  table.pl{min-width:0;font-size:11px}
+  table.pl th,table.pl td{padding:6px 5px}
+}
+table.pl th{color:var(--dim);font-weight:600;background:var(--surface2)}
+table.pl th.l,table.pl td.l{text-align:left}
+table.pl td b{font-family:var(--mono)}
+table.pl tr:last-child td{border-bottom:none}
+.pl-old{color:var(--no);font-weight:700}
+.pl-new{color:var(--ok);font-weight:700}
+.pl-q{color:var(--faint)}
+.pl-stuck{color:var(--no);font-weight:700}
+.pl-st{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
+ border:1px solid currentColor}
+.pl-st.ok{color:var(--ok)}
+.pl-st.run{color:var(--accent)}
+.pl-st.fail{color:var(--no)}
+.pl-note{font-size:11px;color:var(--faint);margin:6px 0 0}
+.v4-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.v4-tabs a{padding:7px 12px;border-radius:16px;border:1px solid var(--line);
+ background:var(--surface2);color:var(--dim);text-decoration:none;
+ white-space:nowrap;font-size:13px}
+.v4-tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+nav.nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--surface);
+ border-top:1px solid var(--line2);padding:6px 0;z-index:20}
+nav.nav a{flex:1;text-align:center;color:var(--dim);text-decoration:none;
+ font-size:12px;padding:6px 0}
+nav.nav a.on{color:var(--accent);font-weight:700}
+</style>
+
+<div class="v3-wrap">
+<!-- 반드시 있는 것
+     한눈에 셋 — 도는 곳 · 갇힌 매물 · 막힌 곳
+     사이트마다 — 매물 · 마지막 수집 · 마지막 본 때 · 갇힘 · 판 기록
+     마지막 판 — 걸음 · 상태 · 두드림 · 받음 · 넣음 · 막힘 · 시작
+     시각이 없으면 「안 돎」이 아니라 「미조회」다 (09-12 실측 — 엔카만 찍는다)
+     막힌 수가 0 이 아니면 붉게 -->
+
+<div class="v4-top"><span><b>CarWatch</b></span><span class="pl-sub">master · admin</span></div>
+
+<h1>수집 현황</h1>
+<p class="pl-sub">지금 돌고 있나 · 어디서 막혔나 · 무엇이 갇혔나</p>
+
+<p class="v4-tabs">
+  <a class="on" href="/admin/pipeline">수집 현황</a>
+  <a href="/admin/collect">수집</a>
+  <a href="/admin/audit">기록</a>
+  <a href="/admin">관리</a>
+</p>
+
+<div class="pl-sum">
+  <div class="pl-box good"><b>3</b><span>지금 도는 곳</span></div>
+  <div class="pl-box warn"><b>356</b><span>갇힌 매물</span></div>
+  <div class="pl-box warn"><b>11</b><span>수집 시각 미조회</span></div>
+</div>
+
+<p class="pl-h">사이트마다 — 언제 받았나</p>
+<div class="pl-tw">
+<table class="pl">
+  <tr><th class="l">사이트</th><th>매물</th><th>마지막 수집</th><th>마지막 본 때</th>
+      <th>갇힘</th><th>판 기록</th></tr>
+  <tr><td class="l">엔카</td><td><b>16,693</b></td>
+      <td class="pl-new">09-12 09:41</td><td>09-12 09:41</td><td>0</td><td>있음</td></tr>
+  <tr><td class="l">KB차차차</td><td><b>6,619</b></td>
+      <td class="pl-q">미조회</td><td>09-12 08:10</td>
+      <td class="pl-stuck">356</td><td>있음</td></tr>
+  <tr><td class="l">리본카</td><td><b>1,648</b></td>
+      <td class="pl-q">미조회</td><td>09-11 22:05</td><td>0</td><td>있음</td></tr>
+  <tr><td class="l">현대인증</td><td><b>1,156</b></td>
+      <td class="pl-q">미조회</td><td class="pl-old">09-08 03:12</td><td>0</td><td>없음</td></tr>
+  <tr><td class="l">기아 CPO</td><td><b>1,087</b></td>
+      <td class="pl-q">미조회</td><td>09-11 19:40</td><td>0</td><td>있음</td></tr>
+  <tr><td class="l">K카</td><td><b>604</b></td>
+      <td class="pl-q">미조회</td><td>09-11 20:15</td><td>0</td><td>없음</td></tr>
+</table>
+</div>
+<p class="pl-note">「미조회」는 <b>안 돈다</b>가 아니라 <b>시각을 안 찍었다</b>입니다 —
+  지금은 엔카만 찍습니다 (R-1). 도는지는 「마지막 본 때」로 보십시오.</p>
+
+<p class="pl-h">마지막 판 — 무엇을 했나</p>
+<div class="pl-tw">
+<table class="pl">
+  <tr><th class="l">사이트</th><th class="l">걸음</th><th class="l">상태</th>
+      <th>두드림</th><th>받음</th><th>넣음</th><th>막힘</th><th class="l">시작</th></tr>
+  <tr><td class="l">엔카</td><td class="l">S2 상세</td>
+      <td class="l"><span class="pl-st run">도는 중</span></td>
+      <td><b>1,204</b></td><td><b>812</b></td><td><b>812</b></td>
+      <td class="pl-stuck">392</td><td class="l">09-12 09:00</td></tr>
+  <tr><td class="l">KB차차차</td><td class="l">S2 상세</td>
+      <td class="l"><span class="pl-st run">도는 중</span></td>
+      <td><b>62</b></td><td><b>62</b></td><td><b>62</b></td><td>0</td>
+      <td class="l">09-12 08:00</td></tr>
+  <tr><td class="l">엔카</td><td class="l">S5 판정</td>
+      <td class="l"><span class="pl-st fail">실패</span></td>
+      <td class="pl-q">—</td><td class="pl-q">—</td><td class="pl-q">—</td>
+      <td class="pl-q">—</td><td class="l">09-11 23:40</td></tr>
+  <tr><td class="l">리본카</td><td class="l">S1 목록</td>
+      <td class="l"><span class="pl-st ok">끝남</span></td>
+      <td><b>1,648</b></td><td><b>1,648</b></td><td><b>219</b></td><td>0</td>
+      <td class="l">09-11 22:00</td></tr>
+</table>
+</div>
+<p class="pl-note">「막힘」이 0 이 아니면 붉게 냅니다.
+  엔카 392 는 407 입니다 — 팔린 것이 아니라 지금 막힌 것입니다.</p>
+
+<nav class="nav">
+  <a href="/">매물</a><a href="/watch">관심</a><a href="/track">추적</a>
+  <a href="/recommend">추천</a><a href="/status">현황</a>
+  <a href="/fetch">받기</a><a class="on" href="/admin">관리</a>
+</nav>
+  <p class="pl-note" style="text-align:center;margin-top:14px">
+    시안 · SPEC-2026.09.12 · 틀 `web/templates/admin_pipeline.html`</p>
+</div>
+</html>

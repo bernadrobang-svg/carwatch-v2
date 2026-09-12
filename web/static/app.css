@@ -3771,3 +3771,45 @@ nav.bot a.on{color:var(--amber);font-weight:700}
 .v3-bot a{flex:1;text-align:center;color:var(--dim);text-decoration:none;
   font-size:12px;padding:6px 0}
 .v3-bot a.on{color:var(--amber);font-weight:700}
+
+
+/* 09-12 — 수집 현황 화면 CSS. 시안 v4m_admin_pipeline_시안.html.
+   09-12 에 개발측이 틀을 먼저 짓고 내가 시안을 안 지었다. 그 자리를 메운다.
+   시안을 지으면 그 자리에서 app.css 로 옮긴다 (S46-291) */
+:root{--bg:var(--text);--surface:var(--btn-on-text)fff;--surface2:var(--surface2);--line:var(--text);--line2:var(--text);
+ --text:var(--text);--dim:var(--text);--faint:var(--text);--accent:var(--text);--ok:var(--text);--no:var(--text);
+ --mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;min-height:0}
+.pl-sub{color:var(--dim);font-size:13px;margin:0 0 12px}
+/* 한눈에 — 셋 */
+.pl-sum{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pl-box{flex:1 1 110px;border:1px solid var(--line);border-radius:10px;
+ background:var(--surface);padding:10px 12px}
+.pl-box b{display:block;font-size:22px;font-weight:800;font-family:var(--mono)}
+.pl-box span{font-size:12px;color:var(--dim)}
+.pl-box.warn b{color:var(--no)}
+.pl-box.good b{color:var(--ok)}
+/* 표 */
+.pl-h{font-size:13px;color:var(--dim);margin:16px 0 6px}
+.pl-tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table.pl{border-collapse:collapse;width:100%;font-size:12px;min-width:520px}
+table.pl th,table.pl td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:right;
+ white-space:nowrap}
+@media (max-width:520px){
+  table.pl{min-width:0;font-size:11px}
+  table.pl th,table.pl td{padding:6px 5px}
+}
+table.pl th{color:var(--dim);font-weight:600;background:var(--surface2);position:sticky;top:0}
+table.pl th.l,table.pl td.l{text-align:left}
+table.pl td b{font-family:var(--mono)}
+table.pl tr:last-child td{border-bottom:none}
+.pl-old{color:var(--no);font-weight:700}
+.pl-new{color:var(--ok);font-weight:700}
+.pl-q{color:var(--faint)}
+.pl-stuck{color:var(--no);font-weight:700}
+.pl-st{padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;
+ border:1px solid currentColor}
+.pl-st.ok{color:var(--ok)}
+.pl-st.run{color:var(--accent)}
+.pl-st.fail{color:var(--no)}
+.pl-note{font-size:11px;color:var(--faint);margin:6px 0 0}
