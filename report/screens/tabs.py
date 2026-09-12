@@ -1320,6 +1320,8 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "       l.undercarriage_json, l.undercarriage_src,"
         # ★ 09-11 M-16 — ★ 거르개가 색·옵션을 본다
         "       l.color_ext_raw, l.options_standard_json, l.options_name_json,"
+        # ★ 09-12 — ★ 옵션값 = ★ 신차출고가 − **신차정가**(등급기준가)
+        "       l.price_origin_won,"
         # ★ 맨 뒤다 — ★ `r[-1]` 로 읽는다 (자리를 세지 않게)
         "       l.detail_status"
         "  FROM core_listing l"
@@ -1407,7 +1409,7 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
      wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
      swap, weld, frame, parts_json,
      g_value, g_car, g_warranty, g_taste, earned, base,
-     under_json, under_src, color, opt_s, opt_n, _detail) = r
+     under_json, under_src, color, opt_s, opt_n, origin_base, _detail) = r
     pct = _dep_pct(won, origin)
     cap = float(cfg["depreciation_max_pct"])
     nodx = float(cfg["depreciation_no_dx_pct"])
@@ -1446,10 +1448,15 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
         {"label": "주행 / 최초등록",
          "cells": [cell(_km(km), "ok" if km is not None else "no"),
                    cell(_ym(ym), "ok" if ym else "no")]},
-        # ★ M-3 — ★ **교환 · 판금 · 골격**을 갈라 낸다.  ★ 부위명도 낸다
+        # ★★★★★ 09-12 (M-20) — ★ 사고는 ★ **두 줄**이다 (마스터).
+        #   ★ 첫 줄   내차 N회 N만 · 상대 N회 N만
+        #   ★ 둘째 줄 골격 무사고|상함 · 외판 교환 N곳 · 판금 N곳 (부위명)
+        #   ★ 꼴은 ★ `config/targets.json` 의 `_사고_보이는꼴` 이 정본이다
         {"label": "사고",
-         "cells": _accident_cells(swap, weld, frame, parts_json,
-                                  my_cnt, my_cost, ot_cnt, ot_cost, big)},
+         "cells": [{"v": _acc_line1(my_cnt, my_cost, ot_cnt, ot_cost),
+                    "cls": _acc_cls1(my_cnt, ot_cnt)},
+                   {"v": _acc_line2(frame, swap, weld, parts_json),
+                    "cls": _acc_cls2(frame)}]},
         {"label": "진단 / 보증",
          "cells": [cell(dx or NOT_ASKED, "ok" if dx else "no"),
                    cell(_warranty(wmon, wkm))]},
@@ -1477,7 +1484,7 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
         # ★ 09-11 (M-16·M-19) — ★ 거르개 일곱을 ★ **하나씩 잰다.**
         #   ★ True 맞음 · False 못 미침 · **None 은 「안 봤다」** (금지 12)
         "_sift": _t4_check(sift or {}, won, ym, km, color, origin, frame,
-                           optj, opt_s, opt_n, site, root),
+                           optj, opt_s, opt_n, site, root, origin_base),
         "bars": _bars(g_value, g_car, g_warranty, g_taste, earned, base),
         "say": _gv70_say(pct, lo, hi, dx, wmon, wkm, swap, frame, big, many,
                          under_json, under_src),
@@ -1706,7 +1713,8 @@ def _t4_pack(card: dict, sift: dict) -> tuple:
 
 
 def _t4_check(sift: dict, won, ym, km, color, origin, frame,
-              opt_c, opt_s, opt_n, site: str, root: str = ".") -> dict:
+              opt_c, opt_s, opt_n, site: str, root: str = ".",
+              origin_base=None) -> dict:
     """거르개 일곱을 ★ 하나씩 잰다 — ★ {이름: True/False/None}.
 
     ★★ **None 은 「안 봤다」**다.  ★ 「없다」가 아니다 (금지 12).
@@ -1729,12 +1737,12 @@ def _t4_check(sift: dict, won, ym, km, color, origin, frame,
     #     ★ ★ 들어 있다** — ★ 더하면 두 번 세는 것이고,
     #     ★ ★ ★ 이름·값을 모른다고 ★ 「미조회」로 만들 까닭도 없다.
     #   ★ 앞서 셋을 다 넣어 ★ 기본 옵션 67개 때문에 ★ **전부 미조회**가 됐었다
-    #   ★★★ 09-11 — ★ 선택 옵션이 ★ **빈 목록**인 것은 ★ 두 가지다:
-    #     ★ ① 상세를 **안 받았다** (`NULL`) — ★ 미조회
-    #     ★ ② 받았는데 **선택 옵션이 없다** (`[]`) — ★ 그것은 **0원**이다
-    #   ★ 실측 09-11 — ★ 흰색·2023년·2.5만km 짜리 여덟 대가 ★ 전부 `NULL` 이었다
-    got["옵션값"] = (None if opt_c is None
-                   else _opt_won_at_least(site, least, root, opt_c))
+    #   ★★★★★ 09-12 (가이드 답) — ★ **이름으로 재지 않는다.**
+    #     ★ 옵션값 = ★ **신차출고가 − 신차정가**다.  ★ 이름이 없어도 걸린다.
+    #     ★ 실측 — ★ 42543098 = 5,455만 − 4,904만 = **551만** → 400만 넘음 → 통과
+    #   ★ 이름 사전 창구는 다 막혔다 (404 · 404 · 407) — ★ 찾지 말라 하셨다.
+    #   ★ `options.standard` 48개는 ★ **기본 사양이고 값이 0** 이다 — ★ 안 건드린다
+    got["옵션값"] = _opt_won_gap(origin_base, origin, least)
     got["골격"] = None if frame is None else (frame == 0)
     return got
 
@@ -1787,3 +1795,81 @@ def _opt_won_at_least(site: str, least: int, root: str,
     if got >= least:
         return True
     return None if unknown else False
+
+
+def _acc_line1(my_cnt, my_cost, ot_cnt, ot_cost) -> str:
+    """★ M-20 첫 줄 — ★ 「내차 N회 N만 · 상대 N회 N만」.
+
+    ★★ 내차와 상대를 ★ **반드시 가른다** — ★ 상대는 ★ 내 차 손상이 아니다.
+    ★ 모르면 ★ 「미조회」다.  ★ 「없다」로 적지 않는다 (금지 12)
+    """
+    def side(name, cnt, cost):
+        if cnt is None:
+            return f"{name} {NOT_ASKED}"
+        if not cnt:
+            return f"{name} 0회"
+        return f"{name} {cnt}회 {_won(cost)}" if cost else f"{name} {cnt}회"
+
+    return f"{side('내차', my_cnt, my_cost)} · {side('상대', ot_cnt, ot_cost)}"
+
+
+def _acc_cls1(my_cnt, ot_cnt) -> str:
+    if my_cnt is None and ot_cnt is None:
+        return "no"
+    return "ok" if not (my_cnt or 0) else ""
+
+
+def _acc_line2(frame, swap, weld, parts_json) -> str:
+    """★ M-20 둘째 줄 — ★ 「골격 무사고 · 외판 판금 1곳 (좌측 문)」.
+
+    ★ 골격을 ★ **앞에** 낸다 — ★ 마스터 기준이 「★ 골격에 안 갔으면 통과」다.
+    ★ 부위명을 ★ 괄호로 적는다.  ★ 정비이력은 ★ **여기 안 넣는다**
+    """
+    try:
+        parts = _j.loads(parts_json) if parts_json else []
+    except (ValueError, TypeError):
+        parts = []
+    parts = [p for p in parts if isinstance(p, dict)]
+
+    if frame is None:
+        head = f"골격 {NOT_ASKED}"
+    elif frame:
+        said = [str(p.get("part") or UNKNOWN) for p in parts if p.get("frame")]
+        head = f"★ 골격 상함 {frame}곳" + (f" ({' · '.join(said[:3])})"
+                                        if said else "")
+    else:
+        head = "골격 무사고"
+
+    tail = []
+    for kind, cnt in (("교환", swap), ("판금", weld)):
+        if cnt is None:
+            continue
+        if not cnt:
+            continue
+        where = [str(p.get("part") or UNKNOWN) for p in parts
+                 if p.get("kind") == kind]
+        tail.append(f"외판 {kind} {cnt}곳"
+                    + (f" ({' · '.join(where[:3])})" if where else ""))
+    if swap is None and weld is None:
+        tail.append(f"외판 {NOT_ASKED}")
+    return " · ".join([head, *tail])
+
+
+def _acc_cls2(frame) -> str:
+    if frame is None:
+        return "no"
+    return "no" if frame else "ok"
+
+
+def _opt_won_gap(base, total, least: int) -> bool | None:
+    """옵션값 = ★ **신차출고가 − 신차정가** (가이드 답 09-12).
+
+    ★★ 이름으로 재지 않는다 — ★ 엔카 옵션은 숫자 코드이고
+      ★ 이름 사전 창구는 ★ 다 막혔다 (`/readside/options` 404 …).
+    ★ 둘 중 하나라도 모르면 ★ **미조회**다.  ★ 0 으로 두지 않는다 (금지 12)
+    """
+    if not least:
+        return True
+    if not base or not total:
+        return None
+    return (int(total) - int(base)) >= int(least)
