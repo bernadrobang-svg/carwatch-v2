@@ -2107,6 +2107,16 @@ def admin_status(conn, account, req, root: str = ROOT, csrf: str = "",
                 refresh_sec=ctx.get("poll_sec", 0))
 
 
+def admin_pipeline(conn, account, req, root: str = ROOT, csrf: str = "",
+                   flash_key: str = "-", **_kw):
+    """수집 현황 (09-12 지시 1번).  ★ 읽기 전용이다."""
+    from report.screens.admin import pipeline_view
+
+    return page(conn, account, "수집 현황", "admin_pipeline.html",
+                pipeline_view(conn, root), csrf=csrf, root=root,
+                flash_key=flash_key)
+
+
 def admin_collect(conn, account, req, root: str = ROOT, csrf: str = "",
                   flash_key: str = "-", collect_urls=None, plan=None, **_kw):
     """브라우저 수집 (13장 STEP 136c).
@@ -3126,6 +3136,7 @@ HANDLERS = {
     "view_admin_import": admin_import,
     "view_admin_collect": admin_collect,
     "view_admin_status": admin_status,
+    "view_admin_pipeline": admin_pipeline,
     "view_admin_dict": admin_dict,
     "view_admin_scoring": admin_scoring,
     "view_admin_registry": admin_registry,

@@ -1,0 +1,44 @@
+<!-- ★ 수집 현황 — ★ 「그 사이트가 언제 뭘 했나」 (09-12 지시 1번).
+     ★ 지금 상태 그대로 낸다.  ★ 좋게 꾸미지 않는다 -->
+<h1>수집 현황</h1>
+
+<p class="muted">
+  사이트 <b>{{ count.사이트 }}</b> ·
+  판 기록이 있는 곳 <b>{{ count.판기록 }}</b> ·
+  갇힌 매물 <b>{{ count.갇힘 | num }}</b>
+</p>
+
+<h2>사이트마다 — 언제 받았나</h2>
+<table class="grid">
+  <tr><th>사이트</th><th>매물</th><th>마지막 수집</th><th>마지막 본 때</th>
+      <th>갇힘</th><th>판 기록</th></tr>
+  {% for s in sites %}
+  <tr>
+    <td>{{ s.site }}</td>
+    <td class="num">{{ s.n | num }}</td>
+    <td>{{ s.collected }}</td>
+    <td>{{ s.last }}</td>
+    <td class="num">{{ s.stuck | num }}</td>
+    <td>{{ s.run }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>마지막 판 — 무엇을 했나</h2>
+{% if !runs %}
+<p class="muted">판 기록이 없습니다. 아직 한 번도 안 돌았거나 기록을 안 남긴 것입니다.</p>
+{% endif %}
+<table class="grid">
+  <tr><th>사이트</th><th>걸음</th><th>상태</th><th>두드림</th><th>받음</th>
+      <th>넣음</th><th>막힘</th><th>시작</th><th>끝</th><th>말</th></tr>
+  {% for r in runs %}
+  <tr>
+    <td>{{ r.site }}</td><td>{{ r.step }}</td><td>{{ r.status }}</td>
+    <td class="num">{{ r.asked | num }}</td>
+    <td class="num">{{ r.got | num }}</td>
+    <td class="num">{{ r.stored | num }}</td>
+    <td class="num">{{ r.blocked | num }}</td>
+    <td>{{ r.at }}</td><td>{{ r.end }}</td><td>{{ r.said }}</td>
+  </tr>
+  {% endfor %}
+</table>

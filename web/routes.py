@@ -114,6 +114,10 @@ ROUTES: tuple[Route, ...] = (
     # ★ 지켜보는 곳.  실행하는 곳(/admin/run)과 나눈다 — 보다가 또 누르면
     #   10,000 호출이 도는 중에 다시 시작된다 (STEP 136f · 개정 272)
     Route("/admin/status", (GET,), "view_admin_status", ROLE_ADMIN, GROUP_OPS),
+    # ★★ 09-12 — ★ **수집 현황**.  ★ 「그 사이트가 언제 뭘 했나」를 낸다.
+    #   ★ 실측 — ★ 엔카가 09-04 부터 멈췄는데 ★ **아무 화면도 안 내고 있었다**
+    Route("/admin/pipeline", (GET,), "view_admin_pipeline",
+          ROLE_ADMIN, GROUP_OPS),
     # 반입은 수집이다 — 탐색(/admin/api)이 아니라 운영이다 (STEP 136a)
     Route("/admin/import", (GET, POST), "view_admin_import", ROLE_ADMIN,
           GROUP_OPS),

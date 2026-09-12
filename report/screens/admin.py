@@ -1110,3 +1110,49 @@ def _menu_by_group(menu: list) -> dict:
         if name:
             out[name].append(one)
     return out
+
+
+def pipeline_view(conn, root: str = ".") -> dict:
+    """★ 수집 현황 — ★ 「그 사이트가 **언제 뭘 했나**」 (09-12 지시 1번).
+
+    ★★★ 실측 09-12 — ★ 엔카 마지막 수집이 ★ **09-04** 였다 (일주일째).
+      ★ 나머지 열한 곳은 ★ `collected_at` 이 ★ **전부 빈칸**이다.
+      ★ ★ 그것을 ★ **아무 화면도 안 내고 있었다** — ★ 그래서 아무도 못 봤다.
+    ★ 이 화면은 ★ **지금 상태 그대로** 낸다 — ★ 좋게 꾸미지 않는다
+    """
+    from store.pipeline import latest
+
+    got = []
+    for site, step, status, asked, sgot, stored, blocked, at, end, said \
+            in latest(conn):
+        got.append({
+            "site": site, "step": step, "status": status,
+            "asked": asked or 0, "got": sgot or 0, "stored": stored or 0,
+            "blocked": blocked or 0,
+            "at": str(at or "")[:16].replace("T", " "),
+            "end": str(end or "")[:16].replace("T", " "),
+            "said": said or "",
+        })
+    seen = {x["site"] for x in got}
+    # ★★ **기록이 없는 사이트**를 ★ 빼지 않는다 — ★ 그것이 바로 「안 돌았다」다.
+    #   ★ 안 내면 ★ 화면이 ★ 「괜찮아 보인다」 (그것이 지난 일주일이었다)
+    rows = conn.execute(
+        "SELECT site, COUNT(*), MAX(collected_at), MAX(last_seen),"
+        "       SUM(status = 'new')"
+        "  FROM core_listing GROUP BY site ORDER BY 2 DESC").fetchall()
+    live = []
+    for site, n, coll, last, stuck in rows:
+        live.append({
+            "site": site, "n": n,
+            "collected": str(coll or "")[:16].replace("T", " ") or "기록 없음",
+            "last": str(last or "")[:16].replace("T", " ") or "-",
+            "stuck": stuck or 0,
+            "run": "있다" if site in seen else "★ 판 기록이 없다",
+        })
+    return {"runs": got, "sites": live,
+            # ★ 틀은 열쇠에 ★ **빈칸을 못 쓴다** — ★ `{{ count.판 기록이… }}` 가
+            #   ★ ★ 빈칸에서 끊긴다 (실측 09-12 — 두 칸이 비어 나왔다)
+            "count": {"사이트": len(rows),
+                      "판기록": len(seen),
+                      "갇힘": sum(x["stuck"] for x in live)},
+            "poll_sec": 0}

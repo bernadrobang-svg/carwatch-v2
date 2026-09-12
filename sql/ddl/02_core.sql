@@ -496,3 +496,40 @@ CREATE TABLE IF NOT EXISTS core_dealer_pii (
 --   원문 0건이다.  스키마는 재수집 후 확정한다 (2장 STEP 26-1)
 --   추정으로 필드를 만들지 않는다.  등록부 blocked 로 둔다 (8장 STEP 87)
 --   수집은 한다 — raw_response 에 원문이 쌓이고, core_listing.diagnosis_status 에 상태가 남는다
+
+-- ★★★★★ 09-12 — ★ **수집 기록** (개발지시_수집자동화_현황화면 · 1번).
+--   ★★ 마스터 —「★ 클로드가 없더라도 알아서 수행하는 것으로」.
+--   ★ 그런데 ★ 「그날 그 사이트가 뭘 했나」를 ★ **낼 수가 없었다** —
+--     ★ ★ `audit_request` 는 ★ **건별 요청**이고
+--     ★ ★ `recalc_job` 은 ★ **판정 작업**이지 수집 기록이 아니다.
+--   ★ 그래서 ★ 엔카가 ★ **일주일째 멈춘 것**을 ★ 아무도 못 봤다 (실측 09-12).
+CREATE TABLE IF NOT EXISTS pipeline_run (
+  run_id                 TEXT PRIMARY KEY,
+  site                   TEXT NOT NULL,
+  step                   TEXT NOT NULL,     -- S1 · S5 · S6 …
+  trigger                TEXT NOT NULL,     -- schedule · hand · resume
+  status                 TEXT NOT NULL,     -- running · done · failed · blocked
+  asked                  INTEGER,           -- 두드린 수
+  got                    INTEGER,           -- 받은 수
+  stored                 INTEGER,           -- 표에 넣은 수
+  blocked                INTEGER,           -- 막힌 수 (407 · 로봇쪽)
+  started_at             TEXT NOT NULL,
+  ended_at               TEXT,
+  detail                 TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_pipeline_run_site
+  ON pipeline_run(site, started_at DESC);
+
+-- ★ 왜 그렇게 됐는지 ★ **한 줄씩** 남긴다 — ★ 「자동으로 저장하면 무엇이
+--   들어갔는지 모른다」는 걱정을 ★ 이 표가 푼다 (사람이 누를 일이 아니다)
+CREATE TABLE IF NOT EXISTS pipeline_reason (
+  run_id                 TEXT NOT NULL,
+  at                     TEXT NOT NULL,
+  kind                   TEXT NOT NULL,     -- asked · got · stored · blocked · skip
+  source_id              TEXT,
+  said                   TEXT NOT NULL
+  -- ★ 열쇠를 안 건다 — ★ 같은 run 에 같은 때·갈래가 여럿일 수 있다.
+  --   ★ `COALESCE` 를 열쇠에 쓰면 ★ SQLite 가 거부한다 (실측 09-12)
+);
+CREATE INDEX IF NOT EXISTS idx_pipeline_reason_run
+  ON pipeline_reason(run_id, at);

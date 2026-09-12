@@ -17,7 +17,7 @@
 | `raw_facet` | 7 |  |
 | `raw_response_reject` | 9 |  |
 
-## `sql/ddl/02_core.sql` — 표 13개
+## `sql/ddl/02_core.sql` — 표 15개
 
 > core_* 스키마.  지시서 3장 STEP 29~35 · STEP 39 / 사이트 무관 공통 스키마.  사이트 고유값은 site_* 접두 (0장 STEP 4)
 
@@ -36,6 +36,8 @@
 | `core_parse_issue` | 8 | 둘을 섞으면 파서 버그가 「원문이 그렇다」로 묻힌다 |
 | `core_pii` | 5 | 개인정보 분리 (STEP 35).  get_pii() 로만 읽는다 — 직접 SELECT 금지 (V2-09) |
 | `core_dealer_pii` | 5 | 딜러 단위.  같은 딜러가 매물 100건이면 연락처가 100번 들어가면 안 된다 |
+| `pipeline_run` | 12 | ★ 그래서 ★ 엔카가 ★ **일주일째 멈춘 것**을 ★ 아무도 못 봤다 (실측 09-12). |
+| `pipeline_reason` | 5 | 들어갔는지 모른다」는 걱정을 ★ 이 표가 푼다 (사람이 누를 일이 아니다) |
 
 ## `sql/ddl/03_dict.sql` — 표 3개
 
@@ -43,7 +45,7 @@
 
 | 표 | 열 | 무엇 |
 |---|--:|---|
-| `dict_option_code` | 9 | 상태 4종.  retired 는 삭제하지 않는다 — 과거 매물 해석에 필요하다 |
+| `dict_option_code` | 10 | 상태 4종.  retired 는 삭제하지 않는다 — 과거 매물 해석에 필요하다 |
 | `dict_model_option` | 10 |  |
 | `dict_enum` | 11 |  |
 
@@ -109,5 +111,5 @@
 | `auth_login_attempt` | 5 | 금지   계정을 영구 잠그는 것.  1인 도구라 스스로 못 풀면 CLI 로 가야 한다 |
 | `fetch_run` | 7 | ★ 우리 셈이라 ★ 기본값 0 이면 넉넉하다 |
 
-**표 46개.**
+**표 48개.**
 
