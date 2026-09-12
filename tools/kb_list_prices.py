@@ -95,20 +95,58 @@ def from_files() -> dict:
     return got
 
 
-def fetch(pages: int = 20) -> dict:
-    """GV70 목록을 받는다.  ★ 빈 쪽이 나오면 끝이다."""
+def queries(only: str = "") -> list:
+    """★ R-4 — ★ 우리 차종 **전부**의 KB 질의.  ★ `targets.json` 이 정본이다.
+
+    ★★ 09-12 — ★ GV70 하나만 보던 것을 ★ 넓혔다.
+      ★ 실측 — ★ KB 에 ★ `new` 로 갇힌 것이 ★ **356건**인데
+        ★ ★ 값이 99 · 연식 149 · 주행 149 밖에 없다.
+      ★ ★ ★ 목록 쪽이 ★ 그 셋을 다 준다 (GV70 에서 607대를 그렇게 살렸다)
+    """
+    with open(os.path.join(ROOT, "config", "targets.json"),
+              encoding="utf-8") as fh:
+        rows = json.load(fh)
+    got = []
+    for key, one in rows.items():
+        if key.startswith("_") or not isinstance(one, dict):
+            continue
+        if only and key != only:
+            continue
+        if not one.get("active"):
+            continue
+        q = (one.get("site_query") or {}).get("kbchachacha")
+        if not isinstance(q, dict) or not q.get("makerCode") \
+                or not str(q.get("classCode") or "").strip():
+            continue
+        # ★★ 09-12 — ★ `carCode` 가 ★ **글자 하나**일 수도 목록일 수도 있다.
+        #   ★ 글자를 그대로 돌면 ★ `"3154"` 가 ★ `3·1·5·4` 로 쪼개진다 (실측)
+        cars = q.get("carCode")
+        cars = (list(cars) if isinstance(cars, list)
+                else ([cars] if cars else [None]))
+        for car in cars:
+            got.append((key, q["makerCode"], q["classCode"],
+                        str(car) if car else None))
+    return got
+
+
+def fetch(pages: int = 20, only: str = "") -> dict:
+    """우리 차종 목록을 받는다.  ★ 빈 쪽이 나오면 그 차종은 끝이다."""
     with open(os.path.join(ROOT, "config", "endpoints.json"),
               encoding="utf-8") as fh:
         e = json.load(fh)["kbchachacha"]
-    with open(os.path.join(ROOT, "config", "targets.json"),
-              encoding="utf-8") as fh:
-        q = ((json.load(fh)["GV70_25T"].get("site_query") or {})
-             .get("kbchachacha") or {})
-    car = (q.get("carCode") or [None])[0]
     got: dict = {}
+    for key, maker, klass, car in queries(only):
+        got.update(_one_target(e, key, maker, klass, car, pages))
+    return got
+
+
+def _one_target(e: dict, key: str, maker: str, klass: str,
+                car: str | None, pages: int) -> dict:
+    got: dict = {}
+    print(f"★ {key}", flush=True)
     for page in range(1, pages + 1):
         url = e["base_url"] + e["paths"]["list_gen"].format(
-            page=page, maker=q["makerCode"], klass=q["classCode"], car=car)
+            page=page, maker=maker, klass=klass, car=car)
         try:
             req = urllib.request.Request(url, headers=e["headers"])
             with urllib.request.urlopen(req, timeout=30) as r:
@@ -120,7 +158,7 @@ def fetch(pages: int = 20) -> dict:
             # ★ 「로봇여부 확인」 쪽이다 — ★ 값으로 삼지 않는다
             print(f"  {page}쪽 — 막혔다 ({len(body):,}자)", flush=True)
             break
-        raw_save("kbchachacha", "list", f"gv70-{page:04d}", url, body,
+        raw_save("kbchachacha", "list", f"{key.lower()}-{page:04d}", url, body,
                  datetime.now(timezone.utc).isoformat(), root=ROOT)
         one = cards(body)
         print(f"  {page}쪽 — {len(body):,}자 · 값을 읽은 것 {len(one)}",
