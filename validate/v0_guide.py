@@ -8306,7 +8306,33 @@ def s46_301_tab4_filter_exists():
     return True, f"탭 4 거르개 {len(f) - 2}가지가 설정에 있다"
 
 
+def s46_302_no_stale_filter_words():
+    """S46-302 — 옛 거르개 문구가 남아 있지 않은가 (마스터 09-12).
+
+    마스터 — 「GV70 추천 순위가 저게 맞나. 왜 수집이 미완료된 것이 저렇게 많나」
+    배포 실측 — 「거른 기준」 띠에 옛것과 새것이 겹쳐 떠 있었다.
+      옛것 — 감가 78% 이하 · 2022년 5월↑ · 8만km 이하 · 진단 없어도 · 깡통도 후보
+      새것 — 2023년 이후 · 2.5만km 이하 · 3,999만 이하 · 흰색 · 옵션값 400만 이상
+    띠를 화면에 글자로 박아서 그렇다.
+    `config/targets.json` 의 `_탭4_거름` 에서 그려야 조건이 바뀌면 따라온다.
+    """
+    import re as _re
+    STALE = ("감가 78% 이하", "2022년 5월", "8만km 이하", "깡통도 후보",
+             "진단 없어도")
+    bad = []
+    for q in sorted((ROOT / "web" / "templates").glob("*.html")):
+        body = _read(q)
+        hit = [w for w in STALE if w in body]
+        if hit:
+            bad.append(f"{q.name} — {' · '.join(hit[:3])}")
+    if bad:
+        return False, ("옛 거르개 문구가 틀에 박혀 있다 — " + " · ".join(bad[:2])
+                       + "  (`_탭4_거름` 에서 그려라)")
+    return True, "옛 거르개 문구가 틀에 없다"
+
+
 CHECKS = (
+    ("S46-302", "옛 거르개 문구가 남아 있지 않은가", s46_302_no_stale_filter_words),
     ("S46-301", "탭 4 거르개가 설정에 있는가", s46_301_tab4_filter_exists),
     ("S46-300", "첫 화면이 목록인가", s46_300_root_is_listings),
     ("S46-299", ":root 변수가 값을 가지는가", s46_299_root_vars_have_values),
