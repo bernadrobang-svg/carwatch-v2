@@ -2,7 +2,7 @@
 
 **`python3.11 tools/build_index.py` 가 만든다. 손으로 고치지 않는다.**
 
-파일 247개 · 총 88,961줄
+파일 249개 · 총 89,313줄
 
 | 파일 | 줄 | 무엇 |
 |---|--:|---|
@@ -13,7 +13,7 @@
 | `validate/v3_logic.py` | 2,337 | V3 로직 검증 — 판정이 작동하는가 · 변별력이 있는가. |
 | `collect/runner.py` | 2,224 | 수집 실행 규칙. |
 | `store/core.py` | 2,117 | CORE 저장소 (L4).  사이트 무관 공통 스키마. |
-| `report/screens/tabs.py` | 1,914 | 추천 탭 2·3·4 — ★ 값을 붙인다 (지시 `r1184` A · 규격 `docs/RECOMMEND_SCREEN.md`). |
+| `report/screens/tabs.py` | 2,062 | 추천 탭 2·3·4 — ★ 값을 붙인다 (지시 `r1184` A · 규격 `docs/RECOMMEND_SCREEN.md`). |
 | `tests/test_spec_ui.py` | 1,494 | 규격 기준 통합 테스트 (통합테스트_시나리오_규격기준.md). |
 | `tests/test_integration.py` | 1,278 | 통합 테스트 — 실제 HTTP 로 전 화면 (통합테스트_시나리오.md). |
 | `tools/check_src.py` | 1,201 | CarWatch v2 — 지시서 ↔ 소스 대조 검증기. |
@@ -176,6 +176,8 @@
 | `tools/fill_encar_options.py` | 107 | ★ 엔카 옵션 **이름**을 사전에 채운다 (`catalog` 창구가 준다). |
 | `tools/fill_gate.py` | 106 | 사이트 × 칸 채움율을 재고, 구멍이 있으면 붉게 낸다 (09-08 마스터 지시). |
 | `tools/probe_kb_wall.py` | 106 | KB 봇 차단을 ★ 재는 도구 (명령서 08-25 · 마스터 「가려 받지 마라」). |
+| `tools/fill_kb_frame.py` | 102 | ★ M-3 — ★ KB 상세 원문에서 ★ **골격(프레임)·외판** 을 집는다 (지시 r1232). |
+| `tools/fill_kb_options.py` | 102 | ★ KB 상세 원문에서 ★ **주요옵션**을 집는다 (지시 r1232 1단계). |
 | `parse/kbchachacha/record.py` | 98 | KB차차차 상세 → `core_record` (명령서 r1007 · 1-5 · 로드맵 차례 1). |
 | `tools/daily_collect.py` | 98 | 아홉+한 사이트를 하루 한 번 받는다 (ORDER_20260829 1순위 2 · S46-127). |
 | `store/tools.py` | 97 | 관리 도구 (13장 STEP 135). |
@@ -298,10 +300,10 @@ CollectGroup:67  load_targets:91  collect_groups:116  facet_axes:184  aspect_nam
 resolve_listing_id:39  resolve_dealer_id:57  serialize_container:73  record_change:84  split_pii:112  flush_dealer_pii:164  _record_dropped:176  classify_invariant_change:211  _lookback:272  _source_history:286  _schema_change_min:315  _current:329  _today:335  _photo_max:352  _cap_photos:370  _drop_non_values:394  origin_dropped:406  _drop_impossible_origin:411  _note_skipped:440  upsert_core:461  mark_gone:589  mark_relisted:613  sweep_gone:640  sweep_gone_groups:684  load_snapshot:726  build_identities:844  resolve_vehicle_id:870  merge_conflict:902  upsert_vehicle:913  upsert_dealer:934  dealer_trust:961  _trust_cfg:1054  upsert_child:1071  _flag:1092  _not_join_months:1106  state_counts:1131  current_versions:1184  diagnosis_of:1214  target_counts:1227  top_target:1234  vehicle_of:1239  collect_scale:1246  our_fault:1266  catalog_coverage:1275  _walk:1319  _sample_bodies:1335  hits_of:1348  key_seen:1367  stored_hits:1382  sample_bodies:1398  observed:1420  known_leaves:1458  has_unclassified:1473  classify_unclassified:1480  _card_limit:1523  _value_chars:1528  _admin_cfg:1533  unclassified_cards:1550  _peek:1606  _short:1653  _blocking_paths:1664  _raw_rows_max:1684  used_endpoints:1694  raw_sections:1703  _flatten:1742  option_diff:1766  _option_names:1807  blocking_keys:1823  full_hits:1841  axis_paths_empty:1866  blocking_rows:1903  record_mismatch_sql:1965  record_mismatch_count:1971  relist_counts:1997  listing_models:2014  filter_options:2034  site_counts:2051  unscored_count:2064  photo_ready_sites:2081  unclassified_fields:2106
 ```
 
-### `report/screens/tabs.py` — 1,914줄
+### `report/screens/tabs.py` — 2,062줄
 
 ```
-tabs_config:33  tab_list:51  tab_template:69  tab_targets:76  _won:84  _km:91  _ym:97  _year_dot:106  _q:111  _median:121  _quantile:129  _band_where:143  _picks:155  _sorts:201  _pager:224  _sel:245  _region_kind:257  _region_key:269  view_tab2:280  _dep:459  _dep_ok:466  _opt_label:472  _warranty:482  analyze_count:492  view_analyze_list:499  _parts:540  copy_text:574  _source_link:596  _lease_where:614  _band_case:636  _grid_stats:646  _year_label:673  view_tab4:680  _split_km:781  _avg_km_of:798  _split_trim:807  _market:824  _cell_rows:850  _calc:897  _mark:930  _tab3_cfg:937  _warranty_left:942  _insurance_won:949  view_tab3:953  _tab3_head:1020  _tab3_sub:1026  _tab3_cond:1034  _tab3_card:1055  _accident_tone:1163  _verdict:1178  _thin_why:1187  _good_line:1198  _source_url_of:1212  _t4:1230  _dep_pct:1234  _fee:1251  _wear:1255  view_gv70:1269  _gv70_card:1416  _pkgs:1505  _bars:1546  _mark_best:1566  _gv70_say:1584  _accident_cells:1610  _panel_book:1662  _frame_said:1670  _under_say:1679  _t4_sift:1696  _t4_pack:1707  _t4_check:1725  _opt_won_at_least:1763  _acc_line1:1810  _acc_cls1:1826  _acc_line2:1832  _acc_cls2:1868  _opt_won_gap:1874  _t4_rule:1888
+tabs_config:33  tab_list:51  tab_template:69  tab_targets:76  _won:84  _km:91  _ym:97  _year_dot:106  _q:111  _median:121  _quantile:129  _band_where:143  _picks:155  _sorts:201  _pager:224  _sel:245  _region_kind:257  _region_key:269  view_tab2:280  _dep:459  _dep_ok:466  _opt_label:472  _warranty:482  analyze_count:492  view_analyze_list:499  _parts:540  copy_text:574  _source_link:596  _lease_where:614  _band_case:636  _grid_stats:646  _year_label:673  view_tab4:680  _split_km:781  _avg_km_of:798  _split_trim:807  _market:824  _cell_rows:850  _calc:897  _mark:930  _tab3_cfg:937  _warranty_left:942  _insurance_won:949  view_tab3:953  _tab3_head:1020  _tab3_sub:1026  _tab3_cond:1034  _tab3_card:1055  _accident_tone:1163  _verdict:1178  _thin_why:1187  _good_line:1198  _source_url_of:1212  _t4:1230  _dep_pct:1234  _fee:1251  _wear:1255  view_gv70:1269  _gv70_card:1402  _pkgs:1518  _bars:1559  _mark_best:1579  _gv70_say:1597  _accident_cells:1623  _panel_book:1675  _frame_said:1683  _under_say:1692  _t4_sift:1709  _is_lease:1720  _t4_logic:1735  _first_won:1748  _t4_gate:1759  _t4_drop:1778  _first_text:1820  _t4_rank:1827  _pct_say:1844  _ym_num:1849  _t4_pack:1855  _t4_check:1873  _opt_won_at_least:1911  _acc_line1:1958  _acc_cls1:1974  _acc_line2:1980  _acc_cls2:2016  _opt_won_gap:2022  _t4_rule:2036
 ```
 
 ### `tests/test_spec_ui.py` — 1,494줄
