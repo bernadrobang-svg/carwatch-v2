@@ -1372,10 +1372,10 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
     _mark_best(keep)
     return {
         "head": label,
+        # ★ 09-12 (M-18) — ★ 이 줄에도 ★ **옛 잣대가 박혀 있었다.**
+        #   ★ 띠와 같은 정본에서 그린다 — ★ 두 곳이 갈리면 ★ 또 어긋난다
         "sub": "마스터 기준으로 걸렀습니다 — "
-               f"감가 {cfg['depreciation_max_pct']}% 이하 · "
-               f"{cfg['year_from'][:4]}년 {int(cfg['year_from'][5:7])}월↑ · "
-               f"{int(cfg['mileage_max_km'] / 10000)}만km 이하 · 골격 무사고",
+               + " · ".join(x["label"] for x in _t4_rule(sift)),
         # ★ 09-11 (M-18) — ★ 「깡통도 후보」를 지웠다.  ★ 마스터가 09-11 에 물리셨다
         # ★★★★★ 09-12 (M-18) — ★ 띠를 ★ **`_탭4_거름` 에서만** 그린다.
         #   ★★ 실측 09-12 — ★ **옛 기준과 새 기준이 같이 떠 있었다**:
