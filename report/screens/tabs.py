@@ -1322,93 +1322,79 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "       l.color_ext_raw, l.options_standard_json, l.options_name_json,"
         # ★ 09-12 — ★ 옵션값 = ★ 신차출고가 − **신차정가**(등급기준가)
         "       l.price_origin_won,"
+        # ★ 09-13 (r1232 2단계) — ★ 리스·렌트 승계를 ★ **2단계에서** 가른다.
+        #   ★ 질의에서 미리 자르면 ★ 「몇 대가 왜 빠졌나」를 셀 수가 없다
+        "       l.sell_type, l.advertisement_type,"
         # ★ 맨 뒤다 — ★ `r[-1]` 로 읽는다 (자리를 세지 않게)
         "       l.detail_status"
         "  FROM core_listing l"
         "  LEFT JOIN result_score s ON s.listing_id = l.listing_id"
         "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
         " WHERE l.target_key = ? AND l.status IN ('active','new','relisted')"
-        f"   AND {lw}"
-        # ★★★★★ 09-12 (M-16) — ★ 잣대를 ★ **`_탭4_거름`** 에서 가져온다.
-        #   ★ 앞서는 ★ 옛 `tab4_gv70` 의 연식·주행을 썼다 —
-        #     ★ ★ 그래서 ★ 「913대가 넘었다」가 ★ **옛 잣대의 수**였다.
-        #   ★★ 연식·주행은 ★ **여기서 안 자른다** — ★ 「하나가 아쉬운 차」(묶음 ③)가
-        #     ★ ★ 있어야 하기 때문이다.  ★ 자르는 것은 ★ **차값 상한**뿐이다
-        "   AND l.price_current_won <= ?",
-        (cfg["target"], *la,
-         sift.get("차값_최대_원") or cfg.get("price_max_won") or 10 ** 9)
-    ).fetchall()
-    passed = len(got)
-    # ★ 「상세를 받았다」 = ★ `detail_status` 가 ok 인 것 (화면 글자 그대로)
-    detailed = sum(1 for r in got if str(r[-1] or "") == "ok")
-    rows = [_gv70_card(r, cfg, sites, root, conn, sift)
-            for r in got if str(r[-1] or "") == "ok"]
-    # ★★★★★ 09-10 (r1212) — ★ 감가율을 못 재는 차를 ★ **지우지 않는다**.
-    #   ★ 지시 r1213 — 「분모가 없으면 ★ 「신차가 미조회 — 감가율을 계산하지 않음」
-    #     ★ ★ 으로 **비운다**」.  ★ 「비운다」는 ★ **차를 지운다**가 아니다.
-    #   ★ 잣대를 넘은 것 · 못 잰 것도 ★ 뒤에 세운다 — ★ 마스터가 보고 고르신다
-    # ★★★★★ 09-11 (M-17) — ★ **네 묶음**으로 가른다.
-    #   ★ ① 조건 다 맞고 미조회 없음  ② 조건 맞는데 미조회 있음
-    #   ★ ③ 하나가 아쉬움            ④ 못 미침 — ★ 수만 센다
-    #   ★★ 미조회는 ★ **떨어뜨리지 않는다** — ★ 「없다」가 아니라 ★ 「안 봤다」다.
-    #   ★ 묶음 **안에서만** 총비용 낮은 순 — ★ 묶음을 건너뛰어 섞지 않는다
-    PACK_SAID = {1: "① 조건을 다 맞췄다", 2: "② 조건은 맞는데 못 본 것이 있다",
-                 3: "③ 하나가 아쉽다", 4: "④ 못 미친다"}
-    for one in rows:
-        one["_pack"], one["_miss"], one["_short"] = _t4_pack(one, sift)
-        # ★ 09-11 (M-19) — ★ **못 본 것을 낱개로** 적는다.
-        #   ★ 화면(템플릿)은 가이드 몫이라 ★ 이미 있는 줄에 넣는다
-        head = PACK_SAID.get(one["_pack"], "")
-        if one["_short"]:
-            head += " — " + " · ".join(one["_short"]) + " 이 모자라다"
-        if one["_miss"]:
-            head += " · ★ 아직 못 봤다: " + " · ".join(one["_miss"])
-        one["say"] = f"{head}.  {one['say']}" if head else one["say"]
-    packs = {n: [c for c in rows if c["_pack"] == n] for n in (1, 2, 3, 4)}
-    for n in packs:
-        packs[n].sort(key=lambda c: c["_total"] or 10 ** 12)
-    picked = len(packs[1])
-    keep = (packs[1] + packs[2] + packs[3])[:int(cfg.get("shown") or 20)]
-    # ★★★★★ 09-12 (M-17) — ★ 묶음을 ★ **눈에 보이게** 가른다.
-    #   ★ 실측 09-12 — ★ 줄세우기는 묶음별이었으나 ★ **화면에는 한 덩어리로** 났다.
-    #   ★ 그래서 「1위가 3,950만 미조회」로 보였다 — ★ 그것은 ②의 1위다.
-    #   ★ 묶음 첫 장에만 머리글을 얹는다 (틀은 `==` 를 못 쓴다)
-    PACK_HEAD = {1: "① 조건을 다 맞췄다", 2: "② 조건은 맞는데 아직 못 본 것이 있다",
-                 3: "③ 하나가 아쉽다"}
-    seen: set = set()
-    for one in keep:
-        n = one["_pack"]
-        if n in seen:
-            one["group_head"] = one["group_note"] = ""
-            continue
-        seen.add(n)
-        one["group_head"] = PACK_HEAD.get(n, "")
-        here = len([x for x in keep if x["_pack"] == n])
-        one["group_note"] = f"{here}대 · 이 묶음 안에서 총비용 낮은 순"
+        # ★★★★★ 09-13 (r1232) — ★ 질의는 ★ **아무것도 안 자른다.**
+        #   ★ 차값·연식·주행·색·옵션값·골격·리스는 ★ 전부 ★ **2단계**다.
+        #   ★★ 질의에서 미리 자르면 ★ 「1단계를 넘는 차가 몇 대인가」를 ★ 못 센다 —
+        #     ★ ★ 마스터가 ★ 바로 그것을 물으셨다 (r1232)
+        , (cfg["target"],)).fetchall()
+    logic = _t4_logic(root)
+    # ★★★★★ 09-13 (r1232 M-16·M-17·M-19) — ★ **세 단계**로 돈다.
+    #   ★★★ 마스터 09-12 — 「★ 옵션도 신차 가격도 성능도 없는 것들을
+    #     ★ ★ **상위에 집어넣는다**는 얘기는 ★ 로직을 전혀 얘기하지 않고 있다는 얘기다」.
+    #   ★ ① 있어야 보인다 — ★ 넷이 없으면 ★ **목록에 안 낸다** (「미조회」로도 안 낸다)
+    #   ★ ② 거른다      — ★ 여덟 중 하나라도 안 맞으면 뺀다
+    #   ★ ③ 세운다      — ★ 잔가율부터.  ★ **총비용은 다섯 번째**다
+    #   ★★ 앞서는 ★ 「네 묶음」으로 ★ 미조회를 화면에 올렸다 — ★ 그것이 물린 것이다
+    cards = [_gv70_card(r, cfg, sites, root, conn, sift) for r in got]
+    passed = len(cards)
+
+    # ── 1단계 ────────────────────────────────────────────────────────
+    seen, unseen = [], []
+    for one in cards:
+        one["_lack"] = _t4_gate(one)
+        (unseen if one["_lack"] else seen).append(one)
+
+    # ── 2단계 ────────────────────────────────────────────────────────
+    kept, dropped = [], []
+    for one in seen:
+        one["_bad"] = _t4_drop(one, logic)
+        (dropped if one["_bad"] else kept).append(one)
+
+    # ── 3단계 ────────────────────────────────────────────────────────
+    kept.sort(key=_t4_rank)
+    keep = kept[:int(cfg.get("shown") or 20)]
+    for i, one in enumerate(keep):
+        # ★ 화면(틀)은 가이드 몫이라 ★ 이미 있는 줄에 넣는다
+        one["group_head"] = "후보 — 잔가율 낮은 순" if not i else ""
+        one["group_note"] = (f"{len(kept)}대 · 잔가율 → 주행 → 연식 → 옵션값 "
+                             "→ 총비용 차례" if not i else "")
+        one["say"] = f"잔가율 {_pct_say(one.get('_keep'))}.  {one['say']}"
     _mark_best(keep)
+    # ★ 「아직 못 본 차」가 ★ **무엇을 못 봤는지**까지 센다 (M-19)
+    why: dict = {}
+    for one in unseen:
+        for x in one["_lack"]:
+            why[x] = why.get(x, 0) + 1
     return {
         "head": label,
-        # ★ 09-12 (M-18) — ★ 이 줄에도 ★ **옛 잣대가 박혀 있었다.**
-        #   ★ 띠와 같은 정본에서 그린다 — ★ 두 곳이 갈리면 ★ 또 어긋난다
+        # ★ 09-12 (M-18) — ★ 띠와 ★ 같은 정본에서 그린다
         "sub": "마스터 기준으로 걸렀습니다 — "
                + " · ".join(x["label"] for x in _t4_rule(sift)),
-        # ★ 09-11 (M-18) — ★ 「깡통도 후보」를 지웠다.  ★ 마스터가 09-11 에 물리셨다
         # ★★★★★ 09-12 (M-18) — ★ 띠를 ★ **`_탭4_거름` 에서만** 그린다.
-        #   ★★ 실측 09-12 — ★ **옛 기준과 새 기준이 같이 떠 있었다**:
-        #     ★ 옛 「감가 78% 이하 · 2022년 5월↑ · 8만km 이하 · 깡통도 후보」
-        #     ★ 새 「2023년 이후 · 2.5만km 이하 · 3,999만 이하 · 흰색 · 옵션값 400만」
-        #   ★ 까닭 — ★ 옛 줄을 ★ **화면 코드에 글자로 박아** 두었다.
-        #   ★ ★ 이제 ★ 조건이 바뀌면 ★ 띠가 **저절로 따라온다** (S46-302)
+        #   ★ 옛 「감가 78% 이하 · 2022년 5월↑ · 8만km 이하 · 깡통도 후보」를 지웠다.
+        #   ★ 조건이 바뀌면 ★ 띠가 **저절로 따라온다** (S46-302)
         "rule": _t4_rule(sift),
         "note": "렌터카 이력은 결격이 아닙니다. "
                 "리본카·K카는 렌터카를 정리해 팔아 값이 쌉니다.",
-        # ★ 묶음마다 몇인지 낸다 — ★ ④ 는 수만 센다 (지시)
-        "packs": {"다맞음": len(packs[1]), "미조회있음": len(packs[2]),
-                  "하나아쉬움": len(packs[3]), "못미침": len(packs[4])},
-        "count": {"all": allc, "passed": passed, "detailed": detailed,
-                  "missing": passed - detailed, "shown": len(keep),
-                  # ★ 「다 맞는 차」가 몇인지 ★ 따로 센다 — ★ shown 과 다르다
-                  "picked": picked},
+        "packs": {"1단계_넘음": len(seen), "2단계_넘음": len(kept),
+                  "2단계에서_빠짐": len(dropped), "아직_못_본_차": len(unseen)},
+        "count": {"all": allc, "passed": passed,
+                  # ★ 「상세를 받은 것」이 아니라 ★ **「1단계를 넘은 것」**을 낸다 —
+                  #   ★ 지시가 ★ 「넷이 다 있어야 후보」라 했다
+                  "detailed": len(seen), "missing": len(unseen),
+                  "shown": len(keep), "picked": len(kept),
+                  "why": " · ".join(f"{k} {v:,}대"
+                                    for k, v in sorted(why.items(),
+                                                       key=lambda x: -x[1]))},
         "rows": keep,
     }
 
@@ -1419,7 +1405,8 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
      wmon, wkm, paired, grade, my_cnt, my_cost, ot_cnt, ot_cost,
      swap, weld, frame, parts_json,
      g_value, g_car, g_warranty, g_taste, earned, base,
-     under_json, under_src, color, opt_s, opt_n, origin_base, _detail) = r
+     under_json, under_src, color, opt_s, opt_n, origin_base,
+     sell_kind, ad_kind, _detail) = r
     pct = _dep_pct(won, origin)
     cap = float(cfg["depreciation_max_pct"])
     nodx = float(cfg["depreciation_no_dx_pct"])
@@ -1499,6 +1486,17 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
         "say": _gv70_say(pct, lo, hi, dx, wmon, wkm, swap, frame, big, many,
                          under_json, under_src),
         "_ok": ok, "_total": total,
+        # ★★★★★ 09-13 (r1232) — ★ 세 단계가 읽을 **날값**이다.
+        #   ★ 화면 글자를 다시 파싱하지 않는다 — ★ 그러면 「3,499만」을 되돌려야 한다
+        "_origin": origin, "_frame": frame, "_choice": optj,
+        "_detail": _detail, "_price": won, "_km": km, "_ym": ym,
+        "_color": color, "_lease": _is_lease(sell_kind, ad_kind),
+        # ★ 옵션값 = ★ 신차출고가 − 신차정가 (가이드 답 09-12)
+        "_optgap": ((origin - origin_base)
+                    if origin is not None and origin_base is not None
+                    else None),
+        # ★ 잔가율 = ★ 값 ÷ 신차출고가.  ★ 분모를 모르면 None — ★ 맨 뒤로 간다
+        "_keep": ((won / origin) if won is not None and origin else None),
     }
 
 
@@ -1702,6 +1700,134 @@ def _t4_sift(root: str = ".") -> dict:
     """
     got = load_config(f"{root}/config/targets.json") or {}
     return got.get("_탭4_거름") or {}
+
+
+def _is_lease(sell_kind, ad_kind, root: str = ".") -> bool:
+    """★ 리스·렌트 **승계**인가 (M-13 · r1232 2단계).
+
+    ★★ 마스터 — 「★ 이것은 뺀다.  ★ **내 차가 안 된다**」.
+    ★ 렌터카 **이력**은 결격이 아니다 — ★ 그것은 딴 이야기다 (`_탭4_규격`).
+    ★ 갈래 이름을 ★ **코드에 박지 않는다** (S14) — ★ `config/web.json` 이 정본이고
+      ★ 질의에 쓰는 `_lease_where()` 와 ★ **같은 부품**을 쓴다
+    """
+    from report.screens.build import _lease_kinds
+
+    ads, sells = _lease_kinds(root)
+    return (str(sell_kind or "") in set(sells)
+            or str(ad_kind or "") in set(ads))
+
+
+def _t4_logic(root: str = ".") -> dict:
+    """★ 탭 4 **로직** 정본 — `config/targets.json` 의 `_탭4_로직` (r1232).
+
+    ★★★ 마스터 09-12 — 「★ 옵션 정보도 하나도 없고 ★ 신차 가격도 없고
+      ★ 성능 정보도 없는 것들을 ★ **상위에 집어넣는다**는 얘기는
+      ★ 네가 개발에 대해서 ★ 로직을 전혀 얘기하지 않고 있다는 얘기다」.
+    ★ 세 단계다 — ① 있어야 보인다 ② 거른다 ③ 세운다.
+    ★ `_탭4_거름` 은 ★ **띠를 그리는 데만** 쓴다 (M-18)
+    """
+    got = load_config(f"{root}/config/targets.json") or {}
+    return got.get("_탭4_로직") or {}
+
+
+def _first_won(text, mark: str) -> int | None:
+    """★ 정본이 글로 적은 값에서 ★ 그 낱말 뒤의 수를 집는다.
+
+    ★ 값을 ★ **코드에 박지 않으려고** 이렇게 한다 (S14 · 지시 「코드에 박지 마라」).
+    ★ 예 — 「45,000km 넘으면 타이어 1,200,000」 → `mark='타이어'` → 1200000
+    """
+    import re as _re
+    hit = _re.search(mark + r"[^0-9]{0,4}([0-9][0-9,]*)", str(text or ""))
+    return int(hit.group(1).replace(",", "")) if hit else None
+
+
+def _t4_gate(card: dict) -> list:
+    """★ **1단계 — 있어야 보인다** (r1232).  ★ 없는 것의 이름을 돌려준다.
+
+    ★★ 넷이 없으면 ★ **후보가 아니다.**  ★ 목록에 안 낸다 — ★ 「미조회」로도 안 낸다.
+      ★ 2단계로 안 간다.  ★ 「아직 못 본 차 N대」 한 줄로만 센다.
+    ★★★ 마스터 — 「★ 스무 대를 모르는 채 늘어놓는 것보다 ★ 세 대를 아는 것이 낫다」
+    """
+    lack = []
+    if card.get("_origin") is None:
+        lack.append("신차출고가")
+    if card.get("_frame") is None:
+        lack.append("골격")
+    if not card.get("_choice"):
+        lack.append("선택 옵션")
+    if str(card.get("_detail") or "") != "ok":
+        lack.append("상세")
+    return lack
+
+
+def _t4_drop(card: dict, logic: dict) -> list:
+    """★ **2단계 — 거른다** (r1232).  ★ 안 맞는 잣대의 이름을 돌려준다.
+
+    ★ 하나라도 안 맞으면 뺀다.  ★ 1단계를 넘은 것만 여기 온다 —
+      ★ 그래서 ★ 여기서는 ★ **「안 봤다」가 나올 수 없다** (금지 「없다와 안 봤다를 섞는 것」)
+    """
+    two = logic.get("2단계_거른다") or {}
+    bad = []
+    ym = str(card.get("_ym") or "").replace("-", "")[:6]
+    want = str(_first_text(two.get("연식"), r">=\s*([0-9]{4}-[0-9]{2})")
+               or "").replace("-", "")[:6]
+    if want and (not ym or ym < want):
+        bad.append("연식")
+    cap_km = _first_won(two.get("주행"), "<=")
+    if cap_km is not None and (card.get("_km") is None
+                               or card["_km"] > cap_km):
+        bad.append("주행")
+    cap_won = _first_won(two.get("차값"), "<=")
+    if cap_won is not None and (card.get("_price") is None
+                                or card["_price"] > cap_won):
+        bad.append("차값")
+    hue = _first_text(two.get("색"), r"([가-힣]+색)")
+    if hue and hue not in str(card.get("_color") or ""):
+        bad.append("색")
+    least = _first_won(two.get("옵션값"), ">=")
+    gap = card.get("_optgap")
+    if least is not None and (gap is None or gap < least):
+        bad.append("옵션값")
+    if card.get("_frame") != 0:
+        bad.append("골격")
+    if card.get("_lease"):
+        bad.append("리스·렌트 승계")
+    return bad
+
+
+def _first_text(text, pattern: str):
+    """★ 정본의 글에서 ★ 무늬에 맞는 첫 조각.  ★ 없으면 None."""
+    import re as _re
+    hit = _re.search(pattern, str(text or ""))
+    return hit.group(1) if hit else None
+
+
+def _t4_rank(card: dict) -> tuple:
+    """★ **3단계 — 세운다** (r1232).  ★ 앞 잣대가 같을 때만 뒤를 본다.
+
+    ★ ① 잔가율 낮은 순 ② 주행 적은 순 ③ 연식 새 순 ④ 옵션값 큰 순 ⑤ 총비용 낮은 순
+    ★★★ 마스터 — 「★ **총비용만으로 세우면 값싼 사고차가 앞에 온다.**
+      ★ 마스터 기준의 첫 잣대는 ★ 잔가율이다」 — ★ 총비용은 ★ **다섯 번째**다
+    """
+    keep = card.get("_keep")          # 잔가율 = 값 ÷ 신차출고가
+    return (
+        keep if keep is not None else 9.9,
+        card.get("_km") if card.get("_km") is not None else 10 ** 9,
+        -_ym_num(card.get("_ym")),
+        -(card.get("_optgap") or 0),
+        card.get("_total") or 10 ** 12,
+    )
+
+
+def _pct_say(keep) -> str:
+    """잔가율을 ★ 사람 말로.  ★ 모르면 「미조회」 — ★ 0 으로 안 적는다 (금지 12)."""
+    return UNKNOWN if keep is None else f"{keep * 100:.0f}%"
+
+
+def _ym_num(ym) -> int:
+    """'2023-05' → 202305.  ★ 모르면 0 (맨 뒤로 간다)."""
+    got = str(ym or "").replace("-", "")[:6]
+    return int(got) if got.isdigit() else 0
 
 
 def _t4_pack(card: dict, sift: dict) -> tuple:

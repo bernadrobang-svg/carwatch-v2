@@ -28,15 +28,20 @@
   <p class="g4-note">{{ note }}</p>
 </div>
 
+<!-- ★ 09-13 (r1232 M-19) — ★ 「아직 못 본 차」는 ★ **한 줄**이다.
+     ★ 1단계(신차출고가·골격·선택 옵션·상세)를 못 넘은 것은 ★ 목록에 안 낸다 -->
 <p class="g4-count">{{ head }} <b>{{ count.all | num }}대</b> 중
-  <b>{{ count.passed | num }}대</b>가 차값 상한을 넘었고,
-  그중 상세를 받은 것은 <b>{{ count.detailed | num }}대</b>입니다 —
-  나머지 <b>{{ count.missing | num }}대</b>는 아직 못 받았습니다</p>
+  살아 있는 것 <b>{{ count.passed | num }}대</b> —
+  네 가지(신차출고가·골격·선택 옵션·상세)를 다 본 것이
+  <b>{{ count.detailed | num }}대</b>,
+  그중 기준을 넘은 것이 <b>{{ count.picked | num }}대</b>입니다.</p>
+<p class="g4-count">아직 못 본 차 <b>{{ count.missing | num }}대</b>
+  — {{ count.why }}</p>
 
 {% if !rows %}
 <p class="cond what">기준을 다 넘은 차가 <strong>아직 없습니다</strong>.
-  상세를 더 받으면 채워집니다 — 지금 못 받은 것이
-  <strong>{{ count.missing | num }}대</strong>입니다.</p>
+  네 가지를 다 본 차가 <strong>{{ count.detailed | num }}대</strong>뿐입니다 —
+  못 본 <strong>{{ count.missing | num }}대</strong>를 채우면 후보가 생깁니다.</p>
 {% endif %}
 
 {% for r in rows %}
