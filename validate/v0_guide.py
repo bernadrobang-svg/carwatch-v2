@@ -8316,19 +8316,27 @@ def s46_302_no_stale_filter_words():
     띠를 화면에 글자로 박아서 그렇다.
     `config/targets.json` 의 `_탭4_거름` 에서 그려야 조건이 바뀌면 따라온다.
     """
-    import re as _re
     STALE = ("감가 78% 이하", "2022년 5월", "8만km 이하", "깡통도 후보",
              "진단 없어도")
+    # ★★★★★ 09-13 — ★ 이 검사가 ★ **틀(.html)만 보고 있었다.**
+    #   ★ 그런데 옛 문구는 ★ **화면 코드**(report/screens/tabs.py)에 박혀 있었다.
+    #   ★ 그래서 ★ 검사는 파랬는데 ★ 배포 화면에는 옛 띠가 떠 있었다 — ★ 헛잡이다.
+    #   ★ 화면 코드도 본다.  ★ 주석 줄은 뺀다 (까닭을 적자면 옛 문구를 써야 한다)
+    what = [(q.name, _read(q)) for q in
+            sorted((ROOT / "web" / "templates").glob("*.html"))]
+    for q in sorted((ROOT / "report" / "screens").glob("*.py")):
+        keep = [ln for ln in _read(q).splitlines()
+                if not ln.lstrip().startswith("#")]
+        what.append((q.name, "\n".join(keep)))
     bad = []
-    for q in sorted((ROOT / "web" / "templates").glob("*.html")):
-        body = _read(q)
+    for name, body in what:
         hit = [w for w in STALE if w in body]
         if hit:
-            bad.append(f"{q.name} — {' · '.join(hit[:3])}")
+            bad.append(f"{name} — {' · '.join(hit[:3])}")
     if bad:
-        return False, ("옛 거르개 문구가 틀에 박혀 있다 — " + " · ".join(bad[:2])
+        return False, ("옛 거르개 문구가 박혀 있다 — " + " · ".join(bad[:2])
                        + "  (`_탭4_거름` 에서 그려라)")
-    return True, "옛 거르개 문구가 틀에 없다"
+    return True, f"옛 거르개 문구가 없다 (틀·화면코드 {len(what)}개)"
 
 
 CHECKS = (
