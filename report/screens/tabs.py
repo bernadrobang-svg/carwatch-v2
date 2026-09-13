@@ -1329,9 +1329,15 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         "  LEFT JOIN core_record  r ON r.listing_id = l.listing_id"
         " WHERE l.target_key = ? AND l.status IN ('active','new','relisted')"
         f"   AND {lw}"
-        "   AND l.year_month >= ? AND l.mileage_km <= ?",
-        (cfg["target"], *la, cfg["year_from"],
-         cfg["mileage_max_km"])).fetchall()
+        # ★★★★★ 09-12 (M-16) — ★ 잣대를 ★ **`_탭4_거름`** 에서 가져온다.
+        #   ★ 앞서는 ★ 옛 `tab4_gv70` 의 연식·주행을 썼다 —
+        #     ★ ★ 그래서 ★ 「913대가 넘었다」가 ★ **옛 잣대의 수**였다.
+        #   ★★ 연식·주행은 ★ **여기서 안 자른다** — ★ 「하나가 아쉬운 차」(묶음 ③)가
+        #     ★ ★ 있어야 하기 때문이다.  ★ 자르는 것은 ★ **차값 상한**뿐이다
+        "   AND l.price_current_won <= ?",
+        (cfg["target"], *la,
+         sift.get("차값_최대_원") or cfg.get("price_max_won") or 10 ** 9)
+    ).fetchall()
     passed = len(got)
     # ★ 「상세를 받았다」 = ★ `detail_status` 가 ok 인 것 (화면 글자 그대로)
     detailed = sum(1 for r in got if str(r[-1] or "") == "ok")
@@ -1371,25 +1377,13 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
                f"{cfg['year_from'][:4]}년 {int(cfg['year_from'][5:7])}월↑ · "
                f"{int(cfg['mileage_max_km'] / 10000)}만km 이하 · 골격 무사고",
         # ★ 09-11 (M-18) — ★ 「깡통도 후보」를 지웠다.  ★ 마스터가 09-11 에 물리셨다
-        "rule": [
-            {"label": f"{str(sift.get('연식_이후') or '')[:4]}년 이후", "key": "key"},
-            {"label": f"{int((sift.get('주행_최대_km') or 0) / 10000)}만km 이하",
-             "key": "key"},
-            {"label": f"{_won(sift.get('차값_최대_원'))} 이하", "key": "key"},
-            {"label": " · ".join(sift.get("색") or ()) or UNKNOWN, "key": "key"},
-            {"label": f"옵션값 {_won(sift.get('옵션값_최소_원'))} 이상",
-             "key": "key"},
-            {"label": f"감가 {cfg['depreciation_max_pct']}% 이하", "key": "key"},
-            {"label": f"{cfg['year_from'][:4]}년 "
-                      f"{int(cfg['year_from'][5:7])}월 ↑", "key": "key"},
-            {"label": f"{int(cfg['mileage_max_km'] / 10000)}만km 이하",
-             "key": "key"},
-            {"label": "골격 무사고", "key": "key"},
-            {"label": "단순교환까지 봄", "key": ""},
-            {"label": f"진단 없어도 감가 {cfg['depreciation_no_dx_pct']}%↓면 후보",
-             "key": ""},
-            {"label": "리스·렌트 승계 제외", "key": ""},
-        ],
+        # ★★★★★ 09-12 (M-18) — ★ 띠를 ★ **`_탭4_거름` 에서만** 그린다.
+        #   ★★ 실측 09-12 — ★ **옛 기준과 새 기준이 같이 떠 있었다**:
+        #     ★ 옛 「감가 78% 이하 · 2022년 5월↑ · 8만km 이하 · 깡통도 후보」
+        #     ★ 새 「2023년 이후 · 2.5만km 이하 · 3,999만 이하 · 흰색 · 옵션값 400만」
+        #   ★ 까닭 — ★ 옛 줄을 ★ **화면 코드에 글자로 박아** 두었다.
+        #   ★ ★ 이제 ★ 조건이 바뀌면 ★ 띠가 **저절로 따라온다** (S46-302)
+        "rule": _t4_rule(sift),
         "note": "렌터카 이력은 결격이 아닙니다. "
                 "리본카·K카는 렌터카를 정리해 팔아 값이 쌉니다.",
         # ★ 묶음마다 몇인지 낸다 — ★ ④ 는 수만 센다 (지시)
@@ -1873,3 +1867,32 @@ def _opt_won_gap(base, total, least: int) -> bool | None:
     if not base or not total:
         return None
     return (int(total) - int(base)) >= int(least)
+
+
+def _t4_rule(sift: dict) -> list:
+    """★ 「거른 기준」 띠 — ★ **`_탭4_거름` 이 정본이다** (M-18).
+
+    ★★ 화면에 글자로 박지 않는다.  ★ 마스터가 조건을 고치시면
+      ★ ★ 그 파일만 고치면 ★ 띠가 저절로 따라온다.
+    ★ 없는 칸은 ★ **안 낸다** — ★ 「미조회」를 조건인 양 걸지 않는다
+    """
+    got = []
+    year = str(sift.get("연식_이후") or "")[:4]
+    if year:
+        got.append({"label": f"{year}년 이후", "key": "key"})
+    km = sift.get("주행_최대_km")
+    if km:
+        got.append({"label": f"{km / 10000:g}만km 이하", "key": "key"})
+    won = sift.get("차값_최대_원")
+    if won:
+        got.append({"label": f"{_won(won)} 이하", "key": "key"})
+    for one in (sift.get("색") or ()):
+        got.append({"label": str(one), "key": "key"})
+    opt = sift.get("옵션값_최소_원")
+    if opt:
+        got.append({"label": f"옵션값 {_won(opt)} 이상", "key": "key"})
+    if sift.get("골격"):
+        got.append({"label": "골격 무사고", "key": "key"})
+    if sift.get("리스렌트승계"):
+        got.append({"label": "리스·렌트 승계 제외", "key": ""})
+    return got

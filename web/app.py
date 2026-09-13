@@ -270,26 +270,38 @@ def static_version(name: str = "app.css") -> str:
 
     ★ run_id 를 쓰지 않는다 — 수집할 때마다 바뀌어 CSS 가 그대로여도
       전부 다시 받게 된다.  내용이 바뀔 때만 바뀌어야 한다.
-    ★ 한 번 읽고 기억한다.  화면마다 파일을 여는 것은 낭비다
+    ★ 한 번 읽고 기억한다.  화면마다 파일을 여는 것은 낭비다.
+    ★★★★★ 09-12 (S-1) — ★ 다만 ★ **파일이 바뀌면 다시 잰다.**
+      ★ 실측 09-12 — ★ 가이드가 `app.css` 를 고쳤는데 ★ `v=` 가 그대로라
+        ★ ★ 브라우저가 ★ **옛 CSS 를 그대로 썼다** (메뉴 배경이 안 바뀌었다).
+      ★ 까닭 — ★ 서버가 뜰 때 ★ **한 번만** 재고 ★ 영영 기억했다.
+      ★ ★ 이제 ★ `mtime` 을 함께 기억해 ★ 그것이 바뀌면 ★ 다시 잰다 —
+        ★ ★ ★ 파일 한 번 stat 하는 값이다.  ★ 배포마다 재시작을 안 해도 된다
     """
     import hashlib
     import json as _j
     import os as _o
 
-    got = _STATIC_VERSION.get(name)
+    root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
+    path = _o.path.join(root, "web", "static", name)
+    try:
+        stamp = str(_o.path.getmtime(path))
+    except OSError:
+        stamp = ""
+    said = _STATIC_VERSION.get(name)
+    got = said[1] if said and said[0] == stamp else None
     if got is None:
-        root = _o.path.dirname(_o.path.dirname(_o.path.abspath(__file__)))
         try:
             # 지문 길이는 표시 정책이라 config 에 둔다 (S14).
             # ★ 충돌만 안 나면 된다 — 주소를 짧게 둔다
             with open(_o.path.join(root, "config", "web.json"),
                       encoding="utf-8") as f:
                 n = int(_j.load(f)["static_fingerprint_chars"])
-            with open(_o.path.join(root, "web", "static", name), "rb") as f:
+            with open(path, "rb") as f:
                 got = hashlib.sha256(f.read()).hexdigest()[:n]
         except (OSError, KeyError, ValueError):
             got = ""          # 못 읽어도 화면은 떠야 한다
-        _STATIC_VERSION[name] = got
+        _STATIC_VERSION[name] = (stamp, got)
     return got
 
 
