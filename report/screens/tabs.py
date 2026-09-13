@@ -1426,7 +1426,18 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
 
     fee = _fee(won, cfg["fee_pct"])
     wear, wear_say = _wear(km, cfg)
-    total = (won or 0) + fee + (wear or 0)
+    # ★★★★★ 09-13 (r1232) — ★ 총비용에 ★ **위약**과 ★ **보증**이 빠져 있었다.
+    #   ★ 지시 — 「총비용 = 차값 ＋ 8.5% ＋ 위약 800,000 ＋ 보증 ＋ 소모품」.
+    #   ★ 값은 ★ **정본의 글에서 집는다** — ★ 코드에 안 박는다 (S14)
+    _logic = _t4_logic(root)
+    penalty = _first_won(_logic.get("총비용"), "위약") or 0
+    # ★ 보증 — ★ 제조사 보증이 남아 있으면 ★ 더 살 것이 없어 ★ 0 이다.
+    #   ★★ 모르면 ★ **0 이 아니라 「미조회」**다 (금지 12) — ★ 합에도 안 넣는다
+    left = _warranty_left(wmon, wkm)
+    guard = 0 if left else (None if left is None else 0)
+    guard_say = ("제조사 보증이 남아 있습니다" if left
+                 else (NOT_ASKED if left is None else "남은 보증이 없습니다"))
+    total = (won or 0) + fee + (wear or 0) + penalty + (guard or 0)
 
     def cell(v, cls=""):
         return {"v": v, "cls": cls}
@@ -1473,6 +1484,10 @@ def _gv70_card(r, cfg: dict, sites: dict, root: str, conn=None,
             {"label": "차값", "v": _won(won), "cls": ""},
             {"label": f"이전등록비 · 매도비 ({cfg['fee_pct']}%)",
              "v": _won(fee), "cls": ""},
+            {"label": "위약 (계약 파기)", "v": _won(penalty), "cls": ""},
+            {"label": f"보증 — {guard_say}",
+             "v": _won(guard) if guard else ("0" if guard == 0 else NOT_ASKED),
+             "cls": ""},
             {"label": f"소모품 — {wear_say}",
              "v": _won(wear) if wear else ("0" if wear == 0 else NOT_ASKED),
              "cls": ""},
@@ -1792,6 +1807,13 @@ def _t4_drop(card: dict, logic: dict) -> list:
         bad.append("골격")
     if card.get("_lease"):
         bad.append("리스·렌트 승계")
+    # ★★★★★ 09-13 (가이드 db84bbb0) — ★ **총비용 상한**이 2단계에 들어왔다.
+    #   ★★ 마스터 — 「★ 255다는 비싸」.  ★ 차값만 막으면 ★ 부대비가 붙어
+    #     ★ ★ 4,000만을 넘는다 — ★ **총비용**으로 막는다
+    cap_all = _first_won(two.get("총비용"), "<=")
+    if cap_all is not None and (card.get("_total") is None
+                                or card["_total"] > cap_all):
+        bad.append("총비용")
     return bad
 
 
