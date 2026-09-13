@@ -8292,6 +8292,20 @@ def s46_301_tab4_filter_exists():
     raw = _read(ROOT / "config" / "targets.json")
     if not raw:
         return False, "targets.json 을 못 읽었다"
+    #   ★★★★★ 09-12 — 마스터 「★ **로직을 전혀 얘기하지 않고 있다**」.
+    #     ★ 「거른다」 「네 묶음」이라고만 적고 ★ **무엇으로 거르고 무엇으로 세우는지**를
+    #       ★ ★ 한 줄도 안 적었다.  ★ `_탭4_로직` 이 그 로직이다.
+    #     ★ 1단계 있어야 보인다 · 2단계 거른다 · 3단계 세운다.
+    #     ★ ★ 3단계의 첫 잣대는 ★ **잔가율**이다 — ★ 총비용은 다섯 번째다.
+    L = json.loads(raw).get("_탭4_로직")
+    if not L:
+        return False, "`_탭4_로직` 이 없다 — 거르고 세우는 로직을 적어야 한다"
+    for k in ("1단계_있어야_보인다", "2단계_거른다", "3단계_세운다", "금지"):
+        if not L.get(k):
+            return False, f"`_탭4_로직` 에 「{k}」 가 없다"
+    ord3 = (L.get("3단계_세운다") or {}).get("차례") or []
+    if not ord3 or "잔가율" not in ord3[0]:
+        return False, "3단계의 첫 잣대가 잔가율이 아니다"
     f = json.loads(raw).get("_탭4_거름")
     if not f:
         return False, "`_탭4_거름` 이 없다 — 탭 4 거르개를 설정에 두어야 한다"
