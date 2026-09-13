@@ -114,6 +114,17 @@ def run_once(db_path: str, make_ctx, make_executors_fn, root: str = ".",
         if job is None:
             return None
         ctx = make_ctx()
+        # ★★★★★ 09-13 — ★ `run_id` 를 ★ **시작할 때** 찍는다.
+        #   ★ 전에는 ★ `finish()` 에서만 찍었다 — ★ 즉 ★ **끝나야** 적혔다.
+        #   ★★ 실측 09-13 — ★ 09-10 20:00 에 큐에 든 판이 ★ 사흘째 `running` 이고
+        #     ★ `run_id` 가 ★ **비어 있었다**.  ★ 서비스를 다시 띄울 때마다
+        #     ★ ★ `resume_point(conn, run_id)` 가 ★ 짚을 자리가 없어
+        #     ★ ★ S5 가 ★ **125,370건을 0부터** 다시 걸었다 (초당 5.4건 · 6.4시간).
+        #   ★ 그래서 ★ 판정(S9·S10)에 ★ 한 번도 못 닿았고 ★ 등급이 PENDING 으로 남았다
+        conn.execute(
+            "UPDATE recalc_job SET run_id = ?, updated_at = ? WHERE job_id = ?",
+            (ctx.run_id, now(), job["job_id"]))
+        conn.commit()
         try:
             # ★ 사유를 실행기에 넘긴다 (실측 08-20).  안 넘기면 공장이
             #   resume=False 로 만들어 S5 가 전건을 다시 던진다 —
