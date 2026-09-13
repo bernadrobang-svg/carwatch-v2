@@ -1369,6 +1369,22 @@ def view_gv70(conn: sqlite3.Connection, root: str = ".",
         packs[n].sort(key=lambda c: c["_total"] or 10 ** 12)
     picked = len(packs[1])
     keep = (packs[1] + packs[2] + packs[3])[:int(cfg.get("shown") or 20)]
+    # ★★★★★ 09-12 (M-17) — ★ 묶음을 ★ **눈에 보이게** 가른다.
+    #   ★ 실측 09-12 — ★ 줄세우기는 묶음별이었으나 ★ **화면에는 한 덩어리로** 났다.
+    #   ★ 그래서 「1위가 3,950만 미조회」로 보였다 — ★ 그것은 ②의 1위다.
+    #   ★ 묶음 첫 장에만 머리글을 얹는다 (틀은 `==` 를 못 쓴다)
+    PACK_HEAD = {1: "① 조건을 다 맞췄다", 2: "② 조건은 맞는데 아직 못 본 것이 있다",
+                 3: "③ 하나가 아쉽다"}
+    seen: set = set()
+    for one in keep:
+        n = one["_pack"]
+        if n in seen:
+            one["group_head"] = one["group_note"] = ""
+            continue
+        seen.add(n)
+        one["group_head"] = PACK_HEAD.get(n, "")
+        here = len([x for x in keep if x["_pack"] == n])
+        one["group_note"] = f"{here}대 · 이 묶음 안에서 총비용 낮은 순"
     _mark_best(keep)
     return {
         "head": label,

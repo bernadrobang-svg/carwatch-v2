@@ -7,6 +7,8 @@
        `tabs` `head` `sub` · `rule[]`(`label`·`key`) · `note`
        `count`(`all`·`passed`·`detailed`·`missing`)
        `rows[]` — listing_id · price · grade · name · site · dx · dx_ok · pick
+         ★ 09-12 (M-17) — `group_head`·`group_note` 는 ★ **묶음 첫 장에만** 온다.
+           ★ 네 묶음(① 다 맞음 ② 미조회 있음 ③ 하나 아쉬움 ④ 못 미침)을 가르는 머리글이다
          four[] (`label` ＋ `cells[{v, cls}]`)   ★ 판단 네 줄
          pkgs[] (`label`·`won`) · total[] (`label`·`v`·`cls`)
          bars[] (`label`·`pct`·`said`·`best`·`hi`) · say
@@ -27,12 +29,9 @@
 </div>
 
 <p class="g4-count">{{ head }} <b>{{ count.all | num }}대</b> 중
-  <b>{{ count.passed | num }}대</b>가 값·연식·주행을 넘었고,
+  <b>{{ count.passed | num }}대</b>가 차값 상한을 넘었고,
   그중 상세를 받은 것은 <b>{{ count.detailed | num }}대</b>입니다 —
   나머지 <b>{{ count.missing | num }}대</b>는 아직 못 받았습니다</p>
-
-<div class="g4-group on"><h2>후보</h2>
-  <span>{{ count.shown | num }}대 · 총비용 낮은 순</span></div>
 
 {% if !rows %}
 <p class="cond what">기준을 다 넘은 차가 <strong>아직 없습니다</strong>.
@@ -41,6 +40,8 @@
 {% endif %}
 
 {% for r in rows %}
+{% if r.group_head %}<div class="g4-group on"><h2>{{ r.group_head }}</h2>
+  <span>{{ r.group_note }}</span></div>{% endif %}
 <div class="g4-card {% if r.pick %}pick{% endif %}">
   <div class="g4-head">
     <span class="g4-price">{{ r.price }}</span>
