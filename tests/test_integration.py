@@ -171,19 +171,21 @@ def m1(anon: Client, lid: int) -> None:
             ok += 1
     rec(1, "/", "상단 메뉴 6개", f"{ok}/{len(NAV)} 응답", ok == len(NAV))
 
-    st, body, _h = anon.get("/")
+    # ★★ Q-1·Q-2 (가이드) — ★ `/` 는 **목록**이 됐고 ★ 현황은 `/status` 로 옮겼다.
+    #   ★ 현황의 절들은 ★ 이제 `/status` 에서 잰다
+    st, body, _h = anon.get("/status")
     grade_links = [x for x in links(body) if "grade=" in x]
-    rec(2, "/", "등급 분포 막대", f"링크 {len(grade_links)}", bool(grade_links))
+    rec(2, "/status", "등급 분포 막대", f"링크 {len(grade_links)}", bool(grade_links))
     st2 = anon.get(grade_links[0])[0] if grade_links else 0
-    rec(2.1, "/", "막대를 눌러 목록", str(st2), st2 == 200)
+    rec(2.1, "/status", "막대를 눌러 목록", str(st2), st2 == 200)
 
     tgt = [x for x in links(body) if "target=" in x]
-    rec(3, "/", "차종별 표의 차종명", f"링크 {len(tgt)}", bool(tgt))
+    rec(3, "/status", "차종별 표의 차종명", f"링크 {len(tgt)}", bool(tgt))
 
     # ★ 개정 427 — 현황의 매물 링크도 /detail 로 바뀌었다.  /why 는 살아 있다
     why = [x for x in links(body)
            if x.startswith("/why/") or x.startswith("/detail/")]
-    rec(4, "/", "상위 후보 → 상세", f"링크 {len(why)}", bool(why))
+    rec(4, "/status", "상위 후보 → 상세", f"링크 {len(why)}", bool(why))
 
     st, lbody, _h = anon.get("/listings")
     chips = [x for x in links(lbody) if "?" in x and "listings" in x]
@@ -768,7 +770,7 @@ def s3(ad: Client, u1: Client, u2: Client, db: str, lid: int) -> None:
 UNIT = {
     # ★★ 08-24 v3_dashboard_시안 — ★ 「오늘 변동」이 ★ 「1 오늘」이 됐다.
     #   ★ 그 아래에 ★ 새로 뜬 것 · 값 내린 것 · 사라진 것 · 마지막 재판정 넷을 낸다
-    "/": ("해야 할 일", "등급 분포", "차종별", "1 오늘", "새로 뜬 것",
+    "/status": ("해야 할 일", "등급 분포", "차종별", "1 오늘", "새로 뜬 것",
           "값 내린 것", "사라진 것", "마지막 재판정", "상위 후보"),
     "/listings": ("지금 조건으로", "축"),
     # ★★★★★ 09-01 — ★ **화면이 통째로 바뀌었다** (`docs/RECOMMEND_SCREEN.md` ·

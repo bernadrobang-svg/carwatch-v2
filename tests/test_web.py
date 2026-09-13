@@ -412,8 +412,13 @@ def test_screens_render() -> None:
 
     # ★ 화면이 아닌 것은 빼고 센다 — 위 loop 이 건너뛴 것과 같은 기준이어야 한다.
     #   기준이 갈리면 「30/31」처럼 영원히 하나 모자란다
-    want = len([r for r in ROUTES if _G in r.methods
-                and r.view in HANDLERS and r.view not in NON_SCREEN_VIEWS])
+    # ★★★★★ 09-13 (Q-1) — ★ 위 고리는 ★ **view 마다 한 번** 돈다
+    #   (`for view in sorted(HANDLERS)`).  ★ 그런데 여기서는 ★ **길**을 셌다.
+    #   ★ Q-1 로 ★ `/` 와 `/listings` 가 ★ 같은 `view_listings` 를 쓰게 되자
+    #   ★ ★ 「36/37」로 ★ 영원히 하나 모자랐다 — ★ 바로 위 주석이 걱정한 그것이다.
+    #   ★ 고리와 같은 기준으로 ★ **view 를 센다**
+    want = len({r.view for r in ROUTES if _G in r.methods
+                and r.view in HANDLERS and r.view not in NON_SCREEN_VIEWS})
     check("★ 전 GET 화면을 돌았다", ok_n == want, f"{ok_n}/{want}")
 
     # ★ 「준비 중」이 남아 있지 않다 — 전 화면이 구현됐다 (D-3).
