@@ -441,6 +441,11 @@ OUR_COLUMNS: frozenset[str] = frozenset({
     "on_grade_change", "on_dom", "evidence", "warning_code", "title",
     "body", "sql_text", "url", "condition", "label", "file", "key_path",
     "curve_json", "sample_json", "request_kind", "reject_reason", "raw_body",
+    # ★★★★★ 09-12 — ★ 수집 기록 표 (`pipeline_run` · `pipeline_reason`).
+    #   ★ 이 넷은 ★ **원문에서 온 값이 아니다** — ★ 우리가 적는 일지다.
+    #   ★ 「어느 걸음을 언제 시작했다」는 ★ 우리가 아는 값이라 ★ 빌 수가 없다.
+    #   ★ V2-19 가 막으려는 것은 ★ 「원문이 안 준 것을 못 넣게 막는 NOT NULL」이다
+    "step", "started_at", "at", "said",
 })
 
 

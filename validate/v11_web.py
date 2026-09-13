@@ -949,8 +949,12 @@ def _routing_table_check(rid):
     #   handler 가 있는데 화면이 아니다 — 겹쳐 세면 수가 안 맞는다 (실측 08-18)
     off = [x for x in NON_SCREEN_VIEWS if x not in HANDLERS]
     n = len(HANDLERS) + len(off)
-    if n != len(ROUTES):
-        bad.append(f"Route {len(ROUTES)} ≠ HANDLERS {len(HANDLERS)} "
+    # ★★★★★ 09-13 (Q-1) — ★ 여기서 ★ **길의 수**와 ★ **handler 의 수**를 맞댔다.
+    #   ★ 그런데 Q-1 으로 ★ `/` 와 `/listings` 가 ★ 같은 `view_listings` 를 쓴다.
+    #   ★ ★ 길 하나에 handler 하나가 ★ **더는 참이 아니다** — ★ view 로 센다
+    seen = {r.view for r in ROUTES}
+    if n != len(seen):
+        bad.append(f"view {len(seen)} ≠ HANDLERS {len(HANDLERS)} "
                    f"+ handler 없는 비화면 {len(off)}")
     return result(C["V11-12"], rid, 0, len(bad), not bad, bad[:20])
 
